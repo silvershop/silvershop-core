@@ -77,7 +77,7 @@ class AccountPage extends Page {
 			$page->writeToStage('Stage');
 			$page->publish('Stage', 'Live');
 			
-			Database::alteration_message('Account page \'Account\' created', 'created');
+			DB::alteration_message('Account page \'Account\' created', 'created');
 		}
 	}
 }

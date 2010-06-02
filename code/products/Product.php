@@ -249,7 +249,7 @@ class Product extends Page {
 				$page1->FeaturedProduct = true;
 				$page1->writeToStage('Stage');
 				$page1->publish('Stage', 'Live');
-				Database::alteration_message('Product page \'Example product\' created', 'created');
+				DB::alteration_message('Product page \'Example product\' created', 'created');
 				
 				$page2 = new Product();
 				$page2->Title = 'Example product 2';
@@ -261,7 +261,7 @@ class Product extends Page {
 				$page2->Model = 'Jane Bloggs';
 				$page2->writeToStage('Stage');
 				$page2->publish('Stage', 'Live');
-				Database::alteration_message('Product page \'Example product 2\' created', 'created');		
+				DB::alteration_message('Product page \'Example product 2\' created', 'created');		
 			}
 		}
 	}

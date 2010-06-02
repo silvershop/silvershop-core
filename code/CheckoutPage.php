@@ -118,7 +118,7 @@ class CheckoutPage extends Page {
 			$page->writeToStage('Stage');
 			$page->publish('Stage', 'Live');
 			
-			Database::alteration_message('Checkout page \'Checkout\' created', 'created');
+			DB::alteration_message('Checkout page \'Checkout\' created', 'created');
 		}
 		
 		if($page->TermsPageID == 0 && $termsPage = DataObject::get_one('Page', "`URLSegment` = 'terms-and-conditions'")) {
@@ -126,7 +126,7 @@ class CheckoutPage extends Page {
 			$page->writeToStage('Stage');
 			$page->publish('Stage', 'Live');
 
-			Database::alteration_message("Page '{$termsPage->Title}' linked to the Checkout page '{$page->Title}'", 'changed');
+			DB::alteration_message("Page '{$termsPage->Title}' linked to the Checkout page '{$page->Title}'", 'changed');
 		}
  	}
 }

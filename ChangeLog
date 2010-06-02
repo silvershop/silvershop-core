@@ -4,16 +4,16 @@ Known Bugs
 	* Can't use 'add' method for products with variations. I have made it redirect to product page instead.
 
 0.6.1
-    * Modified code to work with SS 2.4, and payment trunk as @ revision 103257. This mainly involved supporting the Money class.
-    * Separated out unnecessary css styling. The default style is very much tied to black candy. (This can be put into a theme)
-    * Improved efficiency of ProductGroup to make one database call to retrieve products. All ProductGroup children are retrieved by default, rather than just the immediate children.
-    * Removed 'ShowInMenus' condition for displaying group products.
-    * Added sorting controls to ProductGroup pages
-    * Added pagination to default ProductGroup template
-    * Removed separation of featured and non-featured products. The default sort is set to show featured products, then the rest by title (similar to TradeMe.co.nz)
-    * Tidied up invoice printing
-    * Got the 'all orders' SS report working again
-    * Added 'Store' model admin for orders
+	* Modified code to work with SS 2.4, and payment trunk as @ revision 103257. This mainly involved supporting the Money class.
+	* Separated out unnecessary css styling. The default style is very much tied to black candy. (This can be put into a theme)
+	* Improved efficiency of ProductGroup to make one database call to retrieve products. All ProductGroup children are retrieved by default, rather than just the immediate children.
+	* Removed 'ShowInMenus' condition for displaying group products.
+	* Added sorting controls to ProductGroup pages
+	* Added pagination to default ProductGroup template
+	* Removed separation of featured and non-featured products. The default sort is set to show featured products, then the rest by title (similar to TradeMe.co.nz)
+	* Tidied up invoice printing
+	* Got the 'all orders' SS report working again
+	* Added 'Store' model admin for orders
 	* Show products in multiple categories (does not yet include recursive sub-category products)
 	* Variations of the same product can now be added to the cart together
 	* Prevented order payment form showing on checkout template if nothing is in shopping cart.

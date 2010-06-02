@@ -189,7 +189,7 @@ class ProductGroup extends Page {
 			$page1->URLSegment = 'products';
 			$page1->writeToStage('Stage');
 			$page1->publish('Stage', 'Live');
-			Database::alteration_message('Product group page \'Products\' created', 'created');
+			DB::alteration_message('Product group page \'Products\' created', 'created');
 			
 			$page2 = new ProductGroup();
 			$page2->Title = 'Example product group';
@@ -198,7 +198,7 @@ class ProductGroup extends Page {
 			$page2->ParentID = $page1->ID;
 			$page2->writeToStage('Stage');
 			$page2->publish('Stage', 'Live');
-			Database::alteration_message('Product group page \'Example product group\' created', 'created');
+			DB::alteration_message('Product group page \'Example product group\' created', 'created');
 		}
 	}
 	
