@@ -1,0 +1,106 @@
+#Account h2 {
+	float:left;
+	width:90%;
+}
+
+#PrintPageIcon {
+	float:right;
+	width:10%;
+	text-align:right;
+	vertical-align:middle;
+	padding:11px 0;
+}
+
+.block {
+	text-align:left;
+	background-color:#ccc;
+	margin:10px 0 0;
+	padding:5px;
+}
+	.block h3 {
+		text-align:left;
+		margin: 0 0 5px;
+	}
+
+.block .status {
+	float:left;
+	width:25%;
+	text-align:center;
+}
+
+.block.left, .block.right {
+	width:48%;
+}
+
+.block.left {
+	float:left;
+}
+
+.block.right {
+	float:right;
+}
+
+	.block table {
+		width: 100%;
+		background: #fdfdfd;
+		margin:0 auto;
+	}
+		.block th, .block td {
+			font-size:1em;
+			font-weight:normal;
+			color:#333;
+			border:1px solid #999999;
+			padding:5px;
+		}
+		.block th {
+			font-size:1.2em;
+			font-weight:bold;
+			color:#4EA3D7 !important;
+		}
+		
+		/* Content Block Style */
+		
+		.block .title {
+			text-align:left;
+		}
+		.block .quantity {
+			text-align:center;
+		}
+		.block .price {
+			text-align:right;
+		}
+		.block .transparent {
+			background:#ccc;
+			border:none;
+		}
+	
+		.block .total, .block .othertotal {
+			background:#c9ebff;
+			text-transform:uppercase;
+		}
+			.block .total td, .block .othertotal td {
+				font-weight:bold;
+			}
+			.block .othertotal td {
+				font-size: 1.1em;
+			}
+			.block .total td {
+				font-size: 1.2em;
+			}
+	
+	.block form {
+		text-align:right;
+		margin-top:5px;
+	}
+	
+	/* Billing And Shipping Address Block Style */
+	
+	table.address th, table.address td {
+		text-align:left;
+	}
+	
+	/* Payment Block Style */
+	
+	#Payment th, #Payment td {
+		text-align:center;
+	}

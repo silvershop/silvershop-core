@@ -1,0 +1,226 @@
+/*
+ * CheckoutPage stylesheet.
+ * This is all the styles associated with the checkout page such as the order
+ * information table, and the order form/
+ */
+
+/* Information table styling */
+#InformationTable {
+	width: 100%;
+	background: #fdfdfd;
+	margin:0 auto;
+}
+	
+	/* Cells main styling */
+	#InformationTable th, #InformationTable td {
+		font-size:1em;
+		font-weight:normal;
+		color:#333;
+		border:1px solid #999999;
+		padding:5px;
+	}
+	
+	#InformationTable th {
+		font-size:1.2em;
+		font-weight:bold;
+		color:#4EA3D7 !important;
+	}
+	
+	/* Cells alignment styling */
+	#InformationTable .title {
+		text-align:left;
+	}
+	#InformationTable .quantity {
+		text-align:center;
+	}
+	#InformationTable .unitprice, #InformationTable .total {
+		text-align: right;
+	}
+	
+	/* Lines and cells special styling for subtotal and total */
+	#InformationTable tr.ordertotal, #InformationTable tr.ordersubtotal {
+		background: #c9ebff;
+		text-transform: uppercase;
+	}
+		#InformationTable tr.ordertotal td, #InformationTable tr.ordersubtotal td {
+			font-weight:bold;
+		}
+		#InformationTable tr.ordersubtotal td {
+			font-size: 1.1em;
+		}
+		#InformationTable tr.ordertotal td {
+			font-size: 1.2em;
+		}
+		
+		#InformationTable tr td.transparent {
+			background: #ccc;
+			/*border-left:none;
+			border-right:none;*/
+			border:none;
+		}
+	
+.warningMessage {
+	margin: 4px 0 0 3px;
+	padding: 5px;
+	width: 92%;
+	color: #DC1313;
+	border: 4px solid #FF7373;
+	background: #FED0D0;
+}
+
+/* CheckoutPage form styling */
+#LeftOrder,
+#RightOrder {
+	float: left;
+}
+	#LeftOrder {
+		width: 330px;
+		padding-right: 50px;
+	}
+	#RightOrder {
+		width: 360px;
+	}
+#BottomOrder {
+	clear: both;
+}
+
+#Checkout form div {
+	margin-bottom: 10px;
+}
+	#Checkout a {
+		text-decoration: none; 
+		color: #3E91C4;
+	}
+		#Checkout a:hover { 
+			text-decoration: underline;
+ 		}
+
+	#Checkout h3 {
+		color: #4EA3D7;
+		font-size: 1.4em;
+		padding-bottom: 5px;
+		font-weight: normal;
+		font-family: Tahoma, Verdana, sans-serif;
+	}
+	#Checkout form h3 {
+		margin: 20px 0;
+		border-bottom: 1px solid #ccc;
+	}
+	#Checkout form label.right {
+		font-size: 1em;
+	}
+	#Checkout form #UseShippingAddress {
+		margin-bottom: 10px;
+		margin-top: 5px;
+	}
+	#Checkout form #Country .fieldgroup label {
+		display: none;
+	}
+	#Checkout form #Amount {
+		font-weight: bold;
+	}
+	/*
+	#Checkout form label,
+	#Checkout form select,
+	#Checkout form span.readonly {
+		font-size:1.2em;
+	}
+	*/
+	#Checkout form label.left {
+		float: left;
+		width: 150px;
+		font-weight: bold;
+	}
+	/*
+	#Checkout form input.text,
+	#Checkout form select {
+		width:250px;
+		font-size:1.2em;
+	}
+	*/
+	#Checkout form input.maxlength {
+		width: inherit;
+	}
+	/*
+	#Checkout form input.nolabel {
+		margin-left:150px;
+	}
+	*/
+	#Checkout form div.readonly {
+		padding: 1em;
+		/*font-size:1.2em;*/
+		border: 1px solid #ddd;
+		background: #f9f9f9;
+	}
+	
+	#Checkout form #PaymentMethod .middleColumn {
+		background: none;
+		width: auto;
+	}
+	
+	#Checkout form #MethodFields_DPSPayment {
+		width: 315px;
+	}
+		#Checkout form #MethodFields_DPSPayment .middleColumn {
+			background: none;
+			margin: 0;
+		}
+		#Checkout #MethodFields_DPSPayment label.left {
+			float: none;
+			/*display: none;*/
+			font-weight: bold;
+			margin-bottom: 10px;
+		}
+		 #Checkout #MethodFields_DPSPayment input {
+			width: 35px;
+		}
+			#Checkout #MethodFields_DPSPayment input.text {
+				width: 145px;
+			}
+			/* override the width for the expiry date */
+			#Checkout #MethodFields_DPSPayment input.text.maxlength {
+				width: 37px !important;
+			}
+	#Checkout ul.optionset {
+		clear: both;
+		padding-bottom: 20px;
+	}
+		#Checkout ul.optionset label.left {
+			float: left;
+			line-height: 1.5em;
+		}
+		#Checkout ul.optionset li {
+			float: left;
+		}
+			#Checkout ul.optionset li label {
+				margin-right: 10px;
+			}
+	#Checkout .Actions {
+		text-align: right;
+	}
+	#Checkout #ReadConditions {
+		background: #E9E9E9;
+		padding: 10px;
+	}
+			
+/* Process styles at the top of checkout */	
+#Checkout h3.process {
+	margin-bottom: 1em;
+	line-height: 2em;
+	color: #ccc;
+}
+	#Checkout h3.process span {
+		color: #000;
+	}
+		#Checkout h3.process span.current {
+			background: #eee;
+			padding: 5px;
+		}
+		#Checkout h3.process a {
+			color: #4EA3D7;
+			text-decoration: none;
+		}
+			#Checkout h3.process a:hover {
+				text-decoration: underline;
+			}			
+			

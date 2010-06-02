@@ -1,0 +1,26 @@
+#Checkout form .paymentfields {
+	width: 315px;
+}
+	#Checkout form .paymentfields label.left {
+		float: none;
+		font-weight: bold;
+		margin-bottom: 10px;
+	}
+	#Checkout form .paymentfields .middleColumn {
+		background: none;
+		margin: 0;
+	}
+	#Checkout form .paymentfields input {
+		width: 35px;
+	}
+		#Checkout form .paymentfields input.text {
+			width: 145px;
+		}
+			#Checkout form .paymentfields input.text.maxlength {
+				width: 37px !important;
+			}
+			
+	#Checkout form .paymentfields img {
+		border: 0;
+		margin-right: 7px;
+	}

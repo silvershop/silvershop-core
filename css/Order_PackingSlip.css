@@ -1,0 +1,25 @@
+.packingSlip {
+	width: 98%;
+	border-collapse: collapse;
+}
+.packingSlip th {
+	color: #666;
+	font-size: 1.8em;
+	padding: 5px;
+}
+.packingSlip td {
+	border: 1px solid #ccc;
+	font-size: 1.2em;
+	padding: 5px;
+}
+	.packingSlip td h2 {
+		color: #666;
+		font-size: 2.5em;
+	}	
+	.packingSlip tr.orderDetails {
+		font-weight: bold;
+		border-bottom: 10px;
+	}
+.packingSlip.orderDetails {
+	margin-top: 10px;
+}

@@ -1,0 +1,75 @@
+#Layout h2{
+	font-size: 2em; 
+	color: #4EA3D7; 
+	margin: 15px 0;
+	font-weight:normal;
+	font-family: 'Tahoma', Verdana, sans-serif;
+}
+	#Layout h2 a{
+		color:#3E91C4;
+		text-decoration:none;
+	}
+	#Layout a:hover {
+		text-decoration:underline;
+	}
+
+#Product {
+	margin-left: 230px;
+}
+
+.product_details{
+	width: 220px;
+	float: right;
+	color: #666;
+	overflow: hidden;
+}
+.price_display{
+	font-weight:bold;
+	color:#4694c4;
+	font-size:1.2em;
+}
+.featured,
+.quantityBox {
+	border: 2px solid #9fcb61;
+	padding: 5px;
+	background: #f1ffde;
+	color: #78a33b;
+	font-weight: bold;
+	text-align: center;
+}
+	.featured {
+		background: none;
+		border: #4694c4;
+		color: #4694c4;
+	}
+		.quantityBox a {
+			vertical-align: middle;
+			color: #78a33b;
+		}
+		.quantityBox a:hover {
+			text-decoration: none !important;
+		}
+	.productActions {
+		margin-top: 10px;
+	}
+		.productActions li {
+			text-align: right;
+			list-style: none;
+		}
+		.quantityBox .productActions a {
+			color: #78a33b !important;
+			line-height: 1.5em;
+			font-weight: normal;
+		}
+
+
+form#options label {
+	font-size: 10px;
+}
+
+form#options fieldset input#Quantity {
+	width:30px;
+}
+.productContent {
+	width: 300px;
+}

@@ -1,0 +1,164 @@
+/* 1) Main Settings */
+
+#Layout h2 {
+	font-size: 2em; 
+	color: #4EA3D7; 
+	margin: 15px 0;
+	font-weight: normal;
+	font-family: Tahoma, Verdana, sans-serif;
+}
+
+	#Layout h2 a {
+		color: #3E91C4;
+		text-decoration: none;
+	}
+	#Layout a:hover {
+		text-decoration: underline;
+	}
+
+#ProductGroup {
+	margin-left: 230px;
+}
+
+/* 2) Product Categories Settings */
+
+.categoryTitle {
+	position: relative;
+	margin-bottom: 10px;
+	border-bottom: 1px solid #a1d4f3;
+	font-size: 1.4em;
+	font-weight: normal;
+	line-height: 2em;
+	color: #4EA3D7;
+}
+	.categoryTitle img {
+		position: absolute;
+		right: 0;
+		bottom: 10px;
+		border: none;
+	}
+
+.category {
+	overflow-x: hidden;
+}
+
+ul.productList {
+	color: #666;
+	list-style: none;
+	float: left;
+	width: 100%;
+}
+
+/* 3) Product Settings */
+
+li.productItem {
+	float: left;
+	width: 140px;
+	height: 330px;
+	overflow: hidden;
+	margin: 10px 10px 0 0;
+	font-size: 1.1em;
+	padding: 1em;
+	background: #f4f8f9;
+	border: 1px solid #c9e5f7;
+}
+
+	li.productItem a {
+		color: #999;
+		text-decoration: none;
+	}
+		li.productItem a:hover {
+			text-decoration: underline;
+		}
+	
+	li.productItem .productTitle {
+		font-size: 1.2em;
+		margin-top: 1em;
+	}
+		li.productItem .productTitle a {
+			color: #4694c4;
+		}
+	
+	li.productItem .price_display{
+		font-weight: bold;
+		color: #4694c4;
+		line-height: 1.5em;
+	}
+	
+	li.productItem .productActions {
+		text-align: right;
+		margin-top: 5px;
+	}
+		li.productItem .productActions li {
+			list-style: none;
+		}
+			li.productItem .productActions li a {
+				color: #999;
+			}
+			
+/* 4) jQuery Navigation Bar Styling */
+
+.navigationBar {
+	text-align: center;
+	margin: 10px 0;
+	font-size: 12px;
+}
+
+.navigationBar a,
+.navigationBar .current {
+	background: #fff none repeat scroll 0% 50%;
+	border: 1px solid #dddddd;
+	padding: 2px 6px;
+	text-decoration: none;
+	margin:0 1px;
+}
+
+.navigationBar .current {
+	color: #e31212;
+	font-weight: bold;
+	border: none;
+}
+
+.navigationBar span.prev,
+.navigationBar span.next {
+	color: #999;
+}
+
+#Layout .navigationBar a:hover,
+.navigationBar a:hover {
+	background: #efecec none repeat scroll 0%;
+	text-decoration: none;
+}
+
+/* 5) Results Bar Styling */
+
+.resultsBar {
+	height: 21px;
+	background-color: #c9e5f7;
+	padding: 2px;
+}
+	#Layout .resultsBar p,
+	.resultsBar p {
+		margin: 0;
+		padding: 2px 0;
+		font-weight: bold;
+	}
+	
+	#Layout .resultsBar select.productsDropdown,
+	.resultsBar select.productsDropdown {
+		float: left;
+		width: 10%;
+	}
+	#Layout .resultsBar p.productsDropdown,
+	.resultsBar p.productsDropdown {
+		float: left;
+		width: 25%;
+		text-align: left;
+		margin-left: 5px;
+	}
+	#Layout .resultsBar p.resultsShowing,
+	.resultsBar p.resultsShowing {
+		float: right;
+		width: 50%;
+		text-align: right;
+	}

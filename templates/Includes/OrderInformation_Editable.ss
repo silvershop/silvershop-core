@@ -1,0 +1,98 @@
+<h3 class="orderInfo"><% _t("ORDERINFORMATION","Order Information") %></h3>
+<table id="InformationTable" class="editable" cellspacing="0" cellpadding="0" summary="<% _t("TABLESUMMARY","The contents of your cart are displayed in this form and summary of all fees associated with an order and a rundown of payments options.") %>">
+	<thead>
+		<tr>
+			<th scope="col" class="left"><% _t("PRODUCT","Product") %></th>
+			<th scope="col" class="center"><% _t("QUANTITY", "Quantity") %></th>
+			<th scope="col" class="right"><% _t("PRICE","Price") %> ($Currency)</th>
+			<th scope="col" class="right"><% _t("TOTALPRICE","Total Price") %> ($Currency)</th>
+			<th scope="col" class="right"></th>
+		</tr>
+	</thead>
+	<tbody>
+		<% if Items %>
+			<% control Items %>
+				<% if ShowInTable %>
+					<tr id="$TableID" class="$Classes">
+						<td<% if Link %><% else %> id="$TableTitleID"<% end_if %> class="product title" scope="row">
+							<% if Link %>
+								<a id="$TableTitleID" href="$Link" title="<% sprintf(_t("READMORE","Click here to read more on &quot;%s&quot;"),$TableTitle) %>">$TableTitle</a>
+							<% else %>
+								$TableTitle
+							<% end_if %>
+						</td>
+						<td class="center quantity">
+							<strong>
+								<a class="ajaxQuantityLink" href="$removeLink" title="<% sprintf(_t("REMOVEONE","Remove one of &quot;%s&quot; from your cart"),$TableTitle) %>">
+									<img src="ecommerce/images/minus.gif" alt="-"/>
+								</a>
+							</strong> 
+							<% if AjaxQuantityField %>
+								$AjaxQuantityField
+							<% else %>
+								$Quantity
+							<% end_if %>
+							<strong>
+								<a class="ajaxQuantityLink" href="$addLink" title="<% sprintf(_t("ADDONE","Add one more of &quot;%s&quot; to your cart"),$TableTitle) %>">
+									<img src="ecommerce/images/plus.gif" alt="+"/>
+								</a>
+							</strong>
+						</td>
+						<td class="right unitprice">$UnitPrice.Nice</td>
+						<td class="right total" id="$TableTotalID">$Total.Nice</td>
+						<td class="right remove">
+							<strong>
+								<a class="ajaxQuantityLink" href="$removeallLink" title="<% sprintf(_t("REMOVEALL","Remove all of &quot;%s&quot; from your cart"),$TableTitle) %>">
+									<img src="ecommerce/images/remove.gif" alt="x"/>
+								</a>
+							</strong>
+						</td>
+					</tr>
+				<% end_if %>
+			<% end_control %>
+			
+			<tr class="gap summary">
+				<td colspan="2" scope="row"><% _t("SUBTOTAL","Sub-total") %></td>
+				<td>&nbsp;</td>
+				<td class="right" id="$TableSubTotalID">$SubTotal.Nice</td>
+				<td>&nbsp;</td>
+			</tr>
+			
+			<% control Modifiers %>
+				<% if ShowInTable %>
+					<tr id="$TableID" class="$Classes">
+						<td<% if Link %><% else %> id="$TableTitleID"<% end_if %> colspan="2" scope="row">
+							<% if Link %>
+								<a id="$TableTitleID" href="$Link" title="<% sprintf(_t("READMORE","Click here to read more on &quot;%s&quot;"),$TableTitle) %>">$TableTitle</a>
+							<% else %>
+								$TableTitle
+							<% end_if %>
+						</td>
+						<td>&nbsp;</td>
+						<td class="right" id="$TableTotalID"><% if IsChargable %>$Amount.Nice<% else %>-$Amount.Nice<% end_if %></td>
+						<td class="right remove">
+							<% if CanRemove %>
+								<strong>
+									<a class="ajaxQuantityLink" href="$removeLink" title="<% sprintf(_t("REMOVE","Remove &quot;%s&quot; from your order"),$TableTitle) %>">
+										<img src="ecommerce/images/remove.gif" alt="x"/>
+									</a>
+								</strong>
+							<% end_if %>
+						</td>
+					</tr>
+				<% end_if %>
+			<% end_control %>
+			
+			<tr class="gap Total">
+				<td colspan="2" scope="row"><% _t("TOTAL","Total") %></td>
+				<td>&nbsp;</td>
+				<td class="right" id="$TableTotalID">$Total.Nice $Currency</td>
+				<td>&nbsp;</td>
+			</tr>
+		<% else %>
+			<tr>
+				<td colspan="5" scope="row" class="center"><% _t("NOITEMS","There are <strong>no</strong> items in your cart.") %></td>
+			</tr>
+		<% end_if %>
+	</tbody>
+</table>

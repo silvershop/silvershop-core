@@ -1,0 +1,70 @@
+Ecommerce ChangeLog
+
+0.6
+	- Data model changes (see http://doc.silverstripe.com/doku.php?id=ecommerce:overview&s=ecommerce)
+	- PHP files moved into folders for grouping of models, controllers and forms
+	- Fixed undefined find_link() function on AccountPage_Controller
+	- Check that the member can create a member with the unique field
+	- Added translation for Arabic (Saudi Arabia) - thanks to Talal
+	- Fixed template call to Text::LimitWordCountPlainText()
+	- Fixed ID quoting in Product_Controller->addVariation()
+ 	- #3939 Ability to show all products in ProductGroup
+	- Fixed ShoppingCart index item to be the product ID
+	- Re-added link methods back to Product_OrderItem from OrderItem
+	- More agressive checking of Payment before creating a new Order on OrderForm
+	- Added empty statics to various ecommerce classes to support decoration of statics via DataObjectDecorator
+	- Creation of OrderItem with Product data record properly
+	- Fixed Order::isPaid() to correspond to the Status enum field
+	- If EcommerceRole::findCountry() cannot find the user's country, don't cause an error
+ 	- Fixed Order->_ModifiersSubTotal() to exclude classes properly
+	- Stopped errors occurring if calling shoppingcart/additem without an index ID
+	- Fixed failing from address in the email for status updates
+	- Fixed order status log not working properly
+ 	- Changed reports to use TableListField, and fixed printing
+ 	- Removed old CheckoutPage.js code that was broken, replaced with working version
+	- Renamed MemberForm to ShopAccountForm since this is too general
+	- Removed specifically set CMS fields, these are now scaffolded. 
+	- Moved payment class URL rules to payment module _config.php
+	- Product title not displayed in Receipt Email. Ticket #3680 
+	- Fixed price still showing even if price set to 0 in product 
+	- Moved Eway.js from ecommerce to payment module
+	- Moved Eway payments to payments module
+	- Removed restrictive decimal for Tax Rate field and replaced with double type
+	- Gracefully degrade if member is not logged in on MemberForm
+	- Fixed setRelationAutoSetting method that may not exist in old SS version
+	- Add payment decorator to ecommerce, since payment classes now split into payments module
+	- Added information about payment module being required
+	- Separate payments into a separate module ("payment" module)
+	- disable two deprecated functions in ecommerce/code/_config.php
+	- Fixing usage of deprecated APIs
+	- Make sure array in set_payment_methods() is associative
+	- Cleaned up OrderReport to use non-deprecated APIs, refactored to use TableListField
+	- Update i18n entities since the Report class was renamed
+	- Updated ecommerce report classes to reflect change from Report to SSReport 
+	- removed ecommerce jquery directory that isn't being used anymore
+	- Removed javascript that shouldn't be done until we've got more of a stable platform
+	- Instead of hardcoding css/js requirements into Report.php
+	- Deleted ViewAllProducts.ss which was a relic of the now deleted DataReport API
+	- Removed "abstract" Report class, which is now in the cms module
+	- documentation of vital methods on Payment class
+	- added links to examples for LiveAmount() on OrderModifier
+	- Added documentation to OrderModifier::is_chargable
+ 	- If amount for an OrderModifier is not chargable, then show a minus sign
+	- added a better description to OrderModifier->TableTitle
+	- Lots of code documentation and cleanup of code
+	- Changed Order_Attribute to OrderAttribute, since this is operates on its own separate from Order
+	- If a product can't be purchased, should still be able to see them but just can't add to cart
+	- Paystation Hosted Payment added (now in "payment" module)
+	- Fixed boundary condition in SimpleShippingModifier
+	- jQuery code to replace existing prototype in ecommerce
+ 	- Fixed requirement of $_SERVER[REMOTE_ADDR] for Payment class
+	- Product version is now retained when product added to cart (so price changes don't affect orders)
+	- Fixed bug with TaxModifier::AddedCharge()
+
+0.5.1
+  - Use the Session class rather than accessing $_SESSION directly
+  - Template changes for 2.1.0
+  - Use themes
+
+0.5
+  - Initial release

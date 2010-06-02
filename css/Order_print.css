@@ -1,0 +1,26 @@
+html, body {
+	background:none;
+}
+
+#Container {
+	background:none;
+}
+
+#Header {
+	display:none;
+}
+#Navigation {
+	display:none;
+}
+
+#Footer {
+	display:none;
+}
+
+#PrintPageIcon {
+	display:none;
+}
+
+form {
+	display:none;
+}

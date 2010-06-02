@@ -1,0 +1,71 @@
+/*
+ * AccountPage stylesheet
+ * Styling of past orders and the member form (if required) here
+ */
+ 
+/*
+ * Past orders div containing the order history styling
+ */
+
+/* create a box floated to the right */
+#PastOrders {
+	float: right;
+	width: 210px;
+	border: 1px solid #ccc;
+	padding: 20px;
+}
+	#PastOrders li {
+`		/* turn of list-styles for these list items */
+		list-style: none;
+		list-style-type: none;
+		
+		font-size: 1.2em;
+	}
+		/* apply correct font weight and family to these headers */
+		#PastOrders h3,
+		#ShopAccountForm_MemberForm h3 {
+			font-weight: normal;
+			font-family: Tahoma, Verdana, sans-serif;
+		}
+		/* apply h3 styling to past orders div, as well as the member form */
+		#PastOrders h3,
+		#ShopAccountForm_MemberForm h3 {
+			color: #4EA3D7;
+			font-size: 1.3em;
+		}
+		/* apply h4 styling (completed orders, incomplete orders header inside box) */
+		#PastOrders h4 {
+			line-height: 2.5em;
+		}
+		/* link colours for links */
+		#PastOrders a {
+ 			text-decoration: none; 
+			color: #3E91C4;
+		}
+			#PastOrders a:hover { 
+ 				text-decoration: underline;
+	 		}
+
+/*
+ * Member form styling, and tweaks to the login form as well
+ */
+#ShopAccountForm_MemberForm {
+	width: 500px;
+}
+/* apply some margin to the h3 elements in the form to look better */
+#ShopAccountForm_MemberForm h3 {
+	margin-bottom: 15px;
+	font-weight: normal;
+}
+/* these labels don't have a bold font weight, so apply it */
+#ShopAccountForm_MemberForm label.left,
+#LoginForm_LoginForm label.left {
+	font-weight: bold;
+	float: left;
+	width: 150px;
+}
+/* country select dropdown width is wrong, so reapply it */
+#ShopAccountForm_MemberForm #Country select {
+	width: 305px;
+}
+
