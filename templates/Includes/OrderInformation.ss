@@ -24,24 +24,21 @@
 		<% end_control %>
 		
 		<tr class="gap summary">
-			<td colspan="2" scope="row"><% _t("SUBTOTAL","Sub-total") %></td>
-			<td>&nbsp;</td>
+			<td colspan="3" scope="row"><% _t("SUBTOTAL","Sub-total") %></td>
 			<td class="right" id="$SubTotalIDForTable">$SubTotal.Nice</td>
 		</tr>
 
 		<% control Modifiers %>
 			<% if ShowInOrderTable %>
 				<tr id="$IDForTable" class="$ClassForTable">
-					<td colspan="2" scope="row" id="$TitleIdForTable">$TitleForTable</td>
-					<td>&nbsp;</td>
+					<td colspan="3" scope="row" id="$TitleIdForTable">$TitleForTable</td>
 					<td class="right" id="$ValueIdForTable">$ValueForTable</td>
 				</tr>
 			<% end_if %>
 		<% end_control %>
 				
 		<tr class="gap Total">
-			<td colspan="2" scope="row"><% _t("TOTAL","Total") %></td>
-			<td>&nbsp;</td>
+			<td colspan="3" scope="row"><% _t("TOTAL","Total") %></td>
 			<td class="right" id="$TotalIDForTable">$Total.Nice $Currency</td>
 		</tr>
 		

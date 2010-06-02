@@ -28,6 +28,12 @@ class OrderStatusLog extends DataObject {
 	
 	public static $casting = array();
 	
+	public static $summary_fields = array(
+		'Created' => 'Date',
+		'Note' => 'Note',
+		'Status' => 'Status'
+	);
+	
 	function onBeforeSave() {
 		if(!$this->ID) {
 			$this->AuthorID = Member::currentUser()->ID;

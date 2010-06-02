@@ -31,6 +31,17 @@ class ProductGroup extends Page {
 	
 	static $icon = 'cms/images/treeicons/folder';
 	
+	static $include_child_groups = true;
+	static $page_length = 12;
+	static $must_have_price = true;	
+	
+	static $sort_options = array(
+		'Price' => 'Price',
+		'Title' => 'Name',
+		//'Featured' => 'Featured',
+		//'Weight' => 'Weight'
+	);
+	
 	static $featured_products_permissions = array(
 		'Show Only Featured Products',
 		'Show All Products'
@@ -40,23 +51,40 @@ class ProductGroup extends Page {
 		'Show All Products'
 	);
 	
+	
+	function set_page_length($length){
+		self::$page_length = $length;
+	}
+	
+	function set_sort_options(array $options){
+		self::$sort_options = $options;
+	}
+	
+	function get_sort_options(){
+		return self::$sort_options;
+	}
+	
 	function getCMSFields() {
 		$fields = parent::getCMSFields();
-		$fields->addFieldToTab(
-			'Root.Content',
-			new Tab(
-				'Child Groups',
-				new HeaderField('How should products be presented in the child groups?'),
-				new DropdownField(
-  					'ChildGroupsPermission',
-  					'Permission',
-  					$this->dbObject('ChildGroupsPermission')->enumValues(),
-  					'',
-  					null,
-  					'Don\'t Show Any Products'
+		
+		if(self::$include_child_groups === 'custom'){
+			$fields->addFieldToTab(
+				'Root.Content',
+				new Tab(
+					'Child Groups',
+					new HeaderField('How should products be presented in the child groups?'),
+					new DropdownField(
+	  					'ChildGroupsPermission',
+	  					'Permission',
+	  					$this->dbObject('ChildGroupsPermission')->enumValues(),
+	  					'',
+	  					null,
+	  					'Don\'t Show Any Products'
+					)
 				)
-			)
-		);
+			);
+		}
+		
 		return $fields;
 	}
 	
@@ -71,68 +99,64 @@ class ProductGroup extends Page {
 		return ShoppingCart::current_order();
 	}
 	
+	
 	/**
-	 * Recursively create a set of {@link Product} pages
-	 * that belong to this ProductGroup as a child, related
-	 * Product, or through one of this ProductGroup's nested
-	 * ProductGroup pages.
+	 * Retrieve a set of products, based on the given parameters. Checks get query for sorting and pagination.
 	 * 
 	 * @param string $extraFilter Additional SQL filters to apply to the Product retrieval
 	 * @param array $permissions 
 	 * @return DataObjectSet
 	 */
-	function ProductsShowable($extraFilter = '', $permissions = array("Show All Products")) {
-		$filter = "`ShowInMenus` = 1";
-		if($extraFilter) $filter .= " AND $extraFilter";
-		$products = new DataObjectSet();
+	function ProductsShowable($extraFilter = '', $permissions = array("Show All Products")) { //TODO: re-introduce custom permissions, if wanted
+		$filter = "`AllowPurchase` = 1";
+		$join = "";
 		
-		$childProducts = DataObject::get('Product', "`ParentID` = $this->ID AND $filter");
-		$relatedProducts = $this->getManyManyComponents('Products', $filter);
+		if($extraFilter) $filter.= " AND $extraFilter";
+		if(self::$must_have_price) $filter .= " AND Price > 0";
 		
-		if($childProducts) {
-			$products->merge($childProducts);
-		}
+		$limit = (isset($_GET['start']) && (int)$_GET['start'] > 0) ? (int)$_GET['start'].",".self::$page_length : "0,".self::$page_length;
+		$sort = (isset($_GET['sortby'])) ? Convert::raw2sql($_GET['sortby']) : "FeaturedProduct DESC,Title";
 		
-		if($relatedProducts) {
-			$products->merge($relatedProducts);
-		}
+		$groupids = array($this->ID);
 		
-		if(in_array($this->ChildGroupsPermission, $permissions)) {
-			if($childGroups = $this->ChildGroups()) {
-				foreach($childGroups as $childGroup) {
-					$products->merge($childGroup->ProductsShowable($extraFilter, $permissions));
-				}
-			}
-		}
+		if(self::$include_child_groups && $childgroups = $this->ChildGroups(true))
+			$groupids = array_merge($groupids,$childgroups->map('ID','ID'));
 		
-		$products->removeDuplicates();
+		$groupidsimpl = implode(',',$groupids);
 		
+		$join = $this->getManyManyJoin('Products','Product');
+		$multicatfilter = $this->getManyManyFilter('Products','Product');
+		
+		//TODO: get products that appear in child groups (make this optional)
+		
+		$products = DataObject::get('Product',"(ParentID IN ($groupidsimpl) OR $multicatfilter) AND $filter",$sort,$join,$limit);
+		
+		$allproducts = DataObject::get('Product',"ParentID IN ($groupidsimpl) AND $filter","",$join);
+		if($allproducts) $products->TotalCount = $allproducts->Count(); //add total count to returned data for 'showing x to y of z products'
+		if($products) $products->removeDuplicates();
 		return $products;
 	}
 	
-	/**
-	 * Return products that are featured, that is
-	 * products that have "FeaturedProduct = 1"
-	 */
-	function FeaturedProducts() {
-		return $this->ProductsShowable("`FeaturedProduct` = 1", self::$featured_products_permissions);
-	}
-	
-	/**
-	 * Return products that are not featured, that is
-	 * products that have "FeaturedProduct = 0"
-	 */
-	function NonFeaturedProducts() {
-		return $this->ProductsShowable("`FeaturedProduct` = 0", self::$non_featured_products_permissions);
-	}
-		
 	/** 
 	 * Return children ProductGroup pages of this group.
 	 * @return DataObjectSet
 	 */
-	function ChildGroups() {
-		return DataObject::get('ProductGroup', "`ParentID` = '$this->ID' AND `ShowInMenus` = 1");
-	}
+	function ChildGroups($recursive = false) {
+		if($recursive){
+			if($children = DataObject::get('ProductGroup', "`ParentID` = '$this->ID'")){
+				$output = unserialize(serialize($children));
+				foreach($children as $group){
+					$output->merge($group->ChildGroups($recursive));
+				}
+				return $output;							
+			}
+			return null;
+		}else{
+			return DataObject::get('ProductGroup', "`ParentID` = '$this->ID'");
+		}
+	}		
+	
+
 	
 	/**
 	 * Recursively generate a product menu.
@@ -145,7 +169,7 @@ class ProductGroup extends Page {
 			return $this->ChildGroups();
 		}
 	}
-		
+
 	/**
 	 * Automatically creates some ProductGroup pages in
 	 * the CMS when the database builds if there hasn't
@@ -186,6 +210,46 @@ class ProductGroup_Controller extends Page_Controller {
 
 		Requirements::themedCSS('ProductGroup');
 		Requirements::themedCSS('Cart');
+	}
+	
+	/**
+	 * Return the products for this group.
+	 */
+	public function Products(){
+		return $this->ProductsShowable();
+	}
+	
+	/**
+	 * Return products that are featured, that is products that have "FeaturedProduct = 1"
+	 */
+	function FeaturedProducts() {
+		return $this->ProductsShowable("`FeaturedProduct` = 1");
+	}
+	
+	/**
+	 * Return products that are not featured, that is products that have "FeaturedProduct = 0"
+	 */
+	function NonFeaturedProducts() {
+		return $this->ProductsShowable("`FeaturedProduct` = 0");
+	}
+	
+		/**
+	 * Provides a dataset of links for sorting products.
+	 */
+	function SortLinks(){
+		if(count(ProductGroup::get_sort_options()) <= 0) return null;
+		
+		$sort = (isset($_GET['sortby'])) ? Convert::raw2sql($_GET['sortby']) : "Title";
+		$dos = new DataObjectSet();
+		foreach(ProductGroup::get_sort_options() as $field => $name){
+			$current = ($field == $sort) ? 'current' : false;
+			$dos->push(new ArrayData(array(
+				'Name' => $name,
+				'Link' => $this->Link()."?sortby=$field",
+				'Current' => $current
+			)));
+		}
+		return $dos;
 	}
 
 }

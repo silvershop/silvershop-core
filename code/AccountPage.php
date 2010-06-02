@@ -9,6 +9,8 @@ class AccountPage extends Page {
 	
 	static $add_action = 'an Account Page';
 	
+	static $icon = 'ecommerce/images/icons/account';
+	
 	/**
 	 * Returns the link or the URLSegment to the account page on this site
 	 * @param boolean $urlSegment Return the URLSegment only

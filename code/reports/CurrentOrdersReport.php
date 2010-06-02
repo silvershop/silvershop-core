@@ -7,12 +7,12 @@
  * 
  * @package ecommerce
  */
-class CurrentOrdersReport extends SSReport {
+class CurrentOrdersReport extends SS_Report {
 
 	protected $title = 'Current Orders';
 
 	protected $description = 'This shows all orders that are not paid or cancelled.';
-
+	
 	/**
 	 * Return a {@link ComplexTableField} that shows
 	 * all Order instances that are current.

@@ -3,21 +3,16 @@
 <% end_control %>
 
 <div id="Product">
+	<h1 class="pageTitle">$Title</h1>
 	
-	<div id="Breadcrumbs" class="typography">
-   	<p>$Breadcrumbs</p>
-	</div>
+	<div class="productDetails">
 	
-	<h2 class="pageTitle">
-		$Title
-	</h2>
-	
-	<div class="product_details">
 		<% if Image.ContentImage %>
 			<img class="productImage" src="$Image.ContentImage.URL" alt="<% sprintf(_t("IMAGE","%s image"),$Title) %>" />
-		<% else %>
-			<img src="ecommerce/images/productPlaceHolderNormal.gif" alt="<% sprintf(_t("NOIMAGE","Sorry, no product image for &quot;%s&quot;"),$Title) %>" />
+		<% else %>	
+			<div class="noimage">no image</div>
 		<% end_if %>
+		
 		<% if FeaturedProduct %>
 			<p class="featured"><% _t("FEATURED","This is a featured product.") %></p>
 		<% end_if %>
@@ -56,7 +51,7 @@
 				</table>
 			</div>
 		<% else %>
-			<% if Price != 0 %><p class="price_display">$Price.Nice $Currency $TaxInfo.PriceSuffix</p><% end_if %>
+			<% if Price != 0 %><p class="priceDisplay">$Price.Nice $Currency $TaxInfo.PriceSuffix</p><% end_if %>
 			<% if AllowPurchase %>
 				<% if IsInCart %>
 					<% control Item %>
@@ -86,4 +81,5 @@
 			$Content
 		</div>
 	<% end_if %>
+	<div id="Breadcrumbs" class="typography"><p>$Breadcrumbs</p></div>
 </div>

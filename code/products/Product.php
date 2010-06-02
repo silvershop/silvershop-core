@@ -43,25 +43,32 @@ class Product extends Page {
 	
 	public static $casting = array();
 	
+	public static $summary_fields = array(
+		'ID','Title','InternalItemID','Weight','Model','Price'
+	);
+	
+	public static $searchable_fields = array(
+		'ID','Title','InternalItemID','Weight','Model','Price'
+	);
+	
+	public static $singular_name = 'Product';
+	
+	public static $plural_name = 'Products';
+	
 	static $default_parent = 'ProductGroup';
 	
 	static $add_action = 'a Product Page';
 	
-	static $icon = 'cms/images/treeicons/book';
+	static $icon = 'ecommerce/images/icons/package';
 	
 	function getCMSFields() {
 		$fields = parent::getCMSFields();
 
 		// Standard product detail fields
-		$fields->addFieldsToTab(
-			'Root.Content.Main',
-			array(
-				new TextField('Weight', _t('Product.WEIGHT', 'Weight (kg)'), '', 12),
-				new TextField('Price', _t('Product.PRICE', 'Price'), '', 12),
-				new TextField('Model', _t('Product.MODEL', 'Model/Author'), '', 50),
-				new TextField('InternalItemID', _t('Product.CODE', 'Product Code'), '', 7)
-			)
-		);
+		$fields->addFieldToTab('Root.Content.Main',new TextField('Price', _t('Product.PRICE', 'Price'), '', 12),'Content');
+		$fields->addFieldToTab('Root.Content.Main',new TextField('Weight', _t('Product.WEIGHT', 'Weight (kg)'), '', 12),'Content');
+		$fields->addFieldToTab('Root.Content.Main',new TextField('Model', _t('Product.MODEL', 'Model/Author'), '', 50),'Content');
+		$fields->addFieldToTab('Root.Content.Main',new TextField('InternalItemID', _t('Product.CODE', 'Product Code'), '', 7),'Content');
 
 		if(!$fields->dataFieldByName('Image')) {
 			$fields->addFieldToTab('Root.Content.Images', new ImageField('Image', _t('Product.IMAGE', 'Product Image')));
@@ -134,6 +141,9 @@ class Product extends Page {
 		
 		$tableField->setPageSize(30);
 		$tableField->setPermissions(array());
+		
+		//TODO: use a tree structure for selecting groups
+		//$field = new TreeMultiselectField('ProductGroups','Product Groups','ProductGroup'); 
 		
 		return $tableField;
 	}
@@ -306,19 +316,40 @@ class Product_Image extends Image {
 	
 	public static $belongs_many_many = array();
 	
+	//default image sizes
+	protected static $thumbnail_width = 140;
+	protected static $thumbnail_height = 100;
+	
+	protected static $content_image_width = 200;
+	
+	protected static $large_image_width = 600;
+	
+	function set_thumbnail_size($width = 140, $height = 100){
+		self::$thumbnail_width = $width;
+		self::$thumbnail_height = $height;
+	}
+	
+	function set_content_image_width($width = 200){
+		self::$content_image_width = $width;
+	}
+	
+	function set_large_image_width($width = 600){
+		self::$large_image_width = $width;
+	}
+	
 	function generateThumbnail($gd) {
 		$gd->setQuality(80);
-		return $gd->paddedResize(140,100);
+		return $gd->paddedResize(self::$thumbnail_width,self::$thumbnail_height);
 	}
 	
 	function generateContentImage($gd) {
 		$gd->setQuality(90);
-		return $gd->resizeByWidth(200);
+		return $gd->resizeByWidth(self::$content_image_width);
 	}
 	
 	function generateLargeImage($gd) {
 		$gd->setQuality(90);
-		return $gd->resizeByWidth(600);
+		return $gd->resizeByWidth(self::$large_image_width);
 	}
 	
 }
@@ -353,7 +384,7 @@ class Product_OrderItem extends OrderItem {
  		parent::__construct($product, $quantity);
 	}
 	
-	function getProductID() {
+	function getProductIDForSerialization() {
 		return $this->_productID;
 	}
 	

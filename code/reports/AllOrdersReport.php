@@ -5,63 +5,59 @@
  * 
  * @package ecommerce
  */
-class AllOrdersReport extends SSReport {
+class AllOrdersReport extends SS_Report {
 
 	protected $title = 'All orders';
 
 	protected $description = 'Show all orders in the system.';
 
-	/**
-	 * Return a {@link ComplexTableField} that shows
-	 * all Order instances that are not printed. That is,
-	 * Order instances with the property "Printed" value
-	 * set to "0".
-	 * 
-	 * @return ComplexTableField
-	 */
-	function getReportField() {
-		// Get the fields used for the table columns
-		$fields = Order::$table_overview_fields;
+	function sourceRecords($params, $sort = "", $limit = ""){
 		
-		// Add some fields specific to this report
-		$fields['Invoice'] = '';
-		$fields['Print'] = '';		
+		//filters
+		$filters = array();
+		if(isset($params['OrderID']) && $params['OrderID']) $filters[] = "ID = ".$params['OrderID'];
+		if(isset($params['Status']) && $params['Status']) $filters[] = "Status = '".$params['Status']."'";
 		
-		$table = new TableListField(
-			'Orders',
-			'Order',
-			$fields
-		);
-		
-		// Customise the SQL query for Order, because we don't want it querying
-		// all the fields. Invoice and Printed are dummy fields that just have some
-		// text in them, which would be automatically queried if we didn't specify
-		// a custom query.
-		$query = singleton('Order')->buildSQL('', 'Order.Created DESC');
-		$query->groupby[] = 'Order.Created';
-		$table->setCustomQuery($query);
-
-		// Set the links to the Invoice and Print fields allowing a user to view
-		// another template for viewing an Order instance
-		$table->setFieldFormatting(array(
-			'Invoice' => '<a href=\"OrderReport_Popup/invoice/$ID\">Invoice</a>',
-			'Print' => '<a target=\"_blank\" href=\"OrderReport_Popup/index/$ID?print=1\">Print</a>'
+		//sort
+		$sort = "";
+		$filter = implode(" AND ",$filters); 
+		return DataObject::get('Order',$filter,$sort,"",$limit);
+	}
+	
+	function columns(){
+		$cols = Order::$table_overview_fields;
+		$cols['Invoice'] = 'Invoice';
+		return $cols;
+	}
+	
+	function getReportField(){
+		$tlf = parent::getReportField();
+		$tlf->setFieldFormatting(array(
+			'Invoice' => '<a target=\"_blank\" href=\"OrderReport_Popup/invoice/$ID\">'.i18n::_t('VIEW','view').'</a> ' .
+					'<a target=\"_blank\" href=\"OrderReport_Popup/index/$ID?print=1\">'.i18n::_t('PRINT','print').'</a>',
 		));
-		
-		$table->setFieldCasting(array(
-			'Created' => 'Date',
+		$tlf->setFieldCasting(array(
+			'Created' => 'Date->Long',
 			'Total' => 'Currency->Nice'
 		));
-		
-		$table->setPermissions(array(
-			'edit',
-			'show',
-			'export',
-			'delete',
-		));
-		
-		return $table;
+		$tlf->setPermissions(array('edit','show','export','delete','print'));
+		return $tlf;
 	}
-
+	
+	function parameterFields(){
+		
+		$fields = new FieldSet(
+			new TextField('OrderID','Order No'),
+			new DateField('Created','Created'),
+			//new TextField('FirstName','First Name'),
+			//new TextField('Surname','Surname'),
+			//new NumericField('Total','Total'),
+			$ddf = new DropdownField('Status','Status',singleton('Order')->dbObject('Status')->enumValues())
+		);
+		$ddf->setHasEmptyDefault(true);
+		
+		return $fields;
+	}
+	
 }
 ?>

@@ -135,10 +135,23 @@ class Order extends DataObject {
 	public static $table_overview_fields = array(
 		'ID' => 'Order No',
 		'Created' => 'Created',
-		'Member.FirstName' => 'Customer First Name',
-		'Member.Surname' => 'Customer Surname',
-		'Total' => 'Order Total',
+		'Member.FirstName' => 'First Name',
+		'Member.Surname' => 'Surname',
+		'Total' => 'Total',
 		'Status' => 'Status'
+	);
+	
+	public static $summary_fields = array(
+		'ID' => 'Order No',
+		'Created' => 'Created',
+		'Member.FirstName' => 'First Name',
+		'Member.Surname' => 'Surname',
+		'Total' => 'Total',
+		'Status' => 'Status'
+	);
+	
+	public static $searchable_fields = array(
+		'ID','Total','Status'
 	);
 	
 	/**
@@ -331,7 +344,7 @@ class Order extends DataObject {
 	/**
 	 * Returns the subtotal of the items for this order.
 	 */
-	function _SubTotal() {
+	function SubTotal() {
 		$result = 0;
 		if($items = $this->Items()) {
 			foreach($items as $item) $result += $item->Total();
@@ -345,13 +358,14 @@ class Order extends DataObject {
 	 * from the DB entry.
 	 */ 
  	function Modifiers() {
+ 		$mods = false;
+ 		
  		if($this->ID) {
- 			return $this->modifiersFromDatabase();
+ 			$mods = $this->modifiersFromDatabase();
  		} elseif($modifiers = ShoppingCart::get_modifiers()) {
- 			return $this->createModifiers($modifiers);
- 		} else {
- 			return false;
+ 			$mods = $this->createModifiers($modifiers);
  		}
+ 		return $mods;
 	}
 	
 	/**
@@ -395,7 +409,7 @@ class Order extends DataObject {
 	 * @param $excluded string|array Class(es) of modifier(s) to ignore in the calculation.
 	 * @todo figure out what the return type is? double? float?
 	 */
-	function _ModifiersSubTotal($excluded = null) {
+	function ModifiersSubTotal($excluded = null) {
 		$total = 0;
 		
 		if($modifiers = $this->Modifiers()) {
@@ -418,8 +432,8 @@ class Order extends DataObject {
 	/**
   	 * Returns the total cost of an order including the additional charges or deductions of its modifiers.
   	 */
-	function _Total() {
-		return $this->_SubTotal() + $this->_ModifiersSubTotal();
+	function Total() {
+		return $this->SubTotal() + $this->ModifiersSubTotal();
 	}
 	
 	/**
@@ -427,8 +441,8 @@ class Order extends DataObject {
 	 * and if so, subracts the payment amount from the order
 	 * Precondition : The order is in DB
 	 */
-	function _TotalOutstanding(){
-		$total = $this->_Total();
+	function TotalOutstanding(){
+		$total = $this->Total();
 		if($payments = $this->Payments()) {
 			foreach($payments as $payment) {
 				if($payment->Status == 'Success') $total -= $payment->Amount;
@@ -503,8 +517,8 @@ class Order extends DataObject {
 	}
 	
 	function updateForAjax(array &$js) {
-		$subTotal = DBField::create('Currency', $this->_SubTotal())->Nice();
-		$total = DBField::create('Currency', $this->_Total())->Nice() . ' ' . Payment::site_currency();
+		$subTotal = DBField::create('Currency', $this->SubTotal())->Nice();
+		$total = DBField::create('Currency', $this->Total())->Nice() . ' ' . Payment::site_currency();
 		$js[] = array('id' => $this->TableSubTotalID(), 'parameter' => 'innerHTML', 'value' => $subTotal);
 		$js[] = array('id' => $this->TableTotalID(), 'parameter' => 'innerHTML', 'value' => $total);
 		$js[] = array('id' => $this->CartSubTotalID(), 'parameter' => 'innerHTML', 'value' => $subTotal);
@@ -549,9 +563,7 @@ class Order extends DataObject {
 	 *
 	 * @return string
 	 */
-	function Status() {
-		return $this->IsPaid() ? _t('Order.SUCCESSFULL', 'Order Successful') : _t('Order.INCOMPLETE', 'Order Incomplete');
-	}
+	//function Status() {return $this->IsPaid() ? _t('Order.SUCCESSFULL', 'Order Successful') : _t('Order.INCOMPLETE', 'Order Incomplete');}
 	
 	/**
 	 * Return a link to the {@link CheckoutPage} instance
@@ -732,6 +744,12 @@ class Order extends DataObject {
   			}
   			Database::alteration_message('The orders which status was \'Cancelled\' have been successfully changed to the status \'AdminCancelled\'', 'changed');
   		}
+	}
+	
+	
+	function onBeforeDelete(){
+		//TODO: delete attributes, statuslogs, and payments	
+		
 	}
 	
 }

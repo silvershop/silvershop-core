@@ -11,7 +11,12 @@ DataObject::add_extension('Member', 'EcommerceRole');
 DataObject::add_extension('Payment', 'EcommercePayment');
 
 Director::addRules(50, array(
-	ShoppingCart_Controller::$URLSegment . '/$Action/$ID' => 'ShoppingCart_Controller'
+	ShoppingCart_Controller::$URLSegment . '/$Action/$ID/$OtherID' => 'ShoppingCart_Controller'
 ));
+
+SS_Report::register('ReportAdmin','AllOrdersReport');
+//SS_Report::register('ReportAdmin','CurrentOrdersReport');
+//SS_Report::register('ReportAdmin','UnprintedOrderReport');
+
 
 ?>

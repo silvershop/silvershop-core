@@ -7,7 +7,7 @@
  * 
  * @package ecommerce
  */
-class UnprintedOrderReport extends SSReport {
+class UnprintedOrderReport extends SS_Report {
 
 	protected $title = 'Unprinted Orders';
 

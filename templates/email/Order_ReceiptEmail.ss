@@ -142,6 +142,7 @@
 						$PurchaseCompleteMessage
 					</td>
 				</tr>
+				<% if Order %>
 				<% control Order %>
 					<tr>
 						<td>
@@ -149,6 +150,7 @@
 						</td>
 					</tr>
 				<% end_control %>
+				<% end_if %>
 			</tbody>
 		</table>
 	</body>

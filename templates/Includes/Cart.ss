@@ -35,20 +35,19 @@
 										</a>
 									</strong>
 								</span>
-							</span>
-							<span class="remove">
-								<strong>
+								<span class="remove">
 									<a class="ajaxQuantityLink" href="$removeallLink" title="<% sprintf(_t("REMOVEALL","Remove all of &quot;%s&quot; from your cart"),$CartTitle.XML) %>">
 										<img src="ecommerce/images/remove.gif" alt="x"/>
 									</a>
-								</strong>
+								</span>
 							</span>
 							<div class="clear"><!-- --></div>
 						</li>
 					<% end_if %>
 				<% end_control %>
 				<li class="subtotal"><% _t("SUBTOTAL","Subtotal") %>: <strong id="$CartSubTotalID">$SubTotal.Nice</strong></li>
-
+				
+				<% if Modifiers %>
 				<% control Modifiers %>
 					<% if ShowInCart %>
 						<li id="$CartID" class="$Classes">
@@ -72,9 +71,10 @@
 						</li>
 					<% end_if %>
 				<% end_control %>
+				<% end_if %>
 				
 				<li class="total"><% _t("TOTAL","Total") %>: <strong id="$CartTotalID">$Total.Nice $Currency</strong></li>
-				<li class="buyProducts"><p><a class="checkoutButton" href="$checkoutLink" title="<% _t("CheckoutClick","Click here to go to the checkout") %>"><% _t("CheckoutGoTo","Go to checkout") %> &gt;&gt;</a></p></li>
+				<li class="buyProducts"><p><a class="checkoutButton" href="$checkoutLink" title="<% _t("CheckoutClick","Click here to go to the checkout") %>"><% _t("CheckoutGoTo","Go to checkout") %></a></p></li>
 			</ul>
 		<% else %> 
 			<p class="noItems"><% _t("NOITEMS","There are no items in your cart") %>.</p>

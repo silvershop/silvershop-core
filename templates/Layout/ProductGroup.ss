@@ -1,11 +1,7 @@
 <% include ProductMenu %>
 
 <div id="ProductGroup">
-	<div id="Breadcrumbs" class="typography">
-   	<p>$Breadcrumbs</p>
-	</div>
-	
-	<h2 class="pageTitle">$Title</h2>
+	<h1 class="pageTitle">$Title</h1>
 	
 	<% if Content %>
 		<div class="typography">
@@ -13,15 +9,15 @@
 		</div>
 	<% end_if %>
 	
-	<% if FeaturedProducts %>
-		<h3 class="categoryTitle"><% _t("FEATURED","Featured Products") %></h3>
-		<div id="FeaturedProducts" class="category">
+	<% if Products %>
+		<div id="Products" class="category">
 			<div class="resultsBar typography">
-				<p class="resultsShowing">Showing <span class="firstProductIndex">1</span> to <span class="lastProductIndex">$FeaturedProducts.Count</span> of <span class="productsTotal">$FeaturedProducts.Count</span> products</p>
+				<% if SortLinks %><span class="sortOptions">Sort by <% control SortLinks %><a href="$Link" class="sortlink $Current">$Name</a> <% end_control %></span><% end_if %>
+				<span class="resultsShowing">Showing <span class="firstProductIndex">1</span> to <span class="lastProductIndex">$Products.Count</span> of <span class="productsTotal">$Products.TotalCount</span> products</span>
 			</div>
 			<div class="clear"><!-- --></div>
 			<ul class="productList">
-				<% control FeaturedProducts %>
+				<% control Products %>
 					<% include ProductGroupItem %>
 				<% end_control %>
 			</ul>
@@ -29,19 +25,25 @@
 		</div>
 	<% end_if %>
 	
-	<% if NonFeaturedProducts %>
-		<h3 class="categoryTitle"><% _t("OTHER","Other Products") %></h3>
-		<div id="NonFeaturedProducts" class="category">
-			<div class="resultsBar typography">
-				<p class="resultsShowing">Showing <span class="firstProductIndex">1</span> to <span class="lastProductIndex">$NonFeaturedProducts.Count</span> of <span class="productsTotal">$NonFeaturedProducts.Count</span> products</p>
-			</div>
-			<div class="clear"><!-- --></div>
-			<ul class="productList">
-				<% control NonFeaturedProducts %>
-					<% include ProductGroupItem %>
-				<% end_control %>
-			</ul>
-			<div class="clear"><!-- --></div>
-		</div>
+	<% if Products.MoreThanOnePage %>
+	  <p>page: 
+	  <% if Products.PrevLink %>
+	    <a href="$Products.PrevLink">previous</a> | 
+	  <% end_if %>
+	 
+	  <% control Products.Pages %>
+	    <% if CurrentBool %>
+	      <strong>$PageNum</strong> 
+	    <% else %>
+	      <a href="$Link" title="Go to page $PageNum">$PageNum</a> 
+	    <% end_if %>
+	  <% end_control %>
+	 
+	  <% if Products.NextLink %>
+	    | <a href="$Products.NextLink">next</a>
+	  <% end_if %>
+	  </p>
 	<% end_if %>
+	
+	<div id="Breadcrumbs" class="typography"><p>$Breadcrumbs</p></div>
 </div>

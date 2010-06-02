@@ -11,7 +11,20 @@
  * 
  * @package ecommerce
  */
-class OrderReport_Popup extends Controller {
+class OrderReport_Popup extends Controller {	
+	
+	function init(){
+		parent::init();
+		//include print javascript, if print argument is provided
+		if(isset($_REQUEST['print']) && $_REQUEST['print'])
+			Requirements::customScript("if(document.location.href.indexOf('print=1') > 0) {window.print();}");
+		
+		Requirements::css('ecommerce/css/invoice.css');
+		Requirements::css('ecommerce/css/reset.css');
+		$this->Title = i18n::_t("ORDER.INVOICE","Invoice");
+		if($id = $this->urlParams['ID'])
+			$this->Title .= " #$id";
+	}
 	
 	/**
 	 * This is the default action of this
@@ -22,7 +35,7 @@ class OrderReport_Popup extends Controller {
 	 * order information in a printable view.
 	 */
 	function index() {
-		return $this->renderWith('OrderInformation_Print');
+		return $this->renderWith('Invoice');
 	}
 	
 	/**
@@ -38,7 +51,7 @@ class OrderReport_Popup extends Controller {
 	 * for the current order we're looking at.
 	 */
 	function invoice() {
-		return $this->renderWith('OrderInformation_Print');
+		return $this->renderWith('Invoice');
 	}
 
 	function Link($action = null) {
@@ -213,7 +226,7 @@ class OrderReport_Popup extends Controller {
 			$order->write();
 		}
 		
-		if($_REQUEST['SentToCustomer']) {
+		if(isset($_REQUEST['SentToCustomer']) && $_REQUEST['SentToCustomer']) {
 			$order->sendStatusChange();
 		}
 

@@ -10,7 +10,7 @@
 class OrderForm extends Form {
 	
 	function __construct($controller, $name) {
-		Requirements::themedCSS('OrderForm');
+		//Requirements::themedCSS('OrderForm');
 		
 		// 1) Member and shipping fields
 		$member = Member::currentUser() ? Member::currentUser() : singleton('Member');
@@ -23,7 +23,7 @@ class OrderForm extends Form {
 			$countryField = new DropdownField('ShippingCountry', 'Country', Geoip::getCountryDropDown(), EcommerceRole::findCountry());
 			$shippingFields = new CompositeField(
 				new HeaderField('Send goods to different address', 3),
-				new LiteralField('ShippingNote', '<p class="warningMessage"><em>Your goods will be sent to the address below.</em></p>'),
+				new LiteralField('ShippingNote', '<p class="message warning">Your goods will be sent to the address below.</p>'),
 				new LiteralField('Help', '<p>You can use this for gift giving. No billing information will be disclosed to this address.</p>'),
 				new TextField('ShippingName', 'Name'),
 				new TextField('ShippingAddress', 'Address'),
@@ -31,8 +31,11 @@ class OrderForm extends Form {
 				new TextField('ShippingCity', 'City'),
 				$countryField,
 				new HiddenField('UseShippingAddress', '', true),
-				new FormAction_WithoutLabel('useMemberShippingAddress', 'Use Billing Address for Shipping')
+				$changeshippingbutton = new FormAction_WithoutLabel('useMemberShippingAddress', 'Use Billing Address for Shipping')
 			);
+			//Need to to this because 'FormAction_WithoutLabel' has no text on the actual button
+			$changeshippingbutton->setButtonContent('Use Billing Address for Shipping');
+			$changeshippingbutton->useButtonTag = true;
 			
 			$requiredFields[] = 'ShippingName';
 			$requiredFields[] = 'ShippingAddress';
@@ -41,6 +44,9 @@ class OrderForm extends Form {
 		} else {
 			$countryField = $memberFields->fieldByName('Country');
 			$shippingFields = new FormAction_WithoutLabel('useDifferentShippingAddress', 'Use Different Shipping Address');
+			//Need to to this because 'FormAction_WithoutLabel' has no text on the actual button
+			$shippingFields->setButtonContent('Use Different Shipping Address');
+			$shippingFields->useButtonTag = true;
 		}
 		
 		$countryField->addExtraClass('ajaxCountryField');
@@ -90,6 +96,9 @@ class OrderForm extends Form {
 		// 5) Actions and required fields creation
 		$actions = new FieldSet(new FormAction('processOrder', 'Place order and make payment'));
 		$requiredFields = new CustomRequiredFields($requiredFields);
+		$this->extend('updateValidator',$requiredFields);
+		
+		$this->extend('updateFields',&$fields);
 		
 		// 6) Form construction
 		parent::__construct($controller, $name, $fields, $actions, $requiredFields);
@@ -101,6 +110,9 @@ class OrderForm extends Form {
 		$currentOrder = ShoppingCart::current_order();
 		$currentOrderCountry = $currentOrder->findShippingCountry(true);
 		$countryField->setValue($currentOrderCountry);
+		
+		//allow updating via decoration
+		$this->extend('updateForm',$this);
 	}
 
 	/**
@@ -125,6 +137,15 @@ class OrderForm extends Form {
 	 */
 	function useMemberShippingAddress($data, $form, $request) {
 		ShoppingCart::set_uses_different_shipping_address(false);
+		Director::redirectBack();
+	}
+	
+	function updateShippingCountry($data, $form, $request) {
+		Session::set($this->FormName(), $data);
+		ShoppingCart::set_country($data['Country']);
+		if(Director::is_ajax()){
+			return "success";
+		}
 		Director::redirectBack();
 	}
 	
@@ -183,8 +204,13 @@ class OrderForm extends Form {
 		// Save payment data from form and process payment
 		$form->saveInto($payment);
 		$payment->OrderID = $order->ID;
-		$payment->Amount = $order->Total();
+		$payment->Amount->Amount = $order->Total();
+		$payment->Amount->Currency = Order::Currency();
 		$payment->write();
+		
+		//prepare $data 
+		
+		
 		
 		// Process payment, get the result back
 		$result = $payment->processPayment($data, $form);
@@ -201,6 +227,15 @@ class OrderForm extends Form {
 		Director::redirect($order->Link());
 		return true;
 	}
+	
+	/** Override form validation to make different shipping address button work */ 
+ 	 function validate(){ 
+ 	 	if(!isset($_POST['action_processOrder'])  &&  
+ 	        (isset($_POST['action_useMemberShippingAddress']) || isset($_POST['action_useDifferentShippingAddress']) ) ){ 
+ 	    	return true; 
+ 	    } 
+ 	 	return parent::validate();       
+ 	 } 
 	
 }
 ?>

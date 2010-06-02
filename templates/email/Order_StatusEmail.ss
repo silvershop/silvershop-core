@@ -107,6 +107,7 @@
 				</tr>
 			</thead>
 			<tbody>
+				<% if Order %>
 				<% control Order %>
 					<tr>
 						<td scope="row" colspan="2" class="typography">	
@@ -114,6 +115,7 @@
 						</td>
 					</tr>
 				<% end_control %>
+				<% end_if %>
 				<tr>
 					<td scope="row" colspan="2" class="typography">
 						<p>$Note</p>

@@ -113,6 +113,9 @@ class ShoppingCart extends Object {
 	
 	//4) Items management
 		
+	/**
+	 * Either update or create OrderItem in ShoppingCart.
+	 */
 	static function add_new_item(OrderItem $item) {
 		$itemsTableIndex = self::items_table_name();
 		
@@ -120,14 +123,18 @@ class ShoppingCart extends Object {
 			foreach($serializedItems as $itemIndex => $serializedItem) {
 				if($serializedItem != null) {
 					$unserializedItem = unserialize($serializedItem);
-					if($unserializedItem->hasSameContent($item)) return self::add_item($itemIndex, $item->getQuantity());
+					if($unserializedItem->hasSameContent($item)){
+						return self::add_item($itemIndex, $item->getQuantity());
+					}
 				}
 			}
 		}
-		
-		self::set_item($item->getProductID(), $item);
+		self::set_item($item->getProductIDForSerialization(), $item);
 	}
 	
+	/**
+	 * Add a new OrderItem to session
+	 */
 	static function add_item($itemIndex, $quantity = 1) {
 		$serializedItemIndex = self::item_index($itemIndex);
 		$serializedItem = Session::get($serializedItemIndex);
@@ -135,7 +142,10 @@ class ShoppingCart extends Object {
 		$unserializedItem->addQuantityAttribute($quantity);
 		self::set_item($itemIndex, $unserializedItem);
 	}
-		
+	
+	/**
+	 * Update quantity of an OrderItem in the session
+	 */
 	static function set_quantity_item($itemIndex, $quantity) {
 		$serializedItemIndex = self::item_index($itemIndex);
 		$serializedItem = Session::get($serializedItemIndex);
@@ -144,6 +154,9 @@ class ShoppingCart extends Object {
 		self::set_item($itemIndex, $unserializedItem);
 	}
 	
+	/**
+	 * Reduce quantity of an orderItem, or completely remove
+	 */
 	static function remove_item($itemIndex, $quantity = 1) {
 		$serializedItemIndex = self::item_index($itemIndex);
 		$serializedItem = Session::get($serializedItemIndex);
@@ -152,8 +165,9 @@ class ShoppingCart extends Object {
 		if($newQuantity > 0) {
 			$unserializedItem->setQuantityAttribute($newQuantity);
 			self::set_item($itemIndex, $unserializedItem);
+		}else{
+			Session::clear($serializedItemIndex);
 		}
-		else Session::clear($serializedItemIndex);
 	}
 	
 	static function remove_all_item($itemIndex) {
@@ -166,6 +180,9 @@ class ShoppingCart extends Object {
 		Session::clear($itemsTableIndex);
 	}
 	
+	/**
+	 * Check if there are any items in the cart
+	 */
 	static function has_items() {
 		$itemsTableIndex = self::items_table_name();
 		return Session::get($itemsTableIndex) != null;
@@ -178,7 +195,6 @@ class ShoppingCart extends Object {
 	static function get_items() {
 		$items = array();
 		$itemsTableIndex = self::items_table_name();
-		
 		if($serializedItems = Session::get($itemsTableIndex)) {
 			foreach($serializedItems as $itemIndex => $serializedItem) {
 				if($serializedItem != null) {
@@ -187,20 +203,25 @@ class ShoppingCart extends Object {
 					array_push($items, $unserializedItem);
 				}
 			}
-		}
-		
+		}	
 		return $items;
 	}
 	
+	/**
+	 * Serialise an OrderItem into the session.
+	 */
+	//FIXME: does not cater for product variations properly
 	protected static function set_item($itemIndex, OrderItem $item) {
 		$serializedItemIndex = self::item_index($itemIndex);
 		Session::set($serializedItemIndex, serialize($item));
+		
 	}
 	
 	//5) Modifiers management
 	
 	static function init_all_modifiers() {
 		Order::init_all_modifiers();
+		//self::init_all_modifiers();
 	}
 	
 	static function add_new_modifier(OrderModifier $modifier) {
@@ -240,6 +261,7 @@ class ShoppingCart extends Object {
 	 * @return array
 	 */
 	static function get_modifiers() {
+
 		if(!self::is_initialized()) {
 			self::init_all_modifiers();
 			self::set_initialized(true);
@@ -286,36 +308,62 @@ class ShoppingCart extends Object {
 
 class ShoppingCart_Controller extends Controller {
 	
+	static $url_handlers = array(
+		//'additem//$ID/$OtherID' => 'handleAction',
+	);
+	
+	static $allowed_actions = array(
+		'additem',
+		'removeitem',
+		'removeallitem',
+		'removemodifier',
+		'setcountry',
+		'setquantityitem'
+	);
+	
+	function init(){
+		parent::init();
+	}
+	
 	static $URLSegment = 'shoppingcart';
 	
-	static function add_item_link($id) {
-		return self::$URLSegment . '/additem/' . $id;
+	static function add_item_link($id,$variationid = null) {
+		return self::$URLSegment . '/additem/' . $id . self::variationLink($variationid);
 	}
 	
-	static function remove_item_link($id) {
-		return self::$URLSegment . '/removeitem/' . $id;
+	static function remove_item_link($id,$variationid = null) {
+		return self::$URLSegment . '/removeitem/' . $id . self::variationLink($variationid);
 	}
 	
-	static function remove_all_item_link($id) {
-		return self::$URLSegment . '/removeallitem/' . $id;
+	static function remove_all_item_link($id,$variationid = null) {
+		return self::$URLSegment . '/removeallitem/' . $id . self::variationLink($variationid);
 	}
 	
-	static function set_quantity_item_link($id) {
-		return self::$URLSegment . '/setquantityitem/' . $id;
+	static function set_quantity_item_link($id,$variationid = null) {
+		return self::$URLSegment . '/setquantityitem/' . $id . self::variationLink($variationid);
 	}
 	
-	static function remove_modifier_link($id) {
-		return self::$URLSegment . '/removemodifier/' . $id;
+	static function remove_modifier_link($id,$variationid = null) {
+		return self::$URLSegment . '/removemodifier/' . $id . self::variationLink($variationid);
 	}
 
 	static function set_country_link() {
 		return self::$URLSegment . '/setcountry';
 	}
 	
+	/** helper function for appending variation id */
+	private static function variationLink($variationid){
+		if(is_numeric($variationid)){
+			return "/$variationid";
+		}
+		return "";
+	}
+	
 	function additem() {
 		$itemId = $this->urlParams['ID'];
 		if($itemId) {
-			ShoppingCart::add_item($itemId);
+			//echo $itemId.$this->variationParam();
+			ShoppingCart::add_item($itemId.$this->variationParam());
 			if(!$this->isAjax()) Director::redirectBack();
 		}
 	}
@@ -323,7 +371,7 @@ class ShoppingCart_Controller extends Controller {
 	function removeitem() {
 		$itemId = $this->urlParams['ID'];
 		if($itemId) {
-			ShoppingCart::remove_item($itemId);
+			ShoppingCart::remove_item($itemId.$this->variationParam());
 			if(!$this->isAjax()) Director::redirectBack();
 		}
 	}
@@ -331,11 +379,12 @@ class ShoppingCart_Controller extends Controller {
 	function removeallitem() {
 		$itemId = $this->urlParams['ID'];
 		if($itemId) {
-			ShoppingCart::remove_all_item($itemId);
+			ShoppingCart::remove_all_item($itemId.$this->variationParam());
 			if(!$this->isAjax()) Director::redirectBack();
 		}
 	}
 	
+
 	/**
 	 * Ajax method to set an item quantity
 	 */
@@ -344,7 +393,7 @@ class ShoppingCart_Controller extends Controller {
 		$quantity = $_REQUEST['quantity'];
 		if($itemId && is_numeric($quantity) && is_int($quantity + 0)) {
 			if($quantity > 0) {
-				ShoppingCart::set_quantity_item($itemId, $quantity);
+				ShoppingCart::set_quantity_item($itemId.$this->variationParam(), $quantity);
 				return self::json_code();
 			} else {
 				user_error("Bad data to Product->setQuantity: quantity=$quantity", E_USER_WARNING);
@@ -353,6 +402,17 @@ class ShoppingCart_Controller extends Controller {
 			user_error("Bad data to Product->setQuantity: quantity=$quantity", E_USER_WARNING);
 		}
 	}
+	
+	/**
+	 * Gets variation url param if there is one
+	 */
+	private function variationParam(){
+		if(isset($this->urlParams['OtherID'])){
+			return "_v".$this->urlParams['OtherID'];
+		}
+		return "";
+	}
+	
 	
 	function removemodifier() {
 		$modifierId = $this->urlParams['ID'];

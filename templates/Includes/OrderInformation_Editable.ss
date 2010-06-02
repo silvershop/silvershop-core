@@ -58,6 +58,7 @@
 				<td>&nbsp;</td>
 			</tr>
 			
+			<% if Modifiers %>
 			<% control Modifiers %>
 				<% if ShowInTable %>
 					<tr id="$TableID" class="$Classes">
@@ -82,6 +83,7 @@
 					</tr>
 				<% end_if %>
 			<% end_control %>
+			<% end_if %>
 			
 			<tr class="gap Total">
 				<td colspan="2" scope="row"><% _t("TOTAL","Total") %></td>

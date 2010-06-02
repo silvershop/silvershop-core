@@ -1,0 +1,39 @@
+.cart {
+	margin-top: 20px !important;
+}
+
+/* make the price block so it goes on a separate line */
+.cart .price {
+	display:block;
+}
+
+/* total of the cart */
+.cart .total,
+.cart .subtotal {
+	border-top: 1px solid #ccc;
+	padding-top: 5px;
+	width: 90%;
+}
+.cart .total {
+	font-weight: bold;
+}
+
+/* nudge the message left a bit so it looks better in black candy */
+.noItems {
+	padding-left: 7px;
+}
+
+/* buy products link to buy the items in your cart */
+.buyProducts {
+	font-weight: bold;
+}
+
+.cart .itemdetails {
+	float: left;
+	width: 173px;
+}
+
+.cart .remove {
+	float: right;
+	width: 20px;
+}
