@@ -43,9 +43,6 @@
 		</tr>
 		
 		<% control Payment %>
-			<tr class="gap">
-				<td colspan="4" scope="row" class="left ordersummary"><h3><% _t("ORDERSUMMARY","Order Summary") %>:</h3></td>
-			</tr>
 		<tr class="gap">
 			<th colspan="4" scope="row" class="left"><% _t("PAYMENTINFORMATION","Payment Information") %></th>
 		</tr>
