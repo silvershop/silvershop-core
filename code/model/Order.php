@@ -747,8 +747,33 @@ class Order extends DataObject {
 	}
 	
 	
+	/**
+	 * delete attributes, statuslogs, and payments
+	 */
+	 //TODO: make this optional??
 	function onBeforeDelete(){
-		//TODO: delete attributes, statuslogs, and payments	
+		if($attributes = $this->Attributes()){
+			foreach($attributes as $attribute){
+				$attribute->delete();
+				$attribute->destroy();			
+			}
+		}
+		
+		if($statuslogs = $this->OrderStatusLogs()){
+			foreach($statuslogs as $log){
+				$log->delete();
+				$log->destroy();			
+			}
+		}
+		
+		if($payments = $this->Payments()){
+			foreach($payments as $payment){
+				$payment->delete();
+				$payment->destroy();			
+			}
+		}
+		
+		parent::onBeforeDelete();
 		
 	}
 	
