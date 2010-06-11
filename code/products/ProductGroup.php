@@ -35,9 +35,11 @@ class ProductGroup extends Page {
 	static $page_length = 12;
 	static $must_have_price = true;	
 	
+	//TODO: allow grouping multiple sort fields under one 'sort option', and allow choosing direction of each
 	static $sort_options = array(
-		'Price' => 'Price',
-		'Title' => 'Name',
+		'Title' => 'Alphabetical',		
+		'Price' => 'Lowest Price',
+		'NumberSold' => 'Most Popular'
 		//'Featured' => 'Featured',
 		//'Weight' => 'Weight'
 	);
@@ -117,6 +119,10 @@ class ProductGroup extends Page {
 		$limit = (isset($_GET['start']) && (int)$_GET['start'] > 0) ? (int)$_GET['start'].",".self::$page_length : "0,".self::$page_length;
 		$sort = (isset($_GET['sortby'])) ? Convert::raw2sql($_GET['sortby']) : "FeaturedProduct DESC,Title";
 		
+		//hard coded sort configuration //TODO: make these custom
+		if($sort == "NumberSold") $sort .= " DESC";
+		
+		
 		$groupids = array($this->ID);
 		
 		if(self::$include_child_groups && $childgroups = $this->ChildGroups(true))
@@ -154,8 +160,7 @@ class ProductGroup extends Page {
 		}else{
 			return DataObject::get('ProductGroup', "`ParentID` = '$this->ID'");
 		}
-	}		
-	
+	}
 
 	
 	/**
@@ -241,7 +246,7 @@ class ProductGroup_Controller extends Page_Controller {
 		
 		$sort = (isset($_GET['sortby'])) ? Convert::raw2sql($_GET['sortby']) : "Title";
 		$dos = new DataObjectSet();
-		foreach(ProductGroup::get_sort_options() as $field => $name){
+		foreach(ProductGroup::get_sort_options() as $field => $name){ 
 			$current = ($field == $sort) ? 'current' : false;
 			$dos->push(new ArrayData(array(
 				'Name' => $name,

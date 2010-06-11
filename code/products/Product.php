@@ -20,7 +20,9 @@ class Product extends Page {
 		'Model' => 'Varchar',
 		'FeaturedProduct' => 'Boolean',
 		'AllowPurchase' => 'Boolean',
-		'InternalItemID' => 'Varchar(30)'
+		'InternalItemID' => 'Varchar(30)',
+		
+		'NumberSold' => 'Int' //store number sold, so it doesn't have to be computed on the fly
 	);
 	
 	public static $has_one = array(
@@ -44,7 +46,7 @@ class Product extends Page {
 	public static $casting = array();
 	
 	public static $summary_fields = array(
-		'ID','Title','InternalItemID','Weight','Model','Price'
+		'ID','Title','Price','InternalItemID','Weight','Model','NumberSold'
 	);
 	
 	public static $searchable_fields = array(
@@ -60,6 +62,8 @@ class Product extends Page {
 	static $add_action = 'a Product Page';
 	
 	static $icon = 'ecommerce/images/icons/package';
+	
+	static $number_sold_calculation_type = "SUM"; //SUM or COUNT
 	
 	function getCMSFields() {
 		$fields = parent::getCMSFields();
@@ -102,6 +106,38 @@ class Product extends Page {
 		
 		return $fields;
 	}
+	
+	
+	/**
+	 * Recaulculates the number sold for all products. This should be run as a cron job perhaps daily.
+	 */
+	static function recalculate_numbersold(){
+		
+		$ps = singleton('Product');
+		$q = $ps->buildSQL("`Product`.`AllowPurchase` IS TRUE");
+		$select = $q->select;
+		
+		$select['NewNumberSold'] = self::$number_sold_calculation_type."(OrderItem.Quantity) AS NewNumberSold"; 
+		
+		$q->select($select);
+		$q->groupby("Product.ID");
+		$q->orderby("NewNumberSold DESC");
+
+		$q->leftJoin('Product_OrderItem','Product.ID = Product_OrderItem.ProductID');
+		$q->leftJoin('OrderItem','Product_OrderItem.ID = OrderItem.ID');
+		$records = $q->execute();
+		$productssold = $ps->buildDataObjectSet($records, "DataObjectSet", $q, 'Product');
+		
+		//TODO: this could be done faster with an UPDATE query (SQLQuery doesn't support this yet @11/06/2010)
+		foreach($productssold as $product){
+			if($product->NewNumberSold != $product->NumberSold){
+				$product->NumberSold = $product->NewNumberSold;
+				$product->writeToStage('Stage');
+				$product->publish('Stage', 'Live');
+			}
+		}
+
+	} 
 	
 	function getVariationsTable() {
 		$singleton = singleton('ProductVariation');

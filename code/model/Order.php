@@ -295,6 +295,8 @@ class Order extends DataObject {
 		// Write the order
 		$order->write();
 		
+		Product::recalculate_numbersold(); //TODO: change this to just updating items based on whats in the cart
+		
 		return $order;
 	}	
 	
@@ -746,7 +748,6 @@ class Order extends DataObject {
   		}
 	}
 	
-	
 	/**
 	 * delete attributes, statuslogs, and payments
 	 */
@@ -754,6 +755,7 @@ class Order extends DataObject {
 	function onBeforeDelete(){
 		if($attributes = $this->Attributes()){
 			foreach($attributes as $attribute){
+				//TODO: not working yet - Order Items are still found in DB
 				$attribute->delete();
 				$attribute->destroy();			
 			}
@@ -772,6 +774,8 @@ class Order extends DataObject {
 				$payment->destroy();			
 			}
 		}
+		
+		//TODO: delete order itmes & product_orderitem
 		
 		parent::onBeforeDelete();
 		
