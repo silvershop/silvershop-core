@@ -21,6 +21,7 @@ Known Bugs
 	* Updated sitetree icons (product = package, checkout = shopping cart, account = contact card)
 	* Include shopping cart page type
 	* Removed quantity selectors from products on group page, as they can be updated using the cart on the left.
+	* Added support for calculating and storing the number of products sold
 	
 0.6
 	- Data model changes (see http://doc.silverstripe.com/doku.php?id=ecommerce:overview&s=ecommerce)
