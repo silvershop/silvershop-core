@@ -19,6 +19,11 @@ class OrderAttribute extends DataObject {
 		'CartTitle' => 'Text'
 	);
 	
+	public static $summary_fields = array(
+		'ID' => 'ID',
+		'TableTitle' => 'Title'
+	);
+	
 	public function getIdAttribute() {
 		return $this->_id;
 	}

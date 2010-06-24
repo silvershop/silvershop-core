@@ -21,7 +21,7 @@ class Order extends DataObject {
  	 */
 	public static $db = array(
 		'Status' => "Enum('Unpaid,Query,Paid,Processing,Sent,Complete,AdminCancelled,MemberCancelled','Unpaid')",
-		'Country' => 'Text',
+		'Country' => 'Varchar',
 		'UseShippingAddress' => 'Boolean',
 		'ShippingName' => 'Text',
 		'ShippingAddress' => 'Text',
@@ -153,6 +153,45 @@ class Order extends DataObject {
 	public static $searchable_fields = array(
 		'ID','Total','Status'
 	);
+	
+	function getCMSFields(){
+		$fields = parent::getCMSFields();
+		$member = $this->Member();
+		
+		$fields->addFieldToTab('Root.Main', new HeaderField('MainDetails', 'Main Details'), 'Status');
+		$fields->addFieldToTab('Root.Main', new ReadonlyField('OrderNo', 'Order No', "#{$this->ID}"), 'Status');
+		$fields->addFieldToTab('Root.Main', new ReadonlyField('Date', 'Date', date('l jS F Y h:i:s A', strtotime($this->Created))), 'Status');
+		$fields->addFieldToTab('Root.Main', new ReadonlyField('Customer', 'Customer', "$member->FirstName $member->Surname ($member->Email)"), 'Status');
+
+		$attributes = $fields->findOrMakeTab('Root.Attributes')->fieldByName('Attributes');
+		$attributes->setFieldList(array(
+			'TableTitle' => 'Title',
+			'Quantity' => 'Quantity',
+			'UnitPrice' => 'Price',
+			'Total' => 'Total'
+		));
+		$attributesReadonly = $attributes->performReadonlyTransformation();
+		$attributesReadonly->setPermissions(array());
+		$removeTabs = array('Attributes', 'Order Status Log With Details', 'Country', 'UseShippingAddress', 'ShippingName', 'ShippingAddress', 'ShippingAddress2', 'ShippingCity', 'ShippingCountry', 'Printed', 'Member', 'CustomerOrderNote');
+		foreach($removeTabs as $tab) $fields->removeByName($tab);
+		
+		$total = new Money('Total');
+		$total->setValue(array(
+			'Currency' => Payment::site_currency(),
+			'Amount' => $this->Total()
+		));
+		
+		$fields->addFieldsToTab('Root.Main', array(
+			new HeaderField('ItemDetails', 'Order Item(s)'),
+			$attributesReadonly,
+			new ReadonlyField('TheTotal', 'Total', $total->Nice()),
+			new HeaderField('ShippingDetails', 'Shipping Details'),
+			new ReadonlyField('DeliveryName', 'Name', $this->UseShippingAddress ? $this->ShippingName : "$member->FirstName $member->Surname"),
+			new ReadonlyField('DeliveryAddress', 'Address', $this->UseShippingAddress ? "{$this->ShippingAddress}\n{$this->ShippingAddress2}\n{$this->ShippingCity}\n".Geoip::countryCode2name($this->ShippingCountry) : "$member->Address\n$member->AddressLine2\n$member->City\n".Geoip::countryCode2name($this->Country)),
+		));
+		
+		return $fields;
+	}
 	
 	/**
 	 * Set the fields to be used for {@link ComplexTableField}
@@ -447,7 +486,7 @@ class Order extends DataObject {
 		$total = $this->Total();
 		if($payments = $this->Payments()) {
 			foreach($payments as $payment) {
-				if($payment->Status == 'Success') $total -= $payment->Amount;
+				if($payment->Status == 'Success') $total -= $payment->Amount->Amount;
 			}
 		}
 		return $total;
