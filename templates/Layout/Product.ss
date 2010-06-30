@@ -3,6 +3,7 @@
 <% end_control %>
 
 <div id="Product">
+	<% if Parent %><div id="Breadcrumbs" class="typography"><p>$Breadcrumbs</p></div><% end_if %>
 	<h1 class="pageTitle">$Title</h1>
 	
 	<div class="productDetails">
@@ -81,5 +82,4 @@
 			$Content
 		</div>
 	<% end_if %>
-	<div id="Breadcrumbs" class="typography"><p>$Breadcrumbs</p></div>
 </div>

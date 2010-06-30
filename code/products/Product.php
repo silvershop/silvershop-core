@@ -65,6 +65,8 @@ class Product extends Page {
 	
 	static $number_sold_calculation_type = "SUM"; //SUM or COUNT
 	
+	static $global_allow_purcahse = true;
+	
 	function getCMSFields() {
 		$fields = parent::getCMSFields();
 
@@ -107,6 +109,12 @@ class Product extends Page {
 		return $fields;
 	}
 	
+	/**
+	 * Enables developers to completely turning off the ability to purcahse products.
+	 */
+	static function set_global_allow_purcahse($allow = false){
+		self::$global_allow_purcahse = $allow;		
+	}
 	
 	/**
 	 * Recaulculates the number sold for all products. This should be run as a cron job perhaps daily.
@@ -190,7 +198,8 @@ class Product extends Page {
 	 * 
 	 * @return Order
 	 */
-	function Cart() {
+	function getCart() {
+		if(!self::$global_allow_purcahse) return false;
 		HTTP::set_cache_age(0);
 		return ShoppingCart::current_order();
 	}
@@ -204,7 +213,8 @@ class Product extends Page {
 	 * 
 	 * @return boolean
 	 */
-	function AllowPurchase() {
+	function getAllowPurchase() {
+		if(!self::$global_allow_purcahse) return false;
 		return $this->AllowPurchase && $this->Price;
 	}
 	
@@ -316,8 +326,8 @@ class Product_Controller extends Page_Controller {
 	function add() {
 		if($this->AllowPurchase() && $this->Variations()->Count() == 0) {
 			ShoppingCart::add_new_item(new Product_OrderItem($this->dataRecord));
-			if(!$this->isAjax()) Director::redirectBack();
 		}
+		if(!$this->isAjax()) Director::redirectBack();
 	}
 	
 	function addVariation() {
@@ -333,10 +343,10 @@ class Product_Controller extends Page_Controller {
 			if($variation) {
 				if($variation->AllowPurchase()) {
 					ShoppingCart::add_new_item(new ProductVariation_OrderItem($variation));
-					if(!$this->isAjax()) Director::redirectBack();
 				}
 			}
 		}
+		if(!$this->isAjax()) Director::redirectBack();
 	}
 	
 }
