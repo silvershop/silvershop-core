@@ -215,7 +215,7 @@ class Product extends Page {
 	 */
 	function getAllowPurchase() {
 		if(!self::$global_allow_purcahse) return false;
-		return $this->AllowPurchase && $this->Price;
+		return $this->db('AllowPurchase') && $this->Price;
 	}
 	
 	/**
@@ -323,15 +323,18 @@ class Product_Controller extends Page_Controller {
 		Requirements::themedCSS('Cart');
 	}
 	
+	//TODO: should this be on ShoppingCart_Controller instead???
 	function add() {
-		if($this->AllowPurchase() && $this->Variations()->Count() == 0) {
+		if($this->getAllowPurchase() && $this->Variations()->Count() == 0) {
 			ShoppingCart::add_new_item(new Product_OrderItem($this->dataRecord));
 		}
 		if(!$this->isAjax()) Director::redirectBack();
+		else return json_encode(array('success' => true));
 	}
 	
+	//TODO: should this be on ShoppingCart_Controller instead??
 	function addVariation() {
-		if($this->AllowPurchase && $this->urlParams['ID']) {
+		if($this->getAllowPurchase && $this->urlParams['ID']) {
 			$variation = DataObject::get_one(
 				'ProductVariation', 
 				sprintf(
