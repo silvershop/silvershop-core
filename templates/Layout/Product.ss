@@ -27,11 +27,11 @@
 						<th>Extension</th><th>Price</th><th><% _t("QUANTITYCART","Quantity in cart") %></th>
 					</tr>
 					<% control Variations %>
-						<% if AllowPurchase %>
 							<tr>
 								<td>$Title.XML</td>
 								<td>$Price.Nice $Currency $TaxInfo.PriceSuffix</td>
 								<td>
+								<% if AllowPurchase %>
 									<% if IsInCart %>
 										<% control Item %>
 											<a class="ajaxQuantityLink" href="$removeLink" title="<% sprintf(_t("REMOVEALL","Remove one of &quot;%s&quot; from your cart"),$Title.XML) %>">
@@ -46,8 +46,8 @@
 										<a href="$addLink" title="<% sprintf(_t("ADD","Add &quot;%s&quot; to your cart"),$Title.XML) %>"><% _t("ADDLINK","Add this item to cart") %></a>
 									<% end_if %>
 								</td>
+								<% end_if %>
 							</tr>
-						<% end_if %>
 					<% end_control %>
 				</table>
 			</div>

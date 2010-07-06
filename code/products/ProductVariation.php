@@ -36,7 +36,9 @@ class ProductVariation extends DataObject {
 	}
 	
 	function AllowPurchase() {
-		return $this->Price;
+		if($product = $this->Product())
+			return $this->Price && $product->AllowPurchase;
+		return false;
 	}
 	
 	/*
