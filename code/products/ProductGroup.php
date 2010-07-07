@@ -110,11 +110,11 @@ class ProductGroup extends Page {
 	 * @return DataObjectSet
 	 */
 	function ProductsShowable($extraFilter = '', $permissions = array("Show All Products")) { //TODO: re-introduce custom permissions, if wanted
-		$filter = "`AllowPurchase` = 1";
+		$filter = ""; //
 		$join = "";
 		
 		if($extraFilter) $filter.= " AND $extraFilter";
-		if(self::$must_have_price) $filter .= " AND Price > 0";
+		//if(self::$must_have_price) $filter .= " AND Price > 0";
 		
 		$limit = (isset($_GET['start']) && (int)$_GET['start'] > 0) ? (int)$_GET['start'].",".self::$page_length : "0,".self::$page_length;
 		$sort = (isset($_GET['sortby'])) ? Convert::raw2sql($_GET['sortby']) : "FeaturedProduct DESC,Title";
@@ -135,9 +135,9 @@ class ProductGroup extends Page {
 		
 		//TODO: get products that appear in child groups (make this optional)
 		
-		$products = DataObject::get('Product',"(ParentID IN ($groupidsimpl) OR $multicatfilter) AND $filter",$sort,$join,$limit);
+		$products = DataObject::get('Product',"(ParentID IN ($groupidsimpl) OR $multicatfilter) $filter",$sort,$join,$limit);
 		
-		$allproducts = DataObject::get('Product',"ParentID IN ($groupidsimpl) AND $filter","",$join);
+		$allproducts = DataObject::get('Product',"ParentID IN ($groupidsimpl) $filter","",$join);
 		if($allproducts) $products->TotalCount = $allproducts->Count(); //add total count to returned data for 'showing x to y of z products'
 		if($products) $products->removeDuplicates();
 		return $products;

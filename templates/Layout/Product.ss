@@ -14,22 +14,20 @@
 			<div class="noimage">no image</div>
 		<% end_if %>
 		
-		<% if FeaturedProduct %>
-			<p class="featured"><% _t("FEATURED","This is a featured product.") %></p>
-		<% end_if %>
 		<p><% _t("ItemID","Item #") %>{$ID}</p>
 		<% if Model %><p><% _t("AUTHOR","Author") %>: $Model.XML</p><% end_if %>
 		<% if Size %><p><% _t("SIZE","Size") %>: $Size.XML</p><% end_if %>
 		<% if Variations %>
 			<div class="quantityBox">
-				<table>
+				<table class="quantityTable">
 					<tr>
-						<th>Extension</th><th>Price</th><th><% _t("QUANTITYCART","Quantity in cart") %></th>
+						<th>Variation</th><th>Price</th><% if AllowPurchase %><th><% _t("QUANTITYCART","Quantity in cart") %></th><% end_if %>
 					</tr>
 					<% control Variations %>
 							<tr>
 								<td>$Title.XML</td>
 								<td>$Price.Nice $Currency $TaxInfo.PriceSuffix</td>
+								<% if Top.AllowPurcahse %>
 								<td>
 								<% if AllowPurchase %>
 									<% if IsInCart %>
@@ -45,6 +43,8 @@
 									<% else %>
 										<a href="$addLink" title="<% sprintf(_t("ADD","Add &quot;%s&quot; to your cart"),$Title.XML) %>"><% _t("ADDLINK","Add this item to cart") %></a>
 									<% end_if %>
+								
+								<% end_if %>
 								</td>
 								<% end_if %>
 							</tr>
