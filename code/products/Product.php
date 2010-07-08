@@ -46,7 +46,7 @@ class Product extends Page {
 	public static $casting = array();
 	
 	public static $summary_fields = array(
-		'ID','Title','Price','InternalItemID','Weight','Model','NumberSold'
+		'ID','InternalItemID' => 'Product Code','Title','Price','Weight','Model','NumberSold'
 	);
 	
 	public static $searchable_fields = array(
@@ -58,6 +58,8 @@ class Product extends Page {
 	public static $plural_name = 'Products';
 	
 	static $default_parent = 'ProductGroup';
+	
+	static $default_sort = 'Title ASC';
 	
 	static $add_action = 'a Product Page';
 	
@@ -234,7 +236,8 @@ class Product extends Page {
 	 * Note : This function is usable in the Product context because a
 	 * Product_OrderItem only has a Product object in attribute
 	 */
-	function Item() {
+	function Item() { //TODO: could this be sped up by using the ShoppingCart::get_item_by_id()?
+	
 		$currentOrder = ShoppingCart::current_order();
 		if($items = $currentOrder->Items()) {
 			foreach($items as $item) {
@@ -243,6 +246,8 @@ class Product extends Page {
 				}
 			}
 		}
+	
+		return new Product_OrderItem($this,0); //return dummy item so that we can still make use of Item  
 	}
 	
 	/**
@@ -329,7 +334,7 @@ class Product_Controller extends Page_Controller {
 			ShoppingCart::add_new_item(new Product_OrderItem($this->dataRecord));
 		}
 		if(!$this->isAjax()) Director::redirectBack();
-		else return json_encode(array('success' => true));
+		else return json_encode(array('success' => true)); //TODO: what is the best thing to return?
 	}
 	
 	//TODO: should this be on ShoppingCart_Controller instead??
@@ -427,7 +432,6 @@ class Product_OrderItem extends OrderItem {
 		if(is_object($product)) {		
 			$this->_productID = $product->ID;
  			$this->_productVersion = $product->Version;
- 			
 		}
 		
  		parent::__construct($product, $quantity);
@@ -454,7 +458,8 @@ class Product_OrderItem extends OrderItem {
 	 */
 	public function Product($current = false) {
 		if($current) return DataObject::get_by_id('Product', $this->_productID);
-		else return Versioned::get_version('Product', $this->_productID, $this->_productVersion);
+		elseif($this->_productID && $this->_productVersion)
+			return Versioned::get_version('Product', $this->_productID, $this->_productVersion);
 	}
 	
 	function hasSameContent($orderItem) {

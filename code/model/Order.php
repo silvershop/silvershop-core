@@ -47,6 +47,8 @@ class Order extends DataObject {
 	
 	public static $defaults = array();
 	
+	public static $default_sort = "Created DESC";
+	
 	public static $casting = array(
 		'SubTotal' => 'Currency',
 		'Total' => 'Currency',
@@ -333,9 +335,7 @@ class Order extends DataObject {
 		
 		// Write the order
 		$order->write();
-		
-		Product::recalculate_numbersold(); //TODO: change this to just updating items based on whats in the cart
-		
+	
 		return $order;
 	}	
 	

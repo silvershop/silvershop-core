@@ -225,7 +225,9 @@ class CheckoutPage_Controller extends Page_Controller {
 	 * @return OrderForm object
 	 */
 	function OrderForm() {
-		return new OrderForm($this, 'OrderForm');
+		$form = new OrderForm($this, 'OrderForm');
+		$this->data()->extend('updateOrderForm',&$form);
+		return $form;
 	}
 	
 	/**

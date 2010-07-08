@@ -194,23 +194,46 @@ class ShoppingCart extends Object {
 	 */
 	static function get_items() {
 		$items = array();
-		$itemsTableIndex = self::items_table_name();
-		if($serializedItems = Session::get($itemsTableIndex)) {
+		if($serializedItems = Session::get(self::items_table_name())) {
 			foreach($serializedItems as $itemIndex => $serializedItem) {
 				if($serializedItem != null) {
 					$unserializedItem = unserialize($serializedItem);
 					$unserializedItem->setIdAttribute($itemIndex);
-					array_push($items, $unserializedItem);
+					$items[$itemIndex] = $unserializedItem;
 				}
 			}
-		}	
+		}
 		return $items;
+	}
+	
+	/**
+	 * Get a single item from the cart.
+	 * 
+	 * Don't forget that items don't have IDs.
+	 */
+	static function get_item($key, $value){
+		$allitems = ShoppingCart::get_items();
+		foreach($allitems as $item){
+			if($item->$key == $value){
+				return $item;
+			}
+		}
+		return null;
+	}
+	
+	static function get_item_by_id($id){
+		$items = Session::get(self::items_table_name());
+		if(isset($items[$id])){
+			$item = unserialize($items[$id]);
+			$item->setIdAttribute($id);
+			return $item;
+		}
+		return null;
 	}
 	
 	/**
 	 * Serialise an OrderItem into the session.
 	 */
-	//FIXME: does not cater for product variations properly
 	protected static function set_item($itemIndex, OrderItem $item) {
 		$serializedItemIndex = self::item_index($itemIndex);
 		Session::set($serializedItemIndex, serialize($item));
@@ -308,17 +331,16 @@ class ShoppingCart extends Object {
 
 class ShoppingCart_Controller extends Controller {
 	
-	static $url_handlers = array(
-		//'additem//$ID/$OtherID' => 'handleAction',
-	);
-	
 	static $allowed_actions = array(
 		'additem',
 		'removeitem',
 		'removeallitem',
 		'removemodifier',
 		'setcountry',
-		'setquantityitem'
+		'setquantityitem',
+		'clear',
+		
+		'debug' => 'ADMIN'
 	);
 	
 	function init(){
@@ -362,10 +384,21 @@ class ShoppingCart_Controller extends Controller {
 	function additem() {
 		$itemId = $this->urlParams['ID'];
 		if($itemId) {
-			//echo $itemId.$this->variationParam();
-			ShoppingCart::add_item($itemId.$this->variationParam());
+			
+			if(!ShoppingCart::get_item_by_id($itemId)){ //if item doesn't exist in cart, then add_new_item
+				$product = DataObject::get_by_id('Product',$itemId);
+				ShoppingCart::add_new_item(new Product_OrderItem($product));
+			}else{
+				ShoppingCart::add_item($itemId.$this->variationParam());
+			}
 			if(!$this->isAjax()) Director::redirectBack();
 		}
+	}
+	
+	function addvariation(){
+		
+		//TODO - move code from Product to here
+		
 	}
 	
 	function removeitem() {
@@ -413,15 +446,23 @@ class ShoppingCart_Controller extends Controller {
 		return "";
 	}
 	
-	
 	function removemodifier() {
 		$modifierId = $this->urlParams['ID'];
 		if(ShoppingCart::can_remove_modifier($modifierId)) ShoppingCart::remove_modifier($modifierId);
 		if(!$this->isAjax()) Director::redirectBack();
 	}
 	
+	
 	/**
-	 * Ajax method to set a country
+	 * Clear the cart of all contents.
+	 */
+	function clear(){
+		ShoppingCart::clear();
+		if(!$this->isAjax()) Director::redirectBack();
+	}
+	
+	/**
+	 * Set the country via url
 	 */
 	function setcountry() {
 		$country = $this->urlParams['ID'];
@@ -444,8 +485,11 @@ class ShoppingCart_Controller extends Controller {
 		}
 		
 		$currentOrder->updateForAjax($js);
-		
 		return Convert::array2json($js);
+	}
+	
+	function debug(){
+		Debug::show(ShoppingCart::get_items());
 	}
 	
 }
