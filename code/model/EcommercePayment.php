@@ -10,18 +10,23 @@ class EcommercePayment extends DataObjectDecorator {
 	function extraStatics() {
 		
 		//Customise model admin summary fields
+		
+		//These will break dataobject summary, searchable, default fields - should be on Payment
+		/*
 		Payment::$summary_fields['ID'] = 'ID';
 		Payment::$summary_fields['Created'] = 'Created';
 		Payment::$summary_fields['ClassName'] = 'Type';
 		Payment::$summary_fields['PaidBy.Name'] = 'Member';
 		Payment::$summary_fields['OrderID'] = 'Order ID';
 		Payment::$summary_fields['Status'] = 'Status';
-		
+		*/
+		/*
 		Payment::$searchable_fields = array(
 			'ID','OrderID','ClassName','Status'
 		);
 		
 		Payment::$default_sort = "Created DESC";
+		*/
 		
 		return array(
 			'has_one' => array(
