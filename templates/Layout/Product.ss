@@ -27,7 +27,6 @@
 							<tr>
 								<td>$Title.XML</td>
 								<td>$Price.Nice $Currency $TaxInfo.PriceSuffix</td>
-								<% if Top.AllowPurcahse %>
 								<td>
 								<% if AllowPurchase %>
 									<% if IsInCart %>
@@ -41,12 +40,11 @@
 											</a>
 										<% end_control %>
 									<% else %>
-										<a href="$addLink" title="<% sprintf(_t("ADD","Add &quot;%s&quot; to your cart"),$Title.XML) %>"><% _t("ADDLINK","Add this item to cart") %></a>
+										<a href="$Item.addLink" title="<% sprintf(_t("ADD","Add &quot;%s&quot; to your cart"),$Title.XML) %>"><% _t("ADDLINK","Add this item to cart") %></a>
 									<% end_if %>
 								
 								<% end_if %>
 								</td>
-								<% end_if %>
 							</tr>
 					<% end_control %>
 				</table>

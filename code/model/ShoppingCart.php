@@ -221,10 +221,12 @@ class ShoppingCart extends Object {
 		return null;
 	}
 	
-	static function get_item_by_id($id){
+	static function get_item_by_id($id,$variationid = null){
+		$vid = ($variationid) ? "_v".$variationid : "";
+		
 		$items = Session::get(self::items_table_name());
-		if(isset($items[$id])){
-			$item = unserialize($items[$id]);
+		if(isset($items[$id.$vid])){
+			$item = unserialize($items[$id.$vid]);
 			$item->setIdAttribute($id);
 			return $item;
 		}
@@ -383,22 +385,34 @@ class ShoppingCart_Controller extends Controller {
 	
 	function additem() {
 		$itemId = $this->urlParams['ID'];
-		if($itemId) {
-			
-			if(!ShoppingCart::get_item_by_id($itemId)){ //if item doesn't exist in cart, then add_new_item
-				$product = DataObject::get_by_id('Product',$itemId);
-				ShoppingCart::add_new_item(new Product_OrderItem($product));
+		$variationId = (is_numeric($this->urlParams['OtherID'])) ? $this->urlParams['OtherID'] : null;
+		
+		if($itemId) {	
+			if(!ShoppingCart::get_item_by_id($itemId,$variationId)){ //if item doesn't exist in cart, then add_new_item			
+				if($variationId){
+					$variation = DataObject::get_one(
+						'ProductVariation', 
+						sprintf(
+							"`ID` = %d AND `ProductID` = %d",
+							(int)$this->urlParams['OtherID'],
+							(int)$this->urlParams['ID']
+						)
+					);
+					if($variation && $variation->AllowPurchase()){
+						
+						ShoppingCart::add_new_item(new ProductVariation_OrderItem($variation));
+					}
+				}else{
+					$product = DataObject::get_by_id('Product',$itemId);
+					if($product && $product->AllowPurchase){
+						ShoppingCart::add_new_item(new Product_OrderItem($product));
+					}
+				}			
 			}else{
 				ShoppingCart::add_item($itemId.$this->variationParam());
 			}
 			if(!$this->isAjax()) Director::redirectBack();
 		}
-	}
-	
-	function addvariation(){
-		
-		//TODO - move code from Product to here
-		
 	}
 	
 	function removeitem() {

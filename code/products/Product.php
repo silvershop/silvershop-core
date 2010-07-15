@@ -228,7 +228,7 @@ class Product extends Page {
 	 * @return boolean
 	 */
 	function IsInCart() {
-		return $this->Item() ? true : false;
+		return ($this->Item() && $this->Item()->Quantity > 0) ? true : false;
 	}
 	
 	/**
@@ -237,16 +237,8 @@ class Product extends Page {
 	 * Product_OrderItem only has a Product object in attribute
 	 */
 	function Item() { //TODO: could this be sped up by using the ShoppingCart::get_item_by_id()?
-	
-		$currentOrder = ShoppingCart::current_order();
-		if($items = $currentOrder->Items()) {
-			foreach($items as $item) {
-				if($item instanceof Product_OrderItem && $itemProduct = $item->Product()) {
-					if($itemProduct->ID == $this->ID && $itemProduct->Version == $this->Version) return $item;
-				}
-			}
-		}
-	
+		if($item = ShoppingCart::get_item_by_id($this->ID))
+			return $item;
 		return new Product_OrderItem($this,0); //return dummy item so that we can still make use of Item  
 	}
 	
@@ -269,12 +261,17 @@ class Product extends Page {
 		return $currentOrder->TaxInfo();
 	}
 	
+	//passing on shopping cart links ...is this necessary?? ...why not just pass the cart?
 	function addLink() {
-		return $this->Link() . 'add';
+		return ShoppingCart_Controller::add_item_link($this->ID);
 	}
-
-	function addVariationLink($id) {
-		return $this->Link() . 'addVariation/' . $id;
+	
+	function removeLink() {
+		return ShoppingCart_Controller::remove_item_link($this->ID);
+	}
+	
+	function removeallLink() {
+		return ShoppingCart_Controller::remove_all_item_link($this->ID);
 	}
 	
 	/**
@@ -323,41 +320,12 @@ class Product_Controller extends Page_Controller {
 	
 	function init() {
 		parent::init();
-		
 		Requirements::themedCSS('Product');
 		Requirements::themedCSS('Cart');
 	}
 	
-	//TODO: should this be on ShoppingCart_Controller instead???
-	function add() {
-		if($this->getAllowPurchase() && $this->Variations()->Count() == 0) {
-			ShoppingCart::add_new_item(new Product_OrderItem($this->dataRecord));
-		}
-		if(!$this->isAjax()) Director::redirectBack();
-		else return json_encode(array('success' => true)); //TODO: what is the best thing to return?
-	}
-	
-	//TODO: should this be on ShoppingCart_Controller instead??
-	function addVariation() {
-		if($this->getAllowPurchase && $this->urlParams['ID']) {
-			$variation = DataObject::get_one(
-				'ProductVariation', 
-				sprintf(
-					"`ID` = %d AND `ProductID` = %d",
-					(int)$this->urlParams['ID'],
-					(int)$this->ID
-				)
-			);
-			if($variation) {
-				if($variation->AllowPurchase()) {
-					ShoppingCart::add_new_item(new ProductVariation_OrderItem($variation));
-				}
-			}
-		}
-		if(!$this->isAjax()) Director::redirectBack();
-	}
-	
 }
+
 class Product_Image extends Image {
 
 	public static $db = array();
@@ -515,5 +483,6 @@ class Product_OrderItem extends OrderItem {
 			</p>
 HTML;
 	}
+	
 }
 ?>
