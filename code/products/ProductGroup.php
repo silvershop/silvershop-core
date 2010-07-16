@@ -58,6 +58,10 @@ class ProductGroup extends Page {
 		self::$page_length = $length;
 	}
 	
+	function set_must_have_price($must = true){
+		self::$must_have_price = $must;
+	}
+	
 	function set_sort_options(array $options){
 		self::$sort_options = $options;
 	}
@@ -114,7 +118,7 @@ class ProductGroup extends Page {
 		$join = "";
 		
 		if($extraFilter) $filter.= " AND $extraFilter";
-		//if(self::$must_have_price) $filter .= " AND Price > 0";
+		if(self::$must_have_price) $filter .= " AND Price > 0";
 		
 		$limit = (isset($_GET['start']) && (int)$_GET['start'] > 0) ? (int)$_GET['start'].",".self::$page_length : "0,".self::$page_length;
 		$sort = (isset($_GET['sortby'])) ? Convert::raw2sql($_GET['sortby']) : "FeaturedProduct DESC,Title";
