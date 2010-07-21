@@ -17,7 +17,7 @@ class Product extends Page {
 	public static $db = array(
 		'Price' => 'Currency',
 		'Weight' => 'Decimal(9,2)',
-		'Model' => 'Varchar',
+		'Model' => 'Varchar(30)',
 		'FeaturedProduct' => 'Boolean',
 		'AllowPurchase' => 'Boolean',
 		'InternalItemID' => 'Varchar(30)',
@@ -46,7 +46,7 @@ class Product extends Page {
 	public static $casting = array();
 	
 	public static $summary_fields = array(
-		'ID','Title','Price','InternalItemID','Weight','Model','NumberSold'
+		'ID','InternalItemID' => 'Product Code','Title','Price','Weight','Model','NumberSold'
 	);
 	
 	public static $searchable_fields = array(
@@ -59,11 +59,15 @@ class Product extends Page {
 	
 	static $default_parent = 'ProductGroup';
 	
+	static $default_sort = 'Title ASC';
+	
 	static $add_action = 'a Product Page';
 	
 	static $icon = 'ecommerce/images/icons/package';
 	
 	static $number_sold_calculation_type = "SUM"; //SUM or COUNT
+	
+	static $global_allow_purcahse = true;
 	
 	function getCMSFields() {
 		$fields = parent::getCMSFields();
@@ -71,8 +75,8 @@ class Product extends Page {
 		// Standard product detail fields
 		$fields->addFieldToTab('Root.Content.Main',new TextField('Price', _t('Product.PRICE', 'Price'), '', 12),'Content');
 		$fields->addFieldToTab('Root.Content.Main',new TextField('Weight', _t('Product.WEIGHT', 'Weight (kg)'), '', 12),'Content');
-		$fields->addFieldToTab('Root.Content.Main',new TextField('Model', _t('Product.MODEL', 'Model/Author'), '', 50),'Content');
-		$fields->addFieldToTab('Root.Content.Main',new TextField('InternalItemID', _t('Product.CODE', 'Product Code'), '', 7),'Content');
+		$fields->addFieldToTab('Root.Content.Main',new TextField('Model', _t('Product.MODEL', 'Model/Author'), '', 30),'Content');
+		$fields->addFieldToTab('Root.Content.Main',new TextField('InternalItemID', _t('Product.CODE', 'Product Code'), '', 30),'Content');
 
 		if(!$fields->dataFieldByName('Image')) {
 			$fields->addFieldToTab('Root.Content.Images', new ImageField('Image', _t('Product.IMAGE', 'Product Image')));
@@ -107,6 +111,12 @@ class Product extends Page {
 		return $fields;
 	}
 	
+	/**
+	 * Enables developers to completely turning off the ability to purcahse products.
+	 */
+	static function set_global_allow_purcahse($allow = false){
+		self::$global_allow_purcahse = $allow;		
+	}
 	
 	/**
 	 * Recaulculates the number sold for all products. This should be run as a cron job perhaps daily.
@@ -190,7 +200,8 @@ class Product extends Page {
 	 * 
 	 * @return Order
 	 */
-	function Cart() {
+	function getCart() {
+		if(!self::$global_allow_purcahse) return false;
 		HTTP::set_cache_age(0);
 		return ShoppingCart::current_order();
 	}
@@ -204,8 +215,9 @@ class Product extends Page {
 	 * 
 	 * @return boolean
 	 */
-	function AllowPurchase() {
-		return $this->AllowPurchase && $this->Price;
+	function getAllowPurchase() {
+		if(!self::$global_allow_purcahse) return false;
+		return $this->db('AllowPurchase') && $this->Price;
 	}
 	
 	/**
@@ -216,7 +228,7 @@ class Product extends Page {
 	 * @return boolean
 	 */
 	function IsInCart() {
-		return $this->Item() ? true : false;
+		return ($this->Item() && $this->Item()->Quantity > 0) ? true : false;
 	}
 	
 	/**
@@ -224,15 +236,10 @@ class Product extends Page {
 	 * Note : This function is usable in the Product context because a
 	 * Product_OrderItem only has a Product object in attribute
 	 */
-	function Item() {
-		$currentOrder = ShoppingCart::current_order();
-		if($items = $currentOrder->Items()) {
-			foreach($items as $item) {
-				if($item instanceof Product_OrderItem && $itemProduct = $item->Product()) {
-					if($itemProduct->ID == $this->ID && $itemProduct->Version == $this->Version) return $item;
-				}
-			}
-		}
+	function Item() { //TODO: could this be sped up by using the ShoppingCart::get_item_by_id()?
+		if($item = ShoppingCart::get_item_by_id($this->ID))
+			return $item;
+		return new Product_OrderItem($this,0); //return dummy item so that we can still make use of Item  
 	}
 	
 	/**
@@ -254,12 +261,17 @@ class Product extends Page {
 		return $currentOrder->TaxInfo();
 	}
 	
+	//passing on shopping cart links ...is this necessary?? ...why not just pass the cart?
 	function addLink() {
-		return $this->Link() . 'add';
+		return ShoppingCart_Controller::add_item_link($this->ID);
 	}
-
-	function addVariationLink($id) {
-		return $this->Link() . 'addVariation/' . $id;
+	
+	function removeLink() {
+		return ShoppingCart_Controller::remove_item_link($this->ID);
+	}
+	
+	function removeallLink() {
+		return ShoppingCart_Controller::remove_all_item_link($this->ID);
 	}
 	
 	/**
@@ -308,38 +320,12 @@ class Product_Controller extends Page_Controller {
 	
 	function init() {
 		parent::init();
-		
 		Requirements::themedCSS('Product');
 		Requirements::themedCSS('Cart');
 	}
 	
-	function add() {
-		if($this->AllowPurchase() && $this->Variations()->Count() == 0) {
-			ShoppingCart::add_new_item(new Product_OrderItem($this->dataRecord));
-			if(!$this->isAjax()) Director::redirectBack();
-		}
-	}
-	
-	function addVariation() {
-		if($this->AllowPurchase && $this->urlParams['ID']) {
-			$variation = DataObject::get_one(
-				'ProductVariation', 
-				sprintf(
-					"`ID` = %d AND `ProductID` = %d",
-					(int)$this->urlParams['ID'],
-					(int)$this->ID
-				)
-			);
-			if($variation) {
-				if($variation->AllowPurchase()) {
-					ShoppingCart::add_new_item(new ProductVariation_OrderItem($variation));
-					if(!$this->isAjax()) Director::redirectBack();
-				}
-			}
-		}
-	}
-	
 }
+
 class Product_Image extends Image {
 
 	public static $db = array();
@@ -414,7 +400,6 @@ class Product_OrderItem extends OrderItem {
 		if(is_object($product)) {		
 			$this->_productID = $product->ID;
  			$this->_productVersion = $product->Version;
- 			
 		}
 		
  		parent::__construct($product, $quantity);
@@ -441,7 +426,8 @@ class Product_OrderItem extends OrderItem {
 	 */
 	public function Product($current = false) {
 		if($current) return DataObject::get_by_id('Product', $this->_productID);
-		else return Versioned::get_version('Product', $this->_productID, $this->_productVersion);
+		elseif($this->_productID && $this->_productVersion)
+			return Versioned::get_version('Product', $this->_productID, $this->_productVersion);
 	}
 	
 	function hasSameContent($orderItem) {
@@ -497,5 +483,6 @@ class Product_OrderItem extends OrderItem {
 			</p>
 HTML;
 	}
+	
 }
 ?>

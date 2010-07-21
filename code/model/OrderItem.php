@@ -13,6 +13,8 @@ class OrderItem extends OrderAttribute {
 	
 	protected $_quantity;
 	
+	static $disable_quantity_js = false;
+	
 	public static $db = array(
 		'Quantity' => 'Int'
 	);
@@ -36,13 +38,17 @@ class OrderItem extends OrderAttribute {
 		
 		parent::__construct();
 	}
-
+	
+	static function disable_quantity_js(){
+		self::$disable_quantity_js = true;
+	}
+	
 	function updateForAjax(array &$js) {
 		$total = DBField::create('Currency', $this->Total())->Nice();
 		$js[] = array('id' => $this->TableTotalID(), 'parameter' => 'innerHTML', 'value' => $total);
 		$js[] = array('id' => $this->CartTotalID(), 'parameter' => 'innerHTML', 'value' => $total);
 		$js[] = array('id' => $this->CartQuantityID(), 'parameter' => 'innerHTML', 'value' => $this->getQuantity());
-		$js[] = array('name' => $this->AjaxQuantityFieldName(), 'parameter' => 'value', 'value' => $this->getQuantity());
+		$js[] = array('name' => $this->QuantityFieldName(), 'parameter' => 'value', 'value' => $this->getQuantity());
 	}
 	
 	/**
@@ -114,20 +120,31 @@ HTML;
 		user_error("OrderItem::UnitPrice() called. Please implement UnitPrice() on $this->class", E_USER_ERROR);
 	}
 	
-	protected function AjaxQuantityFieldName() {
+	protected function QuantityFieldName() {
 		return $this->MainID() . '_Quantity';
 	}
 	
-	function AjaxQuantityField() {
-		Requirements::javascript(THIRDPARTY_DIR . '/jquery/jquery.js');
-		Requirements::javascript('ecommerce/javascript/ecommerce.js');
+	/*
+	 * @Depricated - use QuantityField
+	 */
+	function AjaxQuantityField(){
+		return $this->QuantityField();
+	}
+	
+	function QuantityField() {
+		if(!self::$disable_quantity_js){
+			Requirements::javascript(THIRDPARTY_DIR . '/jquery/jquery.js');
+			Requirements::javascript('ecommerce/javascript/ecommerce.js');
+		}
 		
-		$quantityName = $this->AjaxQuantityFieldName();
+		$quantityName = $this->QuantityFieldName();
 		$setQuantityLinkName = $quantityName . '_SetQuantityLink';
 		$setQuantityLink = $this->setquantityLink();
 		
+		$quantity = ($this->_quantity) ? $this->_quantity : ""; //TODO: make this customisable (ie "0", or "")
+		
 		return <<<HTML
-			<input name="$quantityName" class="ajaxQuantityField" type="text" value="$this->_quantity" size="3" maxlength="3" disabled="disabled"/>
+			<input name="$quantityName" class="ajaxQuantityField" type="text" value="$quantity" size="3" maxlength="3" disabled="disabled"/>
 			<input name="$setQuantityLinkName" type="hidden" value="$setQuantityLink"/>
 HTML;
 	}

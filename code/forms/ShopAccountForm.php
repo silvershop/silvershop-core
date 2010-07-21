@@ -18,7 +18,7 @@ class ShopAccountForm extends Form {
 				$passwordField->setCanBeEmpty(true);
 			}
 			
-			$fields->push(new LiteralField('LogoutNote', "<p class=\"message good\">" . _t("MemberForm.LOGGEDIN","You are currently logged in as ") . $member->FirstName . ' ' . $member->Surname . ". Click <a href=\"Security/logout\" title=\"Click here to log out\">here</a> to log out.</p>"));
+			$fields->push(new LiteralField('LogoutNote', "<p class=\"message warning\">" . _t("MemberForm.LOGGEDIN","You are currently logged in as ") . $member->FirstName . ' ' . $member->Surname . ". Click <a href=\"Security/logout\" title=\"Click here to log out\">here</a> to log out.</p>"));
 			$fields->push(new HeaderField('Login Details', 3));
 			$fields->push($passwordField);
 			
@@ -46,7 +46,7 @@ class ShopAccountForm extends Form {
 		
 		$form->saveInto($member);
 		$member->write();
-		$form->sessionMessage(_t("MemberForm.DETAILSSAVED",'Your details have been saved'), 'bad');
+		$form->sessionMessage(_t("MemberForm.DETAILSSAVED",'Your details have been saved'), 'good');
 		
 		Director::redirectBack();
 		return true;
@@ -61,7 +61,7 @@ class ShopAccountForm extends Form {
 
 		$form->saveInto($member);
 		$member->write();
-		$form->sessionMessage(_t("MemberForm.DETAILSSAVED",'Your details have been saved'), 'bad');
+		$form->sessionMessage(_t("MemberForm.DETAILSSAVED",'Your details have been saved'), 'good');
 
 		Director::redirect(CheckoutPage::find_link());
 		return true;

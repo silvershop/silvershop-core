@@ -36,8 +36,12 @@ class ProductVariation extends DataObject {
 	}
 	
 	function AllowPurchase() {
-		return $this->Price;
+		if($product = $this->Product())
+			return $this->Price && $product->AllowPurchase;
+		return false;
 	}
+	
+	//TODO: change this function to match Product->IsInCart
 	
 	/*
 	 * Returns if the product variation is already in the shopping cart.
@@ -45,7 +49,7 @@ class ProductVariation extends DataObject {
 	 * ProductVariation_OrderItem only has a ProductVariation object in attribute
 	 */
 	function IsInCart() {
-		return $this->Item() ? true : false;
+		return ($this->Item() && $this->Item()->Quantity > 0) ? true : false;
 	}
 	
 	/*
@@ -54,19 +58,13 @@ class ProductVariation extends DataObject {
 	 * ProductVariation_OrderItem only has a ProductVariation object in attribute
 	 */
 	function Item() {
-		$currentOrder = ShoppingCart::current_order();
-		if($items = $currentOrder->Items()) {
-			foreach($items as $item) {
-				if($item instanceof ProductVariation_OrderItem && $itemProductVariation = $item->ProductVariation()) {
-					if($itemProductVariation->ID == $this->ID && $itemProductVariation->Version == $this->Version) return $item;
-				}
-			}
-		}
-		else return null;
+		if($item = ShoppingCart::get_item_by_id($this->ProductID,$this->ID))
+			return $item;
+		return new ProductVariation_OrderItem($this,0); //return dummy item so that we can still make use of Item  
 	}
 	
 	function addLink() {
-		return $this->Product()->addVariationLink($this->ID);
+		return $this->Item()->addLink($this->ProductID,$this->ID);
 	}
 }
 

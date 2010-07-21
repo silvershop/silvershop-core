@@ -73,7 +73,7 @@ class OrderForm extends Form {
 		
 		// 2) Payment fields
 		$currentOrder = ShoppingCart::current_order();
-		$total = '$' . number_format($currentOrder->Total(), 2);
+		$total = '$' . number_format($currentOrder->Total(), 2);//TODO: make this multi-currency
 		$paymentFields = Payment::combined_form_fields("$total " . $currentOrder->Currency(), $currentOrder->Total());
 		foreach($paymentFields as $field) $rightFields->push($field);
 		
@@ -193,6 +193,8 @@ class OrderForm extends Form {
 		$member->write();
 		$member->logIn();
 		
+		if($member)	$payment->PaidByID = $member->ID;
+		
 		// Create new Order from shopping cart, discard cart contents in session
 		$order = ShoppingCart::save_current_order();
 		ShoppingCart::clear();
@@ -208,9 +210,7 @@ class OrderForm extends Form {
 		$payment->Amount->Currency = Order::Currency();
 		$payment->write();
 		
-		//prepare $data 
-		
-		
+		//prepare $data
 		
 		// Process payment, get the result back
 		$result = $payment->processPayment($data, $form);

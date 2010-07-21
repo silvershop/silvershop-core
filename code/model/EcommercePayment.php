@@ -8,6 +8,7 @@
 class EcommercePayment extends DataObjectDecorator {
 	
 	function extraStatics() {
+			
 		return array(
 			'has_one' => array(
 				'Order' => 'Order'
@@ -29,6 +30,12 @@ class EcommercePayment extends DataObjectDecorator {
 		Director::redirect($order->Link());
 		return;
 	}
+	
+	function setPaidObject(DataObject $do){
+		$this->owner->PaidForID = $do->ID;
+		$this->owner->PaidForClass = $do->ClassName;		
+	}
+
 	
 }
 ?>

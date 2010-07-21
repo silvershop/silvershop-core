@@ -1,4 +1,5 @@
-<% control Cart %>
+<% if Cart %>
+	<% control Cart %>
 	<div id="ShoppingCart">
 		<h3><% _t("HEADLINE","My Cart") %></h3>
 		<% if Items %>
@@ -80,4 +81,5 @@
 			<p class="noItems"><% _t("NOITEMS","There are no items in your cart") %>.</p>
 		<% end_if %>
 	</div>
-<% end_control %>
+	<% end_control %>
+<% end_if %>
