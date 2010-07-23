@@ -186,14 +186,23 @@ class Order extends DataObject {
 		));
 
 		$fields->addFieldsToTab('Root.Main', array(
-			new HeaderField('ItemDetails', 'Order Item(s)'),
-			$attributesReadonly,
 			new ReadonlyField('TheTotal', 'Total', $total->Nice()),
-			new HeaderField('ShippingDetails', 'Shipping Details'),
-			new ReadonlyField('DeliveryName', 'Name', $this->UseShippingAddress ? $this->ShippingName : "$member->FirstName $member->Surname"),
-			new ReadonlyField('DeliveryAddress', 'Address', $this->UseShippingAddress ? "{$this->ShippingAddress}\n{$this->ShippingAddress2}\n{$this->ShippingCity}\n".Geoip::countryCode2name($this->ShippingCountry) : "$member->Address\n$member->AddressLine2\n$member->City\n".Geoip::countryCode2name($this->Country)),
 		));
 
+		$fields->addFieldsToTab('Root.Items', array(
+			$attributesReadonly
+		));
+		if($this->UseShippingAddress) {
+			$fields->addFieldsToTab('Root.Shipping', array(
+				new ReadonlyField('DeliveryName', 'Name', $this->UseShippingAddress ? $this->ShippingName : "$member->FirstName $member->Surname"),
+				new ReadonlyField('DeliveryAddress', 'Address', $this->UseShippingAddress ? "{$this->ShippingAddress}\n{$this->ShippingAddress2}\n{$this->ShippingCity}\n".Geoip::countryCode2name($this->ShippingCountry) : "$member->Address\n$member->AddressLine2\n$member->City\n".Geoip::countryCode2name($this->Country)),
+			));
+		}
+		else {
+			$fields->addFieldsToTab('Root.Shipping', array(
+				new HeaderField('DeliveryName', 'No (alternative) shipping address to be used')
+			));
+		}
 		return $fields;
 	}
 
