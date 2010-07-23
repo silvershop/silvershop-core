@@ -251,7 +251,12 @@ class ShoppingCart extends Object {
 
 	static function add_new_modifier(OrderModifier $modifier) {
 		$modifiersTableIndex = self::modifiers_table_name();
-		Session::addToArray($modifiersTableIndex, serialize($modifier));
+		if(defined('DB::USE_ANSI_SQL')) {
+			Session::add_to_array($modifiersTableIndex, serialize($modifier));
+		}
+		else {
+			Session::addToArray($modifiersTableIndex, serialize($modifier));
+		}
 	}
 
 	static function can_remove_modifier($modifierIndex) {

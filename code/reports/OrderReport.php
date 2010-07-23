@@ -122,11 +122,18 @@ class OrderReport_Popup extends Controller {
 		Requirements::css('cms/css/layout.css');
 		Requirements::css('cms/css/cms_right.css');
 		Requirements::css('ecommerce/css/OrderReport.css');
-
-		Requirements::javascript('sapphire/javascript/loader.js');
-		Requirements::javascript(THIRDPARTY_DIR.'/behaviour/behaviour.js');
-		Requirements::javascript(THIRDPARTY_DIR.'/prototype/prototype.js');
-		Requirements::javascript('sapphire/javascript/prototype_improvements.js');
+		if(defined('DB::USE_ANSI_SQL')) {//pseudo-identifier for 2.3 vs 2.4
+			Requirements::javascript('sapphire/javascript/loader.js');
+			Requirements::javascript(THIRDPARTY_DIR.'/behaviour/behaviour.js');
+			Requirements::javascript(THIRDPARTY_DIR.'/prototype/prototype.js');
+			Requirements::javascript('sapphire/javascript/prototype_improvements.js');
+		}
+		else {
+			Requirements::javascript('jsparty/loader.js');
+			Requirements::javascript('jsparty/behaviour.js');
+			Requirements::javascript('jsparty/prototype.js');
+			Requirements::javascript('jsparty/prototype_improvements.js');
+		}
 
 		$id = (isset($_REQUEST['ID'])) ? $_REQUEST['ID'] : $this->urlParams['ID'];
 
