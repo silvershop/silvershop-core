@@ -254,4 +254,3 @@ class CheckoutPage_Controller extends Page_Controller {
 	}
 
 }
-?>
