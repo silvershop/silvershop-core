@@ -508,4 +508,3 @@ class ShoppingCart_Controller extends Controller {
 	}
 
 }
-?>

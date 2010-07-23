@@ -882,4 +882,4 @@ class Order_CancelForm extends Form {
 	}
 
 }
-?>
+

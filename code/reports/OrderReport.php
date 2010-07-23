@@ -2,42 +2,42 @@
 /**
  * This is a stand-alone controller, designed to be
  * used with the eCommerce reporting system.
- * 
+ *
  * It allows a user to view a template for a packing
  * slip of an order, or an invoice with status logs.
- * 
+ *
  * @see CurrentOrdersReport
  * @see UnprintedOrderReport
- * 
+ *
  * @package ecommerce
  */
-class OrderReport_Popup extends Controller {	
-	
+class OrderReport_Popup extends Controller {
+
 	function init(){
 		parent::init();
 		//include print javascript, if print argument is provided
 		if(isset($_REQUEST['print']) && $_REQUEST['print'])
 			Requirements::customScript("if(document.location.href.indexOf('print=1') > 0) {window.print();}");
-		
+
 		Requirements::css('ecommerce/css/invoice.css');
 		Requirements::css('ecommerce/css/reset.css');
 		$this->Title = i18n::_t("ORDER.INVOICE","Invoice");
 		if($id = $this->urlParams['ID'])
 			$this->Title .= " #$id";
 	}
-	
+
 	/**
 	 * This is the default action of this
 	 * controller without calling any
 	 * explicit action, such as "show".
-	 * 
+	 *
 	 * This default "action" will show
 	 * order information in a printable view.
 	 */
 	function index() {
 		return $this->renderWith('Invoice');
 	}
-	
+
 	/**
 	 * This action shows a packing slip
 	 * for the current order we're looking at.
@@ -57,10 +57,10 @@ class OrderReport_Popup extends Controller {
 	function Link($action = null) {
 		return "OrderReport_Popup/$action";
 	}
-	
+
 	/**
 	 * This method is used primarily for cheque orders.
-	 * 
+	 *
 	 * @TODO Why is this specific to cheque?
 	 *
 	 * @return unknown
@@ -72,23 +72,23 @@ class OrderReport_Popup extends Controller {
 			$order = DataObject::get_by_id('Order', $id);
 			$payment = $order->Payment();
 			$cheque = false;
-			
+
 			if($payment->First()) {
 				$record = $payment->First();
 				if($record->ClassName == 'ChequePayment') {
 					$cheque = true;
 				}
 			}
-			
+
 			return new ArrayData(array(
 				'DisplayFinalisedOrder' => $order,
 				'IsCheque' => $cheque
 			));
 		}
-		
+
 		return false;
 	}
-	
+
 	/**
 	 * @TODO Get orders by ID or using current filter if ID is not numeric (for getting all orders)
 	 * @TODO Define what the role of this method is. Is it for templates, is it for a report?
@@ -103,7 +103,7 @@ class OrderReport_Popup extends Controller {
 			if(isset($_REQUEST['print'])) {
 				$order->updatePrinted(true);
 			}
-			
+
 			return $order;
 		}
 
@@ -115,7 +115,7 @@ class OrderReport_Popup extends Controller {
 	 * of an order using {@link OrderStatusLog} records.
 	 *
 	 * @TODO Tidy up JS, and switch it over to jQuery instead of prototype.
-	 * 
+	 *
 	 * @return Form
 	 */
 	function StatusForm() {
@@ -129,11 +129,11 @@ class OrderReport_Popup extends Controller {
 		Requirements::javascript('jsparty/prototype_improvements.js');
 
 		$id = (isset($_REQUEST['ID'])) ? $_REQUEST['ID'] : $this->urlParams['ID'];
-		
+
 		if(is_numeric($id)) {
 			$order = DataObject::get_by_id('Order', $id);
 			$member = $order->Member();
-			
+
 			$fields = new FieldSet(
 				new HeaderField(_t('OrderReport.CHANGESTATUS', 'Change Order Status'), 3),
 				$order->obj('Status')->formField('Status', null, null, $order->Status),
@@ -152,7 +152,7 @@ class OrderReport_Popup extends Controller {
 				$fields,
 				$actions
 			);
-			
+
 			return $form;
 		}
 	}
@@ -163,7 +163,7 @@ class OrderReport_Popup extends Controller {
 	 * instance that we're viewing.
 	 *
 	 * @TODO Rename this to StatusLogForm, and check templates.
-	 * 
+	 *
 	 * @return Form
 	 */
 	function StatusLog() {
@@ -209,7 +209,7 @@ class OrderReport_Popup extends Controller {
 		if(!is_numeric($data['ID'])) {
 			return false;
 		}
-		
+
 		$order = DataObject::get_by_id("Order", $data['ID']);
 
 		// if the status was changed or a note was added, create a new log-object
@@ -219,19 +219,18 @@ class OrderReport_Popup extends Controller {
 			$form->saveInto($orderlog);
 			$orderlog->write();
 		}
-		
+
 		// save the order
 		if($order) {
 			$form->saveInto($order);
 			$order->write();
 		}
-		
+
 		if(isset($_REQUEST['SentToCustomer']) && $_REQUEST['SentToCustomer']) {
 			$order->sendStatusChange();
 		}
 
 		return FormResponse::respond();
-	}	
-	
+	}
+
 }
-?>

@@ -2,7 +2,7 @@
 /**
  * EcommerceRole provides customisations to the {@link Member}
  * class specifically for this ecommerce module.
- * 
+ *
  * @package ecommerce
  */
 class EcommerceRole extends DataObjectDecorator {
@@ -25,7 +25,7 @@ class EcommerceRole extends DataObjectDecorator {
 		$fields->removeByName('Country');
 		$fields->addFieldToTab('Root.Main', new DropdownField('Country', 'Country', Geoip::getCountryDropDown()));
 	}
-	
+
 	/**
 	 * Return the member fields to be shown on {@link OrderForm}.
 	 * @return FieldSet
@@ -43,16 +43,16 @@ class EcommerceRole extends DataObjectDecorator {
 			new TextField('City', 'City'),
 			new DropdownField('Country', 'Country', Geoip::getCountryDropDown(), self::findCountry())
 		);
-		
+
 		$this->owner->extend('augmentEcommerceFields', $fields);
-		
+
 		return $fields;
 	}
 
 	/**
 	 * Return which member fields should be required on {@link OrderForm}
 	 * and {@link ShopAccountForm}.
-	 * 
+	 *
 	 * @return array
 	 */
 	function getEcommerceRequiredFields() {
@@ -64,12 +64,12 @@ class EcommerceRole extends DataObjectDecorator {
 			'City',
 			'Country'
 		);
-		
+
 		$this->owner->extend('augmentEcommerceRequiredFields', $fields);
-		
+
 		return $fields;
 	}
-	
+
 	function CountryTitle() {
 		return self::findCountryTitle($this->owner->Country);
 	}
@@ -77,10 +77,10 @@ class EcommerceRole extends DataObjectDecorator {
 	/**
 	 * Create a new member with given data for a new member,
 	 * or merge the data into the logged in member.
-	 * 
+	 *
 	 * IMPORTANT: Before creating a new Member record, we first
 	 * check that the request email address doesn't already exist.
-	 * 
+	 *
 	 * @param array $data Form request data to update the member with
 	 * @return boolean|object Member object or boolean FALSE
 	 */
@@ -90,7 +90,7 @@ class EcommerceRole extends DataObjectDecorator {
 		if(isset($data['Password']) && is_array($data['Password'])) {
 			$data['Password'] = $data['Password']['_Password'];
 		}
-		
+
 		// We need to ensure that the unique field is never overwritten
 		$uniqueField = Member::get_unique_identifier_field();
 		if(isset($data[$uniqueField])) {
@@ -102,16 +102,16 @@ class EcommerceRole extends DataObjectDecorator {
 				}
 			}
 		}
-		
+
 		if(!$member = Member::currentUser()) {
 			$member = new Member();
 		}
-		
+
 		$member->update($data);
-		
+
 		return $member;
 	}
-	
+
 	/**
 	 * Find the member's country.
 	 *
@@ -122,7 +122,7 @@ class EcommerceRole extends DataObjectDecorator {
 	 */
 	static function findCountry() {
 		$member = Member::currentUser();
-		
+
 		if($member && $member->Country) {
 			$country = $member->Country;
 		} else {
@@ -134,10 +134,10 @@ class EcommerceRole extends DataObjectDecorator {
 				$country = Geoip::visitor_country();
 			}
 		}
-		
+
 		return $country;
 	}
-	
+
 	/**
 	 * Give the two letter code to resolve the title of the country.
 	 *
@@ -148,11 +148,10 @@ class EcommerceRole extends DataObjectDecorator {
 		$countries = Geoip::getCountryDropDown();
 		// check if code was provided, and is found in the country array
 		if($code && $countries[$code]) {
-			return $countries[$code];		
+			return $countries[$code];
 		} else {
 			return false;
 		}
 	}
 
 }
-?>
