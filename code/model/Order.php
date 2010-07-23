@@ -166,16 +166,18 @@ class Order extends DataObject {
 		$fields->addFieldToTab('Root.Main', new ReadonlyField('Customer', 'Customer', "$member->FirstName $member->Surname ($member->Email)"), 'Status');
 
 		$attributes = $fields->findOrMakeTab('Root.Attributes')->fieldByName('Attributes');
-		$attributes->setFieldList(array(
-			'TableTitle' => 'Title',
-			'Quantity' => 'Quantity',
-			'UnitPrice' => 'Price',
-			'Total' => 'Total'
-		));
-		$attributesReadonly = $attributes->performReadonlyTransformation();
-		$attributesReadonly->setPermissions(array());
-		$removeTabs = array('Attributes', 'Order Status Log With Details', 'Country', 'UseShippingAddress', 'ShippingName', 'ShippingAddress', 'ShippingAddress2', 'ShippingCity', 'ShippingCountry', 'Printed', 'Member', 'CustomerOrderNote');
-		foreach($removeTabs as $tab) $fields->removeByName($tab);
+		if($attributes) {
+			$attributes->setFieldList(array(
+				'TableTitle' => 'Title',
+				'Quantity' => 'Quantity',
+				'UnitPrice' => 'Price',
+				'Total' => 'Total'
+			));
+			$attributesReadonly = $attributes->performReadonlyTransformation();
+			$attributesReadonly->setPermissions(array());
+		}
+		$fieldsAndTabsToBeRemoved = array('Attributes', 'Order Status Log With Details', 'Country', 'UseShippingAddress', 'ShippingName', 'ShippingAddress', 'ShippingAddress2', 'ShippingCity', 'ShippingCountry', 'Printed', 'Member', 'CustomerOrderNote');
+		foreach($fieldsAndTabsToBeRemoved as $tab) $fields->removeByName($tab);
 
 		$total = new Money('Total');
 		$total->setValue(array(
