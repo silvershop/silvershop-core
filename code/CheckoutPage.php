@@ -83,7 +83,7 @@ class CheckoutPage extends Page {
 	function getCMSFields() {
 		$fields = parent::getCMSFields();
 
-		$fields->addFieldToTab('Root.Content.Main', new TreeDropdownField('TermsPageID', 'Terms and Conditions Page', 'SiteTree'));
+		$fields->addFieldToTab('Root.Content.TermsAndConditions', new TreeDropdownField('TermsPageID', 'Terms and Conditions Page', 'SiteTree'));
 
 		$shopMessageComplete = '<p>This message is shown, along with order information after they submit the checkout :<p>';
 		$shopChequeMessage = '<p>This message is shown when a user selects cheque as a payment option on the checkout :</p>';
