@@ -28,21 +28,21 @@ class CartPage extends Page{
 class CartPage_Controller extends Page_Controller{
 
 		function Order() {
-		if($orderID = Director::urlParam('Action')) return DataObject::get_by_id('Order', $orderID);
-		else return ShoppingCart::current_order();
+			if($orderID = Director::urlParam('Action')) return DataObject::get_by_id('Order', $orderID);
+			else return ShoppingCart::current_order();
 		}
 
 		public function init() {
-		// include extra js requirements for this page
-		Requirements::javascript(THIRDPARTY_DIR . '/jquery/jquery.js');
-		Requirements::javascript('ecommerce/javascript/CheckoutPage.js');
+			// include extra js requirements for this page
+			Requirements::javascript(THIRDPARTY_DIR . '/jquery/jquery.js');
+			Requirements::javascript('ecommerce/javascript/CheckoutPage.js');
 
-		// include stylesheet for the checkout page
-		Requirements::themedCSS('CheckoutPage');
+			// include stylesheet for the checkout page
+			Requirements::themedCSS('CheckoutPage');
 
-		parent::init();
-
+			parent::init();
 	}
+
 }
 
 
