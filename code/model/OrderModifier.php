@@ -86,7 +86,12 @@ class OrderModifier extends OrderAttribute {
 	}
 
 	function TableValue() {
-		return $this->Amount();
+		if($this->IsChargable()) {
+			return $this->Amount();
+		}
+		else {
+		 return "-".$this->Amount();
+		}
 	}
 
 	/**
