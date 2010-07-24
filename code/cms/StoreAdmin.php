@@ -1,20 +1,23 @@
 <?php
+
 class StoreAdmin extends ModelAdmin{
 
-	static $url_segment = 'store';
-	static $menu_title = 'Store';
-	
+	static $url_segment = 'orders';
+
+	static $menu_title = 'Orders';
+
 	static $menu_priority = 1;
-	
+
 	//static $url_priority = 50;
-	
-	public static $managed_models = array('Order','Payment','Product');
+
+	public static $managed_models = array('Order','Payment','OrderStatusLog', 'OrderAttribute');
 
 	public static $collection_controller_class = 'StoreAdmin_CollectionController';
+
 	public static $record_controller_class = 'StoreAdmin_RecordController';
+
 }
 
-//remove side forms
 class StoreAdmin_CollectionController extends ModelAdmin_CollectionController {
 
 	//public function CreateForm() {return false;}
