@@ -380,6 +380,23 @@ class ShoppingCart_Controller extends Controller {
 		return self::$URLSegment . '/setcountry';
 	}
 
+
+	public static function json_code() {
+		$currentOrder = ShoppingCart::current_order();
+		$js = array();
+
+		if($items = $currentOrder->Items()) {
+			foreach($items as $item) $item->updateForAjax($js);
+		}
+
+		if($modifiers = $currentOrder->Modifiers()) {
+			foreach($modifiers as $modifier) $modifier->updateForAjax($js);
+		}
+
+		$currentOrder->updateForAjax($js);
+		return Convert::array2json($js);
+	}
+
 	/** helper function for appending variation id */
 	private static function variationLink($variationid){
 		if(is_numeric($variationid)){
@@ -490,22 +507,6 @@ class ShoppingCart_Controller extends Controller {
 			ShoppingCart::set_country($country);
 			return self::json_code();
 		}
-	}
-
-	protected static function json_code() {
-		$currentOrder = ShoppingCart::current_order();
-		$js = array();
-
-		if($items = $currentOrder->Items()) {
-			foreach($items as $item) $item->updateForAjax($js);
-		}
-
-		if($modifiers = $currentOrder->Modifiers()) {
-			foreach($modifiers as $modifier) $modifier->updateForAjax($js);
-		}
-
-		$currentOrder->updateForAjax($js);
-		return Convert::array2json($js);
 	}
 
 	function debug(){
