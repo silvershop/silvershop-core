@@ -10,12 +10,14 @@ class EcommerceRole extends DataObjectDecorator {
 	function extraStatics() {
 		return array(
 			'db' => array(
-				'Address' => 'Varchar',
-				'AddressLine2' => 'Varchar',
-				'City' => 'Varchar',
+				'Address' => 'Varchar(255)',
+				'AddressLine2' => 'Varchar(255)',
+				'City' => 'Varchar(100)',
+				'PostalCode' => 'Varchar(30)',
+				'State' => 'Varchar(100)',
 				'Country' => 'Varchar',
-				'HomePhone' => 'Varchar',
-				'MobilePhone' => 'Varchar',
+				'HomePhone' => 'Varchar(100)',
+				'MobilePhone' => 'Varchar(100)',
 				'Notes' => 'HTMLText'
 			)
 		);
