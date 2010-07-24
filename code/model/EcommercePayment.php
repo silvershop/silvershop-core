@@ -12,8 +12,30 @@ class EcommercePayment extends DataObjectDecorator {
 		return array(
 			'has_one' => array(
 				'Order' => 'Order'
+			),
+			'searchable_fields' => array(
+				'OrderID' => array('title' => 'Order ID'),
+				'Amount' => array('title' => 'Amount'),
+				'IP' => array('title' => 'IP Address', 'filter' => 'PartialMatchFilter'),
+				'Status'
 			)
 		);
+	}
+
+	function canCreate($member = null) {
+		return false;
+	}
+
+	function canDelete($member = null) {
+		return false;
+	}
+
+	function updateSummaryFields(&$fields){
+		$fields['Created'] = 'Date';
+		$fields['OrderID'] = 'OrderID';
+		$fields['Amount'] = 'Amount';
+		$fields['IP'] = 'Amount';
+		$fields['Total'] = 'Total';
 	}
 
 	function onBeforeWrite() {
