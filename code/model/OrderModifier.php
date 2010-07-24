@@ -85,6 +85,10 @@ class OrderModifier extends OrderAttribute {
 		return $this->ID ? $this->Amount : $this->LiveAmount();
 	}
 
+	function TableValue() {
+		return $this->Amount();
+	}
+
 	/**
 	 * This function returns the amount of the modifier
 	 * based on the current order and its items. It's
