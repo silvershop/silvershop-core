@@ -10,7 +10,11 @@ class OrderStatusLog extends DataObject {
 	public static $db = array(
 		'Status' => 'Varchar(255)',
 		'Note' => 'Text',
-		'SentToCustomer' => 'Boolean'
+		'DispatchedBy' => 'Varchar(255)',
+		'DispatchedOn' => 'Date',
+		'DispatchTicket' => 'Varchar(255)',
+		'PaymentCode' => 'Varchar(255)',
+		'PaymentOK' => 'Boolean'
 	);
 
 	public static $has_one = array(
@@ -18,27 +22,50 @@ class OrderStatusLog extends DataObject {
 		'Order' => 'Order'
 	);
 
-	public static $has_many = array();
+	public function canDelete($member = null) {
+		return false;
+	}
 
-	public static $many_many = array();
-
-	public static $belongs_many_many = array();
-
-	public static $defaults = array();
-
-	public static $casting = array();
+	public static $searchable_fields = array(
+		"Note" => "PartialMatchFilter",
+		"Status" => "PartialMatchFilter",
+		'DispatchTicket' => 'PartialMatchFilter',
+		'PaymentCode' => 'PartialMatchFilter',
+		'PaymentOK'
+	);
 
 	public static $summary_fields = array(
-		'Created' => 'Date',
-		'Note' => 'Note',
-		'Status' => 'Status'
+		"Created" => "Date",
+		"OrderID" => "OrderID",
+		"Status" => "Status",
+		"Note" => "Note"
 	);
+
+	public static $singular_name = "Order Log Entry";
+
+	public static $plural_name = "Order Status Log Entries";
+
+	public static $default_sort = "Created DESC";
 
 	function onBeforeSave() {
 		if(!$this->ID) {
 			$this->AuthorID = Member::currentUser()->ID;
 		}
-
 		parent::onBeforeSave();
 	}
+
+
+	function requiredDefaultRecords() {
+		parent::requiredDefaultRecords();
+		//migration of old records
+		$oldOnes = DataObject::get("", "SentToCustomer = 1", null, null, "0, 200");
+		if($oldOnes) {
+			foreach($oldOnes as $oldOne) {
+				$oldOne->DispatchedOn = $oldOne->Created;
+				$oldOne->SentToCustomer = 0;
+				$oldOne->write();
+			}
+		}
+	}
+
 }
