@@ -3,7 +3,6 @@
  * Password input field.
  * @author nicolaas[at]sunnysideup.co.nz
  * @package forms
- * @subpackage ecommercextras
  */
 
 class OptionalConfirmedPasswordField extends ConfirmedPasswordField {
@@ -13,7 +12,7 @@ class OptionalConfirmedPasswordField extends ConfirmedPasswordField {
 	}
 
 	function Field() {
-		Requirements::javascript('ecommercextras/javascript/OptionalConfirmedPasswordField.js');
+		Requirements::javascript('ecommerce/javascript/OptionalConfirmedPasswordField.js');
 		Requirements::block(SAPPHIRE_DIR . '/javascript/ConfirmedPasswordField.js');
 		return parent::Field();
 	}

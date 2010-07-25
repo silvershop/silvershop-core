@@ -30,7 +30,10 @@ class CheckoutPage extends Page {
 
 	public static $db = array(
 		'PurchaseComplete' => 'HTMLText',
-		'ChequeMessage' => 'HTMLText'
+		'ChequeMessage' => 'HTMLText',
+		'AlreadyCompletedMessage' => 'HTMLText',
+		'NonExistingOrderMessage' => 'HTMLText',
+		'MustLoginToCheckoutMessage' => 'HTMLText'
 	);
 
 	public static $has_one = array(
@@ -45,9 +48,9 @@ class CheckoutPage extends Page {
 
 	public static $defaults = array();
 
-	static $icon = 'ecommerce/images/icons/money';
+	static $icon = 'ecommerce/images/icons/CheckoutPage-file';
 
-	static $add_action = 'a Checkout Page';
+	static $add_action = 'The Checkout Page';
 
 	/**
 	 * Returns the link to the checkout page on this site, using
@@ -62,6 +65,12 @@ class CheckoutPage extends Page {
 		}
 
 		return ($urlSegment) ? $page->URLSegment : $page->Link();
+	}
+
+
+	function canCreate() {
+		$bt = defined('DB::USE_ANSI_SQL') ? "\"" : "`";
+		return !DataObject::get_one("SiteTree", "{$bt}ClassName{$bt} = 'ShopManagerPage'");
 	}
 
 	/**
@@ -85,15 +94,12 @@ class CheckoutPage extends Page {
 
 		$fields->addFieldToTab('Root.Content.TermsAndConditions', new TreeDropdownField('TermsPageID', 'Terms and Conditions Page', 'SiteTree'));
 
-		$shopMessageComplete = '<p>This message is shown, along with order information after they submit the checkout :<p>';
-		$shopChequeMessage = '<p>This message is shown when a user selects cheque as a payment option on the checkout :</p>';
-
 		$fields->addFieldsToTab('Root.Content.Messages', array(
-			new HeaderField('Checkout Messages', 2),
-			new LiteralField('ShopMessageComplete', $shopMessageComplete),
-			new HtmlEditorField('PurchaseComplete', ''),
-			new LiteralField('ShopChequeMessage', $shopChequeMessage),
-			new HtmlEditorField('ChequeMessage', '', 5)
+			new HtmlEditorField('AlreadyCompletedMessage', 'Already Completed - shown when the customer tries to checkout an already completed order', $row = 4),
+			new HtmlEditorField('NonExistingOrderMessage', 'Non-existing Order - shown when the customer tries ', $row = 4),
+			new HtmlEditorField('MustLoginToCheckoutMessage', 'xxx', $row = 4),
+			new HtmlEditorField('PurchaseComplete', 'Purchase Complete - shown, along with order information, after the customer submits the checkout ', $row = 4),
+			new HtmlEditorField('ChequeMessage', 'Cheque Message - shown when a customer selects a delayed payment option (such as a cheque payment) ', $rows = 4)
 		));
 
 		return $fields;
@@ -231,6 +237,18 @@ class CheckoutPage_Controller extends Page_Controller {
 		return $form;
 	}
 
+	function OrderFormWithoutShippingAddress() {
+		$form = new OrderFormWithoutShippingAddress($this, 'OrderFormWithoutShippingAddress');
+		$this->data()->extend('OrderFormWithoutShippingAddress',&$form);
+		return $form;
+	}
+
+	function OrderFormWithShippingAddress() {
+		$form = new OrderFormWithShippingAddress($this, 'OrderFormWithShippingAddress');
+		$this->data()->extend('OrderFormWithShippingAddress',&$form);
+		return $form;
+	}
+
 	/**
 	 * Returns a message explaining why the customer
 	 * can't checkout the requested order.
@@ -242,15 +260,18 @@ class CheckoutPage_Controller extends Page_Controller {
 		$checkoutLink = self::find_link();
 
 		if($memberID = Member::currentUserID()) {
-			if($order = DataObject::get_one('Order', "ID = '$orderID' AND MemberID = '$memberID'")) {
+			if($order = DataObject::get_one('Order', "Order.ID = '$orderID' AND Order.MemberID = '$memberID'")) {
 				return 'You can not checkout this order because it has been already successfully completed. Click <a href="' . $order->Link() . '">here</a> to see it\'s details, otherwise you can <a href="' . $checkoutLink . '">checkout</a> your current order.';
-			} else {
+			}
+			else {
 				return 'You do not have any order corresponding to that ID, so you can\'t checkout this order.';
 			}
-		} else {
+		}
+		else {
 			$redirectLink = CheckoutPage::get_checkout_order_link($orderID);
 			return 'You can not checkout this order because you are not logged in. To do so, please <a href="Security/login?BackURL=' . $redirectLink . '">login</a> first, otherwise you can <a href="' . $checkoutLink . '">checkout</a> your current order.';
 		}
 	}
+
 
 }

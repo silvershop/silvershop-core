@@ -1,35 +1,25 @@
 <?php
- /**
-	* @author Nicolaas [at] sunnysideup.co.nz
+/**
+  * @author Nicolaas [at] sunnysideup.co.nz
   *
   * @see CheckoutPage
   *
-  * @package ecommercextras
-  */
+  * @package ecommerce
+  **/
+
 class OrderFormWithoutShippingAddress extends OrderForm {
 
 	protected static $fixed_country_code;
+		static function set_fixed_country_code($v) {self::$fixed_country_code = $v;}
 
 	protected static $extra_fields = array();
+		static function add_extra_field($tabName, $field) {self::$extra_fields[] = array("TabName" =>$tabName, "FieldObject" => $field);}
 
 	protected static $postal_code_url = "http://www.nzpost.co.nz/Cultures/en-NZ/OnlineTools/PostCodeFinder";
+		static function set_postal_code_url($v) {self::$postal_code_url = $v;}
+
 	protected static $postal_code_label = "find postcode";
-
-	static function add_extra_field($tabName, $field) {
-		self::$extra_fields[] = array("TabName" =>$tabName, "FieldObject" => $field);
-	}
-
-	static function set_fixed_country_code($v) {
-		self::$fixed_country_code = $v;
-	}
-
-	static function set_postal_code_url($v) {
-		self::$postal_code_url = $v;
-	}
-
-	static function set_postal_code_label($v) {
-		self::$postal_code_label = $v;
-	}
+		static function set_postal_code_label($v) {self::$postal_code_label = $v;}
 
 	protected static $login_invite_alternative_text = '';
 		static function set_login_invite_alternative_text($v) {self::$login_invite_alternative_text = $v;}
@@ -37,7 +27,6 @@ class OrderFormWithoutShippingAddress extends OrderForm {
 			if(!self::$login_invite_alternative_text) {
 				self::$login_invite_alternative_text = 'Please <a href="Security/login?BackURL=/">log in now</a> to retrieve your account details or create an account below.';
 			}
-
 			return str_replace("/?BackURL=", "/?BackURL=/".(CheckoutPage::find_link(true)), self::$login_invite_alternative_text) ;
 		}
 
@@ -45,7 +34,7 @@ class OrderFormWithoutShippingAddress extends OrderForm {
 
 	function __construct($controller, $name) {
 
-		Requirements::javascript('ecommercextras/javascript/OrderFormWithoutShippingAddress.js');
+		Requirements::javascript('ecommerce/javascript/OrderFormWithoutShippingAddress.js');
 
 		parent::__construct($controller, $name);
 
@@ -60,7 +49,7 @@ class OrderFormWithoutShippingAddress extends OrderForm {
 			//$passwordField->minLength = 6;
 			//$passwordField->showOnClickTitle = "add password now";
 			//$this->fields->replaceField("Password", $passwordField);
-			Requirements::javascript('ecommercextras/javascript/OptionalConfirmedPasswordField.js');
+			Requirements::javascript('ecommerce/javascript/OptionalConfirmedPasswordField.js');
 			Requirements::block(SAPPHIRE_DIR . '/javascript/ConfirmedPasswordField.js');
 		}
 
@@ -102,7 +91,6 @@ class OrderFormWithoutShippingAddress extends OrderForm {
 
 		$this->fields->addFieldToTab("", new TextareaField('CustomerOrderNote', 'Note / Question', 7, 30, null, $this));
 
-		//$orderForm = new OrderForm($this, "OrderForm"); ************ NOT SURE WHY WE NEED THIS!
 		$data = $this->getData();
 		$this->loadDataFrom($data);
 	}

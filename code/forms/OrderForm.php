@@ -1,12 +1,12 @@
 <?php
  /**
-  * Order form that allows a user to purchase their
-  * order items on the
-  *
-  * @see CheckoutPage
-  *
-  * @package ecommerce
-  */
+	* Order form that allows a user to purchase their
+	* order items on the
+	*
+	* @see CheckoutPage
+	*
+	* @package ecommerce
+	*/
 class OrderForm extends Form {
 
 	function __construct($controller, $name) {
@@ -171,8 +171,8 @@ class OrderForm extends Form {
 
 		if(!ShoppingCart::has_items()) {
 			$form->sessionMessage('Please add some items to your cart', 'bad');
-	   	Director::redirectBack();
-	   	return false;
+			Director::redirectBack();
+			return false;
 		}
 
 		// Create new OR update logged in {@link Member} record
@@ -229,12 +229,11 @@ class OrderForm extends Form {
 	}
 
 	/** Override form validation to make different shipping address button work */
- 	 function validate(){
- 	 	if(!isset($_POST['action_processOrder'])  &&
- 	        (isset($_POST['action_useMemberShippingAddress']) || isset($_POST['action_useDifferentShippingAddress']) ) ){
- 	    	return true;
- 	    }
- 	 	return parent::validate();
- 	 }
+	 function validate(){
+		if(!isset($_POST['action_processOrder'])  && (isset($_POST['action_useMemberShippingAddress']) || isset($_POST['action_useDifferentShippingAddress']) ) ){
+			return true;
+		}
+		return parent::validate();
+	 }
 
 }

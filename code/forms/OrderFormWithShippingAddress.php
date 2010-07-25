@@ -1,16 +1,16 @@
 <?php
- /**
-	* @author Nicolaas [at] sunnysideup.co.nz
+/**
+ * @author Nicolaas [at] sunnysideup.co.nz
   *
   * @see CheckoutPage
   *
-  * @package ecommercextras
-  */
+  * @package ecommerce
+  **/
 class OrderFormWithShippingAddress extends OrderFormWithoutShippingAddress {
 
 	function __construct($controller, $name) {
 
-		Requirements::javascript('ecommercextras/javascript/OrderFormWithShippingAddress.js');
+		Requirements::javascript('ecommerce/javascript/OrderFormWithShippingAddress.js');
 
 		parent::__construct($controller, $name);
 		if(self::$fixed_country_code) {
