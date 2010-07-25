@@ -8,8 +8,48 @@ see https://code.google.com/p/silverstripe-ecommerce/
 
 Requirements
 -----------------------------------------------
-This module requires the payments module to be installed.
+Payment Module 0.3+
+Sapphire 2.4+
 
 Documentation
 -----------------------------------------------
 see https://code.google.com/p/silverstripe-ecommerce/
+
+
+
+Installation Instructions
+-----------------------------------------------
+1. Find out how to add modules to SS and add module as per usual.
+
+2. copy configurations from this module's _config.php file
+into mysite/_config.php file and edit settings as required.
+NB. the idea is not to edit this module so that you can
+upgrade this module in one go without redoing the settings.
+Instead customise your application using your mysite folder.
+
+
+
+Tips
+-----------------------------------------------------------
+
+how to change order status options:
+
+create class in your mysite folder like this
+
+class OrderDecoratorCustom extends DataObjectDecorator {
+
+	function extraStatics() {
+		return array(
+			'db' => array(
+				'Status' => 'Enum("New,ConfirmingPayment,QueryForCustomer,ProductsOnOrder,Dispatching,CustomerReceiving,Completed,MemberCancelled,AdminCancelled","New")',
+			)
+		);
+	}
+}
+
+and then add the following to your _config.php file:
+
+DataObjectDecorator::add_extension('Order', 'OrderDecoratorCustom');
+
+
+
