@@ -11,15 +11,22 @@ class AccountPage extends Page {
 
 	static $icon = 'ecommerce/images/icons/account';
 
+	static $db = array(
+
+	);
+
+
+	function canCreate() {
+		$bt = defined('DB::USE_ANSI_SQL') ? "\"" : "`";
+		return !DataObject::get_one("SiteTree", "{$bt}ClassName{$bt} = 'AccountPage'");
+	}
+
 	/**
 	 * Returns the link or the URLSegment to the account page on this site
 	 * @param boolean $urlSegment Return the URLSegment only
 	 */
 	static function find_link($urlSegment = false) {
-		if(!$page = DataObject::get_one('AccountPage')) {
-			user_error('No AccountPage was found. Please create one in the CMS!', E_USER_ERROR);
-		}
-
+		self::get_if_account_page_exists();
 		return ($urlSegment) ? $page->URLSegment : $page->Link();
 	}
 
@@ -30,11 +37,14 @@ class AccountPage extends Page {
 	 * @param boolean $urlSegment Return the URLSegment only
 	 */
 	static function get_order_link($orderID, $urlSegment = false) {
+		self::get_if_account_page_exists();
+		return ($urlSegment ? $page->URLSegment . '/' : $page->Link()) . 'order/' . $orderID;
+	}
+
+	protected static function get_if_account_page_exists() {
 		if(!$page = DataObject::get_one('AccountPage')) {
 			user_error('No AccountPage was found. Please create one in the CMS!', E_USER_ERROR);
 		}
-
-		return ($urlSegment ? $page->URLSegment . '/' : $page->Link()) . 'order/' . $orderID;
 	}
 
 	/**
@@ -45,8 +55,8 @@ class AccountPage extends Page {
 	 */
 	function CompleteOrders() {
 		$memberID = Member::currentUserID();
-		$statusFilter = "Status IN ('" . implode("','", Order::$paid_status) . "')";
-		return DataObject::get('Order', "MemberID = '$memberID' AND $statusFilter", "Created DESC");
+		$statusFilter = "Order.Status IN ('" . implode("','", Order::$paid_status) . "')";
+		return DataObject::get('Order', "Order.MemberID = '$memberID' AND $statusFilter", "Created DESC");
 	}
 
 	/**
@@ -57,8 +67,8 @@ class AccountPage extends Page {
 	 */
 	function IncompleteOrders() {
 		$memberID = Member::currentUserID();
-		$statusFilter = "Status NOT IN ('" . implode("','", Order::$paid_status) . "')";
-		return DataObject::get('Order', "MemberID = '$memberID' AND $statusFilter", "Created DESC");
+		$statusFilter = "Order.Status NOT IN ('" . implode("','", Order::$paid_status) . "')";
+		return DataObject::get('Order', "Order.MemberID = '$memberID' AND $statusFilter", "Created DESC");
 	}
 
 	/**
@@ -114,15 +124,17 @@ class AccountPage_Controller extends Page_Controller {
 		$accountPageLink = AccountPage::find_link();
 
 		if($orderID = $request->param('ID')) {
-			if($order = DataObject::get_one('Order', "Order.ID = '$orderID' AND MemberID = '$memberID'")) {
+			if($order = DataObject::get_one('Order', "Order.ID = '$orderID' AND Order.MemberID = '$memberID'")) {
 				return array('Order' => $order);
-			} else {
+			}
+			else {
 				return array(
 					'Order' => false,
 					'Message' => 'You do not have any order corresponding to this ID. However, you can <a href="' . $accountPageLink . '">edit your own personal details and view your orders.</a>.'
 				);
 			}
-		} else {
+		}
+		else {
 			return array(
 				'Order' => false,
 				'Message' => 'There is no order by that ID. You can <a href="' . $accountPageLink . '">edit your own personal details and view your orders.</a>.'
