@@ -24,6 +24,40 @@ class OrderItem extends OrderAttribute {
 		'Total' => 'Currency'
 	);
 
+
+	######################
+	## CMS CONFIG ##
+	######################
+
+	public static $searchable_fields = array(
+		"OrderID",
+		"Title" => "PartialMatchFilter",
+		"TableTitle" => "PartialMatchFilter",
+		"CartTitle" => "PartialMatchFilter",
+		"UnitPrice",
+		"Quantity",
+		"Total"
+	);
+
+	public static $field_labels = array(
+
+	);
+	public static $summary_fields = array(
+		"Order.ID" => "Order ID",
+		"TableTitle" => "Title",
+		"CartTitle" => "Title",
+		"ClassName" => "Type",
+		"UnitPrice" => "Unit Price" ,
+		"Quantity" => "Quantity" ,
+		"Total" => "Total Price" ,
+	);
+
+	public static $singular_name = "Order Item";
+
+	public static $plural_name = "Order Items";
+
+	public static $default_sort = "Created DESC";
+
 	public function __construct($object = null, $quantity = 1) {
 
 		// Case 1: Constructed by getting OrderItem from DB

@@ -20,6 +20,7 @@ class Order extends DataObject {
  	 * MemberCancelled: Order cancelled by the customer (Member)
  	 */
 	public static $db = array(
+		'SessionID' => "Varchar(32)", //so that in the future we can link sessions with Orders.... One session can have several orders, but an order can onnly have one session
 		'Status' => "Enum('Unpaid,Query,Paid,Processing,Sent,Complete,AdminCancelled,MemberCancelled','Unpaid')",
 		'Country' => 'Varchar',
 		'UseShippingAddress' => 'Boolean',
@@ -27,9 +28,14 @@ class Order extends DataObject {
 		'ShippingAddress' => 'Text',
 		'ShippingAddress2' => 'Text',
 		'ShippingCity' => 'Text',
+		'ShippingPostalCode' => 'Varchar(30)',
+		'ShippingState' => 'Varchar(30)',
 		'ShippingCountry' => 'Text',
+		'ShippingPhone' => 'Varchar(30)',
+		'CustomerOrderNote' => 'Text',
 		'Printed' => 'Boolean'
 	);
+
 
 	public static $has_one = array(
 		'Member' => 'Member'
@@ -153,8 +159,46 @@ class Order extends DataObject {
 	);
 
 	public static $searchable_fields = array(
-		'ID','Total','Status'
+		'ID',
+		'Status',
+		//'Total',
+		'Member.FirstName' => array('title' => 'Customer Name', 'filter' => 'PartialMatchFilter'),
+		'Member.Email' => array('title' => 'Customer Email', 'filter' => 'PartialMatchFilter')
+		/*
+		'From' => array(
+			'field' => 'DateField',
+			'filter' => 'OrderDecorator_EqualOrGreaterFilter'
+		),
+		'To' => array(
+			'field' => 'DateField',
+			'filter' => 'OrderDecorator_EqualOrLessFilter'
+		)
+		*/
 	);
+
+	protected static $non_shipping_db_fields = array("Status", "Printed");
+		protected static function set_non_shipping_db_fields($v) {self::$non_shipping_db_fields = $v;}
+		protected static function get_non_shipping_db_fields() {return self::$non_shipping_db_fields;}
+
+	protected static function get_shipping_fields() {
+		$arrayNew = array();
+		$array = self::$db;
+		foreach($array as $key => $item) {
+			if(!in_array($key, self::get_non_shipping_db_fields())) {
+				$arrayNew[] = $key;
+			}
+		}
+		return $arrayNew;
+	}
+
+ 	protected static $order_id_start_number = 0;
+		static function set_order_id_start_number($v) {self::$order_id_start_number = $v;}
+		static function get_order_id_start_number() {return self::$order_id_start_number;}
+
+	public static function get_order_status_options() {
+		$newArray = singleton('Order')->dbObject('Status')->enumValues(false);
+		return $newArray;
+	}
 
 	function getCMSFields(){
 		$fields = parent::getCMSFields();
@@ -163,22 +207,27 @@ class Order extends DataObject {
 		$fields->addFieldToTab('Root.Main', new HeaderField('MainDetails', 'Main Details'), 'Status');
 		$fields->addFieldToTab('Root.Main', new ReadonlyField('OrderNo', 'Order No', "#{$this->ID}"), 'Status');
 		$fields->addFieldToTab('Root.Main', new ReadonlyField('Date', 'Date', date('l jS F Y h:i:s A', strtotime($this->Created))), 'Status');
-		$fields->addFieldToTab('Root.Main', new ReadonlyField('Customer', 'Customer', "$member->FirstName $member->Surname ($member->Email)"), 'Status');
-
-		$attributes = $fields->findOrMakeTab('Root.Attributes')->fieldByName('Attributes');
-		if($attributes) {
-			$attributes->setFieldList(array(
-				'TableTitle' => 'Title',
-				'Quantity' => 'Quantity',
-				'UnitPrice' => 'Price',
-				'Total' => 'Total'
-			));
-			$attributesReadonly = $attributes->performReadonlyTransformation();
-			$attributesReadonly->setPermissions(array());
+		$fields->addFieldToTab('Root.Main', new ReadonlyField('Customer', 'Customer', $this->MemberSummary()), 'Status');
+		$attTab = $fields->findOrMakeTab('Root.Attributes');
+		if($attTab) {
+			$attributes = $attTab->fieldByName('Attributes');
+			if($attributes) {
+				$attributes->setFieldList(array(
+					'TableTitle' => 'Title',
+					'Quantity' => 'Quantity',
+					'UnitPrice' => 'Price',
+					'Total' => 'Total'
+				));
+				$attributesReadonly = $attributes->performReadonlyTransformation();
+				$attributesReadonly->setPermissions(array());
+			}
 		}
-		$fieldsAndTabsToBeRemoved = array('Attributes', 'Order Status Log With Details', 'Country', 'UseShippingAddress', 'ShippingName', 'ShippingAddress', 'ShippingAddress2', 'ShippingCity', 'ShippingCountry', 'Printed', 'Member', 'CustomerOrderNote');
-		foreach($fieldsAndTabsToBeRemoved as $tab) $fields->removeByName($tab);
-
+		$fieldsAndTabsToBeRemoved = self::get_shipping_fields();
+		$fieldsAndTabsToBeRemoved[] = 'Attributes';
+		$fieldsAndTabsToBeRemoved[] = 'Order Status Log';
+		foreach($fieldsAndTabsToBeRemoved as $field) {
+			$fields->removeByName($field);
+		}
 		$total = new Money('Total');
 		$total->setValue(array(
 			'Currency' => Payment::site_currency(),
@@ -192,19 +241,46 @@ class Order extends DataObject {
 		$fields->addFieldsToTab('Root.Items', array(
 			$attributesReadonly
 		));
+		$fields->addFieldsToTab('Root.Customer', array(
+			new LiteralField("MemberLink", '<a href="admin/security/EditForm/field/Members/item/1/edit" class="popuplink editlink"><img alt="Edit" src="cms/images/edit.gif"></a>'),
+			new LiteralField("MemberSummary", $this->MemberSummary())
+		));
 		if($this->UseShippingAddress) {
-			$fields->addFieldsToTab('Root.Shipping', array(
-				new ReadonlyField('DeliveryName', 'Name', $this->UseShippingAddress ? $this->ShippingName : "$member->FirstName $member->Surname"),
-				new ReadonlyField('DeliveryAddress', 'Address', $this->UseShippingAddress ? "{$this->ShippingAddress}\n{$this->ShippingAddress2}\n{$this->ShippingCity}\n".Geoip::countryCode2name($this->ShippingCountry) : "$member->Address\n$member->AddressLine2\n$member->City\n".Geoip::countryCode2name($this->Country)),
-			));
+			$shippingFields = self::get_shipping_fields();
+			foreach($shippingFields as $shippingField) {
+				$fields->addFieldToTab('Root.Shipping', new TextField($shippingField));
+			}
 		}
 		else {
 			$fields->addFieldsToTab('Root.Shipping', array(
-				new HeaderField('DeliveryName', 'No (alternative) shipping address to be used')
+				new HeaderField('DeliveryName', 'No (alternative) shipping address to be used'),
+				new LiteralField("MemberSummary", $this->ShippingAddressSummary())
 			));
 		}
+		$fields->addFieldsToTab('Root.PrintOuts', array(
+			new LiteralField("PrintIndex",'<p class="print"><a href="OrderReport_Popup/index/'.$this->ID.'" onclick="javascript: window.open(this.href, \'print_order\', \'toolbar=0,scrollbars=1,location=1,statusbar=0,menubar=0,resizable=1,width=800,height=600,left = 50,top = 50\'); return false;">internal print out</a></p>'),
+			new LiteralField("PrintInvoice",'<p class="print"><a href="OrderReport_Popup/invoice/'.$this->ID.'" onclick="javascript: window.open(this.href, \'print_order\', \'toolbar=0,scrollbars=1,location=1,statusbar=0,menubar=0,resizable=1,width=800,height=600,left = 50,top = 50\'); return false;">print invoice</a></p>'),
+			new LiteralField("PrintPackingSlip",'<p class="print"><a href="OrderReport_Popup/packingslip/'.$this->ID.'" onclick="javascript: window.open(this.href, \'print_order\', \'toolbar=0,scrollbars=1,location=1,statusbar=0,menubar=0,resizable=1,width=800,height=600,left = 50,top = 50\'); return false;">print packing slip</a></p>')
+		));
+		/*
+		$fields->addFieldsToTab('Root.Print', array(
+			new LiteralField("OrderInformationWithNote", $this->renderWith('OrderInformation_Print_Details'))
+		));
+		*/
 		return $fields;
 	}
+
+
+	function MemberSummary() {
+		if($m = $this->Member()) {
+			return $m->renderWith("Order_Member");
+		}
+	}
+
+	function ShippingAddressSummary() {
+		return $this->renderWith("Order_ShippingAddress");
+	}
+
 
 	/**
 	 * Set the fields to be used for {@link ComplexTableField}
@@ -528,6 +604,18 @@ class Order extends DataObject {
 		}
 	}
 
+	public function canDelete($member = null) {
+		return false;
+	}
+
+	public function canEdit($member = null) {
+		return true;
+	}
+
+	public function canCreate($member = null) {
+		return false;
+	}
+
 	/**
 	 * Returns the {@link Payment} records linked
 	 * to this order.
@@ -709,18 +797,22 @@ class Order extends DataObject {
 	 *
 	 * @param string $note Optional note-content (instead of using the OrderStatusLog)
 	 */
-	function sendStatusChange($note = null) {
+	function sendStatusChange($title, $note = null) {
 		if(!$note) {
-			$logs = DataObject::get('OrderStatusLog', "OrderID = {$this->ID}", "Created DESC", null, 1);
-			$latestLog = $logs->First();
-			$note = $latestLog->Note;
+			$logs = DataObject::get('OrderStatusLog', "OrderID = {$this->ID} AND SentToCustomer = 1", "Created DESC", null, 1);
+			if($logs) {
+				$latestLog = $logs->First();
+				$note = $latestLog->Note;
+				$title = $latestLog->Title;
+			}
 		}
 
 		$member = $this->Member();
 
  		if(self::$receipt_email) {
  			$adminEmail = self::$receipt_email;
- 		} else {
+ 		}
+		else {
  			$adminEmail = Email::getAdminEmail();
  		}
 
@@ -734,7 +826,7 @@ class Order extends DataObject {
 			)
 		);
 		$e->setFrom($adminEmail);
-		$e->setSubject('Your order status');
+		$e->setSubject($title);
 		$e->setTo($member->Email);
 		$e->send();
 	}
@@ -788,17 +880,55 @@ class Order extends DataObject {
  			DB::query("ALTER TABLE {$bt}Order{$bt} CHANGE COLUMN {$bt}Shipping{$bt} {$bt}_obsolete_Shipping{$bt} decimal(9,2)");
  			DB::query("ALTER TABLE {$bt}Order{$bt} CHANGE COLUMN {$bt}AddedTax{$bt} {$bt}_obsolete_AddedTax{$bt} decimal(9,2)");
  			DB::alteration_message('The columns \'hasShippingCost\', \'Shipping\' and \'AddedTax\' of the table \'Order\' have been renamed successfully. Also, the columns have been renamed respectly to \'_obsolete_hasShippingCost\', \'_obsolete_Shipping\' and \'_obsolete_AddedTax\'', 'obsolete');
-  		}
+		}
 
-  		// 2) Cancel status update
+		// 2) Cancel status update
 
-  		if($orders = DataObject::get('Order', "{$bt}Status{$bt} = 'Cancelled'")) {
-  			foreach($orders as $order) {
-  				$order->Status = 'AdminCancelled';
-  				$order->write();
-  			}
-  			DB::alteration_message('The orders which status was \'Cancelled\' have been successfully changed to the status \'AdminCancelled\'', 'changed');
-  		}
+		if($orders = DataObject::get('Order', "{$bt}Status{$bt} = 'Cancelled'")) {
+			foreach($orders as $order) {
+				$order->Status = 'AdminCancelled';
+				$order->write();
+			}
+			DB::alteration_message('The orders which status was \'Cancelled\' have been successfully changed to the status \'AdminCancelled\'', 'changed');
+		}
+		//set starting order number ID
+		$number = intval(Order::get_order_id_start_number());
+		$currentMax = 0;
+		//set order ID
+		if($number) {
+			$count = DB::query("SELECT COUNT( {$bt}ID{$bt} ) FROM {$bt}Order{$bt} ")->value();
+		 	if($count > 0) {
+				$currentMax = DB::Query("SELECT MAX( ID ) FROM {$bt}Order{$bt}")->value();
+			}
+			if($number > $currentMax) {
+				DB::query("ALTER TABLE {$bt}Order{$bt}  AUTO_INCREMENT = $number ROW_FORMAT = DYNAMIC ");
+				DB::alteration_message("Change OrderID start number to ".$number, "edited");
+			}
+		}
+		//fix bad status
+		$list = self::get_order_status_options();
+		$firstOption = current($list);
+		$badOrders = DataObject::get("Order", "Status = ''");
+		if($badOrders) {
+			foreach($badOrders as $order) {
+				$order->Status = $firstOption;
+				$order->write();
+				DB::alteration_message("No order status for order number #".$order->ID." reverting to: $firstOption.","error");
+			}
+		}
+	}
+
+
+	function onAfterWrite() {
+		parent::onAfterWrite();
+		$log = new OrderStatusLog();
+		$log->OrderID = $this->ID;
+		$log->SentToCustomer = false;
+		//TO DO: make this sexier OR consider using Versioning!
+		$data = print_r($this->record, true);
+		$log->Title = "Order Update";
+		$log->Note = $data;
+		$log->write();
 	}
 
 	/**
@@ -893,4 +1023,5 @@ class Order_CancelForm extends Form {
 	}
 
 }
+
 

@@ -8,13 +8,14 @@
 class OrderStatusLog extends DataObject {
 
 	public static $db = array(
-		'Status' => 'Varchar(255)',
+		'Title' => 'Varchar(100)',
 		'Note' => 'Text',
-		'DispatchedBy' => 'Varchar(255)',
+		'DispatchedBy' => 'Varchar(100)',
 		'DispatchedOn' => 'Date',
-		'DispatchTicket' => 'Varchar(255)',
-		'PaymentCode' => 'Varchar(255)',
-		'PaymentOK' => 'Boolean'
+		'DispatchTicket' => 'Varchar(100)',
+		'PaymentCode' => 'Varchar(100)',
+		'PaymentOK' => 'Boolean',
+		'SentToCustomer' => 'Boolean'
 	);
 
 	public static $has_one = array(
@@ -25,10 +26,12 @@ class OrderStatusLog extends DataObject {
 	public function canDelete($member = null) {
 		return false;
 	}
+	public function canEdit($member = null) {
+		return false;
+	}
 
 	public static $searchable_fields = array(
 		"Note" => "PartialMatchFilter",
-		"Status" => "PartialMatchFilter",
 		'DispatchTicket' => 'PartialMatchFilter',
 		'PaymentCode' => 'PartialMatchFilter',
 		'PaymentOK'
@@ -37,8 +40,12 @@ class OrderStatusLog extends DataObject {
 	public static $summary_fields = array(
 		"Created" => "Date",
 		"OrderID" => "OrderID",
-		"Status" => "Status",
-		"Note" => "Note"
+		"Title" => "Title",
+		"SentToCustomer" => "SentToCustomer"
+	);
+
+	public static $field_labels = array(
+		"SentToCustomer" => "Send this update as a message to the customer"
 	);
 
 	public static $singular_name = "Order Log Entry";
@@ -49,21 +56,50 @@ class OrderStatusLog extends DataObject {
 
 	function onBeforeSave() {
 		if(!$this->ID) {
+			//TO DO - this does not seem to work
 			$this->AuthorID = Member::currentUser()->ID;
 		}
 		parent::onBeforeSave();
 	}
 
+	function populateDefaults() {
+		parent::populateDefaults();
+		$this->updateWithLastInfo();
+	}
+
+	function onBeforeWrite() {
+		parent::onBeforeWrite();
+		if(!$this->AuthorID) {
+			$this->AuthorID = Member::currentUser()->ID;
+		}
+		if(!$this->Title) {
+			$this->Title = "Order Update";
+		}
+		if(!$this->OrderID) {
+			user_error("there is no order id for Order Status Log", E_USER_NOTICE);
+		}
+	}
+
+	function onAfterWrite(){
+		if($this->SentToCustomer) {
+			$this->order()->sendStatusChange($this->Title, $this->Note);
+		}
+	}
 
 	function requiredDefaultRecords() {
 		parent::requiredDefaultRecords();
-		//migration of old records
-		$oldOnes = DataObject::get("", "SentToCustomer = 1", null, null, "0, 200");
-		if($oldOnes) {
-			foreach($oldOnes as $oldOne) {
-				$oldOne->DispatchedOn = $oldOne->Created;
-				$oldOne->SentToCustomer = 0;
-				$oldOne->write();
+	}
+
+	protected function updateWithLastInfo() {
+		if($this->OrderID) {
+			$logs = DataObject::get('OrderStatusLog', "OrderID = {$this->OrderID}", "Created DESC", null, 1);
+			if($logs) {
+				$latestLog = $logs->First();
+				$this->DispatchedBy = $latestLog->DispatchedBy;
+				$this->DispatchedOn = $latestLog->DispatchedOn;
+				$this->DispatchTicket = $latestLog->DispatchTicket;
+				$this->PaymentCode = $latestLog->PaymentCode;
+				$this->PaymentOK = $latestLog->PaymentOK;
 			}
 		}
 	}

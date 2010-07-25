@@ -19,10 +19,6 @@ class OrderAttribute extends DataObject {
 		'CartTitle' => 'Text'
 	);
 
-	public static $summary_fields = array(
-		'ID' => 'ID',
-		'TableTitle' => 'Title'
-	);
 
 	public function getIdAttribute() {
 		return $this->_id;
@@ -30,6 +26,14 @@ class OrderAttribute extends DataObject {
 
 	public function setIdAttribute($id) {
 		$this->_id = $id;
+	}
+
+	public function canCreate($member = null) {
+		return false;
+	}
+
+	public function canDelete($member = null) {
+		return false;
 	}
 
 	/**
@@ -40,6 +44,7 @@ class OrderAttribute extends DataObject {
 		if($this->ID) return DataObject::get_by_id('Order', $this->OrderID);
 		else return ShoppingCart::current_order();
 	}
+
 
 	######################
 	## TEMPLATE METHODS ##

@@ -67,6 +67,37 @@ class OrderModifier extends OrderAttribute {
 		return new OrderModifierForm($controller, 'ModifierForm', new FieldSet(), new FieldSet());
 	}
 
+
+	######################
+	## CMS CONFIG ##
+	######################
+
+	public static $searchable_fields = array(
+		"OrderID",
+		"Title" => "PartialMatchFilter",
+		"TableTitle" => "PartialMatchFilter",
+		"CartTitle" => "PartialMatchFilter",
+		"Amount",
+		"Type"	);
+
+	public static $field_labels = array(
+
+	);
+	public static $summary_fields = array(
+		"Order.ID" => "Order ID",
+		"TableTitle" => "Title",
+		"CartTitle" => "Title",
+		"ClassName" => "Type",
+		"Amount" => "Amount" ,
+		"Type" => "Type"
+	);
+
+	public static $singular_name = "Order Modifiers";
+
+	public static $plural_name = "Order Modifiers";
+
+	public static $default_sort = "Created DESC";
+
 	/**
 	 * This function is always called to determine the
 	 * amount this modifier needs to charge or deduct.
