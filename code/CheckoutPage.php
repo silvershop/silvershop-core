@@ -70,7 +70,7 @@ class CheckoutPage extends Page {
 
 	function canCreate() {
 		$bt = defined('DB::USE_ANSI_SQL') ? "\"" : "`";
-		return !DataObject::get_one("SiteTree", "{$bt}ClassName{$bt} = 'ShopManagerPage'");
+		return !DataObject::get_one("SiteTree", "{$bt}ClassName{$bt} = 'CheckoutPage'");
 	}
 
 	/**
