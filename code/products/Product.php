@@ -348,16 +348,16 @@ class Product_Image extends Image {
 
 	protected static $large_image_width = 600;
 
-	function set_thumbnail_size($width = 140, $height = 100){
+	static function set_thumbnail_size($width = 140, $height = 100){
 		self::$thumbnail_width = $width;
 		self::$thumbnail_height = $height;
 	}
 
-	function set_content_image_width($width = 200){
+	static function set_content_image_width($width = 200){
 		self::$content_image_width = $width;
 	}
 
-	function set_large_image_width($width = 600){
+	static function set_large_image_width($width = 600){
 		self::$large_image_width = $width;
 	}
 

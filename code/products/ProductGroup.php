@@ -31,12 +31,14 @@ class ProductGroup extends Page {
 
 	static $icon = 'cms/images/treeicons/folder';
 
-	static $include_child_groups = true;
-	static $page_length = 12;
-	static $must_have_price = true;
+	protected static $include_child_groups = true;
+
+	protected static $page_length = 12;
+
+	protected static $must_have_price = true;
 
 	//TODO: allow grouping multiple sort fields under one 'sort option', and allow choosing direction of each
-	static $sort_options = array(
+	protected static $sort_options = array(
 		'Title' => 'Alphabetical',
 		'Price' => 'Lowest Price',
 		'NumberSold' => 'Most Popular'
@@ -44,25 +46,29 @@ class ProductGroup extends Page {
 		//'Weight' => 'Weight'
 	);
 
-	static $featured_products_permissions = array(
+	protected static $featured_products_permissions = array(
 		'Show Only Featured Products',
 		'Show All Products'
 	);
 
-	static $non_featured_products_permissions = array(
+	protected static $non_featured_products_permissions = array(
 		'Show All Products'
 	);
 
 
-	function set_page_length($length){
+	static function set_include_child_groups($include = true){
+		self::$include_child_groups = $include;
+	}
+
+	static function set_page_length($length){
 		self::$page_length = $length;
 	}
 
-	function set_must_have_price($must = true){
+	static function set_must_have_price($must = true){
 		self::$must_have_price = $must;
 	}
 
-	function set_sort_options(array $options){
+	static function set_sort_options(array $options){
 		self::$sort_options = $options;
 	}
 
