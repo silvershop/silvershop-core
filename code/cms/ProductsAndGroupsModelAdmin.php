@@ -9,6 +9,7 @@ class ProductsAndGroupsModelAdmin extends ModelAdmin {
 	static $menu_priority = 2;
 
 	public static $collection_controller_class = "ProductsAndGroupsModelAdmin_CollectionController";
+
 	public static $record_controller_class = "ProductsAndGroupsModelAdmin_RecordController";
 
 	public static $managed_models = array("Product", "ProductGroup");
