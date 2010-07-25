@@ -9,7 +9,7 @@
 	<div class="typography">
 		<div id="OrderInformation">
 			<% control DisplayFinalisedOrder %>
-				<% include OrderInformationWithNote %>
+				<% include OrderInformation_Print_Details %>
 			<% end_control %>
 		</div>
 	</div>
