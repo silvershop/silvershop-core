@@ -48,7 +48,7 @@ class CheckoutPage extends Page {
 
 	public static $defaults = array();
 
-	static $icon = 'ecommerce/images/icons/CheckoutPage-file';
+	static $icon = 'ecommerce/images/icons/money';
 
 	static $add_action = 'The Checkout Page';
 
