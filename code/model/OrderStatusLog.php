@@ -69,8 +69,8 @@ class OrderStatusLog extends DataObject {
 
 	function onBeforeWrite() {
 		parent::onBeforeWrite();
-		if(!$this->AuthorID) {
-			$this->AuthorID = Member::currentUser()->ID;
+		if(!$this->AuthorID && $m = Member::currentUser()) {
+			$this->AuthorID = $m->ID;
 		}
 		if(!$this->Title) {
 			$this->Title = "Order Update";
