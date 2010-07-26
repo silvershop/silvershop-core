@@ -615,6 +615,10 @@ class Order extends DataObject {
 		return $total;
 	}
 
+	private function Payments() {
+		return DataObject::get("Payment", "OrderID = ".$this->ID);
+	}
+
 	/**
 	 * @TODO Why do we need to get this from the AccountPage class?
 	 */
