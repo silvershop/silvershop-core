@@ -43,7 +43,7 @@ class OrderItem extends OrderAttribute {
 
 	);
 	public static $summary_fields = array(
-		"Order.ID" => "Order ID",
+		"OrderSummary" => "Order ID",
 		"TableTitle" => "Title",
 		"CartTitle" => "Title",
 		"ClassName" => "Type",
@@ -51,6 +51,10 @@ class OrderItem extends OrderAttribute {
 		"Quantity" => "Quantity" ,
 		"Total" => "Total Price" ,
 	);
+
+	function OrderSummary() {
+		return $this->Order()->OrderSummary();
+	}
 
 	public static $singular_name = "Order Item";
 

@@ -161,17 +161,18 @@ class Order extends DataObject {
 	public static $searchable_fields = array(
 		'ID',
 		'Status',
-		//'Total',
+		'Printed',
 		'Member.FirstName' => array('title' => 'Customer Name', 'filter' => 'PartialMatchFilter'),
-		'Member.Email' => array('title' => 'Customer Email', 'filter' => 'PartialMatchFilter')
-		/*
-		'From' => array(
-			'field' => 'DateField',
-			'filter' => 'OrderDecorator_EqualOrGreaterFilter'
-		),
+		'Member.Email' => array('title' => 'Customer Email', 'filter' => 'PartialMatchFilter'),
+		'Member.HomePhone' => array('title' => 'Customer Phone', 'filter' => 'PartialMatchFilter'),
+		'Created' => array(
+			'field' => 'EcommerceFormattedDateField',
+			'filter' => 'OrderFilters_EqualOrGreaterDateFilter'
+		)
+		/*,
 		'To' => array(
 			'field' => 'DateField',
-			'filter' => 'OrderDecorator_EqualOrLessFilter'
+			'filter' => 'OrderFilters_EqualOrSmallerDateFilter'
 		)
 		*/
 	);
@@ -201,33 +202,20 @@ class Order extends DataObject {
 	}
 
 	function getCMSFields(){
+		$bt = defined('DB::USE_ANSI_SQL') ? "\"" : "`";
 		$fields = parent::getCMSFields();
-		$member = $this->Member();
-
-		$fields->addFieldToTab('Root.Main', new HeaderField('MainDetails', 'Main Details'), 'Status');
-		$fields->addFieldToTab('Root.Main', new ReadonlyField('OrderNo', 'Order No', "#{$this->ID}"), 'Status');
-		$fields->addFieldToTab('Root.Main', new ReadonlyField('Date', 'Date', date('l jS F Y h:i:s A', strtotime($this->Created))), 'Status');
-		$fields->addFieldToTab('Root.Main', new ReadonlyField('Customer', 'Customer', $this->MemberSummary()), 'Status');
-		$attTab = $fields->findOrMakeTab('Root.Attributes');
-		if($attTab) {
-			$attributes = $attTab->fieldByName('Attributes');
-			if($attributes) {
-				$attributes->setFieldList(array(
-					'TableTitle' => 'Title',
-					'Quantity' => 'Quantity',
-					'UnitPrice' => 'Price',
-					'Total' => 'Total'
-				));
-				$attributesReadonly = $attributes->performReadonlyTransformation();
-				$attributesReadonly->setPermissions(array());
-			}
-		}
 		$fieldsAndTabsToBeRemoved = self::get_shipping_fields();
+		$fieldsAndTabsToBeRemoved[] = 'Printed';
+		$fieldsAndTabsToBeRemoved[] = 'MemberID';
 		$fieldsAndTabsToBeRemoved[] = 'Attributes';
-		$fieldsAndTabsToBeRemoved[] = 'Order Status Log';
 		foreach($fieldsAndTabsToBeRemoved as $field) {
 			$fields->removeByName($field);
 		}
+
+		$fields->addFieldToTab('Root.Main', new HeaderField('MainDetails', 'Main Details'), 'Status');
+		$fields->addFieldToTab('Root.Main', new ReadonlyField('OrderNo', 'Order No', "#{$this->ID}"), 'Status');
+		$fields->addFieldToTab('Root.Main', new ReadonlyField('Date', 'Date', date('l jS F Y h:i A', strtotime($this->Created))), 'Status');
+
 		$total = new Money('Total');
 		$total->setValue(array(
 			'Currency' => Payment::site_currency(),
@@ -238,9 +226,51 @@ class Order extends DataObject {
 			new ReadonlyField('TheTotal', 'Total', $total->Nice()),
 		));
 
+		$orderItemsTable = new TableListField(
+			"OrderItems", //$name
+			"OrderItem", //$sourceClass =
+			OrderItem::$summary_fields, //$fieldList =
+			"OrderID = ".$this->ID, //$sourceFilter =
+			"Created ASC", //$sourceSort =
+			null //$sourceJoin =
+		);
+		//$orderItemsTable->colFunction_sum();
+		//$orderItemsTable->PageSize
+		//$orderItemsTable->SummaryFields
+		//$orderItemsTable->TotalCount
+		$orderItemsTable->setPermissions(array());
+		$orderItemsTable->setPageSize(10000);
+		$orderItemsTable->addSummary(
+			"Total",
+			array("Total" => array("sum","Currency->Nice"))
+		);
+		$fields->addFieldToTab('Root.Items',$orderItemsTable);
+
+		$modifierTable = new TableListField(
+			"OrderModifiers", //$name
+			"OrderModifier", //$sourceClass =
+			OrderModifier::$summary_fields, //$fieldList =
+			"OrderID = ".$this->ID."", //$sourceFilter =
+			"{$bt}Type{$bt}, {$bt}Amount{$bt} ASC, {$bt}Created{$bt} ASC", //$sourceSort =
+			null //$sourceJoin =
+		);
+		//$orderItemsTable->colFunction_sum();
+		//$orderItemsTable->PageSize
+		//$orderItemsTable->SummaryFields
+		//$orderItemsTable->TotalCount
+		$modifierTable->setPermissions(array());
+		$modifierTable->setPageSize(10000);
+		$modifierTable->addSummary(
+			"Amount",
+			array("Amount" => array("sum","Currency->Nice"))
+		);
+		$fields->addFieldToTab('Root.Extras',$modifierTable);
+
+		/*
 		$fields->addFieldsToTab('Root.Items', array(
 			$attributesReadonly
 		));
+		*/
 		$fields->addFieldsToTab('Root.Customer', array(
 			new LiteralField("MemberLink", '<a href="admin/security/EditForm/field/Members/item/1/edit" class="popuplink editlink"><img alt="Edit" src="cms/images/edit.gif"></a>'),
 			new LiteralField("MemberSummary", $this->MemberSummary())
@@ -254,10 +284,11 @@ class Order extends DataObject {
 		else {
 			$fields->addFieldsToTab('Root.Shipping', array(
 				new HeaderField('DeliveryName', 'No (alternative) shipping address to be used'),
-				new LiteralField("MemberSummary", $this->ShippingAddressSummary())
+				new LiteralField("ShippingSummary", $this->ShippingAddressSummary())
 			));
 		}
 		$fields->addFieldsToTab('Root.PrintOuts', array(
+			new CheckboxField("Printed"),
 			new LiteralField("PrintIndex",'<p class="print"><a href="OrderReport_Popup/index/'.$this->ID.'" onclick="javascript: window.open(this.href, \'print_order\', \'toolbar=0,scrollbars=1,location=1,statusbar=0,menubar=0,resizable=1,width=800,height=600,left = 50,top = 50\'); return false;">internal print out</a></p>'),
 			new LiteralField("PrintInvoice",'<p class="print"><a href="OrderReport_Popup/invoice/'.$this->ID.'" onclick="javascript: window.open(this.href, \'print_order\', \'toolbar=0,scrollbars=1,location=1,statusbar=0,menubar=0,resizable=1,width=800,height=600,left = 50,top = 50\'); return false;">print invoice</a></p>'),
 			new LiteralField("PrintPackingSlip",'<p class="print"><a href="OrderReport_Popup/packingslip/'.$this->ID.'" onclick="javascript: window.open(this.href, \'print_order\', \'toolbar=0,scrollbars=1,location=1,statusbar=0,menubar=0,resizable=1,width=800,height=600,left = 50,top = 50\'); return false;">print packing slip</a></p>')
@@ -270,6 +301,9 @@ class Order extends DataObject {
 		return $fields;
 	}
 
+	function OrderSummary() {
+		return "#".number_format($this->ID)." (".$this->Total().")";
+	}
 
 	function MemberSummary() {
 		if($m = $this->Member()) {
