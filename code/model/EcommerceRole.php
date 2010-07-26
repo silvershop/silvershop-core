@@ -7,6 +7,10 @@
  */
 class EcommerceRole extends DataObjectDecorator {
 
+	protected static $group_name = "Shop Customers";
+		static function set_group_name($v) {self::$group_name = $v;}
+		static function get_group_name(){return self::$group_name;}
+
 	function extraStatics() {
 		return array(
 			'db' => array(
@@ -21,6 +25,136 @@ class EcommerceRole extends DataObjectDecorator {
 				'Notes' => 'HTMLText'
 			)
 		);
+	}
+
+
+
+	/**
+	 * Give the two letter code to resolve the title of the country.
+	 *
+	 * @param string $code Country code
+	 * @return string|boolean String if country found, boolean FALSE if nothing found
+	 */
+	static function findCountryTitle($code) {
+		user_error("depreciated, please use EcommerceRole::find_country_title", E_USER_NOTICE);
+		return self::find_country_title($code);
+	}
+	static function find_country_title($code) {
+		$countries = Geoip::getCountryDropDown();
+		// check if code was provided, and is found in the country array
+		if($code && $countries[$code]) {
+			return $countries[$code];
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 * Find the member's country.
+	 *
+	 * If there is no member logged in, try to resolve
+	 * their IP address to a country.
+	 *
+	 * @return string Found country of member
+	 */
+	static function findCountry() {
+		user_error("depreciated, please use EcommerceRole::find_country", E_USER_NOTICE);
+		return self::find_country();
+	}
+	static function find_country() {
+		$member = Member::currentUser();
+
+		if($member && $member->Country) {
+			$country = $member->Country;
+		} else {
+			// HACK Avoid CLI tests from breaking (GeoIP gets in the way of unbiased tests!)
+			// @todo Introduce a better way of disabling GeoIP as needed (Geoip::disable() ?)
+			if(Director::is_cli()) {
+				$country = null;
+			} else {
+				$country = Geoip::visitor_country();
+			}
+		}
+
+		return $country;
+	}
+
+	static function add_members_to_customer_group() {
+		$bt = defined('DB::USE_ANSI_SQL') ? "\"" : "`";
+		$gp = DataObject::get_one("Group", "Title = '".self::get_group_name()."'");
+		if(!$gp) {
+			$gp = new Group();
+			$gp->Title = self::get_group_name();
+			$gp->Sort = 999998;
+			$gp->write();
+		}
+		$allCombos = DB::query("
+			SELECT Group_Members.ID, Group_Members.MemberID, Group_Members.GroupID
+			FROM Group_Members
+			WHERE Group_Members.GroupID = ".$gp->ID.";"
+		);
+		//make an array of all combos
+		$alreadyAdded = array();
+		$alreadyAdded[-1] = -1;
+		if($allCombos) {
+			foreach($allCombos as $combo) {
+				$alreadyAdded[$combo["MemberID"]] = $combo["MemberID"];
+			}
+		}
+		$extraWhere =
+		$unlistedMembers = DataObject::get(
+			"Member",
+			$where = "{$bt}Member{$bt}.{$bt}ID{$bt} NOT IN (".implode(",",$alreadyAdded).")",
+			$sort = null,
+			$join = "INNER JOIN {$bt}Order{$bt} ON {$bt}Order{$bt}.{$bt}MemberID{$bt} = {$bt}Member{$bt}.{$bt}ID{$bt}"
+		);
+
+		//add combos
+		if($unlistedMembers) {
+			$existingMembers = $gp->Members();
+			foreach($unlistedMembers as $member) {
+				$existingMembers->add($member);
+			}
+		}
+	}
+
+	/**
+	 * Create a new member with given data for a new member,
+	 * or merge the data into the logged in member.
+	 *
+	 * IMPORTANT: Before creating a new Member record, we first
+	 * check that the request email address doesn't already exist.
+	 *
+	 * @param array $data Form request data to update the member with
+	 * @return boolean|object Member object or boolean FALSE
+	 */
+	public static function createOrMerge($data) {
+		user_error("depreciated, please use EcommerceRole::ecommerce_create_or_merge", E_USER_NOTICE);
+		return self::ecommerce_create_or_merge($data);
+
+	}
+	public static function ecommerce_create_or_merge($data) {
+		// Because we are using a ConfirmedPasswordField, the password will
+		// be an array of two fields
+		if(isset($data['Password']) && is_array($data['Password'])) {
+			$data['Password'] = $data['Password']['_Password'];
+		}
+		// We need to ensure that the unique field is never overwritten
+		$uniqueField = Member::get_unique_identifier_field();
+		if(isset($data[$uniqueField])) {
+			$SQL_unique = Convert::raw2xml($data[$uniqueField]);
+			$existingUniqueMember = DataObject::get_one('Member', "$uniqueField = '{$SQL_unique}'");
+			if($existingUniqueMember && $existingUniqueMember->exists()) {
+				if(Member::currentUserID() != $existingUniqueMember->ID) {
+					return false;
+				}
+			}
+		}
+		if(!$member = Member::currentUser()) {
+			$member = new Member();
+		}
+		$member->update($data);
+		return $member;
 	}
 
 	function updateCMSFields($fields) {
@@ -43,11 +177,9 @@ class EcommerceRole extends DataObjectDecorator {
 			new TextField('Address', 'Address'),
 			new TextField('AddressLine2', '&nbsp;'),
 			new TextField('City', 'City'),
-			new DropdownField('Country', 'Country', Geoip::getCountryDropDown(), self::findCountry())
+			new DropdownField('Country', 'Country', Geoip::getCountryDropDown(), self::find_country())
 		);
-
 		$this->owner->extend('augmentEcommerceFields', $fields);
-
 		return $fields;
 	}
 
@@ -66,94 +198,19 @@ class EcommerceRole extends DataObjectDecorator {
 			'City',
 			'Country'
 		);
-
 		$this->owner->extend('augmentEcommerceRequiredFields', $fields);
-
 		return $fields;
 	}
 
-	function CountryTitle() {
-		return self::findCountryTitle($this->owner->Country);
+	public function CountryTitle() {
+		return self::find_country_title($this->owner->Country);
 	}
 
-	/**
-	 * Create a new member with given data for a new member,
-	 * or merge the data into the logged in member.
-	 *
-	 * IMPORTANT: Before creating a new Member record, we first
-	 * check that the request email address doesn't already exist.
-	 *
-	 * @param array $data Form request data to update the member with
-	 * @return boolean|object Member object or boolean FALSE
-	 */
-	public static function createOrMerge($data) {
-		// Because we are using a ConfirmedPasswordField, the password will
-		// be an array of two fields
-		if(isset($data['Password']) && is_array($data['Password'])) {
-			$data['Password'] = $data['Password']['_Password'];
-		}
-
-		// We need to ensure that the unique field is never overwritten
-		$uniqueField = Member::get_unique_identifier_field();
-		if(isset($data[$uniqueField])) {
-			$SQL_unique = Convert::raw2xml($data[$uniqueField]);
-			$existingUniqueMember = DataObject::get_one('Member', "$uniqueField = '{$SQL_unique}'");
-			if($existingUniqueMember && $existingUniqueMember->exists()) {
-				if(Member::currentUserID() != $existingUniqueMember->ID) {
-					return false;
-				}
-			}
-		}
-
-		if(!$member = Member::currentUser()) {
-			$member = new Member();
-		}
-
-		$member->update($data);
-
-		return $member;
+	//this method needs to be tested!
+	public function onAfterWrite() {
+		parent::onAfterWrite();
+		self::add_members_to_customer_group();
 	}
 
-	/**
-	 * Find the member's country.
-	 *
-	 * If there is no member logged in, try to resolve
-	 * their IP address to a country.
-	 *
-	 * @return string Found country of member
-	 */
-	static function findCountry() {
-		$member = Member::currentUser();
-
-		if($member && $member->Country) {
-			$country = $member->Country;
-		} else {
-			// HACK Avoid CLI tests from breaking (GeoIP gets in the way of unbiased tests!)
-			// @todo Introduce a better way of disabling GeoIP as needed (Geoip::disable() ?)
-			if(Director::is_cli()) {
-				$country = null;
-			} else {
-				$country = Geoip::visitor_country();
-			}
-		}
-
-		return $country;
-	}
-
-	/**
-	 * Give the two letter code to resolve the title of the country.
-	 *
-	 * @param string $code Country code
-	 * @return string|boolean String if country found, boolean FALSE if nothing found
-	 */
-	static function findCountryTitle($code) {
-		$countries = Geoip::getCountryDropDown();
-		// check if code was provided, and is found in the country array
-		if($code && $countries[$code]) {
-			return $countries[$code];
-		} else {
-			return false;
-		}
-	}
 
 }
