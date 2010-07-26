@@ -609,14 +609,17 @@ class Order extends DataObject {
 		$total = $this->Total();
 		if($payments = $this->Payments()) {
 			foreach($payments as $payment) {
-				if($payment->Status == 'Success') $total -= $payment->Amount->Amount;
+				if($payment->Status == 'Success') {
+					if(is_object($payment->Amount)) {
+						$total -= $payment->Amount->Amount;
+					}
+					else {
+						$total -= $payment->Amount;
+					}
+				}
 			}
 		}
 		return $total;
-	}
-
-	private function Payments() {
-		return DataObject::get("Payment", "OrderID = ".$this->ID);
 	}
 
 	/**
