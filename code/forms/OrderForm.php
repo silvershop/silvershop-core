@@ -20,7 +20,7 @@ class OrderForm extends Form {
 		$requiredFields = $member->getEcommerceRequiredFields();
 
 		if(ShoppingCart::uses_different_shipping_address()) {
-			$countryField = new DropdownField('ShippingCountry', 'Country', Geoip::getCountryDropDown(), EcommerceRole::findCountry());
+			$countryField = new DropdownField('ShippingCountry', 'Country', Geoip::getCountryDropDown(), EcommerceRole::find_country());
 			$shippingFields = new CompositeField(
 				new HeaderField('Send goods to different address', 3),
 				new LiteralField('ShippingNote', '<p class="message warning">Your goods will be sent to the address below.</p>'),
@@ -176,7 +176,7 @@ class OrderForm extends Form {
 		}
 
 		// Create new OR update logged in {@link Member} record
-		$member = EcommerceRole::createOrMerge($data);
+		$member = EcommerceRole::ecommerce_create_or_merge($data);
 		if(!$member) {
 			$form->sessionMessage(
 				_t(

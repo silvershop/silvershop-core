@@ -767,12 +767,13 @@ class Order extends DataObject {
 	 */
 	function findShippingCountry($codeOnly = false) {
 		if(!$this->ID) {
-			$country = ShoppingCart::has_country() ? ShoppingCart::get_country() : EcommerceRole::findCountry();
-		} elseif(!$this->UseShippingAddress || !$country = $this->ShippingCountry) {
-			$country = EcommerceRole::findCountry();
+			$country = ShoppingCart::has_country() ? ShoppingCart::get_country() : EcommerceRole::find_country();
+		}
+		elseif(!$this->UseShippingAddress || !$country = $this->ShippingCountry) {
+			$country = EcommerceRole::find_country();
 		}
 
-		return $codeOnly ? $country : EcommerceRole::findCountryTitle($country);
+		return $codeOnly ? $country : EcommerceRole::find_country_title($country);
 	}
 
 	/**

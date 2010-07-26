@@ -81,7 +81,7 @@ class TaxModifier extends OrderModifier {
 	}
 
 	protected function LiveCountry() {
-		return EcommerceRole::findCountry();
+		return EcommerceRole::find_country();
 	}
 
 	protected function LiveRate() {

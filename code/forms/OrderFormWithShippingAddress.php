@@ -17,7 +17,7 @@ class OrderFormWithShippingAddress extends OrderFormWithoutShippingAddress {
 			$defaulCountry = self::$fixed_country_code;
 		}
 		else {
-			$defaulCountry = EcommerceRole::findCountry();
+			$defaulCountry = EcommerceRole::find_country();
 		}
 		$countryField = new DropdownField('ShippingCountry', 'Country', Geoip::getCountryDropDown(), $defaulCountry, $this);
 
