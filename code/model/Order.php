@@ -173,6 +173,11 @@ class Order extends DataObject {
 			'field' => 'EcommerceFormattedDateField',
 			'filter' => 'OrderFilters_EqualOrGreaterDateFilter',
 			'title' => "created after (yyyy-mm-dd)"
+		),
+		'LastEdited' => array(
+			'field' => 'EcommerceFormattedDateField',
+			'filter' => 'OrderFilters_EqualOrSmallerDateFilter',
+			'title' => "last edited before (yyyy-mm-dd)"
 		)
 		/*,
 		'To' => array(
@@ -210,7 +215,6 @@ class Order extends DataObject {
 		$bt = defined('DB::USE_ANSI_SQL') ? "\"" : "`";
 		$fields = parent::getCMSFields();
 		$fieldsAndTabsToBeRemoved = self::get_shipping_fields();
-		$fieldsAndTabsToBeRemoved[] = 'Payments';
 		$fieldsAndTabsToBeRemoved[] = 'Printed';
 		$fieldsAndTabsToBeRemoved[] = 'MemberID';
 		$fieldsAndTabsToBeRemoved[] = 'Attributes';
@@ -259,23 +263,6 @@ class Order extends DataObject {
 		$modifierTable->setPermissions(array("view"));
 		$modifierTable->setPageSize(10000);
 		$fields->addFieldToTab('Root.Extras',$modifierTable);
-		$extraStatics = singleton("Payment")->extraStatics();
-		$fields = $extraStatics["summary_fields"];
-		$paymentTable = new TableListField(
-			"Payments", //$name
-			"Payment", //$sourceClass =
-			$fields, //$fieldList =
-			"OrderID = ".$this->ID, //$sourceFilter =
-			"{$bt}Created{$bt} DESC", //$sourceSort =
-			null //$sourceJoin =
-		);
-		$paymentTable->setPermissions(array("view"));
-		$paymentTable->setPageSize(10000);
-		$paymentTable->addSummary(
-			"Amount",
-			array("Amount" => array("sum","Currency->Nice"))
-		);
-		$fields->addFieldToTab('Root.Payments',$paymentTable);
 
 		/*
 		$fields->addFieldsToTab('Root.Items', array(
