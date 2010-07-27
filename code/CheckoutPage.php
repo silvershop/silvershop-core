@@ -63,7 +63,6 @@ class CheckoutPage extends Page {
 		if(!$page = DataObject::get_one('CheckoutPage')) {
 			user_error('No CheckoutPage was found. Please create one in the CMS!', E_USER_ERROR);
 		}
-
 		return ($urlSegment) ? $page->URLSegment : $page->Link();
 	}
 

@@ -26,7 +26,7 @@ class AccountPage extends Page {
 	 * @param boolean $urlSegment Return the URLSegment only
 	 */
 	static function find_link($urlSegment = false) {
-		self::get_if_account_page_exists();
+		$page = self::get_if_account_page_exists();
 		return ($urlSegment) ? $page->URLSegment : $page->Link();
 	}
 
@@ -37,14 +37,15 @@ class AccountPage extends Page {
 	 * @param boolean $urlSegment Return the URLSegment only
 	 */
 	static function get_order_link($orderID, $urlSegment = false) {
-		self::get_if_account_page_exists();
+		$page = self::get_if_account_page_exists();
 		return ($urlSegment ? $page->URLSegment . '/' : $page->Link()) . 'order/' . $orderID;
 	}
 
 	protected static function get_if_account_page_exists() {
-		if(!$page = DataObject::get_one('AccountPage')) {
-			user_error('No AccountPage was found. Please create one in the CMS!', E_USER_ERROR);
+		if($page = DataObject::get_one('AccountPage')) {
+			return $page
 		}
+		user_error('No AccountPage was found. Please create one in the CMS!', E_USER_ERROR);
 	}
 
 	/**
