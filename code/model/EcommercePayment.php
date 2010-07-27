@@ -18,6 +18,17 @@ class EcommercePayment extends DataObjectDecorator {
 				'Amount' => array('title' => 'Amount'),
 				'IP' => array('title' => 'IP Address', 'filter' => 'PartialMatchFilter'),
 				'Status'
+			),
+			'summary_fields' => array(
+				'Status' => "Status",
+				'Amount' => 'Amount',
+				'XXXP' => 'Currency',
+				'IP' => 'IP address',
+				'ProxyIP' => 'proxy IP',
+				'PaidForID' => "paid for ID",
+				'PaidForClass' => 'paid for',
+				'PaymentDate' => "Payment Date",
+				'ExceptionError' => 'Error'
 			)
 		);
 	}

@@ -160,6 +160,10 @@ class Order extends DataObject {
 
 	public static $searchable_fields = array(
 		'ID',
+		'ID' => array(
+			'field' => 'TextField',
+			'filter' => 'PartialMatchFilter'
+		),
 		'Status',
 		'Printed',
 		'Member.FirstName' => array('title' => 'Customer Name', 'filter' => 'PartialMatchFilter'),
@@ -167,7 +171,8 @@ class Order extends DataObject {
 		'Member.HomePhone' => array('title' => 'Customer Phone', 'filter' => 'PartialMatchFilter'),
 		'Created' => array(
 			'field' => 'EcommerceFormattedDateField',
-			'filter' => 'OrderFilters_EqualOrGreaterDateFilter'
+			'filter' => 'OrderFilters_EqualOrGreaterDateFilter',
+			'title' => "created after (yyyy-mm-dd)"
 		)
 		/*,
 		'To' => array(
@@ -205,6 +210,7 @@ class Order extends DataObject {
 		$bt = defined('DB::USE_ANSI_SQL') ? "\"" : "`";
 		$fields = parent::getCMSFields();
 		$fieldsAndTabsToBeRemoved = self::get_shipping_fields();
+		$fieldsAndTabsToBeRemoved[] = 'Payments';
 		$fieldsAndTabsToBeRemoved[] = 'Printed';
 		$fieldsAndTabsToBeRemoved[] = 'MemberID';
 		$fieldsAndTabsToBeRemoved[] = 'Attributes';
@@ -234,11 +240,7 @@ class Order extends DataObject {
 			"Created ASC", //$sourceSort =
 			null //$sourceJoin =
 		);
-		//$orderItemsTable->colFunction_sum();
-		//$orderItemsTable->PageSize
-		//$orderItemsTable->SummaryFields
-		//$orderItemsTable->TotalCount
-		$orderItemsTable->setPermissions(array());
+		$orderItemsTable->setPermissions(array("view"));
 		$orderItemsTable->setPageSize(10000);
 		$orderItemsTable->addSummary(
 			"Total",
@@ -254,17 +256,26 @@ class Order extends DataObject {
 			"{$bt}Type{$bt}, {$bt}Amount{$bt} ASC, {$bt}Created{$bt} ASC", //$sourceSort =
 			null //$sourceJoin =
 		);
-		//$orderItemsTable->colFunction_sum();
-		//$orderItemsTable->PageSize
-		//$orderItemsTable->SummaryFields
-		//$orderItemsTable->TotalCount
-		$modifierTable->setPermissions(array());
+		$modifierTable->setPermissions(array("view"));
 		$modifierTable->setPageSize(10000);
-		$modifierTable->addSummary(
+		$fields->addFieldToTab('Root.Extras',$modifierTable);
+		$extraStatics = singleton("Payment")->extraStatics();
+		$fields = $extraStatics["summary_fields"];
+		$paymentTable = new TableListField(
+			"Payments", //$name
+			"Payment", //$sourceClass =
+			$fields, //$fieldList =
+			"OrderID = ".$this->ID, //$sourceFilter =
+			"{$bt}Created{$bt} DESC", //$sourceSort =
+			null //$sourceJoin =
+		);
+		$paymentTable->setPermissions(array("view"));
+		$paymentTable->setPageSize(10000);
+		$paymentTable->addSummary(
 			"Amount",
 			array("Amount" => array("sum","Currency->Nice"))
 		);
-		$fields->addFieldToTab('Root.Extras',$modifierTable);
+		$fields->addFieldToTab('Root.Payments',$paymentTable);
 
 		/*
 		$fields->addFieldsToTab('Root.Items', array(
@@ -299,10 +310,6 @@ class Order extends DataObject {
 		));
 		*/
 		return $fields;
-	}
-
-	function OrderSummary() {
-		return "#".number_format($this->ID)." (".$this->Total().")";
 	}
 
 	function MemberSummary() {
