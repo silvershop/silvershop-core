@@ -25,7 +25,7 @@ class ShopManagerPage extends Page {
 			return true;
 		}
 		else {
-			Security::permissionFailure($this, _t('Security.PERMFAILURE',' This page is secured and you need administrator rights to access it. Enter your credentials below and we will send you right along.'));
+			//Security::permissionFailure($this, _t('Security.PERMFAILURE',' This page is secured and you need administrator rights to access it. Enter your credentials below and we will send you right along.'));
 			return false;
 		}
 	}
