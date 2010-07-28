@@ -159,25 +159,32 @@ class Order extends DataObject {
 	);
 
 	public static $searchable_fields = array(
-		'ID',
 		'ID' => array(
 			'field' => 'TextField',
+			'filter' => 'PartialMatchFilter',
+			'title' => 'Order Number'
+		),
+		'Printed',
+		'Member.FirstName' => array(
+			'title' => 'Customer Name',
 			'filter' => 'PartialMatchFilter'
 		),
-		'Status',
-		'Printed',
-		'Member.FirstName' => array('title' => 'Customer Name', 'filter' => 'PartialMatchFilter'),
-		'Member.Email' => array('title' => 'Customer Email', 'filter' => 'PartialMatchFilter'),
-		'Member.HomePhone' => array('title' => 'Customer Phone', 'filter' => 'PartialMatchFilter'),
-		'Created' => array(
-			'field' => 'EcommerceFormattedDateField',
-			'filter' => 'OrderFilters_EqualOrGreaterDateFilter',
-			'title' => "created after (yyyy-mm-dd)"
+		'Member.Email' => array(
+			'title' => 'Customer Email',
+			'filter' => 'PartialMatchFilter'
 		),
-		'LastEdited' => array(
-			'field' => 'EcommerceFormattedDateField',
-			'filter' => 'OrderFilters_EqualOrSmallerDateFilter',
-			'title' => "last edited before (yyyy-mm-dd)"
+		'Member.HomePhone' => array(
+			'title' => 'Customer Phone',
+			'filter' => 'PartialMatchFilter'
+		),
+		'Created' => array(
+			'field' => 'TextField',
+			'filter' => 'OrderFilters_AroundDateFilter',
+			'title' => "close to date ... enter as yyyy-mm-dd"
+		),
+		'Status' => array(
+			'filter' => 'Order_FiltersMultiOptionsetFilter',
+			'title' => "Status"
 		)
 		/*,
 		'To' => array(
@@ -209,6 +216,12 @@ class Order extends DataObject {
 	public static function get_order_status_options() {
 		$newArray = singleton('Order')->dbObject('Status')->enumValues(false);
 		return $newArray;
+	}
+
+	function scaffoldSearchFields(){
+		$fieldSet = parent::scaffoldSearchFields();
+		$fieldSet->push(new CheckboxSetField("Status", "Status", self::get_order_status_options()));
+		return $fieldSet;
 	}
 
 	function getCMSFields(){
