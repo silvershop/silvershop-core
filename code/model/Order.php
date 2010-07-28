@@ -156,6 +156,7 @@ class Order extends DataObject {
 		'Member.FirstName' => 'First Name',
 		'Member.Surname' => 'Surname',
 		'Total' => 'Total',
+		'TotalOutstanding' => 'Outstanding',
 		'Status' => 'Status'
 	);
 
