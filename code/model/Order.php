@@ -58,6 +58,7 @@ class Order extends DataObject {
 	public static $casting = array(
 		'SubTotal' => 'Currency',
 		'Total' => 'Currency',
+		'TotalPaid' => 'Currency',
 		'Shipping' => 'Currency',
 		'TotalOutstanding' => 'Currency'
 	);
@@ -180,11 +181,13 @@ class Order extends DataObject {
 		'Created' => array(
 			'field' => 'TextField',
 			'filter' => 'OrderFilters_AroundDateFilter',
-			'title' => "close to date ... enter as yyyy-mm-dd"
+			'title' => "date"
+		),
+		'TotalPaid' => array(
+			'filter' => 'OrderFilters_MustHaveAtLeastOnePayment',
 		),
 		'Status' => array(
-			'filter' => 'Order_FiltersMultiOptionsetFilter',
-			'title' => "Status"
+			'filter' => 'OrderFilters_MultiOptionsetFilter',
 		)
 		/*,
 		'To' => array(
@@ -221,6 +224,7 @@ class Order extends DataObject {
 	function scaffoldSearchFields(){
 		$fieldSet = parent::scaffoldSearchFields();
 		$fieldSet->push(new CheckboxSetField("Status", "Status", self::get_order_status_options()));
+		$fieldSet->push(new DropdownField("TotalPaid", "Has Payment", array(1 => "yes", 0 => "no")));
 		return $fieldSet;
 	}
 
@@ -244,10 +248,21 @@ class Order extends DataObject {
 			'Currency' => Payment::site_currency(),
 			'Amount' => $this->Total()
 		));
+		$fields->addFieldsToTab('Root.Main', array(new ReadonlyField('TheTotal', 'Total', $total->Nice())));
 
-		$fields->addFieldsToTab('Root.Main', array(
-			new ReadonlyField('TheTotal', 'Total', $total->Nice()),
+		$paid = new Money('TotalPaid');
+		$paid->setValue(array(
+			'Currency' => Payment::site_currency(),
+			'Amount' => $this->TotalPaid()
 		));
+		$fields->addFieldsToTab('Root.Main', array(new ReadonlyField('TheTotalPaid', 'Total Paid', $paid->Nice())));
+
+		$outstanding = new Money('TotalOutstanding');
+		$outstanding->setValue(array(
+			'Currency' => Payment::site_currency(),
+			'Amount' => $this->TotalOutstanding()
+		));
+		$fields->addFieldsToTab('Root.Main', array(new ReadonlyField('TheTotalOutstanding', 'Total Outstanding', $outstanding->Nice())));
 
 		$orderItemsTable = new TableListField(
 			"OrderItems", //$name
@@ -614,19 +629,25 @@ class Order extends DataObject {
 	 */
 	function TotalOutstanding(){
 		$total = $this->Total();
+		$paid = $this->TotalPaid();
+		return $total - $paid;
+	}
+
+	function TotalPaid() {
+		$paid = 0;
 		if($payments = $this->Payments()) {
 			foreach($payments as $payment) {
 				if($payment->Status == 'Success') {
 					if(is_object($payment->Amount)) {
-						$total -= $payment->Amount->Amount;
+						$paid += $payment->Amount->Amount;
 					}
 					else {
-						$total -= $payment->Amount;
+						$paid += $payment->Amount;
 					}
 				}
 			}
 		}
-		return $total;
+		return $paid;
 	}
 
 	/**

@@ -16,26 +16,57 @@ class OrderFilters_AroundDateFilter extends ExactMatchFilter {
 		$formattedDate = $date->format("Y-m-d");
 		return $query->where("(DATEDIFF({$bt}Order{$bt}.{$bt}Created{$bt}, '$formattedDate') > -".self::get_how_many_days_around()." AND DATEDIFF({$bt}Order{$bt}.{$bt}Created{$bt}, '$formattedDate') < ".self::get_how_many_days_around().")");
 	}
+
+	public function isEmpty() {
+		return $this->getValue() == null || $this->getValue() == '';
+	}
+
 }
 
 
 
-class Order_FiltersMultiOptionsetFilter extends SearchFilter {
+class OrderFilters_MultiOptionsetFilter extends SearchFilter {
 
 	public function apply(SQLQuery $query) {
 		$query = $this->applyRelation($query);
 		$values = $this->getValue();
-		foreach($values as $value) {
-			$matches[] = sprintf("%s LIKE '%s%%'",
-				$this->getDbName(),
-				Convert::raw2sql(str_replace("'", '', $value))
-			);
-		}
+		if(count($values)) {
+			foreach($values as $value) {
+				$matches[] = sprintf("%s LIKE '%s%%'",
+					$this->getDbName(),
+					Convert::raw2sql(str_replace("'", '', $value))
+				);
+			}
 
-		return $query->where(implode(" OR ", $matches));
+			return $query->where(implode(" OR ", $matches));
+		}
+		return $query;
 	}
 
 	public function isEmpty() {
-		return $this->getValue() == null || $this->getValue() == '';
+		if(is_array($this->getValue())) {
+			return count($this->getValue()) == 0;
+		}
+		else {
+			return $this->getValue() == null || $this->getValue() == '';
+		}
+	}
+}
+class OrderFilters_MustHaveAtLeastOnePayment extends SearchFilter {
+
+	public function apply(SQLQuery $query) {
+		$query = $this->applyRelation($query);
+		$value = $this->getValue();
+		if($value) {
+			return $query->innerJoin(
+				$table = "Payment",
+				$onPredicate = "Payment.OrderID = Order.ID",
+				$tableAlias=null
+			);
+		}
+	}
+
+	public function isEmpty() {
+		return $this->getValue() == null || $this->getValue() == '' || $this->getValue() == 0;
 	}
 }
