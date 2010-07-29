@@ -27,33 +27,6 @@ class EcommerceRole extends DataObjectDecorator {
 		);
 	}
 
-
-
-	/**
-	 * Give the two letter code to resolve the title of the country.
-	 *
-	 * @param string $code Country code
-	 * @return string|boolean String if country found, boolean FALSE if nothing found
-	 */
-	function getEcommerceFields() {
-		$fields = new FieldSet(
-			new HeaderField(_t('EcommerceRole.PERSONALINFORMATION','Personal Information'), 3),
-			new TextField('FirstName', _t('EcommerceRole.FIRSTNAME','First Name')),
-			new TextField('Surname', _t('EcommerceRole.SURNAME','Surname')),
-			new TextField('HomePhone', _t('EcommerceRole.HOMEPHONE','Phone')),
-			new TextField('MobilePhone', _t('EcommerceRole.MOBILEPHONE','Mobile')),
-			new EmailField('Email', _t('EcommerceRole.EMAIL','Email')),
-			new TextField('Address', _t('EcommerceRole.ADDRESS','Address')),
-			new TextField('AddressLine2', _t('EcommerceRole.ADDRESSLINE2','&nbsp;')),
-			new TextField('City', _t('EcommerceRole.CITY','City')),
-			new DropdownField('Country', _t('EcommerceRole.COUNTRY','Country'), Geoip::getCountryDropDown(), self::findCountry())
-		);
-
-		$this->owner->extend('augmentEcommerceFields', $fields);
-
-		return $fields;
-	}
-
 	static function findCountryTitle($code) {
 		user_error("depreciated, please use EcommerceRole::find_country_title", E_USER_NOTICE);
 		return self::find_country_title($code);
@@ -183,21 +156,24 @@ class EcommerceRole extends DataObjectDecorator {
 	}
 
 	/**
-	 * Return the member fields to be shown on {@link OrderForm}.
-	 * @return FieldSet
+	 * Give the two letter code to resolve the title of the country.
+	 *
+	 * @param string $code Country code
+	 * @return string|boolean String if country found, boolean FALSE if nothing found
 	 */
 	function getEcommerceFields() {
 		$fields = new FieldSet(
-			new HeaderField('Personal Information', 3),
-			new TextField('FirstName', 'First Name'),
-			new TextField('Surname', 'Surname'),
-			new TextField('HomePhone', 'Phone'),
-			new TextField('MobilePhone', 'Mobile'),
-			new EmailField('Email', 'Email'),
-			new TextField('Address', 'Address'),
-			new TextField('AddressLine2', '&nbsp;'),
-			new TextField('City', 'City'),
-			new DropdownField('Country', 'Country', Geoip::getCountryDropDown(), self::find_country())
+			new HeaderField(_t('EcommerceRole.PERSONALINFORMATION','Personal Information'), 3),
+			new TextField('FirstName', _t('EcommerceRole.FIRSTNAME','First Name')),
+			new TextField('Surname', _t('EcommerceRole.SURNAME','Surname')),
+			new TextField('HomePhone', _t('EcommerceRole.HOMEPHONE','Phone')),
+			new TextField('MobilePhone', _t('EcommerceRole.MOBILEPHONE','Mobile')),
+			new EmailField('Email', _t('EcommerceRole.EMAIL','Email')),
+			new TextField('Address', _t('EcommerceRole.ADDRESS','Address')),
+			new TextField('AddressLine2', _t('EcommerceRole.ADDRESSLINE2','&nbsp;')),
+			new TextField('City', _t('EcommerceRole.CITY','City')),
+			new TextField('PostalCode', _t('EcommerceRole.POSTALCODE','Postal Code')),
+			new DropdownField('Country', _t('EcommerceRole.COUNTRY','Country'), Geoip::getCountryDropDown(), self::findCountry())
 		);
 		$this->owner->extend('augmentEcommerceFields', $fields);
 		return $fields;
