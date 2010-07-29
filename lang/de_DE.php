@@ -229,5 +229,14 @@ $lang['de_DE']['ViewAllProducts.ss']['NOSUBJECTS'] = 'Keine Produkte vorhanden.'
 $lang['de_DE']['ViewAllProducts.ss']['PRICE'] = 'Preis';
 $lang['de_DE']['ViewAllProducts.ss']['PRODUCTID'] = 'Produkt ID';
 $lang['de_DE']['ViewAllProducts.ss']['WEIGHT'] = 'Gewicht';
-
+$lang['de_DE']['EcommerceRole']['PERSONALINFORMATION'] = 'Ihre Daten';
+$lang['de_DE']['EcommerceRole']['COUNTRY'] = 'Land';
+$lang['de_DE']['EcommerceRole']['FIRSTNAME'] = 'Vorname';
+$lang['de_DE']['EcommerceRole']['SURNAME'] = 'Nachname';
+$lang['de_DE']['EcommerceRole']['HOMEPHONE'] = 'Tel.';
+$lang['de_DE']['EcommerceRole']['MOBILEPHONE'] = 'Mobil';
+$lang['de_DE']['EcommerceRole']['EMAIL'] = 'Email';
+$lang['de_DE']['EcommerceRole']['ADDRESS'] = 'Adresse';
+$lang['de_DE']['EcommerceRole']['ADDRESSLINE2'] = '&nbsp;';
+$lang['de_DE']['EcommerceRole']['CITY'] = 'Stadt';
 ?>
