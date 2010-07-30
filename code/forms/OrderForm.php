@@ -20,21 +20,21 @@ class OrderForm extends Form {
 		$requiredFields = $member->getEcommerceRequiredFields();
 
 		if(ShoppingCart::uses_different_shipping_address()) {
-			$countryField = new DropdownField('ShippingCountry', 'Country', Geoip::getCountryDropDown(), EcommerceRole::find_country());
+			$countryField = new DropdownField('ShippingCountry',  _t('OrderForm.Country','Country'), Geoip::getCountryDropDown(), EcommerceRole::find_country());
 			$shippingFields = new CompositeField(
-				new HeaderField('Send goods to different address', 3),
-				new LiteralField('ShippingNote', '<p class="message warning">Your goods will be sent to the address below.</p>'),
-				new LiteralField('Help', '<p>You can use this for gift giving. No billing information will be disclosed to this address.</p>'),
-				new TextField('ShippingName', 'Name'),
-				new TextField('ShippingAddress', 'Address'),
-				new TextField('ShippingAddress2', ''),
-				new TextField('ShippingCity', 'City'),
+				new HeaderField(_t('OrderForm.SendGoodsToDifferentAddress','Send goods to different address'), 3),
+				new LiteralField('ShippingNote', '<p class="message warning">'._t('OrderForm.ShippingNote','Your goods will be sent to the address below.').'</p>'),
+				new LiteralField('Help', '<p>'._t('OrderForm.Help','You can use this for gift giving. No billing information will be disclosed to this address.').'</p>'),
+				new TextField('ShippingName', _t('OrderForm.Name','Name')),
+				new TextField('ShippingAddress', _t('OrderForm.Address','Address')),
+				new TextField('ShippingAddress2', _t('OrderForm.Address2','')),
+				new TextField('ShippingCity', _t('OrderForm.City','City')),
 				$countryField,
 				new HiddenField('UseShippingAddress', '', true),
-				$changeshippingbutton = new FormAction_WithoutLabel('useMemberShippingAddress', 'Use Billing Address for Shipping')
+				$changeshippingbutton = new FormAction_WithoutLabel('useMemberShippingAddress', _t('OrderForm.UseBillingAddress','Use Billing Address for Shipping'))
 			);
 			//Need to to this because 'FormAction_WithoutLabel' has no text on the actual button
-			$changeshippingbutton->setButtonContent('Use Billing Address for Shipping');
+			$changeshippingbutton->setButtonContent(_t('OrderForm.UseBillingAddress','Use Billing Address for Shipping'));
 			$changeshippingbutton->useButtonTag = true;
 
 			$requiredFields[] = 'ShippingName';
@@ -43,9 +43,9 @@ class OrderForm extends Form {
 			$requiredFields[] = 'ShippingCountry';
 		} else {
 			$countryField = $memberFields->fieldByName('Country');
-			$shippingFields = new FormAction_WithoutLabel('useDifferentShippingAddress', 'Use Different Shipping Address');
+			$shippingFields = new FormAction_WithoutLabel('useDifferentShippingAddress', _t('OrderForm.useDifferentShippingAddress', 'Use Different Shipping Address'));
 			//Need to to this because 'FormAction_WithoutLabel' has no text on the actual button
-			$shippingFields->setButtonContent('Use Different Shipping Address');
+			$shippingFields->setButtonContent(_t('OrderForm.useDifferentShippingAddress', 'Use Different Shipping Address'));
 			$shippingFields->useButtonTag = true;
 		}
 
@@ -62,10 +62,10 @@ class OrderForm extends Form {
 		$rightFields->setID('RightOrder');
 
 		if(!$member->ID || $member->Password == '') {
-			$rightFields->push(new HeaderField('Membership Details', 3));
-			$rightFields->push(new LiteralField('MemberInfo', "<p class=\"message good\">If you are already a member, please <a href=\"Security/login?BackURL=" . CheckoutPage::find_link(true) . "/\">log in</a>.</p>"));
-			$rightFields->push(new LiteralField('AccountInfo', "<p>Please choose a password, so you can login and check your order history in the future.</p><br/>"));
-			$rightFields->push(new FieldGroup(new ConfirmedPasswordField('Password', 'Password')));
+			$rightFields->push(new HeaderField(_t('OrderForm.MembershipDetails','Membership Details'), 3));
+			$rightFields->push(new LiteralField('MemberInfo', '<p class="message good">'._t('OrderForm.MemberInfo','If you are already a member please')." <a href=\"Security/login?BackURL=" . CheckoutPage::find_link(true) . "/\">"._t('OrderForm.LogIn','log in').'</a>.</p>'));
+			$rightFields->push(new LiteralField('AccountInfo', '<p>'._t('OrderForm.AccountInfo','Please choose a password, so you can login and check your order history in the future').'</p><br/>'));
+			$rightFields->push(new FieldGroup(new ConfirmedPasswordField('Password', _t('OrderForm.Password','Password'))));
 
 			$requiredFields[] = 'Password[_Password]';
 			$requiredFields[] = 'Password[_ConfirmPassword]';
@@ -94,7 +94,7 @@ class OrderForm extends Form {
 		}
 
 		// 5) Actions and required fields creation
-		$actions = new FieldSet(new FormAction('processOrder', 'Place order and make payment'));
+		$actions = new FieldSet(new FormAction('processOrder', _t('OrderForm.processOrder','Place order and make payment')));
 		$requiredFields = new CustomRequiredFields($requiredFields);
 		$this->extend('updateValidator',$requiredFields);
 
@@ -170,7 +170,7 @@ class OrderForm extends Form {
 		}
 
 		if(!ShoppingCart::has_items()) {
-			$form->sessionMessage('Please add some items to your cart', 'bad');
+			$form->sessionMessage(_t('OrderForm.NoItemsInCart','Please add some items to your cart'), 'bad');
 			Director::redirectBack();
 			return false;
 		}
@@ -206,8 +206,7 @@ class OrderForm extends Form {
 		// Save payment data from form and process payment
 		$form->saveInto($payment);
 		$payment->OrderID = $order->ID;
-		$payment->Amount->Amount = $order->Total();
-		$payment->Amount->Currency = Order::Currency();
+		$payment->Amount = $order->Total();
 		$payment->write();
 
 		//prepare $data
