@@ -239,4 +239,21 @@ $lang['de_DE']['EcommerceRole']['EMAIL'] = 'Email';
 $lang['de_DE']['EcommerceRole']['ADDRESS'] = 'Adresse';
 $lang['de_DE']['EcommerceRole']['ADDRESSLINE2'] = '&nbsp;';
 $lang['de_DE']['EcommerceRole']['CITY'] = 'Stadt';
-?>
+$lang['de_DE']['OrderForm']['useDifferentShippingAddress'] = 'andere Lieferadresse wählen';
+$lang['de_DE']['OrderForm']['processOrder'] = 'Bestellung ausführen';
+$lang['de_DE']['OrderForm']['MembershipDetails'] = 'Kunden-Konto Details';
+$lang['de_DE']['OrderForm']['Password'] = 'Passwort';
+$lang['de_DE']['OrderForm']['AccountInfo'] = 'Bitte wählen Sie ein Passwort, damit Sie sich zukünftig einloggen können und Ihre Bestellhistorie anschauen können.';
+$lang['de_DE']['OrderForm']['MemberInfo'] = 'Haben Sie bereits ein Kunden-Konto?';
+$lang['de_DE']['OrderForm']['LogIn'] = 'Loggen Sie sich ein.';
+$lang['de_DE']['OrderForm']['Country'] = 'Land';
+$lang['de_DE']['OrderForm']['Name'] = 'Name';
+$lang['de_DE']['OrderForm']['City'] = 'Stadt';
+$lang['de_DE']['OrderForm']['Address'] = 'Adresse';
+$lang['de_DE']['OrderForm']['Address2'] = '&nbsp;';
+$lang['de_DE']['OrderForm']['SendGoodsToDifferentAddress'] = 'Abweichende Lieferadresse';
+$lang['de_DE']['OrderForm']['ShippingNote'] = 'Die Bestellung wird an folgende Adresse versendet.';
+$lang['de_DE']['OrderForm']['Help'] = 'Sie können dies für Geschenke benutzen. Es werden keine Rechnungsinformationen mit versandt.';
+$lang['de_DE']['OrderForm']['UseBillingAddress'] = 'An Rechnungsadresse versenden.';
+$lang['de_DE']['OrderForm']['NoItemsInCart'] = 'Sie haben keine Produkte ausgewählt. Bitte legen Sie Produkte in den Warenkorb.';
+
