@@ -240,31 +240,8 @@ class Order extends DataObject {
 			$fields->removeByName($field);
 		}
 
-		$fields->addFieldToTab('Root.Main', new HeaderField('MainDetails', 'Main Details'), 'Status');
-		$fields->addFieldToTab('Root.Main', new ReadonlyField('OrderNo', 'Order No', "#{$this->ID}"), 'Status');
-		$fields->addFieldToTab('Root.Main', new ReadonlyField('Date', 'Date', date('l jS F Y h:i A', strtotime($this->Created))), 'Status');
-
-		$total = new Money('Total');
-		$total->setValue(array(
-			'Currency' => Payment::site_currency(),
-			'Amount' => $this->Total()
-		));
-		$fields->addFieldsToTab('Root.Main', array(new ReadonlyField('TheTotal', 'Total', $total->Nice())));
-
-		$paid = new Money('TotalPaid');
-		$paid->setValue(array(
-			'Currency' => Payment::site_currency(),
-			'Amount' => $this->TotalPaid()
-		));
-		$fields->addFieldsToTab('Root.Main', array(new ReadonlyField('TheTotalPaid', 'Total Paid', $paid->Nice())));
-
-		$outstanding = new Money('TotalOutstanding');
-		$outstanding->setValue(array(
-			'Currency' => Payment::site_currency(),
-			'Amount' => $this->TotalOutstanding()
-		));
-		$fields->addFieldsToTab('Root.Main', array(new ReadonlyField('TheTotalOutstanding', 'Total Outstanding', $outstanding->Nice())));
-
+		$htmlSummary = $this->renderWith("OrderInformation_Print_Details");
+		$fields->addFieldToTab('Root.Main', new LiteralField('MainDetails', $htmlSummary));
 		$orderItemsTable = new TableListField(
 			"OrderItems", //$name
 			"OrderItem", //$sourceClass =

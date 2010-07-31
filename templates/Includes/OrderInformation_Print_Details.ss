@@ -1,3 +1,4 @@
+<div id="OrderInformation">
 <% if CustomerOrderNote %>
 <div id="CustomerOrderNote">
 	<h2 id="CustomerOrderNoteHeading">Nota Bene</h2>
@@ -6,6 +7,9 @@
 <% end_if %>
 <table id="InformationTable">
 	<thead>
+		<tr class="mainHeader">
+			<th class="left" colspan="4"><h2>Sales</h2></th>
+		</tr>
 		<tr>
 			<th scope="col" class="left"><% _t("PRODUCT","Product") %></th>
 			<th scope="col" class="center"><% _t("QUANTITY", "Quantity") %></th>
@@ -15,7 +19,7 @@
 	</thead>
 	<tbody>
 		<% control Items %>
-		<tr class="itemRow">
+		<tr  class="itemRow $EvenOdd $FirstLast">
 			<td class="product title" scope="row">
 				<% if Link %>
 					<a href="$Link" title="<% sprintf(_t("READMORE","Click here to read more on &quot;%s&quot;"),$Title) %>">$ProductTitle</a>
@@ -29,28 +33,28 @@
 		</tr>
 		<% end_control %>
 
-		<tr class="gap summary">
+		<tr class="gap summary" id="SubTotal">
 			<th colspan="3" scope="row" class="threeColHeader"><% _t("SUBTOTAL","Sub-total") %></th>
 			<td class="right">$SubTotal.Nice</td>
 		</tr>
 
 		<% control Modifiers %>
 			<% if ShowInTable %>
-		<tr class="modifierRow">
+		<tr class="modifierRow $EvenOdd $FirstLast">
 			<td colspan="3" scope="row">$TableTitle</td>
 			<td class="right">$TableValue</td>
 		</tr>
 			<% end_if %>
 		<% end_control %>
 
-		<tr class="gap Total">
+		<tr class="gap summary" id="Total">
 			<th colspan="3" scope="row" class="threeColHeader"><% _t("TOTAL","Total") %></th>
 			<td class="right">$Total.Nice $Currency</td>
 		</tr>
 
 <% include OrderInformation_PaymentSection %>
 
-		<tr class="gap Total Outstanding">
+		<tr class="gap summary" id="Outstanding">
 			<th colspan="3" scope="row" class="threeColHeader"><strong><% _t("TOTALOUTSTANDING","Total outstanding") %></strong></th>
 			<td class="right"><strong>$TotalOutstanding.Nice </strong></td>
 		</tr>
@@ -61,3 +65,4 @@
 
 	</tbody>
 </table>
+</div>

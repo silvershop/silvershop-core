@@ -5,13 +5,19 @@
 	<title><% _t("PAGETITLE","Print Orders") %></title>
 </head>
 <body>
-	<a href="#" onclick="window.print(); return false;" id="PrintPageIcon">print now</a>
-	<div class="typography">
-		<div id="OrderInformation">
-			<% control DisplayFinalisedOrder %>
-				<% include OrderInformation_Print_Details %>
-			<% end_control %>
+	<div id="Icons">
+		<a href="#" onclick="window.print(); return false;" id="PrintPageIcon">print now</a>
+		<a href="#" onclick="window.close(); return false;" id="PrintCloseIcon">close</a>
+	</div>
+<% control DisplayFinalisedOrder %><% include OrderInformation_Print_Details %><% end_control %>
+	<div id="OrderStatus">
+		<div id="OrderStatusForm">
+			$StatusForm
+		</div>
+		<div id="OrderStatusLog">
+			$StatusLog
 		</div>
 	</div>
 </body>
 </html>
+
