@@ -1,10 +1,4 @@
 <div id="OrderInformation">
-<% if CustomerOrderNote %>
-<div id="CustomerOrderNote">
-	<h2 id="CustomerOrderNoteHeading">Nota Bene</h2>
-	$CustomerOrderNote
-</div>
-<% end_if %>
 <table id="InformationTable">
 	<thead>
 		<tr class="mainHeader">
@@ -63,6 +57,14 @@
 
 <% include OrderInformation_ShippingSection %>
 
+<% if CustomerOrderNote %>
+		<tr class="gap mainHeader">
+			<th colspan="4" class="left" scope="col"><h2><% _t("CUSTOMERORDERNOTE","Customer Note") %></h2></th>
+		</tr>
+		<tr class="summary odd first">
+			<td colspan="4" class="left fourRolDetail">$CustomerOrderNotee</td>
+		</tr>
+<% end_if %>
 	</tbody>
 </table>
 </div>
