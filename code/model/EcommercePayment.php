@@ -58,5 +58,35 @@ class EcommercePayment extends DataObjectDecorator {
 		$this->owner->PaidForClass = $do->ClassName;
 	}
 
+	function requiredDefaultRecords() {
+		$bt = defined('DB::USE_ANSI_SQL') ? "\"" : "`";
+		parent::requiredDefaultRecords();
+		if(isset($_GET["updatepayment"])) {
+			DB::query("
+				UPDATE {$bt}Payment{$bt}
+				SET {$bt}AmountAmount{$bt} = {$bt}Amount{$bt}
+				WHERE
+					{$bt}Amount{$bt} > 0
+					AND (
+						{$bt}AmountAmount{$bt} IS NULL
+						OR {$bt}AmountAmount{$bt} = 0
+					)
+				"
+			);
+			DB::query("
+				UPDATE {$bt}Payment{$bt}
+				SET {$bt}AmountCurrency{$bt} = {$bt}Currency{$bt}
+				WHERE
+					{$bt}Currency{$bt} <> ''
+					AND {$bt}Currency{$bt} IS NOT NULL
+					AND (
+						{$bt}AmountCurrency{$bt} IS NULL
+						OR {$bt}AmountCurrency{$bt} = ''
+					)
+				"
+			);
+		}
+	}
+
 
 }
