@@ -71,14 +71,10 @@ class EcommercePayment extends DataObjectDecorator {
 						{$bt}AmountAmount{$bt} IS NULL
 						OR {$bt}AmountAmount{$bt} = 0
 					)
-				"
-			);
+			");
 			$countAmountChanges = DB::affectedRows();
 			if($countAmountChanges) {
 				DB::alteration_message("Updated Payment.Amount field to 2.4 - $countAmountChanges rows updated", "edited");
-			}
-			else {
-				DB::alteration_message("Payment is ready for 2.4", "created");
 			}
 			DB::query("
 				UPDATE {$bt}Payment{$bt}
@@ -90,17 +86,13 @@ class EcommercePayment extends DataObjectDecorator {
 						{$bt}AmountCurrency{$bt} IS NULL
 						OR {$bt}AmountCurrency{$bt} = ''
 					)
-				"
-			);
+			");
 			$countCurrencyChanges = DB::affectedRows();
 			if($countCurrencyChanges) {
 				DB::alteration_message("Updated Payment.Currency field to 2.4  - $countCurrencyChanges rows updated", "edited");
 			}
 			if($countAmountChanges != $countCurrencyChanges) {
 				DB::alteration_message("Potential error in Payment fields update to 2.4, please review data", "deleted");
-			}
-			else {
-				DB::alteration_message("Payment is ready for 2.4", "created");
 			}
 		}
 	}
