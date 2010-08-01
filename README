@@ -95,6 +95,10 @@ OrderFormWithoutShippingAddress::set_login_invite_alternative_text('
 Tips
 -----------------------------------------------------------
 
+when running dev/build/ add: ?updatepayment=1 to migrate
+payment data from 2.3 to 2.4 style (currency db field to
+money db field).
+
 how to change order status options:
 
 create class in your mysite folder like this

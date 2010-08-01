@@ -86,8 +86,8 @@ class OrderStatusLog extends DataObject {
 		}
 	}
 
-	function requiredDefaultRecords() {
-		parent::requiredDefaultRecords();
+	function requireDefaultRecords() {
+		parent::requireDefaultRecords();
 	}
 
 	protected function updateWithLastInfo() {
