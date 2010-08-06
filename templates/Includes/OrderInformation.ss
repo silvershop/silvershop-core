@@ -32,7 +32,7 @@
 			<% if ShowInOrderTable %>
 				<tr id="$IDForTable" class="$ClassForTable">
 					<td colspan="3" scope="row" id="$TitleIdForTable">$TableTitle</td>
-					<td class="right" id="$ValueIdForTable">$TableValue</td>
+					<td class="right" id="$ValueIdForTable">$TableValue.Nice</td>
 				</tr>
 			<% end_if %>
 		<% end_control %>
