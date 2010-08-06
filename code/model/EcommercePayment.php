@@ -15,7 +15,6 @@ class EcommercePayment extends DataObjectDecorator {
 			),
 			'searchable_fields' => array(
 				'OrderID' => array('title' => 'Order ID'),
-				'Amount->Amount' => array('title' => 'Amount'),
 				'IP' => array('title' => 'IP Address', 'filter' => 'PartialMatchFilter'),
 				'Status'
 			)
