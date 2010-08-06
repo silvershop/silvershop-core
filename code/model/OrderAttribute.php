@@ -15,6 +15,7 @@ class OrderAttribute extends DataObject {
 	);
 
 	public static $casting = array(
+		'TableValue' => 'Text',
 		'TableTitle' => 'Text',
 		'CartTitle' => 'Text'
 	);
@@ -114,6 +115,14 @@ class OrderAttribute extends DataObject {
 
 	function CartTitle() {
 		return $this->TableTitle();
+	}
+
+	function TableValue() {
+		return 0;
+	}
+
+	function CartValue() {
+		return $this->TableValue();
 	}
 
 	function TableTotalID() {
