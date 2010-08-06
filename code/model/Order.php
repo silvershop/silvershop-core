@@ -202,6 +202,10 @@ class Order extends DataObject {
 		protected static function set_non_shipping_db_fields($v) {self::$non_shipping_db_fields = $v;}
 		protected static function get_non_shipping_db_fields() {return self::$non_shipping_db_fields;}
 
+	protected static $maximum_ignorable_sales_payments_difference = 0.01;
+		protected static function set_maximum_ignorable_sales_payments_difference($v) {self::$maximum_ignorable_sales_payments_difference = $v;}
+		protected static function get_maximum_ignorable_sales_payments_difference() {return self::$maximum_ignorable_sales_payments_difference;}
+
 	protected static function get_shipping_fields() {
 		$arrayNew = array();
 		$array = self::$db;
@@ -242,6 +246,13 @@ class Order extends DataObject {
 
 		$htmlSummary = $this->renderWith("OrderInformation_Print_Details");
 		$fields->addFieldToTab('Root.Main', new LiteralField('MainDetails', $htmlSummary));
+		$fields->addFieldsToTab('Root.Main', array(
+			new HeaderField("PrintedOutsHeader", "Print Order"),
+			new CheckboxField("Printed"),
+			new LiteralField("PrintIndex",'<p class="print"><a href="OrderReport_Popup/index/'.$this->ID.'" onclick="javascript: window.open(this.href, \'print_order\', \'toolbar=0,scrollbars=1,location=1,statusbar=0,menubar=0,resizable=1,width=800,height=600,left = 50,top = 50\'); return false;">internal print out</a></p>'),
+			new LiteralField("PrintInvoice",'<p class="print"><a href="OrderReport_Popup/invoice/'.$this->ID.'" onclick="javascript: window.open(this.href, \'print_order\', \'toolbar=0,scrollbars=1,location=1,statusbar=0,menubar=0,resizable=1,width=800,height=600,left = 50,top = 50\'); return false;">print invoice</a></p>'),
+			new LiteralField("PrintPackingSlip",'<p class="print"><a href="OrderReport_Popup/packingslip/'.$this->ID.'" onclick="javascript: window.open(this.href, \'print_order\', \'toolbar=0,scrollbars=1,location=1,statusbar=0,menubar=0,resizable=1,width=800,height=600,left = 50,top = 50\'); return false;">print packing slip</a></p>')
+		));
 		$orderItemsTable = new TableListField(
 			"OrderItems", //$name
 			"OrderItem", //$sourceClass =
@@ -291,12 +302,6 @@ class Order extends DataObject {
 				new LiteralField("ShippingSummary", $this->ShippingAddressSummary())
 			));
 		}
-		$fields->addFieldsToTab('Root.PrintOuts', array(
-			new CheckboxField("Printed"),
-			new LiteralField("PrintIndex",'<p class="print"><a href="OrderReport_Popup/index/'.$this->ID.'" onclick="javascript: window.open(this.href, \'print_order\', \'toolbar=0,scrollbars=1,location=1,statusbar=0,menubar=0,resizable=1,width=800,height=600,left = 50,top = 50\'); return false;">internal print out</a></p>'),
-			new LiteralField("PrintInvoice",'<p class="print"><a href="OrderReport_Popup/invoice/'.$this->ID.'" onclick="javascript: window.open(this.href, \'print_order\', \'toolbar=0,scrollbars=1,location=1,statusbar=0,menubar=0,resizable=1,width=800,height=600,left = 50,top = 50\'); return false;">print invoice</a></p>'),
-			new LiteralField("PrintPackingSlip",'<p class="print"><a href="OrderReport_Popup/packingslip/'.$this->ID.'" onclick="javascript: window.open(this.href, \'print_order\', \'toolbar=0,scrollbars=1,location=1,statusbar=0,menubar=0,resizable=1,width=800,height=600,left = 50,top = 50\'); return false;">print packing slip</a></p>')
-		));
 		/*
 		$fields->addFieldsToTab('Root.Print', array(
 			new LiteralField("OrderInformationWithNote", $this->renderWith('OrderInformation_Print_Details'))
@@ -608,7 +613,11 @@ class Order extends DataObject {
 	function TotalOutstanding(){
 		$total = $this->Total();
 		$paid = $this->TotalPaid();
-		return $total - $paid;
+		$outstanding = $total - $paid;
+		if(abs($outstanding) < self::get_maximum_ignorable_sales_payments_difference()) {
+			return 0;
+		}
+		return $outstanding;
 	}
 
 	function TotalPaid() {
