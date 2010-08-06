@@ -59,7 +59,7 @@
 									$CartTitle
 								<% end_if %>
 							</span>
-							<span id="$CartTotalID">$TableValue</span>
+							<span id="$CartTotalID">$CartValue</span>
 							<span class="remove">
 								<% if CanRemove %>
 									<strong>

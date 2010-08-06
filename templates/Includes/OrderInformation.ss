@@ -22,7 +22,7 @@
 				<td class="right total" id="$TotalIDForTable">$Total.Nice</td>
 			</tr>
 		<% end_control %>
-		
+
 		<tr class="gap summary">
 			<td colspan="3" scope="row"><% _t("SUBTOTAL","Sub-total") %></td>
 			<td class="right" id="$SubTotalIDForTable">$SubTotal.Nice</td>
@@ -31,17 +31,17 @@
 		<% control Modifiers %>
 			<% if ShowInOrderTable %>
 				<tr id="$IDForTable" class="$ClassForTable">
-					<td colspan="3" scope="row" id="$TitleIdForTable">$TitleForTable</td>
-					<td class="right" id="$ValueIdForTable">$ValueForTable</td>
+					<td colspan="3" scope="row" id="$TitleIdForTable">$TableTitle</td>
+					<td class="right" id="$ValueIdForTable">$TableValue</td>
 				</tr>
 			<% end_if %>
 		<% end_control %>
-				
+
 		<tr class="gap Total">
 			<td colspan="3" scope="row"><% _t("TOTAL","Total") %></td>
 			<td class="right" id="$TotalIDForTable">$Total.Nice $Currency</td>
 		</tr>
-		
+
 		<% control Payment %>
 		<tr class="gap">
 			<th colspan="4" scope="row" class="left"><% _t("PAYMENTINFORMATION","Payment Information") %></th>
@@ -79,7 +79,7 @@
 		<td colspan="3" scope="row" class="left"><strong><% _t("TOTALOUTSTANDING","Total outstanding") %></strong></td>
 		<td class="price"><strong>$TotalOutstanding.Nice </strong></td>
 	</tr>
-	
+
 	<% control Member %>
 		<tr class="gap">
 			<th colspan="4" scope="row" class="left"><% _t("CUSTOMERDETAILS","Customer Details") %></th>
@@ -103,7 +103,7 @@
 		<tr class="summary">
 			<td colspan="3" scope="row" class="left"><% _t("EMAIL","Email") %></td>
 			<td class="price">$Email</td>
-		</tr>				
+		</tr>
 		<tr class="gap">
 			<th colspan="4" scope="row" class="left"><% _t("ADDRESS","Address") %></th>
 		</tr>
@@ -162,6 +162,6 @@
 		</tr>
 		<% end_if %>
 	<% end_if %>
-	
+
 	</tbody>
 </table>
