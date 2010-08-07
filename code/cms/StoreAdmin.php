@@ -34,7 +34,6 @@ class StoreAdmin_CollectionController extends ModelAdmin_CollectionController {
 	//public function CreateForm() {return false;}
 	public function ImportForm() {return false;}
 
-
 	function search($request, $form) {
 		// Get the results form to be rendered
 		$query = $this->getSearchQuery(array_merge($form->getData(), $request));
