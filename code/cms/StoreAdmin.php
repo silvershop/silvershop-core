@@ -34,7 +34,6 @@ class StoreAdmin_CollectionController extends ModelAdmin_CollectionController {
 	//public function CreateForm() {return false;}
 	public function ImportForm() {return false;}
 
-
 	function search($request, $form) {
 		// Get the results form to be rendered
 		$query = $this->getSearchQuery(array_merge($form->getData(), $request));
@@ -60,7 +59,7 @@ class StoreAdmin_RecordController extends ModelAdmin_RecordController {
 		$form->Actions()->removeByName('Delete');
 		$array = unserialize(Session::get("StoreAdminLatestSearch"));
 		if(is_array($array)) {
-			if(count($array)) {
+			if(count($array) && count($array) > 1) {
 				foreach($array as $key => $id) {
 					if($id == $this->currentRecord->ID) {
 						if(isset($array[$key + 1]) && $array[$key + 1]) {

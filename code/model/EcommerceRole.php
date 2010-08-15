@@ -94,7 +94,6 @@ class EcommerceRole extends DataObjectDecorator {
 				$alreadyAdded[$combo["MemberID"]] = $combo["MemberID"];
 			}
 		}
-		$extraWhere =
 		$unlistedMembers = DataObject::get(
 			"Member",
 			$where = "{$bt}Member{$bt}.{$bt}ID{$bt} NOT IN (".implode(",",$alreadyAdded).")",
@@ -173,7 +172,7 @@ class EcommerceRole extends DataObjectDecorator {
 			new TextField('AddressLine2', _t('EcommerceRole.ADDRESSLINE2','&nbsp;')),
 			new TextField('City', _t('EcommerceRole.CITY','City')),
 			new TextField('PostalCode', _t('EcommerceRole.POSTALCODE','Postal Code')),
-			new DropdownField('Country', _t('EcommerceRole.COUNTRY','Country'), Geoip::getCountryDropDown(), self::findCountry())
+			new DropdownField('Country', _t('EcommerceRole.COUNTRY','Country'), Geoip::getCountryDropDown(), self::find_country())
 		);
 		$this->owner->extend('augmentEcommerceFields', $fields);
 		return $fields;

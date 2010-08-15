@@ -15,7 +15,6 @@ class EcommercePayment extends DataObjectDecorator {
 			),
 			'searchable_fields' => array(
 				'OrderID' => array('title' => 'Order ID'),
-				'Amount' => array('title' => 'Amount'),
 				'IP' => array('title' => 'IP Address', 'filter' => 'PartialMatchFilter'),
 				'Status'
 			)
@@ -29,14 +28,14 @@ class EcommercePayment extends DataObjectDecorator {
 	function canDelete($member = null) {
 		return false;
 	}
-
+	/*
 	function updateSummaryFields(&$fields){
 		$fields['Created'] = 'Date';
 		$fields['OrderID'] = 'OrderID';
-		$fields['Amount'] = 'Amount';
 		$fields['IP'] = 'Amount';
 		$fields['Total'] = 'Total';
 	}
+	*/
 
 	function onBeforeWrite() {
 		if($this->owner->Status == 'Success' && $this->owner->Order()) {

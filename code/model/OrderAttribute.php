@@ -16,7 +16,7 @@ class OrderAttribute extends DataObject {
 
 	public static $casting = array(
 		'TableTitle' => 'Text',
-		'CartTitle' => 'Text'
+		'CartTitle' => 'Text',
 	);
 
 

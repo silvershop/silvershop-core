@@ -41,7 +41,7 @@
 								$TableTitle
 							<% end_if %>
 						</td>
-						<td id="$TableTotalID" class="price">$TableValue</td>
+						<td id="$TableTotalID" class="price">$TableValue.Nice</td>
 					</tr>
 				<% end_if %>
 			<% end_control %>

@@ -70,7 +70,7 @@
 							<% end_if %>
 						</td>
 						<td>&nbsp;</td>
-						<td class="right" id="$TableTotalID">$TableValue</td>
+						<td class="right" id="$TableTotalID">$TableValue.Nice</td>
 						<td class="right remove">
 							<% if CanRemove %>
 								<strong>

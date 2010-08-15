@@ -13,6 +13,12 @@ class OrderModifier extends OrderAttribute {
 		'Type' => "Enum('Chargable,Deductable')"
 	);
 
+	public static $casting = array(
+		'TableValue' => 'Currency',
+		'CartValue' => 'Currency'
+	);
+
+
 	/**
 	 * This determines whether the current modifier
 	 * is chargable, in that it adds an amount to the
@@ -78,7 +84,8 @@ class OrderModifier extends OrderAttribute {
 		"TableTitle" => "PartialMatchFilter",
 		"CartTitle" => "PartialMatchFilter",
 		"Amount",
-		"Type"	);
+		"Type"
+	);
 
 	public static $field_labels = array(
 
@@ -123,6 +130,10 @@ class OrderModifier extends OrderAttribute {
 		else {
 		 return "-".$this->Amount();
 		}
+	}
+
+	function CartValue() {
+		return $this->TableValue();
 	}
 
 	/**

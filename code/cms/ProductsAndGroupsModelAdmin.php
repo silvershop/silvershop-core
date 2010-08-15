@@ -25,9 +25,19 @@ class ProductsAndGroupsModelAdmin extends ModelAdmin {
 }
 //remove side forms
 class ProductsAndGroupsModelAdmin_CollectionController extends ModelAdmin_CollectionController {
+	
+	static $disable_import = true;
 
 	//public function CreateForm() {return false;}
-	public function ImportForm() {return false;}
+	public function ImportForm() {
+		if(self::$disable_import)
+			return false;
+		return parent::ImportForm();
+	}
+	
+	function set_disable_import($disable = true){
+		self::$disable_import = $disable;
+	}
 }
 
 class ProductsAndGroupsModelAdmin_RecordController extends ModelAdmin_RecordController{
