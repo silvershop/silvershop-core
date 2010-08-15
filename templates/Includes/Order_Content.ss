@@ -25,12 +25,12 @@
 					</tr>
 				<% end_if %>
 			<% end_control %>
-			
+
 			<tr class="othertotal">
 				<td colspan="3" scope="row" class="title"><% _t("SUBTOTAL","Sub-total") %></td>
 				<td id="$TableSubTotalID" class="price">$SubTotal.Nice</td>
 			</tr>
-			
+
 			<% control Modifiers %>
 				<% if ShowInTable %>
 					<tr id="$TableID" class="$Classes">
@@ -41,18 +41,18 @@
 								$TableTitle
 							<% end_if %>
 						</td>
-						<td id="$TableTotalID" class="price"><% if IsChargable %>$Amount.Nice<% else %>-$Amount.Nice<% end_if %></td>
+						<td id="$TableTotalID" class="price">$TableValue</td>
 					</tr>
 				<% end_if %>
 			<% end_control %>
-			
+
 			<tr class="total">
 				<td colspan="3" scope="row" class="title"><% _t("TOTAL","Total") %></td>
 				<td id="$TableTotalID" class="price">$Total.Nice $Currency</td>
 			</tr>
-			
+
 			<tr><td colspan="4" class="transparent"></td></tr>
-			
+
 			<tr class="othertotal">
 				<td class="transparent"></td>
 				<td colspan="2" scope="row" class="title"><% _t("TOTALOUTSTANDING","Total outstanding") %></td>

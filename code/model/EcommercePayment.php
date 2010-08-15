@@ -2,39 +2,42 @@
 /**
  * Customisations to {@link Payment} specifically
  * for the ecommerce module.
- * 
+ *
  * @package ecommerce
  */
 class EcommercePayment extends DataObjectDecorator {
-	
+
 	function extraStatics() {
-		
-		//Customise model admin summary fields
-		
-		//These will break dataobject summary, searchable, default fields - should be on Payment
-		/*
-		Payment::$summary_fields['ID'] = 'ID';
-		Payment::$summary_fields['Created'] = 'Created';
-		Payment::$summary_fields['ClassName'] = 'Type';
-		Payment::$summary_fields['PaidBy.Name'] = 'Member';
-		Payment::$summary_fields['OrderID'] = 'Order ID';
-		Payment::$summary_fields['Status'] = 'Status';
-		*/
-		/*
-		Payment::$searchable_fields = array(
-			'ID','OrderID','ClassName','Status'
-		);
-		
-		Payment::$default_sort = "Created DESC";
-		*/
-		
+
 		return array(
 			'has_one' => array(
 				'Order' => 'Order'
+			),
+			'searchable_fields' => array(
+				'OrderID' => array('title' => 'Order ID'),
+				'Amount' => array('title' => 'Amount'),
+				'IP' => array('title' => 'IP Address', 'filter' => 'PartialMatchFilter'),
+				'Status'
 			)
 		);
 	}
-	
+
+	function canCreate($member = null) {
+		return false;
+	}
+
+	function canDelete($member = null) {
+		return false;
+	}
+
+	function updateSummaryFields(&$fields){
+		$fields['Created'] = 'Date';
+		$fields['OrderID'] = 'OrderID';
+		$fields['Amount'] = 'Amount';
+		$fields['IP'] = 'Amount';
+		$fields['Total'] = 'Total';
+	}
+
 	function onBeforeWrite() {
 		if($this->owner->Status == 'Success' && $this->owner->Order()) {
 			$order = $this->owner->Order();
@@ -43,18 +46,56 @@ class EcommercePayment extends DataObjectDecorator {
 			$order->sendReceipt();
 		}
 	}
-	
+
 	function redirectToOrder() {
 		$order = $this->owner->Order();
 		Director::redirect($order->Link());
 		return;
 	}
-	
+
 	function setPaidObject(DataObject $do){
 		$this->owner->PaidForID = $do->ID;
-		$this->owner->PaidForClass = $do->ClassName;		
+		$this->owner->PaidForClass = $do->ClassName;
 	}
 
-	
+	function requireDefaultRecords() {
+		$bt = defined('DB::USE_ANSI_SQL') ? "\"" : "`";
+		parent::requireDefaultRecords();
+		if(isset($_GET["updatepayment"])) {
+			DB::query("
+				UPDATE {$bt}Payment{$bt}
+				SET {$bt}AmountAmount{$bt} = {$bt}Amount{$bt}
+				WHERE
+					{$bt}Amount{$bt} > 0
+					AND (
+						{$bt}AmountAmount{$bt} IS NULL
+						OR {$bt}AmountAmount{$bt} = 0
+					)
+			");
+			$countAmountChanges = DB::affectedRows();
+			if($countAmountChanges) {
+				DB::alteration_message("Updated Payment.Amount field to 2.4 - $countAmountChanges rows updated", "edited");
+			}
+			DB::query("
+				UPDATE {$bt}Payment{$bt}
+				SET {$bt}AmountCurrency{$bt} = {$bt}Currency{$bt}
+				WHERE
+					{$bt}Currency{$bt} <> ''
+					AND {$bt}Currency{$bt} IS NOT NULL
+					AND (
+						{$bt}AmountCurrency{$bt} IS NULL
+						OR {$bt}AmountCurrency{$bt} = ''
+					)
+			");
+			$countCurrencyChanges = DB::affectedRows();
+			if($countCurrencyChanges) {
+				DB::alteration_message("Updated Payment.Currency field to 2.4  - $countCurrencyChanges rows updated", "edited");
+			}
+			if($countAmountChanges != $countCurrencyChanges) {
+				DB::alteration_message("Potential error in Payment fields update to 2.4, please review data", "deleted");
+			}
+		}
+	}
+
+
 }
-?>

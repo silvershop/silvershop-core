@@ -4,7 +4,7 @@
  * to view all Order instances in the system that
  * are not printed. {@link UnprintedOrderReport->getReportField()}
  * outlines the logic for what orders are considered to be "unprinted".
- * 
+ *
  * @package ecommerce
  */
 class UnprintedOrderReport extends SS_Report {
@@ -18,23 +18,23 @@ class UnprintedOrderReport extends SS_Report {
 	 * all Order instances that are not printed. That is,
 	 * Order instances with the property "Printed" value
 	 * set to "0".
-	 * 
+	 *
 	 * @return ComplexTableField
 	 */
 	function getReportField() {
 		// Get the fields used for the table columns
 		$fields = Order::$table_overview_fields;
-		
+
 		// Add some fields specific to this report
 		$fields['Invoice'] = '';
-		$fields['Print'] = '';		
-		
+		$fields['Print'] = '';
+
 		$table = new TableListField(
 			'Orders',
 			'Order',
 			$fields
 		);
-		
+
 		// Customise the SQL query for Order, because we don't want it querying
 		// all the fields. Invoice and Printed are dummy fields that just have some
 		// text in them, which would be automatically queried if we didn't specify
@@ -48,22 +48,21 @@ class UnprintedOrderReport extends SS_Report {
 		$table->setFieldFormatting(array(
 			'Invoice' => '<a href=\"OrderReport_Popup/invoice/$ID\">Invoice</a>',
 			'Print' => '<a target=\"_blank\" href=\"OrderReport_Popup/index/$ID?print=1\">Print</a>'
-		));		
-		
+		));
+
 		$table->setFieldCasting(array(
 			'Created' => 'Date',
 			'Total' => 'Currency->Nice'
 		));
-		
+
 		$table->setPermissions(array(
 			'edit',
 			'show',
 			'export',
 			'delete',
 		));
-		
+
 		return $table;
 	}
 
 }
-?>
