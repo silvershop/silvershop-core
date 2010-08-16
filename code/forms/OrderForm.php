@@ -73,8 +73,8 @@ class OrderForm extends Form {
 
 		// 2) Payment fields
 		$currentOrder = ShoppingCart::current_order();
-		$total = '$' . number_format($currentOrder->Total(), 2);//TODO: make this multi-currency
-		$paymentFields = Payment::combined_form_fields("$total " . $currentOrder->Currency(), $currentOrder->Total());
+		//$total = '$' . number_format($currentOrder->Total(), 2);//TODO: make this multi-currency
+		$paymentFields = Payment::combined_form_fields($currentOrder->Total());
 		foreach($paymentFields as $field) $rightFields->push($field);
 
 		if($paymentRequiredFields = Payment::combined_form_requirements()) $requiredFields = array_merge($requiredFields, $paymentRequiredFields);
@@ -209,7 +209,7 @@ class OrderForm extends Form {
 		$payment->Amount->Amount = $order->Total();
 		$payment->write();
 
-		//prepare $data
+		//prepare $data - ie put into the $data array any fields that may need to be there for payment
 
 		// Process payment, get the result back
 		$result = $payment->processPayment($data, $form);
