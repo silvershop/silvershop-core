@@ -21,23 +21,49 @@ class ProductsAndGroupsModelAdmin extends ModelAdmin {
 	public static $url_segment = 'products';
 
 	public static $menu_title = 'Products';
+	
+	public static $model_importers = array(
+		'Product' => 'ProductBulkLoader',
+		'ProductGroup' => null
+	);
 
 }
 //remove side forms
 class ProductsAndGroupsModelAdmin_CollectionController extends ModelAdmin_CollectionController {
-	
-	static $disable_import = true;
 
 	//public function CreateForm() {return false;}
-	public function ImportForm() {
-		if(self::$disable_import)
-			return false;
-		return parent::ImportForm();
+	//public function ImportForm() {return false;}
+	
+	 //note that these are called once for each $managed_models
+	
+	function ImportForm(){
+		$form = parent::ImportForm();
+		if($form){
+			//EmptyBeforeImport checkbox does not appear to work for SiteTree objects, so removed for now
+			$form->Fields()->removeByName('EmptyBeforeImport'); 
+		}
+		return $form;
 	}
 	
-	function set_disable_import($disable = true){
-		self::$disable_import = $disable;
+	
+	//TODO: Half-started attempt at modifying the way products are deleted - they should be deleted from both stages
+	function ResultsForm($searchCriteria){
+		$form = parent::ResultsForm($searchCriteria);
+		if($tf = $form->Fields()->fieldByName($this->modelClass)){
+			/*$tf->actions['create'] = array(
+				'label' => 'delete',
+				'icon' => null,
+				'icon_disabled' => 'cms/images/test.gif',
+				'class' => 'testlink' 
+			);*/
+			
+			/*$tf->setPermissions(array(
+				'create'
+			));*/
+		}
+		return $form;
 	}
+	
 }
 
 class ProductsAndGroupsModelAdmin_RecordController extends ModelAdmin_RecordController{

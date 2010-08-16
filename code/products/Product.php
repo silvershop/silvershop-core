@@ -46,7 +46,7 @@ class Product extends Page {
 	public static $casting = array();
 
 	public static $summary_fields = array(
-		'ID','InternalItemID' => 'Product Code','Title','Price','Weight','Model','NumberSold'
+		'ID','InternalItemID','Title','Price','Weight','Model','NumberSold'
 	);
 
 	public static $searchable_fields = array(
