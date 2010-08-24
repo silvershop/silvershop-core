@@ -73,7 +73,7 @@
 									<td scope="col">$PaymentMethod</td>
 									<td scope="col">$Amount.Nice $Currency</td>
 									<td scope="col">$Status</td>
-									<td scope="col"><% if Message %>$Message<% end_if %></td>
+									<td scope="col"><% if Message %>$Message.NoHTML<% end_if %></td>
 								</tr>
 							<% end_control %>
 						<% else %>

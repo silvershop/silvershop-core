@@ -25,7 +25,7 @@
 	<% if Message %>
 	<tr class="summary odd last">
 		<th colspan="2" scope="row" class="twoColHeader"><% _t("PAYMENTNOTE","Note") %></th>
-		<td colspan="2" class="price">$Message</td>
+		<td colspan="2" class="price">$Message.NoHTML</td>
 	</tr>
 	<% end_if %>
 <% end_control %>

@@ -79,8 +79,9 @@ class OrderForm extends Form {
 
 		// 2) Payment fields
 		$currentOrder = ShoppingCart::current_order();
-		//$total = '$' . number_format($currentOrder->Total(), 2);//TODO: make this multi-currency
-		$paymentFields = Payment::combined_form_fields($currentOrder->Total());
+		$totalobj = DBField::create('Currency',$currentOrder->Total()); //should instead be $totalobj = $currentOrder->dbObject('Total');
+
+		$paymentFields = Payment::combined_form_fields($totalobj->Nice());
 		foreach($paymentFields as $field) $rightFields->push($field);
 
 		if($paymentRequiredFields = Payment::combined_form_requirements()) $requiredFields = array_merge($requiredFields, $paymentRequiredFields);
