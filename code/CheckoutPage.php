@@ -165,6 +165,7 @@ class CheckoutPage_Controller extends Page_Controller {
 		if($forms = $this->ModifierForms()) {
 			foreach($forms as $form) {
 				$this->addWrapperMethod($form->Name(), 'getOrderModifierForm');
+				self::$allowed_actions[] = $form->Name(); // add all these forms to the list of allowed actions also
 			}
 		}
 	}
