@@ -29,22 +29,30 @@
 				<h3><% _t('SHIPPINGADDRESS','Shipping Address') %></h3>
 				<% if UseShippingAddress %>
 					<table class="address" cellspacing="0" cellpadding="0">
+						<% if ShippingName %>
 						<tr>
 							<th><% _t("NAME","Name") %></th>
 							<td>$ShippingName</td>
 						</tr>
-						<tr>
-							<th><% _t("ADDRESS","Address") %></th>
-							<td>$ShippingAddress<% if ShippingAddress2 %><br/>$ShippingAddress2<% end_if %></td>
-						</tr>
-						<tr>
-							<th><% _t("CITY","City") %></th>
-							<td>$ShippingCity</td>
-						</tr>
-						<tr>
-							<th><% _t("COUNTRY","Country") %></th>
-							<td>$findShippingCountry</td>
-						</tr>
+						<% end_if %>
+						<% if ShippingAddress %>
+							<tr>
+								<th><% _t("ADDRESS","Address") %></th>
+								<td>$ShippingAddress<% if ShippingAddress2 %><br/>$ShippingAddress2<% end_if %></td>
+							</tr>
+						<% end_if %>
+						<% if ShippingCity %>
+							<tr>
+								<th><% _t("CITY","City") %></th>
+								<td>$ShippingCity</td>
+							</tr>
+						<% end_if %>
+						<% if ShippingCountry %>
+							<tr>
+								<th><% _t("COUNTRY","Country") %></th>
+								<td>$findShippingCountry</td>
+							</tr>
+						<% end_if %>
 					</table>
 				<% else %>
 					<% control Member %>

@@ -207,7 +207,6 @@ class OrderForm extends Form {
 		
 		// Create new Order from shopping cart, discard cart contents in session
 		$order = ShoppingCart::save_current_order();
-		ShoppingCart::clear();
 		
 		if($order->Total() != $oldtotal) {
 			$form->sessionMessage(_t('OrderForm.PriceUpdated','The order price has been updated'), 'warning');
@@ -230,7 +229,7 @@ class OrderForm extends Form {
 			Director::redirectBack();
 			return false;
 		}
-
+		
 		$member->write();
 		$member->logIn();
 
@@ -238,8 +237,12 @@ class OrderForm extends Form {
 
 		// Write new record {@link Order} to database
 		$form->saveInto($order);
+		
+		$order->MemberID = $member->ID;
 		$order->write();
-
+		
+		ShoppingCart::clear();
+		
 		// Save payment data from form and process payment
 		$form->saveInto($payment);
 		$payment->OrderID = $order->ID;

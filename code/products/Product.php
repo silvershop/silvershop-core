@@ -237,7 +237,7 @@ class Product extends Page {
 	 * Note : This function is usable in the Product context because a
 	 * Product_OrderItem only has a Product object in attribute
 	 */
-	function Item() { //TODO: could this be sped up by using the ShoppingCart::get_item_by_id()?
+	function Item() {
 		if($item = ShoppingCart::get_item_by_id($this->ID))
 			return $item;
 		return new Product_OrderItem($this,0); //return dummy item so that we can still make use of Item

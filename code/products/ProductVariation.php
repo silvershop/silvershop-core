@@ -113,7 +113,7 @@ class ProductVariation_OrderItem extends Product_OrderItem {
 	## Overloaded functions ##
 
 	function getProductIDForSerialization(){
-		return $this->_productID."_v".$this->_productVariationID;
+		return parent::getProductIDForSerialization()."_v".$this->_productVariationID;
 	}
 
 	function addLink() {

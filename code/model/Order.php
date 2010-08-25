@@ -785,7 +785,8 @@ class Order extends DataObject {
 	protected function sendEmail($emailClass, $copyToAdmin = true) {
  		$from = self::$receipt_email ? self::$receipt_email : Email::getAdminEmail();
  		$to = $this->Member()->Email;
-		$subject = self::$receipt_subject ? self::$receipt_subject : "Shop Sale Information #$this->ID";
+		$subject = self::$receipt_subject ? self::$receipt_subject : "Shop Sale Information #%d";
+		$subject = sprintf($subject,$this->ID);
 
  		$purchaseCompleteMessage = DataObject::get_one('CheckoutPage')->PurchaseComplete;
 

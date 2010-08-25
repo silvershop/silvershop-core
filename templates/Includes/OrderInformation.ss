@@ -27,14 +27,12 @@
 			<td colspan="3" scope="row"><% _t("SUBTOTAL","Sub-total") %></td>
 			<td class="right" id="$SubTotalIDForTable">$SubTotal.Nice</td>
 		</tr>
-
+		
 		<% control Modifiers %>
-			<% if ShowInOrderTable %>
-				<tr id="$IDForTable" class="$ClassForTable">
-					<td colspan="3" scope="row" id="$TitleIdForTable">$TableTitle</td>
-					<td class="right" id="$ValueIdForTable">$TableValue.Nice</td>
-				</tr>
-			<% end_if %>
+			<tr id="$IDForTable" class="$ClassForTable">
+				<td colspan="3" scope="row" id="$TitleIdForTable">$TableTitle</td>
+				<td class="right" id="$ValueIdForTable">$TableValue.Nice</td>
+			</tr>
 		<% end_control %>
 
 		<tr class="gap Total">
@@ -58,7 +56,7 @@
 				<th colspan="4" class="left" scope="col"><h2><% _t("CUSTOMERORDERNOTE","Customer Note") %></h2></th>
 			</tr>
 			<tr class="summary odd first">
-				<td colspan="4" class="left fourRolDetail">$CustomerOrderNotee</td>
+				<td colspan="4" class="left fourRolDetail">$CustomerOrderNote</td>
 			</tr>
 	<% end_if %>
 
