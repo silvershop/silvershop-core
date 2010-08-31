@@ -96,8 +96,13 @@ class ProductsAndGroupsModelAdmin_RecordController extends ModelAdmin_RecordCont
 
 	function doSave($data, $form, $request) {
 		$form->saveInto($this->currentRecord);
-		$this->currentRecord->writeToStage("Stage");
-		$this->currentRecord->publish("Stage", "Live");
+		
+		if($this->currentRecord instanceof SiteTree){
+			$this->currentRecord->writeToStage("Stage");
+			$this->currentRecord->publish("Stage", "Live");
+		}else{
+			$this->currentRecord->write();
+		}
 		$this->currentRecord->flushCache();
 		if(Director::is_ajax()) {
 			return $this->edit($request);
