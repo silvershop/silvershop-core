@@ -8,7 +8,7 @@ DataObject::add_extension('Member', 'EcommerceRole');
 DataObject::add_extension('Payment', 'EcommercePayment');
 
 Director::addRules(50, array(
-	ShoppingCart_Controller::$URLSegment . '/$Action/$ID/$OtherID' => 'ShoppingCart_Controller'
+	ShoppingCart::$URLSegment . '/$Action/$ID/$OtherID' => 'ShoppingCart'
 ));
 
 

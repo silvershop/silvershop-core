@@ -450,19 +450,19 @@ class Product_OrderItem extends OrderItem {
 	}
 
 	function addLink() {
-		return ShoppingCart_Controller::add_item_link($this->_productID);
+		return ShoppingCart::add_item_link($this->_productID);
 	}
 
 	function removeLink() {
-		return ShoppingCart_Controller::remove_item_link($this->_productID);
+		return ShoppingCart::remove_item_link($this->_productID);
 	}
 
 	function removeallLink() {
-		return ShoppingCart_Controller::remove_all_item_link($this->_productID);
+		return ShoppingCart::remove_all_item_link($this->_productID);
 	}
 
 	function setquantityLink() {
-		return ShoppingCart_Controller::set_quantity_item_link($this->_productID);
+		return ShoppingCart::set_quantity_item_link($this->_productID);
 	}
 
 	function onBeforeWrite() {

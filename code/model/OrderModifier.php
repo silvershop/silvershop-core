@@ -227,7 +227,7 @@ class OrderModifier extends OrderAttribute {
 	function onBeforeWrite() {
 		parent::onBeforeWrite();
 
-		$this->Amount = $this->Amount();
+		//$this->Amount = $this->Amount();
 		$this->Type = $this->stat('is_chargable') ? 'Chargable' : 'Deductable';
 	}
 

@@ -21,7 +21,7 @@ class Order extends DataObject {
  	 */
 	public static $db = array(
 		'SessionID' => "Varchar(32)", //so that in the future we can link sessions with Orders.... One session can have several orders, but an order can onnly have one session
-		'Status' => "Enum('Unpaid,Query,Paid,Processing,Sent,Complete,AdminCancelled,MemberCancelled','Unpaid')",
+		'Status' => "Enum('Unpaid,Query,Paid,Processing,Sent,Complete,AdminCancelled,MemberCancelled,Cart','Cart')",
 		'Country' => 'Varchar',
 		'UseShippingAddress' => 'Boolean',
 		'ShippingName' => 'Text',
@@ -216,7 +216,7 @@ class Order extends DataObject {
 		}
 		return $arrayNew;
 	}
-
+	
  	protected static $order_id_start_number = 0;
 		static function set_order_id_start_number($v) {self::$order_id_start_number = $v;}
 		static function get_order_id_start_number() {return self::$order_id_start_number;}
@@ -399,20 +399,6 @@ class Order extends DataObject {
 		self::$can_cancel_after_sending = $value;
 	}
 
-	/**
-	 * Initialise all the {@link OrderModifier} objects
-	 * by evaluating init_for_order() on each of them.
-	 */
-	public static function init_all_modifiers() {
-		if(self::$modifiers && is_array(self::$modifiers) && count(self::$modifiers) > 0) {
-			foreach(self::$modifiers as $className) {
-				if(class_exists($className)) {
-					$modifier = new $className();
-					if($modifier instanceof OrderModifier) eval("$className::init_for_order(\$className);");
-				}
-			}
-		}
-	}
 
 	/**
 	 * Return a set of forms to add modifiers
@@ -446,6 +432,11 @@ class Order extends DataObject {
 	 */
 	public static function save_current_order() {
 
+		$order = ShoppingCart::current_order();
+		$order->Status = 'unpaid';
+		$order->write();
+		
+		/*
 		// Create a new order, and write it
 		$order = new Order();
 		$order->write();
@@ -461,7 +452,7 @@ class Order extends DataObject {
 
 		// Write the order
 		$order->write();
-
+		*/
 		return $order;
 	}
 
@@ -473,8 +464,17 @@ class Order extends DataObject {
 	 * from the DB entry.
 	 */
 	function Items() {
- 		if($this->ID) return $this->itemsFromDatabase();
- 		elseif($items = ShoppingCart::get_items()) return $this->createItems($items);
+ 		if($this->ID){
+ 			
+ 			return $this->itemsFromDatabase();
+ 		}
+ 		elseif($items = ShoppingCart::get_items()){
+			SS_Backtrace::backtrace();
+ 			die("session items");
+ 			return $this->createItems($items);
+ 		}
+ 		
+ 		
 	}
 
 	/**
@@ -485,7 +485,8 @@ class Order extends DataObject {
 	 */
 	protected function itemsFromDatabase() {
 		$bt = defined('DB::USE_ANSI_SQL') ? "\"" : "`";
-		return DataObject::get('OrderItem', "{$bt}OrderID{$bt} = '$this->ID'");
+		$dbitems =  DataObject::get('OrderItem', "{$bt}OrderID{$bt} = '$this->ID'");
+		return $dbitems;
 	}
 
 	/**
@@ -519,6 +520,30 @@ class Order extends DataObject {
 		}
 		return $result;
 	}
+
+	
+	/**
+	 * Initialise all the {@link OrderModifier} objects
+	 * by evaluating init_for_order() on each of them.
+	 */
+	function initModifiers() {
+		
+		//check if order has modifiers already
+		//check /re-add all non-removable ones
+		
+		$createdmodifiers = $this->Modifiers();
+		
+		if(self::$modifiers && is_array(self::$modifiers) && count(self::$modifiers) > 0) {
+			foreach(self::$modifiers as $className) {
+				
+				if(class_exists($className) && (!$createdmodifiers || !$createdmodifiers->find('ClassName',$className))) {
+					$modifier = new $className();
+					if($modifier instanceof OrderModifier) eval("$className::init_for_order(\$className);");
+				}
+			}
+		}
+	}
+
 
 	/**
 	 * Returns the modifiers of the order, if it hasn't been saved yet
@@ -1015,6 +1040,23 @@ class Order extends DataObject {
 
 		parent::onBeforeDelete();
 
+	}
+	
+	function debug(){
+		
+		$val = "<h3>Database record: $this->class</h3>\n<ul>\n";
+		if($this->record) foreach($this->record as $fieldName => $fieldVal) {
+			$val .= "\t<li>$fieldName: " . Debug::text($fieldVal) . "</li>\n";
+		}
+		$val .= "</ul>\n";
+		$val .= "<h4>Items</h4>";
+		if($this->Items())
+			$val .= $this->Items()->debug();
+		$val .= "<h4>Modifiers</h4>";
+		if($this->Modifiers())
+			$val .= $this->Modifiers()->debug();	
+			
+		return $val;
 	}
 
 }

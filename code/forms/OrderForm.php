@@ -58,7 +58,7 @@ class OrderForm extends Form {
 		$countryField->addExtraClass('ajaxCountryField');
 
 		$setCountryLinkID = $countryField->id() . '_SetCountryLink';
-		$setContryLink = ShoppingCart_Controller::set_country_link();
+		$setContryLink = ShoppingCart::set_country_link();
 		$memberFields->push(new HiddenField($setCountryLinkID, '', $setContryLink));
 
 		$leftFields = new CompositeField($memberFields, $shippingFields);
