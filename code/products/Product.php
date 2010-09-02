@@ -475,7 +475,7 @@ class Product_OrderItem extends OrderItem {
 		$this->ProductID = $this->_productID;
 		$this->ProductVersion = $this->_productVersion;
 	}
-
+	
 	public function debug() {
 		$title = $this->TableTitle();
 		$productID = $this->_productID;
@@ -485,12 +485,9 @@ class Product_OrderItem extends OrderItem {
 			<p>
 				<b>Title : </b>$title<br/>
 				<b>Product ID : </b>$productID<br/>
-				<b>Product Version : </b>$productVersion<br/>
-				
-				<b>Big Eat : </b> $this->BigEat<br/>
-				<b>MenuID : </b> $this->MenuID
+				<b>Product Version : </b>$productVersion
 			</p>
-HTML; //TODO: remove references to bigeat and menuid
+HTML;
 	}
 
 }
