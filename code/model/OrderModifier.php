@@ -212,7 +212,7 @@ class OrderModifier extends OrderAttribute {
 	}
 
 	function removeLink() {
-		return ShoppingCart_Controller::remove_modifier_link($this->_id);
+		return ShoppingCart::remove_modifier_link($this->_id);
 	}
 
 	/**

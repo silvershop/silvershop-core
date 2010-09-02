@@ -264,15 +264,15 @@ class Product extends Page {
 
 	//passing on shopping cart links ...is this necessary?? ...why not just pass the cart?
 	function addLink() {
-		return ShoppingCart_Controller::add_item_link($this->ID);
+		return ShoppingCart::add_item_link($this->ID);
 	}
 
 	function removeLink() {
-		return ShoppingCart_Controller::remove_item_link($this->ID);
+		return ShoppingCart::remove_item_link($this->ID);
 	}
 
 	function removeallLink() {
-		return ShoppingCart_Controller::remove_all_item_link($this->ID);
+		return ShoppingCart::remove_all_item_link($this->ID);
 	}
 
 	/**
