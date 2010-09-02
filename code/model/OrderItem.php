@@ -180,7 +180,9 @@ HTML;
 	}
 
 	function Total() {
-		return $this->UnitPrice() * $this->Quantity;
+		$total = $this->UnitPrice() * $this->Quantity;
+		$this->extend('updateTotal',&$total);
+		return $total;
 	}
 
 	function TableTitle() {

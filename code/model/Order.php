@@ -433,7 +433,7 @@ class Order extends DataObject {
 	public static function save_current_order() {
 
 		$order = ShoppingCart::current_order();
-		$order->Status = 'unpaid';
+		$order->Status = 'Unpaid';
 		$order->write();
 		
 		/*

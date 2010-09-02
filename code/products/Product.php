@@ -438,11 +438,15 @@ class Product_OrderItem extends OrderItem {
 	}
 
 	function UnitPrice() {
-		return $this->Product()->Price;
+		$unitprice = $this->Product()->Price; 
+		$this->extend('updateUnitPrice',&$unitprice);
+		return $unitprice;
 	}
 
 	function TableTitle() {
-		return $this->Product()->Title;
+		$tabletitle = $this->Product()->Title;
+		$this->extend('updateTableTitle',&$tabletitle);
+		return $tabletitle;
 	}
 
 	function Link() {
@@ -481,9 +485,12 @@ class Product_OrderItem extends OrderItem {
 			<p>
 				<b>Title : </b>$title<br/>
 				<b>Product ID : </b>$productID<br/>
-				<b>Product Version : </b>$productVersion
+				<b>Product Version : </b>$productVersion<br/>
+				
+				<b>Big Eat : </b> $this->BigEat<br/>
+				<b>MenuID : </b> $this->MenuID
 			</p>
-HTML;
+HTML; //TODO: remove references to bigeat and menuid
 	}
 
 }
