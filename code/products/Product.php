@@ -238,9 +238,13 @@ class Product extends Page {
 	 * Product_OrderItem only has a Product object in attribute
 	 */
 	function Item() {
-		if($item = ShoppingCart::get_item_by_id($this->ID))
-			return $item;
-		return new Product_OrderItem($this,0); //return dummy item so that we can still make use of Item
+		$filter = null;
+		$this->extend('updateItemFilter',&$filter);
+		$item = ShoppingCart::get_item_by_id($this->ID,null,$filter); //TODO: needs filter
+		if(!$item)
+			$item = new Product_OrderItem($this,0); //return dummy item so that we can still make use of Item 	
+		$this->extend('updateDummyItem',&$item);
+		return $item; 
 	}
 
 	/**
@@ -453,20 +457,26 @@ class Product_OrderItem extends OrderItem {
 		if($product = $this->Product(true)) return $product->Link();
 	}
 
-	function addLink() {
-		return ShoppingCart::add_item_link($this->_productID);
+	function addLink() {		
+		return ShoppingCart::add_item_link($this->_productID,null,$this->linkParameters());
 	}
 
 	function removeLink() {
-		return ShoppingCart::remove_item_link($this->_productID);
+		return ShoppingCart::remove_item_link($this->_productID,null,$this->linkParameters());
 	}
 
 	function removeallLink() {
-		return ShoppingCart::remove_all_item_link($this->_productID);
+		return ShoppingCart::remove_all_item_link($this->_productID,null,$this->linkParameters());
 	}
 
 	function setquantityLink() {
-		return ShoppingCart::set_quantity_item_link($this->_productID);
+		return ShoppingCart::set_quantity_item_link($this->_productID,null,$this->linkParameters());
+	}
+
+	function linkParameters(){
+		$array = array();
+		$this->extend('updateLinkParameters',&$array);
+		return $array;
 	}
 
 	function onBeforeWrite() {
@@ -480,7 +490,7 @@ class Product_OrderItem extends OrderItem {
 		$title = $this->TableTitle();
 		$productID = $this->_productID;
 		$productVersion = $this->_productVersion;
-		return parent::debug() .<<<HTML
+		$html = parent::debug() .<<<HTML
 			<h3>Product_OrderItem class details</h3>
 			<p>
 				<b>Title : </b>$title<br/>
@@ -488,6 +498,8 @@ class Product_OrderItem extends OrderItem {
 				<b>Product Version : </b>$productVersion
 			</p>
 HTML;
+		$this->extend('updateDebug',&$html);
+		return $html;
 	}
 
 }

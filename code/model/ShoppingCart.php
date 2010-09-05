@@ -48,26 +48,27 @@ class ShoppingCart extends Controller {
 	static $URLSegment = 'shoppingcart';
 	
 	//controller links
-	static function add_item_link($id, $variationid = null) {
-		return self::$URLSegment.'/additem/'.$id.self::variationLink($variationid);
+	static function add_item_link($id, $variationid = null, $parameters = array()) {
+		return self::$URLSegment.'/additem/'.$id.self::variationLink($variationid).self::paramsToGetString($parameters);
 	}
 
-	static function remove_item_link($id, $variationid = null) {
-		return self::$URLSegment.'/removeitem/'.$id.self::variationLink($variationid);
+	static function remove_item_link($id, $variationid = null, $parameters = array()) {
+		return self::$URLSegment.'/removeitem/'.$id.self::variationLink($variationid).self::paramsToGetString($parameters);
 	}
 
-	static function remove_all_item_link($id, $variationid = null) {
-		return self::$URLSegment.'/removeallitem/'.$id.self::variationLink($variationid);
+	static function remove_all_item_link($id, $variationid = null, $parameters = array()) {
+		return self::$URLSegment.'/removeallitem/'.$id.self::variationLink($variationid).self::paramsToGetString($parameters);
 	}
 
-	static function set_quantity_item_link($id, $variationid = null) {
-		return self::$URLSegment.'/setquantityitem/'.$id.self::variationLink($variationid);
+	static function set_quantity_item_link($id, $variationid = null, $parameters = array()) {
+		return self::$URLSegment.'/setquantityitem/'.$id.self::variationLink($variationid).self::paramsToGetString($parameters);
 	}
 
 	static function remove_modifier_link($id, $variationid = null) {
 		return self::$URLSegment.'/removemodifier/'.$id.self::variationLink($variationid);
 	}
-
+	
+	//TODO: this has no purpose currently
 	static function set_country_link() {
 		return self::$URLSegment.'/setcountry';
 	}
@@ -76,6 +77,17 @@ class ShoppingCart extends Controller {
 	protected static function variationLink($variationid) {
 		if (is_numeric($variationid)) {
 			return "/$variationid";
+		}
+		return "";
+	}
+	
+	/**
+	 * Creates the appropriate string parameters for links from array
+	 */
+	protected static function paramsToGetString($array){
+		if($array & count($array > 0)){
+			array_walk($array , create_function('&$v,$k', '$v = $k."=".$v ;'));
+			return "?".htmlentities(implode("&",$array), ENT_QUOTES); //TODO: urlescape values??
 		}
 		return "";
 	}
@@ -265,9 +277,11 @@ class ShoppingCart extends Controller {
 	/**
 	 * Either increments the count or creates a new item.
 	 */
-	function additem($request) {		
+	function additem($request) {
+		
 		if ($itemId = $request->param('ID')) {
 			if($item = ShoppingCart::get_item($this->getFilter())) {
+				
 				ShoppingCart::add_item($item);
 			} else {
 				if($orderitem = $this->getNewOrderItem())
