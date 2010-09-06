@@ -181,8 +181,8 @@ class ShoppingCart extends Controller {
 	 * Return the items currently in the shopping cart.
 	 * @return array
 	 */
-	static function get_items() {
-		return self::current_order()->Items();
+	static function get_items($filter) {
+		return self::current_order()->Items($filter);
 	}
 
 	static function get_item_by_id($id, $variationid = null,$filter = null) {

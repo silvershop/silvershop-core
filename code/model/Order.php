@@ -463,18 +463,16 @@ class Order extends DataObject {
 	 * it returns the items from session, if it has, it returns them
 	 * from the DB entry.
 	 */
-	function Items() {
+	function Items($filter = "") {
  		if($this->ID){
  			
- 			return $this->itemsFromDatabase();
+ 			return $this->itemsFromDatabase($filter);
  		}
  		elseif($items = ShoppingCart::get_items()){
 			SS_Backtrace::backtrace();
  			die("session items");
  			return $this->createItems($items);
- 		}
- 		
- 		
+ 		} 		
 	}
 
 	/**
@@ -483,9 +481,10 @@ class Order extends DataObject {
 	 *
 	 * @return DataObjectSet
 	 */
-	protected function itemsFromDatabase() {
+	protected function itemsFromDatabase($filter = null) {
+		$extrafilter = ($filter) ? " AND $filter" : "";
 		$bt = defined('DB::USE_ANSI_SQL') ? "\"" : "`";
-		$dbitems =  DataObject::get('OrderItem', "{$bt}OrderID{$bt} = '$this->ID'");
+		$dbitems =  DataObject::get('OrderItem', "{$bt}OrderID{$bt} = '$this->ID' $extrafilter");
 		return $dbitems;
 	}
 
