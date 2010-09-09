@@ -10,6 +10,8 @@
 class ShoppingCart extends Controller {
 
 	protected static $order = null; // for temp caching
+	
+	static $cartid_session_name = 'shoppingcartid';
 
 	static $allowed_actions = array (
 		'additem',
@@ -95,16 +97,17 @@ class ShoppingCart extends Controller {
 	public static function current_order() {
 		$order = self::$order;
 		if (!$order) {
-			//find order by session id
-			//TODO: it might be better if the orderID is stored in the session,
-			//becasue there could be some confusion retrieving from multiple orders with the same session ID
-			if ($o = DataObject::get_one('Order', "Status = 'Cart' AND SessionID = '".session_id()."'")) {
+			//find order by id saved to session (allows logging out and retaining cart contents)
+			$cartid = Session::get(self::$cartid_session_name);
+			//TODO: make clear cart on logout optional
+			if ($cartid && $o = DataObject::get_one('Order', "Status = 'Cart' AND ID = $cartid")) {
 				$order = $o;	
 			}else {
 				$order = new Order();
 				$order->SessionID = session_id();
 				$order->MemberID = Member::currentUserID(); // Set the Member relation to this order
-				$order->write();				
+				$order->write();
+				Session::set(self::$cartid_session_name,$order->ID);			
 			}
 			self::$order = $order; //temp caching
 		}

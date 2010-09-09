@@ -57,6 +57,7 @@ class AccountPage extends Page {
 	function CompleteOrders() {
 		$memberID = Member::currentUserID();
 		$statusFilter = "Order.Status IN ('" . implode("','", Order::$paid_status) . "')";
+		$statusFilter .= " AND Order.Status NOT IN('Cart')";
 		return DataObject::get('Order', "Order.MemberID = '$memberID' AND $statusFilter", "Created DESC");
 	}
 
@@ -69,6 +70,7 @@ class AccountPage extends Page {
 	function IncompleteOrders() {
 		$memberID = Member::currentUserID();
 		$statusFilter = "Order.Status NOT IN ('" . implode("','", Order::$paid_status) . "')";
+		$statusFilter .= " AND Order.Status NOT IN('Cart')";
 		return DataObject::get('Order', "Order.MemberID = '$memberID' AND $statusFilter", "Created DESC");
 	}
 

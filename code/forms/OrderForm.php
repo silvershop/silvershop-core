@@ -124,7 +124,7 @@ class OrderForm extends Form {
 	
 	
 	function addValidAction($action){
-		$validactions[] = $action;
+		$this->validactions[] = $action;
 	}
 	
 	function getValidActions($format = true){
@@ -265,6 +265,16 @@ class OrderForm extends Form {
 
 		Director::redirect($order->Link());
 		return true;
+	}
+	
+	function saveDataToSession($data){
+		Session::set("FormInfo.{$this->FormName()}.data", $data);
+	}
+	
+	function loadDataFromSession(){
+		if($data = Session::get("FormInfo.{$this->FormName()}.data")){
+			$this->loadDataFrom($data);
+		}
 	}
 
 }
