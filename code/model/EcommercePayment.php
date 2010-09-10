@@ -64,9 +64,9 @@ class EcommercePayment extends DataObjectDecorator {
 			}
 			if($oldStatus != $this->owner->Status && $this->owner->Status == self::get_payment_status_success()) {
 				// if the payment status changes  and the payment is successful then send receipt
+				$order = $this->owner->Order();
 				$order->sendReceipt();
 				//if the payment is set as paid and the order is not marked as paid then this can be done now...
-				$order = $this->owner->Order();
 				if($order->Status != self::get_order_status_fully_paid()) {
 					$order->Status = self::get_order_status_fully_paid();
 					$order->write();
