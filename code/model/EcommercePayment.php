@@ -56,13 +56,12 @@ class EcommercePayment extends DataObjectDecorator {
 			}
 			$oldData = DataObject::get_by_id("Payment", $id);
 			if(!$oldData) {
-				$oldData = new Payment();
-				$oldStatus = self::get_payment_status_not_complete();
+				$oldStatus = "";
 			}
 			else {
 				$oldStatus = $oldData->Status;
 			}
-			if($oldStatus != $this->owner->Status && $this->owner->Status == self::get_payment_status_success()) {
+			if($oldStatus != $this->owner->Status) {
 				// if the payment status changes  and the payment is successful then send receipt
 				$order = $this->owner->Order();
 				$order->sendReceipt();
