@@ -13,10 +13,9 @@ class ProductsAndGroupsModelAdmin extends ModelAdmin {
 	public static $record_controller_class = "ProductsAndGroupsModelAdmin_RecordController";
 
 	public static $managed_models = array("Product", "ProductGroup");
-
-	public static function set_managed_models(array $array) {
-		self::$managed_models = $array;
-	}
+		public static function set_managed_models(array $array) {self::$managed_models = $array;}
+		public static function add_managed_models($v) {self::$managed_models[] = $v;}
+		public static function remove_managed_models($v) {self::$managed_models[array_search($v, self::$managed_models)] = $v;}
 
 	public static $url_segment = 'products';
 
