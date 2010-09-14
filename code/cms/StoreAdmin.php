@@ -19,11 +19,6 @@ class StoreAdmin extends ModelAdmin{
 
 	public static $record_controller_class = 'StoreAdmin_RecordController';
 
-
-	public static function set_managed_models(array $array) {
-		self::$managed_models = $array;
-	}
-
 	function init() {
 		parent::init();
 		Requirements::themedCSS("OrderReport");
