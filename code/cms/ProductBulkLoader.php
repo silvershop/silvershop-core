@@ -1,22 +1,49 @@
 <?php
 
+//Note: you may need to comment out ModelAdmin line 583 to disable checking file type for Excel exported files
+
 class ProductBulkLoader extends CsvBulkLoader{
 	
 	static $parentpageid = null;
 	
 	public $columnMap = array(
-		//'Image' => '->linkToImage'//TODO: set image, based on filename (perhaps all product images could go in assets/products/)
+	
+		//should these be done with relation callbacks?
+		//'Image' => '->linkToImage',
+		//'Photo' => '->linkToImage',
+		'Category' => '->setParent',
+		'ProductGroup' => '->setParent',
+		
+		'Product ID' => 'InternalItemID',
+		'ProductID' => 'InternalItemID',
+		'Long Description' => 'Content',
+		'Short Description' => 'MetaDescription',
+		
+		'Short Title' => 'MenuTitle'
 	);
 	
 	public $duplicateChecks = array(
-		'InternalItemID' => 'InternalItemID' // use internalItemID for duplicate checks
+		'InternalItemID' => 'InternalItemID', // use internalItemID for duplicate checks
+		'Title' => 'Title'
+			
 	);
 	
-	public $relationCallbacks = array();
+	public $relationCallbacks = array(
+		'Image' => array(
+			'relationname' => 'Image', // relation accessor name
+			'callback' => 'imageByFilename'
+		),
+		'Photo' => array(
+			'relationname' => 'Image', // relation accessor name
+			'callback' => 'imageByFilename'
+		)
+	);
+	
 	
 	protected function processAll($filepath, $preview = false) {
 		$results = parent::processAll($filepath, $preview);
 		
+			
 		//After results have been processed, publish all created & updated products
 		$objects = new DataObjectSet();
 		$objects->merge($results->Created());
@@ -24,11 +51,11 @@ class ProductBulkLoader extends CsvBulkLoader{
 		foreach($objects as $object){
 			
 			$object->ClassName = "Product";
-			 //TODO: find or create parent category, if provided
 			
 			if(!$object->ParentID){
 				 //set parent page
-				if(self::$parentpageid instanceof ProductGroup) //cached option
+				
+				if(is_numeric(self::$parentpageid) &&  DataObject::get_by_id('ProductGroup',self::$parentpageid)) //cached option
 					$object->ParentID = self::$parentpageid;
 				elseif($parentpage = DataObject::get_one('ProductGroup',"Title = 'Products'",'Created DESC')){ //page called 'Products'
 					$object->ParentID = self::$parentpageid = $parentpage->ID;
@@ -43,12 +70,32 @@ class ProductBulkLoader extends CsvBulkLoader{
 			$object->writeToStage('Stage'); 
 			$object->publish('Stage', 'Live');
 		}
+
 		return $results;
 	}
 	
-
+	// set image, based on filename
+	function imageByFilename(&$obj, $val, $record){
+		
+		$filename = strtolower(Convert::raw2sql($val));
+		if($filename && $image = DataObject::get_one('Image',"LOWER(Filename) LIKE '%$filename%'")){ //ignore case
+			$image->ClassName = 'Product_Image'; //must be this type of image
+			$image->write();
+			return $image;
+		}
+		return null;
+	}
+	
+	// find product group parent (ie Cateogry)	
+	function setParent(&$obj, $val, $record){
+		if($val && $parentpage = DataObject::get_one('ProductGroup',"Title = '$val'",'Created DESC')){ // find or create parent category, if provided
+			$obj->ParentID = $parentpage->ID;
+			$obj->write();
+			$obj->writeToStage('Stage'); 
+			$obj->publish('Stage', 'Live');
+		}
+	}
 	
 }
-
 
 ?>
