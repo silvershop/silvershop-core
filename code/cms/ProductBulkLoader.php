@@ -88,7 +88,8 @@ class ProductBulkLoader extends CsvBulkLoader{
 	
 	// find product group parent (ie Cateogry)	
 	function setParent(&$obj, $val, $record){
-		if($val && $parentpage = DataObject::get_one('ProductGroup',"Title = '$val'",'Created DESC')){ // find or create parent category, if provided
+		$title = strtolower(Convert::raw2sql($val));
+		if($title && $parentpage = DataObject::get_one('ProductGroup',"LOWER(Title) = '$title'",'Created DESC')){ // find or create parent category, if provided
 			$obj->ParentID = $parentpage->ID;
 			$obj->write();
 			$obj->writeToStage('Stage'); 
