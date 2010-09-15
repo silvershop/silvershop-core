@@ -78,7 +78,7 @@ class ProductBulkLoader extends CsvBulkLoader{
 	function imageByFilename(&$obj, $val, $record){
 		
 		$filename = strtolower(Convert::raw2sql($val));
-		if($filename && $image = DataObject::get_one('Image',"LOWER(Filename) LIKE \"%$filename%\"")){ //ignore case
+		if($filename && $image = DataObject::get_one('Image',"LOWER(Filename) LIKE '%$filename%'")){ //ignore case
 			$image->ClassName = 'Product_Image'; //must be this type of image
 			$image->write();
 			return $image;
@@ -89,7 +89,7 @@ class ProductBulkLoader extends CsvBulkLoader{
 	// find product group parent (ie Cateogry)	
 	function setParent(&$obj, $val, $record){
 		$title = strtolower(Convert::raw2sql($val));
-		if($title && $parentpage = DataObject::get_one('ProductGroup',"LOWER(Title) = \"$title\"",'Created DESC')){ // find or create parent category, if provided
+		if($title && $parentpage = DataObject::get_one('ProductGroup',"LOWER(Title) = '$title'",'Created DESC')){ // find or create parent category, if provided
 			$obj->ParentID = $parentpage->ID;
 			$obj->write();
 			$obj->writeToStage('Stage'); 
