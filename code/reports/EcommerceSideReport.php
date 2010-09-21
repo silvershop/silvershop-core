@@ -7,7 +7,7 @@
  *
  * @package ecommerce
  */
-class EcommerceSideReport_FeaturedProducts extends SideReport {
+class EcommerceSideReport_FeaturedProducts extends SideReportView {
 
 	function title() {
 		return "Featured products";
@@ -24,7 +24,7 @@ class EcommerceSideReport_FeaturedProducts extends SideReport {
 	}
 }
 
-class EcommerceSideReport_AllProducts extends SideReport {
+class EcommerceSideReport_AllProducts extends SideReportView {
 
 	function title() {
 		return "All products";
