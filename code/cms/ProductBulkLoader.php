@@ -8,14 +8,13 @@ class ProductBulkLoader extends CsvBulkLoader{
 	
 	public $columnMap = array(
 	
-		//should these be done with relation callbacks?
-		//'Image' => '->linkToImage',
-		//'Photo' => '->linkToImage',
 		'Category' => '->setParent',
 		'ProductGroup' => '->setParent',
 		
 		'Product ID' => 'InternalItemID',
 		'ProductID' => 'InternalItemID',
+		'SKU' => 'InternalItemID',
+		
 		'Long Description' => 'Content',
 		'Short Description' => 'MetaDescription',
 		
@@ -25,7 +24,6 @@ class ProductBulkLoader extends CsvBulkLoader{
 	public $duplicateChecks = array(
 		'InternalItemID' => 'InternalItemID', // use internalItemID for duplicate checks
 		'Title' => 'Title'
-			
 	);
 	
 	public $relationCallbacks = array(
@@ -42,7 +40,6 @@ class ProductBulkLoader extends CsvBulkLoader{
 	
 	protected function processAll($filepath, $preview = false) {
 		$results = parent::processAll($filepath, $preview);
-		
 			
 		//After results have been processed, publish all created & updated products
 		$objects = new DataObjectSet();
@@ -66,6 +63,8 @@ class ProductBulkLoader extends CsvBulkLoader{
 				}else
 					$object->ParentID = self::$parentpageid = 0;
 			}
+			
+			$object->extend('updateImport'); //could be used for setting other attributes, such as stock level
 			
 			$object->writeToStage('Stage'); 
 			$object->publish('Stage', 'Live');
