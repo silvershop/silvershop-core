@@ -757,7 +757,9 @@ class Order extends DataObject {
 	 * @return string
 	 */
 	//function Status() {return $this->IsPaid() ? _t('Order.SUCCESSFULL', 'Order Successful') : _t('Order.INCOMPLETE', 'Order Incomplete');}
-
+	function Status() {
+    return _t('Payment.'.$this->owner->Status,$this->owner->Status);
+	}
 	/**
 	 * Return a link to the {@link CheckoutPage} instance
 	 * that exists in the database.
