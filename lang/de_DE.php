@@ -236,7 +236,6 @@ $lang['de_DE']['ViewAllProducts.ss']['NOSUBJECTS'] = 'Keine Produkte vorhanden.'
 $lang['de_DE']['ViewAllProducts.ss']['PRICE'] = 'Preis';
 $lang['de_DE']['ViewAllProducts.ss']['PRODUCTID'] = 'Produkt ID';
 $lang['de_DE']['ViewAllProducts.ss']['WEIGHT'] = 'Gewicht';
-$lang['de_DE']['EcommerceRole']['PERSONALINFORMATION'] = 'Ihre Daten';
 $lang['de_DE']['EcommerceRole']['COUNTRY'] = 'Land';
 $lang['de_DE']['EcommerceRole']['FIRSTNAME'] = 'Vorname';
 $lang['de_DE']['EcommerceRole']['SURNAME'] = 'Nachname';
