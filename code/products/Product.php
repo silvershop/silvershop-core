@@ -202,6 +202,9 @@ class Product extends Page {
 		return ShoppingCart::current_order();
 	}
 	
+	/**
+	 * Depreciated - use canPurchase instead.
+	 */
 	function AllowPurchase(){
 		return $this->canPurchase();
 	}
