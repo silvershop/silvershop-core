@@ -285,7 +285,7 @@ class Product extends Page {
 
 		if(!DataObject::get_one('Product')) {
 			if(!DataObject::get_one('ProductGroup')) singleton('ProductGroup')->requireDefaultRecords();
-			if($group = DataObject::get_one('ProductGroup', '', true, '{$bt}ParentID{$bt} DESC')) {
+			if($group = DataObject::get_one('ProductGroup', '', true, "{$bt}ParentID{$bt} DESC")) {
 				$content = '<p>This is a <em>product</em>. It\'s description goes into the Content field as a standard SilverStripe page would have it\'s content. This is an ideal place to describe your product.</p>';
 
 				$page1 = new Product();
