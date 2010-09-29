@@ -160,23 +160,9 @@ HTML;
 	function AjaxQuantityField(){
 		return $this->QuantityField();
 	}
-
-	function QuantityField() {
-		if(!self::$disable_quantity_js){
-			Requirements::javascript(THIRDPARTY_DIR . '/jquery/jquery.js');
-			Requirements::javascript('ecommerce/javascript/ecommerce.js');
-		}
-
-		$quantityName = $this->QuantityFieldName();
-		$setQuantityLinkName = $quantityName . '_SetQuantityLink';
-		$setQuantityLink = $this->setquantityLink();
-
-		$quantity = ($this->Quantity) ? $this->Quantity : ""; //TODO: make this customisable (ie "0", or "")
-
-		return <<<HTML
-			<input name="$quantityName" class="ajaxQuantityField" type="text" value="$quantity" size="3" maxlength="3" disabled="disabled"/>
-			<input name="$setQuantityLinkName" type="hidden" value="$setQuantityLink"/>
-HTML;
+	
+	function QuantityField(){
+		return new EcomQuantityField($this);		
 	}
 
 	function Total() {

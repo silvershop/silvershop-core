@@ -187,14 +187,20 @@ class ShoppingCart extends Controller {
 	static function get_items($filter) {
 		return self::current_order()->Items($filter);
 	}
-
+	
+	/**
+	 * Get OrderItem according to product id, and coorresponding parameter filter.
+	 */
 	static function get_item_by_id($id, $variationid = null,$filter = null) {
+		$filter = self::paramFilter($filter);
 		$order = self::current_order();
-		$defaultfilter = (self::defaultFilter() && self::defaultFilter() != "") ? " AND ". self::defaultFilter() : "";
-		$fil = ($filter) ? " AND $filter" : $defaultfilter;
+		$fil = ($filter && $filter != "") ? " AND $filter" : "";
 		return DataObject::get_one('OrderItem', "OrderID = $order->ID AND ProductID = $id". $fil);
 	}
 	
+	/**
+	 * Get item according to a filter.
+	 */
 	static function get_item($filter) {
 		$order = self::current_order();
 		return  DataObject::get_one('OrderItem', "OrderID = $order->ID AND $filter");
@@ -244,13 +250,6 @@ class ShoppingCart extends Controller {
 		return self::current_order()->UseShippingAddress;		
 	}
 
-	// Clear function
-
-	static function clear() {
-		self::current_order()->SessionID = null;
-		self::current_order()->write();
-		self::$order = null;
-	}
 
 	// Database saving function
 	static function save_current_order() {
@@ -283,7 +282,7 @@ class ShoppingCart extends Controller {
 	function additem($request) {
 		
 		if ($itemId = $request->param('ID')) {
-			if($item = ShoppingCart::get_item($this->getFilter())) {
+			if($item = ShoppingCart::get_item($this->urlFilter())) {
 				
 				ShoppingCart::add_item($item);
 			} else {
@@ -296,7 +295,7 @@ class ShoppingCart extends Controller {
 	}
 
 	function removeitem($request) {
-		if ($item = ShoppingCart::get_item($this->getFilter())) {
+		if ($item = ShoppingCart::get_item($this->urlFilter())) {
 			ShoppingCart::remove_item($item);
 		}
 		if (!$this->isAjax())
@@ -304,12 +303,24 @@ class ShoppingCart extends Controller {
 	}
 
 	function removeallitem() {
-		if ($item = ShoppingCart::get_item($this->getFilter())) {
+		if ($item = ShoppingCart::get_item($this->urlFilter())) {
 			ShoppingCart::remove_all_item($item);
 		}
 		if (!$this->isAjax())
 			Director::redirectBack();
 	}
+
+	
+	/**
+	 * Clears the cart
+	 */
+	static function clear() {
+		self::current_order()->SessionID = null;
+		self::current_order()->write();
+		self::remove_all_items();
+		self::$order = null;
+	}
+
 
 	/**
 	 * Ajax method to set an item quantity
@@ -317,34 +328,9 @@ class ShoppingCart extends Controller {
 	function setquantityitem() {
 		$quantity = $request->param('quantity');
 		if ($quantity && $quantity > 0) {
-			if ($item = ShoppingCart::get_item($this->getFilter()))
+			if ($item = ShoppingCart::get_item($this->urlFilter()))
 				ShoppingCart::set_quantity_item($item, $quantity);
 		}
-	}
-	
-	/**
-	 * Create a filter for retrieving OrderItem, based on url & get params 
-	 */
-	protected function getFilter(){
-		
-		$bt = defined('DB::USE_ANSI_SQL') ? "\"" : "`";
-		$request = $this->getRequest();
-		
-		$selection = array(
-			'ProductID = '.$request->param('ID')
-		);
-		if($request->param('OtherID'))
-			$selection[] = 'ProductVariationID = '.$request->param('OtherID');
-		
-		$paramarray = self::$paramfilters;
-		
-		foreach($paramarray as $param => $value){
-			$v = ($request->getVar($param)) ? $request->getVar($param) : $value;
-			$paramarray[$param] = "{$bt}$param{$bt} = ".Convert::raw2sql($v);  
-		}
-		
-		$selection = array_merge($selection,$paramarray);
-		return implode(" AND ",$selection);
 	}
 	
 	/**
@@ -377,16 +363,52 @@ class ShoppingCart extends Controller {
 		}
 		return $orderitem;
 	}
+
 	
-	static function defaultFilter(){
+	/**
+	 * Gets a SQL filter based on array of parameters.
+	 * 
+	 * 	 Returns default filter if none provided,
+	 *	 otherwise it updates default filter with passed parameters
+	 */
+	static function paramFilter($params = array()){
+		
+		if(!self::$paramfilters) return ""; //no use for this if there are not parameters defined
+		
 		$bt = defined('DB::USE_ANSI_SQL') ? "\"" : "`";
-		$paramarray = self::$paramfilters;
-		foreach($paramarray as $param => $value){
-			$paramarray[$param] = "{$bt}$param{$bt} = ".Convert::raw2sql($value);  
+		$temparray = self::$paramfilters;
+		
+		$outputarray = array();
+		
+		foreach(self::$paramfilters as $field => $value){
+			if(isset($params[$field])){
+
+				//TODO: convert to $dbfield->prepValueForDB() when Boolean problem figured out
+				$temparray[$field] = Convert::raw2sql($params[$field]);
+			}
+			$outputarray[] = "{$bt}".$field."{$bt} = ".$temparray[$field];
 		}
-		return implode(" AND ",$paramarray);
+		
+		return implode(" AND ",$outputarray);	
 	}
 	
+	/**
+	 * Gets a filter based on urlParameters
+	 */
+	function urlFilter(){
+		$bt = defined('DB::USE_ANSI_SQL') ? "\"" : "`";
+		$request = $this->getRequest();
+		$selection = array(
+			"{$bt}ProductID{$bt} = ".$request->param('ID')
+		);
+		$filter = self::paramFilter($request->getVars());
+		return implode(" AND ",array_merge($selection,array($filter)));
+	}
+	
+	
+	/**
+	 * Removes specified modifier, if allowed
+	 */
 	function removemodifier() {
 		$modifierId = $this->urlParams['ID'];
 		if (ShoppingCart::can_remove_modifier($modifierId))
@@ -394,7 +416,10 @@ class ShoppingCart extends Controller {
 		if (!$this->isAjax())
 			Director::redirectBack();
 	}
-
+	
+	/**
+	 * Displays order info and cart contents.
+	 */
 	function debug() {
 		Debug::show(ShoppingCart::current_order());
 	}
