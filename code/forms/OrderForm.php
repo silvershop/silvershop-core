@@ -241,7 +241,7 @@ class OrderForm extends Form {
 		$order->MemberID = $member->ID;
 		$order->write();
 		
-		ShoppingCart::clear();
+		//ShoppingCart::clear();
 		
 		// Save payment data from form and process payment
 		$form->saveInto($payment);
