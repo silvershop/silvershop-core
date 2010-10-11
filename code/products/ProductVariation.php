@@ -34,15 +34,8 @@ class ProductVariation extends DataObject {
 		$fields[] = new TextField('Price');
 		return new FieldSet($fields);
 	}
-	
-	/*
-	 * @Depreciated - use canPurchase instead
-	 */
-	function AllowPurchase(){
-		return $this->canPurcahse();
-	}
 
-	function canPurchase() {
+	function AllowPurchase() {
 		if($product = $this->Product())
 			return $this->Price && $product->AllowPurchase;
 		return false;
@@ -124,19 +117,19 @@ class ProductVariation_OrderItem extends Product_OrderItem {
 	}
 
 	function addLink() {
-		return ShoppingCart_Controller::add_item_link($this->_productID,$this->_productVariationID);
+		return ShoppingCart::add_item_link($this->_productID,$this->_productVariationID);
 	}
 
 	function removeLink() {
-		return ShoppingCart_Controller::remove_item_link($this->_productID,$this->_productVariationID);
+		return ShoppingCart::remove_item_link($this->_productID,$this->_productVariationID);
 	}
 
 	function removeallLink() {
-		return ShoppingCart_Controller::remove_all_item_link($this->_productID,$this->_productVariationID);
+		return ShoppingCart::remove_all_item_link($this->_productID,$this->_productVariationID);
 	}
 
 	function setquantityLink() {
-		return ShoppingCart_Controller::set_quantity_item_link($this->_productID,$this->_productVariationID);
+		return ShoppingCart::set_quantity_item_link($this->_productID,$this->_productVariationID);
 	}
 
 	function hasSameContent($orderItem) {

@@ -58,7 +58,7 @@ class OrderForm extends Form {
 		$countryField->addExtraClass('ajaxCountryField');
 
 		$setCountryLinkID = $countryField->id() . '_SetCountryLink';
-		$setContryLink = ShoppingCart_Controller::set_country_link();
+		$setContryLink = ShoppingCart::set_country_link();
 		$memberFields->push(new HiddenField($setCountryLinkID, '', $setContryLink));
 
 		$leftFields = new CompositeField($memberFields, $shippingFields);
@@ -124,7 +124,7 @@ class OrderForm extends Form {
 	
 	
 	function addValidAction($action){
-		$validactions[] = $action;
+		$this->validactions[] = $action;
 	}
 	
 	function getValidActions($format = true){
@@ -241,7 +241,7 @@ class OrderForm extends Form {
 		$order->MemberID = $member->ID;
 		$order->write();
 		
-		ShoppingCart::clear();
+		//ShoppingCart::clear();
 		
 		// Save payment data from form and process payment
 		$form->saveInto($payment);
@@ -265,6 +265,16 @@ class OrderForm extends Form {
 
 		Director::redirect($order->Link());
 		return true;
+	}
+	
+	function saveDataToSession($data){
+		Session::set("FormInfo.{$this->FormName()}.data", $data);
+	}
+	
+	function loadDataFromSession(){
+		if($data = Session::get("FormInfo.{$this->FormName()}.data")){
+			$this->loadDataFrom($data);
+		}
 	}
 
 }

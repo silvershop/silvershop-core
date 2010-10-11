@@ -150,8 +150,6 @@ class ProductGroup extends Page {
 		$allproducts = DataObject::get('Product',"ParentID IN ($groupidsimpl) $filter","",$join);
 		if($allproducts) $products->TotalCount = $allproducts->Count(); //add total count to returned data for 'showing x to y of z products'
 		if($products && $products instanceof DataObjectSet) $products->removeDuplicates();
-		
-
 		return $products;
 	}
 

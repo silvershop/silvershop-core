@@ -1,7 +1,7 @@
 <?php
 /**
  * This is a standard Product page-type with fields like
- * Price, Weight, Model and basic management of
+ * Price, Weight, Model/Author and basic management of
  * groups.
  *
  * It also has an associated Product_OrderItem class,
@@ -20,7 +20,7 @@ class Product extends Page {
 		'Model' => 'Varchar(30)',
 		'FeaturedProduct' => 'Boolean',
 		'AllowPurchase' => 'Boolean',
-		'InternalItemID' => 'Varchar(30)', //ie SKU, ProductID etc (internal / existing recognition of product)
+		'InternalItemID' => 'Varchar(30)',
 
 		'NumberSold' => 'Int' //store number sold, so it doesn't have to be computed on the fly
 	);
@@ -75,7 +75,7 @@ class Product extends Page {
 		// Standard product detail fields
 		$fields->addFieldToTab('Root.Content.Main',new TextField('Price', _t('Product.PRICE', 'Price'), '', 12),'Content');
 		$fields->addFieldToTab('Root.Content.Main',new TextField('Weight', _t('Product.WEIGHT', 'Weight (kg)'), '', 12),'Content');
-		$fields->addFieldToTab('Root.Content.Main',new TextField('Model', _t('Product.MODEL', 'Model'), '', 30),'Content');
+		$fields->addFieldToTab('Root.Content.Main',new TextField('Model', _t('Product.MODEL', 'Model/Author'), '', 30),'Content');
 		$fields->addFieldToTab('Root.Content.Main',new TextField('InternalItemID', _t('Product.CODE', 'Product Code'), '', 30),'Content');
 
 		if(!$fields->dataFieldByName('Image')) {
@@ -83,8 +83,13 @@ class Product extends Page {
 		}
 
 		// Flags for this product which affect it's behaviour on the site
-		$fields->addFieldToTab('Root.Content.Main',new CheckboxField('FeaturedProduct', _t('Product.FEATURED', 'Featured Product')), 'Content');
-		$fields->addFieldToTab('Root.Content.Main',new CheckboxField('AllowPurchase', _t('Product.ALLOWPURCHASE', 'Allow product to be purchased'), 1),'Content');
+		$fields->addFieldsToTab(
+			'Root.Content.Main',
+			array(
+				new CheckboxField('FeaturedProduct', _t('Product.FEATURED', 'Featured Product')),
+				new CheckboxField('AllowPurchase', _t('Product.ALLOWPURCHASE', 'Allow product to be purchased'), 1)
+			)
+		);
 
 		$fields->addFieldsToTab(
 			'Root.Content.Variations',
@@ -201,34 +206,19 @@ class Product extends Page {
 		HTTP::set_cache_age(0);
 		return ShoppingCart::current_order();
 	}
-	
-	/**
-	 * Depreciated - use canPurchase instead.
-	 */
-	function AllowPurchase(){
-		return $this->canPurchase();
-	}
-	
+
 	/**
 	 * Conditions for whether a product can be purchased.
 	 *
 	 * If it has the checkbox for 'Allow this product to be purchased',
 	 * as well as having a price, it can be purchased. Otherwise a user
 	 * can't buy it.
-	 * 
-	 * Other conditions may be added by decorating with the canPurcahse function
-	 * 
+	 *
 	 * @return boolean
 	 */
-	function canPurchase($member = null) {
+	function getAllowPurchase() {
 		if(!self::$global_allow_purcahse) return false;
-		$allowpurchase = ($this->dbObject('AllowPurchase')->getValue() && ($this->Price > 0)); 
-		
-		// Standard mechanism for accepting permission changes from decorators
-		$extended = $this->extendedCan('canPurchase', $member);
-		if($extended !== null) return $extended;
-		
-		return $allowpurchase; 
+		return $this->db('AllowPurchase') && $this->Price;
 	}
 
 	/**
@@ -248,9 +238,13 @@ class Product extends Page {
 	 * Product_OrderItem only has a Product object in attribute
 	 */
 	function Item() {
-		if($item = ShoppingCart::get_item_by_id($this->ID))
-			return $item;
-		return new Product_OrderItem($this,0); //return dummy item so that we can still make use of Item
+		$filter = null;
+		$this->extend('updateItemFilter',&$filter);
+		$item = ShoppingCart::get_item_by_id($this->ID,null,$filter); //TODO: needs filter
+		if(!$item)
+			$item = new Product_OrderItem($this,0); //return dummy item so that we can still make use of Item 	
+		$this->extend('updateDummyItem',&$item);
+		return $item; 
 	}
 
 	/**
@@ -274,15 +268,15 @@ class Product extends Page {
 
 	//passing on shopping cart links ...is this necessary?? ...why not just pass the cart?
 	function addLink() {
-		return ShoppingCart_Controller::add_item_link($this->ID);
+		return ShoppingCart::add_item_link($this->ID);
 	}
 
 	function removeLink() {
-		return ShoppingCart_Controller::remove_item_link($this->ID);
+		return ShoppingCart::remove_item_link($this->ID);
 	}
 
 	function removeallLink() {
-		return ShoppingCart_Controller::remove_all_item_link($this->ID);
+		return ShoppingCart::remove_all_item_link($this->ID);
 	}
 
 	/**
@@ -448,31 +442,41 @@ class Product_OrderItem extends OrderItem {
 	}
 
 	function UnitPrice() {
-		return $this->Product()->Price;
+		$unitprice = $this->Product()->Price; 
+		$this->extend('updateUnitPrice',&$unitprice);
+		return $unitprice;
 	}
 
 	function TableTitle() {
-		return $this->Product()->Title;
+		$tabletitle = $this->Product()->Title;
+		$this->extend('updateTableTitle',&$tabletitle);
+		return $tabletitle;
 	}
 
 	function Link() {
 		if($product = $this->Product(true)) return $product->Link();
 	}
 
-	function addLink() {
-		return ShoppingCart_Controller::add_item_link($this->_productID);
+	function addLink() {		
+		return ShoppingCart::add_item_link($this->_productID,null,$this->linkParameters());
 	}
 
 	function removeLink() {
-		return ShoppingCart_Controller::remove_item_link($this->_productID);
+		return ShoppingCart::remove_item_link($this->_productID,null,$this->linkParameters());
 	}
 
 	function removeallLink() {
-		return ShoppingCart_Controller::remove_all_item_link($this->_productID);
+		return ShoppingCart::remove_all_item_link($this->_productID,null,$this->linkParameters());
 	}
 
 	function setquantityLink() {
-		return ShoppingCart_Controller::set_quantity_item_link($this->_productID);
+		return ShoppingCart::set_quantity_item_link($this->_productID,null,$this->linkParameters());
+	}
+
+	function linkParameters(){
+		$array = array();
+		$this->extend('updateLinkParameters',&$array);
+		return $array;
 	}
 
 	function onBeforeWrite() {
@@ -481,12 +485,12 @@ class Product_OrderItem extends OrderItem {
 		$this->ProductID = $this->_productID;
 		$this->ProductVersion = $this->_productVersion;
 	}
-
+	
 	public function debug() {
 		$title = $this->TableTitle();
 		$productID = $this->_productID;
 		$productVersion = $this->_productVersion;
-		return parent::debug() .<<<HTML
+		$html = parent::debug() .<<<HTML
 			<h3>Product_OrderItem class details</h3>
 			<p>
 				<b>Title : </b>$title<br/>
@@ -494,6 +498,8 @@ class Product_OrderItem extends OrderItem {
 				<b>Product Version : </b>$productVersion
 			</p>
 HTML;
+		$this->extend('updateDebug',&$html);
+		return $html;
 	}
 
 }
