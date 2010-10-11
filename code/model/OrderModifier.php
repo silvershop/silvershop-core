@@ -212,7 +212,7 @@ class OrderModifier extends OrderAttribute {
 	}
 
 	function removeLink() {
-		return ShoppingCart_Controller::remove_modifier_link($this->_id);
+		return ShoppingCart::remove_modifier_link($this->_id);
 	}
 
 	/**
@@ -227,7 +227,7 @@ class OrderModifier extends OrderAttribute {
 	function onBeforeWrite() {
 		parent::onBeforeWrite();
 
-		$this->Amount = $this->Amount();
+		//$this->Amount = $this->Amount();
 		$this->Type = $this->stat('is_chargable') ? 'Chargable' : 'Deductable';
 	}
 

@@ -1,5 +1,5 @@
 ###############################################
-eCommerce Module
+Ecommerce Module
 ###############################################
 
 Maintainer Contact
@@ -28,15 +28,13 @@ upgrade this module in one go without redoing the settings.
 Instead customise your application using your mysite folder.
 
 
-Make sure the module root folder is named 'ecommerce' to ensure requirements work properly.
-
 
 //copy the lines between the START AND END line to your /mysite/_config.php file and choose the right settings
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ start ECOMMERCE module ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // ___ ORDER
 //Order::set_modifiers(array());;
 //Order::set_email("websales@silverstripe.co.nz");
-//Order::set_subject("Order #%d - Thank you for your order at silverstripe.co.nz");
+//Order::set_subject("Thank you for your order at silverstripe.co.nz");
 //Order::set_table_overview_fields(array());
 //Order::set_order_id_start_number(1000);
 //Order::$db["Status"] = 'Enum("New,Unpaid,PaymentConfirmed,QueryForCustomer,PartsOnOrder,Processing,Sent,Complete,AdminCancelled,MemberCancelled","New")';
