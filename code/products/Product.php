@@ -1,7 +1,7 @@
 <?php
 /**
  * This is a standard Product page-type with fields like
- * Price, Weight, Model/Author and basic management of
+ * Price, Weight, Model and basic management of
  * groups.
  *
  * It also has an associated Product_OrderItem class,
@@ -20,7 +20,7 @@ class Product extends Page {
 		'Model' => 'Varchar(30)',
 		'FeaturedProduct' => 'Boolean',
 		'AllowPurchase' => 'Boolean',
-		'InternalItemID' => 'Varchar(30)',
+		'InternalItemID' => 'Varchar(30)', //ie SKU, ProductID etc (internal / existing recognition of product)
 
 		'NumberSold' => 'Int' //store number sold, so it doesn't have to be computed on the fly
 	);
@@ -46,7 +46,7 @@ class Product extends Page {
 	public static $casting = array();
 
 	public static $summary_fields = array(
-		'ID','InternalItemID' => 'Product Code','Title','Price','Weight','Model','NumberSold'
+		'ID','InternalItemID','Title','Price','Weight','Model','NumberSold'
 	);
 
 	public static $searchable_fields = array(
@@ -75,7 +75,7 @@ class Product extends Page {
 		// Standard product detail fields
 		$fields->addFieldToTab('Root.Content.Main',new TextField('Price', _t('Product.PRICE', 'Price'), '', 12),'Content');
 		$fields->addFieldToTab('Root.Content.Main',new TextField('Weight', _t('Product.WEIGHT', 'Weight (kg)'), '', 12),'Content');
-		$fields->addFieldToTab('Root.Content.Main',new TextField('Model', _t('Product.MODEL', 'Model/Author'), '', 30),'Content');
+		$fields->addFieldToTab('Root.Content.Main',new TextField('Model', _t('Product.MODEL', 'Model'), '', 30),'Content');
 		$fields->addFieldToTab('Root.Content.Main',new TextField('InternalItemID', _t('Product.CODE', 'Product Code'), '', 30),'Content');
 
 		if(!$fields->dataFieldByName('Image')) {
@@ -83,13 +83,8 @@ class Product extends Page {
 		}
 
 		// Flags for this product which affect it's behaviour on the site
-		$fields->addFieldsToTab(
-			'Root.Content.Main',
-			array(
-				new CheckboxField('FeaturedProduct', _t('Product.FEATURED', 'Featured Product')),
-				new CheckboxField('AllowPurchase', _t('Product.ALLOWPURCHASE', 'Allow product to be purchased'), 1)
-			)
-		);
+		$fields->addFieldToTab('Root.Content.Main',new CheckboxField('FeaturedProduct', _t('Product.FEATURED', 'Featured Product')), 'Content');
+		$fields->addFieldToTab('Root.Content.Main',new CheckboxField('AllowPurchase', _t('Product.ALLOWPURCHASE', 'Allow product to be purchased'), 1),'Content');
 
 		$fields->addFieldsToTab(
 			'Root.Content.Variations',
@@ -206,19 +201,34 @@ class Product extends Page {
 		HTTP::set_cache_age(0);
 		return ShoppingCart::current_order();
 	}
-
+	
+	/**
+	 * Depreciated - use canPurchase instead.
+	 */
+	function AllowPurchase(){
+		return $this->canPurchase();
+	}
+	
 	/**
 	 * Conditions for whether a product can be purchased.
 	 *
 	 * If it has the checkbox for 'Allow this product to be purchased',
 	 * as well as having a price, it can be purchased. Otherwise a user
 	 * can't buy it.
-	 *
+	 * 
+	 * Other conditions may be added by decorating with the canPurcahse function
+	 * 
 	 * @return boolean
 	 */
-	function getAllowPurchase() {
+	function canPurchase($member = null) {
 		if(!self::$global_allow_purcahse) return false;
-		return $this->db('AllowPurchase') && $this->Price;
+		$allowpurchase = ($this->dbObject('AllowPurchase')->getValue() && ($this->Price > 0)); 
+		
+		// Standard mechanism for accepting permission changes from decorators
+		$extended = $this->extendedCan('canPurchase', $member);
+		if($extended !== null) return $extended;
+		
+		return $allowpurchase; 
 	}
 
 	/**
@@ -237,7 +247,7 @@ class Product extends Page {
 	 * Note : This function is usable in the Product context because a
 	 * Product_OrderItem only has a Product object in attribute
 	 */
-	function Item() { //TODO: could this be sped up by using the ShoppingCart::get_item_by_id()?
+	function Item() {
 		if($item = ShoppingCart::get_item_by_id($this->ID))
 			return $item;
 		return new Product_OrderItem($this,0); //return dummy item so that we can still make use of Item

@@ -355,8 +355,11 @@ class Order extends DataObject {
 	 *
 	 * @param array $modifiers An array of {@link OrderModifier} subclass names
 	 */
-	public static function set_modifiers($modifiers) {
-		self::$modifiers = $modifiers;
+	public static function set_modifiers($modifiers, $replace = false) {
+		if($replace)
+			self::$modifiers = $modifiers;
+		else
+			array_merge(self::$modifiers,$modifiers);
 	}
 
 	/**
@@ -717,7 +720,17 @@ class Order extends DataObject {
 		$js[] = array('id' => $this->CartSubTotalID(), 'parameter' => 'innerHTML', 'value' => $subTotal);
 		$js[] = array('id' => $this->CartTotalID(), 'parameter' => 'innerHTML', 'value' => $total);
 	}
-
+	
+	/**
+	 * Will update payment status to "Paid if there is no outstanding amount".
+	 */
+	function updatePaymentStatus(){
+		if($this->Total() > 0 && $this->TotalOutstanding() <= 0){
+			$this->Status = 'Paid';
+			$this->write();
+		}
+	}
+	
 	/**
 	 * Has this order been sent to the customer?
 	 * (at "Sent" status).
@@ -757,9 +770,7 @@ class Order extends DataObject {
 	 * @return string
 	 */
 	//function Status() {return $this->IsPaid() ? _t('Order.SUCCESSFULL', 'Order Successful') : _t('Order.INCOMPLETE', 'Order Incomplete');}
-	function Status() {
-    return _t('Payment.'.$this->owner->Status,$this->owner->Status);
-	}
+
 	/**
 	 * Return a link to the {@link CheckoutPage} instance
 	 * that exists in the database.
@@ -787,7 +798,8 @@ class Order extends DataObject {
 	protected function sendEmail($emailClass, $copyToAdmin = true) {
  		$from = self::$receipt_email ? self::$receipt_email : Email::getAdminEmail();
  		$to = $this->Member()->Email;
-		$subject = self::$receipt_subject ? self::$receipt_subject : "Shop Sale Information #$this->ID";
+		$subject = self::$receipt_subject ? self::$receipt_subject : "Shop Sale Information #%d";
+		$subject = sprintf($subject,$this->ID);
 
  		$purchaseCompleteMessage = DataObject::get_one('CheckoutPage')->PurchaseComplete;
 

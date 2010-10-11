@@ -9,33 +9,19 @@
 
 var EcommerceModelAdminExtensions = {
 
-	nextActionButtonSelector: "#action_goNext",
-
-	prevActionButtonSelector: "#action_goPrev",
-
-	nextRecordURLSelector: "#nextRecordURL",
-
-	prevRecordURLSelector: "#prevRecordURL",
-
-	areaForLoadingResults: "#right #ModelAdminPanel",
-
-	goForwardButtonSelector: "#Form_EditForm_action_goForward, #Form_ResultsForm_action_goForward",
-
-	goBackwardButtonSelector: "#Form_EditForm_action_goBack, #Form_ResultsForm_action_goBack",
-
 	init: function () {
-		jQuery(EcommerceModelAdminExtensions.nextActionButton).live(
-			"click",
+		jQuery('#action_goNext').live(
+			'click',
 			function() {
-				nextPage = jQuery(EcommerceModelAdminExtensions.nextRecordURLSelector).val();
+				nextPage = jQuery('#nextRecordURL').val();
 				EcommerceModelAdminExtensions.loadForm(nextPage);
 				return false;
 			}
 		);
-		jQuery(EcommerceModelAdminExtensions.prevActionButtonSelector).live(
-			"click",
+		jQuery('#action_goPrev').live(
+			'click',
 			function() {
-				prevPage = jQuery(EcommerceModelAdminExtensions.prevRecordURLSelector).val();
+				prevPage = jQuery('#prevRecordURL').val();
 				EcommerceModelAdminExtensions.loadForm(prevPage);
 				return false;
 			}
@@ -44,14 +30,14 @@ var EcommerceModelAdminExtensions = {
 
 	loadForm: function(url) {
 		tinymce_removeAll();
-		jQuery(EcommerceModelAdminExtensions.areaForLoadingResults).load(
+		jQuery('#right #ModelAdminPanel').load(
 			url,
 			function(result) {
-				if(typeof(successCallback) == "function") {
+				if(typeof(successCallback) == 'function') {
 					successCallback.apply();
 				}
-				jQuery().hide(EcommerceModelAdminExtensions.goForwardButtonSelector);
-				jQuery(EcommerceModelAdminExtensions.goBackwardButtonSelector).hide();
+				jQuery('#Form_EditForm_action_goForward, #Form_ResultsForm_action_goForward').hide();
+				jQuery('#Form_EditForm_action_goBack, #Form_ResultsForm_action_goBack').hide();
 
 				Behaviour.apply(); // refreshes ComplexTableField
 				if(window.onresize) {

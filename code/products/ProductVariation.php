@@ -34,8 +34,15 @@ class ProductVariation extends DataObject {
 		$fields[] = new TextField('Price');
 		return new FieldSet($fields);
 	}
+	
+	/*
+	 * @Depreciated - use canPurchase instead
+	 */
+	function AllowPurchase(){
+		return $this->canPurcahse();
+	}
 
-	function AllowPurchase() {
+	function canPurchase() {
 		if($product = $this->Product())
 			return $this->Price && $product->AllowPurchase;
 		return false;
@@ -113,7 +120,7 @@ class ProductVariation_OrderItem extends Product_OrderItem {
 	## Overloaded functions ##
 
 	function getProductIDForSerialization(){
-		return $this->_productID."_v".$this->_productVariationID;
+		return parent::getProductIDForSerialization()."_v".$this->_productVariationID;
 	}
 
 	function addLink() {
