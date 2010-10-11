@@ -41,19 +41,23 @@ class ShoppingCart extends Controller {
 		self::$paramfilters = array_merge(self::$paramfilters,$array);
 	}
 
+	static function country_setting_index() {
+		return "ShoppingCartCountry";
+	}
+
 	static function set_country($country) {
 		$countrySettingIndex = self::country_setting_index();
-		Session::set("ShoppingCartCountry", $country);
+		Session::set($countrySettingIndex, $country);
 	}
 
 	static function get_country() {
 		$countrySettingIndex = self::country_setting_index();
-		return Session::get("ShoppingCartCountry");
+		return Session::get($countrySettingIndex);
 	}
 
 	static function remove_country() {
 		$countrySettingIndex = self::country_setting_index();
-		Session::clear("ShoppingCartCountry");
+		Session::clear($countrySettingIndex);
 	}
 
 	function init() {
