@@ -1,4 +1,5 @@
 <?php
+
 /**
  * ShoppingCart is a session handler that stores
  * information about what products are in a user's
@@ -6,262 +7,215 @@
  *
  * @package ecommerce
  */
-class ShoppingCart extends Object {
+class ShoppingCart extends Controller {
 
-	//1) Main data used to store the products and modifiers in the session
+	protected static $order = null; // for temp caching
+	
+	static $cartid_session_name = 'shoppingcartid';
 
-	static $current_order = 'current_order';
+	static $allowed_actions = array (
+		'additem',
+		'removeitem',
+		'removeallitem',
+		'removemodifier',
+		'setcountry',
+		'setquantityitem',
+		'clear',
 
-	static $setting = 'setting';
+		'debug' => 'ADMIN'
+	);
+	
+	/**
+	 *	used for allowing certian url parameters to be applied to orderitems 
+	 *	eg: ?Color=red will set OrderItem color to 'red'
+	 *	name - defaultvalue (needed for default orderitems)
+	 *
+	 *	array(
+	 *		'Color' => 'Red' //default to red
+	 *	)
+	 *
+	*/
+	protected static $paramfilters = array();
 
-	static $initialized = 'initialized';
-
-	static $country = 'country';
-
-	static $uses_different_address = 'uses_different_address';
-
-	static $items = 'items';
-
-	static $modifiers = 'modifiers';
-
-	//2) Functions which return variable names stored in the session
-
-	private static function setting_table_name() {
-		return self::$current_order . '.' . self::$setting;
+	function set_param_filters($array){
+		self::$paramfilters = array_merge(self::$paramfilters,$array);
 	}
 
-	private static function setting_index($setting) {
-		return self::setting_table_name() . '.' . $setting;
+	function init() {
+		parent::init();
+		self::current_order();
+		self::$order->initModifiers();
 	}
 
-	private static function initialized_setting_index() {
-		return self::setting_index(self::$initialized);
+	static $URLSegment = 'shoppingcart';
+	
+	//controller links
+	static function add_item_link($id, $variationid = null, $parameters = array()) {
+		return self::$URLSegment.'/additem/'.$id.self::variationLink($variationid).self::paramsToGetString($parameters);
 	}
 
-	private static function country_setting_index() {
-		return self::setting_index(self::$country);
+	static function remove_item_link($id, $variationid = null, $parameters = array()) {
+		return self::$URLSegment.'/removeitem/'.$id.self::variationLink($variationid).self::paramsToGetString($parameters);
 	}
 
-	private static function uses_different_shipping_address_index() {
-		return self::setting_index(self::$uses_different_address);
+	static function remove_all_item_link($id, $variationid = null, $parameters = array()) {
+		return self::$URLSegment.'/removeallitem/'.$id.self::variationLink($variationid).self::paramsToGetString($parameters);
 	}
 
-	private static function items_table_name() {
-		return self::$current_order . '.' . self::$items;
+	static function set_quantity_item_link($id, $variationid = null, $parameters = array()) {
+		return self::$URLSegment.'/setquantityitem/'.$id.self::variationLink($variationid).self::paramsToGetString($parameters);
 	}
 
-	private static function item_index($index) {
-		return self::items_table_name() . '.' . $index;
+	static function remove_modifier_link($id, $variationid = null) {
+		return self::$URLSegment.'/removemodifier/'.$id.self::variationLink($variationid);
+	}
+	
+	//TODO: this has no purpose currently
+	static function set_country_link() {
+		return self::$URLSegment.'/setcountry';
 	}
 
-	private static function modifiers_table_name() {
-		return self::$current_order . '.' . self::$modifiers;
+	/** helper function for appending variation id */
+	protected static function variationLink($variationid) {
+		if (is_numeric($variationid)) {
+			return "/$variationid";
+		}
+		return "";
+	}
+	
+	/**
+	 * Creates the appropriate string parameters for links from array
+	 */
+	protected static function paramsToGetString($array){
+		if($array & count($array > 0)){
+			array_walk($array , create_function('&$v,$k', '$v = $k."=".$v ;'));
+			return "?".htmlentities(implode("&",$array), ENT_QUOTES); //TODO: urlescape values??
+		}
+		return "";
 	}
 
-	private static function modifier_index($index) {
-		return self::modifiers_table_name() . '.' . $index;
+	public static function current_order() {
+		$order = self::$order;
+		if (!$order) {
+			//find order by id saved to session (allows logging out and retaining cart contents)
+			$cartid = Session::get(self::$cartid_session_name);
+			//TODO: make clear cart on logout optional
+			if ($cartid && $o = DataObject::get_one('Order', "Status = 'Cart' AND ID = $cartid")) {
+				$order = $o;	
+			}else {
+				$order = new Order();
+				$order->SessionID = session_id();
+				$order->MemberID = Member::currentUserID(); // Set the Member relation to this order
+				$order->write();
+				Session::set(self::$cartid_session_name,$order->ID);			
+			}
+			self::$order = $order; //temp caching
+		}
+		$order->MemberID = Member::currentUserID(); // Set the Member relation to this order
+		$order->write(); // Write the order
+		return $order;
 	}
 
-	//3) Initialisation management
-
-	static function is_initialized() {
-		$initializedSettingIndex = self::initialized_setting_index();
-		return Session::get($initializedSettingIndex);
-	}
-
-	static function set_initialized($initialized) {
-		$initializedSettingIndex = self::initialized_setting_index();
-		$initialized ? Session::set($initializedSettingIndex, true) : Session::clear($initializedSettingIndex);
-	}
-
-	static function remove_all_settings() {
-		$settingTableIndex = self::setting_table_name();
-		Session::clear($settingTableIndex);
-	}
-
-	//3 Bis) Shipping management
-
-	static function has_country() {
-		$countrySettingIndex = self::country_setting_index();
-		return Session::get($countrySettingIndex) != null;
-	}
-
-	static function set_country($country) {
-		$countrySettingIndex = self::country_setting_index();
-		Session::set($countrySettingIndex, $country);
-	}
-
-	static function get_country() {
-		$countrySettingIndex = self::country_setting_index();
-		return Session::get($countrySettingIndex);
-	}
-
-	static function remove_country() {
-		$countrySettingIndex = self::country_setting_index();
-		Session::clear($countrySettingIndex);
-	}
-
-	static function set_uses_different_shipping_address($usesDifferentAddress) {
-		$usesDifferentShippingAddressIndex = self::uses_different_shipping_address_index();
-		$usesDifferentAddress ? Session::set($usesDifferentShippingAddressIndex, true) : Session::clear($usesDifferentShippingAddressIndex);
-	}
-
-	static function uses_different_shipping_address() {
-		$usesDifferentShippingAddressIndex = self::uses_different_shipping_address_index();
-		return Session::get($usesDifferentShippingAddressIndex);
-	}
-
-	//4) Items management
+	// Static items management
 
 	/**
 	 * Either update or create OrderItem in ShoppingCart.
 	 */
 	static function add_new_item(OrderItem $item) {
-		$itemsTableIndex = self::items_table_name();
-
-		if($serializedItems = Session::get($itemsTableIndex)) {
-			foreach($serializedItems as $itemIndex => $serializedItem) {
-				if($serializedItem != null) {
-					$unserializedItem = unserialize($serializedItem);
-					if($unserializedItem->hasSameContent($item)){
-						return self::add_item($itemIndex, $item->getQuantity());
-					}
-				}
-			}
-		}
-		self::set_item($item->getProductIDForSerialization(), $item);
+		$item->write();
+		self::current_order()->Attributes()->add($item);
 	}
 
 	/**
 	 * Add a new OrderItem to session
 	 */
-	static function add_item($itemIndex, $quantity = 1) {
-		$serializedItemIndex = self::item_index($itemIndex);
-		$serializedItem = Session::get($serializedItemIndex);
-		$unserializedItem = unserialize($serializedItem);
-		$unserializedItem->addQuantityAttribute($quantity);
-		self::set_item($itemIndex, $unserializedItem);
+	static function add_item($existingitem, $quantity = 1) {
+		if ($existingitem) {
+			$existingitem->Quantity += $quantity;
+			$existingitem->write();
+		}
 	}
 
 	/**
 	 * Update quantity of an OrderItem in the session
 	 */
-	static function set_quantity_item($itemIndex, $quantity) {
-		$serializedItemIndex = self::item_index($itemIndex);
-		$serializedItem = Session::get($serializedItemIndex);
-		$unserializedItem = unserialize($serializedItem);
-		$unserializedItem->setQuantityAttribute($quantity);
-		self::set_item($itemIndex, $unserializedItem);
+	static function set_quantity_item($existingitem, $quantity) {
+		if ($existingitem) {
+			$existingitem->Quantity = $quantity;
+			$existingitem->write();
+		}
 	}
 
 	/**
 	 * Reduce quantity of an orderItem, or completely remove
 	 */
-	static function remove_item($itemIndex, $quantity = 1) {
-		$serializedItemIndex = self::item_index($itemIndex);
-		$serializedItem = Session::get($serializedItemIndex);
-		$unserializedItem = unserialize($serializedItem);
-		$newQuantity = $unserializedItem->getQuantity() - $quantity;
-		if($newQuantity > 0) {
-			$unserializedItem->setQuantityAttribute($newQuantity);
-			self::set_item($itemIndex, $unserializedItem);
-		}else{
-			Session::clear($serializedItemIndex);
+	static function remove_item($existingitem, $quantity = 1) {
+		if ($existingitem) {
+			if ($quantity >= $existingitem->Quantity) {
+				$existingitem->delete();
+				$existingitem->destroy();
+			} else {
+				$existingitem->Quantity -= $quantity;
+				$existingitem->write();
+			}
 		}
 	}
 
-	static function remove_all_item($itemIndex) {
-		$serializedItemIndex = self::item_index($itemIndex);
-		Session::clear($serializedItemIndex);
+	static function remove_all_item($existingitem) {
+		if($existingitem){
+			$existingitem->delete();
+			$existingitem->destroy();
+		}
 	}
 
 	static function remove_all_items() {
-		$itemsTableIndex = self::items_table_name();
-		Session::clear($itemsTableIndex);
+		//TODO: make this ONLY remove items & not modifiers also
+		self::current_order()->Attributes()->removeAll();
 	}
 
 	/**
 	 * Check if there are any items in the cart
 	 */
 	static function has_items() {
-		$itemsTableIndex = self::items_table_name();
-		return Session::get($itemsTableIndex) != null;
+		return self::current_order()->Items() != null;
 	}
 
 	/**
 	 * Return the items currently in the shopping cart.
 	 * @return array
 	 */
-	static function get_items() {
-		$items = array();
-		if($serializedItems = Session::get(self::items_table_name())) {
-			foreach($serializedItems as $itemIndex => $serializedItem) {
-				if($serializedItem != null) {
-					$unserializedItem = unserialize($serializedItem);
-					$unserializedItem->setIdAttribute($itemIndex);
-					$items[$itemIndex] = $unserializedItem;
-				}
-			}
-		}
-		return $items;
+	static function get_items($filter) {
+		return self::current_order()->Items($filter);
 	}
-
+	
 	/**
-	 * Get a single item from the cart.
-	 *
-	 * Don't forget that items don't have IDs.
+	 * Get OrderItem according to product id, and coorresponding parameter filter.
 	 */
-	static function get_item($key, $value){
-		$allitems = ShoppingCart::get_items();
-		foreach($allitems as $item){
-			if($item->$key == $value){
-				return $item;
-			}
-		}
-		return null;
+	static function get_item_by_id($id, $variationid = null,$filter = null) {
+		$filter = self::paramFilter($filter);
+		$order = self::current_order();
+		$fil = ($filter && $filter != "") ? " AND $filter" : "";
+		return DataObject::get_one('OrderItem', "OrderID = $order->ID AND ProductID = $id". $fil);
 	}
-
-	static function get_item_by_id($id,$variationid = null){
-		$vid = ($variationid) ? "_v".$variationid : "";
-
-		$items = Session::get(self::items_table_name());
-		if(isset($items[$id.$vid])){
-			$item = unserialize($items[$id.$vid]);
-			$item->setIdAttribute($id);
-			return $item;
-		}
-		return null;
-	}
-
+	
 	/**
-	 * Serialise an OrderItem into the session.
+	 * Get item according to a filter.
 	 */
-	protected static function set_item($itemIndex, OrderItem $item) {
-		$serializedItemIndex = self::item_index($itemIndex);
-		Session::set($serializedItemIndex, serialize($item));
-
+	static function get_item($filter) {
+		$order = self::current_order();
+		return  DataObject::get_one('OrderItem', "OrderID = $order->ID AND $filter");
 	}
 
-	//5) Modifiers management
-
-	static function init_all_modifiers() {
-		Order::init_all_modifiers();
-		//self::init_all_modifiers();
-	}
+	// Modifiers management
 
 	static function add_new_modifier(OrderModifier $modifier) {
-		$modifiersTableIndex = self::modifiers_table_name();
-		if(defined('DB::USE_ANSI_SQL')) {
-			Session::add_to_array($modifiersTableIndex, serialize($modifier));
-		}
-		else {
-			Session::addToArray($modifiersTableIndex, serialize($modifier));
-		}
+		$modifier->write();
+		self::current_order()->Attributes()->add($modifier);
 	}
 
 	static function can_remove_modifier($modifierIndex) {
 		$serializedModifierIndex = self::modifier_index($modifierIndex);
-		if($serializedModifier = Session::get($serializedModifierIndex)) {
+		if ($serializedModifier = Session::get($serializedModifierIndex)) {
 			$unserializedModifier = unserialize($serializedModifier);
 			return $unserializedModifier->CanRemove();
 		}
@@ -274,13 +228,11 @@ class ShoppingCart extends Object {
 	}
 
 	static function remove_all_modifiers() {
-		$modifiersTableIndex = self::modifiers_table_name();
-		Session::clear($modifiersTableIndex);
+		self::current_order()->Attributes()->removeAll(); //TODO: make this ONLY remove modifiers
 	}
 
 	static function has_modifiers() {
-		$modifiersTableIndex = self::modifiers_table_name();
-		return Session::get($modifiersTableIndex) != null;
+		return self::get_modifiers() != null;
 	}
 
 	/**
@@ -291,167 +243,82 @@ class ShoppingCart extends Object {
 	 * @return array
 	 */
 	static function get_modifiers() {
-
-		if(!self::is_initialized()) {
-			self::init_all_modifiers();
-			self::set_initialized(true);
-		}
-
-		$modifiersTableIndex = self::modifiers_table_name();
-		if($serializedModifiers = Session::get($modifiersTableIndex)) {
-			$modifiers = array();
-			foreach($serializedModifiers as $modifierIndex => $serializedModifier) {
-				if($serializedModifier != null) {
-					$unserializedModifier = unserialize($serializedModifier);
-					$unserializedModifier->setIdAttribute($modifierIndex);
-					array_push($modifiers, $unserializedModifier);
-				}
-			}
-
-			return $modifiers;
-		}
-
-		return false;
+		return self::current_order()->Modifiers();
 	}
 
-	//6) Init function
-
-	static function clear() {
-		self::remove_all_settings();
-		self::remove_all_items();
-		self::remove_all_modifiers();
+	static function uses_different_shipping_address(){
+		return self::current_order()->UseShippingAddress;		
 	}
 
-	//7) Current order access function
 
-	static function current_order() {
-		 return new Order();
-	}
-
-	//8) Database saving function
-
+	// Database saving function
 	static function save_current_order() {
 		return Order::save_current_order();
-  	}
-
-}
-
-class ShoppingCart_Controller extends Controller {
-
-	static $allowed_actions = array(
-		'additem',
-		'removeitem',
-		'removeallitem',
-		'removemodifier',
-		'setcountry',
-		'setquantityitem',
-		'clear',
-
-		'debug' => 'ADMIN'
-	);
-
-	function init(){
-		parent::init();
 	}
-
-	static $URLSegment = 'shoppingcart';
-
-	static function add_item_link($id,$variationid = null) {
-		return self::$URLSegment . '/additem/' . $id . self::variationLink($variationid);
-	}
-
-	static function remove_item_link($id,$variationid = null) {
-		return self::$URLSegment . '/removeitem/' . $id . self::variationLink($variationid);
-	}
-
-	static function remove_all_item_link($id,$variationid = null) {
-		return self::$URLSegment . '/removeallitem/' . $id . self::variationLink($variationid);
-	}
-
-	static function set_quantity_item_link($id,$variationid = null) {
-		return self::$URLSegment . '/setquantityitem/' . $id . self::variationLink($variationid);
-	}
-
-	static function remove_modifier_link($id,$variationid = null) {
-		return self::$URLSegment . '/removemodifier/' . $id . self::variationLink($variationid);
-	}
-
-	static function set_country_link() {
-		return self::$URLSegment . '/setcountry';
-	}
-
-
-	public static function json_code() {
+	
+	static function json_code() {
 		$currentOrder = ShoppingCart::current_order();
-		$js = array();
+		$js = array ();
 
-		if($items = $currentOrder->Items()) {
-			foreach($items as $item) $item->updateForAjax($js);
+		if ($items = $currentOrder->Items()) {
+			foreach ($items as $item)
+				$item->updateForAjax($js);
 		}
 
-		if($modifiers = $currentOrder->Modifiers()) {
-			foreach($modifiers as $modifier) $modifier->updateForAjax($js);
+		if ($modifiers = $currentOrder->Modifiers()) {
+			foreach ($modifiers as $modifier)
+				$modifier->updateForAjax($js);
 		}
 
 		$currentOrder->updateForAjax($js);
 		return Convert::array2json($js);
 	}
+	
+	//Actions
 
-	/** helper function for appending variation id */
-	private static function variationLink($variationid){
-		if(is_numeric($variationid)){
-			return "/$variationid";
-		}
-		return "";
-	}
-
-	function additem() {
-		$bt = defined('DB::USE_ANSI_SQL') ? "\"" : "`";
-		$itemId = $this->urlParams['ID'];
-		$variationId = (is_numeric($this->urlParams['OtherID'])) ? $this->urlParams['OtherID'] : null;
-
-		if($itemId) {
-			if(!ShoppingCart::get_item_by_id($itemId,$variationId)){ //if item doesn't exist in cart, then add_new_item
-				if($variationId){
-					$variation = DataObject::get_one(
-						'ProductVariation',
-						sprintf(
-							"{$bt}ID{$bt} = %d AND {$bt}ProductID{$bt} = %d",
-							(int)$this->urlParams['OtherID'],
-							(int)$this->urlParams['ID']
-						)
-					);
-					if($variation && $variation->AllowPurchase()){
-
-						ShoppingCart::add_new_item(new ProductVariation_OrderItem($variation));
-					}
-				}else{
-					$product = DataObject::get_by_id('Product',$itemId);
-					if($product && $product->AllowPurchase){
-						ShoppingCart::add_new_item(new Product_OrderItem($product));
-					}
-				}
-			}else{
-				ShoppingCart::add_item($itemId.$this->variationParam());
+	/**
+	 * Either increments the count or creates a new item.
+	 */
+	function additem($request) {
+		
+		if ($itemId = $request->param('ID')) {
+			if($item = ShoppingCart::get_item($this->urlFilter())) {
+				
+				ShoppingCart::add_item($item);
+			} else {
+				if($orderitem = $this->getNewOrderItem())
+					ShoppingCart::add_new_item($orderitem);
 			}
-			if(!$this->isAjax()) Director::redirectBack();
 		}
+		if (!$this->isAjax())
+			Director::redirectBack();
 	}
 
-	function removeitem() {
-		$itemId = $this->urlParams['ID'];
-		if($itemId) {
-			ShoppingCart::remove_item($itemId.$this->variationParam());
-			if(!$this->isAjax()) Director::redirectBack();
+	function removeitem($request) {
+		if ($item = ShoppingCart::get_item($this->urlFilter())) {
+			ShoppingCart::remove_item($item);
 		}
+		if (!$this->isAjax())
+			Director::redirectBack();
 	}
 
 	function removeallitem() {
-		$itemId = $this->urlParams['ID'];
-		if($itemId) {
-			ShoppingCart::remove_all_item($itemId.$this->variationParam());
-			if(!$this->isAjax()) Director::redirectBack();
+		if ($item = ShoppingCart::get_item($this->urlFilter())) {
+			ShoppingCart::remove_all_item($item);
 		}
+		if (!$this->isAjax())
+			Director::redirectBack();
+	}
+
+	
+	/**
+	 * Clears the cart
+	 */
+	static function clear() {
+		self::current_order()->SessionID = null;
+		self::current_order()->write();
+		self::remove_all_items();
+		self::$order = null;
 	}
 
 
@@ -459,58 +326,102 @@ class ShoppingCart_Controller extends Controller {
 	 * Ajax method to set an item quantity
 	 */
 	function setquantityitem() {
-		$itemId = $this->urlParams['ID'];
-		$quantity = $_REQUEST['quantity'];
-		if($itemId && is_numeric($quantity) && is_int($quantity + 0)) {
-			if($quantity > 0) {
-				ShoppingCart::set_quantity_item($itemId.$this->variationParam(), $quantity);
-				return self::json_code();
-			} else {
-				user_error("Bad data to Product->setQuantity: quantity=$quantity", E_USER_WARNING);
-			}
-		} else {
-			user_error("Bad data to Product->setQuantity: quantity=$quantity", E_USER_WARNING);
+		$quantity = $request->param('quantity');
+		if ($quantity && $quantity > 0) {
+			if ($item = ShoppingCart::get_item($this->urlFilter()))
+				ShoppingCart::set_quantity_item($item, $quantity);
 		}
 	}
-
+	
 	/**
-	 * Gets variation url param if there is one
+	 * Creates new order item based on url parameters
 	 */
-	private function variationParam(){
-		if(isset($this->urlParams['OtherID'])){
-			return "_v".$this->urlParams['OtherID'];
+	protected function getNewOrderItem(){
+
+		$bt = defined('DB::USE_ANSI_SQL') ? "\"" : "`";
+		$request = $this->getRequest();
+		$orderitem = null;
+		
+		//create either a ProductVariation_OrderItem or a Product_OrderItem
+		if (is_numeric($request->param('OtherID')) && $variationId = $request->param('OtherID')) {
+			$variation = DataObject::get_one('ProductVariation', sprintf("{$bt}ID{$bt} = %d AND {$bt}ProductID{$bt} = %d", (int) $this->urlParams['OtherID'], (int) $this->urlParams['ID']));
+			if ($variation && $variation->AllowPurchase()) {
+				$orderitem = new ProductVariation_OrderItem($variation,1);
+			}
+		} elseif(is_numeric($request->param('ID')) && $itemId = $request->param('ID')) {
+			$product = DataObject::get_by_id('Product', $itemId);
+			if ($product && $product->AllowPurchase) {
+				$orderitem = new Product_OrderItem($product,1);
+			}
 		}
-		return "";
+		//set extra parameters
+		if($orderitem instanceof OrderItem){
+			foreach(self::$paramfilters as $param => $defaultvalue){
+				$v = ($request->getVar($param)) ? Convert::raw2sql($request->getVar($param)) : $defaultvalue;
+				$orderitem->$param = $v;
+			}
+		}
+		return $orderitem;
 	}
 
+	
+	/**
+	 * Gets a SQL filter based on array of parameters.
+	 * 
+	 * 	 Returns default filter if none provided,
+	 *	 otherwise it updates default filter with passed parameters
+	 */
+	static function paramFilter($params = array()){
+		
+		if(!self::$paramfilters) return ""; //no use for this if there are not parameters defined
+		
+		$bt = defined('DB::USE_ANSI_SQL') ? "\"" : "`";
+		$temparray = self::$paramfilters;
+		
+		$outputarray = array();
+		
+		foreach(self::$paramfilters as $field => $value){
+			if(isset($params[$field])){
+
+				//TODO: convert to $dbfield->prepValueForDB() when Boolean problem figured out
+				$temparray[$field] = Convert::raw2sql($params[$field]);
+			}
+			$outputarray[] = "{$bt}".$field."{$bt} = ".$temparray[$field];
+		}
+		
+		return implode(" AND ",$outputarray);	
+	}
+	
+	/**
+	 * Gets a filter based on urlParameters
+	 */
+	function urlFilter(){
+		$bt = defined('DB::USE_ANSI_SQL') ? "\"" : "`";
+		$request = $this->getRequest();
+		$selection = array(
+			"{$bt}ProductID{$bt} = ".$request->param('ID')
+		);
+		$filter = self::paramFilter($request->getVars());
+		return implode(" AND ",array_merge($selection,array($filter)));
+	}
+	
+	
+	/**
+	 * Removes specified modifier, if allowed
+	 */
 	function removemodifier() {
 		$modifierId = $this->urlParams['ID'];
-		if(ShoppingCart::can_remove_modifier($modifierId)) ShoppingCart::remove_modifier($modifierId);
-		if(!$this->isAjax()) Director::redirectBack();
+		if (ShoppingCart::can_remove_modifier($modifierId))
+			ShoppingCart::remove_modifier($modifierId);
+		if (!$this->isAjax())
+			Director::redirectBack();
 	}
-
-
+	
 	/**
-	 * Clear the cart of all contents.
+	 * Displays order info and cart contents.
 	 */
-	function clear(){
-		ShoppingCart::clear();
-		if(!$this->isAjax()) Director::redirectBack();
-	}
-
-	/**
-	 * Set the country via url
-	 */
-	function setcountry() {
-		$country = $this->urlParams['ID'];
-		if(isset($country)) {
-			ShoppingCart::set_country($country);
-			return self::json_code();
-		}
-	}
-
-	function debug(){
-		Debug::show(ShoppingCart::get_items());
+	function debug() {
+		Debug::show(ShoppingCart::current_order());
 	}
 
 }

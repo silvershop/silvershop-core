@@ -113,23 +113,23 @@ class ProductVariation_OrderItem extends Product_OrderItem {
 	## Overloaded functions ##
 
 	function getProductIDForSerialization(){
-		return $this->_productID."_v".$this->_productVariationID;
+		return parent::getProductIDForSerialization()."_v".$this->_productVariationID;
 	}
 
 	function addLink() {
-		return ShoppingCart_Controller::add_item_link($this->_productID,$this->_productVariationID);
+		return ShoppingCart::add_item_link($this->_productID,$this->_productVariationID);
 	}
 
 	function removeLink() {
-		return ShoppingCart_Controller::remove_item_link($this->_productID,$this->_productVariationID);
+		return ShoppingCart::remove_item_link($this->_productID,$this->_productVariationID);
 	}
 
 	function removeallLink() {
-		return ShoppingCart_Controller::remove_all_item_link($this->_productID,$this->_productVariationID);
+		return ShoppingCart::remove_all_item_link($this->_productID,$this->_productVariationID);
 	}
 
 	function setquantityLink() {
-		return ShoppingCart_Controller::set_quantity_item_link($this->_productID,$this->_productVariationID);
+		return ShoppingCart::set_quantity_item_link($this->_productID,$this->_productVariationID);
 	}
 
 	function hasSameContent($orderItem) {

@@ -15,7 +15,7 @@
 		<% end_if %>
 		
 		<p><% _t("ItemID","Item #") %>{$ID}</p>
-		<% if Model %><p><% _t("AUTHOR","Author") %>: $Model.XML</p><% end_if %>
+		<% if Model %><p><% _t("MODEL","Model") %>: $Model.XML</p><% end_if %>
 		<% if Size %><p><% _t("SIZE","Size") %>: $Size.XML</p><% end_if %>
 		<% if Variations %>
 			<div class="quantityBox">
