@@ -203,7 +203,7 @@ class ShoppingCart extends Controller {
 	 * Return the items currently in the shopping cart.
 	 * @return array
 	 */
-	static function get_items($filter) {
+	static function get_items($filter = null) {
 		return self::current_order()->Items($filter);
 	}
 
@@ -211,7 +211,7 @@ class ShoppingCart extends Controller {
 	 * Get OrderItem according to product id, and coorresponding parameter filter.
 	 */
 	static function get_item_by_id($id, $variationid = null,$filter = null) {
-		$filter = self::paramFilter($filter);
+		$filter = self::get_param_filter($filter);
 		$order = self::current_order();
 		$fil = ($filter && $filter != "") ? " AND $filter" : "";
 		return DataObject::get_one('OrderItem', "OrderID = $order->ID AND ProductID = $id". $fil);
@@ -222,7 +222,10 @@ class ShoppingCart extends Controller {
 	 */
 	static function get_item($filter) {
 		$order = self::current_order();
-		return  DataObject::get_one('OrderItem', "OrderID = $order->ID AND $filter");
+		if($filter) {
+			$filterString = " AND ($filter)";
+		}
+		return  DataObject::get_one('OrderItem', "OrderID = $order->ID $filterString");
 	}
 
 	// Modifiers management
@@ -390,7 +393,7 @@ class ShoppingCart extends Controller {
 	 * 	 Returns default filter if none provided,
 	 *	 otherwise it updates default filter with passed parameters
 	 */
-	static function paramFilter($params = array()){
+	static function get_param_filter($params = array()){
 
 		if(!self::$paramfilters) return ""; //no use for this if there are not parameters defined
 
@@ -420,8 +423,14 @@ class ShoppingCart extends Controller {
 		$selection = array(
 			"{$bt}ProductID{$bt} = ".$request->param('ID')
 		);
-		$filter = self::paramFilter($request->getVars());
-		return implode(" AND ",array_merge($selection,array($filter)));
+		$filter = self::get_param_filter($request->getVars());
+		if($filter) {
+			$selectionAndFilter = array_merge($selection,array($filter));
+		}
+		else {
+			$selectionAndFilter = $selection;
+		}
+		return implode(" AND ", $selectionAndFilter);
 	}
 
 
