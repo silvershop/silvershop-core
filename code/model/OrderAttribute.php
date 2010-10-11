@@ -40,10 +40,10 @@ class OrderAttribute extends DataObject {
 	 * @TODO Where is this method used?
 	 * @return Order
 	 */
-	/*function Order() {
+	function Order() {
 		if($this->ID) return DataObject::get_by_id('Order', $this->OrderID);
 		else return ShoppingCart::current_order();
-	}*/
+	}
 
 
 	######################

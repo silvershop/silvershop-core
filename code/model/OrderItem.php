@@ -24,6 +24,7 @@ class OrderItem extends OrderAttribute {
 		'Total' => 'Currency'
 	);
 
+
 	######################
 	## CMS CONFIG ##
 	######################
@@ -41,7 +42,6 @@ class OrderItem extends OrderAttribute {
 	public static $field_labels = array(
 
 	);
-	
 	public static $summary_fields = array(
 		"Order.ID" => "Order ID",
 		"TableTitle" => "Title",
@@ -58,13 +58,19 @@ class OrderItem extends OrderAttribute {
 
 	public static $default_sort = "Created DESC";
 
-
 	public function __construct($object = null, $quantity = 1) {
-		
-		if(is_array($object))
-			parent::__construct($object);
-		else
-			parent::__construct();
+
+		// Case 1: Constructed by getting OrderItem from DB
+		if(is_array($object)) {
+			$this->_quantity = $object['Quantity'];
+		}
+
+		// Case 2: Constructed in memory
+		if(is_object($object)) {
+			$this->_quantity = $quantity;
+		}
+
+		parent::__construct();
 	}
 
 	static function disable_quantity_js(){
@@ -87,19 +93,17 @@ class OrderItem extends OrderAttribute {
 	 */
 	function onBeforeWrite() {
 		parent::onBeforeWrite();
-		
-		//always keep quantity above 0
-		if($this->Quantity < 1)
-			$this->Quantity = 1;
+
+		$this->Quantity = $this->_quantity;
 	}
 
 	/**
 	 * Get the quantity attribute from memory.
 	 * @return int
 	 */
-	/*public function getQuantity() {
+	public function getQuantity() {
 		return $this->_quantity;
-	}*/
+	}
 
 	/**
 	 * Set the quantity attribute in memory.
@@ -108,7 +112,7 @@ class OrderItem extends OrderAttribute {
 	 * @param int $quantity The quantity to set
 	 */
 	public function setQuantityAttribute($quantity) {
-		$this->Quantity = $quantity;
+		$this->_quantity = $quantity;
 	}
 
 	/**
@@ -118,7 +122,7 @@ class OrderItem extends OrderAttribute {
 	 * @param int $quantity The amount to increment the quantity by.
 	 */
 	public function addQuantityAttribute($quantity) {
-		$this->Quantity += $quantity;
+		$this->_quantity += $quantity;
 	}
 
 	function hasSameContent($orderItem) {
@@ -127,7 +131,7 @@ class OrderItem extends OrderAttribute {
 
 	public function debug() {
 		$id = $this->ID ? $this->ID : $this->_id;
-		$quantity = $this->Quantity;
+		$quantity = $this->_quantity;
 		$orderID = $this->ID ? $this->OrderID : 'The order has not been saved yet, so there is no ID';
 
 		return <<<HTML
@@ -160,15 +164,27 @@ HTML;
 	function AjaxQuantityField(){
 		return $this->QuantityField();
 	}
-	
-	function QuantityField(){
-		return new EcomQuantityField($this);		
+
+	function QuantityField() {
+		if(!self::$disable_quantity_js){
+			Requirements::javascript(THIRDPARTY_DIR . '/jquery/jquery.js');
+			Requirements::javascript('ecommerce/javascript/ecommerce.js');
+		}
+
+		$quantityName = $this->QuantityFieldName();
+		$setQuantityLinkName = $quantityName . '_SetQuantityLink';
+		$setQuantityLink = $this->setquantityLink();
+
+		$quantity = ($this->_quantity) ? $this->_quantity : ""; //TODO: make this customisable (ie "0", or "")
+
+		return <<<HTML
+			<input name="$quantityName" class="ajaxQuantityField" type="text" value="$quantity" size="3" maxlength="3" disabled="disabled"/>
+			<input name="$setQuantityLinkName" type="hidden" value="$setQuantityLink"/>
+HTML;
 	}
 
 	function Total() {
-		$total = $this->UnitPrice() * $this->Quantity;
-		$this->extend('updateTotal',&$total);
-		return $total;
+		return $this->UnitPrice() * $this->_quantity;
 	}
 
 	function TableTitle() {

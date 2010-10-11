@@ -96,8 +96,8 @@ class CheckoutPage extends Page {
 		$fields->addFieldsToTab('Root.Content.Messages', array(
 			new HtmlEditorField('AlreadyCompletedMessage', 'Already Completed - shown when the customer tries to checkout an already completed order', $row = 4),
 			new HtmlEditorField('NonExistingOrderMessage', 'Non-existing Order - shown when the customer tries ', $row = 4),
-			new HtmlEditorField('MustLoginToCheckoutMessage', 'MustLoginToCheckoutMessage', $row = 4),
-			new HtmlEditorField('PurchaseComplete', 'Purchase Complete - included in reciept email, after the customer submits the checkout ', $row = 4),
+			new HtmlEditorField('MustLoginToCheckoutMessage', 'xxx', $row = 4),
+			new HtmlEditorField('PurchaseComplete', 'Purchase Complete - shown, along with order information, after the customer submits the checkout ', $row = 4),
 			new HtmlEditorField('ChequeMessage', 'Cheque Message - shown when a customer selects a delayed payment option (such as a cheque payment) ', $rows = 4)
 		));
 
@@ -145,9 +145,9 @@ class CheckoutPage_Controller extends Page_Controller {
 
 		Requirements::javascript(THIRDPARTY_DIR . '/jquery/jquery.js');
 		Requirements::javascript('ecommerce/javascript/CheckoutPage.js');
-		Requirements::block(THIRDPARTY_DIR . '/behaviour.js');
-		Requirements::block(THIRDPARTY_DIR . '/prototype.js');
-		Requirements::block(THIRDPARTY_DIR . '/prototype_improvements.js');
+		Requirements::block(THIRDPARTY_DIR . '/behaviour/behaviour.js');
+		Requirements::block(THIRDPARTY_DIR . '/prototype/prototype.js');
+		Requirements::block(SAPPHIRE_DIR . '/javascript/prototype_improvements.js');
 		Requirements::block(SAPPHIRE_DIR . '/javascript/Validator.js');
 
 		Requirements::themedCSS('CheckoutPage');
@@ -165,7 +165,6 @@ class CheckoutPage_Controller extends Page_Controller {
 		if($forms = $this->ModifierForms()) {
 			foreach($forms as $form) {
 				$this->addWrapperMethod($form->Name(), 'getOrderModifierForm');
-				self::$allowed_actions[] = $form->Name(); // add all these forms to the list of allowed actions also
 			}
 		}
 	}
@@ -234,9 +233,6 @@ class CheckoutPage_Controller extends Page_Controller {
 	function OrderForm() {
 		$form = new OrderForm($this, 'OrderForm');
 		$this->data()->extend('updateOrderForm',&$form);
-		//load session data //TODO: make this optional
-		$form->loadDataFromSession();
-		
 		return $form;
 	}
 

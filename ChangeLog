@@ -1,15 +1,7 @@
 Ecommerce ChangeLog
 
-DBCart branch
-	* Merged ShoppingCart and ShoppingCart_Controller into one class
-	* Introduced filters/paremeters system for more complex cart situations
-
-	TODO:
-	* Variations? - untested, probably broken.
-	* Removable modifiers? - untested, probably broken.
-	* Remove session-based code from other classes
-	
-	* Introduce a way to ensure only valid products are added with parameters
+Known Bugs
+	* Can't use 'add' method for products with variations. I have made it redirect to product page instead.
 
 0.6.1
 	* Modified code to work with SS 2.4, and payment trunk as @ revision 103257. This mainly involved supporting the Money class.

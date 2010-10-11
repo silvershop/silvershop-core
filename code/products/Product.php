@@ -46,7 +46,7 @@ class Product extends Page {
 	public static $casting = array();
 
 	public static $summary_fields = array(
-		'ID','InternalItemID','Title','Price','Weight','Model','NumberSold'
+		'ID','InternalItemID' => 'Product Code','Title','Price','Weight','Model','NumberSold'
 	);
 
 	public static $searchable_fields = array(
@@ -237,14 +237,10 @@ class Product extends Page {
 	 * Note : This function is usable in the Product context because a
 	 * Product_OrderItem only has a Product object in attribute
 	 */
-	function Item() {
-		$filter = null;
-		$this->extend('updateItemFilter',&$filter);
-		$item = ShoppingCart::get_item_by_id($this->ID,null,$filter); //TODO: needs filter
-		if(!$item)
-			$item = new Product_OrderItem($this,0); //return dummy item so that we can still make use of Item 	
-		$this->extend('updateDummyItem',&$item);
-		return $item; 
+	function Item() { //TODO: could this be sped up by using the ShoppingCart::get_item_by_id()?
+		if($item = ShoppingCart::get_item_by_id($this->ID))
+			return $item;
+		return new Product_OrderItem($this,0); //return dummy item so that we can still make use of Item
 	}
 
 	/**
@@ -268,15 +264,15 @@ class Product extends Page {
 
 	//passing on shopping cart links ...is this necessary?? ...why not just pass the cart?
 	function addLink() {
-		return ShoppingCart::add_item_link($this->ID);
+		return ShoppingCart_Controller::add_item_link($this->ID);
 	}
 
 	function removeLink() {
-		return ShoppingCart::remove_item_link($this->ID);
+		return ShoppingCart_Controller::remove_item_link($this->ID);
 	}
 
 	function removeallLink() {
-		return ShoppingCart::remove_all_item_link($this->ID);
+		return ShoppingCart_Controller::remove_all_item_link($this->ID);
 	}
 
 	/**
@@ -442,41 +438,31 @@ class Product_OrderItem extends OrderItem {
 	}
 
 	function UnitPrice() {
-		$unitprice = $this->Product()->Price; 
-		$this->extend('updateUnitPrice',&$unitprice);
-		return $unitprice;
+		return $this->Product()->Price;
 	}
 
 	function TableTitle() {
-		$tabletitle = $this->Product()->Title;
-		$this->extend('updateTableTitle',&$tabletitle);
-		return $tabletitle;
+		return $this->Product()->Title;
 	}
 
 	function Link() {
 		if($product = $this->Product(true)) return $product->Link();
 	}
 
-	function addLink() {		
-		return ShoppingCart::add_item_link($this->_productID,null,$this->linkParameters());
+	function addLink() {
+		return ShoppingCart_Controller::add_item_link($this->_productID);
 	}
 
 	function removeLink() {
-		return ShoppingCart::remove_item_link($this->_productID,null,$this->linkParameters());
+		return ShoppingCart_Controller::remove_item_link($this->_productID);
 	}
 
 	function removeallLink() {
-		return ShoppingCart::remove_all_item_link($this->_productID,null,$this->linkParameters());
+		return ShoppingCart_Controller::remove_all_item_link($this->_productID);
 	}
 
 	function setquantityLink() {
-		return ShoppingCart::set_quantity_item_link($this->_productID,null,$this->linkParameters());
-	}
-
-	function linkParameters(){
-		$array = array();
-		$this->extend('updateLinkParameters',&$array);
-		return $array;
+		return ShoppingCart_Controller::set_quantity_item_link($this->_productID);
 	}
 
 	function onBeforeWrite() {
@@ -485,12 +471,12 @@ class Product_OrderItem extends OrderItem {
 		$this->ProductID = $this->_productID;
 		$this->ProductVersion = $this->_productVersion;
 	}
-	
+
 	public function debug() {
 		$title = $this->TableTitle();
 		$productID = $this->_productID;
 		$productVersion = $this->_productVersion;
-		$html = parent::debug() .<<<HTML
+		return parent::debug() .<<<HTML
 			<h3>Product_OrderItem class details</h3>
 			<p>
 				<b>Title : </b>$title<br/>
@@ -498,8 +484,6 @@ class Product_OrderItem extends OrderItem {
 				<b>Product Version : </b>$productVersion
 			</p>
 HTML;
-		$this->extend('updateDebug',&$html);
-		return $html;
 	}
 
 }

@@ -7,8 +7,19 @@
  */
 class EcommercePayment extends DataObjectDecorator {
 
-	function extraStatics() {
+	protected static $order_status_fully_paid = "Paid";
+		static function set_order_status_fully_paid($v) {self::$order_status_fully_paid = $v;}
+		static function get_order_status_fully_paid() {return self::$order_status_fully_paid;}
 
+	protected static $payment_status_not_complete = "Incomplete";
+		static function set_payment_status_not_complete($v) {self::$payment_status_not_complete = $v;}
+		static function get_payment_status_not_complete() {return self::$payment_status_not_complete;}
+
+	protected static $payment_status_success = "Success";
+		static function set_payment_status_success($v) {self::$payment_status_success = $v;}
+		static function get_payment_status_success() {return self::$payment_status_success;}
+
+	function extraStatics() {
 		return array(
 			'has_one' => array(
 				'Order' => 'Order'
@@ -38,11 +49,30 @@ class EcommercePayment extends DataObjectDecorator {
 	*/
 
 	function onBeforeWrite() {
-		if($this->owner->Status == 'Success' && $this->owner->Order()) {
-			$order = $this->owner->Order();
-			$order->Status = 'Paid';
-			$order->write();
-			$order->sendReceipt();
+		if($this->owner->Order()) {
+			$id = $this->owner->ID;
+			if(!$id) {
+				$id = 0;
+			}
+			$oldData = DataObject::get_by_id("Payment", $id);
+			if(!$oldData) {
+				$oldStatus = "";
+			}
+			else {
+				$oldStatus = $oldData->Status;
+			}
+			if($oldStatus != $this->owner->Status) {
+				// if the payment status changes  and the payment is successful then send receipt
+				$order = $this->owner->Order();
+				$order->sendReceipt();
+				//if the payment is set as paid and the order is not marked as paid then this can be done now...
+				if($order->Status != self::get_order_status_fully_paid()) {
+					if($this->owner->Status == self::get_payment_status_success()) {
+						$order->Status = self::get_order_status_fully_paid();
+						$order->write();
+					}
+				}
+			}
 		}
 	}
 
