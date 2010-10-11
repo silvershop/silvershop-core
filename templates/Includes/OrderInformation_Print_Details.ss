@@ -36,7 +36,7 @@
 			<% if ShowInTable %>
 		<tr class="modifierRow $EvenOdd $FirstLast">
 			<td colspan="3" scope="row">$TableTitle</td>
-			<td class="right">$TableValue.Nice</td>
+			<td class="right">$TableValue</td>
 		</tr>
 			<% end_if %>
 		<% end_control %>

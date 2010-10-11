@@ -8,7 +8,7 @@
 
 class ShopManagerPage extends Page {
 
-	static $icon = "ecommerce/images/icons/ShopManagerPage";
+	static $icon = "ecommerce/images/treeicons/ShopManagerPage";
 
 	static $defaults = array(
 		"ShowInMenus" => 0,

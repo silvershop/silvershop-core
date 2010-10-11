@@ -10,7 +10,7 @@
 	<p>$Content.LimitWordCount(10) <a href="$Link" title="<% sprintf(_t("READMORE"),$Title) %>"><% _t("READMORECONTENT","read more") %></a></p>
 	<div>
 		<% if Price != 0 %><span class="price_display">$Price.Nice $Currency $TaxInfo.PriceSuffix</span><% end_if %>
-		<% if AllowPurchase %>
+		<% if canPurchase %>
 			<% if IsInCart %>
 				<% control Item %>
 					<div class="quantityBox">

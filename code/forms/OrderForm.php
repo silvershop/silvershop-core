@@ -8,6 +8,12 @@
 	* @package ecommerce
 	*/
 class OrderForm extends Form {
+	
+	//actions that don't need validation
+	protected $validactions = array(
+		'useDifferentShippingAddress',
+		'useMemberShippingAddress'
+	);
 
 	function __construct($controller, $name) {
 		//Requirements::themedCSS('OrderForm');
@@ -73,8 +79,9 @@ class OrderForm extends Form {
 
 		// 2) Payment fields
 		$currentOrder = ShoppingCart::current_order();
-		$total = '$' . number_format($currentOrder->Total(), 2);//TODO: make this multi-currency
-		$paymentFields = Payment::combined_form_fields("$total " . $currentOrder->Currency(), $currentOrder->Total());
+		$totalobj = DBField::create('Currency',$currentOrder->Total()); //should instead be $totalobj = $currentOrder->dbObject('Total');
+
+		$paymentFields = Payment::combined_form_fields($totalobj->Nice());
 		foreach($paymentFields as $field) $rightFields->push($field);
 
 		if($paymentRequiredFields = Payment::combined_form_requirements()) $requiredFields = array_merge($requiredFields, $paymentRequiredFields);
@@ -114,15 +121,34 @@ class OrderForm extends Form {
 		//allow updating via decoration
 		$this->extend('updateForm',$this);
 	}
-
-	/**
-	 * Disable the validator when the action clicked is to use a different shipping address
-	 * or use the member shipping address.
-	 */
-	function beforeProcessing() {
-		if(isset($_REQUEST['action_useDifferentShippingAddress']) || isset($_REQUEST['action_useMemberShippingAddress'])) return true;
-		else return parent::beforeProcessing();
+	
+	
+	function addValidAction($action){
+		$validactions[] = $action;
 	}
+	
+	function getValidActions($format = true){
+		$vas = $this->validactions;
+		
+		if($format){
+			$actions = array();
+			foreach($vas as $action){
+				$actions[] = 'action_'.$action;
+			}			
+		}
+
+		return $actions;
+	}
+	
+	
+	/** Override form validation to make different shipping address button work */
+	 function validate(){
+	 	if(isset($_POST['action_processOrder'])) parent::validate(); //always validate on order processing
+		foreach($this->getValidActions() as $action){
+			if(isset($_POST[$action])){return true;}
+		}
+		return parent::validate();
+	 }
 
 	/**
 	 * Save in the session that the current member wants to use a different shipping address.
@@ -168,13 +194,27 @@ class OrderForm extends Form {
 		if(!($payment && $payment instanceof Payment)) {
 			user_error(get_class($payment) . ' is not a valid Payment object!', E_USER_ERROR);
 		}
-
+		
+		//check for cart items
 		if(!ShoppingCart::has_items()) {
 			$form->sessionMessage(_t('OrderForm.NoItemsInCart','Please add some items to your cart'), 'bad');
 			Director::redirectBack();
 			return false;
 		}
-
+		
+		//check that price hasn't changed
+		$oldtotal = ShoppingCart::current_order()->Total();
+		
+		// Create new Order from shopping cart, discard cart contents in session
+		$order = ShoppingCart::save_current_order();
+		
+		if($order->Total() != $oldtotal) {
+			$form->sessionMessage(_t('OrderForm.PriceUpdated','The order price has been updated'), 'warning');
+			Director::redirectBack();
+			return false;
+		}
+		
+		
 		// Create new OR update logged in {@link Member} record
 		$member = EcommerceRole::ecommerce_create_or_merge($data);
 		if(!$member) {
@@ -189,27 +229,27 @@ class OrderForm extends Form {
 			Director::redirectBack();
 			return false;
 		}
-
+		
 		$member->write();
 		$member->logIn();
 
 		if($member)	$payment->PaidByID = $member->ID;
 
-		// Create new Order from shopping cart, discard cart contents in session
-		$order = ShoppingCart::save_current_order();
-		ShoppingCart::clear();
-
 		// Write new record {@link Order} to database
 		$form->saveInto($order);
+		
+		$order->MemberID = $member->ID;
 		$order->write();
-
+		
+		ShoppingCart::clear();
+		
 		// Save payment data from form and process payment
 		$form->saveInto($payment);
 		$payment->OrderID = $order->ID;
 		$payment->Amount->Amount = $order->Total();
 		$payment->write();
 
-		//prepare $data
+		//prepare $data - ie put into the $data array any fields that may need to be there for payment
 
 		// Process payment, get the result back
 		$result = $payment->processPayment($data, $form);
@@ -226,13 +266,5 @@ class OrderForm extends Form {
 		Director::redirect($order->Link());
 		return true;
 	}
-
-	/** Override form validation to make different shipping address button work */
-	 function validate(){
-		if(!isset($_POST['action_processOrder'])  && (isset($_POST['action_useMemberShippingAddress']) || isset($_POST['action_useDifferentShippingAddress']) ) ){
-			return true;
-		}
-		return parent::validate();
-	 }
 
 }

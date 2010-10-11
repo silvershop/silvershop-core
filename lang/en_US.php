@@ -291,6 +291,7 @@ $lang['en_US']['Product.ss']['ADD'] = 'Add &quot;%s&quot; to your cart';
 $lang['en_US']['Product.ss']['ADDLINK'] = 'Add this item to cart';
 $lang['en_US']['Product.ss']['ADDONE'] = 'Add one more of &quot;%s&quot; to your cart';
 $lang['en_US']['Product.ss']['AUTHOR'] = 'Author';
+$lang['en_US']['Product.ss']['MODEL'] = 'Model';
 $lang['en_US']['Product.ss']['FEATURED'] = 'This is a featured product.';
 $lang['en_US']['Product.ss']['GOTOCHECKOUT'] = 'Go to the checkout now';
 $lang['en_US']['Product.ss']['GOTOCHECKOUTLINK'] = '&raquo; Go to the checkout';

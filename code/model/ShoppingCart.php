@@ -161,6 +161,9 @@ class ShoppingCart extends Object {
 		$serializedItemIndex = self::item_index($itemIndex);
 		$serializedItem = Session::get($serializedItemIndex);
 		$unserializedItem = unserialize($serializedItem);
+		
+		if(!$unserializedItem) return; //can't do anything if there's no item
+		
 		$newQuantity = $unserializedItem->getQuantity() - $quantity;
 		if($newQuantity > 0) {
 			$unserializedItem->setQuantityAttribute($newQuantity);
@@ -251,12 +254,7 @@ class ShoppingCart extends Object {
 
 	static function add_new_modifier(OrderModifier $modifier) {
 		$modifiersTableIndex = self::modifiers_table_name();
-		if(defined('DB::USE_ANSI_SQL')) {
-			Session::add_to_array($modifiersTableIndex, serialize($modifier));
-		}
-		else {
-			Session::addToArray($modifiersTableIndex, serialize($modifier));
-		}
+		Session::add_to_array($modifiersTableIndex, serialize($modifier));
 	}
 
 	static function can_remove_modifier($modifierIndex) {
@@ -323,7 +321,7 @@ class ShoppingCart extends Object {
 	}
 
 	//7) Current order access function
-
+	/**If an order has no ID, it will call for the items etc from the Shopping cart**/
 	static function current_order() {
 		 return new Order();
 	}
@@ -404,8 +402,10 @@ class ShoppingCart_Controller extends Controller {
 		}
 		return "";
 	}
-
+	
+	
 	function additem() {
+		
 		$bt = defined('DB::USE_ANSI_SQL') ? "\"" : "`";
 		$itemId = $this->urlParams['ID'];
 		$variationId = (is_numeric($this->urlParams['OtherID'])) ? $this->urlParams['OtherID'] : null;
