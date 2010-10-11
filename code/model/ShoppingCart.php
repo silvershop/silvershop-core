@@ -10,7 +10,7 @@
 class ShoppingCart extends Controller {
 
 	protected static $order = null; // for temp caching
-	
+
 	static $cartid_session_name = 'shoppingcartid';
 
 	static $allowed_actions = array (
@@ -24,9 +24,9 @@ class ShoppingCart extends Controller {
 
 		'debug' => 'ADMIN'
 	);
-	
+
 	/**
-	 *	used for allowing certian url parameters to be applied to orderitems 
+	 *	used for allowing certian url parameters to be applied to orderitems
 	 *	eg: ?Color=red will set OrderItem color to 'red'
 	 *	name - defaultvalue (needed for default orderitems)
 	 *
@@ -41,6 +41,21 @@ class ShoppingCart extends Controller {
 		self::$paramfilters = array_merge(self::$paramfilters,$array);
 	}
 
+	static function set_country($country) {
+		$countrySettingIndex = self::country_setting_index();
+		Session::set("ShoppingCartCountry", $country);
+	}
+
+	static function get_country() {
+		$countrySettingIndex = self::country_setting_index();
+		return Session::get("ShoppingCartCountry");
+	}
+
+	static function remove_country() {
+		$countrySettingIndex = self::country_setting_index();
+		Session::clear("ShoppingCartCountry");
+	}
+
 	function init() {
 		parent::init();
 		self::current_order();
@@ -48,45 +63,45 @@ class ShoppingCart extends Controller {
 	}
 
 	static $URLSegment = 'shoppingcart';
-	
+
 	//controller links
 	static function add_item_link($id, $variationid = null, $parameters = array()) {
-		return self::$URLSegment.'/additem/'.$id.self::variationLink($variationid).self::paramsToGetString($parameters);
+		return self::$URLSegment.'/additem/'.$id.self::variation_link($variationid).self::params_to_get_string($parameters);
 	}
 
 	static function remove_item_link($id, $variationid = null, $parameters = array()) {
-		return self::$URLSegment.'/removeitem/'.$id.self::variationLink($variationid).self::paramsToGetString($parameters);
+		return self::$URLSegment.'/removeitem/'.$id.self::variation_link($variationid).self::params_to_get_string($parameters);
 	}
 
 	static function remove_all_item_link($id, $variationid = null, $parameters = array()) {
-		return self::$URLSegment.'/removeallitem/'.$id.self::variationLink($variationid).self::paramsToGetString($parameters);
+		return self::$URLSegment.'/removeallitem/'.$id.self::variation_link($variationid).self::params_to_get_string($parameters);
 	}
 
 	static function set_quantity_item_link($id, $variationid = null, $parameters = array()) {
-		return self::$URLSegment.'/setquantityitem/'.$id.self::variationLink($variationid).self::paramsToGetString($parameters);
+		return self::$URLSegment.'/setquantityitem/'.$id.self::variation_link($variationid).self::params_to_get_string($parameters);
 	}
 
 	static function remove_modifier_link($id, $variationid = null) {
-		return self::$URLSegment.'/removemodifier/'.$id.self::variationLink($variationid);
+		return self::$URLSegment.'/removemodifier/'.$id.self::variation_link($variationid);
 	}
-	
+
 	//TODO: this has no purpose currently
 	static function set_country_link() {
 		return self::$URLSegment.'/setcountry';
 	}
 
 	/** helper function for appending variation id */
-	protected static function variationLink($variationid) {
+	protected static function variation_link($variationid) {
 		if (is_numeric($variationid)) {
 			return "/$variationid";
 		}
 		return "";
 	}
-	
+
 	/**
 	 * Creates the appropriate string parameters for links from array
 	 */
-	protected static function paramsToGetString($array){
+	protected static function params_to_get_string($array){
 		if($array & count($array > 0)){
 			array_walk($array , create_function('&$v,$k', '$v = $k."=".$v ;'));
 			return "?".htmlentities(implode("&",$array), ENT_QUOTES); //TODO: urlescape values??
@@ -101,13 +116,13 @@ class ShoppingCart extends Controller {
 			$cartid = Session::get(self::$cartid_session_name);
 			//TODO: make clear cart on logout optional
 			if ($cartid && $o = DataObject::get_one('Order', "Status = 'Cart' AND ID = $cartid")) {
-				$order = $o;	
+				$order = $o;
 			}else {
 				$order = new Order();
 				$order->SessionID = session_id();
 				$order->MemberID = Member::currentUserID(); // Set the Member relation to this order
 				$order->write();
-				Session::set(self::$cartid_session_name,$order->ID);			
+				Session::set(self::$cartid_session_name,$order->ID);
 			}
 			self::$order = $order; //temp caching
 		}
@@ -187,7 +202,7 @@ class ShoppingCart extends Controller {
 	static function get_items($filter) {
 		return self::current_order()->Items($filter);
 	}
-	
+
 	/**
 	 * Get OrderItem according to product id, and coorresponding parameter filter.
 	 */
@@ -197,7 +212,7 @@ class ShoppingCart extends Controller {
 		$fil = ($filter && $filter != "") ? " AND $filter" : "";
 		return DataObject::get_one('OrderItem', "OrderID = $order->ID AND ProductID = $id". $fil);
 	}
-	
+
 	/**
 	 * Get item according to a filter.
 	 */
@@ -247,7 +262,7 @@ class ShoppingCart extends Controller {
 	}
 
 	static function uses_different_shipping_address(){
-		return self::current_order()->UseShippingAddress;		
+		return self::current_order()->UseShippingAddress;
 	}
 
 
@@ -255,7 +270,7 @@ class ShoppingCart extends Controller {
 	static function save_current_order() {
 		return Order::save_current_order();
 	}
-	
+
 	static function json_code() {
 		$currentOrder = ShoppingCart::current_order();
 		$js = array ();
@@ -273,17 +288,17 @@ class ShoppingCart extends Controller {
 		$currentOrder->updateForAjax($js);
 		return Convert::array2json($js);
 	}
-	
+
 	//Actions
 
 	/**
 	 * Either increments the count or creates a new item.
 	 */
 	function additem($request) {
-		
+
 		if ($itemId = $request->param('ID')) {
 			if($item = ShoppingCart::get_item($this->urlFilter())) {
-				
+
 				ShoppingCart::add_item($item);
 			} else {
 				if($orderitem = $this->getNewOrderItem())
@@ -310,7 +325,7 @@ class ShoppingCart extends Controller {
 			Director::redirectBack();
 	}
 
-	
+
 	/**
 	 * Clears the cart
 	 */
@@ -332,7 +347,7 @@ class ShoppingCart extends Controller {
 				ShoppingCart::set_quantity_item($item, $quantity);
 		}
 	}
-	
+
 	/**
 	 * Creates new order item based on url parameters
 	 */
@@ -341,7 +356,7 @@ class ShoppingCart extends Controller {
 		$bt = defined('DB::USE_ANSI_SQL') ? "\"" : "`";
 		$request = $this->getRequest();
 		$orderitem = null;
-		
+
 		//create either a ProductVariation_OrderItem or a Product_OrderItem
 		if (is_numeric($request->param('OtherID')) && $variationId = $request->param('OtherID')) {
 			$variation = DataObject::get_one('ProductVariation', sprintf("{$bt}ID{$bt} = %d AND {$bt}ProductID{$bt} = %d", (int) $this->urlParams['OtherID'], (int) $this->urlParams['ID']));
@@ -364,22 +379,22 @@ class ShoppingCart extends Controller {
 		return $orderitem;
 	}
 
-	
+
 	/**
 	 * Gets a SQL filter based on array of parameters.
-	 * 
+	 *
 	 * 	 Returns default filter if none provided,
 	 *	 otherwise it updates default filter with passed parameters
 	 */
 	static function paramFilter($params = array()){
-		
+
 		if(!self::$paramfilters) return ""; //no use for this if there are not parameters defined
-		
+
 		$bt = defined('DB::USE_ANSI_SQL') ? "\"" : "`";
 		$temparray = self::$paramfilters;
-		
+
 		$outputarray = array();
-		
+
 		foreach(self::$paramfilters as $field => $value){
 			if(isset($params[$field])){
 
@@ -388,10 +403,10 @@ class ShoppingCart extends Controller {
 			}
 			$outputarray[] = "{$bt}".$field."{$bt} = ".$temparray[$field];
 		}
-		
-		return implode(" AND ",$outputarray);	
+
+		return implode(" AND ",$outputarray);
 	}
-	
+
 	/**
 	 * Gets a filter based on urlParameters
 	 */
@@ -404,8 +419,8 @@ class ShoppingCart extends Controller {
 		$filter = self::paramFilter($request->getVars());
 		return implode(" AND ",array_merge($selection,array($filter)));
 	}
-	
-	
+
+
 	/**
 	 * Removes specified modifier, if allowed
 	 */
@@ -416,7 +431,7 @@ class ShoppingCart extends Controller {
 		if (!$this->isAjax())
 			Director::redirectBack();
 	}
-	
+
 	/**
 	 * Displays order info and cart contents.
 	 */
