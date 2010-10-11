@@ -1,0 +1,18 @@
+div#OrderInformation table {margin: 0 auto; clear: both; width: 700px;}
+div#OrderInformation thead {border-bottom: 1px dotted #ccc;}
+div#OrderInformation tbody {border-bottom: 1px dotted #ccc;}
+div#OrderInformation th, div#OrderInformation td {padding: 5px; width: 25%; text-align: left}
+	div#OrderInformation thead th, div#OrderInformation thead td {border-bottom: 1px solid #555; font-weight: bold; padding-top: 20px;}
+div#OrderInformation tbody {}
+div#OrderInformation th {}
+div#OrderInformation td {}
+div#OrderInformation tr.gap {}
+div#OrderInformation tr.gap th, div#OrderInformation tr.gap td {border-top: 1px dotted #555; font-weight: bold;}
+div#OrderInformation tr.last th, div#OrderInformation tr.last td {border-bottom: 1px dotted #555; }
+div#OrderInformation .center {text-align: center;}
+div#OrderInformation .right, div#OrderInformation .price {text-align: right;}
+div#OrderInformation .last {padding-bottom: 20px;}
+
+div#OrderInformation tr#SubTotal td, div#OrderInformation tr#SubTotal th,
+div#OrderInformation tr#Total td, div#OrderInformation tr#Total th,
+div#OrderInformation tr#Outstanding td, div#OrderInformation tr#Outstanding th {padding-bottom: 20px;}

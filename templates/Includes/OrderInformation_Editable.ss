@@ -26,7 +26,7 @@
 								<a class="ajaxQuantityLink" href="$removeLink" title="<% sprintf(_t("REMOVEONE","Remove one of &quot;%s&quot; from your cart"),$TableTitle) %>">
 									<img src="ecommerce/images/minus.gif" alt="-"/>
 								</a>
-							</strong> 
+							</strong>
 							<% if AjaxQuantityField %>
 								$AjaxQuantityField
 							<% else %>
@@ -50,14 +50,14 @@
 					</tr>
 				<% end_if %>
 			<% end_control %>
-			
+
 			<tr class="gap summary">
 				<td colspan="2" scope="row"><% _t("SUBTOTAL","Sub-total") %></td>
 				<td>&nbsp;</td>
 				<td class="right" id="$TableSubTotalID">$SubTotal.Nice</td>
 				<td>&nbsp;</td>
 			</tr>
-			
+
 			<% if Modifiers %>
 			<% control Modifiers %>
 				<% if ShowInTable %>
@@ -70,7 +70,7 @@
 							<% end_if %>
 						</td>
 						<td>&nbsp;</td>
-						<td class="right" id="$TableTotalID"><% if IsChargable %>$Amount.Nice<% else %>-$Amount.Nice<% end_if %></td>
+						<td class="right" id="$TableTotalID">$TableValue.Nice</td>
 						<td class="right remove">
 							<% if CanRemove %>
 								<strong>
@@ -84,7 +84,7 @@
 				<% end_if %>
 			<% end_control %>
 			<% end_if %>
-			
+
 			<tr class="gap Total">
 				<td colspan="2" scope="row"><% _t("TOTAL","Total") %></td>
 				<td>&nbsp;</td>

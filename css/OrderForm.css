@@ -19,8 +19,12 @@
 			#Checkout form .paymentfields input.text.maxlength {
 				width: 37px !important;
 			}
-			
+
 	#Checkout form .paymentfields img {
 		border: 0;
 		margin-right: 7px;
 	}
+.loading {background-image: url(../images/loading.gif); background-repeat: no-repeat; background-position: 95% 0;}
+#action_useDifferentShippingAddress {display: none;}
+
+.doNotShow{display: none;}
