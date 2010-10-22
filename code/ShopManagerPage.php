@@ -16,8 +16,7 @@ class ShopManagerPage extends Page {
 	);
 
 	function canCreate() {
-		$bt = defined('DB::USE_ANSI_SQL') ? "\"" : "`";
-		return !DataObject::get_one("SiteTree", "{$bt}ClassName{$bt} = 'ShopManagerPage'");
+		return !DataObject::get_one("SiteTree", "\"ClassName\" = 'ShopManagerPage'");
 	}
 
 	function canView($member = null) {
@@ -80,9 +79,8 @@ class ShopManagerPage_Controller extends Page_Controller {
 	}
 
 	function getorderdetailsforadmin() {
-		$bt = defined('DB::USE_ANSI_SQL') ? "\"" : "`";
 		$orderID = intval(Director::URLParam("ID"));
-		$dos = DataObject::get("OrderModifier", "{$bt}OrderID{$bt} = '$orderID'");
+		$dos = DataObject::get("OrderModifier", "\"OrderID\" = '$orderID'");
 		$v = print_r($dos);
 		$this->Content = $v;
 		return array();

@@ -73,8 +73,7 @@ class EcommerceRole extends DataObjectDecorator {
 	}
 
 	static function add_members_to_customer_group() {
-		$bt = defined('DB::USE_ANSI_SQL') ? "\"" : "`";
-		$gp = DataObject::get_one("Group", "Title = '".self::get_group_name()."'");
+		$gp = DataObject::get_one("Group", "\"Title\" = '".self::get_group_name()."'");
 		if(!$gp) {
 			$gp = new Group();
 			$gp->Title = self::get_group_name();
@@ -82,9 +81,9 @@ class EcommerceRole extends DataObjectDecorator {
 			$gp->write();
 		}
 		$allCombos = DB::query("
-			SELECT Group_Members.ID, Group_Members.MemberID, Group_Members.GroupID
-			FROM Group_Members
-			WHERE Group_Members.GroupID = ".$gp->ID.";"
+			SELECT \"Group_Members\".\"ID\", \"Group_Members\".\"MemberID\", \"Group_Members\".\"GroupID\"
+			FROM \"Group_Members\"
+			WHERE \"Group_Members\".\"GroupID\" = ".$gp->ID.";"
 		);
 		//make an array of all combos
 		$alreadyAdded = array();
@@ -96,9 +95,9 @@ class EcommerceRole extends DataObjectDecorator {
 		}
 		$unlistedMembers = DataObject::get(
 			"Member",
-			$where = "{$bt}Member{$bt}.{$bt}ID{$bt} NOT IN (".implode(",",$alreadyAdded).")",
+			$where = "\"Member\".\"ID\" NOT IN (".implode(",",$alreadyAdded).")",
 			$sort = null,
-			$join = "INNER JOIN {$bt}Order{$bt} ON {$bt}Order{$bt}.{$bt}MemberID{$bt} = {$bt}Member{$bt}.{$bt}ID{$bt}"
+			$join = "INNER JOIN \"Order\" ON \"Order\".\"MemberID\" = \"Member\".\"ID\""
 		);
 
 		//add combos

@@ -124,7 +124,7 @@ class ProductGroup extends Page {
 		$join = "";
 
 		if($extraFilter) $filter.= " AND $extraFilter";
-		if(self::$must_have_price) $filter .= " AND Price > 0";
+		if(self::$must_have_price) $filter .= " AND \"Price\" > 0";
 
 		$limit = (isset($_GET['start']) && (int)$_GET['start'] > 0) ? (int)$_GET['start'].",".self::$page_length : "0,".self::$page_length;
 		$sort = (isset($_GET['sortby'])) ? Convert::raw2sql($_GET['sortby']) : "FeaturedProduct DESC,Title";
@@ -145,9 +145,10 @@ class ProductGroup extends Page {
 
 		//TODO: get products that appear in child groups (make this optional)
 
-		$products = DataObject::get('Product',"(ParentID IN ($groupidsimpl) OR $multicatfilter) $filter",$sort,$join,$limit);
+		$products = DataObject::get('Product',"(\"ParentID\" IN ($groupidsimpl) OR $multicatfilter) $filter",$sort,$join,$limit);
 
-		$allproducts = DataObject::get('Product',"ParentID IN ($groupidsimpl) $filter","",$join);
+		$allproducts = DataObject::get('Product',"\"ParentID\" IN ($groupidsimpl) $filter","",$join);
+		
 		if($allproducts) $products->TotalCount = $allproducts->Count(); //add total count to returned data for 'showing x to y of z products'
 		if($products && $products instanceof DataObjectSet) $products->removeDuplicates();
 		return $products;
@@ -158,9 +159,8 @@ class ProductGroup extends Page {
 	 * @return DataObjectSet
 	 */
 	function ChildGroups($recursive = false) {
-		$bt = defined('DB::USE_ANSI_SQL') ? "\"" : "`";
 		if($recursive){
-			if($children = DataObject::get('ProductGroup', "{$bt}ParentID{$bt} = '$this->ID'")){
+			if($children = DataObject::get('ProductGroup', "\"ParentID\" = '$this->ID'")){
 				$output = unserialize(serialize($children));
 				foreach($children as $group){
 					$output->merge($group->ChildGroups($recursive));
@@ -169,7 +169,7 @@ class ProductGroup extends Page {
 			}
 			return null;
 		}else{
-			return DataObject::get('ProductGroup', "{$bt}ParentID{$bt} = '$this->ID'");
+			return DataObject::get('ProductGroup', "\"ParentID\" = '$this->ID'");
 		}
 	}
 
@@ -239,16 +239,14 @@ class ProductGroup_Controller extends Page_Controller {
 	 * Return products that are featured, that is products that have "FeaturedProduct = 1"
 	 */
 	function FeaturedProducts() {
-		$bt = defined('DB::USE_ANSI_SQL') ? "\"" : "`";
-		return $this->ProductsShowable("{$bt}FeaturedProduct{$bt} = 1");
+		return $this->ProductsShowable("\"FeaturedProduct\" = 1");
 	}
 
 	/**
 	 * Return products that are not featured, that is products that have "FeaturedProduct = 0"
 	 */
 	function NonFeaturedProducts() {
-		$bt = defined('DB::USE_ANSI_SQL') ? "\"" : "`";
-		return $this->ProductsShowable("{$bt}FeaturedProduct{$bt} = 0");
+		return $this->ProductsShowable("\"FeaturedProduct\" = 0");
 	}
 
 		/**

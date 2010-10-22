@@ -122,9 +122,8 @@ class Product extends Page {
 	 * Recaulculates the number sold for all products. This should be run as a cron job perhaps daily.
 	 */
 	static function recalculate_numbersold(){
-		$bt = defined('DB::USE_ANSI_SQL') ? "\"" : "`";
 		$ps = singleton('Product');
-		$q = $ps->buildSQL("{$bt}Product{$bt}.{$bt}AllowPurchase{$bt} IS TRUE");
+		$q = $ps->buildSQL("\"Product\".\"AllowPurchase\" IS TRUE");
 		$select = $q->select;
 
 		$select['NewNumberSold'] = self::$number_sold_calculation_type."(OrderItem.Quantity) AS NewNumberSold";
@@ -150,12 +149,11 @@ class Product extends Page {
 	}
 
 	function getVariationsTable() {
-		$bt = defined('DB::USE_ANSI_SQL') ? "\"" : "`";
 		$singleton = singleton('ProductVariation');
-		$query = $singleton->buildVersionSQL("{$bt}ProductID{$bt} = '{$this->ID}'");
+		$query = $singleton->buildVersionSQL("\"ProductID\" = '{$this->ID}'");
 		$variations = $singleton->buildDataObjectSet($query->execute());
-		$filter = $variations ? "{$bt}ID{$bt} IN ('" . implode("','", $variations->column('RecordID')) . "')" : "{$bt}ID{$bt} < '0'";
-		//$filter = "{$bt}ProductID{$bt} = '{$this->ID}'";
+		$filter = $variations ? "\"ID\" IN ('" . implode("','", $variations->column('RecordID')) . "')" : "\"ID\" < '0'";
+		//$filter = "\"ProductID\" = '{$this->ID}'";
 
 		$tableField = new HasManyComplexTableField(
 			$this,
@@ -284,12 +282,11 @@ class Product extends Page {
 	 * is invoked, create some default records in the database.
 	 */
 	function requireDefaultRecords() {
-		$bt = defined('DB::USE_ANSI_SQL') ? "\"" : "`";
 		parent::requireDefaultRecords();
 
 		if(!DataObject::get_one('Product')) {
 			if(!DataObject::get_one('ProductGroup')) singleton('ProductGroup')->requireDefaultRecords();
-			if($group = DataObject::get_one('ProductGroup', '', true, "{$bt}ParentID{$bt} DESC")) {
+			if($group = DataObject::get_one('ProductGroup', '', true, "\"ParentID\" DESC")) {
 				$content = '<p>This is a <em>product</em>. It\'s description goes into the Content field as a standard SilverStripe page would have it\'s content. This is an ideal place to describe your product.</p>';
 
 				$page1 = new Product();

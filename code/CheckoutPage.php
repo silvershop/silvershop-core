@@ -68,8 +68,7 @@ class CheckoutPage extends Page {
 
 
 	function canCreate() {
-		$bt = defined('DB::USE_ANSI_SQL') ? "\"" : "`";
-		return !DataObject::get_one("SiteTree", "{$bt}ClassName{$bt} = 'CheckoutPage'");
+		return !DataObject::get_one("SiteTree", "\"ClassName\" = 'CheckoutPage'");
 	}
 
 	/**
@@ -110,7 +109,6 @@ class CheckoutPage extends Page {
 	 * applied to it.
 	 */
 	function requireDefaultRecords() {
-		$bt = defined('DB::USE_ANSI_SQL') ? "\"" : "`";
 		parent::requireDefaultRecords();
 
 		if(!$page = DataObject::get_one('CheckoutPage')) {
@@ -127,7 +125,7 @@ class CheckoutPage extends Page {
 			DB::alteration_message('Checkout page \'Checkout\' created', 'created');
 		}
 
-		if($page->TermsPageID == 0 && $termsPage = DataObject::get_one('Page', "{$bt}URLSegment{$bt} = 'terms-and-conditions'")) {
+		if($page->TermsPageID == 0 && $termsPage = DataObject::get_one('Page', "\"URLSegment\" = 'terms-and-conditions'")) {
 			$page->TermsPageID = $termsPage->ID;
 			$page->writeToStage('Stage');
 			$page->publish('Stage', 'Live');

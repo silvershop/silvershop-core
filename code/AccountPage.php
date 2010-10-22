@@ -17,8 +17,7 @@ class AccountPage extends Page {
 
 
 	function canCreate() {
-		$bt = defined('DB::USE_ANSI_SQL') ? "\"" : "`";
-		return !DataObject::get_one("SiteTree", "{$bt}ClassName{$bt} = 'AccountPage'");
+		return !DataObject::get_one("SiteTree", "\"ClassName\" = 'AccountPage'");
 	}
 
 	/**

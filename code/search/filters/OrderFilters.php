@@ -8,13 +8,12 @@ class OrderFilters_AroundDateFilter extends ExactMatchFilter {
 		static function get_how_many_days_around(){return self::$how_many_days_around;}
 
 	public function apply(SQLQuery $query) {
-		$bt = defined('DB::USE_ANSI_SQL') ? "\"" : "`";
 		$query = $this->applyRelation($query);
 		$value = $this->getValue();
 		$date = new Date();
 		$date->setValue($value);
 		$formattedDate = $date->format("Y-m-d");
-		return $query->where("(DATEDIFF({$bt}Order{$bt}.{$bt}Created{$bt}, '$formattedDate') > -".self::get_how_many_days_around()." AND DATEDIFF({$bt}Order{$bt}.{$bt}Created{$bt}, '$formattedDate') < ".self::get_how_many_days_around().")");
+		return $query->where("(DATEDIFF(\"Order\".\"Created\", '$formattedDate') > -".self::get_how_many_days_around()." AND DATEDIFF(\"Order\".\"Created\", '$formattedDate') < ".self::get_how_many_days_around().")");
 	}
 
 	public function isEmpty() {

@@ -58,17 +58,16 @@ class EcommercePayment extends DataObjectDecorator {
 	}
 
 	function requireDefaultRecords() {
-		$bt = defined('DB::USE_ANSI_SQL') ? "\"" : "`";
 		parent::requireDefaultRecords();
 		if(isset($_GET["updatepayment"])) {
 			DB::query("
-				UPDATE {$bt}Payment{$bt}
-				SET {$bt}AmountAmount{$bt} = {$bt}Amount{$bt}
+				UPDATE \"Payment\"
+				SET \"AmountAmount\" = \"Amount\"
 				WHERE
-					{$bt}Amount{$bt} > 0
+					\"Amount\" > 0
 					AND (
-						{$bt}AmountAmount{$bt} IS NULL
-						OR {$bt}AmountAmount{$bt} = 0
+						\"AmountAmount\" IS NULL
+						OR \"AmountAmount\" = 0
 					)
 			");
 			$countAmountChanges = DB::affectedRows();
@@ -76,14 +75,14 @@ class EcommercePayment extends DataObjectDecorator {
 				DB::alteration_message("Updated Payment.Amount field to 2.4 - $countAmountChanges rows updated", "edited");
 			}
 			DB::query("
-				UPDATE {$bt}Payment{$bt}
-				SET {$bt}AmountCurrency{$bt} = {$bt}Currency{$bt}
+				UPDATE \"Payment\"
+				SET \"AmountCurrency\" = \"Currency\"
 				WHERE
-					{$bt}Currency{$bt} <> ''
-					AND {$bt}Currency{$bt} IS NOT NULL
+					\"Currency\" <> ''
+					AND \"Currency\" IS NOT NULL
 					AND (
-						{$bt}AmountCurrency{$bt} IS NULL
-						OR {$bt}AmountCurrency{$bt} = ''
+						\"AmountCurrency\" IS NULL
+						OR \"AmountCurrency\" = ''
 					)
 			");
 			$countCurrencyChanges = DB::affectedRows();
