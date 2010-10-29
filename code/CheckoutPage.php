@@ -234,7 +234,7 @@ class CheckoutPage_Controller extends Page_Controller {
 		$this->data()->extend('updateOrderForm',&$form);
 		//load session data //TODO: make this optional
 		$form->loadDataFromSession();
-		
+
 		return $form;
 	}
 
@@ -261,7 +261,7 @@ class CheckoutPage_Controller extends Page_Controller {
 		$checkoutLink = self::find_link();
 
 		if($memberID = Member::currentUserID()) {
-			if($order = DataObject::get_one('Order', "Order.ID = '$orderID' AND Order.MemberID = '$memberID'")) {
+			if($order = DataObject::get_one('Order', "Order.ID = '$orderID' AND \"Order\".\"MemberID\" = '$memberID'")) {
 				return 'You can not checkout this order because it has been already successfully completed. Click <a href="' . $order->Link() . '">here</a> to see it\'s details, otherwise you can <a href="' . $checkoutLink . '">checkout</a> your current order.';
 			}
 			else {
