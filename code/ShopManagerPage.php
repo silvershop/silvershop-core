@@ -55,7 +55,7 @@ class ShopManagerPage_Controller extends Page_Controller {
 	}
 
 	function LastOrders() {
-		return DataObject::get("Order", "", "Created DESC", "", "0, 250");
+		return DataObject::get("Order", "", "\"Created\" DESC", "", "0, 250");
 	}
 
 	function clearcompletecart() {
@@ -89,7 +89,7 @@ class ShopManagerPage_Controller extends Page_Controller {
 	function testorderreceipt() {
 		$orderID = intval(Director::URLParam("ID"));
 		if(!$orderID) {
-			$o = DataObject::get_one("Order", "", "Created DESC");
+			$o = DataObject::get_one("Order", "", "\"Created\" DESC");
 			if($o) {
 				$orderID = $o->ID;
 			}
@@ -123,7 +123,7 @@ class ShopManagerPage_Controller extends Page_Controller {
 	function teststatusupdatemail() {
 		$orderID = intval(Director::URLParam("ID"));
 		if(!$orderID) {
-			$o = DataObject::get_one("Order", "", "Created DESC");
+			$o = DataObject::get_one("Order", "", "\"Created\" DESC");
 			if($o) {
 				$orderID = $o->ID;
 			}
@@ -134,7 +134,7 @@ class ShopManagerPage_Controller extends Page_Controller {
 				$from = $order->getReceiptEmail();
 				$to = $order->Member()->Email;
 				$subject = "Your order status";
-				$logs = DataObject::get('OrderStatusLog', "OrderID = {$this->ID}", "Created DESC", null, 1);
+				$logs = DataObject::get('OrderStatusLog', "\"OrderID\" = {$this->ID}", "\"Created\" DESC", null, 1);
 				if($logs) {
 					$latestLog = $logs->First();
 					$note = $latestLog->Note;
@@ -168,7 +168,7 @@ class ShopManagerPage_Controller extends Page_Controller {
 		$accountPageLink = AccountPage::find_link();
 
 		if($orderID = $request->param('ID')) {
-			if($order = DataObject::get_one('Order', "Order.ID = '$orderID'")) {
+			if($order = DataObject::get_one('Order', "\"Order\".\"ID\" = '$orderID'")) {
 				return array('Order' => $order);
 			}
 			else {
