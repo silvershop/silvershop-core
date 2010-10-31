@@ -15,8 +15,8 @@ class AllOrdersReport extends SS_Report {
 
 		//filters
 		$filters = array();
-		if(isset($params['OrderID']) && $params['OrderID']) $filters[] = "ID = ".$params['OrderID'];
-		if(isset($params['Status']) && $params['Status']) $filters[] = "Status = '".$params['Status']."'";
+		if(isset($params['OrderID']) && $params['OrderID']) $filters[] = "\"ID\" = ".$params['OrderID'];
+		if(isset($params['Status']) && $params['Status']) $filters[] = "\"Status\" = '".$params['Status']."'";
 
 		//sort
 		$sort = "";

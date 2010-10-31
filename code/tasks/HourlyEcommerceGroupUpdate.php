@@ -13,14 +13,14 @@ class HourlyEcommerceGroupUpdate extends HourlyTask {
 		static function get_group_name(){return self::$group_name;}
 
 	static function add_members_to_customer_group() {
-		$gp = DataObject::get_one("Group", "Title = '".self::get_group_name()."'");
+		$gp = DataObject::get_one("Group", "\"Title\" = '".self::get_group_name()."'");
 		if(!$gp) {
 			$gp = new Group();
 			$gp->Title = self::get_group_name();
 			$gp->Sort = 999998;
 			$gp->write();
 		}
-		$allCombos = DB::query("Select ID, MemberID, GroupID FROM Group_Members WHERE Group_Members.GroupID = ".$gp->ID.";");
+		$allCombos = DB::query("Select \"ID\", \"MemberID\", \"GroupID\" FROM \"Group_Members\" WHERE \"Group_Members\".\"GroupID\" = ".$gp->ID.";");
 		//make an array of all combos
 		$alreadyAdded = array();
 		$alreadyAdded[-1] = -1;

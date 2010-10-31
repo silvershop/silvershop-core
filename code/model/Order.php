@@ -53,7 +53,7 @@ class Order extends DataObject {
 
 	public static $defaults = array();
 
-	public static $default_sort = "Created DESC";
+	public static $default_sort = "\"Created\" DESC";
 
 	public static $casting = array(
 		'SubTotal' => 'Currency',
@@ -256,8 +256,8 @@ class Order extends DataObject {
 			"OrderItems", //$name
 			"OrderItem", //$sourceClass =
 			OrderItem::$summary_fields, //$fieldList =
-			"OrderID = ".$this->ID, //$sourceFilter =
-			"Created ASC", //$sourceSort =
+			"\"OrderID\" = ".$this->ID, //$sourceFilter =
+			"\"Created\" ASC", //$sourceSort =
 			null //$sourceJoin =
 		);
 		$orderItemsTable->setPermissions(array("view"));
@@ -272,7 +272,7 @@ class Order extends DataObject {
 			"OrderModifiers", //$name
 			"OrderModifier", //$sourceClass =
 			OrderModifier::$summary_fields, //$fieldList =
-			"OrderID = ".$this->ID."", //$sourceFilter =
+			"\"OrderID\" = ".$this->ID."", //$sourceFilter =
 			"\"Type\", \"Amount\" ASC, \"Created\" ASC", //$sourceSort =
 			null //$sourceJoin =
 		);
@@ -697,7 +697,7 @@ class Order extends DataObject {
 	 * @return DataObjectSet
 	 */
 	function Payments() {
-		return DataObject::get('Payment', "OrderID = '$this->ID'", 'LastEdited DESC');
+		return DataObject::get('Payment', "\"OrderID\" = '$this->ID'", '"LastEdited" DESC');
 	}
 
 	/**
@@ -873,7 +873,7 @@ class Order extends DataObject {
 	 */
 	function sendStatusChange($title, $note = null) {
 		if(!$note) {
-			$logs = DataObject::get('OrderStatusLog', "OrderID = {$this->ID} AND SentToCustomer = 1", "Created DESC", null, 1);
+			$logs = DataObject::get('OrderStatusLog', "\"OrderID\" = {$this->ID} AND \"SentToCustomer\" = 1", "\"Created\" DESC", null, 1);
 			if($logs) {
 				$latestLog = $logs->First();
 				$note = $latestLog->Note;
@@ -982,7 +982,7 @@ class Order extends DataObject {
 		if($number) {
 			$count = DB::query("SELECT COUNT( \"ID\" ) FROM \"Order\" ")->value();
 		 	if($count > 0) {
-				$currentMax = DB::Query("SELECT MAX( ID ) FROM \"Order\"")->value();
+				$currentMax = DB::Query("SELECT MAX( \"ID\" ) FROM \"Order\"")->value();
 			}
 			if($number > $currentMax) {
 				DB::query("ALTER TABLE \"Order\"  AUTO_INCREMENT = $number ROW_FORMAT = DYNAMIC ");

@@ -134,7 +134,8 @@ class EcommerceRole extends DataObjectDecorator {
 		$uniqueField = Member::get_unique_identifier_field();
 		if(isset($data[$uniqueField])) {
 			$SQL_unique = Convert::raw2xml($data[$uniqueField]);
-			$existingUniqueMember = DataObject::get_one('Member', "$uniqueField = '{$SQL_unique}'");
+			// TODO review - should $uniqueField be quoted by Member::get_unique_identifier_field() already? (this would be sapphire bug) 
+			$existingUniqueMember = DataObject::get_one('Member', "\"$uniqueField\" = '{$SQL_unique}'");
 			if($existingUniqueMember && $existingUniqueMember->exists()) {
 				if(Member::currentUserID() != $existingUniqueMember->ID) {
 					return false;

@@ -14,7 +14,7 @@ class EcommerceSideReport_FeaturedProducts extends SideReport {
 	}
 
 	function records() {
-		return DataObject::get("Product", "FeaturedProduct = 1", "Title");
+		return DataObject::get("Product", "\"FeaturedProduct\" = 1", "\"Title\"");
 	}
 
 	function fieldsToShow() {

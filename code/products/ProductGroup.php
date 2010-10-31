@@ -127,7 +127,7 @@ class ProductGroup extends Page {
 		if(self::$must_have_price) $filter .= " AND \"Price\" > 0";
 
 		$limit = (isset($_GET['start']) && (int)$_GET['start'] > 0) ? (int)$_GET['start'].",".self::$page_length : "0,".self::$page_length;
-		$sort = (isset($_GET['sortby'])) ? Convert::raw2sql($_GET['sortby']) : "FeaturedProduct DESC,Title";
+		$sort = (isset($_GET['sortby'])) ? Convert::raw2sql($_GET['sortby']) : "\"FeaturedProduct\" DESC,\"Title\"";
 
 		//hard coded sort configuration //TODO: make these custom
 		if($sort == "NumberSold") $sort .= " DESC";

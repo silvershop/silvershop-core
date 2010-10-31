@@ -59,7 +59,7 @@ class Product extends Page {
 
 	static $default_parent = 'ProductGroup';
 
-	static $default_sort = 'Title ASC';
+	static $default_sort = '"Title" ASC';
 
 	static $add_action = 'a Product Page';
 
@@ -126,14 +126,14 @@ class Product extends Page {
 		$q = $ps->buildSQL("\"Product\".\"AllowPurchase\" IS TRUE");
 		$select = $q->select;
 
-		$select['NewNumberSold'] = self::$number_sold_calculation_type."(OrderItem.Quantity) AS NewNumberSold";
+		$select['NewNumberSold'] = self::$number_sold_calculation_type."(\"OrderItem\".\"Quantity\") AS \"NewNumberSold\"";
 
 		$q->select($select);
-		$q->groupby("Product.ID");
-		$q->orderby("NewNumberSold DESC");
+		$q->groupby("\"Product\".\"ID\"");
+		$q->orderby("\"NewNumberSold\" DESC");
 
-		$q->leftJoin('Product_OrderItem','Product.ID = Product_OrderItem.ProductID');
-		$q->leftJoin('OrderItem','Product_OrderItem.ID = OrderItem.ID');
+		$q->leftJoin('Product_OrderItem','"Product"."ID" = "Product_OrderItem"."ProductID"');
+		$q->leftJoin('OrderItem','"Product_OrderItem"."ID" = "OrderItem"."ID"');
 		$records = $q->execute();
 		$productssold = $ps->buildDataObjectSet($records, "DataObjectSet", $q, 'Product');
 

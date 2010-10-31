@@ -30,11 +30,11 @@ class ProductBulkLoader extends CsvBulkLoader{
 				 //set parent page
 				if(self::$parentpageid instanceof ProductGroup) //cached option
 					$object->ParentID = self::$parentpageid;
-				elseif($parentpage = DataObject::get_one('ProductGroup',"Title = 'Products'",'Created DESC')){ //page called 'Products'
+				elseif($parentpage = DataObject::get_one('ProductGroup',"\"Title\" = 'Products'",'"Created" DESC')){ //page called 'Products'
 					$object->ParentID = self::$parentpageid = $parentpage->ID;
-				}elseif($parentpage = DataObject::get_one('ProductGroup',"ParentID = 0",'Created DESC')){ //root page
+				}elseif($parentpage = DataObject::get_one('ProductGroup',"\"ParentID\" = 0",'"Created" DESC')){ //root page
 					$object->ParentID = self::$parentpageid = $parentpage->ID;
-				}elseif($parentpage = DataObject::get_one('ProductGroup',"",'Created DESC')){ //any product page
+				}elseif($parentpage = DataObject::get_one('ProductGroup',"",'"Created" DESC')){ //any product page
 					$object->ParentID = self::$parentpageid = $parentpage->ID;
 				}else
 					$object->ParentID = self::$parentpageid = 0;
