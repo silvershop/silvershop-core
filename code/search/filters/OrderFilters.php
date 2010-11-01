@@ -58,7 +58,7 @@ class OrderFilters_MustHaveAtLeastOnePayment extends SearchFilter {
 		$value = $this->getValue();
 		if($value) {
 			return $query->innerJoin(
-				$table = "\"Payment\"",
+				$table = "Payment", // framework already applies quotes to table names here!
 				$onPredicate = "\"Payment\".\"OrderID\" = \"Order\".\"ID\"",
 				$tableAlias=null
 			);
