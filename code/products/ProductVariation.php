@@ -34,8 +34,15 @@ class ProductVariation extends DataObject {
 		$fields[] = new TextField('Price');
 		return new FieldSet($fields);
 	}
+	
+	/*
+	 * @Depreciated - use canPurchase instead
+	 */
+	function AllowPurchase(){
+		return $this->canPurcahse();
+	}
 
-	function AllowPurchase() {
+	function canPurchase() {
 		if($product = $this->Product())
 			return $this->Price && $product->AllowPurchase;
 		return false;

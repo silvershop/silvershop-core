@@ -232,9 +232,11 @@ class CheckoutPage_Controller extends Page_Controller {
 	function OrderForm() {
 		$form = new OrderForm($this, 'OrderForm');
 		$this->data()->extend('updateOrderForm',&$form);
-		//load session data //TODO: make this optional
-		$form->loadDataFromSession();
-
+		//load session data
+		if($data = Session::get("FormInfo.{$form->FormName()}.data")){
+			$form->loadDataFrom($data);
+		}
+		
 		return $form;
 	}
 

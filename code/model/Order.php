@@ -354,8 +354,11 @@ class Order extends DataObject {
 	 *
 	 * @param array $modifiers An array of {@link OrderModifier} subclass names
 	 */
-	public static function set_modifiers($modifiers) {
-		self::$modifiers = $modifiers;
+	public static function set_modifiers($modifiers, $replace = false) {
+		if($replace)
+			self::$modifiers = $modifiers;
+		else
+			array_merge(self::$modifiers,$modifiers);
 	}
 
 	/**
@@ -738,7 +741,17 @@ class Order extends DataObject {
 		$js[] = array('id' => $this->CartSubTotalID(), 'parameter' => 'innerHTML', 'value' => $subTotal);
 		$js[] = array('id' => $this->CartTotalID(), 'parameter' => 'innerHTML', 'value' => $total);
 	}
-
+	
+	/**
+	 * Will update payment status to "Paid if there is no outstanding amount".
+	 */
+	function updatePaymentStatus(){
+		if($this->Total() > 0 && $this->TotalOutstanding() <= 0){
+			$this->Status = 'Paid';
+			$this->write();
+		}
+	}
+	
 	/**
 	 * Has this order been sent to the customer?
 	 * (at "Sent" status).
@@ -786,7 +799,7 @@ class Order extends DataObject {
 	 * @return string
 	 */
 	function checkoutLink() {
-		return $this->ID ? CheckoutPage::get_checkout_order_link($this->ID) : CheckoutPage::find_link();
+		return CheckoutPage::find_link();
 	}
 
   	/**

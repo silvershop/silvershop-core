@@ -21,14 +21,14 @@
 			<div class="quantityBox">
 				<table class="quantityTable">
 					<tr>
-						<th>Variation</th><th>Price</th><% if AllowPurchase %><th><% _t("QUANTITYCART","Quantity in cart") %></th><% end_if %>
+						<th>Variation</th><th>Price</th><% if canPurchase %><th><% _t("QUANTITYCART","Quantity in cart") %></th><% end_if %>
 					</tr>
 					<% control Variations %>
 							<tr>
 								<td>$Title.XML</td>
 								<td>$Price.Nice $Currency $TaxInfo.PriceSuffix</td>
 								<td>
-								<% if AllowPurchase %>
+								<% if canPurchase %>
 									<% if IsInCart %>
 										<% control Item %>
 											<a class="ajaxQuantityLink" href="$removeLink" title="<% sprintf(_t("REMOVEALL","Remove one of &quot;%s&quot; from your cart"),$Title.XML) %>">
@@ -51,7 +51,7 @@
 			</div>
 		<% else %>
 			<% if Price != 0 %><p class="priceDisplay">$Price.Nice $Currency $TaxInfo.PriceSuffix</p><% end_if %>
-			<% if AllowPurchase %>
+			<% if canPurchase %>
 				<% if IsInCart %>
 					<% control Item %>
 						<div class="quantityBox">

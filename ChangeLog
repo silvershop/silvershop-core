@@ -1,15 +1,20 @@
 Ecommerce ChangeLog
 
+Needing attention / TODO:
+	* Product -> Number sold. This was intended to allow sorting products by popularity, however it may not be implemented the best.
+	* Variations? - untested, probably broken.
+	* Removable modifiers? - untested, probably broken.
+	* Remove session-based code from other classes. (mostly done)
+	
+	* Introduce a way to ensure only valid products are added with parameters.
+
+Burnbright branch
+	* Depricated AllowPurchase function on Product & ProductVariation in favour of canPurcahse. SilverStripe has can____ capabilites built in, and AllowPurchase was overriding the DB field.
+	* Improved ProductBulkLoader to allow setting ProductGroup, and linking up an image of the product.
+
 DBCart branch
 	* Merged ShoppingCart and ShoppingCart_Controller into one class
 	* Introduced filters/paremeters system for more complex cart situations
-
-	TODO:
-	* Variations? - untested, probably broken.
-	* Removable modifiers? - untested, probably broken.
-	* Remove session-based code from other classes
-	
-	* Introduce a way to ensure only valid products are added with parameters
 
 0.6.1
 	* Modified code to work with SS 2.4, and payment trunk as @ revision 103257. This mainly involved supporting the Money class.
