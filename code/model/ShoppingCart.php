@@ -317,11 +317,19 @@ class ShoppingCart extends Controller {
 	/**
 	 * Clears the cart
 	 */
-	static function clear() {
+	static function clear($request = null) {
 		self::current_order()->SessionID = null;
 		self::current_order()->write();
 		self::remove_all_items();
 		self::$order = null;
+		
+		//redirect if called via url
+		if($request instanceof SS_HTTPRequest){
+			if(Director::is_ajax())
+				return "success";
+			else
+				Director::redirectBack();
+		}
 	}
 
 
