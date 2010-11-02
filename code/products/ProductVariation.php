@@ -39,7 +39,7 @@ class ProductVariation extends DataObject {
 	 * @Depreciated - use canPurchase instead
 	 */
 	function AllowPurchase(){
-		return $this->canPurcahse();
+		return $this->canPurchase();
 	}
 
 	function canPurchase() {
@@ -118,10 +118,6 @@ class ProductVariation_OrderItem extends Product_OrderItem {
 	}
 
 	## Overloaded functions ##
-
-	function getProductIDForSerialization(){
-		return parent::getProductIDForSerialization()."_v".$this->_productVariationID;
-	}
 
 	function addLink() {
 		return ShoppingCart::add_item_link($this->_productID,$this->_productVariationID);

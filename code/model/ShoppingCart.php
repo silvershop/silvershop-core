@@ -193,8 +193,12 @@ class ShoppingCart extends Controller {
 	 */
 	static function get_item_by_id($id, $variationid = null,$filter = null) {
 		$filter = self::paramFilter($filter);
+		if(is_numeric($variationid)){
+			$filter .= ($filter && $filter != "") ? " AND " : "";
+			$filter .= "\"ProductVariationID\" = $variationid";
+		}
 		$order = self::current_order();
-		$fil = ($filter && $filter != "") ? " AND $filter" : "";
+		$fil = ($filter && $filter != "") ? " AND $filter" : "";		
 		return DataObject::get_one('OrderItem', "\"OrderID\" = $order->ID AND \"ProductID\" = $id". $fil);
 	}
 	
@@ -249,7 +253,6 @@ class ShoppingCart extends Controller {
 	static function uses_different_shipping_address(){
 		return self::current_order()->UseShippingAddress;		
 	}
-
 
 	// Database saving function
 	static function save_current_order() {
@@ -373,14 +376,11 @@ class ShoppingCart extends Controller {
 	static function paramFilter($params = array()){
 		
 		if(!self::$paramfilters) return ""; //no use for this if there are not parameters defined
-		
 		$temparray = self::$paramfilters;
-		
 		$outputarray = array();
 		
 		foreach(self::$paramfilters as $field => $value){
 			if(isset($params[$field])){
-
 				//TODO: convert to $dbfield->prepValueForDB() when Boolean problem figured out
 				$temparray[$field] = Convert::raw2sql($params[$field]);
 			}
@@ -399,6 +399,10 @@ class ShoppingCart extends Controller {
 		$selection = array(
 			"\"ProductID\" = ".$request->param('ID')
 		);
+		if(is_numeric($request->param('OtherID'))){
+			$selection[] = "\"ProductVariationID\" = ".$request->param('OtherID');
+		}
+		
 		$filter = self::paramFilter($request->getVars());
 		if( $filter ){
 			$result = implode(" AND ",array_merge($selection,array($filter)));	
