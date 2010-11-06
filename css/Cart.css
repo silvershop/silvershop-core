@@ -6,36 +6,38 @@
 	.cart .title{
 		display:block;
 	}
-	
+
 	/* total of the cart */
 	.cart .total,
 	.cart .subtotal {
-	
+
 	}
 	.cart .total {
 		font-weight: bold;
 	}
-	
+
 	/* nudge the message left a bit so it looks better in black candy */
 	.cart .noItems {
 		padding-left: 7px;
 	}
-	
+
 	/* buy products link to buy the items in your cart */
 	.cart .buyProducts {
 		font-weight: bold;
 	}
-	
+
 	.cart .itemdetails {
 		float: left;
 		width: 173px;
 	}
-	
+
 	.cart .remove {
 		padding-left:1em;
 	}
-	
+
 
 #Sidebar{
 	float:left;
+	background-color: #ccc;
+	padding: 17px;
 }

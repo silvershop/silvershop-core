@@ -305,14 +305,14 @@ class ShoppingCart extends Controller {
 	 * Either increments the count or creates a new item.
 	 */
 	function additem($request) {
-
 		if ($itemId = $request->param('ID')) {
 			if($item = ShoppingCart::get_item($this->urlFilter())) {
-
 				ShoppingCart::add_item($item);
-			} else {
-				if($orderitem = $this->getNewOrderItem())
+			}
+			else {
+				if($orderitem = $this->getNewOrderItem()) {
 					ShoppingCart::add_new_item($orderitem);
+				}
 			}
 		}
 		if (!$this->isAjax())
@@ -445,10 +445,8 @@ class ShoppingCart extends Controller {
 	}
 
 
-=======
 
 
->>>>>>> .r290
 	/**
 	 * Removes specified modifier, if allowed
 	 */
