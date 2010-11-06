@@ -39,8 +39,8 @@ class UnprintedOrderReport extends SS_Report {
 		// all the fields. Invoice and Printed are dummy fields that just have some
 		// text in them, which would be automatically queried if we didn't specify
 		// a custom query.
-		$query = singleton('Order')->buildSQL('Order.Printed = 0', 'Order.Created DESC');
-		$query->groupby[] = 'Order.Created';
+		$query = singleton('Order')->buildSQL('"Order"."Printed" = 0', '"Order"."Created" DESC');
+		$query->groupby[] = '"Order"."Created"';
 		$table->setCustomQuery($query);
 
 		// Set the links to the Invoice and Print fields allowing a user to view

@@ -119,7 +119,7 @@ class ShoppingCart extends Controller {
 			//find order by id saved to session (allows logging out and retaining cart contents)
 			$cartid = Session::get(self::$cartid_session_name);
 			//TODO: make clear cart on logout optional
-			if ($cartid && $o = DataObject::get_one('Order', "Status = 'Cart' AND ID = $cartid")) {
+			if ($cartid && $o = DataObject::get_one('Order', "\"Status\" = 'Cart' AND \"ID\" = $cartid")) {
 				$order = $o;
 			}else {
 				$order = new Order();
@@ -212,9 +212,13 @@ class ShoppingCart extends Controller {
 	 */
 	static function get_item_by_id($id, $variationid = null,$filter = null) {
 		$filter = self::get_param_filter($filter);
+		if(is_numeric($variationid)){
+			$filter .= ($filter && $filter != "") ? " AND " : "";
+			$filter .= "\"ProductVariationID\" = $variationid";
+		}
 		$order = self::current_order();
 		$fil = ($filter && $filter != "") ? " AND $filter" : "";
-		return DataObject::get_one('OrderItem', "OrderID = $order->ID AND ProductID = $id". $fil);
+		return DataObject::get_one('OrderItem', "\"OrderID\" = $order->ID AND \"ProductID\" = $id". $fil);
 	}
 
 	/**
@@ -271,7 +275,6 @@ class ShoppingCart extends Controller {
 	static function uses_different_shipping_address(){
 		return self::current_order()->UseShippingAddress;
 	}
-
 
 	// Database saving function
 	static function save_current_order() {
@@ -336,11 +339,19 @@ class ShoppingCart extends Controller {
 	/**
 	 * Clears the cart
 	 */
-	static function clear() {
+	static function clear($request = null) {
 		self::current_order()->SessionID = null;
 		self::current_order()->write();
 		self::remove_all_items();
 		self::$order = null;
+
+		//redirect if called via url
+		if($request instanceof SS_HTTPRequest){
+			if(Director::is_ajax())
+				return "success";
+			else
+				Director::redirectBack();
+	}
 	}
 
 
@@ -360,13 +371,12 @@ class ShoppingCart extends Controller {
 	 */
 	protected function getNewOrderItem(){
 
-		$bt = defined('DB::USE_ANSI_SQL') ? "\"" : "`";
 		$request = $this->getRequest();
 		$orderitem = null;
 
 		//create either a ProductVariation_OrderItem or a Product_OrderItem
 		if (is_numeric($request->param('OtherID')) && $variationId = $request->param('OtherID')) {
-			$variation = DataObject::get_one('ProductVariation', sprintf("{$bt}ID{$bt} = %d AND {$bt}ProductID{$bt} = %d", (int) $this->urlParams['OtherID'], (int) $this->urlParams['ID']));
+			$variation = DataObject::get_one('ProductVariation', sprintf("\"ID\" = %d AND \"ProductID\" = %d", (int) $this->urlParams['OtherID'], (int) $this->urlParams['ID']));
 			if ($variation && $variation->AllowPurchase()) {
 				$orderitem = new ProductVariation_OrderItem($variation,1);
 			}
@@ -396,19 +406,16 @@ class ShoppingCart extends Controller {
 	static function get_param_filter($params = array()){
 
 		if(!self::$paramfilters) return ""; //no use for this if there are not parameters defined
-
 		$bt = defined('DB::USE_ANSI_SQL') ? "\"" : "`";
 		$temparray = self::$paramfilters;
-
 		$outputarray = array();
 
 		foreach(self::$paramfilters as $field => $value){
 			if(isset($params[$field])){
-
 				//TODO: convert to $dbfield->prepValueForDB() when Boolean problem figured out
 				$temparray[$field] = Convert::raw2sql($params[$field]);
 			}
-			$outputarray[] = "{$bt}".$field."{$bt} = ".$temparray[$field];
+			$outputarray[] = "\"".$field."\" = ".$temparray[$field];
 		}
 
 		return implode(" AND ",$outputarray);
@@ -418,22 +425,30 @@ class ShoppingCart extends Controller {
 	 * Gets a filter based on urlParameters
 	 */
 	function urlFilter(){
-		$bt = defined('DB::USE_ANSI_SQL') ? "\"" : "`";
+		$result = '';
 		$request = $this->getRequest();
 		$selection = array(
-			"{$bt}ProductID{$bt} = ".$request->param('ID')
+			"\"ProductID\" = ".$request->param('ID')
 		);
-		$filter = self::get_param_filter($request->getVars());
-		if($filter) {
-			$selectionAndFilter = array_merge($selection,array($filter));
+		if(is_numeric($request->param('OtherID'))){
+			$selection[] = "\"ProductVariationID\" = ".$request->param('OtherID');
+		}
+
+		$filter = self::paramFilter($request->getVars());
+		if( $filter ){
+			$result = implode(" AND ",array_merge($selection,array($filter)));
 		}
 		else {
-			$selectionAndFilter = $selection;
+			$result = implode(" AND ",$selection);
 		}
-		return implode(" AND ", $selectionAndFilter);
+		return $result;
 	}
 
 
+=======
+
+
+>>>>>>> .r290
 	/**
 	 * Removes specified modifier, if allowed
 	 */

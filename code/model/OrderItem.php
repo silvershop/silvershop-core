@@ -56,7 +56,7 @@ class OrderItem extends OrderAttribute {
 
 	public static $plural_name = "Order Items";
 
-	public static $default_sort = "Created DESC";
+	public static $default_sort = "\"Created\" DESC";
 
 
 	public function __construct($object = null, $quantity = 1) {

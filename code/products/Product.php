@@ -1,7 +1,7 @@
 <?php
 /**
  * This is a standard Product page-type with fields like
- * Price, Weight, Model/Author and basic management of
+ * Price, Weight, Model and basic management of
  * groups.
  *
  * It also has an associated Product_OrderItem class,
@@ -20,7 +20,7 @@ class Product extends Page {
 		'Model' => 'Varchar(30)',
 		'FeaturedProduct' => 'Boolean',
 		'AllowPurchase' => 'Boolean',
-		'InternalItemID' => 'Varchar(30)',
+		'InternalItemID' => 'Varchar(30)', //ie SKU, ProductID etc (internal / existing recognition of product)
 
 		'NumberSold' => 'Int' //store number sold, so it doesn't have to be computed on the fly
 	);
@@ -59,7 +59,7 @@ class Product extends Page {
 
 	static $default_parent = 'ProductGroup';
 
-	static $default_sort = 'Title ASC';
+	static $default_sort = '"Title" ASC';
 
 	static $add_action = 'a Product Page';
 
@@ -75,7 +75,7 @@ class Product extends Page {
 		// Standard product detail fields
 		$fields->addFieldToTab('Root.Content.Main',new TextField('Price', _t('Product.PRICE', 'Price'), '', 12),'Content');
 		$fields->addFieldToTab('Root.Content.Main',new TextField('Weight', _t('Product.WEIGHT', 'Weight (kg)'), '', 12),'Content');
-		$fields->addFieldToTab('Root.Content.Main',new TextField('Model', _t('Product.MODEL', 'Model/Author'), '', 30),'Content');
+		$fields->addFieldToTab('Root.Content.Main',new TextField('Model', _t('Product.MODEL', 'Model'), '', 30),'Content');
 		$fields->addFieldToTab('Root.Content.Main',new TextField('InternalItemID', _t('Product.CODE', 'Product Code'), '', 30),'Content');
 
 		if(!$fields->dataFieldByName('Image')) {
@@ -83,13 +83,8 @@ class Product extends Page {
 		}
 
 		// Flags for this product which affect it's behaviour on the site
-		$fields->addFieldsToTab(
-			'Root.Content.Main',
-			array(
-				new CheckboxField('FeaturedProduct', _t('Product.FEATURED', 'Featured Product')),
-				new CheckboxField('AllowPurchase', _t('Product.ALLOWPURCHASE', 'Allow product to be purchased'), 1)
-			)
-		);
+		$fields->addFieldToTab('Root.Content.Main',new CheckboxField('FeaturedProduct', _t('Product.FEATURED', 'Featured Product')), 'Content');
+		$fields->addFieldToTab('Root.Content.Main',new CheckboxField('AllowPurchase', _t('Product.ALLOWPURCHASE', 'Allow product to be purchased'), 1),'Content');
 
 		$fields->addFieldsToTab(
 			'Root.Content.Variations',
@@ -122,19 +117,18 @@ class Product extends Page {
 	 * Recaulculates the number sold for all products. This should be run as a cron job perhaps daily.
 	 */
 	static function recalculate_numbersold(){
-		$bt = defined('DB::USE_ANSI_SQL') ? "\"" : "`";
 		$ps = singleton('Product');
-		$q = $ps->buildSQL("{$bt}Product{$bt}.{$bt}AllowPurchase{$bt} IS TRUE");
+		$q = $ps->buildSQL("\"Product\".\"AllowPurchase\" IS TRUE");
 		$select = $q->select;
 
-		$select['NewNumberSold'] = self::$number_sold_calculation_type."(OrderItem.Quantity) AS NewNumberSold";
+		$select['NewNumberSold'] = self::$number_sold_calculation_type."(\"OrderItem\".\"Quantity\") AS \"NewNumberSold\"";
 
 		$q->select($select);
-		$q->groupby("Product.ID");
-		$q->orderby("NewNumberSold DESC");
+		$q->groupby("\"Product\".\"ID\"");
+		$q->orderby("\"NewNumberSold\" DESC");
 
-		$q->leftJoin('Product_OrderItem','Product.ID = Product_OrderItem.ProductID');
-		$q->leftJoin('OrderItem','Product_OrderItem.ID = OrderItem.ID');
+		$q->leftJoin('Product_OrderItem','"Product"."ID" = "Product_OrderItem"."ProductID"');
+		$q->leftJoin('OrderItem','"Product_OrderItem"."ID" = "OrderItem"."ID"');
 		$records = $q->execute();
 		$productssold = $ps->buildDataObjectSet($records, "DataObjectSet", $q, 'Product');
 
@@ -150,12 +144,11 @@ class Product extends Page {
 	}
 
 	function getVariationsTable() {
-		$bt = defined('DB::USE_ANSI_SQL') ? "\"" : "`";
 		$singleton = singleton('ProductVariation');
-		$query = $singleton->buildVersionSQL("{$bt}ProductID{$bt} = '{$this->ID}'");
+		$query = $singleton->buildVersionSQL("\"ProductID\" = '{$this->ID}'");
 		$variations = $singleton->buildDataObjectSet($query->execute());
-		$filter = $variations ? "{$bt}ID{$bt} IN ('" . implode("','", $variations->column('RecordID')) . "')" : "{$bt}ID{$bt} < '0'";
-		//$filter = "{$bt}ProductID{$bt} = '{$this->ID}'";
+		$filter = $variations ? "\"ID\" IN ('" . implode("','", $variations->column('RecordID')) . "')" : "\"ID\" < '0'";
+		//$filter = "\"ProductID\" = '{$this->ID}'";
 
 		$tableField = new HasManyComplexTableField(
 			$this,
@@ -208,17 +201,32 @@ class Product extends Page {
 	}
 
 	/**
+	 * Depreciated - use canPurchase instead.
+	 */
+	function AllowPurchase(){
+		return $this->canPurchase();
+	}
+	
+	/**
 	 * Conditions for whether a product can be purchased.
 	 *
 	 * If it has the checkbox for 'Allow this product to be purchased',
 	 * as well as having a price, it can be purchased. Otherwise a user
 	 * can't buy it.
 	 *
+	 * Other conditions may be added by decorating with the canPurcahse function
+	 * 
 	 * @return boolean
 	 */
-	function getAllowPurchase() {
+	function canPurchase($member = null) {
 		if(!self::$global_allow_purcahse) return false;
-		return $this->db('AllowPurchase') && $this->Price;
+		$allowpurchase = ($this->dbObject('AllowPurchase')->getValue() && ($this->Price > 0)); 
+		
+		// Standard mechanism for accepting permission changes from decorators
+		$extended = $this->extendedCan('canPurchase', $member);
+		if($extended !== null) return $extended;
+		
+		return $allowpurchase; 
 	}
 
 	/**
@@ -284,12 +292,11 @@ class Product extends Page {
 	 * is invoked, create some default records in the database.
 	 */
 	function requireDefaultRecords() {
-		$bt = defined('DB::USE_ANSI_SQL') ? "\"" : "`";
 		parent::requireDefaultRecords();
 
 		if(!DataObject::get_one('Product')) {
 			if(!DataObject::get_one('ProductGroup')) singleton('ProductGroup')->requireDefaultRecords();
-			if($group = DataObject::get_one('ProductGroup', '', true, "{$bt}ParentID{$bt} DESC")) {
+			if($group = DataObject::get_one('ProductGroup', '', true, "\"ParentID\" DESC")) {
 				$content = '<p>This is a <em>product</em>. It\'s description goes into the Content field as a standard SilverStripe page would have it\'s content. This is an ideal place to describe your product.</p>';
 
 				$page1 = new Product();

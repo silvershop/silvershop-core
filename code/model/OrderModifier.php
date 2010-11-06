@@ -103,7 +103,7 @@ class OrderModifier extends OrderAttribute {
 
 	public static $plural_name = "Order Modifiers";
 
-	public static $default_sort = "Created DESC";
+	public static $default_sort = "\"Created\" DESC";
 
 	/**
 	 * This function is always called to determine the

@@ -68,8 +68,7 @@ class CheckoutPage extends Page {
 
 
 	function canCreate() {
-		$bt = defined('DB::USE_ANSI_SQL') ? "\"" : "`";
-		return !DataObject::get_one("SiteTree", "{$bt}ClassName{$bt} = 'CheckoutPage'");
+		return !DataObject::get_one("SiteTree", "\"ClassName\" = 'CheckoutPage'");
 	}
 
 	/**
@@ -110,7 +109,6 @@ class CheckoutPage extends Page {
 	 * applied to it.
 	 */
 	function requireDefaultRecords() {
-		$bt = defined('DB::USE_ANSI_SQL') ? "\"" : "`";
 		parent::requireDefaultRecords();
 
 		if(!$page = DataObject::get_one('CheckoutPage')) {
@@ -127,7 +125,7 @@ class CheckoutPage extends Page {
 			DB::alteration_message('Checkout page \'Checkout\' created', 'created');
 		}
 
-		if($page->TermsPageID == 0 && $termsPage = DataObject::get_one('Page', "{$bt}URLSegment{$bt} = 'terms-and-conditions'")) {
+		if($page->TermsPageID == 0 && $termsPage = DataObject::get_one('Page', "\"URLSegment\" = 'terms-and-conditions'")) {
 			$page->TermsPageID = $termsPage->ID;
 			$page->writeToStage('Stage');
 			$page->publish('Stage', 'Live');
@@ -234,8 +232,10 @@ class CheckoutPage_Controller extends Page_Controller {
 	function OrderForm() {
 		$form = new OrderForm($this, 'OrderForm');
 		$this->data()->extend('updateOrderForm',&$form);
-		//load session data //TODO: make this optional
-		$form->loadDataFromSession();
+		//load session data
+		if($data = Session::get("FormInfo.{$form->FormName()}.data")){
+			$form->loadDataFrom($data);
+		}
 		
 		return $form;
 	}
@@ -263,7 +263,7 @@ class CheckoutPage_Controller extends Page_Controller {
 		$checkoutLink = self::find_link();
 
 		if($memberID = Member::currentUserID()) {
-			if($order = DataObject::get_one('Order', "Order.ID = '$orderID' AND Order.MemberID = '$memberID'")) {
+			if($order = DataObject::get_one('Order', "\"Order\".\"ID\" = '$orderID' AND \"Order\".\"MemberID\" = '$memberID'")) {
 				return 'You can not checkout this order because it has been already successfully completed. Click <a href="' . $order->Link() . '">here</a> to see it\'s details, otherwise you can <a href="' . $checkoutLink . '">checkout</a> your current order.';
 			}
 			else {

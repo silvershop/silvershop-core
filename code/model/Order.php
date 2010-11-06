@@ -53,7 +53,7 @@ class Order extends DataObject {
 
 	public static $defaults = array();
 
-	public static $default_sort = "Created DESC";
+	public static $default_sort = "\"Created\" DESC";
 
 	public static $casting = array(
 		'SubTotal' => 'Currency',
@@ -234,7 +234,6 @@ class Order extends DataObject {
 	}
 
 	function getCMSFields(){
-		$bt = defined('DB::USE_ANSI_SQL') ? "\"" : "`";
 		$fields = parent::getCMSFields();
 		$fieldsAndTabsToBeRemoved = self::get_shipping_fields();
 		$fieldsAndTabsToBeRemoved[] = 'Printed';
@@ -257,8 +256,8 @@ class Order extends DataObject {
 			"OrderItems", //$name
 			"OrderItem", //$sourceClass =
 			OrderItem::$summary_fields, //$fieldList =
-			"OrderID = ".$this->ID, //$sourceFilter =
-			"Created ASC", //$sourceSort =
+			"\"OrderID\" = ".$this->ID, //$sourceFilter =
+			"\"Created\" ASC", //$sourceSort =
 			null //$sourceJoin =
 		);
 		$orderItemsTable->setPermissions(array("view"));
@@ -273,8 +272,8 @@ class Order extends DataObject {
 			"OrderModifiers", //$name
 			"OrderModifier", //$sourceClass =
 			OrderModifier::$summary_fields, //$fieldList =
-			"OrderID = ".$this->ID."", //$sourceFilter =
-			"{$bt}Type{$bt}, {$bt}Amount{$bt} ASC, {$bt}Created{$bt} ASC", //$sourceSort =
+			"\"OrderID\" = ".$this->ID."", //$sourceFilter =
+			"\"Type\", \"Amount\" ASC, \"Created\" ASC", //$sourceSort =
 			null //$sourceJoin =
 		);
 		$modifierTable->setPermissions(array("view"));
@@ -355,8 +354,11 @@ class Order extends DataObject {
 	 *
 	 * @param array $modifiers An array of {@link OrderModifier} subclass names
 	 */
-	public static function set_modifiers($modifiers) {
+	public static function set_modifiers($modifiers, $replace = false) {
+		if($replace)
 		self::$modifiers = $modifiers;
+		else
+			array_merge(self::$modifiers,$modifiers);
 	}
 
 	/**
@@ -483,8 +485,7 @@ class Order extends DataObject {
 	 */
 	protected function itemsFromDatabase($filter = null) {
 		$extrafilter = ($filter) ? " AND $filter" : "";
-		$bt = defined('DB::USE_ANSI_SQL') ? "\"" : "`";
-		$dbitems =  DataObject::get('OrderItem', "{$bt}OrderID{$bt} = '$this->ID' $extrafilter");
+		$dbitems =  DataObject::get('OrderItem', "\"OrderID\" = '$this->ID' $extrafilter");
 		return $dbitems;
 	}
 
@@ -567,8 +568,7 @@ class Order extends DataObject {
 	 * @return DataObjectSet
 	 */
 	protected function modifiersFromDatabase() {
-		$bt = defined('DB::USE_ANSI_SQL') ? "\"" : "`";
-		return DataObject::get('OrderModifier', "{$bt}OrderID{$bt} = '$this->ID'");
+		return DataObject::get('OrderModifier', "\"OrderID\" = '$this->ID'");
 	}
 
 	/**
@@ -700,7 +700,7 @@ class Order extends DataObject {
 	 * @return DataObjectSet
 	 */
 	function Payments() {
-		return DataObject::get('Payment', "OrderID = '$this->ID'", 'LastEdited DESC');
+		return DataObject::get('Payment', "\"OrderID\" = '$this->ID'", '"LastEdited" DESC');
 	}
 
 	/**
@@ -742,6 +742,16 @@ class Order extends DataObject {
 		$js[] = array('id' => $this->CartTotalID(), 'parameter' => 'innerHTML', 'value' => $total);
 	}
 
+	/**
+	 * Will update payment status to "Paid if there is no outstanding amount".
+	 */
+	function updatePaymentStatus(){
+		if($this->Total() > 0 && $this->TotalOutstanding() <= 0){
+			$this->Status = 'Paid';
+			$this->write();
+		}
+	}
+	
 	/**
 	 * Has this order been sent to the customer?
 	 * (at "Sent" status).
@@ -789,7 +799,7 @@ class Order extends DataObject {
 	 * @return string
 	 */
 	function checkoutLink() {
-		return $this->ID ? CheckoutPage::get_checkout_order_link($this->ID) : CheckoutPage::find_link();
+		return CheckoutPage::find_link();
 	}
 
   	/**
@@ -876,7 +886,7 @@ class Order extends DataObject {
 	 */
 	function sendStatusChange($title, $note = null) {
 		if(!$note) {
-			$logs = DataObject::get('OrderStatusLog', "OrderID = {$this->ID} AND SentToCustomer = 1", "Created DESC", null, 1);
+			$logs = DataObject::get('OrderStatusLog', "\"OrderID\" = {$this->ID} AND \"SentToCustomer\" = 1", "\"Created\" DESC", null, 1);
 			if($logs) {
 				$latestLog = $logs->First();
 				$note = $latestLog->Note;
@@ -917,19 +927,29 @@ class Order extends DataObject {
 	 * Updates the database structure of the Order table
 	 */
 	function requireDefaultRecords() {
-		$bt = defined('DB::USE_ANSI_SQL') ? "\"" : "`";
 		parent::requireDefaultRecords();
 
 		// 1) If some orders with the old structure exist (hasShippingCost, Shipping and AddedTax columns presents in Order table), create the Order Modifiers SimpleShippingModifier and TaxModifier and associate them to the order
 
-		$exist = DB::query("SHOW COLUMNS FROM {$bt}Order{$bt} LIKE 'Shipping'")->numRecords();
+		// we must check for individual database types here because each deals with schema in a none standard way
+		$db = DB::getConn();
+		if( $db instanceof PostgreSQLDatabase )
+		{
+       	    $exist = DB::query("SELECT column_name FROM information_schema.columns WHERE table_name ='Order' AND column_name = 'Shipping'")->numRecords();
+		}
+		else
+		{
+			// default is MySQL - broken for others, each database conn type supported must be checked for!
+       	    $exist = DB::query("SHOW COLUMNS FROM \"Order\" LIKE 'Shipping'")->numRecords();
+		}
+        
  		if($exist > 0) {
  			if($orders = DataObject::get('Order')) {
  				foreach($orders as $order) {
  					$id = $order->ID;
- 					$hasShippingCost = DB::query("SELECT {$bt}hasShippingCost{$bt} FROM {$bt}Order{$bt} WHERE {$bt}ID{$bt} = '$id'")->value();
- 					$shipping = DB::query("SELECT {$bt}Shipping{$bt} FROM {$bt}Order{$bt} WHERE {$bt}ID{$bt} = '$id'")->value();
- 					$addedTax = DB::query("SELECT {$bt}AddedTax{$bt} FROM {$bt}Order{$bt} WHERE {$bt}ID{$bt} = '$id'")->value();
+ 					$hasShippingCost = DB::query("SELECT \"hasShippingCost\" FROM \"Order\" WHERE \"ID\" = '$id'")->value();
+ 					$shipping = DB::query("SELECT \"Shipping\" FROM \"Order\" WHERE \"ID\" = '$id'")->value();
+ 					$addedTax = DB::query("SELECT \"AddedTax\" FROM \"Order\" WHERE \"ID\" = '$id'")->value();
 					$country = $order->findShippingCountry(true);
  					if($hasShippingCost == '1' && $shipping != null) {
  						$modifier1 = new SimpleShippingModifier();
@@ -953,15 +973,15 @@ class Order extends DataObject {
  				}
  				DB::alteration_message('The \'SimpleShippingModifier\' and \'TaxModifier\' objects have been successfully created and linked to the appropriate orders present in the \'Order\' table', 'created');
  			}
- 			DB::query("ALTER TABLE {$bt}Order{$bt} CHANGE COLUMN {$bt}hasShippingCost{$bt} {$bt}_obsolete_hasShippingCost{$bt} tinyint(1)");
- 			DB::query("ALTER TABLE {$bt}Order{$bt} CHANGE COLUMN {$bt}Shipping{$bt} {$bt}_obsolete_Shipping{$bt} decimal(9,2)");
- 			DB::query("ALTER TABLE {$bt}Order{$bt} CHANGE COLUMN {$bt}AddedTax{$bt} {$bt}_obsolete_AddedTax{$bt} decimal(9,2)");
+ 			DB::query("ALTER TABLE \"Order\" CHANGE COLUMN \"hasShippingCost\" \"_obsolete_hasShippingCost\" tinyint(1)");
+ 			DB::query("ALTER TABLE \"Order\" CHANGE COLUMN \"Shipping\" \"_obsolete_Shipping\" decimal(9,2)");
+ 			DB::query("ALTER TABLE \"Order\" CHANGE COLUMN \"AddedTax\" \"_obsolete_AddedTax\" decimal(9,2)");
  			DB::alteration_message('The columns \'hasShippingCost\', \'Shipping\' and \'AddedTax\' of the table \'Order\' have been renamed successfully. Also, the columns have been renamed respectly to \'_obsolete_hasShippingCost\', \'_obsolete_Shipping\' and \'_obsolete_AddedTax\'', 'obsolete');
 		}
 
 		// 2) Cancel status update
 
-		if($orders = DataObject::get('Order', "{$bt}Status{$bt} = 'Cancelled'")) {
+		if($orders = DataObject::get('Order', "\"Status\" = 'Cancelled'")) {
 			foreach($orders as $order) {
 				$order->Status = 'AdminCancelled';
 				$order->write();
@@ -973,19 +993,19 @@ class Order extends DataObject {
 		$currentMax = 0;
 		//set order ID
 		if($number) {
-			$count = DB::query("SELECT COUNT( {$bt}ID{$bt} ) FROM {$bt}Order{$bt} ")->value();
+			$count = DB::query("SELECT COUNT( \"ID\" ) FROM \"Order\" ")->value();
 		 	if($count > 0) {
-				$currentMax = DB::Query("SELECT MAX( ID ) FROM {$bt}Order{$bt}")->value();
+				$currentMax = DB::Query("SELECT MAX( \"ID\" ) FROM \"Order\"")->value();
 			}
 			if($number > $currentMax) {
-				DB::query("ALTER TABLE {$bt}Order{$bt}  AUTO_INCREMENT = $number ROW_FORMAT = DYNAMIC ");
+				DB::query("ALTER TABLE \"Order\"  AUTO_INCREMENT = $number ROW_FORMAT = DYNAMIC ");
 				DB::alteration_message("Change OrderID start number to ".$number, "edited");
 			}
 		}
 		//fix bad status
 		$list = self::get_order_status_options();
 		$firstOption = current($list);
-		$badOrders = DataObject::get("Order", "Status = ''");
+		$badOrders = DataObject::get("Order", "\"Status\" = ''");
 		if($badOrders) {
 			foreach($badOrders as $order) {
 				$order->Status = $firstOption;

@@ -17,8 +17,7 @@ class AccountPage extends Page {
 
 
 	function canCreate() {
-		$bt = defined('DB::USE_ANSI_SQL') ? "\"" : "`";
-		return !DataObject::get_one("SiteTree", "{$bt}ClassName{$bt} = 'AccountPage'");
+		return !DataObject::get_one("SiteTree", "\"ClassName\" = 'AccountPage'");
 	}
 
 	/**
@@ -56,9 +55,9 @@ class AccountPage extends Page {
 	 */
 	function CompleteOrders() {
 		$memberID = Member::currentUserID();
-		$statusFilter = "Order.Status IN ('" . implode("','", Order::$paid_status) . "')";
-		$statusFilter .= " AND Order.Status NOT IN('Cart')";
-		return DataObject::get('Order', "Order.MemberID = '$memberID' AND $statusFilter", "Created DESC");
+		$statusFilter = "\"Order\".\"Status\" IN ('" . implode("','", Order::$paid_status) . "')";
+		$statusFilter .= " AND \"Order\".\"Status\" NOT IN('Cart')";
+		return DataObject::get('Order', "\"Order\".\"MemberID\" = '$memberID' AND $statusFilter", "\"Created\" DESC");
 	}
 
 	/**
@@ -69,9 +68,9 @@ class AccountPage extends Page {
 	 */
 	function IncompleteOrders() {
 		$memberID = Member::currentUserID();
-		$statusFilter = "Order.Status NOT IN ('" . implode("','", Order::$paid_status) . "')";
-		$statusFilter .= " AND Order.Status NOT IN('Cart')";
-		return DataObject::get('Order', "Order.MemberID = '$memberID' AND $statusFilter", "Created DESC");
+		$statusFilter = "\"Order\".\"Status\" NOT IN ('" . implode("','", Order::$paid_status) . "')";
+		$statusFilter .= " AND \"Order\".\"Status\" NOT IN('Cart')";
+		return DataObject::get('Order', "\"Order\".\"MemberID\" = '$memberID' AND $statusFilter", "\"Created\" DESC");
 	}
 
 	/**
@@ -127,7 +126,7 @@ class AccountPage_Controller extends Page_Controller {
 		$accountPageLink = AccountPage::find_link();
 
 		if($orderID = $request->param('ID')) {
-			if($order = DataObject::get_one('Order', "Order.ID = '$orderID' AND Order.MemberID = '$memberID'")) {
+			if($order = DataObject::get_one('Order', "\"Order\".\"ID\" = '$orderID' AND \"Order\".\"MemberID\" = '$memberID'")) {
 				return array('Order' => $order);
 			}
 			else {
