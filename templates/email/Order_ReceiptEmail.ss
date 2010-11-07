@@ -3,7 +3,7 @@
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" >
 		<title><% _t("TITLE","Shop Receipt") %></title>
-		<% include OrderRecieptStyle %>
+		<% include OrderReceiptStyle %>
 	</head>
 	<body>
 		<table id="Content" cellspacing="0" cellpadding="0" summary="Email Information">

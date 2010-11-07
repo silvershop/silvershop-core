@@ -46,8 +46,6 @@ class ProductBulkLoader extends CsvBulkLoader{
 		$objects->merge($results->Updated());
 		foreach($objects as $object){
 			
-			$object->ClassName = "Product";
-			
 			if(!$object->ParentID){
 				 //set parent page
 				

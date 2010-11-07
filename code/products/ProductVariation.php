@@ -27,12 +27,20 @@ class ProductVariation extends DataObject {
 	static $extensions = array(
 		"Versioned('Stage')"
 	);
+	
+	static $summary_fields = array(
+		'Title' => 'Title',
+		'Price' => 'Price'
+	);
 
-	function getCMSFields_forPopup() {
+	function getCMSFields() {
 		$fields = array();
 		$fields[] = new TextField('Title');
 		$fields[] = new TextField('Price');
-		return new FieldSet($fields);
+		
+		$set = new FieldSet($fields);
+		$this->extend('updateCMSFields', $set);
+		return $set;
 	}
 	
 	/*
@@ -42,10 +50,15 @@ class ProductVariation extends DataObject {
 		return $this->canPurchase();
 	}
 
-	function canPurchase() {
+	function canPurchase($member = null) {
+		$allowpurchase = false;
 		if($product = $this->Product())
-			return $this->Price && $product->AllowPurchase;
-		return false;
+			$allowpurchase = $this->Price && $product->AllowPurchase;
+			
+		$extended = $this->extendedCan('canPurchase', $member);
+		if($extended !== null) return $extended;
+		
+		return $allowpurchase; 
 	}
 
 	//TODO: change this function to match Product->IsInCart

@@ -89,12 +89,21 @@ class Product extends Page {
 		$fields->addFieldsToTab(
 			'Root.Content.Variations',
 			array(
-				new HeaderField(_t('Product.VARIATIONSSET', 'This product has the following variations set')),
-				new LiteralField('VariationsNote', '<p class="message good">If this product has active variations, the price of the product will be the price of the variation added by the member to the shopping cart.</p>'),
+				//new HeaderField(_t('Product.VARIATIONSSET', 'This product has the following variations set')),
+				//new LiteralField('VariationsNote', '<p class="message good">If this product has active variations, the price of the product will be the price of the variation added by the member to the shopping cart.</p>'),
 				$this->getVariationsTable()
 			)
 		);
-
+		
+		
+		/*
+		//TODO: don't show price, internalItemID if there are variations. (code has problems with removing variations)
+		if(DataObject::get('ProductVariation',"\"ProductID\" = $this->ID")){ //FIXME: hack, because $this->Variations doesn't seem to work???
+			$fields->addFieldToTab('Root.Content.Main',new LabelField('variationspriceinstructinos','Price - Because you have one or more variations, the price can be set in the "Variations" tab.'),'Price');
+			$fields->removeFieldsFromTab('Root.Content.Main',array('Price','InternalItemID'));
+		}
+		*/
+		
 		$fields->addFieldsToTab(
 			'Root.Content.Product Groups',
 			array(
@@ -154,11 +163,8 @@ class Product extends Page {
 			$this,
 			'Variations',
 			'ProductVariation',
-			array(
-				'Title' => 'Title',
-				'Price' => 'Price'
-			),
-			'getCMSFields_forPopup',
+			null,
+			null,
 			$filter
 		);
 
@@ -220,11 +226,23 @@ class Product extends Page {
 	 */
 	function canPurchase($member = null) {
 		if(!self::$global_allow_purcahse) return false;
-		$allowpurchase = ($this->dbObject('AllowPurchase')->getValue() && ($this->Price > 0)); 
+		if(!$this->dbObject('AllowPurchase')->getValue()) return false;
+		$allowpurchase = false;
+		
+		if($variations = $this->Variations()){
+			foreach($variations as $variation){
+				if($variation->canPurchase()){
+					$allowpurchase = true;
+					break;
+				}
+			}
+		}elseif($this->Price > 0){
+			$allowpurchase = true;
+		}
 		
 		// Standard mechanism for accepting permission changes from decorators
 		$extended = $this->extendedCan('canPurchase', $member);
-		if($extended !== null) return $extended;
+		if($allowpurchase && $extended !== null) $allowpurcahse = $extended;
 		
 		return $allowpurchase; 
 	}
