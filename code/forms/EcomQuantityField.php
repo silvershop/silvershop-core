@@ -13,16 +13,12 @@ class EcomQuantityField extends ViewableData{
 		
 	function __construct($object, $parameters = null){
 		
-		//TODO: variations??
-		
 		if($object instanceof Product){
 			$this->item = ShoppingCart::get_item_by_id($object->ID,null,$parameters);
-			
 			 //provide a 0-quantity facade item if there is no such item in cart
 			if(!$this->item) $this->item = new Product_OrderItem($object,0);
 			
 			//TODO: perhaps we should just store the product itself, and do away with the facade, as it might be unnecessary complication
-				
 		}elseif($object instanceof OrderItem){
 			$this->item = $object;
 		}
@@ -31,7 +27,6 @@ class EcomQuantityField extends ViewableData{
 			user_error("EcomQuantityField: no item or product passed to constructor.");
 
 		$this->parameters = $parameters;
-		
 		//TODO: include javascript for easy update
 	}
 	
@@ -91,7 +86,9 @@ class EcomQuantityField extends ViewableData{
 	}
 
 	function forTemplate(){
-		return $this->renderWith($this->template);		
+		return $this->customise(array(
+			'Item' => $this->item
+		))->renderWith($this->template);		
 	}
 	
 }

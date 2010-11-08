@@ -22,7 +22,7 @@ class Product extends Page {
 		'AllowPurchase' => 'Boolean',
 		'InternalItemID' => 'Varchar(30)', //ie SKU, ProductID etc (internal / existing recognition of product)
 
-		'NumberSold' => 'Int' //store number sold, so it doesn't have to be computed on the fly
+		'NumberSold' => 'Int' //store number sold, so it doesn't have to be computed on the fly. Used for determining popularity.
 	);
 
 	public static $has_one = array(
@@ -86,23 +86,12 @@ class Product extends Page {
 		$fields->addFieldToTab('Root.Content.Main',new CheckboxField('FeaturedProduct', _t('Product.FEATURED', 'Featured Product')), 'Content');
 		$fields->addFieldToTab('Root.Content.Main',new CheckboxField('AllowPurchase', _t('Product.ALLOWPURCHASE', 'Allow product to be purchased'), 1),'Content');
 
-		$fields->addFieldsToTab(
-			'Root.Content.Variations',
-			array(
-				//new HeaderField(_t('Product.VARIATIONSSET', 'This product has the following variations set')),
-				//new LiteralField('VariationsNote', '<p class="message good">If this product has active variations, the price of the product will be the price of the variation added by the member to the shopping cart.</p>'),
-				$this->getVariationsTable()
-			)
-		);
-		
-		
-		/*
-		//TODO: don't show price, internalItemID if there are variations. (code has problems with removing variations)
-		if(DataObject::get('ProductVariation',"\"ProductID\" = $this->ID")){ //FIXME: hack, because $this->Variations doesn't seem to work???
+		$fields->addFieldToTab('Root.Content.Variations',$this->getVariationsTable());
+
+		if($this->Variations()->exists()){
 			$fields->addFieldToTab('Root.Content.Main',new LabelField('variationspriceinstructinos','Price - Because you have one or more variations, the price can be set in the "Variations" tab.'),'Price');
 			$fields->removeFieldsFromTab('Root.Content.Main',array('Price','InternalItemID'));
 		}
-		*/
 		
 		$fields->addFieldsToTab(
 			'Root.Content.Product Groups',
@@ -229,8 +218,8 @@ class Product extends Page {
 		if(!$this->dbObject('AllowPurchase')->getValue()) return false;
 		$allowpurchase = false;
 		
-		if($variations = $this->Variations()){
-			foreach($variations as $variation){
+		if($this->Variations()->exists()){
+			foreach($this->Variations() as $variation){
 				if($variation->canPurchase()){
 					$allowpurchase = true;
 					break;
@@ -242,7 +231,7 @@ class Product extends Page {
 		
 		// Standard mechanism for accepting permission changes from decorators
 		$extended = $this->extendedCan('canPurchase', $member);
-		if($allowpurchase && $extended !== null) $allowpurcahse = $extended;
+		if($allowpurchase && $extended !== null) $allowpurchase = $extended;
 		
 		return $allowpurchase; 
 	}
