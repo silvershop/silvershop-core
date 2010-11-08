@@ -436,6 +436,7 @@ class Order extends DataObject {
 
 		$order = ShoppingCart::current_order();
 		$order->Status = 'Unpaid';
+		$order->extend('onSave'); //allow decorators to do stuff when order is saved.
 		$order->write();
 		
 		/*
@@ -467,12 +468,9 @@ class Order extends DataObject {
 	 */
 	function Items($filter = "") {
  		if($this->ID){
- 			
  			return $this->itemsFromDatabase($filter);
  		}
  		elseif($items = ShoppingCart::get_items()){
-			SS_Backtrace::backtrace();
- 			die("session items");
  			return $this->createItems($items);
  		} 		
 	}
