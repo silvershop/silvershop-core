@@ -102,7 +102,7 @@ class TaxModifier extends OrderModifier {
 		}
 	}
 
-	function LiveAmount() {
+	function Amount() {
 		return $this->AddedCharge();
 	}
 

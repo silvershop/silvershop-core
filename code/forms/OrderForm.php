@@ -54,13 +54,15 @@ class OrderForm extends Form {
 			$shippingFields->setButtonContent(_t('OrderForm.useDifferentShippingAddress', 'Use Different Shipping Address'));
 			$shippingFields->useButtonTag = true;
 		}
+		
+		if($countryField){
+			$countryField->addExtraClass('ajaxCountryField');
 
-		$countryField->addExtraClass('ajaxCountryField');
-
-		$setCountryLinkID = $countryField->id() . '_SetCountryLink';
-		$setContryLink = ShoppingCart::set_country_link();
-		$memberFields->push(new HiddenField($setCountryLinkID, '', $setContryLink));
-
+			$setCountryLinkID = $countryField->id() . '_SetCountryLink';
+			$setContryLink = ShoppingCart::set_country_link();
+			$memberFields->push(new HiddenField($setCountryLinkID, '', $setContryLink));
+		}
+		
 		$leftFields = new CompositeField($memberFields, $shippingFields);
 		$leftFields->setID('LeftOrder');
 
@@ -114,9 +116,11 @@ class OrderForm extends Form {
 		if($member->ID) $this->loadDataFrom($member);
 
 		// 8) Country field value update
-		$currentOrder = ShoppingCart::current_order();
-		$currentOrderCountry = $currentOrder->findShippingCountry(true);
-		$countryField->setValue($currentOrderCountry);
+		if($countryField){
+			$currentOrder = ShoppingCart::current_order();
+			$currentOrderCountry = $currentOrder->findShippingCountry(true);
+			$countryField->setValue($currentOrderCountry);
+		}
 
 		//allow updating via decoration
 		$this->extend('updateForm',$this);
@@ -195,6 +199,8 @@ class OrderForm extends Form {
 			user_error(get_class($payment) . ' is not a valid Payment object!', E_USER_ERROR);
 		}
 		
+		$this->saveDataToSession($data); //save for later if necessary
+		
 		//check for cart items
 		if(!ShoppingCart::has_items()) {
 			$form->sessionMessage(_t('OrderForm.NoItemsInCart','Please add some items to your cart'), 'bad');
@@ -206,7 +212,7 @@ class OrderForm extends Form {
 		$oldtotal = ShoppingCart::current_order()->Total();
 		
 		// Create new Order from shopping cart, discard cart contents in session
-		$order = ShoppingCart::save_current_order();
+		$order = ShoppingCart::current_order();
 		
 		if($order->Total() != $oldtotal) {
 			$form->sessionMessage(_t('OrderForm.PriceUpdated','The order price has been updated'), 'warning');
@@ -218,6 +224,7 @@ class OrderForm extends Form {
 		// Create new OR update logged in {@link Member} record
 		$member = EcommerceRole::ecommerce_create_or_merge($data);
 		if(!$member) {
+			
 			$form->sessionMessage(
 				_t(
 					'OrderForm.MEMBEREXISTS', 'Sorry, a member already exists with that email address.
@@ -225,7 +232,7 @@ class OrderForm extends Form {
 				),
 				'bad'
 			);
-
+			
 			Director::redirectBack();
 			return false;
 		}
@@ -238,17 +245,18 @@ class OrderForm extends Form {
 		// Write new record {@link Order} to database
 		$form->saveInto($order);
 		
+		Order::save_current_order(); //sets status to 'Unpaid' //is it even necessary to have it's own function? ..just legacy code.
 		$order->MemberID = $member->ID;
 		$order->write();
 		
-		//ShoppingCart::clear();
+		$this->clearSessionData(); //clears the stored session form data that might have been needed if validation failed
 		
 		// Save payment data from form and process payment
 		$form->saveInto($payment);
 		$payment->OrderID = $order->ID;
 		$payment->Amount->Amount = $order->Total();
 		$payment->write();
-
+		
 		//prepare $data - ie put into the $data array any fields that may need to be there for payment
 
 		// Process payment, get the result back
@@ -275,6 +283,10 @@ class OrderForm extends Form {
 		if($data = Session::get("FormInfo.{$this->FormName()}.data")){
 			$this->loadDataFrom($data);
 		}
+	}
+	
+	function clearSessionData(){
+		Session::set("FormInfo.{$this->FormName()}.data", null);		
 	}
 
 }

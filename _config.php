@@ -11,5 +11,6 @@ Director::addRules(50, array(
 	ShoppingCart::$URLSegment . '/$Action/$ID/$OtherID' => 'ShoppingCart'
 ));
 
-
-
+SS_Report::register("SideReport", "EcommerceSideReport_AllProducts");
+SS_Report::register("SideReport", "EcommerceSideReport_FeaturedProducts");
+SS_Report::register("SideReport", "EcommerceSideReport_NoImageProducts");

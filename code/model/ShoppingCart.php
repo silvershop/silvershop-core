@@ -13,6 +13,8 @@ class ShoppingCart extends Controller {
 	
 	static $cartid_session_name = 'shoppingcartid';
 
+	static $URLSegment = 'shoppingcart';
+	
 	static $allowed_actions = array (
 		'additem',
 		'removeitem',
@@ -47,7 +49,6 @@ class ShoppingCart extends Controller {
 		self::$order->initModifiers();
 	}
 
-	static $URLSegment = 'shoppingcart';
 	
 	//controller links
 	static function add_item_link($id, $variationid = null, $parameters = array()) {
@@ -85,11 +86,17 @@ class ShoppingCart extends Controller {
 	
 	/**
 	 * Creates the appropriate string parameters for links from array
+	 * 
+	 * Produces string such as: MyParam%3D11%26OtherParam%3D1
+	 *     ...which decodes to: MyParam=11&OtherParam=1
+	 *     
+	 * you will need to decode the url with javascript before using it.
+	 * 
 	 */
 	protected static function paramsToGetString($array){
 		if($array & count($array > 0)){
 			array_walk($array , create_function('&$v,$k', '$v = $k."=".$v ;'));
-			return "?".htmlentities(implode("&",$array), ENT_QUOTES); //TODO: urlescape values??
+			return "?".implode("&",$array);
 		}
 		return "";
 	}
@@ -105,13 +112,13 @@ class ShoppingCart extends Controller {
 			}else {
 				$order = new Order();
 				$order->SessionID = session_id();
-				$order->MemberID = Member::currentUserID(); // Set the Member relation to this order
+				//$order->MemberID = Member::currentUserID(); // Set the Member relation to this order
 				$order->write();
 				Session::set(self::$cartid_session_name,$order->ID);			
 			}
 			self::$order = $order; //temp caching
 		}
-		$order->MemberID = Member::currentUserID(); // Set the Member relation to this order
+		//$order->MemberID = Member::currentUserID(); // Set the Member relation to this order
 		$order->write(); // Write the order
 		return $order;
 	}
@@ -286,7 +293,6 @@ class ShoppingCart extends Controller {
 		
 		if ($itemId = $request->param('ID')) {
 			if($item = ShoppingCart::get_item($this->urlFilter())) {
-				
 				ShoppingCart::add_item($item);
 			} else {
 				if($orderitem = $this->getNewOrderItem())
@@ -336,11 +342,23 @@ class ShoppingCart extends Controller {
 	/**
 	 * Ajax method to set an item quantity
 	 */
-	function setquantityitem() {
-		$quantity = $request->param('quantity');
-		if ($quantity && $quantity > 0) {
-			if ($item = ShoppingCart::get_item($this->urlFilter()))
-				ShoppingCart::set_quantity_item($item, $quantity);
+	function setquantityitem($request) {
+		$quantity = $request->getVar('quantity');
+		if (is_numeric($quantity)) {
+			$item = ShoppingCart::get_item($this->urlFilter());
+			if($quantity > 0){
+				if(!$item){
+					$item = $this->getNewOrderItem();
+					self::add_new_item($item);
+				}
+				if($item){
+					ShoppingCart::set_quantity_item($item, $quantity);
+					if($this->isAjax()) return "success";
+				}
+			}elseif($item){
+				ShoppingCart::remove_all_item($item);
+				if($this->isAjax()) return "success";
+			}
 		}
 	}
 	
@@ -355,12 +373,12 @@ class ShoppingCart extends Controller {
 		//create either a ProductVariation_OrderItem or a Product_OrderItem
 		if (is_numeric($request->param('OtherID')) && $variationId = $request->param('OtherID')) {
 			$variation = DataObject::get_one('ProductVariation', sprintf("\"ID\" = %d AND \"ProductID\" = %d", (int) $this->urlParams['OtherID'], (int) $this->urlParams['ID']));
-			if ($variation && $variation->AllowPurchase()) {
+			if ($variation && $variation->canPurchase()) {
 				$orderitem = new ProductVariation_OrderItem($variation,1);
 			}
 		} elseif(is_numeric($request->param('ID')) && $itemId = $request->param('ID')) {
 			$product = DataObject::get_by_id('Product', $itemId);
-			if ($product && $product->AllowPurchase) {
+			if ($product && $product->canPurchase()) {
 				$orderitem = new Product_OrderItem($product,1);
 			}
 		}
@@ -371,6 +389,7 @@ class ShoppingCart extends Controller {
 				$orderitem->$param = $v;
 			}
 		}
+		
 		return $orderitem;
 	}
 

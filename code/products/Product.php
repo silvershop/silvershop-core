@@ -70,8 +70,12 @@ class Product extends Page {
 	static $global_allow_purcahse = true;
 
 	function getCMSFields() {
+		//prevent calling updateCMSFields extend function too early
+		$tempextvar = $this->stat('runCMSFieldsExtensions');
+		$this->disableCMSFieldsExtensions();
 		$fields = parent::getCMSFields();
-
+		if($tempextvar)	$this->enableCMSFieldsExtensions();
+			
 		// Standard product detail fields
 		$fields->addFieldToTab('Root.Content.Main',new TextField('Price', _t('Product.PRICE', 'Price'), '', 12),'Content');
 		$fields->addFieldToTab('Root.Content.Main',new TextField('Weight', _t('Product.WEIGHT', 'Weight (kg)'), '', 12),'Content');
@@ -96,11 +100,14 @@ class Product extends Page {
 		$fields->addFieldsToTab(
 			'Root.Content.Product Groups',
 			array(
-				new HeaderField(_t('Product.ALSOAPPEARS', 'This product also appears in the following groups')),
+				new HeaderField('ProductGroupsHeader', _t('Product.ALSOAPPEARS')),
 				$this->getProductGroupsTable()
 			)
 		);
-
+		
+		if($tempextvar)
+			$this->extend('updateCMSFields', $fields);
+		
 		return $fields;
 	}
 

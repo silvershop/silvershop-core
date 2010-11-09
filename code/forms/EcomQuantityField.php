@@ -41,6 +41,10 @@ class EcomQuantityField extends ViewableData{
 		$this->template = $template;
 	}
 	
+	function Item(){
+		return $this->item;
+	}
+	
 	function Field() {
 		$size = 3; //make these customisable
 		$maxlength = 3;
@@ -66,7 +70,7 @@ class EcomQuantityField extends ViewableData{
 		if($quantitylink = ShoppingCart::set_quantity_item_link($this->item->getProductIDForSerialization(), null,$this->parameters)){
 			$attributes = array(
 				'type' => 'hidden',
-				'class' => 'ajaxQuantityField',
+				'class' => 'ajaxQuantityField_qtylink',
 				'name' => $this->item->MainID() . '_Quantity_SetQuantityLink',
 				'value' => $quantitylink
 			);
@@ -84,11 +88,11 @@ class EcomQuantityField extends ViewableData{
 		$varid = ($this->item instanceof ProductVariation_OrderItem) ? $this->item->ProductVariationID : null;
 		return ShoppingCart::remove_item_link($this->item->getProductIDForSerialization(), $varid,$this->parameters);
 	}
+	
+	
 
 	function forTemplate(){
-		return $this->customise(array(
-			'Item' => $this->item
-		))->renderWith($this->template);		
+		return $this->renderWith($this->template);		
 	}
 	
 }

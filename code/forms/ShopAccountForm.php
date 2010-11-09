@@ -17,21 +17,23 @@ class ShopAccountForm extends Form {
 			if($member->Password != '') {
 				$passwordField->setCanBeEmpty(true);
 			}
-
-			$fields->push(new LiteralField('LogoutNote', "<p class=\"message warning\">" . _t("MemberForm.LOGGEDIN","You are currently logged in as ") . $member->FirstName . ' ' . $member->Surname . ". Click <a href=\"Security/logout\" title=\"Click here to log out\">here</a> to log out.</p>"));
+			
+			//$fields->push(new LiteralField('LogoutNote', "<p class=\"message warning\">" . _t("MemberForm.LOGGEDIN","You are currently logged in as ") . $member->FirstName . ' ' . $member->Surname . ". Click <a href=\"Security/logout\" title=\"Click here to log out\">here</a> to log out.</p>"));
 			$fields->push(new HeaderField('Login Details', 3));
 			$fields->push($passwordField);
 
-			$requiredFields = new RequiredFields($member->getEcommerceRequiredFields());
+			$requiredFields = new ShopAccountFormValidator($member->getEcommerceRequiredFields());
 		} else {
 			$fields = new FieldSet();
 		}
 
 		$actions = new FieldSet(
-			new FormAction('submit', 'Save Changes'),
-			new FormAction('proceed', 'Save and proceed to checkout')
+			new FormAction('submit', 'Save Changes')
+			//new FormAction('proceed', 'Save and proceed to checkout') //is this even necessary??
 		);
-
+		
+		$controller->extend('updateShopAccountForm',&$fields,&$actions,&$requiredfields);
+		
 		parent::__construct($controller, $name, $fields, $actions, $requiredFields);
 
 		if($member) $this->loadDataFrom($member);

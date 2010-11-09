@@ -202,7 +202,7 @@ class CheckoutPage_Controller extends Page_Controller {
 	 * @return Order
 	 */
 	function Order() {
-		if($orderID = Director::urlParam('Action')) {
+		if($orderID = Director::urlParam('Action') && is_numeric(Director::urlParam('Action'))) {
 			$order = DataObject::get_by_id('Order', $orderID);
 			if($order && $order->MemberID == Member::currentUserID()) {
 				return $order;
