@@ -71,7 +71,7 @@ class Product extends Page {
 
 	function getCMSFields() {
 		//prevent calling updateCMSFields extend function too early
-		$tempextvar = $this->stat('runCMSFieldsExtensions');
+		$tempextvar = $this->get_static('SiteTree','runCMSFieldsExtensions');
 		$this->disableCMSFieldsExtensions();
 		$fields = parent::getCMSFields();
 		if($tempextvar)	$this->enableCMSFieldsExtensions();
@@ -107,7 +107,6 @@ class Product extends Page {
 		
 		if($tempextvar)
 			$this->extend('updateCMSFields', $fields);
-		
 		return $fields;
 	}
 

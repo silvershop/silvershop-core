@@ -5,20 +5,29 @@ class ProductBulkLoader extends CsvBulkLoader{
 	static $parentpageid = null;
 	static $createnewproductgroups = false;
 	
+	static $hasStockImpl = false;
+	
 	public $columnMap = array(
 	
 		'Category' => '->setParent',
 		'ProductGroup' => '->setParent',
 		
-		'Product ID' => 'InternalItemID',
-		'ProductID' => 'InternalItemID',
-		'SKU' => 'InternalItemID',
+		'Product ID' => '->importInternalItemID',
+		'ProductID' => '->importInternalItemID',
+		'SKU' => '->importInternalItemID',
 		
-		'Long Description' => 'Content',
-		'Short Description' => 'MetaDescription',
+		'Long Description' => '->importContent',
+		'Short Description' => '->importMetaDescription',
 		
-		'Short Title' => 'MenuTitle'
-	);
+		'Short Title' => '->importMenuTitle',
+	
+		'Title' => '->importTitle',
+	
+		'Stock' => '->importStock',
+		'Stock Level' => '->importStock',
+		'Inventory' => '->importStock',
+		'Stock Control' => '->importStock'
+		);
 	
 	public $duplicateChecks = array(
 		'InternalItemID' => 'InternalItemID', // use internalItemID for duplicate checks
@@ -36,8 +45,41 @@ class ProductBulkLoader extends CsvBulkLoader{
 		)
 	);
 	
+	static function importContent(&$obj, $val, $record )
+	{
+		$obj->Content = Convert::raw2sql($val);
+	}
+	static function importMetaDescription(&$obj, $val, $record )
+	{
+		$obj->MetaDescription = Convert::raw2sql($val);
+	}
+	static function importMenuTitle(&$obj, $val, $record )
+	{
+		$obj->MenuTitle = Convert::raw2sql($val);
+	}
+	static function importTitle(&$obj, $val, $record )
+	{
+		$obj->Title = Convert::raw2sql($val);
+	}
+
+	static function importStock(&$obj, $val, $record )
+	{
+		if( self::$hasStockImpl ) {
+			$obj->Stock = $val;
+		}
+	}
+	
+	static function importInternalItemID(&$obj, $val, $record )
+	{
+		$obj->InternalItemID = Convert::raw2sql($val);
+	}
 	
 	protected function processAll($filepath, $preview = false) {
+		
+		// we have to check for the existence of this in case the stockcontrol module hasn't been loaded 
+		// and the CSV still contains a Stock column
+		self::$hasStockImpl = Object::has_extension('Product', 'ProductStockDecorator');
+		
 		$results = parent::processAll($filepath, $preview);
 			
 		//After results have been processed, publish all created & updated products
