@@ -563,7 +563,7 @@ class Order extends DataObject {
 	 * @return DataObjectSet
 	 */
 	protected function modifiersFromDatabase() {
-		return DataObject::get('OrderModifier', "\"OrderID\" = '$this->ID'");
+		return DataObject::get('OrderModifier', "\"OrderID\" = '$this->ID'","\"ID\" ASC");
 	}
 
 	/**
