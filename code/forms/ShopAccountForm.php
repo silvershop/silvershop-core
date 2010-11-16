@@ -9,7 +9,9 @@ class ShopAccountForm extends Form {
 
 	function __construct($controller, $name) {
 		$member = Member::currentUser();
-
+		
+		$requiredFields = null;
+		
 		if($member && $member->exists()) {
 			$fields = $member->getEcommerceFields();
 			$passwordField = new ConfirmedPasswordField('Password', 'Password');
@@ -32,7 +34,9 @@ class ShopAccountForm extends Form {
 			//new FormAction('proceed', 'Save and proceed to checkout') //is this even necessary??
 		);
 		
-		$controller->extend('updateShopAccountForm',&$fields,&$actions,&$requiredfields);
+		if($record = $controller->data()){
+			$record->extend('updateShopAccountForm',&$fields,&$actions,&$requiredFields);
+		}
 		
 		parent::__construct($controller, $name, $fields, $actions, $requiredFields);
 
