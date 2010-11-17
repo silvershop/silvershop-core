@@ -1,7 +1,5 @@
 <?php
 
-//Note: you may need to comment out ModelAdmin line 583 to disable checking file type for Excel exported files
-
 class ProductBulkLoader extends CsvBulkLoader{
 
 	static $parentpageid = null;
@@ -47,7 +45,6 @@ class ProductBulkLoader extends CsvBulkLoader{
 		)
 	);
 
-
 	static function importContent(&$obj, $val, $record )
 	{
 		$obj->Content = Convert::raw2sql($val);
@@ -72,8 +69,8 @@ class ProductBulkLoader extends CsvBulkLoader{
 		}
 	}
 
-
-	static function importInternalItemID(&$obj, $val, $record ) {
+	static function importInternalItemID(&$obj, $val, $record )
+	{
 		$obj->InternalItemID = Convert::raw2sql($val);
 	}
 
@@ -96,11 +93,11 @@ class ProductBulkLoader extends CsvBulkLoader{
 
 				if(is_numeric(self::$parentpageid) &&  DataObject::get_by_id('ProductGroup',self::$parentpageid)) //cached option
 					$object->ParentID = self::$parentpageid;
-				elseif($parentpage = DataObject::get_one('ProductGroup',"Title = 'Products'",'Created DESC')){ //page called 'Products'
+				elseif($parentpage = DataObject::get_one('ProductGroup',"\"Title\" = 'Products'",'"Created" DESC')){ //page called 'Products'
 					$object->ParentID = self::$parentpageid = $parentpage->ID;
-				}elseif($parentpage = DataObject::get_one('ProductGroup',"ParentID = 0",'Created DESC')){ //root page
+				}elseif($parentpage = DataObject::get_one('ProductGroup',"\"ParentID\" = 0",'"Created" DESC')){ //root page
 					$object->ParentID = self::$parentpageid = $parentpage->ID;
-				}elseif($parentpage = DataObject::get_one('ProductGroup',"",'Created DESC')){ //any product page
+				}elseif($parentpage = DataObject::get_one('ProductGroup',"",'"Created" DESC')){ //any product page
 					$object->ParentID = self::$parentpageid = $parentpage->ID;
 				}else
 					$object->ParentID = self::$parentpageid = 0;
@@ -119,7 +116,7 @@ class ProductBulkLoader extends CsvBulkLoader{
 	function imageByFilename(&$obj, $val, $record){
 
 		$filename = strtolower(Convert::raw2sql($val));
-		if($filename && $image = DataObject::get_one('Image',"LOWER(Filename) LIKE '%$filename%'")){ //ignore case
+		if($filename && $image = DataObject::get_one('Image',"LOWER(\"Filename\") LIKE '%$filename%'")){ //ignore case
 			$image->ClassName = 'Product_Image'; //must be this type of image
 			$image->write();
 			return $image;
@@ -131,7 +128,7 @@ class ProductBulkLoader extends CsvBulkLoader{
 	function setParent(&$obj, $val, $record){
 		$title = strtolower(Convert::raw2sql($val));
 		if($title){
-			if($parentpage = DataObject::get_one('ProductGroup',"LOWER(Title) = '$title'",'Created DESC')){ // find or create parent category, if provided
+			if($parentpage = DataObject::get_one('ProductGroup',"LOWER(\"Title\") = '$title'",'"Created" DESC')){ // find or create parent category, if provided
 				$obj->ParentID = $parentpage->ID;
 				$obj->write();
 				$obj->writeToStage('Stage');
@@ -148,9 +145,9 @@ class ProductBulkLoader extends CsvBulkLoader{
 				$obj->write();
 				$obj->writeToStage('Stage');
 				$obj->publish('Stage', 'Live');
+			}
 		}
 	}
 
 }
 
-?>
