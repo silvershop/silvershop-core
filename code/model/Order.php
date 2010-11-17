@@ -61,7 +61,7 @@ class Order extends DataObject {
 		'TotalPaid' => 'Currency',
 		'Shipping' => 'Currency',
 		'TotalOutstanding' => 'Currency',
-		
+
 		'FullBillingAddress' => 'Text',
 		'FullShippingAddress' => 'Text'
 	);
@@ -238,9 +238,9 @@ class Order extends DataObject {
 
 	function getCMSFields(){
 		$fields = parent::getCMSFields();
-		
+
 		$fields->insertBefore(new LiteralField('Title',"<h2>Order #$this->ID - ".$this->dbObject('Created')->Nice()." - ".$this->Member()->getName()."</h2>"),'Root');
-		
+
 		$fieldsAndTabsToBeRemoved = self::get_shipping_fields();
 		$fieldsAndTabsToBeRemoved[] = 'Printed';
 		$fieldsAndTabsToBeRemoved[] = 'MemberID';
@@ -251,12 +251,12 @@ class Order extends DataObject {
 		}
 
 		$htmlSummary = $this->renderWith("Order");
-		
+
 		$printlabel = (!$this->Printed) ? "Print Invoice" : "Print Invoice Again"; //TODO: i18n
 		$fields->addFieldsToTab('Root.Main', array(
 			new LiteralField("PrintInvoice",'<p class="print"><a href="OrderReport_Popup/index/'.$this->ID.'?print=1" onclick="javascript: window.open(this.href, \'print_order\', \'toolbar=0,scrollbars=1,location=1,statusbar=0,menubar=0,resizable=1,width=800,height=600,left = 50,top = 50\'); return false;">'.$printlabel.'</a></p>')
 		));
-		
+
 		$fields->addFieldToTab('Root.Main', new LiteralField('MainDetails', $htmlSummary));
 		$orderItemsTable = new TableListField(
 			"OrderItems", //$name
@@ -307,8 +307,8 @@ class Order extends DataObject {
 				new LiteralField("ShippingSummary", $this->dbObject('FullShippingAddress'))
 			));
 		}
-		
-		$this->extend('updateCMSFields',&$fields);
+
+		$this->extend('updateCMSFields',$fields);
 		return $fields;
 	}
 
@@ -716,7 +716,7 @@ class Order extends DataObject {
 			return Payment::site_currency();
 		}
 	}
-	
+
 	function getFullBillingAddress($separator = "",$insertnewlines = true){
 		//TODO: move this somewhere it can be customised
 		$touse = array(
@@ -731,20 +731,20 @@ class Order extends DataObject {
 			'HomePhone',
 			'MobilePhone'
 		);
-		
+
 		$fields = array();
 		$member = $this->Member();
 		foreach($touse as $field){
 			if($member && $member->$field)
 				$fields[] = $member->$field;
 		}
-		
+
 		$separator = ($insertnewlines) ? $separator."\n" : $separator;
-		
+
 		return implode($separator,$fields);
 	}
 	function getFullShippingAddress($separator = "",$insertnewlines = true){
-		
+
 		if(!$this->UseShippingAddress)
 			return $this->getFullBillingAddress($separator,$insertnewlines);
 		//TODO: move this list somewhere it can be customised
@@ -757,17 +757,17 @@ class Order extends DataObject {
 			'ShippingState',
 			'ShippingCountry',
 			'ShippingPhone'
-		);	
-		
+		);
+
 		$fields = array();
-		
+
 		foreach($touse as $field){
 			if($this->$field)
 				$fields[] = $this->$field;
 		}
-		
+
 		$separator = ($insertnewlines) ? $separator."\n" : $separator;
-		
+
 		return implode($separator,$fields);
 	}
 
