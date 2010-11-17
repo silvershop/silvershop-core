@@ -60,7 +60,10 @@ class Order extends DataObject {
 		'Total' => 'Currency',
 		'TotalPaid' => 'Currency',
 		'Shipping' => 'Currency',
-		'TotalOutstanding' => 'Currency'
+		'TotalOutstanding' => 'Currency',
+		
+		'FullBillingAddress' => 'Text',
+		'FullShippingAddress' => 'Text'
 	);
 
 	/**
@@ -235,23 +238,26 @@ class Order extends DataObject {
 
 	function getCMSFields(){
 		$fields = parent::getCMSFields();
+		
+		$fields->insertBefore(new LiteralField('Title',"<h2>Order #$this->ID - ".$this->dbObject('Created')->Nice()." - ".$this->Member()->getName()."</h2>"),'Root');
+		
 		$fieldsAndTabsToBeRemoved = self::get_shipping_fields();
 		$fieldsAndTabsToBeRemoved[] = 'Printed';
 		$fieldsAndTabsToBeRemoved[] = 'MemberID';
 		$fieldsAndTabsToBeRemoved[] = 'Attributes';
+		$fieldsAndTabsToBeRemoved[] = 'SessionID';
 		foreach($fieldsAndTabsToBeRemoved as $field) {
 			$fields->removeByName($field);
 		}
 
-		$htmlSummary = $this->renderWith("OrderInformation_Print_Details");
-		$fields->addFieldToTab('Root.Main', new LiteralField('MainDetails', $htmlSummary));
+		$htmlSummary = $this->renderWith("Order");
+		
+		$printlabel = (!$this->Printed) ? "Print Invoice" : "Print Invoice Again"; //TODO: i18n
 		$fields->addFieldsToTab('Root.Main', array(
-			new HeaderField("PrintedOutsHeader", "Print Order"),
-			new CheckboxField("Printed"),
-			new LiteralField("PrintIndex",'<p class="print"><a href="OrderReport_Popup/index/'.$this->ID.'" onclick="javascript: window.open(this.href, \'print_order\', \'toolbar=0,scrollbars=1,location=1,statusbar=0,menubar=0,resizable=1,width=800,height=600,left = 50,top = 50\'); return false;">internal print out</a></p>'),
-			new LiteralField("PrintInvoice",'<p class="print"><a href="OrderReport_Popup/invoice/'.$this->ID.'" onclick="javascript: window.open(this.href, \'print_order\', \'toolbar=0,scrollbars=1,location=1,statusbar=0,menubar=0,resizable=1,width=800,height=600,left = 50,top = 50\'); return false;">print invoice</a></p>'),
-			new LiteralField("PrintPackingSlip",'<p class="print"><a href="OrderReport_Popup/packingslip/'.$this->ID.'" onclick="javascript: window.open(this.href, \'print_order\', \'toolbar=0,scrollbars=1,location=1,statusbar=0,menubar=0,resizable=1,width=800,height=600,left = 50,top = 50\'); return false;">print packing slip</a></p>')
+			new LiteralField("PrintInvoice",'<p class="print"><a href="OrderReport_Popup/index/'.$this->ID.'?print=1" onclick="javascript: window.open(this.href, \'print_order\', \'toolbar=0,scrollbars=1,location=1,statusbar=0,menubar=0,resizable=1,width=800,height=600,left = 50,top = 50\'); return false;">'.$printlabel.'</a></p>')
 		));
+		
+		$fields->addFieldToTab('Root.Main', new LiteralField('MainDetails', $htmlSummary));
 		$orderItemsTable = new TableListField(
 			"OrderItems", //$name
 			"OrderItem", //$sourceClass =
@@ -286,7 +292,7 @@ class Order extends DataObject {
 		));
 		*/
 		$fields->addFieldsToTab('Root.Customer', array(
-			new LiteralField("MemberLink", '<a href="admin/security/EditForm/field/Members/item/1/edit" class="popuplink editlink"><img alt="Edit" src="cms/images/edit.gif"></a>'),
+			//new LiteralField("MemberLink", '<a href="admin/security/EditForm/field/Members/item/1/edit" class="popuplink editlink"><img alt="Edit" src="cms/images/edit.gif"></a>'),
 			new LiteralField("MemberSummary", $this->MemberSummary())
 		));
 		if($this->UseShippingAddress) {
@@ -298,14 +304,11 @@ class Order extends DataObject {
 		else {
 			$fields->addFieldsToTab('Root.Shipping', array(
 				new HeaderField('DeliveryName', 'No (alternative) shipping address to be used'),
-				new LiteralField("ShippingSummary", $this->ShippingAddressSummary())
+				new LiteralField("ShippingSummary", $this->dbObject('FullShippingAddress'))
 			));
 		}
-		/*
-		$fields->addFieldsToTab('Root.Print', array(
-			new LiteralField("OrderInformationWithNote", $this->renderWith('OrderInformation_Print_Details'))
-		));
-		*/
+		
+		$this->extend('updateCMSFields',&$fields);
 		return $fields;
 	}
 
@@ -314,11 +317,6 @@ class Order extends DataObject {
 			return $m->renderWith("Order_Member");
 		}
 	}
-
-	function ShippingAddressSummary() {
-		return $this->renderWith("Order_ShippingAddress");
-	}
-
 
 	/**
 	 * Set the fields to be used for {@link ComplexTableField}
@@ -717,6 +715,60 @@ class Order extends DataObject {
 		if(class_exists('Payment')) {
 			return Payment::site_currency();
 		}
+	}
+	
+	function getFullBillingAddress($separator = "",$insertnewlines = true){
+		//TODO: move this somewhere it can be customised
+		$touse = array(
+			'Name',
+			'Company',
+			'Address',
+			'AddressLine2',
+			'City',
+			'Country',
+			'Email',
+			'Phone',
+			'HomePhone',
+			'MobilePhone'
+		);
+		
+		$fields = array();
+		$member = $this->Member();
+		foreach($touse as $field){
+			if($member && $member->$field)
+				$fields[] = $member->$field;
+		}
+		
+		$separator = ($insertnewlines) ? $separator."\n" : $separator;
+		
+		return implode($separator,$fields);
+	}
+	function getFullShippingAddress($separator = "",$insertnewlines = true){
+		
+		if(!$this->UseShippingAddress)
+			return $this->getFullBillingAddress($separator,$insertnewlines);
+		//TODO: move this list somewhere it can be customised
+		$touse = array(
+			'ShippingName',
+			'ShippingAddress',
+			'ShippingAddress2',
+			'ShippingCity',
+			'ShippingPostalCode',
+			'ShippingState',
+			'ShippingCountry',
+			'ShippingPhone'
+		);	
+		
+		$fields = array();
+		
+		foreach($touse as $field){
+			if($this->$field)
+				$fields[] = $this->$field;
+		}
+		
+		$separator = ($insertnewlines) ? $separator."\n" : $separator;
+		
+		return implode($separator,$fields);
 	}
 
 	// Order Template Management

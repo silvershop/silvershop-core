@@ -10,7 +10,7 @@
 	
 	<% if CanCheckout %>
 		<% control Order %>
-			<% include OrderInformation_Editable %>
+			<% include Order_Content_Editable %>
 		<% end_control %>
 		
 		<% control ModifierForms %>

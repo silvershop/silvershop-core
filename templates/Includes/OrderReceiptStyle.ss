@@ -1,5 +1,19 @@
+<style>
+<!--
+/** Global resetting for Design **/
+	html {
+		font-size:1em;
+		font-family:Verdana, Arial, sans-serif;
+	}
+	body {
+		font-size:12px;
+		padding:10px;
+		margin:0;
+	}
+	a img { border:0; }
 	
 	h1.title{
+		font-size:1.5em;
 		display:block;
 		text-align:right;
 		border-bottom:1px solid #CDDDDD;
@@ -9,42 +23,8 @@
 	#Content {
 		text-align:left;
 		margin:auto;
-		padding-left:20px;
 	}
-	#Content td {
-	}
-	#Content .emailTitle {
-		color:#4EA3D7;
-		font-family: Tahoma, Verdana, sans-serif;
-		font-weight: normal;
-		font-size: 20px;
-	}
-	#Content .PageTitle {
-		padding:5px;
-		color: #333;
-		font-size:14px;
-		font-family: Tahoma, Verdana, sans-serif;
-	}
-	#Content .footer td {
-		padding:10px;
-	}
-	#Content .footer td.right{ text-align:right;}
-	#Content .typography { padding:0px 10px; }
-	#Content .typography a {
-		font-size:1em;
-		text-decoration:underline;
-	}
-		#Content .typography a:hover {
-			text-decoration:none;
-		}	
-	#Content .typography ul { padding:2px 15px;}
-	#Content .typography ul li { padding:2px 5px;}
-	#Content .typography p {
-		margin:0.75em 0em;
-		font-size:12px;
-		color: #666;
-	}
-	
+
 	table#SenderTable{
 		width:100%;
 	}
@@ -84,13 +64,11 @@
 			font-weight: normal;
 			font-family: Tahoma, Verdana, sans-serif;
 		}
-		table.infotable tr.Total {
-			background: #c9ebff;
-		}
+
 		table.infotable tr.Total td {
 			font-weight:bold;
 			font-size:14px;
-			color:#4EA3D7;
+
 			text-transform:uppercase;
 		}
 			table.infotable tr td,
@@ -142,4 +120,5 @@
 		#ShippingTable th{
 			width:50%;
 		}
-
+-->
+</style>

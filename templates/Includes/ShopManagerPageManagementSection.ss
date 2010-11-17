@@ -14,7 +14,7 @@
 </ul>
 <% if Order %>
 	<% control Order %>
-		<% include OrderInformation %>
+		<% include Order_Content %>
 	<% end_control %>
 <% else %>
 <h3>Last Orders</h3>
