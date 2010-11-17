@@ -22,7 +22,7 @@
 	<table id="NotesTable" class="infotable">
 		<thead>
 			<tr class="gap mainHeader">
-				<th colspan="4" class="left" scope="col"><h2><% _t("CUSTOMERORDERNOTE","Customer Note") %></h2></th>
+				<th colspan="4" class="left" scope="col"><% _t("CUSTOMERORDERNOTE","Customer Note") %></th>
 			</tr>
 		</thead>
 		</tbody>
