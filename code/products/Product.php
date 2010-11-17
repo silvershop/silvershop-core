@@ -75,7 +75,7 @@ class Product extends Page {
 		$this->disableCMSFieldsExtensions();
 		$fields = parent::getCMSFields();
 		if($tempextvar)	$this->enableCMSFieldsExtensions();
-			
+
 		// Standard product detail fields
 		$fields->addFieldToTab('Root.Content.Main',new TextField('Price', _t('Product.PRICE', 'Price'), '', 12),'Content');
 		$fields->addFieldToTab('Root.Content.Main',new TextField('Weight', _t('Product.WEIGHT', 'Weight (kg)'), '', 12),'Content');
@@ -96,7 +96,7 @@ class Product extends Page {
 			$fields->addFieldToTab('Root.Content.Main',new LabelField('variationspriceinstructinos','Price - Because you have one or more variations, the price can be set in the "Variations" tab.'),'Price');
 			$fields->removeFieldsFromTab('Root.Content.Main',array('Price','InternalItemID'));
 		}
-		
+
 		$fields->addFieldsToTab(
 			'Root.Content.Product Groups',
 			array(
@@ -104,7 +104,7 @@ class Product extends Page {
 				$this->getProductGroupsTable()
 			)
 		);
-		
+
 		if($tempextvar)
 			$this->extend('updateCMSFields', $fields);
 		return $fields;
@@ -207,7 +207,7 @@ class Product extends Page {
 	function AllowPurchase(){
 		return $this->canPurchase();
 	}
-	
+
 	/**
 	 * Conditions for whether a product can be purchased.
 	 *
@@ -216,14 +216,14 @@ class Product extends Page {
 	 * can't buy it.
 	 *
 	 * Other conditions may be added by decorating with the canPurcahse function
-	 * 
+	 *
 	 * @return boolean
 	 */
 	function canPurchase($member = null) {
 		if(!self::$global_allow_purcahse) return false;
 		if(!$this->dbObject('AllowPurchase')->getValue()) return false;
 		$allowpurchase = false;
-		
+
 		if($this->Variations()->exists()){
 			foreach($this->Variations() as $variation){
 				if($variation->canPurchase()){
@@ -234,12 +234,12 @@ class Product extends Page {
 		}elseif($this->Price > 0){
 			$allowpurchase = true;
 		}
-		
+
 		// Standard mechanism for accepting permission changes from decorators
 		$extended = $this->extendedCan('canPurchase', $member);
 		if($allowpurchase && $extended !== null) $allowpurchase = $extended;
-		
-		return $allowpurchase; 
+
+		return $allowpurchase;
 	}
 
 	/**
@@ -260,11 +260,11 @@ class Product extends Page {
 	 */
 	function Item() {
 		$filter = null;
-		$this->extend('updateItemFilter',&$filter);
+		$this->extend('updateItemFilter',$filter);
 		$item = ShoppingCart::get_item_by_id($this->ID,null,$filter); //TODO: needs filter
 		if(!$item)
 			$item = new Product_OrderItem($this,0); //return dummy item so that we can still make use of Item
-		$this->extend('updateDummyItem',&$item);
+		$this->extend('updateDummyItem',$item);
 		return $item;
 	}
 
@@ -467,13 +467,13 @@ class Product_OrderItem extends OrderItem {
 
 	function UnitPrice() {
 		$unitprice = $this->Product()->Price;
-		$this->extend('updateUnitPrice',&$unitprice);
+		$this->extend('updateUnitPrice',$unitprice);
 		return $unitprice;
 	}
 
 	function TableTitle() {
 		$tabletitle = $this->Product()->Title;
-		$this->extend('updateTableTitle',&$tabletitle);
+		$this->extend('updateTableTitle',$tabletitle);
 		return $tabletitle;
 	}
 
@@ -499,7 +499,7 @@ class Product_OrderItem extends OrderItem {
 
 	function linkParameters(){
 		$array = array();
-		$this->extend('updateLinkParameters',&$array);
+		$this->extend('updateLinkParameters',$array);
 		return $array;
 	}
 
@@ -522,7 +522,7 @@ class Product_OrderItem extends OrderItem {
 				<b>Product Version : </b>$productVersion
 			</p>
 HTML;
-		$this->extend('updateDebug',&$html);
+		$this->extend('updateDebug',$html);
 		return $html;
 	}
 

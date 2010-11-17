@@ -231,24 +231,24 @@ class CheckoutPage_Controller extends Page_Controller {
 	 */
 	function OrderForm() {
 		$form = new OrderForm($this, 'OrderForm');
-		$this->data()->extend('updateOrderForm',&$form);
+		$this->data()->extend('updateOrderForm',$form);
 		//load session data
 		if($data = Session::get("FormInfo.{$form->FormName()}.data")){
 			$form->loadDataFrom($data);
 		}
-		
+
 		return $form;
 	}
 
 	function OrderFormWithoutShippingAddress() {
 		$form = new OrderFormWithoutShippingAddress($this, 'OrderFormWithoutShippingAddress');
-		$this->data()->extend('OrderFormWithoutShippingAddress',&$form);
+		$this->data()->extend('OrderFormWithoutShippingAddress',$form);
 		return $form;
 	}
 
 	function OrderFormWithShippingAddress() {
 		$form = new OrderFormWithShippingAddress($this, 'OrderFormWithShippingAddress');
-		$this->data()->extend('OrderFormWithShippingAddress',&$form);
+		$this->data()->extend('OrderFormWithShippingAddress',$form);
 		return $form;
 	}
 
