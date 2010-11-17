@@ -41,7 +41,7 @@ class OrderItem extends OrderAttribute {
 	public static $field_labels = array(
 
 	);
-	
+
 	public static $summary_fields = array(
 		"Order.ID" => "Order ID",
 		"TableTitle" => "Title",
@@ -60,7 +60,7 @@ class OrderItem extends OrderAttribute {
 
 
 	public function __construct($object = null, $quantity = 1) {
-		
+
 		if(is_array($object))
 			parent::__construct($object);
 		else
@@ -87,7 +87,7 @@ class OrderItem extends OrderAttribute {
 	 */
 	function onBeforeWrite() {
 		parent::onBeforeWrite();
-		
+
 		//always keep quantity above 0
 		if($this->Quantity < 1)
 			$this->Quantity = 1;
@@ -160,14 +160,14 @@ HTML;
 	function AjaxQuantityField(){
 		return $this->QuantityField();
 	}
-	
+
 	function QuantityField(){
-		return new EcomQuantityField($this);		
+		return new EcomQuantityField($this);
 	}
 
 	function Total() {
 		$total = $this->UnitPrice() * $this->Quantity;
-		$this->extend('updateTotal',&$total);
+		$this->extend('updateTotal',$total);
 		return $total;
 	}
 

@@ -454,7 +454,7 @@ class ShoppingCart extends Controller {
 			$selection[] = "\"ProductVariationID\" = ".$request->param('OtherID');
 		}
 
-		$filter = self::paramFilter($request->getVars());
+		$filter = self::get_param_filter($request->getVars());
 		if( $filter ){
 			$result = implode(" AND ",array_merge($selection,array($filter)));
 		}
