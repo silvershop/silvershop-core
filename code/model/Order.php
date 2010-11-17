@@ -357,7 +357,7 @@ class Order extends DataObject {
 			self::$modifiers = $modifiers;
 		}
 		else {
-			array_merge(self::$modifiers,$modifiers);
+			self::$modifiers =  array_merge(self::$modifiers,$modifiers);
 		}
 	}
 
