@@ -216,7 +216,7 @@ class Order extends DataObject {
 		}
 		return $arrayNew;
 	}
-	
+
  	protected static $order_id_start_number = 0;
 		static function set_order_id_start_number($v) {self::$order_id_start_number = $v;}
 		static function get_order_id_start_number() {return self::$order_id_start_number;}
@@ -354,8 +354,13 @@ class Order extends DataObject {
 	 *
 	 * @param array $modifiers An array of {@link OrderModifier} subclass names
 	 */
-	public static function set_modifiers($modifiers) {
-		self::$modifiers = $modifiers;
+	public static function set_modifiers($modifiers, $replace = false) {
+		if($replace) {
+			self::$modifiers = $modifiers;
+		}
+		else }
+			array_merge(self::$modifiers,$modifiers);
+		}
 	}
 
 	/**
@@ -435,7 +440,7 @@ class Order extends DataObject {
 		$order->Status = 'Unpaid';
 		$order->extend('onSave'); //allow decorators to do stuff when order is saved.
 		$order->write();
-		
+
 		/*
 		// Create a new order, and write it
 		$order = new Order();
@@ -469,7 +474,7 @@ class Order extends DataObject {
  		}
  		elseif($items = ShoppingCart::get_items()){
  			return $this->createItems($items);
- 		} 		
+ 		}
 	}
 
 	/**
@@ -516,21 +521,21 @@ class Order extends DataObject {
 		return $result;
 	}
 
-	
+
 	/**
 	 * Initialise all the {@link OrderModifier} objects
 	 * by evaluating init_for_order() on each of them.
 	 */
 	function initModifiers() {
-		
+
 		//check if order has modifiers already
 		//check /re-add all non-removable ones
-		
+
 		$createdmodifiers = $this->Modifiers();
-		
+
 		if(self::$modifiers && is_array(self::$modifiers) && count(self::$modifiers) > 0) {
 			foreach(self::$modifiers as $className) {
-				
+
 				if(class_exists($className) && (!$createdmodifiers || !$createdmodifiers->find('ClassName',$className))) {
 					$modifier = new $className();
 					if($modifier instanceof OrderModifier) eval("$className::init_for_order(\$className);");
@@ -740,7 +745,7 @@ class Order extends DataObject {
 		$js[] = array('id' => $this->CartSubTotalID(), 'parameter' => 'innerHTML', 'value' => $subTotal);
 		$js[] = array('id' => $this->CartTotalID(), 'parameter' => 'innerHTML', 'value' => $total);
 	}
-	
+
 	/**
 	 * Will update payment status to "Paid if there is no outstanding amount".
 	 */
@@ -750,7 +755,7 @@ class Order extends DataObject {
 			$this->write();
 		}
 	}
-	
+
 	/**
 	 * Has this order been sent to the customer?
 	 * (at "Sent" status).
@@ -941,8 +946,8 @@ class Order extends DataObject {
 			// default is MySQL - broken for others, each database conn type supported must be checked for!
        	    $exist = DB::query("SHOW COLUMNS FROM \"Order\" LIKE 'Shipping'")->numRecords();
 		}
-        
-		if($exist > 0) {
+
+ 		if($exist > 0) {
  			if($orders = DataObject::get('Order')) {
  				foreach($orders as $order) {
  					$id = $order->ID;
@@ -1059,9 +1064,9 @@ class Order extends DataObject {
 		parent::onBeforeDelete();
 
 	}
-	
+
 	function debug(){
-		
+
 		$val = "<h3>Database record: $this->class</h3>\n<ul>\n";
 		if($this->record) foreach($this->record as $fieldName => $fieldVal) {
 			$val .= "\t<li>$fieldName: " . Debug::text($fieldVal) . "</li>\n";
@@ -1072,8 +1077,8 @@ class Order extends DataObject {
 			$val .= $this->Items()->debug();
 		$val .= "<h4>Modifiers</h4>";
 		if($this->Modifiers())
-			$val .= $this->Modifiers()->debug();	
-			
+			$val .= $this->Modifiers()->debug();
+
 		return $val;
 	}
 

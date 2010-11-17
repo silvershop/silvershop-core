@@ -42,11 +42,11 @@ class ProductVariation extends DataObject {
 		$this->extend('updateCMSFields', $set);
 		return $set;
 	}
-	
+
 	/*
 	 * @Depreciated - use canPurchase instead
 	 */
-	function AllowPurchase(){
+	function AllowPurchase() {
 		return $this->canPurchase();
 	}
 

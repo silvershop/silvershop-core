@@ -8,7 +8,7 @@
 	* @package ecommerce
 	*/
 class OrderForm extends Form {
-	
+
 	//actions that don't need validation
 	protected $validactions = array(
 		'useDifferentShippingAddress',
@@ -107,7 +107,7 @@ class OrderForm extends Form {
 		$requiredFields = new CustomRequiredFields($requiredFields);
 		$this->extend('updateValidator',$requiredFields);
 
-		$this->extend('updateFields',&$fields);
+		$this->extend('updateFields',$fields);
 
 		// 6) Form construction
 		parent::__construct($controller, $name, $fields, $actions, $requiredFields);
@@ -125,26 +125,26 @@ class OrderForm extends Form {
 		//allow updating via decoration
 		$this->extend('updateForm',$this);
 	}
-	
-	
+
+
 	function addValidAction($action){
 		$this->validactions[] = $action;
 	}
-	
+
 	function getValidActions($format = true){
 		$vas = $this->validactions;
-		
+
 		if($format){
 			$actions = array();
 			foreach($vas as $action){
 				$actions[] = 'action_'.$action;
-			}			
+			}
 		}
 
 		return $actions;
 	}
-	
-	
+
+
 	/** Override form validation to make different shipping address button work */
 	 function validate(){
 	 	if(isset($_POST['action_processOrder'])) parent::validate(); //always validate on order processing
@@ -198,7 +198,6 @@ class OrderForm extends Form {
 		if(!($payment && $payment instanceof Payment)) {
 			user_error(get_class($payment) . ' is not a valid Payment object!', E_USER_ERROR);
 		}
-		
 		$this->saveDataToSession($data); //save for later if necessary
 		
 		//check for cart items
@@ -207,20 +206,19 @@ class OrderForm extends Form {
 			Director::redirectBack();
 			return false;
 		}
-		
+
 		//check that price hasn't changed
 		$oldtotal = ShoppingCart::current_order()->Total();
-		
+
 		// Create new Order from shopping cart, discard cart contents in session
 		$order = ShoppingCart::current_order();
-		
 		if($order->Total() != $oldtotal) {
 			$form->sessionMessage(_t('OrderForm.PriceUpdated','The order price has been updated'), 'warning');
 			Director::redirectBack();
 			return false;
 		}
-		
-		
+
+
 		// Create new OR update logged in {@link Member} record
 		$member = EcommerceRole::ecommerce_create_or_merge($data);
 		if(!$member) {
@@ -236,7 +234,7 @@ class OrderForm extends Form {
 			Director::redirectBack();
 			return false;
 		}
-		
+
 		$member->write();
 		$member->logIn();
 
@@ -244,13 +242,13 @@ class OrderForm extends Form {
 
 		// Write new record {@link Order} to database
 		$form->saveInto($order);
-		
 		Order::save_current_order(); //sets status to 'Unpaid' //is it even necessary to have it's own function? ..just legacy code.
 		$order->MemberID = $member->ID;
 		$order->write();
-		
+
+
 		$this->clearSessionData(); //clears the stored session form data that might have been needed if validation failed
-		
+
 		// Save payment data from form and process payment
 		$form->saveInto($payment);
 		$payment->OrderID = $order->ID;
@@ -274,11 +272,11 @@ class OrderForm extends Form {
 		Director::redirect($order->Link());
 		return true;
 	}
-	
+
 	function saveDataToSession($data){
 		Session::set("FormInfo.{$this->FormName()}.data", $data);
 	}
-	
+
 	function loadDataFromSession(){
 		if($data = Session::get("FormInfo.{$this->FormName()}.data")){
 			$this->loadDataFrom($data);

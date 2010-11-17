@@ -1,5 +1,4 @@
 #ProductGroup {
-	margin-left: 230px;
 }
 
 .category {
@@ -27,7 +26,7 @@
 	margin: 0 5px 5px 0;
 	padding: 5px;
 }
-	
+
 		.productItem .productActions{
 			padding:0;
 			margin:0;
@@ -37,7 +36,7 @@
 			padding:0;
 			margin:0;
 		}
-		
+
 .resultsBar .resultsShowing,
 .resultsBar .resultsShowing {
 	float: right;

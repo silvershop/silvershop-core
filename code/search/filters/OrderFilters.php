@@ -21,13 +21,13 @@ class OrderFilters_AroundDateFilter extends ExactMatchFilter {
 		{
 			// don't know whether functions should be used, hence the following code using an interval cast to an integer 
 			return $query->where("(\"Order\".\"Created\"::date - '$formattedDate'::date)::integer > -".self::get_how_many_days_around()." AND (\"Order\".\"Created\"::date - '$formattedDate'::date)::integer < ".self::get_how_many_days_around());
-		}
+	}
 		else
 		{
 			// default is MySQL DATEDIFF() function - broken for others, each database conn type supported must be checked for!
 			return $query->where("(DATEDIFF(\"Order\".\"Created\", '$formattedDate') > -".self::get_how_many_days_around()." AND DATEDIFF(\"Order\".\"Created\", '$formattedDate') < ".self::get_how_many_days_around().")");
 		}
-		
+
 	}
 
 	public function isEmpty() {

@@ -214,7 +214,7 @@ class Product extends Page {
 	 * If it has the checkbox for 'Allow this product to be purchased',
 	 * as well as having a price, it can be purchased. Otherwise a user
 	 * can't buy it.
-	 * 
+	 *
 	 * Other conditions may be added by decorating with the canPurcahse function
 	 * 
 	 * @return boolean
@@ -263,9 +263,9 @@ class Product extends Page {
 		$this->extend('updateItemFilter',&$filter);
 		$item = ShoppingCart::get_item_by_id($this->ID,null,$filter); //TODO: needs filter
 		if(!$item)
-			$item = new Product_OrderItem($this,0); //return dummy item so that we can still make use of Item 	
+			$item = new Product_OrderItem($this,0); //return dummy item so that we can still make use of Item
 		$this->extend('updateDummyItem',&$item);
-		return $item; 
+		return $item;
 	}
 
 	/**
@@ -431,6 +431,10 @@ class Product_OrderItem extends OrderItem {
  		parent::__construct($product, $quantity);
 	}
 
+	function getQuantity() {
+		return $this->_quantity;
+	}
+
 	function getProductIDForSerialization() {
 		return $this->_productID;
 	}
@@ -462,7 +466,7 @@ class Product_OrderItem extends OrderItem {
 	}
 
 	function UnitPrice() {
-		$unitprice = $this->Product()->Price; 
+		$unitprice = $this->Product()->Price;
 		$this->extend('updateUnitPrice',&$unitprice);
 		return $unitprice;
 	}
@@ -477,7 +481,7 @@ class Product_OrderItem extends OrderItem {
 		if($product = $this->Product(true)) return $product->Link();
 	}
 
-	function addLink() {		
+	function addLink() {
 		return ShoppingCart::add_item_link($this->_productID,null,$this->linkParameters());
 	}
 
@@ -505,7 +509,7 @@ class Product_OrderItem extends OrderItem {
 		$this->ProductID = $this->_productID;
 		$this->ProductVersion = $this->_productVersion;
 	}
-	
+
 	public function debug() {
 		$title = $this->TableTitle();
 		$productID = $this->_productID;
