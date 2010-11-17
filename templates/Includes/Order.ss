@@ -27,7 +27,7 @@
 		</thead>
 		</tbody>
 			<tr class="summary odd first">
-				<td colspan="4" class="left fourRolDetail">$CustomerOrderNotee</td>
+				<td colspan="4" class="left fourRolDetail">$CustomerOrderNote</td>
 			</tr>
 		</tbody>
 	</table>
