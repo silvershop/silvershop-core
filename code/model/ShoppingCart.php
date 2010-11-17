@@ -236,7 +236,7 @@ class ShoppingCart extends Controller {
 		if($filter) {
 			$filterString = " AND ($filter)";
 		}
-		return  DataObject::get_one('OrderItem', "OrderID = $order->ID $filterString");
+		return  DataObject::get_one('OrderItem', "\"OrderID\" = $order->ID $filterString");
 	}
 
 	// Modifiers management
