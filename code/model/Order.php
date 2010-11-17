@@ -358,7 +358,7 @@ class Order extends DataObject {
 		if($replace) {
 			self::$modifiers = $modifiers;
 		}
-		else }
+		else {
 			array_merge(self::$modifiers,$modifiers);
 		}
 	}
