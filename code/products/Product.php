@@ -431,10 +431,6 @@ class Product_OrderItem extends OrderItem {
  		parent::__construct($product, $quantity);
 	}
 
-	function getQuantity() {
-		return $this->_quantity;
-	}
-
 	function getProductIDForSerialization() {
 		return $this->_productID;
 	}
