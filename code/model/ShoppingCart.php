@@ -400,7 +400,7 @@ class ShoppingCart extends Controller {
 				$orderitem = new ProductVariation_OrderItem($variation,1);
 			}
 		} elseif(is_numeric($request->param('ID')) && $itemId = $request->param('ID')) {
-			$product = DataObject::get_by_id('Product', $itemId);
+			$product = Versioned::get_one_by_stage('Product','Live', '"Product_Live"."ID" = '.$itemId); //only use live products
 			if ($product && $product->canPurchase()) {
 				$orderitem = new Product_OrderItem($product,1);
 			}
