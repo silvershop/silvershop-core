@@ -252,6 +252,9 @@ class OrderForm extends Form {
 		// Save payment data from form and process payment
 		$form->saveInto($payment);
 		$payment->OrderID = $order->ID;
+		$payment->PaidForID = $order->ID;
+		$payment->PaidForClass = $order->class;
+		
 		$payment->Amount->Amount = $order->Total();
 		$payment->write();
 		
