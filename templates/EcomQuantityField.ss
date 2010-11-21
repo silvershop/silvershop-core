@@ -6,4 +6,5 @@
 	<a class="removelink" href="$IncrementLink" title="<% sprintf(_t("ADDONE","Add one more of &quot;%s&quot; to your cart"),$Item.TableTitle) %>">
 		<img src="$ThemeDir(ecommerce)/images/plus.gif" alt="+" />
 	</a>
+	$AJAXLinkHiddenField
 </div>
