@@ -67,7 +67,7 @@ class Product extends Page {
 
 	static $number_sold_calculation_type = "SUM"; //SUM or COUNT
 
-	static $global_allow_purcahse = true;
+	static $global_allow_purchase = true;
 
 	function getCMSFields() {
 		//prevent calling updateCMSFields extend function too early
@@ -113,7 +113,7 @@ class Product extends Page {
 	/**
 	 * Enables developers to completely turning off the ability to purcahse products.
 	 */
-	static function set_global_allow_purcahse($allow = false){
+	static function set_global_allow_purchase($allow = false){
 		self::$global_allow_purcahse = $allow;
 	}
 
