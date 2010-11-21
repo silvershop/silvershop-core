@@ -89,8 +89,6 @@ class EcomQuantityField extends ViewableData{
 		return Convert::raw2att(ShoppingCart::remove_item_link($this->item->getProductIDForSerialization(), $varid,$this->parameters));
 	}
 	
-	
-
 	function forTemplate(){
 		return $this->renderWith($this->template);		
 	}
