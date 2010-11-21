@@ -11,7 +11,7 @@ class EcommercePayment extends DataObjectDecorator {
 
 		return array(
 			'has_one' => array(
-				'Order' => 'Order'
+				'Order' => 'Order' //redundant...should be using PaidObject
 			),
 			'searchable_fields' => array(
 				'OrderID' => array('title' => 'Order ID'),
@@ -28,15 +28,8 @@ class EcommercePayment extends DataObjectDecorator {
 	function canDelete($member = null) {
 		return false;
 	}
+	
 	/*
-	function updateSummaryFields(&$fields){
-		$fields['Created'] = 'Date';
-		$fields['OrderID'] = 'OrderID';
-		$fields['IP'] = 'Amount';
-		$fields['Total'] = 'Total';
-	}
-	*/
-
 	function updateCMSFields(&$fields){
 		$options = $this->owner::$supported_methods;
 		if($options && !$this->ID) {
@@ -47,6 +40,7 @@ class EcommercePayment extends DataObjectDecorator {
 		}
 		return $fields;
 	}
+	*/
 
 
 	//TODO: this function could get called multiple times, resulting in unwanted logs , changes etc.
@@ -111,7 +105,7 @@ class EcommercePayment extends DataObjectDecorator {
 	}
 
 	function Status() {
-    return _t('Payment.'.$this->owner->Status,$this->owner->Status);
+   		return _t('Payment.'.$this->owner->Status,$this->owner->Status);
 	}
 
 
