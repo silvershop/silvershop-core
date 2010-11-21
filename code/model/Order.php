@@ -33,7 +33,7 @@ class Order extends DataObject {
 		'ShippingCountry' => 'Text',
 		'ShippingPhone' => 'Varchar(30)',
 		'CustomerOrderNote' => 'Text',
-		
+
 		'ReceiptSent' => 'Boolean',
 		'Printed' => 'Boolean'
 	);
@@ -403,6 +403,12 @@ class Order extends DataObject {
 		self::$can_cancel_after_sending = $value;
 	}
 
+	protected static $set_can_cancel_on_status = array();
+
+	static function set_can_cancel_on_status($array) {
+		//to do: check that the stati provided in array actually exist
+		self::$set_can_cancel_on_status = $array;
+	}
 
 	/**
 	 * Return a set of forms to add modifiers
@@ -694,8 +700,8 @@ class Order extends DataObject {
 	public function canCreate($member = null) {
 		return false;
 	}
-	
-	
+
+
 	//why do we need this function??
 	/**
 	 * Returns the {@link Payment} records linked
@@ -810,7 +816,7 @@ class Order extends DataObject {
 			//TODO: only run this if it is setting to Paid, and not cancelled or similar
 			$this->Status = 'Paid';
 			$this->write();
-			
+
 			$logEntry = new OrderStatusLog();
 			$logEntry->OrderID = $this->ID;
 			$logEntry->Status = 'Paid';
@@ -885,7 +891,7 @@ class Order extends DataObject {
 	 * @param $copyToAdmin - true by default, whether it should send a copy to the admin
 	 */
 	protected function sendEmail($emailClass, $copyToAdmin = true) {
-		
+
  		$from = self::$receipt_email ? self::$receipt_email : Email::getAdminEmail();
  		$to = $this->Member()->Email;
 		$subject = self::$receipt_subject ? self::$receipt_subject : "Shop Sale Information #%d";
