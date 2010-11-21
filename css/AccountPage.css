@@ -31,4 +31,7 @@
 #ShopAccountForm_MemberForm #Country select {
 	width: 305px;
 }
+#PrintPageIcon img{
+	cursor: pointer;
+}
 
