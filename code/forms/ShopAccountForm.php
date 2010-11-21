@@ -20,7 +20,7 @@ class ShopAccountForm extends Form {
 				$passwordField->setCanBeEmpty(true);
 			}
 
-			//$fields->push(new LiteralField('LogoutNote', "<p class=\"message warning\">" . _t("MemberForm.LOGGEDIN","You are currently logged in as ") . $member->FirstName . ' ' . $member->Surname . ". Click <a href=\"Security/logout\" title=\"Click here to log out\">here</a> to log out.</p>"));
+			$fields->push(new LiteralField('LogoutNote', "<p class=\"message warning\">" . _t("MemberForm.LOGGEDIN","You are currently logged in as ") . $member->FirstName . ' ' . $member->Surname . ". "._t('MemberForm.LOGOUT','Click <a href="Security/logout">here</a> to log out.')."</p>"));
 			$fields->push(new HeaderField('Login Details', 3));
 			$fields->push($passwordField);
 
@@ -29,10 +29,15 @@ class ShopAccountForm extends Form {
 			$fields = new FieldSet();
 		}
 
-		$actions = new FieldSet(
-			new FormAction('submit', 'Save Changes')
-			//new FormAction('proceed', 'Save and proceed to checkout') //is this even necessary??
-		);
+		if(get_class($controller) == 'AccountPage_Controller'){
+			$actions = new FieldSet(new FormAction('submit', _t('MemberForm.SAVE','Save Changes')));
+		}
+		else{
+			$actions = new FieldSet(
+				new FormAction('submit', _t('MemberForm.SAVE','Save Changes')),
+				new FormAction('proceed', _t('MemberForm.SAVEANDPROCEED','Save and proceed to checkout'))
+			);
+		}
 
 		if($record = $controller->data()){
 			$record->extend('updateShopAccountForm',$fields,$actions,$requiredFields);
