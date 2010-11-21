@@ -36,13 +36,16 @@ class EcommercePayment extends DataObjectDecorator {
 		$fields['Total'] = 'Total';
 	}
 	*/
+	
+	//TODO: this function could get called multiple times, resulting in unwanted logs , changes etc.
+	function onAfterWrite() {
+		if($this->owner->Status == 'Success' && $order = $this->owner->Order()) {
 
-	function onBeforeWrite() {
-		if($this->owner->Status == 'Success' && $this->owner->Order()) {
-			$order = $this->owner->Order();
-			$order->Status = 'Paid';
-			$order->write();
-			$order->sendReceipt();
+			if(!$order->ReceiptSent){
+				$order->sendReceipt();
+				$order->updatePaymentStatus();
+			}
+
 		}
 	}
 

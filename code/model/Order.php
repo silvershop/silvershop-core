@@ -33,6 +33,8 @@ class Order extends DataObject {
 		'ShippingCountry' => 'Text',
 		'ShippingPhone' => 'Varchar(30)',
 		'CustomerOrderNote' => 'Text',
+		
+		'ReceiptSent' => 'Boolean',
 		'Printed' => 'Boolean'
 	);
 
@@ -692,7 +694,9 @@ class Order extends DataObject {
 	public function canCreate($member = null) {
 		return false;
 	}
-
+	
+	
+	//why do we need this function??
 	/**
 	 * Returns the {@link Payment} records linked
 	 * to this order.
@@ -701,9 +705,9 @@ class Order extends DataObject {
 	 *
 	 * @return DataObjectSet
 	 */
-	function Payments() {
+	/*function Payments() {
 		return DataObject::get('Payment', "\"OrderID\" = '$this->ID'", '"LastEdited" DESC');
-	}
+	}*/
 
 	/**
 	 * Return the currency of this order.
@@ -803,8 +807,14 @@ class Order extends DataObject {
 	 */
 	function updatePaymentStatus(){
 		if($this->Total() > 0 && $this->TotalOutstanding() <= 0){
+			//TODO: only run this if it is setting to Paid, and not cancelled or similar
 			$this->Status = 'Paid';
 			$this->write();
+			
+			$logEntry = new OrderStatusLog();
+			$logEntry->OrderID = $this->ID;
+			$logEntry->Status = 'Paid';
+			$logEntry->write();
 		}
 	}
 
@@ -864,6 +874,8 @@ class Order extends DataObject {
 	 */
 	function sendReceipt() {
 		$this->sendEmail('Order_ReceiptEmail');
+		$this->ReceiptSent = true;
+		$this->write();
 	}
 
 	/**
@@ -873,6 +885,7 @@ class Order extends DataObject {
 	 * @param $copyToAdmin - true by default, whether it should send a copy to the admin
 	 */
 	protected function sendEmail($emailClass, $copyToAdmin = true) {
+		
  		$from = self::$receipt_email ? self::$receipt_email : Email::getAdminEmail();
  		$to = $this->Member()->Email;
 		$subject = self::$receipt_subject ? self::$receipt_subject : "Shop Sale Information #%d";
