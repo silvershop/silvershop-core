@@ -15,7 +15,7 @@
 				<td class="price">$LastEdited.Nice</td>
 				<td class="price">$Amount.Nice $Currency</td>
 				<td class="price">$Status</td>
-				<td class="price">$PaymentMethod - $IP $ProxyIP</td>
+				<td class="price">$PaymentMethod</td>
 				<td class="price">$Message.NoHTML</td>
 			</tr>
 		<% end_control %>
