@@ -36,7 +36,19 @@ class EcommercePayment extends DataObjectDecorator {
 		$fields['Total'] = 'Total';
 	}
 	*/
-	
+
+	function updateCMSFields(&$fields){
+		$options = $this->owner::$supported_methods;
+		if($options && !$this->ID) {
+			$field->addFieldToTab("Root.Main", new DropdownField("ClassName", "Type", $options), "Status");
+		}
+		else {
+			$field->addFieldToTab("Root.Main", new ReadonlyField("ClassNameConfirmation", "Type", $this->ClassName), "Status");
+		}
+		return $fields;
+	}
+
+
 	//TODO: this function could get called multiple times, resulting in unwanted logs , changes etc.
 	function onAfterWrite() {
 		if($this->owner->Status == 'Success' && $order = $this->owner->Order()) {

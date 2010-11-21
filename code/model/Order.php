@@ -58,14 +58,12 @@ class Order extends DataObject {
 	public static $default_sort = "\"Created\" DESC";
 
 	public static $casting = array(
-		'SubTotal' => 'Currency',
-		'Total' => 'Currency',
-		'TotalPaid' => 'Currency',
-		'Shipping' => 'Currency',
-		'TotalOutstanding' => 'Currency',
-
 		'FullBillingAddress' => 'Text',
-		'FullShippingAddress' => 'Text'
+		'FullShippingAddress' => 'Text',
+		'Total' => 'EcommerceCurrency',
+		'TotalPaid' => 'EcommerceCurrency',
+		'Shipping' => 'EcommerceCurrency',
+		'TotalOutstanding' => 'EcommerceCurrency'
 	);
 
 	/**
@@ -204,12 +202,12 @@ class Order extends DataObject {
 	);
 
 	protected static $non_shipping_db_fields = array("Status", "Printed");
-		protected static function set_non_shipping_db_fields($v) {self::$non_shipping_db_fields = $v;}
-		protected static function get_non_shipping_db_fields() {return self::$non_shipping_db_fields;}
+		static function set_non_shipping_db_fields($v) {self::$non_shipping_db_fields = $v;}
+		static function get_non_shipping_db_fields() {return self::$non_shipping_db_fields;}
 
 	protected static $maximum_ignorable_sales_payments_difference = 0.01;
-		protected static function set_maximum_ignorable_sales_payments_difference($v) {self::$maximum_ignorable_sales_payments_difference = $v;}
-		protected static function get_maximum_ignorable_sales_payments_difference() {return self::$maximum_ignorable_sales_payments_difference;}
+		static function set_maximum_ignorable_sales_payments_difference($v) {self::$maximum_ignorable_sales_payments_difference = $v;}
+		static function get_maximum_ignorable_sales_payments_difference() {return self::$maximum_ignorable_sales_payments_difference;}
 
 	protected static function get_shipping_fields() {
 		$arrayNew = array();
@@ -791,6 +789,10 @@ class Order extends DataObject {
 		return 'Table_Order_Total';
 	}
 
+	function OrderForm_OrderForm_AmountID() {
+		return 'OrderForm_OrderForm_Amount';
+	}
+
 	function CartSubTotalID() {
 		return 'Cart_Order_SubTotal';
 	}
@@ -804,6 +806,7 @@ class Order extends DataObject {
 		$total = DBField::create('Currency', $this->Total())->Nice() . ' ' . Payment::site_currency();
 		$js[] = array('id' => $this->TableSubTotalID(), 'parameter' => 'innerHTML', 'value' => $subTotal);
 		$js[] = array('id' => $this->TableTotalID(), 'parameter' => 'innerHTML', 'value' => $total);
+		$js[] = array('id' => $this->OrderForm_OrderForm_AmountID(), 'parameter' => 'innerHTML', 'value' => $total);
 		$js[] = array('id' => $this->CartSubTotalID(), 'parameter' => 'innerHTML', 'value' => $subTotal);
 		$js[] = array('id' => $this->CartTotalID(), 'parameter' => 'innerHTML', 'value' => $total);
 	}

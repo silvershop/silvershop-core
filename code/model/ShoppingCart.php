@@ -307,7 +307,6 @@ class ShoppingCart extends Controller {
 			foreach ($modifiers as $modifier)
 				$modifier->updateForAjax($js);
 		}
-
 		$currentOrder->updateForAjax($js);
 		return Convert::array2json($js);
 	}
@@ -380,14 +379,20 @@ class ShoppingCart extends Controller {
 					$item = $this->getNewOrderItem();
 					self::add_new_item($item);
 				}
-				if($item){
+				else{
 					ShoppingCart::set_quantity_item($item, $quantity);
-					if($this->isAjax()) return "success";
 				}
 			}elseif($item){
 				ShoppingCart::remove_all_item($item);
-				if($this->isAjax()) return "success";
 			}
+			//TODO isAjax() doesnt seem to be addressed
+			#if($this->isAjax()){
+				$this->response->addHeader('Content-Type', 'application/json');
+				return self::json_code();
+			#}
+			#else{
+				//??? what else
+			#}
 		}
 	}
 
