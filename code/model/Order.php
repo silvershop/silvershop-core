@@ -90,7 +90,7 @@ class Order extends DataObject {
 	 *
 	 * @var string
 	 */
-	protected static $receipt_subject;
+	protected static $receipt_subject = "Shop Sale Information #%d";
 
 	/**
 	 * Flag to determine whether the user can cancel

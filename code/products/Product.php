@@ -122,7 +122,7 @@ class Product extends Page {
 	 */
 	static function recalculate_numbersold(){
 		$ps = singleton('Product');
-		$q = $ps->buildSQL("\"Product\".\"AllowPurchase\" IS TRUE");
+		$q = $ps->buildSQL("\"Product\".\"AllowPurchase\" = 1");
 		$select = $q->select;
 
 		$select['NewNumberSold'] = self::$number_sold_calculation_type."(\"OrderItem\".\"Quantity\") AS \"NewNumberSold\"";

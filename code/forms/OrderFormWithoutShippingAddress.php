@@ -75,7 +75,7 @@ class OrderFormWithoutShippingAddress extends OrderForm {
 					case "Country":
 						if(self::$fixed_country_code) {
 							$child->setValue(self::$fixed_country_code);
-							ShoppingCart::set_country("NZ");
+							ShoppingCart::set_country(self::$fixed_country_code);
 						}
 						break;
 					default:

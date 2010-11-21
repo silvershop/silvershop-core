@@ -14,10 +14,14 @@ Director::addRules(50, array(
 // __________________________________START ECOMMERCE MODULE CONFIG __________________________________
 //The configuration below is not required, but allows you to customise your ecommerce application - check for the defalt value first.
 // * * * DEFINITELY MUST SET
-//Order::set_email("sales@myshop.com");
-//Order::set_email("thank you for your order at www.myshop.com");
+//Order::set_email("your name <sales@myshop.com>);
+//Order::set_subject("thank you for your order at www.myshop.com");
 //Order::set_modifiers(array("MyModifierOne", "MyModifierTwo");
+
+
+// * * * HIGHLY RECOMMENDED SETTINGS NON-ECOMMERCE
 //Payment::set_site_currency('NZD');
+//Geoip::$default_country_code = "NZ";
 
 // * * * SHOPPING CART AND ORDER
 //ShoppingCart::set_fixed_country_code("NZ"); //always use the same country code
