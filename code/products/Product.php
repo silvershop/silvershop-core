@@ -114,7 +114,7 @@ class Product extends Page {
 	 * Enables developers to completely turning off the ability to purcahse products.
 	 */
 	static function set_global_allow_purchase($allow = false){
-		self::$global_allow_purcahse = $allow;
+		self::$global_allow_purchase = $allow;
 	}
 
 	/**
@@ -196,7 +196,7 @@ class Product extends Page {
 	 * @return Order
 	 */
 	function getCart() {
-		if(!self::$global_allow_purcahse) return false;
+		if(!self::$global_allow_purchase) return false;
 		HTTP::set_cache_age(0);
 		return ShoppingCart::current_order();
 	}
@@ -220,7 +220,7 @@ class Product extends Page {
 	 * @return boolean
 	 */
 	function canPurchase($member = null) {
-		if(!self::$global_allow_purcahse) return false;
+		if(!self::$global_allow_purchase) return false;
 		if(!$this->dbObject('AllowPurchase')->getValue()) return false;
 		$allowpurchase = false;
 
