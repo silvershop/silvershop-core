@@ -28,15 +28,20 @@ class EcommercePayment extends DataObjectDecorator {
 	function canDelete($member = null) {
 		return false;
 	}
-	
+
 	/*
 	function updateCMSFields(&$fields){
-		$options = $this->owner::$supported_methods;
-		if($options && !$this->ID) {
-			$field->addFieldToTab("Root.Main", new DropdownField("ClassName", "Type", $options), "Status");
+		//DOES NOT WORK RIGHT NOW AS supported_methods is PROTECTED
+		//$options = $this->owner::$supported_methods;
+		/*
+		NEEDS A BIT MORE THOUGHT...
+		$classes = ClassInfo::subclassesFor("Payment");
+		unset($classes["Payment"]);
+		if($classes && !$this->owner->ID) {
+			$fields->addFieldToTab("Root.Main", new DropdownField("ClassName", "Type", $classes), "Status");
 		}
 		else {
-			$field->addFieldToTab("Root.Main", new ReadonlyField("ClassNameConfirmation", "Type", $this->ClassName), "Status");
+			$fields->addFieldToTab("Root.Main", new ReadonlyField("ClassNameConfirmation", "Type", $this->ClassName), "Status");
 		}
 		return $fields;
 	}
