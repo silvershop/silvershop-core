@@ -73,6 +73,11 @@ class Order extends DataObject {
 	 * @var array
 	 */
 	static $paid_status = array('Paid', 'Processing', 'Sent', 'Complete');
+	
+	/**
+	 * 
+	 */
+	static $hidden_status = array('Cart','AdminCancelled','MemberCancelled','Query');
 
 	/**
 	 * This is the from address that the receipt
@@ -1187,7 +1192,7 @@ class Order_CancelForm extends Form {
 		);
 
 		$actions = new FieldSet(
-			new FormAction('doCancel', 'Cancel Order')
+			new FormAction('doCancel', 'Cancel this order')
 		);
 
 		parent::__construct($controller, $name, $fields, $actions);
@@ -1209,8 +1214,17 @@ class Order_CancelForm extends Form {
 		$order = DataObject::get_by_id('Order', $SQL_data['OrderID']);
 		$order->Status = 'MemberCancelled';
 		$order->write();
-
-		Director::redirectBack();
+		
+		//TODO: notify people via email??
+		
+		if($link = AccountPage::find_link()){
+			
+			//TODO: set session message "order successfully cancelled".
+			
+			Director::redirect($link);
+		}else{
+			Director::redirectBack();
+		}
 		return;
 	}
 
