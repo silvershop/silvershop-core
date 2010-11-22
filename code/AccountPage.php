@@ -169,9 +169,7 @@ class AccountPage_Controller extends Page_Controller {
 	 *
 	 * @return Order_CancelForm
 	 */
-	function CancelForm() {
-		//return null; // This needs to be fixed, URL routing is broken so ID doesn't get picked up
-		
+	function CancelForm() {		
 		$memberID = Member::currentUserID();
 		$orderID = $this->getRequest()->param('ID');
 		if(!$orderID) $orderID = (isset($_POST['OrderID']) && is_numeric($_POST['OrderID'])) ? $_POST['OrderID'] : null;
