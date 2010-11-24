@@ -14,12 +14,12 @@ class OrderFormWithShippingAddress extends OrderFormWithoutShippingAddress {
 
 		parent::__construct($controller, $name);
 		if(self::$fixed_country_code) {
-			$defaulCountry = self::$fixed_country_code;
+			$defaultCountry = self::$fixed_country_code;
 		}
 		else {
-			$defaulCountry = EcommerceRole::find_country();
+			$defaultCountry = EcommerceRole::find_country();
 		}
-		$countryField = new DropdownField('ShippingCountry', 'Country', Geoip::getCountryDropDown(), $defaulCountry, $this);
+		$countryField = new DropdownField('ShippingCountry', 'Country', Geoip::getCountryDropDown(), $defaultCountry, $this);
 
 		$shippingFields = new Tab(
 			"ShippingDetails",
