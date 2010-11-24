@@ -7,21 +7,22 @@ class ProductBulkLoader extends CsvBulkLoader{
 
 	static $hasStockImpl = false;
 
+	// NB do NOT use functional indirection on any fields where they will be used in $duplicateChecks as well - they simply don't work. 
 	public $columnMap = array(
 
 		'Category' => '->setParent',
 		'ProductGroup' => '->setParent',
 
-		'Product ID' => '->importInternalItemID',
-		'ProductID' => '->importInternalItemID',
-		'SKU' => '->importInternalItemID',
+		'Product ID' => 'InternalItemID',
+		'ProductID' => 'InternalItemID',
+		'SKU' => 'InternalItemID',
 
-		'Long Description' => '->importContent',
-		'Short Description' => '->importMetaDescription',
+		'Long Description' => 'Content',
+		'Short Description' => 'MetaDescription',
 
-		'Short Title' => '->importMenuTitle',
+		'Short Title' => 'MenuTitle',
 
-		'Title' => '->importTitle',
+		'Title' => 'Title',
 
 		'Stock' => '->importStock',
 		'Stock Level' => '->importStock',
@@ -29,8 +30,21 @@ class ProductBulkLoader extends CsvBulkLoader{
 		'Stock Control' => '->importStock'
 		);
 
+	/* 	NB there is a bug in CsvBulkLoader where it fails to apply Convert::raw2sql to the field value prior to a duplicate check. 
+	 	This results in a failed database call on any fields here that conatin quotes and causes whole load to fail.
+	 	Fix is to change CsvBulkLoader findExistingObject function
+	 	FROM
+	 		$SQL_fieldValue = $record[$fieldName];
+	 	TO
+	 		$SQL_fieldValue = Convert::raw2sql($record[$fieldName]);	
+	 	until patch gets applied by SS team
+	*/	   	
+	 		   	
 	public $duplicateChecks = array(
 		'InternalItemID' => 'InternalItemID', // use internalItemID for duplicate checks
+		'Product ID' => 'InternalItemID',
+		'ProductID' => 'InternalItemID',
+		'SKU' => 'InternalItemID',
 		'Title' => 'Title'
 	);
 
@@ -45,33 +59,12 @@ class ProductBulkLoader extends CsvBulkLoader{
 		)
 	);
 
-	static function importContent(&$obj, $val, $record )
-	{
-		$obj->Content = Convert::raw2sql($val);
-	}
-	static function importMetaDescription(&$obj, $val, $record )
-	{
-		$obj->MetaDescription = Convert::raw2sql($val);
-	}
-	static function importMenuTitle(&$obj, $val, $record )
-	{
-		$obj->MenuTitle = Convert::raw2sql($val);
-	}
-	static function importTitle(&$obj, $val, $record )
-	{
-		$obj->Title = Convert::raw2sql($val);
-	}
-
+	
 	static function importStock(&$obj, $val, $record )
 	{
 		if( self::$hasStockImpl ) {
 			$obj->Stock = $val;
 		}
-	}
-
-	static function importInternalItemID(&$obj, $val, $record )
-	{
-		$obj->InternalItemID = Convert::raw2sql($val);
 	}
 
 	protected function processAll($filepath, $preview = false) {
