@@ -1,5 +1,5 @@
 <div class="ecomquantityfield">
-	<a class="addlink" href="$DecrementLink" title="<% sprintf(_t("REMOVEALL","Remove one of &quot;%s&quot; from your cart"),$Item.TableTitle) %>">
+	<a class="addlink" href="$DecrementLink" title="<% sprintf(_t("REMOVEONE","Remove one of &quot;%s&quot; from your cart"),$Item.TableTitle) %>">
 		<img src="$ThemeDir(ecommerce)/images/minus.gif" alt="-" />
 	</a>	
 	$Field
