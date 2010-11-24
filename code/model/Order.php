@@ -65,6 +65,9 @@ class Order extends DataObject {
 		'Shipping' => 'EcommerceCurrency',
 		'TotalOutstanding' => 'EcommerceCurrency'
 	);
+	
+	public static $singular_name = "Order";
+	public static $plural_name = "Orders";
 
 	/**
 	 * Any order with one of these values for the Status
