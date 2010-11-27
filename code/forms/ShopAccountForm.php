@@ -14,14 +14,14 @@ class ShopAccountForm extends Form {
 
 		if($member && $member->exists()) {
 			$fields = $member->getEcommerceFields();
-			$passwordField = new ConfirmedPasswordField('Password', 'Password');
+			$passwordField = new ConfirmedPasswordField('Password', _t('MemberForm.PASSWORD','Password'));
 
 			if($member->Password != '') {
 				$passwordField->setCanBeEmpty(true);
 			}
 
 			$fields->push(new LiteralField('LogoutNote', "<p class=\"message warning\">" . _t("MemberForm.LOGGEDIN","You are currently logged in as ") . $member->FirstName . ' ' . $member->Surname . ". "._t('MemberForm.LOGOUT','Click <a href="Security/logout">here</a> to log out.')."</p>"));
-			$fields->push(new HeaderField('Login Details', 3));
+			$fields->push(new HeaderField('Login Details',_t('MemberForm.LOGINDETAILS','Login Details'), 3));
 			$fields->push($passwordField);
 
 			$requiredFields = new ShopAccountFormValidator($member->getEcommerceRequiredFields());

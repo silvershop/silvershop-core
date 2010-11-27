@@ -49,8 +49,8 @@ function setChanges(changes) {
 					jQuery(id).html(value);
 				}
 				else{
-				jQuery(id).attr(parameter, value);
-			}
+					jQuery(id).attr(parameter, value);
+				}
 			}
 			else if(change.name) {
 				var name = change.name;
