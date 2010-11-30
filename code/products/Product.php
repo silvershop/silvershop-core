@@ -34,7 +34,9 @@ class Product extends Page {
 	);
 
 	public static $many_many = array(
-		'ProductGroups' => 'ProductGroup'
+		'ProductGroups' => 'ProductGroup',
+		
+		'VariationAttributes' => 'ProductAttributeType'
 	);
 
 	public static $belongs_many_many = array();
@@ -90,7 +92,10 @@ class Product extends Page {
 		$fields->addFieldToTab('Root.Content.Main',new CheckboxField('FeaturedProduct', _t('Product.FEATURED', 'Featured Product')), 'Content');
 		$fields->addFieldToTab('Root.Content.Main',new CheckboxField('AllowPurchase', _t('Product.ALLOWPURCHASE', 'Allow product to be purchased'), 1),'Content');
 
+		$fields->addFieldToTab('Root.Content.Variations',new HeaderField("Variations"));
 		$fields->addFieldToTab('Root.Content.Variations',$this->getVariationsTable());
+		$fields->addFieldToTab('Root.Content.Variations',new HeaderField("Variation Attribute Types"));
+		$fields->addFieldToTab('Root.Content.Variations',$this->getVariationAttributesTable());
 
 		if($this->Variations()->exists()){
 			$fields->addFieldToTab('Root.Content.Main',new LabelField('variationspriceinstructinos','Price - Because you have one or more variations, the price can be set in the "Variations" tab.'),'Price');
@@ -153,12 +158,19 @@ class Product extends Page {
 		$variations = $singleton->buildDataObjectSet($query->execute());
 		$filter = $variations ? "\"ID\" IN ('" . implode("','", $variations->column('RecordID')) . "')" : "\"ID\" < '0'";
 		//$filter = "\"ProductID\" = '{$this->ID}'";
-
+		
+		$summaryfields= $singleton->summaryFields();
+		
+		if($this->VariationAttributes()->exists())
+			foreach($this->VariationAttributes() as $attribute){
+				$summaryfields["AttributeProxy.Val".$attribute->Name] = $attribute->Title;
+			}
+		
 		$tableField = new HasManyComplexTableField(
 			$this,
 			'Variations',
 			'ProductVariation',
-			null,
+			$summaryfields,
 			null,
 			$filter
 		);
@@ -168,6 +180,44 @@ class Product extends Page {
 		}
 
 		return $tableField;
+	}
+	
+	function getVariationAttributesTable(){
+		$mmctf = new ManyManyComplexTableField($this,'VariationAttributes','ProductAttributeType');
+		
+		return $mmctf;
+	}
+	
+	/*
+	 * Generates variations based on selected attributes. 
+	 */
+	function generateVariationsFromAttributes(){
+		//if product has variation attribute types
+		if($this->VariationAttributes()->exists()){
+			$count = 0;
+			foreach($this->VariationAttributes() as $type){
+				
+				$values = $type->Values();
+				if(!$values->exists()) continue;
+				
+				if($count == 0){//loop through first attribute list, and create new variations
+					
+					foreach($values as $value){
+						$variation = new ProductVariation();
+						$variation->ProductID = $this->ID;
+						$variation->Price = $this->Price;
+						$variation->write();
+						$variation->InternalItemID = $this->InternalItemID.$variation->ID;
+						$variation->AttributeValues()->add($value);
+						$variation->write();
+					}
+				}else{
+					//TODO: create multiple variations
+					
+				}	
+				$count++;
+			}
+		}
 	}
 
 	protected function getProductGroupsTable() {

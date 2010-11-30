@@ -119,6 +119,7 @@ class ProductGroup extends Page {
 	 * @param array $permissions
 	 * @return DataObjectSet
 	 */
+	 //TODO: optimise this where possible..perhaps use less joins
 	function ProductsShowable($extraFilter = '', $permissions = array("Show All Products")) { //TODO: re-introduce custom permissions, if wanted
 		$filter = ""; //
 		$join = "";
@@ -151,8 +152,6 @@ class ProductGroup extends Page {
 		
 		if($allproducts) $products->TotalCount = $allproducts->Count(); //add total count to returned data for 'showing x to y of z products'
 		if($products && $products instanceof DataObjectSet) $products->removeDuplicates();
-		
-
 		return $products;
 	}
 

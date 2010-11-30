@@ -12,7 +12,7 @@ class ProductsAndGroupsModelAdmin extends ModelAdmin {
 
 	public static $record_controller_class = "ProductsAndGroupsModelAdmin_RecordController";
 
-	public static $managed_models = array("Product", "ProductGroup","ProductVariation");
+	public static $managed_models = array("Product", "ProductGroup","ProductVariation","ProductAttributeType");
 
 	public static function set_managed_models(array $array) {
 		self::$managed_models = $array;

@@ -1,4 +1,15 @@
 <?php
+/**
+ * ProductBulkLoader - allows loading products via CSV file.
+ * 
+ * Images should be uploaded before import, where the Photo/Image field corresponds to the filename of a file that was uploaded.
+ * 
+ * Variations can be specified in a "Variation" column this format:
+ * Type:value,value,value
+ * eg: Color: red, green, blue , yellow
+ * up to 6 other variation columns can be specified by adding a number to the end, eg Variation2,$Variation3
+ * 
+ */
 
 class ProductBulkLoader extends CsvBulkLoader{
 
@@ -27,8 +38,16 @@ class ProductBulkLoader extends CsvBulkLoader{
 		'Stock' => '->importStock',
 		'Stock Level' => '->importStock',
 		'Inventory' => '->importStock',
-		'Stock Control' => '->importStock'
-		);
+		'Stock Control' => '->importStock',
+		
+		'Variation' => '->processVariation', //TODO: need this to work on multiple rows
+		'Variation1' => '->processVariation1',
+		'Variation2' => '->processVariation2',
+		'Variation3' => '->processVariation3',
+		'Variation4' => '->processVariation4',
+		'Variation5' => '->processVariation5',
+		'Variation6' => '->processVariation6'
+	);
 
 	/* 	NB there is a bug in CsvBulkLoader where it fails to apply Convert::raw2sql to the field value prior to a duplicate check. 
 	 	This results in a failed database call on any fields here that conatin quotes and causes whole load to fail.
@@ -141,6 +160,46 @@ class ProductBulkLoader extends CsvBulkLoader{
 			}
 		}
 	}
+	
+	function processVariation(&$obj, $val, $record){
+		$parts = explode(":",$val);
+		if(count($parts) == 2){
+			
+			$attributetype = trim($parts[0]);
+			$attributevalues = explode(",",$parts[1]);
+			if(count($attributevalues) >= 1){
+				
+				$attributetype = ProductAttributeType::find_or_make($attributetype);
+				foreach($attributevalues as $key => $value)
+					$attributevalues[$key] = trim($value); //remove outside spaces from values
+					
+				$attributetype->addValues($attributevalues);
+				
+				$obj->VariationAttributes()->add($attributetype);
+			}			
+		}
+		
+	}
+	
+	//work around until I can figure out how to allow calling processVariation multiple times
+	function processVariation1(&$obj, $val, $record){
+		$this->processVariation(&$obj, $val, $record);
+	}
+	function processVariation2(&$obj, $val, $record){
+		$this->processVariation(&$obj, $val, $record);
+	}
+	function processVariation3(&$obj, $val, $record){
+		$this->processVariation(&$obj, $val, $record);
+	}
+	function processVariation4(&$obj, $val, $record){
+		$this->processVariation(&$obj, $val, $record);
+	}
+	function processVariation5(&$obj, $val, $record){
+		$this->processVariation(&$obj, $val, $record);
+	}
+	function processVariation6(&$obj, $val, $record){
+		$this->processVariation(&$obj, $val, $record);
+	}	
 
 }
 

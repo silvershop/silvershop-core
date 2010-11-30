@@ -363,7 +363,7 @@ class ShoppingCart extends Controller {
 				return "success";
 			else
 				Director::redirectBack();
-	}
+		}
 	}
 
 
