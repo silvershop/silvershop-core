@@ -61,6 +61,7 @@ class Order extends DataObject {
 		'FullBillingAddress' => 'Text',
 		'FullShippingAddress' => 'Text',
 		'Total' => 'EcommerceCurrency',
+		'SubTotal' => 'EcommerceCurrency',
 		'TotalPaid' => 'EcommerceCurrency',
 		'Shipping' => 'EcommerceCurrency',
 		'TotalOutstanding' => 'EcommerceCurrency'
