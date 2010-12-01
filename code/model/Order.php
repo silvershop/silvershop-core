@@ -865,6 +865,10 @@ class Order extends DataObject {
 	function IsPaid() {
 		return $this->IsProcessing() || $this->Status == 'Paid';
 	}
+	
+	function IsCart(){
+		return $this->Status == 'Cart';
+	}
 
 	/**
 	 * Return a string of localised text based on the

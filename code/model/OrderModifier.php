@@ -120,7 +120,7 @@ class OrderModifier extends OrderAttribute {
 	 * calculation based on the order and it's items.
 	 */
 	function Amount() {
-		return $this->ID ? $this->Amount : $this->LiveAmount();
+		return ($this->OrderID && !$this->Order()->IsCart()) ? $this->Amount : $this->LiveAmount();
 	}
 
 	function TableValue() {
@@ -128,7 +128,7 @@ class OrderModifier extends OrderAttribute {
 			return $this->Amount();
 		}
 		else {
-		 return "-".$this->Amount();
+		 return "-".$this->Amount(); //TODO: this is different from the bracket syntax for displaying negatives
 		}
 	}
 
