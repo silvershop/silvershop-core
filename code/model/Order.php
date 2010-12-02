@@ -788,7 +788,7 @@ class Order extends DataObject {
 		return implode($separator,$fields);
 	}
 
-	// Order Template Management
+	// Order Template and ajax Management
 
 	function TableSubTotalID() {
 		return 'Table_Order_SubTotal';

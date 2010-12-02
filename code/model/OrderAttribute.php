@@ -36,15 +36,6 @@ class OrderAttribute extends DataObject {
 		return false;
 	}
 
-	/**
-	 * @TODO Where is this method used?
-	 * @return Order
-	 */
-	/*function Order() {
-		if($this->ID) return DataObject::get_by_id('Order', $this->OrderID);
-		else return ShoppingCart::current_order();
-	}*/
-
 
 	######################
 	## TEMPLATE METHODS ##
@@ -58,7 +49,7 @@ class OrderAttribute extends DataObject {
 	 * e.g.: "product_orderitem orderitem
 	 * orderattribute".
 	 *
-	 * Used by the templates.
+	 * Used by the templates and for ajax updating functionality.
 	 *
 	 * @return string
 	 */

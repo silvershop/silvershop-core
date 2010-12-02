@@ -26,6 +26,13 @@ class ShoppingCart extends Controller {
 
 		'debug' => 'ADMIN'
 	);
+	
+	
+	function init() {
+		parent::init();
+		self::current_order();
+		self::$order->initModifiers();
+	}
 
 	/**
 	 *	used for allowing certian url parameters to be applied to orderitems
@@ -42,7 +49,10 @@ class ShoppingCart extends Controller {
 	function set_param_filters($array){
 		self::$paramfilters = array_merge(self::$paramfilters,$array);
 	}
-
+	
+	
+	//Country functions
+	
 	static function country_setting_index() {
 		return "ShoppingCartCountry";
 	}
@@ -61,15 +71,10 @@ class ShoppingCart extends Controller {
 		$countrySettingIndex = self::country_setting_index();
 		Session::clear($countrySettingIndex);
 	}
+	
 
-	function init() {
-		parent::init();
-		self::current_order();
-		self::$order->initModifiers();
-	}
-
-
-	//controller links
+	//Controller links
+	
 	static function add_item_link($id, $variationid = null, $parameters = array()) {
 		return self::$URLSegment.'/additem/'.$id.self::variation_link($variationid).self::params_to_get_string($parameters);
 	}
@@ -90,7 +95,7 @@ class ShoppingCart extends Controller {
 		return self::$URLSegment.'/removemodifier/'.$id.self::variation_link($variationid);
 	}
 
-	//TODO: this has no purpose currently
+
 	static function set_country_link() {
 		return self::$URLSegment.'/setcountry';
 	}
@@ -137,10 +142,12 @@ class ShoppingCart extends Controller {
 			}
 			self::$order = $order; //temp caching
 		}
+		//TODO: re-introduce this because it allows seeing which members don't complete orders
 		//$order->MemberID = Member::currentUserID(); // Set the Member relation to this order
 		$order->write(); // Write the order
 		return $order;
 	}
+
 
 	// Static items management
 
@@ -195,7 +202,7 @@ class ShoppingCart extends Controller {
 	}
 
 	static function remove_all_items() {
-		//TODO: make this ONLY remove items & not modifiers also
+		//TODO: make this ONLY remove items & not modifiers also?
 		self::current_order()->Attributes()->removeAll();
 	}
 
@@ -238,6 +245,7 @@ class ShoppingCart extends Controller {
 		}
 		return  DataObject::get_one('OrderItem', "\"OrderID\" = $order->ID $filterString");
 	}
+
 
 	// Modifiers management
 
@@ -293,8 +301,27 @@ class ShoppingCart extends Controller {
 	static function save_current_order() {
 		return Order::save_current_order();
 	}
-
+		
+	/**
+	 * Sets appropriate status, and message and redirects or returns appropriately.
+	 */
+	 //TODO: it seems silly that this should be a static method just because self::clear is static
+	static function return_data($status = "success",$message = null){
+		
+		if(Director::is_ajax()){
+			return $status; //TODO: make this customisable between json, status message etc. Perhaps make this whole function custom.
+			//return self::json_code(); //TODO: incorporate status / message
+		}
+		//TODO: set session / status in session (like Form sessionMesssage)
+		Director::redirectBack();
+	}
+	
+	/**
+	 * Builds json object to be returned via ajax.
+	 */
 	static function json_code() {
+		
+		$this->response->addHeader('Content-Type', 'application/json');
 		$currentOrder = ShoppingCart::current_order();
 		$js = array ();
 
@@ -320,36 +347,36 @@ class ShoppingCart extends Controller {
 		if ($itemId = $request->param('ID')) {
 			if($item = ShoppingCart::get_item($this->urlFilter())) {
 				ShoppingCart::add_item($item);
-			}
-			else {
+				return self::return_data("success","Extra item added"); //TODO: i18n
+			}else {
 				if($orderitem = $this->getNewOrderItem()) {
 					ShoppingCart::add_new_item($orderitem);
+					return self::return_data("success","Item added"); //TODO: i18n
 				}
 			}
 		}
-		if (!$this->isAjax())
-			Director::redirectBack();
+		return self::return_data("failure","Item could not be added"); //TODO: i18n
 	}
 
 	function removeitem($request) {
 		if ($item = ShoppingCart::get_item($this->urlFilter())) {
 			ShoppingCart::remove_item($item);
+			return self::return_data("success","Item removed");//TODO: i18n
 		}
-		if (!$this->isAjax())
-			Director::redirectBack();
+		return self::return_data("failure","Item could not be found in cart");//TODO: i18n
 	}
 
 	function removeallitem() {
 		if ($item = ShoppingCart::get_item($this->urlFilter())) {
 			ShoppingCart::remove_all_item($item);
+			return self::return_data("success","Item fully removed");//TODO: i18n
 		}
-		if (!$this->isAjax())
-			Director::redirectBack();
+		return self::return_data("failure","Item could not be found in cart");//TODO: i18n
 	}
-
 
 	/**
 	 * Clears the cart
+	 * It disconnects the current cart from the user session.
 	 */
 	static function clear($request = null) {
 		self::current_order()->SessionID = null;
@@ -357,15 +384,12 @@ class ShoppingCart extends Controller {
 		self::remove_all_items();
 		self::$order = null;
 
-		//redirect if called via url
+		//redirect back or send ajax only if called via http request.
+		//This check allows this function to be called from elsewhere in the system.
 		if($request instanceof SS_HTTPRequest){
-			if(Director::is_ajax())
-				return "success";
-			else
-				Director::redirectBack();
+			return self::return_data("success","Cart cleared");//TODO: i18n
 		}
 	}
-
 
 	/**
 	 * Ajax method to set an item quantity
@@ -377,6 +401,7 @@ class ShoppingCart extends Controller {
 			if($quantity > 0){
 				if(!$item){
 					$item = $this->getNewOrderItem();
+					$item->Quantity = $quantity;
 					self::add_new_item($item);
 				}
 				else{
@@ -384,17 +409,28 @@ class ShoppingCart extends Controller {
 				}
 			}elseif($item){
 				ShoppingCart::remove_all_item($item);
+				return self::return_data("success","Item removed completely");//TODO: i18n
 			}
-			//TODO isAjax() doesnt seem to be addressed
-			#if($this->isAjax()){
-				$this->response->addHeader('Content-Type', 'application/json');
-				return self::json_code();
-			#}
-			#else{
-				//??? what else
-			#}
+			return self::return_data("success","Quantity set successfully");//TODO: i18n
 		}
+		return self::return_data("failure","Quantity provided is not numeric");//TODO: i18n
 	}
+
+	/**
+	 * Removes specified modifier, if allowed
+	 */
+	function removemodifier() {
+		$modifierId = $this->urlParams['ID'];
+		if (ShoppingCart::can_remove_modifier($modifierId)){
+			ShoppingCart::remove_modifier($modifierId);
+			return self::return_data("success","Removed");//TODO: i18n
+		}
+		return self::return_data("failure","Could not be removed");//TODO: i18n
+	}
+
+	
+	//Helper functions
+
 
 	/**
 	 * Creates new order item based on url parameters
@@ -423,7 +459,6 @@ class ShoppingCart extends Controller {
 				$orderitem->$param = $v;
 			}
 		}
-
 		return $orderitem;
 	}
 
@@ -473,20 +508,6 @@ class ShoppingCart extends Controller {
 			$result = implode(" AND ",$selection);
 		}
 		return $result;
-	}
-
-
-
-
-	/**
-	 * Removes specified modifier, if allowed
-	 */
-	function removemodifier() {
-		$modifierId = $this->urlParams['ID'];
-		if (ShoppingCart::can_remove_modifier($modifierId))
-			ShoppingCart::remove_modifier($modifierId);
-		if (!$this->isAjax())
-			Director::redirectBack();
 	}
 
 	/**
