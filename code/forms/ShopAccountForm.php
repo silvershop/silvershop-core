@@ -9,7 +9,7 @@ class ShopAccountForm extends Form {
 
 	function __construct($controller, $name) {
 		$member = Member::currentUser();
-
+		
 		$requiredFields = null;
 
 		if($member && $member->exists()) {
@@ -19,8 +19,10 @@ class ShopAccountForm extends Form {
 			if($member->Password != '') {
 				$passwordField->setCanBeEmpty(true);
 			}
-
+			
+			//TODO:is this necessary?
 			$fields->push(new LiteralField('LogoutNote', "<p class=\"message warning\">" . _t("MemberForm.LOGGEDIN","You are currently logged in as ") . $member->FirstName . ' ' . $member->Surname . ". "._t('MemberForm.LOGOUT','Click <a href="Security/logout">here</a> to log out.')."</p>"));
+			
 			$fields->push(new HeaderField('Login Details',_t('MemberForm.LOGINDETAILS','Login Details'), 3));
 			$fields->push($passwordField);
 
@@ -44,8 +46,14 @@ class ShopAccountForm extends Form {
 		}
 
 		parent::__construct($controller, $name, $fields, $actions, $requiredFields);
-
-		if($member) $this->loadDataFrom($member);
+		
+		
+		if($member){
+			$member->Password = ""; //prevents password field from being populated with encrypted password data 
+			$this->loadDataFrom($member);
+		}
+		
+		
 	}
 
 	/**
