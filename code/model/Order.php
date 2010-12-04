@@ -708,7 +708,6 @@ class Order extends DataObject {
 		return false;
 	}
 
-
 	//why do we need this function??
 	/**
 	 * Returns the {@link Payment} records linked
@@ -721,7 +720,23 @@ class Order extends DataObject {
 	/*function Payments() {
 		return DataObject::get('Payment', "\"OrderID\" = '$this->ID'", '"LastEdited" DESC');
 	}*/
-
+	
+	/**
+	 * Return localized Created Date
+	 * locale sould be set
+	 */
+	function CreatedShort() {
+		return $this->obj('Created')->FormatI18N(_t('General.DATEFORMATSHORT','%m/%d/%G'));
+	}
+	
+	/**
+	 * Return localized Created DateTime
+	 * locale sould be set
+	 */
+	function CreatedLong() {
+		return $this->obj('Created')->FormatI18N(_t('General.DATEFORMATLONG','%m/%d/%G %I:%M%p'));
+	}
+	
 	/**
 	 * Return the currency of this order.
 	 * Note: this is a fixed value across the entire site.
