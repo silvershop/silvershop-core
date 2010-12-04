@@ -22,6 +22,12 @@ Director::addRules(50, array(
 // * * * HIGHLY RECOMMENDED SETTINGS NON-ECOMMERCE
 //Payment::set_site_currency('NZD');
 //Geoip::$default_country_code = "NZ";
+//i18n::set_locale('en_NZ');
+//setlocale (LC_ALL, 'en_NZ@dollar', 'en_NZ.UTF-8', 'en_NZ', 'nz', 'nz');
+
+// * * * ECOMMERCE I18N SETTINGS
+//EcommerceCurrency::setDecimalDelimiter(','); //for Money formating
+//EcommerceCurrency::setThousandDelimiter('.'); //for Money formating
 
 // * * * SHOPPING CART AND ORDER
 //ShoppingCart::set_fixed_country_code("NZ"); //always use the same country code
