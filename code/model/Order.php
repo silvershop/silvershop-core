@@ -707,19 +707,6 @@ class Order extends DataObject {
 	public function canCreate($member = null) {
 		return false;
 	}
-
-	//why do we need this function??
-	/**
-	 * Returns the {@link Payment} records linked
-	 * to this order.
-	 *
-	 * PRECONDITION: Order is in DB.
-	 *
-	 * @return DataObjectSet
-	 */
-	/*function Payments() {
-		return DataObject::get('Payment', "\"OrderID\" = '$this->ID'", '"LastEdited" DESC');
-	}*/
 	
 	/**
 	 * Return localized Created Date
