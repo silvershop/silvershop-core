@@ -165,8 +165,9 @@ class Order extends DataObject {
 	public static $summary_fields = array(
 		'ID' => 'Order No',
 		'Created' => 'Created',
-		'Member.FirstName' => 'First Name',
+		'Member.Name' => 'First Name',
 		'Member.Surname' => 'Surname',
+		'Member.Email' => 'Email',
 		'Total' => 'Total',
 		'TotalOutstanding' => 'Outstanding',
 		'Status' => 'Status'
@@ -302,19 +303,6 @@ class Order extends DataObject {
 			
 			//TODO: this should be scaffolded instead, or come from something like $member->getCMSFields();
 			$fields->addFieldToTab('Root.Customer',new LiteralField("MemberSummary", $m->renderWith("Order_Member")));	
-		}
-		
-		if($this->UseShippingAddress) {
-			$shippingFields = self::get_shipping_fields();
-			foreach($shippingFields as $shippingField) {
-				$fields->addFieldToTab('Root.Shipping', new TextField($shippingField));
-			}
-		}
-		else {
-			$fields->addFieldsToTab('Root.Shipping', array(
-				new HeaderField('DeliveryName', 'No (alternative) shipping address to be used'),
-				new LiteralField("ShippingSummary", $this->dbObject('FullShippingAddress'))
-			));
 		}
 
 		$this->extend('updateCMSFields',$fields);

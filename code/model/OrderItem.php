@@ -45,8 +45,8 @@ class OrderItem extends OrderAttribute {
 	public static $summary_fields = array(
 		"Order.ID" => "Order ID",
 		"TableTitle" => "Title",
-		"CartTitle" => "Title",
-		"ClassName" => "Type",
+		//"CartTitle" => "Title", //confusing having two titles - why is it necessary?
+		//"ClassName" => "Type", //this is just confusing isn't it?
 		"UnitPrice" => "Unit Price" ,
 		"Quantity" => "Quantity" ,
 		"Total" => "Total Price" ,
