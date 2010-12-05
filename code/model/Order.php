@@ -295,15 +295,15 @@ class Order extends DataObject {
 		$modifierTable->setPageSize(10000);
 		$fields->addFieldToTab('Root.Extras',$modifierTable);
 
-		/*
-		$fields->addFieldsToTab('Root.Items', array(
-			$attributesReadonly
-		));
-		*/
-		$fields->addFieldsToTab('Root.Customer', array(
-			//new LiteralField("MemberLink", '<a href="admin/security/EditForm/field/Members/item/1/edit" class="popuplink editlink"><img alt="Edit" src="cms/images/edit.gif"></a>'),
-			new LiteralField("MemberSummary", $this->MemberSummary())
-		));
+
+		if($m = $this->Member()) {
+			$lastv = new TextField("MemberLastLogin","Last login",$m->dbObject('LastVisited')->Nice());
+			$fields->addFieldToTab('Root.Customer',$lastv->performReadonlyTransformation());
+			
+			//TODO: this should be scaffolded instead, or come from something like $member->getCMSFields();
+			$fields->addFieldToTab('Root.Customer',new LiteralField("MemberSummary", $m->renderWith("Order_Member")));	
+		}
+		
 		if($this->UseShippingAddress) {
 			$shippingFields = self::get_shipping_fields();
 			foreach($shippingFields as $shippingField) {
@@ -319,12 +319,6 @@ class Order extends DataObject {
 
 		$this->extend('updateCMSFields',$fields);
 		return $fields;
-	}
-
-	function MemberSummary() {
-		if($m = $this->Member()) {
-			return $m->renderWith("Order_Member");
-		}
 	}
 
 	/**
