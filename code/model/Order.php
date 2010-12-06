@@ -1103,13 +1103,13 @@ class Order extends DataObject {
 		$log = new OrderStatusLog();
 		$log->OrderID = $this->ID;
 		$log->SentToCustomer = false;
-		*/
 		
 		//TO DO: make this sexier OR consider using Versioning!
 		$data = print_r($this->record, true);
+		
 		$log->Title = "Order Update";
 		$log->Note = $data;
-		$log->write();
+		$log->write();*/
 	}
 
 	/**
