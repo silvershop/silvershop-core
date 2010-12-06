@@ -268,6 +268,10 @@ class Order extends DataObject {
 		));
 
 		$fields->addFieldToTab('Root.Main', new LiteralField('MainDetails', $htmlSummary));
+		
+		//TODO: re-introduce this when order status logs have some meaningful purpose
+		$fields->removeByName('OrderStatusLogs');
+		
 		$orderItemsTable = new TableListField(
 			"OrderItems", //$name
 			"OrderItem", //$sourceClass =
@@ -282,8 +286,9 @@ class Order extends DataObject {
 			"Total",
 			array("Total" => array("sum","Currency->Nice"))
 		);
+		
 		$fields->addFieldToTab('Root.Items',$orderItemsTable);
-
+		
 		$modifierTable = new TableListField(
 			"OrderModifiers", //$name
 			"OrderModifier", //$sourceClass =
@@ -1093,9 +1098,13 @@ class Order extends DataObject {
 
 	function onAfterWrite() {
 		parent::onAfterWrite();
+		
+		/*//FIXME: this is not a good way to change status, especially when orders are saved multiple times when an oder is placed
 		$log = new OrderStatusLog();
 		$log->OrderID = $this->ID;
 		$log->SentToCustomer = false;
+		*/
+		
 		//TO DO: make this sexier OR consider using Versioning!
 		$data = print_r($this->record, true);
 		$log->Title = "Order Update";
