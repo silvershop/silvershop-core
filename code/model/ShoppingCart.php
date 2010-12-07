@@ -296,11 +296,6 @@ class ShoppingCart extends Controller {
 		$order->UseShippingAddress = $use;
 		$order->write();
 	}
-
-	// Database saving function
-	static function save_current_order() {
-		return Order::save_current_order();
-	}
 		
 	/**
 	 * Sets appropriate status, and message and redirects or returns appropriately.

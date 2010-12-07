@@ -35,6 +35,10 @@ class OrderAttribute extends DataObject {
 	public function canDelete($member = null) {
 		return false;
 	}
+	
+	function isLive(){
+		return (!$this->ID || $this->Order()->IsCart());
+	}
 
 
 	######################

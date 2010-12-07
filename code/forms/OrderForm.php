@@ -242,7 +242,7 @@ class OrderForm extends Form {
 
 		// Write new record {@link Order} to database
 		$form->saveInto($order);
-		Order::save_current_order(); //sets status to 'Unpaid' //is it even necessary to have it's own function? ..just legacy code.
+		$order->save(); //sets status to 'Unpaid'
 		$order->MemberID = $member->ID;
 		$order->write();
 

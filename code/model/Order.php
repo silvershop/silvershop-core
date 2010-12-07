@@ -429,36 +429,23 @@ class Order extends DataObject {
 	}
 
 	/**
-	 * Save the current order, writing it to
-	 * the database.
+	 * Transitions the order from being in the Cart to being in an unpaid post-cart state.
 	 *
 	 * @return Order The current order
 	 */
-	public static function save_current_order() {
+	function save() {
 
-		$order = ShoppingCart::current_order();
-		$order->Status = 'Unpaid';
-		$order->extend('onSave'); //allow decorators to do stuff when order is saved.
-		$order->write();
-
-		/*
-		// Create a new order, and write it
-		$order = new Order();
-		$order->write();
-
-		// Set the items from the cart into the order
-		if($items = ShoppingCart::get_items()) $order->createItems($items, true);
-
-		// Set the modifiers from the cart into the order
-		if($modifiers = ShoppingCart::get_modifiers()) $order->createModifiers($modifiers, true);
-
-		// Set the Member relation to this order
-		$order->MemberID = Member::currentUserID();
-
-		// Write the order
-		$order->write();
-		*/
-		return $order;
+		$this->Status = 'Unpaid';
+		
+		//re-write all attributes and modifiers to make sure they are up-to-date before they can't be changed again
+		if($this->Attributes()->exists()){
+			foreach($this->Attributes() as $attribute){
+				$attribute->write();
+			}
+		}
+		
+		$this->extend('onSave'); //allow decorators to do stuff when order is saved.
+		$this->write();
 	}
 
 	// Items Management

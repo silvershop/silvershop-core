@@ -120,7 +120,7 @@ class OrderModifier extends OrderAttribute {
 	 * calculation based on the order and it's items.
 	 */
 	function Amount() {
-		return ($this->OrderID && !$this->Order()->IsCart()) ? $this->Amount : $this->LiveAmount();
+		return ($this->isLive()) ? $this->LiveAmount() : $this->Amount;
 	}
 
 	function TableValue() {
@@ -220,7 +220,7 @@ class OrderModifier extends OrderAttribute {
 	function onBeforeWrite() {
 		parent::onBeforeWrite();
 
-		//$this->Amount = $this->Amount();
+		$this->Amount = $this->Amount();
 		$this->Type = $this->stat('is_chargable') ? 'Chargable' : 'Deductable';
 	}
 
