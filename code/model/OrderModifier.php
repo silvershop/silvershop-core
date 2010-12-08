@@ -93,7 +93,6 @@ class OrderModifier extends OrderAttribute {
 	public static $summary_fields = array(
 		"Order.ID" => "Order ID",
 		"TableTitle" => "Table Title",
-		"CartTitle" => "Cart Title",
 		"ClassName" => "Type",
 		"Amount" => "Amount" ,
 		"Type" => "Type"
