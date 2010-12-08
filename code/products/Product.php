@@ -191,31 +191,51 @@ class Product extends Page {
 	/*
 	 * Generates variations based on selected attributes. 
 	 */
-	function generateVariationsFromAttributes(){
+	function generateVariationsFromAttributes(ProductAttributeType $attributetype, array $values){
 		//if product has variation attribute types
-		if($this->VariationAttributes()->exists()){
-			$count = 0;
-			foreach($this->VariationAttributes() as $type){
+		if(is_array($values)){
+			
+			//TODO: get values dataobject set
+			$avalues = $attributetype->convertArrayToValues($values);
+			
+			$existingvariations = $this->Variations();
+			
+			if($existingvariations->exists()){
 				
-				$values = $type->Values();
-				if(!$values->exists()) continue;
-				
-				if($count == 0){//loop through first attribute list, and create new variations
+				//delete old variation, and create new ones - to prevent modification of exising variations
+				foreach($existingvariations as $oldvariation){
 					
-					foreach($values as $value){
-						$variation = new ProductVariation();
-						$variation->ProductID = $this->ID;
-						$variation->Price = $this->Price;
-						$variation->write();
-						$variation->InternalItemID = $this->InternalItemID.$variation->ID;
-						$variation->AttributeValues()->add($value);
-						$variation->write();
+					
+					foreach($avalues as $value){
+					
+						$newvariation = $oldvariation->duplicate();
+						$newvariation->InternalItemID = $this->InternalItemID.'-'.$newvariation->ID;
+						$newvariation->AttributeValues()->addMany($oldvariation->AttributeValues());
+						
+						
+						$newvariation->AttributeValues()->add($value);
+						$newvariation->write();
+						
+						$existingvariations->add($newvariation);
 					}
-				}else{
-					//TODO: create multiple variations
 					
-				}	
-				$count++;
+					$oldvariation->delete();
+					$oldvariation->destroy(); //TODO: check that old variations stick around, as they will be needed for past orders etc
+				}				
+				
+			}else{
+					
+				foreach($avalues as $value){
+					$variation = new ProductVariation();
+					$variation->ProductID = $this->ID;
+					$variation->Price = $this->Price;
+					$variation->write();
+					$variation->InternalItemID = $this->InternalItemID.'-'.$variation->ID;
+					$variation->AttributeValues()->add($value); //TODO: find or create actual value
+					$variation->write();
+					
+					$existingvariations->add($variation);
+				}
 			}
 		}
 	}

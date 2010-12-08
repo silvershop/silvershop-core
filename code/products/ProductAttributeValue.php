@@ -24,5 +24,7 @@ class ProductAttributeValue extends DataObject{
 		'Value' => 'Value',
 		
 	);
+	
+	static $default_sort = "TypeID ASC, Sort ASC";
 }
 ?>

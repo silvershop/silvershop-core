@@ -34,13 +34,9 @@ class ProductBulkLoader extends CsvBulkLoader{
 		'Short Title' => 'MenuTitle',
 
 		'Title' => 'Title',
-
-		'Stock' => '->importStock',
-		'Stock Level' => '->importStock',
-		'Inventory' => '->importStock',
-		'Stock Control' => '->importStock',
 		
-		'Variation' => '->processVariation', //TODO: need this to work on multiple rows
+		//TODO: allow row-based variations rather than in cells
+		'Variation' => '->processVariation',
 		'Variation1' => '->processVariation1',
 		'Variation2' => '->processVariation2',
 		'Variation3' => '->processVariation3',
@@ -78,14 +74,6 @@ class ProductBulkLoader extends CsvBulkLoader{
 		)
 	);
 
-	
-	static function importStock(&$obj, $val, $record )
-	{
-		if( self::$hasStockImpl ) {
-			$obj->Stock = $val;
-		}
-	}
-
 	protected function processAll($filepath, $preview = false) {
 
 		// we have to check for the existence of this in case the stockcontrol module hasn't been loaded
@@ -99,6 +87,7 @@ class ProductBulkLoader extends CsvBulkLoader{
 		$objects->merge($results->Created());
 		$objects->merge($results->Updated());
 		foreach($objects as $object){
+
 
 			if(!$object->ParentID){
 				 //set parent page
@@ -164,19 +153,32 @@ class ProductBulkLoader extends CsvBulkLoader{
 	function processVariation(&$obj, $val, $record){
 		$parts = explode(":",$val);
 		if(count($parts) == 2){
+	
 			
 			$attributetype = trim($parts[0]);
 			$attributevalues = explode(",",$parts[1]);
+			
 			if(count($attributevalues) >= 1){
 				
 				$attributetype = ProductAttributeType::find_or_make($attributetype);
-				foreach($attributevalues as $key => $value)
+				foreach($attributevalues as $key => $value){
 					$attributevalues[$key] = trim($value); //remove outside spaces from values
-					
-				$attributetype->addValues($attributevalues);
+				}
 				
+				$attributetype->addValues($attributevalues);
 				$obj->VariationAttributes()->add($attributetype);
-			}			
+				
+				//only generate variations if none exist yet
+				if(!$obj->Variations()->exists() || $obj->WeAreBuildingVariations){
+					
+					//either start new variations, or multiply existing ones by new variations
+					$obj->generateVariationsFromAttributes($attributetype,$attributevalues);
+					
+					$obj->WeAreBuildingVariations = true;
+				}
+				
+			}
+			
 		}
 		
 	}

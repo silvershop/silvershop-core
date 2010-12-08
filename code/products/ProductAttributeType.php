@@ -39,15 +39,26 @@ class ProductAttributeType extends DataObject{
 	}
 	
 	function addValues(array $values){
+		
+		$avalues = $this->convertArrayToValues($values);
+		$this->Values()->addMany($avalues);
+		
+	}
+	
+	function convertArrayToValues(array $values){
+		$set = new DataObjectSet();
+		
 		foreach($values as $value){
-			if(!$this->Values()->find('Value',$value)){  //TODO: ignore case, if possible
-				$newvalue = new ProductAttributeValue();
-				$newvalue->Value = $value;
-				$newvalue->write();
-				$this->Values()->add($newvalue);
+			$val = $this->Values()->find('Value',$value);
+			if(!$val){  //TODO: ignore case, if possible
+				$val = new ProductAttributeValue();
+				$val->Value = $value;
+				$val->write();
 			}
+			$set->push($val);
 		}
 		
+		return $set;
 	}
 	
 	function getDropDownField(){

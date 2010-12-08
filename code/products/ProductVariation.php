@@ -37,6 +37,8 @@ class ProductVariation extends DataObject {
 		'InternalItemID' => 'Product Code',
 		'Price' => 'Price'
 	);
+	
+	public static $default_sort = "InternalItemID";
 
 	function getCMSFields() {
 		$fields = array();
