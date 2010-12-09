@@ -16,8 +16,9 @@ if(array_key_exists('de_DE', $lang) && is_array($lang['de_DE'])) {
 	$lang['de_DE'] = $lang['en_US'];
 }
 
-$lang['de_DE']['General']['DATEFORMATSHORT'] = '%d %B %G';
-$lang['de_DE']['General']['DATEFORMATLONG'] = '%d %B %G %H:%M';
+$lang['de_DE']['General']['DATEFORMATNICE'] = '%e. %B %G';
+$lang['de_DE']['General']['DATETIMEFORMATNICE'] = '%e. %B %G %H:%M';
+$lang['de_DE']['General']['DATETIMEFORMATNICE24'] = 'd.m.Y H:i';
 $lang['de_DE']['AccountPage']['Message'] = 'Sie müssen sich einloggen um auf Ihr Konto zugreifen zu können. Falls Sie nicht registriert sind, können Sie erst nach Ihrer ersten Bestellung auf Ihr Konto zugreifen. Fall Sie bereits registriert sind, geben Sie folgend Ihre Daten ein.';
 $lang['de_DE']['AccountPage']['NOPAGE'] = 'Keine AccountPage auf dieser Website - erstellen Sie bitte eine!';
 $lang['de_DE']['AccountPage.ss']['COMPLETED'] = 'Abgeschlossene Bestellungen';

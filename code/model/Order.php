@@ -681,23 +681,7 @@ class Order extends DataObject {
 	public function canCreate($member = null) {
 		return false;
 	}
-	
-	/**
-	 * Return localized Created Date
-	 * locale sould be set
-	 */
-	function CreatedShort() {
-		return $this->obj('Created')->FormatI18N(_t('General.DATEFORMATSHORT','%m/%d/%G'));
-	}
-	
-	/**
-	 * Return localized Created DateTime
-	 * locale sould be set
-	 */
-	function CreatedLong() {
-		return $this->obj('Created')->FormatI18N(_t('General.DATEFORMATLONG','%m/%d/%G %I:%M%p'));
-	}
-	
+		
 	/**
 	 * Return the currency of this order.
 	 * Note: this is a fixed value across the entire site.
