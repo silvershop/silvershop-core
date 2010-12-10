@@ -21,8 +21,8 @@ class ProductBulkLoader extends CsvBulkLoader{
 	// NB do NOT use functional indirection on any fields where they will be used in $duplicateChecks as well - they simply don't work. 
 	public $columnMap = array(
 
-		'Category' => '->setParent',
-		'ProductGroup' => '->setParent',
+		//'Category' => '->setParent',
+		//'ProductGroup' => '->setParent',
 
 		'Product ID' => 'InternalItemID',
 		'ProductID' => 'InternalItemID',
@@ -54,21 +54,21 @@ class ProductBulkLoader extends CsvBulkLoader{
 	 		$SQL_fieldValue = Convert::raw2sql($record[$fieldName]);	
 	 	until patch gets applied by SS team
 	*/	   	
-	 		   	
+	
 	public $duplicateChecks = array(
-		'InternalItemID' => 'InternalItemID', // use internalItemID for duplicate checks
-		'Product ID' => 'InternalItemID',
-		'ProductID' => 'InternalItemID',
-		'SKU' => 'InternalItemID',
+		'InternalItemID' => 'InternalItemID',
+		//'Product ID' => 'InternalItemID', //TODO: can't check different fields until this patch is applied to CsvBulkLoader: http://open.silverstripe.org/ticket/6255
+		//'ProductID' => 'InternalItemID',
+		//'SKU' => 'InternalItemID',
 		'Title' => 'Title'
 	);
 
 	public $relationCallbacks = array(
-		'Image' => array(
+		'ImageP' => array(
 			'relationname' => 'Image', // relation accessor name
 			'callback' => 'imageByFilename'
 		),
-		'Photo' => array(
+		'PhotoP' => array(
 			'relationname' => 'Image', // relation accessor name
 			'callback' => 'imageByFilename'
 		)
