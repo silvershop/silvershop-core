@@ -15,6 +15,7 @@ class EcommercePayment extends DataObjectDecorator {
 			),
 			'searchable_fields' => array(
 				'OrderID' => array('title' => 'Order ID'),
+				//'Created' => array('title' => 'Date','filter' => 'WithinDateRangeFilter','field' => 'DateRangeField'), //TODO: filter and field not implemented yet				
 				'IP' => array('title' => 'IP Address', 'filter' => 'PartialMatchFilter'),
 				'Status'
 			)
