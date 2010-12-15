@@ -1164,7 +1164,7 @@ class Order_CancelForm extends Form {
 		);
 
 		$actions = new FieldSet(
-			new FormAction('doCancel', 'Cancel this order')
+			new FormAction('doCancel', _t('Order.CANCELORDER','Cancel this order'))
 		);
 
 		parent::__construct($controller, $name, $fields, $actions);

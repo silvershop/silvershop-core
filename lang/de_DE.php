@@ -104,6 +104,7 @@ $lang['de_DE']['MemberForm']['SAVE'] = 'Speichern';
 $lang['de_DE']['MemberForm']['SAVEANDPROCEED'] = 'Speichern und Bestellung abschließen';
 $lang['de_DE']['Order']['INCOMPLETE'] = 'Bestellung unvollständig';
 $lang['de_DE']['Order']['SUCCESSFULL'] = 'Bestellung Erfolgreich';
+$lang['de_DE']['Order']['CANCELORDER'] = 'Bestellung stornieren';
 $lang['de_DE']['Order.ss']['TOTALOUTSTANDING'] = 'Gesamt ausstehend';
 $lang['de_DE']['Order.ss']['CUSTOMERORDERNOTE'] = 'Kunden Benachrichtigung';
 $lang['de_DE']['Order_Content.ss']['NOITEMS'] = 'Ihre Bestellung weist <strong>keine</strong> Artikel auf';
