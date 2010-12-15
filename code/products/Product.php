@@ -192,6 +192,9 @@ class Product extends Page {
 	 * Generates variations based on selected attributes. 
 	 */
 	function generateVariationsFromAttributes(ProductAttributeType $attributetype, array $values){
+		
+		//TODO: introduce transactions here, in case objects get half made etc
+		
 		//if product has variation attribute types
 		if(is_array($values)){
 			
@@ -204,13 +207,14 @@ class Product extends Page {
 				
 				//delete old variation, and create new ones - to prevent modification of exising variations
 				foreach($existingvariations as $oldvariation){
-					
+
+					$oldvalues = $oldvariation->AttributeValues();
 					
 					foreach($avalues as $value){
 					
 						$newvariation = $oldvariation->duplicate();
 						$newvariation->InternalItemID = $this->InternalItemID.'-'.$newvariation->ID;
-						$newvariation->AttributeValues()->addMany($oldvariation->AttributeValues());
+						$newvariation->AttributeValues()->addMany($oldvalues);
 						
 						
 						$newvariation->AttributeValues()->add($value);
@@ -218,9 +222,11 @@ class Product extends Page {
 						
 						$existingvariations->add($newvariation);
 					}
-					
+					$existingvariations->remove($oldvariation);
+					$oldvariation->AttributeValues()->removeAll();
 					$oldvariation->delete();
-					$oldvariation->destroy(); //TODO: check that old variations stick around, as they will be needed for past orders etc
+					$oldvariation->destroy();
+					//TODO: check that old variations actually stick around, as they will be needed for past orders etc
 				}				
 				
 			}else{

@@ -64,11 +64,11 @@ class ProductBulkLoader extends CsvBulkLoader{
 	);
 
 	public $relationCallbacks = array(
-		'ImageP' => array(
+		'Image' => array(
 			'relationname' => 'Image', // relation accessor name
 			'callback' => 'imageByFilename'
 		),
-		'PhotoP' => array(
+		'Photo' => array(
 			'relationname' => 'Image', // relation accessor name
 			'callback' => 'imageByFilename'
 		)
