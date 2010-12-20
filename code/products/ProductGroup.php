@@ -158,6 +158,7 @@ class ProductGroup extends Page {
 		if($products && $products instanceof DataObjectSet) $products->removeDuplicates();
 		if($products) {
 			if(self::get_only_show_products_that_can_purchase()) {
+
 				foreach($products as $product) {
 					if(!$product->canPurchase()) {
 						$products->remove($product);

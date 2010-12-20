@@ -75,7 +75,7 @@ class Product extends Page {
 	 */
 	protected static $global_allow_purchase = true;
 		static function set_global_allow_purchase($v){self::$global_allow_purchase = $v;}
-		static function get_global_allow_purchase(){$sc = DataObject::get_one("SiteConfig"); if($sc) {return $sc->ShopOpenForBusiness;}}
+		static function get_global_allow_purchase(){return self::$global_allow_purchase;}
 
 	function getCMSFields() {
 		//prevent calling updateCMSFields extend function too early
@@ -281,14 +281,16 @@ class Product extends Page {
 					break;
 				}
 			}
-		}elseif($this->Price > 0){
+		}
+		elseif($this->Price > 0){
 			$allowpurchase = true;
 		}
-
 		// Standard mechanism for accepting permission changes from decorators
 		$extended = $this->extendedCan('canPurchase', $member);
-		if($allowpurchase && $extended !== null) $allowpurchase = $extended;
-
+		if($allowpurchase && $extended !== null) {
+			$allowpurchase = $extended;
+		}
+		return 1;
 		return $allowpurchase;
 	}
 
