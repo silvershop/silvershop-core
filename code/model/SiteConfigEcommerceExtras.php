@@ -34,6 +34,7 @@ class SiteConfigEcommerceExtras extends DataObjectDecorator {
 		$update = array();
 		$siteConfig = DataObject::get_one("SiteConfig");
 		if($siteConfig) {
+			/*
 			if(!$siteConfig->ReceiptEmail) {
 				$siteConfig->ReceiptEmail = Order::get_receipt_email();
 				$update[]= "created default entry for ReceiptEmail";
@@ -54,6 +55,7 @@ class SiteConfigEcommerceExtras extends DataObjectDecorator {
 				$siteConfig->write();
 				DB::alteration_message($siteConfig->ClassName." created/updated: ".implode(" --- ",$update), 'created');
 			}
+			*/
 		}
 	}
 }
