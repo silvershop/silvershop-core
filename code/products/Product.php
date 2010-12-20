@@ -238,18 +238,20 @@ class Product extends Page {
 	}
 
 	protected function getProductGroupsTable() {
+		$stage = Versioned::current_stage();
+		if($stage) {
+			$stage = "_".$stage;
+		}
 		$tableField = new ManyManyComplexTableField(
 			$this,
 			'ProductGroups',
 			'ProductGroup',
 			array('Title' => 'Product Group Page Title'),
-			null,
-			"\"ProductGroup\".\"ID\" NOT IN (".$this->ParentID.")"
+			$detailFormFields = null,
+			$sourceFilter = '`SiteTree'.$stage.'`.`ID` <> '.intval($this->ParentID)
 		);
-		$tableField->setPageSize(30);
+		$tableField->setPageSize(100);
 		$tableField->setPermissions(array());
-		//TODO: use a tree structure for selecting groups
-		//$field = new TreeMultiselectField('ProductGroups','Product Groups','ProductGroup');
 		return $tableField;
 	}
 
