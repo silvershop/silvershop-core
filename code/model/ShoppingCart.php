@@ -351,7 +351,7 @@ class ShoppingCart extends Controller {
 	static function return_data($status = "success",$message = null){
 
 		if(Director::is_ajax()){
-			$obj = singleton(self::$response_class);
+			$obj = new self::$response_class();
 			return $obj->ReturnCartData($status, $message);
 		}
 		//TODO: set session / status in session (like Form sessionMesssage)
