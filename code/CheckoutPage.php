@@ -263,7 +263,7 @@ class CheckoutPage_Controller extends Page_Controller {
 	 */
 	function Message() {
 		$orderID = Director::urlParam('Action');
-		$checkoutLink = self::find_link();
+		$checkoutLink = CheckoutPage::find_link();
 		if($memberID = Member::currentUserID()) {
 			if($order = DataObject::get_one('Order', "\"Order\".\"ID\" = '$orderID' AND \"Order\".\"MemberID\" = '$memberID'")) {
 				$this->UsefulLinks[] = array("Title" => $this->FinalizedOrderLinkLabel, "Link" => $order->Link());
