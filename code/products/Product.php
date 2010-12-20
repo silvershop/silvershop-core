@@ -115,8 +115,9 @@ class Product extends Page {
 			)
 		);
 
-		if($tempextvar)
+		if($tempextvar) {
 			$this->extend('updateCMSFields', $fields);
+		}
 		return $fields;
 	}
 
@@ -241,9 +242,9 @@ class Product extends Page {
 			$this,
 			'ProductGroups',
 			'ProductGroup',
-			array(
-				'Title' => 'Product Group Page Title'
-			)
+			array('Title' => 'Product Group Page Title'),
+			null,
+			"\"ProductGroup\".\"ID\" NOT IN (".$this->ParentID.")"
 		);
 		$tableField->setPageSize(30);
 		$tableField->setPermissions(array());
