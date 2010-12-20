@@ -15,7 +15,6 @@
 
 		init: function() {
 			this.passwordInitalisation();
-			$("#OrderFormWithoutShippingAddress_OrderForm_action_useDifferentShippingAddress").hide();
 		},
 
 		passwordInitalisation: function() {

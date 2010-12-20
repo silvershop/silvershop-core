@@ -9,14 +9,15 @@
  */
 class OrderItem extends OrderAttribute {
 
-	protected $_id;
-
-	protected $_quantity;
-
-	static $disable_quantity_js = false;
+	protected static $disable_quantity_js = false;
+		static function disable_quantity_js(){self::$disable_quantity_js = true;}
+		static function get_quantity_js(){return self::$disable_quantity_js;}
+		static function set_quantity_js($v){self::$disable_quantity_js = $v;}
 
 	public static $db = array(
-		'Quantity' => 'Int'
+		'Quantity' => 'Double',
+		'ItemID' => 'Int',
+		'Version' => 'Int'
 	);
 
 	public static $casting = array(
@@ -56,19 +57,26 @@ class OrderItem extends OrderAttribute {
 
 	public static $plural_name = "Order Items";
 
-	public static $default_sort = "\"Created\" DESC";
-
-
+	/*
 	public function __construct($object = null, $quantity = 1) {
-
-		if(is_array($object))
-			parent::__construct($object);
-		else
-			parent::__construct();
+		if(is_array($object)) {
+			//object is its own data-record...
+		}
+		else {
+ 			$this->Quantity = $quantity;
+			$this->Version = $object->Version;
+ 			$this->ItemID = $object->ID;
+		}
+		parent::__construct($object);
 	}
+	*/
 
-	static function disable_quantity_js(){
-		self::$disable_quantity_js = true;
+
+	public function addItem($object, $quantity = 1) {
+		parent::addItem($object);
+		$this->Version = $object->Version;
+		$this->ItemID = $object->ID;
+		$this->Quantity = $quantity;
 	}
 
 	function updateForAjax(array &$js) {
@@ -79,27 +87,17 @@ class OrderItem extends OrderAttribute {
 		$js[] = array('name' => $this->QuantityFieldName(), 'parameter' => 'value', 'value' => $this->Quantity);
 	}
 
-	/**
-	 * Populate some OrderItem object attributes before
-	 * writing them to the OrderItem DB record.
-	 *
-	 * PRECONDITION: The order item is not saved in the database yet.
-	 */
+
 	function onBeforeWrite() {
 		parent::onBeforeWrite();
-
+		$this->ItemID = $this->ItemID;
+		$this->Version = $this->Version;
 		//always keep quantity above 0
-		if($this->Quantity < 1)
+		if(floatval($this->Quantity) == 0) {
 			$this->Quantity = 1;
+		}
+		//product ID and version ID need to be set in subclasses
 	}
-
-	/**
-	 * Get the quantity attribute from memory.
-	 * @return int
-	 */
-	/*public function getQuantity() {
-		return $this->_quantity;
-	}*/
 
 	/**
 	 * Set the quantity attribute in memory.
@@ -122,14 +120,13 @@ class OrderItem extends OrderAttribute {
 	}
 
 	function hasSameContent($orderItem) {
-		return $orderItem instanceof OrderItem;
+		return $orderItem instanceof OrderItem && $this->ItemID == $orderItem->ItemID && $this->Version == $orderItem->Version;
 	}
 
 	public function debug() {
-		$id = $this->ID ? $this->ID : $this->_id;
+		$id = $this->ID ? $this->ID : $this->ItemID;
 		$quantity = $this->Quantity;
 		$orderID = $this->ID ? $this->OrderID : 'The order has not been saved yet, so there is no ID';
-
 		return <<<HTML
 			<h2>$this->class</h2>
 			<h3>OrderItem class details</h3>
@@ -172,11 +169,38 @@ HTML;
 	}
 
 	function TableTitle() {
-		return 'Product';
+		return $this->ClassName;
+	}
+
+	function Item($current = false) {
+		$className = $this->ItemClassName();
+		if($this->ItemID && $this->Version && !$current) {
+			return Versioned::get_version($className, $this->ItemID, $this->Version);
+		}
+		else {
+			return DataObject::get_by_id($className, $this->ItemID);
+		}
+	}
+
+	function ItemClassName() {
+		$className = str_replace(EcommerceItemDecorator::get_order_item_class_name_post_fix(), "", $this->ClassName);
+		if(class_exists($className) && ClassInfo::is_subclass_of($className, "DataObject")) {
+			return $className;
+		}
+		else {
+			user_error($this->ClassName." does not have an item class: $className", E_USER_WARNING);
+		}
+	}
+
+	function ItemTitle() {
+		if($item = $this->Item()) {
+			return $item->Title;
+		}
+		return "Title not found";
 	}
 
 	function ProductTitle() {
-		return $this->Product()->Title;
+		return $this->ItemTitle();
 	}
 
 	function CartQuantityID() {
@@ -186,5 +210,33 @@ HTML;
 	function checkoutLink() {
 		return CheckoutPage::find_link();
 	}
+
+
+	## Often Overloaded functions ##
+
+	function addLink() {
+		return ShoppingCart::add_item_link($this->ItemID, $this->ClassName,$this->linkParameters());
+	}
+
+	function removeLink() {
+		return ShoppingCart::remove_item_link($this->ItemID, $this->ClassName,$this->linkParameters());
+	}
+
+	function removeAllLink() {
+		return ShoppingCart::remove_all_item_link($this->ItemID, $this->ClassName,$this->linkParameters());
+	}
+
+	function setQuantityLink() {
+		return ShoppingCart::set_quantity_item_link($this->ItemID, $this->ClassName,$this->linkParameters());
+	}
+
+	function linkParameters(){
+		$array = array();
+		$this->extend('updateLinkParameters',$array);
+		return $array;
+	}
+
+
+
 
 }
