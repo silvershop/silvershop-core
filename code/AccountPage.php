@@ -67,8 +67,8 @@ class AccountPage extends Page {
 	 */
 	function IncompleteOrders() {
 		$memberID = Member::currentUserID();
-		$statusFilter = "\"Order\".\"Status\" NOT IN ('" . implode("','", Order::$paid_status) . "')";
-		$statusFilter .= " AND \"Order\".\"Status\" NOT IN('". implode("','", Order::$hidden_status) ."')";
+		$statusFilter = "\"Order\".\"Status\" NOT IN ('" . implode("','", Order::get_paid_status()) . "')";
+		$statusFilter .= " AND \"Order\".\"Status\" NOT IN('". implode("','", Order::get_hidden_status()) ."')";
 		return DataObject::get('Order', "\"Order\".\"MemberID\" = '$memberID' AND $statusFilter", "\"Created\" DESC");
 	}
 
