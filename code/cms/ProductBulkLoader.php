@@ -181,7 +181,7 @@ class ProductBulkLoader extends CsvBulkLoader{
 				//create parent product group
 				$pg = new $className();
 				$pg->setTitle($title);
-				$pg->ParentID = (self::$parent_page_id) ? $self::$parent_page_id : 0;
+				$pg->ParentID = (self::$parent_page_id) ? self::$parent_page_id : 0;
 				$pg->writeToStage('Stage');
 				$pg->publish('Stage', 'Live');
 				$obj->ParentID = $pg->ID;
