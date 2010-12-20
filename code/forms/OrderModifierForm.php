@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @TODO What does this class do in relation to
+ * @description: this class is the base class for forms in the checkout form... we could do with more stuff here....
  *
  * @see OrderModifier
  *
