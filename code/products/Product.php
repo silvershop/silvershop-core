@@ -16,7 +16,7 @@ class Product extends Page {
 
 	public static $db = array(
 		'Price' => 'Currency',
-		'Weight' => 'Decimal(9,2)',
+		'Weight' => 'Decimal(9,4)',
 		'Model' => 'Varchar(30)',
 		'FeaturedProduct' => 'Boolean',
 		'AllowPurchase' => 'Boolean',
