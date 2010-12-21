@@ -1,67 +1,45 @@
-<table cellspacing="0" cellpadding="0">
+<table id="InformationTable" class="infotable">
 	<thead>
 		<tr>
-			<th scope="col" class="title"><% _t("PRODUCT","Product") %></th>
-			<th scope="col" class="quantity"><% _t("QUANTITY", "Quantity") %></th>
-			<th scope="col" class="price"><% _t("PRICE","Price") %> ($Currency)</th>
-			<th scope="col" class="price"><% _t("TOTALPRICE","Total Price") %> ($Currency)</th>
+			<th scope="col" class="left"><% _t("PRODUCT","Product") %></th>
+			<th scope="col" class="center"><% _t("QUANTITY", "Quantity") %></th>
+			<th scope="col" class="right"><% _t("PRICE","Price") %> ($Currency)</th>
+			<th scope="col" class="right"><% _t("TOTALPRICE","Total Price") %> ($Currency)</th>
 		</tr>
 	</thead>
 	<tbody>
-		<% if Items %>
-			<% control Items %>
-				<% if ShowInTable %>
-					<tr id="$TableID" class="$Classes">
-						<td<% if Link %><% else %> id="$TableTitleID"<% end_if %> scope="row" class="title">
-							<% if Link %>
-								<a id="$TableTitleID" href="$Link" title="<% sprintf(_t("READMORE","Click here to read more on &quot;%s&quot;"),$TableTitle) %>">$TableTitle</a>
-							<% else %>
-								$TableTitle
-							<% end_if %>
-						</td>
-						<td class="quantity">$Quantity</td>
-						<td class="price">$UnitPrice.Nice</td>
-						<td id="$TableTotalID" class="price">$Total.Nice</td>
-					</tr>
+		<% control Items %>
+		<tr  class="itemRow $EvenOdd $FirstLast">
+			<td class="product title" scope="row">
+				<% if Link %>
+					<a href="$Link" title="<% sprintf(_t("READMORE","Click here to read more on &quot;%s&quot;"),$Title) %>">$ProductTitle</a>
+				<% else %>
+					$ProductTitle
 				<% end_if %>
-			<% end_control %>
+			</td>
+			<td class="center quantity">$Quantity</td>
+			<td class="right unitprice">$UnitPrice.Nice</td>
+			<td class="right total">$Total.Nice</td>
+		</tr>
+		<% end_control %>
 
-			<tr class="othertotal">
-				<td colspan="3" scope="row" class="title"><% _t("SUBTOTAL","Sub-total") %></td>
-				<td id="$TableSubTotalID" class="price">$SubTotal.Nice</td>
-			</tr>
+		<tr class="gap summary" id="SubTotal">
+			<td colspan="3" scope="row" class="threeColHeader subtotal"><% _t("SUBTOTAL","Sub-total") %></td>
+			<td class="right">$SubTotal.Nice</td>
+		</tr>
 
-			<% control Modifiers %>
-				<% if ShowInTable %>
-					<tr id="$TableID" class="$Classes">
-						<td<% if Link %><% else %> id="$TableTitleID"<% end_if %> colspan="3" scope="row" class="title">
-							<% if Link %>
-								<a id="$TableTitleID" href="$Link" title="<% sprintf(_t("READMORE","Click here to read more on &quot;%s&quot;"),$TableTitle) %>">$TableTitle</a>
-							<% else %>
-								$TableTitle
-							<% end_if %>
-						</td>
-						<td id="$TableTotalID" class="price">$TableValue.Nice</td>
-					</tr>
-				<% end_if %>
-			<% end_control %>
+		<% control Modifiers %>
+			<% if ShowInTable %>
+		<tr class="modifierRow $EvenOdd $FirstLast $Classes">
+			<td colspan="3" scope="row">$TableTitle</td>
+			<td class="right">$TableValue.Nice</td>
+		</tr>
+			<% end_if %>
+		<% end_control %>
 
-			<tr class="total">
-				<td colspan="3" scope="row" class="title"><% _t("TOTAL","Total") %></td>
-				<td id="$TableTotalID" class="price">$Total.Nice $Currency</td>
-			</tr>
-
-			<tr><td colspan="4" class="transparent"></td></tr>
-
-			<tr class="othertotal">
-				<td class="transparent"></td>
-				<td colspan="2" scope="row" class="title"><% _t("TOTALOUTSTANDING","Total outstanding") %></td>
-				<td class="price">$TotalOutstanding.Nice $Currency</td>
-			</tr>
-		<% else %>
-			<tr>
-				<td colspan="4" scope="row" class="title"><% _t("NOITEMS","There are <strong>no</strong> items in your order.") %></td>
-			</tr>
-		<% end_if %>
+		<tr class="gap summary total" id="Total">
+			<td colspan="3" scope="row" class="threeColHeader total"><% _t("TOTAL","Total") %></td>
+			<td class="right">$Total.Nice $Currency</td>
+		</tr>
 	</tbody>
 </table>

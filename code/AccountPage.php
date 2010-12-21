@@ -7,27 +7,25 @@
  */
 class AccountPage extends Page {
 
-	static $add_action = 'an Account Page';
+	public static $add_action = 'an Account Page';
 
-	static $icon = 'ecommerce/images/icons/account';
+	public static $icon = 'ecommerce/images/icons/account';
 
-	static $db = array(
+	public static $db = array(
 
 	);
 
-
 	function canCreate() {
-		$bt = defined('DB::USE_ANSI_SQL') ? "\"" : "`";
-		return !DataObject::get_one("SiteTree", "{$bt}ClassName{$bt} = 'AccountPage'");
+		return !DataObject::get_one("SiteTree", "\"ClassName\" = 'AccountPage'");
 	}
 
 	/**
 	 * Returns the link or the URLSegment to the account page on this site
 	 * @param boolean $urlSegment Return the URLSegment only
 	 */
-	static function find_link($urlSegment = false) {
+	public static function find_link($useURLSegment = false) {
 		$page = self::get_if_account_page_exists();
-		return ($urlSegment) ? $page->URLSegment : $page->Link();
+		return ($useURLSegment) ? $page->URLSegment : $page->Link();
 	}
 
 	/**
@@ -36,7 +34,7 @@ class AccountPage extends Page {
 	 * @param int|string $orderID ID of the order
 	 * @param boolean $urlSegment Return the URLSegment only
 	 */
-	static function get_order_link($orderID, $urlSegment = false) {
+	public static function get_order_link($orderID, $urlSegment = false) {
 		$page = self::get_if_account_page_exists();
 		return ($urlSegment ? $page->URLSegment . '/' : $page->Link()) . 'order/' . $orderID;
 	}
@@ -56,8 +54,9 @@ class AccountPage extends Page {
 	 */
 	function CompleteOrders() {
 		$memberID = Member::currentUserID();
-		$statusFilter = "Order.Status IN ('" . implode("','", Order::$paid_status) . "')";
-		return DataObject::get('Order', "Order.MemberID = '$memberID' AND $statusFilter", "Created DESC");
+		$statusFilter = "\"Order\".\"Status\" IN ('" . implode("','", Order::get_paid_status()) . "')";
+		$statusFilter .= " AND \"Order\".\"Status\" NOT IN('". implode("','", Order::get_hidden_status()) ."')";
+		return DataObject::get('Order', "\"Order\".\"MemberID\" = '$memberID' AND $statusFilter", "\"Created\" DESC");
 	}
 
 	/**
@@ -68,8 +67,9 @@ class AccountPage extends Page {
 	 */
 	function IncompleteOrders() {
 		$memberID = Member::currentUserID();
-		$statusFilter = "Order.Status NOT IN ('" . implode("','", Order::$paid_status) . "')";
-		return DataObject::get('Order', "Order.MemberID = '$memberID' AND $statusFilter", "Created DESC");
+		$statusFilter = "\"Order\".\"Status\" NOT IN ('" . implode("','", Order::get_paid_status()) . "')";
+		$statusFilter .= " AND \"Order\".\"Status\" NOT IN('". implode("','", Order::get_hidden_status()) ."')";
+		return DataObject::get('Order', "\"Order\".\"MemberID\" = '$memberID' AND $statusFilter", "\"Created\" DESC");
 	}
 
 	/**
@@ -109,6 +109,8 @@ class AccountPage_Controller extends Page_Controller {
 			Security::permissionFailure($this, $messages);
 			return false;
 		}
+
+
 	}
 
 	/**
@@ -125,8 +127,15 @@ class AccountPage_Controller extends Page_Controller {
 		$accountPageLink = AccountPage::find_link();
 
 		if($orderID = $request->param('ID')) {
-			if($order = DataObject::get_one('Order', "Order.ID = '$orderID' AND Order.MemberID = '$memberID'")) {
-				return array('Order' => $order);
+			if($order = DataObject::get_one('Order', "\"Order\".\"ID\" = '$orderID' AND \"Order\".\"MemberID\" = '$memberID'")) {
+
+				$paymentform = ($order->TotalOutstanding() > 0) ? $this->CancelForm() : null;
+
+
+				return array(
+					'Order' => $order,
+					'Form' => $paymentform
+				);
 			}
 			else {
 				return array(
@@ -161,13 +170,16 @@ class AccountPage_Controller extends Page_Controller {
 	 * @return Order_CancelForm
 	 */
 	function CancelForm() {
-		return null; // This needs to be fixed, URL routing is broken so ID doesn't get picked up
+		$memberID = Member::currentUserID();
+		$orderID = $this->getRequest()->param('ID');
+		if(!$orderID) $orderID = (isset($_POST['OrderID']) && is_numeric($_POST['OrderID'])) ? $_POST['OrderID'] : null;
 
-		if($order = DataObject::get_by_id('Order', (int) Director::urlParam('ID'))) {
+		if(is_numeric($orderID) && $order = DataObject::get_one('Order', "\"Order\".\"ID\" = '$orderID' AND \"Order\".\"MemberID\" = '$memberID'")) {
 			if($order->canCancel()) {
 				return new Order_CancelForm($this, 'CancelForm', $order->ID);
 			}
 		}
+		return null;
 	}
 
 }

@@ -19,22 +19,7 @@
 									<% _t("PRICE","Price") %> : <strong>$UnitPrice.Nice</strong>
 								</span>
 								<span class="quantity">
-									Quantity :
-									<strong>
-										<a class="ajaxQuantityLink" href="$removeLink" title="<% sprintf(_t("REMOVEONE","Remove one of &quot;%s&quot; from your cart"),$CartTitle.XML) %>">
-											<img src="ecommerce/images/minus.gif" alt="-"/>
-										</a>
-									</strong>
-									<% if AjaxQuantityField %>
-										$AjaxQuantityField
-									<% else %>
-										$Quantity
-									<% end_if %>
-									<strong>
-										<a class="ajaxQuantityLink" href="$addLink" title="<% sprintf(_t("ADDONE","Add one more of &quot;%s&quot; to your cart"),$CartTitle.XML) %>">
-											<img src="ecommerce/images/plus.gif" alt="+"/>
-										</a>
-									</strong>
+									Quantity : $QuantityField
 								</span>
 								<span class="remove">
 									<a class="ajaxQuantityLink" href="$removeallLink" title="<% sprintf(_t("REMOVEALL","Remove all of &quot;%s&quot; from your cart"),$CartTitle.XML) %>">

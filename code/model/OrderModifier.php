@@ -93,17 +93,16 @@ class OrderModifier extends OrderAttribute {
 	public static $summary_fields = array(
 		"Order.ID" => "Order ID",
 		"TableTitle" => "Table Title",
-		"CartTitle" => "Cart Title",
 		"ClassName" => "Type",
 		"Amount" => "Amount" ,
 		"Type" => "Type"
 	);
 
-	public static $singular_name = "Order Modifiers";
+	public static $singular_name = "Order Modifier";
 
 	public static $plural_name = "Order Modifiers";
 
-	public static $default_sort = "Created DESC";
+	public static $default_sort = "\"Created\" DESC";
 
 	/**
 	 * This function is always called to determine the
@@ -120,7 +119,7 @@ class OrderModifier extends OrderAttribute {
 	 * calculation based on the order and it's items.
 	 */
 	function Amount() {
-		return $this->ID ? $this->Amount : $this->LiveAmount();
+		return ($this->isLive()) ? $this->LiveAmount() : $this->Amount;
 	}
 
 	function TableValue() {
@@ -128,7 +127,7 @@ class OrderModifier extends OrderAttribute {
 			return $this->Amount();
 		}
 		else {
-		 return "-".$this->Amount();
+		 return "-".$this->Amount(); //TODO: this is different from the bracket syntax for displaying negatives
 		}
 	}
 
@@ -164,7 +163,7 @@ class OrderModifier extends OrderAttribute {
 	 * @return boolean
 	 */
 	function IsChargable() {
-		return $this->ID ? $this->Type == 'Chargable' : $this->stat('is_chargable');
+		return $this->stat('is_chargable');
 	}
 
 	/**
@@ -181,11 +180,12 @@ class OrderModifier extends OrderAttribute {
 	 * @return string
 	 */
 	function TableTitle() {
-		return 'Modifier';
+		return 'Modifier'; //TODO: i18n
 	}
 
 	/**
-	 * @TODO Write a description of what this method does.
+	 * Checks if the modifier can be removed.
+	 * Default check is for whether it is chargable.
 	 *
 	 * @return boolean
 	 */
@@ -194,7 +194,7 @@ class OrderModifier extends OrderAttribute {
 	}
 
 	/**
-	 * @TODO Write a description of what this method does.
+	 * Provides a modifier total that is positive or negative, depending on whether the modifier is chargable or not. 
 	 *
 	 * @return boolean
 	 */
@@ -203,16 +203,8 @@ class OrderModifier extends OrderAttribute {
 		return ($this->IsChargable() ? 1 : -1) * $amount;
 	}
 
-	function updateForAjax(array &$js) {
-		$amount = $this->obj('Amount')->Nice();
-
-		$js[] = array('id' => $this->CartTotalID(), 'parameter' => 'innerHTML', 'value' => $amount);
-		$js[] = array('id' => $this->TableTotalID(), 'parameter' => 'innerHTML', 'value' => $amount);
-		$js[] = array('id' => $this->TableTitleID(), 'parameter' => 'innerHTML', 'value' => $this->TableTitle());
-	}
-
 	function removeLink() {
-		return ShoppingCart_Controller::remove_modifier_link($this->_id);
+		return ShoppingCart::remove_modifier_link($this->_id);
 	}
 
 	/**
@@ -229,6 +221,14 @@ class OrderModifier extends OrderAttribute {
 
 		$this->Amount = $this->Amount();
 		$this->Type = $this->stat('is_chargable') ? 'Chargable' : 'Deductable';
+	}
+
+	function updateForAjax(array &$js) {
+		$amount = $this->obj('Amount')->Nice();
+
+		$js[] = array('id' => $this->CartTotalID(), 'parameter' => 'innerHTML', 'value' => $amount);
+		$js[] = array('id' => $this->TableTotalID(), 'parameter' => 'innerHTML', 'value' => $amount);
+		$js[] = array('id' => $this->TableTitleID(), 'parameter' => 'innerHTML', 'value' => $this->TableTitle());
 	}
 
 	/**

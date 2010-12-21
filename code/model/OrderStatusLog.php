@@ -52,7 +52,7 @@ class OrderStatusLog extends DataObject {
 
 	public static $plural_name = "Order Status Log Entries";
 
-	public static $default_sort = "Created DESC";
+	public static $default_sort = "\"Created\" DESC";
 
 	function onBeforeSave() {
 		if(!$this->ID) {
@@ -92,7 +92,7 @@ class OrderStatusLog extends DataObject {
 
 	protected function updateWithLastInfo() {
 		if($this->OrderID) {
-			$logs = DataObject::get('OrderStatusLog', "OrderID = {$this->OrderID}", "Created DESC", null, 1);
+			$logs = DataObject::get('OrderStatusLog', "\"OrderID\" = {$this->OrderID}", "\"Created\" DESC", null, 1);
 			if($logs) {
 				$latestLog = $logs->First();
 				$this->DispatchedBy = $latestLog->DispatchedBy;

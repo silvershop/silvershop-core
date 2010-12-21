@@ -8,13 +8,24 @@ class OrderFilters_AroundDateFilter extends ExactMatchFilter {
 		static function get_how_many_days_around(){return self::$how_many_days_around;}
 
 	public function apply(SQLQuery $query) {
-		$bt = defined('DB::USE_ANSI_SQL') ? "\"" : "`";
 		$query = $this->applyRelation($query);
 		$value = $this->getValue();
 		$date = new Date();
 		$date->setValue($value);
 		$formattedDate = $date->format("Y-m-d");
-		return $query->where("(DATEDIFF({$bt}Order{$bt}.{$bt}Created{$bt}, '$formattedDate') > -".self::get_how_many_days_around()." AND DATEDIFF({$bt}Order{$bt}.{$bt}Created{$bt}, '$formattedDate') < ".self::get_how_many_days_around().")");
+
+		// changed for PostgreSQL compatability
+		// NOTE - we may wish to add DATEDIFF function to PostgreSQL schema, it's just that this would be the FIRST function added for SilverStripe
+		$db = DB::getConn();
+		if( $db instanceof PostgreSQLDatabase ) {
+			// don't know whether functions should be used, hence the following code using an interval cast to an integer
+			return $query->where("(\"Order\".\"Created\"::date - '$formattedDate'::date)::integer > -".self::get_how_many_days_around()." AND (\"Order\".\"Created\"::date - '$formattedDate'::date)::integer < ".self::get_how_many_days_around());
+		}
+		else {
+			// default is MySQL DATEDIFF() function - broken for others, each database conn type supported must be checked for!
+			return $query->where("(DATEDIFF(\"Order\".\"Created\", '$formattedDate') > -".self::get_how_many_days_around()." AND DATEDIFF(\"Order\".\"Created\", '$formattedDate') < ".self::get_how_many_days_around().")");
+		}
+
 	}
 
 	public function isEmpty() {
@@ -59,8 +70,8 @@ class OrderFilters_MustHaveAtLeastOnePayment extends SearchFilter {
 		$value = $this->getValue();
 		if($value) {
 			return $query->innerJoin(
-				$table = "Payment",
-				$onPredicate = "Payment.OrderID = Order.ID",
+				$table = "Payment", // framework already applies quotes to table names here!
+				$onPredicate = "\"Payment\".\"OrderID\" = \"Order\".\"ID\"",
 				$tableAlias=null
 			);
 		}

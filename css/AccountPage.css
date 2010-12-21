@@ -1,8 +1,9 @@
-/*
- * AccountPage stylesheet
- * Styling of past orders and the member form (if required) here
- */
- 
+/**
+  * IMPORTANT NOTE:
+  * The default e-commerce css only includes the basics and it is recommended that you theme these files.
+  * Also make sure you have the site's general layout and typography styled before you do this.
+  **/
+
 /*
  * Past orders div containing the order history styling
  */
@@ -30,5 +31,8 @@
 /* country select dropdown width is wrong, so reapply it */
 #ShopAccountForm_MemberForm #Country select {
 	width: 305px;
+}
+#PrintPageIcon img{
+	cursor: pointer;
 }
 

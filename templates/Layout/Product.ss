@@ -3,17 +3,16 @@
 <% end_control %>
 
 <div id="Product">
-	<% if Parent %><div id="Breadcrumbs" class="typography"><p>$Breadcrumbs</p></div><% end_if %>
 	<h1 class="pageTitle">$Title</h1>
-	
+
 	<div class="productDetails">
-	
+
 		<% if Image.ContentImage %>
 			<img class="productImage" src="$Image.ContentImage.URL" alt="<% sprintf(_t("IMAGE","%s image"),$Title) %>" />
-		<% else %>	
+		<% else %>
 			<div class="noimage">no image</div>
 		<% end_if %>
-		
+
 		<p><% _t("ItemID","Item #") %>{$ID}</p>
 		<% if Model %><p><% _t("MODEL","Model") %>: $Model.XML</p><% end_if %>
 		<% if Size %><p><% _t("SIZE","Size") %>: $Size.XML</p><% end_if %>
@@ -31,18 +30,12 @@
 								<% if canPurchase %>
 									<% if IsInCart %>
 										<% control Item %>
-											<a class="ajaxQuantityLink" href="$removeLink" title="<% sprintf(_t("REMOVEALL","Remove one of &quot;%s&quot; from your cart"),$Title.XML) %>">
-												<img src="ecommerce/images/minus.gif" alt="-" />
-											</a>	
-											$AjaxQuantityField
-											<a class="ajaxQuantityLink" href="$addLink" title="<% sprintf(_t("ADDONE","Add one more of &quot;%s&quot; to your cart"),$Title.XML) %>">
-												<img src="ecommerce/images/plus.gif" alt="+" />
-											</a>
+											$QuantityField
 										<% end_control %>
 									<% else %>
 										<a href="$Item.addLink" title="<% sprintf(_t("ADD","Add &quot;%s&quot; to your cart"),$Title.XML) %>"><% _t("ADDLINK","Add this item to cart") %></a>
 									<% end_if %>
-								
+
 								<% end_if %>
 								</td>
 							</tr>
@@ -56,13 +49,7 @@
 					<% control Item %>
 						<div class="quantityBox">
 							<span><% _t("QUANTITYCART","Quantity in cart") %>:</span>
-							<a class="ajaxQuantityLink" href="$removeLink" title="<% sprintf(_t("REMOVEALL","Remove one of &quot;%s&quot; from your cart"),$Title) %>">
-								<img src="ecommerce/images/minus.gif" alt="-" />
-							</a>	
-							$AjaxQuantityField
-							<a class="ajaxQuantityLink" href="$addLink" title="<% sprintf(_t("ADDONE","Add one more of &quot;%s&quot; to your cart"),$Title) %>">
-								<img src="ecommerce/images/plus.gif" alt="+" />
-							</a>
+							$QuantityField
 							<ul class="productActions">
 								<li><a href="$removeallLink" title="<% sprintf(_t("REMOVE","Remove &quot;%s&quot; from your cart"),$Title) %>"><% _t("REMOVELINK","&raquo; Remove from cart") %></a></li>
 								<li><a href="$checkoutLink" title="<% _t("GOTOCHECKOUT","Go to the checkout now") %>"><% _t("GOTOCHECKOUTLINK","&raquo; Go to the checkout") %></a></li>

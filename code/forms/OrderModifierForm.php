@@ -17,5 +17,15 @@ class OrderModifierForm extends Form {
 		parent::__construct($checkoutPage, $name, $fields, $actions, $validator);
 	}
 	*/
+
+	function redirect($status = "success", $message = ""){
+		if(Director::is_ajax()){
+			return ShoppingCart::return_data($status, $message);
+		}
+		Director::redirect(CheckoutPage::find_link());
+
+	}
+
+
 }
 

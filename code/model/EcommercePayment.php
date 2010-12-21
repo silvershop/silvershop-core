@@ -11,10 +11,11 @@ class EcommercePayment extends DataObjectDecorator {
 
 		return array(
 			'has_one' => array(
-				'Order' => 'Order'
+				'Order' => 'Order' //redundant...should be using PaidObject
 			),
 			'searchable_fields' => array(
 				'OrderID' => array('title' => 'Order ID'),
+				//'Created' => array('title' => 'Date','filter' => 'WithinDateRangeFilter','field' => 'DateRangeField'), //TODO: filter and field not implemented yet				
 				'IP' => array('title' => 'IP Address', 'filter' => 'PartialMatchFilter'),
 				'Status'
 			)
@@ -28,21 +29,35 @@ class EcommercePayment extends DataObjectDecorator {
 	function canDelete($member = null) {
 		return false;
 	}
+
 	/*
-	function updateSummaryFields(&$fields){
-		$fields['Created'] = 'Date';
-		$fields['OrderID'] = 'OrderID';
-		$fields['IP'] = 'Amount';
-		$fields['Total'] = 'Total';
+	function updateCMSFields(&$fields){
+		//DOES NOT WORK RIGHT NOW AS supported_methods is PROTECTED
+		//$options = $this->owner::$supported_methods;
+		/*
+		NEEDS A BIT MORE THOUGHT...
+		$classes = ClassInfo::subclassesFor("Payment");
+		unset($classes["Payment"]);
+		if($classes && !$this->owner->ID) {
+			$fields->addFieldToTab("Root.Main", new DropdownField("ClassName", "Type", $classes), "Status");
+		}
+		else {
+			$fields->addFieldToTab("Root.Main", new ReadonlyField("ClassNameConfirmation", "Type", $this->ClassName), "Status");
+		}
+		return $fields;
 	}
 	*/
 
-	function onBeforeWrite() {
-		if($this->owner->Status == 'Success' && $this->owner->Order()) {
-			$order = $this->owner->Order();
-			$order->Status = 'Paid';
-			$order->write();
-			$order->sendReceipt();
+
+	//TODO: this function could get called multiple times, resulting in unwanted logs , changes etc.
+	function onAfterWrite() {
+		if($this->owner->Status == 'Success' && $order = $this->owner->Order()) {
+
+			if(!$order->ReceiptSent){
+				$order->sendReceipt();
+				$order->updatePaymentStatus();
+			}
+
 		}
 	}
 
@@ -58,17 +73,16 @@ class EcommercePayment extends DataObjectDecorator {
 	}
 
 	function requireDefaultRecords() {
-		$bt = defined('DB::USE_ANSI_SQL') ? "\"" : "`";
 		parent::requireDefaultRecords();
 		if(isset($_GET["updatepayment"])) {
 			DB::query("
-				UPDATE {$bt}Payment{$bt}
-				SET {$bt}AmountAmount{$bt} = {$bt}Amount{$bt}
+				UPDATE \"Payment\"
+				SET \"AmountAmount\" = \"Amount\"
 				WHERE
-					{$bt}Amount{$bt} > 0
+					\"Amount\" > 0
 					AND (
-						{$bt}AmountAmount{$bt} IS NULL
-						OR {$bt}AmountAmount{$bt} = 0
+						\"AmountAmount\" IS NULL
+						OR \"AmountAmount\" = 0
 					)
 			");
 			$countAmountChanges = DB::affectedRows();
@@ -76,14 +90,14 @@ class EcommercePayment extends DataObjectDecorator {
 				DB::alteration_message("Updated Payment.Amount field to 2.4 - $countAmountChanges rows updated", "edited");
 			}
 			DB::query("
-				UPDATE {$bt}Payment{$bt}
-				SET {$bt}AmountCurrency{$bt} = {$bt}Currency{$bt}
+				UPDATE \"Payment\"
+				SET \"AmountCurrency\" = \"Currency\"
 				WHERE
-					{$bt}Currency{$bt} <> ''
-					AND {$bt}Currency{$bt} IS NOT NULL
+					\"Currency\" <> ''
+					AND \"Currency\" IS NOT NULL
 					AND (
-						{$bt}AmountCurrency{$bt} IS NULL
-						OR {$bt}AmountCurrency{$bt} = ''
+						\"AmountCurrency\" IS NULL
+						OR \"AmountCurrency\" = ''
 					)
 			");
 			$countCurrencyChanges = DB::affectedRows();
@@ -94,6 +108,10 @@ class EcommercePayment extends DataObjectDecorator {
 				DB::alteration_message("Potential error in Payment fields update to 2.4, please review data", "deleted");
 			}
 		}
+	}
+
+	function Status() {
+   		return _t('Payment.'.$this->owner->Status,$this->owner->Status);
 	}
 
 

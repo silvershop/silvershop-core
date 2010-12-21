@@ -1,4 +1,9 @@
-/** Minimal Checkout Page Styling **/
+/**
+  * IMPORTANT NOTE:
+  * The default e-commerce css only includes the basics and it is recommended that you theme these files.
+  * Also make sure you have the site's general layout and typography styled before you do this.
+  **/
+
 
 /* Information table styling */
 #InformationTable {
@@ -8,15 +13,15 @@
 /* CheckoutPage form styling */
 #LeftOrder,#RightOrder {
 	float: left;
-	
+
 }
 	#LeftOrder {width: 50%;}
 	#RightOrder {width: 50%;}
-	
+
 #LeftOrder .CompositeField{
 	margin-right:10px;
 }
-	
+
 #BottomOrder {
 	clear: both;
 }
@@ -29,7 +34,7 @@
 	#Checkout form input.nolabel{
 		margin-left:30%;
 	}
-	
+
 	#Checkout form input.text{
 		width:50%;
 	}

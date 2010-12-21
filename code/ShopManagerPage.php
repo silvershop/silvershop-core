@@ -8,16 +8,15 @@
 
 class ShopManagerPage extends Page {
 
-	static $icon = "ecommerce/images/treeicons/ShopManagerPage";
+	public static $icon = "ecommerce/images/treeicons/ShopManagerPage";
 
-	static $defaults = array(
+	public static $defaults = array(
 		"ShowInMenus" => 0,
 		"ShowInSearch" => 0
 	);
 
 	function canCreate() {
-		$bt = defined('DB::USE_ANSI_SQL') ? "\"" : "`";
-		return !DataObject::get_one("SiteTree", "{$bt}ClassName{$bt} = 'ShopManagerPage'");
+		return !DataObject::get_one("SiteTree", "\"ClassName\" = 'ShopManagerPage'");
 	}
 
 	function canView($member = null) {
@@ -43,6 +42,7 @@ class ShopManagerPage_Controller extends Page_Controller {
 	function init() {
 		// Only administrators can run this method
 		parent::init();
+		Requirements::javascript(THIRDPARTY_DIR . '/jquery/jquery.js');
 		Requirements::themedCSS("ShopManagerPage");
 		Requirements::javascript("ecommerce/javascript/ShopManagerPage.js");
 	}
@@ -56,7 +56,7 @@ class ShopManagerPage_Controller extends Page_Controller {
 	}
 
 	function LastOrders() {
-		return DataObject::get("Order", "", "Created DESC", "", "0, 250");
+		return DataObject::get("Order", "", "\"Created\" DESC", "", "0, 250");
 	}
 
 	function clearcompletecart() {
@@ -80,9 +80,8 @@ class ShopManagerPage_Controller extends Page_Controller {
 	}
 
 	function getorderdetailsforadmin() {
-		$bt = defined('DB::USE_ANSI_SQL') ? "\"" : "`";
 		$orderID = intval(Director::URLParam("ID"));
-		$dos = DataObject::get("OrderModifier", "{$bt}OrderID{$bt} = '$orderID'");
+		$dos = DataObject::get("OrderModifier", "\"OrderID\" = '$orderID'");
 		$v = print_r($dos);
 		$this->Content = $v;
 		return array();
@@ -91,7 +90,7 @@ class ShopManagerPage_Controller extends Page_Controller {
 	function testorderreceipt() {
 		$orderID = intval(Director::URLParam("ID"));
 		if(!$orderID) {
-			$o = DataObject::get_one("Order", "", "Created DESC");
+			$o = DataObject::get_one("Order", "", "\"Created\" DESC");
 			if($o) {
 				$orderID = $o->ID;
 			}
@@ -125,7 +124,7 @@ class ShopManagerPage_Controller extends Page_Controller {
 	function teststatusupdatemail() {
 		$orderID = intval(Director::URLParam("ID"));
 		if(!$orderID) {
-			$o = DataObject::get_one("Order", "", "Created DESC");
+			$o = DataObject::get_one("Order", "", "\"Created\" DESC");
 			if($o) {
 				$orderID = $o->ID;
 			}
@@ -133,10 +132,10 @@ class ShopManagerPage_Controller extends Page_Controller {
 		if($orderID) {
 			$order = DataObject::get_by_id("Order", $orderID);
 			if($order) {
-				$from = $order->getReceiptEmail();
+				$from = Order::get_receipt_email();
 				$to = $order->Member()->Email;
 				$subject = "Your order status";
-				$logs = DataObject::get('OrderStatusLog', "OrderID = {$this->ID}", "Created DESC", null, 1);
+				$logs = DataObject::get('OrderStatusLog', "\"OrderID\" = {$this->ID}", "\"Created\" DESC", null, 1);
 				if($logs) {
 					$latestLog = $logs->First();
 					$note = $latestLog->Note;
@@ -170,7 +169,7 @@ class ShopManagerPage_Controller extends Page_Controller {
 		$accountPageLink = AccountPage::find_link();
 
 		if($orderID = $request->param('ID')) {
-			if($order = DataObject::get_one('Order', "Order.ID = '$orderID'")) {
+			if($order = DataObject::get_one('Order', "\"Order\".\"ID\" = '$orderID'")) {
 				return array('Order' => $order);
 			}
 			else {

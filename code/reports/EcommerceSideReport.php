@@ -7,37 +7,79 @@
  *
  * @package ecommerce
  */
-class EcommerceSideReport_FeaturedProducts extends SideReport {
+class EcommerceSideReport_FeaturedProducts extends SS_Report {
 
 	function title() {
-		return "Featured products";
+		return _t('EcommerceSideReport.FEATUREDPRODUCTS', "Featured Products");
 	}
 
+	function group() {
+		return _t('EcommerceSideReport.ECOMMERCEGROUP', "ECommerce");
+	}
+	function sort() {
+		return 0;
+	}
 	function records() {
-		return DataObject::get("Product", "FeaturedProduct = 1", "Title");
+		return DataObject::get("Product", "\"FeaturedProduct\" = 1", "\"Title\"");
 	}
 
-	function fieldsToShow() {
+	function columns() {
 		return array(
-			"Title" => array("NestedTitle", array("2")),
+			"Title" => array(
+				"title" => "Title",
+				"link" => true
+			)
 		);
 	}
 }
 
-class EcommerceSideReport_AllProducts extends SideReport {
+class EcommerceSideReport_AllProducts extends SS_Report {
 
 	function title() {
-		return "All products";
+		return _t('EcommerceSideReport.ALLPRODUCTS', "All Products");
 	}
-
+	
+	function group() {
+		return _t('EcommerceSideReport.ECOMMERCEGROUP', "ECommerce");
+	}
+	function sort() {
+		return 0;
+	}
 	function records() {
-		return DataObject::get("Product", "", "Title");
+		return DataObject::get("Product", "", "\"Title\"");
 	}
 
-	function fieldsToShow() {
+	function columns() {
 		return array(
-			"Title" => array("NestedTitle", array("2")),
+			"Title" => array(
+				"title" => "Title",
+				"link" => true
+			)
 		);
 	}
 
+}
+
+class EcommerceSideReport_NoImageProducts extends SS_Report {
+	
+	function title() {
+		return _t('EcommerceSideReport.NOIMAGE',"Products with no image");
+	}
+	function group() {
+		return _t('EcommerceSideReport.ECOMMERCEGROUP', "ECommerce");
+	}
+	function sort() {
+		return 0;
+	}
+	function sourceRecords($params = null) {
+		return DataObject::get("Product", "\"Product\".\"ImageID\" IS NULL OR \"Product\".\"ImageID\" <= 0", "\"Title\" ASC");
+	}
+	function columns() {
+		return array(
+			"Title" => array(
+				"title" => "Title",
+				"link" => true
+			)
+		);
+	}
 }

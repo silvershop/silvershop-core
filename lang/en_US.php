@@ -14,6 +14,8 @@ $lang['en_US']['AccountPage']['SINGULARNAME'] = array(
 	50,
 	'Singular name of the object, used in dropdowns and to generally identify a single object in the interface'
 );
+$lang['en_US']['General']['DATEFORMATSHORT'] = '%m/%d/%G';
+$lang['en_US']['General']['DATEFORMATLONG'] = '%m/%d/%G %I:%M%p';
 $lang['en_US']['AccountPage.ss']['COMPLETED'] = 'Completed Orders';
 $lang['en_US']['AccountPage.ss']['HISTORY'] = 'Your Order History';
 $lang['en_US']['AccountPage.ss']['INCOMPLETE'] = 'Incomplete Orders';

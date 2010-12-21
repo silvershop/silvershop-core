@@ -13,6 +13,13 @@
  */
 class OrderReport_Popup extends Controller {
 
+	//basic security for controller
+	public static $allowed_actions = array(
+		'index' => 'ADMIN',
+		'packingslip' => 'ADMIN',
+		'invoice' => 'ADMIN'
+	);
+
 	function init(){
 		parent::init();
 		//include print javascript, if print argument is provided
@@ -23,9 +30,9 @@ class OrderReport_Popup extends Controller {
 		if($id = $this->urlParams['ID']) {
 			$this->Title .= " #$id";
 		}
-		Requirements::themedCSS("reset");
-		Requirements::themedCSS("OrderReport");
-		Requirements::themedCSS("OrderReport_Print", "print");
+		/*Requirements::themedCSS("reset");*/
+		/*Requirements::themedCSS("OrderReport");*/
+		/*Requirements::themedCSS("OrderReport_Print", "print");*/
 	}
 
 	/**
@@ -37,23 +44,7 @@ class OrderReport_Popup extends Controller {
 	 * order information in a printable view.
 	 */
 	function index() {
-		return $this->renderWith('OrderInformation_Print');
-	}
-
-	/**
-	 * This action shows a packing slip
-	 * for the current order we're looking at.
-	 */
-	function packingslip() {
-		return $this->renderWith('OrderInformation_PackingSlip');
-	}
-
-	/**
-	 * This action shows an invoice template
-	 * for the current order we're looking at.
-	 */
-	function invoice() {
-		return $this->renderWith('OrderInformation_Print');
+		return $this->renderWith('Order_Printable');
 	}
 
 
@@ -111,5 +102,9 @@ class OrderReport_Popup extends Controller {
 		}
 
 		return false;
+	}
+
+	function SiteConfig() {
+		return SiteConfig::current_site_config();
 	}
 }

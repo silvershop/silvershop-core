@@ -25,26 +25,52 @@ class ProductGroup extends Page {
 
 	public static $casting = array();
 
-	static $default_child = 'Product';
+	public static $default_child = 'Product';
 
-	static $add_action = 'a Product Group Page';
+	public static $add_action = 'a Product Group Page';
 
-	static $icon = 'cms/images/treeicons/folder';
+	public static $icon = 'cms/images/treeicons/folder';
 
 	protected static $include_child_groups = true;
+		static function set_include_child_groups($include = true){self::$include_child_groups = $include;}
+		static function get_include_child_groups(){return self::$include_child_groups;}
 
 	protected static $page_length = 12;
+		static function set_page_length(int $length){self::$page_length = intval($length);}
+		static function get_page_length(){return self::$page_length;}
 
 	protected static $must_have_price = true;
+		static function set_must_have_price($must = true){user_error("ProductGroup::\$set_must_have_price has been depreciated, use ProductGroup::\$only_show_products_that_can_purchase", E_USER_NOTICE);}
+		static function get_must_have_price(){user_error("ProductGroup::\$set_must_have_price has been depreciated, use ProductGroup::\$only_show_products_that_can_purchase", E_USER_NOTICE);}
+
+	protected static $only_show_products_that_can_purchase = true;
+		static function set_only_show_products_that_can_purchase($must = true){self::$only_show_products_that_can_purchase = $must;}
+		static function get_only_show_products_that_can_purchase(){return self::$only_show_products_that_can_purchase;}
 
 	//TODO: allow grouping multiple sort fields under one 'sort option', and allow choosing direction of each
 	protected static $sort_options = array(
-		'Title' => 'Alphabetical',
-		'Price' => 'Lowest Price',
-		'NumberSold' => 'Most Popular'
-		//'Featured' => 'Featured',
-		//'Weight' => 'Weight'
-	);
+			'title' => array("Title" => 'Alphabetical', "SQL" => "\"Title\" ASC"),
+			'price' => array("Title" => 'Lowest Price', "SQL" => "\"Price\" ASC"),
+			'numbersold' => array("Title" => 'Most Popular', "SQL" => "\"NumberSold\" DESC")
+			//'Featured' => 'Featured',
+			//'Weight' => 'Weight'
+		);
+		static function add_sort_option($key, $title, $sql){self::$sort_options[$key] = array("Title" => $title, "SQL" => $sql);}
+		static function remove_sort_option($key){unset(self::$sort_options[$key]);}
+		static function set_sort_options(array $options){self::$sort_options = $options;}
+		static function get_sort_options(){return self::$sort_options;}
+		protected function getSortOptionSQL($key){ // NOT STATIC
+			if(isset(self::$sort_options[$key])) {
+				return self::$sort_options[$key]["SQL"];
+			}
+			else {
+				return self::$sort_options[self::get_sort_options_default()]["SQL"];
+			}
+		}
+
+	protected static $sort_options_default = "title";
+		static function set_sort_options_default($v){self::$sort_options_default = $v; if(!isset(self::$sort_options[$v])) {user_error("ProductGroup::set_sort_options_default got the parameter $v , however, this is not an existing sort_options key;", E_USER_NOTICE);}}
+		static function get_sort_options_default(){return self::$sort_options_default;}
 
 	protected static $featured_products_permissions = array(
 		'Show Only Featured Products',
@@ -55,26 +81,6 @@ class ProductGroup extends Page {
 		'Show All Products'
 	);
 
-
-	static function set_include_child_groups($include = true){
-		self::$include_child_groups = $include;
-	}
-
-	static function set_page_length($length){
-		self::$page_length = $length;
-	}
-
-	static function set_must_have_price($must = true){
-		self::$must_have_price = $must;
-	}
-
-	static function set_sort_options(array $options){
-		self::$sort_options = $options;
-	}
-
-	function get_sort_options(){
-		return self::$sort_options;
-	}
 
 	function getCMSFields() {
 		$fields = parent::getCMSFields();
@@ -119,23 +125,22 @@ class ProductGroup extends Page {
 	 * @param array $permissions
 	 * @return DataObjectSet
 	 */
-	function ProductsShowable($extraFilter = '', $permissions = array("Show All Products")) { //TODO: re-introduce custom permissions, if wanted
+	 //TODO: optimise this where possible..perhaps use less joins
+	function ProductsShowable($extraFilter = '', $recursive = true){
 		$filter = ""; //
 		$join = "";
 
 		if($extraFilter) $filter.= " AND $extraFilter";
-		if(self::$must_have_price) $filter .= " AND Price > 0";
 
 		$limit = (isset($_GET['start']) && (int)$_GET['start'] > 0) ? (int)$_GET['start'].",".self::$page_length : "0,".self::$page_length;
-		$sort = (isset($_GET['sortby'])) ? Convert::raw2sql($_GET['sortby']) : "FeaturedProduct DESC,Title";
-
-		//hard coded sort configuration //TODO: make these custom
-		if($sort == "NumberSold") $sort .= " DESC";
-
+		if(!isset($_GET['sortby'])) {
+			$_GET['sortby'] = "";
+		}
+		$sort = $this->getSortOptionSQL($_GET['sortby']);
 
 		$groupids = array($this->ID);
 
-		if(self::$include_child_groups && $childgroups = $this->ChildGroups(true))
+		if(($recursive === true || $recursive === 'true') && self::$include_child_groups && $childgroups = $this->ChildGroups(true))
 			$groupids = array_merge($groupids,$childgroups->map('ID','ID'));
 
 		$groupidsimpl = implode(',',$groupids);
@@ -145,13 +150,21 @@ class ProductGroup extends Page {
 
 		//TODO: get products that appear in child groups (make this optional)
 
-		$products = DataObject::get('Product',"(ParentID IN ($groupidsimpl) OR $multicatfilter) $filter",$sort,$join,$limit);
+		$products = DataObject::get('Product',"(\"ParentID\" IN ($groupidsimpl) OR $multicatfilter) $filter",$sort,$join,$limit);
 
-		$allproducts = DataObject::get('Product',"ParentID IN ($groupidsimpl) $filter","",$join);
+		$allproducts = DataObject::get('Product',"\"ParentID\" IN ($groupidsimpl) $filter","",$join);
+
 		if($allproducts) $products->TotalCount = $allproducts->Count(); //add total count to returned data for 'showing x to y of z products'
 		if($products && $products instanceof DataObjectSet) $products->removeDuplicates();
-		
-
+		if($products) {
+			if(self::get_only_show_products_that_can_purchase()) {
+				foreach($products as $product) {
+					if(!$product->canPurchase()) {
+						$products->remove($product);
+					}
+				}
+			}
+		}
 		return $products;
 	}
 
@@ -160,9 +173,8 @@ class ProductGroup extends Page {
 	 * @return DataObjectSet
 	 */
 	function ChildGroups($recursive = false) {
-		$bt = defined('DB::USE_ANSI_SQL') ? "\"" : "`";
 		if($recursive){
-			if($children = DataObject::get('ProductGroup', "{$bt}ParentID{$bt} = '$this->ID'")){
+			if($children = DataObject::get('ProductGroup', "\"ParentID\" = '$this->ID'")){
 				$output = unserialize(serialize($children));
 				foreach($children as $group){
 					$output->merge($group->ChildGroups($recursive));
@@ -171,7 +183,7 @@ class ProductGroup extends Page {
 			}
 			return null;
 		}else{
-			return DataObject::get('ProductGroup', "{$bt}ParentID{$bt} = '$this->ID'");
+			return DataObject::get('ProductGroup', "\"ParentID\" = '$this->ID'");
 		}
 	}
 
@@ -225,7 +237,8 @@ class ProductGroup_Controller extends Page_Controller {
 
 	function init() {
 		parent::init();
-
+		Requirements::javascript(THIRDPARTY_DIR . '/jquery/jquery.js');
+		Requirements::javascript('ecommerce/javascript/Cart.js');
 		Requirements::themedCSS('ProductGroup');
 		Requirements::themedCSS('Cart');
 	}
@@ -233,24 +246,22 @@ class ProductGroup_Controller extends Page_Controller {
 	/**
 	 * Return the products for this group.
 	 */
-	public function Products(){
-		return $this->ProductsShowable();
+	public function Products($recursive = true){
+		return $this->ProductsShowable('',$recursive);
 	}
 
 	/**
 	 * Return products that are featured, that is products that have "FeaturedProduct = 1"
 	 */
-	function FeaturedProducts() {
-		$bt = defined('DB::USE_ANSI_SQL') ? "\"" : "`";
-		return $this->ProductsShowable("{$bt}FeaturedProduct{$bt} = 1");
+	function FeaturedProducts($recursive = true) {
+		return $this->ProductsShowable("\"FeaturedProduct\" = 1",$recursive);
 	}
 
 	/**
 	 * Return products that are not featured, that is products that have "FeaturedProduct = 0"
 	 */
-	function NonFeaturedProducts() {
-		$bt = defined('DB::USE_ANSI_SQL') ? "\"" : "`";
-		return $this->ProductsShowable("{$bt}FeaturedProduct{$bt} = 0");
+	function NonFeaturedProducts($recursive = true) {
+		return $this->ProductsShowable("\"FeaturedProduct\" = 0",$recursive);
 	}
 
 		/**
@@ -258,14 +269,13 @@ class ProductGroup_Controller extends Page_Controller {
 	 */
 	function SortLinks(){
 		if(count(ProductGroup::get_sort_options()) <= 0) return null;
-
-		$sort = (isset($_GET['sortby'])) ? Convert::raw2sql($_GET['sortby']) : "Title";
+		$sort = (isset($_GET['sortby'])) ? Convert::raw2sql($_GET['sortby']) : self::get_sort_options_default();
 		$dos = new DataObjectSet();
-		foreach(ProductGroup::get_sort_options() as $field => $name){
-			$current = ($field == $sort) ? 'current' : false;
+		foreach(ProductGroup::get_sort_options() as $key => $array){
+			$current = ($key == $sort) ? 'current' : false;
 			$dos->push(new ArrayData(array(
-				'Name' => $name,
-				'Link' => $this->Link()."?sortby=$field",
+				'Name' => $array["Title"],
+				'Link' => $this->Link()."?sortby=$key",
 				'Current' => $current
 			)));
 		}

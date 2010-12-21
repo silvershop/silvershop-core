@@ -3,20 +3,15 @@
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" >
 		<title><% _t("TITLE","Shop Receipt") %></title>
-		<% include OrderRecieptStyle %>
+		<% include OrderReceiptStyle %>
 	</head>
 	<body>
 		<table id="Content" cellspacing="0" cellpadding="0" summary="Email Information">
 			<thead>
 				<tr>
 					<th scope="col" colspan="2">
-						<h1 class="emailTitle"><% _t("HEADLINE","Shop Order Receipt") %></h1>
+						<h1 class="title">$Subject</h1>
 					</th>
-				</tr>
-				<tr>
-					<td scope="col">
-						<h1 class="PageTitle">$Subject</h1>
-					</td>
 				</tr>
 			</thead>
 			<tbody>
@@ -29,7 +24,7 @@
 				<% control Order %>
 					<tr>
 						<td>
-							<% include OrderInformation %>
+							<% include Order %>
 						</td>
 					</tr>
 				<% end_control %>

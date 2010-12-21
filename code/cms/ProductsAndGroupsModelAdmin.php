@@ -6,13 +6,13 @@
 
 class ProductsAndGroupsModelAdmin extends ModelAdmin {
 
-	static $menu_priority = 2;
+	public static $menu_priority = 2;
 
 	public static $collection_controller_class = "ProductsAndGroupsModelAdmin_CollectionController";
 
 	public static $record_controller_class = "ProductsAndGroupsModelAdmin_RecordController";
 
-	public static $managed_models = array("Product", "ProductGroup","ProductVariation");
+	public static $managed_models = array("Product", "ProductGroup","ProductVariation","ProductAttributeType");
 
 	public static function set_managed_models(array $array) {
 		self::$managed_models = $array;
@@ -21,7 +21,7 @@ class ProductsAndGroupsModelAdmin extends ModelAdmin {
 	public static $url_segment = 'products';
 
 	public static $menu_title = 'Products';
-	
+
 	public static $model_importers = array(
 		'Product' => 'ProductBulkLoader',
 		'ProductGroup' => null,
@@ -34,19 +34,19 @@ class ProductsAndGroupsModelAdmin_CollectionController extends ModelAdmin_Collec
 
 	//public function CreateForm() {return false;}
 	//public function ImportForm() {return false;}
-	
+
 	 //note that these are called once for each $managed_models
-	
+
 	function ImportForm(){
 		$form = parent::ImportForm();
 		if($form){
 			//EmptyBeforeImport checkbox does not appear to work for SiteTree objects, so removed for now
-			$form->Fields()->removeByName('EmptyBeforeImport'); 
+			$form->Fields()->removeByName('EmptyBeforeImport');
 		}
 		return $form;
 	}
-	
-	
+
+
 	//TODO: Half-started attempt at modifying the way products are deleted - they should be deleted from both stages
 	function ResultsForm($searchCriteria){
 		$form = parent::ResultsForm($searchCriteria);
@@ -55,16 +55,16 @@ class ProductsAndGroupsModelAdmin_CollectionController extends ModelAdmin_Collec
 				'label' => 'delete',
 				'icon' => null,
 				'icon_disabled' => 'cms/images/test.gif',
-				'class' => 'testlink' 
+				'class' => 'testlink'
 			);*/
-			
+
 			/*$tf->setPermissions(array(
 				'create'
 			));*/
 		}
 		return $form;
 	}
-	
+
 }
 
 class ProductsAndGroupsModelAdmin_RecordController extends ModelAdmin_RecordController{
@@ -96,7 +96,7 @@ class ProductsAndGroupsModelAdmin_RecordController extends ModelAdmin_RecordCont
 
 	function doSave($data, $form, $request) {
 		$form->saveInto($this->currentRecord);
-		
+
 		if($this->currentRecord instanceof SiteTree){
 			$this->currentRecord->writeToStage("Stage");
 			$this->currentRecord->publish("Stage", "Live");
@@ -106,7 +106,8 @@ class ProductsAndGroupsModelAdmin_RecordController extends ModelAdmin_RecordCont
 		$this->currentRecord->flushCache();
 		if(Director::is_ajax()) {
 			return $this->edit($request);
-		} else {
+		}
+		else {
 			Director::redirectBack();
 		}
 	}
