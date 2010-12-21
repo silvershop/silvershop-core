@@ -27,11 +27,7 @@
 
 		shippingCitySelector: "#ShippingCity input",
 
-		postalCodeSelector: "#PostalCode input",
-
-		shippingPostalCode: "#ShippingPostalCode input",
-
-		shippingSectionSelector: "#ShippingFields",
+		shippingSectionSelector: "#ShippingDetails",
 
 		useShippingDetailsSelector: "input[name='UseShippingAddress']",
 
@@ -47,19 +43,13 @@
 				}
 			);
 			//update on change
-			var originatorFieldSelector =
-					OrderFormWithShippingAddress.nameSelector+", "+
-					OrderFormWithShippingAddress.addressSelector+" ,"+
-					OrderFormWithShippingAddress.extraAddressSelector+", "+
-					OrderFormWithShippingAddress.citySelector+", "+
-					OrderFormWithShippingAddress.postalCodeSelector;
-			jQuery(originatorFieldSelector).change(
+			jQuery(OrderFormWithShippingAddress.nameSelector+", "+OrderFormWithShippingAddress.addressSelector+" ,"+OrderFormWithShippingAddress.extraAddressSelector+", "+OrderFormWithShippingAddress.citySelector).change(
 				function() {
 					OrderFormWithShippingAddress.updateFields();
 				}
 			);
 			//update on focus
-			jQuery(originatorFieldSelector).focus(
+			jQuery(OrderFormWithShippingAddress.shippingNameSelector+", "+OrderFormWithShippingAddress.shippingAddressSelector+" ,"+OrderFormWithShippingAddress.shippingExtraAddressSelector+", "+OrderFormWithShippingAddress.shippingCitySelector).focus(
 				function() {
 					OrderFormWithShippingAddress.updateFields();
 				}
@@ -67,13 +57,6 @@
 		},
 
 		updateFields: function() {
-			//postal code
-			var PostalCode =  jQuery(OrderFormWithShippingAddress.postalCodeSelector).val();
-			var ShippingPostalCode =  jQuery(OrderFormWithShippingAddress.shippingPostalCode).val();
-			if(!ShippingPostalCode && PostalCode) {
-				jQuery(OrderFormWithShippingAddress.shippingPostalCode).val(PostalCode);
-			}
-
 			//city
 			var City =  jQuery(OrderFormWithShippingAddress.citySelector).val();
 			var ShippingCity =  jQuery(OrderFormWithShippingAddress.shippingCitySelector).val();

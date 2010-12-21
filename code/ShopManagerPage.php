@@ -8,9 +8,9 @@
 
 class ShopManagerPage extends Page {
 
-	public static $icon = "ecommerce/images/treeicons/ShopManagerPage";
+	static $icon = "ecommerce/images/treeicons/ShopManagerPage";
 
-	public static $defaults = array(
+	static $defaults = array(
 		"ShowInMenus" => 0,
 		"ShowInSearch" => 0
 	);
@@ -42,7 +42,6 @@ class ShopManagerPage_Controller extends Page_Controller {
 	function init() {
 		// Only administrators can run this method
 		parent::init();
-		Requirements::javascript(THIRDPARTY_DIR . '/jquery/jquery.js');
 		Requirements::themedCSS("ShopManagerPage");
 		Requirements::javascript("ecommerce/javascript/ShopManagerPage.js");
 	}
@@ -132,7 +131,7 @@ class ShopManagerPage_Controller extends Page_Controller {
 		if($orderID) {
 			$order = DataObject::get_by_id("Order", $orderID);
 			if($order) {
-				$from = Order::get_receipt_email();
+				$from = $order->getReceiptEmail();
 				$to = $order->Member()->Email;
 				$subject = "Your order status";
 				$logs = DataObject::get('OrderStatusLog', "\"OrderID\" = {$this->ID}", "\"Created\" DESC", null, 1);

@@ -2,15 +2,15 @@
 
 class StoreAdmin extends ModelAdmin{
 
-	public static $url_segment = 'orders';
+	static $url_segment = 'orders';
 
-	public static $menu_title = 'Orders';
+	static $menu_title = 'Orders';
 
-	public static $menu_priority = 1;
+	static $menu_priority = 1;
 
 	//static $url_priority = 50;
 
-	public static $managed_models = array('Order','Payment','OrderStatusLog', 'OrderItem', 'OrderModifier', 'ShippingAddress');
+	public static $managed_models = array('Order','Payment','OrderStatusLog', 'OrderItem', 'OrderModifier');
 		public static function set_managed_models(array $array) {self::$managed_models = $array;}
 
 	public static $collection_controller_class = 'StoreAdmin_CollectionController';

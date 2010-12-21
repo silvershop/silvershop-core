@@ -13,7 +13,7 @@
 		<% if Items %>
 			<% control Items %>
 				<% if ShowInTable %>
-					<tr id="$TableID" class="$Classes hideOnZeroItems">
+					<tr id="$TableID" class="$Classes">
 						<td<% if Link %><% else %> id="$TableTitleID"<% end_if %> class="product title" scope="row">
 							<% if Link %>
 								<a id="$TableTitleID" href="$Link" title="<% sprintf(_t("READMORE","Click here to read more on &quot;%s&quot;"),$TableTitle) %>">$TableTitle</a>
@@ -37,7 +37,7 @@
 				<% end_if %>
 			<% end_control %>
 
-			<tr class="gap summary hideOnZeroItems">
+			<tr class="gap summary">
 				<td colspan="2" scope="row"><% _t("SUBTOTAL","Sub-total") %></td>
 				<td>&nbsp;</td>
 				<td class="right" id="$TableSubTotalID">$SubTotal.Nice</td>
@@ -47,7 +47,7 @@
 			<% if Modifiers %>
 			<% control Modifiers %>
 				<% if ShowInTable %>
-					<tr id="$TableID" class="$Classes hideOnZeroItems">
+					<tr id="$TableID" class="$Classes">
 						<td<% if Link %><% else %> id="$TableTitleID"<% end_if %> colspan="2" scope="row">
 							<% if Link %>
 								<a id="$TableTitleID" href="$Link" title="<% sprintf(_t("READMORE","Click here to read more on &quot;%s&quot;"),$TableTitle) %>">$TableTitle</a>
@@ -72,15 +72,16 @@
 			<% end_control %>
 			<% end_if %>
 
-			<tr class="gap Total hideOnZeroItems">
+			<tr class="gap Total">
 				<td colspan="2" scope="row"><% _t("TOTAL","Total") %></td>
 				<td>&nbsp;</td>
 				<td class="right" id="$TableTotalID">$Total.Nice $Currency</td>
 				<td>&nbsp;</td>
 			</tr>
-		<% end_if %>
-			<tr class="showOnZeroItems"<% if Items %> style="display: none"><% end_if %>>
+		<% else %>
+			<tr>
 				<td colspan="5" scope="row" class="center"><% _t("NOITEMS","There are <strong>no</strong> items in your cart.") %></td>
 			</tr>
+		<% end_if %>
 	</tbody>
 </table>

@@ -1,10 +1,3 @@
-/**
-  * IMPORTANT NOTE:
-  * The default e-commerce css only includes the basics and it is recommended that you theme these files.
-  * Also make sure you have the site's general layout and typography styled before you do this.
-  **/
-
-
 #Invoice{
 	width:600px;
 	margin:0 auto;
@@ -15,13 +8,13 @@
 		width:100%;
 		border-collapse:collapse;
 	}
-
+	
 	#Invoice table td{
 		border:1px solid grey;
 		padding:3px;
 		vertical-align:top;
 	}
-
+	
 	#Invoice table th{
 		text-align:left;
 	}

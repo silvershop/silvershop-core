@@ -7,19 +7,6 @@
  */
 class EcommerceRole extends DataObjectDecorator {
 
-
-	protected static $fixed_country_code = '';
-		static function set_fixed_country_code($v) {self::$fixed_country_code = $v;}
-		static function get_fixed_country_code() {return self::$fixed_country_code;}
-
-	protected static $postal_code_url = "http://www.nzpost.co.nz/Cultures/en-NZ/OnlineTools/PostCodeFinder";
-		static function get_postal_code_url() {$sc = DataObject::get_one("SiteConfig"); if($sc) {return $sc->PostalCodeURL;} else {return self::$postal_code_url;} }
-		static function set_postal_code_url($v) {self::$postal_code_url = $v;}
-
-	protected static $postal_code_label = "find postcode";
-		static function get_postal_code_label() {$sc = DataObject::get_one("SiteConfig"); if($sc) {return $sc->PostalCodeLabel;} else {return self::$postal_code_label;} }
-		static function set_postal_code_label($v) {self::$postal_code_label = $v;}
-
 	protected static $group_name = "Shop Customers";
 		static function set_group_name($v) {self::$group_name = $v;}
 		static function get_group_name(){return self::$group_name;}
@@ -68,29 +55,20 @@ class EcommerceRole extends DataObjectDecorator {
 		return self::find_country();
 	}
 	static function find_country() {
-		$country = '';
 		$member = Member::currentUser();
+
 		if($member && $member->Country) {
 			$country = $member->Country;
-		}
-		else {
-			if($country = ShoppingCart::get_country()) {
-				//do nothing
-			}
-			elseif($country = self::get_fixed_country_code()) {
-				//do nothing
-			}
-			else {
-				// HACK Avoid CLI tests from breaking (GeoIP gets in the way of unbiased tests!)
-				// @todo Introduce a better way of disabling GeoIP as needed (Geoip::disable() ?)
-				if(Director::is_cli()) {
-					$country = '';
-				}
-				else {
-					$country = Geoip::visitor_country();
-				}
+		} else {
+			// HACK Avoid CLI tests from breaking (GeoIP gets in the way of unbiased tests!)
+			// @todo Introduce a better way of disabling GeoIP as needed (Geoip::disable() ?)
+			if(Director::is_cli()) {
+				$country = null;
+			} else {
+				$country = Geoip::visitor_country();
 			}
 		}
+
 		return $country;
 	}
 
@@ -156,7 +134,7 @@ class EcommerceRole extends DataObjectDecorator {
 		$uniqueField = Member::get_unique_identifier_field();
 		if(isset($data[$uniqueField])) {
 			$SQL_unique = Convert::raw2xml($data[$uniqueField]);
-			// TODO review - should $uniqueField be quoted by Member::get_unique_identifier_field() already? (this would be sapphire bug)
+			// TODO review - should $uniqueField be quoted by Member::get_unique_identifier_field() already? (this would be sapphire bug) 
 			$existingUniqueMember = DataObject::get_one('Member', "\"$uniqueField\" = '{$SQL_unique}'");
 			if($existingUniqueMember && $existingUniqueMember->exists()) {
 				if(Member::currentUserID() != $existingUniqueMember->ID) {
@@ -183,15 +161,6 @@ class EcommerceRole extends DataObjectDecorator {
 	 * @return string|boolean String if country found, boolean FALSE if nothing found
 	 */
 	function getEcommerceFields() {
-		//postal code
-		$postalCodeField = new TextField('PostalCode', _t('EcommerceRole.POSTALCODE','Postal Code'));
-		$postalCodeField->setRightTitle('<a href="'.self::$postal_code_url.'" id="PostalCodeLink">'.self::$postal_code_label.'</a>');
-		// country
-		$countryField = new DropdownField('Country', _t('EcommerceRole.COUNTRY','Country'), Geoip::getCountryDropDown(), self::find_country());
-		$countryField->addExtraClass('ajaxCountryField');
-		//link used to update the country via Ajax
-		$setCountryLinkID = $countryField->id() . '_SetCountryLink';
-		$countryAJAXLink = new HiddenField($setCountryLinkID, '', ShoppingCart::get_country_link());
 		$fields = new FieldSet(
 			new HeaderField(_t('EcommerceRole.PERSONALINFORMATION','Personal Information'), 3),
 			new TextField('FirstName', _t('EcommerceRole.FIRSTNAME','First Name')),
@@ -202,9 +171,8 @@ class EcommerceRole extends DataObjectDecorator {
 			new TextField('Address', _t('EcommerceRole.ADDRESS','Address')),
 			new TextField('AddressLine2', _t('EcommerceRole.ADDRESSLINE2','&nbsp;')),
 			new TextField('City', _t('EcommerceRole.CITY','City')),
-			$postalCodeField,
-			$countryField,
-			$countryAJAXLink
+			new TextField('PostalCode', _t('EcommerceRole.POSTALCODE','Postal Code')),
+			new DropdownField('Country', _t('EcommerceRole.COUNTRY','Country'), Geoip::getCountryDropDown(), self::find_country())
 		);
 		$this->owner->extend('augmentEcommerceFields', $fields);
 		return $fields;

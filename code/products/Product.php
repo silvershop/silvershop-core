@@ -35,6 +35,7 @@ class Product extends Page {
 
 	public static $many_many = array(
 		'ProductGroups' => 'ProductGroup',
+		
 		'VariationAttributes' => 'ProductAttributeType'
 	);
 
@@ -58,24 +59,17 @@ class Product extends Page {
 
 	public static $plural_name = 'Products';
 
-	public static $default_parent = 'ProductGroup';
+	static $default_parent = 'ProductGroup';
 
-	public static $default_sort = '"Title" ASC';
+	static $default_sort = '"Title" ASC';
 
-	public static $add_action = 'a Product Page';
+	static $add_action = 'a Product Page';
 
-	public static $icon = 'ecommerce/images/icons/package';
+	static $icon = 'ecommerce/images/icons/package';
 
-	protected static $number_sold_calculation_type = "SUM"; //SUM or COUNT
-		static function set_number_sold_calculation_type($allow = false){self::$number_sold_calculation_type = $allow;}
-		static function get_number_sold_calculation_type(){return self::$number_sold_calculation_type;}
+	static $number_sold_calculation_type = "SUM"; //SUM or COUNT
 
-	/**
-	 * Enables developers to completely turning off the ability to purcahse products.
-	 */
-	protected static $global_allow_purchase = true;
-		static function set_global_allow_purchase($v){self::$global_allow_purchase = $v;}
-		static function get_global_allow_purchase(){$sc = DataObject::get_one("SiteConfig"); if($sc) {return $sc->ShopOpenForBusiness;}}
+	static $global_allow_purchase = true;
 
 	function getCMSFields() {
 		//prevent calling updateCMSFields extend function too early
@@ -97,6 +91,7 @@ class Product extends Page {
 		// Flags for this product which affect it's behaviour on the site
 		$fields->addFieldToTab('Root.Content.Main',new CheckboxField('FeaturedProduct', _t('Product.FEATURED', 'Featured Product')), 'Content');
 		$fields->addFieldToTab('Root.Content.Main',new CheckboxField('AllowPurchase', _t('Product.ALLOWPURCHASE', 'Allow product to be purchased'), 1),'Content');
+
 		$fields->addFieldToTab('Root.Content.Variations',new HeaderField("Variations"));
 		$fields->addFieldToTab('Root.Content.Variations',$this->getVariationsTable());
 		$fields->addFieldToTab('Root.Content.Variations',new HeaderField("Variation Attribute Types"));
@@ -120,6 +115,12 @@ class Product extends Page {
 		return $fields;
 	}
 
+	/**
+	 * Enables developers to completely turning off the ability to purcahse products.
+	 */
+	static function set_global_allow_purchase($allow = false){
+		self::$global_allow_purchase = $allow;
+	}
 
 	/**
 	 * Recaulculates the number sold for all products. This should be run as a cron job perhaps daily.
@@ -135,7 +136,8 @@ class Product extends Page {
 		$q->groupby("\"Product\".\"ID\"");
 		$q->orderby("\"NewNumberSold\" DESC");
 
-		$q->leftJoin('OrderItem','"Product"."ID" = "OrderItem"."ItemID"');
+		$q->leftJoin('Product_OrderItem','"Product"."ID" = "Product_OrderItem"."ProductID"');
+		$q->leftJoin('OrderItem','"Product_OrderItem"."ID" = "OrderItem"."ID"');
 		$records = $q->execute();
 		$productssold = $ps->buildDataObjectSet($records, "DataObjectSet", $q, 'Product');
 
@@ -156,14 +158,14 @@ class Product extends Page {
 		$variations = $singleton->buildDataObjectSet($query->execute());
 		$filter = $variations ? "\"ID\" IN ('" . implode("','", $variations->column('RecordID')) . "')" : "\"ID\" < '0'";
 		//$filter = "\"ProductID\" = '{$this->ID}'";
-
+		
 		$summaryfields= $singleton->summaryFields();
-
+		
 		if($this->VariationAttributes()->exists())
 			foreach($this->VariationAttributes() as $attribute){
 				$summaryfields["AttributeProxy.Val".$attribute->Name] = $attribute->Title;
 			}
-
+		
 		$tableField = new HasManyComplexTableField(
 			$this,
 			'Variations',
@@ -179,58 +181,66 @@ class Product extends Page {
 
 		return $tableField;
 	}
-
+	
 	function getVariationAttributesTable(){
 		$mmctf = new ManyManyComplexTableField($this,'VariationAttributes','ProductAttributeType');
-
+		
 		return $mmctf;
 	}
-
+	
 	/*
-	 * Generates variations based on selected attributes.
+	 * Generates variations based on selected attributes. 
 	 */
 	function generateVariationsFromAttributes(ProductAttributeType $attributetype, array $values){
-
+		
 		//TODO: introduce transactions here, in case objects get half made etc
-
+		
 		//if product has variation attribute types
 		if(is_array($values)){
+			
 			//TODO: get values dataobject set
 			$avalues = $attributetype->convertArrayToValues($values);
+			
 			$existingvariations = $this->Variations();
+			
 			if($existingvariations->exists()){
+				
 				//delete old variation, and create new ones - to prevent modification of exising variations
 				foreach($existingvariations as $oldvariation){
+
 					$oldvalues = $oldvariation->AttributeValues();
-					if($oldValues) {
-						foreach($avalues as $value){
-							$newvariation = $oldvariation->duplicate();
-							$newvariation->InternalItemID = $this->InternalItemID.'-'.$newvariation->ID;
-							$newvariation->AttributeValues()->addMany($oldvalues);
-							$newvariation->AttributeValues()->add($value);
-							$newvariation->write();
-							$existingvariations->add($newvariation);
-						}
+					
+					foreach($avalues as $value){
+					
+						$newvariation = $oldvariation->duplicate();
+						$newvariation->InternalItemID = $this->InternalItemID.'-'.$newvariation->ID;
+						$newvariation->AttributeValues()->addMany($oldvalues);
+						
+						
+						$newvariation->AttributeValues()->add($value);
+						$newvariation->write();
+						
+						$existingvariations->add($newvariation);
 					}
 					$existingvariations->remove($oldvariation);
 					$oldvariation->AttributeValues()->removeAll();
 					$oldvariation->delete();
 					$oldvariation->destroy();
 					//TODO: check that old variations actually stick around, as they will be needed for past orders etc
-				}
-			}
-			else {
-				if($avalues) {
-					foreach($avalues as $value){
-						$variation = new ProductVariation();
-						$variation->ProductID = $this->ID;
-						$variation->Price = $this->Price;
-						$variation->write();
-						$variation->InternalItemID = $this->InternalItemID.'-'.$variation->ID;
-						$variation->AttributeValues()->add($value); //TODO: find or create actual value
-						$variation->write();
-						$existingvariations->add($variation);
-					}
+				}				
+				
+			}else{
+					
+				foreach($avalues as $value){
+					$variation = new ProductVariation();
+					$variation->ProductID = $this->ID;
+					$variation->Price = $this->Price;
+					$variation->write();
+					$variation->InternalItemID = $this->InternalItemID.'-'.$variation->ID;
+					$variation->AttributeValues()->add($value); //TODO: find or create actual value
+					$variation->write();
+					
+					$existingvariations->add($variation);
 				}
 			}
 		}
@@ -245,11 +255,33 @@ class Product extends Page {
 				'Title' => 'Product Group Page Title'
 			)
 		);
+
 		$tableField->setPageSize(30);
 		$tableField->setPermissions(array());
+
 		//TODO: use a tree structure for selecting groups
 		//$field = new TreeMultiselectField('ProductGroups','Product Groups','ProductGroup');
+
 		return $tableField;
+	}
+
+	/**
+	 * Returns the shopping cart.
+	 * @todo Does HTTP::set_cache_age() still need to be set here?
+	 *
+	 * @return Order
+	 */
+	function getCart() {
+		if(!self::$global_allow_purchase) return false;
+		HTTP::set_cache_age(0);
+		return ShoppingCart::current_order();
+	}
+
+	/**
+	 * Depreciated - use canPurchase instead.
+	 */
+	function AllowPurchase(){
+		return $this->canPurchase();
 	}
 
 	/**
@@ -264,16 +296,10 @@ class Product extends Page {
 	 * @return boolean
 	 */
 	function canPurchase($member = null) {
-		if($this->ShopClosed()) {
-			return false;
-		}
-		if(!self::get_global_allow_purchase()) {
-			return false;
-		}
-		if(!$this->dbObject('AllowPurchase')->getValue()) {
-			return false;
-		}
+		if(!self::$global_allow_purchase) return false;
+		if(!$this->dbObject('AllowPurchase')->getValue()) return false;
 		$allowpurchase = false;
+
 		if($this->Variations()->exists()){
 			foreach($this->Variations() as $variation){
 				if($variation->canPurchase()){
@@ -290,6 +316,64 @@ class Product extends Page {
 		if($allowpurchase && $extended !== null) $allowpurchase = $extended;
 
 		return $allowpurchase;
+	}
+
+	/**
+	 * Returns if the product is already in the shopping cart.
+	 * Note : This function is usable in the Product context because a
+	 * Product_OrderItem only has a Product object in attribute
+	 *
+	 * @return boolean
+	 */
+	function IsInCart() {
+		return ($this->Item() && $this->Item()->Quantity > 0) ? true : false;
+	}
+
+	/**
+	 * Returns the order item which contains the product
+	 * Note : This function is usable in the Product context because a
+	 * Product_OrderItem only has a Product object in attribute
+	 */
+	function Item() {
+		$filter = null;
+		$this->extend('updateItemFilter',$filter);
+		$item = ShoppingCart::get_item_by_id($this->ID,null,$filter); //TODO: needs filter
+		if(!$item)
+			$item = new Product_OrderItem($this,0); //return dummy item so that we can still make use of Item
+		$this->extend('updateDummyItem',$item);
+		return $item;
+	}
+
+	/**
+	 * Return the currency being used on the site.
+	 * @return string Currency code, e.g. "NZD" or "USD"
+	 */
+	function Currency() {
+		if(class_exists('Payment')) {
+			return Payment::site_currency();
+		}
+	}
+
+	/**
+	 * Return the global tax information of the site.
+	 * @return TaxModifier
+	 */
+	function TaxInfo() {
+		$currentOrder = ShoppingCart::current_order();
+		return $currentOrder->TaxInfo();
+	}
+
+	//passing on shopping cart links ...is this necessary?? ...why not just pass the cart?
+	function addLink() {
+		return ShoppingCart::add_item_link($this->ID);
+	}
+
+	function removeLink() {
+		return ShoppingCart::remove_item_link($this->ID);
+	}
+
+	function removeallLink() {
+		return ShoppingCart::remove_all_item_link($this->ID);
 	}
 
 	/**
@@ -338,8 +422,6 @@ class Product_Controller extends Page_Controller {
 
 	function init() {
 		parent::init();
-		Requirements::javascript(THIRDPARTY_DIR . '/jquery/jquery.js');
-		Requirements::javascript('ecommerce/javascript/Cart.js');
 		Requirements::themedCSS('Product');
 		Requirements::themedCSS('Cart');
 	}
@@ -397,17 +479,36 @@ class Product_Image extends Image {
 }
 class Product_OrderItem extends OrderItem {
 
+	protected $_productID;
+
+	protected $_productVersion;
+
 	static $db = array(
-		'Keep' => 'Boolean'
+		'ProductVersion' => 'Int'
 	);
 
+	static $has_one = array(
+		'Product' => 'Product'
+	);
 
-	public function addItem($object, $quantity) {
-		parent::addItem($object, $quantity);
+	public function __construct($product = null, $quantity = 1) {
+		// Case 1: Constructed by getting OrderItem from DB
+		if(is_array($product)) {
+			$this->ProductID = $this->_productID = $product['ProductID'];
+			$this->ProductVersion = $this->_productVersion = $product['ProductVersion'];
+		}
+
+		// Case 2: Constructed in memory
+		if(is_object($product)) {
+			$this->_productID = $product->ID;
+ 			$this->_productVersion = $product->Version;
+		}
+
+ 		parent::__construct($product, $quantity);
 	}
 
 	function getProductIDForSerialization() {
-		return $this->ItemID;
+		return $this->_productID;
 	}
 
 	/**
@@ -426,12 +527,14 @@ class Product_OrderItem extends OrderItem {
 	 * @return Product object
 	 */
 	public function Product($current = false) {
-		return $this->Item($current);
+		if($current) return DataObject::get_by_id('Product', $this->_productID);
+		elseif($this->_productID && $this->_productVersion)
+			return Versioned::get_version('Product', $this->_productID, $this->_productVersion);
 	}
 
 	function hasSameContent($orderItem) {
-		$parentIsTheSame = parent::hasSameContent($orderItem);
-		return $parentIsTheSame && $orderItem instanceof Product_OrderItem;
+		$equals = parent::hasSameContent($orderItem);
+		return $equals && $orderItem instanceof Product_OrderItem && $this->_productID == $orderItem->_productID && $this->_productVersion == $orderItem->_productVersion;
 	}
 
 	function UnitPrice() {
@@ -446,14 +549,43 @@ class Product_OrderItem extends OrderItem {
 		return $tabletitle;
 	}
 
+	function Link() {
+		if($product = $this->Product(true)) return $product->Link();
+	}
+
+	function addLink() {
+		return ShoppingCart::add_item_link($this->_productID,null,$this->linkParameters());
+	}
+
+	function removeLink() {
+		return ShoppingCart::remove_item_link($this->_productID,null,$this->linkParameters());
+	}
+
+	function removeallLink() {
+		return ShoppingCart::remove_all_item_link($this->_productID,null,$this->linkParameters());
+	}
+
+	function setquantityLink() {
+		return ShoppingCart::set_quantity_item_link($this->_productID,null,$this->linkParameters());
+	}
+
+	function linkParameters(){
+		$array = array();
+		$this->extend('updateLinkParameters',$array);
+		return $array;
+	}
+
 	function onBeforeWrite() {
 		parent::onBeforeWrite();
+
+		$this->ProductID = $this->_productID;
+		$this->ProductVersion = $this->_productVersion;
 	}
 
 	public function debug() {
 		$title = $this->TableTitle();
-		$productID = $this->ItemID;
-		$productVersion = $this->Version;
+		$productID = $this->_productID;
+		$productVersion = $this->_productVersion;
 		$html = parent::debug() .<<<HTML
 			<h3>Product_OrderItem class details</h3>
 			<p>
@@ -465,36 +597,5 @@ HTML;
 		$this->extend('updateDebug',$html);
 		return $html;
 	}
-
-	function requireDefaultRecords() {
-		parent::requireDefaultRecords();
-		// we must check for individual database types here because each deals with schema in a none standard way
-		//can we use Table::has_field ???
-		$db = DB::getConn();
-		if( $db instanceof PostgreSQLDatabase ){
-      $exist = DB::query("SELECT column_name FROM information_schema.columns WHERE table_name ='Product_OrderItem' AND column_name = 'ProductVersion'")->numRecords();
-		}
-		else{
-			// default is MySQL - broken for others, each database conn type supported must be checked for!
-      $exist = DB::query("SHOW COLUMNS FROM \"Product_OrderItem\" LIKE 'ProductVersion'")->numRecords();
-		}
- 		if($exist > 0) {
-			DB::query("
-				UPDATE \"OrderItem\", \"Product_OrderItem\"
-					SET \"OrderItem\".\"Version\" = \"Product_OrderItem\".\"ProductVersion\"
-				WHERE \"OrderItem\".\"ID\" = \"Product_OrderItem\".\"ID\"
-			");
-			DB::query("
-				UPDATE \"OrderItem\", \"Product_OrderItem\"
-					SET \"OrderItem\".\"ItemID\" = \"Product_OrderItem\".\"ProductID\"
-				WHERE \"OrderItem\".\"ID\" = \"Product_OrderItem\".\"ID\"
-			");
- 			DB::query("ALTER TABLE \"Product_OrderItem\" CHANGE COLUMN \"ProductVersion\" \"_obsolete_ProductVersion\" Integer(11)");
- 			DB::query("ALTER TABLE \"Product_OrderItem\" CHANGE COLUMN \"ProductID\" \"_obsolete_ProductID\" Integer(11)");
- 			DB::alteration_message('made ProductVersion and ProductID obsolete in Product_OrderItem', 'obsolete');
-		}
-
-	}
-
 
 }

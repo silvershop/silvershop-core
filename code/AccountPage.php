@@ -7,11 +7,11 @@
  */
 class AccountPage extends Page {
 
-	public static $add_action = 'an Account Page';
+	static $add_action = 'an Account Page';
 
-	public static $icon = 'ecommerce/images/icons/account';
+	static $icon = 'ecommerce/images/icons/account';
 
-	public static $db = array(
+	static $db = array(
 
 	);
 
@@ -23,9 +23,9 @@ class AccountPage extends Page {
 	 * Returns the link or the URLSegment to the account page on this site
 	 * @param boolean $urlSegment Return the URLSegment only
 	 */
-	public static function find_link($useURLSegment = false) {
+	static function find_link($urlSegment = false) {
 		$page = self::get_if_account_page_exists();
-		return ($useURLSegment) ? $page->URLSegment : $page->Link();
+		return ($urlSegment) ? $page->URLSegment : $page->Link();
 	}
 
 	/**
@@ -34,7 +34,7 @@ class AccountPage extends Page {
 	 * @param int|string $orderID ID of the order
 	 * @param boolean $urlSegment Return the URLSegment only
 	 */
-	public static function get_order_link($orderID, $urlSegment = false) {
+	static function get_order_link($orderID, $urlSegment = false) {
 		$page = self::get_if_account_page_exists();
 		return ($urlSegment ? $page->URLSegment . '/' : $page->Link()) . 'order/' . $orderID;
 	}
@@ -54,8 +54,8 @@ class AccountPage extends Page {
 	 */
 	function CompleteOrders() {
 		$memberID = Member::currentUserID();
-		$statusFilter = "\"Order\".\"Status\" IN ('" . implode("','", Order::get_paid_status()) . "')";
-		$statusFilter .= " AND \"Order\".\"Status\" NOT IN('". implode("','", Order::get_hidden_status()) ."')";
+		$statusFilter = "\"Order\".\"Status\" IN ('" . implode("','", Order::$paid_status) . "')";
+		$statusFilter .= " AND \"Order\".\"Status\" NOT IN('". implode("','", Order::$hidden_status) ."')";
 		return DataObject::get('Order', "\"Order\".\"MemberID\" = '$memberID' AND $statusFilter", "\"Created\" DESC");
 	}
 
@@ -67,8 +67,8 @@ class AccountPage extends Page {
 	 */
 	function IncompleteOrders() {
 		$memberID = Member::currentUserID();
-		$statusFilter = "\"Order\".\"Status\" NOT IN ('" . implode("','", Order::get_paid_status()) . "')";
-		$statusFilter .= " AND \"Order\".\"Status\" NOT IN('". implode("','", Order::get_hidden_status()) ."')";
+		$statusFilter = "\"Order\".\"Status\" NOT IN ('" . implode("','", Order::$paid_status) . "')";
+		$statusFilter .= " AND \"Order\".\"Status\" NOT IN('". implode("','", Order::$hidden_status) ."')";
 		return DataObject::get('Order', "\"Order\".\"MemberID\" = '$memberID' AND $statusFilter", "\"Created\" DESC");
 	}
 
@@ -109,8 +109,8 @@ class AccountPage_Controller extends Page_Controller {
 			Security::permissionFailure($this, $messages);
 			return false;
 		}
-
-
+		
+		
 	}
 
 	/**
@@ -128,10 +128,10 @@ class AccountPage_Controller extends Page_Controller {
 
 		if($orderID = $request->param('ID')) {
 			if($order = DataObject::get_one('Order', "\"Order\".\"ID\" = '$orderID' AND \"Order\".\"MemberID\" = '$memberID'")) {
-
+				
 				$paymentform = ($order->TotalOutstanding() > 0) ? $this->CancelForm() : null;
-
-
+				
+				
 				return array(
 					'Order' => $order,
 					'Form' => $paymentform
@@ -169,11 +169,11 @@ class AccountPage_Controller extends Page_Controller {
 	 *
 	 * @return Order_CancelForm
 	 */
-	function CancelForm() {
+	function CancelForm() {		
 		$memberID = Member::currentUserID();
 		$orderID = $this->getRequest()->param('ID');
 		if(!$orderID) $orderID = (isset($_POST['OrderID']) && is_numeric($_POST['OrderID'])) ? $_POST['OrderID'] : null;
-
+		
 		if(is_numeric($orderID) && $order = DataObject::get_one('Order', "\"Order\".\"ID\" = '$orderID' AND \"Order\".\"MemberID\" = '$memberID'")) {
 			if($order->canCancel()) {
 				return new Order_CancelForm($this, 'CancelForm', $order->ID);

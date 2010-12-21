@@ -32,11 +32,8 @@ class CheckoutPage extends Page {
 		'PurchaseComplete' => 'HTMLText',
 		'ChequeMessage' => 'HTMLText',
 		'AlreadyCompletedMessage' => 'HTMLText',
-		'FinalizedOrderLinkLabel' => 'Varchar(255)',
-		'CurrentOrderLinkLabel' => 'Varchar(255)',
 		'NonExistingOrderMessage' => 'HTMLText',
-		'MustLoginToCheckoutMessage' => 'HTMLText',
-		'LoginToOrderLinkLabel' => 'Varchar(255)'
+		'MustLoginToCheckoutMessage' => 'HTMLText'
 	);
 
 	public static $has_one = array(
@@ -51,9 +48,9 @@ class CheckoutPage extends Page {
 
 	public static $defaults = array();
 
-	public static $icon = 'ecommerce/images/icons/money';
+	static $icon = 'ecommerce/images/icons/money';
 
-	public static $add_action = 'The Checkout Page';
+	static $add_action = 'The Checkout Page';
 
 	/**
 	 * Returns the link to the checkout page on this site, using
@@ -62,11 +59,11 @@ class CheckoutPage extends Page {
 	 * @param boolean $urlSegment If set to TRUE, only returns the URLSegment field
 	 * @return string Link to checkout page
 	 */
-	public static function find_link($useURLSegment = false) {
+	static function find_link($urlSegment = false) {
 		if(!$page = DataObject::get_one('CheckoutPage')) {
 			user_error('No CheckoutPage was found. Please create one in the CMS!', E_USER_ERROR);
 		}
-		return ($useURLSegment) ? $page->URLSegment : $page->Link();
+		return ($urlSegment) ? $page->URLSegment : $page->Link();
 	}
 
 
@@ -82,7 +79,7 @@ class CheckoutPage extends Page {
 	 * @param boolean $urlSegment If set to TRUE, only returns the URLSegment field
 	 * @return string Link to checkout page
 	 */
-	public static function get_checkout_order_link($orderID, $urlSegment = false) {
+	static function get_checkout_order_link($orderID, $urlSegment = false) {
 		if(!$page = DataObject::get_one('CheckoutPage')) {
 			user_error('No CheckoutPage was found. Please create one in the CMS!', E_USER_ERROR);
 		}
@@ -92,17 +89,17 @@ class CheckoutPage extends Page {
 
 	function getCMSFields() {
 		$fields = parent::getCMSFields();
+
 		$fields->addFieldToTab('Root.Content.TermsAndConditions', new TreeDropdownField('TermsPageID', 'Terms and Conditions Page', 'SiteTree'));
+
 		$fields->addFieldsToTab('Root.Content.Messages', array(
 			new HtmlEditorField('AlreadyCompletedMessage', 'Already Completed - shown when the customer tries to checkout an already completed order', $row = 4),
-			new TextField('FinalizedOrderLinkLabel', 'Label for the link pointing to a completed order - e.g. click here to view the completed order'),
-			new TextField('CurrentOrderLinkLabel', 'Label for the link pointing to the current order - e.g. click here to view current order'),
 			new HtmlEditorField('NonExistingOrderMessage', 'Non-existing Order - shown when the customer tries ', $row = 4),
 			new HtmlEditorField('MustLoginToCheckoutMessage', 'MustLoginToCheckoutMessage', $row = 4),
-			new TextField('LoginToOrderLinkLabel', 'Label for the link pointing to the order which requires a log in - e.g. click here to log in and view order'),
-			new HtmlEditorField('PurchaseComplete', 'Purchase Complete - included in receipt email, after the customer submits the checkout ', $row = 4),
+			new HtmlEditorField('PurchaseComplete', 'Purchase Complete - included in reciept email, after the customer submits the checkout ', $row = 4),
 			new HtmlEditorField('ChequeMessage', 'Cheque Message - shown when a customer selects a delayed payment option (such as a cheque payment) ', $rows = 4)
 		));
+
 		return $fields;
 	}
 
@@ -120,12 +117,6 @@ class CheckoutPage extends Page {
 			$page->Content = '<p>This is the checkout page. The order summary and order form appear below this content.</p>';
 			$page->PurchaseComplete = '<p>Your purchase is complete.</p>';
 			$page->ChequeMessage = '<p>Please note: Your goods will not be dispatched until we receive your payment.</p>';
-			$page->AlreadyCompletedMessage = '<p>This order has already been completed.</p>';
-			$page->FinalizedOrderLinkLabel = 'view completed order';
-			$page->CurrentOrderLinkLabel = 'view current order';
-			$page->NonExistingOrderMessage = '<p>We can not find your order.</p>';
-			$page->MustLoginToCheckoutMessage = '<p>You must login to view this order</p>';
-			$page->LoginToOrderLinkLabel = '<p>log in and view order</p>';
 			$page->URLSegment = 'checkout';
 			$page->ShowInMenus = 0;
 			$page->writeToStage('Stage');
@@ -145,18 +136,19 @@ class CheckoutPage extends Page {
 }
 class CheckoutPage_Controller extends Page_Controller {
 
-	protected $usefulLinks = null;
-
 	public function init() {
-		parent::init();
 		if(!class_exists('Payment')) {
 			trigger_error('The payment module must be installed for the ecommerce module to function.', E_USER_WARNING);
 		}
+
 		Requirements::javascript(THIRDPARTY_DIR . '/jquery/jquery.js');
-		Requirements::javascript('ecommerce/javascript/EcommercePayment.js');
-		Requirements::javascript('ecommerce/javascript/Cart.js');
+		Requirements::javascript('ecommerce/javascript/CheckoutPage.js');
+		Requirements::javascript('ecommerce/javascript/ecommerce.js');
 		Requirements::themedCSS('CheckoutPage');
+
 		$this->initVirtualMethods();
+
+		parent::init();
 	}
 
 	/**
@@ -244,14 +236,15 @@ class CheckoutPage_Controller extends Page_Controller {
 		return $form;
 	}
 
+	function OrderFormWithoutShippingAddress() {
+		$form = new OrderFormWithoutShippingAddress($this, 'OrderFormWithoutShippingAddress');
+		$this->data()->extend('OrderFormWithoutShippingAddress',$form);
+		return $form;
+	}
 
 	function OrderFormWithShippingAddress() {
 		$form = new OrderFormWithShippingAddress($this, 'OrderFormWithShippingAddress');
 		$this->data()->extend('OrderFormWithShippingAddress',$form);
-		//load session data
-		if($data = Session::get("FormInfo.{$form->FormName()}.data")){
-			$form->loadDataFrom($data);
-		}
 		return $form;
 	}
 
@@ -264,32 +257,20 @@ class CheckoutPage_Controller extends Page_Controller {
 	function Message() {
 		$orderID = Director::urlParam('Action');
 		$checkoutLink = self::find_link();
+
 		if($memberID = Member::currentUserID()) {
 			if($order = DataObject::get_one('Order', "\"Order\".\"ID\" = '$orderID' AND \"Order\".\"MemberID\" = '$memberID'")) {
-				$this->UsefulLinks[] = array("Title" => $this->FinalizedOrderLinkLabel, "Link" => $order->Link());
-				$this->UsefulLinks[] = array("Title" => $this->CurrentOrderLinkLabel, "Link" => $checkoutLink);
-				return $this->AlreadyCompletedMessage;
-				//'You can not checkout this order because it has been already successfully completed. Click <a href="' . $order->Link() . '">here</a> to see it\'s details, otherwise you can <a href="' . $checkoutLink . '">checkout</a> your current order.';
+				return 'You can not checkout this order because it has been already successfully completed. Click <a href="' . $order->Link() . '">here</a> to see it\'s details, otherwise you can <a href="' . $checkoutLink . '">checkout</a> your current order.';
 			}
 			else {
-				$this->UsefulLinks[] = array("Title" => $this->CurrentOrderLinkLabel, "Link" => $checkoutLink);
-				return $this->NonExistingOrderMessage;
+				return 'You do not have any order corresponding to that ID, so you can\'t checkout this order.';
 			}
 		}
 		else {
 			$redirectLink = CheckoutPage::get_checkout_order_link($orderID);
-			$this->UsefulLinks[] = array("Title" => $this->LoginToOrderLinkLabel, "Link" => 'Security/login?BackURL='.urlencode($redirectLink));
-			$this->UsefulLinks[] = array("Title" => $this->CurrentOrderLinkLabel, "Link" => $checkoutLink);
-			return $this->MustLoginToCheckoutMessage;
-			//'You can not checkout this order because you are not logged in. To do so, please <a href="Security/login?BackURL=' . $redirectLink . '">login</a> first, otherwise you can <a href="' . $checkoutLink . '">checkout</a> your current order.'
+			return 'You can not checkout this order because you are not logged in. To do so, please <a href="Security/login?BackURL=' . $redirectLink . '">login</a> first, otherwise you can <a href="' . $checkoutLink . '">checkout</a> your current order.';
 		}
 	}
 
-	function UsefulLinks() {
-		if(is_array($this->usefulLinks)) {
-			if(count($this->usefulLinks)) {
-				return new DataObjectSet( new ArrayData($this->usefulLinks) );
-			}
-		}
-	}
+
 }

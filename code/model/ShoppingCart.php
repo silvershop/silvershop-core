@@ -9,18 +9,11 @@
  */
 class ShoppingCart extends Controller {
 
-	//public, because it is referred to in the _config file...
-	public static $url_segment = 'shoppingcart';
-
 	protected static $order = null; // for temp caching
 
-	protected static $cartid_session_name = 'shoppingcartid';
-		public static function set_cartid_session_name($v) {self::$cartid_session_name = $v;}
-		public static function get_cartid_session_name() {return self::$cartid_session_name;}
+	static $cartid_session_name = 'shoppingcartid';
 
-	protected static $response_class = "CartResponse";
-		public static function set_response_class($v) {self::$url_segment = $v;}
-		public static function get_response_class() {return self::$url_segment;}
+	static $URLSegment = 'shoppingcart';
 
 	static $allowed_actions = array (
 		'additem',
@@ -30,10 +23,11 @@ class ShoppingCart extends Controller {
 		'setcountry',
 		'setquantityitem',
 		'clear',
+
 		'debug' => 'ADMIN'
 	);
-
-
+	
+	
 	function init() {
 		parent::init();
 		self::current_order();
@@ -51,11 +45,14 @@ class ShoppingCart extends Controller {
 	 *
 	*/
 	protected static $paramfilters = array();
-		function set_param_filters($array){self::$paramfilters = array_merge(self::$paramfilters,$array);}
 
-
+	function set_param_filters($array){
+		self::$paramfilters = array_merge(self::$paramfilters,$array);
+	}
+	
+	
 	//Country functions
-
+	
 	static function country_setting_index() {
 		return "ShoppingCartCountry";
 	}
@@ -74,85 +71,41 @@ class ShoppingCart extends Controller {
 		$countrySettingIndex = self::country_setting_index();
 		Session::clear($countrySettingIndex);
 	}
-
+	
 
 	//Controller links
-
-	static function add_item_link($productID, $className = "OrderItem", $parameters = array()) {
-		return self::$url_segment.'/additem/'.$productID."/".self::order_item_class_name($className).self::params_to_get_string($parameters);
+	
+	static function add_item_link($id, $variationid = null, $parameters = array()) {
+		return self::$URLSegment.'/additem/'.$id.self::variation_link($variationid).self::params_to_get_string($parameters);
 	}
 
-	static function remove_item_link($productID, $className = "OrderItem", $parameters = array()) {
-		return self::$url_segment.'/removeitem/'.$productID."/".self::order_item_class_name($className).self::params_to_get_string($parameters);
+	static function remove_item_link($id, $variationid = null, $parameters = array()) {
+		return self::$URLSegment.'/removeitem/'.$id.self::variation_link($variationid).self::params_to_get_string($parameters);
 	}
 
-	static function remove_all_item_link($productID, $className = "OrderItem", $parameters = array()) {
-		return self::$url_segment.'/removeallitem/'.$productID."/".self::order_item_class_name($className).self::params_to_get_string($parameters);
+	static function remove_all_item_link($id, $variationid = null, $parameters = array()) {
+		return self::$URLSegment.'/removeallitem/'.$id.self::variation_link($variationid).self::params_to_get_string($parameters);
 	}
 
-	static function set_quantity_item_link($productID, $className = "OrderItem", $parameters = array()) {
-		return self::$url_segment.'/setquantityitem/'.$productID."/".self::order_item_class_name($className).self::params_to_get_string($parameters);
+	static function set_quantity_item_link($id, $variationid = null, $parameters = array()) {
+		return self::$URLSegment.'/setquantityitem/'.$id.self::variation_link($variationid).self::params_to_get_string($parameters);
 	}
 
-	static function add_modifier_link($modifierID, $className = "OrderModifier") {
-		return self::$url_segment.'/addmodifier/'.$modifierID."/".self::order_modifier_class_name($className);
-	}
-
-	static function remove_modifier_link($modifierID, $className = "OrderModifier") {
-		return self::$url_segment.'/removemodifier/'.$modifierID."/".self::order_modifier_class_name($className);
+	static function remove_modifier_link($id, $variationid = null) {
+		return self::$URLSegment.'/removemodifier/'.$id.self::variation_link($variationid);
 	}
 
 
-	static function get_country_link() {
-		return self::$url_segment.'/setcountry/';
+	static function set_country_link() {
+		return self::$URLSegment.'/setcountry';
 	}
 
 	/** helper function for appending variation id */
 	protected static function variation_link($variationid) {
-		user_error("This function is now outdated and we should use classname link instead!", E_USER_ERROR);
-	}
-
-	protected static function order_item_class_name($className) {
-		if(!ClassInfo::exists($className)) {
-			user_error("ShoppingCart::order_item_class_name ... $className does not exist", E_USER_ERROR);
+		if (is_numeric($variationid)) {
+			return "/$variationid";
 		}
-		if(in_array($className, array("OrderItem", "OrderAttribute"))) {
-			user_error("ShoppingCart::order_item_class_name ... $className should be a subclassed", E_USER_NOTICE);
-			return $className;
-		}
-		if(ClassInfo::is_subclass_of($className, "OrderItem")) {
-			//do nothing
-			if(substr($className, -10) != EcommerceItemDecorator::get_order_item_class_name_post_fix()) {
-				user_error("ShoppingCart::order_item_class_name, $className should end in _OrderItem", E_USER_ERROR);
-			}
-		}
-		elseif(ClassInfo::is_subclass_of($className, "DataObject")) {
-			$className .= EcommerceItemDecorator::get_order_item_class_name_post_fix();
-			return self::order_item_class_name($className);
-		}
-		return $className;
-	}
-
-	protected static function item_class_name($className) {
-		return str_replace(EcommerceItemDecorator::get_order_item_class_name_post_fix(), "", self::order_item_class_name($className));
-	}
-
-	//modifiers
-	protected static function order_modifier_class_name($className) {
-		if(!ClassInfo::exists($className)) {
-			user_error("ShoppingCart::order_modifier_class_name ... $className does not exist", E_USER_ERROR);
-		}
-		if(in_array($className, array("OrderAttribute", "OrderModifier"))) {
-			user_error("ShoppingCart::order_modifier_class_name ... $className should be a subclassed", E_USER_NOTICE);
-			return $className;
-		}
-		if(ClassInfo::is_subclass_of($className, "OrderModifier")) {
-			//do nothing
-		}
-		else {
-			user_error("ShoppingCart::order_modifier_class_name ... $className should be a subclass of OrderModifier", E_USER_ERROR);
-		}
-		return $className;
+		return "";
 	}
 
 	/**
@@ -167,9 +120,9 @@ class ShoppingCart extends Controller {
 	protected static function params_to_get_string($array){
 		if($array & count($array > 0)){
 			array_walk($array , create_function('&$v,$k', '$v = $k."=".$v ;'));
-			return "/?".implode("&",$array);
+			return "?".implode("&",$array);
 		}
-		return "/";
+		return "";
 	}
 
 	public static function current_order() {
@@ -229,14 +182,13 @@ class ShoppingCart extends Controller {
 	/**
 	 * Reduce quantity of an orderItem, or completely remove
 	 */
-	static function remove_item($existingitem, $quantityToReduceBy = 1) {
+	static function remove_item($existingitem, $quantity = 1) {
 		if ($existingitem) {
-			if ($quantityToReduceBy >= $existingitem->Quantity) {
+			if ($quantity >= $existingitem->Quantity) {
 				$existingitem->delete();
 				$existingitem->destroy();
-			}
-			else {
-				$existingitem->Quantity -= $quantityToReduceBy;
+			} else {
+				$existingitem->Quantity -= $quantity;
 				$existingitem->write();
 			}
 		}
@@ -272,14 +224,15 @@ class ShoppingCart extends Controller {
 	/**
 	 * Get OrderItem according to product id, and coorresponding parameter filter.
 	 */
-	static function get_item_by_id($orderItemID, $className = "OrderAttribute", $filter = "" ) {
-		if(!ClassInfo::is_subclass_of($className, "OrderAttribute")) {
-			user_error("$className needs to be a subclass of OrderAttribute", E_USER_WARNING);
-		}
+	static function get_item_by_id($id, $variationid = null,$filter = null) {
 		$filter = self::get_param_filter($filter);
+		if(is_numeric($variationid)){
+			$filter .= ($filter && $filter != "") ? " AND " : "";
+			$filter .= "\"ProductVariationID\" = $variationid";
+		}
 		$order = self::current_order();
-		$filterString = ($filter && trim($filter) != "") ? " AND $filter" : "";
-		return DataObject::get_one($className, "\"OrderID\" = ".$order->ID." AND \"OrderAttribute\".\"ID\" = ".$orderItemID." ". $filterString);
+		$fil = ($filter && $filter != "") ? " AND $filter" : "";
+		return DataObject::get_one('OrderItem', "\"OrderID\" = $order->ID AND \"ProductID\" = $id". $fil);
 	}
 
 	/**
@@ -337,30 +290,50 @@ class ShoppingCart extends Controller {
 	static function uses_different_shipping_address(){
 		return self::current_order()->UseShippingAddress;
 	}
-
+	
 	static function set_uses_different_shipping_address($use = true){
-		$order = self::current_order();
+		$order = self::current_order(); 
 		$order->UseShippingAddress = $use;
 		$order->write();
 	}
-
+		
 	/**
 	 * Sets appropriate status, and message and redirects or returns appropriately.
 	 */
 	 //TODO: it seems silly that this should be a static method just because self::clear is static
 	static function return_data($status = "success",$message = null){
-
+		
 		if(Director::is_ajax()){
-			$obj = singleton(self::$response_class);
-			return $obj->ReturnCartData($status, $message);
+			return $status; //TODO: make this customisable between json, status message etc. Perhaps make this whole function custom.
+			//return self::json_code(); //TODO: incorporate status / message
 		}
 		//TODO: set session / status in session (like Form sessionMesssage)
 		Director::redirectBack();
 	}
+	
+	/**
+	 * Builds json object to be returned via ajax.
+	 */
+	static function json_code() {
+		
+		$this->response->addHeader('Content-Type', 'application/json');
+		$currentOrder = ShoppingCart::current_order();
+		$js = array ();
 
-	//--------------------------------------------------------------------------
+		if ($items = $currentOrder->Items()) {
+			foreach ($items as $item)
+				$item->updateForAjax($js);
+		}
+
+		if ($modifiers = $currentOrder->Modifiers()) {
+			foreach ($modifiers as $modifier)
+				$modifier->updateForAjax($js);
+		}
+		$currentOrder->updateForAjax($js);
+		return Convert::array2json($js);
+	}
+
 	//Actions
-	//--------------------------------------------------------------------------
 
 	/**
 	 * Either increments the count or creates a new item.
@@ -396,16 +369,6 @@ class ShoppingCart extends Controller {
 		return self::return_data("failure","Item could not be found in cart");//TODO: i18n
 	}
 
-	function setcountry() {
-		$request = $this->getRequest();
-		$countryCode = $request->param('ID');
-		if($countryCode && strlen($countryCode) < 4) {
-			ShoppingCart::set_country($countryCode);
-			return self::return_data("success","Country updated");//TODO: i18n
-		}
-		return self::return_data("failure","Country could not be updated");//TODO: i18n
-	}
-
 	/**
 	 * Clears the cart
 	 * It disconnects the current cart from the user session.
@@ -428,15 +391,20 @@ class ShoppingCart extends Controller {
 	 */
 	function setquantityitem($request) {
 		$quantity = $request->getVar('quantity');
-		if (is_numeric($quantity) && $quantity == floatval($quantity)) {
+		if (is_numeric($quantity)) {
 			$item = ShoppingCart::get_item($this->urlFilter());
-			if(!$item){
-				$item = $this->getNewOrderItem();
-				$item->Quantity = $quantity;
-				self::add_new_item($item);
-			}
-			else{
-				ShoppingCart::set_quantity_item($item, $quantity);
+			if($quantity > 0){
+				if(!$item){
+					$item = $this->getNewOrderItem();
+					$item->Quantity = $quantity;
+					self::add_new_item($item);
+				}
+				else{
+					ShoppingCart::set_quantity_item($item, $quantity);
+				}
+			}elseif($item){
+				ShoppingCart::remove_all_item($item);
+				return self::return_data("success","Item removed completely");//TODO: i18n
 			}
 			return self::return_data("success","Quantity set successfully");//TODO: i18n
 		}
@@ -455,7 +423,7 @@ class ShoppingCart extends Controller {
 		return self::return_data("failure","Could not be removed");//TODO: i18n
 	}
 
-
+	
 	//Helper functions
 
 
@@ -463,26 +431,21 @@ class ShoppingCart extends Controller {
 	 * Creates new order item based on url parameters
 	 */
 	protected function getNewOrderItem(){
+
 		$request = $this->getRequest();
 		$orderitem = null;
-		$itemId = intval($request->param('ID'));
-		//create order item
-		if(is_numeric($itemId)) {
-			$itemClassName = self::item_class_name($request->param('OtherID'));
-			if($itemClassName) {
-				$item = Versioned::get_one_by_stage($itemClassName,'Live', '"'.$itemClassName.'_Live"."ID" = '.$itemId); //only use live products
-				if ($item && $item->canPurchase()) {
-					$orderItemClassName = self::order_item_class_name($item->ClassName);
-					$orderitem = new $orderItemClassName();
-					$orderitem->addItem($item,1);
-				}
+
+		//create either a ProductVariation_OrderItem or a Product_OrderItem
+		if (is_numeric($request->param('OtherID')) && $variationId = $request->param('OtherID')) {
+			$variation = DataObject::get_one('ProductVariation', sprintf("\"ID\" = %d AND \"ProductID\" = %d", (int) $this->urlParams['OtherID'], (int) $this->urlParams['ID']));
+			if ($variation && $variation->canPurchase()) {
+				$orderitem = new ProductVariation_OrderItem($variation,1);
 			}
-			else {
-				user_error("no itemClassName ($itemClassName) provided for item to be added", E_USER_ERROR);
+		} elseif(is_numeric($request->param('ID')) && $itemId = $request->param('ID')) {
+			$product = Versioned::get_one_by_stage('Product','Live', '"Product_Live"."ID" = '.$itemId); //only use live products
+			if ($product && $product->canPurchase()) {
+				$orderitem = new Product_OrderItem($product,1);
 			}
-		}
-		else {
-			user_error("no id provided for item to be added", E_USER_ERROR);
 		}
 		//set extra parameters
 		if($orderitem instanceof OrderItem){
@@ -502,11 +465,12 @@ class ShoppingCart extends Controller {
 	 *	 otherwise it updates default filter with passed parameters
 	 */
 	static function get_param_filter($params = array()){
-		if(!self::$paramfilters) {
-			return ""; //no use for this if there are not parameters defined
-		}
+
+		if(!self::$paramfilters) return ""; //no use for this if there are not parameters defined
+		$bt = defined('DB::USE_ANSI_SQL') ? "\"" : "`";
 		$temparray = self::$paramfilters;
 		$outputarray = array();
+
 		foreach(self::$paramfilters as $field => $value){
 			if(isset($params[$field])){
 				//TODO: convert to $dbfield->prepValueForDB() when Boolean problem figured out
@@ -514,22 +478,21 @@ class ShoppingCart extends Controller {
 			}
 			$outputarray[] = "\"".$field."\" = ".$temparray[$field];
 		}
+
 		return implode(" AND ",$outputarray);
 	}
 
 	/**
 	 * Gets a filter based on urlParameters
 	 */
-	protected function urlFilter(){
+	function urlFilter(){
 		$result = '';
 		$request = $this->getRequest();
-		$orderItemClassName = self::order_item_class_name($request->param('OtherID'));
-		$itemClassName = self::item_class_name($request->param('OtherID'));
 		$selection = array(
-			"\"ItemID\" = ".$request->param('ID')
+			"\"ProductID\" = ".$request->param('ID')
 		);
-		if(ClassInfo::is_subclass_of($request->param('OtherID'), "OrderAttribute")){
-			$selection[] = "\"ClassName\" = '".$orderItemClassName."'";
+		if(is_numeric($request->param('OtherID'))){
+			$selection[] = "\"ProductVariationID\" = ".$request->param('OtherID');
 		}
 
 		$filter = self::get_param_filter($request->getVars());

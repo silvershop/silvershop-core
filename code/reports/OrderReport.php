@@ -12,9 +12,9 @@
  * @package ecommerce
  */
 class OrderReport_Popup extends Controller {
-
+	
 	//basic security for controller
-	public static $allowed_actions = array(
+	static $allowed_actions = array(
 		'index' => 'ADMIN',
 		'packingslip' => 'ADMIN',
 		'invoice' => 'ADMIN'
@@ -103,7 +103,7 @@ class OrderReport_Popup extends Controller {
 
 		return false;
 	}
-
+	
 	function SiteConfig() {
 		return SiteConfig::current_site_config();
 	}
