@@ -18,6 +18,8 @@ class ProductAttributeType extends DataObject{
 		'Name' => 'Name'
 	);
 	
+	static $default_sort = "ID ASC";
+	
 	function getCMSFields(){
 		$fields = parent::getCMSFields();
 		//TODO: make this a really fast editing interface. Table list field??

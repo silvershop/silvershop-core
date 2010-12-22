@@ -27,7 +27,8 @@ class ProductBulkLoader extends CsvBulkLoader{
 		'Product ID' => 'InternalItemID',
 		'ProductID' => 'InternalItemID',
 		'SKU' => 'InternalItemID',
-
+		
+		'Description' => 'Content',
 		'Long Description' => 'Content',
 		'Short Description' => 'MetaDescription',
 
