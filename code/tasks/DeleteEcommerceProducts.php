@@ -21,7 +21,8 @@ class DeleteEcommerceProducts extends BuildTask{
 		if($allproducts = DataObject::get('Product')){
 			
 			foreach($allproducts as $product){
-				$product->delete();
+				$product->deleteFromStage('Live');
+				$product->deleteFromStage('Stage');
 				$product->destroy();
 				//TODO: remove versions		
 			}
@@ -53,9 +54,10 @@ class DeleteEcommerceProducts extends BuildTask{
 		}
 		
 		//partial empty queries
+		echo "<p>Deleting all SiteTree</p>";
 		DB::query("DELETE FROM \"SiteTree\" WHERE ClassName = 'Product';");//SiteTree
-		DB::query("DELETE FROM \"SiteTree\" WHERE ClassName = 'Product';");//SiteTree
-
+		DB::query("DELETE FROM \"SiteTree_Live\" WHERE ClassName = 'Product';");//SiteTree
+		DB::query("DELETE FROM \"SiteTree_versions\" WHERE ClassName = 'Product';");//SiteTree
 		
 	}
 	

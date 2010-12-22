@@ -21,8 +21,8 @@ class ProductBulkLoader extends CsvBulkLoader{
 	// NB do NOT use functional indirection on any fields where they will be used in $duplicateChecks as well - they simply don't work. 
 	public $columnMap = array(
 
-		//'Category' => '->setParent',
-		//'ProductGroup' => '->setParent',
+		'Category' => '->setParent',
+		'ProductGroup' => '->setParent',
 
 		'Product ID' => 'InternalItemID',
 		'ProductID' => 'InternalItemID',
