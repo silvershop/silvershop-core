@@ -11,8 +11,12 @@ class ShoppingCart extends Controller {
 
 	//public, because it is referred to in the _config file...
 	public static $url_segment = 'shoppingcart';
+		static function set_url_segment($v) {self::$url_segment = $v;}
+		static function get_url_segment() {return self::$url_segment;}
 
 	protected static $order = null; // for temp caching
+		static function set_order(Order $v) {self::$url_segment = $v;}
+		static function get_order() {return self::$url_segment;}
 
 	protected static $cartid_session_name = 'shoppingcartid';
 		public static function set_cartid_session_name($v) {self::$cartid_session_name = $v;}
@@ -30,14 +34,15 @@ class ShoppingCart extends Controller {
 		'setcountry',
 		'setquantityitem',
 		'clear',
+		'numberofitemsincart',
+		'showcart',
 		'debug' => 'ADMIN'
 	);
 
 
 	function init() {
 		parent::init();
-		self::current_order();
-		self::$order->initModifiers();
+		self::current_order()->initModifiers();
 	}
 
 	/**
@@ -174,25 +179,29 @@ class ShoppingCart extends Controller {
 
 	public static function current_order() {
 		$order = self::$order;
-		if (!$order) {
+		$hasWritten = false;
+		if (!self::$order) {
 			//find order by id saved to session (allows logging out and retaining cart contents)
 			$cartid = Session::get(self::$cartid_session_name);
 			//TODO: make clear cart on logout optional
-			if ($cartid && $o = DataObject::get_one('Order', "\"Status\" = 'Cart' AND \"ID\" = $cartid")) {
-				$order = $o;
-			}else {
-				$order = new Order();
-				$order->SessionID = session_id();
-				//$order->MemberID = Member::currentUserID(); // Set the Member relation to this order
-				$order->write();
-				Session::set(self::$cartid_session_name,$order->ID);
+			if ($cartid && self::$order = DataObject::get_one('Order', "\"Status\" = 'Cart' AND \"ID\" = $cartid")) {
+				//do nothing
 			}
-			self::$order = $order; //temp caching
+			else {
+				self::$order = new Order();
+				self::$order->SessionID = session_id();
+				//$order->MemberID = Member::currentUserID(); // Set the Member relation to this order
+				self::$order->write();
+				$hasWritten = true;
+				Session::set(self::$cartid_session_name,self::$order->ID);
+			}
 		}
 		//TODO: re-introduce this because it allows seeing which members don't complete orders
 		//$order->MemberID = Member::currentUserID(); // Set the Member relation to this order
-		$order->write(); // Write the order
-		return $order;
+		if(!$hasWritten) {
+			self::$order->write(); // Write the order
+		}
+		return self::$order;
 	}
 
 
@@ -359,6 +368,13 @@ class ShoppingCart extends Controller {
 	}
 
 	//--------------------------------------------------------------------------
+	//Data
+	//----
+	function Cart() {
+		return self::get_order();
+	}
+
+	//--------------------------------------------------------------------------
 	//Actions
 	//--------------------------------------------------------------------------
 
@@ -455,7 +471,29 @@ class ShoppingCart extends Controller {
 		return self::return_data("failure","Could not be removed");//TODO: i18n
 	}
 
+	/**
+	 * return number of items in cart
+	 */
 
+	function numberofitemsincart() {
+		$cart = self::current_order();
+		if($cart) {
+			if($cart = $this->Cart()) {
+				if($items = $cart->Items()) {
+					return $items->count();
+				}
+			}
+		}
+		return 0;
+	}
+
+	/**
+	 * return cart for ajax call
+	 */
+
+	function showcart() {
+		$this->renderWith("AjaxSimpleCart");
+	}
 	//Helper functions
 
 

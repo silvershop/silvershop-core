@@ -142,6 +142,24 @@ class CheckoutPage extends Page {
 			DB::alteration_message("Page '{$termsPage->Title}' linked to the Checkout page '{$page->Title}'", 'changed');
 		}
  	}
+
+	function MenuTitleEcommerce() {
+		$count = 0;
+		$cart = ShoppingCart::current_order();
+		if($cart) {
+			if($cart = $this->Cart()) {
+				if($items = $cart->Items()) {
+					$count = $items->count();
+				}
+			}
+		}
+		$v = $this->MenuTitle;
+		if($count) {
+			$v .= " (".$count.")";
+		}
+		return $v;
+	}
+
 }
 class CheckoutPage_Controller extends Page_Controller {
 
