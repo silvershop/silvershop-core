@@ -1,23 +1,6 @@
 <?php
 
 
-class EcommerceSiteTreeExtension extends Controller {
-
-<?php
-/**
-* @author Nicolaas [at] sunnysideup.co.nz
-* @package: ecommerce
-* @description:
-* it contains a whole bunch of useful functions (e.g. number of items in cart) and ajax functionality
-* that is added to any page within a site
-* ajax works as follows:
-* - there are three types of links: add to cart, remove from cart (within cart), remove from cart (link)
-* - when you click the link: add to cart or remove from cart two things change:
-* * the link itself
-* * a designated cart area gets a new cart
-*/
-
-
 class EcommerceSiteTreeExtension extends DataObjectDecorator {
 
 	function MenuTitleEcommerce() {

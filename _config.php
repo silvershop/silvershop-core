@@ -26,8 +26,8 @@ Director::addRules(50, array(
 //Geoip::$default_country_code = "NZ";
 //i18n::set_locale('en_NZ');
 //setlocale (LC_TIME, 'en_NZ@dollar', 'en_NZ.UTF-8', 'en_NZ', 'nz', 'nz');
-//Object::add_extension("Product", "EcommerceItemDecorator");
-//Object::add_extension("ProductVariation", "EcommerceItemDecorator");
+//Object::add_extension("SiteTree", "EcommerceSiteTreeExtension");
+//Object::add_extension("Controller", "EcommerceSiteTreeExtension_Controller");
 
 
 // * * * ECOMMERCE I18N SETTINGS
@@ -43,21 +43,6 @@ Director::addRules(50, array(
 //Order::set_cancel_before_processing(false); //soon to be depreciated
 //Order::set_cancel_before_sending(false); //soon to be depreciated
 //Order::set_cancel_after_sending(false); //soon to be depreciated
-
-// * * * PRODUCTS
-//ProductsAndGroupsModelAdmin::set_managed_models(array(("Product", "ProductGroup","ProductVariation"));
-//SS_Report::register("SideReport", "EcommerceSideReport_AllProducts");
-//SS_Report::register("SideReport", "EcommerceSideReport_FeaturedProducts");
-//SS_Report::register("SideReport", "EcommerceSideReport_NoImageProducts");
-//Product_Image::set_thumbnail_size(140, 100);
-//Product_Image::set_content_image_width(200);
-//Product_Image::set_large_image_width(200);
-//ProductGroup::set_include_child_groups(true);
-//ProductGroup::only_show_products_that_can_purchase(true);
-//ProductGroup::add_sort_option( $key = "price", $title = "Lowest Price", $sql = "Price ASC");
-//ProductGroup::remove_sort_option( $key = "title");
-//ProductGroup::set_sort_options_default( $key = "price");
-//ProductGroup::set_only_show_products_that_can_purchase(true);
 
 // * * * CHECKOUT
 //ExpiryDateField::set_short_months(true); //uses short months (e.g. Jan instead of january) for credit card expiry date.
@@ -75,12 +60,11 @@ Director::addRules(50, array(
 //SimpleShippingModifier::::set_charges_for_countries(array('US' => 10,'NZ' => 5));
 //TaxModifier::::set_for_country($country = "NZ", $rate = 0.15, $name = "GST", $inclexcl = "inclusive"))
 
-// * * * HELP
-//Product::set_global_allow_purcahse(false); //stops the sale of all products
+
 
 // * * * SPECIAL CASES
 //OrderItem::disable_quantity_js();
-//ShoppingCartset_response_class("EcommerceResponse")
+//ShoppingCartset_response_class("EcommerceResponse");
 // ------------------------------------------------------END ECOMMERCE MODULE CONFIG ------------------------------------------------------
 
 
@@ -92,4 +76,3 @@ Payment::set_supported_methods(array(
 ));
 */
 //===================---------------- END payment MODULE ----------------===================
-
