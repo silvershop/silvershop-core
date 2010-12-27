@@ -65,12 +65,9 @@ Director::addRules(50, array(
 //SimpleShippingModifier::::set_charges_for_countries(array('US' => 10,'NZ' => 5));
 //TaxModifier::::set_for_country($country = "NZ", $rate = 0.15, $name = "GST", $inclexcl = "inclusive"))
 
-
-
 // * * * SPECIAL CASES
 //OrderItem::disable_quantity_js();
 //ShoppingCartset_response_class("EcommerceResponse");
-/
 
 // * * * PRODUCTS
 //ProductsAndGroupsModelAdmin::set_managed_models(array(("Product", "ProductGroup");
@@ -91,7 +88,6 @@ Director::addRules(50, array(
 //Product::set_global_allow_purcahse(false); //stops the sale of all products
 
 //===================---------------- END ecommerce_products MODULE ----------------===================
-
 
 
 //===================---------------- START payment MODULE ----------------===================
