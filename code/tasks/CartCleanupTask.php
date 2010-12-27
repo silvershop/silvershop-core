@@ -12,7 +12,6 @@ class CartCleanupTask extends DailyTask{
 
 	//Find and remove carts older than X days
 	function process(){
-
 		$time = date('Y-m-d H:i:s', strtotime("-".self::$clear_days." days"));
 		$generalWhere = "\"Status\" = 'Cart' AND \"LastEdited\" < '$time'";
 		if(self::$dont_delete_if_linked_to_member) {

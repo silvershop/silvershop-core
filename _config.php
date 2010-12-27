@@ -19,6 +19,7 @@ Director::addRules(50, array(
 //Order::set_receipt_email("your name <sales@myshop.com>);
 //Order::set_receipt_subject("thank you for your order at www.myshop.com");
 //Order::set_modifiers(array("MyModifierOne", "MyModifierTwo");
+//Object::add_extension("Product", "EcommerceItemDecorator");
 
 
 // * * * HIGHLY RECOMMENDED SETTINGS NON-ECOMMERCE
@@ -29,7 +30,7 @@ Director::addRules(50, array(
 
 
 // * * * ECOMMERCE I18N SETTINGS
-// * * * for Currency &  Date Formats get this module: http://code.google.com/p/silverstripe-i18n-fieldtypes/   
+// * * * for Currency &  Date Formats get this module: http://code.google.com/p/silverstripe-i18n-fieldtypes/
 //EcommerceCurrency::setDecimalDelimiter(','); //for Money formating
 //EcommerceCurrency::setThousandDelimiter('.'); //for Money formating
 // * * * FOR DATE FORMATS SET F.E.
@@ -69,7 +70,28 @@ Director::addRules(50, array(
 // * * * SPECIAL CASES
 //OrderItem::disable_quantity_js();
 //ShoppingCartset_response_class("EcommerceResponse");
-// ------------------------------------------------------END ECOMMERCE MODULE CONFIG ------------------------------------------------------
+/
+
+// * * * PRODUCTS
+//ProductsAndGroupsModelAdmin::set_managed_models(array(("Product", "ProductGroup");
+//SS_Report::register("SideReport", "EcommerceSideReport_AllProducts");
+//SS_Report::register("SideReport", "EcommerceSideReport_FeaturedProducts");
+//SS_Report::register("SideReport", "EcommerceSideReport_NoImageProducts");
+//Product_Image::set_thumbnail_size(140, 100);
+//Product_Image::set_content_image_width(200);
+//Product_Image::set_large_image_width(200);
+//ProductGroup::set_include_child_groups(true);
+//ProductGroup::only_show_products_that_can_purchase(true);
+//ProductGroup::add_sort_option( $key = "price", $title = "Lowest Price", $sql = "Price ASC");
+//ProductGroup::remove_sort_option( $key = "title");
+//ProductGroup::set_sort_options_default( $key = "price");
+//ProductGroup::set_only_show_products_that_can_purchase(true);
+
+// * * * HELP
+//Product::set_global_allow_purcahse(false); //stops the sale of all products
+
+//===================---------------- END ecommerce_products MODULE ----------------===================
+
 
 
 //===================---------------- START payment MODULE ----------------===================
