@@ -21,8 +21,8 @@ class OrderItem extends OrderAttribute {
 	);
 
 	public static $casting = array(
-		'UnitPrice' => 'EcommerceCurrency',
-		'Total' => 'EcommerceCurrency'
+		'UnitPrice' => 'Currency',
+		'Total' => 'Currency'
 	);
 
 	######################
@@ -80,7 +80,7 @@ class OrderItem extends OrderAttribute {
 	}
 
 	function updateForAjax(array &$js) {
-		$total = DBField::create('EcommerceCurrency', $this->Total())->Nice();
+		$total = $this->Total()->Nice();
 		$js[] = array('id' => $this->TableTotalID(), 'parameter' => 'innerHTML', 'value' => $total);
 		$js[] = array('id' => $this->CartTotalID(), 'parameter' => 'innerHTML', 'value' => $total);
 		$js[] = array('id' => $this->CartQuantityID(), 'parameter' => 'innerHTML', 'value' => $this->Quantity);

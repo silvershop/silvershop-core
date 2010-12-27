@@ -31,14 +31,14 @@ Director::addRules(50, array(
 
 // * * * ECOMMERCE I18N SETTINGS
 // * * * for Currency &  Date Formats get this module: http://code.google.com/p/silverstripe-i18n-fieldtypes/
-//EcommerceCurrency::setDecimalDelimiter(','); //for Money formating
-//EcommerceCurrency::setThousandDelimiter('.'); //for Money formating
+//Object::useCustomClass('Currency','I18nCurrency',true);
+//Object::useCustomClass('Money','CustomMoney',true);
 // * * * FOR DATE FORMATS SET F.E.
 //setlocale (LC_TIME, 'en_NZ@dollar', 'en_NZ.UTF-8', 'en_NZ', 'nz', 'nz');
-//Object::useCustomClass('SS_Datetime','I18nDatetime', true);
+//Object::useCustomClass('SS_Datetime','I18nDatetime',true);
 //OR
 //i18n::set_locale('en_NZ');
-//Object::useCustomClass('SS_Datetime','ZendDate', true);
+//Object::useCustomClass('SS_Datetime','ZendDate',true);
 
 // * * * SHOPPING CART AND ORDER
 //Order::set_table_overview_fields(array('Total' => 'Total','Status' => 'Status'));//
@@ -85,7 +85,7 @@ Director::addRules(50, array(
 //ProductGroup::set_only_show_products_that_can_purchase(true);
 
 // * * * HELP
-//Product::set_global_allow_purcahse(false); //stops the sale of all products
+//Product::set_global_allow_purchase(false); //stops the sale of all products
 
 //===================---------------- END ecommerce_products MODULE ----------------===================
 

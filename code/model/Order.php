@@ -52,11 +52,11 @@ class Order extends DataObject {
 	public static $casting = array(
 		'FullBillingAddress' => 'Text',
 		'FullShippingAddress' => 'Text',
-		'Total' => 'EcommerceCurrency',
-		'SubTotal' => 'EcommerceCurrency',
-		'TotalPaid' => 'EcommerceCurrency',
-		'Shipping' => 'EcommerceCurrency',
-		'TotalOutstanding' => 'EcommerceCurrency'
+		'Total' => 'Currency',
+		'SubTotal' => 'Currency',
+		'TotalPaid' => 'Currency',
+		'Shipping' => 'Currency',
+		'TotalOutstanding' => 'Currency'
 	);
 
 	public static $singular_name = "Order";
