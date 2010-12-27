@@ -2,7 +2,6 @@
 /**
  * @deprecated use instead: http://code.google.com/p/silverstripe-i18n-fieldtypes/
  * @author ivo.bathke
- *
  */
 class EcommerceCurrency extends Currency {
 
