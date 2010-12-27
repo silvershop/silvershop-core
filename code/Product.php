@@ -29,13 +29,8 @@ class Product extends Page {
 		'Image' => 'Product_Image'
 	);
 
-	public static $has_many = array(
-		'Variations' => 'ProductVariation'
-	);
-
 	public static $many_many = array(
 		'ProductGroups' => 'ProductGroup',
-		'VariationAttributes' => 'ProductAttributeType'
 	);
 
 	public static $belongs_many_many = array();
@@ -97,16 +92,6 @@ class Product extends Page {
 		// Flags for this product which affect it's behaviour on the site
 		$fields->addFieldToTab('Root.Content.Main',new CheckboxField('FeaturedProduct', _t('Product.FEATURED', 'Featured Product')), 'Content');
 		$fields->addFieldToTab('Root.Content.Main',new CheckboxField('AllowPurchase', _t('Product.ALLOWPURCHASE', 'Allow product to be purchased'), 1),'Content');
-		$fields->addFieldToTab('Root.Content.Variations',new HeaderField("Variations"));
-		$fields->addFieldToTab('Root.Content.Variations',$this->getVariationsTable());
-		$fields->addFieldToTab('Root.Content.Variations',new HeaderField("Variation Attribute Types"));
-		$fields->addFieldToTab('Root.Content.Variations',$this->getVariationAttributesTable());
-
-		if($this->Variations()->exists()){
-			$fields->addFieldToTab('Root.Content.Main',new LabelField('variationspriceinstructinos','Price - Because you have one or more variations, the price can be set in the "Variations" tab.'),'Price');
-			$fields->removeFieldsFromTab('Root.Content.Main',array('Price','InternalItemID'));
-		}
-
 		$fields->addFieldsToTab(
 			'Root.Content.Product Groups',
 			array(
@@ -151,92 +136,6 @@ class Product extends Page {
 
 	}
 
-	function getVariationsTable() {
-		$singleton = singleton('ProductVariation');
-		$query = $singleton->buildVersionSQL("\"ProductID\" = '{$this->ID}'");
-		$variations = $singleton->buildDataObjectSet($query->execute());
-		$filter = $variations ? "\"ID\" IN ('" . implode("','", $variations->column('RecordID')) . "')" : "\"ID\" < '0'";
-		//$filter = "\"ProductID\" = '{$this->ID}'";
-
-		$summaryfields= $singleton->summaryFields();
-
-		if($this->VariationAttributes()->exists())
-			foreach($this->VariationAttributes() as $attribute){
-				$summaryfields["AttributeProxy.Val".$attribute->Name] = $attribute->Title;
-			}
-
-		$tableField = new HasManyComplexTableField(
-			$this,
-			'Variations',
-			'ProductVariation',
-			$summaryfields,
-			null,
-			$filter
-		);
-
-		if(method_exists($tableField, 'setRelationAutoSetting')) {
-			$tableField->setRelationAutoSetting(true);
-		}
-
-		return $tableField;
-	}
-
-	function getVariationAttributesTable(){
-		$mmctf = new ManyManyComplexTableField($this,'VariationAttributes','ProductAttributeType');
-
-		return $mmctf;
-	}
-
-	/*
-	 * Generates variations based on selected attributes.
-	 */
-	function generateVariationsFromAttributes(ProductAttributeType $attributetype, array $values){
-
-		//TODO: introduce transactions here, in case objects get half made etc
-
-		//if product has variation attribute types
-		if(is_array($values)){
-			//TODO: get values dataobject set
-			$avalues = $attributetype->convertArrayToValues($values);
-			$existingvariations = $this->Variations();
-			if($existingvariations->exists()){
-				//delete old variation, and create new ones - to prevent modification of exising variations
-				foreach($existingvariations as $oldvariation){
-					$oldvalues = $oldvariation->AttributeValues();
-					if($oldValues) {
-						foreach($avalues as $value){
-							$newvariation = $oldvariation->duplicate();
-							$newvariation->InternalItemID = $this->InternalItemID.'-'.$newvariation->ID;
-							$newvariation->AttributeValues()->addMany($oldvalues);
-							$newvariation->AttributeValues()->add($value);
-							$newvariation->write();
-							$existingvariations->add($newvariation);
-						}
-					}
-					$existingvariations->remove($oldvariation);
-					$oldvariation->AttributeValues()->removeAll();
-					$oldvariation->delete();
-					$oldvariation->destroy();
-					//TODO: check that old variations actually stick around, as they will be needed for past orders etc
-				}
-			}
-			else {
-				if($avalues) {
-					foreach($avalues as $value){
-						$variation = new ProductVariation();
-						$variation->ProductID = $this->ID;
-						$variation->Price = $this->Price;
-						$variation->write();
-						$variation->InternalItemID = $this->InternalItemID.'-'.$variation->ID;
-						$variation->AttributeValues()->add($value); //TODO: find or create actual value
-						$variation->write();
-						$existingvariations->add($variation);
-					}
-				}
-			}
-		}
-	}
-
 	protected function getProductGroupsTable() {
 		$stage = Versioned::current_stage();
 		if($stage) {
@@ -277,15 +176,7 @@ class Product extends Page {
 			return false;
 		}
 		$allowpurchase = false;
-		if($this->Variations()->exists()){
-			foreach($this->Variations() as $variation){
-				if($variation->canPurchase()){
-					$allowpurchase = true;
-					break;
-				}
-			}
-		}
-		elseif($this->Price > 0){
+		if($this->Price > 0){
 			$allowpurchase = true;
 		}
 		// Standard mechanism for accepting permission changes from decorators
@@ -293,7 +184,6 @@ class Product extends Page {
 		if($allowpurchase && $extended !== null) {
 			$allowpurchase = $extended;
 		}
-		return 1;
 		return $allowpurchase;
 	}
 
