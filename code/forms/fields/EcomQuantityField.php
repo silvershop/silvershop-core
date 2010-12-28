@@ -13,18 +13,17 @@ class EcomQuantityField extends ViewableData{
 		
 	function __construct($object, $parameters = null){
 		
-		if($object instanceof Product){
+		if(Object::has_extension($object->class,'Buyable')){
 			$this->item = ShoppingCart::get_item_by_id($object->ID,null,$parameters);
 			 //provide a 0-quantity facade item if there is no such item in cart
 			if(!$this->item) $this->item = new Product_OrderItem($object,0);
 			
 			//TODO: perhaps we should just store the product itself, and do away with the facade, as it might be unnecessary complication
-		}elseif($object instanceof OrderItem){
+		}elseif($object instanceof OrderItem && $object->BuyableID){
 			$this->item = $object;
+		}else{
+			user_error("EcomQuantityField: no/bad order item or buyable passed to constructor.");
 		}
-		
-		if(!$this->item)
-			user_error("EcomQuantityField: no item or product passed to constructor.");
 
 		$this->parameters = $parameters;
 		//TODO: include javascript for easy update
@@ -67,7 +66,7 @@ class EcomQuantityField extends ViewableData{
 	 * Used for storing the quantity update link for ajax use.
 	 */
 	function AJAXLinkHiddenField(){
-		if($quantitylink = ShoppingCart::set_quantity_item_link($this->item->getProductIDForSerialization(), null,$this->parameters)){
+		if($quantitylink = ShoppingCart::set_quantity_item_link($this->item->BuyableID, $this->item->class,$this->parameters)){
 			$attributes = array(
 				'type' => 'hidden',
 				'class' => 'ajaxQuantityField_qtylink',
@@ -80,16 +79,12 @@ class EcomQuantityField extends ViewableData{
 	}
 	
 	function IncrementLink(){
-		$varid = ($this->item instanceof ProductVariation_OrderItem) ? $this->item->ProductVariationID : null;
-		return Convert::raw2att(ShoppingCart::add_item_link($this->item->getProductIDForSerialization(), $varid,$this->parameters));
+		return Convert::raw2att(ShoppingCart::add_item_link($this->item->BuyableID, $this->item->class,$this->parameters));
 	}
 	
 	function DecrementLink(){
-		$varid = ($this->item instanceof ProductVariation_OrderItem) ? $this->item->ProductVariationID : null;
-		return Convert::raw2att(ShoppingCart::remove_item_link($this->item->getProductIDForSerialization(), $varid,$this->parameters));
+		return Convert::raw2att(ShoppingCart::remove_item_link($this->item->BuyableID, $this->item->class,$this->parameters));
 	}
-	
-	
 
 	function forTemplate(){
 		return $this->renderWith($this->template);		

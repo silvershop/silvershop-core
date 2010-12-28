@@ -16,7 +16,7 @@ class OrderItem extends OrderAttribute {
 
 	public static $db = array(
 		'Quantity' => 'Double',
-		'ItemID' => 'Int',
+		'BuyableID' => 'Int', //TODO: surely one day this can become a has_one property
 		'Version' => 'Int'
 	);
 
@@ -57,25 +57,10 @@ class OrderItem extends OrderAttribute {
 
 	public static $plural_name = "Order Items";
 
-	/*
-	public function __construct($object = null, $quantity = 1) {
-		if(is_array($object)) {
-			//object is its own data-record...
-		}
-		else {
- 			$this->Quantity = $quantity;
-			$this->Version = $object->Version;
- 			$this->ItemID = $object->ID;
-		}
-		parent::__construct($object);
-	}
-	*/
-
-
-	public function addItem($object, $quantity = 1) {
-		parent::addItem($object);
+	public function addBuyable($object, $quantity = 1) {
+		parent::addBuyable($object);
 		$this->Version = $object->Version;
-		$this->ItemID = $object->ID;
+		$this->BuyableID = $object->ID;
 		$this->Quantity = $quantity;
 	}
 
@@ -90,8 +75,6 @@ class OrderItem extends OrderAttribute {
 
 	function onBeforeWrite() {
 		parent::onBeforeWrite();
-		$this->ItemID = $this->ItemID;
-		$this->Version = $this->Version;
 		//always keep quantity above 0
 		if(floatval($this->Quantity) == 0) {
 			$this->Quantity = 1;
@@ -120,11 +103,11 @@ class OrderItem extends OrderAttribute {
 	}
 
 	function hasSameContent($orderItem) {
-		return $orderItem instanceof OrderItem && $this->ItemID == $orderItem->ItemID && $this->Version == $orderItem->Version;
+		return $orderItem instanceof OrderItem && $this->BuyableID == $orderItem->BuyableID && $this->Version == $orderItem->Version;
 	}
 
 	public function debug() {
-		$id = $this->ID ? $this->ID : $this->ItemID;
+		$id = $this->ID ? $this->ID : $this->BuyableID;
 		$quantity = $this->Quantity;
 		$orderID = $this->ID ? $this->OrderID : 'The order has not been saved yet, so there is no ID';
 		return <<<HTML
@@ -171,19 +154,21 @@ HTML;
 	function TableTitle() {
 		return $this->ClassName;
 	}
-
-	function Item($current = false) {
-		$className = $this->ItemClassName();
-		if($this->ItemID && $this->Version && !$current) {
-			return Versioned::get_version($className, $this->ItemID, $this->Version);
+	
+	
+	//TODO: Change "Item" to something that doesn't conflict with OrderItem
+	function Buyable($current = false) {
+		$className = $this->BuyableClassName();
+		if($this->BuyableID && $this->Version && !$current) {
+			return Versioned::get_version($className, $this->BuyableID, $this->Version);
 		}
 		else {
-			return DataObject::get_by_id($className, $this->ItemID);
+			return DataObject::get_by_id($className, $this->BuyableID);
 		}
 	}
 
-	function ItemClassName() {
-		$className = str_replace(EcommerceItemDecorator::get_order_item_class_name_post_fix(), "", $this->ClassName);
+	function BuyableClassName() {
+		$className = str_replace(Buyable::get_order_item_class_name_post_fix(), "", $this->ClassName);
 		if(class_exists($className) && ClassInfo::is_subclass_of($className, "DataObject")) {
 			return $className;
 		}
@@ -192,15 +177,15 @@ HTML;
 		}
 	}
 
-	function ItemTitle() {
-		if($item = $this->Item()) {
+	function BuyableTitle() {
+		if($item = $this->Buyable()) {
 			return $item->Title;
 		}
-		return "Title not found";
+		return "Title not found"; //TODO: ugly to fall back on
 	}
 
 	function ProductTitle() {
-		return $this->ItemTitle();
+		return $this->BuyableTitle();
 	}
 
 	function CartQuantityID() {
@@ -215,19 +200,19 @@ HTML;
 	## Often Overloaded functions ##
 
 	function addLink() {
-		return ShoppingCart::add_item_link($this->ItemID, $this->ClassName,$this->linkParameters());
+		return ShoppingCart::add_item_link($this->BuyableID, $this->ClassName,$this->linkParameters());
 	}
 
 	function removeLink() {
-		return ShoppingCart::remove_item_link($this->ItemID, $this->ClassName,$this->linkParameters());
+		return ShoppingCart::remove_item_link($this->BuyableID, $this->ClassName,$this->linkParameters());
 	}
 
 	function removeAllLink() {
-		return ShoppingCart::remove_all_item_link($this->ItemID, $this->ClassName,$this->linkParameters());
+		return ShoppingCart::remove_all_item_link($this->BuyableID, $this->ClassName,$this->linkParameters());
 	}
 
 	function setQuantityLink() {
-		return ShoppingCart::set_quantity_item_link($this->ItemID, $this->ClassName,$this->linkParameters());
+		return ShoppingCart::set_quantity_item_link($this->BuyableID, $this->ClassName,$this->linkParameters());
 	}
 
 	function linkParameters(){
@@ -235,8 +220,5 @@ HTML;
 		$this->extend('updateLinkParameters',$array);
 		return $array;
 	}
-
-
-
-
+	
 }

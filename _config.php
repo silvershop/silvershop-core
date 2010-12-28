@@ -6,10 +6,14 @@ DataObject::add_extension('Member', 'EcommerceRole');
 DataObject::add_extension('Payment', 'EcommercePayment');
 // Extend SiteConfig with Ecommerce Extensions
 DataObject::add_extension('SiteConfig', 'SiteConfigEcommerceExtras');
+
+
 //create controller for shopping cart
 Director::addRules(50, array(
 	ShoppingCart::$url_segment . '/$Action/$ID/$OtherID' => 'ShoppingCart'
 ));
+
+
 
 
 // copy the lines below to your mysite/_config.php file and set as required.
@@ -19,7 +23,6 @@ Director::addRules(50, array(
 //Order::set_receipt_email("your name <sales@myshop.com>);
 //Order::set_receipt_subject("thank you for your order at www.myshop.com");
 //Order::set_modifiers(array("MyModifierOne", "MyModifierTwo");
-//Object::add_extension("Product", "EcommerceItemDecorator");
 
 
 // * * * HIGHLY RECOMMENDED SETTINGS NON-ECOMMERCE

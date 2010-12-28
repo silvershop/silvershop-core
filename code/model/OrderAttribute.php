@@ -39,19 +39,8 @@ class OrderAttribute extends DataObject {
 	function isLive(){
 		return (!$this->ID || $this->Order()->IsCart());
 	}
-	/*
-	public function __construct($object = null) {
-		if(is_array($object)) {
-			parent::__construct($object);
-		}
-		elseif($object) {
-			$this->ItemID = $object->ID;
-			parent::__construct();
-		}
-	}
-	*/
 
-	public function addItem($object) {
+	public function addBuyable($object) {
 		//more may be added here in the future
 		return true;
 	}
@@ -83,7 +72,7 @@ class OrderAttribute extends DataObject {
 	}
 
 	function MainID() {
-		return get_class($this) . '_' . ($this->ID ? 'DB_' . $this->ID : $this->ItemID);
+		return get_class($this) . '_' .'DB_' . $this->ID;
 	}
 
 	function TableID() {

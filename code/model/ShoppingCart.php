@@ -39,7 +39,6 @@ class ShoppingCart extends Controller {
 		'debug' => 'ADMIN'
 	);
 
-
 	function init() {
 		parent::init();
 		self::current_order()->initModifiers();
@@ -127,19 +126,19 @@ class ShoppingCart extends Controller {
 		}
 		if(ClassInfo::is_subclass_of($className, "OrderItem")) {
 			//do nothing
-			if(substr($className, -10) != EcommerceItemDecorator::get_order_item_class_name_post_fix()) {
+			if(substr($className, -10) != Buyable::get_order_item_class_name_post_fix()) {
 				user_error("ShoppingCart::order_item_class_name, $className should end in _OrderItem", E_USER_ERROR);
 			}
 		}
 		elseif(ClassInfo::is_subclass_of($className, "DataObject")) {
-			$className .= EcommerceItemDecorator::get_order_item_class_name_post_fix();
+			$className .= Buyable::get_order_item_class_name_post_fix();
 			return self::order_item_class_name($className);
 		}
 		return $className;
 	}
 
 	protected static function item_class_name($className) {
-		return str_replace(EcommerceItemDecorator::get_order_item_class_name_post_fix(), "", self::order_item_class_name($className));
+		return str_replace(Buyable::get_order_item_class_name_post_fix(), "", self::order_item_class_name($className));
 	}
 
 	//modifiers
@@ -490,12 +489,11 @@ class ShoppingCart extends Controller {
 	/**
 	 * return cart for ajax call
 	 */
-
 	function showcart() {
 		$this->renderWith("AjaxSimpleCart");
 	}
+	
 	//Helper functions
-
 
 	/**
 	 * Creates new order item based on url parameters
@@ -503,16 +501,21 @@ class ShoppingCart extends Controller {
 	protected function getNewOrderItem(){
 		$request = $this->getRequest();
 		$orderitem = null;
-		$itemId = intval($request->param('ID'));
+		$buyableId = intval($request->param('ID'));
 		//create order item
-		if(is_numeric($itemId)) {
+		if(is_numeric($buyableId)) {
 			$itemClassName = self::item_class_name($request->param('OtherID'));
 			if($itemClassName) {
-				$item = Versioned::get_one_by_stage($itemClassName,'Live', '"'.$itemClassName.'_Live"."ID" = '.$itemId); //only use live products
-				if ($item && $item->canPurchase()) {
-					$orderItemClassName = self::order_item_class_name($item->ClassName);
+				$buyable = null;
+				if(Object::has_extension($itemClassName,'Versioned') && singleton($itemClassName)->hasVersionField('Live')){ //only 'Live' versions should be used for versioned products
+					$buyable = Versioned::get_one_by_stage($itemClassName,'Live', '"'.$itemClassName.'_Live"."ID" = '.$buyableId);
+				}else{
+					$buyable = DataObject::get_one($itemClassName, '"'.$itemClassName.'"."ID" = '.$buyableId);
+				}
+				if ($buyable && $buyable->canPurchase()) {
+					$orderItemClassName = self::order_item_class_name($buyable->ClassName);
 					$orderitem = new $orderItemClassName();
-					$orderitem->addItem($item,1);
+					$orderitem->addBuyable($buyable,1);
 				}
 			}
 			else {
@@ -564,7 +567,7 @@ class ShoppingCart extends Controller {
 		$orderItemClassName = self::order_item_class_name($request->param('OtherID'));
 		$itemClassName = self::item_class_name($request->param('OtherID'));
 		$selection = array(
-			"\"ItemID\" = ".$request->param('ID')
+			"\"BuyableID\" = ".$request->param('ID')
 		);
 		if(ClassInfo::is_subclass_of($request->param('OtherID'), "OrderAttribute")){
 			$selection[] = "\"ClassName\" = '".$orderItemClassName."'";

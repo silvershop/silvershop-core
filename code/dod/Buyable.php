@@ -1,7 +1,6 @@
 <?php
 
-
-class EcommerceItemDecorator extends DataObjectDecorator {
+class Buyable extends DataObjectDecorator {
 
 	private static $shop_closed = null;
 
@@ -13,7 +12,6 @@ class EcommerceItemDecorator extends DataObjectDecorator {
 		HTTP::set_cache_age(0);
 		return ShoppingCart::current_order();
 	}
-
 
 	/**
 	 * Return the currency being used on the site.
@@ -33,8 +31,6 @@ class EcommerceItemDecorator extends DataObjectDecorator {
 		$currentOrder = ShoppingCart::current_order();
 		return $currentOrder->TaxInfo();
 	}
-
-
 
 	/*
 	 * @Depreciated - use canPurchase instead
@@ -66,11 +62,6 @@ class EcommerceItemDecorator extends DataObjectDecorator {
 		return ($this->owner->Item() && $this->Item()->Quantity > 0) ? true : false;
 	}
 
-	/*
-	 * Returns the order item which contains the product variation
-	 * Note : This function is usable in the ProductVariation context because a
-	 * ProductVariation_OrderItem only has a ProductVariation object in attribute
-	 */
 	function Item() {
 		$filter = "";
 		$className = $this->owner->ClassName;
@@ -79,13 +70,12 @@ class EcommerceItemDecorator extends DataObjectDecorator {
 		$item = ShoppingCart::get_item_by_id($this->owner->ID, $orderItemClassName, $filter);
 		if(!$item) {
 			$item = new $orderItemClassName();
-			$item->addItem($this->owner,0);
+			$item->addBuyable($this->owner,0);
 		}
 		$this->owner->extend('updateDummyItem',$item);
 		return $item; //return dummy item so that we can still make use of Item
 	}
-
-
+	
 	//passing on shopping cart links ...is this necessary?? ...why not just pass the cart?
 	function addLink() {
 		return ShoppingCart::add_item_link($this->owner->ID, $this->classNameForOrderItem(), $this->linkParameters());
@@ -111,7 +101,7 @@ class EcommerceItemDecorator extends DataObjectDecorator {
 
 
 	protected function classNameForOrderItem() {
-		return $this->owner->ClassName.EcommerceItemDecorator::get_order_item_class_name_post_fix();
+		return $this->owner->ClassName.Buyable::get_order_item_class_name_post_fix();
 	}
 
 
