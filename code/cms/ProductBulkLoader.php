@@ -215,22 +215,22 @@ class ProductBulkLoader extends CsvBulkLoader{
 	}
 	//work around until I can figure out how to allow calling processVariation multiple times
 	function processVariation1(&$obj, $val, $record){
-		$this->processVariation(&$obj, $val, $record);
+		$this->processVariation($obj, $val, $record);
 	}
 	function processVariation2(&$obj, $val, $record){
-		$this->processVariation(&$obj, $val, $record);
+		$this->processVariation($obj, $val, $record);
 	}
 	function processVariation3(&$obj, $val, $record){
-		$this->processVariation(&$obj, $val, $record);
+		$this->processVariation($obj, $val, $record);
 	}
 	function processVariation4(&$obj, $val, $record){
-		$this->processVariation(&$obj, $val, $record);
+		$this->processVariation($obj, $val, $record);
 	}
 	function processVariation5(&$obj, $val, $record){
-		$this->processVariation(&$obj, $val, $record);
+		$this->processVariation($obj, $val, $record);
 	}
 	function processVariation6(&$obj, $val, $record){
-		$this->processVariation(&$obj, $val, $record);
+		$this->processVariation($obj, $val, $record);
 	}
 }
 

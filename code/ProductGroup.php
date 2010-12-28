@@ -51,7 +51,6 @@ class ProductGroup extends Page {
 			'price' => array("Title" => 'Lowest Price', "SQL" => "\"Price\" ASC"),
 			'numbersold' => array("Title" => 'Most Popular', "SQL" => "\"NumberSold\" DESC")
 			//'Featured' => 'Featured',
-			//'Weight' => 'Weight'
 		);
 		static function add_sort_option($key, $title, $sql){self::$sort_options[$key] = array("Title" => $title, "SQL" => $sql);}
 		static function remove_sort_option($key){unset(self::$sort_options[$key]);}

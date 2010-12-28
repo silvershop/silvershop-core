@@ -42,11 +42,11 @@ class Product extends Page {
 	public static $casting = array();
 
 	public static $summary_fields = array(
-		'ID','InternalItemID','Title','Price','Weight','Model','NumberSold'
+		'ID','InternalItemID','Title','Price','NumberSold'
 	);
 
 	public static $searchable_fields = array(
-		'ID','Title','InternalItemID','Weight','Model','Price'
+		'ID','Title','InternalItemID','Price'
 	);
 
 	public static $singular_name = 'Product';
@@ -197,8 +197,6 @@ class Product extends Page {
 				$page1->URLSegment = 'example-product';
 				$page1->ParentID = $group->ID;
 				$page1->Price = '15.00';
-				$page1->Weight = '0.50';
-				$page1->Model = 'Joe Bloggs';
 				$page1->FeaturedProduct = true;
 				$page1->writeToStage('Stage');
 				$page1->publish('Stage', 'Live');
@@ -210,8 +208,6 @@ class Product extends Page {
 				$page2->URLSegment = 'example-product-2';
 				$page2->ParentID = $group->ID;
 				$page2->Price = '25.00';
-				$page2->Weight = '1.2';
-				$page2->Model = 'Jane Bloggs';
 				$page2->writeToStage('Stage');
 				$page2->publish('Stage', 'Live');
 				DB::alteration_message('Product page \'Example product 2\' created', 'created');
