@@ -1,36 +1,28 @@
 <?php
 
-// Extend the Member with e-commerce related fields.
-DataObject::add_extension('Member', 'EcommerceRole');
-// Extend Payment with e-commerce relationship.
-DataObject::add_extension('Payment', 'EcommercePayment');
-// Extend SiteConfig with Ecommerce Extensions
-DataObject::add_extension('SiteConfig', 'SiteConfigEcommerceExtras');
 
-
-//create controller for shopping cart
 Director::addRules(50, array(
 	ShoppingCart::$url_segment . '/$Action/$ID/$OtherID' => 'ShoppingCart'
 ));
-
-
 
 
 // copy the lines below to your mysite/_config.php file and set as required.
 // __________________________________START ECOMMERCE MODULE CONFIG __________________________________
 //The configuration below is not required, but allows you to customise your ecommerce application - check for the defalt value first.
 // * * * DEFINITELY MUST SET
-//Order::set_receipt_email("your name <sales@myshop.com>);
+//Order::set_receipt_email("your name <sales@myshop.com>");
 //Order::set_receipt_subject("thank you for your order at www.myshop.com");
 //Order::set_modifiers(array("MyModifierOne", "MyModifierTwo");
-
+//DataObject::add_extension('Member', 'EcommerceRole');
+//DataObject::add_extension('Payment', 'EcommercePayment');
+//DataObject::add_extension('SiteConfig', 'SiteConfigEcommerceExtras');
+//DataObject::add_extension("SiteTree", "EcommerceSiteTreeExtension");
+//DataObject::add_extension("Controller", "EcommerceSiteTreeExtension_Controller");
+//DataObject::add_extension("Product", "Buyable");
 
 // * * * HIGHLY RECOMMENDED SETTINGS NON-ECOMMERCE
 //Payment::set_site_currency('NZD');
 //Geoip::$default_country_code = 'NZ';
-//Object::add_extension("SiteTree", "EcommerceSiteTreeExtension");
-//Object::add_extension("Controller", "EcommerceSiteTreeExtension_Controller");
-
 
 // * * * ECOMMERCE I18N SETTINGS
 // * * * for Currency &  Date Formats get this module: http://code.google.com/p/silverstripe-i18n-fieldtypes/
@@ -89,15 +81,15 @@ Director::addRules(50, array(
 
 // * * * HELP
 //Product::set_global_allow_purchase(false); //stops the sale of all products
+// __________________________________ END ECOMMERCE MODULE CONFIG __________________________________
 
-//===================---------------- END ecommerce_products MODULE ----------------===================
 
 
-//===================---------------- START payment MODULE ----------------===================
+// __________________________________ END PAYMENT MODULE CONFIG __________________________________
 //Payment::set_site_currency("NZD");
 /*
 Payment::set_supported_methods(array(
 	'PayPalPayment' => 'Paypal Payment'
 ));
 */
-//===================---------------- END payment MODULE ----------------===================
+// __________________________________ END PAYMENT MODULE CONFIG __________________________________

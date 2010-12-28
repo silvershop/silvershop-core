@@ -5,7 +5,7 @@ class EcommerceSiteTreeExtension extends DataObjectDecorator {
 
 	function MenuTitleEcommerce() {
 		$v = $this->owner->MenuTitle;
-		if($this->owner instance CheckoutPage) {
+		if($this->owner instanceOf CheckoutPage) {
 			$count = 0;
 			$cart = ShoppingCart::current_order();
 			if($cart) {
@@ -20,6 +20,11 @@ class EcommerceSiteTreeExtension extends DataObjectDecorator {
 			}
 		}
 		return $v;
+	}
+
+	function ShopClosed() {
+		$siteConfig = DataObject::get_one("SiteConfig");
+		return $siteConfig->ShopClosed;
 	}
 
 }
@@ -37,14 +42,20 @@ class EcommerceSiteTreeExtension_Controller extends Extension {
 		return ShoppingCart::get_url_segment()."/showcart/";
 	}
 
+	function Cart() {
+		return ShoppingCart::current_order();
+
+	}
+
 	public function NumItemsInCart() {
-		$cart = ShoppingCart::current_order();
+		$cart = $this->Cart();
 		if($cart) {
 			if($cart = $this->Cart()) {
 				if($items = $cart->Items()) {
 					return $items->count();
 				}
 			}
+		}
 		return 0;
 	}
 

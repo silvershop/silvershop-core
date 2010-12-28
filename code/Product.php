@@ -75,21 +75,15 @@ class Product extends Page {
 		$tempextvar = $this->get_static('SiteTree','runCMSFieldsExtensions');
 		$this->disableCMSFieldsExtensions();
 		$fields = parent::getCMSFields();
-		if($tempextvar)	$this->enableCMSFieldsExtensions();
-
-		// Standard product detail fields
-		$fields->addFieldToTab('Root.Content.Main',new TextField('Price', _t('Product.PRICE', 'Price'), '', 12),'Content');
-		$fields->addFieldToTab('Root.Content.Main',new TextField('Weight', _t('Product.WEIGHT', 'Weight (kg)'), '', 12),'Content');
-		$fields->addFieldToTab('Root.Content.Main',new TextField('Model', _t('Product.MODEL', 'Model'), '', 30),'Content');
-		$fields->addFieldToTab('Root.Content.Main',new TextField('InternalItemID', _t('Product.CODE', 'Product Code'), '', 30),'Content');
-
-		if(!$fields->dataFieldByName('Image')) {
-			$fields->addFieldToTab('Root.Content.Images', new ImageField('Image', _t('Product.IMAGE', 'Product Image')));
+		if($tempextvar)	{
+			$this->enableCMSFieldsExtensions();
 		}
-
-		// Flags for this product which affect it's behaviour on the site
-		$fields->addFieldToTab('Root.Content.Main',new CheckboxField('FeaturedProduct', _t('Product.FEATURED', 'Featured Product')), 'Content');
-		$fields->addFieldToTab('Root.Content.Main',new CheckboxField('AllowPurchase', _t('Product.ALLOWPURCHASE', 'Allow product to be purchased'), 1),'Content');
+		// Standard product detail fields
+		$fields->addFieldToTab('Root.Content.Images', new ImageField('Image', _t('Product.IMAGE', 'Product Image')));
+		$fields->addFieldToTab('Root.Content.Details',new CheckboxField('AllowPurchase', _t('Product.ALLOWPURCHASE', 'Allow product to be purchased'), 1));
+		$fields->addFieldToTab('Root.Content.Details',new CheckboxField('FeaturedProduct', _t('Product.FEATURED', 'Featured Product')));
+		$fields->addFieldToTab('Root.Content.Details',new TextField('Price', _t('Product.PRICE', 'Price'), '', 12));
+		$fields->addFieldToTab('Root.Content.Details',new TextField('InternalItemID', _t('Product.CODE', 'Product Code'), '', 30));
 		$fields->addFieldsToTab(
 			'Root.Content.Product Groups',
 			array(
