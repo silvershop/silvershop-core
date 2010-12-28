@@ -4,7 +4,12 @@
 Director::addRules(50, array(
 	ShoppingCart::$url_segment . '/$Action/$ID/$OtherID' => 'ShoppingCart'
 ));
-
+Object::add_extension('Member', 'EcommerceRole');
+Object::add_extension('Payment', 'EcommercePayment');
+Object::add_extension('SiteConfig', 'SiteConfigEcommerceExtras');
+Object::add_extension("SiteTree", "EcommerceSiteTreeExtension");
+Object::add_extension("Controller", "EcommerceSiteTreeExtension_Controller");
+Object::add_extension("Product", "Buyable");
 
 // copy the lines below to your mysite/_config.php file and set as required.
 // __________________________________START ECOMMERCE MODULE CONFIG __________________________________
@@ -13,12 +18,7 @@ Director::addRules(50, array(
 //Order::set_receipt_email("your name <sales@myshop.com>");
 //Order::set_receipt_subject("thank you for your order at www.myshop.com");
 //Order::set_modifiers(array("MyModifierOne", "MyModifierTwo");
-//DataObject::add_extension('Member', 'EcommerceRole');
-//DataObject::add_extension('Payment', 'EcommercePayment');
-//DataObject::add_extension('SiteConfig', 'SiteConfigEcommerceExtras');
-//DataObject::add_extension("SiteTree", "EcommerceSiteTreeExtension");
-//DataObject::add_extension("Controller", "EcommerceSiteTreeExtension_Controller");
-//DataObject::add_extension("Product", "Buyable");
+
 
 // * * * HIGHLY RECOMMENDED SETTINGS NON-ECOMMERCE
 //Payment::set_site_currency('NZD');
