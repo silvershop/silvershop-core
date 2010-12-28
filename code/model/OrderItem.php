@@ -46,8 +46,6 @@ class OrderItem extends OrderAttribute {
 	public static $summary_fields = array(
 		"Order.ID" => "Order ID",
 		"TableTitle" => "Title",
-		//"CartTitle" => "Title", //confusing having two titles - why is it necessary?
-		//"ClassName" => "Type", //this is just confusing isn't it?
 		"UnitPrice" => "Unit Price" ,
 		"Quantity" => "Quantity" ,
 		"Total" => "Total Price" ,
@@ -154,8 +152,8 @@ HTML;
 	function TableTitle() {
 		return $this->ClassName;
 	}
-	
-	
+
+
 	//TODO: Change "Item" to something that doesn't conflict with OrderItem
 	function Buyable($current = false) {
 		$className = $this->BuyableClassName();
@@ -220,5 +218,26 @@ HTML;
 		$this->extend('updateLinkParameters',$array);
 		return $array;
 	}
-	
+
+
+
+	function requireDefaultRecords() {
+		parent::requireDefaultRecords();
+		// we must check for individual database types here because each deals with schema in a none standard way
+		//can we use Table::has_field ???
+		$db = DB::getConn();
+		if( $db instanceof PostgreSQLDatabase ){
+      $exist = DB::query("SELECT column_name FROM information_schema.columns WHERE table_name ='OrderItem' AND column_name = 'ItemID'")->numRecords();
+		}
+		else{
+			// default is MySQL - broken for others, each database conn type supported must be checked for!
+      $exist = DB::query("SHOW COLUMNS FROM \"OrderItem\" LIKE 'ItemID'")->numRecords();
+		}
+ 		if($exist > 0) {
+			DB::query("UPDATE \"OrderItem\" SET \"OrderItem\".\"BuyableID\" = \"OrderItem\".\"ItemID\"");
+ 			DB::query("ALTER TABLE \"OrderItem\" CHANGE COLUMN \"ItemID\" \"_obsolete_ItemID\" Integer(11)");
+ 			DB::alteration_message('Moved ItemID to BuyableID in OrderItem', 'obsolete');
+		}
+	}
+
 }
