@@ -68,11 +68,13 @@ class Buyable extends DataObjectDecorator {
 		$orderItemClassName = $this->classNameForOrderItem();
 		$this->owner->extend('updateItemFilter',$filter);
 		$item = ShoppingCart::get_item_by_id($this->owner->ID, $orderItemClassName, $filter);
+
 		if(!$item) {
 			$item = new $orderItemClassName();
 			$item->addBuyable($this->owner,0);
 		}
 		$this->owner->extend('updateDummyItem',$item);
+		
 		return $item; //return dummy item so that we can still make use of Item
 	}
 	

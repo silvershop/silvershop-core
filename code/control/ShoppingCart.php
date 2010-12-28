@@ -280,14 +280,14 @@ class ShoppingCart extends Controller {
 	/**
 	 * Get OrderItem according to product id, and coorresponding parameter filter.
 	 */
-	static function get_item_by_id($orderItemID, $className = "OrderAttribute", $filter = "" ) {
-		if(!ClassInfo::is_subclass_of($className, "OrderAttribute")) {
-			user_error("$className needs to be a subclass of OrderAttribute", E_USER_WARNING);
+	static function get_item_by_id($orderItemID, $className = "OrderItem", $filter = "" ) {
+		if(!ClassInfo::is_subclass_of($className, "OrderItem")) {
+			user_error("$className needs to be a subclass of OrderItem", E_USER_WARNING);
 		}
 		$filter = self::get_param_filter($filter);
 		$order = self::current_order();
 		$filterString = ($filter && trim($filter) != "") ? " AND $filter" : "";
-		return DataObject::get_one($className, "\"OrderID\" = ".$order->ID." AND \"OrderAttribute\".\"ID\" = ".$orderItemID." ". $filterString);
+		return DataObject::get_one($className, "\"OrderID\" = ".$order->ID." AND \"BuyableID\" = ".$orderItemID." ". $filterString);
 	}
 
 	/**
