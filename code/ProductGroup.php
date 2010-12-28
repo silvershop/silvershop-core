@@ -27,8 +27,6 @@ class ProductGroup extends Page {
 
 	public static $default_child = 'Product';
 
-	public static $add_action = 'a Product Group Page';
-
 	public static $icon = 'cms/images/treeicons/folder';
 
 	protected static $include_child_groups = true;
