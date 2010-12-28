@@ -106,17 +106,6 @@ class ProductGroup extends Page {
 		return $fields;
 	}
 
-	/**
-	 * Returns the shopping cart.
-	 * @todo Does HTTP::set_cache_age() still need to be set here?
-	 *
-	 * @return Order
-	 */
-	function Cart() {
-		HTTP::set_cache_age(0);
-		return ShoppingCart::current_order();
-	}
-
 
 	/**
 	 * Retrieve a set of products, based on the given parameters. Checks get query for sorting and pagination.
