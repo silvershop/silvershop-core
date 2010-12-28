@@ -18,29 +18,7 @@
 		<% if Size %><p><% _t("SIZE","Size") %>: $Size.XML</p><% end_if %>
 		<% if Variations %>
 			<div class="quantityBox">
-				<table class="quantityTable">
-					<tr>
-						<th>Variation</th><th>Price</th><% if canPurchase %><th><% _t("QUANTITYCART","Quantity in cart") %></th><% end_if %>
-					</tr>
-					<% control Variations %>
-							<tr>
-								<td>$Title.XML</td>
-								<td>$Price.Nice $Currency $TaxInfo.PriceSuffix</td>
-								<td>
-								<% if canPurchase %>
-									<% if IsInCart %>
-										<% control Item %>
-											$QuantityField
-										<% end_control %>
-									<% else %>
-										<a href="$Item.addLink" title="<% sprintf(_t("ADD","Add &quot;%s&quot; to your cart"),$Title.XML) %>"><% _t("ADDLINK","Add this item to cart") %></a>
-									<% end_if %>
-
-								<% end_if %>
-								</td>
-							</tr>
-					<% end_control %>
-				</table>
+				<% include VariationsTable %>
 			</div>
 		<% else %>
 			<% if Price != 0 %><p class="priceDisplay">$Price.Nice $Currency $TaxInfo.PriceSuffix</p><% end_if %>

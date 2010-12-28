@@ -168,9 +168,9 @@ class Product extends Page {
 	 * @return boolean
 	 */
 	function canPurchase($member = null) {
-		/*if($this->ShopClosed()) { //TODO: ShopClosed not found?
+		if($this->ShopClosed()) {
 			return false;
-		}*/
+		}
 		if(!self::get_global_allow_purchase()) {
 			return false;
 		}
