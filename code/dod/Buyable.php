@@ -102,7 +102,7 @@ class Buyable extends DataObjectDecorator {
 	}
 
 
-	protected function classNameForOrderItem() {
+	public function classNameForOrderItem() {
 		return $this->owner->ClassName.Buyable::get_order_item_class_name_post_fix();
 	}
 

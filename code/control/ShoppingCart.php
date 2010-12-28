@@ -280,14 +280,14 @@ class ShoppingCart extends Controller {
 	/**
 	 * Get OrderItem according to product id, and coorresponding parameter filter.
 	 */
-	static function get_item_by_id($orderItemID, $className = "OrderItem", $filter = "" ) {
+	static function get_item_by_id($buyableID, $className = "OrderItem", $filter = "" ) {
 		if(!ClassInfo::is_subclass_of($className, "OrderItem")) {
 			user_error("$className needs to be a subclass of OrderItem", E_USER_WARNING);
 		}
 		$filter = self::get_param_filter($filter);
 		$order = self::current_order();
 		$filterString = ($filter && trim($filter) != "") ? " AND $filter" : "";
-		return DataObject::get_one($className, "\"OrderID\" = ".$order->ID." AND \"BuyableID\" = ".$orderItemID." ". $filterString);
+		return DataObject::get_one($className, "\"OrderID\" = ".$order->ID." AND \"BuyableID\" = ".$buyableID." ". $filterString);
 	}
 
 	/**
@@ -299,6 +299,52 @@ class ShoppingCart extends Controller {
 			$filterString = " AND ($filter)";
 		}
 		return  DataObject::get_one('OrderItem', "\"OrderID\" = $order->ID $filterString");
+	}
+
+	static function add_buyable($buyable,$quantity = 1){
+		if(!$buyable) return null;
+		
+		$item = self::find_or_make_order_item($buyable);
+		if($item->ID){
+			$item->Quantity += $quantity;
+			$item->write();
+		}else{
+			$item->Quantity = $quantity;
+			$item->write();
+			self::add_new_item($item);
+
+		}
+				
+		return $item;
+	}
+	
+	static function find_or_make_order_item($buyable){		
+		if($item = self::get_item_by_id($buyable->ID,$buyable->classNameForOrderItem())){
+			return $item;
+		}
+		return self::create_order_item($buyable);
+	}
+
+	/**
+	 * Creates a new order item based on url parameters
+	 */
+	static function create_order_item($buyable,$quantity = 1, $parameters = null){
+		
+		$orderitem = null;
+		$itemclass = $buyable->classNameForOrderItem();
+		if($buyable && $buyable->canPurchase()) {
+			$orderitem = new $itemclass();
+			$orderitem->addBuyable($buyable);
+		}
+
+		//set extra parameters
+		if($orderitem instanceof OrderItem && is_array($parameters)){
+			foreach(self::$paramfilters as $param => $defaultvalue){
+				$v = (isset($parameters[$param])) ? Convert::raw2sql($parameters[$param]) : $defaultvalue;
+				$orderitem->$param = $v;
+			}
+		}
+		return $orderitem;
 	}
 
 

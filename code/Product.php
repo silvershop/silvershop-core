@@ -232,6 +232,8 @@ class Product extends Page {
 }
 
 class Product_Controller extends Page_Controller {
+	
+	static $allowed_actions = array();
 
 	function init() {
 		parent::init();
