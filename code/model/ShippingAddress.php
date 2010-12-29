@@ -26,7 +26,7 @@ class ShippingAddress extends DataObject {
 
 	public static $searchable_fields = array(
 		"ShippingName" => "PartialMatchFilter",
-		"SearchFields" => "PartialMatchFilter"
+		//"SearchFields" => "PartialMatchFilter"
 	);
 
 	public static $field_labels = array(
