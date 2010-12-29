@@ -113,7 +113,7 @@ class Product extends Page {
 		$q->groupby("\"Product\".\"ID\"");
 		$q->orderby("\"NewNumberSold\" DESC");
 
-		$q->leftJoin('OrderItem','"Product"."ID" = "OrderItem"."ItemID"');
+		$q->leftJoin('OrderItem','"Product"."ID" = "OrderItem"."BuyableID"');
 		$records = $q->execute();
 		$productssold = $ps->buildDataObjectSet($records, "DataObjectSet", $q, 'Product');
 
@@ -218,6 +218,8 @@ class Product extends Page {
 }
 
 class Product_Controller extends Page_Controller {
+	
+	static $allowed_actions = array();
 
 	function init() {
 		parent::init();
@@ -285,14 +287,6 @@ class Product_OrderItem extends OrderItem {
 	);
 
 
-	public function addItem($object, $quantity) {
-		parent::addItem($object, $quantity);
-	}
-
-	function getProductIDForSerialization() {
-		return $this->ItemID;
-	}
-
 	/**
 	 * Overloaded Product accessor method.
 	 *
@@ -309,7 +303,7 @@ class Product_OrderItem extends OrderItem {
 	 * @return Product object
 	 */
 	public function Product($current = false) {
-		return $this->Item($current);
+		return $this->Buyable($current);
 	}
 
 	function hasSameContent($orderItem) {
@@ -335,7 +329,7 @@ class Product_OrderItem extends OrderItem {
 
 	public function debug() {
 		$title = $this->TableTitle();
-		$productID = $this->ItemID;
+		$productID = $this->BuyableID;
 		$productVersion = $this->Version;
 		$html = parent::debug() .<<<HTML
 			<h3>Product_OrderItem class details</h3>
@@ -369,7 +363,7 @@ HTML;
 			");
 			DB::query("
 				UPDATE \"OrderItem\", \"Product_OrderItem\"
-					SET \"OrderItem\".\"ItemID\" = \"Product_OrderItem\".\"ProductID\"
+					SET \"OrderItem\".\"BuyableID\" = \"Product_OrderItem\".\"ProductID\"
 				WHERE \"OrderItem\".\"ID\" = \"Product_OrderItem\".\"ID\"
 			");
  			DB::query("ALTER TABLE \"Product_OrderItem\" CHANGE COLUMN \"ProductVersion\" \"_obsolete_ProductVersion\" Integer(11)");
