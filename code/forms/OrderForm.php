@@ -177,7 +177,7 @@ class OrderForm extends Form {
 		$payment->PaidForID = $order->ID;
 		$payment->PaidForClass = $order->class;
 
-		$payment->Amount->Amount = $order->Total();
+		$payment->Amount->Amount = $order->Total(); //TODO: should this instead be TotalOutstanding ...incase for some reason orders are partially paid.
 		$payment->write();
 
 		//prepare $data - ie put into the $data array any fields that may need to be there for payment

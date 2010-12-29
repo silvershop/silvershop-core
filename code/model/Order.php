@@ -1164,10 +1164,14 @@ class Order_CancelForm extends Form {
 	function doCancel($data, $form) {
 		$SQL_data = Convert::raw2sql($data);
 
-		$order = DataObject::get_by_id('Order', $SQL_data['OrderID']);
-		$order->Status = 'MemberCancelled';
-		$order->write();
-
+		$member = $this->CurrentMember();
+				
+		
+		if(isset($SQL_data['OrderID']) && $order = DataObject::get_one('Order', "\"ID\" = ".$SQL_data['OrderID']." AND \"MemberID\" = $member->ID")){
+			$order->Status = 'MemberCancelled';
+			$order->write();
+		}
+		
 		//TODO: notify people via email??
 
 		if($link = AccountPage::find_link()){
@@ -1182,5 +1186,4 @@ class Order_CancelForm extends Form {
 	}
 
 }
-
 
