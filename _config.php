@@ -4,6 +4,7 @@
 Director::addRules(50, array(
 	ShoppingCart::$url_segment . '/$Action/$ID/$OtherID' => 'ShoppingCart'
 ));
+
 Object::add_extension('Member', 'EcommerceRole');
 Object::add_extension('Payment', 'EcommercePayment');
 Object::add_extension('SiteConfig', 'SiteConfigEcommerceExtras');
