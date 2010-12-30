@@ -6,7 +6,11 @@
  * cart on the site.
  *
  * @package ecommerce
- */
+ * @Description
+ ** Non URL based adding	add_buyable->find_or_make_order_item->add_(new)_item
+ ** URL based adding	additem->getNew/ExistingOrderItem->add_(new)_item
+ **/
+
 class ShoppingCart extends Controller {
 
 	//public, because it is referred to in the _config file...
@@ -54,8 +58,10 @@ class ShoppingCart extends Controller {
 	 *	)
 	 *
 	*/
-	protected static $paramfilters = array();
-		function set_param_filters($array){self::$paramfilters = array_merge(self::$paramfilters,$array);}
+	protected static $default_param_filters = array();
+		static function set_default_param_filters($array){self::$default_param_filters = $array;}
+		static function add_default_param_filters($array){self::$default_param_filters = array_merge(self::$default_param_filters,$array);}
+		static function get_default_param_filters(){return self::$default_param_filters;}
 
 
 	//Country functions
@@ -82,20 +88,20 @@ class ShoppingCart extends Controller {
 
 	//Controller links
 
-	static function add_item_link($productID, $className = "OrderItem", $parameters = array()) {
-		return self::$url_segment.'/additem/'.$productID."/".self::order_item_class_name($className).self::params_to_get_string($parameters);
+	static function add_item_link($buyableID, $className = "OrderItem", $parameters = array()) {
+		return self::$url_segment.'/additem/'.$buyableID."/".self::order_item_class_name($className).self::params_to_get_string($parameters);
 	}
 
-	static function remove_item_link($productID, $className = "OrderItem", $parameters = array()) {
-		return self::$url_segment.'/removeitem/'.$productID."/".self::order_item_class_name($className).self::params_to_get_string($parameters);
+	static function remove_item_link($buyableID, $className = "OrderItem", $parameters = array()) {
+		return self::$url_segment.'/removeitem/'.$buyableID."/".self::order_item_class_name($className).self::params_to_get_string($parameters);
 	}
 
-	static function remove_all_item_link($productID, $className = "OrderItem", $parameters = array()) {
-		return self::$url_segment.'/removeallitem/'.$productID."/".self::order_item_class_name($className).self::params_to_get_string($parameters);
+	static function remove_all_item_link($buyableID, $className = "OrderItem", $parameters = array()) {
+		return self::$url_segment.'/removeallitem/'.$buyableID."/".self::order_item_class_name($className).self::params_to_get_string($parameters);
 	}
 
-	static function set_quantity_item_link($productID, $className = "OrderItem", $parameters = array()) {
-		return self::$url_segment.'/setquantityitem/'.$productID."/".self::order_item_class_name($className).self::params_to_get_string($parameters);
+	static function set_quantity_item_link($buyableID, $className = "OrderItem", $parameters = array()) {
+		return self::$url_segment.'/setquantityitem/'.$buyableID."/".self::order_item_class_name($className).self::params_to_get_string($parameters);
 	}
 
 	static function add_modifier_link($modifierID, $className = "OrderModifier") {
@@ -105,7 +111,6 @@ class ShoppingCart extends Controller {
 	static function remove_modifier_link($modifierID, $className = "OrderModifier") {
 		return self::$url_segment.'/removemodifier/'.$modifierID."/".self::order_modifier_class_name($className);
 	}
-
 
 	static function get_country_link() {
 		return self::$url_segment.'/setcountry/';
@@ -126,8 +131,9 @@ class ShoppingCart extends Controller {
 		}
 		if(ClassInfo::is_subclass_of($className, "OrderItem")) {
 			//do nothing
-			if(substr($className, -10) != Buyable::get_order_item_class_name_post_fix()) {
-				user_error("ShoppingCart::order_item_class_name, $className should end in _OrderItem", E_USER_ERROR);
+			$length = strlen(get_order_item_class_name_post_fix()) * -1;
+			if(substr($className, $length) != Buyable::get_order_item_class_name_post_fix()) {
+				user_error("ShoppingCart::order_item_class_name, $className should end in '".Buyable::get_order_item_class_name_post_fix()."'", E_USER_ERROR);
 			}
 		}
 		elseif(ClassInfo::is_subclass_of($className, "DataObject")) {
@@ -137,8 +143,8 @@ class ShoppingCart extends Controller {
 		return $className;
 	}
 
-	protected static function item_class_name($className) {
-		return str_replace(Buyable::get_order_item_class_name_post_fix(), "", self::order_item_class_name($className));
+	protected static function buyable_class_name($orderItemClassName) {
+		return str_replace(Buyable::get_order_item_class_name_post_fix(), "", self::order_item_class_name($orderItemClassName));
 	}
 
 	//modifiers
@@ -209,51 +215,57 @@ class ShoppingCart extends Controller {
 	/**
 	 * Either update or create OrderItem in ShoppingCart.
 	 */
-	static function add_new_item(OrderItem $item) {
-		$item->write();
-		self::current_order()->Attributes()->add($item);
+	protected static function add_new_item(OrderItem $newOrderItem, $quantity = 1) {
+		//what happens if it has already been added???
+		$orderItem->Quantity = $quantity;
+		$orderItem->write();
+		self::current_order()->Attributes()->add($orderItem);
 	}
 
 	/**
-	 * Add a new OrderItem to session
+	 * Add QTY to an existing OrderItem to session
 	 */
-	static function add_item($existingitem, $quantity = 1) {
-		if ($existingitem) {
-			$existingitem->Quantity += $quantity;
-			$existingitem->write();
+	protected static function add_item($existingOrderItem, $quantity = 1) {
+		//what happens if the item doe not actually exists?
+		if($existingOrderItem->ID) {
+			$existingOrderItem->Quantity += $quantity;
+			$existingOrderItem->write();
+		}
+		else {
+			user_error("Item has not been saved yet", E_USER_WARNING);
 		}
 	}
 
 	/**
 	 * Update quantity of an OrderItem in the session
 	 */
-	static function set_quantity_item($existingitem, $quantity) {
-		if ($existingitem) {
-			$existingitem->Quantity = $quantity;
-			$existingitem->write();
+	static function set_quantity_item($existingOrderItem, $quantity) {
+		if ($existingOrderItem) {
+			$existingOrderItem->Quantity = $quantity;
+			$existingOrderItem->write();
 		}
 	}
 
 	/**
 	 * Reduce quantity of an orderItem, or completely remove
 	 */
-	static function remove_item($existingitem, $quantityToReduceBy = 1) {
-		if ($existingitem) {
+	static function remove_item($existingOrderItem, $quantityToReduceBy = 1) {
+		if ($existingOrderItem) {
 			if ($quantityToReduceBy >= $existingitem->Quantity) {
-				$existingitem->delete();
-				$existingitem->destroy();
+				$existingOrderItem->delete();
+				$existingOrderItem->destroy();
 			}
 			else {
-				$existingitem->Quantity -= $quantityToReduceBy;
-				$existingitem->write();
+				$existingOrderItem->Quantity -= $quantityToReduceBy;
+				$existingOrderItem->write();
 			}
 		}
 	}
 
-	static function remove_all_item($existingitem) {
-		if($existingitem){
-			$existingitem->delete();
-			$existingitem->destroy();
+	static function remove_all_item($existingOrderItem) {
+		if($existingOrderItem){
+			$existingOrderItem->delete();
+			$existingOrderItem->destroy();
 		}
 	}
 
@@ -280,71 +292,64 @@ class ShoppingCart extends Controller {
 	/**
 	 * Get OrderItem according to product id, and coorresponding parameter filter.
 	 */
-	static function get_item_by_id($buyableID, $className = "OrderItem", $filter = "" ) {
-		if(!ClassInfo::is_subclass_of($className, "OrderItem")) {
+	static function get_order_item_by_buyableid($buyableID, $orderItemClassName = "OrderItem", $parameters = null ) {
+		if(!ClassInfo::is_subclass_of($orderItemClassName, "OrderItem")) {
 			user_error("$className needs to be a subclass of OrderItem", E_USER_WARNING);
 		}
-		$filter = self::get_param_filter($filter);
+		$filter = self::turn_params_into_sql($parameters = null);
 		$order = self::current_order();
 		$filterString = ($filter && trim($filter) != "") ? " AND $filter" : "";
-		return DataObject::get_one($className, "\"OrderID\" = ".$order->ID." AND \"BuyableID\" = ".$buyableID." ". $filterString);
+		// NOTE: MUST HAVE THE EXACT CLASSNAME !!!!! THEREFORE INCLUDED IN WHERE PHRASE
+		return DataObject::get_one($orderItemClassName, "\"ClassName\" = ".$orderItemClassName." AND \"OrderID\" = ".$order->ID." AND \"BuyableID\" = ".$buyableID." ". $filterString);
 	}
 
-	/**
-	 * Get item according to a filter.
-	 */
-	static function get_item($filter) {
-		$order = self::current_order();
-		if($filter) {
-			$filterString = " AND ($filter)";
+
+	static function add_buyable($buyable,$quantity = 1, $parameters = null){
+		if(!$buyable) {
+			user_error("No buyable was provided to add", E_USER_NOTICE);
+			return null;
 		}
-		return  DataObject::get_one('OrderItem', "\"OrderID\" = $order->ID $filterString");
+		$orderItem = self::find_or_make_order_item($buyable, $parameters = null);
+		if($orderItem->ID){
+			self::add_item($orderItem, $quantity);
+		}
+		else{
+			self::add_new_item($orderItem, $quantity);
+		}
+		return $orderItem;
 	}
 
-	static function add_buyable($buyable,$quantity = 1){
-		if(!$buyable) return null;
-		
-		$item = self::find_or_make_order_item($buyable);
-		if($item->ID){
-			$item->Quantity += $quantity;
-			$item->write();
-		}else{
-			$item->Quantity = $quantity;
-			$item->write();
-			self::add_new_item($item);
-
+	static function find_or_make_order_item($buyable, $parameters = null){
+		if($orderItem = self::get_order_item_by_buyableid($buyable->ID,$buyable->classNameForOrderItem())){
+			//do nothing
 		}
-				
-		return $item;
-	}
-	
-	static function find_or_make_order_item($buyable){		
-		if($item = self::get_item_by_id($buyable->ID,$buyable->classNameForOrderItem())){
-			return $item;
+		else {
+			$orderItem = self::create_order_item($buyable, 1, $parameters = null);
 		}
-		return self::create_order_item($buyable);
+		return $orderItem;
 	}
 
 	/**
 	 * Creates a new order item based on url parameters
 	 */
-	static function create_order_item($buyable,$quantity = 1, $parameters = null){
-		
-		$orderitem = null;
-		$itemclass = $buyable->classNameForOrderItem();
+	protected static function create_order_item($buyable,$quantity = 1, $parameters = null){
+		$orderItem = null;
 		if($buyable && $buyable->canPurchase()) {
-			$orderitem = new $itemclass();
-			$orderitem->addBuyable($buyable);
+			$classNameForOrderItem = $buyable->classNameForOrderItem();
+			$orderItem = new $classNameForOrderItem();
+			$orderItem->addBuyableToOrderItem($buyable, $quantity);
 		}
 
 		//set extra parameters
-		if($orderitem instanceof OrderItem && is_array($parameters)){
-			foreach(self::$paramfilters as $param => $defaultvalue){
+		if($orderItem instanceof OrderItem && is_array($parameters)){
+			$defaultParamFilters = self::get_default_param_filters();
+			foreach($defaultParamFilters as $param => $defaultvalue){
 				$v = (isset($parameters[$param])) ? Convert::raw2sql($parameters[$param]) : $defaultvalue;
-				$orderitem->$param = $v;
+				//how does this get saved in database? should we check if field exists?
+				$orderItem->$param = $v;
 			}
 		}
-		return $orderitem;
+		return $orderItem;
 	}
 
 
@@ -427,13 +432,14 @@ class ShoppingCart extends Controller {
 	 * Either increments the count or creates a new item.
 	 */
 	function additem($request) {
-		if ($itemId = $request->param('ID')) {
-			if($item = ShoppingCart::get_item($this->urlFilter())) {
-				ShoppingCart::add_item($item);
+		if ($request->param('ID')) {
+			if($orderItem = $this->getExistingOrderItemFromURL()) {
+				ShoppingCart::add_item($orderItem, 1);
 				return self::return_data("success","Extra item added"); //TODO: i18n
-			}else {
-				if($orderitem = $this->getNewOrderItem()) {
-					ShoppingCart::add_new_item($orderitem);
+			}
+			else {
+				if($orderItem = $this->getNewOrderItemFromURL()) {
+					ShoppingCart::add_new_item($orderItem, 1);
 					return self::return_data("success","Item added"); //TODO: i18n
 				}
 			}
@@ -442,16 +448,16 @@ class ShoppingCart extends Controller {
 	}
 
 	function removeitem($request) {
-		if ($item = ShoppingCart::get_item($this->urlFilter())) {
-			ShoppingCart::remove_item($item);
+		if ($orderItem = $this->getExistingOrderItemFromURL()) {
+			ShoppingCart::remove_item($orderItem);
 			return self::return_data("success","Item removed");//TODO: i18n
 		}
 		return self::return_data("failure","Item could not be found in cart");//TODO: i18n
 	}
 
 	function removeallitem() {
-		if ($item = ShoppingCart::get_item($this->urlFilter())) {
-			ShoppingCart::remove_all_item($item);
+		if ($orderItem = $this->getExistingOrderItemFromURL()) {
+			ShoppingCart::remove_all_item($orderItem);
 			return self::return_data("success","Item fully removed");//TODO: i18n
 		}
 		return self::return_data("failure","Item could not be found in cart");//TODO: i18n
@@ -490,14 +496,13 @@ class ShoppingCart extends Controller {
 	function setquantityitem($request) {
 		$quantity = $request->getVar('quantity');
 		if (is_numeric($quantity) && $quantity == floatval($quantity)) {
-			$item = ShoppingCart::get_item($this->urlFilter());
-			if(!$item){
-				$item = $this->getNewOrderItem();
-				$item->Quantity = $quantity;
-				self::add_new_item($item);
+			$orderItem = $this->getExistingOrderItemFromURL();
+			if(!$orderItem){
+				$newOrderItem = $this->getNewOrderItemFromURL();
+				self::add_new_item($newOrderItem, $quantity);
 			}
 			else{
-				ShoppingCart::set_quantity_item($item, $quantity);
+				ShoppingCart::set_quantity_item($orderItem, $quantity);
 			}
 			return self::return_data("success","Quantity set successfully");//TODO: i18n
 		}
@@ -524,8 +529,8 @@ class ShoppingCart extends Controller {
 		$cart = self::current_order();
 		if($cart) {
 			if($cart = $this->Cart()) {
-				if($items = $cart->Items()) {
-					return $items->count();
+				if($orderItems = $cart->Items()) {
+					return $orderItems->count();
 				}
 			}
 		}
@@ -538,42 +543,52 @@ class ShoppingCart extends Controller {
 	function showcart() {
 		$this->renderWith("AjaxSimpleCart");
 	}
-	
+
 	//Helper functions
 
 	/**
 	 * Creates new order item based on url parameters
 	 */
-	protected function getNewOrderItem(){
+	protected function getNewOrderItemFromURL(){
 		$request = $this->getRequest();
 		$orderitem = null;
-		$buyableId = intval($request->param('ID'));
+		$buyableID = intval($request->param('ID'));
 		//create order item
-		if(is_numeric($buyableId)) {
-			$itemClassName = self::item_class_name($request->param('OtherID'));
-			if($itemClassName) {
+		if(is_numeric($buyableID)) {
+			$buyableClassName = self::buyable_class_name($request->param('OtherID'));
+			if($buyableClassName) {
 				$buyable = null;
-				if(Object::has_extension($itemClassName,'Versioned') && singleton($itemClassName)->hasVersionField('Live')){ //only 'Live' versions should be used for versioned products
-					$buyable = Versioned::get_one_by_stage($itemClassName,'Live', '"'.$itemClassName.'_Live"."ID" = '.$buyableId);
-				}else{
-					$buyable = DataObject::get_one($itemClassName, '"'.$itemClassName.'"."ID" = '.$buyableId);
+				if(Object::has_extension($buyableClassName,'Versioned') && singleton($buyableClassName)->hasVersionField('Live')){ //only 'Live' versions should be used for versioned products
+					$buyable = Versioned::get_one_by_stage($buyableClassName,'Live', '"'.$buyableClassName.'_Live"."ID" = '.$buyableID);
 				}
-				if ($buyable && $buyable->canPurchase()) {
-					$orderItemClassName = self::order_item_class_name($buyable->ClassName);
-					$orderitem = new $orderItemClassName();
-					$orderitem->addBuyable($buyable,1);
+				else{
+					$buyable = DataObject::get_one($buyableClassName, '"'.$buyableClassName.'"."ID" = '.$buyableID);
+				}
+				if ($buyable ) {
+					if($buyable->canPurchase()) {
+						$orderItemClassName = self::order_item_class_name($buyable->ClassName);
+						$orderitem = new $orderItemClassName();
+						$orderitem->addBuyableToOrderItem($buyable,1);
+					}
+					else {
+						user_error($buyable->Title." is not for sale!", E_USER_ERROR);
+					}
+				}
+				else {
+					user_error("Buyable was not provided", E_USER_ERROR);
 				}
 			}
 			else {
-				user_error("no itemClassName ($itemClassName) provided for item to be added", E_USER_ERROR);
+				user_error("no itemClassName ($buyableClassName) provided for item to be added", E_USER_ERROR);
 			}
 		}
 		else {
-			user_error("no id provided for item to be added", E_USER_ERROR);
+			user_error("no id provided for item to be added - should be a URL parameter", E_USER_ERROR);
 		}
 		//set extra parameters
 		if($orderitem instanceof OrderItem){
-			foreach(self::$paramfilters as $param => $defaultvalue){
+			$defaultParamFilters = self::get_default_param_filters();
+			foreach($defaultParamFilters as $param => $defaultvalue){
 				$v = ($request->getVar($param)) ? Convert::raw2sql($request->getVar($param)) : $defaultvalue;
 				$orderitem->$param = $v;
 			}
@@ -583,25 +598,40 @@ class ShoppingCart extends Controller {
 
 
 	/**
+	 * Get item according to a filter.
+	 */
+	protected function getExistingOrderItemFromURL() {
+		$filter = $this->urlFilter();
+		$order = self::current_order();
+		if($filter) {
+			$filterString = " AND ($filter)";
+		}
+		return  DataObject::get_one('OrderItem', "\"OrderID\" = $order->ID $filterString");
+	}
+
+
+	/**
 	 * Gets a SQL filter based on array of parameters.
 	 *
 	 * 	 Returns default filter if none provided,
 	 *	 otherwise it updates default filter with passed parameters
 	 */
-	static function get_param_filter($params = array()){
-		if(!self::$paramfilters) {
+	protected static function turn_params_into_sql($params = array()){
+		$defaultParamFilters = self::get_default_param_filters();
+		if(!count($defaultParamFilters)) {
 			return ""; //no use for this if there are not parameters defined
 		}
-		$temparray = self::$paramfilters;
-		$outputarray = array();
-		foreach(self::$paramfilters as $field => $value){
+		$outputArray = array();
+		foreach($defaultParamFilters as $field => $value){
 			if(isset($params[$field])){
 				//TODO: convert to $dbfield->prepValueForDB() when Boolean problem figured out
-				$temparray[$field] = Convert::raw2sql($params[$field]);
+				$defaultParamFilters[$field] = Convert::raw2sql($params[$field]);
 			}
-			$outputarray[] = "\"".$field."\" = ".$temparray[$field];
+			$outputarray[$field] = "\"".$field."\" = ".$defaultParamFilters[$field];
 		}
-		return implode(" AND ",$outputarray);
+		if(count($outputArray)) {
+			return implode(" AND ",$outputArray);
+		}
 	}
 
 	/**
@@ -611,7 +641,7 @@ class ShoppingCart extends Controller {
 		$result = '';
 		$request = $this->getRequest();
 		$orderItemClassName = self::order_item_class_name($request->param('OtherID'));
-		$itemClassName = self::item_class_name($request->param('OtherID'));
+		$buyableClassName = self::buyable_class_name($orderItemClassName);
 		$selection = array(
 			"\"BuyableID\" = ".$request->param('ID')
 		);
@@ -619,7 +649,7 @@ class ShoppingCart extends Controller {
 			$selection[] = "\"ClassName\" = '".$orderItemClassName."'";
 		}
 
-		$filter = self::get_param_filter($request->getVars());
+		$filter = self::turn_params_into_sql($request->getVars());
 		if( $filter ){
 			$result = implode(" AND ",array_merge($selection,array($filter)));
 		}
