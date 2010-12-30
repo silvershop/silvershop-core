@@ -55,11 +55,12 @@ class OrderItem extends OrderAttribute {
 
 	public static $plural_name = "Order Items";
 
-	public function addBuyable($object, $quantity = 1) {
-		parent::addBuyable($object);
-		$this->Version = $object->Version;
-		$this->BuyableID = $object->ID;
+	public function addBuyableToOrderItem($buyable, $quantity = 1) {
+		$this->Version = $buyable->Version;
+		$this->BuyableID = $buyable->ID;
 		$this->Quantity = $quantity;
+		//should always come last!
+		parent::addBuyableToOrderItem($buyable);
 	}
 
 	function updateForAjax(array &$js) {
@@ -183,6 +184,7 @@ HTML;
 	}
 
 	function ProductTitle() {
+		user_error("This function has been replaced by BuyableTitle", E_USER_NOTICE);
 		return $this->BuyableTitle();
 	}
 
@@ -197,23 +199,27 @@ HTML;
 
 	## Often Overloaded functions ##
 
-	function addLink() {
+	function AddLink() {
 		return ShoppingCart::add_item_link($this->BuyableID, $this->ClassName,$this->linkParameters());
 	}
 
-	function removeLink() {
+	function RemoveLink() {
 		return ShoppingCart::remove_item_link($this->BuyableID, $this->ClassName,$this->linkParameters());
 	}
 
-	function removeAllLink() {
+	function RemoveAllLink() {
 		return ShoppingCart::remove_all_item_link($this->BuyableID, $this->ClassName,$this->linkParameters());
 	}
 
-	function setQuantityLink() {
+	function SetQuantityLink() {
 		return ShoppingCart::set_quantity_item_link($this->BuyableID, $this->ClassName,$this->linkParameters());
 	}
 
-	function linkParameters(){
+	function SetSpecificQuantityItemLink($quantity) {
+		return ShoppingCart::set_quantity_item_link($this->BuyableID, $this->ClassName, array_merge($this->linkParameters(), array("quantity" => $quantity)));
+	}
+
+	protected function linkParameters(){
 		$array = array();
 		$this->extend('updateLinkParameters',$array);
 		return $array;

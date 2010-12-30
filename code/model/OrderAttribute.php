@@ -40,7 +40,7 @@ class OrderAttribute extends DataObject {
 		return (!$this->ID || $this->Order()->IsCart());
 	}
 
-	public function addBuyable($object) {
+	public function addBuyableToOrderItem($object) {
 		//more may be added here in the future
 		return true;
 	}
