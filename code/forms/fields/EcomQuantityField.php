@@ -14,7 +14,7 @@ class EcomQuantityField extends NumericField {
 	function __construct($object, $parameters = null){
 
 		if(Object::has_extension($object->class,'Buyable')){
-			$this->item = ShoppingCart::get_item_by_id($object->ID,null,$parameters);
+			$this->item = ShoppingCart::get_order_item_by_buyableid($object->ID,$object->ClassName.Buyable::get_order_item_class_name_post_fix(),$parameters);
 			 //provide a 0-quantity facade item if there is no such item in cart
 			if(!$this->item) {
 				$this->item = new Product_OrderItem($object,0);
