@@ -59,40 +59,48 @@ class Buyable extends DataObjectDecorator {
 	 * @return boolean
 	 */
 	function IsInCart() {
-		return ($this->owner->Item() && $this->Item()->Quantity > 0) ? true : false;
+		return ($this->owner->OrderItem() && $this->OrderItem()->Quantity > 0) ? true : false;
 	}
 
 	function Item() {
+		user_error("This method has been replaced by OrderItem to create clarity between buyable and order item.", E_USER_NOTICE);
+		return $this->OrderItem();
+	}
+
+	function OrderItem() {
 		$filter = "";
 		$className = $this->owner->ClassName;
 		$orderItemClassName = $this->classNameForOrderItem();
 		$this->owner->extend('updateItemFilter',$filter);
-		$item = ShoppingCart::get_item_by_id($this->owner->ID, $orderItemClassName, $filter);
+		$item = ShoppingCart::get_order_item_by_buyableid($this->owner->ID, $orderItemClassName, $filter);
 
 		if(!$item) {
 			$item = new $orderItemClassName();
-			$item->addBuyable($this->owner,0);
+			$item->addBuyableToOrderItem($this->owner,0);
 		}
 		$this->owner->extend('updateDummyItem',$item);
-		
 		return $item; //return dummy item so that we can still make use of Item
 	}
-	
+
 	//passing on shopping cart links ...is this necessary?? ...why not just pass the cart?
-	function addLink() {
+	function AddLink() {
 		return ShoppingCart::add_item_link($this->owner->ID, $this->classNameForOrderItem(), $this->linkParameters());
 	}
 
-	function removeLink() {
+	function RemoveLink() {
 		return ShoppingCart::remove_item_link($this->owner->ID, $this->classNameForOrderItem(), $this->linkParameters());
 	}
 
-	function removeAllLink() {
+	function RemoveAllLink() {
 		return ShoppingCart::remove_all_item_link($this->owner->ID, $this->classNameForOrderItem(), $this->linkParameters());
 	}
 
-	function setQuantityItemLink() {
+	function SetQuantityItemLink() {
 		return ShoppingCart::set_quantity_item_link($this->owner->ID, $this->classNameForOrderItem(), $this->linkParameters());
+	}
+
+	function SetSpecificQuantityItemLink($quantity) {
+		return ShoppingCart::set_quantity_item_link($this->owner->ID, $this->classNameForOrderItem(), array_merge($this->linkParameters(), array("quantity" => $quantity)));
 	}
 
 	protected function linkParameters(){
@@ -103,7 +111,9 @@ class Buyable extends DataObjectDecorator {
 
 
 	public function classNameForOrderItem() {
-		return $this->owner->ClassName.Buyable::get_order_item_class_name_post_fix();
+		$A = $this->owner->ClassName;
+		$B = Buyable::get_order_item_class_name_post_fix();
+		return $A.$B;
 	}
 
 
