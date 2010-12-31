@@ -558,12 +558,13 @@ class ShoppingCart extends Controller {
 			$buyableClassName = self::buyable_class_name($request->param('OtherID'));
 			if($buyableClassName) {
 				$buyable = null;
+				/*
 				if(Object::has_extension($buyableClassName,'Versioned') && singleton($buyableClassName)->hasVersionField('Live')){ //only 'Live' versions should be used for versioned products
+					die("A");
 					$buyable = Versioned::get_one_by_stage($buyableClassName,'Live', '"'.$buyableClassName.'_Live"."ID" = '.$buyableID);
 				}
-				else{
-					$buyable = DataObject::get_one($buyableClassName, '"'.$buyableClassName.'"."ID" = '.$buyableID);
-				}
+			*/
+				$buyable = DataObject::get_by_id($buyableClassName, $buyableID);
 				if ($buyable ) {
 					if($buyable->canPurchase()) {
 						$orderItemClassName = self::order_item_class_name($buyable->ClassName);

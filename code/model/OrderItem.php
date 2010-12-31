@@ -64,7 +64,7 @@ class OrderItem extends OrderAttribute {
 	}
 
 	function updateForAjax(array &$js) {
-		$total = $this->Total()->Nice();
+		$total = $this->TotalAsCurrencyObject()->Nice();
 		$js[] = array('id' => $this->TableTotalID(), 'parameter' => 'innerHTML', 'value' => $total);
 		$js[] = array('id' => $this->CartTotalID(), 'parameter' => 'innerHTML', 'value' => $total);
 		$js[] = array('id' => $this->CartQuantityID(), 'parameter' => 'innerHTML', 'value' => $this->Quantity);
@@ -149,6 +149,11 @@ HTML;
 		$this->extend('updateTotal',$total);
 		return $total;
 	}
+
+	function TotalAsCurrencyObject() {
+		return DBField::create('Currency',$this->Total());
+	}
+
 
 	function TableTitle() {
 		return $this->ClassName;

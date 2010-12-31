@@ -467,6 +467,9 @@ class Order extends DataObject {
 		return $result;
 	}
 
+	function SubTotalAsCurrencyObject() {
+		return DBField::create('Currency',$this->SubTotal());
+	}
 
 	/**
 	 * Initialise all the {@link OrderModifier} objects
@@ -579,6 +582,10 @@ class Order extends DataObject {
 		return $this->SubTotal() + $this->ModifiersSubTotal();
 	}
 
+	function TotalAsCurrencyObject() {
+		return DBField::create('Currency',$this->Total());
+	}
+
 	/**
 	 * Checks to see if any payments have been made on this order
 	 * and if so, subracts the payment amount from the order
@@ -594,6 +601,10 @@ class Order extends DataObject {
 		return $outstanding;
 	}
 
+	function TotalOutstandingAsCurrencyObject(){
+		return DBField::create('Currency',$this->TotalOutstanding());
+	}
+
 	function TotalPaid() {
 		$paid = 0;
 		if($payments = $this->Payments()) {
@@ -604,6 +615,10 @@ class Order extends DataObject {
 			}
 		}
 		return $paid;
+	}
+
+	function TotalPaidAsCurrencyObject(){
+		return DBField::create('Currency',$this->TotalPaid());
 	}
 
 	/**
@@ -717,8 +732,8 @@ class Order extends DataObject {
 	}
 
 	function updateForAjax(array &$js) {
-		$subTotal = DBField::create('Currency', $this->SubTotal())->Nice();
-		$total = DBField::create('Currency', $this->Total())->Nice() . ' ' . Payment::site_currency();
+		$subTotal = $this->SubTotalAsCurrencyObject()->Nice();
+		$total = $this->TotalAsCurrencyObject()->Nice() . ' ' . Payment::site_currency();
 		$js[] = array('id' => $this->TableSubTotalID(), 'parameter' => 'innerHTML', 'value' => $subTotal);
 		$js[] = array('id' => $this->TableTotalID(), 'parameter' => 'innerHTML', 'value' => $total);
 		$js[] = array('id' => $this->OrderForm_OrderForm_AmountID(), 'parameter' => 'innerHTML', 'value' => $total);
@@ -1165,13 +1180,13 @@ class Order_CancelForm extends Form {
 		$SQL_data = Convert::raw2sql($data);
 
 		$member = $this->CurrentMember();
-				
-		
+
+
 		if(isset($SQL_data['OrderID']) && $order = DataObject::get_one('Order', "\"ID\" = ".$SQL_data['OrderID']." AND \"MemberID\" = $member->ID")){
 			$order->Status = 'MemberCancelled';
 			$order->write();
 		}
-		
+
 		//TODO: notify people via email??
 
 		if($link = AccountPage::find_link()){
