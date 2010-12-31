@@ -41,7 +41,7 @@ class ProductGroup extends Page {
 		static function set_must_have_price($must = true){user_error("ProductGroup::\$set_must_have_price has been depreciated, use ProductGroup::\$only_show_products_that_can_purchase", E_USER_NOTICE);}
 		static function get_must_have_price(){user_error("ProductGroup::\$set_must_have_price has been depreciated, use ProductGroup::\$only_show_products_that_can_purchase", E_USER_NOTICE);}
 
-	protected static $only_show_products_that_can_purchase = true;
+	protected static $only_show_products_that_can_purchase = false;
 		static function set_only_show_products_that_can_purchase($must = true){self::$only_show_products_that_can_purchase = $must;}
 		static function get_only_show_products_that_can_purchase(){return self::$only_show_products_that_can_purchase;}
 
@@ -133,18 +133,19 @@ class ProductGroup extends Page {
 
 		$join = $this->getManyManyJoin('Products','Product');
 		$multicatfilter = $this->getManyManyFilter('Products','Product');
-
-		//TODO: get products that appear in child groups (make this optional)
-
+		
 		$products = DataObject::get('Product',"(\"ParentID\" IN ($groupidsimpl) OR $multicatfilter) $filter",$sort,$join,$limit);
-
 		$allproducts = DataObject::get('Product',"\"ParentID\" IN ($groupidsimpl) $filter","",$join);
-
-		if($allproducts) $products->TotalCount = $allproducts->Count(); //add total count to returned data for 'showing x to y of z products'
+		
+		//FIXME: this was breaking the "get_only_show_products_that_can_purchase" code below
+		//if($allproducts) $products->TotalCount = $allproducts->Count(); //add total count to returned data for 'showing x to y of z products'
+		
 		if($products && $products instanceof DataObjectSet) $products->removeDuplicates();
+		
+		//FIXME: this removing does not cater for pagination...so you end up with half empty, or fully empty pages in some cases.
 		if($products) {
 			if(self::get_only_show_products_that_can_purchase()) {
-
+				
 				foreach($products as $product) {
 					if(!$product->canPurchase()) {
 						$products->remove($product);
