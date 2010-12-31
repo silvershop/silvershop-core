@@ -79,7 +79,7 @@
 				<td>&nbsp;</td>
 			</tr>
 		<% end_if %>
-			<tr class="showOnZeroItems"<% if Items %> style="display: none"><% end_if %>>
+			<tr class="showOnZeroItems"<% if Items %> style="display: none"><% end_if %>
 				<td colspan="5" scope="row" class="center"><% _t("NOITEMS","There are <strong>no</strong> items in your cart.") %></td>
 			</tr>
 	</tbody>

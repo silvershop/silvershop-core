@@ -14,8 +14,8 @@ class OrderFormWithShippingAddress extends OrderForm {
 
 		parent::__construct($controller, $name);
 		$order = ShoppingCart::current_order();
-		$this->fields->addFieldToTab("",new CheckboxField("UseShippingAddress", "Use Alternative Delivery Address", $order->UseShippingAddress));
-		$countryField = new DropdownField('ShippingCountry',  _t('OrderForm.Country','Country'), Geoip::getCountryDropDown(), EcommerceRole::find_country());
+		$this->fields->addFieldToTab('',new CheckboxField('UseShippingAddress', _t('OrderForm.USEDIFFERENTSHIPPINGADDRESS','Use Alternative Delivery Address'), $order->UseShippingAddress));
+		$countryField = new DropdownField('ShippingCountry',  _t('OrderForm.COUNTRY','Country'), Geoip::getCountryDropDown(), EcommerceRole::find_country());
 		$shippingFields = new CompositeField(
 			new HeaderField(_t('OrderForm.SENDGOODSTODIFFERENTADDRESS','Send goods to different address'), 3),
 			new LiteralField('ShippingNote', '<p class="message warning">'._t('OrderForm.SHIPPINGNOTE','Your goods will be sent to the address below.').'</p>'),
@@ -32,8 +32,8 @@ class OrderFormWithShippingAddress extends OrderForm {
 		//$requiredFields[] = 'ShippingAddress';
 		//$requiredFields[] = 'ShippingCity';
 		//	$requiredFields[] = 'ShippingCountry';
-		$shippingFields->SetID("ShippingFields");
-		$this->fields->addFieldToTab("",$shippingFields);
+		$shippingFields->SetID('ShippingFields');
+		$this->fields->addFieldToTab('',$shippingFields);
 		$data = $this->getData();
 		$this->loadDataFrom($data);
 	}
