@@ -131,7 +131,7 @@ class ShoppingCart extends Controller {
 		}
 		if(ClassInfo::is_subclass_of($className, "OrderItem")) {
 			//do nothing
-			$length = strlen(get_order_item_class_name_post_fix()) * -1;
+			$length = strlen(Buyable::get_order_item_class_name_post_fix()) * -1;
 			if(substr($className, $length) != Buyable::get_order_item_class_name_post_fix()) {
 				user_error("ShoppingCart::order_item_class_name, $className should end in '".Buyable::get_order_item_class_name_post_fix()."'", E_USER_ERROR);
 			}
@@ -300,7 +300,7 @@ class ShoppingCart extends Controller {
 		$order = self::current_order();
 		$filterString = ($filter && trim($filter) != "") ? " AND $filter" : "";
 		// NOTE: MUST HAVE THE EXACT CLASSNAME !!!!! THEREFORE INCLUDED IN WHERE PHRASE
-		return DataObject::get_one($orderItemClassName, "\"ClassName\" = ".$orderItemClassName." AND \"OrderID\" = ".$order->ID." AND \"BuyableID\" = ".$buyableID." ". $filterString);
+		return DataObject::get_one($orderItemClassName, "\"ClassName\" = '".$orderItemClassName."' AND \"OrderID\" = ".$order->ID." AND \"BuyableID\" = ".$buyableID." ". $filterString);
 	}
 
 
