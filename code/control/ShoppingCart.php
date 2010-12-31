@@ -251,7 +251,7 @@ class ShoppingCart extends Controller {
 	 */
 	static function remove_item($existingOrderItem, $quantityToReduceBy = 1) {
 		if ($existingOrderItem) {
-			if ($quantityToReduceBy >= $existingitem->Quantity) {
+			if ($quantityToReduceBy >= $existingOrderItem->Quantity) {
 				$existingOrderItem->delete();
 				$existingOrderItem->destroy();
 			}
