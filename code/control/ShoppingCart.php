@@ -217,9 +217,9 @@ class ShoppingCart extends Controller {
 	 */
 	protected static function add_new_item(OrderItem $newOrderItem, $quantity = 1) {
 		//what happens if it has already been added???
-		$orderItem->Quantity = $quantity;
-		$orderItem->write();
-		self::current_order()->Attributes()->add($orderItem);
+		$newOrderItem->Quantity = $quantity;
+		$newOrderItem->write();
+		self::current_order()->Attributes()->add($newOrderItem);
 	}
 
 	/**

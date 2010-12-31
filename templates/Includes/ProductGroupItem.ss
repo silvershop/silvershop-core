@@ -12,7 +12,7 @@
 		<% if Price != 0 %><span class="price_display">$Price.Nice $Currency $TaxInfo.PriceSuffix</span><% end_if %>
 		<% if canPurchase %>
 			<% if IsInCart %>
-				<% control Item %>
+				<% control OrderItem %>
 					<div class="quantityBox">
 						<ul class="productActions">
 							<li><a href="$removeallLink" title="<% sprintf(_t("REMOVE","Remove &quot;%s&quot; from your cart"),$Title) %>"><% _t("REMOVELINK","Remove from cart") %></a></li>

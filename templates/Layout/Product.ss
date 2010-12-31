@@ -24,7 +24,7 @@
 			<% if Price != 0 %><p class="priceDisplay">$Price.Nice $Currency $TaxInfo.PriceSuffix</p><% end_if %>
 			<% if canPurchase %>
 				<% if IsInCart %>
-					<% control Item %>
+					<% control OrderItem %>
 						<div class="quantityBox">
 							<span><% _t("QUANTITYCART","Quantity in cart") %>:</span>
 							$QuantityField
