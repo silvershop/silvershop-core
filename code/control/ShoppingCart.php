@@ -305,16 +305,19 @@ class ShoppingCart extends Controller {
 
 
 	static function add_buyable($buyable,$quantity = 1, $parameters = null){
+		$orderItem = null;
 		if(!$buyable) {
 			user_error("No buyable was provided to add", E_USER_NOTICE);
 			return null;
 		}
 		$orderItem = self::find_or_make_order_item($buyable, $parameters = null);
-		if($orderItem->ID){
-			self::add_item($orderItem, $quantity);
-		}
-		else{
-			self::add_new_item($orderItem, $quantity);
+		if($orderItem) {
+			if($orderItem->ID){
+				self::add_item($orderItem, $quantity);
+			}
+			else{
+				self::add_new_item($orderItem, $quantity);
+			}
 		}
 		return $orderItem;
 	}
@@ -339,15 +342,19 @@ class ShoppingCart extends Controller {
 			$orderItem = new $classNameForOrderItem();
 			$orderItem->addBuyableToOrderItem($buyable, $quantity);
 		}
-
-		//set extra parameters
-		if($orderItem instanceof OrderItem && is_array($parameters)){
-			$defaultParamFilters = self::get_default_param_filters();
-			foreach($defaultParamFilters as $param => $defaultvalue){
-				$v = (isset($parameters[$param])) ? Convert::raw2sql($parameters[$param]) : $defaultvalue;
-				//how does this get saved in database? should we check if field exists?
-				$orderItem->$param = $v;
+		if($orderItem) {
+			//set extra parameters
+			if($orderItem instanceof OrderItem && is_array($parameters)){
+				$defaultParamFilters = self::get_default_param_filters();
+				foreach($defaultParamFilters as $param => $defaultvalue){
+					$v = (isset($parameters[$param])) ? Convert::raw2sql($parameters[$param]) : $defaultvalue;
+					//how does this get saved in database? should we check if field exists?
+					$orderItem->$param = $v;
+				}
 			}
+		}
+		else {
+			user_error("product is not for sale or buyable ($buyable->Title()) does not exists.", E_USER_NOTICE);
 		}
 		return $orderItem;
 	}
