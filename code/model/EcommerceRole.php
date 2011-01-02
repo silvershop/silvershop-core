@@ -11,16 +11,16 @@ class EcommerceRole extends DataObjectDecorator {
 	protected static $fixed_country_code = '';
 		static function set_fixed_country_code($v) {self::$fixed_country_code = $v;}
 		static function get_fixed_country_code() {return self::$fixed_country_code;}
-
-	protected static $postal_code_url = "http://www.nzpost.co.nz/Cultures/en-NZ/OnlineTools/PostCodeFinder";
-		static function get_postal_code_url() {$sc = DataObject::get_one("SiteConfig"); if($sc) {return $sc->PostalCodeURL;} else {return self::$postal_code_url;} }
+	//f.e. http://www.nzpost.co.nz/Cultures/en-NZ/OnlineTools/PostCodeFinder
+	protected static $postal_code_url = '';
+		static function get_postal_code_url() {$sc = DataObject::get_one('SiteConfig'); if($sc) {return $sc->PostalCodeURL;} else {return self::$postal_code_url;} }
 		static function set_postal_code_url($v) {self::$postal_code_url = $v;}
 
-	protected static $postal_code_label = "find postcode";
-		static function get_postal_code_label() {$sc = DataObject::get_one("SiteConfig"); if($sc) {return $sc->PostalCodeLabel;} else {return self::$postal_code_label;} }
+	protected static $postal_code_label = 'find postcode';
+		static function get_postal_code_label() {$sc = DataObject::get_one('SiteConfig'); if($sc) {return $sc->PostalCodeLabel;} else {return self::$postal_code_label;} }
 		static function set_postal_code_label($v) {self::$postal_code_label = $v;}
 
-	protected static $group_name = "Shop Customers";
+	protected static $group_name = 'Shop Customers';
 		static function set_group_name($v) {self::$group_name = $v;}
 		static function get_group_name(){return self::$group_name;}
 
@@ -185,7 +185,9 @@ class EcommerceRole extends DataObjectDecorator {
 	function getEcommerceFields() {
 		//postal code
 		$postalCodeField = new TextField('PostalCode', _t('EcommerceRole.POSTALCODE','Postal Code'));
-		$postalCodeField->setRightTitle('<a href="'.self::$postal_code_url.'" id="PostalCodeLink">'.self::$postal_code_label.'</a>');
+		if(self::get_postal_code_url() != ''){
+			$postalCodeField->setRightTitle('<a href="'.self::get_postal_code_url().'" id="PostalCodeLink">'.self::get_postal_code_label().'</a>');
+		}
 		// country
 		$countryField = new DropdownField('Country', _t('EcommerceRole.COUNTRY','Country'), Geoip::getCountryDropDown(), self::find_country());
 		$countryField->addExtraClass('ajaxCountryField');
