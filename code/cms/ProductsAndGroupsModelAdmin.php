@@ -8,11 +8,11 @@ class ProductsAndGroupsModelAdmin extends ModelAdmin {
 
 	public static $menu_priority = 2;
 
-	public static $collection_controller_class = "ProductsAndGroupsModelAdmin_CollectionController";
+	public static $collection_controller_class = 'ProductsAndGroupsModelAdmin_CollectionController';
 
-	public static $record_controller_class = "ProductsAndGroupsModelAdmin_RecordController";
+	public static $record_controller_class = 'ProductsAndGroupsModelAdmin_RecordController';
 
-	public static $managed_models = array("Product", "ProductGroup","ProductVariation","ProductAttributeType");
+	public static $managed_models = array('Product', 'ProductGroup');
 
 	public static function set_managed_models(array $array) {
 		self::$managed_models = $array;
