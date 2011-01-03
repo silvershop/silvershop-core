@@ -94,42 +94,27 @@ class AccountPage extends Page {
 }
 
 class AccountPage_Controller extends Page_Controller {
-	
+
 	static $allowed_actions = array(
 		'order',
 		'CancelForm',
-		'PaymentForm'
+		'PaymentForm',
+		'MemberForm'
 	);
 
 	function init() {
 		parent::init();
-
 		Requirements::themedCSS('AccountPage');
-
 		if(!Member::currentUserID()) {
 			$messages = array(
 				'default' => '<p class="message good">' . _t('AccountPage.Message', 'You\'ll need to login before you can access the account page. If you are not registered, you won\'t be able to access it until you make your first order, otherwise please enter your details below.') . '</p>',
 				'logInAgain' => 'You have been logged out. If you would like to log in again, please do so below.'
 			);
-
 			Security::permissionFailure($this, $messages);
 			return false;
 		}
 	}
-	
-		/**
-	 * Gets the order, as specified in the url OrderID.
-	 */
-	function getOrder(){
-		$memberID = Member::currentUserID();
-		$orderID = $this->getRequest()->param('ID');
-		if(!$orderID) $orderID = (isset($_POST['OrderID']) && is_numeric($_POST['OrderID'])) ? $_POST['OrderID'] : null;
-		
-		if(is_numeric($orderID) && $order = DataObject::get_one('Order', "\"Order\".\"ID\" = '$orderID' AND \"Order\".\"MemberID\" = '$memberID'")) {
-			return $order;	
-		}
-		return null;
-	}
+
 
 	/**
 	 * Return the {@link Order} details for the current
@@ -140,30 +125,18 @@ class AccountPage_Controller extends Page_Controller {
 	function order($request) {
 		Requirements::themedCSS('Order');
 		Requirements::themedCSS('Order_print', 'print');
-
 		$accountPageLink = AccountPage::find_link();
-
-		if($orderID = $request->param('ID')) {
-			if($order = $this->getOrder()) {
-
-				$paymentform = ($order->TotalOutstanding() > 0) ? $this->CancelForm() : null;
-
-				return array(
-					'Order' => $order,
-					'Form' => $paymentform
-				);
-			}
-			else {
-				return array(
-					'Order' => false,
-					'Message' => 'You do not have any order corresponding to this ID. However, you can <a href="' . $accountPageLink . '">edit your own personal details and view your orders.</a>.'
-				);
-			}
+		if($order = $this->getOrder()) {
+			$paymentform = ($order->TotalOutstanding() > 0) ? $this->CancelForm() : null;
+			return array(
+				'Order' => $order,
+				'Form' => $paymentform
+			);
 		}
 		else {
 			return array(
 				'Order' => false,
-				'Message' => 'There is no order by that ID. You can <a href="' . $accountPageLink . '">edit your own personal details and view your orders.</a>.'
+				'Message' => _t('AccountPage.ORDERNOTFOUND', 'Order can not be found.').' '._t('AccountPage.LINKTOACCOUNTPAGE', 'Go to '). '<a href="' . $accountPageLink . '">'.$this->Title.'</a>.'
 			);
 		}
 	}
@@ -185,7 +158,7 @@ class AccountPage_Controller extends Page_Controller {
 	 *
 	 * @return Order_CancelForm
 	 */
-	function CancelForm() {		
+	function CancelForm() {
 		$order = $this->getOrder();
 		if($order && $order->canCancel()) {
 			return new Order_CancelForm($this, 'CancelForm', $order->ID);
@@ -193,66 +166,68 @@ class AccountPage_Controller extends Page_Controller {
 		return null;
 	}
 
-	
+
 	function PaymentForm(){
 		$order = $this->getOrder();
-		
 		if($order && $form = new Order_CancelForm($this, 'PaymentForm', $order->ID)){
-			
 			$paymentFields = Payment::combined_form_fields($order->TotalOutstanding());
 			$paymentFields->merge($form->Fields());
 			$form->setFields($paymentFields);
-			
 			//TODO: add required fields
 			$form->Actions()->push(new FormAction('payOutstanding','Pay Outstanding'));
-			
 			return $form;
 		}
-		
 	}
-	
+
 	function payOutstanding($data,$form){
-		
 		//check order can still be paid for
 			//check outstanding is still < total
-			//status is in ...		
+			//status is in ...
 		//
-		
 		$paymentClass = (!empty($data['PaymentMethod'])) ? $data['PaymentMethod'] : null;
 		$payment = class_exists($paymentClass) ? new $paymentClass() : null;
-
 		if(!($payment && $payment instanceof Payment)) {
 			user_error(get_class($payment) . ' is not a valid Payment object!', E_USER_ERROR);
 		}
-		
 		$order = $this->getOrder();
-		
 		if(!$order){
 			user_error(get_class($payment) . ' order not found', E_USER_ERROR);
 			return;
 		}
-		
 		// Save payment data from form and process payment
 		$form->saveInto($payment);
 		$payment->OrderID = $order->ID;
 		$payment->PaidForID = $order->ID;
 		$payment->PaidForClass = $order->class;
-		
 		$payment->Amount->Amount = $order->TotalOutstanding();
 		$payment->write();
-		
 		// Process payment, get the result back
 		$result = $payment->processPayment($data, $form);
-
 		// isProcessing(): Long payment process redirected to another website (PayPal, Worldpay)
 		if($result->isProcessing()) {
 			return $result->getValue();
 		}
-
 		Director::redirect($order->Link());
-		return true;	
+		return true;
 	}
-	
+
+	/**
+	 * Gets the order, as specified in the url OrderID.
+	 */
+	protected function getOrder(){
+		$memberID = Member::currentUserID();
+		if($memberID) {
+			$orderID = intval($this->getRequest()->param('ID'));
+			if(!$orderID && isset($_POST['OrderID'])) {
+				$orderID = intval($_POST['OrderID']);
+			}
+			if(is_numeric($orderID)) {
+				return DataObject::get_one('Order', "\"Order\".\"ID\" = '$orderID' AND \"Order\".\"MemberID\" = '$memberID'");
+			}
+		}
+		return null;
+	}
+
 
 }
 
