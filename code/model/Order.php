@@ -56,7 +56,9 @@ class Order extends DataObject {
 		'SubTotal' => 'Currency',
 		'TotalPaid' => 'Currency',
 		'Shipping' => 'Currency',
-		'TotalOutstanding' => 'Currency'
+		'TotalOutstanding' => 'Currency',
+		'TotalItems' => 'Int',
+		'TotalItemsTimesQuantity' => 'Int'
 	);
 
 	public static $singular_name = "Order";
@@ -69,15 +71,15 @@ class Order extends DataObject {
 	 * @var array
 	 */
 	protected static $paid_status = array('Paid', 'Processing', 'Sent', 'Complete');
-		function get_paid_status() {return self::$paid_status;}
-		function set_paid_status($v) {self::$paid_status = $v;}
+		static function get_paid_status() {return self::$paid_status;}
+		static function set_paid_status($v) {self::$paid_status = $v;}
 
 	/**
 	 *
 	 */
 	protected static $hidden_status = array('Cart','AdminCancelled','MemberCancelled','Query');
-		function get_hidden_status() {return self::$hidden_status;}
-		function set_hidden_status($v) {self::$hidden_status = $v;}
+		static function get_hidden_status() {return self::$hidden_status;}
+		static function set_hidden_status($v) {self::$hidden_status = $v;}
 
 	/**
 	 * This is the from address that the receipt
@@ -85,9 +87,7 @@ class Order extends DataObject {
 	 *
 	 * @var string
 	 */
-	protected static $receipt_email;
-		function get_receipt_email() {$sc = DataObject::get_one("SiteConfig"); if($sc) {return $sc->ReceiptEmail;} else {return self::$receipt_email;} }
-		function set_receipt_email($v) {self::$receipt_email = $v;}
+	static function get_receipt_email() {$sc = DataObject::get_one("SiteConfig"); if($sc && $sc->ReceiptEmail) {return $sc->ReceiptEmail;} else {return Email::getAdminEmail();} }
 
 	/**
 	 * This is the subject that the receipt
@@ -95,9 +95,7 @@ class Order extends DataObject {
 	 *
 	 * @var string
 	 */
-	protected static $receipt_subject = "Shop Sale Information {OrderNumber}";
-		function get_receipt_subject() {$sc = DataObject::get_one("SiteConfig"); if($sc) {return $sc->ReceiptSubject;} else {return self::$receipt_subject;} }
-		function set_receipt_subject($v) {self::$receipt_subject = $v;}
+	static function get_receipt_subject() {$sc = DataObject::get_one("SiteConfig"); if($sc && $sc->ReceiptSubject) {return $sc->ReceiptSubject;} else {return "Shop Sale Information {OrderNumber}"; } }
 
 	/**
 	 * Flag to determine whether the user can cancel
@@ -106,8 +104,8 @@ class Order extends DataObject {
 	 * @var boolean
 	 */
 	protected static $can_cancel_before_payment = true;
-		function get_can_cancel_before_payment() {return self::$can_cancel_before_payment;}
-		function set_can_cancel_before_payment($v) {self::$can_cancel_before_payment = $v;}
+		static function get_can_cancel_before_payment() {return self::$can_cancel_before_payment;}
+		static function set_can_cancel_before_payment($v) {self::$can_cancel_before_payment = $v;}
 
 	/**
 	 * Flag to determine whether the user can cancel
@@ -116,8 +114,8 @@ class Order extends DataObject {
 	 * @var boolean
 	 */
 	protected static $can_cancel_before_processing = false;
-		function get_can_cancel_before_processing() {return self::$can_cancel_before_processing;}
-		function set_can_cancel_before_processing($v) {self::$can_cancel_before_processing = $v;}
+		static function get_can_cancel_before_processing() {return self::$can_cancel_before_processing;}
+		static function set_can_cancel_before_processing($v) {self::$can_cancel_before_processing = $v;}
 
 	/**
 	 * Flag to determine whether the user can cancel
@@ -126,8 +124,8 @@ class Order extends DataObject {
 	 * @var boolean
 	 */
 	protected static $can_cancel_before_sending = false;
-		function get_can_cancel_before_sending() {return self::$can_cancel_before_sending;}
-		function set_can_cancel_before_sending($v) {self::$can_cancel_before_sending = $v;}
+		static function get_can_cancel_before_sending() {return self::$can_cancel_before_sending;}
+		static function set_can_cancel_before_sending($v) {self::$can_cancel_before_sending = $v;}
 
 	/**
 	 * Flag to determine whether the user can cancel
@@ -136,8 +134,8 @@ class Order extends DataObject {
 	 * @var unknown_type
 	 */
 	protected static $can_cancel_after_sending = false;
-		function get_can_cancel_after_sending() {return self::$can_cancel_after_sending;}
-		function set_can_cancel_after_sending($v) {self::$can_cancel_after_sending = $v;}
+		static function get_can_cancel_after_sending() {return self::$can_cancel_after_sending;}
+		static function set_can_cancel_after_sending($v) {self::$can_cancel_after_sending = $v;}
 
 	/**
 	 * Modifiers represent the additional charges or
@@ -501,10 +499,10 @@ class Order extends DataObject {
 	 */
  	function Modifiers() {
  		$mods = false;
-
  		if($this->ID) {
  			$mods = $this->modifiersFromDatabase();
- 		} elseif($modifiers = ShoppingCart::get_modifiers()) {
+ 		}
+		elseif($modifiers = ShoppingCart::get_modifiers()) {
  			$mods = $this->createModifiers($modifiers);
  		}
  		return $mods;
@@ -619,6 +617,33 @@ class Order extends DataObject {
 
 	function TotalPaidAsCurrencyObject(){
 		return DBField::create('Currency',$this->TotalPaid());
+	}
+
+	function TotalItems() {
+		$cart = self::current_order();
+		if($cart) {
+			if($cart = $this->Cart()) {
+				if($orderItems = $cart->Items()) {
+					return $orderItems->count();
+				}
+			}
+		}
+		return 0;
+	}
+
+	function TotalItemsTimesQuantity() {
+		$cart = self::current_order();
+		$qty = 0;
+		if($cart) {
+			if($cart = $this->Cart()) {
+				if($orderItems = $cart->Items()) {
+					foreach($orderItems as $item) {
+						$qty += $item->Quantity;
+					}
+				}
+			}
+		}
+		return $qty;
 	}
 
 	/**
@@ -1178,26 +1203,72 @@ class Order_CancelForm extends Form {
 	 */
 	function doCancel($data, $form) {
 		$SQL_data = Convert::raw2sql($data);
-
 		$member = $this->CurrentMember();
-
-
 		if(isset($SQL_data['OrderID']) && $order = DataObject::get_one('Order', "\"ID\" = ".$SQL_data['OrderID']." AND \"MemberID\" = $member->ID")){
 			$order->Status = 'MemberCancelled';
 			$order->write();
 		}
-
 		//TODO: notify people via email??
-
 		if($link = AccountPage::find_link()){
-
 			//TODO: set session message "order successfully cancelled".
-
 			Director::redirect($link);
-		}else{
+		}
+		else{
 			Director::redirectBack();
 		}
 		return;
+	}
+
+}
+
+
+
+class Order_Status extends DataObject {
+	//database
+	public static $db = array(
+		"Name" => "Varchar(100)",
+		"CanCancel" => "Boolean",
+		"CanPay" => "Boolean"
+		"Sort" => "Int"
+	);
+	public static $indexes = array(
+		"Name" => true
+	);
+	public static $has_many = array(
+		"Order" => "Order"
+	);
+	public static $field_labels = array(
+		"CanCancel" => "Order can be cancelled",
+		"CanPay" => "Order can still be paid",
+		"Sort" => "Index number"
+	);
+	public static $summary_fields = array(
+		"Name" => "Name",
+		"CanCancel" => "CanCancel",
+		"CanPay" => "CanPay"
+	);
+	public static $singular_name = "Order Status";
+	public static $plural_name = "Order Stati";
+	//CRUD settings
+	//defaults
+	public static $default_sort = "\"Sort\" ASC, \"Name\" ASC";
+	public static $defaults = array();//use fieldName => Default Value
+
+	function requireDefaultRecords() {
+		parent::requireDefaultRecords();
+	}
+
+	function onBeforeWrite() {
+		parent::onBeforeWrite();
+		if(!$this->Name) {
+			$this->Name = "Order Status";
+		}
+	}
+	public function canDelete() {
+		if($order = DataObject::get_one("Order", "StatusID = ".$this->ID)) {
+			return false;
+		}
+		return true;
 	}
 
 }
