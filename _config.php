@@ -16,8 +16,6 @@ Object::add_extension("Product", "Buyable");
 // __________________________________START ECOMMERCE MODULE CONFIG __________________________________
 //The configuration below is not required, but allows you to customise your ecommerce application - check for the defalt value first.
 // * * * DEFINITELY MUST SET
-//Order::set_receipt_email("your name <sales@myshop.com>");
-//Order::set_receipt_subject("thank you for your order at www.myshop.com");
 //Order::set_modifiers(array("MyModifierOne", "MyModifierTwo");
 
 
@@ -37,6 +35,7 @@ Object::add_extension("Product", "Buyable");
 //Object::useCustomClass('SS_Datetime','ZendDate',true);
 
 // * * * SHOPPING CART AND ORDER
+//CheckoutPage::set_add_shipping_fields(true);
 //Order::set_table_overview_fields(array('Total' => 'Total','Status' => 'Status'));//
 //Order::set_maximum_ignorable_sales_payments_difference(0.001);//sometimes there are small discrepancies in total (for various reasons)- here you can set the max allowed differences
 //Order::set_order_id_start_number(1234567);//sets a start number for order ID, so that they do not start at one.
@@ -51,8 +50,6 @@ Object::add_extension("Product", "Buyable");
 // * * * MEMBER
 //EcommerceRole::set_group_name("Customers");
 //EcommerceRole::set_fixed_country_code("NZ"); //country is fixed
-//EcommerceRole::set_postal_code_url("http://maps.google.com"); //link that can be used to check postal code
-//EcommerceRole::set_postal_code_label("click here to check your postal code"); //label for link that can be used to check postal code
 //EcommerceRole::set_login_invite_alternative_text('<a href="http://www.mysite.com/Security/login/?BackURL=">If you are a member then please log in.</a>);
 
 // * * * MODIFIERS
@@ -81,7 +78,6 @@ Object::add_extension("Product", "Buyable");
 //ProductGroup::set_only_show_products_that_can_purchase(true);
 
 // * * * HELP
-//Product::set_global_allow_purchase(false); //stops the sale of all products
 // __________________________________ END ECOMMERCE MODULE CONFIG __________________________________
 
 
