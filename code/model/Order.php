@@ -326,7 +326,7 @@ class Order extends DataObject {
 	 * @param string $email From address. e.g. "info@myshop.com"
 	 */
 	public static function set_email($email) {
-		user_error("this static method has been replaced by set_receipt_email", E_USER_NOTICE);
+		user_error("this static method has been replaced by the siteconfig", E_USER_NOTICE);
 		self::$receipt_email = $email;
 	}
 
@@ -336,7 +336,7 @@ class Order extends DataObject {
 	 * @param string $subject The subject line text
 	 */
 	public static function set_subject($subject) {
-		user_error("this static method has been replaced by set_receipt_subject", E_USER_NOTICE);
+		user_error("this static method is now part of the siteconfig", E_USER_NOTICE);
 		self::$receipt_subject = $subject;
 	}
 
@@ -854,9 +854,9 @@ class Order extends DataObject {
 	 */
 	protected function sendEmail($emailClass, $copyToAdmin = true) {
 
- 		$from = self::$receipt_email ? self::$receipt_email : Email::getAdminEmail();
+ 		$from = self::get_receipt_email();
  		$to = $this->Member()->Email;
-		$subject = self::$receipt_subject ? self::$receipt_subject : "Shop Sale Information {OrderNumber}";
+		$subject = self::get_receipt_subject();
 		$subject = str_replace("{OrderNumber}", $this->ID, $subject);
 
  		$purchaseCompleteMessage = DataObject::get_one('CheckoutPage')->PurchaseComplete;
@@ -865,8 +865,9 @@ class Order extends DataObject {
  		$email->setFrom($from);
  		$email->setTo($to);
  		$email->setSubject($subject);
-		if($copyToAdmin) $email->setBcc(Email::getAdminEmail());
-
+		if($copyToAdmin) {
+			$email->setBcc(Email::getAdminEmail());
+		}
 		$email->populateTemplate(
 			array(
 				'PurchaseCompleteMessage' => $purchaseCompleteMessage,
