@@ -31,7 +31,6 @@ class EcommerceSiteTreeExtension extends DataObjectDecorator {
 
 class EcommerceSiteTreeExtension_Controller extends Extension {
 
-
 	function addAjaxCart() {
 		Requirements::themedCSS("EcommerceCart");
 		Requirements::javascript(THIRDPARTY_DIR."/jquery/jquery.js");
