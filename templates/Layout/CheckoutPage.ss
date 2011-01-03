@@ -17,7 +17,7 @@
 			$Me
 		<% end_control %>
 
-		<% if Order.Items %>$OrderFormWithShippingAddress<% end_if %>
+		<% if Order.Items %>$OrderForm<% end_if %>
 	<% else %>
 	<div id="CanNotCheckOut">
 		<p><strong>$Message</strong></p>

@@ -18,23 +18,18 @@
 		},
 
 		passwordInitalisation: function() {
-			if(!$("#Password_Password").val() || !$("#Password_ConfirmPassword").val() ) {
+			if(jQuery("#PasswordGroup input").length) {
 				var newPassword = this.passwordGenerator();
-				$("#Password_Password").val(newPassword);
-				$("#Password_ConfirmPassword").val(newPassword);
+				$("#PasswordGroup input").val(newPassword);
 			}
-
 		},
 
 		passwordGenerator: function() {
-
 			var randomstring = '';
-
 			for (var i=0; i < this.stringLength; i++) {
 				var rnum = Math.floor(Math.random() * this.chars.length);
 				randomstring += this.chars.substring(rnum,rnum+1);
 			}
-
 			return randomstring;
 		}
 	}
