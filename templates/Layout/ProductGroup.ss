@@ -1,17 +1,17 @@
 <% include ProductMenu %>
 
 <div id="ProductGroup">
-	<h1 class="pageTitle">$Title</h1>
+	<h1 class="pagetitle">$Title</h1>
 
 	<% if Content %>
-		<div class="typography">
+		<div id="ContentHolder">
 			$Content
 		</div>
 	<% end_if %>
 
 	<% if Products %>
 		<div id="Products" class="category">
-			<div class="resultsBar typography">
+			<div class="resultsBar">
 				<% if SortLinks %><span class="sortOptions">Sort by <% control SortLinks %><a href="$Link" class="sortlink $Current">$Name</a> <% end_control %></span><% end_if %>
 			</div>
 			<div class="clear"><!-- --></div>
@@ -30,7 +30,7 @@
 			<% if Products.NotFirstPage %>
 				<a class="prev" href="$Products.PrevLink" title="View the previous page">previous</a>
 			<% end_if %>
- 
+
 			<span>
 		    		<% control Products.PaginationSummary(4) %>
 					<% if CurrentBool %>
@@ -44,7 +44,7 @@
 					<% end_if %>
 				<% end_control %>
 			</span>
- 
+
 			<% if Products.NotLastPage %>
 				<a class="next" href="$Products.NextLink" title="View the next page">next</a>
 			<% end_if %>

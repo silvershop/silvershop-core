@@ -1,9 +1,7 @@
+<h1 class="pagetitle">$Title</h1>
 <div id="Account">
-	<div class="typography">
-		<h2>$Title</h2>
-		<% if Content %>
-			$Content
-		<% end_if %>
+	<div id="ContentHolder">
+		<% if Content %>$Content<% end_if %>
 	</div>
 	<div id="PastOrders">
 

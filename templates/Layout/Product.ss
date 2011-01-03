@@ -41,8 +41,6 @@
 		<% end_if %>
 	</div>
 	<% if Content %>
-		<div class="productContent typography">
-			$Content
-		</div>
+		<div id="ContentHolder">$Content</div>
 	<% end_if %>
 </div>
