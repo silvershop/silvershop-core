@@ -66,9 +66,6 @@ class Product extends Page {
 	/**
 	 * Enables developers to completely turning off the ability to purcahse products.
 	 */
-	protected static $global_allow_purchase = true;
-		static function set_global_allow_purchase($v){self::$global_allow_purchase = $v;}
-		static function get_global_allow_purchase(){return self::$global_allow_purchase;}
 
 	function getCMSFields() {
 		//prevent calling updateCMSFields extend function too early
@@ -161,9 +158,6 @@ class Product extends Page {
 		if($this->ShopClosed()) {
 			return false;
 		}
-		if(!self::get_global_allow_purchase()) {
-			return false;
-		}
 		if(!$this->dbObject('AllowPurchase')->getValue()) {
 			return false;
 		}
@@ -218,7 +212,7 @@ class Product extends Page {
 }
 
 class Product_Controller extends Page_Controller {
-	
+
 	static $allowed_actions = array();
 
 	function init() {
