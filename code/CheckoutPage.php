@@ -53,7 +53,10 @@ class CheckoutPage extends Page {
 
 	public static $icon = 'ecommerce/images/icons/money';
 
-	public static $add_action = 'The Checkout Page';
+	protected static $add_shipping_fields = false; //SUM or COUNT
+		static function set_add_shipping_fields($v){self::$add_shipping_fields = $v;}
+		static function get_add_shipping_fields(){return self::$add_shipping_fields;}
+
 
 	/**
 	 * Returns the link to the checkout page on this site, using
@@ -229,7 +232,8 @@ class CheckoutPage_Controller extends Page_Controller {
 			if($order && $order->MemberID == Member::currentUserID()) {
 				return $order;
 			}
-		} else {
+		}
+		else {
 			return ShoppingCart::current_order();
 		}
 	}
@@ -254,18 +258,6 @@ class CheckoutPage_Controller extends Page_Controller {
 	function OrderForm() {
 		$form = new OrderForm($this, 'OrderForm');
 		$this->data()->extend('updateOrderForm',$form);
-		//load session data
-		if($data = Session::get("FormInfo.{$form->FormName()}.data")){
-			$form->loadDataFrom($data);
-		}
-
-		return $form;
-	}
-
-
-	function OrderFormWithShippingAddress() {
-		$form = new OrderFormWithShippingAddress($this, 'OrderFormWithShippingAddress');
-		$this->data()->extend('OrderFormWithShippingAddress',$form);
 		//load session data
 		if($data = Session::get("FormInfo.{$form->FormName()}.data")){
 			$form->loadDataFrom($data);
