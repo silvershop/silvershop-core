@@ -19,8 +19,8 @@ class ShoppingCart extends Controller {
 		static function get_url_segment() {return self::$url_segment;}
 
 	protected static $order = null; // for temp caching
-		static function set_order(Order $v) {self::$url_segment = $v;}
-		static function get_order() {return self::$url_segment;}
+		static function set_order(Order $v) {self::$order = $v;}
+		static function get_order() {user_error("Use self::current_order() to get order.", E_USER_ERROR);}
 
 	protected static $cartid_session_name = 'shoppingcartid';
 		public static function set_cartid_session_name($v) {self::$cartid_session_name = $v;}
@@ -206,6 +206,8 @@ class ShoppingCart extends Controller {
 		if(!$hasWritten) {
 			self::$order->write(); // Write the order
 		}
+		//seems the best way to add some basic css.
+		Requirements::themedCSS("EcommerceBasics");
 		return self::$order;
 	}
 
@@ -428,7 +430,7 @@ class ShoppingCart extends Controller {
 	//Data
 	//----
 	function Cart() {
-		return self::get_order();
+		return self::current_order();
 	}
 
 	//--------------------------------------------------------------------------
@@ -535,11 +537,7 @@ class ShoppingCart extends Controller {
 	function numberofitemsincart() {
 		$cart = self::current_order();
 		if($cart) {
-			if($cart = $this->Cart()) {
-				if($orderItems = $cart->Items()) {
-					return $orderItems->count();
-				}
-			}
+			return $cart->TotalItems();
 		}
 		return 0;
 	}
