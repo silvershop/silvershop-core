@@ -35,7 +35,6 @@
 
 		useShippingDetailsSelector: "input[name='UseShippingAddress']",
 
-
 		init: function(){
 			//hide shipping fields
 			jQuery(OrderFormWithShippingAddress.shippingSectionSelector).hide();
@@ -44,6 +43,7 @@
 				function(){
 					jQuery(OrderFormWithShippingAddress.shippingSectionSelector).slideToggle();
 					jQuery(OrderFormWithShippingAddress.shippingNameSelector).focus();
+					OrderFormWithShippingAddress.updateFields();
 				}
 			);
 			//update on change
@@ -64,6 +64,11 @@
 					OrderFormWithShippingAddress.updateFields();
 				}
 			);
+			if(jQuery(OrderFormWithShippingAddress.useShippingDetailsSelector).is(":checked")) {
+				jQuery(OrderFormWithShippingAddress.shippingSectionSelector).slideToggle();
+				jQuery(OrderFormWithShippingAddress.shippingNameSelector).focus();
+				OrderFormWithShippingAddress.updateFields();
+			}
 		},
 
 		updateFields: function() {

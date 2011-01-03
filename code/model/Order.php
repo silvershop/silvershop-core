@@ -1228,7 +1228,7 @@ class Order_Status extends DataObject {
 	public static $db = array(
 		"Name" => "Varchar(100)",
 		"CanCancel" => "Boolean",
-		"CanPay" => "Boolean"
+		"CanPay" => "Boolean",
 		"Sort" => "Int"
 	);
 	public static $indexes = array(
