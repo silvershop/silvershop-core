@@ -16,7 +16,7 @@ class EcommerceRole extends DataObjectDecorator {
 		static function get_postal_code_url() {$sc = DataObject::get_one('SiteConfig'); if($sc) {return $sc->PostalCodeURL;} else {return self::$postal_code_url;} }
 		static function set_postal_code_url($v) {self::$postal_code_url = $v;}
 
-	protected static $postal_code_label = 'find postcode';
+	protected static $postal_code_label = '';
 		static function get_postal_code_label() {$sc = DataObject::get_one('SiteConfig'); if($sc) {return $sc->PostalCodeLabel;} else {return self::$postal_code_label;} }
 		static function set_postal_code_label($v) {self::$postal_code_label = $v;}
 
