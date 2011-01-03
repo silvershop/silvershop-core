@@ -12,13 +12,10 @@ class EcommerceRole extends DataObjectDecorator {
 		static function set_fixed_country_code($v) {self::$fixed_country_code = $v;}
 		static function get_fixed_country_code() {return self::$fixed_country_code;}
 	//f.e. http://www.nzpost.co.nz/Cultures/en-NZ/OnlineTools/PostCodeFinder
-	protected static $postal_code_url = '';
-		static function get_postal_code_url() {$sc = DataObject::get_one('SiteConfig'); if($sc) {return $sc->PostalCodeURL;} else {return self::$postal_code_url;} }
-		static function set_postal_code_url($v) {self::$postal_code_url = $v;}
 
-	protected static $postal_code_label = '';
-		static function get_postal_code_label() {$sc = DataObject::get_one('SiteConfig'); if($sc) {return $sc->PostalCodeLabel;} else {return self::$postal_code_label;} }
-		static function set_postal_code_label($v) {self::$postal_code_label = $v;}
+	static function get_postal_code_url() {$sc = DataObject::get_one('SiteConfig'); if($sc) {return $sc->PostalCodeURL;}  }
+
+	static function get_postal_code_label() {$sc = DataObject::get_one('SiteConfig'); if($sc) {return $sc->PostalCodeLabel;}  }
 
 	protected static $group_name = 'Shop Customers';
 		static function set_group_name($v) {self::$group_name = $v;}
