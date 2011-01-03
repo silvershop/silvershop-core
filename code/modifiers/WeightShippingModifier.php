@@ -16,20 +16,23 @@ class WeightShippingModifier extends OrderModifier {
 	 */
 	function LiveAmount() {
 		$order = $this->Order();
-
 		$orderItems = $order->Items();
 		// Calculate the total weight of the order
 		if($orderItems) {
 			foreach($orderItems as $orderItem) $totalWeight += $orderItem->Weight * $orderItem->quantity;
 		}
-
 		// Check if UseShippingAddress is true and if ShippingCountry exists and use that if it does
-		if($order->UseShippingAddress && $order->ShippingCountry) $shippingCountry = $order->ShippingCountry;
-
+		if($order->UseShippingAddress && $order->ShippingCountry) {
+			$shippingCountry = $order->ShippingCountry;
+		}
 		// if there is a shipping country then check whether it is national or international
 		if($shippingCountry) {
-			if($shippingCountry == Geoip::$default_country_code) return $this->nationalCost($totalWeight);
-			else return $this->internationalCost($totalWeight, $shippingCountry);
+			if($shippingCountry == Geoip::$default_country_code) {
+				return $this->nationalCost($totalWeight);
+			}
+			else {
+				return $this->internationalCost($totalWeight, $shippingCountry);
+			}
 		}
 		else {
 			if($order->MemberID && $member = DataObject::get_by_id('Member', $order->MemberID)) {
