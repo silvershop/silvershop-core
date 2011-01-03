@@ -31,50 +31,87 @@ class OrderForm extends Form {
 
 		if(!$member || !$member->ID || $member->Password == '') {
 			//login invite right on the top
-			$rightFields->push(new HeaderField(_t('OrderForm.MembershipDetails','Membership Details'), 3));
-			$rightFields->push(new LiteralField('MemberInfo', '<p class="message good">'._t('OrderForm.MemberInfo','If you are already a member please')." <a href=\"Security/login?BackURL=" . CheckoutPage::find_link(true) . "/\">"._t('OrderForm.LogIn','log in').'</a>.</p>'));
-			$rightFields->push(new LiteralField('AccountInfo', '<p>'._t('OrderForm.AccountInfo','Please choose a password, so you can login and check your order history in the future').'</p><br/>'));
-			$rightFields->push(new FieldGroup(new ConfirmedPasswordField('Password', _t('OrderForm.Password','Password'))));
+			$rightFields->push(new HeaderField(_t('OrderForm.MEMBERSHIPDETAILS','Membership Details'), 3));
+			$rightFields->push(new LiteralField('MemberInfo', '<p class="message good">'._t('OrderForm.MEMBERINFO','If you are already a member please')." <a href=\"Security/login?BackURL=" . CheckoutPage::find_link(true) . "/\">"._t('OrderForm.LOGIN','log in').'</a>.</p>'));
+			$rightFields->push(new LiteralField('AccountInfo', '<p>'._t('OrderForm.ACCOUNTINFO','Please choose a password, so you can login and check your order history in the future').'</p><br/>'));
+			$rightFields->push(new FieldGroup(new ConfirmedPasswordField('Password', _t('OrderForm.PASSWORD','Password'))));
 			$requiredFields[] = 'Password[_Password]';
 			$requiredFields[] = 'Password[_ConfirmPassword]';
 		}
 
 
 		// 2) Payment fields
+		$bottomFields = new CompositeField();
 		$currentOrder = ShoppingCart::current_order();
 		$totalAsCurrencyObject = $currentOrder->TotalAsCurrencyObject(); //should instead be $totalobj = $currentOrder->dbObject('Total');
 		$paymentFields = Payment::combined_form_fields($totalAsCurrencyObject->Nice());
 		foreach($paymentFields as $field) {
-			$rightFields->push($field);
+			$bottomFields->push($field);
 		}
 		if($paymentRequiredFields = Payment::combined_form_requirements()) {
 			$requiredFields = array_merge($requiredFields, $paymentRequiredFields);
 		}
 
-		// 3) Put all the fields in one FieldSet
-		$fields = new FieldSet($leftFields, $rightFields);
-
-		// 4) Terms and conditions field
+		// 3) Terms and conditions field
 		// If a terms and conditions page exists, we need to create a field to confirm the user has read it
+
 		if($controller->TermsPageID && $termsPage = DataObject::get_by_id('Page', $controller->TermsPageID)) {
-			$bottomFields = new CompositeField(new CheckboxField('ReadTermsAndConditions', "I agree to the terms and conditions stated on the <a href=\"$termsPage->URLSegment\" title=\"Read the shop terms and conditions for this site\">terms and conditions</a> page"));
-			$bottomFields->push(new TextareaField('CustomerOrderNote', 'Note / Question', 7, 30));
-			$bottomFields->setID('BottomOrder');
-			$fields->push($bottomFields);
+			$bottomFields->push(new CheckboxField('ReadTermsAndConditions', _t("OrderForm.AGREEWITHTERMS","I agree to the terms and conditions stated on the ")." <a href=\"".$termsPage->URLSegment."\">".$termsPage->Title."</a> "._t("OrderForm.PAGE","page.")));
 			$requiredFields[] = 'ReadTermsAndConditions';
 		}
+		$bottomFields->push(new TextareaField('CustomerOrderNote', 'Note / Question', 7, 30));
+		$bottomFields->setID('BottomOrder');
+		// 4) Put all the fields in one FieldSet
+		$fields = new FieldSet($rightFields, $leftFields, $bottomFields);
 
 		// 5) Actions and required fields creation
-		$actions = new FieldSet(new FormAction('processOrder', _t('OrderForm.processOrder','Place order and make payment')));
+		$actions = new FieldSet(new FormAction('processOrder', _t('OrderForm.PROCESSORDER','Place order and make payment')));
 		$requiredFields = new CustomRequiredFields($requiredFields);
 		$this->extend('updateValidator',$requiredFields);
 		$this->extend('updateFields',$fields);
-
+		Requirements::javascript('ecommerce/javascript/OrderFormWithShippingAddress.js');
+		if(CheckoutPage::get_add_shipping_fields()) {
+			$countryField = new DropdownField('ShippingCountry',  _t('OrderForm.COUNTRY','Country'), Geoip::getCountryDropDown(), EcommerceRole::find_country());
+			$shippingFields = new CompositeField(
+				new HeaderField(_t('OrderForm.SENDGOODSTODIFFERENTADDRESS','Send goods to different address'), 3),
+				new LiteralField('ShippingNote', '<p class="message warning">'._t('OrderFormWithShippingAddress.SHIPPINGNOTE','Your goods will be sent to the address below.').'</p>'),
+				new LiteralField('Help', '<p>'._t('OrderFormWithShippingAddress.HELP','You can use this for gift giving. No billing information will be disclosed to this address.').'</p>'),
+				new TextField('ShippingName', _t('OrderFormWithShippingAddress.NAME','Name')),
+				new TextField('ShippingAddress', _t('OrderFormWithShippingAddress.ADDRESS','Address')),
+				new TextField('ShippingAddress2', _t('OrderFormWithShippingAddress.ADDRESS2','')),
+				new TextField('ShippingCity', _t('OrderFormWithShippingAddress.CITY','City')),
+				new TextField('ShippingPostalCode', _t('OrderFormWithShippingAddress.SHIPPINGPOSTALCODE','Postal Code')),
+				$countryField
+			);
+			//Need to to this because 'FormAction_WithoutLabel' has no text on the actual button
+			//$requiredFields[] = 'ShippingName';
+			//$requiredFields[] = 'ShippingAddress';
+			//$requiredFields[] = 'ShippingCity';
+			//	$requiredFields[] = 'ShippingCountry';
+			$shippingFields->SetID('ShippingFields');
+			$shippingFields->setForm($this);
+			$fields->insertBefore(new CheckboxField("UseShippingAddress", _t("", "Use Alternative Delivery Address")), "BottomOrder");
+			$fields->insertBefore($shippingFields, "BottomOrder");
+		}
 		// 6) Form construction
 		parent::__construct($controller, $name, $fields, $actions, $requiredFields);
 
-		// 7) Member details loading
-		if($member->ID) $this->loadDataFrom($member);
+		// 7)  Load saved data
+		$order = ShoppingCart::current_order();
+		if($order) {
+			$this->loadDataFrom($order);
+			if(CheckoutPage::get_add_shipping_fields()) {
+				if ($shippingAddress = $order->ShippingAddress()) {
+					$this->loadDataFrom($shippingAddress);
+				}
+			}
+		}
+		if($member->ID) {
+			if(!$member->Country) {
+				$member->Country = EcommerceRole::find_country();
+			}
+			$this->loadDataFrom($member);
+		}
 
 		//allow updating via decoration
 		$this->extend('updateForm',$this);
@@ -124,7 +161,7 @@ class OrderForm extends Form {
 
 		//check for cart items
 		if(!ShoppingCart::has_items()) {
-			$form->sessionMessage(_t('OrderForm.NoItemsInCart','Please add some items to your cart'), 'bad');
+			$form->sessionMessage(_t('OrderForm.NOITEMSINCART','Please add some items to your cart'), 'bad');
 			Director::redirectBack();
 			return false;
 		}
@@ -135,7 +172,7 @@ class OrderForm extends Form {
 		// Create new Order from shopping cart, discard cart contents in session
 		$order = ShoppingCart::current_order();
 		if($order->Total() != $oldtotal) {
-			$form->sessionMessage(_t('OrderForm.PriceUpdated','The order price has been updated'), 'warning');
+			$form->sessionMessage(_t('OrderForm.PRICEUPDATED','The order price has been updated'), 'warning');
 			Director::redirectBack();
 			return false;
 		}
