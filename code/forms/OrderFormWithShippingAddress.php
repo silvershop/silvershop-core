@@ -14,17 +14,16 @@ class OrderFormWithShippingAddress extends OrderForm {
 
 		parent::__construct($controller, $name);
 		$order = ShoppingCart::current_order();
-		$this->fields->addFieldToTab('',new CheckboxField('UseShippingAddress', _t('OrderForm.USEDIFFERENTSHIPPINGADDRESS','Use Alternative Delivery Address'), $order->UseShippingAddress));
 		$countryField = new DropdownField('ShippingCountry',  _t('OrderForm.COUNTRY','Country'), Geoip::getCountryDropDown(), EcommerceRole::find_country());
 		$shippingFields = new CompositeField(
 			new HeaderField(_t('OrderForm.SENDGOODSTODIFFERENTADDRESS','Send goods to different address'), 3),
-			new LiteralField('ShippingNote', '<p class="message warning">'._t('OrderForm.SHIPPINGNOTE','Your goods will be sent to the address below.').'</p>'),
-			new LiteralField('Help', '<p>'._t('OrderForm.HELP','You can use this for gift giving. No billing information will be disclosed to this address.').'</p>'),
-			new TextField('ShippingName', _t('OrderForm.NAME','Name')),
-			new TextField('ShippingAddress', _t('OrderForm.ADDRESS','Address')),
-			new TextField('ShippingAddress2', _t('OrderForm.ADDRESS2','')),
-			new TextField('ShippingCity', _t('OrderForm.CITY','City')),
-			new TextField('ShippingPostalCode', _t('OrderForm.SHIPPINGPOSTALCODE','Postal Code')),
+			new LiteralField('ShippingNote', '<p class="message warning">'._t('OrderFormWithShippingAddress.SHIPPINGNOTE','Your goods will be sent to the address below.').'</p>'),
+			new LiteralField('Help', '<p>'._t('OrderFormWithShippingAddress.HELP','You can use this for gift giving. No billing information will be disclosed to this address.').'</p>'),
+			new TextField('ShippingName', _t('OrderFormWithShippingAddress.NAME','Name')),
+			new TextField('ShippingAddress', _t('OrderFormWithShippingAddress.ADDRESS','Address')),
+			new TextField('ShippingAddress2', _t('OrderFormWithShippingAddress.ADDRESS2','')),
+			new TextField('ShippingCity', _t('OrderFormWithShippingAddress.CITY','City')),
+			new TextField('ShippingPostalCode', _t('OrderFormWithShippingAddress.SHIPPINGPOSTALCODE','Postal Code')),
 			$countryField
 		);
 		//Need to to this because 'FormAction_WithoutLabel' has no text on the actual button
@@ -33,7 +32,9 @@ class OrderFormWithShippingAddress extends OrderForm {
 		//$requiredFields[] = 'ShippingCity';
 		//	$requiredFields[] = 'ShippingCountry';
 		$shippingFields->SetID('ShippingFields');
-		$this->fields->addFieldToTab('',$shippingFields);
+		$shippingFields->setForm($this);
+		$this->fields->insertBefore(new CheckboxField("UseShippingAddress", _t("", "Use Alternative Delivery Address"), $order->UseShippingAddress), "BottomOrder");
+		$this->fields->insertBefore($shippingFields, "BottomOrder");
 		$data = $this->getData();
 		$this->loadDataFrom($data);
 	}
