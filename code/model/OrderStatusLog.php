@@ -83,7 +83,7 @@ class OrderStatusLog extends DataObject {
 
 }
 
-class OrderStatusLog_Dispatch extends DataObject {
+class OrderStatusLog_Dispatch extends OrderStatusLog {
 
 	public static $db = array(
 		'DispatchedBy' => 'Varchar(100)',
@@ -161,7 +161,7 @@ class OrderStatusLog_Dispatch extends DataObject {
  * to state that the checks have been run.
 
  **/
-class OrderStatusLog_PaymentCheck extends DataObject {
+class OrderStatusLog_PaymentCheck extends OrderStatusLog {
 
 	public static $db = array(
 		'PaymentConfirmed' => "Boolean",
