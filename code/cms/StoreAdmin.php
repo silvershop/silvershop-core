@@ -10,7 +10,7 @@ class StoreAdmin extends ModelAdmin{
 
 	//static $url_priority = 50;
 
-	public static $managed_models = array('Order','OrderStatus', 'Payment','OrderStatusLog', 'OrderItem', 'OrderModifier', 'ShippingAddress');
+	public static $managed_models = array('Order','Order_Status', 'OrderStatusLog', 'OrderItem', 'OrderModifier', 'ShippingAddress','Payment');
 		public static function set_managed_models(array $array) {self::$managed_models = $array;}
 
 	public static $collection_controller_class = 'StoreAdmin_CollectionController';
