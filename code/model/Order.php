@@ -170,11 +170,6 @@ class Order extends DataObject {
 		static function set_maximum_ignorable_sales_payments_difference($v) {self::$maximum_ignorable_sales_payments_difference = $v;}
 		static function get_maximum_ignorable_sales_payments_difference() {return self::$maximum_ignorable_sales_payments_difference;}
 
-	protected static function get_shipping_fields() {
-		$array = ShippingAddress::$db;
-		return $array;
-	}
-
  	protected static $order_id_start_number = 0;
 		static function set_order_id_start_number($v) {self::$order_id_start_number = $v;}
 		static function get_order_id_start_number() {return self::$order_id_start_number;}
@@ -639,15 +634,17 @@ class Order extends DataObject {
 		$separator = ($insertnewlines) ? $separator."\n" : $separator;
 		return implode($separator,$fields);
 	}
+
 	function getFullShippingAddress($separator = "",$insertnewlines = true){
 		if(!$this->UseShippingAddress) {
 			return $this->getFullBillingAddress($separator,$insertnewlines);
 		}
-		$toUse = self::get_shipping_fields();
+		$toUse = ShippingAddress::get_shipping_fields();
+		$object = $this->ShippingAddress();
 		$fields = array();
 		foreach($toUse as $field){
-			if($this->$field) {
-				$fields[] = $this->$field;
+			if($object->$field) {
+				$fields[] = $object->$field;
 			}
 		}
 		$separator = ($insertnewlines) ? $separator."\n" : $separator;
