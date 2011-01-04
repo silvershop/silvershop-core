@@ -63,6 +63,29 @@ class OrderFilters_MultiOptionsetFilter extends SearchFilter {
 		}
 	}
 }
+class OrderFilters_MultiOptionsetStatusIDFilter extends SearchFilter {
+
+	public function apply(SQLQuery $query) {
+		$query = $this->applyRelation($query);
+		$values = $this->getValue();
+		if(count($values)) {
+			foreach($values as $value) {
+				$matches[] = "\"StatusID\" = ".intval($value);
+			}
+			return $query->where(implode(" OR ", $matches));
+		}
+		return $query;
+	}
+
+	public function isEmpty() {
+		if(is_array($this->getValue())) {
+			return count($this->getValue()) == 0;
+		}
+		else {
+			return $this->getValue() == null || $this->getValue() == '';
+		}
+	}
+}
 class OrderFilters_MustHaveAtLeastOnePayment extends SearchFilter {
 
 	public function apply(SQLQuery $query) {
