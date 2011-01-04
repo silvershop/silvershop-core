@@ -171,17 +171,16 @@ class OrderForm extends Form {
 
 		// Create new Order from shopping cart, discard cart contents in session
 		$order = ShoppingCart::current_order();
+		//TO DO: HOW CAN THESE TWO BE DIFFERENT????
 		if($order->Total() != $oldtotal) {
 			$form->sessionMessage(_t('OrderForm.PRICEUPDATED','The order price has been updated'), 'warning');
 			Director::redirectBack();
 			return false;
 		}
 
-
 		// Create new OR update logged in {@link Member} record
 		$member = EcommerceRole::ecommerce_create_or_merge($data);
 		if(!$member) {
-
 			$form->sessionMessage(
 				_t(
 					'OrderForm.MEMBEREXISTS', 'Sorry, a member already exists with that email address.
@@ -193,44 +192,45 @@ class OrderForm extends Form {
 			Director::redirectBack();
 			return false;
 		}
-
 		$member->write();
 		$member->logIn();
-
-		if($member)	$payment->PaidByID = $member->ID;
-
+		if($member)	{
+			$payment->PaidByID = $member->ID;
+		}
 		// Write new record {@link Order} to database
 		$form->saveInto($order);
-		$order->save(); //sets status to 'Unpaid'
+		$order->save(); //sets status from CanEdit to Next available Status
 		$order->MemberID = $member->ID;
 		$order->write();
-
-
+		if(isset($data['UseShippingAddress']) && $data['UseShippingAddress']){
+			$shippingAddress = new ShippingAddress();
+			$form->saveInto($shippingAddress);
+			$shippingAddress->OrderID = $order->ID;
+			$shippingAddress->write();
+			$order->ShippingAddressID = $shippingAddress->ID;
+			$order->write();
+		}
+		else {
+			die("NOT GOOD");
+		}
 		$this->clearSessionData(); //clears the stored session form data that might have been needed if validation failed
-
 		// Save payment data from form and process payment
 		$form->saveInto($payment);
 		$payment->OrderID = $order->ID;
 		$payment->PaidForID = $order->ID;
 		$payment->PaidForClass = $order->class;
-
 		$payment->Amount->Amount = $order->Total(); //TODO: should this instead be TotalOutstanding ...incase for some reason orders are partially paid.
 		$payment->write();
-
 		//prepare $data - ie put into the $data array any fields that may need to be there for payment
-
 		// Process payment, get the result back
 		$result = $payment->processPayment($data, $form);
-
 		// isProcessing(): Long payment process redirected to another website (PayPal, Worldpay)
 		if($result->isProcessing()) {
 			return $result->getValue();
 		}
-
 		if($result->isSuccess()) {
 			$order->sendReceipt();
 		}
-
 		Director::redirect($order->Link());
 		return true;
 	}
