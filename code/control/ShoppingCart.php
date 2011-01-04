@@ -187,18 +187,39 @@ class ShoppingCart extends Controller {
 		$hasWritten = false;
 		if (!self::$order) {
 			//find order by id saved to session (allows logging out and retaining cart contents)
-			$cartid = Session::get(self::$cartid_session_name);
+			$cartID = Session::get(self::$cartid_session_name);
 			//TODO: make clear cart on logout optional
-			if ($cartid && self::$order = DataObject::get_one('Order', "\"Status\" = 'Cart' AND \"ID\" = $cartid")) {
-				//do nothing
+			if ($cartID) {
+				$cartIDParts = Convert::raw2sql(explode(".", $cartID));
+				if(is_array($cartIDParts) && count($cartIDParts) == 2) {
+					$orders = DataObject::get(
+						'Order',
+						"\"Order_Status\".\"CanEdit\" = 1 AND \"Order\".\"ID\" = '".intval($cartIDParts[0])."' AND \"Order\".\"SessionID\" = '".$cartIDParts[1]."'",
+						"\"LastEdited\" DESC",
+						"INNER JOIN \"Order_Status\" ON \"Order_Status\" .\"ID\" = \"Order\".\"StatusID\"",
+						"1"
+					);
+					if($orders) {
+						self::$order = $orders->First();
+					}
+					else {
+						//TO DO: create notice that order can not be found
+					}
+				}
 			}
-			else {
+			if(!self::$order){
 				self::$order = new Order();
 				self::$order->SessionID = session_id();
 				//$order->MemberID = Member::currentUserID(); // Set the Member relation to this order
-				self::$order->write();
-				$hasWritten = true;
-				Session::set(self::$cartid_session_name,self::$order->ID);
+				if($newStatus = DataObject::get_one("Order_Status", "\"CanEdit\" = 1")) {
+					self::$order->StatusID = $newStatus->ID;
+					self::$order->write();
+					$hasWritten = true;
+					Session::set(self::$cartid_session_name,self::$order->ID.".".session_id());
+				}
+				else {
+					user_error("No Order_Status has been created with CanEdit = 1... Run Dev/Build", E_USER_WARNING);
+				}
 			}
 		}
 		//TODO: re-introduce this because it allows seeing which members don't complete orders
