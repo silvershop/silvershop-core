@@ -36,7 +36,7 @@ Object::add_extension("Product", "Buyable");
 
 // * * * SHOPPING CART AND ORDER
 //CheckoutPage::set_add_shipping_fields(true);
-//Order::set_table_overview_fields(array('Total' => 'Total','Status' => 'Status'));//
+//Order::set_table_overview_fields(array('Total' => 'Total','Status.Name'));//
 //Order::set_maximum_ignorable_sales_payments_difference(0.001);//sometimes there are small discrepancies in total (for various reasons)- here you can set the max allowed differences
 //Order::set_order_id_start_number(1234567);//sets a start number for order ID, so that they do not start at one.
 //Order::set_cancel_before_payment(false); //soon to be depreciated
