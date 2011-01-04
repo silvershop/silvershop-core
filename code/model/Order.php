@@ -918,19 +918,7 @@ class Order extends DataObject {
  			DB::alteration_message('The columns \'hasShippingCost\', \'Shipping\' and \'AddedTax\' of the table \'Order\' have been renamed successfully. Also, the columns have been renamed respectly to \'_obsolete_hasShippingCost\', \'_obsolete_Shipping\' and \'_obsolete_AddedTax\'', 'obsolete');
 		}
 
-		// 2) Cancel status update
-		$orders = DataObject::get('Order', "\"Status\" = 'Cancelled'");
-		$adminCancelledObject = DataObject::get_one("Order_Status", "\"AdminCancelled\" = 1");
-		if($orders && $adminCancelledObject) {
-			foreach($orders as $order) {
-				if(!$order->StatusID && $adminCancelledObject) {
-					$order->StatusID = $adminCancelledObject->ID;
-				}
-				$order->Status = 'AdminCancelled';
-				$order->write();
-			}
-			DB::alteration_message('The orders which status was \'Cancelled\' have been successfully changed to the status \'AdminCancelled\'', 'changed');
-		}
+
 		//set starting order number ID
 		$number = intval(Order::get_order_id_start_number());
 		$currentMax = 0;
@@ -949,14 +937,6 @@ class Order extends DataObject {
 		$dos = self::get_order_status_options();
 		if($dos) {
 			$firstOption = $dos->First();
-			$badOrders = DataObject::get("Order", "\"Status\" = '' OR \"Status\" IS NULL");
-			if($badOrders && $firstOption) {
-				foreach($badOrders as $order) {
-					$order->Status = $firstOption->Name;
-					$order->write();
-					DB::alteration_message("No order status for order number #".$order->ID." reverting to: $firstOption->Name.","error");
-				}
-			}
 			$badOrders = DataObject::get("Order", "\"StatusID\" = '' OR \"StatusID\" = 0 OR \"StatusID\" IS NULL");
 			if($badOrders && $firstOption) {
 				foreach($badOrders as $order) {
@@ -976,7 +956,7 @@ class Order extends DataObject {
       $shippingFieldsExists = DB::query("SHOW COLUMNS FROM \"Order\" LIKE 'ShippingAddress'")->numRecords();
 		}
 		if($shippingFieldsExists) {
- 			if($orders = DataObject::get('Order', "\"UseShippingAddress\" = 1")) {
+ 			if($orders = DataObject::get('Order', "\"UseShippingAddress\" = 1  OR (\"ShippingName\" IS NOT NULL AND \"ShippingName\" <> ''")) {
  				foreach($orders as $order) {
 					$obj = new ShippingAddress();
 					if(isset($order->ShippingName)) {$obj->ShippingName = $order->ShippingName;}
@@ -1001,6 +981,122 @@ class Order extends DataObject {
  			@DB::query("ALTER TABLE \"Order\" CHANGE COLUMN \"ShippingState\" \"_obsolete_ShippingState\" Varchar(255)");
  			@DB::query("ALTER TABLE \"Order\" CHANGE COLUMN \"ShippingCountry\" \"_obsolete_ShippingCountry\" Varchar(255)");
  			@DB::query("ALTER TABLE \"Order\" CHANGE COLUMN \"ShippingPhone\" \"_obsolete_ShippingPhone\" Varchar(255)");
+		}
+		//move to ShippingAddress
+		$db = DB::getConn();
+		if( $db instanceof PostgreSQLDatabase ){
+      $statusFieldExists = DB::query("SELECT column_name FROM information_schema.columns WHERE table_name ='Order' AND column_name = 'Status'")->numRecords();
+		}
+		else{
+			// default is MySQL - broken for others, each database conn type supported must be checked for!
+      $statusFieldExists = DB::query("SHOW COLUMNS FROM \"Order\" LIKE 'Status'")->numRecords();
+		}
+		if($statusFieldExists) {
+		// 2) Cancel status update
+			$orders = DataObject::get('Order', "\"Status\" = 'Cancelled'");
+			$adminCancelledObject = DataObject::get_one("Order_Status", "\"AdminCancelled\" = 1");
+			if($orders && $adminCancelledObject) {
+				foreach($orders as $order) {
+					if(!$order->StatusID && $adminCancelledObject) {
+						$order->StatusID = $adminCancelledObject->ID;
+					}
+					$order->Status = 'AdminCancelled';
+					$order->write();
+				}
+				DB::alteration_message('The orders which status was \'Cancelled\' have been successfully changed to the status \'AdminCancelled\'', 'changed');
+			}
+			$rows = DB::query("SELECT \"ID\", \"Status\" FROM \"Order\"");
+			if($rows) {
+				$CartObject = null;
+				$UnpaidObject = null;
+				$PaidObject = null;
+				$SentObject = null;
+				$AdminCancelledObject = null;
+				$MemberCancelledObject = null;
+ 				foreach($rows as $row) {
+					switch($row["Status"]) {
+						case "Cart":
+							if(!$CartObject) {
+								if(!($CartObject = DataObject::get_one("Order_Status", "\"CanEdit\" = 1"))) {
+									$CartObject = new Order_Status();
+									$CartObject->Name = "Cart";
+									$CartObject->CanEdit = $CartObject->CanCancel = $CartObject->CanPay = $CartObject->Uncollated = $CartObject->Unsent = 1;
+									$CartObject->ShowAsUncompletedOrder = 1;
+									$CartObject->write();
+									DB::alteration_message("Created CART Order Status", "created");
+								}
+							}
+							DB::query("UPDATE \"Order\" SET StatusID = ".$CartObject->ID." WHERE \"Order\".\"ID\" = ".$row["ID"]);
+							break;
+						case "Query":
+						case "Unpaid":
+							if(!$UnpaidObject) {
+								if(!($UnpaidObject = DataObject::get_one("Order_Status", "\"CanEdit\" = 0 AND \"CanPay\" = 1"))) {
+									$UnpaidObject = new Order_Status();
+									$UnpaidObject->Name = "Unpaid";
+									$UnpaidObject->CanCancel = $UnpaidObject->CanPay = $UnpaidObject->Uncollated = $UnpaidObject->Unsent = 1;
+									$UnpaidObject->ShowAsUncompletedOrder = 1;
+									$UnpaidObject->write();
+									DB::alteration_message("Created Unpaid Order Status", "created");
+								}
+							}
+							DB::query("UPDATE \"Order\" SET StatusID = ".$UnpaidObject->ID." WHERE \"Order\".\"ID\" = ".$row["ID"]);
+							break;
+						case "Processing":
+						case "Paid":
+							if(!$PaidObject) {
+								if(!($PaidObject = DataObject::get_one("Order_Status", "\"CanEdit\" = 0 AND \"CanPay\" = 0"))) {
+									$PaidObject = new Order_Status();
+									$PaidObject->Name = "Paid";
+									$PaidObject->Uncollated = $PaidObject->Unsent = 1;
+									$PaidObject->ShowAsInProcessOrder = 1;
+									$PaidObject->write();
+									DB::alteration_message("Created Paid Order Status", "created");
+								}
+							}
+							DB::query("UPDATE \"Order\" SET StatusID = ".$PaidObject->ID." WHERE \"Order\".\"ID\" = ".$row["ID"]);
+							break;
+						case "Sent":
+						case "Complete":
+							if(!$PaidObject) {
+								if(!($SentObject = DataObject::get_one("Order_Status", "\"Unsent\" = 0"))) {
+									$SentObject = new Order_Status();
+									$SentObject->Name = "Sent";
+									$SentObject->ShowAsCompletedOrder = 1;
+									$SentObject->write();
+									DB::alteration_message("Created Sent Order Status", "created");
+								}
+							}
+							DB::query("UPDATE \"Order\" SET StatusID = ".$SentObject->ID." WHERE \"Order\".\"ID\" = ".$row["ID"]);
+							break;
+						case "AdminCancelled":
+							if(!$AdminCancelledObject) {
+								if(!($AdminCancelledObject = DataObject::get_one("Order_Status", "\"AdminCancelled\" = 1"))) {
+									$AdminCancelledObject = new Order_Status();
+									$AdminCancelledObject->Name = "Admin Cancelled";
+									$AdminCancelledObject->AdminCancelled = 1;
+									$AdminCancelledObject->write();
+									DB::alteration_message("Created Admin Cancelled Order Status", "created");
+								}
+							}
+							DB::query("UPDATE \"Order\" SET StatusID = ".$AdminCancelledObject->ID." WHERE \"Order\".\"ID\" = ".$row["ID"]);
+							break;
+						case "MemberCancelled":
+							if(!$MemberCancelledObject) {
+								if(!($MemberCancelledObject = DataObject::get_one("Order_Status", "\"CustomerCancelled\" = 1"))) {
+									$MemberCancelledObject = new Order_Status();
+									$MemberCancelledObject->Name = "Customer Cancelled";
+									$MemberCancelledObject->CustomerCancelled = 1;
+									$MemberCancelledObject->write();
+									DB::alteration_message("Created Customeer Cancelled Order Status", "created");
+								}
+							}
+							DB::query("UPDATE \"Order\" SET StatusID = ".$MemberCancelledObject->ID." WHERE \"Order\".\"ID\" = ".$row["ID"]);
+							break;
+					}
+				}
+			}
+ 			@DB::query("ALTER TABLE \"Order\" CHANGE COLUMN \"Status\" \"_obsolete_Status\" Varchar(255)");
 		}
 	}
 
