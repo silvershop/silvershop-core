@@ -38,28 +38,22 @@ class SiteConfigEcommerceExtras extends DataObjectDecorator {
 		$update = array();
 		$siteConfig = DataObject::get_one("SiteConfig");
 		if($siteConfig) {
-			/*
 			if(!$siteConfig->ReceiptEmail) {
-				$siteConfig->ReceiptEmail = Order::get_receipt_email();
+				$siteConfig->ReceiptEmail = Email::getAdminEmail();
 				$update[]= "created default entry for ReceiptEmail";
 			}
 			if(!$siteConfig->ReceiptSubject) {
-				$siteConfig->ReceiptSubject = Order::get_receipt_subject();
+				$siteConfig->ReceiptSubject = "Shop Sale Information {OrderNumber}";
 				$update[]= "created default entry for ReceiptSubject";
 			}
-			if(!$siteConfig->PostalCodeURL) {
-				$siteConfig->PostalCodeURL = EcommerceRole::get_postal_code_url();
-				$update[]= "created default entry for PostalCodeURL";
-			}
-			if(!$siteConfig->PostalCodeLabel) {
-				$siteConfig->PostalCodeLabel = EcommerceRole::get_postal_code_label();
-				$update[]= "created default entry for PostalCodeLabel";
+			if(!$siteConfig->DispatchEmailSubject) {
+				$siteConfig->DispatchEmailSubject = "Your order has been dispatched";
+				$update[]= "created default entry for DispatchEmailSubject";
 			}
 			if(count($update)) {
 				$siteConfig->write();
 				DB::alteration_message($siteConfig->ClassName." created/updated: ".implode(" --- ",$update), 'created');
 			}
-			*/
 		}
 	}
 }
