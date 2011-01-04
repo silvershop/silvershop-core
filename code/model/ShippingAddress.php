@@ -46,6 +46,16 @@ class ShippingAddress extends DataObject {
 	); //note no => for relational fields
 
 	public static $singular_name = "Shipping Address";
+
 	public static $plural_name = "Shipping Addresses";
+
+	public static function get_shipping_fields() {
+		$array = ShippingAddress::$db;
+		$newArray = array();
+		foreach($array as $key => $value) {
+			$newArray[$key] = $key;
+		}
+		return $newArray;
+	}
 
 }
