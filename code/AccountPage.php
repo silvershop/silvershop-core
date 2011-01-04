@@ -48,29 +48,47 @@ class AccountPage extends Page {
 
 	/**
 	 * Returns all {@link Order} records for this
-	 * member that are completed.
-	 *
-	 * @return DataObjectSet
-	 */
-	function CompleteOrders() {
-		$memberID = Member::currentUserID();
-		$statusFilter = "\"Order\".\"Status\" IN ('" . implode("','", Order::get_paid_status()) . "')";
-		$statusFilter .= " AND \"Order\".\"Status\" NOT IN('". implode("','", Order::get_hidden_status()) ."')";
-		return DataObject::get('Order', "\"Order\".\"MemberID\" = '$memberID' AND $statusFilter", "\"Created\" DESC");
-	}
-
-	/**
-	 * Returns all {@link Order} records for this
 	 * member that are incomplete.
 	 *
 	 * @return DataObjectSet
 	 */
 	function IncompleteOrders() {
-		$memberID = Member::currentUserID();
-		$statusFilter = "\"Order\".\"Status\" NOT IN ('" . implode("','", Order::get_paid_status()) . "')";
-		$statusFilter .= " AND \"Order\".\"Status\" NOT IN('". implode("','", Order::get_hidden_status()) ."')";
-		return DataObject::get('Order', "\"Order\".\"MemberID\" = '$memberID' AND $statusFilter", "\"Created\" DESC");
+		$statusFilter = "\"Order_Status\".\"ShowAsUncompletedOrder\" = 1 ";
+		return $this->OrderSQL($statusFilter);
 	}
+
+	/**
+	 * Returns all {@link Order} records for this
+	 * member that are completed.
+	 *
+	 * @return DataObjectSet
+	 */
+	function InProcessOrders() {
+		$statusFilter = "\"Order_Status\".\"ShowAsInProcessOrder\" = 1";
+		return $this->OrderSQL($statusFilter);
+	}
+
+	/**
+	 * Returns all {@link Order} records for this
+	 * member that are completed.
+	 *
+	 * @return DataObjectSet
+	 */
+	function CompleteOrders() {
+		$statusFilter = "\"Order_Status\".\"ShowAsCompletedOrder\" = 1";
+		return $this->OrderSQL($statusFilter);
+	}
+
+	protected function OrderSQL ($statusFilter) {
+		$memberID = Member::currentUserID();
+		return DataObject::get(
+			$className = 'Order',
+			$where = "\"Order\".\"MemberID\" = '$memberID' AND $statusFilter",
+			$sort = "\"Created\" DESC",
+			$join = "INNER JOIN \"Order_Status\" ON \"Order\".\"StatusID\" = \"Order_Status\".\"ID\""
+		);
+	}
+
 
 	/**
 	 * Automatically create an AccountPage if one is not found
