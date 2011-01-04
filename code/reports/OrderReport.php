@@ -67,8 +67,7 @@ class OrderReport_Popup extends Controller {
 			$payment = $order->Payment();
 			$cheque = false;
 
-			if($payment->First()) {
-				$record = $payment->First();
+			if($record = $payment->First()) {
 				if($record->ClassName == 'ChequePayment') {
 					$cheque = true;
 				}
