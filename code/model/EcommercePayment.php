@@ -15,7 +15,7 @@ class EcommercePayment extends DataObjectDecorator {
 			),
 			'searchable_fields' => array(
 				'OrderID' => array('title' => 'Order ID'),
-				//'Created' => array('title' => 'Date','filter' => 'WithinDateRangeFilter','field' => 'DateRangeField'), //TODO: filter and field not implemented yet				
+				//'Created' => array('title' => 'Date','filter' => 'WithinDateRangeFilter','field' => 'DateRangeField'), //TODO: filter and field not implemented yet
 				'IP' => array('title' => 'IP Address', 'filter' => 'PartialMatchFilter'),
 				'Status'
 			)
@@ -52,12 +52,10 @@ class EcommercePayment extends DataObjectDecorator {
 	//TODO: this function could get called multiple times, resulting in unwanted logs , changes etc.
 	function onAfterWrite() {
 		if($this->owner->Status == 'Success' && $order = $this->owner->Order()) {
-
 			if(!$order->ReceiptSent){
 				$order->sendReceipt();
 				$order->updatePaymentStatus();
 			}
-
 		}
 	}
 
