@@ -29,7 +29,7 @@
 
 		countrySelector: "#Country select",
 
-		shippingCountrySelector: "#Country select",
+		shippingCountrySelector: "#ShippingCountry select",
 
 		postalCodeSelector: "#PostalCode input",
 
@@ -84,9 +84,9 @@
 			}
 
 			//country
-			var Country =  jQuery(OrderFormWithShippingAddress.countrySelector).val();
+			var Country = jQuery(OrderFormWithShippingAddress.countrySelector).val();
 			var ShippingCountry =  jQuery(OrderFormWithShippingAddress.shippingCountrySelector).val();
-			if((!ShippingCountry || ShippingCountry = "AF") && Country) {
+			if((!ShippingCountry || ShippingCountry == "AF") && Country) {
 				jQuery(OrderFormWithShippingAddress.shippingCountrySelector).val(Country);
 			}
 
