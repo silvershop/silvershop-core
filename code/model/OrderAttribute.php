@@ -22,6 +22,10 @@ class OrderAttribute extends DataObject {
 		'CartTitle' => 'Text'
 	);
 
+	public static $create_table_options = array(
+		'MySQLDatabase' => 'ENGINE=InnoDB'
+	);
+
 	public static $default_sort = "\"OrderAttribute\".\"Sort\" ASC, \"OrderAttribute\".\"Created\" DESC";
 
 	public static $indexes = array(
