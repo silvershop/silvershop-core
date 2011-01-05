@@ -1363,6 +1363,16 @@ class Order_Status extends DataObject {
 			}
 			$i++;
 		}
+		//enforce logical order...
+		if($this->CanEdit) {
+			$this->CanPay = $this->Uncollated = $this->Unsent = 1;
+		}
+		if(!$this->CanEdit && $this->CanPay) {
+			$this->Uncollated = $this->Unsent = 1;
+		}
+		if(!$this->CanEdit && !$this->CanPay && $this->Uncollated) {
+			$this->Unsent = 1;
+		}
 	}
 	public function canDelete() {
 		if($order = DataObject::get_one("Order", "StatusID = ".$this->ID)) {
