@@ -12,10 +12,17 @@
 })(jQuery);
 
 ecommerce_cart = {
+
+	hidePlusAndMinus: true,
+		set_hidePlusAndMins: function(v) {this.hidePlusAndMinus = v;},
+
 	init: function () {
 		ecommerce_cart.updateCartRows();
 		jQuery('input.ajaxQuantityField').each(
 			function() {
+				if(ecommerce_cart.hidePlusAndMinus) {
+					jQuery(this).siblings("a.removeOneLink, a.addOneLink").hide();
+				}
 				jQuery(this).removeAttr('disabled');
 				jQuery(this).change(
 					function() {
@@ -23,8 +30,12 @@ ecommerce_cart = {
 						var setQuantityLink = jQuery('[name=' + name + ']');
 						if(jQuery(setQuantityLink).length > 0) {
 							setQuantityLink = jQuery(setQuantityLink).get(0);
-							if(! this.value) this.value = 0;
-							else this.value = this.value.replace(/[^0-9]+/g, '');
+							if(! this.value) {
+								this.value = 0;
+							}
+							else {
+								this.value = this.value.replace(/[^0-9]+/g, '');
+							}
 							var url = jQuery('base').attr('href') + setQuantityLink.value + '?quantity=' + this.value;
 							jQuery("body").addClass("loading");
 							jQuery.getJSON(url, null, ecommerce_cart.setChanges);

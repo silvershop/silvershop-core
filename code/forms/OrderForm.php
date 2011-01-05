@@ -32,7 +32,9 @@ class OrderForm extends Form {
 		if(!$member || !$member->ID || $member->Password == '') {
 			//login invite right on the top
 			$rightFields->push(new HeaderField(_t('OrderForm.MEMBERSHIPDETAILS','Membership Details'), 3));
-			$rightFields->push(new LiteralField('MemberInfo', '<p class="message good">'._t('OrderForm.MEMBERINFO','If you are already a member please')." <a href=\"Security/login?BackURL=" . CheckoutPage::find_link(true) . "/\">"._t('OrderForm.LOGIN','log in').'</a>.</p>'));
+			if(!$member) {
+				$rightFields->push(new LiteralField('MemberInfo', '<p class="message good">'._t('OrderForm.MEMBERINFO','If you are already a member please')." <a href=\"Security/login?BackURL=" . CheckoutPage::find_link(true) . "/\">"._t('OrderForm.LOGIN','log in').'</a>.</p>'));
+			}
 			$rightFields->push(new LiteralField('AccountInfo', '<p>'._t('OrderForm.ACCOUNTINFO','Please choose a password, so you can login and check your order history in the future').'</p><br/>'));
 			$rightFields->push(new FieldGroup(new ConfirmedPasswordField('Password', _t('OrderForm.PASSWORD','Password'))));
 			$requiredFields[] = 'Password[_Password]';
