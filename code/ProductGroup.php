@@ -190,6 +190,12 @@ class ProductGroup extends Page {
 	}
 
 
+	function ParentGroup() {
+		//to do: cater for various parent groups...
+		return DataObject::get_by_id("ProductGroup", $this->ParentID);
+	}
+
+
 	/**
 	 * Recursively generate a product menu.
 	 * @return DataObjectSet

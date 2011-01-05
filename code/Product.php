@@ -125,6 +125,11 @@ class Product extends Page {
 
 	}
 
+	function ParentGroup() {
+		//to do: cater for various parent groups...
+		return DataObject::get_by_id("ProductGroup", $this->ParentID);
+	}
+
 	protected function getProductGroupsTable() {
 		$stage = Versioned::current_stage();
 		if($stage) {
