@@ -28,7 +28,8 @@ class Order extends DataObject {
 	public static $has_many = array(
 		'Attributes' => 'OrderAttribute',
 		'OrderStatusLogs' => 'OrderStatusLog',
-		'Payments' => 'Payment'
+		'Payments' => 'Payment',
+		'Emails' => 'Order_EmailRecord'
 	);
 
 	public static $many_many = array();
@@ -1172,11 +1173,72 @@ class Order extends DataObject {
 
 }
 
+class Order_EmailRecord extends DataObject {
+
+	$db = array(
+		"From" => "Varchar(255)",
+		"To" => "Varchar(255)",
+		"Subject" => "Varchar(255)",
+		"Content" => "HTMLText",
+		"Result" => "Boolean"
+	);
+	$has_one = array(
+		"Order" => "Order",
+		"Member" => "Member"
+	);
+	public static $summary_fields = array(
+		"Created" => "Send",
+		"From" => "From",
+		"To" => "To",
+		"Subject" => "Subject"
+		"Result" => "Sent Succesfully"
+	);
+	public static $singular_name = "Customer Email";
+	public static $plural_name = "Customer Emails";
+	//CRUD settings
+	public function canCreate($member = null) {return false;}
+	public function canEdit($member = null) {return false;}
+	public function canDelete($member = null) {return false;}
+	//defaults
+	public static $default_sort = "\"Created\" DESC";
+
+}
+
+class Order_Email extends Email {
+
+	public function send($messageID = null) {
+		$result = parent::send($messageID);
+		$this->CreateRecord($result);
+		return $result;
+	}
+
+	public function sendPlain($messageID = null) {
+		$result = parent::sendPlain($messageID);
+		$this->CreateRecord($result);
+		return $result;
+
+	}
+
+	protected function CreateRecord($result) {
+		$obj = new Order_EmailRecord();
+		$obj->From = $this->from;
+		$obj->To = $this->to;
+		$obj->Subject = $this->subject;
+		$obj->Content = $this->body;
+		$obj->Result = $result;
+		if(Email::$send_all_emails_to) {
+			$obj->To = Email::$send_all_emails_to;
+		}
+		$obj->write();
+	}
+
+}
+
 /**
  * This class handles the receipt email which gets sent once an order is made.
  * You can call it by issuing sendReceipt() in the Order class.
  */
-class Order_ReceiptEmail extends Email {
+class Order_ReceiptEmail extends Order_Email {
 
 	protected $ss_template = 'Order_ReceiptEmail';
 
@@ -1186,7 +1248,7 @@ class Order_ReceiptEmail extends Email {
  * This class handles the status email which is sent after changing the attributes
  * in the report (eg. status changed to 'Shipped').
  */
-class Order_StatusEmail extends Email {
+class Order_StatusEmail extends Order_Email {
 
 	protected $ss_template = 'Order_StatusEmail';
 

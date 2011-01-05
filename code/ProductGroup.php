@@ -8,7 +8,8 @@
 class ProductGroup extends Page {
 
 	public static $db = array(
-		'ChildGroupsPermission' => "Enum('Show Only Featured Products,Show All Products')"
+		'ChildGroupsPermission' => "Enum('Show Only Featured Products,Show All Products')",
+		"NumberOfProductsPerPage" => "Int"
 	);
 
 	public static $has_one = array();
@@ -32,10 +33,6 @@ class ProductGroup extends Page {
 	protected static $include_child_groups = true;
 		static function set_include_child_groups($include = true){self::$include_child_groups = $include;}
 		static function get_include_child_groups(){return self::$include_child_groups;}
-
-	protected static $page_length = 12;
-		static function set_page_length(int $length){self::$page_length = intval($length);}
-		static function get_page_length(){return self::$page_length;}
 
 	protected static $must_have_price = true;
 		static function set_must_have_price($must = true){user_error("ProductGroup::\$set_must_have_price has been depreciated, use ProductGroup::\$only_show_products_that_can_purchase", E_USER_NOTICE);}
@@ -86,7 +83,8 @@ class ProductGroup extends Page {
 			$fields->addFieldToTab(
 				'Root.Content',
 				new Tab(
-					'Child Groups',
+					'Products',
+					new NumericField("NumberOfProductsPerPage", "Number of products per page"),
 					new HeaderField('How should products be presented in the child groups?'),
 					new DropdownField(
 	  					'ChildGroupsPermission',
@@ -118,7 +116,9 @@ class ProductGroup extends Page {
 
 		if($extraFilter) $filter.= " AND $extraFilter";
 
-		$limit = (isset($_GET['start']) && (int)$_GET['start'] > 0) ? (int)$_GET['start'].",".self::$page_length : "0,".self::$page_length;
+		$limit = (isset($_GET['start']) && (int)$_GET['start'] > 0) ? (int)$_GET['start'] : "0";
+		$limit .= ", ".$this->ProductsPerPage();
+
 		if(!isset($_GET['sortby'])) {
 			$_GET['sortby'] = "";
 		}
@@ -133,19 +133,18 @@ class ProductGroup extends Page {
 
 		$join = $this->getManyManyJoin('Products','Product');
 		$multicatfilter = $this->getManyManyFilter('Products','Product');
-		
+
 		$products = DataObject::get('Product',"(\"ParentID\" IN ($groupidsimpl) OR $multicatfilter) $filter",$sort,$join,$limit);
 		$allproducts = DataObject::get('Product',"\"ParentID\" IN ($groupidsimpl) $filter","",$join);
-		
+
 		//FIXME: this was breaking the "get_only_show_products_that_can_purchase" code below
 		//if($allproducts) $products->TotalCount = $allproducts->Count(); //add total count to returned data for 'showing x to y of z products'
-		
+
 		if($products && $products instanceof DataObjectSet) $products->removeDuplicates();
-		
+
 		//FIXME: this removing does not cater for pagination...so you end up with half empty, or fully empty pages in some cases.
 		if($products) {
 			if(self::get_only_show_products_that_can_purchase()) {
-				
 				foreach($products as $product) {
 					if(!$product->canPurchase()) {
 						$products->remove($product);
@@ -154,6 +153,21 @@ class ProductGroup extends Page {
 			}
 		}
 		return $products;
+	}
+
+	function ProductsPerPage() {
+		$n = 0;
+		if($this->NumberOfProductsPerPage) {
+			$n = $this->NumberOfProductsPerPage;
+		}
+		else {
+			//TO DO: add parent.NumberOfProductsPerPage ???
+			$sc = DataObject::get_one("SiteConfig");
+			if($sc) {
+				$n = $sc->NumberOfProductsPerPage;
+			}
+		}
+		return $n;
 	}
 
 	/**

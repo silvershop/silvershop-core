@@ -16,17 +16,22 @@ class SiteConfigEcommerceExtras extends DataObjectDecorator {
 				"ReceiptSubject" => "Varchar(255)",
 				"DispatchEmailSubject" => "Varchar(255)",
 				"PostalCodeURL" => "Varchar(255)",
-				"PostalCodeLabel" => "Varchar(255)"
+				"PostalCodeLabel" => "Varchar(255)",
+				"NumberOfProductsPerPage" => "Int"
 			)
 		);
 	}
 
 	function updateCMSFields(FieldSet &$fields) {
+		$fields->addFieldToTab("Root.Webshop", new HeaderField("ProductDisplay", "Product Display", 3));
+		$fields->addFieldToTab("Root.Webshop", new NumericField("NumberOfProductsPerPage", "Numer of products per page"));
+		//new section
 		$fields->addFieldToTab("Root.Webshop", new HeaderField("Checkout", "Checkout", 3));
 		$fields->addFieldToTab("Root.Webshop", new CheckboxField("ShopClosed", "Shop closed"));
 		$fields->addFieldToTab("Root.Webshop", new TextField("PostalCodeLink", "Postal code link"));
 		$fields->addFieldToTab("Root.Webshop", new TextField("PostalCodeLabel", "Postal code label"));
-		$fields->addFieldToTab("Root.Webshop", new HeaderField("Emails", "Confirmation Emails", 3));
+		//new section
+		$fields->addFieldToTab("Root.Webshop", new HeaderField("Emails", "Emails to Customer", 3));
 		$fields->addFieldToTab("Root.Webshop", new EmailField("ReceiptEmail", "From email address for shop receipt (e.g. sales@myshop.com)"));
 		$fields->addFieldToTab("Root.Webshop", new TextField("ReceiptSubject", "Subject for shop receipt email ('{OrderNumber}' will be replaced with actual order number - e.g. 'thank you for your order (#{OrderNumber})');"));
 		$fields->addFieldToTab("Root.Webshop", new TextField("DispatchEmailSubject", "Default subject for dispatch email (e.g. your order has been sent)"));
