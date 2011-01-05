@@ -55,6 +55,10 @@ class SiteConfigEcommerceExtras extends DataObjectDecorator {
 				$siteConfig->DispatchEmailSubject = "Your order has been dispatched";
 				$update[]= "created default entry for DispatchEmailSubject";
 			}
+			if(!$siteConfig->NumberOfProductsPerPage) {
+				$siteConfig->NumberOfProductsPerPage = 12;
+				$update[]= "created default entry for NumberOfProductsPerPage";
+			}
 			if(count($update)) {
 				$siteConfig->write();
 				DB::alteration_message($siteConfig->ClassName." created/updated: ".implode(" --- ",$update), 'created');
