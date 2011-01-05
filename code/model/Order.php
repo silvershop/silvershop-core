@@ -1175,14 +1175,14 @@ class Order extends DataObject {
 
 class Order_EmailRecord extends DataObject {
 
-	$db = array(
+	public static $db = array(
 		"From" => "Varchar(255)",
 		"To" => "Varchar(255)",
 		"Subject" => "Varchar(255)",
 		"Content" => "HTMLText",
 		"Result" => "Boolean"
 	);
-	$has_one = array(
+	public static $has_one = array(
 		"Order" => "Order",
 		"Member" => "Member"
 	);
@@ -1190,7 +1190,7 @@ class Order_EmailRecord extends DataObject {
 		"Created" => "Send",
 		"From" => "From",
 		"To" => "To",
-		"Subject" => "Subject"
+		"Subject" => "Subject",
 		"Result" => "Sent Succesfully"
 	);
 	public static $singular_name = "Customer Email";
