@@ -1193,6 +1193,13 @@ class Order_EmailRecord extends DataObject {
 		"Subject" => "Subject",
 		"Result" => "Sent Succesfully"
 	);
+	public static $searchable_fields = array(
+		"From" => "PartialMatchFilter",
+		"To" => "PartialMatchFilter",
+		"Subject" => "PartialMatchFilter",
+		"Result" => true
+	);
+
 	public static $singular_name = "Customer Email";
 	public static $plural_name = "Customer Emails";
 	//CRUD settings
