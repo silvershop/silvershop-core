@@ -56,13 +56,14 @@ class OrderForm extends Form {
 
 		// 3) Terms and conditions field
 		// If a terms and conditions page exists, we need to create a field to confirm the user has read it
-
 		if($controller->TermsPageID && $termsPage = DataObject::get_by_id('Page', $controller->TermsPageID)) {
-			$bottomFields->push(new CheckboxField('ReadTermsAndConditions', _t("OrderForm.AGREEWITHTERMS","I agree to the terms and conditions stated on the ")." <a href=\"".$termsPage->URLSegment."\">".$termsPage->Title."</a> "._t("OrderForm.PAGE","page.")));
+			$bottomFields->push(new CheckboxField('ReadTermsAndConditions', _t('OrderForm.AGREEWITHTERMS1','I agree to the terms and conditions stated on the ').' <a href="'.$termsPage->URLSegment.'">'.$termsPage->Title.'</a> '._t('OrderForm.AGREEWITHTERMS2','page.')));
 			$requiredFields[] = 'ReadTermsAndConditions';
 		}
-		$bottomFields->push(new TextareaField('CustomerOrderNote', 'Note / Question', 7, 30));
+		
+		$bottomFields->push(new TextareaField('CustomerOrderNote', _t('OrderForm.CUSTOMERNOTE','Note / Question'), 7, 30));
 		$bottomFields->setID('BottomOrder');
+		
 		// 4) Put all the fields in one FieldSet
 		$fields = new FieldSet($rightFields, $leftFields, $bottomFields);
 
@@ -89,11 +90,11 @@ class OrderForm extends Form {
 			//$requiredFields[] = 'ShippingName';
 			//$requiredFields[] = 'ShippingAddress';
 			//$requiredFields[] = 'ShippingCity';
-			//	$requiredFields[] = 'ShippingCountry';
+			//$requiredFields[] = 'ShippingCountry';
 			$shippingFields->SetID('ShippingFields');
 			$shippingFields->setForm($this);
-			$fields->insertBefore(new CheckboxField("UseShippingAddress", _t("", "Use Alternative Delivery Address")), "BottomOrder");
-			$fields->insertBefore($shippingFields, "BottomOrder");
+			$fields->insertBefore(new CheckboxField('UseShippingAddress', _t('OrderForm.USEDIFFERENTSHIPPINGADDRESS', 'Use Alternative Delivery Address')), 'BottomOrder');
+			$fields->insertBefore($shippingFields, 'BottomOrder');
 		}
 		// 6) Form construction
 		parent::__construct($controller, $name, $fields, $actions, $requiredFields);
