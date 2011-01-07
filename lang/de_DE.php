@@ -166,9 +166,8 @@ $lang['de_DE']['OrderForm']['HELP'] = 'Sie können dies für Geschenke benutzen.
 $lang['de_DE']['OrderForm']['CUSTOMERNOTE'] = 'Bemerkungen';
 $lang['de_DE']['OrderForm']['AGREEWITHTERMS1'] = 'Ich habe die Informationen zur Bestellung und die ';
 $lang['de_DE']['OrderForm']['AGREEWITHTERMS2'] = ' gelesen und verstanden.';
-//TODO obsolete?
-$lang['de_DE']['OrderForm']['UseBillingAddress'] = 'An Rechnungsadresse versenden.';
-$lang['de_DE']['OrderForm']['NoItemsInCart'] = 'Sie haben keine Produkte ausgewählt. Bitte legen Sie Produkte in den Warenkorb.';
+$lang['de_DE']['OrderForm']['NOITEMSINCART'] = 'Sie haben keine Produkte ausgewählt. Bitte legen Sie Produkte in den Warenkorb.';
+$lang['de_DE']['OrderForm']['PRICEUPDATED'] = 'Die Bestellsumme wurde aktualisiert.';
 $lang['de_DE']['Order_receiptEmail.ss']['HEADLINE'] = 'Auftragsbearbeitung';
 $lang['de_DE']['Order_ReceiptEmail.ss']['HEADLINE'] = 'Auftragsbestätigung';
 $lang['de_DE']['Order_receiptEmail.ss']['TITLE'] = 'Shop Eingang';
