@@ -210,9 +210,6 @@ class OrderForm extends Form {
 			$order->ShippingAddressID = $shippingAddress->ID;
 			$order->write();
 		}
-		else {
-			die("NOT GOOD");
-		}
 		$this->clearSessionData(); //clears the stored session form data that might have been needed if validation failed
 		// Save payment data from form and process payment
 		$form->saveInto($payment);
