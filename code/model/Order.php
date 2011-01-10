@@ -459,9 +459,7 @@ class Order extends DataObject {
  		if($this->ID){
  			return $this->itemsFromDatabase($filter);
  		}
- 		elseif($items = ShoppingCart::get_items()){
- 			return $this->createItems($items);
- 		}
+ 		return null;
 	}
 
 	/**
