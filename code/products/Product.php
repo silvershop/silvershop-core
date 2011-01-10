@@ -502,9 +502,7 @@ class Product_Controller extends Page_Controller {
 		if(isset($data['ProductAttributes']) && $variation = $this->getVariationByAttributes($data['ProductAttributes'])){
 			
 			$quantity = (isset($data['Quantity']) && is_numeric($data['Quantity'])) ? (int) $data['Quantity'] : 1; 
-			
-			
-			Debug::show($variation);
+
 			//add this one to cart
 			ShoppingCart::add_buyable($variation,$quantity);
 			
