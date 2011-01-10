@@ -63,9 +63,16 @@ class ProductAttributeType extends DataObject{
 		return $set;
 	}
 	
-	function getDropDownField(){
-		if($this->Values()->exists())
-			return new DropdownField('ProductAttributes['.$this->ID.']',$this->Name,$this->Values('','Sort ASC, Value ASC')->map('ID','Value'));
+	function getDropDownField($emptystring = null,$values = null){
+		
+		$values = ($values) ? $values : $this->Values('','Sort ASC, Value ASC');	
+		
+		if($values->exists()){
+			$field = new DropdownField('ProductAttributes['.$this->ID.']',$this->Name,$values->map('ID','Value'));
+			if($emptystring)
+				$field->setEmptyString($emptystring);
+			return $field;
+		}
 		return null;		
 	}
 	

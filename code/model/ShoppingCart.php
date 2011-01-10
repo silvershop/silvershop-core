@@ -26,13 +26,7 @@ class ShoppingCart extends Controller {
 
 		'debug' => 'ADMIN'
 	);
-	
-	
-	function init() {
-		parent::init();
-		self::current_order();
-		self::$order->initModifiers();
-	}
+
 
 	/**
 	 *	used for allowing certian url parameters to be applied to orderitems
@@ -124,7 +118,10 @@ class ShoppingCart extends Controller {
 		}
 		return "";
 	}
-
+	
+	/**
+	 * Finds or creates a current order.
+	 */
 	public static function current_order() {
 		$order = self::$order;
 		if (!$order) {
@@ -147,7 +144,6 @@ class ShoppingCart extends Controller {
 		$order->write(); // Write the order
 		return $order;
 	}
-
 
 	// Static items management
 
@@ -225,6 +221,8 @@ class ShoppingCart extends Controller {
 	 * Get OrderItem according to product id, and coorresponding parameter filter.
 	 */
 	static function get_item_by_id($id, $variationid = null,$filter = null) {
+		if(!$id) return null;
+		
 		$filter = self::get_param_filter($filter);
 		if(is_numeric($variationid)){
 			$filter .= ($filter && $filter != "") ? " AND " : "";
@@ -244,6 +242,94 @@ class ShoppingCart extends Controller {
 			$filterString = " AND ($filter)";
 		}
 		return  DataObject::get_one('OrderItem', "\"OrderID\" = $order->ID $filterString");
+	}
+	
+	static function add_buyable($buyable,$quantity = 1){
+		if(!$buyable) return null;
+		
+		$item = self::find_or_make_order_item($buyable);
+		if($item->ID){
+			$item->Quantiy += $quantity;
+			$item->write();
+		}else{
+			$item->Quantity = $quantity;
+			$item->write();
+			self::add_new_item($item);
+		}
+				
+		return $item;
+	}
+	
+	static function get_buyable_by_id($productId, $variationId = null){
+		$buyable = null;
+		if (is_numeric($variationId) && is_numeric($productId)) {
+			$buyable = DataObject::get_one('ProductVariation', sprintf("\"ID\" = %d AND \"ProductID\" = %d", (int) $variationId, (int) $productId));
+		} elseif(is_numeric($productId)) {
+			$buyable = Versioned::get_one_by_stage('Product','Live', '"Product_Live"."ID" = '.$productId); //only use live products
+		}
+		return $buyable;		
+	}
+	
+	static function find_or_make_order_item($buyable){
+		$id = ($buyable instanceof ProductVariation) ? $buyable->ProductID : $buyable->ID;
+		$varid = ($buyable instanceof ProductVariation) ? $buyable->ID : null;
+		
+		if($item = self::get_item_by_id($id,$varid)){
+			return $item;
+		}
+		return self::create_order_item($buyable);
+	}
+
+	/**
+	 * Creates a new order item based on url parameters
+	 */
+	static function create_order_item($buyable,$quantity = 1, $parameters = null){
+		
+		$orderitem = null;
+		//create either a ProductVariation_OrderItem or a Product_OrderItem
+		if ($buyable && $buyable instanceof ProductVariation) {
+			if ($buyable && $buyable->canPurchase()) {
+				$orderitem = new ProductVariation_OrderItem($buyable,$quantity);
+			}
+		} elseif($buyable &&  $buyable instanceof Product) {
+			if ($buyable && $buyable->canPurchase()) {
+				$orderitem = new Product_OrderItem($buyable,$quantity);
+			}
+		}
+
+		//set extra parameters
+		if($orderitem instanceof OrderItem && is_array($parameters)){
+			foreach(self::$paramfilters as $param => $defaultvalue){
+				$v = (isset($parameters[$param])) ? Convert::raw2sql($parameters[$param]) : $defaultvalue;
+				$orderitem->$param = $v;
+			}
+		}
+		return $orderitem;
+	}
+	
+	
+	/**
+	 * Gets a SQL filter based on array of parameters.
+	 *
+	 * 	 Returns default filter if none provided,
+	 *	 otherwise it updates default filter with passed parameters
+	 */
+	static function get_param_filter($params = array()){
+
+		if(!self::$paramfilters) return ""; //no use for this if there are not parameters defined
+		$bt = defined('DB::USE_ANSI_SQL') ? "\"" : "`";
+		$temparray = self::$paramfilters;
+		$outputarray = array();
+
+		foreach(self::$paramfilters as $field => $value){
+			if(isset($params[$field])){
+				//TODO: convert to $dbfield->prepValueForDB() when Boolean problem figured out
+				$temparray[$field] = Convert::raw2sql($params[$field]);
+			}
+			$outputarray[] = "\"".$field."\" = ".$temparray[$field];
+		}
+
+		return implode(" AND ",$outputarray);
 	}
 
 
@@ -332,8 +418,15 @@ class ShoppingCart extends Controller {
 		$currentOrder->updateForAjax($js);
 		return Convert::array2json($js);
 	}
-
-	//Actions
+	
+	
+	//Controller Functinons / Actions
+	
+	function init() {
+		parent::init();
+		self::current_order();
+		self::$order->initModifiers();
+	}
 
 	/**
 	 * Either increments the count or creates a new item.
@@ -369,22 +462,6 @@ class ShoppingCart extends Controller {
 		return self::return_data("failure","Item could not be found in cart");//TODO: i18n
 	}
 
-	/**
-	 * Clears the cart
-	 * It disconnects the current cart from the user session.
-	 */
-	static function clear($request = null) {
-		self::current_order()->SessionID = null;
-		self::current_order()->write();
-		self::remove_all_items();
-		self::$order = null;
-
-		//redirect back or send ajax only if called via http request.
-		//This check allows this function to be called from elsewhere in the system.
-		if($request instanceof SS_HTTPRequest){
-			return self::return_data("success","Cart cleared");//TODO: i18n
-		}
-	}
 
 	/**
 	 * Ajax method to set an item quantity
@@ -422,65 +499,37 @@ class ShoppingCart extends Controller {
 		}
 		return self::return_data("failure","Could not be removed");//TODO: i18n
 	}
-
 	
-	//Helper functions
-
-
+	
 	/**
-	 * Creates new order item based on url parameters
+	 * Clears the cart of all items and modifiers.
+	 * It does this by disconnecting the current cart from the user session.
 	 */
-	protected function getNewOrderItem(){
+	static function clear($request = null) {
+		self::current_order()->SessionID = null;
+		self::current_order()->write();
+		self::remove_all_items();
+		self::$order = null;
 
+		//redirect back or send ajax only if called via http request.
+		//This check allows this function to be called from elsewhere in the system.
+		if($request instanceof SS_HTTPRequest){
+			return self::return_data("success","Cart cleared");//TODO: i18n
+		}
+	}
+	
+	
+	/**
+	 * Retrieves the appropriate product, variation etc from url parameters.
+	 */
+	protected function buyableFromURL(){
 		$request = $this->getRequest();
-		$orderitem = null;
-
-		//create either a ProductVariation_OrderItem or a Product_OrderItem
-		if (is_numeric($request->param('OtherID')) && $variationId = $request->param('OtherID')) {
-			$variation = DataObject::get_one('ProductVariation', sprintf("\"ID\" = %d AND \"ProductID\" = %d", (int) $this->urlParams['OtherID'], (int) $this->urlParams['ID']));
-			if ($variation && $variation->canPurchase()) {
-				$orderitem = new ProductVariation_OrderItem($variation,1);
-			}
-		} elseif(is_numeric($request->param('ID')) && $itemId = $request->param('ID')) {
-			$product = Versioned::get_one_by_stage('Product','Live', '"Product_Live"."ID" = '.$itemId); //only use live products
-			if ($product && $product->canPurchase()) {
-				$orderitem = new Product_OrderItem($product,1);
-			}
-		}
-		//set extra parameters
-		if($orderitem instanceof OrderItem){
-			foreach(self::$paramfilters as $param => $defaultvalue){
-				$v = ($request->getVar($param)) ? Convert::raw2sql($request->getVar($param)) : $defaultvalue;
-				$orderitem->$param = $v;
-			}
-		}
-		return $orderitem;
+		$variationId = $request->param('OtherID');
+		$productId = $request->param('ID');
+		
+		return get_buyable_by_id($productId,$variationId);
 	}
-
-
-	/**
-	 * Gets a SQL filter based on array of parameters.
-	 *
-	 * 	 Returns default filter if none provided,
-	 *	 otherwise it updates default filter with passed parameters
-	 */
-	static function get_param_filter($params = array()){
-
-		if(!self::$paramfilters) return ""; //no use for this if there are not parameters defined
-		$bt = defined('DB::USE_ANSI_SQL') ? "\"" : "`";
-		$temparray = self::$paramfilters;
-		$outputarray = array();
-
-		foreach(self::$paramfilters as $field => $value){
-			if(isset($params[$field])){
-				//TODO: convert to $dbfield->prepValueForDB() when Boolean problem figured out
-				$temparray[$field] = Convert::raw2sql($params[$field]);
-			}
-			$outputarray[] = "\"".$field."\" = ".$temparray[$field];
-		}
-
-		return implode(" AND ",$outputarray);
-	}
+	
 
 	/**
 	 * Gets a filter based on urlParameters

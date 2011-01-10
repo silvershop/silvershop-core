@@ -166,7 +166,9 @@ class ProductBulkLoader extends CsvBulkLoader{
 				
 				$attributetype = ProductAttributeType::find_or_make($attributetype);
 				foreach($attributevalues as $key => $value){
-					$attributevalues[$key] = trim($value); //remove outside spaces from values
+					$val = trim($value);
+					if($val != "" && $val != null)
+						$attributevalues[$key] = $val; //remove outside spaces from values
 				}
 				
 				$attributetype->addValues($attributevalues);
