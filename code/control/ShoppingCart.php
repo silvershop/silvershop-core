@@ -138,7 +138,7 @@ class ShoppingCart extends Controller {
 				//TODO: is this the right time to delete them???
 				self::delete_old_carts();
 				self::$order = new Order();
-				self::$order->start(session_id());
+				self::$order->init(session_id());
 				Session::set(self::$cartid_session_name,self::$order->ID.".".session_id());
 				$hasWritten = true;
 			}
