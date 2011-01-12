@@ -77,12 +77,14 @@ class AccountPage extends Page {
 
 	protected function OrderSQL ($statusFilter) {
 		$memberID = Member::currentUserID();
-		return DataObject::get(
-			$className = 'Order',
-			$where = "\"Order\".\"MemberID\" = '$memberID' AND $statusFilter",
-			$sort = "\"Created\" DESC",
-			$join = "INNER JOIN \"OrderStatus\" ON \"Order\".\"StatusID\" = \"OrderStatus\".\"ID\""
-		);
+		if($memberID) {
+			return DataObject::get(
+				$className = 'Order',
+				$where = "\"Order\".\"MemberID\" = '$memberID' AND $statusFilter",
+				$sort = "\"Created\" DESC",
+				$join = "INNER JOIN \"OrderStatus\" ON \"Order\".\"StatusID\" = \"OrderStatus\".\"ID\""
+			);
+		}
 	}
 
 

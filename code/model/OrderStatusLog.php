@@ -27,7 +27,7 @@ class OrderStatusLog extends DataObject {
 
 	public function canView($member = null) {
 		if(!$member) {
-			$member = Member::currentUserID();
+			$member = Member::currentUser();
 		}
 		if($member->IsShopAdmin()) {
 			return true;
