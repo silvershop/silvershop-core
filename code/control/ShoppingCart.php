@@ -121,7 +121,7 @@ class ShoppingCart extends Controller {
 				if(is_array($cartIDParts) && count($cartIDParts) == 2) {
 					$orders = DataObject::get(
 						'Order',
-						"\"Order_Status\".\"CanEdit\" = 1 AND \"Order\".\"ID\" = '".intval($cartIDParts[0])."' AND \"Order\".\"SessionID\" = '".$cartIDParts[1]."'",
+						"\"OrderStatus\".\"CanEdit\" = 1 AND \"Order\".\"ID\" = '".intval($cartIDParts[0])."' AND \"Order\".\"SessionID\" = '".$cartIDParts[1]."'",
 						"\"LastEdited\" DESC",
 						"INNER JOIN \"OrderStatus\" ON \"OrderStatus\" .\"ID\" = \"Order\".\"StatusID\"",
 						"1"

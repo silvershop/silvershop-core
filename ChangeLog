@@ -3,6 +3,8 @@ Ecommerce ChangeLog
 11/Jan/2011
 Buyables:
 - created new way to add buyable: Buyable::add_class("Product");
+- introduced $array_of_buyables
+- increment and decrement link
 Modifiers:
 - added a third option "removed" (we already had chargable and deductable).
 EcommerceRole:
@@ -37,9 +39,6 @@ ShoppingCart:
 - allow the removal of all modifiers / all items, not ALL attributes
 - removed "add_new_modifier"
 - cleaned up code
-Buyable:
-- introduced $array_of_buyables
-- increment and decrement link
 EcomQtyField:
 - added increment and decrement link
 OrderForm:
@@ -69,6 +68,9 @@ Order:
 OrderAttribute:
 - introduce init method
 - added canEdit and canDelete
+OrderModifier:
+- introduce init method
+- removed  init_for_order
 OrderEmailRecord
 - record of every email send
 OrderFilters:
