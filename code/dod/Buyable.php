@@ -1,6 +1,17 @@
 <?php
 
+/**
+ * @Description: this class extends any DataObject (e.g. Product), including SiteTree items
+ ** once extended, any "buyable" item can be added to cart.
+ * @package: ecommerce
+ * @authors: Silverstripe, Jeremy, Nicolaas
+ **/
+
 class Buyable extends DataObjectDecorator {
+
+	protected static $array_of_buyables = array();
+		static function get_array_of_buyables() {return self::$array_of_buyables;}
+		static function add_class($className) {Object::add_extension($className, "Buyable");self::$array_of_buyables[] = $className;}
 
 	private static $shop_closed = null;
 
@@ -85,6 +96,12 @@ class Buyable extends DataObjectDecorator {
 	//passing on shopping cart links ...is this necessary?? ...why not just pass the cart?
 	function AddLink() {
 		return ShoppingCart::add_item_link($this->owner->ID, $this->classNameForOrderItem(), $this->linkParameters());
+	}
+	function IncrementLink() {
+		return ShoppingCart::increment_item_link($this->owner->ID, $this->classNameForOrderItem(), $this->linkParameters());
+	}
+	function DecrementLink() {
+		return ShoppingCart::decrement_item_link($this->owner->ID, $this->classNameForOrderItem(), $this->linkParameters());
 	}
 
 	function RemoveLink() {

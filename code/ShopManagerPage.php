@@ -8,7 +8,7 @@
 
 class ShopManagerPage extends Page {
 
-	public static $icon = "ecommerce/images/treeicons/ShopManagerPage";
+	public static $icon = "ecommerce/images/treeicons/shopmanager";
 
 	public static $defaults = array(
 		"ShowInMenus" => 0,
@@ -20,11 +20,11 @@ class ShopManagerPage extends Page {
 	}
 
 	function canView($member = null) {
-		if(Permission::check("ADMIN")) {
+		if(Permission::check("SHOP_ADMIN")) {
 			return true;
 		}
 		else {
-			//Security::permissionFailure($this, _t('Security.PERMFAILURE',' This page is secured and you need administrator rights to access it. Enter your credentials below and we will send you right along.'));
+			Security::permissionFailure($this, _t('ShopManagerPage.PERMFAILURE',' This page is secured and you need (shop) administrator rights to access it. Enter your credentials below and we will send you right along.'));
 			return false;
 		}
 	}

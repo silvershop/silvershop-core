@@ -1,10 +1,12 @@
 <?php
- /**
-  * ShopAccountForm allows shop members to update
-  * their details with the shop.
-  *
-  * @package ecommerce
-  */
+/**
+ * @description: ShopAccountForm allows shop members to update their details with the shop.
+ *
+ * @see OrderModifier
+ *
+ * @package ecommerce
+ * @authors: Silverstripe, Jeremy, Nicolaas
+ **/
 class ShopAccountForm extends Form {
 
 	function __construct($controller, $name) {
@@ -20,7 +22,7 @@ class ShopAccountForm extends Form {
 			$fields->push(new LiteralField('LogoutNote', "<p class=\"message warning\">" . _t("ShopAccountForm.LOGGEDIN","You are currently logged in as ") . $member->FirstName . ' ' . $member->Surname . ". "._t('ShopAccountForm.LOGOUT','Click <a href="Security/logout">here</a> to log out.')."</p>"));
 			$fields->push(new HeaderField('Login Details',_t('ShopAccountForm.LOGINDETAILS','Login Details'), 3));
 			$fields->push($passwordField);
-			$requiredFields = new ShopAccountFormValidator($member->getEcommerceRequiredFields());
+			$requiredFields = new ShopAccountForm_Validator($member->getEcommerceRequiredFields());
 		}
 		else {
 			$fields = new FieldSet();
@@ -72,6 +74,34 @@ class ShopAccountForm extends Form {
 		$form->sessionMessage(_t("ShopAccountForm.DETAILSSAVED",'Your details have been saved'), 'good');
 		Director::redirect(CheckoutPage::find_link());
 		return true;
+	}
+
+}
+
+
+class ShopAccountForm_Validator extends RequiredFields{
+
+	/**
+	 * Ensures member unique id stays unique.
+	 * TODO: check if this code is not part of Member itself, as it applies to any member form.
+	 */
+	function php($data){
+		$valid = parent::php($data);
+		$field = Member::get_unique_identifier_field();
+		if(isset($data[$field])){
+			$uid = $data[Member::get_unique_identifier_field()];
+			$currentmember = Member::currentUser();
+			//can't be taken
+			if(DataObject::get_one('Member',"$field = '$uid' AND ID != ".$currentmember->ID)){
+				$this->validationError(
+					$field,
+					"\"$uid\" "._t("ShopAccountForm.ALREADYTAKEN", "is already taken by another member. Try another or log in."),
+					"required"
+				);
+				$valid = false;
+			}
+		}
+		return $valid;
 	}
 
 }

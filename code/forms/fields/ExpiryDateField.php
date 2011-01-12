@@ -1,9 +1,12 @@
 <?php
+
 /**
- * ExpiryDate field, contains validation and formspec for expirydate fields.
- * @package forms
- * @subpackage fields-formattedinput
- */
+ * @Description: ExpiryDate field, contains validation and formspec for expirydate fields.
+ *
+ * @package: ecommerce
+ * @authors: Silverstripe, Jeremy, Nicolaas
+ **/
+
 class ExpiryDateField extends TextField {
 
 	protected static $short_months = 1;

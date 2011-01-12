@@ -28,7 +28,7 @@ class ProductGroup extends Page {
 
 	public static $default_child = 'Product';
 
-	public static $icon = 'cms/images/treeicons/folder';
+	public static $icon = 'cms/images/treeicons/productgroup';
 
 	protected static $include_child_groups = true;
 		static function set_include_child_groups($include = true){self::$include_child_groups = $include;}
@@ -245,10 +245,8 @@ class ProductGroup_Controller extends Page_Controller {
 
 	function init() {
 		parent::init();
-		Requirements::javascript(THIRDPARTY_DIR . '/jquery/jquery.js');
-		Requirements::javascript('ecommerce/javascript/Cart.js');
+		ShoppingCart::add_requirements();
 		Requirements::themedCSS('ProductGroup');
-		Requirements::themedCSS('Cart');
 	}
 
 	/**

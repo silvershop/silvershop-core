@@ -8,7 +8,9 @@
  * that you create your own subclass of {@link OrderModifier}
  *
  * @package ecommerce
- */
+ * @authors: Silverstripe, Jeremy, Nicolaas
+ **/
+
 class SimpleShippingModifier extends OrderModifier {
 
 	static $db = array(
@@ -75,9 +77,10 @@ class SimpleShippingModifier extends OrderModifier {
 	function TableTitle() {
 		if($this->Country()) {
 			$countryList = Geoip::getCountryDropDown();
-			return "Shipping to {$countryList[$this->Country()]}";
-		} else {
-			return 'Shipping';
+			return _t("SimpleShippingModifier.SHIPPINGTO", "Shipping to")." ".$countryList[$this->Country()];
+		}
+		else {
+			return _t("SimpleShippingModifier.SHIPPING", "Shipping");
 		}
 	}
 
@@ -86,7 +89,7 @@ class SimpleShippingModifier extends OrderModifier {
 	 * @return string
 	 */
 	function CartTitle() {
-		return 'Shipping';
+		return _t("SimpleShippingModifier.SHIPPING", "Shipping");
 	}
 
 	// Database Writing Function

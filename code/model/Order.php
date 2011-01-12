@@ -1,14 +1,14 @@
 <?php
+
 /**
- * The order class is a databound object for handling Orders
- * within SilverStripe.
+ * @description: The order class is a databound object for handling Orders within SilverStripe.
  *
  * @package ecommerce
- */
+ * @authors: Silverstripe, Jeremy, Nicolaas
+ **/
+
 class Order extends DataObject {
 
- 	/**
- 	 */
 	public static $db = array(
 		'SessionID' => "Varchar(32)", //so that in the future we can link sessions with Orders.... One session can have several orders, but an order can onnly have one session
 		'Country' => 'Varchar(3)',
@@ -18,18 +18,18 @@ class Order extends DataObject {
 		'Printed' => 'Boolean'
 	);
 
-
 	public static $has_one = array(
 		'Member' => 'Member',
 		'ShippingAddress' => 'ShippingAddress',
-		'Status' => 'Order_Status'
+		'Status' => 'OrderStatus',
+		'CancelledBy' => 'Member'
 	);
 
 	public static $has_many = array(
 		'Attributes' => 'OrderAttribute',
 		'OrderStatusLogs' => 'OrderStatusLog',
 		'Payments' => 'Payment',
-		'Emails' => 'Order_EmailRecord'
+		'Emails' => 'OrderEmailRecord'
 	);
 
 	public static $many_many = array();
@@ -45,6 +45,7 @@ class Order extends DataObject {
 	public static $default_sort = "\"Created\" DESC";
 
 	public static $casting = array(
+		'Title' => 'Text',
 		'FullBillingAddress' => 'Text',
 		'FullShippingAddress' => 'Text',
 		'Total' => 'Currency',
@@ -53,7 +54,8 @@ class Order extends DataObject {
 		'Shipping' => 'Currency',
 		'TotalOutstanding' => 'Currency',
 		'TotalItems' => 'Int',
-		'TotalItemsTimesQuantity' => 'Int'
+		'TotalItemsTimesQuantity' => 'Int',
+		'HasBeenCancelled' => 'Boolean'
 	);
 
 	public static $create_table_options = array(
@@ -61,27 +63,14 @@ class Order extends DataObject {
 	);
 
 	public static $singular_name = "Order";
+		function i18n_singular_name() { return _t("Order.ORDER", "Order");}
 
 	public static $plural_name = "Orders";
+		function i18n_plural_name() { return _t("Order.ORDERS", "Orders");}
 
-
-	/**
-	 * This is the from address that the receipt
-	 * email contains. e.g. "info@shopname.com"
-	 *
-	 * @var string
-	 */
 	static function get_receipt_email() {$sc = DataObject::get_one("SiteConfig"); if($sc && $sc->ReceiptEmail) {return $sc->ReceiptEmail;} else {return Email::getAdminEmail();} }
 
-	/**
-	 * This is the subject that the receipt
-	 * email will contain. e.g. "Joe's Shop Receipt".
-	 *
-	 * @var string
-	 */
 	static function get_receipt_subject() {$sc = DataObject::get_one("SiteConfig"); if($sc && $sc->ReceiptSubject) {return $sc->ReceiptSubject;} else {return "Shop Sale Information {OrderNumber}"; } }
-
-
 
 	/**
 	 * Modifiers represent the additional charges or
@@ -91,183 +80,6 @@ class Order extends DataObject {
 	 * @var array
 	 */
 	protected static $modifiers = array();
-
-	/**
-	 * These are the fields, used for a {@link ComplexTableField}
-	 * in order to show for the table columns on a report.
-	 *
-	 * @see CurrentOrdersReport
-	 * @see UnprintedOrdersReport
-	 *
-	 * To customise these, simply define Order::set_table_overview_fields(Array)
-	 * inside your project _config.php where Array is a set of fields that
-	 * you want to display on the table.
-	 *
-	 * @var array
-	 */
-	public static $table_overview_fields = array(
-		'ID' => 'Order No',
-		'Created' => 'Created',
-		'Member.FirstName' => 'First Name',
-		'Member.Surname' => 'Surname',
-		'Total' => 'Total',
-		'Status' => 'Status'
-	);
-
-	public static $summary_fields = array(
-		'ID' => 'Order No',
-		'Created' => 'Created',
-		'Member.Name' => 'First Name',
-		'Member.Surname' => 'Surname',
-		'Member.Email' => 'Email',
-		'Total' => 'Total',
-		'TotalOutstanding' => 'Outstanding',
-		'Status' => 'Status'
-	);
-
-	public static $searchable_fields = array(
-		'ID' => array(
-			'field' => 'TextField',
-			'filter' => 'PartialMatchFilter',
-			'title' => 'Order Number'
-		),
-		'Printed',
-		'Member.FirstName' => array(
-			'title' => 'Customer First Name',
-			'filter' => 'PartialMatchFilter'
-		),
-		'Member.Surname' => array(
-			'title' => 'Customer Last Name',
-			'filter' => 'PartialMatchFilter'
-		),
-		'Member.Email' => array(
-			'title' => 'Customer Email',
-			'filter' => 'PartialMatchFilter'
-		),
-		'Member.HomePhone' => array(
-			'title' => 'Customer Phone',
-			'filter' => 'PartialMatchFilter'
-		),
-		'Created' => array(
-			'field' => 'TextField',
-			'filter' => 'OrderFilters_AroundDateFilter',
-			'title' => "date"
-		),
-		'TotalPaid' => array(
-			'filter' => 'OrderFilters_MustHaveAtLeastOnePayment',
-		),
-		'Status.ID' => array(
-			'filter' => 'OrderFilters_MultiOptionsetStatusIDFilter',
-		)
-		/*,
-		'To' => array(
-			'field' => 'DateField',
-			'filter' => 'OrderFilters_EqualOrSmallerDateFilter'
-		)
-		*/
-	);
-
-	protected static $maximum_ignorable_sales_payments_difference = 0.01;
-		static function set_maximum_ignorable_sales_payments_difference($v) {self::$maximum_ignorable_sales_payments_difference = $v;}
-		static function get_maximum_ignorable_sales_payments_difference() {return self::$maximum_ignorable_sales_payments_difference;}
-
- 	protected static $order_id_start_number = 0;
-		static function set_order_id_start_number($v) {self::$order_id_start_number = $v;}
-		static function get_order_id_start_number() {return self::$order_id_start_number;}
-
-	public static function get_order_status_options() {
-		return DataObject::get("Order_Status");
-	}
-
-	function scaffoldSearchFields(){
-		$fieldSet = parent::scaffoldSearchFields();
-		if($statusOptions = self::get_order_status_options()) {
-			$fieldSet->push(new CheckboxSetField("StatusID", "Status", $statusOptions->toDropDownMap()));
-		}
-		$fieldSet->push(new DropdownField("TotalPaid", "Has Payment", array(1 => "yes", 0 => "no")));
-		return $fieldSet;
-	}
-
-	function getCMSFields(){
-		$fields = parent::getCMSFields();
-
-		$fields->insertBefore(new LiteralField('Title',"<h2>Order #$this->ID - ".$this->dbObject('Created')->Nice()." - ".$this->Member()->getName()."</h2>"),'Root');
-		$fieldsAndTabsToBeRemoved[] = array('Printed', 'MemberID', 'Attributes', 'SessionID');
-		foreach($fieldsAndTabsToBeRemoved as $field) {
-			$fields->removeByName($field);
-		}
-
-		$htmlSummary = $this->renderWith("Order");
-
-		$printlabel = (!$this->Printed) ? "Print Invoice" : "Print Invoice Again"; //TODO: i18n
-		$fields->addFieldsToTab('Root.Main', array(
-			new LiteralField("PrintInvoice",'<p class="print"><a href="OrderReport_Popup/index/'.$this->ID.'?print=1" onclick="javascript: window.open(this.href, \'print_order\', \'toolbar=0,scrollbars=1,location=1,statusbar=0,menubar=0,resizable=1,width=800,height=600,left = 50,top = 50\'); return false;">'.$printlabel.'</a></p>')
-		));
-
-		$fields->addFieldToTab('Root.Main', new LiteralField('MainDetails', $htmlSummary));
-
-		//TODO: re-introduce this when order status logs have some meaningful purpose
-		//$fields->removeByName('OrderStatusLogs');
-
-		$orderItemsTable = new TableListField(
-			"OrderItems", //$name
-			"OrderItem", //$sourceClass =
-			OrderItem::$summary_fields, //$fieldList =
-			"\"OrderID\" = ".$this->ID, //$sourceFilter =
-			"\"Created\" ASC", //$sourceSort =
-			null //$sourceJoin =
-		);
-		if($this->MyStatus()->CanEdit()) {
-			$orderItemsTable->setPermissions(array("view", "edit", "delete"));
-		}
-		else {
-			$orderItemsTable->setPermissions(array("view"));
-		}
-		$orderItemsTable->setPageSize(100);
-		$orderItemsTable->addSummary(
-			"Total",
-			array("Total" => array("sum","Currency->Nice"))
-		);
-
-		$fields->addFieldToTab('Root.Items',$orderItemsTable);
-
-		$modifierTable = new TableListField(
-			"OrderModifiers", //$name
-			"OrderModifier", //$sourceClass =
-			OrderModifier::$summary_fields, //$fieldList =
-			"\"OrderID\" = ".$this->ID."", //$sourceFilter =
-			"\"Type\", \"Amount\" ASC, \"Created\" ASC", //$sourceSort =
-			null //$sourceJoin =
-		);
-		if($this->MyStatus()->CanEdit()) {
-			$modifierTable->setPermissions(array("view", "edit", "delete"));
-		}
-		else {
-			$modifierTable->setPermissions(array("view"));
-		}
-		$modifierTable->setPageSize(100);
-		$fields->addFieldToTab('Root.Extras',$modifierTable);
-		if($m = $this->Member()) {
-			$lastv = new TextField("MemberLastLogin","Last login",$m->dbObject('LastVisited')->Nice());
-			$fields->addFieldToTab('Root.Customer',$lastv->performReadonlyTransformation());
-			//TODO: this should be scaffolded instead, or come from something like $member->getCMSFields();
-			$fields->addFieldToTab('Root.Customer',new LiteralField("MemberSummary", $m->renderWith("Order_Member")));
-		}
-		$this->extend('updateCMSFields',$fields);
-		return $fields;
-	}
-
-	/**
-	 * Set the fields to be used for {@link ComplexTableField}
-	 * tables for Order instances, such as for reports. This
-	 * sets the {@link Order::$table_overview_fields} variable.
-	 *
-	 * @param array $fields An array of fields to show
-	 */
-	public static function set_table_overview_fields($fields) {
-		self::$table_overview_fields = $fields;
-	}
-
 
 	/**
 	 * Set the modifiers that apply to this site.
@@ -299,37 +111,468 @@ class Order extends DataObject {
 			foreach(self::$modifiers as $className) {
 				if(class_exists($className)) {
 					$modifier = new $className();
-					if($modifier instanceof OrderModifier && eval("return $className::show_form();") && $form = eval("return $className::get_form(\$controller);")) array_push($forms, $form);
+					if($modifier instanceof OrderModifier && eval("return $className::show_form();") && $form = eval("return $className::get_form(\$controller);")) {
+						array_push($forms, $form);
+					}
 				}
 			}
 		}
+		if( count($forms) ) {
+			return new DataObjectSet($forms);
+		}
+		else {
+			return null;
+		}
+	}
 
-		return count($forms) > 0 ? new DataObjectSet($forms) : null;
+	protected static $maximum_ignorable_sales_payments_difference = 0.01;
+		static function set_maximum_ignorable_sales_payments_difference($v) {self::$maximum_ignorable_sales_payments_difference = $v;}
+		static function get_maximum_ignorable_sales_payments_difference() {return self::$maximum_ignorable_sales_payments_difference;}
+
+ 	protected static $order_id_start_number = 0;
+		static function set_order_id_start_number($v) {self::$order_id_start_number = $v;}
+		static function get_order_id_start_number() {return self::$order_id_start_number;}
+
+	public static function get_order_status_options() {
+		return DataObject::get("OrderStatus");
+	}
+
+/*******************************************************
+   * CMS Stuff
+*******************************************************/
+
+	/**
+	 * These are the fields, used for a {@link ComplexTableField}
+	 * in order to show for the table columns on a report.
+	 *
+	 * @see CurrentOrdersReport
+	 * @see UnprintedOrdersReport
+	 *
+	 * To customise these, simply define Order::set_table_overview_fields(Array)
+	 * inside your project _config.php where Array is a set of fields that
+	 * you want to display on the table.
+	 *
+	 * @var array
+	 */
+	protected static $table_overview_fields = array(
+		'ID' => 'Order No',
+		'Created' => 'Created',
+		'Member.FirstName' => 'First Name',
+		'Member.Surname' => 'Surname',
+		'Total' => 'Total',
+		'Status' => 'Status'
+	);
+		public static function set_table_overview_fields($fields) {self::$table_overview_fields = $fields;}
+		public static function get_table_overview_fields() {return self::$table_overview_fields;}
+
+	public static $summary_fields = array(
+		"Title" => "Summary",
+		'Member.Surname',
+		'Member.Email',
+		'Total' => 'Total',
+		'TotalOutstanding' => 'Outstanding',
+		'Status.Name',
+	);
+
+	public static $searchable_fields = array(
+		'ID' => array(
+			'field' => 'NumericField',
+			'title' => 'Order Number'
+		),
+		'Printed',
+		'Member.FirstName' => array(
+			'title' => 'Customer First Name',
+			'filter' => 'PartialMatchFilter'
+		),
+		'Member.Surname' => array(
+			'title' => 'Customer Last Name',
+			'filter' => 'PartialMatchFilter'
+		),
+		'Member.Email' => array(
+			'title' => 'Customer Email',
+			'filter' => 'PartialMatchFilter'
+		),
+		'Member.HomePhone' => array(
+			'title' => 'Customer Phone',
+			'filter' => 'PartialMatchFilter'
+		),
+		'Created' => array(
+			'field' => 'TextField',
+			'filter' => 'OrderFilters_AroundDateFilter',
+			'title' => "Date"
+		),
+		'TotalPaid' => array(
+			'filter' => 'OrderFilters_MustHaveAtLeastOnePayment'
+		),
+		'StatusID' => array(
+			'filter' => 'OrderFilters_MultiOptionsetStatusIDFilter'
+		),
+		'CancelledByID' => array(
+			'filter' => 'OrderFilters_HasBeenCancelled',
+			'title' => "Cancelled"
+		)
+		/*,
+		'To' => array(
+			'field' => 'DateField',
+			'filter' => 'OrderFilters_EqualOrSmallerDateFilter'
+		)
+		*/
+	);
+
+	function scaffoldSearchFields(){
+		$fieldSet = parent::scaffoldSearchFields();
+		if($statusOptions = self::get_order_status_options()) {
+			$fieldSet->push(new CheckboxSetField("StatusID", "Status", $statusOptions->toDropDownMap()));
+		}
+		$fieldSet->push(new DropdownField("TotalPaid", "Has Payment", array(-1 => "(Any)", 1 => "yes", 0 => "no")));
+		$fieldSet->push(new DropdownField("CancelledByID", "Cancelled", array(-1 => "(Any)", 1 => "yes", 0 => "no")));
+		return $fieldSet;
+	}
+
+	function validate() {
+		if(!$this->ID || $this->StatusID) {
+			return parent::validate();
+		}
+		else {
+			return new ValidationError(false, _t("Order.MUSTSETSTATUS", "You must set a status"));
+		}
+	}
+
+	function getCMSFields(){
+		$fields = parent::getCMSFields();
+		$readOnly = (bool)!$this->canEdit();
+		$fieldsAndTabsToBeRemoved = array('Printed', 'MemberID', 'Attributes', 'SessionID', 'Country', 'ShippingAddressID', 'UseShippingAddress', 'ReceiptSent', 'OrderStatusLogs');
+		if(!$readOnly) {
+			$fieldsAndTabsToBeRemoved[] = "Payments";
+			$fieldsAndTabsToBeRemoved[] = "Emails";
+		}
+		foreach($fieldsAndTabsToBeRemoved as $field) {
+			$fields->removeByName($field);
+		}
+		$fields->insertBefore(new LiteralField('Title',"<h2>".$this->Title()."</h2>"),'Root');
+		if($readOnly) {
+			$htmlSummary = $this->renderWith("Order");
+			$printlabel = (!$this->Printed) ? "Print Invoice" : "Print Invoice Again"; //TODO: i18n
+			$fields->addFieldsToTab('Root.Main', array(
+				new LiteralField("PrintInvoice",'<p class="print"><a href="OrderReport_Popup/index/'.$this->ID.'?print=1" onclick="javascript: window.open(this.href, \'print_order\', \'toolbar=0,scrollbars=1,location=1,statusbar=0,menubar=0,resizable=1,width=800,height=600,left = 50,top = 50\'); return false;">'.$printlabel.'</a></p>')
+			));
+
+			$fields->addFieldToTab('Root.Main', new LiteralField('MainDetails', $htmlSummary));
+		}
+		else {
+			$fields->addFieldToTab('Root.Main', new LiteralField('MainDetails', _t("Order.NODETAILSSHOWN", '<p>No details are shown here as this order has not been submitted yet. Once you change the status of the order more options will be available.</p>')));
+		}
+		//TODO: re-introduce this when order status logs have some meaningful purpose
+		//$fields->removeByName('OrderStatusLogs');
+
+		$orderItemsTable = new HasManyComplexTableField(
+			$this, //$controller
+			"Attributes", //$name =
+			"OrderItem", //$sourceClass =
+			null, //$fieldList =
+			null, //$detailedFormFields =
+			"\"OrderID\" = ".$this->ID."  AND \"ClassName\" = 'OrderItem'", //$sourceFilter =
+			"\"Created\" ASC", //$sourceSort =
+			null //$sourceJoin =
+		);
+		if(!$readOnly) {
+			$orderItemsTable->setPermissions(array('edit', 'delete', 'export', 'add', 'inlineadd', "show"));
+		}
+		else {
+			$orderItemsTable->setPermissions(array("show"));
+		}
+		$orderItemsTable->setShowPagination(false);
+		$orderItemsTable->addSummary(
+			"Total",
+			array("Total" => array("sum","Currency->Nice"))
+		);
+
+		$fields->addFieldToTab('Root.Items',$orderItemsTable);
+
+		$modifierTable = new TableListField(
+			"OrderModifiers", //$name
+			"OrderModifier", //$sourceClass =
+			OrderModifier::$summary_fields, //$fieldList =
+			"\"OrderID\" = ".$this->ID."", //$sourceFilter =
+			"\"Type\", \"Amount\" ASC, \"Created\" ASC", //$sourceSort =
+			null //$sourceJoin =
+		);
+		if(!$readOnly) {
+			$modifierTable->setPermissions(array('edit', 'delete', 'export', 'add', 'inlineadd', "show"));
+		}
+		else {
+			$modifierTable->setPermissions(array("show"));
+		}
+		$modifierTable->setPageSize(100);
+		$fields->addFieldToTab('Root.Extras',$modifierTable);
+		if($readOnly) {
+			if($m = $this->Member()) {
+				$lastLogin = new TextField("MemberLastLogin","Last login",$m->dbObject('LastVisited')->Nice());
+				$fields->addFieldToTab('Root.Customer',$lastLogin->performReadonlyTransformation());
+				//TODO: this should be scaffolded instead, or come from something like $member->getCMSFields();
+				$fields->addFieldToTab('Root.Customer',new LiteralField("MemberSummary", $m->renderWith("Order_Member")));
+			}
+			$this->extend('updateCMSFields',$fields);
+			$fields->addFieldToTab("Root.Emails",new CheckboxField("ReceiptSent", "Receipt Sent"));
+			$fields->addFieldsToTab(
+				"Root.Delivery",
+				array(
+					new CheckboxField("UseShippingAddress", "Shipping Address is not the same as Billing Address"),
+					new HeaderField("DispatchLog", _t("Order.DISPATCHLOG", "Dispatch Log")),
+					new ComplexTableField($controller = "OrderStatusLog_Dispatch", "OrderStatusLog_Dispatch", "OrderStatusLog_Dispatch", $fieldList = null, $detailFormFields = null, $sourceFilter = "\"OrderID\" = ".$this->ID, $sourceSort = "", $sourceJoin = "")
+				)
+			);
+		}
+		return $fields;
+	}
+
+
+/*******************************************************
+   * MAIN TRANSITION FUNCTIONS:
+*******************************************************/
+
+	function tryToFinaliseOrder() {
+		$this->init();
+		$this->submit();
+		$this->pay();
+		$this->confirm();
+		$this->send();
+	}
+
+	// ------------------------------------ STEP 1 ------------------------------------
+
+	public function init($sessionID = null) {
+		if(!$sessionID) {
+			$sessionID = session_id();
+		}
+		$this->SessionID = $sessionID;
+		//can it create????
+		$this->initModifiers();
+		if($newStatusID = OrderStatus::get_status_id("CREATED'")) {
+			$this->StatusID = $newStatusID;
+		}
+		else {
+			user_error("No CREATED OrderStatus has been setup ... please Run Dev/Build", E_USER_WARNING);
+		}
+		$this->extend('onInit', $sessionID);
+		$this->write();
+		return $this;
+	}
+
+	//------------------------------------ STEP 2------------------------------------
+
+	public function submit($member = null) {
+		$this->calculateModifiers();
+		if($newStatusID = $this->MyStatus()->ifReadyReturnNewStatusID("SUBMITTED", $this)) {
+			if(!$member) {
+				$member = Member::currentUser();
+			}
+			if(!$member) {
+				user_error("Can not submit an order without a customer.", E_USER_ERROR);
+			}
+			$this->MemberID = $member->ID;
+			$this->StatusID = $newStatusID;
+			//re-write all attributes and modifiers to make sure they are up-to-date before they can't be changed again
+			$this->extend('onSubmit', $member);
+			$this->write();
+		}
+		return $this;
+	}
+
+	// ------------------------------------ STEP 3 ------------------------------------
+	// can run this function several times
+	public function pay($payment = null) {
+		if($newStatusID = $this->MyStatus()->ifReadyReturnNewStatusID("PAID", $this)) {
+			$this->StatusID = $newStatusID;
+			if(!$this->ReceiptSent){
+				$this->sendReceipt();
+			}
+			$this->extend('onPay', $payment);
+			$this->write();
+		}
+		return $this;
+	}
+
+	// ------------------------------------ STEP 4 ------------------------------------
+
+	public function confirm(OrderStatusLog_PaymentCheck $log = null) {
+		if($newStatusID = $this->MyStatus()->ifReadyReturnNewStatusID("CONFIRMED", $this)) {
+			$this->StatusID = $newStatusID;
+			$this->extend('onConfirm', $paymentCheck);
+			$this->write();
+		}
+		return $this;
+	}
+
+	// ------------------------------------ STEP 5 ------------------------------------
+
+	public function send(OrderStatusLog_Dispatch $log = null) {
+		if($newStatusID = $this->MyStatus()->ifReadyReturnNewStatusID("SENT", $this)) {
+			$this->StatusID = $newStatusID;
+			$this->extend('onSend', $orderStatusLog);
+			$this->write();
+		}
+		return $this;
+	}
+
+/*******************************************************
+   * STATUS RELATED FUNCTIONS / SHORTCUTS
+*******************************************************/
+	public function MyStatus() {
+		$obj = null;
+		if($this->StatusID) {
+			$obj = DataObject::get_by_id("OrderStatus", $this->StatusID);
+		}
+		if(!$obj) {
+			$obj = DataObject::get_one("OrderStatus");
+		}
+		$this->StatusID = $obj->ID;
+		return $obj;
+	}
+
+	function HasBeenCancelled() {
+		return (bool)$this->CancelledByID;
 	}
 
 	/**
-	 * Transitions the order from being in the Cart to being in an unpaid post-cart state.
-	 *
-	 * @return Order The current order
+	 * @return boolean
 	 */
-	function save() {
-		if($newStatus = DataObject::get_one("Order_Status", "\"CanEdit\" = 0")) {
-			$this->StatusID = $newStatus->ID;
-		}
-		else {
-			user_error("There is no order_status with CanEdit = 0. This is needed to be able to save an order", E_USER_WARNING);
-		}
-		//re-write all attributes and modifiers to make sure they are up-to-date before they can't be changed again
-		if($this->Attributes()->exists()){
-			foreach($this->Attributes() as $attribute){
-				$attribute->write();
-			}
-		}
-		$this->extend('onSave'); //allow decorators to do stuff when order is saved.
-		$this->write();
+	function IsSent() {
+		return (bool)!$this->MyStatus()->hasPassedOrIsEqualTo("SENT");
 	}
 
-	// Items Management
+	function IsUncomplete() {
+		return (bool)$this->MyStatus()->ShowAsUncompletedOrder;
+	}
+	function IsProcessing() {
+		return (bool)$this->MyStatus()->ShowAsInProcessOrder;
+	}
+	function IsCompleted() {
+		return (bool)$this->MyStatus()->ShowAsCompletedOrder;
+	}
+
+	function IsPaid() {
+		return (bool)($this->Total() > 0 && $this->TotalOutstanding() <= 0);
+	}
+
+	function IsCart(){
+		return (bool)$this->canEdit();
+	}
+
+	function CustomerCancelled() {
+		if($this->MemberID == $this->CancelledByID && $this->MemberID > 0) {
+			return true;
+		}
+		return false;
+	}
+	function MemberCancelled() {
+		return $this->CustomerCancelled();
+	}
+
+	function AdminCancelled() {
+		if($this->CancelledByID) {
+			if(!$this->CustomerCancelled()) {
+				$admin = DataObject::get_by_id("Member", $this->CancelledByID);
+				if($admin->IsShopAdmin()) {
+					return true;
+				}
+				return null;
+			}
+		}
+		return false;
+	}
+
+	function HasPositivePaymentCheck() {
+		return DataObject::get_one("OrderStatusLog_PaymentCheck", "\"OrderID\" = ".$this->ID." AND \"PaymentConfirmed\" = 1");
+	}
+
+	function HasDispatchRecord() {
+		return DataObject::get_one("OrderStatusLog_Dispatch", "\"OrderID\" = ".$this->ID);
+	}
+
+/*******************************************************
+   * CUSTOMER COMMUNICATION....
+*******************************************************/
+  /**
+	 * Send the receipt of the order by mail.
+	 * Precondition: The order payment has been successful
+	 */
+	function sendReceipt() {
+		$this->sendEmail('Order_ReceiptEmail');
+		$subject = self::get_receipt_subject();
+		$subject = str_replace("{OrderNumber}", $this->ID, $subject);
+		$purchaseCompleteMessage = DataObject::get_one('CheckoutPage')->PurchaseComplete;
+		$replacementArray = array(
+			'PurchaseCompleteMessage' => $purchaseCompleteMessage,
+			'Order' => $this
+		);
+		if($outcome = $this->sendEmail("Order_ReceiptEmail", $subject, $replacementArray, true)) {
+			$this->ReceiptSent = true;
+			$this->write();
+		}
+		return $outcome;
+	}
+
+	/**
+	 * Send a message to the client containing the latest
+	 * note of {@link OrderStatusLog} and the current status.
+	 *
+	 * Used in {@link OrderReport}.
+	 *
+	 * @param string $note Optional note-content (instead of using the OrderStatusLog)
+	 */
+	function sendStatusChange($subject, $note = null) {
+		if(!$note) {
+			$logs = DataObject::get('OrderStatusLog', "\"OrderID\" = {$this->ID} AND \"EmailCustomer\" = 1 AND \"EmailSent\" = 0 ", "\"Created\" DESC", null, 1);
+			if($logs) {
+				$latestLog = $logs->First();
+				$note = $latestLog->Note;
+			}
+		}
+		$replacementArray =
+		array(
+			"Order" => $this,
+			"Member" => $member,
+			"Note" => $note
+		);
+		return $this->sendEmail("Order_statusEmail", $subject, $replacementArray, true);
+	}
+
+
+	/**
+	 * Send a mail of the order to the client (and another to the admin).
+	 *
+	 * @param $emailClass - the class name of the email you wish to send
+	 * @param $subject - email subject
+	 * @param $replacementArray - array of fields to replace with data...
+	 * @param $copyToAdmin - true by default, whether it should send a copy to the admin
+	 */
+	protected function sendEmail($emailClass, $subject, $replacementArray = array(), $copyToAdmin = true) {
+ 		$from = self::get_receipt_email();
+ 		$to = $this->Member()->Email;
+		//TO DO: should be a payment specific message as well???
+
+		if(!($emailClass instanceOf Email)) {
+			user_error("No correct email class provided.", E_USER_ERROR);
+		}
+ 		$email = new $emailClass();
+ 		$email->setFrom($from);
+ 		$email->setTo($to);
+ 		$email->setSubject($subject);
+		if($copyToAdmin) {
+			$email->setBcc(Email::getAdminEmail());
+		}
+		$email->populateTemplate(
+			$replacementArray
+		);
+		return $email->send();
+	}
+
+
+/*******************************************************
+   * ITEM MANAGEMENT
+*******************************************************/
+
 
 	/**
 	 * Returns the items of the order, if it hasn't been saved yet
@@ -337,12 +580,10 @@ class Order extends DataObject {
 	 * from the DB entry.
 	 */
 	function Items($filter = "") {
- 		if($this->ID){
- 			return $this->itemsFromDatabase($filter);
- 		}
- 		elseif($items = ShoppingCart::get_items()){
- 			return $this->createItems($items);
- 		}
+ 		if(!$this->ID){
+ 			$this->write();
+		}
+		return $this->itemsFromDatabase($filter);
 	}
 
 	/**
@@ -353,29 +594,8 @@ class Order extends DataObject {
 	 */
 	protected function itemsFromDatabase($filter = null) {
 		$extrafilter = ($filter) ? " AND $filter" : "";
-		$dbitems =  DataObject::get("OrderItem", "\"OrderID\" = '$this->ID' $extrafilter");
-		return $dbitems;
-	}
-
-	/**
-	 * Return a DataObjectSet of {@link OrderItem} objects.
-	 *
-	 * If the write parameter is set to true, then each of
-	 * the item objects in the array are linked to this
-	 * order, then written to the database.
-	 *
-	 * @param array $items An array of {@link OrderItem} objects
-	 * @param boolean $write Flag if set to true, will write the items to the DB
-	 * @return DataObjectSet
-	 */
-	protected function createItems(array $items, $write = false) {
-		if($write) {
-			foreach($items as $item) {
-				$item->OrderID = $this->ID;
-				$item->write();
-			}
-		}
-		return $write ? $this->itemsFromDatabase() : new DataObjectSet($items);
+		$items = DataObject::get("OrderItem", "\"OrderID\" = '$this->ID' $extrafilter");
+		return $items;
 	}
 
 
@@ -383,18 +603,25 @@ class Order extends DataObject {
 	 * Initialise all the {@link OrderModifier} objects
 	 * by evaluating init_for_order() on each of them.
 	 */
-	function initModifiers() {
+	protected function initModifiers() {
 		//check if order has modifiers already
 		//check /re-add all non-removable ones
 		$createdmodifiers = $this->Modifiers();
 		if(self::$modifiers && is_array(self::$modifiers) && count(self::$modifiers) > 0) {
-			foreach(self::$modifiers as $className) {
+			foreach(self::$modifiers as $key => $className) {
 				if(class_exists($className) && (!$createdmodifiers || !$createdmodifiers->find('ClassName',$className))) {
 					$modifier = new $className();
-					if($modifier instanceof OrderModifier) eval("$className::init_for_order(\$className);");
+					if($modifier instanceof OrderModifier) {
+						$modifier->OrderID = $this->ID;
+						$modifier->Sort = $key;
+						$modifier->init();
+						$modifier->write();
+						$this->Attributes()->add($modifier);
+					}
 				}
 			}
 		}
+		$this->extend("onInitModifiers");
 	}
 
 
@@ -404,14 +631,11 @@ class Order extends DataObject {
 	 * from the DB entry.
 	 */
  	function Modifiers() {
- 		$mods = false;
- 		if($this->ID) {
- 			$mods = $this->modifiersFromDatabase();
+ 		if(!$this->ID) {
+ 			$this->write();
+			$this->initModifiers();
  		}
-		elseif($modifiers = ShoppingCart::get_modifiers()) {
- 			$mods = $this->createModifiers($modifiers);
- 		}
- 		return $mods;
+		return $this->modifiersFromDatabase();
 	}
 
 	/**
@@ -419,33 +643,115 @@ class Order extends DataObject {
 	 * available as records in the database.
 	 *
 	 * @return DataObjectSet
+	 * todo: add filter...
 	 */
 	protected function modifiersFromDatabase() {
-		//TO DO: why do we need to have the sort stuff here???
-		return DataObject::get('OrderModifier', $where = "\"OrderID\" = '$this->ID'", $sort = "\"ID\" ASC");
+		return DataObject::get('OrderModifier', $where = "\"OrderAttribute\".\"OrderID\" = ".$this->ID, $sort = "\"OrderAttribute\".\"Sort\" ASC");
 	}
 
-	/**
-	 * Return a DataObjectSet of {@link OrderModifier} objects.
-	 *
-	 * {@link Order->Modifiers()} makes use of this method.
-	 *
-	 * If the write parameter is set to true, then each of
-	 * the modifier objects in the array are linked to this
-	 * order, then written to the database.
-	 *
-	 * @param array $modifiers An array of {@link OrderModifier} objects
-	 * @param boolean $write Flag if set to true, will write the modifiers to the DB
-	 * @return DataObjectSet
-	 */
-	protected function createModifiers(array $modifiers, $write = false) {
-		if($write) {
-			foreach($modifiers as $modifier) {
-				$modifier->OrderID = $this->ID;
-				$modifier->write();
+	public function calculateModifiers() {
+		$this->initModifiers();
+		$modifiers = $this->Modifiers();
+		if($modifiers) {
+			if($modifiers->exists()){
+				foreach($modifiers as $modifier){
+					$modifiers->write();
+				}
 			}
 		}
-		return $write ? $this->modifiersFromDatabase() : new DataObjectSet($modifiers);
+		$this->extend("onCalculate");
+	}
+
+
+	/**
+	 * Returns a TaxModifier object that provides
+	 * information about tax on this order.
+	 *
+	 * @return TaxModifier
+	 */
+	function TaxInfo() {
+		if($modifiers = $this->Modifiers()) {
+			foreach($modifiers as $modifier) {
+				if($modifier instanceof TaxModifier) {
+					return $modifier;
+				}
+			}
+		}
+	}
+
+
+/*******************************************************
+   * CRUD METHODS (e.g. canView, canEdit, canDelete, etc...)
+*******************************************************/
+
+	function canCancel($member = null) {
+		if(!$member) {
+			$member = Member::currentMember();
+		}
+		if($member->IsShopAdmin()) {
+			return true;
+		}
+		else {
+			return $this->MyStatus()->CanCancel;
+		}
+	}
+
+	function canEdit($member = null) {
+		return $this->MyStatus()->CanEdit;
+	}
+
+	function canPay($member = null) {
+		return $this->MyStatus()->CanPay;
+	}
+
+	public function canDelete($member = null) {
+		return false;
+	}
+
+
+	public function canView($member = null) {
+		if(!$member) {
+			$member = Member::currentMember();
+		}
+		if($member) {
+			if($this->MemberID == $member->ID) {
+				return true;
+			}
+			//TO DO: IsAdmin Should be IsShopAdmin
+			elseif($member->IsShopAdmin()) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public function canCreate($member = null) {
+		//TO DO: setup a special group of shop admins (probably can copy some code from Blog)
+		if(!$member) {
+			$member = Member::currentUser();
+		}
+		return $member->IsShopAdmin();
+	}
+
+/*******************************************************
+   * GET METHODS (e.g. Total, SubTotal, Title, etc...)
+*******************************************************/
+
+	function getTitle() {
+		return $this->Title();
+	}
+
+	function Title() {
+		if($this->ID) {
+			$v = $this->i18n_singular_name(). " #$this->ID - ".$this->dbObject('Created')->format("D d M Y");
+			if($this->MemberID && $this->Member()->exists()) {
+				$v .= " - ".$this->Member()->getName();
+			}
+		}
+		else {
+			$v = _t("Order.NEW", "New")." ".$this->i18n_singular_name();
+		}
+		return $v;
 	}
 
 	/**
@@ -457,27 +763,29 @@ class Order extends DataObject {
 	 */
 	function ModifiersSubTotal($excluded = null, $onlyprevious = false) {
 		$total = 0;
-
 		if($modifiers = $this->Modifiers()) {
 			foreach($modifiers as $modifier) {
 				if(is_array($excluded) && in_array($modifier->class, $excluded)) {
-					if($onlyprevious)
+					if($onlyprevious) {
 						break;
-					continue;
-				} elseif($excluded && ($modifier->class == $excluded)) {
-					if($onlyprevious)
-						break;
+					}
 					continue;
 				}
-
+				elseif($excluded && ($modifier->class == $excluded)) {
+					if($onlyprevious) {
+						break;
+					}
+					continue;
+				}
 				$total += $modifier->Total();
 			}
 		}
-
 		return $total;
 	}
 
-	// Order Management
+	function ModifiersSubTotalAsCurrencyObject($excluded = null, $onlyprevious = false) {
+		return DBField::create('Currency',$this->ModifiersSubTotal($excluded = null, $onlyprevious = false));
+	}
 
 	/**
 	 * Returns the subtotal of the items for this order.
@@ -485,7 +793,11 @@ class Order extends DataObject {
 	function SubTotal() {
 		$result = 0;
 		if($items = $this->Items()) {
-			foreach($items as $item) $result += $item->Total();
+			foreach($items as $item) {
+				if($item instanceOf OrderAttribute) {
+					$result += $item->Total();
+				}
+			}
 		}
 		return $result;
 	}
@@ -566,38 +878,11 @@ class Order extends DataObject {
 		return $qty;
 	}
 
-	/**
-	 * @TODO Why do we need to get this from the AccountPage class?
-	 */
 	function Link() {
 		return AccountPage::get_order_link($this->ID);
 	}
 
-	/**
-	 * Returns TRUE if the order can be cancelled
-	 * PRECONDITION: Order is in the DB.
-	 *
-	 * @return boolean
-	 */
-	function canCancel() {
-		return $this->MyStatus()->CanCancel;
-	}
 
-	public function canDelete($member = null) {
-		return false;
-	}
-
-	public function canEdit($member = null) {
-		return true;
-	}
-
-	public function canCreate($member = null) {
-		//TO DO: setup a special group of shop admins (probably can copy some code from Blog)
-		if($member->IsAdmin()) {
-			return true;
-		}
-		return false;
-	}
 
 	/**
 	 * Return the currency of this order.
@@ -685,59 +970,6 @@ class Order extends DataObject {
 	}
 
 	/**
-	 * Will update payment status to "Paid if there is no outstanding amount".
-	 */
-	function updatePaymentStatus(){
-		if($this->IsPaid() && $this->MyStatus()->CanPay){
-			$newStatus = DataObject::get_one("Order_Status", "\"CanPay\" = 0");
-			//TODO: only run this if it is setting to Paid, and not cancelled or similar
-			$this->StatusID = $newStatus->ID;
-			$this->write();
-		}
-	}
-
-	function MyStatus() {
-		$obj = null;
-		if($this->StatusID) {
-			$obj = DataObject::get_by_id("Order_Status", $this->StatusID);
-		}
-		if(!$obj) {
-			$obj = DataObject::get_one("Order_Status");
-		}
-		$this->StatusID = $obj->ID;
-		return $obj;
-	}
-
-	/**
-	 * @return boolean
-	 */
-	function IsSent() {
-		return !$this->MyStatus()->Unsent;
-	}
-
-	/**
-	 * @return boolean
-	 */
-	function IsProcessing() {
-		return $this->MyStatus()->Uncompleted && !$this->MyStatus()->CanEdit;
-	}
-
-	/**
-	 * @return boolean
-	 */
-	function IsPaid() {
-		return $this->Total() > 0 && $this->TotalOutstanding() <= 0;
-	}
-
-	/**
-	 * @return boolean
-	 */
-	function IsCart(){
-		return $this->MyStatus()->CanEdit;
-	}
-
-
-	/**
 	 * Return a link to the {@link CheckoutPage} instance
 	 * that exists in the database.
 	 *
@@ -746,45 +978,6 @@ class Order extends DataObject {
 	 //TO DO: do we need this here??
 	function checkoutLink() {
 		return CheckoutPage::find_link();
-	}
-
-  /**
-	 * Send the receipt of the order by mail.
-	 * Precondition: The order payment has been successful
-	 */
-	function sendReceipt() {
-		$this->sendEmail('Order_ReceiptEmail');
-		$this->ReceiptSent = true;
-		$this->write();
-	}
-
-	/**
-	 * Send a mail of the order to the client (and another to the admin).
-	 *
-	 * @param $emailClass - the class name of the email you wish to send
-	 * @param $copyToAdmin - true by default, whether it should send a copy to the admin
-	 */
-	protected function sendEmail($emailClass, $copyToAdmin = true) {
- 		$from = self::get_receipt_email();
- 		$to = $this->Member()->Email;
-		$subject = self::get_receipt_subject();
-		$subject = str_replace("{OrderNumber}", $this->ID, $subject);
-		//TO DO: should be a payment specific message as well???
-		$purchaseCompleteMessage = DataObject::get_one('CheckoutPage')->PurchaseComplete;
- 		$email = new $emailClass();
- 		$email->setFrom($from);
- 		$email->setTo($to);
- 		$email->setSubject($subject);
-		if($copyToAdmin) {
-			$email->setBcc(Email::getAdminEmail());
-		}
-		$email->populateTemplate(
-			array(
-				'PurchaseCompleteMessage' => $purchaseCompleteMessage,
-				'Order' => $this
-			)
-		);
-		$email->send();
 	}
 
 	/**
@@ -808,63 +1001,9 @@ class Order extends DataObject {
 		return $codeOnly ? $country : EcommerceRole::find_country_title($country);
 	}
 
-	/**
-	 * Returns a TaxModifier object that provides
-	 * information about tax on this order.
-	 *
-	 * @return TaxModifier
-	 */
-	function TaxInfo() {
-		if($modifiers = $this->Modifiers()) {
-			foreach($modifiers as $modifier) {
-				if($modifier instanceof TaxModifier) return $modifier;
-			}
-		}
-	}
-
-	/**
-	 * Send a message to the client containing the latest
-	 * note of {@link OrderStatusLog} and the current status.
-	 *
-	 * Used in {@link OrderReport}.
-	 *
-	 * @param string $note Optional note-content (instead of using the OrderStatusLog)
-	 */
-	function sendStatusChange($title, $note = null) {
-		if(!$note) {
-			$logs = DataObject::get('OrderStatusLog', "\"OrderID\" = {$this->ID} AND \"EmailCustomer\" = 1 AND \"EmailSent\" = 0 ", "\"Created\" DESC", null, 1);
-			if($logs) {
-				$latestLog = $logs->First();
-				$note = $latestLog->Note;
-				$title = $latestLog->Title;
-			}
-		}
-		$member = $this->Member();
- 		if(self::$receipt_email) {
- 			$adminEmail = self::$receipt_email;
- 		}
-		else {
- 			$adminEmail = Email::getAdminEmail();
- 		}
-		$e = new Order_statusEmail();
-		$e->populateTemplate($this);
-		$e->populateTemplate(
-			array(
-				"Order" => $this,
-				"Member" => $member,
-				"Note" => $note
-			)
-		);
-		$e->setFrom($adminEmail);
-		$e->setSubject($title);
-		$e->setTo($member->Email);
-		$e->send();
-	}
-
-	function updatePrinted($printed){
-		$this->__set("Printed", $printed);
-		$this->write();
-	}
+/*******************************************************
+   * STANDARD SS METHODS (requireDefaultRecords, onBeforeDelete, etc...)
+*******************************************************/
 
 	/**
 	 * Updates the database structure of the Order table
@@ -995,13 +1134,10 @@ class Order extends DataObject {
 		if($statusFieldExists) {
 		// 2) Cancel status update
 			$orders = DataObject::get('Order', "\"Status\" = 'Cancelled'");
-			$adminCancelledObject = DataObject::get_one("Order_Status", "\"AdminCancelled\" = 1");
-			if($orders && $adminCancelledObject) {
+			$admin = Member::currentMember();
+			if($orders && $admin) {
 				foreach($orders as $order) {
-					if(!$order->StatusID && $adminCancelledObject) {
-						$order->StatusID = $adminCancelledObject->ID;
-					}
-					$order->Status = 'AdminCancelled';
+					$order->CancelledByID = $admin->ID;
 					$order->write();
 				}
 				DB::alteration_message('The orders which status was \'Cancelled\' have been successfully changed to the status \'AdminCancelled\'', 'changed');
@@ -1018,13 +1154,8 @@ class Order extends DataObject {
 					switch($row["Status"]) {
 						case "Cart":
 							if(!$CartObject) {
-								if(!($CartObject = DataObject::get_one("Order_Status", "\"CanEdit\" = 1"))) {
-									$CartObject = new Order_Status();
-									$CartObject->Name = "Cart";
-									$CartObject->CanEdit = $CartObject->CanCancel = $CartObject->CanPay = $CartObject->Uncollated = $CartObject->Unsent = 1;
-									$CartObject->ShowAsUncompletedOrder = 1;
-									$CartObject->write();
-									DB::alteration_message("Created CART Order Status", "created");
+								if(!($CartObject = DataObject::get_one("OrderStatus", "\"Code\" = 'CREATED'"))) {
+									singleton('OrderStatus')->requireDefaultRecords();
 								}
 							}
 							DB::query("UPDATE \"Order\" SET StatusID = ".$CartObject->ID." WHERE \"Order\".\"ID\" = ".$row["ID"]);
@@ -1032,13 +1163,8 @@ class Order extends DataObject {
 						case "Query":
 						case "Unpaid":
 							if(!$UnpaidObject) {
-								if(!($UnpaidObject = DataObject::get_one("Order_Status", "\"CanEdit\" = 0 AND \"CanPay\" = 1"))) {
-									$UnpaidObject = new Order_Status();
-									$UnpaidObject->Name = "Unpaid";
-									$UnpaidObject->CanCancel = $UnpaidObject->CanPay = $UnpaidObject->Uncollated = $UnpaidObject->Unsent = 1;
-									$UnpaidObject->ShowAsUncompletedOrder = 1;
-									$UnpaidObject->write();
-									DB::alteration_message("Created Unpaid Order Status", "created");
+								if(!($UnpaidObject = DataObject::get_one("OrderStatus", "\"Code\" = 'SUBMITTED'"))) {
+									singleton('OrderStatus')->requireDefaultRecords();
 								}
 							}
 							DB::query("UPDATE \"Order\" SET StatusID = ".$UnpaidObject->ID." WHERE \"Order\".\"ID\" = ".$row["ID"]);
@@ -1046,13 +1172,8 @@ class Order extends DataObject {
 						case "Processing":
 						case "Paid":
 							if(!$PaidObject) {
-								if(!($PaidObject = DataObject::get_one("Order_Status", "\"CanEdit\" = 0 AND \"CanPay\" = 0"))) {
-									$PaidObject = new Order_Status();
-									$PaidObject->Name = "Paid";
-									$PaidObject->Uncollated = $PaidObject->Unsent = 1;
-									$PaidObject->ShowAsInProcessOrder = 1;
-									$PaidObject->write();
-									DB::alteration_message("Created Paid Order Status", "created");
+								if(!($PaidObject = DataObject::get_one("OrderStatus", "\"Code\" = 'PAID'"))) {
+									singleton('OrderStatus')->requireDefaultRecords();
 								}
 							}
 							DB::query("UPDATE \"Order\" SET StatusID = ".$PaidObject->ID." WHERE \"Order\".\"ID\" = ".$row["ID"]);
@@ -1060,39 +1181,33 @@ class Order extends DataObject {
 						case "Sent":
 						case "Complete":
 							if(!$PaidObject) {
-								if(!($SentObject = DataObject::get_one("Order_Status", "\"Unsent\" = 0"))) {
-									$SentObject = new Order_Status();
-									$SentObject->Name = "Sent";
-									$SentObject->ShowAsCompletedOrder = 1;
-									$SentObject->write();
-									DB::alteration_message("Created Sent Order Status", "created");
+								if(!($SentObject = DataObject::get_one("OrderStatus", "\"Code\" = 'SENT'"))) {
+									singleton('OrderStatus')->requireDefaultRecords();
 								}
 							}
 							DB::query("UPDATE \"Order\" SET StatusID = ".$SentObject->ID." WHERE \"Order\".\"ID\" = ".$row["ID"]);
 							break;
 						case "AdminCancelled":
 							if(!$AdminCancelledObject) {
-								if(!($AdminCancelledObject = DataObject::get_one("Order_Status", "\"AdminCancelled\" = 1"))) {
-									$AdminCancelledObject = new Order_Status();
-									$AdminCancelledObject->Name = "Admin Cancelled";
-									$AdminCancelledObject->AdminCancelled = 1;
-									$AdminCancelledObject->write();
-									DB::alteration_message("Created Admin Cancelled Order Status", "created");
+								if(!($AdminCancelledObject  = DataObject::get_one("OrderStatus", "\"Code\" = 'SENT'"))) {
+									singleton('OrderStatus')->requireDefaultRecords();
 								}
 							}
-							DB::query("UPDATE \"Order\" SET StatusID = ".$AdminCancelledObject->ID." WHERE \"Order\".\"ID\" = ".$row["ID"]);
+							if(!$adminID) {
+								$adminID = Member::currentUserID();
+								if(!$adminID) {
+									$adminID = 1;
+								}
+							}
+							DB::query("UPDATE \"Order\" SET StatusID = ".$AdminCancelledObject->ID." WHERE \"Order\".\"ID\" = ".$row["ID"].", \"CancelledByID\" = ".$adminID);
 							break;
 						case "MemberCancelled":
 							if(!$MemberCancelledObject) {
-								if(!($MemberCancelledObject = DataObject::get_one("Order_Status", "\"CustomerCancelled\" = 1"))) {
-									$MemberCancelledObject = new Order_Status();
-									$MemberCancelledObject->Name = "Customer Cancelled";
-									$MemberCancelledObject->CustomerCancelled = 1;
-									$MemberCancelledObject->write();
-									DB::alteration_message("Created Customeer Cancelled Order Status", "created");
+								if(!($MemberCancelledObject = DataObject::get_one("OrderStatus", "\"Code\" = 'SENT'"))) {
+									singleton('OrderStatus')->requireDefaultRecords();
 								}
 							}
-							DB::query("UPDATE \"Order\" SET StatusID = ".$MemberCancelledObject->ID." WHERE \"Order\".\"ID\" = ".$row["ID"]);
+							DB::query("UPDATE \"Order\" SET StatusID = ".$MemberCancelledObject->ID.", \"CancelledByID\" = \"MemberID\" WHERE \"Order\".\"ID\" = '".$row["ID"]."'");
 							break;
 					}
 				}
@@ -1173,282 +1288,4 @@ class Order extends DataObject {
 
 }
 
-class Order_EmailRecord extends DataObject {
-
-	public static $db = array(
-		"From" => "Varchar(255)",
-		"To" => "Varchar(255)",
-		"Subject" => "Varchar(255)",
-		"Content" => "HTMLText",
-		"Result" => "Boolean"
-	);
-	public static $has_one = array(
-		"Order" => "Order",
-		"Member" => "Member"
-	);
-	public static $summary_fields = array(
-		"Created" => "Send",
-		"From" => "From",
-		"To" => "To",
-		"Subject" => "Subject",
-		"Result" => "Sent Succesfully"
-	);
-	public static $searchable_fields = array(
-		"From" => "PartialMatchFilter",
-		"To" => "PartialMatchFilter",
-		"Subject" => "PartialMatchFilter",
-		"Result" => true
-	);
-
-	public static $singular_name = "Customer Email";
-	public static $plural_name = "Customer Emails";
-	//CRUD settings
-	public function canCreate($member = null) {return false;}
-	public function canEdit($member = null) {return false;}
-	public function canDelete($member = null) {return false;}
-	//defaults
-	public static $default_sort = "\"Created\" DESC";
-
-}
-
-class Order_Email extends Email {
-
-	public function send($messageID = null) {
-		$result = parent::send($messageID);
-		$this->CreateRecord($result);
-		return $result;
-	}
-
-	public function sendPlain($messageID = null) {
-		$result = parent::sendPlain($messageID);
-		$this->CreateRecord($result);
-		return $result;
-
-	}
-
-	protected function CreateRecord($result) {
-		$obj = new Order_EmailRecord();
-		$obj->From = $this->from;
-		$obj->To = $this->to;
-		$obj->Subject = $this->subject;
-		$obj->Content = $this->body;
-		$obj->Result = $result;
-		if(Email::$send_all_emails_to) {
-			$obj->To = Email::$send_all_emails_to;
-		}
-		$obj->write();
-	}
-
-}
-
-/**
- * This class handles the receipt email which gets sent once an order is made.
- * You can call it by issuing sendReceipt() in the Order class.
- */
-class Order_ReceiptEmail extends Order_Email {
-
-	protected $ss_template = 'Order_ReceiptEmail';
-
-}
-
-/**
- * This class handles the status email which is sent after changing the attributes
- * in the report (eg. status changed to 'Shipped').
- */
-class Order_StatusEmail extends Order_Email {
-
-	protected $ss_template = 'Order_StatusEmail';
-
-}
-
-class Order_CancelForm extends Form {
-
-	function __construct($controller, $name, $orderID) {
-		$fields = new FieldSet(
-			new HiddenField('OrderID', '', $orderID)
-		);
-		$actions = new FieldSet(
-			new FormAction('doCancel', _t('Order.CANCELORDER','Cancel this order'))
-		);
-		parent::__construct($controller, $name, $fields, $actions);
-	}
-
-	/**
-	 * Form action handler for Order_CancelForm.
-	 *
-	 * Take the order that this was to be change on,
-	 * and set the status that was requested from
-	 * the form request data.
-	 *
-	 * @param array $data The form request data submitted
-	 * @param Form $form The {@link Form} this was submitted on
-	 */
-	function doCancel($data, $form) {
-		$SQLData = Convert::raw2sql($data);
-		$member = $this->CurrentMember();
-		if(isset($SQLData['OrderID']) && $order = DataObject::get_one('Order', "\"ID\" = ".$SQLData['OrderID']." AND \"MemberID\" = $member->ID")){
-			if($order->canCancel()) {
-				if($newStatus = DataObject::get_one("Order_Status", "\"CustomerCancelled\" = 1")) {
-					$order->StatusID = $newStatus->ID;
-					$order->write();
-				}
-				else {
-					user_error("There is no CustomerCancelled Order_Status DataObject", "E_USER_NOTICE");
-				}
-			}
-			else {
-				user_error("Tried to cancel an order that can not be cancelled with Order ID: ".$order->ID, "E_USER_NOTICE");
-			}
-		}
-		//TODO: notify people via email??
-		if($link = AccountPage::find_link()){
-			//TODO: set session message "order successfully cancelled".
-			Director::redirect($link);
-		}
-		else{
-			Director::redirectBack();
-		}
-		return;
-	}
-
-}
-
-
-
-class Order_Status extends DataObject {
-	//database
-	public static $db = array(
-		"Name" => "Varchar(50)",
-		"Description" => "Text",
-		//customer can still edit....
-		"CanEdit" => "Boolean",
-		"CanCancel" => "Boolean",
-		"CanPay" => "Boolean",
-		//order gets processed
-		"Uncollated" => "Boolean", //putting order together
-		"Unsent" => "Boolean", // once sent, it is regards as completed
-		//special cases:
-		"OnHold" => "Boolean",
-		"AdminCancelled" => "Boolean",
-		"CustomerCancelled" => "Boolean",
-		//What to show the customer...
-		"ShowAsUncompletedOrder" => "Boolean",
-		"ShowAsInProcessOrder" => "Boolean",
-		"ShowAsCompletedOrder" => "Boolean",
-		"Sort" => "Int"
-	);
-	public static $indexes = array(
-		"Name" => true
-	);
-	public static $has_many = array(
-		"Order" => "Order"
-	);
-	public static $field_labels = array(
-	);
-	public static $summary_fields = array(
-		"Name" => "Name",
-		"CanEdit" => "CanEdit",
-		"CanCancel" => "CanCancel",
-		"CanPay" => "CanPay",
-		"Uncollated" => "Uncollated",
-		"Unsent" => "Unsent",
-		"OnHold" => "OnHold",
-		"AdminCancelled" => "AdminCancelled",
-		"CustomerCancelled" => "CustomerCancelled",
-		"ShowAsUncompletedOrder" => "ShowAsUncompletedOrder",
-		"ShowAsInProcessOrder" => "ShowAsInProcessOrder",
-		"ShowAsCompletedOrder" => "ShowAsCompletedOrder"
-	);
-	public static $singular_name = "Order Status Option";
-		static function get_singular_name() {return self::$singular_name;}
-		static function set_singular_name($v) {self::$singular_name = $v;}
-
-	public static $plural_name = "Order Status Options";
-
-	public static $default_sort = "\"CustomerCancelled\" ASC, \"AdminCancelled\" ASC, \"OnHold\" ASC, \"Unsent\" DESC, \"Uncollated\" DESC, \"CanPay\" DESC, \"CanCancel\" DESC, \"CanEdit\" DESC, \"Sort\" ASC";
-
-	public static $defaults = array();//use fieldName => Default Value
-
-	//Unpaid,Query,Paid,Processing,Sent,Complete,AdminCancelled,MemberCancelled,Cart
-	function requireDefaultRecords() {
-		parent::requireDefaultRecords();
-		if(!DataObject::get_one("Order_Status", "\"CanEdit\" = 1")) {
-			$obj = new Order_Status();
-			$obj->Name = "Uncompleted";
-			$obj->CanEdit = $obj->CanCancel = $obj->CanPay = $obj->Uncollated = $obj->Unsent = 1;
-			$obj->ShowAsUncompletedOrder = 1;
-			$obj->write();
-			DB::alteration_message("Created Editable (Uncompleted) Order Status", "created");
-		}
-		if(!DataObject::get_one("Order_Status", "\"CanEdit\" = 0 AND \"Unsent\" = 0")) {
-			$obj = new Order_Status();
-			$obj->Name = "Processing";
-			$obj->Uncollated = $obj->Unsent = 1;
-			$obj->ShowAsInProcessOrder = 1;
-			$obj->write();
-			DB::alteration_message("Created Non-Editable, Unpaid Order Status", "created");
-		}
-		if(!DataObject::get_one("Order_Status", "\"Unsent\" = 0")) {
-			$obj = new Order_Status();
-			$obj->Name = "Completed";
-			$obj->ShowAsCompletedOrder = 1;
-			$obj->write();
-			DB::alteration_message("Created Completed Cancelled Order Status", "created");
-		}
-		if(!DataObject::get_one("Order_Status", "\"AdminCancelled\" = 1")) {
-			$obj = new Order_Status();
-			$obj->Name = "Admin Cancelled";
-			$obj->AdminCancelled = 1;
-			$obj->write();
-			DB::alteration_message("Created Admin Cancelled Order Status", "created");
-		}
-		if(!DataObject::get_one("Order_Status", "\"CustomerCancelled\" = 1")) {
-			$obj = new Order_Status();
-			$obj->Name = "Customer Cancelled";
-			$obj->CustomerCancelled = 1;
-			$obj->write();
-			DB::alteration_message("Created Customer Cancelled Order Status", "created");
-		}
-	}
-
-	function getCMSFields() {
-		//TO DO: add warning messages and break up fields
-		$fields = parent::getCMSFields();
-		$fields->addFieldToTab("Root.Main", new HeaderField("WARNING1", _t("Order.CAREFUL", "CAREFUL! please edit with care"), 1), "Name");
-		$fields->addFieldToTab("Root.Main", new HeaderField("WARNING2", _t("Order.CUSTOMERCANCHANGE", "Customer can still make changes..."), 3), "CanEdit");
-		$fields->addFieldToTab("Root.Main", new HeaderField("WARNING3", _t("Order.ORDERPROCESSED", "Order is being processed..."), 3), "Uncollated");
-		$fields->addFieldToTab("Root.Main", new HeaderField("WARNING4", _t("Order.SPECIALCASES", "Special cases..."), 3), "OnHold");
-		$fields->addFieldToTab("Root.Main", new HeaderField("WARNING5", _t("Order.ORDERGROUPS", "Order groups for customer?"), 3), "ShowAsUncompletedOrder");
-		return $fields;
-	}
-
-	function onBeforeWrite() {
-		parent::onBeforeWrite();
-		$i = 0;
-		while(!$this->Name || DataObject::get_one($this->ClassName, "\"Name\" = '".$this->Name."' AND \"".$this->ClassName."\".\"ID\" <> ".intval($this->ID))) {
-			$this->Name = self::get_singular_name();
-			if($i) {
-				$this->Name .= "_".$i;
-			}
-			$i++;
-		}
-		//enforce logical order...
-		if($this->CanEdit) {
-			$this->CanPay = $this->Uncollated = $this->Unsent = 1;
-		}
-		if(!$this->CanEdit && $this->CanPay) {
-			$this->Uncollated = $this->Unsent = 1;
-		}
-		if(!$this->CanEdit && !$this->CanPay && $this->Uncollated) {
-			$this->Unsent = 1;
-		}
-	}
-	public function canDelete() {
-		if($order = DataObject::get_one("Order", "StatusID = ".$this->ID)) {
-			return false;
-		}
-		return true;
-	}
-
-}
 

@@ -9,15 +9,18 @@
  * @see CurrentOrdersReport
  * @see UnprintedOrderReport
  *
+ *
  * @package ecommerce
- */
+ * @authors: Silverstripe, Jeremy, Nicolaas
+ **/
+
 class OrderReport_Popup extends Controller {
 
 	//basic security for controller
 	public static $allowed_actions = array(
-		'index' => 'ADMIN',
-		'packingslip' => 'ADMIN',
-		'invoice' => 'ADMIN'
+		'index' => 'SHOP_ADMIN',
+		'packingslip' => 'SHOP_ADMIN',
+		'invoice' => 'SHOP_ADMIN'
 	);
 
 	function init(){

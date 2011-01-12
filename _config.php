@@ -10,7 +10,7 @@ Object::add_extension('Payment', 'EcommercePayment');
 Object::add_extension('SiteConfig', 'SiteConfigEcommerceExtras');
 Object::add_extension("SiteTree", "EcommerceSiteTreeExtension");
 Object::add_extension("Controller", "EcommerceSiteTreeExtension_Controller");
-Object::add_extension("Product", "Buyable");
+Buyable::add_class("Product");
 
 // copy the lines below to your mysite/_config.php file and set as required.
 // __________________________________START ECOMMERCE MODULE CONFIG __________________________________
@@ -48,7 +48,8 @@ Object::add_extension("Product", "Buyable");
 //ExpiryDateField::set_short_months(true); //uses short months (e.g. Jan instead of january) for credit card expiry date.
 
 // * * * MEMBER
-//EcommerceRole::set_group_name("Customers");
+//EcommerceRole::set_customer_group_name("Customers");
+//EcommerceRole::set_admin_group_name("Shop Administrators");
 //EcommerceRole::set_fixed_country_code("NZ"); //country is fixed
 //EcommerceRole::set_login_invite_alternative_text('<a href="http://www.mysite.com/Security/login/?BackURL=">If you are a member then please log in.</a>);
 

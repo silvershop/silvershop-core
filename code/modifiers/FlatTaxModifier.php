@@ -15,7 +15,9 @@
  * </code>
  *
  * @package ecommerce
- */
+ * @authors: Silverstripe, Jeremy, Nicolaas
+ **/
+
 class FlatTaxModifier extends OrderModifier {
 
 	public static $db = array(
@@ -31,11 +33,11 @@ class FlatTaxModifier extends OrderModifier {
 	public static $belongs_many_many = array();
 	public static $defaults = array();
 	public static $casting = array();
-	
+
 	protected static $name = null;
 	protected static $rate = null;
 	protected static $exclusive = null;
-	
+
 	static $includedmessage = "%.1f%% %s (inclusive)";
 	static $excludedmessage = "%.1f%% %s";
 
@@ -101,7 +103,7 @@ class FlatTaxModifier extends OrderModifier {
 	function ShowInTable() {
 		return $this->Rate();
 	}
-	
+
 	function TableValue(){
 		return $this->Charge();
 	}

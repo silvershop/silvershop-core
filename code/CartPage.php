@@ -1,5 +1,11 @@
 <?php
 
+/**
+ *
+ * @package ecommerce
+ * @authors: Silverstripe, Jeremy, Nicolaas
+ **/
+
 class CartPage extends Page{
 
 	public static $db = array();
@@ -14,7 +20,7 @@ class CartPage extends Page{
 	function getCMSFields(){
 		$fields = parent::getCMSFields();
 		if($checkouts = DataObject::get('CheckoutPage')) {
-			$fields->addFieldToTab('Root.Content.Links',new DropdownField('CheckoutPageID','Checkout Page',$checkouts->toDropDownMap()));
+			$fields->addFieldToTab('Root.Content.Links',new DropdownField('CheckoutPageID','Checkout Page',$checkouts->toDropdownMap()));
 		}
 		$fields->addFieldToTab('Root.Content.Links',new TreeDropdownField('ContinuePageID','Continue Page',"SiteTree"));
 		return $fields;
@@ -26,13 +32,12 @@ class CartPage_Controller extends Page_Controller{
 
 	public function init() {
 		parent::init();
-		Requirements::javascript(THIRDPARTY_DIR . '/jquery/jquery.js');
-		Requirements::javascript('ecommerce/javascript/Cart.js');
+		ShoppingCart::add_requirements();
 		Requirements::themedCSS('CheckoutPage');
 	}
 
 	function Order() {
-		if($orderID = Director::urlParam('Action')) {
+		if($orderID = intval(Director::urlParam('Action'))) {
 			return DataObject::get_by_id('Order', $orderID);
 		}
 		else {

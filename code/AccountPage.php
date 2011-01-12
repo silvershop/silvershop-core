@@ -1,22 +1,18 @@
 <?php
 /**
- * Account page shows order history and a form to allow
- * the member to edit his/her details.
+ * @description: Account page shows order history and a form to allow the member to edit his/her details.
+ *
  *
  * @package ecommerce
- */
-class AccountPage extends Page {
+ * @authors: Silverstripe, Jeremy, Nicolaas
+ **/
 
-	public static $add_action = 'an Account Page';
+class AccountPage extends Page {
 
 	public static $icon = 'ecommerce/images/icons/account';
 
-	public static $db = array(
-
-	);
-
 	function canCreate() {
-		return !DataObject::get_one("SiteTree", "\"ClassName\" = 'AccountPage'");
+		return !DataObject::get_one("AccountPage");
 	}
 
 	/**
@@ -53,7 +49,7 @@ class AccountPage extends Page {
 	 * @return DataObjectSet
 	 */
 	function IncompleteOrders() {
-		$statusFilter = "\"Order_Status\".\"ShowAsUncompletedOrder\" = 1 ";
+		$statusFilter = "\"OrderStatus\".\"ShowAsUncompletedOrder\" = 1 ";
 		return $this->OrderSQL($statusFilter);
 	}
 
@@ -64,7 +60,7 @@ class AccountPage extends Page {
 	 * @return DataObjectSet
 	 */
 	function InProcessOrders() {
-		$statusFilter = "\"Order_Status\".\"ShowAsInProcessOrder\" = 1";
+		$statusFilter = "\"OrderStatus\".\"ShowAsInProcessOrder\" = 1";
 		return $this->OrderSQL($statusFilter);
 	}
 
@@ -75,7 +71,7 @@ class AccountPage extends Page {
 	 * @return DataObjectSet
 	 */
 	function CompleteOrders() {
-		$statusFilter = "\"Order_Status\".\"ShowAsCompletedOrder\" = 1";
+		$statusFilter = "\"OrderStatus\".\"ShowAsCompletedOrder\" = 1";
 		return $this->OrderSQL($statusFilter);
 	}
 
@@ -85,7 +81,7 @@ class AccountPage extends Page {
 			$className = 'Order',
 			$where = "\"Order\".\"MemberID\" = '$memberID' AND $statusFilter",
 			$sort = "\"Created\" DESC",
-			$join = "INNER JOIN \"Order_Status\" ON \"Order\".\"StatusID\" = \"Order_Status\".\"ID\""
+			$join = "INNER JOIN \"OrderStatus\" ON \"Order\".\"StatusID\" = \"OrderStatus\".\"ID\""
 		);
 	}
 
@@ -96,7 +92,6 @@ class AccountPage extends Page {
 	 */
 	function requireDefaultRecords() {
 		parent::requireDefaultRecords();
-
 		if(!DataObject::get_one('AccountPage')) {
 			$page = new AccountPage();
 			$page->Title = 'Account';
@@ -105,7 +100,6 @@ class AccountPage extends Page {
 			$page->ShowInMenus = 0;
 			$page->writeToStage('Stage');
 			$page->publish('Stage', 'Live');
-
 			DB::alteration_message('Account page \'Account\' created', 'created');
 		}
 	}
@@ -192,41 +186,15 @@ class AccountPage_Controller extends Page_Controller {
 			$paymentFields->merge($form->Fields());
 			$form->setFields($paymentFields);
 			//TODO: add required fields
-			$form->Actions()->push(new FormAction('payOutstanding','Pay Outstanding'));
+			$form->Actions()->push(new FormAction('payoutstanding', _t("AccountPage.PAYOUTSTANDING", "Pay Outstanding")));
 			return $form;
 		}
 	}
 
-	function payOutstanding($data,$form){
-		//check order can still be paid for
-			//check outstanding is still < total
-			//status is in ...
-		//
-		$paymentClass = (!empty($data['PaymentMethod'])) ? $data['PaymentMethod'] : null;
-		$payment = class_exists($paymentClass) ? new $paymentClass() : null;
-		if(!($payment && $payment instanceof Payment)) {
-			user_error(get_class($payment) . ' is not a valid Payment object!', E_USER_ERROR);
-		}
+	function payoutstanding($data,$form){
+		$data = Convert::raw2sql($data);
 		$order = $this->getOrder();
-		if(!$order){
-			user_error(get_class($payment) . ' order not found', E_USER_ERROR);
-			return;
-		}
-		// Save payment data from form and process payment
-		$form->saveInto($payment);
-		$payment->OrderID = $order->ID;
-		$payment->PaidForID = $order->ID;
-		$payment->PaidForClass = $order->class;
-		$payment->Amount->Amount = $order->TotalOutstanding();
-		$payment->write();
-		// Process payment, get the result back
-		$result = $payment->processPayment($data, $form);
-		// isProcessing(): Long payment process redirected to another website (PayPal, Worldpay)
-		if($result->isProcessing()) {
-			return $result->getValue();
-		}
-		Director::redirect($order->Link());
-		return true;
+		return EcommercePayment::process_payment_form_and_return_next_step($order, $data, $form);
 	}
 
 	/**

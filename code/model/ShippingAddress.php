@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * @description:
+ *
+ * @package ecommerce
+ * @authors: Silverstripe, Jeremy, Nicolaas
+ **/
 
 class ShippingAddress extends DataObject {
 
@@ -10,8 +16,8 @@ class ShippingAddress extends DataObject {
 		'ShippingCity' => 'Text',
 		'ShippingPostalCode' => 'Varchar(30)',
 		'ShippingState' => 'Varchar(30)',
-		'ShippingCountry' => 'Text',
-		'ShippingPhone' => 'Varchar(30)'
+		'ShippingCountry' => 'Varchar(200)',
+		'ShippingPhone' => 'Varchar(200)'
 	);
 
 	static $has_one = array(
@@ -25,8 +31,14 @@ class ShippingAddress extends DataObject {
 	public static $casting = array(); //adds computed fields that can also have a type (e.g.
 
 	public static $searchable_fields = array(
+		'OrderID' => array(
+			'field' => 'NumericField',
+			'title' => 'Order Number'
+		),
 		"ShippingName" => "PartialMatchFilter",
-		//"SearchFields" => "PartialMatchFilter"
+		"ShippingAddress" => "PartialMatchFilter",
+		"ShippingCity" => "PartialMatchFilter",
+		"ShippingCountry" => "PartialMatchFilter"
 	);
 
 	public static $field_labels = array(
@@ -56,6 +68,35 @@ class ShippingAddress extends DataObject {
 			$newArray[$key] = $key;
 		}
 		return $newArray;
+	}
+
+	function getCMSFields() {
+		$fields = parent::getCMSFields();
+		$fields->replaceField("OrderID", $fields->dataFieldByName("OrderID")->performReadonlyTransformation());
+		return $fields;
+	}
+
+	function scaffoldSearchFields(){
+		$fields = parent::scaffoldSearchFields();
+		$fields->replaceField("OrderID", new NumericField("OrderID", "Order Number"));
+		return $fields;
+	}
+
+	function makeShippingAddressFromMember($member = null) {
+		if(!$member) {
+			$member = Member::currentUser();
+		}
+		if($member) {
+			$this->ShippingName = $member->Title;
+			$this->ShippingAddress = $member->Address;
+			$this->ShippingAddress2 = $member->AddressLine2;
+			$this->ShippingCity = $member->City;
+			$this->ShippingPostalCode = $member->PostalCode;
+			$this->ShippingState = $member->State;
+			$this->ShippingCountry = $member->Country;
+			$this->ShippingPhone = implode(", ", array($member->HomePhone, $member->MobilePhone));
+		}
+		return $this;
 	}
 
 }

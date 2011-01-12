@@ -1,8 +1,9 @@
 <?php
 
 /**
- *@author nicolaas [at] sunnysideup.co.nz
- *
+ *@description: adds a few parameters for e-commerce to the SiteConfig.
+ * @package ecommerce
+ * @authors: Silverstripe, Jeremy, Nicolaas
  *
  **/
 

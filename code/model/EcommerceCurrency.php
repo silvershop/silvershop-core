@@ -19,8 +19,12 @@ class EcommerceCurrency extends Currency {
 
 	function Nice() {
 		$val = self::$currencySymbol . number_format(abs($this->value), 2, self::$decimal_delimiter, self::$thousand_delimiter);
-		if($this->value < 0) return "($val)";
-		else return $val;
+		if($this->value < 0) {
+			return "($val)";
+		}
+		else {
+			return $val;
+		}
 	}
 
 }

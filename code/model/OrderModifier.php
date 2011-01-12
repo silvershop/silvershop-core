@@ -1,16 +1,17 @@
 <?php
+
 /**
- * The OrderModifier class is a databound object for
- * handling the additional charges or deductions of
- * an order.
+ * @description: The OrderModifier class is a databound object for
+ ** handling the additional charges or deductions of an order.
  *
  * @package ecommerce
- */
+ * @authors: Silverstripe, Jeremy, Nicolaas
+ **/
 class OrderModifier extends OrderAttribute {
 
 	public static $db = array(
 		'Amount' => 'Currency',
-		'Type' => "Enum('Chargable,Deductable')"
+		'Type' => "Enum('Chargable,Deductable,Removed')"
 	);
 
 	public static $casting = array(
@@ -44,8 +45,8 @@ class OrderModifier extends OrderAttribute {
 	 * than the one above. It's not easy to understand.
 	 */
 	public static function init_for_order($className) {
-		$modifier = new $className();
-		ShoppingCart::add_new_modifier($modifier);
+		user_error("this function has been depreciated, instead, use $myModifier->init()", E_USER_ERROR);
+		return false;
 	}
 
 	/**
@@ -54,7 +55,7 @@ class OrderModifier extends OrderAttribute {
 	 *
 	 * @return boolean
 	 */
-	static function show_form() {
+	public static function show_form() {
 		return false;
 	}
 
@@ -69,7 +70,7 @@ class OrderModifier extends OrderAttribute {
 	 * @param Controller $controller $controller The controller
 	 * @return OrderModifierForm or subclass
 	 */
-	static function get_form($controller) {
+	public static function get_form($controller) {
 		return new OrderModifierForm($controller, 'ModifierForm', new FieldSet(), new FieldSet());
 	}
 
@@ -79,7 +80,10 @@ class OrderModifier extends OrderAttribute {
 	######################
 
 	public static $searchable_fields = array(
-		"OrderID",
+		'OrderID' => array(
+			'field' => 'NumericField',
+			'title' => 'Order Number'
+		),
 		"Title" => "PartialMatchFilter",
 		"TableTitle" => "PartialMatchFilter",
 		"CartTitle" => "PartialMatchFilter",
@@ -98,11 +102,29 @@ class OrderModifier extends OrderAttribute {
 		"Type" => "Type"
 	);
 
-	public static $singular_name = "Order Modifier";
+	public static $singular_name = "Order Extra";
+		function i18n_singular_name() { return _t("OrderModifier.ORDERMODIFIER", "Order Extra");}
 
-	public static $plural_name = "Order Modifiers";
+	public static $plural_name = "Order Extras";
+		function i18n_plural_name() { return _t("OrderModifier.ORDERMODIFIERS", "Order Extras");}
 
 	public static $default_sort = "\"Created\" DESC";
+
+	function init() {
+		parent::init();
+		return true;
+	}
+
+	function getCMSFields(){
+		$fields = parent::getCMSFields();
+		return $fields;
+	}
+
+	function scaffoldSearchFields(){
+		$fields = parent::scaffoldSearchFields();
+		$fields->replaceField("OrderID", new NumericField("OrderID", "Order Number"));
+		return $fields;
+	}
 
 	/**
 	 * This function is always called to determine the
@@ -119,10 +141,16 @@ class OrderModifier extends OrderAttribute {
 	 * calculation based on the order and it's items.
 	 */
 	function Amount() {
+		if($this->Type == "Removed") {
+			return 0;
+		}
 		return ($this->isLive()) ? $this->LiveAmount() : $this->Amount;
 	}
 
 	function TableValue() {
+		if($this->Type == "Removed") {
+			return 0;
+		}
 		if($this->IsChargable()) {
 			return $this->Amount();
 		}
@@ -194,7 +222,7 @@ class OrderModifier extends OrderAttribute {
 	}
 
 	/**
-	 * Provides a modifier total that is positive or negative, depending on whether the modifier is chargable or not. 
+	 * Provides a modifier total that is positive or negative, depending on whether the modifier is chargable or not.
 	 *
 	 * @return boolean
 	 */
@@ -225,7 +253,6 @@ class OrderModifier extends OrderAttribute {
 
 	function updateForAjax(array &$js) {
 		$amount = $this->obj('Amount')->Nice();
-
 		$js[] = array('id' => $this->CartTotalID(), 'parameter' => 'innerHTML', 'value' => $amount);
 		$js[] = array('id' => $this->TableTotalID(), 'parameter' => 'innerHTML', 'value' => $amount);
 		$js[] = array('id' => $this->TableTitleID(), 'parameter' => 'innerHTML', 'value' => $this->TableTitle());

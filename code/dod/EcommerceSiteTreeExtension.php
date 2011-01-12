@@ -1,5 +1,11 @@
 <?php
 
+/**
+ *@description: adds a few functions to SiteTree to give each page some e-commerce related functionality.
+ *
+ * @package ecommerce
+ * @authors: Silverstripe, Jeremy, Nicolaas
+ **/
 
 class EcommerceSiteTreeExtension extends DataObjectDecorator {
 
@@ -32,9 +38,7 @@ class EcommerceSiteTreeExtension extends DataObjectDecorator {
 class EcommerceSiteTreeExtension_Controller extends Extension {
 
 	function addAjaxCart() {
-		Requirements::themedCSS("EcommerceCart");
-		Requirements::javascript(THIRDPARTY_DIR."/jquery/jquery.js");
-		Requirements::javascript("ecommerce_xtras/javascript/AjaxCart.js");
+		ShoppingCart::add_requirements();
 	}
 
 	function SimpleCartLinkAjax() {

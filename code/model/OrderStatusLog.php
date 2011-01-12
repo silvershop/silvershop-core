@@ -1,10 +1,10 @@
 <?php
 /**
- * Data class that keeps a log of a single
- * status of an order.
+ * @description:  Data class that keeps a log of a single status of an order.
  *
  * @package ecommerce
- */
+ * @authors: Silverstripe, Jeremy, Nicolaas
+ **/
 class OrderStatusLog extends DataObject {
 
 	public static $db = array(
@@ -13,6 +13,8 @@ class OrderStatusLog extends DataObject {
 		'EmailCustomer' => 'Boolean',
 		'EmailSent' => 'Boolean'
 	);
+
+	protected static $internal_use_only = true;
 
 	public static $has_one = array(
 		'Author' => 'Member',
@@ -23,6 +25,23 @@ class OrderStatusLog extends DataObject {
 		"CustomerNote" => "Text"
 	);
 
+	public function canView($member = null) {
+		if(!$member) {
+			$member = Member::currentUserID();
+		}
+		if($member->IsShopAdmin()) {
+			return true;
+		}
+		if(!self::$internal_use_only) {
+			if($this->Order()) {
+				if($this->Order()->MemberID == $member->ID) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
 	public function canDelete($member = null) {
 		return false;
 	}
@@ -31,33 +50,63 @@ class OrderStatusLog extends DataObject {
 	}
 
 	public static $searchable_fields = array(
-		"OrderID" => true,
+		'OrderID' => array(
+			'field' => 'NumericField',
+			'title' => 'Order Number'
+		),
 		"Title" => "PartialMatchFilter",
 		"Note" => "PartialMatchFilter"
 	);
 
 	public static $summary_fields = array(
 		"Created" => "Date",
-		"OrderID" => "OrderID",
 		"Title" => "Title",
 		"EmailSent" => "EmailSent"
 	);
 
 	public static $singular_name = "Order Log Entry";
+		function i18n_singular_name() { return _t("OrderStatusLog.ORDERLOGENTRY", "Order Log Entry");}
 
 	public static $plural_name = "Order Log Entries";
+		function i18n_plural_name() { return _t("OrderStatusLog.ORDERLOGENTRIES", "Order Log Entries");}
 
 	public static $default_sort = "\"Created\" DESC";
 
 	function populateDefaults() {
 		parent::populateDefaults();
+		$this->AuthorID = Member::currentUser()->ID;
+	}
+
+	function getCMSFields() {
+		$fields = parent::getCMSFields();
+		$fields->replaceField("AuthorID", $fields->dataFieldByName("AuthorID")->performReadonlyTransformation());
+		if($this->OrderID) {
+			$fields->replaceField("OrderID", $fields->dataFieldByName("OrderID")->performReadonlyTransformation());
+		}
+		if(self::$internal_use_only) {
+			$fields->removeByName("EmailCustomer");
+			$fields->removeByName("EmailSent");
+		}
+		return $fields;
+	}
+
+	function scaffoldSearchFields(){
+		$fields = parent::scaffoldSearchFields();
+		$fields->replaceField("OrderID", new NumericField("OrderID", "Order Number"));
+		return $fields;
+	}
+
+	function validate() {
+		if($this->OrderID) {
+			return parent::validate();
+		}
+		elseif($this->ID) {
+			return new ValidationResult(false, _t("OrderStatusLog.MUSTSELECTORDER", "You must select an order before it can be saved."));
+		}
 	}
 
 	function onBeforeWrite() {
 		parent::onBeforeWrite();
-		if($this->ID) {
-			user_error("An Order Status Log should only be written once!", E_USER_WARNING);
-		}
 		if(!$this->OrderID) {
 			user_error("There is no order id for Order Status Log", E_USER_WARNING);
 		}
@@ -67,11 +116,14 @@ class OrderStatusLog extends DataObject {
 		if(!$this->Title) {
 			$this->Title = "Order Update";
 		}
+		if(self::$internal_use_only) {
+			$this->EmailCustomer = 0;
+		}
 	}
 
 	function onAfterWrite(){
 		parent::onAfterWrite();
-		if($this->EmailCustomer && !$this->EmailSent) {
+		if($this->EmailCustomer && !$this->EmailSent && !self::$internal_use_only) {
 			$this->order()->sendStatusChange($this->Title, $this->CustomerNote());
 			DB::query("UPDATE \"OrderStatusLog\" SET \"EmailSent\" = 1 WHERE  \"OrderStatusLog\".\"ID\" = ".$this->ID.";");
 		}
@@ -83,7 +135,54 @@ class OrderStatusLog extends DataObject {
 
 }
 
-class OrderStatusLog_Dispatch extends OrderStatusLog {
+class OrderStatusLog_Dispatch extends DataObject {
+
+	protected static $internal_use_only = false;
+
+	public static $singular_name = "Order Log Dispatch Entry";
+		function i18n_singular_name() { return _t("OrderStatusLog.ORDERLOGDISPATCHENTRY", "Order Log Dispatch Entry");}
+
+	public static $plural_name = "Order Log Dispatch Entries";
+		function i18n_plural_name() { return _t("OrderStatusLog.ORDERLOGDISPATCHENTRIES", "Order Log Dispatch Entries");}
+
+	public function canDelete($member = null) {
+		if(!$member) {
+			$member = Member::currentMember();
+		}
+		if($member) {
+			return $member->IsShopAdmin();
+		}
+	}
+
+	public function canEdit($member = null) {
+		if(!$member) {
+			$member = Member::currentMember();
+		}
+		if($member) {
+			return $member->IsShopAdmin();
+		}
+	}
+
+}
+class OrderStatusLog_DispatchElectronicOrder extends OrderStatusLog_Dispatch {
+
+	protected static $internal_use_only = false;
+
+	public static $db = array(
+		'Link' => 'Text',
+	);
+
+	public static $singular_name = "Order Log Electronic Dispatch Entry";
+		function i18n_singular_name() { return _t("OrderStatusLog.ORDERLOGELECTRONICDISPATCHENTRY", "Order Log Electronic Dispatch Entry");}
+
+	public static $plural_name = "Order Log Electronic Dispatch Entries";
+		function i18n_plural_name() { return _t("OrderStatusLog.ORDERLOGELECTRONICDISPATCHENTRIES", "Order Log Electronic Dispatch Entries");}
+
+}
+
+class OrderStatusLog_DispatchPhysicalOrder extends OrderStatusLog_Dispatch {
+
+	protected static $internal_use_only = false;
 
 	public static $db = array(
 		'DispatchedBy' => 'Varchar(100)',
@@ -95,14 +194,11 @@ class OrderStatusLog_Dispatch extends OrderStatusLog {
 		"DispatchedOn" => true
 	);
 
-	public function canDelete($member = null) {
-		return false;
-	}
-	public function canEdit($member = null) {
-		return false;
-	}
-
 	public static $searchable_fields = array(
+		'OrderID' => array(
+			'field' => 'NumericField',
+			'title' => 'Order Number'
+		),
 		"Title" => "PartialMatchFilter",
 		"Note" => "PartialMatchFilter",
 		"DispatchedBy" => "PartialMatchFilter",
@@ -115,11 +211,14 @@ class OrderStatusLog_Dispatch extends OrderStatusLog {
 		"EmailCustomer" => "Customer Emailed"
 	);
 
-	public static $singular_name = "Dispatch Entry";
+	public static $singular_name = "Order Log Physical Dispatch Entry";
+		function i18n_singular_name() { return _t("OrderStatusLog.ORDERLOGPHYSICALDISPATCHENTRY", "Order Log Physical Dispatch Entry");}
 
-	public static $plural_name = "Dispatch Entries";
+	public static $plural_name = "Order Log Physical Dispatch Entries";
+		function i18n_plural_name() { return _t("OrderStatusLog.ORDERLOGPHYSICALDISPATCHENTRIES", "Order Log Physical Dispatch Entries");}
 
-	public static $default_sort = "\"DispatchedOn\" DESC";
+
+	public static $default_sort = "\"DispatchedOn\" DESC, \"Created\" DESC";
 
 	function populateDefaults() {
 		parent::populateDefaults();
@@ -127,7 +226,21 @@ class OrderStatusLog_Dispatch extends OrderStatusLog {
 		if($sc) {
 			$this->Title = $sc->DispatchEmailSubject;
 		}
-		$this->DispatchedOn =  DBField::create('Date', date('Y-m-d'));
+		$this->DispatchedOn =  date('Y-m-d');
+		$this->DispatchedBy =  Member::currentUser()->ID;
+	}
+
+	function getCMSFields() {
+		$fields = parent::getCMSFields();
+		$fields->replaceField("EmailSent", $fields->dataFieldByName("EmailSent")->performReadonlyTransformation());
+		$fields->replaceField("DispatchedOn", new TextField("DispatchedOn", "Dispatched on (Year - month - date): "));
+		return $fields;
+	}
+
+	function scaffoldSearchFields(){
+		$fields = parent::scaffoldSearchFields();
+		$fields->replaceField("OrderID", new NumericField("OrderID", "Order Number"));
+		return $fields;
 	}
 
 	function onBeforeWrite() {
@@ -163,6 +276,8 @@ class OrderStatusLog_Dispatch extends OrderStatusLog {
  **/
 class OrderStatusLog_PaymentCheck extends OrderStatusLog {
 
+	protected static $internal_use_only = true;
+
 	public static $db = array(
 		'PaymentConfirmed' => "Boolean",
 	);
@@ -183,6 +298,10 @@ class OrderStatusLog_PaymentCheck extends OrderStatusLog {
 		static function get_true_and_false_definitions() {return self::$true_and_false_definitions;}
 
 	public static $searchable_fields = array(
+		'OrderID' => array(
+			'field' => 'NumericField',
+			'title' => 'Order Number'
+		),
 		"PaymentConfirmed" => true
 	);
 
@@ -191,13 +310,21 @@ class OrderStatusLog_PaymentCheck extends OrderStatusLog {
 	);
 
 	public static $singular_name = "Payment Confirmation";
+		function i18n_singular_name() { return _t("OrderStatusLog.PAYMENTCONFIRMATION", "Payment Confirmation");}
 
 	public static $plural_name = "Payment Confirmations";
+		function i18n_plural_name() { return _t("OrderStatusLog.PAYMENTCONFIRMATIONS", "Payment Confirmations");}
 
 	public function getCMSFields() {
 		$fields = parent::getCMSFields();
 		$fields->removeByName("PaymentConfirmed");
 		$fields->addFieldsToTab('Root.Main', new TextField("PaymentConfirmed", _t("OrderStatusLog.YESORNO", "Payment has been confirmed (please type yes or no)")));
+	}
+
+	function scaffoldSearchFields(){
+		$fields = parent::scaffoldSearchFields();
+		$fields->replaceField("OrderID", new NumericField("OrderID", "Order Number"));
+		return $fields;
 	}
 
 	function onBeforeWrite() {

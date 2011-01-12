@@ -49,15 +49,16 @@ class Product extends Page {
 		'ID','Title','InternalItemID','Price'
 	);
 
-	public static $singular_name = 'Product';
-
-	public static $plural_name = 'Products';
+	public static $singular_name = "Product";
+		function i18n_singular_name() { return _t("Order.PRODUCT", "Product");}
+	public static $plural_name = "Products";
+		function i18n_plural_name() { return _t("Order.PRODUCTS", "Products");}
 
 	public static $default_parent = 'ProductGroup';
 
 	public static $default_sort = '"Title" ASC';
 
-	public static $icon = 'ecommerce/images/icons/package';
+	public static $icon = 'ecommerce/images/icons/product';
 
 	protected static $number_sold_calculation_type = "SUM"; //SUM or COUNT
 		static function set_number_sold_calculation_type($allow = false){self::$number_sold_calculation_type = $allow;}
@@ -222,10 +223,8 @@ class Product_Controller extends Page_Controller {
 
 	function init() {
 		parent::init();
-		Requirements::javascript(THIRDPARTY_DIR . '/jquery/jquery.js');
-		Requirements::javascript('ecommerce/javascript/Cart.js');
+		ShoppingCart::add_requirements();
 		Requirements::themedCSS('Product');
-		Requirements::themedCSS('Cart');
 	}
 
 }
@@ -285,7 +284,9 @@ class Product_OrderItem extends OrderItem {
 		'Keep' => 'Boolean'
 	);
 
-
+	function canCreate($member = null) {
+		return true;
+	}
 	/**
 	 * Overloaded Product accessor method.
 	 *
@@ -320,10 +321,6 @@ class Product_OrderItem extends OrderItem {
 		$tabletitle = $this->Product()->Title;
 		$this->extend('updateTableTitle',$tabletitle);
 		return $tabletitle;
-	}
-
-	function onBeforeWrite() {
-		parent::onBeforeWrite();
 	}
 
 	public function debug() {

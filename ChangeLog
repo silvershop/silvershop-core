@@ -1,23 +1,92 @@
 Ecommerce ChangeLog
 
-Needing attention / TODO:
-	* Product -> Number sold. This was intended to allow sorting products by popularity, however it may not be implemented the best.
-	* Removable modifiers? - untested, probably broken.
-	* Remove session-based code from other classes. (mostly done)
-	
-	* Introduce a way to ensure only valid products are added with parameters. (Cart validation??)
-	
-	* Introduce a task that removes expired sessions from orders.
-	
-	* Tidy Order_StatusEmail.ss
-
-Trunk
+11/Jan/2011
+Buyables:
+- created new way to add buyable: Buyable::add_class("Product");
+Modifiers:
+- added a third option "removed" (we already had chargable and deductable).
+EcommerceRole:
+- added Shop Admin Group
+All Classes:
+- added authors (first draft)
+- added CRUD methods (canEdit, canView, etc... to a whole bunch of classes
+- added singular and plural names, where required...
+- cleaned up code
+- for those having an OrderID, changed the search field to a numeric field
+All SiteTree Classes
+- changed icons to BW for being more neutral
+- cleaned up icons
+- introduced ShoppingCart::add_requirements(); to replace requirements
+AccountPage:
+- removed "add action"
+- improved canCreate (so that you can extend AccountPage and it still works...)
+- introduced EcommercePayment::process_payment_form_and_return_next_step
+- added _t for formAction
+CartPage:
+- intval to preven SQL injection
+CheckOutPage:
+StoreAdmin:
+- added new classses to be managed
+- allow delete
+ShoppingCart:
+- added: incrementitem (replaces the ambiguous: additem)
+- added decrementitem
+- cleaned up country static functions
+- moved "carts cleanup" functions from tasks to ShoppingCart - so we dont have to setup daily tasks anymore.
+- separated Methods into clear groups
+- allow the removal of all modifiers / all items, not ALL attributes
+- removed "add_new_modifier"
+- cleaned up code
+Buyable:
+- introduced $array_of_buyables
+- increment and decrement link
+EcomQtyField:
+- added increment and decrement link
+OrderForm:
+- introduced EcommercePayment::process_payment_form_and_return_next_step
+- cleanup processing of submitted data
+- always create a shipping address
+ShopAccountForm:
+- added ShopAccountForm_Validator to file (used to be its own file)
+ShopAccountForm_Validator
+- DELETED (see ShopAccountForm)
+EcommerceCurrency:
+- cleaned up NICE functions
+EcommercePayment:
+- moved to DOD folder
+Order:
+- removed "printed" db field
+- introduce CancelledBy field
+- introduced casted variables: Title, HasBeenCancelled'
+- added i18n_singular_name and i18n_plural_name
+- re-ordered code and put into clearer code groups
+- introduce "core" status methods: init, submit, pay, confirm, send
+- removed ambiguous methods: createModifers and createItems
+- remove Order_*** classes - moved to their own classes
+- added Modifier::init concept
+- heaps of other changes
+- added Order casted variable Title
+OrderAttribute:
+- introduce init method
+- added canEdit and canDelete
+OrderEmailRecord
+- record of every email send
+OrderFilters:
+- always return a query - not sure if this is the right syntax, but at least all or none of them are correct.
+EcommerceSideReport:
+- fixed _t stuff.
+WeightShippingModifier:
+- added $a and $b variables - this looks a bit dodgy...
+OrderStatusLog:
+- added: Dispatch, DispatchElectronicOrder, DispatchPhysicalOrder, PaymentCheck - all as new classses, extending from OrderStatusLog
+- each of them has "internalUseOnly"
+------------------------------------------------------------------------------------
 	* Variations working again
 	* Re-structured default templates to be more hierartical and extensible. Removed redundant templates.
 	* Implemented new reciept design
 	* Updated CMS Order interface
 	* Introduced FullBillingAddress and FullShippingAddress functions on Order to provide ways to get combined address fields.
-	
+
 	* Merged in DBCart, Burnbright, and SunnySideUp branches
 
 Burnbright branch
@@ -47,7 +116,7 @@ DBCart branch
 	* Include shopping cart page type
 	* Removed quantity selectors from products on group page, as they can be updated using the cart on the left.
 	* Added support for calculating and storing the number of products sold
-	
+
 0.6
 	- Data model changes (see http://doc.silverstripe.com/doku.php?id=ecommerce:overview&s=ecommerce)
 	- PHP files moved into folders for grouping of models, controllers and forms
@@ -71,10 +140,10 @@ DBCart branch
  	- Changed reports to use TableListField, and fixed printing
  	- Removed old CheckoutPage.js code that was broken, replaced with working version
 	- Renamed MemberForm to ShopAccountForm since this is too general
-	- Removed specifically set CMS fields, these are now scaffolded. 
+	- Removed specifically set CMS fields, these are now scaffolded.
 	- Moved payment class URL rules to payment module _config.php
-	- Product title not displayed in Receipt Email. Ticket #3680 
-	- Fixed price still showing even if price set to 0 in product 
+	- Product title not displayed in Receipt Email. Ticket #3680
+	- Fixed price still showing even if price set to 0 in product
 	- Moved Eway.js from ecommerce to payment module
 	- Moved Eway payments to payments module
 	- Removed restrictive decimal for Tax Rate field and replaced with double type
@@ -88,7 +157,7 @@ DBCart branch
 	- Make sure array in set_payment_methods() is associative
 	- Cleaned up OrderReport to use non-deprecated APIs, refactored to use TableListField
 	- Update i18n entities since the Report class was renamed
-	- Updated ecommerce report classes to reflect change from Report to SSReport 
+	- Updated ecommerce report classes to reflect change from Report to SSReport
 	- removed ecommerce jquery directory that isn't being used anymore
 	- Removed javascript that shouldn't be done until we've got more of a stable platform
 	- Instead of hardcoding css/js requirements into Report.php

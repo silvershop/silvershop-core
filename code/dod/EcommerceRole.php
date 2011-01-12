@@ -1,10 +1,12 @@
 <?php
 /**
- * EcommerceRole provides customisations to the {@link Member}
- * class specifically for this ecommerce module.
+ * @description EcommerceRole provides customisations to the {@link Member}
+ ** class specifically for this ecommerce module.
  *
  * @package ecommerce
- */
+ * @authors: Silverstripe, Jeremy, Nicolaas
+ **/
+
 class EcommerceRole extends DataObjectDecorator {
 
 
@@ -17,9 +19,17 @@ class EcommerceRole extends DataObjectDecorator {
 
 	static function get_postal_code_label() {$sc = DataObject::get_one('SiteConfig'); if($sc) {return $sc->PostalCodeLabel;}  }
 
-	protected static $group_name = 'Shop Customers';
-		static function set_group_name($v) {self::$group_name = $v;}
-		static function get_group_name(){return self::$group_name;}
+	protected static $customer_group_code = 'shop_customers';
+		static function set_customer_group_code($v) {self::$customer_group_code = $v;}
+		static function get_customer_group_code(){return self::$customer_group_code;}
+
+	protected static $customer_group_name = "shop customers";
+		static function set_customer_group_name($v) {self::$customer_group_name = $v;}
+		static function get_customer_group_name() {return self::$customer_group_name;}
+
+	protected static $customer_permission_code = "SHOP_CUSTOMER";
+		static function set_customer_permission_code($v) {self::$customer_permission_code = $v;}
+		static function get_customer_permission_code() {return self::$customer_permission_code;}
 
 	function extraStatics() {
 		return array(
@@ -29,7 +39,7 @@ class EcommerceRole extends DataObjectDecorator {
 				'City' => 'Varchar(100)',
 				'PostalCode' => 'Varchar(30)',
 				'State' => 'Varchar(100)',
-				'Country' => 'Varchar',
+				'Country' => 'Varchar(200)',
 				'HomePhone' => 'Varchar(100)',
 				'MobilePhone' => 'Varchar(100)',
 				'Notes' => 'HTMLText'
@@ -91,39 +101,35 @@ class EcommerceRole extends DataObjectDecorator {
 		return $country;
 	}
 
-	static function add_members_to_customer_group() {
-		$gp = DataObject::get_one("Group", "\"Title\" = '".self::get_group_name()."'");
-		if(!$gp) {
-			$gp = new Group();
-			$gp->Title = self::get_group_name();
-			$gp->Sort = 999998;
-			$gp->write();
-		}
-		$allCombos = DB::query("
-			SELECT \"Group_Members\".\"ID\", \"Group_Members\".\"MemberID\", \"Group_Members\".\"GroupID\"
-			FROM \"Group_Members\"
-			WHERE \"Group_Members\".\"GroupID\" = ".$gp->ID.";"
-		);
-		//make an array of all combos
-		$alreadyAdded = array();
-		$alreadyAdded[-1] = -1;
-		if($allCombos) {
-			foreach($allCombos as $combo) {
-				$alreadyAdded[$combo["MemberID"]] = $combo["MemberID"];
+	protected static function add_members_to_customer_group() {
+		$gp = DataObject::get_one("Group", "\"Title\" = '".self::get_customer_group_name()."'");
+		if($gp) {
+			$allCombos = DB::query("
+				SELECT \"Group_Members\".\"ID\", \"Group_Members\".\"MemberID\", \"Group_Members\".\"GroupID\"
+				FROM \"Group_Members\"
+				WHERE \"Group_Members\".\"GroupID\" = ".$gp->ID.";"
+			);
+			//make an array of all combos
+			$alreadyAdded = array();
+			$alreadyAdded[-1] = -1;
+			if($allCombos) {
+				foreach($allCombos as $combo) {
+					$alreadyAdded[$combo["MemberID"]] = $combo["MemberID"];
+				}
 			}
-		}
-		$unlistedMembers = DataObject::get(
-			"Member",
-			$where = "\"Member\".\"ID\" NOT IN (".implode(",",$alreadyAdded).")",
-			$sort = null,
-			$join = "INNER JOIN \"Order\" ON \"Order\".\"MemberID\" = \"Member\".\"ID\""
-		);
+			$unlistedMembers = DataObject::get(
+				"Member",
+				$where = "\"Member\".\"ID\" NOT IN (".implode(",",$alreadyAdded).")",
+				$sort = "",
+				$join = "INNER JOIN \"Order\" ON \"Order\".\"MemberID\" = \"Member\".\"ID\""
+			);
 
-		//add combos
-		if($unlistedMembers) {
-			$existingMembers = $gp->Members();
-			foreach($unlistedMembers as $member) {
-				$existingMembers->add($member);
+			//add combos
+			if($unlistedMembers) {
+				$existingMembers = $gp->Members();
+				foreach($unlistedMembers as $member) {
+					$existingMembers->add($member);
+				}
 			}
 		}
 	}
@@ -168,9 +174,8 @@ class EcommerceRole extends DataObjectDecorator {
 		return $member;
 	}
 
-	function updateCMSFields($fields) {
-		$fields->removeByName('Country');
-		$fields->addFieldToTab('Root.Main', new DropdownField('Country', 'Country', Geoip::getCountryDropDown()));
+	function updateCMSFields(&$fields) {
+		$fields->replaceField('Country', new DropdownField('Country', 'Country', Geoip::getCountryDropDown()));
 	}
 
 	/**
@@ -239,4 +244,63 @@ class EcommerceRole extends DataObjectDecorator {
 	}
 
 
+/*******************************************************
+   * SHOP ADMIN
+*******************************************************/
+
+
+	protected static $admin_group_code = "shop_administrators";
+		static function set_admin_group_code($v) {self::$admin_group_code = $v;}
+		static function get_admin_group_code() {return self::$admin_group_code;}
+
+	protected static $admin_group_name = "shop administrators";
+		static function set_admin_group_name($v) {self::$admin_group_name = $v;}
+		static function get_admin_group_name() {return self::$admin_group_name;}
+
+	protected static $admin_permission_code = "SHOP_ADMIN";
+		static function set_admin_permission_code($v) {self::$admin_permission_code = $v;}
+		static function get_admin_permission_code() {return self::$admin_permission_code;}
+
+
+	public function requireDefaultRecords() {
+		parent::requireDefaultRecords();
+		if(!$admin_group = DataObject::get_one("Group", "\"Code\" = '".self::get_admin_group_code()."'")) {
+			$admin_group = new Group();
+			$admin_group->Code = self::get_admin_group_code();
+			$admin_group->Title = self::get_admin_group_name();
+			$admin_group->write();
+			Permission::grant( $admin_group->ID, self::get_admin_permission_code());
+			DB::alteration_message(self::get_admin_group_name().' Group created',"created");
+		}
+		elseif(DB::query("SELECT * FROM \"Permission\" WHERE \"GroupID\" = '".$admin_group->ID."' AND \"Code\" LIKE '".self::get_admin_permission_code()."'")->numRecords() == 0 ) {
+			Permission::grant($admin_group->ID, self::get_admin_permission_code());
+			DB::alteration_message(self::get_admin_group_name().' permissions granted',"created");
+		}
+		if(!$customer_group = DataObject::get_one("Group", "\"Code\" = '".self::get_customer_group_code()."'")) {
+			$customer_group = new Group();
+			$customer_group->Code = self::get_customer_group_code();
+			$customer_group->Title = self::get_customer_group_name();
+			$customer_group->write();
+			Permission::grant( $customer_group->ID, self::get_customer_permission_code());
+			DB::alteration_message(self::get_customer_group_name().' Group created',"created");
+		}
+		elseif(DB::query("SELECT * FROM \"Permission\" WHERE \"GroupID\" = '".$customer_group->ID."' AND \"Code\" LIKE '".self::get_customer_permission_code()."'")->numRecords() == 0 ) {
+			Permission::grant($customer_group->ID, self::get_customer_permission_code());
+			DB::alteration_message(self::get_customer_group_name().' permissions granted',"created");
+		}
+	}
+
+	function IsShopAdmin() {
+		if($this->owner->IsAdmin()) {
+			return true;
+		}
+		else{
+			return Permission::checkMember($this, self::get_admin_permission_code());
+		}
+	}
+
+
 }
+
+
+

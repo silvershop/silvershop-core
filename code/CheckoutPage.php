@@ -24,8 +24,11 @@
  * @see OrderModifier
  * @see CheckoutPage_Controller->ModifierForms()
  *
+ *
  * @package ecommerce
- */
+ * @authors: Silverstripe, Jeremy, Nicolaas
+ **/
+
 class CheckoutPage extends Page {
 
 	public static $db = array(
@@ -51,7 +54,7 @@ class CheckoutPage extends Page {
 
 	public static $defaults = array();
 
-	public static $icon = 'ecommerce/images/icons/money';
+	public static $icon = 'ecommerce/images/icons/checkout';
 
 	protected static $add_shipping_fields = false; //SUM or COUNT
 		static function set_add_shipping_fields($v){self::$add_shipping_fields = $v;}
@@ -173,9 +176,8 @@ class CheckoutPage_Controller extends Page_Controller {
 		if(!class_exists('Payment')) {
 			trigger_error('The payment module must be installed for the ecommerce module to function.', E_USER_WARNING);
 		}
-		Requirements::javascript(THIRDPARTY_DIR . '/jquery/jquery.js');
+		ShoppingCart::add_requirements();
 		Requirements::javascript('ecommerce/javascript/EcommercePayment.js');
-		Requirements::javascript('ecommerce/javascript/Cart.js');
 		Requirements::themedCSS('CheckoutPage');
 		$this->initVirtualMethods();
 	}

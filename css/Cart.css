@@ -7,3 +7,10 @@
 .hideOnZeroItems {display: none;}
 
 
+/*
+even when theme-ing ecommerce, these should not be themed
+*/
+
+
+.ajaxQuantityField {text-align: center;}
+.removeOneLink {float: left; padding-right: 5px;}

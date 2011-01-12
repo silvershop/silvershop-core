@@ -1,12 +1,12 @@
 <?php
- /**
-	* Order form that allows a user to purchase their
-	* order items on the
-	*
-	* @see CheckoutPage
-	*
-	* @package ecommerce
-	*/
+
+/**
+ * @Description: form to submit order.
+ * @see CheckoutPage
+ * @package: ecommerce
+ * @authors: Silverstripe, Jeremy, Nicolaas
+ **/
+
 class OrderForm extends Form {
 
 	function __construct($controller, $name) {
@@ -57,10 +57,10 @@ class OrderForm extends Form {
 			$bottomFields->push(new CheckboxField('ReadTermsAndConditions', _t('OrderForm.AGREEWITHTERMS1','I agree to the terms and conditions stated on the ').' <a href="'.$termsPage->URLSegment.'">'.$termsPage->Title.'</a> '._t('OrderForm.AGREEWITHTERMS2','page.')));
 			$requiredFields[] = 'ReadTermsAndConditions';
 		}
-		
+
 		$bottomFields->push(new TextareaField('CustomerOrderNote', _t('OrderForm.CUSTOMERNOTE','Note / Question'), 7, 30));
 		$bottomFields->setID('BottomOrder');
-		
+
 		// 4) Put all the fields in one FieldSet
 		$fields = new FieldSet($rightFields, $leftFields, $bottomFields);
 
@@ -151,24 +151,15 @@ class OrderForm extends Form {
 	 * @param HTTPRequest $request Request object for this action
 	 */
 	function processOrder($data, $form, $request) {
-		$paymentClass = (!empty($data['PaymentMethod'])) ? $data['PaymentMethod'] : null;
-		$payment = class_exists($paymentClass) ? new $paymentClass() : null;
-
-		if(!($payment && $payment instanceof Payment)) {
-			user_error(get_class($payment) . ' is not a valid Payment object!', E_USER_ERROR);
-		}
 		$this->saveDataToSession($data); //save for later if necessary
-
 		//check for cart items
 		if(!ShoppingCart::has_items()) {
 			$form->sessionMessage(_t('OrderForm.NOITEMSINCART','Please add some items to your cart'), 'bad');
 			Director::redirectBack();
 			return false;
 		}
-
 		//check that price hasn't changed
 		$oldtotal = ShoppingCart::current_order()->Total();
-
 		// Create new Order from shopping cart, discard cart contents in session
 		$order = ShoppingCart::current_order();
 		//TO DO: HOW CAN THESE TWO BE DIFFERENT????
@@ -177,59 +168,38 @@ class OrderForm extends Form {
 			Director::redirectBack();
 			return false;
 		}
-
 		// Create new OR update logged in {@link Member} record
 		$member = EcommerceRole::ecommerce_create_or_merge($data);
 		if(!$member) {
 			$form->sessionMessage(
 				_t(
-					'OrderForm.MEMBEREXISTS', 'Sorry, a member already exists with that email address.
-					If this is your email address, please log in first before placing your order.'
+					'OrderForm.MEMBEREXISTS',
+					'Sorry, a member already exists with that email address. If this is your email address, please log in first before placing your order.'
 				),
 				'bad'
 			);
-
 			Director::redirectBack();
 			return false;
 		}
 		$member->write();
 		$member->logIn();
-		if($member)	{
-			$payment->PaidByID = $member->ID;
-		}
 		// Write new record {@link Order} to database
 		$form->saveInto($order);
-		$order->save(); //sets status from CanEdit to Next available Status
-		$order->MemberID = $member->ID;
-		$order->write();
+		$order->submit($member);
+		$shippingAddress = new ShippingAddress();
 		if(isset($data['UseShippingAddress']) && $data['UseShippingAddress']){
-			$shippingAddress = new ShippingAddress();
 			$form->saveInto($shippingAddress);
-			$shippingAddress->OrderID = $order->ID;
-			$shippingAddress->write();
-			$order->ShippingAddressID = $shippingAddress->ID;
 			$order->write();
 		}
+		else {
+			$shippingAddress->makeShippingAddressFromMember($member);
+		}
+		$shippingAddress->OrderID = $order->ID;
+		$shippingAddress->write();
+		$order->ShippingAddressID = $shippingAddress->ID;
+		//----------------- PAYMENT ------------------------------
 		$this->clearSessionData(); //clears the stored session form data that might have been needed if validation failed
-		// Save payment data from form and process payment
-		$form->saveInto($payment);
-		$payment->OrderID = $order->ID;
-		$payment->PaidForID = $order->ID;
-		$payment->PaidForClass = $order->class;
-		$payment->Amount->Amount = $order->Total(); //TODO: should this instead be TotalOutstanding ...incase for some reason orders are partially paid.
-		$payment->write();
-		//prepare $data - ie put into the $data array any fields that may need to be there for payment
-		// Process payment, get the result back
-		$result = $payment->processPayment($data, $form);
-		// isProcessing(): Long payment process redirected to another website (PayPal, Worldpay)
-		if($result->isProcessing()) {
-			return $result->getValue();
-		}
-		if($result->isSuccess()) {
-			$order->sendReceipt();
-		}
-		Director::redirect($order->Link());
-		return true;
+		return EcommercePayment::process_payment_form_and_return_next_step($order, $data, $form, $paidBy);
 	}
 
 	function saveDataToSession($data){

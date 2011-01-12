@@ -9,11 +9,11 @@
  * @Description
  ** Non URL based adding	add_buyable->find_or_make_order_item->add_(new)_item
  ** URL based adding	additem->getNew/ExistingOrderItem->add_(new)_item
+ * @authors: Silverstripe, Jeremy, Nicolaas
  **/
 
 class ShoppingCart extends Controller {
 
-	//public, because it is referred to in the _config file...
 	public static $url_segment = 'shoppingcart';
 		static function set_url_segment($v) {self::$url_segment = $v;}
 		static function get_url_segment() {return self::$url_segment;}
@@ -32,6 +32,8 @@ class ShoppingCart extends Controller {
 
 	static $allowed_actions = array (
 		'additem',
+		'incrementitem',
+		'decrementitem',
 		'removeitem',
 		'removeallitem',
 		'removemodifier',
@@ -40,13 +42,9 @@ class ShoppingCart extends Controller {
 		'clear',
 		'numberofitemsincart',
 		'showcart',
-		'debug' => 'ADMIN'
+		'debug' => 'SHOP_ADMIN'
 	);
 
-	function init() {
-		parent::init();
-		self::current_order()->initModifiers();
-	}
 
 	/**
 	 *	used for allowing certian url parameters to be applied to orderitems
@@ -63,33 +61,120 @@ class ShoppingCart extends Controller {
 		static function add_default_param_filters($array){self::$default_param_filters = array_merge(self::$default_param_filters,$array);}
 		static function get_default_param_filters(){return self::$default_param_filters;}
 
+	protected static $country_setting_index = 'ShoppingCartCountry';
+		static function set_country_setting_index($v) {self::$country_setting_index = $v;}
+		static function get_country_setting_index() {return self::$country_setting_index;}
 
-	//Country functions
+	static function set_country($country) {Session::set(self::get_country_setting_index(), $country);}
+	static function get_country() {return Session::get(self::get_country_setting_index());}
+	static function remove_country() {Session::clear(self::get_country_setting_index());}
 
-	static function country_setting_index() {
-		return "ShoppingCartCountry";
+	protected static $clear_days = 90;
+		function set_clear_days($days = 90){self::$clear_days = $days;}
+		function get_clear_days(){return self::$clear_days;}
+
+	protected static $never_delete_if_linked_to_member = false;
+		function set_never_delete_if_linked_to_member($b){self::$never_delete_if_linked_to_member = $b;}
+		function get_never_delete_if_linked_to_member(){return self::$never_delete_if_linked_to_member;}
+
+
+/*******************************************************
+   * DELETE OLD SHOPPING CARTS
+*******************************************************/
+
+	public static function delete_old_carts(){
+		$time = date('Y-m-d H:i:s', strtotime("-".self::$clear_days." days"));
+		$generalWhere = "\"StatusID\" = ".OrderStatus::get_status_id("CREATED")." AND \"LastEdited\" < '$time'";
+		if(self::$never_delete_if_linked_to_member) {
+			$oldcarts = DataObject::get('Order',$generalWhere." AND \"Member\".\"ID\" IS NULL", $sort = "", $join = "LEFT JOIN \"Member\" ON \"Member\".\"ID\" = \"Order\".\"MemberID\" ");
+		}
+		else {
+			$oldcarts = DataObject::get('Order',$generalWhere);
+		}
+		if($oldcarts){
+			foreach($oldcarts as $cart){
+				$cart->delete();
+				$cart->destroy();
+			}
+		}
 	}
 
-	static function set_country($country) {
-		$countrySettingIndex = self::country_setting_index();
-		Session::set($countrySettingIndex, $country);
+
+/*******************************************************
+   * STARTUP
+*******************************************************/
+
+	function init() {
+		parent::init();
+		self::current_order()->init();
 	}
 
-	static function get_country() {
-		$countrySettingIndex = self::country_setting_index();
-		return Session::get($countrySettingIndex);
+	public static function current_order() {
+		$order = self::$order;
+		$hasWritten = false;
+		if (!self::$order) {
+			//find order by id saved to session (allows logging out and retaining cart contents)
+			$cartID = Session::get(self::$cartid_session_name);
+			//TODO: make clear cart on logout optional
+			if ($cartID) {
+				$cartIDParts = Convert::raw2sql(explode(".", $cartID));
+				if(is_array($cartIDParts) && count($cartIDParts) == 2) {
+					$orders = DataObject::get(
+						'Order',
+						"\"Order_Status\".\"CanEdit\" = 1 AND \"Order\".\"ID\" = '".intval($cartIDParts[0])."' AND \"Order\".\"SessionID\" = '".$cartIDParts[1]."'",
+						"\"LastEdited\" DESC",
+						"INNER JOIN \"OrderStatus\" ON \"OrderStatus\" .\"ID\" = \"Order\".\"StatusID\"",
+						"1"
+					);
+					if($orders) {
+						self::$order = $orders->First();
+					}
+					else {
+						//TO DO: create notice that order can not be found
+					}
+				}
+			}
+			if(!self::$order){
+				//TODO: is this the right time to delete them???
+				self::delete_old_carts();
+				self::$order = new Order();
+				self::$order->start(session_id());
+				Session::set(self::$cartid_session_name,self::$order->ID.".".session_id());
+				$hasWritten = true;
+			}
+		}
+		//TODO: re-introduce this because it allows seeing which members don't complete orders
+		//$order->MemberID = Member::currentUserID(); // Set the Member relation to this order
+		if(!$hasWritten) {
+			self::$order->write(); // Write the order
+		}
+		//TO DO: is this the best way to add some basics...
+		self::add_requirements();
+		return self::$order;
 	}
 
-	static function remove_country() {
-		$countrySettingIndex = self::country_setting_index();
-		Session::clear($countrySettingIndex);
+	public static function add_requirements() {
+		Requirements::javascript(THIRDPARTY_DIR."/jquery/jquery.js");
+		Requirements::javascript('ecommerce/javascript/Cart.js');
+		Requirements::javascript("ecommerce/javascript/AjaxCart.js");
+		Requirements::themedCSS("Cart");
 	}
 
 
-	//Controller links
+/*******************************************************
+   * CONTROLLER LINKS
+*******************************************************/
 
 	static function add_item_link($buyableID, $className = "OrderItem", $parameters = array()) {
 		return self::$url_segment.'/additem/'.$buyableID."/".self::order_item_class_name($className).self::params_to_get_string($parameters);
+	}
+
+	static function increment_item_link($buyableID, $className = "OrderItem", $parameters = array()) {
+		return self::$url_segment.'/incrementitem/'.$buyableID."/".self::order_item_class_name($className).self::params_to_get_string($parameters);
+	}
+
+	static function decrement_item_link($buyableID, $className = "OrderItem", $parameters = array()) {
+		return self::$url_segment.'/decrementitem/'.$buyableID."/".self::order_item_class_name($className).self::params_to_get_string($parameters);
 	}
 
 	static function remove_item_link($buyableID, $className = "OrderItem", $parameters = array()) {
@@ -120,6 +205,10 @@ class ShoppingCart extends Controller {
 	protected static function variation_link($variationid) {
 		user_error("This function is now outdated and we should use classname link instead!", E_USER_ERROR);
 	}
+
+/*******************************************************
+   * ORDER ITEM  AND MODIFIER INFORMATION
+*******************************************************/
 
 	protected static function order_item_class_name($className) {
 		if(!ClassInfo::exists($className)) {
@@ -165,151 +254,28 @@ class ShoppingCart extends Controller {
 		return $className;
 	}
 
-	/**
-	 * Creates the appropriate string parameters for links from array
-	 *
-	 * Produces string such as: MyParam%3D11%26OtherParam%3D1
-	 *     ...which decodes to: MyParam=11&OtherParam=1
-	 *
-	 * you will need to decode the url with javascript before using it.
-	 *
-	 */
-	protected static function params_to_get_string($array){
-		if($array & count($array > 0)){
-			array_walk($array , create_function('&$v,$k', '$v = $k."=".$v ;'));
-			return "/?".implode("&",$array);
-		}
-		return "/";
+/*******************************************************
+   * RETRIEVE INFORMATION
+*******************************************************/
+
+	function Cart() {
+		return self::current_order();
 	}
 
-	public static function current_order() {
-		$order = self::$order;
-		$hasWritten = false;
-		if (!self::$order) {
-			//find order by id saved to session (allows logging out and retaining cart contents)
-			$cartID = Session::get(self::$cartid_session_name);
-			//TODO: make clear cart on logout optional
-			if ($cartID) {
-				$cartIDParts = Convert::raw2sql(explode(".", $cartID));
-				if(is_array($cartIDParts) && count($cartIDParts) == 2) {
-					$orders = DataObject::get(
-						'Order',
-						"\"Order_Status\".\"CanEdit\" = 1 AND \"Order\".\"ID\" = '".intval($cartIDParts[0])."' AND \"Order\".\"SessionID\" = '".$cartIDParts[1]."'",
-						"\"LastEdited\" DESC",
-						"INNER JOIN \"Order_Status\" ON \"Order_Status\" .\"ID\" = \"Order\".\"StatusID\"",
-						"1"
-					);
-					if($orders) {
-						self::$order = $orders->First();
-					}
-					else {
-						//TO DO: create notice that order can not be found
-					}
-				}
-			}
-			if(!self::$order){
-				self::$order = new Order();
-				self::$order->SessionID = session_id();
-				//$order->MemberID = Member::currentUserID(); // Set the Member relation to this order
-				if($newStatus = DataObject::get_one("Order_Status", "\"CanEdit\" = 1")) {
-					self::$order->StatusID = $newStatus->ID;
-					self::$order->write();
-					$hasWritten = true;
-					Session::set(self::$cartid_session_name,self::$order->ID.".".session_id());
-				}
-				else {
-					user_error("No Order_Status has been created with CanEdit = 1... Run Dev/Build", E_USER_WARNING);
-				}
-			}
-		}
-		//TODO: re-introduce this because it allows seeing which members don't complete orders
-		//$order->MemberID = Member::currentUserID(); // Set the Member relation to this order
-		if(!$hasWritten) {
-			self::$order->write(); // Write the order
-		}
-		//seems the best way to add some basic css.
-		Requirements::themedCSS("EcommerceBasics");
-		return self::$order;
-	}
-
-
-	// Static items management
-
-	/**
-	 * Either update or create OrderItem in ShoppingCart.
-	 */
-	protected static function add_new_item(OrderItem $newOrderItem, $quantity = 1) {
-		//what happens if it has already been added???
-		$newOrderItem->Quantity = $quantity;
-		$newOrderItem->write();
-		self::current_order()->Attributes()->add($newOrderItem);
-	}
-
-	/**
-	 * Add QTY to an existing OrderItem to session
-	 */
-	protected static function add_item($existingOrderItem, $quantity = 1) {
-		//what happens if the item doe not actually exists?
-		if($existingOrderItem->ID) {
-			$existingOrderItem->Quantity += $quantity;
-			$existingOrderItem->write();
-		}
-		else {
-			user_error("Item has not been saved yet", E_USER_WARNING);
-		}
-	}
-
-	/**
-	 * Update quantity of an OrderItem in the session
-	 */
-	static function set_quantity_item($existingOrderItem, $quantity) {
-		if ($existingOrderItem) {
-			$existingOrderItem->Quantity = $quantity;
-			$existingOrderItem->write();
-		}
-	}
-
-	/**
-	 * Reduce quantity of an orderItem, or completely remove
-	 */
-	static function remove_item($existingOrderItem, $quantityToReduceBy = 1) {
-		if ($existingOrderItem) {
-			if ($quantityToReduceBy >= $existingOrderItem->Quantity) {
-				$existingOrderItem->delete();
-				$existingOrderItem->destroy();
-			}
-			else {
-				$existingOrderItem->Quantity -= $quantityToReduceBy;
-				$existingOrderItem->write();
-			}
-		}
-	}
-
-	static function remove_all_item($existingOrderItem) {
-		if($existingOrderItem){
-			$existingOrderItem->delete();
-			$existingOrderItem->destroy();
-		}
-	}
-
-	static function remove_all_items() {
-		//TODO: make this ONLY remove items & not modifiers also?
-		self::current_order()->Attributes()->removeAll();
-	}
-
-	/**
-	 * Check if there are any items in the cart
-	 */
 	static function has_items() {
 		return self::current_order()->Items() != null;
 	}
 
-	/**
-	 * Return the items currently in the shopping cart.
-	 * @return array
-	 */
 	static function get_items($filter = null) {
 		return self::current_order()->Items($filter);
+	}
+
+	static function has_modifiers() {
+		return self::get_modifiers() != null;
+	}
+
+	static function get_modifiers() {
+		return self::current_order()->Modifiers();
 	}
 
 	/**
@@ -326,8 +292,113 @@ class ShoppingCart extends Controller {
 		return DataObject::get_one($orderItemClassName, "\"ClassName\" = '".$orderItemClassName."' AND \"OrderID\" = ".$order->ID." AND \"BuyableID\" = ".$buyableID." ". $filterString);
 	}
 
+/*******************************************************
+   * NON ITEM/MODIFIER INFORMATION
+*******************************************************/
 
-	static function add_buyable($buyable,$quantity = 1, $parameters = null){
+	static function uses_different_shipping_address(){
+		return self::current_order()->UseShippingAddress;
+	}
+
+	static function set_uses_different_shipping_address($use = true){
+		$order = self::current_order();
+		$order->UseShippingAddress = $use;
+		$order->write();
+	}
+
+
+/*******************************************************
+   * STATIC FUNCTIONS
+*******************************************************/
+
+	/**
+	 * Either update or create OrderItem in ShoppingCart.
+	 */
+	public static function add_new_item(OrderItem $newOrderItem, $quantity = 1) {
+		//what happens if it has already been added???
+		$newOrderItem->Quantity = $quantity;
+		$newOrderItem->write();
+		self::current_order()->Attributes()->add($newOrderItem);
+	}
+
+	/**
+	 * Add QTY to an existing OrderItem to session
+	 */
+	public static function increment_item($existingOrderItem, $quantity = 1) {
+		//what happens if the item doe not actually exists?
+		if($existingOrderItem->ID) {
+			$existingOrderItem->Quantity += $quantity;
+			$existingOrderItem->write();
+		}
+		else {
+			user_error("Item has not been saved yet", E_USER_WARNING);
+		}
+	}
+	/**
+	 * reduce QTY to an existing OrderItem to session
+	 */
+	public static function decrement_item($existingOrderItem, $quantity = 1) {
+		//what happens if the item doe not actually exists?
+		if($existingOrderItem->ID) {
+			$existingOrderItem->Quantity -= $quantity;
+			$existingOrderItem->write();
+		}
+		else {
+			user_error("Item has not been saved yet", E_USER_WARNING);
+		}
+	}
+
+	/**
+	 * Update quantity of an OrderItem in the session
+	 */
+	public static function set_quantity_item($existingOrderItem, $quantity) {
+		if ($existingOrderItem) {
+			$existingOrderItem->Quantity = $quantity;
+			$existingOrderItem->write();
+		}
+	}
+
+	/**
+	 * Reduce quantity of an orderItem, or completely remove
+	 */
+	public static function remove_item($existingOrderItem, $quantityToReduceBy = 1) {
+		if ($existingOrderItem) {
+			if ($quantityToReduceBy >= $existingOrderItem->Quantity) {
+				$existingOrderItem->delete();
+				$existingOrderItem->destroy();
+			}
+			else {
+				self::decrement_item($existingOrderItem, $quantityToReduceBy);
+			}
+		}
+	}
+
+	public static function remove_all_item($existingOrderItem) {
+		if($existingOrderItem){
+			$existingOrderItem->delete();
+			$existingOrderItem->destroy();
+		}
+	}
+
+	public static function remove_all_items() {
+		$items = self::get_items();
+		return self::remove_many_order_attributes($items);
+	}
+
+	public static function remove_all_modifiers() {
+		$items = self::get_modifiers();
+		return self::remove_many_order_attributes($items);
+	}
+
+	protected static function remove_many_order_attributes($items) {
+		self::current_order()->Attributes()->removeMany($items);
+		foreach($items as $item) {
+			$item->delete();
+			$item->destroy();
+		}
+	}
+
+	public static function add_buyable($buyable,$quantity = 1, $parameters = null){
 		$orderItem = null;
 		if(!$buyable) {
 			user_error("No buyable was provided to add", E_USER_NOTICE);
@@ -345,7 +416,7 @@ class ShoppingCart extends Controller {
 		return $orderItem;
 	}
 
-	static function find_or_make_order_item($buyable, $parameters = null){
+	protected static function find_or_make_order_item($buyable, $parameters = null){
 		if($orderItem = self::get_order_item_by_buyableid($buyable->ID,$buyable->classNameForOrderItem())){
 			//do nothing
 		}
@@ -382,132 +453,86 @@ class ShoppingCart extends Controller {
 		return $orderItem;
 	}
 
-
 	// Modifiers management
 
-	static function add_new_modifier(OrderModifier $modifier) {
+	public static function add_new_modifier(OrderModifier $modifier) {
+		user_error("this function has been depecriated", E_USER_ERROR);
+	}
+
+
+	public static function remove_modifier($modifier) {
+		$modifier->Type = "Removed";
 		$modifier->write();
-		self::current_order()->Attributes()->add($modifier);
 	}
 
-	static function can_remove_modifier($modifierIndex) {
-		$serializedModifierIndex = self::modifier_index($modifierIndex);
-		if ($serializedModifier = Session::get($serializedModifierIndex)) {
-			$unserializedModifier = unserialize($serializedModifier);
-			return $unserializedModifier->CanRemove();
-		}
-		return false;
-	}
 
-	static function remove_modifier($modifierIndex) {
-		$serializedModifierIndex = self::modifier_index($modifierIndex);
-		Session::clear($serializedModifierIndex);
-	}
+/*******************************************************
+   * URL ACTIONS
+*******************************************************/
 
-	static function remove_all_modifiers() {
-		self::current_order()->Attributes()->removeAll(); //TODO: make this ONLY remove modifiers
-	}
 
-	static function has_modifiers() {
-		return self::get_modifiers() != null;
-	}
-
-	/**
-	 * Get all the {@link OrderModifier} instances
-	 * that are currently in use. To set them, use
-	 * {@link Order::set_modifiers()}.
-	 *
-	 * @return array
-	 */
-	static function get_modifiers() {
-		return self::current_order()->Modifiers();
-	}
-
-	static function uses_different_shipping_address(){
-		return self::current_order()->UseShippingAddress;
-	}
-
-	static function set_uses_different_shipping_address($use = true){
-		$order = self::current_order();
-		$order->UseShippingAddress = $use;
-		$order->write();
-	}
-
-	/**
-	 * Sets appropriate status, and message and redirects or returns appropriately.
-	 */
-	 //TODO: it seems silly that this should be a static method just because self::clear is static
-	static function return_data($status = "success",$message = null){
-
-		if(Director::is_ajax()){
-			$obj = new self::$response_class();
-			return $obj->ReturnCartData($status, $message);
-		}
-		//TODO: set session / status in session (like Form sessionMesssage)
-		Director::redirectBack();
-	}
-
-	//--------------------------------------------------------------------------
-	//Data
-	//----
-	function Cart() {
-		return self::current_order();
-	}
-
-	//--------------------------------------------------------------------------
-	//Actions
-	//--------------------------------------------------------------------------
-
-	/**
-	 * Either increments the count or creates a new item.
-	 */
 	function additem($request) {
 		if ($request->param('ID')) {
 			if($orderItem = $this->getExistingOrderItemFromURL()) {
-				ShoppingCart::add_item($orderItem, 1);
-				return self::return_data("success","Extra item added"); //TODO: i18n
+				if($request->param("Action") == "decrementitem" ) {
+					ShoppingCart::decrement_item($orderItem, 1);
+					return $this->returnMessage("success",_t("ShoppingCart.SUPERFLUOUSITEMREMOVED", "Superfluous item removed"));
+				}
+				else {
+					ShoppingCart::increment_item($orderItem, 1);
+					return $this->returnMessage("success",_t("ShoppingCart.EXTRAITEMADDED", "Extra item added"));
+				}
 			}
 			else {
 				if($orderItem = $this->getNewOrderItemFromURL()) {
 					ShoppingCart::add_new_item($orderItem, 1);
-					return self::return_data("success","Item added"); //TODO: i18n
+					return $this->returnMessage("success",_t("ShoppingCart.EXTRAITEMADDED", "Item added"));
 				}
 			}
 		}
-		return self::return_data("failure","Item could not be added"); //TODO: i18n
+		return $this->returnMessage("failure",_t("ShoppingCart.ITEMCOULDNOTBEADDED", "Item could not be added"));
+	}
+
+	function incrementitem($request) {
+		$this->additem($request);
+		return $this->returnMessage("failure",_t("ShoppingCart.ADDITIONALITEMCOULDNOTBEADDED", "Additional item could not be added."));
+	}
+
+	function decrementitem($request) {
+		$this->additem($request);
+		return $this->returnMessage("failure",_t("ShoppingCart.SUPERFLUOUSITEMCOULDNOTBEREMOVED", "Superfluous item could not be removed."));
 	}
 
 	function removeitem($request) {
 		if ($orderItem = $this->getExistingOrderItemFromURL()) {
 			ShoppingCart::remove_item($orderItem);
-			return self::return_data("success","Item removed");//TODO: i18n
+			return $this->returnMessage("success",_t("ShoppingCart.ITEMREMOVED", "Item removed."));
 		}
-		return self::return_data("failure","Item could not be found in cart");//TODO: i18n
+		return $this->returnMessage("failure",_t("ShoppingCart.ITEMCOULDNOTBEFOUNDINCART", "Item could not found in cart."));
 	}
 
-	function removeallitem() {
+	function removeallitem($request) {
 		if ($orderItem = $this->getExistingOrderItemFromURL()) {
 			ShoppingCart::remove_all_item($orderItem);
-			return self::return_data("success","Item fully removed");//TODO: i18n
+			return $this->returnMessage("success",_t("ShoppingCart.ITEMCOMPLETELYREMOVED", "Item completely removed."));
 		}
-		return self::return_data("failure","Item could not be found in cart");//TODO: i18n
+		return $this->returnMessage("failure",_t("ShoppingCart.ITEMCOULDNOTBEFOUNDINCART", "Item could not found in cart."));
 	}
 
-	function setcountry() {
-		$request = $this->getRequest();
+	function setcountry($request) {
 		$countryCode = $request->param('ID');
 		if($countryCode && strlen($countryCode) < 4) {
 			ShoppingCart::set_country($countryCode);
-			return self::return_data("success","Country updated");//TODO: i18n
+			return $this->returnMessage("success",_t("ShoppingCart.COUNTRYUPDATED", "Country updated."));
 		}
-		return self::return_data("failure","Country could not be updated");//TODO: i18n
+		return $this->returnMessage("failure",_t("ShoppingCart.COUNTRYCOULDNOTBEUPDATED", "Country not be updated."));
 	}
 
 	/**
 	 * Clears the cart
 	 * It disconnects the current cart from the user session.
 	 */
-	static function clear($request = null) {
+	function clear($request = null) {
 		self::current_order()->SessionID = null;
 		self::current_order()->write();
 		self::remove_all_items();
@@ -516,7 +541,7 @@ class ShoppingCart extends Controller {
 		//redirect back or send ajax only if called via http request.
 		//This check allows this function to be called from elsewhere in the system.
 		if($request instanceof SS_HTTPRequest){
-			return self::return_data("success","Cart cleared");//TODO: i18n
+			return $this->returnMessage("success",_t("ShoppingCart.CARTCLEARED", "Cart cleared."));
 		}
 	}
 
@@ -534,21 +559,29 @@ class ShoppingCart extends Controller {
 			else{
 				ShoppingCart::set_quantity_item($orderItem, $quantity);
 			}
-			return self::return_data("success","Quantity set successfully");//TODO: i18n
+			return $this->returnMessage("success",_t("ShoppingCart.QUANTITYSET", "Quantity set."));
 		}
-		return self::return_data("failure","Quantity provided is not numeric");//TODO: i18n
+		return $this->returnMessage("failure",_t("ShoppingCart.QUANTITYNOTNUMERIC", "Quantity provided is not numeric."));
 	}
 
 	/**
+	 * add specified modifier, if allowed
+	 */
+	function addmodifier($request) {
+		user_error("We are no longer allowing modifiers to be added by the user", E_USER_ERROR);
+		return false;
+	}
+	/**
 	 * Removes specified modifier, if allowed
 	 */
-	function removemodifier() {
-		$modifierId = $this->urlParams['ID'];
-		if (ShoppingCart::can_remove_modifier($modifierId)){
-			ShoppingCart::remove_modifier($modifierId);
-			return self::return_data("success","Removed");//TODO: i18n
+	function removemodifier($request) {
+		$modifierId = intval($request->param('ID'));
+		$modifier = DataObject::get_by_id("OrderModifier", $modifierId);
+		if ($modifier && $modifier->CanRemove()){
+			ShoppingCart::remove_modifier($modifier);
+			return $this->returnMessage("success",_t("ShoppingCart.MODIFIERREMOVED", "Removed extra."));
 		}
-		return self::return_data("failure","Could not be removed");//TODO: i18n
+		return $this->returnMessage("failure",_t("ShoppingCart.MODIFIERNOTREMOVED", "Could not remove extra."));
 	}
 
 	/**
@@ -570,7 +603,43 @@ class ShoppingCart extends Controller {
 		$this->renderWith("AjaxSimpleCart");
 	}
 
-	//Helper functions
+
+	/**
+	 * Sets appropriate status, and message and redirects or returns appropriately.
+	 */
+
+	protected function returnMessage($status = "success",$message = null){
+		if(Director::is_ajax()){
+			$obj = new self::$response_class();
+			return $obj->ReturnCartData($status, $message);
+		}
+		//TODO: set session / status in session (like Form sessionMesssage)
+		Director::redirectBack();
+	}
+
+
+
+/*******************************************************
+   * URL DECODING AND FILTERING
+*******************************************************/
+
+	/**
+	 * Creates the appropriate string parameters for links from array
+	 *
+	 * Produces string such as: MyParam%3D11%26OtherParam%3D1
+	 *     ...which decodes to: MyParam=11&OtherParam=1
+	 *
+	 * you will need to decode the url with javascript before using it.
+	 *
+	 */
+	protected static function params_to_get_string($array){
+		if($array & count($array > 0)){
+			array_walk($array , create_function('&$v,$k', '$v = $k."=".$v ;'));
+			return "/?".implode("&",$array);
+		}
+		return "/";
+	}
+
 
 	/**
 	 * Creates new order item based on url parameters
@@ -686,11 +755,16 @@ class ShoppingCart extends Controller {
 		return $result;
 	}
 
-	/**
-	 * Displays order info and cart contents.
-	 */
+
+/*******************************************************
+   * DEBUG
+*******************************************************/
+
+
 	function debug() {
 		Debug::show(ShoppingCart::current_order());
 	}
+
+
 
 }

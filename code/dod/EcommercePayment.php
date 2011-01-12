@@ -1,20 +1,58 @@
 <?php
 /**
- * Customisations to {@link Payment} specifically
- * for the ecommerce module.
+ * @description Customisations to {@link Payment} specifically for the ecommerce module.
  *
  * @package ecommerce
- */
+ * @authors: Silverstripe, Jeremy, Nicolaas
+ **/
 class EcommercePayment extends DataObjectDecorator {
 
-	function extraStatics() {
+	public static function process_payment_form_and_return_next_step($order, $form, $data, $paidBy = null) {
+		if(!$order){
+			user_error('Order not found', E_USER_ERROR);
+			return;
+		}
+		if(!$paidBy) {
+			$paidBy = Member::currentUser();
+		}
+		$paymentClass = (!empty($data['PaymentMethod'])) ? $data['PaymentMethod'] : null;
+		$payment = class_exists($paymentClass) ? new $paymentClass() : null;
+		if(!($payment && $payment instanceof Payment)) {
+			user_error(get_class($payment) . ' is not a valid Payment object.', E_USER_ERROR);
+		}
+		if(!$order->canPay()) {
+			user_error("Order can not be paid.", E_USER_ERROR);
+		}
+		// Save payment data from form and process payment
+		$form->saveInto($payment);
+		$payment->OrderID = $order->ID;
+		if($paidBy) {
+			$payment->PaidByID = $paidBy->ID;
+		}
+		$payment->Amount->Amount = $order->TotalOutstanding();
+		$payment->write();
+		// Process payment, get the result back
+		$result = $payment->processPayment($data, $form);
+		// isProcessing(): Long payment process redirected to another website (PayPal, Worldpay)
+		if($result->isProcessing()) {
+			return $result->getValue();
+		}
+		else {
+			Director::redirect($order->Link());
+			return true;
+		}
+	}
 
+	function extraStatics() {
 		return array(
 			'has_one' => array(
 				'Order' => 'Order' //redundant...should be using PaidObject
 			),
 			'searchable_fields' => array(
-				'OrderID' => array('title' => 'Order ID'),
+				'OrderID' => array(
+					'field' => 'TextField',
+					'title' => 'Order Number'
+				),
 				//'Created' => array('title' => 'Date','filter' => 'WithinDateRangeFilter','field' => 'DateRangeField'), //TODO: filter and field not implemented yet
 				'IP' => array('title' => 'IP Address', 'filter' => 'PartialMatchFilter'),
 				'Status'
@@ -23,7 +61,10 @@ class EcommercePayment extends DataObjectDecorator {
 	}
 
 	function canCreate($member = null) {
-		return false;
+		if(!$member) {
+			$member = Member::currentUser();
+		}
+		return $member->IsShopAdmin();
 	}
 
 	function canDelete($member = null) {
@@ -48,26 +89,46 @@ class EcommercePayment extends DataObjectDecorator {
 	}
 	*/
 
-
-	//TODO: this function could get called multiple times, resulting in unwanted logs , changes etc.
-	function onAfterWrite() {
-		if($this->owner->Status == 'Success' && $order = $this->owner->Order()) {
-			if(!$order->ReceiptSent){
-				$order->sendReceipt();
-				$order->updatePaymentStatus();
-			}
-		}
-	}
-
 	function redirectToOrder() {
 		$order = $this->owner->Order();
-		Director::redirect($order->Link());
+		if($order) {
+			Director::redirect($order->Link());
+		}
+		else {
+			user_error("No order found with this payment: ".$this->ID, E_USER_NOTICE);
+		}
 		return;
 	}
 
 	function setPaidObject(DataObject $do){
 		$this->owner->PaidForID = $do->ID;
 		$this->owner->PaidForClass = $do->ClassName;
+	}
+
+
+	function scaffoldSearchFields(){
+		$fields = parent::scaffoldSearchFields();
+		$fields->replaceField("OrderID", new NumericField("OrderID", "Order ID"));
+		return $fields;
+	}
+
+	function onBeforeWrite() {
+		parent::onBeforeWrite();
+		//TODO: throw error IF there is no OrderID
+		if($this->owner->OrderID) {
+			if($order = DataObject::get_by_id("Order", $this->owner->OrderID)) {
+				$this->owner->PaidForID = $order->ID;
+				$this->owner->PaidForClass = $order->ClassName;
+			}
+		}
+	}
+
+	function onAfterWrite() {
+		parent::onAfterWrite();
+		if($this->owner->Status == 'Success' && $order = $this->owner->Order()) {
+			//NOTE: IMPORTANT
+			$order->pay($this);
+		}
 	}
 
 	function requireDefaultRecords() {
@@ -109,8 +170,10 @@ class EcommercePayment extends DataObjectDecorator {
 	}
 
 	function Status() {
-   		return _t('Payment.'.$this->owner->Status,$this->owner->Status);
+   	return _t('Payment.'.$this->owner->Status,$this->owner->Status);
 	}
+
+
 
 
 }

@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @authors: Silverstripe, Jeremy, Nicolaas
+ *
+ **/
+
 class CartResponse extends EcommerceResponse {
 
 

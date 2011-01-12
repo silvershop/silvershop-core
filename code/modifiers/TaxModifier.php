@@ -16,7 +16,9 @@
  * </code>
  *
  * @package ecommerce
- */
+ * @authors: Silverstripe, Jeremy, Nicolaas
+ **/
+
 class TaxModifier extends OrderModifier {
 
 	public static $db = array(
@@ -25,18 +27,6 @@ class TaxModifier extends OrderModifier {
 		'Name' => 'Text',
 		'TaxType' => "Enum('Exclusive,Inclusive')"
 	);
-
-	public static $has_one = array();
-
-	public static $has_many = array();
-
-	public static $many_many = array();
-
-	public static $belongs_many_many = array();
-
-	public static $defaults = array();
-
-	public static $casting = array();
 
 	protected static $names_by_country;
 
@@ -148,7 +138,7 @@ class TaxModifier extends OrderModifier {
 	 * @return string
 	 */
 	function TableTitle() {
-		return number_format($this->Rate() * 100, 1) . '% ' . $this->Name() . ($this->IsExclusive() ? '' : ' (included in the above price)');
+		return number_format($this->Rate() * 100, 1) . '% ' . $this->Name() . ($this->IsExclusive() ? '' : _t("TaxModifier.INCLUDEDINTHEPRICE", ' (included in the above price)'));
 	}
 
 	/**
@@ -156,7 +146,6 @@ class TaxModifier extends OrderModifier {
 	 */
 	public function onBeforeWrite() {
 		parent::onBeforeWrite();
-
 		$this->Country = $this->LiveCountry();
 		$this->Rate = $this->LiveRate();
 		$this->Name = $this->LiveName();

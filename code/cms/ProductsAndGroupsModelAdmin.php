@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @author Nicolaas [at] sunnysideup.co.nz
+ * @authors: Silverstripe, Jeremy, Tony, Nicolaas
  **/
 
 class ProductsAndGroupsModelAdmin extends ModelAdmin {

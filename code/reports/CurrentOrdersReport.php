@@ -6,7 +6,9 @@
  * the detail on the logic for what "Current" means.
  *
  * @package ecommerce
- */
+ * @authors: Silverstripe, Jeremy, Nicolaas
+ **/
+
 class CurrentOrdersReport extends SS_Report {
 
 	protected $title = 'Current Orders';
@@ -24,7 +26,7 @@ class CurrentOrdersReport extends SS_Report {
 	 */
 	function getReportField() {
 		// Get the fields used for the table columns
-		$fields = Order::$table_overview_fields;
+		$fields = Order::get_table_overview_fields();
 
 		// Add some fields specific to this report
 		$fields['Invoice'] = '';

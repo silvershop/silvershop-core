@@ -1,12 +1,15 @@
 <?php
 /**
- * An order item is a product which has been added to an order,
- * ready for purchase. An order item is typically a product itself,
- * but also can include references to other information such as
- * product attributes like colour, size, or type.
+ * @description: An order item is a product which has been added to an order,
+ * ready for purchase. It links to a buyable (e.g. a product)
+ * @description: An order item is a product which has been added to an order,
+ ** ready for purchase. An order item is typically a product itself,
+ ** but also can include references to other information such as
+ ** product attributes like colour, size, or type.
  *
  * @package ecommerce
- */
+ * @authors: Silverstripe, Jeremy, Nicolaas
+ **/
 class OrderItem extends OrderAttribute {
 
 	protected static $disable_quantity_js = false;
@@ -30,7 +33,10 @@ class OrderItem extends OrderAttribute {
 	######################
 
 	public static $searchable_fields = array(
-		"OrderID",
+		'OrderID' => array(
+			'field' => 'NumericField',
+			'title' => 'Order Number'
+		),
 		"Title" => "PartialMatchFilter",
 		"TableTitle" => "PartialMatchFilter",
 		"CartTitle" => "PartialMatchFilter",
@@ -51,9 +57,35 @@ class OrderItem extends OrderAttribute {
 		"Total" => "Total Price" ,
 	);
 
-	public static $singular_name = "Order Item";
 
+	public static $singular_name = "Order Item";
+		function i18n_singular_name() { return _t("OrderItem.ORDERITEM", "Order Item");}
 	public static $plural_name = "Order Items";
+		function i18n_plural_name() { return _t("OrderItem.ORDERITEMS", "Order Items");}
+
+	function getCMSFields() {
+		$fields = parent::getCMSFields();
+		$fields->removeByName("Version");
+		$fields->removeByName("Sort");
+		$fields->removeByName("OrderAttribute_GroupID");
+		$buyables = Buyable::getget_array_of_buyables();
+		$classNameArray = array();
+		$buyablesArray = array();
+		if($buyables && count($buyables)) {
+			foreach($buyables as $buyable) {
+				$classNameArray[$buyable.Buyable::get_order_item_class_name_post_fix()] = $buyable;
+				$buyablesArray = DataObject::get($classNameArray);
+			}
+		}
+		$fields->addFieldToTab("Root", new DropdownField("ClassName", _t("Order.TYPE", "Type"), $classNameArray));
+		$fields->replaceField("BuyableID", new DropdownField());
+		return $fields;
+	}
+	function scaffoldSearchFields(){
+		$fields = parent::scaffoldSearchFields();
+		$fields->replaceField("OrderID", new NumericField("OrderID", "Order Number"));
+		return $fields;
+	}
 
 	public function addBuyableToOrderItem($buyable, $quantity = 1) {
 		$this->Version = $buyable->Version;
@@ -154,11 +186,9 @@ HTML;
 		return DBField::create('Currency',$this->Total());
 	}
 
-
 	function TableTitle() {
 		return $this->ClassName;
 	}
-
 
 	//TODO: Change "Item" to something that doesn't conflict with OrderItem
 	function Buyable($current = false) {
@@ -201,11 +231,17 @@ HTML;
 		return CheckoutPage::find_link();
 	}
 
-
 	## Often Overloaded functions ##
-
 	function AddLink() {
 		return ShoppingCart::add_item_link($this->BuyableID, $this->ClassName,$this->linkParameters());
+	}
+
+	function IncrementLink() {
+		return ShoppingCart::increment_item_link($this->BuyableID, $this->ClassName,$this->linkParameters());
+	}
+
+	function DecrementLink() {
+		return ShoppingCart::decrement_item_link($this->BuyableID, $this->ClassName,$this->linkParameters());
 	}
 
 	function RemoveLink() {
@@ -229,8 +265,6 @@ HTML;
 		$this->extend('updateLinkParameters',$array);
 		return $array;
 	}
-
-
 
 	function requireDefaultRecords() {
 		parent::requireDefaultRecords();

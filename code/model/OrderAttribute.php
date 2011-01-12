@@ -1,11 +1,13 @@
 <?php
 /**
+ * @description: base class for OrderItem (item in cart) and OrderModifier (extra - e.g. Tax)
  * @see OrderModifier
  * @see OrderItem
- * @see OrderModifier
  *
  * @package ecommerce
- */
+ * @authors: Silverstripe, Jeremy, Nicolaas
+ **/
+
 class OrderAttribute extends DataObject {
 
 	public static $db = array(
@@ -32,11 +34,26 @@ class OrderAttribute extends DataObject {
 		"Sort" => true,
 	);
 
-	public function canCreate($member = null) {
-		return false;
+	function init() {
+		return true;
 	}
 
-	public function canDelete($member = null) {
+	function canCreate($member = null) {
+		return true;
+	}
+
+	function canEdit($member = null) {
+		return $this->canDelete($member);
+	}
+
+	function canDelete($member = null) {
+		if($this->OrderID) {
+			if($this->Order()->exists()) {
+				if($this->Order()->MyStatus()->CanEdit) {
+					return true;
+				}
+			}
+		}
 		return false;
 	}
 

@@ -7,8 +7,12 @@
  * in the $shippingCosts array.
  *
  * @package ecommerce
- */
+ * @authors: Silverstripe, Jeremy, Nicolaas
+ **/
+
 class WeightShippingModifier extends OrderModifier {
+
+	protected static $a, $b;
 
 	/**
 	 * Calculates the extra charges from the order based on the weight attribute of a product
@@ -50,11 +54,11 @@ class WeightShippingModifier extends OrderModifier {
 	 */
 	function nationalCost($totalWeight){
 		// if a product can't have a weight, don't charge/display it
-		if($totalWeight <= 0) return '0.00';
-
+		if($totalWeight <= 0) {
+			return '0.00';
+		}
 		// return the pricing appropriate for the weight
 		$shippingCosts = self::$a[Geoip::$default_country_code];
-
 		return $this->getCostFromWeightList($totalWeight, $shippingCosts);
 	}
 
@@ -63,8 +67,9 @@ class WeightShippingModifier extends OrderModifier {
 	 */
 	function internationalCost($totalWeight, $country){
 		// if a product can't have a weight. Don't charge/display it
-		if($totalWeight <= 0) return '0.00';
-
+		if($totalWeight <= 0) {
+			return '0.00';
+		}
 		// return the pricing appropriate for the weight
 		$shippingCosts = self::$a[$country];
 
@@ -82,7 +87,9 @@ class WeightShippingModifier extends OrderModifier {
 	function getCostFromWeightList($totalWeight, $shippingCosts) {
 		if($shippingCosts) {
 			foreach($shippingCosts as $weight => $cost) {
-				if($totalWeight < $weight) return $cost;
+				if($totalWeight < $weight) {
+					return $cost;
+				}
 			}
 			return array_pop($shippingCosts);
 		}

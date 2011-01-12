@@ -1,5 +1,10 @@
 <?php
 
+/**
+ *
+ * @authors: Silverstripe, Jeremy, Romain, Nicolaas
+ **/
+
 class StoreAdmin extends ModelAdmin{
 
 	public static $url_segment = 'orders';
@@ -10,7 +15,7 @@ class StoreAdmin extends ModelAdmin{
 
 	//static $url_priority = 50;
 
-	public static $managed_models = array('Order','Order_Status', 'OrderStatusLog', 'OrderItem', 'OrderModifier', 'Order_Email', 'ShippingAddress','Payment');
+	public static $managed_models = array('Order','OrderStatus', 'OrderStatusLog', 'OrderItem', 'OrderModifier', 'OrderEmailRecord', 'ShippingAddress','Payment');
 		public static function set_managed_models(array $array) {self::$managed_models = $array;}
 
 	public static $collection_controller_class = 'StoreAdmin_CollectionController';
@@ -54,7 +59,7 @@ class StoreAdmin_RecordController extends ModelAdmin_RecordController {
 
 	public function EditForm() {
 		$form = parent::EditForm();
-		$form->Actions()->removeByName('Delete');
+		//$form->Actions()->removeByName('Delete');
 		$array = unserialize(Session::get("StoreAdminLatestSearch"));
 		if(is_array($array)) {
 			if(count($array) && count($array) > 1) {

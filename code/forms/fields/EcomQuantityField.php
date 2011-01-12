@@ -1,8 +1,12 @@
 <?php
 
+
 /**
- * A links-based field for increasing, decreasing and setting a order item quantity
- */
+ * @Description: A links-based field for increasing, decreasing and setting a order item quantity
+ *
+ * @package: ecommerce
+ * @authors: Silverstripe, Jeremy, Nicolaas
+ **/
 
 class EcomQuantityField extends NumericField {
 
@@ -81,11 +85,11 @@ class EcomQuantityField extends NumericField {
 	}
 
 	function IncrementLink(){
-		return Convert::raw2att(ShoppingCart::add_item_link($this->item->BuyableID, $this->item->class,$this->parameters));
+		return Convert::raw2att(ShoppingCart::increment_item_link($this->item->BuyableID, $this->item->ClassName,$this->parameters));
 	}
 
 	function DecrementLink(){
-		return Convert::raw2att(ShoppingCart::remove_item_link($this->item->BuyableID, $this->item->class,$this->parameters));
+		return Convert::raw2att(ShoppingCart::decrement_item_link($this->item->BuyableID, $this->item->class,$this->parameters));
 	}
 
 
