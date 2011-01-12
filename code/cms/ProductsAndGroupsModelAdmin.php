@@ -15,6 +15,15 @@ class ProductsAndGroupsModelAdmin extends ModelAdmin {
 	public static $managed_models = array('Product', 'ProductGroup');
 		public static function set_managed_models(array $array) {self::$managed_models = $array;}
 		public static function add_managed_model($item) {self::$managed_models[] = $item;}
+		public static function remove_managed_model($item) {
+			if(self::$managed_models && count(self::$managed_models)){
+				foreach(self::$managed_models as $key => $model) {
+					if($model == $item) {
+						unset(self::$managed_models[$key]);
+					}
+				}
+			}
+		}
 
 	public static $url_segment = 'products';
 
