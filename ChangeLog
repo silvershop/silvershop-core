@@ -54,7 +54,6 @@ EcommerceCurrency:
 EcommercePayment:
 - moved to DOD folder
 Order:
-- removed "printed" db field
 - introduce CancelledBy field
 - introduced casted variables: Title, HasBeenCancelled'
 - added i18n_singular_name and i18n_plural_name
