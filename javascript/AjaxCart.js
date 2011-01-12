@@ -7,6 +7,8 @@
  * * and remove from cart (cart is expected to be as <li>......<a href="">click to remove</a>, with a tag being a direct child of li, and li holding item
  **/
 
+
+
 ;(function($) {
 	$(document).ready(
 		function() {
@@ -78,49 +80,49 @@ var AjaxCart = {
 		return true;
 	}
 
-
-
-
 }
 
 
-jQuery.fn.extend({
-
-	addAddLinks: function() {
-		jQuery(this).find(AjaxCart.addLinkSelector).click(
-			function(){
-				var url = jQuery(this).attr("href");
-				AjaxCart.loadAjax(url, this);
-				return false;
-			}
-		);
-	},
-
-	addCartRemove: function () {
-		jQuery(this).find(AjaxCart.removeCartSelector).click(
-			function(){
-				if(AjaxCart.UnconfirmedDelete || confirm(AjaxCart.ConfirmDeleteText)) {
-					var url = jQuery(this).attr("href");
-					var el = this;//we need this to retain link to element (this shifts focus)
-					jQuery(el).parent("li").css("text-decoration", "line-through");
-					jQuery.get(url, function(){ jQuery(el).parent("li").fadeOut();});
-				}
-				return false;
-			}
-		);
-	},
-
-	addRemoveLinks: function () {
-		jQuery(this).find(AjaxCart.removeLinkSelector).click(
-			function(){
-				if(AjaxCart.UnconfirmedDelete || confirm(AjaxCart.ConfirmDeleteText)) {
+jQuery.fn.extend(
+	{
+		addAddLinks: function() {
+			jQuery(this).find(AjaxCart.addLinkSelector).click(
+				function(){
 					var url = jQuery(this).attr("href");
 					AjaxCart.loadAjax(url, this);
+					return false;
 				}
-				return false;
-			}
-		);
-	}
+			);
+		},
 
-});
+		addCartRemove: function () {
+			jQuery(this).find(AjaxCart.removeCartSelector).click(
+				function(){
+					if(AjaxCart.UnconfirmedDelete || confirm(AjaxCart.ConfirmDeleteText)) {
+						var url = jQuery(this).attr("href");
+						var el = this;//we need this to retain link to element (this shifts focus)
+						jQuery(el).parent("li").css("text-decoration", "line-through");
+						jQuery.get(url, function(){ jQuery(el).parent("li").fadeOut();});
+					}
+					return false;
+				}
+			);
+		},
+
+		addRemoveLinks: function () {
+			jQuery(this).find(AjaxCart.removeLinkSelector).click(
+				function(){
+					if(AjaxCart.UnconfirmedDelete || confirm(AjaxCart.ConfirmDeleteText)) {
+						var url = jQuery(this).attr("href");
+						AjaxCart.loadAjax(url, this);
+					}
+					return false;
+				}
+			);
+		}
+
+	}
+);
+
+
 

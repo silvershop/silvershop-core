@@ -30,6 +30,10 @@ class ShoppingCart extends Controller {
 		public static function set_response_class($v) {self::$url_segment = $v;}
 		public static function get_response_class() {return self::$url_segment;}
 
+	protected static $ajaxify_cart = false;
+		public static function set_ajaxify_cart($v) {self::$ajaxify_cart = $v;}
+		public static function get_ajaxify_cart() {return self::$ajaxify_cart;}
+
 	static $allowed_actions = array (
 		'additem',
 		'incrementitem',
@@ -156,7 +160,9 @@ class ShoppingCart extends Controller {
 	public static function add_requirements() {
 		Requirements::javascript(THIRDPARTY_DIR."/jquery/jquery.js");
 		Requirements::javascript('ecommerce/javascript/Cart.js');
-		Requirements::javascript("ecommerce/javascript/AjaxCart.js");
+		if(self::get_ajaxify_cart()) {
+			Requirements::javascript("ecommerce/javascript/AjaxCart.js");
+		}
 		Requirements::themedCSS("Cart");
 	}
 
