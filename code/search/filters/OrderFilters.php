@@ -99,7 +99,7 @@ class OrderFilters_HasBeenCancelled extends SearchFilter {
 	public function apply(SQLQuery $query) {
 		$query = $this->applyRelation($query);
 		$value = $this->getValue();
-		if($value == 1)) {
+		if($value == 1) {
 			$query->where("\"CancelledByID\" IS NOT NULL AND \"CancelledByID\" > 0");
 		}
 		return $query;
