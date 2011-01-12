@@ -454,7 +454,7 @@ class ShoppingCart extends Controller {
 			}
 		}
 		else {
-			user_error("product is not for sale or buyable ($buyable->Title()) does not exists.", E_USER_NOTICE);
+			user_error("product is not for sale or buyable (".$buyable->Title().") does not exists.", E_USER_NOTICE);
 		}
 		return $orderItem;
 	}
