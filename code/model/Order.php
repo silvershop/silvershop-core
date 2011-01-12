@@ -348,7 +348,7 @@ class Order extends DataObject {
 		$this->SessionID = $sessionID;
 		//can it create????
 		$this->initModifiers();
-		if($newStatusID = OrderStatus::get_status_id("CREATED'")) {
+		if($newStatusID = OrderStatus::get_status_id("CREATED")) {
 			$this->StatusID = $newStatusID;
 		}
 		else {
