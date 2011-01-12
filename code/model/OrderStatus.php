@@ -57,7 +57,7 @@ class OrderStatus extends DataObject {
 	public static $default_sort = "\"Sort\" ASC";
 
 	public static function get_status_id($code) {
-		if($otherStatus = DataObject::get_one($this->ClassName, "\"Code\" = '".$code."'")) {
+		if($otherStatus = DataObject::get_one("OrderStatus", "\"Code\" = '".$code."'")) {
 			return $otherStatus->ID;
 		}
 		return 0;
