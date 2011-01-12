@@ -18,7 +18,8 @@ class SiteConfigEcommerceExtras extends DataObjectDecorator {
 				"DispatchEmailSubject" => "Varchar(255)",
 				"PostalCodeURL" => "Varchar(255)",
 				"PostalCodeLabel" => "Varchar(255)",
-				"NumberOfProductsPerPage" => "Int"
+				"NumberOfProductsPerPage" => "Int",
+				"SendInvoiceOnSubmit" => "Boolean"
 			)
 		);
 	}
@@ -36,6 +37,9 @@ class SiteConfigEcommerceExtras extends DataObjectDecorator {
 		$fields->addFieldToTab("Root.Webshop", new EmailField("ReceiptEmail", "From email address for shop receipt (e.g. sales@myshop.com)"));
 		$fields->addFieldToTab("Root.Webshop", new TextField("ReceiptSubject", "Subject for shop receipt email ('{OrderNumber}' will be replaced with actual order number - e.g. 'thank you for your order (#{OrderNumber})');"));
 		$fields->addFieldToTab("Root.Webshop", new TextField("DispatchEmailSubject", "Default subject for dispatch email (e.g. your order has been sent)"));
+		$fields->addFieldToTab("Root.Webshop", new EmailField("SendInvoiceOnSubmit", "Send an invoice to customer as soon as he/she submits order (before payment)"));
+
+		//new section
 		return $fields;
 	}
 
