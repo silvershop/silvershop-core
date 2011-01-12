@@ -11,7 +11,7 @@ class EcommerceSiteTreeExtension extends DataObjectDecorator {
 
 	function MenuTitleEcommerce() {
 		$v = $this->owner->MenuTitle;
-		if($this->owner instanceOf CheckoutPage) {
+		if($this->owner instanceOf CheckoutPage || $this->owner instanceOf CartPage ) {
 			$count = 0;
 			$cart = ShoppingCart::current_order();
 			if($cart) {
