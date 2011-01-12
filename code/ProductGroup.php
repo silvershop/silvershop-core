@@ -28,7 +28,7 @@ class ProductGroup extends Page {
 
 	public static $default_child = 'Product';
 
-	public static $icon = 'cms/images/treeicons/productgroup';
+	public static $icon = 'ecommerce/images/treeicons/productgroup';
 
 	protected static $include_child_groups = true;
 		static function set_include_child_groups($include = true){self::$include_child_groups = $include;}
