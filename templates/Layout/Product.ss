@@ -13,7 +13,7 @@
 			<div class="noimage">no image</div>
 		<% end_if %>
 
-		<p><% _t("ItemID","Item #") %>{$ID}</p>
+		<p><% _t("ITEMID","Item #") %>{$ID}</p>
 		<% if Model %><p><% _t("MODEL","Model") %>: $Model.XML</p><% end_if %>
 		<% if Size %><p><% _t("SIZE","Size") %>: $Size.XML</p><% end_if %>
 		<% if Variations %>
@@ -29,7 +29,7 @@
 							<span><% _t("QUANTITYCART","Quantity in cart") %>:</span>
 							$QuantityField
 							<ul class="productActions">
-								<li><a href="$removeallLink" title="<% sprintf(_t("REMOVE","Remove &quot;%s&quot; from your cart"),$Title) %>"><% _t("REMOVELINK","&raquo; Remove from cart") %></a></li>
+								<li><a href="$removeallLink" title="<% sprintf(_t("REMOVE","Remove &quot;%s&quot; from your cart"),$BuyableTitle) %>"><% _t("REMOVELINK","&raquo; Remove from cart") %></a></li>
 								<li><a href="$checkoutLink" title="<% _t("GOTOCHECKOUT","Go to the checkout now") %>"><% _t("GOTOCHECKOUTLINK","&raquo; Go to the checkout") %></a></li>
 							</ul>
 						</div>

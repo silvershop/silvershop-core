@@ -60,7 +60,7 @@
 				<% end_if %>
 
 				<li class="total"><% _t("TOTAL","Total") %>: <strong id="$CartTotalID">$Total.Nice $Currency</strong></li>
-				<li class="buyProducts"><p><a class="checkoutButton" href="$checkoutLink" title="<% _t("CheckoutClick","Click here to go to the checkout") %>"><% _t("CheckoutGoTo","Go to checkout") %></a></p></li>
+				<li class="buyProducts"><p><a class="checkoutButton" href="$checkoutLink" title="<% _t("CHECKOUTCLICK","Click here to go to the checkout") %>"><% _t("CHECKOUTGOTO","Go to checkout") %></a></p></li>
 			</ul>
 		<% else %>
 			<p class="noItems"><% _t("NOITEMS","There are no items in your cart") %>.</p>

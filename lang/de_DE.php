@@ -1,5 +1,4 @@
 <?php
-
 /**
  * German (Germany) language pack
  * @package modules: ecommerce
@@ -16,19 +15,17 @@ if(array_key_exists('de_DE', $lang) && is_array($lang['de_DE'])) {
 	$lang['de_DE'] = $lang['en_US'];
 }
 
-$lang['de_DE']['General']['DATEFORMATNICE'] = '%e. %B %G';
-$lang['de_DE']['General']['DATETIMEFORMATNICE'] = '%e. %B %G %H:%M';
-$lang['de_DE']['General']['DATETIMEFORMATNICE24'] = 'd.m.Y H:i';
-$lang['de_DE']['AccountPage']['Message'] = 'Sie müssen sich einloggen um auf Ihr Konto zugreifen zu können. Falls Sie nicht registriert sind, können Sie erst nach Ihrer ersten Bestellung auf Ihr Konto zugreifen. Fall Sie bereits registriert sind, geben Sie folgend Ihre Daten ein.';
+$lang['de_DE']['AccountPage']['LINKTOACCOUNTPAGE'] = 'Gehen Sie zum ';
+$lang['de_DE']['AccountPage']['LOGINGAGAIN'] = 'Sie wurden automatisch ausgeloggt. Bitte loggen Sie sich wieder ein.';
+$lang['de_DE']['AccountPage']['MESSAGE'] = 'Sie müssen sich einloggen um auf Ihr Konto zugreifen zu können. Falls Sie nicht registriert sind, können Sie erst nach Ihrer ersten Bestellung auf Ihr Konto zugreifen. Fall Sie bereits registriert sind, geben Sie folgend Ihre Daten ein.';
 $lang['de_DE']['AccountPage']['NOPAGE'] = 'Keine AccountPage auf dieser Website - erstellen Sie bitte eine!';
+$lang['de_DE']['AccountPage']['ORDERNOTFOUND'] = 'Bestellung wurde nicht gefunden!';
 $lang['de_DE']['AccountPage.ss']['COMPLETED'] = 'Abgeschlossene Bestellungen';
 $lang['de_DE']['AccountPage.ss']['HISTORY'] = 'Ihr Bestellhistorie';
 $lang['de_DE']['AccountPage.ss']['INCOMPLETE'] = 'Offene Bestellungen';
-$lang['de_DE']['AccountPage.ss']['Message'] = 'Bitte gebe Sie Ihre Daten ein, um sich zur Konto-Verwaltung einzuloggen.<br />Diese Seite ist nur nach der ersten Bestellung aufrufbar, wenn man ein Passwort vergibt.';
 $lang['de_DE']['AccountPage.ss']['NOCOMPLETED'] = 'Es konnten keine abgeschlossenen Bestellungen gefunden werden.';
 $lang['de_DE']['AccountPage.ss']['NOINCOMPLETE'] = 'Es konnten keine offenen Bestellungen gefunden werden.';
 $lang['de_DE']['AccountPage.ss']['ORDER'] = 'Bestellung Nr.';
-$lang['de_DE']['AccountPage.ss']['PRINTORDER'] = 'Bestellung drucken';
 $lang['de_DE']['AccountPage.ss']['STATUS'] = 'Status';
 $lang['de_DE']['AccountPage.ss']['READMORE'] = 'Zur Detail-Ansicht der Bestellung #%s';
 $lang['de_DE']['AccountPage_order.ss']['ADDRESS'] = 'Adresse';
@@ -47,17 +44,17 @@ $lang['de_DE']['AccountPage_order.ss']['NAME'] = 'Name';
 $lang['de_DE']['AccountPage_order.ss']['PAYMENT'] = 'Zahlart';
 $lang['de_DE']['AccountPage_order.ss']['PAYMENTMETHOD'] = 'Bezahlmethode';
 $lang['de_DE']['AccountPage_order.ss']['PAYMENTSTATUS'] = 'Status der Zahlung';
+$lang['de_DE']['AccountPage_order.ss']['PRINTORDER'] = 'Bestellung drucken';
 $lang['de_DE']['Cart.ss']['ADDONE'] = 'Hinzufügen eine oder mehr von  &quot;%s&quot;  in den Warenkorb';
-$lang['de_DE']['Cart.ss']['CheckoutClick'] = 'Hier klicken um auszuchecken';
-$lang['de_DE']['Cart.ss']['CheckoutGoTo'] = 'Zur Kasse';
+$lang['de_DE']['Cart.ss']['CHECKOUTCLICK'] = 'Hier klicken um auszuchecken';
+$lang['de_DE']['Cart.ss']['CHECKOUTGOTO'] = 'Zur Kasse';
 $lang['de_DE']['Cart.ss']['HEADLINE'] = 'Mein Warenkorb';
 $lang['de_DE']['Cart.ss']['NOITEMS'] = 'In Ihrem Warenkorb befinden sich zur Zeit keine Artikel';
 $lang['de_DE']['Cart.ss']['PRICE'] = 'Preis';
+$lang['de_DE']['Cart.ss']['QUANTITY'] = 'Menge';
 $lang['de_DE']['Cart.ss']['READMORE'] = 'Erfahren Sie hier mehr über &quot;%s&quot;';
-$lang['de_DE']['Cart.ss']['Remove'] = '&quot;%s&quot; aus dem Warenkorb entfernen';
 $lang['de_DE']['Cart.ss']['REMOVE'] = '&quot;%s&quot; aus Ihrem Warenkorb entfernen';
 $lang['de_DE']['Cart.ss']['REMOVEALL'] = 'Entfernen alle von &quot;%s&quot; von dem Warenkorb';
-$lang['de_DE']['Cart.ss']['RemoveAlt'] = 'entfernen';
 $lang['de_DE']['Cart.ss']['REMOVEONE'] = 'Entfernen Sie eines von &quot;%s&quot; aus Ihrem Warenkorb';
 $lang['de_DE']['Cart.ss']['SHIPPING'] = 'Versandkosten';
 $lang['de_DE']['Cart.ss']['SUBTOTAL'] = 'Zwischensumme';
@@ -139,7 +136,7 @@ $lang['de_DE']['Order_Member.ss']['NAME'] = 'Name';
 $lang['de_DE']['Order_Member.ss']['PHONE'] = 'Telefon';
 $lang['de_DE']['Order_Payments.ss']['PAYMENTID'] = 'Zahlungs ID';
 $lang['de_DE']['Order_Payments.ss']['PAYMENTINFORMATION'] = 'Zahlungsinformationen';
-$lang['de_DE']['Order_Payments.ss']['PAYMENTMETHOD'] = 'Methode';
+$lang['de_DE']['Order_Payments.ss']['PAYMENTMETHOD'] = 'Zahlart';
 $lang['de_DE']['Order_Payments.ss']['PAYMENTSTATUS'] = 'Bezahlstatus';
 $lang['de_DE']['Order_Payments.ss']['PAYMENTS'] = 'Zahlart';
 $lang['de_DE']['Order_Payments.ss']['PAYMENTNOTE'] = 'Anmerkung';
@@ -147,6 +144,7 @@ $lang['de_DE']['Order_Payments.ss']['DATE'] = 'Datum';
 $lang['de_DE']['Order_Payments.ss']['AMOUNT'] = 'Betrag';
 $lang['de_DE']['Order_Shipping.ss']['TO'] = 'An';
 $lang['de_DE']['Order_Shipping.ss']['SHIPTO'] = 'Lieferadresse (falls abweichend)';
+$lang['de_DE']['Order_Shipping.ss']['PURCHASEDBY'] = 'Rechnungsadresse';
 $lang['de_DE']['OrderForm']['USEDIFFERENTSHIPPINGADDRESS'] = 'andere Lieferadresse wählen';
 $lang['de_DE']['OrderForm']['PROCESSORDER'] = 'Bestellung ausführen';
 $lang['de_DE']['OrderForm']['MEMBERSHIPDETAILS'] = 'Kunden-Konto Details';
@@ -188,15 +186,16 @@ $lang['de_DE']['Product.ss']['ADDLINK'] = 'Diesen Artikel zum Warenkorb hinzufü
 $lang['de_DE']['Product.ss']['ADDONE'] = '&quot;%s&quot; zum Warenkorb hinzufügen';
 $lang['de_DE']['Product.ss']['AUTHOR'] = 'Autor';
 $lang['de_DE']['Product.ss']['FEATURED'] = 'Wir empfehlen diesen Artikel.';
+$lang['de_DE']['Product.ss']['GOTOPAGE'] = 'Zur %s Seite';
 $lang['de_DE']['Product.ss']['GOTOCHECKOUT'] = 'Jetzt zur Kasse gehen';
 $lang['de_DE']['Product.ss']['GOTOCHECKOUTLINK'] = '&raquo; Zur Kasse';
 $lang['de_DE']['Product.ss']['IMAGE'] = '%s Bild';
-$lang['de_DE']['Product.ss']['ItemID'] = 'Artikel Nr.';
+$lang['de_DE']['Product.ss']['ITEMID'] = 'Artikel Nr.';
 $lang['de_DE']['Product.ss']['NOIMAGE'] = 'Keine Produktabbildung vorhanden für &quot;%s&quot;';
 $lang['de_DE']['Product.ss']['QUANTITYCART'] = 'Menge im Warenkorb';
-$lang['de_DE']['Product.ss']['REMOVE'] = '&quot;%s&quot; vom Warenkorb entfernen';
-$lang['de_DE']['Product.ss']['REMOVEALL'] = '&quot;%s&quot; vom Warenkorb entfernen';
-$lang['de_DE']['Product.ss']['REMOVELINK'] = '&raquo; Aus dem Warenkorb entfernen';
+$lang['de_DE']['Product.ss']['REMOVE'] = '&quot;%s&quot; aus dem Warenkorb entfernen';
+$lang['de_DE']['Product.ss']['REMOVEALL'] = '&quot;%s&quot; aus dem Warenkorb entfernen';
+$lang['de_DE']['Product.ss']['REMOVELINK'] = '&raquo; aus dem Warenkorb entfernen';
 $lang['de_DE']['Product.ss']['SIZE'] = 'Größe';
 $lang['de_DE']['ProductGroup.ss']['FEATURED'] = 'Empfohlene Artikel';
 $lang['de_DE']['ProductGroup.ss']['OTHER'] = 'Andere Produkte';
@@ -218,6 +217,13 @@ $lang['de_DE']['ProductGroupItem.ss']['REMOVEALL'] = '1 Einheit von &quot;%s&quo
 $lang['de_DE']['ProductGroupItem.ss']['REMOVELINK'] = '&raquo; Aus dem Warenkorb entfernen';
 $lang['de_DE']['ProductGroupItem.ss']['REMOVEONE'] = '&quot;%s&quot; vom Warenkorb entferrnen';
 $lang['de_DE']['ProductMenu.ss']['GOTOPAGE'] = 'Zur %s Seite';
+$lang['de_DE']['ShopAccountForm']['DETAILSSAVED'] = 'Ihre Daten wurden gespeichert';
+$lang['de_DE']['ShopAccountForm']['LOGGEDIN'] = 'Sie sind angemeldet als ';
+$lang['de_DE']['ShopAccountForm']['LOGOUT'] = 'Klicken Sie <a href="Security/logout" title="Klicken Sie hier um sich abzumelden">hier</a> um sich abzumelden.';
+$lang['de_DE']['ShopAccountForm']['LOGINDETAILS'] = 'Konto Details';
+$lang['de_DE']['ShopAccountForm']['PASSWORD'] = 'Passwort';
+$lang['de_DE']['ShopAccountForm']['SAVE'] = 'Speichern';
+$lang['de_DE']['ShopAccountForm']['SAVEANDPROCEED'] = 'Speichern und Bestellung abschließen';
 $lang['de_DE']['SSReport']['ALLCLICKHERE'] = 'Klicken Sie hier, um alle Produkte anzuzeigen';
 $lang['de_DE']['SSReport']['INVOICE'] = 'Rechnung';
 $lang['de_DE']['SSReport']['PRINT'] = 'drucken';
