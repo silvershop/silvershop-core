@@ -140,12 +140,22 @@ class AccountPage_Controller extends Page_Controller {
 		Requirements::themedCSS('Order');
 		Requirements::themedCSS('Order_print', 'print');
 		$accountPageLink = AccountPage::find_link();
-		if($order = $this->getOrder()) {
-			$paymentform = ($order->TotalOutstanding() > 0) ? $this->CancelForm() : null;
-			return array(
-				'Order' => $order,
-				'Form' => $paymentform
-			);
+		if($orderID = $request->param('ID')) {
+			if($order = $this->getOrder()) {
+
+				$paymentform = ($order->TotalOutstanding() > 0) ? $this->CancelForm() : null;
+
+				return array(
+					'Order' => $order,
+					'Form' => $paymentform
+				);
+			}
+			else {
+				return array(
+					'Order' => false,
+					'Message' => 'You do not have any order corresponding to this ID. However, you can <a href="' . $accountPageLink . '">edit your own personal details and view your orders.</a>.'
+				);
+			}
 		}
 		else {
 			return array(
