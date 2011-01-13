@@ -432,12 +432,13 @@ class ShoppingCart extends Controller {
 	 * Either increments the count or creates a new item.
 	 */
 	function additem($request) {
-		if ($itemId = $request->param('ID')) {
+		if ($itemId = $request->param('ID') && $product = $this->buyableFromURL()) {
+			
 			if($item = ShoppingCart::get_item($this->urlFilter())) {
 				ShoppingCart::add_item($item);
 				return self::return_data("success","Extra item added"); //TODO: i18n
 			}else {
-				if($orderitem = $this->getNewOrderItem()) {
+				if($orderitem = $this->create_order_item($product)) {
 					ShoppingCart::add_new_item($orderitem);
 					return self::return_data("success","Item added"); //TODO: i18n
 				}
@@ -468,13 +469,15 @@ class ShoppingCart extends Controller {
 	 */
 	function setquantityitem($request) {
 		$quantity = $request->getVar('quantity');
-		if (is_numeric($quantity)) {
+		$product = $this->buyableFromURL();
+		if (is_numeric($quantity) && $product) {
 			$item = ShoppingCart::get_item($this->urlFilter());
 			if($quantity > 0){
 				if(!$item){
-					$item = $this->getNewOrderItem();
-					$item->Quantity = $quantity;
-					self::add_new_item($item);
+					if($item = self::create_order_item($product,$quantity)){
+						$item->Quantity = $quantity;
+						self::add_new_item($item);
+					}
 				}
 				else{
 					ShoppingCart::set_quantity_item($item, $quantity);
@@ -527,7 +530,7 @@ class ShoppingCart extends Controller {
 		$variationId = $request->param('OtherID');
 		$productId = $request->param('ID');
 		
-		return get_buyable_by_id($productId,$variationId);
+		return self::get_buyable_by_id($productId,$variationId);
 	}
 	
 
