@@ -25,21 +25,25 @@ class SiteConfigEcommerceExtras extends DataObjectDecorator {
 	}
 
 	function updateCMSFields(FieldSet &$fields) {
-		$fields->addFieldToTab("Root.Webshop", new HeaderField("ProductDisplay", "Product Display", 3));
-		$fields->addFieldToTab("Root.Webshop", new NumericField("NumberOfProductsPerPage", "Numer of products per page"));
-		//new section
-		$fields->addFieldToTab("Root.Webshop", new HeaderField("Checkout", "Checkout", 3));
-		$fields->addFieldToTab("Root.Webshop", new CheckboxField("ShopClosed", "Shop closed"));
-		$fields->addFieldToTab("Root.Webshop", new TextField("PostalCodeLink", "Postal code link"));
-		$fields->addFieldToTab("Root.Webshop", new TextField("PostalCodeLabel", "Postal code label"));
-		//new section
-		$fields->addFieldToTab("Root.Webshop", new HeaderField("Emails", "Emails to Customer", 3));
-		$fields->addFieldToTab("Root.Webshop", new EmailField("ReceiptEmail", "From email address for shop receipt (e.g. sales@myshop.com)"));
-		$fields->addFieldToTab("Root.Webshop", new TextField("ReceiptSubject", "Subject for shop receipt email ('{OrderNumber}' will be replaced with actual order number - e.g. 'thank you for your order (#{OrderNumber})');"));
-		$fields->addFieldToTab("Root.Webshop", new TextField("DispatchEmailSubject", "Default subject for dispatch email (e.g. your order has been sent)"));
-		$fields->addFieldToTab("Root.Webshop", new EmailField("SendInvoiceOnSubmit", "Send an invoice to customer as soon as he/she submits order (before payment)"));
-
-		//new section
+		
+		$shoptabs = new TabSet('Shop',
+			$productstab = new Tab('Products',
+				new CheckboxField("ShopClosed", "Shop closed"),
+				new NumericField("NumberOfProductsPerPage", "Numer of products per page"),
+				new TextField("PostalCodeLink", "Postal code link"),
+				new TextField("PostalCodeLabel", "Postal code label")
+			),
+			$checkouttab = new Tab('Emails',
+				 new EmailField("ReceiptEmail", "From email address for shop receipt (e.g. sales@myshop.com)"),
+				 new TextField("ReceiptSubject", "Subject for shop receipt email ('{OrderNumber}' will be replaced with actual order number - e.g. 'thank you for your order (#{OrderNumber})');"),
+				 new TextField("DispatchEmailSubject", "Default subject for dispatch email (e.g. your order has been sent)"),
+				 new EmailField("SendInvoiceOnSubmit", "Send an invoice to customer as soon as he/she submits order (before payment)")
+			)
+			/*$processtab = new Tab('OrderProcess',
+				new LiteralField('op','Include a drag-and-drop interface for customising order steps (Like WidgetArea)')
+			)*/
+		);
+		$fields->addFieldToTab('Root.Shop',$shoptabs);
 		return $fields;
 	}
 
