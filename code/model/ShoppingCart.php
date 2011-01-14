@@ -230,7 +230,9 @@ class ShoppingCart extends Controller {
 		}
 		$order = self::current_order();
 		$fil = ($filter && $filter != "") ? " AND $filter" : "";
-		return DataObject::get_one('OrderItem', "\"OrderID\" = $order->ID AND \"ProductID\" = $id". $fil);
+				
+		$item = DataObject::get_one('OrderItem', "\"OrderID\" = $order->ID AND \"ProductID\" = $id". $fil);
+		return $item;
 	}
 
 	/**
@@ -315,21 +317,20 @@ class ShoppingCart extends Controller {
 	 *	 otherwise it updates default filter with passed parameters
 	 */
 	static function get_param_filter($params = array()){
-
 		if(!self::$paramfilters) return ""; //no use for this if there are not parameters defined
-		$bt = defined('DB::USE_ANSI_SQL') ? "\"" : "`";
-		$temparray = self::$paramfilters;
 		$outputarray = array();
-
-		foreach(self::$paramfilters as $field => $value){
-			if(isset($params[$field])){
-				//TODO: convert to $dbfield->prepValueForDB() when Boolean problem figured out
-				$temparray[$field] = Convert::raw2sql($params[$field]);
-			}
-			$outputarray[] = "\"".$field."\" = ".$temparray[$field];
+		foreach($p = self::get_clean_param_array($params) as $field => $value){
+			$outputarray[] = "\"".$field."\" = ".Convert::raw2sql($value);
 		}
-
 		return implode(" AND ",$outputarray);
+	}
+	
+	static function get_clean_param_array($params = array()){
+		$arr = array();
+		foreach(self::$paramfilters as $field => $value){
+			$arr[$field] = (isset($params[$field])) ? $params[$field] : $value; 
+		}
+		return $arr;
 	}
 
 
@@ -438,7 +439,7 @@ class ShoppingCart extends Controller {
 				ShoppingCart::add_item($item);
 				return self::return_data("success","Extra item added"); //TODO: i18n
 			}else {
-				if($orderitem = $this->create_order_item($product)) {
+				if($orderitem = $this->create_order_item($product,1,self::get_clean_param_array($this->getRequest()->getVars()))) {
 					ShoppingCart::add_new_item($orderitem);
 					return self::return_data("success","Item added"); //TODO: i18n
 				}
@@ -474,7 +475,7 @@ class ShoppingCart extends Controller {
 			$item = ShoppingCart::get_item($this->urlFilter());
 			if($quantity > 0){
 				if(!$item){
-					if($item = self::create_order_item($product,$quantity)){
+					if($item = self::create_order_item($product,$quantity,self::get_clean_param_array($this->getRequest()->getVars()))){
 						$item->Quantity = $quantity;
 						self::add_new_item($item);
 					}
