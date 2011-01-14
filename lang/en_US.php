@@ -58,7 +58,7 @@ $lang['en_US']['CheckoutPage']['SINGULARNAME'] = array(
 	'Singular name of the object, used in dropdowns and to generally identify a single object in the interface'
 );
 $lang['en_US']['CheckoutPage.ss']['CHECKOUT'] = 'Checkout';
-$lang['en_US']['CheckoutPage.ss']['ORDERSTATUS'] = 'Order Status';
+$lang['en_US']['CheckoutPage.ss']['ORDERSTEP'] = 'Order Status';
 $lang['en_US']['CheckoutPage.ss']['PROCESS'] = 'Process';
 $lang['en_US']['ChequePayment']['MESSAGE'] = 'Payment accepted via Cheque. Please note : products will not be shipped until payment has been received.';
 $lang['en_US']['ChequePayment']['PLURALNAME'] = array(
