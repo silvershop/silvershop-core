@@ -26,6 +26,23 @@ class CartPage extends Page{
 		return $fields;
 	}
 
+	function MenuTitle() {
+		$count = 0;
+		$cart = ShoppingCart::current_order();
+		if($cart) {
+			if($cart = $this->Cart()) {
+				if($items = $cart->Items()) {
+					$count = $items->count();
+				}
+			}
+		}
+		$v = $this->MenuTitle;
+		if($count) {
+			$v .= " (".$count.")";
+		}
+		return $v;
+	}
+
 }
 
 class CartPage_Controller extends Page_Controller{

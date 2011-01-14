@@ -54,7 +54,7 @@ class AllOrdersReport extends SS_Report {
 			//new TextField('FirstName','First Name'),
 			//new TextField('Surname','Surname'),
 			//new NumericField('Total','Total'),
-			$ddf = new DropdownField('StatusID','Status',DataObject::get("OrderStatus")->toDropdownMap())
+			$ddf = new DropdownField('StatusID','Status',DataObject::get("OrderStep")->toDropdownMap())
 		);
 		$ddf->setHasEmptyDefault(true);
 		return $fields;

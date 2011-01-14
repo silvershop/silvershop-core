@@ -88,7 +88,7 @@ class ShoppingCart extends Controller {
 
 	public static function delete_old_carts(){
 		$time = date('Y-m-d H:i:s', strtotime("-".self::$clear_days." days"));
-		$generalWhere = "\"StatusID\" = ".OrderStatus::get_status_id("CREATED")." AND \"LastEdited\" < '$time'";
+		$generalWhere = "\"StatusID\" = ".OrderStep::get_status_id("CREATED")." AND \"LastEdited\" < '$time'";
 		if(self::$never_delete_if_linked_to_member) {
 			$oldcarts = DataObject::get('Order',$generalWhere." AND \"Member\".\"ID\" IS NULL", $sort = "", $join = "LEFT JOIN \"Member\" ON \"Member\".\"ID\" = \"Order\".\"MemberID\" ");
 		}
@@ -125,9 +125,9 @@ class ShoppingCart extends Controller {
 				if(is_array($cartIDParts) && count($cartIDParts) == 2) {
 					$orders = DataObject::get(
 						'Order',
-						"\"OrderStatus\".\"CanEdit\" = 1 AND \"Order\".\"ID\" = '".intval($cartIDParts[0])."' AND \"Order\".\"SessionID\" = '".$cartIDParts[1]."'",
+						"\"OrderStep\".\"CanEdit\" = 1 AND \"Order\".\"ID\" = '".intval($cartIDParts[0])."' AND \"Order\".\"SessionID\" = '".$cartIDParts[1]."'",
 						"\"LastEdited\" DESC",
-						"INNER JOIN \"OrderStatus\" ON \"OrderStatus\" .\"ID\" = \"Order\".\"StatusID\"",
+						"INNER JOIN \"OrderStep\" ON \"OrderStep\" .\"ID\" = \"Order\".\"StatusID\"",
 						"1"
 					);
 					if($orders) {
@@ -413,7 +413,7 @@ class ShoppingCart extends Controller {
 		$orderItem = self::find_or_make_order_item($buyable, $parameters = null);
 		if($orderItem) {
 			if($orderItem->ID){
-				self::add_item($orderItem, $quantity);
+				self::increment_item($orderItem, $quantity);
 			}
 			else{
 				self::add_new_item($orderItem, $quantity);
@@ -500,13 +500,11 @@ class ShoppingCart extends Controller {
 	}
 
 	function incrementitem($request) {
-		$this->additem($request);
-		return $this->returnMessage("failure",_t("ShoppingCart.ADDITIONALITEMCOULDNOTBEADDED", "Additional item could not be added."));
+		return $this->additem($request);
 	}
 
 	function decrementitem($request) {
-		$this->additem($request);
-		return $this->returnMessage("failure",_t("ShoppingCart.SUPERFLUOUSITEMCOULDNOTBEREMOVED", "Superfluous item could not be removed."));
+		return $this->additem($request);
 	}
 
 	function removeitem($request) {
@@ -619,8 +617,11 @@ class ShoppingCart extends Controller {
 			$obj = new self::$response_class();
 			return $obj->ReturnCartData($status, $message);
 		}
+		else {
 		//TODO: set session / status in session (like Form sessionMesssage)
-		Director::redirectBack();
+			Director::redirectBack();
+			return;
+		}
 	}
 
 

@@ -15,7 +15,7 @@ class StoreAdmin extends ModelAdmin{
 
 	//static $url_priority = 50;
 
-	public static $managed_models = array('Order','OrderStatus', 'OrderStatusLog', 'OrderItem', 'OrderModifier', 'OrderEmailRecord', 'ShippingAddress','Payment');
+	public static $managed_models = array('Order','OrderStep', 'OrderStatusLog', 'OrderItem', 'OrderModifier', 'OrderEmailRecord', 'ShippingAddress','Payment');
 		public static function set_managed_models(array $array) {self::$managed_models = $array;}
 		public static function add_managed_model($item) {self::$managed_models[] = $item;}
 		public static function remove_managed_model($item) {

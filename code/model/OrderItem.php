@@ -218,6 +218,13 @@ HTML;
 		return "Title not found"; //TODO: ugly to fall back on
 	}
 
+	function Link() {
+		if($item = $this->Buyable()) {
+			return $item->Link();
+		}
+		return ""; //TODO: ugly to fall back on
+	}
+
 	function ProductTitle() {
 		user_error("This function has been replaced by BuyableTitle", E_USER_NOTICE);
 		return $this->BuyableTitle();

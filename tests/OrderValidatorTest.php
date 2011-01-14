@@ -3,7 +3,7 @@
 /**
  * Unit Test for OrderValidator. Test if the order validator will be used during order processing.
  * Requires {$link OrderValidatorTest_MyValidator} as order validator classes.
- * 
+ *
  * @package ecommerce
  * @subpackage tests
  */
@@ -13,17 +13,17 @@ class OrderValidatorTest extends FunctionalTest {
 
 	function setUp() {
 		parent::setUp();
-		
+
 		/* Set the validator to test */
 		Order::set_default_validator('OrderValidatorTest_MyValidator');
 	}
 
 	/**
-	 * Test UI order validator for quantity test. This test checks if the 
-	 * validation class will be executed.  
+	 * Test UI order validator for quantity test. This test checks if the
+	 * validation class will be executed.
 	 */
 	function testOrderValidator_BeforeProcessing() {
-		
+
 		$member= $this->objFromFixture('Member','member');
 		$order = $this->objFromFixture('Order','order_processor_test');
 
@@ -34,11 +34,11 @@ class OrderValidatorTest extends FunctionalTest {
 			$this->assertFalse(1==1,"Exception expected (Member not set), but hasn't been thrown.");
 		}
 		catch(Exception $e) {
-			
+
 			$this->assertTrue($e->getMessage() == OrderValidatorTest_MyValidator::$err_NoMember,$e->getMessage());
 		}
-		
-		// (2) set member (quantity is okay) 
+
+		// (2) set member (quantity is okay)
 		$order->MemberId = $member->ID;
 		$order->write();
 
@@ -48,7 +48,7 @@ class OrderValidatorTest extends FunctionalTest {
 			$item->Quantity = 0;
 			$item->write();
 		}
-		
+
 		//  (3) test with quanity == 0 shall fail!
 		try {
 			$order->validate_onBeforeProcessing();
@@ -76,8 +76,8 @@ class OrderValidatorTest extends FunctionalTest {
 	}
 
 	/**
-	 * Test UI order validator for quantity test. This test checks if the 
-	 * validation class will be executed.  
+	 * Test UI order validator for quantity test. This test checks if the
+	 * validation class will be executed.
 	 */
 	function testOrderValidator_AfterProcessing_Member() {
 		return;
@@ -91,22 +91,22 @@ class OrderValidatorTest extends FunctionalTest {
 			$this->assertFalse(1==1,"Exception expected (Member not set), but hasn't been thrown.");
 		}
 		catch(Exception $e) {
-			
+
 			$this->assertTrue($e->getMessage() == OrderValidatorTest_MyValidator::$err_NoMember,$e->getMessage());
 		}
-		
-		// (2) set member (quantity is okay) 
+
+		// (2) set member (quantity is okay)
 		$order->MemberId = $member->ID;
 		$order->write();
 
 		// (3) set quantity to 0 and test should fail
 		$orderItems = $order->Items();
-		
+
 		foreach ($orderItems as $item) {
 			$item->Quantity = 0;
 			$item->write();
 		}
-		
+
 		//  (3) test with quaniity == 0 shall fail!
 		try {
 			$order->validate_onAfterProcessing();
@@ -118,7 +118,7 @@ class OrderValidatorTest extends FunctionalTest {
 
 		// (4) set quantity to 1 and test should pass
 		$orderItems = $order->Items();
-		
+
 		foreach ($orderItems as $item) {
 			$item->Quantity = 1;
 			$item->write();
@@ -130,20 +130,20 @@ class OrderValidatorTest extends FunctionalTest {
 			$this->assertFalse(1==1,"Exception expected (Order Status is not Query), but Before-Processing didn't throw it.");
 		}
 		catch(Exception $e) {
-			$this->assertTrue($e->getMessage() == OrderValidatorTest_MyValidator::$err_InvalidOrderStatus,$e->getMessage());
+			$this->assertTrue($e->getMessage() == OrderValidatorTest_MyValidator::$err_InvalidOrderStep,$e->getMessage());
 		}
 
 		// set status and test should go through
 		$order->Status = 'Query';
 		$order->write();
-		
+
 		try {
 			$order->validate_onAfterProcessing();
 		}
 		catch(Exception $e) {
 			$this->assertFalse(1==1,"Before-Processing throw an exception without a valid reason.");
-		}	
-		return;			
+		}
+		return;
 	}
 }
 
@@ -161,7 +161,7 @@ class OrderValidatorTest_MyValidator extends OrderValidator implements TestOnly 
 
 	static $err_NoMember           =  'Unit Test: Member not set.';
 	static $err_InsufficientAmount =  'Unit Test: Insufficient amount.';
-	static $err_InvalidOrderStatus =  'Unit Test: Order Status not correct. Order Processor failed';
+	static $err_InvalidOrderStep =  'Unit Test: Order Status not correct. Order Processor failed';
 
 	/**
 	 * Before Processing: Unit test example.
@@ -170,8 +170,8 @@ class OrderValidatorTest_MyValidator extends OrderValidator implements TestOnly 
 		if ($order == null) {
 			throw new Exception("Internal Error: no order object has been found.");
 		}
-		$this->checkOrderMember($order);	
-		$this->checkOrderItem_Quantity($order);				
+		$this->checkOrderMember($order);
+		$this->checkOrderItem_Quantity($order);
 	}
 
 	/**
@@ -182,19 +182,19 @@ class OrderValidatorTest_MyValidator extends OrderValidator implements TestOnly 
 			throw new Exception("Internal Error: no order object has been found.");
 		}
 
-		$this->checkOrderMember($order);	
-		$this->checkOrderItem_Quantity($order);	
-		$this->checkOrderStatus($order);
+		$this->checkOrderMember($order);
+		$this->checkOrderItem_Quantity($order);
+		$this->checkOrderStep($order);
 	}
-	
+
 	/**
-	 * Check if the order has a relation ship to member. 
+	 * Check if the order has a relation ship to member.
 	 */
 	protected function checkOrderMember($order) {
-		
+
 		$memberID = $order->MemberId;
 		if ($memberID == null or $memberID == 0) {
-			throw new Exception(OrderValidatorTest_MyValidator::$err_NoMember);			
+			throw new Exception(OrderValidatorTest_MyValidator::$err_NoMember);
 		}
 	}
 
@@ -202,21 +202,21 @@ class OrderValidatorTest_MyValidator extends OrderValidator implements TestOnly 
 	 * Check if the quantity of all order items is equal or greater than 1.
 	 */
 	protected function checkOrderItem_Quantity($order) {
-		
+
 		$orderItems = $order->Items();
 		foreach ($orderItems as $item) {
 			$quantity = (int)$item->Quantity;
 			if ($quantity <= 0) {
 				throw new Exception(OrderValidatorTest_MyValidator::$err_InsufficientAmount);
 			}
-		}		
-	}
-	
-	protected function checkOrderStatus($order) {
-		if ($order->Status != 'Query') {
-			throw new Exception(OrderValidatorTest_MyValidator::$err_InvalidOrderStatus);			
 		}
-		
+	}
+
+	protected function checkOrderStep($order) {
+		if ($order->Status != 'Query') {
+			throw new Exception(OrderValidatorTest_MyValidator::$err_InvalidOrderStep);
+		}
+
 	}
 }
 ?>

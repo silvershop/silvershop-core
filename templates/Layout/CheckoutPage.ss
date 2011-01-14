@@ -1,5 +1,5 @@
 <div id="Checkout">
-	<h3 class="process"><span><% _t("PROCESS","Process") %>:</span> &nbsp;<span class="current"><% _t("CHECKOUT","Checkout") %></span> &nbsp;&gt;&nbsp;<% _t("ORDERSTATUS","Order Status") %></h3>
+	<h3 class="process"><span><% _t("PROCESS","Process") %>:</span> &nbsp;<span class="current"><% _t("CHECKOUT","Checkout") %></span> &nbsp;&gt;&nbsp;<% _t("ORDERSTEP","Order Status") %></h3>
 
 	<h1 class="pagetitle">$Title</h1>
 	<div id="ContentHolder">

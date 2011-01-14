@@ -10,13 +10,18 @@
 
 class EcomQuantityField extends NumericField {
 
+	protected static $hide_plus_and_minus = false;
+		static function get_hide_plus_and_minus(){return self::$hide_plus_and_minus;}
+		static function set_hide_plus_and_minus($v){self::$hide_plus_and_minus = $v;}
+
 	protected $item = null;
 	protected $parameters = null;
 	protected $classes = array('ajaxQuantityField');
-	protected $template = 	'EcomQuantityField';
+	protected $template = 'EcomQuantityField';
 
 	function __construct($object, $parameters = null){
-
+		Requirements::javascript("ecommerce/javascript/EcomQuantityField.js");
+		Requirements::customScript("EcomQuantityField.set_hidePlusAndMins(".(EcomQuantityField::get_hide_plus_and_minus() ? 1 : 0).")");
 		if(Object::has_extension($object->class,'Buyable')){
 			$this->item = ShoppingCart::get_order_item_by_buyableid($object->ID,$object->ClassName.Buyable::get_order_item_class_name_post_fix(),$parameters);
 			 //provide a 0-quantity facade item if there is no such item in cart

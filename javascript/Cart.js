@@ -5,45 +5,17 @@
 (function($){
 	$(document).ready(
 		function() {
-			ecommerce_cart.init();
+			Cart.init();
 		}
 	);
 
 })(jQuery);
 
-ecommerce_cart = {
+Cart = {
 
-	hidePlusAndMinus: true,
-		set_hidePlusAndMins: function(v) {this.hidePlusAndMinus = v;},
 
 	init: function () {
-		ecommerce_cart.updateCartRows();
-		jQuery('input.ajaxQuantityField').each(
-			function() {
-				if(ecommerce_cart.hidePlusAndMinus) {
-					jQuery(this).siblings("a.removeOneLink, a.addOneLink").hide();
-				}
-				jQuery(this).removeAttr('disabled');
-				jQuery(this).change(
-					function() {
-						var name = jQuery(this).attr('name')+ '_SetQuantityLink';
-						var setQuantityLink = jQuery('[name=' + name + ']');
-						if(jQuery(setQuantityLink).length > 0) {
-							setQuantityLink = jQuery(setQuantityLink).get(0);
-							if(! this.value) {
-								this.value = 0;
-							}
-							else {
-								this.value = this.value.replace(/[^0-9]+/g, '');
-							}
-							var url = jQuery('base').attr('href') + setQuantityLink.value + '?quantity=' + this.value;
-							jQuery("body").addClass("loading");
-							jQuery.getJSON(url, null, ecommerce_cart.setChanges);
-						}
-					}
-				);
-			}
-		);
+		Cart.updateCartRows();
 		jQuery('select.ajaxCountryField').each(
 			function() {
 				jQuery(this).removeAttr('disabled');
@@ -55,7 +27,7 @@ ecommerce_cart = {
 							setCountryLink = jQuery(setCountryLink).get(0);
 							var url = jQuery('base').attr('href') + setCountryLink.value + this.value + "/";
 							jQuery("body").addClass("loading");
-							jQuery.getJSON(url, null, ecommerce_cart.setChanges);
+							jQuery.getJSON(url, null, Cart.setChanges);
 						}
 					}
 				);
@@ -68,7 +40,7 @@ ecommerce_cart = {
 			var change = changes[i];
 			if(typeof(change.parameter) != 'undefined' && typeof(change.value) != 'undefined') {
 				var parameter = change.parameter;
-				var value = ecommerce_cart.escapeHTML(change.value);
+				var value = Cart.escapeHTML(change.value);
 				if(change.id) {
 					var id = '#' + change.id;
 					if(parameter == 'innerHTML'){

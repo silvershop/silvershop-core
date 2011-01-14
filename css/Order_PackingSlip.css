@@ -28,7 +28,7 @@ h2.pageTitle {
 	font-size:2em;
 }
 #OrderInformation div,
-#OrderStatusForm,
+#OrderStepForm,
 #OrderStatusLog {
 	margin:20px;
 	background:#fff;

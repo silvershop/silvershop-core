@@ -9,28 +9,13 @@
 
 class EcommerceSiteTreeExtension extends DataObjectDecorator {
 
-	function MenuTitleEcommerce() {
-		$v = $this->owner->MenuTitle;
-		if($this->owner instanceOf CheckoutPage || $this->owner instanceOf CartPage ) {
-			$count = 0;
-			$cart = ShoppingCart::current_order();
-			if($cart) {
-				if($cart = $this->Cart()) {
-					if($items = $cart->Items()) {
-						$count = $items->count();
-					}
-				}
-			}
-			if($count) {
-				$v .= " (".$count.")";
-			}
-		}
-		return $v;
-	}
-
 	function ShopClosed() {
 		$siteConfig = DataObject::get_one("SiteConfig");
 		return $siteConfig->ShopClosed;
+	}
+
+	function Cart() {
+		return ShoppingCart::current_order();
 	}
 
 }
@@ -43,11 +28,6 @@ class EcommerceSiteTreeExtension_Controller extends Extension {
 
 	function SimpleCartLinkAjax() {
 		return ShoppingCart::get_url_segment()."/showcart/";
-	}
-
-	function Cart() {
-		return ShoppingCart::current_order();
-
 	}
 
 	public function NumItemsInCart() {

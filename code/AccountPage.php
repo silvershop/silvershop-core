@@ -206,6 +206,7 @@ class AccountPage_Controller extends Page_Controller {
 	function payoutstanding($data,$form){
 		$data = Convert::raw2sql($data);
 		$order = $this->getOrder();
+		//to do - do we need to check if there is an order at all?
 		return EcommercePayment::process_payment_form_and_return_next_step($order, $data, $form);
 	}
 
@@ -228,4 +229,3 @@ class AccountPage_Controller extends Page_Controller {
 
 
 }
-

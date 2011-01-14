@@ -13,15 +13,13 @@ class Order extends DataObject {
 		'SessionID' => "Varchar(32)", //so that in the future we can link sessions with Orders.... One session can have several orders, but an order can onnly have one session
 		'Country' => 'Varchar(3)',
 		'UseShippingAddress' => 'Boolean',
-		'CustomerOrderNote' => 'Text',
-		'ReceiptSent' => 'Boolean',
-		'Printed' => 'Boolean'
+		'CustomerOrderNote' => 'Text'
 	);
 
 	public static $has_one = array(
 		'Member' => 'Member',
 		'ShippingAddress' => 'ShippingAddress',
-		'Status' => 'OrderStatus',
+		'Status' => 'OrderStep',
 		'CancelledBy' => 'Member'
 	);
 
@@ -134,7 +132,7 @@ class Order extends DataObject {
 		static function get_order_id_start_number() {return self::$order_id_start_number;}
 
 	public static function get_order_status_options() {
-		return DataObject::get("OrderStatus");
+		return DataObject::get("OrderStep");
 	}
 
 /*******************************************************
@@ -333,13 +331,24 @@ class Order extends DataObject {
 
 	function tryToFinaliseOrder() {
 		$this->init();
-		$this->submit();
-		$this->pay();
-		$this->confirm();
-		$this->send();
+		$lastStatusID = 0;
+		while($order->StatusID != $lastStatusID) {
+			$this->doNextStatus();
+		}
+	}
+
+	public function doNextStatus($object = null, $codeHint = '') {
+		if($newStatusObject = $this->MyStatus()->ifReadyReturnNextStepObject($this, $codeHint)) {
+			if($newStatusObject->initStep($object)) {
+				$this->StatusID = $newStatusObject->ID;
+				$this->write();
+			}
+		}
+		return $this;
 	}
 
 	// ------------------------------------ STEP 1 ------------------------------------
+
 
 	public function init($sessionID = null) {
 		if(!$sessionID) {
@@ -348,71 +357,42 @@ class Order extends DataObject {
 		$this->SessionID = $sessionID;
 		//can it create????
 		$this->initModifiers();
-		if($newStatusID = OrderStatus::get_status_id("CREATED")) {
+		if($newStatusID = OrderStep::get_status_id("CREATED")) {
 			$this->StatusID = $newStatusID;
 		}
 		else {
-			user_error("No CREATED OrderStatus has been setup ... please Run Dev/Build", E_USER_WARNING);
+			user_error("No CREATED OrderStep has been setup ... please Run Dev/Build", E_USER_WARNING);
 		}
 		$this->extend('onInit', $sessionID);
 		$this->write();
 		return $this;
 	}
-
 	//------------------------------------ STEP 2------------------------------------
 
 	public function submit($member = null) {
-		$this->calculateModifiers();
-		if($newStatusID = $this->MyStatus()->ifReadyReturnNewStatusID("SUBMITTED", $this)) {
-			if(!$member) {
-				$member = Member::currentUser();
-			}
-			if(!$member) {
-				user_error("Can not submit an order without a customer.", E_USER_ERROR);
-			}
-			$this->MemberID = $member->ID;
-			$this->StatusID = $newStatusID;
-			//re-write all attributes and modifiers to make sure they are up-to-date before they can't be changed again
-			$this->extend('onSubmit', $member);
-			$this->write();
-		}
-		return $this;
+		return $this->doNextStatus($member, "SUBMITTED");
 	}
 
 	// ------------------------------------ STEP 3 ------------------------------------
-	// can run this function several times
-	public function pay($payment = null) {
-		if($newStatusID = $this->MyStatus()->ifReadyReturnNewStatusID("PAID", $this)) {
-			$this->StatusID = $newStatusID;
-			if(!$this->ReceiptSent){
-				$this->sendReceipt();
-			}
-			$this->extend('onPay', $payment);
-			$this->write();
-		}
-		return $this;
+	/**
+	 *@param $payments = DataObjectSet of Payment(s)
+	 *
+	 *
+	 **/
+	public function pay($payments = null) {
+		return $this->doNextStatus($payments, "PAID");
 	}
 
 	// ------------------------------------ STEP 4 ------------------------------------
 
 	public function confirm(OrderStatusLog_PaymentCheck $log = null) {
-		if($newStatusID = $this->MyStatus()->ifReadyReturnNewStatusID("CONFIRMED", $this)) {
-			$this->StatusID = $newStatusID;
-			$this->extend('onConfirm', $paymentCheck);
-			$this->write();
-		}
-		return $this;
+		return $this->doNextStatus($log, "CONFIRMED");
 	}
 
 	// ------------------------------------ STEP 5 ------------------------------------
 
 	public function send(OrderStatusLog_Dispatch $log = null) {
-		if($newStatusID = $this->MyStatus()->ifReadyReturnNewStatusID("SENT", $this)) {
-			$this->StatusID = $newStatusID;
-			$this->extend('onSend', $orderStatusLog);
-			$this->write();
-		}
-		return $this;
+		return $this->doNextStatus($log, "SENT");
 	}
 
 /*******************************************************
@@ -421,10 +401,10 @@ class Order extends DataObject {
 	public function MyStatus() {
 		$obj = null;
 		if($this->StatusID) {
-			$obj = DataObject::get_by_id("OrderStatus", $this->StatusID);
+			$obj = DataObject::get_by_id("OrderStep", $this->StatusID);
 		}
 		if(!$obj) {
-			$obj = DataObject::get_one("OrderStatus");
+			$obj = DataObject::get_one("OrderStep");
 		}
 		$this->StatusID = $obj->ID;
 		return $obj;
@@ -499,8 +479,7 @@ class Order extends DataObject {
 	 */
 	function sendReceipt() {
 		$this->sendEmail('Order_ReceiptEmail');
-		$subject = self::get_receipt_subject();
-		$subject = str_replace("{OrderNumber}", $this->ID, $subject);
+		$subject = str_replace("{OrderNumber}", $this->ID,self::get_receipt_subject());
 		$purchaseCompleteMessage = DataObject::get_one('CheckoutPage')->PurchaseComplete;
 		$replacementArray = array(
 			'PurchaseCompleteMessage' => $purchaseCompleteMessage,
@@ -508,6 +487,18 @@ class Order extends DataObject {
 		);
 		if($outcome = $this->sendEmail("Order_ReceiptEmail", $subject, $replacementArray, true)) {
 			$this->ReceiptSent = true;
+			$this->write();
+		}
+		return $outcome;
+	}
+	function sendInvoice() {
+		$this->sendEmail('Order_ReceiptEmail');
+		$subject = str_replace("{OrderNumber}", $this->ID,self::get_receipt_subject());
+		$replacementArray = array(
+			'Order' => $this
+		);
+		if($outcome = $this->sendEmail("Order_ReceiptEmail", $subject, $replacementArray, true)) {
+			$this->InvoiceSent = true;
 			$this->write();
 		}
 		return $outcome;
@@ -1154,8 +1145,8 @@ class Order extends DataObject {
 					switch($row["Status"]) {
 						case "Cart":
 							if(!$CartObject) {
-								if(!($CartObject = DataObject::get_one("OrderStatus", "\"Code\" = 'CREATED'"))) {
-									singleton('OrderStatus')->requireDefaultRecords();
+								if(!($CartObject = DataObject::get_one("OrderStep", "\"Code\" = 'CREATED'"))) {
+									singleton('OrderStep')->requireDefaultRecords();
 								}
 							}
 							DB::query("UPDATE \"Order\" SET StatusID = ".$CartObject->ID." WHERE \"Order\".\"ID\" = ".$row["ID"]);
@@ -1163,8 +1154,8 @@ class Order extends DataObject {
 						case "Query":
 						case "Unpaid":
 							if(!$UnpaidObject) {
-								if(!($UnpaidObject = DataObject::get_one("OrderStatus", "\"Code\" = 'SUBMITTED'"))) {
-									singleton('OrderStatus')->requireDefaultRecords();
+								if(!($UnpaidObject = DataObject::get_one("OrderStep", "\"Code\" = 'SUBMITTED'"))) {
+									singleton('OrderStep')->requireDefaultRecords();
 								}
 							}
 							DB::query("UPDATE \"Order\" SET StatusID = ".$UnpaidObject->ID." WHERE \"Order\".\"ID\" = ".$row["ID"]);
@@ -1172,8 +1163,8 @@ class Order extends DataObject {
 						case "Processing":
 						case "Paid":
 							if(!$PaidObject) {
-								if(!($PaidObject = DataObject::get_one("OrderStatus", "\"Code\" = 'PAID'"))) {
-									singleton('OrderStatus')->requireDefaultRecords();
+								if(!($PaidObject = DataObject::get_one("OrderStep", "\"Code\" = 'PAID'"))) {
+									singleton('OrderStep')->requireDefaultRecords();
 								}
 							}
 							DB::query("UPDATE \"Order\" SET StatusID = ".$PaidObject->ID." WHERE \"Order\".\"ID\" = ".$row["ID"]);
@@ -1181,16 +1172,16 @@ class Order extends DataObject {
 						case "Sent":
 						case "Complete":
 							if(!$PaidObject) {
-								if(!($SentObject = DataObject::get_one("OrderStatus", "\"Code\" = 'SENT'"))) {
-									singleton('OrderStatus')->requireDefaultRecords();
+								if(!($SentObject = DataObject::get_one("OrderStep", "\"Code\" = 'SENT'"))) {
+									singleton('OrderStep')->requireDefaultRecords();
 								}
 							}
 							DB::query("UPDATE \"Order\" SET StatusID = ".$SentObject->ID." WHERE \"Order\".\"ID\" = ".$row["ID"]);
 							break;
 						case "AdminCancelled":
 							if(!$AdminCancelledObject) {
-								if(!($AdminCancelledObject  = DataObject::get_one("OrderStatus", "\"Code\" = 'SENT'"))) {
-									singleton('OrderStatus')->requireDefaultRecords();
+								if(!($AdminCancelledObject  = DataObject::get_one("OrderStep", "\"Code\" = 'SENT'"))) {
+									singleton('OrderStep')->requireDefaultRecords();
 								}
 							}
 							if(!$adminID) {
@@ -1203,8 +1194,8 @@ class Order extends DataObject {
 							break;
 						case "MemberCancelled":
 							if(!$MemberCancelledObject) {
-								if(!($MemberCancelledObject = DataObject::get_one("OrderStatus", "\"Code\" = 'SENT'"))) {
-									singleton('OrderStatus')->requireDefaultRecords();
+								if(!($MemberCancelledObject = DataObject::get_one("OrderStep", "\"Code\" = 'SENT'"))) {
+									singleton('OrderStep')->requireDefaultRecords();
 								}
 							}
 							DB::query("UPDATE \"Order\" SET StatusID = ".$MemberCancelledObject->ID.", \"CancelledByID\" = \"MemberID\" WHERE \"Order\".\"ID\" = '".$row["ID"]."'");

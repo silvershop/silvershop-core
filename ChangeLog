@@ -1,5 +1,34 @@
-Ecommerce ChangeLog
 
+
+Ecommerce ChangeLog
+14/Jan/2011
+config:
+- removed superfluous definitions
+AccountPage:
+- added to do
+CartPage:
+- added MenuTitle method
+CheckoutPage:
+- added MenuTitle method replacing  MenuTitleEcommerce
+All Classes:
+- replace OrderStatus with OrderStep
+ShoppingCart:
+- fixed bug in increment and decrement functions
+EcommerceSiteTreeExtension:
+- removed method MenuTitleEcommerc
+SiteTreeConfigEcommerceExtras
+- added several boolean fields (they may move again...!)
+EcomQtyField:
+- setup its own JS for this....
+Order:
+- further implemented steps concept, removing some hardcoded concepts
+OrderItem:
+- added Link method
+OrderStep:
+- further implemented steps concept, removing some hardcoded concepts
+
+
+------------------------------------------------------------------------------------
 11/Jan/2011
 Buyables:
 - created new way to add buyable: Buyable::add_class("Product");
