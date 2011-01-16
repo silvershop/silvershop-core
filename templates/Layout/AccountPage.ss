@@ -11,7 +11,7 @@
 		<ul>
 			<% control CompleteOrders %>
 				<li>
-					<a href="$Link" title="<% sprintf(_t("READMORE","Read more on Order #%s"),$ID) %>"><% _t("ORDER","Order #") %>{$ID}</a> ($Created.Nice)
+					<a href="$Link" title="<% sprintf(_t("AccountPage.ss.READMORE","Read more on Order #%s"),$ID) %>"><% _t("ORDER","Order #") %>{$ID}</a> ($Created.Nice)
 				</li>
 			<% end_control %>
 		</ul>
@@ -23,7 +23,7 @@
 		<ul>
 			<% control IncompleteOrders %>
 				<li>
-					<a href="$Link" title="<% sprintf(_t("READMORE","Read more on Order #%s"),$ID) %>"><% _t("ORDER","Order #") %>{$ID}</a> ($Created.Nice)
+					<a href="$Link" title="<% sprintf(_t("AccountPage.ss.READMORE","Read more on Order #%s"),$ID) %>"><% _t("ORDER","Order #") %>{$ID}</a> ($Created.Nice)
 				</li>
 			<% end_control %>
 		</ul>

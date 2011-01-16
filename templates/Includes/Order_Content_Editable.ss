@@ -16,7 +16,7 @@
 					<tr id="$TableID" class="$Classes hideOnZeroItems">
 						<td<% if Link %><% else %> id="$TableTitleID"<% end_if %> class="product title" scope="row">
 							<% if Link %>
-								<a id="$TableTitleID" href="$Link" title="<% sprintf(_t("READMORE","Click here to read more on &quot;%s&quot;"),$TableTitle) %>">$TableTitle</a>
+								<a id="$TableTitleID" href="$Link" title="<% sprintf(_t("Order_Content_Editable.ss.READMORE","Click here to read more on &quot;%s&quot;"),$TableTitle) %>">$TableTitle</a>
 							<% else %>
 								$TableTitle
 							<% end_if %>
@@ -28,7 +28,7 @@
 						<td class="right total" id="$TableTotalID">$Total.Nice</td>
 						<td class="right remove">
 							<strong>
-								<a class="ajaxQuantityLink" href="$removeallLink" title="<% sprintf(_t("REMOVEALL","Remove all of &quot;%s&quot; from your cart"),$TableTitle) %>">
+								<a class="ajaxQuantityLink" href="$removeallLink" title="<% sprintf(_t("Order_Content_Editable.ss.REMOVEALL","Remove all of &quot;%s&quot; from your cart"),$TableTitle) %>">
 									<img src="ecommerce/images/remove.gif" alt="x"/>
 								</a>
 							</strong>
@@ -50,7 +50,7 @@
 					<tr id="$TableID" class="$Classes hideOnZeroItems">
 						<td<% if Link %><% else %> id="$TableTitleID"<% end_if %> colspan="2" scope="row">
 							<% if Link %>
-								<a id="$TableTitleID" href="$Link" title="<% sprintf(_t("READMORE","Click here to read more on &quot;%s&quot;"),$TableTitle) %>">$TableTitle</a>
+								<a id="$TableTitleID" href="$Link" title="<% sprintf(_t("Order_Content_Editable.ss.READMORE","Click here to read more on &quot;%s&quot;"),$TableTitle) %>">$TableTitle</a>
 							<% else %>
 								$TableTitle
 							<% end_if %>
@@ -61,7 +61,7 @@
 						<td class="right remove">
 							<% if CanRemove %>
 								<strong>
-									<a class="ajaxQuantityLink" href="$removeLink" title="<% sprintf(_t("REMOVE","Remove &quot;%s&quot; from your order"),$TableTitle) %>">
+									<a class="ajaxQuantityLink" href="$removeLink" title="<% sprintf(_t("Order_Content_Editable.ss.REMOVE","Remove &quot;%s&quot; from your order"),$TableTitle) %>">
 										<img src="ecommerce/images/remove.gif" alt="x"/>
 									</a>
 								</strong>

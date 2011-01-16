@@ -8,7 +8,7 @@
 	<div class="productDetails">
 
 		<% if Image.ContentImage %>
-			<img class="productImage" src="$Image.ContentImage.URL" alt="<% sprintf(_t("IMAGE","%s image"),$Title) %>" />
+			<img class="productImage" src="$Image.ContentImage.URL" alt="<% sprintf(_t("Product.ss.IMAGE","%s image"),$Title) %>" />
 		<% else %>
 			<div class="noimage">no image</div>
 		<% end_if %>
@@ -29,13 +29,13 @@
 							<span><% _t("QUANTITYCART","Quantity in cart") %>:</span>
 							$QuantityField
 							<ul class="productActions">
-								<li><a href="$removeallLink" title="<% sprintf(_t("REMOVE","Remove &quot;%s&quot; from your cart"),$BuyableTitle) %>"><% _t("REMOVELINK","&raquo; Remove from cart") %></a></li>
-								<li><a href="$checkoutLink" title="<% _t("GOTOCHECKOUT","Go to the checkout now") %>"><% _t("GOTOCHECKOUTLINK","&raquo; Go to the checkout") %></a></li>
+								<li><a href="$removeallLink" title="<% sprintf(_t("Product.ss.REMOVE","Remove &quot;%s&quot; from your cart"),$BuyableTitle) %>"><% _t("REMOVELINK","&raquo; Remove from cart") %></a></li>
+								<li><a href="$checkoutLink" title="<% _t("Product.ss.GOTOCHECKOUT","Go to the checkout now") %>"><% _t("GOTOCHECKOUTLINK","&raquo; Go to the checkout") %></a></li>
 							</ul>
 						</div>
 					<% end_control %>
 				<% else %>
-					<p class="quantityBox"><a href="$addLink" title="<% sprintf(_t("ADD","Add &quot;%s&quot; to your cart"),$Title) %>"><% _t("ADDLINK","Add this item to cart") %></a></p>
+					<p class="quantityBox"><a href="$addLink" title="<% sprintf(_t("Product.ss.ADD","Add &quot;%s&quot; to your cart"),$Title) %>"><% _t("ADDLINK","Add this item to cart") %></a></p>
 				<% end_if %>
 			<% end_if %>
 		<% end_if %>

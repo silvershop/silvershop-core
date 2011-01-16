@@ -10,7 +10,7 @@
 							<span class="itemdetails">
 								<span<% if Link %><% else %> id="$CartTitleID"<% end_if %> class="title">
 									<% if Link %>
-										<a id="$CartTitleID" href="$Link" title="<% sprintf(_t("READMORE","Click here to read more on &quot;%s&quot;"),$CartTitle.XML) %>">$CartTitle.XML</a>
+										<a id="$CartTitleID" href="$Link" title="<% sprintf(_t("Cart.ss.READMORE","Click here to read more on &quot;%s&quot;"),$CartTitle.XML) %>">$CartTitle.XML</a>
 									<% else %>
 										$CartTitle.XML
 									<% end_if %>
@@ -22,7 +22,7 @@
 									Quantity : $QuantityField
 								</span>
 								<span class="remove">
-									<a class="ajaxQuantityLink" href="$removeallLink" title="<% sprintf(_t("REMOVEALL","Remove all of &quot;%s&quot; from your cart"),$CartTitle.XML) %>">
+									<a class="ajaxQuantityLink" href="$removeallLink" title="<% sprintf(_t("Cart.ss.REMOVEALL","Remove all of &quot;%s&quot; from your cart"),$CartTitle.XML) %>">
 										<img src="ecommerce/images/remove.gif" alt="x"/>
 									</a>
 								</span>
@@ -39,7 +39,7 @@
 						<li id="$CartID" class="$Classes">
 							<span<% if Link %><% else %> id="$CartTitleID"<% end_if %> class="title">
 								<% if Link %>
-									<a id="$CartTitleID" href="$Link" title="<% sprintf(_t("READMORE","Click here to read more on &quot;%s&quot;"),$CartTitle) %>">$CartTitle</a>
+									<a id="$CartTitleID" href="$Link" title="<% sprintf(_t("Cart.ss.READMORE","Click here to read more on &quot;%s&quot;"),$CartTitle) %>">$CartTitle</a>
 								<% else %>
 									$CartTitle
 								<% end_if %>
@@ -48,7 +48,7 @@
 							<span class="remove">
 								<% if CanRemove %>
 									<strong>
-										<a class="ajaxQuantityLink" href="$removeLink" title="<% sprintf(_t("REMOVE","Remove &quot;%s&quot; from your order"),$TableTitle) %>">
+										<a class="ajaxQuantityLink" href="$removeLink" title="<% sprintf(_t("Cart.ss.REMOVE","Remove &quot;%s&quot; from your order"),$TableTitle) %>">
 											<img src="ecommerce/images/remove.gif" alt="x"/>
 										</a>
 									</strong>

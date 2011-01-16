@@ -12,7 +12,7 @@
 		<tr  class="itemRow $EvenOdd $FirstLast">
 			<td class="product title" scope="row">
 				<% if Link %>
-					<a href="$Link" title="<% sprintf(_t("READMORE","Click here to read more on &quot;%s&quot;"),$Title) %>">$BuyableTitle</a>
+					<a href="$Link" title="<% sprintf(_t("Order_Content.ss.READMORE","Click here to read more on &quot;%s&quot;"),$Title) %>">$BuyableTitle</a>
 				<% else %>
 					$BuyableTitle
 				<% end_if %>
@@ -24,7 +24,7 @@
 		<% end_control %>
 
 		<tr class="gap summary" id="SubTotal">
-			<td colspan="3" scope="row" class="threeColHeader subtotal"><% _t("SUBTOTAL","Sub-total") %></td>
+			<td colspan="3" scope="row" class="threeColHeader subtotal"><% _t("Order_Content.ss.SUBTOTAL","Sub-total") %></td>
 			<td class="right">$SubTotal.Nice</td>
 		</tr>
 
@@ -38,7 +38,7 @@
 		<% end_control %>
 
 		<tr class="gap summary total" id="Total">
-			<td colspan="3" scope="row" class="threeColHeader total"><% _t("TOTAL","Total") %></td>
+			<td colspan="3" scope="row" class="threeColHeader total"><% _t("Order_Content.ss.TOTAL","Total") %></td>
 			<td class="right">$Total.Nice $Currency</td>
 		</tr>
 	</tbody>
