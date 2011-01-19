@@ -27,7 +27,7 @@ class AllOrdersReport extends SS_Report {
 	}
 
 	function columns(){
-		$cols = Order:get_table_overview_fields();
+		$cols = Order::get_table_overview_fields();
 		$cols['Invoice'] = 'Invoice';
 		return $cols;
 	}
