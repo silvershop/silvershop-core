@@ -129,7 +129,7 @@ class OrderStep extends DataObject {
 * moving between statusses...
 **************************************************/
 
-	public function initStep() {
+	public function initStep($order) {
 		user_error("Please implement this in a subclass of OrderStep", E_USER_WARNING);
 		return true;
 	}
@@ -246,7 +246,7 @@ class OrderStep_Created extends OrderStep {
 		return true;
 	}
 
-	public function initStep($sessionID = null) {
+	public function initStep($order, $sessionID = null) {
 		return true;
 	}
 
@@ -285,7 +285,8 @@ class OrderStep_Submitted extends OrderStep {
 	}
 
 
-	public function initStep($member = null) {
+	public function initStep($order, $member = null) {
+
 		//re-write all attributes and modifiers to make sure they are up-to-date before they can't be changed again
 		$order->calculateModifiers();
 		if(!$member) {
@@ -327,6 +328,11 @@ class OrderStep_Submitted extends OrderStep {
 
 class OrderStep_Paid extends OrderStep {
 
+	static $db = array(
+		"SendReceiptOnPaid" => "Boolean",
+		"ReceiptSent" => "Boolean"
+	);
+
 	public static $defaults = array(
 		"Name" => "Paid",
 		"Code" => "PAID",
@@ -338,10 +344,9 @@ class OrderStep_Paid extends OrderStep {
 		return false;
 	}
 
-	public function initStep($payments = null) {
-		$siteConfig = DataObject::get_one("SiteConfig");
-		if($siteConfig && $siteConfig->SendReceiptOnPaid) {
-			if(!$order->ReceiptSent){
+	public function initStep($order, $payments = null) {
+		if($siteConfig && $this->SendReceiptOnPaid) {
+			if(!$this->ReceiptSent){
 				$order->sendReceipt();
 			}
 		}
@@ -393,7 +398,7 @@ class OrderStep_Confirmed extends OrderStep {
 		return null;
 	}
 
-	public function initStep($log = null) {
+	public function initStep($order, $log = null) {
 		if(!$order->ReceiptSent){
 			$order->sendReceipt();
 		}

@@ -20,8 +20,8 @@ class OrderAttribute extends DataObject {
 	);
 
 	public static $casting = array(
-		'TableTitle' => 'Text',
-		'CartTitle' => 'Text'
+		'TableTitle' => 'HTMLText',
+		'CartTitle' => 'HTMLText'
 	);
 
 	public static $create_table_options = array(

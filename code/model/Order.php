@@ -44,8 +44,8 @@ class Order extends DataObject {
 
 	public static $casting = array(
 		'Title' => 'Text',
-		'FullBillingAddress' => 'Text',
-		'FullShippingAddress' => 'Text',
+		'FullBillingAddress' => 'HTMLText',
+		'FullShippingAddress' => 'HTMLText',
 		'Total' => 'Currency',
 		'SubTotal' => 'Currency',
 		'TotalPaid' => 'Currency',

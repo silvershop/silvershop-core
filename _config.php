@@ -33,6 +33,7 @@ Buyable::add_class("Product");
 //OR
 //i18n::set_locale('en_NZ');
 //Object::useCustomClass('SS_Datetime','ZendDate',true);
+//Currency::setCurrencySymbol("€");
 
 // * * * SHOPPING CART AND ORDER
 //EcomQuantityField::set_hide_plus_and_minus(true);
