@@ -1149,7 +1149,9 @@ class Order extends DataObject {
 									singleton('OrderStep')->requireDefaultRecords();
 								}
 							}
-							DB::query("UPDATE \"Order\" SET StatusID = ".$CartObject->ID." WHERE \"Order\".\"ID\" = ".$row["ID"]);
+							if($CartObject = DataObject::get_one("OrderStep", "\"Code\" = 'CREATED'")) {
+								DB::query("UPDATE \"Order\" SET StatusID = ".$CartObject->ID." WHERE \"Order\".\"ID\" = ".$row["ID"]);
+							}
 							break;
 						case "Query":
 						case "Unpaid":
@@ -1158,7 +1160,10 @@ class Order extends DataObject {
 									singleton('OrderStep')->requireDefaultRecords();
 								}
 							}
-							DB::query("UPDATE \"Order\" SET StatusID = ".$UnpaidObject->ID." WHERE \"Order\".\"ID\" = ".$row["ID"]);
+							if($UnpaidObject = DataObject::get_one("OrderStep", "\"Code\" = 'SUBMITTED'")) {
+								DB::query("UPDATE \"Order\" SET StatusID = ".$UnpaidObject->ID." WHERE \"Order\".\"ID\" = ".$row["ID"]);
+							}
+
 							break;
 						case "Processing":
 						case "Paid":
@@ -1167,7 +1172,9 @@ class Order extends DataObject {
 									singleton('OrderStep')->requireDefaultRecords();
 								}
 							}
-							DB::query("UPDATE \"Order\" SET StatusID = ".$PaidObject->ID." WHERE \"Order\".\"ID\" = ".$row["ID"]);
+							if($PaidObject = DataObject::get_one("OrderStep", "\"Code\" = 'PAID'")) {
+								DB::query("UPDATE \"Order\" SET StatusID = ".$PaidObject->ID." WHERE \"Order\".\"ID\" = ".$row["ID"]);
+							}
 							break;
 						case "Sent":
 						case "Complete":
@@ -1176,7 +1183,9 @@ class Order extends DataObject {
 									singleton('OrderStep')->requireDefaultRecords();
 								}
 							}
-							DB::query("UPDATE \"Order\" SET StatusID = ".$SentObject->ID." WHERE \"Order\".\"ID\" = ".$row["ID"]);
+							if($SentObject = DataObject::get_one("OrderStep", "\"Code\" = 'SENT'")) {
+								DB::query("UPDATE \"Order\" SET StatusID = ".$SentObject->ID." WHERE \"Order\".\"ID\" = ".$row["ID"]);
+							}
 							break;
 						case "AdminCancelled":
 							if(!$AdminCancelledObject) {
