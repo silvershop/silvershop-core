@@ -1087,7 +1087,7 @@ class Order extends DataObject {
       $shippingFieldsExists = DB::query("SHOW COLUMNS FROM \"Order\" LIKE 'ShippingAddress'")->numRecords();
 		}
 		if($shippingFieldsExists) {
- 			if($orders = DataObject::get('Order', "\"UseShippingAddress\" = 1  OR (\"ShippingName\" IS NOT NULL AND \"ShippingName\" <> ''")) {
+ 			if($orders = DataObject::get('Order', "\"UseShippingAddress\" = 1  OR (\"ShippingName\" IS NOT NULL AND \"ShippingName\" <> '')")) {
  				foreach($orders as $order) {
 					$obj = new ShippingAddress();
 					if(isset($order->ShippingName)) {$obj->ShippingName = $order->ShippingName;}
