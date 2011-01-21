@@ -332,7 +332,7 @@ class Order extends DataObject {
 	function tryToFinaliseOrder() {
 		$this->init();
 		$lastStatusID = 0;
-		while($order->StatusID != $lastStatusID) {
+		while($this->StatusID != $lastStatusID) {
 			$this->doNextStatus();
 		}
 	}
@@ -952,7 +952,7 @@ class Order extends DataObject {
 
 	function updateForAjax(array &$js) {
 		$subTotal = $this->SubTotalAsCurrencyObject()->Nice();
-		$total = $this->TotalAsCurrencyObject()->Nice() . ' ' . $this->Currency();
+		$total = $this->TotalAsCurrencyObject()->Nice();
 		$js[] = array('id' => $this->TableSubTotalID(), 'parameter' => 'innerHTML', 'value' => $subTotal);
 		$js[] = array('id' => $this->TableTotalID(), 'parameter' => 'innerHTML', 'value' => $total);
 		$js[] = array('id' => $this->OrderForm_OrderForm_AmountID(), 'parameter' => 'innerHTML', 'value' => $total);

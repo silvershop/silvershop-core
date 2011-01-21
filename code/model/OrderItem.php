@@ -190,6 +190,10 @@ HTML;
 		return $this->ClassName;
 	}
 
+	function TableSubTitle() {
+		return "";
+	}
+
 	//TODO: Change "Item" to something that doesn't conflict with OrderItem
 	function Buyable($current = false) {
 		$className = $this->BuyableClassName();

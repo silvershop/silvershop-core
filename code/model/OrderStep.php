@@ -246,7 +246,7 @@ class OrderStep_Created extends OrderStep {
 		return true;
 	}
 
-	public function initStep($order, $sessionID = null) {
+	public function initStep($order) {
 		return true;
 	}
 
@@ -285,14 +285,14 @@ class OrderStep_Submitted extends OrderStep {
 	}
 
 
-	public function initStep($order, $member = null) {
+	public function initStep($order) {
 
 		//re-write all attributes and modifiers to make sure they are up-to-date before they can't be changed again
 		$order->calculateModifiers();
-		if(!$member) {
-			$member = Member::currentUser();
+		if(!$order->MemberID) {
+			$order->MemberID = Member::currentUserID();
 		}
-		if(!$member) {
+		if(!$order->MemberID) {
 			user_error("Can not submit an order without a customer.", E_USER_ERROR);
 		}
 		$order->MemberID = $member->ID;
@@ -344,7 +344,7 @@ class OrderStep_Paid extends OrderStep {
 		return false;
 	}
 
-	public function initStep($order, $payments = null) {
+	public function initStep($order) {
 		if($siteConfig && $this->SendReceiptOnPaid) {
 			if(!$this->ReceiptSent){
 				$order->sendReceipt();
@@ -398,7 +398,7 @@ class OrderStep_Confirmed extends OrderStep {
 		return null;
 	}
 
-	public function initStep($order, $log = null) {
+	public function initStep($order) {
 		if(!$order->ReceiptSent){
 			$order->sendReceipt();
 		}

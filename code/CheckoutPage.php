@@ -218,7 +218,9 @@ class CheckoutPage_Controller extends Page_Controller {
 	 */
 	function CanCheckout() {
 		if($order = $this->Order()) {
-			return !$order->IsPaid();
+			if($order->Items()) {
+				return !$order->IsPaid();
+			}
 		}
 	}
 
@@ -274,34 +276,31 @@ class CheckoutPage_Controller extends Page_Controller {
 	 * @return string
 	 */
 	function Message() {
+		$this->usefulLinks = new DataObjectSet();
 		$orderID = Director::urlParam('Action');
 		$checkoutLink = CheckoutPage::find_link();
 		if($memberID = Member::currentUserID()) {
 			if($order = DataObject::get_one('Order', "\"Order\".\"ID\" = '$orderID' AND \"Order\".\"MemberID\" = '$memberID'")) {
-				$this->UsefulLinks[] = array("Title" => $this->FinalizedOrderLinkLabel, "Link" => $order->Link());
-				$this->UsefulLinks[] = array("Title" => $this->CurrentOrderLinkLabel, "Link" => $checkoutLink);
+				$this->usefulLinks->push(array("Title" => $this->FinalizedOrderLinkLabel, "Link" => $order->Link()));
+				$this->usefulLinks->push(array("Title" => $this->CurrentOrderLinkLabel, "Link" => $checkoutLink));
 				return $this->AlreadyCompletedMessage;
 				//'You can not checkout this order because it has been already successfully completed. Click <a href="' . $order->Link() . '">here</a> to see it\'s details, otherwise you can <a href="' . $checkoutLink . '">checkout</a> your current order.';
 			}
 			else {
-				$this->UsefulLinks[] = array("Title" => $this->CurrentOrderLinkLabel, "Link" => $checkoutLink);
+				$this->usefulLinks->push(array("Title" => $this->CurrentOrderLinkLabel, "Link" => $checkoutLink));
 				return $this->NonExistingOrderMessage;
 			}
 		}
 		else {
 			$redirectLink = CheckoutPage::get_checkout_order_link($orderID);
-			$this->UsefulLinks[] = array("Title" => $this->LoginToOrderLinkLabel, "Link" => 'Security/login?BackURL='.urlencode($redirectLink));
-			$this->UsefulLinks[] = array("Title" => $this->CurrentOrderLinkLabel, "Link" => $checkoutLink);
+			$this->usefulLinks->push(array("Title" => $this->LoginToOrderLinkLabel, "Link" => 'Security/login?BackURL='.urlencode($redirectLink)));
+			$this->usefulLinks->push(array("Title" => $this->CurrentOrderLinkLabel, "Link" => $checkoutLink));
 			return $this->MustLoginToCheckoutMessage;
 			//'You can not checkout this order because you are not logged in. To do so, please <a href="Security/login?BackURL=' . $redirectLink . '">login</a> first, otherwise you can <a href="' . $checkoutLink . '">checkout</a> your current order.'
 		}
 	}
 
 	function UsefulLinks() {
-		if(is_array($this->usefulLinks)) {
-			if(count($this->usefulLinks)) {
-				return new DataObjectSet( new ArrayData($this->usefulLinks) );
-			}
-		}
+		return $this->usefulLinks;
 	}
 }

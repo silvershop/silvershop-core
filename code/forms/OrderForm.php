@@ -50,19 +50,21 @@ class OrderForm extends Form {
 		if($paymentRequiredFields = Payment::combined_form_requirements()) {
 			$requiredFields = array_merge($requiredFields, $paymentRequiredFields);
 		}
-
+		$bottomFields->setID('BottomOrder');
+		$finalFields = new CompositeField();
+		$finalFields->setID('FinalFields');
+		$finalFields->push(new HeaderField(_t('OrderForm.COMPLETEORDER','Complete Order'), 3));
 		// 3) Terms and conditions field
 		// If a terms and conditions page exists, we need to create a field to confirm the user has read it
 		if($controller->TermsPageID && $termsPage = DataObject::get_by_id('Page', $controller->TermsPageID)) {
-			$bottomFields->push(new CheckboxField('ReadTermsAndConditions', _t('OrderForm.AGREEWITHTERMS1','I agree to the terms and conditions stated on the ').' <a href="'.$termsPage->URLSegment.'">'.$termsPage->Title.'</a> '._t('OrderForm.AGREEWITHTERMS2','page.')));
+			$finalFields->push(new CheckboxField('ReadTermsAndConditions', _t('OrderForm.AGREEWITHTERMS1','I agree to the terms and conditions stated on the ').' <a href="'.$termsPage->URLSegment.'">'.$termsPage->Title.'</a> '._t('OrderForm.AGREEWITHTERMS2','page.')));
 			$requiredFields[] = 'ReadTermsAndConditions';
 		}
 
-		$bottomFields->push(new TextareaField('CustomerOrderNote', _t('OrderForm.CUSTOMERNOTE','Note / Question'), 7, 30));
-		$bottomFields->setID('BottomOrder');
+		$finalFields->push(new TextareaField('CustomerOrderNote', _t('OrderForm.CUSTOMERNOTE','Note / Question'), 7, 30));
 
 		// 4) Put all the fields in one FieldSet
-		$fields = new FieldSet($rightFields, $leftFields, $bottomFields);
+		$fields = new FieldSet($rightFields, $leftFields, $bottomFields, $finalFields);
 
 		// 5) Actions and required fields creation
 		$actions = new FieldSet(new FormAction('processOrder', _t('OrderForm.PROCESSORDER','Place order and make payment')));
@@ -185,7 +187,7 @@ class OrderForm extends Form {
 		$member->logIn();
 		// Write new record {@link Order} to database
 		$form->saveInto($order);
-		$order->submit($member);
+		$order->tryToFinaliseOrder();
 		$shippingAddress = new ShippingAddress();
 		if(isset($data['UseShippingAddress']) && $data['UseShippingAddress']){
 			$form->saveInto($shippingAddress);

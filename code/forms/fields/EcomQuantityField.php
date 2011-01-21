@@ -26,7 +26,7 @@ class EcomQuantityField extends NumericField {
 			$this->item = ShoppingCart::get_order_item_by_buyableid($object->ID,$object->ClassName.Buyable::get_order_item_class_name_post_fix(),$parameters);
 			 //provide a 0-quantity facade item if there is no such item in cart
 			if(!$this->item) {
-				$this->item = new Product_OrderItem($object,0);
+				$this->item = new Product_OrderItem($object->dataRecord,0);
 			}
 			//TODO: perhaps we should just store the product itself, and do away with the facade, as it might be unnecessary complication
 		}

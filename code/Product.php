@@ -323,6 +323,12 @@ class Product_OrderItem extends OrderItem {
 		return $tabletitle;
 	}
 
+	function TableSubTitle() {
+		$tablesubtitle = "";
+		$this->extend('updateTableSubTitle',$tablesubtitle);
+		return $tablesubtitle;
+	}
+
 	public function debug() {
 		$title = $this->TableTitle();
 		$productID = $this->BuyableID;
