@@ -16,15 +16,13 @@ class OrderStep extends DataObject {
 		//customer privileges
 		"CanEdit" => "Boolean",
 		"CanCancel" => "Boolean",
-		"CanPay" => "Boolean",
 		//What to show the customer...
 		"ShowAsUncompletedOrder" => "Boolean",
 		"ShowAsInProcessOrder" => "Boolean",
 		"ShowAsCompletedOrder" => "Boolean",
 		//sorting index
-		"Sort" => "Int",
+		"Sort" => "Int"
 		//by-pass
-		"AutomateThisStatus" => "Boolean"
 	);
 	public static $indexes = array(
 		"Code" => true,
@@ -39,7 +37,6 @@ class OrderStep extends DataObject {
 		"Name" => "Name",
 		"CanEdit" => "CanEdit",
 		"CanCancel" => "CanCancel",
-		"CanPay" => "CanPay",
 		"ShowAsUncompletedOrder" => "ShowAsUncompletedOrder",
 		"ShowAsInProcessOrder" => "ShowAsInProcessOrder",
 		"ShowAsCompletedOrder" => "ShowAsCompletedOrder"
@@ -79,11 +76,9 @@ class OrderStep extends DataObject {
 	public static $defaults = array(
 		"CanEdit" => 0,
 		"CanCancel" => 0,
-		"CanPay" =>  0,
 		"ShowAsUncompletedOrder" => 0,
 		"ShowAsInProcessOrder" => 0,
-		"ShowAsCompletedOrder" => 0,
-		"AutomateThisStatus" => 0
+		"ShowAsCompletedOrder" => 0
 	);
 
 	function populateDefaults() {
@@ -103,9 +98,6 @@ class OrderStep extends DataObject {
 		$fields->replaceField("Code", $fields->dataFieldByName("Code")->performReadonlyTransformation());
 		if($this->isDefaultStatusOption()) {
 			$fields->replaceField("Sort", $fields->dataFieldByName("Code")->performReadonlyTransformation());
-		}
-		if(!$this->canMakeThisStatusAutomated()) {
-			$fields->removeFieldFromTab("Root.Main", "AutomateThisStatus");
 		}
 		return $fields;
 	}
@@ -159,10 +151,6 @@ class OrderStep extends DataObject {
 			return false;
 		}
 		return true;
-	}
-
-	protected function canMakeThisStatusAutomated() {
-		return false;
 	}
 
 	public function hasPassed($code, $orIsEqualTo = false) {
@@ -238,13 +226,8 @@ class OrderStep_Created extends OrderStep {
 		"Sort" => 10,
 		"CanEdit" => 1,
 		"CanCancel" => 1,
-		"CanPay" =>  1,
 		"ShowAsUncompletedOrder" => 1
 	);
-
-	protected function canMakeThisStatusAutomated() {
-		return true;
-	}
 
 	public function initStep($order) {
 		return true;
@@ -252,9 +235,6 @@ class OrderStep_Created extends OrderStep {
 
 	public function ifReadyReturnNextStepObject($order, $codeHint = "") {
 		$newStatus = parent::ifReadyReturnNextStepObject($order, $codeHint = "");
-		if($this->AutomateThisStatus) {
-			return $newStatus;
-		}
 		if($order->Items()) {
 			return $newStatus;
 		}
@@ -276,14 +256,8 @@ class OrderStep_Submitted extends OrderStep {
 		"Name" => "Submitted",
 		"Code" => "SUBMITTED",
 		"Sort" => 20,
-		"CanPay" =>  1,
 		"ShowAsInProcessOrder" => 1
 	);
-
-	protected function canMakeThisStatusAutomated() {
-		return false;
-	}
-
 
 	public function initStep($order) {
 
@@ -308,9 +282,6 @@ class OrderStep_Submitted extends OrderStep {
 
 	public function ifReadyReturnNextStepObject($order, $codeHint = "") {
 		$newStatus = parent::ifReadyReturnNextStepObject($order, $codeHint = "");
-		if($this->AutomateThisStatus) {
-			return $newStatus;
-		}
 		if($order->MemberID) {
 			return $newStatus;
 		}
@@ -340,10 +311,6 @@ class OrderStep_Paid extends OrderStep {
 		"ShowAsInProcessOrder" => 1
 	);
 
-	protected function canMakeThisStatusAutomated() {
-		return false;
-	}
-
 	public function initStep($order) {
 		if($siteConfig && $this->SendReceiptOnPaid) {
 			if(!$this->ReceiptSent){
@@ -356,9 +323,6 @@ class OrderStep_Paid extends OrderStep {
 
 	public function ifReadyReturnNextStepObject($order, $codeHint = "") {
 		$newStatus = parent::ifReadyReturnNextStepObject($order, $codeHint = "");
-		if($this->AutomateThisStatus) {
-			return $newStatus;
-		}
 		if($order->IsPaid()) {
 			return $newStatus;
 		}
@@ -383,15 +347,8 @@ class OrderStep_Confirmed extends OrderStep {
 		"ShowAsInProcessOrder" => 1
 	);
 
-	protected function canMakeThisStatusAutomated() {
-		return true;
-	}
-
 	public function ifReadyReturnNextStepObject($order, $codeHint = "") {
 		$newStatus = parent::ifReadyReturnNextStepObject($order, $codeHint = "");
-		if($this->AutomateThisStatus) {
-			return $newStatus;
-		}
 		if($order->HasPositivePaymentCheck()) {
 			return $newStatus;
 		}
@@ -422,15 +379,8 @@ class OrderStep_Sent extends OrderStep {
 		"ShowAsCompletedOrder" => 1
 	);
 
-	protected function canMakeThisStatusAutomated() {
-		return true;
-	}
-
 	public function ifReadyReturnNextStepObject($order, $codeHint = "") {
 		$newStatus = parent::ifReadyReturnNextStepObject($order, $codeHint = "");
-		if($this->AutomateThisStatus) {
-			return $newStatus;
-		}
 		if($order->HasDispatchRecord()) {
 			return $newStatus;
 		}

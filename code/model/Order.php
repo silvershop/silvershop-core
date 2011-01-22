@@ -53,7 +53,7 @@ class Order extends DataObject {
 		'TotalOutstanding' => 'Currency',
 		'TotalItems' => 'Int',
 		'TotalItemsTimesQuantity' => 'Int',
-		'HasBeenCancelled' => 'Boolean'
+		'IsCancelled' => 'Boolean'
 	);
 
 	public static $create_table_options = array(
@@ -380,48 +380,69 @@ class Order extends DataObject {
 		$this->StatusID = $obj->ID;
 		return $obj;
 	}
-
-	function HasBeenCancelled() {
+	/**
+	 * @return boolean
+	 */
+	function IsCancelled() {
 		return (bool)$this->CancelledByID;
 	}
-
 	/**
 	 * @return boolean
 	 */
 	function IsSent() {
 		return (bool)!$this->MyStatus()->hasPassedOrIsEqualTo("SENT");
 	}
-
+	/**
+	 * @return boolean
+	 */
 	function IsUncomplete() {
 		return (bool)$this->MyStatus()->ShowAsUncompletedOrder;
 	}
+	/**
+	 * @return boolean
+	 */
 	function IsProcessing() {
 		return (bool)$this->MyStatus()->ShowAsInProcessOrder;
 	}
+	/**
+	 * @return boolean
+	 */
 	function IsCompleted() {
 		return (bool)$this->MyStatus()->ShowAsCompletedOrder;
 	}
-
+	/**
+	 * @return boolean
+	 */
 	function IsPaid() {
 		return (bool)($this->Total() > 0 && $this->TotalOutstanding() <= 0);
 	}
-
+	/**
+	 * @return boolean
+	 */
 	function IsCart(){
 		return (bool)$this->canEdit();
 	}
-
+	/**
+	 * @return boolean
+	 */
 	function CustomerCancelled() {
-		if($this->MemberID == $this->CancelledByID && $this->MemberID > 0) {
+		if($this->MemberID == $this->IsCancelled() && $this->MemberID > 0) {
 			return true;
 		}
 		return false;
 	}
+	/**
+	 * @return boolean
+	 */
 	function MemberCancelled() {
 		return $this->CustomerCancelled();
 	}
 
+	/**
+	 * @return boolean
+	 */
 	function AdminCancelled() {
-		if($this->CancelledByID) {
+		if($this->IsCancelled()) {
 			if(!$this->CustomerCancelled()) {
 				$admin = DataObject::get_by_id("Member", $this->CancelledByID);
 				if($admin->IsShopAdmin()) {
@@ -433,6 +454,9 @@ class Order extends DataObject {
 		return false;
 	}
 
+	/**
+	 * @return boolean
+	 */
 	function HasPositivePaymentCheck() {
 		return DataObject::get_one("OrderStatusLog_PaymentCheck", "\"OrderID\" = ".$this->ID." AND \"PaymentConfirmed\" = 1");
 	}
@@ -647,23 +671,38 @@ class Order extends DataObject {
 *******************************************************/
 
 	function canCancel($member = null) {
+		if($this->CancelledByID) {
+			return true;
+		}
 		if(!$member) {
 			$member = Member::currentMember();
 		}
-		if($member->IsShopAdmin()) {
-			return true;
+		if($member) {
+			if($member->IsShopAdmin()) {
+				return true;
+			}
 		}
-		else {
-			return $this->MyStatus()->CanCancel;
-		}
+		return $this->MyStatus()->CanCancel;
 	}
 
+
 	function canEdit($member = null) {
+		if($this->IsCancelled()) {
+			return false;
+		}
+		if(!$this->canEdit($member)) {
+			return false;
+		}
 		return $this->MyStatus()->CanEdit;
 	}
 
 	function canPay($member = null) {
-		return $this->MyStatus()->CanPay;
+		if($this->IsPaid() || $this->IsCancelled()) {
+			return false;
+		}
+		if($this->canEdit()) {
+			return false;
+		}
 	}
 
 	public function canDelete($member = null) {
@@ -672,6 +711,9 @@ class Order extends DataObject {
 
 
 	public function canView($member = null) {
+		if($this->IsCancelled()) {
+			return false;
+		}
 		if(!$member) {
 			$member = Member::currentMember();
 		}
@@ -692,7 +734,9 @@ class Order extends DataObject {
 		if(!$member) {
 			$member = Member::currentUser();
 		}
-		return $member->IsShopAdmin();
+		if($member) {
+			return $member->IsShopAdmin();
+		}
 	}
 
 /*******************************************************
