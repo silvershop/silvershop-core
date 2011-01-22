@@ -73,7 +73,7 @@ class CheckoutPage extends Page {
 		if(!$page = DataObject::get_one('CheckoutPage')) {
 			user_error('No CheckoutPage was found. Please create one in the CMS!', E_USER_ERROR);
 		}
-		return ($useURLSegment) ? $page->URLSegment : $page->Link();
+		return $page->Link();
 	}
 
 
@@ -89,12 +89,11 @@ class CheckoutPage extends Page {
 	 * @param boolean $urlSegment If set to TRUE, only returns the URLSegment field
 	 * @return string Link to checkout page
 	 */
-	public static function get_checkout_order_link($orderID, $urlSegment = false) {
+	public static function get_checkout_order_link($orderID) {
 		if(!$page = DataObject::get_one('CheckoutPage')) {
 			user_error('No CheckoutPage was found. Please create one in the CMS!', E_USER_ERROR);
 		}
-
-		return ($urlSegment ? $page->URLSegment . '/' : $page->Link()) . $orderID;
+		return $page->Link("loadorder"). $orderID . "/";
 	}
 
 	function getCMSFields() {
@@ -183,6 +182,7 @@ class CheckoutPage_Controller extends Page_Controller {
 		if(!class_exists('Payment')) {
 			trigger_error('The payment module must be installed for the ecommerce module to function.', E_USER_WARNING);
 		}
+		$this->order = ShoppingCart::current_order();
 		ShoppingCart::add_requirements();
 		Requirements::javascript('ecommerce/javascript/EcommercePayment.js');
 		Requirements::themedCSS('CheckoutPage');
@@ -252,16 +252,12 @@ class CheckoutPage_Controller extends Page_Controller {
 	 *
 	 * @return Order
 	 */
-	function Order() {
-		if(!$this->order) {
-			if($orderID = Director::urlParam('Action') && is_numeric(Director::urlParam('Action'))) {
-				$this->order = ShoppingCart::load_order($orderID);
-			}
-			else {
-				$this->order = ShoppingCart::current_order();
-			}
+	function loadorder($request) {
+		if($orderID = intval($request->param('ID'))) {
+			$this->order = ShoppingCart::load_order($orderID);
+			Director::redirect($this->Link());
 		}
-		return $this->order;
+		return array();
 	}
 	/**
 	 * Determine whether the user can checkout the
@@ -271,8 +267,8 @@ class CheckoutPage_Controller extends Page_Controller {
 	 * @return boolean
 	 */
 	function CanCheckout() {
-		if($this->order = $this->Order()) {
-			if($this->order->Items() && $this->order->CanEdit() && $this->order->CanPay()) {
+		if($this->order) {
+			if($this->order->Items() && $this->order->CanEdit()) {
 				return true;
 			}
 		}
@@ -287,9 +283,6 @@ class CheckoutPage_Controller extends Page_Controller {
 	 */
 	function Message() {
 		$this->usefulLinks = new DataObjectSet();
-		if(!$this->order) {
-			$this->order = $this->Order();
-		}
 		$checkoutLink = CheckoutPage::find_link();
 		if(!Member::currentUserID() && !$this->order) {
 			$redirectLink = CheckoutPage::get_checkout_order_link();

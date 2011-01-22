@@ -389,12 +389,6 @@ class Order extends DataObject {
 	/**
 	 * @return boolean
 	 */
-	function IsSent() {
-		return (bool)!$this->MyStatus()->hasPassedOrIsEqualTo("SENT");
-	}
-	/**
-	 * @return boolean
-	 */
 	function IsUncomplete() {
 		return (bool)$this->MyStatus()->ShowAsUncompletedOrder;
 	}
@@ -425,8 +419,8 @@ class Order extends DataObject {
 	/**
 	 * @return boolean
 	 */
-	function CustomerCancelled() {
-		if($this->MemberID == $this->IsCancelled() && $this->MemberID > 0) {
+	function IsCustomerCancelled() {
+		if($this->MemberID == $this->IsCancelledID && $this->MemberID > 0) {
 			return true;
 		}
 		return false;
@@ -441,9 +435,9 @@ class Order extends DataObject {
 	/**
 	 * @return boolean
 	 */
-	function AdminCancelled() {
+	function IsAdminCancelled() {
 		if($this->IsCancelled()) {
-			if(!$this->CustomerCancelled()) {
+			if(!$this->IsCustomerCancelled()) {
 				$admin = DataObject::get_by_id("Member", $this->CancelledByID);
 				if($admin->IsShopAdmin()) {
 					return true;
@@ -461,10 +455,20 @@ class Order extends DataObject {
 		return DataObject::get_one("OrderStatusLog_PaymentCheck", "\"OrderID\" = ".$this->ID." AND \"PaymentConfirmed\" = 1");
 	}
 
+	/**
+	 * @return boolean
+	 */
 	function HasDispatchRecord() {
 		return DataObject::get_one("OrderStatusLog_Dispatch", "\"OrderID\" = ".$this->ID);
 	}
 
+	/**
+	 * @return boolean
+	 */
+	function ShopClosed() {
+		$siteConfig = DataObject::get_one("SiteConfig");
+		return $siteConfig->ShopClosed;
+	}
 /*******************************************************
    * CUSTOMER COMMUNICATION....
 *******************************************************/
@@ -670,55 +674,29 @@ class Order extends DataObject {
    * CRUD METHODS (e.g. canView, canEdit, canDelete, etc...)
 *******************************************************/
 
-	function canCancel($member = null) {
-		if($this->CancelledByID) {
-			return true;
-		}
-		if(!$member) {
-			$member = Member::currentMember();
-		}
+	public function canCreate($member = null) {
+		if(!$member) {$member = Member::currentMember();}
+		if($member) {$memberID = $member->ID;} else {$memberID = 0;}
+		$extended = $this->extendedCan('canCreate', $memberID);
+		if($extended !== null) {return $extended;}
+		//TO DO: setup a special group of shop admins (probably can copy some code from Blog)
 		if($member) {
-			if($member->IsShopAdmin()) {
-				return true;
-			}
-		}
-		return $this->MyStatus()->CanCancel;
-	}
-
-
-	function canEdit($member = null) {
-		if($this->IsCancelled()) {
-			return false;
-		}
-		if(!$this->canEdit($member)) {
-			return false;
-		}
-		return $this->MyStatus()->CanEdit;
-	}
-
-	function canPay($member = null) {
-		if($this->IsPaid() || $this->IsCancelled()) {
-			return false;
-		}
-		if($this->canEdit()) {
-			return false;
+			return $member->IsShopAdmin();
 		}
 	}
-
-	public function canDelete($member = null) {
-		return false;
-	}
-
-
 	public function canView($member = null) {
-		if($this->IsCancelled()) {
-			return false;
-		}
-		if(!$member) {
-			$member = Member::currentMember();
+		if(!$member) {$member = Member::currentMember();}
+		if($member) {$memberID = $member->ID;} else {$memberID = 0;}
+		$extended = $this->extendedCan('canView', $memberID);
+		if($extended !== null) {return $extended;}
+		if(!$this->MemberID) {
+			return true;
 		}
 		if($member) {
 			if($this->MemberID == $member->ID) {
+				if($this->IsCancelled()) {
+					return false;
+				}
 				return true;
 			}
 			//TO DO: IsAdmin Should be IsShopAdmin
@@ -729,15 +707,55 @@ class Order extends DataObject {
 		return false;
 	}
 
-	public function canCreate($member = null) {
-		//TO DO: setup a special group of shop admins (probably can copy some code from Blog)
-		if(!$member) {
-			$member = Member::currentUser();
+
+	function canEdit($member = null) {
+		if(!$member) {$member = Member::currentMember();}
+		if($member) {$memberID = $member->ID;} else {$memberID = 0;}
+		$extended = $this->extendedCan('canEdit', $memberID);
+		if($extended !== null) {return $extended;}
+		if(!$this->canView($member)) {
+			return false;
 		}
-		if($member) {
-			return $member->IsShopAdmin();
+		return $this->MyStatus()->CanEdit;
+	}
+
+	function canPay($member = null) {
+		if(!$member) {$member = Member::currentMember();}
+		if($member) {$memberID = $member->ID;} else {$memberID = 0;}
+		$extended = $this->extendedCan('canPay', $memberID);
+		if($extended !== null) {return $extended;}
+		if($this->IsPaid() || $this->IsCancelled()) {
+			return false;
+		}
+		if(!$this->canEdit()) {
+			return false;
 		}
 	}
+	function canCancel($member = null) {
+		if($this->CancelledByID) {
+			return true;
+		}
+		if(!$member) {$member = Member::currentMember();}
+		if($member) {$memberID = $member->ID;} else {$memberID = 0;}
+		$extended = $this->extendedCan('canCancel', $memberID);
+		if($extended !== null) {return $extended;}
+		if($member) {
+			if($member->IsShopAdmin()) {
+				return true;
+			}
+		}
+		return $this->MyStatus()->CanCancel;
+	}
+
+
+	public function canDelete($member = null) {
+		if(!$member) {$member = Member::currentMember();}
+		if($member) {$memberID = $member->ID;} else {$memberID = 0;}
+		$extended = $this->extendedCan('canDelete', $memberID);
+		if($extended !== null) {return $extended;}
+		return false;
+	}
+
 
 /*******************************************************
    * GET METHODS (e.g. Total, SubTotal, Title, etc...)
