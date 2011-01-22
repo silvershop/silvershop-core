@@ -245,6 +245,9 @@ class CheckoutPage_Controller extends Page_Controller {
 		return $form;
 	}
 
+	function Order() {
+		return $this->order;
+	}
 
 	/**
 	 * Returns either the current order from the shopping cart or
