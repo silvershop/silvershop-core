@@ -46,6 +46,7 @@ class ShoppingCart extends Controller {
 		'clear',
 		'numberofitemsincart',
 		'showcart',
+		'loadorder',
 		'debug' => 'SHOP_ADMIN'
 	);
 
@@ -64,6 +65,10 @@ class ShoppingCart extends Controller {
 		static function set_default_param_filters($array){self::$default_param_filters = $array;}
 		static function add_default_param_filters($array){self::$default_param_filters = array_merge(self::$default_param_filters,$array);}
 		static function get_default_param_filters(){return self::$default_param_filters;}
+
+	protected static $shopping_cart_message_index = 'ShoppingCartMessage';
+		static function set_shopping_cart_message_index($v) {self::$shopping_cart_message_index = $v;}
+		static function get_shopping_cart_message_index() {return self::$shopping_cart_message_index;}
 
 	protected static $country_setting_index = 'ShoppingCartCountry';
 		static function set_country_setting_index($v) {self::$country_setting_index = $v;}
@@ -113,9 +118,26 @@ class ShoppingCart extends Controller {
 		self::current_order()->init();
 	}
 
+	/**
+	* load_order:
+	*@return Order if found, otherwise null. IMPORTANT
+	**/
+	public static function load_order($orderID, $memberID = 0) {
+		if(!$memberID) {
+			$memberID = Member::currentUserID();
+		}
+		if($memberID) {
+			$order = DataObject::get_by_id('Order', $orderID);
+			if($order && $order->MemberID == $memberID) {
+				self::$order = $order;
+				self::initialise_new_order();
+				return self::current_order();
+			}
+		}
+		return null;
+	}
+
 	public static function current_order() {
-		$order = self::$order;
-		$hasWritten = false;
 		if (!self::$order) {
 			//find order by id saved to session (allows logging out and retaining cart contents)
 			$cartID = Session::get(self::$cartid_session_name);
@@ -125,13 +147,17 @@ class ShoppingCart extends Controller {
 				if(is_array($cartIDParts) && count($cartIDParts) == 2) {
 					$orders = DataObject::get(
 						'Order',
-						"\"OrderStep\".\"CanEdit\" = 1 AND \"Order\".\"ID\" = '".intval($cartIDParts[0])."' AND \"Order\".\"SessionID\" = '".$cartIDParts[1]."'",
+						"\"Order\".\"ID\" = '".intval($cartIDParts[0])."' AND \"Order\".\"SessionID\" = '".$cartIDParts[1]."'",
 						"\"LastEdited\" DESC",
-						"INNER JOIN \"OrderStep\" ON \"OrderStep\" .\"ID\" = \"Order\".\"StatusID\"",
+						null,
 						"1"
 					);
 					if($orders) {
-						self::$order = $orders->First();
+						foreach($orders as $order) {
+							if($order->CanEdit()) {
+								return $order;
+							}
+						}
 					}
 					else {
 						//TO DO: create notice that order can not be found
@@ -140,21 +166,23 @@ class ShoppingCart extends Controller {
 			}
 			if(!self::$order){
 				//TODO: is this the right time to delete them???
-				self::delete_old_carts();
 				self::$order = new Order();
-				self::$order->init(session_id());
-				Session::set(self::$cartid_session_name,self::$order->ID.".".session_id());
-				$hasWritten = true;
+				self::initialise_new_order();
 			}
 		}
 		//TODO: re-introduce this because it allows seeing which members don't complete orders
-		//$order->MemberID = Member::currentUserID(); // Set the Member relation to this order
-		if(!$hasWritten) {
-			self::$order->write(); // Write the order
-		}
-		//TO DO: is this the best way to add some basics...
+		// // Set the Member relation to this order
 		self::add_requirements();
 		return self::$order;
+	}
+
+	protected static function initialise_new_order() {
+		self::$order->init();
+		self::$order->SessionID = session_id();
+		self::$order->MemberID = Member::currentUserID();
+		self::$order->write();
+		Session::set(self::$cartid_session_name,self::$order->ID.".".session_id());
+		self::delete_old_carts();
 	}
 
 	public static function add_requirements() {
@@ -603,10 +631,18 @@ class ShoppingCart extends Controller {
 	/**
 	 * return cart for ajax call
 	 */
-	function showcart() {
-		$this->renderWith("AjaxSimpleCart");
+	function showcart($request) {
+		return $this->renderWith("AjaxSimpleCart");
 	}
 
+	function loadorder($request) {
+		if($orderID = Director::urlParam('Action') && is_numeric(Director::urlParam('Action'))) {
+			if(self::load_order($orderID)) {
+				$this->returnMessage("success", _t("ShoppingCart.ORDERLOADEDSUCCESSFULLY", "Order has been loaded."));
+			}
+		}
+		$this->returnMessage("failure", _t("ShoppingCart.ORDERLOADEDSUCCESSFULLY", "Order could not be loaded."));
+	}
 
 	/**
 	 * Sets appropriate status, and message and redirects or returns appropriately.
@@ -618,7 +654,8 @@ class ShoppingCart extends Controller {
 			return $obj->ReturnCartData($status, $message);
 		}
 		else {
-		//TODO: set session / status in session (like Form sessionMesssage)
+			Session::set(self::get_shopping_cart_message_index().".Message", $message);
+			Session::set(self::get_shopping_cart_message_index().".Status", $status);
 			Director::redirectBack();
 			return;
 		}

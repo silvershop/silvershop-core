@@ -349,51 +349,22 @@ class Order extends DataObject {
 
 	// ------------------------------------ STEP 1 ------------------------------------
 
-
-	public function init($sessionID = null) {
-		if(!$sessionID) {
-			$sessionID = session_id();
-		}
-		$this->SessionID = $sessionID;
-		//can it create????
+	//NOTE: anything to do with Current Member and Session should be in Shopping Cart!
+	public function init() {
 		$this->initModifiers();
-		if($newStatusID = OrderStep::get_status_id("CREATED")) {
-			$this->StatusID = $newStatusID;
+		if(!$this->StatusID) {
+			if($newStatus = DataObject::get_one("OrderStep")) {
+				$this->StatusID = $newStatus->ID;
+			}
+			else {
+				user_error("No CREATED OrderStep has been setup ... please Run Dev/Build", E_USER_WARNING);
+			}
 		}
-		else {
-			user_error("No CREATED OrderStep has been setup ... please Run Dev/Build", E_USER_WARNING);
-		}
-		$this->extend('onInit', $sessionID);
+		$this->extend('onInit');
 		$this->write();
 		return $this;
 	}
-	//------------------------------------ STEP 2------------------------------------
 
-	public function submit($member = null) {
-		return $this->doNextStatus($member, "SUBMITTED");
-	}
-
-	// ------------------------------------ STEP 3 ------------------------------------
-	/**
-	 *@param $payments = DataObjectSet of Payment(s)
-	 *
-	 *
-	 **/
-	public function pay($payments = null) {
-		return $this->doNextStatus($payments, "PAID");
-	}
-
-	// ------------------------------------ STEP 4 ------------------------------------
-
-	public function confirm(OrderStatusLog_PaymentCheck $log = null) {
-		return $this->doNextStatus($log, "CONFIRMED");
-	}
-
-	// ------------------------------------ STEP 5 ------------------------------------
-
-	public function send(OrderStatusLog_Dispatch $log = null) {
-		return $this->doNextStatus($log, "SENT");
-	}
 
 /*******************************************************
    * STATUS RELATED FUNCTIONS / SHORTCUTS
