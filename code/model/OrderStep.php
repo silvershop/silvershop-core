@@ -86,6 +86,7 @@ class OrderStep extends DataObject {
 					$newArray[$className] = strtoupper($code);
 				}
 			}
+			return $newArray;
 		}
 		function getMyCode() {return self::$defaults["Code"];}
 
