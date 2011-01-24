@@ -44,8 +44,6 @@ class Order extends DataObject {
 
 	public static $casting = array(
 		'Title' => 'Text',
-		'FullBillingAddress' => 'HTMLText',
-		'FullShippingAddress' => 'HTMLText',
 		'Total' => 'Currency',
 		'SubTotal' => 'Currency',
 		'TotalPaid' => 'Currency',
@@ -133,6 +131,23 @@ class Order extends DataObject {
 
 	public static function get_order_status_options() {
 		return DataObject::get("OrderStep");
+	}
+
+	public static function get_by_id($id) {
+		$obj = DataObject::get_by_id("Order", $id);
+		if($obj->canView()) {
+			return $obj;
+		}
+		return null;
+	}
+	public static function get_by_id_and_member_id($id, $memberID) {
+		$obj = DataObject::get_by_id("Order", $id);
+		if($obj) {
+			if($obj->MemberID == $memberID && $obj->canView()) {
+				return $obj;
+			}
+		}
+		return null;
 	}
 
 /*******************************************************
@@ -239,7 +254,7 @@ class Order extends DataObject {
 	function getCMSFields(){
 		$fields = parent::getCMSFields();
 		$readOnly = (bool)!$this->canEdit();
-		$fieldsAndTabsToBeRemoved = array('Printed', 'MemberID', 'Attributes', 'SessionID', 'Country', 'ShippingAddressID', 'UseShippingAddress', 'ReceiptSent', 'OrderStatusLogs');
+		$fieldsAndTabsToBeRemoved = array('Printed', 'MemberID', 'Attributes', 'SessionID', 'Country', 'ShippingAddressID', 'UseShippingAddress', 'OrderStatusLogs');
 		if(!$readOnly) {
 			$fieldsAndTabsToBeRemoved[] = "Payments";
 			$fieldsAndTabsToBeRemoved[] = "Emails";
@@ -311,7 +326,6 @@ class Order extends DataObject {
 				$fields->addFieldToTab('Root.Customer',new LiteralField("MemberSummary", $m->renderWith("Order_Member")));
 			}
 			$this->extend('updateCMSFields',$fields);
-			$fields->addFieldToTab("Root.Emails",new CheckboxField("ReceiptSent", "Receipt Sent"));
 			$fields->addFieldsToTab(
 				"Root.Delivery",
 				array(
@@ -329,35 +343,40 @@ class Order extends DataObject {
    * MAIN TRANSITION FUNCTIONS:
 *******************************************************/
 
-	function tryToFinaliseOrder() {
+	public function tryToFinaliseOrder() {
 		$this->init();
-		$lastStatusID = 0;
-		while($this->StatusID != $lastStatusID) {
-			$this->doNextStatus();
+		for($i = 1; $i < 99; $i++) {
+			if(!$this->doNextStatus()) {
+				$i = 100;
+			}
 		}
 	}
 
-	public function doNextStatus($object = null, $codeHint = '') {
-		if($newStatusObject = $this->MyStatus()->ifReadyReturnNextStepObject($this, $codeHint)) {
-			if($newStatusObject->initStep($object)) {
-				$this->StatusID = $newStatusObject->ID;
-				$this->write();
+	public function doNextStatus() {
+		if($this->MyStatus()->initStep($this)) {
+			if($this->MyStatus()->doStep($this)) {
+				if($nextOrderStepObject = $this->MyStatus()->nextStep($this)) {
+					$this->StatusID = $nextOrderStepObject->ID;
+					$this->write();
+					return $this->StatusID;
+				}
 			}
 		}
-		return $this;
+		return false;
 	}
 
 	// ------------------------------------ STEP 1 ------------------------------------
 
 	//NOTE: anything to do with Current Member and Session should be in Shopping Cart!
 	public function init() {
+		//to do: check if shop is open....
 		$this->initModifiers();
 		if(!$this->StatusID) {
 			if($newStatus = DataObject::get_one("OrderStep")) {
 				$this->StatusID = $newStatus->ID;
 			}
 			else {
-				user_error("No CREATED OrderStep has been setup ... please Run Dev/Build", E_USER_WARNING);
+				user_error("There are no OrderSteps ... please Run Dev/Build", E_USER_WARNING);
 			}
 		}
 		$this->extend('onInit');
@@ -472,6 +491,15 @@ class Order extends DataObject {
 /*******************************************************
    * CUSTOMER COMMUNICATION....
 *******************************************************/
+
+	function sendInvoice() {
+		$this->sendEmail('Order_ReceiptEmail');
+		$subject = str_replace("{OrderNumber}", $this->ID,self::get_receipt_subject());
+		$replacementArray = array(
+			'Order' => $this
+		);
+		return $this->sendEmail("Order_ReceiptEmail", $subject, $replacementArray, true);
+	}
   /**
 	 * Send the receipt of the order by mail.
 	 * Precondition: The order payment has been successful
@@ -484,23 +512,7 @@ class Order extends DataObject {
 			'PurchaseCompleteMessage' => $purchaseCompleteMessage,
 			'Order' => $this
 		);
-		if($outcome = $this->sendEmail("Order_ReceiptEmail", $subject, $replacementArray, true)) {
-			$this->ReceiptSent = true;
-			$this->write();
-		}
-		return $outcome;
-	}
-	function sendInvoice() {
-		$this->sendEmail('Order_ReceiptEmail');
-		$subject = str_replace("{OrderNumber}", $this->ID,self::get_receipt_subject());
-		$replacementArray = array(
-			'Order' => $this
-		);
-		if($outcome = $this->sendEmail("Order_ReceiptEmail", $subject, $replacementArray, true)) {
-			$this->InvoiceSent = true;
-			$this->write();
-		}
-		return $outcome;
+		return $this->sendEmail("Order_ReceiptEmail", $subject, $replacementArray, true);
 	}
 
 	/**
@@ -520,11 +532,11 @@ class Order extends DataObject {
 			}
 		}
 		$replacementArray =
-		array(
-			"Order" => $this,
-			"Member" => $member,
-			"Note" => $note
-		);
+			array(
+				"Order" => $this,
+				"Member" => $member,
+				"Note" => $note
+			);
 		return $this->sendEmail("Order_statusEmail", $subject, $replacementArray, true);
 	}
 
@@ -555,7 +567,7 @@ class Order extends DataObject {
 		$email->populateTemplate(
 			$replacementArray
 		);
-		return $email->send();
+		return $email->send(null, $this);
 	}
 
 
@@ -727,9 +739,7 @@ class Order extends DataObject {
 		if($this->IsPaid() || $this->IsCancelled()) {
 			return false;
 		}
-		if(!$this->canEdit()) {
-			return false;
-		}
+		return true;
 	}
 	function canCancel($member = null) {
 		if($this->CancelledByID) {
@@ -768,8 +778,10 @@ class Order extends DataObject {
 	function Title() {
 		if($this->ID) {
 			$v = $this->i18n_singular_name(). " #$this->ID - ".$this->dbObject('Created')->format("D d M Y");
-			if($this->MemberID && $this->Member()->exists()) {
-				$v .= " - ".$this->Member()->getName();
+			if($this->MemberID && $this->Member()->exists() ) {
+				if($this->MemberID != Member::currentUserID()) {
+					$v .= " - ".$this->Member()->getName();
+				}
 			}
 		}
 		else {
@@ -918,47 +930,6 @@ class Order extends DataObject {
 		if(class_exists('Payment')) {
 			return Payment::site_currency();
 		}
-	}
-
-	function getFullBillingAddress($separator = "",$insertnewlines = true){
-		//TODO: move this somewhere it can be customised
-		$toUse = array(
-			'Name',
-			'Company',
-			'Address',
-			'AddressLine2',
-			'City',
-			'Country',
-			'Email',
-			'Phone',
-			'HomePhone',
-			'MobilePhone'
-		);
-
-		$fields = array();
-		$member = $this->Member();
-		foreach($toUse as $field){
-			if($member && $member->$field)
-				$fields[] = $member->$field;
-		}
-		$separator = ($insertnewlines) ? $separator."\n" : $separator;
-		return implode($separator,$fields);
-	}
-
-	function getFullShippingAddress($separator = "",$insertnewlines = true){
-		if(!$this->UseShippingAddress) {
-			return $this->getFullBillingAddress($separator,$insertnewlines);
-		}
-		$toUse = ShippingAddress::get_shipping_fields();
-		$object = $this->ShippingAddress();
-		$fields = array();
-		foreach($toUse as $field){
-			if($object->$field) {
-				$fields[] = $object->$field;
-			}
-		}
-		$separator = ($insertnewlines) ? $separator."\n" : $separator;
-		return implode($separator,$fields);
 	}
 
 	// Order Template and ajax Management
@@ -1254,6 +1225,13 @@ class Order extends DataObject {
 		parent::populateDefaults();
 		//@Session::start();
 		//$this->SessionID = Session_id();
+	}
+
+	function onBeforeWrite() {
+		parent::onBeforeWrite();
+		if(!$this->CancelledByID) {
+			$this->CancelledByID = 0;
+		}
 	}
 
 	function onAfterWrite() {

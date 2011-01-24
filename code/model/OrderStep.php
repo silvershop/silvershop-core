@@ -2,6 +2,7 @@
 
 /**
  * @description: Defines the Order Status Options
+ *   There must always be an OrderStep Created
  * @package ecommerce
  * @authors: Silverstripe, Jeremy, Nicolaas
  **/
@@ -32,6 +33,9 @@ class OrderStep extends DataObject {
 		"Orders" => "Order"
 	);
 	public static $field_labels = array(
+		"Sort" => "Sorting Index",
+		"CanEdit" => "Customer can edit",
+		"CanCancel" => "Customer can cancel"
 	);
 	public static $summary_fields = array(
 		"Name" => "Name",
@@ -52,9 +56,10 @@ class OrderStep extends DataObject {
 		static function set_plural_name($v) {self::$plural_name = $v;}
 		function i18n_plural_name() { return _t("OrderStep.ORDERSTEPOPTION", "Order Status Options");}
 
+	// SUPER IMPORTANT TO KEEP ORDER!
 	public static $default_sort = "\"Sort\" ASC";
 
-	public static function get_status_id($code) {
+	public static function get_status_id_from_code($code) {
 		if($otherStatus = DataObject::get_one("OrderStep", "\"Code\" = '".$code."'")) {
 			return $otherStatus->ID;
 		}
@@ -62,16 +67,27 @@ class OrderStep extends DataObject {
 	}
 
 	// MOST IMPORTANT DEFINITION!
-	protected static $standard_codes = array(
-		"OrderStep_Created" => "CREATED",
-		"OrderStep_Submitted" => "SUBMITTED",
-		"OrderStep_Paid" => "PAID",
-		"OrderStep_Confirmed" => "CONFIRMED",
-		"OrderStep_Sent" => "SENT"
+	protected static $classes = array(
+		"OrderStep_Created",
+		"OrderStep_Submitted",
+		"OrderStep_SentInvoice",
+		"OrderStep_Paid",
+		"OrderStep_SentReceipt",
+		"OrderStep_Confirmed",
+		"OrderStep_Sent"
 	);
-		static function set_standard_codes($v) {self::$standard_codes = $v;}
-		static function get_standard_codes() {return self::$standard_codes;}
-
+		static function set_classes($v) {self::$classes = $v;}
+		static function get_classes() {self::$classes;}
+		static function get_codes() {
+			$array = self::get_classes();
+			if($array && count($array)) {
+				foreach($array as $className) {
+					$code = singleton($this->ClassName)->getCode();
+					$newArray[$className] = strtoupper($code);
+				}
+			}
+		}
+		function getCode() {return self::$defaults["Code"];}
 
 	public static $defaults = array(
 		"CanEdit" => 0,
@@ -92,7 +108,7 @@ class OrderStep extends DataObject {
 		//TO DO: add warning messages and break up fields
 		$fields = parent::getCMSFields();
 		$fields->addFieldToTab("Root.Main", new HeaderField("WARNING1", _t("OrderStep.CAREFUL", "CAREFUL! please edit with care"), 1), "Name");
-		$fields->addFieldToTab("Root.Main", DropdownField("ClassName", _t("OrderStep.TYPE", "Type"), self::$standard_codes));
+		$fields->addFieldToTab("Root.Main", DropdownField("ClassName", _t("OrderStep.TYPE", "Type"), self::get_codes()));
 		$fields->addFieldToTab("Root.Main", new HeaderField("WARNING2", _t("OrderStep.CUSTOMERCANCHANGE", "What can be changed?"), 3), "CanEdit");
 		$fields->addFieldToTab("Root.Main", new HeaderField("WARNING5", _t("OrderStep.ORDERGROUPS", "Order groups for customer?"), 3), "ShowAsUncompletedOrder");
 		$fields->replaceField("Code", $fields->dataFieldByName("Code")->performReadonlyTransformation());
@@ -120,19 +136,38 @@ class OrderStep extends DataObject {
 /**************************************************
 * moving between statusses...
 **************************************************/
-
+	/**
+  	*initStep:
+  	* makes sure the step is ready to run.... (e.g. check if the order is ready to be emailed as receipt).
+	* should be able to run this function many times to check if the step is ready
+  	*@param Order object
+  	*@return Boolean - true if run correctly
+  	**/
 	public function initStep($order) {
 		user_error("Please implement this in a subclass of OrderStep", E_USER_WARNING);
 		return true;
 	}
-
-	public function ifReadyReturnNextStepObject($order, $codeHint = '') {
-		$nextStatus = DataObject::get_one("OrderStep", "\"Sort\" > ".$this->Sort);
-		if($codeHint && $codeHint != $nextStatus->Code) {
-			return null;
-		}
-		if($nextStatus) {
-			return $nextStatus;
+	/**
+  	*doStep:
+	* should only be able to run this function one (init stops you from running it twice - in theory....)
+  	*runs the actual step
+  	*@param Order object
+  	*@return Boolean - true if run correctly
+  	**/
+	public function doStep($order) {
+		user_error("Please implement this in a subclass of OrderStep", E_USER_WARNING);
+		return true;
+	}
+	/**
+  	*nextStep:
+  	*runs the actual step
+  	*@param Order object
+  	*@return next step OrderStep object
+  	**/
+	public function nextStep($order) {
+		$nextOrderStepObject = DataObject::get_one("OrderStep", "\"Sort\" > ".$this->Sort);
+		if($nextOrderStepObject) {
+			return $nextOrderStepObject;
 		}
 		return null;
 	}
@@ -144,7 +179,7 @@ class OrderStep extends DataObject {
 **************************************************/
 
 	public function canDelete($member = null) {
-		if($order = DataObject::get_one("Order", "StatusID = ".$this->ID)) {
+		if($order = DataObject::get_one("Order", "\"StatusID\" = ".$this->ID)) {
 			return false;
 		}
 		if($this->isDefaultStatusOption()) {
@@ -182,9 +217,17 @@ class OrderStep extends DataObject {
 	}
 
 	protected function isDefaultStatusOption() {
-		return in_array($this->Code, self::$standard_codes);
+		return in_array($this->Code, self::get_codes());
 	}
 
+	//EMAIL
+
+	protected function hasBeenSent($order) {
+		if(DataObject::get_one("OrderEmailRecord", "\"OrderEmailRecord\".\"OrderID\" = ".$order->ID." AND \"OrderEmailRecord\".\"StatusID\" = ".$order->StatusID." AND  \"OrderEmailRecord\".\"Result\" = 1")) {
+			return true;
+		}
+		return false;
+	}
 
 /**************************************************
 * Silverstripe Standard Functions
@@ -205,8 +248,8 @@ class OrderStep extends DataObject {
 	//USED TO BE: Unpaid,Query,Paid,Processing,Sent,Complete,AdminCancelled,MemberCancelled,Cart
 	function requireDefaultRecords() {
 		parent::requireDefaultRecords();
-		if(self::$standard_codes && count(self::$standard_codes)) {
-			foreach(self::$standard_codes as $className => $code) {
+		if(self::get_classes() && count(self::get_classes())) {
+			foreach(self::get_codes() as $className => $code) {
 				if(!DataObject::get_one("OrderStep", "\"Code\" = '".strtoupper($code)."'")) {
 					$obj = new $className();
 					$obj->Code = strtoupper($obj->Code);
@@ -221,7 +264,7 @@ class OrderStep extends DataObject {
 class OrderStep_Created extends OrderStep {
 
 	public static $defaults = array(
-		"Name" => "Created",
+		"Name" => "Create",
 		"Code" => "CREATED",
 		"Sort" => 10,
 		"CanEdit" => 1,
@@ -233,10 +276,14 @@ class OrderStep_Created extends OrderStep {
 		return true;
 	}
 
-	public function ifReadyReturnNextStepObject($order, $codeHint = "") {
-		$newStatus = parent::ifReadyReturnNextStepObject($order, $codeHint = "");
+	public function doStep($order) {
+		return true;
+	}
+
+	public function nextStep($order) {
+		$nextOrderStepObject = parent::nextStep($order);
 		if($order->Items()) {
-			return $newStatus;
+			return $nextOrderStepObject;
 		}
 		return null;
 	}
@@ -253,37 +300,37 @@ class OrderStep_Created extends OrderStep {
 class OrderStep_Submitted extends OrderStep {
 
 	static $defaults = array(
-		"Name" => "Submitted",
+		"Name" => "Submit",
 		"Code" => "SUBMITTED",
 		"Sort" => 20,
 		"ShowAsInProcessOrder" => 1
 	);
 
 	public function initStep($order) {
-
-		//re-write all attributes and modifiers to make sure they are up-to-date before they can't be changed again
+		if(!$order->Items()) {
+			return false;
+		}
 		$order->calculateModifiers();
-		if(!$order->MemberID) {
-			$order->MemberID = Member::currentUserID();
-		}
-		if(!$order->MemberID) {
-			user_error("Can not submit an order without a customer.", E_USER_ERROR);
-		}
-		$order->MemberID = $member->ID;
-		$siteConfig = DataObject::get_one("SiteConfig");
-		if($siteConfig && $siteConfig->SendInvoiceOnSubmit) {
-			if(!$order->InvoiceSent){
-				$order->sentInvoice();
-			}
-		}
-		$this->extend('onSubmit', $member);
 		return true;
 	}
 
-	public function ifReadyReturnNextStepObject($order, $codeHint = "") {
-		$newStatus = parent::ifReadyReturnNextStepObject($order, $codeHint = "");
+	public function doStep($order) {
+		if(!$order->MemberID && Member::currentUser()) {
+			if(Member::currentUser()->IsShopAdmin) {
+				$order->MemberID = Member::currentUserID();
+				$order->write();
+			}
+		}
+		if(!$order->MemberID) {
+			return false;
+		}
+		return true;
+	}
+
+	public function nextStep($order) {
+		$nextOrderStepObject = parent::nextStep($order);
 		if($order->MemberID) {
-			return $newStatus;
+			return $nextOrderStepObject;
 		}
 		return null;
 	}
@@ -297,34 +344,75 @@ class OrderStep_Submitted extends OrderStep {
 
 }
 
-class OrderStep_Paid extends OrderStep {
+
+
+class OrderStep_SentInvoice extends OrderStep {
 
 	static $db = array(
-		"SendReceiptOnPaid" => "Boolean",
-		"ReceiptSent" => "Boolean"
+		"SendInvoiceToCustomer" => "Boolean"
 	);
 
 	public static $defaults = array(
-		"Name" => "Paid",
+		"Name" => "Send invoice",
+		"Code" => "INVOICED",
+		"Sort" => 25,
+		"ShowAsInProcessOrder" => 1,
+		"SendInvoiceToCustomer" => 1
+	);
+
+	public function initStep($order) {
+		return true;
+	}
+
+	public function doStep($order) {
+		if($this->SendInvoiceToCustomer){
+			if(!$this->hasBeenSent($order)) {
+				return $order->sendInvoice();
+			}
+		}
+		return true;
+	}
+
+	public function nextStep($order) {
+		$nextOrderStepObject = parent::nextStep($order);
+		if(!$this->SendInvoiceToCustomer || $this->hasBeenSent($order)) {
+			return $nextOrderStepObject;
+		}
+		return null;
+	}
+
+
+	function populateDefaults() {
+		parent::populateDefaults();
+		foreach(self::$defaults as $field => $value) {
+			$this->$field = $value;
+		}
+	}
+
+
+}
+
+class OrderStep_Paid extends OrderStep {
+
+	public static $defaults = array(
+		"Name" => "Pay",
 		"Code" => "PAID",
 		"Sort" => 30,
 		"ShowAsInProcessOrder" => 1
 	);
 
 	public function initStep($order) {
-		if($siteConfig && $this->SendReceiptOnPaid) {
-			if(!$this->ReceiptSent){
-				$order->sendReceipt();
-			}
-		}
-		$this->extend('onPay', $payments);
 		return true;
 	}
 
-	public function ifReadyReturnNextStepObject($order, $codeHint = "") {
-		$newStatus = parent::ifReadyReturnNextStepObject($order, $codeHint = "");
+	public function doStep($order) {
+		return true;
+	}
+
+	public function nextStep($order) {
+		$nextOrderStepObject = parent::nextStep($order);
 		if($order->IsPaid()) {
-			return $newStatus;
+			return $nextOrderStepObject;
 		}
 		return null;
 	}
@@ -338,29 +426,81 @@ class OrderStep_Paid extends OrderStep {
 	}
 }
 
+
+class OrderStep_SentReceipt extends OrderStep {
+
+	static $db = array(
+		"SendReceiptToCustomer" => "Boolean"
+	);
+
+	public static $defaults = array(
+		"Name" => "Send receipt",
+		"Code" => "RECEIPTED",
+		"Sort" => 35,
+		"ShowAsInProcessOrder" => 1,
+		"SendReceiptToCustomer" => 1
+	);
+
+	public function initStep($order) {
+		return true;
+	}
+
+
+	public function doStep($order) {
+		if($this->SendReceiptToCustomer){
+			if(!$this->hasBeenSent($order)) {
+				return $order->sendReceipt();
+			}
+		}
+		return true;
+	}
+
+	public function nextStep($order) {
+		$nextOrderStepObject = parent::nextStep($order);
+		if(!$this->SendReceiptToCustomer || $this->hasBeenSent($order)) {
+			return $nextOrderStepObject;
+		}
+		return null;
+	}
+
+
+	function populateDefaults() {
+		parent::populateDefaults();
+		foreach(self::$defaults as $field => $value) {
+			$this->$field = $value;
+		}
+	}
+
+}
+
+
 class OrderStep_Confirmed extends OrderStep {
 
 	public static $defaults = array(
-		"Name" => "Confirmed",
+		"Name" => "Confirm",
 		"Code" => "CONFIRMED",
 		"Sort" => 40,
 		"ShowAsInProcessOrder" => 1
 	);
 
-	public function ifReadyReturnNextStepObject($order, $codeHint = "") {
-		$newStatus = parent::ifReadyReturnNextStepObject($order, $codeHint = "");
-		if($order->HasPositivePaymentCheck()) {
-			return $newStatus;
-		}
-		return null;
-	}
-
 	public function initStep($order) {
 		if(!$order->ReceiptSent){
 			$order->sendReceipt();
 		}
-		$this->extend('onConfirmed', $log);
 	}
+
+	public function doStep($order) {
+		return true;
+	}
+
+	public function nextStep($order) {
+		$nextOrderStepObject = parent::nextStep($order);
+		if($order->HasPositivePaymentCheck()) {
+			return $nextOrderStepObject;
+		}
+		return null;
+	}
+
 
 	function populateDefaults() {
 		parent::populateDefaults();
@@ -373,16 +513,24 @@ class OrderStep_Confirmed extends OrderStep {
 class OrderStep_Sent extends OrderStep {
 
 	public static $defaults = array(
-		"Name" => "Sent",
+		"Name" => "Send order",
 		"Code" => "SENT",
 		"Sort" => 50,
 		"ShowAsCompletedOrder" => 1
 	);
 
-	public function ifReadyReturnNextStepObject($order, $codeHint = "") {
-		$newStatus = parent::ifReadyReturnNextStepObject($order, $codeHint = "");
+	public function initStep($order) {
+		return true;
+	}
+
+	public function doStep($order) {
+		return true;
+	}
+
+	public function nextStep($order) {
+		$nextOrderStepObject = parent::nextStep($order);
 		if($order->HasDispatchRecord()) {
-			return $newStatus;
+			return $nextOrderStepObject;
 		}
 		return null;
 	}

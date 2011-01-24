@@ -74,7 +74,7 @@ class OrderStatusLog extends DataObject {
 
 	function populateDefaults() {
 		parent::populateDefaults();
-		$this->AuthorID = Member::currentUser()->ID;
+		$this->AuthorID = Member::currentUserID();
 	}
 
 	function getCMSFields() {
@@ -227,7 +227,7 @@ class OrderStatusLog_DispatchPhysicalOrder extends OrderStatusLog_Dispatch {
 			$this->Title = $sc->DispatchEmailSubject;
 		}
 		$this->DispatchedOn =  date('Y-m-d');
-		$this->DispatchedBy =  Member::currentUser()->ID;
+		$this->DispatchedBy =  Member::currentUserID();
 	}
 
 	function getCMSFields() {

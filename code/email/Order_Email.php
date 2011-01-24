@@ -9,9 +9,9 @@
 
 class Order_Email extends Email {
 
-	public function send($messageID = null) {
+	public function send($messageID = null, $order) {
 		$result = parent::send($messageID);
-		$this->CreateRecord($result);
+		$this->CreateRecord($result, $order);
 		return $result;
 	}
 
@@ -22,13 +22,15 @@ class Order_Email extends Email {
 
 	}
 
-	protected function CreateRecord($result) {
+	protected function CreateRecord($result, $order) {
 		$obj = new OrderEmailRecord();
 		$obj->From = $this->from;
 		$obj->To = $this->to;
 		$obj->Subject = $this->subject;
 		$obj->Content = $this->body;
-		$obj->Result = $result;
+		$obj->Result = $result ? 1 : 0;
+		$obj->OrderID = $order->ID;
+		$obj->OrderStepID = $order->OrderStepID;
 		if(Email::$send_all_emails_to) {
 			$obj->To .= Email::$send_all_emails_to;
 		}

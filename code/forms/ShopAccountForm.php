@@ -46,33 +46,29 @@ class ShopAccountForm extends Form {
 		}
 	}
 
-	/**
-	 * Save the changes to the form
-	 */
-	function submit($data, $form, $request) {
-		$member = Member::currentUser();
-		if(!$member) {
-			return false;
-		}
-		$form->saveInto($member);
-		$member->write();
-		$form->sessionMessage(_t("ShopAccountForm.DETAILSSAVED",'Your details have been saved'), 'good');
-		Director::redirectBack();
-		return true;
-	}
 
 	/**
 	 * Save the changes to the form, and redirect to the checkout page
 	 */
 	function proceed($data, $form, $request) {
+		return $this->processForm($data, $form, $request, CheckoutPage::find_link());
+	}
+
+	protected function processForm($data, $form, $request, $link = "") {
 		$member = Member::currentUser();
 		if(!$member) {
 			return false;
 		}
 		$form->saveInto($member);
 		$member->write();
-		$form->sessionMessage(_t("ShopAccountForm.DETAILSSAVED",'Your details have been saved'), 'good');
-		Director::redirect(CheckoutPage::find_link());
+		//TO DO: fix password....
+		$form->sessionMessage(_t("ShopAccountForm.DETAILSSAVED",'Your details have been saved.'), 'good');
+		if($link) {
+			Director::redirect($link);
+		}
+		else {
+			Director::redirectBack();
+		}
 		return true;
 	}
 
@@ -82,23 +78,45 @@ class ShopAccountForm extends Form {
 class ShopAccountForm_Validator extends RequiredFields{
 
 	/**
-	 * Ensures member unique id stays unique.
+	 * Ensures member unique id stays unique and other basic stuff...
 	 * TODO: check if this code is not part of Member itself, as it applies to any member form.
 	 */
 	function php($data){
 		$valid = parent::php($data);
 		$field = Member::get_unique_identifier_field();
+		$currentMember = Member::currentUser();
 		if(isset($data[$field])){
 			$uid = $data[Member::get_unique_identifier_field()];
-			$currentmember = Member::currentUser();
 			//can't be taken
-			if(DataObject::get_one('Member',"$field = '$uid' AND ID != ".$currentmember->ID)){
+			if(DataObject::get_one('Member',"$field = '$uid' AND ID != ".$currentMember->ID)){
 				$this->validationError(
 					$field,
-					"\"$uid\" "._t("ShopAccountForm.ALREADYTAKEN", "is already taken by another member. Try another or log in."),
+					"\"$uid\" "._t("ShopAccountForm.ALREADYTAKEN", " is already taken by another member. Please log in or use another \"$uid\"."),
 					"required"
 				);
 				$valid = false;
+			}
+		}
+		// check password fields are the same before saving
+		if(isset($data["Password"]["_Password"]) && isset($data["Password"]["_ConfirmPassword"])) {
+			if($data["Password"]["_Password"] != $data["Password"]["_ConfirmPassword"]) {
+				$this->validationError(
+					$field,
+					_t("ShopAccountForm.PASSWORDSERROR", "Passwords do not match."),
+					"required"
+				);
+				$valid = false;
+			}
+			if(!$currentMember && !$data["Password"]["_Password"]) {
+				$this->validationError(
+					$field,
+					_t("ShopAccountForm.SELECTPASSWORD", "Please select a password."),
+					"required"
+				);
+				$valid = false;
+			}
+			if($currentMember  && !$data["Password"]["_Password"]) {
+				//TO DO: set password back to pre-existing password.
 			}
 		}
 		return $valid;

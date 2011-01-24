@@ -63,19 +63,24 @@ class CheckoutPage extends Page {
 
 
 	/**
-	 * Returns the link to the checkout page on this site, using
-	 * a specific Order ID that already exists in the database.
-	 *
-	 * @param boolean $urlSegment If set to TRUE, only returns the URLSegment field
-	 * @return string Link to checkout page
+	 * Returns the link or the Link to the account page on this site
+	 * @return String (URLSegment)
 	 */
-	public static function find_link($useURLSegment = false) {
+	public static function find_link() {
 		if(!$page = DataObject::get_one('CheckoutPage')) {
 			user_error('No CheckoutPage was found. Please create one in the CMS!', E_USER_ERROR);
 		}
 		return $page->Link();
 	}
 
+	/**
+	 * Return a link to view the order on this page.
+	 * @return String (URLSegment)
+	 * @param int|string $orderID ID of the order
+	 */
+	public static function get_order_link($orderID) {
+		return self::find_link(). 'showorder/' . $orderID . '/';
+	}
 
 	function canCreate() {
 		return !DataObject::get_one("SiteTree", "\"ClassName\" = 'CheckoutPage'");
@@ -93,7 +98,7 @@ class CheckoutPage extends Page {
 		if(!$page = DataObject::get_one('CheckoutPage')) {
 			user_error('No CheckoutPage was found. Please create one in the CMS!', E_USER_ERROR);
 		}
-		return $page->Link("loadorder"). $orderID . "/";
+		return $page->Link("loadorder"). "/" . $orderID . "/";
 	}
 
 	function getCMSFields() {
@@ -138,7 +143,7 @@ class CheckoutPage extends Page {
 		if($page) {
 			if(!$page->PurchaseComplete) {$page->PurchaseComplete = '<p>Your purchase is complete.</p>'; $update[] = "added PurchaseComplete content";}
 			if(!$page->ChequeMessage) {$page->ChequeMessage = '<p>Please note: Your goods will not be dispatched until we receive your payment.</p>'; $update[] = "added ChequeMessage content";}
-			if(!$page->PAlreadyCompletedMessage) {$page->AlreadyCompletedMessage = '<p>This order has already been completed.</p>'; $update[] = "added AlreadyCompletedMessage content";}
+			if(!$page->AlreadyCompletedMessage) {$page->AlreadyCompletedMessage = '<p>This order has already been completed.</p>'; $update[] = "added AlreadyCompletedMessage content";}
 			if(!$page->FinalizedOrderLinkLabel) {$page->FinalizedOrderLinkLabel = 'view completed order'; $update[] = "added FinalizedOrderLinkLabel content";}
 			if(!$page->CurrentOrderLinkLabel) {$page->CurrentOrderLinkLabel = 'view current order'; $update[] = "added CurrentOrderLinkLabel content";}
 			if(!$page->NonExistingOrderMessage) {$page->NonExistingOrderMessage = '<p>We can not find your order.</p>'; $update[] = "added NonExistingOrderMessage content";}
@@ -175,14 +180,14 @@ class CheckoutPage_Controller extends Page_Controller {
 
 	protected $usefulLinks = null;
 
-	protected $order = null;
+	protected $currentOrder = null;
 
 	public function init() {
 		parent::init();
 		if(!class_exists('Payment')) {
 			trigger_error('The payment module must be installed for the ecommerce module to function.', E_USER_WARNING);
 		}
-		$this->order = ShoppingCart::current_order();
+		$this->currentOrder = ShoppingCart::current_order();
 		ShoppingCart::add_requirements();
 		Requirements::javascript('ecommerce/javascript/EcommercePayment.js');
 		Requirements::themedCSS('CheckoutPage');
@@ -246,7 +251,7 @@ class CheckoutPage_Controller extends Page_Controller {
 	}
 
 	function Order() {
-		return $this->order;
+		return $this->currentOrder;
 	}
 
 	/**
@@ -257,7 +262,7 @@ class CheckoutPage_Controller extends Page_Controller {
 	 */
 	function loadorder($request) {
 		if($orderID = intval($request->param('ID'))) {
-			$this->order = ShoppingCart::load_order($orderID);
+			$this->currentOrder = ShoppingCart::load_order($orderID);
 			Director::redirect($this->Link());
 		}
 		return array();
@@ -270,8 +275,8 @@ class CheckoutPage_Controller extends Page_Controller {
 	 * @return boolean
 	 */
 	function CanCheckout() {
-		if($this->order) {
-			if($this->order->Items() && $this->order->CanEdit()) {
+		if($this->currentOrder) {
+			if($this->currentOrder->Items() && $this->currentOrder->CanEdit()) {
 				return true;
 			}
 		}
@@ -287,27 +292,26 @@ class CheckoutPage_Controller extends Page_Controller {
 	function Message() {
 		$this->usefulLinks = new DataObjectSet();
 		$checkoutLink = CheckoutPage::find_link();
-		if(!Member::currentUserID() && !$this->order) {
+		if(!Member::currentUserID() && !$this->currentOrder) {
 			$redirectLink = CheckoutPage::get_checkout_order_link();
 			$this->usefulLinks->push(new ArrayData(array("Title" => $this->LoginToOrderLinkLabel, "Link" => 'Security/login?BackURL='.urlencode($redirectLink))));
 			$this->usefulLinks->push(new ArrayData(array("Title" => $this->CurrentOrderLinkLabel, "Link" => $checkoutLink)));
 			return $this->MustLoginToCheckoutMessage;
 			//'You can not checkout this order because you are not logged in. To do so, please <a href="Security/login?BackURL=' . $redirectLink . '">login</a> first, otherwise you can <a href="' . $checkoutLink . '">checkout</a> your current order.'
 		}
-		elseif(!$this->order) {
+		elseif(!$this->currentOrder) {
 			$this->usefulLinks->push(new arrayData(array("Title" => $this->CurrentOrderLinkLabel, "Link" => $checkoutLink)));
 			return $this->NonExistingOrderMessage;
 		}
-		elseif(!$this->order->Items()) {
+		elseif(!$this->currentOrder->Items()) {
 			return $this->NoItemsInOrderMessage;
 		}
-
-		elseif(!$this->order->CanPay() || !$this->order->CanEdit()) {
-			$this->usefulLinks->push(new ArrayData(array("Title" => $this->FinalizedOrderLinkLabel, "Link" => $this->order->Link())));
+		elseif(!$this->currentOrder->CanPay() || !$this->currentOrder->CanEdit()) {
+			$this->usefulLinks->push(new ArrayData(array("Title" => $this->FinalizedOrderLinkLabel, "Link" => $this->currentOrder->Link())));
 			$this->usefulLinks->push(new ArrayData(array("Title" => $this->CurrentOrderLinkLabel, "Link" => $checkoutLink)));
 			return $this->AlreadyCompletedMessage;
 		}
-
+		return "";
 	}
 
 	function UsefulLinks() {

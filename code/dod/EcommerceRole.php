@@ -295,7 +295,7 @@ class EcommerceRole extends DataObjectDecorator {
 			return true;
 		}
 		else{
-			return Permission::checkMember($this, self::get_admin_permission_code());
+			return Permission::checkMember($this->owner, self::get_admin_permission_code());
 		}
 	}
 

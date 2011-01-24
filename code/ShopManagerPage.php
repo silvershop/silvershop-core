@@ -166,7 +166,7 @@ class ShopManagerPage_Controller extends Page_Controller {
 		Requirements::themedCSS('Order_print', 'print');
 		$accountPageLink = AccountPage::find_link();
 		if($orderID = $request->param('ID')) {
-			if($order = DataObject::get_one('Order', "\"Order\".\"ID\" = '$orderID'")) {
+			if($order = DataObject::get_by_id('Order', $orderID)) {
 				return array('Order' => $order);
 			}
 			else {

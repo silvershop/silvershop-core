@@ -29,7 +29,7 @@ class EcommercePayment extends DataObjectDecorator {
 		if($paidBy) {
 			$payment->PaidByID = $paidBy->ID;
 		}
-		$payment->Amount->Amount = $order->TotalOutstanding();
+		$payment->Amount = $order->TotalOutstandingAsCurrencyObject();
 		$payment->write();
 		// Process payment, get the result back
 		$result = $payment->processPayment($data, $form);
@@ -116,7 +116,7 @@ class EcommercePayment extends DataObjectDecorator {
 		parent::onBeforeWrite();
 		//TODO: throw error IF there is no OrderID
 		if($this->owner->OrderID) {
-			if($order = DataObject::get_by_id("Order", $this->owner->OrderID)) {
+			if($order = Order::get_by_id($this->owner->OrderID)) {
 				$this->owner->PaidForID = $order->ID;
 				$this->owner->PaidForClass = $order->ClassName;
 			}

@@ -28,4 +28,4 @@
 			<% end_if %>
 		<% end_if %>
 	</div>
-</div>																			
+</div>

@@ -16,30 +16,55 @@ class AccountPage extends Page {
 	}
 
 	/**
-	 * Returns the link or the URLSegment to the account page on this site
-	 * @param boolean $urlSegment Return the URLSegment only
+	 * Returns the link or the Link to the account page on this site
+	 * @return String (URLSegment)
 	 */
-	public static function find_link($useURLSegment = false) {
-		$page = self::get_if_account_page_exists();
-		return ($useURLSegment) ? $page->URLSegment : $page->Link();
+	public static function find_link() {
+		if($page = self::get_if_account_page_exists()) {
+			return $page->Link();
+		}
 	}
 
 	/**
-	 * Return a link to view the order on the account page.
-	 *
+	 * Return a link to view the order on this page.
+	 * @return String (URLSegment)
 	 * @param int|string $orderID ID of the order
-	 * @param boolean $urlSegment Return the URLSegment only
 	 */
-	public static function get_order_link($orderID, $urlSegment = false) {
-		$page = self::get_if_account_page_exists();
-		return ($urlSegment ? $page->URLSegment . '/' : $page->Link()) . 'order/' . $orderID;
+	public static function get_order_link($orderID) {
+		return self::find_link(). 'showorder/' . $orderID . '/';
 	}
 
 	protected static function get_if_account_page_exists() {
 		if($page = DataObject::get_one('AccountPage')) {
 			return $page;
 		}
-		user_error('No AccountPage was found. Please create one in the CMS!', E_USER_ERROR);
+		user_error('No AccountPage was found. Please create one in the CMS!', E_USER_WARNING);
+	}
+
+	function AllMemberOrders() {
+		$dos = new DataObjectSet();
+		$doIncompleteOrders = new DataObject();
+		$doIncompleteOrders->Orders = $this->IncompleteOrders();
+		if($doIncompleteOrders->Orders) {
+			$doIncompleteOrders->Heading = _t("AccountPage.INCOMPLETEORDERS", "Incomplete Orders");
+			$dos->push($doIncompleteOrders);
+		}
+		$doInProcessOrders = new DataObject();
+		$doInProcessOrders->Orders = $this->InProcessOrders();
+		if($doInProcessOrders->Orders) {
+			$doInProcessOrders->Heading = _t("AccountPage.INPROCESSORDERS", "In Process Orders");
+			$dos->push($doInProcessOrders);
+		}
+		$doCompleteOrders = new DataObject();
+		$doCompleteOrders->Orders = $this->CompleteOrders();
+		if($doCompleteOrders->Orders) {
+			$doCompleteOrders->Heading = _t("AccountPage.COMPLETEORDERS", "Complete Orders");
+			$dos->push($doCompleteOrders);
+		}
+		if($dos->count()) {
+			return $dos;
+		}
+		return null;
 	}
 
 	/**
@@ -50,7 +75,7 @@ class AccountPage extends Page {
 	 */
 	function IncompleteOrders() {
 		$statusFilter = "\"OrderStatus\".\"ShowAsUncompletedOrder\" = 1 ";
-		return $this->OrderSQL($statusFilter);
+		$orders = $this->otherOrderSQL($statusFilter);
 	}
 
 	/**
@@ -61,7 +86,7 @@ class AccountPage extends Page {
 	 */
 	function InProcessOrders() {
 		$statusFilter = "\"OrderStatus\".\"ShowAsInProcessOrder\" = 1";
-		return $this->OrderSQL($statusFilter);
+		return $this->otherOrderSQL($statusFilter);
 	}
 
 	/**
@@ -72,19 +97,32 @@ class AccountPage extends Page {
 	 */
 	function CompleteOrders() {
 		$statusFilter = "\"OrderStatus\".\"ShowAsCompletedOrder\" = 1";
-		return $this->OrderSQL($statusFilter);
+		return $this->otherOrderSQL($statusFilter);
 	}
 
-	protected function OrderSQL ($statusFilter) {
+	protected function otherOrderSQL ($statusFilter) {
 		$memberID = Member::currentUserID();
 		if($memberID) {
-			return DataObject::get(
+			//to do ?? check for canView????
+			$orders = DataObject::get(
 				$className = 'Order',
-				$where = "\"Order\".\"MemberID\" = '$memberID' AND $statusFilter",
+				$where = "\"Order\".\"MemberID\" = '$memberID' AND $statusFilter AND \"CancelledByID\" = 0",
 				$sort = "\"Created\" DESC",
 				$join = "INNER JOIN \"OrderStatus\" ON \"Order\".\"StatusID\" = \"OrderStatus\".\"ID\""
 			);
+			if($orders) {
+				foreach($orders as $order) {
+					if(!$order->Items() || !$order->canView()) {
+						$orders->remove($order);
+					}
+					elseif(!$order->canEdit())  {
+						$order->tryToFinaliseOrder();
+					}
+				}
+				return $orders;
+			}
 		}
+		return null;
 	}
 
 
@@ -110,16 +148,32 @@ class AccountPage extends Page {
 class AccountPage_Controller extends Page_Controller {
 
 	static $allowed_actions = array(
-		'order',
+		'showorder',
 		'CancelForm',
 		'PaymentForm',
 		'MemberForm'
 	);
 
+	protected $currentOrder = null;
+
+	protected $orderID = 0;
+
+	protected $memberID = 0;
+
+	protected $message = "";
+
+	protected static $session_code = "AccountPageMessage";
+		static function set_session_code($v) {self::$session_code = $v;}
+		static function get_session_code() {return self::$session_code;}
+
+	public static function set_message($message) {Session::set(self::get_session_code(), $message);}
+
 	function init() {
 		parent::init();
+
 		Requirements::themedCSS('AccountPage');
-		if(!Member::currentUserID()) {
+		$this->memberID = Member::currentUserID();
+		if(!$this->memberID) {
 			$messages = array(
 				'default' => '<p class="message good">' . _t('AccountPage.MESSAGE', 'You\'ll need to login before you can access the account page. If you are not registered, you won\'t be able to access it until you make your first order, otherwise please enter your details below.') . '</p>',
 				'logInAgain' => _t('AccountPage.LOGINAGAIN', 'You have been logged out. If you would like to log in again, please do so below.')
@@ -127,42 +181,47 @@ class AccountPage_Controller extends Page_Controller {
 			Security::permissionFailure($this, $messages);
 			return false;
 		}
+		//WE HAVE THIS FOR SUBMITTING FORMS!
+		if(isset($_POST['OrderID'])) {
+			$this->orderID = intval($_POST['OrderID']);
+		}
 	}
 
+	function CurrentOrder() {
+		if(!$this->currentOrder) {
+			$this->currentOrder = Order::get_by_id_and_member_id($this->orderID, $this->memberID);
+			if($this->currentOrder) {
+				if(!$this->currentOrder->canEdit())  {
+					$this->currentOrder->tryToFinaliseOrder();
+				}
+			}
+		}
+		return $this->currentOrder;
+	}
+
+	function Message() {
+		if($sessionMessage = Session::get(self::get_session_code())) {
+			$this->message .= $sessionMessage;
+			Session::set(self::get_session_code(), "");
+			Session::clear(self::get_session_code());
+		}
+		return $this->message;
+	}
 
 	/**
 	 * Return the {@link Order} details for the current
 	 * Order ID that we're viewing (ID parameter in URL).
 	 *
-	 * @return array of template variables
+	 * @return array
 	 */
-	function order($request) {
+	function showorder($request) {
 		Requirements::themedCSS('Order');
 		Requirements::themedCSS('Order_print', 'print');
-		$accountPageLink = AccountPage::find_link();
-		if($orderID = $request->param('ID')) {
-			if($order = $this->getOrder()) {
-
-				$paymentform = ($order->TotalOutstanding() > 0) ? $this->CancelForm() : null;
-
-				return array(
-					'Order' => $order,
-					'Form' => $paymentform
-				);
-			}
-			else {
-				return array(
-					'Order' => false,
-					'Message' => 'You do not have any order corresponding to this ID. However, you can <a href="' . $accountPageLink . '">edit your own personal details and view your orders.</a>.'
-				);
-			}
+		$this->orderID = intval($request->param("ID"));
+		if(!$this->CurrentOrder()) {
+			$this->message = _t('AccountPage.ORDERNOTFOUNDGOTO', 'Order can not be found. Go to '). '<a href="' . $this->Link() . '">'.$this->Title.'</a> '._t('AccountPage.FORMOREOPTIONS', 'for more options').'.';
 		}
-		else {
-			return array(
-				'Order' => false,
-				'Message' => _t('AccountPage.ORDERNOTFOUND', 'Order can not be found.').' '._t('AccountPage.LINKTOACCOUNTPAGE', 'Go to '). '<a href="' . $accountPageLink . '">'.$this->Title.'</a>.'
-			);
-		}
+		return array();
 	}
 
 	/**
@@ -172,7 +231,9 @@ class AccountPage_Controller extends Page_Controller {
 	 * @return ShopAccountForm
 	 */
 	function MemberForm() {
-		return new ShopAccountForm($this, 'MemberForm');
+		if(!$this->CurrentOrder()) {
+			return new ShopAccountForm($this, 'MemberForm');
+		}
 	}
 
 	/**
@@ -180,51 +241,23 @@ class AccountPage_Controller extends Page_Controller {
 	 * checking to see if they can cancel their order
 	 * first of all.
 	 *
-	 * @return Order_CancelForm
+	 * @return OrderForm_Cancel
 	 */
 	function CancelForm() {
-		$order = $this->getOrder();
-		if($order && $order->canCancel()) {
-			return new Order_CancelForm($this, 'CancelForm', $order->ID);
+		if($this->CurrentOrder()) {
+			if($this->currentOrder->canCancel()) {
+				return new OrderForm_Cancel($this, 'CancelForm', $this->currentOrder);
+			}
 		}
-		return null;
 	}
 
 
 	function PaymentForm(){
-		$order = $this->getOrder();
-		if($order && $form = new Order_CancelForm($this, 'PaymentForm', $order->ID)){
-			$paymentFields = Payment::combined_form_fields($order->TotalOutstanding());
-			$paymentFields->merge($form->Fields());
-			$form->setFields($paymentFields);
-			//TODO: add required fields
-			$form->Actions()->push(new FormAction('payoutstanding', _t("AccountPage.PAYOUTSTANDING", "Pay Outstanding")));
-			return $form;
-		}
-	}
-
-	function payoutstanding($data,$form){
-		$data = Convert::raw2sql($data);
-		$order = $this->getOrder();
-		//to do - do we need to check if there is an order at all?
-		return EcommercePayment::process_payment_form_and_return_next_step($order, $data, $form);
-	}
-
-	/**
-	 * Gets the order, as specified in the url OrderID.
-	 */
-	protected function getOrder(){
-		$memberID = Member::currentUserID();
-		if($memberID) {
-			$orderID = intval($this->getRequest()->param('ID'));
-			if(!$orderID && isset($_POST['OrderID'])) {
-				$orderID = intval($_POST['OrderID']);
-			}
-			if(is_numeric($orderID)) {
-				return DataObject::get_one('Order', "\"Order\".\"ID\" = '$orderID' AND \"Order\".\"MemberID\" = '$memberID'");
+		if($this->CurrentOrder()){
+			if($this->currentOrder->canPay()) {
+				return $form = new OrderForm_Payment($this, 'PaymentForm', $this->currentOrder);
 			}
 		}
-		return null;
 	}
 
 

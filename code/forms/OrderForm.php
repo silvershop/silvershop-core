@@ -11,7 +11,6 @@ class OrderForm extends Form {
 
 	function __construct($controller, $name) {
 		//Requirements::themedCSS('OrderForm');
-
 		Requirements::javascript('ecommerce/javascript/OrderForm.js');
 
 		// 1) Member fields
@@ -33,10 +32,12 @@ class OrderForm extends Form {
 			if(!$member->Created) {
 				$rightFields->push(new LiteralField('MemberInfo', '<p class="message good">'._t('OrderForm.MEMBERINFO','If you are already a member please')." <a href=\"Security/login?BackURL=" . CheckoutPage::find_link(true) . "/\">"._t('OrderForm.LOGIN','log in').'</a>.</p>'));
 			}
-			$rightFields->push(new LiteralField('AccountInfo', '<p>'._t('OrderForm.ACCOUNTINFO','Please choose a password, so you can login and check your order history in the future').'</p><br/>'));
+			$rightFields->push(new LiteralField('AccountInfo', '<p>'._t('OrderForm.ACCOUNTINFO',
+				'Please <a href="#Password" class="choosePassword">choose a password</a>, so you can log in and check your order history in the future.').'</p><br/>'));
 			$rightFields->push(new FieldGroup(new ConfirmedPasswordField('Password', _t('OrderForm.PASSWORD','Password'))));
 			$requiredFields[] = 'Password[_Password]';
 			$requiredFields[] = 'Password[_ConfirmPassword]';
+			Requirements::customScript('jQuery("#ChoosePassword").click();');
 		}
 
 		// 2) Payment fields
@@ -156,7 +157,7 @@ class OrderForm extends Form {
 		$this->saveDataToSession($data); //save for later if necessary
 		//check for cart items
 		if(!ShoppingCart::has_items()) {
-			$form->sessionMessage(_t('OrderForm.NOITEMSINCART','Please add some items to your cart'), 'bad');
+			$form->sessionMessage(_t('OrderForm.NOITEMSINCART','Please add some items to your cart.'), 'bad');
 			Director::redirectBack();
 			return false;
 		}
@@ -166,7 +167,7 @@ class OrderForm extends Form {
 		$order = ShoppingCart::current_order();
 		//TO DO: HOW CAN THESE TWO BE DIFFERENT????
 		if($order->Total() != $oldtotal) {
-			$form->sessionMessage(_t('OrderForm.PRICEUPDATED','The order price has been updated'), 'warning');
+			$form->sessionMessage(_t('OrderForm.PRICEUPDATED','The order price has been updated.'), 'warning');
 			Director::redirectBack();
 			return false;
 		}
@@ -176,7 +177,7 @@ class OrderForm extends Form {
 			$form->sessionMessage(
 				_t(
 					'OrderForm.MEMBEREXISTS',
-					'Sorry, a member already exists with that email address. If this is your email address, please log in first before placing your order.'
+					'Sorry, an account with that email address already exists. If this is your email address, please log in first before placing your order.'
 				),
 				'bad'
 			);
@@ -187,11 +188,10 @@ class OrderForm extends Form {
 		$member->logIn();
 		// Write new record {@link Order} to database
 		$form->saveInto($order);
-		$order->tryToFinaliseOrder();
+		$order->MemberID = $member->ID;
 		$shippingAddress = new ShippingAddress();
 		if(isset($data['UseShippingAddress']) && $data['UseShippingAddress']){
 			$form->saveInto($shippingAddress);
-			$order->write();
 		}
 		else {
 			$shippingAddress->makeShippingAddressFromMember($member);
@@ -199,9 +199,12 @@ class OrderForm extends Form {
 		$shippingAddress->OrderID = $order->ID;
 		$shippingAddress->write();
 		$order->ShippingAddressID = $shippingAddress->ID;
+		// IMPORTANT - SAVE ORDER....!
+		$order->write();
+		$order->tryToFinaliseOrder();
 		//----------------- PAYMENT ------------------------------
 		$this->clearSessionData(); //clears the stored session form data that might have been needed if validation failed
-		return EcommercePayment::process_payment_form_and_return_next_step($order, $data, $form, $paidBy);
+		return EcommercePayment::process_payment_form_and_return_next_step($order, $form, $data, $member);
 	}
 
 	function saveDataToSession($data){
@@ -218,4 +221,106 @@ class OrderForm extends Form {
 		Session::set("FormInfo.{$this->FormName()}.data", null);
 	}
 
+}
+
+
+/**
+ * @Description: allows customer to make additional payments for their order
+ *
+ * @package: ecommerce
+ * @authors: Silverstripe, Jeremy, Nicolaas
+ **/
+
+
+class OrderForm_Payment extends Form {
+
+	function __construct($controller, $name, $order) {
+		$fields = new FieldSet(
+			new HiddenField('OrderID', '', $order->ID)
+		);
+		$totalAsCurrencyObject = $order->TotalAsCurrencyObject();
+		$paymentFields = Payment::combined_form_fields($totalAsCurrencyObject->Nice());
+		foreach($paymentFields as $paymentField) {
+			if($paymentField->class == "HeaderField") {
+				$paymentField->setTitle(_t("OrderForm.MAKEPAYMENT", "Make Payment"));
+			}
+			$fields->push($paymentField);
+		}
+		$requiredFields = array();
+		if($paymentRequiredFields = Payment::combined_form_requirements()) {
+			$requiredFields = array_merge($requiredFields, $paymentRequiredFields);
+		}
+		$actions = new FieldSet(
+			new FormAction('dopayment', _t('OrderForm.PAYORDER','Pay outstanding balance'))
+		);
+		parent::__construct($controller, $name, $fields, $actions, $requiredFields);
+	}
+
+	function dopayment($data, $form) {
+		$SQLData = Convert::raw2sql($data);
+		$member = Member::currentUser();
+		if($member && $orderID = intval($SQLData['OrderID'])) {
+			$order = Order::get_by_id_and_member_id($orderID, $member->ID);
+			if($order && $order->canPay()) {
+				return EcommercePayment::process_payment_form_and_return_next_step($order, $form, $data);
+			}
+		}
+		//to do - gracefull error
+	}
+
+}
+
+
+/**
+ * @Description: allows customer to cancel order.
+ *
+ * @package: ecommerce
+ * @authors: Silverstripe, Jeremy, Nicolaas
+ **/
+
+
+class OrderForm_Cancel extends Form {
+
+	function __construct($controller, $name, $order) {
+		$fields = new FieldSet(
+			new HiddenField('OrderID', '', $order->ID)
+		);
+		$actions = new FieldSet(
+			new FormAction('docancel', _t('OrderForm.CANCELORDER','Cancel this order'))
+		);
+		parent::__construct($controller, $name, $fields, $actions);
+	}
+
+	/**
+	 * Form action handler for OrderForm_Cancel.
+	 *
+	 * Take the order that this was to be change on,
+	 * and set the status that was requested from
+	 * the form request data.
+	 *
+	 * @param array $data The form request data submitted
+	 * @param Form $form The {@link Form} this was submitted on
+	 */
+	function docancel($data, $form) {
+		$SQLData = Convert::raw2sql($data);
+		$member = Member::currentUser();
+		if(isset($SQLData['OrderID']) && $order = DataObject::get_one('Order', "\"ID\" = ".intval($SQLData['OrderID'])." AND \"MemberID\" = ".$member->ID)){
+			if($order->canCancel()) {
+				$order->CancelledByID = $member->ID;
+				$order->write();
+			}
+			else {
+				user_error("Tried to cancel an order that can not be cancelled with Order ID: ".$order->ID, "E_USER_NOTICE");
+			}
+		}
+		//TODO: notify people via email??
+		if($link = AccountPage::find_link()){
+			AccountPage::set_message(_t("OrderForm.ORDERHASBEENCANCELLED","Order has been cancelled"));
+			Director::redirect($link);
+		}
+		else{
+			Director::redirectBack();
+		}
+		return;
+	}
 }

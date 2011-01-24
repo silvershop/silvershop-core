@@ -93,7 +93,7 @@ class ShoppingCart extends Controller {
 
 	public static function delete_old_carts(){
 		$time = date('Y-m-d H:i:s', strtotime("-".self::$clear_days." days"));
-		$generalWhere = "\"StatusID\" = ".OrderStep::get_status_id("CREATED")." AND \"LastEdited\" < '$time'";
+		$generalWhere = "\"StatusID\" = ".OrderStep::get_status_id_from_code("CREATED")." AND \"LastEdited\" < '$time'";
 		if(self::$never_delete_if_linked_to_member) {
 			$oldcarts = DataObject::get('Order',$generalWhere." AND \"Member\".\"ID\" IS NULL", $sort = "", $join = "LEFT JOIN \"Member\" ON \"Member\".\"ID\" = \"Order\".\"MemberID\" ");
 		}

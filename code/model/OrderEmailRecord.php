@@ -18,6 +18,7 @@ class OrderEmailRecord extends DataObject {
 	);
 	public static $has_one = array(
 		"Order" => "Order",
+		"OrderStep" => "OrderStep",
 		"Member" => "Member"
 	);
 	public static $summary_fields = array(
@@ -61,4 +62,7 @@ class OrderEmailRecord extends DataObject {
 		$fields->replaceField("OrderID", new NumericField("OrderID", "Order Number"));
 		return $fields;
 	}
+
+
+
 }

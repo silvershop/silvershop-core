@@ -14,6 +14,7 @@ class AllOrdersReport extends SS_Report {
 	protected $description = 'Show all orders in the system.';
 
 	function sourceRecords($params, $sort = "", $limit = ""){
+		//TO DO: fix filters
 		$filters = array();
 		if(isset($params['OrderID']) && $params['OrderID']) {
 			$filters[] = "\"ID\" = ".$params['OrderID'];

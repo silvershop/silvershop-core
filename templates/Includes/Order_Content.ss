@@ -3,18 +3,24 @@
 		<tr>
 			<th scope="col" class="left"><% _t("PRODUCT","Product") %></th>
 			<th scope="col" class="center"><% _t("QUANTITY", "Quantity") %></th>
-			<th scope="col" class="right"><% _t("PRICE","Price") %> ($Currency)</th>
+			<th scope="col" class="right"><% _t("PRICE","Price") %></th>
 			<th scope="col" class="right"><% _t("TOTALPRICE","Total Price") %> ($Currency)</th>
 		</tr>
 	</thead>
+	<tfoot>
+		<tr class="gap summary total" id="Total">
+			<td colspan="3" scope="row" class="threeColHeader total"><% _t("Order_Content.ss.TOTAL","Total") %></td>
+			<td class="right"><strong>$Total.Nice $Currency</strong></td>
+		</tr>
+	</tfoot>
 	<tbody>
 		<% control Items %>
 		<tr  class="itemRow $EvenOdd $FirstLast">
 			<td class="product title" scope="row">
 				<% if Link %>
-					<a href="$Link" title="<% sprintf(_t("Order_Content.ss.READMORE","Click here to read more on &quot;%s&quot;"),$Title) %>">$BuyableTitle</a>
+					<a href="$Link" title="<% sprintf(_t("Order_Content.ss.READMORE","Click here to read more on &quot;%s&quot;"),$Title) %>">$TableTitle</a> $TableSubTitle
 				<% else %>
-					$BuyableTitle
+					$TableTitle $TableSubTitle
 				<% end_if %>
 			</td>
 			<td class="center quantity">$Quantity</td>
@@ -37,9 +43,5 @@
 			<% end_if %>
 		<% end_control %>
 
-		<tr class="gap summary total" id="Total">
-			<td colspan="3" scope="row" class="threeColHeader total"><% _t("Order_Content.ss.TOTAL","Total") %></td>
-			<td class="right">$Total.Nice $Currency</td>
-		</tr>
 	</tbody>
 </table>

@@ -19,8 +19,23 @@
 
 		passwordInitalisation: function() {
 			if(jQuery("#PasswordGroup input").length) {
-				var newPassword = this.passwordGenerator();
-				$("#PasswordGroup input").val(newPassword);
+
+
+				jQuery(".choosePassword").click(
+					function() {
+						jQuery("#PasswordGroup").toggle();
+						if(jQuery("#PasswordGroup input").is(':visible')) {
+							var newPassword = '';
+						}
+						else{
+							var newPassword = OrderFormWithoutShippingAddress.passwordGenerator();
+						}
+						$("#PasswordGroup input").val(newPassword);
+						return false;
+					}
+				);
+				jQuery(".choosePassword").click();
+
 			}
 		},
 
