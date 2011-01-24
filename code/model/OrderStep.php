@@ -82,12 +82,12 @@ class OrderStep extends DataObject {
 			$array = self::get_classes();
 			if($array && count($array)) {
 				foreach($array as $className) {
-					$code = singleton($this->ClassName)->getCode();
+					$code = singleton($this->ClassName)->getMyCode();
 					$newArray[$className] = strtoupper($code);
 				}
 			}
 		}
-		function getCode() {return self::$defaults["Code"];}
+		function getMyCode() {return self::$defaults["Code"];}
 
 	public static $defaults = array(
 		"CanEdit" => 0,
