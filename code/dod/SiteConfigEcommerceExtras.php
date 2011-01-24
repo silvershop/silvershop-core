@@ -45,7 +45,7 @@ class SiteConfigEcommerceExtras extends DataObjectDecorator {
 				new HTMLEditorField("ShopPhysicalAddress", "Shop physical address", 5,5)
 			),
 			new Tab('Process',
-				new ComplexTableField()
+				new ComplexTableField($this->owner, "OrderSteps", "OrderStep")
 			)
 			/*$processtab = new Tab('OrderProcess',
 				new LiteralField('op','Include a drag-and-drop interface for customising order steps (Like WidgetArea)')
