@@ -79,6 +79,7 @@ class OrderStep extends DataObject {
 		static function set_classes($v) {self::$classes = $v;}
 		static function get_classes() {self::$classes;}
 		static function get_codes() {
+			$newArray = array();
 			$array = self::get_classes();
 			if($array && count($array)) {
 				foreach($array as $className) {
