@@ -205,7 +205,7 @@ class Order extends DataObject {
 			'title' => 'Customer Email',
 			'filter' => 'PartialMatchFilter'
 		),
-		'Member.HomePhone' => array(
+		'Member.Phone' => array(
 			'title' => 'Customer Phone',
 			'filter' => 'PartialMatchFilter'
 		),

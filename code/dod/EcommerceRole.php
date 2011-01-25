@@ -40,8 +40,7 @@ class EcommerceRole extends DataObjectDecorator {
 				'PostalCode' => 'Varchar(30)',
 				'State' => 'Varchar(100)',
 				'Country' => 'Varchar(200)',
-				'HomePhone' => 'Varchar(100)',
-				'MobilePhone' => 'Varchar(100)',
+				'Phone' => 'Varchar(100)',
 				'Notes' => 'HTMLText'
 			)
 		);
@@ -200,8 +199,7 @@ class EcommerceRole extends DataObjectDecorator {
 			new HeaderField(_t('EcommerceRole.PERSONALINFORMATION','Personal Information'), 3),
 			new TextField('FirstName', _t('EcommerceRole.FIRSTNAME','First Name')),
 			new TextField('Surname', _t('EcommerceRole.SURNAME','Surname')),
-			new TextField('HomePhone', _t('EcommerceRole.HOMEPHONE','Phone')),
-			new TextField('MobilePhone', _t('EcommerceRole.MOBILEPHONE','Mobile')),
+			new TextField('Phone', _t('EcommerceRole.PHONE','Phone')),
 			new EmailField('Email', _t('EcommerceRole.EMAIL','Email')),
 			new TextField('Address', _t('EcommerceRole.ADDRESS','Address')),
 			new TextField('AddressLine2', _t('EcommerceRole.ADDRESSLINE2','&nbsp;')),

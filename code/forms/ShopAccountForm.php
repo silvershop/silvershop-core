@@ -14,38 +14,41 @@ class ShopAccountForm extends Form {
 		$requiredFields = null;
 		if($member && $member->exists()) {
 			$fields = $member->getEcommerceFields();
-			$passwordField = new ConfirmedPasswordField('Password', _t('ShopAccountForm.PASSWORD','Password'));
-			if($member->Password != '') {
-				$passwordField->setCanBeEmpty(true);
-			}
 			//TODO:is this necessary?
 			$fields->push(new LiteralField('LogoutNote', "<p class=\"message warning\">" . _t("ShopAccountForm.LOGGEDIN","You are currently logged in as ") . $member->FirstName . ' ' . $member->Surname . ". "._t('ShopAccountForm.LOGOUT','Click <a href="Security/logout">here</a> to log out.')."</p>"));
 			$fields->push(new HeaderField('Login Details',_t('ShopAccountForm.LOGINDETAILS','Login Details'), 3));
+			// PASSWORD KEPT CHANGING - SO I REMOVED IT FOR NOW - Nicolaas
+			$passwordField = new ConfirmedPasswordField('Password', _t('ShopAccountForm.PASSWORD','Password'), "", null, true);
 			$fields->push($passwordField);
 			$requiredFields = new ShopAccountForm_Validator($member->getEcommerceRequiredFields());
 		}
 		else {
 			$fields = new FieldSet();
 		}
-		if(get_class($controller) == 'AccountPage_Controller'){
-			$actions = new FieldSet(new FormAction('submit', _t('ShopAccountForm.SAVE','Save Changes')));
-		}
-		else{
-			$actions = new FieldSet(
-				new FormAction('submit', _t('ShopAccountForm.SAVE','Save Changes')),
-				new FormAction('proceed', _t('ShopAccountForm.SAVEANDPROCEED','Save and proceed to checkout'))
-			);
-		}
+		$actions = new FieldSet(
+			new FormAction('submit', _t('ShopAccountForm.SAVE','Save Changes')),
+			new FormAction('proceed', _t('ShopAccountForm.SAVEANDPROCEED','Save and proceed to checkout'))
+		);
 		if($record = $controller->data()){
 			$record->extend('updateShopAccountForm',$fields,$actions,$requiredFields);
 		}
 		parent::__construct($controller, $name, $fields, $actions, $requiredFields);
-		if($member){
-			$member->Password = ""; //prevents password field from being populated with encrypted password data
+		if($member && $member->Password ){
 			$this->loadDataFrom($member);
+			if(!isset($_REQUEST["Password"])) {
+				$this->fields()->fieldByName("Password")->SetValue("");
+			}
+			$this->fields()->fieldByName("Password")->setCanBeEmpty(true);
 		}
 	}
 
+
+	/**
+	 * Save the changes to the form, and go back to previous page.
+	 */
+	function submit($data, $form, $request) {
+		return $this->processForm($data, $form, $request, "");
+	}
 
 	/**
 	 * Save the changes to the form, and redirect to the checkout page
@@ -57,16 +60,18 @@ class ShopAccountForm extends Form {
 	protected function processForm($data, $form, $request, $link = "") {
 		$member = Member::currentUser();
 		if(!$member) {
-			return false;
+			$form->sessionMessage(_t("ShopAccountForm.DETAILSNOTSAVED",'Your details could not be saved.'), 'bad');
+			Director::redirectBack();
 		}
 		$form->saveInto($member);
 		$member->write();
+
 		//TO DO: fix password....
-		$form->sessionMessage(_t("ShopAccountForm.DETAILSSAVED",'Your details have been saved.'), 'good');
 		if($link) {
 			Director::redirect($link);
 		}
 		else {
+			$form->sessionMessage(_t("ShopAccountForm.DETAILSSAVED",'Your details have been saved.'), 'good');
 			Director::redirectBack();
 		}
 		return true;
@@ -101,7 +106,7 @@ class ShopAccountForm_Validator extends RequiredFields{
 		if(isset($data["Password"]["_Password"]) && isset($data["Password"]["_ConfirmPassword"])) {
 			if($data["Password"]["_Password"] != $data["Password"]["_ConfirmPassword"]) {
 				$this->validationError(
-					$field,
+					"Password",
 					_t("ShopAccountForm.PASSWORDSERROR", "Passwords do not match."),
 					"required"
 				);
@@ -109,15 +114,15 @@ class ShopAccountForm_Validator extends RequiredFields{
 			}
 			if(!$currentMember && !$data["Password"]["_Password"]) {
 				$this->validationError(
-					$field,
+					"Password",
 					_t("ShopAccountForm.SELECTPASSWORD", "Please select a password."),
 					"required"
 				);
 				$valid = false;
 			}
-			if($currentMember  && !$data["Password"]["_Password"]) {
-				//TO DO: set password back to pre-existing password.
-			}
+		}
+		if(!$valid) {
+			$this->form->sessionMessage(_t("ShopAccountForm.ERRORINFORM", "We could not save your submission, please check your errors below."), "bad");
 		}
 		return $valid;
 	}

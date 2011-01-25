@@ -27,6 +27,9 @@ class OrderForm extends Form {
 		$rightFields->setID('RightOrder');
 
 		if(!$member || !$member->ID || $member->Password == '') {
+			$passwordField = new ConfirmedPasswordField('Password', _t('OrderForm.PASSWORD','Password'));
+			//allow people to purchase without creating a password
+			$passwordField->setCanBeEmpty(false);
 			//login invite right on the top
 			$rightFields->push(new HeaderField(_t('OrderForm.MEMBERSHIPDETAILS','Membership Details'), 3));
 			if(!$member->Created) {
@@ -34,7 +37,7 @@ class OrderForm extends Form {
 			}
 			$rightFields->push(new LiteralField('AccountInfo', '<p>'._t('OrderForm.ACCOUNTINFO',
 				'Please <a href="#Password" class="choosePassword">choose a password</a>, so you can log in and check your order history in the future.').'</p><br/>'));
-			$rightFields->push(new FieldGroup(new ConfirmedPasswordField('Password', _t('OrderForm.PASSWORD','Password'))));
+			$rightFields->push(new FieldGroup($passwordField));
 			$requiredFields[] = 'Password[_Password]';
 			$requiredFields[] = 'Password[_ConfirmPassword]';
 			Requirements::customScript('jQuery("#ChoosePassword").click();');
@@ -172,6 +175,8 @@ class OrderForm extends Form {
 			return false;
 		}
 		// Create new OR update logged in {@link Member} record
+
+		//TO DO: change to $form->saveInto($member)  = much better!
 		$member = EcommerceRole::ecommerce_create_or_merge($data);
 		if(!$member) {
 			$form->sessionMessage(
@@ -315,7 +320,7 @@ class OrderForm_Cancel extends Form {
 		}
 		//TODO: notify people via email??
 		if($link = AccountPage::find_link()){
-			AccountPage::set_message(_t("OrderForm.ORDERHASBEENCANCELLED","Order has been cancelled"));
+			AccountPage_Controller::set_message(_t("OrderForm.ORDERHASBEENCANCELLED","Order has been cancelled"));
 			Director::redirect($link);
 		}
 		else{

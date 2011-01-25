@@ -94,7 +94,7 @@ class ShippingAddress extends DataObject {
 			$this->ShippingPostalCode = $member->PostalCode;
 			$this->ShippingState = $member->State;
 			$this->ShippingCountry = $member->Country;
-			$this->ShippingPhone = implode(", ", array($member->HomePhone, $member->MobilePhone));
+			$this->ShippingPhone = $member->HomePhone;
 		}
 		return $this;
 	}

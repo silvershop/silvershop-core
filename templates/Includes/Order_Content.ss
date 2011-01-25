@@ -4,13 +4,13 @@
 			<th scope="col" class="left"><% _t("PRODUCT","Product") %></th>
 			<th scope="col" class="center"><% _t("QUANTITY", "Quantity") %></th>
 			<th scope="col" class="right"><% _t("PRICE","Price") %></th>
-			<th scope="col" class="right"><% _t("TOTALPRICE","Total Price") %> ($Currency)</th>
+			<th scope="col" class="right"><% _t("TOTALPRICE","Total Price") %></th>
 		</tr>
 	</thead>
 	<tfoot>
 		<tr class="gap summary total" id="Total">
-			<td colspan="3" scope="row" class="threeColHeader total"><% _t("Order_Content.ss.TOTAL","Total") %></td>
-			<td class="right"><strong>$Total.Nice $Currency</strong></td>
+			<th colspan="3" scope="row" class="threeColHeader total"><strong><% _t("Order_Content.ss.TOTAL","Total") %></strong></th>
+			<td class="right"><strong>$Total.Nice</strong></td>
 		</tr>
 	</tfoot>
 	<tbody>
@@ -30,7 +30,7 @@
 		<% end_control %>
 
 		<tr class="gap summary" id="SubTotal">
-			<td colspan="3" scope="row" class="threeColHeader subtotal"><% _t("Order_Content.ss.SUBTOTAL","Sub-total") %></td>
+			<th colspan="3" scope="row" class="threeColHeader subtotal"><% _t("Order_Content.ss.SUBTOTAL","Sub-total") %></th>
 			<td class="right">$SubTotal.Nice</td>
 		</tr>
 

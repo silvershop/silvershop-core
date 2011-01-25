@@ -249,6 +249,10 @@ class AccountPage_Controller extends Page_Controller {
 				return new OrderForm_Cancel($this, 'CancelForm', $this->currentOrder);
 			}
 		}
+		//once cancelled, you will be redirected to main page - hence we need this...
+		if(isset($_REQUEST["OrderID"])) {
+			return array();
+		}
 	}
 
 
