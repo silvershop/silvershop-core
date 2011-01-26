@@ -72,7 +72,7 @@ class OrderForm extends Form {
 
 		// 5) Actions and required fields creation
 		$actions = new FieldSet(new FormAction('processOrder', _t('OrderForm.PROCESSORDER','Place order and make payment')));
-		$requiredFields = new CustomRequiredFields($requiredFields);
+		$requiredFields = new OrderForm_Validator($requiredFields);
 		$this->extend('updateValidator',$requiredFields);
 		$this->extend('updateFields',$fields);
 		Requirements::javascript('ecommerce/javascript/OrderFormWithShippingAddress.js');
@@ -236,6 +236,34 @@ class OrderForm extends Form {
  * @authors: Silverstripe, Jeremy, Nicolaas
  **/
 
+class OrderForm_Validator extends ShopAccountForm_Validator{
+
+	/**
+	 * Ensures member unique id stays unique and other basic stuff...
+	 * TODO: check if this code is not part of Member itself, as it applies to any member form.
+	 */
+	function php($data){
+		$valid = parent::php($data);
+		if(isset($data["ReadTermsAndConditions"])) {
+			if(!$data["ReadTermsAndConditions"]) {
+				$this->validationError(
+					"ReadTermsAndConditions",
+					_t("OrderForm_Validator.READTERMSANDCONDITIONS", "Have you read the terms and conditions?"),
+					"required"
+				);
+				$valid = false;
+			}
+		}
+		if(!$valid) {
+			$this->form->sessionMessage(_t("OrderForm_Validator.ERRORINFORM", "We could not proceed with your order, please check your errors below."), "bad");
+			$this->form->messageForForm("OrderForm", _t("OrderForm_Validator.ERRORINFORM", "We could not proceed with your order, please check your errors below."), "bad");
+		}
+		return $valid;
+	}
+
+}
+
+
 
 class OrderForm_Payment extends Form {
 
@@ -329,3 +357,5 @@ class OrderForm_Cancel extends Form {
 		return;
 	}
 }
+
+
