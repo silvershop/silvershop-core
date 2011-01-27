@@ -74,7 +74,7 @@ class AccountPage extends Page {
 	 * @return DataObjectSet
 	 */
 	function IncompleteOrders() {
-		$statusFilter = "\"OrderStatus\".\"ShowAsUncompletedOrder\" = 1 ";
+		$statusFilter = "\"OrderStep\".\"ShowAsUncompletedOrder\" = 1 ";
 		$orders = $this->otherOrderSQL($statusFilter);
 	}
 
@@ -85,7 +85,7 @@ class AccountPage extends Page {
 	 * @return DataObjectSet
 	 */
 	function InProcessOrders() {
-		$statusFilter = "\"OrderStatus\".\"ShowAsInProcessOrder\" = 1";
+		$statusFilter = "\"OrderStep\".\"ShowAsInProcessOrder\" = 1";
 		return $this->otherOrderSQL($statusFilter);
 	}
 
@@ -96,7 +96,7 @@ class AccountPage extends Page {
 	 * @return DataObjectSet
 	 */
 	function CompleteOrders() {
-		$statusFilter = "\"OrderStatus\".\"ShowAsCompletedOrder\" = 1";
+		$statusFilter = "\"OrderStep\".\"ShowAsCompletedOrder\" = 1";
 		return $this->otherOrderSQL($statusFilter);
 	}
 
@@ -108,7 +108,7 @@ class AccountPage extends Page {
 				$className = 'Order',
 				$where = "\"Order\".\"MemberID\" = '$memberID' AND $statusFilter AND \"CancelledByID\" = 0",
 				$sort = "\"Created\" DESC",
-				$join = "INNER JOIN \"OrderStatus\" ON \"Order\".\"StatusID\" = \"OrderStatus\".\"ID\""
+				$join = "INNER JOIN \"OrderStep\" ON \"Order\".\"StatusID\" = \"OrderStep\".\"ID\""
 			);
 			if($orders) {
 				foreach($orders as $order) {
