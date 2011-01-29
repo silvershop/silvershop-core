@@ -493,26 +493,24 @@ class Order extends DataObject {
 *******************************************************/
 
 	function sendInvoice() {
-		$this->sendEmail('Order_ReceiptEmail');
 		$subject = str_replace("{OrderNumber}", $this->ID,self::get_receipt_subject());
 		$replacementArray = array(
 			'Order' => $this
 		);
-		return $this->sendEmail("Order_ReceiptEmail", $subject, $replacementArray, true);
+		return $this->sendEmail('Order_ReceiptEmail', $subject, $replacementArray, true);
 	}
-  /**
+  	/**
 	 * Send the receipt of the order by mail.
 	 * Precondition: The order payment has been successful
 	 */
 	function sendReceipt() {
-		$this->sendEmail('Order_ReceiptEmail');
 		$subject = str_replace("{OrderNumber}", $this->ID,self::get_receipt_subject());
 		$purchaseCompleteMessage = DataObject::get_one('CheckoutPage')->PurchaseComplete;
 		$replacementArray = array(
 			'PurchaseCompleteMessage' => $purchaseCompleteMessage,
 			'Order' => $this
 		);
-		return $this->sendEmail("Order_ReceiptEmail", $subject, $replacementArray, true);
+		return $this->sendEmail('Order_ReceiptEmail', $subject, $replacementArray, true);
 	}
 
 	/**
@@ -537,7 +535,7 @@ class Order extends DataObject {
 				"Member" => $member,
 				"Note" => $note
 			);
-		return $this->sendEmail("Order_statusEmail", $subject, $replacementArray, true);
+		return $this->sendEmail('Order_StatusEmail', $subject, $replacementArray, true);
 	}
 
 
@@ -553,11 +551,10 @@ class Order extends DataObject {
  		$from = self::get_receipt_email();
  		$to = $this->Member()->Email;
 		//TO DO: should be a payment specific message as well???
-
+		$email = new $emailClass();
 		if(!($emailClass instanceOf Email)) {
 			user_error("No correct email class provided.", E_USER_ERROR);
 		}
- 		$email = new $emailClass();
  		$email->setFrom($from);
  		$email->setTo($to);
  		$email->setSubject($subject);
@@ -570,11 +567,9 @@ class Order extends DataObject {
 		return $email->send(null, $this);
 	}
 
-
 /*******************************************************
    * ITEM MANAGEMENT
 *******************************************************/
-
 
 	/**
 	 * Returns the items of the order, if it hasn't been saved yet
@@ -663,7 +658,6 @@ class Order extends DataObject {
 		}
 		$this->extend("onCalculate");
 	}
-
 
 	/**
 	 * Returns a TaxModifier object that provides
