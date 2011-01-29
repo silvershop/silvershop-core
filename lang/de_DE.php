@@ -126,6 +126,7 @@ $lang['de_DE']['OrderForm']['USEDIFFERENTSHIPPINGADDRESS'] = 'andere Lieferadres
 $lang['de_DE']['OrderForm']['PROCESSORDER'] = 'Bestellung ausführen';
 $lang['de_DE']['OrderForm']['MEMBERSHIPDETAILS'] = 'Kunden-Konto Details';
 $lang['de_DE']['OrderForm']['PASSWORD'] = 'Passwort';
+$lang['de_DE']['OrderForm']['COMPLETEORDER'] = 'Bestellung abschließen';
 $lang['de_DE']['OrderForm']['ACCOUNTINFO'] = 'Bitte wählen Sie ein Passwort, damit Sie sich zukünftig einloggen können und Ihre Bestellhistorie anschauen können.';
 $lang['de_DE']['OrderForm']['MEMBERINFO'] = 'Haben Sie bereits ein Kunden-Konto?';
 $lang['de_DE']['OrderForm']['LOGIN'] = 'Loggen Sie sich ein.';
