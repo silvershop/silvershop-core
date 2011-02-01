@@ -866,9 +866,7 @@ class Order extends DataObject {
 	}
 
 	function TotalOutstandingAsMoneyObject(){
-		$money = DBField::create('Money');
-		$money->setAmount($this->TotalOutstanding());
-		$money->setCurrency($this->Currency());
+		$money = DBField::create('Money', array("Amount" => $this->TotalOutstanding(), "Currency" => $this->Currency());
 		return $money;
 	}
 
