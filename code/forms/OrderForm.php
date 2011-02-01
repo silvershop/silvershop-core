@@ -10,9 +10,7 @@
 class OrderForm extends Form {
 
 	function __construct($controller, $name) {
-		//clear old messages...
-		$this->clearMessage();
-
+		$order = ShoppingCart::current_order();
 		//Requirements::themedCSS('OrderForm');
 		Requirements::javascript('ecommerce/javascript/OrderForm.js');
 
@@ -48,8 +46,7 @@ class OrderForm extends Form {
 
 		// 2) Payment fields
 		$bottomFields = new CompositeField();
-		$currentOrder = ShoppingCart::current_order();
-		$totalAsCurrencyObject = $currentOrder->TotalAsCurrencyObject(); //should instead be $totalobj = $currentOrder->dbObject('Total');
+		$totalAsCurrencyObject = $order->TotalAsCurrencyObject(); //should instead be $totalobj = $order->dbObject('Total');
 		$paymentFields = Payment::combined_form_fields($totalAsCurrencyObject->Nice());
 		foreach($paymentFields as $field) {
 			$bottomFields->push($field);
@@ -106,7 +103,6 @@ class OrderForm extends Form {
 		parent::__construct($controller, $name, $fields, $actions, $requiredFields);
 
 		// 7)  Load saved data
-		$order = ShoppingCart::current_order();
 		if($order) {
 			$this->loadDataFrom($order);
 			if(CheckoutPage::get_add_shipping_fields()) {
@@ -164,7 +160,8 @@ class OrderForm extends Form {
 		$this->saveDataToSession($data); //save for later if necessary
 		//check for cart items
 		if(!ShoppingCart::has_items()) {
-			$form->sessionMessage(_t('OrderForm.NOITEMSINCART','Please add some items to your cart.'), 'bad');
+			// WE DO NOT NEED THE THING BELOW BECAUSE IT IS ALREADY IN THE TEMPLATE AND IT CAN LEAD TO SHOWING ORDER WITH ITEMS AND MESSAGE
+			//$form->sessionMessage(_t('OrderForm.NOITEMSINCART','Please add some items to your cart.'), 'bad');
 			Director::redirectBack();
 			return false;
 		}
@@ -227,6 +224,7 @@ class OrderForm extends Form {
 	}
 
 	function clearSessionData(){
+		$this->clearMessage();
 		Session::set("FormInfo.{$this->FormName()}.data", null);
 	}
 
