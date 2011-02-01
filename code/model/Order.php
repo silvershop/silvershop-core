@@ -552,7 +552,7 @@ class Order extends DataObject {
  		$to = $this->Member()->Email;
 		//TO DO: should be a payment specific message as well???
 		$email = new $emailClass();
-		if(!($emailClass instanceOf Email)) {
+		if(!($email instanceOf Email)) {
 			user_error("No correct email class provided.", E_USER_ERROR);
 		}
  		$email->setFrom($from);
