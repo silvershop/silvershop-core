@@ -10,6 +10,9 @@
 class OrderForm extends Form {
 
 	function __construct($controller, $name) {
+		//clear old messages...
+		$this->clearMessage();
+
 		//Requirements::themedCSS('OrderForm');
 		Requirements::javascript('ecommerce/javascript/OrderForm.js');
 
@@ -121,6 +124,7 @@ class OrderForm extends Form {
 
 		//allow updating via decoration
 		$this->extend('updateForm',$this);
+
 	}
 
 
