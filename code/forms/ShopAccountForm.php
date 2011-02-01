@@ -26,9 +26,11 @@ class ShopAccountForm extends Form {
 			$fields = new FieldSet();
 		}
 		$actions = new FieldSet(
-			new FormAction('submit', _t('ShopAccountForm.SAVE','Save Changes')),
-			new FormAction('proceed', _t('ShopAccountForm.SAVEANDPROCEED','Save and proceed to checkout'))
+			new FormAction('submit', _t('ShopAccountForm.SAVE','Save Changes'))
 		);
+		if($order->Items()) {
+			$actions->push(new FormAction('proceed', _t('ShopAccountForm.SAVEANDPROCEED','Save changes and proceed to checkout')));
+		}
 		if($record = $controller->data()){
 			$record->extend('updateShopAccountForm',$fields,$actions,$requiredFields);
 		}
