@@ -29,7 +29,7 @@ class EcommercePayment extends DataObjectDecorator {
 		if($paidBy) {
 			$payment->PaidByID = $paidBy->ID;
 		}
-		$payment->Amount = $order->TotalOutstandingAsCurrencyObject();
+		$payment->Amount = $order->TotalOutstandingAsMoneyObject();
 		$payment->write();
 		// Process payment, get the result back
 		$result = $payment->processPayment($data, $form);
