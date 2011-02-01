@@ -870,7 +870,7 @@ class Order extends DataObject {
 		if($payments = $this->Payments()) {
 			foreach($payments as $payment) {
 				if($payment->Status == 'Success') {
-					$paid += $payment->getValue();
+					$paid += $payment->Amount;
 				}
 			}
 		}
