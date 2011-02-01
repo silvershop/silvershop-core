@@ -127,7 +127,7 @@ class EcommercePayment extends DataObjectDecorator {
 		parent::onAfterWrite();
 		if($this->owner->Status == 'Success' && $order = $this->owner->Order()) {
 			//NOTE: IMPORTANT
-			$order->pay($this);
+			//$order->pay($this);
 		}
 	}
 
