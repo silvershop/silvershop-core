@@ -50,7 +50,7 @@ class OrderAttribute extends DataObject {
 	function canDelete($member = null) {
 		if($this->OrderID) {
 			if($this->Order()->exists()) {
-				if($this->Order()->MyStatus()->CanEdit) {
+				if($this->Order()->CanEdit($member)) {
 					return true;
 				}
 			}

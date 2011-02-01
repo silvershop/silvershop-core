@@ -353,9 +353,9 @@ class Order extends DataObject {
 	}
 
 	public function doNextStatus() {
-		if($this->MyStatus()->initStep($this)) {
-			if($this->MyStatus()->doStep($this)) {
-				if($nextOrderStepObject = $this->MyStatus()->nextStep($this)) {
+		if($this->MyStep()->initStep($this)) {
+			if($this->MyStep()->doStep($this)) {
+				if($nextOrderStepObject = $this->MyStep()->nextStep($this)) {
 					$this->StatusID = $nextOrderStepObject->ID;
 					$this->write();
 					return $this->StatusID;
@@ -388,7 +388,7 @@ class Order extends DataObject {
 /*******************************************************
    * STATUS RELATED FUNCTIONS / SHORTCUTS
 *******************************************************/
-	public function MyStatus() {
+	public function MyStep() {
 		$obj = null;
 		if($this->StatusID) {
 			$obj = DataObject::get_by_id("OrderStep", $this->StatusID);
@@ -409,19 +409,19 @@ class Order extends DataObject {
 	 * @return boolean
 	 */
 	function IsUncomplete() {
-		return (bool)$this->MyStatus()->ShowAsUncompletedOrder;
+		return (bool)$this->MyStep()->ShowAsUncompletedOrder;
 	}
 	/**
 	 * @return boolean
 	 */
 	function IsProcessing() {
-		return (bool)$this->MyStatus()->ShowAsInProcessOrder;
+		return (bool)$this->MyStep()->ShowAsInProcessOrder;
 	}
 	/**
 	 * @return boolean
 	 */
 	function IsCompleted() {
-		return (bool)$this->MyStatus()->ShowAsCompletedOrder;
+		return (bool)$this->MyStep()->ShowAsCompletedOrder;
 	}
 	/**
 	 * @return boolean
@@ -722,7 +722,7 @@ class Order extends DataObject {
 		if(!$this->canView($member)) {
 			return false;
 		}
-		return $this->MyStatus()->CanEdit;
+		return $this->MyStep()->CanEdit;
 	}
 
 	function canPay($member = null) {
@@ -748,7 +748,7 @@ class Order extends DataObject {
 				return true;
 			}
 		}
-		return $this->MyStatus()->CanCancel;
+		return $this->MyStep()->CanCancel;
 	}
 
 
