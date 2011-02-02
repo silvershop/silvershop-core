@@ -95,7 +95,7 @@ class ShopAccountForm_Validator extends RequiredFields{
 		$field = Member::get_unique_identifier_field();
 		$currentMember = Member::currentUser();
 		if($currentMember) {
-			$memberID = $currentMember->ID
+			$memberID = $currentMember->ID;
 		}
 		else {
 			$memberID = 0;
