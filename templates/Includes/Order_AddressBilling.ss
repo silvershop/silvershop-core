@@ -40,5 +40,11 @@
 		<td>$Phone</td>
 	</tr>
 	<% end_if %>
+	<% if Email %>
+	<tr id="Phone">
+		<th scope="row"><% _t("EMAIL","Email") %></th>
+		<td>$Email</td>
+	</tr>
+	<% end_if %>
 </table>
 <% end_control %>

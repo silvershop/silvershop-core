@@ -94,10 +94,16 @@ class ShopAccountForm_Validator extends RequiredFields{
 		$valid = parent::php($data);
 		$field = Member::get_unique_identifier_field();
 		$currentMember = Member::currentUser();
-		if(isset($data[$field]) && $currentMember){
+		if($currentMember) {
+			$memberID = $currentMember->ID
+		}
+		else {
+			$memberID = 0;
+		}
+		if(isset($data[$field])){
 			$uid = $data[Member::get_unique_identifier_field()];
 			//can't be taken
-			if(DataObject::get_one('Member',"$field = '$uid' AND ID != ".$currentMember->ID)){
+			if(DataObject::get_one('Member',"$field = '$uid' AND ID != ".$memberID)){
 				$this->validationError(
 					$field,
 					"\"$uid\" "._t("ShopAccountForm.ALREADYTAKEN", " is already taken by another member. Please log in or use another \"$uid\"."),

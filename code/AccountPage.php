@@ -149,6 +149,7 @@ class AccountPage_Controller extends Page_Controller {
 
 	static $allowed_actions = array(
 		'showorder',
+		'sendreceipt',
 		'CancelForm',
 		'PaymentForm',
 		'MemberForm'
@@ -220,6 +221,28 @@ class AccountPage_Controller extends Page_Controller {
 		$this->orderID = intval($request->param("ID"));
 		if(!$this->CurrentOrder()) {
 			$this->message = _t('AccountPage.ORDERNOTFOUNDGOTO', 'Order can not be found. Go to '). '<a href="' . $this->Link() . '">'.$this->Title.'</a> '._t('AccountPage.FORMOREOPTIONS', 'for more options').'.';
+		}
+		return array();
+	}
+
+	function sendreceipt($request) {
+		$this->orderID = intval($request->param("ID"));
+		if($o = $this->CurrentOrder()) {
+			if($m = $this->CurrentOrder()->Member()) {
+				if($m->Email) {
+					$o->sendReceipt();
+					$this->message = _t('AccountPage.RECEIPTSENT', 'An order receipt has been sent to: ').$m->Email.'.';
+				}
+				else {
+					$this->message = _t('AccountPage.RECEIPTNOTSENTNOEMAIL', 'No email could be found for sending this receipt.');
+				}
+			}
+			else {
+				$this->message = _t('AccountPage.RECEIPTNOTSENTNOEMAIL', 'No email could be found for sending this receipt.');
+			}
+		}
+		else {
+			$this->message = _t('AccountPage.RECEIPTNOTSENTNOORDER', 'Order could not be found.');
 		}
 		return array();
 	}
