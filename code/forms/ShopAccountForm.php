@@ -15,8 +15,8 @@ class ShopAccountForm extends Form {
 		if($member && $member->exists()) {
 			$fields = $member->getEcommerceFields();
 			//TODO:is this necessary?
-			$fields->push(new LiteralField('LogoutNote', "<p class=\"message warning\">" . _t("ShopAccountForm.LOGGEDIN","You are currently logged in as ") . $member->FirstName . ' ' . $member->Surname . ". "._t('ShopAccountForm.LOGOUT','Click <a href="Security/logout">here</a> to log out.')."</p>"));
 			$fields->push(new HeaderField('Login Details',_t('ShopAccountForm.LOGINDETAILS','Login Details'), 3));
+			$fields->push(new LiteralField('LogoutNote', "<p class=\"message warning\">" . _t("ShopAccountForm.LOGGEDIN","You are currently logged in as ") . $member->FirstName . ' ' . $member->Surname . ". "._t('ShopAccountForm.LOGOUT','<a href="Security/logout">Click here</a> to log out.')."</p>"));
 			// PASSWORD KEPT CHANGING - SO I REMOVED IT FOR NOW - Nicolaas
 			$passwordField = new ConfirmedPasswordField('Password', _t('ShopAccountForm.PASSWORD','Password'), "", null, true);
 			$fields->push($passwordField);
@@ -94,7 +94,7 @@ class ShopAccountForm_Validator extends RequiredFields{
 		$valid = parent::php($data);
 		$field = Member::get_unique_identifier_field();
 		$currentMember = Member::currentUser();
-		if(isset($data[$field])){
+		if(isset($data[$field]) && $currentMember){
 			$uid = $data[Member::get_unique_identifier_field()];
 			//can't be taken
 			if(DataObject::get_one('Member',"$field = '$uid' AND ID != ".$currentMember->ID)){
