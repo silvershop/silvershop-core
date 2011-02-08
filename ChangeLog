@@ -1,4 +1,22 @@
-
+r709:
+Checkout Page:
+- canCheckOut improved
+- useful links improvements
+Product:
+- introduced table subtitle
+OrderForm:
+- added field group "final field"
+EcomQuanityField:
+- bugfix in _construct
+Order:
+- bugfixes
+OrderAttribute:
+- introduced Table SubTitle
+OrderItem
+- introduced Table SubTitle
+OrderStep:
+- improved steps (do not require secondary params)
+- improved saving of Member
 
 Ecommerce ChangeLog
 14/Jan/2011
