@@ -231,7 +231,7 @@ class EcommerceRole extends DataObjectDecorator {
 			$postalCodeField->setRightTitle('<a href="'.self::get_postal_code_url().'" id="PostalCodeLink">'.self::get_postal_code_label().'</a>');
 		}
 		// country
-		$countryField = new DropdownField('Country', _t('EcommerceRole.COUNTRY','Country'), Geoip::getCountryDropDown(), self::find_country());
+		$countryField = new DropdownField('Country', _t('EcommerceRole.COUNTRY','Country'), $this->listOfAllowedCountriesForDropdown(), ShoppingCart::get_country());
 		$countryField->addExtraClass('ajaxCountryField');
 		//link used to update the country via Ajax
 		$setCountryLinkID = $countryField->id() . '_SetCountryLink';
