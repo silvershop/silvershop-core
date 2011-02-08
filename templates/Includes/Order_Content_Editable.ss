@@ -57,11 +57,11 @@
 							$Form
 						</td>
 						<td>&nbsp;</td>
-						<td class="right" id="$TableTotalID">$TableValue.Nice</td>
+						<td class="right total" id="$TableTotalID">$TableValue.Nice</td>
 						<td class="right remove">
 							<% if CanRemove %>
 								<strong>
-									<a class="ajaxQuantityLink" href="$removeLink" title="<% sprintf(_t("Order_Content_Editable.ss.REMOVE","Remove &quot;%s&quot; from your order"),$TableTitle) %>">
+									<a class="ajaxQuantityLink" href="$RemoveLink" title="<% sprintf(_t("Order_Content_Editable.ss.REMOVE","Remove &quot;%s&quot; from your order"),$TableTitle) %>">
 										<img src="ecommerce/images/remove.gif" alt="x"/>
 									</a>
 								</strong>
@@ -75,7 +75,7 @@
 			<tr class="gap Total hideOnZeroItems">
 				<td colspan="2" scope="row"><% _t("TOTAL","Total") %></td>
 				<td>&nbsp;</td>
-				<td class="right" id="$TableTotalID">$Total.Nice $Currency</td>
+				<td class="right total" id="$TableTotalID">$Total.Nice $Currency</td>
 				<td>&nbsp;</td>
 			</tr>
 		<% end_if %>

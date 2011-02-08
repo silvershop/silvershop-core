@@ -57,9 +57,8 @@ class CheckoutPage extends Page {
 
 	public static $icon = 'ecommerce/images/icons/checkout';
 
-	protected static $add_shipping_fields = false; //SUM or COUNT
-		static function set_add_shipping_fields($v){self::$add_shipping_fields = $v;}
-		static function get_add_shipping_fields(){return self::$add_shipping_fields;}
+	static function set_add_shipping_fields($v){user_error("This function has been moved to Order", E_USER_ERROR);}
+	static function get_add_shipping_fields(){user_error("This function has been moved to Order", E_USER_ERROR);}
 
 
 	/**
@@ -231,7 +230,9 @@ class CheckoutPage_Controller extends Page_Controller {
 	 * @return DataObjectSet
 	 */
 	function ModifierForms() {
-		return Order::get_modifier_forms($this);
+		if($this->currentOrder) {
+			return $this->currentOrder->getModifierForms($this);
+		}
 	}
 
 	/**
@@ -320,4 +321,10 @@ class CheckoutPage_Controller extends Page_Controller {
 		}
 		return null;
 	}
+
+	function ModifierForm($request) {
+		user_error("Make sure that you set the controller for your ModifierForm to a controller directly associated with the Modifier", E_USER_WARNING);
+		return array();
+	}
+
 }

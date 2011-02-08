@@ -84,8 +84,8 @@ class ProductGroup extends Page {
 				'Root.Content',
 				new Tab(
 					'Products',
-					new NumericField("NumberOfProductsPerPage", "Number of products per page"),
-					new HeaderField('How should products be presented in the child groups?'),
+					new NumericField("NumberOfProductsPerPage", _t("ProductGroup.NUMBEROFPRODUCTS", "Number of products per page")),
+					new HeaderField(_t("ProductGroup.HOWPRESENTED", 'How should products be presented in the child groups?')),
 					new DropdownField(
 	  					'ChildGroupsPermission',
 	  					'Permission',

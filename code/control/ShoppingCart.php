@@ -70,13 +70,74 @@ class ShoppingCart extends Controller {
 		static function set_shopping_cart_message_index($v) {self::$shopping_cart_message_index = $v;}
 		static function get_shopping_cart_message_index() {return self::$shopping_cart_message_index;}
 
+
+
+/*******************************************************
+   * COUNTRY MANAGEMENT
+  * NOTE THAT WE GET THE COUNTRY FROM MULTIPLE SOURCES!
+*******************************************************/
+
 	protected static $country_setting_index = 'ShoppingCartCountry';
 		static function set_country_setting_index($v) {self::$country_setting_index = $v;}
 		static function get_country_setting_index() {return self::$country_setting_index;}
 
-	static function set_country($country) {Session::set(self::get_country_setting_index(), $country);}
-	static function get_country() {return Session::get(self::get_country_setting_index());}
+	static function set_country($countryCode) {
+		Session::set(self::get_country_setting_index(), $countryCode);
+		$member = Member::currentUser();
+		//check if the member has a country
+		if($member) {
+			$member->Country = $countryCode;
+			$member->write();
+		}
+	}
+	static function get_country() {
+		//@todo: incorporate allowed countries...
+		$countryCode = '';
+		//1. fixed country is first
+		$countryCode = EcommerceRole::get_fixed_country_code();
+		if(!$countryCode) {
+			//2. check shipping address
+			if($o = self::current_order()) {
+				if($o->ShippingAddressID) {
+					if($shippingAddress = DataObject::get_by_id("ShippingAddress", $o->ShippingAddressID)) {
+						$countryCode = $shippingAddress->ShippingCountry;
+					}
+				}
+			}
+			//3. check member
+			if(!$countryCode) {
+				$member = Member::currentUser();
+				if($member && $member->Country) {$countryCode = $member->Country;}
+				//4. check session - NOTE: session saves to member + shipping address
+				if(!$countryCode) {
+					$countryCode = self::get_country();
+					//5. check GEOIP information
+					if(!$countryCode) {
+						$countryCode = Geoip::visitor_country();
+						//6. check default country....
+						if(!$countryCode) {
+							$countryCode = Geoip::$default_country_code;
+							//7. check default country....
+							if(!$countryCode) {
+								$a = EcommerceRole::get_allowed_country_codes();
+								if(is_array($a) && count($array)) {
+									$countryCode = array_shift($a);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		return $countryCode;
+	}
+
 	static function remove_country() {Session::clear(self::get_country_setting_index());}
+
+
+/*******************************************************
+   * CLEARING OLD ORDERS
+*******************************************************/
 
 	protected static $clear_days = 90;
 		function set_clear_days($days = 90){self::$clear_days = $days;}
@@ -115,7 +176,7 @@ class ShoppingCart extends Controller {
 
 	function init() {
 		parent::init();
-		self::current_order()->init();
+		self::$order = self::current_order();
 	}
 
 	/**
@@ -155,7 +216,7 @@ class ShoppingCart extends Controller {
 					if($orders) {
 						foreach($orders as $order) {
 							if($order->CanEdit()) {
-								return $order;
+								self::$order = $order;
 							}
 						}
 					}
@@ -169,10 +230,11 @@ class ShoppingCart extends Controller {
 				self::$order = new Order();
 				self::initialise_new_order();
 			}
+			//TODO: re-introduce this because it allows seeing which members don't complete orders
+			// // Set the Member relation to this order
+			self::add_requirements();
+			self::$order->calculateModifiers();
 		}
-		//TODO: re-introduce this because it allows seeing which members don't complete orders
-		// // Set the Member relation to this order
-		self::add_requirements();
 		return self::$order;
 	}
 
@@ -426,9 +488,11 @@ class ShoppingCart extends Controller {
 
 	protected static function remove_many_order_attributes($items) {
 		self::current_order()->Attributes()->removeMany($items);
-		foreach($items as $item) {
-			$item->delete();
-			$item->destroy();
+		if($items) {
+			foreach($items as $item) {
+				$item->delete();
+				$item->destroy();
+			}
 		}
 	}
 
@@ -554,6 +618,7 @@ class ShoppingCart extends Controller {
 	function setcountry($request) {
 		$countryCode = $request->param('ID');
 		if($countryCode && strlen($countryCode) < 4) {
+			//to do: check if country exists
 			ShoppingCart::set_country($countryCode);
 			return $this->returnMessage("success",_t("ShoppingCart.COUNTRYUPDATED", "Country updated."));
 		}
@@ -648,7 +713,11 @@ class ShoppingCart extends Controller {
 	 * Sets appropriate status, and message and redirects or returns appropriately.
 	 */
 
-	protected function returnMessage($status = "success",$message = null){
+	protected function returnMessage($status = "success",$message = null) {
+		return self::return_message($status = "success",$message = null);
+	}
+
+	public static function return_message($status = "success",$message = null){
 		if(Director::is_ajax()){
 			$obj = new self::$response_class();
 			return $obj->ReturnCartData($status, $message);

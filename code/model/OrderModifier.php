@@ -1,53 +1,176 @@
 <?php
 
 /**
- * @description: The OrderModifier class is a databound object for
- ** handling the additional charges or deductions of an order.
- *
- * @package ecommerce
- * @authors: Silverstripe, Jeremy, Nicolaas
- **/
+ * @author Nicolaas [at] sunnysideup.co.nz
+ * @package: ecommerce
+ * @sub-package: ecommerce_modifiers
+ * @description: shows a list of recommended products
+ * the product page / dataobject need to have a function RecommendedProductsForCart
+ * which returns an array of IDs
+ * SEQUENCE - USE FOR ALL MODIFIERS!!!
+// ######################################## *** model defining static variables (e.g. $db, $has_one)
+// ######################################## *** cms variables + functions (e.g. getCMSFields, $searchableFields)
+// ######################################## *** other (non) static variables (e.g. protected static $special_name_for_something, protected $order)
+// ######################################## *** CRUD functions (e.g. canEdit)
+// ######################################## *** init and update functions
+// ######################################## *** form functions (e. g. showform and getform)
+// ######################################## *** template functions (e.g. ShowInTable, TableTitle, etc...) ... USES DB VALUES
+// ######################################## ***  inner calculations.... USES CALCULATED VALUES
+// ######################################## *** calculate database fields: protected function Live[field name]  ... USES CALCULATED VALUES
+// ######################################## *** Type Functions (IsChargeable, IsDeductable, IsNoChange, IsRemoved)
+// ######################################## *** standard database related functions (e.g. onBeforeWrite, onAfterWrite, etc...)
+// ######################################## *** AJAX related functions
+// ######################################## *** debug functions
+ */
 class OrderModifier extends OrderAttribute {
 
+
+
+// ########################################  *** model defining static variables (e.g. $db, $has_one)
 	public static $db = array(
+		'Name' => 'Varchar(255)',
 		'Amount' => 'Currency',
-		'Type' => "Enum('Chargable,Deductable,Removed')"
+		'Type' => "Enum('Chargeable,Deductable,NoChange,Removed')"
 	);
 
 	public static $casting = array(
 		'TableValue' => 'Currency',
-		'CartValue' => 'Currency'
+		'CartValue' => 'Currency',
+		'CalculationTotal' => 'Currency'
+	);
+
+	public static $defaults = array(
+		'Type' => 'Chargeable',
+		'Name' => 'Modifier'
 	);
 
 
-	/**
-	 * This determines whether the current modifier
-	 * is chargable, in that it adds an amount to the
-	 * order. An example of when this would be true is
-	 * for a shipping or tax calculator.
-	 *
-	 * If you set this to false for your modifier, then
-	 * it will deduct from the order instead given the
-	 * amount returned in {@link OrderModifier->LiveAmount()}.
-	 *
-	 * @var boolean
-	 */
-	protected static $is_chargable = true;
 
-	/*
-	 * This function is called when the order initialises
-	 * it's modifiers. It is better than directly
-	 * constructing the modifier in the Order class
-	 * because the user may need to create several
-	 * modifiers or customize it.
-	 *
-	 * @TODO Write a better description for this function
-	 * than the one above. It's not easy to understand.
-	 */
+// ########################################  *** cms variables  + functions (e.g. getCMSFields, $searchableFields)
+
+	public static $searchable_fields = array(
+		'OrderID' => array(
+			'field' => 'NumericField',
+			'title' => 'Order Number'
+		),
+		"Title" => "PartialMatchFilter",
+		"TableTitle" => "PartialMatchFilter",
+		"CartTitle" => "PartialMatchFilter",
+		"Amount",
+		"Type"
+	);
+
+	public static $summary_fields = array(
+		"Order.ID" => "Order ID",
+		"TableTitle" => "Table Title",
+		"ClassName" => "Name",
+		"Amount" => "Amount" ,
+		"Type" => "Type"
+	);
+
+	public static $singular_name = "Order Extra";
+		function i18n_singular_name() { return _t("OrderModifier.ORDERMODIFIER", "Order Extra");}
+
+	public static $plural_name = "Order Extras";
+		function i18n_plural_name() { return _t("OrderModifier.ORDERMODIFIERS", "Order Extras");}
+
+	function getCMSFields(){
+		$fields = parent::getCMSFields();
+		return $fields;
+	}
+
+	function scaffoldSearchFields(){
+		$fields = parent::scaffoldSearchFields();
+		$fields->replaceField("OrderID", new NumericField("OrderID", "Order Number"));
+		return $fields;
+	}
+
+
+
+// ########################################  *** other static variables (e.g. special_name_for_something)
+
+	protected $baseInitCalled = false;
+
+	protected $mustUpdate = false;
+
+	protected $_canEdit = null;
+
+
+// ######################################## *** CRUD functions (e.g. canEdit)
+
+
+
+// ########################################  *** init and update functions
+
+
 	public static function init_for_order($className) {
 		user_error("this function has been depreciated, instead, use $myModifier->init()", E_USER_ERROR);
 		return false;
 	}
+
+	public function init() {
+		parent::init();
+		return true;
+	}
+
+	/**
+	* each modifier class must have this function, at least if it has more dataobjects!
+	*@param $mustUpdate Boolean, passed on from Child Class....
+	*
+	**/
+
+	public function runUpdate() {
+		$this->checkField("Name");
+		$this->checkField("Amount");
+		$this->checkField("Type");
+		$this->checkField("Type");
+		if($this->mustUpdate) {
+			$this->write();
+		}
+		$this->baseInitCalled = true;
+	}
+
+	protected function checkField($fieldName) {
+		if($this->_canEdit === null) {
+			$this->_canEdit = $this->canEdit();
+		}
+		if($this->_canEdit) {
+			$functionName = "Live".$fieldName;
+			if($this->$functionName() != $this->$fieldName) {
+				$this->$fieldName = $this->$functionName();
+				$this->mustUpdate = true;
+			}
+		}
+	}
+
+	/**
+	 * Provides a modifier total that is positive or negative, depending on whether the modifier is chargable or not.
+	 * This number is used to work out the order Grand Total.....
+	 * @return float / double
+	 */
+	public function CalculationTotal() {
+		if($this->IsRemoved()) {
+			return 0;
+		}
+		else {
+			$amount = $this->Amount;
+			if($this->IsChargeable()) {
+				return $amount;
+			}
+			elseif($this->IsDeductable()) {
+ 				return -1 * $amount;
+			}
+			elseif($this->IsNoChange()) {
+				return 0;
+			}
+			else {
+				user_error("could not work out value for ".$this->Name, E_USER_WARNING);
+				return 0;
+			}
+		}
+	}
+
+// ########################################  *** form functions (showform and getform)
 
 	/**
 	 * This determines whether the OrderModifierForm
@@ -55,7 +178,12 @@ class OrderModifier extends OrderAttribute {
 	 *
 	 * @return boolean
 	 */
-	public static function show_form() {
+	public function showForm() {
+		/* TO DO: find a better place for it...
+		if(!$this->baseInitCalled) {
+			user_error("While the order can be edited, you must call the init method everytime you get the details for this modifier", E_USER_ERROR);
+		}
+		*/
 		return false;
 	}
 
@@ -70,60 +198,90 @@ class OrderModifier extends OrderAttribute {
 	 * @param Controller $controller $controller The controller
 	 * @return OrderModifierForm or subclass
 	 */
-	public static function get_form($controller) {
+	public function getForm($controller) {
 		return new OrderModifierForm($controller, 'ModifierForm', new FieldSet(), new FieldSet());
 	}
 
 
-	######################
-	## CMS CONFIG ##
-	######################
 
-	public static $searchable_fields = array(
-		'OrderID' => array(
-			'field' => 'NumericField',
-			'title' => 'Order Number'
-		),
-		"Title" => "PartialMatchFilter",
-		"TableTitle" => "PartialMatchFilter",
-		"CartTitle" => "PartialMatchFilter",
-		"Amount",
-		"Type"
-	);
 
-	public static $field_labels = array(
+// ######################################## *** template functions (e.g. ShowInTable, TableTitle, etc...)
 
-	);
-	public static $summary_fields = array(
-		"Order.ID" => "Order ID",
-		"TableTitle" => "Table Title",
-		"ClassName" => "Type",
-		"Amount" => "Amount" ,
-		"Type" => "Type"
-	);
-
-	public static $singular_name = "Order Extra";
-		function i18n_singular_name() { return _t("OrderModifier.ORDERMODIFIER", "Order Extra");}
-
-	public static $plural_name = "Order Extras";
-		function i18n_plural_name() { return _t("OrderModifier.ORDERMODIFIERS", "Order Extras");}
-
-	public static $default_sort = "\"Created\" DESC";
-
-	function init() {
-		parent::init();
-		return true;
+	public function ShowInTable() {
+		if(!$this->baseInitCalled && $this->canEdit()) {
+			user_error("While the order can be edited, you must call the init method everytime you get the details for this modifier", E_USER_ERROR);
+		}
+		return false;
 	}
 
-	function getCMSFields(){
-		$fields = parent::getCMSFields();
-		return $fields;
+
+	/**
+	 * Checks if the modifier can be removed. Default check is for whether it is Chargeable.
+	 *
+	 * @return boolean
+	 **/
+	public function CanRemove() {
+		return !$this->IsChargeable();
 	}
 
-	function scaffoldSearchFields(){
-		$fields = parent::scaffoldSearchFields();
-		$fields->replaceField("OrderID", new NumericField("OrderID", "Order Number"));
-		return $fields;
+	/**
+	 * Checks if the modifier can be added.
+	 *
+	 * @return boolean
+	 **/
+	public function CanAdd() {
+		return $this->IsRemoved();
+	}
+
+	public function TableValue() {
+		if($this->Type == "Chargeable") {
+			$amount = $this->Amount;
+		}
+		elseif($this->Type == "Deductable") {
+		 $amount = -1 * $this->Amount; //TODO: this is different from the bracket syntax for displaying negatives
+		}
+		else {
+			$amount = 0;
+		}
+		$obj = DBField::create('Currency', $amount);
+		return $obj;
+	}
+
+
+	public function CartValue() {
+		return $this->TableValue();
+	}
+
+	/**
+	 * This describes what the name of the  modifier should be, in relation to
+	 * the order table on the check out page - which the templates uses directly.
+	 * For example, this could be something  like "Shipping to NZ", where NZ is a
+	 * dynamic variable on where the user currently is, using {@link Geoip}.
+	 *
+	 * @return string
+	 */
+	public function TableTitle() {
+		return $this->Name;
+	}
+
+	public function CartTitle() {
+		return $this->TableTitle();
+	}
+
+	public function RemoveLink() {
+		return ShoppingCart::remove_modifier_link($this->ID);
+	}
+
+
+
+
+// ######################################## ***  inner calculations....
+
+
+// ######################################## ***  calculate database fields ( = protected function Live[field name]() { ....}
+
+	protected function LiveName() {
+		return self::$defaults["Name"];
 	}
 
 	/**
@@ -135,137 +293,116 @@ class OrderModifier extends OrderAttribute {
 	 * the Amount data field from the DB. This is for
 	 * existing orders.
 	 *
-	 * If this is a new order, and the modifier doesn't
-	 * exist in the DB ($this->ID is 0), so we return
-	 * the amount from $this->LiveAmount() which is a
-	 * calculation based on the order and it's items.
-	 */
-	function Amount() {
-		if($this->Type == "Removed") {
-			return 0;
-		}
-		return ($this->isLive()) ? $this->LiveAmount() : $this->Amount;
-	}
-
-	function TableValue() {
-		if($this->Type == "Removed") {
-			return 0;
-		}
-		if($this->IsChargable()) {
-			return $this->Amount();
-		}
-		else {
-		 return "-".$this->Amount(); //TODO: this is different from the bracket syntax for displaying negatives
-		}
-	}
-
-	function CartValue() {
-		return $this->TableValue();
-	}
-
-	/**
-	 * This function returns the amount of the modifier
-	 * based on the current order and its items. It's
-	 * designed to be overloaded on your OrderModifier
-	 * subclass.
-	 *
-	 * See SimpleShippingModifier->LiveAmount()
-	 * See TaxModifier->LiveAmount()
-	 *
-	 * For example, it could produce a tax calculation,
-	 * and return a number, which is the amount the
-	 * modifier uses to charge or deduct, based on the
-	 * setting of {@link OrderModifier::$is_chargable}.
+	 * @return Currency
 	 */
 	protected function LiveAmount() {
-		user_error("Please implement LiveAmount() on $this->class", E_USER_ERROR);
-	}
-
-	/**
-	 * If the current instance of this OrderModifier
-	 * exists in the database, check if the Type in
-	 * the DB field is "Chargable", if it is, return
-	 * true, otherwise check the static "is_chargable",
-	 * since this instance currently isn't in the DB.
-	 *
-	 * @return boolean
-	 */
-	function IsChargable() {
-		return $this->stat('is_chargable');
-	}
-
-	/**
-	 * This describes what the name of the
-	 * modifier should be, in relation to
-	 * the order table on the check out page
-	 * - which the templates uses directly.
-	 *
-	 * For example, this could be something
-	 * like "Shipping to NZ", where NZ is a
-	 * dynamic variable on where the user
-	 * currently is, using {@link Geoip}.
-	 *
-	 * @return string
-	 */
-	function TableTitle() {
-		return 'Modifier'; //TODO: i18n
-	}
-
-	/**
-	 * Checks if the modifier can be removed.
-	 * Default check is for whether it is chargable.
-	 *
-	 * @return boolean
-	 */
-	function CanRemove() {
-		return !$this->stat('is_chargable');
+		if($this->Type == "Removed" || $this->Type == "NoChange") {
+			return 0;
+		}
+		return $this->Amount;
 	}
 
 	/**
 	 * Provides a modifier total that is positive or negative, depending on whether the modifier is chargable or not.
 	 *
-	 * @return boolean
+	 * @return String
 	 */
-	function Total() {
-		$amount = $this->Amount();
-		return ($this->IsChargable() ? 1 : -1) * $amount;
+	protected function LiveType() {
+		$v = $this->Type;
+		if(!$this->IsRemoved()) {
+			if($this->IsNoChange()) {
+				$v = "NoChange";
+			}
+			elseif($this->IsDeductable()) {
+				$v = "Deductable";
+			}
+			elseif($this->IsChargeable()){
+				$v = "Chargeable";
+			}
+			else {
+				user_error("Could not work out modifier type (chargeable, Deductable, or NoChange", E_USER_WARNING);
+			}
+		}
+		if(!$v) {
+			$v = self::$defaults["Type"];
+		}
+		return $v;
 	}
 
-	function removeLink() {
-		return ShoppingCart::remove_modifier_link($this->_id);
+
+
+
+// ######################################## ***  Type Functions (IsChargeable, IsDeductable, IsNoChange, IsRemoved)
+
+	/**
+	 * should be extended if it is true in child class
+	 * @return boolean
+	 */
+	protected function IsChargeable() {
+		return false;
+	}
+	/**
+	 * should be extended if it is true in child class
+	 * @return boolean
+	 */
+	protected function IsDeductable() {
+		return false;
 	}
 
 	/**
-	 * Before this OrderModifier is written to
-	 * the database, we set some of the fields
+	 * should be extended if it is true in child class
+	 * @return boolean
+	 */
+	protected function IsNoChange() {
+		return false;
+	}
+
+	/**
+	 * always the same, do not extend.
+	 * @return boolean
+	 */
+	protected function IsRemoved() {
+		return $this->Type == "Removed";
+	}
+
+
+// ######################################## ***  standard database related functions (e.g. onBeforeWrite, onAfterWrite, etc...)
+
+	/**
+	 * Before this OrderModifier is written to the database, we set some of the fields
 	 * based on the way it was set up
-	 * {@link OrderModifier::is_chargable()}.
-	 *
-	 * Precondition: The order item is not
-	 * saved in the database yet.
+	 * Precondition: The order item is not saved in the database yet.
 	 */
 	function onBeforeWrite() {
 		parent::onBeforeWrite();
-
-		$this->Amount = $this->Amount();
-		$this->Type = $this->stat('is_chargable') ? 'Chargable' : 'Deductable';
 	}
+
+
+
+// ######################################## ***  AJAX related functions
 
 	function updateForAjax(array &$js) {
-		$amount = $this->obj('Amount')->Nice();
-		$js[] = array('id' => $this->CartTotalID(), 'parameter' => 'innerHTML', 'value' => $amount);
-		$js[] = array('id' => $this->TableTotalID(), 'parameter' => 'innerHTML', 'value' => $amount);
+		$this->runUpdate();
+		$tableValue = DBField::create('Currency',$this->TableValue())->Nice();
+		$cartValue = DBField::create('Currency',$this->CartValue())->Nice();
+		$js[] = array('id' => $this->TableTotalID(), 'parameter' => 'innerHTML', 'value' => $tableValue);
+		$js[] = array('id' => $this->CartTotalID(), 'parameter' => 'innerHTML', 'value' => $cartValue);
 		$js[] = array('id' => $this->TableTitleID(), 'parameter' => 'innerHTML', 'value' => $this->TableTitle());
+		$js[] = array('id' => $this->CartTitleID(), 'parameter' => 'innerHTML', 'value' => $this->CartTitle());
 	}
+
+
+
+
+// ######################################## ***  debug functions
 
 	/**
 	 * Debug helper method.
 	 */
 	public function debug() {
-		$id = $this->ID ? $this->ID : $this->_id;
-		$amount = $this->Amount();
-		$type = $this->IsChargable() ? 'Chargable' : 'Deductable';
-		$orderID = $this->ID ? $this->OrderID : 'The order has not been saved yet, so there is no ID';
+		$amount = $this->Amount;
+		$type = $this->Type;
+		$orderID = $this->OrderID;
 		return <<<HTML
 			<h2>$this->class</h2>
 			<h3>OrderModifier class details</h3>
@@ -277,4 +414,7 @@ class OrderModifier extends OrderAttribute {
 			</p>
 HTML;
 	}
+
 }
+
+

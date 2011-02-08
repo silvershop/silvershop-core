@@ -32,7 +32,7 @@ class OrderForm extends Form {
 			//allow people to purchase without creating a password
 			$passwordField->setCanBeEmpty(false);
 			//login invite right on the top
-			$rightFields->push(new HeaderField(_t('OrderForm.MEMBERSHIPDETAILS','Membership Details'), 3));
+			$rightFields->push(new HeaderField(_t('OrderForm.MEMBERSHIPDETAILS','Account Details'), 3));
 			if(!$member->Created) {
 				$rightFields->push(new LiteralField('MemberInfo', '<p class="message good">'._t('OrderForm.MEMBERINFO','If you are already a member please')." <a href=\"Security/login?BackURL=" . CheckoutPage::find_link(true) . "/\">"._t('OrderForm.LOGIN','log in').'</a>.</p>'));
 			}
@@ -48,8 +48,11 @@ class OrderForm extends Form {
 		$bottomFields = new CompositeField();
 		$totalAsCurrencyObject = $order->TotalAsCurrencyObject(); //should instead be $totalobj = $order->dbObject('Total');
 		$paymentFields = Payment::combined_form_fields($totalAsCurrencyObject->Nice());
-		foreach($paymentFields as $field) {
-			$bottomFields->push($field);
+		foreach($paymentFields as $paymentField) {
+			if($paymentField->class == "HeaderField") {
+				$paymentField->setTitle(_t("OrderForm.MAKEPAYMENT", "Make Payment"));
+			}
+			$bottomFields->push($paymentField);
 		}
 		if($paymentRequiredFields = Payment::combined_form_requirements()) {
 			$requiredFields = array_merge($requiredFields, $paymentRequiredFields);
@@ -76,7 +79,7 @@ class OrderForm extends Form {
 		$this->extend('updateValidator',$requiredFields);
 		$this->extend('updateFields',$fields);
 		Requirements::javascript('ecommerce/javascript/OrderFormWithShippingAddress.js');
-		if(CheckoutPage::get_add_shipping_fields()) {
+		if(Order::get_add_shipping_fields()) {
 			$countryField = new DropdownField('ShippingCountry',  _t('OrderForm.COUNTRY','Country'), Geoip::getCountryDropDown(), EcommerceRole::find_country());
 			$shippingFields = new CompositeField(
 				new HeaderField(_t('OrderForm.SENDGOODSTODIFFERENTADDRESS','Send goods to different address'), 3),
@@ -105,7 +108,7 @@ class OrderForm extends Form {
 		// 7)  Load saved data
 		if($order) {
 			$this->loadDataFrom($order);
-			if(CheckoutPage::get_add_shipping_fields()) {
+			if(Order::get_add_shipping_fields()) {
 				if ($shippingAddress = $order->ShippingAddress()) {
 					$this->loadDataFrom($shippingAddress);
 				}

@@ -19,7 +19,7 @@ class SiteConfigEcommerceExtras extends DataObjectDecorator {
 				"DispatchEmailSubject" => "Varchar(255)",
 				"PostalCodeURL" => "Varchar(255)",
 				"PostalCodeLabel" => "Varchar(255)",
-				"NumberOfProductsPerPage" => "Int",
+				"NumberOfProductsPerPage" => "Int"
 			)
 		);
 	}

@@ -9,12 +9,23 @@
 
 class EcommerceRole extends DataObjectDecorator {
 
+	/**
+	*@param $a : array("NZ" => "NZ", "UK => "UK", etc...)
+	**/
+	protected static $allowed_country_codes = array();
+		static function set_allowed_country_codes($a) {self::$allowed_country_codes = $a;}
+		static function get_allowed_country_codes() {return self::$allowed_country_codes;}
+		static function add_allowed_country_code($code) {self::$allowed_country_codes[$code] = $code;}
+		static function remove_allowed_country_code($code) {unset(self::$allowed_country_codes[$code]);}
 
+	/**
+	*@param $code = string
+	**/
 	protected static $fixed_country_code = '';
-		static function set_fixed_country_code($v) {self::$fixed_country_code = $v;}
+		static function set_fixed_country_code($code) {self::$fixed_country_code = $code;}
 		static function get_fixed_country_code() {return self::$fixed_country_code;}
-	//f.e. http://www.nzpost.co.nz/Cultures/en-NZ/OnlineTools/PostCodeFinder
 
+	//e.g. http://www.nzpost.co.nz/Cultures/en-NZ/OnlineTools/PostCodeFinder
 	static function get_postal_code_url() {$sc = DataObject::get_one('SiteConfig'); if($sc) {return $sc->PostalCodeURL;}  }
 
 	static function get_postal_code_label() {$sc = DataObject::get_one('SiteConfig'); if($sc) {return $sc->PostalCodeLabel;}  }
@@ -51,12 +62,40 @@ class EcommerceRole extends DataObjectDecorator {
 		return self::find_country_title($code);
 	}
 
-	static function find_country_title($code) {
+	public static function country_code_allowed($code) {
+		if($code) {
+			$c = self::get_fixed_country_code();
+			if($c) {
+				if($c == $code) {
+					return true;
+				}
+			}
+			else {
+				$a = self::get_allowed_country_codes();
+				if(is_array($a) && count($a)) {
+					if(in_array($code, $a, false) || array_key_exists($code, $a)) {
+						return true;
+					}
+				}
+				else {
+					$a = Geoip::getCountryDropDown();
+					if(isset($a[$code])) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+
+
+	public static function find_country_title($code) {
 		$countries = Geoip::getCountryDropDown();
 		// check if code was provided, and is found in the country array
-		if($code && $countries[$code]) {
+		if($code && isset($countries[$code])) {
 			return $countries[$code];
-		} else {
+		}
+		else {
 			return false;
 		}
 	}
@@ -73,31 +112,9 @@ class EcommerceRole extends DataObjectDecorator {
 		user_error("depreciated, please use EcommerceRole::find_country", E_USER_NOTICE);
 		return self::find_country();
 	}
-	static function find_country() {
-		$country = '';
-		$member = Member::currentUser();
-		if($member && $member->Country) {
-			$country = $member->Country;
-		}
-		else {
-			if($country = ShoppingCart::get_country()) {
-				//do nothing
-			}
-			elseif($country = self::get_fixed_country_code()) {
-				//do nothing
-			}
-			else {
-				// HACK Avoid CLI tests from breaking (GeoIP gets in the way of unbiased tests!)
-				// @todo Introduce a better way of disabling GeoIP as needed (Geoip::disable() ?)
-				if(Director::is_cli()) {
-					$country = '';
-				}
-				else {
-					$country = Geoip::visitor_country();
-				}
-			}
-		}
-		return $country;
+
+	public static function find_country() {
+		return ShoppingCart::get_country();
 	}
 
 	protected static function add_members_to_customer_group() {
@@ -175,6 +192,30 @@ class EcommerceRole extends DataObjectDecorator {
 
 	function updateCMSFields(&$fields) {
 		$fields->replaceField('Country', new DropdownField('Country', 'Country', Geoip::getCountryDropDown()));
+	}
+
+	function listOfAllowedCountriesForDropdown() {
+		$keys = array();
+		if($v = self::get_fixed_country_code()) {
+			$keys[$v] = $v;
+		}
+		elseif($a = self::get_allowed_country_codes()) {
+			$keys = array_merge($keys, $a);
+		}
+		else{
+
+		}
+		if(isset($keys) && count($keys)) {
+			$newArray = array();
+			foreach($keys as $key) {
+				$newArray[$key] = self::find_country_title($key);
+			}
+			return $newArray;
+		}
+		else {
+			return Geoip::getCountryDropDown();
+		}
+
 	}
 
 	/**

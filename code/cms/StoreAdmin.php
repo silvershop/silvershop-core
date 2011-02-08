@@ -9,7 +9,7 @@ class StoreAdmin extends ModelAdmin{
 
 	public static $url_segment = 'orders';
 
-	public static $menu_title = 'Orders';
+	public static $menu_title = 'Shop';
 
 	public static $menu_priority = 1;
 

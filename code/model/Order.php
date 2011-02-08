@@ -102,12 +102,15 @@ class Order extends DataObject {
 	 * @return DataObjectSet
 	 */
 	public static function get_modifier_forms($controller) {
+		user_error("this method has been changed to getModifierForms, the current function has been depreciated", E_USER_ERROR);
+	}
+
+	public function getModifierForms($controller) {
 		$forms = array();
-		if(self::$modifiers && is_array(self::$modifiers) && count(self::$modifiers) > 0) {
-			foreach(self::$modifiers as $className) {
-				if(class_exists($className)) {
-					$modifier = new $className();
-					if($modifier instanceof OrderModifier && eval("return $className::show_form();") && $form = eval("return $className::get_form(\$controller);")) {
+		if($modifiers = $this->Modifiers()) {
+			foreach($modifiers as $modifier) {
+				if($modifier instanceof OrderModifier && $modifier->showForm()) {
+					if($form = $modifier->getForm($controller)) {
 						array_push($forms, $form);
 					}
 				}
@@ -149,6 +152,10 @@ class Order extends DataObject {
 		}
 		return null;
 	}
+
+	protected static $add_shipping_fields = false;
+		static function set_add_shipping_fields($v){self::$add_shipping_fields = $v;}
+		static function get_add_shipping_fields(){return self::$add_shipping_fields;}
 
 /*******************************************************
    * CMS Stuff
@@ -192,7 +199,6 @@ class Order extends DataObject {
 			'field' => 'NumericField',
 			'title' => 'Order Number'
 		),
-		'Printed',
 		'Member.FirstName' => array(
 			'title' => 'Customer First Name',
 			'filter' => 'PartialMatchFilter'
@@ -254,7 +260,7 @@ class Order extends DataObject {
 	function getCMSFields(){
 		$fields = parent::getCMSFields();
 		$readOnly = (bool)!$this->canEdit();
-		$fieldsAndTabsToBeRemoved = array('Printed', 'MemberID', 'Attributes', 'SessionID', 'Country', 'ShippingAddressID', 'UseShippingAddress', 'OrderStatusLogs');
+		$fieldsAndTabsToBeRemoved = array('MemberID', 'Attributes', 'SessionID', 'Country', 'ShippingAddressID', 'UseShippingAddress', 'OrderStatusLogs');
 		if(!$readOnly) {
 			$fieldsAndTabsToBeRemoved[] = "Payments";
 			$fieldsAndTabsToBeRemoved[] = "Emails";
@@ -265,7 +271,7 @@ class Order extends DataObject {
 		$fields->insertBefore(new LiteralField('Title',"<h2>".$this->Title()."</h2>"),'Root');
 		if($readOnly) {
 			$htmlSummary = $this->renderWith("Order");
-			$printlabel = (!$this->Printed) ? "Print Invoice" : "Print Invoice Again"; //TODO: i18n
+			$printlabel = "Print Invoice"; //TODO: i18n
 			$fields->addFieldsToTab('Root.Main', array(
 				new LiteralField("PrintInvoice",'<p class="print"><a href="OrderReport_Popup/index/'.$this->ID.'?print=1" onclick="javascript: window.open(this.href, \'print_order\', \'toolbar=0,scrollbars=1,location=1,statusbar=0,menubar=0,resizable=1,width=800,height=600,left = 50,top = 50\'); return false;">'.$printlabel.'</a></p>')
 			));
@@ -613,6 +619,7 @@ class Order extends DataObject {
 						$modifier->Sort = $key;
 						$modifier->init();
 						$modifier->write();
+						$modifier->runUpdate();
 						$this->Attributes()->add($modifier);
 					}
 				}
@@ -629,7 +636,7 @@ class Order extends DataObject {
 	 */
  	function Modifiers() {
  		if(!$this->ID) {
- 			$this->write();
+ 			$this->runUpdate();
 			$this->initModifiers();
  		}
 		return $this->modifiersFromDatabase();
@@ -652,7 +659,7 @@ class Order extends DataObject {
 		if($modifiers) {
 			if($modifiers->exists()){
 				foreach($modifiers as $modifier){
-					$modifiers->write();
+					$modifier->runUpdate();
 				}
 			}
 		}
@@ -790,6 +797,7 @@ class Order extends DataObject {
 	 *
 	 * @param $excluded string|array Class(es) of modifier(s) to ignore in the calculation.
 	 * @todo figure out what the return type is? double? float?
+	 * @todo what is Only Previous?????
 	 */
 	function ModifiersSubTotal($excluded = null, $onlyprevious = false) {
 		$total = 0;
@@ -807,7 +815,7 @@ class Order extends DataObject {
 					}
 					continue;
 				}
-				$total += $modifier->Total();
+				$total += $modifier->CalculationTotal();
 			}
 		}
 		return $total;
@@ -986,13 +994,16 @@ class Order extends DataObject {
 	 * @return string
 	 */
 	function findShippingCountry($codeOnly = false) {
-		if(!$this->ID) {
-			$country = ShoppingCart::has_country() ? ShoppingCart::get_country() : EcommerceRole::find_country();
+		if($this->Country) {return $this->Country;}
+		else {
+			$countryCode = ShoppingCart::get_country();
+			if($codeOnly) {
+				return $countryCode;
+			}
+			else {
+				return EcommerceRole::find_country_title($countryCode);
+			}
 		}
-		elseif(!$this->UseShippingAddress) {
-			$country = EcommerceRole::find_country();
-		}
-		return $codeOnly ? $country : EcommerceRole::find_country_title($country);
 	}
 
 /*******************************************************
@@ -1027,7 +1038,7 @@ class Order extends DataObject {
  					if($hasShippingCost == '1' && $shipping != null) {
  						$modifier1 = new SimpleShippingModifier();
  						$modifier1->Amount = $shipping < 0 ? abs($shipping) : $shipping;
- 						$modifier1->Type = 'Chargable';
+ 						$modifier1->Type = 'Chargeable';
  						$modifier1->OrderID = $id;
  						$modifier1->Country = $country;
  						$modifier1->ShippingChargeType = 'Default';
@@ -1036,7 +1047,7 @@ class Order extends DataObject {
  					if($addedTax != null) {
  						$modifier2 = new TaxModifier();
  						$modifier2->Amount = $addedTax < 0 ? abs($addedTax) : $addedTax;
- 						$modifier2->Type = 'Chargable';
+ 						$modifier2->Type = 'Chargeable';
  						$modifier2->OrderID = $id;
  						$modifier2->Country = $country;
  						$modifier2->Name = 'Undefined After Ecommerce Upgrade';
@@ -1228,8 +1239,13 @@ class Order extends DataObject {
 
 	function onBeforeWrite() {
 		parent::onBeforeWrite();
-		if(!$this->CancelledByID) {
+		if(!$this->CancelledByID && $this->CancelledByID != 0) {
 			$this->CancelledByID = 0;
+		}
+		$member = Member::currentMember();
+		//sove the country...
+		if($member && $this->MemberID == $member->ID) {
+			$this->Country = ShoppingCart::get_country();
 		}
 	}
 

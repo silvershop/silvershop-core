@@ -29,6 +29,9 @@ class OrderAttribute extends DataObject {
 		'MySQLDatabase' => 'ENGINE=InnoDB'
 	);
 
+	/**
+	* @note: we can add the \"OrderAttribute_Group\".\"Sort\" part because this table is always included (see extendedSQL).
+	**/
 	public static $default_sort = "\"OrderAttribute\".\"Sort\" ASC, \"OrderAttribute\".\"Created\" DESC";
 
 	public static $indexes = array(
@@ -50,7 +53,7 @@ class OrderAttribute extends DataObject {
 	function canDelete($member = null) {
 		if($this->OrderID) {
 			if($this->Order()->exists()) {
-				if($this->Order()->CanEdit($member)) {
+				if($this->Order()->canEdit($member)) {
 					return true;
 				}
 			}
@@ -58,15 +61,18 @@ class OrderAttribute extends DataObject {
 		return false;
 	}
 
-	function isLive(){
-		return (!$this->ID || $this->Order()->IsCart());
-	}
-
 	public function addBuyableToOrderItem($object) {
 		//more may be added here in the future
 		return true;
 	}
-
+	/**
+	 * @see DataObject::extendedSQL
+	 * TO DO: make it work... because we call DataObject::get(....) it may not be called....
+	public function extendedSQL($filter = "", $sort = "", $limit = "", $join = "", $having = ""){
+		$join .= " LEFT JOIN \"OrderAttribute_Group\" ON \"OrderAttribute_Group\".\"ID\" = \"OrderAttribute\".\"OrderAttribute_GroupID\"";
+		return parent::extendedSQL($filter, $sort, $limit, $join, $having);
+	}
+	*/
 	######################
 	## TEMPLATE METHODS ##
 	######################

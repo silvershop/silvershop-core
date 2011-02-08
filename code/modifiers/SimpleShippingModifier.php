@@ -10,13 +10,21 @@
  * @package ecommerce
  * @authors: Silverstripe, Jeremy, Nicolaas
  **/
-
 class SimpleShippingModifier extends OrderModifier {
 
+
+// ######################################## *** model defining static variables (e.g. $db, $has_one)
+
 	static $db = array(
-		'Country' => 'Text',
+		'Country' => 'Varchar(3)',
 		'ShippingChargeType' => "Enum('Default,ForCountry')"
 	);
+
+// ######################################## *** cms variables + functions (e.g. getCMSFields, $searchableFields)
+
+
+// ######################################## *** other (non) static variables (e.g. protected static $special_name_for_something, protected $order)
+
 
 	static $default_charge = 0;
 
@@ -38,46 +46,34 @@ class SimpleShippingModifier extends OrderModifier {
 		self::$charges_by_country = array_merge(self::$charges_by_country, $countryMap);
 	}
 
-	// Attributes Functions
+// ######################################## *** CRUD functions (e.g. canEdit)
+// ######################################## *** init and update functions
 
-	function Country() {
-		return $this->ID ? $this->Country : $this->LiveCountry();
+	public function runUpdate() {
+		$this->checkField("Country");
+		$this->checkField("ShippingChargeType");
+		parent::runUpdate();
 	}
 
-	function IsDefaultCharge() {
-		return $this->ID ? $this->ShippingChargeType == 'Default' : $this->LiveIsDefaultCharge();
-	}
 
-	protected function LiveCountry() {
-		$order = ShoppingCart::current_order();
-		return $order->findShippingCountry(true);
-	}
-
-	protected function LiveIsDefaultCharge() {
-		return !$this->LiveCountry() || !array_key_exists($this->LiveCountry(), self::$charges_by_country);
-	}
+// ######################################## *** form functions (e. g. showform and getform)
+// ######################################## *** template functions (e.g. ShowInTable, TableTitle, etc...) ...  USES DB VALUES
 
 	/**
-	 * Find the amount for the shipping on the shipping country for the order.
+	 * @return boolean
 	 */
-	function LiveAmount() {
-		return $this->LiveIsDefaultCharge() ? self::$default_charge : self::$charges_by_country[$this->LiveCountry()];
-	}
 
-	// Display Functions
-
-	function ShowInCart() {
-		return $this->Total() > 0;
+	public function ShowInCart() {
+		return $this->CalculationTotal() > 0;
 	}
 
 	/**
-	 * @TODO Add i18n entities to the text.
 	 * @return string
 	 */
-	function TableTitle() {
-		if($this->Country()) {
+	public function TableTitle() {
+		if($this->Country) {
 			$countryList = Geoip::getCountryDropDown();
-			return _t("SimpleShippingModifier.SHIPPINGTO", "Shipping to")." ".$countryList[$this->Country()];
+			return _t("SimpleShippingModifier.SHIPPINGTO", "Shipping to")." ".$countryList[$this->Country];
 		}
 		else {
 			return _t("SimpleShippingModifier.SHIPPING", "Shipping");
@@ -85,22 +81,50 @@ class SimpleShippingModifier extends OrderModifier {
 	}
 
 	/**
-	 * @TODO Add i18n entities to the text.
 	 * @return string
 	 */
-	function CartTitle() {
+	public function CartTitle() {
 		return _t("SimpleShippingModifier.SHIPPING", "Shipping");
 	}
 
-	// Database Writing Function
 
-	/*
-	 * Precondition : The order item is not saved in the database yet
-	 */
-	function onBeforeWrite() {
-		parent::onBeforeWrite();
+// ######################################## ***  inner calculations....  USES CALCULATED VALUES
 
-		$this->Country = $this->LiveCountry();
-		$this->ShippingChargeType = $this->LiveIsDefaultCharge() ? 'Default' : 'ForCountry';
+	protected function IsDefaultCharge() {
+		return !$this->LiveCountry() || !array_key_exists($this->LiveCountry(), self::$charges_by_country);
 	}
+
+// ######################################## *** calculate database fields: protected function Live[field name] ...  USES CALCULATED VALUES
+
+	protected function LiveCountry() {
+		ShoppingCart::get_country();
+	}
+
+	/**
+	 * Find the amount for the shipping on the shipping country for the order.
+	 */
+	protected function LiveAmount() {
+		return $this->IsDefaultCharge() ? self::$default_charge : self::$charges_by_country[$this->LiveCountry()];
+	}
+
+	protected function LiveShippingChargeType() {
+		$this->IsDefaultCharge() ? 'Default' : 'ForCountry';
+	}
+
+// ######################################## *** Type Functions (IsChargeable, IsDeductable, IsNoChange, IsRemoved)
+
+	protected function IsChargeable() {
+		return true;
+	}
+
+
+// ######################################## *** standard database related functions (e.g. onBeforeWrite, onAfterWrite, etc...)
+
+	public function onBeforeWrite() {
+		parent::onBeforeWrite();
+	}
+
+// ######################################## *** AJAX related functions
+// ######################################## *** debug functions
+
 }

@@ -29,7 +29,7 @@
 							<span><% _t("QUANTITYCART","Quantity in cart") %>:</span>
 							$QuantityField
 							<ul class="productActions">
-								<li><a href="$removeallLink" title="<% sprintf(_t("Product.ss.REMOVE","Remove &quot;%s&quot; from your cart"),$BuyableTitle) %>"><% _t("REMOVELINK","&raquo; Remove from cart") %></a></li>
+								<li><a href="$RemoveAllLink" title="<% sprintf(_t("Product.ss.REMOVE","Remove &quot;%s&quot; from your cart"),$BuyableTitle) %>"><% _t("REMOVELINK","&raquo; Remove from cart") %></a></li>
 								<li><a href="$checkoutLink" title="<% _t("Product.ss.GOTOCHECKOUT","Go to the checkout now") %>"><% _t("GOTOCHECKOUTLINK","&raquo; Go to the checkout") %></a></li>
 							</ul>
 						</div>

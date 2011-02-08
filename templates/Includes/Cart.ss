@@ -48,7 +48,7 @@
 							<span class="remove">
 								<% if CanRemove %>
 									<strong>
-										<a class="ajaxQuantityLink" href="$removeLink" title="<% sprintf(_t("Cart.ss.REMOVE","Remove &quot;%s&quot; from your order"),$TableTitle) %>">
+										<a class="ajaxQuantityLink" href="$RemoveLink" title="<% sprintf(_t("Cart.ss.REMOVE","Remove &quot;%s&quot; from your order"),$TableTitle) %>">
 											<img src="ecommerce/images/remove.gif" alt="x"/>
 										</a>
 									</strong>
