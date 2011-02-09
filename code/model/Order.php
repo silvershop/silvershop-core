@@ -636,7 +636,6 @@ class Order extends DataObject {
 	 */
  	function Modifiers() {
  		if(!$this->ID) {
- 			$this->runUpdate();
 			$this->initModifiers();
  		}
 		return $this->modifiersFromDatabase();
