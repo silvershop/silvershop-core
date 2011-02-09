@@ -13,7 +13,7 @@ class SiteConfigEcommerceExtras extends DataObjectDecorator {
 		return array(
 			'db' => array(
 				"ShopClosed" => "Boolean",
-				"ShopPhysicalAddress" => "Boolean",
+				"ShopPhysicalAddress" => "HTMLText",
 				"ReceiptEmail" => "Varchar(255)",
 				"ReceiptSubject" => "Varchar(255)",
 				"DispatchEmailSubject" => "Varchar(255)",

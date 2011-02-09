@@ -169,7 +169,7 @@ class CheckoutPage extends Page {
 		}
 		$v = $this->MenuTitle;
 		if($count) {
-			$v .= " (".$count.")";
+			$v .= " <span class=\"numberOfItemsInCart\">(".$count.")</span>";
 		}
 		return $v;
 	}
