@@ -280,7 +280,7 @@ class ProductGroup_Controller extends Page_Controller {
 		foreach(ProductGroup::get_sort_options() as $key => $array){
 			$current = ($key == $sort) ? 'current' : false;
 			$dos->push(new ArrayData(array(
-				'Name' => _t('ProductGroup.ss.SORTBY'.strtoupper(str_replace(' ','',$array['Title'])),$array['Title']),
+				'Name' => _t('ProductGroup.SORTBY'.strtoupper(str_replace(' ','',$array['Title'])),$array['Title']),
 				'Link' => $this->Link()."?sortby=$key",
 				'Current' => $current
 			)));

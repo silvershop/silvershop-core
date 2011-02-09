@@ -12,7 +12,7 @@
 	<% if Products %>
 		<div id="Products" class="category">
 			<div class="resultsBar">
-				<% if SortLinks %><span class="sortOptions"><% _t('SORTBY','Sort by') %> <% control SortLinks %><a href="$Link" class="sortlink $Current">$Name</a> <% end_control %></span><% end_if %>
+				<% if SortLinks %><span class="sortOptions"><% _t('ProductGroup.SORTBY','Sort by') %> <% control SortLinks %><a href="$Link" class="sortlink $Current">$Name</a> <% end_control %></span><% end_if %>
 			</div>
 			<div class="clear"><!-- --></div>
 			<ul class="productList">
@@ -28,7 +28,7 @@
 	<div id="PageNumbers">
 		<p>
 			<% if Products.NotFirstPage %>
-				<a class="prev" href="$Products.PrevLink" title="View the previous page">previous</a>
+				<a class="prev" href="$Products.PrevLink" title="<% _t('ProductGroup.SHOWPREVIOUSPAGE','View the previous page') %>"><% _t('ProductGroup.PREVIOUS','previous') %></a>
 			<% end_if %>
 
 			<span>
@@ -37,7 +37,7 @@
 						$PageNum
 					<% else %>
 						<% if Link %>
-							<a href="$Link" title="View page number $PageNum">$PageNum</a>
+							<a href="$Link" title="<% sprintf(_t("ProductGroup.GOTOPAGE","View page number %s"),$PageNum) %>">$PageNum</a>
 						<% else %>
 							&hellip;
 						<% end_if %>
@@ -46,7 +46,7 @@
 			</span>
 
 			<% if Products.NotLastPage %>
-				<a class="next" href="$Products.NextLink" title="View the next page">next</a>
+				<a class="next" href="$Products.NextLink" title="<% _t('ProductGroup.SHOWNEXTPAGE','View the next page') %>"><% _t('ProductGroup.NEXT','next') %></a>
 			<% end_if %>
 		</p>
 	</div>
