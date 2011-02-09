@@ -54,6 +54,11 @@ class ShoppingCart extends Controller {
 	static function set_country($country) {
 		$countrySettingIndex = self::country_setting_index();
 		Session::set($countrySettingIndex, $country);
+		//check if the member has a country
+		if($member = Member::currentUser()) {
+			$member->Country = $country;
+			$member->write();
+		}
 	}
 
 	static function get_country() {
@@ -403,7 +408,7 @@ class ShoppingCart extends Controller {
 	 */
 	static function json_code() {
 		
-		$this->response->addHeader('Content-Type', 'application/json');
+		//$this->response->addHeader('Content-Type', 'application/json');
 		$currentOrder = ShoppingCart::current_order();
 		$js = array ();
 
@@ -575,9 +580,10 @@ class ShoppingCart extends Controller {
 		if($countryCode && strlen($countryCode) < 4) {
 			//to do: check if country exists
 			ShoppingCart::set_country($countryCode);
-			return $this->returnMessage("success",_t("ShoppingCart.COUNTRYUPDATED", "Country updated."));
+			//return _t("ShoppingCart.COUNTRYUPDATED", "Country updated.");
+			return self::json_code();
 		}
-		return $this->returnMessage("failure",_t("ShoppingCart.COUNTRYCOULDNOTBEUPDATED", "Country not be updated."));
+		return _t("ShoppingCart.COUNTRYCOULDNOTBEUPDATED", "Country not be updated.");
 	}
 
 }

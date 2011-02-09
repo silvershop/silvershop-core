@@ -39,7 +39,9 @@ class SimpleShippingModifier extends OrderModifier {
 	// Attributes Functions
 
 	function Country() {
-		return $this->ID ? $this->Country : $this->LiveCountry();
+		if(!$this->Order() || !$this->Order()->IsCart())
+			return $this->Country;
+		return $this->LiveCountry();
 	}
 
 	function IsDefaultCharge() {
