@@ -564,5 +564,20 @@ class ShoppingCart extends Controller {
 	function debug() {
 		Debug::show(ShoppingCart::current_order());
 	}
+	
+	
+	
+	/**
+	 *  Change country action 
+	 * */
+	function setcountry($request) {
+		$countryCode = $request->param('ID');
+		if($countryCode && strlen($countryCode) < 4) {
+			//to do: check if country exists
+			ShoppingCart::set_country($countryCode);
+			return $this->returnMessage("success",_t("ShoppingCart.COUNTRYUPDATED", "Country updated."));
+		}
+		return $this->returnMessage("failure",_t("ShoppingCart.COUNTRYCOULDNOTBEUPDATED", "Country not be updated."));
+	}
 
 }
