@@ -52,8 +52,7 @@ EcomQuantityField = {
 								this.value = this.value.replace(/[^0-9]+/g, '');
 							}
 							var url = jQuery('base').attr('href') + setQuantityLink.value + '?quantity=' + this.value;
-							jQuery("body").addClass("loading");
-							jQuery.getJSON(url, null, Cart.setChanges);
+							Cart.getChanges(url, null);
 						}
 					}
 				);

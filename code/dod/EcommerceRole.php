@@ -10,6 +10,13 @@
 class EcommerceRole extends DataObjectDecorator {
 
 	/**
+	*@param $code = string
+	**/
+	protected static $fixed_country_code = '';
+		static function set_fixed_country_code($s) {self::$fixed_country_code = $s;}
+		static function get_fixed_country_code() {return self::$fixed_country_code;}
+
+	/**
 	*@param $a : array("NZ" => "NZ", "UK => "UK", etc...)
 	**/
 	protected static $allowed_country_codes = array();
@@ -18,12 +25,29 @@ class EcommerceRole extends DataObjectDecorator {
 		static function add_allowed_country_code($code) {self::$allowed_country_codes[$code] = $code;}
 		static function remove_allowed_country_code($code) {unset(self::$allowed_country_codes[$code]);}
 
+
 	/**
-	*@param $code = string
+	*these variables and methods allow to to "dynamically limit the countries available, based on, for example: ordermodifiers, item selection, etc....
+	* for example, if a person chooses delivery within Australasia (with modifier) - then you can limit the countries available to "Australasian" countries
+	* @param $a = array should be country codes.e.g array("NZ", "NP", "AU");
 	**/
-	protected static $fixed_country_code = '';
-		static function set_fixed_country_code($code) {self::$fixed_country_code = $code;}
-		static function get_fixed_country_code() {return self::$fixed_country_code;}
+	protected static for_current_order_only_show_countries = array();
+		static function set_for_current_order_only_show_countries($a) {
+			if(count(self::$for_current_order_only_show_countries)) {
+				self::$for_current_order_only_show_countries = array_intersect($a, self::$for_current_order_only_show_countries);
+			}
+			else {
+				self::$for_current_order_only_show_countries = $a;
+			}
+		}
+		static function get_for_current_order_only_show_countries() {return self::$for_current_order_only_show_countries;}
+	protected static for_current_order_do_not_show_countries = array();
+		static function set_for_current_order_do_not_show_countries($a) {
+			self::$for_current_order_do_not_show_countries = array_merge($a, self::$for_current_order_do_not_show_countries);
+		}
+		static function get_for_current_order_do_not_show_countries() {return self::$for_current_order_do_not_show_countries;}
+
+
 
 	//e.g. http://www.nzpost.co.nz/Cultures/en-NZ/OnlineTools/PostCodeFinder
 	static function get_postal_code_url() {$sc = DataObject::get_one('SiteConfig'); if($sc) {return $sc->PostalCodeURL;}  }
@@ -194,7 +218,7 @@ class EcommerceRole extends DataObjectDecorator {
 		$fields->replaceField('Country', new DropdownField('Country', 'Country', Geoip::getCountryDropDown()));
 	}
 
-	function listOfAllowedCountriesForDropdown() {
+	public function listOfAllowedCountriesForDropdown() {
 		$keys = array();
 		if($v = self::get_fixed_country_code()) {
 			$keys[$v] = $v;
@@ -202,20 +226,30 @@ class EcommerceRole extends DataObjectDecorator {
 		elseif($a = self::get_allowed_country_codes()) {
 			$keys = array_merge($keys, $a);
 		}
-		else{
-
-		}
 		if(isset($keys) && count($keys)) {
 			$newArray = array();
 			foreach($keys as $key) {
-				$newArray[$key] = self::find_country_title($key);
+				$codeTitleArray[$key] = self::find_country_title($key);
 			}
-			return $newArray;
 		}
 		else {
-			return Geoip::getCountryDropDown();
+			$codeTitleArray = Geoip::getCountryDropDown();
 		}
-
+		$onlyShow = self::get_for_current_order_only_show_countries()
+		$doNotShow = self::get_for_current_order_do_not_show_countries();
+		if(count($onlyShow)) {
+			foreach($codeTitleArray as $key => $value) {
+				if(!in_array($key, $onlyShow)) {
+					unset($codeTitleArray[$key]);
+				}
+			}
+		}
+		if(count($doNotShow)) {
+			foreach($doNotShow as $countryCode) {
+				unset($codeTitleArray[$countryCode]);
+			}
+		}
+		return $codeTitleArray;
 	}
 
 	/**

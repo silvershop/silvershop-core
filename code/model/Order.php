@@ -646,7 +646,7 @@ class Order extends DataObject {
 							$modifier->write();
 							$modifier->runUpdate();
 							$this->Attributes()->add($modifier);
-							$createdModifiers[] = $modifier;
+							$createdModifiers->push($modifier);
 						}
 					}
 					else{

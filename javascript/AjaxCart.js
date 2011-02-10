@@ -23,7 +23,7 @@ var AjaxCart = {
 
 	LoadingText: "updating cart ... ",
 
-	LoadingClass: "loading",
+	LoadingClass: "loadingCartData",
 
 	ajaxAddRemoveLinkSelector: ".ajaxAddToCartLink",
 

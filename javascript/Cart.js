@@ -13,6 +13,9 @@
 
 Cart = {
 
+	classToShowLoading: "loadingCartData",
+
+	attachClassTo: "body",
 
 	init: function () {
 		Cart.updateCartRows();
@@ -26,15 +29,19 @@ Cart = {
 						if(jQuery(setCountryLink).length > 0) {
 							setCountryLink = jQuery(setCountryLink).get(0);
 							var url = jQuery('base').attr('href') + setCountryLink.value + this.value + "/";
-							jQuery("body").addClass("loading");
-							jQuery.getJSON(url, null, Cart.setChanges);
+							Cart.getChanges(url, null);
 						}
 					}
 				);
 			}
 		);
-
 	},
+
+	getChanges: function(url, params) {
+		jQuery(Cart.attachClassTo).addClass(Cart.classToShowLoading);
+		jQuery.getJSON(url, params, Cart.setChanges);
+	},
+
 	setChanges: function (changes) {
 		for(var i in changes) {
 			var change = changes[i];
@@ -60,13 +67,13 @@ Cart = {
 				}
 			}
 		}
-		jQuery("body").removeClass("loading");
+		jQuery(Cart.attachClassTo).removeClass(Cart.classToShowLoading);
 	},
-
+	//to do: remove ... we dont seem to need it!
 	escapeHTML: function (str) {
 		 return str;
 	},
-
+	//to do: explain this function
 	updateCartRows: function() {
 		if(jQuery("tr.orderitem").length > 0) {
 			jQuery(".showOnZeroItems").hide();
