@@ -40,8 +40,8 @@ class EcommerceRole extends DataObjectDecorator {
 				self::$for_current_order_only_show_countries = $a;
 			}
 		}
-		static function $get_for_current_order_only_show_countries() {return self::$for_current_order_only_show_countries;}
-	protected static for_current_order_do_not_show_countries = array();
+		static function get_for_current_order_only_show_countries() {return self::$for_current_order_only_show_countries;}
+	protected static $for_current_order_do_not_show_countries = array();
 		static function set_for_current_order_do_not_show_countries($a) {
 			self::$for_current_order_do_not_show_countries = array_merge($a, self::$for_current_order_do_not_show_countries);
 		}
@@ -235,7 +235,7 @@ class EcommerceRole extends DataObjectDecorator {
 		else {
 			$codeTitleArray = Geoip::getCountryDropDown();
 		}
-		$onlyShow = self::get_for_current_order_only_show_countries()
+		$onlyShow = self::get_for_current_order_only_show_countries();
 		$doNotShow = self::get_for_current_order_do_not_show_countries();
 		if(count($onlyShow)) {
 			foreach($codeTitleArray as $key => $value) {
