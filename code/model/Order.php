@@ -631,6 +631,9 @@ class Order extends DataObject {
 				$createdModifiersClassNames[$modifier->ID] = $modifier->ClassName;
 			}
 		}
+		else {
+			$createdModifiers = new DataObjectSet();
+		}
 		if(is_array(self::$modifiers) && count(self::$modifiers) > 0) {
 			foreach(self::$modifiers as $key => $className) {
 				if(!in_array($className, $createdModifiersClassNames)) {
@@ -643,7 +646,7 @@ class Order extends DataObject {
 							$modifier->write();
 							$modifier->runUpdate();
 							$this->Attributes()->add($modifier);
-							$createdModifiers->push($modifier);
+							$createdModifiers[] = $modifier;
 						}
 					}
 					else{
