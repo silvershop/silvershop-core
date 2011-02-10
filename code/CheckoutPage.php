@@ -157,7 +157,7 @@ class CheckoutPage extends Page {
 		}
  	}
 
-	function MenuTitle() {
+	function EcommerceMenuTitle() {
 		$count = 0;
 		$cart = ShoppingCart::current_order();
 		if($cart) {

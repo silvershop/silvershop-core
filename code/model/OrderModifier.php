@@ -382,7 +382,6 @@ class OrderModifier extends OrderAttribute {
 // ######################################## ***  AJAX related functions
 
 	function updateForAjax(array &$js) {
-		$this->runUpdate();
 		$tableValue = DBField::create('Currency',$this->TableValue())->Nice();
 		$cartValue = DBField::create('Currency',$this->CartValue())->Nice();
 		$js[] = array('id' => $this->TableTotalID(), 'parameter' => 'innerHTML', 'value' => $tableValue);

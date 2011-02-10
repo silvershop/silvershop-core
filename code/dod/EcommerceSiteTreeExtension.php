@@ -9,9 +9,17 @@
 
 class EcommerceSiteTreeExtension extends DataObjectDecorator {
 
+	static $casting = array(
+		"EcommerceMenuTitle" => "HTMLVarchar"
+	);
+
 	function ShopClosed() {
 		$siteConfig = DataObject::get_one("SiteConfig");
 		return $siteConfig->ShopClosed;
+	}
+
+	function EcommerceMenuTitle() {
+		return $this->owner->MenuTitle;
 	}
 
 	function Cart() {

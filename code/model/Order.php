@@ -376,7 +376,6 @@ class Order extends DataObject {
 	//NOTE: anything to do with Current Member and Session should be in Shopping Cart!
 	public function init() {
 		//to do: check if shop is open....
-		$this->initModifiers();
 		if(!$this->StatusID) {
 			if($newStatus = DataObject::get_one("OrderStep")) {
 				$this->StatusID = $newStatus->ID;
@@ -603,41 +602,11 @@ class Order extends DataObject {
 
 
 	/**
-	 * Initialise all the {@link OrderModifier} objects
-	 * by evaluating init_for_order() on each of them.
-	 */
-	protected function initModifiers() {
-		//check if order has modifiers already
-		//check /re-add all non-removable ones
-		$createdmodifiers = $this->Modifiers();
-		if(self::$modifiers && is_array(self::$modifiers) && count(self::$modifiers) > 0) {
-			foreach(self::$modifiers as $key => $className) {
-				if(class_exists($className) && (!$createdmodifiers || !$createdmodifiers->find('ClassName',$className))) {
-					$modifier = new $className();
-					if($modifier instanceof OrderModifier) {
-						$modifier->OrderID = $this->ID;
-						$modifier->Sort = $key;
-						$modifier->init();
-						$modifier->write();
-						$modifier->runUpdate();
-						$this->Attributes()->add($modifier);
-					}
-				}
-			}
-		}
-		$this->extend("onInitModifiers");
-	}
-
-
-	/**
 	 * Returns the modifiers of the order, if it hasn't been saved yet
 	 * it returns the modifiers from session, if it has, it returns them
-	 * from the DB entry.
+	 * from the DB entry. ONLY USE OUTSIDE ORDER
 	 */
  	function Modifiers() {
- 		if(!$this->ID && $this->ID > 0) {
-			$this->initModifiers();
- 		}
 		return $this->modifiersFromDatabase();
 	}
 
@@ -653,13 +622,39 @@ class Order extends DataObject {
 	}
 
 	public function calculateModifiers() {
-		$this->initModifiers();
-		$modifiers = $this->Modifiers();
-		if($modifiers) {
-			if($modifiers->exists()){
-				foreach($modifiers as $modifier){
-					$modifier->runUpdate();
+		//check if order has modifiers already
+		//check /re-add all non-removable ones
+		$createdModifiersClassNames = array();
+		$createdModifiers = $this->modifiersFromDatabase();
+		if($createdModifiers) {
+			foreach($createdModifiers as $modifier) {
+				$createdModifiersClassNames[$modifier->ID] = $modifier->ClassName;
+			}
+		}
+		if(is_array(self::$modifiers) && count(self::$modifiers) > 0) {
+			foreach(self::$modifiers as $key => $className) {
+				if(!in_array($className, $createdModifiersClassNames)) {
+					if(class_exists($className)) {
+						$modifier = new $className();
+						if($modifier instanceof OrderModifier) {
+							$modifier->OrderID = $this->ID;
+							$modifier->Sort = $key;
+							$modifier->init();
+							$modifier->write();
+							$modifier->runUpdate();
+							$this->Attributes()->add($modifier);
+							$createdModifiers->push($modifier);
+						}
+					}
+					else{
+						user_error("reference to a non-existing class: ".$className." in modifiers", E_USER_NOTICE);
+					}
 				}
+			}
+		}
+		if($createdModifiers) {
+			foreach($createdModifiers as $modifier){
+				$modifier->runUpdate();
 			}
 		}
 		$this->extend("onCalculate");
