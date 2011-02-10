@@ -67,7 +67,7 @@ class OrderStep extends DataObject {
 	}
 
 	// MOST IMPORTANT DEFINITION!
-	protected static $classes = array(
+	protected static $order_steps_to_include = array(
 		"OrderStep_Created",
 		"OrderStep_Submitted",
 		"OrderStep_SentInvoice",
@@ -76,27 +76,32 @@ class OrderStep extends DataObject {
 		"OrderStep_Confirmed",
 		"OrderStep_Sent"
 	);
-		static function set_classes($v) {self::$classes = $v;}
-		static function get_classes() {self::$classes;}
-		static function get_codes() {
+		static function set_order_steps_to_include($v) {self::$order_steps_to_include = $v;}
+		static function get_order_steps_to_include() {return self::$order_steps_to_include;}
+		static function get_codes_for_order_steps_to_include() {
 			$newArray = array();
-			$array = self::get_classes();
+			$array = self::get_order_steps_to_include();
 			if($array && count($array)) {
 				foreach($array as $className) {
-					$code = singleton($this->ClassName)->getMyCode();
+					$code = singleton($className)->getMyCode();
 					$newArray[$className] = strtoupper($code);
 				}
 			}
 			return $newArray;
 		}
-		function getMyCode() {return self::$defaults["Code"];}
+		function getMyCode() {
+			if(!isset(self::$defaults["Code"])) {user_error($this->class." does not have a default code specified");}
+			return self::$defaults["Code"];
+		}
 
+	//IMPORTANT:: MUST HAVE Code defined!!!
 	public static $defaults = array(
 		"CanEdit" => 0,
 		"CanCancel" => 0,
 		"ShowAsUncompletedOrder" => 0,
 		"ShowAsInProcessOrder" => 0,
-		"ShowAsCompletedOrder" => 0
+		"ShowAsCompletedOrder" => 0,
+		"Code" => "ORDERSTEP"
 	);
 
 	function populateDefaults() {
@@ -110,7 +115,7 @@ class OrderStep extends DataObject {
 		//TO DO: add warning messages and break up fields
 		$fields = parent::getCMSFields();
 		$fields->addFieldToTab("Root.Main", new HeaderField("WARNING1", _t("OrderStep.CAREFUL", "CAREFUL! please edit with care"), 1), "Name");
-		$fields->addFieldToTab("Root.Main", DropdownField("ClassName", _t("OrderStep.TYPE", "Type"), self::get_codes()));
+		$fields->addFieldToTab("Root.Main", DropdownField("ClassName", _t("OrderStep.TYPE", "Type"), self::get_codes_for_order_steps_to_include()));
 		$fields->addFieldToTab("Root.Main", new HeaderField("WARNING2", _t("OrderStep.CUSTOMERCANCHANGE", "What can be changed?"), 3), "CanEdit");
 		$fields->addFieldToTab("Root.Main", new HeaderField("WARNING5", _t("OrderStep.ORDERGROUPS", "Order groups for customer?"), 3), "ShowAsUncompletedOrder");
 		$fields->replaceField("Code", $fields->dataFieldByName("Code")->performReadonlyTransformation());
@@ -219,7 +224,7 @@ class OrderStep extends DataObject {
 	}
 
 	protected function isDefaultStatusOption() {
-		return in_array($this->Code, self::get_codes());
+		return in_array($this->Code, self::get_codes_for_order_steps_to_include());
 	}
 
 	//EMAIL
@@ -250,13 +255,17 @@ class OrderStep extends DataObject {
 	//USED TO BE: Unpaid,Query,Paid,Processing,Sent,Complete,AdminCancelled,MemberCancelled,Cart
 	function requireDefaultRecords() {
 		parent::requireDefaultRecords();
-		if(self::get_classes() && count(self::get_classes())) {
-			foreach(self::get_codes() as $className => $code) {
-				if(!DataObject::get_one("OrderStep", "\"Code\" = '".strtoupper($code)."'")) {
-					$obj = new $className();
-					$obj->Code = strtoupper($obj->Code);
-					$obj->write();
-					DB::alteration_message("Created \"$code\" as $className.", "created");
+		$orderStepsToInclude = self::get_order_steps_to_include();
+		$codesToInclude = self::get_codes_for_order_steps_to_include();
+		if($orderStepsToInclude && count($orderStepsToInclude) && count($codesToInclude)) {
+			foreach($codesToInclude as $className => $code) {
+				if(!DataObject::get_one($className)) {
+					if(!DataObject::get_one("OrderStep", "\"Code\" = '".strtoupper($code)."'")) {
+						$obj = new $className();
+						$obj->Code = strtoupper($obj->Code);
+						$obj->write();
+						DB::alteration_message("Created \"$code\" as $className.", "created");
+					}
 				}
 			}
 		}
@@ -312,7 +321,6 @@ class OrderStep_Submitted extends OrderStep {
 		if(!$order->Items()) {
 			return false;
 		}
-		$order->calculateModifiers();
 		return true;
 	}
 

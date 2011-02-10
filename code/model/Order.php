@@ -329,7 +329,7 @@ class Order extends DataObject {
 				$lastLogin = new TextField("MemberLastLogin","Last login",$m->dbObject('LastVisited')->Nice());
 				$fields->addFieldToTab('Root.Customer',$lastLogin->performReadonlyTransformation());
 				//TODO: this should be scaffolded instead, or come from something like $member->getCMSFields();
-				$fields->addFieldToTab('Root.Customer',new LiteralField("MemberSummary", $m->renderWith("Order_Member")));
+				$fields->addFieldToTab('Root.Customer',new LiteralField("MemberSummary", $m->renderWith("Order_Addresses")));
 			}
 			$this->extend('updateCMSFields',$fields);
 			$fields->addFieldsToTab(
