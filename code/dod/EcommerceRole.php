@@ -31,7 +31,7 @@ class EcommerceRole extends DataObjectDecorator {
 	* for example, if a person chooses delivery within Australasia (with modifier) - then you can limit the countries available to "Australasian" countries
 	* @param $a = array should be country codes.e.g array("NZ", "NP", "AU");
 	**/
-	protected static for_current_order_only_show_countries = array();
+	protected static $for_current_order_only_show_countries = array();
 		static function set_for_current_order_only_show_countries($a) {
 			if(count(self::$for_current_order_only_show_countries)) {
 				self::$for_current_order_only_show_countries = array_intersect($a, self::$for_current_order_only_show_countries);
@@ -40,7 +40,7 @@ class EcommerceRole extends DataObjectDecorator {
 				self::$for_current_order_only_show_countries = $a;
 			}
 		}
-		static function get_for_current_order_only_show_countries() {return self::$for_current_order_only_show_countries;}
+		static function $get_for_current_order_only_show_countries() {return self::$for_current_order_only_show_countries;}
 	protected static for_current_order_do_not_show_countries = array();
 		static function set_for_current_order_do_not_show_countries($a) {
 			self::$for_current_order_do_not_show_countries = array_merge($a, self::$for_current_order_do_not_show_countries);
