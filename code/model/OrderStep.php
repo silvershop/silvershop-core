@@ -230,7 +230,7 @@ class OrderStep extends DataObject {
 	//EMAIL
 
 	protected function hasBeenSent($order) {
-		if(DataObject::get_one("OrderEmailRecord", "\"OrderEmailRecord\".\"OrderID\" = ".$order->ID." AND \"OrderEmailRecord\".\"StatusID\" = ".$order->StatusID." AND  \"OrderEmailRecord\".\"Result\" = 1")) {
+		if(DataObject::get_one("OrderEmailRecord", "\"OrderEmailRecord\".\"OrderID\" = ".$order->ID." AND \"OrderEmailRecord\".\"OrderStepID\" = ".$order->OrderStepID." AND  \"OrderEmailRecord\".\"Result\" = 1")) {
 			return true;
 		}
 		return false;
