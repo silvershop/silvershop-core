@@ -97,7 +97,7 @@ class OrderReport_Popup extends Controller {
 		if(is_numeric($id)) {
 			$order = DataObject::get_by_id("Order", $id);
 			if(isset($_REQUEST['print'])) {
-				$order->updatePrinted(true);
+				//$order->updatePrinted(true);
 			}
 
 			return $order;

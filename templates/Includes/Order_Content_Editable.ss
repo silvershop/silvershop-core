@@ -72,7 +72,7 @@
 			<% end_control %>
 			<% end_if %>
 
-			<tr class="gap Total hideOnZeroItems">
+			<tr class="gap total summary hideOnZeroItems">
 				<td colspan="2" scope="row"><% _t("TOTAL","Total") %></td>
 				<td>&nbsp;</td>
 				<td class="right total" id="$TableTotalID">$Total.Nice $Currency</td>

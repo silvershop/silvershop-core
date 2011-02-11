@@ -172,6 +172,7 @@ class OrderForm extends Form {
 		$oldtotal = ShoppingCart::current_order()->Total();
 		// Create new Order from shopping cart, discard cart contents in session
 		$order = ShoppingCart::current_order();
+		$order->calculateModifiers();
 		//TO DO: HOW CAN THESE TWO BE DIFFERENT????
 		if($order->Total() != $oldtotal) {
 			$form->sessionMessage(_t('OrderForm.PRICEUPDATED','The order price has been updated.'), 'warning');

@@ -90,8 +90,9 @@ class OrderStep extends DataObject {
 			return $newArray;
 		}
 		function getMyCode() {
-			if(!isset(self::$defaults["Code"])) {user_error($this->class." does not have a default code specified");}
-			return self::$defaults["Code"];
+			$array = Object::uninherited_static($this->ClassName, 'defaults');
+			if(!isset($array["Code"])) {user_error($this->class." does not have a default code specified");}
+			return $array["Code"];
 		}
 
 	//IMPORTANT:: MUST HAVE Code defined!!!
@@ -115,12 +116,12 @@ class OrderStep extends DataObject {
 		//TO DO: add warning messages and break up fields
 		$fields = parent::getCMSFields();
 		$fields->addFieldToTab("Root.Main", new HeaderField("WARNING1", _t("OrderStep.CAREFUL", "CAREFUL! please edit with care"), 1), "Name");
-		$fields->addFieldToTab("Root.Main", DropdownField("ClassName", _t("OrderStep.TYPE", "Type"), self::get_codes_for_order_steps_to_include()));
+		$fields->addFieldToTab("Root.Main", new DropdownField("ClassName", _t("OrderStep.TYPE", "Type"), self::get_codes_for_order_steps_to_include()), "Name");
 		$fields->addFieldToTab("Root.Main", new HeaderField("WARNING2", _t("OrderStep.CUSTOMERCANCHANGE", "What can be changed?"), 3), "CanEdit");
 		$fields->addFieldToTab("Root.Main", new HeaderField("WARNING5", _t("OrderStep.ORDERGROUPS", "Order groups for customer?"), 3), "ShowAsUncompletedOrder");
 		$fields->replaceField("Code", $fields->dataFieldByName("Code")->performReadonlyTransformation());
 		if($this->isDefaultStatusOption()) {
-			$fields->replaceField("Sort", $fields->dataFieldByName("Code")->performReadonlyTransformation());
+			$fields->replaceField("Code", $fields->dataFieldByName("Code")->performReadonlyTransformation());
 		}
 		return $fields;
 	}
