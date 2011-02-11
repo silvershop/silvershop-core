@@ -26,23 +26,18 @@ class CartPage extends Page{
 		return $fields;
 	}
 
-	function MenuTitle() {
+	function EcommerceMenuTitle() {
 		$count = 0;
-		$cart = ShoppingCart::current_order();
-		if($cart) {
-			if($cart = $this->Cart()) {
-				if($items = $cart->Items()) {
-					$count = $items->count();
-				}
-			}
+		$order = ShoppingCart::current_order();
+		if($order) {
+			$count = $order->TotalItems();
 		}
 		$v = $this->MenuTitle;
 		if($count) {
-			$v .= " (".$count.")";
+			$v .= " <span class=\"numberOfItemsInCart\">(".$count.")</span>";
 		}
 		return $v;
 	}
-
 
 	/**
 	 * Returns the link or the Link to the account page on this site

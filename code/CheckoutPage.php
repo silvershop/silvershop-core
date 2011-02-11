@@ -159,13 +159,9 @@ class CheckoutPage extends Page {
 
 	function EcommerceMenuTitle() {
 		$count = 0;
-		$cart = ShoppingCart::current_order();
-		if($cart) {
-			if($cart = $this->Cart()) {
-				if($items = $cart->Items()) {
-					$count = $items->count();
-				}
-			}
+		$order = ShoppingCart::current_order();
+		if($order) {
+			$count = $order->TotalItems();
 		}
 		$v = $this->MenuTitle;
 		if($count) {

@@ -78,6 +78,14 @@ class Order extends DataObject {
 	protected static $modifiers = array();
 
 	/**
+	 * Total Items : total items in cart
+	 *
+	 * @var integer / null
+	 */
+
+	protected static $total_items = null;
+
+	/**
 	 * Set the modifiers that apply to this site.
 	 *
 	 * @param array $modifiers An array of {@link OrderModifier} subclass names
@@ -842,6 +850,7 @@ class Order extends DataObject {
 	function SubTotalAsCurrencyObject() {
 		return DBField::create('Currency',$this->SubTotal());
 	}
+
 	/**
   	 * Returns the total cost of an order including the additional charges or deductions of its modifiers.
   	 */
@@ -894,27 +903,24 @@ class Order extends DataObject {
 	}
 
 	function TotalItems() {
-		$cart = self::current_order();
-		if($cart) {
-			if($cart = $this->Cart()) {
-				if($orderItems = $cart->Items()) {
-					return $orderItems->count();
-				}
-			}
+		if(self::$total_items === null) {
+			$query = @mysql_query("
+				SELECT COUNT(ID)
+				FROM \"OrderItem\"
+					INNER JOIN \"OrderAttribute\" ON \"OrderAttribute\".\"ID\" = \"OrderItem\".\"ID\"
+					WHERE \"OrderAttribute\".\"OrderID\" = ".$this->ID
+			);
+			$num = @mysql_num_rows($query);
+			self::$total_items = intval($num);
 		}
-		return 0;
+		return self::$total_items;
 	}
 
 	function TotalItemsTimesQuantity() {
-		$cart = self::current_order();
 		$qty = 0;
-		if($cart) {
-			if($cart = $this->Cart()) {
-				if($orderItems = $cart->Items()) {
-					foreach($orderItems as $item) {
-						$qty += $item->Quantity;
-					}
-				}
+		if($orderItems = $this->Items()) {
+			foreach($orderItems as $item) {
+				$qty += $item->Quantity;
 			}
 		}
 		return $qty;

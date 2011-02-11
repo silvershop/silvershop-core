@@ -9,10 +9,6 @@
 
 class EcommerceSiteTreeExtension extends DataObjectDecorator {
 
-	static $casting = array(
-		"EcommerceMenuTitle" => "HTMLVarchar"
-	);
-
 	function ShopClosed() {
 		$siteConfig = DataObject::get_one("SiteConfig");
 		return $siteConfig->ShopClosed;
@@ -26,6 +22,14 @@ class EcommerceSiteTreeExtension extends DataObjectDecorator {
 		return ShoppingCart::current_order();
 	}
 
+	public function NumItemsInCart() {
+		$order = ShoppingCart::current_order();
+		if($order) {
+			return $order->TotalItems();
+		}
+		return 0;
+	}
+
 }
 
 class EcommerceSiteTreeExtension_Controller extends Extension {
@@ -36,18 +40,6 @@ class EcommerceSiteTreeExtension_Controller extends Extension {
 
 	function SimpleCartLinkAjax() {
 		return ShoppingCart::get_url_segment()."/showcart/";
-	}
-
-	public function NumItemsInCart() {
-		$cart = $this->Cart();
-		if($cart) {
-			if($cart = $this->Cart()) {
-				if($items = $cart->Items()) {
-					return $items->count();
-				}
-			}
-		}
-		return 0;
 	}
 
 	public function MoreThanOneItemInCart() {
