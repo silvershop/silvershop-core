@@ -179,7 +179,6 @@ HTML;
 	}
 
 	function Total() {
-		debug::show($this->Title."-".$this->UnitPrice()."-".$this->Quantity);
 		$total = $this->UnitPrice() * $this->Quantity;
 		$this->extend('updateTotal',$total);
 		return $total;
