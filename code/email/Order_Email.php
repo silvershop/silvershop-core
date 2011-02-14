@@ -26,6 +26,7 @@ class Order_Email extends Email {
 				$result = parent::sendPlain($messageID);
 			}
 			else {
+				$this->parseVariables();
 				$result = parent::send($messageID);
 			}
 			$this->createRecord($result, $order);
