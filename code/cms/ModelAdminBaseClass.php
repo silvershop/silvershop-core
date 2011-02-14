@@ -55,7 +55,6 @@ class ModelAdminEcommerceClass_RecordController extends ModelAdmin_RecordControl
 			$actions->push(new FormAction("doGoto", "go to page"));
 			$form->setActions($actions);
 		}
-
 		if($this->parentController) {
 			$array = unserialize(Session::get("ModelAdminEcommerceClass".$this->parentController->getModelClass()));
 			if(is_array($array)) {
@@ -82,32 +81,45 @@ class ModelAdminEcommerceClass_RecordController extends ModelAdmin_RecordControl
 		return $form;
 	}
 
+
+	/**
+	 * Postback action to save a record
+	 *
+	 * @param array $data
+	 * @param Form $form
+	 * @param SS_HTTPRequest $request
+	 * @return mixed
+	 */
 	function doSave($data, $form, $request) {
 		$form->saveInto($this->currentRecord);
 		if($this->currentRecord instanceof SiteTree){
-			$this->currentRecord->writeToStage("Stage");
-			$this->currentRecord->publish("Stage", "Live");
-		}
-		else{
-			$this->currentRecord->write();
-		}
-		$this->currentRecord->flushCache();
-		if(Director::is_ajax()) {
-			return $this->edit($request);
+			try {
+				$this->currentRecord->writeToStage("Stage");
+				$this->currentRecord->publish("Stage", "Live");
+			}
+			catch(ValidationException $e) {
+				$form->sessionMessage($e->getResult()->message(), 'bad');
+			}
 		}
 		else {
+			try {
+				$this->currentRecord->write();
+			}
+			catch(ValidationException $e) {
+				$form->sessionMessage($e->getResult()->message(), 'bad');
+			}
+		}
+
+		// Behaviour switched on ajax.
+		if(Director::is_ajax()) {
+			return $this->edit($request);
+		} else {
 			Director::redirectBack();
 		}
 	}
 
 	function doGoto($data, $form, $request) {
 		Director::redirect($this->currentRecord->Link());
-	}
-
-
-	function doDelete() {
-		user_error("this function has not been implemented yet", E_USER_NOTICE);
-		//might be prudent not to allow deletions as products should not be deleted, but rather be made "not for sale"
 	}
 
 

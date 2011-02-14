@@ -183,22 +183,21 @@ class Order extends DataObject {
 	 * @var array
 	 */
 	protected static $table_overview_fields = array(
-		'ID' => 'Order No',
+		"\"Order\".\"ID\"" => 'Order No',
 		'Created' => 'Created',
 		'Member.FirstName' => 'First Name',
 		'Member.Surname' => 'Surname',
-		'Total' => 'Total',
+		'TotalAsCurrencyObject.Nice' => 'Total',
 		'Status' => 'Status'
 	);
 		public static function set_table_overview_fields($fields) {self::$table_overview_fields = $fields;}
 		public static function get_table_overview_fields() {return self::$table_overview_fields;}
 
 	public static $summary_fields = array(
-		"Title" => "Summary",
+		"\"Order\".\"ID\"" => "ID",
 		'Member.Surname',
 		'Member.Email',
-		'Total' => 'Total',
-		'TotalOutstanding' => 'Outstanding',
+		'TotalAsCurrencyObject.Nice' => 'Total',
 		'Status.Name',
 	);
 
@@ -268,9 +267,8 @@ class Order extends DataObject {
 	function getCMSFields(){
 		$fields = parent::getCMSFields();
 		$readOnly = (bool)!$this->canEdit();
-		$fieldsAndTabsToBeRemoved = array('MemberID', 'Attributes', 'SessionID', 'Country', 'ShippingAddressID', 'UseShippingAddress', 'OrderStatusLogs');
+		$fieldsAndTabsToBeRemoved = array('MemberID', 'Attributes', 'SessionID', 'Country', 'ShippingAddressID', 'UseShippingAddress', 'OrderStatusLogs', 'Payments');
 		if(!$readOnly) {
-			$fieldsAndTabsToBeRemoved[] = "Payments";
 			$fieldsAndTabsToBeRemoved[] = "Emails";
 		}
 		foreach($fieldsAndTabsToBeRemoved as $field) {
@@ -283,61 +281,60 @@ class Order extends DataObject {
 			$fields->addFieldsToTab('Root.Main', array(
 				new LiteralField("PrintInvoice",'<p class="print"><a href="OrderReport_Popup/index/'.$this->ID.'?print=1" onclick="javascript: window.open(this.href, \'print_order\', \'toolbar=0,scrollbars=1,location=1,statusbar=0,menubar=0,resizable=1,width=800,height=600,left = 50,top = 50\'); return false;">'.$printlabel.'</a></p>')
 			));
-
 			$fields->addFieldToTab('Root.Main', new LiteralField('MainDetails', $htmlSummary));
+			$paymentsTable = new TableListField(
+				"Payments", //$name
+				"Payment", //$sourceClass =
+				EcommercePayment::$summary_fields, //$fieldList =
+				"\"OrderID\" = ".$this->ID."", //$sourceFilter =
+				"\"Created\" ASC", //$sourceSort =
+				null //$sourceJoin =
+			);
+			$paymentsTable->setPermissions(array('show'));
+			$paymentsTable->setPageSize(100);
+			$fields->addFieldToTab('Root.Payments',$paymentsTable);
 		}
 		else {
 			$fields->addFieldToTab('Root.Main', new LiteralField('MainDetails', _t("Order.NODETAILSSHOWN", '<p>No details are shown here as this order has not been submitted yet. Once you change the status of the order more options will be available.</p>')));
-		}
-		//TODO: re-introduce this when order status logs have some meaningful purpose
-		//$fields->removeByName('OrderStatusLogs');
-
-		$orderItemsTable = new HasManyComplexTableField(
-			$this, //$controller
-			"Attributes", //$name =
-			"OrderItem", //$sourceClass =
-			null, //$fieldList =
-			null, //$detailedFormFields =
-			"\"OrderID\" = ".$this->ID."  AND \"ClassName\" = 'OrderItem'", //$sourceFilter =
-			"\"Created\" ASC", //$sourceSort =
-			null //$sourceJoin =
-		);
-		if(!$readOnly) {
+			//TODO: re-introduce this when order status logs have some meaningful purpose
+			//$fields->removeByName('OrderStatusLogs');
+			$orderItemsTable = new HasManyComplexTableField(
+				$this, //$controller
+				"Attributes", //$name =
+				"OrderItem", //$sourceClass =
+				null, //$fieldList =
+				null, //$detailedFormFields =
+				"\"OrderID\" = ".$this->ID."", //$sourceFilter =
+				"\"Created\" ASC", //$sourceSort =
+				null //$sourceJoin =
+			);
 			$orderItemsTable->setPermissions(array('edit', 'delete', 'export', 'add', 'inlineadd', "show"));
-		}
-		else {
-			$orderItemsTable->setPermissions(array("show"));
-		}
-		$orderItemsTable->setShowPagination(false);
-		$orderItemsTable->addSummary(
-			"Total",
-			array("Total" => array("sum","Currency->Nice"))
-		);
-
-		$fields->addFieldToTab('Root.Items',$orderItemsTable);
-
-		$modifierTable = new TableListField(
-			"OrderModifiers", //$name
-			"OrderModifier", //$sourceClass =
-			OrderModifier::$summary_fields, //$fieldList =
-			"\"OrderID\" = ".$this->ID."", //$sourceFilter =
-			"\"Type\", \"Amount\" ASC, \"Created\" ASC", //$sourceSort =
-			null //$sourceJoin =
-		);
-		if(!$readOnly) {
+			$orderItemsTable->setShowPagination(false);
+			$orderItemsTable->addSummary(
+				"Total",
+				array("Total" => array("sum","Currency->Nice"))
+			);
+			$fields->addFieldToTab('Root.Items',$orderItemsTable);
+			$modifierTable = new TableListField(
+				"OrderModifiers", //$name
+				"OrderModifier", //$sourceClass =
+				OrderModifier::$summary_fields, //$fieldList =
+				"\"OrderID\" = ".$this->ID."", //$sourceFilter =
+				"\"Type\", \"Amount\" ASC, \"Created\" ASC", //$sourceSort =
+				null //$sourceJoin =
+			);
 			$modifierTable->setPermissions(array('edit', 'delete', 'export', 'add', 'inlineadd', "show"));
+			$modifierTable->setPageSize(100);
+			$fields->addFieldToTab('Root.Extras',$modifierTable);
 		}
-		else {
-			$modifierTable->setPermissions(array("show"));
-		}
-		$modifierTable->setPageSize(100);
-		$fields->addFieldToTab('Root.Extras',$modifierTable);
 		if($readOnly) {
 			if($m = $this->Member()) {
 				$lastLogin = new TextField("MemberLastLogin","Last login",$m->dbObject('LastVisited')->Nice());
 				$fields->addFieldToTab('Root.Customer',$lastLogin->performReadonlyTransformation());
 				//TODO: this should be scaffolded instead, or come from something like $member->getCMSFields();
-				//$fields->addFieldToTab('Root.Customer',new LiteralField("MemberSummary", $m->renderWith("Order_AddressBilling")));
+				if($group = EcommerceRole::get_customer_group()) {
+					$fields->addFieldToTab('Root.Customer',new LiteralField("EditMembers", '<p><a href="/admin/security/show/'.$group->ID.'/">edit customers</a></p>'));
+				}
 			}
 			/*
 			$fields->addFieldsToTab(
@@ -349,6 +346,9 @@ class Order extends DataObject {
 				)
 			);
 			*/
+		}
+		if($this->MyStep()) {
+			$this->MyStep()->addOrderStepFields($fields);
 		}
 		$this->extend('updateCMSFields',$fields);
 		return $fields;
@@ -392,6 +392,36 @@ class Order extends DataObject {
 			}
 			else {
 				user_error("There are no OrderSteps ... please Run Dev/Build", E_USER_WARNING);
+			}
+		}
+		$createdModifiersClassNames = array();
+		$createdModifiers = $this->modifiersFromDatabase($includingRemoved = true);
+		if($createdModifiers) {
+			foreach($createdModifiers as $modifier) {
+				$createdModifiersClassNames[$modifier->ID] = $modifier->ClassName;
+			}
+		}
+		else {
+			$createdModifiers = new DataObjectSet();
+		}
+		if(is_array(self::$modifiers) && count(self::$modifiers) > 0) {
+			foreach(self::$modifiers as $key => $className) {
+				if(!in_array($className, $createdModifiersClassNames)) {
+					if(class_exists($className)) {
+						$modifier = new $className();
+						if($modifier instanceof OrderModifier) {
+							$modifier->OrderID = $this->ID;
+							$modifier->Sort = $key;
+							$modifier->init();
+							$modifier->write();
+							$this->Attributes()->add($modifier);
+							$createdModifiers->push($modifier);
+						}
+					}
+					else{
+						user_error("reference to a non-existing class: ".$className." in modifiers", E_USER_NOTICE);
+					}
+				}
 			}
 		}
 		$this->extend('onInit');
@@ -507,25 +537,21 @@ class Order extends DataObject {
    * CUSTOMER COMMUNICATION....
 *******************************************************/
 
-	function sendInvoice() {
+	function sendInvoice($message = "", $resend = false) {
 		$subject = str_replace("{OrderNumber}", $this->ID,self::get_receipt_subject());
-		$replacementArray = array(
-			'Order' => $this
-		);
-		return $this->sendEmail('Order_ReceiptEmail', $subject, $replacementArray, true);
+		$replacementArray = array("Message" => $message);
+		return $this->sendEmail('Order_ReceiptEmail', $subject, $replacementArray, $resend);
 	}
   	/**
 	 * Send the receipt of the order by mail.
 	 * Precondition: The order payment has been successful
 	 */
-	function sendReceipt() {
+	function sendReceipt($message = "", $resend = false) {
 		$subject = str_replace("{OrderNumber}", $this->ID,self::get_receipt_subject());
-		$purchaseCompleteMessage = DataObject::get_one('CheckoutPage')->PurchaseComplete;
 		$replacementArray = array(
-			'PurchaseCompleteMessage' => $purchaseCompleteMessage,
-			'Order' => $this
+			'Message' => $message
 		);
-		return $this->sendEmail('Order_ReceiptEmail', $subject, $replacementArray, true);
+		return $this->sendEmail('Order_ReceiptEmail', $subject, $replacementArray, $resend);
 	}
 
 	/**
@@ -536,21 +562,23 @@ class Order extends DataObject {
 	 *
 	 * @param string $note Optional note-content (instead of using the OrderStatusLog)
 	 */
-	function sendStatusChange($subject, $note = null) {
-		if(!$note) {
+	function sendStatusChange($subject, $message = '', $resend = false) {
+		if(!$message) {
 			$logs = DataObject::get('OrderStatusLog', "\"OrderID\" = {$this->ID} AND \"EmailCustomer\" = 1 AND \"EmailSent\" = 0 ", "\"Created\" DESC", null, 1);
 			if($logs) {
 				$latestLog = $logs->First();
-				$note = $latestLog->Note;
+				$message = $latestLog->Note;
 			}
+		}
+		if(!$subject) {
+			$subject = str_replace("{OrderNumber}", $this->ID,self::get_receipt_subject());
 		}
 		$replacementArray =
 			array(
-				"Order" => $this,
 				"Member" => $member,
-				"Note" => $note
+				"Message" => $message
 			);
-		return $this->sendEmail('Order_StatusEmail', $subject, $replacementArray, true);
+		return $this->sendEmail('Order_StatusEmail', $subject, $replacementArray, $resend);
 	}
 
 
@@ -562,7 +590,8 @@ class Order extends DataObject {
 	 * @param $replacementArray - array of fields to replace with data...
 	 * @param $copyToAdmin - true by default, whether it should send a copy to the admin
 	 */
-	protected function sendEmail($emailClass, $subject, $replacementArray = array(), $copyToAdmin = true) {
+	protected function sendEmail($emailClass, $subject, $replacementArray = array(), $resend = false) {
+		$replacementArray["Order"] = $this;
  		$from = self::get_receipt_email();
  		$to = $this->Member()->Email;
 		//TO DO: should be a payment specific message as well???
@@ -573,13 +602,10 @@ class Order extends DataObject {
  		$email->setFrom($from);
  		$email->setTo($to);
  		$email->setSubject($subject);
-		if($copyToAdmin) {
-			$email->setBcc(Email::getAdminEmail());
-		}
 		$email->populateTemplate(
 			$replacementArray
 		);
-		return $email->send(null, $this);
+		return $email->send(null, $this, $resend);
 	}
 
 /*******************************************************
@@ -606,7 +632,7 @@ class Order extends DataObject {
 	 */
 	protected function itemsFromDatabase($filter = null) {
 		$extrafilter = ($filter) ? " AND $filter" : "";
-		$items = DataObject::get("OrderItem", "\"OrderID\" = '$this->ID' $extrafilter");
+		$items = DataObject::get("OrderItem", "\"OrderID\" = '$this->ID' AND \"Quantity\" > 0 $extrafilter");
 		return $items;
 	}
 
@@ -627,50 +653,30 @@ class Order extends DataObject {
 	 * @return DataObjectSet
 	 * todo: add filter...
 	 */
-	protected function modifiersFromDatabase() {
-		return DataObject::get('OrderModifier', $where = "\"OrderAttribute\".\"OrderID\" = ".$this->ID, $sort = "\"OrderAttribute\".\"Sort\" ASC");
+	protected function modifiersFromDatabase($includingRemoved = false) {
+		if($includingRemoved) {
+			$where = "";
+		}
+		else {
+			$where = " AND \"Type\" <> 'Removed'";
+		}
+		return DataObject::get('OrderModifier', $where = "\"OrderAttribute\".\"OrderID\" = ".$this->ID.$where);
 	}
 
 	public function calculateModifiers() {
 		//check if order has modifiers already
 		//check /re-add all non-removable ones
-		$createdModifiersClassNames = array();
-		$createdModifiers = $this->modifiersFromDatabase();
-		if($createdModifiers) {
-			foreach($createdModifiers as $modifier) {
-				$createdModifiersClassNames[$modifier->ID] = $modifier->ClassName;
-			}
-		}
-		else {
-			$createdModifiers = new DataObjectSet();
-		}
-		if(is_array(self::$modifiers) && count(self::$modifiers) > 0) {
-			foreach(self::$modifiers as $key => $className) {
-				if(!in_array($className, $createdModifiersClassNames)) {
-					if(class_exists($className)) {
-						$modifier = new $className();
-						if($modifier instanceof OrderModifier) {
-							$modifier->OrderID = $this->ID;
-							$modifier->Sort = $key;
-							$modifier->init();
-							$modifier->write();
-							$modifier->runUpdate();
-							$this->Attributes()->add($modifier);
-							$createdModifiers->push($modifier);
-						}
-					}
-					else{
-						user_error("reference to a non-existing class: ".$className." in modifiers", E_USER_NOTICE);
-					}
+		//$start = microtime();
+		if(OrderAttribute::get_has_been_written()) {
+			$createdModifiers = $this->modifiersFromDatabase();
+			if($createdModifiers) {
+				foreach($createdModifiers as $modifier){
+					$modifier->runUpdate();
 				}
 			}
+			$this->extend("onCalculate");
+			OrderAttribute::unset_has_been_written();
 		}
-		if($createdModifiers) {
-			foreach($createdModifiers as $modifier){
-				$modifier->runUpdate();
-			}
-		}
-		$this->extend("onCalculate");
 	}
 
 	/**
@@ -736,7 +742,7 @@ class Order extends DataObject {
 		if(!$this->canView($member)) {
 			return false;
 		}
-		return $this->MyStep()->CanEdit;
+		return $this->MyStep()->CustomerCanEdit;
 	}
 
 	function canPay($member = null) {
@@ -872,9 +878,9 @@ class Order extends DataObject {
 		$paid = $this->TotalPaid();
 		$outstanding = $total - $paid;
 		if(abs($outstanding) < self::get_maximum_ignorable_sales_payments_difference()) {
-			return 0;
+			$outstanding = 0;
 		}
-		return $outstanding;
+		return floatval($outstanding);
 	}
 
 	function TotalOutstandingAsCurrencyObject(){
@@ -904,14 +910,12 @@ class Order extends DataObject {
 
 	function TotalItems() {
 		if(self::$total_items === null) {
-			$query = @mysql_query("
-				SELECT COUNT(ID)
+			self::$total_items = DB::query("
+				SELECT COUNT(\"OrderItem\".\"ID\")
 				FROM \"OrderItem\"
 					INNER JOIN \"OrderAttribute\" ON \"OrderAttribute\".\"ID\" = \"OrderItem\".\"ID\"
-					WHERE \"OrderAttribute\".\"OrderID\" = ".$this->ID
-			);
-			$num = @mysql_num_rows($query);
-			self::$total_items = intval($num);
+					WHERE \"OrderAttribute\".\"OrderID\" = ".$this->ID." AND \"OrderItem\".\"Quantity\" > 0"
+			)->value();
 		}
 		return self::$total_items;
 	}

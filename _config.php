@@ -77,6 +77,10 @@ Buyable::add_class("Product");
 //ProductGroup::set_sort_options_default( $key = "price");
 //ProductGroup::set_only_show_products_that_can_purchase(true);
 
+// * * * EMAILS
+//Order_Email::set_send_all_emails_plain(true);
+//Order_Email::set_copy_to_admin_for_all_emails(false);
+
 // * * * HELP
 // __________________________________ END ECOMMERCE MODULE CONFIG __________________________________
 

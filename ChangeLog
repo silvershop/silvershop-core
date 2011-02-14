@@ -1,3 +1,32 @@
+------------------------------------------------------------------------------------
+Ecommerce ChangeLog
+------------------------------------------------------------------------------------
+
+NOTE: this needs updating - a lot of revisions are missing - will update as time allows - NICOLAAS
+
+
+r836:
+AccountPage:
+- bugfixes;
+CheckoutPage:
+- bugfixes, improved emails;
+EcommercePayment:
+- added AmountValue Method, improved getCMSfields;
+EcommerceSiteTreeExtension:
+- removed EcommerceMenuTitle;
+Order_Email: added two options: send as plain text and copy to admin;
+OrderForm:
+- check for shipping address - dont just createa a new one;
+Order:
+- improved CMS fields + improved email sending;
+OrderAttribute:
+-  introduced a flag, which is set onAfterWrite and onAfterDelete;
+OrderStep:
+- changed CanEdit/CanCancel to CustomerCanEdit, CustomerCanCancel - to avoid confusion.
+- Improved Emails (introduced Message - simplified design)
+- add ability to add fields to Order CMS Fields
+
+------------------------------------------------------------------------------------
 r709:
 Checkout Page:
 - canCheckOut improved
@@ -18,7 +47,7 @@ OrderStep:
 - improved steps (do not require secondary params)
 - improved saving of Member
 
-Ecommerce ChangeLog
+------------------------------------------------------------------------------------
 14/Jan/2011
 config:
 - removed superfluous definitions

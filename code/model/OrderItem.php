@@ -23,6 +23,10 @@ class OrderItem extends OrderAttribute {
 		'Version' => 'Int'
 	);
 
+	public static $indexes = array(
+		"Quantity" => true
+	);
+
 	public static $casting = array(
 		'UnitPrice' => 'Currency',
 		'Total' => 'Currency'

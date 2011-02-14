@@ -7,6 +7,34 @@
  **/
 class EcommercePayment extends DataObjectDecorator {
 
+	public static $summary_fields = array(
+		"OrderID" => "Order ID",
+		"ClassName" => "Type",
+		"AmountValue" => "Amount",
+		"Status" => "Status"
+	);
+
+
+	function extraStatics() {
+		return array(
+			'has_one' => array(
+				'Order' => 'Order' //redundant...should be using PaidObject
+			),
+			'casting' => array(
+				'AmountValue' => 'Currency'
+			),
+			'summary_fields' => self::$summary_fields,
+			'searchable_fields' => array(
+				'OrderID' => array(
+					'field' => 'TextField',
+					'title' => 'Order Number'
+				),
+				//'Created' => array('title' => 'Date','filter' => 'WithinDateRangeFilter','field' => 'DateRangeField'), //TODO: filter and field not implemented yet
+				'IP' => array('title' => 'IP Address', 'filter' => 'PartialMatchFilter'),
+				'Status'
+			)
+		);
+	}
 	public static function process_payment_form_and_return_next_step($order, $form, $data, $paidBy = null) {
 		if(!$order){
 			user_error('Order not found', E_USER_ERROR);
@@ -43,23 +71,6 @@ class EcommercePayment extends DataObjectDecorator {
 		}
 	}
 
-	function extraStatics() {
-		return array(
-			'has_one' => array(
-				'Order' => 'Order' //redundant...should be using PaidObject
-			),
-			'searchable_fields' => array(
-				'OrderID' => array(
-					'field' => 'TextField',
-					'title' => 'Order Number'
-				),
-				//'Created' => array('title' => 'Date','filter' => 'WithinDateRangeFilter','field' => 'DateRangeField'), //TODO: filter and field not implemented yet
-				'IP' => array('title' => 'IP Address', 'filter' => 'PartialMatchFilter'),
-				'Status'
-			)
-		);
-	}
-
 	function canCreate($member = null) {
 		if(!$member) {
 			$member = Member::currentUser();
@@ -71,7 +82,7 @@ class EcommercePayment extends DataObjectDecorator {
 		return false;
 	}
 
-	/*
+
 	function updateCMSFields(&$fields){
 		//DOES NOT WORK RIGHT NOW AS supported_methods is PROTECTED
 		//$options = $this->owner::$supported_methods;
@@ -85,9 +96,11 @@ class EcommercePayment extends DataObjectDecorator {
 		else {
 			$fields->addFieldToTab("Root.Main", new ReadonlyField("ClassNameConfirmation", "Type", $this->ClassName), "Status");
 		}
+		*/
+		$fields->replaceField("OrderID", new ReadonlyField("OrderID", "Order ID"));
 		return $fields;
+
 	}
-	*/
 
 	function redirectToOrder() {
 		$order = $this->owner->Order();
@@ -105,6 +118,9 @@ class EcommercePayment extends DataObjectDecorator {
 		$this->owner->PaidForClass = $do->ClassName;
 	}
 
+	function AmountValue() {
+		return $this->owner->Amount->getAmount();
+	}
 
 	function scaffoldSearchFields(){
 		$fields = parent::scaffoldSearchFields();

@@ -8,19 +8,19 @@
  * the product page / dataobject need to have a function RecommendedProductsForCart
  * which returns an array of IDs
  * SEQUENCE - USE FOR ALL MODIFIERS!!!
-// ######################################## *** model defining static variables (e.g. $db, $has_one)
-// ######################################## *** cms variables + functions (e.g. getCMSFields, $searchableFields)
-// ######################################## *** other (non) static variables (e.g. protected static $special_name_for_something, protected $order)
-// ######################################## *** CRUD functions (e.g. canEdit)
-// ######################################## *** init and update functions
-// ######################################## *** form functions (e. g. showform and getform)
-// ######################################## *** template functions (e.g. ShowInTable, TableTitle, etc...) ... USES DB VALUES
-// ######################################## ***  inner calculations.... USES CALCULATED VALUES
-// ######################################## *** calculate database fields: protected function Live[field name]  ... USES CALCULATED VALUES
-// ######################################## *** Type Functions (IsChargeable, IsDeductable, IsNoChange, IsRemoved)
-// ######################################## *** standard database related functions (e.g. onBeforeWrite, onAfterWrite, etc...)
-// ######################################## *** AJAX related functions
-// ######################################## *** debug functions
+//  *** model defining static variables (e.g. $db, $has_one)
+//  *** cms variables + functions (e.g. getCMSFields, $searchableFields)
+//  *** other (non) static variables (e.g. protected static $special_name_for_something, protected $order)
+//  *** CRUD functions (e.g. canEdit)
+//  *** init and update functions
+//  *** form functions (e. g. showform and getform)
+//  *** template functions (e.g. ShowInTable, TableTitle, etc...) ... USES DB VALUES
+//  ***  inner calculations.... USES CALCULATED VALUES
+//  *** calculate database fields: protected function Live[field name]  ... USES CALCULATED VALUES
+//  *** Type Functions (IsChargeable, IsDeductable, IsNoChange, IsRemoved)
+//  *** standard database related functions (e.g. onBeforeWrite, onAfterWrite, etc...)
+//  *** AJAX related functions
+//  *** debug functions
  */
 class OrderModifier extends OrderAttribute {
 
@@ -85,15 +85,13 @@ class OrderModifier extends OrderAttribute {
 		return $fields;
 	}
 
-
-
 // ########################################  *** other static variables (e.g. special_name_for_something)
 
 	protected $baseInitCalled = false;
 
 	protected $mustUpdate = false;
 
-	protected $_canEdit = null;
+
 
 
 // ######################################## *** CRUD functions (e.g. canEdit)
@@ -123,24 +121,31 @@ class OrderModifier extends OrderAttribute {
 		$this->checkField("Name");
 		$this->checkField("Amount");
 		$this->checkField("Type");
-		$this->checkField("Type");
 		if($this->mustUpdate) {
 			$this->write();
 		}
 		$this->baseInitCalled = true;
 	}
 
+	/**
+	*we use hasChanged method to bypass the whole runUpdate system
+	* you can overload this method in a child class (extending OrderModifier) and return false
+	**/
+
+	protected function hasChanged() {
+		return $this->canEdit();
+	}
+
 	protected function checkField($fieldName) {
-		if($this->_canEdit === null) {
-			$this->_canEdit = $this->canEdit();
-		}
-		if($this->_canEdit) {
+		//$start =  microtime();
+		if($this->hasChanged()) {
 			$functionName = "Live".$fieldName;
 			if($this->$functionName() != $this->$fieldName) {
 				$this->$fieldName = $this->$functionName();
 				$this->mustUpdate = true;
 			}
 		}
+		//debug::show($this->ClassName.".".$fieldName.": ".floatval(microtime() - $start));
 	}
 
 	/**
@@ -208,8 +213,8 @@ class OrderModifier extends OrderAttribute {
 // ######################################## *** template functions (e.g. ShowInTable, TableTitle, etc...)
 
 	public function ShowInTable() {
-		if(!$this->baseInitCalled && $this->canEdit()) {
-			user_error("While the order can be edited, you must call the init method everytime you get the details for this modifier", E_USER_ERROR);
+		if(!$this->baseInitCalled && $this->_canEdit) {
+			user_error("While the order can be edited, you must call the runUpdate method everytime you get the details for this modifier", E_USER_ERROR);
 		}
 		return false;
 	}

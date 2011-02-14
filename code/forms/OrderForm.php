@@ -199,14 +199,17 @@ class OrderForm extends Form {
 		// Write new record {@link Order} to database
 		$form->saveInto($order);
 		$order->MemberID = $member->ID;
-		$shippingAddress = new ShippingAddress();
+		$shippingAddress = DataObject::get_one("ShippingAddress", "\"OrderID\" = ".$order->ID);
+		if(!$shippingAddress){
+			$shippingAddress = new ShippingAddress();
+			$shippingAddress->OrderID = $order->ID;
+		}
 		if(isset($data['UseShippingAddress']) && $data['UseShippingAddress']){
 			$form->saveInto($shippingAddress);
 		}
 		else {
 			$shippingAddress->makeShippingAddressFromMember($member);
 		}
-		$shippingAddress->OrderID = $order->ID;
 		$shippingAddress->write();
 		$order->ShippingAddressID = $shippingAddress->ID;
 		// IMPORTANT - SAVE ORDER....!

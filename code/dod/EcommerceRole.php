@@ -9,6 +9,22 @@
 
 class EcommerceRole extends DataObjectDecorator {
 
+	function extraStatics() {
+		return array(
+			'db' => array(
+				'Address' => 'Varchar(255)',
+				'AddressLine2' => 'Varchar(255)',
+				'City' => 'Varchar(100)',
+				'PostalCode' => 'Varchar(30)',
+				'State' => 'Varchar(100)',
+				'Country' => 'Varchar(200)',
+				'Phone' => 'Varchar(100)',
+				'Notes' => 'HTMLText'
+			)
+		);
+	}
+
+
 	/**
 	*@param $code = string
 	**/
@@ -48,7 +64,6 @@ class EcommerceRole extends DataObjectDecorator {
 		static function get_for_current_order_do_not_show_countries() {return self::$for_current_order_do_not_show_countries;}
 
 
-
 	//e.g. http://www.nzpost.co.nz/Cultures/en-NZ/OnlineTools/PostCodeFinder
 	static function get_postal_code_url() {$sc = DataObject::get_one('SiteConfig'); if($sc) {return $sc->PostalCodeURL;}  }
 
@@ -56,7 +71,7 @@ class EcommerceRole extends DataObjectDecorator {
 
 	protected static $customer_group_code = 'shop_customers';
 		static function set_customer_group_code($v) {self::$customer_group_code = $v;}
-		static function get_customer_group_code(){return self::$customer_group_code;}
+		static function get_customer_group_code() {return self::$customer_group_code;}
 
 	protected static $customer_group_name = "shop customers";
 		static function set_customer_group_name($v) {self::$customer_group_name = $v;}
@@ -66,20 +81,26 @@ class EcommerceRole extends DataObjectDecorator {
 		static function set_customer_permission_code($v) {self::$customer_permission_code = $v;}
 		static function get_customer_permission_code() {return self::$customer_permission_code;}
 
-	function extraStatics() {
-		return array(
-			'db' => array(
-				'Address' => 'Varchar(255)',
-				'AddressLine2' => 'Varchar(255)',
-				'City' => 'Varchar(100)',
-				'PostalCode' => 'Varchar(30)',
-				'State' => 'Varchar(100)',
-				'Country' => 'Varchar(200)',
-				'Phone' => 'Varchar(100)',
-				'Notes' => 'HTMLText'
-			)
-		);
+	public function get_customer_group() {
+		return DataObject::get_one("Group", "\"Code\" = '".self::get_customer_group_code()."' OR \"Title\" = '".self::get_customer_group_name()."'");
 	}
+
+/*******************************************************
+   * SHOP ADMIN
+*******************************************************/
+
+
+	protected static $admin_group_code = "shop_administrators";
+		static function set_admin_group_code($v) {self::$admin_group_code = $v;}
+		static function get_admin_group_code() {return self::$admin_group_code;}
+
+	protected static $admin_group_name = "shop administrators";
+		static function set_admin_group_name($v) {self::$admin_group_name = $v;}
+		static function get_admin_group_name() {return self::$admin_group_name;}
+
+	protected static $admin_permission_code = "SHOP_ADMIN";
+		static function set_admin_permission_code($v) {self::$admin_permission_code = $v;}
+		static function get_admin_permission_code() {return self::$admin_permission_code;}
 
 	static function findCountryTitle($code) {
 		user_error("depreciated, please use EcommerceRole::find_country_title", E_USER_NOTICE);
@@ -315,25 +336,6 @@ class EcommerceRole extends DataObjectDecorator {
 		parent::onAfterWrite();
 		self::add_members_to_customer_group();
 	}
-
-
-/*******************************************************
-   * SHOP ADMIN
-*******************************************************/
-
-
-	protected static $admin_group_code = "shop_administrators";
-		static function set_admin_group_code($v) {self::$admin_group_code = $v;}
-		static function get_admin_group_code() {return self::$admin_group_code;}
-
-	protected static $admin_group_name = "shop administrators";
-		static function set_admin_group_name($v) {self::$admin_group_name = $v;}
-		static function get_admin_group_name() {return self::$admin_group_name;}
-
-	protected static $admin_permission_code = "SHOP_ADMIN";
-		static function set_admin_permission_code($v) {self::$admin_permission_code = $v;}
-		static function get_admin_permission_code() {return self::$admin_permission_code;}
-
 
 	public function requireDefaultRecords() {
 		parent::requireDefaultRecords();

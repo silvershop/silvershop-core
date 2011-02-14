@@ -14,10 +14,6 @@ class EcommerceSiteTreeExtension extends DataObjectDecorator {
 		return $siteConfig->ShopClosed;
 	}
 
-	function EcommerceMenuTitle() {
-		return $this->owner->MenuTitle;
-	}
-
 	function Cart() {
 		return ShoppingCart::current_order();
 	}

@@ -228,9 +228,9 @@ class AccountPage_Controller extends Page_Controller {
 	function sendreceipt($request) {
 		$this->orderID = intval($request->param("ID"));
 		if($o = $this->CurrentOrder()) {
-			if($m = $this->CurrentOrder()->Member()) {
+			if($m = $o->Member()) {
 				if($m->Email) {
-					$o->sendReceipt();
+					$o->sendReceipt(_t("AccountPage.COPYONLY", "--- COPY ONLY ---"), true);
 					$this->message = _t('AccountPage.RECEIPTSENT', 'An order receipt has been sent to: ').$m->Email.'.';
 				}
 				else {

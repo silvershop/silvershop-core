@@ -38,6 +38,13 @@ class OrderAttribute extends DataObject {
 		"Sort" => true,
 	);
 
+	protected static $has_been_written = false;
+		public static function set_has_been_written() {Session::set("OrderAttributeHasBeenWritten", true); self::$has_been_written = true;}
+		public static function get_has_been_written() {$outcome = Session::get("OrderAttributeHasBeenWritten") || self::$has_been_written ? true : false;}
+		public static function unset_has_been_written() {Session::set("OrderAttributeHasBeenWritten", false);self::$has_been_written = false;}
+
+	protected $_canEdit = null;
+
 	function init() {
 		return true;
 	}
@@ -47,17 +54,20 @@ class OrderAttribute extends DataObject {
 	}
 
 	function canEdit($member = null) {
-		return $this->canDelete($member);
-	}
-
-	function canDelete($member = null) {
-		if($this->OrderID) {
-			if($this->Order()->exists()) {
-				if($this->Order()->canEdit($member)) {
-					return true;
+		if($this->_canEdit === null) {
+			$this->_canEdit = false;
+			if($this->OrderID) {
+				if($this->Order()->exists()) {
+					if($this->Order()->canEdit($member)) {
+						$this->_canEdit = true;
+					}
 				}
 			}
 		}
+		return $this->_canEdit;
+	}
+
+	function canDelete($member = null) {
 		return false;
 	}
 
@@ -147,6 +157,16 @@ class OrderAttribute extends DataObject {
 
 	function CartTotalID() {
 		return $this->CartID() . '_Total';
+	}
+
+	function onAfterWrite() {
+		parent::onAfterWrite();
+		self::set_has_been_written();
+	}
+
+	function onAfterDelete() {
+		parent::onAfterDelete();
+		self::set_has_been_written();
 	}
 
 }

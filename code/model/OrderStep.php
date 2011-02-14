@@ -15,8 +15,8 @@ class OrderStep extends DataObject {
 		"Description" => "Text",
 		"CustomerMessage" => "HTMLText",
 		//customer privileges
-		"CanEdit" => "Boolean",
-		"CanCancel" => "Boolean",
+		"CustomerCanEdit" => "Boolean",
+		"CustomerCanCancel" => "Boolean",
 		//What to show the customer...
 		"ShowAsUncompletedOrder" => "Boolean",
 		"ShowAsInProcessOrder" => "Boolean",
@@ -34,24 +34,24 @@ class OrderStep extends DataObject {
 	);
 	public static $field_labels = array(
 		"Sort" => "Sorting Index",
-		"CanEdit" => "Customer can edit",
-		"CanCancel" => "Customer can cancel"
+		"CustomerCanEdit" => "Customer can edit",
+		"CustomerCanCancel" => "Customer can cancel"
 	);
 	public static $summary_fields = array(
 		"Name" => "Name",
-		"CanEdit" => "CanEdit",
-		"CanCancel" => "CanCancel",
+		"CustomerCanEdit" => "CustomerCanEdit",
+		"CustomerCanCancel" => "CustomerCanCancel",
 		"ShowAsUncompletedOrder" => "ShowAsUncompletedOrder",
 		"ShowAsInProcessOrder" => "ShowAsInProcessOrder",
 		"ShowAsCompletedOrder" => "ShowAsCompletedOrder"
 	);
 
-	public static $singular_name = "Order Status Option";
+	public static $singular_name = "Order Step";
 		static function get_singular_name() {return self::$singular_name;}
 		static function set_singular_name($v) {self::$singular_name = $v;}
 		function i18n_singular_name() { return _t("OrderStep.ORDERSTEPOPTION", "Order Status Option");}
 
-	public static $plural_name = "Order Status Options";
+	public static $plural_name = "Order Steps";
 		static function get_plural_name() {return self::$plural_name;}
 		static function set_plural_name($v) {self::$plural_name = $v;}
 		function i18n_plural_name() { return _t("OrderStep.ORDERSTEPOPTION", "Order Status Options");}
@@ -97,8 +97,8 @@ class OrderStep extends DataObject {
 
 	//IMPORTANT:: MUST HAVE Code defined!!!
 	public static $defaults = array(
-		"CanEdit" => 0,
-		"CanCancel" => 0,
+		"CustomerCanEdit" => 0,
+		"CustomerCanCancel" => 0,
 		"ShowAsUncompletedOrder" => 0,
 		"ShowAsInProcessOrder" => 0,
 		"ShowAsCompletedOrder" => 0,
@@ -107,22 +107,37 @@ class OrderStep extends DataObject {
 
 	function populateDefaults() {
 		parent::populateDefaults();
-		foreach(self::$defaults as $field => $value) {
-			$this->$field = $value;
+		$array = Object::uninherited_static($this->ClassName, 'defaults');
+		if($array && count($array)) {
+			foreach($array as $field => $value) {
+				$this->$field = $value;
+			}
 		}
 	}
 
 	function getCMSFields() {
 		//TO DO: add warning messages and break up fields
 		$fields = parent::getCMSFields();
-		$fields->addFieldToTab("Root.Main", new HeaderField("WARNING1", _t("OrderStep.CAREFUL", "CAREFUL! please edit with care"), 1), "Name");
-		$fields->addFieldToTab("Root.Main", new DropdownField("ClassName", _t("OrderStep.TYPE", "Type"), self::get_codes_for_order_steps_to_include()), "Name");
-		$fields->addFieldToTab("Root.Main", new HeaderField("WARNING2", _t("OrderStep.CUSTOMERCANCHANGE", "What can be changed?"), 3), "CanEdit");
-		$fields->addFieldToTab("Root.Main", new HeaderField("WARNING5", _t("OrderStep.ORDERGROUPS", "Order groups for customer?"), 3), "ShowAsUncompletedOrder");
-		$fields->replaceField("Code", $fields->dataFieldByName("Code")->performReadonlyTransformation());
+		//replacing
+		$fields->addFieldToTab("Root.Description", new TextareaField("Description", _t("OrderStep.DESCRIPTION", "Description"), 5));
+		$fields->addFieldToTab("Root.CustomerMessage", new HTMLEditorField("CustomerMessage", _t("OrderStep.CUSTOMERMESSAGE", "Customer Message"), 5));
+		//adding
+		if(!$this->ID || !$this->isDefaultStatusOption()) {
+			$fields->removeFieldFromTab("Root.Main", "Code");
+			$fields->addFieldToTab("Root.Main", new DropdownField("ClassName", _t("OrderStep.TYPE", "Type"), self::get_codes_for_order_steps_to_include()), "Name");
+		}
 		if($this->isDefaultStatusOption()) {
 			$fields->replaceField("Code", $fields->dataFieldByName("Code")->performReadonlyTransformation());
 		}
+		//headers
+		$fields->addFieldToTab("Root.Main", new HeaderField("WARNING1", _t("OrderStep.CAREFUL", "CAREFUL! please edit with care"), 1), "Name");
+		$fields->addFieldToTab("Root.Main", new HeaderField("WARNING2", _t("OrderStep.CUSTOMERCANCHANGE", "What can be changed?"), 3), "CustomerCanEdit");
+		$fields->addFieldToTab("Root.Main", new HeaderField("WARNING5", _t("OrderStep.ORDERGROUPS", "Order groups for customer?"), 3), "ShowAsUncompletedOrder");
+		$fields->addFieldToTab("Root.Main", new HeaderField("WARNING7", _t("OrderStep.SORTINGINDEXHEADER", "Index Number (lower number come first)"), 3), "Sort");
+		return $fields;
+	}
+
+	function addOrderStepFields(&$fields) {
 		return $fields;
 	}
 
@@ -231,14 +246,11 @@ class OrderStep extends DataObject {
 	//EMAIL
 
 	protected function hasBeenSent($order) {
-		if(DataObject::get_one("OrderEmailRecord", "\"OrderEmailRecord\".\"OrderID\" = ".$order->ID." AND \"OrderEmailRecord\".\"OrderStepID\" = ".intval($this->ID)." AND  \"OrderEmailRecord\".\"Result\" = 1")) {
-			return true;
-		}
-		return false;
+		return DataObject::get_one("OrderEmailRecord", "\"OrderEmailRecord\".\"OrderID\" = ".$order->ID." AND \"OrderEmailRecord\".\"OrderStepID\" = ".$this->ID." AND  \"OrderEmailRecord\".\"Result\" = 1");
 	}
 
 /**************************************************
-* Silverstripe Standard Functions
+* Silverstripe Standard DO Methods
 **************************************************/
 
 
@@ -276,11 +288,11 @@ class OrderStep extends DataObject {
 class OrderStep_Created extends OrderStep {
 
 	public static $defaults = array(
+		"CustomerCanEdit" => 1,
+		"CustomerCanCancel" => 1,
 		"Name" => "Create",
 		"Code" => "CREATED",
 		"Sort" => 10,
-		"CanEdit" => 1,
-		"CanCancel" => 1,
 		"ShowAsUncompletedOrder" => 1
 	);
 
@@ -294,24 +306,19 @@ class OrderStep_Created extends OrderStep {
 
 	public function nextStep($order) {
 		$nextOrderStepObject = parent::nextStep($order);
-		if($order->Items()) {
+		if($order->TotalItems()) {
 			return $nextOrderStepObject;
 		}
 		return null;
 	}
 
-
-	function populateDefaults() {
-		parent::populateDefaults();
-		foreach(self::$defaults as $field => $value) {
-			$this->$field = $value;
-		}
-	}
 }
 
 class OrderStep_Submitted extends OrderStep {
 
 	static $defaults = array(
+		"CustomerCanEdit" => 0,
+		"CustomerCanCancel" => 0,
 		"Name" => "Submit",
 		"Code" => "SUBMITTED",
 		"Sort" => 20,
@@ -319,23 +326,20 @@ class OrderStep_Submitted extends OrderStep {
 	);
 
 	public function initStep($order) {
-		if(!$order->Items()) {
-			return false;
-		}
-		return true;
+		return (bool) $order->TotalItems();
 	}
 
 	public function doStep($order) {
-		if(!$order->MemberID && Member::currentUser()) {
-			if(Member::currentUser()->IsShopAdmin) {
-				$order->MemberID = Member::currentUserID();
-				$order->write();
+		if(!$order->MemberID) {
+			$m = Member::currentUser();
+			if($m) {
+				if(!$m->IsShopAdmin()) {
+					$order->MemberID = $m->ID();
+					$order->write();
+				}
 			}
 		}
-		if(!$order->MemberID) {
-			return false;
-		}
-		return true;
+		return $order->MemberID;
 	}
 
 	public function nextStep($order) {
@@ -344,13 +348,6 @@ class OrderStep_Submitted extends OrderStep {
 			return $nextOrderStepObject;
 		}
 		return null;
-	}
-
-	function populateDefaults() {
-		parent::populateDefaults();
-		foreach(self::$defaults as $field => $value) {
-			$this->$field = $value;
-		}
 	}
 
 }
@@ -364,6 +361,8 @@ class OrderStep_SentInvoice extends OrderStep {
 	);
 
 	public static $defaults = array(
+		"CustomerCanEdit" => 0,
+		"CustomerCanCancel" => 0,
 		"Name" => "Send invoice",
 		"Code" => "INVOICED",
 		"Sort" => 25,
@@ -378,7 +377,7 @@ class OrderStep_SentInvoice extends OrderStep {
 	public function doStep($order) {
 		if($this->SendInvoiceToCustomer){
 			if(!$this->hasBeenSent($order)) {
-				return $order->sendInvoice();
+				return $order->sendInvoice($this->CustomerMessage);
 			}
 		}
 		return true;
@@ -392,20 +391,13 @@ class OrderStep_SentInvoice extends OrderStep {
 		return null;
 	}
 
-
-	function populateDefaults() {
-		parent::populateDefaults();
-		foreach(self::$defaults as $field => $value) {
-			$this->$field = $value;
-		}
-	}
-
-
 }
 
 class OrderStep_Paid extends OrderStep {
 
 	public static $defaults = array(
+		"CustomerCanEdit" => 0,
+		"CustomerCanCancel" => 0,
 		"Name" => "Pay",
 		"Code" => "PAID",
 		"Sort" => 30,
@@ -428,13 +420,6 @@ class OrderStep_Paid extends OrderStep {
 		return null;
 	}
 
-
-	function populateDefaults() {
-		parent::populateDefaults();
-		foreach(self::$defaults as $field => $value) {
-			$this->$field = $value;
-		}
-	}
 }
 
 
@@ -445,6 +430,8 @@ class OrderStep_SentReceipt extends OrderStep {
 	);
 
 	public static $defaults = array(
+		"CustomerCanEdit" => 0,
+		"CustomerCanCancel" => 0,
 		"Name" => "Send receipt",
 		"Code" => "RECEIPTED",
 		"Sort" => 35,
@@ -460,7 +447,8 @@ class OrderStep_SentReceipt extends OrderStep {
 	public function doStep($order) {
 		if($this->SendReceiptToCustomer){
 			if(!$this->hasBeenSent($order)) {
-				return $order->sendReceipt();
+				//$purchaseCompleteMessage = DataObject::get_one('CheckoutPage')->PurchaseComplete;
+				return $order->sendReceipt($this->CustomerMessage);
 			}
 		}
 		return true;
@@ -474,20 +462,14 @@ class OrderStep_SentReceipt extends OrderStep {
 		return null;
 	}
 
-
-	function populateDefaults() {
-		parent::populateDefaults();
-		foreach(self::$defaults as $field => $value) {
-			$this->$field = $value;
-		}
-	}
-
 }
 
 
 class OrderStep_Confirmed extends OrderStep {
 
 	public static $defaults = array(
+		"CustomerCanEdit" => 0,
+		"CustomerCanCancel" => 0,
 		"Name" => "Confirm",
 		"Code" => "CONFIRMED",
 		"Sort" => 40,
@@ -495,9 +477,7 @@ class OrderStep_Confirmed extends OrderStep {
 	);
 
 	public function initStep($order) {
-		if(!$order->ReceiptSent){
-			$order->sendReceipt();
-		}
+		return true;
 	}
 
 	public function doStep($order) {
@@ -524,6 +504,8 @@ class OrderStep_Confirmed extends OrderStep {
 class OrderStep_Sent extends OrderStep {
 
 	public static $defaults = array(
+		"CustomerCanEdit" => 0,
+		"CustomerCanCancel" => 0,
 		"Name" => "Send order",
 		"Code" => "SENT",
 		"Sort" => 50,
@@ -545,12 +527,7 @@ class OrderStep_Sent extends OrderStep {
 		}
 		return null;
 	}
-	function populateDefaults() {
-		parent::populateDefaults();
-		foreach(self::$defaults as $field => $value) {
-			$this->$field = $value;
-		}
-	}
+
 }
 
 

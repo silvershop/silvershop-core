@@ -2,6 +2,7 @@
 
 /**
  * @authors: Silverstripe, Jeremy, Tony, Nicolaas
+ * @description: Manages everything you sell including modifiers
  **/
 
 class ProductsAndGroupsModelAdmin extends ModelAdmin {

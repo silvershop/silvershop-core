@@ -206,23 +206,10 @@ class ShoppingCart extends Controller {
 			if ($cartID) {
 				$cartIDParts = Convert::raw2sql(explode(".", $cartID));
 				if(is_array($cartIDParts) && count($cartIDParts) == 2) {
-					$orders = DataObject::get(
+					self::$order = DataObject::get_one(
 						'Order',
-						"\"Order\".\"ID\" = '".intval($cartIDParts[0])."' AND \"Order\".\"SessionID\" = '".$cartIDParts[1]."'",
-						"\"LastEdited\" DESC",
-						null,
-						"1"
+						"\"Order\".\"ID\" = '".intval($cartIDParts[0])."' AND \"Order\".\"SessionID\" = '".$cartIDParts[1]."'"
 					);
-					if($orders) {
-						foreach($orders as $order) {
-							if($order->CanEdit()) {
-								self::$order = $order;
-							}
-						}
-					}
-					else {
-						//TO DO: create notice that order can not be found
-					}
 				}
 			}
 			if(!self::$order){

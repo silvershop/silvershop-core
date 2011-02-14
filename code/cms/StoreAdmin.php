@@ -3,6 +3,7 @@
 /**
  *
  * @authors: Silverstripe, Jeremy, Romain, Nicolaas
+ * @description: manages everything you have sold and all related data (e.g. logs, payments)
  **/
 
 class StoreAdmin extends ModelAdmin{

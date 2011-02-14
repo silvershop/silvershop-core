@@ -18,8 +18,7 @@ class OrderEmailRecord extends DataObject {
 	);
 	public static $has_one = array(
 		"Order" => "Order",
-		"OrderStep" => "OrderStep",
-		"Member" => "Member"
+		"OrderStep" => "OrderStep"
 	);
 	public static $summary_fields = array(
 		"Created" => "Send",

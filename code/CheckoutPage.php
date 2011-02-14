@@ -273,7 +273,7 @@ class CheckoutPage_Controller extends Page_Controller {
 	 */
 	function CanCheckout() {
 		if($this->currentOrder) {
-			if($this->currentOrder->Items() && $this->currentOrder->CanEdit()) {
+			if($this->currentOrder->Items() && $this->currentOrder->canEdit()) {
 				return true;
 			}
 		}
@@ -303,7 +303,7 @@ class CheckoutPage_Controller extends Page_Controller {
 		elseif(!$this->currentOrder->Items()) {
 			return $this->NoItemsInOrderMessage;
 		}
-		elseif(!$this->currentOrder->CanPay() || !$this->currentOrder->CanEdit()) {
+		elseif(!$this->currentOrder->canPay() || !$this->currentOrder->canEdit()) {
 			$this->usefulLinks->push(new ArrayData(array("Title" => $this->FinalizedOrderLinkLabel, "Link" => $this->currentOrder->Link())));
 			$this->usefulLinks->push(new ArrayData(array("Title" => $this->CurrentOrderLinkLabel, "Link" => $checkoutLink)));
 			return $this->AlreadyCompletedMessage;
