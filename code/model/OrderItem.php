@@ -179,6 +179,8 @@ HTML;
 	}
 
 	function Total() {
+		debug::show($this->UnitPrice);
+		debug::show($this->Quantity);
 		$total = $this->UnitPrice() * $this->Quantity;
 		$this->extend('updateTotal',$total);
 		return $total;
