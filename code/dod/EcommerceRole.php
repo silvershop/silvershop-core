@@ -103,7 +103,7 @@ class EcommerceRole extends DataObjectDecorator {
 		static function get_admin_permission_code() {return self::$admin_permission_code;}
 
 	static function findCountryTitle($code) {
-		user_error("depreciated, please use EcommerceRole::find_country_title", E_USER_NOTICE);
+		user_error("depreciated, please use ShoppingCart::get_country", E_USER_NOTICE);
 		return self::find_country_title($code);
 	}
 
@@ -154,13 +154,13 @@ class EcommerceRole extends DataObjectDecorator {
 	 * @return string Found country of member
 	 */
 	static function findCountry() {
-		user_error("depreciated, please use EcommerceRole::find_country", E_USER_NOTICE);
-		return self::find_country();
+		user_error("depreciated, please use ShoppingCart::get_country", E_USER_NOTICE);
+		return ShoppingCart::get_country();
 	}
 
 	//this function will be depreciated soon....
 	public static function find_country() {
-		user_error("depreciated, please use ShoppingCart::find_country", E_USER_NOTICE);
+		user_error("depreciated, please use ShoppingCart::get_country", E_USER_NOTICE);
 		return ShoppingCart::get_country();
 	}
 
