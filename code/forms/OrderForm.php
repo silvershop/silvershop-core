@@ -15,10 +15,12 @@ class OrderForm extends Form {
 		Requirements::javascript('ecommerce/javascript/OrderForm.js');
 
 		// 1) Member fields
-		$member = Member::currentUser() ? Member::currentUser() : singleton('Member');
+		$member = Member::currentUser();
+		if(!$member) {
+			$member = new Member();
+		}
 
 		$memberFields = new CompositeField($member->getEcommerceFields());
-
 		$requiredFields = $member->getEcommerceRequiredFields();
 
 		$leftFields = new CompositeField($memberFields);
@@ -26,6 +28,7 @@ class OrderForm extends Form {
 
 		$rightFields = new CompositeField();
 		$rightFields->setID('RightOrder');
+
 
 		if(!$member || !$member->ID || $member->Password == '') {
 			$passwordField = new ConfirmedPasswordField('Password', _t('OrderForm.PASSWORD','Password'));
@@ -80,7 +83,7 @@ class OrderForm extends Form {
 		$this->extend('updateFields',$fields);
 		Requirements::javascript('ecommerce/javascript/OrderFormWithShippingAddress.js');
 		if(Order::get_add_shipping_fields()) {
-			$countryField = new DropdownField('ShippingCountry',  _t('OrderForm.COUNTRY','Country'), Geoip::getCountryDropDown(), EcommerceRole::find_country());
+			$countryField = new DropdownField('ShippingCountry',  _t('OrderForm.COUNTRY','Country'), Geoip::getCountryDropDown(), ShoppingCart::find_country());
 			$shippingFields = new CompositeField(
 				new HeaderField(_t('OrderForm.SENDGOODSTODIFFERENTADDRESS','Send goods to different address'), 3),
 				new LiteralField('ShippingNote', '<p class="message warning">'._t('OrderFormWithShippingAddress.SHIPPINGNOTE','Your goods will be sent to the address below.').'</p>'),
@@ -114,13 +117,13 @@ class OrderForm extends Form {
 				}
 			}
 		}
+
 		if($member->ID) {
 			if(!$member->Country) {
-				$member->Country = EcommerceRole::find_country();
+				$member->Country = ShoppingCart::find_country();
 			}
 			$this->loadDataFrom($member);
 		}
-
 		//allow updating via decoration
 		$this->extend('updateForm',$this);
 

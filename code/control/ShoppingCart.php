@@ -107,10 +107,12 @@ class ShoppingCart extends Controller {
 			//3. check member
 			if(!$countryCode) {
 				$member = Member::currentUser();
-				if($member && $member->Country) {$countryCode = $member->Country;}
+				if($member && $member->Country) {
+					$countryCode = $member->Country;
+				}
 				//4. check session - NOTE: session saves to member + shipping address
 				if(!$countryCode) {
-					$countryCode = self::get_country();
+					$countryCode = Session::get(self::get_country_setting_index());
 					//5. check GEOIP information
 					if(!$countryCode) {
 						$countryCode = Geoip::visitor_country();
@@ -189,7 +191,7 @@ class ShoppingCart extends Controller {
 		}
 		if($memberID) {
 			$order = DataObject::get_by_id('Order', $orderID);
-			if($order && $order->MemberID == $memberID) {
+			if($order && $order->MemberID == $memberID && $order->canEdit()) {
 				self::$order = $order;
 				self::initialise_new_order();
 				return self::current_order();
@@ -212,7 +214,7 @@ class ShoppingCart extends Controller {
 					);
 				}
 			}
-			if(!self::$order){
+			if(!self::$order || !self::$order->canEdit()){
 				//TODO: is this the right time to delete them???
 				self::$order = new Order();
 				self::initialise_new_order();

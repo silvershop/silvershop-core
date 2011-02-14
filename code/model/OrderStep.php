@@ -49,12 +49,12 @@ class OrderStep extends DataObject {
 	public static $singular_name = "Order Step";
 		static function get_singular_name() {return self::$singular_name;}
 		static function set_singular_name($v) {self::$singular_name = $v;}
-		function i18n_singular_name() { return _t("OrderStep.ORDERSTEPOPTION", "Order Status Option");}
+		function i18n_singular_name() { return _t("OrderStep.ORDERSTEPOPTION", "Order Step");}
 
 	public static $plural_name = "Order Steps";
 		static function get_plural_name() {return self::$plural_name;}
 		static function set_plural_name($v) {self::$plural_name = $v;}
-		function i18n_plural_name() { return _t("OrderStep.ORDERSTEPOPTION", "Order Status Options");}
+		function i18n_plural_name() { return _t("OrderStep.ORDERSTEPOPTION", "Order Steps");}
 
 	// SUPER IMPORTANT TO KEEP ORDER!
 	public static $default_sort = "\"Sort\" ASC";
