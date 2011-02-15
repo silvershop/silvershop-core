@@ -34,8 +34,10 @@ class OrderStatusLog extends DataObject {
 		if(!$member) {
 			$member = Member::currentUser();
 		}
-		if($member->IsShopAdmin()) {
-			return true;
+		if($member) {
+			if($member->IsShopAdmin()) {
+				return true;
+			}
 		}
 		if(!self::$internal_use_only) {
 			if($this->Order()) {
@@ -97,7 +99,7 @@ class OrderStatusLog extends DataObject {
 		if($this->OrderID) {
 			$fields->replaceField("OrderID", $fields->dataFieldByName("OrderID")->performReadonlyTransformation());
 		}
-		if(Object::uninherited_static($this->ClassName, 'internal_use_only')) {
+		if($this->isInternalUseOnly()) {
 			$fields->removeByName("EmailCustomer");
 		}
 		$classes = ClassInfo::subclassesFor("OrderStatusLog");
@@ -126,6 +128,10 @@ class OrderStatusLog extends DataObject {
 		return $this->i18n_singular_name();
 	}
 
+	function isInternalUseOnly() {
+		return Object::uninherited_static($this->ClassName, 'internal_use_only');
+	}
+
 	function scaffoldSearchFields(){
 		$fields = parent::scaffoldSearchFields();
 		$fields->replaceField("OrderID", new NumericField("OrderID", "Order Number"));
@@ -143,14 +149,14 @@ class OrderStatusLog extends DataObject {
 		if(!$this->Title) {
 			$this->Title = "Order Update";
 		}
-		if(self::$internal_use_only) {
+		if($this->isInternalUseOnly()) {
 			$this->EmailCustomer = 0;
 		}
 	}
 
 	function onAfterWrite(){
 		parent::onAfterWrite();
-		if($this->EmailCustomer && !$this->EmailSent && !self::$internal_use_only) {
+		if($this->EmailCustomer && !$this->EmailSent && !$this->isInternalUseOnly()) {
 			$this->order()->sendStatusChange($this->Title, $this->CustomerNote());
 			DB::query("UPDATE \"OrderStatusLog\" SET \"EmailSent\" = 1 WHERE  \"OrderStatusLog\".\"ID\" = ".$this->ID.";");
 		}

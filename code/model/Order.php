@@ -526,10 +526,11 @@ class Order extends DataObject {
 		if($this->IsCancelled()) {
 			if(!$this->IsCustomerCancelled()) {
 				$admin = DataObject::get_by_id("Member", $this->CancelledByID);
-				if($admin->IsShopAdmin()) {
-					return true;
+				if($admin) {
+					if($admin->IsShopAdmin()) {
+						return true;
+					}
 				}
-				return null;
 			}
 		}
 		return false;
@@ -766,8 +767,10 @@ class Order extends DataObject {
 		if(!$this->canView($member) || $this->IsCancelled()) {
 			return false;
 		}
-		if($member->IsShopAdmin()) {
-			return true;
+		if($member) {
+			if($member->IsShopAdmin()) {
+				return true;
+			}
 		}
 		return $this->MyStep()->CustomerCanEdit;
 	}
