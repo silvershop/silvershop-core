@@ -519,6 +519,7 @@ class ShoppingCart extends Controller {
 		self::current_order()->write();
 		self::remove_all_items();
 		self::$order = null;
+		Session::clear(self::country_setting_index());
 
 		//redirect back or send ajax only if called via http request.
 		//This check allows this function to be called from elsewhere in the system.
