@@ -233,10 +233,10 @@ class ShoppingCart extends Controller {
 	}
 
 	protected static function initialise_new_order() {
-		self::$order->init();
 		self::$order->SessionID = session_id();
 		self::$order->MemberID = Member::currentUserID();
-		self::$order->write();
+		//NOTE: init function includes a write....
+		self::$order->init();
 		Session::set(self::$cartid_session_name,self::$order->ID.".".session_id());
 		self::delete_old_carts();
 	}

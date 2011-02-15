@@ -40,7 +40,7 @@ class OrderAttribute extends DataObject {
 
 	protected static $has_been_written = false;
 		public static function set_has_been_written() {Session::set("OrderAttributeHasBeenWritten", true); self::$has_been_written = true;}
-		public static function get_has_been_written() {$outcome = Session::get("OrderAttributeHasBeenWritten") || self::$has_been_written ? true : false;}
+		public static function get_has_been_written() {return Session::get("OrderAttributeHasBeenWritten") || self::$has_been_written ? true : false;}
 		public static function unset_has_been_written() {Session::set("OrderAttributeHasBeenWritten", false);self::$has_been_written = false;}
 
 	protected $_canEdit = null;

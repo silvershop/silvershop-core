@@ -19,7 +19,7 @@ class CartResponse extends EcommerceResponse {
 		}
 		else {
 			$currentOrder = ShoppingCart::current_order();
-			$currentOrder->calculateModifiers();
+			$currentOrder->calculateModifiers($force = true);
 			$js = array ();
 			if ($items = $currentOrder->Items()) {
 				foreach ($items as $item) {

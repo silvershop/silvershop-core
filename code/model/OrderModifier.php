@@ -108,6 +108,9 @@ class OrderModifier extends OrderAttribute {
 
 	public function init() {
 		parent::init();
+		$this->write();
+		$this->mustUpdate = true;
+		$this->runUpdate();
 		return true;
 	}
 
@@ -121,7 +124,7 @@ class OrderModifier extends OrderAttribute {
 		$this->checkField("Name");
 		$this->checkField("Amount");
 		$this->checkField("Type");
-		if($this->mustUpdate) {
+		if($this->mustUpdate && $this->canBeUpdated()) {
 			$this->write();
 		}
 		$this->baseInitCalled = true;
@@ -132,13 +135,13 @@ class OrderModifier extends OrderAttribute {
 	* you can overload this method in a child class (extending OrderModifier) and return false
 	**/
 
-	protected function hasChanged() {
+	protected function canBeUpdated() {
 		return $this->canEdit();
 	}
 
 	protected function checkField($fieldName) {
 		//$start =  microtime();
-		if($this->hasChanged()) {
+		if($this->canBeUpdated()) {
 			$functionName = "Live".$fieldName;
 			if($this->$functionName() != $this->$fieldName) {
 				$this->$fieldName = $this->$functionName();

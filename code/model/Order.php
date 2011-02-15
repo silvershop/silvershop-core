@@ -114,7 +114,6 @@ class Order extends DataObject {
 	}
 
 	public function getModifierForms($controller) {
-		$this->init();
 		$forms = array();
 		if($modifiers = $this->Modifiers()) {
 			foreach($modifiers as $modifier) {
@@ -387,6 +386,7 @@ class Order extends DataObject {
 
 	//NOTE: anything to do with Current Member and Session should be in Shopping Cart!
 	public function init() {
+		$this->write();
 		//to do: check if shop is open....
 		if(!$this->StatusID) {
 			if($newStatus = DataObject::get_one("OrderStep")) {
@@ -414,8 +414,8 @@ class Order extends DataObject {
 						if($modifier instanceof OrderModifier) {
 							$modifier->OrderID = $this->ID;
 							$modifier->Sort = $numericKey;
+							//init method includes a WRITE
 							$modifier->init();
-							$modifier->write();
 							$this->Attributes()->add($modifier);
 							$createdModifiers->push($modifier);
 						}
@@ -428,6 +428,7 @@ class Order extends DataObject {
 		}
 		$this->extend('onInit');
 		$this->write();
+		$this->calculateModifiers(true);
 		return $this;
 	}
 
@@ -665,11 +666,11 @@ class Order extends DataObject {
 		return DataObject::get('OrderModifier', "\"OrderAttribute\".\"OrderID\" = ".$this->ID.$extraWhereWithAnd);
 	}
 
-	public function calculateModifiers() {
+	public function calculateModifiers($force = false) {
 		//check if order has modifiers already
 		//check /re-add all non-removable ones
 		//$start = microtime();
-		if(OrderAttribute::get_has_been_written()) {
+		if(OrderAttribute::get_has_been_written() || $force) {
 			$createdModifiers = $this->modifiersFromDatabase();
 			if($createdModifiers) {
 				foreach($createdModifiers as $modifier){
