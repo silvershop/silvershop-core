@@ -756,9 +756,7 @@ class Order extends DataObject {
 		if($this->canEdit($member)) {
 			return true;
 		}
-		else {
-			return $this->MyStep()->CustomerCanPay;
-		}
+		return $this->MyStep()->CustomerCanPay;
 	}
 
 	function canCancel($member = null) {
@@ -920,7 +918,12 @@ class Order extends DataObject {
 				SELECT COUNT(\"OrderItem\".\"ID\")
 				FROM \"OrderItem\"
 					INNER JOIN \"OrderAttribute\" ON \"OrderAttribute\".\"ID\" = \"OrderItem\".\"ID\"
-					WHERE \"OrderAttribute\".\"OrderID\" = ".$this->ID." AND \"OrderItem\".\"Quantity\" > 0"
+					INNER JOIN \"Order\" ON \"OrderAttribute\".\"OrderID\" = \"Order\".\"ID\"
+					INNER JOIN \"OrderStep\" ON \"OrderStep\".\"ID\" = \"Order\".\"StatusID\"
+					WHERE
+						\"OrderAttribute\".\"OrderID\" = ".$this->ID."
+						AND \"OrderItem\".\"Quantity\" > 0
+						AND \"OrderStep\".\"CustomerCanEdit\" = 1"
 			)->value();
 		}
 		return self::$total_items;

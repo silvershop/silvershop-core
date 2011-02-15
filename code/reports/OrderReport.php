@@ -47,6 +47,7 @@ class OrderReport_Popup extends Controller {
 	 * order information in a printable view.
 	 */
 	function index() {
+		Requirements::themedCSS("OrderReport");
 		return $this->renderWith('Order_Printable');
 	}
 

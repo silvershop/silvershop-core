@@ -48,9 +48,6 @@ class EcommercePayment extends DataObjectDecorator {
 		if(!($payment && $payment instanceof Payment)) {
 			user_error(get_class($payment) . ' is not a valid Payment object.', E_USER_ERROR);
 		}
-		if(!$order->canPay()) {
-			user_error("Order can not be paid.", E_USER_ERROR);
-		}
 		// Save payment data from form and process payment
 		$form->saveInto($payment);
 		$payment->OrderID = $order->ID;
