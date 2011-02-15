@@ -17,6 +17,7 @@ class OrderStep extends DataObject {
 		//customer privileges
 		"CustomerCanEdit" => "Boolean",
 		"CustomerCanCancel" => "Boolean",
+		"CustomerCanPay" => "Boolean",
 		//What to show the customer...
 		"ShowAsUncompletedOrder" => "Boolean",
 		"ShowAsInProcessOrder" => "Boolean",
@@ -35,11 +36,13 @@ class OrderStep extends DataObject {
 	public static $field_labels = array(
 		"Sort" => "Sorting Index",
 		"CustomerCanEdit" => "Customer can edit",
+		"CustomerCanPay" => "Customer can pay",
 		"CustomerCanCancel" => "Customer can cancel"
 	);
 	public static $summary_fields = array(
 		"Name" => "Name",
 		"CustomerCanEdit" => "CustomerCanEdit",
+		"CustomerCanPay" => "CustomerCanPay",
 		"CustomerCanCancel" => "CustomerCanCancel",
 		"ShowAsUncompletedOrder" => "ShowAsUncompletedOrder",
 		"ShowAsInProcessOrder" => "ShowAsInProcessOrder",
@@ -99,6 +102,7 @@ class OrderStep extends DataObject {
 	public static $defaults = array(
 		"CustomerCanEdit" => 0,
 		"CustomerCanCancel" => 0,
+		"CustomerCanPay" => 1,
 		"ShowAsUncompletedOrder" => 0,
 		"ShowAsInProcessOrder" => 0,
 		"ShowAsCompletedOrder" => 0,
@@ -289,6 +293,7 @@ class OrderStep_Created extends OrderStep {
 
 	public static $defaults = array(
 		"CustomerCanEdit" => 1,
+		"CustomerCanPay" => 1,
 		"CustomerCanCancel" => 1,
 		"Name" => "Create",
 		"Code" => "CREATED",
@@ -318,6 +323,7 @@ class OrderStep_Submitted extends OrderStep {
 
 	static $defaults = array(
 		"CustomerCanEdit" => 0,
+		"CustomerCanPay" => 1,
 		"CustomerCanCancel" => 0,
 		"Name" => "Submit",
 		"Code" => "SUBMITTED",
@@ -363,6 +369,7 @@ class OrderStep_SentInvoice extends OrderStep {
 	public static $defaults = array(
 		"CustomerCanEdit" => 0,
 		"CustomerCanCancel" => 0,
+		"CustomerCanPay" => 1,
 		"Name" => "Send invoice",
 		"Code" => "INVOICED",
 		"Sort" => 25,
@@ -398,6 +405,7 @@ class OrderStep_Paid extends OrderStep {
 	public static $defaults = array(
 		"CustomerCanEdit" => 0,
 		"CustomerCanCancel" => 0,
+		"CustomerCanPay" => 0,
 		"Name" => "Pay",
 		"Code" => "PAID",
 		"Sort" => 30,
@@ -432,6 +440,7 @@ class OrderStep_SentReceipt extends OrderStep {
 	public static $defaults = array(
 		"CustomerCanEdit" => 0,
 		"CustomerCanCancel" => 0,
+		"CustomerCanPay" => 0,
 		"Name" => "Send receipt",
 		"Code" => "RECEIPTED",
 		"Sort" => 35,
@@ -470,6 +479,7 @@ class OrderStep_Confirmed extends OrderStep {
 	public static $defaults = array(
 		"CustomerCanEdit" => 0,
 		"CustomerCanCancel" => 0,
+		"CustomerCanPay" => 0,
 		"Name" => "Confirm",
 		"Code" => "CONFIRMED",
 		"Sort" => 40,
@@ -493,12 +503,6 @@ class OrderStep_Confirmed extends OrderStep {
 	}
 
 
-	function populateDefaults() {
-		parent::populateDefaults();
-		foreach(self::$defaults as $field => $value) {
-			$this->$field = $value;
-		}
-	}
 }
 
 class OrderStep_Sent extends OrderStep {
@@ -506,6 +510,7 @@ class OrderStep_Sent extends OrderStep {
 	public static $defaults = array(
 		"CustomerCanEdit" => 0,
 		"CustomerCanCancel" => 0,
+		"CustomerCanPay" => 0,
 		"Name" => "Send order",
 		"Code" => "SENT",
 		"Sort" => 50,

@@ -739,7 +739,7 @@ class Order extends DataObject {
 		if($member) {$memberID = $member->ID;} else {$memberID = 0;}
 		$extended = $this->extendedCan('canEdit', $memberID);
 		if($extended !== null) {return $extended;}
-		if(!$this->canView($member)) {
+		if(!$this->canView($member) || $this->IsCancelled()) {
 			return false;
 		}
 		return $this->MyStep()->CustomerCanEdit;
@@ -753,7 +753,12 @@ class Order extends DataObject {
 		if($this->IsPaid() || $this->IsCancelled()) {
 			return false;
 		}
-		return true;
+		if($this->canEdit($member)) {
+			return true;
+		}
+		else {
+			return $this->MyStep()->CustomerCanPay;
+		}
 	}
 
 	function canCancel($member = null) {
