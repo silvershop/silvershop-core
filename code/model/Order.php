@@ -273,11 +273,15 @@ class Order extends DataObject {
 		if(!$readOnly) {
 			$fieldsAndTabsToBeRemoved[] = "Emails";
 		}
+		else {
+			$fieldsAndTabsToBeRemoved[] = "CustomerOrderNote";
+		}
 		foreach($fieldsAndTabsToBeRemoved as $field) {
 			$fields->removeByName($field);
 		}
 		$fields->insertBefore(new LiteralField('Title',"<h2>".$this->Title()."</h2>"),'Root');
 		if($readOnly) {
+
 			$htmlSummary = $this->renderWith("Order");
 			$printlabel = _t("Order.PRINTINVOICE", "Print Invoice");
 			$fields->addFieldsToTab('Root.Main', array(

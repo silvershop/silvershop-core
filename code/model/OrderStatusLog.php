@@ -332,7 +332,6 @@ class OrderStatusLog_PaymentCheck extends OrderStatusLog {
 
 	public function getCMSFields() {
 		$fields = parent::getCMSFields();
-		$fields->removeByName("PaymentConfirmed");
 		$fields->addFieldsToTab('Root.Main', new TextField("PaymentConfirmed", _t("OrderStatusLog.YESORNO", "Payment has been confirmed (please type yes or no)")));
 	}
 

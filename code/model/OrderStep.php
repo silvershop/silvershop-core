@@ -461,6 +461,11 @@ class OrderStep_Confirmed extends OrderStep {
 	}
 
 
+	function addOrderStepFields(&$fields) {
+		$msg = _t("OrderStep.MUSTDOPAYMENTCHECK", "To move this order to the next step you must carry out a payment check and record it in the logs");
+		$fields->addFieldToTab("Root.Main", new HeaderField("OrderStep_Confirmed", $msg, 3),"StatusID");
+		return $fields;
+	}
 }
 
 
@@ -536,6 +541,11 @@ class OrderStep_Sent extends OrderStep {
 		return null;
 	}
 
+	function addOrderStepFields(&$fields) {
+		$msg = _t("OrderStep.MUSTENTERDISPATCHRECORD", "To move this order to the next step you enter the dispatch details in the logs.");
+		$fields->addFieldToTab("Root.Main", new HeaderField("OrderStep_Sent", $msg, 3),"StatusID");
+		return $fields;
+	}
 }
 
 
