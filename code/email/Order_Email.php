@@ -13,7 +13,7 @@ class Order_Email extends Email {
 		function set_send_all_emails_plain($b) {self::$send_all_emails_plain = $b;}
 		function get_send_all_emails_plain() {return self::$send_all_emails_plain;}
 
-	protected static $css_file_location = "ecommerce/css/EcommerceEmailReceiptStyle.css";
+	protected static $css_file_location = "ecommerce/css/OrderReport.css";
 		function set_css_file_location($s) {self::$css_file_location = $s;}
 		function get_css_file_location() {return self::$css_file_location;}
 
