@@ -16,7 +16,7 @@ if(array_key_exists('en_GB', $lang) && is_array($lang['en_GB'])) {
 	$lang['en_GB'] = $lang['en_US'];
 }
 
-$lang['en_GB']['AccountPage']['Message'] = 'You\'ll need to login before you can access the account page. If you are not registered, you won\'t be able to access it until you\'ll make your first order, otherwise please enter your details below.';
+$lang['en_GB']['AccountPage']['Message'] = 'You\'ll need to login before you can access the account page. If you are not registered, you won\'t be able to access it until you\'ll place your first order, otherwise please enter your details below.';
 $lang['en_GB']['AccountPage']['NOPAGE'] = 'No AccountPage on this site - please create one !';
 $lang['en_GB']['AccountPage.ss']['COMPLETED'] = 'Completed Orders';
 $lang['en_GB']['AccountPage.ss']['HISTORY'] = 'Your Order History';

@@ -13,6 +13,10 @@ class Order_Email extends Email {
 		function set_send_all_emails_plain($b) {self::$send_all_emails_plain = $b;}
 		function get_send_all_emails_plain() {return self::$send_all_emails_plain;}
 
+	protected static $css_file_location = "ecommerce/css/EcommerceEmailReceiptStyle.css";
+		function set_css_file_location($s) {self::$css_file_location = $s;}
+		function get_css_file_location() {return self::$css_file_location;}
+
 	protected static $copy_to_admin_for_all_emails = true;
 		function set_copy_to_admin_for_all_emails($b) {self::$copy_to_admin_for_all_emails = $b;}
 		function get_copy_to_admin_for_all_emails() {return self::$copy_to_admin_for_all_emails;}
@@ -26,7 +30,6 @@ class Order_Email extends Email {
 				$result = parent::sendPlain($messageID);
 			}
 			else {
-				$this->parseVariables();
 				$result = parent::send($messageID);
 			}
 			$this->createRecord($result, $order);
@@ -53,35 +56,20 @@ class Order_Email extends Email {
 		return DataObject::get_one("OrderEmailRecord", "\"OrderEmailRecord\".\"OrderID\" = ".$order->ID." AND \"OrderEmailRecord\".\"OrderStepID\" = ".intval($order->StatusID)." AND  \"OrderEmailRecord\".\"Result\" = 1");
 	}
 
-		/**
-		 * @author Mark Guinn
-		 */
+	/**
+	 * @author Mark Guinn
+	 */
 
 	protected function parseVariables($isPlain = false) {
 		require_once(Director::baseFolder() . '/ecommerce/thirdparty/Emogrifier.php');
 		parent::parseVariables($isPlain);
 		// if it's an html email, filter it through emogrifier
-		if (!$isPlain && preg_match('/<style[^>]*>(?:<\!--)?(.*)(?:-->)?<\/style>/ims', $this->body, $match)){
-			$css = $match[1];
-			$html = str_replace(
-				array(
-					"<p>\n<table>",
-					"</table>\n</p>",
-					'&copy ',
-					$match[0],
-				),
-				array(
-					"<table>",
-					"</table>",
-					'',
-					'',
-				),
-				$this->body
-			);
-
-			$emog = new Emogrifier($html, $css);
-			$this->body = $emog->emogrify();
-		}
+		$cssFileLocation = Director::baseFolder()."/".self::get_css_file_location();
+		$cssFileHandler = fopen($cssFileLocation, 'r');
+		$css = fread($cssFileHandler,  filesize($cssFileLocation));
+		fclose($cssFileHandler);
+		$emog = new Emogrifier($this->body, $css);
+		$this->body = $emog->emogrify();
 	}
 
 

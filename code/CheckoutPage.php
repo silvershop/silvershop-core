@@ -37,6 +37,7 @@ class CheckoutPage extends Page {
 		'AlreadyCompletedMessage' => 'HTMLText',
 		'FinalizedOrderLinkLabel' => 'Varchar(255)',
 		'CurrentOrderLinkLabel' => 'Varchar(255)',
+		'StartNewOrderLinkLabel' => 'Varchar(255)',
 		'NoItemsInOrderMessage' => 'HTMLText',
 		'NonExistingOrderMessage' => 'HTMLText',
 		'MustLoginToCheckoutMessage' => 'HTMLText',
@@ -107,6 +108,7 @@ class CheckoutPage extends Page {
 			new HtmlEditorField('AlreadyCompletedMessage', 'Already Completed - shown when the customer tries to checkout an already completed order', $row = 4),
 			new TextField('FinalizedOrderLinkLabel', 'Label for the link pointing to a completed order - e.g. click here to view the completed order'),
 			new TextField('CurrentOrderLinkLabel', 'Label for the link pointing to the current order - e.g. click here to view current order'),
+			new TextField('StartNewOrderLinkLabel', 'Label for starting new order - e.g. click here to start new order'),
 			new HtmlEditorField('NonExistingOrderMessage', 'Non-existing Order - shown when the customer tries ', $row = 4),
 			new HtmlEditorField('NoItemsInOrderMessage', 'No items in order - shown when the customer tries to checkout an order without items.', $row = 4),
 			new HtmlEditorField('MustLoginToCheckoutMessage', 'MustLoginToCheckoutMessage', $row = 4),
@@ -145,6 +147,7 @@ class CheckoutPage extends Page {
 			if(!$page->AlreadyCompletedMessage) {$page->AlreadyCompletedMessage = '<p>This order has already been completed.</p>'; $update[] = "added AlreadyCompletedMessage content";}
 			if(!$page->FinalizedOrderLinkLabel) {$page->FinalizedOrderLinkLabel = 'view completed order'; $update[] = "added FinalizedOrderLinkLabel content";}
 			if(!$page->CurrentOrderLinkLabel) {$page->CurrentOrderLinkLabel = 'view current order'; $update[] = "added CurrentOrderLinkLabel content";}
+			if(!$page->StartNewOrderLinkLabel) {$page->StartNewOrderLinkLabel = 'start new order'; $update[] = "added StartNewOrderLinkLabel content";}
 			if(!$page->NonExistingOrderMessage) {$page->NonExistingOrderMessage = '<p>We can not find your order.</p>'; $update[] = "added NonExistingOrderMessage content";}
 			if(!$page->NoItemsInOrderMessage) {$page->NoItemsInOrderMessage = '<p>There are no items in your order. Please add some products first.</p>'; $update[] = "added NoItemsInOrderMessage content";}
 			if(!$page->MustLoginToCheckoutMessage) {$page->MustLoginToCheckoutMessage = '<p>You must login to view this order</p>'; $update[] = "added MustLoginToCheckoutMessage content";}
@@ -187,6 +190,11 @@ class CheckoutPage_Controller extends Page_Controller {
 		Requirements::javascript('ecommerce/javascript/EcommercePayment.js');
 		Requirements::themedCSS('CheckoutPage');
 		$this->initVirtualMethods();
+	}
+
+	function startneworder() {
+		ShoppingCart::clear();
+		Director::redirectBack();
 	}
 
 	/**
@@ -305,7 +313,7 @@ class CheckoutPage_Controller extends Page_Controller {
 		}
 		elseif(!$this->currentOrder->canPay() || !$this->currentOrder->canEdit()) {
 			$this->usefulLinks->push(new ArrayData(array("Title" => $this->FinalizedOrderLinkLabel, "Link" => $this->currentOrder->Link())));
-			$this->usefulLinks->push(new ArrayData(array("Title" => $this->CurrentOrderLinkLabel, "Link" => $checkoutLink)));
+			$this->usefulLinks->push(new ArrayData(array("Title" => $this->StartNewOrderLinkLabel, "Link" => CheckoutPage::find_link()."startneworder/")));
 			return $this->AlreadyCompletedMessage;
 		}
 		return "";

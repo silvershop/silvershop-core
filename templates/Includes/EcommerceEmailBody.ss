@@ -3,10 +3,8 @@
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" >
 		<title>$Subject</title>
-		<% include EmailReceiptStyle %>
 	</head>
 	<body>
-		<% include EmailReceiptStyle %>
 		<table id="Content" cellspacing="0" cellpadding="0" summary="Email Information">
 			<thead>
 				<tr>

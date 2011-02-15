@@ -41,7 +41,7 @@
 	</tr>
 	<% end_if %>
 	<% if Email %>
-	<tr id="Phone">
+	<tr id="Email">
 		<th scope="row"><% _t("EMAIL","Email") %></th>
 		<td>$Email</td>
 	</tr>

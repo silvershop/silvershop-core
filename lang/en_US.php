@@ -2,7 +2,7 @@
 
 global $lang;
 
-$lang['en_US']['AccountPage']['Message'] = 'You\'ll need to login before you can access the account page. If you are not registered, you won\'t be able to access it until you make your first order, otherwise please enter your details below.';
+$lang['en_US']['AccountPage']['Message'] = 'You\'ll need to login before you can access the account page. If you are not registered, you won\'t be able to access it until you place your first order, otherwise please enter your details below.';
 $lang['en_US']['AccountPage']['NOPAGE'] = 'No AccountPage on this site - please create one !';
 $lang['en_US']['AccountPage']['PLURALNAME'] = array(
 	'Account Pags',

@@ -227,6 +227,11 @@ class ShoppingCart extends Controller {
 		return self::$order;
 	}
 
+
+	public function clear_order_from_shopping_cart() {
+		Session::set(self::$cartid_session_name,null);
+	}
+
 	protected static function initialise_new_order() {
 		self::$order->init();
 		self::$order->SessionID = session_id();
@@ -235,6 +240,7 @@ class ShoppingCart extends Controller {
 		Session::set(self::$cartid_session_name,self::$order->ID.".".session_id());
 		self::delete_old_carts();
 	}
+
 
 	public static function add_requirements() {
 		Requirements::javascript(THIRDPARTY_DIR."/jquery/jquery.js");

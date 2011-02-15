@@ -755,6 +755,7 @@ class Order extends DataObject {
 		}
 		return true;
 	}
+
 	function canCancel($member = null) {
 		if($this->CancelledByID) {
 			return true;
@@ -768,7 +769,7 @@ class Order extends DataObject {
 				return true;
 			}
 		}
-		return $this->MyStep()->CanCancel;
+		return $this->MyStep()->CustomerCanCancel;
 	}
 
 

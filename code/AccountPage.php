@@ -176,7 +176,7 @@ class AccountPage_Controller extends Page_Controller {
 		$this->memberID = Member::currentUserID();
 		if(!$this->memberID) {
 			$messages = array(
-				'default' => '<p class="message good">' . _t('AccountPage.MESSAGE', 'You\'ll need to login before you can access the account page. If you are not registered, you won\'t be able to access it until you make your first order, otherwise please enter your details below.') . '</p>',
+				'default' => '<p class="message good">' . _t('AccountPage.MESSAGE', 'You\'ll need to login before you can access the account page. If you are not registered, you won\'t be able to access it until you place your first order, otherwise please enter your details below.') . '</p>',
 				'logInAgain' => _t('AccountPage.LOGINAGAIN', 'You have been logged out. If you would like to log in again, please do so below.')
 			);
 			Security::permissionFailure($this, $messages);
@@ -282,6 +282,7 @@ class AccountPage_Controller extends Page_Controller {
 	function PaymentForm(){
 		if($this->CurrentOrder()){
 			if($this->currentOrder->canPay()) {
+				Requirements::javascript("ecommerce/javascript/EcommercePayment.js");
 				return $form = new OrderForm_Payment($this, 'PaymentForm', $this->currentOrder);
 			}
 		}

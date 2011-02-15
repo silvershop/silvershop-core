@@ -218,8 +218,10 @@ class OrderForm extends Form {
 		// IMPORTANT - SAVE ORDER....!
 		$order->write();
 		$order->tryToFinaliseOrder();
-		//----------------- PAYMENT ------------------------------
+		//----------------- CLEAR OLD DATA ------------------------------
 		$this->clearSessionData(); //clears the stored session form data that might have been needed if validation failed
+		ShoppingCart::clear_order_from_shopping_cart();
+		//----------------- PAYMENT ------------------------------
 		return EcommercePayment::process_payment_form_and_return_next_step($order, $form, $data, $member);
 	}
 
