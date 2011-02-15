@@ -108,6 +108,7 @@ table.infotable{
 			padding:5px;
 			color: #333;
 			border:1px solid #CDDDDD;
+			vertical-align: top;
 		}
 			table.infotable td {
 				font-size:12px;

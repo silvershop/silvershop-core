@@ -75,9 +75,10 @@ class OrderStep extends DataObject {
 		"OrderStep_Submitted",
 		"OrderStep_SentInvoice",
 		"OrderStep_Paid",
-		"OrderStep_SentReceipt",
 		"OrderStep_Confirmed",
-		"OrderStep_Sent"
+		"OrderStep_SentReceipt",
+		"OrderStep_Sent",
+		"OrderStep_Archived"
 	);
 		static function set_order_steps_to_include($v) {self::$order_steps_to_include = $v;}
 		static function get_order_steps_to_include() {return self::$order_steps_to_include;}
@@ -431,6 +432,39 @@ class OrderStep_Paid extends OrderStep {
 }
 
 
+class OrderStep_Confirmed extends OrderStep {
+
+	public static $defaults = array(
+		"CustomerCanEdit" => 0,
+		"CustomerCanCancel" => 0,
+		"CustomerCanPay" => 0,
+		"Name" => "Confirm",
+		"Code" => "CONFIRMED",
+		"Sort" => 35,
+		"ShowAsInProcessOrder" => 1
+	);
+
+	public function initStep($order) {
+		return true;
+	}
+
+	public function doStep($order) {
+		return true;
+	}
+
+	public function nextStep($order) {
+		$nextOrderStepObject = parent::nextStep($order);
+		if($order->HasPositivePaymentCheck()) {
+			return $nextOrderStepObject;
+		}
+		return null;
+	}
+
+
+}
+
+
+
 class OrderStep_SentReceipt extends OrderStep {
 
 	static $db = array(
@@ -443,7 +477,7 @@ class OrderStep_SentReceipt extends OrderStep {
 		"CustomerCanPay" => 0,
 		"Name" => "Send receipt",
 		"Code" => "RECEIPTED",
-		"Sort" => 35,
+		"Sort" => 40,
 		"ShowAsInProcessOrder" => 1,
 		"SendReceiptToCustomer" => 1
 	);
@@ -474,37 +508,6 @@ class OrderStep_SentReceipt extends OrderStep {
 }
 
 
-class OrderStep_Confirmed extends OrderStep {
-
-	public static $defaults = array(
-		"CustomerCanEdit" => 0,
-		"CustomerCanCancel" => 0,
-		"CustomerCanPay" => 0,
-		"Name" => "Confirm",
-		"Code" => "CONFIRMED",
-		"Sort" => 40,
-		"ShowAsInProcessOrder" => 1
-	);
-
-	public function initStep($order) {
-		return true;
-	}
-
-	public function doStep($order) {
-		return true;
-	}
-
-	public function nextStep($order) {
-		$nextOrderStepObject = parent::nextStep($order);
-		if($order->HasPositivePaymentCheck()) {
-			return $nextOrderStepObject;
-		}
-		return null;
-	}
-
-
-}
-
 class OrderStep_Sent extends OrderStep {
 
 	public static $defaults = array(
@@ -530,6 +533,33 @@ class OrderStep_Sent extends OrderStep {
 		if($order->HasDispatchRecord()) {
 			return $nextOrderStepObject;
 		}
+		return null;
+	}
+
+}
+
+
+class OrderStep_Archived extends OrderStep {
+
+	public static $defaults = array(
+		"CustomerCanEdit" => 0,
+		"CustomerCanCancel" => 0,
+		"CustomerCanPay" => 0,
+		"Name" => "Archived order",
+		"Code" => "ARCHIVED",
+		"Sort" => 55,
+		"ShowAsCompletedOrder" => 1
+	);
+
+	public function initStep($order) {
+		return true;
+	}
+
+	public function doStep($order) {
+		return true;
+	}
+
+	public function nextStep($order) {
 		return null;
 	}
 

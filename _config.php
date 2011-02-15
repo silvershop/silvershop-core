@@ -81,6 +81,9 @@ Buyable::add_class("Product");
 //Order_Email::set_send_all_emails_plain(true);
 //Order_Email::set_copy_to_admin_for_all_emails(false);
 
+// * * * LOGS
+//OrderStatusLog::set_available_log_classes_array(array("OrderStatusLog_PaymentCheck"));
+
 // * * * HELP
 // __________________________________ END ECOMMERCE MODULE CONFIG __________________________________
 

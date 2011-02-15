@@ -266,8 +266,9 @@ class Order extends DataObject {
 	}
 
 	function getCMSFields(){
+		$this->tryToFinaliseOrder();
 		$fields = parent::getCMSFields();
-		$readOnly = (bool)!$this->canEdit();
+		$readOnly = (bool)!$this->MyStep()->CustomerCanEdit;
 		$fieldsAndTabsToBeRemoved = array('MemberID', 'Attributes', 'SessionID', 'Country', 'ShippingAddressID', 'UseShippingAddress', 'OrderStatusLogs', 'Payments');
 		if(!$readOnly) {
 			$fieldsAndTabsToBeRemoved[] = "Emails";
@@ -278,27 +279,61 @@ class Order extends DataObject {
 		$fields->insertBefore(new LiteralField('Title',"<h2>".$this->Title()."</h2>"),'Root');
 		if($readOnly) {
 			$htmlSummary = $this->renderWith("Order");
-			$printlabel = "Print Invoice"; //TODO: i18n
+			$printlabel = _t("Order.PRINTINVOICE", "Print Invoice");
 			$fields->addFieldsToTab('Root.Main', array(
 				new LiteralField("PrintInvoice",'<p class="print"><a href="OrderReport_Popup/index/'.$this->ID.'?print=1" onclick="javascript: window.open(this.href, \'print_order\', \'toolbar=0,scrollbars=1,location=1,statusbar=0,menubar=0,resizable=1,width=800,height=600,left = 50,top = 50\'); return false;">'.$printlabel.'</a></p>')
 			));
 			$fields->addFieldToTab('Root.Main', new LiteralField('MainDetails', $htmlSummary));
-			$paymentsTable = new TableListField(
+			$paymentsTable = new HasManyComplexTableField(
+				$this,
 				"Payments", //$name
 				"Payment", //$sourceClass =
-				EcommercePayment::$summary_fields, //$fieldList =
+				null, //$fieldList =
+				null, //$detailedFormFields =
 				"\"OrderID\" = ".$this->ID."", //$sourceFilter =
 				"\"Created\" ASC", //$sourceSort =
 				null //$sourceJoin =
 			);
-			$paymentsTable->setPermissions(array('show'));
 			$paymentsTable->setPageSize(100);
+			$paymentsTable->setShowPagination(false);
+			$paymentsTable->setRelationAutoSetting(true);
 			$fields->addFieldToTab('Root.Payments',$paymentsTable);
+			if($m = $this->Member()) {
+				$lastLogin = new TextField("MemberLastLogin","Last login",$m->dbObject('LastVisited')->Nice());
+				$fields->addFieldToTab('Root.Customer',$lastLogin->performReadonlyTransformation());
+				//TODO: this should be scaffolded instead, or come from something like $member->getCMSFields();
+				if($group = EcommerceRole::get_customer_group()) {
+					$fields->addFieldToTab('Root.Customer',new LiteralField("EditMembers", '<p><a href="/admin/security/show/'.$group->ID.'/">edit customers</a></p>'));
+				}
+			}
+			$orderStatusLogsTable = new HasManyComplexTableField(
+				$this,
+				"OrderStatusLogs", //$name
+				"OrderStatusLog", //$sourceClass =
+				null, //$fieldList =
+				null, //$detailedFormFields =
+				"\"OrderID\" = ".$this->ID."", //$sourceFilter =
+				"\"Created\" ASC", //$sourceSort =
+				null //$sourceJoin =
+			);
+			$orderStatusLogsTable->setPageSize(100);
+			$orderStatusLogsTable->setShowPagination(false);
+			$orderStatusLogsTable->setRelationAutoSetting(true);
+			$fields->addFieldToTab('Root.Logs',$orderStatusLogsTable);
+			/*
+			$fields->addFieldsToTab(
+				"Root.Delivery",
+				array(
+					new CheckboxField("UseShippingAddress", "Shipping Address is not the same as Billing Address"),
+					new HeaderField("DispatchLog", _t("Order.DISPATCHLOG", "Dispatch Log")),
+					new ComplexTableField($controller = "OrderStatusLog_Dispatch", "OrderStatusLog_Dispatch", "OrderStatusLog_Dispatch", $fieldList = null, $detailFormFields = null, $sourceFilter = "\"OrderID\" = ".$this->ID, $sourceSort = "", $sourceJoin = "")
+				)
+			);
+			*/
 		}
 		else {
 			$fields->addFieldToTab('Root.Main', new LiteralField('MainDetails', _t("Order.NODETAILSSHOWN", '<p>No details are shown here as this order has not been submitted yet. Once you change the status of the order more options will be available.</p>')));
 			//TODO: re-introduce this when order status logs have some meaningful purpose
-			//$fields->removeByName('OrderStatusLogs');
 			$orderItemsTable = new HasManyComplexTableField(
 				$this, //$controller
 				"Attributes", //$name =
@@ -311,6 +346,7 @@ class Order extends DataObject {
 			);
 			$orderItemsTable->setPermissions(array('edit', 'delete', 'export', 'add', 'inlineadd', "show"));
 			$orderItemsTable->setShowPagination(false);
+			$orderItemsTable->setRelationAutoSetting(true);
 			$orderItemsTable->addSummary(
 				"Total",
 				array("Total" => array("sum","Currency->Nice"))
@@ -327,26 +363,6 @@ class Order extends DataObject {
 			$modifierTable->setPermissions(array('edit', 'delete', 'export', 'add', 'inlineadd', "show"));
 			$modifierTable->setPageSize(100);
 			$fields->addFieldToTab('Root.Extras',$modifierTable);
-		}
-		if($readOnly) {
-			if($m = $this->Member()) {
-				$lastLogin = new TextField("MemberLastLogin","Last login",$m->dbObject('LastVisited')->Nice());
-				$fields->addFieldToTab('Root.Customer',$lastLogin->performReadonlyTransformation());
-				//TODO: this should be scaffolded instead, or come from something like $member->getCMSFields();
-				if($group = EcommerceRole::get_customer_group()) {
-					$fields->addFieldToTab('Root.Customer',new LiteralField("EditMembers", '<p><a href="/admin/security/show/'.$group->ID.'/">edit customers</a></p>'));
-				}
-			}
-			/*
-			$fields->addFieldsToTab(
-				"Root.Delivery",
-				array(
-					new CheckboxField("UseShippingAddress", "Shipping Address is not the same as Billing Address"),
-					new HeaderField("DispatchLog", _t("Order.DISPATCHLOG", "Dispatch Log")),
-					new ComplexTableField($controller = "OrderStatusLog_Dispatch", "OrderStatusLog_Dispatch", "OrderStatusLog_Dispatch", $fieldList = null, $detailFormFields = null, $sourceFilter = "\"OrderID\" = ".$this->ID, $sourceSort = "", $sourceJoin = "")
-				)
-			);
-			*/
 		}
 		if($this->MyStep()) {
 			$this->MyStep()->addOrderStepFields($fields);
@@ -713,6 +729,7 @@ class Order extends DataObject {
 			return $member->IsShopAdmin();
 		}
 	}
+
 	public function canView($member = null) {
 		if(!$member) {$member = Member::currentMember();}
 		if($member) {$memberID = $member->ID;} else {$memberID = 0;}
@@ -744,6 +761,9 @@ class Order extends DataObject {
 		if($extended !== null) {return $extended;}
 		if(!$this->canView($member) || $this->IsCancelled()) {
 			return false;
+		}
+		if($member->IsShopAdmin()) {
+			return true;
 		}
 		return $this->MyStep()->CustomerCanEdit;
 	}

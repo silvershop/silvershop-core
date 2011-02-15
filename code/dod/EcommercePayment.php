@@ -129,10 +129,8 @@ class EcommercePayment extends DataObjectDecorator {
 		parent::onBeforeWrite();
 		//TODO: throw error IF there is no OrderID
 		if($this->owner->OrderID) {
-			if($order = Order::get_by_id($this->owner->OrderID)) {
-				$this->owner->PaidForID = $order->ID;
-				$this->owner->PaidForClass = $order->ClassName;
-			}
+			$this->owner->PaidForID = $this->owner->OrderID;
+			$this->owner->PaidForClass = "Order";
 		}
 	}
 

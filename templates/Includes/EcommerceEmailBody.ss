@@ -10,24 +10,18 @@
 				<tr>
 					<th>
 						<h1 class="title">$Subject</h1>
+						<% if Message %>$Message<% end_if %>
 					</th>
 				</tr>
 			</thead>
-			<% if Message %><tfoot>
-				<tr>
-					<th>
-						$Message
-					</th>
-				</tr>
-			</tfoot><% end_if %>
 			<tbody>
-				<% if Order %>
+<% if Order %>
 				<tr>
 					<td>
 						<% control Order %><% include Order %><% end_control %>
 					</td>
 				</tr>
-				<% end_if %>
+<% end_if %>
 			</tbody>
 		</table>
 	</body>

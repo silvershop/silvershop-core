@@ -7,6 +7,10 @@
  **/
 class OrderStatusLog extends DataObject {
 
+	protected static $available_log_classes_array = array();
+		static function set_available_log_classes_array($a) {self::$available_log_classes_array = $a;}
+		static function get_available_log_classes_array() {return self::$available_log_classes_array;}
+
 	public static $db = array(
 		'Title' => 'Varchar(100)',
 		'Note' => 'Text',
@@ -22,7 +26,8 @@ class OrderStatusLog extends DataObject {
 	);
 
 	public static $casting = array(
-		"CustomerNote" => "Text"
+		"CustomerNote" => "Text",
+		"Type" => "Varchar"
 	);
 
 	public function canView($member = null) {
@@ -45,7 +50,13 @@ class OrderStatusLog extends DataObject {
 	public function canDelete($member = null) {
 		return false;
 	}
+	public function canCreate($member = null) {
+		return true;
+	}
 	public function canEdit($member = null) {
+		if($o = $this->Order()) {
+			return $o->canEdit($member);
+		}
 		return false;
 	}
 
@@ -60,6 +71,7 @@ class OrderStatusLog extends DataObject {
 
 	public static $summary_fields = array(
 		"Created" => "Date",
+		"Type" => "Type",
 		"Title" => "Title",
 		"EmailSent" => "EmailSent"
 	);
@@ -79,15 +91,39 @@ class OrderStatusLog extends DataObject {
 
 	function getCMSFields() {
 		$fields = parent::getCMSFields();
+
+		$fields->replaceField("EmailSent", $fields->dataFieldByName("EmailSent")->performReadonlyTransformation());
 		$fields->replaceField("AuthorID", $fields->dataFieldByName("AuthorID")->performReadonlyTransformation());
 		if($this->OrderID) {
 			$fields->replaceField("OrderID", $fields->dataFieldByName("OrderID")->performReadonlyTransformation());
 		}
-		if(self::$internal_use_only) {
+		if(Object::uninherited_static($this->ClassName, 'internal_use_only')) {
 			$fields->removeByName("EmailCustomer");
-			$fields->removeByName("EmailSent");
+		}
+		$classes = ClassInfo::subclassesFor("OrderStatusLog");
+		$dropdownArray = array();
+		$availableLogs = self::get_available_log_classes_array();
+		if(!is_array($availableLogs)) {
+			$availableLogs = array();
+		}
+		if($classes) {
+			foreach($classes as $className) {
+				if(!count($availableLogs) || in_array($className, $availableLogs )) {
+					$obj = singleton($className);
+					if($obj) {
+						$dropdownArray[$className] = $obj->i18n_singular_name();
+					}
+				}
+			}
+		}
+		if(count($dropdownArray)) {
+			$fields->addFieldToTab("Root.Main", new DropdownField("ClassName", "Type", $dropdownArray), "Title");
 		}
 		return $fields;
+	}
+
+	function Type() {
+		return $this->i18n_singular_name();
 	}
 
 	function scaffoldSearchFields(){
@@ -96,18 +132,9 @@ class OrderStatusLog extends DataObject {
 		return $fields;
 	}
 
-	function validate() {
-		if($this->OrderID) {
-			return parent::validate();
-		}
-		elseif($this->ID) {
-			return new ValidationResult(false, _t("OrderStatusLog.MUSTSELECTORDER", "You must select an order before it can be saved."));
-		}
-	}
-
 	function onBeforeWrite() {
 		parent::onBeforeWrite();
-		if(!$this->OrderID) {
+		if(!$this->OrderID && 1 == 2) {
 			user_error("There is no order id for Order Status Log", E_USER_WARNING);
 		}
 		if(!$this->AuthorID && $m = Member::currentUser()) {
@@ -135,7 +162,7 @@ class OrderStatusLog extends DataObject {
 
 }
 
-class OrderStatusLog_Dispatch extends DataObject {
+class OrderStatusLog_Dispatch extends OrderStatusLog {
 
 	protected static $internal_use_only = false;
 
@@ -154,14 +181,6 @@ class OrderStatusLog_Dispatch extends DataObject {
 		}
 	}
 
-	public function canEdit($member = null) {
-		if(!$member) {
-			$member = Member::currentMember();
-		}
-		if($member) {
-			return $member->IsShopAdmin();
-		}
-	}
 
 }
 class OrderStatusLog_DispatchElectronicOrder extends OrderStatusLog_Dispatch {
@@ -283,10 +302,6 @@ class OrderStatusLog_PaymentCheck extends OrderStatusLog {
 	);
 
 	public function canDelete($member = null) {
-		return false;
-	}
-
-	public function canEdit($member = null) {
 		return false;
 	}
 

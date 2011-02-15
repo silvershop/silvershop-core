@@ -119,9 +119,7 @@ class OrderForm extends Form {
 		}
 
 		if($member->ID) {
-			if(!$member->Country) {
-				$member->Country = ShoppingCart::get_country();
-			}
+			$member->Country = ShoppingCart::get_country();
 			$this->loadDataFrom($member);
 		}
 		//allow updating via decoration
@@ -171,11 +169,12 @@ class OrderForm extends Form {
 			Director::redirectBack();
 			return false;
 		}
-		//check that price hasn't changed
-		$oldtotal = ShoppingCart::current_order()->Total();
-		// Create new Order from shopping cart, discard cart contents in session
+
+		//RUN UPDATES TO CHECK NOTHING HAS CHANGED
 		$order = ShoppingCart::current_order();
-		$order->calculateModifiers();
+		$oldtotal = $order->Total();
+		// Create new Order from shopping cart, discard cart contents in session
+		$order->calculateModifiers($force = true);
 		//TO DO: HOW CAN THESE TWO BE DIFFERENT????
 		if($order->Total() != $oldtotal) {
 			$form->sessionMessage(_t('OrderForm.PRICEUPDATED','The order price has been updated.'), 'warning');
@@ -184,6 +183,7 @@ class OrderForm extends Form {
 		}
 		// Create new OR update logged in {@link Member} record
 
+		//MEMBER
 		//TO DO: change to $form->saveInto($member)  = much better!
 		$member = EcommerceRole::ecommerce_create_or_merge($data);
 		if(!$member) {
@@ -199,9 +199,8 @@ class OrderForm extends Form {
 		}
 		$member->write();
 		$member->logIn();
-		// Write new record {@link Order} to database
-		$form->saveInto($order);
-		$order->MemberID = $member->ID;
+
+		// SHIPPING ADDRESS
 		$shippingAddress = DataObject::get_one("ShippingAddress", "\"OrderID\" = ".$order->ID);
 		if(!$shippingAddress){
 			$shippingAddress = new ShippingAddress();
@@ -214,13 +213,22 @@ class OrderForm extends Form {
 			$shippingAddress->makeShippingAddressFromMember($member);
 		}
 		$shippingAddress->write();
+
+		//ORDER
+		//TODO: do we need this form saving into order - there are no fields in the form from the order...
+		//saving customer note, UseShippingAddress, country...
+		$form->saveInto($order);
+		$order->MemberID = $member->ID;
 		$order->ShippingAddressID = $shippingAddress->ID;
+
 		// IMPORTANT - SAVE ORDER....!
 		$order->write();
 		$order->tryToFinaliseOrder();
+
 		//----------------- CLEAR OLD DATA ------------------------------
 		$this->clearSessionData(); //clears the stored session form data that might have been needed if validation failed
 		ShoppingCart::clear_order_from_shopping_cart();
+
 		//----------------- PAYMENT ------------------------------
 		return EcommercePayment::process_payment_form_and_return_next_step($order, $form, $data, $member);
 	}

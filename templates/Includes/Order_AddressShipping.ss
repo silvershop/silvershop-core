@@ -1,4 +1,4 @@
-<% control ShippingAddress %>
+<% if ShippingAddress %> <% control ShippingAddress %>
 <table class="addressTable" cellspacing="0" cellpadding="0" id="ShippingAddressTable">
 	<tr id="ShippingName">
 		<th scope="row"><% _t("NAME","Name") %></th>
@@ -42,3 +42,4 @@
 	<% end_if %>
 </table>
 <% end_control %>
+<% end_if %>
