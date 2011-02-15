@@ -191,7 +191,7 @@ class ShoppingCart extends Controller {
 		}
 		if($memberID) {
 			$order = DataObject::get_by_id('Order', $orderID);
-			if($order && $order->MemberID == $memberID && $order->canEdit()) {
+			if($order && $order->MemberID == $memberID ) {
 				self::$order = $order;
 				self::initialise_new_order();
 				return self::current_order();
@@ -214,7 +214,7 @@ class ShoppingCart extends Controller {
 					);
 				}
 			}
-			if(!self::$order || !self::$order->canEdit()){
+			if(!self::$order ){
 				//TODO: is this the right time to delete them???
 				self::$order = new Order();
 				self::initialise_new_order();
