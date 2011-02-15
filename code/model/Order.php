@@ -114,6 +114,7 @@ class Order extends DataObject {
 	}
 
 	public function getModifierForms($controller) {
+		$this->init();
 		$forms = array();
 		if($modifiers = $this->Modifiers()) {
 			foreach($modifiers as $modifier) {
@@ -124,6 +125,7 @@ class Order extends DataObject {
 				}
 			}
 		}
+
 		if( count($forms) ) {
 			return new DataObjectSet($forms);
 		}
@@ -405,13 +407,13 @@ class Order extends DataObject {
 			$createdModifiers = new DataObjectSet();
 		}
 		if(is_array(self::$modifiers) && count(self::$modifiers) > 0) {
-			foreach(self::$modifiers as $key => $className) {
+			foreach(self::$modifiers as $numericKey => $className) {
 				if(!in_array($className, $createdModifiersClassNames)) {
 					if(class_exists($className)) {
 						$modifier = new $className();
 						if($modifier instanceof OrderModifier) {
 							$modifier->OrderID = $this->ID;
-							$modifier->Sort = $key;
+							$modifier->Sort = $numericKey;
 							$modifier->init();
 							$modifier->write();
 							$this->Attributes()->add($modifier);
@@ -655,12 +657,12 @@ class Order extends DataObject {
 	 */
 	protected function modifiersFromDatabase($includingRemoved = false) {
 		if($includingRemoved) {
-			$where = "";
+			$extraWhereWithAnd = "";
 		}
 		else {
-			$where = " AND \"Type\" <> 'Removed'";
+			$extraWhereWithAnd = " AND \"Type\" <> 'Removed'";
 		}
-		return DataObject::get('OrderModifier', $where = "\"OrderAttribute\".\"OrderID\" = ".$this->ID.$where);
+		return DataObject::get('OrderModifier', "\"OrderAttribute\".\"OrderID\" = ".$this->ID.$extraWhereWithAnd);
 	}
 
 	public function calculateModifiers() {

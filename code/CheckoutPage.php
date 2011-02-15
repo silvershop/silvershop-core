@@ -219,7 +219,9 @@ class CheckoutPage_Controller extends Page_Controller {
 	protected function getOrderModifierForm($name) {
 		if($forms = $this->ModifierForms()) {
 			foreach($forms as $form) {
-				if($form->Name() == $name) return $form;
+				if($form->Name() == $name) {
+					return $form;
+				}
 			}
 		}
 	}
