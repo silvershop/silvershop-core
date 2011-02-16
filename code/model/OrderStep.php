@@ -142,7 +142,7 @@ class OrderStep extends DataObject {
 		return $fields;
 	}
 
-	function addOrderStepFields(&$fields) {
+	function addOrderStepFields(&$fields, $order) {
 		return $fields;
 	}
 
@@ -454,18 +454,21 @@ class OrderStep_Confirmed extends OrderStep {
 
 	public function nextStep($order) {
 		$nextOrderStepObject = parent::nextStep($order);
-		if($order->HasPositivePaymentCheck()) {
+		if(DataObject::get_one("OrderStatusLog_PaymentCheck", "\"OrderID\" = ".$order->ID." AND \"PaymentConfirmed\" = 1")) {
 			return $nextOrderStepObject;
 		}
 		return null;
 	}
 
 
-	function addOrderStepFields(&$fields) {
-		$msg = _t("OrderStep.MUSTDOPAYMENTCHECK", "To move this order to the next step you must carry out a payment check and record it in the logs");
+	function addOrderStepFields(&$fields, $order) {
+		$msg = _t("OrderStep.MUSTDOPAYMENTCHECK", "To move this order to the next step you must carry out a payment check (is the money in the bank?) and record it below");
 		$fields->addFieldToTab("Root.Main", new HeaderField("OrderStep_Confirmed", $msg, 3),"StatusID");
+		$fields->addFieldToTab("Root.Main", $order->OrderStatusLogsTable("OrderStatusLog_PaymentCheck"),"StatusID");
 		return $fields;
 	}
+
+
 }
 
 
@@ -535,17 +538,20 @@ class OrderStep_Sent extends OrderStep {
 
 	public function nextStep($order) {
 		$nextOrderStepObject = parent::nextStep($order);
-		if($order->HasDispatchRecord()) {
+		if(DataObject::get_one("OrderStatusLog_Dispatch", "\"OrderID\" = ".$order->ID)) {
 			return $nextOrderStepObject;
 		}
 		return null;
 	}
 
-	function addOrderStepFields(&$fields) {
+	function addOrderStepFields(&$fields, $order) {
 		$msg = _t("OrderStep.MUSTENTERDISPATCHRECORD", "To move this order to the next step you enter the dispatch details in the logs.");
 		$fields->addFieldToTab("Root.Main", new HeaderField("OrderStep_Sent", $msg, 3),"StatusID");
+		$fields->addFieldToTab("Root.Main", $order->OrderStatusLogsTable("OrderStatusLog_Dispatch"),"StatusID");
 		return $fields;
 	}
+
+
 }
 
 

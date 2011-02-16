@@ -21,7 +21,8 @@ class OrderEmailRecord extends DataObject {
 		"OrderStep" => "OrderStep"
 	);
 	public static $casting = array(
-		"RelatedStatus" => "Varchar"
+		"RelatedStatus" => "Varchar",
+		"ResultNice" => "Varchar"
 	);
 	public static $summary_fields = array(
 		"Created" => "Send",
@@ -29,7 +30,7 @@ class OrderEmailRecord extends DataObject {
 		"From" => "From",
 		"To" => "To",
 		"Subject" => "Subject",
-		"Result" => "Sent Succesfully"
+		"ResultNice" => "Sent Succesfully"
 	);
 	public static $searchable_fields = array(
 		'OrderID' => array(
@@ -41,6 +42,13 @@ class OrderEmailRecord extends DataObject {
 		"Subject" => "PartialMatchFilter",
 		"Result" => true
 	);
+
+	function ResultNice() {
+		if($this->Result) {
+			return _t("OrderEmailRecord.YES", "Yes");
+		}
+		return _t("OrderEmailRecord.NO", "No");
+	}
 
 	public static $singular_name = "Customer Email";
 		function i18n_singular_name() { return _t("Order.CUSTOMEREMAIL", "Customer Email");}

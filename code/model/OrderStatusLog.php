@@ -22,12 +22,26 @@ class OrderStatusLog extends DataObject {
 
 	public static $casting = array(
 		"CustomerNote" => "Text",
-		"Type" => "Varchar"
+		"Type" => "Varchar",
+		'EmailCustomerNice' => 'Varchar',
+		'EmailSentNice' => 'Varchar',
+		'InternalUseOnlyNice' => 'Varchar'
+	);
+	public static $summary_fields = array(
+		"Created" => "Date",
+		"Type" => "Type",
+		"Title" => "Title",
+		'EmailSentNice' => 'Email sent to customer',
+		'InternalUseOnlyNice' => 'Internal use only'
 	);
 
 	public static $defaults = array(
 		"InternalUseOnly" => true
 	);
+
+	function EmailCustomerNice() {if($this->EmailCustomer) { return _t("OrderStatusLog.YES", "Yes");} return _t("OrderStatusLog.No", "No");}
+	function EmailSentNice() {if($this->EmailSent) { return _t("OrderStatusLog.YES", "Yes");} return _t("OrderStatusLog.No", "No");}
+	function InternalUseOnlyNice() {if($this->InternalUseOnly) { return _t("OrderStatusLog.YES", "Yes");} return _t("OrderStatusLog.No", "No");}
 
 	protected static $available_log_classes_array = array();
 		static function set_available_log_classes_array($a) {self::$available_log_classes_array = $a;}
@@ -74,12 +88,6 @@ class OrderStatusLog extends DataObject {
 		"Note" => "PartialMatchFilter"
 	);
 
-	public static $summary_fields = array(
-		"Created" => "Date",
-		"Type" => "Type",
-		"Title" => "Title",
-		"EmailSent" => "EmailSent"
-	);
 
 	public static $singular_name = "Order Log Entry";
 		function i18n_singular_name() { return _t("OrderStatusLog.ORDERLOGENTRY", "Order Log Entry");}
@@ -96,7 +104,6 @@ class OrderStatusLog extends DataObject {
 
 	function getCMSFields() {
 		$fields = parent::getCMSFields();
-
 		$fields->replaceField("EmailSent", $fields->dataFieldByName("EmailSent")->performReadonlyTransformation());
 		$fields->replaceField("AuthorID", $fields->dataFieldByName("AuthorID")->performReadonlyTransformation());
 		if($this->OrderID) {
@@ -156,8 +163,14 @@ class OrderStatusLog extends DataObject {
 	function onAfterWrite(){
 		parent::onAfterWrite();
 		if($this->EmailCustomer && !$this->EmailSent && !$this->InternalUseOnly) {
-			$this->order()->sendStatusChange($this->Title, $this->CustomerNote());
-			DB::query("UPDATE \"OrderStatusLog\" SET \"EmailSent\" = 1 WHERE  \"OrderStatusLog\".\"ID\" = ".$this->ID.";");
+			$outcome = $this->order()->sendStatusChange($this->Title, $this->CustomerNote());
+			if($outcome) {
+				//can not do a proper write here for risk of ending up in a loop
+				DB::query("UPDATE \"OrderStatusLog\" SET \"EmailSent\" = 1 WHERE  \"OrderStatusLog\".\"ID\" = ".$this->ID.";");
+			}
+			else {
+				DB::query("UPDATE \"OrderStatusLog\" SET \"EmailCustomer\" = 0 WHERE  \"OrderStatusLog\".\"ID\" = ".$this->ID.";");
+			}
 		}
 	}
 
@@ -230,7 +243,8 @@ class OrderStatusLog_DispatchPhysicalOrder extends OrderStatusLog_Dispatch {
 	public static $summary_fields = array(
 		"DispatchedOn" => "Date",
 		"OrderID" => "Order ID",
-		"EmailCustomer" => "Customer Emailed"
+		"EmailCustomerNice" => "Customer Emailed",
+		"EmailSentNice" => "Email Sent"
 	);
 
 	public static $singular_name = "Order Log Physical Dispatch Entry";
@@ -326,8 +340,15 @@ class OrderStatusLog_PaymentCheck extends OrderStatusLog {
 	);
 
 	public static $summary_fields = array(
-		"PaymentConfirmed" => "PaymentConfirmed"
+		"Created" => "Date",
+		"PaymentConfirmedNice" => "Payment Confirmed"
 	);
+
+	public static $casting = array(
+		"PaymentConfirmedNice" => "Varchar"
+	);
+
+	function PaymentConfirmedNice() {if($this->PaymentConfirmed) {return _t("OrderStatusLog.YES", "yes");}return _t("OrderStatusLog.No", "no");}
 
 	public static $singular_name = "Payment Confirmation";
 		function i18n_singular_name() { return _t("OrderStatusLog.PAYMENTCONFIRMATION", "Payment Confirmation");}
@@ -339,7 +360,8 @@ class OrderStatusLog_PaymentCheck extends OrderStatusLog {
 		$fields = parent::getCMSFields();
 		$fields->removeByName("Title");
 		$fields->removeByName("Note");
-		$fields->addFieldsToTab('Root.Main', new TextField("PaymentConfirmed", _t("OrderStatusLog.YESORNO", "Payment has been confirmed (please type yes or no)")));
+		$fields->addFieldsToTab('Root.Main', new CheckboxField("PaymentConfirmed", _t("OrderStatusLog.CONFIRMED", "Payment is confirmed")));
+		return $fields;
 	}
 
 	function scaffoldSearchFields(){
@@ -350,13 +372,13 @@ class OrderStatusLog_PaymentCheck extends OrderStatusLog {
 
 	function onBeforeWrite() {
 		parent::onBeforeWrite();
-		$this->PaymentConfirmed = strtolower($this->PaymentConfirmed);
-		if(isset(self::$true_and_false_definitions[$this->PaymentConfirmed])) {
-			$this->PaymentConfirmed = self::$true_and_false_definitions[$this->PaymentConfirmed];
-		}
-		else {
-			$this->PaymentConfirmed = 0;
-		}
 	}
+
+
+	function CustomerNote() {
+		if($this->PaymentConfirmed && $this->Author()) { return _t("OrderStatus.PAYMENTCONFIRMEDBY", "Payment Confirmed by: ").$this->Author()->getTitle()." | ".$this->Created;}
+		if(!$this->PaymentConfirmed && $this->Author()) { return _t("OrderStatus.PAYMENTDECLINEDBY", "Payment DECLINED by: ").$this->Author()->getTitle()." | ".$this->Created;}
+	}
+
 }
 

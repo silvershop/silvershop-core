@@ -310,20 +310,6 @@ class Order extends DataObject {
 					$fields->addFieldToTab('Root.Customer',new LiteralField("EditMembers", '<p><a href="/admin/security/show/'.$group->ID.'/">edit customers</a></p>'));
 				}
 			}
-			$orderStatusLogsTable = new HasManyComplexTableField(
-				$this,
-				"OrderStatusLogs", //$name
-				"OrderStatusLog", //$sourceClass =
-				null, //$fieldList =
-				null, //$detailedFormFields =
-				"\"OrderID\" = ".$this->ID."", //$sourceFilter =
-				"\"Created\" ASC", //$sourceSort =
-				null //$sourceJoin =
-			);
-			$orderStatusLogsTable->setPageSize(100);
-			$orderStatusLogsTable->setShowPagination(false);
-			$orderStatusLogsTable->setRelationAutoSetting(true);
-			$fields->addFieldToTab('Root.Logs',$orderStatusLogsTable);
 			/*
 			$fields->addFieldsToTab(
 				"Root.Delivery",
@@ -369,13 +355,26 @@ class Order extends DataObject {
 			$fields->addFieldToTab('Root.Extras',$modifierTable);
 		}
 		if($this->MyStep()) {
-			$this->MyStep()->addOrderStepFields($fields);
+			$this->MyStep()->addOrderStepFields($fields, $this);
 		}
 		$this->extend('updateCMSFields',$fields);
 		return $fields;
 	}
 
-
+	function OrderStatusLogsTable($sourceClass) {
+		$orderStatusLogsTable = new HasManyComplexTableField(
+			$this,
+			"OrderStatusLogs", //$name
+			$sourceClass, //$sourceClass =
+			null, //$fieldList =
+			null, //$detailedFormFields =
+			"\"OrderID\" = ".$this->ID.""
+		);
+		$orderStatusLogsTable->setPageSize(100);
+		$orderStatusLogsTable->setShowPagination(false);
+		$orderStatusLogsTable->setRelationAutoSetting(true);
+		return $orderStatusLogsTable;
+	}
 
 
 
@@ -547,19 +546,6 @@ class Order extends DataObject {
 		return false;
 	}
 
-	/**
-	 * @return boolean
-	 */
-	function HasPositivePaymentCheck() {
-		return DataObject::get_one("OrderStatusLog_PaymentCheck", "\"OrderID\" = ".$this->ID." AND \"PaymentConfirmed\" = 1");
-	}
-
-	/**
-	 * @return boolean
-	 */
-	function HasDispatchRecord() {
-		return DataObject::get_one("OrderStatusLog_Dispatch", "\"OrderID\" = ".$this->ID);
-	}
 
 	/**
 	 * @return boolean

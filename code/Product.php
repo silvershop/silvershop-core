@@ -271,10 +271,6 @@ class Product_Image extends Image {
 }
 class Product_OrderItem extends OrderItem {
 
-	static $db = array(
-		'Keep' => 'Boolean'
-	);
-
 	function canCreate($member = null) {
 		return true;
 	}

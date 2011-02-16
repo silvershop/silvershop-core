@@ -19,7 +19,7 @@
 			<td class="center">$Status</td>
 			<td class="center">$PaymentMethod</td>
 			<td class="center">$Message.NoHTML</td>
-			<td class="price">$Amount.Nice $Currency</td>
+			<td class="right">$Amount.Nice $Currency</td>
 		</tr>
 	<% end_control %>
 	</tbody>
