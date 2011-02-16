@@ -1,24 +1,19 @@
 <?php
 /**
- * @description:  Data class that keeps a log of a single status of an order.
+ * @description:  Data class that records events for an order like "Payment Checked", "Cheque Cleaered", "Goods dispatched", etc...
  *
  * @package ecommerce
  * @authors: Silverstripe, Jeremy, Nicolaas
  **/
 class OrderStatusLog extends DataObject {
 
-	protected static $available_log_classes_array = array();
-		static function set_available_log_classes_array($a) {self::$available_log_classes_array = $a;}
-		static function get_available_log_classes_array() {return self::$available_log_classes_array;}
-
 	public static $db = array(
 		'Title' => 'Varchar(100)',
 		'Note' => 'Text',
 		'EmailCustomer' => 'Boolean',
-		'EmailSent' => 'Boolean'
+		'EmailSent' => 'Boolean',
+		'InternalUseOnly' => 'Boolean'
 	);
-
-	protected static $internal_use_only = true;
 
 	public static $has_one = array(
 		'Author' => 'Member',
@@ -30,6 +25,14 @@ class OrderStatusLog extends DataObject {
 		"Type" => "Varchar"
 	);
 
+	public static $defaults = array(
+		"InternalUseOnly" => true
+	);
+
+	protected static $available_log_classes_array = array();
+		static function set_available_log_classes_array($a) {self::$available_log_classes_array = $a;}
+		static function get_available_log_classes_array() {return self::$available_log_classes_array;}
+
 	public function canView($member = null) {
 		if(!$member) {
 			$member = Member::currentUser();
@@ -39,7 +42,7 @@ class OrderStatusLog extends DataObject {
 				return true;
 			}
 		}
-		if(!self::$internal_use_only) {
+		if(!$this->InternalUseOnly) {
 			if($this->Order()) {
 				if($this->Order()->MemberID == $member->ID) {
 					return true;
@@ -99,7 +102,7 @@ class OrderStatusLog extends DataObject {
 		if($this->OrderID) {
 			$fields->replaceField("OrderID", $fields->dataFieldByName("OrderID")->performReadonlyTransformation());
 		}
-		if($this->isInternalUseOnly()) {
+		if($this->InternalUseOnly) {
 			$fields->removeByName("EmailCustomer");
 		}
 		$classes = ClassInfo::subclassesFor("OrderStatusLog");
@@ -128,10 +131,6 @@ class OrderStatusLog extends DataObject {
 		return $this->i18n_singular_name();
 	}
 
-	function isInternalUseOnly() {
-		return Object::uninherited_static($this->ClassName, 'internal_use_only');
-	}
-
 	function scaffoldSearchFields(){
 		$fields = parent::scaffoldSearchFields();
 		$fields->replaceField("OrderID", new NumericField("OrderID", "Order Number"));
@@ -149,14 +148,14 @@ class OrderStatusLog extends DataObject {
 		if(!$this->Title) {
 			$this->Title = "Order Update";
 		}
-		if($this->isInternalUseOnly()) {
+		if($this->InternalUseOnly) {
 			$this->EmailCustomer = 0;
 		}
 	}
 
 	function onAfterWrite(){
 		parent::onAfterWrite();
-		if($this->EmailCustomer && !$this->EmailSent && !$this->isInternalUseOnly()) {
+		if($this->EmailCustomer && !$this->EmailSent && !$this->InternalUseOnly) {
 			$this->order()->sendStatusChange($this->Title, $this->CustomerNote());
 			DB::query("UPDATE \"OrderStatusLog\" SET \"EmailSent\" = 1 WHERE  \"OrderStatusLog\".\"ID\" = ".$this->ID.";");
 		}
@@ -170,7 +169,9 @@ class OrderStatusLog extends DataObject {
 
 class OrderStatusLog_Dispatch extends OrderStatusLog {
 
-	protected static $internal_use_only = false;
+	public static $defaults = array(
+		"InternalUseOnly" => false
+	);
 
 	public static $singular_name = "Order Log Dispatch Entry";
 		function i18n_singular_name() { return _t("OrderStatusLog.ORDERLOGDISPATCHENTRY", "Order Log Dispatch Entry");}
@@ -191,8 +192,6 @@ class OrderStatusLog_Dispatch extends OrderStatusLog {
 }
 class OrderStatusLog_DispatchElectronicOrder extends OrderStatusLog_Dispatch {
 
-	protected static $internal_use_only = false;
-
 	public static $db = array(
 		'Link' => 'Text',
 	);
@@ -206,8 +205,6 @@ class OrderStatusLog_DispatchElectronicOrder extends OrderStatusLog_Dispatch {
 }
 
 class OrderStatusLog_DispatchPhysicalOrder extends OrderStatusLog_Dispatch {
-
-	protected static $internal_use_only = false;
 
 	public static $db = array(
 		'DispatchedBy' => 'Varchar(100)',
@@ -283,9 +280,9 @@ class OrderStatusLog_DispatchPhysicalOrder extends OrderStatusLog_Dispatch {
 
 	function CustomerNote() {
 		return $this->Note
-			."\r\n\r\n"._t("OrderStatusLog.DISPATCHEDBY", "Dispatched By").": ".$this->DispatchedBy
-			."\r\n\r\n"._t("OrderStatusLog.DISPATCHEDON", "Dispatched On").": ".$this->DispatchedOn
-			."\r\n\r\n"._t("OrderStatusLog.DISPATCHTICKET", "Dispatch Ticket").": ".$this->DispatchTicket;
+			."\r\n\r\n"._t("OrderStatusLog.DISPATCHEDBY", "Dispatched By").": ".$this->DispatchedBy.". "
+			."\r\n\r\n"._t("OrderStatusLog.DISPATCHEDON", "Dispatched On").": ".$this->DispatchedOn.". "
+			."\r\n\r\n"._t("OrderStatusLog.DISPATCHTICKET", "Dispatch Ticket").": ".$this->DispatchTicket.". ";
 	}
 }
 
@@ -301,7 +298,9 @@ class OrderStatusLog_DispatchPhysicalOrder extends OrderStatusLog_Dispatch {
  **/
 class OrderStatusLog_PaymentCheck extends OrderStatusLog {
 
-	protected static $internal_use_only = true;
+	public static $defaults = array(
+		"InternalUseOnly" => true
+	);
 
 	public static $db = array(
 		'PaymentConfirmed' => "Boolean",
@@ -338,6 +337,8 @@ class OrderStatusLog_PaymentCheck extends OrderStatusLog {
 
 	public function getCMSFields() {
 		$fields = parent::getCMSFields();
+		$fields->removeByName("Title");
+		$fields->removeByName("Note");
 		$fields->addFieldsToTab('Root.Main', new TextField("PaymentConfirmed", _t("OrderStatusLog.YESORNO", "Payment has been confirmed (please type yes or no)")));
 	}
 

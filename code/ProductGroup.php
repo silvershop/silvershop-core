@@ -9,7 +9,8 @@ class ProductGroup extends Page {
 
 	public static $db = array(
 		'ChildGroupsPermission' => "Enum('Show Only Featured Products,Show All Products')",
-		"NumberOfProductsPerPage" => "Int"
+		"NumberOfProductsPerPage" => "Int",
+		"ProductsAlsoInOthersGroups" => "Boolean"
 	);
 
 	public static $has_one = array();
@@ -85,19 +86,19 @@ class ProductGroup extends Page {
 				new Tab(
 					'Products',
 					new NumericField("NumberOfProductsPerPage", _t("ProductGroup.NUMBEROFPRODUCTS", "Number of products per page")),
-					new HeaderField(_t("ProductGroup.HOWPRESENTED", 'How should products be presented in the child groups?')),
+					new HeaderField("whatproductsshown", _t("ProductGroup.WHATPRODUCTSSHOWN", 'How should products be presented in the child groups?')),
 					new DropdownField(
 	  					'ChildGroupsPermission',
 	  					'Permission',
 	  					$this->dbObject('ChildGroupsPermission')->enumValues(),
 	  					'',
 	  					null,
-	  					'Don\'t Show Any Products'
+	  					_t("ProductGroup.DONOTSHOWPRODUCTS", 'Don\'t Show Any Products')
 					)
 				)
 			);
 		}
-
+		$fields->addFieldToTab("Root.Content.Products", new CheckboxField("ProductsAlsoInOthersGroups", _t("ProductGroup.PRODUCTSALSOINOTHERSGROUPS", "Also allow the products for this product group to show in other groups (see product pages for actual selection).")));
 		return $fields;
 	}
 

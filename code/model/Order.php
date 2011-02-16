@@ -376,9 +376,15 @@ class Order extends DataObject {
 	}
 
 
+
+
+
 /*******************************************************
    * MAIN TRANSITION FUNCTIONS:
 *******************************************************/
+
+
+
 
 	public function tryToFinaliseOrder() {
 		$this->init();
@@ -453,9 +459,14 @@ class Order extends DataObject {
 	}
 
 
+
+
 /*******************************************************
    * STATUS RELATED FUNCTIONS / SHORTCUTS
 *******************************************************/
+
+
+
 	public function MyStep() {
 		$obj = null;
 		if($this->StatusID) {
@@ -557,9 +568,17 @@ class Order extends DataObject {
 		$siteConfig = DataObject::get_one("SiteConfig");
 		return $siteConfig->ShopClosed;
 	}
+
+
+
+
 /*******************************************************
    * CUSTOMER COMMUNICATION....
 *******************************************************/
+
+
+
+
 
 	function sendInvoice($message = "", $resend = false) {
 		$subject = str_replace("{OrderNumber}", $this->ID,self::get_receipt_subject());
@@ -632,9 +651,15 @@ class Order extends DataObject {
 		return $email->send(null, $this, $resend);
 	}
 
+
+
+
 /*******************************************************
    * ITEM MANAGEMENT
 *******************************************************/
+
+
+
 
 	/**
 	 * Returns the items of the order, if it hasn't been saved yet
@@ -719,10 +744,27 @@ class Order extends DataObject {
 		}
 	}
 
+	function CanViewOrderStatusLogs() {
+		$canViewOrderStatusLogs = new DataObjectSet();
+		$logs = $this->OrderStatusLogs();
+		foreach($logs as $log) {
+			if($log->canView()) {
+				$canViewOrderStatusLogs->push($log);
+			}
+		}
+		if($canViewOrderStatusLogs->count()) {
+			return $canViewOrderStatusLogs;
+		}
+		return null;
+	}
+
 
 /*******************************************************
    * CRUD METHODS (e.g. canView, canEdit, canDelete, etc...)
 *******************************************************/
+
+
+
 
 	public function canCreate($member = null) {
 		if(!$member) {$member = Member::currentMember();}
@@ -815,9 +857,14 @@ class Order extends DataObject {
 	}
 
 
+
+
 /*******************************************************
    * GET METHODS (e.g. Total, SubTotal, Title, etc...)
 *******************************************************/
+
+
+
 
 	function getTitle() {
 		return $this->Title();
@@ -1054,9 +1101,15 @@ class Order extends DataObject {
 		}
 	}
 
+
+
+
 /*******************************************************
    * STANDARD SS METHODS (requireDefaultRecords, onBeforeDelete, etc...)
 *******************************************************/
+
+
+
 
 	/**
 	 * Updates the database structure of the Order table

@@ -21,7 +21,6 @@ class Product extends Page {
 		'FeaturedProduct' => 'Boolean',
 		'AllowPurchase' => 'Boolean',
 		'InternalItemID' => 'Varchar(30)', //ie SKU, ProductID etc (internal / existing recognition of product)
-
 		'NumberSold' => 'Int' //store number sold, so it doesn't have to be computed on the fly. Used for determining popularity.
 	);
 
@@ -82,14 +81,17 @@ class Product extends Page {
 		$fields->addFieldToTab('Root.Content.Details',new CheckboxField('FeaturedProduct', _t('Product.FEATURED', 'Featured Product')));
 		$fields->addFieldToTab('Root.Content.Details',new TextField('Price', _t('Product.PRICE', 'Price'), '', 12));
 		$fields->addFieldToTab('Root.Content.Details',new TextField('InternalItemID', _t('Product.CODE', 'Product Code'), '', 30));
-		$fields->addFieldsToTab(
-			'Root.Content.Product Groups',
-			array(
-				new HeaderField('ProductGroupsHeader', _t('Product.ALSOAPPEARS', 'Also shows in ...')),
-				$this->getProductGroupsTable()
-			)
-		);
-
+		if($this->ParentID && $parent = DataObject::get_by_id("ProductGroup", $this->ParentID)) {
+			if($parent->ProductsAlsoInOthersGroups) {
+				$fields->addFieldsToTab(
+					'Root.Content.AlsoSeenHere',
+					array(
+						new HeaderField('ProductGroupsHeader', _t('Product.ALSOAPPEARS', 'Also shows in ...')),
+						$this->getProductGroupsTable()
+					)
+				);
+			}
+		}
 		if($tempextvar) {
 			$this->extend('updateCMSFields', $fields);
 		}
@@ -132,21 +134,10 @@ class Product extends Page {
 	}
 
 	protected function getProductGroupsTable() {
-		$stage = Versioned::current_stage();
-		if($stage) {
-			$stage = "_".$stage;
-		}
-		$tableField = new ManyManyComplexTableField(
-			$this,
-			'ProductGroups',
-			'ProductGroup',
-			array('Title' => 'Product Group Page Title'),
-			$detailFormFields = null,
-			$sourceFilter = '`SiteTree'.$stage.'`.`ID` <> '.intval($this->ParentID)
-		);
-		$tableField->setPageSize(100);
-		$tableField->setPermissions(array());
-		return $tableField;
+		$field = new TreeMultiselectField($name = "ProductGroups", $title = "Other Groups", $sourceObject = "SiteTree", $keyField = "ID", $labelField = "MenuTitle");
+		//TO DO: fix  filter function below...
+		//$field->setFilterFunction( create_function( '$obj', 'return $obj instanceOf ProductGroup && $obj->ID <> '.intval($this->ParentID)));
+		return $field;
 	}
 
 	/**
