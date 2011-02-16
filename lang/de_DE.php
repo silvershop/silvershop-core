@@ -31,6 +31,7 @@ $lang['de_DE']['AccountPage.ss']['READMORE'] = 'Zur Detail-Ansicht der Bestellun
 $lang['de_DE']['Cart']['ADDONE'] = '1 &quot;%s&quot; zum Warenkorb hinzufügen';
 $lang['de_DE']['Cart']['CHECKOUTCLICK'] = 'Hier klicken um zur Kasse zu gehen.';
 $lang['de_DE']['Cart']['CHECKOUTGOTO'] = 'Zur Kasse';
+$lang['de_DE']['Cart']['CONTINUESHOPPING'] = 'Einkauf fortsetzen';
 $lang['de_DE']['Cart']['HEADLINE'] = 'Mein Warenkorb';
 $lang['de_DE']['Cart']['NOITEMS'] = 'In Ihrem Warenkorb befinden sich zur Zeit keine Artikel';
 $lang['de_DE']['Cart']['PRICE'] = 'Preis';
