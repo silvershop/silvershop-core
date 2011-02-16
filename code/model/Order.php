@@ -1345,31 +1345,31 @@ class Order extends DataObject {
 	 */
 	 //TODO: make this optional??
 	function onBeforeDelete(){
-		if($attributes = $this->Attributes()){
-			foreach($attributes as $attribute){
-				//TODO: not working yet - Order Items are still found in DB
-				$attribute->delete();
-				$attribute->destroy();
-			}
-		}
-
-		if($statuslogs = $this->OrderStatusLogs()){
-			foreach($statuslogs as $log){
-				$log->delete();
-				$log->destroy();
-			}
-		}
-
-		if($payments = $this->Payments()){
-			foreach($payments as $payment){
-				$payment->delete();
-				$payment->destroy();
-			}
-		}
-		if($shippingAddress = $this->ShippingAddress()) {
-			$shippingAddress->delete();
-			$shippingAddress-->destroy();
-		}
+//		if($attributes = $this->Attributes()){
+//			foreach($attributes as $attribute){
+//				//TODO: not working yet - Order Items are still found in DB
+//				$attribute->delete();
+//				$attribute->destroy();
+//			}
+//		}
+//
+//		if($statuslogs = $this->OrderStatusLogs()){
+//			foreach($statuslogs as $log){
+//				$log->delete();
+//				$log->destroy();
+//			}
+//		}
+//
+//		if($payments = $this->Payments()){
+//			foreach($payments as $payment){
+//				$payment->delete();
+//				$payment->destroy();
+//			}
+//		}
+//		if($shippingAddress = $this->ShippingAddress()) {
+//			$shippingAddress->delete();
+//			$shippingAddress-->destroy();
+//		}
 		parent::onBeforeDelete();
 
 	}
