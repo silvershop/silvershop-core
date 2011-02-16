@@ -1,7 +1,7 @@
 <% if Cart %>
 	<% control Cart %>
 	<div id="ShoppingCart">
-		<h3><% _t("HEADLINE","My Cart") %></h3>
+		<h3><% _t("Cart.HEADLINE","My Cart") %></h3>
 		<% if Items %>
 			<ul>
 				<% control Items %>
@@ -10,19 +10,19 @@
 							<span class="itemdetails">
 								<span<% if Link %><% else %> id="$CartTitleID"<% end_if %> class="title">
 									<% if Link %>
-										<a id="$CartTitleID" href="$Link" title="<% sprintf(_t("Cart.ss.READMORE","Click here to read more on &quot;%s&quot;"),$CartTitle.XML) %>">$CartTitle.XML</a>
+										<a id="$CartTitleID" href="$Link" title="<% sprintf(_t("Cart.READMORE","Click here to read more on &quot;%s&quot;"),$CartTitle.XML) %>">$CartTitle.XML</a>
 									<% else %>
 										$CartTitle.XML
 									<% end_if %>
 								</span>
 								<span class="price">
-									<% _t("PRICE","Price") %> : <strong>$UnitPrice.Nice</strong>
+									<% _t("Cart.PRICE","Price") %> : <strong>$UnitPrice.Nice</strong>
 								</span>
 								<span class="quantity">
-									Quantity : $QuantityField
+									<% _t("Cart.QUANTITY","Quantity") %> : $QuantityField
 								</span>
 								<span class="remove">
-									<a class="ajaxQuantityLink" href="$removeallLink" title="<% sprintf(_t("Cart.ss.REMOVEALL","Remove all of &quot;%s&quot; from your cart"),$CartTitle.XML) %>">
+									<a class="ajaxQuantityLink" href="$removeallLink" title="<% sprintf(_t("Cart.REMOVEALL","Remove all of &quot;%s&quot; from your cart"),$CartTitle.XML) %>">
 										<img src="ecommerce/images/remove.gif" alt="x"/>
 									</a>
 								</span>
@@ -31,15 +31,15 @@
 						</li>
 					<% end_if %>
 				<% end_control %>
-				<li class="subtotal"><% _t("SUBTOTAL","Subtotal") %>: <strong id="$CartSubTotalID">$SubTotal.Nice</strong></li>
+				<li class="subtotal"><% _t("Cart.SUBTOTAL","Subtotal") %>: <strong id="$CartSubTotalID">$SubTotal.Nice</strong></li>
 
 				<% if Modifiers %>
 				<% control Modifiers %>
 					<% if ShowInCart %>
 						<li id="$CartID" class="$Classes">
-							<span<% if Link %><% else %> id="$CartTitleID"<% end_if %> class="title">
+							<span><% if Link %><% else %> id="$CartTitleID"<% end_if %> class="title">
 								<% if Link %>
-									<a id="$CartTitleID" href="$Link" title="<% sprintf(_t("Cart.ss.READMORE","Click here to read more on &quot;%s&quot;"),$CartTitle) %>">$CartTitle</a>
+									<a id="$CartTitleID" href="$Link" title="<% sprintf(_t("Cart.READMORE","Click here to read more on &quot;%s&quot;"),$CartTitle) %>">$CartTitle</a>
 								<% else %>
 									$CartTitle
 								<% end_if %>
@@ -48,7 +48,7 @@
 							<span class="remove">
 								<% if CanRemove %>
 									<strong>
-										<a class="ajaxQuantityLink" href="$RemoveLink" title="<% sprintf(_t("Cart.ss.REMOVE","Remove &quot;%s&quot; from your order"),$TableTitle) %>">
+										<a class="ajaxQuantityLink" href="$RemoveLink" title="<% sprintf(_t("Cart.REMOVE","Remove &quot;%s&quot; from your order"),$TableTitle) %>">
 											<img src="ecommerce/images/remove.gif" alt="x"/>
 										</a>
 									</strong>
@@ -59,11 +59,11 @@
 				<% end_control %>
 				<% end_if %>
 
-				<li class="total"><% _t("TOTAL","Total") %>: <strong id="$CartTotalID">$Total.Nice $Currency</strong></li>
-				<li class="buyProducts"><p><a class="checkoutButton" href="$checkoutLink" title="<% _t("CHECKOUTCLICK","Click here to go to the checkout") %>"><% _t("CHECKOUTGOTO","Go to checkout") %></a></p></li>
+				<li class="total"><% _t("Cart.TOTAL","Total") %>: <strong id="$CartTotalID">$Total.Nice $Currency</strong></li>
+				<li class="buyProducts"><p><a class="checkoutButton" href="$checkoutLink" title="<% _t("Cart.CHECKOUTCLICK","Click here to go to the checkout") %>"><% _t("Cart.CHECKOUTGOTO","Go to checkout") %></a></p></li>
 			</ul>
 		<% else %>
-			<p class="noItems"><% _t("NOITEMS","There are no items in your cart") %>.</p>
+			<p class="noItems"><% _t("Cart.NOITEMS","There are no items in your cart") %>.</p>
 		<% end_if %>
 	</div>
 	<% end_control %>
