@@ -198,7 +198,6 @@ $lang['de_DE']['ProductGroupItem.ss']['REMOVE'] = '&quot;%s&quot; vom Warenkorb 
 $lang['de_DE']['ProductGroupItem.ss']['REMOVEALL'] = '1 Einheit von &quot;%s&quot; aus dem Warenkorb entferne';
 $lang['de_DE']['ProductGroupItem.ss']['REMOVELINK'] = '&raquo; Aus dem Warenkorb entfernen';
 $lang['de_DE']['ProductGroupItem.ss']['REMOVEONE'] = '&quot;%s&quot; vom Warenkorb entferrnen';
-$lang['de_DE']['ProductMenu.ss']['GOTOPAGE'] = 'Zur %s Seite';
 $lang['de_DE']['ShopAccountForm']['DETAILSSAVED'] = 'Ihre Daten wurden gespeichert';
 $lang['de_DE']['ShopAccountForm']['LOGGEDIN'] = 'Sie sind angemeldet als ';
 $lang['de_DE']['ShopAccountForm']['LOGOUT'] = 'Klicken Sie <a href="Security/logout" title="Klicken Sie hier um sich abzumelden">hier</a> um sich abzumelden.';
