@@ -158,9 +158,15 @@ class ProductBulkLoader extends CsvBulkLoader{
 		$parts = explode(":",$val);
 		if(count($parts) == 2){
 	
-			
 			$attributetype = trim($parts[0]);
 			$attributevalues = explode(",",$parts[1]);
+			
+			//get rid of empty values
+			foreach($attributevalues as $key => $value){
+				if(!$value || trim($value) == ""){
+					unset($attributevalues[$key]);
+				}
+			}
 			
 			if(count($attributevalues) >= 1){
 				
