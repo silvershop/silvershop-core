@@ -595,6 +595,14 @@ class OrderStep_Archived extends OrderStep {
 		return null;
 	}
 
+
+	function addOrderStepFields(&$fields, $order) {
+		$msg = _t("OrderStep.ADDITIONALNOTES", "This order has been completed.");
+		$fields->addFieldToTab("Root.Main", new HeaderField("OrderStep_Archived", $msg, 3),"StatusID");
+		$fields->addFieldToTab("Root.Main", $order->OrderStatusLogsTable("OrderStatusLog"),"StatusID");
+		return $fields;
+	}
+
 }
 
 
