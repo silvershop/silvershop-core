@@ -378,6 +378,10 @@ class EcommerceRole extends DataObjectDecorator {
 		}
 	}
 
+	function populateDefaults() {
+		parent::populateDefaults();
+		$this->Country = ShoppingCart::get_country();
+	}
 
 }
 

@@ -122,7 +122,7 @@ class ShoppingCart extends Controller {
 							//7. check default countries from ecommerce...
 							if(!$countryCode) {
 								$a = EcommerceRole::get_allowed_country_codes();
-								if(is_array($a) && count($array)) {
+								if(is_array($a) && count($a)) {
 									$countryCode = array_shift($a);
 								}
 							}

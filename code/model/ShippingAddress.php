@@ -99,4 +99,9 @@ class ShippingAddress extends DataObject {
 		return $this;
 	}
 
+	function populateDefaults() {
+		parent::populateDefaults();
+		$this->ShippingCountry = ShoppingCart::get_country();
+	}
+
 }
