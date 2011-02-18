@@ -1,5 +1,12 @@
 <?php
 
+/**
+ *@description: copy the commented lines to your own mysite/_config.php file for editing...
+ *Make sure that you save this file as UTF-8 to get the right encoding for currency symbols.
+ *
+ *
+ **/
+
 
 Director::addRules(50, array(
 	ShoppingCart::$url_segment . '/$Action/$ID/$OtherID' => 'ShoppingCart'

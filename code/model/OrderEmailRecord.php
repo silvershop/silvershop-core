@@ -43,12 +43,7 @@ class OrderEmailRecord extends DataObject {
 		"Result" => true
 	);
 
-	function ResultNice() {
-		if($this->Result) {
-			return _t("OrderEmailRecord.YES", "Yes");
-		}
-		return _t("OrderEmailRecord.NO", "No");
-	}
+	function ResultNice() {if($this->Result) {return _t("OrderEmailRecord.YES", "Yes");}return _t("OrderEmailRecord.NO", "No");}
 
 	public static $singular_name = "Customer Email";
 		function i18n_singular_name() { return _t("Order.CUSTOMEREMAIL", "Customer Email");}

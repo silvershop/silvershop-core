@@ -41,13 +41,29 @@ class OrderStep extends DataObject {
 	);
 	public static $summary_fields = array(
 		"Name" => "Name",
-		"CustomerCanEdit" => "CustomerCanEdit",
-		"CustomerCanPay" => "CustomerCanPay",
-		"CustomerCanCancel" => "CustomerCanCancel",
-		"ShowAsUncompletedOrder" => "ShowAsUncompletedOrder",
-		"ShowAsInProcessOrder" => "ShowAsInProcessOrder",
-		"ShowAsCompletedOrder" => "ShowAsCompletedOrder"
+		"CustomerCanEditNice" => "CustomerCanEdit",
+		"CustomerCanPayNice" => "CustomerCanPay",
+		"CustomerCanCancelNice" => "CustomerCanCancel",
+		"ShowAsUncompletedOrderNice" => "ShowAsUncompletedOrder",
+		"ShowAsInProcessOrderNice" => "ShowAsInProcessOrder",
+		"ShowAsCompletedOrderNice" => "ShowAsCompletedOrder"
 	);
+
+	public static $casting = array(
+		"CustomerCanEditNice" => "Varchar",
+		"CustomerCanPayNice" => "Varchar",
+		"CustomerCanCancelNice" => "Varchar",
+		"ShowAsUncompletedOrderNice" => "Varchar",
+		"ShowAsInProcessOrderNice" => "Varchar",
+		"ShowAsCompletedOrderNice" => "Varchar"
+	);
+
+	function CustomerCanEditNice() {if($this->CustomerCanEdit) {return _t("OrderStep.YES", "Yes");}return _t("OrderStep.NO", "No");}
+	function CustomerCanPayNice() {if($this->CustomerCanPay) {return _t("OrderStep.YES", "Yes");}return _t("OrderStep.NO", "No");}
+	function CustomerCanCancelNice() {if($this->CustomerCanCancel) {return _t("OrderStep.YES", "Yes");}return _t("OrderStep.NO", "No");}
+	function ShowAsUncompletedOrderNice() {if($this->ShowAsUncompletedOrder) {return _t("OrderStep.YES", "Yes");}return _t("OrderStep.NO", "No");}
+	function ShowAsInProcessOrderNice() {if($this->ShowAsInProcessOrder) {return _t("OrderStep.YES", "Yes");}return _t("OrderStep.NO", "No");}
+	function ShowAsCompletedOrderNice() {if($this->ShowAsCompletedOrder) {return _t("OrderStep.YES", "Yes");}return _t("OrderStep.NO", "No");}
 
 	public static $singular_name = "Order Step";
 		static function get_singular_name() {return self::$singular_name;}
@@ -538,7 +554,7 @@ class OrderStep_Sent extends OrderStep {
 
 	public function nextStep($order) {
 		$nextOrderStepObject = parent::nextStep($order);
-		if(DataObject::get_one("OrderStatusLog_Dispatch", "\"OrderID\" = ".$order->ID)) {
+		if(DataObject::get_one("OrderStatusLog_DispatchPhysicalOrder", "\"OrderID\" = ".$order->ID)) {
 			return $nextOrderStepObject;
 		}
 		return null;
@@ -547,7 +563,7 @@ class OrderStep_Sent extends OrderStep {
 	function addOrderStepFields(&$fields, $order) {
 		$msg = _t("OrderStep.MUSTENTERDISPATCHRECORD", "To move this order to the next step you enter the dispatch details in the logs.");
 		$fields->addFieldToTab("Root.Main", new HeaderField("OrderStep_Sent", $msg, 3),"StatusID");
-		$fields->addFieldToTab("Root.Main", $order->OrderStatusLogsTable("OrderStatusLog_Dispatch"),"StatusID");
+		$fields->addFieldToTab("Root.Main", $order->OrderStatusLogsTable("OrderStatusLog_DispatchPhysicalOrder"),"StatusID");
 		return $fields;
 	}
 
