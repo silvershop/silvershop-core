@@ -243,13 +243,13 @@ class EcommerceRole extends DataObjectDecorator {
 
 	public function list_of_allowed_countries_for_dropdown() {
 		$keys = array();
-		$alloweCountryCode = self::get_fixed_country_code();
-		$alloweCountryCodeArray = self::get_allowed_country_codes();
-		if($alloweCountryCode) {
-			$keys[$alloweCountryCode] = $alloweCountryCode;
+		$allowedCountryCode = self::get_fixed_country_code();
+		$allowedCountryCodeArray = self::get_allowed_country_codes();
+		if($allowedCountryCode) {
+			$keys[$allowedCountryCode] = $allowedCountryCode;
 		}
-		elseif($alloweCountryCodeArray && count(alloweCountryCodeArray)) {
-			$keys = array_merge($keys, $alloweCountryCodeArray);
+		elseif($allowedCountryCodeArray && count($allowedCountryCodeArray)) {
+			$keys = array_merge($keys, $allowedCountryCodeArray);
 		}
 		if(isset($keys) && count($keys)) {
 			$newArray = array();
