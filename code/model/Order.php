@@ -604,7 +604,6 @@ class Order extends DataObject {
 		}
 		$replacementArray =
 			array(
-				"Member" => $member,
 				"Message" => $message
 			);
 		return $this->sendEmail('Order_StatusEmail', $subject, $replacementArray, $resend);
