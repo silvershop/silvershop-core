@@ -226,6 +226,7 @@ class ProductGroup extends Page {
 				<p>In this example we have setup a main product group (this page), with a nested product group containing 2 example products.</p>
 			";
 			$page1->URLSegment = 'products';
+			$page1->NumberOfProductsPerPage = 5;
 			$page1->writeToStage('Stage');
 			$page1->publish('Stage', 'Live');
 			DB::alteration_message('Product group page \'Products\' created', 'created');
@@ -234,6 +235,7 @@ class ProductGroup extends Page {
 			$page2->Title = 'Example product group';
 			$page2->Content = '<p>This is a nested <em>product group</em> within the main <em>product group</em> page. You can add a paragraph here to describe what this product group is about, and what sort of products you can expect to find in it.</p>';
 			$page2->URLSegment = 'example-product-group';
+			$page1->NumberOfProductsPerPage = 5;
 			$page2->ParentID = $page1->ID;
 			$page2->writeToStage('Stage');
 			$page2->publish('Stage', 'Live');
@@ -254,7 +256,7 @@ class ProductGroup_Controller extends Page_Controller {
 	 * Return the products for this group.
 	 */
 	public function Products($recursive = true){
-		return $this->ProductsShowable('',$recursive);
+		return $this->ProductsShowable("\"FeaturedProduct\" = 1",$recursive);
 	}
 
 	/**

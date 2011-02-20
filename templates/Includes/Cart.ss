@@ -1,67 +1,61 @@
 <% if Cart %>
 	<% control Cart %>
 	<div id="ShoppingCart">
-		<h3><% _t("Cart.HEADLINE","My Cart") %></h3>
-		<% if Items %>
-			<ul>
-				<% control Items %>
-					<% if ShowInCart %>
-						<li id="$CartID" class="$Classes">
-							<span class="itemdetails">
-								<span<% if Link %><% else %> id="$CartTitleID"<% end_if %> class="title">
+		<h3 id="CartHeader"><% _t("Cart.HEADLINE","My Cart") %></h3>
+		<table id="InformationTable" class="editable" cellspacing="0" cellpadding="0" summary="<% _t("TABLESUMMARY","The contents of your cart are displayed in this form and summary of all fees associated with an order and a rundown of payments options.") %>">
+			<tbody>
+				<% if Items %>
+					<% control Items %>
+						<% if ShowInTable %>
+							<tr id="$TableID" class="$Classes hideOnZeroItems">
+								<td <% if Link %><% else %> id="$TableTitleID"<% end_if %> class="product title" scope="row">
 									<% if Link %>
-										<a id="$CartTitleID" href="$Link" title="<% sprintf(_t("Cart.READMORE","Click here to read more on &quot;%s&quot;"),$CartTitle.XML) %>">$CartTitle.XML</a>
+										<a id="$TableTitleID" href="$Link" title="<% sprintf(_t("Order_Content_Editable.ss.READMORE","Click here to read more on &quot;%s&quot;"),$TableTitle) %>">$TableTitle</a>
 									<% else %>
-										$CartTitle.XML
+										$TableTitle
 									<% end_if %>
-								</span>
-								<span class="price">
-									<% _t("Cart.PRICE","Price") %> : <strong>$UnitPrice.Nice</strong>
-								</span>
-								<span class="quantity">
-									<% _t("Cart.QUANTITY","Quantity") %> : $QuantityField
-								</span>
-								<span class="remove">
-									<a class="ajaxQuantityLink" href="$removeallLink" title="<% sprintf(_t("Cart.REMOVEALL","Remove all of &quot;%s&quot; from your cart"),$CartTitle.XML) %>">
-										<img src="ecommerce/images/remove.gif" alt="x"/>
-									</a>
-								</span>
-							</span>
-							<div class="clear"><!-- --></div>
-						</li>
-					<% end_if %>
-				<% end_control %>
-				<li class="subtotal"><% _t("Cart.SUBTOTAL","Subtotal") %>: <strong id="$CartSubTotalID">$SubTotal.Nice</strong></li>
+								</td>
+								<td class="center quantity">
+									$QuantityField
+								</td>
+								<td class="right total" id="$TableTotalID">$Total.Nice</td>
+							</tr>
+						<% end_if %>
+					<% end_control %>
 
-				<% if Modifiers %>
-				<% control Modifiers %>
-					<% if ShowInCart %>
-						<li id="$CartID" class="$Classes">
-							<span><% if Link %><% else %> id="$CartTitleID"<% end_if %> class="title">
-								<% if Link %>
-									<a id="$CartTitleID" href="$Link" title="<% sprintf(_t("Cart.READMORE","Click here to read more on &quot;%s&quot;"),$CartTitle) %>">$CartTitle</a>
-								<% else %>
-									$CartTitle
-								<% end_if %>
-							</span>
-							<span id="$CartTotalID">$CartValue</span>
-							<span class="remove">
-								<% if CanRemove %>
-									<strong>
-										<a class="ajaxQuantityLink" href="$RemoveLink" title="<% sprintf(_t("Cart.REMOVE","Remove &quot;%s&quot; from your order"),$TableTitle) %>">
-											<img src="ecommerce/images/remove.gif" alt="x"/>
-										</a>
-									</strong>
-								<% end_if %>
-							</span>
-						</li>
-					<% end_if %>
-				<% end_control %>
-				<% end_if %>
+					<tr class="gap summary hideOnZeroItems">
+						<td colspan="2" scope="row"><% _t("SUBTOTAL","Sub-total") %></td>
+						<td class="right" id="$TableSubTotalID">$SubTotal.Nice</td>
+					</tr>
 
-				<li class="total"><% _t("Cart.TOTAL","Total") %>: <strong id="$CartTotalID">$Total.Nice $Currency</strong></li>
-				<li class="buyProducts"><p><a class="checkoutButton" href="$checkoutLink" title="<% _t("Cart.CHECKOUTCLICK","Click here to go to the checkout") %>"><% _t("Cart.CHECKOUTGOTO","Go to checkout") %></a></p></li>
-			</ul>
+					<% if Modifiers %>
+					<% control Modifiers %>
+						<% if ShowInTable %>
+							<tr id="$TableID" class="$Classes hideOnZeroItems">
+								<td<% if Link %><% else %> id="$TableTitleID"<% end_if %> colspan="2" scope="row">
+									<% if Link %>
+										<a id="$TableTitleID" href="$Link" title="<% sprintf(_t("Order_Content_Editable.ss.READMORE","Click here to read more on &quot;%s&quot;"),$TableTitle) %>">$TableTitle</a>
+									<% else %>
+										$TableTitle
+									<% end_if %>
+									$Form
+								</td>
+								<td class="right total" id="$TableTotalID">$TableValue.Nice</td>
+							</tr>
+						<% end_if %>
+					<% end_control %>
+					<% end_if %>
+
+					<tr class="gap total summary hideOnZeroItems">
+						<td colspan="2" scope="row"><% _t("TOTAL","Total") %></td>
+						<td class="right total" id="$TableTotalID">$Total.Nice $Currency</td>
+					</tr>
+					<tr class="showOnZeroItems"<% if Items %> style="display: none"<% end_if %>>
+						<td colspan="3" scope="row" class="center"><% _t("NOITEMS","There are <strong>no</strong> items in your cart.") %></td>
+					</tr>
+			</tbody>
+		</table>
+
 		<% else %>
 			<p class="noItems"><% _t("Cart.NOITEMS","There are no items in your cart") %>.</p>
 		<% end_if %>
