@@ -31,15 +31,15 @@ class OrderForm extends Form {
 
 
 		if(!$member || !$member->ID || $member->Password == '') {
-			$passwordField = new ConfirmedPasswordField('Password', _t('OrderForm.PASSWORD','Password'));
+			$passwordField = new ConfirmedPasswordField('Password', _t('Order.PASSWORD','Password'));
 			//allow people to purchase without creating a password
 			$passwordField->setCanBeEmpty(false);
 			//login invite right on the top
-			$rightFields->push(new HeaderField(_t('OrderForm.MEMBERSHIPDETAILS','Account Details'), 3));
+			$rightFields->push(new HeaderField(_t('Order.MEMBERSHIPDETAILS','Account Details'), 3));
 			if(!$member->Created) {
-				$rightFields->push(new LiteralField('MemberInfo', '<p class="message good">'._t('OrderForm.MEMBERINFO','If you are already a member please')." <a href=\"Security/login?BackURL=" . CheckoutPage::find_link(true) . "/\">"._t('OrderForm.LOGIN','log in').'</a>.</p>'));
+				$rightFields->push(new LiteralField('MemberInfo', '<p class="message good">'._t('Order.MEMBERINFO','If you are already a member please')." <a href=\"Security/login?BackURL=" . CheckoutPage::find_link(true) . "/\">"._t('Order.LOGIN','log in').'</a>.</p>'));
 			}
-			$rightFields->push(new LiteralField('AccountInfo', '<p>'._t('OrderForm.ACCOUNTINFO',
+			$rightFields->push(new LiteralField('AccountInfo', '<p>'._t('Order.ACCOUNTINFO',
 				'Please <a href="#Password" class="choosePassword">choose a password</a>, so you can log in and check your order history in the future.').'</p><br/>'));
 			$rightFields->push(new FieldGroup($passwordField));
 			$requiredFields[] = 'Password[_Password]';
@@ -53,7 +53,7 @@ class OrderForm extends Form {
 		$paymentFields = Payment::combined_form_fields($totalAsCurrencyObject->Nice());
 		foreach($paymentFields as $paymentField) {
 			if($paymentField->class == "HeaderField") {
-				$paymentField->setTitle(_t("OrderForm.MAKEPAYMENT", "Make Payment"));
+				$paymentField->setTitle(_t("Order.MAKEPAYMENT", "Make Payment"));
 			}
 			$bottomFields->push($paymentField);
 		}
@@ -63,36 +63,36 @@ class OrderForm extends Form {
 		$bottomFields->setID('BottomOrder');
 		$finalFields = new CompositeField();
 		$finalFields->setID('FinalFields');
-		$finalFields->push(new HeaderField(_t('OrderForm.COMPLETEORDER','Complete Order'), 3));
+		$finalFields->push(new HeaderField(_t('Order.COMPLETEORDER','Complete Order'), 3));
 		// 3) Terms and conditions field
 		// If a terms and conditions page exists, we need to create a field to confirm the user has read it
 		if($controller->TermsPageID && $termsPage = DataObject::get_by_id('Page', $controller->TermsPageID)) {
-			$finalFields->push(new CheckboxField('ReadTermsAndConditions', _t('OrderForm.AGREEWITHTERMS1','I agree to the terms and conditions stated on the ').' <a href="'.$termsPage->URLSegment.'">'.Convert::raw2xml($termsPage->Title).'</a> '._t('OrderForm.AGREEWITHTERMS2','page.')));
+			$finalFields->push(new CheckboxField('ReadTermsAndConditions', _t('Order.AGREEWITHTERMS1','I agree to the terms and conditions stated on the ').' <a href="'.$termsPage->URLSegment.'">'.Convert::raw2xml($termsPage->Title).'</a> '._t('Order.AGREEWITHTERMS2','page.')));
 			$requiredFields[] = 'ReadTermsAndConditions';
 		}
 
-		$finalFields->push(new TextareaField('CustomerOrderNote', _t('OrderForm.CUSTOMERNOTE','Note / Question'), 7, 30));
+		$finalFields->push(new TextareaField('CustomerOrderNote', _t('Order.CUSTOMERNOTE','Note / Question'), 7, 30));
 
 		// 4) Put all the fields in one FieldSet
 		$fields = new FieldSet($rightFields, $leftFields, $bottomFields, $finalFields);
 
 		// 5) Actions and required fields creation
-		$actions = new FieldSet(new FormAction('processOrder', _t('OrderForm.PROCESSORDER','Place order and make payment')));
+		$actions = new FieldSet(new FormAction('processOrder', _t('Order.PROCESSORDER','Place order and make payment')));
 		$requiredFields = new OrderForm_Validator($requiredFields);
 		$this->extend('updateValidator',$requiredFields);
 		$this->extend('updateFields',$fields);
 		Requirements::javascript('ecommerce/javascript/OrderFormWithShippingAddress.js');
 		if(Order::get_add_shipping_fields()) {
-			$countryField = new DropdownField('ShippingCountry',  _t('OrderForm.COUNTRY','Country'), Geoip::getCountryDropDown(), ShoppingCart::get_country());
+			$countryField = new DropdownField('ShippingCountry',  _t('Order.COUNTRY','Country'), Geoip::getCountryDropDown(), ShoppingCart::get_country());
 			$shippingFields = new CompositeField(
-				new HeaderField(_t('OrderForm.SENDGOODSTODIFFERENTADDRESS','Send goods to different address'), 3),
-				new LiteralField('ShippingNote', '<p class="message warning">'._t('OrderFormWithShippingAddress.SHIPPINGNOTE','Your goods will be sent to the address below.').'</p>'),
-				new LiteralField('Help', '<p>'._t('OrderFormWithShippingAddress.HELP','You can use this for gift giving. No billing information will be disclosed to this address.').'</p>'),
-				new TextField('ShippingName', _t('OrderFormWithShippingAddress.NAME','Name')),
-				new TextField('ShippingAddress', _t('OrderFormWithShippingAddress.ADDRESS','Address')),
-				new TextField('ShippingAddress2', _t('OrderFormWithShippingAddress.ADDRESS2','')),
-				new TextField('ShippingCity', _t('OrderFormWithShippingAddress.CITY','City')),
-				new TextField('ShippingPostalCode', _t('OrderFormWithShippingAddress.SHIPPINGPOSTALCODE','Postal Code')),
+				new HeaderField(_t('Order.SENDGOODSTODIFFERENTADDRESS','Send goods to different address'), 3),
+				new LiteralField('ShippingNote', '<p class="message warning">'._t('Order.SHIPPINGNOTE','Your goods will be sent to the address below.').'</p>'),
+				new LiteralField('Help', '<p>'._t('Order.SHIPPINGHELP','You can use this for gift giving. No billing information will be disclosed to this address.').'</p>'),
+				new TextField('ShippingName', _t('Order.NAME','Name')),
+				new TextField('ShippingAddress', _t('Order.ADDRESS','Address')),
+				new TextField('ShippingAddress2', _t('Order.ADDRESS2','')),
+				new TextField('ShippingCity', _t('Order.CITY','City')),
+				new TextField('ShippingPostalCode', _t('Order.SHIPPINGPOSTALCODE','Postal Code')),
 				$countryField
 			);
 			//Need to to this because 'FormAction_WithoutLabel' has no text on the actual button
@@ -102,7 +102,7 @@ class OrderForm extends Form {
 			//$requiredFields[] = 'ShippingCountry';
 			$shippingFields->SetID('ShippingFields');
 			$shippingFields->setForm($this);
-			$fields->insertBefore(new CheckboxField('UseShippingAddress', _t('OrderForm.USEDIFFERENTSHIPPINGADDRESS', 'Use Alternative Delivery Address')), 'BottomOrder');
+			$fields->insertBefore(new CheckboxField('UseShippingAddress', _t('Order.USEDIFFERENTSHIPPINGADDRESS', 'Use Alternative Delivery Address')), 'BottomOrder');
 			$fields->insertBefore($shippingFields, 'BottomOrder');
 		}
 		// 6) Form construction
@@ -165,7 +165,7 @@ class OrderForm extends Form {
 		//check for cart items
 		if(!ShoppingCart::has_items()) {
 			// WE DO NOT NEED THE THING BELOW BECAUSE IT IS ALREADY IN THE TEMPLATE AND IT CAN LEAD TO SHOWING ORDER WITH ITEMS AND MESSAGE
-			//$form->sessionMessage(_t('OrderForm.NOITEMSINCART','Please add some items to your cart.'), 'bad');
+			//$form->sessionMessage(_t('Order.NOITEMSINCART','Please add some items to your cart.'), 'bad');
 			Director::redirectBack();
 			return false;
 		}
@@ -177,7 +177,7 @@ class OrderForm extends Form {
 		$order->calculateModifiers($force = true);
 		//TO DO: HOW CAN THESE TWO BE DIFFERENT????
 		if($order->Total() != $oldtotal) {
-			$form->sessionMessage(_t('OrderForm.PRICEUPDATED','The order price has been updated.'), 'warning');
+			$form->sessionMessage(_t('Order.PRICEUPDATED','The order price has been updated.'), 'warning');
 			Director::redirectBack();
 			return false;
 		}
@@ -341,7 +341,7 @@ class OrderForm_Cancel extends Form {
 			new HiddenField('OrderID', '', $order->ID)
 		);
 		$actions = new FieldSet(
-			new FormAction('docancel', _t('OrderForm.CANCELORDER','Cancel this order'))
+			new FormAction('docancel', _t('Order.CANCELORDER','Cancel this order'))
 		);
 		parent::__construct($controller, $name, $fields, $actions);
 	}
@@ -370,7 +370,7 @@ class OrderForm_Cancel extends Form {
 		}
 		//TODO: notify people via email??
 		if($link = AccountPage::find_link()){
-			AccountPage_Controller::set_message(_t("OrderForm.ORDERHASBEENCANCELLED","Order has been cancelled"));
+			AccountPage_Controller::set_message(_t("Order.ORDERHASBEENCANCELLED","Order has been cancelled"));
 			Director::redirect($link);
 		}
 		else{
