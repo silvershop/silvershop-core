@@ -1168,7 +1168,9 @@ class Order extends DataObject {
 		$dos = self::get_order_status_options();
 		if($dos) {
 			$firstOption = $dos->First();
-			$badOrders = DataObject::get("Order", "\"StatusID\" = '' OR \"StatusID\" = 0 OR \"StatusID\" IS NULL");
+			// TODO: somebody review please - StatusID is an INTEGER type - cannot check as a string!
+			// $badOrders = DataObject::get("Order", "\"StatusID\" = '' OR \"StatusID\" = 0 OR \"StatusID\" IS NULL");
+			$badOrders = DataObject::get("Order", "\"StatusID\" = 0 OR \"StatusID\" IS NULL");
 			if($badOrders && $firstOption) {
 				foreach($badOrders as $order) {
 					$order->StatusID = $firstOption->ID;
@@ -1204,14 +1206,43 @@ class Order extends DataObject {
 					$order->write();
 				}
 			}
- 			@DB::query("ALTER TABLE \"Order\" CHANGE COLUMN \"ShippingName\" \"_obsolete_ShippingName\" Varchar(255)");
- 			@DB::query("ALTER TABLE \"Order\" CHANGE COLUMN \"ShippingAddress\" \"_obsolete_ShippingAddress\" Varchar(255)");
- 			@DB::query("ALTER TABLE \"Order\" CHANGE COLUMN \"ShippingAddress2\" \"_obsolete_ShippingAddress2\" Varchar(255)");
- 			@DB::query("ALTER TABLE \"Order\" CHANGE COLUMN \"ShippingCity\" \"_obsolete_ShippingCity\" Varchar(255)");
- 			@DB::query("ALTER TABLE \"Order\" CHANGE COLUMN \"ShippingPostalCode\" \"_obsolete_ShippingPostalCode\" Varchar(255)");
- 			@DB::query("ALTER TABLE \"Order\" CHANGE COLUMN \"ShippingState\" \"_obsolete_ShippingState\" Varchar(255)");
- 			@DB::query("ALTER TABLE \"Order\" CHANGE COLUMN \"ShippingCountry\" \"_obsolete_ShippingCountry\" Varchar(255)");
- 			@DB::query("ALTER TABLE \"Order\" CHANGE COLUMN \"ShippingPhone\" \"_obsolete_ShippingPhone\" Varchar(255)");
+			
+			if( $db instanceof PostgreSQLDatabase ){
+				@DB::query('ALTER TABLE "Order" RENAME "ShippingName"  TO "_obsolete_ShippingName"');
+				@DB::query('ALTER TABLE "Order" ALTER "_obsolete_ShippingName" TYPE character varying(255)');
+				
+				@DB::query('ALTER TABLE "Order" RENAME "ShippingAddress"  TO "_obsolete_ShippingAddress"');
+				@DB::query('ALTER TABLE "Order" ALTER "_obsolete_ShippingAddress" TYPE character varying(255)');
+				
+				@DB::query('ALTER TABLE "Order" RENAME "ShippingAddress2"  TO "_obsolete_ShippingAddress2"');
+				@DB::query('ALTER TABLE "Order" ALTER "_obsolete_ShippingAddress2" TYPE character varying(255)');
+				
+				@DB::query('ALTER TABLE "Order" RENAME "ShippingCity"  TO "_obsolete_ShippingCity"');
+				@DB::query('ALTER TABLE "Order" ALTER "_obsolete_ShippingCity" TYPE character varying(255)');
+				
+				@DB::query('ALTER TABLE "Order" RENAME "ShippingPostalCode"  TO "_obsolete_ShippingPostalCode"');
+				@DB::query('ALTER TABLE "Order" ALTER "_obsolete_ShippingPostalCode" TYPE character varying(255)');
+				
+				@DB::query('ALTER TABLE "Order" RENAME "ShippingState"  TO "_obsolete_ShippingState"');
+				@DB::query('ALTER TABLE "Order" ALTER "_obsolete_ShippingState" TYPE character varying(255)');
+				
+				@DB::query('ALTER TABLE "Order" RENAME "ShippingCountry"  TO "_obsolete_ShippingCountry"');
+				@DB::query('ALTER TABLE "Order" ALTER "_obsolete_ShippingCountry" TYPE character varying(255)');
+				
+				@DB::query('ALTER TABLE "Order" RENAME "ShippingPhone"  TO "_obsolete_ShippingPhone"');
+				@DB::query('ALTER TABLE "Order" ALTER "_obsolete_ShippingPhone" TYPE character varying(255)');
+			}
+			else
+			{
+	 			@DB::query("ALTER TABLE \"Order\" CHANGE COLUMN \"ShippingName\" \"_obsolete_ShippingName\" Varchar(255)");
+	 			@DB::query("ALTER TABLE \"Order\" CHANGE COLUMN \"ShippingAddress\" \"_obsolete_ShippingAddress\" Varchar(255)");
+	 			@DB::query("ALTER TABLE \"Order\" CHANGE COLUMN \"ShippingAddress2\" \"_obsolete_ShippingAddress2\" Varchar(255)");
+	 			@DB::query("ALTER TABLE \"Order\" CHANGE COLUMN \"ShippingCity\" \"_obsolete_ShippingCity\" Varchar(255)");
+	 			@DB::query("ALTER TABLE \"Order\" CHANGE COLUMN \"ShippingPostalCode\" \"_obsolete_ShippingPostalCode\" Varchar(255)");
+	 			@DB::query("ALTER TABLE \"Order\" CHANGE COLUMN \"ShippingState\" \"_obsolete_ShippingState\" Varchar(255)");
+	 			@DB::query("ALTER TABLE \"Order\" CHANGE COLUMN \"ShippingCountry\" \"_obsolete_ShippingCountry\" Varchar(255)");
+	 			@DB::query("ALTER TABLE \"Order\" CHANGE COLUMN \"ShippingPhone\" \"_obsolete_ShippingPhone\" Varchar(255)");
+			}
 		}
 		//move to ShippingAddress
 		$db = DB::getConn();
@@ -1250,7 +1281,7 @@ class Order extends DataObject {
 								}
 							}
 							if($CartObject = DataObject::get_one("OrderStep", "\"Code\" = 'CREATED'")) {
-								DB::query("UPDATE \"Order\" SET StatusID = ".$CartObject->ID." WHERE \"Order\".\"ID\" = ".$row["ID"]);
+								DB::query("UPDATE \"Order\" SET \"StatusID\" = ".$CartObject->ID." WHERE \"Order\".\"ID\" = ".$row["ID"]);
 							}
 							break;
 						case "Query":
@@ -1261,7 +1292,7 @@ class Order extends DataObject {
 								}
 							}
 							if($UnpaidObject = DataObject::get_one("OrderStep", "\"Code\" = 'SUBMITTED'")) {
-								DB::query("UPDATE \"Order\" SET StatusID = ".$UnpaidObject->ID." WHERE \"Order\".\"ID\" = ".$row["ID"]);
+								DB::query("UPDATE \"Order\" SET \"StatusID\" = ".$UnpaidObject->ID." WHERE \"Order\".\"ID\" = ".$row["ID"]);
 							}
 
 							break;
@@ -1273,7 +1304,7 @@ class Order extends DataObject {
 								}
 							}
 							if($PaidObject = DataObject::get_one("OrderStep", "\"Code\" = 'PAID'")) {
-								DB::query("UPDATE \"Order\" SET StatusID = ".$PaidObject->ID." WHERE \"Order\".\"ID\" = ".$row["ID"]);
+								DB::query("UPDATE \"Order\" SET \"StatusID\" = ".$PaidObject->ID." WHERE \"Order\".\"ID\" = ".$row["ID"]);
 							}
 							break;
 						case "Sent":
@@ -1284,7 +1315,7 @@ class Order extends DataObject {
 								}
 							}
 							if($SentObject = DataObject::get_one("OrderStep", "\"Code\" = 'SENT'")) {
-								DB::query("UPDATE \"Order\" SET StatusID = ".$SentObject->ID." WHERE \"Order\".\"ID\" = ".$row["ID"]);
+								DB::query("UPDATE \"Order\" SET \"StatusID\" = ".$SentObject->ID." WHERE \"Order\".\"ID\" = ".$row["ID"]);
 							}
 							break;
 						case "AdminCancelled":
@@ -1299,7 +1330,7 @@ class Order extends DataObject {
 									$adminID = 1;
 								}
 							}
-							DB::query("UPDATE \"Order\" SET StatusID = ".$AdminCancelledObject->ID." WHERE \"Order\".\"ID\" = ".$row["ID"].", \"CancelledByID\" = ".$adminID);
+							DB::query("UPDATE \"Order\" SET \"StatusID\" = ".$AdminCancelledObject->ID." WHERE \"Order\".\"ID\" = ".$row["ID"].", \"CancelledByID\" = ".$adminID);
 							break;
 						case "MemberCancelled":
 							if(!$MemberCancelledObject) {
@@ -1307,12 +1338,18 @@ class Order extends DataObject {
 									singleton('OrderStep')->requireDefaultRecords();
 								}
 							}
-							DB::query("UPDATE \"Order\" SET StatusID = ".$MemberCancelledObject->ID.", \"CancelledByID\" = \"MemberID\" WHERE \"Order\".\"ID\" = '".$row["ID"]."'");
+							DB::query("UPDATE \"Order\" SET \"StatusID\" = ".$MemberCancelledObject->ID.", \"CancelledByID\" = \"MemberID\" WHERE \"Order\".\"ID\" = '".$row["ID"]."'");
 							break;
 					}
 				}
 			}
- 			@DB::query("ALTER TABLE \"Order\" CHANGE COLUMN \"Status\" \"_obsolete_Status\" Varchar(255)");
+			if( $db instanceof PostgreSQLDatabase ) {
+				@DB::query('ALTER TABLE "Order" RENAME "Status"  TO "_obsolete_Status"');
+				@DB::query('ALTER TABLE "Order" ALTER "_obsolete_Status" TYPE character varying(255)');
+			}
+			else {
+			 	@DB::query("ALTER TABLE \"Order\" CHANGE COLUMN \"Status\" \"_obsolete_Status\" Varchar(255)");
+			}
 		}
 	}
 
