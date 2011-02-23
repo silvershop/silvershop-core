@@ -152,7 +152,7 @@ class OrderStep extends DataObject {
 		//TO DO: add warning messages and break up fields
 		$fields = parent::getCMSFields();
 		//replacing
-		$fields->addFieldToTab("Root.Description", new TextareaField("Description", _t("OrderStep.DESCRIPTION", "Description"), 5));
+		$fields->addFieldToTab("Root.Description", new TextareaField("Description", _t("OrderStep.DESCRIPTION", "Internal Description"), 5));
 		$fields->addFieldToTab("Root.CustomerMessage", new HTMLEditorField("CustomerMessage", _t("OrderStep.CUSTOMERMESSAGE", "Customer Message"), 5));
 		//adding
 		if(!$this->ID || !$this->isDefaultStatusOption()) {
