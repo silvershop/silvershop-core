@@ -58,6 +58,18 @@ class OrderStep extends DataObject {
 		"ShowAsCompletedOrderNice" => "Varchar"
 	);
 
+
+	public static $searchable_fields = array(
+		'Name' => array(
+			'title' => 'Name',
+			'filter' => 'PartialMatchFilter'
+		),
+		'Code' => array(
+			'title' => 'Code',
+			'filter' => 'PartialMatchFilter'
+		)
+	);
+
 	function CustomerCanEditNice() {if($this->CustomerCanEdit) {return _t("OrderStep.YES", "Yes");}return _t("OrderStep.NO", "No");}
 	function CustomerCanPayNice() {if($this->CustomerCanPay) {return _t("OrderStep.YES", "Yes");}return _t("OrderStep.NO", "No");}
 	function CustomerCanCancelNice() {if($this->CustomerCanCancel) {return _t("OrderStep.YES", "Yes");}return _t("OrderStep.NO", "No");}
