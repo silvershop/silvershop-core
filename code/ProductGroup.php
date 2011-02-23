@@ -256,7 +256,8 @@ class ProductGroup_Controller extends Page_Controller {
 	 * Return the products for this group.
 	 */
 	public function Products($recursive = true){
-		return $this->ProductsShowable("\"FeaturedProduct\" = 1",$recursive);
+	//	return $this->ProductsShowable("\"FeaturedProduct\" = 1",$recursive);
+		return $this->ProductsShowable('',$recursive);
 	}
 
 	/**
