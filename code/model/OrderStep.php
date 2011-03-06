@@ -152,7 +152,7 @@ class OrderStep extends DataObject {
 		//TO DO: add warning messages and break up fields
 		$fields = parent::getCMSFields();
 		//replacing
-		$fields->addFieldToTab("Root.Description", new TextareaField("Description", _t("OrderStep.DESCRIPTION", "Internal Description"), 5));
+		$fields->addFieldToTab("Root.InternalDescription", new TextareaField("Description", _t("OrderStep.DESCRIPTION", "Explanation for internal use only"), 5));
 		$fields->addFieldToTab("Root.CustomerMessage", new HTMLEditorField("CustomerMessage", _t("OrderStep.CUSTOMERMESSAGE", "Customer Message"), 5));
 		//adding
 		if(!$this->ID || !$this->isDefaultStatusOption()) {
@@ -164,7 +164,7 @@ class OrderStep extends DataObject {
 		}
 		//headers
 		$fields->addFieldToTab("Root.Main", new HeaderField("WARNING1", _t("OrderStep.CAREFUL", "CAREFUL! please edit with care"), 1), "Name");
-		$fields->addFieldToTab("Root.Main", new HeaderField("WARNING2", _t("OrderStep.CUSTOMERCANCHANGE", "What can be changed?"), 3), "CustomerCanEdit");
+		$fields->addFieldToTab("Root.Main", new HeaderField("WARNING2", _t("OrderStep.CUSTOMERCANCHANGE", "What can be changed during this step?"), 3), "CustomerCanEdit");
 		$fields->addFieldToTab("Root.Main", new HeaderField("WARNING5", _t("OrderStep.ORDERGROUPS", "Order groups for customer?"), 3), "ShowAsUncompletedOrder");
 		$fields->addFieldToTab("Root.Main", new HeaderField("WARNING7", _t("OrderStep.SORTINGINDEXHEADER", "Index Number (lower number come first)"), 3), "Sort");
 		return $fields;
@@ -417,6 +417,12 @@ class OrderStep_SentInvoice extends OrderStep {
 			}
 		}
 		return true;
+	}
+
+	public function getCMSFields() {
+		$fields = parent::getCMSFields();
+		$fields->addFieldToTab("Root.Main", new HeaderField("ACTUALLYSEND", _t("OrderStep.ACTUALLYSEND", "Actually Send the invoice?"), 1), "SendInvoiceToCustomer");
+		return $fields;
 	}
 
 	public function nextStep($order) {

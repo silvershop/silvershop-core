@@ -85,6 +85,7 @@ Buyable::add_class("Product");
 //ProductGroup::set_only_show_products_that_can_purchase(true);
 
 // * * * EMAILS
+//Email::setAdminEmail("cool@bool.com");
 //Order_Email::set_send_all_emails_plain(true);
 //Order_Email::set_copy_to_admin_for_all_emails(false);
 

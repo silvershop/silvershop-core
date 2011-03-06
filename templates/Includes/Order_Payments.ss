@@ -18,7 +18,7 @@
 			<td class="center">$LastEdited.Nice24</td>
 			<td class="center">$Status</td>
 			<td class="center">$PaymentMethod</td>
-			<td class="center">$Message.NoHTML</td>
+			<td class="left">$Message.NoHTML</td>
 			<td class="right">$Amount.Nice $Currency</td>
 		</tr>
 	<% end_control %>

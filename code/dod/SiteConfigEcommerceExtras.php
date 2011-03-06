@@ -62,6 +62,9 @@ class SiteConfigEcommerceExtras extends DataObjectDecorator {
 		if($siteConfig) {
 			if(!$siteConfig->ReceiptEmail) {
 				$siteConfig->ReceiptEmail = Email::getAdminEmail();
+				if(!$siteConfig->ReceiptEmail) {
+					user_error("you must set an AdminEmail (Email::setAdminEmail)", E_USER_NOTICE);
+				}
 				$update[]= "created default entry for ReceiptEmail";
 			}
 			if(!$siteConfig->ReceiptSubject) {
