@@ -6,7 +6,8 @@
   *
   * This file contains a 'stand-alone' formatting of a full order for email and for printing.
   *
-  *
+  * To specifically apply formatting to email use: #EmailContent ...
+  * To specifically apply to printing use @media print { ...}
   **/
 
 h1.title{
