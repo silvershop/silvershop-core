@@ -6,7 +6,7 @@
 	<% if ShippingCity %>$ShippingCity<br /><% end_if %>
 	<% if ShippingState %>$ShippingState<br /><% end_if %>
 	<% if ShippingPostalCode %>$ShippingPostalCode<br /><% end_if %>
-	<% if ShippingFullCountryName %>$ShippingFullCountryName<br /><% end_if %>
+	<% if ShippingFullCountryName %>$ShippingFullCountryName $ShippingCountry<br /><% end_if %>
 	<% if ShippingPhone %>$ShippingPhone<% end_if %>
 </address>
 <% end_control %>
