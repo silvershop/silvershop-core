@@ -20,6 +20,9 @@ class EcommerceRole extends DataObjectDecorator {
 				'Country' => 'Varchar(200)',
 				'Phone' => 'Varchar(100)',
 				'Notes' => 'HTMLText'
+			),
+			'casting' => array(
+				"FullCountryName" => "Varchar"
 			)
 		);
 	}
@@ -237,9 +240,15 @@ class EcommerceRole extends DataObjectDecorator {
 		return $member;
 	}
 
+	public function FullCountryName() {
+		return self::find_country_title($this->Country);
+	}
+
 	function updateCMSFields(&$fields) {
 		$fields->replaceField('Country', new DropdownField('Country', 'Country', Geoip::getCountryDropDown()));
 	}
+
+
 
 	public function list_of_allowed_countries_for_dropdown() {
 		$keys = array();
