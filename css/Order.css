@@ -4,30 +4,11 @@
   * Also make sure you have the site's general layout and typography styled before you do this.
   **/
 
-.block .status {
-	float:left;
-	width:25%;
-	text-align:center;
-}
+.block .status { float: left; width: 25%; text-align: center; }
+.block.left, .block.right { width: 48%; }
+.block.left { float: left; }
+.block.right { float: right; }
 
-.block.left, .block.right {
-	width:48%;
-}
+.block table { width: 100%; background: #fdfdfd; margin: 0 auto; }
 
-.block.left {
-	float:left;
-}
-
-.block.right {
-	float:right;
-}
-
-	.block table {
-		width: 100%;
-		background: #fdfdfd;
-		margin:0 auto;
-	}
-
-table.infotable{
-	width:100%;
-}
+table.infotable { width: 100%; }

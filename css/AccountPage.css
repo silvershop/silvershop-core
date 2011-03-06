@@ -8,31 +8,8 @@
  * Past orders div containing the order history styling
  */
 
-/* create a box floated to the right */
-#PastOrders {
-	float: right;
-	width: 45%;
-}
-
-/*
- * Member form styling, and tweaks to the login form as well
- */
-#ShopAccountForm_MemberForm {
-	width: 45%;
-}
-
-/* these labels don't have a bold font weight, so apply it */
-#ShopAccountForm_MemberForm label.left,
-#LoginForm_LoginForm label.left {
-	font-weight: bold;
-	float: left;
-	width: 150px;
-}
-/* country select dropdown width is wrong, so reapply it */
-#ShopAccountForm_MemberForm #Country select {
-	width: 305px;
-}
-#PrintPageIcon img{
-	cursor: pointer;
-}
-
+#PastOrders { float: right; width: 45%; }
+#ShopAccountForm_MemberForm { width: 45%; }
+	#ShopAccountForm_MemberForm label.left, #LoginForm_LoginForm label.left { font-weight: bold; float: left; width: 150px; }
+	#ShopAccountForm_MemberForm #Country select { width: 305px; }
+#PrintPageIcon img { cursor: pointer; }
