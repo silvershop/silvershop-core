@@ -29,7 +29,9 @@ class ShippingAddress extends DataObject {
 		array( 'name' => 'SearchFields', 'type' => 'fulltext', 'value' => 'ShippingAddress, ShippingAddress2, ShippingCity, ShippingPostalCode, ShippingState, ShippingPhone' )
 	);
 
-	public static $casting = array(); //adds computed fields that can also have a type (e.g.
+	public static $casting = array(
+		"ShippingFullCountryName" => "Varchar"
+	);
 
 	public static $searchable_fields = array(
 		'OrderID' => array(
@@ -69,6 +71,10 @@ class ShippingAddress extends DataObject {
 			$newArray[$key] = $key;
 		}
 		return $newArray;
+	}
+
+	function ShippingFullCountryName() {
+		return EcommerceRole::find_country_title($this->ShippingCountry);
 	}
 
 	function getCMSFields() {
