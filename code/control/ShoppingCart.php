@@ -374,7 +374,7 @@ class ShoppingCart extends Controller {
 	 */
 	static function get_order_item_by_buyableid($buyableID, $orderItemClassName = "OrderItem", $parameters = null ) {
 		if(!ClassInfo::is_subclass_of($orderItemClassName, "OrderItem")) {
-			user_error("$className needs to be a subclass of OrderItem", E_USER_WARNING);
+			user_error("$orderItemClassName needs to be a subclass of OrderItem", E_USER_WARNING);
 		}
 		$filter = self::turn_params_into_sql($parameters = null);
 		$order = self::current_order();
