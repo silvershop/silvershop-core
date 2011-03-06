@@ -241,7 +241,7 @@ class EcommerceRole extends DataObjectDecorator {
 	}
 
 	public function FullCountryName() {
-		return self::find_country_title($this->Country);
+		return self::find_country_title($this->owner->Country);
 	}
 
 	function updateCMSFields(&$fields) {
