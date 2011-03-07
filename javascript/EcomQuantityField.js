@@ -39,8 +39,8 @@ EcomQuantityField = {
 
 				}
 				jQuery(this).removeAttr('disabled');
-				jQuery(this).change(
-					function() {
+				jQuery(this).keyup(
+					function(charCode) {
 						var name = jQuery(this).attr('name')+ '_SetQuantityLink';
 						var setQuantityLink = jQuery('[name=' + name + ']');
 						if(jQuery(setQuantityLink).length > 0) {
