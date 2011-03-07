@@ -421,7 +421,7 @@ class OrderStep_SentInvoice extends OrderStep {
 
 	public function getCMSFields() {
 		$fields = parent::getCMSFields();
-		$fields->addFieldToTab("Root.Main", new HeaderField("ACTUALLYSEND", _t("OrderStep.ACTUALLYSEND", "Actually Send the invoice?"), 1), "SendInvoiceToCustomer");
+		$fields->addFieldToTab("Root.Main", new HeaderField("ACTUALLYSENDINVOICE", _t("OrderStep.ACTUALLYSENDINVOICE", "Actually send the invoice?"), 1), "SendInvoiceToCustomer");
 		return $fields;
 	}
 
@@ -545,6 +545,13 @@ class OrderStep_SentReceipt extends OrderStep {
 			return $nextOrderStepObject;
 		}
 		return null;
+	}
+
+
+	public function getCMSFields() {
+		$fields = parent::getCMSFields();
+		$fields->addFieldToTab("Root.Main", new HeaderField("ACTUALLYSENDRECEIPT", _t("OrderStep.ACTUALLYSENDRECEIPT", "Actually send the receipt?"), 1), "SendReceiptToCustomer");
+		return $fields;
 	}
 
 }
