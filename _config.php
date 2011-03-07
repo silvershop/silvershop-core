@@ -86,6 +86,7 @@ Buyable::add_class("Product");
 
 // * * * EMAILS
 //Email::setAdminEmail("cool@bool.com");
+//Order_Email::set_css_file_location("themes/mytheme_ecommerce/css/OrderReport.css");
 //Order_Email::set_send_all_emails_plain(true);
 //Order_Email::set_copy_to_admin_for_all_emails(false);
 

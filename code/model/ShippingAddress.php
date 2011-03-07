@@ -16,7 +16,7 @@ class ShippingAddress extends DataObject {
 		'ShippingCity' => 'Text',
 		'ShippingPostalCode' => 'Varchar(30)',
 		'ShippingState' => 'Varchar(30)',
-		'ShippingCountry' => 'Varchar(200)',
+		'ShippingCountry' => 'Varchar(4)',
 		'ShippingPhone' => 'Varchar(200)'
 	);
 
@@ -77,10 +77,6 @@ class ShippingAddress extends DataObject {
 		return EcommerceRole::find_country_title($this->ShippingCountry);
 	}
 
-	function getShippingFullCountryName() {
-		return EcommerceRole::find_country_title($this->ShippingCountry);
-	}
-
 	function getCMSFields() {
 		$fields = parent::getCMSFields();
 		$fields->replaceField("OrderID", $fields->dataFieldByName("OrderID")->performReadonlyTransformation());
@@ -93,19 +89,19 @@ class ShippingAddress extends DataObject {
 		return $fields;
 	}
 
-	function makeShippingAddressFromMember($member = null) {
+	function makeShippingAddressFromMember($member = null, $forceOverRide = false) {
 		if(!$member) {
 			$member = Member::currentUser();
 		}
 		if($member) {
-			$this->ShippingName = $member->Title;
-			$this->ShippingAddress = $member->Address;
-			$this->ShippingAddress2 = $member->AddressLine2;
-			$this->ShippingCity = $member->City;
-			$this->ShippingPostalCode = $member->PostalCode;
-			$this->ShippingState = $member->State;
-			$this->ShippingCountry = $member->Country;
-			$this->ShippingPhone = $member->Phone;
+			if(!$this->ShippingName || $forceOverRide) $this->ShippingName = $member->Title;
+			if(!$this->ShippingAddress || $forceOverRide) $this->ShippingAddress = $member->Address;
+			if(!$this->ShippingAddress2 || $forceOverRide) $this->ShippingAddress2 = $member->AddressLine2;
+			if(!$this->ShippingCity || $forceOverRide) $this->ShippingCity = $member->City;
+			if(!$this->ShippingPostalCode || $forceOverRide) $this->ShippingPostalCode = $member->PostalCode;
+			if(!$this->ShippingState || $forceOverRide) $this->ShippingState = $member->State;
+			if(!$this->ShippingCountry || $forceOverRide) $this->ShippingCountry = $member->Country;
+			//if(!$this->ShippingPhone || $forceOverRide) $this->ShippingPhone = $member->Phone;
 		}
 		return $this;
 	}
