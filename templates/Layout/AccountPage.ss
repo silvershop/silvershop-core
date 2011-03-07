@@ -1,3 +1,3 @@
-<div id="AccountPageGeneral" class="typography">
+<div id="AccountPageGeneral">
 <% include AccountPageGeneral %>
 </div>
