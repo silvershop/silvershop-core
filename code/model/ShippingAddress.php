@@ -77,6 +77,10 @@ class ShippingAddress extends DataObject {
 		return EcommerceRole::find_country_title($this->ShippingCountry);
 	}
 
+	function getShippingFullCountryName() {
+		return EcommerceRole::find_country_title($this->ShippingCountry);
+	}
+
 	function getCMSFields() {
 		$fields = parent::getCMSFields();
 		$fields->replaceField("OrderID", $fields->dataFieldByName("OrderID")->performReadonlyTransformation());
