@@ -1168,8 +1168,6 @@ class Order extends DataObject {
 		$dos = self::get_order_status_options();
 		if($dos) {
 			$firstOption = $dos->First();
-			// TODO: somebody review please - StatusID is an INTEGER type - cannot check as a string!
-			// $badOrders = DataObject::get("Order", "\"StatusID\" = '' OR \"StatusID\" = 0 OR \"StatusID\" IS NULL");
 			$badOrders = DataObject::get("Order", "\"StatusID\" = 0 OR \"StatusID\" IS NULL");
 			if($badOrders && $firstOption) {
 				foreach($badOrders as $order) {
@@ -1206,29 +1204,29 @@ class Order extends DataObject {
 					$order->write();
 				}
 			}
-			
+
 			if( $db instanceof PostgreSQLDatabase ){
 				@DB::query('ALTER TABLE "Order" RENAME "ShippingName"  TO "_obsolete_ShippingName"');
 				@DB::query('ALTER TABLE "Order" ALTER "_obsolete_ShippingName" TYPE character varying(255)');
-				
+
 				@DB::query('ALTER TABLE "Order" RENAME "ShippingAddress"  TO "_obsolete_ShippingAddress"');
 				@DB::query('ALTER TABLE "Order" ALTER "_obsolete_ShippingAddress" TYPE character varying(255)');
-				
+
 				@DB::query('ALTER TABLE "Order" RENAME "ShippingAddress2"  TO "_obsolete_ShippingAddress2"');
 				@DB::query('ALTER TABLE "Order" ALTER "_obsolete_ShippingAddress2" TYPE character varying(255)');
-				
+
 				@DB::query('ALTER TABLE "Order" RENAME "ShippingCity"  TO "_obsolete_ShippingCity"');
 				@DB::query('ALTER TABLE "Order" ALTER "_obsolete_ShippingCity" TYPE character varying(255)');
-				
+
 				@DB::query('ALTER TABLE "Order" RENAME "ShippingPostalCode"  TO "_obsolete_ShippingPostalCode"');
 				@DB::query('ALTER TABLE "Order" ALTER "_obsolete_ShippingPostalCode" TYPE character varying(255)');
-				
+
 				@DB::query('ALTER TABLE "Order" RENAME "ShippingState"  TO "_obsolete_ShippingState"');
 				@DB::query('ALTER TABLE "Order" ALTER "_obsolete_ShippingState" TYPE character varying(255)');
-				
+
 				@DB::query('ALTER TABLE "Order" RENAME "ShippingCountry"  TO "_obsolete_ShippingCountry"');
 				@DB::query('ALTER TABLE "Order" ALTER "_obsolete_ShippingCountry" TYPE character varying(255)');
-				
+
 				@DB::query('ALTER TABLE "Order" RENAME "ShippingPhone"  TO "_obsolete_ShippingPhone"');
 				@DB::query('ALTER TABLE "Order" ALTER "_obsolete_ShippingPhone" TYPE character varying(255)');
 			}
