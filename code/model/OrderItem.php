@@ -70,17 +70,22 @@ class OrderItem extends OrderAttribute {
 		$fields->removeByName("Version");
 		$fields->removeByName("Sort");
 		$fields->removeByName("OrderAttribute_GroupID");
-		$buyables = Buyable::getget_array_of_buyables();
+		$buyables = Buyable::get_array_of_buyables();
 		$classNameArray = array();
 		$buyablesArray = array();
 		if($buyables && count($buyables)) {
 			foreach($buyables as $buyable) {
 				$classNameArray[$buyable.Buyable::get_order_item_class_name_post_fix()] = $buyable;
-				$buyablesArray = DataObject::get($classNameArray);
+				$newObjects = DataObject::get($buyable);
+				if($newObjects) {
+					$buyablesArray = array_merge($buyablesArray, $newObjects->toDropDownMap());
+				}
 			}
 		}
-		$fields->addFieldToTab("Root", new DropdownField("ClassName", _t("Order.TYPE", "Type"), $classNameArray));
-		$fields->replaceField("BuyableID", new DropdownField());
+		if(count($classNameArray)) {
+			$fields->addFieldToTab("Root.Main", new DropdownField("ClassName", _t("OrderItem.TYPE", "Type"), $classNameArray));
+			$fields->replaceField("BuyableID", new DropdownField("BuyableID", _t("OrderItem.BOUGHT", "Bought"), $buyablesArray));
+		}
 		return $fields;
 	}
 	function scaffoldSearchFields(){

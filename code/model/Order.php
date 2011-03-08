@@ -257,12 +257,18 @@ class Order extends DataObject {
 	}
 
 	function validate() {
-		if(!$this->ID || $this->StatusID) {
-			return parent::validate();
+		if($this->StatusID) {
+			//do nothing
 		}
 		else {
-			return new ValidationError(false, _t("Order.MUSTSETSTATUS", "You must set a status"));
+			if($firstStep = DataObject::get_one("OrderStep")) {
+				$this->StatusID = $firstStep->ID;
+			}
+			else {
+				return new ValidationResult(false, _t("Order.MUSTSETSTATUS", "You must set a status"));
+			}
 		}
+		return parent::validate();
 	}
 
 	function getCMSFields(){
@@ -620,6 +626,7 @@ class Order extends DataObject {
 	 */
 	protected function sendEmail($emailClass, $subject, $replacementArray = array(), $resend = false) {
 		$replacementArray["Order"] = $this;
+		$replacementArray["EmailLogo"] = SiteConfig::current_site_config()->EmailLogo();
  		$from = self::get_receipt_email();
  		$to = $this->Member()->Email;
 		//TO DO: should be a payment specific message as well???

@@ -341,7 +341,9 @@ class OrderStep_Created extends OrderStep {
 	public function nextStep($order) {
 		$nextOrderStepObject = parent::nextStep($order);
 		if($order->TotalItems()) {
-			return $nextOrderStepObject;
+			if($order->MemberID) {
+				return $nextOrderStepObject;
+			}
 		}
 		return null;
 	}

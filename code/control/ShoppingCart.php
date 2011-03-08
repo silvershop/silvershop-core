@@ -47,6 +47,7 @@ class ShoppingCart extends Controller {
 		'numberofitemsincart',
 		'showcart',
 		'loadorder',
+		'copyorder',
 		'debug' => 'SHOP_ADMIN'
 	);
 
@@ -198,6 +199,30 @@ class ShoppingCart extends Controller {
 			}
 		}
 		return null;
+	}
+
+	public static function copy_order($oldOrderID) {
+		$oldOrder = DataObject::get_by_id("Order", $oldOrderID);
+		if(!$oldOrder) {
+			user_error("Could not find old order", E_USER_NOTICE);
+		}
+		else {
+			$newOrder = new Order();
+			$fieldList = array_keys(DB::fieldList("Order"));
+			$newOrder->write();
+			self::load_order($newOrder->ID, $oldOrder->MemberID);
+			self::$order = $newOrder;
+			self::initialise_new_order();
+			$items = DataObject::get("OrderItem", "\"OrderID\" = ".$oldOrder->ID);
+			if($items) {
+				foreach($items as $item) {
+					$buyable = $item->Buyable($current = true);
+					self::add_buyable($buyable, $item->Quantity);
+				}
+			}
+			$newOrder->write();
+			return $newOrder;
+		}
 	}
 
 	public static function current_order() {
@@ -696,12 +721,23 @@ class ShoppingCart extends Controller {
 	}
 
 	function loadorder($request) {
-		if($orderID = Director::urlParam('Action') && is_numeric(Director::urlParam('Action'))) {
+		$orderID = Director::urlParam('ID');
+		if($orderID == intval($orderID)) {
 			if(self::load_order($orderID)) {
-				$this->returnMessage("success", _t("ShoppingCart.ORDERLOADEDSUCCESSFULLY", "Order has been loaded."));
+				return $this->returnMessage("success", _t("ShoppingCart.ORDERLOADEDSUCCESSFULLY", "Order has been loaded."));
 			}
 		}
-		$this->returnMessage("failure", _t("ShoppingCart.ORDERLOADEDSUCCESSFULLY", "Order could not be loaded."));
+		return $this->returnMessage("failure", _t("ShoppingCart.ORDERNOTLOADEDSUCCESSFULLY", "Order could not be loaded."));
+	}
+
+	function copyorder($request) {
+		$orderID = Director::urlParam('ID');
+		if($orderID == intval($orderID)) {
+			if(self::copy_order(intval($orderID))) {
+				return $this->returnMessage("success", _t("ShoppingCart.ORDERCREATEDSUCCESSFULLY", "Order has been created."));
+			}
+		}
+		return $this->returnMessage("failure", _t("ShoppingCart.ORDERNOTCREATEDSUCCESSFULLY", "Order could not be created."));
 	}
 
 	/**

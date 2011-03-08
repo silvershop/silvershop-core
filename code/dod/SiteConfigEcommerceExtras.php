@@ -20,6 +20,9 @@ class SiteConfigEcommerceExtras extends DataObjectDecorator {
 				"PostalCodeURL" => "Varchar(255)",
 				"PostalCodeLabel" => "Varchar(255)",
 				"NumberOfProductsPerPage" => "Int"
+			),
+			'has_one' => array(
+				"EmailLogo" => "Image"
 			)
 		);
 	}
@@ -39,7 +42,8 @@ class SiteConfigEcommerceExtras extends DataObjectDecorator {
 			new Tab('Emails',
 				new EmailField("ReceiptEmail", "From email address for shop receipt (e.g. sales@myshop.com)"),
 				new TextField("ReceiptSubject", "Subject for shop receipt email ('{OrderNumber}' will be replaced with actual order number - e.g. 'thank you for your order (#{OrderNumber})');"),
-				new TextField("DispatchEmailSubject", "Default subject for dispatch email (e.g. your order has been sent)")
+				new TextField("DispatchEmailSubject", "Default subject for dispatch email (e.g. your order has been sent)"),
+				new ImageField("EmailLogo", "Email Logo")
 			),
 			new Tab('Legal',
 				new HTMLEditorField("ShopPhysicalAddress", "Shop physical address", 5,5)

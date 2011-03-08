@@ -299,14 +299,20 @@ class Product_OrderItem extends OrderItem {
 	}
 
 	function UnitPrice() {
-		$unitprice = $this->Product()->Price;
-		$this->extend('updateUnitPrice',$unitprice);
+		$unitprice = 0;
+		if($this->Product()) {
+			$unitprice = $this->Product()->Price;
+			$this->extend('updateUnitPrice',$unitprice);
+		}
 		return $unitprice;
 	}
 
 	function TableTitle() {
-		$tabletitle = $this->Product()->Title;
-		$this->extend('updateTableTitle',$tabletitle);
+		$tabletitle = _t("Product.UNKNOWN", "Unknown Product");
+		if($this->Product()) {
+			$tabletitle = $this->Product()->Title;
+			$this->extend('updateTableTitle',$tabletitle);
+		}
 		return $tabletitle;
 	}
 
