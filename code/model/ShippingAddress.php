@@ -34,7 +34,7 @@ class ShippingAddress extends DataObject {
 	);
 
 	public static $casting = array(
-		"ShippingFullCountryName" => "Varchar"
+		"ShippingFullCountryName" => "Varchar(200)"
 	);
 
 	public static $searchable_fields = array(
@@ -75,6 +75,10 @@ class ShippingAddress extends DataObject {
 			$newArray[$key] = $key;
 		}
 		return $newArray;
+	}
+
+	function getShippingFullCountryName() {
+		return $this->ShippingFullCountryName();
 	}
 
 	function ShippingFullCountryName() {
