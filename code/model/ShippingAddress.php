@@ -26,7 +26,11 @@ class ShippingAddress extends DataObject {
 
 	static $indexes = array(
 		// "SearchFields" => "fulltext (ShippingAddress, ShippingAddress2, ShippingCity, ShippingPostalCode, ShippingState, ShippingPhone)"
-		array( 'name' => 'SearchFields', 'type' => 'fulltext', 'value' => 'ShippingAddress, ShippingAddress2, ShippingCity, ShippingPostalCode, ShippingState, ShippingPhone' )
+		array(
+			'name' => 'SearchFields',
+			'type' => 'fulltext',
+			'value' => 'ShippingAddress, ShippingAddress2, ShippingCity, ShippingPostalCode, ShippingState, ShippingPhone'
+		)
 	);
 
 	public static $casting = array(
