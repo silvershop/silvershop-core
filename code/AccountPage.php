@@ -75,7 +75,7 @@ class AccountPage extends Page {
 	 */
 	function IncompleteOrders() {
 		$statusFilter = "\"OrderStep\".\"ShowAsUncompletedOrder\" = 1 ";
-		$orders = $this->otherOrderSQL($statusFilter);
+		return $this->otherOrderSQL($statusFilter);
 	}
 
 	/**
@@ -240,10 +240,13 @@ class AccountPage_Controller extends Page_Controller {
 			else {
 				$this->message = _t('AccountPage.RECEIPTNOTSENTNOEMAIL', 'No email could be found for sending this receipt.');
 			}
+			
+			Director::redirect($o->Link());
 		}
 		else {
 			$this->message = _t('AccountPage.RECEIPTNOTSENTNOORDER', 'Order could not be found.');
 		}
+		
 		return array();
 	}
 

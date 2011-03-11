@@ -106,7 +106,7 @@ class ShopAccountForm_Validator extends RequiredFields{
 			if(DataObject::get_one('Member',"$field = '$uid' AND ID != ".$memberID)){
 				$this->validationError(
 					$field,
-					"\"$uid\" "._t('Account.ALREADYTAKEN', ' is already taken by another member. Please log in or use another "'.$uid.'".'),
+					"\"$uid\" "._t('Account.ALREADYTAKEN', ' is already taken by another member. Please log in or use another'),
 					"required"
 				);
 				$valid = false;
