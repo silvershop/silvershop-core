@@ -189,7 +189,7 @@ class OrderForm extends Form {
 		if(!$member) {
 			$form->sessionMessage(
 				_t(
-					'OrderForm.MEMBEREXISTS',
+					'Order.MEMBEREXISTS',
 					'Sorry, an account with that email address already exists. If this is your email address, please log in first before placing your order.'
 				),
 				'bad'
@@ -270,15 +270,15 @@ class OrderForm_Validator extends ShopAccountForm_Validator{
 			if(!$data["ReadTermsAndConditions"]) {
 				$this->validationError(
 					"ReadTermsAndConditions",
-					_t("OrderForm_Validator.READTERMSANDCONDITIONS", "Have you read the terms and conditions?"),
+					_t("Order.READTERMSANDCONDITIONS", "Have you read the terms and conditions?"),
 					"required"
 				);
 				$valid = false;
 			}
 		}
 		if(!$valid) {
-			$this->form->sessionMessage(_t("OrderForm_Validator.ERRORINFORM", "We could not proceed with your order, please check your errors below."), "bad");
-			$this->form->messageForForm("OrderForm", _t("OrderForm_Validator.ERRORINFORM", "We could not proceed with your order, please check your errors below."), "bad");
+			$this->form->sessionMessage(_t("Order.ERRORINFORM", "We could not proceed with your order, please check your errors below."), "bad");
+			$this->form->messageForForm("OrderForm", _t("Order.ERRORINFORM", "We could not proceed with your order, please check your errors below."), "bad");
 		}
 		return $valid;
 	}
@@ -297,7 +297,7 @@ class OrderForm_Payment extends Form {
 		$paymentFields = Payment::combined_form_fields($totalAsCurrencyObject->Nice());
 		foreach($paymentFields as $paymentField) {
 			if($paymentField->class == "HeaderField") {
-				$paymentField->setTitle(_t("OrderForm.MAKEPAYMENT", "Make Payment"));
+				$paymentField->setTitle(_t("Order.MAKEPAYMENT", "Make Payment"));
 			}
 			$fields->push($paymentField);
 		}
@@ -306,7 +306,7 @@ class OrderForm_Payment extends Form {
 			$requiredFields = array_merge($requiredFields, $paymentRequiredFields);
 		}
 		$actions = new FieldSet(
-			new FormAction('dopayment', _t('OrderForm.PAYORDER','Pay outstanding balance'))
+			new FormAction('dopayment', _t('Order.PAYORDER','Pay outstanding balance'))
 		);
 		parent::__construct($controller, $name, $fields, $actions, $requiredFields);
 	}

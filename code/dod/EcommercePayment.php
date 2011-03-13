@@ -185,10 +185,7 @@ class EcommercePayment extends DataObjectDecorator {
 	}
 
 	function Status() {
-   	return _t('Payment.'.$this->owner->Status,$this->owner->Status);
+   		return _t('Payment.'.$this->owner->Status,$this->owner->Status);
 	}
-
-
-
 
 }
