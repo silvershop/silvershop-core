@@ -439,7 +439,11 @@ class Product extends Page {
 	
 	function onBeforeDelete(){
 		parent::onBeforeDelete();
-		$this->Variations()->removeAll();
+		foreach($this->Variations() as $variation){
+			$variation->delete();
+			$variation->destroy();
+		}
+		 //TODO: make this work...otherwise we get rouge variations that could mess up future imports
 	}
 
 }
