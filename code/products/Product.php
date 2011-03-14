@@ -436,6 +436,11 @@ class Product extends Page {
 			}
 		}
 	}
+	
+	function onBeforeDelete(){
+		parent::onBeforeDelete();
+		$this->Variations()->removeAll();
+	}
 
 }
 
