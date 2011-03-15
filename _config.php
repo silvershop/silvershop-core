@@ -56,7 +56,7 @@ Buyable::add_class("Product");
 //EcommerceRole::set_customer_group_name("Customers");
 //EcommerceRole::set_admin_group_name("Shop Administrators");
 //EcommerceRole::set_fixed_country_code("NZ"); //country is fixed
-//EcommerceRole::set_allowed_country_codes("NZ" => "NZ", "UK," => "UK"); //country is fixed
+//EcommerceRole::set_allowed_country_codes(array("NZ" => "NZ", "UK," => "UK")); //country is fixed
 //EcommerceRole::set_login_invite_alternative_text('<a href="http://www.mysite.com/Security/login/?BackURL=">If you are a member then please log in.</a>);
 
 // * * * MODIFIERS
