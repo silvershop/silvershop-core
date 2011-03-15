@@ -261,12 +261,14 @@ class Order extends DataObject {
 			//do nothing
 		}
 		else {
-			if($firstStep = DataObject::get_one("OrderStep")) {
+			$firstStep = DataObject::get_one("OrderStep");
+			if($firstStep) {
 				$this->StatusID = $firstStep->ID;
+				if($this->StatusID) {
+					return $this->validate();
+				}
 			}
-			else {
-				return new ValidationResult(false, _t("Order.MUSTSETSTATUS", "You must set a status"));
-			}
+			return new ValidationError(false, _t("Order.MUSTSETSTATUS", "You must set a status"));
 		}
 		return parent::validate();
 	}
@@ -305,6 +307,12 @@ class Order extends DataObject {
 				null //$sourceJoin =
 			);
 			$paymentsTable->setPageSize(100);
+			if($this->IsPaid()){
+				$paymentsTable->setPermissions(array('export', 'show'));
+			}
+			else {
+				$paymentsTable->setPermissions(array('edit', 'delete', 'export', 'add', 'show'));
+			}
 			$paymentsTable->setShowPagination(false);
 			$paymentsTable->setRelationAutoSetting(true);
 			$fields->addFieldToTab('Root.Payments',$paymentsTable);
@@ -356,7 +364,7 @@ class Order extends DataObject {
 				"\"Type\", \"Amount\" ASC, \"Created\" ASC", //$sourceSort =
 				null //$sourceJoin =
 			);
-			$modifierTable->setPermissions(array('edit', 'delete', 'export', 'add', 'inlineadd', "show"));
+			$modifierTable->setPermissions(array('edit', 'delete', 'export', 'add', 'show'));
 			$modifierTable->setPageSize(100);
 			$fields->addFieldToTab('Root.Extras',$modifierTable);
 		}
@@ -1113,14 +1121,9 @@ class Order extends DataObject {
 
 		// we must check for individual database types here because each deals with schema in a none standard way
 		$db = DB::getConn();
-		if( $db instanceof PostgreSQLDatabase ){
-      $exist = DB::query("SELECT column_name FROM information_schema.columns WHERE table_name ='Order' AND column_name = 'Shipping'")->numRecords();
-		}
-		else{
-			// default is MySQL - broken for others, each database conn type supported must be checked for!
-      $exist = DB::query("SHOW COLUMNS FROM \"Order\" LIKE 'Shipping'")->numRecords();
-		}
- 		if($exist > 0) {
+		$fieldArray = $db->fieldList("Order");
+		$hasField =  isset($fieldArray["Shipping"]);
+ 		if($hasField) {
  			if($orders = DataObject::get('Order')) {
  				foreach($orders as $order) {
  					$id = $order->ID;
@@ -1184,16 +1187,10 @@ class Order extends DataObject {
 				}
 			}
 		}
-		//move to ShippingAddress
 		$db = DB::getConn();
-		if( $db instanceof PostgreSQLDatabase ){
-      $shippingFieldsExists = DB::query("SELECT column_name FROM information_schema.columns WHERE table_name ='Order' AND column_name = 'ShippingAddress'")->numRecords();
-		}
-		else{
-			// default is MySQL - broken for others, each database conn type supported must be checked for!
-      $shippingFieldsExists = DB::query("SHOW COLUMNS FROM \"Order\" LIKE 'ShippingAddress'")->numRecords();
-		}
-		if($shippingFieldsExists) {
+		$fieldArray = $db->fieldList("Order");
+		$hasField =  isset($fieldArray["ShippingAddress"]);
+		if($hasField) {
  			if($orders = DataObject::get('Order', "\"UseShippingAddress\" = 1  OR (\"ShippingName\" IS NOT NULL AND \"ShippingName\" <> '')")) {
  				foreach($orders as $order) {
 					$obj = new ShippingAddress();
