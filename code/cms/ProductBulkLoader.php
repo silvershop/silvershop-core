@@ -122,8 +122,9 @@ class ProductBulkLoader extends CsvBulkLoader{
 	// set image, based on filename
 	function imageByFilename(&$obj, $val, $record){
 
-		$filename = strtolower(Convert::raw2sql($val));
-		if($filename && $image = DataObject::get_one('Image',"LOWER(\"Filename\") LIKE '%$filename%'")){ //ignore case
+		$filename = trim(strtolower(Convert::raw2sql($val)));
+		$filenamedashes = str_replace(" ","-",$filename);
+		if($filename && $image = DataObject::get_one('Image',"LOWER(\"Filename\") LIKE '%$filename%' OR LOWER(\"Filename\") LIKE '%$filenamedashes%'")){ //ignore case
 		
 			if($image->ID){
 				$image->ClassName = 'Product_Image'; //must be this type of image
@@ -164,7 +165,7 @@ class ProductBulkLoader extends CsvBulkLoader{
 	
 	function processVariation(&$obj, $val, $record){
 		
-		if($record['->variationRow']) return; //don't use this technique for variation rows
+		if(isset($record['->variationRow'])) return; //don't use this technique for variation rows
 
 		$parts = explode(":",$val);
 		if(count($parts) == 2){
