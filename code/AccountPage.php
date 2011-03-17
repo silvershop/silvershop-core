@@ -46,19 +46,19 @@ class AccountPage extends Page {
 		$doIncompleteOrders = new DataObject();
 		$doIncompleteOrders->Orders = $this->IncompleteOrders();
 		if($doIncompleteOrders->Orders) {
-			$doIncompleteOrders->Heading = _t("AccountPage.INCOMPLETEORDERS", "Incomplete Orders");
+			$doIncompleteOrders->Heading = _t("Account.INCOMPLETEORDERS", "Incomplete Orders");
 			$dos->push($doIncompleteOrders);
 		}
 		$doInProcessOrders = new DataObject();
 		$doInProcessOrders->Orders = $this->InProcessOrders();
 		if($doInProcessOrders->Orders) {
-			$doInProcessOrders->Heading = _t("AccountPage.INPROCESSORDERS", "In Process Orders");
+			$doInProcessOrders->Heading = _t("Account.INPROCESSORDERS", "In Process Orders");
 			$dos->push($doInProcessOrders);
 		}
 		$doCompleteOrders = new DataObject();
 		$doCompleteOrders->Orders = $this->CompleteOrders();
 		if($doCompleteOrders->Orders) {
-			$doCompleteOrders->Heading = _t("AccountPage.COMPLETEORDERS", "Complete Orders");
+			$doCompleteOrders->Heading = _t("Account.COMPLETEORDERS", "Complete Orders");
 			$dos->push($doCompleteOrders);
 		}
 		if($dos->count()) {
@@ -176,8 +176,8 @@ class AccountPage_Controller extends Page_Controller {
 		$this->memberID = Member::currentUserID();
 		if(!$this->memberID) {
 			$messages = array(
-				'default' => '<p class="message good">' . _t('AccountPage.MESSAGE', 'You\'ll need to login before you can access the account page. If you are not registered, you won\'t be able to access it until you place your first order, otherwise please enter your details below.') . '</p>',
-				'logInAgain' => _t('AccountPage.LOGINAGAIN', 'You have been logged out. If you would like to log in again, please do so below.')
+				'default' => '<p class="message good">' . _t('Account.MESSAGE', 'You\'ll need to login before you can access the account page. If you are not registered, you won\'t be able to access it until you place your first order, otherwise please enter your details below.') . '</p>',
+				'logInAgain' => _t('Account.LOGINAGAIN', 'You have been logged out. If you would like to log in again, please do so below.')
 			);
 			Security::permissionFailure($this, $messages);
 			return false;
@@ -220,7 +220,7 @@ class AccountPage_Controller extends Page_Controller {
 		Requirements::themedCSS('Order_print', 'print');
 		$this->orderID = intval($request->param("ID"));
 		if(!$this->CurrentOrder()) {
-			$this->message = _t('AccountPage.ORDERNOTFOUNDGOTO', 'Order can not be found. Go to '). '<a href="' . $this->Link() . '">'.$this->Title.'</a> '._t('AccountPage.FORMOREOPTIONS', 'for more options').'.';
+			$this->message = _t('Account.ORDERNOTFOUNDGOTO', 'Order can not be found. Go to '). '<a href="' . $this->Link() . '">'.$this->Title.'</a> '._t('Account.FORMOREOPTIONS', 'for more options').'.';
 		}
 		return array();
 	}
@@ -230,21 +230,21 @@ class AccountPage_Controller extends Page_Controller {
 		if($o = $this->CurrentOrder()) {
 			if($m = $o->Member()) {
 				if($m->Email) {
-					$o->sendReceipt(_t("AccountPage.COPYONLY", "--- COPY ONLY ---"), true);
-					$this->message = _t('AccountPage.RECEIPTSENT', 'An order receipt has been sent to: ').$m->Email.'.';
+					$o->sendReceipt(_t("Account.COPYONLY", "--- COPY ONLY ---"), true);
+					$this->message = _t('Account.RECEIPTSENT', 'An order receipt has been sent to: ').$m->Email.'.';
 				}
 				else {
-					$this->message = _t('AccountPage.RECEIPTNOTSENTNOEMAIL', 'No email could be found for sending this receipt.');
+					$this->message = _t('Account.RECEIPTNOTSENTNOEMAIL', 'No email could be found for sending this receipt.');
 				}
 			}
 			else {
-				$this->message = _t('AccountPage.RECEIPTNOTSENTNOEMAIL', 'No email could be found for sending this receipt.');
+				$this->message = _t('Account.RECEIPTNOTSENTNOEMAIL', 'No email could be found for sending this receipt.');
 			}
 			
 			Director::redirect($o->Link());
 		}
 		else {
-			$this->message = _t('AccountPage.RECEIPTNOTSENTNOORDER', 'Order could not be found.');
+			$this->message = _t('Account.RECEIPTNOTSENTNOORDER', 'Order could not be found.');
 		}
 		
 		return array();

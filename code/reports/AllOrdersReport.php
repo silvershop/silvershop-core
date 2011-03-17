@@ -36,8 +36,8 @@ class AllOrdersReport extends SS_Report {
 	function getReportField(){
 		$tlf = parent::getReportField();
 		$tlf->setFieldFormatting(array(
-			'Invoice' => '<a target=\"_blank\" href=\"OrderReport_Popup/invoice/$ID\">'.i18n::_t('VIEW','view').'</a> ' .
-					'<a target=\"_blank\" href=\"OrderReport_Popup/index/$ID?print=1\">'.i18n::_t('PRINT','print').'</a>',
+			'Invoice' => '<a target=\"_blank\" href=\"OrderReport_Popup/invoice/$ID\">'.i18n::_t('Report.VIEW','view').'</a> ' .
+					'<a target=\"_blank\" href=\"OrderReport_Popup/index/$ID?print=1\">'.i18n::_t('Report.PRINT','print').'</a>',
 		));
 		$tlf->setFieldCasting(array(
 			'Created' => 'Date->Long',
