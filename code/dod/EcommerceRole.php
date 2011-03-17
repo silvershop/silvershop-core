@@ -60,6 +60,7 @@ class EcommerceRole extends DataObjectDecorator {
 			}
 		}
 		static function get_for_current_order_only_show_countries() {return self::$for_current_order_only_show_countries;}
+
 	protected static $for_current_order_do_not_show_countries = array();
 		static function set_for_current_order_do_not_show_countries($a) {
 			self::$for_current_order_do_not_show_countries = array_merge($a, self::$for_current_order_do_not_show_countries);
@@ -250,7 +251,7 @@ class EcommerceRole extends DataObjectDecorator {
 
 
 
-	public function list_of_allowed_countries_for_dropdown() {
+	public static function list_of_allowed_countries_for_dropdown() {
 		$keys = array();
 		$allowedCountryCode = self::get_fixed_country_code();
 		$allowedCountryCodeArray = self::get_allowed_country_codes();
@@ -299,7 +300,8 @@ class EcommerceRole extends DataObjectDecorator {
 			$postalCodeField->setRightTitle('<a href="'.self::get_postal_code_url().'" id="PostalCodeLink">'.self::get_postal_code_label().'</a>');
 		}
 		// country
-		$countryField = new DropdownField('Country', _t('EcommerceRole.COUNTRY','Country'), self::list_of_allowed_countries_for_dropdown(), ShoppingCart::get_country());
+		$countriesForDropdown = EcommerceRole::list_of_allowed_countries_for_dropdown();
+		$countryField = new DropdownField('Country',  _t('Order.COUNTRY','Country'), $countriesForDropdown, ShoppingCart::get_country());
 		$countryField->addExtraClass('ajaxCountryField');
 		//link used to update the country via Ajax
 		$setCountryLinkID = $countryField->id() . '_SetCountryLink';

@@ -127,7 +127,7 @@ class OrderStep extends DataObject {
 			return $array["Code"];
 		}
 
-	//IMPORTANT:: MUST HAVE Code defined!!!
+	//IMPORTANT:: MUST HAVE Code must be defined!!!
 	public static $defaults = array(
 		"CustomerCanEdit" => 0,
 		"CustomerCanCancel" => 0,

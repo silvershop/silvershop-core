@@ -83,7 +83,11 @@ class OrderForm extends Form {
 		$this->extend('updateFields',$fields);
 		Requirements::javascript('ecommerce/javascript/OrderFormWithShippingAddress.js');
 		if(Order::get_add_shipping_fields()) {
-			$countryField = new DropdownField('ShippingCountry',  _t('Order.COUNTRY','Country'), Geoip::getCountryDropDown(), ShoppingCart::get_country());
+			$countriesForDropdown = EcommerceRole::list_of_allowed_countries_for_dropdown();
+			$countryField = new DropdownField('ShippingCountry',  _t('Order.COUNTRY','Country'), $countriesForDropdown, ShoppingCart::get_country());
+			if(count($countriesForDropdown) == 1) {
+				$countryField = $countryField->performReadonlyTransformation();
+			}
 			$shippingFields = new CompositeField(
 				new HeaderField(_t('Order.SENDGOODSTODIFFERENTADDRESS','Send goods to different address'), 3),
 				new LiteralField('ShippingNote', '<p class="message warning">'._t('Order.SHIPPINGNOTE','Your goods will be sent to the address below.').'</p>'),

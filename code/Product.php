@@ -340,18 +340,11 @@ HTML;
 
 	function requireDefaultRecords() {
 		parent::requireDefaultRecords();
-		// we must check for individual database types here because each deals with schema in a none standard way
-		//can we use Table::has_field ???
 		$db = DB::getConn();
 		if($db->hasTable("Product_OrderItem")) {
-			if( $db instanceof PostgreSQLDatabase ){
-				$exist = DB::query("SELECT column_name FROM information_schema.columns WHERE table_name ='Product_OrderItem' AND column_name = 'ProductVersion'")->numRecords();
-			}
-			else{
-				// default is MySQL - broken for others, each database conn type supported must be checked for!
-				$exist = DB::query("SHOW COLUMNS FROM \"Product_OrderItem\" LIKE 'ProductVersion'")->numRecords();
-			}
-			if($exist > 0) {
+			$fieldArray = $db->fieldList("Product_OrderItem");
+			$hasField =  isset($fieldArray["ProductVersion"]);
+			if($hasField) {
 				DB::query("
 					UPDATE \"OrderItem\", \"Product_OrderItem\"
 						SET \"OrderItem\".\"Version\" = \"Product_OrderItem\".\"ProductVersion\"

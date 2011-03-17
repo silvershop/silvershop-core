@@ -289,14 +289,9 @@ HTML;
 		// we must check for individual database types here because each deals with schema in a none standard way
 		//can we use Table::has_field ???
 		$db = DB::getConn();
-		if( $db instanceof PostgreSQLDatabase ){
-      $exist = DB::query("SELECT column_name FROM information_schema.columns WHERE table_name ='OrderItem' AND column_name = 'ItemID'")->numRecords();
-		}
-		else{
-			// default is MySQL - broken for others, each database conn type supported must be checked for!
-      $exist = DB::query("SHOW COLUMNS FROM \"OrderItem\" LIKE 'ItemID'")->numRecords();
-		}
- 		if($exist > 0) {
+		$fieldArray = $db->fieldList("OrderItem");
+		$hasField =  isset($fieldArray["ItemID"]);
+		if($hasField) {
 			DB::query("UPDATE \"OrderItem\" SET \"OrderItem\".\"BuyableID\" = \"OrderItem\".\"ItemID\"");
  			DB::query("ALTER TABLE \"OrderItem\" CHANGE COLUMN \"ItemID\" \"_obsolete_ItemID\" Integer(11)");
  			DB::alteration_message('Moved ItemID to BuyableID in OrderItem', 'obsolete');

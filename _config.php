@@ -23,7 +23,7 @@ Buyable::add_class("Product");
 // __________________________________START ECOMMERCE MODULE CONFIG __________________________________
 //The configuration below is not required, but allows you to customise your ecommerce application - check for the defalt value first.
 // * * * DEFINITELY MUST SET
-//Order::set_modifiers(array("MyModifierOne", "MyModifierTwo");
+//Order::set_modifiers(array("MyModifierOne", "MyModifierTwo"));
 
 
 // * * * HIGHLY RECOMMENDED SETTINGS NON-ECOMMERCE
@@ -53,6 +53,7 @@ Buyable::add_class("Product");
 //ExpiryDateField::set_short_months(true); //uses short months (e.g. Jan instead of january) for credit card expiry date.
 
 // * * * MEMBER
+//EcommerceCountry::set_auto_add_countries(true);
 //EcommerceRole::set_customer_group_name("Customers");
 //EcommerceRole::set_admin_group_name("Shop Administrators");
 //EcommerceRole::set_fixed_country_code("NZ"); //country is fixed

@@ -8,19 +8,19 @@
  * the product page / dataobject need to have a function RecommendedProductsForCart
  * which returns an array of IDs
  * SEQUENCE - USE FOR ALL MODIFIERS!!!
-//  *** model defining static variables (e.g. $db, $has_one)
-//  *** cms variables + functions (e.g. getCMSFields, $searchableFields)
-//  *** other (non) static variables (e.g. protected static $special_name_for_something, protected $order)
-//  *** CRUD functions (e.g. canEdit)
-//  *** init and update functions
-//  *** form functions (e. g. showform and getform)
-//  *** template functions (e.g. ShowInTable, TableTitle, etc...) ... USES DB VALUES
-//  ***  inner calculations.... USES CALCULATED VALUES
-//  *** calculate database fields: protected function Live[field name]  ... USES CALCULATED VALUES
-//  *** Type Functions (IsChargeable, IsDeductable, IsNoChange, IsRemoved)
-//  *** standard database related functions (e.g. onBeforeWrite, onAfterWrite, etc...)
-//  *** AJAX related functions
-//  *** debug functions
+  *** model defining static variables (e.g. $db, $has_one)
+  *** cms variables + functions (e.g. getCMSFields, $searchableFields)
+  *** other (non) static variables (e.g. protected static $special_name_for_something, protected $order)
+  *** CRUD functions (e.g. canEdit)
+  *** init and update functions
+  *** form functions (e. g. showform and getform)
+  *** template functions (e.g. ShowInTable, TableTitle, etc...) ... USES DB VALUES
+  ***  inner calculations.... USES CALCULATED VALUES
+  *** calculate database fields: protected function Live[field name]  ... USES CALCULATED VALUES
+  *** Type Functions (IsChargeable, IsDeductable, IsNoChange, IsRemoved)
+  *** standard database related functions (e.g. onBeforeWrite, onAfterWrite, etc...)
+  *** AJAX related functions
+  *** debug functions
  */
 class OrderModifier extends OrderAttribute {
 
@@ -39,6 +39,7 @@ class OrderModifier extends OrderAttribute {
 		'CalculationTotal' => 'Currency'
 	);
 
+	// make sure to choose the right Type and Name for this.
 	public static $defaults = array(
 		'Type' => 'Chargeable',
 		'Name' => 'Modifier'
@@ -87,8 +88,16 @@ class OrderModifier extends OrderAttribute {
 
 // ########################################  *** other static variables (e.g. special_name_for_something)
 
+	/**
+	* we use this variable to make sure that the parent::runUpdate() is called in all child classes
+	* this is similar to parent::init in the controller.
+	**/
 	protected $baseInitCalled = false;
 
+	/**
+	* This is a flag for running an update.
+	* Running an update means that all fields are (re)set, using the Live{FieldName} methods.
+	**/
 	protected $mustUpdate = false;
 
 
@@ -106,6 +115,10 @@ class OrderModifier extends OrderAttribute {
 		return false;
 	}
 
+	/**
+	* This method runs when the OrderModifier is first added to the order.
+	**/
+
 	public function init() {
 		parent::init();
 		$this->write();
@@ -115,8 +128,7 @@ class OrderModifier extends OrderAttribute {
 	}
 
 	/**
-	* each modifier class must have this function, at least if it has more dataobjects!
-	*@param $mustUpdate Boolean, passed on from Child Class....
+	* all modifier child-classes must have this method if it has more fields
 	*
 	**/
 
@@ -131,13 +143,17 @@ class OrderModifier extends OrderAttribute {
 	}
 
 	/**
-	*we use hasChanged method to bypass the whole runUpdate system
-	* you can overload this method in a child class (extending OrderModifier) and return false
+	* You can overload this method as canEdit might not be the right indicator.
+	* @return Boolean
 	**/
 
 	protected function canBeUpdated() {
 		return $this->canEdit();
 	}
+
+	/**
+	* This method simply checks if a fields has changed and if it has changed it updates the field.
+	**/
 
 	protected function checkField($fieldName) {
 		//$start =  microtime();
@@ -154,6 +170,7 @@ class OrderModifier extends OrderAttribute {
 	/**
 	 * Provides a modifier total that is positive or negative, depending on whether the modifier is chargable or not.
 	 * This number is used to work out the order Grand Total.....
+	 * It is important to note that this can be positive or negative, while the amount is always positive.
 	 * @return float / double
 	 */
 	public function CalculationTotal() {
@@ -183,7 +200,8 @@ class OrderModifier extends OrderAttribute {
 	/**
 	 * This determines whether the OrderModifierForm
 	 * is shown or not. {@link OrderModifier::get_form()}.
-	 *
+	 * OrderModifierForms are forms that are added to check out to facilitate the use of the modifier
+	 * an example would be a form allowing the user to select the delivery option.
 	 * @return boolean
 	 */
 	public function showForm() {
@@ -215,8 +233,14 @@ class OrderModifier extends OrderAttribute {
 
 // ######################################## *** template functions (e.g. ShowInTable, TableTitle, etc...)
 
+	/**
+	* tells you whether the modifier shows up on the checkout  / cart form.
+	* this is also the place where we check if the modifier has been updated.
+	*@return Boolean
+	**/
+
 	public function ShowInTable() {
-		if(!$this->baseInitCalled && $this->_canEdit) {
+		if(!$this->baseInitCalled && $this->canBeUpdated()) {
 			user_error("While the order can be edited, you must call the runUpdate method everytime you get the details for this modifier", E_USER_ERROR);
 		}
 		return false;
@@ -233,7 +257,7 @@ class OrderModifier extends OrderAttribute {
 	}
 
 	/**
-	 * Checks if the modifier can be added.
+	 * Checks if the modifier can be added again after it has been removed.
 	 *
 	 * @return boolean
 	 **/
@@ -241,6 +265,11 @@ class OrderModifier extends OrderAttribute {
 		return $this->IsRemoved();
 	}
 
+	/**
+	 * This is what shows up on the actual cart / checkout page
+	 *
+	 * @return Currency Object
+	 **/
 	public function TableValue() {
 		if($this->Type == "Chargeable") {
 			$amount = $this->Amount;
@@ -256,6 +285,11 @@ class OrderModifier extends OrderAttribute {
 	}
 
 
+	/**
+	 * Sometimes we need a difference between Cart and Checkout Value - the cart value can be differentiated here.
+	 *
+	 * @return Currency Object
+	 **/
 	public function CartValue() {
 		return $this->TableValue();
 	}
@@ -271,6 +305,12 @@ class OrderModifier extends OrderAttribute {
 	public function TableTitle() {
 		return $this->Name;
 	}
+
+	/**
+	 * Sometimes we need a difference between Cart and Checkout Title - the cart Title can be differentiated here.
+	 *
+	 * @return Currency Object
+	 **/
 
 	public function CartTitle() {
 		return $this->TableTitle();
@@ -377,9 +417,6 @@ class OrderModifier extends OrderAttribute {
 // ######################################## ***  standard database related functions (e.g. onBeforeWrite, onAfterWrite, etc...)
 
 	/**
-	 * Before this OrderModifier is written to the database, we set some of the fields
-	 * based on the way it was set up
-	 * Precondition: The order item is not saved in the database yet.
 	 */
 	function onBeforeWrite() {
 		parent::onBeforeWrite();
