@@ -28,8 +28,8 @@ class ProductBulkLoader extends CsvBulkLoader{
 		'ProductID' => 'InternalItemID',
 		'SKU' => 'InternalItemID',
 		
-		'Description' => 'Content',
-		'Long Description' => 'Content',
+		'Description' => '->setContent',
+		'Long Description' => '->setContent',
 		'Short Description' => 'MetaDescription',
 
 		'Short Title' => 'MenuTitle',
@@ -118,6 +118,13 @@ class ProductBulkLoader extends CsvBulkLoader{
 
 		return $results;
 	}
+	
+	function processRecord($record, $columnMap, &$results, $preview = false){
+		if(!$record || !isset($record['Title']) || $record['Title'] == ''){ //TODO: make required fields customisable
+			return null;
+		}		
+		return parent::processRecord($record, $columnMap, $results, $preview);
+	}
 
 	// set image, based on filename
 	function imageByFilename(&$obj, $val, $record){
@@ -160,6 +167,18 @@ class ProductBulkLoader extends CsvBulkLoader{
 				$obj->writeToStage('Stage');
 				$obj->publish('Stage', 'Live');
 			}
+		}
+	}
+	
+	
+	/**
+	 * Adds paragraphs to content.
+	 */
+	function setContent(&$obj, $val, $record){
+		$val = trim($val);
+		if($val){
+			$paragraphs = explode("\n",$val);
+			$obj->Content = "<p>".implode("</p><p>",$paragraphs)."</p>";
 		}
 	}
 	
