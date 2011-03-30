@@ -123,7 +123,9 @@ class ProductGroup extends Page {
 	function ProductsShowable($extraFilter = '', $recursive = true){
 		$filter = ""; //
 		$join = "";
-
+		
+		$this->extend('updateFilter',$extraFilter);
+		
 		if($extraFilter) $filter.= " AND $extraFilter";
 		if(self::$must_have_price) $filter .= " AND \"Price\" > 0";
 

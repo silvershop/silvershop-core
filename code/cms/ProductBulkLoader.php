@@ -81,13 +81,15 @@ class ProductBulkLoader extends CsvBulkLoader{
 	);
 
 	protected function processAll($filepath, $preview = false) {
-
+		
+		$this->extend('updateColumnMap',$this->columnMap);
+		
 		// we have to check for the existence of this in case the stockcontrol module hasn't been loaded
 		// and the CSV still contains a Stock column
 		self::$hasStockImpl = Object::has_extension('Product', 'ProductStockDecorator');
 
 		$results = parent::processAll($filepath, $preview);
-
+				
 		//After results have been processed, publish all created & updated products
 		$objects = new DataObjectSet();
 		$objects->merge($results->Created());
