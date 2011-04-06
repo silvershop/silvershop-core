@@ -79,7 +79,7 @@ class Product extends Page {
 		$fields->addFieldToTab('Root.Content.Images', new ImageField('Image', _t('Product.IMAGE', 'Product Image')));
 		$fields->addFieldToTab('Root.Content.Details',new CheckboxField('AllowPurchase', _t('Product.ALLOWPURCHASE', 'Allow product to be purchased'), 1));
 		$fields->addFieldToTab('Root.Content.Details',new CheckboxField('FeaturedProduct', _t('Product.FEATURED', 'Featured Product')));
-		$fields->addFieldToTab('Root.Content.Details',new TextField('Price', _t('Product.PRICE', 'Price'), '', 12));
+		$fields->addFieldToTab('Root.Content.Details',new NumericField('Price', _t('Product.PRICE', 'Price'), '', 12));
 		$fields->addFieldToTab('Root.Content.Details',new TextField('InternalItemID', _t('Product.CODE', 'Product Code'), '', 30));
 		if($this->ParentID && $parent = DataObject::get_by_id("ProductGroup", $this->ParentID)) {
 			if($parent->ProductsAlsoInOthersGroups) {
