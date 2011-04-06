@@ -479,7 +479,9 @@ class Order extends DataObject {
 *******************************************************/
 
 
-
+	/**
+	 * @return current OrderStep
+	 */
 	public function MyStep() {
 		$obj = null;
 		if($this->StatusID) {
@@ -491,6 +493,21 @@ class Order extends DataObject {
 		$this->StatusID = $obj->ID;
 		return $obj;
 	}
+
+	/**
+	 * @return current OrderStep that can be seen by customer
+	 */
+	public function CurrentStepVisibleToCustomer() {
+		$obj = $this->MyStep();
+		if($obj->HideStepFromCustomer) {
+			$obj = DataObject::get_one("OrderStep", "\"Sort\" < ".$obj->Sort." AND \"HideStepFromCustomer\" = 0");
+			if(!$obj) {
+				$obj = DataObject::get_one("OrderStep");
+			}
+		}
+		return $obj;
+	}
+
 	/**
 	 * @return boolean
 	 */

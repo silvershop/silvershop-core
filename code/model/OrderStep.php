@@ -22,6 +22,7 @@ class OrderStep extends DataObject {
 		"ShowAsUncompletedOrder" => "Boolean",
 		"ShowAsInProcessOrder" => "Boolean",
 		"ShowAsCompletedOrder" => "Boolean",
+		"HideStepFromCustomer" => "Boolean",
 		//sorting index
 		"Sort" => "Int"
 		//by-pass
@@ -55,7 +56,8 @@ class OrderStep extends DataObject {
 		"CustomerCanCancelNice" => "Varchar",
 		"ShowAsUncompletedOrderNice" => "Varchar",
 		"ShowAsInProcessOrderNice" => "Varchar",
-		"ShowAsCompletedOrderNice" => "Varchar"
+		"ShowAsCompletedOrderNice" => "Varchar",
+		"HideStepFromCustomer" => "Varchar"
 	);
 
 
@@ -76,6 +78,7 @@ class OrderStep extends DataObject {
 	function ShowAsUncompletedOrderNice() {if($this->ShowAsUncompletedOrder) {return _t("OrderStep.YES", "Yes");}return _t("OrderStep.NO", "No");}
 	function ShowAsInProcessOrderNice() {if($this->ShowAsInProcessOrder) {return _t("OrderStep.YES", "Yes");}return _t("OrderStep.NO", "No");}
 	function ShowAsCompletedOrderNice() {if($this->ShowAsCompletedOrder) {return _t("OrderStep.YES", "Yes");}return _t("OrderStep.NO", "No");}
+	function HideStepFromCustomer() {if($this->HideStepFromCustomer) {return _t("OrderStep.YES", "Yes");}return _t("OrderStep.NO", "No");}
 
 	public static $singular_name = "Order Step";
 		static function get_singular_name() {return self::$singular_name;}
