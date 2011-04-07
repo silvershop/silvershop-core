@@ -1,0 +1,15 @@
+Product ID,VariationID,Title,Long Description,Price,Stock,Category,Colour,Size,Weight,Photo,Variation,Variation1,Variation2,Variation3,Variation4,Variation5,Variation6
+123,,Beach Ball,"A beach ball with a difference. This ball is made from the finest plastic in the world.
+Hours of fun are to be had with the whole family down at the beach with this ball.",,,Sports,,,0.2,beachball.jpg,,,,,,,
+123,123-1,Beach Ball,,5,1,,Blue,1,,,,,Size:1,Colour:Blue,,,
+123,123-2,Beach Ball,,5,3,,Red,2,,,,,Size:2,Colour:Red,,,
+123,123-3,Beach Ball,,6,3,,Blue,2,,,,,Size:2,Colour:Blue,,,
+124,,Socks,The comfiest pair of socks you'll ever own.,12,12,Apparel,"Black,White","8,9,10",0.2,socks.png,,,"Size:8,9,10","Colour:Black,White",,,
+125,,100% Cotton T-Shirt,Finest t-shirt you'll ever own,25,1,Apparel,"White,Red","S,M,L,XL",0.5,tshirt.jpg,"Gender:Male, Female",,"Size:S,M,L,XL","Colour:White,Red",,,
+CAR001,,Car,An actual car,25000,15,Automotive,,,3000,car.jpg,,,,,,,
+23140402,,Mp3 Player,Listen to your music on the go with this Mp3 player. Plays Mp3 files to your headphones.,,,Electronics,,,0.6,mp3player.jpg,,,,,,,
+,23140402-1,Mp3 Player,,100,0,,Silver,1GB,,,,,Size:1GB,Colour:Silver,,,
+,23140402-2,Mp3 Player,,150,3,,Silver,2GB,,,,,Size:2GB,Colour:Silver,,,
+,23140402-3,Mp3 Player,,100,6,,Blue,1GB,,,,,Size:1GB,Colour:Blue,,,
+,23140402-4,Mp3 Player,,150,1,,Blue,2GB,,,,,Size:2GB,Colour:Blue,,,
+,23140402-5,Mp3 Player,,400,9,,Silver,8GB,,,,,Size:8GB,Colour:Silver,,,

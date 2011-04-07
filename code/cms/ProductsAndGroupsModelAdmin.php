@@ -32,8 +32,7 @@ class ProductsAndGroupsModelAdmin extends ModelAdmin {
 
 	public static $model_importers = array(
 		'Product' => 'ProductBulkLoader',
-		'ProductGroup' => null,
-		'ProductVariation' => null
+		'ProductGroup' => null
 	);
 
 	function init() {

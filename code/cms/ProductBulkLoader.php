@@ -4,10 +4,6 @@
  *
  * Images should be uploaded before import, where the Photo/Image field corresponds to the filename of a file that was uploaded.
  *
- * Variations can be specified in a "Variation" column this format:
- * Type:value,value,value
- * eg: Color: red, green, blue , yellow
- * up to 6 other variation columns can be specified by adding a number to the end, eg Variation2,$Variation3
  * @authors: Silverstripe, Jeremy, Tony, Nicolaas
  */
 
@@ -35,28 +31,20 @@ class ProductBulkLoader extends CsvBulkLoader{
 
 	public $columnMap = array(
 
-		//'Category' => '->setParent',
-		//'ProductGroup' => '->setParent',
+		'Category' => '->setParent',
+		'ProductGroup' => '->setParent',
 
 		'Product ID' => 'InternalItemID',
 		'ProductID' => 'InternalItemID',
 		'SKU' => 'InternalItemID',
-
-		'Long Description' => 'Content',
+		
+		'Description' => '->setContent',
+		'Long Description' => '->setContent',
 		'Short Description' => 'MetaDescription',
 
 		'Short Title' => 'MenuTitle',
 
 		'Title' => 'Title',
-
-		//TODO: allow row-based variations rather than in cells
-		'Variation' => '->processVariation',
-		'Variation1' => '->processVariation1',
-		'Variation2' => '->processVariation2',
-		'Variation3' => '->processVariation3',
-		'Variation4' => '->processVariation4',
-		'Variation5' => '->processVariation5',
-		'Variation6' => '->processVariation6'
 	);
 
 	/* 	NB there is a bug in CsvBulkLoader where it fails to apply Convert::raw2sql to the field value prior to a duplicate check.
@@ -112,7 +100,9 @@ class ProductBulkLoader extends CsvBulkLoader{
 	}
 
 	protected function processAll($filepath, $preview = false) {
-
+		
+		$this->extend('updateColumnMap',$this->columnMap);
+		
 		// we have to check for the existence of this in case the stockcontrol module hasn't been loaded
 		// and the CSV still contains a Stock column
 		self::$has_stock_impl = Object::has_extension(self::get_product_class_name(), 'ProductStockDecorator');
@@ -151,6 +141,13 @@ class ProductBulkLoader extends CsvBulkLoader{
 		}
 
 		return $results;
+	}
+	
+	function processRecord($record, $columnMap, &$results, $preview = false){
+		if(!$record || !isset($record['Title']) || $record['Title'] == ''){ //TODO: make required fields customisable
+			return null;
+		}		
+		return parent::processRecord($record, $columnMap, $results, $preview);
 	}
 
 	// set image, based on filename
@@ -191,46 +188,17 @@ class ProductBulkLoader extends CsvBulkLoader{
 			}
 		}
 	}
-
-	function processVariation(&$obj, $val, $record){
-		$parts = explode(":",$val);
-		if(count($parts) == 2){
-			$attributetype = trim($parts[0]);
-			$attributevalues = explode(",",$parts[1]);
-			if(count($attributevalues) >= 1){
-				$attributetype = ProductAttributeType::find_or_make($attributetype);
-				foreach($attributevalues as $key => $value){
-					$attributevalues[$key] = trim($value); //remove outside spaces from values
-				}
-				$attributetype->addValues($attributevalues);
-				$obj->VariationAttributes()->add($attributetype);
-				//only generate variations if none exist yet
-				if(!$obj->Variations()->exists() || $obj->WeAreBuildingVariations){
-					//either start new variations, or multiply existing ones by new variations
-					$obj->generateVariationsFromAttributes($attributetype,$attributevalues);
-					$obj->WeAreBuildingVariations = true;
-				}
-			}
+	
+	/**
+	 * Adds paragraphs to content.
+	 */
+	function setContent(&$obj, $val, $record){
+		$val = trim($val);
+		if($val){
+			$paragraphs = explode("\n",$val);
+			$obj->Content = "<p>".implode("</p><p>",$paragraphs)."</p>";
 		}
 	}
-	//work around until I can figure out how to allow calling processVariation multiple times
-	function processVariation1(&$obj, $val, $record){
-		$this->processVariation($obj, $val, $record);
-	}
-	function processVariation2(&$obj, $val, $record){
-		$this->processVariation($obj, $val, $record);
-	}
-	function processVariation3(&$obj, $val, $record){
-		$this->processVariation($obj, $val, $record);
-	}
-	function processVariation4(&$obj, $val, $record){
-		$this->processVariation($obj, $val, $record);
-	}
-	function processVariation5(&$obj, $val, $record){
-		$this->processVariation($obj, $val, $record);
-	}
-	function processVariation6(&$obj, $val, $record){
-		$this->processVariation($obj, $val, $record);
-	}
+	
 }
 

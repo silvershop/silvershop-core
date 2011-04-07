@@ -158,19 +158,16 @@ OrderStatusLog:
 - added: Dispatch, DispatchElectronicOrder, DispatchPhysicalOrder, PaymentCheck - all as new classses, extending from OrderStatusLog
 - each of them has "internalUseOnly"
 ------------------------------------------------------------------------------------
+
+0.7 & 0.8
 	* Variations working again
 	* Re-structured default templates to be more hierartical and extensible. Removed redundant templates.
 	* Implemented new reciept design
 	* Updated CMS Order interface
 	* Introduced FullBillingAddress and FullShippingAddress functions on Order to provide ways to get combined address fields.
-
 	* Merged in DBCart, Burnbright, and SunnySideUp branches
-
-Burnbright branch
 	* Depricated AllowPurchase function on Product & ProductVariation in favour of canPurcahse. SilverStripe has can____ capabilites built in, and AllowPurchase was overriding the DB field.
 	* Improved ProductBulkLoader to allow setting ProductGroup, and linking up an image of the product.
-
-DBCart branch
 	* Merged ShoppingCart and ShoppingCart_Controller into one class
 	* Introduced filters/paremeters system for more complex cart situations
 
