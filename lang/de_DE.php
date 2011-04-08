@@ -63,6 +63,18 @@ $lang['de_DE']['Checkout']['CHECKOUT'] = 'Kasse';
 $lang['de_DE']['Checkout']['ORDERSTATUS'] = 'Bestellstatus';
 $lang['de_DE']['Checkout']['PROCESS'] = 'Bestellvorgang';
 $lang['de_DE']['Checkout']['ORDERSTEP'] = 'Bestellstatus';
+//german defaults for CheckoutPage, after run dev/build
+$lang['de_DE']['Checkout']['PURCHASECOMPLETE'] = 'Ihre Bestellung ist vollständig.';
+$lang['de_DE']['Checkout']['CHEQUEMESSAGE'] = 'Bitte beachten: Der Versand der Produkte erfolgt erst nach Zahlungseingang.';
+$lang['de_DE']['Checkout']['ALREADYCOMPLETEDMESSAGE'] = 'Diese Bestellung wurde bereits abgeschloßen.';
+$lang['de_DE']['Checkout']['FINALIZEDORDERLINKLABEL'] = 'Abgeschloßene Bestellung ansehen:';
+$lang['de_DE']['Checkout']['CURRENTORDERLINKLABEL'] = 'Aktuelle Bestellung ansehen:';
+$lang['de_DE']['Checkout']['STARTNEWDORDERLINKLABEL'] = 'Neue Bestellung';
+$lang['de_DE']['Checkout']['NONEXISTINGORDERMESSAGE'] = 'Diese Bestellung existiert nicht.';
+$lang['de_DE']['Checkout']['NONITEMSINORDERMESSAGE'] = 'Es sind keine Artikel in dieser Bestellung.';
+$lang['de_DE']['Checkout']['MUSTLOGINTOCHECKOUTMESSAGE'] = 'Sie müssen eingeloggt sein, um die Bestellung anzusehen.';
+$lang['de_DE']['Checkout']['LOGINTOORDERLINKLABEL'] = 'Einloggen und Bestellung ansehen.';
+
 $lang['de_DE']['ChequePayment']['MESSAGE'] = 'Bezahlung per Scheck (Vorkasse). Bitte beachten: Der Versand der Produkte erfolgt erst nach Zahlungseingang.';
 $lang['de_DE']['EcommerceRole']['PERSONALINFORMATION'] = 'Ihre Daten';
 $lang['de_DE']['EcommerceRole']['COUNTRY'] = 'Land';

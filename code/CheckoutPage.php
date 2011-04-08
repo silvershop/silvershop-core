@@ -142,16 +142,16 @@ class CheckoutPage extends Page {
 			}
 		}
 		if($page) {
-			if(!$page->PurchaseComplete) {$page->PurchaseComplete = '<p>Your purchase is complete.</p>'; $update[] = "added PurchaseComplete content";}
-			if(!$page->ChequeMessage) {$page->ChequeMessage = '<p>Please note: Your goods will not be dispatched until we receive your payment.</p>'; $update[] = "added ChequeMessage content";}
-			if(!$page->AlreadyCompletedMessage) {$page->AlreadyCompletedMessage = '<p>This order has already been completed.</p>'; $update[] = "added AlreadyCompletedMessage content";}
-			if(!$page->FinalizedOrderLinkLabel) {$page->FinalizedOrderLinkLabel = 'view completed order'; $update[] = "added FinalizedOrderLinkLabel content";}
-			if(!$page->CurrentOrderLinkLabel) {$page->CurrentOrderLinkLabel = 'view current order'; $update[] = "added CurrentOrderLinkLabel content";}
-			if(!$page->StartNewOrderLinkLabel) {$page->StartNewOrderLinkLabel = 'start new order'; $update[] = "added StartNewOrderLinkLabel content";}
-			if(!$page->NonExistingOrderMessage) {$page->NonExistingOrderMessage = '<p>We can not find your order.</p>'; $update[] = "added NonExistingOrderMessage content";}
-			if(!$page->NoItemsInOrderMessage) {$page->NoItemsInOrderMessage = '<p>There are no items in your order. Please add some products first.</p>'; $update[] = "added NoItemsInOrderMessage content";}
-			if(!$page->MustLoginToCheckoutMessage) {$page->MustLoginToCheckoutMessage = '<p>You must login to view this order</p>'; $update[] = "added MustLoginToCheckoutMessage content";}
-			if(!$page->LoginToOrderLinkLabel) {$page->LoginToOrderLinkLabel = '<p>log in and view order</p>'; $update[] = "added LoginToOrderLinkLabel content";}
+			if(!$page->PurchaseComplete) {$page->PurchaseComplete = '<p>'._t('Checkout.PURCHASECOMPLETE','Your purchase is complete.').'</p>'; $update[] = "added PurchaseComplete content";}
+			if(!$page->ChequeMessage) {$page->ChequeMessage = '<p>'._t('Checkout.CHEQUEMESSAGE','Please note: Your goods will not be dispatched until we receive your payment.').'</p>'; $update[] = "added ChequeMessage content";}
+			if(!$page->AlreadyCompletedMessage) {$page->AlreadyCompletedMessage = '<p>'._t('Checkout.ALREADYCOMPLETEDMESSAGE','').'This order has already been completed.</p>'; $update[] = "added AlreadyCompletedMessage content";}
+			if(!$page->FinalizedOrderLinkLabel) {$page->FinalizedOrderLinkLabel = _t('Checkout.FINALIZEDORDERLINKLABEL','view completed order'); $update[] = "added FinalizedOrderLinkLabel content";}
+			if(!$page->CurrentOrderLinkLabel) {$page->CurrentOrderLinkLabel = _t('Checkout.CURRENTORDERLINKLABEL','view current order'); $update[] = "added CurrentOrderLinkLabel content";}
+			if(!$page->StartNewOrderLinkLabel) {$page->StartNewOrderLinkLabel = _t('Checkout.STARTNEWDORDERLINKLABEL','start new order'); $update[] = "added StartNewOrderLinkLabel content";}
+			if(!$page->NonExistingOrderMessage) {$page->NonExistingOrderMessage = '<p>'._t('Checkout.NONEXISTINGORDERMESSAGE','We can not find your order.').'</p>'; $update[] = "added NonExistingOrderMessage content";}
+			if(!$page->NoItemsInOrderMessage) {$page->NoItemsInOrderMessage = '<p>'._t('Checkout.NONITEMSINORDERMESSAGE','There are no items in your order. Please add some products first.').'</p>'; $update[] = "added NoItemsInOrderMessage content";}
+			if(!$page->MustLoginToCheckoutMessage) {$page->MustLoginToCheckoutMessage = '<p>'._t('Checkout.MUSTLOGINTOCHECKOUTMESSAGE','You must login to view this order').'</p>'; $update[] = "added MustLoginToCheckoutMessage content";}
+			if(!$page->LoginToOrderLinkLabel) {$page->LoginToOrderLinkLabel = '<p>'._t('Checkout.LOGINTOORDERLINKLABEL','log in and view order').'</p>'; $update[] = "added LoginToOrderLinkLabel content";}
 			if(count($update)) {
 				$page->writeToStage('Stage');
 				$page->publish('Stage', 'Live');
