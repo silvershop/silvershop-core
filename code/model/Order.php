@@ -182,6 +182,7 @@ class Order extends DataObject {
 	 * you want to display on the table.
 	 *
 	 * @var array
+	 * @to do can we get rid of this?????? - ONLY used in reports...
 	 */
 	protected static $table_overview_fields = array(
 		"\"Order\".\"ID\"" => 'Order No',
