@@ -10,7 +10,7 @@
 		</tr>
 	</thead>
 	<tfoot>
-		<tr class="cartMessage"></tr>
+		<tr class="cartMessage">
 			<td colspan="5" scope="row" class="center $CartStatusClass" id="$TableMessageID">$CartStatusMessage</td>
 		</tr>
 		<tr class="showOnZeroItems"<% if Items %> style="display: none"<% end_if %>>
