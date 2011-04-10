@@ -261,10 +261,6 @@ class ShoppingCart extends Controller {
 		return self::$order;
 	}
 
-	function TEST() {
-		return "TEST TEST TEST TEST TEST TEST TEST TEST TEST ";
-	}
-
 	public function clear_order_from_shopping_cart() {
 		Session::set(self::$cartid_session_name,null);
 	}
