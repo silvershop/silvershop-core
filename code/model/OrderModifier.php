@@ -246,6 +246,18 @@ class OrderModifier extends OrderAttribute {
 		return false;
 	}
 
+	/**
+	* some modifiers can be hidden after an ajax update (e.g. if someone enters a discount coupon and it does not exist)
+	* in this case, we can not use @link ShowInTable, because we still want the HTML to be available
+	*@return Boolean
+	**/
+
+	function CanBeHiddenAfterAjaxUpdate() {
+		if($this->ShowInTable()) {
+			return false;
+		}
+		return true;
+	}
 
 	/**
 	 * Checks if the modifier can be removed. Default check is for whether it is Chargeable.
@@ -429,10 +441,16 @@ class OrderModifier extends OrderAttribute {
 	function updateForAjax(array &$js) {
 		$tableValue = DBField::create('Currency',$this->TableValue())->Nice();
 		$cartValue = DBField::create('Currency',$this->CartValue())->Nice();
-		$js[] = array('id' => $this->TableTotalID(), 'parameter' => 'innerHTML', 'value' => $tableValue);
-		$js[] = array('id' => $this->CartTotalID(), 'parameter' => 'innerHTML', 'value' => $cartValue);
-		$js[] = array('id' => $this->TableTitleID(), 'parameter' => 'innerHTML', 'value' => $this->TableTitle());
-		$js[] = array('id' => $this->CartTitleID(), 'parameter' => 'innerHTML', 'value' => $this->CartTitle());
+		if($this->CanBeHiddenAfterAjaxUpdate()) {
+			$js[] = array("id" => $this->TableID(), 'parameter' => "hide", "value" => 1);
+		}
+		else {
+			$js[] = array('id' => $this->TableTotalID(), 'parameter' => 'innerHTML', 'value' => $tableValue);
+			$js[] = array('id' => $this->CartTotalID(), 'parameter' => 'innerHTML', 'value' => $cartValue);
+			$js[] = array('id' => $this->TableTitleID(), 'parameter' => 'innerHTML', 'value' => $this->TableTitle());
+			$js[] = array('id' => $this->CartTitleID(), 'parameter' => 'innerHTML', 'value' => $this->CartTitle());
+			$js[] = array("id" => $this->TableID(), 'parameter' => "hide", "value" => 0);
+		}
 	}
 
 

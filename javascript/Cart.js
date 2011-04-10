@@ -13,9 +13,19 @@
 
 Cart = {
 
+	setCountryLinkAppendix: "_SetCountryLink",
+
 	classToShowLoading: "loadingCartData",
 
-	attachClassTo: "body",
+	attachLoadingClassTo: "body",
+
+	cartMessageClass: "cartMessage",
+
+	selectorShowOnZeroItems: ".showOnZeroItems",
+
+	selectorHideOnZeroItems: ".hideOnZeroItems",
+
+	selectorItemRows: "tr.orderitem",
 
 	init: function () {
 		Cart.updateCartRows();
@@ -24,7 +34,7 @@ Cart = {
 				jQuery(this).removeAttr('disabled');
 				jQuery(this).change(
 					function() {
-						var id = '#' + jQuery(this).attr('id') + '_SetCountryLink';
+						var id = '#' + jQuery(this).attr('id') + Cart.setCountryLinkAppendix;
 						var setCountryLink = jQuery(id);
 						if(jQuery(setCountryLink).length > 0) {
 							setCountryLink = jQuery(setCountryLink).get(0);
@@ -38,28 +48,54 @@ Cart = {
 	},
 
 	getChanges: function(url, params) {
-		jQuery(Cart.attachClassTo).addClass(Cart.classToShowLoading);
+		jQuery(Cart.attachLoadingClassTo).addClass(Cart.classToShowLoading);
 		jQuery.getJSON(url, params, Cart.setChanges);
 	},
 
 	setChanges: function (changes) {
+		Cart.updateCartRows();
 		for(var i in changes) {
 			var change = changes[i];
 			if(typeof(change.parameter) != 'undefined' && typeof(change.value) != 'undefined') {
 				var parameter = change.parameter;
 				var value = Cart.escapeHTML(change.value);
-				if(change.id) {
-					var id = '#' + change.id;
-					if(parameter == 'innerHTML'){
+				//selector Types
+				var id = change.id;
+				var name = change.name;
+				var selector = change.selector;
+				if(Cart.variableSetWithValue(id)) {
+					var id = '#' + id;
+					//hide or show row...
+					if(parameter == "hide") {
+						if(change.value) {
+							jQuery(id).hide();
+						}
+						else {
+							jQuery(id).show();
+						}
+					}
+					//general message
+					else if(Cart.variableSetWithValue(change.isOrderMessage)) {
+						jQuery(id).html('<span class="'+ change.messageClass+'">' + value +'</span>');
+					}
+					else if(parameter == 'innerHTML'){
 						jQuery(id).html(value);
 					}
 					else{
 						jQuery(id).attr(parameter, value);
 					}
 				}
-				else if(change.name) {
-					var name = change.name;
+				//used for form fields...
+				else if(Cart.variableSetWithValue(name)) {
 					jQuery('[name=' + name + ']').each(
+						function() {
+							jQuery(this).attr(parameter, value);
+						}
+					);
+				}
+				//user for class elements
+				else if(Cart.variableSetWithValue(selector)) {
+					jQuery(selector).each(
 						function() {
 							jQuery(this).attr(parameter, value);
 						}
@@ -67,21 +103,42 @@ Cart = {
 				}
 			}
 		}
-		jQuery(Cart.attachClassTo).removeClass(Cart.classToShowLoading);
+		jQuery(Cart.attachLoadingClassTo).removeClass(Cart.classToShowLoading);
 	},
 	//to do: remove ... we dont seem to need it!
 	escapeHTML: function (str) {
-		 return str;
+		return str;
 	},
 	//to do: explain this function
 	updateCartRows: function() {
-		if(jQuery("tr.orderitem").length > 0) {
-			jQuery(".showOnZeroItems").hide();
-			jQuery(".hideOnZeroItems").show();
+		if(Cart.cartHasItems()) {
+			jQuery(Cart.selectorShowOnZeroItems).hide();
+			jQuery(Cart.selectorHideOnZeroItems).show();
 		}
 		else {
-			jQuery(".showOnZeroItems").show();
-			jQuery(".hideOnZeroItems").hide();
+			jQuery(Cart.selectorShowOnZeroItems).show();
+			jQuery(Cart.selectorHideOnZeroItems).hide();
 		}
+	},
+
+	cartHasItems: function() {
+		return jQuery(Cart.selectorItemRows).length > 0;
+	},
+
+	variableSet: function(variable) {
+		if(typeof(variable) == 'undefined' || typeof variable == 'undefined' || variable == 'undefined') {
+			return false;
+		}
+		return true;
+	},
+
+	variableSetWithValue: function(variable) {
+		if(Cart.variableSet(variable)) {
+			if(variable) {
+				return true;
+			}
+		}
+		return false;
 	}
+
 }

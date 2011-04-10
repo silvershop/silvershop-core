@@ -74,8 +74,8 @@ class ShoppingCart extends Controller {
 
 
 /*******************************************************
-   * COUNTRY MANAGEMENT
-  * NOTE THAT WE GET THE COUNTRY FROM MULTIPLE SOURCES!
+	* COUNTRY MANAGEMENT
+ 	* NOTE THAT WE GET THE COUNTRY FROM MULTIPLE SOURCES!
 *******************************************************/
 
 	protected static $country_setting_index = 'ShoppingCartCountry';
@@ -139,7 +139,7 @@ class ShoppingCart extends Controller {
 
 
 /*******************************************************
-   * CLEARING OLD ORDERS
+	 * CLEARING OLD ORDERS
 *******************************************************/
 
 	protected static $clear_days = 90;
@@ -152,7 +152,7 @@ class ShoppingCart extends Controller {
 
 
 /*******************************************************
-   * DELETE OLD SHOPPING CARTS
+	 * DELETE OLD SHOPPING CARTS
 *******************************************************/
 
 	public static function delete_old_carts(){
@@ -174,7 +174,7 @@ class ShoppingCart extends Controller {
 
 
 /*******************************************************
-   * STARTUP
+	 * STARTUP
 *******************************************************/
 
 	function init() {
@@ -278,7 +278,7 @@ class ShoppingCart extends Controller {
 
 
 /*******************************************************
-   * CONTROLLER LINKS
+	 * CONTROLLER LINKS
 *******************************************************/
 
 	static function add_item_link($buyableID, $className = "OrderItem", $parameters = array()) {
@@ -323,7 +323,7 @@ class ShoppingCart extends Controller {
 	}
 
 /*******************************************************
-   * ORDER ITEM  AND MODIFIER INFORMATION
+	 * ORDER ITEM  AND MODIFIER INFORMATION
 *******************************************************/
 
 	protected static function order_item_class_name($className) {
@@ -371,7 +371,7 @@ class ShoppingCart extends Controller {
 	}
 
 /*******************************************************
-   * RETRIEVE INFORMATION
+	 * RETRIEVE INFORMATION
 *******************************************************/
 
 	function Cart() {
@@ -409,7 +409,7 @@ class ShoppingCart extends Controller {
 	}
 
 /*******************************************************
-   * NON ITEM/MODIFIER INFORMATION
+	 * NON ITEM/MODIFIER INFORMATION
 *******************************************************/
 
 	static function uses_different_shipping_address(){
@@ -424,7 +424,7 @@ class ShoppingCart extends Controller {
 
 
 /*******************************************************
-   * STATIC FUNCTIONS
+	 * STATIC FUNCTIONS
 *******************************************************/
 
 	/**
@@ -585,7 +585,7 @@ class ShoppingCart extends Controller {
 
 
 /*******************************************************
-   * URL ACTIONS
+	 * URL ACTIONS
 *******************************************************/
 
 
@@ -764,7 +764,7 @@ class ShoppingCart extends Controller {
 
 
 /*******************************************************
-   * URL DECODING AND FILTERING
+	 * URL DECODING AND FILTERING
 *******************************************************/
 
 	/**
@@ -901,7 +901,7 @@ class ShoppingCart extends Controller {
 
 
 /*******************************************************
-   * DEBUG
+	 * DEBUG
 *******************************************************/
 
 

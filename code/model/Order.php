@@ -134,12 +134,16 @@ class Order extends DataObject {
 	}
 
 	protected static $maximum_ignorable_sales_payments_difference = 0.01;
-		static function set_maximum_ignorable_sales_payments_difference($v) {self::$maximum_ignorable_sales_payments_difference = $v;}
+		static function set_maximum_ignorable_sales_payments_difference($f) {self::$maximum_ignorable_sales_payments_difference = $f;}
 		static function get_maximum_ignorable_sales_payments_difference() {return self::$maximum_ignorable_sales_payments_difference;}
 
  	protected static $order_id_start_number = 0;
-		static function set_order_id_start_number($v) {self::$order_id_start_number = $v;}
+		static function set_order_id_start_number($i) {self::$order_id_start_number = $i;}
 		static function get_order_id_start_number() {return self::$order_id_start_number;}
+
+	protected static $table_message_id = "CartMessage";
+		static function set_table_message_id($s) {self::$table_message_id = $s;}
+		static function get_table_message_id() {return self::$table_message_id;}
 
 	public static function get_order_status_options() {
 		return DataObject::get("OrderStep");
@@ -396,9 +400,6 @@ class Order extends DataObject {
 /*******************************************************
    * MAIN TRANSITION FUNCTIONS:
 *******************************************************/
-
-
-
 
 	public function tryToFinaliseOrder() {
 		$this->init();
@@ -882,6 +883,9 @@ class Order extends DataObject {
 *******************************************************/
 
 
+	function TableMessageID() {
+		return self::$table_message_id."_".$this->ID;
+	}
 
 
 	function getTitle() {
@@ -1118,8 +1122,6 @@ class Order extends DataObject {
 			}
 		}
 	}
-
-
 
 
 /*******************************************************
