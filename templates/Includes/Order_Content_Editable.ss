@@ -10,7 +10,10 @@
 		</tr>
 	</thead>
 	<tfoot>
-		<tr class="showOnZeroItems cartMessage"<% if Items %> style="display: none"<% end_if %> id="$TableMessageID">
+		<tr class="cartMessage"></tr>
+			<td colspan="5" scope="row" class="center $CartStatusClass" id="$TableMessageID">$CartStatusMessage</td>
+		</tr>
+		<tr class="showOnZeroItems"<% if Items %> style="display: none"<% end_if %>>
 			<td colspan="5" scope="row" class="center"><% _t("NOITEMS","There are <strong>no</strong> items in your cart.") %></td>
 		</tr>
 	</tfoot>

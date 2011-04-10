@@ -44,6 +44,13 @@ class CartResponse extends EcommerceResponse {
 				"value" => 0
 			);
 		}
+		else {
+			$js[] = array(
+				"id" => $currentOrder->TableMessageID(),
+				"parameter" => "hide",
+				"value" => 1
+			);
+		}
 		return Convert::array2json($js);
 	}
 

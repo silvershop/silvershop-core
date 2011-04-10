@@ -15,6 +15,8 @@ Cart = {
 
 	setCountryLinkAppendix: "_SetCountryLink",
 
+	ajaxCountryFieldSelector: "select.ajaxCountryField",
+
 	classToShowLoading: "loadingCartData",
 
 	attachLoadingClassTo: "body",
@@ -29,7 +31,7 @@ Cart = {
 
 	init: function () {
 		Cart.updateCartRows();
-		jQuery('select.ajaxCountryField').each(
+		jQuery(Cart.ajaxCountryFieldSelector).each(
 			function() {
 				jQuery(this).removeAttr('disabled');
 				jQuery(this).change(
@@ -142,3 +144,5 @@ Cart = {
 	}
 
 }
+
+

@@ -249,9 +249,21 @@ class ShoppingCart extends Controller {
 			self::add_requirements();
 			self::$order->calculateModifiers();
 		}
+		//add shopping cart items
+		if($message = Session::get(self::get_shopping_cart_message_index().".Message")) {
+			self::$order->CartStatusMessage = $message;
+			Session::set(self::get_shopping_cart_message_index().".Message", null);
+			if($className = Session::get(self::get_shopping_cart_message_index().".Status", $status)) {
+				self::$order->CartStatusClass = $className;
+				Session::set(self::get_shopping_cart_message_index().".Status", null);
+			}
+		}
 		return self::$order;
 	}
 
+	function TEST() {
+		return "TEST TEST TEST TEST TEST TEST TEST TEST TEST ";
+	}
 
 	public function clear_order_from_shopping_cart() {
 		Session::set(self::$cartid_session_name,null);
@@ -745,7 +757,7 @@ class ShoppingCart extends Controller {
 	 */
 
 	protected function returnMessage($status = "success",$message = null) {
-		return self::return_message($status = "success",$message = null);
+		return self::return_message($status = "success",$message);
 	}
 
 	public static function return_message($status = "success",$message = null){
