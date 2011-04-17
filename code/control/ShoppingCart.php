@@ -274,7 +274,7 @@ class ShoppingCart extends Controller {
 		if($message = Session::get(self::get_shopping_cart_message_index().".Message")) {
 			self::$order->CartStatusMessage = $message;
 			Session::set(self::get_shopping_cart_message_index().".Message", null);
-			if($className = Session::get(self::get_shopping_cart_message_index().".Status", $status)) {
+			if($className = Session::get(self::get_shopping_cart_message_index().".Status")) {
 				self::$order->CartStatusClass = $className;
 				Session::set(self::get_shopping_cart_message_index().".Status", null);
 			}

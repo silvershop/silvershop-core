@@ -90,7 +90,7 @@ class EcomQuantityField extends NumericField {
 	 * Used for storing the quantity update link for ajax use.
 	 */
 	function AJAXLinkHiddenField(){
-		if($quantitylink = ShoppingCart::set_quantity_item_link($this->item->BuyableID, $this->orderItem->class,$this->parameters)){
+		if($quantitylink = ShoppingCart::set_quantity_item_link($this->orderItem->BuyableID, $this->orderItem->class,$this->parameters)){
 			$attributes = array(
 				'type' => 'hidden',
 				'class' => 'ajaxQuantityField_qtylink',
@@ -106,16 +106,15 @@ class EcomQuantityField extends NumericField {
 	 *@return String(URLSegment)
 	 **/
 	function IncrementLink(){
-		return Convert::raw2att(ShoppingCart::increment_item_link($this->item->BuyableID, $this->item->ClassName,$this->parameters));
+		return Convert::raw2att(ShoppingCart::increment_item_link($this->orderItem->BuyableID, $this->orderItem->ClassName,$this->parameters));
 	}
 
 	/**
 	 *@return String(URLSegment)
 	 **/
 	function DecrementLink(){
-		return Convert::raw2att(ShoppingCart::decrement_item_link($this->item->BuyableID, $this->item->class,$this->parameters));
+		return Convert::raw2att(ShoppingCart::decrement_item_link($this->orderItem->BuyableID, $this->orderItem->ClassName,$this->parameters));
 	}
-
 
 	/**
 	 *@return HTML

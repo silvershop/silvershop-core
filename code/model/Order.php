@@ -176,7 +176,7 @@ class Order extends DataObject {
 	}
 
 	protected static $add_shipping_fields = false;
-		static function set_add_shipping_fields(boolean $b){self::$add_shipping_fields = $b;}
+		static function set_add_shipping_fields($b){self::$add_shipping_fields = $b;}
 		static function get_add_shipping_fields(){return self::$add_shipping_fields;}
 
 /*******************************************************

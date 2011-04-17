@@ -111,8 +111,8 @@ class OrderStep extends DataObject {
 		"OrderStep_Sent",
 		"OrderStep_Archived"
 	);
-		static function set_order_steps_to_include(string $s) {self::$order_steps_to_include = $s;}
-		static function get_order_steps_to_include() {return(string)self::$order_steps_to_include;}
+		static function set_order_steps_to_include(array $a) {self::$order_steps_to_include = $a;}
+		static function get_order_steps_to_include() {return(array)self::$order_steps_to_include;}
 		/**
 		 *
 		 *@return Array
@@ -120,7 +120,7 @@ class OrderStep extends DataObject {
 		static function get_codes_for_order_steps_to_include() {
 			$newArray = array();
 			$array = self::get_order_steps_to_include();
-			if($array && count($array)) {
+			if(is_array($array) && count($array)) {
 				foreach($array as $className) {
 					$code = singleton($className)->getMyCode();
 					$newArray[$className] = strtoupper($code);
