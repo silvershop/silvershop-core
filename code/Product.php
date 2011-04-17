@@ -50,6 +50,7 @@ class Product extends Page {
 
 	public static $singular_name = "Product";
 		function i18n_singular_name() { return _t("Order.PRODUCT", "Product");}
+
 	public static $plural_name = "Products";
 		function i18n_plural_name() { return _t("Order.PRODUCTS", "Products");}
 
@@ -60,12 +61,8 @@ class Product extends Page {
 	public static $icon = 'ecommerce/images/icons/product';
 
 	protected static $number_sold_calculation_type = "SUM"; //SUM or COUNT
-		static function set_number_sold_calculation_type($allow = false){self::$number_sold_calculation_type = $allow;}
+		static function set_number_sold_calculation_type($s){self::$number_sold_calculation_type = $s;}
 		static function get_number_sold_calculation_type(){return self::$number_sold_calculation_type;}
-
-	/**
-	 * Enables developers to completely turning off the ability to purcahse products.
-	 */
 
 	function getCMSFields() {
 		//prevent calling updateCMSFields extend function too early
@@ -102,7 +99,7 @@ class Product extends Page {
 	/**
 	 * Recaulculates the number sold for all products. This should be run as a cron job perhaps daily.
 	 */
-	static function recalculate_numbersold(){
+	public static function recalculate_number_sold(){
 		$ps = singleton('Product');
 		$q = $ps->buildSQL("\"Product\".\"AllowPurchase\" = 1");
 		$select = $q->select;
@@ -128,11 +125,17 @@ class Product extends Page {
 
 	}
 
+	/**
+	 *@return DataObject(ProductGroup) or NULL
+	 **/
 	function ParentGroup() {
 		//to do: cater for various parent groups...
 		return DataObject::get_by_id("ProductGroup", $this->ParentID);
 	}
 
+	/**
+	 *@return TreeMultiselectField
+	 **/
 	protected function getProductGroupsTable() {
 		$field = new TreeMultiselectField($name = "ProductGroups", $title = "Other Groups", $sourceObject = "SiteTree", $keyField = "ID", $labelField = "MenuTitle");
 		//TO DO: fix  filter function below...
@@ -176,7 +179,6 @@ class Product extends Page {
 	 */
 	function requireDefaultRecords() {
 		parent::requireDefaultRecords();
-
 		if(!DataObject::get_one('Product')) {
 			if(!DataObject::get_one('ProductGroup')) singleton('ProductGroup')->requireDefaultRecords();
 			if($group = DataObject::get_one('ProductGroup', '', true, "\"ParentID\" DESC")) {
@@ -253,16 +255,25 @@ class Product_Image extends Image {
 		self::$large_image_width = $width;
 	}
 
+	/**
+	 *@return GD
+	 **/
 	function generateThumbnail($gd) {
 		$gd->setQuality(80);
 		return $gd->paddedResize(self::$thumbnail_width,self::$thumbnail_height);
 	}
 
+	/**
+	 *@return GD
+	 **/
 	function generateContentImage($gd) {
 		$gd->setQuality(90);
 		return $gd->resizeByWidth(self::$content_image_width);
 	}
 
+	/**
+	 *@return GD
+	 **/
 	function generateLargeImage($gd) {
 		$gd->setQuality(90);
 		return $gd->resizeByWidth(self::$large_image_width);
@@ -293,11 +304,18 @@ class Product_OrderItem extends OrderItem {
 		return $this->Buyable($current);
 	}
 
+
+	/**
+	 *@return Boolean
+	 **/
 	function hasSameContent($orderItem) {
 		$parentIsTheSame = parent::hasSameContent($orderItem);
 		return $parentIsTheSame && $orderItem instanceof Product_OrderItem;
 	}
 
+	/**
+	 *@return Float
+	 **/
 	function UnitPrice() {
 		$unitprice = 0;
 		if($this->Product()) {
@@ -307,6 +325,9 @@ class Product_OrderItem extends OrderItem {
 		return $unitprice;
 	}
 
+	/**
+	 *@return String
+	 **/
 	function TableTitle() {
 		$tabletitle = _t("Product.UNKNOWN", "Unknown Product");
 		if($this->Product()) {
@@ -316,6 +337,9 @@ class Product_OrderItem extends OrderItem {
 		return $tabletitle;
 	}
 
+	/**
+	 *@return String
+	 **/
 	function TableSubTitle() {
 		$tablesubtitle = "";
 		$this->extend('updateTableSubTitle',$tablesubtitle);
@@ -360,7 +384,6 @@ HTML;
 				DB::alteration_message('made ProductVersion and ProductID obsolete in Product_OrderItem', 'obsolete');
 			}
 		}
-
 	}
 
 

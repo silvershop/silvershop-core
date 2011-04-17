@@ -82,7 +82,7 @@ class OrderStep extends DataObject {
 
 	public static $singular_name = "Order Step";
 		static function get_singular_name() {return self::$singular_name;}
-		static function set_singular_name($v) {self::$singular_name = $v;}
+		static function set_singular_name(string $s) {self::$singular_name = $s;}
 		function i18n_singular_name() { return _t("OrderStep.ORDERSTEPOPTION", "Order Step");}
 
 	public static $plural_name = "Order Steps";
@@ -111,8 +111,12 @@ class OrderStep extends DataObject {
 		"OrderStep_Sent",
 		"OrderStep_Archived"
 	);
-		static function set_order_steps_to_include($v) {self::$order_steps_to_include = $v;}
-		static function get_order_steps_to_include() {return self::$order_steps_to_include;}
+		static function set_order_steps_to_include(string $s) {self::$order_steps_to_include = $s;}
+		static function get_order_steps_to_include() {return(string)self::$order_steps_to_include;}
+		/**
+		 *
+		 *@return Array
+		 **/
 		static function get_codes_for_order_steps_to_include() {
 			$newArray = array();
 			$array = self::get_order_steps_to_include();
@@ -151,6 +155,10 @@ class OrderStep extends DataObject {
 		}
 	}
 
+	/**
+	 *
+	 *@return Fieldset
+	 **/
 	function getCMSFields() {
 		//TO DO: add warning messages and break up fields
 		$fields = parent::getCMSFields();
@@ -173,10 +181,18 @@ class OrderStep extends DataObject {
 		return $fields;
 	}
 
+	/**
+	 *
+	 *@return FieldSet
+	 **/
 	function addOrderStepFields(&$fields, $order) {
 		return $fields;
 	}
 
+	/**
+	 *
+	 *@return ValidationResult
+	 **/
 	function validate() {
 		$result = DataObject::get_one(
 			"OrderStep",
@@ -206,6 +222,7 @@ class OrderStep extends DataObject {
 		user_error("Please implement this in a subclass of OrderStep", E_USER_WARNING);
 		return true;
 	}
+
 	/**
   	*doStep:
 	* should only be able to run this function one (init stops you from running it twice - in theory....)
@@ -217,11 +234,12 @@ class OrderStep extends DataObject {
 		user_error("Please implement this in a subclass of OrderStep", E_USER_WARNING);
 		return true;
 	}
+
 	/**
   	*nextStep:
   	*runs the actual step
   	*@param Order object
-  	*@return next step OrderStep object
+  	*@return DataObject (next step OrderStep object)
   	**/
 	public function nextStep($order) {
 		$nextOrderStepObject = DataObject::get_one("OrderStep", "\"Sort\" > ".$this->Sort);
@@ -237,6 +255,10 @@ class OrderStep extends DataObject {
 * Boolean checks
 **************************************************/
 
+	/**
+	 *
+	 *@return Boolean
+	 **/
 	public function canDelete($member = null) {
 		if($order = DataObject::get_one("Order", "\"StatusID\" = ".$this->ID)) {
 			return false;
@@ -247,6 +269,10 @@ class OrderStep extends DataObject {
 		return true;
 	}
 
+	/**
+	 *
+	 *@return Boolean
+	 **/
 	public function hasPassed($code, $orIsEqualTo = false) {
 		$otherStatus = DataObject::get_one("OrderStep", "\"Code\" = '".$code."'");
 		if($otherStatus) {
@@ -263,24 +289,44 @@ class OrderStep extends DataObject {
 		return false;
 	}
 
+	/**
+	 *
+	 *@return Boolean
+	 **/
 	public function hasPassedOrIsEqualTo($code) {
 		return $this->hasPassed($code, true);
 	}
 
+	/**
+	 *
+	 *@return Boolean
+	 **/
 	public function hasNotPassed($code) {
 		return (bool)!$this->hasPassed($code, true);
 	}
 
+	/**
+	 *
+	 *@return Boolean
+	 **/
 	public function isBefore($code) {
 		return (bool)!$this->hasPassed($code, false);
 	}
 
+	/**
+	 *
+	 *@return Boolean
+	 **/
 	protected function isDefaultStatusOption() {
 		return in_array($this->Code, self::get_codes_for_order_steps_to_include());
 	}
 
 	//EMAIL
 
+	/**
+	 *
+	 *@return Boolean
+	 **/
 	protected function hasBeenSent($order) {
 		return DataObject::get_one("OrderEmailRecord", "\"OrderEmailRecord\".\"OrderID\" = ".$order->ID." AND \"OrderEmailRecord\".\"OrderStepID\" = ".$this->ID." AND  \"OrderEmailRecord\".\"Result\" = 1");
 	}
@@ -341,6 +387,10 @@ class OrderStep_Created extends OrderStep {
 		return true;
 	}
 
+	/**
+	 *
+	 *@return DataObject  (nextStep DataObject
+	 **/
 	public function nextStep($order) {
 		$nextOrderStepObject = parent::nextStep($order);
 		if($order->TotalItems()) {

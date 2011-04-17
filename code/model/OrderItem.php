@@ -13,9 +13,9 @@
 class OrderItem extends OrderAttribute {
 
 	protected static $disable_quantity_js = false;
+		static function set_disable_quantity_js(boolean $b){self::$disable_quantity_js = $b;}
+		static function get_disable_quantity_js(){return self::$disable_quantity_js;}
 		static function disable_quantity_js(){self::$disable_quantity_js = true;}
-		static function get_quantity_js(){return self::$disable_quantity_js;}
-		static function set_quantity_js($v){self::$disable_quantity_js = $v;}
 
 	public static $db = array(
 		'Quantity' => 'Double',
@@ -88,6 +88,11 @@ class OrderItem extends OrderAttribute {
 		}
 		return $fields;
 	}
+
+	/**
+	 *
+	 * @return FieldSet
+	  **/
 	function scaffoldSearchFields(){
 		$fields = parent::scaffoldSearchFields();
 		$fields->replaceField("OrderID", new NumericField("OrderID", "Order Number"));
@@ -102,6 +107,10 @@ class OrderItem extends OrderAttribute {
 		parent::addBuyableToOrderItem($buyable);
 	}
 
+	/**
+	 *
+	 * @return Array used to create JSON for AJAX
+	  **/
 	function updateForAjax(array &$js) {
 		$total = $this->TotalAsCurrencyObject()->Nice();
 		$js[] = array('id' => $this->TableTotalID(), 'parameter' => 'innerHTML', 'value' => $total);
@@ -140,6 +149,10 @@ class OrderItem extends OrderAttribute {
 		$this->Quantity += $quantity;
 	}
 
+	/**
+	 *
+	 * @return Boolean
+	  **/
 	function hasSameContent($orderItem) {
 		return $orderItem instanceof OrderItem && $this->BuyableID == $orderItem->BuyableID && $this->Version == $orderItem->Version;
 	}
@@ -168,6 +181,10 @@ HTML;
 		user_error("OrderItem::UnitPrice() called. Please implement UnitPrice() on $this->class", E_USER_ERROR);
 	}
 
+	/**
+	 *
+	 *@return integer
+	  **/
 	protected function QuantityFieldName() {
 		return $this->MainID() . '_Quantity';
 	}
@@ -179,28 +196,36 @@ HTML;
 		return $this->QuantityField();
 	}
 
+	/**
+	 *
+	 * @return Field (EcomQuantityField)
+	  **/
 	function QuantityField(){
 		return new EcomQuantityField($this);
 	}
 
+	/**
+	 *
+	 * @return Float
+	  **/
 	function Total() {
 		$total = $this->UnitPrice() * $this->Quantity;
 		$this->extend('updateTotal',$total);
 		return $total;
 	}
 
+	/**
+	 *
+	 * @return Currency (DB Object)
+	  **/
 	function TotalAsCurrencyObject() {
 		return DBField::create('Currency',$this->Total());
 	}
 
-	function TableTitle() {
-		return $this->ClassName;
-	}
-
-	function TableSubTitle() {
-		return "";
-	}
-
+	/**
+	 *
+	 * @return DataObject (Any type of Data Object that is buyable)
+	  **/
 	//TODO: Change "Item" to something that doesn't conflict with OrderItem
 	function Buyable($current = false) {
 		$className = $this->BuyableClassName();
@@ -212,6 +237,10 @@ HTML;
 		}
 	}
 
+	/**
+	 *
+	 * @return String
+	  **/
 	function BuyableClassName() {
 		$className = str_replace(Buyable::get_order_item_class_name_post_fix(), "", $this->ClassName);
 		if(class_exists($className) && ClassInfo::is_subclass_of($className, "DataObject")) {
@@ -222,6 +251,10 @@ HTML;
 		}
 	}
 
+	/**
+	 *
+	 * @return String
+	  **/
 	function BuyableTitle() {
 		if($item = $this->Buyable()) {
 			return $item->Title;
@@ -229,6 +262,10 @@ HTML;
 		return "Title not found"; //TODO: ugly to fall back on
 	}
 
+	/**
+	 *
+	 * @return String (URLSegment)
+	  **/
 	function Link() {
 		if($item = $this->Buyable()) {
 			return $item->Link();
@@ -236,48 +273,109 @@ HTML;
 		return ""; //TODO: ugly to fall back on
 	}
 
+	/**
+	 *
+	 * @return String
+	  **/
 	function ProductTitle() {
 		user_error("This function has been replaced by BuyableTitle", E_USER_NOTICE);
 		return $this->BuyableTitle();
 	}
 
+	/**
+	 *
+	 * @return String
+	  **/
+	function TableTitle() {
+		return $this->ClassName;
+	}
+
+	/**
+	 *
+	 * @return String
+	  **/
+	function TableSubTitle() {
+		return "";
+	}
+
+	/**
+	 *
+	 * @return String
+	  **/
 	function CartQuantityID() {
 		return $this->CartID() . '_Quantity';
 	}
 
+	/**
+	 *
+	 * @return String (URLSegment)
+	  **/
 	function checkoutLink() {
 		return CheckoutPage::find_link();
 	}
 
 	## Often Overloaded functions ##
+
+	/**
+	 *
+	 * @return String (URLSegment)
+	  **/
 	function AddLink() {
 		return ShoppingCart::add_item_link($this->BuyableID, $this->ClassName,$this->linkParameters());
 	}
 
+	/**
+	 *
+	 * @return String (URLSegment)
+	  **/
 	function IncrementLink() {
 		return ShoppingCart::increment_item_link($this->BuyableID, $this->ClassName,$this->linkParameters());
 	}
 
+	/**
+	 *
+	 * @return String (URLSegment)
+	  **/
 	function DecrementLink() {
 		return ShoppingCart::decrement_item_link($this->BuyableID, $this->ClassName,$this->linkParameters());
 	}
 
+	/**
+	 *
+	 * @return String (URLSegment)
+	  **/
 	function RemoveLink() {
 		return ShoppingCart::remove_item_link($this->BuyableID, $this->ClassName,$this->linkParameters());
 	}
 
+	/**
+	 *
+	 * @return String (URLSegment)
+	  **/
 	function RemoveAllLink() {
 		return ShoppingCart::remove_all_item_link($this->BuyableID, $this->ClassName,$this->linkParameters());
 	}
 
+	/**
+	 *
+	 * @return String (URLSegment)
+	  **/
 	function SetQuantityLink() {
 		return ShoppingCart::set_quantity_item_link($this->BuyableID, $this->ClassName,$this->linkParameters());
 	}
 
+	/**
+	 *
+	 * @return String (URLSegment)
+	  **/
 	function SetSpecificQuantityItemLink($quantity) {
 		return ShoppingCart::set_quantity_item_link($this->BuyableID, $this->ClassName, array_merge($this->linkParameters(), array("quantity" => $quantity)));
 	}
 
+	/**
+	 *
+	 * @return array for use as get variables in link
+	  **/
 	protected function linkParameters(){
 		$array = array();
 		$this->extend('updateLinkParameters',$array);

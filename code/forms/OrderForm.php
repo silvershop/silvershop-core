@@ -136,16 +136,18 @@ class OrderForm extends Form {
 		$this->validactions[] = $action;
 	}
 
+
+	/**
+	 *@return array
+	 **/
 	function getValidActions($format = true){
 		$vas = $this->validactions;
-
 		if($format){
 			$actions = array();
 			foreach($vas as $action){
 				$actions[] = 'action_'.$action;
 			}
 		}
-
 		return $actions;
 	}
 
@@ -267,6 +269,8 @@ class OrderForm_Validator extends ShopAccountForm_Validator{
 	/**
 	 * Ensures member unique id stays unique and other basic stuff...
 	 * TODO: check if this code is not part of Member itself, as it applies to any member form.
+	 *@param array $data = Form Data
+	 *@return Boolean
 	 */
 	function php($data){
 		$valid = parent::php($data);

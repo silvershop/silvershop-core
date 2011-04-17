@@ -10,9 +10,13 @@
 class OrderFilters_AroundDateFilter extends ExactMatchFilter {
 
 	protected static $how_many_days_around = 31;
-		static function set_how_many_days_around($v){self::$how_many_days_around = $v;}
+		static function set_how_many_days_around(integer $i){self::$how_many_days_around = $i;}
 		static function get_how_many_days_around(){return self::$how_many_days_around;}
 
+	/**
+	 *
+	 *@return SQLQuery
+	 **/
 	public function apply(SQLQuery $query) {
 		$query = $this->applyRelation($query);
 		$value = $this->getValue();
@@ -35,6 +39,10 @@ class OrderFilters_AroundDateFilter extends ExactMatchFilter {
 
 	}
 
+	/**
+	 *
+	 *@return Boolean
+	 **/
 	public function isEmpty() {
 		return $this->getValue() == null || $this->getValue() == '';
 	}
@@ -45,6 +53,10 @@ class OrderFilters_AroundDateFilter extends ExactMatchFilter {
 
 class OrderFilters_MultiOptionsetFilter extends SearchFilter {
 
+	/**
+	 *
+	 *@return SQLQuery
+	 **/
 	public function apply(SQLQuery $query) {
 		$query = $this->applyRelation($query);
 		$values = $this->getValue();
@@ -60,6 +72,10 @@ class OrderFilters_MultiOptionsetFilter extends SearchFilter {
 		return $query;
 	}
 
+	/**
+	 *
+	 *@return Boolean
+	 **/
 	public function isEmpty() {
 		if(is_array($this->getValue())) {
 			return count($this->getValue()) == 0;
@@ -72,6 +88,10 @@ class OrderFilters_MultiOptionsetFilter extends SearchFilter {
 
 class OrderFilters_MultiOptionsetStatusIDFilter extends SearchFilter {
 
+	/**
+	 *
+	 *@return SQLQuery
+	 **/
 	public function apply(SQLQuery $query) {
 		$query = $this->applyRelation($query);
 		$values = $this->getValue();
@@ -84,6 +104,10 @@ class OrderFilters_MultiOptionsetStatusIDFilter extends SearchFilter {
 		return $query;
 	}
 
+	/**
+	 *
+	 *@return Boolean
+	 **/
 	public function isEmpty() {
 		if(is_array($this->getValue())) {
 			return count($this->getValue()) == 0;
@@ -96,6 +120,10 @@ class OrderFilters_MultiOptionsetStatusIDFilter extends SearchFilter {
 
 class OrderFilters_HasBeenCancelled extends SearchFilter {
 
+	/**
+	 *
+	 *@return SQLQuery
+	 **/
 	public function apply(SQLQuery $query) {
 		$query = $this->applyRelation($query);
 		$value = $this->getValue();
@@ -105,6 +133,10 @@ class OrderFilters_HasBeenCancelled extends SearchFilter {
 		return $query;
 	}
 
+	/**
+	 *
+	 *@return Boolean
+	 **/
 	public function isEmpty() {
 		return $this->getValue() == null || $this->getValue() == '' || $this->getValue() == 0;
 	}
@@ -112,6 +144,10 @@ class OrderFilters_HasBeenCancelled extends SearchFilter {
 
 class OrderFilters_MustHaveAtLeastOnePayment extends SearchFilter {
 
+	/**
+	 *
+	 *@return SQLQuery
+	 **/
 	public function apply(SQLQuery $query) {
 		$query = $this->applyRelation($query);
 		$value = $this->getValue();
@@ -125,6 +161,10 @@ class OrderFilters_MustHaveAtLeastOnePayment extends SearchFilter {
 		return $query;
 	}
 
+	/**
+	 *
+	 *@return Boolean
+	 **/
 	public function isEmpty() {
 		return $this->getValue() == null || $this->getValue() == '' || $this->getValue() == 0;
 	}

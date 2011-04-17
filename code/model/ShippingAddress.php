@@ -77,26 +77,46 @@ class ShippingAddress extends DataObject {
 		return $newArray;
 	}
 
+	/**
+	 *
+	 *@return String
+	 **/
 	function getShippingFullCountryName() {
 		return $this->ShippingFullCountryName();
 	}
 
+	/**
+	 *
+	 *@return String
+	 **/
 	function ShippingFullCountryName() {
 		return EcommerceRole::find_country_title($this->ShippingCountry);
 	}
 
+	/**
+	 *
+	 *@return FieldSet
+	 **/
 	function getCMSFields() {
 		$fields = parent::getCMSFields();
 		$fields->replaceField("OrderID", $fields->dataFieldByName("OrderID")->performReadonlyTransformation());
 		return $fields;
 	}
 
+	/**
+	 *
+	 *@return FieldSet
+	 **/
 	function scaffoldSearchFields(){
 		$fields = parent::scaffoldSearchFields();
 		$fields->replaceField("OrderID", new NumericField("OrderID", "Order Number"));
 		return $fields;
 	}
 
+	/**
+	 *
+	 *@return DataObject (ShippingAddress)
+	 **/
 	function makeShippingAddressFromMember($member = null, $forceOverRide = false) {
 		if(!$member) {
 			$member = Member::currentUser();

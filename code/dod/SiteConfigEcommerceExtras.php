@@ -27,9 +27,9 @@ class SiteConfigEcommerceExtras extends DataObjectDecorator {
 		);
 	}
 
+
 	function updateCMSFields(FieldSet &$fields) {
 		//new section
-
 		$shoptabs = new TabSet('Shop',
 			new Tab('Products',
 				new CheckboxField("ShopClosed", "Shop closed"),

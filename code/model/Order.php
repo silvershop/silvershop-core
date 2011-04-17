@@ -134,30 +134,39 @@ class Order extends DataObject {
 	}
 
 	protected static $maximum_ignorable_sales_payments_difference = 0.01;
-		static function set_maximum_ignorable_sales_payments_difference($f) {self::$maximum_ignorable_sales_payments_difference = $f;}
-		static function get_maximum_ignorable_sales_payments_difference() {return self::$maximum_ignorable_sales_payments_difference;}
+		static function set_maximum_ignorable_sales_payments_difference(float $f) {self::$maximum_ignorable_sales_payments_difference = $f;}
+		static function get_maximum_ignorable_sales_payments_difference() {return(float)self::$maximum_ignorable_sales_payments_difference;}
 
  	protected static $order_id_start_number = 0;
-		static function set_order_id_start_number($i) {self::$order_id_start_number = $i;}
-		static function get_order_id_start_number() {return self::$order_id_start_number;}
+		static function set_order_id_start_number(integer $i) {self::$order_id_start_number = $i;}
+		static function get_order_id_start_number() {return(integer)self::$order_id_start_number;}
 
 	protected static $table_message_id = "CartMessage";
-		static function set_table_message_id($s) {self::$table_message_id = $s;}
-		static function get_table_message_id() {return self::$table_message_id;}
+		static function set_table_message_id(string $s) {self::$table_message_id = $s;}
+		static function get_table_message_id() {return(string)self::$table_message_id;}
 
 	public static function get_order_status_options() {
 		return DataObject::get("OrderStep");
 	}
 
-	public static function get_by_id($id) {
-		$obj = DataObject::get_by_id("Order", $id);
+	/**
+	 * Like the standard get_by_id, but it checks if we are allowed to view it!
+	 *@return DataObject (Order)
+	 **/
+	public static function get_by_id_if_can_view($id) {
+		$obj = Order::get_by_id_if_can_view($id);
 		if($obj->canView()) {
 			return $obj;
 		}
 		return null;
 	}
+
+	/**
+	 * Like the standard get_by_id, but it checks if we are allowed to view it!
+	 *@return DataObject (Order)
+	 **/
 	public static function get_by_id_and_member_id($id, $memberID) {
-		$obj = DataObject::get_by_id("Order", $id);
+		$obj = Order::get_by_id_if_can_view($id);
 		if($obj) {
 			if($obj->MemberID == $memberID && $obj->canView()) {
 				return $obj;
@@ -167,7 +176,7 @@ class Order extends DataObject {
 	}
 
 	protected static $add_shipping_fields = false;
-		static function set_add_shipping_fields($v){self::$add_shipping_fields = $v;}
+		static function set_add_shipping_fields(boolean $b){self::$add_shipping_fields = $b;}
 		static function get_add_shipping_fields(){return self::$add_shipping_fields;}
 
 /*******************************************************
@@ -196,7 +205,7 @@ class Order extends DataObject {
 		'TotalAsCurrencyObject.Nice' => 'Total',
 		'Status' => 'Status'
 	);
-		public static function set_table_overview_fields($fields) {self::$table_overview_fields = $fields;}
+		public static function set_table_overview_fields(array $a) {self::$table_overview_fields = $a;}
 		public static function get_table_overview_fields() {return self::$table_overview_fields;}
 
 	public static $summary_fields = array(
@@ -380,6 +389,10 @@ class Order extends DataObject {
 		return $fields;
 	}
 
+	/**
+	 *
+	 *@return HasManyComplexTableField
+	 **/
 	function OrderStatusLogsTable($sourceClass) {
 		$orderStatusLogsTable = new HasManyComplexTableField(
 			$this,
@@ -684,6 +697,7 @@ class Order extends DataObject {
 	 * Returns the items of the order, if it hasn't been saved yet
 	 * it returns the items from session, if it has, it returns them
 	 * from the DB entry.
+	 *@return DataObjectSet (OrderItems)
 	 */
 	function Items($filter = "") {
  		if(!$this->ID){
@@ -709,6 +723,7 @@ class Order extends DataObject {
 	 * Returns the modifiers of the order, if it hasn't been saved yet
 	 * it returns the modifiers from session, if it has, it returns them
 	 * from the DB entry. ONLY USE OUTSIDE ORDER
+	 *@return DataObjectSet(OrderModifiers)
 	 */
  	function Modifiers() {
 		return $this->modifiersFromDatabase();
@@ -784,7 +799,10 @@ class Order extends DataObject {
 
 
 
-
+	/**
+	 *
+	 *@return Boolean
+	 **/
 	public function canCreate($member = null) {
 		if(!$member) {$member = Member::currentMember();}
 		if($member) {$memberID = $member->ID;} else {$memberID = 0;}
@@ -796,6 +814,10 @@ class Order extends DataObject {
 		}
 	}
 
+	/**
+	 *
+	 *@return Boolean
+	 **/
 	public function canView($member = null) {
 		if(!$member) {$member = Member::currentMember();}
 		if($member) {$memberID = $member->ID;} else {$memberID = 0;}
@@ -820,6 +842,10 @@ class Order extends DataObject {
 	}
 
 
+	/**
+	 *
+	 *@return Boolean
+	 **/
 	function canEdit($member = null) {
 		if(!$member) {$member = Member::currentMember();}
 		if($member) {$memberID = $member->ID;} else {$memberID = 0;}
@@ -836,6 +862,10 @@ class Order extends DataObject {
 		return $this->MyStep()->CustomerCanEdit;
 	}
 
+	/**
+	 *
+	 *@return Boolean
+	 **/
 	function canPay($member = null) {
 		if(!$member) {$member = Member::currentMember();}
 		if($member) {$memberID = $member->ID;} else {$memberID = 0;}
@@ -850,6 +880,10 @@ class Order extends DataObject {
 		return $this->MyStep()->CustomerCanPay;
 	}
 
+	/**
+	 *
+	 *@return Boolean
+	 **/
 	function canCancel($member = null) {
 		if($this->CancelledByID) {
 			return true;
@@ -867,6 +901,10 @@ class Order extends DataObject {
 	}
 
 
+	/**
+	 *
+	 *@return Boolean
+	 **/
 	public function canDelete($member = null) {
 		if(!$member) {$member = Member::currentMember();}
 		if($member) {$memberID = $member->ID;} else {$memberID = 0;}
@@ -883,15 +921,18 @@ class Order extends DataObject {
 *******************************************************/
 
 
-	function TableMessageID() {
-		return self::$table_message_id."_".$this->ID;
-	}
-
-
+	/**
+	 *
+	 *@return String
+	 **/
 	function getTitle() {
 		return $this->Title();
 	}
 
+	/**
+	 *
+	 *@return String
+	 **/
 	function Title() {
 		if($this->ID) {
 			$v = $this->i18n_singular_name(). " #$this->ID - ".$this->dbObject('Created')->format("D d M Y");
@@ -914,6 +955,7 @@ class Order extends DataObject {
 	 * @param $excluded string|array Class(es) of modifier(s) to ignore in the calculation.
 	 * @todo figure out what the return type is? double? float?
 	 * @todo what is Only Previous?????
+	 * @return Float
 	 */
 	function ModifiersSubTotal($excluded = null, $onlyprevious = false) {
 		$total = 0;
@@ -937,12 +979,17 @@ class Order extends DataObject {
 		return $total;
 	}
 
+	/**
+	 *
+	 *@return Currency (DB Object)
+	 **/
 	function ModifiersSubTotalAsCurrencyObject($excluded = null, $onlyprevious = false) {
 		return DBField::create('Currency',$this->ModifiersSubTotal($excluded = null, $onlyprevious = false));
 	}
 
 	/**
 	 * Returns the subtotal of the items for this order.
+	 *@return float
 	 */
 	function SubTotal() {
 		$result = 0;
@@ -956,17 +1003,26 @@ class Order extends DataObject {
 		return $result;
 	}
 
+	/**
+	 *
+	 *@return Currency (DB Object)
+	 **/
 	function SubTotalAsCurrencyObject() {
 		return DBField::create('Currency',$this->SubTotal());
 	}
 
 	/**
   	 * Returns the total cost of an order including the additional charges or deductions of its modifiers.
+	 *@return float
   	 */
 	function Total() {
 		return $this->SubTotal() + $this->ModifiersSubTotal();
 	}
 
+	/**
+	 *
+	 *@return Currency (DB Object)
+	 **/
 	function TotalAsCurrencyObject() {
 		return DBField::create('Currency',$this->Total());
 	}
@@ -975,7 +1031,9 @@ class Order extends DataObject {
 	 * Checks to see if any payments have been made on this order
 	 * and if so, subracts the payment amount from the order
 	 * Precondition : The order is in DB
-	 */
+	 *
+	 *@return float
+	 **/
 	function TotalOutstanding(){
 		$total = $this->Total();
 		$paid = $this->TotalPaid();
@@ -986,15 +1044,26 @@ class Order extends DataObject {
 		return floatval($outstanding);
 	}
 
+	/**
+	 *
+	 *@return Currency (DB Object)
+	 **/
 	function TotalOutstandingAsCurrencyObject(){
 		return DBField::create('Currency',$this->TotalOutstanding());
 	}
 
+	/**
+	 *
+	 *@return Money
+	 **/
 	function TotalOutstandingAsMoneyObject(){
 		$money = DBField::create('Money', array("Amount" => $this->TotalOutstanding(), "Currency" => $this->Currency()));
 		return $money;
 	}
 
+	/**
+	 *@return float
+	 */
 	function TotalPaid() {
 		$paid = 0;
 		if($payments = $this->Payments()) {
@@ -1007,6 +1076,10 @@ class Order extends DataObject {
 		return $paid;
 	}
 
+	/**
+	 *
+	 *@return Currency (DB Object)
+	 **/
 	function TotalPaidAsCurrencyObject(){
 		return DBField::create('Currency',$this->TotalPaid());
 	}
@@ -1038,6 +1111,9 @@ class Order extends DataObject {
 		return $qty;
 	}
 
+	/**
+	 *@return String(URLSegment)
+	 */
 	function Link() {
 		return AccountPage::get_order_link($this->ID);
 	}
@@ -1057,27 +1133,57 @@ class Order extends DataObject {
 	}
 
 	// Order Template and ajax Management
+	/**
+	 *
+	 *@return String
+	 **/
+	function TableMessageID() {
+		return self::$table_message_id;
+	}
 
+	/**
+	* For use in the templates as ID
+	 *@return String
+	 */
 	function TableSubTotalID() {
 		return 'Table_Order_SubTotal';
 	}
 
+	/**
+	* For use in the templates as ID
+	 *@return String
+	 */
 	function TableTotalID() {
 		return 'Table_Order_Total';
 	}
 
+	/**
+	* For use in the templates as ID
+	 *@return String
+	 */
 	function OrderForm_OrderForm_AmountID() {
 		return 'OrderForm_OrderForm_Amount';
 	}
 
+	/**
+	* For use in the templates as ID
+	 *@return String
+	 */
 	function CartSubTotalID() {
 		return 'Cart_Order_SubTotal';
 	}
 
+	/**
+	* For use in the templates as ID
+	 *@return String
+	 */
 	function CartTotalID() {
 		return 'Cart_Order_Total';
 	}
-
+	/**
+	 *
+	 *@return Array (for use in AJAX for JSON)
+	 **/
 	function updateForAjax(array &$js) {
 		$subTotal = $this->SubTotalAsCurrencyObject()->Nice();
 		$total = $this->TotalAsCurrencyObject()->Nice();

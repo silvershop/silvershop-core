@@ -80,6 +80,10 @@ class OrderModifier extends OrderAttribute {
 		return $fields;
 	}
 
+	/**
+	 *
+	 * @return FieldSet
+	  **/
 	function scaffoldSearchFields(){
 		$fields = parent::scaffoldSearchFields();
 		$fields->replaceField("OrderID", new NumericField("OrderID", "Order Number"));
@@ -118,7 +122,6 @@ class OrderModifier extends OrderAttribute {
 	/**
 	* This method runs when the OrderModifier is first added to the order.
 	**/
-
 	public function init() {
 		parent::init();
 		$this->write();
@@ -131,7 +134,6 @@ class OrderModifier extends OrderAttribute {
 	* all modifier child-classes must have this method if it has more fields
 	*
 	**/
-
 	public function runUpdate() {
 		$this->checkField("Name");
 		$this->checkField("Amount");
@@ -146,7 +148,6 @@ class OrderModifier extends OrderAttribute {
 	* You can overload this method as canEdit might not be the right indicator.
 	* @return Boolean
 	**/
-
 	protected function canBeUpdated() {
 		return $this->canEdit();
 	}
@@ -154,7 +155,6 @@ class OrderModifier extends OrderAttribute {
 	/**
 	* This method simply checks if a fields has changed and if it has changed it updates the field.
 	**/
-
 	protected function checkField($fieldName) {
 		//$start =  microtime();
 		if($this->canBeUpdated()) {
@@ -238,7 +238,6 @@ class OrderModifier extends OrderAttribute {
 	* this is also the place where we check if the modifier has been updated.
 	*@return Boolean
 	**/
-
 	public function ShowInTable() {
 		if(!$this->baseInitCalled && $this->canBeUpdated()) {
 			user_error("While the order can be edited, you must call the runUpdate method everytime you get the details for this modifier", E_USER_ERROR);
@@ -251,7 +250,6 @@ class OrderModifier extends OrderAttribute {
 	* in this case, we can not use @link ShowInTable, because we still want the HTML to be available
 	*@return Boolean
 	**/
-
 	function CanBeHiddenAfterAjaxUpdate() {
 		if($this->ShowInTable()) {
 			return false;
@@ -321,18 +319,20 @@ class OrderModifier extends OrderAttribute {
 	/**
 	 * Sometimes we need a difference between Cart and Checkout Title - the cart Title can be differentiated here.
 	 *
-	 * @return Currency Object
+	 * @return String
 	 **/
 
 	public function CartTitle() {
 		return $this->TableTitle();
 	}
 
+	/**
+	 *
+	 * @return String
+	  **/
 	public function RemoveLink() {
 		return ShoppingCart::remove_modifier_link($this->ID);
 	}
-
-
 
 
 // ######################################## ***  inner calculations....
@@ -438,6 +438,11 @@ class OrderModifier extends OrderAttribute {
 
 // ######################################## ***  AJAX related functions
 
+	/**
+	 *
+	 *
+	 *return $array for AJAX JSON
+	 **/
 	function updateForAjax(array &$js) {
 		$tableValue = DBField::create('Currency',$this->TableValue())->Nice();
 		$cartValue = DBField::create('Currency',$this->CartValue())->Nice();

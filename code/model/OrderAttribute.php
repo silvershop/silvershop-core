@@ -11,7 +11,8 @@
 class OrderAttribute extends DataObject {
 
 	public static $db = array(
-		'Sort' => 'Int'
+		'Sort' => 'Int',
+		'GroupSort' => 'Int'
 	);
 
 	public static $has_one = array(
@@ -32,14 +33,14 @@ class OrderAttribute extends DataObject {
 	/**
 	* @note: we can add the \"OrderAttribute_Group\".\"Sort\" part because this table is always included (see extendedSQL).
 	**/
-	public static $default_sort = "\"OrderAttribute\".\"Sort\" ASC, \"OrderAttribute\".\"Created\" DESC";
+	public static $default_sort = "\"OrderAttribute\".\"GroupSort\" ASC, \"OrderAttribute\".\"Sort\" ASC, \"OrderAttribute\".\"Created\" ASC";
 
 	public static $indexes = array(
 		"Sort" => true,
 	);
 
 	protected static $has_been_written = false;
-		public static function set_has_been_written() {Session::set("OrderAttributeHasBeenWritten", true); self::$has_been_written = true;}
+		public static function set_has_been_written($b = true) {Session::set("OrderAttributeHasBeenWritten", $b); self::$has_been_written = true;}
 		public static function get_has_been_written() {return Session::get("OrderAttributeHasBeenWritten") || self::$has_been_written ? true : false;}
 		public static function unset_has_been_written() {Session::set("OrderAttributeHasBeenWritten", false);self::$has_been_written = false;}
 
@@ -49,10 +50,23 @@ class OrderAttribute extends DataObject {
 		return true;
 	}
 
+	/**
+	 *@return Boolean
+	 **/
+	function TableMessageID() {
+		return self::$table_message_id."_".$this->ID;
+	}
+
+	/**
+	 *@return Boolean
+	 **/
 	function canCreate($member = null) {
 		return true;
 	}
 
+	/**
+	 *@return Boolean
+	 **/
 	function canEdit($member = null) {
 		if($this->_canEdit === null) {
 			$this->_canEdit = false;
@@ -67,10 +81,16 @@ class OrderAttribute extends DataObject {
 		return $this->_canEdit;
 	}
 
+	/**
+	 *@return Boolean
+	 **/
 	function canDelete($member = null) {
 		return false;
 	}
 
+	/**
+	 *@return Boolean (true on success / false on failure)
+	 **/
 	public function addBuyableToOrderItem($object) {
 		//more may be added here in the future
 		return true;
@@ -109,37 +129,73 @@ class OrderAttribute extends DataObject {
 		return implode(' ', $classes);
 	}
 
+	/**
+	 *@return String for use in the Templates
+	 **/
 	function MainID() {
 		return get_class($this) . '_' .'DB_' . $this->ID;
 	}
 
+	/**
+	 *@return String for use in the Templates
+	 **/
 	function TableID() {
 		return 'Table_' . $this->MainID();
 	}
 
+	/**
+	 *@return String for use in the Templates
+	 **/
 	function CartID() {
 		return 'Cart_' . $this->MainID();
 	}
 
-	function ShowInTable() {
-		return true;
-	}
-
-	function ShowInCart() {
-		return $this->ShowInTable();
-	}
-
+	/**
+	 *@return String for use in the Templates
+	 **/
 	function TableTitleID() {
 		return $this->TableID() . '_Title';
 	}
 
+	/**
+	 *@return String for use in the Templates
+	 **/
 	function CartTitleID() {
 		return $this->CartID() . '_Title';
 	}
 
 	/**
+	 *@return String for use in the Templates
+	 **/
+	function TableTotalID() {
+		return $this->TableID() . '_Total';
+	}
+
+	/**
+	 *@return String for use in the Templates
+	 **/
+	function CartTotalID() {
+		return $this->CartID() . '_Total';
+	}
+	/**
+	 *Should this item be shown on check out page table?
+	 *@return Boolean
+	 **/
+	function ShowInTable() {
+		return true;
+	}
+
+	/**
+	 *Should this item be shown on in the cart (which is on other pages than the checkout page)
+	 *@return Boolean
+	 **/
+	function ShowInCart() {
+		return $this->ShowInTable();
+	}
+
+	/**
 	 * Return a name of what this attribute is
-	 * called e.g. "Modifier", or "Product".
+	 * called e.g. "Product 21" or "Discount"
 	 *
 	 * @return string
 	 */
@@ -147,18 +203,24 @@ class OrderAttribute extends DataObject {
 		return 'Attribute';
 	}
 
+	/**
+	 * Return a name of what this attribute is
+	 * called e.g. "Product 21" or "Discount"
+	 *
+	 * @return string
+	 */
 	function CartTitle() {
 		return $this->TableTitle();
 	}
 
-	function TableTotalID() {
-		return $this->TableID() . '_Total';
+	function onBeforeWrite() {
+		parent::onBeforeWrite();
+		if($this->OrderAttribute_GroupID) {
+			if($group = $this->OrderAttribute_GroupID()) {
+				$this->GroupSort = $group->Sort;
+			}
+		}
 	}
-
-	function CartTotalID() {
-		return $this->CartID() . '_Total';
-	}
-
 	function onAfterWrite() {
 		parent::onAfterWrite();
 		self::set_has_been_written();

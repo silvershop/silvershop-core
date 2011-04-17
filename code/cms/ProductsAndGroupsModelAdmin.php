@@ -14,12 +14,12 @@ class ProductsAndGroupsModelAdmin extends ModelAdmin {
 	public static $record_controller_class = 'ProductsAndGroupsModelAdmin_RecordController';
 
 	public static $managed_models = array('Product', 'ProductGroup');
-		public static function set_managed_models(array $array) {self::$managed_models = $array;}
-		public static function add_managed_model($item) {self::$managed_models[] = $item;}
-		public static function remove_managed_model($item) {
+		public static function set_managed_models(array $a) {self::$managed_models = $a;}
+		public static function add_managed_model($s) {self::$managed_models[] = $s;}
+		public static function remove_managed_model($s) {
 			if(self::$managed_models && count(self::$managed_models)){
 				foreach(self::$managed_models as $key => $model) {
-					if($model == $item) {
+					if($model == $s) {
 						unset(self::$managed_models[$key]);
 					}
 				}
@@ -40,6 +40,9 @@ class ProductsAndGroupsModelAdmin extends ModelAdmin {
 		Requirements::javascript("ecommerce/javascript/EcommerceModelAdminExtensions.js");
 	}
 
+	/**
+	 *@return String (URL Segment)
+	 **/
 	function urlSegmenter() {
 		return self::$url_segment;
 	}
@@ -53,6 +56,10 @@ class ProductsAndGroupsModelAdmin_CollectionController extends ModelAdminEcommer
 
 	 //note that these are called once for each $managed_models
 
+	/**
+	 *
+	 *@return Form
+	 **/
 	function ImportForm(){
 		$form = parent::ImportForm();
 		if($form){

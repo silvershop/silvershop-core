@@ -69,6 +69,10 @@ class OrderEmailRecord extends DataObject {
 		return $fields;
 	}
 
+	/**
+	 *
+	 *@ return String
+	  **/
 	function RelatedStatus() {
 		if($this->OrderStepID) {
 			$orderStep = DataObject::get_by_id("OrderStep", $this->OrderStepID);

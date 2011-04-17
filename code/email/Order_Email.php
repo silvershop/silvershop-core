@@ -10,15 +10,15 @@
 class Order_Email extends Email {
 
 	protected static $send_all_emails_plain = false;
-		function set_send_all_emails_plain($b) {self::$send_all_emails_plain = $b;}
+		function set_send_all_emails_plain(boolean $b) {self::$send_all_emails_plain = $b;}
 		function get_send_all_emails_plain() {return self::$send_all_emails_plain;}
 
 	protected static $css_file_location = "ecommerce/css/OrderReport.css";
-		function set_css_file_location($s) {self::$css_file_location = $s;}
+		function set_css_file_location(string $s) {self::$css_file_location = $s;}
 		function get_css_file_location() {return self::$css_file_location;}
 
 	protected static $copy_to_admin_for_all_emails = true;
-		function set_copy_to_admin_for_all_emails($b) {self::$copy_to_admin_for_all_emails = $b;}
+		function set_copy_to_admin_for_all_emails(boolean $b) {self::$copy_to_admin_for_all_emails = $b;}
 		function get_copy_to_admin_for_all_emails() {return self::$copy_to_admin_for_all_emails;}
 
 	public function send($messageID = null, $order, $resend = false) {
@@ -37,6 +37,10 @@ class Order_Email extends Email {
 		}
 	}
 
+
+	/**
+	 *@return DataObject (OrderEmailRecord)
+	 **/
 	protected function createRecord($result, $order) {
 		$obj = new OrderEmailRecord();
 		$obj->From = $this->from;
@@ -50,16 +54,23 @@ class Order_Email extends Email {
 			$obj->To .= Email::$send_all_emails_to;
 		}
 		$obj->write();
-	}
-
-	function hasBeenSent($order) {
-		return DataObject::get_one("OrderEmailRecord", "\"OrderEmailRecord\".\"OrderID\" = ".$order->ID." AND \"OrderEmailRecord\".\"OrderStepID\" = ".intval($order->StatusID)." AND  \"OrderEmailRecord\".\"Result\" = 1");
+		return $obj;
 	}
 
 	/**
-	 * @author Mark Guinn
-	 */
+	 *@return boolean
+	 **/
+	function hasBeenSent($order) {
+		if(DataObject::get_one("OrderEmailRecord", "\"OrderEmailRecord\".\"OrderID\" = ".$order->ID." AND \"OrderEmailRecord\".\"OrderStepID\" = ".intval($order->StatusID)." AND  \"OrderEmailRecord\".\"Result\" = 1")) {
+			return true;
+		}
+		return false;
+	}
 
+	/**
+	 * moves CSS to inline CSS in email
+	 *@author Mark Guinn
+	 */
 	protected function parseVariables($isPlain = false) {
 		require_once(Director::baseFolder() . '/ecommerce/thirdparty/Emogrifier.php');
 		parent::parseVariables($isPlain);

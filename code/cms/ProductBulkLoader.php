@@ -10,34 +10,33 @@
 class ProductBulkLoader extends CsvBulkLoader{
 
 	protected static $product_class_name = "Product";
-		static function set_product_class_name($v) {self::$product_class_name = $v;}
+		static function set_product_class_name($s) {self::$product_class_name = $s;}
 		static function get_product_class_name() {return self::$product_class_name;}
 
 	protected static $product_group_class_name = "ProductGroup";
-		static function set_product_group_class_name($v) {self::$product_group_class_name = $v;}
+		static function set_product_group_class_name($s) {self::$product_group_class_name = $s;}
 		static function get_product_group_class_name() {return self::$product_group_class_name;}
 
 	protected static $parent_page_id = null;
-		static function set_parent_page_id(int $v) {self::$parent_page_id = intval($v);}
+		static function set_parent_page_id(int $i) {self::$parent_page_id = intval($i);}
 		static function get_parent_page_id() {return self::$parent_page_id;}
 
 	protected static $create_new_product_groups = false;
-		static function set_create_new_product_groups(boolean $v) {self::$create_new_product_groups = $v;}
+		static function set_create_new_product_groups(boolean $b) {self::$create_new_product_groups = $b;}
 		static function get_create_new_product_groups() {return self::$create_new_product_groups;}
 
 	protected static $has_stock_impl = false;
-		static function set_has_stock_impl(boolean $v) {self::$has_stock_impl = $v;}
+		static function set_has_stock_impl(boolean $b) {self::$has_stock_impl = $b;}
 		static function get_has_stock_impl() {return self::$has_stock_impl;}
 
 	public $columnMap = array(
-
 		'Category' => '->setParent',
 		'ProductGroup' => '->setParent',
 
 		'Product ID' => 'InternalItemID',
 		'ProductID' => 'InternalItemID',
 		'SKU' => 'InternalItemID',
-		
+
 		'Description' => '->setContent',
 		'Long Description' => '->setContent',
 		'Short Description' => 'MetaDescription',
@@ -100,9 +99,7 @@ class ProductBulkLoader extends CsvBulkLoader{
 	}
 
 	protected function processAll($filepath, $preview = false) {
-		
 		$this->extend('updateColumnMap',$this->columnMap);
-		
 		// we have to check for the existence of this in case the stockcontrol module hasn't been loaded
 		// and the CSV still contains a Stock column
 		self::$has_stock_impl = Object::has_extension(self::get_product_class_name(), 'ProductStockDecorator');
@@ -114,24 +111,27 @@ class ProductBulkLoader extends CsvBulkLoader{
 		$objects->merge($results->Created());
 		$objects->merge($results->Updated());
 		foreach($objects as $object){
-
-
 			if(!$object->ParentID){
 				 //set parent page
-				if(is_numeric(self::$parent_page_id) &&  DataObject::get_by_id(self::get_product_group_class_name(),self::$parent_page_id)) {//cached option
+				 //cached option
+				if(is_numeric(self::$parent_page_id) &&  DataObject::get_by_id(self::get_product_group_class_name(),self::$parent_page_id)) {
 					$object->ParentID = self::$parent_page_id;
 				}
-				elseif($parentpage = DataObject::get_one(self::get_product_group_class_name(),"\"Title\" = 'Products'",'"Created" DESC')){ //page called 'Products'
+				//page called 'Products'
+				elseif($parentpage = DataObject::get_one(self::get_product_group_class_name(),"\"Title\" = 'Products'",'"Created" DESC')){
 					$object->ParentID = self::$parent_page_id = $parentpage->ID;
 				}
-				elseif($parentpage = DataObject::get_one(self::get_product_group_class_name(),"\"ParentID\" = 0",'"Created" DESC')){ //root page
+				//root page
+				elseif($parentpage = DataObject::get_one(self::get_product_group_class_name(),"\"ParentID\" = 0",'"Created" DESC')){
 					$object->ParentID = self::$parent_page_id = $parentpage->ID;
 				}
-				elseif($parentpage = DataObject::get_one(self::get_product_group_class_name(),"",'"Created" DESC')){ //any product page
+				//any product page
+				elseif($parentpage = DataObject::get_one(self::get_product_group_class_name(),"",'"Created" DESC')){
 					$object->ParentID = self::$parent_page_id = $parentpage->ID;
 				}
-				else
+				else {
 					$object->ParentID = self::$parent_page_id = 0;
+				}
 			}
 
 			$object->extend('updateImport'); //could be used for setting other attributes, such as stock level
@@ -142,15 +142,18 @@ class ProductBulkLoader extends CsvBulkLoader{
 
 		return $results;
 	}
-	
+
 	function processRecord($record, $columnMap, &$results, $preview = false){
 		if(!$record || !isset($record['Title']) || $record['Title'] == ''){ //TODO: make required fields customisable
 			return null;
-		}		
+		}
 		return parent::processRecord($record, $columnMap, $results, $preview);
 	}
 
-	// set image, based on filename
+	/**
+	 *set image, based on filename
+	 *@return Image Object
+	 **/
 	function imageByFilename(&$obj, $val, $record){
 		$filename = strtolower(Convert::raw2sql($val));
 		if($filename && $image = DataObject::get_one('Image',"LOWER(\"Filename\") LIKE '%$filename%'")){ //ignore case
@@ -188,7 +191,7 @@ class ProductBulkLoader extends CsvBulkLoader{
 			}
 		}
 	}
-	
+
 	/**
 	 * Adds paragraphs to content.
 	 */
@@ -199,6 +202,6 @@ class ProductBulkLoader extends CsvBulkLoader{
 			$obj->Content = "<p>".implode("</p><p>",$paragraphs)."</p>";
 		}
 	}
-	
+
 }
 

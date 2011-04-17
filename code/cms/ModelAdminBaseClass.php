@@ -39,7 +39,9 @@ class ModelAdminEcommerceClass_RecordController extends ModelAdmin_RecordControl
 
 	/**
 	 * Returns a form for editing the attached model
-	 */
+	 *
+	 *@return Form
+	 **/
 	public function EditForm() {
 		$form = parent::EditForm();
 		if($this->currentRecord instanceof SiteTree){
@@ -113,7 +115,8 @@ class ModelAdminEcommerceClass_RecordController extends ModelAdmin_RecordControl
 		// Behaviour switched on ajax.
 		if(Director::is_ajax()) {
 			return $this->edit($request);
-		} else {
+		}
+		else {
 			Director::redirectBack();
 		}
 	}

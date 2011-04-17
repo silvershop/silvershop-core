@@ -67,7 +67,7 @@ class OrderReport_Popup extends Controller {
 		$id = $this->urlParams['ID'];
 
 		if(is_numeric($id)) {
-			$order = DataObject::get_by_id('Order', $id);
+			$order = Order::get_by_id_if_can_view($id);
 			$payment = $order->Payment();
 			$cheque = false;
 
@@ -96,7 +96,7 @@ class OrderReport_Popup extends Controller {
 		$id = $this->urlParams['ID'];
 
 		if(is_numeric($id)) {
-			$order = DataObject::get_by_id("Order", $id);
+			$order = Order::get_by_id_if_can_view($id);
 			if(isset($_REQUEST['print'])) {
 				//$order->updatePrinted(true);
 			}

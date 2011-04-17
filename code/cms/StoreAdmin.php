@@ -18,11 +18,11 @@ class StoreAdmin extends ModelAdmin{
 
 	public static $managed_models = array('OrderStep', 'EcommerceCountry');
 		public static function set_managed_models(array $array) {self::$managed_models = $array;}
-		public static function add_managed_model($item) {self::$managed_models[] = $item;}
-		public static function remove_managed_model($item) {
+		public static function add_managed_model($s) {self::$managed_models[] = $s;}
+		public static function remove_managed_model($s) {
 			if(self::$managed_models && count(self::$managed_models)){
 				foreach(self::$managed_models as $key => $model) {
-					if($model == $item) {
+					if($model == $s) {
 						unset(self::$managed_models[$key]);
 					}
 				}
@@ -33,12 +33,15 @@ class StoreAdmin extends ModelAdmin{
 
 	public static $record_controller_class = 'StoreAdmin_RecordController';
 
-
 	function init() {
 		parent::init();
 	}
 
 
+	/**
+	 *
+	 *@return String (URLSegment)
+	 **/
 	function urlSegmenter() {
 		return self::$url_segment;
 	}

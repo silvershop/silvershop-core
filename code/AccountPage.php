@@ -11,7 +11,10 @@ class AccountPage extends Page {
 
 	public static $icon = 'ecommerce/images/icons/account';
 
-	function canCreate() {
+	/**
+	 *@return Boolean
+	 **/
+	function canCreate($member = null) {
 		return !DataObject::get_one("AccountPage");
 	}
 
@@ -34,6 +37,9 @@ class AccountPage extends Page {
 		return self::find_link(). 'showorder/' . $orderID . '/';
 	}
 
+	/**
+	 *@return Object(AccountPage)
+	 **/
 	protected static function get_if_account_page_exists() {
 		if($page = DataObject::get_one('AccountPage')) {
 			return $page;
@@ -41,6 +47,9 @@ class AccountPage extends Page {
 		user_error('No AccountPage was found. Please create one in the CMS!', E_USER_WARNING);
 	}
 
+	/**
+	 *@return DataObjectSet or Null
+	 **/
 	function AllMemberOrders() {
 		$dos = new DataObjectSet();
 		$doIncompleteOrders = new DataObject();
@@ -100,6 +109,9 @@ class AccountPage extends Page {
 		return $this->otherOrderSQL($statusFilter);
 	}
 
+	/**
+	 *@return DataObjectSet or Null
+	 **/
 	protected function otherOrderSQL ($statusFilter) {
 		$memberID = Member::currentUserID();
 		if($memberID) {
@@ -164,14 +176,13 @@ class AccountPage_Controller extends Page_Controller {
 	protected $message = "";
 
 	protected static $session_code = "AccountPageMessage";
-		static function set_session_code($v) {self::$session_code = $v;}
+		static function set_session_code($s) {self::$session_code = $s;}
 		static function get_session_code() {return self::$session_code;}
 
-	public static function set_message($message) {Session::set(self::get_session_code(), $message);}
+	public static function set_message($s) {Session::set(self::get_session_code(), $s);}
 
 	function init() {
 		parent::init();
-
 		Requirements::themedCSS('AccountPage');
 		$this->memberID = Member::currentUserID();
 		if(!$this->memberID) {
@@ -188,6 +199,9 @@ class AccountPage_Controller extends Page_Controller {
 		}
 	}
 
+	/**
+	 *@return DataObject (Order)
+	 **/
 	function CurrentOrder() {
 		if(!$this->currentOrder) {
 			$this->currentOrder = Order::get_by_id_and_member_id($this->orderID, $this->memberID);
@@ -200,6 +214,9 @@ class AccountPage_Controller extends Page_Controller {
 		return $this->currentOrder;
 	}
 
+	/**
+	 *@return String
+	 **/
 	function Message() {
 		if($sessionMessage = Session::get(self::get_session_code())) {
 			$this->message .= $sessionMessage;
@@ -225,6 +242,9 @@ class AccountPage_Controller extends Page_Controller {
 		return array();
 	}
 
+	/**
+	 *@return Array - just so the template is still displayed
+	 **/
 	function sendreceipt($request) {
 		$this->orderID = intval($request->param("ID"));
 		if($o = $this->CurrentOrder()) {
@@ -240,13 +260,11 @@ class AccountPage_Controller extends Page_Controller {
 			else {
 				$this->message = _t('Account.RECEIPTNOTSENTNOEMAIL', 'No email could be found for sending this receipt.');
 			}
-			
 			Director::redirect($o->Link());
 		}
 		else {
 			$this->message = _t('Account.RECEIPTNOTSENTNOORDER', 'Order could not be found.');
 		}
-		
 		return array();
 	}
 
@@ -282,6 +300,9 @@ class AccountPage_Controller extends Page_Controller {
 	}
 
 
+	/**
+	 *@return Form (OrderForm_Payment) or Null
+	 **/
 	function PaymentForm(){
 		if($this->CurrentOrder()){
 			if($this->currentOrder->canPay()) {

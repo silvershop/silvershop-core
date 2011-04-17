@@ -9,15 +9,24 @@
 
 class EcommerceSiteTreeExtension extends DataObjectDecorator {
 
+	/**
+	 *@return Boolean
+	 **/
 	function ShopClosed() {
 		$siteConfig = DataObject::get_one("SiteConfig");
 		return $siteConfig->ShopClosed;
 	}
 
+	/**
+	 *@return Order
+	 **/
 	function Cart() {
 		return ShoppingCart::current_order();
 	}
 
+	/**
+	 *@return Integer
+	 **/
 	public function NumItemsInCart() {
 		$order = ShoppingCart::current_order();
 		if($order) {
@@ -34,23 +43,38 @@ class EcommerceSiteTreeExtension_Controller extends Extension {
 		ShoppingCart::add_requirements();
 	}
 
+	/**
+	 *@return string
+	 **/
 	function SimpleCartLinkAjax() {
 		return ShoppingCart::get_url_segment()."/showcart/";
 	}
 
+	/**
+	 *@return Boolean
+	 **/
 	public function MoreThanOneItemInCart() {
 		return $this->NumItemsInCart() > 1;
 	}
 
+	/**
+	 *@return Float
+	 **/
 	public function SubTotalCartValue() {
 		$order = ShoppingCart::current_order();
 		return $order->SubTotal;
 	}
 
+	/**
+	 *@return String (URLSegment)
+	 **/
 	public function AccountPageLink() {
 		return AccountPage::find_link();
 	}
 
+	/**
+	 *@return String (URLSegment)
+	 **/
 	public function CheckoutLink() {
 		return CheckoutPage::find_link();
 	}

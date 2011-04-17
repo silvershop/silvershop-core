@@ -36,6 +36,7 @@ class EcommercePayment extends DataObjectDecorator {
 			)
 		);
 	}
+
 	public static function process_payment_form_and_return_next_step($order, $form, $data, $paidBy = null) {
 		if(!$order){
 			user_error('Order not found', E_USER_ERROR);
@@ -69,6 +70,9 @@ class EcommercePayment extends DataObjectDecorator {
 		}
 	}
 
+	/**
+	 *@return Boolean
+	 **/
 	function canCreate($member = null) {
 		if(!$member) {
 			$member = Member::currentUser();
@@ -78,7 +82,9 @@ class EcommercePayment extends DataObjectDecorator {
 		}
 		return false;
 	}
-
+	/**
+	 *@return Boolean
+	 **/
 	function canDelete($member = null) {
 		return false;
 	}
@@ -118,7 +124,10 @@ class EcommercePayment extends DataObjectDecorator {
 		$this->owner->PaidForID = $do->ID;
 		$this->owner->PaidForClass = $do->ClassName;
 	}
-
+	/**
+	 *@return float
+	 * TO DO TO DO TO DO TO DO : check if this return float or object TODO....
+	 **/
 	function AmountValue() {
 		return $this->owner->Amount->getAmount();
 	}
@@ -184,6 +193,9 @@ class EcommercePayment extends DataObjectDecorator {
 		}
 	}
 
+	/**
+	 *@return String
+	 **/
 	function Status() {
    		return _t('Payment.'.$this->owner->Status,$this->owner->Status);
 	}

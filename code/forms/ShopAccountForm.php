@@ -56,11 +56,15 @@ class ShopAccountForm extends Form {
 
 	/**
 	 * Save the changes to the form, and redirect to the checkout page
+	 *@return ?????????????
 	 */
 	function proceed($data, $form, $request) {
 		return $this->processForm($data, $form, $request, CheckoutPage::find_link());
 	}
 
+	/**
+	 *@return Boolean
+	 **/
 	protected function processForm($data, $form, $request, $link = "") {
 		$member = Member::currentUser();
 		if(!$member) {
@@ -89,6 +93,8 @@ class ShopAccountForm_Validator extends RequiredFields{
 	/**
 	 * Ensures member unique id stays unique and other basic stuff...
 	 * TODO: check if this code is not part of Member itself, as it applies to any member form.
+	 *@param $data = array Form Field Data
+	 *@return Boolean
 	 */
 	function php($data){
 		$valid = parent::php($data);

@@ -10,15 +10,19 @@
 class Buyable extends DataObjectDecorator {
 
 	protected static $array_of_buyables = array();
-		static function get_array_of_buyables() {return self::$array_of_buyables;}
+		static function set_array_of_buyables(array $a) {self::$array_of_buyables = $a;}
+		static function get_array_of_buyables() {return(array)self::$array_of_buyables;}
 		static function add_class($className) {Object::add_extension($className, "Buyable");self::$array_of_buyables[] = $className;}
 
 	private static $shop_closed = null;
 
 	protected static $order_item_class_name_post_fix = "_OrderItem";
-		static function get_order_item_class_name_post_fix() {return self::$order_item_class_name_post_fix;}
-		static function set_order_item_class_name_post_fix($v) {self::$order_item_class_name_post_fix = $v;}
+		static function get_order_item_class_name_post_fix() {return(string)self::$order_item_class_name_post_fix;}
+		static function set_order_item_class_name_post_fix(string $s) {self::$order_item_class_name_post_fix = $s;}
 
+	/**
+	 *@return Order
+	 **/
 	public function getCart() {
 		HTTP::set_cache_age(0);
 		return ShoppingCart::current_order();
@@ -51,6 +55,9 @@ class Buyable extends DataObjectDecorator {
 		return $this->owner->canPurchase();
 	}
 
+	/**
+	 *@return Boolean
+	 **/
 	function ShopClosed() {
 		//CACHING!
 		if(self::$shop_closed === null) {
@@ -60,6 +67,14 @@ class Buyable extends DataObjectDecorator {
 			}
 		}
 		return self::$shop_closed;
+	}
+
+	/**
+	 * alternative method for ShopClosed with the more standard IsBlaBla syntax
+	 *@return Boolean
+	 **/
+	function IsClosedShop() {
+		return $this->ClosedShop();
 	}
 
 	/**
@@ -78,6 +93,9 @@ class Buyable extends DataObjectDecorator {
 		return $this->OrderItem();
 	}
 
+	/**
+	 *@return OrderItem (no kidding)
+	 **/
 	function OrderItem() {
 		$filter = "";
 		$className = $this->owner->ClassName;
@@ -120,6 +138,9 @@ class Buyable extends DataObjectDecorator {
 		return ShoppingCart::set_quantity_item_link($this->owner->ID, $this->classNameForOrderItem(), array_merge($this->linkParameters(), array("quantity" => $quantity)));
 	}
 
+	/**
+	 *@return Array
+	 **/
 	protected function linkParameters(){
 		$array = array();
 		$this->owner->extend('updateLinkParameters',$array);
@@ -127,6 +148,9 @@ class Buyable extends DataObjectDecorator {
 	}
 
 
+	/**
+	 *@return String
+	 **/
 	public function classNameForOrderItem() {
 		$A = $this->owner->ClassName;
 		$B = Buyable::get_order_item_class_name_post_fix();

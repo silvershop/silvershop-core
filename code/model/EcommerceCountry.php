@@ -8,7 +8,7 @@
 class EcommerceCountry extends DataObject {
 
 	protected static $auto_add_countries = true;
-		static function set_auto_add_countries($b) {self::$auto_add_countries = $b;}
+		static function set_auto_add_countries(boolean $b) {self::$auto_add_countries = $b;}
 		static function get_auto_add_countries() {return self::$auto_add_countries;}
 
 	static $db = array(

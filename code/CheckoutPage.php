@@ -82,7 +82,7 @@ class CheckoutPage extends Page {
 		return self::find_link(). 'showorder/' . $orderID . '/';
 	}
 
-	function canCreate() {
+	function canCreate($member = null) {
 		return !DataObject::get_one("SiteTree", "\"ClassName\" = 'CheckoutPage'");
 	}
 
@@ -160,6 +160,9 @@ class CheckoutPage extends Page {
 		}
  	}
 
+	/**
+	 *@return String (HTML snippet of Menu Title WITH number of products in cart)
+	 **/
 	function EcommerceMenuTitle() {
 		$count = 0;
 		$order = ShoppingCart::current_order();
@@ -214,7 +217,7 @@ class CheckoutPage_Controller extends Page_Controller {
 	 * Return a specific {@link OrderModifierForm} by it's name.
 	 *
 	 * @param string $name The name of the form to return
-	 * @return Form
+	 * @return Form or NULL
 	 */
 	protected function getOrderModifierForm($name) {
 		if($forms = $this->ModifierForms()) {
@@ -321,6 +324,9 @@ class CheckoutPage_Controller extends Page_Controller {
 		return "";
 	}
 
+	/**
+	 *@return DataObjectSet (Title, Link)
+	 **/
 	function UsefulLinks() {
 		if($this->usefulLinks && $this->usefulLinks->count()) {
 			return $this->usefulLinks;

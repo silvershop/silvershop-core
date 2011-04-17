@@ -29,7 +29,7 @@ class EcommerceRole extends DataObjectDecorator {
 
 
 	/**
-	*@param $code = string
+	*@param $code = string, Country Code  (e.g NZ)
 	**/
 	protected static $fixed_country_code = '';
 		static function set_fixed_country_code($s) {self::$fixed_country_code = $s;}
@@ -37,12 +37,13 @@ class EcommerceRole extends DataObjectDecorator {
 
 	/**
 	*@param $a : array("NZ" => "NZ", "UK => "UK", etc...)
+	*@param $s : string - country code, e.g. NZ
 	**/
 	protected static $allowed_country_codes = array();
-		static function set_allowed_country_codes($a) {self::$allowed_country_codes = $a;}
+		static function set_allowed_country_codes(array $a) {self::$allowed_country_codes = $a;}
 		static function get_allowed_country_codes() {return self::$allowed_country_codes;}
-		static function add_allowed_country_code($code) {self::$allowed_country_codes[$code] = $code;}
-		static function remove_allowed_country_code($code) {unset(self::$allowed_country_codes[$code]);}
+		static function add_allowed_country_code(string $s) {self::$allowed_country_codes[$s] = $s;}
+		static function remove_allowed_country_code(string $s) {unset(self::$allowed_country_codes[$s]);}
 
 
 	/**
@@ -51,7 +52,7 @@ class EcommerceRole extends DataObjectDecorator {
 	* @param $a = array should be country codes.e.g array("NZ", "NP", "AU");
 	**/
 	protected static $for_current_order_only_show_countries = array();
-		static function set_for_current_order_only_show_countries($a) {
+		static function set_for_current_order_only_show_countries(array $a) {
 			if(count(self::$for_current_order_only_show_countries)) {
 				self::$for_current_order_only_show_countries = array_intersect($a, self::$for_current_order_only_show_countries);
 			}
@@ -62,7 +63,7 @@ class EcommerceRole extends DataObjectDecorator {
 		static function get_for_current_order_only_show_countries() {return self::$for_current_order_only_show_countries;}
 
 	protected static $for_current_order_do_not_show_countries = array();
-		static function set_for_current_order_do_not_show_countries($a) {
+		static function set_for_current_order_do_not_show_countries(array $a) {
 			self::$for_current_order_do_not_show_countries = array_merge($a, self::$for_current_order_do_not_show_countries);
 		}
 		static function get_for_current_order_do_not_show_countries() {return self::$for_current_order_do_not_show_countries;}
@@ -74,17 +75,21 @@ class EcommerceRole extends DataObjectDecorator {
 	static function get_postal_code_label() {$sc = DataObject::get_one('SiteConfig'); if($sc) {return $sc->PostalCodeLabel;}  }
 
 	protected static $customer_group_code = 'shop_customers';
-		static function set_customer_group_code($v) {self::$customer_group_code = $v;}
+		static function set_customer_group_code(string $s) {self::$customer_group_code = $s;}
 		static function get_customer_group_code() {return self::$customer_group_code;}
 
 	protected static $customer_group_name = "shop customers";
-		static function set_customer_group_name($v) {self::$customer_group_name = $v;}
+		static function set_customer_group_name(string $s) {self::$customer_group_name = $s;}
 		static function get_customer_group_name() {return self::$customer_group_name;}
 
 	protected static $customer_permission_code = "SHOP_CUSTOMER";
-		static function set_customer_permission_code($v) {self::$customer_permission_code = $v;}
+		static function set_customer_permission_code(string $s) {self::$customer_permission_code = $s;}
 		static function get_customer_permission_code() {return self::$customer_permission_code;}
 
+
+	/**
+	 *@return DataObject (Group)
+	 **/
 	public function get_customer_group() {
 		return DataObject::get_one("Group", "\"Code\" = '".self::get_customer_group_code()."' OR \"Title\" = '".self::get_customer_group_name()."'");
 	}
@@ -95,15 +100,15 @@ class EcommerceRole extends DataObjectDecorator {
 
 
 	protected static $admin_group_code = "shop_administrators";
-		static function set_admin_group_code($v) {self::$admin_group_code = $v;}
+		static function set_admin_group_code(string $s) {self::$admin_group_code = $s;}
 		static function get_admin_group_code() {return self::$admin_group_code;}
 
 	protected static $admin_group_name = "shop administrators";
-		static function set_admin_group_name($v) {self::$admin_group_name = $v;}
+		static function set_admin_group_name(string $s) {self::$admin_group_name = $s;}
 		static function get_admin_group_name() {return self::$admin_group_name;}
 
 	protected static $admin_permission_code = "SHOP_ADMIN";
-		static function set_admin_permission_code($v) {self::$admin_permission_code = $v;}
+		static function set_admin_permission_code(string $s) {self::$admin_permission_code = $s;}
 		static function get_admin_permission_code() {return self::$admin_permission_code;}
 
 	static function findCountryTitle($code) {
@@ -111,6 +116,11 @@ class EcommerceRole extends DataObjectDecorator {
 		return self::find_country_title($code);
 	}
 
+	/**
+	 *checks if a country code is allowed
+	 *@param String $code - e.g. NZ
+	 *@return Boolean
+	 **/
 	public static function country_code_allowed($code) {
 		if($code) {
 			$c = self::get_fixed_country_code();
@@ -138,6 +148,9 @@ class EcommerceRole extends DataObjectDecorator {
 	}
 
 
+	/**
+	 *@return String (country name)
+	 **/
 	public static function find_country_title($code) {
 		$countries = Geoip::getCountryDropDown();
 		// check if code was provided, and is found in the country array
@@ -162,7 +175,7 @@ class EcommerceRole extends DataObjectDecorator {
 		return ShoppingCart::get_country();
 	}
 
-	//this function will be depreciated soon....
+	//this function will be depreciated ....
 	public static function find_country() {
 		user_error("depreciated, please use ShoppingCart::get_country", E_USER_NOTICE);
 		return ShoppingCart::get_country();
@@ -214,8 +227,11 @@ class EcommerceRole extends DataObjectDecorator {
 	public static function createOrMerge($data) {
 		user_error("depreciated, please use EcommerceRole::ecommerce_create_or_merge", E_USER_NOTICE);
 		return self::ecommerce_create_or_merge($data);
-
 	}
+
+	/**
+	 *@return DataObject (member)
+	 **/
 	public static function ecommerce_create_or_merge($data) {
 		// Because we are using a ConfirmedPasswordField, the password will
 		// be an array of two fields
@@ -241,6 +257,9 @@ class EcommerceRole extends DataObjectDecorator {
 		return $member;
 	}
 
+	/**
+	 *@return String (Country Name - e.g. New Zealand)
+	 **/
 	public function FullCountryName() {
 		return self::find_country_title($this->owner->Country);
 	}
@@ -250,7 +269,9 @@ class EcommerceRole extends DataObjectDecorator {
 	}
 
 
-
+	/**
+	 *@return Array (Code, Title)
+	 **/
 	public static function list_of_allowed_countries_for_dropdown() {
 		$keys = array();
 		$allowedCountryCode = self::get_fixed_country_code();
@@ -287,13 +308,11 @@ class EcommerceRole extends DataObjectDecorator {
 		return $codeTitleArray;
 	}
 
+
 	/**
-	 * Give the two letter code to resolve the title of the country.
-	 *
-	 * @param string $code Country code
-	 * @return string|boolean String if country found, boolean FALSE if nothing found
-	 */
-	function getEcommerceFields() {
+	 *@return Fieldset
+	 **/
+	 function getEcommerceFields() {
 		//postal code
 		$postalCodeField = new TextField('PostalCode', _t('EcommerceRole.POSTALCODE','Postal Code'));
 		if(self::get_postal_code_url()){
@@ -342,6 +361,9 @@ class EcommerceRole extends DataObjectDecorator {
 		return $fields;
 	}
 
+	/**
+	 *@return String (Country Name) e.g. Switzerland
+	 **/
 	public function CountryTitle() {
 		return self::find_country_title($this->owner->Country);
 	}
@@ -380,6 +402,9 @@ class EcommerceRole extends DataObjectDecorator {
 		}
 	}
 
+	/**
+	 *@return Boolean
+	 **/
 	function IsShopAdmin() {
 		if($this->owner->IsAdmin()) {
 			return true;

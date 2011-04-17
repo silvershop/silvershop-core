@@ -10,7 +10,9 @@ class CartResponse extends EcommerceResponse {
 
 	/**
 	 * Builds json object to be returned via ajax.
-	 */
+	 *
+	 *@return JSON
+	 **/
 	public function ReturnCartData($status, $message = "", $data = null) {
 		$this->addHeader('Content-Type', 'application/json');
 		if($status != "success") {

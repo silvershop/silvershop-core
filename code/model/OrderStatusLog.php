@@ -44,9 +44,13 @@ class OrderStatusLog extends DataObject {
 	function InternalUseOnlyNice() {if($this->InternalUseOnly) { return _t("OrderStatusLog.YES", "Yes");} return _t("OrderStatusLog.No", "No");}
 
 	protected static $available_log_classes_array = array();
-		static function set_available_log_classes_array($a) {self::$available_log_classes_array = $a;}
+		static function set_available_log_classes_array(array $a) {self::$available_log_classes_array = $a;}
 		static function get_available_log_classes_array() {return self::$available_log_classes_array;}
 
+	/**
+	*
+	*@return Boolean
+	**/
 	public function canView($member = null) {
 		if(!$member) {
 			$member = Member::currentUser();
@@ -66,12 +70,26 @@ class OrderStatusLog extends DataObject {
 		return false;
 	}
 
+	/**
+	*
+	*@return Boolean
+	**/
 	public function canDelete($member = null) {
 		return false;
 	}
+
+	/**
+	*
+	*@return Boolean
+	**/
 	public function canCreate($member = null) {
 		return true;
 	}
+
+	/**
+	*
+	*@return Boolean
+	**/
 	public function canEdit($member = null) {
 		if($o = $this->Order()) {
 			return $o->canEdit($member);
@@ -102,6 +120,10 @@ class OrderStatusLog extends DataObject {
 		$this->AuthorID = Member::currentUserID();
 	}
 
+	/**
+	*
+	*@return FieldSet
+	**/
 	function getCMSFields() {
 		$fields = parent::getCMSFields();
 		$fields->replaceField("EmailSent", $fields->dataFieldByName("EmailSent")->performReadonlyTransformation());
@@ -134,10 +156,18 @@ class OrderStatusLog extends DataObject {
 		return $fields;
 	}
 
+	/**
+	*
+	*@return String
+	**/
 	function Type() {
 		return $this->i18n_singular_name();
 	}
 
+	/**
+	*
+	*@return Fieldset
+	**/
 	function scaffoldSearchFields(){
 		$fields = parent::scaffoldSearchFields();
 		$fields->replaceField("OrderID", new NumericField("OrderID", "Order Number"));
@@ -174,6 +204,10 @@ class OrderStatusLog extends DataObject {
 		}
 	}
 
+	/**
+	*
+	*@return String
+	**/
 	function CustomerNote() {
 		return $this->Note;
 	}
@@ -266,6 +300,10 @@ class OrderStatusLog_DispatchPhysicalOrder extends OrderStatusLog_Dispatch {
 		$this->DispatchedBy =  Member::currentUserID();
 	}
 
+	/**
+	*
+	*@return FieldSet
+	**/
 	function getCMSFields() {
 		$fields = parent::getCMSFields();
 		$fields->replaceField("EmailSent", $fields->dataFieldByName("EmailSent")->performReadonlyTransformation());
@@ -292,6 +330,11 @@ class OrderStatusLog_DispatchPhysicalOrder extends OrderStatusLog_Dispatch {
 		}
 	}
 
+	/**
+	*
+	*@return String
+	*@To do: move formatting to template
+	**/
 	function CustomerNote() {
 		return $this->Note
 			."\r\n\r\n"._t("OrderStatusLog.DISPATCHEDBY", "Dispatched By").": ".$this->DispatchedBy.". "
@@ -320,6 +363,10 @@ class OrderStatusLog_PaymentCheck extends OrderStatusLog {
 		'PaymentConfirmed' => "Boolean",
 	);
 
+	/**
+	*
+	*@return Boolean
+	**/
 	public function canDelete($member = null) {
 		return false;
 	}
@@ -328,7 +375,7 @@ class OrderStatusLog_PaymentCheck extends OrderStatusLog {
 		"yes" => 1,
 		"no" => 0
 	);
-		static function set_true_and_false_definitions($v) {self::$true_and_false_definitions = $v;}
+		static function set_true_and_false_definitions(array $a) {self::$true_and_false_definitions = $a;}
 		static function get_true_and_false_definitions() {return self::$true_and_false_definitions;}
 
 	public static $searchable_fields = array(
@@ -375,9 +422,19 @@ class OrderStatusLog_PaymentCheck extends OrderStatusLog {
 	}
 
 
+	/**
+	*
+	*@return String
+	**/
 	function CustomerNote() {
-		if($this->PaymentConfirmed && $this->Author()) { return _t("OrderStatus.PAYMENTCONFIRMEDBY", "Payment Confirmed by: ").$this->Author()->getTitle()." | ".$this->Created;}
-		if(!$this->PaymentConfirmed && $this->Author()) { return _t("OrderStatus.PAYMENTDECLINEDBY", "Payment DECLINED by: ").$this->Author()->getTitle()." | ".$this->Created;}
+		if($this->Author()) {
+			if($this->PaymentConfirmed) {
+				return _t("OrderStatus.PAYMENTCONFIRMEDBY", "Payment Confirmed by: ").$this->Author()->getTitle()." | ".$this->Created;
+			}
+			else {
+				return _t("OrderStatus.PAYMENTDECLINEDBY", "Payment DECLINED by: ").$this->Author()->getTitle()." | ".$this->Created;
+			}
+		}
 	}
 
 }

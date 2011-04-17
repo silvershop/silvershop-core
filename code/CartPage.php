@@ -17,6 +17,9 @@ class CartPage extends Page{
 
 	public static $icon = 'ecommerce/images/icons/cart';
 
+	/**
+	 *@return Fieldset
+	 **/
 	function getCMSFields(){
 		$fields = parent::getCMSFields();
 		if($checkouts = DataObject::get('CheckoutPage')) {
@@ -26,6 +29,9 @@ class CartPage extends Page{
 		return $fields;
 	}
 
+	/**
+	 *@return String (HTML Snipper)
+	 **/
 	function EcommerceMenuTitle() {
 		$count = 0;
 		$order = ShoppingCart::current_order();
@@ -80,10 +86,13 @@ class CartPage_Controller extends Page_Controller{
 		}
 	}
 
+	/**
+	 *@return DataObject(Order) or NULL
+	 **/
 	function CurrentOrder() {
 		if(!$this->currentOrder) {
 			if($this->orderID) {
-				$this->currentOrder = Order::get_by_id($this->orderID);
+				$this->currentOrder = Order::get_by_id_if_can_view($this->orderID);
 			}
 			else {
 				$this->currentOrder = ShoppingCart::current_order();
@@ -92,6 +101,9 @@ class CartPage_Controller extends Page_Controller{
 		return $this->currentOrder;
 	}
 
+	/**
+	 *@return array just so that template shows -  sets CurrentOrder variable
+	 **/
 	function showorder($request) {
 		Requirements::themedCSS('Order');
 		Requirements::themedCSS('Order_print', 'print');

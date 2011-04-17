@@ -9,10 +9,13 @@
 
 class ExpiryDateField extends TextField {
 
-	protected static $short_months = 1;
-		static function set_short_months($boolean) {self::$short_months = $boolean;}
+	protected static $short_months = true;
+		static function set_short_months(boolean $b) {self::$short_months = $b;}
 		static function get_short_months() {return self::$short_months;}
 
+	/**
+	 *@return HTML
+	 **/
 	function Field() {
 		$monthValue = '';
 		$yearValue = '';
@@ -31,6 +34,10 @@ class ExpiryDateField extends TextField {
 			</span>";
 		return $field;
 	}
+
+	/**
+	 *@return string
+	 **/
 	function dataValue() {
 		if(is_array($this->value)) {
 			$string = '';
@@ -45,6 +52,9 @@ class ExpiryDateField extends TextField {
 		}
 	}
 
+	/**
+	 *@return string (Javascript)
+	 **/
 	function jsValidation() {
 		$formID = $this->form->FormName();
 		$jsFunc =<<<JS
@@ -72,6 +82,9 @@ JS;
 		return "\$('$formID').validateExpiryDate('$this->name');";
 	}
 
+	/**
+	 *@return boolean
+	 **/
 	function validate($validator){
 		// If the field is empty then don't return an invalidation message'
 		if(!isset($this->value[0])) {
@@ -112,6 +125,9 @@ JS;
 		return true;
 	}
 
+	/**
+	 *@return array(2000 => 2000, 2001 => 2001, etc...)
+	 **/
 	protected function yearArray() {
 		$list = array();
 		$i = 0;
@@ -123,6 +139,9 @@ JS;
 	}
 
 
+	/**
+	 *@return string (html)
+	 **/
 	protected function makeSelectList($array, $currentValue) {
 		$string = '';
 		foreach($array as $key => $value) {
@@ -135,6 +154,9 @@ JS;
 		return $string;
 	}
 
+	/**
+	 *@return array(1 => "Jan", etc...)
+	 **/
 	protected function monthArray() {
 		if(self::$short_months) {
 		  return array(

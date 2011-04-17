@@ -15,23 +15,23 @@
 class ShoppingCart extends Controller {
 
 	public static $url_segment = 'shoppingcart';
-		static function set_url_segment($v) {self::$url_segment = $v;}
+		static function set_url_segment(string $s) {self::$url_segment = $s;}
 		static function get_url_segment() {return self::$url_segment;}
 
 	protected static $order = null; // for temp caching
-		static function set_order(Order $v) {self::$order = $v;}
+		static function set_order(Order $orderObject) {self::$order = $orderObject;}
 		static function get_order() {user_error("Use self::current_order() to get order.", E_USER_ERROR);}
 
 	protected static $cartid_session_name = 'shoppingcartid';
-		public static function set_cartid_session_name($v) {self::$cartid_session_name = $v;}
+		public static function set_cartid_session_name(string $s) {self::$cartid_session_name = $s;}
 		public static function get_cartid_session_name() {return self::$cartid_session_name;}
 
 	protected static $response_class = "CartResponse";
-		public static function set_response_class($v) {self::$url_segment = $v;}
+		public static function set_response_class(string $s) {self::$url_segment = $s;}
 		public static function get_response_class() {return self::$url_segment;}
 
 	protected static $ajaxify_cart = false;
-		public static function set_ajaxify_cart($v) {self::$ajaxify_cart = $v;}
+		public static function set_ajaxify_cart(boolean $b) {self::$ajaxify_cart = $b;}
 		public static function get_ajaxify_cart() {return self::$ajaxify_cart;}
 
 	static $allowed_actions = array (
@@ -63,12 +63,12 @@ class ShoppingCart extends Controller {
 	 *
 	*/
 	protected static $default_param_filters = array();
-		static function set_default_param_filters($array){self::$default_param_filters = $array;}
-		static function add_default_param_filters($array){self::$default_param_filters = array_merge(self::$default_param_filters,$array);}
+		static function set_default_param_filters(array $a){self::$default_param_filters = $a;}
+		static function add_default_param_filters(array $a){self::$default_param_filters = array_merge(self::$default_param_filters,$a);}
 		static function get_default_param_filters(){return self::$default_param_filters;}
 
 	protected static $shopping_cart_message_index = 'ShoppingCartMessage';
-		static function set_shopping_cart_message_index($v) {self::$shopping_cart_message_index = $v;}
+		static function set_shopping_cart_message_index(string $s) {self::$shopping_cart_message_index = $s;}
 		static function get_shopping_cart_message_index() {return self::$shopping_cart_message_index;}
 
 
@@ -79,18 +79,27 @@ class ShoppingCart extends Controller {
 *******************************************************/
 
 	protected static $country_setting_index = 'ShoppingCartCountry';
-		static function set_country_setting_index($v) {self::$country_setting_index = $v;}
+		static function set_country_setting_index(string $s) {self::$country_setting_index = $s;}
 		static function get_country_setting_index() {return self::$country_setting_index;}
 
-	static function set_country($countryCode) {
-		Session::set(self::get_country_setting_index(), $countryCode);
+	/**
+	 *
+	 *@param $s CountryCode (e.g. NZ)
+	 **/
+	static function set_country(string $s) {
+		Session::set(self::get_country_setting_index(), $s);
 		$member = Member::currentUser();
 		//check if the member has a country
 		if($member) {
-			$member->Country = $countryCode;
+			$member->Country = $s;
 			$member->write();
 		}
 	}
+
+
+	/**
+	 *@return String - Country Code - e.g. NZ
+	 **/
 	static function get_country() {
 		//@todo: incorporate allowed countries...
 		$countryCode = '';
@@ -143,19 +152,23 @@ class ShoppingCart extends Controller {
 *******************************************************/
 
 	protected static $clear_days = 90;
-		function set_clear_days($days = 90){self::$clear_days = $days;}
-		function get_clear_days(){return self::$clear_days;}
+		function set_clear_days(integer $i){self::$clear_days = $i;}
+		function get_clear_days(){return(integer)self::$clear_days;}
 
 	protected static $never_delete_if_linked_to_member = false;
-		function set_never_delete_if_linked_to_member($b){self::$never_delete_if_linked_to_member = $b;}
-		function get_never_delete_if_linked_to_member(){return self::$never_delete_if_linked_to_member;}
+		function set_never_delete_if_linked_to_member(boolean $b){self::$never_delete_if_linked_to_member = $b;}
+		function get_never_delete_if_linked_to_member(){return(boolean)self::$never_delete_if_linked_to_member;}
 
 
 /*******************************************************
 	 * DELETE OLD SHOPPING CARTS
 *******************************************************/
 
+	/**
+	 *@return Integer - number of carts destroyed
+	 **/
 	public static function delete_old_carts(){
+		$count = 0;
 		$time = date('Y-m-d H:i:s', strtotime("-".self::$clear_days." days"));
 		$generalWhere = "\"StatusID\" = ".OrderStep::get_status_id_from_code("CREATED")." AND \"LastEdited\" < '$time'";
 		if(self::$never_delete_if_linked_to_member) {
@@ -166,10 +179,12 @@ class ShoppingCart extends Controller {
 		}
 		if($oldcarts){
 			foreach($oldcarts as $cart){
+				$count++;
 				$cart->delete();
 				$cart->destroy();
 			}
 		}
+		return $count;
 	}
 
 
@@ -191,7 +206,7 @@ class ShoppingCart extends Controller {
 			$memberID = Member::currentUserID();
 		}
 		if($memberID) {
-			$order = DataObject::get_by_id('Order', $orderID);
+			$order = Order::get_by_id_if_can_view($orderID);
 			if($order && $order->MemberID == $memberID ) {
 				self::$order = $order;
 				self::initialise_new_order();
@@ -201,8 +216,11 @@ class ShoppingCart extends Controller {
 		return null;
 	}
 
+	/**
+	 *@return DataObject(Order)
+	 **/
 	public static function copy_order($oldOrderID) {
-		$oldOrder = DataObject::get_by_id("Order", $oldOrderID);
+		$oldOrder = Order::get_by_id_if_can_view($oldOrderID);
 		if(!$oldOrder) {
 			user_error("Could not find old order", E_USER_NOTICE);
 		}
@@ -225,6 +243,9 @@ class ShoppingCart extends Controller {
 		}
 	}
 
+	/**
+	 *@return DataObject(Order)
+	 **/
 	public static function current_order() {
 		if (!self::$order) {
 			//find order by id saved to session (allows logging out and retaining cart contents)
@@ -286,7 +307,7 @@ class ShoppingCart extends Controller {
 
 
 /*******************************************************
-	 * CONTROLLER LINKS
+	 * CONTROLLER LINKS - all return STRINGS!
 *******************************************************/
 
 	static function add_item_link($buyableID, $className = "OrderItem", $parameters = array()) {
@@ -334,6 +355,9 @@ class ShoppingCart extends Controller {
 	 * ORDER ITEM  AND MODIFIER INFORMATION
 *******************************************************/
 
+	/**
+	 *@return String
+	 **/
 	protected static function order_item_class_name($className) {
 		if(!ClassInfo::exists($className)) {
 			user_error("ShoppingCart::order_item_class_name ... $className does not exist", E_USER_ERROR);
@@ -356,11 +380,18 @@ class ShoppingCart extends Controller {
 		return $className;
 	}
 
+	/**
+	 *@return String
+	 **/
 	protected static function buyable_class_name($orderItemClassName) {
 		return str_replace(Buyable::get_order_item_class_name_post_fix(), "", self::order_item_class_name($orderItemClassName));
 	}
 
 	//modifiers
+
+	/**
+	 *@return String
+	 **/
 	protected static function order_modifier_class_name($className) {
 		if(!ClassInfo::exists($className)) {
 			user_error("ShoppingCart::order_modifier_class_name ... $className does not exist", E_USER_ERROR);
@@ -382,29 +413,46 @@ class ShoppingCart extends Controller {
 	 * RETRIEVE INFORMATION
 *******************************************************/
 
+	/**
+	 *@return DataObject (Order)
+	 **/
 	function Cart() {
 		return self::current_order();
 	}
 
+	/**
+	 *@return boolean
+	 **/
 	static function has_items() {
 		return self::current_order()->Items() != null;
 	}
 
+	/**
+	 *@return DataObjectSet (OrderItem)
+	 **/
 	static function get_items($filter = null) {
 		return self::current_order()->Items($filter);
 	}
 
+	/**
+	 *@return Boolean
+	 **/
 	static function has_modifiers() {
 		return self::get_modifiers() != null;
 	}
 
+	/**
+	 *@return DataObjectSet (OrderItemModifiers)
+	 **/
 	static function get_modifiers() {
 		return self::current_order()->Modifiers();
 	}
 
 	/**
 	 * Get OrderItem according to product id, and coorresponding parameter filter.
-	 */
+	 *
+	 *@return OrderItem (ONE!)
+	 **/
 	static function get_order_item_by_buyableid($buyableID, $orderItemClassName = "OrderItem", $parameters = null ) {
 		if(!ClassInfo::is_subclass_of($orderItemClassName, "OrderItem")) {
 			user_error("$orderItemClassName needs to be a subclass of OrderItem", E_USER_WARNING);
@@ -424,9 +472,9 @@ class ShoppingCart extends Controller {
 		return self::current_order()->UseShippingAddress;
 	}
 
-	static function set_uses_different_shipping_address($use = true){
+	static function set_uses_different_shipping_address($b = true){
 		$order = self::current_order();
-		$order->UseShippingAddress = $use;
+		$order->UseShippingAddress = $b;
 		$order->write();
 	}
 
@@ -524,6 +572,9 @@ class ShoppingCart extends Controller {
 		}
 	}
 
+	/**
+	 *@return DataObject (OrderItem)
+	 **/
 	public static function add_buyable($buyable,$quantity = 1, $parameters = null){
 		$orderItem = null;
 		if(!$buyable) {
@@ -542,6 +593,9 @@ class ShoppingCart extends Controller {
 		return $orderItem;
 	}
 
+	/**
+	 *@return DataObject (OrderItem)
+	 **/
 	protected static function find_or_make_order_item($buyable, $parameters = null){
 		if($orderItem = self::get_order_item_by_buyableid($buyable->ID,$buyable->classNameForOrderItem())){
 			//do nothing
@@ -553,8 +607,8 @@ class ShoppingCart extends Controller {
 	}
 
 	/**
-	 * Creates a new order item based on url parameters
-	 */
+	 *@return DataObject (OrderItem)
+	 **/
 	protected static function create_order_item($buyable,$quantity = 1, $parameters = null){
 		$orderItem = null;
 		if($buyable && $buyable->canPurchase()) {
@@ -597,6 +651,9 @@ class ShoppingCart extends Controller {
 *******************************************************/
 
 
+	/**
+	 *@return String (message)
+	 **/
 	function additem($request) {
 		if ($request->param('ID')) {
 			if($orderItem = $this->getExistingOrderItemFromURL()) {
@@ -619,14 +676,23 @@ class ShoppingCart extends Controller {
 		return $this->returnMessage("failure",_t("ShoppingCart.ITEMCOULDNOTBEADDED", "Item could not be added"));
 	}
 
+	/**
+	 *@return String (message)
+	 **/
 	function incrementitem($request) {
 		return $this->additem($request);
 	}
 
+	/**
+	 *@return String (message)
+	 **/
 	function decrementitem($request) {
 		return $this->additem($request);
 	}
 
+	/**
+	 *@return String (message)
+	 **/
 	function removeitem($request) {
 		if ($orderItem = $this->getExistingOrderItemFromURL()) {
 			ShoppingCart::remove_item($orderItem);
@@ -643,6 +709,9 @@ class ShoppingCart extends Controller {
 		return $this->returnMessage("failure",_t("ShoppingCart.ITEMCOULDNOTBEFOUNDINCART", "Item could not found in cart."));
 	}
 
+	/**
+	 *@return String (message)
+	 **/
 	function setcountry($request) {
 		$countryCode = $request->param('ID');
 		if($countryCode && strlen($countryCode) < 4) {
@@ -672,7 +741,9 @@ class ShoppingCart extends Controller {
 
 	/**
 	 * Ajax method to set an item quantity
-	 */
+	 *
+	 *@return String (message)
+	 **/
 	function setquantityitem($request) {
 		$quantity = $request->getVar('quantity');
 		if (is_numeric($quantity) && $quantity == floatval($quantity)) {
@@ -698,7 +769,9 @@ class ShoppingCart extends Controller {
 	}
 	/**
 	 * Removes specified modifier, if allowed
-	 */
+	 *
+	 *@return String (message)
+	 **/
 	function removemodifier($request) {
 		$modifierId = intval($request->param('ID'));
 		$modifier = DataObject::get_by_id("OrderModifier", $modifierId);
@@ -711,8 +784,8 @@ class ShoppingCart extends Controller {
 
 	/**
 	 * return number of items in cart
-	 */
-
+	 *@return integer
+	 **/
 	function numberofitemsincart() {
 		$cart = self::current_order();
 		if($cart) {
@@ -723,11 +796,15 @@ class ShoppingCart extends Controller {
 
 	/**
 	 * return cart for ajax call
+	 *@return HTML
 	 */
 	function showcart($request) {
 		return $this->renderWith("AjaxSimpleCart");
 	}
 
+	/**
+	 *@return String (message)
+	 **/
 	function loadorder($request) {
 		$orderID = Director::urlParam('ID');
 		if($orderID == intval($orderID)) {
@@ -738,6 +815,9 @@ class ShoppingCart extends Controller {
 		return $this->returnMessage("failure", _t("ShoppingCart.ORDERNOTLOADEDSUCCESSFULLY", "Order could not be loaded."));
 	}
 
+	/**
+	 *@return String (message)
+	 **/
 	function copyorder($request) {
 		$orderID = Director::urlParam('ID');
 		if($orderID == intval($orderID)) {
@@ -750,7 +830,8 @@ class ShoppingCart extends Controller {
 
 	/**
 	 * Sets appropriate status, and message and redirects or returns appropriately.
-	 */
+	 * @return JSON or redirects back
+	 **/
 
 	protected function returnMessage($status = "success",$message = null) {
 		return self::return_message($status = "success",$message);
@@ -783,6 +864,7 @@ class ShoppingCart extends Controller {
 	 *
 	 * you will need to decode the url with javascript before using it.
 	 *
+	 *@return String (URLSegment)
 	 */
 	protected static function params_to_get_string($array){
 		if($array & count($array > 0)){
@@ -795,6 +877,7 @@ class ShoppingCart extends Controller {
 
 	/**
 	 * Creates new order item based on url parameters
+	 *@return DataObject (OrderItem)
 	 */
 	protected function getNewOrderItemFromURL(){
 		$request = $this->getRequest();
@@ -847,6 +930,7 @@ class ShoppingCart extends Controller {
 
 	/**
 	 * Get item according to a filter.
+	 *@return DataObject(OrderItem)
 	 */
 	protected function getExistingOrderItemFromURL() {
 		$filter = $this->urlFilter();
@@ -863,6 +947,7 @@ class ShoppingCart extends Controller {
 	 *
 	 * 	 Returns default filter if none provided,
 	 *	 otherwise it updates default filter with passed parameters
+	 *@return String (SQL where statement)
 	 */
 	protected static function turn_params_into_sql($params = array()){
 		$defaultParamFilters = self::get_default_param_filters();
@@ -884,6 +969,7 @@ class ShoppingCart extends Controller {
 
 	/**
 	 * Gets a filter based on urlParameters
+	 *@return String (SQL where statement)
 	 */
 	protected function urlFilter(){
 		$result = '';

@@ -15,10 +15,14 @@ class ShopManagerPage extends Page {
 		"ShowInSearch" => 0
 	);
 
-	function canCreate() {
+	function canCreate($member = null) {
 		return !DataObject::get_one("SiteTree", "\"ClassName\" = 'ShopManagerPage'");
 	}
 
+	/**
+	 *
+	 *@return Boolean
+	 **/
 	function canView($member = null) {
 		if(Permission::check("SHOP_ADMIN")) {
 			return true;
@@ -46,14 +50,26 @@ class ShopManagerPage_Controller extends Page_Controller {
 		Requirements::javascript("ecommerce/javascript/ShopManagerPage.js");
 	}
 
+	/**
+	 *
+	 *@return CheckoutPage Object
+	 **/
 	function CheckoutPage() {
 		return DataObject::get_one("CheckoutPage");
 	}
 
+	/**
+	 *
+	 *@return AccountPage Object
+	 **/
 	function AccountPage() {
 		return DataObject::get_one("AccountPage");
 	}
 
+	/**
+	 *
+	 *@return DataObjectSet
+	 **/
 	function LastOrders() {
 		return DataObject::get("Order", "", "\"Created\" DESC", "", "0, 250");
 	}
@@ -95,7 +111,7 @@ class ShopManagerPage_Controller extends Page_Controller {
 			}
 		}
 		if($orderID) {
-			$order = DataObject::get_by_id("Order", $orderID);
+			$order = Order::get_by_id_if_can_view($orderID);
 			if($order) {
 				$from = $order->getReceiptEmail();
 				$to = $order->Member()->Email;
@@ -129,7 +145,7 @@ class ShopManagerPage_Controller extends Page_Controller {
 			}
 		}
 		if($orderID) {
-			$order = DataObject::get_by_id("Order", $orderID);
+			$order = Order::get_by_id_if_can_view($orderID);
 			if($order) {
 				$from = Order::get_receipt_email();
 				$to = $order->Member()->Email;
@@ -165,7 +181,7 @@ class ShopManagerPage_Controller extends Page_Controller {
 		Requirements::themedCSS('Order_print', 'print');
 		$accountPageLink = AccountPage::find_link();
 		if($orderID = $request->param('ID')) {
-			if($order = DataObject::get_by_id('Order', $orderID)) {
+			if($order = Order::get_by_id_if_can_view($orderID)) {
 				return array('Order' => $order);
 			}
 			else {
