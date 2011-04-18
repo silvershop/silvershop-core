@@ -1,7 +1,7 @@
 <table id="AddressesTable" class="infotable">
 	<tr>
-		<th scope="col"><% _t("PURCHASEDBY","Purchased by") %></th>
-		<% if ShippingAddress %><th scope="col"><% _t("SHIPTO","Ship To") %></th><% end_if %>
+		<th scope="col"><% _t("Order.PURCHASEDBY","Purchased by") %></th>
+		<% if ShippingAddress %><th scope="col"><% _t("Order.SHIPTO","Ship To") %></th><% end_if %>
 	</tr>
 	<tr>
 		<td><% include Order_AddressBilling %></td>
