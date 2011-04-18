@@ -331,7 +331,7 @@ class OrderModifier extends OrderAttribute {
 	 * @return String
 	  **/
 	public function RemoveLink() {
-		return ShoppingCart::remove_modifier_link($this->ID);
+		return ShoppingCart::remove_modifier_link($this->ID,$this->ClassName);
 	}
 
 
