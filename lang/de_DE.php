@@ -160,6 +160,8 @@ $lang['de_DE']['Order_ReceiptEmail.ss']['TITLE'] = 'Shop Empfangsbestätigung';
 $lang['de_DE']['Order_StatusEmail.ss']['HEADLINE'] = 'Shop-Status Änderung';
 $lang['de_DE']['Order_StatusEmail.ss']['STATUSCHANGE'] = 'Status geändert zu "%s" für Bestellung Nr.';
 $lang['de_DE']['Order_StatusEmail.ss']['TITLE'] = 'Shop-Status Änderung';
+//TODO the Payment translation should actually go in the Payment module 
+$lang['de_DE']['Payment']['AMOUNT'] = 'Gesamt';
 $lang['de_DE']['Payment']['Incomplete'] = 'Unvollständig';
 $lang['de_DE']['Payment']['Success'] = 'Erfolg';
 $lang['de_DE']['Payment']['Failure'] = 'Misserfolg';

@@ -155,9 +155,11 @@ class Order extends DataObject {
 	 **/
 	public static function get_by_id_if_can_view($id) {
 		$obj = DataObject::get_by_id("Order", $id);
-		if($obj->canView()) {
-			return $obj;
-		}
+                if(is_object($obj)){
+                    if($obj->canView()) {
+                            return $obj;
+                    }
+                }
 		return null;
 	}
 
