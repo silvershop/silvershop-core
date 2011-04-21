@@ -131,6 +131,7 @@ $lang['de_DE']['Order']['NOITEMS'] = 'Ihre Bestellung weist <strong>keine</stron
 $lang['de_DE']['Order']['NOITEMSINCART'] = 'Sie haben keine Produkte ausgewählt. Bitte legen Sie Produkte in den Warenkorb.';
 $lang['de_DE']['Order']['NOPAYMENTS'] = 'Es gibt keine Zahlungen für diese Bestellung.';
 $lang['de_DE']['Order']['ORDERHASBEENCANCELLED'] = 'Bestellung wurde storniert!';
+$lang['de_DE']['Order']['ORDER'] = 'Bestellung';
 $lang['de_DE']['Order']['PASSWORD'] = 'Passwort';
 $lang['de_DE']['Order']['PAYMENTMETHOD'] = 'Zahlart';
 $lang['de_DE']['Order']['PAYMENTSTATUS'] = 'Bezahlstatus';

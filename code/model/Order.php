@@ -937,7 +937,7 @@ class Order extends DataObject {
 	 **/
 	function Title() {
 		if($this->ID) {
-			$v = $this->i18n_singular_name(). " #$this->ID - ".$this->dbObject('Created')->format("D d M Y");
+			$v = $this->i18n_singular_name(). " #$this->ID - ".$this->dbObject('Created')->Nice();
 			if($this->MemberID && $this->Member()->exists() ) {
 				if($this->MemberID != Member::currentUserID()) {
 					$v .= " - ".$this->Member()->getName();
