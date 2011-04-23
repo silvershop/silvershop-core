@@ -14,6 +14,7 @@
 
 class ShoppingCart extends Controller {
 
+	//EXPLAIN: what is the reasoning behind having getters and setters for every static variable? why not just add them when needed?
 	public static $url_segment = 'shoppingcart';
 		static function set_url_segment($v) {self::$url_segment = $v;}
 		static function get_url_segment() {return self::$url_segment;}
@@ -171,7 +172,7 @@ class ShoppingCart extends Controller {
 			}
 		}
 	}
-
+	
 
 /*******************************************************
    * STARTUP
@@ -200,7 +201,9 @@ class ShoppingCart extends Controller {
 		}
 		return null;
 	}
-
+	
+	
+	//EXPLAIN: what is this for, why  is it not on Order?
 	public static function copy_order($oldOrderID) {
 		$oldOrder = DataObject::get_by_id("Order", $oldOrderID);
 		if(!$oldOrder) {
@@ -258,12 +261,13 @@ class ShoppingCart extends Controller {
 	}
 
 	protected static function initialise_new_order() {
-		self::$order->SessionID = session_id();
-		self::$order->MemberID = Member::currentUserID();
 		//NOTE: init function includes a write....
 		self::$order->init();
-		Session::set(self::$cartid_session_name,self::$order->ID.".".session_id());
-		self::delete_old_carts();
+		
+		//EXPLAIN: why do we store the session id in the session??
+		Session::set(self::$cartid_session_name,self::$order->ID.".".session_id()); 
+		
+		self::delete_old_carts(); //TODO: check how this impacts on performance
 	}
 
 
@@ -280,6 +284,11 @@ class ShoppingCart extends Controller {
 /*******************************************************
    * CONTROLLER LINKS
 *******************************************************/
+
+	function Link($action = null){
+		$action = ($action)? "/$action/" : ""; 
+		return self::$URLSegment.$action;
+	}
 
 	static function add_item_link($buyableID, $className = "OrderItem", $parameters = array()) {
 		return self::$url_segment.'/additem/'.$buyableID."/".self::order_item_class_name($className).self::params_to_get_string($parameters);

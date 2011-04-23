@@ -121,6 +121,8 @@ class Product extends Page {
 		foreach($productssold as $product){
 			if($product->NewNumberSold != $product->NumberSold){
 				$product->NumberSold = $product->NewNumberSold;
+				
+				//TODO: this should not send draft changes live undesireably
 				$product->writeToStage('Stage');
 				$product->publish('Stage', 'Live');
 			}

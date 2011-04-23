@@ -18,11 +18,13 @@ class EcommerceRole extends DataObjectDecorator {
 				'PostalCode' => 'Varchar(30)',
 				'State' => 'Varchar(100)',
 				'Country' => 'Varchar(4)',
-				'Phone' => 'Varchar(100)',
-				'Notes' => 'HTMLText'
+				'Phone' => 'Varchar(100)'
 			),
 			'casting' => array(
 				"FullCountryName" => "Varchar"
+			),
+			'has_one' => array(
+				'ShippingAddress' => 'ShippingAddress',
 			)
 		);
 	}

@@ -11,9 +11,19 @@ class Order extends DataObject {
 
 	public static $db = array(
 		'SessionID' => "Varchar(32)", //so that in the future we can link sessions with Orders.... One session can have several orders, but an order can onnly have one session
-		'Country' => 'Varchar(3)',
+		'Country' => 'Varchar(4)',
 		'UseShippingAddress' => 'Boolean',
-		'CustomerOrderNote' => 'Text'
+		'CustomerOrderNote' => 'Text',
+		
+		
+		//new fields introduced from EcommerceRole
+		'Address' => 'Varchar(255)',
+		'AddressLine2' => 'Varchar(255)',
+		'City' => 'Varchar(100)',
+		'PostalCode' => 'Varchar(30)',
+		'State' => 'Varchar(100)',
+		'Phone' => 'Varchar(100)',
+		'Notes' => 'HTMLText'		
 	);
 
 	public static $has_one = array(
@@ -67,6 +77,11 @@ class Order extends DataObject {
 	static function get_receipt_email() {$sc = DataObject::get_one("SiteConfig"); if($sc && $sc->ReceiptEmail) {return $sc->ReceiptEmail;} else {return Email::getAdminEmail();} }
 
 	static function get_receipt_subject() {$sc = DataObject::get_one("SiteConfig"); if($sc && $sc->ReceiptSubject) {return $sc->ReceiptSubject;} else {return "Shop Sale Information {OrderNumber}"; } }
+
+	protected static $automatic_membership = true;
+		function set_automatic_membership($mem){self::$automatic_membership  = $mem;}
+		function get_automatic_membership(){return self::$automatic_membership;}
+
 
 	/**
 	 * Modifiers represent the additional charges or
@@ -374,7 +389,7 @@ class Order extends DataObject {
 		$this->extend('updateCMSFields',$fields);
 		return $fields;
 	}
-
+	
 	function OrderStatusLogsTable($sourceClass) {
 		$orderStatusLogsTable = new HasManyComplexTableField(
 			$this,
@@ -401,6 +416,7 @@ class Order extends DataObject {
 
 	public function tryToFinaliseOrder() {
 		$this->init();
+		//TODO: it is not clear what these magic numbers are for
 		for($i = 1; $i < 99; $i++) {
 			if(!$this->doNextStatus()) {
 				$i = 100;
@@ -425,6 +441,8 @@ class Order extends DataObject {
 
 	//NOTE: anything to do with Current Member and Session should be in Shopping Cart!
 	public function init() {
+		$this->SessionID = session_id();
+		$this->MemberID = Member::currentUserID();
 		$this->write();
 		//to do: check if shop is open....
 		if(!$this->StatusID) {

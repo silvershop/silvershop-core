@@ -30,7 +30,7 @@ class OrderModifier extends OrderAttribute {
 	public static $db = array(
 		'Name' => 'Varchar(255)',
 		'Amount' => 'Currency',
-		'Type' => "Enum('Chargeable,Deductable,NoChange,Removed')"
+		'Type' => "Enum('Chargeable,Deductable,NoChange')" //this should go
 	);
 
 	public static $casting = array(
@@ -317,7 +317,7 @@ class OrderModifier extends OrderAttribute {
 	}
 
 	public function RemoveLink() {
-		return ShoppingCart::remove_modifier_link($this->ID);
+		return ShoppingCart::remove_modifier_link($this->ID,$this->ClassName);
 	}
 
 
@@ -459,6 +459,59 @@ class OrderModifier extends OrderAttribute {
 HTML;
 	}
 
+}
+
+
+/**
+ * This controller allows you to submit modifier forms from anywhere on the site, especially the cart page.
+ */
+class OrderModifier_Controller extends Controller{
+	
+	static $allowed_actions = array(
+		'removemodifier'
+	);
+	
+	public function init() {
+		$this->initVirtualMethods();
+		parent::init();
+	}
+	
+	/**
+	 * Inits the virtual methods from the name of the modifier forms to
+	 * redirect the action method to the form class
+	 */
+	protected function initVirtualMethods() {
+		
+		if($forms = Order::get_modifier_forms($this)) {
+			foreach($forms as $form) {
+				$this->addWrapperMethod($form->Name(), 'getOrderModifierForm');
+				self::$allowed_actions[] = $form->Name(); // add all these forms to the list of allowed actions also
+			}
+		}
+	}
+	
+	/**
+	 * Return a specific {@link OrderModifierForm} by it's name.
+	 *
+	 * @param string $name The name of the form to return
+	 * @return Form
+	 */
+	protected function getOrderModifierForm($name) {
+		if($forms = Order::get_modifier_forms($this)) {
+			foreach($forms as $form) {
+				if($form->Name() == $name) return $form;
+			}
+		}
+	}
+	
+	function Link($action = null){
+		$action = ($action)? "/$action/" : ""; 
+		return $this->class.$action;
+	}
+	
+	function removemodifier(){
+		//TODO: move from shopping cart
+	}	
 }
 
 

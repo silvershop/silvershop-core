@@ -190,7 +190,8 @@ class OrderForm extends Form {
 		//MEMBER
 		//TO DO: change to $form->saveInto($member)  = much better!
 		$member = EcommerceRole::ecommerce_create_or_merge($data);
-		if(!$member) {
+		
+		if(!$member && Order::get_automatic_membership()) {
 			$form->sessionMessage(
 				_t(
 					'Order.MEMBEREXISTS',
@@ -200,9 +201,10 @@ class OrderForm extends Form {
 			);
 			Director::redirectBack();
 			return false;
+		}elseif($member){
+			$member->write();
+			$member->logIn();
 		}
-		$member->write();
-		$member->logIn();
 
 		// SHIPPING ADDRESS
 		$shippingAddress = DataObject::get_one("ShippingAddress", "\"OrderID\" = ".$order->ID);
@@ -213,7 +215,7 @@ class OrderForm extends Form {
 		if(isset($data['UseShippingAddress']) && $data['UseShippingAddress']){
 			$form->saveInto($shippingAddress);
 		}
-		else {
+		elseif($member){
 			$shippingAddress->makeShippingAddressFromMember($member);
 		}
 		$shippingAddress->write();
@@ -222,7 +224,11 @@ class OrderForm extends Form {
 		//TODO: do we need this form saving into order - there are no fields in the form from the order...
 		//saving customer note, UseShippingAddress, country...
 		$form->saveInto($order);
-		$order->MemberID = $member->ID;
+		
+		if($member){
+			$order->MemberID = $member->ID;
+		}
+		
 		$order->ShippingAddressID = $shippingAddress->ID;
 
 		// IMPORTANT - SAVE ORDER....!

@@ -12,6 +12,15 @@
 class OrderModifierForm extends Form {
 
 	protected $order;
+	
+	
+	function __construct($controller = null, $name,$fields,$actions,$validator){
+		if(!$controller){
+			$controller = new OrderModifier_Controller();
+		}
+		parent::__construct($controller, $name, $fields, $actions, $validator);
+	}
+	
 
 	function redirect($status = "success", $message = ""){
 		return ShoppingCart::return_message($status, $message);
