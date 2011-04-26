@@ -10,8 +10,12 @@
  * @see UnprintedOrderReport
  *
  *
- * @package ecommerce
+ *
  * @authors: Silverstripe, Jeremy, Nicolaas
+ *
+ * @package: ecommerce
+ * @sub-package: reports
+ *
  **/
 
 class OrderReport_Popup extends Controller {
@@ -58,8 +62,6 @@ class OrderReport_Popup extends Controller {
 
 	/**
 	 * This method is used primarily for cheque orders.
-	 *
-	 * @TODO Why is this specific to cheque?
 	 *
 	 * @return unknown
 	 */

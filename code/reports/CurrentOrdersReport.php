@@ -5,8 +5,12 @@
  * {@link CurrentOrdersReport->getReportField()} has
  * the detail on the logic for what "Current" means.
  *
- * @package ecommerce
+ *
  * @authors: Silverstripe, Jeremy, Nicolaas
+ *
+ * @package: ecommerce
+ * @sub-package: reports
+ *
  **/
 
 class CurrentOrdersReport extends SS_Report {
@@ -26,7 +30,7 @@ class CurrentOrdersReport extends SS_Report {
 	 */
 	function getReportField() {
 		// Get the fields used for the table columns
-		$fields = Order::get_table_overview_fields();
+		$fields = Order::get_summary_fields();
 
 		// Add some fields specific to this report
 		$fields['Invoice'] = '';
@@ -42,7 +46,6 @@ class CurrentOrdersReport extends SS_Report {
 		// all the fields. Invoice and Printed are dummy fields that just have some
 		// text in them, which would be automatically queried if we didn't specify
 		// a custom query.
-		// TO DO: NEEDS NEW SQL
 		$query = singleton('Order')->buildSQL("\"Order\".\"Status\" NOT IN ('Complete', 'Cancelled')", '"Order"."Created" DESC');
 		$query->groupby[] = '"Order"."Created"';
 		$table->setCustomQuery($query);

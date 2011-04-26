@@ -5,8 +5,12 @@
  * are not printed. {@link UnprintedOrderReport->getReportField()}
  * outlines the logic for what orders are considered to be "unprinted".
  *
- * @package ecommerce
+ *
  * @authors: Silverstripe, Jeremy, Nicolaas
+ *
+ * @package: ecommerce
+ * @sub-package: reports
+ *
  **/
 
 class UnprintedOrderReport extends SS_Report {
@@ -25,7 +29,7 @@ class UnprintedOrderReport extends SS_Report {
 	 */
 	function getReportField() {
 		// Get the fields used for the table columns
-		$fields = Order::get_table_overview_fields();
+		$fields = Order::get_summary_fields();
 
 		// Add some fields specific to this report
 		$fields['Invoice'] = '';

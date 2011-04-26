@@ -3,8 +3,12 @@
  * An extension to {@link SSReport} that allows a user
  * to view all Order instances in the system.
  *
- * @package ecommerce
+ *
  * @authors: Silverstripe, Jeremy, Nicolaas
+ *
+ * @package: ecommerce
+ * @sub-package: reports
+ *
  **/
 
 class AllOrdersReport extends SS_Report {
@@ -14,7 +18,6 @@ class AllOrdersReport extends SS_Report {
 	protected $description = 'Show all orders in the system.';
 
 	function sourceRecords($params, $sort = "", $limit = ""){
-		//TO DO: fix filters
 		$filters = array();
 		if(isset($params['OrderID']) && $params['OrderID']) {
 			$filters[] = "\"ID\" = ".$params['OrderID'];
@@ -28,7 +31,7 @@ class AllOrdersReport extends SS_Report {
 	}
 
 	function columns(){
-		$cols = Order::get_table_overview_fields();
+		$cols = Order::get_summary_fields();
 		$cols['Invoice'] = 'Invoice';
 		return $cols;
 	}
