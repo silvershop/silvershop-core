@@ -7,8 +7,13 @@
  * If you require more advanced shipping control, we suggest
  * that you create your own subclass of {@link OrderModifier}
  *
- * @package ecommerce
+ *
  * @authors: Silverstripe, Jeremy, Nicolaas
+ *
+ * @package: ecommerce
+ * @sub-package: modifiers
+ *
+
  **/
 class SimpleShippingModifier extends OrderModifier {
 
@@ -97,13 +102,13 @@ class SimpleShippingModifier extends OrderModifier {
 // ######################################## *** calculate database fields: protected function Live[field name] ...  USES CALCULATED VALUES
 
 	protected function LiveCountry() {
-		ShoppingCart::get_country();
+		EcommerceCountry::get_country();
 	}
 
 	/**
 	 * Find the amount for the shipping on the shipping country for the order.
 	 */
-	protected function LiveAmount() {
+	protected function LiveCalculationValue() {
 		return $this->IsDefaultCharge() ? self::$default_charge : self::$charges_by_country[$this->LiveCountry()];
 	}
 
@@ -112,18 +117,7 @@ class SimpleShippingModifier extends OrderModifier {
 	}
 
 // ######################################## *** Type Functions (IsChargeable, IsDeductable, IsNoChange, IsRemoved)
-
-	protected function IsChargeable() {
-		return true;
-	}
-
-
 // ######################################## *** standard database related functions (e.g. onBeforeWrite, onAfterWrite, etc...)
-
-	public function onBeforeWrite() {
-		parent::onBeforeWrite();
-	}
-
 // ######################################## *** AJAX related functions
 // ######################################## *** debug functions
 
