@@ -2,9 +2,11 @@
 
 /**
  *@description: adds a few parameters for e-commerce to the SiteConfig.
- * @package ecommerce
+ *
  * @authors: Silverstripe, Jeremy, Nicolaas
  *
+ * @package ecommerce
+ * @sub-package integration
  **/
 
 class SiteConfigEcommerceExtras extends DataObjectDecorator {
