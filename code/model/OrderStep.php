@@ -2,9 +2,13 @@
 
 /**
  * @description: Defines the Order Status Options
- *   There must always be an OrderStep Created
- * @package ecommerce
+ * There must always be an OrderStep Created
+ *
  * @authors: Silverstripe, Jeremy, Nicolaas
+ *
+ * @package: ecommerce
+ * @sub-package: model
+ *
  **/
 
 class OrderStep extends DataObject {
@@ -81,14 +85,10 @@ class OrderStep extends DataObject {
 	function HideStepFromCustomer() {if($this->HideStepFromCustomer) {return _t("OrderStep.YES", "Yes");}return _t("OrderStep.NO", "No");}
 
 	public static $singular_name = "Order Step";
-		static function get_singular_name() {return self::$singular_name;}
-		static function set_singular_name(string $s) {self::$singular_name = $s;}
-		function i18n_singular_name() { return _t("OrderStep.ORDERSTEPOPTION", "Order Step");}
+		function i18n_singular_name() { return _t("OrderStep.ORDERSTEP", "Order Step");}
 
 	public static $plural_name = "Order Steps";
-		static function get_plural_name() {return self::$plural_name;}
-		static function set_plural_name($v) {self::$plural_name = $v;}
-		function i18n_plural_name() { return _t("OrderStep.ORDERSTEPOPTION", "Order Steps");}
+		function i18n_plural_name() { return _t("OrderStep.ORDERSTEPS", "Order Steps");}
 
 	// SUPER IMPORTANT TO KEEP ORDER!
 	public static $default_sort = "\"Sort\" ASC";
@@ -160,7 +160,6 @@ class OrderStep extends DataObject {
 	 *@return Fieldset
 	 **/
 	function getCMSFields() {
-		//TO DO: add warning messages and break up fields
 		$fields = parent::getCMSFields();
 		//replacing
 		$fields->addFieldToTab("Root.InternalDescription", new TextareaField("Description", _t("OrderStep.DESCRIPTION", "Explanation for internal use only"), 5));
