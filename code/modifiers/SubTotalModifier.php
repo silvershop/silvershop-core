@@ -1,8 +1,13 @@
 <?php
 /**
  * SubTotal modifier provides a way to display subtotal within the list of modifiers.
- * @package ecommerce
+ *
  * @authors: Silverstripe, Jeremy, Nicolaas
+ *
+ * @package: ecommerce
+ * @sub-package: modifiers
+ *
+
  **/
 
 class SubTotalModifier extends OrderModifier {
@@ -23,14 +28,14 @@ class SubTotalModifier extends OrderModifier {
 // ######################################## *** template functions (e.g. ShowInTable, TableTitle, etc...) ... USES DB VALUES
 
 	/**
-	 * This overrides the table value to show the subtotal, but the LiveAmount is always 0 (see below)
+	 * This overrides the table value to show the subtotal, but the LiveCalculationValue is always 0 (see below)
 	 */
 	public function TableValue() {
 		$order = $this->Order();
 		return $order->SubTotal() + $order->ModifiersSubTotal($this->class,true);
 	}
 
-	public function CanRemove(){
+	public function CanBeRemoved(){
 		return false;
 	}
 
@@ -44,17 +49,11 @@ class SubTotalModifier extends OrderModifier {
 // ######################################## *** calculate database fields: protected function Live[field name] ... USED CALCULATED VALUES
 
 
-	protected function LiveAmount(){
+	protected function LiveCalculationValue(){
 		return 0;
 	}
 
 // ######################################## *** Type Functions (IsChargeable, IsDeductable, IsNoChange, IsRemoved)
-
-	protected function IsNoChange() {
-		return true;
-	}
-
-
 // ######################################## *** standard database related functions (e.g. onBeforeWrite, onAfterWrite, etc...)
 // ######################################## *** AJAX related functions
 // ######################################## *** debug functions
