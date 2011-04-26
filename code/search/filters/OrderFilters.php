@@ -1,9 +1,13 @@
 <?php
 
 /**
+ * @description: provides a bunch of filters for search in ModelAdmin (CMS)
  *
- * @package ecommerce
  * @authors: Silverstripe, Jeremy, Nicolaas
+ *
+ * @package: ecommerce
+ * @sub-package: cms
+ *
  **/
 
 
