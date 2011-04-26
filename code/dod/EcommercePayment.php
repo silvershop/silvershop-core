@@ -2,8 +2,12 @@
 /**
  * @description Customisations to {@link Payment} specifically for the ecommerce module.
  *
- * @package ecommerce
  * @authors: Silverstripe, Jeremy, Nicolaas
+ *
+ *
+ * @package: ecommerce
+ * @sub-package: payment
+ *
  **/
 class EcommercePayment extends DataObjectDecorator {
 
@@ -13,8 +17,6 @@ class EcommercePayment extends DataObjectDecorator {
 		"AmountValue" => "Amount",
 		"Status" => "Status"
 	);
-
-
 
 	function extraStatics() {
 		return array(
@@ -30,8 +32,15 @@ class EcommercePayment extends DataObjectDecorator {
 					'field' => 'TextField',
 					'title' => 'Order Number'
 				),
-				//'Created' => array('title' => 'Date','filter' => 'WithinDateRangeFilter','field' => 'DateRangeField'), //TODO: filter and field not implemented yet
-				'IP' => array('title' => 'IP Address', 'filter' => 'PartialMatchFilter'),
+				'Created' => array(
+					'title' => 'Date (e.g. today)',
+					'field' => 'TextField',
+					'filter' => 'PaymentFilters_AroundDateFilter',
+				),
+				'IP' => array(
+					'title' => 'IP Address',
+					'filter' => 'PartialMatchFilter'
+				),
 				'Status'
 			)
 		);
@@ -126,7 +135,6 @@ class EcommercePayment extends DataObjectDecorator {
 	}
 	/**
 	 *@return float
-	 * TO DO TO DO TO DO TO DO : check if this return float or object TODO....
 	 **/
 	function AmountValue() {
 		return $this->owner->Amount->getAmount();
@@ -140,9 +148,13 @@ class EcommercePayment extends DataObjectDecorator {
 
 	function onBeforeWrite() {
 		parent::onBeforeWrite();
-		//TODO: throw error IF there is no OrderID
+		//see issue 148
 		if($this->owner->OrderID) {
 			$this->owner->PaidForID = $this->owner->OrderID;
+			$this->owner->PaidForClass = "Order";
+		}
+		if($this->owner->PaidForID && !$this->owner->OrderID) {
+			$this->owner->OrderID = $this->owner->PaidForID;
 			$this->owner->PaidForClass = "Order";
 		}
 	}
@@ -152,44 +164,6 @@ class EcommercePayment extends DataObjectDecorator {
 		if($this->owner->Status == 'Success' && $order = $this->owner->Order()) {
 			//NOTE: IMPORTANT
 			//$order->pay($this);
-		}
-	}
-
-	function requireDefaultRecords() {
-		parent::requireDefaultRecords();
-		if(isset($_GET["updatepayment"])) {
-			DB::query("
-				UPDATE \"Payment\"
-				SET \"AmountAmount\" = \"Amount\"
-				WHERE
-					\"Amount\" > 0
-					AND (
-						\"AmountAmount\" IS NULL
-						OR \"AmountAmount\" = 0
-					)
-			");
-			$countAmountChanges = DB::affectedRows();
-			if($countAmountChanges) {
-				DB::alteration_message("Updated Payment.Amount field to 2.4 - $countAmountChanges rows updated", "edited");
-			}
-			DB::query("
-				UPDATE \"Payment\"
-				SET \"AmountCurrency\" = \"Currency\"
-				WHERE
-					\"Currency\" <> ''
-					AND \"Currency\" IS NOT NULL
-					AND (
-						\"AmountCurrency\" IS NULL
-						OR \"AmountCurrency\" = ''
-					)
-			");
-			$countCurrencyChanges = DB::affectedRows();
-			if($countCurrencyChanges) {
-				DB::alteration_message("Updated Payment.Currency field to 2.4  - $countCurrencyChanges rows updated", "edited");
-			}
-			if($countAmountChanges != $countCurrencyChanges) {
-				DB::alteration_message("Potential error in Payment fields update to 2.4, please review data", "deleted");
-			}
 		}
 	}
 
