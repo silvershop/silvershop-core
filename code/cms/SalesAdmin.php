@@ -1,9 +1,13 @@
 <?php
 
 /**
+ * @description: CMS management for everything you have sold and all related data (e.g. logs, payments)
  *
  * @authors: Silverstripe, Jeremy, Romain, Nicolaas
- * @description: manages everything you have sold and all related data (e.g. logs, payments)
+ *
+ * @package: ecommerce
+ * @sub-package: cms
+ *
  **/
 
 class SalesAdmin extends ModelAdmin{
@@ -16,7 +20,7 @@ class SalesAdmin extends ModelAdmin{
 
 	//static $url_priority = 50;
 
-	public static $managed_models = array('Order','OrderStatusLog', 'OrderItem', 'OrderModifier', 'OrderEmailRecord', 'ShippingAddress','Payment');
+	public static $managed_models = array('Order','OrderStatusLog', 'OrderItem', 'OrderModifier', 'OrderEmailRecord', 'Billing', 'ShippingAddress','Payment');
 		public static function set_managed_models(array $a) {self::$managed_models = $a;}
 		public static function add_managed_model($s) {self::$managed_models[] = $s;}
 		public static function remove_managed_model($s) {
@@ -37,7 +41,7 @@ class SalesAdmin extends ModelAdmin{
 	function init() {
 		parent::init();
 		Requirements::themedCSS("OrderReport");
-		Requirements::javascript("ecommerce/javascript/EcommerceModelAdminExtensions.js");
+		Requirements::javascript("ecommerce/javascript/EcomModelAdminExtensions.js");
 	}
 
 
