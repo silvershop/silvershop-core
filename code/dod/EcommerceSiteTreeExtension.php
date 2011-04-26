@@ -3,9 +3,14 @@
 /**
  *@description: adds a few functions to SiteTree to give each page some e-commerce related functionality.
  *
- * @package ecommerce
+ *
  * @authors: Silverstripe, Jeremy, Nicolaas
+ *
+ * @package ecommerce
+ * @sub-package integration
+ *
  **/
+
 
 class EcommerceSiteTreeExtension extends DataObjectDecorator {
 
