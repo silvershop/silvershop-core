@@ -4,8 +4,10 @@
  * @see OrderModifier
  * @see OrderItem
  *
- * @package ecommerce
  * @authors: Silverstripe, Jeremy, Nicolaas
+ *
+ * @package: ecommerce
+ * @sub-package: model
  **/
 
 class OrderAttribute extends DataObject {
@@ -23,7 +25,7 @@ class OrderAttribute extends DataObject {
 	public static $casting = array(
 		'TableTitle' => 'HTMLText',
 		'TableSubTitle' => 'HTMLText',
-		'CartTitle' => 'HTMLText'
+		'CartTitle' => 'HTMLText' //shorter version of table table
 	);
 
 	public static $create_table_options = array(
@@ -39,23 +41,12 @@ class OrderAttribute extends DataObject {
 		"Sort" => true,
 	);
 
-	protected static $has_been_written = false;
-		public static function set_has_been_written($b = true) {Session::set("OrderAttributeHasBeenWritten", $b); self::$has_been_written = true;}
-		public static function get_has_been_written() {return Session::get("OrderAttributeHasBeenWritten") || self::$has_been_written ? true : false;}
-		public static function unset_has_been_written() {Session::set("OrderAttributeHasBeenWritten", false);self::$has_been_written = false;}
-
 	protected $_canEdit = null;
 
 	function init() {
 		return true;
 	}
 
-	/**
-	 *@return Boolean
-	 **/
-	function TableMessageID() {
-		return self::$table_message_id."_".$this->ID;
-	}
 
 	/**
 	 *@return Boolean
@@ -65,6 +56,7 @@ class OrderAttribute extends DataObject {
 	}
 
 	/**
+	 * This is an important method.
 	 *@return Boolean
 	 **/
 	function canEdit($member = null) {
@@ -95,14 +87,7 @@ class OrderAttribute extends DataObject {
 		//more may be added here in the future
 		return true;
 	}
-	/**
-	 * @see DataObject::extendedSQL
-	 * TO DO: make it work... because we call DataObject::get(....) it may not be called....
-	public function extendedSQL($filter = "", $sort = "", $limit = "", $join = "", $having = ""){
-		$join .= " LEFT JOIN \"OrderAttribute_Group\" ON \"OrderAttribute_Group\".\"ID\" = \"OrderAttribute\".\"OrderAttribute_GroupID\"";
-		return parent::extendedSQL($filter, $sort, $limit, $join, $having);
-	}
-	*/
+
 	######################
 	## TEMPLATE METHODS ##
 	######################
@@ -223,12 +208,10 @@ class OrderAttribute extends DataObject {
 	}
 	function onAfterWrite() {
 		parent::onAfterWrite();
-		self::set_has_been_written();
 	}
 
 	function onAfterDelete() {
 		parent::onAfterDelete();
-		self::set_has_been_written();
 	}
 
 }
