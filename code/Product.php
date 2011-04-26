@@ -10,8 +10,15 @@
  * eCommerce platform. This means you can add an instance
  * of this page type to the shopping cart.
  *
- * @package ecommerce
- */
+ *
+ * @authors: Silverstripe, Jeremy, Nicolaas
+ *
+ * @package: ecommerce
+ * @sub-package: products
+ *
+ **/
+
+
 class Product extends Page {
 
 	public static $db = array(
@@ -66,10 +73,10 @@ class Product extends Page {
 
 	function getCMSFields() {
 		//prevent calling updateCMSFields extend function too early
-		$tempextvar = $this->get_static('SiteTree','runCMSFieldsExtensions');
+		$siteTreeFieldExtensions = $this->get_static('SiteTree','runCMSFieldsExtensions');
 		$this->disableCMSFieldsExtensions();
 		$fields = parent::getCMSFields();
-		if($tempextvar)	{
+		if($siteTreeFieldExtensions) {
 			$this->enableCMSFieldsExtensions();
 		}
 		// Standard product detail fields
@@ -89,7 +96,7 @@ class Product extends Page {
 				);
 			}
 		}
-		if($tempextvar) {
+		if($siteTreeFieldExtensions) {
 			$this->extend('updateCMSFields', $fields);
 		}
 		return $fields;
@@ -114,22 +121,30 @@ class Product extends Page {
 		$records = $q->execute();
 		$productssold = $ps->buildDataObjectSet($records, "DataObjectSet", $q, 'Product');
 
-		//TODO: this could be done faster with an UPDATE query (SQLQuery doesn't support this yet @11/06/2010)
 		foreach($productssold as $product){
 			if($product->NewNumberSold != $product->NumberSold){
-				$product->NumberSold = $product->NewNumberSold;
-				$product->writeToStage('Stage');
-				$product->publish('Stage', 'Live');
+				DB::query("Update \"Product\" SET \"NumberSold\" = ".$product->NewNumberSold." WHERE ID = ".$product->ID);
+				DB::query("Update \"Product_Live\" SET \"NumberSold\" = ".$product->NewNumberSold." WHERE ID = ".$product->ID);
 			}
 		}
 
 	}
 
 	/**
-	 *@return DataObject(ProductGroup) or NULL
+	 * Returns all the parent groups for the product.
+	 * This function has been added her to contrast it with MainParentGroup (see below).
+	  *@return DataObjectSet(ProductGroup) or NULL
 	 **/
-	function ParentGroup() {
-		//to do: cater for various parent groups...
+	function AllParentGroup() {
+		return $this->ProductGroups();
+	}
+
+	/**
+	 * Returns the direct parent group for the product.
+	 *
+	 * @return DataObject(ProductGroup) or NULL
+	 **/
+	function MainParentGroup() {
 		return DataObject::get_by_id("ProductGroup", $this->ParentID);
 	}
 
@@ -138,8 +153,7 @@ class Product extends Page {
 	 **/
 	protected function getProductGroupsTable() {
 		$field = new TreeMultiselectField($name = "ProductGroups", $title = "Other Groups", $sourceObject = "SiteTree", $keyField = "ID", $labelField = "MenuTitle");
-		//TO DO: fix  filter function below...
-		//$field->setFilterFunction( create_function( '$obj', 'return $obj instanceOf ProductGroup && $obj->ID <> '.intval($this->ParentID)));
+		//See issue: 139
 		return $field;
 	}
 
@@ -155,9 +169,7 @@ class Product extends Page {
 	 * @return boolean
 	 */
 	function canPurchase($member = null) {
-		if($this->ShopClosed()) {
-			return false;
-		}
+		//check DB field...
 		if(!$this->dbObject('AllowPurchase')->getValue()) {
 			return false;
 		}
@@ -171,41 +183,6 @@ class Product extends Page {
 			$allowpurchase = $extended;
 		}
 		return $allowpurchase;
-	}
-
-	/**
-	 * When the ecommerce module is first installed, and db/build
-	 * is invoked, create some default records in the database.
-	 */
-	function requireDefaultRecords() {
-		parent::requireDefaultRecords();
-		if(!DataObject::get_one('Product')) {
-			if(!DataObject::get_one('ProductGroup')) singleton('ProductGroup')->requireDefaultRecords();
-			if($group = DataObject::get_one('ProductGroup', '', true, "\"ParentID\" DESC")) {
-				$content = '<p>This is a <em>product</em>. It\'s description goes into the Content field as a standard SilverStripe page would have it\'s content. This is an ideal place to describe your product.</p>';
-
-				$page1 = new Product();
-				$page1->Title = 'Example product';
-				$page1->Content = $content . '<p>You may also notice that we have checked it as a featured product and it will be displayed on the main Products page.</p>';
-				$page1->URLSegment = 'example-product';
-				$page1->ParentID = $group->ID;
-				$page1->Price = '15.00';
-				$page1->FeaturedProduct = true;
-				$page1->writeToStage('Stage');
-				$page1->publish('Stage', 'Live');
-				DB::alteration_message('Product page \'Example product\' created', 'created');
-
-				$page2 = new Product();
-				$page2->Title = 'Example product 2';
-				$page2->Content = $content;
-				$page2->URLSegment = 'example-product-2';
-				$page2->ParentID = $group->ID;
-				$page2->Price = '25.00';
-				$page2->writeToStage('Stage');
-				$page2->publish('Stage', 'Live');
-				DB::alteration_message('Product page \'Example product 2\' created', 'created');
-			}
-		}
 	}
 
 }
@@ -360,30 +337,6 @@ class Product_OrderItem extends OrderItem {
 HTML;
 		$this->extend('updateDebug',$html);
 		return $html;
-	}
-
-	function requireDefaultRecords() {
-		parent::requireDefaultRecords();
-		$db = DB::getConn();
-		if($db->hasTable("Product_OrderItem")) {
-			$fieldArray = $db->fieldList("Product_OrderItem");
-			$hasField =  isset($fieldArray["ProductVersion"]);
-			if($hasField) {
-				DB::query("
-					UPDATE \"OrderItem\", \"Product_OrderItem\"
-						SET \"OrderItem\".\"Version\" = \"Product_OrderItem\".\"ProductVersion\"
-					WHERE \"OrderItem\".\"ID\" = \"Product_OrderItem\".\"ID\"
-				");
-				DB::query("
-					UPDATE \"OrderItem\", \"Product_OrderItem\"
-						SET \"OrderItem\".\"BuyableID\" = \"Product_OrderItem\".\"ProductID\"
-					WHERE \"OrderItem\".\"ID\" = \"Product_OrderItem\".\"ID\"
-				");
-				DB::query("ALTER TABLE \"Product_OrderItem\" CHANGE COLUMN \"ProductVersion\" \"_obsolete_ProductVersion\" Integer(11)");
-				DB::query("ALTER TABLE \"Product_OrderItem\" CHANGE COLUMN \"ProductID\" \"_obsolete_ProductID\" Integer(11)");
-				DB::alteration_message('made ProductVersion and ProductID obsolete in Product_OrderItem', 'obsolete');
-			}
-		}
 	}
 
 
