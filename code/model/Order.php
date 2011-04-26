@@ -2,23 +2,30 @@
 
 /**
  * @description: The order class is a databound object for handling Orders within SilverStripe.
+ * Note that it works closely with the ShoppingCart class, which accompanies the Order
+ * until it has been paid for / confirmed by the user.
  *
- * @package ecommerce
+ *
  * @authors: Silverstripe, Jeremy, Nicolaas
+ *
+ *
+ * @package: ecommerce
+ * @sub-package: model
+ *
  **/
 
 class Order extends DataObject {
 
 	public static $db = array(
 		'SessionID' => "Varchar(32)", //so that in the future we can link sessions with Orders.... One session can have several orders, but an order can onnly have one session
-		'Country' => 'Varchar(3)',
 		'UseShippingAddress' => 'Boolean',
 		'CustomerOrderNote' => 'Text'
 	);
 
 	public static $has_one = array(
 		'Member' => 'Member',
-		'ShippingAddress' => 'ShippingAddress',
+		'BillingAddress' => 'BillingAddress',
+		'ShippingAdress' => 'ShippingAdress',
 		'Status' => 'OrderStep',
 		'CancelledBy' => 'Member'
 	);
@@ -51,7 +58,9 @@ class Order extends DataObject {
 		'TotalOutstanding' => 'Currency',
 		'TotalItems' => 'Int',
 		'TotalItemsTimesQuantity' => 'Int',
-		'IsCancelled' => 'Boolean'
+		'IsCancelled' => 'Boolean',
+		'Country' => "Varchar", //This is the applicable country for the order - for tax purposes, etc....
+		'FullNameCountry' => "Varchar"
 	);
 
 	public static $create_table_options = array(
@@ -63,10 +72,6 @@ class Order extends DataObject {
 
 	public static $plural_name = "Orders";
 		function i18n_plural_name() { return _t("Order.ORDERS", "Orders");}
-
-	static function get_receipt_email() {$sc = DataObject::get_one("SiteConfig"); if($sc && $sc->ReceiptEmail) {return $sc->ReceiptEmail;} else {return Email::getAdminEmail();} }
-
-	static function get_receipt_subject() {$sc = DataObject::get_one("SiteConfig"); if($sc && $sc->ReceiptSubject) {return $sc->ReceiptSubject;} else {return "Shop Sale Information {OrderNumber}"; } }
 
 	/**
 	 * Modifiers represent the additional charges or
@@ -99,59 +104,71 @@ class Order extends DataObject {
 		}
 	}
 
-	/**
-	 * Return a set of forms to add modifiers
-	 * to update the OrderInformation table.
-	 *
-	 * @TODO Make the above descrption clearer
-	 * after fully understanding what this
-	 * function does.
-	 *
-	 * @return DataObjectSet
-	 */
+
 	public static function get_modifier_forms($controller) {
 		user_error("this method has been changed to getModifierForms, the current function has been depreciated", E_USER_ERROR);
 	}
 
-	public function getModifierForms($controller) {
-		$forms = array();
+	/**
+	 * Returns a set of modifier forms for use in the checkout order form,
+	 * Controller is optional, because the orderForm has its own default controller.
+	 *
+	 *@return DataObjectSet of OrderModiferForms
+	 **/
+	public function getModifierForms($optionalController = null) {
+		$dos = new DataObjectSet();
 		if($modifiers = $this->Modifiers()) {
 			foreach($modifiers as $modifier) {
-				if($modifier instanceof OrderModifier && $modifier->showForm()) {
-					if($form = $modifier->getForm($controller)) {
-						array_push($forms, $form);
+				if($modifier->showForm()) {
+					if($form = $modifier->getModifierForm($optionalController)) {
+						$dos->push($form);
 					}
 				}
 			}
 		}
-
-		if( count($forms) ) {
-			return new DataObjectSet($forms);
+		if( $dos->count() ) {
+			return $dos;
 		}
 		else {
 			return null;
 		}
 	}
 
+
+	/**
+	 * The maximum difference between the total cost of the order and the total payment made.
+	 * If this value is, for example, 10 cents and the total amount outstanding for an order is less than
+	 * ten cents, than the order is considered "paid".
+	 *@var Float
+	 **/
 	protected static $maximum_ignorable_sales_payments_difference = 0.01;
 		static function set_maximum_ignorable_sales_payments_difference(float $f) {self::$maximum_ignorable_sales_payments_difference = $f;}
 		static function get_maximum_ignorable_sales_payments_difference() {return(float)self::$maximum_ignorable_sales_payments_difference;}
 
+	/**
+	 * Each order has an order number.  Normally, the order numbers start at one,
+	 * but in case you would like this number to be different you can set it here.
+	 *
+	 *@var Integer
+	 **/
  	protected static $order_id_start_number = 0;
 		static function set_order_id_start_number(integer $i) {self::$order_id_start_number = $i;}
 		static function get_order_id_start_number() {return(integer)self::$order_id_start_number;}
 
-	protected static $table_message_id = "CartMessage";
-		static function set_table_message_id(string $s) {self::$table_message_id = $s;}
-		static function get_table_message_id() {return(string)self::$table_message_id;}
 
+	/**
+	 * This function returns the OrderSteps
+	 *
+	 *@returns: DataObjectSet (OrderSteps)
+	 **/
 	public static function get_order_status_options() {
 		return DataObject::get("OrderStep");
 	}
 
 	/**
-	 * Like the standard get_by_id, but it checks if we are allowed to view it!
-	 *@return DataObject (Order)
+	 * Like the standard get_by_id, but it checks whether we are allowed to view the order.
+	 *
+	 *@returns: DataObject (Order)
 	 **/
 	public static function get_by_id_if_can_view($id) {
 		$obj = DataObject::get_by_id("Order", $id);
@@ -177,39 +194,15 @@ class Order extends DataObject {
 		return null;
 	}
 
-	protected static $add_shipping_fields = false;
-		static function set_add_shipping_fields($b){self::$add_shipping_fields = $b;}
-		static function get_add_shipping_fields(){return self::$add_shipping_fields;}
+
 
 /*******************************************************
    * CMS Stuff
 *******************************************************/
 
 	/**
-	 * These are the fields, used for a {@link ComplexTableField}
-	 * in order to show for the table columns on a report.
-	 *
-	 * @see CurrentOrdersReport
-	 * @see UnprintedOrdersReport
-	 *
-	 * To customise these, simply define Order::set_table_overview_fields(Array)
-	 * inside your project _config.php where Array is a set of fields that
-	 * you want to display on the table.
-	 *
-	 * @var array
-	 * @to do can we get rid of this?????? - ONLY used in reports...
-	 */
-	protected static $table_overview_fields = array(
-		"\"Order\".\"ID\"" => 'Order No',
-		'Created' => 'Created',
-		'Member.FirstName' => 'First Name',
-		'Member.Surname' => 'Surname',
-		'TotalAsCurrencyObject.Nice' => 'Total',
-		'Status' => 'Status'
-	);
-		public static function set_table_overview_fields(array $a) {self::$table_overview_fields = $a;}
-		public static function get_table_overview_fields() {return self::$table_overview_fields;}
-
+	 * STANDARD SILVERSTRIPE STUFF
+	 **/
 	public static $summary_fields = array(
 		"\"Order\".\"ID\"" => "ID",
 		'Member.Surname',
@@ -217,7 +210,11 @@ class Order extends DataObject {
 		'TotalAsCurrencyObject.Nice' => 'Total',
 		'Status.Name',
 	);
+		public static function get_summary_fields() {return self::$summary_fields;}
 
+	/**
+	 * STANDARD SILVERSTRIPE STUFF
+	 **/
 	public static $searchable_fields = array(
 		'ID' => array(
 			'field' => 'NumericField',
@@ -242,7 +239,7 @@ class Order extends DataObject {
 		'Created' => array(
 			'field' => 'TextField',
 			'filter' => 'OrderFilters_AroundDateFilter',
-			'title' => "Date"
+			'title' => "Date (e.g. Today)"
 		),
 		'TotalPaid' => array(
 			'filter' => 'OrderFilters_MustHaveAtLeastOnePayment'
@@ -262,6 +259,9 @@ class Order extends DataObject {
 		*/
 	);
 
+	/**
+	 * STANDARD SILVERSTRIPE STUFF
+	 **/
 	function scaffoldSearchFields(){
 		$fieldSet = parent::scaffoldSearchFields();
 		if($statusOptions = self::get_order_status_options()) {
@@ -272,6 +272,9 @@ class Order extends DataObject {
 		return $fieldSet;
 	}
 
+	/**
+	 * STANDARD SILVERSTRIPE STUFF
+	 **/
 	function validate() {
 		if($this->StatusID) {
 			//do nothing
@@ -281,6 +284,7 @@ class Order extends DataObject {
 			if($firstStep) {
 				$this->StatusID = $firstStep->ID;
 				if($this->StatusID) {
+					//rerun with valid StatusID in place
 					return $this->validate();
 				}
 			}
@@ -289,11 +293,15 @@ class Order extends DataObject {
 		return parent::validate();
 	}
 
+	/**
+	 * STANDARD SILVERSTRIPE STUFF
+	 * broken up into readOnly and editable
+	 **/
 	function getCMSFields(){
 		$this->tryToFinaliseOrder();
 		$fields = parent::getCMSFields();
 		$readOnly = (bool)!$this->MyStep()->CustomerCanEdit;
-		$fieldsAndTabsToBeRemoved = array('MemberID', 'Attributes', 'SessionID', 'Country', 'ShippingAddressID', 'UseShippingAddress', 'OrderStatusLogs', 'Payments');
+		$fieldsAndTabsToBeRemoved = array('MemberID', 'Attributes', 'SessionID', 'BillingAddressID', 'ShippingAddressID', 'UseShippingAddress', 'OrderStatusLogs', 'Payments');
 		if(!$readOnly) {
 			$fieldsAndTabsToBeRemoved[] = "Emails";
 		}
@@ -305,7 +313,6 @@ class Order extends DataObject {
 		}
 		$fields->insertBefore(new LiteralField('Title',"<h2>".$this->Title()."</h2>"),'Root');
 		if($readOnly) {
-
 			$htmlSummary = $this->renderWith("Order");
 			$printlabel = _t("Order.PRINTINVOICE", "Print Invoice");
 			$fields->addFieldsToTab('Root.Main', array(
@@ -332,13 +339,8 @@ class Order extends DataObject {
 			$paymentsTable->setShowPagination(false);
 			$paymentsTable->setRelationAutoSetting(true);
 			$fields->addFieldToTab('Root.Payments',$paymentsTable);
-			if($m = $this->Member()) {
-				$lastLogin = new TextField("MemberLastLogin","Last login",$m->dbObject('LastVisited')->Nice());
-				$fields->addFieldToTab('Root.Customer',$lastLogin->performReadonlyTransformation());
-				//TODO: this should be scaffolded instead, or come from something like $member->getCMSFields();
-				if($group = EcommerceRole::get_customer_group()) {
-					$fields->addFieldToTab('Root.Customer',new LiteralField("EditMembers", '<p><a href="/admin/security/show/'.$group->ID.'/">edit customers</a></p>'));
-				}
+			if($member = $this->Member()) {
+				$fields->addFieldToTab('Root.Customer', $member->getEcommerceFieldsForCMS());
 			}
 			/*
 			$fields->addFieldsToTab(
@@ -353,7 +355,6 @@ class Order extends DataObject {
 		}
 		else {
 			$fields->addFieldToTab('Root.Main', new LiteralField('MainDetails', _t("Order.NODETAILSSHOWN", '<p>No details are shown here as this order has not been submitted yet. Once you change the status of the order more options will be available.</p>')));
-			//TODO: re-introduce this when order status logs have some meaningful purpose
 			$orderItemsTable = new HasManyComplexTableField(
 				$this, //$controller
 				"Attributes", //$name =
@@ -376,9 +377,7 @@ class Order extends DataObject {
 				"OrderModifiers", //$name
 				"OrderModifier", //$sourceClass =
 				OrderModifier::$summary_fields, //$fieldList =
-				"\"OrderID\" = ".$this->ID."", //$sourceFilter =
-				"\"Type\", \"Amount\" ASC, \"Created\" ASC", //$sourceSort =
-				null //$sourceJoin =
+				"\"OrderID\" = ".$this->ID."" //$sourceFilter =
 			);
 			$modifierTable->setPermissions(array('edit', 'delete', 'export', 'add', 'show'));
 			$modifierTable->setPageSize(100);
@@ -416,15 +415,93 @@ class Order extends DataObject {
    * MAIN TRANSITION FUNCTIONS:
 *******************************************************/
 
-	public function tryToFinaliseOrder() {
-		$this->init();
-		for($i = 1; $i < 99; $i++) {
-			if(!$this->doNextStatus()) {
-				$i = 100;
+	/**
+	 *init runs on start of a new Order (@see onAfterWrite)
+	 * it adds all the modifiers to the orders and the starting OrderStep
+	 *
+	 * @return DataObject (Order)
+	 **/
+
+	public function init() {
+		//to do: check if shop is open....
+		if(!$this->StatusID) {
+			if($newStatus = DataObject::get_one("OrderStep")) {
+				$this->StatusID = $newStatus->ID;
 			}
+			else {
+				user_error("There are no OrderSteps ... please Run Dev/Build", E_USER_WARNING);
+			}
+		}
+		$createdModifiersClassNames = array();
+		$this->modifiers = $this->modifiersFromDatabase($includingRemoved = true);
+		if($this->modifiers) {
+			foreach($this->modifiers as $modifier) {
+				$createdModifiersClassNames[$modifier->ID] = $modifier->ClassName;
+			}
+		}
+		else {
+			$this->modifiers = new DataObjectSet();
+		}
+		if(is_array(self::$modifiers) && count(self::$modifiers) > 0) {
+			foreach(self::$modifiers as $numericKey => $className) {
+				if(!in_array($className, $createdModifiersClassNames)) {
+					if(class_exists($className)) {
+						$modifier = new $className();
+						//only add the ones that should be added automatically
+						if(!$modifier->DoNotAddAutomatically()) {
+							if($modifier instanceof OrderModifier) {
+								$modifier->OrderID = $this->ID;
+								$modifier->Sort = $numericKey;
+								//init method includes a WRITE
+								$modifier->init();
+								//IMPORTANT - add as has_many relationship  (Attributes can be a modifier OR an OrderItem)
+								$this->Attributes()->add($modifier);
+								$this->modifiers->push($modifier);
+							}
+						}
+					}
+					else{
+						user_error("reference to a non-existing class: ".$className." in modifiers", E_USER_NOTICE);
+					}
+				}
+			}
+		}
+		$this->extend('onInit', $this);
+		$this->write();
+		return $this;
+	}
+
+	/**
+	 * Sets up the Member, Billing and Shipping Address in the order
+	 * so that everything is at pre-populated as can be in the checkout.
+	 * TO DO: consider if this should go into an OrderStep???
+	 * NOTE: this is not used at the moment...
+	 **/
+	public function prepareForCheckout() {
+		$this->CreateMember();
+		$this->CreateAddress("BillingAddress", "BillingAddress");
+		if(OrderAddress::get_use_separate_shipping_address()) {
+			$this->CreateAddress("ShippingAddress", "ShippingAddress");
 		}
 	}
 
+
+	/**
+	 * Goes through the order steps and tries to "apply" the next status to the order
+	 *
+	 **/
+	public function tryToFinaliseOrder() {
+		do {
+			//status of order is being progressed
+			$nextStatusID = $this->doNextStatus();
+		}
+		while ($nextStatusID);
+	}
+
+	/**
+	 * Goes through the order steps and tries to "apply" the next
+	 *@return Integer (StatusID or false if the next status can not be "applied")
+	 **/
 	public function doNextStatus() {
 		if($this->MyStep()->initStep($this)) {
 			if($this->MyStep()->doStep($this)) {
@@ -438,56 +515,6 @@ class Order extends DataObject {
 		return false;
 	}
 
-	// ------------------------------------ STEP 1 ------------------------------------
-
-	//NOTE: anything to do with Current Member and Session should be in Shopping Cart!
-	public function init() {
-		$this->write();
-		//to do: check if shop is open....
-		if(!$this->StatusID) {
-			if($newStatus = DataObject::get_one("OrderStep")) {
-				$this->StatusID = $newStatus->ID;
-			}
-			else {
-				user_error("There are no OrderSteps ... please Run Dev/Build", E_USER_WARNING);
-			}
-		}
-		$createdModifiersClassNames = array();
-		$createdModifiers = $this->modifiersFromDatabase($includingRemoved = true);
-		if($createdModifiers) {
-			foreach($createdModifiers as $modifier) {
-				$createdModifiersClassNames[$modifier->ID] = $modifier->ClassName;
-			}
-		}
-		else {
-			$createdModifiers = new DataObjectSet();
-		}
-		if(is_array(self::$modifiers) && count(self::$modifiers) > 0) {
-			foreach(self::$modifiers as $numericKey => $className) {
-				if(!in_array($className, $createdModifiersClassNames)) {
-					if(class_exists($className)) {
-						$modifier = new $className();
-						if($modifier instanceof OrderModifier) {
-							$modifier->OrderID = $this->ID;
-							$modifier->Sort = $numericKey;
-							//init method includes a WRITE
-							$modifier->init();
-							$this->Attributes()->add($modifier);
-							$createdModifiers->push($modifier);
-						}
-					}
-					else{
-						user_error("reference to a non-existing class: ".$className." in modifiers", E_USER_NOTICE);
-					}
-				}
-			}
-		}
-		$this->extend('onInit');
-		$this->write();
-		$this->calculateModifiers(true);
-		return $this;
-	}
-
 
 
 
@@ -497,7 +524,7 @@ class Order extends DataObject {
 
 
 	/**
-	 * @return current OrderStep
+	 * @return DataObject (current OrderStep)
 	 */
 	public function MyStep() {
 		$obj = null;
@@ -511,8 +538,9 @@ class Order extends DataObject {
 		return $obj;
 	}
 
+
 	/**
-	 * @return current OrderStep that can be seen by customer
+	 * @return DataObject (current OrderStep that can be seen by customer)
 	 */
 	public function CurrentStepVisibleToCustomer() {
 		$obj = $this->MyStep();
@@ -526,42 +554,78 @@ class Order extends DataObject {
 	}
 
 	/**
+	 * works out if the order is still at the first OrderStep.
 	 * @return boolean
 	 */
-	function IsCancelled() {
-		return (bool)$this->CancelledByID;
+	public function IsFirstStep() {
+		$firstStep = DataObject::get_one("OrderStep");
+		$currentStep = $this->MyStep();
+		if($firstStep && $currentStep) {
+			if($firstStep->ID == $currentStep->ID) {
+				return true;
+			}
+		}
+		return false;
 	}
+
 	/**
+	 * Is the order still being "edited" by the customer?
+	 * @return boolean
+	 */
+	function IsInCart(){
+		return (bool)$this->canEdit();
+	}
+
+	/**
+	 * The order has "passed" the IsInCart phase
+	 * @return boolean
+	 */
+	function IsPastCart(){
+		return !(bool)$this->IsInCart();
+	}
+
+	/**
+	* Are there still steps the order needs to go through?
 	 * @return boolean
 	 */
 	function IsUncomplete() {
 		return (bool)$this->MyStep()->ShowAsUncompletedOrder;
 	}
+
 	/**
+	* Is the order in the :"processing" phaase.?
 	 * @return boolean
 	 */
 	function IsProcessing() {
 		return (bool)$this->MyStep()->ShowAsInProcessOrder;
 	}
+
 	/**
+	* Is the order completed?
 	 * @return boolean
 	 */
 	function IsCompleted() {
 		return (bool)$this->MyStep()->ShowAsCompletedOrder;
 	}
+
 	/**
+	 * Has the order been paid?
 	 * @return boolean
 	 */
 	function IsPaid() {
 		return (bool)($this->Total() > 0 && $this->TotalOutstanding() <= 0);
 	}
+
 	/**
+	 * Has the order been cancelled?
 	 * @return boolean
 	 */
-	function IsCart(){
-		return (bool)$this->canEdit();
+	public function IsCancelled() {
+		return (bool)$this->CancelledByID;
 	}
+
 	/**
+	 * Has the order been cancelled by the customer?
 	 * @return boolean
 	 */
 	function IsCustomerCancelled() {
@@ -570,14 +634,10 @@ class Order extends DataObject {
 		}
 		return false;
 	}
-	/**
-	 * @return boolean
-	 */
-	function MemberCancelled() {
-		return $this->CustomerCancelled();
-	}
+
 
 	/**
+	 * Has the order been cancelled by the  administrator?
 	 * @return boolean
 	 */
 	function IsAdminCancelled() {
@@ -596,6 +656,7 @@ class Order extends DataObject {
 
 
 	/**
+	* Is the Shop Closed for business?
 	 * @return boolean
 	 */
 	function ShopClosed() {
@@ -607,24 +668,106 @@ class Order extends DataObject {
 
 
 /*******************************************************
-   * CUSTOMER COMMUNICATION....
+   * LINKING ORDER WITH MEMBER AND ADDRESS
 *******************************************************/
 
 
+	/**
+	 * returns a member linked to the order -
+	 * this member is NOT written, if a member is already linked, it will return the existing member.
+	 *@return: DataObject (Member)
+	 **/
+	public function CreateMember() {
+		if(!$this->MemberID) {
+			if($member = Member::currentMember()) {
+				$this->MemberID = $member->ID;
+				$this->write();
+			}
+			else {
+				$member = new Member();
+			}
+		}
+		else {
+			$member = DataObject::get_by_id("Member", $this->MemberID);
+		}
+		return $member;
+	}
+
+	/**
+	 * DOES NOT WRITE OrderAddress for the sake of it.
+	 * returns either the existing one or a new one...
+	 * Method used to retrieve object e.g. for $order->BillingAddress(); "BillingAddress" is the method name you can use.
+	 * If the method name is the same as the class name then dont worry about providing one.
+	 *
+	 *@param String $className   - ClassName of the Address (e.g. BillingAddress or ShippingAddress)
+	 *@param String $alternativeMethodName  -
+	 *
+	 * @return DataObject (OrderAddress)
+	 **/
+
+	public function CreateAddress(string $className, $alternativeMethodName = '') {
+		$variableName = $className."ID";
+		if($alternativeMethodName) {
+			$methodName = $alternativeMethodName;
+		}
+		else {
+			$methodName = $className;
+		}
+		$address = null;
+		if($this->$variableName) {
+			if($address = $this->$methodName()) {
+				if($address->OrderID != $this->ID && $this->ID) {
+					$address->OrderID = $this->ID;
+					$address->write();
+				}
+			}
+		}
+		if(!$address) {
+			$address = new $className();
+			$address->OrderID = $this->ID;
+			if($member = $this->Member()) {
+				$address->CopyLastaddressFromMember($member, false);
+			}
+		}
+		return $address;
+	}
+
+	/**
+	 * Sets the country in the billing and shipping address
+	 *
+	 **/
+
+	public function SetCountry($countryCode) {
+		if($billingAddress = $this->CreateAddress("BillingAddress", "BillingAddress")) {
+			$billingAddress->SetCountry($countryCode);
+		}
+		if(OrderAddress::get_use_separate_shipping_address()) {
+			if($shippingAddress = $this->CreateAddress("ShippingAddress", "ShippingAddress")) {
+				$shippingAddress->SetCountry($countryCode);
+			}
+		}
+	}
 
 
+/*******************************************************
+   * CUSTOMER COMMUNICATION AND ADDRESS STUFF....
+*******************************************************/
 
+	/**
+	 * Send the invoice of the order by email.
+	 */
 	function sendInvoice($message = "", $resend = false) {
-		$subject = str_replace("{OrderNumber}", $this->ID,self::get_receipt_subject());
+		$subject = str_replace("{OrderNumber}", $this->ID,Order_Email::get_subject());
 		$replacementArray = array("Message" => $message);
 		return $this->sendEmail('Order_ReceiptEmail', $subject, $replacementArray, $resend);
 	}
-  	/**
-	 * Send the receipt of the order by mail.
+
+	/**
+	 * Send the receipt of the order by email.
 	 * Precondition: The order payment has been successful
 	 */
 	function sendReceipt($message = "", $resend = false) {
-		$subject = str_replace("{OrderNumber}", $this->ID,self::get_receipt_subject());
+		$subject = str_replace("{OrderNumber}", $this->ID,Order_Email::get_subject());
 		$replacementArray = array(
 			'Message' => $message
 		);
@@ -641,19 +784,16 @@ class Order extends DataObject {
 	 */
 	function sendStatusChange($subject, $message = '', $resend = false) {
 		if(!$message) {
-			$logs = DataObject::get('OrderStatusLog', "\"OrderID\" = {$this->ID} AND \"EmailCustomer\" = 1 AND \"EmailSent\" = 0 ", "\"Created\" DESC", null, 1);
+			$emailableLogs = DataObject::get('OrderStatusLog', "\"OrderID\" = {$this->ID} AND \"EmailCustomer\" = 1 AND \"EmailSent\" = 0 ", "\"Created\" DESC", null, 1);
 			if($logs) {
-				$latestLog = $logs->First();
-				$message = $latestLog->Note;
+				$latestEmailableLog = $lemailableLogs->First();
+				$message = $latestEmailableLog->Note;
 			}
 		}
 		if(!$subject) {
-			$subject = str_replace("{OrderNumber}", $this->ID,self::get_receipt_subject());
+			$subject = str_replace("{OrderNumber}", $this->ID,Order_Email::get_subject());
 		}
-		$replacementArray =
-			array(
-				"Message" => $message
-			);
+		$replacementArray = array("Message" => $message);
 		return $this->sendEmail('Order_StatusEmail', $subject, $replacementArray, $resend);
 	}
 
@@ -661,15 +801,17 @@ class Order extends DataObject {
 	/**
 	 * Send a mail of the order to the client (and another to the admin).
 	 *
-	 * @param $emailClass - the class name of the email you wish to send
-	 * @param $subject - email subject
-	 * @param $replacementArray - array of fields to replace with data...
-	 * @param $copyToAdmin - true by default, whether it should send a copy to the admin
+	 * @param String $emailClass - the class name of the email you wish to send
+	 * @param String $subject - email subject
+	 * @param Array $replacementArray - array of fields to replace with data...
+	 * @param Boolean $copyToAdmin - true by default, whether it should send a copy to the admin
+	 *
+	 * @return Boolean TRUE for success, FALSE for failure (not tested)
 	 */
 	protected function sendEmail($emailClass, $subject, $replacementArray = array(), $resend = false) {
 		$replacementArray["Order"] = $this;
 		$replacementArray["EmailLogo"] = SiteConfig::current_site_config()->EmailLogo();
- 		$from = self::get_receipt_email();
+ 		$from = Order_Email::get_from_email();
  		$to = $this->Member()->Email;
 		//TO DO: should be a payment specific message as well???
 		$email = new $emailClass();
@@ -679,9 +821,7 @@ class Order extends DataObject {
  		$email->setFrom($from);
  		$email->setTo($to);
  		$email->setSubject($subject);
-		$email->populateTemplate(
-			$replacementArray
-		);
+		$email->populateTemplate($replacementArray);
 		return $email->send(null, $this, $resend);
 	}
 
@@ -692,13 +832,12 @@ class Order extends DataObject {
    * ITEM MANAGEMENT
 *******************************************************/
 
-
-
-
 	/**
-	 * Returns the items of the order, if it hasn't been saved yet
-	 * it returns the items from session, if it has, it returns them
-	 * from the DB entry.
+	 * Returns the items of the order.
+	 * Items are the order items (products) and NOT the modifiers (discount, tax, etc...)
+	 *
+	 *@param String filter - where statement to exclude certain items.
+	 *
 	 *@return DataObjectSet (OrderItems)
 	 */
 	function Items($filter = "") {
@@ -712,9 +851,11 @@ class Order extends DataObject {
 	 * Return all the {@link OrderItem} instances that are
 	 * available as records in the database.
 	 *
+	 *@param String filter - where statement to exclude certain items.
+	 *
 	 * @return DataObjectSet
 	 */
-	protected function itemsFromDatabase($filter = null) {
+	protected function itemsFromDatabase(String $filter = null) {
 		$extrafilter = ($filter) ? " AND $filter" : "";
 		$items = DataObject::get("OrderItem", "\"OrderID\" = '$this->ID' AND \"Quantity\" > 0 $extrafilter");
 		return $items;
@@ -725,60 +866,82 @@ class Order extends DataObject {
 	 * Returns the modifiers of the order, if it hasn't been saved yet
 	 * it returns the modifiers from session, if it has, it returns them
 	 * from the DB entry. ONLY USE OUTSIDE ORDER
+	 *
+	 *@param String filter - where statement to exclude certain items.
+	 *
 	 *@return DataObjectSet(OrderModifiers)
 	 */
- 	function Modifiers() {
+ 	function Modifiers($filter = '') {
 		return $this->modifiersFromDatabase();
 	}
 
 	/**
 	 * Get all {@link OrderModifier} instances that are
 	 * available as records in the database.
+	 * NOTE: includes REMOVED Modifiers, so that they do not get added again...
+	 *
+	 *@param String filter - where statement to exclude certain items.
 	 *
 	 * @return DataObjectSet
-	 * todo: add filter...
 	 */
-	protected function modifiersFromDatabase($includingRemoved = false) {
-		if($includingRemoved) {
-			$extraWhereWithAnd = "";
-		}
-		else {
-			$extraWhereWithAnd = " AND \"Type\" <> 'Removed'";
-		}
-		return DataObject::get('OrderModifier', "\"OrderAttribute\".\"OrderID\" = ".$this->ID.$extraWhereWithAnd);
+	protected function modifiersFromDatabase($filter = '') {
+		$extrafilter = ($filter) ? " AND $filter" : "";
+		return DataObject::get('OrderModifier', "\"OrderAttribute\".\"OrderID\" = ".$this->ID." $extrafilter");
 	}
+
+	/**
+	 * Calculates and updates all the modifiers.
+	 **/
 
 	public function calculateModifiers($force = false) {
 		//check if order has modifiers already
 		//check /re-add all non-removable ones
 		//$start = microtime();
-		if(OrderAttribute::get_has_been_written() || $force) {
-			$createdModifiers = $this->modifiersFromDatabase();
-			if($createdModifiers) {
-				foreach($createdModifiers as $modifier){
+		$createdModifiers = $this->modifiersFromDatabase();
+		if($createdModifiers) {
+			foreach($createdModifiers as $modifier){
+				if(!$modifier->IsRemoved()) {
 					$modifier->runUpdate();
 				}
 			}
-			$this->extend("onCalculate");
-			OrderAttribute::unset_has_been_written();
+		}
+		$this->extend("onCalculate");
+	}
+
+	/**
+	 * @param String $className: class name for the modifier
+	 * @return DataObject (OrderModifier)
+	 **/
+	function RetrieveModifier(String $className) {
+		if($modifiers = $this->Modifiers()) {
+			foreach($modifiers as $modifier) {
+				if($modifier instanceof $className) {
+					return $modifier;
+				}
+			}
 		}
 	}
 
 	/**
 	 * Returns a TaxModifier object that provides
 	 * information about tax on this order.
-	 *
-	 * @return TaxModifier
+	 * @return DataObject (TaxModifier)
 	 */
 	function TaxInfo() {
-		if($modifiers = $this->Modifiers()) {
-			foreach($modifiers as $modifier) {
-				if($modifier instanceof TaxModifier) {
-					return $modifier;
-				}
-			}
-		}
+		return $this->RetrieveModifier("TaxModifier");
 	}
+
+
+/*******************************************************
+   * LOGS
+*******************************************************/
+
+	/**
+	 * Returns all the order logs that the current member can view
+	 * i.e. some order logs can only be viewed by the admin (e.g. suspected fraud orderlog).
+	 *
+	 * @return DataObjectSet|Null (set of OrderLogs)
+	 **/
 
 	function CanViewOrderStatusLogs() {
 		$canViewOrderStatusLogs = new DataObjectSet();
@@ -795,10 +958,23 @@ class Order extends DataObject {
 	}
 
 
+
 /*******************************************************
    * CRUD METHODS (e.g. canView, canEdit, canDelete, etc...)
 *******************************************************/
 
+	/**
+	 *
+	 * @return DataObject (Member)
+	 **/
+	protected function getMemberForCanFunctions($member = null) {
+		if(!$member) {$member = Member::currentMember();}
+		if(!$member) {
+			$member = new Object();
+			$member->ID = 0;
+		}
+		return $member;
+	}
 
 
 	/**
@@ -806,12 +982,11 @@ class Order extends DataObject {
 	 *@return Boolean
 	 **/
 	public function canCreate($member = null) {
-		if(!$member) {$member = Member::currentMember();}
-		if($member) {$memberID = $member->ID;} else {$memberID = 0;}
-		$extended = $this->extendedCan('canCreate', $memberID);
+		$member = $this->getMemberForCanFunctions($member);
+		$extended = $this->extendedCan('canCreate', $member->ID);
 		if($extended !== null) {return $extended;}
 		//TO DO: setup a special group of shop admins (probably can copy some code from Blog)
-		if($member) {
+		if($member->ID) {
 			return $member->IsShopAdmin();
 		}
 	}
@@ -821,23 +996,22 @@ class Order extends DataObject {
 	 *@return Boolean
 	 **/
 	public function canView($member = null) {
-		if(!$member) {$member = Member::currentMember();}
-		if($member) {$memberID = $member->ID;} else {$memberID = 0;}
-		$extended = $this->extendedCan('canView', $memberID);
+		$member = $this->getMemberForCanFunctions($member);
+		//check if this has been "altered" in a DataObjectDecorator
+		$extended = $this->extendedCan('canView', $member->ID);
 		if($extended !== null) {return $extended;}
+		//no member present: ONLY if the member can edit the order it can be viewed...
 		if(!$this->MemberID) {
-			return true;
+			return $this->canEdit($member);
 		}
-		if($member) {
-			if($this->MemberID == $member->ID) {
-				if($this->IsCancelled()) {
-					return false;
-				}
+		elseif($member->ID) {
+			if($member->IsShopAdmin()) {
 				return true;
 			}
-			//TO DO: IsAdmin Should be IsShopAdmin
-			elseif($member->IsShopAdmin()) {
-				return true;
+			if($this->MemberID == $member->ID) {
+				if(!$this->IsCancelled()) {
+					return true;
+				}
 			}
 		}
 		return false;
@@ -849,14 +1023,13 @@ class Order extends DataObject {
 	 *@return Boolean
 	 **/
 	function canEdit($member = null) {
-		if(!$member) {$member = Member::currentMember();}
-		if($member) {$memberID = $member->ID;} else {$memberID = 0;}
-		$extended = $this->extendedCan('canEdit', $memberID);
+		$member = $this->getMemberForCanFunctions($member);
+		$extended = $this->extendedCan('canEdit', $member->ID);
 		if($extended !== null) {return $extended;}
 		if(!$this->canView($member) || $this->IsCancelled()) {
 			return false;
 		}
-		if($member) {
+		if($member->ID) {
 			if($member->IsShopAdmin()) {
 				return true;
 			}
@@ -869,15 +1042,11 @@ class Order extends DataObject {
 	 *@return Boolean
 	 **/
 	function canPay($member = null) {
-		if(!$member) {$member = Member::currentMember();}
-		if($member) {$memberID = $member->ID;} else {$memberID = 0;}
-		$extended = $this->extendedCan('canPay', $memberID);
+		$member = $this->getMemberForCanFunctions($member);
+		$extended = $this->extendedCan('canPay', $member->ID);
 		if($extended !== null) {return $extended;}
 		if($this->IsPaid() || $this->IsCancelled()) {
 			return false;
-		}
-		if($this->canEdit($member)) {
-			return true;
 		}
 		return $this->MyStep()->CustomerCanPay;
 	}
@@ -887,14 +1056,14 @@ class Order extends DataObject {
 	 *@return Boolean
 	 **/
 	function canCancel($member = null) {
+		//if it is already cancelled it can be cancelled again
 		if($this->CancelledByID) {
 			return true;
 		}
-		if(!$member) {$member = Member::currentMember();}
-		if($member) {$memberID = $member->ID;} else {$memberID = 0;}
-		$extended = $this->extendedCan('canCancel', $memberID);
+		$member = $this->getMemberForCanFunctions($member);
+		$extended = $this->extendedCan('canCancel', $member->ID);
 		if($extended !== null) {return $extended;}
-		if($member) {
+		if($member->ID) {
 			if($member->IsShopAdmin()) {
 				return true;
 			}
@@ -908,9 +1077,8 @@ class Order extends DataObject {
 	 *@return Boolean
 	 **/
 	public function canDelete($member = null) {
-		if(!$member) {$member = Member::currentMember();}
-		if($member) {$memberID = $member->ID;} else {$memberID = 0;}
-		$extended = $this->extendedCan('canDelete', $memberID);
+		$member = $this->getMemberForCanFunctions($member);
+		$extended = $this->extendedCan('canDelete', $member->ID);
 		if($extended !== null) {return $extended;}
 		return false;
 	}
@@ -924,7 +1092,7 @@ class Order extends DataObject {
 
 
 	/**
-	 *
+	 * see Order::Title()
 	 *@return String
 	 **/
 	function getTitle() {
@@ -932,7 +1100,7 @@ class Order extends DataObject {
 	}
 
 	/**
-	 *
+	 * A "Title" for the order, which summarises the main details (date, and customer) in a string.
 	 *@return String
 	 **/
 	function Title() {
@@ -954,28 +1122,30 @@ class Order extends DataObject {
 	 * Returns the subtotal of the modifiers for this order.
 	 * If a modifier appears in the excludedModifiers array, it is not counted.
 	 *
-	 * @param $excluded string|array Class(es) of modifier(s) to ignore in the calculation.
-	 * @todo figure out what the return type is? double? float?
-	 * @todo what is Only Previous?????
+	 * @param string|array $excluded - Class(es) of modifier(s) to ignore in the calculation.
+	 * @param Boolean $stopAtExcludedModifier  - when this flag is TRUE, we stop adding the modifiers when we reach an excluded modifier.
+	 *
 	 * @return Float
 	 */
-	function ModifiersSubTotal($excluded = null, $onlyprevious = false) {
+	function ModifiersSubTotal($excluded = null, $stopAtExcludedModifier = false) {
 		$total = 0;
 		if($modifiers = $this->Modifiers()) {
 			foreach($modifiers as $modifier) {
-				if(is_array($excluded) && in_array($modifier->class, $excluded)) {
-					if($onlyprevious) {
-						break;
+				if(!$modifier->IsRemoved()) { //we just double-check this...
+					if(is_array($excluded) && in_array($modifier->ClassName, $excluded)) {
+						if($stopAtExcludedModifier) {
+							break;
+						}
+						continue;
 					}
-					continue;
-				}
-				elseif($excluded && ($modifier->class == $excluded)) {
-					if($onlyprevious) {
-						break;
+					elseif($excluded && ($modifier->ClassName == $excluded)) {
+						if($stopAtExcludedModifier) {
+							break;
+						}
+						continue;
 					}
-					continue;
+					$total += $modifier->CalculationTotal();
 				}
-				$total += $modifier->CalculationTotal();
 			}
 		}
 		return $total;
@@ -983,10 +1153,13 @@ class Order extends DataObject {
 
 	/**
 	 *
+	 * @param string|array $excluded - Class(es) of modifier(s) to ignore in the calculation.
+	 * @param Boolean $stopAtExcludedModifier  - when this flag is TRUE, we stop adding the modifiers when we reach an excluded modifier.
+	 *
 	 *@return Currency (DB Object)
 	 **/
-	function ModifiersSubTotalAsCurrencyObject($excluded = null, $onlyprevious = false) {
-		return DBField::create('Currency',$this->ModifiersSubTotal($excluded = null, $onlyprevious = false));
+	function ModifiersSubTotalAsCurrencyObject($excluded = null, $stopAtExcludedModifier = false) {
+		return DBField::create('Currency',$this->ModifiersSubTotal($excluded, $stopAtExcludedModifier));
 	}
 
 	/**
@@ -1032,7 +1205,6 @@ class Order extends DataObject {
 	/**
 	 * Checks to see if any payments have been made on this order
 	 * and if so, subracts the payment amount from the order
-	 * Precondition : The order is in DB
 	 *
 	 *@return float
 	 **/
@@ -1114,12 +1286,57 @@ class Order extends DataObject {
 	}
 
 	/**
+	 * Returns the country code for the country that applies to the order.
+	 * It might be unclear if the Billing or the Shipping Address takes precedent here.
+	 *@return String (country code)
+	 **/
+	public function Country() {
+		//Question - what should take precedent: Billing Or Shipping?
+		// We have chosen for Billing.
+		$countryCodes = array();
+		if($this->BillingAddressID) {
+			if($billingAddress = DataObject::get_by_id("BillingAddress", $this->BillingAddressID)) {
+				$countryCodes[] = $billingAddress->Country;
+			}
+		}
+		if($this->ShippingAddressID) {
+			if($shippingAddress = DataObject::get_by_id("ShippingAddress", $this-ShippingAddressID)) {
+				$countryCodes[] = $shippingAddress->ShippingCountry;
+			}
+		}
+		if(count($countryCodes)) {
+			if(EcommerceCountry::get_use_shipping_address_country_as_default_country()) {
+				$countryCodes = array_reverse($countryCodes);
+			}
+			return array_shift($countryCodes);
+		}
+	}
+
+	function findShippingCountry($codeOnly = false) {
+		user_error("This function has been depreciated", E_USER_WARNING);
+	}
+
+	public function FullNameCountry() {
+		return EcommerceCountry::find_country_title($this->Country);
+	}
+
+	/**
+	 * returns the link to view the Order e.g. /account-page/view/12345
 	 *@return String(URLSegment)
 	 */
 	function Link() {
 		return AccountPage::get_order_link($this->ID);
 	}
 
+	/**
+	 * Return a link to the {@link CheckoutPage} instance
+	 * that exists in the database.
+	 *
+	 * @return string
+	 */
+	function CheckoutLink() {
+		return CheckoutPage::find_link();
+	}
 
 
 	/**
@@ -1134,102 +1351,14 @@ class Order extends DataObject {
 		}
 	}
 
-	// Order Template and ajax Management
-	/**
-	 *
-	 *@return String
-	 **/
-	function TableMessageID() {
-		return self::$table_message_id;
-	}
 
-	/**
-	* For use in the templates as ID
-	 *@return String
-	 */
-	function TableSubTotalID() {
-		return 'Table_Order_SubTotal';
-	}
 
-	/**
-	* For use in the templates as ID
-	 *@return String
-	 */
-	function TableTotalID() {
-		return 'Table_Order_Total';
-	}
 
-	/**
-	* For use in the templates as ID
-	 *@return String
-	 */
-	function OrderForm_OrderForm_AmountID() {
-		return 'OrderForm_OrderForm_Amount';
-	}
+/*******************************************************
+   * TEMPLATE RELATED STUFF
+*******************************************************/
+	// MOVED TO SHOPPING CART
 
-	/**
-	* For use in the templates as ID
-	 *@return String
-	 */
-	function CartSubTotalID() {
-		return 'Cart_Order_SubTotal';
-	}
-
-	/**
-	* For use in the templates as ID
-	 *@return String
-	 */
-	function CartTotalID() {
-		return 'Cart_Order_Total';
-	}
-	/**
-	 *
-	 *@return Array (for use in AJAX for JSON)
-	 **/
-	function updateForAjax(array &$js) {
-		$subTotal = $this->SubTotalAsCurrencyObject()->Nice();
-		$total = $this->TotalAsCurrencyObject()->Nice();
-		$js[] = array('id' => $this->TableSubTotalID(), 'parameter' => 'innerHTML', 'value' => $subTotal);
-		$js[] = array('id' => $this->TableTotalID(), 'parameter' => 'innerHTML', 'value' => $total);
-		$js[] = array('id' => $this->OrderForm_OrderForm_AmountID(), 'parameter' => 'innerHTML', 'value' => $total);
-		$js[] = array('id' => $this->CartSubTotalID(), 'parameter' => 'innerHTML', 'value' => $subTotal);
-		$js[] = array('id' => $this->CartTotalID(), 'parameter' => 'innerHTML', 'value' => $total);
-	}
-
-	/**
-	 * Return a link to the {@link CheckoutPage} instance
-	 * that exists in the database.
-	 *
-	 * @return string
-	 */
-	 //TO DO: do we need this here??
-	function checkoutLink() {
-		return CheckoutPage::find_link();
-	}
-
-	/**
-	 * Returns the correct shipping address. If there is an alternate
-	 * shipping country then it uses that. Failing that, it returns
-	 * the country of the member.
-	 *
-	 * @TODO This is pretty complicated code. It can be simplified.
-	 *
-	 * @param boolean $codeOnly If true, returns only the country code, instead
-	 * 								of the full name.
-	 * @return string
-	 */
-	function findShippingCountry($codeOnly = false) {
-		if($this->Country) {return $this->Country;}
-		else {
-			$countryCode = ShoppingCart::get_country();
-			if($codeOnly) {
-				return $countryCode;
-			}
-			else {
-				return EcommerceRole::find_country_title($countryCode);
-			}
-		}
-	}
 
 
 /*******************************************************
@@ -1238,331 +1367,86 @@ class Order extends DataObject {
 
 
 
-
-	/**
-	 * Updates the database structure of the Order table
-	 */
-	function requireDefaultRecords() {
-		parent::requireDefaultRecords();
-
-		// 1) If some orders with the old structure exist (hasShippingCost, Shipping and AddedTax columns presents in Order table), create the Order Modifiers SimpleShippingModifier and TaxModifier and associate them to the order
-
-		// we must check for individual database types here because each deals with schema in a none standard way
-		$db = DB::getConn();
-		$fieldArray = $db->fieldList("Order");
-		$hasField =  isset($fieldArray["Shipping"]);
- 		if($hasField) {
- 			if($orders = DataObject::get('Order')) {
- 				foreach($orders as $order) {
- 					$id = $order->ID;
- 					$hasShippingCost = DB::query("SELECT \"hasShippingCost\" FROM \"Order\" WHERE \"ID\" = '$id'")->value();
- 					$shipping = DB::query("SELECT \"Shipping\" FROM \"Order\" WHERE \"ID\" = '$id'")->value();
- 					$addedTax = DB::query("SELECT \"AddedTax\" FROM \"Order\" WHERE \"ID\" = '$id'")->value();
-					$country = $order->findShippingCountry(true);
- 					if($hasShippingCost == '1' && $shipping != null) {
- 						$modifier1 = new SimpleShippingModifier();
- 						$modifier1->Amount = $shipping < 0 ? abs($shipping) : $shipping;
- 						$modifier1->Type = 'Chargeable';
- 						$modifier1->OrderID = $id;
- 						$modifier1->Country = $country;
- 						$modifier1->ShippingChargeType = 'Default';
- 						$modifier1->write();
- 					}
- 					if($addedTax != null) {
- 						$modifier2 = new TaxModifier();
- 						$modifier2->Amount = $addedTax < 0 ? abs($addedTax) : $addedTax;
- 						$modifier2->Type = 'Chargeable';
- 						$modifier2->OrderID = $id;
- 						$modifier2->Country = $country;
- 						$modifier2->Name = 'Undefined After Ecommerce Upgrade';
- 						$modifier2->TaxType = 'Exclusive';
- 						$modifier2->write();
- 					}
- 				}
- 				DB::alteration_message('The \'SimpleShippingModifier\' and \'TaxModifier\' objects have been successfully created and linked to the appropriate orders present in the \'Order\' table', 'created');
- 			}
- 			DB::query("ALTER TABLE \"Order\" CHANGE COLUMN \"hasShippingCost\" \"_obsolete_hasShippingCost\" tinyint(1)");
- 			DB::query("ALTER TABLE \"Order\" CHANGE COLUMN \"Shipping\" \"_obsolete_Shipping\" decimal(9,2)");
- 			DB::query("ALTER TABLE \"Order\" CHANGE COLUMN \"AddedTax\" \"_obsolete_AddedTax\" decimal(9,2)");
- 			DB::alteration_message('The columns \'hasShippingCost\', \'Shipping\' and \'AddedTax\' of the table \'Order\' have been renamed successfully. Also, the columns have been renamed respectly to \'_obsolete_hasShippingCost\', \'_obsolete_Shipping\' and \'_obsolete_AddedTax\'', 'obsolete');
-		}
-
-
-		//set starting order number ID
-		$number = intval(Order::get_order_id_start_number());
-		$currentMax = 0;
-		//set order ID
-		if($number) {
-			$count = DB::query("SELECT COUNT( \"ID\" ) FROM \"Order\" ")->value();
-		 	if($count > 0) {
-				$currentMax = DB::Query("SELECT MAX( \"ID\" ) FROM \"Order\"")->value();
-			}
-			if($number > $currentMax) {
-				DB::query("ALTER TABLE \"Order\"  AUTO_INCREMENT = $number ROW_FORMAT = DYNAMIC ");
-				DB::alteration_message("Change OrderID start number to ".$number, "edited");
-			}
-		}
-		//fix bad status
-		$dos = self::get_order_status_options();
-		if($dos) {
-			$firstOption = $dos->First();
-			$badOrders = DataObject::get("Order", "\"StatusID\" = 0 OR \"StatusID\" IS NULL");
-			if($badOrders && $firstOption) {
-				foreach($badOrders as $order) {
-					$order->StatusID = $firstOption->ID;
-					$order->write();
-					DB::alteration_message("No order status for order number #".$order->ID." reverting to: $firstOption->Name.","error");
-				}
-			}
-		}
-		$db = DB::getConn();
-		$fieldArray = $db->fieldList("Order");
-		$hasField =  isset($fieldArray["ShippingAddress"]);
-		if($hasField) {
- 			if($orders = DataObject::get('Order', "\"UseShippingAddress\" = 1  OR (\"ShippingName\" IS NOT NULL AND \"ShippingName\" <> '')")) {
- 				foreach($orders as $order) {
-					$obj = new ShippingAddress();
-					if(isset($order->ShippingName)) {$obj->ShippingName = $order->ShippingName;}
-					if(isset($order->ShippingAddress)) {$obj->ShippingAddress = $order->ShippingAddress;}
-					if(isset($order->ShippingAddress2)) {$obj->ShippingAddress2 = $order->ShippingAddress2;}
-					if(isset($order->ShippingCity)) {$obj->ShippingCity = $order->ShippingCity;}
-					if(isset($order->ShippingPostalCode)) {$obj->ShippingPostalCode = $order->ShippingPostalCode;}
-					if(isset($order->ShippingState)) {$obj->ShippingState = $order->ShippingState;}
-					if(isset($order->ShippingCountry)) {$obj->ShippingCountry = $order->ShippingCountry;}
-					if(isset($order->ShippingPhone)) {$obj->ShippingPhone = $order->ShippingPhone;}
-					$obj->OrderID = $order->ID;
-					$obj->write();
-					$order->ShippingAddressID = $obj->ID;
-					$order->write();
-				}
-			}
-
-			if( $db instanceof PostgreSQLDatabase ){
-				@DB::query('ALTER TABLE "Order" RENAME "ShippingName"  TO "_obsolete_ShippingName"');
-				@DB::query('ALTER TABLE "Order" ALTER "_obsolete_ShippingName" TYPE character varying(255)');
-
-				@DB::query('ALTER TABLE "Order" RENAME "ShippingAddress"  TO "_obsolete_ShippingAddress"');
-				@DB::query('ALTER TABLE "Order" ALTER "_obsolete_ShippingAddress" TYPE character varying(255)');
-
-				@DB::query('ALTER TABLE "Order" RENAME "ShippingAddress2"  TO "_obsolete_ShippingAddress2"');
-				@DB::query('ALTER TABLE "Order" ALTER "_obsolete_ShippingAddress2" TYPE character varying(255)');
-
-				@DB::query('ALTER TABLE "Order" RENAME "ShippingCity"  TO "_obsolete_ShippingCity"');
-				@DB::query('ALTER TABLE "Order" ALTER "_obsolete_ShippingCity" TYPE character varying(255)');
-
-				@DB::query('ALTER TABLE "Order" RENAME "ShippingPostalCode"  TO "_obsolete_ShippingPostalCode"');
-				@DB::query('ALTER TABLE "Order" ALTER "_obsolete_ShippingPostalCode" TYPE character varying(255)');
-
-				@DB::query('ALTER TABLE "Order" RENAME "ShippingState"  TO "_obsolete_ShippingState"');
-				@DB::query('ALTER TABLE "Order" ALTER "_obsolete_ShippingState" TYPE character varying(255)');
-
-				@DB::query('ALTER TABLE "Order" RENAME "ShippingCountry"  TO "_obsolete_ShippingCountry"');
-				@DB::query('ALTER TABLE "Order" ALTER "_obsolete_ShippingCountry" TYPE character varying(255)');
-
-				@DB::query('ALTER TABLE "Order" RENAME "ShippingPhone"  TO "_obsolete_ShippingPhone"');
-				@DB::query('ALTER TABLE "Order" ALTER "_obsolete_ShippingPhone" TYPE character varying(255)');
-			}
-			else
-			{
-	 			@DB::query("ALTER TABLE \"Order\" CHANGE COLUMN \"ShippingName\" \"_obsolete_ShippingName\" Varchar(255)");
-	 			@DB::query("ALTER TABLE \"Order\" CHANGE COLUMN \"ShippingAddress\" \"_obsolete_ShippingAddress\" Varchar(255)");
-	 			@DB::query("ALTER TABLE \"Order\" CHANGE COLUMN \"ShippingAddress2\" \"_obsolete_ShippingAddress2\" Varchar(255)");
-	 			@DB::query("ALTER TABLE \"Order\" CHANGE COLUMN \"ShippingCity\" \"_obsolete_ShippingCity\" Varchar(255)");
-	 			@DB::query("ALTER TABLE \"Order\" CHANGE COLUMN \"ShippingPostalCode\" \"_obsolete_ShippingPostalCode\" Varchar(255)");
-	 			@DB::query("ALTER TABLE \"Order\" CHANGE COLUMN \"ShippingState\" \"_obsolete_ShippingState\" Varchar(255)");
-	 			@DB::query("ALTER TABLE \"Order\" CHANGE COLUMN \"ShippingCountry\" \"_obsolete_ShippingCountry\" Varchar(255)");
-	 			@DB::query("ALTER TABLE \"Order\" CHANGE COLUMN \"ShippingPhone\" \"_obsolete_ShippingPhone\" Varchar(255)");
-			}
-		}
-		//move to ShippingAddress
-		$db = DB::getConn();
-		if( $db instanceof PostgreSQLDatabase ){
-      $statusFieldExists = DB::query("SELECT column_name FROM information_schema.columns WHERE table_name ='Order' AND column_name = 'Status'")->numRecords();
-		}
-		else{
-			// default is MySQL - broken for others, each database conn type supported must be checked for!
-      $statusFieldExists = DB::query("SHOW COLUMNS FROM \"Order\" LIKE 'Status'")->numRecords();
-		}
-		if($statusFieldExists) {
-		// 2) Cancel status update
-			$orders = DataObject::get('Order', "\"Status\" = 'Cancelled'");
-			$admin = Member::currentMember();
-			if($orders && $admin) {
-				foreach($orders as $order) {
-					$order->CancelledByID = $admin->ID;
-					$order->write();
-				}
-				DB::alteration_message('The orders which status was \'Cancelled\' have been successfully changed to the status \'AdminCancelled\'', 'changed');
-			}
-			$rows = DB::query("SELECT \"ID\", \"Status\" FROM \"Order\"");
-			if($rows) {
-				$CartObject = null;
-				$UnpaidObject = null;
-				$PaidObject = null;
-				$SentObject = null;
-				$AdminCancelledObject = null;
-				$MemberCancelledObject = null;
- 				foreach($rows as $row) {
-					switch($row["Status"]) {
-						case "Cart":
-							if(!$CartObject) {
-								if(!($CartObject = DataObject::get_one("OrderStep", "\"Code\" = 'CREATED'"))) {
-									singleton('OrderStep')->requireDefaultRecords();
-								}
-							}
-							if($CartObject = DataObject::get_one("OrderStep", "\"Code\" = 'CREATED'")) {
-								DB::query("UPDATE \"Order\" SET \"StatusID\" = ".$CartObject->ID." WHERE \"Order\".\"ID\" = ".$row["ID"]);
-							}
-							break;
-						case "Query":
-						case "Unpaid":
-							if(!$UnpaidObject) {
-								if(!($UnpaidObject = DataObject::get_one("OrderStep", "\"Code\" = 'SUBMITTED'"))) {
-									singleton('OrderStep')->requireDefaultRecords();
-								}
-							}
-							if($UnpaidObject = DataObject::get_one("OrderStep", "\"Code\" = 'SUBMITTED'")) {
-								DB::query("UPDATE \"Order\" SET \"StatusID\" = ".$UnpaidObject->ID." WHERE \"Order\".\"ID\" = ".$row["ID"]);
-							}
-
-							break;
-						case "Processing":
-						case "Paid":
-							if(!$PaidObject) {
-								if(!($PaidObject = DataObject::get_one("OrderStep", "\"Code\" = 'PAID'"))) {
-									singleton('OrderStep')->requireDefaultRecords();
-								}
-							}
-							if($PaidObject = DataObject::get_one("OrderStep", "\"Code\" = 'PAID'")) {
-								DB::query("UPDATE \"Order\" SET \"StatusID\" = ".$PaidObject->ID." WHERE \"Order\".\"ID\" = ".$row["ID"]);
-							}
-							break;
-						case "Sent":
-						case "Complete":
-							if(!$PaidObject) {
-								if(!($SentObject = DataObject::get_one("OrderStep", "\"Code\" = 'SENT'"))) {
-									singleton('OrderStep')->requireDefaultRecords();
-								}
-							}
-							if($SentObject = DataObject::get_one("OrderStep", "\"Code\" = 'SENT'")) {
-								DB::query("UPDATE \"Order\" SET \"StatusID\" = ".$SentObject->ID." WHERE \"Order\".\"ID\" = ".$row["ID"]);
-							}
-							break;
-						case "AdminCancelled":
-							if(!$AdminCancelledObject) {
-								if(!($AdminCancelledObject  = DataObject::get_one("OrderStep", "\"Code\" = 'SENT'"))) {
-									singleton('OrderStep')->requireDefaultRecords();
-								}
-							}
-							if(!$adminID) {
-								$adminID = Member::currentUserID();
-								if(!$adminID) {
-									$adminID = 1;
-								}
-							}
-							DB::query("UPDATE \"Order\" SET \"StatusID\" = ".$AdminCancelledObject->ID." WHERE \"Order\".\"ID\" = ".$row["ID"].", \"CancelledByID\" = ".$adminID);
-							break;
-						case "MemberCancelled":
-							if(!$MemberCancelledObject) {
-								if(!($MemberCancelledObject = DataObject::get_one("OrderStep", "\"Code\" = 'SENT'"))) {
-									singleton('OrderStep')->requireDefaultRecords();
-								}
-							}
-							DB::query("UPDATE \"Order\" SET \"StatusID\" = ".$MemberCancelledObject->ID.", \"CancelledByID\" = \"MemberID\" WHERE \"Order\".\"ID\" = '".$row["ID"]."'");
-							break;
-					}
-				}
-			}
-			if( $db instanceof PostgreSQLDatabase ) {
-				@DB::query('ALTER TABLE "Order" RENAME "Status"  TO "_obsolete_Status"');
-				@DB::query('ALTER TABLE "Order" ALTER "_obsolete_Status" TYPE character varying(255)');
-			}
-			else {
-			 	@DB::query("ALTER TABLE \"Order\" CHANGE COLUMN \"Status\" \"_obsolete_Status\" Varchar(255)");
-			}
-		}
-	}
-
-
 	function populateDefaults() {
 		parent::populateDefaults();
 		//@Session::start();
 		//$this->SessionID = Session_id();
 	}
 
+	/**
+ 	 * Marks if a records has been "init"-ed....
+ 	 * @var Boolean
+ 	 **/
+	protected $newRecord = true;
+
 	function onBeforeWrite() {
 		parent::onBeforeWrite();
-		if(!$this->CancelledByID && $this->CancelledByID != 0) {
-			$this->CancelledByID = 0;
-		}
-		$member = Member::currentMember();
-		//sove the country...
-		if($member && $this->MemberID == $member->ID) {
-			$this->Country = ShoppingCart::get_country();
+		if((isset($this->record['ID']) && $this->record['ID'])) {
+			$this->newRecord = false;
 		}
 	}
 
 	function onAfterWrite() {
 		parent::onAfterWrite();
+		if($this->newRecord) {
+			$this->init();
+		}
 	}
 
 	/**
 	 * delete attributes, statuslogs, and payments
 	 */
-	 //TODO: make this optional??
 	function onBeforeDelete(){
-//		if($attributes = $this->Attributes()){
-//			foreach($attributes as $attribute){
-//				//TODO: not working yet - Order Items are still found in DB
-//				$attribute->delete();
-//				$attribute->destroy();
-//			}
-//		}
-//
-//		if($statuslogs = $this->OrderStatusLogs()){
-//			foreach($statuslogs as $log){
-//				$log->delete();
-//				$log->destroy();
-//			}
-//		}
-//
-//		if($payments = $this->Payments()){
-//			foreach($payments as $payment){
-//				$payment->delete();
-//				$payment->destroy();
-//			}
-//		}
-//		if($shippingAddress = $this->ShippingAddress()) {
-//			$shippingAddress->delete();
-//			$shippingAddress-->destroy();
-//		}
+		if($attributes = $this->Attributes()){
+			foreach($attributes as $attribute){
+				$attribute->delete();
+				$attribute->destroy();
+			}
+		}
+		if($statuslogs = $this->OrderStatusLogs()){
+			foreach($statuslogs as $log){
+				$log->delete();
+				//$log->destroy();
+			}
+		}
+		if($payments = $this->Payments()){
+			foreach($payments as $payment){
+				$payment->delete();
+				//$payment->destroy();
+			}
+		}
+		if($billingAddress = $this->BillingAddress()) {
+			$billingAddress->delete();
+			//$billingAddress->destroy();
+		}
+		if($shippingAddress = $this->ShippingAddress()) {
+			$shippingAddress->delete();
+			//$shippingAddress->destroy();
+		}
+		if($emails = $this->Emails()) {
+			foreach($emails as $email){
+				$email->delete();
+				//$email->destroy();
+			}
+		}
 		parent::onBeforeDelete();
-
 	}
 
 	function debug(){
-
 		$val = "<h3>Database record: $this->class</h3>\n<ul>\n";
 		if($this->record) foreach($this->record as $fieldName => $fieldVal) {
 			$val .= "\t<li>$fieldName: " . Debug::text($fieldVal) . "</li>\n";
 		}
 		$val .= "</ul>\n";
 		$val .= "<h4>Items</h4>";
-		if($this->Items())
+		if($this->Items()) {
 			$val .= $this->Items()->debug();
+		}
 		$val .= "<h4>Modifiers</h4>";
-		if($this->Modifiers())
+		if($this->Modifiers()) {
 			$val .= $this->Modifiers()->debug();
-
+		}
 		return $val;
-	}
-
-	public static function set_email($email) {
-		user_error("this static method has been replaced by the siteconfig", E_USER_ERROR);
-	}
-
-	public static function set_subject($subject) {
-		user_error("this static method is now part of the siteconfig", E_USER_ERROR);
 	}
 
 }
