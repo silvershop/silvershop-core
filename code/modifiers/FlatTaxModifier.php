@@ -14,8 +14,11 @@
  * 	FlatTaxModifier::set_tax(0.15, 'GST', false);
  * </code>
  *
- * @package ecommerce
  * @authors: Silverstripe, Jeremy, Nicolaas
+ *
+ * @package: ecommerce
+ * @sub-package: modifiers
+ *
  **/
 
 class FlatTaxModifier extends OrderModifier {
@@ -115,7 +118,7 @@ class FlatTaxModifier extends OrderModifier {
 		return "Inclusive";
 	}
 
-	protected function LiveAmount() {
+	protected function LiveCalculationValue() {
 		if($this->IsExclusive()) {
 			$this->TaxableAmount() * $this->LiveRate();
 		}
