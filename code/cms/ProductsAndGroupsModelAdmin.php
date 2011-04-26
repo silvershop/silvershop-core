@@ -1,8 +1,14 @@
 <?php
 
 /**
+ * @description: Manages everything you sell.
+ * Products and Product Groups are included by default - can also include ProductVariations, etc..
+ *
  * @authors: Silverstripe, Jeremy, Tony, Nicolaas
- * @description: Manages everything you sell including modifiers
+ *
+ * @package: ecommerce
+ * @sub-package: cms
+ *
  **/
 
 class ProductsAndGroupsModelAdmin extends ModelAdmin {
@@ -37,7 +43,7 @@ class ProductsAndGroupsModelAdmin extends ModelAdmin {
 
 	function init() {
 		parent::init();
-		Requirements::javascript("ecommerce/javascript/EcommerceModelAdminExtensions.js");
+		Requirements::javascript("ecommerce/javascript/EcomModelAdminExtensions.js");
 	}
 
 	/**
@@ -70,7 +76,7 @@ class ProductsAndGroupsModelAdmin_CollectionController extends ModelAdminEcommer
 	}
 
 	/*
-	//TODO: Half-started attempt at modifying the way products are deleted - they should be deleted from both stages
+	//see issue 145
 	function ResultsForm($searchCriteria){
 		$form = parent::ResultsForm($searchCriteria);
 		if($tf = $form->Fields()->fieldByName($this->modelClass)){
