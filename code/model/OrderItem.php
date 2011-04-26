@@ -1,14 +1,17 @@
 <?php
 /**
  * @description: An order item is a product which has been added to an order,
- * ready for purchase. It links to a buyable (e.g. a product)
- * @description: An order item is a product which has been added to an order,
- ** ready for purchase. An order item is typically a product itself,
- ** but also can include references to other information such as
- ** product attributes like colour, size, or type.
+ * ready for purchase. An order item is typically a product itself,
+ * but also can include references to other information such as
+ * product attributes like colour, size, or type.
  *
- * @package ecommerce
+ *
+ *
  * @authors: Silverstripe, Jeremy, Nicolaas
+ *
+ * @package: ecommerce
+ * @sub-package: model
+ *
  **/
 class OrderItem extends OrderAttribute {
 
@@ -19,7 +22,7 @@ class OrderItem extends OrderAttribute {
 
 	public static $db = array(
 		'Quantity' => 'Double',
-		'BuyableID' => 'Int', //TODO: surely one day this can become a has_one property
+		'BuyableID' => 'Int',
 		'Version' => 'Int'
 	);
 
@@ -62,6 +65,7 @@ class OrderItem extends OrderAttribute {
 
 	public static $singular_name = "Order Item";
 		function i18n_singular_name() { return _t("OrderItem.ORDERITEM", "Order Item");}
+
 	public static $plural_name = "Order Items";
 		function i18n_plural_name() { return _t("OrderItem.ORDERITEMS", "Order Items");}
 
@@ -226,7 +230,6 @@ HTML;
 	 *
 	 * @return DataObject (Any type of Data Object that is buyable)
 	  **/
-	//TODO: Change "Item" to something that doesn't conflict with OrderItem
 	function Buyable($current = false) {
 		$className = $this->BuyableClassName();
 		if($this->BuyableID && $this->Version && !$current) {
@@ -246,9 +249,7 @@ HTML;
 		if(class_exists($className) && ClassInfo::is_subclass_of($className, "DataObject")) {
 			return $className;
 		}
-		else {
-			user_error($this->ClassName." does not have an item class: $className", E_USER_WARNING);
-		}
+		user_error($this->ClassName." does not have an item class: $className", E_USER_WARNING);
 	}
 
 	/**
@@ -257,9 +258,13 @@ HTML;
 	  **/
 	function BuyableTitle() {
 		if($item = $this->Buyable()) {
-			return $item->Title;
+			if($title = $item->Title) {
+				return $title;
+			}
+			//This should work in all cases, because ultimately, it will return #ID - see DataObject
+			return $item->getTitle();
 		}
-		return "Title not found"; //TODO: ugly to fall back on
+		user_error("No Buyable could be found for OrderItem with ID: ".$this->ID, E_USER_WARNING);
 	}
 
 	/**
@@ -270,7 +275,7 @@ HTML;
 		if($item = $this->Buyable()) {
 			return $item->Link();
 		}
-		return ""; //TODO: ugly to fall back on
+		user_error("No Buyable could be found for OrderItem with ID: ".$this->ID, E_USER_WARNING);
 	}
 
 	/**
@@ -310,7 +315,7 @@ HTML;
 	 *
 	 * @return String (URLSegment)
 	  **/
-	function checkoutLink() {
+	function CheckoutLink() {
 		return CheckoutPage::find_link();
 	}
 
@@ -380,20 +385,6 @@ HTML;
 		$array = array();
 		$this->extend('updateLinkParameters',$array);
 		return $array;
-	}
-
-	function requireDefaultRecords() {
-		parent::requireDefaultRecords();
-		// we must check for individual database types here because each deals with schema in a none standard way
-		//can we use Table::has_field ???
-		$db = DB::getConn();
-		$fieldArray = $db->fieldList("OrderItem");
-		$hasField =  isset($fieldArray["ItemID"]);
-		if($hasField) {
-			DB::query("UPDATE \"OrderItem\" SET \"OrderItem\".\"BuyableID\" = \"OrderItem\".\"ItemID\"");
- 			DB::query("ALTER TABLE \"OrderItem\" CHANGE COLUMN \"ItemID\" \"_obsolete_ItemID\" Integer(11)");
- 			DB::alteration_message('Moved ItemID to BuyableID in OrderItem', 'obsolete');
-		}
 	}
 
 }
