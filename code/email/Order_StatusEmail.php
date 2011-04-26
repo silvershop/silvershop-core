@@ -2,10 +2,14 @@
 
 /**
  * @Description: This class handles the status email which is sent after changing the attributes
- ** in the report (eg. status changed to 'Shipped').
+ * in the report (eg. status changed to 'Shipped').
+ *
+ *
+ * @authors: Silverstripe, Jeremy, Nicolaas
  *
  * @package: ecommerce
- * @authors: Silverstripe, Jeremy, Nicolaas
+ * @sub-package: email
+ *
  **/
 
 class Order_StatusEmail extends Order_Email {
