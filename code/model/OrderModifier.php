@@ -1,51 +1,48 @@
 <?php
 
 /**
- * @author Nicolaas [at] sunnysideup.co.nz
- * @package: ecommerce
- * @sub-package: ecommerce_modifiers
- * @description: shows a list of recommended products
- * the product page / dataobject need to have a function RecommendedProductsForCart
  * which returns an array of IDs
  * SEQUENCE - USE FOR ALL MODIFIERS!!!
-  *** model defining static variables (e.g. $db, $has_one)
-  *** cms variables + functions (e.g. getCMSFields, $searchableFields)
-  *** other (non) static variables (e.g. protected static $special_name_for_something, protected $order)
-  *** CRUD functions (e.g. canEdit)
-  *** init and update functions
-  *** form functions (e. g. showform and getform)
-  *** template functions (e.g. ShowInTable, TableTitle, etc...) ... USES DB VALUES
-  ***  inner calculations.... USES CALCULATED VALUES
-  *** calculate database fields: protected function Live[field name]  ... USES CALCULATED VALUES
-  *** Type Functions (IsChargeable, IsDeductable, IsNoChange, IsRemoved)
-  *** standard database related functions (e.g. onBeforeWrite, onAfterWrite, etc...)
-  *** AJAX related functions
-  *** debug functions
- */
+ * *** model defining static variables (e.g. $db, $has_one)
+ * *** cms variables + functions (e.g. getCMSFields, $searchableFields)
+ * *** other (non) static variables (e.g. protected static $special_name_for_something, protected $order)
+ * *** CRUD functions (e.g. canEdit)
+ * *** init and update functions
+ * *** form functions (e. g. showform and getform)
+ * *** template functions (e.g. ShowInTable, TableTitle, etc...) ... USES DB VALUES
+ * ***  inner calculations.... USES CALCULATED VALUES
+ * *** calculate database fields: protected function Live[field name]  ... USES CALCULATED VALUES
+ * *** standard database related functions (e.g. onBeforeWrite, onAfterWrite, etc...)
+ * *** AJAX related functions
+ * *** debug functions
+ *
+ * FAQs
+ *
+ * *** What is the difference between cart and table ***
+ * The Cart is a smaller version of the Table. Table is used for Checkout Page + Confirmation page.
+ * Cart is used for other pages (pre-checkout for example). At times, the values and names may differ
+ *
+ *
+ * @authors: Silverstripe, Jeremy, Nicolaas
+ *
+ * @package: ecommerce
+ * @sub-package: modifiers
+ *
+ **/
 class OrderModifier extends OrderAttribute {
-
-
 
 // ########################################  *** model defining static variables (e.g. $db, $has_one)
 	public static $db = array(
-		'Name' => 'Varchar(255)',
-		'Amount' => 'Currency',
-		'Type' => "Enum('Chargeable,Deductable,NoChange,Removed')"
-	);
-
-	public static $casting = array(
-		'TableValue' => 'Currency',
-		'CartValue' => 'Currency',
-		'CalculationTotal' => 'Currency'
+		'Name' => 'Varchar(255)', // we use this to create the TableTitle, CartTitle and TableSubTitle
+		'TableValue' => 'Currency', //the $$ shown in the checkout table
+		'CalculationValue' => 'Currency', // this is the value we use to deduct / add to the sub-total (e.g. discount = -20, delivery = +10)
+		'HasBeenRemoved' => 'Boolean' // we add this so that we can see what modifiers have been removed
 	);
 
 	// make sure to choose the right Type and Name for this.
 	public static $defaults = array(
-		'Type' => 'Chargeable',
-		'Name' => 'Modifier'
+		'Name' => 'Modifier' //making sure that you choose a different name for any class extensions.
 	);
-
-
 
 // ########################################  *** cms variables  + functions (e.g. getCMSFields, $searchableFields)
 
@@ -54,19 +51,19 @@ class OrderModifier extends OrderAttribute {
 			'field' => 'NumericField',
 			'title' => 'Order Number'
 		),
-		"Title" => "PartialMatchFilter",
 		"TableTitle" => "PartialMatchFilter",
-		"CartTitle" => "PartialMatchFilter",
-		"Amount",
-		"Type"
+		"TableValue",
+		"HasBeenRemoved"
 	);
 
 	public static $summary_fields = array(
 		"Order.ID" => "Order ID",
 		"TableTitle" => "Table Title",
-		"ClassName" => "Name",
-		"Amount" => "Amount" ,
-		"Type" => "Type"
+		"TableValue" => "Value Shown"
+	);
+
+	public static $casting = array(
+		'CartValue' => 'Currency', // the $$ shown in the cart (smaller version of the checkout table)
 	);
 
 	public static $singular_name = "Order Extra";
@@ -93,18 +90,36 @@ class OrderModifier extends OrderAttribute {
 // ########################################  *** other static variables (e.g. special_name_for_something)
 
 	/**
-	* we use this variable to make sure that the parent::runUpdate() is called in all child classes
-	* this is similar to parent::init in the controller.
-	**/
+	 * $do_not_add_automatically Identifies whether a modifier is NOT automatically added
+	 * Most modifiers, such as delivery and GST would be added automatically.
+	 * However, there are also ones that are not added automatically.
+	 * @var Boolean
+	 **/
+	protected static $do_not_add_automatically = false;
+		static function set_do_not_add_automatically($b) {self::$do_not_add_automatically = $b;}
+		static function get_do_not_add_automatically() {return $this->stat("do_not_add_automatically");}
+
+	/**
+	 * $can_be_removed Identifies whether a modifier can be removed by the user.
+	 * @var Boolean
+	 **/
+	protected static $can_be_removed = false;
+		static function set_can_be_removed($b) {self::$can_be_removed = $b;}
+		static function get_can_be_removed() {return $this->stat("can_be_removed");}
+
+	/**
+	 * we use this variable to make sure that the parent::runUpdate() is called in all child classes
+	 * this is similar to the checks run for parent::init in the controller class.
+	 * @var Boolean
+	 **/
 	protected $baseInitCalled = false;
 
 	/**
 	* This is a flag for running an update.
 	* Running an update means that all fields are (re)set, using the Live{FieldName} methods.
+	* @var Boolean
 	**/
 	protected $mustUpdate = false;
-
-
 
 
 // ######################################## *** CRUD functions (e.g. canEdit)
@@ -135,11 +150,14 @@ class OrderModifier extends OrderAttribute {
 	*
 	**/
 	public function runUpdate() {
-		$this->checkField("Name");
-		$this->checkField("Amount");
-		$this->checkField("Type");
-		if($this->mustUpdate && $this->canBeUpdated()) {
-			$this->write();
+		if(!$this->IsRemoved()) {
+			$this->checkField("Name");
+			$this->checkField("TableValue");
+			$this->checkField("CartValue");
+			$this->checkField("CalculationValue");
+			if($this->mustUpdate && $this->canBeUpdated()) {
+				$this->write();
+			}
 		}
 		$this->baseInitCalled = true;
 	}
@@ -174,42 +192,21 @@ class OrderModifier extends OrderAttribute {
 	 * @return float / double
 	 */
 	public function CalculationTotal() {
-		if($this->IsRemoved()) {
+		if($this->HasBeenRemoved) {
 			return 0;
 		}
-		else {
-			$amount = $this->Amount;
-			if($this->IsChargeable()) {
-				return $amount;
-			}
-			elseif($this->IsDeductable()) {
- 				return -1 * $amount;
-			}
-			elseif($this->IsNoChange()) {
-				return 0;
-			}
-			else {
-				user_error("could not work out value for ".$this->Name, E_USER_WARNING);
-				return 0;
-			}
-		}
+		return $this->CalculationValue;
 	}
 
 // ########################################  *** form functions (showform and getform)
 
 	/**
-	 * This determines whether the OrderModifierForm
-	 * is shown or not. {@link OrderModifier::get_form()}.
-	 * OrderModifierForms are forms that are added to check out to facilitate the use of the modifier
-	 * an example would be a form allowing the user to select the delivery option.
+	 * This determines whether the OrderModifierForm is shown or not. {@link OrderModifier::get_form()}.
+	 * OrderModifierForms are forms that are added to check out to facilitate the use of the modifier.
+	 * An example would be a form allowing the user to select the delivery option.
 	 * @return boolean
 	 */
 	public function showForm() {
-		/* TO DO: find a better place for it...
-		if(!$this->baseInitCalled) {
-			user_error("While the order can be edited, you must call the init method everytime you get the details for this modifier", E_USER_ERROR);
-		}
-		*/
 		return false;
 	}
 
@@ -217,15 +214,16 @@ class OrderModifier extends OrderAttribute {
 	 * This function returns a form that allows a user
 	 * to change the modifier to the order.
 	 *
-	 * @todo When is this used?
-	 * @todo How is this used?
-	 * @todo How does one create their own OrderModifierForm implementation?
 	 *
-	 * @param Controller $controller $controller The controller
+	 * @param String $name- name for the modifier form
+	 * @param Controller $optionalController  - optional custom controller class
+	 * @param Validator $optionalValidator  - optional custom validator class
 	 * @return OrderModifierForm or subclass
 	 */
-	public function getForm($controller) {
-		return new OrderModifierForm($controller, 'ModifierForm', new FieldSet(), new FieldSet());
+	public function getModifierForm($name = 'ModifierForm', $optionalController = null, $optionalValidator = null) {
+		if($this->showForm()) {
+			return new OrderModifierForm($optionalController, $name, $fields = new FieldSet(), $actions = new FieldSet(), $optionalValidator);
+		}
 	}
 
 
@@ -246,11 +244,11 @@ class OrderModifier extends OrderAttribute {
 	}
 
 	/**
-	* some modifiers can be hidden after an ajax update (e.g. if someone enters a discount coupon and it does not exist)
-	* in this case, we can not use @link ShowInTable, because we still want the HTML to be available
+	* some modifiers can be hidden after an ajax update (e.g. if someone enters a discount coupon and it does not exist).
+	* There might be instances where ShowInTable (the starting point) is TRUE and HideInAjaxUpdate return false.
 	*@return Boolean
 	**/
-	function CanBeHiddenAfterAjaxUpdate() {
+	public function HideInAjaxUpdate() {
 		if($this->ShowInTable()) {
 			return false;
 		}
@@ -258,22 +256,31 @@ class OrderModifier extends OrderAttribute {
 	}
 
 	/**
-	 * Checks if the modifier can be removed. Default check is for whether it is Chargeable.
+	 * Checks if the modifier can be removed.
 	 *
 	 * @return boolean
 	 **/
-	public function CanRemove() {
-		return !$this->IsChargeable();
+	public function CanBeRemoved() {
+		return self::get_can_be_removed();
 	}
 
 	/**
-	 * Checks if the modifier can be added again after it has been removed.
+	 * Checks if the modifier can be added manually
 	 *
 	 * @return boolean
 	 **/
 	public function CanAdd() {
-		return $this->IsRemoved();
+		return $this->HasBeenRemoved || $this->DoNotAddOnInit();
 	}
+
+	/**
+	 *Identifier whether a modifier will be added automatically for all new orders.
+	 * @return boolean
+	 */
+	public function DoNotAddAutomatically() {
+		return self::get_do_not_add_automatically();
+	}
+
 
 	/**
 	 * This is what shows up on the actual cart / checkout page
@@ -281,15 +288,7 @@ class OrderModifier extends OrderAttribute {
 	 * @return Currency Object
 	 **/
 	public function TableValue() {
-		if($this->Type == "Chargeable") {
-			$amount = $this->Amount;
-		}
-		elseif($this->Type == "Deductable") {
-		 $amount = -1 * $this->Amount; //TODO: this is different from the bracket syntax for displaying negatives
-		}
-		else {
-			$amount = 0;
-		}
+		$amount = $this->CalculationValue;
 		$obj = DBField::create('Currency', $amount);
 		return $obj;
 	}
@@ -302,6 +301,14 @@ class OrderModifier extends OrderAttribute {
 	 **/
 	public function CartValue() {
 		return $this->TableValue();
+	}
+	/**
+	 * Actual calculation used
+	 *
+	 * @return Float / Double
+	 **/
+	public function CalculationValue() {
+		return $this->CalculationValue;
 	}
 
 	/**
@@ -327,6 +334,13 @@ class OrderModifier extends OrderAttribute {
 	}
 
 	/**
+	 * This link is for modifiers that have been removed and are being put "back".
+	 * @return String
+	  **/
+	public function AddLink() {
+		return ShoppingCart::remove_modifier_link($this->ID,$this->ClassName);
+	}
+	/**
 	 *
 	 * @return String
 	  **/
@@ -344,52 +358,23 @@ class OrderModifier extends OrderAttribute {
 		return self::$defaults["Name"];
 	}
 
+	protected function LiveTableValue() {
+		return $this->LiveCalculationValue();
+	}
+
+	protected function LiveCartValue() {
+		return $this->LiveCalculationValue();
+	}
 	/**
 	 * This function is always called to determine the
-	 * amount this modifier needs to charge or deduct.
+	 * amount this modifier needs to charge or deduct - if any.
 	 *
-	 * If the modifier exists in the DB, in which case it
-	 * already exists for a given order, we just return
-	 * the Amount data field from the DB. This is for
-	 * existing orders.
 	 *
 	 * @return Currency
 	 */
-	protected function LiveAmount() {
-		if($this->Type == "Removed" || $this->Type == "NoChange") {
-			return 0;
-		}
-		return $this->Amount;
+	protected function LiveCalculationValue() {
+		return $this->CalculationValue;
 	}
-
-	/**
-	 * Provides a modifier total that is positive or negative, depending on whether the modifier is chargable or not.
-	 *
-	 * @return String
-	 */
-	protected function LiveType() {
-		$v = $this->Type;
-		if(!$this->IsRemoved()) {
-			if($this->IsNoChange()) {
-				$v = "NoChange";
-			}
-			elseif($this->IsDeductable()) {
-				$v = "Deductable";
-			}
-			elseif($this->IsChargeable()){
-				$v = "Chargeable";
-			}
-			else {
-				user_error("Could not work out modifier type (chargeable, Deductable, or NoChange", E_USER_WARNING);
-			}
-		}
-		if(!$v) {
-			$v = self::$defaults["Type"];
-		}
-		return $v;
-	}
-
-
 
 
 // ######################################## ***  Type Functions (IsChargeable, IsDeductable, IsNoChange, IsRemoved)
@@ -399,14 +384,14 @@ class OrderModifier extends OrderAttribute {
 	 * @return boolean
 	 */
 	protected function IsChargeable() {
-		return false;
+		return $this->LiveCalculationValue() > 0;
 	}
 	/**
 	 * should be extended if it is true in child class
 	 * @return boolean
 	 */
 	protected function IsDeductable() {
-		return false;
+		return $this->LiveCalculationValue() < 0;
 	}
 
 	/**
@@ -414,16 +399,17 @@ class OrderModifier extends OrderAttribute {
 	 * @return boolean
 	 */
 	protected function IsNoChange() {
-		return false;
+		return $this->LiveCalculationValue()  == 0 ;
 	}
 
 	/**
-	 * always the same, do not extend.
+	 * should be extended if it is true in child class
 	 * @return boolean
 	 */
 	protected function IsRemoved() {
-		return $this->Type == "Removed";
+		return $this->HasBeenRemoved;
 	}
+
 
 
 // ######################################## ***  standard database related functions (e.g. onBeforeWrite, onAfterWrite, etc...)
@@ -446,7 +432,7 @@ class OrderModifier extends OrderAttribute {
 	function updateForAjax(array &$js) {
 		$tableValue = DBField::create('Currency',$this->TableValue())->Nice();
 		$cartValue = DBField::create('Currency',$this->CartValue())->Nice();
-		if($this->CanBeHiddenAfterAjaxUpdate()) {
+		if($this->HideInAjaxUpdate()) {
 			$js[] = array("id" => $this->TableID(), 'parameter' => "hide", "value" => 1);
 		}
 		else {
@@ -454,11 +440,9 @@ class OrderModifier extends OrderAttribute {
 			$js[] = array('id' => $this->CartTotalID(), 'parameter' => 'innerHTML', 'value' => $cartValue);
 			$js[] = array('id' => $this->TableTitleID(), 'parameter' => 'innerHTML', 'value' => $this->TableTitle());
 			$js[] = array('id' => $this->CartTitleID(), 'parameter' => 'innerHTML', 'value' => $this->CartTitle());
-			$js[] = array("id" => $this->TableID(), 'parameter' => "hide", "value" => 0);
+			$js[] = array("id" => $this->TableID(), 'parameter' => "hide", "value" => $this->HideInAjaxUpdate());
 		}
 	}
-
-
 
 
 // ######################################## ***  debug functions
@@ -467,17 +451,23 @@ class OrderModifier extends OrderAttribute {
 	 * Debug helper method.
 	 */
 	public function debug() {
-		$amount = $this->Amount;
-		$type = $this->Type;
+		$calculationValue = $this->CalculationValue();
+		$tableTitle = $this->TableTitle();
+		$tableValue = $this->TableValue();
+		$cartTitle = $this->CartTitle();
+		$cartValue = $this->CartValue();
 		$orderID = $this->OrderID;
 		return <<<HTML
 			<h2>$this->class</h2>
 			<h3>OrderModifier class details</h3>
 			<p>
 				<b>ID : </b>$id<br/>
-				<b>Amount : </b>$amount<br/>
-				<b>Type : </b>$type<br/>
-				<b>Order ID : </b>$orderID
+				<b>Order ID : </b>$orderID<br/>
+				<b>Calculation Value : </b>$calculationValue<br/>
+				<b>Table Title: </b>$tableTitle<br/>
+				<b>Table Value: </b>$tableValue<br/>
+				<b>Cart Value: </b>$cartTitle<br/>
+				<b>Cart Title: </b>$cartValue<br/>
 			</p>
 HTML;
 	}
