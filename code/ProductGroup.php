@@ -3,8 +3,14 @@
   * Product Group is a 'holder' for Products within the CMS
   * It contains functions for versioning child products
   *
-  * @package ecommerce
-  */
+ *
+ * @authors: Silverstripe, Jeremy, Nicolaas
+ *
+ * @package: ecommerce
+ * @sub-package: Products
+ *
+ **/
+
 class ProductGroup extends Page {
 
 	public static $db = array(
@@ -43,7 +49,6 @@ class ProductGroup extends Page {
 		static function set_only_show_products_that_can_purchase($b = true){self::$only_show_products_that_can_purchase = $b;}
 		static function get_only_show_products_that_can_purchase(){return self::$only_show_products_that_can_purchase;}
 
-	//TODO: allow grouping multiple sort fields under one 'sort option', and allow choosing direction of each
 	protected static $sort_options = array(
 			'title' => array("Title" => 'Alphabetical', "SQL" => "\"Title\" ASC"),
 			'price' => array("Title" => 'Lowest Price', "SQL" => "\"Price\" ASC"),
@@ -107,9 +112,8 @@ class ProductGroup extends Page {
 	 *
 	 * @param string $extraFilter Additional SQL filters to apply to the Product retrieval
 	 * @param array $permissions
-	 * @return DataObjectSet
+	 * @return DataObjectSet | Null
 	 */
-	 //TODO: optimise this where possible..perhaps use less joins
 	function ProductsShowable($extraFilter = '', $recursive = true){
 		$filter = ""; //
 		$join = "";
@@ -159,18 +163,22 @@ class ProductGroup extends Page {
 	 *@return Integer
 	 **/
 	function ProductsPerPage() {
-		$n = 0;
+		$productsPagePage = 0;
 		if($this->NumberOfProductsPerPage) {
-			$n = $this->NumberOfProductsPerPage;
+			$productsPagePage = $this->NumberOfProductsPerPage;
 		}
 		else {
-			//TO DO: add parent.NumberOfProductsPerPage ???
-			$sc = DataObject::get_one("SiteConfig");
-			if($sc) {
-				$n = $sc->NumberOfProductsPerPage;
+			if($parent = $this->ParentGroup()) {
+				$productsPagePage = $parent->ProductsPerPage();
+			}
+			else {
+				$sc = DataObject::get_one("SiteConfig");
+				if($siteConfig) {
+					$productsPagePage = $siteConfig->NumberOfProductsPerPage;
+				}
 			}
 		}
-		return $n;
+		return $productsPagePage;
 	}
 
 	/**
@@ -196,7 +204,6 @@ class ProductGroup extends Page {
 	 *@return DataObject (ProductGroup)
 	 **/
 	function ParentGroup() {
-		//to do: cater for various parent groups...
 		return DataObject::get_by_id("ProductGroup", $this->ParentID);
 	}
 
@@ -213,39 +220,6 @@ class ProductGroup extends Page {
 		}
 	}
 
-	/**
-	 * Automatically creates some ProductGroup pages in
-	 * the CMS when the database builds if there hasn't
-	 * been any set up yet.
-	 */
-	function requireDefaultRecords() {
-		parent::requireDefaultRecords();
-
-		if(!DataObject::get_one('ProductGroup')) {
-			$page1 = new ProductGroup();
-			$page1->Title = 'Products';
-			$page1->Content = "
-				<p>This is the top level products page, it uses the <em>product group</em> page type, and it allows you to show your products checked as 'featured' on it. It also allows you to nest <em>product group</em> pages inside it.</p>
-				<p>For example, you have a product group called 'DVDs', and inside you have more product groups like 'sci-fi', 'horrors' or 'action'.</p>
-				<p>In this example we have setup a main product group (this page), with a nested product group containing 2 example products.</p>
-			";
-			$page1->URLSegment = 'products';
-			$page1->NumberOfProductsPerPage = 5;
-			$page1->writeToStage('Stage');
-			$page1->publish('Stage', 'Live');
-			DB::alteration_message('Product group page \'Products\' created', 'created');
-
-			$page2 = new ProductGroup();
-			$page2->Title = 'Example product group';
-			$page2->Content = '<p>This is a nested <em>product group</em> within the main <em>product group</em> page. You can add a paragraph here to describe what this product group is about, and what sort of products you can expect to find in it.</p>';
-			$page2->URLSegment = 'example-product-group';
-			$page1->NumberOfProductsPerPage = 5;
-			$page2->ParentID = $page1->ID;
-			$page2->writeToStage('Stage');
-			$page2->publish('Stage', 'Live');
-			DB::alteration_message('Product group page \'Example product group\' created', 'created');
-		}
-	}
 
 }
 class ProductGroup_Controller extends Page_Controller {
