@@ -1,10 +1,14 @@
 <?php
 
 /**
- * @Description: this class extends any DataObject (e.g. Product), including SiteTree items
- ** once extended, any "buyable" item can be added to cart.
- * @package: ecommerce
+ * @description: This class extends any DataObject (e.g. Product), including SiteTree items
+ * once extended, any "buyable" item can be added to cart.
+ *
  * @authors: Silverstripe, Jeremy, Nicolaas
+ *
+ * @package: ecommerce
+ * @sub-package: products
+ *
  **/
 
 class Buyable extends DataObjectDecorator {
@@ -53,6 +57,16 @@ class Buyable extends DataObjectDecorator {
 	function AllowPurchase() {
 		user_error("this method has been Depreciated - use canPurchase", E_USER_NOTICE);
 		return $this->owner->canPurchase();
+	}
+
+
+	function canPurchase($member = null) {
+		if($this->ShopClosed()) {
+			return false;
+		}
+		//IMPORTANT - if it returns null then the product / other buyable will not take notice of this extension.
+		return true;
+
 	}
 
 	/**
