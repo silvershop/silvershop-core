@@ -1,7 +1,12 @@
 <?php
 /**
- * Common functionality for ModelAdmin
+ * @Descrition: Common functionality for ModelAdmin
+ *
  * @authors: Silverstripe, Jeremy, Nicolaas
+ *
+ * @package: ecommerce
+ * @sub-package: cms
+ *
  */
 
 class ModelAdminEcommerceClass_CollectionController extends ModelAdmin_CollectionController {
