@@ -3,8 +3,13 @@
 /**
  * @Description: ExpiryDate field, contains validation and formspec for expirydate fields.
  *
- * @package: ecommerce
+ *
+ *
  * @authors: Silverstripe, Jeremy, Nicolaas
+ *
+ * @package: ecommerce
+ * @sub-package: forms
+ *
  **/
 
 class ExpiryDateField extends TextField {
