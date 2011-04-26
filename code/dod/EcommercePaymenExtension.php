@@ -1,7 +1,11 @@
 <?php
 
 /**
- *@description: this is a Hack class that adds a few features to payment, needed to run e-commerce.
+ * @description: This is a Hack class that adds a few features to payment, needed to run e-commerce.
+ * Eventually this class will be deleted.
+ *
+ * @package: ecommerce
+ * @sub-package: payment
  *
  **/
 
