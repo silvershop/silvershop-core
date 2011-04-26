@@ -9,7 +9,9 @@
 
 
 Director::addRules(50, array(
-	ShoppingCart::$url_segment . '/$Action/$ID/$OtherID' => 'ShoppingCart'
+	ShoppingCart::$url_segment . '/$Action/$ID/$OtherID' => 'ShoppingCart',
+	'ecommerce-load-default-records//$Action' => 'EcommerceDefaultRecords',
+	'ecommerce-migrate//$Action' => 'EcommerceMigration'
 ));
 
 Object::add_extension('Member', 'EcommerceRole');
@@ -44,7 +46,7 @@ Buyable::add_class("Product");
 
 // * * * SHOPPING CART AND ORDER
 //EcomQuantityField::set_hide_plus_and_minus(true);
-//Order::set_add_shipping_fields(true);
+//OrderAddress::set_use_separate_shipping_address(true)
 //Order::set_table_overview_fields(array('Total' => 'Total','Status.Name'));//
 //Order::set_maximum_ignorable_sales_payments_difference(0.001);//sometimes there are small discrepancies in total (for various reasons)- here you can set the max allowed differences
 //Order::set_order_id_start_number(1234567);//sets a start number for order ID, so that they do not start at one.
@@ -77,7 +79,7 @@ Buyable::add_class("Product");
 //SS_Report::register("SideReport", "EcommerceSideReport_NoImageProducts");
 //Product_Image::set_thumbnail_size(140, 100);
 //Product_Image::set_content_image_width(200);
-//Product_Image::set_large_image_width(200);
+//Product_Image::set_large_image_width(500);
 //ProductGroup::set_include_child_groups(true);
 //ProductGroup::only_show_products_that_can_purchase(true);
 //ProductGroup::add_sort_option( $key = "price", $title = "Lowest Price", $sql = "Price ASC");
