@@ -1,13 +1,15 @@
 <?php
 /**
  * This field shows the user where the Order is at (which orderstep)
- * If
  *
  *
- * @package forms
- * @subpackage fields-dataless
- * @author nicolaas [at]sunnysideup.co.nz
- */
+ * @authors: Silverstripe, Jeremy, Nicolaas
+ *
+ * @package: ecommerce
+ * @sub-package: forms
+ *
+ **/
+
 class OrderStepField extends DatalessField {
 
 	/**
