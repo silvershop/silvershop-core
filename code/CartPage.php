@@ -1,9 +1,14 @@
 <?php
 
 /**
+ * @description: This is a page that shows the cart content,
+ * without "leading to" checking out. That is, there is no "next step" functionality.
  *
- * @package ecommerce
  * @authors: Silverstripe, Jeremy, Nicolaas
+ *
+ * @package: ecommerce
+ * @sub-package: pages
+ *
  **/
 
 class CartPage extends Page{
