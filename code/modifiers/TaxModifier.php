@@ -15,8 +15,12 @@
  * 	TaxModifier::set_for_country('UK', 0.175, 'VAT', 'exclusive');
  * </code>
  *
- * @package ecommerce
  * @authors: Silverstripe, Jeremy, Nicolaas
+ *
+ * @package: ecommerce
+ * @sub-package: modifiers
+ *
+
  **/
 
 class TaxModifier extends OrderModifier {
@@ -129,7 +133,7 @@ class TaxModifier extends OrderModifier {
 	}
 
 	protected function LiveCountry() {
-		return ShoppingCart::get_country();
+		return EcommerceCountry::get_country();
 	}
 
 	protected function LiveRate() {
@@ -162,7 +166,7 @@ class TaxModifier extends OrderModifier {
 		return "Inclusive";
 	}
 
-	protected function LiveAmount() {
+	protected function LiveCalculationValue() {
 		return $this->LiveIsExclusive() ? $this->LiveCharge() : 0;
 	}
 
@@ -185,12 +189,6 @@ class TaxModifier extends OrderModifier {
 	}
 
 // ######################################## *** standard database related functions (e.g. onBeforeWrite, onAfterWrite, etc...)
-
-
-	public function onBeforeWrite() {
-		parent::onBeforeWrite();
-	}
-
 // ######################################## *** AJAX related functions
 // ######################################## *** debug functions
 
