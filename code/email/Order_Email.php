@@ -3,11 +3,20 @@
 
 /**
  * @Description: Email spefically for communicating with customer about order.
- * @package: ecommerce
+ *
  * @authors: Silverstripe, Jeremy, Nicolaas
+ *
+ * @package: ecommerce
+ * @sub-package: email
+ *
  **/
 
-class Order_Email extends Email {
+class Order_Email::get_subject extends Email {
+
+	static function get_from_email() {$sc = DataObject::get_one("SiteConfig"); if($sc && $sc->ReceiptEmail) {return $sc->ReceiptEmail;} else {return Email::getAdminEmail();} }
+
+	static function get_subject() {$sc = DataObject::get_one("SiteConfig"); if($sc && $sc->ReceiptSubject) {return $sc->ReceiptSubject;} else {return "Shop Sale Information {OrderNumber}"; } }
+
 
 	protected static $send_all_emails_plain = false;
 		function set_send_all_emails_plain(boolean $b) {self::$send_all_emails_plain = $b;}
