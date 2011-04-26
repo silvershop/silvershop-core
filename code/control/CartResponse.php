@@ -3,6 +3,10 @@
 /**
  * @authors: Silverstripe, Jeremy, Nicolaas
  *
+ * @package: ecommerce
+ * @sub-package: control
+ * @Description: this class
+ *
  **/
 
 class CartResponse extends EcommerceResponse {
@@ -14,12 +18,17 @@ class CartResponse extends EcommerceResponse {
 	 *@return JSON
 	 **/
 	public function ReturnCartData($status, $message = "", $data = null) {
+		//add header
 		$this->addHeader('Content-Type', 'application/json');
 		if($status != "success") {
 			$this->setStatusCode(400, "not successfull: ".$status." --- ".$message);
 		}
+
+		//init Order - IMPORTANT
 		$currentOrder = ShoppingCart::current_order();
-		$currentOrder->calculateModifiers($force = true);
+		$currentOrder->calculateModifiers(true);
+
+		// populate Javascript
 		$js = array ();
 		if ($items = $currentOrder->Items()) {
 			foreach ($items as $item) {
@@ -31,27 +40,11 @@ class CartResponse extends EcommerceResponse {
 				$modifier->updateForAjax($js);
 			}
 		}
-		$currentOrder->updateForAjax($js);
-		if($message) {
-			$js[] = array(
-				"id" => $currentOrder->TableMessageID(),
-				"parameter" => "innerHTML",
-				"value" => $message,
-				"isOrderMessage" => true,
-				"messageClass" => $status
-			);
-			$js[] = array(
-				"id" => $currentOrder->TableMessageID(),
-				"parameter" => "hide",
-				"value" => 0
-			);
-		}
-		else {
-			$js[] = array(
-				"id" => $currentOrder->TableMessageID(),
-				"parameter" => "hide",
-				"value" => 1
-			);
+		ShoppingCart::update_for_ajax($js, $message, $status);
+
+		//merge and return
+		if(is_array($data)) {
+			$js = array_merge($js, $data);
 		}
 		return Convert::array2json($js);
 	}
