@@ -1,10 +1,14 @@
 <?php
 /**
- * ProductBulkLoader - allows loading products via CSV file.
- *
- * Images should be uploaded before import, where the Photo/Image field corresponds to the filename of a file that was uploaded.
+ * @Description: ProductBulkLoader - allows loading products via CSV file.
+ * Images should be uploaded before import,
+ * where the Photo/Image field corresponds to the filename of a file that was uploaded.
  *
  * @authors: Silverstripe, Jeremy, Tony, Nicolaas
+ *
+ * @package: ecommerce
+ * @sub-package: cms
+ *
  */
 
 class ProductBulkLoader extends CsvBulkLoader{
@@ -58,7 +62,7 @@ class ProductBulkLoader extends CsvBulkLoader{
 
 	public $duplicateChecks = array(
 		'InternalItemID' => 'InternalItemID',
-		//'Product ID' => 'InternalItemID', //TODO: can't check different fields until this patch is applied to CsvBulkLoader: http://open.silverstripe.org/ticket/6255
+		//'Product ID' => 'InternalItemID', // see issue 143
 		//'ProductID' => 'InternalItemID',
 		//'SKU' => 'InternalItemID',
 		'Title' => 'Title'
@@ -144,7 +148,8 @@ class ProductBulkLoader extends CsvBulkLoader{
 	}
 
 	function processRecord($record, $columnMap, &$results, $preview = false){
-		if(!$record || !isset($record['Title']) || $record['Title'] == ''){ //TODO: make required fields customisable
+		//see issue 144
+		if(!$record || !isset($record['Title']) || $record['Title'] == ''){
 			return null;
 		}
 		return parent::processRecord($record, $columnMap, $results, $preview);
