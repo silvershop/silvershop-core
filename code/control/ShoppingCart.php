@@ -1,56 +1,51 @@
 <?php
 
 /**
- * ShoppingCart is a session handler that stores
+ * @description: ShoppingCart is a session handler that stores
  * information about what products are in a user's
  * cart on the site.
- *
- * @package ecommerce
- * @Description
  ** Non URL based adding	add_buyable->find_or_make_order_item->add_(new)_item
  ** URL based adding	additem->getNew/ExistingOrderItem->add_(new)_item
+ *
  * @authors: Silverstripe, Jeremy, Nicolaas
+ *
+ * @package: ecommerce
+ * @sub-package: control
+ *
  **/
 
 class ShoppingCart extends Controller {
 
-	public static $url_segment = 'shoppingcart';
-		static function set_url_segment(string $s) {self::$url_segment = $s;}
-		static function get_url_segment() {return self::$url_segment;}
-
+	/**
+	 *stores the current order - initiated and retrieved with ShoppingCart::current_order()
+	 *
+	 *@var DataObject(Order)
+	 *
+	 **/
 	protected static $order = null; // for temp caching
 		static function set_order(Order $orderObject) {self::$order = $orderObject;}
 		static function get_order() {user_error("Use self::current_order() to get order.", E_USER_ERROR);}
 
+	/**
+	 * URLSegment used for shopping-cart actions
+	 *
+	 *@var String
+	 *
+	 **/
+	public static $url_segment = 'shoppingcart';
+		static function set_url_segment(string $s) {self::$url_segment = $s;}
+		static function get_url_segment() {return self::$url_segment;}
+
+	/**
+	 *$cart_session_name: tores both OrderID and Session ID (seperated by a comma)
+	 *we need both  Session ID and Order ID here because
+	 * (a) you may have several orders with one session ID -
+	 * (b) you may have an order that is not in the current session....
+	 * @var String
+	 **/
 	protected static $cartid_session_name = 'shoppingcartid';
 		public static function set_cartid_session_name(string $s) {self::$cartid_session_name = $s;}
 		public static function get_cartid_session_name() {return self::$cartid_session_name;}
-
-	protected static $response_class = "CartResponse";
-		public static function set_response_class(string $s) {self::$url_segment = $s;}
-		public static function get_response_class() {return self::$url_segment;}
-
-	protected static $ajaxify_cart = false;
-		public static function set_ajaxify_cart(boolean $b) {self::$ajaxify_cart = $b;}
-		public static function get_ajaxify_cart() {return self::$ajaxify_cart;}
-
-	static $allowed_actions = array (
-		'additem',
-		'incrementitem',
-		'decrementitem',
-		'removeitem',
-		'removeallitem',
-		'removemodifier',
-		'setcountry',
-		'setquantityitem',
-		'clear',
-		'numberofitemsincart',
-		'showcart',
-		'loadorder',
-		'copyorder',
-		'debug' => 'SHOP_ADMIN'
-	);
-
 
 	/**
 	 *	used for allowing certian url parameters to be applied to orderitems
@@ -67,125 +62,80 @@ class ShoppingCart extends Controller {
 		static function add_default_param_filters(array $a){self::$default_param_filters = array_merge(self::$default_param_filters,$a);}
 		static function get_default_param_filters(){return self::$default_param_filters;}
 
-	protected static $shopping_cart_message_index = 'ShoppingCartMessage';
-		static function set_shopping_cart_message_index(string $s) {self::$shopping_cart_message_index = $s;}
-		static function get_shopping_cart_message_index() {return self::$shopping_cart_message_index;}
+	/**
+	 * $response_class is the name of the class that provides the repsonse to "actions" called in the shopping cart.
+	 *
+	 *@var String
+	 **/
+	protected static $response_class = "CartResponse";
+		public static function set_response_class(string $s) {self::$url_segment = $s;}
+		public static function get_response_class() {return self::$url_segment;}
+
+	/**
+	 * $template_id_prefix is a prefix to all HTML IDs referred to in the shopping cart
+	 * e.g. CartCellID can become MyCartCellID by setting the template_id_prefix to "My"
+	 * The IDs are used for setting values in the HTML using the AJAX method with
+	 * the CartResponse providing the DATA (JSON).
+	 *
+	 *@var String
+	 **/
+	protected static $template_id_prefix = "";
+		public static function set_template_id_prefix(string $s) {self::$template_id_prefix = $s;}
+		public static function get_template_id_prefix() {return self::$template_id_prefix;}
+
+	/**
+	 * Add additional JS functionality to your shopping cart.  The default is to add AJAX "add" / "remove" from cart methods
+	 *
+	 *
+	 * @var Array
+	 **/
+	protected static $additional_javascript_requirements = array("ecommerce/javascript/EcomAjaxCart.js");
+		public static function set_additional_javascript_requirements(Array $a) {self::$additional_javascript_requirements = $a;}
+		public static function get_additional_javascript_requirements() {return self::$additional_javascript_requirements;}
+
+	public static $allowed_actions = array (
+		'additem',
+		'incrementitem',
+		'decrementitem',
+		'removeitem',
+		'removeallitem',
+		'removemodifier',
+		'addmodifier',
+		'setcountry',
+		'setquantityitem',
+		'clearcartandlogout',
+		'clear',
+		'numberofitemsincart',
+		'showcart',
+		'loadorder',
+		'copyorder',
+		'debug' => 'SHOP_ADMIN'
+	);
+
+
+
 
 
 
 /*******************************************************
 	* COUNTRY MANAGEMENT
- 	* NOTE THAT WE GET THE COUNTRY FROM MULTIPLE SOURCES!
 *******************************************************/
 
-	protected static $country_setting_index = 'ShoppingCartCountry';
-		static function set_country_setting_index(string $s) {self::$country_setting_index = $s;}
-		static function get_country_setting_index() {return self::$country_setting_index;}
-
 	/**
-	 *
+	 * Sets the country for the order...
 	 *@param $s CountryCode (e.g. NZ)
 	 **/
 	static function set_country(string $s) {
-		Session::set(self::get_country_setting_index(), $s);
-		$member = Member::currentUser();
-		//check if the member has a country
-		if($member) {
-			$member->Country = $s;
-			$member->write();
-		}
-	}
-
-
-	/**
-	 *@return String - Country Code - e.g. NZ
-	 **/
-	static function get_country() {
-		//@todo: incorporate allowed countries...
-		$countryCode = '';
-		//1. fixed country is first
-		$countryCode = EcommerceRole::get_fixed_country_code();
-		if(!$countryCode) {
-			//2. check shipping address
+		if(EcommerceCountry::country_code_allowed($countryCode)) {
+			Session::set(self::get_country_setting_index(), $s);
+			$member = Member::currentUser();
+			//check if the member has a country
 			if($o = self::current_order()) {
-				if($o->ShippingAddressID) {
-					if($shippingAddress = DataObject::get_by_id("ShippingAddress", $o->ShippingAddressID)) {
-						$countryCode = $shippingAddress->ShippingCountry;
-					}
-				}
-			}
-			//3. check member
-			if(!$countryCode) {
-				$member = Member::currentUser();
-				if($member && $member->Country) {
-					$countryCode = $member->Country;
-				}
-				//4. check session - NOTE: session saves to member + shipping address
-				if(!$countryCode) {
-					$countryCode = Session::get(self::get_country_setting_index());
-					//5. check GEOIP information
-					if(!$countryCode) {
-						$countryCode = Geoip::visitor_country();
-						//6. check default country....
-						if(!$countryCode) {
-							$countryCode = Geoip::$default_country_code;
-							//7. check default countries from ecommerce...
-							if(!$countryCode) {
-								$a = EcommerceRole::get_allowed_country_codes();
-								if(is_array($a) && count($a)) {
-									$countryCode = array_shift($a);
-								}
-							}
-						}
-					}
-				}
+				$o->SetCountry($s);
 			}
 		}
-		return $countryCode;
 	}
 
-	static function remove_country() {Session::clear(self::get_country_setting_index());}
-
-
-/*******************************************************
-	 * CLEARING OLD ORDERS
-*******************************************************/
-
-	protected static $clear_days = 90;
-		function set_clear_days(integer $i){self::$clear_days = $i;}
-		function get_clear_days(){return(integer)self::$clear_days;}
-
-	protected static $never_delete_if_linked_to_member = false;
-		function set_never_delete_if_linked_to_member(boolean $b){self::$never_delete_if_linked_to_member = $b;}
-		function get_never_delete_if_linked_to_member(){return(boolean)self::$never_delete_if_linked_to_member;}
-
-
-/*******************************************************
-	 * DELETE OLD SHOPPING CARTS
-*******************************************************/
-
-	/**
-	 *@return Integer - number of carts destroyed
-	 **/
-	public static function delete_old_carts(){
-		$count = 0;
-		$time = date('Y-m-d H:i:s', strtotime("-".self::$clear_days." days"));
-		$generalWhere = "\"StatusID\" = ".OrderStep::get_status_id_from_code("CREATED")." AND \"LastEdited\" < '$time'";
-		if(self::$never_delete_if_linked_to_member) {
-			$oldcarts = DataObject::get('Order',$generalWhere." AND \"Member\".\"ID\" IS NULL", $sort = "", $join = "LEFT JOIN \"Member\" ON \"Member\".\"ID\" = \"Order\".\"MemberID\" ");
-		}
-		else {
-			$oldcarts = DataObject::get('Order',$generalWhere);
-		}
-		if($oldcarts){
-			foreach($oldcarts as $cart){
-				$count++;
-				$cart->delete();
-				$cart->destroy();
-			}
-		}
-		return $count;
-	}
 
 
 /*******************************************************
@@ -217,6 +167,7 @@ class ShoppingCart extends Controller {
 	}
 
 	/**
+	 * NOTE: tried to copy part to the Order Class - but that was not much of a go-er.
 	 *@return DataObject(Order)
 	 **/
 	public static function copy_order($oldOrderID) {
@@ -226,6 +177,7 @@ class ShoppingCart extends Controller {
 		}
 		else {
 			$newOrder = new Order();
+			//for later use...
 			$fieldList = array_keys(DB::fieldList("Order"));
 			$newOrder->write();
 			self::load_order($newOrder->ID, $oldOrder->MemberID);
@@ -235,7 +187,9 @@ class ShoppingCart extends Controller {
 			if($items) {
 				foreach($items as $item) {
 					$buyable = $item->Buyable($current = true);
-					self::add_buyable($buyable, $item->Quantity);
+					if($buyable->canPurchase()) {
+						self::add_buyable($buyable, $item->Quantity);
+					}
 				}
 			}
 			$newOrder->write();
@@ -244,63 +198,64 @@ class ShoppingCart extends Controller {
 	}
 
 	/**
-	 *@return DataObject(Order)
+	 * This is THE pivotal method of the ShoppingCart.
+	 * Anytime you want to display (parts) of the order, you should use this method to retrieve the Order.
+	 * It will provide the Order that is currently stored in the Session and it will also add additional stuff to it
+	 * that is relevant to displaying it.
+	 *
+ 	 *@return DataObject(Order)
 	 **/
 	public static function current_order() {
 		if (!self::$order) {
 			//find order by id saved to session (allows logging out and retaining cart contents)
-			$cartID = Session::get(self::$cartid_session_name);
-			//TODO: make clear cart on logout optional
-			if ($cartID) {
-				$cartIDParts = Convert::raw2sql(explode(".", $cartID));
-				if(is_array($cartIDParts) && count($cartIDParts) == 2) {
-					self::$order = DataObject::get_one(
-						'Order',
-						"\"Order\".\"ID\" = '".intval($cartIDParts[0])."' AND \"Order\".\"SessionID\" = '".$cartIDParts[1]."'"
-					);
-				}
+			$cartID = Session::get(self::get_cartid_session_name().".OrderAndSessionID");
+			//we need both  Session ID and Order ID here because (a) you may have several orders with one session ID - (b) you may have an order that is not in the current session....
+			$cartIDParts = explode(",", $cartID);
+			if($cartIDParts && is_array($cartIDParts) && count($cartIDParts) == 2) {
+				self::$order = DataObject::get_one('Order',"\"Order\".\"ID\" = '".intval($cartIDParts[0])."' AND \"Order\".\"SessionID\" = '".intval($cartIDParts[1])."'");
 			}
 			if(!self::$order ){
-				//TODO: is this the right time to delete them???
 				self::$order = new Order();
 				self::initialise_new_order();
 			}
-			//TODO: re-introduce this because it allows seeing which members don't complete orders
-			// // Set the Member relation to this order
 			self::add_requirements();
 			self::$order->calculateModifiers();
 		}
 		//add shopping cart items
-		if($message = Session::get(self::get_shopping_cart_message_index().".Message")) {
-			self::$order->CartStatusMessage = $message;
-			Session::set(self::get_shopping_cart_message_index().".Message", null);
-			if($className = Session::get(self::get_shopping_cart_message_index().".Status")) {
-				self::$order->CartStatusClass = $className;
-				Session::set(self::get_shopping_cart_message_index().".Status", null);
-			}
-		}
+		self::add_template_ids();
 		return self::$order;
 	}
 
+	/**
+	 * removes the current order from session
+	 **/
 	public function clear_order_from_shopping_cart() {
-		Session::set(self::$cartid_session_name,null);
+		Session::set(self::get_cartid_session_name().".OrderAndSessionID",null);
 	}
 
+	/**
+	 * Stores an order into session and associates the current Member with it (if any).
+	 **/
 	protected static function initialise_new_order() {
 		self::$order->SessionID = session_id();
 		self::$order->MemberID = Member::currentUserID();
-		//NOTE: init function includes a write....
-		self::$order->init();
-		Session::set(self::$cartid_session_name,self::$order->ID.".".session_id());
-		self::delete_old_carts();
+		self::$order->write();
+		//we need both  Session ID and Order ID here because (a) you may have several orders with one session ID - (b) you may have an order that is not in the current session....
+		Session::set(self::get_cartid_session_name()."OrderAndSessionID",self::$order->ID.",".self::$order->SessionID);
+
+		//see issue: 140
+		CartCleanupTask::run_on_demand();
 	}
 
 
 	public static function add_requirements() {
 		Requirements::javascript(THIRDPARTY_DIR."/jquery/jquery.js");
-		Requirements::javascript('ecommerce/javascript/Cart.js');
-		if(self::get_ajaxify_cart()) {
-			Requirements::javascript("ecommerce/javascript/AjaxCart.js");
+		Requirements::javascript('ecommerce/javascript/EcomCart.js');
+		$array = self::get_additional_javascript_requirements();
+		if(count($array)) {
+			foreach($array as $fileName) {
+				Requirements::javascript($fileName);
+			}
 		}
 		Requirements::themedCSS("Cart");
 	}
@@ -309,6 +264,11 @@ class ShoppingCart extends Controller {
 /*******************************************************
 	 * CONTROLLER LINKS - all return STRINGS!
 *******************************************************/
+
+	function Link($action = null){
+		$action = ($action)? "/$action/" : "";
+		return self::$url_segment.$action;
+	}
 
 	static function add_item_link($buyableID, $className = "OrderItem", $parameters = array()) {
 		return self::$url_segment.'/additem/'.$buyableID."/".self::order_item_class_name($className).self::params_to_get_string($parameters);
@@ -334,7 +294,7 @@ class ShoppingCart extends Controller {
 		return self::$url_segment.'/setquantityitem/'.$buyableID."/".self::order_item_class_name($className).self::params_to_get_string($parameters);
 	}
 
-	static function add_modifier_link($modifierID, $className = "OrderModifier") {
+	static function add_modifier_link($modifierID = 0, $className = "OrderModifier") {
 		return self::$url_segment.'/addmodifier/'.$modifierID."/".self::order_modifier_class_name($className);
 	}
 
@@ -342,7 +302,11 @@ class ShoppingCart extends Controller {
 		return self::$url_segment.'/removemodifier/'.$modifierID."/".self::order_modifier_class_name($className);
 	}
 
-	static function get_country_link() {
+	static function clear_cart_and_logout_link() {
+		return self::$url_segment.'/clearcartandlogout/';
+	}
+
+	static function set_country_link() {
 		return self::$url_segment.'/setcountry/';
 	}
 
@@ -573,9 +537,13 @@ class ShoppingCart extends Controller {
 	}
 
 	/**
+	 * adds a "product" to the cart.
+	 *@param $buyable DataObject ( a buyable DataObject, such as a product or a product variation)
+	 *@param $quantity Integer
+	 *@param $parameters Array | Null
 	 *@return DataObject (OrderItem)
 	 **/
-	public static function add_buyable($buyable,$quantity = 1, $parameters = null){
+	public static function add_buyable($buyable, $quantity = 1, $parameters = null){
 		$orderItem = null;
 		if(!$buyable) {
 			user_error("No buyable was provided to add", E_USER_NOTICE);
@@ -641,7 +609,7 @@ class ShoppingCart extends Controller {
 
 
 	public static function remove_modifier($modifier) {
-		$modifier->Type = "Removed";
+		$modifier->HasBeenRemoved = 1;
 		$modifier->write();
 	}
 
@@ -709,35 +677,6 @@ class ShoppingCart extends Controller {
 		return $this->returnMessage("failure",_t("ShoppingCart.ITEMCOULDNOTBEFOUNDINCART", "Item could not found in cart."));
 	}
 
-	/**
-	 *@return String (message)
-	 **/
-	function setcountry($request) {
-		$countryCode = $request->param('ID');
-		if($countryCode && strlen($countryCode) < 4) {
-			//to do: check if country exists
-			ShoppingCart::set_country($countryCode);
-			return $this->returnMessage("success",_t("ShoppingCart.COUNTRYUPDATED", "Country updated."));
-		}
-		return $this->returnMessage("failure",_t("ShoppingCart.COUNTRYCOULDNOTBEUPDATED", "Country not be updated."));
-	}
-
-	/**
-	 * Clears the cart
-	 * It disconnects the current cart from the user session.
-	 */
-	function clear($request = null) {
-		self::current_order()->SessionID = null;
-		self::current_order()->write();
-		self::remove_all_items();
-		self::$order = null;
-
-		//redirect back or send ajax only if called via http request.
-		//This check allows this function to be called from elsewhere in the system.
-		if($request instanceof SS_HTTPRequest){
-			return $this->returnMessage("success",_t("ShoppingCart.CARTCLEARED", "Cart cleared."));
-		}
-	}
 
 	/**
 	 * Ajax method to set an item quantity
@@ -764,9 +703,32 @@ class ShoppingCart extends Controller {
 	 * add specified modifier, if allowed
 	 */
 	function addmodifier($request) {
-		user_error("We are no longer allowing modifiers to be added by the user", E_USER_ERROR);
-		return false;
+		$modifierId = intval($request->param('ID'));
+		if(!$modifierId) {
+			$className = $request->param('OtherID');
+			if(class_exists($className)) {
+				$modifier = new $className();
+				if(!($modifier instanceof OrderModifier)) {
+					$modifier = null;
+				}
+				else {
+					$modifier->init();
+				}
+			}
+		}
+		else {
+			$modifier = DataObject::get_by_id("OrderModifier", $modifierId);
+		}
+		if($modifier) {
+			if($modifier->ID == $modifierId) {
+				$modifier->HasBeenRemoved = 0;
+			}
+			$modifier->runUpdate();
+			return $this->returnMessage("success",_t("ShoppingCart.MODIFIERADDED", "Order Extra added."));
+		}
+		return $this->returnMessage("failure",_t("ShoppingCart.MODIFIERNOTADDED", "Could not add Order Extra."));
 	}
+
 	/**
 	 * Removes specified modifier, if allowed
 	 *
@@ -775,11 +737,55 @@ class ShoppingCart extends Controller {
 	function removemodifier($request) {
 		$modifierId = intval($request->param('ID'));
 		$modifier = DataObject::get_by_id("OrderModifier", $modifierId);
-		if ($modifier && $modifier->CanRemove()){
+		if ($modifier && $modifier->CanBeRemoved()){
 			ShoppingCart::remove_modifier($modifier);
 			return $this->returnMessage("success",_t("ShoppingCart.MODIFIERREMOVED", "Removed extra."));
 		}
 		return $this->returnMessage("failure",_t("ShoppingCart.MODIFIERNOTREMOVED", "Could not remove extra."));
+	}
+
+
+	/**
+	 *@return String (message)
+	 **/
+	function setcountry($request) {
+		$countryCode = $request->param('ID');
+		if($countryCode) {
+			//set_country will check if the country code is actually allowed....
+			ShoppingCart::set_country($countryCode);
+			return $this->returnMessage("success",_t("ShoppingCart.COUNTRYUPDATED", "Country updated."));
+		}
+		return $this->returnMessage("failure",_t("ShoppingCart.COUNTRYCOULDNOTBEUPDATED", "Country not be updated."));
+	}
+
+	/**
+	 * Clears the cart
+	 * It disconnects the current cart from the user session.
+	 */
+	function clear($request = null) {
+		self::current_order()->SessionID = null;
+		self::current_order()->write();
+		self::remove_all_items();
+		self::$order = null;
+
+		//redirect back or send ajax only if called via http request.
+		//This check allows this function to be called from elsewhere in the system.
+		if($request instanceof SS_HTTPRequest){
+			return $this->returnMessage("success",_t("ShoppingCart.CARTCLEARED", "Cart cleared."));
+		}
+	}
+
+	/**
+	 * Log out and clear cart
+	 *
+	 *@return String (message)
+	 **/
+	function clearcartandlogout($request = null) {
+		$this->clear($request);
+		if($member = Member::currentUser()) {
+			$member->logout();
+		}
+		return $this->returnMessage("failure",_t("ShoppingCart.CARTCLEAREDANDLOGGEDOUT", "Cart cleared and you have been logged out."));
 	}
 
 	/**
@@ -843,8 +849,8 @@ class ShoppingCart extends Controller {
 			return $obj->ReturnCartData($status, $message);
 		}
 		else {
-			Session::set(self::get_shopping_cart_message_index().".Message", $message);
-			Session::set(self::get_shopping_cart_message_index().".Status", $status);
+			Session::set(self::get_cartid_session_name().".Message", $message);
+			Session::set(self::cartid_session_name().".Status", $status);
 			Director::redirectBack();
 			return;
 		}
@@ -957,7 +963,7 @@ class ShoppingCart extends Controller {
 		$outputArray = array();
 		foreach($defaultParamFilters as $field => $value){
 			if(isset($params[$field])){
-				//TODO: convert to $dbfield->prepValueForDB() when Boolean problem figured out
+				//see issue 147
 				$defaultParamFilters[$field] = Convert::raw2sql($params[$field]);
 			}
 			$outputarray[$field] = "\"".$field."\" = ".$defaultParamFilters[$field];
@@ -992,6 +998,70 @@ class ShoppingCart extends Controller {
 		}
 		return $result;
 	}
+
+
+/*******************************************************
+	 * ORDER TEMPLATE STUFF
+*******************************************************/
+
+
+	/**
+	 * For use in the templates as ID
+	 *@return String
+	 **/
+	protected static function add_template_ids_and_message() {
+		if($message = Session::get(self::get_cartid_session_name().".Message")) {
+			self::$order->CartStatusMessage = $message;
+			if($className = Session::get(self::get_cartid_session_name().".Status")) {
+				self::$order->CartStatusClass = $className;
+			}
+		}
+		Session::set(self::get_cartid_session_name().".Status", null);
+		Session::set(self::get_cartid_session_name().".Message", null);
+		self::$order->TableMessageID = self::$template_id_prefix.'Table_Order_Message';
+		self::$order->TableSubTotalID = self::$template_id_prefix.'Table_Order_SubTotal';
+		self::$order->TableTotalID = self::$template_id_prefix.'Table_Order_Total';
+		self::$order->OrderForm_OrderForm_AmountID = self::$template_id_prefix.'OrderForm_OrderForm_Amount';
+		self::$order->CartSubTotalID = self::$template_id_prefix.'Cart_Order_SubTotal';
+		self::$order->CartTotalID = self::$template_id_prefix.'Cart_Order_Total';
+	}
+
+	/**
+	 *
+	 *@return Array (for use in AJAX for JSON)
+	 **/
+	static function update_for_ajax(array &$js, $message = '', $status = 'Success') {
+		$subTotal = self::$order->SubTotalAsCurrencyObject()->Nice();
+		$total = self::$order->TotalAsCurrencyObject()->Nice();
+		$js[] = array('id' => self::$order->TableSubTotalID, 'parameter' => 'innerHTML', 'value' => $subTotal);
+		$js[] = array('id' => self::$order->TableTotalID, 'parameter' => 'innerHTML', 'value' => $total);
+		$js[] = array('id' => self::$order->OrderForm_OrderForm_AmountID, 'parameter' => 'innerHTML', 'value' => $total);
+		$js[] = array('id' => self::$order->CartSubTotalID, 'parameter' => 'innerHTML', 'value' => $subTotal);
+		$js[] = array('id' => self::$order->CartTotalID, 'parameter' => 'innerHTML', 'value' => $total);
+		if($message) {
+			$js[] = array(
+				"id" => self::$order->TableMessageID,
+				"parameter" => "innerHTML",
+				"value" => $message,
+				"isOrderMessage" => true,
+				"messageClass" => $status
+			);
+			$js[] = array(
+				"id" =>  self::$order->TableMessageID,
+				"parameter" => "hide",
+				"value" => 0
+			);
+		}
+		else {
+			$js[] = array(
+				"id" => self::$order->TableMessageID,
+				"parameter" => "hide",
+				"value" => 1
+			);
+		}
+
+	}
+
 
 
 /*******************************************************
