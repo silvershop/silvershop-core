@@ -1,9 +1,13 @@
 <?php
 
 /**
+ * @description: CMS management for the store setup (e.g Order Steps, Countries, etc...)
  *
- * @authors: Silverstripe, Jeremy, Romain, Nicolaas
- * @description: manages everything you have sold and all related data (e.g. logs, payments)
+ * @authors: Jeremy, Romain, Nicolaas
+ *
+ * @package: ecommerce
+ * @sub-package: cms
+ *
  **/
 
 class StoreAdmin extends ModelAdmin{
