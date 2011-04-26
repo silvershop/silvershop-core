@@ -6,8 +6,11 @@
  * ASSUMPTION: The total order weight can be at maximum the last item
  * in the $shippingCosts array.
  *
- * @package ecommerce
  * @authors: Silverstripe, Jeremy, Nicolaas
+ *
+ * @package: ecommerce
+ * @sub-package: modifiers
+ *
  **/
 
 class WeightShippingModifier extends OrderModifier {
@@ -99,14 +102,14 @@ class WeightShippingModifier extends OrderModifier {
 	}
 
 	protected function LiveCountry() {
-		return ShoppingCart::get_country();
+		return EcommerceCountry::get_country();
 	}
 
 	/**
 	 * Calculates the extra charges from the order based on the weight attribute of a product
  	 * ASSUMPTION -> weight in grams
 	 */
-	protected function LiveAmount() {
+	protected function LiveCalculationValue() {
 		$order = $this->Order();
 		$shippingCountry = $this->LiveCountry();
 		// if there is a shipping country then check whether it is national or international
@@ -122,9 +125,6 @@ class WeightShippingModifier extends OrderModifier {
 	}
 
 // ######################################## *** Type Functions (IsChargeable, IsDeductable, IsNoChange, IsRemoved)
-	protected function IsChargeable() {
-		return true;
-	}
 // ######################################## *** standard database related functions (e.g. onBeforeWrite, onAfterWrite, etc...)
 // ######################################## *** AJAX related functions
 // ######################################## *** debug functions
