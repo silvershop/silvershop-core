@@ -4,8 +4,12 @@
  *
  * @see OrderModifier
  *
- * @package ecommerce
+ *
  * @authors: Silverstripe, Jeremy, Nicolaas
+ *
+ * @package: ecommerce
+ * @sub-package: forms
+ *
  **/
 class ShopAccountForm extends Form {
 
@@ -14,9 +18,9 @@ class ShopAccountForm extends Form {
 		$requiredFields = null;
 		if($member && $member->exists()) {
 			$fields = $member->getEcommerceFields();
-			//TODO:is this necessary?
 			$fields->push(new HeaderField('Login Details',_t('Account.LOGINDETAILS','Login Details'), 3));
-			$fields->push(new LiteralField('LogoutNote', "<p class=\"message warning\">" . _t("Account.LOGGEDIN","You are currently logged in as ") . $member->FirstName . ' ' . $member->Surname . ". "._t('Account.LOGOUT','<a href="Security/logout">Click here</a> to log out.')."</p>"));
+			$logoutLink = ShoppingCart::clear_cart_and_logout_link();
+			$fields->push(new LiteralField('LogoutNote', "<p class=\"message warning\">" . _t("Account.LOGGEDIN","You are currently logged in as ") . $member->FirstName . ' ' . $member->Surname . '. <a href="'.$logoutLink.'">'._t('Account.LOGOUT','Log out and clear your cart.')."</a></p>"));
 			// PASSWORD KEPT CHANGING - SO I REMOVED IT FOR NOW - Nicolaas
 			$passwordField = new ConfirmedPasswordField('Password', _t('Account.PASSWORD','Password'), "", null, true);
 			$fields->push($passwordField);
@@ -74,7 +78,6 @@ class ShopAccountForm extends Form {
 		$form->saveInto($member);
 		$member->write();
 
-		//TO DO: fix password....
 		if($link) {
 			Director::redirect($link);
 		}
@@ -92,27 +95,20 @@ class ShopAccountForm_Validator extends RequiredFields{
 
 	/**
 	 * Ensures member unique id stays unique and other basic stuff...
-	 * TODO: check if this code is not part of Member itself, as it applies to any member form.
-	 *@param $data = array Form Field Data
-	 *@return Boolean
-	 */
+	 * @param $data = array Form Field Data
+	 * @return Boolean
+	 **/
 	function php($data){
 		$valid = parent::php($data);
 		$field = Member::get_unique_identifier_field();
-		$currentMember = Member::currentUser();
-		if($currentMember) {
-			$memberID = $currentMember->ID;
-		}
-		else {
-			$memberID = 0;
-		}
-		if(isset($data[$field])){
-			$uid = $data[Member::get_unique_identifier_field()];
+		$memberID = Member::currentUserID();
+		if(isset($data[$field]) && $memberID && $data[$field]){
+			$email = Convert::raw2sql($data[$field]);
 			//can't be taken
-			if(DataObject::get_one('Member',"$field = '$uid' AND ID != ".$memberID)){
+			if(DataObject::get_one('Member',"\"$field\" = '$email' AND ID <> ".$memberID)){
 				$this->validationError(
 					$field,
-					"\"$uid\" "._t('Account.ALREADYTAKEN', ' is already taken by another member. Please log in or use another'),
+					"\"$email\" "._t('Account.ALREADYTAKEN', " is already taken by another member. Please log in or use another \"$email\""),
 					"required"
 				);
 				$valid = false;
@@ -128,7 +124,7 @@ class ShopAccountForm_Validator extends RequiredFields{
 				);
 				$valid = false;
 			}
-			if(!$currentMember && !$data["Password"]["_Password"]) {
+			if(!$memberID && !$data["Password"]["_Password"]) {
 				$this->validationError(
 					"Password",
 					_t('Account.SELECTPASSWORD', 'Please select a password.'),
@@ -138,7 +134,7 @@ class ShopAccountForm_Validator extends RequiredFields{
 			}
 		}
 		if(!$valid) {
-			$this->form->sessionMessage(_t('Account.ERRORINFORM', 'We could not save your submission, please check your errors below.'), "bad");
+			$this->form->sessionMessage(_t('Account.ERRORINFORM', 'We could not save your details, please check your errors below.'), "bad");
 		}
 		return $valid;
 	}
