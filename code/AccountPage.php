@@ -3,8 +3,12 @@
  * @description: Account page shows order history and a form to allow the member to edit his/her details.
  *
  *
- * @package ecommerce
+ *
  * @authors: Silverstripe, Jeremy, Nicolaas
+ *
+ * @package: ecommerce
+ * @sub-package: pages
+ *
  **/
 
 class AccountPage extends Page {
@@ -115,7 +119,6 @@ class AccountPage extends Page {
 	protected function otherOrderSQL ($statusFilter) {
 		$memberID = Member::currentUserID();
 		if($memberID) {
-			//to do ?? check for canView????
 			$orders = DataObject::get(
 				$className = 'Order',
 				$where = "\"Order\".\"MemberID\" = '$memberID' AND $statusFilter AND \"CancelledByID\" = 0",
@@ -127,7 +130,7 @@ class AccountPage extends Page {
 					if(!$order->Items() || !$order->canView()) {
 						$orders->remove($order);
 					}
-					elseif(!$order->canEdit())  {
+					elseif($order->IsPastCart())  {
 						$order->tryToFinaliseOrder();
 					}
 				}
@@ -138,23 +141,6 @@ class AccountPage extends Page {
 	}
 
 
-	/**
-	 * Automatically create an AccountPage if one is not found
-	 * on the site at the time the database is built (dev/build).
-	 */
-	function requireDefaultRecords() {
-		parent::requireDefaultRecords();
-		if(!DataObject::get_one('AccountPage')) {
-			$page = new AccountPage();
-			$page->Title = 'Account';
-			$page->Content = '<p>This is the account page. It is used for shop users to login and change their member details if they have an account.</p>';
-			$page->URLSegment = 'account';
-			$page->ShowInMenus = 0;
-			$page->writeToStage('Stage');
-			$page->publish('Stage', 'Live');
-			DB::alteration_message('Account page \'Account\' created', 'created');
-		}
-	}
 }
 
 class AccountPage_Controller extends Page_Controller {
@@ -306,7 +292,7 @@ class AccountPage_Controller extends Page_Controller {
 	function PaymentForm(){
 		if($this->CurrentOrder()){
 			if($this->currentOrder->canPay()) {
-				Requirements::javascript("ecommerce/javascript/EcommercePayment.js");
+				Requirements::javascript("ecommerce/javascript/EcomPayment.js");
 				return $form = new OrderForm_Payment($this, 'PaymentForm', $this->currentOrder);
 			}
 		}
