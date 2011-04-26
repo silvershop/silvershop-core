@@ -1,9 +1,13 @@
 <?php
 /**
-* @author Nicolaas [at] sunnysideup.co.nz
-* @package: ecommerce
 * @description: this is an extra page which allows you to manage your shop
-*/
+ *
+ * @authors: Silverstripe, Jeremy, Nicolaas
+ *
+ * @package: ecommerce
+ * @sub-package: cms
+ *
+ **/
 
 
 class ShopManagerPage extends Page {
@@ -47,7 +51,7 @@ class ShopManagerPage_Controller extends Page_Controller {
 		parent::init();
 		Requirements::javascript(THIRDPARTY_DIR . '/jquery/jquery.js');
 		Requirements::themedCSS("ShopManagerPage");
-		Requirements::javascript("ecommerce/javascript/ShopManagerPage.js");
+		Requirements::javascript("ecommerce/javascript/EcomShopManagerPage.js");
 	}
 
 	/**
@@ -147,7 +151,7 @@ class ShopManagerPage_Controller extends Page_Controller {
 		if($orderID) {
 			$order = Order::get_by_id_if_can_view($orderID);
 			if($order) {
-				$from = Order::get_receipt_email();
+				$from = Order_Email::get_from_email();
 				$to = $order->Member()->Email;
 				$subject = "Your order status";
 				$logs = DataObject::get('OrderStatusLog', "\"OrderID\" = {$this->ID}", "\"Created\" DESC", null, 1);
