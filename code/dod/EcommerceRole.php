@@ -1,25 +1,31 @@
 <?php
 /**
  * @description EcommerceRole provides customisations to the {@link Member}
- ** class specifically for this ecommerce module.
+ * class specifically for this ecommerce module.
+ *
+ *
+ * @authors: Silverstripe, Jeremy, Nicolaas
  *
  * @package ecommerce
- * @authors: Silverstripe, Jeremy, Nicolaas
+ * @sub-package member
+ *
  **/
 
 class EcommerceRole extends DataObjectDecorator {
 
+
+	protected static $automatic_membership = true;
+		static function set_automatic_membership($b){self::$automatic_membership = $b;}
+		static function get_automatic_membership(){return self::$automatic_membership;}
+
+
 	function extraStatics() {
 		return array(
 			'db' => array(
-				'Address' => 'Varchar(255)',
-				'AddressLine2' => 'Varchar(255)',
-				'City' => 'Varchar(100)',
-				'PostalCode' => 'Varchar(30)',
-				'State' => 'Varchar(100)',
-				'Country' => 'Varchar(4)',
-				'Phone' => 'Varchar(100)',
 				'Notes' => 'HTMLText'
+			),
+			'has_many' => array(
+				"Orders" => "Order"
 			),
 			'casting' => array(
 				"FullCountryName" => "Varchar"
@@ -27,52 +33,6 @@ class EcommerceRole extends DataObjectDecorator {
 		);
 	}
 
-
-	/**
-	*@param $code = string, Country Code  (e.g NZ)
-	**/
-	protected static $fixed_country_code = '';
-		static function set_fixed_country_code($s) {self::$fixed_country_code = $s;}
-		static function get_fixed_country_code() {return self::$fixed_country_code;}
-
-	/**
-	*@param $a : array("NZ" => "NZ", "UK => "UK", etc...)
-	*@param $s : string - country code, e.g. NZ
-	**/
-	protected static $allowed_country_codes = array();
-		static function set_allowed_country_codes(array $a) {self::$allowed_country_codes = $a;}
-		static function get_allowed_country_codes() {return self::$allowed_country_codes;}
-		static function add_allowed_country_code(string $s) {self::$allowed_country_codes[$s] = $s;}
-		static function remove_allowed_country_code(string $s) {unset(self::$allowed_country_codes[$s]);}
-
-
-	/**
-	*these variables and methods allow to to "dynamically limit the countries available, based on, for example: ordermodifiers, item selection, etc....
-	* for example, if a person chooses delivery within Australasia (with modifier) - then you can limit the countries available to "Australasian" countries
-	* @param $a = array should be country codes.e.g array("NZ", "NP", "AU");
-	**/
-	protected static $for_current_order_only_show_countries = array();
-		static function set_for_current_order_only_show_countries(array $a) {
-			if(count(self::$for_current_order_only_show_countries)) {
-				self::$for_current_order_only_show_countries = array_intersect($a, self::$for_current_order_only_show_countries);
-			}
-			else {
-				self::$for_current_order_only_show_countries = $a;
-			}
-		}
-		static function get_for_current_order_only_show_countries() {return self::$for_current_order_only_show_countries;}
-
-	protected static $for_current_order_do_not_show_countries = array();
-		static function set_for_current_order_do_not_show_countries(array $a) {
-			self::$for_current_order_do_not_show_countries = array_merge($a, self::$for_current_order_do_not_show_countries);
-		}
-		static function get_for_current_order_do_not_show_countries() {return self::$for_current_order_do_not_show_countries;}
-
-
-	//e.g. http://www.nzpost.co.nz/Cultures/en-NZ/OnlineTools/PostCodeFinder
-	static function get_postal_code_url() {$sc = DataObject::get_one('SiteConfig'); if($sc) {return $sc->PostalCodeURL;}  }
-
-	static function get_postal_code_label() {$sc = DataObject::get_one('SiteConfig'); if($sc) {return $sc->PostalCodeLabel;}  }
 
 	protected static $customer_group_code = 'shop_customers';
 		static function set_customer_group_code(string $s) {self::$customer_group_code = $s;}
@@ -110,76 +70,6 @@ class EcommerceRole extends DataObjectDecorator {
 	protected static $admin_permission_code = "SHOP_ADMIN";
 		static function set_admin_permission_code(string $s) {self::$admin_permission_code = $s;}
 		static function get_admin_permission_code() {return self::$admin_permission_code;}
-
-	static function findCountryTitle($code) {
-		user_error("depreciated, please use ShoppingCart::get_country", E_USER_NOTICE);
-		return self::find_country_title($code);
-	}
-
-	/**
-	 *checks if a country code is allowed
-	 *@param String $code - e.g. NZ
-	 *@return Boolean
-	 **/
-	public static function country_code_allowed($code) {
-		if($code) {
-			$c = self::get_fixed_country_code();
-			if($c) {
-				if($c == $code) {
-					return true;
-				}
-			}
-			else {
-				$a = self::get_allowed_country_codes();
-				if(is_array($a) && count($a)) {
-					if(in_array($code, $a, false) || array_key_exists($code, $a)) {
-						return true;
-					}
-				}
-				else {
-					$a = Geoip::getCountryDropDown();
-					if(isset($a[$code])) {
-						return true;
-					}
-				}
-			}
-		}
-		return false;
-	}
-
-
-	/**
-	 *@return String (country name)
-	 **/
-	public static function find_country_title($code) {
-		$countries = Geoip::getCountryDropDown();
-		// check if code was provided, and is found in the country array
-		if($code && isset($countries[$code])) {
-			return $countries[$code];
-		}
-		else {
-			return false;
-		}
-	}
-
-	/**
-	 * Find the member's country.
-	 *
-	 * If there is no member logged in, try to resolve
-	 * their IP address to a country.
-	 *
-	 * @return string Found country of member
-	 */
-	static function findCountry() {
-		user_error("depreciated, please use ShoppingCart::get_country", E_USER_NOTICE);
-		return ShoppingCart::get_country();
-	}
-
-	//this function will be depreciated ....
-	public static function find_country() {
-		user_error("depreciated, please use ShoppingCart::get_country", E_USER_NOTICE);
-		return ShoppingCart::get_country();
-	}
 
 	protected static function add_members_to_customer_group() {
 		$gp = DataObject::get_one("Group", "\"Title\" = '".self::get_customer_group_name()."'");
@@ -230,113 +120,67 @@ class EcommerceRole extends DataObjectDecorator {
 	}
 
 	/**
-	 *@return DataObject (member)
+	 * OPTIONS:
+	 * ** NO PROBLEM:
+	 * 1. user not logged in: create a new member
+	 * 2. user logged in: some information might be different (and is updated)
+	 * ** PROBLEM
+	 * 3. user not logged in, but (s)he enters an email of an existing user... - as part of our goals under Ecommerce, we want a user to be able to do this...
+	 * 4. user logged in and changes email to another email belonging to another registered user
+	 *
+	 * NOTE: ecommerce_create_or_merge return false if logged  in user is changing their email address to that of another user
+	 * it return true if the user is not logged in, but the email address is listed as a user, and it
+	 * return the member object if (a) the user is logged in and email address matches or (b) we can create a new user with the email address supplied.
+	 * The rational behind the return values is that FALSE: real problem: TRUE: not really a problem but we want to make sure not to return the member,
+	 * as no changes should be made to the member (since the user is not logged in).
+	 * Is it a problem that a not-logged-in user can place an order under the "name" of a logged-in user?
+	 * Not really, as doing so does not give them access to the account.  However, it might be worthwhile to note that they have done so without logging in .
+	 *
+	 * NOTE: Because we are using a ConfirmedPasswordField, the password will be an array of two fields
+	 *
+	 * @return DataObject|FALSE |TRUE = see explanation above
+	 *
 	 **/
-	public static function ecommerce_create_or_merge($data) {
-		// Because we are using a ConfirmedPasswordField, the password will
-		// be an array of two fields
-		if(isset($data['Password']) && is_array($data['Password'])) {
-			$data['Password'] = $data['Password']['_Password'];
-		}
-		// We need to ensure that the unique field is never overwritten
+	public static function ecommerce_create_or_merge($data, $testOnly = false) {
+		//
+		// SEE issue 142
 		$uniqueField = Member::get_unique_identifier_field();
+
+		//The check below covers both Scenario 3 and 4....
 		if(isset($data[$uniqueField])) {
-			$SQL_unique = Convert::raw2xml($data[$uniqueField]);
-			// TODO review - should $uniqueField be quoted by Member::get_unique_identifier_field() already? (this would be sapphire bug)
-			$existingUniqueMember = DataObject::get_one('Member', "\"$uniqueField\" = '{$SQL_unique}'");
+			$uniqueFieldData = Convert::raw2xml($data[$uniqueField]);
+			$existingUniqueMember = DataObject::get_one('Member', "\"$uniqueField\" = '{$uniqueFieldData}'");
 			if($existingUniqueMember && $existingUniqueMember->exists()) {
 				if(Member::currentUserID() != $existingUniqueMember->ID) {
-					return false;
+					if(Member::currentUserID) {
+						return false;
+					}
+					else {
+						//NOTE: we do not return the existing member, because the user is not logged in and therefore the user can not be changed.
+						//in some cases this may result in out-of-date data.
+						return true;
+					}
 				}
 			}
 		}
 		if(!$member = Member::currentUser()) {
 			$member = new Member();
 		}
-		$member->update($data);
 		return $member;
 	}
 
-	/**
-	 *@return String (Country Name - e.g. New Zealand)
-	 **/
-	public function FullCountryName() {
-		return self::find_country_title($this->owner->Country);
-	}
-
-	function updateCMSFields(&$fields) {
-		$fields->replaceField('Country', new DropdownField('Country', 'Country', Geoip::getCountryDropDown()));
-	}
 
 
 	/**
-	 *@return Array (Code, Title)
-	 **/
-	public static function list_of_allowed_countries_for_dropdown() {
-		$keys = array();
-		$allowedCountryCode = self::get_fixed_country_code();
-		$allowedCountryCodeArray = self::get_allowed_country_codes();
-		if($allowedCountryCode) {
-			$keys[$allowedCountryCode] = $allowedCountryCode;
-		}
-		elseif($allowedCountryCodeArray && count($allowedCountryCodeArray)) {
-			$keys = array_merge($keys, $allowedCountryCodeArray);
-		}
-		if(isset($keys) && count($keys)) {
-			$newArray = array();
-			foreach($keys as $key) {
-				$codeTitleArray[$key] = self::find_country_title($key);
-			}
-		}
-		else {
-			$codeTitleArray = Geoip::getCountryDropDown();
-		}
-		$onlyShow = self::get_for_current_order_only_show_countries();
-		$doNotShow = self::get_for_current_order_do_not_show_countries();
-		if(is_array($onlyShow) && count($onlyShow)) {
-			foreach($codeTitleArray as $key => $value) {
-				if(!in_array($key, $onlyShow)) {
-					unset($codeTitleArray[$key]);
-				}
-			}
-		}
-		if(is_array($doNotShow) && count($doNotShow)) {
-			foreach($doNotShow as $countryCode) {
-				unset($codeTitleArray[$countryCode]);
-			}
-		}
-		return $codeTitleArray;
-	}
-
-
-	/**
-	 *@return Fieldset
-	 **/
-	 function getEcommerceFields() {
-		//postal code
-		$postalCodeField = new TextField('PostalCode', _t('EcommerceRole.POSTALCODE','Postal Code'));
-		if(self::get_postal_code_url()){
-			$postalCodeField->setRightTitle('<a href="'.self::get_postal_code_url().'" id="PostalCodeLink">'.self::get_postal_code_label().'</a>');
-		}
-		// country
-		$countriesForDropdown = EcommerceRole::list_of_allowed_countries_for_dropdown();
-		$countryField = new DropdownField('Country',  _t('Order.COUNTRY','Country'), $countriesForDropdown, ShoppingCart::get_country());
-		$countryField->addExtraClass('ajaxCountryField');
-		//link used to update the country via Ajax
-		$setCountryLinkID = $countryField->id() . '_SetCountryLink';
-		$countryAJAXLink = new HiddenField($setCountryLinkID, '', ShoppingCart::get_country_link());
+	 *
+	 * @return FieldSet
+	 */
+	function getEcommerceFields() {
 		$fields = new FieldSet(
 			new HeaderField(_t('EcommerceRole.PERSONALINFORMATION','Personal Information'), 3),
 			new TextField('FirstName', _t('EcommerceRole.FIRSTNAME','First Name')),
 			new TextField('Surname', _t('EcommerceRole.SURNAME','Surname')),
-			new TextField('Phone', _t('EcommerceRole.PHONE','Phone')),
-			new EmailField('Email', _t('EcommerceRole.EMAIL','Email')),
-			new TextField('Address', _t('EcommerceRole.ADDRESS','Address')),
-			new TextField('AddressLine2', _t('EcommerceRole.ADDRESSLINE2','&nbsp;')),
-			new TextField('City', _t('EcommerceRole.CITY','City')),
-			$postalCodeField,
-			$countryField,
-			$countryAJAXLink
+			new EmailField('Email', _t('EcommerceRole.EMAIL','Email'))
 		);
 		$this->owner->extend('augmentEcommerceFields', $fields);
 		return $fields;
@@ -352,12 +196,29 @@ class EcommerceRole extends DataObjectDecorator {
 		$fields = array(
 			'FirstName',
 			'Surname',
-			'Email',
-			'Address',
-			'City',
-			'Country'
+			'Email'
 		);
 		$this->owner->extend('augmentEcommerceRequiredFields', $fields);
+		return $fields;
+	}
+
+	/**
+	 * get CMS fields describing the member in the CMS when viewing the order.
+	 *
+	 * @return Field / ComponentSet
+	 **/
+
+	public function getEcommerceFieldsForCMS() {
+		$fields = new CompositeField();
+		$memberTitle = new TextField("MemberTitle", "Name", $this->getTitle());
+		$fields->push($memberTitle->performReadonlyTransformation());
+		$memberEmail = new TextField("MemberEmail","Email", $this->Email);
+		$fields->push($memberEmail->performReadonlyTransformation());
+		$lastLogin = new TextField("MemberLastLogin","Last login",$this->dbObject('LastVisited')->Nice());
+		$fields->push($lastLogin->performReadonlyTransformation());
+		if($group = EcommerceRole::get_customer_group()) {
+			$fields->push(new LiteralField("EditMembers", '<p><a href="/admin/security/show/'.$group->ID.'/">view (and edit) all customers</a></p>'));
+		}
 		return $fields;
 	}
 
@@ -416,7 +277,7 @@ class EcommerceRole extends DataObjectDecorator {
 
 	function populateDefaults() {
 		parent::populateDefaults();
-		$this->Country = ShoppingCart::get_country();
+		$this->Country = EcommerceCountry::get_country();
 	}
 
 }
