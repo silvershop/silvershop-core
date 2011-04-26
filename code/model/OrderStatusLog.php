@@ -2,9 +2,15 @@
 /**
  * @description:  Data class that records events for an order like "Payment Checked", "Cheque Cleaered", "Goods dispatched", etc...
  *
- * @package ecommerce
+ *
  * @authors: Silverstripe, Jeremy, Nicolaas
+ *
+ * @package: ecommerce
+ * @sub-package: cms
+ *
  **/
+
+
 class OrderStatusLog extends DataObject {
 
 	public static $db = array(
@@ -336,10 +342,7 @@ class OrderStatusLog_DispatchPhysicalOrder extends OrderStatusLog_Dispatch {
 	*@To do: move formatting to template
 	**/
 	function CustomerNote() {
-		return $this->Note
-			."\r\n\r\n"._t("OrderStatusLog.DISPATCHEDBY", "Dispatched By").": ".$this->DispatchedBy.". "
-			."\r\n\r\n"._t("OrderStatusLog.DISPATCHEDON", "Dispatched On").": ".$this->DispatchedOn.". "
-			."\r\n\r\n"._t("OrderStatusLog.DISPATCHTICKET", "Dispatch Ticket").": ".$this->DispatchTicket.". ";
+		return $this->renderWith("LogDispatchPhysicalOrderCustomerNote");
 	}
 }
 
