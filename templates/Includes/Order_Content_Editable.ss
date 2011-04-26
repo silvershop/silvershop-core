@@ -62,12 +62,11 @@
 				<% else %>
 					$TableTitle
 				<% end_if %>
-				$Form
 			</td>
 			<td>&nbsp;</td>
 			<td class="right total" id="$TableTotalID">$TableValue.Nice</td>
 			<td class="right remove">
-				<% if CanRemove %>
+				<% if CanBeRemoved %>
 					<strong>
 						<a class="ajaxQuantityLink" href="$RemoveLink" title="<% sprintf(_t("Order.REMOVE","Remove &quot;%s&quot; from your order"),$TableTitle) %>">
 							<img src="ecommerce/images/remove.gif" alt="x"/>

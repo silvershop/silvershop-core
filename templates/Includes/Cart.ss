@@ -18,41 +18,19 @@
 					$QuantityField
 				</td>
 				<td class="right total" id="$TableTotalID">$Total.Nice</td>
-			<tr class="gap summary hideOnZeroItems">
-				<td colspan="2" scope="row"><% _t("Cart.SUBTOTAL","Sub-total") %></td>
-				<td class="right" id="$TableSubTotalID">$SubTotal.Nice</td>
 			</tr>
 		<% end_if %>
 	<% end_control %>
-
-	<% if Modifiers %>
-		<% control Modifiers %>
-			<% if ShowInTable %>
-			<tr id="$TableID" class="$Classes hideOnZeroItems">
-				<td <% if Link %><% else %> id="$TableTitleID"<% end_if %> colspan="2" scope="row">
-					<% if Link %>
-						<a id="$TableTitleID" href="$Link" title="<% sprintf(_t("Order_Content_Editable.ss.READMORE","Click here to read more on &quot;%s&quot;"),$TableTitle) %>">$TableTitle</a>
-					<% else %>
-						$TableTitle
-					<% end_if %>
-					$Form
-				</td>
-				<td class="right total" id="$TableTotalID">$TableValue.Nice</td>
-			</tr>
-			<% end_if %>
-		<% end_control %>
-		<% end_if %>
-
-			<tr class="gap total summary hideOnZeroItems">
-				<td colspan="2" scope="row"><% _t("TOTAL","Total") %></td>
-				<td class="right total" id="$TableTotalID">$Total.Nice $Currency</td>
+			<tr class="gap summary hideOnZeroItems">
+				<td colspan="2" scope="row"><% _t("Cart.SUBTOTAL","Sub-total") %></td>
+				<td class="right" id="$TableSubTotalID">$SubTotal.Nice</td>
 			</tr>
 			<tr class="showOnZeroItems"<% if Items %> style="display: none"<% end_if %>>
 				<td colspan="3" scope="row" class="center"><% _t("Cart.NOITEMS","There are no items in your cart") %></td>
 			</tr>
 		</tbody>
 	</table>
-
+	<p class="goToCart"><a href="$checkoutLink"><% _t("Product.GOTOCHECKOUTLINK","&raquo; Go to the checkout") %></a></p>
 	<% else %>
 		<p class="noItems"><% _t("Cart.NOITEMS","There are no items in your cart") %>.</p>
 	<% end_if %>
