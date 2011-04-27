@@ -2,7 +2,7 @@
 /**
  * Test {@link ShoppingCart}
  */
-class ShoppingCartTest extends FunctionalTest {
+class ShoppingCartTestTwo extends FunctionalTest {
 
 	static $fixture_file = 'ecommerce/tests/ecommerce.yml';
 	

@@ -4,7 +4,7 @@
  * 
  * @package ecommerce
  */
-class ProductTest extends FunctionalTest {
+class ProductTestTwo extends FunctionalTest {
 	
 	static $fixture_file = 'ecommerce/tests/ecommerce.yml';
 	
