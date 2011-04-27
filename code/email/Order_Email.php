@@ -11,7 +11,7 @@
  *
  **/
 
-class Order_Email::get_subject extends Email {
+class Order_Email extends Email {
 
 	static function get_from_email() {$sc = DataObject::get_one("SiteConfig"); if($sc && $sc->ReceiptEmail) {return $sc->ReceiptEmail;} else {return Email::getAdminEmail();} }
 
