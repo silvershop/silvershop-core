@@ -172,7 +172,7 @@ class ProductGroup extends Page {
 				$productsPagePage = $parent->ProductsPerPage();
 			}
 			else {
-				$sc = DataObject::get_one("SiteConfig");
+				$siteConfig = DataObject::get_one("SiteConfig");
 				if($siteConfig) {
 					$productsPagePage = $siteConfig->NumberOfProductsPerPage;
 				}
