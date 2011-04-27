@@ -2,7 +2,7 @@
 
 /**
  * ShoppingCart is a session handler that stores information about what products are in a user's cart on the site.
- * 
+ *
  * Editing the cart:
  * - Non URL based adding	add_buyable->find_or_make_order_item->add_(new)_item
  * - URL based adding	additem->getNew/ExistingOrderItem->add_(new)_item
@@ -1005,25 +1005,24 @@ class ShoppingCart extends Controller {
 
 	/**
 	 * For use in the templates as ID
+	 * @ToDo: move variables into array
 	 *@return String
 	 **/
 	protected static function add_template_ids_and_message() {
 		if($message = Session::get(self::get_cartid_session_name().".Message")) {
 			self::$order->CartStatusMessage = $message;
+			Session::set(self::get_cartid_session_name().".Message", "");
 			if($className = Session::get(self::get_cartid_session_name().".Status")) {
 				self::$order->CartStatusClass = $className;
+				Session::set(self::get_cartid_session_name().".Status", "");
 			}
 		}
-
-		Session::clear(self::get_cartid_session_name());
-		
 		self::$order->TableMessageID = self::$template_id_prefix.'Table_Order_Message';
 		self::$order->TableSubTotalID = self::$template_id_prefix.'Table_Order_SubTotal';
 		self::$order->TableTotalID = self::$template_id_prefix.'Table_Order_Total';
-		self::$order->OrderForm_OrderForm_AmountID = self::$template_id_prefix.'OrderForm_OrderForm_Amount';
 		self::$order->CartSubTotalID = self::$template_id_prefix.'Cart_Order_SubTotal';
 		self::$order->CartTotalID = self::$template_id_prefix.'Cart_Order_Total';
-		
+		self::$order->OrderForm_OrderForm_AmountID = self::$template_id_prefix.'OrderForm_OrderForm_Amount';
 	}
 
 	/**
