@@ -900,7 +900,7 @@ class Order extends DataObject {
 		$createdModifiers = $this->modifiersFromDatabase();
 		if($createdModifiers) {
 			foreach($createdModifiers as $modifier){
-				if(!$modifier->IsRemoved()) {
+				if($modifier) {
 					$modifier->runUpdate();
 				}
 			}
@@ -970,7 +970,7 @@ class Order extends DataObject {
 	protected function getMemberForCanFunctions($member = null) {
 		if(!$member) {$member = Member::currentMember();}
 		if(!$member) {
-			$member = new Object();
+			$member = new Member();
 			$member->ID = 0;
 		}
 		return $member;
@@ -1002,7 +1002,7 @@ class Order extends DataObject {
 		if($extended !== null) {return $extended;}
 		//no member present: ONLY if the member can edit the order it can be viewed...
 		if(!$this->MemberID) {
-			return $this->canEdit($member);
+			//return $this->canEdit($member);
 		}
 		elseif($member->ID) {
 			if($member->IsShopAdmin()) {

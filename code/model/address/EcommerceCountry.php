@@ -132,8 +132,6 @@ class EcommerceCountry extends DataObject {
 		return $countryCode;
 	}
 
-
-
 	/**
 	 *checks if a country code is allowed
 	 *@param String $code - e.g. NZ

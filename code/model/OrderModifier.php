@@ -97,7 +97,7 @@ class OrderModifier extends OrderAttribute {
 	 **/
 	protected static $do_not_add_automatically = false;
 		static function set_do_not_add_automatically($b) {self::$do_not_add_automatically = $b;}
-		static function get_do_not_add_automatically() {return $this->stat("do_not_add_automatically");}
+		static function get_do_not_add_automatically() {return self::$do_not_add_automatically;}
 
 	/**
 	 * $can_be_removed Identifies whether a modifier can be removed by the user.

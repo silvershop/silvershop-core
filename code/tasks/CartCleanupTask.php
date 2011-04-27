@@ -52,7 +52,7 @@ class CartCleanupTask extends HourlyTask {
 	/**
 	 *@return Integer - number of carts destroyed
 	 **/
-	public function run($request){
+	public function run(){
 		$count = 0;
 		$time = date('Y-m-d H:i:s', strtotime("-".self::$clear_days." days"));
 		$generalWhere = "\"StatusID\" = ".OrderStep::get_status_id_from_code("CREATED")." AND \"LastEdited\" < '$time'";

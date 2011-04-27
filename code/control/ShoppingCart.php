@@ -1,16 +1,16 @@
 <?php
 
 /**
- * @description: ShoppingCart is a session handler that stores
- * information about what products are in a user's
- * cart on the site.
- ** Non URL based adding	add_buyable->find_or_make_order_item->add_(new)_item
- ** URL based adding	additem->getNew/ExistingOrderItem->add_(new)_item
+ * ShoppingCart is a session handler that stores information about what products are in a user's cart on the site.
+ * 
+ * Editing the cart:
+ * - Non URL based adding	add_buyable->find_or_make_order_item->add_(new)_item
+ * - URL based adding	additem->getNew/ExistingOrderItem->add_(new)_item
  *
- * @authors: Silverstripe, Jeremy, Nicolaas
+ * @author: Silverstripe, Jeremy, Nicolaas
  *
  * @package: ecommerce
- * @sub-package: control
+ * @subpackage: control
  *
  **/
 
@@ -93,6 +93,11 @@ class ShoppingCart extends Controller {
 		public static function set_additional_javascript_requirements(Array $a) {self::$additional_javascript_requirements = $a;}
 		public static function get_additional_javascript_requirements() {return self::$additional_javascript_requirements;}
 
+
+	public static function get_country_setting_index(){
+		return "countrysettingindex";
+	}
+
 	public static $allowed_actions = array (
 		'additem',
 		'incrementitem',
@@ -109,13 +114,8 @@ class ShoppingCart extends Controller {
 		'showcart',
 		'loadorder',
 		'copyorder',
-		'debug' => 'SHOP_ADMIN'
+		'debug' => 'ADMIN'
 	);
-
-
-
-
-
 
 /*******************************************************
 	* COUNTRY MANAGEMENT
@@ -126,7 +126,7 @@ class ShoppingCart extends Controller {
 	 *@param $s CountryCode (e.g. NZ)
 	 **/
 	static function set_country(string $s) {
-		if(EcommerceCountry::country_code_allowed($countryCode)) {
+		if(EcommerceCountry::country_code_allowed($s)) {
 			Session::set(self::get_country_setting_index(), $s);
 			$member = Member::currentUser();
 			//check if the member has a country
@@ -222,7 +222,7 @@ class ShoppingCart extends Controller {
 			self::$order->calculateModifiers();
 		}
 		//add shopping cart items
-		self::add_template_ids();
+		self::add_template_ids_and_message();
 		return self::$order;
 	}
 
@@ -845,18 +845,16 @@ class ShoppingCart extends Controller {
 
 	public static function return_message($status = "success",$message = null){
 		if(Director::is_ajax()){
-			$obj = new self::$response_class();
+			$obj = new self::${response_class}();
 			return $obj->ReturnCartData($status, $message);
 		}
 		else {
 			Session::set(self::get_cartid_session_name().".Message", $message);
-			Session::set(self::cartid_session_name().".Status", $status);
+			Session::set(self::get_cartid_session_name().".Status", $status);
 			Director::redirectBack();
 			return;
 		}
 	}
-
-
 
 /*******************************************************
 	 * URL DECODING AND FILTERING
@@ -1016,14 +1014,16 @@ class ShoppingCart extends Controller {
 				self::$order->CartStatusClass = $className;
 			}
 		}
-		Session::set(self::get_cartid_session_name().".Status", null);
-		Session::set(self::get_cartid_session_name().".Message", null);
+
+		Session::clear(self::get_cartid_session_name());
+		
 		self::$order->TableMessageID = self::$template_id_prefix.'Table_Order_Message';
 		self::$order->TableSubTotalID = self::$template_id_prefix.'Table_Order_SubTotal';
 		self::$order->TableTotalID = self::$template_id_prefix.'Table_Order_Total';
 		self::$order->OrderForm_OrderForm_AmountID = self::$template_id_prefix.'OrderForm_OrderForm_Amount';
 		self::$order->CartSubTotalID = self::$template_id_prefix.'Cart_Order_SubTotal';
 		self::$order->CartTotalID = self::$template_id_prefix.'Cart_Order_Total';
+		
 	}
 
 	/**

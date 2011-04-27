@@ -18,6 +18,12 @@ class EcommerceRole extends DataObjectDecorator {
 		static function set_automatic_membership($b){self::$automatic_membership = $b;}
 		static function get_automatic_membership(){return self::$automatic_membership;}
 
+	
+	//TODO: this was needed to get code worknig again
+	function get_allowed_country_codes(){
+		return array();
+	}
+
 
 	function extraStatics() {
 		return array(
@@ -67,6 +73,12 @@ class EcommerceRole extends DataObjectDecorator {
 	protected static $admin_permission_code = "SHOP_ADMIN";
 		static function set_admin_permission_code(string $s) {self::$admin_permission_code = $s;}
 		static function get_admin_permission_code() {return self::$admin_permission_code;}
+
+
+	static function get_fixed_country_code(){
+		return null;
+	}
+
 
 	protected static function add_members_to_customer_group() {
 		$gp = DataObject::get_one("Group", "\"Title\" = '".self::get_customer_group_name()."'");
