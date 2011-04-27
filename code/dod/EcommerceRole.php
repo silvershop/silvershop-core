@@ -127,6 +127,8 @@ class EcommerceRole extends DataObjectDecorator {
 	 * ** PROBLEM
 	 * 3. user not logged in, but (s)he enters an email of an existing user... - as part of our goals under Ecommerce, we want a user to be able to do this...
 	 * 4. user logged in and changes email to another email belonging to another registered user
+	 * 5. user places order "without creating an account" and then on a subsequent visit tries to create an account
+	 * 6. the user tries to setup an account on another part of the site and then discovers that (s)he already has an account ("silently" created while placing on order).
 	 *
 	 * NOTE: ecommerce_create_or_merge return false if logged  in user is changing their email address to that of another user
 	 * it return true if the user is not logged in, but the email address is listed as a user, and it
