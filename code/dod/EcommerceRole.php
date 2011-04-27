@@ -26,9 +26,6 @@ class EcommerceRole extends DataObjectDecorator {
 			),
 			'has_many' => array(
 				"Orders" => "Order"
-			),
-			'casting' => array(
-				"FullCountryName" => "Varchar"
 			)
 		);
 	}
