@@ -1,0 +1,1 @@
+Migrate info from [here](http://code.google.com/p/silverstripe-ecommerce/wiki/HowEcommerceIsBuilt)
