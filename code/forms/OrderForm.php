@@ -23,18 +23,18 @@ class OrderForm extends Form {
 		//  ________________ 1) Member + Address fields
 
 		//member fields
-		$leftFields = new CompositeField();
-		$leftFields->setID('LeftOrder');
+		$leftFields = new FieldSet();
+		//$leftFields->setID('LeftOrder');
 		$member = $order->CreateMember();
 		$memberFields =  $member->getEcommerceFields();
 		$requiredFields = array_merge($requiredFields, $member->getEcommerceRequiredFields());
-		$leftFields->push($memberFields);
+		$leftFields->merge($memberFields);
 		//link between Billing And ShippingAdress
 		//billing address field
 		$billingAddress = $order->CreateAddress("BillingAddress", "BillingAddress");
 		$billingAddressFields = $billingAddress->getFields();
 		$requiredFields = array_merge($requiredFields, $billingAddress->getRequiredFields());
-		$leftFields->push($billingAddressFields);
+		$leftFields->merge($billingAddressFields);
 		//shipping address field
 		if(OrderAddress::get_use_separate_shipping_address()) {
 			$useShippingAddressField = new FieldSet(new CheckboxField("UseShippingAddress", _t("OrderForm.USESHIPPINGADDRESS", "Use an alternative shipping address")));

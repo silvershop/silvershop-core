@@ -102,7 +102,7 @@ class BillingAddress extends OrderAddress {
 			$stateField = new HiddenField('State', '', "Bliss");
 		}
 		// country
-		$countriesForDropdown = EcommerceRole::list_of_allowed_countries_for_dropdown();
+		$countriesForDropdown = EcommerceCountry::list_of_allowed_countries_for_dropdown();
 		$countryField = new DropdownField('Country',  _t('OrderAddress.COUNTRY','Country'), $countriesForDropdown, EcommerceCountry::get_country());
 		$countryField->addExtraClass('ajaxCountryField');
 		$setCountryLinkID = $countryField->id() . '_SetCountryLink';

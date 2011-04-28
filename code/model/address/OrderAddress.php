@@ -167,7 +167,7 @@ class OrderAddress extends DataObject {
 		parent::populateDefaults();
 	}
 
-	public function SetCountry($countrCode) {
+	public function SetCountry($countryCode) {
 		$this->Country = $countryCode;
 		$this->ShippingCountry = $countryCode;
 		$this->write();
