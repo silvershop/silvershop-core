@@ -191,14 +191,12 @@ class OrderForm extends Form {
 		}
 		// Create new OR update logged in {@link Member} record
 
+				// MAKE SURE TO REVIEW ecommerce_create_or_merge "return" values
+		$member = EcommerceRole::ecommerce_create_or_merge($data, $testOnly = false);
 		//MEMBER
 		if(isset($data['Password']) && is_array($data['Password'])) {
 			$data['Password'] = $data['Password']['_Password'];
-		}
-		// MAKE SURE TO REVIEW ecommerce_create_or_merge "return" values
-		$member = EcommerceRole::ecommerce_create_or_merge($data, $testOnly = false);
-
-		//ONLY IF THE MEMBER IS ALREADY LOGGED IN OR IT IS A NEW MEMBER....
+		}//ONLY IF THE MEMBER IS ALREADY LOGGED IN OR IT IS A NEW MEMBER....
 		elseif(is_object($member) && $member instanceof Member) {
 			// NOTE: write should return the new ID of the object
 			$form->saveInto($member);
