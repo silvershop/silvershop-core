@@ -68,8 +68,8 @@ class ShoppingCart extends Controller {
 	 *@var String
 	 **/
 	protected static $response_class = "CartResponse";
-		public static function set_response_class(string $s) {self::$url_segment = $s;}
-		public static function get_response_class() {return self::$url_segment;}
+		public static function set_response_class(string $s) {self::$response_class = $s;}
+		public static function get_response_class() {return self::$response_class;}
 
 	/**
 	 * $template_id_prefix is a prefix to all HTML IDs referred to in the shopping cart
@@ -208,11 +208,11 @@ class ShoppingCart extends Controller {
 	public static function current_order() {
 		if (!self::$order) {
 			//find order by id saved to session (allows logging out and retaining cart contents)
-			$cartID = Session::get(self::get_cartid_session_name().".OrderAndSessionID");
+			$cartID = Session::get(self::get_cartid_session_name()."OrderAndSessionID");
 			//we need both  Session ID and Order ID here because (a) you may have several orders with one session ID - (b) you may have an order that is not in the current session....
 			$cartIDParts = explode(",", $cartID);
 			if($cartIDParts && is_array($cartIDParts) && count($cartIDParts) == 2) {
-				self::$order = DataObject::get_one('Order',"\"Order\".\"ID\" = '".intval($cartIDParts[0])."' AND \"Order\".\"SessionID\" = '".intval($cartIDParts[1])."'");
+				self::$order = DataObject::get_one('Order',"\"Order\".\"ID\" = '".intval($cartIDParts[0])."' AND \"Order\".\"SessionID\" = '".$cartIDParts[1]."'");
 			}
 			if(!self::$order ){
 				self::$order = new Order();
@@ -230,7 +230,7 @@ class ShoppingCart extends Controller {
 	 * removes the current order from session
 	 **/
 	public function clear_order_from_shopping_cart() {
-		Session::set(self::get_cartid_session_name().".OrderAndSessionID",null);
+		Session::set(self::get_cartid_session_name()."OrderAndSessionID",null);
 	}
 
 	/**
@@ -448,10 +448,9 @@ class ShoppingCart extends Controller {
 *******************************************************/
 
 	/**
-	 * Either update or create OrderItem in ShoppingCart.
+	 * add a new item to the Order
 	 */
 	public static function add_new_item(OrderItem $newOrderItem, $quantity = 1) {
-		//what happens if it has already been added???
 		$newOrderItem->Quantity = $quantity;
 		$newOrderItem->write();
 		self::current_order()->Attributes()->add($newOrderItem);
@@ -625,23 +624,24 @@ class ShoppingCart extends Controller {
 	function additem($request) {
 		if ($request->param('ID')) {
 			if($orderItem = $this->getExistingOrderItemFromURL()) {
+				//increment and decrement also call additem hence we have this strange if statement below (you may wonder where decrementitem comes from ;-))
 				if($request->param("Action") == "decrementitem" ) {
 					ShoppingCart::decrement_item($orderItem, 1);
-					return $this->returnMessage("success",_t("ShoppingCart.SUPERFLUOUSITEMREMOVED", "Superfluous item removed"));
+					return $this->returnMessage("success",_t("ShoppingCart.SUPERFLUOUSITEMREMOVED", "Superfluous item removed."));
 				}
 				else {
 					ShoppingCart::increment_item($orderItem, 1);
-					return $this->returnMessage("success",_t("ShoppingCart.EXTRAITEMADDED", "Extra item added"));
+					return $this->returnMessage("success",_t("ShoppingCart.EXTRAITEMADDED", "Extra item added."));
 				}
 			}
 			else {
 				if($orderItem = $this->getNewOrderItemFromURL()) {
 					ShoppingCart::add_new_item($orderItem, 1);
-					return $this->returnMessage("success",_t("ShoppingCart.EXTRAITEMADDED", "Item added"));
+					return $this->returnMessage("success",_t("ShoppingCart.ITEMADDED", "Item added."));
 				}
 			}
 		}
-		return $this->returnMessage("failure",_t("ShoppingCart.ITEMCOULDNOTBEADDED", "Item could not be added"));
+		return $this->returnMessage("failure",_t("ShoppingCart.ITEMCOULDNOTBEADDED", "Item could not be added."));
 	}
 
 	/**
@@ -845,12 +845,13 @@ class ShoppingCart extends Controller {
 
 	public static function return_message($status = "success",$message = null){
 		if(Director::is_ajax()){
-			$obj = new self::${response_class}();
+			$responseClass = self::get_response_class();
+			$obj = new $responseClass();
 			return $obj->ReturnCartData($status, $message);
 		}
 		else {
-			Session::set(self::get_cartid_session_name().".Message", $message);
-			Session::set(self::get_cartid_session_name().".Status", $status);
+			Session::set(self::get_cartid_session_name()."Message", $message);
+			Session::set(self::get_cartid_session_name()."Status", $status);
 			Director::redirectBack();
 			return;
 		}
@@ -1009,13 +1010,12 @@ class ShoppingCart extends Controller {
 	 *@return String
 	 **/
 	protected static function add_template_ids_and_message() {
-		if($message = Session::get(self::get_cartid_session_name().".Message")) {
+		if($message = Session::get(self::get_cartid_session_name()."Message")) {
 			self::$order->CartStatusMessage = $message;
-			Session::set(self::get_cartid_session_name().".Message", "");
-			if($className = Session::get(self::get_cartid_session_name().".Status")) {
-				self::$order->CartStatusClass = $className;
-				Session::set(self::get_cartid_session_name().".Status", "");
-			}
+			Session::set(self::get_cartid_session_name()."Message", "");
+			$className = Session::get(self::get_cartid_session_name()."Status");
+			self::$order->CartStatusClass = $className;
+			Session::set(self::get_cartid_session_name()."Status", "");
 		}
 		self::$order->TableMessageID = self::$template_id_prefix.'Table_Order_Message';
 		self::$order->TableSubTotalID = self::$template_id_prefix.'Table_Order_SubTotal';
