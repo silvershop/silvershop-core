@@ -128,13 +128,13 @@ class FlatTaxModifier extends OrderModifier {
 	}
 
 // ######################################## *** Type functions
-	protected function IsChargeable() {
+	public function IsChargeable() {
 		if($this->IsExclusive()) {
 			return true;
 		}
 	}
 
-	protected function IsNoChange() {
+	public function IsNoChange() {
 		if(!$this->IsChargeable()) {
 			return true;
 		}

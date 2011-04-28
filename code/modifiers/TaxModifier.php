@@ -172,14 +172,14 @@ class TaxModifier extends OrderModifier {
 
 // ######################################## *** Type Functions (IsChargeable, IsDeductable, IsNoChange, IsRemoved)
 
-	protected function IsChargeable(){
+	public function IsChargeable(){
 		if($this->IsExclusive()) {
 			return true;
 		}
 		return false;
 	}
 
-	protected function IsNoChange() {
+	public function IsNoChange() {
 		if($this->IsChargeable()) {
 			return false;
 		}
