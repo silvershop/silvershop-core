@@ -10,7 +10,7 @@
  * @package: ecommerce
  * @sub-package: member
  *
- *
+ * TO DO: do not add dataobjects if you dont want to...
  **/
 
 class EcommerceCountry extends DataObject {
@@ -120,7 +120,7 @@ class EcommerceCountry extends DataObject {
 						$countryCode = Geoip::$default_country_code;
 						//7. check default countries from ecommerce... - NOTE: fixed is checked first....
 						if(!$countryCode) {
-							$a = EcommerceRole::get_allowed_country_codes();
+							$a = EcommerceCountry::get_allowed_country_codes();
 							if(is_array($a) && count($a)) {
 								$countryCode = array_shift($a);
 							}
