@@ -383,14 +383,14 @@ class OrderModifier extends OrderAttribute {
 	 * should be extended if it is true in child class
 	 * @return boolean
 	 */
-	protected function IsChargeable() {
+	public function IsChargeable() {
 		return $this->LiveCalculationValue() > 0;
 	}
 	/**
 	 * should be extended if it is true in child class
 	 * @return boolean
 	 */
-	protected function IsDeductable() {
+	public function IsDeductable() {
 		return $this->LiveCalculationValue() < 0;
 	}
 
@@ -398,15 +398,16 @@ class OrderModifier extends OrderAttribute {
 	 * should be extended if it is true in child class
 	 * @return boolean
 	 */
-	protected function IsNoChange() {
+	public function IsNoChange() {
 		return $this->LiveCalculationValue()  == 0 ;
 	}
 
 	/**
 	 * should be extended if it is true in child class
+	 * Needs to be a public class
 	 * @return boolean
 	 */
-	protected function IsRemoved() {
+	public function IsRemoved() {
 		return $this->HasBeenRemoved;
 	}
 
@@ -451,25 +452,18 @@ class OrderModifier extends OrderAttribute {
 	 * Debug helper method.
 	 */
 	public function debug() {
-		$calculationValue = $this->CalculationValue();
-		$tableTitle = $this->TableTitle();
-		$tableValue = $this->TableValue();
-		$cartTitle = $this->CartTitle();
-		$cartValue = $this->CartValue();
-		$orderID = $this->OrderID;
-		return <<<HTML
-			<h2>$this->class</h2>
+		return "
+			<h2>".$this->ClassName."</h2>
 			<h3>OrderModifier class details</h3>
 			<p>
-				<b>ID : </b>$id<br/>
-				<b>Order ID : </b>$orderID<br/>
-				<b>Calculation Value : </b>$calculationValue<br/>
-				<b>Table Title: </b>$tableTitle<br/>
-				<b>Table Value: </b>$tableValue<br/>
-				<b>Cart Value: </b>$cartTitle<br/>
-				<b>Cart Title: </b>$cartValue<br/>
-			</p>
-HTML;
+				<b>ID : </b>".$this->ID."<br/>
+				<b>Order ID : </b>".$this->OrderID."<br/>
+				<b>Calculation Value : </b>".$this->CalculationValue()."<br/>
+				<b>Table Title: </b>".$this->TableTitle()."<br/>
+				<b>Table Value: </b>".$this->TableValue()."<br/>
+				<b>Cart Value: </b>".$this->CartTitle()."<br/>
+				<b>Cart Title: </b>".$this->CartValue()."<br/>
+			</p>";
 	}
 
 }
