@@ -25,6 +25,9 @@ class SiteConfigEcommerceExtras extends DataObjectDecorator {
 			),
 			'has_one' => array(
 				"EmailLogo" => "Image"
+			),
+			'defaults' =>array(
+				'ShopClosed' => false
 			)
 		);
 	}

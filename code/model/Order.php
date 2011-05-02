@@ -288,7 +288,7 @@ class Order extends DataObject {
 					return $this->validate();
 				}
 			}
-			return new ValidationError(false, _t("Order.MUSTSETSTATUS", "You must set a status"));
+			return new ValidationResult(false, _t("Order.MUSTSETSTATUS", "You must set a status"));
 		}
 		return parent::validate();
 	}
@@ -429,7 +429,7 @@ class Order extends DataObject {
 				$this->StatusID = $newStatus->ID;
 			}
 			else {
-				user_error("There are no OrderSteps ... please Run Dev/Build", E_USER_WARNING);
+				//user_error("There are no OrderSteps ... please Run Dev/Build", E_USER_WARNING);
 			}
 		}
 		$createdModifiersClassNames = array();

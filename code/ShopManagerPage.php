@@ -5,7 +5,9 @@
  * @authors: Silverstripe, Jeremy, Nicolaas
  *
  * @package: ecommerce
- * @sub-package: cms
+ * @subpackage: cms
+ *
+ * @todo this functionality should really be in the CMS.
  *
  **/
 

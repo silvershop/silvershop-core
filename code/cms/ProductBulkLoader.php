@@ -48,6 +48,8 @@ class ProductBulkLoader extends CsvBulkLoader{
 		'Short Title' => 'MenuTitle',
 
 		'Title' => 'Title',
+		
+		//'Delete' //TODO: allow products to be deleted/disabled via CSV
 	);
 
 	/* 	NB there is a bug in CsvBulkLoader where it fails to apply Convert::raw2sql to the field value prior to a duplicate check.
