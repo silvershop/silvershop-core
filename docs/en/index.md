@@ -1,10 +1,5 @@
 # Ecommerce developer docs
 
-* [SilverStripe eCommerce project on Google Code](http://code.google.com/p/silverstripe-ecommerce/)
-* [API Docs](http://www.incharge.co.uk/ss-ecommerce-doc/)
-* [Demo 1](http://ecommerce-demo.burnbright.co.nz/)
-* [Silverstripe Forums](http://silverstripe.org/e-commerce-module-forum/)
-
 ## Contents
 * [Introduction](Introduction)
 * [Installation](Installation) - requirements, instructions
@@ -26,6 +21,13 @@
  * Mission/aim
  * Coding style/conventions
  * Release process
+ 
+## External Links
+* [SilverStripe eCommerce project on Google Code](http://code.google.com/p/silverstripe-ecommerce/)
+* [API Docs](http://www.incharge.co.uk/ss-ecommerce-doc/)
+* [Demo 1](http://ecommerce-demo.burnbright.co.nz/)
+* [Silverstripe Forums](http://silverstripe.org/e-commerce-module-forum/)
+* User Documetation / Videos ...
 
 ## Mission
 What the module authors hope to accomplish for users, store admins, and fellow developers.
