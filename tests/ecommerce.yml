@@ -5,18 +5,19 @@ Page:
 
 ProductGroup:
     g1:
-        Title: Group 1
-        URLSegment: group-1
+        Title: Products
+        URLSegment: products
     g2:
-        Title: Group 2
-        URLSegment: group-2
+        Title: Clothing
+        URLSegment: clothing
+        Parent:=>ProductGroup.Products
 
 Product:
     p1a:
-        Title: Product 1a
-        Price: 500
+        Title: Beach Ball
+        Price: 10
         Parent:=>ProductGroup.g1
-        URLSegment: product-1a
+        URLSegment: beach-ball
         AllowPurchase: 0
     p1b:
         Title: Product 1b
@@ -60,3 +61,11 @@ Member:
         Country: US
         Email: bob@somewhere.com
         Password: 3456sdfsd34
+OrderStep:
+	step1:
+		Name: Test Step 1
+		Code: teststep1
+		Description: created merely for testing purposes
+		CustomerCanPay: 1
+		Sort: 0
+		ShowAsCompletedOrder: 1

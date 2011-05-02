@@ -5,12 +5,38 @@
 class ShoppingCartTest extends FunctionalTest {
 
 	static $fixture_file = 'ecommerce/tests/ecommerce.yml';
-
 	static $disable_theme = true;
+	static $use_draft_site = true; //TODO: explain why
+	
+	
+	function testAddToCart(){
+		
+		
+		$this->assertTrue(false,'Item is in cart.');	
+		//$this->assertEquals($cart->getQuantity(), $quantity, 'Cart contains expected quantity.');
+	}
+	
+	function testRemoveFromCart(){
+		$this->assertTrue(false); //stub for unit test
+	}
+	
+	function testParameterisedProduct(){
+		$this->assertTrue(false); //stub for unit test
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	// OLD TESTS (to be deleted)
+		
 
-	static $use_draft_site = true;
-
-	function testAddItemsToCart() {
+	function old_testAddItemsToCart() {
 		/* Retrieve the product to compare from fixture */
 		$productID = $this->idFromFixture('Product', 'p2b');
 
@@ -29,7 +55,7 @@ class ShoppingCartTest extends FunctionalTest {
 		$this->assertEquals($items[0]->getQuantity(), 2, 'We have 2 of this product in the cart.');
 	}
 
-	function testAddArbitraryQuantityToItem() {
+	function old_testAddArbitraryQuantityToItem() {
 		/* Add an item to the cart */
 		$this->get('product-2b/add');
 
@@ -54,7 +80,7 @@ class ShoppingCartTest extends FunctionalTest {
 		ShoppingCart::clear();
 	}
 
-	function testRemoveItemFromCart() {
+	function old_testRemoveItemFromCart() {
 		/* Add 2 different products to the cart */
 		$this->get('product-2a/add');
 		$this->get('product-2b/add');
@@ -93,7 +119,7 @@ class ShoppingCartTest extends FunctionalTest {
 		ShoppingCart::clear();
 	}
 
-	function testClearEntireCart() {
+	function old_testClearEntireCart() {
 		/* Invoke the existing test for adding items to the cart */
 		$this->testAddItemsToCart();
 

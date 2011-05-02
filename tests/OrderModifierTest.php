@@ -3,7 +3,7 @@
  * @package ecommerce
  * @subpackage tests
  */
-/*
+
 class OrderModifierTest extends FunctionalTest {
 	
 	static $fixture_file = 'ecommerce/tests/ecommerce.yml';
@@ -106,5 +106,5 @@ class OrderModifierTest extends FunctionalTest {
 	}
 	
 }
-*/
+
 ?>
