@@ -6,8 +6,6 @@ Regression Testing
 ------------------
 [Google doc containing regression tests](https://spreadsheets.google.com/ccc?key=0AtHUrSaBxJY8dG8teWVNTFYzbThZYUhhLTNmT0FiUHc&hl=en)
 
-
-
 Unit Testing
 ------------
 We insist that the eCommerce module contains a suite of unit tests that are updated with any changes to the code. Sub-Modules should also have their own test suites.
@@ -15,8 +13,12 @@ See the [sapphire testing documentation](http://doc.silverstripe.org/sapphire/en
 
 TBA: At some stage an automated testing system will continually test the code, especially when new commits are made.
 
+To run all ecommerce tests:
 
-Tests:
+dev/tests/CheckoutPageTest,EcommerceTest,OrderItemTest,OrderModifierTest,OrderTest,PaymentTest,ProductBulkLoaderTest,ProductOrderItemTest,ProductTest,ShoppingCartTest
+
+#### Tests that have/will be written
+[Here](http://code.google.com/p/silverstripe-ecommerce/source/browse/?r=1000#svn%2Ftrunk%2Ftests) are some historic test classes that could be referenced when writing them.
 
  - ShoppingCart
   - add
@@ -27,17 +29,27 @@ Tests:
   - test all links
  - EcommerceRole (Member)
  - Order
-  - Totals,SubTotals
-  - Quantity
+  - totals,subtotals,quantity
+  - create / don't create membership
+  - shipping/order addresses
+ - Buyable (Decorator)
+  - crud new type of buyable
+  - cart operations with buyable
+ - ProductGroup
+  - pagination / filtering link tests
  - Product (Page)
   - can view
- - ProductGroup
  - ProductBulkLoader
  - OrderStep
+  - Follow steps
+  - Edit steps
  - CheckoutPage
-  - Processing
+  - processing
+  - country selection
  - AccountPage
+ - Forms/processing?
  - Modifiers - tests the default modifiers.
  - Payment - should be in the payment class ideally
+ - CartCleanupTaskTest
  
- [Here](http://code.google.com/p/silverstripe-ecommerce/source/browse/?r=1000#svn%2Ftrunk%2Ftests) are some historic test classes that could be referenced when creating these.
+ - Javascript tests
