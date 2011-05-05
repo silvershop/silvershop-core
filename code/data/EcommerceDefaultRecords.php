@@ -64,6 +64,12 @@ class EcommerceDefaultRecords extends DatabaseAdmin {
 			}
 		}
 
+	}
+
+
+	function addproducts() {
+
+
 		// PRODUCT PAGE
 
 		if(!DataObject::get_one('Product')) {
