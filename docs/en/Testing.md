@@ -10,6 +10,8 @@ Unit Testing
 ------------
 We insist that the eCommerce module contains a suite of unit tests that are updated with any changes to the code. Sub-Modules should also have their own test suites.
 See the [sapphire testing documentation](http://doc.silverstripe.org/sapphire/en/topics/testing/index) for setup information etc.
+See also: [http://www.phpunit.de/manual/3.5/en/index.html](http://www.phpunit.de/manual/3.5/en/index.html)
+
 
 TBA: At some stage an automated testing system will continually test the code, especially when new commits are made.
 

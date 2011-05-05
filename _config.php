@@ -19,6 +19,9 @@ Object::add_extension('Payment', 'EcommercePayment');
 Object::add_extension('SiteConfig', 'SiteConfigEcommerceExtras');
 Object::add_extension("SiteTree", "EcommerceSiteTreeExtension");
 Object::add_extension("Controller", "EcommerceSiteTreeExtension_Controller");
+Object::add_extension("DevelopmentAdmin", "EcommerceDevelopmentAdminDecorator");
+DevelopmentAdmin::$allowed_actions[] = 'ecommerce';
+
 Buyable::add_class("Product");
 
 // copy the lines below to your mysite/_config.php file and set as required.

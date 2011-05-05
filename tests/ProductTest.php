@@ -36,6 +36,11 @@ class ProductTest extends FunctionalTest {
 		*/
 	}
 	
+	
+	/* -----------OLD TESTS (to be removed) ------------------ */
+	
+	
+	//Note: PriceByCurrency does not exist
 	function old_testPriceByCurrency() {
 		$p1a = $this->objFromFixture('Product', 'p1a');
 		
