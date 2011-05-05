@@ -40,7 +40,10 @@ class OrderModifierTest extends FunctionalTest {
 	}
 	
 	
-	function testTaxModifier() {
+	
+	/* -------------- OLD TESTS (to be removed) -------------------- */
+	
+	function old_testTaxModifier() {
 		$product1b = $this->objFromFixture('Product', 'p1b');
 		
 		// Add 2 of the product-1b to the shopping cart
@@ -73,7 +76,7 @@ class OrderModifierTest extends FunctionalTest {
 		$this->session()->inst_set('loggedInAs', null);
 	}
 	
-	function testSimpleShippingModifier() {
+	function old_testSimpleShippingModifier() {
 		$product1b = $this->objFromFixture('Product', 'p1b');
 		
 		// Add 2 of the product-1b to the shopping cart
