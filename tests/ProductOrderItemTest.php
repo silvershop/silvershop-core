@@ -33,6 +33,9 @@ class ProductOrderItemTest extends SapphireTest {
 		Product::set_supported_currencies($this->orig['Product_supported_currencies']);
 		*/
 	}
+	
+	
+	/* --------------------- OLD TESTS (to be removed) -----------------------*/
 
 	function old_testProductPriceVersionDoesntChangeInOrder() {
 		$poi1a = $this->objFromFixture('ProductOrderItem', 'poi1a');
