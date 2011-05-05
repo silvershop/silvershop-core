@@ -2,7 +2,9 @@
 
 
 /**
- * @description: cleans up old (abandonned) carts...
+ * @description:
+ * - cleans up old (abandonned) carts...
+ * - sets up default records
  *
  * @authors: Silverstripe, Jeremy, Nicolaas
  *
