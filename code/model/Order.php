@@ -855,7 +855,7 @@ class Order extends DataObject {
 	 *
 	 * @return DataObjectSet
 	 */
-	protected function itemsFromDatabase(String $filter = null) {
+	protected function itemsFromDatabase($filter = null) {
 		$extrafilter = ($filter) ? " AND $filter" : "";
 		$items = DataObject::get("OrderItem", "\"OrderID\" = '$this->ID' AND \"Quantity\" > 0 $extrafilter");
 		return $items;
