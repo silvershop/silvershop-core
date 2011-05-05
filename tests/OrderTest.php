@@ -34,7 +34,6 @@ class OrderTest extends SapphireTest {
 	}
 	
 	
-	
 	/* -------- OLD TESTS (to be removed) ------------------*/
 	
 	function old_testValidateProductCurrencies() {
