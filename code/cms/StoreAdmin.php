@@ -2,7 +2,7 @@
 
 /**
  * @description: CMS management for the store setup (e.g Order Steps, Countries, etc...)
- *
+ * @ TO DO TO DO TO DO TO DO TO DO TO DO  todo: move to siteconfig
  * @authors: Jeremy, Romain, Nicolaas
  *
  * @package: ecommerce
