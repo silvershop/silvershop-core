@@ -16,7 +16,7 @@
  * Search filters
  * [Bulk loading products from a CSV spreadsheet](BulkLoading)
 * Payment - link to payment docs
-* Development
+* [Development](Development)
  * [Testing](Testing) - infrastructure / instructions
  * [Contribution Guidelines](Contributing)
  * Mission/aim
