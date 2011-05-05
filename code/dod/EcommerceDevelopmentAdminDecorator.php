@@ -9,7 +9,7 @@ class EcommerceDevelopmentAdminDecorator extends Extension{
 		} else {
 			$renderer = Object::create('DebugView');
 			$renderer->writeHeader();
-			$renderer->writeInfo("Ecommerce tools", Director::absoluteBaseURL());
+			$renderer->writeInfo("Ecommerce Development Tools", Director::absoluteBaseURL());
 			echo "<div style=\"margin: 0 2em\">";
 
 			$da = Object::create('EcommerceDatabaseAdmin');
