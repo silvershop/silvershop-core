@@ -33,6 +33,10 @@ class OrderTest extends SapphireTest {
 		*/
 	}
 	
+	
+	
+	/* -------- OLD TESTS (to be removed) ------------------*/
+	
 	function old_testValidateProductCurrencies() {
 		$productUSDOnly = $this->objFromFixture('Product', 'p1b');
 		$orderInEUR = $this->objFromFixture('Order', 'open_order_eur');
