@@ -26,12 +26,8 @@ class ProductBulkLoader extends CsvBulkLoader{
 		static function get_parent_page_id() {return self::$parent_page_id;}
 
 	protected static $create_new_product_groups = false;
-		static function set_create_new_product_groups(boolean $b) {self::$create_new_product_groups = $b;}
+		static function set_create_new_product_groups($b = true) {self::$create_new_product_groups = $b;}
 		static function get_create_new_product_groups() {return self::$create_new_product_groups;}
-
-	protected static $has_stock_impl = false;
-		static function set_has_stock_impl(boolean $b) {self::$has_stock_impl = $b;}
-		static function get_has_stock_impl() {return self::$has_stock_impl;}
 
 	public $columnMap = array(
 		'Category' => '->setParent',
@@ -94,12 +90,6 @@ class ProductBulkLoader extends CsvBulkLoader{
 		$obj->Title = Convert::raw2sql($val);
 	}
 
-	static function import_stock(&$obj, $val, $record ){
-		if( self::$has_stock_impl ) {
-			$obj->Stock = $val;
-		}
-	}
-
 	static function importInternalItemID(&$obj, $val, $record ){
 		$obj->InternalItemID = Convert::raw2sql($val);
 	}
@@ -108,7 +98,6 @@ class ProductBulkLoader extends CsvBulkLoader{
 		$this->extend('updateColumnMap',$this->columnMap);
 		// we have to check for the existence of this in case the stockcontrol module hasn't been loaded
 		// and the CSV still contains a Stock column
-		self::$has_stock_impl = Object::has_extension(self::get_product_class_name(), 'ProductStockDecorator');
 
 		$results = parent::processAll($filepath, $preview);
 

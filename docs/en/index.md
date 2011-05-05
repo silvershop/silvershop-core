@@ -14,6 +14,7 @@
 * Emailing
 * Back-end administration
  * Search filters
+ * [Bulk loading products from a CSV spreadsheet](BulkLoading)
 * Payment - link to payment docs
 * Development
  * [Testing](Testing) - infrastructure / instructions

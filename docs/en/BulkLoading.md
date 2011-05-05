@@ -1,17 +1,19 @@
 # Loading and modifying products via SpreadSheet
 
-Products can be created and updated via spreadsheet.
+Products can be created and updated via spreadsheet. This is done in the Products section of the CMS. Make sure "Product" is selected on the left tab, then use the import form at the bottom to load your product spreadsheet.
 
 ## General Info
 
 ProductID/SKU must be unique, otherwise duplicates will be overridden. If there is no ProductID, Title will be used instead.
 
 If a column title matches a field on Product, it will be loaded in. eg if you specify a "AllowPurchase" column, the values will be loaded into each Product's AllowPurchase field. Clicking the "Show Specification for Product" link in the Products section of the CMS will help you identify the possible fields to import to.
-Category
+
+You can find a test spreadsheet in ecommerce/tests/test_products.csv , which was exported from ecommerce/tests/test_products.xls.
+
+## Assigning products to Categories
 
 If you specify a 'Category' or 'ProductGroup' column, the loader will look for a ProductGroup with a title matching the specified category name. If you desire to use this system, it is recommended building your ProductGroup structure before loading the products.
 
-You can find a test spreadsheet in ecommerce/tests/test_products.csv , which was exported from ecommerce/tests/test_products.xls.
 
 ## Product Images
 
@@ -29,5 +31,11 @@ Trouble Shooting Tips
 Make sure you don't have rouge spaces in your headings.
 
 
+## Settings before you load
 
- 
+Set this if you want categories to be created if they don't exist.
+	ProductBulkLoader::set_create_new_product_groups(true);
+
+You can force every product to be in a certain category, as long as you know it's id:
+	ProductBulkLoader::set_parent_page_id(..id here...);
+	
