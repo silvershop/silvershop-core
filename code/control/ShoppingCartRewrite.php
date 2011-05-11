@@ -1,0 +1,493 @@
+<?php
+/**
+ * ShoppingCart - provides a global way to interface with the cart (current order).
+ * 
+ * This can be used in other code by calling $cart = ShoppingCart::singleton();
+ * 
+ * 
+ * This version of shopping cart has been rewritten to:
+ * - Seperate controller from the cart functions, abstracts out and encapsulates specific functionality.
+ * - Reduce the excessive use of static variables.
+ * - Clearly define an API for editing the cart, trying to keep the number of functions to a minimum.
+ * - Allow easier testing of cart functionality.
+ * - Message handling done in one place.
+ * This is not taking a step backward, be cause the old ShoppingCart / Controller seperation had all static variables/functions on ShoppingCart
+ * 
+ * @author: Jeremy Shipman, Nicolaas Francken
+ * @package: ecommerce
+ * 
+
+ * @todo country selection - this needs to be unified into one place 
+ * @todo handle rendering?
+ * 
+ * @todo copying order - repeat orders
+ * 
+ */
+class ShoppingCartRewrite extends Object{
+	
+	protected static $session_variable = "EcommerceShoppingCart"; //used for setting/getting cart things from the session
+	protected static $cleanup_every_time = true;
+		static function set_cleanup_every_time(array $bool = false){self::$cleanup_every_time = $bool;}
+	protected static $default_param_filters = array();
+		static function set_default_param_filters(array $paramarray){self::$default_param_filters = $paramarray;}
+	
+	protected $messages = array();
+	protected $currentorder = null; //stores a reference to the current order object
+		
+	/**
+	 * Allows access to the cart from anywhere in code.
+	 * @return ShoppingCart Object
+	 */
+	protected static $singletoncart = null;
+	static function singleton(){
+		if(!self::$singletoncart){
+			self::$singletoncart = new ShoppingCartRewrite();
+		}
+		return self::$singletoncart;
+	}
+	
+	/**
+	 * Adds any number of items to the cart.
+	 * @param $buyable - the buyable (generally a product) being added to the cart
+	 * @param $quantity - number of items add.
+	 * @param $parameters - array of parameters to target a specific order item. eg: group=1, length=5 
+	 * @return the new item or null
+	 */
+	public function addBuyable($buyable,$quantity = 1, $parameters = array(),$overwriteqty = false){
+		if($quantity <= 1 && $overwriteqty){ //special case remove
+			$this->removeBuyable($buyable,'all',$parameters);
+			return;
+		}
+		if($buyable->canPurchase() && $item = $this->findormakeitem($buyable,$parameters)){ //find existing order item or make one
+			$quantity = ($quantity >= 1 ) ? $quantity: 1; //ensuring sanity
+			$item->Quantity = ($overwriteqty) ? $item->Quantity + $quantity : $quantity;
+			$item->write();
+			$this->currentOrder()->Attributes()->add($item); //save to current order
+			//TODO: distinquish between incremented and set
+			//TODO: use sprintf to allow product name etc to be included in message
+			$this->message(($quantity == 1)?_t("ShoppingCart.ITEMADDED", "Item added."):_t("ShoppingCart.ITEMSADDED", "Items added."),'good');
+		}
+		$this->message(_t("ShoppingCart.ITEMCOULDNOTBEADDED", "Item could not be added."),'bad');
+	}
+	
+	/**
+	 * Removes any number of items from the cart.
+	 * @return boolean - successfully removed
+	 */
+	public function removeBuyable($buyable,$quantity = 1, $parameters = array()){
+		$item = $this->getexistingitem($buyable,$parameters);
+		if(!$item){//check for existence of item
+			$this->message(_t("ShoppingCart.ITEMCOULDNOTBEFOUNDINCART", "Item could not found in cart."),'warning');
+			return;
+		}
+		if($quantity <= 0){
+			$this->message(_t("ShoppingCart.CANTREMOVENONE", "It is not possible to remove zero items."),'warning');
+			return;
+		}
+		$item->Quantity -= $quantity; //remove quantity
+		if($item->Quantity <= 0 || $quantity == 'all'){ //remove all items from cart
+			$this->currentOrder()->Attributes()->remove($item);
+			$item->delete();
+			$item->destroy();
+			$this->message(_t("ShoppingCart.ITEMCOMPLETELYREMOVED", "Item completely removed."),'good');
+		}else{
+			$item->write();
+			$this->message(_t("ShoppingCart.ITEMREMOVED", "Item removed."),'good');
+		}
+	}
+	
+	/**
+	 * Clears the cart contents completely by removing the orderID from session, and thus creating a new cart on next request.
+	 */
+	public function clear(){
+		Session::clear(self::$session_variable); //clear the orderid from session
+		$this->currentorder = null; //clear local variable
+	}
+	
+	/**
+	 * Removes a modifier from the cart
+	 */
+	public function removeModifier($modifier){
+		$modifier = (is_numeric($modifier)) ? DataObject::get_by_id('OrderModifier',$modifier) : $modifier;
+		if(!$modifier || !$modifier->CanBeRemoved()){
+			$this->message(_t("ShoppingCart.MODIFIERNOTREMOVED", "Could not be removed."),'bad');
+			return;
+		}
+		$modifier->HasBeenRemoved = 1;
+		$modifier->write();
+		$this->message(_t("ShoppingCart.MODIFIERREMOVED", "Removed."));
+	}
+
+	/**
+	 * Sets an order as the current order.
+	 * 
+	 */
+	public function loadOrder($order){
+		//TODO: how to handle existing order
+		$order = (is_numeric($order)) ? DataObject::get_by_id('Order',$order) : $order;
+		//TODO: permission check - does this belong to another member? ...or should permission be assumed already?
+		if($order){
+			$this->currentorder = $order;
+			Session::set(self::$session_variable.".ID",$this->currentorder->ID);
+			$this->message(_t("ShoppingCart.LOADEDEXISTING", "Order loaded."),'good');
+		}
+		$this->message(_t("ShoppingCart.NOORDER", "No such order."),'bad');
+	}
+
+	/**
+	 * Produces a debug of the shopping cart.
+	 */
+	public function debug(){
+		Debug::show($this->currentOrder());
+	}
+	
+	/*******************************************************
+	* HELPER FUNCTIONS
+	*******************************************************/
+	
+	/**
+	 * Gets or creates the current order.
+	 */
+	protected function currentOrder(){	
+		if (!$this->currentorder) {
+			//TODO: try to retrieve incomplete member order
+			$this->currentorder = DataObject::get_by_id('Order',Session::get(self::$session_variable.".ID")); //find order by id saved to session (allows logging out and retaining cart contents)
+			if(!$this->currentorder){
+				$this->currentorder = new Order();
+				$this->currentorder->MemberID = Member::currentUserID();
+				$this->currentorder->write();
+				Session::set(self::$session_variable.".ID",$this->currentorder->ID);
+				if(self::$cleanup_every_time)
+					CartCleanupTask::run_on_demand(); //TODO: see issue: 140 - this could be impacting on performance
+			}
+			$this->currentorder->calculateModifiers(); //TODO: do this less, eg when order is initially created
+		}
+		return $this->currentorder;
+	}
+	
+	/**
+	 * Helper function for making / retrieving order items.
+	 * @param $buyable
+	 * @param $parameters
+	 * @return OrderItem
+	 */
+	protected function findorMakeItem($buyable,$parameters = array()){
+		//TODO: check for buyable existence & permission to do stuff
+		if($item = $this->getexistingitem($buyable,$parameters)){
+			return $item;
+		}
+		//otherwise create a new item
+		$item = new ${$buyable->OrderItemClass()}(); //TODO: OrderItemClass isn't implemented yet
+		return $item;
+	}
+	
+	/**
+	 * Gets an existing order item based on buyable and passed parameters
+	 * @param $buyable
+	 * @param $parameters
+	 * @return OrderItem or null
+	 */
+	protected function getExistingItem($buyable,$parameters = array()){
+		$order = $this->currentOrder();
+		$filterString = $this->parametersToSQL($parameters);
+		return  DataObject::get_one('OrderItem', "\"OrderID\" = $order->ID $filterString");
+	}
+	
+	/**
+	 * Removes parameters that aren't in the default array, merges with default parameters, and converts raw2SQL.
+	 * @param $parameters unclean array
+	 * @return cleaned array
+	 */
+	protected function cleanParameters($params = array()){
+		$newarray = array_merge(array(),self::$default_param_filters); //clone array
+		if(!count($newarray)) {
+			return array(); //no use for this if there are not parameters defined
+		}
+		foreach($newarray as $field => $value){
+			if(isset($params[$field])){
+				$newarray[$field] = Convert::raw2sql($params[$field]);
+			}
+		}
+		return $newarray;	
+	}
+	
+	/**
+	 * Converts parameter array to SQL query filter 
+	 */
+	protected function parametersToSQL($parameters = array()){
+		$defaultParamFilters = self::$default_param_filters;
+		if(!count($defaultParamFilters)) {
+			return ""; //no use for this if there are not parameters defined
+		}
+		$cleanedparams = $this->cleanParameters($parameters);
+		$outputArray = array();
+		foreach($cleanedparams as $field => $value){
+			$outputarray[$field] = "\"".$field."\" = ".$value;
+		}
+		if(count($outputArray)) {
+			return implode(" AND ",$outputArray);
+		}
+		return "";
+	}
+	
+	/*******************************************************
+	* UI MESSAGE HANDLING
+	*******************************************************/
+	
+	/**
+	 * Stores a message that can later be returned via ajax or to $form->sessionMessage();
+	 * @param $message - the message, which could be a notification of successful action, or reason for failure
+	 * @param $type - please use good, bad, warning
+	 */
+	protected function message($message, $type = 'good'){
+		$this->messages[] = array(
+			'message' => $message,
+			'type' => $type
+		);
+	}
+	
+	/**
+	 * Retrieves all good, bad, and ugly messages that have been produced during the current request.
+	 * @return array of messages
+	 */
+	function getMessages(){
+		return $this->messages;
+	}
+
+}
+
+/**
+ * ShoppingCart_Controller
+ * 
+ * Handles the modification of a shopping cart via http requests.
+ * Provides links for making these modifications.
+ * 
+ * @author: Jeremy Shipman, Nicolaas Francken
+ * @package: ecommerce
+ * 
+ * @todo supply links for adding, removing, and clearing cart items
+ * @todo link for removing modifier(s)
+ */
+class ShoppingCartRewrite_Controller extends Object{
+	
+	protected static $url_segment = 'shoppingcartrewrite';
+		static function set_url_segment(string $url) {self::$url_segment = $url;}
+		static function get_url_segment() {return self::$url_segment;}
+
+	protected static $response_class = "CartResponse";
+
+	protected $cart = null;
+	
+	function init() {
+		parent::init();
+		$this->cart = ShoppingCart::singleton();
+	}
+	
+	public static $allowed_actions = array (
+		'additem',
+		'incrementitem', //decremented
+		'decrementitem', //decremented
+		'removeitem',
+		'removeallitem',
+		'removemodifier',
+		'addmodifier', //decremented
+		'setcountry', //decremented
+		'setquantityitem',
+		'clearcartandlogout',  //decremented
+		'clear',
+		'numberofitemsincart',
+		'showcart', //decremented
+		'loadorder', //decremented - now on ShoppingCart
+		'copyorder', //
+		'debug' => 'ADMIN'
+	);
+
+	/*******************************************************
+	* CONTROLLER LINKS
+	*******************************************************/
+	
+	public function Link($action = null) {
+		return Controller::join_links(Director::baseURL(), $this->RelativeLink($action));
+	}
+
+	static function add_item_link($buyableID, $className = "OrderItem", $parameters = array()) {
+		return self::$url_segment.'/additem/'.$buyableID."/".self::order_item_class_name($className).self::params_to_get_string($parameters);
+	}
+
+	static function remove_item_link($buyableID, $className = "OrderItem", $parameters = array()) {
+		return self::$url_segment.'/removeitem/'.$buyableID."/".self::order_item_class_name($className).self::params_to_get_string($parameters);
+	}
+	
+	static function remove_all_item_link($buyableID, $className = "OrderItem", $parameters = array()) {
+		return self::$url_segment.'/removeallitem/'.$buyableID."/".self::order_item_class_name($className).self::params_to_get_string($parameters);
+	}
+
+	static function set_quantity_item_link($buyableID, $className = "OrderItem", $parameters = array()) {
+		return self::$url_segment.'/setquantityitem/'.$buyableID."/".self::order_item_class_name($className).self::params_to_get_string($parameters);
+	}
+
+	static function remove_modifier_link($modifierID, $className = "OrderModifier") {
+		return self::$url_segment.'/removemodifier/'.$modifierID."/".self::order_modifier_class_name($className);
+	}
+	
+	/**
+	 * Helper function used by link functions
+	 * Creates the appropriate url-encoded string parameters for links from array
+	 *
+	 * Produces string such as: MyParam%3D11%26OtherParam%3D1
+	 *     ...which decodes to: MyParam=11&OtherParam=1
+	 *
+	 * you will need to decode the url with javascript before using it.
+	 *
+	 *@todo: check that comment description actually matches what it does
+	 *@return String (URLSegment)
+	 */
+	protected static function params_to_get_string($array){
+		if($array & count($array > 0)){
+			array_walk($array , create_function('&$v,$k', '$v = $k."=".$v ;'));
+			return "/?".implode("&",$array);
+		}
+		return "/";
+	}
+	
+	/**
+	 * Adds item to cart via controller action.
+	 */
+	function additem(){
+		$this->cart->addBuyable($this->buyable(),$this->quantity(),$this->parameters());
+		$this->setMessageAndReturn();
+	}
+	
+	/**
+	 * Sets the exact passed quantity.
+	 * Note: If no ?quantity=x is specified in URL, then quantity will be set to 1. 
+	 */
+	function setquantityitem(){
+		$this->cart->addBuyable($this->buyable(),$this->quantity(),$this->parameters(),true);
+		$this->setMessageAndReturn();
+	}
+	
+	/**
+	 * Removes item from cart via controller action.
+	 */
+	function removeitem(){
+		$this->cart->removeBuyable($this->buyable(),$this->quantity(),$this->parameters());
+		$this->setMessageAndReturn();
+	}
+	
+	/**
+	 * Removes all of a specific item
+	 */
+	function removeallitem(){
+		$this->cart->removeBuyable($this->buyable(),'all',$this->parameters());
+		$this->setMessageAndReturn();
+	}
+	
+	/**
+	 * Remoces a specified modifier from the cart;
+	 */
+	function removemodifier(){
+		$this->cart->removeModifier($request->param('ID'));
+		$this->setMessageAndReturn();
+	}
+	
+	/**
+	 * Gets a buyable object based on URL actions
+	 * @todo: should this be in ShoppingCart??
+	 */
+	protected function buyable(){
+		$request = $this->getRequest();
+		$className = $request->param('OtherID');
+		$buyableID = $request->param('ID');
+		if($className && $buyableID){
+			return DataObject::get_by_id($className,$buyableID); //TODO: possible unsafe class name being passed...do proper subclass check
+		}
+		return null;
+	}
+	
+	/**
+	 * Gets the requested quantity
+	 */
+	protected function quantity(){
+		$qty = $this->getRequest()->getVar('quantity');
+		if(is_numeric($qty)){
+			return $qty;
+		}
+		return 1;
+	}
+	
+	/**
+	 * Gets the request parameters
+	 * @param $getpost - choose between obtaining the chosen parameters from GET or POST
+	 */
+	protected function parameters($getpost = 'GET'){
+		return ($getpost == 'GET') ? $request->getVars() : $_POST;
+	}
+	
+	/**
+	 * Packages up error/success messages from shopping cart and returns them to the client.
+	 */
+	protected function setMessageAndReturn(){
+		
+		//TODO: handle passing back multiple messages
+		$messages = $this->cart->getMessages();
+		$status = (isset($messages[0])) ? $messages[0]['type']: "";
+		$message = (isset($messages[0])) ? $messages[0]['message']: "";
+		
+		if(Director::is_ajax()){
+			$responseClass = self::get_response_class();
+			$obj = new $responseClass();
+			return $obj->ReturnCartData($status, $message);
+		}
+		else {
+			//TODO: handle passing a message back to a form->sessionMessage
+			Session::set(self::get_cartid_session_name()."Message", $message);
+			Session::set(self::get_cartid_session_name()."Status", $status);
+			Director::redirectBack();
+			return;
+		}
+	}
+	
+	/**
+	 * Handy debugging action visit.
+	 * Log in as an administrator and visit mysite/shoppingcart/debug
+	 */
+	function debug(){
+		$this->cart->debug();		
+	}
+
+	/*******************************************************
+	* DEPRECATED FUNCTIONS - to be removed
+	*******************************************************/
+
+	 //functions to be removed in v1.0
+	 
+	/**
+	 *@deprecated use add_item_link instead.
+	 **/	
+	static function increment_item_link($buyableID, $className = "OrderItem", $parameters = array()) {
+		return add_item_link($buyableID,$className,$parameters);
+	}
+	
+	/**
+	 *@deprecated use remove_item_link instead.
+	 **/	
+	static function decrement_item_link($buyableID, $className = "OrderItem", $parameters = array()) {
+		return remove_item_link($buyableID,$className,$parameters);
+	}
+	
+	/**
+	 *@deprecated use additem instead
+	 **/
+	function incrementitem($request) {
+		return $this->additem($request);
+	}
+
+	/**
+	 *@deprecated use removeitem instead.
+	 **/
+	function decrementitem($request) {
+		return $this->removeitem($request);
+	}
+
+}
