@@ -1402,7 +1402,7 @@ class Order extends DataObject {
 	 *
 	 *@return Array (for use in AJAX for JSON)
 	 **/
-	static function updateForAjax(array &$js) {
+	function updateForAjax(array &$js) {
 		$subTotal = $this->SubTotalAsCurrencyObject()->Nice();
 		$total = $this->TotalAsCurrencyObject()->Nice();
 		$js[] = array('id' => $this->TableSubTotalID(), 'parameter' => 'innerHTML', 'value' => $subTotal);
