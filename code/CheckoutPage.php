@@ -1,4 +1,5 @@
 <?php
+
 /**
  * CheckoutPage is a CMS page-type that shows the order
  * details to the customer for their current shopping
@@ -32,10 +33,9 @@
  *
  **/
 
-
 class CheckoutPage extends Page {
 
-	public static $db = array(
+	public static $db = array (
 		'PurchaseComplete' => 'HTMLText',
 		'ChequeMessage' => 'HTMLText',
 		'AlreadyCompletedMessage' => 'HTMLText',
@@ -48,31 +48,34 @@ class CheckoutPage extends Page {
 		'LoginToOrderLinkLabel' => 'Varchar(255)'
 	);
 
-	public static $has_one = array(
+	public static $has_one = array (
 		'TermsPage' => 'Page'
 	);
 
-	public static $has_many = array();
+	public static $has_many = array ();
 
-	public static $many_many = array();
+	public static $many_many = array ();
 
-	public static $belongs_many = array();
+	public static $belongs_many = array ();
 
-	public static $defaults = array();
+	public static $defaults = array ();
 
 	public static $icon = 'ecommerce/images/icons/checkout';
 
-	static function set_add_shipping_fields($v){user_error("This function has been moved to Order", E_USER_ERROR);}
-	static function get_add_shipping_fields(){user_error("This function has been moved to Order", E_USER_ERROR);}
-
+	static function set_add_shipping_fields($v) {
+		user_error("This function has been moved to Order", E_USER_ERROR);
+	}
+	static function get_add_shipping_fields() {
+		user_error("This function has been moved to Order", E_USER_ERROR);
+	}
 
 	/**
 	 * Returns the Terms and Conditions Page (if there is one).
 	 * @return DataObject (Page)
 	 */
 	public static function find_terms_and_conditions_page() {
-		$checkoutPage = DataObject::get_one("CheckoutPage");
-		return DataObject::get_by_id('Page', $checkoutPage->TermsPageID);
+		$checkoutPage = DataObject :: get_one("CheckoutPage");
+		return DataObject :: get_by_id('Page', $checkoutPage->TermsPageID);
 	}
 
 	/**
@@ -80,7 +83,7 @@ class CheckoutPage extends Page {
 	 * @return String (URLSegment)
 	 */
 	public static function find_link() {
-		if(!$page = DataObject::get_one('CheckoutPage')) {
+		if (!$page = DataObject :: get_one('CheckoutPage')) {
 			user_error('No CheckoutPage was found. Please create one in the CMS!', E_USER_ERROR);
 		}
 		return $page->Link();
@@ -92,11 +95,11 @@ class CheckoutPage extends Page {
 	 * @param int|string $orderID ID of the order
 	 */
 	public static function get_order_link($orderID) {
-		return self::find_link(). 'showorder/' . $orderID . '/';
+		return self :: find_link() . 'showorder/' . $orderID . '/';
 	}
 
 	function canCreate($member = null) {
-		return !DataObject::get_one("SiteTree", "\"ClassName\" = 'CheckoutPage'");
+		return !DataObject :: get_one("SiteTree", "\"ClassName\" = 'CheckoutPage'");
 	}
 
 	/**
@@ -108,16 +111,16 @@ class CheckoutPage extends Page {
 	 * @return string Link to checkout page
 	 */
 	public static function get_checkout_order_link($orderID) {
-		if(!$page = DataObject::get_one('CheckoutPage')) {
+		if (!$page = DataObject :: get_one('CheckoutPage')) {
 			user_error('No CheckoutPage was found. Please create one in the CMS!', E_USER_ERROR);
 		}
-		return $page->Link("loadorder"). "/" . $orderID . "/";
+		return $page->Link("loadorder") . "/" . $orderID . "/";
 	}
 
 	function getCMSFields() {
-		$fields = parent::getCMSFields();
+		$fields = parent :: getCMSFields();
 		$fields->addFieldToTab('Root.Content.TermsAndConditions', new TreeDropdownField('TermsPageID', 'Terms and Conditions Page', 'SiteTree'));
-		$fields->addFieldsToTab('Root.Content.Messages', array(
+		$fields->addFieldsToTab('Root.Content.Messages', array (
 			new HtmlEditorField('AlreadyCompletedMessage', 'Already Completed - shown when the customer tries to checkout an already completed order', $row = 4),
 			new TextField('FinalizedOrderLinkLabel', 'Label for the link pointing to a completed order - e.g. click here to view the completed order'),
 			new TextField('CurrentOrderLinkLabel', 'Label for the link pointing to the current order - e.g. click here to view current order'),
@@ -132,19 +135,18 @@ class CheckoutPage extends Page {
 		return $fields;
 	}
 
-
 	/**
 	 *@return String (HTML snippet of Menu Title WITH number of products in cart)
 	 **/
 	function EcommerceMenuTitle() {
 		$count = 0;
-		$order = ShoppingCart::current_order();
-		if($order) {
+		$order = ShoppingCart :: current_order();
+		if ($order) {
 			$count = $order->TotalItems();
 		}
 		$v = $this->MenuTitle;
-		if($count) {
-			$v .= " <span class=\"numberOfItemsInCart\">(".$count.")</span>";
+		if ($count) {
+			$v .= " <span class=\"numberOfItemsInCart\">(" . $count . ")</span>";
 		}
 		return $v;
 	}
@@ -162,7 +164,6 @@ class CheckoutPage_Controller extends Page_Controller {
 	 **/
 	protected $currentOrder = null;
 
-
 	/**
 	 *@var $currentStep Integer
 	 * if set to zero (0), all steps will be included
@@ -175,27 +176,24 @@ class CheckoutPage_Controller extends Page_Controller {
 	 **/
 	protected $readOnly = false;
 
-
-
 	public function init() {
-		parent::init();
- 		if(!class_exists('Payment')) {
+		parent :: init();
+		if (!class_exists('Payment')) {
 			trigger_error('The payment module must be installed for the ecommerce module to function.', E_USER_WARNING);
 		}
-		$this->currentOrder = ShoppingCart::current_order();
+		$this->currentOrder = ShoppingCart :: current_order();
 		//ShoppingCart::add_requirements();
-		Requirements::javascript('ecommerce/javascript/EcomPayment.js');
-		Requirements::themedCSS('CheckoutPage');
+		Requirements :: javascript('ecommerce/javascript/EcomPayment.js');
+		Requirements :: themedCSS('CheckoutPage');
 	}
-
 
 	function processmodifierform($request) {
 		$formName = $request->param("ID");
-		if($forms = $this->ModifierForms()) {
-			foreach($forms as $form) {
+		if ($forms = $this->ModifierForms()) {
+			foreach ($forms as $form) {
 				$fullName = explode("/", $form->Name());
 				$shortName = $fullName[1];
-				if($shortName == $formName) {
+				if ($shortName == $formName) {
 					return $form->submit($request->requestVars(), $form);
 				}
 			}
@@ -208,19 +206,19 @@ class CheckoutPage_Controller extends Page_Controller {
 	 *
 	 */
 	function loadorder($request) {
-		if($orderID = intval($request->param('ID'))) {
-			$this->currentOrder = ShoppingCart::singleton()->loadOrder($orderID);
-			Director::redirect($this->Link());
+		if ($orderID = intval($request->param('ID'))) {
+			$this->currentOrder = ShoppingCart :: singleton()->loadOrder($orderID);
+			Director :: redirect($this->Link());
 		}
-		return array();
+		return array ();
 	}
 
 	/**
 	 * Start a new order
 	 */
 	function startneworder() {
-		ShoppingCart::singleton()->clear();
-		Director::redirectBack();
+		ShoppingCart :: singleton()->clear();
+		Director :: redirectBack();
 	}
 
 	/**
@@ -228,10 +226,10 @@ class CheckoutPage_Controller extends Page_Controller {
 	 */
 	function step($request) {
 		$this->currentStep = intval($request->Param("ID"));
-		if($this->currentStep) {
-			return $this->renderWith("CheckoutPage_step".$this->currentStep, "Page");
+		if ($this->currentStep) {
+			return $this->renderWith("CheckoutPage_step" . $this->currentStep, "Page");
 		}
-		return array();
+		return array ();
 	}
 
 	function confirm($request) {
@@ -247,7 +245,7 @@ class CheckoutPage_Controller extends Page_Controller {
 	 * @return DataObjectSet
 	 */
 	function ModifierForms() {
-		if($this->currentOrder) {
+		if ($this->currentOrder) {
 			return $this->currentOrder->getModifierForms();
 		}
 	}
@@ -260,9 +258,9 @@ class CheckoutPage_Controller extends Page_Controller {
 	 */
 	function OrderForm() {
 		$form = new OrderForm($this, 'OrderForm');
-		$this->data()->extend('updateOrderForm',$form);
+		$this->data()->extend('updateOrderForm', $form);
 		//load session data
-		if($data = Session::get("FormInfo.{$form->FormName()}.data")){
+		if ($data = Session :: get("FormInfo.{$form->FormName()}.data")) {
 			$form->loadDataFrom($data);
 		}
 		return $form;
@@ -283,13 +281,12 @@ class CheckoutPage_Controller extends Page_Controller {
 	 * @return boolean
 	 */
 	function CanCheckout() {
-		if($this->currentOrder) {
-			if($this->currentOrder->Items() && $this->currentOrder->canEdit()) {
+		if ($this->currentOrder) {
+			if ($this->currentOrder->Items() && $this->currentOrder->canEdit()) {
 				return true;
 			}
 		}
 	}
-
 
 	/**
 	 * Returns a message explaining why the customer
@@ -298,24 +295,39 @@ class CheckoutPage_Controller extends Page_Controller {
 	 * @return string
 	 */
 	function Message() {
-		$this->$actionLinks = new DataObjectSet();
-		$checkoutLink = CheckoutPage::find_link();
-		if(!Member::currentUserID() && !$this->currentOrder) {
-			$redirectLink = CheckoutPage::get_checkout_order_link();
-			$this->$actionLinks->push(new ArrayData(array("Title" => $this->LoginToOrderLinkLabel, "Link" => 'Security/login?BackURL='.urlencode($redirectLink))));
-			$this->$actionLinks->push(new ArrayData(array("Title" => $this->CurrentOrderLinkLabel, "Link" => $checkoutLink)));
+		$this->actionLinks = new DataObjectSet();
+		$checkoutLink = CheckoutPage :: find_link();
+		if (!Member :: currentUserID() && !$this->currentOrder) {
+			$redirectLink = CheckoutPage :: get_checkout_order_link();
+			$this->actionLinks->push(new ArrayData(array (
+				"Title" => $this->LoginToOrderLinkLabel,
+				"Link" => 'Security/login?BackURL=' . urlencode($redirectLink)
+			)));
+			$this->actionLinks->push(new ArrayData(array (
+				"Title" => $this->CurrentOrderLinkLabel,
+				"Link" => $checkoutLink
+			)));
 			return $this->MustLoginToCheckoutMessage;
 		}
-		elseif(!$this->currentOrder) {
-			$this->$actionLinks->push(new arrayData(array("Title" => $this->CurrentOrderLinkLabel, "Link" => $checkoutLink)));
+		elseif (!$this->currentOrder) {
+			$this->actionLinks->push(new arrayData(array (
+				"Title" => $this->CurrentOrderLinkLabel,
+				"Link" => $checkoutLink
+			)));
 			return $this->NonExistingOrderMessage;
 		}
-		elseif(!$this->currentOrder->Items()) {
+		elseif (!$this->currentOrder->Items()) {
 			return $this->NoItemsInOrderMessage;
 		}
-		elseif(!$this->currentOrder->canPay() || !$this->currentOrder->canEdit()) {
-			$this->$actionLinks->push(new ArrayData(array("Title" => $this->FinalizedOrderLinkLabel, "Link" => $this->currentOrder->Link())));
-			$this->$actionLinks->push(new ArrayData(array("Title" => $this->StartNewOrderLinkLabel, "Link" => CheckoutPage::find_link()."startneworder/")));
+		elseif (!$this->currentOrder->canPay() || !$this->currentOrder->canEdit()) {
+			$this->actionLinks->push(new ArrayData(array (
+				"Title" => $this->FinalizedOrderLinkLabel,
+				"Link" => $this->currentOrder->Link()
+			)));
+			$this->actionLinks->push(new ArrayData(array (
+				"Title" => $this->StartNewOrderLinkLabel,
+				"Link" => CheckoutPage :: find_link() . "startneworder/"
+			)));
 			return $this->AlreadyCompletedMessage;
 		}
 		return "";
@@ -325,15 +337,15 @@ class CheckoutPage_Controller extends Page_Controller {
 	 *@return DataObjectSet (Title, Link)
 	 **/
 	function ActionLinks() {
-		if($this->$actionLinks && $this->$actionLinks->count()) {
-			return $this->$actionLinks;
+		if ($this->actionLinks && $this->actionLinks->count()) {
+			return $this->actionLinks;
 		}
 		return null;
 	}
 
 	function ModifierForm($request) {
 		user_error("Make sure that you set the controller for your ModifierForm to a controller directly associated with the Modifier", E_USER_WARNING);
-		return array();
+		return array ();
 	}
 
 	/**
@@ -341,11 +353,11 @@ class CheckoutPage_Controller extends Page_Controller {
 	 *@return Boolean
 	 **/
 	function CanShowPartInCurrentStep($part) {
-		if(!$this->currentStep) {
+		if (!$this->currentStep) {
 			return true;
 		}
-		elseif(isset(self::$checkout_steps[$this->currentStep])) {
-			if(in_array($name, self::$checkout_steps[$this->currentStep])) {
+		elseif (isset (self :: $checkout_steps[$this->currentStep])) {
+			if (in_array($name, self :: $checkout_steps[$this->currentStep])) {
 				return true;
 			}
 		}

@@ -522,7 +522,7 @@ class Order extends DataObject {
 			$obj = DataObject::get_by_id("OrderStep", $this->StatusID);
 		}
 		if(!$obj) {
-			$obj = DataObject::get_one("OrderStep");
+			$obj = DataObject::get_one("OrderStep"); //TODO: this could produce strange results
 		}
 		$this->StatusID = $obj->ID;
 		return $obj;
@@ -959,6 +959,7 @@ class Order extends DataObject {
 	 *
 	 * @return DataObject (Member)
 	 **/
+	 //TODO: please comment why we make use of this function
 	protected function getMemberForCanFunctions($member = null) {
 		if(!$member) {$member = Member::currentMember();}
 		if(!$member) {
@@ -993,18 +994,15 @@ class Order extends DataObject {
 		$extended = $this->extendedCan('canView', $member->ID);
 		if($extended !== null) {return $extended;}
 		//no member present: ONLY if the member can edit the order it can be viewed...
-		if(!$this->MemberID) {
-			//return $this->canEdit($member);
+		if($member->IsShopAdmin()) {
+			return true;
 		}
-		elseif($member->ID) {
-			if($member->IsShopAdmin()) {
-				return true;
-			}
-			if($this->MemberID == $member->ID) {
-				if(!$this->IsCancelled()) {
-					return true;
-				}
-			}
+		elseif(!$this->MemberID) {
+			//return $this->canEdit($member); //this causes a recusrive loop
+			return false;
+		}
+		elseif($member && $this->MemberID == $member->ID && !$this->IsCancelled()) {
+			return true;
 		}
 		return false;
 	}
@@ -1019,6 +1017,7 @@ class Order extends DataObject {
 		$extended = $this->extendedCan('canEdit', $member->ID);
 		if($extended !== null) {return $extended;}
 		if(!$this->canView($member) || $this->IsCancelled()) {
+
 			return false;
 		}
 		if($member->ID) {
@@ -1026,6 +1025,7 @@ class Order extends DataObject {
 				return true;
 			}
 		}
+
 		return $this->MyStep()->CustomerCanEdit;
 	}
 

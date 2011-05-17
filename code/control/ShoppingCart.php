@@ -232,7 +232,7 @@ class ShoppingCart extends Controller {
 			self::$order->calculateModifiers();
 		}
 		//add shopping cart items
-		self::add_template_ids_and_message();
+		//self::add_template_ids_and_message(); //this function doesn't exist
 		return self::$order;
 	}
 

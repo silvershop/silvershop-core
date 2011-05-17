@@ -128,14 +128,18 @@ class Buyable extends DataObjectDecorator {
 		$className = $this->owner->ClassName;
 		$orderItemClassName = $this->classNameForOrderItem();
 		$this->owner->extend('updateItemFilter',$filter);
-		$item = ShoppingCart::singleton()->addBuyable($buyable = $this->owner, $quantity = 0, $filter);
+		$item = ShoppingCart::get_order_item_by_buyableid($this->owner->ID, $orderItemClassName, $filter);
+		if(!$item) {
+			$item = new $orderItemClassName();
+			$item->addBuyableToOrderItem($this->owner,0);
+		}
 		$this->owner->extend('updateDummyItem',$item);
 		return $item; //return dummy item so that we can still make use of Item
 	}
 
 	//passing on shopping cart links ...is this necessary?? ...why not just pass the cart?
 	function AddLink() {
-		return ShoppingCart_Controller::add_item_link($this->owner->ID, $this->classNameForOrderItem(), $this->linkParameters());
+		return ShoppingCart::add_item_link($this->owner->ID, $this->classNameForOrderItem(), $this->linkParameters());
 	}
 	function IncrementLink() {
 		return $this->AddLink();
@@ -145,15 +149,15 @@ class Buyable extends DataObjectDecorator {
 	}
 
 	function RemoveLink() {
-		return ShoppingCart_Controller::remove_item_link($this->owner->ID, $this->classNameForOrderItem(), $this->linkParameters());
+		return ShoppingCart::remove_item_link($this->owner->ID, $this->classNameForOrderItem(), $this->linkParameters());
 	}
 
 	function RemoveAllLink() {
-		return ShoppingCart_Controller::remove_all_item_link($this->owner->ID, $this->classNameForOrderItem(), $this->linkParameters());
+		return ShoppingCart::remove_all_item_link($this->owner->ID, $this->classNameForOrderItem(), $this->linkParameters());
 	}
 
 	function SetQuantityItemLink() {
-		return ShoppingCart_Controller::set_quantity_item_link($this->owner->ID, $this->classNameForOrderItem(), $this->linkParameters());
+		return ShoppingCart::set_quantity_item_link($this->owner->ID, $this->classNameForOrderItem(), $this->linkParameters());
 	}
 
 	function SetSpecificQuantityItemLink($quantity) {
