@@ -13,13 +13,26 @@
 
 class Buyable extends DataObjectDecorator {
 
+	/**
+	 *List if classes (class names) that are buyable
+	 *@var array
+	 **/
 	protected static $array_of_buyables = array();
 		static function set_array_of_buyables(array $a) {self::$array_of_buyables = $a;}
 		static function get_array_of_buyables() {return(array)self::$array_of_buyables;}
 		static function add_class($className) {Object::add_extension($className, "Buyable");self::$array_of_buyables[] = $className;}
 
+	/**
+	 * static variable that "remembers" if the shop is closed.
+	 *@var Boolean
+	 **/
 	private static $shop_closed = null;
 
+	/**
+	 * Adds a bit to the end of a buyable to make it into an order item - e.g. Product and Product_OrderItem....
+	 * You sell products, but there is only ONE product A, so customers actually buy an OrderItem linked to ProductA.
+	 *@var String
+	 **/
 	protected static $order_item_class_name_post_fix = "_OrderItem";
 		static function get_order_item_class_name_post_fix() {return(string)self::$order_item_class_name_post_fix;}
 		static function set_order_item_class_name_post_fix(string $s) {self::$order_item_class_name_post_fix = $s;}
@@ -115,37 +128,32 @@ class Buyable extends DataObjectDecorator {
 		$className = $this->owner->ClassName;
 		$orderItemClassName = $this->classNameForOrderItem();
 		$this->owner->extend('updateItemFilter',$filter);
-		$item = ShoppingCart::get_order_item_by_buyableid($this->owner->ID, $orderItemClassName, $filter);
-
-		if(!$item) {
-			$item = new $orderItemClassName();
-			$item->addBuyableToOrderItem($this->owner,0);
-		}
+		$item = ShoppingCart::singleton()->addBuyable($buyable = $this->owner, $quantity = 0, $filter);
 		$this->owner->extend('updateDummyItem',$item);
 		return $item; //return dummy item so that we can still make use of Item
 	}
 
 	//passing on shopping cart links ...is this necessary?? ...why not just pass the cart?
 	function AddLink() {
-		return ShoppingCart::add_item_link($this->owner->ID, $this->classNameForOrderItem(), $this->linkParameters());
+		return ShoppingCart_Controller::add_item_link($this->owner->ID, $this->classNameForOrderItem(), $this->linkParameters());
 	}
 	function IncrementLink() {
-		return ShoppingCart::increment_item_link($this->owner->ID, $this->classNameForOrderItem(), $this->linkParameters());
+		return $this->AddLink();
 	}
 	function DecrementLink() {
-		return ShoppingCart::decrement_item_link($this->owner->ID, $this->classNameForOrderItem(), $this->linkParameters());
+		return $this->RemoveLink();
 	}
 
 	function RemoveLink() {
-		return ShoppingCart::remove_item_link($this->owner->ID, $this->classNameForOrderItem(), $this->linkParameters());
+		return ShoppingCart_Controller::remove_item_link($this->owner->ID, $this->classNameForOrderItem(), $this->linkParameters());
 	}
 
 	function RemoveAllLink() {
-		return ShoppingCart::remove_all_item_link($this->owner->ID, $this->classNameForOrderItem(), $this->linkParameters());
+		return ShoppingCart_Controller::remove_all_item_link($this->owner->ID, $this->classNameForOrderItem(), $this->linkParameters());
 	}
 
 	function SetQuantityItemLink() {
-		return ShoppingCart::set_quantity_item_link($this->owner->ID, $this->classNameForOrderItem(), $this->linkParameters());
+		return ShoppingCart_Controller::set_quantity_item_link($this->owner->ID, $this->classNameForOrderItem(), $this->linkParameters());
 	}
 
 	function SetSpecificQuantityItemLink($quantity) {

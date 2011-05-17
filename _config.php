@@ -9,9 +9,9 @@
 
 
 Director::addRules(50, array(
-	ShoppingCart::$url_segment . '/$Action/$ID/$OtherID' => 'ShoppingCart',
-	'ecommerce-load-default-records//$Action' => 'EcommerceDefaultRecords',
-	'ecommerce-migrate//$Action' => 'EcommerceMigration'
+	ShoppingCart_Controller::get_url_segment(). '/$Action/$ID/$OtherID' => 'ShoppingCart',
+	'ecommerce-load-default-records/$Action' => 'EcommerceDefaultRecords',
+	'ecommerce-migrate/$Action' => 'EcommerceMigration'
 ));
 
 Object::add_extension('Member', 'EcommerceRole');
@@ -73,7 +73,7 @@ Buyable::add_class("Product");
 
 // * * * SPECIAL CASES
 //OrderItem::disable_quantity_js();
-//ShoppingCartset_response_class("EcommerceResponse");
+//ShoppingCart_Controller::set_response_class("EcommerceResponse");
 
 // * * * PRODUCTS
 //ProductsAndGroupsModelAdmin::set_managed_models(array(("Product", "ProductGroup");

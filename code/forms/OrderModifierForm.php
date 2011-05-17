@@ -22,7 +22,7 @@ class OrderModifierForm extends Form {
 	 *
 	 *@var String
 	 **/
-	protected static $controller_class = "OrderModifier_Controller";
+	protected static $controller_class = "OrderModifierForm_Controller";
 		static function set_controller_class(String $s) {self::$controller_class = $s;}
 		static function get_controller_class() {return self::$controller_class;}
 
@@ -31,7 +31,7 @@ class OrderModifierForm extends Form {
 	 *
 	 *@var String
 	 **/
-	protected static $validator_class = "OrderModifier_Validator";
+	protected static $validator_class = "OrderModifierForm_Validator";
 		static function set_validator_class(String $s) {self::$validator_class = $s;}
 		static function get_validator_class() {return self::$validator_class;}
 
@@ -98,7 +98,7 @@ class OrderModifierForm_AjaxSubmit extends OrderModifierForm {
 /**
  * This controller allows you to submit modifier forms from anywhere on the site, especially the cart page.
  */
-class OrderModifier_Controller extends Controller{
+class OrderModifierForm_Controller extends Controller{
 
 	static $allowed_actions = array(
 		'removemodifier'

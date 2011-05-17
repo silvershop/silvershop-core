@@ -23,31 +23,32 @@ class OrderForm extends Form {
 		//  ________________ 1) Member + Address fields
 
 		//member fields
-		$leftFields = new FieldSet();
-		//$leftFields->setID('LeftOrder');
-		$member = $order->CreateMember();
-		$memberFields =  $member->getEcommerceFields();
+		$addressFields = new FieldSet();
+		$member = $order->CreateOrReturnExistingMember();
+		$memberFields = $member->getEcommerceFields();
 		$requiredFields = array_merge($requiredFields, $member->getEcommerceRequiredFields());
-		$leftFields->merge($memberFields);
+		$addressFields->merge($memberFields);
 		//link between Billing And ShippingAdress
 		//billing address field
-		$billingAddress = $order->CreateAddress("BillingAddress", "BillingAddress");
+		$billingAddress = $order->CreateOrReturnExistingAddress("BillingAddress", "BillingAddress");
 		$billingAddressFields = $billingAddress->getFields();
 		$requiredFields = array_merge($requiredFields, $billingAddress->getRequiredFields());
-		$leftFields->merge($billingAddressFields);
+		$addressFields->merge($billingAddressFields);
 		//shipping address field
 		if(OrderAddress::get_use_separate_shipping_address()) {
+			//add the important CHECKBOX
 			$useShippingAddressField = new FieldSet(new CheckboxField("UseShippingAddress", _t("OrderForm.USESHIPPINGADDRESS", "Use an alternative shipping address")));
-			$leftFields->push($useShippingAddressField);
-			$shippingAddress = $order->CreateAddress("ShippingAddress", "ShippingAddress");
-			$shippingAddressFields = $billingAddress->getFields();
+			$addressFields->merge($useShippingAddressField);
+			//now we can add the shipping fields
+			$shippingAddress = $order->CreateOrReturnExistingAddress("ShippingAddress", "ShippingAddress");
+			$shippingAddressFields = $shippingAddress->getFields();
 			$requiredFields = array_merge($requiredFields, $shippingAddress->getRequiredFields());
 			//finalise left fields
-			$leftFields->push($shippingAddress);
+			$addressFields->merge($shippingAddressFields);
 			Requirements::javascript('ecommerce/javascript/EcomOrderFormShipping.js');
 		}
-
-
+		$leftFields = new CompositeField($addressFields);
+		$leftFields->setID('LeftOrder');
 
 		//  ________________  2) Log in / vs Create Account fields - RIGHT-HAND-SIDE fields
 		$rightFields = new CompositeField();
@@ -116,7 +117,7 @@ class OrderForm extends Form {
 
 		//  ________________  7)  Load saved data
 		if ($member) {
-			$member->Country = ShoppingCart::get_country();
+			$member->Country = EcommerceCountry::get_country();
 			$this->loadDataFrom($member);
 		}
 		if($order) {
@@ -189,34 +190,43 @@ class OrderForm extends Form {
 			Director::redirectBack();
 			return false;
 		}
-		// Create new OR update logged in {@link Member} record
 
-				// MAKE SURE TO REVIEW ecommerce_create_or_merge "return" values
-		$member = EcommerceRole::ecommerce_create_or_merge($data, $testOnly = false);
-		//MEMBER
+		//PASSWORD HACK ... TO DO: test that you can actually update a password as the method below
+		//does NOT change the FORM only DATA, but we save to the new details using $form->saveInto($member)
+		//and NOT $data->saveInto($member)
 		if(isset($data['Password']) && is_array($data['Password'])) {
 			$data['Password'] = $data['Password']['_Password'];
-		}//ONLY IF THE MEMBER IS ALREADY LOGGED IN OR IT IS A NEW MEMBER....
-		elseif(is_object($member) && $member instanceof Member) {
-			// NOTE: write should return the new ID of the object
+		}
+		// Create new OR update logged in {@link Member} record
+		// MAKE SURE TO REVIEW ecommerce_create_or_merge "return" values
+		$member = EcommerceRole::ecommerce_create_or_merge($data, $testOnly = false);
+
+		//ONLY IF THE MEMBER IS ALREADY LOGGED IN OR IT IS A NEW MEMBER....
+		if(is_object($member) && $member instanceof Member) {
 			$form->saveInto($member);
+			// NOTE: write should return the new ID of the object
 			$order->MemberID = $member->write();
 			if(!Member::currentUserID()) {
 				$member->logIn();
 			}
 		}
 		//BILLING ADDRESS
-		if($billingAddress = $order->CreateAddress("BillingAddress", "BillingAddress")) {
+		if($billingAddress = $order->CreateOrReturnExistingAddress("BillingAddress", "BillingAddress")) {
 			$form->saveInto($billingAddress);
 			$order->BillingAddressID = $billingAddress->write();
 		}
 
 		// SHIPPING ADDRESS
-		if(isset($data['UseShippingAddress']) && $data['UseShippingAddress']){
-			if($shippingAddress = $order->CreateAddress("ShippingAddress", "ShippingAddress")) {
-				$form->saveInto($shippingAddress);
-				// NOTE: write should return the new ID of the object
-				$order->ShippingAddressID = $shippingAddress->write();
+		if(isset($data['UseShippingAddress'])){
+			if($data['UseShippingAddress']) {
+				if($shippingAddress = $order->CreateOrReturnExistingAddress("ShippingAddress", "ShippingAddress")) {
+					$form->saveInto($shippingAddress);
+					// NOTE: write should return the new ID of the object
+					$order->ShippingAddressID = $shippingAddress->write();
+				}
+			}
+			else {
+				$order->ShippingAddressID = 0;
 			}
 		}
 		//ORDER

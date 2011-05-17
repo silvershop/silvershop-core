@@ -226,7 +226,7 @@ class ProductGroup_Controller extends Page_Controller {
 
 	function init() {
 		parent::init();
-		ShoppingCart::add_requirements();
+		//ShoppingCart::add_requirements();
 		Requirements::themedCSS('ProductGroup');
 	}
 

@@ -185,6 +185,10 @@ class Product extends Page {
 		return $allowpurchase;
 	}
 
+	function DefaultImageLink() {
+		return "/ecommerce/images/productPlaceHolderThumbnail.gif";
+	}
+
 }
 
 class Product_Controller extends Page_Controller {

@@ -1,6 +1,6 @@
 <div id="OrderInformation">
 
-	<h2 class="blackHeading">$Title</h2>
+	<h2 class="orderHeading">$Title</h2>
 
 	<% include Order_CustomerNote %>
 

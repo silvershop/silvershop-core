@@ -74,7 +74,7 @@ class CartCleanupTask extends HourlyTask {
 		$where = "\"StatusID\" = ".OrderStep::get_status_id_from_code("CREATED")." AND \"LastEdited\" < '$time'";
 		$sort = "\"Order\".\"Created\" ASC";
 		$join = "";
-		$limit = "LIMIT 0, ".self::get_maximum_number_of_objects_deleted();
+		$limit = "0, ".self::get_maximum_number_of_objects_deleted();
 		if(self::$never_delete_if_linked_to_member) {
 			$where .= " AND \"Member\".\"ID\" IS NULL";
 			$join .= "LEFT JOIN \"Member\" ON \"Member\".\"ID\" = \"Order\".\"MemberID\" ";
@@ -93,16 +93,17 @@ class CartCleanupTask extends HourlyTask {
 	function cleanupUnlinkedOrderObjects() {
 		$classNames = self::get_linked_objects_array();
 		if(is_array($classNames) && count($classNames)) {
-			$where = "\"Order\".\"ID\" IS NULL";
-			$sort = '';
-			$join = "LEFT JOIN \"Order\" ON \"Order\".\"ID\" = \"OrderID\"";
-			$limit = "LIMIT 0, ".self::get_maximum_number_of_objects_deleted();
-			$unlinkedObjects = DataObject::get($className, $where, $sort, $join, $limit);
-			if($unlinkedObjects){
-				foreach($unlinkedObjects as $object){
-					$count++;
-					$object->delete();
-					$object->destroy();
+			foreach($classNames as $className) {
+				$where = "\"Order\".\"ID\" IS NULL";
+				$sort = '';
+				$join = "LEFT JOIN \"Order\" ON \"Order\".\"ID\" = \"OrderID\"";
+				$limit = "0, ".self::get_maximum_number_of_objects_deleted();
+				$unlinkedObjects = DataObject::get($className, $where, $sort, $join, $limit);
+				if($unlinkedObjects){
+					foreach($unlinkedObjects as $object){
+						$object->delete();
+						$object->destroy();
+					}
 				}
 			}
 		}

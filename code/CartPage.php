@@ -82,7 +82,7 @@ class CartPage_Controller extends Page_Controller{
 
 	public function init() {
 		parent::init();
-		ShoppingCart::add_requirements();
+		//ShoppingCart::add_requirements();
 		Requirements::themedCSS('CheckoutPage');
 		$orderID = intval($this->getRequest()->param('ID'));
 		//WE HAVE THIS FOR SUBMITTING FORMS!

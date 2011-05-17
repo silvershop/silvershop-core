@@ -172,11 +172,11 @@ class Order extends DataObject {
 	 **/
 	public static function get_by_id_if_can_view($id) {
 		$obj = DataObject::get_by_id("Order", $id);
-                if(is_object($obj)){
-                    if($obj->canView()) {
-                            return $obj;
-                    }
-                }
+		if(is_object($obj)){
+			if($obj->canView()) {
+				return $obj;
+			}
+		}
 		return null;
 	}
 
@@ -472,21 +472,6 @@ class Order extends DataObject {
 	}
 
 	/**
-	 * Sets up the Member, Billing and Shipping Address in the order
-	 * so that everything is at pre-populated as can be in the checkout.
-	 * TO DO: consider if this should go into an OrderStep???
-	 * NOTE: this is not used at the moment...
-	 **/
-	public function prepareForCheckout() {
-		$this->CreateMember();
-		$this->CreateAddress("BillingAddress", "BillingAddress");
-		if(OrderAddress::get_use_separate_shipping_address()) {
-			$this->CreateAddress("ShippingAddress", "ShippingAddress");
-		}
-	}
-
-
-	/**
 	 * Goes through the order steps and tries to "apply" the next status to the order
 	 *
 	 **/
@@ -522,6 +507,11 @@ class Order extends DataObject {
    * STATUS RELATED FUNCTIONS / SHORTCUTS
 *******************************************************/
 
+	public function ShippingAddress() {
+		if($this->ShippingAddressID) {
+			return DataObject::get_by_id("ShippingAddress", $this->ShippingAddressID);
+		}
+	}
 
 	/**
 	 * @return DataObject (current OrderStep)
@@ -677,7 +667,7 @@ class Order extends DataObject {
 	 * this member is NOT written, if a member is already linked, it will return the existing member.
 	 *@return: DataObject (Member)
 	 **/
-	public function CreateMember() {
+	public function CreateOrReturnExistingMember() {
 		if(!$this->MemberID) {
 			if($member = Member::currentMember()) {
 				$this->MemberID = $member->ID;
@@ -705,7 +695,7 @@ class Order extends DataObject {
 	 * @return DataObject (OrderAddress)
 	 **/
 
-	public function CreateAddress(string $className, $alternativeMethodName = '') {
+	public function CreateOrReturnExistingAddress(string $className, $alternativeMethodName = '') {
 		$variableName = $className."ID";
 		if($alternativeMethodName) {
 			$methodName = $alternativeMethodName;
@@ -716,6 +706,8 @@ class Order extends DataObject {
 		$address = null;
 		if($this->$variableName) {
 			if($address = $this->$methodName()) {
+				//the stuff below is just a little additional check... linking the address to the order...
+				//that is, the order could link to the address without the address linking back to the order.
 				if($address->OrderID != $this->ID && $this->ID) {
 					$address->OrderID = $this->ID;
 					$address->write();
@@ -738,11 +730,11 @@ class Order extends DataObject {
 	 **/
 
 	public function SetCountry($countryCode) {
-		if($billingAddress = $this->CreateAddress("BillingAddress", "BillingAddress")) {
+		if($billingAddress = $this->CreateOrReturnExistingAddress("BillingAddress", "BillingAddress")) {
 			$billingAddress->SetCountry($countryCode);
 		}
 		if(OrderAddress::get_use_separate_shipping_address()) {
-			if($shippingAddress = $this->CreateAddress("ShippingAddress", "ShippingAddress")) {
+			if($shippingAddress = $this->CreateOrReturnExistingAddress("ShippingAddress", "ShippingAddress")) {
 				$shippingAddress->SetCountry($countryCode);
 			}
 		}
@@ -1357,7 +1349,68 @@ class Order extends DataObject {
 /*******************************************************
    * TEMPLATE RELATED STUFF
 *******************************************************/
-	// MOVED TO SHOPPING CART
+
+	/**
+	 * $template_id_prefix is a prefix to all HTML IDs referred to in the shopping cart
+	 * e.g. CartCellID can become MyCartCellID by setting the template_id_prefix to "My"
+	 * The IDs are used for setting values in the HTML using the AJAX method with
+	 * the CartResponse providing the DATA (JSON).
+	 *
+	 *@var String
+	 **/
+	protected static $template_id_prefix = "";
+		public static function set_template_id_prefix(string $s) {self::$template_id_prefix = $s;}
+		public static function get_template_id_prefix() {return self::$template_id_prefix;}
+
+	/**
+	 * id that is used in templates and in the JSON return @see CartResponse
+	 *@return String
+	 **/
+	function TableMessageID() {return self::$template_id_prefix.'Table_Order_Message';}
+
+	/**
+	 * id that is used in templates and in the JSON return @see CartResponse
+	 *@return String
+	 **/
+	function TableSubTotalID() {return self::$template_id_prefix.'Table_Order_SubTotal';}
+
+	/**
+	 * id that is used in templates and in the JSON return @see CartResponse
+	 *@return String
+	 **/
+	function TableTotalID() {return self::$template_id_prefix.'Table_Order_Total';}
+
+	/**
+	 * id that is used in templates and in the JSON return @see CartResponse
+	 *@return String
+	 **/
+	function CartSubTotalID() {return self::$template_id_prefix.'Cart_Order_SubTotal';}
+
+	/**
+	 * id that is used in templates and in the JSON return @see CartResponse
+	 *@return String
+	 **/
+	function CartTotalID() {return self::$template_id_prefix.'Cart_Order_Total';}
+
+	/**
+	 * id that is used in templates and in the JSON return @see CartResponse
+	 *@return String
+	 **/
+	function OrderForm_OrderForm_AmountID() {return self::$template_id_prefix.'OrderForm_OrderForm_Amount';}
+
+	/**
+	 *
+	 *@return Array (for use in AJAX for JSON)
+	 **/
+	static function updateForAjax(array &$js) {
+		$subTotal = $this->SubTotalAsCurrencyObject()->Nice();
+		$total = $this->TotalAsCurrencyObject()->Nice();
+		$js[] = array('id' => $this->TableSubTotalID(), 'parameter' => 'innerHTML', 'value' => $subTotal);
+		$js[] = array('id' => $this->TableTotalID(), 'parameter' => 'innerHTML', 'value' => $total);
+		$js[] = array('id' => $this->OrderForm_OrderForm_AmountID(), 'parameter' => 'innerHTML', 'value' => $total);
+		$js[] = array('id' => $this->CartSubTotalID(), 'parameter' => 'innerHTML', 'value' => $subTotal);
+		$js[] = array('id' => $this->CartTotalID(), 'parameter' => 'innerHTML', 'value' => $total);
+	}
 
 
 

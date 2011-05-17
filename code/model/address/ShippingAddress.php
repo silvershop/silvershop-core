@@ -13,6 +13,7 @@
 
 class ShippingAddress extends OrderAddress {
 
+
 	static $db = array(
 		'ShippingFirstName' => 'Text',
 		'ShippingSurname' => 'Text',
@@ -84,10 +85,12 @@ class ShippingAddress extends OrderAddress {
 	}
 
 
+
 	/**
 	 *@return Fieldset
 	 **/
-	 public function getEcommerceFields() {
+	public function getFields() {
+		$fields = parent::getEcommerceFields();
 		if(OrderAddress::get_use_separate_shipping_address()) {
 			$fields = parent::getEcommerceFields();
 			// *** BILLING ADDRESS
@@ -105,7 +108,7 @@ class ShippingAddress extends OrderAddress {
 				$shippingStateField = new HiddenField('ShippingState', '', "Bliss");
 			}
 			// country
-			$countriesForDropdown = EcommerceRole::list_of_allowed_countries_for_dropdown();
+			$countriesForDropdown = EcommerceCountry::list_of_allowed_countries_for_dropdown();
 			$shippingCountryField = new DropdownField('ShippingCountry',  _t('OrderAddress.COUNTRY','Country'), $countriesForDropdown, EcommerceCountry::get_country());
 			$shippingCountryField->addExtraClass('ajaxCountryField');
 			if(count($countriesForDropdown) == 1) {
@@ -142,6 +145,21 @@ class ShippingAddress extends OrderAddress {
 	function getEcommerceRequiredFields() {
 		$requiredFieldsArray = array();
 		$this->owner->extend('augmentEcommerceRequiredFields', $requiredFieldsArray);
+		return $requiredFieldsArray;
+	}
+
+	/**
+	 * Return which member fields should be required on {@link OrderForm}
+	 * and {@link ShopAccountForm}.
+	 *
+	 * @return array
+	 */
+	function getRequiredFields() {
+		$requiredFieldsArray = array(
+			'ShippingAddress',
+			'ShippingCity',
+			'ShippingCountry'
+		);
 		return $requiredFieldsArray;
 	}
 

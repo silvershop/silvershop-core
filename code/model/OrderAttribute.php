@@ -125,14 +125,14 @@ class OrderAttribute extends DataObject {
 	 *@return String for use in the Templates
 	 **/
 	function TableID() {
-		return 'Table_' . $this->MainID();
+		return Order::get_template_id_prefix() . $this->MainID();
 	}
 
 	/**
 	 *@return String for use in the Templates
 	 **/
 	function CartID() {
-		return 'Cart_' . $this->MainID();
+		return $this->TableID();
 	}
 
 	/**
@@ -146,7 +146,7 @@ class OrderAttribute extends DataObject {
 	 *@return String for use in the Templates
 	 **/
 	function CartTitleID() {
-		return $this->CartID() . '_Title';
+		return $this->TableTitleID();
 	}
 
 	/**
@@ -160,7 +160,7 @@ class OrderAttribute extends DataObject {
 	 *@return String for use in the Templates
 	 **/
 	function CartTotalID() {
-		return $this->CartID() . '_Total';
+		return $this->TableTotalID();
 	}
 	/**
 	 *Should this item be shown on check out page table?

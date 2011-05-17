@@ -17,7 +17,7 @@ class CartResponse extends EcommerceResponse {
 	 *
 	 *@return JSON
 	 **/
-	public function ReturnCartData($status, $message = "", $data = null) {
+	public function ReturnCartData($messages = array, $data = null, $status = "success") {
 		//add header
 		$this->addHeader('Content-Type', 'application/json');
 		if($status != "success") {
@@ -40,7 +40,32 @@ class CartResponse extends EcommerceResponse {
 				$modifier->updateForAjax($js);
 			}
 		}
-		ShoppingCart::update_for_ajax($js, $message, $status);
+		$currentOrder->updateForAjax($js);
+		if($messages) {
+			$messagesImploded = '';
+			foreach($messages as $messageArray) {
+				$messagesImploded .= '<span class="'.$messageArray["Type"].'">'.$messageArray["Message"].'</span>';
+			}
+			$js[] = array(
+				"id" => $currentOrder->TableMessageID(),
+				"parameter" => "innerHTML",
+				"value" => $messagesImploded;
+				"isOrderMessage" => true
+			);
+			$js[] = array(
+				"id" =>  $currentOrder->TableMessageID(),
+				"parameter" => "hide",
+				"value" => 0
+			);
+		}
+		else {
+			$js[] = array(
+				"id" => $currentOrder->TableMessageID(),
+				"parameter" => "hide",
+				"value" => 1
+			);
+		}
+
 
 		//merge and return
 		if(is_array($data)) {

@@ -1,7 +1,7 @@
-<% control Parent %>
-	<% include ProductMenu %>
-<% end_control %>
-
+<div id="Sidebar">
+	<% include Sidebar_Cart %>
+	<% include Sidebar_Products %>
+</div>
 <div id="Product">
 	<h1 class="pageTitle">$Title</h1>
 	<div class="productDetails">

@@ -25,9 +25,13 @@
  * @see CheckoutPage_Controller->ModifierForms()
  *
  *
- * @package ecommerce
  * @authors: Silverstripe, Jeremy, Nicolaas
+ *
+ * @package: ecommerce
+ * @sub-package: pages
+ *
  **/
+
 
 class CheckoutPage extends Page {
 
@@ -61,6 +65,15 @@ class CheckoutPage extends Page {
 	static function set_add_shipping_fields($v){user_error("This function has been moved to Order", E_USER_ERROR);}
 	static function get_add_shipping_fields(){user_error("This function has been moved to Order", E_USER_ERROR);}
 
+
+	/**
+	 * Returns the Terms and Conditions Page (if there is one).
+	 * @return DataObject (Page)
+	 */
+	public static function find_terms_and_conditions_page() {
+		$checkoutPage = DataObject::get_one("CheckoutPage");
+		return DataObject::get_by_id('Page', $checkoutPage->TermsPageID);
+	}
 
 	/**
 	 * Returns the link or the Link to the account page on this site
@@ -119,46 +132,6 @@ class CheckoutPage extends Page {
 		return $fields;
 	}
 
-	/**
-	 * This automatically creates a CheckoutPage whenever dev/build
-	 * is invoked and there is no page on the site with CheckoutPage
-	 * applied to it.
-	 */
-	function requireDefaultRecords() {
-		parent::requireDefaultRecords();
-		$update = array();
-		if(!$page = DataObject::get_one('CheckoutPage')) {
-			$page = new CheckoutPage();
-			$page->Content = '<p>This is the checkout page. The order summary and order form appear below this content.</p>';
-			$page->MetaTitle = 'Checkout';
-			$page->MenuTitle = 'Checkout';
-			$page->Title = 'Checkout';
-			$update[] = 'Checkout page \'Checkout\' created';
-			$page->URLSegment = 'checkout';
-			$page->ShowInMenus = 0;
-			if($page->TermsPageID == 0 && $termsPage = DataObject::get_one('Page', "\"URLSegment\" = 'terms-and-conditions'")) {
-				$page->TermsPageID = $termsPage->ID;
-				$update[] = 'added terms page';
-			}
-		}
-		if($page) {
-			if(!$page->PurchaseComplete) {$page->PurchaseComplete = '<p>'._t('Checkout.PURCHASECOMPLETE','Your purchase is complete.').'</p>'; $update[] = "added PurchaseComplete content";}
-			if(!$page->ChequeMessage) {$page->ChequeMessage = '<p>'._t('Checkout.CHEQUEMESSAGE','Please note: Your goods will not be dispatched until we receive your payment.').'</p>'; $update[] = "added ChequeMessage content";}
-			if(!$page->AlreadyCompletedMessage) {$page->AlreadyCompletedMessage = '<p>'._t('Checkout.ALREADYCOMPLETEDMESSAGE','').'This order has already been completed.</p>'; $update[] = "added AlreadyCompletedMessage content";}
-			if(!$page->FinalizedOrderLinkLabel) {$page->FinalizedOrderLinkLabel = _t('Checkout.FINALIZEDORDERLINKLABEL','view completed order'); $update[] = "added FinalizedOrderLinkLabel content";}
-			if(!$page->CurrentOrderLinkLabel) {$page->CurrentOrderLinkLabel = _t('Checkout.CURRENTORDERLINKLABEL','view current order'); $update[] = "added CurrentOrderLinkLabel content";}
-			if(!$page->StartNewOrderLinkLabel) {$page->StartNewOrderLinkLabel = _t('Checkout.STARTNEWDORDERLINKLABEL','start new order'); $update[] = "added StartNewOrderLinkLabel content";}
-			if(!$page->NonExistingOrderMessage) {$page->NonExistingOrderMessage = '<p>'._t('Checkout.NONEXISTINGORDERMESSAGE','We can not find your order.').'</p>'; $update[] = "added NonExistingOrderMessage content";}
-			if(!$page->NoItemsInOrderMessage) {$page->NoItemsInOrderMessage = '<p>'._t('Checkout.NONITEMSINORDERMESSAGE','There are no items in your order. Please add some products first.').'</p>'; $update[] = "added NoItemsInOrderMessage content";}
-			if(!$page->MustLoginToCheckoutMessage) {$page->MustLoginToCheckoutMessage = '<p>'._t('Checkout.MUSTLOGINTOCHECKOUTMESSAGE','You must login to view this order').'</p>'; $update[] = "added MustLoginToCheckoutMessage content";}
-			if(!$page->LoginToOrderLinkLabel) {$page->LoginToOrderLinkLabel = '<p>'._t('Checkout.LOGINTOORDERLINKLABEL','log in and view order').'</p>'; $update[] = "added LoginToOrderLinkLabel content";}
-			if(count($update)) {
-				$page->writeToStage('Stage');
-				$page->publish('Stage', 'Live');
-				DB::alteration_message("create / updated checkout page: ".implode("<br />", $update), 'created');
-			}
-		}
- 	}
 
 	/**
 	 *@return String (HTML snippet of Menu Title WITH number of products in cart)
@@ -179,68 +152,103 @@ class CheckoutPage extends Page {
 }
 class CheckoutPage_Controller extends Page_Controller {
 
-	protected $usefulLinks = null;
+	/**
+	 *@var $actionLinks DataObjectSet (Link, Title)
+	 **/
+	protected $actionLinks = null;
 
+	/**
+	 *@var $currentOrder Order (DataObject)
+	 **/
 	protected $currentOrder = null;
+
+
+	/**
+	 *@var $currentStep Integer
+	 * if set to zero (0), all steps will be included
+	 **/
+	protected $currentStep = 0;
+
+	/**
+	 *@var $readOnly Boolean
+	 * if set to false, user can edit order, if set to true, user can only review order
+	 **/
+	protected $readOnly = false;
+
+
 
 	public function init() {
 		parent::init();
-		if(!class_exists('Payment')) {
+ 		if(!class_exists('Payment')) {
 			trigger_error('The payment module must be installed for the ecommerce module to function.', E_USER_WARNING);
 		}
 		$this->currentOrder = ShoppingCart::current_order();
-		ShoppingCart::add_requirements();
-		Requirements::javascript('ecommerce/javascript/EcommercePayment.js');
+		//ShoppingCart::add_requirements();
+		Requirements::javascript('ecommerce/javascript/EcomPayment.js');
 		Requirements::themedCSS('CheckoutPage');
-		$this->initVirtualMethods();
 	}
 
-	function startneworder() {
-		ShoppingCart::clear();
-		Director::redirectBack();
-	}
 
-	/**
-	 * Inits the virtual methods from the name of the modifier forms to
-	 * redirect the action method to the form class
-	 */
-	protected function initVirtualMethods() {
+	function processmodifierform($request) {
+		$formName = $request->param("ID");
 		if($forms = $this->ModifierForms()) {
 			foreach($forms as $form) {
-				$this->addWrapperMethod($form->Name(), 'getOrderModifierForm');
-				self::$allowed_actions[] = $form->Name(); // add all these forms to the list of allowed actions also
-			}
-		}
-	}
-
-	/**
-	 * Return a specific {@link OrderModifierForm} by it's name.
-	 *
-	 * @param string $name The name of the form to return
-	 * @return Form or NULL
-	 */
-	protected function getOrderModifierForm($name) {
-		if($forms = $this->ModifierForms()) {
-			foreach($forms as $form) {
-				if($form->Name() == $name) {
-					return $form;
+				$fullName = explode("/", $form->Name());
+				$shortName = $fullName[1];
+				if($shortName == $formName) {
+					return $form->submit($request->requestVars(), $form);
 				}
 			}
 		}
 	}
 
+	/**
+	 * Loads either the current order from the shopping cart or
+	 * by the specified Order ID in the URL.
+	 *
+	 */
+	function loadorder($request) {
+		if($orderID = intval($request->param('ID'))) {
+			$this->currentOrder = ShoppingCart::singleton()->loadOrder($orderID);
+			Director::redirect($this->Link());
+		}
+		return array();
+	}
 
+	/**
+	 * Start a new order
+	 */
+	function startneworder() {
+		ShoppingCart::singleton()->clear();
+		Director::redirectBack();
+	}
+
+	/**
+	 * Show only one step in the order process (e.g. only show OrderItems)
+	 */
+	function step($request) {
+		$this->currentStep = intval($request->Param("ID"));
+		if($this->currentStep) {
+			return $this->renderWith("CheckoutPage_step".$this->currentStep, "Page");
+		}
+		return array();
+	}
+
+	function confirm($request) {
+		$this->readOnly = true;
+		return $this->renderWith("CheckoutPage_confirm", "Page");
+	}
 
 	/**
 	 * Returns a DataObjectSet of {@link OrderModifierForm} objects. These
 	 * forms are used in the OrderInformation HTML table for the user to fill
-	 * out as needed for each modifier applied on the site.
+	 * in as needed for each modifier applied on the site.
 	 *
 	 * @return DataObjectSet
 	 */
 	function ModifierForms() {
 		if($this->currentOrder) {
-			return $this->currentOrder->getModifierForms($this);
+			return $this->currentOrder->getModifierForms();
 		}
 	}
 
@@ -260,23 +268,13 @@ class CheckoutPage_Controller extends Page_Controller {
 		return $form;
 	}
 
+	/**
+	 *@return Order (DataObject)
+	 **/
 	function Order() {
 		return $this->currentOrder;
 	}
 
-	/**
-	 * Returns either the current order from the shopping cart or
-	 * by the specified Order ID in the URL.
-	 *
-	 * @return Order
-	 */
-	function loadorder($request) {
-		if($orderID = intval($request->param('ID'))) {
-			$this->currentOrder = ShoppingCart::load_order($orderID);
-			Director::redirect($this->Link());
-		}
-		return array();
-	}
 	/**
 	 * Determine whether the user can checkout the
 	 * specified Order ID in the URL, that isn't
@@ -300,25 +298,24 @@ class CheckoutPage_Controller extends Page_Controller {
 	 * @return string
 	 */
 	function Message() {
-		$this->usefulLinks = new DataObjectSet();
+		$this->$actionLinks = new DataObjectSet();
 		$checkoutLink = CheckoutPage::find_link();
 		if(!Member::currentUserID() && !$this->currentOrder) {
 			$redirectLink = CheckoutPage::get_checkout_order_link();
-			$this->usefulLinks->push(new ArrayData(array("Title" => $this->LoginToOrderLinkLabel, "Link" => 'Security/login?BackURL='.urlencode($redirectLink))));
-			$this->usefulLinks->push(new ArrayData(array("Title" => $this->CurrentOrderLinkLabel, "Link" => $checkoutLink)));
+			$this->$actionLinks->push(new ArrayData(array("Title" => $this->LoginToOrderLinkLabel, "Link" => 'Security/login?BackURL='.urlencode($redirectLink))));
+			$this->$actionLinks->push(new ArrayData(array("Title" => $this->CurrentOrderLinkLabel, "Link" => $checkoutLink)));
 			return $this->MustLoginToCheckoutMessage;
-			//'You can not checkout this order because you are not logged in. To do so, please <a href="Security/login?BackURL=' . $redirectLink . '">login</a> first, otherwise you can <a href="' . $checkoutLink . '">checkout</a> your current order.'
 		}
 		elseif(!$this->currentOrder) {
-			$this->usefulLinks->push(new arrayData(array("Title" => $this->CurrentOrderLinkLabel, "Link" => $checkoutLink)));
+			$this->$actionLinks->push(new arrayData(array("Title" => $this->CurrentOrderLinkLabel, "Link" => $checkoutLink)));
 			return $this->NonExistingOrderMessage;
 		}
 		elseif(!$this->currentOrder->Items()) {
 			return $this->NoItemsInOrderMessage;
 		}
 		elseif(!$this->currentOrder->canPay() || !$this->currentOrder->canEdit()) {
-			$this->usefulLinks->push(new ArrayData(array("Title" => $this->FinalizedOrderLinkLabel, "Link" => $this->currentOrder->Link())));
-			$this->usefulLinks->push(new ArrayData(array("Title" => $this->StartNewOrderLinkLabel, "Link" => CheckoutPage::find_link()."startneworder/")));
+			$this->$actionLinks->push(new ArrayData(array("Title" => $this->FinalizedOrderLinkLabel, "Link" => $this->currentOrder->Link())));
+			$this->$actionLinks->push(new ArrayData(array("Title" => $this->StartNewOrderLinkLabel, "Link" => CheckoutPage::find_link()."startneworder/")));
 			return $this->AlreadyCompletedMessage;
 		}
 		return "";
@@ -327,9 +324,9 @@ class CheckoutPage_Controller extends Page_Controller {
 	/**
 	 *@return DataObjectSet (Title, Link)
 	 **/
-	function UsefulLinks() {
-		if($this->usefulLinks && $this->usefulLinks->count()) {
-			return $this->usefulLinks;
+	function ActionLinks() {
+		if($this->$actionLinks && $this->$actionLinks->count()) {
+			return $this->$actionLinks;
 		}
 		return null;
 	}
@@ -337,6 +334,21 @@ class CheckoutPage_Controller extends Page_Controller {
 	function ModifierForm($request) {
 		user_error("Make sure that you set the controller for your ModifierForm to a controller directly associated with the Modifier", E_USER_WARNING);
 		return array();
+	}
+
+	/**
+	 *@param $part Strong (OrderItems, OrderModifiers, OrderForm, OrderPayment)
+	 *@return Boolean
+	 **/
+	function CanShowPartInCurrentStep($part) {
+		if(!$this->currentStep) {
+			return true;
+		}
+		elseif(isset(self::$checkout_steps[$this->currentStep])) {
+			if(in_array($name, self::$checkout_steps[$this->currentStep])) {
+				return true;
+			}
+		}
 	}
 
 }

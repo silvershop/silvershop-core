@@ -41,7 +41,7 @@ class SiteConfigEcommerceExtras extends DataObjectDecorator {
 				new NumericField("NumberOfProductsPerPage", "Numer of products per page")
 			),
 			new Tab('Checkout',
-				new TextField("PostalCodeLink", "Postal code link"),
+				new TextField("PostalCodeURL", "Postal code link"),
 				new TextField("PostalCodeLabel", "Postal code label")
 			),
 			new Tab('Emails',

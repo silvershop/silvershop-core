@@ -78,7 +78,7 @@ EcomCart = {
 					}
 					//general message
 					else if(EcomCart.variableSetWithValue(change.isOrderMessage)) {
-						jQuery(id).html('<span class="'+ change.messageClass+'">' + value +'</span>');
+						jQuery(id).html(value);
 					}
 					else if(parameter == 'innerHTML'){
 						jQuery(id).html(value);
