@@ -52,7 +52,7 @@ class ProductGroup extends Page {
 	protected static $sort_options = array(
 			'title' => array("Title" => 'Alphabetical', "SQL" => "\"Title\" ASC"),
 			'price' => array("Title" => 'Lowest Price', "SQL" => "\"Price\" ASC"),
-			'numbersold' => array("Title" => 'Most Popular', "SQL" => "\"NumberSold\" DESC")
+			//'numbersold' => array("Title" => 'Most Popular', "SQL" => "\"NumberSold\" DESC")
 			//'Featured' => 'Featured',
 		);
 		static function add_sort_option($key, $title, $sql){self::$sort_options[$key] = array("Title" => $title, "SQL" => $sql);}

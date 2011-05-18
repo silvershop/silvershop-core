@@ -10,7 +10,8 @@ After an order is placed, it is immediately put into the fulfilment pipeline, wh
 Example steps
 -------------
  - Send email notification to customer
- - 
+ - Supplier stock check
+ - Processing
 
 
 How to configure...

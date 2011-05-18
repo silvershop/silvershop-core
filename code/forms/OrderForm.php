@@ -28,7 +28,7 @@ class OrderForm extends Form {
 		$memberFields = $member->getEcommerceFields();
 		$requiredFields = array_merge($requiredFields, $member->getEcommerceRequiredFields());
 		$addressFields->merge($memberFields);
-		//link between Billing And ShippingAdress
+		//link between Billing And ShippingAddress
 		//billing address field
 		$billingAddress = $order->CreateOrReturnExistingAddress("BillingAddress", "BillingAddress");
 		$billingAddressFields = $billingAddress->getFields();
@@ -116,10 +116,7 @@ class OrderForm extends Form {
 
 
 		//  ________________  7)  Load saved data
-		if ($member) {
-			$member->Country = EcommerceCountry::get_country();
-			$this->loadDataFrom($member);
-		}
+
 		if($order) {
 			$this->loadDataFrom($order);
 			if($billingAddress) {
@@ -130,6 +127,10 @@ class OrderForm extends Form {
 					$this->loadDataFrom($shippingAddress);
 				}
 			}
+		}
+		if ($member) {
+			$member->Country = EcommerceCountry::get_country();
+			$this->loadDataFrom($member);
 		}
 		//allow updating via decoration
 		$this->extend('updateForm',$this);

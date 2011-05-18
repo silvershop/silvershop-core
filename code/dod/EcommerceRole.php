@@ -163,7 +163,7 @@ class EcommerceRole extends DataObjectDecorator {
 			$existingUniqueMember = DataObject::get_one('Member', "\"$uniqueField\" = '{$uniqueFieldData}'");
 			if($existingUniqueMember && $existingUniqueMember->exists()) {
 				if(Member::currentUserID() != $existingUniqueMember->ID) {
-					if(Member::currentUserID) {
+					if(Member::currentUserID()) {
 						return false;
 					}
 					else {
@@ -221,11 +221,11 @@ class EcommerceRole extends DataObjectDecorator {
 
 	public function getEcommerceFieldsForCMS() {
 		$fields = new CompositeField();
-		$memberTitle = new TextField("MemberTitle", "Name", $this->getTitle());
+		$memberTitle = new TextField("MemberTitle", "Name", $this->owner->getTitle());
 		$fields->push($memberTitle->performReadonlyTransformation());
-		$memberEmail = new TextField("MemberEmail","Email", $this->Email);
+		$memberEmail = new TextField("MemberEmail","Email", $this->owner->Email);
 		$fields->push($memberEmail->performReadonlyTransformation());
-		$lastLogin = new TextField("MemberLastLogin","Last login",$this->dbObject('LastVisited')->Nice());
+		$lastLogin = new TextField("MemberLastLogin","Last login",$this->owner->dbObject('LastVisited')->Nice());
 		$fields->push($lastLogin->performReadonlyTransformation());
 		if($group = EcommerceRole::get_customer_group()) {
 			$fields->push(new LiteralField("EditMembers", '<p><a href="/admin/security/show/'.$group->ID.'/">view (and edit) all customers</a></p>'));

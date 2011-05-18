@@ -35,7 +35,7 @@ class EcommercePayment extends DataObjectDecorator {
 				'Created' => array(
 					'title' => 'Date (e.g. today)',
 					'field' => 'TextField',
-					'filter' => 'PaymentFilters_AroundDateFilter',
+					//'filter' => 'PaymentFilters_AroundDateFilter', //TODO: this breaks the sales section of the CMS
 				),
 				'IP' => array(
 					'title' => 'IP Address',
@@ -62,7 +62,7 @@ class EcommercePayment extends DataObjectDecorator {
 		// Save payment data from form and process payment
 		$form->saveInto($payment);
 		$payment->OrderID = $order->ID;
-		if($paidBy) {
+		if(is_object($paidBy)) {
 			$payment->PaidByID = $paidBy->ID;
 		}
 		$payment->Amount = $order->TotalOutstandingAsMoneyObject();
@@ -73,9 +73,9 @@ class EcommercePayment extends DataObjectDecorator {
 		if($result->isProcessing()) {
 			return $result->getValue();
 		}
-		else {
+		else {			
 			Director::redirect($order->Link());
-			return true;
+			return true;		
 		}
 	}
 

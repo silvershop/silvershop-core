@@ -19,13 +19,17 @@ class Order extends DataObject {
 	public static $db = array(
 		'SessionID' => "Varchar(32)", //so that in the future we can link sessions with Orders.... One session can have several orders, but an order can onnly have one session
 		'UseShippingAddress' => 'Boolean',
-		'CustomerOrderNote' => 'Text'
+		'CustomerOrderNote' => 'Text',
+		
+		'FirstName' => 'Varchar',
+		'Surname' => 'Varchar',
+		'Email' => 'Varchar'
 	);
 
 	public static $has_one = array(
 		'Member' => 'Member',
 		'BillingAddress' => 'BillingAddress',
-		'ShippingAdress' => 'ShippingAdress',
+		'ShippingAddress' => 'ShippingAddress',
 		'Status' => 'OrderStep',
 		'CancelledBy' => 'Member'
 	);
@@ -171,11 +175,9 @@ class Order extends DataObject {
 	 *@returns: DataObject (Order)
 	 **/
 	public static function get_by_id_if_can_view($id) {
-		$obj = DataObject::get_by_id("Order", $id);
-		if(is_object($obj)){
-			if($obj->canView()) {
-				return $obj;
-			}
+		$order = DataObject::get_by_id("Order", $id);		
+		if(is_object($order) && $order->canView()){
+			return $order;
 		}
 		return null;
 	}
@@ -184,7 +186,7 @@ class Order extends DataObject {
 	 * Like the standard get_by_id, but it checks if we are allowed to view it!
 	 *@return DataObject (Order)
 	 **/
-	public static function get_by_id_and_member_id($id, $memberID) {
+	public static function get_by_id_if_allowed($id, $memberID) {
 		$obj = Order::get_by_id_if_can_view($id);
 		if($obj) {
 			if($obj->MemberID == $memberID && $obj->canView()) {
@@ -232,10 +234,12 @@ class Order extends DataObject {
 			'title' => 'Customer Email',
 			'filter' => 'PartialMatchFilter'
 		),
-		'Member.Phone' => array(
+		
+		//TODO: this breaks the sales part of the CMS
+		/*'Member.Phone' => array(
 			'title' => 'Customer Phone',
 			'filter' => 'PartialMatchFilter'
-		),
+		),*/
 		'Created' => array(
 			'field' => 'TextField',
 			'filter' => 'OrderFilters_AroundDateFilter',
@@ -300,6 +304,8 @@ class Order extends DataObject {
 	function getCMSFields(){
 		$this->tryToFinaliseOrder();
 		$fields = parent::getCMSFields();
+		
+		
 		$readOnly = (bool)!$this->MyStep()->CustomerCanEdit;
 		$fieldsAndTabsToBeRemoved = array('MemberID', 'Attributes', 'SessionID', 'BillingAddressID', 'ShippingAddressID', 'UseShippingAddress', 'OrderStatusLogs', 'Payments');
 		if(!$readOnly) {
@@ -387,6 +393,7 @@ class Order extends DataObject {
 			$this->MyStep()->addOrderStepFields($fields, $this);
 		}
 		$this->extend('updateCMSFields',$fields);
+		$fields->addFieldToTab('Root.Debug',new LiteralField('sessionid',"order session id: ".$this->SessionID." your session id: ".session_id()));//debug
 		return $fields;
 	}
 
@@ -997,8 +1004,11 @@ class Order extends DataObject {
 		if($member->IsShopAdmin()) {
 			return true;
 		}
-		elseif(!$this->MemberID) {
-			//return $this->canEdit($member); //this causes a recusrive loop
+		elseif($this->SessionID == session_id()){
+			
+			return true;			
+		}
+		elseif(!$this->MemberID) {			
 			return false;
 		}
 		elseif($member && $this->MemberID == $member->ID && !$this->IsCancelled()) {

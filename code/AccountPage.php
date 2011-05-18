@@ -170,8 +170,15 @@ class AccountPage_Controller extends Page_Controller {
 	function init() {
 		parent::init();
 		Requirements::themedCSS('AccountPage');
-		$this->memberID = Member::currentUserID();
-		if(!$this->memberID) {
+		
+		//WE HAVE THIS FOR SUBMITTING FORMS!
+		if(isset($_POST['OrderID'])) {
+			$this->orderID = intval($_POST['OrderID']);
+		}elseif(Director::urlParam('ID')){
+			$this->orderID = Director::urlParam('ID');
+		}
+			
+		if(!$this->CurrentOrder()) {
 			$messages = array(
 				'default' => '<p class="message good">' . _t('Account.MESSAGE', 'You\'ll need to login before you can access the account page. If you are not registered, you won\'t be able to access it until you place your first order, otherwise please enter your details below.') . '</p>',
 				'logInAgain' => _t('Account.LOGINAGAIN', 'You have been logged out. If you would like to log in again, please do so below.')
@@ -179,10 +186,7 @@ class AccountPage_Controller extends Page_Controller {
 			Security::permissionFailure($this, $messages);
 			return false;
 		}
-		//WE HAVE THIS FOR SUBMITTING FORMS!
-		if(isset($_POST['OrderID'])) {
-			$this->orderID = intval($_POST['OrderID']);
-		}
+		
 	}
 
 	/**
@@ -190,7 +194,7 @@ class AccountPage_Controller extends Page_Controller {
 	 **/
 	function CurrentOrder() {
 		if(!$this->currentOrder) {
-			$this->currentOrder = Order::get_by_id_and_member_id($this->orderID, $this->memberID);
+			$this->currentOrder = Order::get_by_id_if_can_view($this->orderID);
 			if($this->currentOrder) {
 				if(!$this->currentOrder->canEdit())  {
 					$this->currentOrder->tryToFinaliseOrder();
