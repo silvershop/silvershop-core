@@ -15,30 +15,27 @@
  * </code>
  *
  * @package ecommerce
- * @authors: Silverstripe, Jeremy, Nicolaas
- **/
-
+ */
 class FlatTaxModifier extends OrderModifier {
-
-// ######################################## *** model defining static variables (e.g. $db, $has_one)
 
 	public static $db = array(
 		'Country' => 'Text',
 		'Rate' => 'Double',
-		'TaxType' => "Enum('Exclusive,Inclusive')",
-		'TaxableAmount' => "Currency"
+		'Name' => 'Text',
+		'TaxType' => "Enum('Exclusive,Inclusive')"
 	);
 
-
-// ######################################## *** cms variables + functions (e.g. getCMSFields, $searchableFields)
-
-// ######################################## *** other (non) static variables (e.g. protected static $special_name_for_something, protected $order)
-
-
+	public static $has_one = array();
+	public static $has_many = array();
+	public static $many_many = array();
+	public static $belongs_many_many = array();
+	public static $defaults = array();
+	public static $casting = array();
+	
 	protected static $name = null;
 	protected static $rate = null;
 	protected static $exclusive = null;
-
+	
 	static $includedmessage = "%.1f%% %s (inclusive)";
 	static $excludedmessage = "%.1f%% %s";
 
@@ -47,26 +44,66 @@ class FlatTaxModifier extends OrderModifier {
 		self::$name = (string)$name;
 		self::$exclusive = (bool)$exclusive;
 	}
-// ######################################## *** CRUD functions (e.g. canEdit)
-// ######################################## *** init and update functions
 
-	public function runUpdate() {
-		$this->checkField("Country");
-		$this->checkField("Rate");
-		$this->checkField("TaxType");
-		$this->checkField("TaxableAmount");
-		parent::runUpdate();
+	function Rate() {
+		return $this->ID ? $this->Rate : $this->LiveRate();
 	}
 
-// ######################################## *** form functions (showform and getform)
-// ######################################## *** template functions (e.g. ShowInTable, TableTitle, etc...) ... USES DB VALUES
-
-	public function ShowInTable() {
-		return $this->Rate;
+	function Name() {
+		return $this->ID ? $this->Name : $this->LiveName();
 	}
 
-	public function TableValue(){
-		return $this->TaxableAmount * $this->Rate;
+	function IsExclusive() {
+		return $this->ID ? $this->TaxType == 'Exclusive' : $this->LiveIsExclusive();
+	}
+
+	protected function LiveRate() {
+		return self::$rate;
+	}
+
+	protected function LiveName() {
+		return self::$name;
+	}
+
+	protected function LiveIsExclusive() {
+		return self::$exclusive;
+	}
+
+	function Amount() {
+		return $this->AddedCharge();
+	}
+
+	/**
+	 * Get the tax amount that needs to be added to the given order.
+	 * If tax is setup to be inclusive, then this will be 0.
+	 */
+	function AddedCharge() {
+		return $this->IsExclusive() ? $this->Charge() : 0;
+	}
+
+	/**
+	 * Get the tax amount to charge on the order.
+	 *
+	 */
+	function Charge() {
+		return $this->TaxableAmount() * $this->Rate();
+	}
+
+	/**
+	 * The total amount from the {@link Order} that
+	 * is taxable.
+	 */
+	function TaxableAmount() {
+		$order = $this->Order();
+		return $order->SubTotal() + $order->ModifiersSubTotal($this->class);
+	}
+
+	function ShowInTable() {
+		return $this->Rate();
+	}
+	
+	function TableValue(){
+		return $this->Charge();
 	}
 
 	/**
@@ -77,74 +114,19 @@ class FlatTaxModifier extends OrderModifier {
 	 *
 	 * @return string
 	 */
-	public function TableTitle() {
+	function TableTitle() {
 		$message = ($this->IsExclusive()) ? self::$excludedmessage : self::$includedmessage;
-		return sprintf($message,$this->Rate * 100,$this->Name);
+		return sprintf($message,$this->Rate() * 100,$this->Name());
 	}
-// ######################################## ***  inner calculations.... USES CALCULATED VALUES
-
-
-	protected function IsExclusive() {
-		return self::$exclusive;
-	}
-
-// ######################################## *** calculate database fields ... USES CALCULATED VALUES
 
 	/**
-	 * The total amount from the {@link Order} that
-	 * is taxable.
+	 * PRECONDITION: The order item is not saved in the database yet.
 	 */
-	protected function LiveTaxableAmount() {
-		$order = $this->Order();
-		return $order->SubTotal() + $order->ModifiersSubTotal($this->class);
-	}
-
-
-	protected function LiveRate() {
-		return self::$rate;
-	}
-
-	protected function LiveName() {
-		return self::$name;
-	}
-
-	protected function LiveTaxType() {
-		if($this->IsExclusive()) {
-			return "Exclusive";
-		}
-		return "Inclusive";
-	}
-
-	protected function LiveAmount() {
-		if($this->IsExclusive()) {
-			$this->TaxableAmount() * $this->LiveRate();
-		}
-		else {
-			return 0;
-		}
-	}
-
-// ######################################## *** Type functions
-	protected function IsChargeable() {
-		if($this->IsExclusive()) {
-			return true;
-		}
-	}
-
-	protected function IsNoChange() {
-		if(!$this->IsChargeable()) {
-			return true;
-		}
-	}
-
-
-// ######################################## *** standard database related functions (e.g. onBeforeWrite, onAfterWrite, etc...)
-
 	public function onBeforeWrite() {
 		parent::onBeforeWrite();
+
+		$this->Rate = $this->LiveRate();
+		$this->Name = $this->LiveName();
+		$this->TaxType = $this->LiveIsExclusive() ? 'Exclusive' : 'Inclusive';
 	}
-
-// ######################################## *** AJAX related functions
-// ######################################## *** debug functions
-
 }

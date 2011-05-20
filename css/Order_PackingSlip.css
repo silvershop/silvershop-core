@@ -1,19 +1,62 @@
-/**
-  * IMPORTANT NOTE:
-  * The default e-commerce css only includes the basics and it is recommended that you theme these files.
-  * Also make sure you have the site's general layout and typography styled before you do this.
-  **/
-html,body { text-align: left; border: 0; padding: 0; margin: 0; background: #e9e9e9; }
-body { font-size: 62.5%; }
-p.footertext { text-align: center; color: #666; font-size: 10px; }
-* { font-size: 1em; }
-h2.pageTitle { font-size: 2em; }
+html,body{
+	text-align:left;
+	border:0;
+	padding:0;
+	margin:0;
+	background:#e9e9e9;
+}
+body {
+	font-size:62.5%;
+}
+
+p.footertext {
+	text-align:center;
+	color:#666;
+	font-size:10px;
+}
+
+* {
+	font-size:1em;
+}
+h2.pageTitle {
+	font-size:2em;
+}
 #OrderInformation div,
-	#OrderStepForm,
-	#OrderStatusLog { margin: 20px; background: #fff; padding: 20px; border: 1px solid #333; page-break-after: always; font-family: Arial,Helvetica,sans-serif; width: 600px; text-align: left; }
-.packingSlip { width: 98%; border-collapse: collapse; }
-	.packingSlip th { color: #666; font-size: 1.8em; padding: 5px; }
-	.packingSlip td { border: 1px solid #ccc; font-size: 1.2em; padding: 5px; }
-		.packingSlip td h2 { color: #666; font-size: 2.5em; }
-		.packingSlip tr.orderDetails { font-weight: bold; border-bottom: 10px; }
-	.packingSlip .orderDetails { margin-top: 10px; }
+#OrderStatusForm,
+#OrderStatusLog {
+	margin:20px;
+	background:#fff;
+	padding:20px;
+	border:1px solid #333;
+	page-break-after:always;
+	font-family:Arial,Helvetica,sans-serif;
+	width:600px;
+	text-align:left;
+}
+
+
+.packingSlip {
+	width: 98%;
+	border-collapse: collapse;
+}
+	.packingSlip th {
+		color: #666;
+		font-size: 1.8em;
+		padding: 5px;
+	}
+	.packingSlip td {
+		border: 1px solid #ccc;
+		font-size: 1.2em;
+		padding: 5px;
+	}
+		.packingSlip td h2 {
+			color: #666;
+			font-size: 2.5em;
+		}	
+		.packingSlip tr.orderDetails {
+			font-weight: bold;
+			border-bottom: 10px;
+		}
+	.packingSlip.orderDetails {
+		margin-top: 10px;
+	}

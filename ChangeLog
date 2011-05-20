@@ -1,173 +1,30 @@
-------------------------------------------------------------------------------------
-e-commerce ChangeLog
-------------------------------------------------------------------------------------
+Ecommerce ChangeLog
 
-NOTE: this needs updating - a lot of revisions are missing - will update as time allows - NICOLAAS
+Needing attention / TODO:
+	* Product -> Number sold. This was intended to allow sorting products by popularity, however it may not be implemented the best.
+	* Removable modifiers? - untested, probably broken.
+	* Remove session-based code from other classes. (mostly done)
+	
+	* Introduce a way to ensure only valid products are added with parameters. (Cart validation??)
+	
+	* Introduce a task that removes expired sessions from orders.
+	
+	* Tidy Order_StatusEmail.ss
 
-
-r836:
-AccountPage:
-- bugfixes;
-CheckoutPage:
-- bugfixes, improved emails;
-EcommercePayment:
-- added AmountValue Method, improved getCMSfields;
-EcommerceSiteTreeExtension:
-- removed EcommerceMenuTitle;
-Order_Email: added two options: send as plain text and copy to admin;
-OrderForm:
-- check for shipping address - dont just createa a new one;
-Order:
-- improved CMS fields + improved email sending;
-OrderAttribute:
--  introduced a flag, which is set onAfterWrite and onAfterDelete;
-OrderStep:
-- changed CanEdit/CanCancel to CustomerCanEdit, CustomerCanCancel - to avoid confusion.
-- Improved Emails (introduced Message - simplified design)
-- add ability to add fields to Order CMS Fields
-
-------------------------------------------------------------------------------------
-r709:
-Checkout Page:
-- canCheckOut improved
-- useful links improvements
-Product:
-- introduced table subtitle
-OrderForm:
-- added field group "final field"
-EcomQuanityField:
-- bugfix in _construct
-Order:
-- bugfixes
-OrderAttribute:
-- introduced Table SubTitle
-OrderItem
-- introduced Table SubTitle
-OrderStep:
-- improved steps (do not require secondary params)
-- improved saving of Member
-
-------------------------------------------------------------------------------------
-14/Jan/2011
-config:
-- removed superfluous definitions
-AccountPage:
-- added to do
-CartPage:
-- added MenuTitle method
-CheckoutPage:
-- added MenuTitle method replacing  MenuTitleEcommerce
-All Classes:
-- replace OrderStatus with OrderStep
-ShoppingCart:
-- fixed bug in increment and decrement functions
-EcommerceSiteTreeExtension:
-- removed method MenuTitleEcommerc
-SiteTreeConfigEcommerceExtras
-- added several boolean fields (they may move again...!)
-EcomQtyField:
-- setup its own JS for this....
-Order:
-- further implemented steps concept, removing some hardcoded concepts
-OrderItem:
-- added Link method
-OrderStep:
-- further implemented steps concept, removing some hardcoded concepts
-
-
-------------------------------------------------------------------------------------
-11/Jan/2011
-Buyables:
-- created new way to add buyable: Buyable::add_class("Product");
-- introduced $array_of_buyables
-- increment and decrement link
-Modifiers:
-- added a third option "removed" (we already had chargable and deductable).
-EcommerceRole:
-- added Shop Admin Group
-All Classes:
-- added authors (first draft)
-- added CRUD methods (canEdit, canView, etc... to a whole bunch of classes
-- added singular and plural names, where required...
-- cleaned up code
-- for those having an OrderID, changed the search field to a numeric field
-All SiteTree Classes
-- changed icons to BW for being more neutral
-- cleaned up icons
-- introduced ShoppingCart::add_requirements(); to replace requirements
-AccountPage:
-- removed "add action"
-- improved canCreate (so that you can extend AccountPage and it still works...)
-- introduced EcommercePayment::process_payment_form_and_return_next_step
-- added _t for formAction
-CartPage:
-- intval to preven SQL injection
-CheckOutPage:
-StoreAdmin:
-- added new classses to be managed
-- allow delete
-ShoppingCart:
-- added: incrementitem (replaces the ambiguous: additem)
-- added decrementitem
-- cleaned up country static functions
-- moved "carts cleanup" functions from tasks to ShoppingCart - so we dont have to setup daily tasks anymore.
-- separated Methods into clear groups
-- allow the removal of all modifiers / all items, not ALL attributes
-- removed "add_new_modifier"
-- cleaned up code
-EcomQtyField:
-- added increment and decrement link
-OrderForm:
-- introduced EcommercePayment::process_payment_form_and_return_next_step
-- cleanup processing of submitted data
-- always create a shipping address
-ShopAccountForm:
-- added ShopAccountForm_Validator to file (used to be its own file)
-ShopAccountForm_Validator
-- DELETED (see ShopAccountForm)
-EcommerceCurrency:
-- cleaned up NICE functions
-EcommercePayment:
-- moved to DOD folder
-Order:
-- introduce CancelledBy field
-- introduced casted variables: Title, HasBeenCancelled'
-- added i18n_singular_name and i18n_plural_name
-- re-ordered code and put into clearer code groups
-- introduce "core" status methods: init, submit, pay, confirm, send
-- removed ambiguous methods: createModifers and createItems
-- remove Order_*** classes - moved to their own classes
-- added Modifier::init concept
-- heaps of other changes
-- added Order casted variable Title
-OrderAttribute:
-- introduce init method
-- added canEdit and canDelete
-OrderModifier:
-- introduce init method
-- removed  init_for_order
-OrderEmailRecord
-- record of every email send
-OrderFilters:
-- always return a query - not sure if this is the right syntax, but at least all or none of them are correct.
-EcommerceSideReport:
-- fixed _t stuff.
-WeightShippingModifier:
-- added $a and $b variables - this looks a bit dodgy...
-OrderStatusLog:
-- added: Dispatch, DispatchElectronicOrder, DispatchPhysicalOrder, PaymentCheck - all as new classses, extending from OrderStatusLog
-- each of them has "internalUseOnly"
-------------------------------------------------------------------------------------
-
-0.7 & 0.8
+Trunk
 	* Variations working again
 	* Re-structured default templates to be more hierartical and extensible. Removed redundant templates.
 	* Implemented new reciept design
 	* Updated CMS Order interface
 	* Introduced FullBillingAddress and FullShippingAddress functions on Order to provide ways to get combined address fields.
+	
 	* Merged in DBCart, Burnbright, and SunnySideUp branches
+
+Burnbright branch
 	* Depricated AllowPurchase function on Product & ProductVariation in favour of canPurcahse. SilverStripe has can____ capabilites built in, and AllowPurchase was overriding the DB field.
 	* Improved ProductBulkLoader to allow setting ProductGroup, and linking up an image of the product.
+
+DBCart branch
 	* Merged ShoppingCart and ShoppingCart_Controller into one class
 	* Introduced filters/paremeters system for more complex cart situations
 
@@ -190,7 +47,7 @@ OrderStatusLog:
 	* Include shopping cart page type
 	* Removed quantity selectors from products on group page, as they can be updated using the cart on the left.
 	* Added support for calculating and storing the number of products sold
-
+	
 0.6
 	- Data model changes (see http://doc.silverstripe.com/doku.php?id=ecommerce:overview&s=ecommerce)
 	- PHP files moved into folders for grouping of models, controllers and forms
@@ -214,10 +71,10 @@ OrderStatusLog:
  	- Changed reports to use TableListField, and fixed printing
  	- Removed old CheckoutPage.js code that was broken, replaced with working version
 	- Renamed MemberForm to ShopAccountForm since this is too general
-	- Removed specifically set CMS fields, these are now scaffolded.
+	- Removed specifically set CMS fields, these are now scaffolded. 
 	- Moved payment class URL rules to payment module _config.php
-	- Product title not displayed in Receipt Email. Ticket #3680
-	- Fixed price still showing even if price set to 0 in product
+	- Product title not displayed in Receipt Email. Ticket #3680 
+	- Fixed price still showing even if price set to 0 in product 
 	- Moved Eway.js from ecommerce to payment module
 	- Moved Eway payments to payments module
 	- Removed restrictive decimal for Tax Rate field and replaced with double type
@@ -231,7 +88,7 @@ OrderStatusLog:
 	- Make sure array in set_payment_methods() is associative
 	- Cleaned up OrderReport to use non-deprecated APIs, refactored to use TableListField
 	- Update i18n entities since the Report class was renamed
-	- Updated ecommerce report classes to reflect change from Report to SSReport
+	- Updated ecommerce report classes to reflect change from Report to SSReport 
 	- removed ecommerce jquery directory that isn't being used anymore
 	- Removed javascript that shouldn't be done until we've got more of a stable platform
 	- Instead of hardcoding css/js requirements into Report.php

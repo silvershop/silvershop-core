@@ -1,18 +1,20 @@
 <% include ProductMenu %>
+
 <div id="ProductGroup">
-	<h1 class="pagetitle">$Title</h1>
+	<h1 class="pageTitle">$Title</h1>
 
 	<% if Content %>
-		<div id="ContentHolder">
+		<div class="typography">
 			$Content
 		</div>
 	<% end_if %>
 
 	<% if Products %>
 		<div id="Products" class="category">
-			<div class="resultsBar">
-				<% if SortLinks %><span class="sortOptions"><% _t('ProductGroup.SORTBY','Sort by') %> <% control SortLinks %><a href="$Link" class="sortlink $Current">$Name</a> <% end_control %></span><% end_if %>
+			<div class="resultsBar typography">
+				<% if SortLinks %><span class="sortOptions">Sort by <% control SortLinks %><a href="$Link" class="sortlink $Current">$Name</a> <% end_control %></span><% end_if %>
 			</div>
+			<div class="clear"><!-- --></div>
 			<ul class="productList">
 				<% control Products %>
 					<% include ProductGroupItem %>
@@ -23,31 +25,23 @@
 	<% end_if %>
 
 	<% if Products.MoreThanOnePage %>
-	<div id="PageNumbers">
-		<p>
-			<% if Products.NotFirstPage %>
-				<a class="prev" href="$Products.PrevLink" title="<% _t('ProductGroup.SHOWPREVIOUSPAGE','View the previous page') %>"><% _t('ProductGroup.PREVIOUS','previous') %></a>
-			<% end_if %>
+	  <p>page:
+	  <% if Products.PrevLink %>
+	    <a href="$Products.PrevLink">previous</a> |
+	  <% end_if %>
 
-			<span>
-		    		<% control Products.PaginationSummary(4) %>
-					<% if CurrentBool %>
-						$PageNum
-					<% else %>
-						<% if Link %>
-							<a href="$Link" title="<% sprintf(_t("ProductGroup.GOTOPAGE","View page number %s"),$PageNum) %>">$PageNum</a>
-						<% else %>
-							&hellip;
-						<% end_if %>
-					<% end_if %>
-				<% end_control %>
-			</span>
+	  <% control Products.Pages %>
+	    <% if CurrentBool %>
+	      <strong>$PageNum</strong>
+	    <% else %>
+	      <a href="$Link" title="Go to page $PageNum">$PageNum</a>
+	    <% end_if %>
+	  <% end_control %>
 
-			<% if Products.NotLastPage %>
-				<a class="next" href="$Products.NextLink" title="<% _t('ProductGroup.SHOWNEXTPAGE','View the next page') %>"><% _t('ProductGroup.NEXT','next') %></a>
-			<% end_if %>
-		</p>
-	</div>
+	  <% if Products.NextLink %>
+	    | <a href="$Products.NextLink">next</a>
+	  <% end_if %>
+	  </p>
 	<% end_if %>
 
 </div>

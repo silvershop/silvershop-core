@@ -6,9 +6,7 @@
  * outlines the logic for what orders are considered to be "unprinted".
  *
  * @package ecommerce
- * @authors: Silverstripe, Jeremy, Nicolaas
- **/
-
+ */
 class UnprintedOrderReport extends SS_Report {
 
 	protected $title = 'Unprinted Orders';
@@ -25,7 +23,7 @@ class UnprintedOrderReport extends SS_Report {
 	 */
 	function getReportField() {
 		// Get the fields used for the table columns
-		$fields = Order::get_table_overview_fields();
+		$fields = Order::$table_overview_fields;
 
 		// Add some fields specific to this report
 		$fields['Invoice'] = '';

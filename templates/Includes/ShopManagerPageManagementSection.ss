@@ -21,7 +21,7 @@
 	<% if LastOrders %>
 <p class="showHideNext"><a href="#">show now</a></p>
 <ul id="ShopManagerPageLastOrders">
-	<% control LastOrders %><li>#$ID, $Created.Nice, <% if Member %> $Member.Firstname $Member.Surname, $Member.Email <% end_if %></li><% end_control %>
+	<% control LastOrders %><li>#$ID, $Created.Nice, $Status, $Member.Firstname $Member.Surname, $Member.Email</li><% end_control %>
 </ul>
 	<% else %>
 <p>There are no orders</p>

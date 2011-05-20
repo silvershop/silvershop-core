@@ -3,20 +3,27 @@
 <head>
 	<% base_tag %>
 	<title><% _t("PAGETITLE","Print Orders") %></title>
-	<% include OrderReport %>
-	<% include OrderReport_Print %>
+	<% include OrderReceiptStyle %>
 </head>
 <body>
-
+	
 	<%-- todo: allow printing multiple invoices at once --%>
 	<div style="page-break-after: always;">
 		<h1 class="title">$Top.SiteConfig.Title Invoice</h1>
-
+		
 		<table id="SenderTable">
 			<tbody>
 				<tr>
 					<td class="sender">
 						$Top.SiteConfig.SenderAddress
+					</td>
+					<td class="meta">
+						<table id="MetaTable">
+							<tbody>
+								<tr><td class="label">Invoice Date:</td><td class="date">$Now.Nice</td></tr>
+								<tr><td class="label">Order ID:</td><td class="id">$DisplayFinalisedOrder.ID</td></tr>
+							</tbody>
+						</table>
 					</td>
 				</tr>
 			</tbody>
@@ -26,7 +33,7 @@
 			<% include Order %>
 		<% end_control %>
 	</div>
-
+	
 </body>
 </html>
 

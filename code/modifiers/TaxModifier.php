@@ -16,23 +16,27 @@
  * </code>
  *
  * @package ecommerce
- * @authors: Silverstripe, Jeremy, Nicolaas
- **/
-
+ */
 class TaxModifier extends OrderModifier {
 
-
-// ######################################## *** model defining static variables (e.g. $db, $has_one)
 	public static $db = array(
-		'Country' => 'Varchar(3)',
+		'Country' => 'Text',
 		'Rate' => 'Double',
-		'TaxType' => "Enum('Exclusive,Inclusive')",
-		'Charge' => "Currency",
-		'TaxableAmount' => "Currency"
+		'Name' => 'Text',
+		'TaxType' => "Enum('Exclusive,Inclusive')"
 	);
 
-// ######################################## *** cms variables + functions (e.g. getCMSFields, $searchableFields)
-// ######################################## *** other (non) static variables (e.g. protected static $special_name_for_something, protected $order)
+	public static $has_one = array();
+
+	public static $has_many = array();
+
+	public static $many_many = array();
+
+	public static $belongs_many_many = array();
+
+	public static $defaults = array();
+
+	public static $casting = array();
 
 	protected static $names_by_country;
 
@@ -59,77 +63,25 @@ class TaxModifier extends OrderModifier {
 			default: user_error("TaxModifier::set_for_country - bad argument '$inclexcl' for \$inclexl.  Must be 'inclusive' or 'exclusive'.", E_USER_ERROR);
 		}
 	}
-// ######################################## *** CRUD functions (e.g. canEdit)
-// ######################################## *** init and update functions
 
-
-	public function runUpdate() {
-		$this->checkField("Country");
-		$this->checkField("Rate");
-		$this->checkField("TaxType");
-		$this->checkField("Charge");
-		$this->checkField("TaxableAmount");
-		parent::runUpdate();
+	function Country() {
+		return $this->ID ? $this->Country : $this->LiveCountry();
 	}
 
-// ######################################## *** form functions (e. g. showform and getform)
-// ######################################## *** template functions (e.g. ShowInTable, TableTitle, etc...) ... USED DB VALUES
-
-	function ShowInTable() {
-		return $this->Rate;
+	function Rate() {
+		return $this->ID ? $this->Rate : $this->LiveRate();
 	}
 
-	/**
-	 * @return string
-	 */
-	function TableValue() {
-		return $this->Charge;
+	function Name() {
+		return $this->ID ? $this->Name : $this->LiveName();
 	}
 
-	/**
-	 * @return string
-	 */
-	function TableTitle() {
-		return number_format($this->Rate * 100, 1) . '% ' . $this->Name . ($this->TaxType == "Exclusive" ? '' : _t("TaxModifier.INCLUDEDINTHEPRICE", ' (included in the above price)'));
-	}
-
-
-	public function IsExclusive() {
-		return $this->TaxType == "Exclusive";
-	}
-
-
-// ######################################## ***  inner calculations.... ... USED CALCULATED VALUES
-
-
-
-// ######################################## *** calculate database fields: protected function Live[field name]
-
-
-
-	/**
-	 * Get the tax amount to charge on the order.
-	 *
-	 * Exclusive is easy, however, inclusive is harder.
-	 * For example, with GST the tax amount is 1/9 of the
-	 * inclusive price not 1/8.
-	 */
-	protected function LiveCharge() {
-		$rate = ($this->LiveIsExclusive() ? $this->LiveRate() : (1 - (1 / (1 + $this->LiveRate()))));
-		return $this->LiveTaxableAmount() * $rate;
-	}
-
-	/**
-	 * The total amount from the {@link Order} that
-	 * is taxable.
-	 */
-	protected function LiveTaxableAmount() {
-		$order = $this->Order();
-		return $order->SubTotal() + $order->ModifiersSubTotal($this->class);
+	function IsExclusive() {
+		return $this->ID ? $this->TaxType == 'Exclusive' : $this->LiveIsExclusive();
 	}
 
 	protected function LiveCountry() {
-		return ShoppingCart::get_country();
+		return EcommerceRole::find_country();
 	}
 
 	protected function LiveRate() {
@@ -142,56 +94,72 @@ class TaxModifier extends OrderModifier {
 		if($this->LiveCountry() && isset(self::$names_by_country[$this->LiveCountry()])) {
 			return self::$names_by_country[$this->LiveCountry()];
 		}
-		return _t("TaxModifier.TAX", "tax");
 	}
 
 	protected function LiveIsExclusive() {
-		$exclusive = false;
 		if($this->LiveCountry() && isset(self::$excl_by_country[$this->LiveCountry()])) {
-			if( self::$excl_by_country[$this->LiveCountry()]) {
-				$exclusive = true;
-			}
-		}
-		return $exclusive;
-	}
-
-	protected function LiveTaxType() {
-		if($this->LiveIsExclusive()) {
-			return "Exclusive";
-		}
-		return "Inclusive";
-	}
-
-	protected function LiveAmount() {
-		return $this->LiveIsExclusive() ? $this->LiveCharge() : 0;
-	}
-
-// ######################################## *** Type Functions (IsChargeable, IsDeductable, IsNoChange, IsRemoved)
-
-	protected function IsChargeable(){
-		if($this->IsExclusive()) {
-			return true;
-		}
-		return false;
-	}
-
-	protected function IsNoChange() {
-		if($this->IsChargeable()) {
-			return false;
-		}
-		else {
-			return true;
+			return self::$excl_by_country[$this->LiveCountry()];
 		}
 	}
 
-// ######################################## *** standard database related functions (e.g. onBeforeWrite, onAfterWrite, etc...)
+	function Amount() {
+		return $this->AddedCharge();
+	}
 
+	/**
+	 * Get the tax amount that needs to be added to the given order.
+	 * If tax is setup to be inclusive, then this will be 0.
+	 */
+	function AddedCharge() {
+		return $this->IsExclusive() ? $this->Charge() : 0;
+	}
 
+	/**
+	 * Get the tax amount to charge on the order.
+	 *
+	 * Exclusive is easy, however, inclusive is harder.
+	 * For example, with GST the tax amount is 1/9 of the
+	 * inclusive price not 1/8.
+	 */
+	function Charge() {
+		$rate = ($this->IsExclusive() ? $this->Rate() : (1 - (1 / (1 + $this->Rate()))));
+		return $this->TaxableAmount() * $rate;
+	}
+
+	/**
+	 * The total amount from the {@link Order} that
+	 * is taxable.
+	 */
+	function TaxableAmount() {
+		$order = $this->Order();
+		return $order->SubTotal() + $order->ModifiersSubTotal($this->class);
+	}
+
+	function ShowInTable() {
+		return $this->Rate();
+	}
+
+	/**
+	 * The title of what appears on the OrderInformation
+	 * template table on the checkout page.
+	 *
+	 * PRECONDITION: There is a rate set.
+	 *
+	 * @return string
+	 */
+	function TableTitle() {
+		return number_format($this->Rate() * 100, 1) . '% ' . $this->Name() . ($this->IsExclusive() ? '' : ' (included in the above price)');
+	}
+
+	/**
+	 * PRECONDITION: The order item is not saved in the database yet.
+	 */
 	public function onBeforeWrite() {
 		parent::onBeforeWrite();
+
+		$this->Country = $this->LiveCountry();
+		$this->Rate = $this->LiveRate();
+		$this->Name = $this->LiveName();
+		$this->TaxType = $this->LiveIsExclusive() ? 'Exclusive' : 'Inclusive';
 	}
-
-// ######################################## *** AJAX related functions
-// ######################################## *** debug functions
-
 }

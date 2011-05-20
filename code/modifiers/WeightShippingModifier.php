@@ -7,126 +7,82 @@
  * in the $shippingCosts array.
  *
  * @package ecommerce
- * @authors: Silverstripe, Jeremy, Nicolaas
- **/
-
+ */
 class WeightShippingModifier extends OrderModifier {
-
-// ######################################## *** model defining static variables (e.g. $db, $has_one)
-
-	static $db =array(
-		"TotalWeight" => "Double",
-		"Country" => "Varchar(3)"
-	);
-
-// ######################################## *** cms variables + functions (e.g. getCMSFields, $searchableFields)
-// ######################################## *** other (non) static variables (e.g. protected static $special_name_for_something, protected $order)
-
-	protected static $a, $b;
-
-// ######################################## *** CRUD functions (e.g. canEdit)
-// ######################################## *** init and update functions
-
-	public function runUpdate() {
-		$this->checkField("TotalWeight");
-		$this->checkField("Country");
-		parent::runUpdate();
-	}
-
-// ######################################## *** form functions (e. g. showform and getform)
-// ######################################## *** template functions (e.g. ShowInTable, TableTitle, etc...) ...  ... USES DB VALUES
-// ######################################## ***  inner calculations....  ... USES CALCULATED VALUES
-
-
-	/**
-	 * Retrieve the cost from Geoip::$default_country_code shipping
-	 */
-	protected function nationalCost(){
-		// if a product can't have a weight, don't charge/display it
-		if($this->LiveTotalWeight() <= 0) {
-			return '0.00';
-		}
-		// return the pricing appropriate for the weight
-		$shippingCosts = self::$a[Geoip::$default_country_code];
-		return $this->getCostFromWeightList($shippingCosts);
-	}
-
-	/**
-	 * Retrieve the cost from overseas shipping
-	 */
-	protected function internationalCost(){
-		// if a product can't have a weight. Don't charge/display it
-		if($this->LiveTotalWeight() <= 0) {
-			return '0.00';
-		}
-		// return the pricing appropriate for the weight
-		$shippingCosts = self::$a[$this->Country];
-
-		// if there isn't any country code specifically in the array, use a zone instead
-		if(! $shippingCosts) {
-			$zone = self::$b[$this->Country];
-			$shippingCosts = self::$a[$zone];
-		}
-		return $this->getCostFromWeightList($shippingCosts);
-	}
-
-	/**
-	 * Get the cost from a list of max-weight => cost pairs
-	 */
-	protected function getCostFromWeightList($shippingCosts) {
-		if($shippingCosts) {
-			foreach($shippingCosts as $weight => $cost) {
-				if($this->LiveTotalWeight() < $weight) {
-					return $cost;
-				}
-			}
-			return array_pop($shippingCosts);
-		}
-	}
-
-
-// ######################################## *** calculate database fields: protected function Live[field name]  ... USES CALCULATED VALUES
-
-	protected function LiveTotalWeight() {
-		$totalWeight = 0;
-		$order = $this->Order();
-		$orderItems = $order->Items();
-		// Calculate the total weight of the order
-		if($orderItems) {
-			foreach($orderItems as $orderItem) $totalWeight += $orderItem->Weight * $orderItem->Quantity;
-		}
-		return $totalWeight;
-	}
-
-	protected function LiveCountry() {
-		return ShoppingCart::get_country();
-	}
 
 	/**
 	 * Calculates the extra charges from the order based on the weight attribute of a product
  	 * ASSUMPTION -> weight in grams
 	 */
-	protected function LiveAmount() {
+	function LiveAmount() {
 		$order = $this->Order();
-		$shippingCountry = $this->LiveCountry();
+
+		$orderItems = $order->Items();
+		// Calculate the total weight of the order
+		if($orderItems) {
+			foreach($orderItems as $orderItem) $totalWeight += $orderItem->Weight * $orderItem->quantity;
+		}
+
+		// Check if UseShippingAddress is true and if ShippingCountry exists and use that if it does
+		if($order->UseShippingAddress && $order->ShippingCountry) $shippingCountry = $order->ShippingCountry;
+
 		// if there is a shipping country then check whether it is national or international
 		if($shippingCountry) {
-			if($shippingCountry == Geoip::$default_country_code) {
-				return $this->nationalCost();
-			}
-			else {
-				return $this->internationalCost();
-			}
+			if($shippingCountry == 'NZ') return $this->nationalCost($totalWeight);
+			else return $this->internationalCost($totalWeight, $shippingCountry);
 		}
-		return 0;
+		else {
+			if($order->MemberID && $member = DataObject::get_by_id('Member', $order->MemberID)) {
+				if($member->Country) $country = $member->Country;
+				else $country = Geoip::visitor_country();
+			}
+			if(! $country) $country = 'NZ';
+			if($country == 'NZ') return $this->nationalCost($totalWeight);
+			else return $this->internationalCost($totalWeight, $country);
+		}
 	}
 
-// ######################################## *** Type Functions (IsChargeable, IsDeductable, IsNoChange, IsRemoved)
-	protected function IsChargeable() {
-		return true;
+	/**
+	 * Retrieve the cost from NZ shipping
+	 */
+	function nationalCost($totalWeight){
+		// if a product can't have a weight, don't charge/display it
+		if($totalWeight <= 0) return '0.00';
+
+		// return the pricing appropriate for the weight
+		$shippingCosts = self::$a['NZ'];
+
+		return $this->getCostFromWeightList($totalWeight, $shippingCosts);
 	}
-// ######################################## *** standard database related functions (e.g. onBeforeWrite, onAfterWrite, etc...)
-// ######################################## *** AJAX related functions
-// ######################################## *** debug functions
+
+	/**
+	 * Retrieve the cost from overseas shipping
+	 */
+	function internationalCost($totalWeight, $country){
+		// if a product can't have a weight. Don't charge/display it
+		if($totalWeight <= 0) return '0.00';
+
+		// return the pricing appropriate for the weight
+		$shippingCosts = self::$a[$country];
+
+		// if there isn't any country code specifically in the array, use a zone instead
+		if(! $shippingCosts) {
+			$zone = self::$b[$country];
+			$shippingCosts = self::$a[$zone];
+		}
+		return $this->getCostFromWeightList($totalWeight, $shippingCosts);
+	}
+
+	/**
+	 * Get the cost from a list of max-weight => cost pairs
+	 */
+	function getCostFromWeightList($totalWeight, $shippingCosts) {
+		if($shippingCosts) {
+			foreach($shippingCosts as $weight => $cost) {
+				if($totalWeight < $weight) return $cost;
+			}
+			return array_pop($shippingCosts);
+		}
+	}
 
 }

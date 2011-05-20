@@ -4,9 +4,7 @@
  * to view all Order instances in the system.
  *
  * @package ecommerce
- * @authors: Silverstripe, Jeremy, Nicolaas
- **/
-
+ */
 class AllOrdersReport extends SS_Report {
 
 	protected $title = 'All orders';
@@ -14,21 +12,20 @@ class AllOrdersReport extends SS_Report {
 	protected $description = 'Show all orders in the system.';
 
 	function sourceRecords($params, $sort = "", $limit = ""){
-		//TO DO: fix filters
+
+		//filters
 		$filters = array();
-		if(isset($params['OrderID']) && $params['OrderID']) {
-			$filters[] = "\"ID\" = ".$params['OrderID'];
-		}
-		if(isset($params['Status']) && $params['Status']) {
-			$filters[] = "\"Status\" = '".$params['Status']."'";
-		}
+		if(isset($params['OrderID']) && $params['OrderID']) $filters[] = "\"ID\" = ".$params['OrderID'];
+		if(isset($params['Status']) && $params['Status']) $filters[] = "\"Status\" = '".$params['Status']."'";
+
+		//sort
 		$sort = "";
 		$filter = implode(" AND ",$filters);
 		return DataObject::get('Order',$filter,$sort,"",$limit);
 	}
 
 	function columns(){
-		$cols = Order::get_table_overview_fields();
+		$cols = Order::$table_overview_fields;
 		$cols['Invoice'] = 'Invoice';
 		return $cols;
 	}
@@ -36,8 +33,8 @@ class AllOrdersReport extends SS_Report {
 	function getReportField(){
 		$tlf = parent::getReportField();
 		$tlf->setFieldFormatting(array(
-			'Invoice' => '<a target=\"_blank\" href=\"OrderReport_Popup/invoice/$ID\">'.i18n::_t('Report.VIEW','view').'</a> ' .
-					'<a target=\"_blank\" href=\"OrderReport_Popup/index/$ID?print=1\">'.i18n::_t('Report.PRINT','print').'</a>',
+			'Invoice' => '<a target=\"_blank\" href=\"OrderReport_Popup/invoice/$ID\">'.i18n::_t('VIEW','view').'</a> ' .
+					'<a target=\"_blank\" href=\"OrderReport_Popup/index/$ID?print=1\">'.i18n::_t('PRINT','print').'</a>',
 		));
 		$tlf->setFieldCasting(array(
 			'Created' => 'Date->Long',
@@ -55,9 +52,10 @@ class AllOrdersReport extends SS_Report {
 			//new TextField('FirstName','First Name'),
 			//new TextField('Surname','Surname'),
 			//new NumericField('Total','Total'),
-			$ddf = new DropdownField('StatusID','Status',DataObject::get("OrderStep")->toDropdownMap())
+			$ddf = new DropdownField('Status','Status',singleton('Order')->dbObject('Status')->enumValues())
 		);
 		$ddf->setHasEmptyDefault(true);
+
 		return $fields;
 	}
 

@@ -1,8 +1,43 @@
-/**
-  * IMPORTANT NOTE:
-  * The default e-commerce css only includes the basics and it is recommended that you theme these files.
-  * Also make sure you have the site's general layout and typography styled before you do this.
-  **/
+/** Minimal Checkout Page Styling **/
 
+/* Information table styling */
+#InformationTable {
+	width: 100%;
+}
 
-.loadingCartData #InformationTable, .loadingCartData #Amount {color: #e7e7e7!important;}
+/* CheckoutPage form styling */
+#LeftOrder,#RightOrder {
+	float: left;
+	
+}
+	#LeftOrder {width: 50%;}
+	#RightOrder {width: 50%;}
+	
+#LeftOrder .CompositeField{
+	margin-right:10px;
+}
+	
+#BottomOrder {
+	clear: both;
+}
+
+	#Checkout form label.left {
+		float: left;
+		width: 30%;
+		font-weight: bold;
+	}
+	#Checkout form input.nolabel{
+		margin-left:30%;
+	}
+	
+	#Checkout form input.text{
+		width:50%;
+	}
+
+#Checkout form #PaymentMethod li{
+	list-style:none;
+}
+#Checkout form #Amount{
+	font-size:1.5em;
+}
+

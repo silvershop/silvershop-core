@@ -1,88 +1,51 @@
 <?php
 /**
- * @description: base class for OrderItem (item in cart) and OrderModifier (extra - e.g. Tax)
  * @see OrderModifier
  * @see OrderItem
+ * @see OrderModifier
  *
  * @package ecommerce
- * @authors: Silverstripe, Jeremy, Nicolaas
- **/
-
+ */
 class OrderAttribute extends DataObject {
 
-	public static $db = array(
-		'Sort' => 'Int'
-	);
+	protected $_id;
 
 	public static $has_one = array(
-		'Order' => 'Order',
-		'OrderAttribute_Group' => 'OrderAttribute_Group'
+		'Order' => 'Order'
 	);
 
 	public static $casting = array(
-		'TableTitle' => 'HTMLText',
-		'TableSubTitle' => 'HTMLText',
-		'CartTitle' => 'HTMLText'
+		'TableTitle' => 'Text',
+		'CartTitle' => 'Text',
 	);
 
-	public static $create_table_options = array(
-		'MySQLDatabase' => 'ENGINE=InnoDB'
-	);
 
-	/**
-	* @note: we can add the \"OrderAttribute_Group\".\"Sort\" part because this table is always included (see extendedSQL).
-	**/
-	public static $default_sort = "\"OrderAttribute\".\"Sort\" ASC, \"OrderAttribute\".\"Created\" DESC";
-
-	public static $indexes = array(
-		"Sort" => true,
-	);
-
-	protected static $has_been_written = false;
-		public static function set_has_been_written() {Session::set("OrderAttributeHasBeenWritten", true); self::$has_been_written = true;}
-		public static function get_has_been_written() {return Session::get("OrderAttributeHasBeenWritten") || self::$has_been_written ? true : false;}
-		public static function unset_has_been_written() {Session::set("OrderAttributeHasBeenWritten", false);self::$has_been_written = false;}
-
-	protected $_canEdit = null;
-
-	function init() {
-		return true;
+	public function getIdAttribute() {
+		return $this->_id;
 	}
 
-	function canCreate($member = null) {
-		return true;
+	public function setIdAttribute($id) {
+		$this->_id = $id;
 	}
 
-	function canEdit($member = null) {
-		if($this->_canEdit === null) {
-			$this->_canEdit = false;
-			if($this->OrderID) {
-				if($this->Order()->exists()) {
-					if($this->Order()->canEdit($member)) {
-						$this->_canEdit = true;
-					}
-				}
-			}
-		}
-		return $this->_canEdit;
-	}
-
-	function canDelete($member = null) {
+	public function canCreate($member = null) {
 		return false;
 	}
 
-	public function addBuyableToOrderItem($object) {
-		//more may be added here in the future
-		return true;
+	public function canDelete($member = null) {
+		return false;
 	}
+
 	/**
-	 * @see DataObject::extendedSQL
-	 * TO DO: make it work... because we call DataObject::get(....) it may not be called....
-	public function extendedSQL($filter = "", $sort = "", $limit = "", $join = "", $having = ""){
-		$join .= " LEFT JOIN \"OrderAttribute_Group\" ON \"OrderAttribute_Group\".\"ID\" = \"OrderAttribute\".\"OrderAttribute_GroupID\"";
-		return parent::extendedSQL($filter, $sort, $limit, $join, $having);
-	}
-	*/
+	 * @TODO Where is this method used?
+	 * @return Order
+	 */
+	/*function Order() {
+		if($this->ID) return DataObject::get_by_id('Order', $this->OrderID);
+		else return ShoppingCart::current_order();
+	}*/
+
+
 	######################
 	## TEMPLATE METHODS ##
 	######################
@@ -95,7 +58,7 @@ class OrderAttribute extends DataObject {
 	 * e.g.: "product_orderitem orderitem
 	 * orderattribute".
 	 *
-	 * Used by the templates and for ajax updating functionality.
+	 * Used by the templates.
 	 *
 	 * @return string
 	 */
@@ -103,14 +66,16 @@ class OrderAttribute extends DataObject {
 		$class = get_class($this);
 		$classes = array();
 		$classes[] = strtolower($class);
+
 		while(get_parent_class($class) != 'DataObject' && $class = get_parent_class($class)) {
 			$classes[] = strtolower($class);
 		}
+
 		return implode(' ', $classes);
 	}
 
 	function MainID() {
-		return get_class($this) . '_' .'DB_' . $this->ID;
+		return get_class($this) . '_' . ($this->ID ? 'DB_' . $this->ID : $this->_id);
 	}
 
 	function TableID() {
@@ -158,32 +123,5 @@ class OrderAttribute extends DataObject {
 	function CartTotalID() {
 		return $this->CartID() . '_Total';
 	}
-
-	function onAfterWrite() {
-		parent::onAfterWrite();
-		self::set_has_been_written();
-	}
-
-	function onAfterDelete() {
-		parent::onAfterDelete();
-		self::set_has_been_written();
-	}
-
-}
-
-
-class OrderAttribute_Group extends DataObject {
-
-	public static $db = array(
-		"Title" => "Varchar(100)",
-		'Sort' => 'Int'
-	);
-
-	public static $default_sort = "\"Sort\" ASC";
-
-	public static $indexes = array(
-		"Sort" => true,
-	);
-
 
 }

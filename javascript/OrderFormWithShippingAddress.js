@@ -27,17 +27,10 @@
 
 		shippingCitySelector: "#ShippingCity input",
 
-		countrySelector: "#Country select",
-
-		shippingCountrySelector: "#ShippingCountry select",
-
-		postalCodeSelector: "#PostalCode input",
-
-		shippingPostalCode: "#ShippingPostalCode input",
-
-		shippingSectionSelector: "#ShippingFields",
+		shippingSectionSelector: "#ShippingDetails",
 
 		useShippingDetailsSelector: "input[name='UseShippingAddress']",
+
 
 		init: function(){
 			//hide shipping fields
@@ -47,49 +40,23 @@
 				function(){
 					jQuery(OrderFormWithShippingAddress.shippingSectionSelector).slideToggle();
 					jQuery(OrderFormWithShippingAddress.shippingNameSelector).focus();
-					OrderFormWithShippingAddress.updateFields();
 				}
 			);
 			//update on change
-			var originatorFieldSelector =
-					OrderFormWithShippingAddress.nameSelector+", "+
-					OrderFormWithShippingAddress.addressSelector+" ,"+
-					OrderFormWithShippingAddress.extraAddressSelector+", "+
-					OrderFormWithShippingAddress.citySelector+", "+
-					OrderFormWithShippingAddress.postalCodeSelector;
-			jQuery(originatorFieldSelector).change(
+			jQuery(OrderFormWithShippingAddress.nameSelector+", "+OrderFormWithShippingAddress.addressSelector+" ,"+OrderFormWithShippingAddress.extraAddressSelector+", "+OrderFormWithShippingAddress.citySelector).change(
 				function() {
 					OrderFormWithShippingAddress.updateFields();
 				}
 			);
 			//update on focus
-			jQuery(originatorFieldSelector).focus(
+			jQuery(OrderFormWithShippingAddress.shippingNameSelector+", "+OrderFormWithShippingAddress.shippingAddressSelector+" ,"+OrderFormWithShippingAddress.shippingExtraAddressSelector+", "+OrderFormWithShippingAddress.shippingCitySelector).focus(
 				function() {
 					OrderFormWithShippingAddress.updateFields();
 				}
 			);
-			if(jQuery(OrderFormWithShippingAddress.useShippingDetailsSelector).is(":checked")) {
-				jQuery(OrderFormWithShippingAddress.shippingSectionSelector).slideToggle();
-				jQuery(OrderFormWithShippingAddress.shippingNameSelector).focus();
-				OrderFormWithShippingAddress.updateFields();
-			}
 		},
 
 		updateFields: function() {
-			//postal code
-			var PostalCode =  jQuery(OrderFormWithShippingAddress.postalCodeSelector).val();
-			var ShippingPostalCode =  jQuery(OrderFormWithShippingAddress.shippingPostalCode).val();
-			if(!ShippingPostalCode && PostalCode) {
-				jQuery(OrderFormWithShippingAddress.shippingPostalCode).val(PostalCode);
-			}
-
-			//country
-			var Country = jQuery(OrderFormWithShippingAddress.countrySelector).val();
-			var ShippingCountry =  jQuery(OrderFormWithShippingAddress.shippingCountrySelector).val();
-			if((!ShippingCountry || ShippingCountry == "AF") && Country) {
-				jQuery(OrderFormWithShippingAddress.shippingCountrySelector).val(Country);
-			}
-
 			//city
 			var City =  jQuery(OrderFormWithShippingAddress.citySelector).val();
 			var ShippingCity =  jQuery(OrderFormWithShippingAddress.shippingCitySelector).val();

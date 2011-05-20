@@ -1,18 +1,30 @@
-/**
-  * IMPORTANT NOTE:
-  * The default e-commerce css only includes the basics and it is recommended that you theme these files.
-  * Also make sure you have the site's general layout and typography styled before you do this.
-  **/
+#Checkout form .paymentfields {
+	width: 315px;
+}
+	#Checkout form .paymentfields label.left {
+		float: none;
+		font-weight: bold;
+		margin-bottom: 10px;
+	}
+	#Checkout form .paymentfields .middleColumn {
+		background: none;
+		margin: 0;
+	}
+	#Checkout form .paymentfields input {
+		width: 35px;
+	}
+		#Checkout form .paymentfields input.text {
+			width: 145px;
+		}
+			#Checkout form .paymentfields input.text.maxlength {
+				width: 37px !important;
+			}
 
-#Checkout form .paymentfields { width: 315px; }
-	#Checkout form .paymentfields label.left { float: none; font-weight: bold; margin-bottom: 10px; }
-	#Checkout form .paymentfields .middleColumn { background: none; margin: 0; }
-	#Checkout form .paymentfields input { width: 35px; }
-		#Checkout form .paymentfields input.text { width: 145px; }
-		#Checkout form .paymentfields input.text.maxlength { width: 37px !important; }
-	#Checkout form .paymentfields img { border: 0; margin-right: 7px; }
+	#Checkout form .paymentfields img {
+		border: 0;
+		margin-right: 7px;
+	}
+.loading {background-image: url(../images/loading.gif); background-repeat: no-repeat; background-position: 95% 0;}
+#action_useDifferentShippingAddress {display: none;}
 
-#action_useDifferentShippingAddress { display: none; }
-
-.doNotShow { display: none; }
-.loading { background-image: url(../images/loading.gif); background-repeat: no-repeat; background-position: 95% 0; }
+.doNotShow{display: none;}

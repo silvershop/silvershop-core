@@ -1,15 +1,34 @@
-/**
-  * IMPORTANT NOTE:
-  * The default e-commerce css only includes the basics and it is recommended that you theme these files.
-  * Also make sure you have the site's general layout and typography styled before you do this.
-  **/
-
+/*
+ * AccountPage stylesheet
+ * Styling of past orders and the member form (if required) here
+ */
+ 
 /*
  * Past orders div containing the order history styling
  */
 
-#PastOrders { float: right; width: 45%; }
-#ShopAccountForm_MemberForm { width: 45%; }
-	#ShopAccountForm_MemberForm label.left, #LoginForm_LoginForm label.left { font-weight: bold; float: left; width: 150px; }
-	#ShopAccountForm_MemberForm #Country select { width: 305px; }
-#PrintPageIcon img { cursor: pointer; }
+/* create a box floated to the right */
+#PastOrders {
+	float: right;
+	width: 45%;
+}
+
+/*
+ * Member form styling, and tweaks to the login form as well
+ */
+#ShopAccountForm_MemberForm {
+	width: 45%;
+}
+
+/* these labels don't have a bold font weight, so apply it */
+#ShopAccountForm_MemberForm label.left,
+#LoginForm_LoginForm label.left {
+	font-weight: bold;
+	float: left;
+	width: 150px;
+}
+/* country select dropdown width is wrong, so reapply it */
+#ShopAccountForm_MemberForm #Country select {
+	width: 305px;
+}
+

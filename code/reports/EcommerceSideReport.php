@@ -5,10 +5,8 @@
  * Currently there are reports to show products flagged as 'FeatuedProduct',
  * as well as a report on all products within the system.
  *
- * @package Ecommerce
- * @authors: Silverstripe, Jeremy, Nicolaas
- **/
-
+ * @package ecommerce
+ */
 class EcommerceSideReport_FeaturedProducts extends SS_Report {
 
 	function title() {
@@ -16,7 +14,7 @@ class EcommerceSideReport_FeaturedProducts extends SS_Report {
 	}
 
 	function group() {
-		return _t('EcommerceSideReport.ECOMMERCEGROUP', "Ecommerce");
+		return _t('EcommerceSideReport.ECOMMERCEGROUP', "ECommerce");
 	}
 	function sort() {
 		return 0;
@@ -40,9 +38,9 @@ class EcommerceSideReport_AllProducts extends SS_Report {
 	function title() {
 		return _t('EcommerceSideReport.ALLPRODUCTS', "All Products");
 	}
-
+	
 	function group() {
-		return _t('EcommerceSideReport.ECOMMERCEGROUP', "Ecommerce");
+		return _t('EcommerceSideReport.ECOMMERCEGROUP', "ECommerce");
 	}
 	function sort() {
 		return 0;
@@ -63,12 +61,12 @@ class EcommerceSideReport_AllProducts extends SS_Report {
 }
 
 class EcommerceSideReport_NoImageProducts extends SS_Report {
-
+	
 	function title() {
 		return _t('EcommerceSideReport.NOIMAGE',"Products with no image");
 	}
 	function group() {
-		return _t('EcommerceSideReport.ECOMMERCEGROUP', "Ecommerce");
+		return _t('EcommerceSideReport.ECOMMERCEGROUP', "ECommerce");
 	}
 	function sort() {
 		return 0;

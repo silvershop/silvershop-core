@@ -1,16 +1,57 @@
-/**
-  * IMPORTANT NOTE:
-  * The default e-commerce css only includes the basics and it is recommended that you theme these files.
-  * Also make sure you have the site's general layout and typography styled before you do this.
-  **/
+#ProductGroup {
+}
 
+.category {
+	overflow-x: hidden;
+}
 
-.category { overflow-x: hidden; }
-.sortOptions .current { text-decoration: none; font-weight: bold; }
-.productList { padding: 0; margin: 0; }
-	.productItem { list-style: none; float: left; width: 140px; height: 330px; overflow: hidden; margin: 0 5px 5px 0; padding: 5px; }
-		.productItem .productActions { padding: 0; margin: 0; }
-		.productItem .productActions li { list-style: none; padding: 0; margin: 0; }
-		.resultsBar .resultsShowing,
-		.resultsBar .resultsShowing { float: right; width: 50%; text-align: right; }
-		.productItem a.noimage { padding: 20px; height: 60px; text-align: center; background: #eeeeee; color: #d3d3d3; display: block; text-decoration: none; font-size: 20px; }
+.sortOptions .current{
+	text-decoration:none;
+	font-weight:bold;
+}
+
+.productList{
+	padding:0;
+	margin:0;
+}
+
+/* 3) Product Settings */
+
+.productItem {
+	list-style:none;
+	float: left;
+	width: 140px;
+	height: 330px;
+	overflow: hidden;
+	margin: 0 5px 5px 0;
+	padding: 5px;
+}
+
+		.productItem .productActions{
+			padding:0;
+			margin:0;
+		}
+		.productItem .productActions li {
+			list-style: none;
+			padding:0;
+			margin:0;
+		}
+
+.resultsBar .resultsShowing,
+.resultsBar .resultsShowing {
+	float: right;
+	width: 50%;
+	text-align: right;
+}
+
+/* Image placeholder */
+.productItem a.noimage{
+	padding:20px;
+	height:60px;
+	text-align:center;
+	background:#eeeeee;
+	color:#d3d3d3;
+	display:block;
+	text-decoration:none;
+	font-size:20px;
+}

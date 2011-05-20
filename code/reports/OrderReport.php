@@ -9,18 +9,15 @@
  * @see CurrentOrdersReport
  * @see UnprintedOrderReport
  *
- *
  * @package ecommerce
- * @authors: Silverstripe, Jeremy, Nicolaas
- **/
-
+ */
 class OrderReport_Popup extends Controller {
-
+	
 	//basic security for controller
-	public static $allowed_actions = array(
-		'index' => 'SHOP_ADMIN',
-		'packingslip' => 'SHOP_ADMIN',
-		'invoice' => 'SHOP_ADMIN'
+	static $allowed_actions = array(
+		'index' => 'ADMIN',
+		'packingslip' => 'ADMIN',
+		'invoice' => 'ADMIN'
 	);
 
 	function init(){
@@ -47,7 +44,6 @@ class OrderReport_Popup extends Controller {
 	 * order information in a printable view.
 	 */
 	function index() {
-		Requirements::themedCSS("OrderReport");
 		return $this->renderWith('Order_Printable');
 	}
 
@@ -71,7 +67,8 @@ class OrderReport_Popup extends Controller {
 			$payment = $order->Payment();
 			$cheque = false;
 
-			if($record = $payment->First()) {
+			if($payment->First()) {
+				$record = $payment->First();
 				if($record->ClassName == 'ChequePayment') {
 					$cheque = true;
 				}
@@ -98,7 +95,7 @@ class OrderReport_Popup extends Controller {
 		if(is_numeric($id)) {
 			$order = DataObject::get_by_id("Order", $id);
 			if(isset($_REQUEST['print'])) {
-				//$order->updatePrinted(true);
+				$order->updatePrinted(true);
 			}
 
 			return $order;
@@ -106,7 +103,7 @@ class OrderReport_Popup extends Controller {
 
 		return false;
 	}
-
+	
 	function SiteConfig() {
 		return SiteConfig::current_site_config();
 	}

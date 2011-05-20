@@ -2,7 +2,7 @@
 
 global $lang;
 
-$lang['en_US']['AccountPage']['Message'] = 'You\'ll need to login before you can access the account page. If you are not registered, you won\'t be able to access it until you place your first order, otherwise please enter your details below.';
+$lang['en_US']['AccountPage']['Message'] = 'You\'ll need to login before you can access the account page. If you are not registered, you won\'t be able to access it until you make your first order, otherwise please enter your details below.';
 $lang['en_US']['AccountPage']['NOPAGE'] = 'No AccountPage on this site - please create one !';
 $lang['en_US']['AccountPage']['PLURALNAME'] = array(
 	'Account Pags',
@@ -14,8 +14,6 @@ $lang['en_US']['AccountPage']['SINGULARNAME'] = array(
 	50,
 	'Singular name of the object, used in dropdowns and to generally identify a single object in the interface'
 );
-$lang['en_US']['General']['DATEFORMATSHORT'] = '%m/%d/%G';
-$lang['en_US']['General']['DATEFORMATLONG'] = '%m/%d/%G %I:%M%p';
 $lang['en_US']['AccountPage.ss']['COMPLETED'] = 'Completed Orders';
 $lang['en_US']['AccountPage.ss']['HISTORY'] = 'Your Order History';
 $lang['en_US']['AccountPage.ss']['INCOMPLETE'] = 'Incomplete Orders';
@@ -58,7 +56,7 @@ $lang['en_US']['CheckoutPage']['SINGULARNAME'] = array(
 	'Singular name of the object, used in dropdowns and to generally identify a single object in the interface'
 );
 $lang['en_US']['CheckoutPage.ss']['CHECKOUT'] = 'Checkout';
-$lang['en_US']['CheckoutPage.ss']['ORDERSTEP'] = 'Order Status';
+$lang['en_US']['CheckoutPage.ss']['ORDERSTATUS'] = 'Order Status';
 $lang['en_US']['CheckoutPage.ss']['PROCESS'] = 'Process';
 $lang['en_US']['ChequePayment']['MESSAGE'] = 'Payment accepted via Cheque. Please note : products will not be shipped until payment has been received.';
 $lang['en_US']['ChequePayment']['PLURALNAME'] = array(

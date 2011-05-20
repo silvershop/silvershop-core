@@ -8,9 +8,9 @@
 
 class ShopManagerPage extends Page {
 
-	public static $icon = "ecommerce/images/treeicons/shopmanager";
+	static $icon = "ecommerce/images/treeicons/ShopManagerPage";
 
-	public static $defaults = array(
+	static $defaults = array(
 		"ShowInMenus" => 0,
 		"ShowInSearch" => 0
 	);
@@ -20,11 +20,12 @@ class ShopManagerPage extends Page {
 	}
 
 	function canView($member = null) {
-		if(Permission::check("SHOP_ADMIN")) {
+		if(Permission::check("ADMIN")) {
 			return true;
 		}
 		else {
-			//Security::permissionFailure($this, _t('ShopManagerPage.PERMFAILURE',' This page is secured and you need (shop) administrator rights to access it. Enter your credentials below and we will send you right along.'));
+			//Security::permissionFailure($this, _t('Security.PERMFAILURE',' This page is secured and you need administrator rights to access it. Enter your credentials below and we will send you right along.'));
+			return false;
 		}
 	}
 
@@ -41,7 +42,6 @@ class ShopManagerPage_Controller extends Page_Controller {
 	function init() {
 		// Only administrators can run this method
 		parent::init();
-		Requirements::javascript(THIRDPARTY_DIR . '/jquery/jquery.js');
 		Requirements::themedCSS("ShopManagerPage");
 		Requirements::javascript("ecommerce/javascript/ShopManagerPage.js");
 	}
@@ -131,7 +131,7 @@ class ShopManagerPage_Controller extends Page_Controller {
 		if($orderID) {
 			$order = DataObject::get_by_id("Order", $orderID);
 			if($order) {
-				$from = Order::get_receipt_email();
+				$from = $order->getReceiptEmail();
 				$to = $order->Member()->Email;
 				$subject = "Your order status";
 				$logs = DataObject::get('OrderStatusLog', "\"OrderID\" = {$this->ID}", "\"Created\" DESC", null, 1);
@@ -163,9 +163,12 @@ class ShopManagerPage_Controller extends Page_Controller {
 	function showorder($request) {
 		Requirements::themedCSS('Order');
 		Requirements::themedCSS('Order_print', 'print');
+
+		$memberID = Member::currentUserID();
 		$accountPageLink = AccountPage::find_link();
+
 		if($orderID = $request->param('ID')) {
-			if($order = DataObject::get_by_id('Order', $orderID)) {
+			if($order = DataObject::get_one('Order', "\"Order\".\"ID\" = '$orderID'")) {
 				return array('Order' => $order);
 			}
 			else {

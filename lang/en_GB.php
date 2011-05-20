@@ -16,7 +16,7 @@ if(array_key_exists('en_GB', $lang) && is_array($lang['en_GB'])) {
 	$lang['en_GB'] = $lang['en_US'];
 }
 
-$lang['en_GB']['AccountPage']['Message'] = 'You\'ll need to login before you can access the account page. If you are not registered, you won\'t be able to access it until you\'ll place your first order, otherwise please enter your details below.';
+$lang['en_GB']['AccountPage']['Message'] = 'You\'ll need to login before you can access the account page. If you are not registered, you won\'t be able to access it until you\'ll make your first order, otherwise please enter your details below.';
 $lang['en_GB']['AccountPage']['NOPAGE'] = 'No AccountPage on this site - please create one !';
 $lang['en_GB']['AccountPage.ss']['COMPLETED'] = 'Completed Orders';
 $lang['en_GB']['AccountPage.ss']['HISTORY'] = 'Your Order History';
@@ -44,19 +44,19 @@ $lang['en_GB']['Cart.ss']['SUBTOTAL'] = 'Subtotal';
 $lang['en_GB']['Cart.ss']['TOTAL'] = 'Total';
 $lang['en_GB']['CheckoutPage']['NOPAGE'] = 'No CheckoutPage on this site - please create one !';
 $lang['en_GB']['CheckoutPage.ss']['CHECKOUT'] = 'Checkout';
-$lang['en_GB']['CheckoutPage.ss']['ORDERSTEP'] = 'Order Status';
+$lang['en_GB']['CheckoutPage.ss']['ORDERSTATUS'] = 'Order Status';
 $lang['en_GB']['CheckoutPage.ss']['PROCESS'] = 'Process';
 $lang['en_GB']['CheckoutPage_OrderIncomplete.ss']['BACKTOCHECKOUT'] = 'Click here to go back to the Checkout';
 $lang['en_GB']['CheckoutPage_OrderIncomplete.ss']['CHECKOUT'] = 'Checkout';
 $lang['en_GB']['CheckoutPage_OrderIncomplete.ss']['CHEQUEINSTRUCTIONS'] = 'If you ordered by cheque you will receive an email with instructions.';
 $lang['en_GB']['CheckoutPage_OrderIncomplete.ss']['DETAILSSUBMITTED'] = 'Here are the details you submitted';
 $lang['en_GB']['CheckoutPage_OrderIncomplete.ss']['INCOMPLETE'] = 'Order Incomplete';
-$lang['en_GB']['CheckoutPage_OrderIncomplete.ss']['ORDERSTEP'] = 'Order Status';
+$lang['en_GB']['CheckoutPage_OrderIncomplete.ss']['ORDERSTATUS'] = 'Order Status';
 $lang['en_GB']['CheckoutPage_OrderIncomplete.ss']['PROCESS'] = 'Process';
 $lang['en_GB']['CheckoutPage_OrderSuccessful.ss']['BACKTOCHECKOUT'] = 'Click here to go back to the Checkout';
 $lang['en_GB']['CheckoutPage_OrderSuccessful.ss']['CHECKOUT'] = 'Checkout';
 $lang['en_GB']['CheckoutPage_OrderSuccessful.ss']['EMAILDETAILS'] = 'A copy of this has been sent to your email address confirming the order details.';
-$lang['en_GB']['CheckoutPage_OrderSuccessful.ss']['ORDERSTEP'] = 'Order Status';
+$lang['en_GB']['CheckoutPage_OrderSuccessful.ss']['ORDERSTATUS'] = 'Order Status';
 $lang['en_GB']['CheckoutPage_OrderSuccessful.ss']['PROCESS'] = 'Process';
 $lang['en_GB']['CheckoutPage_OrderSuccessful.ss']['SUCCESSFULl'] = 'Order Successful';
 $lang['en_GB']['ChequePayment']['MESSAGE'] = 'Payment accepted via Cheque. Please note : products will not be shipped until payment has been received.';
