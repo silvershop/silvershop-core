@@ -14,7 +14,7 @@
  *
  **/
 
-class ShoppingCart extends Controller {
+class ShoppingCartOld extends Controller {
 
 	/**
 	 *stores the current order - initiated and retrieved with ShoppingCart::current_order()
@@ -27,27 +27,17 @@ class ShoppingCart extends Controller {
 		static function get_order() {user_error("Use self::current_order() to get order.", E_USER_ERROR);}
 
 	/**
-	 * identifies if the old orders need to be cleaned "continuously"
-	 * This is useful if you
-	 *
-	 *@var Boolena(Order)
-	 **/
-	protected static $cleanup_every_time = null; // for temp caching
-		static function set_cleanup_every_time($b) {self::$cleanup_every_time = $b;}
-		static function get_cleanup_every_time() {return self::$cleanup_every_time;}
-
-	/**
 	 * URLSegment used for shopping-cart actions
 	 *
 	 *@var String
 	 *
 	 **/
-	protected static $url_segment = 'shoppingcart';
+	public static $url_segment = 'shoppingcart';
 		static function set_url_segment(string $s) {self::$url_segment = $s;}
 		static function get_url_segment() {return self::$url_segment;}
 
 	/**
-	 *$cart_session_name: stores both OrderID and Session ID (seperated by a comma)
+	 *$cart_session_name: tores both OrderID and Session ID (seperated by a comma)
 	 *we need both  Session ID and Order ID here because
 	 * (a) you may have several orders with one session ID -
 	 * (b) you may have an order that is not in the current session....
@@ -252,9 +242,9 @@ class ShoppingCart extends Controller {
 		self::$order->write();
 		//we need both  Session ID and Order ID here because (a) you may have several orders with one session ID - (b) you may have an order that is not in the current session....
 		Session::set(self::get_cartid_session_name()."OrderAndSessionID",self::$order->ID.",".self::$order->SessionID);
-		if(self::$cleanup_every_time) {
-			CartCleanupTask::run_on_demand(); //TODO: see issue: 140 - this could be impacting on performance
-		}
+
+		//see issue: 140
+		CartCleanupTask::run_on_demand();
 	}
 
 
@@ -1012,6 +1002,65 @@ class ShoppingCart extends Controller {
 /*******************************************************
 	 * ORDER TEMPLATE STUFF
 *******************************************************/
+
+
+	/**
+	 * For use in the templates as ID
+	 * @ToDo: move variables into array
+	 *@return String
+	 **/
+	protected static function add_template_ids_and_message() {
+		if($message = Session::get(self::get_cartid_session_name()."Message")) {
+			self::$order->CartStatusMessage = $message;
+			Session::set(self::get_cartid_session_name()."Message", "");
+			$className = Session::get(self::get_cartid_session_name()."Status");
+			self::$order->CartStatusClass = $className;
+			Session::set(self::get_cartid_session_name()."Status", "");
+		}
+		self::$order->TableMessageID = self::$template_id_prefix.'Table_Order_Message';
+		self::$order->TableSubTotalID = self::$template_id_prefix.'Table_Order_SubTotal';
+		self::$order->TableTotalID = self::$template_id_prefix.'Table_Order_Total';
+		self::$order->CartSubTotalID = self::$template_id_prefix.'Cart_Order_SubTotal';
+		self::$order->CartTotalID = self::$template_id_prefix.'Cart_Order_Total';
+		self::$order->OrderForm_OrderForm_AmountID = self::$template_id_prefix.'OrderForm_OrderForm_Amount';
+	}
+
+	/**
+	 *
+	 *@return Array (for use in AJAX for JSON)
+	 **/
+	static function update_for_ajax(array &$js, $message = '', $status = 'Success') {
+		$subTotal = self::$order->SubTotalAsCurrencyObject()->Nice();
+		$total = self::$order->TotalAsCurrencyObject()->Nice();
+		$js[] = array('id' => self::$order->TableSubTotalID, 'parameter' => 'innerHTML', 'value' => $subTotal);
+		$js[] = array('id' => self::$order->TableTotalID, 'parameter' => 'innerHTML', 'value' => $total);
+		$js[] = array('id' => self::$order->OrderForm_OrderForm_AmountID, 'parameter' => 'innerHTML', 'value' => $total);
+		$js[] = array('id' => self::$order->CartSubTotalID, 'parameter' => 'innerHTML', 'value' => $subTotal);
+		$js[] = array('id' => self::$order->CartTotalID, 'parameter' => 'innerHTML', 'value' => $total);
+		if($message) {
+			$js[] = array(
+				"id" => self::$order->TableMessageID,
+				"parameter" => "innerHTML",
+				"value" => $message,
+				"isOrderMessage" => true,
+				"messageClass" => $status
+			);
+			$js[] = array(
+				"id" =>  self::$order->TableMessageID,
+				"parameter" => "hide",
+				"value" => 0
+			);
+		}
+		else {
+			$js[] = array(
+				"id" => self::$order->TableMessageID,
+				"parameter" => "hide",
+				"value" => 1
+			);
+		}
+
+	}
+
 
 
 /*******************************************************
