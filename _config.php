@@ -15,7 +15,8 @@ Director::addRules(50, array(
 ));
 
 Object::add_extension('Member', 'EcommerceRole');
-Object::add_extension('Payment', 'EcommercePayment');
+if(!class_exists('Payment')) user_error("You need to also install the Payment module to use the eCommerce module", E_USER_ERROR);
+DataObject::add_extension('Payment', 'EcommercePayment');
 Object::add_extension('SiteConfig', 'SiteConfigEcommerceExtras');
 Object::add_extension("SiteTree", "EcommerceSiteTreeExtension");
 Object::add_extension("Controller", "EcommerceSiteTreeExtension_Controller");
