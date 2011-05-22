@@ -11,13 +11,9 @@ class CheckoutPageTest extends FunctionalTest {
 	static $disable_theme = true;
 	
 	static $use_draft_site = true;
-	
-	
-	
 
-	/* --- OLD TESTS (to be removed) -- */
 
-	function old_testFindLink() {
+	function testFindLink() {
 		$link = CheckoutPage::find_link();
 		$this->assertEquals(Director::baseURL() . 'checkout/', $link, 'find_link() returns the correct link to checkout.');
 
@@ -30,6 +26,7 @@ class CheckoutPageTest extends FunctionalTest {
 		$link = CheckoutPage::find_link();
 	}
 	
+	/* --- OLD TESTS (to be removed) -- */
 	
 	/**
 	 * CheckOUT unit tests need to be rewritten to work with the new shopping card implementation.
