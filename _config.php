@@ -9,7 +9,7 @@
 
 
 Director::addRules(50, array(
-	ShoppingCart_Controller::get_url_segment(). '/$Action/$ID/$OtherID' => 'ShoppingCart_Controller',
+	ShoppingCart::get_url_segment(). '/$Action/$ID/$OtherID' => 'ShoppingCart_Controller',
 	'ecommerce-load-default-records/$Action' => 'EcommerceDefaultRecords',
 	'ecommerce-migrate/$Action' => 'EcommerceMigration'
 ));
