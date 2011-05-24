@@ -33,7 +33,22 @@ class Order extends DataObject {
 		'ShippingCountry' => 'Text',
 		'ShippingPhone' => 'Varchar(30)',
 		'CustomerOrderNote' => 'Text',
-		'Printed' => 'Boolean'
+		'Printed' => 'Boolean',
+		
+		//main order details
+		'Address' => 'Varchar(255)',
+		'AddressLine2' => 'Varchar(255)',
+		'City' => 'Varchar(100)',
+		'PostalCode' => 'Varchar(30)',
+		'State' => 'Varchar(100)',
+		'Country' => 'Varchar',
+		'HomePhone' => 'Varchar(100)',
+		'MobilePhone' => 'Varchar(100)',
+		'Notes' => 'HTMLText',
+		
+		'FirstName' => 'Varchar',
+		'Surname' => 'Varchar',
+		'Email' => 'Varchar'
 	);
 
 
@@ -147,8 +162,8 @@ class Order extends DataObject {
 	public static $table_overview_fields = array(
 		'ID' => 'Order No',
 		'Created' => 'Created',
-		'Member.FirstName' => 'First Name',
-		'Member.Surname' => 'Surname',
+		'FirstName' => 'First Name',
+		'Surname' => 'Surname',
 		'Total' => 'Total',
 		'Status' => 'Status'
 	);
@@ -156,8 +171,9 @@ class Order extends DataObject {
 	public static $summary_fields = array(
 		'ID' => 'Order No',
 		'Created' => 'Created',
-		'Member.FirstName' => 'First Name',
-		'Member.Surname' => 'Surname',
+		'FirstName' => 'First Name',
+		'Surname' => 'Surname',
+		'LatestEmail' => 'Email',
 		'Total' => 'Total',
 		'TotalOutstanding' => 'Outstanding',
 		'Status' => 'Status'
@@ -170,15 +186,15 @@ class Order extends DataObject {
 			'title' => 'Order Number'
 		),
 		'Printed',
-		'Member.FirstName' => array(
+		'FirstName' => array(
 			'title' => 'Customer Name',
 			'filter' => 'PartialMatchFilter'
 		),
-		'Member.Email' => array(
+		'Email' => array(
 			'title' => 'Customer Email',
 			'filter' => 'PartialMatchFilter'
 		),
-		'Member.HomePhone' => array(
+		'HomePhone' => array(
 			'title' => 'Customer Phone',
 			'filter' => 'PartialMatchFilter'
 		),
@@ -662,7 +678,7 @@ class Order extends DataObject {
 	 * @TODO Why do we need to get this from the AccountPage class?
 	 */
 	function Link() {
-		return AccountPage::get_order_link($this->ID);
+		return CheckoutPage::find_link(false,"finish",$this->ID);
 	}
 
 	/**
@@ -716,6 +732,16 @@ class Order extends DataObject {
 			return Payment::site_currency();
 		}
 	}
+	
+	/**
+	 * Get the latest email for this order.
+	 */
+	function getLatestEmail(){
+		if($this->MemberID && $this->Member()->LastEdited > $this->LastEdited){
+			$this->Member()->Email;
+		}
+		return $this->getField('Email');
+	}
 
 	function getFullBillingAddress($separator = "",$insertnewlines = true){
 		//TODO: move this somewhere it can be customised
@@ -733,10 +759,10 @@ class Order extends DataObject {
 		);
 
 		$fields = array();
-		$member = $this->Member();
+		$do = ($this->MemberID) ? $this->Member(): $this; //TODO: perhaps always use this??
 		foreach($touse as $field){
-			if($member && $member->$field)
-				$fields[] = $member->$field;
+			if($do && $do->$field)
+				$fields[] = $do->$field;
 		}
 
 		$separator = ($insertnewlines) ? $separator."\n" : $separator;
@@ -874,12 +900,12 @@ class Order extends DataObject {
 	 */
 	protected function sendEmail($emailClass, $copyToAdmin = true) {
  		$from = self::$receipt_email ? self::$receipt_email : Email::getAdminEmail();
- 		$to = $this->Member()->Email;
+ 		$to = $this->getLatestEmail();
 		$subject = self::$receipt_subject ? self::$receipt_subject : "Shop Sale Information #%d";
 		$subject = sprintf($subject,$this->ID);
 
  		$purchaseCompleteMessage = DataObject::get_one('CheckoutPage')->PurchaseComplete;
-
+ 		
  		$email = new $emailClass();
  		$email->setFrom($from);
  		$email->setTo($to);
@@ -892,8 +918,8 @@ class Order extends DataObject {
 				'Order' => $this
 			)
 		);
-
-		$email->send();
+		
+		$email->send(); //fixme breaks here.
 	}
 
 	/**
@@ -1074,6 +1100,9 @@ class Order extends DataObject {
 
 	function onAfterWrite() {
 		parent::onAfterWrite();
+		
+		/*
+		//this code gets run 4 times when an order is processed
 		$log = new OrderStatusLog();
 		$log->OrderID = $this->ID;
 		$log->SentToCustomer = false;
@@ -1082,6 +1111,7 @@ class Order extends DataObject {
 		$log->Title = "Order Update";
 		$log->Note = $data;
 		$log->write();
+		*/
 	}
 
 	/**

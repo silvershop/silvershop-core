@@ -1,3 +1,8 @@
+SiteConfig:
+	config:
+		Title: eCommerce Testing Website
+		ShopClosed: 0
+
 Page:
     home:
         Title: Home
@@ -5,37 +10,46 @@ Page:
 
 ProductGroup:
     g1:
-        Title: Group 1
-        URLSegment: group-1
+        Title: Products
+        URLSegment: products
     g2:
-        Title: Group 2
-        URLSegment: group-2
+        Title: Clothing
+        URLSegment: clothing
+        Parent:=>ProductGroup.g1	#Sub page of products
 
 Product:
-    p1a:
-        Title: Product 1a
-        Price: 500
-        Parent:=>ProductGroup.g1
-        URLSegment: product-1a
-        AllowPurchase: 0
-    p1b:
-        Title: Product 1b
-        Price: 600
-        URLSegment: product-1b
+    mp3player:
+        Title: Mp3 Player
+        Price: 200
+        URLSegment: mp3-player
         Parent:=>ProductGroup.g1
         AllowPurchase: 1
-    p2a:
-        Title: Product 2a
-        Price: 800
+        Weight: 0.3
+        Stock: 1000					#You need stock levels if you have included the stock module, else the test will fail.
+    socks:
+        Title: Socks
+        Price: 8
+        URLSegment: socks
         Parent:=>ProductGroup.g2
-        URLSegment: product-2a
         AllowPurchase: 1
-    p2b:
-        Title: Product 2b
-        Price: 900
+        Weight:0.1
+        Stock: 50
+    tshirt:
+        Title: T-Shirt
+        Price: 25
         Parent:=>ProductGroup.g2
-        URLSegment: product-2b
+        URLSegment: t-shirt
         AllowPurchase: 1
+        Weight: 0.3
+        Stock: 1000
+    beachball:
+        Title: Beach Ball
+        Price: 10
+        URLSegment: beach-ball
+        Parent:=>ProductGroup.g1
+        AllowPurchase: 0			#This product has AllowPurchase set to 0
+        Weight: 0.4
+        Stock: 1000
         
 CheckoutPage:
     page:
@@ -49,8 +63,8 @@ AccountPage:
         
 Member:
     member:
-        FirstName: Test
-        Surname: User
+        FirstName: Joe
+        Surname: Bloggs
         Country: NZ
         Email: test@example.com
         Password: 23u90oijlJKsa

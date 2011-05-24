@@ -11,6 +11,7 @@ class EcommerceRole extends DataObjectDecorator {
 		static function set_group_name($v) {self::$group_name = $v;}
 		static function get_group_name(){return self::$group_name;}
 
+
 	function extraStatics() {
 		return array(
 			'db' => array(

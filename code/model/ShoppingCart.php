@@ -282,6 +282,11 @@ class ShoppingCart extends Controller {
 	static function uses_different_shipping_address(){
 		return self::current_order()->UseShippingAddress;
 	}
+	
+	static function set_uses_different_shipping_address($use = true){
+		self::current_order()->UseShippingAddress = $use;
+		self::current_order()->write();
+	}
 
 	// Database saving function
 	static function save_current_order() {

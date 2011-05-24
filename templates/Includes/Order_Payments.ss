@@ -10,6 +10,8 @@
 			<th scope="row" class="twoColHeader"><% _t("PAYMENTMETHOD","Method") %></th>
 			<th scope="row" class="twoColHeader"><% _t("PAYMENTNOTE","Note") %></th>
 		</tr>
+	</thead>
+	<tbody>
 		<% control Payments %>	
 			<tr>
 				<td class="price">$LastEdited.Nice</td>
