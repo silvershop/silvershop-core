@@ -3,6 +3,18 @@ Development
 
 This information should be useful when developing with ecommerce.
 
+Release Process
+---------------
+
+ - Branch that is being released must be stable & passing unit tests.
+ - Release candidate to find bugs, and get feedback - feature requests from this should go into tickets.
+ - Make sure change-log is up-to-date
+ - After a week or so, create a tag (create a remider to do this)
+ - Update demo site with latest release
+ - Update silverstripe.org extensions page
+ - Post notification on forums, google group
+
+
 Development practices
 ---------------------
 
