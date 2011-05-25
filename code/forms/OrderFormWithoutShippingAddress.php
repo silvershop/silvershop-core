@@ -21,13 +21,10 @@ class OrderFormWithoutShippingAddress extends OrderForm {
 	protected static $postal_code_label = "find postcode";
 		static function set_postal_code_label($v) {self::$postal_code_label = $v;}
 
-	protected static $login_invite_alternative_text = '';
+	protected static $login_invite_alternative_text = 'Please <a href="Security/login?BackURL=/">log in now</a> to retrieve your account details or create an account below.';
 		static function set_login_invite_alternative_text($v) {self::$login_invite_alternative_text = $v;}
 		static function get_login_invite_alternative_text() {
-			if(!self::$login_invite_alternative_text) {
-				self::$login_invite_alternative_text = 'Please <a href="Security/login?BackURL=/">log in now</a> to retrieve your account details or create an account below.';
-			}
-			return str_replace("/?BackURL=", "/?BackURL=/".(CheckoutPage::find_link(true)), self::$login_invite_alternative_text) ;
+			return str_replace("Security/login/", "Security/login/?BackURL=/".(CheckoutPage::find_link(true)), self::$login_invite_alternative_text) ;
 		}
 
 
@@ -78,7 +75,7 @@ class OrderFormWithoutShippingAddress extends OrderForm {
 					case "Country":
 						if(self::$fixed_country_code) {
 							$child->setValue(self::$fixed_country_code);
-							ShoppingCart::set_country("NZ");
+							ShoppingCart::set_country(self::$fixed_country_code);
 						}
 						break;
 					default:

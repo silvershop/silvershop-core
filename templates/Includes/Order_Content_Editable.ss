@@ -54,6 +54,7 @@
 							<% else %>
 								$TableTitle
 							<% end_if %>
+							$Form
 						</td>
 						<td>&nbsp;</td>
 						<td class="right" id="$TableTotalID">$TableValue.Nice</td>

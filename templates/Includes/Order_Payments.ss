@@ -10,14 +10,12 @@
 			<th scope="row" class="twoColHeader"><% _t("PAYMENTMETHOD","Method") %></th>
 			<th scope="row" class="twoColHeader"><% _t("PAYMENTNOTE","Note") %></th>
 		</tr>
-	</thead>
-	<tbody>
 		<% control Payments %>	
 			<tr>
-				<td class="price">$LastEdited.Nice</td>
+				<td class="price">$LastEdited.Nice24</td>
 				<td class="price">$Amount.Nice $Currency</td>
 				<td class="price">$Status</td>
-				<td class="price">$PaymentMethod - $IP $ProxyIP</td>
+				<td class="price">$PaymentMethod</td>
 				<td class="price">$Message.NoHTML</td>
 			</tr>
 		<% end_control %>

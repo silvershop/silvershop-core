@@ -2,7 +2,7 @@ jQuery(document).ready(
 	function() {
 		jQuery('input.ajaxQuantityField').each(
 			function() {
-				jQuery(this).attr('disabled', false);
+				jQuery(this).removeAttr('disabled');
 				jQuery(this).change(
 					function() {
 						var name = jQuery(this).attr('name')+ '_SetQuantityLink';
@@ -20,7 +20,7 @@ jQuery(document).ready(
 		);
 		jQuery('select.ajaxCountryField').each(
 			function() {
-				jQuery(this).attr('disabled', false);
+				jQuery(this).removeAttr('disabled');
 				jQuery(this).change(
 					function() {
 						var id = '#' + jQuery(this).attr('id') + '_SetCountryLink';
@@ -45,7 +45,12 @@ function setChanges(changes) {
 			var value = escapeHTML(change.value);
 			if(change.id) {
 				var id = '#' + change.id;
-				jQuery(id).attr(parameter, value);
+				if(parameter == 'innerHTML'){
+					jQuery(id).html(value);
+				}
+				else{
+					jQuery(id).attr(parameter, value);
+				}
 			}
 			else if(change.name) {
 				var name = change.name;

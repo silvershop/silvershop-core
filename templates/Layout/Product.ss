@@ -55,7 +55,13 @@
 					<% control Item %>
 						<div class="quantityBox">
 							<span><% _t("QUANTITYCART","Quantity in cart") %>:</span>
-							$QuantityField
+							<a class="ajaxQuantityLink" href="$removeLink" title="<% sprintf(_t("REMOVEALL","Remove one of &quot;%s&quot; from your cart"),$Title) %>">
+								<img src="ecommerce/images/minus.gif" alt="-" />
+							</a>
+							$AjaxQuantityField
+							<a class="ajaxQuantityLink" href="$addLink" title="<% sprintf(_t("ADDONE","Add one more of &quot;%s&quot; to your cart"),$Title) %>">
+								<img src="ecommerce/images/plus.gif" alt="+" />
+							</a>
 							<ul class="productActions">
 								<li><a href="$removeallLink" title="<% sprintf(_t("REMOVE","Remove &quot;%s&quot; from your cart"),$Title) %>"><% _t("REMOVELINK","&raquo; Remove from cart") %></a></li>
 								<li><a href="$checkoutLink" title="<% _t("GOTOCHECKOUT","Go to the checkout now") %>"><% _t("GOTOCHECKOUTLINK","&raquo; Go to the checkout") %></a></li>

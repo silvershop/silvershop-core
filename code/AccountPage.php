@@ -55,7 +55,7 @@ class AccountPage extends Page {
 	function CompleteOrders() {
 		$memberID = Member::currentUserID();
 		$statusFilter = "\"Order\".\"Status\" IN ('" . implode("','", Order::$paid_status) . "')";
-		$statusFilter .= " AND \"Order\".\"Status\" NOT IN('Cart')";
+		$statusFilter .= " AND \"Order\".\"Status\" NOT IN('". implode("','", Order::$hidden_status) ."')";
 		return DataObject::get('Order', "\"Order\".\"MemberID\" = '$memberID' AND $statusFilter", "\"Created\" DESC");
 	}
 
@@ -68,7 +68,7 @@ class AccountPage extends Page {
 	function IncompleteOrders() {
 		$memberID = Member::currentUserID();
 		$statusFilter = "\"Order\".\"Status\" NOT IN ('" . implode("','", Order::$paid_status) . "')";
-		$statusFilter .= " AND \"Order\".\"Status\" NOT IN('Cart')";
+		$statusFilter .= " AND \"Order\".\"Status\" NOT IN('". implode("','", Order::$hidden_status) ."')";
 		return DataObject::get('Order', "\"Order\".\"MemberID\" = '$memberID' AND $statusFilter", "\"Created\" DESC");
 	}
 
@@ -109,6 +109,8 @@ class AccountPage_Controller extends Page_Controller {
 			Security::permissionFailure($this, $messages);
 			return false;
 		}
+		
+		
 	}
 
 	/**
@@ -126,7 +128,14 @@ class AccountPage_Controller extends Page_Controller {
 
 		if($orderID = $request->param('ID')) {
 			if($order = DataObject::get_one('Order', "\"Order\".\"ID\" = '$orderID' AND \"Order\".\"MemberID\" = '$memberID'")) {
-				return array('Order' => $order);
+				
+				$paymentform = ($order->TotalOutstanding() > 0) ? $this->CancelForm() : null;
+				
+				
+				return array(
+					'Order' => $order,
+					'Form' => $paymentform
+				);
 			}
 			else {
 				return array(
@@ -160,14 +169,17 @@ class AccountPage_Controller extends Page_Controller {
 	 *
 	 * @return Order_CancelForm
 	 */
-	function CancelForm() {
-		return null; // This needs to be fixed, URL routing is broken so ID doesn't get picked up
-
-		if($order = DataObject::get_by_id('Order', (int) Director::urlParam('ID'))) {
+	function CancelForm() {		
+		$memberID = Member::currentUserID();
+		$orderID = $this->getRequest()->param('ID');
+		if(!$orderID) $orderID = (isset($_POST['OrderID']) && is_numeric($_POST['OrderID'])) ? $_POST['OrderID'] : null;
+		
+		if(is_numeric($orderID) && $order = DataObject::get_one('Order', "\"Order\".\"ID\" = '$orderID' AND \"Order\".\"MemberID\" = '$memberID'")) {
 			if($order->canCancel()) {
 				return new Order_CancelForm($this, 'CancelForm', $order->ID);
 			}
 		}
+		return null;
 	}
 
 }

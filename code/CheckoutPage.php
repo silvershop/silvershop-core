@@ -33,9 +33,7 @@ class CheckoutPage extends Page {
 		'ChequeMessage' => 'HTMLText',
 		'AlreadyCompletedMessage' => 'HTMLText',
 		'NonExistingOrderMessage' => 'HTMLText',
-		'MustLoginToCheckoutMessage' => 'HTMLText',
-		
-		'CheckoutFinishMessage' => 'HTMLText'
+		'MustLoginToCheckoutMessage' => 'HTMLText'
 	);
 
 	public static $has_one = array(
@@ -61,12 +59,11 @@ class CheckoutPage extends Page {
 	 * @param boolean $urlSegment If set to TRUE, only returns the URLSegment field
 	 * @return string Link to checkout page
 	 */
-	static function find_link($urlSegment = false,$action = null,$id = null) {
+	static function find_link($urlSegment = false) {
 		if(!$page = DataObject::get_one('CheckoutPage')) {
 			user_error('No CheckoutPage was found. Please create one in the CMS!', E_USER_ERROR);
 		}
-		$id = ($id)? "/".$id : "";
-		return ($urlSegment) ? $page->URLSegment : $page->Link($action).$id;
+		return ($urlSegment) ? $page->URLSegment : $page->Link();
 	}
 
 
@@ -146,7 +143,7 @@ class CheckoutPage_Controller extends Page_Controller {
 
 		Requirements::javascript(THIRDPARTY_DIR . '/jquery/jquery.js');
 		Requirements::javascript('ecommerce/javascript/CheckoutPage.js');
-
+		Requirements::javascript('ecommerce/javascript/ecommerce.js');
 		Requirements::themedCSS('CheckoutPage');
 
 		$this->initVirtualMethods();
@@ -274,41 +271,6 @@ class CheckoutPage_Controller extends Page_Controller {
 			return 'You can not checkout this order because you are not logged in. To do so, please <a href="Security/login?BackURL=' . $redirectLink . '">login</a> first, otherwise you can <a href="' . $checkoutLink . '">checkout</a> your current order.';
 		}
 	}
-	
-	
-	/**
-	 * Go here after order has been processed.
-	 */
-	function finish(){
-		Requirements::themedCSS('Order');
-		//TODO: make redirecting to account page optional
-		
-		//otherwise display last completed order(s)
-		
-		$orderid = Director::urlParam('ID');
-		
-		//security filter
-		$filter = ($cid = Member::currentUserID()) ? "\"MemberID\" = $cid" : "\"SessionID\" = '".session_id()."'";
-		$filter = " AND $filter";
-		
-		$order = DataObject::get_one('Order',"\"ID\"= $orderid".$filter);
-		
-		//if no id, then get first of latest orders for member or session id?
-		
-		//TODO: permission message on failure
-		
-		$message = $mtype = null;
-		if(!$order){
-			$message = _t("CheckoutPage.ORDERNOTFOUND","Order could not be found.");
-			$mtype = 'bad';
-		}
-		
-		return array(
-			'Order' => $order,
-			'Message' => $message,
-			'MessageType' => $mtype
-		);
-		
-	}
+
 
 }

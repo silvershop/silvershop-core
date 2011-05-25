@@ -27,6 +27,7 @@ class ShoppingCart extends Controller {
 		'debug' => 'ADMIN'
 	);
 
+
 	/**
 	 *	used for allowing certian url parameters to be applied to orderitems
 	 *	eg: ?Color=red will set OrderItem color to 'red'
@@ -42,7 +43,10 @@ class ShoppingCart extends Controller {
 	function set_param_filters($array){
 		self::$paramfilters = array_merge(self::$paramfilters,$array);
 	}
-
+	
+	
+	//Country functions
+	
 	static function country_setting_index() {
 		return "ShoppingCartCountry";
 	}
@@ -50,6 +54,11 @@ class ShoppingCart extends Controller {
 	static function set_country($country) {
 		$countrySettingIndex = self::country_setting_index();
 		Session::set($countrySettingIndex, $country);
+		//check if the member has a country
+		if($member = Member::currentUser()) {
+			$member->Country = $country;
+			$member->write();
+		}
 	}
 
 	static function get_country() {
@@ -61,15 +70,10 @@ class ShoppingCart extends Controller {
 		$countrySettingIndex = self::country_setting_index();
 		Session::clear($countrySettingIndex);
 	}
+	
 
-	function init() {
-		parent::init();
-		self::current_order();
-		self::$order->initModifiers();
-	}
-
-
-	//controller links
+	//Controller links
+	
 	static function add_item_link($id, $variationid = null, $parameters = array()) {
 		return self::$URLSegment.'/additem/'.$id.self::variation_link($variationid).self::params_to_get_string($parameters);
 	}
@@ -90,7 +94,7 @@ class ShoppingCart extends Controller {
 		return self::$URLSegment.'/removemodifier/'.$id.self::variation_link($variationid);
 	}
 
-	//TODO: this has no purpose currently
+
 	static function set_country_link() {
 		return self::$URLSegment.'/setcountry';
 	}
@@ -119,7 +123,10 @@ class ShoppingCart extends Controller {
 		}
 		return "";
 	}
-
+	
+	/**
+	 * Finds or creates a current order.
+	 */
 	public static function current_order() {
 		$order = self::$order;
 		if (!$order) {
@@ -137,6 +144,7 @@ class ShoppingCart extends Controller {
 			}
 			self::$order = $order; //temp caching
 		}
+		//TODO: re-introduce this because it allows seeing which members don't complete orders
 		//$order->MemberID = Member::currentUserID(); // Set the Member relation to this order
 		$order->write(); // Write the order
 		return $order;
@@ -195,7 +203,7 @@ class ShoppingCart extends Controller {
 	}
 
 	static function remove_all_items() {
-		//TODO: make this ONLY remove items & not modifiers also
+		//TODO: make this ONLY remove items & not modifiers also?
 		self::current_order()->Attributes()->removeAll();
 	}
 
@@ -218,6 +226,8 @@ class ShoppingCart extends Controller {
 	 * Get OrderItem according to product id, and coorresponding parameter filter.
 	 */
 	static function get_item_by_id($id, $variationid = null,$filter = null) {
+		if(!$id) return null;
+		
 		$filter = self::get_param_filter($filter);
 		if(is_numeric($variationid)){
 			$filter .= ($filter && $filter != "") ? " AND " : "";
@@ -225,7 +235,9 @@ class ShoppingCart extends Controller {
 		}
 		$order = self::current_order();
 		$fil = ($filter && $filter != "") ? " AND $filter" : "";
-		return DataObject::get_one('OrderItem', "\"OrderID\" = $order->ID AND \"ProductID\" = $id". $fil);
+				
+		$item = DataObject::get_one('OrderItem', "\"OrderID\" = $order->ID AND \"ProductID\" = $id". $fil);
+		return $item;
 	}
 
 	/**
@@ -238,6 +250,94 @@ class ShoppingCart extends Controller {
 		}
 		return  DataObject::get_one('OrderItem', "\"OrderID\" = $order->ID $filterString");
 	}
+	
+	static function add_buyable($buyable,$quantity = 1){
+		if(!$buyable) return null;
+		
+		$item = self::find_or_make_order_item($buyable);
+		if($item->ID){
+			$item->Quantiy += $quantity;
+			$item->write();
+		}else{
+			$item->Quantity = $quantity;
+			$item->write();
+			self::add_new_item($item);
+		}
+				
+		return $item;
+	}
+	
+	static function get_buyable_by_id($productId, $variationId = null){
+		$buyable = null;
+		if (is_numeric($variationId) && is_numeric($productId)) {
+			$buyable = DataObject::get_one('ProductVariation', sprintf("\"ID\" = %d AND \"ProductID\" = %d", (int) $variationId, (int) $productId));
+		} elseif(is_numeric($productId)) {
+			$buyable = Versioned::get_one_by_stage('Product','Live', '"Product_Live"."ID" = '.$productId); //only use live products
+		}
+		return $buyable;		
+	}
+	
+	static function find_or_make_order_item($buyable){
+		$id = ($buyable instanceof ProductVariation) ? $buyable->ProductID : $buyable->ID;
+		$varid = ($buyable instanceof ProductVariation) ? $buyable->ID : null;
+		
+		if($item = self::get_item_by_id($id,$varid)){
+			return $item;
+		}
+		return self::create_order_item($buyable);
+	}
+
+	/**
+	 * Creates a new order item based on url parameters
+	 */
+	static function create_order_item($buyable,$quantity = 1, $parameters = null){
+		
+		$orderitem = null;
+		//create either a ProductVariation_OrderItem or a Product_OrderItem
+		if ($buyable && $buyable instanceof ProductVariation) {
+			if ($buyable && $buyable->canPurchase()) {
+				$orderitem = new ProductVariation_OrderItem($buyable,$quantity);
+			}
+		} elseif($buyable &&  $buyable instanceof Product) {
+			if ($buyable && $buyable->canPurchase()) {
+				$orderitem = new Product_OrderItem($buyable,$quantity);
+			}
+		}
+
+		//set extra parameters
+		if($orderitem instanceof OrderItem && is_array($parameters)){
+			foreach(self::$paramfilters as $param => $defaultvalue){
+				$v = (isset($parameters[$param])) ? Convert::raw2sql($parameters[$param]) : $defaultvalue;
+				$orderitem->$param = $v;
+			}
+		}
+		return $orderitem;
+	}
+	
+	
+	/**
+	 * Gets a SQL filter based on array of parameters.
+	 *
+	 * 	 Returns default filter if none provided,
+	 *	 otherwise it updates default filter with passed parameters
+	 */
+	static function get_param_filter($params = array()){
+		if(!self::$paramfilters) return ""; //no use for this if there are not parameters defined
+		$outputarray = array();
+		foreach($p = self::get_clean_param_array($params) as $field => $value){
+			$outputarray[] = "\"".$field."\" = ".Convert::raw2sql($value);
+		}
+		return implode(" AND ",$outputarray);
+	}
+	
+	static function get_clean_param_array($params = array()){
+		$arr = array();
+		foreach(self::$paramfilters as $field => $value){
+			$arr[$field] = (isset($params[$field])) ? $params[$field] : $value; 
+		}
+		return $arr;
+	}
+
 
 	// Modifiers management
 
@@ -284,16 +384,31 @@ class ShoppingCart extends Controller {
 	}
 	
 	static function set_uses_different_shipping_address($use = true){
-		self::current_order()->UseShippingAddress = $use;
-		self::current_order()->write();
+		$order = self::current_order(); 
+		$order->UseShippingAddress = $use;
+		$order->write();
 	}
-
-	// Database saving function
-	static function save_current_order() {
-		return Order::save_current_order();
+		
+	/**
+	 * Sets appropriate status, and message and redirects or returns appropriately.
+	 */
+	 //TODO: it seems silly that this should be a static method just because self::clear is static
+	static function return_data($status = "success",$message = null){
+		
+		if(Director::is_ajax()){
+			return $status; //TODO: make this customisable between json, status message etc. Perhaps make this whole function custom.
+			//return self::json_code(); //TODO: incorporate status / message
+		}
+		//TODO: set session / status in session (like Form sessionMesssage)
+		Director::redirectBack();
 	}
-
+	
+	/**
+	 * Builds json object to be returned via ajax.
+	 */
 	static function json_code() {
+		
+		//$this->response->addHeader('Content-Type', 'application/json');
 		$currentOrder = ShoppingCart::current_order();
 		$js = array ();
 
@@ -306,64 +421,52 @@ class ShoppingCart extends Controller {
 			foreach ($modifiers as $modifier)
 				$modifier->updateForAjax($js);
 		}
-
 		$currentOrder->updateForAjax($js);
 		return Convert::array2json($js);
 	}
-
-	//Actions
+	
+	
+	//Controller Functinons / Actions
+	
+	function init() {
+		parent::init();
+		self::current_order();
+		self::$order->initModifiers();
+	}
 
 	/**
 	 * Either increments the count or creates a new item.
 	 */
 	function additem($request) {
-		if ($itemId = $request->param('ID')) {
+		if ($itemId = $request->param('ID') && $product = $this->buyableFromURL()) {
+			
 			if($item = ShoppingCart::get_item($this->urlFilter())) {
 				ShoppingCart::add_item($item);
-			}
-			else {
-				if($orderitem = $this->getNewOrderItem()) {
+				return self::return_data("success","Extra item added"); //TODO: i18n
+			}else {
+				if($orderitem = $this->create_order_item($product,1,self::get_clean_param_array($this->getRequest()->getVars()))) {
 					ShoppingCart::add_new_item($orderitem);
+					return self::return_data("success","Item added"); //TODO: i18n
 				}
 			}
 		}
-		if (!$this->isAjax())
-			Director::redirectBack();
+		return self::return_data("failure","Item could not be added"); //TODO: i18n
 	}
 
 	function removeitem($request) {
 		if ($item = ShoppingCart::get_item($this->urlFilter())) {
 			ShoppingCart::remove_item($item);
+			return self::return_data("success","Item removed");//TODO: i18n
 		}
-		if (!$this->isAjax())
-			Director::redirectBack();
+		return self::return_data("failure","Item could not be found in cart");//TODO: i18n
 	}
 
 	function removeallitem() {
 		if ($item = ShoppingCart::get_item($this->urlFilter())) {
 			ShoppingCart::remove_all_item($item);
+			return self::return_data("success","Item fully removed");//TODO: i18n
 		}
-		if (!$this->isAjax())
-			Director::redirectBack();
-	}
-
-
-	/**
-	 * Clears the cart
-	 */
-	static function clear($request = null) {
-		self::current_order()->SessionID = null;
-		self::current_order()->write();
-		self::remove_all_items();
-		self::$order = null;
-
-		//redirect if called via url
-		if($request instanceof SS_HTTPRequest){
-			if(Director::is_ajax())
-				return "success";
-			else
-				Director::redirectBack();
-	}
+		return self::return_data("failure","Item could not be found in cart");//TODO: i18n
 	}
 
 
@@ -372,79 +475,71 @@ class ShoppingCart extends Controller {
 	 */
 	function setquantityitem($request) {
 		$quantity = $request->getVar('quantity');
-		if (is_numeric($quantity)) {
+		$product = $this->buyableFromURL();
+		if (is_numeric($quantity) && $product) {
 			$item = ShoppingCart::get_item($this->urlFilter());
 			if($quantity > 0){
 				if(!$item){
-					$item = $this->getNewOrderItem();
-					self::add_new_item($item);
+					if($item = self::create_order_item($product,$quantity,self::get_clean_param_array($this->getRequest()->getVars()))){
+						$item->Quantity = $quantity;
+						self::add_new_item($item);
+					}
 				}
-				if($item){
+				else{
 					ShoppingCart::set_quantity_item($item, $quantity);
-					if($this->isAjax()) return "success";
 				}
 			}elseif($item){
 				ShoppingCart::remove_all_item($item);
-				if($this->isAjax()) return "success";
+				return self::return_data("success","Item removed completely");//TODO: i18n
 			}
+			return self::return_data("success","Quantity set successfully");//TODO: i18n
 		}
+		return self::return_data("failure","Quantity provided is not numeric");//TODO: i18n
 	}
 
 	/**
-	 * Creates new order item based on url parameters
+	 * Removes specified modifier, if allowed
 	 */
-	protected function getNewOrderItem(){
+	function removemodifier() {
+		$modifierId = $this->urlParams['ID'];
+		if (ShoppingCart::can_remove_modifier($modifierId)){
+			ShoppingCart::remove_modifier($modifierId);
+			return self::return_data("success","Removed");//TODO: i18n
+		}
+		return self::return_data("failure","Could not be removed");//TODO: i18n
+	}
+	
+	
+	/**
+	 * Clears the cart of all items and modifiers.
+	 * It does this by disconnecting the current cart from the user session.
+	 */
+	static function clear($request = null) {
+		self::current_order()->SessionID = null;
+		self::current_order()->write();
+		self::remove_all_items();
+		self::$order = null;
+		Session::clear(self::country_setting_index());
 
+		//redirect back or send ajax only if called via http request.
+		//This check allows this function to be called from elsewhere in the system.
+		if($request instanceof SS_HTTPRequest){
+			return self::return_data("success","Cart cleared");//TODO: i18n
+		}
+	}
+	
+	
+	/**
+	 * Retrieves the appropriate product, variation etc from url parameters.
+	 */
+	protected function buyableFromURL(){
 		$request = $this->getRequest();
-		$orderitem = null;
-
-		//create either a ProductVariation_OrderItem or a Product_OrderItem
-		if (is_numeric($request->param('OtherID')) && $variationId = $request->param('OtherID')) {
-			$variation = DataObject::get_one('ProductVariation', sprintf("\"ID\" = %d AND \"ProductID\" = %d", (int) $this->urlParams['OtherID'], (int) $this->urlParams['ID']));
-			if ($variation && $variation->canPurchase()) {
-				$orderitem = new ProductVariation_OrderItem($variation,1);
-			}
-		} elseif(is_numeric($request->param('ID')) && $itemId = $request->param('ID')) {
-			$product = Versioned::get_one_by_stage('Product','Live', '"Product_Live"."ID" = '.$itemId); //only use live products
-			if ($product && $product->canPurchase()) {
-				$orderitem = new Product_OrderItem($product,1);
-			}
-		}
-		//set extra parameters
-		if($orderitem instanceof OrderItem){
-			foreach(self::$paramfilters as $param => $defaultvalue){
-				$v = ($request->getVar($param)) ? Convert::raw2sql($request->getVar($param)) : $defaultvalue;
-				$orderitem->$param = $v;
-			}
-		}
-
-		return $orderitem;
+		$variationId = $request->param('OtherID');
+		$productId = $request->param('ID');
+		
+		return self::get_buyable_by_id($productId,$variationId);
 	}
-
-
-	/**
-	 * Gets a SQL filter based on array of parameters.
-	 *
-	 * 	 Returns default filter if none provided,
-	 *	 otherwise it updates default filter with passed parameters
-	 */
-	static function get_param_filter($params = array()){
-
-		if(!self::$paramfilters) return ""; //no use for this if there are not parameters defined
-		$bt = defined('DB::USE_ANSI_SQL') ? "\"" : "`";
-		$temparray = self::$paramfilters;
-		$outputarray = array();
-
-		foreach(self::$paramfilters as $field => $value){
-			if(isset($params[$field])){
-				//TODO: convert to $dbfield->prepValueForDB() when Boolean problem figured out
-				$temparray[$field] = Convert::raw2sql($params[$field]);
-			}
-			$outputarray[] = "\"".$field."\" = ".$temparray[$field];
-		}
-
-		return implode(" AND ",$outputarray);
-	}
+	
 
 	/**
 	 * Gets a filter based on urlParameters
@@ -469,25 +564,27 @@ class ShoppingCart extends Controller {
 		return $result;
 	}
 
-
-
-
-	/**
-	 * Removes specified modifier, if allowed
-	 */
-	function removemodifier() {
-		$modifierId = $this->urlParams['ID'];
-		if (ShoppingCart::can_remove_modifier($modifierId))
-			ShoppingCart::remove_modifier($modifierId);
-		if (!$this->isAjax())
-			Director::redirectBack();
-	}
-
 	/**
 	 * Displays order info and cart contents.
 	 */
 	function debug() {
 		Debug::show(ShoppingCart::current_order());
+	}
+	
+	
+	
+	/**
+	 *  Change country action 
+	 * */
+	function setcountry($request) {
+		$countryCode = $request->param('ID');
+		if($countryCode && strlen($countryCode) < 4) {
+			//to do: check if country exists
+			ShoppingCart::set_country($countryCode);
+			//return _t("ShoppingCart.COUNTRYUPDATED", "Country updated.");
+			return self::json_code();
+		}
+		return _t("ShoppingCart.COUNTRYCOULDNOTBEUPDATED", "Country not be updated.");
 	}
 
 }

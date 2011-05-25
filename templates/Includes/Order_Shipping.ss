@@ -1,6 +1,6 @@
 <table id="ShippingTable" class="infotable">
 	<tr>
-		<th>To</th><th>Ship To (if different address)</th>
+		<th><% _t("TO","To") %></th><th><% _t("SHIPTO","Ship To (if different address)") %></th>
 	</tr>
 	<tr>
 		<td>

@@ -2,12 +2,13 @@
 	<div class="typography">
 	<% if Order %>
 		<% control Order %>
-			<h2><% _t('AccountPage.ss.ORDER','Order') %> #$ID ($Created.Long)</h2>
-			
+			<h2><% _t('AccountPage.ss.ORDER','Order') %> #$ID</h2>
+			<h3>$Created.Nice</h3>
 			<% include Order %>
 		<% end_control %>
 	<% else %>
-		<p><strong>$Message</strong></p>
+		<div id="AccountMessage">$Message.Raw</div>
 	<% end_if %>
+	$Form
 	</div>
 </div>

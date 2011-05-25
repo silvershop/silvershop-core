@@ -81,16 +81,14 @@ class EcomQuantityField extends ViewableData{
 	
 	function IncrementLink(){
 		$varid = ($this->item instanceof ProductVariation_OrderItem) ? $this->item->ProductVariationID : null;
-		return ShoppingCart::add_item_link($this->item->getProductIDForSerialization(), $varid,$this->parameters);
+		return Convert::raw2att(ShoppingCart::add_item_link($this->item->getProductIDForSerialization(), $varid,$this->parameters));
 	}
 	
 	function DecrementLink(){
 		$varid = ($this->item instanceof ProductVariation_OrderItem) ? $this->item->ProductVariationID : null;
-		return ShoppingCart::remove_item_link($this->item->getProductIDForSerialization(), $varid,$this->parameters);
+		return Convert::raw2att(ShoppingCart::remove_item_link($this->item->getProductIDForSerialization(), $varid,$this->parameters));
 	}
 	
-	
-
 	function forTemplate(){
 		return $this->renderWith($this->template);		
 	}

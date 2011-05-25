@@ -28,7 +28,7 @@ class WeightShippingModifier extends OrderModifier {
 
 		// if there is a shipping country then check whether it is national or international
 		if($shippingCountry) {
-			if($shippingCountry == 'NZ') return $this->nationalCost($totalWeight);
+			if($shippingCountry == Geoip::$default_country_code) return $this->nationalCost($totalWeight);
 			else return $this->internationalCost($totalWeight, $shippingCountry);
 		}
 		else {
@@ -36,21 +36,21 @@ class WeightShippingModifier extends OrderModifier {
 				if($member->Country) $country = $member->Country;
 				else $country = Geoip::visitor_country();
 			}
-			if(! $country) $country = 'NZ';
-			if($country == 'NZ') return $this->nationalCost($totalWeight);
+			if(! $country) $country = Geoip::$default_country_code;
+			if($country == Geoip::$default_country_code) return $this->nationalCost($totalWeight);
 			else return $this->internationalCost($totalWeight, $country);
 		}
 	}
 
 	/**
-	 * Retrieve the cost from NZ shipping
+	 * Retrieve the cost from Geoip::$default_country_code shipping
 	 */
 	function nationalCost($totalWeight){
 		// if a product can't have a weight, don't charge/display it
 		if($totalWeight <= 0) return '0.00';
 
 		// return the pricing appropriate for the weight
-		$shippingCosts = self::$a['NZ'];
+		$shippingCosts = self::$a[Geoip::$default_country_code];
 
 		return $this->getCostFromWeightList($totalWeight, $shippingCosts);
 	}

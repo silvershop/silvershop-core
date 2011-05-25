@@ -119,10 +119,13 @@ class ProductGroup extends Page {
 	 * @param array $permissions
 	 * @return DataObjectSet
 	 */
-	function ProductsShowable($extraFilter = '', $permissions = array("Show All Products")) { //TODO: re-introduce custom permissions, if wanted
+	 //TODO: optimise this where possible..perhaps use less joins
+	function ProductsShowable($extraFilter = '', $recursive = true){
 		$filter = ""; //
 		$join = "";
-
+		
+		$this->extend('updateFilter',$extraFilter);
+		
 		if($extraFilter) $filter.= " AND $extraFilter";
 		if(self::$must_have_price) $filter .= " AND \"Price\" > 0";
 
@@ -135,7 +138,7 @@ class ProductGroup extends Page {
 
 		$groupids = array($this->ID);
 
-		if(self::$include_child_groups && $childgroups = $this->ChildGroups(true))
+		if(($recursive === true || $recursive === 'true') && self::$include_child_groups && $childgroups = $this->ChildGroups(true))
 			$groupids = array_merge($groupids,$childgroups->map('ID','ID'));
 
 		$groupidsimpl = implode(',',$groupids);
@@ -151,8 +154,6 @@ class ProductGroup extends Page {
 		
 		if($allproducts) $products->TotalCount = $allproducts->Count(); //add total count to returned data for 'showing x to y of z products'
 		if($products && $products instanceof DataObjectSet) $products->removeDuplicates();
-		
-
 		return $products;
 	}
 
@@ -233,22 +234,22 @@ class ProductGroup_Controller extends Page_Controller {
 	/**
 	 * Return the products for this group.
 	 */
-	public function Products(){
-		return $this->ProductsShowable();
+	public function Products($recursive = true){
+		return $this->ProductsShowable('',$recursive);
 	}
 
 	/**
 	 * Return products that are featured, that is products that have "FeaturedProduct = 1"
 	 */
-	function FeaturedProducts() {
-		return $this->ProductsShowable("\"FeaturedProduct\" = 1");
+	function FeaturedProducts($recursive = true) {
+		return $this->ProductsShowable("\"FeaturedProduct\" = 1",$recursive);
 	}
 
 	/**
 	 * Return products that are not featured, that is products that have "FeaturedProduct = 0"
 	 */
-	function NonFeaturedProducts() {
-		return $this->ProductsShowable("\"FeaturedProduct\" = 0");
+	function NonFeaturedProducts($recursive = true) {
+		return $this->ProductsShowable("\"FeaturedProduct\" = 0",$recursive);
 	}
 
 		/**
