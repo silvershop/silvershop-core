@@ -275,7 +275,6 @@ class CheckoutPage_Controller extends Page_Controller {
 		}
 	}
 	
-	
 	/**
 	 * Go here after order has been processed.
 	 */
@@ -291,7 +290,7 @@ class CheckoutPage_Controller extends Page_Controller {
 		$filter = " AND \"SessionID\" = '".session_id()."'";
 		$filter .= ($cid = Member::currentUserID()) ? " OR \"MemberID\" = $cid" : "";
 		
-		$order = DataObject::get_one('Order',"\"ID\"= $orderid".$filter);
+		$order = DataObject::get_one('Order',"\"ID\"= $orderid AND \"Status\" NOT IN('Cart','AdminCancelled','MemberCancelled')".$filter);
 		
 		//if no id, then get first of latest orders for member or session id?
 		

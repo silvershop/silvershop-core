@@ -288,7 +288,6 @@ class OrderForm extends Form {
 		// Write new record {@link Order} to database
 		$form->saveInto($order);
 		$order->save(); //sets status to 'Unpaid' //is it even necessary to have it's own function? ..just legacy code.
-		$order->write();
 
 		$this->clearSessionData(); //clears the stored session form data that might have been needed if validation failed
 		

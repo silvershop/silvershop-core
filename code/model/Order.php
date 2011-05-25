@@ -459,6 +459,7 @@ class Order extends DataObject {
 			}
 		}
 		
+		$this->SessionID = session_id(); //update session id		
 		$this->extend('onSave'); //allow decorators to do stuff when order is saved.
 		$this->write();
 	}
