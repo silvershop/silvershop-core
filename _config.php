@@ -18,7 +18,7 @@ DevelopmentAdmin::$allowed_actions[] = 'ecommerce';
 //The configuration below is not required, but allows you to customise your ecommerce application - check for the defalt value first.
 // * * * DEFINITELY MUST SET
 //Order::set_email("your name <sales@myshop.com>);
-//Order::set_subject("thank you for your order at www.myshop.com");
+//Order::set_receipt_subject("thank you for your order at www.myshop.com");
 //Order::set_modifiers(array("MyModifierOne", "MyModifierTwo");
 
 

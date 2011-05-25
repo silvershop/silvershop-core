@@ -354,7 +354,7 @@ class Order extends DataObject {
 	 *
 	 * @param string $subject The subject line text
 	 */
-	public static function set_subject($subject) {
+	public static function set_receipt_subject($subject) {
 		self::$receipt_subject = $subject;
 	}
 
