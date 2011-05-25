@@ -10,6 +10,8 @@ Director::addRules(50, array(
 	ShoppingCart::$URLSegment . '/$Action/$ID/$OtherID' => 'ShoppingCart'
 ));
 
+Object::add_extension("DevelopmentAdmin", "EcommerceDevelopmentAdminDecorator");
+DevelopmentAdmin::$allowed_actions[] = 'ecommerce';
 
 // copy the lines below to your mysite/_config.php file and set as required.
 // __________________________________START ECOMMERCE MODULE CONFIG __________________________________

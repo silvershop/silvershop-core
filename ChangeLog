@@ -5,6 +5,8 @@ Ecommerce ChangeLog
 	* Added CartPage action and template "finished", which displays the order just placed.
 	* Copied all ecommerce member fields to Order, so that orders can be placed without member.
 	* Added docs folder, along with some developer and user documentation
+	* Introduced mysite/dev/ecommerce to get quick access to ecommerce dev tools
+	* Began updating test suite
 
 0.7 - 0.8.1	
 	* Variations working again
