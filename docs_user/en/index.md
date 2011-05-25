@@ -1,4 +1,4 @@
-eCommerce User Documentation
+for users
 ==========================
 
 To cover:

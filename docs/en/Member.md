@@ -3,5 +3,4 @@ When you start an order and are logged in, the order immediately gets associated
 
 You can log into another machine and continue an unfinished order by viewing your list of unfinished orders.
 
-
-![Membership Flow Chart](\_images\membership-flow-chart.jpg)
+![Membership Flow Chart](\images\membership-flow-chart.jpg)
