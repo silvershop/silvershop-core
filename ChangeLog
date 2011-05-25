@@ -1,30 +1,21 @@
 Ecommerce ChangeLog
 
-Needing attention / TODO:
-	* Product -> Number sold. This was intended to allow sorting products by popularity, however it may not be implemented the best.
-	* Removable modifiers? - untested, probably broken.
-	* Remove session-based code from other classes. (mostly done)
-	
-	* Introduce a way to ensure only valid products are added with parameters. (Cart validation??)
-	
-	* Introduce a task that removes expired sessions from orders.
-	
-	* Tidy Order_StatusEmail.ss
+0.8.2
+	* Modified order form to allow orders to be placed without becoming a member in the process.
+	* Added CartPage action and template "finished", which displays the order just placed.
+	* Copied all ecommerce member fields to Order, so that orders can be placed without member.
+	* Added docs folder, along with some developer and user documentation
 
-Trunk
+0.7 - 0.8.1	
 	* Variations working again
 	* Re-structured default templates to be more hierartical and extensible. Removed redundant templates.
 	* Implemented new reciept design
 	* Updated CMS Order interface
 	* Introduced FullBillingAddress and FullShippingAddress functions on Order to provide ways to get combined address fields.
-	
-	* Merged in DBCart, Burnbright, and SunnySideUp branches
 
-Burnbright branch
+	* Merged in DBCart, Burnbright, and SunnySideUp branches
 	* Depricated AllowPurchase function on Product & ProductVariation in favour of canPurcahse. SilverStripe has can____ capabilites built in, and AllowPurchase was overriding the DB field.
 	* Improved ProductBulkLoader to allow setting ProductGroup, and linking up an image of the product.
-
-DBCart branch
 	* Merged ShoppingCart and ShoppingCart_Controller into one class
 	* Introduced filters/paremeters system for more complex cart situations
 
