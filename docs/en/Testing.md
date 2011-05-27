@@ -55,3 +55,13 @@ dev/tests/CheckoutPageTest,EcommerceTest,OrderItemTest,OrderModifierTest,OrderTe
  - CartCleanupTaskTest
  
  - Javascript tests
+ 
+
+More things to test:
+
+ - Order shows up in cart, when logged in or not logged in.
+ - Check things don't carry accross different sessions.
+ - Place two orders, whilst logged out using the same email address.
+ - Price checking
+ - Call a bunch of basic links to view: product, product group, account. admin: products, sales ...along with a single product/sale
+ - test all config options

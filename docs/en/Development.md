@@ -3,6 +3,19 @@ Development
 
 This information should be useful when developing with ecommerce.
 
+
+## Mission
+What the module authors hope to accomplish for users, store admins, and fellow developers.
+
+### For the user
+
+### For the store admin
+
+### For the developer
+A well thought, clearly defined and documented API that can be used to easily extend the module.
+
+
+
 Release Process
 ---------------
 
@@ -10,6 +23,7 @@ Release Process
  - Release candidate to find bugs, and get feedback - feature requests from this should go into tickets.
  - Make sure change-log is up-to-date
  - After a week or so, create a tag (create a remider to do this)
+ - Create downloadable version
  - Update demo site with latest release
  - Update silverstripe.org extensions page
  - Post notification on forums, google group

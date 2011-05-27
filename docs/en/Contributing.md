@@ -19,6 +19,7 @@ see http://doc.silverstripe.org/coding-conventions
 ## SVN Comits
 
 Some general commit rules:
+
 * Always test before committing. Run the unit test suite.
 * Update any unit tests that get broken.
 * Please be as descriptive as necessary about what has changed. DO NOT post empty commit messages.
