@@ -1,6 +1,8 @@
 # Frequently Asked Questions
 
-Also see the [user FAQ](user/FAQ)
+If you have a common question needing a common answer, hopefully you can find it here.
+
+*Also see the user documentation FAQ.*
 
 ### Which version of Silverstripe / eCommerce / payment should I use?
 
@@ -18,10 +20,12 @@ see the [customising docs](Customising#CountryFeild)
 
 see [payment](Payment)
 
-### How do I add shipping calculation to the checkout process? How do I customise fees for locations?
+### How do I add shipping calculation to the checkout process? How do I customise fees for different locations / delivery zones?
 
-The default eCommerce module provides a few shipping [modifiers](OrderModifiers).
-You can also have one custom built for your needs.
+The default eCommerce module provides a few shipping [modifiers](OrderModifiers). You can also have one custom built for your needs.
 
-### How do I run the module in a different language?
 
+### How do I use in a different language?
+
+Follow the [Silverstripe internationalisation guide](http://doc.silverstripe.org/sapphire/en/topics/i18n)
+We welcome your contribution of language files.

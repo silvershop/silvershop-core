@@ -41,11 +41,3 @@ Here are some diagrams:
 Cart items are stored in the database. A new order is created when the first item is added to the cart.
 
 ## Checkout
-
-
-## Core Customisations/Extensions
-
-Explaining why we've made these changes.
-
-EcommerceResponse / CartResponse
-ModelAdminBaseClass

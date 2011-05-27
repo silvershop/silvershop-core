@@ -26,6 +26,15 @@ If you are interested in developing your own sub-module, see [contributing](Cont
 
 ## Shipping & Tax Modifiers
 
+SimpleShippingModifier
+Allows you to choose different flat rates for different countries.
+
+WeightShippingModifier
+Requires entering a weight for each product.
+
+FlatTaxModifier
+
+TaxModifier
 
 
 ## Common Customisations
