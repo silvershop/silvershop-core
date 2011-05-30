@@ -1,4 +1,4 @@
-# Frequently Asked Questions
+# Frequently Asked Questions & Troubleshooting
 
 If you have a common question needing a common answer, hopefully you can find it here.
 

@@ -51,11 +51,26 @@ How to work together without treading on each other's toes
  - Agree on what are good development practices.
  - Develop major features in isolation. Only introduce them along side the stable code when they are actually stable.
 
-
 Tools
 -----
 
 You can find some useful development tools at yoursite/dev/ecommerce
+
+Tasks: Automated & Manual
+-------------------------
+There are a number of manual and automated tasks that can be set up and run. The manual tasks can be accessed from yoursite/dev/ecommerce.
+
+### CartCleanupTask
+This will remove old carts from the database to help keep the number of carts down. You can specify the age of carts in days to clear from (default is 90 days old). 
+
+### DeleteEcommerceOrders
+Deletes all orders, order items, and payments from the system.
+
+### DeleteEcommerceProducts
+Deletes all of the products
+
+### HourlyEcommerceGroupUpdate
+Adds members who have placed orders to the "Shop Customers" group every hour. Useful for maintaining a distinction between shop customers and other members.
 
 Decorator Hooks
 ---------------

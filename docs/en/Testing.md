@@ -65,3 +65,4 @@ More things to test:
  - Price checking
  - Call a bunch of basic links to view: product, product group, account. admin: products, sales ...along with a single product/sale
  - test all config options
+ - test all tasks
