@@ -4,7 +4,11 @@ Testing is highly important for maintaining a quality product.
 
 Regression Testing
 ------------------
-[Google doc containing regression tests](https://spreadsheets.google.com/ccc?key=0AtHUrSaBxJY8dG8teWVNTFYzbThZYUhhLTNmT0FiUHc&hl=en)
+This [Google doc containing regression tests](https://spreadsheets.google.com/ccc?key=0AtHUrSaBxJY8dG8teWVNTFYzbThZYUhhLTNmT0FiUHc&hl=en) will give you an idea of the various things you can test manually.
+In a nutshell, be sure to test the following main functionality:
+
+ * Adding/removing items from cart
+ * Placing an order
 
 Unit Testing
 ------------
@@ -12,14 +16,13 @@ We insist that the eCommerce module contains a suite of unit tests that are upda
 See the [sapphire testing documentation](http://doc.silverstripe.org/sapphire/en/topics/testing/index) for setup information etc.
 See also: [http://www.phpunit.de/manual/3.5/en/index.html](http://www.phpunit.de/manual/3.5/en/index.html)
 
+To run all ecommerce tests visit yoursite/dev/ecommerce and click the "Run all ecommerce unit tests" link.
 
-TBA: At some stage an automated testing system will continually test the code, especially when new commits are made.
+**Note:** Be aware that your configuration in _config.php may affect your test results.
 
-To run all ecommerce tests:
-
-dev/tests/CheckoutPageTest,EcommerceTest,OrderItemTest,OrderModifierTest,OrderTest,PaymentTest,ProductBulkLoaderTest,ProductOrderItemTest,ProductTest,ShoppingCartTest
 
 #### Tests that have/will be written
+
 [Here](http://code.google.com/p/silverstripe-ecommerce/source/browse/?r=1000#svn%2Ftrunk%2Ftests) are some historic test classes that could be referenced when writing them.
 
  - ShoppingCart

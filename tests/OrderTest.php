@@ -122,6 +122,8 @@ class OrderTest extends FunctionalTest {
 		$order = DataObject::get_by_id('Order',$cart->ID);
 		$this->assertNotNull($order,'Order exists');
 		if($order){
+			$this->assertEquals($order->Status,'Unpaid','status is now "unpaid"');
+			
 			$this->assertEquals($order->FirstName,'Joseph','order first name');
 			$this->assertEquals($order->Surname,'Blog','order surname');
 			$this->assertEquals($order->Email,'joe@blog.net.abz','order email');
@@ -142,6 +144,13 @@ class OrderTest extends FunctionalTest {
 	
 	function testNoMemberOrder(){
 		
+		//TODO: test configuration that deines non-member orders
+		
+		//adjust configuration to allow non member orders
+		OrderForm::set_user_membership_optional(true);
+		OrderForm::set_force_membership(false);
+		
+		
 		$socks = $this->objFromFixture('Product', 'socks');
 		$this->get(ShoppingCart::add_item_link($socks->ID)); //add a different product
 		$cart = ShoppingCart::current_order();
@@ -159,19 +168,23 @@ class OrderTest extends FunctionalTest {
 		
 		$order = DataObject::get_by_id('Order',$cart->ID);
 		$this->assertNotNull($order,'Order exists');
-		$this->assertEquals($order->MemberID,0,'No associated member');
-		$this->assertEquals($order->Total(),8,'grand total');
-		$this->assertEquals($order->TotalOutstanding(),8,'total outstanding');
-		$this->assertEquals($order->TotalPaid(),0,'total outstanding');
 		
-		$this->assertEquals($order->FirstName,'Donald','order first name');
-		$this->assertEquals($order->Surname,'Duck','order surname');
-		$this->assertEquals($order->Email,'donald@pondcorp.edu.za','order email');
-		$this->assertEquals($order->Address,'4 The Strand');
-		$this->assertNull($order->AddressLine2,'order address2');
-		$this->assertEquals($order->City,'Melbourne','order city');
-		$this->assertNull($order->PostalCode,'order postcode');
-		$this->assertEquals($order->Country,'AU','order country');
+		if($order){
+			$this->assertEquals($order->Status,'Unpaid','status is now "unpaid"');
+			$this->assertEquals($order->MemberID,0,'No associated member');
+			$this->assertEquals($order->Total(),8,'grand total');
+			$this->assertEquals($order->TotalOutstanding(),8,'total outstanding');
+			$this->assertEquals($order->TotalPaid(),0,'total outstanding');
+			
+			$this->assertEquals($order->FirstName,'Donald','order first name');
+			$this->assertEquals($order->Surname,'Duck','order surname');
+			$this->assertEquals($order->Email,'donald@pondcorp.edu.za','order email');
+			$this->assertEquals($order->Address,'4 The Strand');
+			$this->assertNull($order->AddressLine2,'order address2');
+			$this->assertEquals($order->City,'Melbourne','order city');
+			$this->assertNull($order->PostalCode,'order postcode');
+			$this->assertEquals($order->Country,'AU','order country');
+		}
 		
 		ShoppingCart::clear(); //cleanup
 	}

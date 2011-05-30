@@ -1,43 +1,43 @@
-Migrate info from [here](http://code.google.com/p/silverstripe-ecommerce/wiki/HowEcommerceIsBuilt)
+Architecture
+=============
 
-[ShoppingCart](ShoppingCart) provides the API to add and remove items from the current order.
+[ShoppingCart](ShoppingCart) provides the API to add and remove items from the current order. Once an order is processed on the CheckoutPage, it is no longer in the cart.
 
-Once an order is processed on the CheckoutPage, it is no longer in the cart.
-
-Each user shopping cart is stored in the session, and saved to the database when the order payment is processed.
-
-# Data Model
+## Data Model
 
 Here are some diagrams: 
 [DataModel PDF v1.0alpha](https://code.google.com/p/silverstripe-ecommerce/downloads/detail?name=SSEcommerce1.0alpha.pdf&can=2),
 [DataModel PDF v0.6.1](https://code.google.com/p/silverstripe-ecommerce/downloads/detail?name=SSEcommerce0.61.pdf&can=2&q=)
 
-## DataObjects
+### DataObjects
 
   * Order
    * OrderAttribute
   	* OrderItem
   	 * Product_OrderItem
    	 * ProductVariation_OrderItem
-   * OrderModifier
-   * ProductVariation
+   * OrderModifier - Shippping/Tax calculators etc... see [order modifiers](OrderModifiers)
+   * ProductVariation - variations in price/colour/shape etc for a product.
    
    * OrderStatusLog
 
-## Page Types
+### Page Types
 
   * Product
   * CartPage
   * CheckoutPage
-  * AccountPage
+  * AccountPage - Member functionality
 
-## Decorators
+### Decorators
 
  * EcommercePayment - adds connection to an order for each Payment.
  * EcommerceRole - adds shipping details to a Member.
 
-## Shopping Cart
+### Shopping Cart
 
 Cart items are stored in the database. A new order is created when the first item is added to the cart.
 
-## Checkout
+### Checkout
+
+
+Also see [core changes](CoreChanges).
