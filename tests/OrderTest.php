@@ -88,14 +88,17 @@ class OrderTest extends FunctionalTest {
 		//TODO: check email
 		//TODO: check items match
 		//TODO: check cart is now empty
+	
 	}
 	
-	
-	function testExistingMemberOrder(){
+	function testMemberOrder(){
+		
+		$mp3player = $this->objFromFixture('Product', 'mp3player');
+		$this->get(ShoppingCart::add_item_link($mp3player->ID)); //add item via url
+		
 		$joemember = $this->objFromFixture('Member', 'joebloggs');
 		$joemember->logIn();
-		
-		//TODO: check if 
+		$cart = ShoppingCart::current_order();
 		
 		$this->placeOrder(
 			'Joseph',
@@ -113,19 +116,73 @@ class OrderTest extends FunctionalTest {
 		//TODO: test that the form is pre-populated with the member's details
 		//TODO: what happens if member enters different email? / name?
 		
+		$order = DataObject::get_by_id('Order',$cart->ID);
+		$this->assertNotNull($order,'Order exists');
+		if($order){
+			$this->assertEquals($order->FirstName,'Joseph','order first name');
+			$this->assertEquals($order->Surname,'Blog','order surname');
+			$this->assertEquals($order->Email,'joe@blog.net.abz','order email');
+			$this->assertEquals($order->Address,'100 Melrose Place','order address');
+			$this->assertNull($order->AddressLine2,'order address2');
+			$this->assertEquals($order->City,'Martinsonville','order city');
+			$this->assertNull($order->PostalCode,'order postcode');
+			$this->assertEquals($order->Country,'EG','order country');
+			
+			//ASSUMPTION: member details are NOT updated with order
+			$this->assertEquals($order->MemberID,$joemember->ID,'Order associated with member');
+			$this->assertEquals($order->Member()->FirstName,'Joe','member first name has not changed');
+		}
+		
+		$joemember->logOut();
 	}
 	
 	function testNoMemberOrder(){
 		
+		$socks = $this->objFromFixture('Product', 'socks');
+		$this->get(ShoppingCart::add_item_link($socks->ID)); //add a different product
+		$cart = ShoppingCart::current_order();
+		
+		$this->placeOrder(
+			'Donald',
+			'Duck',
+			'donald@pondcorp.edu.za',
+			'4 The Strand',
+			null,
+			'Melbourne',
+			null,
+			'AU'
+		);
+		
+		$order = DataObject::get_by_id('Order',$cart->ID);
+		
+		$this->assertNotNull($order,'Order exists');
+		$this->assertEquals($order->Total(),8,'grand total');
+		$this->assertEquals($order->TotalOutstanding(),8,'total outstanding');
+		$this->assertEquals($order->TotalPaid(),0,'total outstanding');
+		
+		$this->assertEquals($order->FirstName,'Donald','order first name');
+		$this->assertEquals($order->Surname,'Duck','order surname');
+		$this->assertEquals($order->Email,'donald@pondcorp.edu.za','order email');
+		$this->assertEquals($order->Address,'4 The Strand');
+		$this->assertNull($order->AddressLine2,'order address2');
+		$this->assertEquals($order->City,'Melbourne','order city');
+		$this->assertNull($order->PostalCode,'order postcode');
+		$this->assertEquals($order->Country,'AU','order country');
 	
 	}
 	
+	/*
 	function testOrderFormValidation(){
 		
+		//TODO: test trying to use an email that has already been taken
+		//TODO: submit with empty cart
+		//TODO: missing required fields
 		
 		
 	}
+	*/	
 	
+	//TODO: test country selection - countries that are not on list
 	
 	/**
 	 * Helper function that populates a form with data and submits it.
@@ -150,8 +207,6 @@ class OrderTest extends FunctionalTest {
 		
 		$this->submitForm('OrderForm_OrderForm','action_processOrder',$data);
 	}
-	
-	
 	
 	
 	/* -------- OLD TESTS (to be removed or factored in) ------------------*/
