@@ -88,7 +88,10 @@ class OrderTest extends FunctionalTest {
 		//TODO: check email
 		//TODO: check items match
 		//TODO: check cart is now empty
-	
+		
+		
+		$order->Member()->logOut();
+		ShoppingCart::clear(); //cleanup
 	}
 	
 	function testMemberOrder(){
@@ -134,6 +137,7 @@ class OrderTest extends FunctionalTest {
 		}
 		
 		$joemember->logOut();
+		ShoppingCart::clear(); //cleanup
 	}
 	
 	function testNoMemberOrder(){
@@ -154,8 +158,8 @@ class OrderTest extends FunctionalTest {
 		);
 		
 		$order = DataObject::get_by_id('Order',$cart->ID);
-		
 		$this->assertNotNull($order,'Order exists');
+		$this->assertEquals($order->MemberID,0,'No associated member');
 		$this->assertEquals($order->Total(),8,'grand total');
 		$this->assertEquals($order->TotalOutstanding(),8,'total outstanding');
 		$this->assertEquals($order->TotalPaid(),0,'total outstanding');
@@ -168,7 +172,8 @@ class OrderTest extends FunctionalTest {
 		$this->assertEquals($order->City,'Melbourne','order city');
 		$this->assertNull($order->PostalCode,'order postcode');
 		$this->assertEquals($order->Country,'AU','order country');
-	
+		
+		ShoppingCart::clear(); //cleanup
 	}
 	
 	/*
@@ -178,10 +183,10 @@ class OrderTest extends FunctionalTest {
 		//TODO: submit with empty cart
 		//TODO: missing required fields
 		
-		
 	}
 	*/	
 	
+	//TODO: test shipping / billing details
 	//TODO: test country selection - countries that are not on list
 	
 	/**

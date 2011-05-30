@@ -46,7 +46,7 @@ class EcommerceDatabaseAdmin extends Controller{
 			'OrderTest' => 'Order',
 			'CheckoutPageTest' => 'Checkout Page',
 			'EcommerceTest' => 'Ecommerce',
-			'OrderItemTest' => 'Order Item',
+			//'OrderItemTest' => 'Order Item',
 			'OrderModifierTest' => 'Order Modifier',
 			'PaymentTest' => 'Payment',
 			'ProductBulkLoaderTest' => 'Bulk Loader',

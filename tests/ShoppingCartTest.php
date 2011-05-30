@@ -72,7 +72,7 @@ class ShoppingCartTest extends FunctionalTest {
 		//TODO: price checks
 		//TODO: adding item directly via class API
 		//TODO: adding via form submission
-		
+		ShoppingCart::clear();
 	}
 	
 	function testRemoveFromCart(){

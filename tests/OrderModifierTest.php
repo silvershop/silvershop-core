@@ -13,6 +13,7 @@ class OrderModifierTest extends FunctionalTest {
 	function setUp() {
 		parent::setUp();
 		
+		/*
 		// Set the modifiers to test
 		Order::set_modifiers(array(
 			'SimpleShippingModifier',
@@ -35,9 +36,20 @@ class OrderModifierTest extends FunctionalTest {
 			'NZ' => 5,
 			'UK' => 20
 		));
+		*/
 	}
 	
-	
+	function tearDown(){
+		parent::tearDown();
+		
+		//get rid of all lingering modifiers, order items etc
+		if($attributes = DataObject::get('OrderAttribute')){
+			foreach($attributes as $attribute){
+				$attribute->delete();
+				$attribute->destroy();
+			}
+		}
+	}
 	
 	/* -------------- OLD TESTS (to be removed) -------------------- */
 	
