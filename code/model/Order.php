@@ -449,19 +449,19 @@ class Order extends DataObject {
 	 * @return Order The current order
 	 */
 	function save() {
-
-		$this->Status = 'Unpaid';
 		
-		//re-write all attributes and modifiers to make sure they are up-to-date before they can't be changed again
-		if($this->Attributes()->exists()){
-			foreach($this->Attributes() as $attribute){
-				$attribute->write();
+		if($this->Status == 'Cart' || !$this->Status){
+			$this->Status = 'Unpaid';
+			//re-write all attributes and modifiers to make sure they are up-to-date before they can't be changed again
+			if($this->Attributes()->exists()){
+				foreach($this->Attributes() as $attribute){
+					$attribute->write();
+				}
 			}
+			$this->SessionID = session_id(); //update session id		
+			$this->extend('onSave'); //allow decorators to do stuff when order is saved.
+			$this->write();
 		}
-		
-		$this->SessionID = session_id(); //update session id		
-		$this->extend('onSave'); //allow decorators to do stuff when order is saved.
-		$this->write();
 	}
 
 	// Items Management
@@ -662,7 +662,7 @@ class Order extends DataObject {
 	}
 
 	/**
-	 * @TODO Why do we need to get this from the AccountPage class?
+	 * Get the link for finishing order processing.
 	 */
 	function Link() {
 		return CheckoutPage::find_link(false,"finish",$this->ID);

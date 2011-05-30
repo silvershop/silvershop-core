@@ -28,3 +28,5 @@ for developers
 * [Demo 1](http://ecommerce-demo.burnbright.co.nz/)
 * [Silverstripe Forums](http://silverstripe.org/e-commerce-module-forum/)
 * [User Documetation](http://ecommerce-demo.burnbright.co.nz/docs/user)
+
+* [Ohloh](http://www.ohloh.net/p/silverstripe-ecommerce)

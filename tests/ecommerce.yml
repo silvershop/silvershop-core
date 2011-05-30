@@ -18,14 +18,6 @@ ProductGroup:
         Parent:=>ProductGroup.g1	#Sub page of products
 
 Product:
-    mp3player:
-        Title: Mp3 Player
-        Price: 200
-        URLSegment: mp3-player
-        Parent:=>ProductGroup.g1
-        AllowPurchase: 1
-        Weight: 0.3
-        Stock: 1000					#You need stock levels if you have included the stock module, else the test will fail.
     socks:
         Title: Socks
         Price: 8
@@ -42,6 +34,13 @@ Product:
         AllowPurchase: 1
         Weight: 0.3
         Stock: 1000
+    hdtv:						#This product has no price
+    	Title: High Definition Television
+    	Parent:=>ProductGroup.g1
+    	URLSegment: hdtv
+    	AllowPurchase: 1
+    	Weight: 50
+    	Stock: 3
     beachball:
         Title: Beach Ball
         Price: 10
@@ -50,9 +49,17 @@ Product:
         AllowPurchase: 0			#This product has AllowPurchase set to 0
         Weight: 0.4
         Stock: 1000
-        
+    mp3player:
+        Title: Mp3 Player
+        Price: 200
+        URLSegment: mp3-player
+        Parent:=>ProductGroup.g1
+        AllowPurchase: 1
+        Weight: 0.3
+        Stock: 1000					#You need stock levels if you have included the stock module, else the test will fail.
+                
 CheckoutPage:
-    page:
+    checkout:
         Title: Checkout
         URLSegment: checkout
         
@@ -62,13 +69,13 @@ AccountPage:
         URLSegment: account
         
 Member:
-    member:
+    joebloggs:
         FirstName: Joe
         Surname: Bloggs
         Country: NZ
         Email: test@example.com
         Password: 23u90oijlJKsa
-    member1:
+    bobjones:
         FirstName: Bob
         Surname: Jones
         Country: US

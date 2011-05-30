@@ -304,7 +304,7 @@ class OrderForm extends Form {
 
 		// Process payment, get the result back
 		$result = $payment->processPayment($data, $form);
-
+		
 		// isProcessing(): Long payment process redirected to another website (PayPal, Worldpay)
 		if($result->isProcessing()) {
 			return $result->getValue();

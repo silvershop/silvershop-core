@@ -319,6 +319,7 @@ class Product extends Page {
 	function canPurchase($member = null) {
 		if(!self::$global_allow_purchase) return false;
 		if(!$this->dbObject('AllowPurchase')->getValue()) return false;
+		if(!$this->isPublished()) return false;
 		$allowpurchase = false;
 
 		if($this->Variations()->exists()){

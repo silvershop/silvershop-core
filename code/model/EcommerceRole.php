@@ -10,6 +10,10 @@ class EcommerceRole extends DataObjectDecorator {
 	protected static $group_name = "Shop Customers";
 		static function set_group_name($v) {self::$group_name = $v;}
 		static function get_group_name(){return self::$group_name;}
+		
+	protected static $associate_to_current_order = false;
+		static function associate_to_current_order($associate = true){self::$associate_to_current_order = $associate;}
+		static function get_associate_to_current_order(){return self::$associate_to_current_order;}
 
 	function extraStatics() {
 		return array(
@@ -25,6 +29,22 @@ class EcommerceRole extends DataObjectDecorator {
 				'Notes' => 'HTMLText'
 			)
 		);
+	}
+	
+	/**
+	 * Member login hook
+	 */
+	function memberLoggedIn(){
+		if(self::$associate_to_current_order && ShoppingCart::order_started() && $order = ShoppingCart::current_order()){
+			$order->MemberID = $this->owner->ID;
+			$order->write();
+		}
+	}
+	
+	function memberLoggedOut(){
+		if(self::$associate_to_current_order){
+			ShoppingCart::clear();
+		}
 	}
 
 	static function findCountryTitle($code) {

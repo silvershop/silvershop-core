@@ -5,8 +5,6 @@
  */
 class OrderItemTest extends SapphireTest {
 	
-	
-	
 	/* OLD (to be removed) */	
 	
 	function old_testConstructorSetsQuantity() {

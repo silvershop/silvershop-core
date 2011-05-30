@@ -138,16 +138,23 @@ class ShoppingCart extends Controller {
 			}else {
 				$order = new Order();
 				$order->SessionID = session_id();
-				//$order->MemberID = Member::currentUserID(); // Set the Member relation to this order
+				if(EcommerceRole::get_associate_to_current_order())
+					$order->MemberID = Member::currentUserID(); // Set the Member relation to this order
 				$order->write();
 				Session::set(self::$cartid_session_name,$order->ID);
 			}
 			self::$order = $order; //temp caching
 		}
-		//TODO: re-introduce this because it allows seeing which members don't complete orders
-		//$order->MemberID = Member::currentUserID(); // Set the Member relation to this order
 		$order->write(); // Write the order
 		return $order;
+	}
+	
+	/**
+	 * Allow checking if order has started, because we don't always want to create a cart.
+	 */
+	public static function order_started(){
+		$cartid = Session::get(self::$cartid_session_name);
+		return (bool) (self::$order || ($cartid && DataObject::get_one('Order', "\"Status\" = 'Cart' AND \"ID\" = $cartid")));
 	}
 
 	// Static items management
@@ -268,7 +275,7 @@ class ShoppingCart extends Controller {
 	}
 	
 	static function get_buyable_by_id($productId, $variationId = null){
-		$buyable = null;
+		$buyable = null;		
 		if (is_numeric($variationId) && is_numeric($productId)) {
 			$buyable = DataObject::get_one('ProductVariation', sprintf("\"ID\" = %d AND \"ProductID\" = %d", (int) $variationId, (int) $productId));
 		} elseif(is_numeric($productId)) {
@@ -515,9 +522,11 @@ class ShoppingCart extends Controller {
 	 * It does this by disconnecting the current cart from the user session.
 	 */
 	static function clear($request = null) {
-		self::current_order()->SessionID = null;
-		self::current_order()->write();
-		self::remove_all_items();
+		if(self::order_started()){
+			self::current_order()->SessionID = null;
+			self::current_order()->write();
+			self::remove_all_items();
+		}
 		self::$order = null;
 		Session::clear(self::country_setting_index());
 

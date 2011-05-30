@@ -1,7 +1,15 @@
 Ecommerce ChangeLog
 
+TODO in 0.8.3
+	* Overhaul the shopping cart API so that the controller is specific from the actual shopping cart interaction functions.
+	* Remove assumption that there is always an order. Allow an order to be null. This is to prevent too many carts being created for no reason..ie a call to Cart().
+	* Introduce order step pipeline system
+	* Upgrade Payment module
+	* Introduce buyable concept from trunk
+
 0.8.2
 	* Modified order form to allow orders to be placed without becoming a member in the process.
+	* Introduced EcommerceRole::associate_to_current_order() for choosing to join order to member on login.
 	* Added CartPage action and template "finished", which displays the order just placed.
 	* Copied all ecommerce member fields to Order, so that orders can be placed without member.
 	* Added docs folder, along with some developer and user documentation

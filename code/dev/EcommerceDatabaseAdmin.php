@@ -42,7 +42,16 @@ class EcommerceDatabaseAdmin extends Controller{
 	
 	
 	private $tests = array(
-			'ShoppingCartTest' => 'Shopping Cart'
+			'ShoppingCartTest' => 'Shopping Cart',
+			'OrderTest' => 'Order',
+			'CheckoutPageTest' => 'Checkout Page',
+			'EcommerceTest' => 'Ecommerce',
+			'OrderItemTest' => 'Order Item',
+			'OrderModifierTest' => 'Order Modifier',
+			'PaymentTest' => 'Payment',
+			'ProductBulkLoaderTest' => 'Bulk Loader',
+			'ProductOrderItemTest' => 'Product Order Item',
+			'ProductTest' => 'Product',
 	);
 	
 	function Tests(){
