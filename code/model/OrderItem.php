@@ -29,7 +29,10 @@ class OrderItem extends OrderAttribute {
 	######################
 
 	public static $searchable_fields = array(
-		"OrderID",
+		'OrderID' => array(
+			'title' => 'Order ID',
+			'field' => 'TextField'
+		),
 		"Title" => "PartialMatchFilter",
 		"TableTitle" => "PartialMatchFilter",
 		"CartTitle" => "PartialMatchFilter",
