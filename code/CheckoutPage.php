@@ -138,20 +138,25 @@ class CheckoutPage extends Page {
  	}
 }
 class CheckoutPage_Controller extends Page_Controller {
+	
+	static $allowed_actions = array(
+		'OrderForm',
+		'OrderFormWithoutShippingAddress',
+		'OrderFormWithShippingAddress',
+		'finish'
+	);
 
 	public function init() {
-		if(!class_exists('Payment')) {
-			trigger_error('The payment module must be installed for the ecommerce module to function.', E_USER_WARNING);
-		}
-
+		parent::init();
+	}
+	
+	public function index(){
 		Requirements::javascript(THIRDPARTY_DIR . '/jquery/jquery.js');
 		Requirements::javascript('ecommerce/javascript/CheckoutPage.js');
 		Requirements::javascript('ecommerce/javascript/ecommerce.js');
 		Requirements::themedCSS('CheckoutPage');
-
 		$this->initVirtualMethods();
-
-		parent::init();
+		return array();
 	}
 
 	/**
@@ -277,23 +282,29 @@ class CheckoutPage_Controller extends Page_Controller {
 	
 	/**
 	 * Go here after order has been processed.
+	 * 
+	 * @return Order - either the order specified by ID in url, or just the most recent order.
 	 */
 	function finish(){
 		Requirements::themedCSS('Order');
 		//TODO: make redirecting to account page optional
-		
-		//otherwise display last completed order(s)
+		//TODO: could all this be moved to some central location where it can be used by other parts of the system?
 		
 		$orderid = Director::urlParam('ID');
+		$order = null;
+		$memberid = Member::currentUserID();
+		$sessionid = session_id();
+		
+		//Only get carts relating to session, or member id
+		$filter = "\"SessionID\" = '$sessionid'";
+		$filter =  ($memberid) ? "($filter OR \"MemberID\" = $memberid)" : $filter;
+		$filter = " AND $filter";
+		
+		$idfilter = ($orderid) ? " AND \"ID\" = $orderid" : "";
 		
 		//security filter to only allow viewing orders associated with this session, or member id
-		$filter = " AND \"SessionID\" = '".session_id()."'";
-		$filter .= ($cid = Member::currentUserID()) ? " OR \"MemberID\" = $cid" : "";
-		
-		$order = DataObject::get_one('Order',"\"ID\"= $orderid AND \"Status\" NOT IN('Cart','AdminCancelled','MemberCancelled')".$filter);
-		
+		$order = DataObject::get_one('Order',"\"Status\" NOT IN('Cart','AdminCancelled','MemberCancelled')".$filter.$idfilter,true,"Created DESC");
 		//if no id, then get first of latest orders for member or session id?
-		
 		//TODO: permission message on failure
 		
 		$message = $mtype = null;
@@ -305,7 +316,9 @@ class CheckoutPage_Controller extends Page_Controller {
 		return array(
 			'Order' => $order,
 			'Message' => $message,
-			'MessageType' => $mtype
+			'MessageType' => $mtype,
+			'CompleteOrders' => DataObject::get('Order',"\"Status\" IN('Paid','Complete','Sent')".$filter),
+			'IncompleteOrders' => DataObject::get('Order',"\"Status\" IN('Unpaid','Processing')".$filter)
 		);
 		
 	}

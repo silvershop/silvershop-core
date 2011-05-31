@@ -51,6 +51,18 @@ class OrderModifierTest extends FunctionalTest {
 		}
 	}
 	
+	
+	function testModiferCreation(){
+		
+		//TODO:
+		//place an item in cart
+		//check modifiers are also setup with order
+		//check modifiers change after new items are added
+		//place order
+		//check modifers are still correct
+	}
+	
+	
 	/* -------------- OLD TESTS (to be removed) -------------------- */
 	
 	function old_testTaxModifier() {

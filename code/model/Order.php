@@ -357,6 +357,13 @@ class Order extends DataObject {
 	public static function set_receipt_subject($subject) {
 		self::$receipt_subject = $subject;
 	}
+	
+	/**
+	 * @deprecated Use set_receipt_subject instead.
+	 */
+	public static function set_subject($subject){
+		self::set_receipt_subject($subject);
+	}
 
 	/**
 	 * Set the modifiers that apply to this site.
@@ -545,55 +552,13 @@ class Order extends DataObject {
 		}
 	}
 
-
 	/**
 	 * Returns the modifiers of the order, if it hasn't been saved yet
 	 * it returns the modifiers from session, if it has, it returns them
 	 * from the DB entry.
 	 */
  	function Modifiers() {
- 		$mods = false;
-
- 		if($this->ID) {
- 			$mods = $this->modifiersFromDatabase();
- 		} elseif($modifiers = ShoppingCart::get_modifiers()) {
- 			$mods = $this->createModifiers($modifiers);
- 		}
- 		return $mods;
-	}
-
-	/**
-	 * Get all {@link OrderModifier} instances that are
-	 * available as records in the database.
-	 *
-	 * @return DataObjectSet
-	 */
-	protected function modifiersFromDatabase() {
-		return DataObject::get('OrderModifier', "\"OrderID\" = '$this->ID'","\"ID\" ASC");
-	}
-
-	/**
-	 * Return a DataObjectSet of {@link OrderModifier} objects.
-	 *
-	 * {@link Order->Modifiers()} makes use of this method.
-	 *
-	 * If the write parameter is set to true, then each of
-	 * the modifier objects in the array are linked to this
-	 * order, then written to the database.
-	 *
-	 * @param array $modifiers An array of {@link OrderModifier} objects
-	 * @param boolean $write Flag if set to true, will write the modifiers to the DB
-	 * @return DataObjectSet
-	 */
-	protected function createModifiers(array $modifiers, $write = false) {
-		if($write) {
-			foreach($modifiers as $modifier) {
-				$modifier->OrderID = $this->ID;
-				$modifier->write();
-			}
-		}
-
-		return $write ? $this->modifiersFromDatabase() : new DataObjectSet($modifiers);
+ 		return DataObject::get('OrderModifier', "\"OrderID\" = '$this->ID'","\"ID\" ASC");
 	}
 
 	/**
