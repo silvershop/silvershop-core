@@ -5,7 +5,10 @@ The rest of the time they may log in / out and the order will remain associated 
 
 Config settings:
 
-	OrderForm::set_user_membership_optional(true); //does the user have the choice in becomign a member?
+	OrderForm::set_user_membership_optional(true); //allow/deny users the choice to become a member
 	OrderForm::set_force_membership(false);
+	
+The way for a user to specify they don't want to become a member is by leaving the password fields blank on the checkout page.
+Usability could be further improved by adding a checkbox with the question "do you want to save your details?", which would show the password fields via ajax only when the user checks the box.
 
 ![Membership Flow Chart](\images\membership-flow-chart.jpg)
