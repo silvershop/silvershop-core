@@ -17,10 +17,14 @@ Note: some templates are needed in multiple places to work.
 Sub-modules provide additional functionality that remains separate from the main eCommerce module to keep the core code as minimal as possible.
 
 Here is a list of current sub-modules, along with their purpose:
-* Product Variations 
-* Stock Control
-* Discount Coupons
+
+* [Product Variations](https://silverstripe-ecommerce.googlecode.com/svn/modules/ecommerce_product_variation/trunk) 
+* [Stock Control](https://silverstripe-ecommerce.googlecode.com/svn/modules/ecommerce_stockcontrol/branches/simple)
+* [Discount Coupons](https://silverstripe-ecommerce.googlecode.com/svn/modules/ecommerce_coupon/trunk)
 * Brand browsing
+
+More unannounced modules can be found [here](https://code.google.com/p/silverstripe-ecommerce/source/browse/#svn%2Fmodules).
+
 
 If you are interested in developing your own sub-module, see [contributing](Contributing) docs.
 
