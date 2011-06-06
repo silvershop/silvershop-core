@@ -21,7 +21,7 @@ Here is a list of current sub-modules, along with their purpose:
 * [Product Variations](https://silverstripe-ecommerce.googlecode.com/svn/modules/ecommerce_product_variation/trunk) 
 * [Stock Control](https://silverstripe-ecommerce.googlecode.com/svn/modules/ecommerce_stockcontrol/branches/simple)
 * [Discount Coupons](https://silverstripe-ecommerce.googlecode.com/svn/modules/ecommerce_coupon/trunk)
-* Brand browsing
+* [Brand browsing](http://silverstripe-ecommerce.googlecode.com/svn/modules/ecommerce_brandbrowsing/trunk/)
 
 More unannounced modules can be found [here](https://code.google.com/p/silverstripe-ecommerce/source/browse/#svn%2Fmodules).
 
