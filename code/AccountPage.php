@@ -94,6 +94,10 @@ class AccountPage extends Page {
 }
 
 class AccountPage_Controller extends Page_Controller {
+	
+	public static $extensions = array(
+		'OrderManipulation'
+	);
 
 	function init() {
 		parent::init();
@@ -109,7 +113,6 @@ class AccountPage_Controller extends Page_Controller {
 			Security::permissionFailure($this, $messages);
 			return false;
 		}
-		
 		
 	}
 
@@ -162,25 +165,4 @@ class AccountPage_Controller extends Page_Controller {
 		return new ShopAccountForm($this, 'MemberForm');
 	}
 
-	/**
-	 * Returns the form to cancel the current order,
-	 * checking to see if they can cancel their order
-	 * first of all.
-	 *
-	 * @return Order_CancelForm
-	 */
-	function CancelForm() {		
-		$memberID = Member::currentUserID();
-		$orderID = $this->getRequest()->param('ID');
-		if(!$orderID) $orderID = (isset($_POST['OrderID']) && is_numeric($_POST['OrderID'])) ? $_POST['OrderID'] : null;
-		
-		if(is_numeric($orderID) && $order = DataObject::get_one('Order', "\"Order\".\"ID\" = '$orderID' AND \"Order\".\"MemberID\" = '$memberID'")) {
-			if($order->canCancel()) {
-				return new Order_CancelForm($this, 'CancelForm', $order->ID);
-			}
-		}
-		return null;
-	}
-
 }
-

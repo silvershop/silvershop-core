@@ -229,7 +229,7 @@ class OrderForm extends Form {
 		$payment = class_exists($paymentClass) ? new $paymentClass() : null;
 
 		if(!($payment && $payment instanceof Payment)) {
-			user_error(get_class($payment) . ' is not a valid Payment object!', E_USER_ERROR);
+			user_error(get_class($payment) . ' is not a valid Payment object!', E_USER_ERROR); //TODO: be more graceful with errors
 		}
 		$this->saveDataToSession($data); //save for later if necessary
 		

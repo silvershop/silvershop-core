@@ -233,7 +233,7 @@ class Order extends DataObject {
 	protected static $maximum_ignorable_sales_payments_difference = 0.01;
 		protected static function set_maximum_ignorable_sales_payments_difference($v) {self::$maximum_ignorable_sales_payments_difference = $v;}
 		protected static function get_maximum_ignorable_sales_payments_difference() {return self::$maximum_ignorable_sales_payments_difference;}
-
+	
 	protected static function get_shipping_fields() {
 		$arrayNew = array();
 		$array = self::$db;
@@ -647,6 +647,13 @@ class Order extends DataObject {
 			case 'Sent' : case 'Complete' : return self::$can_cancel_after_sending;
 			default : return false;
 		}
+	}
+
+	public function canPay($member = null){
+		if($this->TotalOutstanding() > 0){
+			return true;
+		}
+		return false;
 	}
 
 	public function canDelete($member = null) {
@@ -1124,6 +1131,7 @@ class Order extends DataObject {
 
 }
 
+
 /**
  * This class handles the receipt email which gets sent once an order is made.
  * You can call it by issuing sendReceipt() in the Order class.
@@ -1144,18 +1152,22 @@ class Order_StatusEmail extends Email {
 
 }
 
+
+/**
+ * Form for canceling an order.
+ */
 class Order_CancelForm extends Form {
+	
+	static $email_notification = false;
 
 	function __construct($controller, $name, $orderID) {
 
 		$fields = new FieldSet(
 			new HiddenField('OrderID', '', $orderID)
 		);
-
 		$actions = new FieldSet(
 			new FormAction('doCancel', _t('Order.CANCELORDER','Cancel this order'))
 		);
-
 		parent::__construct($controller, $name, $fields, $actions);
 	}
 
@@ -1171,19 +1183,22 @@ class Order_CancelForm extends Form {
 	 */
 	function doCancel($data, $form) {
 		$SQL_data = Convert::raw2sql($data);
-
 		$order = DataObject::get_by_id('Order', $SQL_data['OrderID']);
 		$order->Status = 'MemberCancelled';
 		$order->write();
 		
-		//TODO: notify people via email??
+		//TODO: notify people via email?? Make it optional.
+		if(self::$email_notification){
+			$email = new Email(Email::getAdminEmail(),Email::getAdminEmail(),sprintf(_t('Order.CANCELSUBJECT','Order #%d cancelled by member'),$order->ID),$order->renderWith('Order'));
+			$email->send();
+		}
 		
-		if($link = AccountPage::find_link()){
-			
+		if(Member::currentUser() && $link = AccountPage::find_link()){
 			//TODO: set session message "order successfully cancelled".
-			
-			Director::redirect($link);
+			Director::redirect($link); //TODO: can't redirect to account page when not logged in
 		}else{
+			
+			$form->Controller()->setSessionMessage(_t("OrderForm.ORDERCANCELLED", "Order sucessfully cancelled"),'warning'); //assumes controller has OrderManipulation extension
 			Director::redirectBack();
 		}
 		return;
@@ -1191,4 +1206,79 @@ class Order_CancelForm extends Form {
 
 }
 
+/**
+ * Form for paying outstanding orders.
+ */
+class Order_PaymentForm extends Form {
 
+	function __construct($controller, $name, $order) {
+		$fields = new FieldSet(
+			new HiddenField('OrderID', '', $order->ID)
+		);
+		$totalAsCurrencyObject = DBField::create('Currency',$order->TotalOutstanding()); //This should really be handled by the payment module
+		$paymentFields = Payment::combined_form_fields($totalAsCurrencyObject->Nice());
+		foreach($paymentFields as $paymentField) {
+			if($paymentField->class == "HeaderField") {
+				$paymentField->setTitle(_t("OrderForm.MAKEPAYMENT", "Make Payment"));
+			}
+			$fields->push($paymentField);
+		}
+		$requiredFields = array();
+		if($paymentRequiredFields = Payment::combined_form_requirements()) {
+			$requiredFields = array_merge($requiredFields, $paymentRequiredFields);
+		}
+		$actions = new FieldSet(
+			new FormAction('dopayment', _t('OrderForm.PAYORDER','Pay outstanding balance'))
+		);
+		parent::__construct($controller, $name, $fields, $actions, $requiredFields);
+	}
+
+	function dopayment($data, $form) {
+		if($order = $this->Controller()->orderfromid()) { //assumes that the controller is extended by OrderManipulation decorator
+			if($order->canPay()) {
+				
+				//TODO: move this to $order->makepayment($amount,$data);
+				
+				$paymentClass = (!empty($data['PaymentMethod'])) ? $data['PaymentMethod'] : null;
+				$payment = class_exists($paymentClass) ? new $paymentClass() : null;
+		
+				if(!($payment && $payment instanceof Payment)) {
+					user_error(get_class($payment) . ' is not a valid Payment object!', E_USER_ERROR);
+				}
+				
+				$form->saveInto($payment);
+				$payment->OrderID = $order->ID;
+				$payment->PaidForID = $order->ID;
+				$payment->PaidForClass = $order->class;
+				
+				$payment->Amount->Amount = $order->Total();
+				$payment->write();
+				
+				$result = $payment->processPayment($data, $form);
+				
+				// isProcessing(): Long payment process redirected to another website (PayPal, Worldpay)
+				if($result->isProcessing()) {
+					return $result->getValue();
+				}
+		
+				if($result->isSuccess()) {
+					$order->sendReceipt();
+				}
+		
+				Director::redirect($order->Link());
+				return true;
+			}
+		}
+		$form->sessionMessage(
+			_t(
+				'OrderForm.COULDNOTPROCESSPAYMENT',
+				'Sorry, we could not process your payment.'
+			),
+			'bad'
+		);
+		Director::redirectBack();
+		return false;
+	}
+
+
+}

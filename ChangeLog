@@ -3,9 +3,10 @@ Ecommerce ChangeLog
 TODO in 0.8.3
 	* Overhaul the shopping cart API so that the controller is specific from the actual shopping cart interaction functions.
 	* Remove assumption that there is always an order. Allow an order to be null. This is to prevent too many carts being created for no reason..ie a call to Cart().
-	* Introduce order step pipeline system
+	* Introduce order step pipeline system. Reconfigure how order fulfilment works.
 	* Upgrade Payment module
 	* Introduce buyable concept from trunk
+	* Move docs, tests, diagrams to a different submodule??
 
 0.8.2
 	* Modified order form to allow orders to be placed without becoming a member in the process.
@@ -15,6 +16,7 @@ TODO in 0.8.3
 	* Added docs folder, along with some developer and user documentation
 	* Introduced mysite/dev/ecommerce to get quick access to ecommerce dev tools
 	* Began updating test suite
+	* Introduced the ability to pay and cancel incomplete orders
 
 0.7 - 0.8.1	
 	* Variations working again

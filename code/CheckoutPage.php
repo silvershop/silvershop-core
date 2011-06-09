@@ -139,6 +139,10 @@ class CheckoutPage extends Page {
 }
 class CheckoutPage_Controller extends Page_Controller {
 	
+	public static $extensions = array(
+		'OrderManipulation'
+	);
+	
 	static $allowed_actions = array(
 		'OrderForm',
 		'OrderFormWithoutShippingAddress',
@@ -255,6 +259,8 @@ class CheckoutPage_Controller extends Page_Controller {
 		$this->data()->extend('OrderFormWithShippingAddress',$form);
 		return $form;
 	}
+	
+	
 
 	/**
 	 * Returns a message explaining why the customer
@@ -290,22 +296,7 @@ class CheckoutPage_Controller extends Page_Controller {
 		//TODO: make redirecting to account page optional
 		//TODO: could all this be moved to some central location where it can be used by other parts of the system?
 		
-		$orderid = Director::urlParam('ID');
-		$order = null;
-		$memberid = Member::currentUserID();
-		$sessionid = session_id();
-		
-		//Only get carts relating to session, or member id
-		$filter = "\"SessionID\" = '$sessionid'";
-		$filter =  ($memberid) ? "($filter OR \"MemberID\" = $memberid)" : $filter;
-		$filter = " AND $filter";
-		
-		$idfilter = ($orderid) ? " AND \"ID\" = $orderid" : "";
-		
-		//security filter to only allow viewing orders associated with this session, or member id
-		$order = DataObject::get_one('Order',"\"Status\" NOT IN('Cart','AdminCancelled','MemberCancelled')".$filter.$idfilter,true,"Created DESC");
-		//if no id, then get first of latest orders for member or session id?
-		//TODO: permission message on failure
+		$order = $this->orderfromid(); //stored in OrderManipulation extension
 		
 		$message = $mtype = null;
 		if(!$order){
@@ -313,15 +304,19 @@ class CheckoutPage_Controller extends Page_Controller {
 			$mtype = 'bad';
 		}
 		
+		if($sm = $this->SessionMessage()){
+			$message = $sm;
+			$mtype = $this->SessionMessageType();
+		}
+		
 		return array(
 			'Order' => $order,
 			'Message' => $message,
 			'MessageType' => $mtype,
-			'CompleteOrders' => DataObject::get('Order',"\"Status\" IN('Paid','Complete','Sent')".$filter),
-			'IncompleteOrders' => DataObject::get('Order',"\"Status\" IN('Unpaid','Processing')".$filter)
+			'CompleteOrders' => $this->allorders("\"Status\" IN('Paid','Complete','Sent')"),
+			'IncompleteOrders' => $this->allorders("\"Status\" IN('Unpaid','Processing')")
 		);
 		
 	}
-
 
 }
