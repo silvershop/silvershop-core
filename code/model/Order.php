@@ -1105,9 +1105,7 @@ class Order extends DataObject {
 				$payment->destroy();
 			}
 		}
-
 		//TODO: delete order itmes & product_orderitem
-
 		parent::onBeforeDelete();
 
 	}

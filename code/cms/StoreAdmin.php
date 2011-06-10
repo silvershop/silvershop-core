@@ -27,7 +27,7 @@ class StoreAdmin extends ModelAdmin{
 	function init() {
 		parent::init();
 		Requirements::themedCSS("OrderReport");
-		Requirements::javascript("ecommerce/javascript/EcommerceModelAdminExtensions.js");
+		Requirements::javascript(ECOMMERCE_DIR."/javascript/EcommerceModelAdminExtensions.js");
 	}
 
 

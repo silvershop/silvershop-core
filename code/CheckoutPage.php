@@ -156,8 +156,8 @@ class CheckoutPage_Controller extends Page_Controller {
 	
 	public function index(){
 		Requirements::javascript(THIRDPARTY_DIR . '/jquery/jquery.js');
-		Requirements::javascript('ecommerce/javascript/CheckoutPage.js');
-		Requirements::javascript('ecommerce/javascript/ecommerce.js');
+		Requirements::javascript(ECOMMERCE_DIR.'/javascript/CheckoutPage.js');
+		Requirements::javascript(ECOMMERCE_DIR.'/javascript/ecommerce.js');
 		Requirements::themedCSS('CheckoutPage');
 		$this->initVirtualMethods();
 		return array();

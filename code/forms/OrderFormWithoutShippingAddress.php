@@ -31,7 +31,7 @@ class OrderFormWithoutShippingAddress extends OrderForm {
 
 	function __construct($controller, $name) {
 
-		Requirements::javascript('ecommerce/javascript/OrderFormWithoutShippingAddress.js');
+		Requirements::javascript(ECOMMERCE_DIR.'/javascript/OrderFormWithoutShippingAddress.js');
 
 		parent::__construct($controller, $name);
 
@@ -46,7 +46,7 @@ class OrderFormWithoutShippingAddress extends OrderForm {
 			//$passwordField->minLength = 6;
 			//$passwordField->showOnClickTitle = "add password now";
 			//$this->fields->replaceField("Password", $passwordField);
-			Requirements::javascript('ecommerce/javascript/OptionalConfirmedPasswordField.js');
+			Requirements::javascript(ECOMMERCE_DIR.'/javascript/OptionalConfirmedPasswordField.js');
 			Requirements::block(SAPPHIRE_DIR . '/javascript/ConfirmedPasswordField.js');
 		}
 

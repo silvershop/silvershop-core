@@ -43,7 +43,7 @@ class ShopManagerPage_Controller extends Page_Controller {
 		// Only administrators can run this method
 		parent::init();
 		Requirements::themedCSS("ShopManagerPage");
-		Requirements::javascript("ecommerce/javascript/ShopManagerPage.js");
+		Requirements::javascript(ECOMMERCE_DIR."/javascript/ShopManagerPage.js");
 	}
 
 	function CheckoutPage() {

@@ -17,6 +17,7 @@ TODO in 0.8.3
 	* Introduced mysite/dev/ecommerce to get quick access to ecommerce dev tools
 	* Began updating test suite
 	* Introduced the ability to pay and cancel incomplete orders
+	* Introduced ECOMMERCE_DIR constant to allow ecommerce directory to be different. Note that some paths are still make use of 'ecommerce'.
 
 0.7 - 0.8.1	
 	* Variations working again

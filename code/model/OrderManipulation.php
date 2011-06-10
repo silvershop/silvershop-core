@@ -6,8 +6,8 @@
 
 class OrderManipulation extends Extension{
 	
-	static $allow_cancelling = true;
-	static $allow_paying = true;
+	static $allow_cancelling = false;
+	static $allow_paying = false;
 
 	static $allowed_actions = array(
 		'CancelForm',
@@ -76,7 +76,9 @@ class OrderManipulation extends Extension{
 	function CancelForm() {		
 		if(self::$allow_cancelling && $order = $this->orderfromid()) {
 			if($order->canCancel()) {
-				return new Order_CancelForm($this->owner, 'CancelForm', $order->ID);
+				$form = new Order_CancelForm($this->owner, 'CancelForm', $order->ID);
+				$form->extend('updateCancelForm',$order);
+				return $form;
 			}
 		}
 		return null;
@@ -89,9 +91,12 @@ class OrderManipulation extends Extension{
 	function PaymentForm(){
 		//TODO: handle pending payments better: eg if a cheque payment has been made, there's no point allowing another.
 		if(self::$allow_paying && $order = $this->orderfromid()){
-			/*Requirements::javascript("ecommerce/javascript/EcomPayment.js");*/
-			if($order->canPay())
-				return $form = new Order_PaymentForm($this->owner, 'PaymentForm', $order);
+			Requirements::javascript(ECOMMERCE_DIR."/javascript/EcomPayment.js");
+			if($order->canPay()){
+				$form = new Order_PaymentForm($this->owner, 'PaymentForm', $order);
+				$form->extend('updatePaymentForm',$order);
+				return $form;
+			}
 		}
 		return null;
 	}

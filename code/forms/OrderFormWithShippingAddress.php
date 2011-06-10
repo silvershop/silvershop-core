@@ -10,7 +10,7 @@ class OrderFormWithShippingAddress extends OrderFormWithoutShippingAddress {
 
 	function __construct($controller, $name) {
 
-		Requirements::javascript('ecommerce/javascript/OrderFormWithShippingAddress.js');
+		Requirements::javascript(ECOMMERCE_DIR.'/javascript/OrderFormWithShippingAddress.js');
 
 		parent::__construct($controller, $name);
 		if(self::$fixed_country_code) {

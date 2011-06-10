@@ -1,5 +1,7 @@
 <?php
 
+define('ECOMMERCE_DIR','ecommerce');
+
 // Extend the Member with e-commerce related fields.
 DataObject::add_extension('Member', 'EcommerceRole');
 // Extend Payment with e-commerce relationship. 

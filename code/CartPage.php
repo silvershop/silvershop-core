@@ -35,7 +35,7 @@ class CartPage_Controller extends Page_Controller{
 		public function init() {
 			// include extra js requirements for this page
 			Requirements::javascript(THIRDPARTY_DIR . '/jquery/jquery.js');
-			Requirements::javascript('ecommerce/javascript/CheckoutPage.js');
+			Requirements::javascript(ECOMMERCE_DIR.'/javascript/CheckoutPage.js');
 
 			// include stylesheet for the checkout page
 			Requirements::themedCSS('CheckoutPage');
