@@ -45,6 +45,12 @@ DevelopmentAdmin::$allowed_actions[] = 'ecommerce';
 //Order::set_cancel_before_sending(false); //soon to be depreciated
 //Order::set_cancel_after_sending(false); //soon to be depreciated
 
+//OrderForm::set_user_membership_optional(); //optional for user to become a member
+//OrderForm::set_force_membership(); //all users must become members if true, or won't become members if false
+
+//OrderManipulation::set_allow_cancelling(); //shows a cancel button on the order page
+//OrderManipulation::set_allow_paying(); //shows a payment form
+
 // * * * PRODUCTS
 //ProductsAndGroupsModelAdmin::set_managed_models(array(("Product", "ProductGroup","ProductVariation"));
 //SS_Report::register("SideReport", "EcommerceSideReport_AllProducts");

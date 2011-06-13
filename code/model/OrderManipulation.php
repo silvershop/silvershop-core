@@ -8,12 +8,15 @@ class OrderManipulation extends Extension{
 	
 	static $allow_cancelling = false;
 	static $allow_paying = false;
+	
+	static function set_allow_cancelling($cancel = true){self::$allow_cancelling = $cancel;}
+	static function set_allow_paying($pay = true){self::$allow_paying = $pay;}
 
 	static $allowed_actions = array(
 		'CancelForm',
 		'PaymentForm'
 	);
-
+	
 	/**
 	 * Get the order via url 'ID' or form submission 'OrderID'.
 	 * It will check for permission based on session id or member id.
