@@ -227,12 +227,12 @@ class Order extends DataObject {
 	);
 
 	protected static $non_shipping_db_fields = array("Status", "Printed");
-		protected static function set_non_shipping_db_fields($v) {self::$non_shipping_db_fields = $v;}
-		protected static function get_non_shipping_db_fields() {return self::$non_shipping_db_fields;}
+		public static function set_non_shipping_db_fields($v) {self::$non_shipping_db_fields = $v;}
+		public static function get_non_shipping_db_fields() {return self::$non_shipping_db_fields;}
 
 	protected static $maximum_ignorable_sales_payments_difference = 0.01;
-		protected static function set_maximum_ignorable_sales_payments_difference($v) {self::$maximum_ignorable_sales_payments_difference = $v;}
-		protected static function get_maximum_ignorable_sales_payments_difference() {return self::$maximum_ignorable_sales_payments_difference;}
+		public static function set_maximum_ignorable_sales_payments_difference($v) {self::$maximum_ignorable_sales_payments_difference = $v;}
+		public static function get_maximum_ignorable_sales_payments_difference() {return self::$maximum_ignorable_sales_payments_difference;}
 	
 	protected static function get_shipping_fields() {
 		$arrayNew = array();
