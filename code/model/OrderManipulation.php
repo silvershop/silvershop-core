@@ -23,11 +23,12 @@ class OrderManipulation extends Extension{
 	 * 
 	 * @return the order
 	 */
-	public function orderfromid(){
+	public function orderfromid($extrafilter = null){
 		$orderid = Director::urlParam('ID');
 		if(!$orderid) $orderid = (isset($_POST['OrderID']) && is_numeric($_POST['OrderID'])) ? $_POST['OrderID'] : null;
 		$order = null;
 		$filter = $this->orderfilter();
+		if($extrafilter) $filter .= " AND $extrafilter";
 		$idfilter = ($orderid) ? " AND \"ID\" = $orderid" : "";
 		//security filter to only allow viewing orders associated with this session, or member id
 		$order = DataObject::get_one('Order',"\"Status\" NOT IN('Cart','AdminCancelled','MemberCancelled') AND ".$filter.$idfilter,true,"Created DESC");

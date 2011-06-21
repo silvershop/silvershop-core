@@ -77,8 +77,8 @@ class ProductAttributeType extends DataObject{
 	}
 	
 	function canDelete(){
-		return false;
-		//TODO: allow deleting if not in use.
+		//TODO: prevent deleting if has been used
+		return true;
 	}
 	
 }

@@ -55,6 +55,8 @@ class ProductVariation extends DataObject {
 						$field->setValue($value->ID);
 					
 					$fields[] = $field;
+				}else{
+					$fields[] = new LiteralField('novalues'.$attribute->Name,"<p class=\"message warning\">".$attribute->Name." has no values to choose from. You can create them in the \"Products\" &#62; \"Product Attribute Type\" section of the CMS.</p>");
 				}
 				//TODO: allow setting custom value, rather than visiting the products section
 			}
