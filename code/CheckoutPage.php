@@ -259,31 +259,14 @@ class CheckoutPage_Controller extends Page_Controller {
 		$this->data()->extend('OrderFormWithShippingAddress',$form);
 		return $form;
 	}
-	
-	
 
 	/**
-	 * Returns a message explaining why the customer
-	 * can't checkout the requested order.
-	 *
+	 * Returns any error messages produced during request.
+	 * @deprecated you should use SessionMessage instead
 	 * @return string
 	 */
 	function Message() {
-		$orderID = Director::urlParam('Action');
-		$checkoutLink = self::find_link();
-
-		if($memberID = Member::currentUserID()) {
-			if($order = DataObject::get_one('Order', "\"Order\".\"ID\" = '$orderID' AND \"Order\".\"MemberID\" = '$memberID'")) {
-				return 'You can not checkout this order because it has been already successfully completed. Click <a href="' . $order->Link() . '">here</a> to see it\'s details, otherwise you can <a href="' . $checkoutLink . '">checkout</a> your current order.';
-			}
-			else {
-				return 'You do not have any order corresponding to that ID, so you can\'t checkout this order.';
-			}
-		}
-		else {
-			$redirectLink = CheckoutPage::get_checkout_order_link($orderID);
-			return 'You can not checkout this order because you are not logged in. To do so, please <a href="Security/login?BackURL=' . $redirectLink . '">login</a> first, otherwise you can <a href="' . $checkoutLink . '">checkout</a> your current order.';
-		}
+		return $this->SessionMessage();
 	}
 	
 	/**

@@ -6,7 +6,7 @@ There are a number of configuration options to be set in your _config.php file. 
 
 ## Theming / Templates
 There are a number of templates you can customise to create your desired look for the eCommerce module.
-The Order template has been modularised using SilverStripe's <% include TemplateName %> tag to provide varying degress of freedom to customise. The order template is used in both the Account page to display summaries of past orders, and it is also used with the email template.
+The Order template has been modularised using SilverStripe's <% include TemplateName %> tag to provide varying degrees of freedom to customise. The order template is used in both the Account page to display summaries of past orders, and it is also used with the email template.
 To make your customisations you need to create your own corresponding version of the template/partial-template with the same name in your mysite/templates folder or the themes folder.
 
 More about developing themes [here](http://doc.silverstripe.org/sapphire/en/topics/theme-development).
