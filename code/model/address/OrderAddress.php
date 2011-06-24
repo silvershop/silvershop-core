@@ -80,7 +80,7 @@ class OrderAddress extends DataObject {
 		if($member) {
 			$oldAddress = $this->LastAddressFromMember($member);
 			if($oldAddress) {
-				return $this->copyLastAddress($oldAddress, $write);
+				return $this->copyOldAddress($oldAddress, $write);
 			}
 		}
 		return $this;

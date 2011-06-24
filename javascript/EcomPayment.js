@@ -2,8 +2,8 @@
  * helps in EcommercePayment Selection
  *
  **/
-(function($){
-	$(window).load(function() {
+(function(jQuery){
+	jQuery(window).load(function() {
 		EcomPayment.init();
 	});
 })(jQuery);
@@ -11,20 +11,20 @@
 var EcomPayment = {
 
 	init: function () {
-		var paymentInputs = $('#PaymentMethod input[type=radio]');
-		var methodFields = $('div.paymentfields');
+		var paymentInputs = jQuery('#PaymentMethod input[type=radio]');
+		var methodFields = jQuery('div.paymentfields');
 
 		methodFields.hide();
 
 		paymentInputs.each(function(e) {
-			if($(this).attr('checked') == true) {
-				$('#MethodFields_' + $(this).attr('value')).show();
+			if(jQuery(this).attr('checked') == true) {
+				jQuery('#MethodFields_' + jQuery(this).attr('value')).show();
 			}
 		});
 
 		paymentInputs.click(function(e) {
 			methodFields.hide();
-			$('#MethodFields_' + $(this).attr('value')).show();
+			jQuery('#MethodFields_' + jQuery(this).attr('value')).show();
 		});
 	}
 

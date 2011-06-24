@@ -151,10 +151,10 @@ class OrderModifier extends OrderAttribute {
 	**/
 	public function runUpdate() {
 		if(!$this->IsRemoved()) {
+			$this->checkField("CalculationValue");			
 			$this->checkField("Name");
 			$this->checkField("TableValue");
 			$this->checkField("CartValue");
-			$this->checkField("CalculationValue");
 			if($this->mustUpdate && $this->canBeUpdated()) {
 				$this->write();
 			}
