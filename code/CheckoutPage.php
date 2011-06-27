@@ -217,7 +217,7 @@ class CheckoutPage_Controller extends Page_Controller {
 	 * Start a new order
 	 */
 	function startneworder() {
-		ShoppingCart :: singleton()->clear();
+		ShoppingCart ::clear();
 		Director :: redirectBack();
 	}
 
