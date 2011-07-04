@@ -12,7 +12,7 @@ modified in any way.
 Contents
 --------
 
- * [Store configuration](Configuration)
+ * [Getting Started & Configuration](Configuration)
  * [Adding and editing products](AddingEditingProducts)
   * [Images / Photos](AddingEditingProducts#ChoosingAnImage)
   * [Creating and modifying products with a spreadsheet file](BulkLoadingProducts)
