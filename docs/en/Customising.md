@@ -59,7 +59,13 @@ eg:
 
 If Order does not contain 'State', you'll need to extend Order to add it to the db fields. The OrderForm data also gets saved to Member, if one exists, so you would need to add State to that also.
 
-### Country drop-down field
+#### Custom validation
+
+...
+
+### Modify country dropdown field
+
+...
 
 
 Also see [Development](Development).

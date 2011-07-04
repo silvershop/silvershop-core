@@ -82,7 +82,7 @@ class Product extends Page {
 		$fields->addFieldToTab('Root.Content.Main',new TextField('Price', _t('Product.PRICE', 'Price'), '', 12),'Content');
 		$fields->addFieldToTab('Root.Content.Main',new TextField('Weight', _t('Product.WEIGHT', 'Weight (kg)'), '', 12),'Content');
 		$fields->addFieldToTab('Root.Content.Main',new TextField('Model', _t('Product.MODEL', 'Model'), '', 30),'Content');
-		$fields->addFieldToTab('Root.Content.Main',new TextField('InternalItemID', _t('Product.CODE', 'Product Code'), '', 30),'Content');
+		$fields->addFieldToTab('Root.Content.Main',new TextField('InternalItemID', _t('Product.CODE', 'Product Code'), '', 30),'Price');
 
 		if(!$fields->dataFieldByName('Image')) {
 			$fields->addFieldToTab('Root.Content.Images', new ImageField('Image', _t('Product.IMAGE', 'Product Image')));
@@ -109,6 +109,9 @@ class Product extends Page {
 				$this->getProductGroupsTable()
 			)
 		);
+		
+		if($pagename = $fields->fieldByName('Root.Content.Main.Title'))
+			$pagename->setTitle(_t('Product.PAGENAME','Page/Product Name'));
 
 		if($tempextvar)
 			$this->extend('updateCMSFields', $fields);

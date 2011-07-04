@@ -112,11 +112,11 @@ class OrderForm extends Form {
 
 		// 4) Terms and conditions field
 		// If a terms and conditions page exists, we need to create a field to confirm the user has read it
-		if($controller->TermsPageID && $termsPage = DataObject::get_by_id('Page', $controller->TermsPageID)) {
+		if($termsPage = $controller->TermsPage()) {
 			$bottomFields = new CompositeField(new CheckboxField('ReadTermsAndConditions', "I agree to the terms and conditions stated on the <a href=\"$termsPage->URLSegment\" title=\"Read the shop terms and conditions for this site\">terms and conditions</a> page"));
 			$bottomFields->setID('BottomOrder');
 			$fields->push($bottomFields);
-			$requiredFields[] = 'ReadTermsAndConditions';
+			$requiredFields[] = 'ReadTermsAndConditions'; //TODO: this doesn't work for check-boxes
 		}
 
 		// 5) Actions and required fields creation
