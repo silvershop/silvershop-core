@@ -1060,6 +1060,25 @@ class Order extends DataObject {
 				DB::alteration_message("No order status for order number #".$order->ID." reverting to: $firstOption.","error");
 			}
 		}
+		
+		//import details from member
+		$memberfields = array(
+			'FirstName',
+			'Surname',
+			'Email'
+		);
+		foreach($memberfields as $field){
+			$memberfields[$field] = "\"$field\" = '' OR \"$field\" IS NULL";
+		}
+		if(count($memberfields) > 0 && $orders = DataObject::get('Order',implode(" OR ",$memberfields)." AND \"MemberID\" > 0")){
+			foreach($orders as $order){
+				foreach($memberfields as $field => $filter){
+					$order->{$field} = $order->Member()->{$field};
+				}
+				$order->write();
+			}
+		}
+		
 	}
 
 
