@@ -10,10 +10,9 @@
 class ShoppingCart extends Controller {
 
 	protected static $order = null; // for temp caching
-
 	static $cartid_session_name = 'shoppingcartid';
-
 	static $URLSegment = 'shoppingcart';
+	static $default_country = null;
 
 	static $allowed_actions = array (
 		'additem',
@@ -52,23 +51,19 @@ class ShoppingCart extends Controller {
 	}
 
 	static function set_country($country) {
-		$countrySettingIndex = self::country_setting_index();
-		Session::set($countrySettingIndex, $country);
-		//check if the member has a country
-		if($member = Member::currentUser()) {
-			$member->Country = $country;
-			$member->write();
-		}
+		self::$default_country = $country;
+		Session::set(self::country_setting_index(), $country);
 	}
 
 	static function get_country() {
-		$countrySettingIndex = self::country_setting_index();
-		return Session::get($countrySettingIndex);
+		if($c = Session::get(self::country_setting_index())){
+			return $c;
+		}
+		return self::$default_country;
 	}
 
 	static function remove_country() {
-		$countrySettingIndex = self::country_setting_index();
-		Session::clear($countrySettingIndex);
+		Session::clear(self::country_setting_index());
 	}
 	
 

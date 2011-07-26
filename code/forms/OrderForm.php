@@ -113,7 +113,7 @@ class OrderForm extends Form {
 		// 4) Terms and conditions field
 		// If a terms and conditions page exists, we need to create a field to confirm the user has read it
 		if($termsPage = $controller->TermsPage()) {
-			$bottomFields = new CompositeField(new CheckboxField('ReadTermsAndConditions', "I agree to the terms and conditions stated on the <a href=\"$termsPage->URLSegment\" title=\"Read the shop terms and conditions for this site\">terms and conditions</a> page"));
+			$bottomFields = new CompositeField(new CheckboxField('ReadTermsAndConditions', sprintf(_t('OrderForm.TERMSANDCONDITIONS',"I agree to the terms and conditions stated on the <a href=\"%s\" title=\"Read the shop terms and conditions for this site\">terms and conditions</a> page"),$termsPage->Link())));
 			$bottomFields->setID('BottomOrder');
 			$fields->push($bottomFields);
 			$requiredFields[] = 'ReadTermsAndConditions'; //TODO: this doesn't work for check-boxes
@@ -167,7 +167,7 @@ class OrderForm extends Form {
 	function validate(){
 		//always validate on order processing
 	 	if(isset($_POST['action_processOrder'])){
-	 		//TODO: check items are in cart
+	 		//TODO: check items are in cart, and each item can be purchased
 			//TODO: Check if prices have changed
 	 		
 	 		$valid = parent::validate();

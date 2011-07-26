@@ -7,6 +7,8 @@ class ProductGroupTest extends SapphireTest{
 	
 	//check published/ non published / allow purchase etc
 	
+	//Hide product if no price...or if product has variations, allow viewing.
+	
 }
 
 ?>

@@ -100,7 +100,7 @@ class EcommerceRole extends DataObjectDecorator {
 		if(!$gp) {
 			$gp = new Group();
 			$gp->Title = self::get_group_name();
-			$gp->Sort = 999998;
+			$gp->Sort = 999998; //TODO: explain why?
 			$gp->write();
 		}
 		$allCombos = DB::query("
