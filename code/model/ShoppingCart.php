@@ -254,7 +254,7 @@ class ShoppingCart extends Controller {
 	}
 	
 	static function add_buyable($buyable,$quantity = 1){
-		if(!$buyable) return null;
+		if(!$buyable || !$buyable->canPurchase()) return null;
 		
 		$item = self::find_or_make_order_item($buyable);
 		if($item->ID){
@@ -313,6 +313,7 @@ class ShoppingCart extends Controller {
 				$orderitem->$param = $v;
 			}
 		}
+
 		return $orderitem;
 	}
 	
