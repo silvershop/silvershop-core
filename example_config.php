@@ -1,9 +1,9 @@
 <?php
 /**
  * Example eCommerce configuration file.
- * 
+ *
  * This file is tested in the 'EcommerceTest' unit test.
- * 
+ *
  * copy the lines below to your mysite/_config.php file and set as required.
  */
 
@@ -27,10 +27,10 @@ Order::set_table_overview_fields(array('Total' => 'Total','Status' => 'Status'))
 Order::set_maximum_ignorable_sales_payments_difference(0.001);//sometimes there are small discrepancies in total (for various reasons)- here you can set the max allowed differences
 Order::set_order_id_start_number(1234567);//sets a start number for order ID, so that they do not start at one.
 
-Order::set_cancel_before_payment(false); //soon to be depreciated
-Order::set_cancel_before_processing(false); //soon to be depreciated
-Order::set_cancel_before_sending(false); //soon to be depreciated
-Order::set_cancel_after_sending(false); //soon to be depreciated
+Order::set_cancel_before_payment(false);
+Order::set_cancel_before_processing(false);
+Order::set_cancel_before_sending(false);
+Order::set_cancel_after_sending(false);
 
 OrderForm::set_user_membership_optional(); //optional for user to become a member
 OrderForm::set_force_membership(); //all users must become members if true, or won't become members if false
@@ -48,7 +48,7 @@ Product_Image::set_content_image_width(200);
 Product_Image::set_large_image_width(200);
 ProductGroup::set_include_child_groups(true);
 ProductGroup::set_must_have_price(true);
-ProductGroup::set_sort_options( array('Title' => 'Alphabetical','Price' => 'Lowest Price')); // will be depreciated soon in this form, WATCH THIS SPACE.
+ProductGroup::set_sort_options( array('Title' => 'Alphabetical','Price' => 'Lowest Price'));
 
 // * * * CHECKOUT
 ExpiryDateField::set_short_months(true); //uses short months (e.g. Jan instead of january) for credit card expiry date.

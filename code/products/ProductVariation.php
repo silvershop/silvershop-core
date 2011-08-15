@@ -15,7 +15,7 @@ class ProductVariation extends DataObject {
 	static $has_one = array(
 		'Product' => 'Product'
 	);
-	
+
 	static $many_many = array(
 		'AttributeValues' => 'ProductAttributeValue'
 	);
@@ -32,12 +32,12 @@ class ProductVariation extends DataObject {
 	static $extensions = array(
 		"Versioned('Stage')"
 	);
-	
+
 	static $summary_fields = array(
 		'InternalItemID' => 'Product Code',
 		'Price' => 'Price'
 	);
-	
+
 	public static $default_sort = "InternalItemID";
 
 	function getCMSFields() {
@@ -45,15 +45,15 @@ class ProductVariation extends DataObject {
 		$fields[] = new TextField('InternalItemID','Product Code');
 		//$fields[] = new TextField('Title');
 		$fields[] = new TextField('Price');
-		
+
 		//add attributes dropdowns
 		if($this->Product()->VariationAttributes()->exists() && $attributes = $this->Product()->VariationAttributes()){
 			foreach($attributes as $attribute){
 				if($field = $attribute->getDropDownField()){
-					
+
 					if($value = $this->AttributeValues()->find('TypeID',$attribute->ID))
 						$field->setValue($value->ID);
-					
+
 					$fields[] = $field;
 				}else{
 					$fields[] = new LiteralField('novalues'.$attribute->Name,"<p class=\"message warning\">".$attribute->Name." has no values to choose from. You can create them in the \"Products\" &#62; \"Product Attribute Type\" section of the CMS.</p>");
@@ -61,15 +61,15 @@ class ProductVariation extends DataObject {
 				//TODO: allow setting custom value, rather than visiting the products section
 			}
 		}
-		
+
 		$set = new FieldSet($fields);
 		$this->extend('updateCMSFields', $set);
 		return $set;
 	}
-	
+
 	function onBeforeWrite(){
 		parent::onBeforeWrite();
-		
+
 		//TODO: perhaps move this to onAfterWrite, for the case when the variation has just been created, and thus has no ID to relate
 		//..but that might cause recursion
 		if(isset($_POST['ProductAttributes']) && is_array($_POST['ProductAttributes'])){
@@ -77,7 +77,7 @@ class ProductVariation extends DataObject {
 		}
 
 	}
-	
+
 	function getTitle(){
 		$values = $this->AttributeValues();
 		if($values->exists()){
@@ -87,10 +87,10 @@ class ProductVariation extends DataObject {
 			}
 			return implode(', ',$labelvalues);
 		}
-		return $this->InternalItemID;		
+		return $this->InternalItemID;
 	}
-	
-	
+
+
 	//this is used by TableListField to access attribute values.
 	function AttributeProxy(){
 		$do = new DataObject();
@@ -99,11 +99,11 @@ class ProductVariation extends DataObject {
 				$do->{'Val'.$value->Type()->Name} = $value->Value;
 			}
 		}
-		return $do;		
+		return $do;
 	}
-	
-	/*
-	 * @Depreciated - use canPurchase instead
+
+	/**
+	 * @deprecated use canPurchase instead
 	 */
 	function AllowPurchase() {
 		return $this->canPurchase();
@@ -113,11 +113,11 @@ class ProductVariation extends DataObject {
 		$allowpurchase = false;
 		if($product = $this->Product())
 			$allowpurchase = ($this->Price > 0) && $product->AllowPurchase;
-			
+
 		$extended = $this->extendedCan('canPurchase', $member);
 		if($allowpurchase && $extended !== null) $allowpurchase = $extended;
-		
-		return $allowpurchase; 
+
+		return $allowpurchase;
 	}
 
 	//TODO: change this function to match Product->IsInCart

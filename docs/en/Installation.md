@@ -14,6 +14,18 @@ Assuming you have a SilverStripe 2.4 installation set up already:
 carefully review all _config and README files for more information
 
 
-## Setting up shipping
+## Setting up shipping and tax calculation
 
 ...
+
+
+
+## Testing environment
+
+### EMmails
+
+To catch local emails, you either need to set up a local dummy SMTP server, or...
+
+If you run windows, you can run the "Antix SMTP Server For Developers", and open the emails in your preferred email client.
+Mac...
+Linux...

@@ -10,7 +10,7 @@ class EcommerceRole extends DataObjectDecorator {
 	protected static $group_name = "Shop Customers";
 		static function set_group_name($v) {self::$group_name = $v;}
 		static function get_group_name(){return self::$group_name;}
-		
+
 	protected static $associate_to_current_order = false;
 		static function associate_to_current_order($associate = true){self::$associate_to_current_order = $associate;}
 		static function get_associate_to_current_order(){return self::$associate_to_current_order;}
@@ -30,7 +30,7 @@ class EcommerceRole extends DataObjectDecorator {
 			)
 		);
 	}
-	
+
 	/**
 	 * Member login hook
 	 */
@@ -40,7 +40,7 @@ class EcommerceRole extends DataObjectDecorator {
 			$order->write();
 		}
 	}
-	
+
 	function memberLoggedOut(){
 		if(self::$associate_to_current_order){
 			ShoppingCart::clear();
@@ -48,7 +48,7 @@ class EcommerceRole extends DataObjectDecorator {
 	}
 
 	static function findCountryTitle($code) {
-		user_error("depreciated, please use EcommerceRole::find_country_title", E_USER_NOTICE);
+		user_error("deprecated, please use EcommerceRole::find_country_title", E_USER_NOTICE);
 		return self::find_country_title($code);
 	}
 
@@ -71,7 +71,7 @@ class EcommerceRole extends DataObjectDecorator {
 	 * @return string Found country of member
 	 */
 	static function findCountry() {
-		user_error("depreciated, please use EcommerceRole::find_country", E_USER_NOTICE);
+		user_error("deprecated, please use EcommerceRole::find_country", E_USER_NOTICE);
 		return self::find_country();
 	}
 	static function find_country() {
@@ -82,7 +82,7 @@ class EcommerceRole extends DataObjectDecorator {
 		} else {
 			if($country = ShoppingCart::get_country())
 				return $country;
-			
+
 			// HACK Avoid CLI tests from breaking (GeoIP gets in the way of unbiased tests!)
 			// @todo Introduce a better way of disabling GeoIP as needed (Geoip::disable() ?)
 			if(Director::is_cli()) {
@@ -143,7 +143,7 @@ class EcommerceRole extends DataObjectDecorator {
 	 * @return boolean|object Member object or boolean FALSE
 	 */
 	public static function createOrMerge($data) {
-		user_error("depreciated, please use EcommerceRole::ecommerce_create_or_merge", E_USER_NOTICE);
+		user_error("deprecated, please use EcommerceRole::ecommerce_create_or_merge", E_USER_NOTICE);
 		return self::ecommerce_create_or_merge($data);
 
 	}
@@ -157,7 +157,7 @@ class EcommerceRole extends DataObjectDecorator {
 		$uniqueField = Member::get_unique_identifier_field();
 		if(isset($data[$uniqueField])) {
 			$SQL_unique = Convert::raw2xml($data[$uniqueField]);
-			// TODO review - should $uniqueField be quoted by Member::get_unique_identifier_field() already? (this would be sapphire bug) 
+			// TODO review - should $uniqueField be quoted by Member::get_unique_identifier_field() already? (this would be sapphire bug)
 			$existingUniqueMember = DataObject::get_one('Member', "\"$uniqueField\" = '{$SQL_unique}'");
 			if($existingUniqueMember && $existingUniqueMember->exists()) {
 				if(Member::currentUserID() != $existingUniqueMember->ID) {
