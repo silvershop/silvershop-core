@@ -36,7 +36,7 @@ class Order extends DataObject {
 
 		'ReceiptSent' => 'Boolean',
 		'Printed' => 'Boolean',
-		
+
 		//main order details
 		'Address' => 'Varchar(255)',
 		'AddressLine2' => 'Varchar(255)',
@@ -47,7 +47,7 @@ class Order extends DataObject {
 		'HomePhone' => 'Varchar(100)',
 		'MobilePhone' => 'Varchar(100)',
 		'Notes' => 'HTMLText',
-		
+
 		'FirstName' => 'Varchar',
 		'Surname' => 'Varchar',
 		'Email' => 'Varchar'
@@ -81,7 +81,7 @@ class Order extends DataObject {
 		'Shipping' => 'EcommerceCurrency',
 		'TotalOutstanding' => 'EcommerceCurrency'
 	);
-	
+
 	public static $singular_name = "Order";
 	public static $plural_name = "Orders";
 
@@ -92,11 +92,17 @@ class Order extends DataObject {
 	 * @var array
 	 */
 	static $paid_status = array('Paid', 'Processing', 'Sent', 'Complete');
-	
+
 	/**
-	 * 
+	 *
 	 */
 	static $hidden_status = array('Cart','AdminCancelled','MemberCancelled','Query');
+
+	/**
+	 * Migration script in requiredefaultRecords will only run if this is enabled.
+	 * It can be taxing on db/build if there is a large database of orders.
+	 */
+	static $do_migration = false;
 
 	/**
 	 * This is the from address that the receipt
@@ -233,7 +239,7 @@ class Order extends DataObject {
 	protected static $maximum_ignorable_sales_payments_difference = 0.01;
 		public static function set_maximum_ignorable_sales_payments_difference($v) {self::$maximum_ignorable_sales_payments_difference = $v;}
 		public static function get_maximum_ignorable_sales_payments_difference() {return self::$maximum_ignorable_sales_payments_difference;}
-	
+
 	protected static function get_shipping_fields() {
 		$arrayNew = array();
 		$array = self::$db;
@@ -283,10 +289,10 @@ class Order extends DataObject {
 		));
 
 		$fields->addFieldToTab('Root.Main', new LiteralField('MainDetails', $htmlSummary));
-		
+
 		//TODO: re-introduce this when order status logs have some meaningful purpose
 		$fields->removeByName('OrderStatusLogs');
-		
+
 		$orderItemsTable = new TableListField(
 			"OrderItems", //$name
 			"OrderItem", //$sourceClass =
@@ -301,9 +307,9 @@ class Order extends DataObject {
 			"Total",
 			array("Total" => array("sum","Currency->Nice"))
 		);
-		
+
 		$fields->addFieldToTab('Root.Items',$orderItemsTable);
-		
+
 		$modifierTable = new TableListField(
 			"OrderModifiers", //$name
 			"OrderModifier", //$sourceClass =
@@ -320,9 +326,9 @@ class Order extends DataObject {
 		if($m = $this->Member()) {
 			$lastv = new TextField("MemberLastLogin","Last login",$m->dbObject('LastVisited')->Nice());
 			$fields->addFieldToTab('Root.Customer',$lastv->performReadonlyTransformation());
-			
+
 			//TODO: this should be scaffolded instead, or come from something like $member->getCMSFields();
-			$fields->addFieldToTab('Root.Customer',new LiteralField("MemberSummary", $m->renderWith("Order_Member")));	
+			$fields->addFieldToTab('Root.Customer',new LiteralField("MemberSummary", $m->renderWith("Order_Member")));
 		}
 
 		$this->extend('updateCMSFields',$fields);
@@ -357,7 +363,7 @@ class Order extends DataObject {
 	public static function set_receipt_subject($subject) {
 		self::$receipt_subject = $subject;
 	}
-	
+
 	/**
 	 * @deprecated Use set_receipt_subject instead.
 	 */
@@ -456,7 +462,7 @@ class Order extends DataObject {
 	 * @return Order The current order
 	 */
 	function save() {
-		
+
 		if($this->Status == 'Cart' || !$this->Status){
 			$this->Status = 'Unpaid';
 			//re-write all attributes and modifiers to make sure they are up-to-date before they can't be changed again
@@ -465,7 +471,7 @@ class Order extends DataObject {
 					$attribute->write();
 				}
 			}
-			$this->SessionID = session_id(); //update session id		
+			$this->SessionID = session_id(); //update session id
 			$this->extend('onSave'); //allow decorators to do stuff when order is saved.
 			$this->write();
 		}
@@ -667,7 +673,7 @@ class Order extends DataObject {
 	public function canCreate($member = null) {
 		return false;
 	}
-		
+
 	/**
 	 * Return the currency of this order.
 	 * Note: this is a fixed value across the entire site.
@@ -679,7 +685,7 @@ class Order extends DataObject {
 			return Payment::site_currency();
 		}
 	}
-	
+
 	/**
 	 * Get the latest email for this order.
 	 */
@@ -822,7 +828,7 @@ class Order extends DataObject {
 	function IsPaid() {
 		return $this->IsProcessing() || $this->Status == 'Paid';
 	}
-	
+
 	function IsCart(){
 		return $this->Status == 'Cart';
 	}
@@ -976,6 +982,8 @@ class Order extends DataObject {
 	function requireDefaultRecords() {
 		parent::requireDefaultRecords();
 
+		if(!self::$do_migration) return;
+
 		// 1) If some orders with the old structure exist (hasShippingCost, Shipping and AddedTax columns presents in Order table), create the Order Modifiers SimpleShippingModifier and TaxModifier and associate them to the order
 
 		// we must check for individual database types here because each deals with schema in a none standard way
@@ -1060,7 +1068,7 @@ class Order extends DataObject {
 				DB::alteration_message("No order status for order number #".$order->ID." reverting to: $firstOption.","error");
 			}
 		}
-		
+
 		//import details from member
 		$memberfields = array(
 			'FirstName',
@@ -1078,21 +1086,21 @@ class Order extends DataObject {
 				$order->write();
 			}
 		}
-		
+
 	}
 
 
 	function onAfterWrite() {
 		parent::onAfterWrite();
-		
+
 		/*//FIXME: this is not a good way to change status, especially when orders are saved multiple times when an oder is placed
 		$log = new OrderStatusLog();
 		$log->OrderID = $this->ID;
 		$log->SentToCustomer = false;
-		
+
 		//TO DO: make this sexier OR consider using Versioning!
 		$data = print_r($this->record, true);
-		
+
 		$log->Title = "Order Update";
 		$log->Note = $data;
 		$log->write();*/
@@ -1174,7 +1182,7 @@ class Order_StatusEmail extends Email {
  * Form for canceling an order.
  */
 class Order_CancelForm extends Form {
-	
+
 	static $email_notification = false;
 
 	function __construct($controller, $name, $orderID) {
@@ -1203,18 +1211,18 @@ class Order_CancelForm extends Form {
 		$order = DataObject::get_by_id('Order', $SQL_data['OrderID']);
 		$order->Status = 'MemberCancelled';
 		$order->write();
-		
+
 		//TODO: notify people via email?? Make it optional.
 		if(self::$email_notification){
 			$email = new Email(Email::getAdminEmail(),Email::getAdminEmail(),sprintf(_t('Order.CANCELSUBJECT','Order #%d cancelled by member'),$order->ID),$order->renderWith('Order'));
 			$email->send();
 		}
-		
+
 		if(Member::currentUser() && $link = AccountPage::find_link()){
 			//TODO: set session message "order successfully cancelled".
 			Director::redirect($link); //TODO: can't redirect to account page when not logged in
 		}else{
-			
+
 			$form->Controller()->setSessionMessage(_t("OrderForm.ORDERCANCELLED", "Order sucessfully cancelled"),'warning'); //assumes controller has OrderManipulation extension
 			Director::redirectBack();
 		}
@@ -1253,35 +1261,35 @@ class Order_PaymentForm extends Form {
 	function dopayment($data, $form) {
 		if($order = $this->Controller()->orderfromid()) { //assumes that the controller is extended by OrderManipulation decorator
 			if($order->canPay()) {
-				
+
 				//TODO: move this to $order->makepayment($amount,$data);
-				
+
 				$paymentClass = (!empty($data['PaymentMethod'])) ? $data['PaymentMethod'] : null;
 				$payment = class_exists($paymentClass) ? new $paymentClass() : null;
-		
+
 				if(!($payment && $payment instanceof Payment)) {
 					user_error(get_class($payment) . ' is not a valid Payment object!', E_USER_ERROR);
 				}
-				
+
 				$form->saveInto($payment);
 				$payment->OrderID = $order->ID;
 				$payment->PaidForID = $order->ID;
 				$payment->PaidForClass = $order->class;
-				
+
 				$payment->Amount->Amount = $order->Total();
 				$payment->write();
-				
+
 				$result = $payment->processPayment($data, $form);
-				
+
 				// isProcessing(): Long payment process redirected to another website (PayPal, Worldpay)
 				if($result->isProcessing()) {
 					return $result->getValue();
 				}
-		
+
 				if($result->isSuccess()) {
 					$order->sendReceipt();
 				}
-		
+
 				Director::redirect($order->Link());
 				return true;
 			}
