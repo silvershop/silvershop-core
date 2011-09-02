@@ -8,13 +8,13 @@
 	* @package ecommerce
 	*/
 class OrderForm extends Form {
-	
+
 	//TODO: name these better so they can be understood
-	
+
 	//optional for user to become a member
 	protected static $user_membership_optional = false;
 		static function set_user_membership_optional($optional = true){self::$user_membership_optional = $optional;}
-	
+
 	//all users must become members if true, or won't become members if false
 	protected static $force_membership = true;
 		static function set_force_membership($force = false){self::$force_membership = $force;}
@@ -62,7 +62,7 @@ class OrderForm extends Form {
 			$shippingFields->setButtonContent(_t('OrderForm.useDifferentShippingAddress', 'Use Different Shipping Address'));
 			$shippingFields->useButtonTag = true;
 		}
-		
+
 		if($countryField){
 			$countryField->addExtraClass('ajaxCountryField');
 
@@ -70,30 +70,30 @@ class OrderForm extends Form {
 			$setContryLink = ShoppingCart::set_country_link();
 			$memberFields->push(new HiddenField($setCountryLinkID, '', $setContryLink));
 		}
-		
+
 		$leftFields = new CompositeField($memberFields, $shippingFields);
 		$leftFields->setID('LeftOrder');
 
 		$rightFields = new CompositeField();
 		$rightFields->setID('RightOrder');
-		
-		
+
+
 		if(!$member) {
 			$rightFields->push(new HeaderField(_t('OrderForm.MembershipDetails','Membership Details'), 3));
 			$rightFields->push(new LiteralField('MemberInfo', '<p class="message warning">'._t('OrderForm.MemberInfo','If you are already a member please')." <a href=\"Security/login?BackURL=" . CheckoutPage::find_link(true) . "/\">"._t('OrderForm.LogIn','log in').'</a>.</p>'));
 			$rightFields->push(new LiteralField('AccountInfo', '<p>'._t('OrderForm.AccountInfo','Please choose a password, so you can login and check your order history in the future').'</p><br/>'));
 			$rightFields->push(new FieldGroup($pwf = new ConfirmedPasswordField('Password', _t('OrderForm.Password','Password'))));
-			
+
 			//if user doesn't fill out password, we assume they don't want to become a member
 			//TODO: allow different ways of specifying that you want to become a member
 			if(self::$user_membership_optional){ $pwf->setCanBeEmpty(true);	}
-			
+
 			if(self::$force_membership || !self::$user_membership_optional){
 				$requiredFields[] = 'Password[_Password]';
 				$requiredFields[] = 'Password[_ConfirmPassword]';
 				//TODO: allow extending this to provide other ways of indicating that you want to become a member
 			}
-			
+
 		}else{
 			$rightFields->push(new LiteralField('MemberInfo', '<p class="message good">'.sprintf(_t('OrderForm.LoggedInAs','You are logged in as %s.'),$member->getName())." <a href=\"Security/logout?BackURL=" . CheckoutPage::find_link(true) . "/\">"._t('OrderForm.LogOut','log out').'</a>.</p>'));
 		}
@@ -158,8 +158,8 @@ class OrderForm extends Form {
 		}
 		return $actions;
 	}
-	
-	
+
+
 	/**
 	 * Validation of various pre-processing things.
 	 * @return valid or not.
@@ -169,14 +169,14 @@ class OrderForm extends Form {
 	 	if(isset($_POST['action_processOrder'])){
 	 		//TODO: check items are in cart, and each item can be purchased
 			//TODO: Check if prices have changed
-	 		
+
 	 		$valid = parent::validate();
-	 			 		
+
 	 		//TODO: check that member details are not already taken, if entered
 			//Chekc payment method is valid
 	 		return $valid;
-	 	} 
-	 	
+	 	}
+
 	 	//Override form validation to make different shipping address button, and other form actions work
 		foreach($this->getValidActions() as $action){
 			if(isset($_POST[$action])){return true;}
@@ -223,8 +223,8 @@ class OrderForm extends Form {
 	 * @param Form $form Form object for this action
 	 * @param HTTPRequest $request Request object for this action
 	 */
-	function processOrder($data, $form, $request) {		
-		
+	function processOrder($data, $form, $request) {
+
 		$paymentClass = (!empty($data['PaymentMethod'])) ? $data['PaymentMethod'] : null;
 		$payment = class_exists($paymentClass) ? new $paymentClass() : null;
 
@@ -232,7 +232,7 @@ class OrderForm extends Form {
 			user_error(get_class($payment) . ' is not a valid Payment object!', E_USER_ERROR); //TODO: be more graceful with errors
 		}
 		$this->saveDataToSession($data); //save for later if necessary
-		
+
 		//check for cart items
 		if(!ShoppingCart::has_items()) {
 			$form->sessionMessage(_t('OrderForm.NoItemsInCart','Please add some items to your cart'), 'bad');
@@ -263,20 +263,21 @@ class OrderForm extends Form {
 				$member = EcommerceRole::ecommerce_create_or_merge($data);
 			}
 		}
-		
+
 		//if they are a member, or if they have filled out the member fields (password, save my details)
 		// Create new OR update logged in {@link Member} record
 		if($member === false) {
 			$form->sessionMessage(
 				_t('OrderForm.MEMBEREXISTS', 'Sorry, a member already exists with that email address.
-					If this is your email address, please log in first before placing your order.'
+					If this is your email address, please log in first before placing your order.'.
+					' <a href="Security/lostpassword">Recover password.</a>'
 				),
 				'bad'
 			);
 			Director::redirectBack();
 			return false;
 		}
-		
+
 		//assiciate member with order, if there is a member now
 		if($member){
 			$member->write();
@@ -284,27 +285,27 @@ class OrderForm extends Form {
 			if($member)	$payment->PaidByID = $member->ID;
 			$order->MemberID = $member->ID;
 		}
-		
+
 		// Write new record {@link Order} to database
 		$form->saveInto($order);
 		$order->save(); //sets status to 'Unpaid' //is it even necessary to have it's own function? ..just legacy code.
 
 		$this->clearSessionData(); //clears the stored session form data that might have been needed if validation failed
-		
+
 		// Save payment data from form and process payment
 		$form->saveInto($payment);
 		$payment->OrderID = $order->ID;
 		$payment->PaidForID = $order->ID;
 		$payment->PaidForClass = $order->class;
-		
+
 		$payment->Amount->Amount = $order->Total();
 		$payment->write();
-		
+
 		//prepare $data - ie put into the $data array any fields that may need to be there for payment
 
 		// Process payment, get the result back
 		$result = $payment->processPayment($data, $form);
-		
+
 		// isProcessing(): Long payment process redirected to another website (PayPal, Worldpay)
 		if($result->isProcessing()) {
 			return $result->getValue();
@@ -317,7 +318,7 @@ class OrderForm extends Form {
 		Director::redirect($order->Link());
 		return true;
 	}
-	
+
 	/**
 	 * Detect if user wants to become a member at checkout.
 	 */
@@ -336,9 +337,9 @@ class OrderForm extends Form {
 			$this->loadDataFrom($data);
 		}
 	}
-	
+
 	function clearSessionData(){
-		Session::set("FormInfo.{$this->FormName()}.data", null);		
+		Session::set("FormInfo.{$this->FormName()}.data", null);
 	}
 
 }
