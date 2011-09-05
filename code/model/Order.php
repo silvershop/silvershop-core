@@ -696,6 +696,13 @@ class Order extends DataObject {
 		return $this->getField('Email');
 	}
 
+	/**
+	 * Gets the name of the customer.
+	 */
+	function getName(){
+		return ($this->Surname) ? trim($this->FirstName . ' ' . $this->Surname) : $this->FirstName;
+	}
+
 	function getFullBillingAddress($separator = "",$insertnewlines = true){
 		//TODO: move this somewhere it can be customised
 		$touse = array(
@@ -719,7 +726,6 @@ class Order extends DataObject {
 		}
 
 		$separator = ($insertnewlines) ? $separator."\n" : $separator;
-
 		return implode($separator,$fields);
 	}
 	function getFullShippingAddress($separator = "",$insertnewlines = true){
@@ -739,14 +745,11 @@ class Order extends DataObject {
 		);
 
 		$fields = array();
-
 		foreach($touse as $field){
 			if($this->$field)
 				$fields[] = $this->$field;
 		}
-
 		$separator = ($insertnewlines) ? $separator."\n" : $separator;
-
 		return implode($separator,$fields);
 	}
 
@@ -1304,6 +1307,5 @@ class Order_PaymentForm extends Form {
 		Director::redirectBack();
 		return false;
 	}
-
 
 }

@@ -5,10 +5,10 @@
  */
 
 class OrderManipulation extends Extension{
-	
+
 	static $allow_cancelling = false;
 	static $allow_paying = false;
-	
+
 	static function set_allow_cancelling($cancel = true){self::$allow_cancelling = $cancel;}
 	static function set_allow_paying($pay = true){self::$allow_paying = $pay;}
 
@@ -16,16 +16,17 @@ class OrderManipulation extends Extension{
 		'CancelForm',
 		'PaymentForm'
 	);
-	
+
 	/**
 	 * Get the order via url 'ID' or form submission 'OrderID'.
 	 * It will check for permission based on session id or member id.
-	 * 
+	 *
 	 * @return the order
 	 */
 	public function orderfromid($extrafilter = null){
 		$orderid = Director::urlParam('ID');
-		if(!$orderid) $orderid = (isset($_POST['OrderID']) && is_numeric($_POST['OrderID'])) ? $_POST['OrderID'] : null;
+		if(!$orderid) $orderid = (isset($_POST['OrderID'])) ? $_POST['OrderID'] : null;
+		if(!is_numeric($orderid)) return null;
 		$order = null;
 		$filter = $this->orderfilter();
 		if($extrafilter) $filter .= " AND $extrafilter";
@@ -41,8 +42,8 @@ class OrderManipulation extends Extension{
 		}
 		*/
 		return $order;
-	}	
-	
+	}
+
 	/**
 	 * Get all orders for current member / session.
 	 * @return DataObjectSet of Orders
@@ -51,7 +52,7 @@ class OrderManipulation extends Extension{
 		if($filter && $filter != "") $filter = " AND ".$filter;
 		return DataObject::get('Order',$this->orderfilter().$filter,$orderby);
 	}
-	
+
 	/**
 	 * Makes sure to only get carts relating to session, or member id
 	 */
@@ -62,14 +63,14 @@ class OrderManipulation extends Extension{
 		$filter =  ($memberid) ? "($filter OR \"MemberID\" = $memberid)" : $filter;
 		return $filter;
 	}
-	
+
 	/**
 	 * Return all past orders for current member / session.
 	 */
 	function PastOrders(){
 		return $this->allorders("\"Status\" IN('Paid','Complete','Sent','Unpaid','Processing')");
 	}
-	
+
 	/**
 	 * Returns the form to cancel the current order,
 	 * checking to see if they can cancel their order
@@ -77,7 +78,7 @@ class OrderManipulation extends Extension{
 	 *
 	 * @return Order_CancelForm
 	 */
-	function CancelForm() {		
+	function CancelForm() {
 		if(self::$allow_cancelling && $order = $this->orderfromid()) {
 			if($order->canCancel()) {
 				$form = new Order_CancelForm($this->owner, 'CancelForm', $order->ID);
@@ -87,7 +88,7 @@ class OrderManipulation extends Extension{
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Creates form to pay for incomplete orders
 	 *@return Form (OrderForm_Payment) or Null
@@ -104,15 +105,15 @@ class OrderManipulation extends Extension{
 		}
 		return null;
 	}
-	
+
 	protected $sessionmessage = null;
 	protected $sessionmessagetype = null;
-	
+
 	function setSessionMessage($message = "success",$type = "good"){
 		Session::set('OrderManipulation.Message',$message);
 		Session::set('OrderManipulation.MessageType',$type);
 	}
-	
+
 	function SessionMessage(){
 		if($message = Session::get("OrderManipulation.Message")){
 			$this->sessionmessage = $message;
@@ -120,7 +121,7 @@ class OrderManipulation extends Extension{
 		}
 		return $this->sessionmessage;
 	}
-	
+
 	function SessionMessageType(){
 		if($type = Session::get("OrderManipulation.MessageType")){
 			$this->sessionmessagetype = $type;
