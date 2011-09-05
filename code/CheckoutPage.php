@@ -34,7 +34,7 @@ class CheckoutPage extends Page {
 		'AlreadyCompletedMessage' => 'HTMLText',
 		'NonExistingOrderMessage' => 'HTMLText',
 		'MustLoginToCheckoutMessage' => 'HTMLText',
-		
+
 		'CheckoutFinishMessage' => 'HTMLText'
 	);
 
@@ -43,11 +43,8 @@ class CheckoutPage extends Page {
 	);
 
 	public static $has_many = array();
-
 	public static $many_many = array();
-
 	public static $belongs_many = array();
-
 	public static $defaults = array();
 
 	static $icon = 'ecommerce/images/icons/money';
@@ -68,7 +65,6 @@ class CheckoutPage extends Page {
 		$id = ($id)? "/".$id : "";
 		return ($urlSegment) ? $page->URLSegment : $page->Link($action).$id;
 	}
-
 
 	function canCreate() {
 		return !DataObject::get_one("SiteTree", "\"ClassName\" = 'CheckoutPage'");
@@ -138,11 +134,11 @@ class CheckoutPage extends Page {
  	}
 }
 class CheckoutPage_Controller extends Page_Controller {
-	
+
 	public static $extensions = array(
 		'OrderManipulation'
 	);
-	
+
 	static $allowed_actions = array(
 		'OrderForm',
 		'OrderFormWithoutShippingAddress',
@@ -153,7 +149,7 @@ class CheckoutPage_Controller extends Page_Controller {
 	public function init() {
 		parent::init();
 	}
-	
+
 	public function index(){
 		Requirements::javascript(THIRDPARTY_DIR . '/jquery/jquery.js');
 		Requirements::javascript(ECOMMERCE_DIR.'/javascript/CheckoutPage.js');
@@ -262,36 +258,36 @@ class CheckoutPage_Controller extends Page_Controller {
 
 	/**
 	 * Returns any error messages produced during request.
-	 * @deprecated you should use SessionMessage instead
+	 * @deprecated you should use SessionMessage instead (found in OrderManipulation.php)
 	 * @return string
 	 */
 	function Message() {
 		return $this->SessionMessage();
 	}
-	
+
 	/**
 	 * Go here after order has been processed.
-	 * 
+	 *
 	 * @return Order - either the order specified by ID in url, or just the most recent order.
 	 */
 	function finish(){
 		Requirements::themedCSS('Order');
 		//TODO: make redirecting to account page optional
 		//TODO: could all this be moved to some central location where it can be used by other parts of the system?
-		
+
 		$order = $this->orderfromid(); //stored in OrderManipulation extension
-		
+
 		$message = $mtype = null;
 		if(!$order){
 			$message = _t("CheckoutPage.ORDERNOTFOUND","Order could not be found.");
 			$mtype = 'bad';
 		}
-		
+
 		if($sm = $this->SessionMessage()){
 			$message = $sm;
 			$mtype = $this->SessionMessageType();
 		}
-		
+
 		return array(
 			'Order' => $order,
 			'Message' => $message,
@@ -299,7 +295,7 @@ class CheckoutPage_Controller extends Page_Controller {
 			'CompleteOrders' => $this->allorders("\"Status\" IN('Paid','Complete','Sent')"),
 			'IncompleteOrders' => $this->allorders("\"Status\" IN('Unpaid','Processing')")
 		);
-		
+
 	}
 
 }
