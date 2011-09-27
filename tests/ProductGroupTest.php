@@ -10,5 +10,3 @@ class ProductGroupTest extends SapphireTest{
 	//Hide product if no price...or if product has variations, allow viewing.
 
 }
-
-?>

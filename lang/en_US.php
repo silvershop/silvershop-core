@@ -382,5 +382,3 @@ $lang['en_US']['WorldpayPayment']['SINGULARNAME'] = array(
 	50,
 	'Singular name of the object, used in dropdowns and to generally identify a single object in the interface'
 );
-
-?>
