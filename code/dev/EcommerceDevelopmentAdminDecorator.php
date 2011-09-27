@@ -1,7 +1,7 @@
 <?php
 
 class EcommerceDevelopmentAdminDecorator extends Extension{
-	
+
 	function ecommerce($request) {
 		if(Director::is_cli()) {
 			$da = Object::create('EcommerceDatabaseAdmin');
@@ -17,10 +17,8 @@ class EcommerceDevelopmentAdminDecorator extends Extension{
 
 			echo "</div>";
 			$renderer->writeFooter();
-			
+
 		}
 	}
-	
-}
 
-?>
+}
