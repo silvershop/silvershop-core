@@ -11,6 +11,13 @@ Consult your website developer to get a complete understanding of any changes th
 Before reading these tutorials you should first get familiar with the SilverStripe Content Management System [user help](http://userhelp.silverstripe.org/).
 The SilverStripe Content Management System, which is the back-end interface for updating your website will simply be referred to as the 'CMS'.
 
+### Cataloging your products
+
+It is highly recommended that you create, and use a [Stock Keeping Unit (SKU)](http://en.wikipedia.org/wiki/Stock-keeping_unit) coding scheme to uniquely identify everything that you sell.
+This will enable better tracking of products sold, and quick input for search and management of products.
+
+Note SKU might also be referred to as the Product/Internal ID or Code.
+
 ### Page types:
 
  * At least one product

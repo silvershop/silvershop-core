@@ -43,9 +43,9 @@ class OrderModifier extends OrderAttribute {
 	 * @TODO Write a better description for this function
 	 * than the one above. It's not easy to understand.
 	 */
-	public static function init_for_order($className) {
+	public static function init_for_order($className,$order) {
 		$modifier = new $className();
-		ShoppingCart::add_new_modifier($modifier);
+		$order->Attributes()->add($modifier);
 	}
 
 	/**
@@ -197,7 +197,7 @@ class OrderModifier extends OrderAttribute {
 	}
 
 	/**
-	 * Provides a modifier total that is positive or negative, depending on whether the modifier is chargable or not. 
+	 * Provides a modifier total that is positive or negative, depending on whether the modifier is chargable or not.
 	 *
 	 * @return boolean
 	 */

@@ -43,7 +43,6 @@ class ProductVariation extends DataObject {
 	function getCMSFields() {
 		$fields = array();
 		$fields[] = new TextField('InternalItemID','Product Code');
-		//$fields[] = new TextField('Title');
 		$fields[] = new TextField('Price');
 
 		//add attributes dropdowns

@@ -224,12 +224,6 @@ class Order extends DataObject {
 		'Status' => array(
 			'filter' => 'OrderFilters_MultiOptionsetFilter',
 		)
-		/*,
-		'To' => array(
-			'field' => 'DateField',
-			'filter' => 'OrderFilters_EqualOrSmallerDateFilter'
-		)
-		*/
 	);
 
 	protected static $non_shipping_db_fields = array("Status", "Printed");
@@ -541,18 +535,16 @@ class Order extends DataObject {
 	 * by evaluating init_for_order() on each of them.
 	 */
 	function initModifiers() {
-
-		//check if order has modifiers already
-		//check /re-add all non-removable ones
-
 		$createdmodifiers = $this->Modifiers();
-
 		if(self::$modifiers && is_array(self::$modifiers) && count(self::$modifiers) > 0) {
 			foreach(self::$modifiers as $className) {
-
+				//check if order has modifiers already
+				$classexists = class_exists($className);
 				if(class_exists($className) && (!$createdmodifiers || !$createdmodifiers->find('ClassName',$className))) {
 					$modifier = new $className();
-					if($modifier instanceof OrderModifier) eval("$className::init_for_order(\$className);");
+					if($modifier instanceof OrderModifier){
+						eval("$className::init_for_order(\$className,\$this);");
+					}
 				}
 			}
 		}
@@ -576,7 +568,6 @@ class Order extends DataObject {
 	 */
 	function ModifiersSubTotal($excluded = null, $onlyprevious = false) {
 		$total = 0;
-
 		if($modifiers = $this->Modifiers()) {
 			foreach($modifiers as $modifier) {
 				if(is_array($excluded) && in_array($modifier->class, $excluded)) {
@@ -588,11 +579,9 @@ class Order extends DataObject {
 						break;
 					continue;
 				}
-
 				$total += $modifier->Total();
 			}
 		}
-
 		return $total;
 	}
 
@@ -1167,7 +1156,6 @@ class Order extends DataObject {
 class Order_ReceiptEmail extends Email {
 
 	protected $ss_template = 'Order_ReceiptEmail';
-
 }
 
 /**

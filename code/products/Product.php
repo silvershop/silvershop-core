@@ -29,23 +29,13 @@ class Product extends Page {
 		'Image' => 'Product_Image'
 	);
 
-	public static $has_many = array(
-		'Variations' => 'ProductVariation'
-	);
-
 	public static $many_many = array(
-		'ProductGroups' => 'ProductGroup',
-
-		'VariationAttributes' => 'ProductAttributeType'
+		'ProductGroups' => 'ProductGroup'
 	);
-
-	public static $belongs_many_many = array();
 
 	public static $defaults = array(
 		'AllowPurchase' => true
 	);
-
-	public static $casting = array();
 
 	public static $summary_fields = array(
 		'ID','InternalItemID','Title','Price','Weight','Model','NumberSold'
@@ -91,16 +81,6 @@ class Product extends Page {
 		// Flags for this product which affect it's behaviour on the site
 		$fields->addFieldToTab('Root.Content.Main',new CheckboxField('FeaturedProduct', _t('Product.FEATURED', 'Featured Product')), 'Content');
 		$fields->addFieldToTab('Root.Content.Main',new CheckboxField('AllowPurchase', _t('Product.ALLOWPURCHASE', 'Allow product to be purchased'), 1),'Content');
-
-		$fields->addFieldToTab('Root.Content.Variations',new HeaderField("Variations"));
-		$fields->addFieldToTab('Root.Content.Variations',$this->getVariationsTable());
-		$fields->addFieldToTab('Root.Content.Variations',new HeaderField("Variation Attribute Types"));
-		$fields->addFieldToTab('Root.Content.Variations',$this->getVariationAttributesTable());
-
-		if($this->Variations()->exists()){
-			$fields->addFieldToTab('Root.Content.Main',new LabelField('variationspriceinstructinos','Price - Because you have one or more variations, the price can be set in the "Variations" tab.'),'Price');
-			$fields->removeFieldsFromTab('Root.Content.Main',array('Price','InternalItemID'));
-		}
 
 		$fields->addFieldsToTab(
 			'Root.Content.Product Groups',
@@ -155,121 +135,6 @@ class Product extends Page {
 
 	}
 
-	function getVariationsTable() {
-		$singleton = singleton('ProductVariation');
-		$query = $singleton->buildVersionSQL("\"ProductID\" = '{$this->ID}'");
-		$variations = $singleton->buildDataObjectSet($query->execute());
-		$filter = $variations ? "\"ID\" IN ('" . implode("','", $variations->column('RecordID')) . "')" : "\"ID\" < '0'";
-		//$filter = "\"ProductID\" = '{$this->ID}'";
-
-		$summaryfields= $singleton->summaryFields();
-
-		if($this->VariationAttributes()->exists())
-			foreach($this->VariationAttributes() as $attribute){
-				$summaryfields["AttributeProxy.Val".$attribute->Name] = $attribute->Title;
-			}
-
-		$tableField = new HasManyComplexTableField(
-			$this,
-			'Variations',
-			'ProductVariation',
-			$summaryfields,
-			null,
-			$filter
-		);
-
-		if(method_exists($tableField, 'setRelationAutoSetting')) {
-			$tableField->setRelationAutoSetting(true);
-		}
-
-		return $tableField;
-	}
-
-	function getVariationAttributesTable(){
-		$mmctf = new ManyManyComplexTableField($this,'VariationAttributes','ProductAttributeType');
-
-		return $mmctf;
-	}
-
-
-	function getVariationByAttributes(array $attributes){
-
-		if(!is_array($attributes)) return null;
-		$keyattributes = array_keys($attributes);
-		$id = $keyattributes[0];
-		$where = "\"ProductID\" = ".$this->ID;
-		$join = "";
-
-		foreach($attributes as $typeid => $valueid){
-			if(!is_numeric($typeid) || !is_numeric($valueid)) return null; //ids MUST be numeric
-
-			$alias = "A$typeid";
-			$where .= " AND $alias.ProductAttributeValueID = $valueid";
-			$join .= "INNER JOIN ProductVariation_AttributeValues AS $alias ON ProductVariation.ID = $alias.ProductVariationID ";
-		}
-		$variation = DataObject::get('ProductVariation',$where,"",$join);
-		return $variation->First();
-
-	}
-
-	/*
-	 * Generates variations based on selected attributes.
-	 */
-	function generateVariationsFromAttributes(ProductAttributeType $attributetype, array $values){
-
-		//TODO: introduce transactions here, in case objects get half made etc
-
-		//if product has variation attribute types
-		if(is_array($values)){
-
-			//TODO: get values dataobject set
-			$avalues = $attributetype->convertArrayToValues($values);
-
-			$existingvariations = $this->Variations();
-
-			if($existingvariations->exists()){
-
-				//delete old variation, and create new ones - to prevent modification of exising variations
-				foreach($existingvariations as $oldvariation){
-
-					$oldvalues = $oldvariation->AttributeValues();
-
-					foreach($avalues as $value){
-
-						$newvariation = $oldvariation->duplicate();
-						$newvariation->InternalItemID = $this->InternalItemID.'-'.$newvariation->ID;
-						$newvariation->AttributeValues()->addMany($oldvalues);
-
-
-						$newvariation->AttributeValues()->add($value);
-						$newvariation->write();
-
-						$existingvariations->add($newvariation);
-					}
-					$existingvariations->remove($oldvariation);
-					$oldvariation->AttributeValues()->removeAll();
-					$oldvariation->delete();
-					$oldvariation->destroy();
-					//TODO: check that old variations actually stick around, as they will be needed for past orders etc
-				}
-
-			}else{
-
-				foreach($avalues as $value){
-					$variation = new ProductVariation();
-					$variation->ProductID = $this->ID;
-					$variation->Price = $this->Price;
-					$variation->write();
-					$variation->InternalItemID = $this->InternalItemID.'-'.$variation->ID;
-					$variation->AttributeValues()->add($value); //TODO: find or create actual value
-					$variation->write();
-
-					$existingvariations->add($variation);
-				}
-			}
-		}
-	}
-
 	protected function getProductGroupsTable() {
 		$tableField = new ManyManyComplexTableField(
 			$this,
@@ -279,13 +144,8 @@ class Product extends Page {
 				'Title' => 'Product Group Page Title'
 			)
 		);
-
 		$tableField->setPageSize(30);
 		$tableField->setPermissions(array());
-
-		//TODO: use a tree structure for selecting groups
-		//$field = new TreeMultiselectField('ProductGroups','Product Groups','ProductGroup');
-
 		return $tableField;
 	}
 
@@ -381,6 +241,7 @@ class Product extends Page {
 
 	/**
 	 * Return the global tax information of the site.
+	 * @todo review this, and decide if it is necessary.
 	 * @return TaxModifier
 	 */
 	function TaxInfo() {
@@ -441,18 +302,11 @@ class Product extends Page {
 		}
 	}
 
-	function onBeforeDelete(){
-		parent::onBeforeDelete();
-		foreach($this->Variations() as $variation){
-			$variation->delete();
-			$variation->destroy();
-		}
-		 //TODO: make this work...otherwise we get rouge variations that could mess up future imports
-	}
-
 }
 
 class Product_Controller extends Page_Controller {
+
+	static $allowed_actions = array();
 
 	function init() {
 		parent::init();
@@ -460,108 +314,10 @@ class Product_Controller extends Page_Controller {
 		Requirements::themedCSS('Cart');
 	}
 
-	function VariationForm(){
-
-		//TODO: cache this form so it doesn't need to be regenerated all the time?
-
-		$farray = array();
-		$requiredfields = array();
-		$attributes = $this->VariationAttributes();
-
-		foreach($this->Variations() as $variation){
-
-		}
-
-		foreach($attributes as $attribute){
-			$farray[] = $attribute->getDropDownField("choose $attribute->Label ...",$this->possibleValuesForAttributeType($attribute));//new DropDownField("Attribute_".$attribute->ID,$attribute->Name,);
-			$requiredfields[] = "ProductAttributes[$attribute->ID]";
-		}
-
-		$fields = new FieldSet($farray);
-		$fields->push(new NumericField('Quantity','Quantity',1)); //TODO: perhaps use a dropdown instead (elimiates need to use keyboard)
-
-
-
-		if(true){ //TODO: make javascript json inclusion optional
-			$vararray = array();
-
-			if($vars = $this->Variations()){
-				foreach($vars as $var){
-					$vararray[$var->ID] = $var->AttributeValues()->map('ID','ID');
-				}
-			}
-
-			$fields->push(new HiddenField('VariationOptions','VariationOptions',json_encode($vararray)));
-		}
-
-
-		$actions = new FieldSet(
-			new FormAction('addVariation', _t("Product.ADDLINK","Add this item to cart"))
-		);
-
-
-		$requiredfields[] = 'Quantity';
-		$validator = new RequiredFields($requiredfields);
-
-		$form = new Form($this,'VariationForm',$fields,$actions,$validator);
-		return $form;
-
-	}
-
-	function addVariation($data,$form){
-
-		//TODO: save form data to session so selected values are not lost
-
-		if(isset($data['ProductAttributes']) && $variation = $this->getVariationByAttributes($data['ProductAttributes'])){
-
-			$quantity = (isset($data['Quantity']) && is_numeric($data['Quantity'])) ? (int) $data['Quantity'] : 1;
-
-			//add this one to cart
-			ShoppingCart::add_buyable($variation,$quantity);
-
-			$form->sessionMessage("Successfully added to cart.","good");
-
-		}else{
-			//validation fail
-			$form->sessionMessage("That variation is not available, sorry.","bad");
-		}
-
-		if(!Director::is_ajax()){
-			Director::redirectBack();
-		}
-	}
-
-	function possibleValuesForAttributeType($type){
-		if(!is_numeric($type))
-			$type = $type->ID;
-
-		if(!$type) return null;
-
-		$where = "TypeID = $type AND ProductVariation.ProductID = $this->ID";
-		//TODO: is there a better place to obtain these joins?
-		$join = "INNER JOIN ProductVariation_AttributeValues ON ProductAttributeValue.ID = ProductVariation_AttributeValues.ProductAttributeValueID" .
-				" INNER JOIN ProductVariation ON ProductVariation_AttributeValues.ProductVariationID = ProductVariation.ID";
-
-		$vals = DataObject::get('ProductAttributeValue',$where,$sort = "ProductAttributeValue.Sort,ProductAttributeValue.Value",$join);
-
-		return $vals;
-	}
-
-
 
 }
 
 class Product_Image extends Image {
-
-	public static $db = array();
-
-	public static $has_one = array();
-
-	public static $has_many = array();
-
-	public static $many_many = array();
-
-	public static $belongs_many_many = array();
 
 	//default image sizes
 	protected static $thumbnail_width = 140;
@@ -603,7 +359,6 @@ class Product_Image extends Image {
 class Product_OrderItem extends OrderItem {
 
 	protected $_productID;
-
 	protected $_productVersion;
 
 	static $db = array(

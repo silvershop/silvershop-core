@@ -42,10 +42,9 @@ class ShoppingCart extends Controller {
 	function set_param_filters($array){
 		self::$paramfilters = array_merge(self::$paramfilters,$array);
 	}
-	
-	
+
 	//Country functions
-	
+
 	static function country_setting_index() {
 		return "ShoppingCartCountry";
 	}
@@ -65,10 +64,9 @@ class ShoppingCart extends Controller {
 	static function remove_country() {
 		Session::clear(self::country_setting_index());
 	}
-	
 
 	//Controller links
-	
+
 	static function add_item_link($id, $variationid = null, $parameters = array()) {
 		return self::$URLSegment.'/additem/'.$id.self::variation_link($variationid).self::params_to_get_string($parameters);
 	}
@@ -118,32 +116,37 @@ class ShoppingCart extends Controller {
 		}
 		return "";
 	}
-	
+
 	/**
 	 * Finds or creates a current order.
+	 * @todo split this into two functions: initcart, and currentcart...so that templates can return null for Cart
 	 */
 	public static function current_order() {
-		$order = self::$order;
-		if (!$order) {
-			//find order by id saved to session (allows logging out and retaining cart contents)
-			$cartid = Session::get(self::$cartid_session_name);
-			//TODO: make clear cart on logout optional
-			if ($cartid && $o = DataObject::get_one('Order', "\"Status\" = 'Cart' AND \"ID\" = $cartid")) {
-				$order = $o;
-			}else {
-				$order = new Order();
-				$order->SessionID = session_id();
-				if(EcommerceRole::get_associate_to_current_order())
-					$order->MemberID = Member::currentUserID(); // Set the Member relation to this order
-				$order->write();
-				Session::set(self::$cartid_session_name,$order->ID);
-			}
-			self::$order = $order; //temp caching
+		if(self::$order) return self::$order; //we only want to hit the database once
+
+		//find order by id saved to session (allows logging out and retaining cart contents)
+		$cartid = Session::get(self::$cartid_session_name);
+		//TODO: make clear cart on logout optional
+		if ($cartid && $o = DataObject::get_one('Order', "\"Status\" = 'Cart' AND \"ID\" = $cartid")) {
+			$order = $o;
+		}else {
+			$order = new Order();
+			$order->SessionID = session_id();
+			if(EcommerceRole::get_associate_to_current_order())
+				$order->MemberID = Member::currentUserID(); // Set the Member relation to this order
+			$order->write();
+			Session::set(self::$cartid_session_name,$order->ID);
+			//init modifiers the first time the order is created
+				// (currently assumes modifiers won't change)
 		}
+
+		self::$order = $order; //temp caching
+		$order->initModifiers(); //init /re-init modifiers
 		$order->write(); // Write the order
+
 		return $order;
 	}
-	
+
 	/**
 	 * Allow checking if order has started, because we don't always want to create a cart.
 	 */
@@ -229,7 +232,7 @@ class ShoppingCart extends Controller {
 	 */
 	static function get_item_by_id($id, $variationid = null,$filter = null) {
 		if(!$id) return null;
-		
+
 		$filter = self::get_param_filter($filter);
 		if(is_numeric($variationid)){
 			$filter .= ($filter && $filter != "") ? " AND " : "";
@@ -237,7 +240,7 @@ class ShoppingCart extends Controller {
 		}
 		$order = self::current_order();
 		$fil = ($filter && $filter != "") ? " AND $filter" : "";
-				
+
 		$item = DataObject::get_one('OrderItem', "\"OrderID\" = $order->ID AND \"ProductID\" = $id". $fil);
 		return $item;
 	}
@@ -252,37 +255,37 @@ class ShoppingCart extends Controller {
 		}
 		return  DataObject::get_one('OrderItem', "\"OrderID\" = $order->ID $filterString");
 	}
-	
+
 	static function add_buyable($buyable,$quantity = 1){
 		if(!$buyable || !$buyable->canPurchase()) return null;
-		
+
 		$item = self::find_or_make_order_item($buyable);
 		if($item->ID){
-			$item->Quantiy += $quantity;
+			$item->Quantity += $quantity;
 			$item->write();
 		}else{
 			$item->Quantity = $quantity;
 			$item->write();
 			self::add_new_item($item);
 		}
-				
+
 		return $item;
 	}
-	
+
 	static function get_buyable_by_id($productId, $variationId = null){
-		$buyable = null;		
+		$buyable = null;
 		if (is_numeric($variationId) && is_numeric($productId)) {
 			$buyable = DataObject::get_one('ProductVariation', sprintf("\"ID\" = %d AND \"ProductID\" = %d", (int) $variationId, (int) $productId));
 		} elseif(is_numeric($productId)) {
 			$buyable = Versioned::get_one_by_stage('Product','Live', '"Product_Live"."ID" = '.$productId); //only use live products
 		}
-		return $buyable;		
+		return $buyable;
 	}
-	
+
 	static function find_or_make_order_item($buyable){
 		$id = ($buyable instanceof ProductVariation) ? $buyable->ProductID : $buyable->ID;
 		$varid = ($buyable instanceof ProductVariation) ? $buyable->ID : null;
-		
+
 		if($item = self::get_item_by_id($id,$varid)){
 			return $item;
 		}
@@ -293,7 +296,7 @@ class ShoppingCart extends Controller {
 	 * Creates a new order item based on url parameters
 	 */
 	static function create_order_item($buyable,$quantity = 1, $parameters = null){
-		
+
 		$orderitem = null;
 		//create either a ProductVariation_OrderItem or a Product_OrderItem
 		if ($buyable && $buyable instanceof ProductVariation) {
@@ -316,8 +319,8 @@ class ShoppingCart extends Controller {
 
 		return $orderitem;
 	}
-	
-	
+
+
 	/**
 	 * Gets a SQL filter based on array of parameters.
 	 *
@@ -332,22 +335,17 @@ class ShoppingCart extends Controller {
 		}
 		return implode(" AND ",$outputarray);
 	}
-	
+
 	static function get_clean_param_array($params = array()){
 		$arr = array();
 		foreach(self::$paramfilters as $field => $value){
-			$arr[$field] = (isset($params[$field])) ? $params[$field] : $value; 
+			$arr[$field] = (isset($params[$field])) ? $params[$field] : $value;
 		}
 		return $arr;
 	}
 
 
 	// Modifiers management
-
-	static function add_new_modifier(OrderModifier $modifier) {
-		$modifier->write();
-		self::current_order()->Attributes()->add($modifier);
-	}
 
 	static function can_remove_modifier($modifierIndex) {
 		$serializedModifierIndex = self::modifier_index($modifierIndex);
@@ -385,19 +383,19 @@ class ShoppingCart extends Controller {
 	static function uses_different_shipping_address(){
 		return self::current_order()->UseShippingAddress;
 	}
-	
+
 	static function set_uses_different_shipping_address($use = true){
-		$order = self::current_order(); 
+		$order = self::current_order();
 		$order->UseShippingAddress = $use;
 		$order->write();
 	}
-		
+
 	/**
 	 * Sets appropriate status, and message and redirects or returns appropriately.
 	 */
 	 //TODO: it seems silly that this should be a static method just because self::clear is static
 	static function return_data($status = "success",$message = null){
-		
+
 		if(Director::is_ajax()){
 			return $status; //TODO: make this customisable between json, status message etc. Perhaps make this whole function custom.
 			//return self::json_code(); //TODO: incorporate status / message
@@ -405,12 +403,12 @@ class ShoppingCart extends Controller {
 		//TODO: set session / status in session (like Form sessionMesssage)
 		Director::redirectBack();
 	}
-	
+
 	/**
 	 * Builds json object to be returned via ajax.
 	 */
 	static function json_code() {
-		
+
 		//$this->response->addHeader('Content-Type', 'application/json');
 		$currentOrder = ShoppingCart::current_order();
 		$js = array ();
@@ -427,22 +425,15 @@ class ShoppingCart extends Controller {
 		$currentOrder->updateForAjax($js);
 		return Convert::array2json($js);
 	}
-	
-	
+
 	//Controller Functinons / Actions
-	
-	function init() {
-		parent::init();
-		self::current_order();
-		self::$order->initModifiers();
-	}
 
 	/**
 	 * Either increments the count or creates a new item.
 	 */
 	function additem($request) {
 		if ($itemId = $request->param('ID') && $product = $this->buyableFromURL()) {
-			
+
 			if($item = ShoppingCart::get_item($this->urlFilter())) {
 				ShoppingCart::add_item($item);
 				return self::return_data("success","Extra item added"); //TODO: i18n
@@ -511,8 +502,8 @@ class ShoppingCart extends Controller {
 		}
 		return self::return_data("failure","Could not be removed");//TODO: i18n
 	}
-	
-	
+
+
 	/**
 	 * Clears the cart of all items and modifiers.
 	 * It does this by disconnecting the current cart from the user session.
@@ -532,8 +523,8 @@ class ShoppingCart extends Controller {
 			return self::return_data("success","Cart cleared");//TODO: i18n
 		}
 	}
-	
-	
+
+
 	/**
 	 * Retrieves the appropriate product, variation etc from url parameters.
 	 */
@@ -541,10 +532,10 @@ class ShoppingCart extends Controller {
 		$request = $this->getRequest();
 		$variationId = $request->param('OtherID');
 		$productId = $request->param('ID');
-		
+
 		return self::get_buyable_by_id($productId,$variationId);
 	}
-	
+
 
 	/**
 	 * Gets a filter based on urlParameters
@@ -575,11 +566,11 @@ class ShoppingCart extends Controller {
 	function debug() {
 		Debug::show(ShoppingCart::current_order());
 	}
-	
-	
-	
+
+
+
 	/**
-	 *  Change country action 
+	 *  Change country action
 	 * */
 	function setcountry($request) {
 		$countryCode = $request->param('ID');

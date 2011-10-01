@@ -39,7 +39,7 @@ class ProductGroup extends Page {
 
 	//TODO: allow grouping multiple sort fields under one 'sort option', and allow choosing direction of each
 	protected static $sort_options = array(
-		'Title' => 'Alphabetical',
+		'URLSegment' => 'Alphabetical',
 		'Price' => 'Lowest Price',
 		'NumberSold' => 'Most Popular'
 		//'Featured' => 'Featured',
@@ -123,18 +123,17 @@ class ProductGroup extends Page {
 	function ProductsShowable($extraFilter = '', $recursive = true){
 		$filter = ""; //
 		$join = "";
-		
+
 		$this->extend('updateFilter',$extraFilter);
-		
+
 		if($extraFilter) $filter.= " AND $extraFilter";
 		if(self::$must_have_price) $filter .= " AND \"Price\" > 0";
 
 		$limit = (isset($_GET['start']) && (int)$_GET['start'] > 0) ? (int)$_GET['start'].",".self::$page_length : "0,".self::$page_length;
-		$sort = (isset($_GET['sortby'])) ? Convert::raw2sql($_GET['sortby']) : "\"FeaturedProduct\" DESC,\"Title\"";
+		$sort = (isset($_GET['sortby'])) ? Convert::raw2sql($_GET['sortby']) : "\"FeaturedProduct\" DESC,\"URLSegment\"";
 
 		//hard coded sort configuration //TODO: make these custom
 		if($sort == "NumberSold") $sort .= " DESC";
-
 
 		$groupids = array($this->ID);
 
@@ -151,7 +150,7 @@ class ProductGroup extends Page {
 		$products = DataObject::get('Product',"(\"ParentID\" IN ($groupidsimpl) OR $multicatfilter) $filter",$sort,$join,$limit);
 
 		$allproducts = DataObject::get('Product',"\"ParentID\" IN ($groupidsimpl) $filter","",$join);
-		
+
 		if($allproducts) $products->TotalCount = $allproducts->Count(); //add total count to returned data for 'showing x to y of z products'
 		if($products && $products instanceof DataObjectSet) $products->removeDuplicates();
 		return $products;
