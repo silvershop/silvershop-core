@@ -31,7 +31,11 @@ Make sure the module root folder is named 'ecommerce' to ensure requirements wor
 
 Configuration
 ---------------------------------------------------
-See the file named 'example_config.php' for various configuration options.
+You can view various configuration options in the 'example_config.php' file.
+
+WARNING: do not copy and paste entire configuration example file without
+first understanding each line, otherwise the system may not work as documented.
+In other words, only copy the lines which you understand.
 
 Tips
 -----------------------------------------------------------
