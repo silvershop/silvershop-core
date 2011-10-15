@@ -41,7 +41,7 @@ class ProductGroup extends Page {
 	protected static $sort_options = array(
 		'URLSegment' => 'Alphabetical',
 		'Price' => 'Lowest Price',
-		'NumberSold' => 'Most Popular'
+		//'NumberSold' => 'Most Popular'
 		//'Featured' => 'Featured',
 		//'Weight' => 'Weight'
 	);
