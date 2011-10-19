@@ -55,4 +55,9 @@ class EcommerceTest extends FunctionalTest {
 		$this->assertPartialMatchBySelector('#PastOrders h3', array('Your Order History'));
 	}
 
+	static function setConfiguration(){
+		$ds = DIRECTORY_SEPARATOR;
+		include(BASE_PATH.$ds.ECOMMERCE_DIR.$ds.'tests'.$ds.'test_config.php');
+	}
+
 }

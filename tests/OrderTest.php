@@ -5,12 +5,16 @@
  *
  */
 class OrderTest extends FunctionalTest {
+
 	static $fixture_file = 'ecommerce/tests/ecommerce.yml';
 
 	protected $orig = array();
 
 	function setUp() {
 		parent::setUp();
+
+		EcommerceTest::setConfiguration();
+
 		$this->objFromFixture('Product', 'mp3player')->publish('Stage','Live');
 		$this->objFromFixture('Product', 'socks')->publish('Stage','Live');
 		$this->objFromFixture('Product', 'beachball')->publish('Stage','Live');

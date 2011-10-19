@@ -15,7 +15,11 @@ Director::addRules(50, array(
 Object::add_extension("DevelopmentAdmin", "EcommerceDevelopmentAdminDecorator");
 DevelopmentAdmin::$allowed_actions[] = 'ecommerce';
 
-
 //variations
 DataObject::add_extension("Product","ProductVariationDecorator");
 Object::add_extension("Product_Controller","ProductControllerVariationExtension");
+
+//reports
+SS_Report::register("SideReport", "EcommerceSideReport_AllProducts");
+SS_Report::register("SideReport", "EcommerceSideReport_FeaturedProducts");
+SS_Report::register("SideReport", "EcommerceSideReport_NoImageProducts");

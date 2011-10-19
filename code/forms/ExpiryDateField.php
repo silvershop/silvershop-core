@@ -6,7 +6,7 @@
  */
 class ExpiryDateField extends TextField {
 
-	protected static $short_months = 1;
+	protected static $short_months = true;
 		static function set_short_months($boolean) {self::$short_months = $boolean;}
 		static function get_short_months() {return self::$short_months;}
 

@@ -15,12 +15,4 @@
 <p><a href="{$BaseHref}dev/tasks/DeleteEcommerceProducts">Delete Ecommere Products</a> - removes all products from the database.</p>
 
 <h3>Ecommerce Unit Tests</h3>
-<p><a href="{$BaseHref}dev/tests/$AllTests">Run all ecommerce unit tests</a></p>
-<p>Individual tests:</p>
-<% if Tests %>
-<ul>
-<% control Tests %>
-	<li><a href="{$BaseHref}dev/tests/$Class">$Name</a></li>
-<% end_control %>
-</ul>
-<% end_if %>
+<p><a href="{$BaseHref}dev/tests/module/$EcommerceFolder">Run all ecommerce unit tests</a></p>

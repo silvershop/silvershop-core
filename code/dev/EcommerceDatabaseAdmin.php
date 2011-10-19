@@ -34,39 +34,13 @@ class EcommerceDatabaseAdmin extends Controller{
 		}
 	}
 
-
 	function deleteproducts($request){
 		$task = new DeleteEcommerceProductsTask();
 		$task->run($request);
 	}
 
-
-	private $tests = array(
-			'ShoppingCartTest' => 'Shopping Cart',
-			'OrderTest' => 'Order',
-			'CheckoutPageTest' => 'Checkout Page',
-			'EcommerceTest' => 'Ecommerce',
-			//'OrderItemTest' => 'Order Item',
-			'OrderModifierTest' => 'Order Modifier',
-			'PaymentTest' => 'Payment',
-			'ProductBulkLoaderTest' => 'Bulk Loader',
-			'ProductOrderItemTest' => 'Product Order Item',
-			'ProductTest' => 'Product',
-	);
-
-	function Tests(){
-	    $dos = new DataObjectSet();
-	    foreach($this->tests as $class => $name){
-	    	$dos->push(new ArrayData(array(
-	    		'Name' => $name,
-	    		'Class' => $class
-	    	)));
-	    }
-	    return $dos;
-	}
-
-	function AllTests(){
-		return implode(',',array_keys($this->tests));
+	function EcommerceFolder(){
+		return ECOMMERCE_DIR;
 	}
 
 	public function Link($action = null) {

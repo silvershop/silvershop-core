@@ -6,7 +6,7 @@
 	<% end_if %>
 
 	<h3 class="productTitle"><a href="$Link" title="<% sprintf(_t("READMORE"),$Title) %>">$Title</a></h3>
-	<% if Model %><p><strong><% _t("AUTHOR","Author") %>:</strong> $Model.XML</p><% end_if %>
+	<% if Model %><p><strong><% _t("MODEL","Model") %>:</strong> $Model.XML</p><% end_if %>
 	<p>$Content.LimitWordCount(10) <a href="$Link" title="<% sprintf(_t("READMORE"),$Title) %>"><% _t("READMORECONTENT","read more") %></a></p>
 	<div>
 		<% if Price != 0 %><span class="price_display">$Price.Nice $Currency $TaxInfo.PriceSuffix</span><% end_if %>

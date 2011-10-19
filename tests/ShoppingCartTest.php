@@ -17,6 +17,8 @@ class ShoppingCartTest extends FunctionalTest {
 	function setUp(){
 		parent::setUp();
 
+		EcommerceTest::setConfiguration(); //reset config
+
 		//publish some products
 		$this->objFromFixture('Product', 'mp3player')->publish('Stage','Live');
 		$this->objFromFixture('Product', 'socks')->publish('Stage','Live');
