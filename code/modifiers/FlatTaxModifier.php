@@ -31,11 +31,11 @@ class FlatTaxModifier extends OrderModifier {
 	public static $belongs_many_many = array();
 	public static $defaults = array();
 	public static $casting = array();
-	
+
 	protected static $name = null;
 	protected static $rate = null;
 	protected static $exclusive = null;
-	
+
 	static $includedmessage = "%.1f%% %s (inclusive)";
 	static $excludedmessage = "%.1f%% %s";
 
@@ -86,7 +86,9 @@ class FlatTaxModifier extends OrderModifier {
 	 *
 	 */
 	function Charge() {
-		return $this->TaxableAmount() * $this->Rate();
+		if($this->IsExclusive())
+			return $this->TaxableAmount() * $this->Rate();
+		return $this->TaxableAmount() - ($this->TaxableAmount()/(1+$this->Rate())); //inclusive tax requires a different calculation
 	}
 
 	/**
@@ -101,7 +103,7 @@ class FlatTaxModifier extends OrderModifier {
 	function ShowInTable() {
 		return $this->Rate();
 	}
-	
+
 	function TableValue(){
 		return $this->Charge();
 	}
@@ -116,7 +118,7 @@ class FlatTaxModifier extends OrderModifier {
 	 */
 	function TableTitle() {
 		$message = ($this->IsExclusive()) ? self::$excludedmessage : self::$includedmessage;
-		return sprintf($message,$this->Rate() * 100,$this->Name());
+		return sprintf($message,$this->Rate() * 100, $this->Name());
 	}
 
 	/**
