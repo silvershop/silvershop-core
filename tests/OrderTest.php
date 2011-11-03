@@ -7,6 +7,7 @@
 class OrderTest extends FunctionalTest {
 
 	static $fixture_file = 'ecommerce/tests/ecommerce.yml';
+	static $disable_theme = true;
 
 	protected $orig = array();
 
@@ -92,7 +93,6 @@ class OrderTest extends FunctionalTest {
 		//TODO: check email
 		//TODO: check items match
 		//TODO: check cart is now empty
-
 
 		$order->Member()->logOut();
 		ShoppingCart::clear(); //cleanup
