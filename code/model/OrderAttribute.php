@@ -8,8 +8,6 @@
  */
 class OrderAttribute extends DataObject {
 
-	protected $_id;
-
 	public static $has_one = array(
 		'Order' => 'Order'
 	);
@@ -19,15 +17,6 @@ class OrderAttribute extends DataObject {
 		'CartTitle' => 'Text'
 	);
 
-
-	public function getIdAttribute() {
-		return $this->_id;
-	}
-
-	public function setIdAttribute($id) {
-		$this->_id = $id;
-	}
-
 	public function canCreate($member = null) {
 		return false;
 	}
@@ -35,11 +24,10 @@ class OrderAttribute extends DataObject {
 	public function canDelete($member = null) {
 		return false;
 	}
-	
+
 	function isLive(){
 		return (!$this->ID || $this->Order()->IsCart());
 	}
-
 
 	######################
 	## TEMPLATE METHODS ##
@@ -70,7 +58,7 @@ class OrderAttribute extends DataObject {
 	}
 
 	function MainID() {
-		return get_class($this) . '_' . ($this->ID ? 'DB_' . $this->ID : $this->_id);
+		return get_class($this) . '_' . 'DB_' . $this->ID;
 	}
 
 	function TableID() {

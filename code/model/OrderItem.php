@@ -9,10 +9,6 @@
  */
 class OrderItem extends OrderAttribute {
 
-	protected $_id;
-
-	protected $_quantity;
-
 	static $disable_quantity_js = false;
 
 	public static $db = array(
@@ -48,8 +44,6 @@ class OrderItem extends OrderAttribute {
 	public static $summary_fields = array(
 		"Order.ID" => "Order ID",
 		"TableTitle" => "Title",
-		//"CartTitle" => "Title", //confusing having two titles - why is it necessary?
-		//"ClassName" => "Type", //this is just confusing isn't it?
 		"UnitPrice" => "Unit Price" ,
 		"Quantity" => "Quantity" ,
 		"Total" => "Total Price" ,
@@ -60,7 +54,6 @@ class OrderItem extends OrderAttribute {
 	public static $plural_name = "Order Items";
 
 	public static $default_sort = "\"Created\" DESC";
-
 
 	public function __construct($object = null, $quantity = 1) {
 
@@ -97,14 +90,6 @@ class OrderItem extends OrderAttribute {
 	}
 
 	/**
-	 * Get the quantity attribute from memory.
-	 * @return int
-	 */
-	/*public function getQuantity() {
-		return $this->_quantity;
-	}*/
-
-	/**
 	 * Set the quantity attribute in memory.
 	 * PRECONDITION: The order item is not saved in the database yet.
 	 *
@@ -129,7 +114,7 @@ class OrderItem extends OrderAttribute {
 	}
 
 	public function debug() {
-		$id = $this->ID ? $this->ID : $this->_id;
+		$id = $this->ID;
 		$quantity = $this->Quantity;
 		$orderID = $this->ID ? $this->OrderID : 'The order has not been saved yet, so there is no ID';
 

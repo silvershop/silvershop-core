@@ -25,8 +25,7 @@ class EcommerceRole extends DataObjectDecorator {
 				'State' => 'Varchar(100)',
 				'Country' => 'Varchar',
 				'HomePhone' => 'Varchar(100)',
-				'MobilePhone' => 'Varchar(100)',
-				'Notes' => 'HTMLText'
+				'MobilePhone' => 'Varchar(100)'
 			)
 		);
 	}

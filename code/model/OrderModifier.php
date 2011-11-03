@@ -207,7 +207,7 @@ class OrderModifier extends OrderAttribute {
 	}
 
 	function removeLink() {
-		return ShoppingCart::remove_modifier_link($this->_id);
+		return ShoppingCart::remove_modifier_link($this->ID);
 	}
 
 	/**
@@ -238,7 +238,7 @@ class OrderModifier extends OrderAttribute {
 	 * Debug helper method.
 	 */
 	public function debug() {
-		$id = $this->ID ? $this->ID : $this->_id;
+		$id = $this->ID;
 		$amount = $this->Amount();
 		$type = $this->IsChargable() ? 'Chargable' : 'Deductable';
 		$orderID = $this->ID ? $this->OrderID : 'The order has not been saved yet, so there is no ID';
