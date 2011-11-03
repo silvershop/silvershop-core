@@ -12,9 +12,7 @@ class ProductAttributeValue extends DataObject{
 
 	static $has_many = array();
 
-	static $belongs_to = array(
-
-	);
+	static $belongs_to = array();
 
 	static $belongs_many_many = array(
 		'ProductVariation' => 'ProductVariation'
