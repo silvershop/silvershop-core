@@ -37,9 +37,7 @@ class OrderItem extends OrderAttribute {
 		"Total"
 	);
 
-	public static $field_labels = array(
-
-	);
+	public static $field_labels = array();
 
 	public static $summary_fields = array(
 		"Order.ID" => "Order ID",
@@ -83,30 +81,9 @@ class OrderItem extends OrderAttribute {
 	 */
 	function onBeforeWrite() {
 		parent::onBeforeWrite();
-
 		//always keep quantity above 0
 		if($this->Quantity < 1)
 			$this->Quantity = 1;
-	}
-
-	/**
-	 * Set the quantity attribute in memory.
-	 * PRECONDITION: The order item is not saved in the database yet.
-	 *
-	 * @param int $quantity The quantity to set
-	 */
-	public function setQuantityAttribute($quantity) {
-		$this->Quantity = $quantity;
-	}
-
-	/**
-	 * Increment the quantity attribute in memory by a given amount.
-	 * PRECONDITION: The order item is not saved in the database yet.
-	 *
-	 * @param int $quantity The amount to increment the quantity by.
-	 */
-	public function addQuantityAttribute($quantity) {
-		$this->Quantity += $quantity;
 	}
 
 	function hasSameContent($orderItem) {
