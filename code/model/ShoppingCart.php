@@ -22,8 +22,7 @@ class ShoppingCart extends Controller {
 		'setcountry',
 		'setquantityitem',
 		'clear',
-
-		'debug' => 'ADMIN'
+		'debug'
 	);
 
 
@@ -320,7 +319,6 @@ class ShoppingCart extends Controller {
 		return $orderitem;
 	}
 
-
 	/**
 	 * Gets a SQL filter based on array of parameters.
 	 *
@@ -503,7 +501,6 @@ class ShoppingCart extends Controller {
 		return self::return_data("failure","Could not be removed");//TODO: i18n
 	}
 
-
 	/**
 	 * Clears the cart of all items and modifiers.
 	 * It does this by disconnecting the current cart from the user session.
@@ -524,7 +521,6 @@ class ShoppingCart extends Controller {
 		}
 	}
 
-
 	/**
 	 * Retrieves the appropriate product, variation etc from url parameters.
 	 */
@@ -532,10 +528,8 @@ class ShoppingCart extends Controller {
 		$request = $this->getRequest();
 		$variationId = $request->param('OtherID');
 		$productId = $request->param('ID');
-
 		return self::get_buyable_by_id($productId,$variationId);
 	}
-
 
 	/**
 	 * Gets a filter based on urlParameters
@@ -564,10 +558,9 @@ class ShoppingCart extends Controller {
 	 * Displays order info and cart contents.
 	 */
 	function debug() {
-		Debug::show(ShoppingCart::current_order());
+		if(Director::isDev() || Permission::check("ADMIN"))
+			Debug::show(ShoppingCart::current_order());
 	}
-
-
 
 	/**
 	 *  Change country action
