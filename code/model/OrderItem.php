@@ -12,7 +12,8 @@ class OrderItem extends OrderAttribute {
 	static $disable_quantity_js = false;
 
 	public static $db = array(
-		'Quantity' => 'Int'
+		'Quantity' => 'Int',
+		'Amount' => 'Currency'
 	);
 
 	public static $casting = array(
@@ -48,9 +49,7 @@ class OrderItem extends OrderAttribute {
 	);
 
 	public static $singular_name = "Order Item";
-
 	public static $plural_name = "Order Items";
-
 	public static $default_sort = "\"Created\" DESC";
 
 	public function __construct($object = null, $quantity = 1) {
@@ -84,6 +83,8 @@ class OrderItem extends OrderAttribute {
 		//always keep quantity above 0
 		if($this->Quantity < 1)
 			$this->Quantity = 1;
+
+		$this->CalculateTotal();
 	}
 
 	function hasSameContent($orderItem) {
@@ -131,8 +132,19 @@ HTML;
 	}
 
 	function Total() {
+		if((int)$this->Amount)
+			return $this->Amount;
+		return $this->CalculateTotal(); //revert to calculating total if stored value not available
+	}
+
+	/**
+	 * Calculates the total for this item.
+	 * Generally called by onBeforeWrite
+	 */
+	function CalculateTotal(){
 		$total = $this->UnitPrice() * $this->Quantity;
 		$this->extend('updateTotal',$total);
+		$this->Amount = $total;
 		return $total;
 	}
 
