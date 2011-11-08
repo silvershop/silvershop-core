@@ -1,17 +1,17 @@
 <% include ProductMenu %>
-<div id="ProductGroup">
+<div id="ProductGroup" class="typography">
 	<h1 class="pageTitle">$Title</h1>
 
 	<% if Content %>
-		<div class="typography">
+		<div>
 			$Content
 		</div>
 	<% end_if %>
 
 	<% if Products %>
 		<div id="Products" class="category">
-			<div class="resultsBar typography">
-				<% if SortLinks %><span class="sortOptions">Sort by <% control SortLinks %><a href="$Link" class="sortlink $Current">$Name</a> <% end_control %></span><% end_if %>
+			<div class="resultsBar">
+				<% if SortLinks %><span class="sortOptions"><% _t('ProductGroup.SORTBY','sort by') %> <% control SortLinks %><a href="$Link" class="sortlink $Current">$Name</a> <% end_control %></span><% end_if %>
 			</div>
 			<div class="clear"><!-- --></div>
 			<ul class="productList">
@@ -20,8 +20,7 @@
 				<% end_control %>
 			</ul>
 			<div class="clear"><!-- --></div>
+			<% include ProductGroupPagination %>
 		</div>
-		<% include ProductGroupPagination %>
 	<% end_if %>
-
 </div>

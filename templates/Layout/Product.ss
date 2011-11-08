@@ -2,7 +2,7 @@
 	<% include ProductMenu %>
 <% end_control %>
 
-<div id="Product">
+<div id="Product" class="typography">
 	<h1 class="pageTitle">$Title</h1>
 
 	<div class="productDetails">
@@ -30,13 +30,7 @@
 								<% if canPurchase %>
 									<% if IsInCart %>
 										<% control Item %>
-											<a class="ajaxQuantityLink" href="$removeLink" title="<% sprintf(_t("REMOVEALL","Remove one of &quot;%s&quot; from your cart"),$Title.XML) %>">
-												<img src="ecommerce/images/minus.gif" alt="-" />
-											</a>
-											$AjaxQuantityField
-											<a class="ajaxQuantityLink" href="$addLink" title="<% sprintf(_t("ADDONE","Add one more of &quot;%s&quot; to your cart"),$Title.XML) %>">
-												<img src="ecommerce/images/plus.gif" alt="+" />
-											</a>
+											$QuantityField
 										<% end_control %>
 									<% else %>
 										<a href="$Item.addLink" title="<% sprintf(_t("ADD","Add &quot;%s&quot; to your cart"),$Title.XML) %>"><% _t("ADDLINK","Add this item to cart") %></a>
@@ -54,17 +48,11 @@
 				<% if IsInCart %>
 					<% control Item %>
 						<div class="quantityBox">
-							<span><% _t("QUANTITYCART","Quantity in cart") %>:</span>
-							<a class="ajaxQuantityLink" href="$removeLink" title="<% sprintf(_t("REMOVEALL","Remove one of &quot;%s&quot; from your cart"),$Title) %>">
-								<img src="ecommerce/images/minus.gif" alt="-" />
-							</a>
-							$AjaxQuantityField
-							<a class="ajaxQuantityLink" href="$addLink" title="<% sprintf(_t("ADDONE","Add one more of &quot;%s&quot; to your cart"),$Title) %>">
-								<img src="ecommerce/images/plus.gif" alt="+" />
-							</a>
+							<span><% _t("QUANTITYCART","Quantity in cart") %>:</span> 
+							$QuantityField
 							<ul class="productActions">
-								<li><a href="$removeallLink" title="<% sprintf(_t("REMOVE","Remove &quot;%s&quot; from your cart"),$Title) %>"><% _t("REMOVELINK","&raquo; Remove from cart") %></a></li>
-								<li><a href="$checkoutLink" title="<% _t("GOTOCHECKOUT","Go to the checkout now") %>"><% _t("GOTOCHECKOUTLINK","&raquo; Go to the checkout") %></a></li>
+								<li><a href="$removeallLink" title="<% sprintf(_t("REMOVE","Remove &quot;%s&quot; from your cart"),$Title) %>"><% _t("REMOVELINK","Remove from cart") %></a></li>
+								<li><a href="$checkoutLink" title="<% _t("GOTOCHECKOUT","Go to the checkout now") %>"><% _t("GOTOCHECKOUTLINK","Go to the checkout") %></a></li>
 							</ul>
 						</div>
 					<% end_control %>

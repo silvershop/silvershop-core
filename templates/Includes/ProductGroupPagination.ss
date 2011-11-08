@@ -1,8 +1,8 @@
 <% if Products.MoreThanOnePage %>
 <div id="PageNumbers">
-	<p>
+	<p><% _t('ProductGroup.PAGE','page') %>:
 		<% if Products.NotFirstPage %>
-			<a class="prev" href="$Products.PrevLink" title="View the previous page">previous</a>
+			<a class="prev" href="$Products.PrevLink" title="View the previous page"><% _t('ProductGroup.PREVIOUS','previous') %></a>
 		<% end_if %>
 
 		<span>
@@ -20,7 +20,7 @@
 		</span>
 
 		<% if Products.NotLastPage %>
-			<a class="next" href="$Products.NextLink" title="View the next page">next</a>
+			<a class="next" href="$Products.NextLink" title="View the next page"><% _t('ProductGroup.NEXT','next') %></a>
 		<% end_if %>
 	</p>
 </div>
