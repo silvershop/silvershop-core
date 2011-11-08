@@ -8,6 +8,10 @@
  */
 class OrderAttribute extends DataObject {
 
+	public static $db = array(
+		'CalculatedTotal' => 'Currency'
+	);
+
 	public static $has_one = array(
 		'Order' => 'Order'
 	);

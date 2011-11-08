@@ -12,8 +12,7 @@ class OrderItem extends OrderAttribute {
 	static $disable_quantity_js = false;
 
 	public static $db = array(
-		'Quantity' => 'Int',
-		'Amount' => 'Currency'
+		'Quantity' => 'Int'
 	);
 
 	public static $casting = array(
@@ -81,9 +80,7 @@ class OrderItem extends OrderAttribute {
 	function onBeforeWrite() {
 		parent::onBeforeWrite();
 		//always keep quantity above 0
-		if($this->Quantity < 1)
-			$this->Quantity = 1;
-
+		if($this->Quantity < 1)	$this->Quantity = 1;
 		$this->CalculateTotal();
 	}
 
@@ -120,8 +117,8 @@ HTML;
 		return $this->MainID() . '_Quantity';
 	}
 
-	/*
-	 * @Depricated - use QuantityField
+	/**
+	 * @deprecated 1.0 - use QuantityField instead
 	 */
 	function AjaxQuantityField(){
 		return $this->QuantityField();
@@ -132,8 +129,13 @@ HTML;
 	}
 
 	function Total() {
-		if((int)$this->Amount)
+		$order = $this->Order();
+		if($order && $order->IsCart()){ //always calculate total if order is in cart
+			return $this->CalculateTotal();
+		}
+		if((int)$this->Amount){
 			return $this->Amount;
+		}
 		return $this->CalculateTotal(); //revert to calculating total if stored value not available
 	}
 
@@ -144,7 +146,7 @@ HTML;
 	function CalculateTotal(){
 		$total = $this->UnitPrice() * $this->Quantity;
 		$this->extend('updateTotal',$total);
-		$this->Amount = $total;
+		$this->CalculatedTotal = $total;
 		return $total;
 	}
 

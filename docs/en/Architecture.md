@@ -41,18 +41,14 @@ Cart items are stored in the database. A new order is created when the first ite
 
 The checkout is a page type which includes an OrderForm, plus has the facility for displaying an order that has been placed. 
 
-
 Also see [core changes](CoreChanges).
 
-### Persisting order information / audit trail
+### Persisting order information
 
 If you are changing your product catalog or customers are updating / removing their member info, then you don't want to loose important information in the process.
 
 Protections that are in place:
 
  * Products are pages, so inherently have versions associated with them. The product ID and product version ID are associated with an order item from the moment they are added to the cart.
- * Product Variations are versioned, however their associated attribute types + values are not protected. 
-
-Protections NOT in place:
-
- * Changes to an order over time.
+ * Product Variations are versioned, however their associated attribute types + values are not protected.
+ * OrderItem amount is recalculated on write after an order has been placed (no longer in cart). You should be careful not to write order items if they are storing historical values that shouldn't be changed.
