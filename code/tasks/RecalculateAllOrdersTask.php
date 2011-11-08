@@ -13,10 +13,18 @@ class RecalculateAllOrdersTask extends BuildTask {
 	function run($request){
 
 		//TODO: include order total calculation, once that gets written
-		$items = DataObject::get("OrderItem");
-		foreach($items as $item){
-			if($item->Product()){
-				$item->write(); //OrderItem->onBeforeWrite calls 'CalculateTotal'
+
+		if($orders = DataObject::get("Order")){
+			echo "<br/>\nWriting all order items: ";
+			foreach($orders as $order){
+				if($items = $order->Items()){
+					foreach($items as $item){
+						if($item->Product()){
+							echo $item->ID." ";
+							$item->write(); //OrderItem->onBeforeWrite calls 'CalculateTotal'
+						}
+					}
+				}
 			}
 		}
 	}
