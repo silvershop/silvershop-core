@@ -132,9 +132,8 @@ HTML;
 		$order = $this->Order();
 		if($order && $order->IsCart()){ //always calculate total if order is in cart
 			return $this->CalculateTotal();
-		}
-		if((int)$this->Amount){
-			return $this->Amount;
+		}elseif((int)$this->CalculatedTotal){
+			return $this->CalculatedTotal;
 		}
 		return $this->CalculateTotal(); //revert to calculating total if stored value not available
 	}
