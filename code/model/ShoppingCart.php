@@ -558,8 +558,9 @@ class ShoppingCart extends Controller {
 	 * Displays order info and cart contents.
 	 */
 	function debug() {
-		if(Director::isDev() || Permission::check("ADMIN"))
+		if(Director::isDev() || Permission::check("ADMIN")){
 			Debug::show(ShoppingCart::current_order());
+		}
 	}
 
 	/**
@@ -574,6 +575,16 @@ class ShoppingCart extends Controller {
 			return self::json_code();
 		}
 		return _t("ShoppingCart.COUNTRYCOULDNOTBEUPDATED", "Country not be updated.");
+	}
+
+	function index(){
+		if(false && self::order_started() && $order = self::current_order()){
+			Director::redirect($order->Link());
+			return;
+		}elseif($response = ErrorPage::response_for(404)) {
+			return $response;
+		}
+		return $this->httpError(404, _t("ShoppingCart.NOCARTINITIALISED", "no cart initialised"));
 	}
 
 }
