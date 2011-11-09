@@ -578,7 +578,7 @@ class ShoppingCart extends Controller {
 	}
 
 	function index(){
-		if(false && self::order_started() && $order = self::current_order()){
+		if(self::order_started() && $order = self::current_order()){
 			Director::redirect($order->Link());
 			return;
 		}elseif($response = ErrorPage::response_for(404)) {
