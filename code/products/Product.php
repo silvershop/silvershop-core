@@ -378,8 +378,8 @@ class Product_OrderItem extends OrderItem {
 
 		// Case 2: Constructed in memory
 		if(is_object($product)) {
-			$this->_productID = $product->ID;
- 			$this->_productVersion = $product->Version;
+			$this->ProductID = $this->_productID = $product->ID;
+ 			$this->ProductVersion = $this->_productVersion = $product->Version;
 		}
 
  		parent::__construct($product, $quantity);
