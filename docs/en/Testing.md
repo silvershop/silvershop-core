@@ -1,17 +1,16 @@
-Testing the eCommerce Module
-============================
+# Testing the eCommerce Module #
 Testing is highly important for maintaining a quality product.
 
-Regression Testing
-------------------
+## Regression Testing
+
 This [Google doc containing regression tests](https://spreadsheets.google.com/ccc?key=0AtHUrSaBxJY8dG8teWVNTFYzbThZYUhhLTNmT0FiUHc&hl=en) will give you an idea of the various things you can test manually.
 In a nutshell, be sure to test the following main functionality:
 
  * Adding/removing items from cart
  * Placing an order
 
-Unit Testing
-------------
+## Unit / Functional Testing
+
 We insist that the eCommerce module contains a suite of unit tests that are updated with any changes to the code. Sub-Modules should also have their own test suites.
 See the [sapphire testing documentation](http://doc.silverstripe.org/sapphire/en/topics/testing/index) for setup information etc.
 See also: [http://www.phpunit.de/manual/3.5/en/index.html](http://www.phpunit.de/manual/3.5/en/index.html)
@@ -20,8 +19,12 @@ To run all ecommerce tests visit yoursite/dev/ecommerce and click the "Run all e
 
 **Note:** Be aware that your configuration in _config.php may affect your test results.
 
+### Writing Tests
 
-#### Tests that have/will be written
+The products created by the ecommerce.yml file are all in draft form (unpublished). You need to publish products if you wish to test
+functionality that involves adding products to the cart etc. 
+
+### Tests that have/will be written
 
 [Here](http://code.google.com/p/silverstripe-ecommerce/source/browse/?r=1000#svn%2Ftrunk%2Ftests) are some historic test classes that could be referenced when writing them.
 
@@ -30,7 +33,7 @@ To run all ecommerce tests visit yoursite/dev/ecommerce and click the "Run all e
   - remove / removeall
   - set quantity
   - clear cart
- - ShoppingCart_Controller
+ - ShoppingCartController
   - test all links
  - EcommerceRole (Member)
  - Order
