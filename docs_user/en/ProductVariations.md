@@ -23,16 +23,27 @@ Before you create a product variation, you should first create a some attributes
 to choose from.
 
  1. Create Attribute Types
+ 
   * In the CMS, select the product you wish to edit.
   * Find the 'Content > Variations' tab for your product. 
   * Click the "Add Product Attribute Type" link in the "Variation Attribute Types" table.
   * Give the new attribute type a name (eg: "Shoe Size") and label (eg: "Size"). The 'label' is used on the front-end of the website.
   * Click 'Save'
+  
  2. Assign attribute types to the product
+ 
   * Check the newly created attribute type in the 'Variation Attribute Types' table.
   * Save and publish the product page.
   * Note that you should save the product after checking each attribute type. The attribute types may not be set otherwise.
+  
  3. Create Attribute Values
+ 
+  * Click the product attribute type edit icon.
+  * Switch to the 'Values' tab.
+  * Fill out 'Value' and 'Sort' table as required.
+ 
+ Note, you can also manage product attribute types and values in the "Products" section:
+ 
   * Switch to the 'Products' section of the SilverStripe CMS.
   * Choose 'Product Attribute Type' from the 'Search for:' drop-down list on the left.
   * Find and click on the attribute type you want to add values to.
