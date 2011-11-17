@@ -21,8 +21,16 @@ class ProductAttributeType extends DataObject{
 
 	function getCMSFields(){
 		$fields = parent::getCMSFields();
-		//TODO: make this a really fast editing interface. Table list field??
-		//$fields->removeFieldFromTab('Root.Values','Values');
+		$fields->removeFieldFromTab('Root.Values','Values');
+		$fieldList = array(
+			'Value' => 'Value',
+			'Sort' => 'Sort'
+		);
+		$fieldTypes = array(
+			'Value' => 'TextField',
+			'Sort' => 'TextField'
+		);
+		$fields->addFieldToTab("Root.Values", new TableField("Values", "ProductAttributeValue",$fieldList,$fieldTypes));
 		return $fields;
 	}
 
@@ -40,10 +48,8 @@ class ProductAttributeType extends DataObject{
 	}
 
 	function addValues(array $values){
-
 		$avalues = $this->convertArrayToValues($values);
 		$this->Values()->addMany($avalues);
-
 	}
 
 	function convertArrayToValues(array $values){
