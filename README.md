@@ -1,19 +1,17 @@
-###############################################
-Ecommerce Module
-###############################################
+# SilverStripe Shop Module
 
 Maintainer Contact
 -----------------------------------------------
-see https://code.google.com/p/silverstripe-ecommerce/
+see https://github.com/burnbright/silverstripe-shop
 
 Requirements
 -----------------------------------------------
+SilverStripe 2.4+
 Payment Module 0.3+
-Sapphire 2.4+
 
 Documentation
 -----------------------------------------------
-see https://code.google.com/p/silverstripe-ecommerce/
+see http://ecommerce-demo.burnbright.co.nz/docs
 
 Installation Instructions
 -----------------------------------------------
