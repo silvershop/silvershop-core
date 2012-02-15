@@ -52,6 +52,9 @@ class ProductOrderItemTest extends FunctionalTest {
 	function testProductVersionDoesNotExist(){
 
 		$currentorder = ShoppingCart::current_order();
+		
+		$productSocks = $this->objFromFixture('Product', 'socks');
+		
 		$brokenitem = new Product_OrderItem(
 			array(
 				"ProductID" => $productSocks->ID,
