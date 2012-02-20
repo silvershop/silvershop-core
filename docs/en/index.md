@@ -1,11 +1,16 @@
-for developers
-=====
+# for developers
+
+The SilverStripe shop module is a bare-bones product catalog / shopping cart solution.
+Add it as a shop component of a website, or use as a full ecommerce website solution.
+
+Customisation is left to the developer, similar to how the SilverStripe CMS is customised.
+There is little in the way of online web-interface based configuration, tweaking and setup.
+This has been left for the store owner to collaborate with their developer. 
 
 ## Contents
 
-* [Introduction](Introduction)
-* [Installation](Installation) - requirements, instructions
-* [Configuring & Customising](Customising)
+* [Installation & Configuration](Installation) - requirements, instructions
+* [Customising](Customising)
  * Shipping and Tax Calculation
  * Emails
  * Sub-modules - stock, discounts ...
@@ -23,10 +28,10 @@ for developers
  
 ## External Links
 
-* [SilverStripe eCommerce project on Google Code](http://code.google.com/p/silverstripe-ecommerce/)
-* [API Docs](http://www.incharge.co.uk/ss-ecommerce-doc/)
-* [Demo 1](http://ecommerce-demo.burnbright.co.nz/)
-* [Silverstripe Forums](http://silverstripe.org/e-commerce-module-forum/)
-* [User Documetation](http://ecommerce-demo.burnbright.co.nz/docs/user)
-
-* [Ohloh](http://www.ohloh.net/p/silverstripe-ecommerce)
+* [Demo](http://demo.ss-shop.org/)
+* [Project Homepage](http://ss-shop.org/)
+* [GitHub](http://github.com/burnbright/silverstripe-shop)
+* [API Docs](http://api.ss-shop.org/)
+* [Developer Documetation](http://demo.ss-shop.org/docs/developer)
+* [User Documetation](http://demo.ss-shop.org/docs/user)
+* [Forum](http://silverstripe.org/e-commerce-module-forum/)

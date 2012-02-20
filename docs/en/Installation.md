@@ -1,31 +1,28 @@
 # Installation
 
-
-Assuming you have a SilverStripe 2.4 installation set up already:
+Assuming you have a [SilverStripe 2.4 installation](http://doc.silverstripe.org/sapphire/en/2.4/installation/) set up already:
 
  * Put a copy of the eCommerce code into your site directory. The directory must be called 'ecommerce' for some links to work properly.
  * Also get a copy of the [http://silverstripe.org/payment-module/ Payment module], this is a requirement of eCommerce. Make sure you get the right version of the Payment Module - currently this is /branches/0.3
  * Run mysite/db/build?flush=1
 
-[SilverStripe install instructions](http://doc.silverstripe.org/installation)
+## Configuration Options
 
-## Configuration options
+The example_config.php file gives an exaustive list of the possible configuration options within the shop module.
 
-carefully review all _config and README files for more information
+## Testing / Development Environment
+
+Please note the tools accessabile via [yoursite]/dev/ecommerce.
+
+### Debugging
+
+If you are wanting to use a debugger tool, you'll probably need to make sure you have an index.php file, which can be found in the
+SilverStripe installer. Point your debugger to use index.php, as it likley wont be able to handle using htaccess configurations.
 
 
-## Setting up shipping and tax calculation
-
-...
-
-
-
-## Testing environment
-
-### EMmails
+### EMails
 
 To catch local emails, you either need to set up a local dummy SMTP server, or...
 
-If you run windows, you can run the "Antix SMTP Server For Developers", and open the emails in your preferred email client.
-Mac...
-Linux...
+ * Windows - you can run the "Antix SMTP Server For Developers", and open the emails in your preferred email client.
+ * Linux,Mac - pipe emails to a custom php script, such as [this one](http://blogs.bigfish.tv/adam/2009/12/03/setup-a-testing-mail-server-using-php-on-mac-os-x/).
