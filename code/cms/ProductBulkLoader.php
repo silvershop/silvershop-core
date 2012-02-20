@@ -9,6 +9,7 @@
  * eg: Color: red, green, blue , yellow
  * up to 6 other variation columns can be specified by adding a number to the end, eg Variation2,$Variation3
  * 
+ * @package shop
  */
 
 class ProductBulkLoader extends CsvBulkLoader{

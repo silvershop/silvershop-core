@@ -3,7 +3,7 @@
  * Data class that keeps a log of a single
  * status of an order.
  *
- * @package ecommerce
+ * @package shop
  */
 class OrderStatusLog extends DataObject {
 

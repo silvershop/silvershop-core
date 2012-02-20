@@ -5,7 +5,7 @@
  * but also can include references to other information such as
  * product attributes like colour, size, or type.
  *
- * @package ecommerce
+ * @package shop
  */
 class OrderItem extends OrderAttribute {
 

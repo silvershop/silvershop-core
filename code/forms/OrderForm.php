@@ -5,7 +5,7 @@
 	*
 	* @see CheckoutPage
 	*
-	* @package ecommerce
+	* @package shop
 	*/
 class OrderForm extends Form {
 

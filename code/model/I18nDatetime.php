@@ -2,7 +2,7 @@
 /**
  * provides I18n formating
  * 
- * @package ecommerce
+ * @package shop
  */
 class I18nDatetime extends SS_Datetime{
 

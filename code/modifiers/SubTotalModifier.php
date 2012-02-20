@@ -1,7 +1,7 @@
 <?php
 /**
  * SubTotal modifier provides a way to display subtotal within the list of modifiers.
- * @package ecommerce
+ * @package shop
  */
 class SubTotalModifier extends OrderModifier {
 	

@@ -2,7 +2,7 @@
 /**
  * Test {@link Product}
  * 
- * @package ecommerce
+ * @package shop
  */
 class ProductTest extends FunctionalTest {
 	

@@ -5,7 +5,7 @@
  * information about what products are in a user's
  * cart on the site.
  *
- * @package ecommerce
+ * @package shop
  */
 class ShoppingCart extends Controller {
 

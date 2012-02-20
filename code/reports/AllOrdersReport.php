@@ -3,7 +3,7 @@
  * An extension to {@link SSReport} that allows a user
  * to view all Order instances in the system.
  *
- * @package ecommerce
+ * @package shop
  */
 class AllOrdersReport extends SS_Report {
 

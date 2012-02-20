@@ -5,7 +5,7 @@
  * Currently there are reports to show products flagged as 'FeatuedProduct',
  * as well as a report on all products within the system.
  *
- * @package ecommerce
+ * @package shop
  */
 class EcommerceSideReport_FeaturedProducts extends SS_Report {
 

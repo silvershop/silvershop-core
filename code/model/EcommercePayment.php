@@ -3,7 +3,7 @@
  * Customisations to {@link Payment} specifically
  * for the ecommerce module.
  *
- * @package ecommerce
+ * @package shop
  */
 class EcommercePayment extends DataObjectDecorator {
 	

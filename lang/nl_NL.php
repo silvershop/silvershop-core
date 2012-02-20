@@ -2,7 +2,7 @@
 
 /**
  * Dutch (Netherlands) language pack
- * @package modules: ecommerce
+ * @package shop
  * @subpackage i18n
  */
 

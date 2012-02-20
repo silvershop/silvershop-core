@@ -1,7 +1,7 @@
 <?php
 /**
  * ExpiryDate field, contains validation and formspec for expirydate fields.
- * @package forms
+ * @package shop
  * @subpackage fields-formattedinput
  */
 class ExpiryDateField extends TextField {

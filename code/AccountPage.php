@@ -3,7 +3,7 @@
  * Account page shows order history and a form to allow
  * the member to edit his/her details.
  *
- * @package ecommerce
+ * @package shop
  */
 class AccountPage extends Page {
 

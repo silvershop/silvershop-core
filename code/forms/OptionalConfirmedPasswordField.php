@@ -2,7 +2,7 @@
 /**
  * Password input field.
  * @author nicolaas[at]sunnysideup.co.nz
- * @package forms
+ * @package shop
  */
 
 class OptionalConfirmedPasswordField extends ConfirmedPasswordField {

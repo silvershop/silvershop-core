@@ -24,7 +24,7 @@
  * @see OrderModifier
  * @see CheckoutPage_Controller->ModifierForms()
  *
- * @package ecommerce
+ * @package shop
  */
 class CheckoutPage extends Page {
 

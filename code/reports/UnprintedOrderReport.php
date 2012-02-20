@@ -5,7 +5,7 @@
  * are not printed. {@link UnprintedOrderReport->getReportField()}
  * outlines the logic for what orders are considered to be "unprinted".
  *
- * @package ecommerce
+ * @package shop
  */
 class UnprintedOrderReport extends SS_Report {
 

@@ -3,7 +3,7 @@
   * ShopAccountForm allows shop members to update
   * their details with the shop.
   *
-  * @package ecommerce
+  * @package shop
   */
 class ShopAccountForm extends Form {
 

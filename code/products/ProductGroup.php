@@ -3,7 +3,7 @@
   * Product Group is a 'holder' for Products within the CMS
   * It contains functions for versioning child products
   *
-  * @package ecommerce
+  * @package shop
   */
 class ProductGroup extends Page {
 

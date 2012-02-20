@@ -4,7 +4,7 @@
  * @see OrderItem
  * @see OrderModifier
  *
- * @package ecommerce
+ * @package shop
  */
 class OrderAttribute extends DataObject {
 

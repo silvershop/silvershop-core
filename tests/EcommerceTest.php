@@ -2,7 +2,7 @@
 /**
  * High level tests of the whole ecommerce module.
  *
- * @package ecommerce
+ * @package shop
  * @subpackage tests
  */
 class EcommerceTest extends FunctionalTest {

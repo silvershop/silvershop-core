@@ -2,7 +2,7 @@
 
 /**
  * Norwegian Bokmal (Norway) language pack
- * @package modules: ecommerce
+ * @package shop
  * @subpackage i18n
  */
 

@@ -2,7 +2,7 @@
 /**
  * @todo How does this class work in relation to Product?
  *
- * @package ecommerce
+ * @package shop
  */
 class ProductVariation extends DataObject {
 

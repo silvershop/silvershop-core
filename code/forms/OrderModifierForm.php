@@ -5,7 +5,7 @@
  *
  * @see OrderModifier
  *
- * @package ecommerce
+ * @package shop
  */
 class OrderModifierForm extends Form {
 	/*

@@ -2,7 +2,7 @@
 
 /**
  * Arabic (Saudi Arabia) language pack
- * @package modules: ecommerce
+ * @package shop
  * @subpackage i18n
  */
 

@@ -10,7 +10,7 @@
  * eCommerce platform. This means you can add an instance
  * of this page type to the shopping cart.
  *
- * @package ecommerce
+ * @package shop
  */
 class Product extends Page {
 

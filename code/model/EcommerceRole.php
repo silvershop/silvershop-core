@@ -3,7 +3,7 @@
  * EcommerceRole provides customisations to the {@link Member}
  * class specifically for this ecommerce module.
  *
- * @package ecommerce
+ * @package shop
  */
 class EcommerceRole extends DataObjectDecorator {
 

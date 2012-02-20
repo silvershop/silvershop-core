@@ -4,7 +4,7 @@
  * handling the additional charges or deductions of
  * an order.
  *
- * @package ecommerce
+ * @package shop
  */
 class OrderModifier extends OrderAttribute {
 

@@ -6,7 +6,7 @@
  * ASSUMPTION: The total order weight can be at maximum the last item
  * in the $shippingCosts array.
  *
- * @package ecommerce
+ * @package shop
  */
 class WeightShippingModifier extends OrderModifier {
 

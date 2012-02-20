@@ -4,7 +4,7 @@
   *
   * @see CheckoutPage
   *
-  * @package ecommerce
+  * @package shop
   **/
 
 class OrderFormWithoutShippingAddress extends OrderForm {

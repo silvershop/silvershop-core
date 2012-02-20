@@ -3,7 +3,7 @@
  * The order class is a databound object for handling Orders
  * within SilverStripe.
  *
- * @package ecommerce
+ * @package shop
  */
 class Order extends DataObject {
 

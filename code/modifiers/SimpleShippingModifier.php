@@ -7,7 +7,7 @@
  * If you require more advanced shipping control, we suggest
  * that you create your own subclass of {@link OrderModifier}
  *
- * @package ecommerce
+ * @package shop
  */
 class SimpleShippingModifier extends OrderModifier {
 

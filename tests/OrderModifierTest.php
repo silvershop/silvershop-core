@@ -1,6 +1,6 @@
 <?php
 /**
- * @package ecommerce
+ * @package shop
  * @subpackage tests
  */
 

@@ -14,7 +14,7 @@
  * 	FlatTaxModifier::set_tax(0.15, 'GST', false);
  * </code>
  *
- * @package ecommerce
+ * @package shop
  */
 class FlatTaxModifier extends OrderModifier {
 

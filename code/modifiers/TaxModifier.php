@@ -15,7 +15,7 @@
  * 	TaxModifier::set_for_country('UK', 0.175, 'VAT', 'exclusive');
  * </code>
  *
- * @package ecommerce
+ * @package shop
  */
 class TaxModifier extends OrderModifier {
 

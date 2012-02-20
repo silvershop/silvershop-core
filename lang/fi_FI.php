@@ -2,7 +2,7 @@
 
 /**
  * Finnish (Finland) language pack
- * @package modules: ecommerce
+ * @package shop
  * @subpackage i18n
  */
 
