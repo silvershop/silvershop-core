@@ -6,6 +6,7 @@
  * outlines the logic for what orders are considered to be "unprinted".
  *
  * @package shop
+ * @subpackage reports
  */
 class UnprintedOrderReport extends SS_Report {
 

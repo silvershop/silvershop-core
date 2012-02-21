@@ -2,7 +2,7 @@
 
 /**
  * CartWidget displays the current contents of the user's cart.
- *
+ * @subpackage widgets
  */
 
 class CartWidget extends Widget{

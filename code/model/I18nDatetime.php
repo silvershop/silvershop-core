@@ -3,6 +3,7 @@
  * provides I18n formating
  * 
  * @package shop
+ * @subpackage i18n
  */
 class I18nDatetime extends SS_Datetime{
 

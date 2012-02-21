@@ -10,6 +10,7 @@
  * up to 6 other variation columns can be specified by adding a number to the end, eg Variation2,$Variation3
  * 
  * @package shop
+ * @subpackage cms
  */
 
 class ProductBulkLoader extends CsvBulkLoader{

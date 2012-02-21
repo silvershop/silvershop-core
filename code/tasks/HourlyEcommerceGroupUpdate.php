@@ -1,9 +1,9 @@
 <?php
 
 /**
- *@author nicolaas [at] sunnysideup . co . nz
- *@description: adds all customers to a customer group
- *to action: use HourlyEcommerceGroupUpdate::add_members_to_customer_group OR cron job to http://www.mysite.com/silverstripe/HourlyTask/
+ * @desc adds all customers to a customer group
+ * @todo use HourlyEcommerceGroupUpdate::add_members_to_customer_group OR cron job to http://www.mysite.com/silverstripe/HourlyTask/
+ * @subpackage: tasks
  **/
 
 class HourlyEcommerceGroupUpdate extends HourlyTask {
@@ -50,8 +50,4 @@ class HourlyEcommerceGroupUpdate extends HourlyTask {
 	function process() {
 		self::add_members_to_customer_group();
 	}
-
-
-
-
 }

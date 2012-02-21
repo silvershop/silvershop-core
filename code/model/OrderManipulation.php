@@ -2,6 +2,7 @@
 
 /**
  * Provides forms and processing to a controller for editing an order that has been previously placed.
+ * @package shop
  */
 
 class OrderManipulation extends Extension{

@@ -4,6 +4,7 @@
  * to view all Order instances in the system.
  *
  * @package shop
+ * @subpackage reports
  */
 class AllOrdersReport extends SS_Report {
 

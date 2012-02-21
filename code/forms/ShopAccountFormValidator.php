@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Validates the shop account form.
+ * @subpackage forms
+ */
 class ShopAccountFormValidator extends RequiredFields{
 
 	/**

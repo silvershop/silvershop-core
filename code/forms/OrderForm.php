@@ -1,12 +1,10 @@
 <?php
- /**
-	* Order form that allows a user to purchase their
-	* order items on the
-	*
-	* @see CheckoutPage
-	*
-	* @package shop
-	*/
+/**
+* Shows on the checkout page, when completing an order.
+*
+* @package shop
+* @subpackage forms
+*/
 class OrderForm extends Form {
 
 	//TODO: name these better so they can be understood

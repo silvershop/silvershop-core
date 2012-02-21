@@ -1,11 +1,12 @@
 <?php
-
 /**
- * @TODO What does this class do in relation to
+ * Base class for modifier forms.
+ * Provides a redirect back to the checkout page.
  *
  * @see OrderModifier
  *
  * @package shop
+ * @subpackage forms
  */
 class OrderModifierForm extends Form {
 	/*
@@ -26,7 +27,6 @@ class OrderModifierForm extends Form {
 		Director::redirect(CheckoutPage::find_link());
 		 
 	}
-
 	
 }
 

@@ -10,6 +10,7 @@
  * @see UnprintedOrderReport
  *
  * @package shop
+ * @subpackage reports
  */
 class OrderReport_Popup extends Controller {
 	

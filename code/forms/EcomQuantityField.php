@@ -2,6 +2,7 @@
 
 /**
  * A links-based field for increasing, decreasing and setting a order item quantity
+ * @subpackage forms
  */
 
 class EcomQuantityField extends ViewableData{

@@ -1,17 +1,15 @@
 <?php
 
 /**
- * @author Nicolaas [at] sunnysideup.co.nz
+ * Products and Groups Model Admin
+ * @subpackage cms
  **/
-
 class ProductsAndGroupsModelAdmin extends ModelAdmin {
 
 	static $menu_priority = 2;
 
 	public static $collection_controller_class = "ProductsAndGroupsModelAdmin_CollectionController";
-
 	public static $record_controller_class = "ProductsAndGroupsModelAdmin_RecordController";
-
 	public static $managed_models = array("Product", "ProductGroup","ProductVariation","ProductAttributeType");
 
 	public static function set_managed_models(array $array) {
@@ -29,14 +27,14 @@ class ProductsAndGroupsModelAdmin extends ModelAdmin {
 	);
 
 }
-//remove side forms
-class ProductsAndGroupsModelAdmin_CollectionController extends ModelAdmin_CollectionController {
 
-	//public function CreateForm() {return false;}
-	//public function ImportForm() {return false;}
+/**
+ * Removes the import form "Empty Before Import" option.
+ * @subpackage cms
+ */
+class ProductsAndGroupsModelAdmin_CollectionController extends ModelAdmin_CollectionController {
 	
 	 //note that these are called once for each $managed_models
-	
 	function ImportForm(){
 		$form = parent::ImportForm();
 		if($form){
@@ -46,27 +44,12 @@ class ProductsAndGroupsModelAdmin_CollectionController extends ModelAdmin_Collec
 		return $form;
 	}
 	
-	
-	//TODO: Half-started attempt at modifying the way products are deleted - they should be deleted from both stages
-	function ResultsForm($searchCriteria){
-		$form = parent::ResultsForm($searchCriteria);
-		if($tf = $form->Fields()->fieldByName($this->modelClass)){
-			/*$tf->actions['create'] = array(
-				'label' => 'delete',
-				'icon' => null,
-				'icon_disabled' => 'cms/images/test.gif',
-				'class' => 'testlink' 
-			);*/
-			
-			/*$tf->setPermissions(array(
-				'create'
-			));*/
-		}
-		return $form;
-	}
-	
 }
 
+/**
+ * Modifies the record controller to disable some actions.
+ * @subpackage cms
+ */
 class ProductsAndGroupsModelAdmin_RecordController extends ModelAdmin_RecordController{
 
 	protected static $actions_to_keep = array(
@@ -82,12 +65,12 @@ class ProductsAndGroupsModelAdmin_RecordController extends ModelAdmin_RecordCont
 		$form = parent::EditForm();
 		$oldActions = $form->Actions();
 		//in order of appearance
-		//$form->unsetActionByName("action_doDelete"); - USEFUL TO KEEP
+		//$form->unsetActionByName("action_doDelete");
 		$form->unsetActionByName("action_unpublish");
 		$form->unsetActionByName("action_delete");
 		$form->unsetActionByName("action_save");
 		$form->unsetActionByName("action_publish");
-		//$form->unsetActionByName("action_doSave"); - USEFUL TO KEEP
+		//$form->unsetActionByName("action_doSave");
 		$actions = $form->Actions();
 		$actions->push(new FormAction("doGoto", "go to page"));
 		$form->setActions($actions);
@@ -114,7 +97,6 @@ class ProductsAndGroupsModelAdmin_RecordController extends ModelAdmin_RecordCont
 	function doGoto($data, $form, $request) {
 		Director::redirect($this->currentRecord->Link());
 	}
-
 
 	function doDelete() {
 		user_error("this function has not been implemented yet", E_USER_NOTICE);

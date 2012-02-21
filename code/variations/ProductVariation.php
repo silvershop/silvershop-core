@@ -1,8 +1,12 @@
 <?php
 /**
- * @todo How does this class work in relation to Product?
+ * Product Variation
+ * Provides a means for specifying many variations on a product.
+ * Used in combination with ProductAttributes, such as color, size.
+ * A variation will specify one particular combination, such as red, and large.
  *
  * @package shop
+ * @subpackage variations
  */
 class ProductVariation extends DataObject {
 
@@ -146,6 +150,11 @@ class ProductVariation extends DataObject {
 	}
 }
 
+/**
+ * Product Variation - Order Item
+ * Connects a variation to an order, as a line in the order specifying the particular variation.
+ * @package variations
+ */
 class ProductVariation_OrderItem extends Product_OrderItem {
 
 	protected $_productVariationID;

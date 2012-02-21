@@ -5,6 +5,7 @@
  * an order.
  *
  * @package shop
+ * @subpackage modifiers
  */
 class OrderModifier extends OrderAttribute {
 

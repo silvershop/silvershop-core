@@ -7,6 +7,7 @@
  * in the $shippingCosts array.
  *
  * @package shop
+ * @subpackage modifiers
  */
 class WeightShippingModifier extends OrderModifier {
 

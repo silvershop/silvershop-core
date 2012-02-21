@@ -1,5 +1,10 @@
 <?php
-
+/**
+ * Producte Attribute Type
+ * Types of product attributes.
+ * eg: color, size, length
+ * @subpackage variations
+ */
 class ProductAttributeType extends DataObject{
 
 	static $db = array(

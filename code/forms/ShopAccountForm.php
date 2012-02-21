@@ -1,9 +1,9 @@
 <?php
  /**
-  * ShopAccountForm allows shop members to update
-  * their details with the shop.
+  * Allows shop members to update their details with the shop.
   *
   * @package shop
+  * @subpackage forms
   */
 class ShopAccountForm extends Form {
 
@@ -52,7 +52,6 @@ class ShopAccountForm extends Form {
 			$member->Password = ""; //prevents password field from being populated with encrypted password data 
 			$this->loadDataFrom($member);
 		}
-		
 		
 	}
 

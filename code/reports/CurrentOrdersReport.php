@@ -6,6 +6,7 @@
  * the detail on the logic for what "Current" means.
  *
  * @package shop
+ * @subpackage reports
  */
 class CurrentOrdersReport extends SS_Report {
 

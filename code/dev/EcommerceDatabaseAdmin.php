@@ -1,14 +1,15 @@
 <?php
-
+/**
+ * Provides a list of development tasks to perform.
+ * @package shop
+ * @subpackage dev
+ */
 class EcommerceDatabaseAdmin extends Controller{
 
-	static $url_handlers = array(
-		//'' => 'browse',
-	);
+	static $url_handlers = array();
 
 	static $allowed_actions = array(
 		'deleteproducts',
-
 	);
 
 	function init() {
@@ -45,7 +46,7 @@ class EcommerceDatabaseAdmin extends Controller{
 
 	public function Link($action = null) {
 		$action = ($action) ? $action : "";
-		return Controller::join_links(Director::absoluteBaseURL(), 'dev/ecommerce/'.$action);
+		return Controller::join_links(Director::absoluteBaseURL(), 'dev/'.$this->EcommerceFolder().'/'.$action);
 	}
 
 }

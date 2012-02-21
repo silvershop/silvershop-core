@@ -1,5 +1,8 @@
 <?php
-
+/**
+ * 
+ * @subpackage tasks
+ */
 class ProductVariationsFromAttributeCombinations extends CliController{
 
 	function process(){

@@ -15,6 +15,7 @@
  * </code>
  *
  * @package shop
+ * @subpackage modifiers
  */
 class FlatTaxModifier extends OrderModifier {
 

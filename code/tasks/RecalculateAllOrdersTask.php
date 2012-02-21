@@ -1,8 +1,9 @@
 <?php
 
 /**
- * Re runs all calculation functions on all orders so that database is populated with pre-calculated values.
- * @author Jeremy
+ * Recalculate All Orders
+ * Re-runs all calculation functions on all orders so that database is populated with pre-calculated values.
+ * @subpackage tasks
  */
 class RecalculateAllOrdersTask extends BuildTask {
 

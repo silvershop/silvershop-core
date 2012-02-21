@@ -1,14 +1,14 @@
 <?php
-
+/**
+ * Order administration interface, based on ModelAdmin
+ * @package shop
+ * @subpackage cms
+ */
 class StoreAdmin extends ModelAdmin{
 
 	static $url_segment = 'orders';
-
 	static $menu_title = 'Orders';
-
 	static $menu_priority = 1;
-
-	//static $url_priority = 50;
 
 	public static $managed_models = array(
 		'Order' => array('title' => 'Orders'),
@@ -17,12 +17,9 @@ class StoreAdmin extends ModelAdmin{
 		//'OrderItem',
 		//'OrderModifier'
 	);
-		public static function set_managed_models(array $array) {self::$managed_models = $array;}
-
+	public static function set_managed_models(array $array) {self::$managed_models = $array;}
 	public static $collection_controller_class = 'StoreAdmin_CollectionController';
-
 	public static $record_controller_class = 'StoreAdmin_RecordController';
-
 
 	function init() {
 		parent::init();
@@ -30,9 +27,11 @@ class StoreAdmin extends ModelAdmin{
 		Requirements::javascript(ECOMMERCE_DIR."/javascript/EcommerceModelAdminExtensions.js");
 	}
 
-
 }
 
+/**
+ * @subpackage cms
+ */
 class StoreAdmin_CollectionController extends ModelAdmin_CollectionController {
 
 	//public function CreateForm() {return false;}
@@ -55,7 +54,10 @@ class StoreAdmin_CollectionController extends ModelAdmin_CollectionController {
 
 }
 
-//remove delete action
+/**
+ * Removes delete action
+ * @subpackage cms
+ */
 class StoreAdmin_RecordController extends ModelAdmin_RecordController {
 
 	public function EditForm() {
@@ -84,8 +86,4 @@ class StoreAdmin_RecordController extends ModelAdmin_RecordController {
 		}
 		return $form;
 	}
-
-
-
-
 }

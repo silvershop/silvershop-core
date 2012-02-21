@@ -1,5 +1,10 @@
 <?php
-
+/**
+ * Cart Cleanup Task
+ * Removes all orders (carts) that are older than a specific number of days.
+ * @package shop
+ * @subpackage tasks
+ */
 class CartCleanupTask extends WeeklyTask{
 
 	static $cleardays = 90;

@@ -2,7 +2,7 @@
 /**
  * ExpiryDate field, contains validation and formspec for expirydate fields.
  * @package shop
- * @subpackage fields-formattedinput
+ * @subpackage forms
  */
 class ExpiryDateField extends TextField {
 

@@ -1,10 +1,9 @@
 <?php
 /**
- * Password input field.
- * @author nicolaas[at]sunnysideup.co.nz
+ * Password input field
  * @package shop
+ * @subpackage forms
  */
-
 class OptionalConfirmedPasswordField extends ConfirmedPasswordField {
 
 	function __construct($name, $title = null, $value = "", $form = null, $showOnClick = false, $titleConfirmField = null) {

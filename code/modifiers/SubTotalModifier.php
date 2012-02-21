@@ -2,6 +2,7 @@
 /**
  * SubTotal modifier provides a way to display subtotal within the list of modifiers.
  * @package shop
+ * @subpackage modifiers
  */
 class SubTotalModifier extends OrderModifier {
 	

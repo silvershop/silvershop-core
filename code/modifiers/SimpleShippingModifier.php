@@ -8,6 +8,7 @@
  * that you create your own subclass of {@link OrderModifier}
  *
  * @package shop
+ * @subpackage modifiers
  */
 class SimpleShippingModifier extends OrderModifier {
 

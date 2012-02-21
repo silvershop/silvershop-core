@@ -1,5 +1,9 @@
 <?php
-
+/**
+ * An extension for DevelopmentAdmin, to provide the sub-url /dev/shop
+ * @package shop
+ * @subpackage dev
+ */
 class EcommerceDevelopmentAdminDecorator extends Extension{
 
 	function ecommerce($request) {

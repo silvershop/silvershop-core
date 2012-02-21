@@ -1,5 +1,8 @@
 <?php
-
+/**
+ * 
+ * @subpackage variations
+ */
 class ProductVariationDecorator extends DataObjectDecorator{
 
 	function extraStatics(){
@@ -175,6 +178,10 @@ class ProductVariationDecorator extends DataObjectDecorator{
 
 }
 
+/**
+ * 
+ * @subpackage variations
+ */
 class ProductControllerVariationExtension extends Extension{
 
 	static $max_quantity = 50;

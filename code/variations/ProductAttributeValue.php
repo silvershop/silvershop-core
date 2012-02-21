@@ -1,4 +1,10 @@
 <?php
+/**
+ * Product Attribute Value
+ * The actual values for a type of product attribute.
+ * eg: red, green, blue... 12, 13, 15
+ * @subpackage variations
+ */
 class ProductAttributeValue extends DataObject{
 
 	static $db = array(
