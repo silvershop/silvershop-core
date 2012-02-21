@@ -19,13 +19,13 @@ Order::set_receipt_subject("Shop Sale Information #%d");
 Order::set_modifiers(array(),true);
 
 Order::set_table_overview_fields(array(
-		'ID' => 'Order No',
-		'Created' => 'Created',
-		'FirstName' => 'First Name',
-		'Surname' => 'Surname',
-		'Total' => 'Total',
-		'Status' => 'Status'
-	));
+	'ID' => 'Order No',
+	'Created' => 'Created',
+	'FirstName' => 'First Name',
+	'Surname' => 'Surname',
+	'Total' => 'Total',
+	'Status' => 'Status'
+));
 Order::set_maximum_ignorable_sales_payments_difference(0.01);
 Order::set_order_id_start_number(0);
 
@@ -51,11 +51,6 @@ ProductGroup::set_sort_options( array('Title' => 'Alphabetical','Price' => 'Lowe
 
 // * * * CHECKOUT
 ExpiryDateField::set_short_months(true);
-OrderFormWithoutShippingAddress::set_fixed_country_code(null);
-OrderFormWithoutShippingAddress::set_postal_code_url("http://www.nzpost.co.nz/Cultures/en-NZ/OnlineTools/PostCodeFinder");
-OrderFormWithoutShippingAddress::set_postal_code_label("find postcode");
-OrderFormWithoutShippingAddress::set_login_invite_alternative_text('Please <a href="Security/login?BackURL=/">log in now</a> to retrieve your account details or create an account below.');
-
 // * * * MEMBER
 EcommerceRole::set_group_name("Shop Customers");
 

@@ -49,10 +49,6 @@ ProductGroup::set_sort_options( array('Title' => 'Alphabetical','Price' => 'Lowe
 
 // * * * CHECKOUT
 ExpiryDateField::set_short_months(true); //uses short months (e.g. Jan instead of january) for credit card expiry date.
-OrderFormWithoutShippingAddress::set_fixed_country_code("NZ"); //country is fixed
-OrderFormWithoutShippingAddress::set_postal_code_url("http://maps.google.com"); //link that can be used to check postal code
-OrderFormWithoutShippingAddress::set_postal_code_label("click here to check your postal code"); //label for link that can be used to check postal code
-OrderFormWithoutShippingAddress::set_login_invite_alternative_text('<a href="http://www.mysite.com/Security/login/?BackURL=">If you are a member then please log in.</a>'); //label for link that can be used to check postal code
 
 // * * * MEMBER
 EcommerceRole::set_group_name("Customers");
