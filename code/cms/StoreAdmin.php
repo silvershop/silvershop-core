@@ -30,6 +30,7 @@ class StoreAdmin extends ModelAdmin{
 }
 
 /**
+ * @package shop
  * @subpackage cms
  */
 class StoreAdmin_CollectionController extends ModelAdmin_CollectionController {
@@ -56,6 +57,7 @@ class StoreAdmin_CollectionController extends ModelAdmin_CollectionController {
 
 /**
  * Removes delete action
+ * @package shop
  * @subpackage cms
  */
 class StoreAdmin_RecordController extends ModelAdmin_RecordController {

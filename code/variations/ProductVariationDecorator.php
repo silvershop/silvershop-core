@@ -1,6 +1,8 @@
 <?php
 /**
+ * Adds extra fields and relationships to Products.
  * 
+ * @package shop
  * @subpackage variations
  */
 class ProductVariationDecorator extends DataObjectDecorator{

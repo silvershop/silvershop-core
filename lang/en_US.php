@@ -1,11 +1,17 @@
 <?php
 
+/**
+* English (United States) language pack
+* @package shop
+* @subpackage i18n
+*/
+
 global $lang;
 
 $lang['en_US']['AccountPage']['Message'] = 'You\'ll need to login before you can access the account page. If you are not registered, you won\'t be able to access it until you make your first order, otherwise please enter your details below.';
 $lang['en_US']['AccountPage']['NOPAGE'] = 'No AccountPage on this site - please create one !';
 $lang['en_US']['AccountPage']['PLURALNAME'] = array(
-	'Account Pags',
+	'Account Pages',
 	50,
 	'Pural name of the object, used in dropdowns and to generally identify a collection of this object in the interface'
 );
@@ -48,7 +54,7 @@ $lang['en_US']['Cart.ss']['SUBTOTAL'] = 'Subtotal';
 $lang['en_US']['Cart.ss']['TOTAL'] = 'Total';
 $lang['en_US']['CheckoutPage']['NOPAGE'] = 'No CheckoutPage on this site - please create one!';
 $lang['en_US']['CheckoutPage']['PLURALNAME'] = array(
-	'Checkout Pags',
+	'Checkout Pages',
 	50,
 	'Pural name of the object, used in dropdowns and to generally identify a collection of this object in the interface'
 );

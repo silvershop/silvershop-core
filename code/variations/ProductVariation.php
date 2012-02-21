@@ -153,7 +153,8 @@ class ProductVariation extends DataObject {
 /**
  * Product Variation - Order Item
  * Connects a variation to an order, as a line in the order specifying the particular variation.
- * @package variations
+ * @package shop
+ * @subpackage variations
  */
 class ProductVariation_OrderItem extends Product_OrderItem {
 

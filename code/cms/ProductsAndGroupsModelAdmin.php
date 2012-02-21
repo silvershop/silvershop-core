@@ -2,6 +2,7 @@
 
 /**
  * Products and Groups Model Admin
+ * @package shop
  * @subpackage cms
  **/
 class ProductsAndGroupsModelAdmin extends ModelAdmin {
@@ -30,6 +31,7 @@ class ProductsAndGroupsModelAdmin extends ModelAdmin {
 
 /**
  * Removes the import form "Empty Before Import" option.
+ * @package shop
  * @subpackage cms
  */
 class ProductsAndGroupsModelAdmin_CollectionController extends ModelAdmin_CollectionController {
@@ -48,6 +50,7 @@ class ProductsAndGroupsModelAdmin_CollectionController extends ModelAdmin_Collec
 
 /**
  * Modifies the record controller to disable some actions.
+ * @package shop
  * @subpackage cms
  */
 class ProductsAndGroupsModelAdmin_RecordController extends ModelAdmin_RecordController{

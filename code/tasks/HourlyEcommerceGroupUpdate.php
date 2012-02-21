@@ -1,9 +1,10 @@
 <?php
 
 /**
- * @desc adds all customers to a customer group
+ * Adds all customers to a customer group.
  * @todo use HourlyEcommerceGroupUpdate::add_members_to_customer_group OR cron job to http://www.mysite.com/silverstripe/HourlyTask/
- * @subpackage: tasks
+ * @package shop
+ * @subpackage tasks
  **/
 
 class HourlyEcommerceGroupUpdate extends HourlyTask {
