@@ -60,10 +60,10 @@ class CheckoutPage extends Page {
 	 */
 	static function find_link($urlSegment = false, $action = null, $id = null) {
 		if(!$page = DataObject::get_one('CheckoutPage')) {
-			user_error('No CheckoutPage was found. Please create one in the CMS!', E_USER_ERROR);
+			return Controller::join_links(Director::baseURL(),CheckoutPage_Controller::$url_segment);
 		}
 		$id = ($id)? "/".$id : "";
-		return ($urlSegment) ? $page->URLSegment : $page->Link($action).$id;
+		return ($urlSegment) ? $page->URLSegment : Controller::join_links($page->Link($action),$id);
 	}
 
 	function canCreate() {
@@ -112,7 +112,7 @@ class CheckoutPage extends Page {
 
 		if(!$page = DataObject::get_one('CheckoutPage')) {
 			$page = new CheckoutPage();
-			$page->Title = 'Checkout';
+			$page->Title = _t('CheckoutPage.Title',"Checkout");
 			$page->Content = '<p>This is the checkout page. The order summary and order form appear below this content.</p>';
 			$page->PurchaseComplete = '<p>Your purchase is complete.</p>';
 			$page->ChequeMessage = '<p>Please note: Your goods will not be dispatched until we receive your payment.</p>';
@@ -134,6 +134,8 @@ class CheckoutPage extends Page {
  	}
 }
 class CheckoutPage_Controller extends Page_Controller {
+	
+	static $url_segment = "checkout";
 
 	public static $extensions = array(
 		'OrderManipulation'
@@ -145,9 +147,10 @@ class CheckoutPage_Controller extends Page_Controller {
 		'OrderFormWithShippingAddress',
 		'finish'
 	);
-
-	public function init() {
-		parent::init();
+	
+	public function Title(){
+		if($this->Title) return $this->Title;
+		return _t('CheckoutPage.TITLE',"Checkout");
 	}
 
 	public function index(){
