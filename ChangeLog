@@ -2,6 +2,7 @@ Ecommerce ChangeLog
 
 0.8.3
 	* Added in CalculatedTotal to OrderAttribute for the purpose of permanantly storing old values, and helping with order read speed.
+	* Made VariaionForm the default way to add product variations.
 
 0.8.2
 	* Modified order form to allow orders to be placed without becoming a member in the process.
