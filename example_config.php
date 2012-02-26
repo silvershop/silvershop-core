@@ -7,18 +7,18 @@
  * copy the lines below to your mysite/_config.php file and set as required.
  */
 
-// * * * NON-ECOMMERCE SETTINGS
+//NON-ECOMMERCE SETTINGS
 Payment::set_site_currency('NZD');
 Geoip::$default_country_code = "NZ";
 i18n::set_locale('en_NZ');
 setlocale (LC_TIME, 'en_NZ@dollar', 'en_NZ.UTF-8', 'en_NZ', 'nz', 'nz');
 
-// * * * ECOMMERCE I18N SETTINGS
+//ECOMMERCE I18N SETTINGS
 EcommerceCurrency::setDecimalDelimiter('.'); //for Money formating
 EcommerceCurrency::setThousandDelimiter(','); //for Money formating
 Object::useCustomClass('SS_Datetime','I18nDatetime', true);
 
-// * * * SHOPPING CART AND ORDER
+//SHOPPING CART AND ORDER
 Order::set_email("sales@myshop.com");
 Order::set_receipt_subject("Thank you for your order at www.myshop.com - Order #%d");
 Order::set_modifiers(array("FlatTaxModifier", "SimpleShippingModifier"));
@@ -38,7 +38,7 @@ OrderForm::set_force_membership(); //all users must become members if true, or w
 OrderManipulation::set_allow_cancelling(); //shows a cancel button on the order page
 OrderManipulation::set_allow_paying(); //shows a payment form
 
-// * * * PRODUCTS
+//PRODUCTS
 ProductsAndGroupsModelAdmin::set_managed_models(array("Product", "ProductGroup","ProductVariation"));
 Product_Image::set_thumbnail_size(140, 100);
 Product_Image::set_content_image_width(200);
@@ -47,17 +47,17 @@ ProductGroup::set_include_child_groups(true);
 ProductGroup::set_must_have_price(true);
 ProductGroup::set_sort_options( array('Title' => 'Alphabetical','Price' => 'Lowest Price'));
 
-// * * * CHECKOUT
+//CHECKOUT
 ExpiryDateField::set_short_months(true); //uses short months (e.g. Jan instead of january) for credit card expiry date.
 
-// * * * MEMBER
+//MEMBER
 EcommerceRole::set_group_name("Customers");
 
-// * * * MODIFIERS
+//MODIFIERS
 FlatTaxModifier::set_tax("0.15", "GST", $exclusive = false);
 SimpleShippingModifier::set_default_charge(10);
 SimpleShippingModifier::set_charges_for_countries(array('US' => 10,'NZ' => 5));
 TaxModifier::set_for_country($country = "NZ", $rate = 0.15, $name = "GST", $inclexcl = "inclusive");
 
-// * * * HELP
+//HELP
 Product::set_global_allow_purchase(false); //stops the sale of all products

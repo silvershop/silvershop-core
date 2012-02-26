@@ -82,15 +82,12 @@ class CheckoutPage extends Page {
 		if(!$page = DataObject::get_one('CheckoutPage')) {
 			user_error('No CheckoutPage was found. Please create one in the CMS!', E_USER_ERROR);
 		}
-
 		return ($urlSegment ? $page->URLSegment . '/' : $page->Link()) . $orderID;
 	}
 
 	function getCMSFields() {
 		$fields = parent::getCMSFields();
-
 		$fields->addFieldToTab('Root.Content.TermsAndConditions', new TreeDropdownField('TermsPageID', 'Terms and Conditions Page', 'SiteTree'));
-
 		$fields->addFieldsToTab('Root.Content.Messages', array(
 			new HtmlEditorField('AlreadyCompletedMessage', 'Already Completed - shown when the customer tries to checkout an already completed order', $row = 4),
 			new HtmlEditorField('NonExistingOrderMessage', 'Non-existing Order - shown when the customer tries ', $row = 4),
@@ -98,7 +95,6 @@ class CheckoutPage extends Page {
 			new HtmlEditorField('PurchaseComplete', 'Purchase Complete - included in reciept email, after the customer submits the checkout ', $row = 4),
 			new HtmlEditorField('ChequeMessage', 'Cheque Message - shown when a customer selects a delayed payment option (such as a cheque payment) ', $rows = 4)
 		));
-
 		return $fields;
 	}
 
@@ -243,19 +239,6 @@ class CheckoutPage_Controller extends Page_Controller {
 		if($data = Session::get("FormInfo.{$form->FormName()}.data")){
 			$form->loadDataFrom($data);
 		}
-
-		return $form;
-	}
-
-	function OrderFormWithoutShippingAddress() {
-		$form = new OrderFormWithoutShippingAddress($this, 'OrderFormWithoutShippingAddress');
-		$this->data()->extend('OrderFormWithoutShippingAddress',$form);
-		return $form;
-	}
-
-	function OrderFormWithShippingAddress() {
-		$form = new OrderFormWithShippingAddress($this, 'OrderFormWithShippingAddress');
-		$this->data()->extend('OrderFormWithShippingAddress',$form);
 		return $form;
 	}
 
@@ -277,7 +260,6 @@ class CheckoutPage_Controller extends Page_Controller {
 		Requirements::themedCSS('Order');
 		//TODO: make redirecting to account page optional
 		//TODO: could all this be moved to some central location where it can be used by other parts of the system?
-
 		$order = $this->orderfromid(); //stored in OrderManipulation extension
 
 		$message = $mtype = null;

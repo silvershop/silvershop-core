@@ -1,5 +1,7 @@
 <?php
 /**
+ * A single line in an order. This could be an item, or a subtotal line.
+ * 
  * @see OrderModifier
  * @see OrderItem
  * @see OrderModifier

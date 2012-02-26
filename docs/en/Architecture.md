@@ -1,5 +1,4 @@
-Architecture
-=============
+# Architecture
 
 [ShoppingCart](ShoppingCart) provides the API to add and remove items from the current order. Once an order is processed on the CheckoutPage, it is no longer in the cart.
 

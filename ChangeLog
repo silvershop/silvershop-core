@@ -1,12 +1,8 @@
-Shop ChangeLog
+Ecommerce ChangeLog
 
 0.8.3
-	* Renamed module to 'shop', and changed all 'ecommerce' directory references to 'shop', in line with new name for the module.
 	* Added in CalculatedTotal to OrderAttribute for the purpose of permanantly storing old values, and helping with order read speed.
 	* Made VariaionForm the default way to add product variations.
-	* ENHANCEMENT: Allowed checkout page to not require a page model.
-	* updated documentation to include packages, and sub packages for phpdoc
-	* Removed OrderFormWithoutShippingAddress
 
 0.8.2
 	* Modified order form to allow orders to be placed without becoming a member in the process.

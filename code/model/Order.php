@@ -65,11 +65,9 @@ class Order extends DataObject {
 	);
 
 	public static $many_many = array();
-
 	public static $belongs_many_many = array();
-
 	public static $defaults = array();
-
+	
 	public static $default_sort = "\"Created\" DESC";
 
 	public static $casting = array(

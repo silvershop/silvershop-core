@@ -1,21 +1,31 @@
 # Order Modifiers
 
-## What are modifiers?
+A cart holds two basic items: 
 
-Modifiers provide an abstract way to add additional (non-product) lines to your order, for things things like:
-bonus products, tax, delivery charges, staff discounts, etc...
+ * __Items__ - the actual product lines in an order, which usually contain a quantity and unit price.
+ * __Modifiers__ - additional lines that specify costs or deductions on the items subtotal.
 
-A cart holds two basic items: Order Items and Order Modifiers. The former are the actual products.
-The latter are items that add / change / deduct / do whatever to the order.  One of the main differences 
-between Order Items and Modifiers is that an Order Item has a quantity associated to it. 
+They provide an abstract way to add additional (non-product) lines to your order.
 
-## How to add a modifier
+Example modifiers:
 
-  * create a new class "MyModifierOne" that extends the OrderModifier class
-  * use Order::set_modifiers(array("MyModifierOne", "MyModifierTwo")); in your _config file to "include"
-  the modifier in all carts. 
+ * Tax Charge - such as GST, VAT
+ * Delivery Charges - postage provider
+ * Automatic Discounts - eg save 50% in March
+ * Coupon Discounts - requiring the use of a code
+ * Credit Note Usage - using funds available on account
+ * Payment Gateway - passing on the cost
+ 
+Things you should know about modifiers:
 
-## Extending the modifier class
+ * Modifiers can be updated at any point before an order is placed. After that, their values are permanently persisted to the database.
+ * Modifier values are recalculated whenever the cart contents are changed, or 
+
+## How to add a modifier type
+
+Use Order::set_modifiers(array("MyModifierOne", "MyModifierTwo")); in your _config file to register new modifiers.
+
+## Developing New Modifiers
 
 The best way to write a modifier is to copy the modifier class itself and 
 
@@ -27,3 +37,12 @@ There are lots of comments in the code that will help you.  You may also want to
 
   * OrderAttribute (you may want to overload some of the methods)
   * Other OrderModifier sub-classes
+  
+## Removing Modifier Types
+
+Removing modifiers from the modifiers array should not cause permanent damage, but it may pay to observe the total of a past 
+order before and after the change to check that the totals dont change.
+
+**Be careful** *when removing modifier types from the system, that is removing them completely from the code base, where running
+dev/build would remove them from the database. This may cause the modifier table to be removed from the database, which could
+remove historical data from your site.*

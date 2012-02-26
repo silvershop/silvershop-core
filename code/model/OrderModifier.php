@@ -19,36 +19,61 @@ class OrderModifier extends OrderAttribute {
 		'CartValue' => 'Currency'
 	);
 
+	public static $searchable_fields = array(
+		'OrderID' => array(
+			'title' => 'Order ID',
+			'field' => 'TextField'
+		),
+		"Title" => "PartialMatchFilter",
+		"TableTitle" => "PartialMatchFilter",
+		"CartTitle" => "PartialMatchFilter",
+		"Amount",
+		"Type"
+	);
 
+	public static $field_labels = array();
+	public static $summary_fields = array(
+		"Order.ID" => "Order ID",
+		"TableTitle" => "Table Title",
+		"ClassName" => "Type",
+		"Amount" => "Amount" ,
+		"Type" => "Type"
+	);
+
+	public static $singular_name = "Order Modifier";
+	public static $plural_name = "Order Modifiers";
+
+	public static $default_sort = "\"Created\" DESC";
+	
 	/**
-	 * This determines whether the current modifier
-	 * is chargable, in that it adds an amount to the
-	 * order. An example of when this would be true is
-	 * for a shipping or tax calculator.
-	 *
-	 * If you set this to false for your modifier, then
-	 * it will deduct from the order instead given the
-	 * amount returned in {@link OrderModifier->LiveAmount()}.
-	 *
-	 * @var boolean
-	 */
+	* This determines whether the current modifier
+	* is chargable, in that it adds an amount to the
+	* order. An example of when this would be true is
+	* for a shipping or tax calculator.
+	*
+	* If you set this to false for your modifier, then
+	* it will deduct from the order instead given the
+	* amount returned in {@link OrderModifier->LiveAmount()}.
+	*
+	* @var boolean
+	*/
 	protected static $is_chargable = true;
-
+	
 	/*
 	 * This function is called when the order initialises
-	 * it's modifiers. It is better than directly
-	 * constructing the modifier in the Order class
-	 * because the user may need to create several
-	 * modifiers or customize it.
-	 *
-	 * @TODO Write a better description for this function
-	 * than the one above. It's not easy to understand.
-	 */
+	* it's modifiers. It is better than directly
+	* constructing the modifier in the Order class
+	* because the user may need to create several
+	* modifiers or customize it.
+	*
+	* @TODO Write a better description for this function
+	* than the one above. It's not easy to understand.
+	*/
 	public static function init_for_order($className,$order) {
 		$modifier = new $className();
 		$order->Attributes()->add($modifier);
 	}
-
+	
 	/**
 	 * This determines whether the OrderModifierForm
 	 * is shown or not. {@link OrderModifier::get_form()}.
@@ -58,7 +83,7 @@ class OrderModifier extends OrderAttribute {
 	static function show_form() {
 		return false;
 	}
-
+	
 	/**
 	 * This function returns a form that allows a user
 	 * to change the modifier to the order.
@@ -73,40 +98,6 @@ class OrderModifier extends OrderAttribute {
 	static function get_form($controller) {
 		return new OrderModifierForm($controller, 'ModifierForm', new FieldSet(), new FieldSet());
 	}
-
-
-	######################
-	## CMS CONFIG ##
-	######################
-
-	public static $searchable_fields = array(
-		'OrderID' => array(
-			'title' => 'Order ID',
-			'field' => 'TextField'
-		),
-		"Title" => "PartialMatchFilter",
-		"TableTitle" => "PartialMatchFilter",
-		"CartTitle" => "PartialMatchFilter",
-		"Amount",
-		"Type"
-	);
-
-	public static $field_labels = array(
-
-	);
-	public static $summary_fields = array(
-		"Order.ID" => "Order ID",
-		"TableTitle" => "Table Title",
-		"ClassName" => "Type",
-		"Amount" => "Amount" ,
-		"Type" => "Type"
-	);
-
-	public static $singular_name = "Order Modifier";
-
-	public static $plural_name = "Order Modifiers";
-
-	public static $default_sort = "\"Created\" DESC";
 
 	/**
 	 * This function is always called to determine the
