@@ -51,7 +51,7 @@
 		<div id="Outer">
 			<div id="Inner">
 				$Logo<br/>
-				<img src="ecommerce/images/loading.gif" alt="Loading image">
+				<img src="shop/images/loading.gif" alt="Loading image">
 				$Form
 			</div>
 		</div>

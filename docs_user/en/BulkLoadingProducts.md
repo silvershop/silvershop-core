@@ -13,7 +13,7 @@ ProductID/SKU must be unique, otherwise duplicates will be overridden. If there 
 
 If a column title matches a field on Product, it will be loaded in. eg if you specify a "AllowPurchase" column, the values will be loaded into each Product's AllowPurchase field. Clicking the "Show Specification for Product" link in the Products section of the CMS will help you identify the possible fields to import to.
 
-You can find a test spreadsheet in ecommerce/tests/test_products.csv , which was exported from ecommerce/tests/test_products.xls.
+You can find a test spreadsheet in shop/tests/test_products.csv , which was exported from shop/tests/test_products.xls.
 
 ## Assigning products to Categories
 

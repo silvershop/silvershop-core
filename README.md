@@ -11,7 +11,8 @@
 
 ## Documentation
 
- * http://ecommerce-demo.burnbright.co.nz/docs
+ * http://ss-shop.org/docs
+ * http://api.ss-shop.org
 
 ## Installation Instructions
 
@@ -23,9 +24,8 @@ NB. the idea is not to edit this module so that you can
 upgrade this module in one go without redoing the settings.
 Instead customise your application using your mysite folder.
 
-Make sure the module root folder is named 'ecommerce' to ensure requirements
-work properly, although you can change the root folder by modifying the
-ECOMMERCE_DIR, found in the module's _config.php file.
+Make sure the module root folder is named 'shop' to ensure requirements
+work properly.
 
 ## Configuration
 

@@ -7,7 +7,7 @@
  */
 class EcommerceTest extends FunctionalTest {
 
-	static $fixture_file = 'ecommerce/tests/ecommerce.yml';
+	static $fixture_file = 'shop/tests/ecommerce.yml';
 
 	static $disable_theme = true;
 
@@ -20,7 +20,7 @@ class EcommerceTest extends FunctionalTest {
 	}
 
 	function testExampleConfig(){
-		require_once(BASE_PATH.DIRECTORY_SEPARATOR.ECOMMERCE_DIR.DIRECTORY_SEPARATOR.'example_config.php');
+		require_once(BASE_PATH.DIRECTORY_SEPARATOR.SHOP_DIR.DIRECTORY_SEPARATOR.'example_config.php');
 
 		//TODO: test each configuration
 	}
@@ -57,7 +57,7 @@ class EcommerceTest extends FunctionalTest {
 
 	static function setConfiguration(){
 		$ds = DIRECTORY_SEPARATOR;
-		include(BASE_PATH.$ds.ECOMMERCE_DIR.$ds.'tests'.$ds.'test_config.php');
+		include(BASE_PATH.$ds.SHOP_DIR.$ds.'tests'.$ds.'test_config.php');
 	}
 
 }

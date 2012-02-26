@@ -55,7 +55,7 @@ class Product extends Page {
 
 	static $add_action = 'a Product Page';
 
-	static $icon = 'ecommerce/images/icons/package';
+	static $icon = 'shop/images/icons/package';
 
 	static $number_sold_calculation_type = "SUM"; //SUM or COUNT
 

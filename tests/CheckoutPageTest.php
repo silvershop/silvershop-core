@@ -6,7 +6,7 @@
  */
 class CheckoutPageTest extends FunctionalTest {
 
-	static $fixture_file = 'ecommerce/tests/ecommerce.yml';
+	static $fixture_file = 'shop/tests/ecommerce.yml';
 
 	static $disable_theme = true;
 

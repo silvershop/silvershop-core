@@ -5,7 +5,7 @@
  */
 class PaymentTest extends SapphireTest {
 
-	static $fixture_file = 'ecommerce/tests/ecommerce.yml';
+	static $fixture_file = 'shop/tests/ecommerce.yml';
 
 	//note: each paymement type should have it's own test(s)
 

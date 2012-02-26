@@ -23,7 +23,7 @@
 								</span>
 								<span class="remove">
 									<a class="ajaxQuantityLink" href="$removeallLink" title="<% sprintf(_t("REMOVEALL","Remove all of &quot;%s&quot; from your cart"),$CartTitle.XML) %>">
-										<img src="ecommerce/images/remove.gif" alt="x"/>
+										<img src="shop/images/remove.gif" alt="x"/>
 									</a>
 								</span>
 							</span>
@@ -49,7 +49,7 @@
 								<% if CanRemove %>
 									<strong>
 										<a class="ajaxQuantityLink" href="$removeLink" title="<% sprintf(_t("REMOVE","Remove &quot;%s&quot; from your order"),$TableTitle) %>">
-											<img src="ecommerce/images/remove.gif" alt="x"/>
+											<img src="shop/images/remove.gif" alt="x"/>
 										</a>
 									</strong>
 								<% end_if %>

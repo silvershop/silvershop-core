@@ -9,7 +9,7 @@ class AccountPage extends Page {
 
 	static $add_action = 'an Account Page';
 
-	static $icon = 'ecommerce/images/icons/account';
+	static $icon = 'shop/images/icons/account';
 
 	static $db = array(
 

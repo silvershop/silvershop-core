@@ -1,6 +1,6 @@
 <?php
 
-define('ECOMMERCE_DIR','ecommerce');
+define('SHOP_DIR','shop');
 
 // Extend the Member with e-commerce related fields.
 DataObject::add_extension('Member', 'EcommerceRole');
@@ -13,7 +13,7 @@ Director::addRules(50, array(
 ));
 
 Object::add_extension("DevelopmentAdmin", "EcommerceDevelopmentAdminDecorator");
-DevelopmentAdmin::$allowed_actions[] = 'ecommerce';
+DevelopmentAdmin::$allowed_actions[] = 'shop';
 
 //variations
 DataObject::add_extension("Product","ProductVariationDecorator");

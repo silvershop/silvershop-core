@@ -97,7 +97,7 @@ class OrderManipulation extends Extension{
 	function PaymentForm(){
 		//TODO: handle pending payments better: eg if a cheque payment has been made, there's no point allowing another.
 		if(self::$allow_paying && $order = $this->orderfromid()){
-			Requirements::javascript(ECOMMERCE_DIR."/javascript/EcomPayment.js");
+			Requirements::javascript(SHOP_DIR."/javascript/EcomPayment.js");
 			if($order->canPay()){
 				$form = new Order_PaymentForm($this->owner, 'PaymentForm', $order);
 				$form->extend('updatePaymentForm',$order);

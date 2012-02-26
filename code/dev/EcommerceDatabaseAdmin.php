@@ -41,7 +41,7 @@ class EcommerceDatabaseAdmin extends Controller{
 	}
 
 	function EcommerceFolder(){
-		return ECOMMERCE_DIR;
+		return SHOP_DIR;
 	}
 
 	public function Link($action = null) {

@@ -2,14 +2,14 @@
 
 class ProductBulkLoaderTest extends FunctionalTest {
 	
-	static $fixture_file = 'ecommerce/tests/ecommerce.yml';
+	static $fixture_file = 'shop/tests/ecommerce.yml';
 	static $disable_theme = true;
 	static $use_draft_site = true;
 	
 	function testLoad() {
 		$loader = new ProductBulkLoader('Product');
 		
-		$filepath = Director::baseFolder() . '/ecommerce/tests/test_products.csv';
+		$filepath = Director::baseFolder() . '/'.SHOP_DIR.'/tests/test_products.csv';
 		$file = fopen($filepath, 'r');
 
 		fgetcsv($file); // pop header row
