@@ -11,7 +11,7 @@ class OptionalConfirmedPasswordField extends ConfirmedPasswordField {
 	}
 
 	function Field() {
-		Requirements::javascript(ECOMMERCE_DIR.'/javascript/OptionalConfirmedPasswordField.js');
+		Requirements::javascript(SHOP_DIR.'/javascript/OptionalConfirmedPasswordField.js');
 		Requirements::block(SAPPHIRE_DIR . '/javascript/ConfirmedPasswordField.js');
 		return parent::Field();
 	}
