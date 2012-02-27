@@ -11,7 +11,7 @@
 
 ## Documentation
 
- * http://ss-shop.org/docs
+ * http://demo.ss-shop.org/docs
  * http://api.ss-shop.org
 
 ## Installation Instructions
