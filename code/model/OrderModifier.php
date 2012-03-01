@@ -11,7 +11,7 @@ class OrderModifier extends OrderAttribute {
 
 	public static $db = array(
 		'Amount' => 'Currency',
-		'Type' => "Enum('Chargable,Deductable')"
+		'Type' => "Enum('Chargable,Deductable,Ignored')"
 	);
 
 	public static $casting = array(
@@ -40,8 +40,10 @@ class OrderModifier extends OrderAttribute {
 		"Type" => "Type"
 	);
 
-	public static $singular_name = "Order Modifier";
-	public static $plural_name = "Order Modifiers";
+	public static $singular_name = "Modifier";
+	function i18n_singular_name() {	return _t("OrderModifier.SINGULAR", self::$singular_name); }
+	public static $plural_name = "Modifiers";
+	function i18n_plural_name() { return _t("OrderModifier.PLURAL", self::$plural_name); }
 
 	public static $default_sort = "\"Created\" DESC";
 	
@@ -59,8 +61,8 @@ class OrderModifier extends OrderAttribute {
 	*/
 	protected static $is_chargable = true;
 	
-	/*
-	 * This function is called when the order initialises
+	/**
+	* This function is called when the order initialises
 	* it's modifiers. It is better than directly
 	* constructing the modifier in the Order class
 	* because the user may need to create several
@@ -174,8 +176,8 @@ class OrderModifier extends OrderAttribute {
 	 *
 	 * @return string
 	 */
-	function TableTitle() {
-		return 'Modifier'; //TODO: i18n
+	function TableTitle(){
+		return self::i18n_singular_name();
 	}
 
 	/**
@@ -220,7 +222,6 @@ class OrderModifier extends OrderAttribute {
 
 	function updateForAjax(array &$js) {
 		$amount = $this->obj('Amount')->Nice();
-
 		$js[] = array('id' => $this->CartTotalID(), 'parameter' => 'innerHTML', 'value' => $amount);
 		$js[] = array('id' => $this->TableTotalID(), 'parameter' => 'innerHTML', 'value' => $amount);
 		$js[] = array('id' => $this->TableTitleID(), 'parameter' => 'innerHTML', 'value' => $this->TableTitle());

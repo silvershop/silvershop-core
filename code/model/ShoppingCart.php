@@ -345,18 +345,16 @@ class ShoppingCart extends Controller {
 
 	// Modifiers management
 
-	static function can_remove_modifier($modifierIndex) {
-		$serializedModifierIndex = self::modifier_index($modifierIndex);
-		if ($serializedModifier = Session::get($serializedModifierIndex)) {
-			$unserializedModifier = unserialize($serializedModifier);
-			return $unserializedModifier->CanRemove();
+	static function remove_modifier($modifierIndex) {
+		
+		$order = self::current_order();
+		
+		if($modifierIndex && $order && $modifier =  DataObject::get_one('OrderModifier',"\"OrderID\" = ".$order->ID." AND \"OrderModifier\".\"ID\" = $modifierIndex")){
+			$modifier->delete();
+			$modifier->destroy();
+			return true;
 		}
 		return false;
-	}
-
-	static function remove_modifier($modifierIndex) {
-		$serializedModifierIndex = self::modifier_index($modifierIndex);
-		Session::clear($serializedModifierIndex);
 	}
 
 	static function remove_all_modifiers() {
@@ -494,8 +492,7 @@ class ShoppingCart extends Controller {
 	 */
 	function removemodifier() {
 		$modifierId = $this->urlParams['ID'];
-		if (ShoppingCart::can_remove_modifier($modifierId)){
-			ShoppingCart::remove_modifier($modifierId);
+		if (ShoppingCart::remove_modifier($modifierId)){
 			return self::return_data("success","Removed");//TODO: i18n
 		}
 		return self::return_data("failure","Could not be removed");//TODO: i18n
