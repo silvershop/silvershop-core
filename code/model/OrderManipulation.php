@@ -3,8 +3,8 @@
 /**
  * Provides forms and processing to a controller for editing an order that has been previously placed.
  * @package shop
+ * @subpackage forms
  */
-
 class OrderManipulation extends Extension{
 
 	static $allow_cancelling = false;
@@ -82,7 +82,7 @@ class OrderManipulation extends Extension{
 	function CancelForm() {
 		if(self::$allow_cancelling && $order = $this->orderfromid()) {
 			if($order->canCancel()) {
-				$form = new Order_CancelForm($this->owner, 'CancelForm', $order->ID);
+				$form = new CancelOrderForm($this->owner, 'CancelForm', $order->ID);
 				$form->extend('updateCancelForm',$order);
 				return $form;
 			}
@@ -99,7 +99,7 @@ class OrderManipulation extends Extension{
 		if(self::$allow_paying && $order = $this->orderfromid()){
 			Requirements::javascript(SHOP_DIR."/javascript/EcomPayment.js");
 			if($order->canPay()){
-				$form = new Order_PaymentForm($this->owner, 'PaymentForm', $order);
+				$form = new OutstandingPaymentForm($this->owner, 'PaymentForm', $order);
 				$form->extend('updatePaymentForm',$order);
 				return $form;
 			}
