@@ -6,6 +6,10 @@ A cart holds two basic items:
  * __Modifiers__ - additional lines that specify costs or deductions on the items subtotal.
 
 They provide an abstract way to add additional (non-product) lines to your order.
+Other shopping cart soultions usually handle this part of the system with a hard-coded sum of shipping, tax etc.
+The oder modifiers system should provide more flexability around the footer lines for an order.
+
+The OrderModifier class is a base datamodel for creating specific modifiers with.
 
 Example modifiers:
 

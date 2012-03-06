@@ -11,7 +11,12 @@ class OrderModifier extends OrderAttribute {
 
 	public static $db = array(
 		'Amount' => 'Currency',
-		'Type' => "Enum('Chargable,Deductable,Ignored')"
+		'Type' => "Enum('Chargable,Deductable,Ignored','Chargable')", //TODO: deperecate this in a future release
+		'Sort' => 'Int'
+	);
+	
+	public static $defaults = array(
+		'Type' => 'Chargable'
 	);
 
 	public static $casting = array(
@@ -45,60 +50,44 @@ class OrderModifier extends OrderAttribute {
 	public static $plural_name = "Modifiers";
 	function i18n_plural_name() { return _t("OrderModifier.PLURAL", self::$plural_name); }
 
-	public static $default_sort = "\"Created\" DESC";
+	public static $default_sort = "\"Sort\" ASC, \"Created\" ASC";
 	
 	/**
-	* This determines whether the current modifier
-	* is chargable, in that it adds an amount to the
-	* order. An example of when this would be true is
-	* for a shipping or tax calculator.
-	*
-	* If you set this to false for your modifier, then
-	* it will deduct from the order instead given the
-	* amount returned in {@link OrderModifier->LiveAmount()}.
-	*
-	* @var boolean
-	*/
+	 * @deprecated
+	 */
 	protected static $is_chargable = true;
 	
 	/**
-	* This function is called when the order initialises
-	* it's modifiers. It is better than directly
-	* constructing the modifier in the Order class
-	* because the user may need to create several
-	* modifiers or customize it.
-	*
-	* @TODO Write a better description for this function
-	* than the one above. It's not easy to understand.
+	* Specifies whether this modifier is always required in an order.
 	*/
-	public static function init_for_order($className,$order) {
-		$modifier = new $className();
-		$order->Attributes()->add($modifier);
+	public function required(){
+		return true;
 	}
 	
 	/**
-	 * This determines whether the OrderModifierForm
-	 * is shown or not. {@link OrderModifier::get_form()}.
-	 *
-	 * @return boolean
+	 * Modifies the incoming value by adding, subtracting or ignoring the value this modifier calculates.
 	 */
-	static function show_form() {
-		return false;
+	public function modify($incoming){
+		switch($this->Type){
+			case "Chargable":
+				$incoming += $this->value($incoming);
+				break;
+			case "Deductable":
+				$incoming -= $this->value($incoming);
+				break;
+			case "Ignored":
+				$this->value($incoming); //needs to be called to store Amount
+				break;
+		}
+		return $incoming;
 	}
 	
 	/**
-	 * This function returns a form that allows a user
-	 * to change the modifier to the order.
-	 *
-	 * @todo When is this used?
-	 * @todo How is this used?
-	 * @todo How does one create their own OrderModifierForm implementation?
-	 *
-	 * @param Controller $controller $controller The controller
-	 * @return OrderModifierForm or subclass
+	 * Calculates value to store, based on incoming running total.
+	 * @param float $incoming the incoming running total.
 	 */
-	static function get_form($controller) {
-		return new OrderModifierForm($controller, 'ModifierForm', new FieldSet(), new FieldSet());
+	public function value($incoming){
+		return $this->Amount = 0;
 	}
 
 	/**
@@ -116,40 +105,36 @@ class OrderModifier extends OrderAttribute {
 	 * calculation based on the order and it's items.
 	 */
 	function Amount() {
-		return ($this->isLive()) ? $this->LiveAmount() : $this->Amount;
+		return $this->Amount;
 	}
-
+	
+	/**
+	 * Monetary to use in templates.
+	 */
 	function TableValue() {
-		if($this->IsChargable()) {
-			return $this->Amount();
-		}
-		else {
-		 return "-".$this->Amount(); //TODO: this is different from the bracket syntax for displaying negatives
-		}
+		return $this->Total();
 	}
-
-	function CartValue() {
-		return $this->TableValue();
+	
+	/**
+	* Produces a title for use in templates.
+	* @return string
+	*/
+	function Title(){
+		return $this->i18n_singular_name();
 	}
 
 	/**
-	 * This function returns the amount of the modifier
-	 * based on the current order and its items. It's
-	 * designed to be overloaded on your OrderModifier
-	 * subclass.
-	 *
-	 * See SimpleShippingModifier->LiveAmount()
-	 * See TaxModifier->LiveAmount()
-	 *
-	 * For example, it could produce a tax calculation,
-	 * and return a number, which is the amount the
-	 * modifier uses to charge or deduct, based on the
-	 * setting of {@link OrderModifier::$is_chargable}.
-	 */
-	protected function LiveAmount() {
-		user_error("Please implement LiveAmount() on $this->class", E_USER_ERROR);
+	* Provides a modifier total that is positive or negative, depending on whether the modifier is chargable or not.
+	*
+	* @return boolean
+	*/
+	function Total() {
+		if($this->Type == "Deductable"){
+			return $this->Amount * -1;
+		}
+		return $this->Amount;
 	}
-
+	
 	/**
 	 * If the current instance of this OrderModifier
 	 * exists in the database, check if the Type in
@@ -160,24 +145,7 @@ class OrderModifier extends OrderAttribute {
 	 * @return boolean
 	 */
 	function IsChargable() {
-		return $this->stat('is_chargable');
-	}
-
-	/**
-	 * This describes what the name of the
-	 * modifier should be, in relation to
-	 * the order table on the check out page
-	 * - which the templates uses directly.
-	 *
-	 * For example, this could be something
-	 * like "Shipping to NZ", where NZ is a
-	 * dynamic variable on where the user
-	 * currently is, using {@link Geoip}.
-	 *
-	 * @return string
-	 */
-	function TableTitle(){
-		return self::i18n_singular_name();
+		return $this->Type == "Chargable";
 	}
 
 	/**
@@ -190,41 +158,8 @@ class OrderModifier extends OrderAttribute {
 		return !$this->stat('is_chargable');
 	}
 
-	/**
-	 * Provides a modifier total that is positive or negative, depending on whether the modifier is chargable or not.
-	 *
-	 * @return boolean
-	 */
-	function Total() {
-		$amount = $this->Amount();
-		return ($this->IsChargable() ? 1 : -1) * $amount;
-	}
-
 	function removeLink() {
 		return ShoppingCart::remove_modifier_link($this->ID);
-	}
-
-	/**
-	 * Before this OrderModifier is written to
-	 * the database, we set some of the fields
-	 * based on the way it was set up
-	 * {@link OrderModifier::is_chargable()}.
-	 *
-	 * Precondition: The order item is not
-	 * saved in the database yet.
-	 */
-	function onBeforeWrite() {
-		parent::onBeforeWrite();
-
-		$this->Amount = $this->Amount();
-		$this->Type = $this->stat('is_chargable') ? 'Chargable' : 'Deductable';
-	}
-
-	function updateForAjax(array &$js) {
-		$amount = $this->obj('Amount')->Nice();
-		$js[] = array('id' => $this->CartTotalID(), 'parameter' => 'innerHTML', 'value' => $amount);
-		$js[] = array('id' => $this->TableTotalID(), 'parameter' => 'innerHTML', 'value' => $amount);
-		$js[] = array('id' => $this->TableTitleID(), 'parameter' => 'innerHTML', 'value' => $this->TableTitle());
 	}
 
 	/**
@@ -246,4 +181,62 @@ class OrderModifier extends OrderAttribute {
 			</p>
 HTML;
 	}
+	
+	//deprecated functions
+
+	/**
+	* @deprecated use Title
+	*/
+	function TableTitle(){
+		return $this->Title();
+	}
+	
+	/**
+	 * @deprecated use Title
+	 */
+	function CartValue() {
+		return $this->Title();
+	}
+	
+	/**
+	 * @deprecated use Amount
+	 */
+	protected function LiveAmount() {
+		return $this->value();
+	}
+
+	//TODO: remove these functions
+	
+	/**
+	* This determines whether the OrderModifierForm
+	* is shown or not. {@link OrderModifier::get_form()}.
+	*
+	* @return boolean
+	*/
+	static function show_form() {
+		return false;
+	}
+	
+	/**
+	 * This function returns a form that allows a user
+	 * to change the modifier to the order.
+	 *
+	 * @todo When is this used?
+	 * @todo How is this used?
+	 * @todo How does one create their own OrderModifierForm implementation?
+	 *
+	 * @param Controller $controller $controller The controller
+	 * @return OrderModifierForm or subclass
+	 */
+	static function get_form($controller) {
+		return new OrderModifierForm($controller, 'ModifierForm', new FieldSet(), new FieldSet());
+	}
+	
+	function updateForAjax(array &$js) {
+		$amount = $this->obj('Amount')->Nice();
+		$js[] = array('id' => $this->CartTotalID(), 'parameter' => 'innerHTML', 'value' => $amount);
+		$js[] = array('id' => $this->TableTotalID(), 'parameter' => 'innerHTML', 'value' => $amount);
+		$js[] = array('id' => $this->TableTitleID(), 'parameter' => 'innerHTML', 'value' => $this->TableTitle());
+	}
+	
 }

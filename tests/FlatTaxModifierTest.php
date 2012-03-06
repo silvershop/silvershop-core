@@ -12,23 +12,30 @@ class FlatTaxModifierTest extends FunctionalTest {
 
 	function setUp(){
 		parent::setUp();
-		EcommerceTest::setConfiguration();
-		Order::set_modifiers(array("FlatTaxModifer"),true);
+		ShopTest::setConfiguration();
+		Order::set_modifiers(array("FlatTaxModifier"),true);
+		$this->cart = ShoppingCart::getInstance();
+		$this->mp3player = $this->objFromFixture('Product', 'mp3player');
+		$this->mp3player->publish('Stage','Live');
+	}
+
+	function testInclusiveTax(){
+		FlatTaxModifier::set_tax(0.15,"GST",false);
+		$this->cart->clear();
+		$this->cart->add($this->mp3player);
+		$order = $this->cart->current();
+		$this->assertEquals($order->Total(),200);
+	}
+	
+	function testExclusiveTax(){
 		FlatTaxModifier::set_tax(0.15,"GST",true);
-
-		$this->objFromFixture('Product', 'mp3player')->publish('Stage','Live');
-
-		ShoppingCart::clear();
+		$this->cart->clear();
+		$this->cart->add($this->mp3player);
+		
+		$order = $this->cart->current();
+		//TODO: check modifier ammount (should be $30)
+		//$this->assertEquals($modifier->Amount,30);
+		$this->assertEquals($order->Total(),230);
 	}
-
-	function testCalculations(){
-
-		$mp3player = $this->objFromFixture('Product', 'mp3player');
-		$this->get(ShoppingCart::add_item_link($mp3player->ID));
-		$cart = ShoppingCart::current_order();
-		$this->assertEquals($cart->Total(),215);
-	}
-
-	//is tax worked out correctly?
 
 }

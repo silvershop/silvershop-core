@@ -160,6 +160,18 @@ class Order extends DataObject {
 	protected static $modifiers = array();
 
 	/**
+	 * Modifiers created for this order.
+	 */
+	protected $createdmodifiers = array();
+	protected $modifiersdirty = true;
+	
+	/**
+	 * Store total after calculation
+	 * @var unknown_type
+	 */
+	protected $total = 0;
+	
+	/**
 	 * These are the fields, used for a {@link ComplexTableField}
 	 * in order to show for the table columns on a report.
 	 *
@@ -527,34 +539,13 @@ class Order extends DataObject {
 		return $result;
 	}
 
-
-	/**
-	 * Initialise all the {@link OrderModifier} objects
-	 * by evaluating init_for_order() on each of them.
-	 */
-	function initModifiers() {
-		$createdmodifiers = $this->Modifiers();
-		if(self::$modifiers && is_array(self::$modifiers) && count(self::$modifiers) > 0) {
-			foreach(self::$modifiers as $className) {
-				//check if order has modifiers already
-				$classexists = class_exists($className);
-				if(class_exists($className) && (!$createdmodifiers || !$createdmodifiers->find('ClassName',$className))) {
-					$modifier = new $className();
-					if($modifier instanceof OrderModifier){
-						eval("$className::init_for_order(\$className,\$this);");
-					}
-				}
-			}
-		}
-	}
-
 	/**
 	 * Returns the modifiers of the order, if it hasn't been saved yet
 	 * it returns the modifiers from session, if it has, it returns them
 	 * from the DB entry.
 	 */
  	function Modifiers() {
- 		return DataObject::get('OrderModifier', "\"OrderID\" = '$this->ID'","\"ID\" ASC");
+ 		return DataObject::get('OrderModifier', "\"OrderID\" = '$this->ID'");
 	}
 
 	/**
@@ -563,33 +554,88 @@ class Order extends DataObject {
 	 *
 	 * @param $excluded string|array Class(es) of modifier(s) to ignore in the calculation.
 	 * @todo figure out what the return type is? double? float?
+	 * @deprecated CreateModifiers will pass in subtotal
 	 */
-	function ModifiersSubTotal($excluded = null, $onlyprevious = false) {
-		$total = 0;
-		if($modifiers = $this->Modifiers()) {
-			foreach($modifiers as $modifier) {
-				if(is_array($excluded) && in_array($modifier->class, $excluded)) {
-					if($onlyprevious)
-						break;
-					continue;
-				} elseif($excluded && ($modifier->class == $excluded)) {
-					if($onlyprevious)
-						break;
-					continue;
-				}
-				$total += $modifier->Total();
-			}
-		}
-		return $total;
+	function ModifiersSubTotal() {
+		return $this->modifiertotal;
 	}
 
+	/**
+	* Initialise all the {@link OrderModifier} objects.
+	* @deprecated use CalculateModifiers function instead.
+	*/
+	function initModifiers() {
+		$this->CalculateModifiers();
+	}
+	
+	/**
+	 * Creates (if necessary) and calculates values for each modifier.
+	 * Caches to prevent recalculation, unless dirty.
+	 * 
+	 * @return the final total
+	 * @todo remove empty modifiers? ...perhaps create some kind of 'cleanup' function?
+	 * @todo prevent this function from being run too many times
+	 */
+	function CalculateModifiers(){
+		//check if modifiers are even in use
+		if(!self::$modifiers || !is_array(self::$modifiers) || count(self::$modifiers) <= 0){
+			$this->total = $this->SubTotal();
+			return $this->total;
+		}
+		$runningtotal = $this->SubTotal();
+		$modifiertotal = 0;
+		$sort = 1;
+		foreach(self::$modifiers as $ClassName){
+			if($modifier = $this->getModifier($ClassName)){
+				$modifier->Sort = $sort;
+				$runningtotal = $modifier->modify($runningtotal);
+				$this->createdmodifiers[] = $modifier;
+				if($modifier->isChanged())
+					$modifier->write();
+			}
+			$sort++;
+		}
+		$this->modifiertotal = $modifiertotal;
+		$this->total = $runningtotal;
+		return $runningtotal;
+	}
+	
+	/**
+	 * Retrieve a modifier of a given class for this order.
+	 * Modifier will be retrieved from database if it already exists, 
+	 * or created if it is always required.
+	 * 
+	 * @param string $className
+	 * @param boolean $forcecreate - force the modifier to be created.
+	 */
+	public function getModifier($className, $forcecreate = false){
+		if(ClassInfo::exists($className)){
+			//search for existing
+			if($modifier = DataObject::get_one($className,"\"OrderID\" = ".$this->ID)){ //sort by?
+				return $modifier;
+			}
+			$modifier = new $className();
+			if($modifier->required() || $forcecreate){ //create any modifiers that are required for every order
+				$modifier->OrderID = $this->ID;
+				$modifier->write();
+				return $modifier;	
+			}
+		}else{
+			user_error("Class \"$className\" does not exist.");
+		}
+		return null;
+	}
+	
 	// Order Management
 
 	/**
   	 * Returns the total cost of an order including the additional charges or deductions of its modifiers.
   	 */
 	function Total() {
-		return $this->SubTotal() + $this->ModifiersSubTotal();
+		if(!$this->total){
+			$this->CalculateModifiers();
+		}		
+		return $this->total;
 	}
 
 	/**
