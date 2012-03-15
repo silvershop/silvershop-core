@@ -11,30 +11,15 @@ class ProductGroup extends Page {
 		'ChildGroupsPermission' => "Enum('Show Only Featured Products,Show All Products')"
 	);
 
-	public static $has_one = array();
-
-	public static $has_many = array();
-
-	public static $many_many = array();
-
 	public static $belongs_many_many = array(
 		'Products' => 'Product'
 	);
 
-	public static $defaults = array();
-
-	public static $casting = array();
-
 	static $default_child = 'Product';
-
-	static $add_action = 'a Product Group Page';
-
 	static $icon = 'cms/images/treeicons/folder';
 
 	protected static $include_child_groups = true;
-
 	protected static $page_length = 12;
-
 	protected static $must_have_price = true;
 
 	//TODO: allow grouping multiple sort fields under one 'sort option', and allow choosing direction of each
@@ -54,7 +39,6 @@ class ProductGroup extends Page {
 	protected static $non_featured_products_permissions = array(
 		'Show All Products'
 	);
-
 
 	static function set_include_child_groups($include = true){
 		self::$include_child_groups = $include;

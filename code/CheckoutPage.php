@@ -49,8 +49,6 @@ class CheckoutPage extends Page {
 
 	static $icon = 'shop/images/icons/money';
 
-	static $add_action = 'The Checkout Page';
-
 	/**
 	 * Returns the link to the checkout page on this site, using
 	 * a specific Order ID that already exists in the database.
@@ -115,6 +113,9 @@ class CheckoutPage_Controller extends Page_Controller {
 		'finish'
 	);
 	
+	/**
+	 * Display a title if there is no model, or no title.
+	 */
 	public function Title(){
 		if($this->Title) return $this->Title;
 		return _t('CheckoutPage.TITLE',"Checkout");

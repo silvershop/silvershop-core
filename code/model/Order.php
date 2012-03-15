@@ -53,7 +53,6 @@ class Order extends DataObject {
 		'Email' => 'Varchar'
 	);
 
-
 	public static $has_one = array(
 		'Member' => 'Member'
 	);
@@ -63,10 +62,6 @@ class Order extends DataObject {
 		'OrderStatusLogs' => 'OrderStatusLog',
 		'Payments' => 'Payment'
 	);
-
-	public static $many_many = array();
-	public static $belongs_many_many = array();
-	public static $defaults = array();
 	
 	public static $default_sort = "\"Created\" DESC";
 
@@ -230,32 +225,14 @@ class Order extends DataObject {
 		)
 	);
 
-	protected static $non_shipping_db_fields = array("Status", "Printed");
-		public static function set_non_shipping_db_fields($v) {self::$non_shipping_db_fields = $v;}
-		public static function get_non_shipping_db_fields() {return self::$non_shipping_db_fields;}
-
-	protected static $maximum_ignorable_sales_payments_difference = 0.01;
-		public static function set_maximum_ignorable_sales_payments_difference($v) {self::$maximum_ignorable_sales_payments_difference = $v;}
-		public static function get_maximum_ignorable_sales_payments_difference() {return self::$maximum_ignorable_sales_payments_difference;}
-
-	protected static function get_shipping_fields() {
-		$arrayNew = array();
-		$array = self::$db;
-		foreach($array as $key => $item) {
-			if(!in_array($key, self::get_non_shipping_db_fields())) {
-				$arrayNew[] = $key;
-			}
-		}
-		return $arrayNew;
+	
+	static $maximum_ignorable_sales_payments_difference = 0.01;
+	public static function set_maximum_ignorable_sales_payments_difference($difference){
+		self::$maximum_ignorable_sales_payments_difference = $difference;
 	}
 
- 	protected static $order_id_start_number = 0;
-		static function set_order_id_start_number($v) {self::$order_id_start_number = $v;}
-		static function get_order_id_start_number() {return self::$order_id_start_number;}
-
 	public static function get_order_status_options() {
-		$newArray = singleton('Order')->dbObject('Status')->enumValues(false);
-		return $newArray;
+		return singleton('Order')->dbObject('Status')->enumValues(false);
 	}
 
 	function scaffoldSearchFields(){
@@ -267,7 +244,6 @@ class Order extends DataObject {
 
 	function getCMSFields(){
 		$fields = parent::getCMSFields();
-
 		$fields->insertBefore(new LiteralField('Title',"<h2>Order #$this->ID - ".$this->dbObject('Created')->Nice()." - ".$this->Member()->getName()."</h2>"),'Root');
 
 		$fieldsAndTabsToBeRemoved = self::get_shipping_fields();
@@ -278,19 +254,14 @@ class Order extends DataObject {
 		foreach($fieldsAndTabsToBeRemoved as $field) {
 			$fields->removeByName($field);
 		}
-
 		$htmlSummary = $this->renderWith("Order");
-
 		$printlabel = (!$this->Printed) ? "Print Invoice" : "Print Invoice Again"; //TODO: i18n
 		$fields->addFieldsToTab('Root.Main', array(
 			new LiteralField("PrintInvoice",'<p class="print"><a href="OrderReport_Popup/index/'.$this->ID.'?print=1" onclick="javascript: window.open(this.href, \'print_order\', \'toolbar=0,scrollbars=1,location=1,statusbar=0,menubar=0,resizable=1,width=800,height=600,left = 50,top = 50\'); return false;">'.$printlabel.'</a></p>')
 		));
-
 		$fields->addFieldToTab('Root.Main', new LiteralField('MainDetails', $htmlSummary));
-
 		//TODO: re-introduce this when order status logs have some meaningful purpose
 		$fields->removeByName('OrderStatusLogs');
-
 		$orderItemsTable = new TableListField(
 			"OrderItems", //$name
 			"OrderItem", //$sourceClass =
@@ -301,13 +272,8 @@ class Order extends DataObject {
 		);
 		$orderItemsTable->setPermissions(array("view"));
 		$orderItemsTable->setPageSize(10000);
-		$orderItemsTable->addSummary(
-			"Total",
-			array("Total" => array("sum","Currency->Nice"))
-		);
-
+		$orderItemsTable->addSummary("Total",array("Total" => array("sum","Currency->Nice")));
 		$fields->addFieldToTab('Root.Items',$orderItemsTable);
-
 		$modifierTable = new TableListField(
 			"OrderModifiers", //$name
 			"OrderModifier", //$sourceClass =
@@ -319,16 +285,12 @@ class Order extends DataObject {
 		$modifierTable->setPermissions(array("view"));
 		$modifierTable->setPageSize(10000);
 		$fields->addFieldToTab('Root.Extras',$modifierTable);
-
-
 		if($m = $this->Member()) {
 			$lastv = new TextField("MemberLastLogin","Last login",$m->dbObject('LastVisited')->Nice());
 			$fields->addFieldToTab('Root.Customer',$lastv->performReadonlyTransformation());
-
 			//TODO: this should be scaffolded instead, or come from something like $member->getCMSFields();
 			$fields->addFieldToTab('Root.Customer',new LiteralField("MemberSummary", $m->renderWith("Order_Member")));
 		}
-
 		$this->extend('updateCMSFields',$fields);
 		return $fields;
 	}
@@ -450,7 +412,6 @@ class Order extends DataObject {
 				}
 			}
 		}
-
 		return count($forms) > 0 ? new DataObjectSet($forms) : null;
 	}
 
@@ -460,7 +421,6 @@ class Order extends DataObject {
 	 * @return Order The current order
 	 */
 	function save() {
-
 		if($this->Status == 'Cart' || !$this->Status){
 			$this->Status = 'Unpaid';
 			//re-write all attributes and modifiers to make sure they are up-to-date before they can't be changed again
@@ -482,44 +442,12 @@ class Order extends DataObject {
 	 * it returns the items from session, if it has, it returns them
 	 * from the DB entry.
 	 */
-	function Items($filter = "") {
+	function Items($filter = null) {
  		if($this->ID){
- 			return $this->itemsFromDatabase($filter);
+ 			$extrafilter = ($filter) ? " AND $filter" : "";
+ 			return DataObject::get('OrderItem', "\"OrderID\" = '$this->ID' $extrafilter");
  		}
  		return null;
-	}
-
-	/**
-	 * Return all the {@link OrderItem} instances that are
-	 * available as records in the database.
-	 *
-	 * @return DataObjectSet
-	 */
-	protected function itemsFromDatabase($filter = null) {
-		$extrafilter = ($filter) ? " AND $filter" : "";
-		$dbitems =  DataObject::get('OrderItem', "\"OrderID\" = '$this->ID' $extrafilter");
-		return $dbitems;
-	}
-
-	/**
-	 * Return a DataObjectSet of {@link OrderItem} objects.
-	 *
-	 * If the write parameter is set to true, then each of
-	 * the item objects in the array are linked to this
-	 * order, then written to the database.
-	 *
-	 * @param array $items An array of {@link OrderItem} objects
-	 * @param boolean $write Flag if set to true, will write the items to the DB
-	 * @return DataObjectSet
-	 */
-	protected function createItems(array $items, $write = false) {
-		if($write) {
-			foreach($items as $item) {
-				$item->OrderID = $this->ID;
-				$item->write();
-			}
-		}
-		return $write ? $this->itemsFromDatabase() : new DataObjectSet($items);
 	}
 
 	/**
@@ -528,7 +456,9 @@ class Order extends DataObject {
 	function SubTotal() {
 		$result = 0;
 		if($items = $this->Items()) {
-			foreach($items as $item) $result += $item->Total();
+			foreach($items as $item){
+				$result += $item->Total();
+			}
 		}
 		return $result;
 	}
@@ -649,12 +579,15 @@ class Order extends DataObject {
 		$total = $this->Total();
 		$paid = $this->TotalPaid();
 		$outstanding = $total - $paid;
-		if(abs($outstanding) < self::get_maximum_ignorable_sales_payments_difference()) {
+		if(abs($outstanding) < self::$maximum_ignorable_sales_payments_difference) {
 			return 0;
 		}
 		return $outstanding;
 	}
-
+	
+	/**
+	 * Add up successful payments
+	 */
 	function TotalPaid() {
 		$paid = 0;
 		if($payments = $this->Payments()) {
@@ -828,7 +761,6 @@ class Order extends DataObject {
 			//TODO: only run this if it is setting to Paid, and not cancelled or similar
 			$this->Status = 'Paid';
 			$this->write();
-
 			$logEntry = new OrderStatusLog();
 			$logEntry->OrderID = $this->ID;
 			$logEntry->Status = 'Paid';
@@ -870,16 +802,7 @@ class Order extends DataObject {
 	function IsCart(){
 		return $this->Status == 'Cart';
 	}
-
-	/**
-	 * Return a string of localised text based on the
-	 * determination of whether this order is paid for,
-	 * or not, by checking {@link IsPaid()}.
-	 *
-	 * @return string
-	 */
-	//function Status() {return $this->IsPaid() ? _t('Order.SUCCESSFULL', 'Order Successful') : _t('Order.INCOMPLETE', 'Order Incomplete');}
-
+	
 	/**
 	 * Return a link to the {@link CheckoutPage} instance
 	 * that exists in the database.
@@ -1065,135 +988,5 @@ class Order_ReceiptEmail extends Email {
 class Order_StatusEmail extends Email {
 
 	protected $ss_template = 'Order_StatusEmail';
-
-}
-
-
-/**
- * Form for canceling an order.
- */
-class Order_CancelForm extends Form {
-
-	static $email_notification = false;
-
-	function __construct($controller, $name, $orderID) {
-
-		$fields = new FieldSet(
-			new HiddenField('OrderID', '', $orderID)
-		);
-		$actions = new FieldSet(
-			new FormAction('doCancel', _t('Order.CANCELORDER','Cancel this order'))
-		);
-		parent::__construct($controller, $name, $fields, $actions);
-	}
-
-	/**
-	 * Form action handler for Order_CancelForm.
-	 *
-	 * Take the order that this was to be change on,
-	 * and set the status that was requested from
-	 * the form request data.
-	 *
-	 * @param array $data The form request data submitted
-	 * @param Form $form The {@link Form} this was submitted on
-	 */
-	function doCancel($data, $form) {
-		$SQL_data = Convert::raw2sql($data);
-		$order = DataObject::get_by_id('Order', $SQL_data['OrderID']);
-		$order->Status = 'MemberCancelled';
-		$order->write();
-
-		//TODO: notify people via email?? Make it optional.
-		if(self::$email_notification){
-			$email = new Email(Email::getAdminEmail(),Email::getAdminEmail(),sprintf(_t('Order.CANCELSUBJECT','Order #%d cancelled by member'),$order->ID),$order->renderWith('Order'));
-			$email->send();
-		}
-
-		if(Member::currentUser() && $link = AccountPage::find_link()){
-			//TODO: set session message "order successfully cancelled".
-			Director::redirect($link); //TODO: can't redirect to account page when not logged in
-		}else{
-
-			$form->Controller()->setSessionMessage(_t("OrderForm.ORDERCANCELLED", "Order sucessfully cancelled"),'warning'); //assumes controller has OrderManipulation extension
-			Director::redirectBack();
-		}
-		return;
-	}
-
-}
-
-/**
- * Form for paying outstanding orders.
- */
-class Order_PaymentForm extends Form {
-
-	function __construct($controller, $name, $order) {
-		$fields = new FieldSet(
-			new HiddenField('OrderID', '', $order->ID)
-		);
-		$totalAsCurrencyObject = DBField::create('Currency',$order->TotalOutstanding()); //This should really be handled by the payment module
-		$paymentFields = Payment::combined_form_fields($totalAsCurrencyObject->Nice());
-		foreach($paymentFields as $paymentField) {
-			if($paymentField->class == "HeaderField") {
-				$paymentField->setTitle(_t("OrderForm.MAKEPAYMENT", "Make Payment"));
-			}
-			$fields->push($paymentField);
-		}
-		$requiredFields = array();
-		if($paymentRequiredFields = Payment::combined_form_requirements()) {
-			$requiredFields = array_merge($requiredFields, $paymentRequiredFields);
-		}
-		$actions = new FieldSet(
-			new FormAction('dopayment', _t('OrderForm.PAYORDER','Pay outstanding balance'))
-		);
-		parent::__construct($controller, $name, $fields, $actions, $requiredFields);
-	}
-
-	function dopayment($data, $form) {
-		if($order = $this->Controller()->orderfromid()) { //assumes that the controller is extended by OrderManipulation decorator
-			if($order->canPay()) {
-
-				//TODO: move this to $order->makepayment($amount,$data);
-
-				$paymentClass = (!empty($data['PaymentMethod'])) ? $data['PaymentMethod'] : null;
-				$payment = class_exists($paymentClass) ? new $paymentClass() : null;
-
-				if(!($payment && $payment instanceof Payment)) {
-					user_error(get_class($payment) . ' is not a valid Payment object!', E_USER_ERROR);
-				}
-
-				$form->saveInto($payment);
-				$payment->OrderID = $order->ID;
-				$payment->PaidForID = $order->ID;
-				$payment->PaidForClass = $order->class;
-
-				$payment->Amount->Amount = $order->Total();
-				$payment->write();
-
-				$result = $payment->processPayment($data, $form);
-
-				// isProcessing(): Long payment process redirected to another website (PayPal, Worldpay)
-				if($result->isProcessing()) {
-					return $result->getValue();
-				}
-
-				if($result->isSuccess()) {
-					$order->sendReceipt();
-				}
-
-				Director::redirect($order->Link());
-				return true;
-			}
-		}
-		$form->sessionMessage(
-			_t(
-				'OrderForm.COULDNOTPROCESSPAYMENT',
-				'Sorry, we could not process your payment.'
-			),
-			'bad'
-		);
-		Director::redirectBack();
-		return false;
-	}
 
 }

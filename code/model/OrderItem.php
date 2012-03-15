@@ -20,10 +20,6 @@ class OrderItem extends OrderAttribute {
 		'Total' => 'EcommerceCurrency'
 	);
 
-	######################
-	## CMS CONFIG ##
-	######################
-
 	public static $searchable_fields = array(
 		'OrderID' => array(
 			'title' => 'Order ID',
@@ -48,7 +44,9 @@ class OrderItem extends OrderAttribute {
 	);
 
 	public static $singular_name = "Order Item";
+	function i18n_singular_name() { return _t("OrderItem.SINGULAR", self::$singular_name); }
 	public static $plural_name = "Order Items";
+	function i18n_plural_name() { return _t("OrderItem.PLURAL", self::$plural_name); }
 	public static $default_sort = "\"Created\" DESC";
 
 	public function __construct($object = null, $quantity = 1) {
@@ -80,12 +78,10 @@ class OrderItem extends OrderAttribute {
 	function onBeforeWrite() {
 		parent::onBeforeWrite();
 		//always keep quantity above 0
-		if($this->Quantity < 1)	$this->Quantity = 1;
+		if($this->Quantity < 1){
+			$this->Quantity = 1;
+		}
 		$this->CalculateTotal();
-	}
-
-	function hasSameContent($orderItem) {
-		return $orderItem instanceof OrderItem;
 	}
 
 	public function debug() {
@@ -103,11 +99,6 @@ class OrderItem extends OrderAttribute {
 			</p>
 HTML;
 	}
-
-
-	######################
-	## TEMPLATE METHODS ##
-	######################
 
 	function UnitPrice() {
 		user_error("OrderItem::UnitPrice() called. Please implement UnitPrice() on $this->class", E_USER_ERROR);
@@ -150,7 +141,7 @@ HTML;
 	}
 
 	function TableTitle() {
-		return 'Product';
+		return $this->i18n_singular_name();
 	}
 
 	function ProductTitle() {

@@ -27,7 +27,6 @@ Order::set_table_overview_fields(array(
 	'Status' => 'Status'
 ));
 Order::set_maximum_ignorable_sales_payments_difference(0.01);
-Order::set_order_id_start_number(0);
 
 Order::set_cancel_before_payment(true);
 Order::set_cancel_before_processing(false);

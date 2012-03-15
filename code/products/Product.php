@@ -21,7 +21,6 @@ class Product extends Page {
 		'FeaturedProduct' => 'Boolean',
 		'AllowPurchase' => 'Boolean',
 		'InternalItemID' => 'Varchar(30)', //ie SKU, ProductID etc (internal / existing recognition of product)
-
 		'NumberSold' => 'Int' //store number sold, so it doesn't have to be computed on the fly. Used for determining popularity.
 	);
 
@@ -45,20 +44,16 @@ class Product extends Page {
 		'ID','Title','InternalItemID','Weight','Model','Price'
 	);
 
-	public static $singular_name = 'Product';
-
-	public static $plural_name = 'Products';
-
+	public static $singular_name = "Product";
+	function i18n_singular_name() { return _t("Product.SINGULAR", self::$singular_name); }
+	public static $plural_name = "Products";
+	function i18n_plural_name() { return _t("Product.PLURAL", self::$plural_name); }
+	
+	static $icon = 'shop/images/icons/package';
 	static $default_parent = 'ProductGroup';
-
 	static $default_sort = '"Title" ASC';
 
-	static $add_action = 'a Product Page';
-
-	static $icon = 'shop/images/icons/package';
-
 	static $number_sold_calculation_type = "SUM"; //SUM or COUNT
-
 	static $global_allow_purchase = true;
 
 	function getCMSFields() {
@@ -134,7 +129,10 @@ class Product extends Page {
 		}
 
 	}
-
+	
+	/**
+	 * Helper for creating the product groups table
+	 */
 	protected function getProductGroupsTable() {
 		$tableField = new ManyManyComplexTableField(
 			$this,
@@ -265,7 +263,6 @@ class Product_Controller extends Page_Controller {
 		Requirements::themedCSS('Product');
 		Requirements::themedCSS('Cart');
 	}
-
 
 }
 

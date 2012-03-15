@@ -7,13 +7,7 @@
  */
 class AccountPage extends Page {
 
-	static $add_action = 'an Account Page';
-
 	static $icon = 'shop/images/icons/account';
-
-	static $db = array(
-
-	);
 
 	function canCreate() {
 		return !DataObject::get_one("SiteTree", "\"ClassName\" = 'AccountPage'");

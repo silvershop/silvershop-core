@@ -5,7 +5,7 @@
 	<% control Variations %>
 			<tr>
 				<td>$Title.XML</td>
-				<td>$Price.Nice $Currency $TaxInfo.PriceSuffix</td>
+				<td>$Price.Nice $Currency</td>
 				<td>
 				<% if canPurchase %>
 					<% if IsInCart %>

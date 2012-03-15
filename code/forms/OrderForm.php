@@ -157,7 +157,6 @@ class OrderForm extends Form {
 		return $actions;
 	}
 
-
 	/**
 	 * Validation of various pre-processing things.
 	 * @return valid or not.
@@ -167,17 +166,16 @@ class OrderForm extends Form {
 	 	if(isset($_POST['action_processOrder'])){
 	 		//TODO: check items are in cart, and each item can be purchased
 			//TODO: Check if prices have changed
-
 	 		$valid = parent::validate();
-
 	 		//TODO: check that member details are not already taken, if entered
 			//Chekc payment method is valid
 	 		return $valid;
 	 	}
-
 	 	//Override form validation to make different shipping address button, and other form actions work
 		foreach($this->getValidActions() as $action){
-			if(isset($_POST[$action])){return true;}
+			if(isset($_POST[$action])){
+				return true;
+			}
 		}
 		return parent::validate();
 	 }
@@ -222,15 +220,12 @@ class OrderForm extends Form {
 	 * @param HTTPRequest $request Request object for this action
 	 */
 	function processOrder($data, $form, $request) {
-
 		$paymentClass = (!empty($data['PaymentMethod'])) ? $data['PaymentMethod'] : null;
 		$payment = class_exists($paymentClass) ? new $paymentClass() : null;
-
 		if(!($payment && $payment instanceof Payment)) {
 			user_error(get_class($payment) . ' is not a valid Payment object!', E_USER_ERROR); //TODO: be more graceful with errors
 		}
 		$this->saveDataToSession($data); //save for later if necessary
-
 		//check for cart items
 		if(!ShoppingCart::has_items()) {
 			$form->sessionMessage(_t('OrderForm.NoItemsInCart','Please add some items to your cart'), 'bad');
