@@ -86,10 +86,6 @@ class OrderStatusLog extends DataObject {
 		}
 	}
 
-	function requireDefaultRecords() {
-		parent::requireDefaultRecords();
-	}
-
 	protected function updateWithLastInfo() {
 		if($this->OrderID) {
 			$logs = DataObject::get('OrderStatusLog', "\"OrderID\" = {$this->OrderID}", "\"Created\" DESC", null, 1);

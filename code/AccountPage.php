@@ -72,25 +72,6 @@ class AccountPage extends Page {
 		return DataObject::get('Order', "\"Order\".\"MemberID\" = '$memberID' AND $statusFilter", "\"Created\" DESC");
 	}
 
-	/**
-	 * Automatically create an AccountPage if one is not found
-	 * on the site at the time the database is built (dev/build).
-	 */
-	function requireDefaultRecords() {
-		parent::requireDefaultRecords();
-
-		if(!DataObject::get_one('AccountPage')) {
-			$page = new AccountPage();
-			$page->Title = 'Account';
-			$page->Content = '<p>This is the account page. It is used for shop users to login and change their member details if they have an account.</p>';
-			$page->URLSegment = 'account';
-			$page->ShowInMenus = 0;
-			$page->writeToStage('Stage');
-			$page->publish('Stage', 'Live');
-
-			DB::alteration_message('Account page \'Account\' created', 'created');
-		}
-	}
 }
 
 class AccountPage_Controller extends Page_Controller {

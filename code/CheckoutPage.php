@@ -98,36 +98,7 @@ class CheckoutPage extends Page {
 		return $fields;
 	}
 
-	/**
-	 * This automatically creates a CheckoutPage whenever dev/build
-	 * is invoked and there is no page on the site with CheckoutPage
-	 * applied to it.
-	 */
-	function requireDefaultRecords() {
-		parent::requireDefaultRecords();
 
-		if(!$page = DataObject::get_one('CheckoutPage')) {
-			$page = new CheckoutPage();
-			$page->Title = _t('CheckoutPage.Title',"Checkout");
-			$page->Content = '<p>This is the checkout page. The order summary and order form appear below this content.</p>';
-			$page->PurchaseComplete = '<p>Your purchase is complete.</p>';
-			$page->ChequeMessage = '<p>Please note: Your goods will not be dispatched until we receive your payment.</p>';
-			$page->URLSegment = 'checkout';
-			$page->ShowInMenus = 0;
-			$page->writeToStage('Stage');
-			$page->publish('Stage', 'Live');
-
-			DB::alteration_message('Checkout page \'Checkout\' created', 'created');
-		}
-
-		if($page->TermsPageID == 0 && $termsPage = DataObject::get_one('Page', "\"URLSegment\" = 'terms-and-conditions'")) {
-			$page->TermsPageID = $termsPage->ID;
-			$page->writeToStage('Stage');
-			$page->publish('Stage', 'Live');
-
-			DB::alteration_message("Page '{$termsPage->Title}' linked to the Checkout page '{$page->Title}'", 'changed');
-		}
- 	}
 }
 class CheckoutPage_Controller extends Page_Controller {
 	

@@ -263,43 +263,6 @@ class Product extends Page {
 	}
 
 	/**
-	 * When the ecommerce module is first installed, and db/build
-	 * is invoked, create some default records in the database.
-	 */
-	function requireDefaultRecords() {
-		parent::requireDefaultRecords();
-
-		if(!DataObject::get_one('Product')) {
-			if(!DataObject::get_one('ProductGroup')) singleton('ProductGroup')->requireDefaultRecords();
-			if($group = DataObject::get_one('ProductGroup', '', true, "\"ParentID\" DESC")) {
-				$content = '<p>This is a <em>product</em>. It\'s description goes into the Content field as a standard SilverStripe page would have it\'s content. This is an ideal place to describe your product.</p>';
-
-				$page1 = new Product();
-				$page1->Title = 'Example product';
-				$page1->Content = $content . '<p>You may also notice that we have checked it as a featured product and it will be displayed on the main Products page.</p>';
-				$page1->URLSegment = 'example-product';
-				$page1->ParentID = $group->ID;
-				$page1->Price = '15.00';
-				$page1->Weight = '0.50';
-				$page1->Model = 'Joe Bloggs';
-				$page1->FeaturedProduct = true;
-				$page1->writeToStage('Stage');
-				$page1->publish('Stage', 'Live');
-				DB::alteration_message('Product page \'Example product\' created', 'created');
-
-				$page2 = new Product();
-				$page2->Title = 'Example product 2';
-				$page2->Content = $content;
-				$page2->URLSegment = 'example-product-2';
-				$page2->ParentID = $group->ID;
-				$page2->Price = '25.00';
-				$page2->Weight = '1.2';
-				$page2->Model = 'Jane Bloggs';
-				$page2->writeToStage('Stage');
-				$page2->publish('Stage', 'Live');
-				DB::alteration_message('Product page \'Example product 2\' created', 'created');
-			}
-		}
 	}
 
 }
