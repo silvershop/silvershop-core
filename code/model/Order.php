@@ -158,12 +158,6 @@ class Order extends DataObject {
 	 * @var array
 	 */
 	protected static $modifiers = array();
-
-	/**
-	 * Modifiers created for this order.
-	 */
-	protected $createdmodifiers = array();
-	protected $modifiersdirty = true;
 	
 	/**
 	 * Store total after calculation
@@ -540,9 +534,7 @@ class Order extends DataObject {
 	}
 
 	/**
-	 * Returns the modifiers of the order, if it hasn't been saved yet
-	 * it returns the modifiers from session, if it has, it returns them
-	 * from the DB entry.
+	 * Returns the modifiers of the order
 	 */
  	function Modifiers() {
  		return DataObject::get('OrderModifier', "\"OrderID\" = '$this->ID'");
@@ -562,41 +554,52 @@ class Order extends DataObject {
 
 	/**
 	* Initialise all the {@link OrderModifier} objects.
-	* @deprecated use CalculateModifiers function instead.
+	* @deprecated use Calculate function instead.
 	*/
 	function initModifiers() {
-		$this->CalculateModifiers();
+		$this->calculate();
 	}
 	
 	/**
-	 * Creates (if necessary) and calculates values for each modifier.
+	 * Creates (if necessary) and calculates values for each modifier,
+	 * and subsequently the total of the order.
 	 * Caches to prevent recalculation, unless dirty.
 	 * 
 	 * @return the final total
 	 * @todo remove empty modifiers? ...perhaps create some kind of 'cleanup' function?
 	 * @todo prevent this function from being run too many times
 	 */
-	function CalculateModifiers(){
-		//check if modifiers are even in use
-		if(!self::$modifiers || !is_array(self::$modifiers) || count(self::$modifiers) <= 0){
-			$this->total = $this->SubTotal();
-			return $this->total;
-		}
+	function calculate(){
 		$runningtotal = $this->SubTotal();
 		$modifiertotal = 0;
 		$sort = 1;
-		foreach(self::$modifiers as $ClassName){
-			if($modifier = $this->getModifier($ClassName)){
-				$modifier->Sort = $sort;
-				$runningtotal = $modifier->modify($runningtotal);
-				$this->createdmodifiers[] = $modifier;
-				if($modifier->isChanged())
-					$modifier->write();
+		if($this->IsCart()){
+			//check if modifiers are even in use
+			if(!self::$modifiers || !is_array(self::$modifiers) || count(self::$modifiers) <= 0){
+				return $this->Total = $runningtotal;
 			}
-			$sort++;
+			foreach(self::$modifiers as $ClassName){
+				if($modifier = $this->getModifier($ClassName)){
+					$modifier->Sort = $sort;
+					$runningtotal = $modifier->modify($runningtotal);
+					if($modifier->isChanged()){
+						$modifier->write();
+					}
+				}
+				$sort++;
+			}
+		}else{ //use existing modifiers, if order has been placed
+			if($modifiers = $this->Modifiers()){
+				foreach($modifiers as $modifier){
+					$modifier->Sort = $sort;
+					//TODO: prevent recalculating value if $this->Amount is present
+						//this will help historical records to not be altered
+					$runningtotal = $modifier->modify($runningtotal);
+					$modifier->write();
+				}
+			}
 		}
-		$this->modifiertotal = $modifiertotal;
-		$this->total = $runningtotal;
+		$this->Total = $runningtotal;
 		return $runningtotal;
 	}
 	
@@ -626,16 +629,15 @@ class Order extends DataObject {
 		return null;
 	}
 	
-	// Order Management
-
-	/**
-  	 * Returns the total cost of an order including the additional charges or deductions of its modifiers.
-  	 */
-	function Total() {
-		if(!$this->total){
-			$this->CalculateModifiers();
-		}		
-		return $this->total;
+	function GrandTotal(){
+		if($this->Total){
+			return $this->Total;
+		}
+		return $this->getField('Total');
+	}
+	
+	function Total(){
+		return $this->GrandTotal();
 	}
 
 	/**
@@ -822,7 +824,7 @@ class Order extends DataObject {
 	 * Will update payment status to "Paid if there is no outstanding amount".
 	 */
 	function updatePaymentStatus(){
-		if($this->Total() > 0 && $this->TotalOutstanding() <= 0){
+		if($this->GrandTotal() > 0 && $this->TotalOutstanding() <= 0){
 			//TODO: only run this if it is setting to Paid, and not cancelled or similar
 			$this->Status = 'Paid';
 			$this->write();
@@ -951,19 +953,6 @@ class Order extends DataObject {
 		return $codeOnly ? $country : EcommerceRole::find_country_title($country);
 	}
 
-	/**
-	 * Returns a TaxModifier object that provides
-	 * information about tax on this order.
-	 *
-	 * @return TaxModifier
-	 */
-	function TaxInfo() {
-		if($modifiers = $this->Modifiers()) {
-			foreach($modifiers as $modifier) {
-				if($modifier instanceof TaxModifier) return $modifier;
-			}
-		}
-	}
 
 	/**
 	 * Send a message to the client containing the latest

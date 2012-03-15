@@ -6,26 +6,21 @@
  */
 class SubTotalModifier extends OrderModifier {
 	
-	protected static $is_chargable = false;
+	public static $defaults = array(
+		'Type' => 'Ignored'
+	);
 	
-	/**
-	 * This overrides the table value to show the subtotal, but the LiveAmount is always 0 (see below)
-	 */
-	function TableValue() {
-		$order = $this->Order();
-		return $order->SubTotal() + $order->ModifiersSubTotal($this->class,true);	
+	public static $singular_name = "Sub Total";
+	function i18n_singular_name() {
+		return _t("SubTotalModifier.SINGULAR", self::$singular_name);
+	}
+	public static $plural_name = "Sub Totals";
+	function i18n_plural_name() {
+		return _t("SubTotalModifier.PLURAL", self::$plural_name);
 	}
 	
-	function LiveAmount(){
-		return 0;
-	}
-	
-	function CanRemove(){
-		return false;
-	}
-	
-	function TableTitle(){
-		return 'Sub Total'; //TODO: lang
+	function value($incoming){
+		return $this->Amount = $incoming;
 	}
 	
 }

@@ -20,8 +20,7 @@ class OrderModifier extends OrderAttribute {
 	);
 
 	public static $casting = array(
-		'TableValue' => 'Currency',
-		'CartValue' => 'Currency'
+		'TableValue' => 'EcommerceCurrency'
 	);
 
 	public static $searchable_fields = array(
@@ -65,21 +64,31 @@ class OrderModifier extends OrderAttribute {
 	}
 	
 	/**
-	 * Modifies the incoming value by adding, subtracting or ignoring the value this modifier calculates.
+	 * Modifies the incoming value by adding, 
+	 * subtracting or ignoring the value this modifier calculates.
+	 * 
+	 * Sets $this->Amount to the calculated value;
+	 * @param $subtotal - running total to be modified
+	 * @param $forcecalculation - force calculating the value, if order isn't in cart
+	 * 
+	 * @return $subtotal - updated subtotal
 	 */
-	public function modify($incoming){
-		switch($this->Type){
+	public function modify($subtotal,$forcecalculation = false){
+		$order = $this->Order();
+		$value = ($order->IsCart() || $forcecalculation) ? $this->value($subtotal) : $this->Amount;
+		switch($this->Type){			
 			case "Chargable":
-				$incoming += $this->value($incoming);
+				$subtotal += $value;
 				break;
 			case "Deductable":
-				$incoming -= $this->value($incoming);
+				$subtotal -= $value;
 				break;
 			case "Ignored":
-				$this->value($incoming); //needs to be called to store Amount
 				break;
 		}
-		return $incoming;
+		$value = round($value,Order::$rounding_precision);
+		$this->Amount = $value;
+		return $subtotal;
 	}
 	
 	/**
@@ -87,7 +96,14 @@ class OrderModifier extends OrderAttribute {
 	 * @param float $incoming the incoming running total.
 	 */
 	public function value($incoming){
-		return $this->Amount = 0;
+		return 0;
+	}
+	
+	/**
+	 * Check if the modifier should be in the cart.
+	 */
+	public function valid(){
+		return true;
 	}
 
 	/**
@@ -119,7 +135,7 @@ class OrderModifier extends OrderAttribute {
 	* Produces a title for use in templates.
 	* @return string
 	*/
-	function Title(){
+	function TableTitle(){
 		return $this->i18n_singular_name();
 	}
 
@@ -150,16 +166,14 @@ class OrderModifier extends OrderAttribute {
 
 	/**
 	 * Checks if the modifier can be removed.
-	 * Default check is for whether it is chargable.
-	 *
 	 * @return boolean
 	 */
-	function CanRemove() {
-		return !$this->stat('is_chargable');
+	function canRemove() {
+		return false;
 	}
 
 	function removeLink() {
-		return ShoppingCart::remove_modifier_link($this->ID);
+		return CheckoutPage_Controller::remove_modifier_link($this->ID);
 	}
 
 	/**
@@ -183,19 +197,12 @@ HTML;
 	}
 	
 	//deprecated functions
-
-	/**
-	* @deprecated use Title
-	*/
-	function TableTitle(){
-		return $this->Title();
-	}
 	
 	/**
 	 * @deprecated use Title
 	 */
 	function CartValue() {
-		return $this->Title();
+		return $this->TableTitle();
 	}
 	
 	/**

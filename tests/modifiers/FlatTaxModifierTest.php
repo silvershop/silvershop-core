@@ -24,18 +24,21 @@ class FlatTaxModifierTest extends FunctionalTest {
 		$this->cart->clear();
 		$this->cart->add($this->mp3player);
 		$order = $this->cart->current();
-		$this->assertEquals($order->Total(),200);
+		$order->calculate();
+		$modifier = $order->getModifier('FlatTaxModifier');
+		$this->assertEquals($modifier->Amount,26.09); //remember that 15% tax inclusive is different to exclusive
+		$this->assertEquals($order->GrandTotal(),200);
 	}
 	
 	function testExclusiveTax(){
 		FlatTaxModifier::set_tax(0.15,"GST",true);
 		$this->cart->clear();
 		$this->cart->add($this->mp3player);
-		
 		$order = $this->cart->current();
-		//TODO: check modifier ammount (should be $30)
-		//$this->assertEquals($modifier->Amount,30);
-		$this->assertEquals($order->Total(),230);
+		$order->calculate();
+		$modifier = $order->getModifier('FlatTaxModifier');
+		$this->assertEquals($modifier->Amount,30);
+		$this->assertEquals($order->GrandTotal(),230);
 	}
 
 }

@@ -17,21 +17,11 @@
  * @package shop
  * @subpackage modifiers
  */
-class FlatTaxModifier extends OrderModifier {
+class FlatTaxModifier extends TaxModifier {
 
 	public static $db = array(
-		'Rate' => 'Double',
 		'TaxType' => "Enum('Exclusive,Inclusive')" //deprecated
 	);
-	
-	public static $defaults = array(
-		'Rate' => 0.15 //15% tax
-	);
-	
-	public static $singular_name = "Flat Tax";
-	function i18n_singular_name() { return _t("FlatTaxModifier.SINGULAR", self::$singular_name); }
-	public static $plural_name = "Flat Taxes";
-	function i18n_plural_name() { return _t("FlatTaxModifier.PLURAL", self::$plural_name); }
 
 	protected static $name = null;
 	protected static $rate = null;
@@ -56,9 +46,10 @@ class FlatTaxModifier extends OrderModifier {
 	 *
 	 */
 	function value($incoming) {
+		$this->Rate = self::$rate;
 		if(self::$exclusive)
-			return $this->Amount = $incoming * self::$rate;
-		return $this->Amount = $incoming - ($incoming/(1+self::$rate)); //inclusive tax requires a different calculation
+			return $incoming * $this->Rate;
+		return $incoming - round($incoming/(1+$this->Rate),Order::$rounding_precision); //inclusive tax requires a different calculation
 	}
 
 }

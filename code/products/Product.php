@@ -238,17 +238,6 @@ class Product extends Page {
 			return Payment::site_currency();
 		}
 	}
-
-	/**
-	 * Return the global tax information of the site.
-	 * @todo review this, and decide if it is necessary.
-	 * @return TaxModifier
-	 */
-	function TaxInfo() {
-		$currentOrder = ShoppingCart::current_order();
-		return $currentOrder->TaxInfo();
-	}
-
 	//passing on shopping cart links ...is this necessary?? ...why not just pass the cart?
 	function addLink() {
 		return ShoppingCart::add_item_link($this->ID);
