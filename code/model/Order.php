@@ -1002,136 +1002,6 @@ class Order extends DataObject {
 	}
 
 	/**
-	 * Updates the database structure of the Order table
-	 */
-	function requireDefaultRecords() {
-		parent::requireDefaultRecords();
-
-		if(!self::$do_migration) return;
-
-		// 1) If some orders with the old structure exist (hasShippingCost, Shipping and AddedTax columns presents in Order table), create the Order Modifiers SimpleShippingModifier and TaxModifier and associate them to the order
-
-		// we must check for individual database types here because each deals with schema in a none standard way
-		$db = DB::getConn();
-		if( $db instanceof PostgreSQLDatabase )
-		{
-       	    $exist = DB::query("SELECT column_name FROM information_schema.columns WHERE table_name ='Order' AND column_name = 'Shipping'")->numRecords();
-		}
-		else
-		{
-			// default is MySQL - broken for others, each database conn type supported must be checked for!
-       	    $exist = DB::query("SHOW COLUMNS FROM \"Order\" LIKE 'Shipping'")->numRecords();
-		}
-
- 		if($exist > 0) {
- 			if($orders = DataObject::get('Order')) {
- 				foreach($orders as $order) {
- 					$id = $order->ID;
- 					$hasShippingCost = DB::query("SELECT \"hasShippingCost\" FROM \"Order\" WHERE \"ID\" = '$id'")->value();
- 					$shipping = DB::query("SELECT \"Shipping\" FROM \"Order\" WHERE \"ID\" = '$id'")->value();
- 					$addedTax = DB::query("SELECT \"AddedTax\" FROM \"Order\" WHERE \"ID\" = '$id'")->value();
-					$country = $order->findShippingCountry(true);
- 					if($hasShippingCost == '1' && $shipping != null) {
- 						$modifier1 = new SimpleShippingModifier();
- 						$modifier1->Amount = $shipping < 0 ? abs($shipping) : $shipping;
- 						$modifier1->Type = 'Chargable';
- 						$modifier1->OrderID = $id;
- 						$modifier1->Country = $country;
- 						$modifier1->ShippingChargeType = 'Default';
- 						$modifier1->write();
- 					}
- 					if($addedTax != null) {
- 						$modifier2 = new TaxModifier();
- 						$modifier2->Amount = $addedTax < 0 ? abs($addedTax) : $addedTax;
- 						$modifier2->Type = 'Chargable';
- 						$modifier2->OrderID = $id;
- 						$modifier2->Country = $country;
- 						$modifier2->Name = 'Undefined After Ecommerce Upgrade';
- 						$modifier2->TaxType = 'Exclusive';
- 						$modifier2->write();
- 					}
- 				}
- 				DB::alteration_message('The \'SimpleShippingModifier\' and \'TaxModifier\' objects have been successfully created and linked to the appropriate orders present in the \'Order\' table', 'created');
- 			}
- 			DB::query("ALTER TABLE \"Order\" CHANGE COLUMN \"hasShippingCost\" \"_obsolete_hasShippingCost\" tinyint(1)");
- 			DB::query("ALTER TABLE \"Order\" CHANGE COLUMN \"Shipping\" \"_obsolete_Shipping\" decimal(9,2)");
- 			DB::query("ALTER TABLE \"Order\" CHANGE COLUMN \"AddedTax\" \"_obsolete_AddedTax\" decimal(9,2)");
- 			DB::alteration_message('The columns \'hasShippingCost\', \'Shipping\' and \'AddedTax\' of the table \'Order\' have been renamed successfully. Also, the columns have been renamed respectly to \'_obsolete_hasShippingCost\', \'_obsolete_Shipping\' and \'_obsolete_AddedTax\'', 'obsolete');
-		}
-
-		// 2) Cancel status update
-
-		if($orders = DataObject::get('Order', "\"Status\" = 'Cancelled'")) {
-			foreach($orders as $order) {
-				$order->Status = 'AdminCancelled';
-				$order->write();
-			}
-			DB::alteration_message('The orders which status was \'Cancelled\' have been successfully changed to the status \'AdminCancelled\'', 'changed');
-		}
-		//set starting order number ID
-		$number = intval(Order::get_order_id_start_number());
-		$currentMax = 0;
-		//set order ID
-		if($number) {
-			$count = DB::query("SELECT COUNT( \"ID\" ) FROM \"Order\" ")->value();
-		 	if($count > 0) {
-				$currentMax = DB::Query("SELECT MAX( \"ID\" ) FROM \"Order\"")->value();
-			}
-			if($number > $currentMax) {
-				DB::query("ALTER TABLE \"Order\"  AUTO_INCREMENT = $number ROW_FORMAT = DYNAMIC ");
-				DB::alteration_message("Change OrderID start number to ".$number, "edited");
-			}
-		}
-		//fix bad status
-		$list = self::get_order_status_options();
-		$firstOption = current($list);
-		$badOrders = DataObject::get("Order", "\"Status\" = ''");
-		if($badOrders) {
-			foreach($badOrders as $order) {
-				$order->Status = $firstOption;
-				$order->write();
-				DB::alteration_message("No order status for order number #".$order->ID." reverting to: $firstOption.","error");
-			}
-		}
-
-		//import details from member
-		$memberfields = array(
-			'FirstName',
-			'Surname',
-			'Email'
-		);
-		foreach($memberfields as $field){
-			$memberfields[$field] = "\"$field\" = '' OR \"$field\" IS NULL";
-		}
-		if(count($memberfields) > 0 && $orders = DataObject::get('Order',implode(" OR ",$memberfields)." AND \"MemberID\" > 0")){
-			foreach($orders as $order){
-				foreach($memberfields as $field => $filter){
-					$order->{$field} = $order->Member()->{$field};
-				}
-				$order->write();
-			}
-		}
-
-	}
-
-
-	function onAfterWrite() {
-		parent::onAfterWrite();
-
-		/*//FIXME: this is not a good way to change status, especially when orders are saved multiple times when an oder is placed
-		$log = new OrderStatusLog();
-		$log->OrderID = $this->ID;
-		$log->SentToCustomer = false;
-
-		//TO DO: make this sexier OR consider using Versioning!
-		$data = print_r($this->record, true);
-
-		$log->Title = "Order Update";
-		$log->Note = $data;
-		$log->write();*/
-	}
-
-	/**
 	 * delete attributes, statuslogs, and payments
 	 */
 	 //TODO: make this optional??
@@ -1143,14 +1013,12 @@ class Order extends DataObject {
 				$attribute->destroy();
 			}
 		}
-
 		if($statuslogs = $this->OrderStatusLogs()){
 			foreach($statuslogs as $log){
 				$log->delete();
 				$log->destroy();
 			}
 		}
-
 		if($payments = $this->Payments()){
 			foreach($payments as $payment){
 				$payment->delete();
@@ -1159,7 +1027,6 @@ class Order extends DataObject {
 		}
 		//TODO: delete order itmes & product_orderitem
 		parent::onBeforeDelete();
-
 	}
 
 	function debug(){

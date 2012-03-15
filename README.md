@@ -1,5 +1,7 @@
 # Shop Module
 
+ * http://ss-shop.org
+
 ## Maintainer Contact
 
  * Jeremy Shipman (Jedateach, jeremy@burnbright.net)
@@ -16,13 +18,7 @@
 
 ## Installation Instructions
 
-1. Find out how to add modules to SilverStripe and add module as per usual.
-
-2. Copy configurations from this module's _config.php file
-into mysite/_config.php file and edit settings as required.
-NB. the idea is not to edit this module so that you can
-upgrade this module in one go without redoing the settings.
-Instead customise your application using your mysite folder.
+Put the module folder into your SilverStripe root folder.
 
 Make sure the module root folder is named 'shop' to ensure requirements
 work properly.
@@ -31,10 +27,11 @@ work properly.
 
 You can view various configuration options in the 'example_config.php' file.
 
-WARNING: do not copy and paste entire configuration example file without
+*WARNING:* do not copy and paste entire configuration example file without
 first understanding each line, otherwise the system may not work as documented.
 In other words, only copy the lines which you need and understand.
 
-When running dev/build/ add: ?updatepayment=1 to migrate
-payment data from 2.3 to 2.4 style (currency db field to
-money db field).
+## Migrating
+
+Visit [yoursite]/dev/tasks/ShopMigrationTask to migrate your database to work properly.
+Make sure you take a database backup, as perfect results aren't guaranteed.
