@@ -20,7 +20,7 @@ class OrderModifier extends OrderAttribute {
 	);
 
 	public static $casting = array(
-		'TableValue' => 'EcommerceCurrency'
+		'TableValue' => 'Currency'
 	);
 
 	public static $searchable_fields = array(

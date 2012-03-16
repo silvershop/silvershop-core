@@ -18,6 +18,8 @@ Director::addRules(0, array(
 Object::add_extension("DevelopmentAdmin", "EcommerceDevelopmentAdminDecorator");
 DevelopmentAdmin::$allowed_actions[] = 'shop';
 
+Object::useCustomClass('Currency','EcommerceCurrency', true);
+
 //variations
 DataObject::add_extension("Product","ProductVariationDecorator");
 Object::add_extension("Product_Controller","ProductControllerVariationExtension");

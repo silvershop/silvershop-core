@@ -16,8 +16,8 @@ class OrderItem extends OrderAttribute {
 	);
 
 	public static $casting = array(
-		'UnitPrice' => 'EcommerceCurrency',
-		'Total' => 'EcommerceCurrency'
+		'UnitPrice' => 'Currency',
+		'Total' => 'Currency'
 	);
 
 	public static $searchable_fields = array(
