@@ -305,10 +305,8 @@ class Product_Image extends Image {
 	}
 
 }
-class Product_OrderItem extends OrderItem {
 
-	protected $_productID;
-	protected $_productVersion;
+class Product_OrderItem extends OrderItem {
 
 	static $db = array(
 		'ProductVersion' => 'Int'
@@ -318,66 +316,39 @@ class Product_OrderItem extends OrderItem {
 		'Product' => 'Product'
 	);
 
-	public function __construct($product = null, $quantity = 1) {
-		// Case 1: Constructed by getting OrderItem from DB
-		if(is_array($product)) {
-			$this->ProductID = $this->_productID = $product['ProductID'];
-			$this->ProductVersion = $this->_productVersion = $product['ProductVersion'];
-		}
-
-		// Case 2: Constructed in memory
-		if(is_object($product)) {
-			$this->ProductID = $this->_productID = $product->ID;
- 			$this->ProductVersion = $this->_productVersion = $product->Version;
-		}
-
- 		parent::__construct($product, $quantity);
-	}
-
-	function getProductIDForSerialization() {
-		return $this->_productID;
-	}
-
 	/**
-	 * Overloaded Product accessor method.
+	 * Get related product, based on version info if it is not in the cart.
 	 *
-	 * Overloaded from the default has_one accessor to
-	 * retrieve a product by it's version, this is extremely
-	 * useful because we can set in stone the version of
-	 * a product at the time when the user adds the item to
-	 * their cart, so if the CMS admin changes the price, it
-	 * remains the same for this order.
-	 *
-	 * @param boolean $current If set to TRUE, returns the latest published version of the Product,
-	 * 								If set to FALSE, returns the set version number of the Product
-	 * 						 		(instead of the latest published version)
-	 * @return Product object
+	 * @param boolean $forcecurrent - force getting latest version of the product.
+	 * @return Product
 	 */
-	public function Product($current = false) {
-		if($current) return DataObject::get_by_id('Product', $this->_productID);
-		elseif($this->_productID && $this->_productVersion)
-			return Versioned::get_version('Product', $this->_productID, $this->_productVersion);
-	}
-
-	function hasSameContent($orderItem) {
-		$equals = parent::hasSameContent($orderItem);
-		return $equals && $orderItem instanceof Product_OrderItem && $this->_productID == $orderItem->_productID && $this->_productVersion == $orderItem->_productVersion;
+	public function Product($forcecurrent = false) {
+		if($this->ProductID && $this->ProductVersion && !$forcecurrent){
+			return Versioned::get_version('Product', $this->ProductID, $this->ProductVersion);
+		}elseif($this->ProductID && $product = DataObject::get_by_id('Product', $this->ProductID)){
+			return $product;
+		}
+		return false;		
 	}
 
 	function UnitPrice() {
-		$unitprice = $this->Product()->Price;
+		$product = $this->Product();
+		$unitprice = ($product) ? $product->Price : 0;
 		$this->extend('updateUnitPrice',$unitprice);
 		return $unitprice;
 	}
 
 	function TableTitle() {
-		$tabletitle = $this->Product()->Title;
+		$product = $this->Product();
+		$tabletitle = ($product) ? $product->Title : $this->i18n_singular_name();
 		$this->extend('updateTableTitle',$tabletitle);
 		return $tabletitle;
 	}
 
 	function Link() {
-		if($product = $this->Product(true)) return $product->Link();
+		if($product = $this->Product()){
+			return $product->Link();
+		}
 	}
 
 	function addLink() {
@@ -402,17 +373,10 @@ class Product_OrderItem extends OrderItem {
 		return $array;
 	}
 
-	function onBeforeWrite() {
-		parent::onBeforeWrite();
-
-		$this->ProductID = $this->_productID;
-		$this->ProductVersion = $this->_productVersion;
-	}
-
 	public function debug() {
 		$title = $this->TableTitle();
-		$productID = $this->_productID;
-		$productVersion = $this->_productVersion;
+		$productID = $this->ProductID;
+		$productVersion = $this->ProductVersion;
 		$html = parent::debug() .<<<HTML
 			<h3>Product_OrderItem class details</h3>
 			<p>

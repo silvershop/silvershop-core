@@ -158,10 +158,6 @@ class ProductVariation extends DataObject {
  */
 class ProductVariation_OrderItem extends Product_OrderItem {
 
-	protected $_productVariationID;
-
-	protected $_productVariationVersion;
-
 	static $db = array(
 		'ProductVariationVersion' => 'Int'
 	);
@@ -170,55 +166,29 @@ class ProductVariation_OrderItem extends Product_OrderItem {
 		'ProductVariation' => 'ProductVariation'
 	);
 
-	public function __construct($productVariation = null, $quantity = 1) {
-
-		// Case 1 : Constructed by the static function get of DataObject
-
-		if(is_array($productVariation)) {
-			$this->ProductVariationID = $this->_productVariationID = $productVariation['ProductVariationID'];
-			$this->ProductVariationVersion = $this->_productVariationVersion = $productVariation['ProductVariationVersion'];
-			parent::__construct($productVariation, $quantity);
-		}
-
-		// Case 2 : Constructed in memory
-
-		else if(is_object($productVariation)) {
-			parent::__construct($productVariation->Product(), $quantity);
-			$this->_productVariationID = $productVariation->ID;
- 			$this->_productVariationVersion = $productVariation->Version;
-		}
-
-		else parent::__construct();
-	}
-
 	// ProductVariation Access Function
 
 	public function ProductVariation($current = false) {
-		if($current) return DataObject::get_by_id('ProductVariation', $this->_productVariationID);
-		else return Versioned::get_version('ProductVariation', $this->_productVariationID, $this->_productVariationVersion);
+		if($current) return DataObject::get_by_id('ProductVariation', $this->ProductVariationID);
+		else return Versioned::get_version('ProductVariation', $this->ProductVariationID, $this->ProductVariationVersion);
 	}
 
 	## Overloaded functions ##
 
 	function addLink() {
-		return ShoppingCart::add_item_link($this->_productID,$this->_productVariationID);
+		return ShoppingCart::add_item_link($this->ProductID,$this->ProductVariationID);
 	}
 
 	function removeLink() {
-		return ShoppingCart::remove_item_link($this->_productID,$this->_productVariationID);
+		return ShoppingCart::remove_item_link($this->ProductID,$this->ProductVariationID);
 	}
 
 	function removeallLink() {
-		return ShoppingCart::remove_all_item_link($this->_productID,$this->_productVariationID);
+		return ShoppingCart::remove_all_item_link($this->ProductID,$this->ProductVariationID);
 	}
 
 	function setquantityLink() {
-		return ShoppingCart::set_quantity_item_link($this->_productID,$this->_productVariationID);
-	}
-
-	function hasSameContent($orderItem) {
-		$equals = parent::hasSameContent($orderItem);
-		return $equals && $orderItem instanceof ProductVariation_OrderItem && $this->_productVariationID == $orderItem->_productVariationID && $this->_productVariationVersion == $orderItem->_productVariationVersion;
+		return ShoppingCart::set_quantity_item_link($this->ProductID,$this->ProductVariationID);
 	}
 
 	function UnitPrice() {
@@ -229,17 +199,10 @@ class ProductVariation_OrderItem extends Product_OrderItem {
 		return parent::TableTitle() . ' (' . $this->ProductVariation()->Title . ')';
 	}
 
-	function onBeforeWrite() {
-		parent::onBeforeWrite();
-
-		$this->ProductVariationID = $this->_productVariationID;
-		$this->ProductVariationVersion = $this->_productVariationVersion;
-	}
-
 	public function debug() {
 		$title = $this->TableTitle();
-		$productVariationID = $this->_productVariationID;
-		$productVariationVersion = $this->_productVariationVersion;
+		$productVariationID = $this->ProductVariationID;
+		$productVariationVersion = $this->ProductVariationVersion;
 		return parent::debug() .<<<HTML
 			<h3>ProductVariation_OrderItem class details</h3>
 			<p>

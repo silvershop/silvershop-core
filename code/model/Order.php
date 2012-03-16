@@ -426,6 +426,10 @@ class Order extends DataObject {
 			//re-write all attributes and modifiers to make sure they are up-to-date before they can't be changed again
 			if($this->Attributes()->exists()){
 				foreach($this->Attributes() as $attribute){
+					if($attribute instanceof Product_OrderItem){
+						$product = $attribute->Product();
+						$attribute->ProductVersion = $product->Version;
+					}
 					$attribute->write();
 				}
 			}

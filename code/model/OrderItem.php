@@ -49,24 +49,8 @@ class OrderItem extends OrderAttribute {
 	function i18n_plural_name() { return _t("OrderItem.PLURAL", self::$plural_name); }
 	public static $default_sort = "\"Created\" DESC";
 
-	public function __construct($object = null, $quantity = 1) {
-
-		if(is_array($object))
-			parent::__construct($object);
-		else
-			parent::__construct();
-	}
-
 	static function disable_quantity_js(){
 		self::$disable_quantity_js = true;
-	}
-
-	function updateForAjax(array &$js) {
-		$total = DBField::create('EcommerceCurrency', $this->Total())->Nice();
-		$js[] = array('id' => $this->TableTotalID(), 'parameter' => 'innerHTML', 'value' => $total);
-		$js[] = array('id' => $this->CartTotalID(), 'parameter' => 'innerHTML', 'value' => $total);
-		$js[] = array('id' => $this->CartQuantityID(), 'parameter' => 'innerHTML', 'value' => $this->Quantity);
-		$js[] = array('name' => $this->QuantityFieldName(), 'parameter' => 'value', 'value' => $this->Quantity);
 	}
 
 	/**
@@ -104,17 +88,6 @@ HTML;
 		user_error("OrderItem::UnitPrice() called. Please implement UnitPrice() on $this->class", E_USER_ERROR);
 	}
 
-	protected function QuantityFieldName() {
-		return $this->MainID() . '_Quantity';
-	}
-
-	/**
-	 * @deprecated 1.0 - use QuantityField instead
-	 */
-	function AjaxQuantityField(){
-		return $this->QuantityField();
-	}
-
 	function QuantityField(){
 		return new EcomQuantityField($this);
 	}
@@ -144,16 +117,32 @@ HTML;
 		return $this->i18n_singular_name();
 	}
 
-	function ProductTitle() {
-		return $this->Product()->Title;
-	}
-
-	function CartQuantityID() {
-		return $this->CartID() . '_Quantity';
-	}
-
 	function checkoutLink() {
 		return CheckoutPage::find_link();
 	}
+	
+	//Deprecated, to be removed or factored out
 
+	/**
+	* @deprecated 1.0 - use QuantityField instead
+	*/
+	function AjaxQuantityField(){
+		return $this->QuantityField();
+	}
+	
+	protected function QuantityFieldName() {
+		return $this->MainID() . '_Quantity';
+	}
+	
+	function CartQuantityID() {
+		return $this->CartID() . '_Quantity';
+	}
+	
+	function updateForAjax(array &$js) {
+		$total = DBField::create('Currency', $this->Total())->Nice();
+		$js[] = array('id' => $this->TableTotalID(), 'parameter' => 'innerHTML', 'value' => $total);
+		$js[] = array('id' => $this->CartTotalID(), 'parameter' => 'innerHTML', 'value' => $total);
+		$js[] = array('id' => $this->CartQuantityID(), 'parameter' => 'innerHTML', 'value' => $this->Quantity);
+		$js[] = array('name' => $this->QuantityFieldName(), 'parameter' => 'value', 'value' => $this->Quantity);
+	}
 }
