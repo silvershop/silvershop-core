@@ -19,7 +19,7 @@
 		<% if Variations %>
 			$VariationForm
 		<% else %>
-			<% if Price != 0 %><p class="priceDisplay">$Price.Nice $Currency $TaxInfo.PriceSuffix</p><% end_if %>
+			<% if Price != 0 %><p class="priceDisplay">$Price.Nice $Currency</p><% end_if %>
 			<% if canPurchase %>
 				<% if IsInCart %>
 					<% control Item %>
