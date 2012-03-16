@@ -1,8 +1,8 @@
 <?php
 /**
- * Example eCommerce configuration file.
+ * Example Shop configuration file.
  *
- * This file is tested in the 'EcommerceTest' unit test.
+ * This file is tested in the 'ShopTest' unit test.
  *
  * copy the lines below to your mysite/_config.php file and set as required.
  */
@@ -56,7 +56,7 @@ EcommerceRole::set_group_name("Customers");
 FlatTaxModifier::set_tax("0.15", "GST", $exclusive = false);
 SimpleShippingModifier::set_default_charge(10);
 SimpleShippingModifier::set_charges_for_countries(array('US' => 10,'NZ' => 5));
-TaxModifier::set_for_country($country = "NZ", $rate = 0.15, $name = "GST", $inclexcl = "inclusive");
+GlobalTaxModifier::set_for_country($country = "NZ", $rate = 0.15, $name = "GST", $inclexcl = "inclusive");
 
 //HELP
 Product::set_global_allow_purchase(false); //stops the sale of all products

@@ -68,7 +68,7 @@ class EcomQuantityField extends ViewableData{
 	 * Used for storing the quantity update link for ajax use.
 	 */
 	function AJAXLinkHiddenField(){
-		if($quantitylink = ShoppingCart::set_quantity_item_link($this->item->getProductIDForSerialization(), null,$this->parameters)){
+		if($quantitylink = ShoppingCart_Controller::set_quantity_item_link($this->item->ProductID, null,$this->parameters)){
 			$attributes = array(
 				'type' => 'hidden',
 				'class' => 'ajaxQuantityField_qtylink',
@@ -82,12 +82,12 @@ class EcomQuantityField extends ViewableData{
 	
 	function IncrementLink(){
 		$varid = ($this->item instanceof ProductVariation_OrderItem) ? $this->item->ProductVariationID : null;
-		return Convert::raw2att(ShoppingCart::add_item_link($this->item->getProductIDForSerialization(), $varid,$this->parameters));
+		return Convert::raw2att(ShoppingCart_Controller::add_item_link($this->item->ProductID, $varid,$this->parameters));
 	}
 	
 	function DecrementLink(){
 		$varid = ($this->item instanceof ProductVariation_OrderItem) ? $this->item->ProductVariationID : null;
-		return Convert::raw2att(ShoppingCart::remove_item_link($this->item->getProductIDForSerialization(), $varid,$this->parameters));
+		return Convert::raw2att(ShoppingCart_Controller::remove_item_link($this->item->ProductID, $varid,$this->parameters));
 	}
 	
 	function forTemplate(){

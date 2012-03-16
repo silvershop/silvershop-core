@@ -13,7 +13,7 @@ class CartWidget extends Widget{
 	static $description = "Displays the current contents of the user's cart.";
 
 	function Cart(){
-		return ShoppingCart::current_order();
+		return Controller::curr()->Cart();
 	}
-
+	
 }

@@ -110,7 +110,8 @@ class CheckoutPage_Controller extends Page_Controller {
 		'OrderForm',
 		'OrderFormWithoutShippingAddress',
 		'OrderFormWithShippingAddress',
-		'finish'
+		'finish',
+		'removemodifier'
 	);
 	
 	/**
@@ -126,35 +127,7 @@ class CheckoutPage_Controller extends Page_Controller {
 		Requirements::javascript(SHOP_DIR.'/javascript/CheckoutPage.js');
 		Requirements::javascript(SHOP_DIR.'/javascript/ecommerce.js');
 		Requirements::themedCSS('CheckoutPage');
-		$this->initVirtualMethods();
 		return array();
-	}
-
-	/**
-	 * Inits the virtual methods from the name of the modifier forms to
-	 * redirect the action method to the form class
-	 */
-	protected function initVirtualMethods() {
-		if($forms = $this->ModifierForms()) {
-			foreach($forms as $form) {
-				$this->addWrapperMethod($form->Name(), 'getOrderModifierForm');
-				self::$allowed_actions[] = $form->Name(); // add all these forms to the list of allowed actions also
-			}
-		}
-	}
-
-	/**
-	 * Return a specific {@link OrderModifierForm} by it's name.
-	 *
-	 * @param string $name The name of the form to return
-	 * @return Form
-	 */
-	protected function getOrderModifierForm($name) {
-		if($forms = $this->ModifierForms()) {
-			foreach($forms as $form) {
-				if($form->Name() == $name) return $form;
-			}
-		}
 	}
 
 	/**
@@ -165,9 +138,10 @@ class CheckoutPage_Controller extends Page_Controller {
 	 * @return boolean
 	 */
 	function CanCheckout() {
-		if($order = $this->Order()) {
+		if($order = $this->Cart()) {
 			return !$order->IsPaid();
 		}
+		return false;
 	}
 
 	/**
@@ -182,20 +156,8 @@ class CheckoutPage_Controller extends Page_Controller {
 			if($order && $order->MemberID == Member::currentUserID()) {
 				return $order;
 			}
-		} else {
-			return ShoppingCart::current_order();
 		}
-	}
-
-	/**
-	 * Returns a DataObjectSet of {@link OrderModifierForm} objects. These
-	 * forms are used in the OrderInformation HTML table for the user to fill
-	 * out as needed for each modifier applied on the site.
-	 *
-	 * @return DataObjectSet
-	 */
-	function ModifierForms() {
-		return Order::get_modifier_forms($this);
+		return null;
 	}
 
 	/**
@@ -205,6 +167,11 @@ class CheckoutPage_Controller extends Page_Controller {
 	 * @return OrderForm object
 	 */
 	function OrderForm() {
+		
+		if(!$this->CanCheckout()){
+			return false;
+		}
+		
 		$form = new OrderForm($this, 'OrderForm');
 		$this->data()->extend('updateOrderForm',$form);
 		//load session data
@@ -253,6 +220,67 @@ class CheckoutPage_Controller extends Page_Controller {
 			'IncompleteOrders' => $this->allorders("\"Status\" IN('Unpaid','Processing')")
 		);
 
+	}
+	
+	/**
+	* Returns a DataObjectSet of {@link OrderModifierForm} objects. These
+	* forms are used in the OrderInformation HTML table for the user to fill
+	* out as needed for each modifier applied on the site.
+	* @deprecated add form to template manually
+	* @return DataObjectSet
+	*/
+	function ModifierForms() {
+		if(ShoppingCart::order_started()){
+			return Order::get_modifier_forms($this);
+		}
+		return null;
+	}
+	
+	/**
+	 * Inits the virtual methods from the name of the modifier forms to
+	 * redirect the action method to the form class
+	 * @deprecated add form to template manually
+	 */
+	protected function initVirtualMethods() {
+		if($forms = $this->ModifierForms()) {
+			foreach($forms as $form) {
+				$this->addWrapperMethod($form->Name(), 'getOrderModifierForm');
+				self::$allowed_actions[] = $form->Name(); // add all these forms to the list of allowed actions also
+			}
+		}
+	}
+	
+	/**
+	 * Return a specific {@link OrderModifierForm} by it's name.
+	 *@deprecated add form to template manually
+	 * @param string $name The name of the form to return
+	 * @return Form
+	 */
+	protected function getOrderModifierForm($name) {
+		if($forms = $this->ModifierForms()) {
+			foreach($forms as $form) {
+				if($form->Name() == $name) return $form;
+			}
+		}
+	}
+	
+	static function remove_modifier_link($id){
+		return self::$url_segment.'/removemodifier/'.$id;
+	}
+	
+	function removemodifier(){
+		$modifierId = $this->urlParams['ID'];
+		$order = ShoppingCart::current_order();
+		if($modifierId && $order && $modifier =  DataObject::get_one('OrderModifier',"\"OrderID\" = ".$order->ID." AND \"OrderModifier\".\"ID\" = $modifierId")){
+			if($modifier->canRemove()){	
+				$modifier->delete();
+				$modifier->destroy();
+				Director::redirectBack();
+				return;
+			}
+		}
+		Director::redirectBack();
+		return false;
 	}
 
 }

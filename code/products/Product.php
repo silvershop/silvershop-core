@@ -12,7 +12,7 @@
  *
  * @package shop
  */
-class Product extends Page {
+class Product extends Page implements Buyable{
 
 	public static $db = array(
 		'Price' => 'Currency',
@@ -160,13 +160,6 @@ class Product extends Page {
 	}
 
 	/**
-	 * @deprecated use canPurchase instead.
-	 */
-	function AllowPurchase(){
-		return $this->canPurchase();
-	}
-
-	/**
 	 * Conditions for whether a product can be purchased.
 	 *
 	 * If it has the checkbox for 'Allow this product to be purchased',
@@ -222,10 +215,24 @@ class Product extends Page {
 		$this->extend('updateItemFilter',$filter);
 		$item = ShoppingCart::get_item_by_id($this->ID,null,$filter); //TODO: needs filter
 		if(!$item)
-			$item = new Product_OrderItem($this,0); //return dummy item so that we can still make use of Item
+			$item = $this->createItem(0,false); //return dummy item so that we can still make use of Item
 		$this->extend('updateDummyItem',$item);
 		return $item;
 	}
+	
+	/**
+	 * @see Buyable::createItem()
+	 */
+	function createItem($quantity = 1,$write = true){
+		$item = new Product_OrderItem();
+		$item->ProductID = $this->ID;
+		//$item->ProductVersion = $this->Version; //Save on save
+		$item->Quantity = $quantity;
+		if($write){
+			$item->write();
+		}
+		return $item;
+	}	
 
 	/**
 	 * Return the currency being used on the site.
@@ -238,18 +245,24 @@ class Product extends Page {
 	}
 	//passing on shopping cart links ...is this necessary?? ...why not just pass the cart?
 	function addLink() {
-		return ShoppingCart::add_item_link($this->ID);
+		return ShoppingCart_Controller::add_item_link($this->ID);
 	}
 
 	function removeLink() {
-		return ShoppingCart::remove_item_link($this->ID);
+		return ShoppingCart_Controller::remove_item_link($this->ID);
 	}
 
 	function removeallLink() {
-		return ShoppingCart::remove_all_item_link($this->ID);
+		return ShoppingCart_Controller::remove_all_item_link($this->ID);
 	}
 
+	//Deprecated fields
+	
 	/**
+	* @deprecated v1.0 use canPurchase instead.
+	*/
+	function AllowPurchase(){
+		return $this->canPurchase();
 	}
 
 }
@@ -352,19 +365,19 @@ class Product_OrderItem extends OrderItem {
 	}
 
 	function addLink() {
-		return ShoppingCart::add_item_link($this->_productID,null,$this->linkParameters());
+		return ShoppingCart_Controller::add_item_link($this->ProductID,null,$this->linkParameters());
 	}
 
 	function removeLink() {
-		return ShoppingCart::remove_item_link($this->_productID,null,$this->linkParameters());
+		return ShoppingCart_Controller::remove_item_link($this->ProductID,null,$this->linkParameters());
 	}
 
 	function removeallLink() {
-		return ShoppingCart::remove_all_item_link($this->_productID,null,$this->linkParameters());
+		return ShoppingCart_Controller::remove_all_item_link($this->ProductID,null,$this->linkParameters());
 	}
 
 	function setquantityLink() {
-		return ShoppingCart::set_quantity_item_link($this->_productID,null,$this->linkParameters());
+		return ShoppingCart_Controller::set_quantity_item_link($this->ProductID,null,$this->linkParameters());
 	}
 
 	function linkParameters(){

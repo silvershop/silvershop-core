@@ -8,7 +8,7 @@
 	</div>
 	
 	<% if CanCheckout %>
-		<% control Order %>
+		<% control Cart %>
 			<% include Order_Content_Editable %>
 		<% end_control %>
 		
@@ -16,7 +16,7 @@
 			$Me
 		<% end_control %>
 		
-		<% if Order.Items %>$OrderForm<% end_if %>
+		<% if Cart.Items %>$OrderForm<% end_if %>
 	<% else %>
 		<p><strong>$Message</strong></p>
 	<% end_if %>

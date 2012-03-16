@@ -17,7 +17,13 @@ class CartCleanupTask extends WeeklyTask{
 	function process(){
 
 		$time = date('Y-m-d H:i:s', strtotime("-".self::$cleardays." days"));
-		if($oldcarts = DataObject::get('Order',"\"Status\" = 'Cart' AND \"LastEdited\" < '$time'")){
+		$filter = "\"Status\" = 'Cart'";
+		
+		if(self::$cleardays){
+			$filter .= " AND \"LastEdited\" < '$time'";
+		}
+		
+		if($oldcarts = DataObject::get('Order',$filter)){
 			echo "<br/>\nDeleted ids: ";
 			foreach($oldcarts as $cart){
 				echo $cart->Title." ";

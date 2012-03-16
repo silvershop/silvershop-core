@@ -6,6 +6,8 @@
 // * * * NON-ECOMMERCE SETTINGS
 Payment::set_site_currency('USD');
 Geoip::$default_country_code = false;
+Email::setAdminEmail('test@myshop.com');
+
 //i18n::set_locale('');
 
 // * * * ECOMMERCE I18N SETTINGS

@@ -9,7 +9,7 @@ if(!class_exists('Payment')) user_error("You need to also install the Payment mo
 DataObject::add_extension('Payment', 'EcommercePayment');
 //create controller for shopping cart
 Director::addRules(50, array(
-	ShoppingCart::$URLSegment . '/$Action/$ID/$OtherID' => 'ShoppingCart',
+	ShoppingCart_Controller::$url_segment . '/$Action/$ID/$OtherID' => 'ShoppingCart_Controller',
 ));
 Director::addRules(0, array(
 	CheckoutPage_Controller::$url_segment . '/$Action/$ID/$OtherID' => 'CheckoutPage_Controller'
@@ -17,6 +17,7 @@ Director::addRules(0, array(
 
 Object::add_extension("DevelopmentAdmin", "EcommerceDevelopmentAdminDecorator");
 DevelopmentAdmin::$allowed_actions[] = 'shop';
+Object::add_extension("Page_Controller","ViewableCart");
 
 Object::useCustomClass('Currency','EcommerceCurrency', true);
 

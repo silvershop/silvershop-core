@@ -22,7 +22,26 @@ class Order extends DataObject {
 	public static $db = array(
 		'SessionID' => "Varchar(32)", //so that in the future we can link sessions with Orders.... One session can have several orders, but an order can onnly have one session
 		'Status' => "Enum('Unpaid,Query,Paid,Processing,Sent,Complete,AdminCancelled,MemberCancelled,Cart','Cart')",
+		'ReceiptSent' => 'Boolean',
+		'Printed' => 'Boolean',
+
+		//member
+		'FirstName' => 'Varchar',
+		'Surname' => 'Varchar',
+		'Email' => 'Varchar',
+		'Notes' => 'Text',
+		
+		//invoice/shipping
+		'Address' => 'Varchar(255)',
+		'AddressLine2' => 'Varchar(255)',
+		'City' => 'Varchar(100)',
+		'PostalCode' => 'Varchar(30)',
+		'State' => 'Varchar(100)',
 		'Country' => 'Varchar',
+		'HomePhone' => 'Varchar(100)',
+		'MobilePhone' => 'Varchar(100)',
+	
+		//separate shipping
 		'UseShippingAddress' => 'Boolean',
 		'ShippingName' => 'Text',
 		'ShippingAddress' => 'Text',
@@ -32,25 +51,9 @@ class Order extends DataObject {
 		'ShippingState' => 'Varchar(30)',
 		'ShippingCountry' => 'Text',
 		'ShippingPhone' => 'Varchar(30)',
-		'CustomerOrderNote' => 'Text',
-
-		'ReceiptSent' => 'Boolean',
-		'Printed' => 'Boolean',
-
-		//main order details
-		'Address' => 'Varchar(255)',
-		'AddressLine2' => 'Varchar(255)',
-		'City' => 'Varchar(100)',
-		'PostalCode' => 'Varchar(30)',
-		'State' => 'Varchar(100)',
-		'Country' => 'Varchar',
-		'HomePhone' => 'Varchar(100)',
-		'MobilePhone' => 'Varchar(100)',
-		'Notes' => 'HTMLText',
-
-		'FirstName' => 'Varchar',
-		'Surname' => 'Varchar',
-		'Email' => 'Varchar'
+		
+		//financials
+		'Total' => 'Currency',
 	);
 
 	public static $has_one = array(
@@ -64,7 +67,11 @@ class Order extends DataObject {
 	);
 	
 	public static $default_sort = "\"Created\" DESC";
-
+	
+	public static $defaults = array(
+		'Status' => 'Cart'
+	);
+	
 	public static $casting = array(
 		'FullBillingAddress' => 'Text',
 		'FullShippingAddress' => 'Text',
@@ -90,12 +97,6 @@ class Order extends DataObject {
 	 *
 	 */
 	static $hidden_status = array('Cart','AdminCancelled','MemberCancelled','Query');
-
-	/**
-	 * Migration script in requiredefaultRecords will only run if this is enabled.
-	 * It can be taxing on db/build if there is a large database of orders.
-	 */
-	static $do_migration = false;
 
 	/**
 	 * This is the from address that the receipt
@@ -225,8 +226,9 @@ class Order extends DataObject {
 		)
 	);
 
+	public static $rounding_precision = 2;
 	
-	static $maximum_ignorable_sales_payments_difference = 0.01;
+	protected static $maximum_ignorable_sales_payments_difference = 0.01;
 	public static function set_maximum_ignorable_sales_payments_difference($difference){
 		self::$maximum_ignorable_sales_payments_difference = $difference;
 	}
@@ -245,12 +247,14 @@ class Order extends DataObject {
 	function getCMSFields(){
 		$fields = parent::getCMSFields();
 		$fields->insertBefore(new LiteralField('Title',"<h2>Order #$this->ID - ".$this->dbObject('Created')->Nice()." - ".$this->Member()->getName()."</h2>"),'Root');
-
-		$fieldsAndTabsToBeRemoved = self::get_shipping_fields();
-		$fieldsAndTabsToBeRemoved[] = 'Printed';
-		$fieldsAndTabsToBeRemoved[] = 'MemberID';
-		$fieldsAndTabsToBeRemoved[] = 'Attributes';
-		$fieldsAndTabsToBeRemoved[] = 'SessionID';
+		$fieldsAndTabsToBeRemoved = array(
+			'Main',
+			'Status',
+			'Printed',
+			'MemberID',
+			'Attributes',
+			'SessionID',
+		);
 		foreach($fieldsAndTabsToBeRemoved as $field) {
 			$fields->removeByName($field);
 		}
@@ -279,7 +283,7 @@ class Order extends DataObject {
 			"OrderModifier", //$sourceClass =
 			OrderModifier::$summary_fields, //$fieldList =
 			"\"OrderID\" = ".$this->ID."", //$sourceFilter =
-			"\"Type\", \"Amount\" ASC, \"Created\" ASC", //$sourceSort =
+			null, //$sourceSort =
 			null //$sourceJoin =
 		);
 		$modifierTable->setPermissions(array("view"));
@@ -549,6 +553,13 @@ class Order extends DataObject {
 		if(ClassInfo::exists($className)){
 			//search for existing
 			if($modifier = DataObject::get_one($className,"\"OrderID\" = ".$this->ID)){ //sort by?
+				//remove if no longer valid
+				if(!$modifier->valid()){
+					//TODO: need to provide feedback message - why modifier was removed
+					$modifier->delete();
+					$modifier->destroy();
+					return null;
+				}
 				return $modifier;
 			}
 			$modifier = new $className();
@@ -580,7 +591,7 @@ class Order extends DataObject {
 	 * Precondition : The order is in DB
 	 */
 	function TotalOutstanding(){
-		$total = $this->Total();
+		$total = $this->Total;
 		$paid = $this->TotalPaid();
 		$outstanding = $total - $paid;
 		if(abs($outstanding) < self::$maximum_ignorable_sales_payments_difference) {

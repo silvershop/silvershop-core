@@ -4,7 +4,7 @@
 		$Content
 	<% end_if %>
 </div>
-<% control Order %>
+<% control Cart %>
 	<% include Order_Content_Editable %>
 <% end_control %>
 <% if ContinuePage %><a class="continuelink button" href="$ContinuePage.Link">continue shopping</a><% end_if %>

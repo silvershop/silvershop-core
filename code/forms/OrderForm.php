@@ -30,8 +30,10 @@ class OrderForm extends Form {
 		$member = Member::currentUser();
 		$memberFields = new CompositeField(singleton('Member')->getEcommerceFields());
 		$requiredFields = singleton('Member')->getEcommerceRequiredFields();
+		
+		$order = ShoppingCart::current_order();		
 
-		if(ShoppingCart::uses_different_shipping_address()) {
+		if($order && $order->UseShippingAddress) {
 			$countryField = new DropdownField('ShippingCountry',  _t('OrderForm.Country','Country'), Geoip::getCountryDropDown(), EcommerceRole::find_country());
 			$shippingFields = new CompositeField(
 				new HeaderField(_t('OrderForm.SendGoodsToDifferentAddress','Send goods to different address'), 3),
@@ -184,7 +186,9 @@ class OrderForm extends Form {
 	 * Save in the session that the current member wants to use a different shipping address.
 	 */
 	function useDifferentShippingAddress($data, $form, $request) {
-		ShoppingCart::set_uses_different_shipping_address(true);
+		$order = ShoppingCart::current_order();
+		$order->UseShippingAddress = true;
+		$order->write();
 		$this->saveDataToSession($data);
 		Director::redirectBack();
 	}
@@ -193,14 +197,18 @@ class OrderForm extends Form {
 	 * Save in the session that the current member wants to use his address as a shipping address.
 	 */
 	function useMemberShippingAddress($data, $form, $request) {
-		ShoppingCart::set_uses_different_shipping_address(false);
+		$order = ShoppingCart::current_order();
+		$order->UseShippingAddress = false;
+		$order->write();
 		$this->saveDataToSession($data);
 		Director::redirectBack();
 	}
 
 	function updateShippingCountry($data, $form, $request) {
 		Session::set($this->FormName(), $data);
-		ShoppingCart::set_country($data['Country']);
+		$order = ShoppingCart::current_order();
+		$order->Country = $data['Country'];
+		$order->write();		
 		if(Director::is_ajax()){
 			return "success";
 		}
@@ -226,23 +234,28 @@ class OrderForm extends Form {
 			user_error(get_class($payment) . ' is not a valid Payment object!', E_USER_ERROR); //TODO: be more graceful with errors
 		}
 		$this->saveDataToSession($data); //save for later if necessary
+		$cart = ShoppingCart::getInstance();
+		$order = $cart->current();
+		
 		//check for cart items
-		if(!ShoppingCart::has_items()) {
+		if(!$order) {
 			$form->sessionMessage(_t('OrderForm.NoItemsInCart','Please add some items to your cart'), 'bad');
 			Director::redirectBack();
 			return false;
 		}
+		
+		$cart->clear(); //clear / disconnect the shopping cart
+		$order->calculate(); //final recalculation
 
-		//check that price hasn't changed
-		$oldtotal = ShoppingCart::current_order()->Total();
-
-		// Create new Order from shopping cart, discard cart contents in session
-		$order = ShoppingCart::current_order();
+		//TODO: check that price hasn't changed
+		/*
+		$oldtotal = $order->Total();
 		if($order->Total() != $oldtotal) {
 			$form->sessionMessage(_t('OrderForm.PriceUpdated','The order price has been updated'), 'warning');
 			Director::redirectBack();
 			return false;
 		}
+		*/
 
 		$member = Member::currentUser();
 		if(!$member){
@@ -291,7 +304,7 @@ class OrderForm extends Form {
 		$payment->PaidForID = $order->ID;
 		$payment->PaidForClass = $order->class;
 
-		$payment->Amount->Amount = $order->Total();
+		$payment->Amount->Amount = $order->TotalOutstanding();
 		$payment->write();
 
 		//prepare $data - ie put into the $data array any fields that may need to be there for payment

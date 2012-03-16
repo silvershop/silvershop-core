@@ -8,7 +8,7 @@
  * @package shop
  * @subpackage variations
  */
-class ProductVariation extends DataObject {
+class ProductVariation extends DataObject implements Buyable{
 
 	static $db = array(
 		//'Title' => 'Text',
@@ -148,6 +148,20 @@ class ProductVariation extends DataObject {
 	function addLink() {
 		return $this->Item()->addLink($this->ProductID,$this->ID);
 	}
+	
+	function createItem($quantity = 1, $write = true){
+		$item = new ProductVariation_OrderItem();
+		$item->Quantity = $quantity;
+		$item->ProductID = $this->ProductID;
+		//$item->ProductVersion = $this->Product()->Version;
+		$item->ProductVariationID = $this->ID;
+		$item->ProductVariationVersion = $this->Version;
+		if($write){
+			$item->write();
+		}
+		return $item;
+	}
+	
 }
 
 /**

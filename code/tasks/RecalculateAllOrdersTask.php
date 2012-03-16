@@ -21,16 +21,8 @@ class RecalculateAllOrdersTask extends BuildTask {
 		if($orders = DataObject::get("Order")){
 			echo $br."Writing all order items ";
 			foreach($orders as $order){
-				if($items = $order->Items()){
-					foreach($items as $item){
-						if($item->Product()){
-							if($verbose) echo $item->ID." ";
-							$item->write(); //OrderItem->onBeforeWrite calls 'CalculateTotal'
-						}
-						$item->destroy();
-					}
-				}
-				$order->destroy();
+				$order->calculate();
+				$order->write();
 			}
 			echo $br."done.".$br;
 		}

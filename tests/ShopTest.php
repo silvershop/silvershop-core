@@ -5,12 +5,10 @@
  * @package shop
  * @subpackage tests
  */
-class EcommerceTest extends FunctionalTest {
+class ShopTest extends FunctionalTest {
 
 	static $fixture_file = 'shop/tests/ecommerce.yml';
-
 	static $disable_theme = true;
-
 	static $use_draft_site = true;
 
 	function setUp() {
@@ -21,12 +19,12 @@ class EcommerceTest extends FunctionalTest {
 
 	function testExampleConfig(){
 		require_once(BASE_PATH.DIRECTORY_SEPARATOR.SHOP_DIR.DIRECTORY_SEPARATOR.'example_config.php');
-
 		//TODO: test each configuration
 	}
 
 	function testCanViewCheckoutPage() {
-		$this->get('checkout/');
+		$this->get('checkout');
+		//TODO: check order hasn't started
 	}
 
 	function testCanViewProductPage() {
@@ -34,6 +32,7 @@ class EcommerceTest extends FunctionalTest {
 		$p2a = $this->objFromFixture('Product', 'socks');
 		$this->get(Director::makeRelative($p1a->Link()));
 		$this->get(Director::makeRelative($p2a->Link()));
+		//TODO: check order hasn't started
 	}
 
 	function testCanViewProductGroupPage() {
@@ -41,6 +40,7 @@ class EcommerceTest extends FunctionalTest {
 		$g2 = $this->objFromFixture('ProductGroup', 'g2');
 		$this->get(Director::makeRelative($g1->Link()));
 		$this->get(Director::makeRelative($g2->Link()));
+		//TODO: check order hasn't started
 	}
 
 	function old_testCanViewAccountPage() {
