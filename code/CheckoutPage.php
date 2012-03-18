@@ -156,6 +156,9 @@ class CheckoutPage_Controller extends Page_Controller {
 			if($order && $order->MemberID == Member::currentUserID()) {
 				return $order;
 			}
+		}else{
+			//fallback for templates - to be deprecated
+			return $this->Cart();
 		}
 		return null;
 	}
