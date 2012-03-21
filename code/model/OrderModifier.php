@@ -163,7 +163,7 @@ class OrderModifier extends OrderAttribute {
 	function IsChargable() {
 		return $this->Type == "Chargable";
 	}
-
+	
 	/**
 	 * Checks if the modifier can be removed.
 	 * @return boolean
@@ -202,7 +202,7 @@ HTML;
 	 * @deprecated use Title
 	 */
 	function CartValue() {
-		return $this->TableTitle();
+		return $this->TableValue();
 	}
 	
 	/**

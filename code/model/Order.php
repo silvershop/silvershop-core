@@ -511,6 +511,9 @@ class Order extends DataObject {
 		$runningtotal = $this->SubTotal();
 		$modifiertotal = 0;
 		$sort = 1;
+		
+		$existingmodifiers = $this->Modifiers();
+		
 		if($this->IsCart()){
 			//check if modifiers are even in use
 			if(!self::$modifiers || !is_array(self::$modifiers) || count(self::$modifiers) <= 0){
@@ -526,8 +529,18 @@ class Order extends DataObject {
 				}
 				$sort++;
 			}
-		}else{ //use existing modifiers, if order has been placed
-			if($modifiers = $this->Modifiers()){
+			//clear out modifiers that shouldn't be there, according to defined modifiers list
+				//TODO: it may be better to store/run this as a build task - remove all invalid modifiers from carts
+			foreach($existingmodifiers as $modifier){
+				if(!in_array($modifier->ClassName,self::$modifiers)){
+					$modifier->delete();
+					$modifier->destroy();
+					return null;
+				}
+			}
+			
+		}else{ //only use existing modifiers, if order has been placed
+			if($existingmodifiers){
 				foreach($modifiers as $modifier){
 					$modifier->Sort = $sort;
 					//TODO: prevent recalculating value if $this->Amount is present
