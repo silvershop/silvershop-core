@@ -401,5 +401,12 @@ HTML;
 		$this->extend('updateDebug',$html);
 		return $html;
 	}
+	
+	/**
+	 * @deprecated - use TableTitle instead
+	 */
+	function ProductTitle(){
+		return $this->TableTitle();
+	}
 
 }

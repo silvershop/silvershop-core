@@ -245,55 +245,36 @@ class Order extends DataObject {
 	}
 
 	function getCMSFields(){
-		$fields = parent::getCMSFields();
+		$fields = new FieldSet(new TabSet('Root',new Tab('Main')));
 		$fields->insertBefore(new LiteralField('Title',"<h2>Order #$this->ID - ".$this->dbObject('Created')->Nice()." - ".$this->Member()->getName()."</h2>"),'Root');
-		$fieldsAndTabsToBeRemoved = array(
-			'Main',
-			'Status',
-			'Printed',
-			'MemberID',
-			'Attributes',
-			'SessionID',
-		);
+		$fieldsAndTabsToBeRemoved = array('Main','Payments','Status','Printed','MemberID','Attributes','SessionID');
 		foreach($fieldsAndTabsToBeRemoved as $field) {
 			$fields->removeByName($field);
 		}
-		$htmlSummary = $this->renderWith("Order");
-		$printlabel = (!$this->Printed) ? "Print Invoice" : "Print Invoice Again"; //TODO: i18n
+		$printlabel = (!$this->Printed) ? _t("Order.PRINT","Print Invoice") : _t("Order.PRINTAGAIN","Print Invoice Again");
 		$fields->addFieldsToTab('Root.Main', array(
-			new LiteralField("PrintInvoice",'<p class="print"><a href="OrderReport_Popup/index/'.$this->ID.'?print=1" onclick="javascript: window.open(this.href, \'print_order\', \'toolbar=0,scrollbars=1,location=1,statusbar=0,menubar=0,resizable=1,width=800,height=600,left = 50,top = 50\'); return false;">'.$printlabel.'</a></p>')
+			new LiteralField("PrintInvoice",'<p class="print"><a href="OrderReport_Popup/index/'.$this->ID.'?print=1" onclick="javascript: window.open(this.href, \'print_order\', \'toolbar=0,scrollbars=1,location=1,statusbar=0,menubar=0,resizable=1,width=800,height=600,left = 50,top = 50\'); return false;">'.$printlabel.'</a></p>'),
+			new DropdownField("Status","Status", self::get_order_status_options()),
+			new LiteralField('MainDetails', $this->renderWith("Order"))
 		));
-		$fields->addFieldToTab('Root.Main', new LiteralField('MainDetails', $htmlSummary));
-		//TODO: re-introduce this when order status logs have some meaningful purpose
-		$fields->removeByName('OrderStatusLogs');
-		$orderItemsTable = new TableListField(
-			"OrderItems", //$name
-			"OrderItem", //$sourceClass =
-			OrderItem::$summary_fields, //$fieldList =
+		$payments = new TableListField(
+			"Payments", //$name
+			"Payment", //$sourceClass =
+			Payment::$summary_fields, //$fieldList =
 			"\"OrderID\" = ".$this->ID, //$sourceFilter =
 			"\"Created\" ASC", //$sourceSort =
 			null //$sourceJoin =
 		);
-		$orderItemsTable->setPermissions(array("view"));
-		$orderItemsTable->setPageSize(10000);
-		$orderItemsTable->addSummary("Total",array("Total" => array("sum","Currency->Nice")));
-		$fields->addFieldToTab('Root.Items',$orderItemsTable);
-		$modifierTable = new TableListField(
-			"OrderModifiers", //$name
-			"OrderModifier", //$sourceClass =
-			OrderModifier::$summary_fields, //$fieldList =
-			"\"OrderID\" = ".$this->ID."", //$sourceFilter =
-			null, //$sourceSort =
-			null //$sourceJoin =
-		);
-		$modifierTable->setPermissions(array("view"));
-		$modifierTable->setPageSize(10000);
-		$fields->addFieldToTab('Root.Extras',$modifierTable);
+		$payments->setPermissions(array("view"));
+		$payments->setPageSize(20);
+		$payments->addSummary("Total",array("Total" => array("sum","Currency->Nice")));
+		$fields->addFieldToTab('Root.Payments',$payments);
 		if($m = $this->Member()) {
 			$lastv = new TextField("MemberLastLogin","Last login",$m->dbObject('LastVisited')->Nice());
-			$fields->addFieldToTab('Root.Customer',$lastv->performReadonlyTransformation());
-			//TODO: this should be scaffolded instead, or come from something like $member->getCMSFields();
-			$fields->addFieldToTab('Root.Customer',new LiteralField("MemberSummary", $m->renderWith("Order_Member")));
+			$fields->addFieldsToTab('Root.Customer',array(
+				$lastv->performReadonlyTransformation(),
+				new LiteralField("MemberSummary", $m->renderWith("Order_Member"))
+			));
 		}
 		$this->extend('updateCMSFields',$fields);
 		return $fields;
@@ -531,17 +512,19 @@ class Order extends DataObject {
 			}
 			//clear out modifiers that shouldn't be there, according to defined modifiers list
 				//TODO: it may be better to store/run this as a build task - remove all invalid modifiers from carts
-			foreach($existingmodifiers as $modifier){
-				if(!in_array($modifier->ClassName,self::$modifiers)){
-					$modifier->delete();
-					$modifier->destroy();
-					return null;
+			if($existingmodifiers){
+				foreach($existingmodifiers as $modifier){
+					if(!in_array($modifier->ClassName,self::$modifiers)){
+						$modifier->delete();
+						$modifier->destroy();
+						return null;
+					}
 				}
 			}
 			
 		}else{ //only use existing modifiers, if order has been placed
 			if($existingmodifiers){
-				foreach($modifiers as $modifier){
+				foreach($existingmodifiers as $modifier){
 					$modifier->Sort = $sort;
 					//TODO: prevent recalculating value if $this->Amount is present
 						//this will help historical records to not be altered
