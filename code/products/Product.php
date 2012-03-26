@@ -213,7 +213,7 @@ class Product extends Page implements Buyable{
 	function Item() {
 		$filter = null;
 		$this->extend('updateItemFilter',$filter);
-		$item = ShoppingCart::get_item_by_id($this->ID,null,$filter); //TODO: needs filter
+		$item = ShoppingCart::getInstance()->get($this); //TODO: needs filter
 		if(!$item)
 			$item = $this->createItem(0,false); //return dummy item so that we can still make use of Item
 		$this->extend('updateDummyItem',$item);
