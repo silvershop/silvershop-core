@@ -57,11 +57,12 @@ class GlobalTaxModifier extends TaxModifier {
 	}
 
 	protected function Country() {
-		return $this->Country = EcommerceRole::find_country();
+		return EcommerceRole::find_country();
 	}
 
 	function TableTitle() {
-		return parent::TableTitle()." for ".$this->Country()." ".($this->Type == "Chargable" ? '' : _t("GlobalTaxModifier.INCLUDED",' (included in the above price)'));
+		$country = ($this->Country()) ? " for ".$this->Country()." " : "";
+		return parent::TableTitle().$country.($this->Type == "Chargable" ? '' : _t("GlobalTaxModifier.INCLUDED",' (included in the above price)'));
 	}
 
 }
