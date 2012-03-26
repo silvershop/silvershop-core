@@ -1,15 +1,26 @@
 # Architecture
 
-[ShoppingCart](ShoppingCart) provides the API to add and remove items from the current order. Once an order is processed on the CheckoutPage,
-it is no longer in the cart.
+## Basics to understand
+
+[ShoppingCart](ShoppingCart) provides the API to add and remove items from the current order.
+
+Products are pages, with some extra details, such as an image, and price.
+
+Under the hood, a cart and an order are both the same DataObject (Order), but an order is treated as 'cart', 
+when it has the status 'cart'.
+Once an order is processed on the CheckoutPage, it is no longer a cart, and has some other status.
+
+A product is associated with an order/cart as an OrderItem. An order item usually has a quantity.
 
 ## Data Model
 
-Here are some diagrams: 
-[DataModel PDF v1.0alpha](https://code.google.com/p/silverstripe-ecommerce/downloads/detail?name=SSEcommerce1.0alpha.pdf&can=2),
-[DataModel PDF v0.6.1](https://code.google.com/p/silverstripe-ecommerce/downloads/detail?name=SSEcommerce0.61.pdf&can=2&q=)
+Here are some diagrams:
+[DataModel PDF v0.8](https://github.com/downloads/burnbright/silverstripe-shop/ShopModule0.8.pdf)
+
 
 ### DataObjects
+
+Here is an overview of the model classes
 
   * Order
    * OrderAttribute
@@ -23,9 +34,10 @@ Here are some diagrams:
 
 ### Page Types
 
-  * Product
-  * CartPage
-  * CheckoutPage
+  * Product - view product details
+  * ProductGroup - browse and find products via categories
+  * CartPage - display and edit the cart
+  * CheckoutPage - place an order
   * AccountPage - Member functionality
 
 ### Decorators
