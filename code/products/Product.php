@@ -328,6 +328,8 @@ class Product_OrderItem extends OrderItem {
 	static $has_one = array(
 		'Product' => 'Product'
 	);
+	
+	static $disable_versioned = true;
 
 	/**
 	 * Get related product, based on version info if it is not in the cart.
@@ -336,7 +338,7 @@ class Product_OrderItem extends OrderItem {
 	 * @return Product
 	 */
 	public function Product($forcecurrent = false) {
-		if($this->ProductID && $this->ProductVersion && !$forcecurrent){
+		if($this->ProductID && $this->ProductVersion && !$forcecurrent && !self::$disable_versioned){
 			return Versioned::get_version('Product', $this->ProductID, $this->ProductVersion);
 		}elseif($this->ProductID && $product = DataObject::get_by_id('Product', $this->ProductID)){
 			return $product;
