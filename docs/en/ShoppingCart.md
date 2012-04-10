@@ -57,5 +57,5 @@ The ecommerce module supports such products.
 
 Making use of this requires:
 
- * adding parameters to url links / forms
+ * adding GET parameters to url links / forms
  * modifying order item to store data, such as length, or group
