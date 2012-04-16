@@ -10,29 +10,29 @@
  * @package shop
  * @todo handle variations
  */
-class ShoppingCart extends Object{
+class ShoppingCart{
 	
 	private static $instance;
 	private static $cartid_session_name = 'shoppingcartid';
-	protected $order;
-	protected $calculateonce = false;
 	
-	/**
-	 * Prevent constructing a ShoppingCart any other way.
-	 */
-	/*private function __construct(){
-		parent::__construct();
-	}*/
+	private $order;
+	private $calculateonce = false;
+	private $message, $type;
 	
 	/**
 	 * Access for only allowing access to one (singleton) ShoppingCart.
 	 */
-	public static function getInstance(){
+	public static function singleton(){
 		if(!self::$instance){
 			self::$instance = new ShoppingCart();
 		}
 		return self::$instance;
 	}
+	
+	/**
+	* Singleton prevents constructing a ShoppingCart any other way.
+	*/
+	private function __construct(){}
 	
 	/**
 	* Get the current order, or return null if it doesn't exist.
@@ -238,6 +238,16 @@ class ShoppingCart extends Object{
 		return $this->message;
 	}
 	
+	//singleton protection
+	
+	public function __clone(){
+		trigger_error('Clone is not allowed.', E_USER_ERROR);
+	}
+	
+	public function __wakeup(){
+		trigger_error('Unserializing is not allowed.', E_USER_ERROR);
+	}
+	
 	//Deprecated, but needed in the mean time for things to work
 	/**
 	 * @deprecated use $cart = ShoppingCart::getInstance()->current();
@@ -285,6 +295,13 @@ class ShoppingCart extends Object{
 	static function get_items($filter = null) {
 		if($order = ShoppingCart::getInstance()->current())
 			return $order->Items($filter);
+	}
+	
+	/**
+	 * @deprecated use ShoppingCart::singleton() instead.
+	 */
+	static function getInstance(){
+		return self::singleton();
 	}
 	
 }
