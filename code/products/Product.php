@@ -387,22 +387,6 @@ class Product_OrderItem extends OrderItem {
 		$this->extend('updateLinkParameters',$array);
 		return $array;
 	}
-
-	public function debug() {
-		$title = $this->TableTitle();
-		$productID = $this->ProductID;
-		$productVersion = $this->ProductVersion;
-		$html = parent::debug() .<<<HTML
-			<h3>Product_OrderItem class details</h3>
-			<p>
-				<b>Title : </b>$title<br/>
-				<b>Product ID : </b>$productID<br/>
-				<b>Product Version : </b>$productVersion
-			</p>
-HTML;
-		$this->extend('updateDebug',$html);
-		return $html;
-	}
 	
 	/**
 	 * @deprecated - use TableTitle instead

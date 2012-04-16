@@ -68,22 +68,6 @@ class OrderItem extends OrderAttribute {
 		$this->CalculateTotal();
 	}
 
-	public function debug() {
-		$id = $this->ID;
-		$quantity = $this->Quantity;
-		$orderID = $this->ID ? $this->OrderID : 'The order has not been saved yet, so there is no ID';
-
-		return <<<HTML
-			<h2>$this->class</h2>
-			<h3>OrderItem class details</h3>
-			<p>
-				<b>ID : </b>$id<br/>
-				<b>Quantity : </b>$quantity<br/>
-				<b>Order ID : </b>$orderID
-			</p>
-HTML;
-	}
-
 	function UnitPrice() {
 		user_error("OrderItem::UnitPrice() called. Please implement UnitPrice() on $this->class", E_USER_ERROR);
 	}
