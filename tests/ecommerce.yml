@@ -8,35 +8,35 @@ Page:
         Title: Home
         URLSegment: home
 
-ProductGroup:
+ProductCategory:
     g1:
         Title: Products
         URLSegment: products
     g2:
         Title: Clothing
         URLSegment: clothing
-        Parent:=>ProductGroup.g1	#Sub page of products
+        Parent:=>ProductCategory.g1	#Sub page of products
 
 Product:
     socks:
         Title: Socks
         Price: 8
         URLSegment: socks
-        Parent:=>ProductGroup.g2
+        Parent:=>ProductCategory.g2
         AllowPurchase: 1
         Weight:0.1
         Stock: 50
     tshirt:
         Title: T-Shirt
         Price: 25
-        Parent:=>ProductGroup.g2
+        Parent:=>ProductCategory.g2
         URLSegment: t-shirt
         AllowPurchase: 1
         Weight: 0.3
         Stock: 1000
     hdtv:						#This product has no price
     	Title: High Definition Television
-    	Parent:=>ProductGroup.g1
+    	Parent:=>ProductCategory.g1
     	URLSegment: hdtv
     	AllowPurchase: 1
     	Weight: 50
@@ -45,7 +45,7 @@ Product:
         Title: Beach Ball
         Price: 10
         URLSegment: beach-ball
-        Parent:=>ProductGroup.g1
+        Parent:=>ProductCategory.g1
         AllowPurchase: 0			#This product has AllowPurchase set to 0
         Weight: 0.4
         Stock: 1000
@@ -53,7 +53,7 @@ Product:
         Title: Mp3 Player
         Price: 200
         URLSegment: mp3-player
-        Parent:=>ProductGroup.g1
+        Parent:=>ProductCategory.g1
         AllowPurchase: 1
         Weight: 0.3
         Stock: 1000					#You need stock levels if you have included the stock module, else the test will fail.

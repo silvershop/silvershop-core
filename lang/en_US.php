@@ -311,32 +311,32 @@ $lang['en_US']['Product.ss']['REMOVE'] = 'Remove &quot;%s&quot; from your cart';
 $lang['en_US']['Product.ss']['REMOVEALL'] = 'Remove one of &quot;%s&quot; from your cart';
 $lang['en_US']['Product.ss']['REMOVELINK'] = '&raquo; Remove from cart';
 $lang['en_US']['Product.ss']['SIZE'] = 'Size';
-$lang['en_US']['ProductGroup']['PLURALNAME'] = array(
+$lang['en_US']['ProductCategory']['PLURALNAME'] = array(
 	'Product Groups',
 	50,
 	'Pural name of the object, used in dropdowns and to generally identify a collection of this object in the interface'
 );
-$lang['en_US']['ProductGroup']['SINGULARNAME'] = array(
+$lang['en_US']['ProductCategory']['SINGULARNAME'] = array(
 	'Product Group',
 	50,
 	'Singular name of the object, used in dropdowns and to generally identify a single object in the interface'
 );
-$lang['en_US']['ProductGroup.ss']['FEATURED'] = 'Featured Products';
-$lang['en_US']['ProductGroup.ss']['OTHER'] = 'Other Products';
-$lang['en_US']['ProductGroupItem.ss']['ADD'] = 'Add &quot;%s&quot; to your cart';
-$lang['en_US']['ProductGroupItem.ss']['ADDLINK'] = 'Add this item to cart';
-$lang['en_US']['ProductGroupItem.ss']['ADDONE'] = 'Add one more of &quot;%s&quot; to your cart';
-$lang['en_US']['ProductGroupItem.ss']['AUTHOR'] = 'Author';
-$lang['en_US']['ProductGroupItem.ss']['GOTOCHECKOUT'] = 'Go to the checkout now';
-$lang['en_US']['ProductGroupItem.ss']['GOTOCHECKOUTLINK'] = '&raquo; Go to the checkout';
-$lang['en_US']['ProductGroupItem.ss']['IMAGE'] = '%s image';
-$lang['en_US']['ProductGroupItem.ss']['NOIMAGE'] = 'Sorry, no product image for &quot;%s&quot;';
-$lang['en_US']['ProductGroupItem.ss']['QUANTITYCART'] = 'Quantity in cart';
-$lang['en_US']['ProductGroupItem.ss']['READMORE'] = 'Click here to read more on &quot;%s&quot;';
-$lang['en_US']['ProductGroupItem.ss']['READMORECONTENT'] = 'Click to read more &raquo;';
-$lang['en_US']['ProductGroupItem.ss']['REMOVE'] = 'Remove &quot;%s&quot; from your cart';
-$lang['en_US']['ProductGroupItem.ss']['REMOVEALL'] = 'Remove one of &quot;%s&quot; from your cart';
-$lang['en_US']['ProductGroupItem.ss']['REMOVELINK'] = '&raquo; Remove from cart';
+$lang['en_US']['ProductCategory.ss']['FEATURED'] = 'Featured Products';
+$lang['en_US']['ProductCategory.ss']['OTHER'] = 'Other Products';
+$lang['en_US']['ProductCategoryItem.ss']['ADD'] = 'Add &quot;%s&quot; to your cart';
+$lang['en_US']['ProductCategoryItem.ss']['ADDLINK'] = 'Add this item to cart';
+$lang['en_US']['ProductCategoryItem.ss']['ADDONE'] = 'Add one more of &quot;%s&quot; to your cart';
+$lang['en_US']['ProductCategoryItem.ss']['AUTHOR'] = 'Author';
+$lang['en_US']['ProductCategoryItem.ss']['GOTOCHECKOUT'] = 'Go to the checkout now';
+$lang['en_US']['ProductCategoryItem.ss']['GOTOCHECKOUTLINK'] = '&raquo; Go to the checkout';
+$lang['en_US']['ProductCategoryItem.ss']['IMAGE'] = '%s image';
+$lang['en_US']['ProductCategoryItem.ss']['NOIMAGE'] = 'Sorry, no product image for &quot;%s&quot;';
+$lang['en_US']['ProductCategoryItem.ss']['QUANTITYCART'] = 'Quantity in cart';
+$lang['en_US']['ProductCategoryItem.ss']['READMORE'] = 'Click here to read more on &quot;%s&quot;';
+$lang['en_US']['ProductCategoryItem.ss']['READMORECONTENT'] = 'Click to read more &raquo;';
+$lang['en_US']['ProductCategoryItem.ss']['REMOVE'] = 'Remove &quot;%s&quot; from your cart';
+$lang['en_US']['ProductCategoryItem.ss']['REMOVEALL'] = 'Remove one of &quot;%s&quot; from your cart';
+$lang['en_US']['ProductCategoryItem.ss']['REMOVELINK'] = '&raquo; Remove from cart';
 $lang['en_US']['ProductMenu.ss']['GOTOPAGE'] = 'Go to the %s page';
 $lang['en_US']['ProductVariation']['PLURALNAME'] = array(
 	'Product Variations',

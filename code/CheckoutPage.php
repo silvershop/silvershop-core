@@ -95,9 +95,8 @@ class CheckoutPage extends Page {
 		));
 		return $fields;
 	}
-
-
 }
+
 class CheckoutPage_Controller extends Page_Controller {
 	
 	static $url_segment = "checkout";

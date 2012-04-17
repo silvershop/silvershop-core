@@ -16,7 +16,7 @@ class CartPage extends Page{
 		if($checkouts = DataObject::get('CheckoutPage')) {
 			$fields->addFieldToTab('Root.Content.Links',new DropdownField('CheckoutPageID','Checkout Page',$checkouts->toDropDownMap()));
 		}
-		if($pgroups = DataObject::get('ProductGroup')) {
+		if($pgroups = DataObject::get('ProductCategory')) {
 			$fields->addFieldToTab('Root.Content.Links',new DropdownField('ContinuePageID','Continue Product Group Page',$pgroups->toDropDownMap()));
 		}
 

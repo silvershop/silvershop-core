@@ -14,6 +14,30 @@ class PopulateShopTask extends BuildTask{
 	
 	function run($request){
 		
+		//categories
+		if(!DataObject::get_one('ProductCategory')) {
+			$page1 = new ProductCategory();
+			$page1->Title = 'Products';
+			$page1->Content = "
+						<p>This is the top level products page, it uses the <em>product group</em> page type, and it allows you to show your products checked as 'featured' on it. It also allows you to nest <em>product category</em> pages inside it.</p>
+						<p>For example, you have a product category called 'DVDs', and inside you have more product categories like 'sci-fi', 'horrors' or 'action'.</p>
+						<p>In this example we have setup a main product category (this page), with a nested product category containing 2 example products.</p>
+					";
+			$page1->URLSegment = 'products';
+			$page1->writeToStage('Stage');
+			$page1->publish('Stage', 'Live');
+			DB::alteration_message('Product category page \'Products\' created', 'created');
+		
+			$page2 = new ProductCategory();
+			$page2->Title = 'Example product category';
+			$page2->Content = '<p>This is a nested <em>product category</em> within the main <em>product category</em> page. You can add a paragraph here to describe what this product category is about, and what sort of products you can expect to find in it.</p>';
+			$page2->URLSegment = 'example-product-category';
+			$page2->ParentID = $page1->ID;
+			$page2->writeToStage('Stage');
+			$page2->publish('Stage', 'Live');
+			DB::alteration_message('Product category page \'Example product category\' created', 'created');
+		}
+		
 		//account page
 		if(!DataObject::get_one('AccountPage')) {
 			$page = new AccountPage();
@@ -29,8 +53,8 @@ class PopulateShopTask extends BuildTask{
 		
 		//products
 		if(!DataObject::get_one('Product')) {
-			if(!DataObject::get_one('ProductGroup')) singleton('ProductGroup')->requireDefaultRecords();
-			if($group = DataObject::get_one('ProductGroup', '', true, "\"ParentID\" DESC")) {
+			if(!DataObject::get_one('ProductCategory')) singleton('ProductCategory')->requireDefaultRecords();
+			if($group = DataObject::get_one('ProductCategory', '', true, "\"ParentID\" DESC")) {
 				$content = '<p>This is a <em>product</em>. It\'s description goes into the Content field as a standard SilverStripe page would have it\'s content. This is an ideal place to describe your product.</p>';
 		
 				$page1 = new Product();

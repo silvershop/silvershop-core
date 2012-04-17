@@ -29,7 +29,7 @@ class Product extends Page implements Buyable{
 	);
 
 	public static $many_many = array(
-		'ProductGroups' => 'ProductGroup'
+		'ProductCategories' => 'ProductCategory'
 	);
 
 	public static $defaults = array(
@@ -50,7 +50,7 @@ class Product extends Page implements Buyable{
 	function i18n_plural_name() { return _t("Product.PLURAL", self::$plural_name); }
 	
 	static $icon = 'shop/images/icons/package';
-	static $default_parent = 'ProductGroup';
+	static $default_parent = 'ProductCategory';
 	static $default_sort = '"Title" ASC';
 
 	static $number_sold_calculation_type = "SUM"; //SUM or COUNT
@@ -80,8 +80,8 @@ class Product extends Page implements Buyable{
 		$fields->addFieldsToTab(
 			'Root.Content.Product Groups',
 			array(
-				new HeaderField('ProductGroupsHeader', _t('Product.ALSOAPPEARS')),
-				$this->getProductGroupsTable()
+				new HeaderField('ProductCategoriesHeader', _t('Product.ALSOAPPEARS')),
+				$this->getProductCategoriesTable()
 			)
 		);
 
@@ -133,11 +133,11 @@ class Product extends Page implements Buyable{
 	/**
 	 * Helper for creating the product groups table
 	 */
-	protected function getProductGroupsTable() {
+	protected function getProductCategoriesTable() {
 		$tableField = new ManyManyComplexTableField(
 			$this,
-			'ProductGroups',
-			'ProductGroup',
+			'ProductCategories',
+			'ProductCategory',
 			array(
 				'Title' => 'Product Group Page Title'
 			)

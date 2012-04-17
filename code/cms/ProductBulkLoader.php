@@ -25,6 +25,7 @@ class ProductBulkLoader extends CsvBulkLoader{
 
 		'Category' => '->setParent',
 		'ProductGroup' => '->setParent',
+		'ProductCategory' => '->setParent',
 
 		'Product ID' => 'InternalItemID',
 		'ProductID' => 'InternalItemID',
@@ -102,13 +103,13 @@ class ProductBulkLoader extends CsvBulkLoader{
 			if(!$object->ParentID){
 				 //set parent page
 
-				if(is_numeric(self::$parentpageid) &&  DataObject::get_by_id('ProductGroup',self::$parentpageid)) //cached option
+				if(is_numeric(self::$parentpageid) &&  DataObject::get_by_id('ProductCategory',self::$parentpageid)) //cached option
 					$object->ParentID = self::$parentpageid;
-				elseif($parentpage = DataObject::get_one('ProductGroup',"\"Title\" = 'Products'",'"Created" DESC')){ //page called 'Products'
+				elseif($parentpage = DataObject::get_one('ProductCategory',"\"Title\" = 'Products'",'"Created" DESC')){ //page called 'Products'
 					$object->ParentID = self::$parentpageid = $parentpage->ID;
-				}elseif($parentpage = DataObject::get_one('ProductGroup',"\"ParentID\" = 0",'"Created" DESC')){ //root page
+				}elseif($parentpage = DataObject::get_one('ProductCategory',"\"ParentID\" = 0",'"Created" DESC')){ //root page
 					$object->ParentID = self::$parentpageid = $parentpage->ID;
-				}elseif($parentpage = DataObject::get_one('ProductGroup',"",'"Created" DESC')){ //any product page
+				}elseif($parentpage = DataObject::get_one('ProductCategory',"",'"Created" DESC')){ //any product page
 					$object->ParentID = self::$parentpageid = $parentpage->ID;
 				}else
 					$object->ParentID = self::$parentpageid = 0;
@@ -150,7 +151,7 @@ class ProductBulkLoader extends CsvBulkLoader{
 	function setParent(&$obj, $val, $record){
 		$title = strtolower(Convert::raw2sql($val));
 		if($title){
-			if($parentpage = DataObject::get_one('ProductGroup',"LOWER(\"Title\") = '$title'",'"Created" DESC')){ // find or create parent category, if provided
+			if($parentpage = DataObject::get_one('ProductCategory',"LOWER(\"Title\") = '$title'",'"Created" DESC')){ // find or create parent category, if provided
 				$obj->ParentID = $parentpage->ID;
 				$obj->write();
 				$obj->writeToStage('Stage');
@@ -160,7 +161,7 @@ class ProductBulkLoader extends CsvBulkLoader{
 				
 			}elseif(self::$createnewproductgroups){
 				//create parent product group
-				$pg = new ProductGroup();
+				$pg = new ProductCategory();
 				$pg->setTitle($title);
 				$pg->ParentID = (self::$parentpageid) ? $parentpageid :0;
 				$pg->writeToStage('Stage');

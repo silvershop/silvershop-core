@@ -11,7 +11,7 @@ class ProductsAndGroupsModelAdmin extends ModelAdmin {
 
 	public static $collection_controller_class = "ProductsAndGroupsModelAdmin_CollectionController";
 	public static $record_controller_class = "ProductsAndGroupsModelAdmin_RecordController";
-	public static $managed_models = array("Product", "ProductGroup","ProductVariation","ProductAttributeType");
+	public static $managed_models = array("Product", "ProductCategory","ProductVariation","ProductAttributeType");
 
 	public static function set_managed_models(array $array) {
 		self::$managed_models = $array;
@@ -23,7 +23,7 @@ class ProductsAndGroupsModelAdmin extends ModelAdmin {
 	
 	public static $model_importers = array(
 		'Product' => 'ProductBulkLoader',
-		'ProductGroup' => null,
+		'ProductCategory' => null,
 		'ProductVariation' => null
 	);
 

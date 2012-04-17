@@ -30,7 +30,7 @@ class DeleteEcommerceProducts extends BuildTask{
 		
 		$basetables = array(
 			'Product',
-				'Product_Live','Product_versions','Product_ProductGroups','Product_OrderItem','Product_VariationAttributes',
+				'Product_Live','Product_versions','Product_ProductCategories','Product_OrderItem','Product_VariationAttributes',
 			'ProductVariation',
 				'ProductVariation_AttributeValues','ProductVariation_OrderItem','ProductVariation_versions',
 			'ProductAttributeType','ProductAttributeValue'

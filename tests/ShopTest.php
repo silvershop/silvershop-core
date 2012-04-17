@@ -35,9 +35,9 @@ class ShopTest extends FunctionalTest {
 		//TODO: check order hasn't started
 	}
 
-	function testCanViewProductGroupPage() {
-		$g1 = $this->objFromFixture('ProductGroup', 'g1');
-		$g2 = $this->objFromFixture('ProductGroup', 'g2');
+	function testCanViewProductCategoryPage() {
+		$g1 = $this->objFromFixture('ProductCategory', 'g1');
+		$g2 = $this->objFromFixture('ProductCategory', 'g2');
 		$this->get(Director::makeRelative($g1->Link()));
 		$this->get(Director::makeRelative($g2->Link()));
 		//TODO: check order hasn't started

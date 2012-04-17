@@ -1,11 +1,12 @@
 <?php
  /**
-  * Product Group is a 'holder' for Products within the CMS
+  * Product Category provides a way to hierartically categorise products.
+  * 
   * It contains functions for versioning child products
   *
   * @package shop
   */
-class ProductGroup extends Page {
+class ProductCategory extends Page {
 
 	public static $db = array(
 		'ChildGroupsPermission' => "Enum('Show Only Featured Products,Show All Products')"
@@ -15,6 +16,16 @@ class ProductGroup extends Page {
 		'Products' => 'Product'
 	);
 
+	public static $singular_name = "Product Category";
+	function i18n_singular_name() {
+		return _t("ProductCategory.SINGULAR", $this->stat('singular_name'));
+	}
+	public static $plural_name = "Product Categories";
+	function i18n_plural_name() {
+		return _t("ProductCategory.PLURAL", $this->stat('plural_name'));
+	}
+	
+	
 	static $default_child = 'Product';
 	static $icon = 'cms/images/treeicons/folder';
 
@@ -85,18 +96,6 @@ class ProductGroup extends Page {
 	}
 
 	/**
-	 * Returns the shopping cart.
-	 * @todo Does HTTP::set_cache_age() still need to be set here?
-	 *
-	 * @return Order
-	 */
-	function Cart() {
-		HTTP::set_cache_age(0);
-		return ShoppingCart::current_order();
-	}
-
-
-	/**
 	 * Retrieve a set of products, based on the given parameters. Checks get query for sorting and pagination.
 	 *
 	 * @param string $extraFilter Additional SQL filters to apply to the Product retrieval
@@ -141,12 +140,12 @@ class ProductGroup extends Page {
 	}
 
 	/**
-	 * Return children ProductGroup pages of this group.
+	 * Return children ProductCategory pages of this group.
 	 * @return DataObjectSet
 	 */
 	function ChildGroups($recursive = false) {
 		if($recursive){
-			if($children = DataObject::get('ProductGroup', "\"ParentID\" = '$this->ID'")){
+			if($children = DataObject::get('ProductCategory', "\"ParentID\" = '$this->ID'")){
 				$output = unserialize(serialize($children));
 				foreach($children as $group){
 					$output->merge($group->ChildGroups($recursive));
@@ -155,10 +154,9 @@ class ProductGroup extends Page {
 			}
 			return null;
 		}else{
-			return DataObject::get('ProductGroup', "\"ParentID\" = '$this->ID'");
+			return DataObject::get('ProductCategory', "\"ParentID\" = '$this->ID'");
 		}
 	}
-
 
 	/**
 	 * Recursively generate a product menu.
@@ -166,51 +164,20 @@ class ProductGroup extends Page {
 	 */
 	function GroupsMenu() {
 		if($parent = $this->Parent()) {
-			return $parent instanceof ProductGroup ? $parent->GroupsMenu() : $this->ChildGroups();
+			return $parent instanceof ProductCategory ? $parent->GroupsMenu() : $this->ChildGroups();
 		} else {
 			return $this->ChildGroups();
 		}
 	}
 
-	/**
-	 * Automatically creates some ProductGroup pages in
-	 * the CMS when the database builds if there hasn't
-	 * been any set up yet.
-	 */
-	function requireDefaultRecords() {
-		parent::requireDefaultRecords();
-
-		if(!DataObject::get_one('ProductGroup')) {
-			$page1 = new ProductGroup();
-			$page1->Title = 'Products';
-			$page1->Content = "
-				<p>This is the top level products page, it uses the <em>product group</em> page type, and it allows you to show your products checked as 'featured' on it. It also allows you to nest <em>product group</em> pages inside it.</p>
-				<p>For example, you have a product group called 'DVDs', and inside you have more product groups like 'sci-fi', 'horrors' or 'action'.</p>
-				<p>In this example we have setup a main product group (this page), with a nested product group containing 2 example products.</p>
-			";
-			$page1->URLSegment = 'products';
-			$page1->writeToStage('Stage');
-			$page1->publish('Stage', 'Live');
-			DB::alteration_message('Product group page \'Products\' created', 'created');
-
-			$page2 = new ProductGroup();
-			$page2->Title = 'Example product group';
-			$page2->Content = '<p>This is a nested <em>product group</em> within the main <em>product group</em> page. You can add a paragraph here to describe what this product group is about, and what sort of products you can expect to find in it.</p>';
-			$page2->URLSegment = 'example-product-group';
-			$page2->ParentID = $page1->ID;
-			$page2->writeToStage('Stage');
-			$page2->publish('Stage', 'Live');
-			DB::alteration_message('Product group page \'Example product group\' created', 'created');
-		}
-	}
-
 }
-class ProductGroup_Controller extends Page_Controller {
+
+class ProductCategory_Controller extends Page_Controller {
 
 	function init() {
 		parent::init();
 
-		Requirements::themedCSS('ProductGroup');
+		Requirements::themedCSS('ProductCategory');
 		Requirements::themedCSS('Cart');
 	}
 
@@ -239,11 +206,11 @@ class ProductGroup_Controller extends Page_Controller {
 	 * Provides a dataset of links for sorting products.
 	 */
 	function SortLinks(){
-		if(count(ProductGroup::get_sort_options()) <= 0) return null;
+		if(count(ProductCategory::get_sort_options()) <= 0) return null;
 
 		$sort = (isset($_GET['sortby'])) ? Convert::raw2sql($_GET['sortby']) : "Title";
 		$dos = new DataObjectSet();
-		foreach(ProductGroup::get_sort_options() as $field => $name){
+		foreach(ProductCategory::get_sort_options() as $field => $name){
 			$current = ($field == $sort) ? 'current' : false;
 			$dos->push(new ArrayData(array(
 				'Name' => $name,
@@ -255,3 +222,18 @@ class ProductGroup_Controller extends Page_Controller {
 	}
 
 }
+
+/**
+* @deprecated use ProductCategory instead
+*/
+class ProductGroup extends ProductCategory{
+	
+	function canCreate(){
+		return false;
+	}
+}
+
+/**
+ * @deprecated use ProductCategory_Controller instead
+ */
+class ProductGroup_Controller extends ProductCategory_Controller{}
