@@ -338,8 +338,8 @@ class Product_OrderItem extends OrderItem {
 	 * @return Product
 	 */
 	public function Product($forcecurrent = false) {
-		if($this->ProductID && $this->ProductVersion && !$forcecurrent && !self::$disable_versioned){
-			return Versioned::get_version('Product', $this->ProductID, $this->ProductVersion);
+		if($this->ProductID && $this->ProductVersion && !$forcecurrent){
+			return FixVersioned::get_version('Product', $this->ProductID, $this->ProductVersion);
 		}elseif($this->ProductID && $product = DataObject::get_by_id('Product', $this->ProductID)){
 			return $product;
 		}

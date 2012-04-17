@@ -19,7 +19,9 @@ Object::add_extension("DevelopmentAdmin", "EcommerceDevelopmentAdminDecorator");
 DevelopmentAdmin::$allowed_actions[] = 'shop';
 Object::add_extension("Page_Controller","ViewableCart");
 
+//custom classes
 Object::useCustomClass('Currency','EcommerceCurrency', true);
+Object::useCustomClass('Versioned','FixVersioned');
 
 //variations
 DataObject::add_extension("Product","ProductVariationDecorator");
