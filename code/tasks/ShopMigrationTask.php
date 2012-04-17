@@ -116,8 +116,9 @@ class ShopMigrationTask extends BuildTask{
 	 * Performs calculation function on un-calculated orders.
 	 */
 	function migrateOrderCalculation($order){
-		if(!$order->Total){
+		if(!is_numeric($order->Total) || $order->Total <= 0){
 			$order->calculate();
+			$order->write();
 		}
 	}
 	
