@@ -1,6 +1,6 @@
 <?php
 
-class DeleteEcommerceProducts extends BuildTask{
+class DeleteProductsTask extends BuildTask{
 	
 	protected $title = "Delete Products";
 	

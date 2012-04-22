@@ -5,10 +5,9 @@
  * @package shop
  * @subpackage tasks
  */
-class DeleteEcommerceOrders extends BuildTask{
+class DeleteOrdersTask extends BuildTask{
 
 	protected $title = "Delete Orders";
-
 	protected $description = "Deletes all orders, order items, and payments from the database.";
 
 	function run($request){
