@@ -20,17 +20,16 @@ class Order extends DataObject {
  	 * MemberCancelled: Order cancelled by the customer (Member)
  	 */
 	public static $db = array(
-		'SessionID' => "Varchar(32)", //so that in the future we can link sessions with Orders.... One session can have several orders, but an order can onnly have one session
+		//order
 		'Status' => "Enum('Unpaid,Query,Paid,Processing,Sent,Complete,AdminCancelled,MemberCancelled,Cart','Cart')",
 		'ReceiptSent' => 'Boolean',
 		'Printed' => 'Boolean',
-
-		//member
+		'Total' => 'Currency',
+		//customer
 		'FirstName' => 'Varchar',
 		'Surname' => 'Varchar',
 		'Email' => 'Varchar',
 		'Notes' => 'Text',
-		
 		//invoice/shipping
 		'Address' => 'Varchar(255)',
 		'AddressLine2' => 'Varchar(255)',
@@ -40,7 +39,6 @@ class Order extends DataObject {
 		'Country' => 'Varchar',
 		'HomePhone' => 'Varchar(100)',
 		'MobilePhone' => 'Varchar(100)',
-	
 		//separate shipping
 		'UseShippingAddress' => 'Boolean',
 		'ShippingName' => 'Text',
@@ -51,9 +49,6 @@ class Order extends DataObject {
 		'ShippingState' => 'Varchar(30)',
 		'ShippingCountry' => 'Text',
 		'ShippingPhone' => 'Varchar(30)',
-		
-		//financials
-		'Total' => 'Currency',
 	);
 
 	public static $has_one = array(
@@ -86,15 +81,12 @@ class Order extends DataObject {
 	public static $plural_name = "Orders";
 
 	/**
-	 * Any order with one of these values for the Status
-	 * field indicates that the customer has paid for their order.
-	 *
-	 * @var array
+	 * Statuses for orders that have been placed.
 	 */
-	static $paid_status = array('Paid', 'Processing', 'Sent', 'Complete');
+	static $placed_status = array('Paid','Unpaid', 'Processing', 'Sent', 'Complete');
 
 	/**
-	 *
+	 * Statuses that shouldn't show in user account.
 	 */
 	static $hidden_status = array('Cart','AdminCancelled','MemberCancelled','Query');
 

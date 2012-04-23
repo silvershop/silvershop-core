@@ -10,6 +10,8 @@ class OrderManipulation extends Extension{
 	static $allow_cancelling = false;
 	static $allow_paying = false;
 
+	static $session_variable = "OrderManipulation.historicalorders";
+	
 	static function set_allow_cancelling($cancel = true){self::$allow_cancelling = $cancel;}
 	static function set_allow_paying($pay = true){self::$allow_paying = $pay;}
 
@@ -19,30 +21,49 @@ class OrderManipulation extends Extension{
 	);
 
 	/**
+	 * Add an order to the session-stored history of orders.
+	 */
+	static function add_session_order(Order $order){
+		$history = self::get_session_order_ids();
+		if(!is_array($history)){
+			$history = array();
+		}
+		$history[$order->ID] = $order->ID;
+		Session::set(self::$session_variable,$history);
+	}
+	
+	/**
+	 * Get historical orders for current session.
+	 */
+	static function get_session_order_ids(){
+		$history = Session::get(self::$session_variable);
+		if(!is_array($history)){
+			$history = null;
+		}
+		return $history;
+	}
+	
+	/**
 	 * Get the order via url 'ID' or form submission 'OrderID'.
-	 * It will check for permission based on session id or member id.
+	 * It will check for permission based on session stored ids or member id.
 	 *
 	 * @return the order
 	 */
 	public function orderfromid($extrafilter = null){
 		$orderid = Director::urlParam('ID');
-		if(!$orderid) $orderid = (isset($_POST['OrderID'])) ? $_POST['OrderID'] : null;
-		if(!is_numeric($orderid)) return null;
+		if(!$orderid){
+			$orderid = (isset($_POST['OrderID'])) ? $_POST['OrderID'] : null;
+		}
+		if(!is_numeric($orderid)){
+			return null;
+		}
 		$order = null;
 		$filter = $this->orderfilter();
-		if($extrafilter) $filter .= " AND $extrafilter";
-		$idfilter = ($orderid) ? " AND \"ID\" = $orderid" : "";
-		//security filter to only allow viewing orders associated with this session, or member id
-		$order = DataObject::get_one('Order',"\"Status\" NOT IN('Cart','AdminCancelled','MemberCancelled') AND ".$filter.$idfilter,true,"Created DESC");
-		//if no id, then get first of latest orders for member or session id?
-		/*
-		 //TODO: permission message on failure
-		if(!$order){
-			//order doesn't exist, or don't have permission
-			$this->setSessionMessage($reason,'bad');
+		if($extrafilter){
+			$filter .= " AND $extrafilter";
 		}
-		*/
-		return $order;
+		$idfilter = ($orderid) ? " AND \"ID\" = $orderid" : "";
+		return DataObject::get_one('Order',$filter.$idfilter,true,"Created DESC");
 	}
 
 	/**
@@ -59,8 +80,10 @@ class OrderManipulation extends Extension{
 	 */
 	protected function orderfilter(){
 		$memberid = Member::currentUserID();
-		$sessionid = session_id();
-		$filter = "\"SessionID\" = '$sessionid'";
+		//session orders
+		$sessids = self::get_session_order_ids();
+		$ids = is_array($sessids) ? implode(',',$sessids) : "-1";
+		$filter = "\"ID\" IN ($ids)";
 		$filter =  ($memberid) ? "($filter OR \"MemberID\" = $memberid)" : $filter;
 		return $filter;
 	}
@@ -68,8 +91,11 @@ class OrderManipulation extends Extension{
 	/**
 	 * Return all past orders for current member / session.
 	 */
-	function PastOrders(){
-		return $this->allorders("\"Status\" IN('Paid','Complete','Sent','Unpaid','Processing')");
+	function PastOrders($extrafilter = null){
+		$statusFilter = "\"Order\".\"Status\" IN ('" . implode("','", Order::$placed_status) . "')";
+		$statusFilter .= " AND \"Order\".\"Status\" NOT IN('". implode("','", Order::$hidden_status) ."')";
+		$statusFilter .= ($extrafilter) ? " AND $extrafilter" : "";
+		return $this->allorders($statusFilter);
 	}
 
 	/**

@@ -40,31 +40,7 @@ class AccountPage extends Page {
 		user_error('No AccountPage was found. Please create one in the CMS!', E_USER_ERROR);
 	}
 
-	/**
-	 * Returns all {@link Order} records for this
-	 * member that are completed.
-	 *
-	 * @return DataObjectSet
-	 */
-	function CompleteOrders() {
-		$memberID = Member::currentUserID();
-		$statusFilter = "\"Order\".\"Status\" IN ('" . implode("','", Order::$paid_status) . "')";
-		$statusFilter .= " AND \"Order\".\"Status\" NOT IN('". implode("','", Order::$hidden_status) ."')";
-		return DataObject::get('Order', "\"Order\".\"MemberID\" = '$memberID' AND $statusFilter", "\"Created\" DESC");
-	}
 
-	/**
-	 * Returns all {@link Order} records for this
-	 * member that are incomplete.
-	 *
-	 * @return DataObjectSet
-	 */
-	function IncompleteOrders() {
-		$memberID = Member::currentUserID();
-		$statusFilter = "\"Order\".\"Status\" NOT IN ('" . implode("','", Order::$paid_status) . "')";
-		$statusFilter .= " AND \"Order\".\"Status\" NOT IN('". implode("','", Order::$hidden_status) ."')";
-		return DataObject::get('Order', "\"Order\".\"MemberID\" = '$memberID' AND $statusFilter", "\"Created\" DESC");
-	}
 
 }
 
@@ -76,19 +52,35 @@ class AccountPage_Controller extends Page_Controller {
 
 	function init() {
 		parent::init();
-
 		Requirements::themedCSS('AccountPage');
-
 		if(!Member::currentUserID()) {
 			$messages = array(
 				'default' => '<p class="message good">' . _t('AccountPage.Message', 'You\'ll need to login before you can access the account page. If you are not registered, you won\'t be able to access it until you make your first order, otherwise please enter your details below.') . '</p>',
 				'logInAgain' => 'You have been logged out. If you would like to log in again, please do so below.'
 			);
-
 			Security::permissionFailure($this, $messages);
 			return false;
 		}
-		
+	}
+	
+	/**
+	 * Returns all {@link Order} records for this
+	 * member that are completed.
+	 *
+	 * @return DataObjectSet
+	 */
+	function CompleteOrders() {
+		return $this->PastOrders("\"Order\".\"Status\" = 'Complete'");
+	}
+	
+	/**
+	 * Returns all {@link Order} records for this
+	 * member that are incomplete.
+	 *
+	 * @return DataObjectSet
+	 */
+	function IncompleteOrders() {
+		return $this->PastOrders("\"Order\".\"Status\" != 'Complete'");
 	}
 
 	/**
