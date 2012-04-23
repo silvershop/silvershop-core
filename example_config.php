@@ -50,7 +50,7 @@ ProductCategory::set_sort_options( array('Title' => 'Alphabetical','Price' => 'L
 ExpiryDateField::set_short_months(true); //uses short months (e.g. Jan instead of january) for credit card expiry date.
 
 //MEMBER
-EcommerceRole::set_group_name("Customers");
+ShopMember::set_group_name("ShopMembers");
 
 //MODIFIERS
 FlatTaxModifier::set_tax("0.15", "GST", $exclusive = false);

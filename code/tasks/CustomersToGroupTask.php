@@ -7,10 +7,10 @@ class CustomersToGroupTask extends BuildTask{
 	
 	function run($request){
 		
-		$gp = DataObject::get_one("Group", "\"Title\" = '".self::get_group_name()."'");
+		$gp = DataObject::get_one("Group", "\"Title\" = '".ShopMember::get_group_name()."'");
 		if(!$gp) {
 			$gp = new Group();
-			$gp->Title = Customer::get_group_name();
+			$gp->Title = ShopMember::get_group_name();
 			$gp->write();
 		}
 		$allCombos = DB::query("

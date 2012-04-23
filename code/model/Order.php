@@ -878,13 +878,12 @@ class Order extends DataObject {
 	 */
 	function findShippingCountry($codeOnly = false) {
 		if(!$this->ID) {
-			$country = ShoppingCart::has_country() ? ShoppingCart::get_country() : EcommerceRole::find_country();
+			$country = ShoppingCart::has_country() ? ShoppingCart::get_country() : ShopMember::find_country();
 		}
 		elseif(!$this->UseShippingAddress || !$country = $this->ShippingCountry) {
-			$country = EcommerceRole::find_country();
+			$country = ShopMember::find_country();
 		}
-
-		return $codeOnly ? $country : EcommerceRole::find_country_title($country);
+		return $codeOnly ? $country : ShopMember::find_country_title($country);
 	}
 
 

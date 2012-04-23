@@ -53,7 +53,7 @@ ProductCategory::set_sort_options( array('Title' => 'Alphabetical','Price' => 'L
 // * * * CHECKOUT
 ExpiryDateField::set_short_months(true);
 // * * * MEMBER
-EcommerceRole::set_group_name("Shop Customers");
+ShopMember::set_group_name("Shop ShopMembers");
 
 // * * * HELP
 Product::set_global_allow_purchase(true);

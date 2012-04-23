@@ -57,7 +57,7 @@ class GlobalTaxModifier extends TaxModifier {
 	}
 
 	protected function Country() {
-		return EcommerceRole::find_country();
+		return ShopMember::find_country();
 	}
 
 	function TableTitle() {

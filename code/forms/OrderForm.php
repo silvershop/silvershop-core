@@ -34,7 +34,7 @@ class OrderForm extends Form {
 		$order = ShoppingCart::current_order();		
 
 		if($order && $order->UseShippingAddress) {
-			$countryField = new DropdownField('ShippingCountry',  _t('OrderForm.Country','Country'), Geoip::getCountryDropDown(), EcommerceRole::find_country());
+			$countryField = new DropdownField('ShippingCountry',  _t('OrderForm.Country','Country'), Geoip::getCountryDropDown(), ShopMember::find_country());
 			$shippingFields = new CompositeField(
 				new HeaderField(_t('OrderForm.SendGoodsToDifferentAddress','Send goods to different address'), 3),
 				new LiteralField('ShippingNote', '<p class="message warning">'._t('OrderForm.ShippingNote','Your goods will be sent to the address below.').'</p>'),
@@ -261,12 +261,12 @@ class OrderForm extends Form {
 		if(!$member){
 			if(self::$user_membership_optional){
 				if($this->userWantsToBecomeMember($data,$form)){
-					$member = EcommerceRole::ecommerce_create_or_merge($data);
+					$member = ShopMember::ecommerce_create_or_merge($data);
 				}
 				//otherwise we assume they don't want to become a member
 			}elseif(self::$force_membership){
 				//create member
-				$member = EcommerceRole::ecommerce_create_or_merge($data);
+				$member = ShopMember::ecommerce_create_or_merge($data); //create member
 			}
 		}
 

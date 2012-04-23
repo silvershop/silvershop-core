@@ -63,7 +63,7 @@ class ShoppingCart{
 		//otherwise start a new order
 		$order = new Order();
 		$order->SessionID = session_id();
-		if(EcommerceRole::get_associate_to_current_order()){
+		if(ShopMember::get_associate_to_current_order()){
 			$order->MemberID = Member::currentUserID(); // Set the Member relation to this order
 		}
 		$order->write();

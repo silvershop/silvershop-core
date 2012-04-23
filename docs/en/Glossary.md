@@ -2,14 +2,18 @@
 
 This page explains verious terms used in the documentation.
 
+## Visitor
+
+A person who visits the website.
+
 ## Customer
 
-Someone who visits and/or purchases from an eCommerce website.
+A visitor who places an order on an ecommerce website.
 
 ## Member
 
-Someone who has a login to see order history, etc.
+A visitor who has a login to see order history, etc.
 
 ## Guest
 
-Someone who does not want to save member details.
+A visitor who does not want to save member details.
