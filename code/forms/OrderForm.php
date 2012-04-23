@@ -7,8 +7,6 @@
 */
 class OrderForm extends Form {
 
-	//TODO: name these better so they can be understood
-
 	//optional for user to become a member
 	protected static $user_membership_optional = false;
 		static function set_user_membership_optional($optional = true){self::$user_membership_optional = $optional;}
@@ -30,7 +28,6 @@ class OrderForm extends Form {
 		$member = Member::currentUser();
 		$memberFields = new CompositeField(singleton('Member')->getEcommerceFields());
 		$requiredFields = singleton('Member')->getEcommerceRequiredFields();
-		
 		$order = ShoppingCart::current_order();		
 
 		if($order && $order->UseShippingAddress) {
@@ -65,7 +62,6 @@ class OrderForm extends Form {
 
 		if($countryField){
 			$countryField->addExtraClass('ajaxCountryField');
-
 			$setCountryLinkID = $countryField->id() . '_SetCountryLink';
 			$setContryLink = ShoppingCart::set_country_link();
 			$memberFields->push(new HiddenField($setCountryLinkID, '', $setContryLink));
@@ -73,10 +69,8 @@ class OrderForm extends Form {
 
 		$leftFields = new CompositeField($memberFields, $shippingFields);
 		$leftFields->setID('LeftOrder');
-
 		$rightFields = new CompositeField();
 		$rightFields->setID('RightOrder');
-
 
 		if(!$member) {
 			$rightFields->push(new HeaderField(_t('OrderForm.MembershipDetails','Membership Details'), 3));
@@ -103,9 +97,11 @@ class OrderForm extends Form {
 		$totalobj = DBField::create('Currency',$currentOrder->Total()); //should instead be $totalobj = $currentOrder->dbObject('Total');
 
 		$paymentFields = Payment::combined_form_fields($totalobj->Nice());
-		foreach($paymentFields as $field) $rightFields->push($field);
+		foreach($paymentFields as $field)
+			$rightFields->push($field);
 
-		if($paymentRequiredFields = Payment::combined_form_requirements()) $requiredFields = array_merge($requiredFields, $paymentRequiredFields);
+		if($paymentRequiredFields = Payment::combined_form_requirements())
+			$requiredFields = array_merge($requiredFields, $paymentRequiredFields);
 
 		// 3) Put all the fields in one FieldSet
 		$fields = new FieldSet($leftFields, $rightFields);
@@ -130,7 +126,8 @@ class OrderForm extends Form {
 		parent::__construct($controller, $name, $fields, $actions, $requiredFields);
 
 		// 7) Member details loading
-		if($member && $member->ID) $this->loadDataFrom($member);
+		if($member && $member->ID)
+			$this->loadDataFrom($member);
 
 		// 8) Country field value update
 		if($countryField){
@@ -227,49 +224,25 @@ class OrderForm extends Form {
 	 * @param Form $form Form object for this action
 	 * @param HTTPRequest $request Request object for this action
 	 */
-	function processOrder($data, $form, $request) {
-		$paymentClass = (!empty($data['PaymentMethod'])) ? $data['PaymentMethod'] : null;
-		$payment = class_exists($paymentClass) ? new $paymentClass() : null;
-		if(!($payment && $payment instanceof Payment)) {
-			user_error(get_class($payment) . ' is not a valid Payment object!', E_USER_ERROR); //TODO: be more graceful with errors
-		}
-		$this->saveDataToSession($data); //save for later if necessary
+	function processOrder($data, $form) {
+		$this->saveDataToSession($data); //save for later if necessary ...shouldn't technically be needed, if order is being written?
 		$cart = ShoppingCart::getInstance();
 		$order = $cart->current();
-		
-		//check for cart items
-		if(!$order) {
-			$form->sessionMessage(_t('OrderForm.NoItemsInCart','Please add some items to your cart'), 'bad');
-			Director::redirectBack();
-			return false;
-		}
-		
-		$cart->clear(); //clear / disconnect the shopping cart
-		$order->calculate(); //final recalculation
-
-		//TODO: check that price hasn't changed
-		/*
-		$oldtotal = $order->Total();
-		if($order->Total() != $oldtotal) {
-			$form->sessionMessage(_t('OrderForm.PriceUpdated','The order price has been updated'), 'warning');
-			Director::redirectBack();
-			return false;
-		}
-		*/
-
+		$form->saveInto($order);
+		$order->write();
 		$member = Member::currentUser();
 		if(!$member){
 			if(self::$user_membership_optional){
 				if($this->userWantsToBecomeMember($data,$form)){
 					$member = ShopMember::ecommerce_create_or_merge($data);
 				}
-				//otherwise we assume they don't want to become a member
 			}elseif(self::$force_membership){
-				//create member
 				$member = ShopMember::ecommerce_create_or_merge($data); //create member
 			}
+		}else{
+			//TODO: make this configurable
+			$member = ShopMember::ecommerce_create_or_merge($data); //merge data
 		}
-
 		//if they are a member, or if they have filled out the member fields (password, save my details)
 		// Create new OR update logged in {@link Member} record
 		if($member === false) {
@@ -283,44 +256,40 @@ class OrderForm extends Form {
 			Director::redirectBack();
 			return false;
 		}
-
+		//TODO: check that price hasn't changed
+		$processor = OrderProcessor::create($order);
+		if(!$processor->placeOrder()){
+			$form->sessionMessage($processor->getError(), 'bad');
+			Director::redirectBack();
+			return false;
+		}
+		$cart->clear();
+		$this->clearSessionData(); //clears the stored session form data that might have been needed if validation failed
 		//assiciate member with order, if there is a member now
 		if($member){
 			$member->write();
 			$member->logIn();
-			if($member)	$payment->PaidByID = $member->ID;
 			$order->MemberID = $member->ID;
+			$order->write();
 		}
-
-		// Write new record {@link Order} to database
-		$form->saveInto($order);
-		$order->save(); //sets status to 'Unpaid' //is it even necessary to have it's own function? ..just legacy code.
-
-		$this->clearSessionData(); //clears the stored session form data that might have been needed if validation failed
-
 		// Save payment data from form and process payment
-		$form->saveInto($payment);
-		$payment->OrderID = $order->ID;
-		$payment->PaidForID = $order->ID;
-		$payment->PaidForClass = $order->class;
-
-		$payment->Amount->Amount = $order->TotalOutstanding();
-		$payment->write();
-
+		$paymentClass = (!empty($data['PaymentMethod'])) ? $data['PaymentMethod'] : null;
+		$payment = $processor->createPayment($paymentClass);
+		if(!$payment){
+			$form->sessionMessage($processor->getError(), 'bad');
+			Director::redirect($order->Link());
+			return false;
+		}
+		//TODO: end code here, and leave making payment to the next step
 		//prepare $data - ie put into the $data array any fields that may need to be there for payment
-
 		// Process payment, get the result back
 		$result = $payment->processPayment($data, $form);
-
-		// isProcessing(): Long payment process redirected to another website (PayPal, Worldpay)
-		if($result->isProcessing()) {
+		if($result->isProcessing()) { // isProcessing(): Long payment process redirected to another website (PayPal, Worldpay)
 			return $result->getValue();
 		}
-
 		if($result->isSuccess()) {
-			$order->sendReceipt();
+			$processor->sendReceipt();
 		}
-
 		Director::redirect($order->Link());
 		return true;
 	}

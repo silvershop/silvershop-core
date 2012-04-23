@@ -13,26 +13,20 @@ class OrderTest extends SapphireTest {
 	function setUp() {
 		parent::setUp();
 		ShopTest::setConfiguration();
-		
-		SSViewer::set_theme('skeleton'); //TODO: make this work without a theme
-		
 		$this->mp3player = $this->objFromFixture('Product', 'mp3player');
 		$this->socks = $this->objFromFixture('Product', 'socks');
-		
 		$this->mp3player->publish('Stage','Live');
 		$this->socks->publish('Stage','Live');
-
 	}
 	
 	function testProductOrderItems() {
 		$order = self::createOrder();
-		$testString = 'ProductList: ';
 		$items = $order->Items();
 		$this->assertNotNull($items);
-		foreach ($items as $item) {
-			$testString .= $item->Product()->Title.";";
-		}
-		$this->assertEquals($testString, "ProductList: Mp3 Player;Socks;");
+		$this->assertDOSEquals(array(
+			array('ProductID' => $this->mp3player->ID,'Quantity' => 2, 'CalculatedTotal' => 400),
+			array('ProductID' => $this->socks->ID, 'Quantity' => 1, 'CalculatedTotal' => 8)
+		), $items);
 	}
 	
 	function testSubtotal() {

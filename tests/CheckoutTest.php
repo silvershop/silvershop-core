@@ -4,8 +4,10 @@
  * 
  * @package shop
  * @subpackage tests
+ * 
+ * @todo check session retrieval of orders
  */
-class CheckoutTest extends FunctionalTest {
+class CheckoutTest extends SapphireTest {
 
 	static $fixture_file = 'shop/tests/ecommerce.yml';
 	static $disable_theme = true;
@@ -28,8 +30,9 @@ class CheckoutTest extends FunctionalTest {
 		$this->hdtv->publish('Stage','Live');
 	
 		$this->cart = ShoppingCart::getInstance();
-	
-		$this->objFromFixture('CheckoutPage', 'checkout')->publish('Stage','Live');
+		
+		$this->checkoutpage = $this->objFromFixture('CheckoutPage', 'checkout');
+		$this->checkoutpage->publish('Stage','Live');
 	}
 	
 	function testFindLink() {
@@ -37,7 +40,7 @@ class CheckoutTest extends FunctionalTest {
 		$this->assertEquals(Director::baseURL() . 'checkout/', $link, 'find_link() returns the correct link to checkout.');
 	}
 	
-	function testPlaceOrderWithForm(){
+	function testPlaceOrder(){
 	
 		//place items in cart
 		$this->cart->add($this->mp3player,2);
@@ -45,19 +48,29 @@ class CheckoutTest extends FunctionalTest {
 	
 		$order = $this->cart->current();
 		
+		$member = ShopMember::ecommerce_create_or_merge(array(
+			'FirstName' => 'James',
+			'Surname'	=> 'Brown',
+			'Email'		=> 'james@jamesbrown.net.xx',
+			'Password'	=> 'jbrown'
+		));
+		$this->assertTrue((bool)$member);
+		$member->write();	
+		
 		//submit checkout page
-		$this->placeOrder(
-				'James',
-				'Brown',
-				'james@jamesbrown.net.xx',
-				'23 Small Street',
-				'North Beach',
-				'Springfield',
-				'1234567',
-				'NZ',
-				'jbrown',
-				'jbrown'
-		);
+		$this->assertTrue($this->placeOrder(
+			'James',
+			'Brown',
+			'james@jamesbrown.net.xx',
+			'23 Small Street',
+			'North Beach',
+			'Springfield',
+			'1234567',
+			'NZ',
+			'jbrown',
+			'jbrown',
+			$member
+		));
 	
 		$order = DataObject::get_by_id('Order',$order->ID); //update order variable to db-stored version
 		$this->assertNotNull($order);
@@ -85,6 +98,7 @@ class CheckoutTest extends FunctionalTest {
 		$this->assertEquals($order->Country,'NZ','order country');
 	
 		/* check membership details */
+		
 		$this->assertNotNull($order->MemberID,'member exists now');
 		//TODO: check that the member is now logged in
 		$this->assertEquals($order->Member()->FirstName,'James','member first name matches');
@@ -94,9 +108,7 @@ class CheckoutTest extends FunctionalTest {
 	
 		//TODO: test redirected to the right place?
 		//TODO: check items match
-		
-		$this->assertEmailSent("james@jamesbrown.net.xx","test@myshop.com","Shop Sale Information #".$order->ID);
-	
+		//$this->assertEmailSent("james@jamesbrown.net.xx","test@myshop.com","Shop Sale Information #".$order->ID);
 		//TODO: check cart is now empty
 		//$this->assertFalse($this->cart->current(),'cart has been cleared');
 	
@@ -111,8 +123,8 @@ class CheckoutTest extends FunctionalTest {
 		$joemember = $this->objFromFixture('Member', 'joebloggs');
 		$joemember->logIn();
 		$cart = ShoppingCart::current_order();
-	
-		$this->placeOrder(
+		
+		$this->assertTrue($this->placeOrder(
 			'Joseph',
 			'Blog',
 			'joe@blog.net.abz',
@@ -122,8 +134,9 @@ class CheckoutTest extends FunctionalTest {
 			null,
 			'EG',
 			'newpassword',
-			'newpassword'
-		);
+			'newpassword',
+			$joemember
+		),"Place order");
 	
 		//TODO: test that the form is pre-populated with the member's details
 		//TODO: what happens if member enters different email? / name?
@@ -132,7 +145,6 @@ class CheckoutTest extends FunctionalTest {
 		$this->assertNotNull($order,'Order exists');
 		if($order){
 			$this->assertEquals($order->Status,'Unpaid','status is now "unpaid"');
-	
 			$this->assertEquals($order->FirstName,'Joseph','order first name');
 			$this->assertEquals($order->Surname,'Blog','order surname');
 			$this->assertEquals($order->Email,'joe@blog.net.abz','order email');
@@ -141,7 +153,6 @@ class CheckoutTest extends FunctionalTest {
 			$this->assertEquals($order->City,'Martinsonville','order city');
 			$this->assertNull($order->PostalCode,'order postcode');
 			$this->assertEquals($order->Country,'EG','order country');
-	
 			//ASSUMPTION: member details are NOT updated with order
 			$this->assertEquals($order->MemberID,$joemember->ID,'Order associated with member');
 			$this->assertEquals($order->Member()->FirstName,'Joe','member first name has not changed');
@@ -152,18 +163,13 @@ class CheckoutTest extends FunctionalTest {
 	}
 	
 	function testNoMemberOrder(){
-	
 		//TODO: test configuration that deines non-member orders
-	
 		//adjust configuration to allow non member orders
 		OrderForm::set_user_membership_optional(true);
 		OrderForm::set_force_membership(false);
-	
 		$this->cart->add($this->socks);
-		
 		$order = $this->cart->current();
-	
-		$this->placeOrder(
+		$this->assertTrue($this->placeOrder(
 			'Donald',
 			'Duck',
 			'donald@pondcorp.edu.za',
@@ -172,7 +178,7 @@ class CheckoutTest extends FunctionalTest {
 			'Melbourne',
 			null,
 			'AU'
-		);
+		));
 	
 		$order = DataObject::get_by_id('Order',$order->ID); //update $order
 		$this->assertNotNull($order,'Order exists');
@@ -183,7 +189,6 @@ class CheckoutTest extends FunctionalTest {
 			$this->assertEquals($order->GrandTotal(),8,'grand total');
 			$this->assertEquals($order->TotalOutstanding(),8,'total outstanding');
 			$this->assertEquals($order->TotalPaid(),0,'total outstanding');
-	
 			$this->assertEquals($order->FirstName,'Donald','order first name');
 			$this->assertEquals($order->Surname,'Duck','order surname');
 			$this->assertEquals($order->Email,'donald@pondcorp.edu.za','order email');
@@ -199,11 +204,9 @@ class CheckoutTest extends FunctionalTest {
 	
 	/*
 	 function testOrderFormValidation(){
-	
-	//TODO: test trying to use an email that has already been taken
-	//TODO: submit with empty cart
-	//TODO: missing required fields
-	
+		//TODO: test trying to use an email that has already been taken
+		//TODO: submit with empty cart
+		//TODO: missing required fields
 	}
 	*/
 	
@@ -213,26 +216,29 @@ class CheckoutTest extends FunctionalTest {
 	/**
 	 * Helper function that populates a form with data and submits it.
 	 */
-	protected function placeOrder($firstname,$surname,$email,$address1,$address2 = null,$city,$postcode = null,$country = null,$password = null,$confirmpassword = null,$paymentmethod = "ChequePayment"){
-		$response = $this->get('checkout');
-	
+	protected function placeOrder($firstname,$surname,$email,$address1,$address2 = null,$city,$postcode = null,$country = null,$password = null,$confirmpassword = null, $member = null){
 		$data = array(
 			'FirstName' => $firstname,
 			'Surname' => $surname,
 			'Email' => $email,
 			'Address' => $address1,
-			'City' => $city,
-			'PaymentMethod' => $paymentmethod
+			'City' => $city
 		);
-	
 		if($address2) $data['AddressLine2'] = $address2;
 		if($postcode) $data['PostalCode'] = $postcode;
 		if($country) $data['Country'] = $country;
 		if($password) $data['Password[_Password]'] = $password;
 		if($confirmpassword) $data['Password[_ConfirmPassword]'] = $confirmpassword;
-	
+		$order = ShoppingCart::singleton()->current();
+		$order->update($data);
+		$order->write();
+		if($member){
+			$order->MemberID = $member->ID;
+			$order->write();
+		}
+		return OrderProcessor::create($order)->placeOrder();
 		//TODO: form submissions not working - theme issues
-		$this->submitForm('OrderForm_OrderForm','action_processOrder',$data);
+		//$this->submitForm('OrderForm_OrderForm','action_processOrder',$data);
 	}
 
 }

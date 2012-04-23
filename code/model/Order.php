@@ -99,22 +99,6 @@ class Order extends DataObject {
 	static $hidden_status = array('Cart','AdminCancelled','MemberCancelled','Query');
 
 	/**
-	 * This is the from address that the receipt
-	 * email contains. e.g. "info@shopname.com"
-	 *
-	 * @var string
-	 */
-	protected static $receipt_email;
-
-	/**
-	 * This is the subject that the receipt
-	 * email will contain. e.g. "Joe's Shop Receipt".
-	 *
-	 * @var string
-	 */
-	protected static $receipt_subject = "Shop Sale Information #%d";
-
-	/**
 	 * Flag to determine whether the user can cancel
 	 * this order before payment is received.
 	 *
@@ -292,31 +276,6 @@ class Order extends DataObject {
 	}
 
 	/**
-	 * Set the from address for receipt emails.
-	 *
-	 * @param string $email From address. e.g. "info@myshop.com"
-	 */
-	public static function set_email($email) {
-		self::$receipt_email = $email;
-	}
-
-	/**
-	 * Set the subject of the order receipt email.
-	 *
-	 * @param string $subject The subject line text
-	 */
-	public static function set_receipt_subject($subject) {
-		self::$receipt_subject = $subject;
-	}
-
-	/**
-	 * @deprecated Use set_receipt_subject instead.
-	 */
-	public static function set_subject($subject){
-		self::set_receipt_subject($subject);
-	}
-
-	/**
 	 * Set the modifiers that apply to this site.
 	 *
 	 * @param array $modifiers An array of {@link OrderModifier} subclass names
@@ -373,7 +332,7 @@ class Order extends DataObject {
 	protected static $set_can_cancel_on_status = array();
 
 	static function set_can_cancel_on_status($array) {
-		//to do: check that the stati provided in array actually exist
+		//TODO: check that the stati provided in array actually exist
 		self::$set_can_cancel_on_status = $array;
 	}
 
@@ -398,30 +357,6 @@ class Order extends DataObject {
 			}
 		}
 		return count($forms) > 0 ? new DataObjectSet($forms) : null;
-	}
-
-	/**
-	 * Transitions the order from being in the Cart to being in an unpaid post-cart state.
-	 *
-	 * @return Order The current order
-	 */
-	function save() {
-		if($this->Status == 'Cart' || !$this->Status){
-			$this->Status = 'Unpaid';
-			//re-write all attributes and modifiers to make sure they are up-to-date before they can't be changed again
-			if($this->Attributes()->exists()){
-				foreach($this->Attributes() as $attribute){
-					if($attribute instanceof Product_OrderItem){
-						$product = $attribute->Product();
-						$attribute->ProductVersion = $product->Version;
-					}
-					$attribute->write();
-				}
-			}
-			$this->SessionID = session_id(); //update session id
-			$this->extend('onSave'); //allow decorators to do stuff when order is saved.
-			$this->write();
-		}
 	}
 
 	// Items Management
@@ -458,26 +393,6 @@ class Order extends DataObject {
  	function Modifiers() {
  		return DataObject::get('OrderModifier', "\"OrderID\" = '$this->ID'");
 	}
-
-	/**
-	 * Returns the subtotal of the modifiers for this order.
-	 * If a modifier appears in the excludedModifiers array, it is not counted.
-	 *
-	 * @param $excluded string|array Class(es) of modifier(s) to ignore in the calculation.
-	 * @todo figure out what the return type is? double? float?
-	 * @deprecated CreateModifiers will pass in subtotal
-	 */
-	function ModifiersSubTotal() {
-		return $this->modifiertotal;
-	}
-
-	/**
-	* Initialise all the {@link OrderModifier} objects.
-	* @deprecated use Calculate function instead.
-	*/
-	function initModifiers() {
-		$this->calculate();
-	}
 	
 	/**
 	 * Creates (if necessary) and calculates values for each modifier,
@@ -492,7 +407,6 @@ class Order extends DataObject {
 		$runningtotal = $this->SubTotal();
 		$modifiertotal = 0;
 		$sort = 1;
-		
 		$existingmodifiers = $this->Modifiers();
 		
 		if($this->IsCart()){
@@ -696,19 +610,17 @@ class Order extends DataObject {
 			'HomePhone',
 			'MobilePhone'
 		);
-
 		$fields = array();
 		$do = ($this->MemberID) ? $this->Member(): $this; //TODO: perhaps always use this??
 		foreach($touse as $field){
 			if($do && $do->$field)
 				$fields[] = $do->$field;
 		}
-
 		$separator = ($insertnewlines) ? $separator."\n" : $separator;
 		return implode($separator,$fields);
 	}
+	
 	function getFullShippingAddress($separator = "",$insertnewlines = true){
-
 		if(!$this->UseShippingAddress)
 			return $this->getFullBillingAddress($separator,$insertnewlines);
 		//TODO: move this list somewhere it can be customised
@@ -722,7 +634,6 @@ class Order extends DataObject {
 			'ShippingCountry',
 			'ShippingPhone'
 		);
-
 		$fields = array();
 		foreach($touse as $field){
 			if($this->$field)
@@ -824,47 +735,6 @@ class Order extends DataObject {
 		return CheckoutPage::find_link();
 	}
 
-  	/**
-	 * Send the receipt of the order by mail.
-	 * Precondition: The order payment has been successful
-	 */
-	function sendReceipt() {
-		$this->sendEmail('Order_ReceiptEmail');
-		$this->ReceiptSent = true;
-		$this->write();
-	}
-
-	/**
-	 * Send a mail of the order to the client (and another to the admin).
-	 *
-	 * @param $emailClass - the class name of the email you wish to send
-	 * @param $copyToAdmin - true by default, whether it should send a copy to the admin
-	 */
-	protected function sendEmail($emailClass, $copyToAdmin = true) {
-
- 		$from = self::$receipt_email ? self::$receipt_email : Email::getAdminEmail();
- 		$to = $this->getLatestEmail();
-		$subject = self::$receipt_subject ? self::$receipt_subject : "Shop Sale Information #%d";
-		$subject = sprintf($subject,$this->ID);
-
- 		$purchaseCompleteMessage = DataObject::get_one('CheckoutPage')->PurchaseComplete;
-
- 		$email = new $emailClass();
- 		$email->setFrom($from);
- 		$email->setTo($to);
- 		$email->setSubject($subject);
-		if($copyToAdmin) $email->setBcc(Email::getAdminEmail());
-
-		$email->populateTemplate(
-			array(
-				'PurchaseCompleteMessage' => $purchaseCompleteMessage,
-				'Order' => $this
-			)
-		);
-
-		$email->send();
-	}
-
 	/**
 	 * Returns the correct shipping address. If there is an alternate
 	 * shipping country then it uses that. Failing that, it returns
@@ -884,49 +754,6 @@ class Order extends DataObject {
 			$country = ShopMember::find_country();
 		}
 		return $codeOnly ? $country : ShopMember::find_country_title($country);
-	}
-
-
-	/**
-	 * Send a message to the client containing the latest
-	 * note of {@link OrderStatusLog} and the current status.
-	 *
-	 * Used in {@link OrderReport}.
-	 *
-	 * @param string $note Optional note-content (instead of using the OrderStatusLog)
-	 */
-	function sendStatusChange($title, $note = null) {
-		if(!$note) {
-			$logs = DataObject::get('OrderStatusLog', "\"OrderID\" = {$this->ID} AND \"SentToCustomer\" = 1", "\"Created\" DESC", null, 1);
-			if($logs) {
-				$latestLog = $logs->First();
-				$note = $latestLog->Note;
-				$title = $latestLog->Title;
-			}
-		}
-
-		$member = $this->Member();
-
- 		if(self::$receipt_email) {
- 			$adminEmail = self::$receipt_email;
- 		}
-		else {
- 			$adminEmail = Email::getAdminEmail();
- 		}
-
-		$e = new Order_statusEmail();
-		$e->populateTemplate($this);
-		$e->populateTemplate(
-			array(
-				"Order" => $this,
-				"Member" => $member,
-				"Note" => $note
-			)
-		);
-		$e->setFrom($adminEmail);
-		$e->setSubject($title);
-		$e->setTo($member->Email);
-		$e->send();
 	}
 
 	function updatePrinted($printed){
@@ -958,12 +785,11 @@ class Order extends DataObject {
 				$payment->destroy();
 			}
 		}
-		//TODO: delete order itmes & product_orderitem
+		//TODO: delete order items & product_orderitem
 		parent::onBeforeDelete();
 	}
 
 	function debug(){
-
 		$val = "<h3>Database record: $this->class</h3>\n<ul>\n";
 		if($this->record) foreach($this->record as $fieldName => $fieldVal) {
 			$val .= "\t<li>$fieldName: " . Debug::text($fieldVal) . "</li>\n";
@@ -975,28 +801,71 @@ class Order extends DataObject {
 		$val .= "<h4>Modifiers</h4>";
 		if($this->Modifiers())
 			$val .= $this->Modifiers()->debug();
-
 		return $val;
 	}
+	
+	//deprecated code
+	
+	/**
+	* @deprecated Use OrderProcessor
+	*/
+	public static function set_email($email) {
+		OrderProcessor::set_email_from($email);
+	}
+	/**
+	 * @deprecated Use OrderProcessor
+	 */
+	public static function set_receipt_subject($subject) {
+		OrderProcessor::set_receipt_subject($subject);
+	}
+	/**
+	 * @deprecated Use OrderProcessor
+	 */
+	public static function set_subject($subject){
+		OrderProcessor::set_receipt_subject($subject);
+	}
+	/**
+	* @deprecated use OrderProcessor
+	*/
+	function sendReceipt() {
+		OrderProcessor::create($this)->sendReceipt();
+	}
+	/**
+	 * @deprecated use OrderProcessor
+	 */
+	function sendStatusChange($title, $note = null) {
+		OrderProcessor::create($this)->sendStatusChange($title,$note);
+	}
 
-}
-
-
-/**
- * This class handles the receipt email which gets sent once an order is made.
- * You can call it by issuing sendReceipt() in the Order class.
- */
-class Order_ReceiptEmail extends Email {
-
-	protected $ss_template = 'Order_ReceiptEmail';
-}
-
-/**
- * This class handles the status email which is sent after changing the attributes
- * in the report (eg. status changed to 'Shipped').
- */
-class Order_StatusEmail extends Email {
-
-	protected $ss_template = 'Order_StatusEmail';
+	/**
+	* @deprecated use OrderProcessor placeOrder
+	*/
+	function save() {
+		OrderProcessor::create($this)->placeOrder();
+	}
+	/**
+	* Returns the subtotal of the modifiers for this order.
+	* If a modifier appears in the excludedModifiers array, it is not counted.
+	*
+	* @param $excluded string|array Class(es) of modifier(s) to ignore in the calculation.
+	* @todo figure out what the return type is? double? float?
+	* @deprecated CreateModifiers will pass in subtotal
+	*/
+	function ModifiersSubTotal() {
+		return $this->modifiertotal;
+	}
+	/**
+	 * Initialise all the {@link OrderModifier} objects.
+	 * @deprecated use Calculate function instead.
+	 */
+	function initModifiers() {
+		$this->calculate();
+	}
+	/**
+	* @deprecated use OrderProcessor
+	*/
+	protected function sendEmail($emailClass, $copyToAdmin = true) {
+		OrderProcessor::create($this)->sendStatusChange($emailClass,$copyToAdmin);
+	}
 
 }
