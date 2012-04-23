@@ -92,16 +92,14 @@ class OrderReport_Popup extends Controller {
 	 */
 	function DisplayFinalisedOrder() {
 		$id = $this->urlParams['ID'];
-
 		if(is_numeric($id)) {
 			$order = DataObject::get_by_id("Order", $id);
 			if(isset($_REQUEST['print'])) {
-				$order->updatePrinted(true);
+				$this->Printed = true;
+				$this->write();
 			}
-
 			return $order;
 		}
-
 		return false;
 	}
 	

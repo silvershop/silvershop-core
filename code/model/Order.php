@@ -748,11 +748,6 @@ class Order extends DataObject {
 		return $codeOnly ? $country : ShopMember::find_country_title($country);
 	}
 
-	function updatePrinted($printed){
-		$this->__set("Printed", $printed);
-		$this->write();
-	}
-
 	/**
 	 * delete attributes, statuslogs, and payments
 	 */
