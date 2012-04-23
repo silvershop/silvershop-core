@@ -22,13 +22,21 @@
 		<% control Items %><% if ShowInTable %>
 			<tr id="$TableID" class="$Classes">
 				<td id="$TableTitleID">
-					<% if Product.Image %><% control Product %>$Image.setWidth(45)<% end_control %><% end_if %>
+					<% if Product.Image %>
+						<div class="image">
+							<a href="$Link" title="<% sprintf(_t("READMORE","View &quot;%s&quot;"),$Title) %>">
+								<% control Product %>$Image.setWidth(45)<% end_control %>
+							</a>
+						</div>
+					<% end_if %>
+					<h3>
 					<% if Link %>
-						<a href="$Link" title="<% sprintf(_t("READMORE","Click here to read more on &quot;%s&quot;"),$TableTitle) %>">$TableTitle</a>
+						<a href="$Link" title="<% sprintf(_t("READMORE","View &quot;%s&quot;"),$Title) %>">$TableTitle</a>
 					<% else %>
 						$TableTitle
 					<% end_if %>
-					<% if SubTitle %><span class="subtitle">$SubTitle</span><% end_if %>
+					</h3>
+					<% if SubTitle %><p class="subtitle">$SubTitle</p><% end_if %>
 				</td>
 				<td>$QuantityField</td>
 				<td>$UnitPrice.Nice</td>

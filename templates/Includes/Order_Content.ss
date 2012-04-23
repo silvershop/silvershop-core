@@ -11,11 +11,23 @@
 		<% control Items %>
 		<tr  class="itemRow $EvenOdd $FirstLast">
 			<td class="product title" scope="row">
+				<% if Product.Image %>
+					<div class="image">
+						<a href="$Link" title="<% sprintf(_t("READMORE","View &quot;%s&quot;"),$Title) %>">
+							<% control Product %>
+							<img src="<% control Image.setWidth(45) %>$Me.AbsoluteURL<% end_control %>" alt="$Title"/>
+							<% end_control %>
+						</a>
+					</div>
+				<% end_if %>
+				<h3>
 				<% if Link %>
-					<a href="$Link" title="<% sprintf(_t("READMORE","Click here to read more on &quot;%s&quot;"),$Title) %>">$TableTitle</a>
+					<a href="$Link" title="<% sprintf(_t("READMORE","View &quot;%s&quot;"),$Title) %>">$TableTitle</a>
 				<% else %>
 					$TableTitle
 				<% end_if %>
+				</h3>
+				<% if SubTitle %><p class="subtitle">$SubTitle</p><% end_if %>
 			</td>
 			<td class="center quantity">$Quantity</td>
 			<td class="right unitprice">$UnitPrice.Nice</td>

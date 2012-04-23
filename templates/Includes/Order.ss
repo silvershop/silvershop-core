@@ -1,9 +1,6 @@
 <div id="OrderInformation">
-
 	<% include Order_Shipping %>
-
 	<% include Order_Content %>
-	
 	<% if Payments %>
 		<% include Order_Payments %>
 		
@@ -16,8 +13,6 @@
 			</tbody>
 		</table>
 	<% end_if %>
-
-
 	<% if CustomerOrderNote %>
 	<table id="NotesTable" class="infotable">
 		<thead>
@@ -32,5 +27,4 @@
 		</tbody>
 	</table>
 	<% end_if %>
-	
 </div>
