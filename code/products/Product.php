@@ -45,13 +45,15 @@ class Product extends Page implements Buyable{
 	);
 
 	public static $singular_name = "Product";
-	function i18n_singular_name() { return _t("Product.SINGULAR", self::$singular_name); }
+	function i18n_singular_name() { return _t("Product.SINGULAR", $this->stat('singular_name')); }
 	public static $plural_name = "Products";
-	function i18n_plural_name() { return _t("Product.PLURAL", self::$plural_name); }
+	function i18n_plural_name() { return _t("Product.PLURAL", $this->stat('plural_name')); }
 	
 	static $icon = 'shop/images/icons/package';
 	static $default_parent = 'ProductCategory';
 	static $default_sort = '"Title" ASC';
+	
+	static $order_item = "Product_OrderItem";
 
 	static $number_sold_calculation_type = "SUM"; //SUM or COUNT
 	static $global_allow_purchase = true;
@@ -223,9 +225,14 @@ class Product extends Page implements Buyable{
 	/**
 	 * @see Buyable::createItem()
 	 */
-	function createItem($quantity = 1,$write = true){
-		$item = new Product_OrderItem();
+	function createItem($quantity = 1,$write = true, $filter = null){
+		$orderitem = $this->stat("order_item");
+		$item = new $orderitem();
 		$item->ProductID = $this->ID;
+		
+		if($filter){
+			$item->update($filter); //TODO: make this a bit safer, perhaps only use allowed fields
+		}
 		//$item->ProductVersion = $this->Version; //Save on save
 		$item->Quantity = $quantity;
 		if($write){

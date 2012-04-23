@@ -42,7 +42,9 @@ class OrderItem extends OrderAttribute {
 		"Quantity" => "Quantity" ,
 		"Total" => "Total Price" ,
 	);
-
+	
+	static $required_fields = array();
+	
 	public static $singular_name = "Order Item";
 	function i18n_singular_name() { return _t("OrderItem.SINGULAR", self::$singular_name); }
 	public static $plural_name = "Order Items";

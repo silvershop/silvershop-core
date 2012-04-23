@@ -47,7 +47,7 @@ store administrator.
 
 Only if a customer completely removes an item from the cart will they be presented with a different set of details.
 
-## Order Item Parameters
+## Ordering Customised Products (Order Item Parameters)
 
 You may want to add seperate types of the same item to a cart.
 for example: "12 meters of rope", along with "5 meters of rope".

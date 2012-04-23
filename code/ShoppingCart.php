@@ -80,13 +80,13 @@ class ShoppingCart{
 	 * @param product $item - #TODO: should this be an id, or object?
 	 * @param int $quantity
 	 */
-	public function add($product,$quantity = 1){
+	public function add($product,$quantity = 1,$filter = array()){
 		$order = $this->findOrMake();
 		if(!$product){ 
 			$this->error(_t("ShoppingCart.PRODUCTNOTFOUND","Product not found."));
 			return false;
 		}
-		$item = $this->findOrMakeItem($product);
+		$item = $this->findOrMakeItem($product,$filter);
 		if(!$item){	
 			$this->error(_t("ShoppingCart.ITEMNOTCREATED","Item could not be created."));
 			return false;
@@ -106,13 +106,13 @@ class ShoppingCart{
 	 * @param $item
 	 * @param int $quantity - number of items to remove, or leave null for all items (default)
 	 */
-	 public function remove($product,$quantity = null){
+	 public function remove($product,$quantity = null,$filter = array()){
 		$order = $this->current();
 		if(!$order){
 			$this->error(_t("ShoppingCart.NOORDER","No current order."));
 			return false;
 		}
-		$item = $this->get($product);
+		$item = $this->get($product,$filter);
 		if(!$item){
 			return false;
 		}
@@ -134,12 +134,12 @@ class ShoppingCart{
 	 * @param $item
 	 * @param int $quantity
 	 */
-	public function setQuantity($product,$quantity = 1){
+	public function setQuantity($product,$quantity = 1,$filter = array()){
 		if($quantity <= 0){
-			return $this->remove($product);
+			return $this->remove($product,$quantity,$filter);
 		}
 		$order = $this->findOrMake();
-		$item = $this->findOrMakeItem($product);
+		$item = $this->findOrMakeItem($product,$filter);
 		if(!$item){
 			return false;
 		}
@@ -154,7 +154,7 @@ class ShoppingCart{
 	 * @param id or Product $product
 	 * @param string $filter
 	 */
-	private function findOrMakeItem($product,$filter = null){
+	private function findOrMakeItem($product,$filter = array()){
 		$order = $this->findOrMake();
 		if(is_numeric($product)){
 			$product = DataObject::get_by_id("Product", $product);
@@ -169,9 +169,10 @@ class ShoppingCart{
 				//TODO: get more specific message
 				return false;
 			}
-			$item = $product->createItem();
+			$item = $product->createItem(1,false,$filter);
 			$item->OrderID = $order->ID;
 			$item->write();
+			$order->Attributes()->add($item);
 			$item->_brandnew = true; //flag as being new
 		}
 		return $item;
@@ -183,14 +184,29 @@ class ShoppingCart{
 	 * @param string $filter
 	 * @return the item requested, or false
 	 */
-	public function get($product,$filter = null){
+	public function get($product,$customfilter = array()){
 		if(is_numeric($product)){
 			$product = DataObject::get_by_id("Product", $product);
 		}
 		$order = $this->current();
 		if(!$product || !$order) return false;
-		$id = $product->ID;
-		$item = DataObject::get_one('OrderItem', "\"OrderID\" = $order->ID AND \"ProductID\" = $id");
+		//TODO: only use filter array, instead of 
+		
+		$filter = array(
+			'OrderID' => $order->ID,
+			'ProductID' => $product->ID
+		);
+		
+		$itemclass = $product->stat('order_item');
+		$singletonorderitem = singleton($itemclass);
+		$required = $singletonorderitem->stat('required_fields');
+		//TODO: $required = $itemclass::$required_fields; //php 5.3 isn't standard until SS3
+		
+		$required = array_merge(array('Order','Product'),$required);
+		//TODO: allow passing exact id
+		
+		$query = new MatchObjectFilter($itemclass,array_merge($customfilter,$filter),$required);
+		$item = DataObject::get_one($itemclass, $query->getFilter());
 		if(!$item){
 			$this->error(_t("ShoppingCart.ITEMNOTFOUND","Item not found."));
 			return false;
@@ -236,6 +252,10 @@ class ShoppingCart{
 	
 	public function getMessage(){
 		return $this->message;
+	}
+	
+	public function getMessageType(){
+		return $this->type;
 	}
 	
 	//singleton protection
@@ -315,6 +335,7 @@ class ShoppingCart{
 class ShoppingCart_Controller extends Controller{
 	
 	static $url_segment = "shoppingcart";
+	private $cart;
 	
 	static $allowed_actions = array(
 		'add',

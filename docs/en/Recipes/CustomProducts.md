@@ -15,6 +15,3 @@ You may want to store details against an order item, which are currently not pro
 		);
 	
 	}
-
-
-
