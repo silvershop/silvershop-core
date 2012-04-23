@@ -43,9 +43,8 @@ class ShopMember extends DataObjectDecorator {
 	 * Clear the cart, and session variables.
 	 */
 	function memberLoggedOut(){
-		if(self::$login_joins_cart){
-			ShoppingCart::singleton()->clear();
-		}
+		ShoppingCart::singleton()->clear();
+		OrderManipulation::clear_session_order_ids();
 	}
 
 	static function find_country_title($code) {

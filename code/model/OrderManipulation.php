@@ -43,6 +43,11 @@ class OrderManipulation extends Extension{
 		return $history;
 	}
 	
+	static function clear_session_order_ids(){
+		Session::set(self::$session_variable,null);
+		Session::clear(self::$session_variable);
+	}
+	
 	/**
 	 * Get the order via url 'ID' or form submission 'OrderID'.
 	 * It will check for permission based on session stored ids or member id.
