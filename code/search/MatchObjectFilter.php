@@ -66,8 +66,10 @@ class MatchObjectFilter{
 		
 		//add 'ID' to has one relationship fields
 		foreach($hasones as $key => $value){
-			$fields[$key."ID"] = $value; 
-			unset($fields[$key]);
+			if(isset($fields[$key])){
+				$fields[$key."ID"] = $value; 
+				unset($fields[$key]);
+			}
 		}
 		
 		$new = array();
