@@ -1,3 +1,5 @@
+<% require themedCSS(order) %>
+<% require themedCSS(account) %>
 <div id="Account">
 	<div class="typography">
 		<% if Order %>

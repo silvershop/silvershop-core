@@ -1,5 +1,5 @@
+<% require themedCSS(checkout) %>
 <div id="Checkout">
-
 	<div class="typography">
 		<h2 class="pageTitle">$Title</h2>
 		<% if Content %>

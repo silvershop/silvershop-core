@@ -52,7 +52,6 @@ class AccountPage_Controller extends Page_Controller {
 
 	function init() {
 		parent::init();
-		Requirements::themedCSS('AccountPage');
 		if(!Member::currentUserID()) {
 			$messages = array(
 				'default' => '<p class="message good">' . _t('AccountPage.Message', 'You\'ll need to login before you can access the account page. If you are not registered, you won\'t be able to access it until you make your first order, otherwise please enter your details below.') . '</p>',
@@ -90,18 +89,11 @@ class AccountPage_Controller extends Page_Controller {
 	 * @return array of template variables
 	 */
 	function order($request) {
-		Requirements::themedCSS('Order');
-		Requirements::themedCSS('Order_print', 'print');
-
 		$memberID = Member::currentUserID();
 		$accountPageLink = AccountPage::find_link();
-
 		if($orderID = $request->param('ID')) {
 			if($order = DataObject::get_one('Order', "\"Order\".\"ID\" = '$orderID' AND \"Order\".\"MemberID\" = '$memberID'")) {
-				
 				$paymentform = ($order->TotalOutstanding() > 0) ? $this->CancelForm() : null;
-				
-				
 				return array(
 					'Order' => $order,
 					'Form' => $paymentform

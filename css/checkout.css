@@ -1,8 +1,7 @@
 /** Minimal Checkout Page Styling **/
 
-/* Information table styling */
-#InformationTable {
-	width: 100%;
+#OrderForm_OrderForm{
+	clear:left;	
 }
 
 /* CheckoutPage form styling */

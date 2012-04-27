@@ -277,13 +277,7 @@ class Product extends Page implements Buyable{
 class Product_Controller extends Page_Controller {
 
 	static $allowed_actions = array();
-
-	function init() {
-		parent::init();
-		Requirements::themedCSS('Product');
-		Requirements::themedCSS('Cart');
-	}
-
+	
 }
 
 class Product_Image extends Image {

@@ -1,3 +1,4 @@
+<% require themedCSS(account) %>
 <div id="Account">
 	<div class="typography">
 		<h2>$Title</h2>

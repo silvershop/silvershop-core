@@ -1,18 +1,15 @@
-
-
 #Product {
-	margin-left: 230px;
-}
 
-	.priceDisplay{
+}
+	.price .value{
 		font-weight:bold;
 		font-size:1.2em;
 	}
 	
 	/* Image placeholder */
 	#Product .noimage{
-		padding:20px;
-		height:100px;
+		padding:60px 20px;
+		height:40px;
 		width:200px;
 		text-align:center;
 		background:#eeeeee;

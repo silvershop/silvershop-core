@@ -24,8 +24,7 @@ class ProductCategory extends Page {
 	function i18n_plural_name() {
 		return _t("ProductCategory.PLURAL", $this->stat('plural_name'));
 	}
-	
-	
+
 	static $default_child = 'Product';
 	static $icon = 'cms/images/treeicons/folder';
 
@@ -173,13 +172,6 @@ class ProductCategory extends Page {
 }
 
 class ProductCategory_Controller extends Page_Controller {
-
-	function init() {
-		parent::init();
-
-		Requirements::themedCSS('ProductCategory');
-		Requirements::themedCSS('Cart');
-	}
 
 	/**
 	 * Return the products for this group.

@@ -1,27 +1,27 @@
+<% require themedCSS(editableorder) %>
 <% if Items %>
 <h3 class="orderInfo"><% _t("ORDERINFORMATION","Order Information") %></h3>
-
-<table id="InformationTable" class="orderconent editable" summary="<% _t("TABLESUMMARY","The contents of your cart are displayed in this form and summary of all fees associated with an order and a rundown of payments options.") %>">
-	<colgroup>
-		<col class="product title left"/>
-		<col class="quantity center" />
-		<col class="unitprice center" />
-		<col class="total right"/>
-		<col class="remove center"/>
-	</colgroup>	
+<table id="InformationTable" class="ordercontent editable" summary="<% _t("TABLESUMMARY","Current contents of your cart.") %>">
+	<colgroup class="image"/>
+	<colgroup class="product title"/>
+	<colgroup class="unitprice" />
+	<colgroup class="quantity" />
+	<colgroup class="total"/>
+	<colgroup class="remove"/>
 	<thead>
 		<tr>
+			<th scope="col"></th>
 			<th scope="col"><% _t("PRODUCT","Product") %></th>
+			<th scope="col"><% _t("UNITPRICE","Unit Price") %></th>
 			<th scope="col"><% _t("QUANTITY", "Quantity") %></th>
-			<th scope="col"><% _t("PRICE","Price") %> ($Currency)</th>
 			<th scope="col"><% _t("TOTALPRICE","Total Price") %> ($Currency)</th>
 			<th scope="col"></th>
 		</tr>
 	</thead>
 	<tbody>
 		<% control Items %><% if ShowInTable %>
-			<tr id="$TableID" class="$Classes">
-				<td id="$TableTitleID">
+			<tr id="$TableID" class="$Classes $EvenOdd $FirstLast">
+				<td>
 					<% if Product.Image %>
 						<div class="image">
 							<a href="$Link" title="<% sprintf(_t("READMORE","View &quot;%s&quot;"),$Title) %>">
@@ -29,6 +29,8 @@
 							</a>
 						</div>
 					<% end_if %>
+				</td>
+				<td id="$TableTitleID">
 					<h3>
 					<% if Link %>
 						<a href="$Link" title="<% sprintf(_t("READMORE","View &quot;%s&quot;"),$Title) %>">$TableTitle</a>
@@ -38,8 +40,8 @@
 					</h3>
 					<% if SubTitle %><p class="subtitle">$SubTitle</p><% end_if %>
 				</td>
-				<td>$QuantityField</td>
 				<td>$UnitPrice.Nice</td>
+				<td>$QuantityField</td>
 				<td id="$TableTotalID">$Total.Nice</td>
 				<td>
 					<a href="$removeallLink" title="<% sprintf(_t("REMOVEALL","Remove all of &quot;%s&quot; from your cart"),$TableTitle) %>">
@@ -51,7 +53,7 @@
 	</tbody>
 	<tfoot>
 		<tr class="subtotal">
-			<th colspan="3" scope="row"><% _t("SUBTOTAL","Sub-total") %></th>
+			<th colspan="4" scope="row"><% _t("SUBTOTAL","Sub-total") %></th>
 			<td id="$TableSubTotalID">$SubTotal.Nice</td>
 			<td>&nbsp;</td>
 		</tr>
@@ -59,7 +61,7 @@
 			<% control Modifiers %>
 				<% if ShowInTable %>
 					<tr id="$TableID" class="$Classes">
-						<th id="$TableTitleID" colspan="3" scope="row">
+						<th id="$TableTitleID" colspan="4" scope="row">
 							<% if Link %>
 								<a href="$Link" title="<% sprintf(_t("READMORE","Click here to read more on &quot;%s&quot;"),$TableTitle) %>">$TableTitle</a>
 							<% else %>
@@ -81,7 +83,7 @@
 			<% end_control %>
 		<% end_if %>
 		<tr class="gap Total">
-			<th colspan="3" scope="row"><% _t("TOTAL","Total") %></th>
+			<th colspan="4" scope="row"><% _t("TOTAL","Total") %></th>
 			<td id="$TableTotalID"><span class="value">$Total.Nice</span> <span class="currency">$Currency</span></td>
 		</tr>
 	</tfoot>

@@ -125,7 +125,6 @@ class CheckoutPage_Controller extends Page_Controller {
 		Requirements::javascript(THIRDPARTY_DIR . '/jquery/jquery.js');
 		Requirements::javascript(SHOP_DIR.'/javascript/CheckoutPage.js');
 		Requirements::javascript(SHOP_DIR.'/javascript/ecommerce.js');
-		Requirements::themedCSS('CheckoutPage');
 		return array();
 	}
 
@@ -198,7 +197,6 @@ class CheckoutPage_Controller extends Page_Controller {
 	 * @return Order - either the order specified by ID in url, or just the most recent order.
 	 */
 	function finish(){
-		Requirements::themedCSS('Order');
 		//TODO: make redirecting to account page optional
 		//TODO: could all this be moved to some central location where it can be used by other parts of the system?
 		$order = $this->orderfromid(); //stored in OrderManipulation extension

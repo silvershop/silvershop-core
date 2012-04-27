@@ -1,25 +1,32 @@
-<% control Parent %>
-	<% include ProductMenu %>
-<% end_control %>
-
+<% require themedCSS(product) %>
+<div id="Sidebar">
+	<% control Parent %>
+		<% include ProductMenu %>
+	<% end_control %>
+	<div class="cart">
+		<% include SideCart %>
+	</div>
+</div>
 <div id="Product" class="typography">
 	<h1 class="pageTitle">$Title</h1>
-
+	<div class="breadcrumbs">$Breadcrumbs</div>
 	<div class="productDetails">
-
 		<% if Image.ContentImage %>
 			<img class="productImage" src="$Image.ContentImage.URL" alt="<% sprintf(_t("IMAGE","%s image"),$Title) %>" />
 		<% else %>
 			<div class="noimage">no image</div>
 		<% end_if %>
-
-		<p><% _t("ItemID","Item #") %>{$ID}</p>
+		<% if InternalItemID %><p><% _t("CODE","Product Code") %>: {$InternalItemID}</p><% end_if %>
 		<% if Model %><p><% _t("MODEL","Model") %>: $Model.XML</p><% end_if %>
 		<% if Size %><p><% _t("SIZE","Size") %>: $Size.XML</p><% end_if %>
 		<% if Variations %>
 			$VariationForm
 		<% else %>
-			<% if Price != 0 %><p class="priceDisplay">$Price.Nice $Currency</p><% end_if %>
+			<% if Price %>
+				<div class="price">
+					<strong class="value">$Price.Nice</strong> <span class="currency">$Currency</span>
+				</div>
+			<% end_if %>
 			<% if canPurchase %>
 				<% if IsInCart %>
 					<% control Item %>

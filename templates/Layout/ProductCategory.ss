@@ -1,7 +1,13 @@
-<% include ProductMenu %>
+<% require themedCSS(productcategory) %>
+<div id="Sidebar">
+	<% include ProductMenu %>
+	<div class="cart">
+		<% include SideCart %>
+	</div>
+</div>
+
 <div id="ProductGroup" class="typography">
 	<h1 class="pageTitle">$Title</h1>
-
 	<% if Content %>
 		<div>
 			$Content
