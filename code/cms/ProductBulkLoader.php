@@ -84,25 +84,18 @@ class ProductBulkLoader extends CsvBulkLoader{
 	);
 
 	protected function processAll($filepath, $preview = false) {
-		
 		$this->extend('updateColumnMap',$this->columnMap);
-		
 		// we have to check for the existence of this in case the stockcontrol module hasn't been loaded
 		// and the CSV still contains a Stock column
 		self::$hasStockImpl = Object::has_extension('Product', 'ProductStockDecorator');
-
-		$results = parent::processAll($filepath, $preview);
-				
+		$results = parent::processAll($filepath, $preview);	
 		//After results have been processed, publish all created & updated products
 		$objects = new DataObjectSet();
 		$objects->merge($results->Created());
 		$objects->merge($results->Updated());
 		foreach($objects as $object){
-
-
 			if(!$object->ParentID){
 				 //set parent page
-
 				if(is_numeric(self::$parentpageid) &&  DataObject::get_by_id('ProductCategory',self::$parentpageid)) //cached option
 					$object->ParentID = self::$parentpageid;
 				elseif($parentpage = DataObject::get_one('ProductCategory',"\"Title\" = 'Products'",'"Created" DESC')){ //page called 'Products'
@@ -114,13 +107,10 @@ class ProductBulkLoader extends CsvBulkLoader{
 				}else
 					$object->ParentID = self::$parentpageid = 0;
 			}
-
 			$object->extend('updateImport'); //could be used for setting other attributes, such as stock level
-
 			$object->writeToStage('Stage');
 			$object->publish('Stage', 'Live');
 		}
-
 		return $results;
 	}
 	
@@ -133,11 +123,9 @@ class ProductBulkLoader extends CsvBulkLoader{
 
 	// set image, based on filename
 	function imageByFilename(&$obj, $val, $record){
-
 		$filename = trim(strtolower(Convert::raw2sql($val)));
 		$filenamedashes = str_replace(" ","-",$filename);
 		if($filename && $image = DataObject::get_one('Image',"LOWER(\"Filename\") LIKE '%$filename%' OR LOWER(\"Filename\") LIKE '%$filenamedashes%'")){ //ignore case
-		
 			if($image->ID){
 				$image->ClassName = 'Product_Image'; //must be this type of image
 				$image->write();
@@ -156,9 +144,7 @@ class ProductBulkLoader extends CsvBulkLoader{
 				$obj->write();
 				$obj->writeToStage('Stage');
 				$obj->publish('Stage', 'Live');
-				
 				//TODO: otherwise assign it to the first prodcut group found
-				
 			}elseif(self::$createnewproductgroups){
 				//create parent product group
 				$pg = new ProductCategory();
@@ -166,7 +152,6 @@ class ProductBulkLoader extends CsvBulkLoader{
 				$pg->ParentID = (self::$parentpageid) ? $parentpageid :0;
 				$pg->writeToStage('Stage');
 				$pg->publish('Stage', 'Live');
-
 				$obj->ParentID = $pg->ID;
 				$obj->write();
 				$obj->writeToStage('Stage');
@@ -174,7 +159,6 @@ class ProductBulkLoader extends CsvBulkLoader{
 			}
 		}
 	}
-	
 	
 	/**
 	 * Adds paragraphs to content.
@@ -188,47 +172,34 @@ class ProductBulkLoader extends CsvBulkLoader{
 	}
 	
 	function processVariation(&$obj, $val, $record){
-		
 		if(isset($record['->variationRow'])) return; //don't use this technique for variation rows
-
 		$parts = explode(":",$val);
 		if(count($parts) == 2){
-	
 			$attributetype = trim($parts[0]);
 			$attributevalues = explode(",",$parts[1]);
-			
 			//get rid of empty values
 			foreach($attributevalues as $key => $value){
 				if(!$value || trim($value) == ""){
 					unset($attributevalues[$key]);
 				}
 			}
-			
 			if(count($attributevalues) >= 1){
-				
 				$attributetype = ProductAttributeType::find_or_make($attributetype);
 				foreach($attributevalues as $key => $value){
 					$val = trim($value);
 					if($val != "" && $val != null)
 						$attributevalues[$key] = $val; //remove outside spaces from values
 				}
-				
 				$attributetype->addValues($attributevalues);
-				$obj->VariationAttributes()->add($attributetype);
-				
+				$obj->VariationAttributeTypes()->add($attributetype);
 				//only generate variations if none exist yet
 				if(!$obj->Variations()->exists() || $obj->WeAreBuildingVariations){
-					
 					//either start new variations, or multiply existing ones by new variations
 					$obj->generateVariationsFromAttributes($attributetype,$attributevalues);
-					
 					$obj->WeAreBuildingVariations = true;
 				}
-				
 			}
-			
 		}
-		
 	}
 	
 	//work around until I can figure out how to allow calling processVariation multiple times
@@ -254,7 +225,6 @@ class ProductBulkLoader extends CsvBulkLoader{
 	function variationRow(&$obj, $val, $record){
 		
 		$obj->write(); //make sure product is in DB
-		
 		//TODO: or find existing variation
 		$variation = DataObject::get_one('ProductVariation',"InternalItemID = '$val'");
 		if(!$variation){
@@ -263,7 +233,6 @@ class ProductBulkLoader extends CsvBulkLoader{
 			$variation->ProductID = $obj->ID; //link to product
 			$variation->write();
 		}
-				
 		$varcols = array(
 			'->processVariation',
 			'->processVariation1',
@@ -273,52 +242,39 @@ class ProductBulkLoader extends CsvBulkLoader{
 			'->processVariation5',
 			'->processVariation6',
 		);
-		
 		foreach($varcols as $col){
 			if(isset($record[$col])){
 				$parts = explode(":",$record[$col]);
 				if(count($parts) == 2){
-					
 					$attributetype = trim($parts[0]);
 					$attributevalues = explode(",",$parts[1]);
-					
 					//get rid of empty values
 					foreach($attributevalues as $key => $value){
 						if(!$value || trim($value) == ""){
 							unset($attributevalues[$key]);
 						}
 					}
-					
 					if(count($attributevalues) == 1){
-				
 						$attributetype = ProductAttributeType::find_or_make($attributetype);
-						
 						foreach($attributevalues as $key => $value){
 							$val = trim($value);
 							if($val != "" && $val != null)
 								$attributevalues[$key] = $val; //remove outside spaces from values
 						}
-						
 						$attributetype->addValues($attributevalues); //create and add values to attribute type
-						$obj->VariationAttributes()->add($attributetype); //add variation attribute type to product
-						
+						$obj->VariationAttributeTypes()->add($attributetype); //add variation attribute type to product
 						//TODO: if existing variation, then remove current values
-						
 						//record vairation attribute values (variation1, 2 etc)	
 						foreach($attributetype->convertArrayToValues($attributevalues) as $value){
 							$variation->AttributeValues()->add($value);
 							break;								
 						}
-						
-						
 					}
 					
 				}
 				
 			}
 		}
-
-		
 		//copy db values into variation (InternalItemID, Price, Stock, etc) ...there will be unknowns from extensions.
 		$dbfields = $variation->db();
 		foreach($record as $field => $value){
@@ -326,11 +282,7 @@ class ProductBulkLoader extends CsvBulkLoader{
 				$variation->$field = $value;
 			}
 		}
-		
-
 		$variation->write();
-
 	}	
 
 }
-

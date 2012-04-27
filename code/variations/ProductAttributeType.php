@@ -57,9 +57,14 @@ class ProductAttributeType extends DataObject{
 		$this->Values()->addMany($avalues);
 	}
 
+	/**
+	 * Finds or creates values for this type.
+	 * 
+	 * @param array $values
+	 * @return DataObjectSet
+	 */
 	function convertArrayToValues(array $values){
 		$set = new DataObjectSet();
-
 		foreach($values as $value){
 			$val = $this->Values()->find('Value',$value);
 			if(!$val){  //TODO: ignore case, if possible
@@ -69,7 +74,6 @@ class ProductAttributeType extends DataObject{
 			}
 			$set->push($val);
 		}
-
 		return $set;
 	}
 

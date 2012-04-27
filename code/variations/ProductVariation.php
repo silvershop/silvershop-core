@@ -17,7 +17,8 @@ class ProductVariation extends DataObject implements Buyable{
 	);
 
 	static $has_one = array(
-		'Product' => 'Product'
+		'Product' => 'Product',
+		'Image' => 'Product_Image'
 	);
 
 	static $many_many = array(
@@ -43,17 +44,17 @@ class ProductVariation extends DataObject implements Buyable{
 	);
 
 	public static $default_sort = "InternalItemID";
+	
+	static $order_item = "ProductVariation_OrderItem";
 
 	function getCMSFields() {
 		$fields = array();
 		$fields[] = new TextField('InternalItemID','Product Code');
 		$fields[] = new TextField('Price');
-
 		//add attributes dropdowns
-		if($this->Product()->VariationAttributes()->exists() && $attributes = $this->Product()->VariationAttributes()){
+		if($this->Product()->VariationAttributeTypes()->exists() && $attributes = $this->Product()->VariationAttributeTypes()){
 			foreach($attributes as $attribute){
 				if($field = $attribute->getDropDownField()){
-
 					if($value = $this->AttributeValues()->find('TypeID',$attribute->ID))
 						$field->setValue($value->ID);
 
@@ -64,7 +65,6 @@ class ProductVariation extends DataObject implements Buyable{
 				//TODO: allow setting custom value, rather than visiting the products section
 			}
 		}
-
 		$set = new FieldSet($fields);
 		$this->extend('updateCMSFields', $set);
 		return $set;
@@ -72,13 +72,11 @@ class ProductVariation extends DataObject implements Buyable{
 
 	function onBeforeWrite(){
 		parent::onBeforeWrite();
-
 		//TODO: perhaps move this to onAfterWrite, for the case when the variation has just been created, and thus has no ID to relate
 		//..but that might cause recursion
 		if(isset($_POST['ProductAttributes']) && is_array($_POST['ProductAttributes'])){
 			$this->AttributeValues()->setByIDList(array_values($_POST['ProductAttributes']));
 		}
-
 	}
 
 	function getTitle(){
@@ -92,7 +90,6 @@ class ProductVariation extends DataObject implements Buyable{
 		}
 		return $this->InternalItemID;
 	}
-
 
 	//this is used by TableListField to access attribute values.
 	function AttributeProxy(){
@@ -114,12 +111,13 @@ class ProductVariation extends DataObject implements Buyable{
 
 	function canPurchase($member = null) {
 		$allowpurchase = false;
-		if($product = $this->Product())
+		if($product = $this->Product()){
 			$allowpurchase = ($this->Price > 0) && $product->AllowPurchase;
-
+		}
 		$extended = $this->extendedCan('canPurchase', $member);
-		if($allowpurchase && $extended !== null) $allowpurchase = $extended;
-
+		if($allowpurchase && $extended !== null){
+			$allowpurchase = $extended;
+		}
 		return $allowpurchase;
 	}
 
@@ -149,16 +147,16 @@ class ProductVariation extends DataObject implements Buyable{
 		return $this->Item()->addLink($this->ProductID,$this->ID);
 	}
 	
-	function createItem($quantity = 1, $write = true){
-		$item = new ProductVariation_OrderItem();
-		$item->Quantity = $quantity;
+	function createItem($quantity = 1,$filter = array()){
+		$orderitem = $this->stat("order_item");
+		$item = new $orderitem();
 		$item->ProductID = $this->ProductID;
-		//$item->ProductVersion = $this->Product()->Version;
 		$item->ProductVariationID = $this->ID;
-		$item->ProductVariationVersion = $this->Version;
-		if($write){
-			$item->write();
+		//$item->ProductVariationVersion = $this->Version;
+		if($filter){
+			$item->update($filter); //TODO: make this a bit safer, perhaps intersect with allowed fields
 		}
+		$item->Quantity = $quantity;
 		return $item;
 	}
 	
@@ -179,38 +177,34 @@ class ProductVariation_OrderItem extends Product_OrderItem {
 	static $has_one = array(
 		'ProductVariation' => 'ProductVariation'
 	);
-
-	// ProductVariation Access Function
-
-	public function ProductVariation($current = false) {
-		if($current) return DataObject::get_by_id('ProductVariation', $this->ProductVariationID);
-		else return Versioned::get_version('ProductVariation', $this->ProductVariationID, $this->ProductVariationVersion);
-	}
-
-	## Overloaded functions ##
-
-	function addLink() {
-		return ShoppingCart::add_item_link($this->ProductID,$this->ProductVariationID);
-	}
-
-	function removeLink() {
-		return ShoppingCart::remove_item_link($this->ProductID,$this->ProductVariationID);
-	}
-
-	function removeallLink() {
-		return ShoppingCart::remove_all_item_link($this->ProductID,$this->ProductVariationID);
-	}
-
-	function setquantityLink() {
-		return ShoppingCart::set_quantity_item_link($this->ProductID,$this->ProductVariationID);
+	
+	static $buyable_relationship = "ProductVariation";
+	
+	/**
+	 * Overloaded relationship, for getting versioned variations
+	 * @param unknown_type $current
+	 */
+	public function ProductVariation($forcecurrent = false) {
+		if($this->ProductVariationID && $this->ProductVariationVersion && !$forcecurrent){
+			return FixVersioned::get_version('ProducVariation', $this->ProductVariationID, $this->ProductVariationVersion);
+		}elseif($this->ProductVariationID && $product = DataObject::get_by_id('ProductVariation', $this->ProductVariationID)){
+			return $product;
+		}
+		return false;
 	}
 
 	function UnitPrice() {
-		return $this->ProductVariation()->Price;
+		if($this->ProductVariation() && $this->ProductVariation()->Price)
+			return $this->ProductVariation()->Price;
+		if($this->Product() && $this->Product()->Price)
+			return $this->Product()->Price;
+		return false;
 	}
 
-	function TableTitle() {
-		return parent::TableTitle() . ' (' . $this->ProductVariation()->Title . ')';
+	function SubTitle() {
+		if($this->ProductVariation())
+			return $this->ProductVariation()->getTitle();
+		return false;
 	}
 
 }

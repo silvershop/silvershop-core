@@ -1,0 +1,49 @@
+ProductAttributeType:
+    size:
+        Name: Ball Size
+        Label: Size
+    color:
+        Name: Color
+        Label: Color
+    capacity:
+        Name: Device Capacity
+        Label: Capacity
+    shape:
+        Name: Shape
+        Label: Shape
+    
+ProductAttributeValue:
+    size_small:
+        Value: Small
+    size_medium:
+        Value: Medium
+    size_large:
+        Value: Medium
+    color_red:
+        Value: Red
+    color_blue:
+        Value: Blue
+    color_yellow:
+        Value: Yellow
+    capacity_60:
+        Value: 60GB
+    capacity_120:
+        Value: 120GB
+
+Product:
+    ball:
+        Title: Beach Ball
+        VariationAttributeTypes: =>ProductAttributeType.size,=>ProductAttributeType.color
+    mp3player:
+        Title: Mp3 Player
+        VariationAttributeTypes: =>ProductAttributeType.capacity,=>ProductAttributeType.color
+
+ProductVariation:
+    redlarge:
+        Product: =>Product.ball
+        Price: 22.00
+        AttributeValues: =>ProductAttributeValue.size_large,=>ProductAttributeValue.color_red
+    redsmall:
+        Product: =>Product.ball
+        Price: 20.00
+        AttributeValues: =>ProductAttributeValue.size_small,=>ProductAttributeValue.color_red

@@ -1,6 +1,6 @@
 <?php
 /**
- * Adds extra fields and relationships to Products.
+ * Adds extra fields and relationships to Products for variations support.
  * 
  * @package shop
  * @subpackage variations
@@ -13,7 +13,7 @@ class ProductVariationDecorator extends DataObjectDecorator{
 				'Variations' => 'ProductVariation'
 			),
 			'many_many' => array(
-				'VariationAttributes' => 'ProductAttributeType'
+				'VariationAttributeTypes' => 'ProductAttributeType'
 			)
 		);
 	}
@@ -25,7 +25,7 @@ class ProductVariationDecorator extends DataObjectDecorator{
 		$fields->addFieldToTab('Root.Content.Variations',new HeaderField("Variations"));
 		$fields->addFieldToTab('Root.Content.Variations',$this->getVariationsTable());
 		$fields->addFieldToTab('Root.Content.Variations',new HeaderField("Variation Attribute Types"));
-		$fields->addFieldToTab('Root.Content.Variations',new ManyManyComplexTableField($this->owner,'VariationAttributes','ProductAttributeType'));
+		$fields->addFieldToTab('Root.Content.Variations',new ManyManyComplexTableField($this->owner,'VariationAttributeTypes','ProductAttributeType'));
 
 		if($this->owner->Variations()->exists()){
 			$fields->addFieldToTab('Root.Content.Main',new LabelField('variationspriceinstructinos','Price - Because you have one or more variations, the price can be set in the "Variations" tab.'),'Price');
@@ -45,8 +45,8 @@ class ProductVariationDecorator extends DataObjectDecorator{
 
 		$summaryfields= $singleton->summaryFields();
 
-		if($this->owner->VariationAttributes()->exists())
-		foreach($this->owner->VariationAttributes() as $attribute){
+		if($this->owner->VariationAttributeTypes()->exists())
+		foreach($this->owner->VariationAttributeTypes() as $attribute){
 			$summaryfields["AttributeProxy.Val".$attribute->Name] = $attribute->Title;
 		}
 
@@ -110,19 +110,23 @@ class ProductVariationDecorator extends DataObjectDecorator{
 		$join = "";
 
 		foreach($attributes as $typeid => $valueid){
-			if(!is_numeric($typeid) || !is_numeric($valueid)) return null; //ids MUST be numeric
-
+			if(!is_numeric($typeid) || !is_numeric($valueid))
+				return null; //ids MUST be numeric
 			$alias = "A$typeid";
 			$where .= " AND $alias.ProductAttributeValueID = $valueid";
 			$join .= "INNER JOIN ProductVariation_AttributeValues AS $alias ON ProductVariation.ID = $alias.ProductVariationID ";
 		}
-		$variation = DataObject::get('ProductVariation',$where,"",$join);
-		return $variation->First();
+		if($variation = DataObject::get('ProductVariation',$where,"",$join))
+			return $variation->First();
+		return false;
 	}
 
 	/**
 	 * Generates variations based on selected attributes.
-	*/
+	 * 
+	 * @param ProductAttributeType $attributetype
+	 * @param array $values
+	 */
 	function generateVariationsFromAttributes(ProductAttributeType $attributetype, array $values){
 		//TODO: introduce transactions here, in case objects get half made etc
 		//if product has variation attribute types
@@ -130,9 +134,7 @@ class ProductVariationDecorator extends DataObjectDecorator{
 			//TODO: get values dataobject set
 			$avalues = $attributetype->convertArrayToValues($values);
 			$existingvariations = $this->owner->Variations();
-
 			if($existingvariations->exists()){
-
 				//delete old variation, and create new ones - to prevent modification of exising variations
 				foreach($existingvariations as $oldvariation){
 					$oldvalues = $oldvariation->AttributeValues();
@@ -150,17 +152,15 @@ class ProductVariationDecorator extends DataObjectDecorator{
 					$oldvariation->destroy();
 					//TODO: check that old variations actually stick around, as they will be needed for past orders etc
 				}
-
 			}else{
 				foreach($avalues as $value){
 					$variation = new ProductVariation();
 					$variation->ProductID = $this->owner->ID;
-					$variation->Price = $this->Price;
+					$variation->Price = $this->owner->Price;
 					$variation->write();
 					$variation->InternalItemID = $this->owner->InternalItemID.'-'.$variation->ID;
 					$variation->AttributeValues()->add($value); //TODO: find or create actual value
 					$variation->write();
-
 					$existingvariations->add($variation);
 				}
 			}
@@ -196,7 +196,7 @@ class ProductControllerVariationExtension extends Extension{
 	function VariationForm(){
 		$farray = array();
 		$requiredfields = array();
-		$attributes = $this->owner->VariationAttributes();
+		$attributes = $this->owner->VariationAttributeTypes();
 
 		foreach($attributes as $attribute){
 			$farray[] = $attribute->getDropDownField("choose $attribute->Label ...",$this->owner->possibleValuesForAttributeType($attribute));
@@ -204,7 +204,6 @@ class ProductControllerVariationExtension extends Extension{
 		}
 
 		$fields = new FieldSet($farray);
-
 		if($maxquantity = self::$max_quantity){
 			$values = array();
 			$count = 1;
@@ -242,8 +241,13 @@ class ProductControllerVariationExtension extends Extension{
 	function addVariation($data,$form){
 		if(isset($data['ProductAttributes']) && $variation = $this->owner->getVariationByAttributes($data['ProductAttributes'])){
 			$quantity = (isset($data['Quantity']) && is_numeric($data['Quantity'])) ? (int) $data['Quantity'] : 1;
-			ShoppingCart::add_buyable($variation,$quantity); //add this one to cart
-			$form->sessionMessage("Successfully added to cart.","good");
+			$cart = ShoppingCart::singleton();
+			if($cart->add($variation,$quantity)){
+				$form->sessionMessage("Successfully added to cart.","good");
+			}else{
+				$form->sessionMessage($cart->getMessage(),$cart->getMessageType());
+			}
+			
 		}else{
 			$form->sessionMessage("That variation is not available, sorry.","bad"); //validation fail
 		}
