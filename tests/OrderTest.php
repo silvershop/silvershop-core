@@ -8,7 +8,7 @@
  */
 class OrderTest extends SapphireTest {
 
-	static $fixture_file = 'shop/tests/ecommerce.yml';
+	static $fixture_file = 'shop/tests/shop.yml';
 
 	function setUp() {
 		parent::setUp();

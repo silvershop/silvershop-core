@@ -28,6 +28,6 @@ DataObject::add_extension("Product","ProductVariationDecorator");
 Object::add_extension("Product_Controller","ProductControllerVariationExtension");
 
 //reports
-SS_Report::register("SideReport", "EcommerceSideReport_AllProducts");
-SS_Report::register("SideReport", "EcommerceSideReport_FeaturedProducts");
-SS_Report::register("SideReport", "EcommerceSideReport_NoImageProducts");
+SS_Report::register("SideReport", "ShopSideReport_AllProducts");
+SS_Report::register("SideReport", "ShopSideReport_FeaturedProducts");
+SS_Report::register("SideReport", "ShopSideReport_NoImageProducts");

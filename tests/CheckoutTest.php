@@ -9,7 +9,7 @@
  */
 class CheckoutTest extends SapphireTest {
 
-	static $fixture_file = 'shop/tests/ecommerce.yml';
+	static $fixture_file = 'shop/tests/shop.yml';
 	static $disable_theme = true;
 	static $use_draft_site = true;
 	

@@ -1,6 +1,6 @@
 <?php
 /**
- * Ecommerce Side Report classes are to allow quick reports that can be accessed
+ * Shop Side Report classes are to allow quick reports that can be accessed
  * on the Reports tab to the left inside the SilverStripe CMS.
  * Currently there are reports to show products flagged as 'FeatuedProduct',
  * as well as a report on all products within the system.
@@ -8,14 +8,14 @@
  * @package shop
  * @subpackage reports
  */
-class EcommerceSideReport_FeaturedProducts extends SS_Report {
+class ShopSideReport_FeaturedProducts extends SS_Report {
 
 	function title() {
-		return _t('EcommerceSideReport.FEATUREDPRODUCTS', "Featured Products");
+		return _t('ShopSideReport.FEATUREDPRODUCTS', "Featured Products");
 	}
 
 	function group() {
-		return _t('EcommerceSideReport.ECOMMERCEGROUP', "ECommerce");
+		return _t('ShopSideReport.ShopGROUP', "Shop");
 	}
 	function sort() {
 		return 0;
@@ -38,14 +38,14 @@ class EcommerceSideReport_FeaturedProducts extends SS_Report {
  * All Products Report
  * @subpackage reports
  */
-class EcommerceSideReport_AllProducts extends SS_Report {
+class ShopSideReport_AllProducts extends SS_Report {
 
 	function title() {
-		return _t('EcommerceSideReport.ALLPRODUCTS', "All Products");
+		return _t('ShopSideReport.ALLPRODUCTS', "All Products");
 	}
 	
 	function group() {
-		return _t('EcommerceSideReport.ECOMMERCEGROUP', "ECommerce");
+		return _t('ShopSideReport.ShopGROUP', "Shop");
 	}
 	function sort() {
 		return 0;
@@ -65,13 +65,13 @@ class EcommerceSideReport_AllProducts extends SS_Report {
 
 }
 
-class EcommerceSideReport_NoImageProducts extends SS_Report {
+class ShopSideReport_NoImageProducts extends SS_Report {
 	
 	function title() {
-		return _t('EcommerceSideReport.NOIMAGE',"Products with no image");
+		return _t('ShopSideReport.NOIMAGE',"Products with no image");
 	}
 	function group() {
-		return _t('EcommerceSideReport.ECOMMERCEGROUP', "ECommerce");
+		return _t('ShopSideReport.ShopGROUP', "Shop");
 	}
 	function sort() {
 		return 0;
