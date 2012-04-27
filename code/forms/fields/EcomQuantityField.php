@@ -7,23 +7,26 @@
 
 class EcomQuantityField extends ViewableData{
 	
-	protected $item = null;
-	protected $parameters = null;
+	protected $item;
+	protected $parameters;
 	protected $classes = array('ajaxQuantityField');
-	protected $template = 	'EcomQuantityField';
-		
+	protected $template = 'EcomQuantityField';
+	protected $buyable;
+	
 	function __construct($object, $parameters = null){
 		
-		if($object instanceof Product){
-			$this->item = ShoppingCart::get_item_by_id($object->ID,null,$parameters);
+		if($object instanceof Buyable){
+			$this->item = ShoppingCart::singleton()->get($object,$parameters);
 			 //provide a 0-quantity facade item if there is no such item in cart
-			if(!$this->item) $this->item = new Product_OrderItem($object,0);
-			
+			if(!$this->item){
+				$this->item = new OrderItem($object,0);
+			}
+			$this->buyable = $object;
 			//TODO: perhaps we should just store the product itself, and do away with the facade, as it might be unnecessary complication
 		}elseif($object instanceof OrderItem){
 			$this->item = $object;
+			$this->buyable = $object->Buyable();
 		}
-		
 		if(!$this->item)
 			user_error("EcomQuantityField: no item or product passed to constructor.");
 
@@ -49,7 +52,6 @@ class EcomQuantityField extends ViewableData{
 	function Field() {
 		$size = 3; //make these customisable
 		$maxlength = 3;
-
 		$attributes = array(
 			'type' => 'text',
 			'class' => implode(' ',$this->classes),
@@ -58,7 +60,6 @@ class EcomQuantityField extends ViewableData{
 			'maxlength' => $maxlength,
 			'size' => $size 
 		);
-		
 		//IMPROVE ME: hack to use the form field createTag method ...perhaps this should become a form field instead
 		$formfield = new FormField('hack'); 
 		return $formfield->createTag('input', $attributes);
@@ -68,7 +69,7 @@ class EcomQuantityField extends ViewableData{
 	 * Used for storing the quantity update link for ajax use.
 	 */
 	function AJAXLinkHiddenField(){
-		if($quantitylink = ShoppingCart_Controller::set_quantity_item_link($this->item->ProductID, null,$this->parameters)){
+		if($quantitylink = ShoppingCart_Controller::set_quantity_item_link($this->buyable,$this->parameters)){
 			$attributes = array(
 				'type' => 'hidden',
 				'class' => 'ajaxQuantityField_qtylink',
@@ -81,13 +82,11 @@ class EcomQuantityField extends ViewableData{
 	}
 	
 	function IncrementLink(){
-		$varid = ($this->item instanceof ProductVariation_OrderItem) ? $this->item->ProductVariationID : null;
-		return Convert::raw2att(ShoppingCart_Controller::add_item_link($this->item->ProductID, $varid,$this->parameters));
+		return Convert::raw2att(ShoppingCart_Controller::add_item_link($this->buyable,$this->parameters));
 	}
 	
 	function DecrementLink(){
-		$varid = ($this->item instanceof ProductVariation_OrderItem) ? $this->item->ProductVariationID : null;
-		return Convert::raw2att(ShoppingCart_Controller::remove_item_link($this->item->ProductID, $varid,$this->parameters));
+		return Convert::raw2att(ShoppingCart_Controller::remove_item_link($this->buyable,$this->parameters));
 	}
 	
 	function forTemplate(){

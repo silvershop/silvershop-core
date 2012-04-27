@@ -63,6 +63,24 @@ class OrderAttribute extends DataObject {
 		return implode(' ', $classes);
 	}
 
+	/**
+	 * Return a name of what this attribute is
+	 * called e.g. "Modifier", or "Product".
+	 *
+	 * @return string
+	 */
+	function TableTitle() {
+		return 'Attribute';
+	}
+	
+	function CartTitle() {
+		return $this->TableTitle();
+	}
+	
+	function ShowInTable() {
+		return true;
+	}
+	
 	function MainID() {
 		return get_class($this) . '_' . 'DB_' . $this->ID;
 	}
@@ -75,10 +93,6 @@ class OrderAttribute extends DataObject {
 		return 'Cart_' . $this->MainID();
 	}
 
-	function ShowInTable() {
-		return true;
-	}
-
 	function ShowInCart() {
 		return $this->ShowInTable();
 	}
@@ -89,20 +103,6 @@ class OrderAttribute extends DataObject {
 
 	function CartTitleID() {
 		return $this->CartID() . '_Title';
-	}
-
-	/**
-	 * Return a name of what this attribute is
-	 * called e.g. "Modifier", or "Product".
-	 *
-	 * @return string
-	 */
-	function TableTitle() {
-		return 'Attribute';
-	}
-
-	function CartTitle() {
-		return $this->TableTitle();
 	}
 
 	function TableTotalID() {

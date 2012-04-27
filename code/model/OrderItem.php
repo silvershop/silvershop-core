@@ -9,8 +9,6 @@
  */
 class OrderItem extends OrderAttribute {
 
-	static $disable_quantity_js = false;
-
 	public static $db = array(
 		'Quantity' => 'Int'
 	);
@@ -44,6 +42,8 @@ class OrderItem extends OrderAttribute {
 	);
 	
 	static $required_fields = array();
+	static $buyable_relationship = "Product";
+	static $disable_quantity_js = false;
 	
 	public static $singular_name = "Order Item";
 	function i18n_singular_name() { return _t("OrderItem.SINGULAR", self::$singular_name); }
@@ -73,9 +73,15 @@ class OrderItem extends OrderAttribute {
 	function UnitPrice() {
 		user_error("OrderItem::UnitPrice() called. Please implement UnitPrice() on $this->class", E_USER_ERROR);
 	}
-
+	
+	
 	function QuantityField(){
 		return new EcomQuantityField($this);
+	}
+	
+	function Buyable(){
+		$buyable = $this->stat('buyable_relationship');
+		return $this->$buyable();
 	}
 
 	function Total() {

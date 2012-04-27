@@ -18,6 +18,13 @@ interface Buyable{
 	 * @param boolean $write
 	 * @return OrderItem new OrderItem object
 	 */
-	function createItem($quantity = 1, $write = true);
+	function createItem($quantity = 1, $filter = array());
+	
+	/**
+	 * Checks if the buyable can be purchased.
+	 * 
+	 * @return boolean
+	 */
+	function canPurchase();
 	
 }

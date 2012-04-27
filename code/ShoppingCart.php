@@ -1,14 +1,12 @@
 <?php
 /**
- * Front-end manipulation of the current order using a singleton pattern.
+ * Encapsulated manipulation of the current order using a singleton pattern.
  * 
- * Ensures that an order is only started when necessary, and only
- * that order is manipulated, until the order has been placed.
- * 
- * The basic requirement for starting an order is to add an item to the cart.
+ * Ensures that an order is only started (persisted to DB) when necessary,
+ * and all future changes are on the same order, until the order has is placed.
+ * The requirement for starting an order is to adding an item to the cart.
  * 
  * @package shop
- * @todo handle variations
  */
 class ShoppingCart{
 	
@@ -44,7 +42,6 @@ class ShoppingCart{
 			$this->calculateonce = true;
 			$order->calculate();
 		}
-		
 		if($this->order) return $this->order;
 		//find order by id saved to session (allows logging out and retaining cart contents)
 		$sessionid = Session::get(self::$cartid_session_name);
@@ -80,15 +77,14 @@ class ShoppingCart{
 	 * @param product $item - #TODO: should this be an id, or object?
 	 * @param int $quantity
 	 */
-	public function add($product,$quantity = 1,$filter = array()){
+	public function add(Buyable $buyable,$quantity = 1,$filter = array()){
 		$order = $this->findOrMake();
-		if(!$product){ 
+		if(!$buyable){ 
 			$this->error(_t("ShoppingCart.PRODUCTNOTFOUND","Product not found."));
 			return false;
 		}
-		$item = $this->findOrMakeItem($product,$filter);
+		$item = $this->findOrMakeItem($buyable,$filter);
 		if(!$item){	
-			$this->error(_t("ShoppingCart.ITEMNOTCREATED","Item could not be created."));
 			return false;
 		}
 		if(!$item->_brandnew){
@@ -103,16 +99,18 @@ class ShoppingCart{
 	
 	/**
 	 * Remove an item from the cart.
+	 * 
+	 * @param id or Buyable $buyable
 	 * @param $item
 	 * @param int $quantity - number of items to remove, or leave null for all items (default)
 	 */
-	 public function remove($product,$quantity = null,$filter = array()){
+	 public function remove(Buyable $buyable,$quantity = null,$filter = array()){
 		$order = $this->current();
 		if(!$order){
 			$this->error(_t("ShoppingCart.NOORDER","No current order."));
 			return false;
 		}
-		$item = $this->get($product,$filter);
+		$item = $this->get($buyable,$filter);
 		if(!$item){
 			return false;
 		}
@@ -131,15 +129,16 @@ class ShoppingCart{
 	 * Sets the quantity of an item in the cart.
 	 * Will automatically add or remove item, if necessary.
 	 * 
+	 * @param id or Buyable $buyable
 	 * @param $item
 	 * @param int $quantity
 	 */
-	public function setQuantity($product,$quantity = 1,$filter = array()){
+	public function setQuantity(Buyable $buyable,$quantity = 1,$filter = array()){
 		if($quantity <= 0){
-			return $this->remove($product,$quantity,$filter);
+			return $this->remove($buyable,$quantity,$filter);
 		}
 		$order = $this->findOrMake();
-		$item = $this->findOrMakeItem($product,$filter);
+		$item = $this->findOrMakeItem($buyable,$filter);
 		if(!$item){
 			return false;
 		}
@@ -151,25 +150,22 @@ class ShoppingCart{
 	
 	/**
 	 * Finds or makes an order item for a given product + filter.
-	 * @param id or Product $product
+	 * @param id or Buyable $buyable
 	 * @param string $filter
 	 */
-	private function findOrMakeItem($product,$filter = array()){
+	private function findOrMakeItem(Buyable $buyable,$filter = array()){
 		$order = $this->findOrMake();
-		if(is_numeric($product)){
-			$product = DataObject::get_by_id("Product", $product);
-		}
-		if(!$product || !$order){
+		if(!$buyable || !$order){
 			return false;
 		}
-		$item = $this->get($product,$filter);
+		$item = $this->get($buyable,$filter);
 		if(!$item){
-			if(!$product->canPurchase()){
-				$this->message(_t("ShoppingCart.CANNOTPURCHASE","This product cannot be purchased."));
+			if(!$buyable->canPurchase()){
+				$this->message(sprintf(_t("ShoppingCart.CANNOTPURCHASE","This %s cannot be purchased."),strtolower($buyable->i18n_singular_name())),'bad');
 				//TODO: get more specific message
 				return false;
 			}
-			$item = $product->createItem(1,false,$filter);
+			$item = $buyable->createItem(1,$filter);
 			$item->OrderID = $order->ID;
 			$item->write();
 			$order->Attributes()->add($item);
@@ -180,33 +176,29 @@ class ShoppingCart{
 	
 	/**
 	 * Finds an existing order item.
-	 * @param int or Product $product
+	 * @param int or Buyable $buyable
 	 * @param string $filter
 	 * @return the item requested, or false
 	 */
-	public function get($product,$customfilter = array()){
-		if(is_numeric($product)){
-			$product = DataObject::get_by_id("Product", $product);
-		}
+	public function get(Buyable $buyable, $customfilter = array()){
 		$order = $this->current();
-		if(!$product || !$order) return false;
-		//TODO: only use filter array, instead of 
-		
+		if(!$buyable || !$order){
+			return false;
+		}
 		$filter = array(
-			'OrderID' => $order->ID,
-			'ProductID' => $product->ID
+			'OrderID' => $order->ID
 		);
-		
-		$itemclass = $product->stat('order_item');
+		$itemclass = $buyable->stat('order_item');
 		$singletonorderitem = singleton($itemclass);
+		$relationship = $singletonorderitem->stat('buyable_relationship');
+		$filter[$singletonorderitem->stat('buyable_relationship')."ID"] = $buyable->ID;
 		$required = $singletonorderitem->stat('required_fields');
 		//TODO: $required = $itemclass::$required_fields; //php 5.3 isn't standard until SS3
-		
-		$required = array_merge(array('Order','Product'),$required);
+		$required = array_merge(array('Order',$singletonorderitem->stat('buyable_relationship')),$required);
 		//TODO: allow passing exact id
-		
 		$query = new MatchObjectFilter($itemclass,array_merge($customfilter,$filter),$required);
-		$item = DataObject::get_one($itemclass, $query->getFilter());
+		$filter = $query->getFilter();
+		$item = DataObject::get_one($itemclass, $filter);
 		if(!$item){
 			$this->error(_t("ShoppingCart.ITEMNOTFOUND","Item not found."));
 			return false;
@@ -335,7 +327,7 @@ class ShoppingCart{
 class ShoppingCart_Controller extends Controller{
 	
 	static $url_segment = "shoppingcart";
-	private $cart;
+	protected $cart;
 	
 	static $allowed_actions = array(
 		'add',
@@ -346,30 +338,29 @@ class ShoppingCart_Controller extends Controller{
 		'removeallitem',
 		'setquantity',
 		'setquantityitem',
-		'clear'
+		'clear',
+		'debug'
 	);
 	
-	static function add_item_link($id, $variationid = null, $parameters = array()) {
-		return self::$url_segment.'/add/'.$id.self::variation_link($variationid).self::params_to_get_string($parameters);
+	static function add_item_link(Buyable $buyable, $parameters = array()) {
+		if($buyable->class != "Product")
+			$parameters['buyable'] = $buyable->class;
+		return self::$url_segment.'/add/'.$buyable->ID.self::params_to_get_string($parameters);
 	}
-	static function remove_item_link($id, $variationid = null, $parameters = array()) {
-		return self::$url_segment.'/remove/'.$id.self::variation_link($variationid).self::params_to_get_string($parameters);
+	static function remove_item_link(Buyable $buyable, $parameters = array()) {
+		if($buyable->class != "Product")
+			$parameters['buyable'] = $buyable->class;
+		return self::$url_segment.'/remove/'.$buyable->ID.self::params_to_get_string($parameters);
 	}
-	static function remove_all_item_link($id, $variationid = null, $parameters = array()) {
-		return self::$url_segment.'/removeall/'.$id.self::variation_link($variationid).self::params_to_get_string($parameters);
+	static function remove_all_item_link(Buyable $buyable, $parameters = array()) {
+		if($buyable->class != "Product")
+			$parameters['buyable'] = $buyable->class;
+		return self::$url_segment.'/removeall/'.$buyable->ID.self::params_to_get_string($parameters);
 	}
-	static function set_quantity_item_link($id, $variationid = null, $parameters = array()) {
-		return self::$url_segment.'/setquantity/'.$id.self::variation_link($variationid).self::params_to_get_string($parameters);
-	}
-	
-	/** 
-	 * helper function for appending variation id
-	 */
-	protected static function variation_link($variationid) {
-		if (is_numeric($variationid)) {
-			return "/$variationid";
-		}
-		return "";
+	static function set_quantity_item_link(Buyable $buyable, $parameters = array()) {
+		if($buyable->class != "Product")
+			$parameters['buyable'] = $buyable->class;
+		return self::$url_segment.'/setquantity/'.$buyable->ID.self::params_to_get_string($parameters);
 	}
 	
 	/**
@@ -393,35 +384,50 @@ class ShoppingCart_Controller extends Controller{
 		$this->cart = ShoppingCart::getInstance();
 	}
 	
+	protected function buyableFromRequest(){
+		$request = $this->getRequest();
+		if($id = (int) $request->param('ID')){
+			$buyableclass = "Product";
+			if($class = $request->getVar("buyable")){
+				$buyableclass = Convert::raw2sql($class);
+			}
+			if($buyable = DataObject::get_by_id($buyableclass,$id)){
+
+				return $buyable;
+			}
+		}
+		return null;
+	}
+	
 	function add($request){
-		if($id = (int) $request->param('ID'))
-			$this->cart->add($id);
+		if($product = $this->buyableFromRequest())
+			$this->cart->add($product);
 		return $this->direct();
 	}
 	
 	function remove($request){
-		if($id = (int) $request->param('ID'))
-			$this->cart->remove($id,$quantity = 1);
+		if($product = $this->buyableFromRequest())
+			$this->cart->remove($product,$quantity = 1);
 		return $this->direct();
 	}
 	
 	function removeall($request){
-		if($id = (int) $request->param('ID'))
-			$this->cart->remove($id);
+		if($product = $this->buyableFromRequest())
+			$this->cart->remove($product);
 		return $this->direct();
 	}
 	
 	function setquantity($request){
-		$id = (int) $request->param('ID');
+		$product = $this->buyableFromRequest();
 		$quantity = (int) $request->getVar('quantity');
-		if($id)
-			$this->cart->setQuantity($id,$quantity);
+		if($product)
+			$this->cart->setQuantity($product,$quantity);
 		return $this->direct();
 	}
 	
 	function clear($request){
 		$this->cart->clear();
-		$this->direct();		
+		return $this->direct();		
 	}
 	
 	function direct($status = "success"){

@@ -217,7 +217,7 @@ class Product extends Page implements Buyable{
 		$this->extend('updateItemFilter',$filter);
 		$item = ShoppingCart::getInstance()->get($this); //TODO: needs filter
 		if(!$item)
-			$item = $this->createItem(0,false); //return dummy item so that we can still make use of Item
+			$item = $this->createItem(0); //return dummy item so that we can still make use of Item
 		$this->extend('updateDummyItem',$item);
 		return $item;
 	}
@@ -225,19 +225,14 @@ class Product extends Page implements Buyable{
 	/**
 	 * @see Buyable::createItem()
 	 */
-	function createItem($quantity = 1,$write = true, $filter = null){
+	function createItem($quantity = 1, $filter = null){
 		$orderitem = $this->stat("order_item");
 		$item = new $orderitem();
 		$item->ProductID = $this->ID;
-		
 		if($filter){
-			$item->update($filter); //TODO: make this a bit safer, perhaps only use allowed fields
+			$item->update($filter); //TODO: make this a bit safer, perhaps intersect with allowed fields
 		}
-		//$item->ProductVersion = $this->Version; //Save on save
 		$item->Quantity = $quantity;
-		if($write){
-			$item->write();
-		}
 		return $item;
 	}	
 
@@ -252,15 +247,15 @@ class Product extends Page implements Buyable{
 	}
 	//passing on shopping cart links ...is this necessary?? ...why not just pass the cart?
 	function addLink() {
-		return ShoppingCart_Controller::add_item_link($this->ID);
+		return ShoppingCart_Controller::add_item_link($this);
 	}
 
 	function removeLink() {
-		return ShoppingCart_Controller::remove_item_link($this->ID);
+		return ShoppingCart_Controller::remove_item_link($this);
 	}
 
 	function removeallLink() {
-		return ShoppingCart_Controller::remove_all_item_link($this->ID);
+		return ShoppingCart_Controller::remove_all_item_link($this);
 	}
 
 	//Deprecated fields
@@ -285,9 +280,7 @@ class Product_Image extends Image {
 	//default image sizes
 	protected static $thumbnail_width = 140;
 	protected static $thumbnail_height = 100;
-
 	protected static $content_image_width = 200;
-
 	protected static $large_image_width = 600;
 
 	static function set_thumbnail_size($width = 140, $height = 100){
@@ -330,6 +323,10 @@ class Product_OrderItem extends OrderItem {
 		'Product' => 'Product'
 	);
 	
+	/**
+	 * the has_one join field to identify the buyable
+	 */
+	static $buyable_relationship = "Product";
 	static $disable_versioned = true;
 
 	/**
@@ -368,19 +365,19 @@ class Product_OrderItem extends OrderItem {
 	}
 
 	function addLink() {
-		return ShoppingCart_Controller::add_item_link($this->ProductID,null,$this->linkParameters());
+		return ShoppingCart_Controller::add_item_link($this->Product(),$this->linkParameters());
 	}
 
 	function removeLink() {
-		return ShoppingCart_Controller::remove_item_link($this->ProductID,null,$this->linkParameters());
+		return ShoppingCart_Controller::remove_item_link($this->Product(),$this->linkParameters());
 	}
 
 	function removeallLink() {
-		return ShoppingCart_Controller::remove_all_item_link($this->ProductID,null,$this->linkParameters());
+		return ShoppingCart_Controller::remove_all_item_link($this->Product(),$this->linkParameters());
 	}
 
 	function setquantityLink() {
-		return ShoppingCart_Controller::set_quantity_item_link($this->ProductID,null,$this->linkParameters());
+		return ShoppingCart_Controller::set_quantity_item_link($this->Product(),$this->linkParameters());
 	}
 
 	function linkParameters(){
