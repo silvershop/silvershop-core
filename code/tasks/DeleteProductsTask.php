@@ -1,10 +1,11 @@
 <?php
-
+/**
+ * Remove all products and categories from the site.
+ */
 class DeleteProductsTask extends BuildTask{
 	
 	protected $title = "Delete Products";
-	
-	protected $description = "Removes all Products from the database.";
+	protected $description = "Removes all Products and Categories from the database.";
 	
 	function run($request){
 		
@@ -26,6 +27,15 @@ class DeleteProductsTask extends BuildTask{
 			}
 		}
 		
+		if($allcategories = DataObject::get('ProductCategory')){
+			foreach($allcategories as $category){
+				$category->deleteFromStage('Live');
+				$category->deleteFromStage('Stage');
+				$category->destroy();
+				//TODO: remove versions
+			}
+		}
+		
 		//TODO: use TRUNCATE instead?
 		
 		$basetables = array(
@@ -37,10 +47,9 @@ class DeleteProductsTask extends BuildTask{
 		);
 		
 		foreach($basetables as $table){
-			if(!(ClassInfo::hasTable($table)))continue;
-			
+			if(!(ClassInfo::hasTable($table)))
+				continue;
 			foreach(ClassInfo::subclassesFor($table) as $key => $class){
-				
 				if(ClassInfo::hasTable($class)){
 					DB::query("DELETE FROM \"$class\" WHERE 1;");
 					echo "<p>Deleting all $class</p>";

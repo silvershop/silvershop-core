@@ -33,7 +33,8 @@ class Product extends Page implements Buyable{
 	);
 
 	public static $defaults = array(
-		'AllowPurchase' => true
+		'AllowPurchase' => true,
+		'ShowInMenus' => false
 	);
 
 	public static $summary_fields = array(
@@ -63,30 +64,27 @@ class Product extends Page implements Buyable{
 		$tempextvar = $this->get_static('SiteTree','runCMSFieldsExtensions');
 		$this->disableCMSFieldsExtensions();
 		$fields = parent::getCMSFields();
-		if($tempextvar)	$this->enableCMSFieldsExtensions();
-
+		if($tempextvar){
+			$this->enableCMSFieldsExtensions();
+		}
 		// Standard product detail fields
 		$fields->addFieldToTab('Root.Content.Main',new TextField('Price', _t('Product.PRICE', 'Price'), '', 12),'Content');
 		$fields->addFieldToTab('Root.Content.Main',new TextField('Weight', _t('Product.WEIGHT', 'Weight (kg)'), '', 12),'Content');
 		$fields->addFieldToTab('Root.Content.Main',new TextField('Model', _t('Product.MODEL', 'Model'), '', 30),'Content');
 		$fields->addFieldToTab('Root.Content.Main',new TextField('InternalItemID', _t('Product.CODE', 'Product Code'), '', 30),'Price');
-
 		if(!$fields->dataFieldByName('Image')) {
 			$fields->addFieldToTab('Root.Content.Images', new ImageField('Image', _t('Product.IMAGE', 'Product Image')));
 		}
-
 		// Flags for this product which affect it's behaviour on the site
 		$fields->addFieldToTab('Root.Content.Main',new CheckboxField('FeaturedProduct', _t('Product.FEATURED', 'Featured Product')), 'Content');
 		$fields->addFieldToTab('Root.Content.Main',new CheckboxField('AllowPurchase', _t('Product.ALLOWPURCHASE', 'Allow product to be purchased'), 1),'Content');
-
 		$fields->addFieldsToTab(
-			'Root.Content.Product Groups',
+			'Root.Content.Categories',
 			array(
-				new HeaderField('ProductCategoriesHeader', _t('Product.ALSOAPPEARS')),
+				new LabelField('ProductCategoriesInstuctions', _t('Product.CATEGORIES',"Select the categories that this product should also show up in")),
 				$this->getProductCategoriesTable()
 			)
 		);
-
 		if($pagename = $fields->fieldByName('Root.Content.Main.Title'))
 			$pagename->setTitle(_t('Product.PAGENAME','Page/Product Name'));
 
@@ -141,7 +139,7 @@ class Product extends Page implements Buyable{
 			'ProductCategories',
 			'ProductCategory',
 			array(
-				'Title' => 'Product Group Page Title'
+				'Title' => 'Category'
 			)
 		);
 		$tableField->setPageSize(30);
