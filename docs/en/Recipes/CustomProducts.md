@@ -1,17 +1,41 @@
-You may need to introduce the ability to buy a different kind of product.
-This requires creating both the new type of product, and a likely a new type of order item
-to store against the order.
+# Custom Products
 
-You may want to store details against an order item, which are currently not provided by the base classes.
+You may want to sell things other than generic products within your store. You may need additional
+features and functionality for these products. You might want to sell something that already exists
+in your site.
 
-	class MyOrderItem extends Product_OrderItem{
+Here are a few options:
+
+ * Customise the Product class(es) using decorators, or modifying core code.
+ * Subclass Product to create your own type of product.
+ * Turn a dataojbect into something buyable.
+ 
+If you want to sell things that a visitor can choose customisations of, you should make use of
+product variations or shopping cart filters.
+
+In most cases you will need to customise or create your own order items. These record the relationship
+between a product/buyable and an order.
+
+	class MyOrderItem extends OrderItem{
 	
 		static $db = array(
 			'MyField' => 'Varchar'
 		);
 		
-		static $unique_fields = array(
-			'MyField'
+		static $has_one = array(
+			'Buyable' => 'MyProduct'
 		);
 	
 	}
+
+	
+# Buyables
+
+The concept of something being buyable was introduced to allow things other than Products to be
+included in the cart. The Buyable interface enforces a few methods that are needed for objects
+to be added to the shopping cart.
+
+Every OrderItem must specify a 'Buyable' has_one relationship, this can be of 
+
+By default Product implements Buyable. If you are not worried about custom products, you can simply
+treat Buyables as Products.

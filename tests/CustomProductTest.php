@@ -1,13 +1,12 @@
 <?php
 
-class CustomProductTest extends SapphireTest{
+class CustomProductTest extends FunctionalTest{
 	
 	static $fixture_file = 'shop/tests/customproduct.yml';
 	
 	function setUp(){
 		parent::setUp();
 		$this->thing = $this->objFromFixture("CustomProduct", "thing");
-		$this->thing->publish('Stage','Live');
 	}
 	
 	function testCustomProduct(){
@@ -17,6 +16,7 @@ class CustomProductTest extends SapphireTest{
 		$options1 = array('Color' => 'Green','Size' => 5,'Premium' => true);
 		$this->assertTrue($cart->add($this->thing,1,$options1),"add to customisation 1 to cart");
 		$item = $cart->get($this->thing,$options1);
+		
 		$this->assertTrue((bool)$item,"item with customisation 1 exists");
 		$this->assertEquals($item->Quantity,1);
 		
@@ -47,24 +47,71 @@ class CustomProductTest extends SapphireTest{
 		
 		$this->assertEquals($items->Count(),4,"4 items in cart");
 		
+		//remove
+		$cart->remove($this->thing,2,$options2);
+		$item = $cart->get($this->thing,$options2);
+		$this->assertEquals($item->Quantity,3);
+		
+		//set quantity
+		$options4 = array('Size' => 12, 'Color' => 'Turquoise');
+		$cart->setQuantity($this->thing,5,$options4);
+		$item = $cart->get($this->thing,$options4);
+		$this->assertEquals($item->Quantity,5);
+		
+		//test by using urls
 		//add a partial match
+		//TODO: what about default values that have been set?
+	}
+	
+	/*
+	function testCustomProductURLs(){
 		
-		//TODO: what about default values that have been set?!
+		$options = array(
+			'Color' => 'Green',
+			'Size' => 3,
+			'Premium' => true
+		);
 		
-		//remove quantities of each
+		$this->get(ShoppingCart_Controller::add_item_link($this->thing,$options));
 		
-		//set quantity, instead of add
+		$cart = ShoppingCart::singleton();
 		
+		Debug::show($cart->current()->Items());
+		$item = $cart->get($this->thing);
+		$this->assertEquals($item->Quantity,1);
+		
+		//$this->get();
+	}
+	*/
+	
+}
+
+class CustomProduct extends DataObject implements Buyable{
+	
+	static $order_item = 'CustomProduct_OrderItem';
+	
+	static $db = array(
+		'Title' => 'Varchar',
+		'Price' => 'Currency'
+	);
+	
+	function createItem($quantity = 1, $filter = array()){
+		$itemclass = $this->stat('order_item');
+		$item = new $itemclass();
+		$item->ProductID = $this->ID;
+		if($filter){
+			$item->update($filter);
+		}
+		return $item;
+	}
+	
+	function canPurchase(){
+		return $this->Price > 0;
 	}
 	
 }
 
-class CustomProduct extends Product{
-	
-	static $order_item = 'CustomProduct_OrderItem';
-}
-
-class CustomProduct_OrderItem extends Product_OrderItem{
+class CustomProduct_OrderItem extends OrderItem{
 	
 	static $db = array(
 		'Color' => "Enum('Red,Green,Blue','Red')",
@@ -78,8 +125,11 @@ class CustomProduct_OrderItem extends Product_OrderItem{
 	);
 	
 	static $has_one = array(
+		'Product' => 'CustomProduct',
 		'Recipient' => 'Member'
 	);
+	
+	static $buyable_relationship = "Product";
 	
 	//combintation of fields that must be unique
 	static $required_fields = array(
@@ -89,4 +139,11 @@ class CustomProduct_OrderItem extends Product_OrderItem{
 		'Recipient'
 	);
 	
+	function UnitPrice(){
+		if($product = $this->Product()){
+			return $product->Price;
+		}
+		return 0;
+	}
+
 }

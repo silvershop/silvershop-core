@@ -1,5 +1,4 @@
 CustomProduct:
-	thing:
-		Title: Thing
-		Price: 30
-		AllowPurchase: 1
+    thing:
+        Title: Thing
+        Price: 30
