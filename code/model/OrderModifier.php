@@ -11,7 +11,7 @@ class OrderModifier extends OrderAttribute {
 
 	public static $db = array(
 		'Amount' => 'Currency',
-		'Type' => "Enum('Chargable,Deductable,Ignored','Chargable')", //TODO: deperecate this in a future release
+		'Type' => "Enum('Chargable,Deductable,Ignored','Chargable')",
 		'Sort' => 'Int'
 	);
 	
@@ -174,26 +174,6 @@ class OrderModifier extends OrderAttribute {
 
 	function removeLink() {
 		return CheckoutPage_Controller::remove_modifier_link($this->ID);
-	}
-
-	/**
-	 * Debug helper method.
-	 */
-	public function debug() {
-		$id = $this->ID;
-		$amount = $this->Amount();
-		$type = $this->IsChargable() ? 'Chargable' : 'Deductable';
-		$orderID = $this->ID ? $this->OrderID : 'The order has not been saved yet, so there is no ID';
-		return <<<HTML
-			<h2>$this->class</h2>
-			<h3>OrderModifier class details</h3>
-			<p>
-				<b>ID : </b>$id<br/>
-				<b>Amount : </b>$amount<br/>
-				<b>Type : </b>$type<br/>
-				<b>Order ID : </b>$orderID
-			</p>
-HTML;
 	}
 	
 	//deprecated functions

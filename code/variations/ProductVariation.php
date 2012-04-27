@@ -213,17 +213,4 @@ class ProductVariation_OrderItem extends Product_OrderItem {
 		return parent::TableTitle() . ' (' . $this->ProductVariation()->Title . ')';
 	}
 
-	public function debug() {
-		$title = $this->TableTitle();
-		$productVariationID = $this->ProductVariationID;
-		$productVariationVersion = $this->ProductVariationVersion;
-		return parent::debug() .<<<HTML
-			<h3>ProductVariation_OrderItem class details</h3>
-			<p>
-				<b>Title : </b>$title<br/>
-				<b>ProductVariation ID : </b>$productVariationID<br/>
-				<b>ProductVariation Version : </b>$productVariationVersion<br/>
-			</p>
-HTML;
-	}
 }
