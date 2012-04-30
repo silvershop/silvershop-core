@@ -47,8 +47,10 @@ class OrderModifierTest extends FunctionalTest {
 		$order = new Order();
 		$order->write();
 		$item1a = $this->mp3player->createItem(2);
+		$item1a->write();
 		$order->Attributes()->add($item1a);
 		$item1b = $this->socks->createItem();
+		$item1b->write();
 		$order->Attributes()->add($item1b);
 		return $order;
 	}
