@@ -20,14 +20,14 @@ class ViewableCart extends Extension{
 		if(!$order){
 			return false;
 		}
-		//TODO: record changes dirty
-		
 		if(!$this->calculateonce && $order){
 			$this->calculateonce = true;
 			$order->calculate();
 		}
-		
-		return $order;
+		return $order->customise(array(
+			'CheckoutLink' => CheckoutPage::find_link(),
+			'CartLink' => CartPage::find_link()
+		));
 	}
 	
 }

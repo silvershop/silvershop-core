@@ -1,8 +1,10 @@
 <?php
 
+/**
+ * View and edit the cart in a full page.
+ * Visitor can continue shopping, or proceed to checkout.
+ */
 class CartPage extends Page{
-
-	static $db = array();
 
 	static $has_one = array(
 		'CheckoutPage' => 'CheckoutPage',
@@ -19,27 +21,58 @@ class CartPage extends Page{
 		if($pgroups = DataObject::get('ProductCategory')) {
 			$fields->addFieldToTab('Root.Content.Links',new DropdownField('ContinuePageID','Continue Product Group Page',$pgroups->toDropDownMap()));
 		}
-
 		return $fields;
+	}
+	
+	/**
+	 * Returns the link to the checkout page on this site
+	 *
+	 * @param boolean $urlSegment If set to TRUE, only returns the URLSegment field
+	 * @return string Link to checkout page
+	 */
+	static function find_link($urlSegment = false, $action = null, $id = null) {
+		if(!$page = DataObject::get_one('CartPage')) {
+			return Controller::join_links(Director::baseURL(),CartPage_Controller::$url_segment);
+		}
+		$id = ($id)? "/".$id : "";
+		return ($urlSegment) ? $page->URLSegment : Controller::join_links($page->Link($action),$id);
 	}
 
 }
 
 class CartPage_Controller extends Page_Controller{
-
-		function Order() {
-			if($orderID = Director::urlParam('Action')) return DataObject::get_by_id('Order', $orderID);
-			else return ShoppingCart::current_order();
-		}
-
-		public function init() {
-			// include extra js requirements for this page
-			Requirements::javascript(THIRDPARTY_DIR . '/jquery/jquery.js');
-			Requirements::javascript(SHOP_DIR.'/javascript/CheckoutPage.js');
-			parent::init();
+	
+	static $url_segment = 'cart';
+	static $allowed_actions = array();
+	
+	/**
+	 * Display a title if there is no model, or no title.
+	 */
+	public function Title(){
+		if($this->Title)
+			return $this->Title;
+		return _t('CartPage.TITLE',"Shopping Cart");
 	}
-
+	
+	public function init(){
+		parent::init();
+		// include extra js requirements for this page
+		Requirements::javascript(THIRDPARTY_DIR . '/jquery/jquery.js');
+		Requirements::javascript(SHOP_DIR.'/javascript/CheckoutPage.js');
+	}
+	
+	
+	public function ContinueLink(){
+		if($maincategory = DataObject::get_one('ProductCategory',"",true,"ParentID ASC, ID ASC")){
+			return $maincategory->Link();
+		}
+		return Director::baseURL();
+	}
+	
+	/**
+	 * @deprecated use $this->Cart() instead
+	 */
+	function Order() {
+		return $this->Cart();
+	}
 }
-
-
-

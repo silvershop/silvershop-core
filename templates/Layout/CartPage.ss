@@ -4,11 +4,26 @@
 		$Content
 	<% end_if %>
 </div>
-<% control Cart %>
-	<% include Order_Content_Editable %>
-<% end_control %>
-
+<% if Cart %>
+	<% control Cart %>
+		<% include Order_Content_Editable %>
+	<% end_control %>
+<% else %>
+	<p class="message warning"><% _t('CartPage.ss.CARTEMPTY','Your cart is empty.') %></p>
+<% end_if %>
 <div class="cartfooter">
-	<% if ContinuePage %><a class="continuelink button" href="$ContinuePage.Link">continue shopping</a><% end_if %>
-	<% if CheckoutPage %><a class="checkoutlink button" href="$CheckoutPage.Link">proceed to checkout</a><% end_if %>
+	<% if ContinueLink %>
+		<a class="continuelink button" href="$ContinueLink">
+			<% _t('CartPage.ss.CONTINUE','Continue Shopping') %>
+		</a>
+	<% end_if %>
+	<% if Cart %>
+		<% if Cart.CheckoutLink %>
+			<a class="checkoutlink button" href="$Cart.CheckoutLink">
+				<% _t('CartPage.ss.PROCEEDTOCHECKOUT','Proceed to Checkout') %>
+			</a>
+		<% end_if %>
+	<% end_if %>
 </div>
+<% include RelatedItems %>
+<% include RecentlyViewedItems %>

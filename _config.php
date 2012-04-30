@@ -11,13 +11,11 @@ DataObject::add_extension('Payment', 'EcommercePayment');
 Director::addRules(50, array(
 	ShoppingCart_Controller::$url_segment . '/$Action/$ID/$OtherID' => 'ShoppingCart_Controller',
 ));
-Director::addRules(0, array(
-	CheckoutPage_Controller::$url_segment . '/$Action/$ID/$OtherID' => 'CheckoutPage_Controller'
-));
 
 Object::add_extension("DevelopmentAdmin", "EcommerceDevelopmentAdminDecorator");
 DevelopmentAdmin::$allowed_actions[] = 'shop';
 Object::add_extension("Page_Controller","ViewableCart");
+Object::add_extension("ShoppingCart_Controller","ViewableCart");
 
 //custom classes
 Object::useCustomClass('Currency','EcommerceCurrency', true);

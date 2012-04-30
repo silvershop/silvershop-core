@@ -42,16 +42,10 @@ class CheckoutPage extends Page {
 		'TermsPage' => 'Page'
 	);
 
-	public static $has_many = array();
-	public static $many_many = array();
-	public static $belongs_many = array();
-	public static $defaults = array();
-
 	static $icon = 'shop/images/icons/money';
 
 	/**
-	 * Returns the link to the checkout page on this site, using
-	 * a specific Order ID that already exists in the database.
+	 * Returns the link to the checkout page on this site
 	 *
 	 * @param boolean $urlSegment If set to TRUE, only returns the URLSegment field
 	 * @return string Link to checkout page
@@ -117,7 +111,8 @@ class CheckoutPage_Controller extends Page_Controller {
 	 * Display a title if there is no model, or no title.
 	 */
 	public function Title(){
-		if($this->Title) return $this->Title;
+		if($this->Title)
+			return $this->Title;
 		return _t('CheckoutPage.TITLE',"Checkout");
 	}
 
@@ -126,20 +121,6 @@ class CheckoutPage_Controller extends Page_Controller {
 		Requirements::javascript(SHOP_DIR.'/javascript/CheckoutPage.js');
 		Requirements::javascript(SHOP_DIR.'/javascript/ecommerce.js');
 		return array();
-	}
-
-	/**
-	 * Determine whether the user can checkout the
-	 * specified Order ID in the URL, that isn't
-	 * paid for yet.
-	 *
-	 * @return boolean
-	 */
-	function CanCheckout() {
-		if($order = $this->Cart()) {
-			return !$order->IsPaid();
-		}
-		return false;
 	}
 
 	/**
@@ -168,11 +149,9 @@ class CheckoutPage_Controller extends Page_Controller {
 	 * @return OrderForm object
 	 */
 	function OrderForm() {
-		
 		if(!$this->CanCheckout()){
 			return false;
 		}
-		
 		$form = new OrderForm($this, 'OrderForm');
 		$this->data()->extend('updateOrderForm',$form);
 		//load session data
@@ -200,18 +179,15 @@ class CheckoutPage_Controller extends Page_Controller {
 		//TODO: make redirecting to account page optional
 		//TODO: could all this be moved to some central location where it can be used by other parts of the system?
 		$order = $this->orderfromid(); //stored in OrderManipulation extension
-
 		$message = $mtype = null;
 		if(!$order){
 			$message = _t("CheckoutPage.ORDERNOTFOUND","Order could not be found.");
 			$mtype = 'bad';
 		}
-
 		if($sm = $this->SessionMessage()){
 			$message = $sm;
 			$mtype = $this->SessionMessageType();
 		}
-
 		return array(
 			'Order' => $order,
 			'Message' => $message,
@@ -219,7 +195,6 @@ class CheckoutPage_Controller extends Page_Controller {
 			'CompleteOrders' => $this->allorders("\"Status\" IN('Paid','Complete','Sent')"),
 			'IncompleteOrders' => $this->allorders("\"Status\" IN('Unpaid','Processing')")
 		);
-
 	}
 	
 	/**
@@ -282,5 +257,20 @@ class CheckoutPage_Controller extends Page_Controller {
 		Director::redirectBack();
 		return false;
 	}
+	
+	
+	//deprecated functions
+	/**
+	 * Determine whether the user can checkout the
+	 * specified Order ID in the URL, that isn't
+	 * paid for yet.
+	 *
+	 * @deprecated use Cart instead
+	 * @return boolean
+	 */
+	function CanCheckout() {
+		return (bool)$this->Cart();
+	}
+	
 
 }

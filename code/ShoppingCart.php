@@ -327,6 +327,7 @@ class ShoppingCart{
 class ShoppingCart_Controller extends Controller{
 	
 	static $url_segment = "shoppingcart";
+	static $direct_to_cart_page = true;
 	protected $cart;
 	
 	static $allowed_actions = array(
@@ -392,7 +393,6 @@ class ShoppingCart_Controller extends Controller{
 				$buyableclass = Convert::raw2sql($class);
 			}
 			if($buyable = DataObject::get_by_id($buyableclass,$id)){
-
 				return $buyable;
 			}
 		}
@@ -434,15 +434,21 @@ class ShoppingCart_Controller extends Controller{
 		if(Director::is_ajax()){
 			return $status;
 		}
-		Director::redirectBack();
+		if(self::$direct_to_cart_page && $cartlink = CartPage::find_link()){
+			Director::redirect($cartlink);
+			return;
+		}else{
+			Director::redirectBack();
+			return;
+		}
 	}	
 
 	/**
 	 * Handle index requests
 	 */
 	function index(){
-		if($order = ShoppingCart::getInstance()->current()){
-			Director::redirect($order->Link());
+		if($cart = $this->Cart()){
+			Director::redirect($cart->CartLink);
 			return;
 		}elseif($response = ErrorPage::response_for(404)) {
 			return $response;
