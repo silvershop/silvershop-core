@@ -14,11 +14,11 @@ This is a work in progress. Some of these recipes may turn into submodules, or c
 A store may need few or many steps to complete an order. This module provides flexability
 to allow orders to be processed in various ways.
 
- * [Customising Fields](CustomisingFields) - add/remove fields from customers, orders
+ * [Custom Products](CustomProducts) - sell anything you want.
+ * [Customising Fields](CustomisingFields) - add/remove fields from customers, orders.
  * [Single Step Solution](SingleStepSolution) - all order and payment details captured in a single page.
  * [Multi Step Solution](MultiStepSolution) - details progressively captured.
  * [API](API) - API / javascript solution
- 
  
 ## Adding products with a form, rather than links
 

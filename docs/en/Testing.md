@@ -21,7 +21,7 @@ To run all ecommerce tests visit yoursite/dev/ecommerce and click the "Run all e
 
 ### Writing Tests
 
-The products created by the ecommerce.yml file are all in draft form (unpublished). You need to publish products if you wish to test
+The products created by the shop.yml file are all in draft form (unpublished). You need to publish products if you wish to test
 functionality that involves adding products to the cart etc. 
 
 ### Tests that have/will be written

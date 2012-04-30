@@ -10,12 +10,13 @@ so these have been kept seperate.
 
 ## Ideas / TODO
 
- * Stock Control - keep track of 
+ * Stock Control - keep track of stock numbers, warn when products are out of stock, or prevent sales.
  * Brand Browsing - browse products by brand
  * Choose What You Pay - a product that allows the user to choose what they will pay for it.
  * Digital Downloads / Virtual Products - products that are purely digital, only requiring download, and no shipping.
  * Financial Accounts - charge orders to a particular group/account, which could be in credit, or dept.
  * Google Analytics - integration to record shop sales to Google Analytics.
  * Sub Shops - allow members to create their own store, and sell products from.
+ * Dontation - pay nothing or any price for something.
  
 Feel free to request additional submodules and functionality.
