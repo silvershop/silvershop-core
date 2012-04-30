@@ -6,7 +6,7 @@ define('SHOP_DIR','shop');
 DataObject::add_extension('Member', 'ShopMember');
 // Extend Payment with e-commerce relationship.
 if(!class_exists('Payment')) user_error("You need to also install the Payment module to use the eCommerce module", E_USER_ERROR);
-DataObject::add_extension('Payment', 'EcommercePayment');
+DataObject::add_extension('Payment', 'ShopPayment');
 //create controller for shopping cart
 Director::addRules(50, array(
 	ShoppingCart_Controller::$url_segment . '/$Action/$ID/$OtherID' => 'ShoppingCart_Controller',

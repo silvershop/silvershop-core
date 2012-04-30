@@ -1,11 +1,11 @@
 <?php
 /**
  * Customisations to {@link Payment} specifically
- * for the ecommerce module.
+ * for the shop module.
  *
  * @package shop
  */
-class EcommercePayment extends DataObjectDecorator {
+class ShopPayment extends DataObjectDecorator {
 	
 	public static $summary_fields = array(
 		"OrderID" => "Order ID",

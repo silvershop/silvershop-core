@@ -42,8 +42,8 @@ Here is an overview of the model classes
 
 ### Decorators
 
- * EcommercePayment - adds connection to an order for each Payment.
- * EcommerceRole - adds shipping details to a Member.
+ * ShopPayment - adds connection to an order for each Payment.
+ * ShopMember - adds shipping details to a Member.
 
 ### Shopping Cart
 
