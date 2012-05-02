@@ -8,7 +8,7 @@
 	</div>
 	<% if Cart %>
 		<% control Cart %>
-			<% include Order_Content_Editable %>
+			<% include Cart %>
 		<% end_control %>
 		<% control ModifierForms %>
 			$Me

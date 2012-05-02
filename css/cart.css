@@ -1,0 +1,26 @@
+table.cart{
+	width: 100%;
+}
+	table.cart td{
+		text-align:center;
+	}
+		table.cart td h3,
+		table.cart td .subtitle{
+			text-align:left;
+			margin-top:0;
+			margin-bottom:0.5em;
+		}
+		table.cart colgroup.image,
+		table.cart colgroup.remove{
+			width:10px;
+		}
+		table.cart colgroup.unitprice,
+		table.cart colgroup.total{
+			width:10em;
+		}
+		table.cart colgroup.quantity{
+			width:10em;
+		}
+		table.cart tfoot th{
+			text-align:left;
+		}

@@ -31,9 +31,6 @@ class OrderReport_Popup extends Controller {
 		if($id = $this->urlParams['ID']) {
 			$this->Title .= " #$id";
 		}
-		/*Requirements::themedCSS("reset");*/
-		/*Requirements::themedCSS("OrderReport");*/
-		/*Requirements::themedCSS("OrderReport_Print", "print");*/
 	}
 
 	/**

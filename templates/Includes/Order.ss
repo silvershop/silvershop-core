@@ -1,3 +1,4 @@
+<% require themedCSS(order) %>
 <div id="OrderInformation">
 	<% include Order_Shipping %>
 	<% include Order_Content %>
@@ -7,7 +8,7 @@
 		<table id="OutstandingTable" class="infotable">
 			<tbody>
 				<tr class="gap summary" id="Outstanding">
-					<th colspan="3" scope="row" class="threeColHeader"><strong><% _t("TOTALOUTSTANDING","Total outstanding") %></strong></th>
+					<th colspan="4" scope="row" class="threeColHeader"><strong><% _t("TOTALOUTSTANDING","Total outstanding") %></strong></th>
 					<td class="right"><strong>$TotalOutstanding.Nice </strong></td>
 				</tr>
 			</tbody>

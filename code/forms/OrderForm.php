@@ -22,8 +22,6 @@ class OrderForm extends Form {
 	);
 
 	function __construct($controller, $name) {
-		//Requirements::themedCSS('OrderForm');
-
 		// 1) Member and shipping fields
 		$member = Member::currentUser();
 		$memberFields = new CompositeField(singleton('Member')->getEcommerceFields());

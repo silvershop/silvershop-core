@@ -1,7 +1,7 @@
-<% require themedCSS(editableorder) %>
+<% require themedCSS(cart) %>
 <% if Items %>
 <h3 class="orderInfo"><% _t("ORDERINFORMATION","Order Information") %></h3>
-<table id="InformationTable" class="ordercontent editable" summary="<% _t("TABLESUMMARY","Current contents of your cart.") %>">
+<table class="cart" summary="<% _t("TABLESUMMARY","Current contents of your cart.") %>">
 	<colgroup class="image"/>
 	<colgroup class="product title"/>
 	<colgroup class="unitprice" />
@@ -85,6 +85,7 @@
 		<tr class="gap Total">
 			<th colspan="4" scope="row"><% _t("TOTAL","Total") %></th>
 			<td id="$TableTotalID"><span class="value">$Total.Nice</span> <span class="currency">$Currency</span></td>
+			<td></td>
 		</tr>
 	</tfoot>
 </table>

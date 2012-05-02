@@ -1,10 +1,9 @@
-<table id="InformationTable" class="ordercontent">
+<table id="InformationTable" class="infotable ordercontent">
 	<colgroup class="image"/>
 	<colgroup class="product title"/>
 	<colgroup class="unitprice" />
 	<colgroup class="quantity" />
 	<colgroup class="total"/>
-	<colgroup class="remove"/>
 	<thead>
 		<tr>
 			<th scope="col"></th>
@@ -12,7 +11,6 @@
 			<th scope="col"><% _t("UNITPRICE","Unit Price") %></th>
 			<th scope="col"><% _t("QUANTITY", "Quantity") %></th>
 			<th scope="col"><% _t("TOTALPRICE","Total Price") %> ($Currency)</th>
-			<th scope="col"></th>
 		</tr>
 	</thead>
 	<tbody>
@@ -45,19 +43,19 @@
 		</tr>
 		<% end_control %>
 		<tr class="gap summary" id="SubTotal">
-			<td colspan="3" scope="row" class="threeColHeader subtotal"><% _t("SUBTOTAL","Sub-total") %></td>
+			<td colspan="4" scope="row" class="threeColHeader subtotal"><% _t("SUBTOTAL","Sub-total") %></td>
 			<td class="right">$SubTotal.Nice</td>
 		</tr>
 		<% control Modifiers %>
 			<% if ShowInTable %>
 		<tr class="modifierRow $EvenOdd $FirstLast $Classes">
-			<td colspan="3" scope="row">$TableTitle</td>
+			<td colspan="4" scope="row">$TableTitle</td>
 			<td class="right">$TableValue.Nice</td>
 		</tr>
 			<% end_if %>
 		<% end_control %>
 		<tr class="gap summary total" id="Total">
-			<td colspan="3" scope="row" class="threeColHeader total"><% _t("TOTAL","Total") %></td>
+			<td colspan="4" scope="row" class="threeColHeader total"><% _t("TOTAL","Total") %></td>
 			<td class="right">$Total.Nice $Currency</td>
 		</tr>
 	</tbody>
