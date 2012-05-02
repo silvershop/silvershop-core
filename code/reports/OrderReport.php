@@ -16,9 +16,7 @@ class OrderReport_Popup extends Controller {
 	
 	//basic security for controller
 	static $allowed_actions = array(
-		'index' => 'ADMIN',
-		'packingslip' => 'ADMIN',
-		'invoice' => 'ADMIN'
+		'index' => 'ADMIN'
 	);
 
 	function init(){
@@ -45,7 +43,6 @@ class OrderReport_Popup extends Controller {
 		return $this->renderWith('Order_Printable');
 	}
 
-
 	function Link($action = null) {
 		return "OrderReport_Popup/$action";
 	}
@@ -59,25 +56,21 @@ class OrderReport_Popup extends Controller {
 	 */
 	function SingleOrder(){
 		$id = $this->urlParams['ID'];
-
 		if(is_numeric($id)) {
 			$order = DataObject::get_by_id('Order', $id);
 			$payment = $order->Payment();
 			$cheque = false;
-
 			if($payment->First()) {
 				$record = $payment->First();
 				if($record->ClassName == 'ChequePayment') {
 					$cheque = true;
 				}
 			}
-
 			return new ArrayData(array(
 				'DisplayFinalisedOrder' => $order,
 				'IsCheque' => $cheque
 			));
 		}
-
 		return false;
 	}
 
@@ -92,8 +85,8 @@ class OrderReport_Popup extends Controller {
 		if(is_numeric($id)) {
 			$order = DataObject::get_by_id("Order", $id);
 			if(isset($_REQUEST['print'])) {
-				$this->Printed = true;
-				$this->write();
+				$order->Printed = true;
+				$order->write();
 			}
 			return $order;
 		}
