@@ -327,7 +327,7 @@ class ShoppingCart{
 class ShoppingCart_Controller extends Controller{
 	
 	static $url_segment = "shoppingcart";
-	static $direct_to_cart_page = true;
+	protected static $direct_to_cart_page = false;
 	protected $cart;
 	
 	static $allowed_actions = array(
@@ -342,6 +342,10 @@ class ShoppingCart_Controller extends Controller{
 		'clear',
 		'debug'
 	);
+	
+	static function set_direct_to_cart($direct = true){
+		self::$direct_to_cart_page = $direct;
+	}
 	
 	static function add_item_link(Buyable $buyable, $parameters = array()) {
 		if($buyable->class != "Product")
