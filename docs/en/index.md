@@ -10,6 +10,7 @@ This has been left for the store owner to collaborate with their developer.
 ## Contents
 
 * [Installation & Configuration](Installation) - requirements, instructions
+* [Upgrade Troubleshooting](Upgrading)
 * [Customising](Customising)
  * Shipping and Tax Calculation
  * Emails
