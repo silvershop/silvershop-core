@@ -55,6 +55,26 @@ class PopulateShopTask extends BuildTask{
 		}else{
 			echo "<p style=\"color:orange;\">Products and categories were not created because some already exist.</p>";
 		}
+		
+		//cart page
+		if(!$page = DataObject::get_one('CartPage')) {
+			$page = new CartPage();
+			$page->Title = _t('CartPage.Title',"Cart");
+			$page->URLSegment = 'cart';
+			$page->ShowInMenus = 0;
+			$page->writeToStage('Stage');
+			$page->publish('Stage', 'Live');
+			DB::alteration_message('Cart page created', 'created');
+		}
+		
+		//terms page
+		if($page->TermsPageID == 0 && $termsPage = DataObject::get_one('Page', "\"URLSegment\" = 'terms-and-conditions'")) {
+			$page->TermsPageID = $termsPage->ID;
+			$page->writeToStage('Stage');
+			$page->publish('Stage', 'Live');
+			DB::alteration_message("Page '{$termsPage->Title}' linked to the Checkout page '{$page->Title}'", 'changed');
+		}
+		
 		//checkout page
 		if(!$page = DataObject::get_one('CheckoutPage')) {
 			$page = new CheckoutPage();
@@ -68,23 +88,7 @@ class PopulateShopTask extends BuildTask{
 			$page->publish('Stage', 'Live');
 			DB::alteration_message('Checkout page created', 'created');
 		}
-		//cart page
-		if(!$page = DataObject::get_one('CartPage')) {
-			$page = new CartPage();
-			$page->Title = _t('CartPage.Title',"Cart");
-			$page->URLSegment = 'cart';
-			$page->ShowInMenus = 0;
-			$page->writeToStage('Stage');
-			$page->publish('Stage', 'Live');
-			DB::alteration_message('Cart page created', 'created');
-		}
-		//terms page
-		if($page->TermsPageID == 0 && $termsPage = DataObject::get_one('Page', "\"URLSegment\" = 'terms-and-conditions'")) {
-			$page->TermsPageID = $termsPage->ID;
-			$page->writeToStage('Stage');
-			$page->publish('Stage', 'Live');
-			DB::alteration_message("Page '{$termsPage->Title}' linked to the Checkout page '{$page->Title}'", 'changed');
-		}
+
 		//account page
 		if(!DataObject::get_one('AccountPage')) {
 			$page = new AccountPage();
