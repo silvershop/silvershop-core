@@ -2,7 +2,6 @@
 /**
  * A single line in an order. This could be an item, or a subtotal line.
  * 
- * @see OrderModifier
  * @see OrderItem
  * @see OrderModifier
  *
@@ -35,34 +34,6 @@ class OrderAttribute extends DataObject {
 		return (!$this->ID || $this->Order()->IsCart());
 	}
 
-	######################
-	## TEMPLATE METHODS ##
-	######################
-
-	/**
-	 * Return a string of class names, in order
-	 * of heirarchy from OrderAttribute for the
-	 * current attribute.
-	 *
-	 * e.g.: "product_orderitem orderitem
-	 * orderattribute".
-	 *
-	 * Used by the templates and for ajax updating functionality.
-	 *
-	 * @return string
-	 */
-	function Classes() {
-		$class = get_class($this);
-		$classes = array();
-		$classes[] = strtolower($class);
-
-		while(get_parent_class($class) != 'DataObject' && $class = get_parent_class($class)) {
-			$classes[] = strtolower($class);
-		}
-
-		return implode(' ', $classes);
-	}
-
 	/**
 	 * Return a name of what this attribute is
 	 * called e.g. "Modifier", or "Product".
@@ -79,38 +50,6 @@ class OrderAttribute extends DataObject {
 	
 	function ShowInTable() {
 		return true;
-	}
-	
-	function MainID() {
-		return get_class($this) . '_' . 'DB_' . $this->ID;
-	}
-
-	function TableID() {
-		return 'Table_' . $this->MainID();
-	}
-
-	function CartID() {
-		return 'Cart_' . $this->MainID();
-	}
-
-	function ShowInCart() {
-		return $this->ShowInTable();
-	}
-
-	function TableTitleID() {
-		return $this->TableID() . '_Title';
-	}
-
-	function CartTitleID() {
-		return $this->CartID() . '_Title';
-	}
-
-	function TableTotalID() {
-		return $this->TableID() . '_Total';
-	}
-
-	function CartTotalID() {
-		return $this->CartID() . '_Total';
 	}
 
 }
