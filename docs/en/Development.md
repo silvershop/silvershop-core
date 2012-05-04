@@ -75,7 +75,7 @@ Adds members who have placed orders to the "Shop Customers" group every hour. Us
 Decorator Hooks
 ---------------
 
-Doing a search within the eCommerce code for "->extend(" will reveal the various points where you can call extensions via decorators/extension classes.
+Doing a search within the shop module code for "->extend(" will reveal the various points where you can call extensions via decorators/extension classes.
 
 Here is a (possibly incomplete) list of hooks you can use by extending various classes:
 

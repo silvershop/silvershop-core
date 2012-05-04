@@ -1,6 +1,6 @@
 SiteConfig:
     config:
-        Title: eCommerce Testing Website
+        Title: Shop Testing Website
         ShopClosed: 0
 
 Page:

@@ -37,7 +37,7 @@
 				</h3>
 				<% if SubTitle %><p class="subtitle">$SubTitle</p><% end_if %>
 			</td>
-			<td class="right unitprice">$UnitPrice.Nice</td>
+			<td class="center unitprice">$UnitPrice.Nice</td>
 			<td class="center quantity">$Quantity</td>
 			<td class="right total">$Total.Nice</td>
 		</tr>

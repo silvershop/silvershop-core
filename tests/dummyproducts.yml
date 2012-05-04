@@ -94,6 +94,7 @@ ProductAttributeType:
 Product:
     socks:
         Title: Socks
+        InternalItemID: abc136
         Price: 8
         URLSegment: socks
         Parent: =>ProductCategory.apparel
@@ -105,6 +106,7 @@ Product:
             Our patented technology means quality you can trust.</p>
     hdtv: #This product has no price
         Title: 42inch 1080p LCD TV - 16:9 - HDTV
+        InternalItemID: 
         Parent: =>ProductCategory.electronics
         URLSegment: hdtv
         AllowPurchase: 1
@@ -117,6 +119,7 @@ Product:
             game. Surround sound matches that quality picture with quality sound.</p>
     beachball:
         Title: Beach Ball
+        InternalItemID: abc130
         Price: 10
         URLSegment: beach-ball
         Parent: =>ProductCategory.toys
@@ -144,6 +147,7 @@ Product:
             and more„and wirelessly pushes them to all your devices.</p>
     genericmovie:
         Title: Generic Movie
+        InternalItemID: abc137
         Parent: =>ProductCategory.drama
         Price: 23.00
         AllowPurchase: 1
@@ -153,6 +157,7 @@ Product:
             <a href="http://www.youtube.com/watch?v=AcD292xrpjY">Watch trailer</a>
     lemonchicken:
         Title: Lemon Chicken
+        InternalItemID: abc140
         Parent: =>ProductCategory.food
         Price: 16.99
         Weight: 0.250
@@ -164,40 +169,54 @@ Product:
             <p>(From frozen): Grill or saute approximately 6 minutes per side or bake 25 minutes at 400&deg;.</p>
     book:
         Title: The Lion, the Witch and the Wardrobe
+        InternalItemID: abc126
         Price: 8.99
         Parent: =>ProductCategory.books
+        Weight: 0.6
         Content: >
             <p>They open a door and enter a world.</p>
     lamp:
-        Title: Ikea Orgel Floor Lamp
+        Title: Desk Lamp
+        InternalItemID: abc125
         Price: 32.99
         Parent: =>ProductCategory.bedroom
+        Weight: 4.3
         Content: >
             <p>Product materials: Shade: Paper Tube/ Base plate: Steel, Brush finish nickel-plated, Clear lacquer</p>
     ring:
         Title: Round Diamond Solitaire Ring in 14K White Gold
+        InternalItemID: abc135
         Price: 1236.30
         Parent: =>ProductCategory.jewellery
+        Weight: 0.01
         Content: >
             <p>Say I love you with this stunning piece that will stun you if you are not careful.</p>
     kite:
         Title: Kite
+        InternalItemID: abc134
         Price: 20
+        Weight: 0.03
         Parent: =>ProductCategory.toys
     hoop:
         Title: Hula Hoop
+        InternalItemID: abc131
         Price: 4
         Parent: =>ProductCategory.toys
     paper:
         Title: Paper Roll
+        InternalItemID: abc132
         Price: 12
+        Weight: 1.4
         Parent: =>ProductCategory.stationery
     pens:
         Title: Ball Point Pens (7 pack)
+        InternalItemID: abc123
         Price: 12
+        Weight: 0.1
         Parent: =>ProductCategory.stationery
     tshirt:
         Title: T-Shirt
+        InternalItemID: abc128
         Price: 25
         Parent: =>ProductCategory.apparel
         URLSegment: t-shirt

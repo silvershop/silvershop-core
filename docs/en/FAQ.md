@@ -8,6 +8,11 @@ If you have a common question needing a common answer, hopefully you can find it
 
 Please refer to the requirements found at [ss-shop.org](http://ss-shop.org)
 
+### How to customise forms - checkout, add product, cart, etc
+
+If the form has been built well, it should have extension hooks that allow you to make
+adjustments by writing your own Extension class.
+
 ### How do I customise the country field? - change country list, remove field completely, set default
 
 see the [customising docs](Customising#CountryFeild)
