@@ -56,7 +56,8 @@ class Order extends DataObject {
 	);
 
 	public static $has_many = array(
-		'Attributes' => 'OrderAttribute',
+		'Items' => 'OrderItem',
+		'Modifiers' => 'OrderModifier',
 		'OrderStatusLogs' => 'OrderStatusLog',
 		'Payments' => 'Payment'
 	);
@@ -354,19 +355,6 @@ class Order extends DataObject {
 	// Items Management
 
 	/**
-	 * Returns the items of the order, if it hasn't been saved yet
-	 * it returns the items from session, if it has, it returns them
-	 * from the DB entry.
-	 */
-	function Items($filter = null) {
- 		if($this->ID){
- 			$extrafilter = ($filter) ? " AND $filter" : "";
- 			return DataObject::get('OrderItem', "\"OrderID\" = '$this->ID' $extrafilter");
- 		}
- 		return null;
-	}
-
-	/**
 	 * Returns the subtotal of the items for this order.
 	 */
 	function SubTotal() {
@@ -377,13 +365,6 @@ class Order extends DataObject {
 			}
 		}
 		return $result;
-	}
-
-	/**
-	 * Returns the modifiers of the order
-	 */
- 	function Modifiers() {
- 		return DataObject::get('OrderModifier', "\"OrderID\" = '$this->ID'");
 	}
 	
 	/**
@@ -468,6 +449,7 @@ class Order extends DataObject {
 			if($modifier->required() || $forcecreate){ //create any modifiers that are required for every order
 				$modifier->OrderID = $this->ID;
 				$modifier->write();
+				$this->Modifiers()->add($modifier);
 				return $modifier;	
 			}
 		}else{
@@ -637,36 +619,6 @@ class Order extends DataObject {
 
 	// Order Template and ajax Management
 
-	function TableSubTotalID() {
-		return 'Table_Order_SubTotal';
-	}
-
-	function TableTotalID() {
-		return 'Table_Order_Total';
-	}
-
-	function OrderForm_OrderForm_AmountID() {
-		return 'OrderForm_OrderForm_Amount';
-	}
-
-	function CartSubTotalID() {
-		return 'Cart_Order_SubTotal';
-	}
-
-	function CartTotalID() {
-		return 'Cart_Order_Total';
-	}
-
-	function updateForAjax(array &$js) {
-		$subTotal = DBField::create('Currency', $this->SubTotal())->Nice();
-		$total = DBField::create('Currency', $this->Total())->Nice() . ' ' . Payment::site_currency();
-		$js[] = array('id' => $this->TableSubTotalID(), 'parameter' => 'innerHTML', 'value' => $subTotal);
-		$js[] = array('id' => $this->TableTotalID(), 'parameter' => 'innerHTML', 'value' => $total);
-		$js[] = array('id' => $this->OrderForm_OrderForm_AmountID(), 'parameter' => 'innerHTML', 'value' => $total);
-		$js[] = array('id' => $this->CartSubTotalID(), 'parameter' => 'innerHTML', 'value' => $subTotal);
-		$js[] = array('id' => $this->CartTotalID(), 'parameter' => 'innerHTML', 'value' => $total);
-	}
-
 	/**
 	 * Will update payment status to "Paid if there is no outstanding amount".
 	 */
@@ -751,28 +703,11 @@ class Order extends DataObject {
 	/**
 	 * delete attributes, statuslogs, and payments
 	 */
-	 //TODO: make this optional??
 	function onBeforeDelete(){
-		if($attributes = $this->Attributes()){
-			foreach($attributes as $attribute){
-				//TODO: not working yet - Order Items are still found in DB
-				$attribute->delete();
-				$attribute->destroy();
-			}
-		}
-		if($statuslogs = $this->OrderStatusLogs()){
-			foreach($statuslogs as $log){
-				$log->delete();
-				$log->destroy();
-			}
-		}
-		if($payments = $this->Payments()){
-			foreach($payments as $payment){
-				$payment->delete();
-				$payment->destroy();
-			}
-		}
-		//TODO: delete order items & product_orderitem
+		$this->Items()->removeAll();
+		$this->Modifiers()->removeAll();
+		$this->OrderStatusLogs()->removeAll();
+		$this->Payments()->removeAll();
 		parent::onBeforeDelete();
 	}
 

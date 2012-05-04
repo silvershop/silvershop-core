@@ -18,7 +18,7 @@ Object::useCustomClass('SS_Datetime','I18nDatetime', true);
 // * * * SHOPPING CART, ORDER, MODIFIERS
 Order::set_email(null);
 Order::set_receipt_subject("Shop Sale Information #%d");
-Order::set_modifiers(array(),true);
+Order::set_modifiers(array(),true); //empty modifiers
 
 Order::set_table_overview_fields(array(
 	'ID' => 'Order No',

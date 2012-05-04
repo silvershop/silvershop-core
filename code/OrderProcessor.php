@@ -76,7 +76,13 @@ class OrderProcessor{
 		}
 		$this->order->Status = 'Unpaid'; //update status
 		//re-write all attributes and modifiers to make sure they are up-to-date before they can't be changed again
-		$attributes = $this->order->Attributes();
+		$attributes = $this->order->Items();
+		if($attributes->exists()){
+			foreach($attributes as $attribute){
+				$attribute->write();
+			}
+		}
+		$attributes = $this->order->Modifiers();
 		if($attributes->exists()){
 			foreach($attributes as $attribute){
 				$attribute->write();

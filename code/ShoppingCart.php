@@ -168,7 +168,7 @@ class ShoppingCart{
 			$item = $buyable->createItem(1,$filter);
 			$item->OrderID = $order->ID;
 			$item->write();
-			$order->Attributes()->add($item);
+			$order->Items()->add($item);
 			$item->_brandnew = true; //flag as being new
 		}
 		return $item;
