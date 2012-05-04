@@ -59,15 +59,7 @@ class CartPage_Controller extends Page_Controller{
 		// include extra js requirements for this page
 		Requirements::javascript(THIRDPARTY_DIR . '/jquery/jquery.js');
 		Requirements::javascript(SHOP_DIR.'/javascript/CheckoutPage.js');
-	}
-	
-	
-	public function ContinueLink(){
-		if($maincategory = DataObject::get_one('ProductCategory',"",true,"ParentID ASC, ID ASC")){
-			return $maincategory->Link();
-		}
-		return Director::baseURL();
-	}
+	}	
 	
 	/**
 	 * @deprecated use $this->Cart() instead
