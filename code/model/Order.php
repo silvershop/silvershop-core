@@ -691,7 +691,7 @@ class Order extends DataObject {
 	 * @return string
 	 */
 	function findShippingCountry($codeOnly = false) {
-		if(!$this->ID) {
+		if(!$this->isInDB()) {
 			$country = ShoppingCart::has_country() ? ShoppingCart::get_country() : ShopMember::find_country();
 		}
 		elseif(!$this->UseShippingAddress || !$country = $this->ShippingCountry) {

@@ -126,7 +126,7 @@ class ProductBulkLoader extends CsvBulkLoader{
 		$filename = trim(strtolower(Convert::raw2sql($val)));
 		$filenamedashes = str_replace(" ","-",$filename);
 		if($filename && $image = DataObject::get_one('Image',"LOWER(\"Filename\") LIKE '%$filename%' OR LOWER(\"Filename\") LIKE '%$filenamedashes%'")){ //ignore case
-			if($image->ID){
+			if($image->isInDB()){
 				$image->ClassName = 'Product_Image'; //must be this type of image
 				$image->write();
 				return $image;

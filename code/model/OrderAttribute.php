@@ -31,7 +31,7 @@ class OrderAttribute extends DataObject {
 	}
 
 	function isLive(){
-		return (!$this->ID || $this->Order()->IsCart());
+		return (!$this->isInDB() || $this->Order()->IsCart());
 	}
 
 	/**

@@ -124,7 +124,7 @@ class OrderForm extends Form {
 		parent::__construct($controller, $name, $fields, $actions, $requiredFields);
 
 		// 7) Member details loading
-		if($member && $member->ID)
+		if($member && $member->isInDB())
 			$this->loadDataFrom($member);
 
 		// 8) Country field value update

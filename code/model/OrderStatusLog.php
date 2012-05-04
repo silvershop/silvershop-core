@@ -55,7 +55,7 @@ class OrderStatusLog extends DataObject {
 	public static $default_sort = "\"Created\" DESC";
 
 	function onBeforeSave() {
-		if(!$this->ID) {
+		if(!$this->isInDB()) {
 			//TO DO - this does not seem to work
 			$this->AuthorID = Member::currentUser()->ID;
 		}
