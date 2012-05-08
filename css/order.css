@@ -100,6 +100,7 @@
 			}
 				table.infotable td {
 					font-size:12px;
+					vertical-align:middle;
 				}
 				table.infotable tr.summary {
 					font-weight: bold;
