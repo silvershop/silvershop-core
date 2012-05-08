@@ -48,7 +48,7 @@
 						<img src="shop/images/remove.gif" alt="x"/>
 					</a>
 				</td>
-			</tr>
+			</tr>			
 		<% end_if %><% end_control %>
 	</tbody>
 	<tfoot>
@@ -79,6 +79,11 @@
 							<% end_if %>
 						</td>
 					</tr>
+					<% if Form %>
+						<tr>
+							<td colspan="5">$Form</td><td colspan="10"></td>
+						</tr>
+					<% end_if %>
 				<% end_if %>
 			<% end_control %>
 		<% end_if %>

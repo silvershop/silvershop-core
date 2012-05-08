@@ -1,9 +1,8 @@
 <% require themedCSS(sidecart) %>
-<% if Cart %>
-	<% control Cart %>
-	<div class="sidecart">
-		<h3><% _t("HEADLINE","My Cart") %></h3>
-		<% if Items %>
+<div class="sidecart">
+	<h3><% _t("HEADLINE","My Cart") %></h3>
+	<% if Cart %>
+		<% control Cart %>
 			<p class="itemcount">There are <a href="$CartLink">$Items.Count items</a> in your cart.</p>
 			<div class="checkout">
 				<a href="$CheckoutLink">Checkout</a>
@@ -29,9 +28,8 @@
 					</a>
 				</div>
 			<% end_control %>
-		<% else %>
-			<p class="noItems"><% _t("NOITEMS","There are no items in your cart") %>.</p>
-		<% end_if %>
-	</div>
-	<% end_control %>
-<% end_if %>
+		<% end_control %>
+	<% else %>
+		<p class="noItems"><% _t("NOITEMS","There are no items in your cart") %>.</p>
+	<% end_if %>
+</div>
