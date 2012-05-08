@@ -302,6 +302,19 @@ class ShoppingCart{
 	}
 	
 	/**
+	 * @deprecated this is checkout related
+	 */
+	static function set_country($country){
+		if($order = ShoppingCart::getInstance()->current()){
+			if($order->ShippingCountry){
+				$order->ShippingCountry = $country;
+			}else{
+				$order->Country = $country;
+			}
+		}
+	}
+	
+	/**
 	 * @deprecated
 	 */
 	static function get_items($filter = null) {
