@@ -36,7 +36,7 @@ class ShopDatabaseAdmin extends Controller{
 	}
 
 	function deleteproducts($request){
-		$task = new DeleteEcommerceProductsTask();
+		$task = new DeleteProductsTask();
 		$task->run($request);
 	}
 
@@ -46,7 +46,7 @@ class ShopDatabaseAdmin extends Controller{
 
 	public function Link($action = null) {
 		$action = ($action) ? $action : "";
-		return Controller::join_links(Director::absoluteBaseURL(), 'dev/'.$this->EcommerceFolder().'/'.$action);
+		return Controller::join_links(Director::absoluteBaseURL(), 'dev/'.$this->ShopFolder().'/'.$action);
 	}
 
 }
