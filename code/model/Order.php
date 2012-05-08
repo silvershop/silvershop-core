@@ -80,6 +80,7 @@ class Order extends DataObject {
 
 	public static $singular_name = "Order";
 	public static $plural_name = "Orders";
+	static $admin_template = "Order";
 
 	/**
 	 * Statuses for orders that have been placed.
@@ -232,7 +233,7 @@ class Order extends DataObject {
 		$fields->addFieldsToTab('Root.Main', array(
 			new LiteralField("PrintInvoice",'<p class="print"><a href="OrderReport_Popup/index/'.$this->ID.'?print=1" onclick="javascript: window.open(this.href, \'print_order\', \'toolbar=0,scrollbars=1,location=1,statusbar=0,menubar=0,resizable=1,width=800,height=600,left = 50,top = 50\'); return false;">'.$printlabel.'</a></p>'),
 			new DropdownField("Status","Status", self::get_order_status_options()),
-			new LiteralField('MainDetails', $this->renderWith("Order"))
+			new LiteralField('MainDetails', $this->renderWith(self::$admin_template))
 		));
 		$payments = new TableListField(
 			"Payments", //$name

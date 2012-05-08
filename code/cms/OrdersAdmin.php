@@ -70,11 +70,9 @@ class OrdersAdmin_RecordController extends ModelAdmin_RecordController {
 		$form = parent::EditForm();
 		//remove delete action
 		$form->Actions()->removeByName('Delete');
-		
 		//add next / previous actions
 		$array = unserialize(Session::get("StoreAdminLatestSearch"));
 		if(is_array($array) && count($array) && count($array) > 1) {
-	
 			foreach($array as $key => $id) {
 				if($id == $this->currentRecord->ID) {
 					if(isset($array[$key + 1]) && $array[$key + 1]) {
@@ -91,9 +89,7 @@ class OrdersAdmin_RecordController extends ModelAdmin_RecordController {
 					}
 				}
 			}
-			
 		}
-		
 		//add recalculate action
 		$link = $this->Link('recalculate');
 		$form->Fields()->addFieldToTab("Root.AdminActions",
