@@ -4,11 +4,11 @@
  * @package shop
  * @subpackage dev
  */
-class EcommerceDevelopmentAdminDecorator extends Extension{
+class ShopDevelopmentAdminDecorator extends Extension{
 
 	function shop($request) {
 		if(Director::is_cli()) {
-			$da = Object::create('EcommerceDatabaseAdmin');
+			$da = Object::create('ShopDatabaseAdmin');
 			return $da->handleRequest($request);
 		} else {
 			$renderer = Object::create('DebugView');
@@ -16,7 +16,7 @@ class EcommerceDevelopmentAdminDecorator extends Extension{
 			$renderer->writeInfo(_t("Shop.DEVTOOLSTITLE","Shop Development Tools"), Director::absoluteBaseURL());
 			echo "<div style=\"margin: 0 2em\">";
 
-			$da = Object::create('EcommerceDatabaseAdmin');
+			$da = Object::create('ShopDatabaseAdmin');
 			return $da->handleRequest($request);
 
 			echo "</div>";

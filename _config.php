@@ -12,7 +12,7 @@ Director::addRules(50, array(
 	ShoppingCart_Controller::$url_segment . '/$Action/$ID/$OtherID' => 'ShoppingCart_Controller',
 ));
 
-Object::add_extension("DevelopmentAdmin", "EcommerceDevelopmentAdminDecorator");
+Object::add_extension("DevelopmentAdmin", "ShopDevelopmentAdminDecorator");
 DevelopmentAdmin::$allowed_actions[] = 'shop';
 Object::add_extension("Page_Controller","ViewableCart");
 Object::add_extension("ShoppingCart_Controller","ViewableCart");

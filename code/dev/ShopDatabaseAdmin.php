@@ -4,7 +4,7 @@
  * @package shop
  * @subpackage dev
  */
-class EcommerceDatabaseAdmin extends Controller{
+class ShopDatabaseAdmin extends Controller{
 
 	static $url_handlers = array();
 
@@ -40,7 +40,7 @@ class EcommerceDatabaseAdmin extends Controller{
 		$task->run($request);
 	}
 
-	function EcommerceFolder(){
+	function ShopFolder(){
 		return SHOP_DIR;
 	}
 

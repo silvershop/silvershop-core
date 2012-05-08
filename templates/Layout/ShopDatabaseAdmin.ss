@@ -4,16 +4,16 @@
 
 <h3><% _t("BUILDTASKS","Build Tasks") %></h3>
 <p>
-	<a href="{$BaseHref}CartCleanupTask"><% _t("CARTCLEANUP","Cleanup old carts") %></a> 
+	<a href="{$BaseHref}dev/tasks/CartCleanupTask"><% _t("CARTCLEANUP","Cleanup old carts") %></a> 
 	- <% _t("CARTCLEANUPDESC","Remove abandoned carts.") %>
 </p>
 
 <p>
-	<a href="{$BaseHref}dev/tasks/DeleteEcommerceOrders"><% _t("DELETEORDERS","Delete All Orders") %></a> 
+	<a href="{$BaseHref}dev/tasks/DeleteOrdersTask"><% _t("DELETEORDERS","Delete All Orders") %></a> 
 	- <% _t("DELETEORDERSDESC","Remove all orders, modifiers, and payments from the database.") %>
 </p>
 <p>
-	<a href="{$BaseHref}dev/tasks/DeleteEcommerceProducts"><% _t("DELETEPRODUCTS","Delete All Products") %></a>
+	<a href="{$BaseHref}dev/tasks/DeleteProductsTask"><% _t("DELETEPRODUCTS","Delete All Products") %></a>
 	- <% _t("DELETEPRODUCTSDESC","Remove all products from the database.") %>
 </p>
 <p>
@@ -22,4 +22,4 @@
 </p>
 
 <h3><% _t("UNITTESTS","Unit Tests") %></h3>
-<p><a href="{$BaseHref}dev/tests/module/$EcommerceFolder"><% _t("RUNALLTESTS","Run all shop unit tests") %></a></p>
+<p><a href="{$BaseHref}dev/tests/module/$ShopFolder"><% _t("RUNALLTESTS","Run all shop unit tests") %></a></p>
