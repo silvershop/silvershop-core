@@ -3,7 +3,6 @@ Development
 
 This information should be useful when developing with ecommerce.
 
-
 ## Mission
 What the module authors hope to accomplish for users, store admins, and fellow developers.
 
@@ -13,8 +12,6 @@ What the module authors hope to accomplish for users, store admins, and fellow d
 
 ### For the developer
 A well thought, clearly defined and documented API that can be used to easily extend the module.
-
-
 
 Release Process
 ---------------
@@ -56,11 +53,16 @@ Tools
 
 You can find some useful development tools at yoursite/dev/ecommerce
 
-Tasks: Automated & Manual
+Batch Tasks
 -------------------------
-There are a number of manual and automated tasks that can be set up and run. The manual tasks can be accessed from yoursite/dev/ecommerce.
+There are a number of manual and automated tasks that can be set up and run. The manual tasks can be accessed from yoursite/dev/shop.
+
+If you have a large number of dataobjects, it may pay to run these tasks from the command line, for example:
+
+    [rootdir]: sapphire/sake dev/tasks/CartCleanupTask
 
 ### CartCleanupTask
+
 This will remove old carts from the database to help keep the number of carts down. You can specify the age of carts in days to clear from (default is 90 days old). 
 
 ### DeleteEcommerceOrders
@@ -106,7 +108,6 @@ EcommerceRole
 
  - augmentEcommerceFields
  - augmentEcommerceRequiredFields
-
 
 OrderForm
 

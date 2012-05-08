@@ -10,7 +10,9 @@ First read the [silverstripe docs on this](http://doc.silverstripe.org/sapphire/
 
 Customer fields are saved to both Members and Orders.
 
-Here is an example extension:
+### Add database field(s) to the model
+
+In [mysite]/code/ExtendedCustomer.php
 
 	<?php
 	class ExtendedCustomer extends DataObjectDecorator{
@@ -29,4 +31,22 @@ To your _config.php file, add:
 
 	Object::add_extension('Member','ExtendedCustomer');
 	Object::add_extension('Order','ExtendedCustomer');
+
+### Update form(s)
+
+To let your website visitors actually enter the data, you will need to modify
+various forms.
+
+	<?php
+	class ExtendedOrderForm extends Extension{
+	
+		function updateFields($fields){
+			$fields->push(new TextField("MyExtraField","My Extra Field"));
+		}
+	
+	}
+	
+To your _config.php file, add:
+
+	Object::add_extension('OrderForm','ExtendedOrderForm');
 
