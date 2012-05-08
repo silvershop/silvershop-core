@@ -18,6 +18,8 @@ Object::add_extension("Page_Controller","ViewableCart");
 Object::add_extension("ShoppingCart_Controller","ViewableCart");
 Object::add_extension("OrderAttribute","OrderAttributeAJAX");
 Object::add_extension("Order","OrderAJAX");
+Object::add_extension("ComponentSet","OrderItemList");
+
 
 //custom classes
 Object::useCustomClass('Currency','EcommerceCurrency', true);

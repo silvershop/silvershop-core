@@ -3,7 +3,7 @@
 	<h3><% _t("HEADLINE","My Cart") %></h3>
 	<% if Cart %>
 		<% control Cart %>
-			<p class="itemcount">There are <a href="$CartLink">$Items.Count items</a> in your cart.</p>
+			<p class="itemcount">There <% if Items.Plural %>are<% else %>is<% end_if %> <a href="$CartLink">$Items.Quantity item<% if Items.Plural %>s<% end_if %></a> in your cart.</p>
 			<div class="checkout">
 				<a href="$CheckoutLink">Checkout</a>
 			</div>
