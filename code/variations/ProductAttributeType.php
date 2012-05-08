@@ -12,14 +12,13 @@ class ProductAttributeType extends DataObject{
 		'Label' => 'Varchar' //for front-end use
 	);
 
-	static $has_one = array();
-
 	static $has_many = array(
 		'Values' => 'ProductAttributeValue'
 	);
 
 	static $summary_fields = array(
-		'Name' => 'Name'
+		'Name' => 'Name',
+		'Label' => 'Label'
 	);
 
 	static $default_sort = "ID ASC";
@@ -41,14 +40,13 @@ class ProductAttributeType extends DataObject{
 
 	static function find_or_make($name){
 		$name = strtolower($name);
-		if($type = DataObject::get_one('ProductAttributeType',"LOWER(\"Name\") = '$name'"))
+		if($type = DataObject::get_one('ProductAttributeType',"LOWER(\"Name\") = '$name'")){
 			return $type;
-
+		}
 		$type = new ProductAttributeType();
 		$type->Name = $name;
 		$type->Label = $name;
 		$type->write();
-
 		return $type;
 	}
 
@@ -78,9 +76,7 @@ class ProductAttributeType extends DataObject{
 	}
 
 	function getDropDownField($emptystring = null,$values = null){
-
 		$values = ($values) ? $values : $this->Values('','Sort ASC, Value ASC');
-
 		if($values->exists()){
 			$field = new DropdownField('ProductAttributes['.$this->ID.']',$this->Name,$values->map('ID','Value'));
 			if($emptystring)
@@ -89,7 +85,16 @@ class ProductAttributeType extends DataObject{
 		}
 		return null;
 	}
-
+	
+	function onBeforeWrite(){
+		parent::onBeforeWrite();
+		if($this->Name && !$this->Label){
+			$this->Label = $this->Name;
+		}elseif($this->Label && !$this->Name){
+			$this->Name = $this->Label;
+		}
+	}
+	
 	function canDelete(){
 		//TODO: prevent deleting if has been used
 		return true;

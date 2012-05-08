@@ -15,12 +15,10 @@ class ProductVariation extends DataObject implements Buyable{
 		'InternalItemID' => 'Varchar(30)',
 		'Price' => 'Currency'
 	);
-
 	static $has_one = array(
 		'Product' => 'Product',
 		'Image' => 'Product_Image'
 	);
-
 	static $many_many = array(
 		'AttributeValues' => 'ProductAttributeValue'
 	);
@@ -40,7 +38,13 @@ class ProductVariation extends DataObject implements Buyable{
 
 	static $summary_fields = array(
 		'InternalItemID' => 'Product Code',
+		//'Product.Title' => 'Product',
+		'Title' => 'Variation',
 		'Price' => 'Price'
+	);
+	
+	static $searchable_fields = array(
+		'Product.Title'
 	);
 
 	public static $default_sort = "InternalItemID";
