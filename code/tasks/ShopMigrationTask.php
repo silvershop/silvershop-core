@@ -2,7 +2,7 @@
 /**
  * Updates database to work with latest version of the code.
  */
-class ShopMigrationTask extends BuildTask{
+class ShopMigrationTask extends MigrationTask{
 	
 	/**
 	 * Choose how many orders get processed at a time.
@@ -13,7 +13,10 @@ class ShopMigrationTask extends BuildTask{
 	protected $description = "Where dev/build is not enough, this task updates database to work with latest version of shop module.
 		You may want to run the CartCleanupTask before migrating if you want to discard past carts.";
 	
-	function run($request){
+	/**
+	 * Migrate upwards
+	 */
+	function up(){
 		$start = 0;
 		$count = 0;
 		while($batch = DataObject::get('Order',"","\"Created\" ASC","",$start.",".self::$batch_size)){
@@ -25,7 +28,8 @@ class ShopMigrationTask extends BuildTask{
 			$start += self::$batch_size;
 			echo "$count orders updated.\n<br/>";
 		};
-		$this->migratePayments();
+		
+		$this->migrateProductVariationsAttribues();
 	}
 	
 	/**
@@ -122,35 +126,13 @@ class ShopMigrationTask extends BuildTask{
 		}
 	}
 	
-	/**
-	 * Moves values in payment to correct fields.
-	 */
-	function migratePayments(){
-		
-		DB::query("
-			UPDATE \"Payment\"
-			SET \"AmountAmount\" = \"Amount\"
-			WHERE
-				\"Amount\" > 0
-				AND (
-					\"AmountAmount\" IS NULL
-					OR \"AmountAmount\" = 0
-				)
-		");
-
-		DB::query("
-			UPDATE \"Payment\"
-			SET \"AmountCurrency\" = \"Currency\"
-			WHERE
-				\"Currency\" <> ''
-				AND \"Currency\" IS NOT NULL
-				AND (
-					\"AmountCurrency\" IS NULL
-					OR \"AmountCurrency\" = ''
-				)
-		");
-
-		
+	function migrateProductVariationsAttribues(){
+		$db = DB::getConn();
+		//TODO: delete Product_VariationAttribute, if it's empty
+		if($db->hasTable("Product_VariationAttributes")){ //TODO: check if Product_VariationAttributeTypes table is empty
+			DB::query("DROP TABLE \"Product_VariationAttributeTypes\"");
+			$db->renameTable("Product_VariationAttributes","Product_VariationAttributeTypes");
+		}
 	}
 	
 	
