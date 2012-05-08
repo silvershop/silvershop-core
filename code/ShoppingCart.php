@@ -384,6 +384,19 @@ class ShoppingCart_Controller extends Controller{
 		return "";
 	}
 	
+	static function direct($status = "success"){
+		if(Director::is_ajax()){
+			return $status;
+		}
+		if(self::$direct_to_cart_page && $cartlink = CartPage::find_link()){
+			Director::redirect($cartlink);
+			return;
+		}else{
+			Director::redirectBack();
+			return;
+		}
+	}
+	
 	function init(){
 		parent::init();
 		$this->cart = ShoppingCart::getInstance();
@@ -406,19 +419,19 @@ class ShoppingCart_Controller extends Controller{
 	function add($request){
 		if($product = $this->buyableFromRequest())
 			$this->cart->add($product);
-		return $this->direct();
+		return self::direct();
 	}
 	
 	function remove($request){
 		if($product = $this->buyableFromRequest())
 			$this->cart->remove($product,$quantity = 1);
-		return $this->direct();
+		return self::direct();
 	}
 	
 	function removeall($request){
 		if($product = $this->buyableFromRequest())
 			$this->cart->remove($product);
-		return $this->direct();
+		return self::direct();
 	}
 	
 	function setquantity($request){
@@ -426,26 +439,13 @@ class ShoppingCart_Controller extends Controller{
 		$quantity = (int) $request->getVar('quantity');
 		if($product)
 			$this->cart->setQuantity($product,$quantity);
-		return $this->direct();
+		return self::direct();
 	}
 	
 	function clear($request){
 		$this->cart->clear();
-		return $this->direct();		
+		return self::direct();		
 	}
-	
-	function direct($status = "success"){
-		if(Director::is_ajax()){
-			return $status;
-		}
-		if(self::$direct_to_cart_page && $cartlink = CartPage::find_link()){
-			Director::redirect($cartlink);
-			return;
-		}else{
-			Director::redirectBack();
-			return;
-		}
-	}	
 
 	/**
 	 * Handle index requests

@@ -251,9 +251,7 @@ class ProductControllerVariationExtension extends Extension{
 		}else{
 			$form->sessionMessage("That variation is not available, sorry.","bad"); //validation fail
 		}
-		if(!Director::is_ajax()){
-			Director::redirectBack();
-		}
+		ShoppingCart_Controller::direct();
 	}
 
 	function possibleValuesForAttributeType($type){

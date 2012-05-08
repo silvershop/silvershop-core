@@ -26,7 +26,7 @@ class AddProductForm extends Form{
 		$cart = ShoppingCart::getInstance();
 		$cart->add($product,(int) $data['Quantity'],$data);
 		$form->SessionMessage($cart->getMessage(),$cart->getMessageType());
-		Director::redirectBack();
+		ShoppingCart_Controller::direct($cart->getMessageType());
 	}
 	
 }
