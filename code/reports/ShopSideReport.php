@@ -88,3 +88,27 @@ class ShopSideReport_NoImageProducts extends SS_Report {
 		);
 	}
 }
+
+class ShopSideReport_HeavyProducts extends SS_Report {
+
+	function title() {
+		return _t('ShopSideReport.HEAVY',"Heavy Products");
+	}
+	function group() {
+		return _t('ShopSideReport.ShopGROUP', "Shop");
+	}
+	function sort() {
+		return 0;
+	}
+	function sourceRecords($params = null) {
+		return DataObject::get("Product", "\"Product\".\"Weight\" > 10", "\"Weight\" ASC");
+	}
+	function columns() {
+		return array(
+				"Title" => array(
+						"title" => "Title",
+						"link" => true
+				)
+		);
+	}
+}
