@@ -5,6 +5,7 @@ The rest of the time they may log in / out and the order will remain associated 
 
 Config settings:
 
+	:::php
 	OrderForm::set_user_membership_optional(true); //allow/deny users the choice to become a member
 	OrderForm::set_force_membership(false);
 	

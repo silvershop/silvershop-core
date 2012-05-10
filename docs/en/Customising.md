@@ -5,6 +5,8 @@ Fortunately it is very easy to do so with the SilverStripe eCommerce module.
 
 There are a number of configuration options to be set in your _config.php file. See [Configuration](Configuration)
 
+Also see the list of [recipes](Recipes)
+
 ## Theming / Templates
 
 There are a number of templates you can customise to create your desired look for the eCommerce module.
@@ -55,7 +57,8 @@ The OrderForm is what you at the checkout.
 * Create a function in your extension called either: updateValidator, updateFields, or updateForm
 
 eg:
-
+	
+	:::php
 	function updateFields(&$fields){
 		$fields->insertBefore(new TextField('State'),'Country');
 	}

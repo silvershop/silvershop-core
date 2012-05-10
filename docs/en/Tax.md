@@ -6,8 +6,8 @@ To enable tax calculations, you'll need to introduce an appropriate [order modif
 
 Modifiers included with core code:
 
-	* FlatTaxModifier - addes a set percentage to all orders
-	* GlobalTaxModifier - applies different tax calculation to different regions
+ * FlatTaxModifier - addes a set percentage to all orders
+ * GlobalTaxModifier - applies different tax calculation to different regions
 
 Common requirements:
 

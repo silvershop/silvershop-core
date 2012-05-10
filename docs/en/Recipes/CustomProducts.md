@@ -16,6 +16,7 @@ product variations or shopping cart filters.
 In most cases you will need to customise or create your own order items. These record the relationship
 between a product/buyable and an order.
 
+	:::php
 	class MyOrderItem extends OrderItem{
 	
 		static $db = array(

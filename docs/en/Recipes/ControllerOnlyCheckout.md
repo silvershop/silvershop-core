@@ -4,6 +4,7 @@ You can run your site without creating actual checkout and cart pages.
 
 Add the following director rules to your _config.php file:
 
+	:::php
     Director::addRules(50, array(
         CheckoutPage_Controller::$url_segment . '/$Action/$ID/$OtherID' => 'CheckoutPage_Controller',
         CartPage_Controller::$url_segment . '/$Action/$ID/$OtherID' => 'CartPage_Controller'

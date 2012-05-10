@@ -24,6 +24,7 @@ This has been left for the store owner to collaborate with their developer.
  * [Bulk loading products from a CSV spreadsheet](BulkLoading)
 * [Payment](Payment)
 * [Development](Development) - Mission/aim, Coding style/conventions, Release process
+ * [Recipes](Recipes) - how do build in various features.
  * [Testing](Testing) - infrastructure / instructions
  * [Contribution Guidelines](Contributing)
  
