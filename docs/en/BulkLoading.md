@@ -60,9 +60,12 @@ Make sure you don't have rouge spaces in your headings.
 
 Set this if you want categories to be created if they don't exist.
 
+	:::php
 	ProductBulkLoader::set_create_new_product_groups(true);
 
 You can force every product to be in a certain category, as long as you know it's id:
 
+	:::php
 	ProductBulkLoader::set_parent_page_id(..id here...);
-	
+
+.	
