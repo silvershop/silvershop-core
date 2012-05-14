@@ -22,12 +22,11 @@ class OrderForm extends Form {
 	);
 
 	function __construct($controller, $name) {
-		// 1) Member and shipping fields
+		//Member and shipping fields
 		$member = Member::currentUser();
 		$memberFields = new CompositeField(singleton('Member')->getEcommerceFields());
 		$requiredFields = singleton('Member')->getEcommerceRequiredFields();
 		$order = ShoppingCart::current_order();		
-
 		if($order && $order->UseShippingAddress) {
 			$countryField = new DropdownField('ShippingCountry',  _t('OrderForm.Country','Country'), Geoip::getCountryDropDown(), ShopMember::find_country());
 			$shippingFields = new CompositeField(
@@ -57,25 +56,21 @@ class OrderForm extends Form {
 			$shippingFields->setButtonContent(_t('OrderForm.useDifferentShippingAddress', 'Use Different Shipping Address'));
 			$shippingFields->useButtonTag = true;
 		}
-
 		if($countryField){
 			$countryField->addExtraClass('ajaxCountryField');
 			$setCountryLinkID = $countryField->id() . '_SetCountryLink';
 			$setContryLink = ShoppingCart::set_country_link();
 			$memberFields->push(new HiddenField($setCountryLinkID, '', $setContryLink));
 		}
-
 		$leftFields = new CompositeField($memberFields, $shippingFields);
 		$leftFields->setID('LeftOrder');
 		$rightFields = new CompositeField();
 		$rightFields->setID('RightOrder');
-
 		if(!$member) {
 			$rightFields->push(new HeaderField(_t('OrderForm.MembershipDetails','Membership Details'), 3));
 			$rightFields->push(new LiteralField('MemberInfo', '<p class="message warning">'._t('OrderForm.MemberInfo','If you are already a member please')." <a href=\"Security/login?BackURL=" . CheckoutPage::find_link(true) . "/\">"._t('OrderForm.LogIn','log in').'</a>.</p>'));
 			$rightFields->push(new LiteralField('AccountInfo', '<p>'._t('OrderForm.AccountInfo','Please choose a password, so you can login and check your order history in the future').'</p><br/>'));
 			$rightFields->push(new FieldGroup($pwf = new ConfirmedPasswordField('Password', _t('OrderForm.Password','Password'))));
-
 			//if user doesn't fill out password, we assume they don't want to become a member
 			//TODO: allow different ways of specifying that you want to become a member
 			if(self::$user_membership_optional){ $pwf->setCanBeEmpty(true);	}
@@ -85,59 +80,48 @@ class OrderForm extends Form {
 				$requiredFields[] = 'Password[_ConfirmPassword]';
 				//TODO: allow extending this to provide other ways of indicating that you want to become a member
 			}
-
 		}else{
 			$rightFields->push(new LiteralField('MemberInfo', '<p class="message good">'.sprintf(_t('OrderForm.LoggedInAs','You are logged in as %s.'),$member->getName())." <a href=\"Security/logout?BackURL=" . CheckoutPage::find_link(true) . "/\">"._t('OrderForm.LogOut','log out').'</a>.</p>'));
 		}
-
-		// 2) Payment fields
+		//Payment fields
 		$currentOrder = ShoppingCart::current_order();
 		$totalobj = DBField::create('Currency',$currentOrder->Total()); //should instead be $totalobj = $currentOrder->dbObject('Total');
-
 		$paymentFields = Payment::combined_form_fields($totalobj->Nice());
-		foreach($paymentFields as $field)
+		foreach($paymentFields as $field){
 			$rightFields->push($field);
-
-		if($paymentRequiredFields = Payment::combined_form_requirements())
+		}
+		if($paymentRequiredFields = Payment::combined_form_requirements()){
 			$requiredFields = array_merge($requiredFields, $paymentRequiredFields);
-
-		// 3) Put all the fields in one FieldSet
+		}
+		//Put all the fields in one FieldSet
 		$fields = new FieldSet($leftFields, $rightFields);
-
-		// 4) Terms and conditions field
-		// If a terms and conditions page exists, we need to create a field to confirm the user has read it
+		//Terms and conditions field
+		//If a terms and conditions page exists, we need to create a field to confirm the user has read it
 		if($controller->TermsPageID && $termsPage = $controller->TermsPage()) {
 			$bottomFields = new CompositeField(new CheckboxField('ReadTermsAndConditions', sprintf(_t('OrderForm.TERMSANDCONDITIONS',"I agree to the terms and conditions stated on the <a href=\"%s\" title=\"Read the shop terms and conditions for this site\">terms and conditions</a> page"),$termsPage->Link())));
 			$bottomFields->setID('BottomOrder');
 			$fields->push($bottomFields);
 			$requiredFields[] = 'ReadTermsAndConditions'; //TODO: this doesn't work for check-boxes
 		}
-
-		// 5) Actions and required fields creation
+		//Actions and required fields creation
 		$actions = new FieldSet(new FormAction('processOrder', _t('OrderForm.processOrder','Place order and make payment')));
 		$requiredFields = new CustomRequiredFields($requiredFields);
 		$this->extend('updateValidator',$requiredFields);
-
 		$this->extend('updateFields',$fields);
-
-		// 6) Form construction
 		parent::__construct($controller, $name, $fields, $actions, $requiredFields);
-
-		// 7) Member details loading
-		if($member && $member->isInDB())
+		//Member details loading
+		if($member && $member->isInDB()){
 			$this->loadDataFrom($member);
-
-		// 8) Country field value update
+		}
+		//Country field value update
 		if($countryField){
 			$currentOrder = ShoppingCart::current_order();
 			$currentOrderCountry = $currentOrder->findShippingCountry(true);
 			$countryField->setValue($currentOrderCountry);
 		}
-
 		//allow updating via decoration
 		$this->extend('updateForm',$this);
 	}
-
 
 	function addValidAction($action){
 		$this->validactions[] = $action;
@@ -161,11 +145,38 @@ class OrderForm extends Form {
 	function validate(){
 		//always validate on order processing
 	 	if(isset($_POST['action_processOrder'])){
-	 		//TODO: check items are in cart, and each item can be purchased
+	 		$data = $this->getData();
+	 		//check items are in cart, and each item can be purchased
+	 		$order = ShoppingCart::singleton()->current();
+	 		if(!$order){
+	 			return false;
+	 		}
+	 		$items = $order->Items();
+	 		if($items->exists()){
+		 		foreach($items as $item){
+		 			if(!$item->Buyable()->canPurchase()){
+		 				$this->sessionMessage(sprintf(_t("OrderForm.PRODUCTCANTPURCHASE","%s cannot be purchased"),$item->Title), "bad");
+		 				return false;
+		 			}		 				
+		 		}
+	 		}else{
+	 			$this->sessionMessage(_t("OrderForm.EMPTYCART","Your cart is empty"), $type);
+	 			return false;
+	 		}
 			//TODO: Check if prices have changed
 	 		$valid = parent::validate();
 	 		//TODO: check that member details are not already taken, if entered
-			//Chekc payment method is valid
+			//Check payment method is valid
+			$supportedpayments = Payment::get_supported_methods();
+			if(isset($data['PaymentMethod']) && !isset($supportedpayments[$data['PaymentMethod']])){
+				$this->sessionMessage(_t("OrderForm.PAYMENTNOTSUPPORTED","Payment method not supported"), "bad");
+				return false;
+			}
+	 		//check terms have been accepted
+	 		if($this->Controller()->TermsPage() && (!isset($data['ReadTermsAndConditions']) || !(bool)$data['ReadTermsAndConditions'])){
+	 			$this->sessionMessage(_t("OrderForm.MUSTREADTERMS","You must agree to terms and conditions"), "bad");
+	 			return false;
+	 		}
 	 		return $valid;
 	 	}
 	 	//Override form validation to make different shipping address button, and other form actions work
