@@ -40,3 +40,6 @@ Every OrderItem must specify a 'Buyable' has_one relationship, this can be of
 
 By default Product implements Buyable. If you are not worried about custom products, you can simply
 treat Buyables as Products.
+
+You can see an example in the shop/tests/CustomProductTest.php file. You can also observe
+shop/code/variations/ProductVariation.php as a secondary example.

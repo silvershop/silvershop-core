@@ -55,3 +55,6 @@ To your _config.php file, add:
 
 	Object::add_extension('OrderForm','ExtendedOrderForm');
 
+<div class="warning" markdown="1">
+Note: remember to flush the class manifest by adding ?flush=1 to your site url.
+</div>

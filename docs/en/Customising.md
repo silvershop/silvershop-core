@@ -74,4 +74,8 @@ If Order does not contain 'State', you'll need to extend Order to add it to the 
 ...
 
 
+### Renaming the cart
+
+You might want to refer to the cart as something else like: 'trolley' or 'basket'
+
 Also see [Development](Development).
