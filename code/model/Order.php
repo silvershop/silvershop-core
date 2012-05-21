@@ -713,17 +713,32 @@ class Order extends DataObject {
 	}
 
 	function debug(){
-		$val = "<h3>Database record: $this->class</h3>\n<ul>\n";
+		$val = "<div class='order'><h1>$this->class</h1>\n<ul>\n";
 		if($this->record) foreach($this->record as $fieldName => $fieldVal) {
 			$val .= "\t<li>$fieldName: " . Debug::text($fieldVal) . "</li>\n";
 		}
 		$val .= "</ul>\n";
-		$val .= "<h4>Items</h4>";
-		if($this->Items())
+		
+		$val .= "<div class='items'><h2>Items</h2>";
+		if($items = $this->Items()){
 			$val .= $this->Items()->debug();
-		$val .= "<h4>Modifiers</h4>";
-		if($this->Modifiers())
-			$val .= $this->Modifiers()->debug();
+			$val .= "<ul>";
+			foreach($items as $item) { //extra debug info for items, since ComponentSet doesn't provdide this
+				$val .= "<li style=\"list-style-type: disc; margin-left: 20px\">" . Debug::text($item) . "</li>";
+			}
+			$val .= "</ul>";
+		}
+		$val .= "</div><div class='modifiers'><h2>Modifiers</h2>";
+		if($modifiers = $this->Modifiers()){
+			$val .= $modifiers->debug();
+			$val .= "<ul>";
+			foreach($modifiers as $item) { //extra debug info for items, since ComponentSet doesn't provdide this
+				$val .= "<li style=\"list-style-type: disc; margin-left: 20px\">" . Debug::text($item) . "</li>";
+			}
+			$val .= "</ul>";
+		}
+		$val .= "</div></div>";
+			
 		return $val;
 	}
 	

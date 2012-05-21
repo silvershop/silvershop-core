@@ -486,7 +486,11 @@ class ShoppingCart_Controller extends Controller{
 	*/
 	function debug() {
 		if(Director::isDev() || Permission::check("ADMIN")){
-			Debug::show(ShoppingCart::getInstance()->current());
+			//TODO: allow specifying a particular id to debug
+			Requirements::css(SHOP_DIR."/css/cartdebug.css");
+			$order = ShoppingCart::getInstance()->current();
+			$content = ($order) ? Debug::text($order) : "Cart has not been created yet. Add a product.";
+			return array('Content' => $content);
 		}
 	}
 	
