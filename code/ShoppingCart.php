@@ -377,6 +377,7 @@ class ShoppingCart_Controller extends Controller{
 	 * Helper for creating a url
 	 */
 	protected static function build_url($action, $buyable, $params = array()){
+		$params[SecurityToken::inst()->getName()] = SecurityToken::inst()->getValue();		
 		return self::$url_segment.'/'.$action.'/'.$buyable->class."/".$buyable->ID.self::params_to_get_string($params);
 	}
 	
@@ -416,6 +417,9 @@ class ShoppingCart_Controller extends Controller{
 	
 	protected function buyableFromRequest(){
 		$request = $this->getRequest();
+		if(!SecurityToken::inst()->checkRequest($request)){
+			return $this->httpError(400, _t("ShoppingCart.CSRF", "Invalid security token, possible CSRF attack."));
+		}
 		if($id = (int) $request->param('ID')){
 			$buyableclass = "Product";
 			if($class = $request->param('Buyable')){
