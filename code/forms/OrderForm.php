@@ -173,7 +173,8 @@ class OrderForm extends Form {
 				return false;
 			}
 	 		//check terms have been accepted
-	 		if($this->Controller()->TermsPage() && (!isset($data['ReadTermsAndConditions']) || !(bool)$data['ReadTermsAndConditions'])){
+			$controller = $this->Controller();
+	 		if($controller->TermsPageID && $controller->TermsPage() && (!isset($data['ReadTermsAndConditions']) || !(bool)$data['ReadTermsAndConditions'])){
 	 			$this->sessionMessage(_t("OrderForm.MUSTREADTERMS","You must agree to terms and conditions"), "bad");
 	 			return false;
 	 		}
