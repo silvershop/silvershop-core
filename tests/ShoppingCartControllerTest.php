@@ -55,7 +55,7 @@ class ShoppingCartControllerTest extends FunctionalTest {
 			$this->assertEquals($mp3playeritem->Quantity, 2, 'We have 2 of this product in the cart.');
 
 			/* set item quantiy */
-			$this->get(ShoppingCart_Controller::set_quantity_item_link($this->mp3player)."?quantity=5"); //add item via url
+			$this->get(ShoppingCart_Controller::set_quantity_item_link($this->mp3player,array('quantity' => 5))); //add item via url
 			$items = ShoppingCart::get_items();
 			$mp3playeritem = $items->find('ProductID',$this->mp3player->ID);
 			$this->assertEquals($mp3playeritem->Quantity, 5, 'We have 5 of this product in the cart.');
@@ -75,7 +75,7 @@ class ShoppingCartControllerTest extends FunctionalTest {
 	function testRemoveFromCart(){
 
 		/* add items via url */
-		$this->get(ShoppingCart_Controller::set_quantity_item_link($this->mp3player)."?quantity=5");
+		$this->get(ShoppingCart_Controller::set_quantity_item_link($this->mp3player,array('quantity' => 5)));
 		$this->assertTrue($this->cart->get($this->mp3player) !== false,"mp3player item now exists in cart");
 		$this->get(ShoppingCart_Controller::add_item_link($this->socks));
 		$this->assertTrue($this->cart->get($this->socks) !== false,"socks item now exists in cart");

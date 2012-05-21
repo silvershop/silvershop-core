@@ -9,7 +9,7 @@ if(!class_exists('Payment')) user_error("You need to also install the Payment mo
 DataObject::add_extension('Payment', 'ShopPayment');
 //create controller for shopping cart
 Director::addRules(50, array(
-	ShoppingCart_Controller::$url_segment . '/$Action/$ID/$OtherID' => 'ShoppingCart_Controller',
+	ShoppingCart_Controller::$url_segment . '/$Action/$Buyable/$ID' => 'ShoppingCart_Controller',
 ));
 
 Object::add_extension("DevelopmentAdmin", "ShopDevelopmentAdminDecorator");

@@ -73,10 +73,45 @@ class OrderItem extends OrderAttribute {
 	function UnitPrice() {
 		user_error("OrderItem::UnitPrice() called. Please implement UnitPrice() on $this->class", E_USER_ERROR);
 	}
-	
-	
+
 	function QuantityField(){
 		return new EcomQuantityField($this);
+	}
+	
+	function addLink() {
+		return ShoppingCart_Controller::add_item_link($this->Product(),$this->uniquedata());
+	}
+	
+	function removeLink() {
+		return ShoppingCart_Controller::remove_item_link($this->Product(),$this->uniquedata());
+	}
+	
+	function removeallLink() {
+		return ShoppingCart_Controller::remove_all_item_link($this->Product(),$this->uniquedata());
+	}
+	
+	function setquantityLink() {
+		return ShoppingCart_Controller::set_quantity_item_link($this->Product(),$this->uniquedata());
+	}
+	
+	/**
+	 * Intersects this item's required_fields with the data record.
+	 * This is used for uniquely adding items to the cart. 
+	 */
+	function uniquedata(){
+		$required = $this->stat('required_fields'); //TODO: also combine with all ancestors of this->class
+		$data = $this->record;
+		$unique = array();
+		//reduce record to only required fields
+		if($required){
+			foreach($required as $field){
+				if($this->has_one($field)){
+					$field = $field."ID"; //add ID to hasones
+				}
+				$unique[$field] = $this->$field;
+			}
+		}
+		return $unique;
 	}
 	
 	function Buyable(){

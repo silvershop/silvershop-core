@@ -62,7 +62,6 @@ class MatchObjectFilter{
 		$db = $singleton->db();
 		$allowed = array_merge($db,$hasones); //fields that can be used
 		$fields = array_flip(array_intersect(array_keys($allowed),$this->required));
-		//TODO: warn against required fields that are not allowed?
 		
 		//add 'ID' to has one relationship fields
 		foreach($hasones as $key => $value){

@@ -361,24 +361,23 @@ class ShoppingCart_Controller extends Controller{
 	}
 	
 	static function add_item_link(Buyable $buyable, $parameters = array()) {
-		if($buyable->class != "Product")
-			$parameters['buyable'] = $buyable->class;
-		return self::$url_segment.'/add/'.$buyable->ID.self::params_to_get_string($parameters);
+		return self::build_url("add", $buyable,$parameters);
 	}
 	static function remove_item_link(Buyable $buyable, $parameters = array()) {
-		if($buyable->class != "Product")
-			$parameters['buyable'] = $buyable->class;
-		return self::$url_segment.'/remove/'.$buyable->ID.self::params_to_get_string($parameters);
+		return self::build_url("remove", $buyable,$parameters);
 	}
 	static function remove_all_item_link(Buyable $buyable, $parameters = array()) {
-		if($buyable->class != "Product")
-			$parameters['buyable'] = $buyable->class;
-		return self::$url_segment.'/removeall/'.$buyable->ID.self::params_to_get_string($parameters);
+		return self::build_url("removeall", $buyable,$parameters);
 	}
 	static function set_quantity_item_link(Buyable $buyable, $parameters = array()) {
-		if($buyable->class != "Product")
-			$parameters['buyable'] = $buyable->class;
-		return self::$url_segment.'/setquantity/'.$buyable->ID.self::params_to_get_string($parameters);
+		return self::build_url("setquantity", $buyable, $parameters);
+	}
+	
+	/**
+	 * Helper for creating a url
+	 */
+	protected static function build_url($action, $buyable, $params = array()){
+		return self::$url_segment.'/'.$action.'/'.$buyable->class."/".$buyable->ID.self::params_to_get_string($params);
 	}
 	
 	/**
@@ -419,31 +418,36 @@ class ShoppingCart_Controller extends Controller{
 		$request = $this->getRequest();
 		if($id = (int) $request->param('ID')){
 			$buyableclass = "Product";
-			if($class = $request->getVar("buyable")){
+			if($class = $request->param('Buyable')){
 				$buyableclass = Convert::raw2sql($class);
 			}
-			if($buyable = DataObject::get_by_id($buyableclass,$id)){
-				return $buyable;
+			if(ClassInfo::exists($buyableclass) && $buyable = DataObject::get_by_id($buyableclass,$id)){
+				if($buyable instanceof Buyable){
+					return $buyable;
+				}
 			}
 		}
 		return null;
 	}
 	
 	function add($request){
-		if($product = $this->buyableFromRequest())
-			$this->cart->add($product);
+		if($product = $this->buyableFromRequest()){
+			$quantity = (int) $request->getVar('quantity');
+			if(!$quantity) $quantity = 1;
+			$this->cart->add($product,$quantity,$request->getVars());
+		}
 		return self::direct();
 	}
 	
 	function remove($request){
 		if($product = $this->buyableFromRequest())
-			$this->cart->remove($product,$quantity = 1);
+			$this->cart->remove($product,$quantity = 1,$request->getVars());
 		return self::direct();
 	}
 	
 	function removeall($request){
 		if($product = $this->buyableFromRequest())
-			$this->cart->remove($product);
+			$this->cart->remove($product,null,$request->getVars());
 		return self::direct();
 	}
 	
@@ -451,7 +455,7 @@ class ShoppingCart_Controller extends Controller{
 		$product = $this->buyableFromRequest();
 		$quantity = (int) $request->getVar('quantity');
 		if($product)
-			$this->cart->setQuantity($product,$quantity);
+			$this->cart->setQuantity($product,$quantity,$request->getVars());
 		return self::direct();
 	}
 	

@@ -361,28 +361,6 @@ class Product_OrderItem extends OrderItem {
 			return $product->Link();
 		}
 	}
-
-	function addLink() {
-		return ShoppingCart_Controller::add_item_link($this->Product(),$this->linkParameters());
-	}
-
-	function removeLink() {
-		return ShoppingCart_Controller::remove_item_link($this->Product(),$this->linkParameters());
-	}
-
-	function removeallLink() {
-		return ShoppingCart_Controller::remove_all_item_link($this->Product(),$this->linkParameters());
-	}
-
-	function setquantityLink() {
-		return ShoppingCart_Controller::set_quantity_item_link($this->Product(),$this->linkParameters());
-	}
-
-	function linkParameters(){
-		$array = array();
-		$this->extend('updateLinkParameters',$array);
-		return $array;
-	}
 	
 	/**
 	 * @deprecated - use TableTitle instead

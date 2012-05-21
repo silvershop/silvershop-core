@@ -14,7 +14,6 @@ class EcomQuantityField extends ViewableData{
 	protected $buyable;
 	
 	function __construct($object, $parameters = null){
-		
 		if($object instanceof Buyable){
 			$this->item = ShoppingCart::singleton()->get($object,$parameters);
 			 //provide a 0-quantity facade item if there is no such item in cart
@@ -69,7 +68,7 @@ class EcomQuantityField extends ViewableData{
 	 * Used for storing the quantity update link for ajax use.
 	 */
 	function AJAXLinkHiddenField(){
-		if($quantitylink = ShoppingCart_Controller::set_quantity_item_link($this->buyable,$this->parameters)){
+		if($quantitylink = $this->item->setquantityLink()){
 			$attributes = array(
 				'type' => 'hidden',
 				'class' => 'ajaxQuantityField_qtylink',
@@ -82,11 +81,11 @@ class EcomQuantityField extends ViewableData{
 	}
 	
 	function IncrementLink(){
-		return Convert::raw2att(ShoppingCart_Controller::add_item_link($this->buyable,$this->parameters));
+		return $this->item->addLink();
 	}
 	
 	function DecrementLink(){
-		return Convert::raw2att(ShoppingCart_Controller::remove_item_link($this->buyable,$this->parameters));
+		return $this->item->removeLink();
 	}
 	
 	function forTemplate(){
