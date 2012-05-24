@@ -25,6 +25,14 @@ Things you should know about modifiers:
  * Modifiers can be updated at any point before an order is placed. After that, their values are permanently persisted to the database.
  * Modifier values are recalculated whenever the cart contents are changed, or 
 
+
+## Shipping & Tax Modifiers
+
+ * SimpleShippingModifier -Allows you to choose different flat rates for different countries.
+ * WeightShippingModifier - Requires entering a weight for each product.
+ * FlatTaxModifier
+ * TaxModifier
+
 ## How to add a modifier type
 
 Use Order::set_modifiers(array("MyModifierOne", "MyModifierTwo")); in your _config file to register new modifiers.

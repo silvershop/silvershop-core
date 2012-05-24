@@ -1,5 +1,10 @@
 # Setting up Shop
 
+<div class="bad" markdown="1">
+The documentation for this topic is incomplete. Please comment below to indicate you need it.
+</div>
+
+
 This tutorial explains start-to-finish how to set up an online shop with the SilverStripe shop module.
 If you are upgrading your shop, see [Upgrading](Upgrading).
 
@@ -39,9 +44,12 @@ Some
 Because carts are stored in the database, you will probably want to automatically or manually clear out old ones.
 The best way to do this is via the provided 'Delete Old Carts' / CartCleanup Task.
 
-To run manually, in your browser visit: [yoursiteurl]/dev/tasks/CartCleanupTask
+To run manually, in your browser visit:
+
+	[yoursiteurl.dom]/dev/tasks/CartCleanupTask
 
 To run automatically, trigger the following [sake script](http://doc.silverstripe.org/sapphire/en/topics/commandline) to run periodically on your sever:
-[yoursitepath]/sapphire/sake dev/tasks/CartCleanupTask
+
+	[yoursitepath]/sapphire/sake dev/tasks/CartCleanupTask
 
 If you add '?type=sql' to the end of the url, the deletion will use direct SQL satements, which is faster, but less secure.

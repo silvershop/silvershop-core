@@ -2,8 +2,8 @@
 
 Assuming you have a [SilverStripe 2.4 installation](http://doc.silverstripe.org/sapphire/en/2.4/installation/) set up already:
 
- * Put a copy of the eCommerce code into your site directory. The directory must be called 'ecommerce' for some links to work properly.
- * Also get a copy of the [http://silverstripe.org/payment-module/ Payment module], this is a requirement of eCommerce. Make sure you get the right version of the Payment Module - currently this is /branches/0.3
+ * Put a copy of the shop code into your site directory. The directory must be called 'shop' for some links to work properly.
+ * Also get a copy of the [http://silverstripe.org/payment-module/ Payment module], this is a requirement of shop. Make sure you get the right version of the Payment Module - currently this is /branches/0.3
  * Run mysite/db/build?flush=1
 
 ## Configuration Options
@@ -12,13 +12,12 @@ The example_config.php file gives an exaustive list of the possible configuratio
 
 ## Testing / Development Environment
 
-Please note the tools accessabile via [yoursite]/dev/ecommerce.
+Please note the tools accessabile via [yoursite]/dev/shop.
 
 ### Debugging
 
 If you are wanting to use a debugger tool, you'll probably need to make sure you have an index.php file, which can be found in the
 SilverStripe installer. Point your debugger to use index.php, as it likley wont be able to handle using htaccess configurations.
-
 
 ### EMails
 

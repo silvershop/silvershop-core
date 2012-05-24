@@ -4,7 +4,7 @@ If you have a common question needing a common answer, hopefully you can find it
 
 *Also see the user documentation FAQ.*
 
-### Which version of Silverstripe / eCommerce / payment should I use?
+### Which version of Silverstripe / shop / payment should I use?
 
 Please refer to the requirements found at [ss-shop.org](http://ss-shop.org)
 

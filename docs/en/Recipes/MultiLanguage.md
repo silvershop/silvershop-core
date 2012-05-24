@@ -1,4 +1,4 @@
-<div class="info" markdown='1'>
+<div class="bad" markdown="1">
 This feature is currently not working / complete.
 See the [issue on github](https://github.com/burnbright/silverstripe-shop/issues/2).
 </div>

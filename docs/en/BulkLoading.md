@@ -16,8 +16,8 @@ help you identify the possible fields to import to.
 
 You are not required to fill out all fields for each product row.
 
-You can find a test spreadsheet in ecommerce/tests/test_products.csv , which was exported from 
-ecommerce/tests/test_products.xls.
+You can find a test spreadsheet in shop/tests/test_products.csv , which was exported from 
+shop/tests/test_products.xls.
 
 ## Assigning products to Categories
 

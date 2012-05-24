@@ -8,12 +8,7 @@ The payment code is now [hosted on github](https://github.com/silverstripe-labs/
 
 ## Available payment types
 
- * Cheque - included with Payment module.
- * [Paypal (Express Checkout)](http://code.google.com/p/silverstripe-ecommerce/downloads/detail?name=payment_paypal_1.1.zip)
- * [PaymentExpress(DPS) - pxpay](https://silverstripe-ecommerce.googlecode.com/svn/modules/payment_dps/trunk)
- * [ePay.dk](https://silverstripe-ecommerce.googlecode.com/svn/modules/payment_epaydk/trunk)
- * [SecurePayTek](https://silverstripe-ecommerce.googlecode.com/svn/modules/payment_NZ_gateways/trunk)
- * [Paystation](https://silverstripe-ecommerce.googlecode.com/svn/modules/payment_NZ_gateways/trunk)
+See [payment options](https://github.com/burnbright/silverstripe-shop/wiki/Payment-Options)
  
 ## Creating your own payment type
 
