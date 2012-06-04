@@ -4,7 +4,7 @@
  * @package shop
  * @subpackage dev
  */
-class ShopDatabaseAdmin extends Controller{
+class ShopDevelopmentAdmin extends Controller{
 
 	static $url_handlers = array();
 
@@ -33,6 +33,12 @@ class ShopDatabaseAdmin extends Controller{
 				"This page is secured and you need administrator rights to access it. " .
 				"Enter your credentials below and we will send you right along.");
 		}
+		
+		//render the debug view
+		$renderer = Object::create('DebugView');
+		$renderer->writeHeader();
+		$renderer->writeInfo(_t("Shop.DEVTOOLSTITLE","Shop Development Tools"), Director::absoluteBaseURL());
+		
 	}
 
 	function deleteproducts($request){
