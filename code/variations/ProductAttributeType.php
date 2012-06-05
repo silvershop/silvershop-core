@@ -36,6 +36,7 @@ class ProductAttributeType extends DataObject{
 		);
 		
 		$valuesTable = new TableField("Values", "ProductAttributeValue",$fieldList,$fieldTypes);
+		// Need this or else the table shows all value objects
 		$valuesTable->setCustomSourceItems($this->Values());
 		$fields->addFieldToTab("Root.Values", $valuesTable);
 		
