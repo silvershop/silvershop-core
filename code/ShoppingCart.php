@@ -65,7 +65,6 @@ class ShoppingCart{
 		}
 		$order->write();
 		Session::set(self::$cartid_session_name,$order->ID);
-		$order->write();
 		return $this->order = $order;
 	}
 	
@@ -88,7 +87,7 @@ class ShoppingCart{
 			return false;
 		}
 		if(!$item->_brandnew){
-			$item->Quantity += $quantity; //TODO: only increment if it is not a new item
+			$item->Quantity += $quantity;
 		}else{
 			$item->Quantity = $quantity;
 		}
@@ -160,7 +159,7 @@ class ShoppingCart{
 		}
 		$item = $this->get($buyable,$filter);
 		if(!$item){
-			if(!$buyable->canPurchase()){
+			if(!$buyable->canPurchase(Member::currentUser())){
 				$this->message(sprintf(_t("ShoppingCart.CANNOTPURCHASE","This %s cannot be purchased."),strtolower($buyable->i18n_singular_name())),'bad');
 				//TODO: get more specific message
 				return false;
@@ -333,9 +332,6 @@ class ShoppingCart{
 
 /**
  * Manipulate the cart via urls.
- * 
- * @TODO handle filter stuff
- * @TODO introduce security token
  */
 class ShoppingCart_Controller extends Controller{
 	
@@ -358,6 +354,10 @@ class ShoppingCart_Controller extends Controller{
 	
 	static function set_direct_to_cart($direct = true){
 		self::$direct_to_cart_page = $direct;
+	}
+	
+	static function get_direct_to_cart(){
+		return self::$direct_to_cart_page;
 	}
 	
 	static function add_item_link(Buyable $buyable, $parameters = array()) {
