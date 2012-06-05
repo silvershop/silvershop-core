@@ -34,7 +34,10 @@ class ProductAttributeType extends DataObject{
 			'Value' => 'TextField',
 			'Sort' => 'TextField'
 		);
-		$fields->addFieldToTab("Root.Values", new TableField("Values", "ProductAttributeValue",$fieldList,$fieldTypes));
+		$valuesTable = new TableField("Values", "ProductAttributeValue",$fieldList,$fieldTypes);
+		$valuesTable->setCustomSourceItems($this->Values());
+		$fields->addFieldToTab("Root.Values", $valuesTable);
+		
 		return $fields;
 	}
 
