@@ -271,6 +271,10 @@ class Product_Controller extends Page_Controller {
 
 	static $allowed_actions = array();
 	
+	function AddProductForm(){
+		return new AddProductForm($this,$this->dataRecord);
+	}
+	
 }
 
 class Product_Image extends Image {
