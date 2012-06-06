@@ -37,6 +37,9 @@ Things you should know about modifiers:
 
 Use Order::set_modifiers(array("MyModifierOne", "MyModifierTwo")); in your _config file to register new modifiers.
 
+Note that you may need to clear the current order to see updates to modifiers. You can do this by visiting
+mysite.com/shoppingcart/clear
+
 ## Developing New Modifiers
 
 The best way to write a modifier is to copy the modifier class itself and 
