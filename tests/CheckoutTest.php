@@ -4,8 +4,6 @@
  * 
  * @package shop
  * @subpackage tests
- * 
- * @todo check session retrieval of orders
  */
 class CheckoutTest extends SapphireTest {
 
@@ -91,12 +89,23 @@ class CheckoutTest extends SapphireTest {
 		$this->assertEquals($order->FirstName,'James','order first name');
 		$this->assertEquals($order->Surname,'Brown','order surname');
 		$this->assertEquals($order->Email,'james@jamesbrown.net.xx','order email');
-		$this->assertEquals($order->Address,'23 Small Street','order address');
-		$this->assertEquals($order->AddressLine2,'North Beach','order address2');
-		$this->assertEquals($order->City,'Springfield','order city');
-		$this->assertEquals($order->PostalCode,'1234567','order postcode');
-		$this->assertEquals($order->Country,'NZ','order country');
+		
+		$shippingaddress = $order->ShippingAddress();
+		
+		$this->assertEquals($shippingaddress->Address,'23 Small Street','order address');
+		$this->assertEquals($shippingaddress->AddressLine2,'North Beach','order address2');
+		$this->assertEquals($shippingaddress->City,'Springfield','order city');
+		$this->assertEquals($shippingaddress->PostalCode,'1234567','order postcode');
+		$this->assertEquals($shippingaddress->Country,'NZ','order country');
 	
+		$billingaddress = $order->BillingAddress();
+		
+		$this->assertEquals($billingaddress->Address,'23 Small Street','order address');
+		$this->assertEquals($billingaddress->AddressLine2,'North Beach','order address2');
+		$this->assertEquals($billingaddress->City,'Springfield','order city');
+		$this->assertEquals($billingaddress->PostalCode,'1234567','order postcode');
+		$this->assertEquals($billingaddress->Country,'NZ','order country');
+		
 		/* check membership details */
 		
 		$this->assertNotNull($order->MemberID,'member exists now');
@@ -105,12 +114,6 @@ class CheckoutTest extends SapphireTest {
 		$this->assertEquals($order->Member()->Surname,'Brown','surname matches');
 		$this->assertEquals($order->Member()->Email,'james@jamesbrown.net.xx','email matches');
 		//$this->assertEquals($order->Member()->Password, Security::encrypt_password('jbrown'),'password matches'); //not finished...need to find out how to encrypt the same
-	
-		//TODO: test redirected to the right place?
-		//TODO: check items match
-		//$this->assertEmailSent("james@jamesbrown.net.xx","test@myshop.com","Shop Sale Information #".$order->ID);
-		//TODO: check cart is now empty
-		//$this->assertFalse($this->cart->current(),'cart has been cleared');
 	
 		$order->Member()->logOut();
 		$this->cart->clear(); //cleanup
@@ -138,21 +141,23 @@ class CheckoutTest extends SapphireTest {
 			$joemember
 		),"Place order");
 	
-		//TODO: test that the form is pre-populated with the member's details
-		//TODO: what happens if member enters different email? / name?
-	
 		$order = DataObject::get_by_id('Order',$cart->ID);
 		$this->assertNotNull($order,'Order exists');
 		if($order){
+			
 			$this->assertEquals($order->Status,'Unpaid','status is now "unpaid"');
 			$this->assertEquals($order->FirstName,'Joseph','order first name');
 			$this->assertEquals($order->Surname,'Blog','order surname');
 			$this->assertEquals($order->Email,'joe@blog.net.abz','order email');
-			$this->assertEquals($order->Address,'100 Melrose Place','order address');
-			$this->assertNull($order->AddressLine2,'order address2');
-			$this->assertEquals($order->City,'Martinsonville','order city');
-			$this->assertNull($order->PostalCode,'order postcode');
-			$this->assertEquals($order->Country,'EG','order country');
+			
+			$shippingaddress = $order->ShippingAddress();
+			
+			$this->assertEquals($shippingaddress->Address,'100 Melrose Place','order address');
+			$this->assertNull($shippingaddress->AddressLine2,'order address2');
+			$this->assertEquals($shippingaddress->City,'Martinsonville','order city');
+			$this->assertNull($shippingaddress->PostalCode,'order postcode');
+			$this->assertEquals($shippingaddress->Country,'EG','order country');
+			
 			//ASSUMPTION: member details are NOT updated with order
 			$this->assertEquals($order->MemberID,$joemember->ID,'Order associated with member');
 			$this->assertEquals($order->Member()->FirstName,'Joe','member first name has not changed');
@@ -163,7 +168,7 @@ class CheckoutTest extends SapphireTest {
 	}
 	
 	function testNoMemberOrder(){
-		//TODO: test configuration that deines non-member orders
+		
 		//adjust configuration to allow non member orders
 		OrderForm::set_user_membership_optional(true);
 		OrderForm::set_force_membership(false);
@@ -192,26 +197,18 @@ class CheckoutTest extends SapphireTest {
 			$this->assertEquals($order->FirstName,'Donald','order first name');
 			$this->assertEquals($order->Surname,'Duck','order surname');
 			$this->assertEquals($order->Email,'donald@pondcorp.edu.za','order email');
-			$this->assertEquals($order->Address,'4 The Strand');
-			$this->assertNull($order->AddressLine2,'order address2');
-			$this->assertEquals($order->City,'Melbourne','order city');
-			$this->assertNull($order->PostalCode,'order postcode');
-			$this->assertEquals($order->Country,'AU','order country');
+			
+			$shippingaddress = $order->ShippingAddress();
+			
+			$this->assertEquals($shippingaddress->Address,'4 The Strand');
+			$this->assertNull($shippingaddress->AddressLine2,'order address2');
+			$this->assertEquals($shippingaddress->City,'Melbourne','order city');
+			$this->assertNull($shippingaddress->PostalCode,'order postcode');
+			$this->assertEquals($shippingaddress->Country,'AU','order country');
 		}
 	
 		$this->cart->clear(); //cleanup
 	}
-	
-	/*
-	 function testOrderFormValidation(){
-		//TODO: test trying to use an email that has already been taken
-		//TODO: submit with empty cart
-		//TODO: missing required fields
-	}
-	*/
-	
-	//TODO: test shipping / billing details
-	//TODO: test country selection - countries that are not on list
 	
 	/**
 	 * Helper function that populates a form with data and submits it.
@@ -229,16 +226,21 @@ class CheckoutTest extends SapphireTest {
 		if($country) $data['Country'] = $country;
 		if($password) $data['Password[_Password]'] = $password;
 		if($confirmpassword) $data['Password[_ConfirmPassword]'] = $confirmpassword;
+
 		$order = ShoppingCart::singleton()->current();
 		$order->update($data);
-		$order->write();
+		$address = new Address();
+		$address->update($data);
+		$address->write();
+		$order->ShippingAddressID = $address->ID;
+		$order->BillingAddressID = $address->ID; //same (for now)
+		
 		if($member){
 			$order->MemberID = $member->ID;
-			$order->write();
 		}
+		
+		$order->write();
 		return OrderProcessor::create($order)->placeOrder();
-		//TODO: form submissions not working - theme issues
-		//$this->submitForm('OrderForm_OrderForm','action_processOrder',$data);
 	}
 
 }

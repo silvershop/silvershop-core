@@ -24,45 +24,43 @@ class OrderForm extends Form {
 	function __construct($controller, $name) {
 		//Member and shipping fields
 		$member = Member::currentUser();
-		$memberFields = new CompositeField(singleton('Member')->getEcommerceFields());
-		$requiredFields = singleton('Member')->getEcommerceRequiredFields();
-		$order = ShoppingCart::current_order();		
-		if($order && $order->UseShippingAddress) {
+		$addressSingleton = singleton('Address');
+		$order = ShoppingCart::current_order();
+		
+		$orderFields = new CompositeField($order->getFormFields());
+		$requiredFields = $order->getRequiredFields();
+			
+		if($order && $order->SeparateBillingAddress) {
 			$countryField = new DropdownField('ShippingCountry',  _t('OrderForm.Country','Country'), Geoip::getCountryDropDown(), ShopMember::find_country());
-			$shippingFields = new CompositeField(
-				new HeaderField(_t('OrderForm.SendGoodsToDifferentAddress','Send goods to different address'), 3),
-				new LiteralField('ShippingNote', '<p class="message warning">'._t('OrderForm.ShippingNote','Your goods will be sent to the address below.').'</p>'),
-				new LiteralField('Help', '<p>'._t('OrderForm.Help','You can use this for gift giving. No billing information will be disclosed to this address.').'</p>'),
-				new TextField('ShippingName', _t('OrderForm.Name','Name')),
-				new TextField('ShippingAddress', _t('OrderForm.Address','Address')),
-				new TextField('ShippingAddress2', _t('OrderForm.Address2','')),
-				new TextField('ShippingCity', _t('OrderForm.City','City')),
-				$countryField,
-				new HiddenField('UseShippingAddress', '', true),
-				$changeshippingbutton = new FormAction_WithoutLabel('useMemberShippingAddress', _t('OrderForm.UseBillingAddress','Use Billing Address for Shipping'))
+			$orderFields->fieldByName("ShippingHeading")->setTitle(_t('OrderForm.ShippingAddress','Shipping Address'));
+			$billingFields = new CompositeField(
+				new HeaderField(_t('OrderForm.BillingAddress','Billing Address'), 3),
+				new HiddenField('SeparateBillingAddress', '', true)
 			);
+			
+			$billingFields->FieldSet()->merge($addressSingleton->getFormFields('Billing'));
+			$billingFields->push($changeshippingbutton = new FormAction_WithoutLabel('useMemberShippingAddress', _t('OrderForm.ShippingIsBilling','Use Shipping Address for Billing')));
+			
 			//Need to to this because 'FormAction_WithoutLabel' has no text on the actual button
-			$changeshippingbutton->setButtonContent(_t('OrderForm.UseBillingAddress','Use Billing Address for Shipping'));
+			$changeshippingbutton->setButtonContent(_t('OrderForm.ShippingIsBilling','Use Shipping Address for Billing'));
 			$changeshippingbutton->useButtonTag = true;
 
-			$requiredFields[] = 'ShippingName';
-			$requiredFields[] = 'ShippingAddress';
-			$requiredFields[] = 'ShippingCity';
-			$requiredFields[] = 'ShippingCountry';
+			$requiredFields = array_merge($requiredFields,$addressSingleton->getRequiredFields('Billing'));
 		} else {
-			$countryField = $memberFields->fieldByName('Country');
-			$shippingFields = new FormAction_WithoutLabel('useDifferentShippingAddress', _t('OrderForm.useDifferentShippingAddress', 'Use Different Shipping Address'));
+			$countryField = $orderFields->fieldByName('Country');
+		
+			$billingFields = new FormAction_WithoutLabel('useDifferentShippingAddress', _t('OrderForm.DifferentBillingAddress', 'Use Different Billing Address'));
 			//Need to to this because 'FormAction_WithoutLabel' has no text on the actual button
-			$shippingFields->setButtonContent(_t('OrderForm.useDifferentShippingAddress', 'Use Different Shipping Address'));
-			$shippingFields->useButtonTag = true;
+			$billingFields->setButtonContent(_t('OrderForm.DifferentBillingAddress', 'Use Different Billing Address'));
+			$billingFields->useButtonTag = true;
 		}
 		if($countryField){
 			$countryField->addExtraClass('ajaxCountryField');
 			$setCountryLinkID = $countryField->id() . '_SetCountryLink';
 			$setContryLink = ShoppingCart::set_country_link();
-			$memberFields->push(new HiddenField($setCountryLinkID, '', $setContryLink));
+			$orderFields->push(new HiddenField($setCountryLinkID, '', $setContryLink));
 		}
-		$leftFields = new CompositeField($memberFields, $shippingFields);
+		$leftFields = new CompositeField($orderFields, $billingFields);
 		$leftFields->setID('LeftOrder');
 		$rightFields = new CompositeField();
 		$rightFields->setID('RightOrder');
@@ -107,10 +105,6 @@ class OrderForm extends Form {
 		$actions = new FieldSet(new FormAction('processOrder', _t('OrderForm.processOrder','Place order and make payment')));
 		$requiredFields = new CustomRequiredFields($requiredFields);
 		parent::__construct($controller, $name, $fields, $actions, $requiredFields);
-		//Member details loading
-		if($member && $member->isInDB()){
-			$this->loadDataFrom($member);
-		}
 		//Country field value update
 		if($countryField){
 			$currentOrder = ShoppingCart::current_order();
@@ -187,7 +181,7 @@ class OrderForm extends Form {
 	 */
 	function useDifferentShippingAddress($data, $form, $request) {
 		$order = ShoppingCart::current_order();
-		$order->UseShippingAddress = true;
+		$order->SeparateBillingAddress = true;
 		$order->write();
 		$this->saveDataToSession($data);
 		Director::redirectBack();
@@ -198,7 +192,7 @@ class OrderForm extends Form {
 	 */
 	function useMemberShippingAddress($data, $form, $request) {
 		$order = ShoppingCart::current_order();
-		$order->UseShippingAddress = false;
+		$order->SeparateBillingAddress = false;
 		$order->write();
 		$this->saveDataToSession($data);
 		Director::redirectBack();
@@ -232,7 +226,8 @@ class OrderForm extends Form {
 		$cart = ShoppingCart::getInstance();
 		$order = $cart->current();
 		$form->saveInto($order);
-		$order->write();
+		
+		//membership
 		$member = Member::currentUser();
 		if(!$member){
 			if(self::$user_membership_optional){
@@ -259,6 +254,19 @@ class OrderForm extends Form {
 			Director::redirectBack();
 			return false;
 		}
+		
+		//save addresses
+		$address = $this->saveAddress($order->getShippingAddress(),$form,$member);
+		$order->ShippingAddressID = $address->ID;
+		if(!$order->SeparateBillingAddress){
+			$order->BillingAddressID = $order->ShippingAddressID;
+		}else{
+			$address = $this->saveAddress($order->getBillingAddress(),$form,$member,true);
+			$order->BillingAddressID = $address->ID;
+		}
+
+		$order->write();
+		
 		//TODO: check that price hasn't changed
 		$processor = OrderProcessor::create($order);
 		if(!$processor->placeOrder()){
@@ -270,6 +278,8 @@ class OrderForm extends Form {
 		$this->clearSessionData(); //clears the stored session form data that might have been needed if validation failed
 		//assiciate member with order, if there is a member now
 		if($member){
+			$member->DefaultShippingAddressID = $order->ShippingAddressID;
+			$member->DefaultBillingAddressID = $order->BillingAddressID;
 			$member->write();
 			$member->logIn();
 			$order->MemberID = $member->ID;
@@ -295,6 +305,71 @@ class OrderForm extends Form {
 		}
 		Director::redirect($order->Link());
 		return true;
+	}
+	
+	private function saveAddress($address = null,$form,$member,$billing = false){
+		if(!$address){
+			$address = new Address();
+		}
+		$prefix = ($billing) ? "Billing" : "Shipping";
+		$fieldmap = $address->getFieldMap($prefix);
+		
+		$form->saveInto($address,$fieldmap); //TODO: provide mapping of BillingFields => AddressFields
+		if($member){
+			$address->MemberID = $member->ID;
+		}
+		if(!$address->isInDB()){
+			$address->write();
+		}elseif($address->isChanged()){
+			$address = $address->duplicate(); //save a copy
+		}
+		return $address;
+	}
+	
+	/**
+	 * Override saveInto to allow custom form field to model field mapping.
+	 */
+	function saveInto($dataObject,$fieldList = null){
+		$this->mapFieldNames($fieldList);
+		parent::saveInto($dataObject,$fieldList);
+		$this->restoreFieldNames($fieldList);
+	}
+	
+	/**
+	 * Override loadDataFrom to allow custom form field to model field mapping.
+	 */
+	function loadDataFrom($data,$clearMissingFields = false, $fieldList = null){
+		$this->mapFieldNames($fieldList);
+		parent::loadDataFrom($data,$clearMissingFields,$fieldList);
+		$this->restoreFieldNames($fieldList);
+	}
+	
+	protected function mapFieldNames($fieldList){
+		if(!is_array($fieldList) || empty($fieldList))
+			return false;
+		//rename other fields temporarly, incase they get overwritten
+		$savableFields = $this->fields->saveableFields();
+		foreach($savableFields as $field){
+			$field->originalFieldName = $field->Name();
+			$field->setName($field->originalFieldName."_renamed");
+		}
+		foreach($fieldList as $formfield => $modelfield){
+			if(!is_int($formfield) && isset($savableFields[$formfield]) && $field = $savableFields[$formfield]){
+				$field->originalFieldName = $formfield;
+				$field->setName($modelfield);
+			}
+		}
+	}
+	
+	protected function restoreFieldNames($fieldList){
+		if(!is_array($fieldList) || empty($fieldList))
+			return false;
+		foreach($this->fields->saveableFields() as $field){
+			if($field->originalFieldName){
+				$field->setName($field->originalFieldName);
+				$field->originalFieldName = null;
+			}
+		}
 	}
 
 	/**

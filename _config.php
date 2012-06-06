@@ -13,11 +13,14 @@ Director::addRules(50, array(
 	'dev/shop' => 'ShopDevelopmentAdmin'
 ));
 
+LeftAndMain::require_css(SHOP_DIR.'/css/admin.css');
+
 Object::add_extension("Page_Controller","ViewableCart");
 Object::add_extension("ShoppingCart_Controller","ViewableCart");
 Object::add_extension("OrderAttribute","OrderAttributeAJAX");
 Object::add_extension("Order","OrderAJAX");
 Object::add_extension("ComponentSet","OrderItemList");
+Object::add_extension("SiteConfig", "ShopConfig");
 
 //custom classes
 Object::useCustomClass('Currency','EcommerceCurrency', true);

@@ -16,15 +16,12 @@ class ShopMember extends DataObjectDecorator {
 	
 	function extraStatics() {
 		return array(
-			'db' => array(
-				'Address' => 'Varchar(255)',
-				'AddressLine2' => 'Varchar(255)',
-				'City' => 'Varchar(100)',
-				'PostalCode' => 'Varchar(30)',
-				'State' => 'Varchar(100)',
-				'Country' => 'Varchar',
-				'HomePhone' => 'Varchar(100)',
-				'MobilePhone' => 'Varchar(100)'
+			'has_many' => array(
+				'AddressBook' => 'Address'
+			),
+			'has_one' => array(
+				'DefaultShippingAddress' => 'Address',
+				'DefaultBillingAddress' => 'Address'		
 			)
 		);
 	}
@@ -102,48 +99,11 @@ class ShopMember extends DataObjectDecorator {
 		$fields->removeByName('Country');
 		$fields->addFieldToTab('Root.Main', new DropdownField('Country', 'Country', Geoip::getCountryDropDown()));
 	}
-
-	/**
-	 * Give the two letter code to resolve the title of the country.
-	 *
-	 * @param string $code Country code
-	 * @return string|boolean String if country found, boolean FALSE if nothing found
-	 */
-	function getEcommerceFields() {
-		$fields = new FieldSet(
-			new HeaderField(_t('ShopMember.PERSONALINFORMATION','Personal Information'), 3),
-			new TextField('FirstName', _t('ShopMember.FIRSTNAME','First Name')),
-			new TextField('Surname', _t('ShopMember.SURNAME','Surname')),
-			new TextField('HomePhone', _t('ShopMember.HOMEPHONE','Phone')),
-			new TextField('MobilePhone', _t('ShopMember.MOBILEPHONE','Mobile')),
-			new EmailField('Email', _t('ShopMember.EMAIL','Email')),
-			new TextField('Address', _t('ShopMember.ADDRESS','Address')),
-			new TextField('AddressLine2', _t('ShopMember.ADDRESSLINE2','&nbsp;')),
-			new TextField('City', _t('ShopMember.CITY','City')),
-			new TextField('PostalCode', _t('ShopMember.POSTALCODE','Postal Code')),
-			new DropdownField('Country', _t('ShopMember.COUNTRY','Country'), Geoip::getCountryDropDown(), self::find_country())
-		);
-		$this->owner->extend('augmentEcommerceFields', $fields);
-		return $fields;
-	}
-
-	/**
-	 * Return which member fields should be required on {@link OrderForm}
-	 * and {@link ShopAccountForm}.
-	 *
-	 * @return array
-	 */
-	function getEcommerceRequiredFields() {
-		$fields = array(
-			'FirstName',
-			'Surname',
-			'Email',
-			'Address',
-			'City',
-			'Country'
-		);
-		$this->owner->extend('augmentEcommerceRequiredFields', $fields);
-		return $fields;
+	
+	function updateMemberFormFields($fields){
+		$fields->removeByName('DefaultShippingAddressID');
+		$fields->removeByName('DefaultBillingAddressID');
+		$fields->fieldByName('Gender')->setHasEmptyDefault(true);
 	}
 	
 	function getPastOrders($extrafilter = null){

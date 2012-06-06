@@ -30,29 +30,14 @@ class Order extends DataObject {
 		'Surname' => 'Varchar',
 		'Email' => 'Varchar',
 		'Notes' => 'Text',
-		//invoice/shipping
-		'Address' => 'Varchar(255)',
-		'AddressLine2' => 'Varchar(255)',
-		'City' => 'Varchar(100)',
-		'PostalCode' => 'Varchar(30)',
-		'State' => 'Varchar(100)',
-		'Country' => 'Varchar',
-		'HomePhone' => 'Varchar(100)',
-		'MobilePhone' => 'Varchar(100)',
 		//separate shipping
-		'UseShippingAddress' => 'Boolean',
-		'ShippingName' => 'Text',
-		'ShippingAddress' => 'Text',
-		'ShippingAddress2' => 'Text',
-		'ShippingCity' => 'Text',
-		'ShippingPostalCode' => 'Varchar(30)',
-		'ShippingState' => 'Varchar(30)',
-		'ShippingCountry' => 'Text',
-		'ShippingPhone' => 'Varchar(30)',
+		'SeparateBillingAddress' => 'Boolean'
 	);
 
 	public static $has_one = array(
-		'Member' => 'Member'
+		'Member' => 'Member',
+		'ShippingAddress' => 'Address',
+		'BillingAddress' => 'Address'
 	);
 
 	public static $has_many = array(
@@ -187,10 +172,6 @@ class Order extends DataObject {
 			'title' => 'Customer Email',
 			'filter' => 'PartialMatchFilter'
 		),
-		'HomePhone' => array(
-			'title' => 'Customer Phone',
-			'filter' => 'PartialMatchFilter'
-		),
 		'Created' => array(
 			'field' => 'TextField',
 			'filter' => 'OrderFilters_AroundDateFilter',
@@ -255,6 +236,42 @@ class Order extends DataObject {
 			));
 		}
 		$this->extend('updateCMSFields',$fields);
+		return $fields;
+	}
+	
+	/**
+	 * Give the two letter code to resolve the title of the country.
+	 *
+	 * @param string $code Country code
+	 * @return string|boolean String if country found, boolean FALSE if nothing found
+	 */
+	function getFormFields() {
+		$fields = new FieldSet(
+			new TextField('FirstName', _t('Order.FIRSTNAME','First Name')),
+			new TextField('Surname', _t('Order.SURNAME','Surname')),
+			new EmailField('Email', _t('Order.EMAIL','Email')),
+			new HeaderField("ShippingHeading",_t('OrderForm.ShippingAndBillingAddress','Shipping and Billing Address'), 3)
+		);
+		$fields->merge(singleton('Address')->getFormFields("Shipping"));
+		$this->owner->extend('updateFormFields', $fields);
+		$this->owner->extend('augmentEcommerceFields', $fields); //deprecated
+		return $fields;
+	}
+	
+	/**
+	 * Return which fields should be required on {@link OrderForm}
+	 * and {@link ShopAccountForm}.
+	 *
+	 * @return array
+	 */
+	function getRequiredFields() {
+		$fields = array(
+			'FirstName',
+			'Email'
+		);
+		$fields = array_merge($fields,singleton('Address')->getRequiredFields());
+		$this->owner->extend('updateRequiredFields', $fields);
+		$this->owner->extend('augmentEcommerceRequiredFields', $fields); //deprecated
 		return $fields;
 	}
 
@@ -504,6 +521,9 @@ class Order extends DataObject {
 	 * Get the link for finishing order processing.
 	 */
 	function Link() {
+		if($member = $this->Member()){
+			return Controller::join_links(AccountPage::find_link(),'order',$this->ID);
+		}
 		return CheckoutPage::find_link(false,"finish",$this->ID);
 	}
 
@@ -570,51 +590,33 @@ class Order extends DataObject {
 	function getName(){
 		return ($this->Surname) ? trim($this->FirstName . ' ' . $this->Surname) : $this->FirstName;
 	}
-
-	function getFullBillingAddress($separator = "",$insertnewlines = true){
-		//TODO: move this somewhere it can be customised
-		$touse = array(
-			'Name',
-			'Company',
-			'Address',
-			'AddressLine2',
-			'City',
-			'Country',
-			'Email',
-			'Phone',
-			'HomePhone',
-			'MobilePhone'
-		);
-		$fields = array();
-		foreach($touse as $field){
-			if($this->$field)
-				$fields[] = $this->$field;
+	
+	function getShippingAddress(){
+		if($address = $this->ShippingAddress()){
+			return $address;
+		}elseif($this->Member() && $address = $this->Member()->DefaultShippingAddress()){
+			return $address;
 		}
-		$separator = ($insertnewlines) ? $separator."\n" : $separator;
-		return implode($separator,$fields);
+		return null;
+	}
+
+	function getBillingAddress(){
+		if(!$this->SeparateBillingAddress){
+			return $this->getShippingAddress();
+		}elseif($address = $this->BillingAddress()){
+			return $address;
+		}elseif($this->Member() && $address = $this->Member()->DefaultBillingAddress()){
+			return $address;
+		}
+		return null;
 	}
 	
-	function getFullShippingAddress($separator = "",$insertnewlines = true){
-		if(!$this->UseShippingAddress)
-			return $this->getFullBillingAddress($separator,$insertnewlines);
-		//TODO: move this list somewhere it can be customised
-		$touse = array(
-			'ShippingName',
-			'ShippingAddress',
-			'ShippingAddress2',
-			'ShippingCity',
-			'ShippingPostalCode',
-			'ShippingState',
-			'ShippingCountry',
-			'ShippingPhone'
-		);
-		$fields = array();
-		foreach($touse as $field){
-			if($this->$field)
-				$fields[] = $this->$field;
-		}
-		$separator = ($insertnewlines) ? $separator."\n" : $separator;
-		return implode($separator,$fields);
+	function getFullShippingAddress(){
+		return $this->getShippingAddress();
+	}
+	
+	function getFullBillingAddress(){
+		return $this->getBillingAddress();
 	}
 
 	// Order Template and ajax Management
