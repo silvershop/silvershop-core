@@ -35,6 +35,7 @@ class ProductAttributeType extends DataObject{
 			'Sort' => 'TextField'
 		);
 		
+		// Create Values table
 		$valuesTable = new TableField("Values", "ProductAttributeValue",$fieldList,$fieldTypes);
 		// Need this or else the table shows all value objects
 		$valuesTable->setCustomSourceItems($this->Values());
