@@ -243,6 +243,13 @@ class Product extends Page implements Buyable{
 			return Payment::site_currency();
 		}
 	}
+	
+	function Link(){
+		$link = parent::Link();
+		$this->extend('updateLink',$link);
+		return $link;
+	}
+	
 	//passing on shopping cart links ...is this necessary?? ...why not just pass the cart?
 	function addLink() {
 		return ShoppingCart_Controller::add_item_link($this);
@@ -270,6 +277,10 @@ class Product extends Page implements Buyable{
 class Product_Controller extends Page_Controller {
 
 	static $allowed_actions = array();
+	
+	function AddProductForm(){
+		return new AddProductForm($this,$this->dataRecord);
+	}
 	
 }
 
