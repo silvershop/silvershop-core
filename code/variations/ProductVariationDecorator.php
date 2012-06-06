@@ -22,6 +22,9 @@ class ProductVariationDecorator extends DataObjectDecorator{
 	 * Adds variations specific fields to the CMS.
 	 */
 	function updateCMSFields(&$fields){
+		
+		$fields->insertBefore(new Tab('Variations','Variations'), 'Images');
+		
 		$fields->addFieldToTab('Root.Content.Variations',new HeaderField("Variations"));
 		$fields->addFieldToTab('Root.Content.Variations',$this->getVariationsTable());
 		$fields->addFieldToTab('Root.Content.Variations',new HeaderField("Variation Attribute Types"));
@@ -156,7 +159,7 @@ class ProductVariationDecorator extends DataObjectDecorator{
 				foreach($avalues as $value){
 					$variation = new ProductVariation();
 					$variation->ProductID = $this->owner->ID;
-					$variation->Price = $this->owner->Price;
+					$variation->Price = $this->owner->BasePrice;
 					$variation->write();
 					$variation->InternalItemID = $this->owner->InternalItemID.'-'.$variation->ID;
 					$variation->AttributeValues()->add($value); //TODO: find or create actual value

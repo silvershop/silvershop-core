@@ -19,6 +19,7 @@ class ShopMigrationTask extends MigrationTask{
 	function up(){
 		$start = 0;
 		$count = 0;
+		//batch process orders
 		while($batch = DataObject::get('Order',"","\"Created\" ASC","",$start.",".self::$batch_size)){
 			foreach($batch as $order){
 				$this->migrate($order);
@@ -28,7 +29,7 @@ class ShopMigrationTask extends MigrationTask{
 			$start += self::$batch_size;
 			echo "$count orders updated.\n<br/>";
 		};
-		
+		$this->migrateProductPrice();
 		$this->migrateProductVariationsAttribues();
 	}
 	
@@ -42,6 +43,13 @@ class ShopMigrationTask extends MigrationTask{
 		$this->migrateShippingValues($order);
 		$this->migrateOrderCalculation($order);
 		$order->write();
+	}
+	
+	function migrateProductPrice(){
+		$db = DB::getConn();
+		if($db->hasTable("Product")){
+			$db->renameField("Product","Price","BasePrice");
+		}
 	}
 	
 	/**

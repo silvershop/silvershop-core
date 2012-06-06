@@ -7,7 +7,7 @@ class AddProductForm extends Form{
 			new NumericField("Quantity",_t("AddProductForm.QUANTITY","Quantity"),1),
 			new HiddenField("BuyableID","",$buyable->ID),
 			new HiddenField("BuyableClass","",$buyable->ClassName),
-			new LiteralField("Price", "<h2 class=\"price\">".$buyable->dbObject('Price')->Nice()."</h2>")
+			new LiteralField("Price", $buyable->renderWith("PriceTag"))
 		);
 		$actions = new FieldSet(
 			new FormAction('addtocart',_t("AddProductForm.ADDTOCART",'Add to Cart'))

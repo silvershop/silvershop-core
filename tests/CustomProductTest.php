@@ -109,6 +109,10 @@ class CustomProduct extends DataObject implements Buyable{
 		return $this->Price > 0;
 	}
 	
+	function sellingPrice(){
+		return $this->Price;
+	}
+	
 }
 
 class CustomProduct_OrderItem extends OrderItem{

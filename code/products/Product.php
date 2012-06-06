@@ -15,7 +15,8 @@
 class Product extends Page implements Buyable{
 
 	public static $db = array(
-		'Price' => 'Currency',
+		'CostPrice' => 'Currency', // Wholesale cost of the product to the merchant
+		'BasePrice' => 'Currency', // Base retail price the item is marked at.
 		'Weight' => 'Decimal(9,2)',
 		'Model' => 'Varchar(30)',
 		'FeaturedProduct' => 'Boolean',
@@ -38,11 +39,17 @@ class Product extends Page implements Buyable{
 	);
 
 	public static $summary_fields = array(
-		'ID','InternalItemID','Title','Price','Weight','Model','NumberSold'
+		'InternalItemID','Title','BasePrice','Weight','Model','NumberSold'
 	);
 
 	public static $searchable_fields = array(
-		'ID','Title','InternalItemID','Weight','Model','Price'
+		'InternalItemID','Title','Weight','Model','BasePrice'
+	);
+	
+	public static $field_labels = array(
+		'InternalItemID' => 'SKU',
+		'Title' => 'Title',
+		'BasePrice' => 'Price'
 	);
 
 	public static $singular_name = "Product";
@@ -67,9 +74,23 @@ class Product extends Page implements Buyable{
 		if($tempextvar){
 			$this->enableCMSFieldsExtensions();
 		}
+		
+		//set up tab ordering
+		$fields->insertBefore(new Tab('Pricing','Pricing'), 'Metadata');
+		$fields->insertBefore(new Tab('Images',_t('Product.IMAGES','Images')), 'Metadata');
+		$fields->insertBefore(new Tab('Shipping','Shipping'), 'Metadata');
+		$fields->insertBefore(new Tab('Categories',_t('Product.CATEGORIES','Categories')), 'Metadata');
+		
 		// Standard product detail fields
-		$fields->addFieldToTab('Root.Content.Main',new TextField('Price', _t('Product.PRICE', 'Price'), '', 12),'Content');
-		$fields->addFieldToTab('Root.Content.Main',new TextField('Weight', _t('Product.WEIGHT', 'Weight (kg)'), '', 12),'Content');
+		$fields->addFieldsToTab('Root.Content.Pricing',array(
+			new TextField('BasePrice', _t('Product.PRICE', 'Price - base price to sell this product at'), '', 12),
+			new TextField('CostPrice', _t('Product.COSTPRICE', 'Cost Price - wholesale price before markup'), '', 12)
+		));
+
+		$fields->addFieldsToTab('Root.Content.Shipping',array(
+			new TextField('Weight', _t('Product.WEIGHT', 'Weight (kg)'), '', 12)
+		));
+		
 		$fields->addFieldToTab('Root.Content.Main',new TextField('Model', _t('Product.MODEL', 'Model'), '', 30),'Content');
 		$fields->addFieldToTab('Root.Content.Main',new TextField('InternalItemID', _t('Product.CODE', 'Product Code'), '', 30),'Price');
 		if(!$fields->dataFieldByName('Image')) {
@@ -78,18 +99,16 @@ class Product extends Page implements Buyable{
 		// Flags for this product which affect it's behaviour on the site
 		$fields->addFieldToTab('Root.Content.Main',new CheckboxField('FeaturedProduct', _t('Product.FEATURED', 'Featured Product')), 'Content');
 		$fields->addFieldToTab('Root.Content.Main',new CheckboxField('AllowPurchase', _t('Product.ALLOWPURCHASE', 'Allow product to be purchased'), 1),'Content');
-		$fields->addFieldsToTab(
-			'Root.Content.Categories',
-			array(
-				new LabelField('ProductCategoriesInstuctions', _t('Product.CATEGORIES',"Select the categories that this product should also show up in")),
-				$this->getProductCategoriesTable()
-			)
-		);
-		if($pagename = $fields->fieldByName('Root.Content.Main.Title'))
-			$pagename->setTitle(_t('Product.PAGENAME','Page/Product Name'));
-
-		if($tempextvar)
+		$fields->addFieldsToTab('Root.Content.Categories',array(
+			new LabelField('ProductCategoriesInstuctions', _t('Product.CATEGORIES',"Select the categories that this product should also show up in")),
+			$this->getProductCategoriesTable()
+		));
+		if($pagename = $fields->fieldByName('Root.Content.Main.Title')){
+			$pagename->setTitle(_t('Product.PAGETITLE','Product Page Title'));
+		}
+		if($tempextvar){
 			$this->extend('updateCMSFields', $fields);
+		}
 		return $fields;
 	}
 
@@ -175,7 +194,6 @@ class Product extends Page implements Buyable{
 		if(!$this->dbObject('AllowPurchase')->getValue()) return false;
 		if(!$this->isPublished()) return false;
 		$allowpurchase = false;
-
 		if($this->Variations()->exists()){
 			foreach($this->Variations() as $variation){
 				if($variation->canPurchase()){
@@ -183,14 +201,14 @@ class Product extends Page implements Buyable{
 					break;
 				}
 			}
-		}elseif($this->Price > 0){
+		}elseif($this->sellingPrice() > 0){
 			$allowpurchase = true;
 		}
-
 		// Standard mechanism for accepting permission changes from decorators
 		$extended = $this->extendedCan('canPurchase', $member);
-		if($allowpurchase && $extended !== null) $allowpurchase = $extended;
-
+		if($allowpurchase && $extended !== null){
+			$allowpurchase = $extended;
+		}
 		return $allowpurchase;
 	}
 
@@ -232,16 +250,29 @@ class Product extends Page implements Buyable{
 		}
 		$item->Quantity = $quantity;
 		return $item;
-	}	
-
+	}
+	
 	/**
-	 * Return the currency being used on the site.
-	 * @return string Currency code, e.g. "NZD" or "USD"
+	 * Original price for template usage
 	 */
-	function Currency() {
-		if(class_exists('Payment')) {
-			return Payment::site_currency();
-		}
+	function getPrice(){
+		$currency = Payment::site_currency();
+		$field = new Money("Price");
+		$field->setAmount($this->sellingPrice());
+		$field->setCurrency($currency);
+		return $field;
+	}
+	
+	/**
+	 * The raw retail price the visitor will get when they
+	 * add to cart. Can include discounts or markups on the base price.
+	 */
+	function sellingPrice(){
+		$price = $this->BasePrice;
+		$this->extend("updateSellingPrice",$price); //TODO: this is not ideal, because prices manipulations will not happen in a known order
+		if($price < 0)
+			$price = 0; //prevent negative sales
+		return $price;
 	}
 	
 	function Link(){
@@ -351,13 +382,6 @@ class Product_OrderItem extends OrderItem {
 			return $product;
 		}
 		return false;		
-	}
-
-	function UnitPrice() {
-		$product = $this->Product();
-		$unitprice = ($product) ? $product->Price : 0;
-		$this->extend('updateUnitPrice',$unitprice);
-		return $unitprice;
 	}
 
 	function TableTitle() {

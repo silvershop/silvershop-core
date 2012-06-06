@@ -71,7 +71,10 @@ class OrderItem extends OrderAttribute {
 	}
 
 	function UnitPrice() {
-		user_error("OrderItem::UnitPrice() called. Please implement UnitPrice() on $this->class", E_USER_ERROR);
+		$buyable = $this->Buyable();
+		$unitprice = ($buyable) ? $buyable->sellingPrice() : 0;
+		$this->extend('updateUnitPrice',$unitprice);
+		return $unitprice;
 	}
 
 	function QuantityField(){
