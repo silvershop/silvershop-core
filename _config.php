@@ -10,16 +10,14 @@ DataObject::add_extension('Payment', 'ShopPayment');
 //create controller for shopping cart
 Director::addRules(50, array(
 	ShoppingCart_Controller::$url_segment . '/$Action/$Buyable/$ID' => 'ShoppingCart_Controller',
+	'dev/shop' => 'ShopDevelopmentAdmin'
 ));
 
-Object::add_extension("DevelopmentAdmin", "ShopDevelopmentAdminDecorator");
-DevelopmentAdmin::$allowed_actions[] = 'shop';
 Object::add_extension("Page_Controller","ViewableCart");
 Object::add_extension("ShoppingCart_Controller","ViewableCart");
 Object::add_extension("OrderAttribute","OrderAttributeAJAX");
 Object::add_extension("Order","OrderAJAX");
 Object::add_extension("ComponentSet","OrderItemList");
-
 
 //custom classes
 Object::useCustomClass('Currency','EcommerceCurrency', true);
