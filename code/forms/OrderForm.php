@@ -146,6 +146,7 @@ class OrderForm extends Form {
 		//always validate on order processing
 	 	if(isset($_POST['action_processOrder'])){
 	 		$data = $this->getData();
+	 		$this->saveDataToSession($data);
 	 		//check items are in cart, and each item can be purchased
 	 		$order = ShoppingCart::singleton()->current();
 	 		if(!$order){
