@@ -78,6 +78,7 @@ class ShoppingCart{
 	 */
 	public function add(Buyable $buyable,$quantity = 1,$filter = array()){
 		$order = $this->findOrMake();
+		$order->extend("beforeAdd",$buyable,$quantity,$filter);
 		if(!$buyable){ 
 			$this->error(_t("ShoppingCart.PRODUCTNOTFOUND","Product not found."));
 			return false;
@@ -92,6 +93,7 @@ class ShoppingCart{
 			$item->Quantity = $quantity;
 		}
 		$item->write();
+		$order->extend("afterAdd",$item,$buyable,$quantity,$filter);
 		$this->message(_t("ShoppingCart.ITEMADD","Item has been added successfully."));
 		return true;
 	}
@@ -105,6 +107,7 @@ class ShoppingCart{
 	 */
 	 public function remove(Buyable $buyable,$quantity = null,$filter = array()){
 		$order = $this->current();
+		$order->extend("beforeRemove",$buyable,$quantity,$filter);
 		if(!$order){
 			$this->error(_t("ShoppingCart.NOORDER","No current order."));
 			return false;
@@ -120,6 +123,7 @@ class ShoppingCart{
 		}else{
 			$item->write();
 		}
+		$order->extend("afterRemove",$item,$buyable,$quantity,$filter);
 		$this->message(_t("ShoppingCart.ITEMREMOVED","Item has been successfully removed."));
 		return true;
 	}
@@ -133,6 +137,7 @@ class ShoppingCart{
 	 * @param int $quantity
 	 */
 	public function setQuantity(Buyable $buyable,$quantity = 1,$filter = array()){
+		$order->extend("beforeSetQuantity",$buyable,$quantity,$filter);
 		if($quantity <= 0){
 			return $this->remove($buyable,$quantity,$filter);
 		}
@@ -143,6 +148,7 @@ class ShoppingCart{
 		}
 		$item->Quantity = $quantity;
 		$item->write();
+		$order->extend("afterSetQuantity",$item,$buyable,$quantity,$filter);
 		$this->message(_t("ShoppingCart.QUANTITYSET","Quantity has been set."));
 		return true;
 	}
