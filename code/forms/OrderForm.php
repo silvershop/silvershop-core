@@ -166,12 +166,6 @@ class OrderForm extends Form {
 			//TODO: Check if prices have changed
 	 		$valid = parent::validate();
 	 		//TODO: check that member details are not already taken, if entered
-			//Check payment method is valid
-			$supportedpayments = Payment::get_supported_methods();
-			if(isset($data['PaymentMethod']) && !isset($supportedpayments[$data['PaymentMethod']])){
-				$this->sessionMessage(_t("OrderForm.PAYMENTNOTSUPPORTED","Payment method not supported"), "bad");
-				return false;
-			}
 	 		//check terms have been accepted
 			$controller = $this->Controller();
 	 		if($controller->TermsPageID && $controller->TermsPage() && (!isset($data['ReadTermsAndConditions']) || !(bool)$data['ReadTermsAndConditions'])){
