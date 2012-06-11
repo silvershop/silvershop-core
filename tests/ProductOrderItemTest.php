@@ -40,7 +40,7 @@ class ProductOrderItemTest extends FunctionalTest {
 		$itembefore = $this->cart->get($this->socks);
 		$this->assertEquals($itembefore->UnitPrice(),8,"unit price matches product price");
 		//update product details
-		$this->socks->Price = 9;
+		$this->socks->BasePrice = 9;
 		$this->socks->write();
 		$itemafter = $this->cart->get($this->socks);
 		$this->assertEquals($itemafter->UnitPrice(),9,"unit price matches updated product price"); //total is updated whilst item is still in cart

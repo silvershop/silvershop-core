@@ -27,4 +27,9 @@ interface Buyable{
 	 */
 	function canPurchase();
 	
+	/**
+	 * The price the customer gets this buyable for, with any additional additions or subtractions.
+	 */
+	function sellingPrice();
+	
 }

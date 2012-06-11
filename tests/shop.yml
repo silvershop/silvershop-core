@@ -20,7 +20,7 @@ ProductCategory:
 Product:
     socks:
         Title: Socks
-        Price: 8
+        BasePrice: 8
         URLSegment: socks
         Parent: =>ProductCategory.g2
         AllowPurchase: 1
@@ -28,7 +28,7 @@ Product:
         Stock: 50
     tshirt:
         Title: T-Shirt
-        Price: 25
+        BasePrice: 25
         Parent: =>ProductCategory.g2
         URLSegment: t-shirt
         AllowPurchase: 1
@@ -43,7 +43,7 @@ Product:
         Stock: 3
     beachball:
         Title: Beach Ball
-        Price: 10
+        BasePrice: 10
         URLSegment: beach-ball
         Parent: =>ProductCategory.g1
         AllowPurchase: 0 #This product has AllowPurchase set to 0
@@ -51,7 +51,7 @@ Product:
         Stock: 1000
     mp3player:
         Title: Mp3 Player
-        Price: 200
+        BasePrice: 200
         URLSegment: mp3-player
         Parent: =>ProductCategory.g1
         AllowPurchase: 1

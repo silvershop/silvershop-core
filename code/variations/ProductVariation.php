@@ -164,6 +164,14 @@ class ProductVariation extends DataObject implements Buyable{
 		return $item;
 	}
 	
+	function sellingPrice(){
+		if($price = $this->Price)
+			return $this->Price;
+		if($this->Product() && $this->Product()->sellingPrice())
+			return $this->Product()->sellingPrice();
+		return 0;
+	}
+	
 }
 
 /**
@@ -194,14 +202,6 @@ class ProductVariation_OrderItem extends Product_OrderItem {
 		}elseif($this->ProductVariationID && $product = DataObject::get_by_id('ProductVariation', $this->ProductVariationID)){
 			return $product;
 		}
-		return false;
-	}
-
-	function UnitPrice() {
-		if($this->ProductVariation() && $this->ProductVariation()->Price)
-			return $this->ProductVariation()->Price;
-		if($this->Product() && $this->Product()->Price)
-			return $this->Product()->Price;
 		return false;
 	}
 
