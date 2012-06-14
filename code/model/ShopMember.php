@@ -46,7 +46,7 @@ class ShopMember extends DataObjectDecorator {
 		ShoppingCart::singleton()->clear();
 		OrderManipulation::clear_session_order_ids();
 	}
-
+	
 	static function find_country_title($code) {
 		$countries = Geoip::getCountryDropDown();
 		// check if code was provided, and is found in the country array
@@ -59,7 +59,6 @@ class ShopMember extends DataObjectDecorator {
 
 	static function find_country() {
 		$member = Member::currentUser();
-
 		if($member && $member->Country) {
 			$country = $member->Country;
 		} else {
@@ -73,7 +72,6 @@ class ShopMember extends DataObjectDecorator {
 				$country = Geoip::visitor_country();
 			}
 		}
-
 		return $country;
 	}
 	
@@ -147,8 +145,16 @@ class ShopMember extends DataObjectDecorator {
 		$this->owner->extend('augmentEcommerceRequiredFields', $fields);
 		return $fields;
 	}
+	
+	function getPastOrders($extrafilter = null){
+		$filter = "\"MemberID\" = ".(int)$this->owner->ID;
+		$statusFilter = " AND \"Order\".\"Status\" IN ('" . implode("','", Order::$placed_status) . "')";
+		$statusFilter .= " AND \"Order\".\"Status\" NOT IN('". implode("','", Order::$hidden_status) ."')";
+		$statusFilter .= ($extrafilter) ? " AND $extrafilter" : "";
+		return DataObject::get('Order',$filter.$statusFilter); //TODO: get orders for this member
+	}
 
-	public function CountryTitle() {
+	function CountryTitle() {
 		return self::find_country_title($this->owner->Country);
 	}	
 	
@@ -194,7 +200,6 @@ class ShopMember extends DataObjectDecorator {
 	public static function createOrMerge($data) {
 		user_error("deprecated, please use ShopMember::ecommerce_create_or_merge", E_USER_NOTICE);
 		return self::ecommerce_create_or_merge($data);
-	
 	}
 
 }
