@@ -26,14 +26,8 @@ class ProductAttributeType extends DataObject{
 	function getCMSFields(){
 		$fields = parent::getCMSFields();
 		$fields->removeFieldFromTab('Root.Values','Values');
-		$fieldList = array(
-			'Value' => 'Value',
-			'Sort' => 'Sort'
-		);
-		$fieldTypes = array(
-			'Value' => 'TextField',
-			'Sort' => 'TextField'
-		);
+		$fieldList = singleton("ProductAttributeValue")->tableFields();
+		$fieldTypes = singleton("ProductAttributeValue")->tableTypeFields();
 		if($this->isInDB()){
 			$valuesTable = new TableField("Values", "ProductAttributeValue",$fieldList,$fieldTypes);
 			$valuesTable->setCustomSourceItems($this->Values());
