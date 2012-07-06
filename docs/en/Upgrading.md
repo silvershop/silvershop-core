@@ -9,7 +9,20 @@ shop module:
     [yourdomain.com]/dev/build?flush=all
     [yourdomain.com]/tasks/ShopMigrationTask
 
-# 0.8.4
+# 0.9
+
+# Prices are missing
+
+I've renamed Price database field to BasePrice, as part of work to make pricing system more flexible.
+Try running the ShopMigrationTask.
+
+# 0.8.4 -0.8.5
+
+## Variation Attribute Types are lost
+
+The Product->VariataionAttributes() relationship was renamed to Product->VariationAttributeTypes()
+Try running mysite/dev/tasks/ShopMigrationTask, or if that fails, rename the database table manually:
+*Product_VariationAttributes* becomes *Product_VariationAttributeTypes*
 
 ## CSS is lost / templates 
 
