@@ -47,8 +47,14 @@ class ShopMigrationTask extends MigrationTask{
 	
 	function migrateProductPrice(){
 		$db = DB::getConn();
-		if($db->hasTable("Product")){
-			$db->renameField("Product","Price","BasePrice");
+		//if BasePrice has no values, but Price does, then copy from Price
+		if($db->hasTable("Product") && !DataObject::get_one("Product","\"BasePrice\" > 0")){
+			//TODO: warn against lost data
+			DB::query("UPDATE \"Product\" SET \"BasePrice\" = \"Price\";");
+			DB::query("UPDATE \"Product_Live\" SET \"BasePrice\" = \"Price\";");
+			//TODO: rename, if possible without breaking migraton task next time it runs
+			//$db->renameField("Product","Price","Price_obselete");
+			//$db->renameField("Product_Live","Price","Price_obselete");
 		}
 	}
 	
@@ -142,7 +148,6 @@ class ShopMigrationTask extends MigrationTask{
 			$db->renameTable("Product_VariationAttributes","Product_VariationAttributeTypes");
 		}
 	}
-	
 	
 	function migrateShippingTaxValues(){
 		//rename obselete columns
