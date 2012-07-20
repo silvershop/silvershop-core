@@ -40,11 +40,22 @@ class AccountPage extends Page {
 		user_error('No AccountPage was found. Please create one in the CMS!', E_USER_ERROR);
 	}
 
-
-
 }
 
 class AccountPage_Controller extends Page_Controller {
+	
+	static $url_segment = 'account';
+	static $allowed_actions = array(
+		'order',
+		'addressbook',
+		'CreateAddressForm',
+		'DefaultAddressForm',
+		'editprofile',
+		'EditAccountForm',
+		'ChangePasswordForm'
+	);
+	
+	protected $member;
 	
 	public static $extensions = array(
 		'OrderManipulation'
@@ -60,12 +71,119 @@ class AccountPage_Controller extends Page_Controller {
 			Security::permissionFailure($this, $messages);
 			return false;
 		}
+		$this->member = Member::currentUser();
 	}
+	
+	function getMember(){
+		return $this->member;
+	}
+
+	/**
+	 * Return the {@link Order} details for the current
+	 * Order ID that we're viewing (ID parameter in URL).
+	 *
+	 * @return array of template variables
+	 */
+	function order() {
+		$accountPageLink = AccountPage::find_link();
+		$order = $message = $form = null;
+		if($order = $this->orderfromid()) {
+			$form = ($order->TotalOutstanding() > 0) ? $this->CancelForm() : null;
+		}else{
+			$message = sprintf(_t("AccountPage.NoOrder",'You do not have any order corresponding to this ID. However, you can <a href="%s">edit your own personal details and view your orders.</a>.'),$accountPageLink);
+		}
+		return array(
+			'Order' => $order,
+			'Message' => $message,
+			'Form' => $form
+		);
+	}
+	
+	function addressbook(){
+		//select defaults
+		//new address form
+		return array(
+			'DefaultAddressForm' => $this->DefaultAddressForm(),
+			'CreateAddressForm' => $this->CreateAddressForm()
+		);
+	}
+	
+	function DefaultAddressForm(){
+		$addresses = $this->member->AddressBook();
+		if($addresses->exists()){
+			$fields = new FieldSet(
+				$shipping = new DropdownField("DefaultShippingAddressID","Shipping Address",$addresses->map('ID','toString')),
+				$billing = new DropdownField("DefaultBillingAddressID","Billing Address",$addresses->map('ID','toString'))	
+			);
+			$shipping->setHasEmptyDefault(true);
+			$shipping->setEmptyString("no default");
+			$billing->setHasEmptyDefault(true);
+			$billing->setEmptyString("no default");
+			$actions = new FieldSet(
+				new FormAction('savedefaultaddresses',"Save Defaults")	
+			);
+			$form = new Form($this,"DefaultAddressForm",$fields,$actions);
+			$form->loadDataFrom($this->member);
+			return $form;
+		}
+		return false;
+	}
+	
+	function savedefaultaddresses($data,$form){
+		$form->saveInto($this->member);
+		$this->member->write();
+		$this->redirect($this->Link('addressbook'));
+	}
+	
+	function CreateAddressForm(){
+		$fields = singleton('Address')->getFormFields();
+		$actions = new FieldSet(
+			new FormAction("saveaddress","Save New Address")	
+		);
+		return new Form($this,"CreateAddressForm",$fields,$actions);	
+	}
+	
+	function saveaddress($data,$form){
+		$member = $this->getMember();
+		$address = new Address();
+		$form->saveInto($address);
+		$address->MemberID = $member->ID;
+		$address->write();
+		if(!$member->DefaultShippingAddressID){
+			$member->DefaultShippingAddressID = $address->ID;
+			$member->write();
+		}
+		if(!$member->DefaultBillingAddressID){
+			$member->DefaultBillingAddressID = $address->ID;
+			$member->write();
+		}
+		$this->redirect($this->Link('addressbook'));
+	}
+	
+	function editprofile(){
+		return array();
+	}
+
+	/**
+	 * Return a form allowing the user to edit their details.
+	 *
+	 * @return ShopAccountForm
+	 */
+	function EditAccountForm() {
+		return new ShopAccountForm($this, 'EditAccountForm');
+	}
+	
+	function ChangePasswordForm(){
+		return new ChangePasswordForm($this, "ChangePasswordForm");
+	}
+	
+	//deprecated functions
 	
 	/**
 	 * Returns all {@link Order} records for this
 	 * member that are completed.
 	 *
+	 * @deprecated 0.9 - use PastOrders instead
 	 * @return DataObjectSet
 	 */
 	function CompleteOrders() {
@@ -76,52 +194,11 @@ class AccountPage_Controller extends Page_Controller {
 	 * Returns all {@link Order} records for this
 	 * member that are incomplete.
 	 *
+	 * @deprecated 0.9 - use PastOrders instead
 	 * @return DataObjectSet
 	 */
 	function IncompleteOrders() {
 		return $this->PastOrders("\"Order\".\"Status\" != 'Complete'");
-	}
-
-	/**
-	 * Return the {@link Order} details for the current
-	 * Order ID that we're viewing (ID parameter in URL).
-	 *
-	 * @return array of template variables
-	 */
-	function order($request) {
-		$memberID = Member::currentUserID();
-		$accountPageLink = AccountPage::find_link();
-		if($orderID = $request->param('ID')) {
-			if($order = DataObject::get_one('Order', "\"Order\".\"ID\" = '$orderID' AND \"Order\".\"MemberID\" = '$memberID'")) {
-				$paymentform = ($order->TotalOutstanding() > 0) ? $this->CancelForm() : null;
-				return array(
-					'Order' => $order,
-					'Form' => $paymentform
-				);
-			}
-			else {
-				return array(
-					'Order' => false,
-					'Message' => 'You do not have any order corresponding to this ID. However, you can <a href="' . $accountPageLink . '">edit your own personal details and view your orders.</a>.'
-				);
-			}
-		}
-		else {
-			return array(
-				'Order' => false,
-				'Message' => 'There is no order by that ID. You can <a href="' . $accountPageLink . '">edit your own personal details and view your orders.</a>.'
-			);
-		}
-	}
-
-	/**
-	 * Return a form allowing the user to edit
-	 * their details with the shop.
-	 *
-	 * @return ShopAccountForm
-	 */
-	function MemberForm() {
-		return new ShopAccountForm($this, 'MemberForm');
 	}
 
 }

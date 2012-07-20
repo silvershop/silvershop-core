@@ -1,38 +1,28 @@
 <% require themedCSS(account) %>
-<div id="Account">
-	<div class="typography">
-		<h2>$Title</h2>
-		<% if Content %>
-			$Content
-		<% end_if %>
-	</div>
-	<div id="PastOrders">
-
-		<h3><% _t("HISTORY","Your Order History") %></h3>
-		<h4><% _t("COMPLETED","Completed Orders") %></h4>
-		<% if CompleteOrders %>
-		<ul>
-			<% control CompleteOrders %>
-				<li>
-					<a href="$Link" title="<% sprintf(_t("READMORE","Read more on Order #%s"),$ID) %>"><% _t("ORDER","Order #") %>{$ID}</a> ($Created.Nice)
-				</li>
-			<% end_control %>
+<div class="accountnav">
+	<div class="nav">
+		<h2>My Account</h2>
+		<ul class="nav nav-list">
+			<li class="$LinkingMode"><a href="$Link"><i class="icon icon-list"></i> Past Orders</a></li>
+			<li class="$LinkingMode"><a href="$Link(editprofile)"><i class="icon icon-user"></i> Edit Profile</a></li>
+			<li class="$LinkingMode"><a href="$Link(addressbook)"><i class="icon icon-book"></i> Address Book</a></li>
 		</ul>
-		<% else %>
-			<p><% _t("NOCOMPLETED","No completed orders were found.") %></p>
-		<% end_if %>
-			<h4><% _t("INCOMPLETE","Incomplete Orders") %></h4>
-		<% if IncompleteOrders %>
-		<ul>
-			<% control IncompleteOrders %>
-				<li>
-					<a href="$Link" title="<% sprintf(_t("READMORE","Read more on Order #%s"),$ID) %>"><% _t("ORDER","Order #") %>{$ID}</a> ($Created.Nice)
-				</li>
-			<% end_control %>
-		</ul>
-		<% else %>
-			<p><% _t("NOINCOMPLETE","No incomplete orders were found.") %></p>
-		<% end_if %>
 	</div>
-	$MemberForm
+	<div class="memberdetails">	
+		<% control Member %>
+			<dl>
+				<dt>Name</dt><dd>$Name</dd>
+				<dt>Email</dt><dd>$Email</dd>
+				<dt>Member Since</dt> <dd>$Created.Nice</dd>
+				<dt>Last Visit</dt> <dd>$LastVisited.Nice</dd>
+				<dt>Number of orders</dt> <dd><% if PastOrders %>$PastOrders.Count<% else %>0<% end_if %></dd>
+			</dl>
+		<% end_control %>
+	</div>
+	<a></a>
+	<a href="Security/logout" class="btn btn-inverted"><i class="icon icon-off"></i> Log Out</a>
 </div>
+<div class="typography accountcontent">
+	$Content
+</div>
+<div class="clear"></div>

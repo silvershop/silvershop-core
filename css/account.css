@@ -1,37 +1,28 @@
-/*
- * AccountPage stylesheet
- * Styling of past orders and the member form (if required) here
- */
- 
-/*
- * Past orders div containing the order history styling
- */
 
 /* create a box floated to the right */
-#PastOrders {
-	float: right;
-	width: 45%;
+.accountcontent{
+	float:left;
+	width:70%;
+}
+
+.accountnav{
+	float:right;
+	width:25%;
+}
+
+table.orderhistory{
+	width:100%;
 }
 
 /*
  * Member form styling, and tweaks to the login form as well
  */
-#ShopAccountForm_MemberForm {
+#ShopAccountForm_EditAccountForm,
+#ChangePasswordForm_ChangePasswordForm {
 	width: 45%;
+	float:left;
 }
 
-/* these labels don't have a bold font weight, so apply it */
-#ShopAccountForm_MemberForm label.left,
-#LoginForm_LoginForm label.left {
-	font-weight: bold;
-	float: left;
-	width: 150px;
+#ChangePasswordForm_ChangePasswordForm{
+	margin-left:5%;
 }
-/* country select dropdown width is wrong, so reapply it */
-#ShopAccountForm_MemberForm #Country select {
-	width: 305px;
-}
-#PrintPageIcon img{
-	cursor: pointer;
-}
-
