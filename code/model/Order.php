@@ -586,10 +586,9 @@ class Order extends DataObject {
 			'MobilePhone'
 		);
 		$fields = array();
-		$do = ($this->MemberID) ? $this->Member(): $this; //TODO: perhaps always use this??
 		foreach($touse as $field){
-			if($do && $do->$field)
-				$fields[] = $do->$field;
+			if($this->$field)
+				$fields[] = $this->$field;
 		}
 		$separator = ($insertnewlines) ? $separator."\n" : $separator;
 		return implode($separator,$fields);
