@@ -23,9 +23,13 @@ class ProductVariationTest extends SapphireTest{
 	
 	function testVariationOrderItem(){
 		$cart = ShoppingCart::singleton();
+		
+		$emptyitem = $this->redlarge->Item();
+		$this->assertEquals($emptyitem->Quantity,0);
+		
 		$cart->add($this->redlarge);
 		$item = $cart->get($this->redlarge);
-		$this->assertTrue((bool)$item,"item exists"); //failing here
+		$this->assertTrue((bool)$item,"item exists");
 		$this->assertEquals($item->Quantity,1);
 	}
 	

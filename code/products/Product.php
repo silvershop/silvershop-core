@@ -211,9 +211,9 @@ class Product extends Page implements Buyable{
 	 * Product_OrderItem only has a Product object in attribute
 	 */
 	function Item() {
-		$filter = null;
+		$filter = array();
 		$this->extend('updateItemFilter',$filter);
-		$item = ShoppingCart::getInstance()->get($this); //TODO: needs filter
+		$item = ShoppingCart::getInstance()->get($this,$filter);
 		if(!$item)
 			$item = $this->createItem(0); //return dummy item so that we can still make use of Item
 		$this->extend('updateDummyItem',$item);
