@@ -106,8 +106,6 @@ class OrderForm extends Form {
 		//Actions and required fields creation
 		$actions = new FieldSet(new FormAction('processOrder', _t('OrderForm.processOrder','Place order and make payment')));
 		$requiredFields = new CustomRequiredFields($requiredFields);
-		$this->extend('updateValidator',$requiredFields);
-		$this->extend('updateFields',$fields);
 		parent::__construct($controller, $name, $fields, $actions, $requiredFields);
 		//Member details loading
 		if($member && $member->isInDB()){

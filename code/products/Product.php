@@ -263,6 +263,10 @@ class Product extends Page implements Buyable{
 		return $field;
 	}
 	
+	function setPrice($val){
+		$this->setField("BasePrice", $val);
+	}
+	
 	/**
 	 * The raw retail price the visitor will get when they
 	 * add to cart. Can include discounts or markups on the base price.
