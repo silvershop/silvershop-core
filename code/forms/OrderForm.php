@@ -319,5 +319,25 @@ class OrderForm extends Form {
 	function clearSessionData(){
 		Session::set("FormInfo.{$this->FormName()}.data", null);
 	}
+	
+	function forTemplate(){
+		$script =<<<JS
+        Behaviour.register({
+            '#OrderForm_OrderForm': {
+                onsubmit: function(e){
+                    var action = e.explicitOriginalTarget.attributes[0].value;
+                    if(action == "action_useDifferentShippingAddress" || action == "action_useMemberShippingAddress"){
+                        return;
+                    }
+                    return this.validate();
+                }
+            }
+        });
+JS;
+		$form =  parent::forTemplate();
+		if($this->validator && $this->validator->getJavascriptValidationHandler() == 'prototype')
+			Requirements::customScript($script);
+		return $form;
+	}
 
 }
