@@ -142,9 +142,13 @@ class ProductVariation extends DataObject implements Buyable{
 	 * ProductVariation_OrderItem only has a ProductVariation object in attribute
 	 */
 	function Item() {
-		if($item = ShoppingCart::get_item_by_id($this->ProductID,$this->ID))
-			return $item;
-		return new ProductVariation_OrderItem($this,0); //return dummy item so that we can still make use of Item
+		$filter = array();
+		$this->extend('updateItemFilter',$filter);
+		$item = ShoppingCart::getInstance()->get($this,$filter);
+		if(!$item)
+			$item = $this->createItem(0); //return dummy item so that we can still make use of Item
+		$this->extend('updateDummyItem',$item);
+		return $item;
 	}
 
 	function addLink() {

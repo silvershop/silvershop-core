@@ -30,6 +30,11 @@ class ProductOrderItemTest extends FunctionalTest {
 		$this->cart = ShoppingCart::getInstance();
 	}
 	
+	function testEmptyItem(){
+		$emptyitem = $this->mp3player->Item();
+		$this->assertEquals($emptyitem->Quantity,0);
+	}
+	
 	/**
 	 * Test product updates. These may be caused by an admin, causing everyone's cart to update.
 	 * @TODO: this feature needs to be implemented
