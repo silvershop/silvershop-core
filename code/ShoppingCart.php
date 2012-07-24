@@ -137,7 +137,7 @@ class ShoppingCart{
 	 * @param int $quantity
 	 */
 	public function setQuantity(Buyable $buyable,$quantity = 1,$filter = array()){
-		$order->extend("beforeSetQuantity",$buyable,$quantity,$filter);
+		
 		if($quantity <= 0){
 			return $this->remove($buyable,$quantity,$filter);
 		}
@@ -146,6 +146,7 @@ class ShoppingCart{
 		if(!$item){
 			return false;
 		}
+		$order->extend("beforeSetQuantity",$buyable,$quantity,$filter);
 		$item->Quantity = $quantity;
 		$item->write();
 		$order->extend("afterSetQuantity",$item,$buyable,$quantity,$filter);
