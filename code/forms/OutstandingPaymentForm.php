@@ -27,6 +27,7 @@ class OutstandingPaymentForm extends Form {
 		new FormAction('dopayment', _t('OrderForm.PAYORDER','Pay outstanding balance'))
 		);
 		parent::__construct($controller, $name, $fields, $actions, $requiredFields);
+		$this->extend('updateForm');
 	}
 
 	function dopayment($data, $form) {

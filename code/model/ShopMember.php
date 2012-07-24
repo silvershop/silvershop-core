@@ -103,7 +103,10 @@ class ShopMember extends DataObjectDecorator {
 	function updateMemberFormFields($fields){
 		$fields->removeByName('DefaultShippingAddressID');
 		$fields->removeByName('DefaultBillingAddressID');
-		$fields->fieldByName('Gender')->setHasEmptyDefault(true);
+		if($gender=$fields->fieldByName('Gender')){
+			$gender->setHasEmptyDefault(true);
+		}
+		
 	}
 	
 	function getPastOrders($extrafilter = null){
@@ -111,7 +114,7 @@ class ShopMember extends DataObjectDecorator {
 		$statusFilter = " AND \"Order\".\"Status\" IN ('" . implode("','", Order::$placed_status) . "')";
 		$statusFilter .= " AND \"Order\".\"Status\" NOT IN('". implode("','", Order::$hidden_status) ."')";
 		$statusFilter .= ($extrafilter) ? " AND $extrafilter" : "";
-		return DataObject::get('Order',$filter.$statusFilter); //TODO: get orders for this member
+		return DataObject::get('Order',$filter.$statusFilter);
 	}
 
 	function CountryTitle() {
