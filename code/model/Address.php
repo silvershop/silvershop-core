@@ -38,7 +38,7 @@ class Address extends DataObject{
 			new TextField($nameprefix.'PostalCode', _t('Address.POSTALCODE','Postal Code')),
 			new TextField($nameprefix.'Phone', _t('Address.PHONE','Phone Number'))
 		);
-		$this->extend('updateFormFields',$fields);
+		$this->extend('updateFormFields',$fields,$nameprefix);
 		return $fields;
 	}
 	
@@ -49,7 +49,7 @@ class Address extends DataObject{
 			$nameprefix.'State',
 			$nameprefix.'Country'
 		);
-		$this->extend('updateRequiredFields',$fields);
+		$this->extend('updateRequiredFields',$fields,$nameprefix);
 		return $fields;
 	}
 	
@@ -70,8 +70,8 @@ class Address extends DataObject{
 	 */
 	function toString($separator = ", "){
 		$fields = array(
-			$this->FullName,
-			//$this->Compnay,
+			$this->FirstName,
+			$this->Surname,
 			$this->Address,
 			$this->AddressLine2,
 			$this->City,
