@@ -111,8 +111,7 @@ class ShopMember extends DataObjectDecorator {
 	
 	function getPastOrders($extrafilter = null){
 		$filter = "\"MemberID\" = ".(int)$this->owner->ID;
-		$statusFilter = " AND \"Order\".\"Status\" IN ('" . implode("','", Order::$placed_status) . "')";
-		$statusFilter .= " AND \"Order\".\"Status\" NOT IN('". implode("','", Order::$hidden_status) ."')";
+		$statusFilter = " AND \"Order\".\"Status\" NOT IN('". implode("','", Order::$hidden_status) ."')";
 		$statusFilter .= ($extrafilter) ? " AND $extrafilter" : "";
 		return DataObject::get('Order',$filter.$statusFilter);
 	}

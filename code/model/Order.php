@@ -75,7 +75,7 @@ class Order extends DataObject {
 	/**
 	 * Statuses that shouldn't show in user account.
 	 */
-	static $hidden_status = array('Cart','AdminCancelled','MemberCancelled','Query');
+	static $hidden_status = array('Cart','Query');
 
 	/**
 	 * Flag to determine whether the user can cancel
