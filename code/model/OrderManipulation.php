@@ -108,7 +108,7 @@ class OrderManipulation extends Extension{
 	 * checking to see if they can cancel their order
 	 * first of all.
 	 *
-	 * @return Order_CancelForm
+	 * @return CancelOrderForm
 	 */
 	function CancelForm() {
 		if(self::$allow_cancelling && $order = $this->orderfromid()) {
