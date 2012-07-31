@@ -121,6 +121,13 @@ class OrderItem extends OrderAttribute {
 		$buyable = $this->stat('buyable_relationship');
 		return $this->$buyable();
 	}
+	
+	function Image(){
+		if(method_exists($this->Buyable(),'Image')){
+			return $this->Buyable()->Image();
+		}
+		return null;
+	}
 
 	function Total() {
 		$order = $this->Order();

@@ -22,10 +22,10 @@
 		<% control Items %><% if ShowInTable %>
 			<tr id="$TableID" class="$Classes $EvenOdd $FirstLast">
 				<td>
-					<% if Product.Image %>
+					<% if Image %>
 						<div class="image">
-							<a href="$Link" title="<% sprintf(_t("READMORE","View &quot;%s&quot;"),$Title) %>">
-								<% control Product %>$Image.setWidth(45)<% end_control %>
+							<a href="$Link" title="<% sprintf(_t("READMORE","View &quot;%s&quot;"),$Buyable.Title) %>">
+								$Image.setWidth(45)
 							</a>
 						</div>
 					<% end_if %>
