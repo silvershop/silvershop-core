@@ -269,7 +269,7 @@ class Order extends DataObject {
 			'FirstName',
 			'Email'
 		);
-		$fields = array_merge($fields,singleton('Address')->getRequiredFields());
+		$fields = array_merge($fields,singleton('Address')->getRequiredFields("Shipping"));
 		$this->owner->extend('updateRequiredFields', $fields);
 		$this->owner->extend('augmentEcommerceRequiredFields', $fields); //deprecated
 		return $fields;
