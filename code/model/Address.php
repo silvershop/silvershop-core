@@ -1,16 +1,32 @@
 <?php
 /**
  * Address model
+ * 
+ * Typical Address Hierarcy:
+ * 	Continent
+ * 	Country
+ * 	State / Province / Territory (Island?)
+ * 	District / Suburb / County / City
+ *		Code / Zip (may cross over the above)
+ * 	Street / Road,
+ * 	(Premesis/Building/Unit)
+ * 		(Floor/Side/Wing)
+ * 	Number / Entrance
+ * 	Person(s), Company, Department
+ * 
+ * 	Info on address formats: http://bitboost.com/ref/international-address-formats.html
+ * 	See also: xAL address standard
  */
 class Address extends DataObject{
 	
 	static $db = array(
-		'Address' => 'Varchar(255)',		//Street address, P.O. box, company name, c/o
-		'AddressLine2' => 'Varchar(255)',	//Apartment, suite, unit, building, floor, etc
+		'Country' => 'Varchar',
+		'State' => 'Varchar(100)',
 		'City' => 'Varchar(100)',
 		'PostalCode' => 'Varchar(30)',
-		'State' => 'Varchar(100)',
-		'Country' => 'Varchar',
+		'AddressLine2' => 'Varchar(255)',	//Apartment, suite, unit, building, floor, etc
+		'Address' => 'Varchar(255)',		//Street address, P.O. box, company name, c/o
+		
 		'FirstName' => 'Varchar(100)',
 		'Surname' => 'Varchar(100)',
 		'Phone' => 'Varchar(100)',
