@@ -26,6 +26,7 @@ class Order extends DataObject {
 		'Printed' => 'Boolean',
 		'Total' => 'Currency',
 		//customer
+		'Reference' => 'Varchar', //allow for customised order numbering schemes
 		'FirstName' => 'Varchar',
 		'Surname' => 'Varchar',
 		'Email' => 'Varchar',
@@ -138,8 +139,8 @@ class Order extends DataObject {
 	 * @var array
 	 */
 	public static $table_overview_fields = array(
-		'ID' => 'Order No',
 		'Created' => 'Created',
+		'Reference' => 'Order No',
 		'FirstName' => 'First Name',
 		'Surname' => 'Surname',
 		'Total' => 'Total',
@@ -147,10 +148,10 @@ class Order extends DataObject {
 	);
 
 	public static $summary_fields = array(
-		'ID' => 'Order No',
 		'Created' => 'Created',
 		'FirstName' => 'First Name',
 		'Surname' => 'Surname',
+		'Reference' => 'Order No',
 		'LatestEmail' => 'Email',
 		'Total' => 'Total',
 		'TotalOutstanding' => 'Outstanding',
@@ -158,10 +159,10 @@ class Order extends DataObject {
 	);
 
 	public static $searchable_fields = array(
-		'ID' => array(
+		'Reference' => array(
 			'field' => 'TextField',
 			'filter' => 'PartialMatchFilter',
-			'title' => 'Order Number'
+			'title' => 'Reference'
 		),
 		'Printed',
 		'FirstName' => array(
@@ -186,6 +187,7 @@ class Order extends DataObject {
 	);
 
 	public static $rounding_precision = 2;
+	public static $reference_id_padding = 10;
 	
 	protected static $maximum_ignorable_sales_payments_difference = 0.01;
 	public static function set_maximum_ignorable_sales_payments_difference($difference){
@@ -672,6 +674,24 @@ class Order extends DataObject {
 	}
 	
 	/**
+	 * Create a unique reference identifier string for this order.
+	 */
+	function generateReference(){
+		if(!$this->Reference){
+			$this->Reference = str_pad($this->ID,self::$reference_id_padding,'0',STR_PAD_LEFT);
+			$this->extend('updateGenerateReference');
+			//TODO: prevent generating references that are the same
+		}
+	}
+	
+	/**
+	 * Get the reference for this order
+	 */
+	function getReference(){
+		return $this->getField('Reference') ? $this->getField('Reference') : $this->ID;
+	}
+	
+	/**
 	 * Return a link to the {@link CheckoutPage} instance
 	 * that exists in the database.
 	 *
@@ -700,6 +720,16 @@ class Order extends DataObject {
 			$country = ShopMember::find_country();
 		}
 		return $codeOnly ? $country : ShopMember::find_country_title($country);
+	}
+	
+	/**
+	 * Force creating an order reference
+	 */
+	function onBeforeWrite(){
+		parent::onBeforeWrite();
+		if(in_array($this->Status,self::$placed_status)){
+			$this->generateReference();
+		}
 	}
 
 	/**
@@ -782,6 +812,7 @@ class Order extends DataObject {
 	function save() {
 		OrderProcessor::create($this)->placeOrder();
 	}
+	
 	/**
 	* Returns the subtotal of the modifiers for this order.
 	* If a modifier appears in the excludedModifiers array, it is not counted.
