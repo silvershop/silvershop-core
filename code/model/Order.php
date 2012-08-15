@@ -20,7 +20,6 @@ class Order extends DataObject {
  	 * MemberCancelled: Order cancelled by the customer (Member)
  	 */
 	public static $db = array(
-		'Status' => "Enum('Unpaid,Query,Paid,Processing,Sent,Complete,AdminCancelled,MemberCancelled,Cart','Cart')",
 		'Total' => 'Currency',
 		'Reference' => 'Varchar', //allow for customised order numbering schemes
 		//status
@@ -29,6 +28,7 @@ class Order extends DataObject {
 		'ReceiptSent' => 'SS_Datetime', //receipt emailed to customer
 		'Printed' => 'SS_Datetime',
 		'Dispatched' => 'SS_Datetime', //products have been sent to customer
+		'Status' => "Enum('Unpaid,Paid,Processing,Sent,Complete,AdminCancelled,MemberCancelled,Cart','Cart')",
 		//customer (for guest orders)
 		'FirstName' => 'Varchar',
 		'Surname' => 'Varchar',
