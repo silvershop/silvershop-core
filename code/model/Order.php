@@ -594,8 +594,8 @@ class Order extends DataObject {
 	 * Get the latest email for this order.
 	 */
 	function getLatestEmail(){
-		if($this->MemberID && $this->Member()->LastEdited > $this->LastEdited){
-			$this->Member()->Email;
+		if($this->MemberID && ($this->Member()->LastEdited > $this->LastEdited || !$this->Email)){
+			return $this->Member()->Email;
 		}
 		return $this->getField('Email');
 	}
