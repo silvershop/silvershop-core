@@ -72,7 +72,7 @@ class OrderItem extends OrderAttribute {
 
 	function UnitPrice() {
 		$buyable = $this->Buyable();
-		$unitprice = ($buyable) ? $buyable->sellingPrice() : $this->CalculatedTotal;
+		$unitprice = ($buyable) ? $buyable->sellingPrice() : (float)$this->CalculatedTotal;
 		$this->extend('updateUnitPrice',$unitprice);
 		return $unitprice;
 	}
