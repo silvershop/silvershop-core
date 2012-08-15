@@ -625,10 +625,6 @@ class Order extends DataObject {
 			//TODO: only run this if it is setting to Paid, and not cancelled or similar
 			$this->Status = 'Paid';
 			$this->write();
-			$logEntry = new OrderStatusLog();
-			$logEntry->OrderID = $this->ID;
-			$logEntry->Status = 'Paid';
-			$logEntry->write();
 		}
 	}
 
