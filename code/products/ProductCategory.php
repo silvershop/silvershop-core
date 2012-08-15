@@ -109,7 +109,7 @@ class ProductCategory extends Page {
 		$this->extend('updateFilter',$extraFilter);
 
 		if($extraFilter) $filter.= " AND $extraFilter";
-		if(self::$must_have_price) $filter .= " AND \"Price\" > 0";
+		if(self::$must_have_price) $filter .= " AND \"BasePrice\" > 0";
 
 		$limit = (isset($_GET['start']) && (int)$_GET['start'] > 0) ? (int)$_GET['start'].",".self::$page_length : "0,".self::$page_length;
 		$sort = (isset($_GET['sortby'])) ? Convert::raw2sql($_GET['sortby']) : "\"FeaturedProduct\" DESC,\"URLSegment\"";
