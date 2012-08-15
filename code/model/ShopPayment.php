@@ -44,18 +44,6 @@ class ShopPayment extends DataObjectDecorator {
 		return false;
 	}
 
-	//TODO: this function could get called multiple times, resulting in unwanted logs , changes etc.
-	function onAfterWrite() {
-		if($this->owner->Status == 'Success' && $order = $this->owner->Order()) {
-
-			if(!$order->ReceiptSent){
-				$order->sendReceipt();
-				$order->updatePaymentStatus();
-			}
-
-		}
-	}
-
 	function redirectToOrder() {
 		$order = $this->owner->Order();
 		Director::redirect($order->Link());
