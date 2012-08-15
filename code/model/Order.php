@@ -152,13 +152,11 @@ class Order extends DataObject {
 	);
 
 	public static $summary_fields = array(
-		'FirstName' => 'First Name',
-		'Surname' => 'Surname',
 		'Reference' => 'Order No',
 		'Placed' => 'Date',
+		'Name' => 'Customer',
 		'LatestEmail' => 'Email',
 		'Total' => 'Total',
-		'TotalOutstanding' => 'Outstanding',
 		'Status' => 'Status'
 	);
 
@@ -168,7 +166,6 @@ class Order extends DataObject {
 			'filter' => 'PartialMatchFilter',
 			'title' => 'Reference'
 		),
-		'Printed',
 		'FirstName' => array(
 			'title' => 'Customer Name',
 			'filter' => 'PartialMatchFilter'
@@ -180,10 +177,7 @@ class Order extends DataObject {
 		'Placed' => array(
 			'field' => 'TextField',
 			'filter' => 'OrderFilters_AroundDateFilter',
-			'title' => "date"
-		),
-		'TotalPaid' => array(
-			'filter' => 'OrderFilters_MustHaveAtLeastOnePayment',
+			'title' => "Date"
 		),
 		'Status' => array(
 			'filter' => 'OrderFilters_MultiOptionsetFilter',
@@ -204,21 +198,24 @@ class Order extends DataObject {
 
 	function scaffoldSearchFields(){
 		$fieldSet = parent::scaffoldSearchFields();
-		$fieldSet->push(new CheckboxSetField("Status", "Status", self::get_order_status_options()));
-		$fieldSet->push(new DropdownField("TotalPaid", "Has Payment", array(1 => "yes", 0 => "no")));
+		$values = self::$placed_status;
+		$fields = array_combine(self::$placed_status,self::$placed_status);
+		$fieldSet->push(new CheckboxSetField("Status", "Status",$fields,$values));
 		return $fieldSet;
 	}
-
+	
+	/**
+	 * Create CMS fields for cms viewing and editing orders
+	 * Also note that some fields are introduced in OrdersAdmin_RecordController 
+	 */
 	function getCMSFields(){
 		$fields = new FieldSet(new TabSet('Root',new Tab('Main')));
-		$fields->insertBefore(new LiteralField('Title',"<h2>Order #$this->ID - ".$this->dbObject('Created')->Nice()." - ".$this->Member()->getName()."</h2>"),'Root');
-		$fieldsAndTabsToBeRemoved = array('Main','Payments','Status','Printed','MemberID','Attributes','SessionID');
-		foreach($fieldsAndTabsToBeRemoved as $field) {
-			$fields->removeByName($field);
-		}
-		$printlabel = (!$this->Printed) ? _t("Order.PRINT","Print Invoice") : _t("Order.PRINTAGAIN","Print Invoice Again");
+		$fields->insertBefore(new HeaderField('Title',"Order #".$this->getReference()),'Root');
+		$fields->insertBefore(new LiteralField('SubTitle',
+			"<h4 class=\"subtitle\">".$this->dbObject('Placed')->Nice()." - <a href=\"mailto:".$this->getLatestEmail()."\">".$this->getName()."</a></h4>"
+		),"Root");
+		
 		$fields->addFieldsToTab('Root.Main', array(
-			new LiteralField("PrintInvoice",'<p class="print"><a href="OrderReport_Popup/index/'.$this->ID.'?print=1" onclick="javascript: window.open(this.href, \'print_order\', \'toolbar=0,scrollbars=1,location=1,statusbar=0,menubar=0,resizable=1,width=800,height=600,left = 50,top = 50\'); return false;">'.$printlabel.'</a></p>'),
 			new DropdownField("Status","Status", self::get_order_status_options()),
 			new LiteralField('MainDetails', $this->renderWith(self::$admin_template))
 		));
@@ -234,13 +231,6 @@ class Order extends DataObject {
 		$payments->setPageSize(20);
 		$payments->addSummary("Total",array("Total" => array("sum","Currency->Nice")));
 		$fields->addFieldToTab('Root.Payments',$payments);
-		if($m = $this->Member()) {
-			$lastv = new TextField("MemberLastLogin","Last login",$m->dbObject('LastVisited')->Nice());
-			$fields->addFieldsToTab('Root.Customer',array(
-				$lastv->performReadonlyTransformation(),
-				new LiteralField("MemberSummary", $m->renderWith("Order_Member"))
-			));
-		}
 		$this->extend('updateCMSFields',$fields);
 		return $fields;
 	}

@@ -1,6 +1,5 @@
 <?php
 
-
 class OrderFilters_AroundDateFilter extends ExactMatchFilter {
 
 	protected static $how_many_days_around = 31;
@@ -34,8 +33,6 @@ class OrderFilters_AroundDateFilter extends ExactMatchFilter {
 
 }
 
-
-
 class OrderFilters_MultiOptionsetFilter extends SearchFilter {
 
 	public function apply(SQLQuery $query) {
@@ -48,7 +45,6 @@ class OrderFilters_MultiOptionsetFilter extends SearchFilter {
 					Convert::raw2sql(str_replace("'", '', $value))
 				);
 			}
-
 			return $query->where(implode(" OR ", $matches));
 		}
 		return $query;
@@ -61,23 +57,5 @@ class OrderFilters_MultiOptionsetFilter extends SearchFilter {
 		else {
 			return $this->getValue() == null || $this->getValue() == '';
 		}
-	}
-}
-class OrderFilters_MustHaveAtLeastOnePayment extends SearchFilter {
-
-	public function apply(SQLQuery $query) {
-		$query = $this->applyRelation($query);
-		$value = $this->getValue();
-		if($value) {
-			return $query->innerJoin(
-				$table = "Payment", // framework already applies quotes to table names here!
-				$onPredicate = "\"Payment\".\"OrderID\" = \"Order\".\"ID\"",
-				$tableAlias=null
-			);
-		}
-	}
-
-	public function isEmpty() {
-		return $this->getValue() == null || $this->getValue() == '' || $this->getValue() == 0;
 	}
 }

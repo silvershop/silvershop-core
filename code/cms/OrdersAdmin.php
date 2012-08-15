@@ -63,7 +63,8 @@ class OrdersAdmin_CollectionController extends ModelAdmin_CollectionController {
 class OrdersAdmin_RecordController extends ModelAdmin_RecordController {
 	
 	static $allowed_actions = array(
-		'recalculate'
+		'recalculate',
+		'printorder'
 	);
 	
 	public function EditForm() {
@@ -91,12 +92,20 @@ class OrdersAdmin_RecordController extends ModelAdmin_RecordController {
 			}
 		}
 		//add recalculate action
-		$link = $this->Link('recalculate');
-		$form->Fields()->addFieldToTab("Root.AdminActions",
-			new LiteralField("recalculate",
-				"<a href=\"$link\">recalculate order</a>"
-			)
+		$recalculatelink = $this->Link('recalculate');
+		$printlink = $this->Link('printorder')."?print=1";
+		
+		$printwindowjs =<<<JS
+			window.open('$printlink', 'print_order', 'toolbar=0,scrollbars=1,location=1,statusbar=0,menubar=0,resizable=1,width=800,height=600,left = 50,top = 50');return false;
+JS;
+		
+		
+		$form->Actions()->insertFirst(
+//			new LiteralField("recalculate","<a href=\"$recalculatelink\">recalculate order</a>"),
+			new LiteralField("PrintOrder","<input type=\"submit\" onclick=\"javascript:$printwindowjs\" class=\"action\" value=\""._t("Order.PRINT","Print")."\">")
 		);
+
+		
 		return $form;
 	}
 	
@@ -108,7 +117,23 @@ class OrdersAdmin_RecordController extends ModelAdmin_RecordController {
 		//TODO: only recalculate if all order items have retrievable product versions
 		$order->calculate();
 		$order->write();
-		return "success: ".$order->Total();
+		if(Director::is_ajax()){
+			return "success: ".$order->Total();
+		}
+		Director::redirectBack();
+	}
+	
+	public function printorder(){
+		//include print javascript, if print argument is provided
+		if(isset($_REQUEST['print']) && $_REQUEST['print']) {
+			Requirements::customScript("if(document.location.href.indexOf('print=1') > 0) {window.print();}");
+		}
+		$this->Title = i18n::_t("ORDER.INVOICE","Invoice");
+		if($id = $this->urlParams['ID']) {
+			$this->Title .= " #$id";
+		}
+		Requirements::clear();
+		return $this->currentRecord->customise(array('SiteConfig' => SiteConfig::current_site_config()))->renderWith('Order_Printable');
 	}
 	
 }
