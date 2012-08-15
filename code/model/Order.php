@@ -236,10 +236,9 @@ class Order extends DataObject {
 	}
 	
 	/**
-	 * Give the two letter code to resolve the title of the country.
-	 *
-	 * @param string $code Country code
-	 * @return string|boolean String if country found, boolean FALSE if nothing found
+	 * Get fields for order form
+	 * 
+	 * @return FieldSet
 	 */
 	function getFormFields() {
 		$fields = new FieldSet(
