@@ -34,6 +34,7 @@ class Order extends DataObject {
 		'Surname' => 'Varchar',
 		'Email' => 'Varchar',
 		'Notes' => 'Text',
+		'IPAddress' => 'Varchar(15)',
 		//separate shipping
 		'SeparateBillingAddress' => 'Boolean'
 	);

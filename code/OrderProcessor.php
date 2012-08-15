@@ -77,6 +77,7 @@ class OrderProcessor{
 		$this->order->Status = 'Unpaid'; //update status
 		if(!$this->order->Placed){
 			$this->order->Placed = SS_Datetime::now()->Rfc2822(); //record placed order datetime
+			$this->order->IPAddress = Controller::curr()->getRequest()->getIP(); //record client IP
 		}
 		//re-write all attributes and modifiers to make sure they are up-to-date before they can't be changed again
 		$attributes = $this->order->Items();
