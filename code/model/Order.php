@@ -538,22 +538,42 @@ class Order extends DataObject {
 			default : return false;
 		}
 	}
-
+	
+	/**
+	 * Check if an order can be paid for.
+	 * 
+	 * @return boolean
+	 */
 	public function canPay($member = null){
 		if($this->TotalOutstanding() > 0){
 			return true;
 		}
 		return false;
 	}
-
+	
+	/*
+	 * Prevent deleting orders.
+	 * 
+	 * @return boolean
+	 */
 	public function canDelete($member = null) {
 		return false;
 	}
-
+	
+	/**
+	 * Check if an order can be edited.
+	 * 
+	 * @return boolean
+	 */
 	public function canEdit($member = null) {
 		return true;
 	}
 
+	/**
+	 * Prevent standard creation of orders.
+	 * 
+	 * @return boolean
+	 */
 	public function canCreate($member = null) {
 		return false;
 	}
