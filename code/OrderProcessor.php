@@ -75,6 +75,9 @@ class OrderProcessor{
 			return false;
 		}
 		$this->order->Status = 'Unpaid'; //update status
+		if(!$this->order->Placed){
+			$this->order->Placed = SS_Datetime::now()->Rfc2822(); //record placed order datetime
+		}
 		//re-write all attributes and modifiers to make sure they are up-to-date before they can't be changed again
 		$attributes = $this->order->Items();
 		if($attributes->exists()){
@@ -173,7 +176,7 @@ class OrderProcessor{
 	*/
 	function sendReceipt() {
 		$this->sendEmail('Order_ReceiptEmail');
-		$this->order->ReceiptSent = true;
+		$this->order->ReceiptSent = SS_Datetime::now()->Rfc2822();
 		$this->order->write();
 	}
 	

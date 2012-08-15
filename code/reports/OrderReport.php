@@ -85,7 +85,7 @@ class OrderReport_Popup extends Controller {
 		if(is_numeric($id)) {
 			$order = DataObject::get_by_id("Order", $id);
 			if(isset($_REQUEST['print'])) {
-				$order->Printed = true;
+				$order->Printed = SS_Datetime::now()->Rfc2822();
 				$order->write();
 			}
 			return $order;

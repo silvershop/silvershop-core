@@ -20,13 +20,16 @@ class Order extends DataObject {
  	 * MemberCancelled: Order cancelled by the customer (Member)
  	 */
 	public static $db = array(
-		//order
 		'Status' => "Enum('Unpaid,Query,Paid,Processing,Sent,Complete,AdminCancelled,MemberCancelled,Cart','Cart')",
-		'ReceiptSent' => 'Boolean',
-		'Printed' => 'Boolean',
 		'Total' => 'Currency',
-		//customer
 		'Reference' => 'Varchar', //allow for customised order numbering schemes
+		//status
+		'Placed' => "SS_Datetime", //date the order was placed (went from Cart to Order)
+		'Paid' => 'SS_Datetime', //no outstanding payment left
+		'ReceiptSent' => 'SS_Datetime', //receipt emailed to customer
+		'Printed' => 'SS_Datetime',
+		'Dispatched' => 'SS_Datetime', //products have been sent to customer
+		//customer (for guest orders)
 		'FirstName' => 'Varchar',
 		'Surname' => 'Varchar',
 		'Email' => 'Varchar',
@@ -48,7 +51,7 @@ class Order extends DataObject {
 		'Payments' => 'Payment'
 	);
 	
-	public static $default_sort = "\"Created\" DESC";
+	public static $default_sort = "\"Placed\" DESC, \"Created\" DESC";
 	
 	public static $defaults = array(
 		'Status' => 'Cart'
@@ -139,8 +142,8 @@ class Order extends DataObject {
 	 * @var array
 	 */
 	public static $table_overview_fields = array(
-		'Created' => 'Created',
 		'Reference' => 'Order No',
+		'Placed' => 'Date',
 		'FirstName' => 'First Name',
 		'Surname' => 'Surname',
 		'Total' => 'Total',
@@ -148,10 +151,10 @@ class Order extends DataObject {
 	);
 
 	public static $summary_fields = array(
-		'Created' => 'Created',
 		'FirstName' => 'First Name',
 		'Surname' => 'Surname',
 		'Reference' => 'Order No',
+		'Placed' => 'Date',
 		'LatestEmail' => 'Email',
 		'Total' => 'Total',
 		'TotalOutstanding' => 'Outstanding',
@@ -173,7 +176,7 @@ class Order extends DataObject {
 			'title' => 'Customer Email',
 			'filter' => 'PartialMatchFilter'
 		),
-		'Created' => array(
+		'Placed' => array(
 			'field' => 'TextField',
 			'filter' => 'OrderFilters_AroundDateFilter',
 			'title' => "date"
