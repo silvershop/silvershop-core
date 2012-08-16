@@ -18,9 +18,10 @@ class OrdersAdmin extends ModelAdmin{
 		),
 		'Payment' => array('title' => 'Payments'),
 	);
-	public static function set_managed_models(array $array) {self::$managed_models = $array;}
-	//public static $collection_controller_class = 'OrdersAdmin_CollectionController';
-	//public static $record_controller_class = 'OrdersAdmin_RecordController';
+	
+	public static function set_managed_models(array $array) {
+		self::$managed_models = $array;
+	}
 
 	function init() {
 		parent::init();
@@ -99,13 +100,10 @@ class OrdersAdmin_RecordController extends ModelAdmin_RecordController {
 			window.open('$printlink', 'print_order', 'toolbar=0,scrollbars=1,location=1,statusbar=0,menubar=0,resizable=1,width=800,height=600,left = 50,top = 50');return false;
 JS;
 		
-		
 		$form->Actions()->insertFirst(
-//			new LiteralField("recalculate","<a href=\"$recalculatelink\">recalculate order</a>"),
+			//new LiteralField("recalculate","<a href=\"$recalculatelink\">recalculate order</a>"),
 			new LiteralField("PrintOrder","<input type=\"submit\" onclick=\"javascript:$printwindowjs\" class=\"action\" value=\""._t("Order.PRINT","Print")."\">")
 		);
-
-		
 		return $form;
 	}
 	
