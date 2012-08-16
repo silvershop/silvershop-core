@@ -82,6 +82,16 @@ class Address extends DataObject{
 	}
 	
 	/**
+	 * Get full name associated with this Address
+	 */
+	function getName(){
+		return implode('',array_filter(array(
+			$this->FirstName,
+			$this->Surname
+		)));
+	}
+	
+	/**
 	 * Convert address to a single string.
 	 */
 	function toString($separator = ", "){
@@ -99,7 +109,7 @@ class Address extends DataObject{
 		$this->extend('updateToString',$fields);
 		return implode($separator,array_filter($fields));
 	}
-
+	
 	function forTemplate(){
 		return $this->renderWith('Address');
 	}
