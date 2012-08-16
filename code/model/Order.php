@@ -75,7 +75,7 @@ class Order extends DataObject {
 	/**
 	 * Statuses for orders that have been placed.
 	 */
-	static $placed_status = array('Paid','Unpaid', 'Processing', 'Sent', 'Complete');
+	static $placed_status = array('Paid','Unpaid', 'Processing', 'Sent', 'Complete', 'MemberCancelled', 'AdminCancelled');
 
 	/**
 	 * Statuses that shouldn't show in user account.
