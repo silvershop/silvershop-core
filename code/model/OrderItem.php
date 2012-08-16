@@ -67,7 +67,6 @@ class OrderItem extends OrderAttribute {
 		if($this->Quantity < 1){
 			$this->Quantity = 1;
 		}
-		$this->CalculateTotal();
 	}
 
 	function UnitPrice() {
@@ -129,14 +128,16 @@ class OrderItem extends OrderAttribute {
 		return null;
 	}
 
+	/**
+	 * Get calculated total, or stored total
+	 * depending on whether the order is in cart
+	 */
 	function Total() {
 		$order = $this->Order();
 		if($order && $order->IsCart()){ //always calculate total if order is in cart
 			return $this->CalculateTotal();
-		}elseif((int)$this->CalculatedTotal){
-			return $this->CalculatedTotal;
 		}
-		return $this->CalculateTotal(); //revert to calculating total if stored value not available
+		return $this->CalculatedTotal; //otherwise get value from database
 	}
 
 	/**
