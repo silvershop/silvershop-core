@@ -57,18 +57,10 @@ class OrderItem extends OrderAttribute {
 	}
 	
 	/**
-	 * Force quantity to be at least 1, and recalculate total
-	 * before saving to database.
+	 * Get the buyable object related to this item.
 	 */
-	function onBeforeWrite() {
-		parent::onBeforeWrite();
-		if($this->OrderID && $this->Order() && $this->Order()->isCart()){
-			//always keep quantity above 0
-			if($this->Quantity < 1){
-				$this->Quantity = 1;
-			}
-			$this->calculatetotal();
-		}
+	function Buyable(){
+		return $this->{$this->stat('buyable_relationship')}();
 	}
 	
 	/**
@@ -83,57 +75,6 @@ class OrderItem extends OrderAttribute {
 			return $this->UnitPrice = $unitprice;
 		}
 		return $this->UnitPrice;
-	}
-
-	function QuantityField(){
-		return new EcomQuantityField($this);
-	}
-	
-	function addLink() {
-		return ShoppingCart_Controller::add_item_link($this->Buyable(),$this->uniquedata());
-	}
-	
-	function removeLink() {
-		return ShoppingCart_Controller::remove_item_link($this->Buyable(),$this->uniquedata());
-	}
-	
-	function removeallLink() {
-		return ShoppingCart_Controller::remove_all_item_link($this->Buyable(),$this->uniquedata());
-	}
-	
-	function setquantityLink() {
-		return ShoppingCart_Controller::set_quantity_item_link($this->Buyable(),$this->uniquedata());
-	}
-	
-	/**
-	 * Intersects this item's required_fields with the data record.
-	 * This is used for uniquely adding items to the cart. 
-	 */
-	function uniquedata(){
-		$required = $this->stat('required_fields'); //TODO: also combine with all ancestors of this->class
-		$data = $this->record;
-		$unique = array();
-		//reduce record to only required fields
-		if($required){
-			foreach($required as $field){
-				if($this->has_one($field)){
-					$field = $field."ID"; //add ID to hasones
-				}
-				$unique[$field] = $this->$field;
-			}
-		}
-		return $unique;
-	}
-	
-	function Buyable(){
-		return $this->{$this->stat('buyable_relationship')}();
-	}
-	
-	function Image(){
-		if(method_exists($this->Buyable(),'Image')){
-			return $this->Buyable()->Image();
-		}
-		return null;
 	}
 
 	/**
@@ -157,13 +98,79 @@ class OrderItem extends OrderAttribute {
 		$this->CalculatedTotal = $total;
 		return $total;
 	}
+	
+	/**
+	 * Intersects this item's required_fields with the data record.
+	 * This is used for uniquely adding items to the cart.
+	 */
+	function uniquedata(){
+		$required = $this->stat('required_fields'); //TODO: also combine with all ancestors of this->class
+		$data = $this->record;
+		$unique = array();
+		//reduce record to only required fields
+		if($required){
+			foreach($required as $field){
+				if($this->has_one($field)){
+					$field = $field."ID"; //add ID to hasones
+				}
+				$unique[$field] = $this->$field;
+			}
+		}
+		return $unique;
+	}
+	
+	/**
+	 * Force quantity to be at least 1, and recalculate total
+	 * before saving to database.
+	 */
+	function onBeforeWrite() {
+		parent::onBeforeWrite();
+		if($this->OrderID && $this->Order() && $this->Order()->isCart()){
+			//always keep quantity above 0
+			if($this->Quantity < 1){
+				$this->Quantity = 1;
+			}
+			$this->calculatetotal();
+		}
+	}
+	
+	/**
+	 * Get the buyable image.
+	 * Also serves as a standardised placeholder for overriding in subclasses.
+	 */
+	function Image(){
+		if(method_exists($this->Buyable(),'Image')){
+			return $this->Buyable()->Image();
+		}
+		return null;
+	}
 
 	function TableTitle() {
 		return $this->i18n_singular_name();
 	}
 
+	function QuantityField(){
+		return new EcomQuantityField($this);
+	}
+	
 	function checkoutLink() {
 		return CheckoutPage::find_link();
+	}
+	
+	function addLink() {
+		return ShoppingCart_Controller::add_item_link($this->Buyable(),$this->uniquedata());
+	}
+	
+	function removeLink() {
+		return ShoppingCart_Controller::remove_item_link($this->Buyable(),$this->uniquedata());
+	}
+	
+	function removeallLink() {
+		return ShoppingCart_Controller::remove_all_item_link($this->Buyable(),$this->uniquedata());
+	}
+	
+	function setquantityLink() {
+		return ShoppingCart_Controller::set_quantity_item_link($this->Buyable(),$this->uniquedata());
 	}
 	
 	//Deprecated, to be removed or factored out
