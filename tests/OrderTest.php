@@ -14,9 +14,18 @@ class OrderTest extends SapphireTest {
 		parent::setUp();
 		ShopTest::setConfiguration();
 		$this->mp3player = $this->objFromFixture('Product', 'mp3player');
-		$this->socks = $this->objFromFixture('Product', 'socks');
 		$this->mp3player->publish('Stage','Live');
+		$this->socks = $this->objFromFixture('Product', 'socks');
 		$this->socks->publish('Stage','Live');
+		$this->beachball = $this->objFromFixture('Product', 'beachball');
+		$this->beachball->publish('Stage','Live');
+	}
+	
+	function tearDown(){
+		parent::tearDown();
+		unset($this->mp3player);
+		unset($this->socks);
+		unset($this->beachball);
 	}
 	
 	function testProductOrderItems() {
@@ -49,8 +58,48 @@ class OrderTest extends SapphireTest {
 		$this->assertEquals($order->TotalOutstanding(), 208,"Outstanding total is correct");
 	}
 	
+	function testPlacedOrderImmutability(){
+		//create order
+		$order = self::createOrder();
+		
+		//place order
+		$processor = OrderProcessor::create($order)->placeOrder();
+		
+		//check totals
+		$this->assertEquals($order->Total(),408);
+		
+		//make a changes to existing products
+		$this->mp3player->BasePrice = 100;
+		$this->mp3player->write();
+		$this->socks->BasePrice = 20;
+		$this->socks->write();
+		
+		//total doesn't change
+		$this->assertEquals($order->Total(),408);
+		$this->assertFalse($order->isCart());
+		
+		//item values don't change
+		$items = $order->Items();
+		$this->assertNotNull($items);
+		$this->assertDOSEquals(array(
+			array('ProductID' => $this->mp3player->ID,'Quantity' => 2, 'CalculatedTotal' => 400),
+			array('ProductID' => $this->socks->ID, 'Quantity' => 1, 'CalculatedTotal' => 8)
+		), $items);
+		
+		$mp3player = $items->find('ProductID',$this->mp3player->ID);
+		$this->assertNotNull($mp3player);
+		$this->assertEquals($mp3player->UnitPrice(),200,"Unit price remains the same");
+		$this->assertEquals($mp3player->Total(),400,"");
+		
+		$socks = $items->find('ProductID',$this->socks->ID);
+		$this->assertNotNull($socks);
+		$this->assertEquals($socks->UnitPrice(),8);
+		$this->assertEquals($socks->Total(),8);
+	}
+	
 	/**
 	 * Helper for creating an order
+	 * Total should be $408.00
 	 */
 	function createOrder(){
 		$order = new Order();
@@ -62,6 +111,7 @@ class OrderTest extends SapphireTest {
 		$item1b->write();
 		$order->Items()->add($item1b);
 		
+		//add a payment
 		$payment = new Payment();
 		$payment->OrderID = $order->ID;
 		$payment->AmountAmount = 200;
