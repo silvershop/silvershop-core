@@ -10,7 +10,8 @@
 class OrderItem extends OrderAttribute {
 
 	public static $db = array(
-		'Quantity' => 'Int'
+		'Quantity' => 'Int',
+		'UnitPrice' => 'Currency'
 	);
 
 	public static $casting = array(
@@ -54,26 +55,34 @@ class OrderItem extends OrderAttribute {
 	static function disable_quantity_js(){
 		self::$disable_quantity_js = true;
 	}
-
+	
 	/**
-	 * Populate some OrderItem object attributes before
-	 * writing them to the OrderItem DB record.
-	 *
-	 * PRECONDITION: The order item is not saved in the database yet.
+	 * Force quantity to be at least 1, and recalculate total
+	 * before saving to database.
 	 */
 	function onBeforeWrite() {
 		parent::onBeforeWrite();
-		//always keep quantity above 0
-		if($this->Quantity < 1){
-			$this->Quantity = 1;
+		if($this->OrderID && $this->Order() && $this->Order()->isCart()){
+			//always keep quantity above 0
+			if($this->Quantity < 1){
+				$this->Quantity = 1;
+			}
+			$this->calculatetotal();
 		}
 	}
-
+	
+	/**
+	 * Get unit price for this item.
+	 * Fetches from db, or Buyable, based on order status.
+	 */
 	function UnitPrice() {
-		$buyable = $this->Buyable();
-		$unitprice = ($buyable) ? $buyable->sellingPrice() : (float)$this->CalculatedTotal;
-		$this->extend('updateUnitPrice',$unitprice);
-		return $unitprice;
+		if($this->Order()->IsCart()){
+			$buyable = $this->Buyable();
+			$unitprice = ($buyable) ? $buyable->sellingPrice() : $this->UnitPrice;
+			$this->extend('updateUnitPrice',$unitprice);
+			return $this->UnitPrice = $unitprice;
+		}
+		return $this->UnitPrice;
 	}
 
 	function QuantityField(){
@@ -117,8 +126,7 @@ class OrderItem extends OrderAttribute {
 	}
 	
 	function Buyable(){
-		$buyable = $this->stat('buyable_relationship');
-		return $this->$buyable();
+		return $this->{$this->stat('buyable_relationship')}();
 	}
 	
 	function Image(){
@@ -133,9 +141,8 @@ class OrderItem extends OrderAttribute {
 	 * depending on whether the order is in cart
 	 */
 	function Total() {
-		$order = $this->Order();
-		if($order && $order->IsCart()){ //always calculate total if order is in cart
-			return $this->CalculateTotal();
+		if($this->Order()->IsCart()){ //always calculate total if order is in cart
+			return $this->calculatetotal();
 		}
 		return $this->CalculatedTotal; //otherwise get value from database
 	}
@@ -144,7 +151,7 @@ class OrderItem extends OrderAttribute {
 	 * Calculates the total for this item.
 	 * Generally called by onBeforeWrite
 	 */
-	function CalculateTotal(){
+	protected function calculatetotal(){
 		$total = $this->UnitPrice() * $this->Quantity;
 		$this->extend('updateTotal',$total);
 		$this->CalculatedTotal = $total;
