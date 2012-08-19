@@ -17,6 +17,7 @@ class AddProductForm extends Form{
 			'BuyableID'
 		));
 		parent::__construct($controller,"AddProductForm",$fields,$actions,$validator);
+		$this->extend('updateForm');
 	}
 	
 	function addtocart($data,$form){
