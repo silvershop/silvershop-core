@@ -169,6 +169,23 @@ class ProductVariationDecorator extends DataObjectDecorator{
 			}
 		}
 	}
+	
+	/**
+	 * Get all the values for a given attribute type,
+	 * based on this product's varaitions.
+	 */
+	function possibleValuesForAttributeType($type){
+		if(!is_numeric($type))
+			$type = $type->ID;
+		if(!$type) return null;
+	
+		$where = "TypeID = $type AND \"ProductVariation\".\"ProductID\" = ".$this->owner->ID;
+		//TODO: is there a better place to obtain these joins?
+		$join = "INNER JOIN \"ProductVariation_AttributeValues\" ON \"ProductAttributeValue\".\"ID\" = \"ProductVariation_AttributeValues\".\"ProductAttributeValueID\"" .
+			" INNER JOIN \"ProductVariation\" ON \"ProductVariation_AttributeValues\".\"ProductVariationID\" = \"ProductVariation\".\"ID\"";
+	
+		return DataObject::get('ProductAttributeValue',$where,$sort = "\"ProductAttributeValue\".\"Sort\",\"ProductAttributeValue\".\"Value\"",$join);
+	}
 
 	/**
 	 * Make sure variations are deleted with product.
@@ -193,10 +210,15 @@ class ProductControllerVariationExtension extends Extension{
 
 	public static $allowed_actions = array(
 		'VariationForm',
+		'AddVariationForm',
 		'addVariation'
 	);
-
+	
 	function VariationForm(){
+		return new VariationForm($this->owner);
+	}
+
+	function VariationForm_old(){
 		$farray = array();
 		$requiredfields = array();
 		$attributes = $this->owner->VariationAttributeTypes();
@@ -255,20 +277,6 @@ class ProductControllerVariationExtension extends Extension{
 			$form->sessionMessage("That variation is not available, sorry.","bad"); //validation fail
 		}
 		ShoppingCart_Controller::direct();
-	}
-
-	function possibleValuesForAttributeType($type){
-		if(!is_numeric($type))
-		$type = $type->ID;
-
-		if(!$type) return null;
-
-		$where = "TypeID = $type AND \"ProductVariation\".\"ProductID\" = ".$this->owner->ID;
-		//TODO: is there a better place to obtain these joins?
-		$join = "INNER JOIN \"ProductVariation_AttributeValues\" ON \"ProductAttributeValue\".\"ID\" = \"ProductVariation_AttributeValues\".\"ProductAttributeValueID\"" .
-					" INNER JOIN \"ProductVariation\" ON \"ProductVariation_AttributeValues\".\"ProductVariationID\" = \"ProductVariation\".\"ID\"";
-
-		return DataObject::get('ProductAttributeValue',$where,$sort = "\"ProductAttributeValue\".\"Sort\",\"ProductAttributeValue\".\"Value\"",$join);
 	}
 
 }
