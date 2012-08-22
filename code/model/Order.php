@@ -185,7 +185,7 @@ class Order extends DataObject {
 	);
 
 	public static $rounding_precision = 2;
-	public static $reference_id_padding = 10;
+	public static $reference_id_padding = 5;
 	
 	protected static $maximum_ignorable_sales_payments_difference = 0.01;
 	public static function set_maximum_ignorable_sales_payments_difference($difference){
@@ -688,10 +688,14 @@ class Order extends DataObject {
 	 * Create a unique reference identifier string for this order.
 	 */
 	function generateReference(){
-		if(!$this->Reference){
-			$this->Reference = str_pad($this->ID,self::$reference_id_padding,'0',STR_PAD_LEFT);
-			$this->extend('updateGenerateReference');
-			//TODO: prevent generating references that are the same
+		$reference = str_pad($this->ID,self::$reference_id_padding,'0',STR_PAD_LEFT);
+		$this->extend('generateReference',$reference);
+		$this->Reference = $reference;
+		//prevent generating references that are the same
+		$count = 0;
+		while(DataObject::get_one('Order',"\"Reference\" = '$this->Reference'")){
+			$count++;
+			$this->Reference = $reference."".$count;
 		}
 	}
 	
