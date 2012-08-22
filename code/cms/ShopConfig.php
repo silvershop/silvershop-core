@@ -6,7 +6,10 @@ class ShopConfig extends DataObjectDecorator{
 		return array(
 			'db' => array(
 				'AllowedCountries' => 'Text'		
-			)		
+			),
+			'has_one' => array(
+				'TermsPage' => 'SiteTree'
+			)
 		);
 	}
 	
