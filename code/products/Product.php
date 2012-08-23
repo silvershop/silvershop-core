@@ -310,11 +310,21 @@ class Product extends Page implements Buyable{
 }
 
 class Product_Controller extends Page_Controller {
-
-	static $allowed_actions = array();
 	
+	public $formclass = "AddProductForm"; //allow overriding the type of form used
+	
+	function Form(){
+		$formclass = $this->formclass;
+		$form = new $formclass($this,"Form");
+		$this->extend('updateForm',$form);
+		return $form;
+	}
+
+	/**
+	 * @deprecated - use Form instead
+	 */
 	function AddProductForm(){
-		return new AddProductForm($this,$this->dataRecord);
+		return $this->Form();
 	}
 	
 }

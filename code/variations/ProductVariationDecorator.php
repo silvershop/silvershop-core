@@ -197,6 +197,12 @@ class ProductVariationDecorator extends DataObjectDecorator{
 		}
 		//TODO: make this work...otherwise we get rouge variations that could mess up future imports
 	}
+	
+	function contentcontrollerInit($controller){
+		if($this->owner->Variations()->exists()){
+			$controller->formclass = 'VariationForm';
+		}
+	}
 
 }
 
@@ -206,77 +212,18 @@ class ProductVariationDecorator extends DataObjectDecorator{
  */
 class ProductControllerVariationExtension extends Extension{
 
-	static $max_quantity = 50;
-
-	public static $allowed_actions = array(
-		'VariationForm',
-		'AddVariationForm',
-		'addVariation'
-	);
-	
+	/**
+	 * @deprecated - use Form instead
+	 */
 	function VariationForm(){
-		return new VariationForm($this->owner);
+		return $this->owner->Form();
 	}
-
-	function VariationForm_old(){
-		$farray = array();
-		$requiredfields = array();
-		$attributes = $this->owner->VariationAttributeTypes();
-
-		foreach($attributes as $attribute){
-			$farray[] = $attribute->getDropDownField("choose $attribute->Label ...",$this->owner->possibleValuesForAttributeType($attribute));
-			$requiredfields[] = "ProductAttributes[$attribute->ID]";
-		}
-
-		$fields = new FieldSet($farray);
-		if($maxquantity = self::$max_quantity){
-			$values = array();
-			$count = 1;
-			while($count <= $maxquantity){
-				$values[$count] = $count;
-				$count++;
-			}
-			$fields->push(new DropdownField('Quantity','Quantity',$values,1));
-		}else{
-			$fields->push(new NumericField('Quantity','Quantity',1));
-		}
-
-		if(true){
-			//TODO: make javascript json inclusion optional
-			$vararray = array();
-			if($vars = $this->owner->Variations()){
-				foreach($vars as $var){
-					$vararray[$var->ID] = $var->AttributeValues()->map('ID','ID');
-				}
-			}
-			$fields->push(new HiddenField('VariationOptions','VariationOptions',json_encode($vararray)));
-		}
-
-		$actions = new FieldSet(
-			new FormAction('addVariation', _t("Product.ADDLINK","Add this item to cart"))
-		);
-
-		$requiredfields[] = 'Quantity';
-		$validator = new RequiredFields($requiredfields);
-
-		$form = new Form($this->owner,'VariationForm',$fields,$actions,$validator);
-		return $form;
+	
+	/**
+	 * @deprecated - use Form instead
+	 */
+	function AddVariationForm(){
+		return $this->owner->Form();
 	}
-
-	function addVariation($data,$form){
-		if(isset($data['ProductAttributes']) && $variation = $this->owner->getVariationByAttributes($data['ProductAttributes'])){
-			$quantity = (isset($data['Quantity']) && is_numeric($data['Quantity'])) ? (int) $data['Quantity'] : 1;
-			$cart = ShoppingCart::singleton();
-			if($cart->add($variation,$quantity)){
-				$form->sessionMessage("Successfully added to cart.","good");
-			}else{
-				$form->sessionMessage($cart->getMessage(),$cart->getMessageType());
-			}
-			
-		}else{
-			$form->sessionMessage("That variation is not available, sorry.","bad"); //validation fail
-		}
-		ShoppingCart_Controller::direct();
-	}
-
+	
 }

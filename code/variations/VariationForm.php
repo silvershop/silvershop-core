@@ -1,10 +1,11 @@
 <?php
 
-class VariationForm extends Form{
+class VariationForm extends AddProductForm{
 	
-	static $max_quantity = 50; //populate quantity dropdown with this many values
+	static $include_json = true;
 	
 	function __construct($controller, $name = "VariationForm"){
+		parent::__construct($controller,$name);
 		$product = $controller->data();
 		$farray = array();
 		$requiredfields = array();
@@ -14,19 +15,8 @@ class VariationForm extends Form{
 			$requiredfields[] = "ProductAttributes[$attribute->ID]";
 		}
 		$fields = new FieldSet($farray);
-		if($maxquantity = self::$max_quantity){
-			$values = array();
-			$count = 1;
-			while($count <= $maxquantity){
-				$values[$count] = $count;
-				$count++;
-			}
-			$fields->push(new DropdownField('Quantity','Quantity',$values,1));
-		}else{
-			$fields->push(new NumericField('Quantity','Quantity',1));
-		}
-		if(true){
-			//TODO: make javascript json inclusion optional
+		
+		if(self::$include_json){ //TODO: this should be included as js validation instead
 			$vararray = array();
 			if($vars = $product->Variations()){
 				foreach($vars as $var){
@@ -35,30 +25,33 @@ class VariationForm extends Form{
 			}
 			$fields->push(new HiddenField('VariationOptions','VariationOptions',json_encode($vararray)));
 		}
-		$actions = new FieldSet(
-			new FormAction('addtocart', _t("Product.ADDLINK","Add this item to cart"))
-		);
+		$fields->merge($this->Fields());
+		$this->setFields($fields);
 		$requiredfields[] = 'Quantity';
-		$validator = new RequiredFields($requiredfields);
-	
-		parent::__construct($controller,$name,$fields,$actions,$validator);
-		$this->extend('updateForm');
+		$this->setValidator(new RequiredFields($requiredfields));
+		$this->extend('updateVariationForm');
 	}
 	
 	function addtocart($data,$form){
-		if(isset($data['ProductAttributes']) && $variation = $this->Controller()->getVariationByAttributes($data['ProductAttributes'])){
+		if($variation = $this->getBuyable($data)){
 			$quantity = (isset($data['Quantity']) && is_numeric($data['Quantity'])) ? (int) $data['Quantity'] : 1;
 			$cart = ShoppingCart::singleton();
 			if($cart->add($variation,$quantity)){
 				$form->sessionMessage("Successfully added to cart.","good");
 			}else{
 				$form->sessionMessage($cart->getMessage(),$cart->getMessageType());
-			}
-				
+			}	
 		}else{
 			$form->sessionMessage("That variation is not available, sorry.","bad"); //validation fail
 		}
 		ShoppingCart_Controller::direct();
+	}
+	
+	function getBuyable($data = null){
+		if(isset($data['ProductAttributes']) && $variation = $this->Controller()->getVariationByAttributes($data['ProductAttributes'])){
+			return $variation;
+		}
+		return null;
 	}
 	
 }
