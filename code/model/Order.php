@@ -742,7 +742,7 @@ class Order extends DataObject {
 	 */
 	function onBeforeWrite(){
 		parent::onBeforeWrite();
-		if(in_array($this->Status,self::$placed_status)){
+		if(!$this->Reference && in_array($this->Status,self::$placed_status)){
 			$this->generateReference();
 		}
 	}
