@@ -214,5 +214,15 @@ class ProductVariation_OrderItem extends Product_OrderItem {
 			return $this->ProductVariation()->getTitle();
 		return false;
 	}
+	
+	function Image(){
+		if($this->ProductVariation() && $image = $this->ProductVariation()->Image()){
+			return $image;
+		}
+		if($this->Product()){
+			return $this->Product()->Image();
+		}
+		return null;
+	}
 
 }
