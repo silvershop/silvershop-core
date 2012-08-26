@@ -28,7 +28,7 @@ class VariationForm extends AddProductForm{
 		$fields->merge($this->Fields());
 		$this->setFields($fields);
 		$requiredfields[] = 'Quantity';
-		$this->setValidator(new RequiredFields($requiredfields));
+		$this->setValidator(new VariationFormValidator($requiredfields));
 		$this->extend('updateVariationForm');
 	}
 	
@@ -53,5 +53,20 @@ class VariationForm extends AddProductForm{
 		}
 		return null;
 	}
+	
+}
+
+class VariationFormValidator extends RequiredFields{
+	
+	function php($data){
+		$valid = parent::php($data);		
+		if($valid && !$this->form->getBuyable($_POST)){
+			$this->validationError(
+				"","This product is not available with the selected options."
+			);
+			$valid = false;
+		}
+		return $valid;
+	}	
 	
 }
