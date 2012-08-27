@@ -97,6 +97,8 @@ class ShopMember extends DataObjectDecorator {
 
 	function updateCMSFields($fields) {
 		$fields->removeByName('Country');
+		$fields->removeByName("DefaultShippingAddressID");
+		$fields->removeByName("DefaultBillingAddressID");
 		$fields->addFieldToTab('Root.Main', new DropdownField('Country', 'Country', Geoip::getCountryDropDown()));
 	}
 	
