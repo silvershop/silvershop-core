@@ -398,6 +398,12 @@ class Product_OrderItem extends OrderItem {
 		return false;		
 	}
 
+	function place(){
+		if($product = $this->Product(true)){
+			$this->ProductVersion = $product->Version;
+		}
+	}
+	
 	function TableTitle() {
 		$product = $this->Product();
 		$tabletitle = ($product) ? $product->Title : $this->i18n_singular_name();

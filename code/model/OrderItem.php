@@ -100,6 +100,13 @@ class OrderItem extends OrderAttribute {
 	}
 	
 	/**
+	 * Last time saving/processing, before item permanently stored in database.
+	 * This should only be called when order is transformed from
+	 * Cart to Order, aka being 'placed'.
+	 */
+	function place(){}
+	
+	/**
 	 * Intersects this item's required_fields with the data record.
 	 * This is used for uniquely adding items to the cart.
 	 */

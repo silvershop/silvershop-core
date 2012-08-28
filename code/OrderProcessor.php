@@ -80,16 +80,17 @@ class OrderProcessor{
 			$this->order->IPAddress = Controller::curr()->getRequest()->getIP(); //record client IP
 		}
 		//re-write all attributes and modifiers to make sure they are up-to-date before they can't be changed again
-		$attributes = $this->order->Items();
-		if($attributes->exists()){
-			foreach($attributes as $attribute){
-				$attribute->write();
+		$items = $this->order->Items();
+		if($items->exists()){
+			foreach($items as $item){
+				$item->place();
+				$item->write();
 			}
 		}
-		$attributes = $this->order->Modifiers();
-		if($attributes->exists()){
-			foreach($attributes as $attribute){
-				$attribute->write();
+		$modifiers = $this->order->Modifiers();
+		if($modifiers->exists()){
+			foreach($modifiers as $modifier){
+				$modifier->write();
 			}
 		}
 		//TODO: add member to customer group
