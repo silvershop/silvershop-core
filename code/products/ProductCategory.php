@@ -129,9 +129,8 @@ class ProductCategory extends Page {
 
 		//TODO: get products that appear in child groups (make this optional)
 
-		$products = DataObject::get('Product',"(\"ParentID\" IN ($groupidsimpl) OR $multicatfilter) $filter",$sort,$join,$limit);
-
-		$allproducts = DataObject::get('Product',"\"ParentID\" IN ($groupidsimpl) $filter","",$join);
+		$products = Versioned::get_by_stage('Product','Live',"(\"ParentID\" IN ($groupidsimpl) OR $multicatfilter) $filter",$sort,$join,$limit);
+		$allproducts = Versioned::get_by_stage('Product','Live',"\"ParentID\" IN ($groupidsimpl) $filter","",$join);
 
 		if($allproducts) $products->TotalCount = $allproducts->Count(); //add total count to returned data for 'showing x to y of z products'
 		if($products && $products instanceof DataObjectSet) $products->removeDuplicates();
@@ -144,7 +143,7 @@ class ProductCategory extends Page {
 	 */
 	function ChildGroups($recursive = false) {
 		if($recursive){
-			if($children = DataObject::get('ProductCategory', "\"ParentID\" = '$this->ID'")){
+			if($children = Versioned::get_by_stage('ProductCategory','Live', "\"ParentID\" = '$this->ID'")){
 				$output = unserialize(serialize($children));
 				foreach($children as $group){
 					$output->merge($group->ChildGroups($recursive));
@@ -153,7 +152,7 @@ class ProductCategory extends Page {
 			}
 			return null;
 		}else{
-			return DataObject::get('ProductCategory', "\"ParentID\" = '$this->ID'");
+			return Versioned::get_by_stage('ProductCategory','Live', "\"ParentID\" = '$this->ID'");
 		}
 	}
 
