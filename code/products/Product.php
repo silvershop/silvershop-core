@@ -384,7 +384,9 @@ class Product_OrderItem extends OrderItem {
 	static $disable_versioned = true;
 
 	/**
-	 * Get related product, based on version info if it is not in the cart.
+	 * Get related product
+	 *  - live version if in cart, or
+	 *  - historical version if order is placed 
 	 *
 	 * @param boolean $forcecurrent - force getting latest version of the product.
 	 * @return Product
@@ -392,7 +394,7 @@ class Product_OrderItem extends OrderItem {
 	public function Product($forcecurrent = false) {
 		if($this->ProductID && $this->ProductVersion && !$forcecurrent){
 			return FixVersioned::get_version('Product', $this->ProductID, $this->ProductVersion);
-		}elseif($this->ProductID && $product = DataObject::get_by_id('Product', $this->ProductID)){
+		}elseif($this->ProductID && $product = Versioned::get_one_by_stage('Product','Live', "\"Product\".\"ID\"  = ".$this->ProductID)){
 			return $product;
 		}
 		return false;		
