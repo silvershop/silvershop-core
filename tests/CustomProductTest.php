@@ -50,13 +50,15 @@ class CustomProductTest extends FunctionalTest{
 		//remove
 		$cart->remove($this->thing,2,$options2);
 		$item = $cart->get($this->thing,$options2);
+		$this->assertNotNull($item,'item exists in cart');
 		$this->assertEquals($item->Quantity,3);
 		
 		//set quantity
 		$options4 = array('Size' => 12, 'Color' => 'Turquoise');
 		$cart->setQuantity($this->thing,5,$options4);
 		$item = $cart->get($this->thing,$options4);
-		$this->assertEquals($item->Quantity,5);
+		$this->assertNotNull($item,'item exists in cart');
+		$this->assertEquals($item->Quantity,5,"quantity is 5");
 		
 		//test by using urls
 		//add a partial match

@@ -44,11 +44,12 @@ class ProductOrderItemTest extends FunctionalTest {
 		$currentorder = $this->cart->current();
 		$itembefore = $this->cart->get($this->socks);
 		$this->assertEquals($itembefore->UnitPrice(),8,"unit price matches product price");
-		//update product details
+		//update product details, whilst items still incart
 		$this->socks->BasePrice = 9;
-		$this->socks->write();
+		$this->socks->writeToStage('Stage');
+		$this->socks->publish('Stage','Live');
 		$itemafter = $this->cart->get($this->socks);
-		$this->assertEquals($itemafter->UnitPrice(),9,"unit price matches updated product price"); //total is updated whilst item is still in cart
+		$this->assertEquals($itemafter->UnitPrice(),9,"unit price matches updated product price");
 	}
 
 	/**
@@ -60,7 +61,7 @@ class ProductOrderItemTest extends FunctionalTest {
 			"ProductID" => $this->socks->ID,
 			"ProductVersion" => 99999 //non existent version
 		));
-		$this->assertEquals($brokenitem->UnitPrice(),0,"version does not exist");
+		$this->assertFalse($brokenitem->Product(),"version does not exist");
 	}
 
 }
