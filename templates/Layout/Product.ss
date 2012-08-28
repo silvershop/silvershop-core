@@ -24,7 +24,7 @@
 		<% else %>
 			<% if Price %>
 				<div class="price">
-					<strong class="value">$Price.Nice</strong> <span class="currency">$Currency</span>
+					<strong class="value">$Price.Nice</strong> <span class="currency">$Price.Currency</span>
 				</div>
 			<% end_if %>
 			<% if canPurchase %>
