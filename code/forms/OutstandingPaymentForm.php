@@ -53,6 +53,8 @@ class OutstandingPaymentForm extends Form {
 				$payment->write();
 
 				$result = $payment->processPayment($data, $form);
+				
+				$payment->ReturnURL = $order->Link(); //set payment return url
 
 				// isProcessing(): Long payment process redirected to another website (PayPal, Worldpay)
 				if($result->isProcessing()) {
@@ -63,7 +65,7 @@ class OutstandingPaymentForm extends Form {
 					$order->sendReceipt();
 				}
 
-				Director::redirect($order->Link());
+				Director::redirect($payment->ReturnURL);
 				return true;
 			}
 		}

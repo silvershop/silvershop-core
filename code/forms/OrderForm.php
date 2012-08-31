@@ -297,6 +297,9 @@ class OrderForm extends Form {
 			Director::redirect($order->Link());
 			return false;
 		}
+		
+		$payment->ReturnURL = $order->Link(); //set payment return url
+		
 		//TODO: end code here, and leave making payment to the next step
 		//prepare $data - ie put into the $data array any fields that may need to be there for payment
 		// Process payment, get the result back
@@ -307,7 +310,7 @@ class OrderForm extends Form {
 		if($result->isSuccess()) {
 			$processor->sendReceipt();
 		}
-		Director::redirect($order->Link());
+		Director::redirect($payment->ReturnURL);
 		return true;
 	}
 	
