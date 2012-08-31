@@ -74,6 +74,13 @@ class AccountPage_Controller extends Page_Controller {
 		$this->member = Member::currentUser();
 	}
 	
+	function getTitle(){
+		if($this->dataRecord && $title = $this->dataRecord->Title){
+			return $title;
+		}
+		return _t('AccountPage.Title', "Account");
+	}
+	
 	function getMember(){
 		return $this->member;
 	}
