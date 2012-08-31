@@ -148,6 +148,22 @@ class OrderProcessor{
 	}
 	
 	/**
+	 * Complete payment processing
+	 *    - send receipt
+	 * 	- update order status accordingling
+	 */
+	function completePayment(){
+		if(!$this->order->ReceiptSent && $this->order->Status != 'Paid'){
+			$this->sendReceipt();
+			if($this->order->GrandTotal() > 0 && $this->order->TotalOutstanding() <= 0){
+				$this->order->Status = 'Paid';
+				$this->order->Paid = SS_Datetime::now()->Rfc2822();
+				$this->order->write();
+			}
+		}
+	}	
+	
+	/**
 	* Send a mail of the order to the client (and another to the admin).
 	*
 	* @param $emailClass - the class name of the email you wish to send

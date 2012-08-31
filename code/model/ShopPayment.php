@@ -43,6 +43,16 @@ class ShopPayment extends DataObjectDecorator {
 	function canDelete($member = null) {
 		return false;
 	}
+	
+	/**
+	 * Update order status when payment is sucessful.
+	 * This is called when payment status is updated in Payment.
+	 */
+	function onAfterWrite() {
+		if($this->owner->Status == 'Success' && $order = $this->owner->Order()) {
+			OrderProcessor::create($order)->completePayment();
+		}
+	}
 
 	function redirectToOrder() {
 		$order = $this->owner->Order();
@@ -56,8 +66,7 @@ class ShopPayment extends DataObjectDecorator {
 	}
 
 	function Status() {
-   		return _t('Payment.'.$this->owner->Status,$this->owner->Status);
+   	return _t('Payment.'.$this->owner->Status,$this->owner->Status);
 	}
-
 
 }
