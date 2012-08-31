@@ -64,6 +64,7 @@ class ShoppingCart{
 			$order->MemberID = Member::currentUserID(); // Set the Member relation to this order
 		}
 		$order->write();
+		$order->extend('onStartOrder');
 		Session::set(self::$cartid_session_name,$order->ID);
 		return $this->order = $order;
 	}
