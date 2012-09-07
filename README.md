@@ -1,6 +1,8 @@
 # Shop Module
 
  * http://ss-shop.org
+ 
+[![Build Status](https://secure.travis-ci.org/burnbright/silverstripe-shop.png)](http://travis-ci.org/burnbright/silverstripe-shop)
 
 ## Maintainer Contact
 
