@@ -42,7 +42,7 @@ OrderManipulation::set_allow_cancelling(false);
 OrderManipulation::set_allow_paying(false);
 
 // * * * PRODUCTS
-ProductsAndGroupsModelAdmin::set_managed_models(array("Product", "ProductCategory","ProductVariation","ProductAttributeType"));
+ProductCatalogAdmin::set_managed_models(array("Product", "ProductCategory","ProductVariation","ProductAttributeType"));
 Product_Image::set_thumbnail_size(140, 100);
 Product_Image::set_content_image_width(200);
 Product_Image::set_large_image_width(200);

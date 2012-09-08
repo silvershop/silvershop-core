@@ -38,7 +38,7 @@ OrderManipulation::set_allow_cancelling(); //shows a cancel button on the order 
 OrderManipulation::set_allow_paying(); //shows a payment form
 
 //PRODUCTS
-ProductsAndGroupsModelAdmin::set_managed_models(array("Product", "ProductCategory","ProductVariation"));
+ProductCatalogAdmin::set_managed_models(array("Product", "ProductCategory","ProductVariation"));
 Product_Image::set_thumbnail_size(140, 100);
 Product_Image::set_content_image_width(200);
 Product_Image::set_large_image_width(200);
