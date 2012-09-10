@@ -26,6 +26,7 @@ class OrderProcessor{
 	* email will contain. e.g. "Joe's Shop Receipt".
 	*
 	* @var string
+	* @deprecated - use translation instead via Order.EMAILSUBJECT
 	*/
 	protected static $receipt_subject = "Shop Sale Information #%d";
 	
@@ -173,7 +174,7 @@ class OrderProcessor{
 	function sendEmail($emailClass, $copyToAdmin = true){
 		$from = self::$email_from ? self::$email_from : Email::getAdminEmail();
 		$to = $this->order->getLatestEmail();
-		$subject = sprintf(self::$receipt_subject ,$this->order->ID);
+		$subject = sprintf(_t("Order.EMAILSUBJECT",self::$receipt_subject) ,$this->order->Reference);
 		$purchaseCompleteMessage = DataObject::get_one('CheckoutPage')->PurchaseComplete;
 		$email = new $emailClass();
 		$email->setFrom($from);
