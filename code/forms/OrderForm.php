@@ -305,6 +305,8 @@ class OrderForm extends Form {
 		
 		//TODO: end code here, and leave making payment to the next step
 		//prepare $data - ie put into the $data array any fields that may need to be there for payment
+		$data['Reference'] = $order->Reference;
+		
 		// Process payment, get the result back
 		$result = $payment->processPayment($data, $form);
 		if($result->isProcessing()) { // isProcessing(): Long payment process redirected to another website (PayPal, Worldpay)

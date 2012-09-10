@@ -115,6 +115,7 @@ class OrderProcessor{
 			$payment->PaidForID = $this->order->ID;
 			$payment->PaidForClass = $this->order->class;
 			$payment->Amount->Amount = $this->order->TotalOutstanding();
+			$payment->Reference = $this->order->Reference;
 			$payment->write();
 			$this->order->Payments()->add($payment);
 			return $payment;
