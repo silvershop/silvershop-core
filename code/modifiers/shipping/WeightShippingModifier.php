@@ -42,7 +42,7 @@ class WeightShippingModifier extends ShippingModifier {
 	}
 	
 	function TableTitle(){
-		return parent::TableTitle()." (".$this->Weight()." kg)";
+		return  sprintf(_t("WeightShippingModifier.TABLETITLE","Shipping (%f kg)"),$this->Weight());
 	}
 	
 	/**
