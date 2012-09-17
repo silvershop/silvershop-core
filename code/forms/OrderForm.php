@@ -82,15 +82,12 @@ class OrderForm extends Form {
 			$rightFields->push(new LiteralField('MemberInfo', '<p class="message good">'.sprintf(_t('OrderForm.LoggedInAs','You are logged in as %s.'),$member->getName())." <a href=\"Security/logout?BackURL=" . CheckoutPage::find_link(true) . "/\">"._t('OrderForm.LogOut','log out').'</a>.</p>'));
 		}
 		//Payment fields
-		$currentOrder = ShoppingCart::current_order();
-		$totalobj = DBField::create('Currency',$currentOrder->Total()); //should instead be $totalobj = $currentOrder->dbObject('Total');
-		$paymentFields = Payment::combined_form_fields($totalobj->Nice());
-		foreach($paymentFields as $field){
-			$rightFields->push($field);
-		}
-		if($paymentRequiredFields = Payment::combined_form_requirements()){
-			$requiredFields = array_merge($requiredFields, $paymentRequiredFields);
-		}
+		$rightFields->push(new HeaderField(_t('Payment.PAYMENTTYPE', 'Payment Type'), 3));
+		$rightFields->push(new OptionsetField(
+			'PaymentMethod','',Payment::get_supported_methods(),array_shift(array_keys(Payment::get_supported_methods()))
+		));
+		$rightFields->push(new ReadonlyField('Amount', _t('Payment.AMOUNT', 'Amount'), DBField::create('Currency',$order->Total())->Nice()));
+
 		//Put all the fields in one FieldSet
 		$fields = new FieldSet($leftFields, $rightFields);
 		$bottomFields = new CompositeField(
@@ -303,7 +300,6 @@ class OrderForm extends Form {
 		
 		$payment->ReturnURL = $order->Link(); //set payment return url
 		
-		//TODO: end code here, and leave making payment to the next step
 		//prepare $data - ie put into the $data array any fields that may need to be there for payment
 		$data['Reference'] = $order->Reference;
 		
