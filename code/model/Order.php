@@ -544,7 +544,7 @@ class Order extends DataObject {
 	 * @return boolean
 	 */
 	public function canPay($member = null){
-		if($this->TotalOutstanding() > 0){
+		if($this->TotalOutstanding() > 0 && !$this->Paid){
 			return true;
 		}
 		return false;
