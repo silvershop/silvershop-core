@@ -123,5 +123,13 @@ class OrderTest extends SapphireTest {
 		$order->write();
 		return $order;
 	}
+	
+	function testCanFunctions(){
+		$order = $this->createOrder();
+		$this->assertTrue($order->canPay());
+		$this->assertTrue($order->canCancel());
+		
+		//TODO: modify order, and retest
+	}
 
 }
