@@ -126,10 +126,14 @@ class OrderTest extends SapphireTest {
 	
 	function testCanFunctions(){
 		$order = $this->createOrder();
-		$this->assertTrue($order->canPay());
-		$this->assertTrue($order->canCancel());
+		//order is in cart
+		$this->assertTrue($order->canPay()); //can pay when order is in cart
+		$this->assertFalse($order->canCancel()); //can't cancel when order is in cart
+		$this->assertFalse($order->canDelete()); //never allow deleting
+		//canCreate
+		//canEdit
 		
-		//TODO: modify order, and retest
+		//TODO: modify order, and retest all can functions
 	}
 
 }
