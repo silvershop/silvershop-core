@@ -46,7 +46,6 @@ class AccountPage_Controller extends Page_Controller {
 	
 	static $url_segment = 'account';
 	static $allowed_actions = array(
-		'order',
 		'addressbook',
 		'CreateAddressForm',
 		'DefaultAddressForm',
@@ -83,27 +82,6 @@ class AccountPage_Controller extends Page_Controller {
 	
 	function getMember(){
 		return $this->member;
-	}
-
-	/**
-	 * Return the {@link Order} details for the current
-	 * Order ID that we're viewing (ID parameter in URL).
-	 *
-	 * @return array of template variables
-	 */
-	function order() {
-		$accountPageLink = AccountPage::find_link();
-		$order = $message = $form = null;
-		if($order = $this->orderfromid()) {
-			$form = ($order->TotalOutstanding() > 0) ? $this->CancelForm() : null;
-		}else{
-			$message = sprintf(_t("AccountPage.NoOrder",'You do not have any order corresponding to this ID. However, you can <a href="%s">edit your own personal details and view your orders.</a>.'),$accountPageLink);
-		}
-		return array(
-			'Order' => $order,
-			'Message' => $message,
-			'Form' => $form
-		);
 	}
 	
 	function addressbook(){

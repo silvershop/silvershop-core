@@ -516,10 +516,10 @@ class Order extends DataObject {
 	 * Get the link for finishing order processing.
 	 */
 	function Link() {
-		if($member = $this->Member()){
+		if(Member::currentUser()){
 			return Controller::join_links(AccountPage::find_link(),'order',$this->ID);
 		}
-		return CheckoutPage::find_link(false,"finish",$this->ID);
+		return CheckoutPage::find_link(false,"order",$this->ID);
 	}
 
 	/**

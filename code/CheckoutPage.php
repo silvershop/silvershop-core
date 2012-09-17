@@ -101,9 +101,6 @@ class CheckoutPage_Controller extends Page_Controller {
 
 	static $allowed_actions = array(
 		'OrderForm',
-		'OrderFormWithoutShippingAddress',
-		'OrderFormWithShippingAddress',
-		'finish',
 		'removemodifier'
 	);
 	
@@ -124,38 +121,19 @@ class CheckoutPage_Controller extends Page_Controller {
 	}
 
 	/**
-	 * Returns either the current order from the shopping cart or
-	 * by the specified Order ID in the URL.
-	 *
-	 * @return Order
-	 */
-	function Order() {
-		if($orderID = Director::urlParam('Action') && is_numeric(Director::urlParam('Action'))) {
-			$order = DataObject::get_by_id('Order', $orderID);
-			if($order && $order->MemberID == Member::currentUserID()) {
-				return $order;
-			}
-		}else{
-			//fallback for templates - to be deprecated
-			return $this->Cart();
-		}
-		return null;
-	}
-
-	/**
 	 * Returns a form allowing a user to enter their
 	 * details to checkout their order.
 	 *
 	 * @return OrderForm object
 	 */
 	function OrderForm() {
-		if(!$this->CanCheckout()){
+		$cart = $this->Cart(); //see ViewableCart.php
+		if(!(bool)$cart){
 			return false;
 		}
 		$form = new OrderForm($this, 'OrderForm');
 		$this->data()->extend('updateOrderForm',$form);
-		
-		$form->loadDataFrom($this->Order());
+		$form->loadDataFrom($cart);
 		//prevent fields being populated with relation object class names
 		$form->loadDataFrom(array(
 			"BillingAddress" => "",
@@ -187,28 +165,9 @@ class CheckoutPage_Controller extends Page_Controller {
 	 * Go here after order has been processed.
 	 *
 	 * @return Order - either the order specified by ID in url, or just the most recent order.
+	 * @deprecated - use OrderManipulation order instead
 	 */
-	function finish(){
-		//TODO: make redirecting to account page optional
-		//TODO: could all this be moved to some central location where it can be used by other parts of the system?
-		$order = $this->orderfromid(); //stored in OrderManipulation extension
-		$message = $mtype = null;
-		if(!$order){
-			$message = _t("CheckoutPage.ORDERNOTFOUND","Order could not be found.");
-			$mtype = 'bad';
-		}
-		if($sm = $this->SessionMessage()){
-			$message = $sm;
-			$mtype = $this->SessionMessageType();
-		}
-		return array(
-			'Order' => $order,
-			'Message' => $message,
-			'MessageType' => $mtype,
-			'CompleteOrders' => $this->allorders("\"Status\" IN('Paid','Complete','Sent')"),
-			'IncompleteOrders' => $this->allorders("\"Status\" IN('Unpaid','Processing')")
-		);
-	}
+	function finish(){}
 	
 	/**
 	* Returns a DataObjectSet of {@link OrderModifierForm} objects. These
@@ -252,10 +211,18 @@ class CheckoutPage_Controller extends Page_Controller {
 		}
 	}
 	
+	/**
+	 * 
+	 * @deprecated
+	 */
 	static function remove_modifier_link($id){
 		return self::$url_segment.'/removemodifier/'.$id;
 	}
 	
+	/**
+	 * 
+	 * @deprecated
+	 */
 	function removemodifier(){
 		$modifierId = $this->urlParams['ID'];
 		$order = ShoppingCart::current_order();
@@ -271,7 +238,6 @@ class CheckoutPage_Controller extends Page_Controller {
 		return false;
 	}
 	
-	
 	//deprecated functions
 	/**
 	 * Determine whether the user can checkout the
@@ -282,8 +248,7 @@ class CheckoutPage_Controller extends Page_Controller {
 	 * @return boolean
 	 */
 	function CanCheckout() {
-		return (bool)$this->Cart();
+		return (bool)$this->Cart(); //see ViewableCart.php
 	}
-	
 
 }

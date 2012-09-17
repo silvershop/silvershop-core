@@ -16,8 +16,8 @@ class OrderManipulation extends Extension{
 	static function set_allow_paying($pay = true){self::$allow_paying = $pay;}
 
 	static $allowed_actions = array(
-		'CancelForm',
-		'PaymentForm'
+		'ActionsForm',
+		'order'
 	);
 
 	/**
@@ -85,7 +85,6 @@ class OrderManipulation extends Extension{
 	 */
 	protected function orderfilter(){
 		$memberid = Member::currentUserID();
-		//session orders
 		$sessids = self::get_session_order_ids();
 		$ids = is_array($sessids) ? implode(',',$sessids) : "-1";
 		$filter = "\"ID\" IN ($ids)";
@@ -102,44 +101,39 @@ class OrderManipulation extends Extension{
 		$statusFilter .= ($extrafilter) ? " AND $extrafilter" : "";
 		return $this->allorders($statusFilter);
 	}
-
+	
 	/**
-	 * Returns the form to cancel the current order,
-	 * checking to see if they can cancel their order
-	 * first of all.
+	 * Return the {@link Order} details for the current
+	 * Order ID that we're viewing (ID parameter in URL).
 	 *
-	 * @return CancelOrderForm
+	 * @return array of template variables
 	 */
-	function CancelForm() {
-		if(self::$allow_cancelling && $order = $this->orderfromid()) {
-			if($order->canCancel()) {
-				$form = new CancelOrderForm($this->owner, 'CancelForm', $order->ID);
-				$form->extend('updateCancelForm',$order);
-				return $form;
-			}
+	function order(SS_HTTPRequest $request) {	
+		$message = null;
+		$order = $this->orderfromid();
+		if(!$order) {
+			return $this->owner->httpError(404,"Order could not be found");
 		}
-		return null;
+		return array(
+			'Order' => $order,
+			'Form' => $this->ActionsForm() //see OrderManipulation extension
+		);
 	}
-
+	
 	/**
-	 * Creates form to pay for incomplete orders
-	 *@return Form (OrderForm_Payment) or Null
-	 **/
-	function PaymentForm(){
-		//TODO: handle pending payments better: eg if a cheque payment has been made, there's no point allowing another.
-		if(self::$allow_paying && $order = $this->orderfromid()){
-			Requirements::javascript(SHOP_DIR."/javascript/EcomPayment.js");
-			if($order->canPay()){
-				$form = new OutstandingPaymentForm($this->owner, 'PaymentForm', $order);
-				$form->extend('updatePaymentForm',$order);
-				return $form;
-			}
+	 * Build a form for cancelling, or retrying payment for a placed order.
+	 * @return Form
+	 */
+	function ActionsForm(){
+		if($order = $this->orderfromid()){
+			$form = new OrderActionsForm($this->owner, "ActionsForm",$order);
+			$form->extend('updateActionsForm',$order);
+			return $form;
 		}
 		return null;
 	}
 
-	protected $sessionmessage = null;
-	protected $sessionmessagetype = null;
+	protected $sessionmessage, $sessionmessagetype = null;
 
 	function setSessionMessage($message = "success",$type = "good"){
 		Session::set('OrderManipulation.Message',$message);
@@ -162,4 +156,31 @@ class OrderManipulation extends Extension{
 		return $this->sessionmessagetype;
 	}
 
+	/**
+	 * Returns the form to cancel the current order,
+	 * checking to see if they can cancel their order
+	 * first of all.
+	 *
+	 * @return CancelOrderForm
+	 * @deprecated use getActionsForm instead
+	 */
+	function CancelForm() {
+		if($form = $this->ActionsForm()){
+			$form->extend('updateCancelForm',$order);
+			return $form;
+		}
+	}
+	
+	/**
+	 * Creates form to pay for incomplete orders
+	 * @return Form (OrderForm_Payment) or Null
+	 * @deprecated use getActionsForm instead
+	 **/
+	function PaymentForm(){
+		if($form = $this->ActionsForm()){
+			$form->extend('updatePaymentForm',$order);
+			return $form;
+		}
+	}
+	
 }
