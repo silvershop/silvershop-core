@@ -25,27 +25,19 @@ class OrderActionsForm extends Form{
 			new HiddenField('OrderID', '', $order->ID)
 		);
 		$actions = new FieldSet();
-		
 		if(OrderManipulation::$allow_paying && $order->canPay() && $order->canCancel()){
 			$actions->push(new FormAction('dopayment', _t('OrderActionsForm.PAYORDER','Pay outstanding balance')));
-			$totalAsCurrencyObject = DBField::create('Currency',$order->TotalOutstanding()); //This should really be handled by the payment module
-			$paymentFields = Payment::combined_form_fields($totalAsCurrencyObject->Nice());
-			foreach($paymentFields as $paymentField) {
-				if($paymentField->class == "HeaderField") {
-					$paymentField->setTitle(_t("OrderForm.MAKEPAYMENT", "Make Payment"));
-				}
-				$fields->push($paymentField);
-			}
-			$requiredFields = array();
-			if($paymentRequiredFields = Payment::combined_form_requirements()) {
-				$requiredFields = array_merge($requiredFields, $paymentRequiredFields);
-			}
+			$fields->push(new HeaderField("MakePaymentHeader",_t("OrderActionsForm.MAKEPAYMENT", "Make Payment")));
+			$fields->push(new LiteralField("Outstanding",
+				sprintf(_t("OrderActionsForm.OUTSTANDING","Outstanding: %s"),DBField::create('Currency',$order->TotalOutstanding())->Nice())
+			));
+			$fields->push(new OptionsetField(
+				'PaymentMethod','Payment Method',Payment::get_supported_methods(),array_shift(array_keys(Payment::get_supported_methods()))
+			));
 		}
-		
 		if(OrderManipulation::$allow_cancelling && $order->canCancel()){
 			$actions->push(new FormAction('docancel', _t('OrderActionsForm.CANCELORDER','Cancel this order')));
 		}
-		
 		parent::__construct($controller, $name, $fields, $actions);
 		$this->extend("updateForm");
 	}
