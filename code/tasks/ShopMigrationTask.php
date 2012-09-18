@@ -31,6 +31,8 @@ class ShopMigrationTask extends MigrationTask{
 		};
 		$this->migrateProductPrice();
 		$this->migrateProductVariationsAttribues();
+		
+		//TODO: migrate CheckoutPage->TermsPageID to ShopConfig
 	}
 	
 	/**

@@ -97,9 +97,10 @@ class OrderForm extends Form {
 		
 		//Terms and conditions field
 		//If a terms and conditions page exists, we need to create a field to confirm the user has read it
-		if($controller->TermsPageID && $termsPage = $controller->TermsPage()) {
+		if(SiteConfig::current_site_config()->TermsPage()->exists()) {
+			$termsPage = SiteConfig::current_site_config()->TermsPage();
 			$bottomFields->push(
-				new CheckboxField('ReadTermsAndConditions', sprintf(_t('OrderForm.TERMSANDCONDITIONS',"I agree to the terms and conditions stated on the <a href=\"%s\" title=\"Read the shop terms and conditions for this site\">terms and conditions</a> page"),$termsPage->Link()))
+				new CheckboxField('ReadTermsAndConditions', sprintf(_t('OrderForm.TERMSANDCONDITIONS',"I agree to the terms and conditions stated on the <a href=\"%s\" target=\"new\" title=\"Read the shop terms and conditions for this site\">terms and conditions</a> page"),$termsPage->Link()))
 			);
 			$requiredFields[] = 'ReadTermsAndConditions'; //TODO: this doesn't work for check-boxes
 		}
@@ -165,7 +166,7 @@ class OrderForm extends Form {
 	 		//TODO: check that member details are not already taken, if entered
 	 		//check terms have been accepted
 			$controller = $this->Controller();
-	 		if($controller->TermsPageID && $controller->TermsPage() && (!isset($data['ReadTermsAndConditions']) || !(bool)$data['ReadTermsAndConditions'])){
+	 		if(SiteConfig::current_site_config()->TermsPage()->exists() && (!isset($data['ReadTermsAndConditions']) || !(bool)$data['ReadTermsAndConditions'])){
 	 			$this->sessionMessage(_t("OrderForm.MUSTREADTERMS","You must agree to terms and conditions"), "bad");
 	 			return false;
 	 		}

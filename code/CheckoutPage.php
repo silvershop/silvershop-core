@@ -38,10 +38,6 @@ class CheckoutPage extends Page {
 		'CheckoutFinishMessage' => 'HTMLText'
 	);
 
-	public static $has_one = array(
-		'TermsPage' => 'Page'
-	);
-
 	static $icon = 'shop/images/icons/money';
 
 	/**
@@ -79,7 +75,6 @@ class CheckoutPage extends Page {
 
 	function getCMSFields() {
 		$fields = parent::getCMSFields();
-		$fields->addFieldToTab('Root.Content.TermsAndConditions', new TreeDropdownField('TermsPageID', 'Terms and Conditions Page', 'SiteTree'));
 		$fields->addFieldsToTab('Root.Content.Messages', array(
 			new HtmlEditorField('AlreadyCompletedMessage', 'Already Completed - shown when the customer tries to checkout an already completed order', $row = 4),
 			new HtmlEditorField('NonExistingOrderMessage', 'Non-existing Order - shown when the customer tries ', $row = 4),
@@ -89,6 +84,18 @@ class CheckoutPage extends Page {
 		));
 		return $fields;
 	}
+	
+	/**
+	 * @deprecated - use SiteConfig::current_site_config()->TermsPage()
+	 */
+	function TermsPage(){
+		$terms = SiteConfig::current_site_config()->TermsPage();
+		if($terms->exists()){
+			return $terms;
+		}
+		return null;
+	}
+	
 }
 
 class CheckoutPage_Controller extends Page_Controller {

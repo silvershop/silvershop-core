@@ -19,6 +19,7 @@ class ShopConfig extends DataObjectDecorator{
 	
 	function updateCMSFields($fields){
 		$fields->insertBefore($shoptab = new Tab('Shop', 'Shop'), 'Access');
+		$fields->addFieldToTab('Root.Shop', new TreeDropdownField('TermsPageID', _t("ShopConfig.TERMSPAGE",'Terms and Conditions Page', 'SiteTree')));
 		$fields->addFieldsToTab("Root.Shop", new TabSet("ShopTabs",$countriestab = new Tab("Countries",
 			$allowed = new CheckboxSetField('AllowedCountries','Allowed Ordering and Shipping Countries',Geoip::getCountryDropDown())
 		)));
