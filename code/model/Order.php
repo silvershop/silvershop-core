@@ -603,9 +603,9 @@ class Order extends DataObject {
 	 * Gets the name of the customer.
 	 */
 	function getName(){
-		$firstname = $this->Member()->FirstName;
-		$surname = $this->Member()->Surname;
-		return ($surname) ? trim($firstname . ' ' . $surname) : $firstname;
+		$firstname = $this->FirstName ? $this->FirstName : $this->Member()->FirstName;
+		$surname = $this->FirstName ? $this->Surname : $this->Member()->Surname;
+		return implode(" ",array_filter(array($firstname,$surname)));
 	}
 	
 	function getShippingAddress(){
