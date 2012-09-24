@@ -45,6 +45,7 @@ class Address extends DataObject{
 	function getFormFields($nameprefix = ""){
 		$countries = SiteConfig::current_site_config()->getCountriesList();
 		$countryfield = (count($countries)) ? new DropdownField($nameprefix."Country",_t('Address.COUNTRY','Country'),$countries) : new ReadonlyField("Country",_t('Address.COUNTRY','Country'));
+		$countryfield->setHasEmptyDefault(true);
 		$fields = new FieldSet(
 			$countryfield,
 			new TextField($nameprefix.'Address', _t('Address.ADDRESS','Address')),
