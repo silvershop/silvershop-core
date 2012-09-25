@@ -210,7 +210,7 @@ class Order extends DataObject {
 	 */
 	function getCMSFields(){
 		$fields = new FieldSet(new TabSet('Root',new Tab('Main')));
-		$fields->insertBefore(new HeaderField('Title',"Order #".$this->getReference()),'Root');
+		$fields->insertBefore(new HeaderField('Title',"Order #".$this->Reference),'Root');
 		$fields->insertBefore(new LiteralField('SubTitle',
 			"<h4 class=\"subtitle\">".$this->dbObject('Placed')->Nice()." - <a href=\"mailto:".$this->getLatestEmail()."\">".$this->getName()."</a></h4>"
 		),"Root");
@@ -690,17 +690,18 @@ class Order extends DataObject {
 	function generateReference(){
 		$reference = str_pad($this->ID,self::$reference_id_padding,'0',STR_PAD_LEFT);
 		$this->extend('generateReference',$reference);
-		$this->Reference = $reference;
+		$candidate = $reference;
 		//prevent generating references that are the same
 		$count = 0;
-		while(DataObject::get_one('Order',"\"Reference\" = '$this->Reference'")){
+		while(DataObject::get_one('Order',"\"Reference\" = '$candidate'")){
 			$count++;
-			$this->Reference = $reference."".$count;
+			$candidate = $reference."".$count;
 		}
+		$this->Reference = $candidate;
 	}
 	
 	/**
-	 * Get the reference for this order
+	 * Get the reference for this order, or fall back to order ID.
 	 */
 	function getReference(){
 		return $this->getField('Reference') ? $this->getField('Reference') : $this->ID;
@@ -742,7 +743,7 @@ class Order extends DataObject {
 	 */
 	function onBeforeWrite(){
 		parent::onBeforeWrite();
-		if(!$this->Reference && in_array($this->Status,self::$placed_status)){
+		if(!$this->getField("Reference") && in_array($this->Status,self::$placed_status)){
 			$this->generateReference();
 		}
 	}
