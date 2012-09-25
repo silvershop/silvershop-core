@@ -131,7 +131,10 @@ JS;
 			$this->Title .= " #$id";
 		}
 		Requirements::clear();
-		return $this->currentRecord->customise(array('SiteConfig' => SiteConfig::current_site_config()))->renderWith('Order_Printable');
+		return $this->currentRecord->customise(array(
+			'SiteConfig' => SiteConfig::current_site_config(),
+			'Now' => $this->Now()
+		))->renderWith('Order_Printable');
 	}
 	
 }
