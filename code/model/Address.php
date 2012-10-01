@@ -20,7 +20,7 @@
 class Address extends DataObject{
 	
 	static $db = array(
-		'Country' => 'Varchar',
+		'Country' => 'ShopCountry',
 		'State' => 'Varchar(100)',
 		'City' => 'Varchar(100)',
 		'PostalCode' => 'Varchar(30)',
@@ -36,6 +36,10 @@ class Address extends DataObject{
 	
 	static $has_one = array(
 		'Member' => 'Member'		
+	);
+	
+	static $casting = array(
+		'Country' => 'ShopCountry'	
 	);
 	
 	/**
