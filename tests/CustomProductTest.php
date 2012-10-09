@@ -2,7 +2,7 @@
 
 class CustomProductTest extends FunctionalTest{
 	
-	static $fixture_file = 'shop/tests/customproduct.yml';
+	static $fixture_file = 'shop/tests/fixtures/customproduct.yml';
 	
 	function setUp(){
 		parent::setUp();

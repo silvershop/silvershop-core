@@ -5,7 +5,7 @@
  */
 class ProductOrderItemTest extends FunctionalTest {
 
-	static $fixture_file = 'shop/tests/shop.yml';
+	static $fixture_file = 'shop/tests/fixtures/shop.yml';
 
 	static $disable_theme = true;
 	static $orig = array();
