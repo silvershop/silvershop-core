@@ -100,6 +100,9 @@ Product:
         Parent: =>ProductCategory.apparel
         AllowPurchase: 1
         Weight: 0.1
+        Width: 
+        Height: 
+        Depth: 
         Stock: 50
         Content: >
             <p>This sock has cushioned sole for extra comfort with comfortable stay-up top.
@@ -111,6 +114,9 @@ Product:
         URLSegment: hdtv
         AllowPurchase: 1
         Weight: 50
+        Width: 
+        Height: 
+        Depth: 
         Stock: 3
         Content: >
             <p>Whatever room, whatever light, LGs 42 CS560 LCD television adjusts its picture to look
@@ -125,6 +131,9 @@ Product:
         Parent: =>ProductCategory.toys
         AllowPurchase: 0 #This product has AllowPurchase set to 0
         Weight: 0.4
+        Width: 
+        Height: 
+        Depth: 
         Stock: 1000
         Content: >
             <p>Branded 12 inch Beach Ball. Multicolor vinyl ball for Beach and outdoor play</p>
@@ -138,6 +147,9 @@ Product:
         Parent: =>ProductCategory.electronics
         AllowPurchase: 1
         Weight: 0.3
+        Width: 
+        Height: 
+        Depth: 
         Stock: 1000 #You need stock levels if you have included the stock module, else the test will fail.
         Content: >
             <p>The world's most popular portable gaming device is even more fun. Now available in black and white,
@@ -152,6 +164,9 @@ Product:
         Price: 23.00
         AllowPurchase: 1
         Weight: 0.100
+        Width: 13.5
+        Height: 19
+        Depth: 1.5
         Content: >
             <p>The most generic meta-movie you'll ever watch. Inspired by every drama movie ever made.</a>
             <a href="http://www.youtube.com/watch?v=AcD292xrpjY">Watch trailer</a>
@@ -161,6 +176,9 @@ Product:
         Parent: =>ProductCategory.food
         Price: 16.99
         Weight: 0.250
+        Width: 
+        Height: 
+        Depth: 
         Stock: 30
         Content: >
             <p>Boneless, skinless chicken breast cutlets marinated in a delicious lemon herbal sauce.</p>
@@ -173,6 +191,9 @@ Product:
         Price: 8.99
         Parent: =>ProductCategory.books
         Weight: 0.6
+        Width: 15
+        Height: 20
+        Depth: 3
         Content: >
             <p>They open a door and enter a world.</p>
     lamp:
@@ -181,6 +202,9 @@ Product:
         Price: 32.99
         Parent: =>ProductCategory.bedroom
         Weight: 4.3
+        Width: 
+        Height: 
+        Depth:  
         Content: >
             <p>Product materials: Shade: Paper Tube/ Base plate: Steel, Brush finish nickel-plated, Clear lacquer</p>
     ring:
@@ -189,6 +213,9 @@ Product:
         Price: 1236.30
         Parent: =>ProductCategory.jewellery
         Weight: 0.01
+        Width: 
+        Height: 
+        Depth: 
         Content: >
             <p>Say I love you with this stunning piece that will stun you if you are not careful.</p>
     kite:
@@ -196,6 +223,9 @@ Product:
         InternalItemID: abc134
         Price: 20
         Weight: 0.03
+        Width: 
+        Height: 
+        Depth: 
         Parent: =>ProductCategory.toys
     hoop:
         Title: Hula Hoop
@@ -207,12 +237,18 @@ Product:
         InternalItemID: abc132
         Price: 12
         Weight: 1.4
+        Width: 7
+        Height: 7
+        Depth: 120
         Parent: =>ProductCategory.stationery
     pens:
         Title: Ball Point Pens (7 pack)
         InternalItemID: abc123
         Price: 12
         Weight: 0.1
+        Width: 5
+        Height: 10
+        Depth: 3
         Parent: =>ProductCategory.stationery
     tshirt:
         Title: T-Shirt
@@ -222,6 +258,9 @@ Product:
         URLSegment: t-shirt
         AllowPurchase: 1
         Weight: 0.3
+        Height: 28
+        Width: 18.5
+        Depth: 2
         Stock: 1000
         Content: >
             <p>This popular t-shirt could make you popular.</p>

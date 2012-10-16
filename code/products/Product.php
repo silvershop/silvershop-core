@@ -15,13 +15,21 @@
 class Product extends Page implements Buyable{
 
 	public static $db = array(
+		'InternalItemID' => 'Varchar(30)', //ie SKU, ProductID etc (internal / existing recognition of product)
+		'Model' => 'Varchar(30)',
+		
 		'CostPrice' => 'Currency', // Wholesale cost of the product to the merchant
 		'BasePrice' => 'Currency', // Base retail price the item is marked at.
+		
+		//physical properties
 		'Weight' => 'Decimal(9,2)',
-		'Model' => 'Varchar(30)',
+		'Height' => 'Decimal(9,2)',
+		'Width' => 'Decimal(9,2)',
+		'Depth' => 'Decimal(9,2)',
+		
 		'FeaturedProduct' => 'Boolean',
 		'AllowPurchase' => 'Boolean',
-		'InternalItemID' => 'Varchar(30)', //ie SKU, ProductID etc (internal / existing recognition of product)
+		
 		'NumberSold' => 'Int' //store number sold, so it doesn't have to be computed on the fly. Used for determining popularity.
 	);
 
@@ -86,9 +94,15 @@ class Product extends Page implements Buyable{
 			new TextField('BasePrice', _t('Product.PRICE', 'Price - base price to sell this product at'), '', 12),
 			new TextField('CostPrice', _t('Product.COSTPRICE', 'Cost Price - wholesale price before markup'), '', 12)
 		));
-
+		
+		//physical measurements
+		$weightunit = "kg"; //TODO: globalise / make custom
+		$lengthunit = "cm";  //TODO: globalise / make custom
 		$fields->addFieldsToTab('Root.Content.Shipping',array(
-			new TextField('Weight', _t('Product.WEIGHT', 'Weight (kg)'), '', 12)
+			new TextField('Weight', sprintf(_t('Product.WEIGHT', 'Weight (%s)'), $weightunit), '', 12),
+			new TextField('Height', sprintf(_t('Product.HEIGHT', 'Height (%s)'), $lengthunit), '', 12),
+			new TextField('Width', sprintf(_t('Product.WIDTH', 'Width (%s)'), $lengthunit), '', 12),
+			new TextField('Depth', sprintf(_t('Product.DEPTH', 'Depth (%s)'), $lengthunit), '', 12),
 		));
 		
 		$fields->addFieldToTab('Root.Content.Main',new TextField('Model', _t('Product.MODEL', 'Model'), '', 30),'Content');
