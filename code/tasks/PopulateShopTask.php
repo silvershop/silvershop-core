@@ -12,9 +12,12 @@ class PopulateShopTask extends BuildTask{
 	protected $description = 'Creates dummy account page, products, checkout page, terms page.';
 	
 	function run($request){
+		
+		$this->extend("beforePopulate");
+		
 		//create products
 		if(!DataObject::get_one('Product')){
-			$fixture = new YamlFixture(SHOP_DIR."/tests/dummyproducts.yml");
+			$fixture = new YamlFixture(SHOP_DIR."/tests/fixtures/dummyproducts.yml");
 			$fixture->saveIntoDatabase();
 			
 			$categoriestopublish = array(
@@ -100,6 +103,9 @@ class PopulateShopTask extends BuildTask{
 			$page->publish('Stage', 'Live');
 			DB::alteration_message('Account page \'Account\' created', 'created');
 		}
+		
+		$this->extend("afterPopulate");
+		
 	}
 	
 }
