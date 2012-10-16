@@ -1,7 +1,6 @@
 <?php
-
 /**
- * Additional template functions for Item lists.
+ * Additional functions for Item lists.
  */
 class OrderItemList extends Extension{
 	
@@ -13,11 +12,21 @@ class OrderItemList extends Extension{
 		return $this->Quantity() > 1;
 	}
 	
-	function Sum($field){
+	/**
+	 * Sums up all of desired field for items. Optionally sum product field instead.
+	 * @param $field - field to sum
+	 * @param boolean $onproduct - sum from product or not
+	 * @return number total
+	 */
+	function Sum($field, $onproduct = false){
 		$total = 0;
 		if($this->owner->exists()){
 			foreach($this->owner as $item){
-				$total += $item->$field;
+				if(!$onproduct){
+					$total += $item->$field;
+				}elseif($product = $item->Product()){
+					$total += $product->$field;
+				}
 			}
 		}
 		return $total;
