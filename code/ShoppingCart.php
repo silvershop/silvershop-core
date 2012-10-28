@@ -28,6 +28,13 @@ class ShoppingCart{
 	}
 	
 	/**
+	 * Shortened alias for ShoppingCart::singleton()->current()
+	 */
+	public static function curr(){
+		return ShoppingCart::singleton()->current();
+	}
+	
+	/**
 	* Singleton prevents constructing a ShoppingCart any other way.
 	*/
 	private function __construct(){}
