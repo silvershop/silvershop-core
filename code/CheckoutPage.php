@@ -120,13 +120,6 @@ class CheckoutPage_Controller extends Page_Controller {
 		return _t('CheckoutPage.TITLE',"Checkout");
 	}
 
-	public function index(){
-		Requirements::javascript(THIRDPARTY_DIR . '/jquery/jquery.js');
-		Requirements::javascript(SHOP_DIR.'/javascript/CheckoutPage.js');
-		Requirements::javascript(SHOP_DIR.'/javascript/ecommerce.js');
-		return array();
-	}
-
 	/**
 	 * Returns a form allowing a user to enter their
 	 * details to checkout their order.
