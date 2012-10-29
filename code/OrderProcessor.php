@@ -119,6 +119,7 @@ class OrderProcessor{
 			$payment->Reference = $this->order->Reference;
 			$payment->write();
 			$this->order->Payments()->add($payment);
+			$payment->ReturnURL = $this->order->Link(); //store temp return url reference
 			return $payment;
 		}
 		return false;
@@ -147,6 +148,39 @@ class OrderProcessor{
 		//shipping has been selected (if required)
 		//modifiers have been calculated
 		return true;
+	}
+	
+	
+	/**
+	 * Create a payment model, and provide link to redirect to external gateway,
+	 * or redirect to order link.
+	 * @return string - url for redirection after payment has been made
+	 */
+	function makePayment($paymentClass){
+		//create payment
+		$payment = $this->createPayment($paymentClass);
+		if(!$payment){
+			$form->sessionMessage($processor->getError(), 'bad');
+			//TODO: form session message won't work here if we are directing to order link
+			return $this->order->Link();
+		}
+		//map data fields
+		$data = array(
+			'Reference' => $this->order->Reference,
+			'FirstName' => $this->order->FirstName,
+			'Surname' => $this->order->Surname,
+			'Email' => $this->order->Email
+			//TODO: there is probably more that needs to be mapped (billing address??)
+		);
+		// Process payment, get the result back
+		$result = $payment->processPayment($data, null); //TODO: payment shouldn't ask for a form!
+		if($result->isProcessing()) { // isProcessing(): Long payment process redirected to another website (PayPal, Worldpay)
+			return $result->getValue();
+		}
+		if($result->isSuccess()) {
+			$this->sendReceipt();
+		}
+		return $payment->ReturnURL;
 	}
 	
 	/**
