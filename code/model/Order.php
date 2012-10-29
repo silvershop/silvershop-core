@@ -618,7 +618,7 @@ class Order extends DataObject {
 	}
 
 	function getBillingAddress(){
-		if(!$this->SeparateBillingAddress){
+		if(!$this->SeparateBillingAddress && $this->ShippingAddressID === $this->BillingAddressID){
 			return $this->getShippingAddress();
 		}elseif($address = $this->BillingAddress()){
 			return $address;
