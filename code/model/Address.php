@@ -68,8 +68,8 @@ class Address extends DataObject{
 			$phonefield = new TextField($nameprefix.'Phone', _t('Address.PHONE','Phone Number'))
 		);		
 		if($showhints){
-			$addressfield->setRightTitle(_t("Address.ADDRESSHINT","i.e. street / thoroughfare number, name, and type or P.O. Box"));
-			$address2field->setRightTitle(_t("Address.ADDRESS2HINT","i.e. premises, building, apartment, unit, floor"));
+			$addressfield->setRightTitle(_t("Address.ADDRESSHINT","street / thoroughfare number, name, and type or P.O. Box"));
+			$address2field->setRightTitle(_t("Address.ADDRESS2HINT","premises, building, apartment, unit, floor"));
 			$cityfield->setRightTitle(_t("Address.CITYHINT","or suburb, county, district"));
 			$statefield->setRightTitle(_t("Address.STATEHINT","or province, territory, island"));
 		}
