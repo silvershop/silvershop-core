@@ -1,0 +1,25 @@
+{
+	"name" : "burnbright/shop",
+	"description" : "Provides an ecommerce product catalog, shopping cart, and order management system.",
+	"type" : "silverstripe-module",
+	"homepage": "http://www.ss-shop.org/",
+	"keywords" : ["shop","shopping cart","ecommerce","online shopping","payment","ordering","silverstripe"],
+	"authors" : [
+		{
+			"name" : "Jeremy Shipman",
+			"email" : "jeremy@burnbright.net",
+			"homepage" : "https://github.com/jedateach"
+		}
+	],
+	"require" : {
+		"php": ">=5.3.2",
+		"silverstripe/framework": "2.4.*",
+		"silverstripe/payment": "0.3.*"
+	},
+	"extra" : {
+		"snapshot" : "https://raw.github.com/burnbright/silverstripe-shop/gh-pages/assets/screenshots/shipping%20estimate%20form.png"
+   },
+   "support":{
+		"issues" : "https://github.com/burnbright/silverstripe-shop/issues"
+	}
+}
