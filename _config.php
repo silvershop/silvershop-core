@@ -25,7 +25,7 @@ SteppedCheckout::setupSteps(array(
 	'contactdetails' => 'CheckoutStep_ContactDetails',
 	'shippingaddress' => 'CheckoutStep_Address',
 	'billingaddress' => 'CheckoutStep_Address',
-	'shippingmethod' => 'CheckoutStep_ShippingMethod',
+	//'shippingmethod' => 'CheckoutStep_ShippingMethod', //currently in the shippingframework submodule
 	'paymentmethod' => 'CheckoutStep_PaymentMethod',
 	'summary' => 'CheckoutStep_Summary'
 ));

@@ -22,7 +22,7 @@ class CheckoutHelperTest extends SapphireTest{
 	}
 	
 	function testSetShippingMethod(){
-		$this->checkout->setShippingMethod(new ShippingMethod());
+		//$this->checkout->setShippingMethod(new ShippingMethod()); //see shippingframework submodule
 	}
 	
 	function testSetPaymentMethod(){
