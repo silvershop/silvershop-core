@@ -30,7 +30,7 @@ Address:
         District:   'WEST BEACH'
         Territory:  SA
         PostCode:   5024
-        Country:    AUSTRALIA   
+        Country:    AU
     scn266033:
         Name:       'MR. ZHIMIN LI'
         Address:    '63 RENMIN LU'
@@ -38,14 +38,14 @@ Address:
         Province:   SHANDONG
         PostCode:   266033
         Country:    CN
-    #doesn't have a state / province, country in full
+    #Swizerland - doesn't have a state / province
     zch1234:
         Title:      Herr
         Name:       'Hans Katze'
         Address:    'Tastentanzenstrasse 5/16'
         PostalCode: 1234
         City:       Zuerich
-        Country:    SWITZERLAND
+        Country:    CH
     aus85728:
         Name:       NISWANDEE
         Company:    BITBOOST
@@ -53,11 +53,11 @@ Address:
         City:       TUCSON 
         State:      AZ
         ZipCode:    85728
-        Country:    USA
+        Country:    US
     wus98102:
         Name:       'JOHN SMITH'
         Address:    '300 BOYLSTON AVE E'
         City:       SEATTLE
         State:      WA
         ZipCode:    98102
-        Country:    USA
+        Country:    US
