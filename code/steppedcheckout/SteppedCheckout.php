@@ -5,6 +5,8 @@
 
 class SteppedCheckout extends Extension{
 
+	static $first_step = null; //action to show on index
+	
 	protected static $steps = null;
 	
 	static function setupSteps($steps){
@@ -63,7 +65,10 @@ class SteppedCheckout extends Extension{
 	 * get first step from stored steps
 	 */
 	function index(){
-		return $this->owner->contactdetails();
+		if(self::$first_step){
+			return $this->owner->{self::$first_step}();
+		}
+		return array();
 	}
 	
 }
