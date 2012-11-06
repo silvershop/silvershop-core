@@ -20,17 +20,6 @@ Object::add_extension("Order","OrderAJAX");
 Object::add_extension("ComponentSet","OrderItemList");
 Object::add_extension("SiteConfig", "ShopConfig");
 
-//stepped checkout
-SteppedCheckout::setupSteps(array(
-	'contactdetails' => 'CheckoutStep_ContactDetails',
-	'shippingaddress' => 'CheckoutStep_Address',
-	'billingaddress' => 'CheckoutStep_Address',
-	//'shippingmethod' => 'CheckoutStep_ShippingMethod', //currently in the shippingframework submodule
-	'paymentmethod' => 'CheckoutStep_PaymentMethod',
-	'summary' => 'CheckoutStep_Summary'
-));
-Object::add_extension("CheckoutPage_Controller", "SteppedCheckout");
-
 //custom classes
 Object::useCustomClass('Currency','EcommerceCurrency', true);
 Object::useCustomClass('Versioned','FixVersioned');

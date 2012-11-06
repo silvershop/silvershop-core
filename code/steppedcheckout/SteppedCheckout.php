@@ -1,17 +1,32 @@
 <?php
 
-//TODO: validation - provide validation for each step, and re-validate each request
-//if validation fails at any step, then jump back to that step, with a message
-
 class SteppedCheckout extends Extension{
 
 	static $first_step = null; //action to show on index
 	
 	protected static $steps = null;
 	
-	static function setupSteps($steps){
+	/**
+	 * Set up CheckoutPage_Controller decorators for managing steps 
+	 */
+	static function setupSteps($steps = null){
+		if(!$steps){
+			$steps = array(
+				'contactdetails' => 'CheckoutStep_ContactDetails',
+				'shippingaddress' => 'CheckoutStep_Address',
+				'billingaddress' => 'CheckoutStep_Address',
+				//'shippingmethod' => 'CheckoutStep_ShippingMethod', //currently in the shippingframework submodule
+				'paymentmethod' => 'CheckoutStep_PaymentMethod',
+				'summary' => 'CheckoutStep_Summary'
+			);
+		}
+		Object::add_extension("CheckoutPage_Controller", "SteppedCheckout");
 		foreach($steps as $action => $classname){
 			Object::add_extension("CheckoutPage_Controller", $classname);
+		}
+		if(!self::$first_step){
+			reset($steps);
+			self::$first_step = key($steps);
 		}
 		self::$steps = $steps;
 	}
