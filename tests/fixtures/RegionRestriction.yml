@@ -1,0 +1,14 @@
+#Note that Country, State, City, and PostalCode default to '*', if not entered
+RegionRestriction_RateTest:
+    newzealand:
+        Country:    NZ
+        Rate:       50
+    wellington:
+        Country:    NZ
+        State:      Wellington
+        Rate:       10
+    local:
+        Country:    NZ
+        State:      Wellington
+        PostalCode: 6012
+        Rate:       2
