@@ -52,6 +52,8 @@ ProductCategory::set_sort_options( array('Title' => 'Alphabetical','Price' => 'L
 
 // * * * CHECKOUT
 ExpiryDateField::set_short_months(true);
+SteppedCheckout::$first_step = null; //disable stepped checkout first step
+
 // * * * MEMBER
 ShopMember::set_group_name("Shop ShopMembers");
 
