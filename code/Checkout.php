@@ -34,18 +34,19 @@ class Checkout{
 		$this->order->write();
 	}
 	
-	
 	//save / set up addresses
 	function setShippingAddress(Address $address){
 		//TODO: allow submitting array of data, which gets validated as an address?
 		$this->order->ShippingAddressID = $address->ID;
 		$this->order->write();
+		$this->order->extend('onSetShippingAddress',$address);
 	}
 	
 	function setBillingAddress(Address $address){
 		//TODO: allow submitting array of data, which gets validated as an address?
 		$this->order->BillingAddressID = $address->ID;
 		$this->order->write();
+		$this->order->extend('onSetBillingAddress',$address);
 	}
 	
 	/**
