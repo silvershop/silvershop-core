@@ -46,7 +46,7 @@ class CheckoutStep_Address extends CheckoutStep{
 	}
 
 	function setAddress($data,$form){
-		$redirect = $this->NextStepLink('shippingmethod');
+		$redirect = $this->NextStepLink();
 		if($order = ShoppingCart::curr()){
 			$address = $this->addressFromForm($form);
 			$checkout = new Checkout($order);
@@ -68,7 +68,7 @@ class CheckoutStep_Address extends CheckoutStep{
 			$checkout->setBillingAddress($address);
 			//TODO: either set new address, or choose matching existing member address
 		}
-		Director::redirect($this->NextStepLink('shippingmethod'));
+		Director::redirect($this->NextStepLink());
 	}
 	
 	protected function addressFromForm($form){

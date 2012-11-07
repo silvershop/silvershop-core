@@ -32,7 +32,7 @@ class CheckoutStep_PaymentMethod extends CheckoutStep{
 		if($checkout = Checkout::get()){
 			$checkout->setPaymentMethod($data["PaymentMethod"]);
 		}
-		Director::redirect($this->NextStepLink('summary'));
+		Director::redirect($this->NextStepLink());
 	}
 	
 	function getSelectedPaymentMethod(){

@@ -4,7 +4,7 @@ class SteppedCheckout extends Extension{
 
 	static $first_step = null; //action to show on index
 	
-	protected static $steps = null;
+	static $steps = null;
 	
 	/**
 	 * Set up CheckoutPage_Controller decorators for managing steps 
