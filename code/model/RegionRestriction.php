@@ -65,6 +65,15 @@ class RegionRestriction extends DataObject{
 		return self::$table_field_types;
 	}
 	
+	/**
+	 * Produces a sort check to make wildcards come last.
+	 * Useful because we are only interested in the wildcard,
+	 * and not sorting of other values.
+	 */
+	static function wildcard_sort($field, $direction = "ASC"){
+		return "CASE \"{$field}\" WHEN '*' THEN 1 ELSE 0 END $direction";
+	}
+	
 	function onBeforeWrite(){
 		//prevent empty data - '*' must be used
 		foreach(self::$defaults as $field => $value){
