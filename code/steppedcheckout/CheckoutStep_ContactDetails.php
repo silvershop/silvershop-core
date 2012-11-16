@@ -1,7 +1,5 @@
 <?php
 
-//TODO: require membership, or not
-
 class CheckoutStep_ContactDetails extends CheckoutStep{
 	
 	static $allowed_actions = array(
@@ -11,7 +9,12 @@ class CheckoutStep_ContactDetails extends CheckoutStep{
 	
 	function contactdetails(){
 		$form = $this->ContactDetailsForm();
-		$form->loadDataFrom(ShoppingCart::curr());
+		if($member = Member::currentUser()){
+			$form->loadDataFrom($member);
+		}
+		if($cart = ShoppingCart::curr()){
+			$form->loadDataFrom($cart->toMap()); //converting cart to array means it wont overwrite with empty data
+		}
 		return array(
 			'Form' => $form
 		);
@@ -22,10 +25,8 @@ class CheckoutStep_ContactDetails extends CheckoutStep{
 		$actions = new FieldSet(
 			new FormAction("setContactDetails","Continue")
 		);
-		
-		//TODO: validation
-		
-		$form = new Form($this->owner, 'ContactDetailsForm', $fields, $actions);
+		$validator =  new RequiredFields(array_keys($fields->dataFields())); //require all fields
+		$form = new Form($this->owner, 'ContactDetailsForm', $fields, $actions,$validator);
 		$this->owner->extend('updateForm',$form);
 		return $form;
 	}

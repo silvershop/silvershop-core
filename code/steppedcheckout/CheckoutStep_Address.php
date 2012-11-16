@@ -13,6 +13,9 @@ class CheckoutStep_Address extends CheckoutStep{
 	
 	function shippingaddress(){
 		$form = $this->AddressForm();
+		if($member = Member::currentUser()){
+			$form->loadDataFrom($member->DefaultShippingAddress());
+		}
 		$form->loadDataFrom(ShoppingCart::curr()->ShippingAddress());
 		$form->Fields()->push(
 			new CheckboxField("SeperateBilling","Bill to a different address from this")
@@ -35,6 +38,9 @@ class CheckoutStep_Address extends CheckoutStep{
 	
 	function billingaddress(){
 		$form = $this->AddressForm();
+		if($member = Member::currentUser()){
+			$form->loadDataFrom($member->DefaultBillingAddress());
+		}
 		$form->loadDataFrom(ShoppingCart::curr()->BillingAddress());
 		$form->Actions()->emptyItems();
 		$form->Actions()->push(
