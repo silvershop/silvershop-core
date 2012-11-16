@@ -19,7 +19,7 @@ class ShopPayment extends DataObjectDecorator {
 	}
 	
 	static function get_supported_methods(){
-		return Payment::get_supported_methods();
+		return Payment::get_supported_methods(); //Warning: this is only available on a custom version of Payment module
 	}
 	
 	static function get_method_dataset(){
@@ -46,7 +46,8 @@ class ShopPayment extends DataObjectDecorator {
 	}
 	
 	static function has_method($method){
-		return in_array($method, self::get_supported_methods());
+		$methods = self::get_supported_methods();
+		return isset($methods[$method]);
 	}
 		
 	function extraStatics() {

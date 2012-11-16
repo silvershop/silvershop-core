@@ -26,10 +26,8 @@ class CheckoutStep_Summary extends CheckoutStep{
 		$actions = new FieldSet(
 			new FormAction("place","Confirm and Pay")
 		);
-		//TODO: validation - check if order can be placed via OrderProcessor
-		//make sure payment type exists & is allowed
-		//terms conditions required
-		return new Form($this->owner,"ConfirmationForm",$fields,$actions);
+		$validator = new CheckoutValidator();
+		return new Form($this->owner,"ConfirmationForm",$fields,$actions, $validator);
 	}
 	
 	function place($data, $form){
