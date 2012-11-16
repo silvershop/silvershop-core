@@ -1,3 +1,29 @@
+Product:
+    product1:
+        Title: Laptop
+        BasePrice: 1940.00
+        AllowPurchase: 1
+        Width: 50
+        Height: 30
+        Depth: 10
+        Weight: 3.4
+
+Address:
+    address1:
+        Address: '201-203 BROADWAY AVE'
+        Address2: 'U 235'
+        City: 'WEST BEACH'
+        State: South Australia
+        PostCode: 5024
+        Country: AU
+
 Order:
     cart1:
         Name: Blah
+        ShippingAddress: =>Address.address1
+        BillingAddress: =>Address.address1
+        
+Product_OrderItem:
+    item1:
+        Product: =>Product.product1
+        Quantity: 1
