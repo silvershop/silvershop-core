@@ -7,14 +7,6 @@
 */
 class OrderForm extends Form {
 
-	//optional for user to become a member
-	protected static $user_membership_optional = false;
-		static function set_user_membership_optional($optional = true){self::$user_membership_optional = $optional;}
-
-	//all users must become members if true, or won't become members if false
-	protected static $force_membership = true;
-		static function set_force_membership($force = false){self::$force_membership = $force;}
-
 	//actions that don't need validation
 	protected $validactions = array(
 		'useDifferentShippingAddress',
@@ -189,7 +181,7 @@ class OrderForm extends Form {
 		$order->SeparateBillingAddress = true;
 		$order->write();
 		$this->saveDataToSession($data);
-		Director::redirectBack();
+		Controller::curr()->redirectBack();
 	}
 
 	/**
@@ -200,7 +192,7 @@ class OrderForm extends Form {
 		$order->SeparateBillingAddress = false;
 		$order->write();
 		$this->saveDataToSession($data);
-		Director::redirectBack();
+		Controller::curr()->redirectBack();
 	}
 
 	function updateShippingCountry($data, $form, $request) {
@@ -211,7 +203,7 @@ class OrderForm extends Form {
 		if(Director::is_ajax()){
 			return "success";
 		}
-		Director::redirectBack();
+		Controller::curr()->redirectBack();
 	}
 
 	/**
@@ -227,37 +219,22 @@ class OrderForm extends Form {
 	 * @param HTTPRequest $request Request object for this action
 	 */
 	function processOrder($data, $form) {
+		$checkout = Checkout::get();
 		$this->saveDataToSession($data); //save for later if necessary ...shouldn't technically be needed, if order is being written?
-		$cart = ShoppingCart::getInstance();
+		$cart = ShoppingCart::singleton();
 		$order = $cart->current();
 		$form->saveInto($order);
 		
-		//membership
 		$member = Member::currentUser();
 		if(!$member){
-			if(self::$user_membership_optional){
-				if($this->userWantsToBecomeMember($data,$form)){
-					$member = ShopMember::ecommerce_create_or_merge($data);
-				}
-			}elseif(self::$force_membership){
-				$member = ShopMember::ecommerce_create_or_merge($data); //create member
+			$member = new DataObject(); //dummy dataobject to handle the goodness of $form->saveInto
+			$form->saveInto($member);
+			$member = $checkout->createMembership($member->toMap());
+			if(!$member){
+				$form->sessionMessage($checkout->getMessage(),$checkout->getMessageType());
+				Controller::curr()->redirectBack();
+				return;
 			}
-		}else{
-			//TODO: make this configurable
-			$member = ShopMember::ecommerce_create_or_merge($data); //merge data
-		}
-		//if they are a member, or if they have filled out the member fields (password, save my details)
-		// Create new OR update logged in {@link Member} record
-		if($member === false) {
-			$form->sessionMessage(
-				_t('OrderForm.MEMBEREXISTS', 'Sorry, a member already exists with that email address.
-					If this is your email address, please log in first before placing your order.'.
-					' <a href="Security/lostpassword">Recover password.</a>'
-				),
-				'bad'
-			);
-			Director::redirectBack();
-			return false;
 		}
 		
 		//save addresses
@@ -276,7 +253,7 @@ class OrderForm extends Form {
 		$processor = OrderProcessor::create($order);
 		if(!$processor->placeOrder()){
 			$form->sessionMessage($processor->getError(), 'bad');
-			Director::redirectBack();
+			Controller::curr()->redirectBack();
 			return false;
 		}
 		$cart->clear();
@@ -295,7 +272,7 @@ class OrderForm extends Form {
 		$payment = $processor->createPayment($paymentClass);
 		if(!$payment){
 			$form->sessionMessage($processor->getError(), 'bad');
-			Director::redirect($order->Link());
+			Controller::curr()->redirect($order->Link());
 			return false;
 		}
 		
@@ -312,7 +289,7 @@ class OrderForm extends Form {
 		if($result->isSuccess()) {
 			$processor->sendReceipt();
 		}
-		Director::redirect($payment->ReturnURL);
+		Controller::curr()->redirect($payment->ReturnURL);
 		return true;
 	}
 	
@@ -422,6 +399,24 @@ JS;
 		if($this->validator && $this->validator->getJavascriptValidationHandler() == 'prototype')
 			Requirements::customScript($script);
 		return $form;
+	}
+	
+	//optional for user to become a member
+	protected static $user_membership_optional = false;
+	 /* 
+	 * @deprecated
+	 */
+	static function set_user_membership_optional($optional = true){
+		self::$user_membership_optional = $optional;
+	}
+	
+	//all users must become members if true, or won't become members if false
+	protected static $force_membership = true;
+	/*
+	 * @deprecated
+	*/
+	static function set_force_membership($force = false){
+		Checkout::$membership_required = $force;
 	}
 
 }
