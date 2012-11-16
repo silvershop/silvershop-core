@@ -33,6 +33,16 @@ class CheckoutFieldFactory{
 		);
 	}
 	
+	function getMembershipFields(){
+		$fields = $this->getContactFields();
+		$idfield = Member::get_unique_identifier_field();
+		if(!$fields->fieldByName($idfield)){
+			$fields->push(new TextField($idfield,$idfield)); //TODO: scaffold the correct id field
+		}
+		$fields->push(new ConfirmedPasswordField("Password"));
+		return $fields;
+	}
+	
 	function getPasswordFields(){
 		$fields =  new FieldSet(
 			$header = new HeaderField(_t('OrderForm.MembershipDetails','Membership Details'), 3),
