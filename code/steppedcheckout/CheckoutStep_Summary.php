@@ -41,7 +41,7 @@ class CheckoutStep_Summary extends CheckoutStep{
 			Director::redirectBack();
 			return false;
 		}
-		$paymentredirect = $processor->makePayment(Checkout::get($order)->getSelectedPaymentMethod());
+		$paymentredirect = $processor->makePayment(Checkout::get($order)->getSelectedPaymentMethod(false));
 		if(!Director::redirected_to()){ //only redirect if one hasn't been done already
 			Director::redirect($paymentredirect);
 		}

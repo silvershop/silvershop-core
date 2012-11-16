@@ -99,32 +99,34 @@ class Checkout{
 		return true;
 	}
 	
-	//set discount code
-	
-	//get payment methods
+	/*
+	 * Get a dataobject of payment methods.
+	 */
 	function getPaymentMethods(){
-		$set = new DataObjectSet();
-		foreach(Payment::get_supported_methods() as $class => $name){
-			$set->push(new ArrayData(array(
-				'Title' => $name,
-				'ClassName' => $class	
-			)));	
-		}		
-		return $set;
+		return ShopPayment::get_method_dataset();
 	}
 	
 	/**
 	 * Set payment method
 	 */
 	function setPaymentMethod($paymentmethod){
-		//TODO: check if method even exists
-		
+		if(!ShopPayment::has_method($paymentmethod)){
+			return $this->error(_t("Checkout.NOPAYMENTMETHOD","Payment method does not exist"));
+		}
 		Session::set("Checkout.PaymentMethod",$paymentmethod);
 		return true;
 	}
 	
-	function getSelectedPaymentMethod(){
-		return Session::get("Checkout.PaymentMethod");
+	/**
+	 * Gets the sorted payment methdod from the session.
+	 * 
+	 */
+	function getSelectedPaymentMethod($nice = true){
+		$method = Session::get("Checkout.PaymentMethod");
+		if($nice){
+			$method = ShopPayment::method_title($method);
+		}
+		return $method;
 	}
 	
 	//display final data
