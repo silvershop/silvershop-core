@@ -25,25 +25,51 @@ class ShopMember extends DataObjectDecorator {
 			)
 		);
 	}
-
-	/**
-	 * Link the current order to the current member, if there is one.
-	 */
-	function memberLoggedIn(){
-		if(self::$login_joins_cart && $order = ShoppingCart::singleton()->current()){
-			$order->MemberID = $this->owner->ID;
-			$order->write();
-		}
-	}
-
-	/**
-	 * Clear the cart, and session variables.
-	 */
-	function memberLoggedOut(){
-		ShoppingCart::singleton()->clear();
-		OrderManipulation::clear_session_order_ids();
+	
+	function updateCMSFields($fields) {
+		$fields->removeByName('Country');
+		$fields->removeByName("DefaultShippingAddressID");
+		$fields->removeByName("DefaultBillingAddressID");
+		$fields->addFieldToTab('Root.Main', new DropdownField('Country', 'Country', Geoip::getCountryDropDown()));
 	}
 	
+	function updateMemberFormFields($fields){
+		$fields->removeByName('DefaultShippingAddressID');
+		$fields->removeByName('DefaultBillingAddressID');
+		if($gender=$fields->fieldByName('Gender')){
+			$gender->setHasEmptyDefault(true);
+		}
+	}
+	
+	/**
+	 * Get member by unique field.
+	 * @return Member|null
+	 */
+	public static function get_by_identifier($value){
+		$uniqueField = Member::get_unique_identifier_field();
+		return DataObject::get_one('Member', "\"$uniqueField\" = '{$value}'");
+	}
+	
+	public static function create_or_merge($data){
+		if(!isset($data[Member::get_unique_identifier_field()]) || empty($data[Member::get_unique_identifier_field()])){
+			return false;	
+		}
+		$existingmember = self::get_by_identifier($data[Member::get_unique_identifier_field()]);
+		if($existingmember && $existingmember->exists()){
+			if(Member::currentUserID() != $existingUniqueMember->ID) {
+				return false;
+			}
+		}
+		if(!$member = Member::currentUser()) {
+			$member = new Member();
+		}
+		$member->update($data);
+		return $member;
+	}
+		
+	/**
+	 * Get country title by iso country code.
+	 */
 	static function find_country_title($code) {
 		$countries = Geoip::getCountryDropDown();
 		// check if code was provided, and is found in the country array
@@ -53,7 +79,10 @@ class ShopMember extends DataObjectDecorator {
 			return false;
 		}
 	}
-
+	
+	/**
+	 * Find country that member is from.
+	 */
 	static function find_country() {
 		$member = Member::currentUser();
 		if($member && $member->Country) {
@@ -71,44 +100,24 @@ class ShopMember extends DataObjectDecorator {
 		}
 		return $country;
 	}
-	
-	public static function ecommerce_create_or_merge($data) {
-		// Because we are using a ConfirmedPasswordField, the password will be an array of two fields
-		if(isset($data['Password']) && is_array($data['Password'])) {
-			$data['Password'] = $data['Password']['_Password'];
-		}
-		// We need to ensure that the unique field is never overwritten
-		$uniqueField = Member::get_unique_identifier_field();
-		if(isset($data[$uniqueField])) {
-			$SQL_unique = Convert::raw2xml($data[$uniqueField]);
-			$existingUniqueMember = DataObject::get_one('Member', "\"$uniqueField\" = '{$SQL_unique}'");
-			if($existingUniqueMember && $existingUniqueMember->exists()) {
-				if(Member::currentUserID() != $existingUniqueMember->ID) {
-					return false;
-				}
-			}
-		}
-		if(!$member = Member::currentUser()) {
-			$member = new Member();
-		}
-		$member->update($data);
-		return $member;
-	}
 
-	function updateCMSFields($fields) {
-		$fields->removeByName('Country');
-		$fields->removeByName("DefaultShippingAddressID");
-		$fields->removeByName("DefaultBillingAddressID");
-		$fields->addFieldToTab('Root.Main', new DropdownField('Country', 'Country', Geoip::getCountryDropDown()));
+	/**
+	 * Link the current order to the current member on login,
+	 * if there is one, and if configuration is set to do so.
+	 */
+	function memberLoggedIn(){
+		if(self::$login_joins_cart && $order = ShoppingCart::singleton()->current()){
+			$order->MemberID = $this->owner->ID;
+			$order->write();
+		}
 	}
 	
-	function updateMemberFormFields($fields){
-		$fields->removeByName('DefaultShippingAddressID');
-		$fields->removeByName('DefaultBillingAddressID');
-		if($gender=$fields->fieldByName('Gender')){
-			$gender->setHasEmptyDefault(true);
-		}
-		
+	/**
+	 * Clear the cart, and session variables on member logout
+	 */
+	function memberLoggedOut(){
+		ShoppingCart::singleton()->clear();
+		OrderManipulation::clear_session_order_ids();
 	}
 	
 	function getPastOrders($extrafilter = null){
@@ -162,8 +171,13 @@ class ShopMember extends DataObjectDecorator {
 	 * @return boolean|object Member object or boolean FALSE
 	 */
 	public static function createOrMerge($data) {
-		user_error("deprecated, please use ShopMember::ecommerce_create_or_merge", E_USER_NOTICE);
+		user_error("deprecated, please use ShopMember::create_or_merge", E_USER_NOTICE);
 		return self::ecommerce_create_or_merge($data);
+	}
+	
+	static function ecommerce_create_or_merge(){
+		user_error("deprecated, please use ShopMember::create_or_merge", E_USER_NOTICE);
+		return self::create_or_merge($data);
 	}
 
 }

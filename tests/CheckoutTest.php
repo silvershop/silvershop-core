@@ -46,7 +46,7 @@ class CheckoutTest extends SapphireTest {
 	
 		$order = $this->cart->current();
 		
-		$member = ShopMember::ecommerce_create_or_merge(array(
+		$member = ShopMember::create_or_merge(array(
 			'FirstName' => 'James',
 			'Surname'	=> 'Brown',
 			'Email'		=> 'james@jamesbrown.net.xx',
