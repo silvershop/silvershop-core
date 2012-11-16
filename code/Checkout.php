@@ -24,6 +24,24 @@ class Checkout{
 		$this->order = $order;
 	}
 	
+	protected $message, $type;
+	
+	/**
+	 * Get stored message
+	 * @return string
+	 */
+	public function getMessage(){
+		return $this->message;
+	}
+	
+	/**
+	 * Get type of stored message
+	 * @return string
+	 */
+	public function getMessageType(){
+		return $this->type;
+	}
+	
 	/**
 	 * contact information
 	 */
@@ -68,15 +86,17 @@ class Checkout{
 	 */
 	function setShippingMethod(ShippingMethod $option){
 		$package = $this->order->createShippingPackage();
-		$address = $this->order->getShippingAddress();
-		if($option && $package && $address && $address->exists()){
-			$this->order->ShippingTotal = $option->calculateRate($package,$address);
-			$this->order->ShippingMethodID = $option->ID;
-			$this->order->write();
-			return true;
+		if(!$package){
+			return $this->error(_t("Checkout.NOPACKAGE","Shipping package information not available"));
 		}
-		//TODO: set error messages
-		return false;
+		$address = $this->order->getShippingAddress();
+		if(!$address || !$address->exists()){
+			return $this->error(_t("Checkout.NOADDRESS","No address has been set"));
+		}
+		$this->order->ShippingTotal = $option->calculateRate($package,$address);
+		$this->order->ShippingMethodID = $option->ID;
+		$this->order->write();
+		return true;
 	}
 	
 	//set discount code
@@ -109,11 +129,22 @@ class Checkout{
 	
 	//display final data
 	
-	//place order
-	function placeOrder(){
-		
-	}	
+	/**
+	 * Store a new error & return false;
+	 */
+	protected function error($message){
+		$this->message($message,"bad");
+		return false;
+	}
 	
-	//create member account (optional)
+	/**
+	 * Store a message to be fed back to user.
+	 * @param string $message
+	 * @param string $type - good, bad, warning
+	 */
+	protected function message($message,$type = "good"){
+		$this->message = $message;
+		$this->type = $type;
+	}
 	
 }
