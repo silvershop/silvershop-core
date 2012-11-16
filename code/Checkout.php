@@ -4,9 +4,20 @@
  */
 class Checkout{
 	
-	static $user_membership_required = false;
-	static function user_membership_required(){
-		return self::$user_membership_required;
+	//4 different membership schemes:
+		//1: creation disabled & membership not required = no body can, or is required to, becaome a member at checkout.
+		//2: creation disabled & membership required = only existing members can use checkout. (ideally the entire shop should be disabled in this case)
+		//3: creation enabled & membership required = everyone must be, or become a member at checkout.
+		//4: creation enabled & membership not required (default) = it is optional to be, or become a member at checkout.
+
+	static $member_creation_enabled = true;
+	static function member_creation_enabled(){
+		return self::$member_creation_enabled;
+	}
+	
+	static $membership_required = false;
+	static function membership_required(){
+		return self::$membership_required;
 	}
 	
 	static function get($order = null){
@@ -129,7 +140,30 @@ class Checkout{
 		return $method;
 	}
 	
-	//display final data
+	/**
+	 * Create member account from data array.
+	 * Data must contain unique identifier.
+	 * @param $data - map of member data
+	 * @return Member|boolean - new member (not saved to db), or false if there is an error.
+	 */
+	function createMembership($data){
+		if(!Checkout::$member_creation_enabled){
+			return $this->error(_t("Checkout.MEMBERSHIPSNOTALLOWED","Creating new memberships is not allowed"));
+		}
+		$idfield = Member::get_unique_identifier_field();
+		if(isset($data[$idfield]) || empty( $data[$idfield])){
+			return $this->error(sprintf(_t("Checkout.IDFIELDNOTFOUND","Required field not found: %s"),$idfield));
+		}
+		if(!ShopMember::get_by_identifier($idval)){
+			return $this->error(sprintf(_t("Checkout.MEMBEREXISTS","A member already exists with the %s %s"),$idfield,$idval));
+		}
+		$member = new Member(Convert::raw2sql($data));
+		$validation = $member->validate();
+		if(!$validation->valid()){
+			return $this->error($validation->message());	//TODO need to handle i18n here?
+		}
+		return $member;
+	}
 	
 	/**
 	 * Store a new error & return false;
