@@ -13,8 +13,9 @@
 
 ## Documentation
 
- * http://demo.ss-shop.org/docs
- * http://api.ss-shop.org
+ * http://demo.ss-shop.org/docs - user and developer docs
+ * http://api.ss-shop.org - api docs
+ * https://github.com/burnbright/silverstripe-shop/wiki - extra wiki pages
 
 ## Installation Instructions
 
