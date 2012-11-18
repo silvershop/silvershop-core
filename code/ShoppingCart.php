@@ -88,8 +88,7 @@ class ShoppingCart{
 		$order = $this->findOrMake();
 		$order->extend("beforeAdd",$buyable,$quantity,$filter);
 		if(!$buyable){ 
-			$this->error(_t("ShoppingCart.PRODUCTNOTFOUND","Product not found."));
-			return false;
+			return $this->error(_t("ShoppingCart.PRODUCTNOTFOUND","Product not found."));
 		}
 		$item = $this->findOrMakeItem($buyable,$filter);
 		if(!$item){	
@@ -117,8 +116,7 @@ class ShoppingCart{
 		$order = $this->current();
 		$order->extend("beforeRemove",$buyable,$quantity,$filter);
 		if(!$order){
-			$this->error(_t("ShoppingCart.NOORDER","No current order."));
-			return false;
+			return $this->error(_t("ShoppingCart.NOORDER","No current order."));
 		}
 		$item = $this->get($buyable,$filter);
 		if(!$item){
@@ -175,9 +173,8 @@ class ShoppingCart{
 		$item = $this->get($buyable,$filter);
 		if(!$item){
 			if(!$buyable->canPurchase(Member::currentUser())){
-				$this->message(sprintf(_t("ShoppingCart.CANNOTPURCHASE","This %s cannot be purchased."),strtolower($buyable->i18n_singular_name())),'bad');
+				return $this->error(sprintf(_t("ShoppingCart.CANNOTPURCHASE","This %s cannot be purchased."),strtolower($buyable->i18n_singular_name())));
 				//TODO: get more specific message
-				return false;
 			}
 			$item = $buyable->createItem(1,$filter);
 			$item->OrderID = $order->ID;
@@ -214,8 +211,7 @@ class ShoppingCart{
 		$filter = $query->getFilter();
 		$item = DataObject::get_one($itemclass, $filter);
 		if(!$item){
-			$this->error(_t("ShoppingCart.ITEMNOTFOUND","Item not found."));
-			return false;
+			return $this->error(_t("ShoppingCart.ITEMNOTFOUND","Item not found."));
 		}
 		return $item;
 	}
@@ -227,8 +223,7 @@ class ShoppingCart{
 	function clear() {
 		$order = $this->current();
 		if(!$order){
-			$this->error(_t("ShoppingCart.NOCARTFOUND","No cart found."));
-			return false;
+			return $this->error(_t("ShoppingCart.NOCARTFOUND","No cart found."));
 		}
 		//TODO: optionally delete the order from database
 		$order->SessionID = null;
@@ -244,6 +239,7 @@ class ShoppingCart{
 	 */
 	protected function error($message){
 		$this->message($message,"bad");
+		return false;
 	}
 	
 	/**
