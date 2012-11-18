@@ -225,6 +225,7 @@ class ProductControllerVariationExtension extends Extension{
 				}
 			}
 			$fields->push(new HiddenField('VariationOptions','VariationOptions',json_encode($vararray)));
+			Requirements::javascript('shop/javascript/VariationSelectors.js');
 		}
 
 		$actions = new FieldSet(

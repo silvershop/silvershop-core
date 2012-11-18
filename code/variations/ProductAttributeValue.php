@@ -25,9 +25,30 @@ class ProductAttributeValue extends DataObject{
 	);
 
 	static $summary_fields = array(
+		'Value' => 'Value'
+	);
+	
+	static $table_fields = array(
 		'Value' => 'Value',
-
+		'Sort' => 'Sort'
+	);
+	
+	static $table_type_fields = array(
+		'Value' => 'TextField',
+		'Sort' => 'TextField'
 	);
 
 	static $default_sort = "TypeID ASC, Sort ASC, Value ASC";
+	
+	public function tableFields(){
+		$fields = self::$table_fields;
+		$this->extend("updateTableFields", $fields);
+		return $fields;
+	}
+	
+	public function tableTypeFields(){
+		$fields = self::$table_type_fields;
+		$this->extend("updateTableTypeFields", $fields);
+		return $fields;
+	}
 }
