@@ -11,7 +11,6 @@ class CheckoutTest extends SapphireTest{
 	function setUp(){
 		parent::setUp();
 		ShopTest::setConfiguration();
-		
 		$this->cart = $this->objFromFixture("Order", "cart1");
 		$this->shippingaddress = $this->objFromFixture("Address", "wnz6012");
 		$this->checkout = new Checkout($this->cart);
@@ -20,7 +19,8 @@ class CheckoutTest extends SapphireTest{
 	function testSetUpShippingAddress(){		
 		$this->checkout->setShippingAddress($this->shippingaddress);
 		//address was successfully added
-		//don't allow adding bad addressses
+		$this->assertEquals($this->cart->ShippingAddressID,$this->shippingaddress->ID);
+		//TODO: don't allow adding bad addressses
 	}
 
 	
@@ -33,15 +33,17 @@ class CheckoutTest extends SapphireTest{
 		ShopPayment::set_supported_methods(array(
 			'Cheque' => 'Cheque'
 		));
-		
 		$this->assertTrue($this->checkout->setPaymentMethod("Cheque"),"Valid method set correctly");
 		$this->assertEquals($this->checkout->getSelectedPaymentMethod(false),'Cheque');
 	}
 	
+	/**
+	 * Tests the default membership configuration.
+	 * You can become a member, but it is not necessary
+	 */
 	function testCanBecomeMember(){
 		Checkout::$member_creation_enabled = true;
 		Checkout::$membership_required = false;
-		
 		//check can proceeed with/without order
 		//check member exists
 		$result = $this->checkout->createMembership(array(
@@ -51,20 +53,42 @@ class CheckoutTest extends SapphireTest{
 			'Password' => 'janesmith2012'	
 		));
 		$this->assertType("Member", $result, $this->checkout->getMessage());
+		$this->assertTrue($this->checkout->validateMember($result));
 	}
 	
 	function testMustBecomeOrBeMember(){
 		Checkout::$member_creation_enabled = true;
 		Checkout::$membership_required = true;
+		
+		$member = $this->checkout->createMembership(array(
+			'FirstName' => 'Susan',
+			'Surname' => 'Jackson',
+			'Email' => 'susan@jmail.com',
+			'Password' => 'jaleho3htgll'	
+		));
+		
+		$this->assertTrue($this->checkout->validateMember($member));
 		//check can't proceed without being a member
-		//$this->checkout->validateMember($member);
+		$this->assertFalse($this->checkout->validateMember(false));
 	}
 	
 	function testNoMemberships(){
 		Checkout::$member_creation_enabled = false;
 		Checkout::$membership_required = false;
+		
+		$member = $this->checkout->createMembership(array(
+			'FirstName' => 'Susan',
+			'Surname' => 'Jackson',
+			'Email' => 'susan@jmail.com',
+			'Password' => 'jaleho3htgll'
+		));
+		
 		//validate member returns true - any member or not is allowed
-		//check membership is not tied to order
+		$this->assertTrue($this->checkout->validateMember($member));
+		//check can't proceed without being a member
+		$this->assertTrue($this->checkout->validateMember(false));
+		
+		//TODO: check membership does not get tied to order
 	}
 	
 	function testMembersOnly(){

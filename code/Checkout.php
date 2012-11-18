@@ -172,6 +172,20 @@ class Checkout{
 	}
 	
 	/**
+	 * Checks if member (or not) is allowed, in accordance with configuration
+	 */
+	function validateMember($member){
+		if(!self::$membership_required){
+			return true;
+		}
+		if(empty($member) || !($member instanceof Member)){
+			return false;
+		}
+		
+		return true;
+	}
+	
+	/**
 	 * Store a new error & return false;
 	 */
 	protected function error($message){
