@@ -26,6 +26,13 @@ class ShopTest extends FunctionalTest {
 		$this->get('checkout');
 		//TODO: check order hasn't started
 	}
+	
+	function testFindLink() {
+		$this->checkoutpage = $this->objFromFixture('CheckoutPage', 'checkout');
+		$this->checkoutpage->publish('Stage','Live');
+		$link = CheckoutPage::find_link();
+		$this->assertEquals(Director::baseURL() . 'checkout/', $link, 'find_link() returns the correct link to checkout.');
+	}
 
 	function testCanViewProductPage() {
 		$p1a = $this->objFromFixture('Product', 'tshirt');
