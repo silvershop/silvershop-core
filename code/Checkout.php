@@ -156,19 +156,19 @@ class Checkout{
 		
 		$idfield = Member::get_unique_identifier_field();
 		if(!isset($data[$idfield]) || empty( $data[$idfield])){ 
-			return self::error(sprintf(_t("Checkout.IDFIELDNOTFOUND","Required field not found: %s"),$idfield));
+			return $this->error(sprintf(_t("Checkout.IDFIELDNOTFOUND","Required field not found: %s"),$idfield));
 		}else{
 			$idval = $data[$idfield];
 		}
 		
 		if(ShopMember::get_by_identifier($idval)){
-			return self::error(sprintf(_t("Checkout.MEMBEREXISTS","A member already exists with the %s %s"),$idfield,$idval));
+			return $this->error(sprintf(_t("Checkout.MEMBEREXISTS","A member already exists with the %s %s"),$idfield,$idval));
 		}
 
 		$member = new Member(Convert::raw2sql($data));
 		$validation = $member->validate();
 		if(!$validation->valid()){
-			return self::error($validation->message());	//TODO need to handle i18n here?
+			return $this->error($validation->message());	//TODO need to handle i18n here?
 		}
 		
 		return $member;
