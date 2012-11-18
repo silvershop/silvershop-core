@@ -149,21 +149,28 @@ class Checkout{
 	 * @return Member|boolean - new member (not saved to db), or false if there is an error.
 	 */
 	function createMembership($data){
+		
 		if(!Checkout::$member_creation_enabled){
 			return $this->error(_t("Checkout.MEMBERSHIPSNOTALLOWED","Creating new memberships is not allowed"));
 		}
+		
 		$idfield = Member::get_unique_identifier_field();
-		if(isset($data[$idfield]) || empty( $data[$idfield])){
+		if(!isset($data[$idfield]) || empty( $data[$idfield])){ 
 			return $this->error(sprintf(_t("Checkout.IDFIELDNOTFOUND","Required field not found: %s"),$idfield));
+		}else{
+			$idval = $data[$idfield];
 		}
-		if(!ShopMember::get_by_identifier($idval)){
+		
+		if(ShopMember::get_by_identifier($idval)){
 			return $this->error(sprintf(_t("Checkout.MEMBEREXISTS","A member already exists with the %s %s"),$idfield,$idval));
 		}
+
 		$member = new Member(Convert::raw2sql($data));
 		$validation = $member->validate();
 		if(!$validation->valid()){
 			return $this->error($validation->message());	//TODO need to handle i18n here?
 		}
+		
 		return $member;
 	}
 	
