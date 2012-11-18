@@ -22,13 +22,20 @@ class CheckoutTest extends SapphireTest{
 		//address was successfully added
 		//don't allow adding bad addressses
 	}
+
 	
 	function testSetShippingMethod(){
-		$this->checkout->setShippingMethod(new ShippingMethod()); //see shippingframework submodule
+		//TODO: combine shipping framework with core, or remove reliance
+		//$this->checkout->setShippingMethod(new ShippingMethod()); //see shippingframework submodule
 	}
 	
 	function testSetPaymentMethod(){
-		$this->checkout->setPaymentMethod("Cheque");
+		ShopPayment::set_supported_methods(array(
+			'Cheque' => 'Cheque'
+		));
+		
+		$this->assertTrue($this->checkout->setPaymentMethod("Cheque"),"Valid method set correctly");
+		$this->assertEquals($this->checkout->getSelectedPaymentMethod(false),'Cheque');
 	}
 	
 	function testCanBecomeMember(){
