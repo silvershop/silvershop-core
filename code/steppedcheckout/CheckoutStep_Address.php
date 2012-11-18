@@ -28,10 +28,10 @@ class CheckoutStep_Address extends CheckoutStep{
 	function AddressForm(){
 		$fields = singleton("Address")->getFormFields("",true);
 		$actions = new FieldSet(
-			//new FormAction("useSeperateBillingAddress","Continue"), //TODO: add in billing address support
 			new FormAction("setAddress","Continue")
 		);
-		$form = new Form($this->owner, 'AddressForm', $fields, $actions);
+		$validator =  new RequiredFields(singleton("Address")->getRequiredFields());
+		$form = new Form($this->owner, 'AddressForm', $fields, $actions, $validator);
 		$this->owner->extend('updateForm',$form);
 		return $form;
 	}
