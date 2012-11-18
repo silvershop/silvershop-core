@@ -50,6 +50,13 @@ class Address extends DataObject{
 		'Country' => 'ShopCountry'	
 	);
 	
+	static $required_fields = array(
+		'Address',
+		'City',
+		'State',
+		'Country'
+	);
+	
 	/**
 	 * @todo: customise format and labels, based on passed locale
 	 * @param unknown_type $nameprefix
@@ -78,15 +85,14 @@ class Address extends DataObject{
 	}
 	
 	/**
-	 * Get an array of fields that must be populated in a form
+	 * Get an array of fields that must be populated in a form.
+	 * Required fields can be customised via self::$required_fields
 	 */
 	function getRequiredFields($nameprefix = ""){
-		$fields = array(
-			$nameprefix.'Address',
-			$nameprefix.'City',
-			$nameprefix.'State',
-			$nameprefix.'Country'
-		);
+		$fields = array();
+		foreach(self::$required_fields as $field){
+			$fields[] = $nameprefix.$field;
+		}
 		$this->extend('updateRequiredFields',$fields,$nameprefix);
 		return $fields;
 	}
