@@ -153,10 +153,14 @@ class Checkout{
 			return $this->error(_t("Checkout.MEMBERSHIPSNOTALLOWED","Creating new memberships is not allowed"));
 		}
 		$idfield = Member::get_unique_identifier_field();
-		if(isset($data[$idfield]) || empty( $data[$idfield])){
+		if(!isset($data[$idfield]) || empty( $data[$idfield])){
 			return $this->error(sprintf(_t("Checkout.IDFIELDNOTFOUND","Required field not found: %s"),$idfield));
 		}
-		if(!ShopMember::get_by_identifier($idval)){
+		if(!isset($data['Password']) || empty( $data['Password'])){
+			return $this->error(_t("Checkout.PASSWORDREQUIRED","A password is required"));
+		}
+		$idval = $data[$idfield];
+		if(ShopMember::get_by_identifier($idval)){
 			return $this->error(sprintf(_t("Checkout.MEMBEREXISTS","A member already exists with the %s %s"),$idfield,$idval));
 		}
 		$member = new Member(Convert::raw2sql($data));
