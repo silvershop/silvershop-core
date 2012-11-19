@@ -23,7 +23,7 @@ class CheckoutStep_ContactDetails extends CheckoutStep{
 	function ContactDetailsForm(){
 		$fields = CheckoutFieldFactory::singleton()->getContactFields();
 		$actions = new FieldSet(
-			new FormAction("setContactDetails","Continue")
+			new FormAction("setcontactdetails","Continue")
 		);
 		$validator =  new RequiredFields(array_keys($fields->dataFields())); //require all fields
 		$form = new Form($this->owner, 'ContactDetailsForm', $fields, $actions,$validator);
@@ -31,7 +31,7 @@ class CheckoutStep_ContactDetails extends CheckoutStep{
 		return $form;
 	}
 	
-	function setContactDetails($data,$form){
+	function setcontactdetails($data,$form){
 		if($order = ShoppingCart::curr()){
 			$checkout = new Checkout($order);
 			$checkout->setContactDetails($data['Email'],$data['FirstName'],$data['Surname']);

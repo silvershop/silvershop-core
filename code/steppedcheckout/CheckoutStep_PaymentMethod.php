@@ -20,14 +20,14 @@ class CheckoutStep_PaymentMethod extends CheckoutStep{
 			'PaymentMethod','',$checkout->getPaymentMethods()->map('ClassName','Title'),$checkout->getPaymentMethods()->First()->ClassName
 		));
 		$actions = new FieldSet(
-			new FormAction("setPaymentMethod","Continue")
+			new FormAction("setpaymentmethod","Continue")
 		);
 		$validator = new RequiredFields('PaymentMethod');
 		$form = new Form($this->owner,"PaymentMethodForm",$fields,$actions);
 		return $form;
 	}
 	
-	function setPaymentMethod($data, $form){
+	function setpaymentmethod($data, $form){
 		if($checkout = Checkout::get()){
 			$checkout->setPaymentMethod($data["PaymentMethod"]);
 		}

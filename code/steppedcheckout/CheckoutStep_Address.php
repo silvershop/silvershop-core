@@ -28,7 +28,7 @@ class CheckoutStep_Address extends CheckoutStep{
 	function AddressForm(){
 		$fields = singleton("Address")->getFormFields();
 		$actions = new FieldSet(
-			new FormAction("setAddress","Continue")
+			new FormAction("setaddress","Continue")
 		);
 		$validator =  new RequiredFields(singleton("Address")->getRequiredFields());
 		$form = new Form($this->owner, 'AddressForm', $fields, $actions, $validator);
@@ -44,14 +44,14 @@ class CheckoutStep_Address extends CheckoutStep{
 		$form->loadDataFrom(ShoppingCart::curr()->BillingAddress());
 		$form->Actions()->emptyItems();
 		$form->Actions()->push(
-			new FormAction("setBillingAddress","Continue")
+			new FormAction("setbillingaddress","Continue")
 		);
 		return array(
 			'Form' => $form
 		);
 	}
 
-	function setAddress($data,$form){
+	function setaddress($data,$form){
 		$redirect = $this->NextStepLink();
 		if($order = ShoppingCart::curr()){
 			$address = $this->addressFromForm($form);
@@ -64,17 +64,17 @@ class CheckoutStep_Address extends CheckoutStep{
 				$checkout->setBillingAddress($address);
 			}
 		}
-		Director::redirect($redirect);
+		Controller::curr()->redirect($redirect);
 	}
 	
-	function setBillingAddress($data,$form){
+	function setbillingaddress($data,$form){
 		if($order = ShoppingCart::curr()){
 			$address = $this->addressFromForm($form);
 			$checkout = new Checkout($order);
 			$checkout->setBillingAddress($address);
 			//TODO: either set new address, or choose matching existing member address
 		}
-		Director::redirect($this->NextStepLink());
+		Controller::curr()->redirect($this->NextStepLink());
 	}
 	
 	protected function addressFromForm($form){

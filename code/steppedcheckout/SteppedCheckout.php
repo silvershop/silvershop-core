@@ -12,6 +12,7 @@ class SteppedCheckout extends Extension{
 	static function setupSteps($steps = null){
 		if(!$steps){
 			$steps = array(
+				'membership' => 'CheckoutStep_Membership',
 				'contactdetails' => 'CheckoutStep_ContactDetails',
 				'shippingaddress' => 'CheckoutStep_Address',
 				'billingaddress' => 'CheckoutStep_Address',
