@@ -54,6 +54,17 @@ ProductCategory::set_sort_options( array('Title' => 'Alphabetical','Price' => 'L
 ExpiryDateField::set_short_months(true);
 SteppedCheckout::$first_step = null; //disable stepped checkout first step
 
+Address::$required_fields = array(
+	'Address',
+	'AddressLine2',
+	'State',
+	'Country',
+	'City',
+	'PostalCode'
+);
+
+Address::$show_form_hints = true; //show form field hints
+
 // * * * MEMBER
 ShopMember::set_group_name("Shop ShopMembers");
 

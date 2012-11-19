@@ -1,7 +1,7 @@
 <?php
 
 class CheckoutStep_Address extends CheckoutStep{
-	
+		
 	static $allowed_actions = array(
 		'shippingaddress',
 		'AddressForm',
@@ -26,7 +26,7 @@ class CheckoutStep_Address extends CheckoutStep{
 	}
 	
 	function AddressForm(){
-		$fields = singleton("Address")->getFormFields("",true);
+		$fields = singleton("Address")->getFormFields();
 		$actions = new FieldSet(
 			new FormAction("setAddress","Continue")
 		);

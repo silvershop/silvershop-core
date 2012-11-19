@@ -58,10 +58,16 @@ class Address extends DataObject{
 	);
 	
 	/**
+	 * Tub-titles for address fields that describe what they are for
+	 * @var boolean
+	 */
+	static $show_form_hints = false;
+	
+	/**
 	 * @todo: customise format and labels, based on passed locale
 	 * @param unknown_type $nameprefix
 	 */
-	function getFormFields($nameprefix = "", $showhints = false){
+	function getFormFields($nameprefix = ""){
 		$countries = SiteConfig::current_site_config()->getCountriesList();
 		$countryfield = (count($countries)) ? new DropdownField($nameprefix."Country",_t('Address.COUNTRY','Country'),$countries) : new ReadonlyField($nameprefix."Country",_t('Address.COUNTRY','Country'));
 		$countryfield->setHasEmptyDefault(true);
@@ -74,7 +80,7 @@ class Address extends DataObject{
 			$postcodefield = new TextField($nameprefix.'PostalCode', _t('Address.POSTALCODE','Postal Code')),
 			$phonefield = new TextField($nameprefix.'Phone', _t('Address.PHONE','Phone Number'))
 		);		
-		if($showhints){
+		if(self::$showhints){
 			$addressfield->setRightTitle(_t("Address.ADDRESSHINT","street / thoroughfare number, name, and type or P.O. Box"));
 			$address2field->setRightTitle(_t("Address.ADDRESS2HINT","premises, building, apartment, unit, floor"));
 			$cityfield->setRightTitle(_t("Address.CITYHINT","or suburb, county, district"));
