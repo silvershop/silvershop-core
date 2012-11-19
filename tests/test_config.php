@@ -65,6 +65,10 @@ Address::$required_fields = array(
 
 Address::$show_form_hints = true; //show form field hints
 
+ShopPayment::set_supported_methods(array(
+	'Cheque' => 'Cheque'
+));
+
 // * * * MEMBER
 ShopMember::set_group_name("Shop ShopMembers");
 

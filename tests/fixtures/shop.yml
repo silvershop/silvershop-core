@@ -68,6 +68,14 @@ AccountPage:
         Title: Account
         URLSegment: account
 
+Address:
+    foobar:
+        Address: 12 Foo Street
+        Address2: Bar
+        City: Farmville
+        State: New Sandwich
+        Country: US
+
 Member:
     joebloggs:
         FirstName: Joe
@@ -75,6 +83,8 @@ Member:
         Country: NZ
         Email: test@example.com
         Password: 23u90oijlJKsa
+        DefaultShippingAddress: =>Address.foobar
+        DefaultBillingAddress: =>Address.foobar
     bobjones:
         FirstName: Bob
         Surname: Jones
