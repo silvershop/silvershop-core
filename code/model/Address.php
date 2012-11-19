@@ -80,7 +80,7 @@ class Address extends DataObject{
 			$postcodefield = new TextField($nameprefix.'PostalCode', _t('Address.POSTALCODE','Postal Code')),
 			$phonefield = new TextField($nameprefix.'Phone', _t('Address.PHONE','Phone Number'))
 		);		
-		if(self::$showhints){
+		if(self::$show_form_hints){
 			$addressfield->setRightTitle(_t("Address.ADDRESSHINT","street / thoroughfare number, name, and type or P.O. Box"));
 			$address2field->setRightTitle(_t("Address.ADDRESS2HINT","premises, building, apartment, unit, floor"));
 			$cityfield->setRightTitle(_t("Address.CITYHINT","or suburb, county, district"));
