@@ -4,10 +4,10 @@
  * Order validator makes sure everything is set correctly
  * and in place before an order can be placed.
  */
-class CheckoutValidator extends Validator{
+class CheckoutValidator extends RequiredFields{
 
 	function php($data){
-		$valid =  true;
+		$valid =  parent::php($data);	
 		$checkout = Checkout::get();
 		if(!$checkout->getSelectedPaymentMethod(false)){
 			$valid = false;
