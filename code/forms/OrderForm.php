@@ -14,13 +14,23 @@ class OrderForm extends Form {
 	);
 
 	function __construct($controller, $name) {
+		$cff = CheckoutFieldFactory::singleton();
+		
 		//Member and shipping fields
 		$member = Member::currentUser();
 		$addressSingleton = singleton('Address');
 		$order = ShoppingCart::current_order();
+				
+		$basefields = $cff->getContactFields();
+		$basefields->push(
+			new HeaderField("ShippingHeading",_t('OrderForm.ShippingAndBillingAddress','Shipping and Billing Address'), 3)
+		);
+		$basefields->merge($cff->getAddressFields("Shipping"));
+		$order->extend('updateFormFields', $basefields); //deprecated
+		$order->extend('augmentEcommerceFields', $basefields); //deprecated
+		$orderFields = new CompositeField($basefields);		
 		
-		$orderFields = new CompositeField($order->getFormFields());
-		$requiredFields = $order->getRequiredFields();
+		$requiredFields = $order->getRequiredFields(); //TODO: move to somewhere else
 			
 		if($order && $order->SeparateBillingAddress) {
 			$countryField = new DropdownField('ShippingCountry',  _t('OrderForm.Country','Country'), Geoip::getCountryDropDown(), ShopMember::find_country());
@@ -63,7 +73,9 @@ class OrderForm extends Form {
 			$rightFields->push(new FieldGroup($pwf = new ConfirmedPasswordField('Password', _t('OrderForm.Password','Password'))));
 			//if user doesn't fill out password, we assume they don't want to become a member
 			//TODO: allow different ways of specifying that you want to become a member
-			if(self::$user_membership_optional){ $pwf->setCanBeEmpty(true);	}
+			if(self::$user_membership_optional){
+				$pwf->setCanBeEmpty(true);
+			}
 
 			if(self::$force_membership || !self::$user_membership_optional){
 				$requiredFields[] = 'Password[_Password]';
@@ -75,9 +87,7 @@ class OrderForm extends Form {
 		}
 		//Payment fields
 		$rightFields->push(new HeaderField(_t('Payment.PAYMENTTYPE', 'Payment Type'), 3));
-		$rightFields->push(new OptionsetField(
-			'PaymentMethod','',Payment::get_supported_methods(),array_shift(array_keys(Payment::get_supported_methods()))
-		));
+		$rightFields->push($cff->getPaymentMethodFields());
 		$rightFields->push(new ReadonlyField('Amount', _t('Payment.AMOUNT', 'Amount'), DBField::create('Currency',$order->Total())->Nice()));
 
 		//Put all the fields in one FieldSet
@@ -88,14 +98,10 @@ class OrderForm extends Form {
 		$bottomFields->setID('BottomOrder');
 		
 		//Terms and conditions field
-		//If a terms and conditions page exists, we need to create a field to confirm the user has read it
-		if(SiteConfig::current_site_config()->TermsPage()->exists()) {
-			$termsPage = SiteConfig::current_site_config()->TermsPage();
-			$bottomFields->push(
-				new CheckboxField('ReadTermsAndConditions', sprintf(_t('OrderForm.TERMSANDCONDITIONS',"I agree to the terms and conditions stated on the <a href=\"%s\" target=\"new\" title=\"Read the shop terms and conditions for this site\">terms and conditions</a> page"),$termsPage->Link()))
-			);
-			$requiredFields[] = 'ReadTermsAndConditions'; //TODO: this doesn't work for check-boxes
+		if($termsfield = $cff->getTermsConditionsField()){
+			$bottomFields->push($termsfield);
 		}
+		
 		$fields->push($bottomFields);
 		
 		//Actions and required fields creation
