@@ -234,41 +234,6 @@ class Order extends DataObject {
 		$this->extend('updateCMSFields',$fields);
 		return $fields;
 	}
-	
-	/**
-	 * Get fields for order form
-	 * 
-	 * @return FieldSet
-	 */
-	function getFormFields() {
-		$fields = new FieldSet(
-			new TextField('FirstName', _t('Order.FIRSTNAME','First Name')),
-			new TextField('Surname', _t('Order.SURNAME','Surname')),
-			new EmailField('Email', _t('Order.EMAIL','Email')),
-			new HeaderField("ShippingHeading",_t('OrderForm.ShippingAndBillingAddress','Shipping and Billing Address'), 3)
-		);
-		$fields->merge(singleton('Address')->getFormFields("Shipping"));
-		$this->owner->extend('updateFormFields', $fields);
-		$this->owner->extend('augmentEcommerceFields', $fields); //deprecated
-		return $fields;
-	}
-	
-	/**
-	 * Return which fields should be required on {@link OrderForm}
-	 * and {@link ShopAccountForm}.
-	 *
-	 * @return array
-	 */
-	function getRequiredFields() {
-		$fields = array(
-			'FirstName',
-			'Email'
-		);
-		$fields = array_merge($fields,singleton('Address')->getRequiredFields("Shipping"));
-		$this->owner->extend('updateRequiredFields', $fields);
-		$this->owner->extend('augmentEcommerceRequiredFields', $fields); //deprecated
-		return $fields;
-	}
 
 	/**
 	 * Set the fields to be used for {@link ComplexTableField}
@@ -852,6 +817,43 @@ class Order extends DataObject {
 	*/
 	protected function sendEmail($emailClass, $copyToAdmin = true) {
 		OrderProcessor::create($this)->sendStatusChange($emailClass,$copyToAdmin);
+	}
+	
+	/**
+	 * Get fields for order form
+	 *
+	 * @deprecated - use CheckoutFieldFactory
+	 * @return FieldSet
+	 */
+	function getFormFields() {
+		$fields = new FieldSet(
+			new TextField('FirstName', _t('Order.FIRSTNAME','First Name')),
+			new TextField('Surname', _t('Order.SURNAME','Surname')),
+			new EmailField('Email', _t('Order.EMAIL','Email')),
+			new HeaderField("ShippingHeading",_t('OrderForm.ShippingAndBillingAddress','Shipping and Billing Address'), 3)
+		);
+		$fields->merge(singleton('Address')->getFormFields("Shipping"));
+		$this->owner->extend('updateFormFields', $fields);
+		$this->owner->extend('augmentEcommerceFields', $fields); //deprecated
+		return $fields;
+	}
+	
+	/**
+	 * Return which fields should be required on {@link OrderForm}
+	 * and {@link ShopAccountForm}.
+	 *
+	 * @deprecated
+	 * @return array
+	 */
+	function getRequiredFields() {
+		$fields = array(
+			'FirstName',
+			'Email'
+		);
+		$fields = array_merge($fields,singleton('Address')->getRequiredFields("Shipping"));
+		$this->owner->extend('updateRequiredFields', $fields);
+		$this->owner->extend('augmentEcommerceRequiredFields', $fields); //deprecated
+		return $fields;
 	}
 
 }
