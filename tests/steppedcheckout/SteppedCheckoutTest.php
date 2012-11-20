@@ -94,7 +94,7 @@ class SteppedCheckoutTest extends FunctionalTest{
 	}
 	
 	function testPaymentMethod(){
-		$this->checkout->paymentmethod();
+		//$this->checkout->paymentmethod(); //doesn't work, because a redirect occurrs if there is only 1 payment type
 		$data = array(
 			'PaymentMethod' => 'Cheque',
 			'action_setpaymentmethod' => 1
