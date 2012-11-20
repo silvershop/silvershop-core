@@ -8,7 +8,13 @@ class CheckoutStep_PaymentMethod extends CheckoutStep{
 	);
 	
 	function paymentmethod(){
-		//TODO: trigger automatic set & redirect if there is only one payment type
+		$methods = Checkout::get()->getPaymentMethods();
+		if($methods->Count() == 1){ //skip step if there is only one payment type
+			$this->setpaymentmethod(array(
+				'PaymentMethod' => $methods->First()->ClassName
+			), null);
+			return;
+		}
 		return array(
 			'Form' => $this->PaymentMethodForm()
 		);
