@@ -1,5 +1,10 @@
 <?php
-
+/**
+ * Stepped checkout provides multiple forms and actions for placing an order
+ * 
+ * @package shop
+ * @subpackage steppedcheckout
+ */
 class SteppedCheckout extends Extension{
 
 	static $first_step = null; //action to show on index
@@ -32,24 +37,19 @@ class SteppedCheckout extends Extension{
 		self::$steps = $steps;
 	}
 	
-	private function compareActions($action1, $action2){
-		$comp =  $this->actionPos($action1) - $this->actionPos($action2);
-		//echo "( $action1 $action2 $comp ) <br/>";
-		return $comp;
-	}
-	
-	private function actionPos($incoming){
-		$count = 0;
-		foreach(self::$steps as $action => $step){
-			if($action == $incoming){
-				return $count;
-			}
-			$count++;
+	/**
+	 * Redirect back to start of checkout if no cart started
+	 */
+	function onAfterInit(){
+		$action = $this->owner->getRequest()->param('Action');
+		if(!ShoppingCart::curr() && !empty($action) && isset(self::$steps[$action])){
+			Controller::curr()->redirect($this->owner->Link());
+			return;
 		}
 	}
 	
 	/**
-	 * checks if passed action is the same as the current step
+	 * Check if passed action is the same as the current step
 	 */
 	function IsCurrentStep($name){
 		if($this->owner->getAction() === $name){
@@ -62,7 +62,7 @@ class SteppedCheckout extends Extension{
 	}
 	
 	/**
-	 * checks if passed action is for a step before current
+	 * Check if passed action is for a step before current
 	 */
 	function IsPastStep($name){
 		//echo "ispast ";
@@ -70,7 +70,7 @@ class SteppedCheckout extends Extension{
 	}
 	
 	/**
-	 * checks if passed action is for a step after current
+	 * Check if passed action is for a step after current
 	 */
 	function IsFutureStep($name){
 		//echo "isfuture ";
@@ -78,13 +78,33 @@ class SteppedCheckout extends Extension{
 	}
 	
 	/**
-	 * get first step from stored steps
+	 * Get first step from stored steps
 	 */
 	function index(){
 		if(self::$first_step){
 			return $this->owner->{self::$first_step}();
 		}
 		return array();
+	}
+	
+	/**
+	 * Check if one step comes before or after the another
+	 */
+	private function compareActions($action1, $action2){
+		return $this->actionPos($action1) - $this->actionPos($action2);
+	}
+	
+	/**
+	 * Get the numerical position of a step
+	 */
+	private function actionPos($incoming){
+		$count = 0;
+		foreach(self::$steps as $action => $step){
+			if($action == $incoming){
+				return $count;
+			}
+			$count++;
+		}
 	}
 	
 }
