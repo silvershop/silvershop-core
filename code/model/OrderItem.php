@@ -160,10 +160,6 @@ class OrderItem extends OrderAttribute {
 		return new EcomQuantityField($this);
 	}
 	
-	function checkoutLink() {
-		return CheckoutPage::find_link();
-	}
-	
 	function addLink() {
 		return ShoppingCart_Controller::add_item_link($this->Buyable(),$this->uniquedata());
 	}
@@ -187,6 +183,13 @@ class OrderItem extends OrderAttribute {
 	*/
 	function AjaxQuantityField(){
 		return $this->QuantityField();
+	}
+	
+	/**
+	 * @deprecated
+	 */
+	function checkoutLink() {
+		return CheckoutPage::find_link();
 	}
 	
 	protected function QuantityFieldName() {
