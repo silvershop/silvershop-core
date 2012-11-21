@@ -2,7 +2,7 @@
 /**
  * Improvements to Currency for presenting in templates.
  */
-class EcommerceCurrency extends Currency {
+class ShopCurrency extends Currency {
 
 	protected static $decimalDelimiter = '.';
 	protected static $thousandDelimiter = ',';
@@ -34,3 +34,8 @@ class EcommerceCurrency extends Currency {
 		return self::$thousandDelimiter;
 	}
 }
+
+/**
+ * @deprecated use ShopCurrency
+ */
+class EcommerceCurrency extends ShopCurrency{}

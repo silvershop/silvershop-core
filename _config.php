@@ -21,7 +21,7 @@ Object::add_extension("ComponentSet","OrderItemList");
 Object::add_extension("SiteConfig", "ShopConfig");
 
 //custom classes
-Object::useCustomClass('Currency','EcommerceCurrency', true);
+Object::useCustomClass('Currency','ShopCurrency', true);
 Object::useCustomClass('Versioned','FixVersioned');
 
 //variations

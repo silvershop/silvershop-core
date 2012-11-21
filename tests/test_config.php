@@ -11,8 +11,8 @@ Email::setAdminEmail('test@myshop.com');
 //i18n::set_locale('');
 
 // * * * ECOMMERCE I18N SETTINGS
-EcommerceCurrency::setDecimalDelimiter('.');
-EcommerceCurrency::setThousandDelimiter('');
+ShopCurrency::setDecimalDelimiter('.');
+ShopCurrency::setThousandDelimiter('');
 Object::useCustomClass('SS_Datetime','I18nDatetime', true);
 
 // * * * SHOPPING CART, ORDER, MODIFIERS

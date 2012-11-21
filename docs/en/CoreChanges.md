@@ -2,7 +2,7 @@
 
 Here are the subclasses, and extensions of standard Sapphire components for the shop module.
 
- * EcommerceCurrency - provides ability to customise currency formatting.
+ * ShopCurrency - provides ability to customise currency formatting.
  * ShopPayment - provides some additional functionality that should eventually move to Payment itself.
  * ProductBulkLoader - extends CSVBulkLoader to provide shop-specific loading. See [Bulk Loading](BulkLoading) for more.
 
