@@ -12,15 +12,19 @@ class CheckoutTest extends SapphireTest{
 		parent::setUp();
 		ShopTest::setConfiguration();
 		$this->cart = $this->objFromFixture("Order", "cart1");
-		$this->shippingaddress = $this->objFromFixture("Address", "wnz6012");
+		$this->address1 = $this->objFromFixture("Address", "address1");
+		$this->address2 = $this->objFromFixture("Address", "address2");
 		$this->checkout = new Checkout($this->cart);
 	}
 	
 	function testSetUpShippingAddress(){		
-		$this->checkout->setShippingAddress($this->shippingaddress);
-		//address was successfully added
-		$this->assertEquals($this->cart->ShippingAddressID,$this->shippingaddress->ID);
-		//TODO: don't allow adding bad addressses
+		$this->checkout->setShippingAddress($this->address1);
+		$this->assertEquals($this->cart->ShippingAddressID,$this->address1->ID,"shipping address was successfully added");
+	}
+	
+	function testSetUpBillingAddress(){
+		$this->checkout->setBillingAddress($this->address2);
+		$this->assertEquals($this->cart->BillingAddressID,$this->address2->ID,"billing address was successfully added");
 	}
 
 	

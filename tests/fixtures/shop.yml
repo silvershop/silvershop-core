@@ -64,7 +64,7 @@ CheckoutPage:
         URLSegment: checkout
 
 AccountPage:
-    page:
+    accountpage:
         Title: Account
         URLSegment: account
 

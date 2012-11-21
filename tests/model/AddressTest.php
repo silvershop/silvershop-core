@@ -5,6 +5,12 @@ class AddressTest extends SapphireTest{
 		$address = new Address();
 		$fields = $address->getFormFields();
 		$requiremetns = $address->getRequiredFields();
+		
+		$address->getFieldMap("prefix");
+		$address->toString("|");
+		
+		//TODO: assertions
+		
 	}
 	
 	function testFieldAliasSetters(){

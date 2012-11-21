@@ -28,6 +28,18 @@ class OrderTest extends SapphireTest {
 		unset($this->beachball);
 	}
 	
+	function testCMSFields(){
+		singleton('Order')->getCMSFields();
+	}
+	
+	function testSearchFields(){
+		singleton('Order')->scaffoldSearchFields();
+	}
+	
+	function testDebug(){
+		singleton('Order')->debug();
+	}
+	
 	function testProductOrderItems() {
 		$order = self::createOrder();
 		$items = $order->Items();
@@ -36,6 +48,8 @@ class OrderTest extends SapphireTest {
 			array('ProductID' => $this->mp3player->ID,'Quantity' => 2, 'CalculatedTotal' => 400),
 			array('ProductID' => $this->socks->ID, 'Quantity' => 1, 'CalculatedTotal' => 8)
 		), $items);
+		$this->assertEquals($items->Quantity(),3);
+		$this->assertTrue($items->Plural());
 	}
 	
 	function testSubtotal() {
