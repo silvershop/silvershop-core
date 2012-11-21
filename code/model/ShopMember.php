@@ -56,7 +56,7 @@ class ShopMember extends DataObjectDecorator {
 		}
 		$existingmember = self::get_by_identifier($data[Member::get_unique_identifier_field()]);
 		if($existingmember && $existingmember->exists()){
-			if(Member::currentUserID() != $existingUniqueMember->ID) {
+			if(Member::currentUserID() != $existingmember->ID) {
 				return false;
 			}
 		}
