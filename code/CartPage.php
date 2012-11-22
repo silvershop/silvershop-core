@@ -53,14 +53,7 @@ class CartPage_Controller extends Page_Controller{
 			return $this->Title;
 		return _t('CartPage.TITLE',"Shopping Cart");
 	}
-	
-	public function init(){
-		parent::init();
-		// include extra js requirements for this page
-		Requirements::javascript(THIRDPARTY_DIR . '/jquery/jquery.js');
-		Requirements::javascript(SHOP_DIR.'/javascript/CheckoutPage.js');
-	}	
-	
+		
 	/**
 	 * @deprecated use $this->Cart() instead
 	 */
