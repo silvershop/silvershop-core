@@ -13,10 +13,15 @@ class CheckoutStep_Address extends CheckoutStep{
 	
 	function shippingaddress(){
 		$form = $this->AddressForm();
-		if($member = Member::currentUser()){
-			$form->loadDataFrom($member->DefaultShippingAddress());
+		if($shopuser = ShopUserInfo::get_location()){
+			$form->loadDataFrom($shopuser->toMap());
 		}
-		$form->loadDataFrom(ShoppingCart::curr()->ShippingAddress());
+		if($member = Member::currentUser()){
+			$form->loadDataFrom($member->DefaultShippingAddress()->toMap());
+		}
+		if(ShoppingCart::curr()->ShippingAddress()->exists()){
+			$form->loadDataFrom(ShoppingCart::curr()->ShippingAddress());
+		}
 		$form->Fields()->push(
 			new CheckboxField("SeperateBilling","Bill to a different address from this")
 		);
@@ -38,10 +43,15 @@ class CheckoutStep_Address extends CheckoutStep{
 	
 	function billingaddress(){
 		$form = $this->AddressForm();
+		if($shopuser = ShopUserInfo::get_location()){
+			$form->loadDataFrom($shopuser);
+		}
 		if($member = Member::currentUser()){
 			$form->loadDataFrom($member->DefaultBillingAddress());
 		}
-		$form->loadDataFrom(ShoppingCart::curr()->BillingAddress());
+		if(ShoppingCart::curr()->BillingAddress()->exists()){
+			$form->loadDataFrom(ShoppingCart::curr()->BillingAddress());
+		}
 		$form->Actions()->emptyItems();
 		$form->Actions()->push(
 			new FormAction("setbillingaddress","Continue")
