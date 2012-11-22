@@ -91,3 +91,22 @@ Member:
         Country: US
         Email: bob@somewhere.com
         Password: 3456sdfsd34
+        
+Order:
+    cart:
+        Name: Cart
+    placed:
+        Name: Placed Order
+        Status: Unpaid
+        Created: 2012-11-21 15:23:32
+        Placed: 2012-11-21 15:33:02
+
+Product_OrderItem:
+    cart_socks:
+        Order: =>Order.cart
+        Product: =>Product.socks
+        Quantity: 1
+    placed_tshirt:
+        Order: =>Order.placed
+        Product: =>Product.tshirt
+        
