@@ -4,7 +4,7 @@
  * Provide functions on order to help with ajax updates.
  * These functions were extracted out of the Order class.
  */
-class OrderAJAX extends DataObjectDecorator{
+class OrderAJAX extends DataExtension{
 	
 	// Order Template and ajax Management
 	

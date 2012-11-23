@@ -40,7 +40,7 @@ class OrderForm extends Form {
 				new HiddenField('SeparateBillingAddress', '', true)
 			);
 			
-			$billingFields->FieldSet()->merge($addressSingleton->getFormFields('Billing'));
+			$billingFields->FieldList()->merge($addressSingleton->getFormFields('Billing'));
 			$billingFields->push($changeshippingbutton = new FormAction_WithoutLabel('useMemberShippingAddress', _t('OrderForm.ShippingIsBilling','Use Shipping Address for Billing')));
 			
 			//Need to to this because 'FormAction_WithoutLabel' has no text on the actual button
@@ -51,7 +51,7 @@ class OrderForm extends Form {
 		} else {
 			$countryField = $orderFields->fieldByName('Country');
 		
-			$billingFields = new FormAction_WithoutLabel('useDifferentShippingAddress', _t('OrderForm.DifferentBillingAddress', 'Use Different Billing Address'));
+			$billingFields = new FormAction('useDifferentShippingAddress', _t('OrderForm.DifferentBillingAddress', 'Use Different Billing Address'));
 			//Need to to this because 'FormAction_WithoutLabel' has no text on the actual button
 			$billingFields->setButtonContent(_t('OrderForm.DifferentBillingAddress', 'Use Different Billing Address'));
 			$billingFields->useButtonTag = true;
@@ -88,10 +88,10 @@ class OrderForm extends Form {
 		//Payment fields
 		$rightFields->push(new HeaderField(_t('Payment.PAYMENTTYPE', 'Payment Type'), 3));
 		$rightFields->push($cff->getPaymentMethodFields());
-		$rightFields->push(new ReadonlyField('Amount', _t('Payment.AMOUNT', 'Amount'), DBField::create('Currency',$order->Total())->Nice()));
+		$rightFields->push(new ReadonlyField('Amount', _t('Payment.AMOUNT', 'Amount'), DBField::create_field('Currency',$order->Total())->Nice()));
 
-		//Put all the fields in one FieldSet
-		$fields = new FieldSet($leftFields, $rightFields);
+		//Put all the fields in one FieldList
+		$fields = new FieldList($leftFields, $rightFields);
 		$bottomFields = new CompositeField(
 			new TextareaField("Notes","Message")
 		);
@@ -105,8 +105,8 @@ class OrderForm extends Form {
 		$fields->push($bottomFields);
 		
 		//Actions and required fields creation
-		$actions = new FieldSet(new FormAction('processOrder', _t('OrderForm.processOrder','Place order and make payment')));
-		$requiredFields = new CustomRequiredFields($requiredFields);
+		$actions = new FieldList(new FormAction('processOrder', _t('OrderForm.processOrder','Place order and make payment')));
+		$requiredFields = new RequiredFields();
 		parent::__construct($controller, $name, $fields, $actions, $requiredFields);
 		//Country field value update
 		if($countryField){
@@ -321,7 +321,7 @@ class OrderForm extends Form {
 	/**
 	 * Override saveInto to allow custom form field to model field mapping.
 	 */
-	function saveInto($dataObject,$fieldList = null){
+	function saveInto(DataObjectInterface $dataObject, $fieldList = null){
 		$this->mapFieldNames($fieldList);
 		parent::saveInto($dataObject,$fieldList);
 		$this->restoreFieldNames($fieldList);
@@ -342,7 +342,7 @@ class OrderForm extends Form {
 		//rename other fields temporarly, incase they get overwritten
 		$savableFields = $this->fields->saveableFields();
 		foreach($savableFields as $field){
-			$field->originalFieldName = $field->Name();
+			$field->originalFieldName = $field->getName();
 			$field->setName($field->originalFieldName."_renamed");
 		}
 		foreach($fieldList as $formfield => $modelfield){
@@ -402,7 +402,7 @@ class OrderForm extends Form {
         });
 JS;
 		$form =  parent::forTemplate();
-		if($this->validator && $this->validator->getJavascriptValidationHandler() == 'prototype')
+		if($this->validator)
 			Requirements::customScript($script);
 		return $form;
 	}

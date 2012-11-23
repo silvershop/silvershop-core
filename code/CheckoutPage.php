@@ -54,7 +54,7 @@ class CheckoutPage extends Page {
 		return ($urlSegment) ? $page->URLSegment : Controller::join_links($page->Link($action),$id);
 	}
 
-	function canCreate() {
+	function canCreate($member = null) {
 		return !DataObject::get_one("SiteTree", "\"ClassName\" = 'CheckoutPage'");
 	}
 
@@ -75,7 +75,7 @@ class CheckoutPage extends Page {
 
 	function getCMSFields() {
 		$fields = parent::getCMSFields();
-		$fields->addFieldsToTab('Root.Content.Messages', array(
+		$fields->addFieldsToTab('Root.Messages', array(
 			new HtmlEditorField('AlreadyCompletedMessage', 'Already Completed - shown when the customer tries to checkout an already completed order', $row = 4),
 			new HtmlEditorField('NonExistingOrderMessage', 'Non-existing Order - shown when the customer tries ', $row = 4),
 			new HtmlEditorField('MustLoginToCheckoutMessage', 'MustLoginToCheckoutMessage', $row = 4),

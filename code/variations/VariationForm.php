@@ -14,7 +14,7 @@ class VariationForm extends AddProductForm{
 			$farray[] = $attribute->getDropDownField("choose $attribute->Label ...",$product->possibleValuesForAttributeType($attribute));
 			$requiredfields[] = "ProductAttributes[$attribute->ID]";
 		}
-		$fields = new FieldSet($farray);
+		$fields = new FieldList($farray);
 		
 		if(self::$include_json){ //TODO: this should be included as js validation instead
 			$vararray = array();

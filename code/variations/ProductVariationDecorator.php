@@ -5,67 +5,49 @@
  * @package shop
  * @subpackage variations
  */
-class ProductVariationDecorator extends DataObjectDecorator{
-
-	function extraStatics(){
-		return array(
-			'has_many' => array(
-				'Variations' => 'ProductVariation'
-			),
-			'many_many' => array(
-				'VariationAttributeTypes' => 'ProductAttributeType'
-			)
-		);
-	}
+class ProductVariationDecorator extends DataExtension{
+	
+	static $db = array(
+		'Test2' => 'Varchar(128)'
+	);
+	
+	static $has_many = array(
+		'Variations' => 'ProductVariation'
+	);
+	
+	static $many_many = array(
+		'VariationAttributeTypes' => 'ProductAttributeType'
+	);
 
 	/**
 	 * Adds variations specific fields to the CMS.
 	 */
-	function updateCMSFields(&$fields){
+	public function updateCMSFields(FieldList $fields) {
+		$productVariationAttributeTypes = DataObject::get("ProductAttributeType")->map("ID", "Title");
+		$fields->addFieldToTab('Root.Variations',$this->getVariationsTable());
+		$fields->addFieldToTab('Root.Variations',new HeaderField("Variation Attribute Types"));
+		$fields->addFieldToTab('Root.Variations',new CheckboxSetField("VariationAttributeTypes","Variation Attribute Types",$productVariationAttributeTypes));
 		
-		$fields->insertBefore(new Tab('Variations','Variations'), 'Images');
-		
-		$fields->addFieldToTab('Root.Content.Variations',new HeaderField("Variations"));
-		$fields->addFieldToTab('Root.Content.Variations',$this->getVariationsTable());
-		$fields->addFieldToTab('Root.Content.Variations',new HeaderField("Variation Attribute Types"));
-		$fields->addFieldToTab('Root.Content.Variations',new ManyManyComplexTableField($this->owner,'VariationAttributeTypes','ProductAttributeType'));
-
 		if($this->owner->Variations()->exists()){
-			$fields->addFieldToTab('Root.Content.Main',new LabelField('variationspriceinstructinos','Price - Because you have one or more variations, the price can be set in the "Variations" tab.'),'Price');
-			$fields->removeFieldsFromTab('Root.Content.Main',array('Price','InternalItemID'));
+			$fields->addFieldToTab('Root.Pricing',new LabelField('variationspriceinstructinos','Price - Because you have one or more variations, the price can be set in the "Variations" tab.'));
+			$fields->removeFieldFromTab('Root.Pricing','BasePrice');
+			$fields->removeFieldFromTab('Root.Pricing','CostPrice');
+			$fields->removeFieldFromTab('Root.Main','InternalItemID');
 		}
 	}
-
+	
+	
 	/**
 	 * CMS fields helper function for getting the variations table.
 	 * @return HasManyComplexTableField
 	 */
 	function getVariationsTable() {
-		$singleton = singleton('ProductVariation');
-		$query = $singleton->buildVersionSQL("\"ProductID\" = '{$this->owner->ID}'");
-		$variations = $singleton->buildDataObjectSet($query->execute());
-		$filter = $variations ? "\"ID\" IN ('" . implode("','", $variations->column('RecordID')) . "')" : "\"ID\" < '0'";
-
-		$summaryfields= $singleton->summaryFields();
-
-		if($this->owner->VariationAttributeTypes()->exists())
-		foreach($this->owner->VariationAttributeTypes() as $attribute){
-			$summaryfields["AttributeProxy.Val".$attribute->Name] = $attribute->Title;
-		}
-
-		$tableField = new HasManyComplexTableField(
-			$this->owner,
-			'Variations',
-			'ProductVariation',
-			$summaryfields,
-			null,
-			$filter
-		);
-
-		if(method_exists($tableField, 'setRelationAutoSetting')) {
-			$tableField->setRelationAutoSetting(true);
-		}
-		return $tableField;
+		
+		$variations = $this->owner->Variations();
+		$itemsConfig = new GridFieldConfig_RelationEditor();
+		$itemsTable = new GridField("Variations","Variations",$variations,$itemsConfig);
+		
+		return $itemsTable;
 	}
 
 	function PriceRange(){
@@ -172,7 +154,7 @@ class ProductVariationDecorator extends DataObjectDecorator{
 	
 	/**
 	 * Get all the values for a given attribute type,
-	 * based on this product's varaitions.
+	 * based on this product's variations.
 	 */
 	function possibleValuesForAttributeType($type){
 		if(!is_numeric($type))
@@ -183,7 +165,7 @@ class ProductVariationDecorator extends DataObjectDecorator{
 		//TODO: is there a better place to obtain these joins?
 		$join = "INNER JOIN \"ProductVariation_AttributeValues\" ON \"ProductAttributeValue\".\"ID\" = \"ProductVariation_AttributeValues\".\"ProductAttributeValueID\"" .
 			" INNER JOIN \"ProductVariation\" ON \"ProductVariation_AttributeValues\".\"ProductVariationID\" = \"ProductVariation\".\"ID\"";
-	
+		//TODO: Change this to use DataList I think and then use innerJoin()
 		return DataObject::get('ProductAttributeValue',$where,$sort = "\"ProductAttributeValue\".\"Sort\",\"ProductAttributeValue\".\"Value\"",$join);
 	}
 

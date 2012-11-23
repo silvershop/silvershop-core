@@ -5,7 +5,12 @@
  *
  * @package shop
  */
-class ShopPayment extends DataObjectDecorator {
+class ShopPayment extends DataExtension {
+	
+	
+	static $has_one = array(
+		'Order' => 'Order' //redundant...should be using PaidObject
+	);
 	
 	public static $summary_fields = array(
 		"OrderID" => "Order ID",
@@ -48,27 +53,6 @@ class ShopPayment extends DataObjectDecorator {
 	static function has_method($method){
 		$methods = self::get_supported_methods();
 		return isset($methods[$method]);
-	}
-		
-	function extraStatics() {
-		return array(
-			'has_one' => array(
-				'Order' => 'Order' //redundant...should be using PaidObject
-			),
-			'summary_fields' => self::$summary_fields,
-			'searchable_fields' => array(
-				'OrderID' => array(
-					'title' => 'Order ID',
-					'field' => 'TextField'
-				),
-				//'Created' => array('title' => 'Date','filter' => 'WithinDateRangeFilter','field' => 'DateRangeField'), //TODO: filter and field not implemented yet				
-				'IP' => array(
-					'title' => 'IP Address',
-					'filter' => 'PartialMatchFilter'
-				),
-				'Status'
-			)
-		);
 	}
 
 	function canCreate($member = null) {

@@ -20,7 +20,7 @@ class ShopSideReport_FeaturedProducts extends SS_Report {
 	function sort() {
 		return 0;
 	}
-	function records() {
+	function records($params = null) {
 		return DataObject::get("Product", "\"FeaturedProduct\" = 1", "\"Title\"");
 	}
 
@@ -50,7 +50,7 @@ class ShopSideReport_AllProducts extends SS_Report {
 	function sort() {
 		return 0;
 	}
-	function records() {
+	function records($params = null) {
 		return DataObject::get("Product", "", "\"Title\"");
 	}
 

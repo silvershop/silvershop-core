@@ -28,8 +28,8 @@ class CheckoutStep_Membership extends CheckoutStep{
 	}
 	
 	function MembershipForm(){
-		$fields = new FieldSet();
-		$actions = new FieldSet(
+		$fields = new FieldList();
+		$actions = new FieldList(
 			new FormAction("createaccount","Create an Account"),
 			new FormAction("guestcontinue","Continue as Guest")
 		);
@@ -64,7 +64,7 @@ class CheckoutStep_Membership extends CheckoutStep{
 	
 	function CreateAccountForm(){
 		$fields = CheckoutFieldFactory::singleton()->getMembershipFields();
-		$actions = new FieldSet(
+		$actions = new FieldList(
 			new FormAction('docreateaccount','Create New Account')
 		);
 		$validator = new RequiredFields(array_keys($fields->dataFields())); //require all fields

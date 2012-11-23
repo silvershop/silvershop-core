@@ -120,20 +120,19 @@ class ProductCategory extends Page {
 		$groupids = array($this->ID);
 
 		if(($recursive === true || $recursive === 'true') && self::$include_child_groups && $childgroups = $this->ChildGroups(true))
-			$groupids = array_merge($groupids,$childgroups->map('ID','ID'));
+			$groupids = array_merge($groupids,$childgroups->toArray());
 
 		$groupidsimpl = implode(',',$groupids);
 
-		$join = $this->getManyManyJoin('Products','Product');
-		$multicatfilter = $this->getManyManyFilter('Products','Product');
+		//$join = $this->getManyManyJoin('Products','Product');
+		//$multicatfilter = $this->getManyManyFilter('Products','Product');
 
 		//TODO: get products that appear in child groups (make this optional)
-
-		$products = Versioned::get_by_stage('Product','Live',"(\"ParentID\" IN ($groupidsimpl) OR $multicatfilter) $filter",$sort,$join,$limit);
-		$allproducts = Versioned::get_by_stage('Product','Live',"\"ParentID\" IN ($groupidsimpl) $filter","",$join);
+		$products = Versioned::get_by_stage('Product','Live',"\"ParentID\" IN ($groupidsimpl) $filter",$sort,"",$limit);
+		$allproducts = Versioned::get_by_stage('Product','Live',"\"ParentID\" IN ($groupidsimpl) $filter","","");
 
 		if($allproducts) $products->TotalCount = $allproducts->Count(); //add total count to returned data for 'showing x to y of z products'
-		if($products && $products instanceof DataObjectSet) $products->removeDuplicates();
+		//if($products && $products instanceof DataList) $products->removeDuplicates();
 		return $products;
 	}
 
@@ -197,13 +196,13 @@ class ProductCategory_Controller extends Page_Controller {
 	 * Provides a dataset of links for sorting products.
 	 */
 	function SortLinks(){
-		if(count(ProductCategory::get_sort_options()) <= 0) return null;
+		if(count($this->get_sort_options()) <= 0) return null;
 
 		$sort = (isset($_GET['sortby'])) ? Convert::raw2sql($_GET['sortby']) : "Title";
-		$dos = new DataObjectSet();
-		foreach(ProductCategory::get_sort_options() as $field => $name){
+		$dos = new ArrayList();
+		foreach($this->get_sort_options() as $field => $name){
 			$current = ($field == $sort) ? 'current' : false;
-			$dos->push(new ArrayData(array(
+			$dos->add(new ArrayData(array(
 				'Name' => $name,
 				'Link' => $this->Link()."?sortby=$field",
 				'Current' => $current
@@ -219,7 +218,7 @@ class ProductCategory_Controller extends Page_Controller {
 */
 class ProductGroup extends ProductCategory{
 	
-	function canCreate(){
+	function canCreate($member = null){
 		return false;
 	}
 }

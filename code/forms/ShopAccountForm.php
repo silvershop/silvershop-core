@@ -15,13 +15,13 @@ class ShopAccountForm extends Form {
 			$fields->removeByName('Password');
 			$requiredFields = $member->getValidator();
 		} else {
-			$fields = new FieldSet();
+			$fields = new FieldList();
 		}
 		if(get_class($controller) == 'AccountPage_Controller'){
-			$actions = new FieldSet(new FormAction('submit', _t('MemberForm.SAVE','Save Changes')));
+			$actions = new FieldList(new FormAction('submit', _t('MemberForm.SAVE','Save Changes')));
 		}
 		else{
-			$actions = new FieldSet(
+			$actions = new FieldList(
 				new FormAction('submit', _t('MemberForm.SAVE','Save Changes')),
 				new FormAction('proceed', _t('MemberForm.SAVEANDPROCEED','Save and proceed to checkout'))
 			);

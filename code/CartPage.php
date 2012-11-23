@@ -16,10 +16,10 @@ class CartPage extends Page{
 	function getCMSFields(){
 		$fields = parent::getCMSFields();
 		if($checkouts = DataObject::get('CheckoutPage')) {
-			$fields->addFieldToTab('Root.Content.Links',new DropdownField('CheckoutPageID','Checkout Page',$checkouts->toDropDownMap()));
+			$fields->addFieldToTab('Root.Links',new DropdownField('CheckoutPageID','Checkout Page',$checkouts->map("ID","Title")));
 		}
 		if($pgroups = DataObject::get('ProductCategory')) {
-			$fields->addFieldToTab('Root.Content.Links',new DropdownField('ContinuePageID','Continue Product Group Page',$pgroups->toDropDownMap()));
+			$fields->addFieldToTab('Root.Links',new DropdownField('ContinuePageID','Continue Product Group Page',$pgroups->map("ID","Title")));
 		}
 		return $fields;
 	}

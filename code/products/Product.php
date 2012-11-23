@@ -32,7 +32,8 @@ class Product extends Page implements Buyable{
 		
 		'NumberSold' => 'Int' //store number sold, so it doesn't have to be computed on the fly. Used for determining popularity.
 	);
-
+	
+	
 	public static $has_one = array(
 		'Image' => 'Product_Image'
 	);
@@ -75,22 +76,11 @@ class Product extends Page implements Buyable{
 	static $global_allow_purchase = true;
 
 	function getCMSFields() {
-		//prevent calling updateCMSFields extend function too early
-		$tempextvar = $this->get_static('SiteTree','runCMSFieldsExtensions');
-		$this->disableCMSFieldsExtensions();
+
 		$fields = parent::getCMSFields();
-		if($tempextvar){
-			$this->enableCMSFieldsExtensions();
-		}
-		
-		//set up tab ordering
-		$fields->insertBefore(new Tab('Pricing','Pricing'), 'Metadata');
-		$fields->insertBefore(new Tab('Images',_t('Product.IMAGES','Images')), 'Metadata');
-		$fields->insertBefore(new Tab('Shipping','Shipping'), 'Metadata');
-		$fields->insertBefore(new Tab('Categories',_t('Product.CATEGORIES','Categories')), 'Metadata');
-		
+
 		// Standard product detail fields
-		$fields->addFieldsToTab('Root.Content.Pricing',array(
+		$fields->addFieldsToTab('Root.Pricing',array(
 			new TextField('BasePrice', _t('Product.PRICE', 'Price - base price to sell this product at'), '', 12),
 			new TextField('CostPrice', _t('Product.COSTPRICE', 'Cost Price - wholesale price before markup'), '', 12)
 		));
@@ -98,31 +88,31 @@ class Product extends Page implements Buyable{
 		//physical measurements
 		$weightunit = "kg"; //TODO: globalise / make custom
 		$lengthunit = "cm";  //TODO: globalise / make custom
-		$fields->addFieldsToTab('Root.Content.Shipping',array(
+		$fields->addFieldsToTab('Root.Shipping',array(
 			new TextField('Weight', sprintf(_t('Product.WEIGHT', 'Weight (%s)'), $weightunit), '', 12),
 			new TextField('Height', sprintf(_t('Product.HEIGHT', 'Height (%s)'), $lengthunit), '', 12),
 			new TextField('Width', sprintf(_t('Product.WIDTH', 'Width (%s)'), $lengthunit), '', 12),
 			new TextField('Depth', sprintf(_t('Product.DEPTH', 'Depth (%s)'), $lengthunit), '', 12),
 		));
 		
-		$fields->addFieldToTab('Root.Content.Main',new TextField('Model', _t('Product.MODEL', 'Model'), '', 30),'Content');
-		$fields->addFieldToTab('Root.Content.Main',new TextField('InternalItemID', _t('Product.CODE', 'Product Code'), '', 30),'Price');
+		$fields->addFieldToTab('Root.Main',new TextField('Model', _t('Product.MODEL', 'Model'), '', 30),'Content');
+		$fields->addFieldToTab('Root.Main',new TextField('InternalItemID', _t('Product.CODE', 'Product Code'), '', 30),'Model');
 		if(!$fields->dataFieldByName('Image')) {
-			$fields->addFieldToTab('Root.Content.Images', new ImageField('Image', _t('Product.IMAGE', 'Product Image')));
+			$fields->addFieldToTab('Root.Images', new UploadField('Image', _t('Product.IMAGE', 'Product Image')));
 		}
 		// Flags for this product which affect it's behaviour on the site
-		$fields->addFieldToTab('Root.Content.Main',new CheckboxField('FeaturedProduct', _t('Product.FEATURED', 'Featured Product')), 'Content');
-		$fields->addFieldToTab('Root.Content.Main',new CheckboxField('AllowPurchase', _t('Product.ALLOWPURCHASE', 'Allow product to be purchased'), 1),'Content');
-		$fields->addFieldsToTab('Root.Content.Categories',array(
+		$fields->addFieldToTab('Root.Main',new CheckboxField('FeaturedProduct', _t('Product.FEATURED', 'Featured Product')), 'Content');
+		$fields->addFieldToTab('Root.Main',new CheckboxField('AllowPurchase', _t('Product.ALLOWPURCHASE', 'Allow product to be purchased'), 1),'Content');
+		$fields->addFieldsToTab('Root.Categories',array(
 			new LabelField('ProductCategoriesInstuctions', _t('Product.CATEGORIES',"Select the categories that this product should also show up in")),
 			$this->getProductCategoriesTable()
 		));
-		if($pagename = $fields->fieldByName('Root.Content.Main.Title')){
+		if($pagename = $fields->fieldByName('Root.Main.Title')){
 			$pagename->setTitle(_t('Product.PAGETITLE','Product Page Title'));
 		}
-		if($tempextvar){
-			$this->extend('updateCMSFields', $fields);
-		}
+		
+		$this->extend('updateCMSFields', $fields);
+		
 		return $fields;
 	}
 
@@ -167,17 +157,11 @@ class Product extends Page implements Buyable{
 	 * Helper for creating the product groups table
 	 */
 	protected function getProductCategoriesTable() {
-		$tableField = new ManyManyComplexTableField(
-			$this,
-			'ProductCategories',
-			'ProductCategory',
-			array(
-				'Title' => 'Category'
-			)
-		);
-		$tableField->setPageSize(30);
-		$tableField->setPermissions(array());
-		return $tableField;
+		//TODO: SS3 has no support for GridField many_many, get more info
+		$productCategories = DataObject::get("ProductCategory");
+		$itemsTable = new CheckboxSetField("ProductCategories","Product Categories",$productCategories->map("ID", "Title"));
+		
+		return $itemsTable;
 	}
 
 	/**

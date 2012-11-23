@@ -30,4 +30,12 @@ class ProductAttributeValue extends DataObject{
 	);
 
 	static $default_sort = "TypeID ASC, Sort ASC, Value ASC";
+	
+	function getCMSFields(){
+		$fields = parent::getCMSFields();
+		$fields->removeFieldFromTab("Root", "ProductVariation");
+		$fields->removeFieldFromTab("Root.Main", "TypeID");
+		return $fields;
+	}
+	
 }
