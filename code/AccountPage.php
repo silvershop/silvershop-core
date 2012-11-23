@@ -9,7 +9,7 @@ class AccountPage extends Page {
 
 	static $icon = 'shop/images/icons/account';
 
-	function canCreate() {
+	function canCreate($member = null) {
 		return !DataObject::get_one("SiteTree", "\"ClassName\" = 'AccountPage'");
 	}
 
@@ -96,7 +96,7 @@ class AccountPage_Controller extends Page_Controller {
 	function DefaultAddressForm(){
 		$addresses = $this->member->AddressBook();
 		if($addresses->exists()){
-			$fields = new FieldSet(
+			$fields = new FieldList(
 				$shipping = new DropdownField("DefaultShippingAddressID","Shipping Address",$addresses->map('ID','toString')),
 				$billing = new DropdownField("DefaultBillingAddressID","Billing Address",$addresses->map('ID','toString'))	
 			);
@@ -104,7 +104,7 @@ class AccountPage_Controller extends Page_Controller {
 			$shipping->setEmptyString("no default");
 			$billing->setHasEmptyDefault(true);
 			$billing->setEmptyString("no default");
-			$actions = new FieldSet(
+			$actions = new FieldList(
 				new FormAction('savedefaultaddresses',"Save Defaults")	
 			);
 			$form = new Form($this,"DefaultAddressForm",$fields,$actions);
@@ -122,7 +122,7 @@ class AccountPage_Controller extends Page_Controller {
 	
 	function CreateAddressForm(){
 		$fields = singleton('Address')->getFormFields();
-		$actions = new FieldSet(
+		$actions = new FieldList(
 			new FormAction("saveaddress","Save New Address")	
 		);
 		return new Form($this,"CreateAddressForm",$fields,$actions);	

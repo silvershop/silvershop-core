@@ -18,7 +18,8 @@ class OrderItemList extends Extension{
 	 * @param boolean $onproduct - sum from product or not
 	 * @return number total
 	 */
-	function Sum($field, $onproduct = false){
+	
+	function orderItemsSum($field, $onproduct = false){
 		$total = 0;
 		if($this->owner->exists()){
 			foreach($this->owner as $item){

@@ -1,7 +1,7 @@
 <?php
 
 class ZoneSelectField extends DropdownField{
-	
+
 	function getSource() {
 		$zones = DataObject::get("Zone");
 		if($zones && $zones->exists()){
@@ -9,5 +9,5 @@ class ZoneSelectField extends DropdownField{
 		}
 		return array();
 	}
-	
+
 }

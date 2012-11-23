@@ -3,6 +3,7 @@
 /**
  * Temporary fix for Versioned class.
  */
+/*
 class FixVersioned extends Versioned{
 	
 	static function get_version($class, $id, $version) {
@@ -33,3 +34,4 @@ class FixVersioned extends Versioned{
 	}
 	
 }
+*/

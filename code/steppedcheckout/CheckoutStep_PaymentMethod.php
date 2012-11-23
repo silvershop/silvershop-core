@@ -22,10 +22,10 @@ class CheckoutStep_PaymentMethod extends CheckoutStep{
 	
 	function PaymentMethodForm(){
 		$checkout = Checkout::get();
-		$fields = new FieldSet(new OptionsetField(
+		$fields = new FieldList(new OptionsetField(
 			'PaymentMethod','',$checkout->getPaymentMethods()->map('ClassName','Title'),$checkout->getPaymentMethods()->First()->ClassName
 		));
-		$actions = new FieldSet(
+		$actions = new FieldList(
 			new FormAction("setpaymentmethod","Continue")
 		);
 		$validator = new RequiredFields('PaymentMethod');

@@ -29,5 +29,3 @@
 		<% end_if %>
 	<% end_if %>
 </div>
-<% include RelatedItems %>
-<% include RecentlyViewedItems %>

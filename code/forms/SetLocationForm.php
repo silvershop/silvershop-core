@@ -1,15 +1,15 @@
 <?php
 
 class SetLocationForm extends Form{
-	
+
 	function __construct($controller, $name = "SetLocationForm"){
 		$countries = SiteConfig::current_site_config()->getCountriesList();
-		$fields = new FieldSet(
+		$fields = new FieldList(
 			$countryfield = new DropdownField("Country",_t('SetLocationForm.COUNTRY','Country'),$countries)
 		);
 		$countryfield->setHasEmptyDefault(true);
 		$countryfield->setEmptyString(_t('SetLocationForm.CHOOSECOUNTRY','Choose country...'));
-		$actions = new FieldSet(
+		$actions = new FieldList(
 			new FormAction("setLocation","set")	
 		);
 		parent::__construct($controller, $name, $fields, $actions);
@@ -19,22 +19,22 @@ class SetLocationForm extends Form{
 			$this->loadDataFrom($address);
 		}
 	}
-	
+
 	function setLocation($data,$form){
 		ShopUserInfo::set_location($data);
 		Controller::curr()->redirectBack();
 	}
-	
+
 }
 
 class LocationFormPageDecorator extends Extension{
-	
+
 	static $allowed_actions = array(
 		"SetLocationForm"
 	);
-	
+
 	function SetLocationForm(){
 		return new SetLocationForm($this->owner);
 	}
-	
+
 }

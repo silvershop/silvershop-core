@@ -22,7 +22,7 @@ class CheckoutStep_ContactDetails extends CheckoutStep{
 	
 	function ContactDetailsForm(){
 		$fields = CheckoutFieldFactory::singleton()->getContactFields();
-		$actions = new FieldSet(
+		$actions = new FieldList(
 			new FormAction("setcontactdetails","Continue")
 		);
 		$validator =  new RequiredFields(array_keys($fields->dataFields())); //require all fields

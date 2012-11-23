@@ -157,7 +157,7 @@ class OrderItem extends OrderAttribute {
 	}
 
 	function QuantityField(){
-		return new EcomQuantityField($this);
+		return new DropdownShopQuantityField($this);
 	}
 	
 	function addLink() {

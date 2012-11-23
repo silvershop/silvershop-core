@@ -68,12 +68,11 @@ class Checkout{
 		$this->order->ShippingAddressID = $address->ID;
 		$this->order->write();
 		$this->order->extend('onSetShippingAddress',$address);
-		
 		//update zones and userinfo
 		ShopUserInfo::set_location($address);
 		Zone::cache_zone_ids($address);
 	}
-	
+
 	function setBillingAddress(Address $address){
 		$this->order->BillingAddressID = $address->ID;
 		$this->order->write();

@@ -25,22 +25,13 @@ class ProductAttributeType extends DataObject{
 
 	function getCMSFields(){
 		$fields = parent::getCMSFields();
-		$fields->removeFieldFromTab('Root.Values','Values');
-		$fieldList = array(
-			'Value' => 'Value',
-			'Sort' => 'Sort'
-		);
-		$fieldTypes = array(
-			'Value' => 'TextField',
-			'Sort' => 'TextField'
-		);
 		if($this->isInDB()){
-			$valuesTable = new TableField("Values", "ProductAttributeValue",$fieldList,$fieldTypes);
-			$valuesTable->setCustomSourceItems($this->Values());
+			$itemsConfig = new GridFieldConfig_RelationEditor();
+			$itemsTable = new GridField("Values","Values",$this->Values(),$itemsConfig);
 		}else{
-			$valuesTable = new LiteralField("Values", "<p class=\"message warning\">Save first, then you can add values.</p>");
+			$itemsTable = new LiteralField("Values", "<p class=\"message warning\">Save first, then you can add values.</p>");
 		}
-		$fields->addFieldToTab("Root.Values", $valuesTable);
+		$fields->addFieldToTab("Root.Values", $itemsTable);
 		return $fields;
 	}
 
@@ -99,9 +90,10 @@ class ProductAttributeType extends DataObject{
 		}elseif($this->Label && !$this->Name){
 			$this->Name = $this->Label;
 		}
+		
 	}
 	
-	function canDelete(){
+	function canDelete($member = null){
 		//TODO: prevent deleting if has been used
 		return true;
 	}

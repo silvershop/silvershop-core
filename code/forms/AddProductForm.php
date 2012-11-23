@@ -2,10 +2,10 @@
 
 class AddProductForm extends Form{
 	
-	protected $maxquantity = 100; //populate quantity dropdown with this many values
+	protected $maxquantity = 20; //populate quantity dropdown with this many values
 	
 	function __construct($controller, $name = "AddProductForm"){
-		$fields = new FieldSet();
+		$fields = new FieldList();
 		
 		if($this->maxquantity){
 			$values = array();
@@ -18,7 +18,7 @@ class AddProductForm extends Form{
 		}else{
 			$fields->push(new NumericField('Quantity','Quantity',1));
 		}
-		$actions = new FieldSet(
+		$actions = new FieldList(
 			new FormAction('addtocart',_t("AddProductForm.ADDTOCART",'Add to Cart'))
 		);
 		$validator = new RequiredFields(array(

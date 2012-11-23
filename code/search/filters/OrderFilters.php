@@ -6,7 +6,7 @@ class OrderFilters_AroundDateFilter extends ExactMatchFilter {
 		static function set_how_many_days_around($v){self::$how_many_days_around = $v;}
 		static function get_how_many_days_around(){return self::$how_many_days_around;}
 
-	public function apply(SQLQuery $query) {
+	public function apply(DataQuery $query) {
 		$query = $this->applyRelation($query);
 		$value = $this->getValue();
 		$date = new Date();
@@ -35,7 +35,7 @@ class OrderFilters_AroundDateFilter extends ExactMatchFilter {
 
 class OrderFilters_MultiOptionsetFilter extends SearchFilter {
 
-	public function apply(SQLQuery $query) {
+	public function apply(DataQuery $query) {
 		$query = $this->applyRelation($query);
 		$values = $this->getValue();
 		if(count($values)) {

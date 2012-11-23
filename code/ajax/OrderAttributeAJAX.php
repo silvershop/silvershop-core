@@ -1,6 +1,6 @@
 <?php
 
-class OrderAttributeAJAX extends DataObjectDecorator{
+class OrderAttributeAJAX extends DataExtension{
 	
 	/**
 	 * Return a string of class names, in order

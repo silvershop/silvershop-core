@@ -17,13 +17,13 @@ class CheckoutStep_Summary extends CheckoutStep{
 	
 	function ConfirmationForm(){
 		$cff = CheckoutFieldFactory::singleton();
-		$fields = new FieldSet(
+		$fields = new FieldList(
 			$cff->getNotesField()
 		);
 		if($tf = $cff->getTermsConditionsField()){
 			$fields->push($tf);
 		}
-		$actions = new FieldSet(
+		$actions = new FieldList(
 			new FormAction("place","Confirm and Pay")
 		);
 		$validator = new CheckoutValidator();

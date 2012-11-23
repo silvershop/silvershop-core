@@ -26,7 +26,7 @@ class CheckoutFieldFactory{
 	 * name + email
 	 */
 	function getContactFields(){
-		return new FieldSet(
+		return new FieldList(
 			new TextField('FirstName', _t('CheckoutField.FIRSTNAME','First Name')),
 			new TextField('Surname', _t('CheckoutField.SURNAME','Surname')),
 			new EmailField('Email', _t('CheckoutField.EMAIL','Email'))
@@ -44,7 +44,7 @@ class CheckoutFieldFactory{
 	}
 	
 	function getPasswordFields(){
-		$fields =  new FieldSet(
+		$fields =  new FieldList(
 			$header = new HeaderField(_t('OrderForm.MembershipDetails','Membership Details'), 3),
 			$memberinfo = new LiteralField('MemberInfo', '<p class="message warning">'._t('OrderForm.MemberInfo','If you are already a member please')." <a href=\"Security/login?BackURL=" . CheckoutPage::find_link(true) . "/\">"._t('OrderForm.LogIn','log in').'</a>.</p>'),
 			$accountinfo = new LiteralField('AccountInfo', '<p>'._t('OrderForm.AccountInfo','Please choose a password, so you can login and check your order history in the future').'</p><br/>'),
@@ -59,7 +59,7 @@ class CheckoutFieldFactory{
 	function getPaymentMethodFields(){
 		//TODO: only get one field if there is no option
 		return new OptionsetField(
-			'PaymentMethod','',Payment::get_supported_methods(),array_shift(array_keys(Payment::get_supported_methods()))
+			'PaymentMethod','',Payment::get_supported_methods(),array_keys(Payment::get_supported_methods())
 		);
 	}
 	

@@ -216,7 +216,7 @@ class OrderModifier extends OrderAttribute {
 	 * @return OrderModifierForm or subclass
 	 */
 	static function get_form($controller) {
-		return new OrderModifierForm($controller, 'ModifierForm', new FieldSet(), new FieldSet());
+		return new OrderModifierForm($controller, 'ModifierForm', new FieldList(), new FieldList());
 	}
 	
 	function updateForAjax(array &$js) {

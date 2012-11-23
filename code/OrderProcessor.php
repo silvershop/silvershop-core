@@ -9,10 +9,10 @@
  * @todo figure out reference issues ...if you store a reference to order in here, it can get stale.
  */
 class OrderProcessor{
-	
+
 	protected $order;
 	protected $error;
-	
+
 	/**
 	* This is the from address that the receipt
 	* email contains. e.g. "info@shopname.com"
@@ -20,7 +20,7 @@ class OrderProcessor{
 	* @var string
 	*/
 	protected static $email_from;
-	
+
 	/**
 	* This is the subject that the receipt
 	* email will contain. e.g. "Joe's Shop Receipt".
@@ -29,7 +29,7 @@ class OrderProcessor{
 	* @deprecated - use translation instead via Order.EMAILSUBJECT
 	*/
 	protected static $receipt_subject = "Shop Sale Information #%d";
-	
+
 	/**
 	 * Static way to create the order processor.
 	 * Makes creating a processor easier.
@@ -38,7 +38,7 @@ class OrderProcessor{
 	static function create(Order $order){		
 		return new OrderProcessor($order);
 	}
-	
+
 	/**
 	* Set the from address for receipt emails.
 	*
@@ -47,11 +47,11 @@ class OrderProcessor{
 	public static function set_email_from($email) {
 		self::$email_from = $email;
 	}
-	
+
 	public static function set_receipt_subject($subject) {
 		self::$receipt_subject = $subject;
 	}
-	
+
 	/**
 	 * Assign the order to a local variable
 	 * @param Order $order
@@ -59,7 +59,7 @@ class OrderProcessor{
 	private function __construct(Order $order){
 		$this->order = $order;
 	}
-	
+
 	/**
 	 * Takes an order from being a cart to awaiting payment.
 	 * @param Member $member - assign a member to the order
@@ -102,7 +102,7 @@ class OrderProcessor{
 		$this->order->write();
 		return true; //report success
 	}
-	
+
 	/**
 	 * Create a new payment for an order
 	 */
@@ -126,7 +126,7 @@ class OrderProcessor{
 		$payment->ReturnURL = $this->order->Link(); //store temp return url reference
 		return $payment;
 	}
-	
+
 	/**
 	 * Determine if an order can be placed.
 	 * @param unknown_type $order
@@ -151,8 +151,8 @@ class OrderProcessor{
 		//modifiers have been calculated
 		return true;
 	}
-	
-	
+
+
 	/**
 	 * Create a payment model, and provide link to redirect to external gateway,
 	 * or redirect to order link.
@@ -183,7 +183,7 @@ class OrderProcessor{
 		}
 		return $payment->ReturnURL;
 	}
-	
+
 	/**
 	 * Complete payment processing
 	 *    - send receipt
@@ -199,7 +199,7 @@ class OrderProcessor{
 			}
 		}
 	}	
-	
+
 	/**
 	* Send a mail of the order to the client (and another to the admin).
 	*
@@ -224,7 +224,7 @@ class OrderProcessor{
 		));
 		return $email->send();
 	}
-	
+
 	/**
 	* Send the receipt of the order by mail.
 	* Precondition: The order payment has been successful
@@ -234,7 +234,7 @@ class OrderProcessor{
 		$this->order->ReceiptSent = SS_Datetime::now()->Rfc2822();
 		$this->order->write();
 	}
-	
+
 	/**
 	* Send a message to the client containing the latest
 	* note of {@link OrderStatusLog} and the current status.
@@ -270,13 +270,13 @@ class OrderProcessor{
 		$e->setTo($member->Email);
 		$e->send();
 	}
-	
+
 	function getError(){
 		return $this->error;
 	}
-	
+
 	private function error($message){
 		$this->error = $message;
 	}
-	
+
 }
