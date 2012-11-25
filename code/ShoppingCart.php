@@ -60,6 +60,18 @@ class ShoppingCart{
 	}
 	
 	/**
+	 * Set the current cart
+	 */
+	function setCurrent(Order $cart){
+		if(!$cart->IsCart()){
+			trigger_error("Passed Order object is not cart status", E_ERROR);
+		}
+		$this->order = $cart;
+		Session::set(self::$cartid_session_name, $cart->ID);
+		return $this;
+	}
+	
+	/**
 	 * Helper that only allows orders to be started internally.
 	 */
 	protected function findOrMake(){
