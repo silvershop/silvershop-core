@@ -1,8 +1,3 @@
-SiteConfig:
-    config:
-        Title: Shop Testing Website
-        ShopClosed: 0
-
 Page:
     home:
         Title: Home
@@ -68,6 +63,12 @@ AccountPage:
         Title: Account
         URLSegment: account
 
+Page:
+    termsandconditions:
+        Title: Terms and Conditions
+        URLSegment: terms-and-conditions
+        Content: Test terms and conditions.
+
 Address:
     foobar:
         Address: 12 Foo Street
@@ -109,4 +110,10 @@ Product_OrderItem:
     placed_tshirt:
         Order: =>Order.placed
         Product: =>Product.tshirt
+        
+SiteConfig:
+    config:
+        Title: Shop Testing Website
+        ShopClosed: 0
+        TermsPage: =>Page.termsandconditions
         

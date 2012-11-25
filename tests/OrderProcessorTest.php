@@ -15,8 +15,6 @@ class OrderProcessorTest extends SapphireTest {
 		parent::setUp();
 		ShopTest::setConfiguration();
 	
-		SSViewer::set_theme('skeleton'); //TODO: make this work without a theme
-	
 		$this->mp3player = $this->objFromFixture('Product', 'mp3player');
 		$this->socks = $this->objFromFixture('Product', 'socks');
 		$this->beachball = $this->objFromFixture('Product', 'beachball');
@@ -30,8 +28,14 @@ class OrderProcessorTest extends SapphireTest {
 		$this->cart = ShoppingCart::getInstance();
 	}
 	
-	function testPlaceOrder(){
+	function testCreatePayment(){
+		$order = $this->objFromFixture("Order", "placed");
+		$processor = OrderProcessor::create($order);
+		$payment = $processor->createPayment('ChequePayment');
+		$this->assertTrue((boolean)$payment);
+	}
 	
+	function testPlaceOrder(){
 		//place items in cart
 		$this->cart->add($this->mp3player,2);
 		$this->cart->add($this->socks);

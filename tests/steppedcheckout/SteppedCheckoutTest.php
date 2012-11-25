@@ -13,16 +13,34 @@ class SteppedCheckoutTest extends FunctionalTest{
 		ShopTest::setConfiguration();
 		//set up steps
 		SteppedCheckout::setupSteps(); //use default steps
-		$this->checkout = new CheckoutPage_Controller();
-		ShoppingCart::singleton()->add($this->objFromFixture("Product", "socks"));
-		$this->cart = ShoppingCart::curr();
+		
+		$this->socks = $this->objFromFixture("Product", "socks");
+		$this->socks->publish('Stage','Live');
+		
+		$this->checkout = new CheckoutPage_Controller($this->objFromFixture("CheckoutPage", "checkout"));
+		$this->checkout->handleRequest(new SS_HTTPRequest("GET", "checkout"));
+		
+		$this->cart = $this->objFromFixture("Order", "cart");
+		ShoppingCart::singleton()->setCurrent($this->cart);
 	}
 	
 	function testTemplateFunctions(){
-		$this->checkout->handleRequest(new SS_HTTPRequest('GET', "membership"));
+		$this->checkout->handleRequest(new SS_HTTPRequest('GET', "")); //put us at the first step index == membership
 		$this->assertFalse($this->checkout->IsPastStep('membership'));
 		$this->assertTrue($this->checkout->IsCurrentStep('membership'));
 		$this->assertFalse($this->checkout->IsFutureStep('membership'));
+		
+		$this->checkout->NextStepLink(); //TODO: assertion
+		
+		$this->assertFalse($this->checkout->IsPastStep('contactdetails'));
+		$this->assertFalse($this->checkout->IsCurrentStep('contactdetails'));
+		$this->assertTrue($this->checkout->IsFutureStep('contactdetails'));
+		
+		$this->checkout->handleRequest(new SS_HTTPRequest('GET', "summary")); //change to summary step
+		$this->assertFalse($this->checkout->IsPastStep('summary'));
+		$this->assertTrue($this->checkout->IsCurrentStep('summary'));
+		$this->assertFalse($this->checkout->IsFutureStep('summary'));
+		
 	}
 	
 	function testMembershipStep(){
@@ -105,13 +123,18 @@ class SteppedCheckoutTest extends FunctionalTest{
 	
 	function testSummary(){
 		$this->checkout->summary();
+		$form = $this->checkout->ConfirmationForm();
 		$data = array(
 			'Notes' => 'Leave it around the back',
 			'ReadTermsAndConditions' => 1,
 			'PaymentMethod' => 'Cheque',
-			'action_place' => 1
+			'action_place' => "Confirm and Pay"
 		);
+		Checkout::get($this->cart)->setPaymentMethod("Cheque"); //a selected payment method is required
+		$form->loadDataFrom($data);
+		$this->assertTrue($form->validate(),"Checkout data is valid");		
 		$response = $this->post('/checkout/ConfirmationForm', $data);
+		$this->assertEquals($this->cart->Status,'Unpaid', "Order status is updated");
 	}
 	
 }
