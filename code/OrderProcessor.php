@@ -78,7 +78,9 @@ class OrderProcessor{
 		$this->order->Status = 'Unpaid'; //update status
 		if(!$this->order->Placed){
 			$this->order->Placed = SS_Datetime::now()->Rfc2822(); //record placed order datetime
-			$this->order->IPAddress = Controller::curr()->getRequest()->getIP(); //record client IP
+			if($request = Controller::curr()->getRequest()){
+				$this->order->IPAddress = $request->getIP(); //record client IP
+			}
 		}
 		//re-write all attributes and modifiers to make sure they are up-to-date before they can't be changed again
 		$items = $this->order->Items();
@@ -105,24 +107,25 @@ class OrderProcessor{
 	 * Create a new payment for an order
 	 */
 	function createPayment($paymentClass = "Payment"){
-		if($this->order->canPay(Member::currentUser())){
-			$payment = class_exists($paymentClass) ? new $paymentClass() : null;
-			if(!($payment && $payment instanceof Payment)) {
-				$this->error(_t("PaymentProcessor.NOTPAYMENT","Incorrect payment class."));
-				return false;
-			}
-			//TODO: check if chosen payment type is allowed
-			$payment->OrderID = $this->order->ID;
-			$payment->PaidForID = $this->order->ID;
-			$payment->PaidForClass = $this->order->class;
-			$payment->Amount->Amount = $this->order->TotalOutstanding();
-			$payment->Reference = $this->order->Reference;
-			$payment->write();
-			$this->order->Payments()->add($payment);
-			$payment->ReturnURL = $this->order->Link(); //store temp return url reference
-			return $payment;
+		$payment = class_exists($paymentClass) ? new $paymentClass() : null;
+		if(!($payment && $payment instanceof Payment)) {
+			$this->error(_t("PaymentProcessor.NOTPAYMENT","`$paymentClass` isn't a valid payment method"));
+			return false;
 		}
-		return false;
+		if($this->order->canPay(Member::currentUser())){
+			$this->error(_t("PaymentProcessor.MEMBERCANTPAY","Member can't pay"));
+			return false;
+		}
+		$payment->OrderID = $this->order->ID;
+		$payment->PaidForID = $this->order->ID;
+		$payment->PaidForClass = $this->order->class;
+		$payment->Amount->Amount = $this->order->TotalOutstanding();
+		$payment->Reference = $this->order->Reference;
+		$payment->write();
+		$this->order->Payments()->add($payment);
+		$payment->ReturnURL = $this->order->Link(); //store temp return url reference
+		return $payment;
+
 	}
 	
 	/**
@@ -160,8 +163,7 @@ class OrderProcessor{
 		//create payment
 		$payment = $this->createPayment($paymentClass);
 		if(!$payment){
-			$form->sessionMessage($processor->getError(), 'bad');
-			//TODO: form session message won't work here if we are directing to order link
+			$this->error("Payment could not be created");
 			return $this->order->Link();
 		}
 		//map data fields
