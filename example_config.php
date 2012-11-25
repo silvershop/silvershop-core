@@ -9,6 +9,9 @@
 
 //NON-ECOMMERCE SETTINGS
 Payment::set_site_currency('NZD');
+Payment::set_supported_methods(array(
+	'ChequePayment' => 'Cheque'
+));
 Geoip::$default_country_code = "NZ";
 i18n::set_locale('en_NZ');
 setlocale (LC_TIME, 'en_NZ@dollar', 'en_NZ.UTF-8', 'en_NZ', 'nz', 'nz');
