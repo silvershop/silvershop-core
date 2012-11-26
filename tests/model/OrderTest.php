@@ -37,7 +37,8 @@ class OrderTest extends SapphireTest {
 	}
 	
 	function testDebug(){
-		singleton('Order')->debug();
+		$order = $this->objFromFixture("Order", "cart");
+		$order->debug();
 	}
 	
 	function testProductOrderItems() {
@@ -139,15 +140,30 @@ class OrderTest extends SapphireTest {
 	}
 	
 	function testCanFunctions(){
-		$order = $this->createOrder();
-		//order is in cart
-		$this->assertTrue($order->canPay()); //can pay when order is in cart
-		$this->assertFalse($order->canCancel()); //can't cancel when order is in cart
-		$this->assertFalse($order->canDelete()); //never allow deleting
-		//canCreate
-		//canEdit
+		$order = $this->objFromFixture("Order", "cart");
+		$order->calculate();
+		$this->assertTrue($order->canPay(),"can pay when order is in cart");
+		$this->assertFalse($order->canCancel(),"can't cancel when order is in cart");
+		$this->assertFalse($order->canDelete(),"never allow deleting orders");
+		$this->assertTrue($order->canEdit(), "orders can be edited by anyone");
+		$this->assertFalse($order->canCreate(),"no body can create orders manually");
 		
-		//TODO: modify order, and retest all can functions
+		$order = $this->objFromFixture("Order", "placed");
+		$this->assertTrue($order->canPay(),"can pay after order is placed");
+		$this->assertTrue($order->canCancel());
+		$this->assertFalse($order->canDelete(),"never allow deleting orders");
+		
+		$order = $this->objFromFixture("Order", "paid");
+		$this->assertFalse($order->canPay(),"paid order can't be paid for");
+		$this->assertFalse($order->canCancel(),"paid order can't be cancelled");
+		$this->assertFalse($order->canDelete(),"never allow deleting orders");
+		
+		//TODO: check other statuses
+	}
+	
+	function testDelete(){
+		$order = $this->objFromFixture("Order", "placed");
+		$order->delete();
 	}
 
 }

@@ -96,13 +96,17 @@ Member:
 Order:
     cart:
         Name: Cart
-    #Make sure placed cart has stored calculations!
     placed:
-        Name: Placed Order
         Status: Unpaid
         Created: 2012-11-21 15:23:32
         Placed: 2012-11-21 15:33:02
         Total: 500
+    paid:
+        Staus: Paid
+        Created: 2012-10-02 07:23:08
+        Placed: 2012-10-02 07:33:21
+        Paid: 2012-10-02 07:34:29
+        Total: 800
 
 Product_OrderItem:
     cart_socks:
@@ -112,15 +116,30 @@ Product_OrderItem:
     placed_tshirt:
         Order: =>Order.placed
         Product: =>Product.tshirt
-        Quantity: 4
         UnitPrice: 25
+        Quantity: 4
         CalculatedTotal: 100
     placed_mp3player:
         Order: =>Order.placed
         Product: =>Product.mp3player
-        Quantity: 2
         UnitPrice: 200
+        Quantity: 2
         CalculatedTotal: 400
+    paid_socks:
+        Order: =>Order.paid
+        Product: =>Product.socks
+        UnitPrice: 8
+        Quantity: 100
+        CalculatedTotal: 800
+
+#TODO: test payments trigger email sends via ShopPayment onAfterWrite
+#ChequePayment:
+#    paid_success:
+#        Status: Success
+#        AmountAmount: 800
+#        AmountCurrency: NZD
+#        Created: 2012-10-02 07:33:21
+#        Order: =>Order.paid
         
 SiteConfig:
     config:
