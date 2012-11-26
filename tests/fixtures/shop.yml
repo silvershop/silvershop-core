@@ -96,11 +96,13 @@ Member:
 Order:
     cart:
         Name: Cart
+    #Make sure placed cart has stored calculations!
     placed:
         Name: Placed Order
         Status: Unpaid
         Created: 2012-11-21 15:23:32
         Placed: 2012-11-21 15:33:02
+        Total: 500
 
 Product_OrderItem:
     cart_socks:
@@ -110,10 +112,18 @@ Product_OrderItem:
     placed_tshirt:
         Order: =>Order.placed
         Product: =>Product.tshirt
+        Quantity: 4
+        UnitPrice: 25
+        CalculatedTotal: 100
+    placed_mp3player:
+        Order: =>Order.placed
+        Product: =>Product.mp3player
+        Quantity: 2
+        UnitPrice: 200
+        CalculatedTotal: 400
         
 SiteConfig:
     config:
         Title: Shop Testing Website
         ShopClosed: 0
         TermsPage: =>Page.termsandconditions
-        
