@@ -112,8 +112,8 @@ class OrderProcessor{
 			$this->error(_t("PaymentProcessor.NOTPAYMENT","`$paymentClass` isn't a valid payment method"));
 			return false;
 		}
-		if($this->order->canPay(Member::currentUser())){
-			$this->error(_t("PaymentProcessor.MEMBERCANTPAY","Member can't pay"));
+		if(!$this->order->canPay(Member::currentUser())){
+			$this->error(_t("PaymentProcessor.CANTPAY","Order can't be paid for"));
 			return false;
 		}
 		$payment->OrderID = $this->order->ID;
@@ -125,7 +125,6 @@ class OrderProcessor{
 		$this->order->Payments()->add($payment);
 		$payment->ReturnURL = $this->order->Link(); //store temp return url reference
 		return $payment;
-
 	}
 	
 	/**
