@@ -17,13 +17,14 @@ class CheckoutStep_Membership extends CheckoutStep{
 	
 	function membership(){
 		//if logged in, then redirect to next step
-		if(self::$skip_if_logged_in && Member::currentUser()){
+		if(ShoppingCart::curr() && self::$skip_if_logged_in && Member::currentUser()){
 			Director::redirect($this->NextStepLink());
 			return;
 		}
 		return $this->owner->customise(array(
 			'Form' => $this->MembershipForm(),
-			'LoginForm' => $this->LoginForm()
+			'LoginForm' => $this->LoginForm(),
+			'GuestLink' => $this->NextStepLink()
 		))->renderWith(array("CheckoutPage_membership","CheckoutPage","Page")); //needed to make rendering work on index
 	}
 	
