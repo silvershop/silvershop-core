@@ -13,9 +13,10 @@ class ShopUserInfo extends Object{
 	}
 	
 	protected function setLocation($address){
-		if(is_array($address)){
-			$address = new Address($address);
+		if($address instanceof Address){
+			$address = $address->toMap();
 		}
+		$address = new Address(Convert::raw2sql($address));
 		Session::set("UserInfo.Location",$address);
 		$this->extend("onAfterSetLocation",$address);
 	}
