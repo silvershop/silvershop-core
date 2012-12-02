@@ -23,7 +23,7 @@ In [mysite]/code/ExtendedAddress.php
 			);
 		}
 		
-		function updateFormFields(FieldSet $fields,$nameprefix = ""){
+		function updateFormFields(FieldList $fields,$nameprefix = ""){
 			$fields->insertBefore(new TextField($nameprefix.'Suburb',"Suburb"),$nameprefix.'City');
 			$fields->insertAfter(new TextField($nameprefix.'Fax',"Fax"),$nameprefix.'Phone');
 			$fields->insertFirst(new TextField($nameprefix.'Company',"Company"));

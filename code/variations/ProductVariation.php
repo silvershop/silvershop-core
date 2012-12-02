@@ -57,6 +57,7 @@ class ProductVariation extends DataObject implements Buyable{
 		$fields[] = new TextField('Price');
 		//add attributes dropdowns
 		if($this->Product()->VariationAttributeTypes()->exists() && $attributes = $this->Product()->VariationAttributeTypes()){
+			
 			foreach($attributes as $attribute){
 				if($field = $attribute->getDropDownField()){
 					if($value = $this->AttributeValues()->find('TypeID',$attribute->ID))
@@ -69,11 +70,11 @@ class ProductVariation extends DataObject implements Buyable{
 				//TODO: allow setting custom value, rather than visiting the products section
 			}
 		}
-		$set = new FieldSet($fields);
+		$set = new FieldList($fields);
 		$this->extend('updateCMSFields', $set);
 		return $set;
 	}
-
+	
 	function onBeforeWrite(){
 		parent::onBeforeWrite();
 		//TODO: perhaps move this to onAfterWrite, for the case when the variation has just been created, and thus has no ID to relate

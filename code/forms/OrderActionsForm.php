@@ -21,10 +21,10 @@ class OrderActionsForm extends Form{
 	}
 	
 	function __construct($controller, $name = "OrderActionsForm", Order $order) {
-		$fields = new FieldSet(
+		$fields = new FieldList(
 			new HiddenField('OrderID', '', $order->ID)
 		);
-		$actions = new FieldSet();
+		$actions = new FieldList();
 		if(OrderManipulation::$allow_paying && $order->canPay() && $order->canCancel()){
 			$actions->push(new FormAction('dopayment', _t('OrderActionsForm.PAYORDER','Pay outstanding balance')));
 			$fields->push(new HeaderField("MakePaymentHeader",_t("OrderActionsForm.MAKEPAYMENT", "Make Payment")));

@@ -196,20 +196,22 @@ class Order extends DataObject {
 		return singleton('Order')->dbObject('Status')->enumValues(false);
 	}
 
+	/* do we need this
 	function scaffoldSearchFields(){
-		$fieldSet = parent::scaffoldSearchFields();
+		$FieldList = parent::scaffoldSearchFields();
 		$values = self::$placed_status;
 		$fields = array_combine(self::$placed_status,self::$placed_status);
-		$fieldSet->push(new CheckboxSetField("Status", "Status",$fields,$values));
-		return $fieldSet;
+		$FieldList->push(new CheckboxSetField("Status", "Status",$fields,$values));
+		return $FieldList;
 	}
+	*
 	
 	/**
 	 * Create CMS fields for cms viewing and editing orders
 	 * Also note that some fields are introduced in OrdersAdmin_RecordController 
 	 */
 	function getCMSFields(){
-		$fields = new FieldSet(new TabSet('Root',new Tab('Main')));
+		$fields = new FieldList(new TabSet('Root',new Tab('Main')));
 		$fields->insertBefore(new HeaderField('Title',"Order #".$this->Reference),'Root');
 		$fields->insertBefore(new LiteralField('SubTitle',
 			"<h4 class=\"subtitle\">".$this->dbObject('Placed')->Nice()." - <a href=\"mailto:".$this->getLatestEmail()."\">".$this->getName()."</a></h4>"
@@ -823,10 +825,10 @@ class Order extends DataObject {
 	 * Get fields for order form
 	 *
 	 * @deprecated - use CheckoutFieldFactory
-	 * @return FieldSet
+	 * @return FieldList
 	 */
 	function getFormFields() {
-		$fields = new FieldSet(
+		$fields = new FieldList(
 			new TextField('FirstName', _t('Order.FIRSTNAME','First Name')),
 			new TextField('Surname', _t('Order.SURNAME','Surname')),
 			new EmailField('Email', _t('Order.EMAIL','Email')),

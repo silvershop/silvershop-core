@@ -4,7 +4,7 @@
  *
  * @package shop
  */
-class ShopMember extends DataObjectDecorator {
+class ShopMember extends DataExtension {
 
 	protected static $group_name = "Customers";
 		static function set_group_name($v) {self::$group_name = $v;}
@@ -14,19 +14,17 @@ class ShopMember extends DataObjectDecorator {
 	static function associate_to_current_order($join = true){self::$login_joins_cart = $join;}
 	static function get_associate_to_current_order(){ return self::$login_joins_cart; }
 	
-	function extraStatics() {
-		return array(
-			'has_many' => array(
-				'AddressBook' => 'Address'
-			),
-			'has_one' => array(
-				'DefaultShippingAddress' => 'Address',
-				'DefaultBillingAddress' => 'Address'		
-			)
-		);
-	}
+	static $has_many = array(
+		'AddressBook' => 'Address'
+	);
 	
-	function updateCMSFields($fields) {
+	static $has_one = array(
+		'DefaultShippingAddress' => 'Address',
+		'DefaultBillingAddress' => 'Address'
+	);
+	
+	
+	function updateCMSFields(FieldList $fields){
 		$fields->removeByName('Country');
 		$fields->removeByName("DefaultShippingAddressID");
 		$fields->removeByName("DefaultBillingAddressID");

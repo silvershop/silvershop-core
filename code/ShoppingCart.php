@@ -423,7 +423,7 @@ class ShoppingCart_Controller extends Controller{
 		return "";
 	}
 	
-	static function direct($status = "success"){
+	static function direct($status = true){
 		if(Director::is_ajax()){
 			return $status;
 		}
@@ -443,9 +443,11 @@ class ShoppingCart_Controller extends Controller{
 	
 	protected function buyableFromRequest(){
 		$request = $this->getRequest();
+		/*
 		if(!SecurityToken::inst()->checkRequest($request)){
 			return $this->httpError(400, _t("ShoppingCart.CSRF", "Invalid security token, possible CSRF attack."));
 		}
+		*/
 		if($id = (int) $request->param('ID')){
 			$buyableclass = "Product";
 			if($class = $request->param('Buyable')){

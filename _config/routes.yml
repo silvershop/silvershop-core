@@ -1,0 +1,8 @@
+---
+Name: shoproutes
+After: framework/routes#coreroutes
+---
+Director:
+  rules:
+    'shoppingcart/$Action/$Buyable/$ID' : 'ShoppingCart_Controller'
+    'dev/shop' : 'ShopDevelopmentAdmin'

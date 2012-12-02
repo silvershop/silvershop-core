@@ -10,7 +10,7 @@ class ExpiryDateField extends TextField {
 		static function set_short_months($boolean) {self::$short_months = $boolean;}
 		static function get_short_months() {return self::$short_months;}
 
-	function Field() {
+	function Field($properties = array()) {
 		$monthValue = '';
 		$yearValue = '';
 		if(strlen($this->value) == 4) {

@@ -1,23 +1,20 @@
 <?php
 
-class ShopConfig extends DataObjectDecorator{
+class ShopConfig extends DataExtension{
 	
-	function extraStatics(){
-		return array(
-			'db' => array(
-				'AllowedCountries' => 'Text'		
-			),
-			'has_one' => array(
-				'TermsPage' => 'SiteTree'
-			)
-		);
-	}
+	static $db = array(
+		'AllowedCountries' => 'Text'
+	);
+	
+	static $has_one = array(
+		'TermsPage' => 'SiteTree'
+	);
 	
 	function populateDefaults(){
 		$this->owner->AllowedCountries = Geoip::visitor_country();
 	}
-	
-	function updateCMSFields($fields){
+
+	function updateCMSFields(FieldList $fields) {
 		$fields->insertBefore($shoptab = new Tab('Shop', 'Shop'), 'Access');
 				
 		$fields->addFieldsToTab("Root.Shop", new TabSet("ShopTabs",

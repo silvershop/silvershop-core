@@ -5,12 +5,12 @@
  * @subpackage forms
  */
 
-class EcomQuantityField extends ViewableData{
+class DropdownShopQuantityField extends ViewableData{
 	
 	protected $item;
 	protected $parameters;
 	protected $classes = array('ajaxQuantityField');
-	protected $template = 'EcomQuantityField';
+	protected $template = 'DropdownShopQuantityField';
 	protected $buyable;
 	
 	function __construct($object, $parameters = null){
@@ -49,6 +49,12 @@ class EcomQuantityField extends ViewableData{
 	}
 	
 	function Field() {
+		$qtyArray = array();
+		for($r=1; $r<=20; $r++){
+			$qtyArray[$r] = $r;
+		}
+		return new DropdownField($this->item->MainID() . '_Quantity',"Qty",$qtyArray,($this->item->Quantity) ? $this->item->Quantity : "");
+		
 		$size = 3; //make these customisable
 		$maxlength = 3;
 		$attributes = array(

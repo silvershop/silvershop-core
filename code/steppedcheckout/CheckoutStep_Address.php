@@ -32,7 +32,7 @@ class CheckoutStep_Address extends CheckoutStep{
 	
 	function AddressForm(){
 		$fields = singleton("Address")->getFormFields();
-		$actions = new FieldSet(
+		$actions = new FieldList(
 			new FormAction("setaddress","Continue")
 		);
 		$validator =  new RequiredFields(singleton("Address")->getRequiredFields());
