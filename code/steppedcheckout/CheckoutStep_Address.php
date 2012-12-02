@@ -52,10 +52,11 @@ class CheckoutStep_Address extends CheckoutStep{
 		if(ShoppingCart::curr()->BillingAddress()->exists()){
 			$form->loadDataFrom(ShoppingCart::curr()->BillingAddress());
 		}
-		$form->Actions()->emptyItems();
-		$form->Actions()->push(
-			new FormAction("setbillingaddress","Continue")
+		$actions = new FieldList(
+				new FormAction("setbillingaddress","Continue")
 		);
+		$form->setActions($actions);
+		
 		return array(
 			'Form' => $form
 		);
