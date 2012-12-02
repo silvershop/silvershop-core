@@ -43,7 +43,7 @@ class CartPage extends Page{
 class CartPage_Controller extends Page_Controller{
 	
 	static $url_segment = 'cart';
-	static $allowed_actions = array();
+	static $allowed_actions = array("UpdateCartForm","doUpdateCartForm");
 	
 	/**
 	 * Display a title if there is no model, or no title.
@@ -60,4 +60,5 @@ class CartPage_Controller extends Page_Controller{
 	function Order() {
 		return $this->Cart();
 	}
+
 }

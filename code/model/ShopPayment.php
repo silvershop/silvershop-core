@@ -28,7 +28,7 @@ class ShopPayment extends DataExtension {
 	}
 	
 	static function get_method_dataset(){
-		$set = new DataObjectSet();
+		$set = new ArrayList();
 		foreach(self::get_supported_methods() as $method => $name){
 			$set->push(new ArrayData(array(
 				'Title' => self::method_title($method),

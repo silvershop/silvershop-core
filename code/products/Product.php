@@ -192,7 +192,7 @@ class Product extends Page implements Buyable{
 		if(!$this->dbObject('AllowPurchase')->getValue()) return false;
 		if(!$this->isPublished()) return false;
 		$allowpurchase = false;
-		if($this->Variations()->exists()){
+		if(DataObject::get_one("ProductVariation","ProductID = ".$this->ID)){ // TODO: I get errors if I have not decorated product.php with variations... method does not exist
 			foreach($this->Variations() as $variation){
 				if($variation->canPurchase()){
 					$allowpurchase = true;

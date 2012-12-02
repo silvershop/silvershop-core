@@ -46,7 +46,7 @@ In [mysite]/code/ExtendedOrderForm.php
 	class ExtendedOrderForm extends Extension{
 	
 		function updateForm($form){
-			$leftfields = $form->Fields()->fieldByName("LeftOrder")->FieldSet();
+			$leftfields = $form->Fields()->fieldByName("LeftOrder")->FieldList();
 			$leftfields->insertAfter(new TextField("MyExtraField","My Extra Field"),"Country");
 		}
 	

@@ -9,7 +9,7 @@
 		</ul>
 	</div>
 	<div class="memberdetails">	
-		<% control Member %>
+		<% with CurrentMember %>
 			<dl>
 				<dt>Name</dt><dd>$Name</dd>
 				<dt>Email</dt><dd>$Email</dd>
@@ -17,7 +17,7 @@
 				<dt>Last Visit</dt> <dd>$LastVisited.Nice</dd>
 				<dt>Number of orders</dt> <dd><% if PastOrders %>$PastOrders.Count<% else %>0<% end_if %></dd>
 			</dl>
-		<% end_control %>
+		<% end_with %>
 	</div>
 	<a></a>
 	<a href="Security/logout" class="btn btn-inverted"><i class="icon icon-off"></i> Log Out</a>

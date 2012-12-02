@@ -2,7 +2,7 @@
 
 class AddProductForm extends Form{
 	
-	protected $maxquantity = 100; //populate quantity dropdown with this many values
+	protected $maxquantity = 20; //populate quantity dropdown with this many values
 	
 	function __construct($controller, $name = "AddProductForm"){
 		$fields = new FieldList();
