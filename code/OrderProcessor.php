@@ -9,10 +9,10 @@
  * @todo figure out reference issues ...if you store a reference to order in here, it can get stale.
  */
 class OrderProcessor{
-	
+
 	protected $order;
 	protected $error;
-	
+
 	/**
 	* This is the from address that the receipt
 	* email contains. e.g. "info@shopname.com"
@@ -20,7 +20,7 @@ class OrderProcessor{
 	* @var string
 	*/
 	protected static $email_from;
-	
+
 	/**
 	* This is the subject that the receipt
 	* email will contain. e.g. "Joe's Shop Receipt".
@@ -29,7 +29,7 @@ class OrderProcessor{
 	* @deprecated - use translation instead via Order.EMAILSUBJECT
 	*/
 	protected static $receipt_subject = "Shop Sale Information #%d";
-	
+
 	/**
 	 * Static way to create the order processor.
 	 * Makes creating a processor easier.
@@ -38,7 +38,7 @@ class OrderProcessor{
 	static function create(Order $order){		
 		return new OrderProcessor($order);
 	}
-	
+
 	/**
 	* Set the from address for receipt emails.
 	*
@@ -47,11 +47,11 @@ class OrderProcessor{
 	public static function set_email_from($email) {
 		self::$email_from = $email;
 	}
-	
+
 	public static function set_receipt_subject($subject) {
 		self::$receipt_subject = $subject;
 	}
-	
+
 	/**
 	 * Assign the order to a local variable
 	 * @param Order $order
@@ -59,7 +59,7 @@ class OrderProcessor{
 	private function __construct(Order $order){
 		$this->order = $order;
 	}
-	
+
 	/**
 	 * Takes an order from being a cart to awaiting payment.
 	 * @param Member $member - assign a member to the order
@@ -78,7 +78,9 @@ class OrderProcessor{
 		$this->order->Status = 'Unpaid'; //update status
 		if(!$this->order->Placed){
 			$this->order->Placed = SS_Datetime::now()->Rfc2822(); //record placed order datetime
-			$this->order->IPAddress = Controller::curr()->getRequest()->getIP(); //record client IP
+			if($request = Controller::curr()->getRequest()){
+				$this->order->IPAddress = $request->getIP(); //record client IP
+			}
 		}
 		//re-write all attributes and modifiers to make sure they are up-to-date before they can't be changed again
 		$items = $this->order->Items();
@@ -100,31 +102,31 @@ class OrderProcessor{
 		$this->order->write();
 		return true; //report success
 	}
-	
+
 	/**
 	 * Create a new payment for an order
 	 */
 	function createPayment($paymentClass = "Payment"){
-		if($this->order->canPay(Member::currentUser())){
-			$payment = class_exists($paymentClass) ? new $paymentClass() : null;
-			if(!($payment && $payment instanceof Payment)) {
-				$this->error(_t("PaymentProcessor.NOTPAYMENT","Incorrect payment class."));
-				return false;
-			}
-			//TODO: check if chosen payment type is allowed
-			$payment->OrderID = $this->order->ID;
-			$payment->PaidForID = $this->order->ID;
-			$payment->PaidForClass = $this->order->class;
-			$payment->Amount->Amount = $this->order->TotalOutstanding();
-			$payment->Reference = $this->order->Reference;
-			$payment->write();
-			$this->order->Payments()->add($payment);
-			$payment->ReturnURL = $this->order->Link(); //store temp return url reference
-			return $payment;
+		$payment = class_exists($paymentClass) ? new $paymentClass() : null;
+		if(!($payment && $payment instanceof Payment)) {
+			$this->error(_t("PaymentProcessor.NOTPAYMENT","`$paymentClass` isn't a valid payment method"));
+			return false;
 		}
-		return false;
+		if(!$this->order->canPay(Member::currentUser())){
+			$this->error(_t("PaymentProcessor.CANTPAY","Order can't be paid for"));
+			return false;
+		}
+		$payment->OrderID = $this->order->ID;
+		$payment->PaidForID = $this->order->ID;
+		$payment->PaidForClass = $this->order->class;
+		$payment->Amount->Amount = $this->order->TotalOutstanding();
+		$payment->Reference = $this->order->Reference;
+		$payment->write();
+		$this->order->Payments()->add($payment);
+		$payment->ReturnURL = $this->order->Link(); //store temp return url reference
+		return $payment;
 	}
-	
+
 	/**
 	 * Determine if an order can be placed.
 	 * @param unknown_type $order
@@ -149,8 +151,8 @@ class OrderProcessor{
 		//modifiers have been calculated
 		return true;
 	}
-	
-	
+
+
 	/**
 	 * Create a payment model, and provide link to redirect to external gateway,
 	 * or redirect to order link.
@@ -160,8 +162,7 @@ class OrderProcessor{
 		//create payment
 		$payment = $this->createPayment($paymentClass);
 		if(!$payment){
-			$form->sessionMessage($processor->getError(), 'bad');
-			//TODO: form session message won't work here if we are directing to order link
+			$this->error("Payment could not be created");
 			return $this->order->Link();
 		}
 		//map data fields
@@ -182,7 +183,7 @@ class OrderProcessor{
 		}
 		return $payment->ReturnURL;
 	}
-	
+
 	/**
 	 * Complete payment processing
 	 *    - send receipt
@@ -198,7 +199,7 @@ class OrderProcessor{
 			}
 		}
 	}	
-	
+
 	/**
 	* Send a mail of the order to the client (and another to the admin).
 	*
@@ -223,7 +224,7 @@ class OrderProcessor{
 		));
 		return $email->send();
 	}
-	
+
 	/**
 	* Send the receipt of the order by mail.
 	* Precondition: The order payment has been successful
@@ -233,7 +234,7 @@ class OrderProcessor{
 		$this->order->ReceiptSent = SS_Datetime::now()->Rfc2822();
 		$this->order->write();
 	}
-	
+
 	/**
 	* Send a message to the client containing the latest
 	* note of {@link OrderStatusLog} and the current status.
@@ -269,13 +270,13 @@ class OrderProcessor{
 		$e->setTo($member->Email);
 		$e->send();
 	}
-	
+
 	function getError(){
 		return $this->error;
 	}
-	
+
 	private function error($message){
 		$this->error = $message;
 	}
-	
+
 }

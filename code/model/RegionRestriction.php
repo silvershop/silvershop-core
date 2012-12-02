@@ -54,9 +54,9 @@ class RegionRestriction extends DataObject{
 			"PostalCode"
 		);
 		$where = array();
-		$rr = "\"RegionRestriction\"";
+		$rr = "\"RegionRestriction\".";
 		foreach($restrictables as $field){
-			$where[] = "TRIM(LOWER($rr.\"$field\")) = TRIM(LOWER('".$address->$field."')) OR $rr.\"$field\" = '*' OR $rr.\"$field\" = ''";
+			$where[] = "TRIM(LOWER($rr\"$field\")) = TRIM(LOWER('".$address->$field."')) OR $rr\"$field\" = '*' OR $rr\"$field\" = ''";
 		}
 		return "(".implode(") AND (", $where).")";
 	}

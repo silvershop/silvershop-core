@@ -29,12 +29,17 @@ class ShopConfig extends DataExtension{
 		$countriestab->setTitle("Allowed Countries");
 	}
 	
-	function getCountriesList(){
+	function getCountriesList($prefixisocode = false){
 		$countries = Geoip::getCountryDropDown();
 		if($allowed = $this->owner->AllowedCountries){
 			$allowed = explode(",",$allowed);
 			if(count($allowed > 0))
 				$countries = array_intersect_key($countries,array_flip($allowed));
+		}
+		if($prefixisocode){
+			foreach($countries as $key => $value){
+				$countries[$key] = "$key - $value";
+			}
 		}
 		return $countries;
 	}
