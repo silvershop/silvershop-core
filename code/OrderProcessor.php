@@ -28,7 +28,7 @@ class OrderProcessor{
 	* @var string
 	* @deprecated - use translation instead via Order.EMAILSUBJECT
 	*/
-	protected static $receipt_subject = "Shop Sale Information #%d";
+	protected static $receipt_subject = "Shop Sale Information #%s";
 	
 	/**
 	 * Static way to create the order processor.
