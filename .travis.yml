@@ -3,35 +3,25 @@ php:
 - 5.3
 before_script:
 
-# downgrade phpunit
-- pyrus uninstall pear.phpunit.de/PHPUnit
-- pear channel-discover pear.phpunit.de
-- pear install phpunit/PHPUnit-3.3.11
-- phpenv rehash
-- phpunit --version
-
 # get core code
 - cd ~/builds
 - git clone git://github.com/silverstripe/silverstripe-installer.git ss
 - git clone git://github.com/silverstripe/sapphire.git ss/sapphire
 - cd ss/sapphire
-- git checkout 2.4.5
+- git checkout 3.0.3
 - cd ~/builds
 - git clone git://github.com/silverstripe/silverstripe-cms.git ss/cms
 - cd ss/cms
-- git checkout 2.4.5
+- git checkout 3.0.3
 - cd ~/builds
 - git clone git://github.com/burnbright/silverstripe-payment.git ss/payment
 - git clone git://github.com/burnbright/silverstripe-bootstrap.git ss/themes/bootstrap
 - git clone git://github.com/burnbright/silverstripe-bootstrap-shop.git ss/themes/bootstrap_shop
 - git clone https://github.com/silverstripe-labs/silverstripe-sqlite3.git ss/sqlite
-- cd ss/sqlite
-- git checkout 1.2.0
-- cd ~/builds
 
 - mv burnbright/silverstripe-shop ss/shop
 
-# install configs
+# copy configs
 - mv -f ss/shop/tests/travis/_config.php.travis ss/mysite/_config.php
 - mv -f ss/shop/tests/travis/_ss_environment.php.travis ss/_ss_environment.php
 - mv -f ss/shop/tests/travis/phpunit.xml.travis ss/phpunit.xml

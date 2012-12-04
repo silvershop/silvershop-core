@@ -10,7 +10,7 @@
 
 ## Requirements
 
- * SilverStripe 2.4+
+ * SilverStripe 3+
  * Payment Module 0.3+
 
 ## Documentation
