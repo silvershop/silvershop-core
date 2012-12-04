@@ -18,14 +18,14 @@ class SteppedCheckoutTest extends FunctionalTest{
 		$this->socks->publish('Stage','Live');
 		
 		$this->checkout = new CheckoutPage_Controller($this->objFromFixture("CheckoutPage", "checkout"));
-		$this->checkout->handleRequest(new SS_HTTPRequest("GET", "checkout"));
+		$this->checkout->handleRequest(new SS_HTTPRequest("GET", "checkout"), DataModel::inst());
 		
 		$this->cart = $this->objFromFixture("Order", "cart");
 		ShoppingCart::singleton()->setCurrent($this->cart);
 	}
 	
 	function testTemplateFunctions(){
-		$this->checkout->handleRequest(new SS_HTTPRequest('GET', "")); //put us at the first step index == membership
+		$this->checkout->handleRequest(new SS_HTTPRequest('GET', ""), DataModel::inst()); //put us at the first step index == membership
 		$this->assertFalse($this->checkout->IsPastStep('membership'));
 		$this->assertTrue($this->checkout->IsCurrentStep('membership'));
 		$this->assertFalse($this->checkout->IsFutureStep('membership'));
@@ -36,7 +36,7 @@ class SteppedCheckoutTest extends FunctionalTest{
 		$this->assertFalse($this->checkout->IsCurrentStep('contactdetails'));
 		$this->assertTrue($this->checkout->IsFutureStep('contactdetails'));
 		
-		$this->checkout->handleRequest(new SS_HTTPRequest('GET', "summary")); //change to summary step
+		$this->checkout->handleRequest(new SS_HTTPRequest('GET', "summary"), DataModel::inst()); //change to summary step
 		$this->assertFalse($this->checkout->IsPastStep('summary'));
 		$this->assertTrue($this->checkout->IsCurrentStep('summary'));
 		$this->assertFalse($this->checkout->IsFutureStep('summary'));

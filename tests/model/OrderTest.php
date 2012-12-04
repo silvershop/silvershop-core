@@ -101,7 +101,7 @@ class OrderTest extends SapphireTest {
 			array('ProductID' => $this->socks->ID, 'Quantity' => 1, 'CalculatedTotal' => 8)
 		), $items);
 		
-		$mp3player = $items->find('ProductID',$this->mp3player->ID);
+		$mp3player = $items->innerJoin("Product_OrderItem","OrderItem.ID = Product_OrderItem.ID")->find('ProductID',$this->mp3player->ID);//join needed to provide ProductID
 		$this->assertNotNull($mp3player);
 		$this->assertEquals($mp3player->UnitPrice(),200,"Unit price remains the same");
 		$this->assertEquals($mp3player->Total(),400,"");

@@ -91,18 +91,23 @@ class ProductVariationDecorator extends DataExtension{
 		if(!is_array($attributes)) return null;
 		$keyattributes = array_keys($attributes);
 		$id = $keyattributes[0];
-		$where = "\"ProductID\" = ".$this->owner->ID;
 		$join = "";
 
+		$variations = ProductVariation::get()->where("\"ProductID\" = ".$this->owner->ID);
+		
 		foreach($attributes as $typeid => $valueid){
 			if(!is_numeric($typeid) || !is_numeric($valueid))
 				return null; //ids MUST be numeric
 			$alias = "A$typeid";
-			$where .= " AND $alias.ProductAttributeValueID = $valueid";
-			$join .= "INNER JOIN ProductVariation_AttributeValues AS $alias ON ProductVariation.ID = $alias.ProductVariationID ";
+			$variations->where("$alias.ProductAttributeValueID = $valueid");
+			$variations->innerJoin(
+				"ProductVariation_AttributeValues",
+				"ProductVariation.ID = $alias.ProductVariationID",
+				$alias
+			);
 		}
-		if($variation = DataObject::get('ProductVariation',$where,"",$join))
-			return $variation->First();
+		if($variation = $variations->First())
+			return $variation;
 		return false;
 	}
 

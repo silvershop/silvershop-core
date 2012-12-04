@@ -41,7 +41,7 @@ class OrderForm extends Form {
 			);
 			
 			$billingFields->FieldList()->merge($addressSingleton->getFormFields('Billing'));
-			$billingFields->push($changeshippingbutton = new FormAction_WithoutLabel('useMemberShippingAddress', _t('OrderForm.ShippingIsBilling','Use Shipping Address for Billing')));
+			$billingFields->push($changeshippingbutton = new FormAction('useMemberShippingAddress', _t('OrderForm.ShippingIsBilling','Use Shipping Address for Billing')));
 			
 			//Need to to this because 'FormAction_WithoutLabel' has no text on the actual button
 			$changeshippingbutton->setButtonContent(_t('OrderForm.ShippingIsBilling','Use Shipping Address for Billing'));

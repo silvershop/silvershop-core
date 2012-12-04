@@ -20,7 +20,7 @@ class PopulateShopTask extends BuildTask{
 		//create products
 		if(!DataObject::get_one('Product')){
 			$fixture = new YamlFixture(SHOP_DIR."/tests/fixtures/dummyproducts.yml");
-			$fixture->saveIntoDatabase("Product");
+			$fixture->saveIntoDatabase(DataModel::inst());//needs to be a data model
 			$categoriestopublish = array(
 				'products',
 					'electronics',
@@ -63,7 +63,7 @@ class PopulateShopTask extends BuildTask{
 		//terms page
 		if(!$termsPage = DataObject::get_one('Page', "\"URLSegment\" = 'terms-and-conditions'")) {
 			$fixture = new YamlFixture(SHOP_DIR."/tests/fixtures/pages/TermsConditions.yml");
-			$fixture->saveIntoDatabase("Page");
+			$fixture->saveIntoDatabase(DataModel::inst());
 			$page = $fixture->objFromFixture("Page", "termsconditions");
 			$page->writeToStage('Stage');
 			$page->publish('Stage', 'Live');
@@ -77,7 +77,7 @@ class PopulateShopTask extends BuildTask{
 		//cart page
 		if(!$page = DataObject::get_one('CartPage')) {
 			$fixture = new YamlFixture(SHOP_DIR."/tests/fixtures/pages/Cart.yml");
-			$fixture->saveIntoDatabase("CartPage");
+			$fixture->saveIntoDatabase(DataModel::inst());
 			$page = $fixture->objFromFixture("CartPage", "cart");
 			$page->writeToStage('Stage');
 			$page->publish('Stage', 'Live');
@@ -87,7 +87,7 @@ class PopulateShopTask extends BuildTask{
 		//checkout page
 		if(!$page = DataObject::get_one('CheckoutPage')) {
 			$fixture = new YamlFixture(SHOP_DIR."/tests/fixtures/pages/Checkout.yml");
-			$fixture->saveIntoDatabase('CheckoutPage');
+			$fixture->saveIntoDatabase(DataModel::inst());
 			$page = $fixture->objFromFixture("CheckoutPage", "checkout");
 			$page->writeToStage('Stage');
 			$page->publish('Stage', 'Live');
@@ -97,7 +97,7 @@ class PopulateShopTask extends BuildTask{
 		//account page
 		if(!DataObject::get_one('AccountPage')) {
 			$fixture = new YamlFixture(SHOP_DIR."/tests/fixtures/pages/Account.yml");
-			$fixture->saveIntoDatabase('AccountPage');
+			$fixture->saveIntoDatabase(DataModel::inst());
 			$page = $fixture->objFromFixture("AccountPage", "account");
 			$page->writeToStage('Stage');
 			$page->publish('Stage', 'Live');

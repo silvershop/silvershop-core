@@ -27,7 +27,7 @@ class ZoneTest extends SapphireTest{
 	
 	function assertNoZoneMatch($address){
 		$zones = Zone::get_zones_for_address($address);
-		$this->assertNull($zones);
+		$this->assertFalse($zones->exists(), "No zones exist");
 	}
 	
 }

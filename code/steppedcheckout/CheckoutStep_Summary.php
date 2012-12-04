@@ -38,12 +38,12 @@ class CheckoutStep_Summary extends CheckoutStep{
 		//try to place order
 		if(!$processor->placeOrder()){
 			$form->sessionMessage($processor->getError(), 'bad');
-			Director::redirectBack();
+			$this->owner->redirectBack();
 			return false;
 		}
 		$paymentredirect = $processor->makePayment(Checkout::get($order)->getSelectedPaymentMethod(false));
-		if(!Director::redirected_to()){ //only redirect if one hasn't been done already
-			Director::redirect($paymentredirect);
+		if(!$this->owner->redirectedTo()){ //only redirect if one hasn't been done already
+			$this->owner->redirect($paymentredirect);
 		}
 		return;
 	}

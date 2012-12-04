@@ -61,7 +61,7 @@ class ProductOrderItemTest extends FunctionalTest {
 			"ProductID" => $this->socks->ID,
 			"ProductVersion" => 99999 //non existent version
 		));
-		$this->assertFalse($brokenitem->Product(),"version does not exist");
+		$this->assertNull($brokenitem->Product(),"version does not exist");
 	}
 
 }

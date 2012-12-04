@@ -55,7 +55,7 @@ class OrderManipulation extends Extension{
 	 * @return the order
 	 */
 	public function orderfromid($extrafilter = null){
-		$orderid = Director::urlParam('ID');
+		$orderid = $this->owner->getRequest()->param('ID');
 		if(!$orderid){
 			$orderid = (isset($_POST['OrderID'])) ? $_POST['OrderID'] : null;
 		}

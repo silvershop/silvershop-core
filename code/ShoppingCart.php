@@ -428,10 +428,10 @@ class ShoppingCart_Controller extends Controller{
 			return $status;
 		}
 		if(self::$direct_to_cart_page && $cartlink = CartPage::find_link()){
-			Director::redirect($cartlink);
+			Controller::curr()->redirect($cartlink);
 			return;
 		}else{
-			Director::redirectBack();
+			Controller::curr()->redirectBack();
 			return;
 		}
 	}

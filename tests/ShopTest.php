@@ -13,7 +13,6 @@ class ShopTest extends FunctionalTest {
 
 	function setUp() {
 		parent::setUp();
-		/* Let's check that we have the Payment module installed properly */
 		$this->assertTrue(class_exists('Payment'), 'Payment module is installed.');
 	}
 

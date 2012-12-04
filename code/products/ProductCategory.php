@@ -120,19 +120,17 @@ class ProductCategory extends Page {
 		$groupids = array($this->ID);
 
 		if(($recursive === true || $recursive === 'true') && self::$include_child_groups && $childgroups = $this->ChildGroups(true))
-			$groupids = array_merge($groupids,$childgroups->toArray());
+			$groupids = array_merge($groupids,$childgroups->map('ID','ID'));
 
 		$groupidsimpl = implode(',',$groupids);
 
-		//$join = $this->getManyManyJoin('Products','Product');
-		//$multicatfilter = $this->getManyManyFilter('Products','Product');
-
-		//TODO: get products that appear in child groups (make this optional)
 		$products = Versioned::get_by_stage('Product','Live',"\"ParentID\" IN ($groupidsimpl) $filter",$sort,"",$limit);
 		$allproducts = Versioned::get_by_stage('Product','Live',"\"ParentID\" IN ($groupidsimpl) $filter","","");
 
-		if($allproducts) $products->TotalCount = $allproducts->Count(); //add total count to returned data for 'showing x to y of z products'
-		//if($products && $products instanceof DataList) $products->removeDuplicates();
+		if($allproducts){
+			$products->TotalCount = $allproducts->Count(); //add total count to returned data for 'showing x to y of z products'
+		}
+
 		return $products;
 	}
 
@@ -143,7 +141,7 @@ class ProductCategory extends Page {
 	function ChildGroups($recursive = false) {
 		if($recursive){
 			if($children = Versioned::get_by_stage('ProductCategory','Live', "\"ParentID\" = '$this->ID'")){
-				$output = unserialize(serialize($children));
+				$output = new ArrayList($children->toArray());
 				foreach($children as $group){
 					$output->merge($group->ChildGroups($recursive));
 				}

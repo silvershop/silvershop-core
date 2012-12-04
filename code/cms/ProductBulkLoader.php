@@ -93,7 +93,7 @@ class ProductBulkLoader extends CsvBulkLoader{
 		self::$hasStockImpl = Object::has_extension('Product', 'ProductStockDecorator');
 		$results = parent::processAll($filepath, $preview);	
 		//After results have been processed, publish all created & updated products
-		$objects = new DataObjectSet();
+		$objects = new ArrayList();
 		$objects->merge($results->Created());
 		$objects->merge($results->Updated());
 		foreach($objects as $object){

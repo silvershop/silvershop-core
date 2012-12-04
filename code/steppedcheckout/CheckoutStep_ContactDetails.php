@@ -35,10 +35,10 @@ class CheckoutStep_ContactDetails extends CheckoutStep{
 		if($order = ShoppingCart::curr()){
 			$checkout = new Checkout($order);
 			$checkout->setContactDetails($data['Email'],$data['FirstName'],$data['Surname']);
-			Director::redirect($this->NextStepLink());
+			$this->owner->redirect($this->NextStepLink());
 			return;
 		}
-		Director::redirect($this->owner->Link());
+		$this->owner->redirect($this->owner->Link());
 	}
 	
 }

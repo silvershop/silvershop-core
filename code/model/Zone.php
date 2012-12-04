@@ -20,11 +20,11 @@ class Zone extends DataObject{
 	 * Returns a DataSet of matching zones
 	*/
 	static function get_zones_for_address(Address $address){
-		$join = "INNER JOIN \"ZoneRegion\" ON \"Zone\".\"ID\" = \"ZoneRegion\".\"ZoneID\" ".
-			"INNER JOIN \"RegionRestriction\" ON \"ZoneRegion\".\"ID\" = \"RegionRestriction\".\"ID\" ";
 		$where = RegionRestriction::address_filter($address);
-		$sort = "\"PostalCode\" DESC, \"City\" DESC, \"State\" DESC,\"Country\" DESC"; //* comes after alpha numerics
-		return DataObject::get("Zone",$where,$sort,$join);
+		return Zone::get()->where($where)
+					->sort('PostalCode DESC, City DESC, State DESC, Country DESC')
+					->innerJoin("ZoneRegion","\"Zone\".\"ID\" = \"ZoneRegion\".\"ZoneID\"")
+					->innerJoin("RegionRestriction","\"ZoneRegion\".\"ID\" = \"RegionRestriction\".\"ID\"");
 	}
 	
 	/*
@@ -32,7 +32,7 @@ class Zone extends DataObject{
 	 */
 	static function cache_zone_ids(Address $address){
 		if($zones = self::get_zones_for_address($address)){
-			$ids = $zones->map('ID','ID');
+			$ids = $zones->map('ID','ID')->toArray();
 			Session::set("MatchingZoneIDs",implode(",",$ids));
 			return $ids;
 		}
