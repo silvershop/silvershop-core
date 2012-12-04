@@ -391,7 +391,7 @@ class Product_OrderItem extends OrderItem {
 	 */
 	public function Product($forcecurrent = false) {
 		if($this->ProductID && $this->ProductVersion && !$forcecurrent){
-			return FixVersioned::get_version('Product', $this->ProductID, $this->ProductVersion);
+			return Versioned::get_version('Product', $this->ProductID, $this->ProductVersion);
 		}elseif($this->ProductID && $product = Versioned::get_one_by_stage('Product','Live', "\"Product\".\"ID\"  = ".$this->ProductID)){
 			return $product;
 		}
