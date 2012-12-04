@@ -28,16 +28,6 @@
  */
 class CheckoutPage extends Page {
 
-	public static $db = array(
-		'PurchaseComplete' => 'HTMLText',
-		'ChequeMessage' => 'HTMLText',
-		'AlreadyCompletedMessage' => 'HTMLText',
-		'NonExistingOrderMessage' => 'HTMLText',
-		'MustLoginToCheckoutMessage' => 'HTMLText',
-
-		'CheckoutFinishMessage' => 'HTMLText'
-	);
-
 	static $icon = 'shop/images/icons/money';
 
 	/**

@@ -55,7 +55,7 @@ class OrderManipulation extends Extension{
 	 * @return the order
 	 */
 	public function orderfromid($extrafilter = null){
-		$orderid = Director::urlParam('ID');
+		$orderid = Controller::curr()->request->param('ID');
 		if(!$orderid){
 			$orderid = (isset($_POST['OrderID'])) ? $_POST['OrderID'] : null;
 		}
@@ -154,6 +154,21 @@ class OrderManipulation extends Extension{
 			Session::clear("OrderManipulation.MessageType");
 		}
 		return $this->sessionmessagetype;
+	}
+	
+	/**
+	 * If Session 'ShowCheckoutSuccessMessage' true
+	 * see: OrderProcessor#completePayment this is 
+	 * where 'ShowCheckoutSuccessMessage' is set 
+	 * then show content from ShopConfig
+	 * @return HTMLText
+	 */
+	function SuccessMessage(){
+		if(SiteConfig::current_site_config()->CheckoutSuccessMessage && Session::get('ShowCheckoutSuccessMessage')){
+			Session::clear('ShowCheckoutSuccessMessage');
+			$successMessage = SiteConfig::current_site_config()->CheckoutSuccessMessage;
+			return $successMessage;
+		}
 	}
 
 	/**

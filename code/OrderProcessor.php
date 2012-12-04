@@ -186,12 +186,16 @@ class OrderProcessor{
 
 	/**
 	 * Complete payment processing
+	 *    - set session ShowCheckoutSuccessMessage to true 
+	 *      used in OrderManipulation for displaying
+	 *      SuccessMessage in template
 	 *    - send receipt
-	 * 	- update order status accordingling
+	 * 	  - update order status accordingling
 	 */
 	function completePayment(){
 		if(!$this->order->ReceiptSent && $this->order->Status != 'Paid'){
-			$this->sendReceipt();
+			Session::set('ShowCheckoutSuccessMessage',true);
+			$this->sendReceipt(); // send email
 			if($this->order->GrandTotal() > 0 && $this->order->TotalOutstanding() <= 0){
 				$this->order->Status = 'Paid';
 				$this->order->Paid = SS_Datetime::now()->Rfc2822();
@@ -210,7 +214,7 @@ class OrderProcessor{
 		$from = self::$email_from ? self::$email_from : Email::getAdminEmail();
 		$to = $this->order->getLatestEmail();
 		$subject = sprintf(_t("Order.EMAILSUBJECT",self::$receipt_subject) ,$this->order->Reference);
-		$purchaseCompleteMessage = DataObject::get_one('CheckoutPage')->PurchaseComplete;
+		$purchaseCompleteMessage = SiteConfig::current_site_config()->CheckoutSuccessMessage;
 		$email = new $emailClass();
 		$email->setFrom($from);
 		$email->setTo($to);
