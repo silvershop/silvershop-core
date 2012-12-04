@@ -51,10 +51,6 @@ class CheckoutStep_Membership extends CheckoutStep{
 	
 	function createaccount($requestdata){
 		if(Member::currentUser()){ //we shouldn't create an account if already a member
-			if(!ShoppingCart::curr()){
-				debug("yes");
-				exit();
-			}
 			Controller::curr()->redirect($this->NextStepLink());
 			return;
 		}
