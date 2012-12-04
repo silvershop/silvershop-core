@@ -33,35 +33,24 @@ class OrderForm extends Form {
 		$requiredFields = $order->getRequiredFields(); //TODO: move to somewhere else
 			
 		if($order && $order->SeparateBillingAddress) {
-			$countryField = new DropdownField('ShippingCountry',  _t('OrderForm.Country','Country'), Geoip::getCountryDropDown(), ShopMember::find_country());
 			$orderFields->fieldByName("ShippingHeading")->setTitle(_t('OrderForm.ShippingAddress','Shipping Address'));
 			$billingFields = new CompositeField(
 				new HeaderField(_t('OrderForm.BillingAddress','Billing Address'), 3),
 				new HiddenField('SeparateBillingAddress', '', true)
 			);
-			
 			$billingFields->FieldList()->merge($addressSingleton->getFormFields('Billing'));
 			$billingFields->push($changeshippingbutton = new FormAction('useMemberShippingAddress', _t('OrderForm.ShippingIsBilling','Use Shipping Address for Billing')));
-			
 			//Need to to this because 'FormAction_WithoutLabel' has no text on the actual button
 			$changeshippingbutton->setButtonContent(_t('OrderForm.ShippingIsBilling','Use Shipping Address for Billing'));
 			$changeshippingbutton->useButtonTag = true;
-
 			$requiredFields = array_merge($requiredFields,$addressSingleton->getRequiredFields('Billing'));
-		} else {
-			$countryField = $orderFields->fieldByName('Country');
-		
+		} else {		
 			$billingFields = new FormAction('useDifferentShippingAddress', _t('OrderForm.DifferentBillingAddress', 'Use Different Billing Address'));
 			//Need to to this because 'FormAction_WithoutLabel' has no text on the actual button
 			$billingFields->setButtonContent(_t('OrderForm.DifferentBillingAddress', 'Use Different Billing Address'));
 			$billingFields->useButtonTag = true;
 		}
-		if($countryField){
-			$countryField->addExtraClass('ajaxCountryField');
-			$setCountryLinkID = $countryField->id() . '_SetCountryLink';
-			$setContryLink = ShoppingCart::set_country_link();
-			$orderFields->push(new HiddenField($setCountryLinkID, '', $setContryLink));
-		}
+
 		$leftFields = new CompositeField($orderFields, $billingFields);
 		$leftFields->setID('LeftOrder');
 		$rightFields = new CompositeField();
@@ -76,7 +65,6 @@ class OrderForm extends Form {
 			if(self::$user_membership_optional){
 				$pwf->setCanBeEmpty(true);
 			}
-
 			if(self::$force_membership || !self::$user_membership_optional){
 				$requiredFields[] = 'Password[_Password]';
 				$requiredFields[] = 'Password[_ConfirmPassword]';
@@ -107,13 +95,7 @@ class OrderForm extends Form {
 		//Actions and required fields creation
 		$actions = new FieldList(new FormAction('processOrder', _t('OrderForm.processOrder','Place order and make payment')));
 		$requiredFields = new RequiredFields();
-		parent::__construct($controller, $name, $fields, $actions, $requiredFields);
-		//Country field value update
-		if($countryField){
-			$currentOrder = ShoppingCart::current_order();
-			$currentOrderCountry = $currentOrder->findShippingCountry(true);
-			$countryField->setValue($currentOrderCountry);
-		}		
+		parent::__construct($controller, $name, $fields, $actions, $requiredFields);	
 		//allow updating via decoration
 		$this->extend('updateForm',$this);
 	}
