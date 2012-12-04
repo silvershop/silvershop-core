@@ -37,7 +37,7 @@ class CheckoutStep_Address extends CheckoutStep{
 		);
 		$validator =  new RequiredFields(singleton("Address")->getRequiredFields());
 		$form = new Form($this->owner, 'AddressForm', $fields, $actions, $validator);
-		$this->owner->extend('updateForm',$form);
+		$this->owner->extend('updateAddressForm',$form);
 		return $form;
 	}
 	
@@ -56,6 +56,7 @@ class CheckoutStep_Address extends CheckoutStep{
 		$form->Actions()->push(
 			new FormAction("setbillingaddress","Continue")
 		);
+		$this->owner->extend('updateBillingAddressForm',$form);
 		return array(
 			'Form' => $form
 		);

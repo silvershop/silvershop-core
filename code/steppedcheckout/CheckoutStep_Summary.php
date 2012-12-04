@@ -27,7 +27,9 @@ class CheckoutStep_Summary extends CheckoutStep{
 			new FormAction("place","Confirm and Pay")
 		);
 		$validator = new CheckoutValidator();
-		return new Form($this->owner,"ConfirmationForm",$fields,$actions, $validator);
+		$form = new Form($this->owner,"ConfirmationForm",$fields,$actions, $validator);
+		$this->owner->extend('updateConfirmationForm',$form);
+		return $form;
 	}
 	
 	function place($data, $form){

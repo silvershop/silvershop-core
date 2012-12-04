@@ -27,7 +27,7 @@ class CheckoutStep_ContactDetails extends CheckoutStep{
 		);
 		$validator =  new RequiredFields(array_keys($fields->dataFields())); //require all fields
 		$form = new Form($this->owner, 'ContactDetailsForm', $fields, $actions,$validator);
-		$this->owner->extend('updateForm',$form);
+		$this->owner->extend('updateContactDetailsForm',$form);
 		return $form;
 	}
 	
