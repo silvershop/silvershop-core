@@ -16,8 +16,8 @@ class OrderActionsForm extends Form{
 		'httpsubmission'
 	);
 	
-	function handleRequest($request){
-		return parent::handleRequest($request);
+	function handleRequest(SS_HTTPRequest $request, DataModel $model){
+		return parent::handleRequest($request,$model);
 	}
 	
 	function __construct($controller, $name = "OrderActionsForm", Order $order) {
@@ -59,7 +59,7 @@ class OrderActionsForm extends Form{
 				$payment = $processor->createPayment($paymentClass);
 				if(!$payment){
 					$form->sessionMessage($processor->getError(), 'bad');
-					Director::redirect($order->Link());
+					Controller::curr()->redirect($order->Link());
 					return;
 				}
 				$payment->ReturnURL = $order->Link(); //set payment return url
@@ -70,12 +70,12 @@ class OrderActionsForm extends Form{
 				if($result->isSuccess()) {
 					$order->sendReceipt();
 				}
-				Director::redirect($payment->ReturnURL);
+				Controller::curr()->redirect($payment->ReturnURL);
 				return;
 			}
 		}
 		$form->sessionMessage(_t('OrderForm.COULDNOTPROCESSPAYMENT', 'Payment could not be processed.'),'bad');
-		Director::redirectBack();
+		Controller::curr()->redirectBack();
 	}
 	
 	/**
@@ -101,7 +101,7 @@ class OrderActionsForm extends Form{
 			}
 			$form->Controller()->setSessionMessage(_t("OrderForm.ORDERCANCELLED", "Order sucessfully cancelled"),'warning'); //assumes controller has OrderManipulation extension
 			if(Member::currentUser() && $link = $order->Link()){
-				Director::redirect($link);
+				Controller::curr()->redirect($link);
 			}else{
 				Director::redirectBack();
 			}

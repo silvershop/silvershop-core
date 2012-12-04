@@ -416,7 +416,7 @@ class ShoppingCart_Controller extends Controller{
 			return $status;
 		}
 		if(self::$direct_to_cart_page && $cartlink = CartPage::find_link()){
-			Director::redirect($cartlink);
+			Controller::curr()->redirect($cartlink);
 			return;
 		}else{
 			Director::redirectBack();
@@ -489,7 +489,7 @@ class ShoppingCart_Controller extends Controller{
 	 */
 	function index(){
 		if($cart = $this->Cart()){
-			Director::redirect($cart->CartLink);
+			Controller::curr()->redirect($cart->CartLink);
 			return;
 		}elseif($response = ErrorPage::response_for(404)) {
 			return $response;

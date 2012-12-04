@@ -43,7 +43,7 @@ class CheckoutStep_Summary extends CheckoutStep{
 		}
 		$paymentredirect = $processor->makePayment(Checkout::get($order)->getSelectedPaymentMethod(false));
 		if(!Director::redirected_to()){ //only redirect if one hasn't been done already
-			Director::redirect($paymentredirect);
+			Controller::curr()->redirect($paymentredirect);
 		}
 		return;
 	}
