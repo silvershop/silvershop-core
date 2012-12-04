@@ -3,7 +3,9 @@
 class ShopConfig extends DataExtension{
 	
 	static $db = array(
-		'AllowedCountries' => 'Text'
+		'AllowedCountries' => 'Text',
+		'CheckoutSuccessMessage' => 'HTMLText',
+		'CheckoutEmailSuccessMessage' => 'HTMLText'
 	);
 	
 	static $has_one = array(
@@ -23,6 +25,10 @@ class ShopConfig extends DataExtension{
 			),
 			$countriestab = new Tab("Countries",
 				$allowed = new CheckboxSetField('AllowedCountries','Allowed Ordering and Shipping Countries',Geoip::getCountryDropDown())
+			),
+			$messagestab = new Tab("Messages",
+				new HtmlEditorField('CheckoutSuccessMessage','Order Success Content (appears in Checkout and Account pages)'),
+				new HtmlEditorField('CheckoutEmailSuccessMessage','Email Success Content (appears in email receipt)')
 			)
 		));
 		$fields->removeByName("CreateTopLevelGroups");
