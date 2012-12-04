@@ -14,7 +14,7 @@ class ShopCountry extends Varchar{
 	 * Convert ISO abbreviation to full, translated country name
 	 */
 	function Nice(){
-		$val = Geoip::countryCode2name($this->value);
+		$val = ShopConfig::countryCode2name($this->value);
 		if(!$val){
 			$val  = $this->value;
 		} 

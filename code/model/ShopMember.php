@@ -28,7 +28,7 @@ class ShopMember extends DataExtension {
 		$fields->removeByName('Country');
 		$fields->removeByName("DefaultShippingAddressID");
 		$fields->removeByName("DefaultBillingAddressID");
-		$fields->addFieldToTab('Root.Main', new DropdownField('Country', 'Country', Geoip::getCountryDropDown()));
+		$fields->addFieldToTab('Root.Main', new DropdownField('Country', 'Country', SiteConfig::current_site_config()->getCountriesList()));
 	}
 	
 	function updateMemberFormFields($fields){
@@ -69,7 +69,7 @@ class ShopMember extends DataExtension {
 	 * Get country title by iso country code.
 	 */
 	static function find_country_title($code) {
-		$countries = Geoip::getCountryDropDown();
+		$countries = SiteConfig::current_site_config()->getCountriesList();
 		// check if code was provided, and is found in the country array
 		if($code && $countries[$code]) {
 			return $countries[$code];
@@ -86,14 +86,8 @@ class ShopMember extends DataExtension {
 		if($member && $member->Country) {
 			$country = $member->Country;
 		} else {
-			if($country = ShoppingCart::get_country())
+			if($country = ShoppingCart::get_country()){
 				return $country;
-			// HACK Avoid CLI tests from breaking (GeoIP gets in the way of unbiased tests!)
-			// @todo Introduce a better way of disabling GeoIP as needed (Geoip::disable() ?)
-			if(Director::is_cli()) {
-				$country = null;
-			} else {
-				$country = Geoip::visitor_country();
 			}
 		}
 		return $country;
