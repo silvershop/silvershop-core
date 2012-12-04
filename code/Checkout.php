@@ -24,9 +24,11 @@ class Checkout{
 		if($order === null){
 			$order = ShoppingCart::curr(); //roll back to current cart
 		}		
-		if($order->exists() && $order->isInDB()){//check if order can go through checkout
+		if($order){
 			return new Checkout($order);
 		}
+		
+		
 		return false;
 	}
 	
