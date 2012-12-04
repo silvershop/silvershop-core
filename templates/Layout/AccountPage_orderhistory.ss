@@ -2,8 +2,7 @@
 <div class="accountnav">
 	<% include AccountPageSideBar %>
 </div>
-<div class="typography accountcontent">
-	$Content
+<div class="typography accountcontent orderhistory">
 	<h2 class="pagetitle">Past Orders</h2>
 	<% with CurrentMember %>
 		<% if PastOrders %>
