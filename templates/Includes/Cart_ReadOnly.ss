@@ -16,7 +16,7 @@
 	</thead>
 	<tbody>
 		<% control Items %>
-			<% include Order_ItemLine %>
+			<% include Order_Content_ItemLine %>
 		<% end_control %>
 	</tbody>
 	<tfoot>
