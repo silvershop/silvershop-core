@@ -16,10 +16,6 @@ class OrderActionsForm extends Form{
 		'httpsubmission'
 	);
 	
-	function handleRequest($request){
-		return parent::handleRequest($request);
-	}
-	
 	function __construct($controller, $name = "OrderActionsForm", Order $order) {
 		$fields = new FieldList(
 			new HiddenField('OrderID', '', $order->ID)
