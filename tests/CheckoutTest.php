@@ -56,7 +56,7 @@ class CheckoutTest extends SapphireTest{
 			'Email' => 'jane@smith.net',
 			'Password' => 'janesmith2012'	
 		));
-		$this->assertType("Member", $result, $this->checkout->getMessage());
+		$this->assertTrue(($result instanceof Member), $this->checkout->getMessage());
 		$this->assertTrue($this->checkout->validateMember($result));
 	}
 	
