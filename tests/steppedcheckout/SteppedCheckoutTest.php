@@ -40,10 +40,10 @@ class SteppedCheckoutTest extends FunctionalTest{
 		$this->assertFalse($this->checkout->IsPastStep('summary'));
 		$this->assertTrue($this->checkout->IsCurrentStep('summary'));
 		$this->assertFalse($this->checkout->IsFutureStep('summary'));
-		
 	}
 	
 	function testMembershipStep(){
+		
 		$this->checkout->index();
 		$this->checkout->membership();
 		$this->post('/checkout/guestcontinue', array()); //redirect to next step
@@ -63,11 +63,10 @@ class SteppedCheckoutTest extends FunctionalTest{
 			'action_docreateaccount' => 'Create New Account'
 		);
 		$response = $this->post('/checkout/CreateAccountForm', $data); //redirect to next step
-		//TODO: check redirect?
-		//check new account was created
 		$member = ShopMember::get_by_identifier("mb@blahmail.com");
-		$this->assertEquals($member->FirstName,'Michael');
-		$this->assertEquals($member->Surname,'Black');
+		$this->assertTrue((boolean)$member, "Check new account was created");
+		$this->assertEquals($member->FirstName, 'Michael');
+		$this->assertEquals($member->Surname, 'Black');
 	}
 	
 	function testContactDetails(){
