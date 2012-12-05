@@ -10,6 +10,7 @@ class CheckoutStep_Membership extends CheckoutStep{
 		'MembershipForm',
 		'LoginForm',
 		'createaccount',
+		'docreateaccount',
 		'CreateAccountForm'
 	);
 	
