@@ -5,7 +5,13 @@
 class OrderItemList extends Extension{
 	
 	function Quantity(){
-		return $this->owner->Sum('Quantity');
+		$total = 0;
+		if($this->owner->exists()){
+			foreach($this->owner as $item){
+				$total += $item->Quantity;
+			}
+		}
+		return $total;
 	}
 	
 	function Plural(){
@@ -13,7 +19,8 @@ class OrderItemList extends Extension{
 	}
 	
 	/**
-	 * Sums up all of desired field for items. Optionally sum product field instead.
+	 * Sums up all of desired field for items, and multiply by quantity.
+	 * Optionally sum product field instead.
 	 * @param $field - field to sum
 	 * @param boolean $onproduct - sum from product or not
 	 * @return number total
@@ -23,9 +30,9 @@ class OrderItemList extends Extension{
 		if($this->owner->exists()){
 			foreach($this->owner as $item){
 				if(!$onproduct){
-					$total += $item->$field;
+					$total += $item->$field * $item->Quantity;
 				}elseif($product = $item->Product()){
-					$total += $product->$field;
+					$total += $product->$field * $item->Quantity;
 				}
 			}
 		}

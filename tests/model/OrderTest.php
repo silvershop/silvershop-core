@@ -41,7 +41,7 @@ class OrderTest extends SapphireTest {
 		$order->debug();
 	}
 	
-	function testProductOrderItems() {
+	function testOrderItems() {
 		$order = self::createOrder();
 		$items = $order->Items();
 		$this->assertNotNull($items);
@@ -51,6 +51,7 @@ class OrderTest extends SapphireTest {
 		), $items);
 		$this->assertEquals($items->Quantity(),3);
 		$this->assertTrue($items->Plural());
+		$this->assertEquals($items->Sum('Weight', true), 0.7);
 	}
 	
 	function testSubtotal() {
