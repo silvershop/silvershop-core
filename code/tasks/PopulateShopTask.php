@@ -15,9 +15,9 @@ class PopulateShopTask extends BuildTask{
 	
 	function run($request){
 		
-		if($request->getParam('createintzone')){
+		if($request->getVar('createintzone')){
 			$this->populateInternationalZone();
-			DB::alteration_message('Created international zone', 'created');
+			DB::alteration_message('Created an international zone', 'created');
 			return;
 		}
 		
