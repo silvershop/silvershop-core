@@ -53,13 +53,15 @@ class Zone extends DataObject{
 	
 	function getCMSFields(){
 		$fields = parent::getCMSFields();
-		$fields->fieldByName("Root")->removeByName("Regions");
-		if($this->isInDB()){
-			$tablefield = new TableField("Regions", "ZoneRegion", RegionRestriction::$field_labels, RegionRestriction::get_table_field_types());
-			$tablefield->setCustomSourceItems($this->Regions());
-			$fields->addFieldsToTab("Root.Main", array(
-				$tablefield
-			));
+		if($this->Regions()->Count() < 20){
+			$fields->fieldByName("Root")->removeByName("Regions");
+			if($this->isInDB()){
+				$tablefield = new TableField("Regions", "ZoneRegion", RegionRestriction::$field_labels, RegionRestriction::get_table_field_types());
+				$tablefield->setCustomSourceItems($this->Regions());
+				$fields->addFieldsToTab("Root.Main", array(
+					$tablefield
+				));
+			}
 		}
 		return $fields;
 	}
