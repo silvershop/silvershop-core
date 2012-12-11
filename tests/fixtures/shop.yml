@@ -58,6 +58,11 @@ CheckoutPage:
         Title: Checkout
         URLSegment: checkout
 
+CartPage:
+    cart:
+        Title: Cart
+        URLSegment: cart
+
 AccountPage:
     accountpage:
         Title: Account
@@ -112,22 +117,26 @@ Product_OrderItem:
     cart_socks:
         Order: =>Order.cart
         Product: =>Product.socks
+        ProductVersion: 1
         Quantity: 1
     placed_tshirt:
         Order: =>Order.placed
         Product: =>Product.tshirt
+        ProductVersion: 1
         UnitPrice: 25
         Quantity: 4
         CalculatedTotal: 100
     placed_mp3player:
         Order: =>Order.placed
         Product: =>Product.mp3player
+        ProductVersion: 1
         UnitPrice: 200
         Quantity: 2
         CalculatedTotal: 400
     paid_socks:
         Order: =>Order.paid
         Product: =>Product.socks
+        ProductVersion: 1
         UnitPrice: 8
         Quantity: 100
         CalculatedTotal: 800
