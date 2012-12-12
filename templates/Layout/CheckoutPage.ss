@@ -1,3 +1,4 @@
+<% require ThemedCSS(checkout) %>
 <h1 class="pagetitle">$Title</h1>
 <div class="typography">
 	<% if Content %>
@@ -13,23 +14,17 @@
 	<% control ModifierForms %>
 		$Me
 	<% end_control %>
-	
+	$OrderForm
 <% else %>
 	<p class="message warning"><% _t('CartPage.ss.CARTEMPTY','Your cart is empty.') %></p>
-<% end_if %>  
+<% end_if %> 
+
 <div class="cartfooter">
 	<% if ContinueLink %>
 		<a class="continuelink button" href="$ContinueLink">
 			<% _t('CartPage.ss.CONTINUE','Continue Shopping') %>
 		</a>
-	<% end_if %>
-	<% if Cart %>
-		<% if Cart.CheckoutLink %>
-			<a class="checkoutlink button" href="$Cart.CheckoutLink">
-				<% _t('CartPage.ss.PROCEEDTOCHECKOUT','Proceed to Checkout') %>
-			</a>
-		<% end_if %>
-	<% end_if %>
+	<% end_if %>	
 </div>
 <%--- <% include RelatedItems %> ---%>
 <%--- <% include RecentlyViewedItems %> ---%>
