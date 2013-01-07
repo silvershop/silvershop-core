@@ -14,7 +14,7 @@
 	<tbody>
 		<% control Payments %>	
 			<tr>
-				<td class="price">$Created.Nice</td>
+				<td class="price">$Created.Nice24</td>
 				<td class="price">$Amount.Nice $Currency</td>
 				<td class="price">$Status</td>
 				<td class="price">$PaymentMethod</td>
