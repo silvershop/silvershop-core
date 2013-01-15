@@ -187,11 +187,6 @@ class Order extends DataObject {
 	public static $rounding_precision = 2;
 	public static $reference_id_padding = 5;
 	
-	protected static $maximum_ignorable_sales_payments_difference = 0.01;
-	public static function set_maximum_ignorable_sales_payments_difference($difference){
-		self::$maximum_ignorable_sales_payments_difference = $difference;
-	}
-
 	public static function get_order_status_options() {
 		return singleton('Order')->dbObject('Status')->enumValues(false);
 	}
@@ -755,6 +750,17 @@ class Order extends DataObject {
 	}
 	
 	//deprecated code
+	
+	/**
+	 * @deprecated - rely on rounding precision instead
+	 */
+	protected static $maximum_ignorable_sales_payments_difference = 0.01;
+	/**
+	 * @deprecated - rely on rounding precision instead.
+	 */
+	public static function set_maximum_ignorable_sales_payments_difference($difference){
+		self::$maximum_ignorable_sales_payments_difference = $difference;
+	}
 	
 	/**
 	* @deprecated Use OrderProcessor
