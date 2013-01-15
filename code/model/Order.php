@@ -124,12 +124,6 @@ class Order extends DataObject {
 	protected static $modifiers = array();
 	
 	/**
-	 * Store total after calculation
-	 * @var unknown_type
-	 */
-	protected $total = 0;
-	
-	/**
 	 * These are the fields, used for a {@link ComplexTableField}
 	 * in order to show for the table columns on a report.
 	 *
@@ -324,8 +318,6 @@ class Order extends DataObject {
 		}
 		return count($forms) > 0 ? new DataObjectSet($forms) : null;
 	}
-
-	// Items Management
 
 	/**
 	 * Returns the subtotal of the items for this order.
@@ -572,6 +564,9 @@ class Order extends DataObject {
 		return implode(" ",array_filter(array($firstname,$surname)));
 	}
 	
+	/**
+	 * Get shipping address, or member default shipping address.
+	 */
 	function getShippingAddress(){
 		if($address = $this->ShippingAddress()){
 			return $address;
@@ -581,6 +576,10 @@ class Order extends DataObject {
 		return null;
 	}
 
+	/**
+	 * Get billing address, if marked to use seperate address, otherwise use shipping address,
+	 * or the member default billing address.
+	 */
 	function getBillingAddress(){
 		if(!$this->SeparateBillingAddress && $this->ShippingAddressID === $this->BillingAddressID){
 			return $this->getShippingAddress();
@@ -590,14 +589,6 @@ class Order extends DataObject {
 			return $address;
 		}
 		return null;
-	}
-	
-	function getFullShippingAddress(){
-		return $this->getShippingAddress();
-	}
-	
-	function getFullBillingAddress(){
-		return $this->getBillingAddress();
 	}
 
 	// Order Template and ajax Management
@@ -729,7 +720,6 @@ class Order extends DataObject {
 			$val .= "\t<li>$fieldName: " . Debug::text($fieldVal) . "</li>\n";
 		}
 		$val .= "</ul>\n";
-		
 		$val .= "<div class='items'><h2>Items</h2>";
 		if($items = $this->Items()){
 			$val .= $this->Items()->debug();
@@ -864,6 +854,20 @@ class Order extends DataObject {
 		$this->owner->extend('updateRequiredFields', $fields);
 		$this->owner->extend('augmentEcommerceRequiredFields', $fields); //deprecated
 		return $fields;
+	}
+	
+	/**
+	 * @deprecated - alias to getShippingAddress
+	 */
+	function getFullShippingAddress(){
+		return $this->getShippingAddress();
+	}
+	
+	/**
+	 * @deprecated - alias to getBillingAddress
+	 */
+	function getFullBillingAddress(){
+		return $this->getBillingAddress();
 	}
 
 }
