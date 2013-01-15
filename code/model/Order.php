@@ -431,30 +431,34 @@ class Order extends DataObject {
 		return null;
 	}
 	
-	function GrandTotal(){
-		if($this->Total){
-			return $this->Total;
-		}
-		return $this->getField('Total');
+	/**
+	 * Enforce rounding precision when setting total
+	 */
+	function setTotal($val){
+		$this->setField("Total", round($val, self::$rounding_precision));
 	}
 	
+	/**
+	 * Get final value of order.
+	 * Retrieves value from DataObject's record array.
+	 */
 	function Total(){
-		return $this->GrandTotal();
+		return $this->getField("Total");
+	}
+	
+	/**
+	 * Alias for Total.
+	 */
+	function GrandTotal(){
+		return $this->Total();
 	}
 
 	/**
-	 * Checks to see if any payments have been made on this order
-	 * and if so, subracts the payment amount from the order
-	 * Precondition : The order is in DB
+	 * Calculate how much is left to be paid on the order.
+	 * Enforces rounding precision.
 	 */
 	function TotalOutstanding(){
-		$total = $this->Total;
-		$paid = $this->TotalPaid();
-		$outstanding = $total - $paid;
-		if(abs($outstanding) < self::$maximum_ignorable_sales_payments_difference) {
-			return 0;
-		}
-		return $outstanding;
+		return round($this->GrandTotal() - $this->TotalPaid(), self::$rounding_precision);
 	}
 	
 	/**

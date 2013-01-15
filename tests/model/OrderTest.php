@@ -74,6 +74,17 @@ class OrderTest extends SapphireTest {
 		$this->assertEquals($order->TotalOutstanding(), 208,"Outstanding total is correct");
 	}
 	
+	function testRounding(){
+		//create an order with unrounded total
+		$order = new Order(array(
+			'Total' => 123.257323, //NOTE: setTotal isn't called here, so un-rounded data *could* get in to the object
+			'Status' => 'Unpaid'
+		));
+		$order->Total = 123.257323; //setTotal IS called here
+		$this->assertEquals(123.26,$order->Total(), "Check total rounds appropriately");
+		$this->assertEquals(123.26,$order->TotalOutstanding(),"Check total outstanding rounds appropriately");
+	}
+	
 	function testPlacedOrderImmutability(){
 		//create order
 		$order = self::createOrder();
