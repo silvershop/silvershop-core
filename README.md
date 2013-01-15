@@ -1,8 +1,15 @@
 # Shop Module
 
- * http://ss-shop.org
+The SilverStripe Shop module aims to provide developers with a framework for building, and customising ecommerce-based projects.
+It includes facilities for customers to browse products and place orders, and for administrators to manage products and orders.
  
 [![Build Status](https://secure.travis-ci.org/burnbright/silverstripe-shop.png)](http://travis-ci.org/burnbright/silverstripe-shop)
+
+Website: http://ss-shop.org
+Demo: http://demo.ss-shop.org
+
+There are many ways you can [contribute to this project](https://github.com/burnbright/silverstripe-shop/wiki/Contributing).
+A tremendous thanks to [everyone that has already contributed](https://github.com/burnbright/silverstripe-shop/graphs/contributors).
 
 ## Maintainer Contact
 
@@ -10,13 +17,13 @@
 
 ## Requirements
 
- * SilverStripe 2.4+
- * Payment Module 0.3+
+ * SilverStripe 2.4+ [sapphire](https://github.com/silverstripe/sapphire) & [cms](https://github.com/silverstripe/silverstripe-cms)
+ * [Payment Module 0.3+](https://github.com/silverstripe-labs/silverstripe-payment)
 
 ## Documentation
 
- * http://demo.ss-shop.org/docs
- * http://api.ss-shop.org
+ * http://demo.ss-shop.org/docs - for Developers & Users
+ * http://api.ss-shop.org - API
 
 ## Installation Instructions
 
