@@ -10,21 +10,19 @@ class ProductCategoryTest extends SapphireTest{
 		parent::setUp();
 		ProductCategory::set_must_have_price(false);
 		
-		$this->cat1 = $this->objFromFixture('ProductCategory','g1');
-		$this->cat1->publish('Stage','Live');
-		$this->cat2 = $this->objFromFixture('ProductCategory','g2');
-		$this->cat2->publish('Stage','Live');
+		$this->products = $this->objFromFixture('ProductCategory','products');
+		$this->products->publish('Stage','Live');
+		$this->clothing = $this->objFromFixture('ProductCategory','clothing');
+		$this->clothing->publish('Stage','Live');
+		$this->electronics = $this->objFromFixture('ProductCategory','electronics');
+		$this->electronics->publish('Stage','Live');
 		
-
 		$this->socks = $this->objFromFixture('Product', 'socks');
 		$this->socks->publish('Stage','Live');
-		
 		$this->tshirt = $this->objFromFixture('Product', 'tshirt');
 		$this->tshirt->publish('Stage','Live');
 		$this->hdtv = $this->objFromFixture('Product', 'hdtv');
 		$this->hdtv->publish('Stage','Live');
-		
-		
 		$this->beachball = $this->objFromFixture('Product', 'beachball');
 		$this->beachball->publish('Stage','Live');
 		$this->mp3player = $this->objFromFixture('Product', 'mp3player');
@@ -32,26 +30,19 @@ class ProductCategoryTest extends SapphireTest{
 	}
 
 	function testGetAllProducts(){
-		
-		$products = $this->cat1->ProductsShowable();
+		$products = $this->products->ProductsShowable();		
 		$this->assertNotNull($products,"Products exist in category");
-		$this->assertEquals($products->Count(),5,"Five products in category");
-		
 		$this->assertDOSEquals(array(
 			array('URLSegment' => 'socks'),
 			array('URLSegment' => 't-shirt'),
 			array('URLSegment' => 'hdtv'),
 			array('URLSegment' => 'beach-ball'),
-			array('URLSegment' => 'mp3-player'),
+			//array('URLSegment' => 'mp3-player'), //music players category isn't published, therefore it shouldn't show up
 		), $products);
-		
 	}
 	
-	//TODO: check that sub-category products show up
 	//TODO: check filtering
-	
 	//check published/ non published / allow purchase etc
-	
 	//Hide product if no price...or if product has variations, allow viewing.
 
 }
