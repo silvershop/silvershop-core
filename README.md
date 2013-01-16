@@ -8,7 +8,7 @@ It includes facilities for customers to browse products and place orders, and fo
 Website: http://ss-shop.org
 Demo: http://demo.ss-shop.org
 
-There are many ways you can [contribute to this project](https://github.com/burnbright/silverstripe-shop/wiki/Contributing).
+We are looking for contributiors. There are many ways you can [contribute to this project](https://github.com/burnbright/silverstripe-shop/wiki/Contributing).
 A tremendous thanks to [everyone that has already contributed](https://github.com/burnbright/silverstripe-shop/graphs/contributors).
 
 ## Maintainer Contact
