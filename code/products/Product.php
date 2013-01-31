@@ -35,7 +35,8 @@ class Product extends Page implements Buyable{
 	
 	
 	public static $has_one = array(
-		'Image' => 'Product_Image'
+		//'Image' => 'Product_Image'
+		'Image' => 'Image'
 	);
 
 	public static $many_many = array(
