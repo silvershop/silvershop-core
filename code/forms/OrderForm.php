@@ -268,9 +268,10 @@ class OrderForm extends Form {
 		
 		//prepare $data - ie put into the $data array any fields that may need to be there for payment
 		$data['Reference'] = $order->Reference;
-		
+		SS_Log::log( New Exception('process payment'), SS_Log::NOTICE );
 		// Process payment, get the result back
 		$result = $payment->processPayment($data, $form);
+		SS_Log::log( New Exception('after process payment'), SS_Log::NOTICE );
 		if($result->isProcessing()) { // isProcessing(): Long payment process redirected to another website (PayPal, Worldpay)
 			return $result->getValue();
 		}
