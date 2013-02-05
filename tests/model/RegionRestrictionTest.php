@@ -46,6 +46,22 @@ class RegionRestrictionTest extends SapphireTest{
 		$this->assertFalse($rate);
 	}
 	
+	function testMatchSQLEscaping(){
+		$address = new Address(array(
+			"Country" => "IT",
+			"State" => "Valle d'Aosta"
+		));
+		$rate = $this->getRate($address);
+		$this->assertFalse((boolean)$rate,"Can't find rate with unescaped data");
+		
+		$address = new Address(array(
+			"Country" => "NZ",
+			"State" => "Hawke's Bay"
+		));
+		$rate = $this->getRate($address);
+		$this->assertTrue((boolean)$rate,"Rate with unescaped data found");
+	}
+	
 	function getRate(Address $address){
 		$where = RegionRestriction::address_filter($address);
 		return DataObject::get_one("RegionRestriction_RateTest", $where, true, "Rate ASC");
