@@ -38,7 +38,7 @@ class CheckoutStep_Summary extends CheckoutStep{
 		$order->write();
 		$processor = OrderProcessor::create($order);
 		//try to place order
-		if(!$processor->placeOrder()){
+		if(!$processor->placeOrder(Member::currentMember())){
 			$form->sessionMessage($processor->getError(), 'bad');
 			Director::redirectBack();
 			return false;

@@ -129,11 +129,21 @@ class SteppedCheckoutTest extends FunctionalTest{
 			'PaymentMethod' => 'Cheque',
 			'action_place' => "Confirm and Pay"
 		);
+		$member = $this->objFromFixture("Member", "joebloggs");
+		$member->logIn(); //log in member before processing
+		
 		Checkout::get($this->cart)->setPaymentMethod("Cheque"); //a selected payment method is required
 		$form->loadDataFrom($data);
 		$this->assertTrue($form->validate(),"Checkout data is valid");		
 		$response = $this->post('/checkout/ConfirmationForm', $data);
 		$this->assertEquals($this->cart->Status,'Unpaid', "Order status is updated");
+		
+		$order = DataObject::get_by_id("Order",$this->cart->ID);
+		$m = $order->Member();
+		$this->assertTrue($m->exists());
+		$this->assertEquals($m->Email,"test@example.com");
+		
+		$member->logOut();
 	}
 	
 }

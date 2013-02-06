@@ -230,13 +230,8 @@ class OrderProcessorTest extends SapphireTest {
 		$address->write();
 		$order->ShippingAddressID = $address->ID;
 		$order->BillingAddressID = $address->ID; //same (for now)
-		
-		if($member){
-			$order->MemberID = $member->ID;
-		}
-		
 		$order->write();
-		return OrderProcessor::create($order)->placeOrder();
+		return OrderProcessor::create($order)->placeOrder($member);
 	}
 
 }

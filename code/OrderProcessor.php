@@ -65,7 +65,7 @@ class OrderProcessor{
 	 * @param Member $member - assign a member to the order
 	 * @return boolean - success/failure
 	 */
-	function placeOrder(){
+	function placeOrder($member = null){
 		if(!$this->order){
 			$this->error(_t("OrderProcessor.NULL","A new order has not yet been started."));
 			return false;
@@ -96,7 +96,10 @@ class OrderProcessor{
 				$modifier->write();
 			}
 		}
-		//TODO: add member to customer group
+		if($member){
+			$this->order->MemberID = $member->ID;
+			$this->order->setComponent("Member", $member);
+		}
 		OrderManipulation::add_session_order($this->order); //save order reference to session
 		$this->order->extend('onPlaceOrder'); //allow decorators to do stuff when order is saved.
 		$this->order->write();
