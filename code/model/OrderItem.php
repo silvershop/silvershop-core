@@ -76,6 +76,16 @@ class OrderItem extends OrderAttribute {
 		}
 		return $this->UnitPrice;
 	}
+	
+	/**
+	 * Prevent unit price ever being below 0
+	 */
+	function setUnitPrice($val){
+		if($val < 0){
+			$val = 0;
+		}
+		$this->setField("UnitPrice", $val);
+	}
 
 	/**
 	 * Get calculated total, or stored total
@@ -139,6 +149,13 @@ class OrderItem extends OrderAttribute {
 			}
 			$this->calculatetotal();
 		}
+	}
+	
+	/*
+	 * Event handler called when an order is fully paid for.
+	 */
+	function onPayment() {
+		$this->extend('onPayment',null);
 	}
 	
 	/**

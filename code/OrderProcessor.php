@@ -202,6 +202,9 @@ class OrderProcessor{
 				$this->order->Status = 'Paid';
 				$this->order->Paid = SS_Datetime::now()->Rfc2822();
 				$this->order->write();
+				foreach($this->order->Items() as $item){
+					$item->onPayment();
+				}
 			}
 		}
 	}	
