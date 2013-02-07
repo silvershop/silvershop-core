@@ -34,6 +34,11 @@ class ShopConfig extends DataObjectDecorator{
 		$countriestab->setTitle("Allowed Countries");
 	}
 	
+	/**
+	 * Get list of allowed countries
+	 * @param boolean $prefixisocode - prefix the country code
+	 * @return array
+	 */
 	function getCountriesList($prefixisocode = false){
 		$countries = Geoip::getCountryDropDown();
 		if($allowed = $this->owner->AllowedCountries){
@@ -48,5 +53,14 @@ class ShopConfig extends DataObjectDecorator{
 		}
 		return $countries;
 	}
+	
+	/**
+	 * Alias function for getting SiteConfig
+	 * @return SiteConfig
+	 */
+	static function current($locale = null){
+		return SiteConfig::current_site_config($locale);
+	}
+	
 	
 }
