@@ -3,6 +3,8 @@ php:
 - 5.3
 before_script:
 
+- pwd
+
 # downgrade phpunit
 - pyrus uninstall pear.phpunit.de/PHPUnit
 - pear channel-discover pear.phpunit.de
@@ -29,7 +31,7 @@ before_script:
 - git checkout 1.2.0
 - cd ~/builds
 
-- mv burnbright/silverstripe-shop ss/shop
+- mv ~/build/burnbright/silverstripe-shop ss/shop
 
 # install configs
 - mv -f ss/shop/tests/travis/_config.php.travis ss/mysite/_config.php
