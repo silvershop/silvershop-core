@@ -1,14 +1,15 @@
 <?php
 
 class ShopConfig extends DataObjectDecorator{
-	
+		
 	function extraStatics(){
 		return array(
 			'db' => array(
 				'AllowedCountries' => 'Text'		
 			),
 			'has_one' => array(
-				'TermsPage' => 'SiteTree'
+				'TermsPage' => 'SiteTree',
+				"CustomerGroup" => "Group"
 			)
 		);
 	}
@@ -22,7 +23,8 @@ class ShopConfig extends DataObjectDecorator{
 				
 		$fields->addFieldsToTab("Root.Shop", new TabSet("ShopTabs",
 			$maintab = new Tab("Main",
-				new TreeDropdownField('TermsPageID', _t("ShopConfig.TERMSPAGE",'Terms and Conditions Page'), 'SiteTree')
+				new TreeDropdownField('TermsPageID', _t("ShopConfig.TERMSPAGE",'Terms and Conditions Page'), 'SiteTree'),
+				new TreeDropdownField("CustomerGroupID", _t("ShopConfig.CUSTOMERGROUP","Group to add new customers to"), "Group")
 			),
 			$countriestab = new Tab("Countries",
 				$allowed = new CheckboxSetField('AllowedCountries','Allowed Ordering and Shipping Countries',Geoip::getCountryDropDown())

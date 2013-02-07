@@ -90,6 +90,11 @@ Address:
         State: New Sandwich
         Country: US
 
+Group:
+    customers:
+        Title: Customers
+        Code: customers
+        
 Member:
     joebloggs:
         FirstName: Joe
@@ -169,3 +174,4 @@ SiteConfig:
         Title: Shop Testing Website
         ShopClosed: 0
         TermsPage: =>Page.termsandconditions
+        CustomerGroup: =>Group.customers

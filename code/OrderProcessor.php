@@ -99,6 +99,9 @@ class OrderProcessor{
 		if($member){
 			$this->order->MemberID = $member->ID;
 			$this->order->setComponent("Member", $member);
+			if($cgroup = ShopConfig::current()->CustomerGroup()){
+				$member->Groups()->add($cgroup);
+			}
 		}
 		OrderManipulation::add_session_order($this->order); //save order reference to session
 		$this->order->extend('onPlaceOrder'); //allow decorators to do stuff when order is saved.
