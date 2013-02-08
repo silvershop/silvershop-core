@@ -160,7 +160,6 @@ class Product extends Page implements Buyable{
 				$product->publish('Stage', 'Live');
 			}
 		}
-
 	}
 	
 	/**
@@ -414,7 +413,8 @@ class Product_OrderItem extends OrderItem {
 		return false;		
 	}
 
-	function place(){
+	function onPlacement(){
+		parent::onPlacement();
 		if($product = $this->Product(true)){
 			$this->ProductVersion = $product->Version;
 		}

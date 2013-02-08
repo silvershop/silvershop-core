@@ -110,13 +110,6 @@ class OrderItem extends OrderAttribute {
 	}
 	
 	/**
-	 * Last time saving/processing, before item permanently stored in database.
-	 * This should only be called when order is transformed from
-	 * Cart to Order, aka being 'placed'.
-	 */
-	function place(){}
-	
-	/**
 	 * Intersects this item's required_fields with the data record.
 	 * This is used for uniquely adding items to the cart.
 	 */
@@ -155,7 +148,17 @@ class OrderItem extends OrderAttribute {
 	 * Event handler called when an order is fully paid for.
 	 */
 	function onPayment() {
-		$this->extend('onPayment',null);
+		$this->extend('onPayment');
+	}
+	
+	/**
+	 * Event handlier called for last time saving/processing,
+	 * before item permanently stored in database.
+	 * This should only be called when order is transformed from
+	 * Cart to Order, aka being 'placed'.
+	 */
+	function onPlacement() {
+		$this->extend('onPlacement');
 	}
 	
 	/**
@@ -196,17 +199,24 @@ class OrderItem extends OrderAttribute {
 	//Deprecated, to be removed or factored out
 
 	/**
-	* @deprecated 1.0 - use QuantityField instead
+	* @deprecated - use QuantityField instead
 	*/
 	function AjaxQuantityField(){
 		return $this->QuantityField();
 	}
 	
 	/**
-	 * @deprecated
+	 * @deprecated - use CheckoutPage::find_link
 	 */
 	function checkoutLink() {
 		return CheckoutPage::find_link();
+	}
+	
+	/**
+	 * @deprecated - use onPlace instead
+	 */
+	function place(){
+		return $this->onPlace();
 	}
 	
 	protected function QuantityFieldName() {

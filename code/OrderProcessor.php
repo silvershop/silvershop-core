@@ -86,7 +86,7 @@ class OrderProcessor{
 		$items = $this->order->Items();
 		if($items->exists()){
 			foreach($items as $item){
-				$item->place();
+				$item->onPlacement();
 				$item->write();
 			}
 		}
