@@ -93,8 +93,10 @@ class ShoppingCart{
 	/**
 	 * Adds an item to the cart
 	 * 
-	 * @param product $item - #TODO: should this be an id, or object?
-	 * @param int $quantity
+	 * @param Buyable $buyable
+	 * @param number $quantity
+	 * @param unknown $filter
+	 * @return boolean
 	 */
 	public function add(Buyable $buyable,$quantity = 1,$filter = array()){
 		$order = $this->findOrMake();
