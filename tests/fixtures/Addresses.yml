@@ -61,3 +61,10 @@ Address:
         State:      WA
         ZipCode:    98102
         Country:    US
+    nus11230:
+        Name:       Bobbie O'Neil
+        Address:    '1000 Coney Island Ave'
+        City:       Brooklyn
+        State:      NY
+        ZipCode:    11230
+        Country:    US

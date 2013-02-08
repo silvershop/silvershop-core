@@ -159,6 +159,13 @@ Product_OrderItem:
         UnitPrice: 8
         Quantity: 100
         CalculatedTotal: 800
+    othercart_mp3player:
+        Order: =>Order.othercart
+        Product: =>Product.mp3player
+        ProductVersion: 1
+        UnitPrice: 200
+        Quantity: 1
+        CalculatedTotal: 200
 
 #TODO: prevent test payments from triggering email sends via ShopPayment onAfterWrite
 #ChequePayment:
