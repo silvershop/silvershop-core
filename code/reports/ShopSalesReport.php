@@ -2,9 +2,11 @@
 /**
  * Order sales for the entire shop.
  * 
+ * @todo: exclude some records: cancelled, refunded, etc
  * @todo: include a graph
  * @todo: count products sold
  * @todo: show geographical map of sales
+ * @todo: add profits
 */
 class ShopSalesReport extends SS_Report{
 	
@@ -94,6 +96,7 @@ class ShopSalesReport extends SS_Report{
 		}elseif($end){
 			$query->where("\"$dunit\" <= '$end'");
 		}
+		$query->where("\"$dunit\" IS NOT NULL"); //only include paid orders
 		switch($params['Grouping']){
 			case "Year":
 				$query->groupby("YEAR(\"$dunit\")");
