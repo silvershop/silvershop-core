@@ -4,6 +4,11 @@ class AddProductForm extends Form{
 	
 	protected $maxquantity = 100; //populate quantity dropdown with this many values
 	
+	/**
+	 * Fields that can be saved to an order item.
+	 */
+	protected $saveablefields = array();
+	
 	function __construct($controller, $name = "AddProductForm"){
 		$fields = new FieldSet();
 		
@@ -35,11 +40,16 @@ class AddProductForm extends Form{
 		$this->maxquantity = (int)$qty;
 	}
 	
+	function setSaveableFields($fields){
+		$this->saveablefields = $fields;
+	}
+	
 	function addtocart($data,$form){
 		if($buyable = $this->getBuyable($data)){
 			$cart = ShoppingCart::getInstance();
-			$quantity = isset($data['Quantity']) ? (int) $data['Quantity']: 1;
-			$cart->add($buyable,$quantity,$data);
+			$saveabledata = (!empty($this->saveablefields)) ? Convert::raw2sql(array_intersect_key($data,array_combine($this->saveablefields,$this->saveablefields))) : $data;
+			$quantity = isset($data['Quantity']) ? (int) $data['Quantity']: 1;			
+			$cart->add($buyable,$quantity,$saveabledata);
 			if(!ShoppingCart_Controller::get_direct_to_cart()){
 				$form->SessionMessage($cart->getMessage(),$cart->getMessageType());
 			}
