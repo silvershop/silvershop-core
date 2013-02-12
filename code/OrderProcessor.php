@@ -158,7 +158,6 @@ class OrderProcessor{
 		return true;
 	}
 	
-	
 	/**
 	 * Create a payment model, and provide link to redirect to external gateway,
 	 * or redirect to order link.
@@ -196,8 +195,10 @@ class OrderProcessor{
 	 * 	- update order status accordingling
 	 */
 	function completePayment(){
-		if(!$this->order->ReceiptSent && $this->order->Status != 'Paid'){
-			$this->sendReceipt();
+		if($this->order->Status != 'Paid'){
+			if(!$this->order->ReceiptSent){
+				$this->sendReceipt();
+			}
 			if($this->order->GrandTotal() > 0 && $this->order->TotalOutstanding() <= 0){
 				$this->order->Status = 'Paid';
 				$this->order->Paid = SS_Datetime::now()->Rfc2822();
