@@ -94,6 +94,9 @@ Group:
     customers:
         Title: Customers
         Code: customers
+    resellers:
+        Title: Resellers
+        Code: resellers
         
 Member:
     joebloggs:
@@ -104,12 +107,14 @@ Member:
         Password: 23u90oijlJKsa
         DefaultShippingAddress: =>Address.foobar
         DefaultBillingAddress: =>Address.foobar
+        Groups: =>Group.customers
     bobjones:
         FirstName: Bob
         Surname: Jones
         Country: US
         Email: bob@somewhere.com
         Password: 3456sdfsd34
+        Groups: =>Group.resellers,=>Group.customers
         
 Order:
     emptycart:
@@ -119,6 +124,7 @@ Order:
         Total: 8
     othercart:
         Name: Other cart
+        Member: =>Member.bobjones
     placed:
         Status: Unpaid
         Created: 2012-11-21 15:23:32
