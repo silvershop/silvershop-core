@@ -14,7 +14,6 @@ class ShopSalesReport extends SS_Report{
 	
 	protected $title = "Shop Sales";
 	protected $description = "Monitor shop sales performance for a particular period. Group results by year, month, or day.";
-	protected $usesummary = true;
 	
 	function title(){
 		return _t("ShopSalesReport.TITLE",$this->title);
