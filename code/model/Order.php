@@ -208,17 +208,28 @@ class Order extends DataObject {
 			new DropdownField("Status","Status", self::get_order_status_options()),
 			new LiteralField('MainDetails', $this->renderWith(self::$admin_template))
 		));
-		$payments = new TableListField(
+		$payments = new TableField(
 			"Payments", //$name
 			"Payment", //$sourceClass =
-			Payment::$summary_fields, //$fieldList =
+			array_merge(
+				Payment::$summary_fields
+			), //$fieldList =
+			array(
+				'ID' => 'ReadonlyField',
+				'Created' => 'ReadonlyField',
+				'AmountAmount' => 'ReadonlyField',
+				'PaymentMethod' => 'ReadonlyField',
+				'Status' => 'PaymentStatusUpdateField',
+				'Message' => 'ReadonlyField'
+			),
+			null,
 			"\"OrderID\" = ".$this->ID, //$sourceFilter =
 			"\"Created\" ASC", //$sourceSort =
 			null //$sourceJoin =
 		);
-		$payments->setPermissions(array("view"));
+		$payments->setPermissions(array("view","edit"));
 		$payments->setPageSize(20);
-		$payments->addSummary("Total",array("Total" => array("sum","Currency->Nice")));
+		//$payments->addSummary("Total",array("Total" => array("sum","Currency->Nice")));
 		$fields->addFieldToTab('Root.Payments',$payments);
 		$this->extend('updateCMSFields',$fields);
 		return $fields;
