@@ -34,6 +34,6 @@ SS_Report::register("SideReport", "ShopSideReport_FeaturedProducts");
 SS_Report::register("SideReport", "ShopSideReport_NoImageProducts");
 SS_Report::register("SideReport", "ShopSideReport_HeavyProducts");
 
-SS_Report::register("ReportAdmin", "ShopSalesReport");
-SS_Report::register("ReportAdmin", "CustomerReport");
-SS_Report::register("ReportAdmin", "ProductReport");
+SS_Report::register("ReportAdmin", "ShopSalesReport", 20);
+SS_Report::register("ReportAdmin", "ProductReport", 9);
+SS_Report::register("ReportAdmin", "CustomerReport", 8);
