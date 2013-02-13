@@ -8,6 +8,15 @@ class ShopPeriodReport extends SS_Report{
 	protected $dataClass = 'Order';
 	protected $periodfield = "Created";
 	protected $grouping = false;
+	protected $pagesize = 20;
+	
+	function title(){
+		return _t($this->class.".TITLE",$this->title);
+	}
+	
+	function description(){
+		return _t($this->class.".DESCRIPTION",$this->description);
+	}
 	
 	function parameterFields() {
 		$dateformat = Member::currentUser()->getDateFormat();
@@ -52,16 +61,16 @@ class ShopPeriodReport extends SS_Report{
 					"Day" =>	"d F Y"
 				);
 				$dformat = $dformats[$params['Grouping']];
-				$record->Period = (empty($result["FilterPeriod"])) ? "uncategorised" : date($dformat, strtotime($result["FilterPeriod"]));
+				$record->FilterPeriod = (empty($result["FilterPeriod"])) ? "uncategorised" : date($dformat, strtotime($result["FilterPeriod"]));
 			}
 		}
 		return $output;
 	}
 	
 	function query($params){
-		$query = new SQLQuery();
+		$query = new ShopReport_Query();
 		$query->select("$this->periodfield AS FilterPeriod");
-		$query->from($this->dataClass);
+		$query->from("\"$this->dataClass\"");
 		$start = isset($params['StartPeriod']) && !empty($params['StartPeriod']) ? date('Y-m-d',strtotime($params["StartPeriod"])) : null;
 		$end = isset($params['EndPeriod']) && !empty($params['EndPeriod']) ? date('Y-m-d',strtotime($params["EndPeriod"]) + 86400) : null; //end day is inclusive
 		if($start && $end){
@@ -92,7 +101,23 @@ class ShopPeriodReport extends SS_Report{
 					break;
 			}
 		}
+		if(isset($params["ctf"]["ReportContent"]["sort"])){
+			$dir = isset($params["ctf"]["ReportContent"]["dir"]) ? $params["ctf"]["ReportContent"]["dir"] : "DESC";
+			$query->orderby($params["ctf"]["ReportContent"]["sort"]." $dir");
+		}
+		if(isset($params["ctf"]["ReportContent"]["start"])){
+			$query->limit($params["ctf"]["ReportContent"]["start"].",".$this->pagesize);
+		}else{
+			$query->limit($this->pagesize);
+		}
 		return $query;
 	}
 	
+}
+
+class ShopReport_Query extends SQLQuery{
+
+	function canSortBy($fieldName) {
+		return true;
+	}
 }
