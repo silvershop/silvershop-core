@@ -13,7 +13,7 @@ class OrdersAdmin extends ModelAdmin{
 	public static $managed_models = array(
 		'Order' => array(
 			'title' => 'Orders',
-			'collection_controller_class' => 'OrdersAdmin_RecordController',
+			'collection_controller' => 'OrdersAdmin_CollectionController',
 			'record_controller' => 'OrdersAdmin_RecordController'
 		),
 		'Payment' => array('title' => 'Payments'),
@@ -39,6 +39,12 @@ class OrdersAdmin_CollectionController extends ModelAdmin_CollectionController {
 	//public function CreateForm() {return false;}
 	public function ImportForm() {return false;}
 
+	function SearchForm(){
+		$form = parent::SearchForm();
+		$form->Fields()->fieldByName("Status")->setValue(null); //make status checkbox field set empty
+		return $form;
+	}
+	
 	function search($request, $form) {
 		// Get the results form to be rendered
 		$query = $this->getSearchQuery(array_merge($form->getData(), $request));
@@ -53,7 +59,7 @@ class OrdersAdmin_CollectionController extends ModelAdmin_CollectionController {
 		Session::set("StoreAdminLatestSearch",serialize($array));
 		return parent::search($request, $form);
 	}
-
+	
 }
 
 /**
@@ -101,7 +107,6 @@ class OrdersAdmin_RecordController extends ModelAdmin_RecordController {
 JS;
 		
 		$form->Actions()->insertFirst(
-			//new LiteralField("recalculate","<a href=\"$recalculatelink\">recalculate order</a>"),
 			new LiteralField("PrintOrder","<input type=\"submit\" onclick=\"javascript:$printwindowjs\" class=\"action\" value=\""._t("Order.PRINT","Print")."\">")
 		);
 		return $form;
