@@ -125,6 +125,7 @@ Order:
     othercart:
         Name: Other cart
         Member: =>Member.bobjones
+        Total: 200
     placed:
         Status: Unpaid
         Created: 2012-11-21 15:23:32
