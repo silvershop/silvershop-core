@@ -36,7 +36,7 @@ class ProductCategory extends Page {
 	protected static $sort_options = array(
 		'URLSegment' => 'Alphabetical',
 		'Price' => 'Lowest Price',
-		//'NumberSold' => 'Most Popular'
+		//'Popularity' => 'Most Popular'
 		//'Featured' => 'Featured',
 		//'Weight' => 'Weight'
 	);
@@ -115,7 +115,7 @@ class ProductCategory extends Page {
 		$sort = (isset($_GET['sortby'])) ? Convert::raw2sql($_GET['sortby']) : "\"FeaturedProduct\" DESC,\"URLSegment\"";
 
 		//hard coded sort configuration //TODO: make these custom
-		if($sort == "NumberSold") $sort .= " DESC";
+		if($sort == "Popularity") $sort .= " DESC";
 
 		$groupids = array($this->ID);
 
