@@ -1,6 +1,6 @@
 <?php
 
-define('SHOP_DIR','shop');
+define('SHOP_DIR',basename(__DIR__));
 
 // Extend the Member with e-commerce related fields.
 DataObject::add_extension('Member', 'ShopMember');
