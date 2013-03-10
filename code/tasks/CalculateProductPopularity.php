@@ -18,16 +18,17 @@ class CalculateProductPopularity extends BuildTask{
 	
 	/**
 	 * Update both live and stage tables, based on the algorithm:
-	 * 	product popularity = sum(item quantity/order age) / product age
-	 * 
+	 * 	product popularity = sum(1/order_age) * sum(item_quantity)
 	 */
 	function viasql(){
 		
 		foreach(array("_Live","") as $stage){
 			$sql =<<<SQL
 				UPDATE "Product$stage" SET "Popularity" = (
-					SELECT SUM("OrderItem"."Quantity" / DATEDIFF(Order.Paid,NOW())) 
-							/ DATEDIFF(SiteTree$stage.Created,NOW()) AS Popularity
+					SELECT 
+						SUM(1 / DATEDIFF(NOW(),Order.Paid)) * SUM(`OrderItem`.`Quantity`)
+						#	/ DATEDIFF(SiteTree$stage.Created,NOW()) 
+						AS Popularity
 					FROM "SiteTree$stage"
 						INNER JOIN "Product_OrderItem" ON "SiteTree$stage"."ID" = "Product_OrderItem"."ProductID"
 						INNER JOIN "OrderItem" ON "OrderItem"."ID" = "Product_OrderItem"."ID"
