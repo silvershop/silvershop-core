@@ -1,17 +1,17 @@
 # Templates
 
-The shop module tempaltes have been broken down into small, reusable parts. This allows a greater freedom of customisation.
+The shop module tempaltes have been broken down into small, reusable parts.
+This allows a greater freedom of customisation.
 
 Here is the heirarchy of templates:
 
-Order.ss
-	Order_Shipping.ss
-	Order_Content.ss
-	Order_Payments.ss
+ * Order.ss
+  * Order_Shipping.ss
+  * Order_Content.ss
+  * Order_Payments.ss
 
-ProductCategory.ss
-	ProductGroupItem.ss
-	
+ * ProductCategory.ss
+  * ProductGroupItem.ss
 
 # Getting the cart in templates
 
