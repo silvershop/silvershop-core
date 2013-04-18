@@ -12,11 +12,11 @@ before_script:
 - git clone git://github.com/silverstripe/silverstripe-installer.git ss
 - git clone git://github.com/silverstripe/sapphire.git ss/sapphire
 - cd ss/sapphire
-- git checkout 3.0.3
+- git checkout 3.1
 - cd ~/builds
 - git clone git://github.com/silverstripe/silverstripe-cms.git ss/cms
 - cd ss/cms
-- git checkout 3.0.3
+- git checkout 3.1
 - cd ~/builds
 - git clone git://github.com/burnbright/silverstripe-payment.git ss/payment
 - cd ss/payment
