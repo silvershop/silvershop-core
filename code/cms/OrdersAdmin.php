@@ -12,16 +12,9 @@ class OrdersAdmin extends ModelAdmin{
 
 	public static $managed_models = array(
 		'Order' => array(
-			'title' => 'Orders',
-			'collection_controller_class' => 'OrdersAdmin_RecordController',
-			'record_controller' => 'OrdersAdmin_RecordController'
-		),
-		'Payment' => array('title' => 'Payments'),
+			'title' => 'Orders'
+		)
 	);
-	
-	public static function set_managed_models(array $array) {
-		self::$managed_models = $array;
-	}
 
 	function init() {
 		parent::init();

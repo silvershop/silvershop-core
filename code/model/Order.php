@@ -195,16 +195,6 @@ class Order extends DataObject {
 	public static function get_order_status_options() {
 		return singleton('Order')->dbObject('Status')->enumValues(false);
 	}
-
-	/* do we need this
-	function scaffoldSearchFields(){
-		$FieldList = parent::scaffoldSearchFields();
-		$values = self::$placed_status;
-		$fields = array_combine(self::$placed_status,self::$placed_status);
-		$FieldList->push(new CheckboxSetField("Status", "Status",$fields,$values));
-		return $FieldList;
-	}
-	*
 	
 	/**
 	 * Create CMS fields for cms viewing and editing orders
@@ -216,23 +206,14 @@ class Order extends DataObject {
 		$fields->insertBefore(new LiteralField('SubTitle',
 			"<h4 class=\"subtitle\">".$this->dbObject('Placed')->Nice()." - <a href=\"mailto:".$this->getLatestEmail()."\">".$this->getName()."</a></h4>"
 		),"Root");
-		
 		$fields->addFieldsToTab('Root.Main', array(
 			new DropdownField("Status","Status", self::get_order_status_options()),
 			new LiteralField('MainDetails', $this->renderWith(self::$admin_template))
 		));
-		$payments = new TableListField(
-			"Payments", //$name
-			"Payment", //$sourceClass =
-			Payment::$summary_fields, //$fieldList =
-			"\"OrderID\" = ".$this->ID, //$sourceFilter =
-			"\"Created\" ASC", //$sourceSort =
-			null //$sourceJoin =
-		);
-		$payments->setPermissions(array("view"));
-		$payments->setPageSize(20);
-		$payments->addSummary("Total",array("Total" => array("sum","Currency->Nice")));
-		$fields->addFieldToTab('Root.Payments',$payments);
+		$payments = $this->owner->Payments();
+		$paymentConfig = new GridFieldConfig_RelationEditor();
+		$paymentGrid = new GridField("Payments","Payments",$payments,$paymentConfig);
+		$fields->addFieldToTab("Root.Payments", $paymentGrid);
 		$this->extend('updateCMSFields',$fields);
 		return $fields;
 	}
