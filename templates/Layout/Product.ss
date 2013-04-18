@@ -1,8 +1,8 @@
 <% require themedCSS(product) %>
 <div id="Sidebar">
-	<% control Parent %>
+	<% with Parent %>
 		<% include ProductMenu %>
-	<% end_control %>
+	<% end_with %>
 	<div class="cart">
 		<% include SideCart %>
 	</div>
@@ -29,7 +29,7 @@
 			<% end_if %>
 			<% if canPurchase %>
 				<% if IsInCart %>
-					<% control Item %>
+					<% with Item %>
 						<div class="quantityBox">
 							<span><% _t("QUANTITYCART","Quantity in cart") %>:</span> 
 							$QuantityField
@@ -38,7 +38,7 @@
 								<li><a href="$checkoutLink" title="<% _t("GOTOCHECKOUT","Go to the checkout now") %>"><% _t("GOTOCHECKOUTLINK","Go to the checkout") %></a></li>
 							</ul>
 						</div>
-					<% end_control %>
+					<% end_with %>
 				<% else %>
 					<p class="quantityBox"><a href="$addLink" title="<% sprintf(_t("ADD","Add &quot;%s&quot; to your cart"),$Title) %>"><% _t("ADDLINK","Add this item to cart") %></a></p>
 				<% end_if %>

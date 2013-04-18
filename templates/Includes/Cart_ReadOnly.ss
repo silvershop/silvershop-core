@@ -15,9 +15,9 @@
 		</tr>
 	</thead>
 	<tbody>
-		<% control Items %>
+		<% loop Items %>
 			<% include Order_ItemLine %>
-		<% end_control %>
+		<% end_loop %>
 	</tbody>
 	<tfoot>
 		<tr class="subtotal">

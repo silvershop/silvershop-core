@@ -5,10 +5,10 @@
 		</tr>
 	</thead>
 	<tbody>
-		<% control PastOrders %>
+		<% loop PastOrders %>
 			<tr class="$Status">
 				<td>$Reference</td><td>$Created.Nice</td><td>$Items.Quantity</td><td>$Total.Nice</td><td>$Status</td><td><a class="btn btn-mini btn-primary" href="$Link"><i class="icon icon-white icon-eye-open"></i> view</a></td>
 			</tr>
-		<% end_control %>
+		<% end_loop %>
 	</tbody>
 </table>

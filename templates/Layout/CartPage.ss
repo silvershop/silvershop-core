@@ -6,12 +6,9 @@
 	<% end_if %>
 </div>
 <% if Cart %>
-	<% control Cart %>
+	<% with Cart %>
 		<% include Cart %>
-	<% end_control %>
-	<% control ModifierForms %>
-		$Me
-	<% end_control %>
+	<% end_with %>
 <% else %>
 	<p class="message warning"><% _t('CartPage.ss.CARTEMPTY','Your cart is empty.') %></p>
 <% end_if %>

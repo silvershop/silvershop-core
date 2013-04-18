@@ -17,13 +17,13 @@
 	<% if Products %>
 		<div id="Products" class="category">
 			<div class="resultsBar">
-				<% if SortLinks %><span class="sortOptions"><% _t('ProductGroup.SORTBY','sort by') %> <% control SortLinks %><a href="$Link" class="sortlink $Current">$Name</a> <% end_control %></span><% end_if %>
+				<% if SortLinks %><span class="sortOptions"><% _t('ProductGroup.SORTBY','sort by') %> <% loop SortLinks %><a href="$Link" class="sortlink $Current">$Name</a> <% end_loop %></span><% end_if %>
 			</div>
 			<div class="clear"><!-- --></div>
 			<ul class="productList">
-				<% control Products %>
+				<% loop Products %>
 					<% include ProductGroupItem %>
-				<% end_control %>
+				<% end_loop %>
 			</ul>
 			<div class="clear"><!-- --></div>
 			<% include ProductGroupPagination %>

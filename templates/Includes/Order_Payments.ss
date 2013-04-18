@@ -12,7 +12,7 @@
 		</tr>
 	</thead>
 	<tbody>
-		<% control Payments %>	
+		<% loop Payments %>	
 			<tr>
 				<td class="price">$Created.Nice</td>
 				<td class="price">$Amount.Nice $Currency</td>
@@ -20,6 +20,6 @@
 				<td class="price">$PaymentMethod</td>
 				<td class="price">$Message.NoHTML</td>
 			</tr>
-		<% end_control %>
+		<% end_loop %>
 	</tbody>
 </table>

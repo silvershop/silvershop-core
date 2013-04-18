@@ -14,9 +14,9 @@
 		</tr>
 	</thead>
 	<tbody>
-		<% control Items %>
+		<% loop Items %>
 			<% include Order_Content_ItemLine %>
-		<% end_control %>
+		<% end_loop %>
 	</tbody>
 	<% include Order_Content_SubTotals %>
 </table>

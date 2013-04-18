@@ -3,7 +3,7 @@
 		<% if Image %>
 			<div class="image">
 				<a href="$Link" title="<% sprintf(_t("READMORE","View &quot;%s&quot;"),$Title) %>">
-					<img src="<% control Image.setWidth(45) %>$Me.AbsoluteURL<% end_control %>" alt="$Buyable.Title"/>
+					<img src="<% with Image.setWidth(45) %>$Me.AbsoluteURL<% end_with %>" alt="$Buyable.Title"/>
 				</a>
 			</div>
 		<% end_if %>

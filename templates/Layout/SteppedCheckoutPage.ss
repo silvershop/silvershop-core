@@ -15,9 +15,9 @@
 					</div>
 					<div class="accordion-body">
 						<div class="accordion-inner">
-							<% control Cart %>
+							<% with Cart %>
 								<% include Cart_ReadOnly %>
-							<% end_control %>
+							<% end_with %>
 						</div>
 					</div>
 				</div>
@@ -40,9 +40,9 @@
 									$Form
 								<% end_if %>
 								<% if IsPastStep(contactdetails) %>
-									<% control Cart %>
+									<% with Cart %>
 										$Name ($Email)
-									<% end_control %>
+									<% end_with %>
 								<% end_if %>
 							</div>
 						</div>
@@ -69,20 +69,20 @@
 								<% if IsPastStep(shippingaddress) %>
 									<div class="row">
 										<div class="span4">
-											<% control Cart %>
+											<% with Cart %>
 												<h4>Ship To:</h4>
 												$ShippingAddress
-											<% end_control %>
+											<% end_with %>
 										</div>
 										<div class="span4">
 										<h4>Bill To:</h4>
 											<% if IsCurrentStep(billingaddress) %>
 												$Form
 											<% else %>
-												<% control Cart %>
+												<% with Cart %>
 													$BillingAddress
 												<% end_control %>
-											<% end_if %>
+											<% end_with %>
 										</div>
 									</div>
 								<% end_if %>
@@ -108,9 +108,9 @@
 									$Form
 								<% end_if %>
 								<% if IsPastStep(shippingmethod) %>
-									<% control Cart %>
+									<% with Cart %>
 										<p>$ShippingMethod.Title</p>
-									<% end_control %>
+									<% end_with %>
 								<% end_if %>
 							</div>
 						</div>
@@ -151,24 +151,24 @@
 						<div class="accordion-body">
 							<div class="accordion-inner">
 								<% if IsCurrentStep(summary) %>
-									<% control Cart %>
+									<% with Cart %>
 										<table class="table">
 											<tfoot>
-												<% control Modifiers %>
+												<% loop Modifiers %>
 													<% if ShowInTable %>
 												<tr class="modifierRow $EvenOdd $FirstLast $Classes">
 													<td colspan="3">$TableTitle</td>
 													<td>$TableValue.Nice</td>
 												</tr>
 													<% end_if %>
-												<% end_control %>
+												<% end_loop %>
 												<tr>
 													<th colspan="3">Grand Total</th>
 													<td>$Total.Nice $Currency</td>
 												</tr>
 											</tfoot>
 										</table>
-									<% end_control %>
+									<% end_with %>
 									$Form
 								<% end_if %>
 							</div>
