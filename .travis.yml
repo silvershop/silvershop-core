@@ -1,27 +1,18 @@
 language: php
+
 php:
 - 5.3
+
 before_script:
-
 - pwd
-
 - phpunit --version
 
 # get core code
 - cd ~/builds
-- git clone git://github.com/silverstripe/silverstripe-installer.git ss
-- git clone git://github.com/silverstripe/sapphire.git ss/sapphire
-- cd ss/sapphire
-- git checkout 3.1
-- cd ~/builds
-- git clone git://github.com/silverstripe/silverstripe-cms.git ss/cms
-- cd ss/cms
-- git checkout 3.1
-- cd ~/builds
-- git clone git://github.com/burnbright/silverstripe-payment.git ss/payment
-- cd ss/payment
-- git checkout ss3
-- cd ~/builds
+- git clone --branch="3.1" git://github.com/silverstripe/silverstripe-installer.git ss
+- git clone --branch="3.1" git://github.com/silverstripe/sapphire.git ss/framework
+- git clone --branch="3.1" git://github.com/silverstripe/silverstripe-cms.git ss/cms
+- git clone --branch="ss3" git://github.com/burnbright/silverstripe-payment.git ss/payment
 - git clone git://github.com/burnbright/silverstripe-bootstrap.git ss/themes/bootstrap
 - git clone git://github.com/burnbright/silverstripe-bootstrap-shop.git ss/themes/bootstrap_shop
 - git clone https://github.com/silverstripe-labs/silverstripe-sqlite3.git ss/sqlite
@@ -33,8 +24,6 @@ before_script:
 - mv -f ss/shop/tests/travis/_ss_environment.php.travis ss/_ss_environment.php
 - mv -f ss/shop/tests/travis/phpunit.xml.travis ss/phpunit.xml
 
-#- ss/sapphire/sake dev/build "flush=all"
-
 script:
 - cd ~/builds/ss
-- sapphire/sake dev/tests/module/shop
+- framework/sake dev/tests/module/shop flush=1
