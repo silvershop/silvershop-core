@@ -3,6 +3,10 @@ php:
 - 5.3
 before_script:
 
+- pwd
+
+- phpunit --version
+
 # get core code
 - cd ~/builds
 - git clone git://github.com/silverstripe/silverstripe-installer.git ss
@@ -22,7 +26,7 @@ before_script:
 - git clone git://github.com/burnbright/silverstripe-bootstrap-shop.git ss/themes/bootstrap_shop
 - git clone https://github.com/silverstripe-labs/silverstripe-sqlite3.git ss/sqlite
 
-- mv burnbright/silverstripe-shop ss/shop
+- mv ~/build/burnbright/silverstripe-shop ss/shop
 
 # copy configs
 - mv -f ss/shop/tests/travis/_config.php.travis ss/mysite/_config.php
