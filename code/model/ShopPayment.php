@@ -75,7 +75,7 @@ class ShopPayment extends DataExtension {
 
 	function redirectToOrder() {
 		$order = $this->owner->Order();
-		Director::redirect($order->Link());
+		Controller::curr()->redirect($order->Link());
 		return;
 	}
 

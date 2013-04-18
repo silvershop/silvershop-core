@@ -18,7 +18,7 @@ class CheckoutStep_Membership extends CheckoutStep{
 	function membership(){
 		//if logged in, then redirect to next step
 		if(ShoppingCart::curr() && self::$skip_if_logged_in && Member::currentUser()){
-			Director::redirect($this->NextStepLink());
+			Controller::curr()->redirect($this->NextStepLink());
 			return;
 		}
 		return $this->owner->customise(array(
@@ -51,11 +51,11 @@ class CheckoutStep_Membership extends CheckoutStep{
 	
 	function createaccount($requestdata){
 		if(Member::currentUser()){ //we shouldn't create an account if already a member
-			Director::redirect($this->NextStepLink());
+			Controller::curr()->redirect($this->NextStepLink());
 			return;
 		}
 		if(!($requestdata instanceof SS_HTTPRequest)){ //using this function to redirect, and display action
-			Director::redirect($this->NextStepLink('createaccount'));
+			Controller::curr()->redirect($this->NextStepLink('createaccount'));
 			return;
 		}
 		return array(

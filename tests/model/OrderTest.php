@@ -94,22 +94,22 @@ class OrderTest extends SapphireTest {
 		$this->assertFalse($order->isCart());
 		
 		//item values don't change
-		$items = $order->Items();
+		$items = $order->Items()->innerJoin("Product_OrderItem","OrderItem.ID = Product_OrderItem.ID"); //TODO: why is this join needed?
 		$this->assertNotNull($items);
 		$this->assertDOSEquals(array(
 			array('ProductID' => $this->mp3player->ID,'Quantity' => 2, 'CalculatedTotal' => 400),
 			array('ProductID' => $this->socks->ID, 'Quantity' => 1, 'CalculatedTotal' => 8)
 		), $items);
 		
-		$mp3player = $items->innerJoin("Product_OrderItem","OrderItem.ID = Product_OrderItem.ID")->find('ProductID',$this->mp3player->ID);//join needed to provide ProductID
-		$this->assertNotNull($mp3player);
+		$mp3player = $items->find('ProductID',$this->mp3player->ID);//join needed to provide ProductID
+		$this->assertNotNull($mp3player,"MP3 player is in order");
 		$this->assertEquals($mp3player->UnitPrice(),200,"Unit price remains the same");
-		$this->assertEquals($mp3player->Total(),400,"");
+		$this->assertEquals($mp3player->Total(),400,"Total remains the same");
 		
 		$socks = $items->find('ProductID',$this->socks->ID);
-		$this->assertNotNull($socks);
-		$this->assertEquals($socks->UnitPrice(),8);
-		$this->assertEquals($socks->Total(),8);
+		$this->assertNotNull($socks,"Socks are in order");
+		$this->assertEquals($socks->UnitPrice(),8,"Unit price remains the same");
+		$this->assertEquals($socks->Total(),8,"Total remains the same");
 	}
 	
 	/**

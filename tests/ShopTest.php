@@ -17,7 +17,7 @@ class ShopTest extends FunctionalTest {
 	}
 
 	function testExampleConfig(){
-		require_once(BASE_PATH.DIRECTORY_SEPARATOR.SHOP_DIR.DIRECTORY_SEPARATOR.'example_config.php');
+		require_once(SHOP_PATH.DIRECTORY_SEPARATOR.'example_config.php');
 		//TODO: test each configuration
 	}
 

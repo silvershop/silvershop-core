@@ -4,5 +4,5 @@ After: framework/routes#coreroutes
 ---
 Director:
   rules:
-    'shoppingcart/$Action/$Buyable/$ID' : 'ShoppingCart_Controller'
+    'shoppingcart' : 'ShoppingCart_Controller'
     'dev/shop' : 'ShopDevelopmentAdmin'

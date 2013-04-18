@@ -230,11 +230,11 @@ class CheckoutPage_Controller extends Page_Controller {
 			if($modifier->canRemove()){	
 				$modifier->delete();
 				$modifier->destroy();
-				Director::redirectBack();
+				$this->redirectBack();
 				return;
 			}
 		}
-		Director::redirectBack();
+		$this->redirectBack();
 		return false;
 	}
 	

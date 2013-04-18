@@ -111,8 +111,6 @@ class Product extends Page implements Buyable{
 			$pagename->setTitle(_t('Product.PAGETITLE','Product Page Title'));
 		}
 		
-		$this->extend('updateCMSFields', $fields);
-		
 		return $fields;
 	}
 

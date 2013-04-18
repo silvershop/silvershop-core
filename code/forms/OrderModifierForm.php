@@ -24,7 +24,7 @@ class OrderModifierForm extends Form {
 		if(Director::is_ajax()){
 			return $status; //TODO: allow for custom return types, eg json - similar to ShoppingCart::return_data()
 		}
-		Director::redirect(CheckoutPage::find_link());
+		Controller::curr()->redirect(CheckoutPage::find_link());
 		 
 	}
 	

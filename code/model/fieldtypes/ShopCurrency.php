@@ -4,16 +4,16 @@
  */
 class ShopCurrency extends Currency {
 
-	protected static $decimalDelimiter = '.';
-	protected static $thousandDelimiter = ',';
+	protected static $decimal_delimiter = '.';
+	protected static $thousand_delimiter = ',';
 	protected static $negative_value_format = "<span class=\"negative\">(%s)</span>";
 
 	public static function getCurrencySymbol() {
-		return self::$currencySymbol;
+		return Currency::config()->currency_symbol;
 	}
 
 	function Nice() {
-		$val = self::$currencySymbol . number_format(abs($this->value), 2, self::$decimalDelimiter, self::$thousandDelimiter);
+		$val = self::getCurrencySymbol() . number_format(abs($this->value), 2, self::getDecimalDelimiter(), self::getThousandDelimiter());
 		if($this->value < 0){
 			return sprintf(self::$negative_value_format,$val);
 		}
@@ -21,17 +21,17 @@ class ShopCurrency extends Currency {
 	}
 
 	static function setDecimalDelimiter($value) {
-		self::$decimalDelimiter = $value;
+		self::$decimal_delimiter = $value;
 	}
 	static function setThousandDelimiter($value) {
-		self::$thousandDelimiter = $value;
+		self::$thousand_delimiter = $value;
 	}
 	
 	static function getDecimalDelimiter() {
-		return self::$decimalDelimiter;
+		return self::$decimal_delimiter;
 	}
 	static function getThousandDelimiter() {
-		return self::$thousandDelimiter;
+		return self::$thousand_delimiter;
 	}
 }
 

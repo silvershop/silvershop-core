@@ -48,7 +48,7 @@ class ShopAccountForm extends Form {
 		$member->write();
 		$form->sessionMessage(_t("MemberForm.DETAILSSAVED",'Your details have been saved'), 'good');
 
-		Director::redirectBack();
+		Controller::curr()->redirectBack();
 		return true;
 	}
 
@@ -61,7 +61,7 @@ class ShopAccountForm extends Form {
 		$form->saveInto($member);
 		$member->write();
 		$form->sessionMessage(_t("MemberForm.DETAILSSAVED",'Your details have been saved'), 'good');
-		Director::redirect(CheckoutPage::find_link());
+		Controller::curr()->redirect(CheckoutPage::find_link());
 		return true;
 	}
 

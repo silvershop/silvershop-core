@@ -7,10 +7,6 @@
  */
 class ProductVariationDecorator extends DataExtension{
 	
-	static $db = array(
-		'Test2' => 'Varchar(128)'
-	);
-	
 	static $has_many = array(
 		'Variations' => 'ProductVariation'
 	);
@@ -36,7 +32,6 @@ class ProductVariationDecorator extends DataExtension{
 		}
 	}
 	
-	
 	/**
 	 * CMS fields helper function for getting the variations table.
 	 * @return HasManyComplexTableField
@@ -46,7 +41,7 @@ class ProductVariationDecorator extends DataExtension{
 		$variations = $this->owner->Variations();
 		$itemsConfig = new GridFieldConfig_RelationEditor();
 		$itemsTable = new GridField("Variations","Variations",$variations,$itemsConfig);
-		
+
 		return $itemsTable;
 	}
 
@@ -62,12 +57,12 @@ class ProductVariationDecorator extends DataExtension{
 			$minprice = min($prices);
 			$hasrange = ($minprice != $maxprice);
 
-			$maxprice = DBField::create("Currency",$maxprice);
-			$minprice = DBField::create("Currency",$minprice);
+			$maxprice = ShopCurrency::create($maxprice);
+			$minprice = ShopCurrency::create($minprice);
 
 			if($count > 0){
 				$averageprice = $sum/$count;
-				$averageprice = DBField::create("Currency",$averageprice);
+				$averageprice = ShopCurrency::create($averageprice);
 			}
 		}else{
 			return null;
@@ -91,20 +86,16 @@ class ProductVariationDecorator extends DataExtension{
 		if(!is_array($attributes)) return null;
 		$keyattributes = array_keys($attributes);
 		$id = $keyattributes[0];
-		$join = "";
-
-		$variations = ProductVariation::get()->where("\"ProductID\" = ".$this->owner->ID);
-		
+		$variations = ProductVariation::get()->filter("ProductID",$this->owner->ID);
 		foreach($attributes as $typeid => $valueid){
 			if(!is_numeric($typeid) || !is_numeric($valueid))
 				return null; //ids MUST be numeric
 			$alias = "A$typeid";
-			$variations->where("$alias.ProductAttributeValueID = $valueid");
-			$variations->innerJoin(
+			$variations = $variations->innerJoin(
 				"ProductVariation_AttributeValues",
 				"ProductVariation.ID = $alias.ProductVariationID",
 				$alias
-			);
+			)->where("$alias.ProductAttributeValueID = $valueid");
 		}
 		if($variation = $variations->First())
 			return $variation;
@@ -165,13 +156,13 @@ class ProductVariationDecorator extends DataExtension{
 		if(!is_numeric($type))
 			$type = $type->ID;
 		if(!$type) return null;
-	
-		$where = "TypeID = $type AND \"ProductVariation\".\"ProductID\" = ".$this->owner->ID;
-		//TODO: is there a better place to obtain these joins?
-		$join = "INNER JOIN \"ProductVariation_AttributeValues\" ON \"ProductAttributeValue\".\"ID\" = \"ProductVariation_AttributeValues\".\"ProductAttributeValueID\"" .
-			" INNER JOIN \"ProductVariation\" ON \"ProductVariation_AttributeValues\".\"ProductVariationID\" = \"ProductVariation\".\"ID\"";
-		//TODO: Change this to use DataList I think and then use innerJoin()
-		return DataObject::get('ProductAttributeValue',$where,$sort = "\"ProductAttributeValue\".\"Sort\",\"ProductAttributeValue\".\"Value\"",$join);
+		
+		return ProductAttributeValue::get()
+					->innerJoin("ProductVariation_AttributeValues",
+							"\"ProductAttributeValue\".\"ID\" = \"ProductVariation_AttributeValues\".\"ProductAttributeValueID\""
+					)->innerJoin("ProductVariation",
+							"\"ProductVariation_AttributeValues\".\"ProductVariationID\" = \"ProductVariation\".\"ID\""
+					)->where("TypeID = $type AND \"ProductVariation\".\"ProductID\" = ".$this->owner->ID);
 	}
 
 	/**

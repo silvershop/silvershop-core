@@ -362,6 +362,10 @@ class ShoppingCart_Controller extends Controller{
 	protected static $direct_to_cart_page = false;
 	protected $cart;
 	
+	private static $url_handlers = array(
+		'$Action/$Buyable/$ID' => 'handleAction',
+	);
+	
 	static $allowed_actions = array(
 		'add',
 		'additem',
@@ -501,7 +505,7 @@ class ShoppingCart_Controller extends Controller{
 	 */
 	function index(){
 		if($cart = $this->Cart()){
-			Director::redirect($cart->CartLink);
+			$this->redirect($cart->CartLink);
 			return;
 		}elseif($response = ErrorPage::response_for(404)) {
 			return $response;

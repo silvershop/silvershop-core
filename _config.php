@@ -1,6 +1,7 @@
 <?php
 
-define('SHOP_DIR','shop');
+define('SHOP_DIR',basename(__DIR__));
+define('SHOP_PATH',BASE_PATH.DIRECTORY_SEPARATOR.SHOP_DIR);
 
 // Extend the Member with e-commerce related fields.
 DataObject::add_extension('Member', 'ShopMember');
@@ -8,13 +9,6 @@ DataObject::add_extension('Member', 'ShopMember');
 if(!class_exists('Payment')) user_error("You need to also install the Payment module to use the shop module", E_USER_ERROR);
 DataObject::add_extension('Payment', 'ShopPayment');
 //create controller for shopping cart
-
-/*
-Director::addRules(50, array(
-	ShoppingCart_Controller::$url_segment . '/$Action/$Buyable/$ID' => 'ShoppingCart_Controller',
-	'dev/shop' => 'ShopDevelopmentAdmin'
-));
-*/
 
 Object::add_extension("Page_Controller","ViewableCart");
 Object::add_extension("ShoppingCart_Controller","ViewableCart");
@@ -29,7 +23,7 @@ Object::useCustomClass('Currency','ShopCurrency', true);
 
 //variations
 Object::add_extension("Product","ProductVariationDecorator");
-//Object::add_extension("Product_Controller","ProductControllerVariationExtension");
+Object::add_extension("Product_Controller","ProductControllerVariationExtension");
 
 //reports
 /*
