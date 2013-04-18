@@ -1,5 +1,5 @@
 {
-	"name" : "burnbright/silverstripe-shop",
+	"name" : "burnbright/shop",
 	"description" : "Provides an ecommerce product catalog, shopping cart, and order management system",
 	"license" : "BSD-2-Clause",
 	"type" : "silverstripe-module",
