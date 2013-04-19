@@ -5,7 +5,7 @@
 class OrderItemList extends Extension{
 	
 	function Quantity(){
-		return $this->owner->Sum('Quantity');
+		return $this->owner->orderItemsSum('Quantity');
 	}
 	
 	function Plural(){
