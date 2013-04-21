@@ -21,8 +21,8 @@ class ProductBulkLoaderTest extends FunctionalTest {
 		
 		// Test that columns were correctly imported
 		$obj = DataObject::get_one("Product", "\"Title\" = 'Socks'");
-		$this->assertNotNull($obj);
-		$this->assertEquals("<p>The comfiest pair of socks you'll ever own.</p>", $obj->Content);
+		$this->assertNotNull($obj, "New product exists");
+		$this->assertEquals("<p>The comfiest pair of socks you'll ever own.</p>", $obj->Content,"Content matches");
 		$this->assertEquals(12, $obj->BasePrice,"Checking price matches.");
 		//$this->assertEquals(124, $obj->ID,"Checking ID matches");
 		

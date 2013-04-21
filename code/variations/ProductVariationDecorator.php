@@ -37,16 +37,13 @@ class ProductVariationDecorator extends DataExtension{
 	 * @return HasManyComplexTableField
 	 */
 	function getVariationsTable() {
-		
 		$variations = $this->owner->Variations();
 		$itemsConfig = new GridFieldConfig_RelationEditor();
 		$itemsTable = new GridField("Variations","Variations",$variations,$itemsConfig);
-
 		return $itemsTable;
 	}
 
 	function PriceRange(){
-
 		$maxprice = $minprice = $averageprice = $hasrange = null;
 		$variations = $this->owner->Variations();
 		if($variations->exists() && $variations->Count()){
@@ -67,7 +64,6 @@ class ProductVariationDecorator extends DataExtension{
 		}else{
 			return null;
 		}
-
 		return new ArrayData(array(
 			'HasRange' => $hasrange,
 			'Max' => $maxprice,
