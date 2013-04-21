@@ -29,7 +29,7 @@ class OrderProcessor{
 	* @deprecated - use translation instead via Order.EMAILSUBJECT
 	*/
 	protected static $receipt_subject = "Shop Sale Information #%d";
-
+	
 	/**
 	 * Static way to create the order processor.
 	 * Makes creating a processor easier.
@@ -65,7 +65,7 @@ class OrderProcessor{
 	 * @param Member $member - assign a member to the order
 	 * @return boolean - success/failure
 	 */
-	function placeOrder(){
+	function placeOrder($member = null){
 		if(!$this->order){
 			$this->error(_t("OrderProcessor.NULL","A new order has not yet been started."));
 			return false;
@@ -86,7 +86,7 @@ class OrderProcessor{
 		$items = $this->order->Items();
 		if($items->exists()){
 			foreach($items as $item){
-				$item->place();
+				$item->onPlacement();
 				$item->write();
 			}
 		}
@@ -96,7 +96,13 @@ class OrderProcessor{
 				$modifier->write();
 			}
 		}
-		//TODO: add member to customer group
+		if($member){
+			$this->order->MemberID = $member->ID;
+			$this->order->setComponent("Member", $member);
+			if($cgroup = ShopConfig::current()->CustomerGroup()){
+				$member->Groups()->add($cgroup);
+			}
+		}
 		OrderManipulation::add_session_order($this->order); //save order reference to session
 		$this->order->extend('onPlaceOrder'); //allow decorators to do stuff when order is saved.
 		$this->order->write();
@@ -151,8 +157,8 @@ class OrderProcessor{
 		//modifiers have been calculated
 		return true;
 	}
-
-
+	
+	
 	/**
 	 * Create a payment model, and provide link to redirect to external gateway,
 	 * or redirect to order link.
@@ -190,12 +196,17 @@ class OrderProcessor{
 	 * 	- update order status accordingling
 	 */
 	function completePayment(){
-		if(!$this->order->ReceiptSent && $this->order->Status != 'Paid'){
-			$this->sendReceipt();
+		if($this->order->Status != 'Paid'){
+			if(!$this->order->ReceiptSent){
+				$this->sendReceipt();
+			}
 			if($this->order->GrandTotal() > 0 && $this->order->TotalOutstanding() <= 0){
 				$this->order->Status = 'Paid';
 				$this->order->Paid = SS_Datetime::now()->Rfc2822();
 				$this->order->write();
+				foreach($this->order->Items() as $item){
+					$item->onPayment();
+				}
 			}
 		}
 	}	

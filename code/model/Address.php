@@ -158,9 +158,6 @@ class Address extends DataObject{
 	function setProvince($val){$this->State = $val;}
 	function setTerritory($val){$this->State = $val;}
 	function setIsland($val){$this->State = $val;}
-	function setSuburb($val){$this->City = $val;}
-	function setCounty($val){$this->City = $val;}
-	function setDistrict($val){$this->City = $val;}
 	function setPostCode($val){$this->PostalCode = $val;}
 	function setZipCode($val){$this->PostalCode = $val;}
 	function setStreet($val){$this->Address = $val;}

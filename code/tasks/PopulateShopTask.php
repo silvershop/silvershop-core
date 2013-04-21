@@ -15,6 +15,12 @@ class PopulateShopTask extends BuildTask{
 	
 	function run($request){
 		
+		if($request->getVar('createintzone')){
+			$this->populateInternationalZone();
+			DB::alteration_message('Created an international zone', 'created');
+			return;
+		}
+		
 		$this->extend("beforePopulate");
 		
 		//create products
@@ -124,6 +130,23 @@ class PopulateShopTask extends BuildTask{
 			$siteconfig->write();
 		}
 		$this->extend("afterPopulate");
+	}
+	
+	function populateInternationalZone(){
+		$zone = new Zone(array(
+			'Name' => 'International'	
+		));
+		$zone->write();
+		
+		if($countries = SiteConfig::current_site_config()->getCountriesList()){
+			foreach($countries as $iso => $country){
+				$region = new ZoneRegion(array(
+					'Country' => $iso,
+					'ZoneID' => $zone->ID	
+				));
+				$region->write();
+			}
+		}
 	}
 	
 }

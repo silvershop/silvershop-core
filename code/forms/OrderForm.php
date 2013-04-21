@@ -224,7 +224,6 @@ class OrderForm extends Form {
 				return;
 			}
 		}
-		
 		//save addresses
 		$address = $this->saveAddress($order->getShippingAddress(),$form,$member);
 		$order->ShippingAddressID = $address->ID;
@@ -234,27 +233,17 @@ class OrderForm extends Form {
 			$address = $this->saveAddress($order->getBillingAddress(),$form,$member,true);
 			$order->BillingAddressID = $address->ID;
 		}
-
 		$order->write();
 		
 		//TODO: check that price hasn't changed
 		$processor = OrderProcessor::create($order);
-		if(!$processor->placeOrder()){
+		if(!$processor->placeOrder($member)){
 			$form->sessionMessage($processor->getError(), 'bad');
 			Controller::curr()->redirectBack();
 			return false;
 		}
 		$cart->clear();
 		$this->clearSessionData(); //clears the stored session form data that might have been needed if validation failed
-		//assiciate member with order, if there is a member now
-		if($member){
-			$member->DefaultShippingAddressID = $order->ShippingAddressID;
-			$member->DefaultBillingAddressID = $order->BillingAddressID;
-			$member->write();
-			$member->logIn();
-			$order->MemberID = $member->ID;
-			$order->write();
-		}
 		// Save payment data from form and process payment
 		$paymentClass = (!empty($data['PaymentMethod'])) ? $data['PaymentMethod'] : null;
 		$payment = $processor->createPayment($paymentClass);

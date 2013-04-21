@@ -21,4 +21,8 @@ class ShopCountry extends Varchar{
 		return _t("ShopCountry.".$this->value,$val);
 	}
 	
+	function XML(){
+		return Convert::raw2xml($this->Nice());
+	}
+	
 }

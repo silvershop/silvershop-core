@@ -38,15 +38,13 @@ class ShopTest extends FunctionalTest {
 		$p2a = $this->objFromFixture('Product', 'socks');
 		$this->get(Director::makeRelative($p1a->Link()));
 		$this->get(Director::makeRelative($p2a->Link()));
-		//TODO: check order hasn't started
 	}
-
+	
 	function testCanViewProductCategoryPage() {
-		$g1 = $this->objFromFixture('ProductCategory', 'g1');
-		$g2 = $this->objFromFixture('ProductCategory', 'g2');
-		$this->get(Director::makeRelative($g1->Link()));
-		$this->get(Director::makeRelative($g2->Link()));
-		//TODO: check order hasn't started
+		$clothing = $this->objFromFixture('ProductCategory', 'clothing');
+		$musicplayers = $this->objFromFixture('ProductCategory', 'musicplayers');
+		$this->get(Director::makeRelative($clothing->Link()));
+		$this->get(Director::makeRelative($musicplayers->Link()));
 	}
 
 	function old_testCanViewAccountPage() {

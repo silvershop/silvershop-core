@@ -15,10 +15,7 @@ class OrdersAdmin extends ModelAdmin{
 			'title' => 'Orders'
 		)
 	);
+	
 
-	function init() {
-		parent::init();
-		Requirements::javascript(SHOP_DIR."/javascript/EcommerceModelAdminExtensions.js");
-	}
 
 }

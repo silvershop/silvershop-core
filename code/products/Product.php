@@ -30,7 +30,7 @@ class Product extends Page implements Buyable{
 		'FeaturedProduct' => 'Boolean',
 		'AllowPurchase' => 'Boolean',
 		
-		'NumberSold' => 'Int' //store number sold, so it doesn't have to be computed on the fly. Used for determining popularity.
+		'Popularity' => 'Float' //storage for ClaculateProductPopularity task
 	);
 	
 	
@@ -48,7 +48,7 @@ class Product extends Page implements Buyable{
 	);
 
 	public static $summary_fields = array(
-		'InternalItemID','Title','BasePrice','Weight','Model','NumberSold'
+		'InternalItemID','Title','BasePrice','Weight','Model'
 	);
 
 	public static $searchable_fields = array(
@@ -120,37 +120,7 @@ class Product extends Page implements Buyable{
 	static function set_global_allow_purchase($allow = false){
 		self::$global_allow_purchase = $allow;
 	}
-
-	/**
-	 * Recaulculates the number sold for all products. This should be run as a cron job perhaps daily.
-	 */
-	static function recalculate_numbersold(){
-		$ps = singleton('Product');
-		$q = $ps->buildSQL("\"Product\".\"AllowPurchase\" = 1");
-		$select = $q->select;
-
-		$select['NewNumberSold'] = self::$number_sold_calculation_type."(\"OrderItem\".\"Quantity\") AS \"NewNumberSold\"";
-
-		$q->select($select);
-		$q->groupby("\"Product\".\"ID\"");
-		$q->orderby("\"NewNumberSold\" DESC");
-
-		$q->leftJoin('Product_OrderItem','"Product"."ID" = "Product_OrderItem"."ProductID"');
-		$q->leftJoin('OrderItem','"Product_OrderItem"."ID" = "OrderItem"."ID"');
-		$records = $q->execute();
-		$productssold = $ps->buildDataObjectSet($records, "DataObjectSet", $q, 'Product');
-
-		//TODO: this could be done faster with an UPDATE query (SQLQuery doesn't support this yet @11/06/2010)
-		foreach($productssold as $product){
-			if($product->NewNumberSold != $product->NumberSold){
-				$product->NumberSold = $product->NewNumberSold;
-				$product->writeToStage('Stage');
-				$product->publish('Stage', 'Live');
-			}
-		}
-
-	}
-	
+		
 	/**
 	 * Helper for creating the product groups table
 	 */
@@ -388,6 +358,10 @@ class Product_OrderItem extends OrderItem {
 	 * @return Product
 	 */
 	public function Product($forcecurrent = false) {
+		
+		//TODO: this might need some unit testing to make sure it compliles with comment description
+			//ie use live if inn cart (however I see no logic for checking cart status)
+		
 		if($this->ProductID && $this->ProductVersion && !$forcecurrent){
 			return Versioned::get_version('Product', $this->ProductID, $this->ProductVersion);
 		}elseif($this->ProductID && $product = Versioned::get_one_by_stage('Product','Live', "\"Product\".\"ID\"  = ".$this->ProductID)){
@@ -396,7 +370,8 @@ class Product_OrderItem extends OrderItem {
 		return false;		
 	}
 
-	function place(){
+	function onPlacement(){
+		parent::onPlacement();
 		if($product = $this->Product(true)){
 			$this->ProductVersion = $product->Version;
 		}
@@ -420,6 +395,15 @@ class Product_OrderItem extends OrderItem {
 	 */
 	function ProductTitle(){
 		return $this->TableTitle();
+	}
+	
+	/**
+	 * Recaulculates the number sold for all products. This should be run as a cron job perhaps daily.
+	 * @deprecated use CalculateProductPopularity task instead
+	 */
+	static function recalculate_numbersold(){
+		$task = new CalculateProductPopularity();
+		$task->viaphp();
 	}
 
 }

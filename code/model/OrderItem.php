@@ -76,6 +76,16 @@ class OrderItem extends OrderAttribute {
 		}
 		return $this->UnitPrice;
 	}
+	
+	/**
+	 * Prevent unit price ever being below 0
+	 */
+	function setUnitPrice($val){
+		if($val < 0){
+			$val = 0;
+		}
+		$this->setField("UnitPrice", $val);
+	}
 
 	/**
 	 * Get calculated total, or stored total
@@ -98,13 +108,6 @@ class OrderItem extends OrderAttribute {
 		$this->CalculatedTotal = $total;
 		return $total;
 	}
-	
-	/**
-	 * Last time saving/processing, before item permanently stored in database.
-	 * This should only be called when order is transformed from
-	 * Cart to Order, aka being 'placed'.
-	 */
-	function place(){}
 	
 	/**
 	 * Intersects this item's required_fields with the data record.
@@ -139,6 +142,23 @@ class OrderItem extends OrderAttribute {
 			}
 			$this->calculatetotal();
 		}
+	}
+	
+	/*
+	 * Event handler called when an order is fully paid for.
+	 */
+	function onPayment() {
+		$this->extend('onPayment');
+	}
+	
+	/**
+	 * Event handlier called for last time saving/processing,
+	 * before item permanently stored in database.
+	 * This should only be called when order is transformed from
+	 * Cart to Order, aka being 'placed'.
+	 */
+	function onPlacement() {
+		$this->extend('onPlacement');
 	}
 	
 	/**
@@ -179,17 +199,24 @@ class OrderItem extends OrderAttribute {
 	//Deprecated, to be removed or factored out
 
 	/**
-	* @deprecated 1.0 - use QuantityField instead
+	* @deprecated - use QuantityField instead
 	*/
 	function AjaxQuantityField(){
 		return $this->QuantityField();
 	}
 	
 	/**
-	 * @deprecated
+	 * @deprecated - use CheckoutPage::find_link
 	 */
 	function checkoutLink() {
 		return CheckoutPage::find_link();
+	}
+	
+	/**
+	 * @deprecated - use onPlace instead
+	 */
+	function place(){
+		return $this->onPlace();
 	}
 	
 	protected function QuantityFieldName() {

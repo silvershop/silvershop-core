@@ -56,7 +56,7 @@ class RegionRestriction extends DataObject{
 		$where = array();
 		$rr = "\"RegionRestriction\".";
 		foreach($restrictables as $field){
-			$where[] = "TRIM(LOWER($rr\"$field\")) = TRIM(LOWER('".$address->$field."')) OR $rr\"$field\" = '*' OR $rr\"$field\" = ''";
+			$where[] = "TRIM(LOWER($rr\"$field\")) = TRIM(LOWER('".Convert::raw2sql($address->$field)."')) OR $rr\"$field\" = '*' OR $rr\"$field\" = ''";
 		}
 		return "(".implode(") AND (", $where).")";
 	}
@@ -81,7 +81,7 @@ class RegionRestriction extends DataObject{
 				$this->$field = $value;
 			}
 		}
-		//TODO: prevent non-heirarichal entries, eg country = '*', state = 'blah'		
+		//TODO: prevent non-heirarichal entries, eg country = '*', then state = 'blah'		
 		parent::onBeforeWrite();
 	}
 	

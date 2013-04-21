@@ -47,3 +47,10 @@ See also: DiscountModule
 ## Automatically applying mass reductions
 
 Trigger reductions to occur on a cateogry / set of products during a specific period.
+
+## Rounding
+
+Values are rounded to two decimal places using the default php [round function](http://php.net/manual/en/function.round.php),
+which uses the 'round half up' mode by default.
+
+The Currency db field only allows storing up to two decimal values.

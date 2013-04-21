@@ -10,6 +10,7 @@ class CheckoutStep_Membership extends CheckoutStep{
 		'MembershipForm',
 		'LoginForm',
 		'createaccount',
+		'docreateaccount',
 		'CreateAccountForm'
 	);
 	
@@ -69,7 +70,9 @@ class CheckoutStep_Membership extends CheckoutStep{
 			new FormAction('docreateaccount','Create New Account')
 		);
 		$validator = new RequiredFields(array_keys($fields->dataFields())); //require all fields
-		return new Form($this->owner,"CreateAccountForm",$fields,$actions, $validator);
+		$form = new Form($this->owner,"CreateAccountForm",$fields,$actions, $validator);
+		$this->owner->extend('updateCreateAccountForm', $form);
+		return $form;
 	}
 	
 	function docreateaccount($data, Form $form){

@@ -30,6 +30,7 @@ class CheckoutStep_PaymentMethod extends CheckoutStep{
 		);
 		$validator = new RequiredFields('PaymentMethod');
 		$form = new Form($this->owner,"PaymentMethodForm",$fields,$actions);
+		$this->owner->extend('updatePaymentMethodForm',$form);
 		return $form;
 	}
 	

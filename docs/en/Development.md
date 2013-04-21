@@ -51,8 +51,8 @@ Deletes all of the products
 
 ### CustomersToGroupTask
 
-Adds members who have placed orders to the "Shop Customers" group every hour. Useful for maintaining a distinction between
-shop customers and other members.
+Adds members who have placed orders to the selected customer group (see the shop config). Useful for maintaining a
+distinction between shop customers and other members.
 
 ## Decorator Hooks
 

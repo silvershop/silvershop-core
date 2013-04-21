@@ -27,7 +27,9 @@ class CheckoutStep_Summary extends CheckoutStep{
 			new FormAction("place","Confirm and Pay")
 		);
 		$validator = new CheckoutValidator();
-		return new Form($this->owner,"ConfirmationForm",$fields,$actions, $validator);
+		$form = new Form($this->owner,"ConfirmationForm",$fields,$actions, $validator);
+		$this->owner->extend('updateConfirmationForm',$form);
+		return $form;
 	}
 	
 	function place($data, $form){
@@ -36,7 +38,7 @@ class CheckoutStep_Summary extends CheckoutStep{
 		$order->write();
 		$processor = OrderProcessor::create($order);
 		//try to place order
-		if(!$processor->placeOrder()){
+		if(!$processor->placeOrder(Member::currentMember())){
 			$form->sessionMessage($processor->getError(), 'bad');
 			$this->owner->redirectBack();
 			return false;

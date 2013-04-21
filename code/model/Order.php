@@ -124,12 +124,6 @@ class Order extends DataObject {
 	protected static $modifiers = array();
 	
 	/**
-	 * Store total after calculation
-	 * @var unknown_type
-	 */
-	protected $total = 0;
-	
-	/**
 	 * These are the fields, used for a {@link ComplexTableField}
 	 * in order to show for the table columns on a report.
 	 *
@@ -187,11 +181,6 @@ class Order extends DataObject {
 	public static $rounding_precision = 2;
 	public static $reference_id_padding = 5;
 	
-	protected static $maximum_ignorable_sales_payments_difference = 0.01;
-	public static function set_maximum_ignorable_sales_payments_difference($difference){
-		self::$maximum_ignorable_sales_payments_difference = $difference;
-	}
-
 	public static function get_order_status_options() {
 		return singleton('Order')->dbObject('Status')->enumValues(false);
 	}
@@ -313,8 +302,6 @@ class Order extends DataObject {
 		return count($forms) > 0 ? new DataObjectSet($forms) : null;
 	}
 
-	// Items Management
-
 	/**
 	 * Returns the subtotal of the items for this order.
 	 */
@@ -419,30 +406,34 @@ class Order extends DataObject {
 		return null;
 	}
 	
-	function GrandTotal(){
-		if($this->Total){
-			return $this->Total;
-		}
-		return $this->getField('Total');
+	/**
+	 * Enforce rounding precision when setting total
+	 */
+	function setTotal($val){
+		$this->setField("Total", round($val, self::$rounding_precision));
 	}
 	
+	/**
+	 * Get final value of order.
+	 * Retrieves value from DataObject's record array.
+	 */
 	function Total(){
-		return $this->GrandTotal();
+		return $this->getField("Total");
+	}
+	
+	/**
+	 * Alias for Total.
+	 */
+	function GrandTotal(){
+		return $this->Total();
 	}
 
 	/**
-	 * Checks to see if any payments have been made on this order
-	 * and if so, subracts the payment amount from the order
-	 * Precondition : The order is in DB
+	 * Calculate how much is left to be paid on the order.
+	 * Enforces rounding precision.
 	 */
 	function TotalOutstanding(){
-		$total = $this->Total;
-		$paid = $this->TotalPaid();
-		$outstanding = $total - $paid;
-		if(abs($outstanding) < self::$maximum_ignorable_sales_payments_difference) {
-			return 0;
-		}
-		return $outstanding;
+		return round($this->GrandTotal() - $this->TotalPaid(), self::$rounding_precision);
 	}
 	
 	/**
@@ -556,6 +547,9 @@ class Order extends DataObject {
 		return implode(" ",array_filter(array($firstname,$surname)));
 	}
 	
+	/**
+	 * Get shipping address, or member default shipping address.
+	 */
 	function getShippingAddress(){
 		if($address = $this->ShippingAddress()){
 			return $address;
@@ -565,6 +559,10 @@ class Order extends DataObject {
 		return null;
 	}
 
+	/**
+	 * Get billing address, if marked to use seperate address, otherwise use shipping address,
+	 * or the member default billing address.
+	 */
 	function getBillingAddress(){
 		if(!$this->SeparateBillingAddress && $this->ShippingAddressID === $this->BillingAddressID){
 			return $this->getShippingAddress();
@@ -574,14 +572,6 @@ class Order extends DataObject {
 			return $address;
 		}
 		return null;
-	}
-	
-	function getFullShippingAddress(){
-		return $this->getShippingAddress();
-	}
-	
-	function getFullBillingAddress(){
-		return $this->getBillingAddress();
 	}
 
 	// Order Template and ajax Management
@@ -713,7 +703,6 @@ class Order extends DataObject {
 			$val .= "\t<li>$fieldName: " . Debug::text($fieldVal) . "</li>\n";
 		}
 		$val .= "</ul>\n";
-		
 		$val .= "<div class='items'><h2>Items</h2>";
 		if($items = $this->Items()){
 			$val .= $this->Items()->debug();
@@ -738,6 +727,17 @@ class Order extends DataObject {
 	}
 	
 	//deprecated code
+	
+	/**
+	 * @deprecated - rely on rounding precision instead
+	 */
+	protected static $maximum_ignorable_sales_payments_difference = 0.01;
+	/**
+	 * @deprecated - rely on rounding precision instead.
+	 */
+	public static function set_maximum_ignorable_sales_payments_difference($difference){
+		self::$maximum_ignorable_sales_payments_difference = $difference;
+	}
 	
 	/**
 	* @deprecated Use OrderProcessor
@@ -837,6 +837,20 @@ class Order extends DataObject {
 		$this->owner->extend('updateRequiredFields', $fields);
 		$this->owner->extend('augmentEcommerceRequiredFields', $fields); //deprecated
 		return $fields;
+	}
+	
+	/**
+	 * @deprecated - alias to getShippingAddress
+	 */
+	function getFullShippingAddress(){
+		return $this->getShippingAddress();
+	}
+	
+	/**
+	 * @deprecated - alias to getBillingAddress
+	 */
+	function getFullBillingAddress(){
+		return $this->getBillingAddress();
 	}
 
 }

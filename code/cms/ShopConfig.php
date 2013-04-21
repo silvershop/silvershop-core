@@ -5,6 +5,9 @@ class ShopConfig extends DataExtension{
 	static $db = array(
 		'AllowedCountries' => 'Text'
 	);
+	static $has_one => array(
+		"CustomerGroup" => "Group"
+	);
 	
 	static $has_one = array(
 		'TermsPage' => 'SiteTree'
@@ -14,7 +17,8 @@ class ShopConfig extends DataExtension{
 		$fields->insertBefore($shoptab = new Tab('Shop', 'Shop'), 'Access');
 		$fields->addFieldsToTab("Root.Shop", new TabSet("ShopTabs",
 			$maintab = new Tab("Main",
-				new TreeDropdownField('TermsPageID', _t("ShopConfig.TERMSPAGE",'Terms and Conditions Page'), 'SiteTree')
+				new TreeDropdownField('TermsPageID', _t("ShopConfig.TERMSPAGE",'Terms and Conditions Page'), 'SiteTree'),
+				new TreeDropdownField("CustomerGroupID", _t("ShopConfig.CUSTOMERGROUP","Group to add new customers to"), "Group")
 			),
 			$countriestab = new Tab("Countries",
 				$allowed = new CheckboxSetField('AllowedCountries','Allowed Ordering and Shipping Countries',self::$iso_3166_countryCodes)
@@ -24,6 +28,11 @@ class ShopConfig extends DataExtension{
 		$countriestab->setTitle("Allowed Countries");
 	}
 	
+	/**
+	 * Get list of allowed countries
+	 * @param boolean $prefixisocode - prefix the country code
+	 * @return array
+	 */
 	function getCountriesList($prefixisocode = false){
 		$countries = self::$iso_3166_countryCodes;
 		asort($countries);

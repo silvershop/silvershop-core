@@ -4,34 +4,42 @@ Page:
         URLSegment: home
 
 ProductCategory:
-    g1:
+    products:
         Title: Products
         URLSegment: products
-    g2:
+    clothing:
         Title: Clothing
         URLSegment: clothing
-        Parent: =>ProductCategory.g1 #Sub page of products
+        Parent: =>ProductCategory.products #Sub page of products
+    electronics:
+        Title: Electronics
+        URLSegment: electronics
+        Parent: =>ProductCategory.products
+    musicplayers:
+        Title: Music Players
+        URLSegment: music-players
+        Parent: =>ProductCategory.electronics
 
 Product:
     socks:
         Title: Socks
         BasePrice: 8
         URLSegment: socks
-        Parent: =>ProductCategory.g2
+        Parent: =>ProductCategory.clothing
         AllowPurchase: 1
         Weight: 0.1
         Stock: 50
     tshirt:
         Title: T-Shirt
         BasePrice: 25
-        Parent: =>ProductCategory.g2
+        Parent: =>ProductCategory.clothing
         URLSegment: t-shirt
         AllowPurchase: 1
         Weight: 0.3
         Stock: 1000
     hdtv: #This product has no price
         Title: High Definition Television
-        Parent: =>ProductCategory.g1
+        Parent: =>ProductCategory.electronics
         URLSegment: hdtv
         AllowPurchase: 1
         Weight: 50
@@ -40,7 +48,7 @@ Product:
         Title: Beach Ball
         BasePrice: 10
         URLSegment: beach-ball
-        Parent: =>ProductCategory.g1
+        Parent: =>ProductCategory.products
         AllowPurchase: 0 #This product has AllowPurchase set to 0
         Weight: 0.4
         Stock: 1000
@@ -48,7 +56,7 @@ Product:
         Title: Mp3 Player
         BasePrice: 200
         URLSegment: mp3-player
-        Parent: =>ProductCategory.g1
+        Parent: =>ProductCategory.musicplayers
         AllowPurchase: 1
         Weight: 0.3
         Stock: 1000 #You need stock levels if you have included the stock module, else the test will fail.
@@ -57,6 +65,11 @@ CheckoutPage:
     checkout:
         Title: Checkout
         URLSegment: checkout
+
+CartPage:
+    cart:
+        Title: Cart
+        URLSegment: cart
 
 AccountPage:
     accountpage:
@@ -77,6 +90,14 @@ Address:
         State: New Sandwich
         Country: US
 
+Group:
+    customers:
+        Title: Customers
+        Code: customers
+    resellers:
+        Title: Resellers
+        Code: resellers
+        
 Member:
     joebloggs:
         FirstName: Joe
@@ -86,16 +107,25 @@ Member:
         Password: 23u90oijlJKsa
         DefaultShippingAddress: =>Address.foobar
         DefaultBillingAddress: =>Address.foobar
+        Groups: =>Group.customers
     bobjones:
         FirstName: Bob
         Surname: Jones
         Country: US
         Email: bob@somewhere.com
         Password: 3456sdfsd34
+        Groups: =>Group.resellers,=>Group.customers
         
 Order:
+    emptycart:
+        Name: Empty Cart
     cart:
         Name: Cart
+        Total: 8
+    othercart:
+        Name: Other cart
+        Member: =>Member.bobjones
+        Total: 200
     placed:
         Status: Unpaid
         Created: 2012-11-21 15:23:32
@@ -106,33 +136,45 @@ Order:
         Created: 2012-10-02 07:23:08
         Placed: 2012-10-02 07:33:21
         Paid: 2012-10-02 07:34:29
+        Member: =>Member.joebloggs
         Total: 800
 
 Product_OrderItem:
     cart_socks:
         Order: =>Order.cart
         Product: =>Product.socks
+        ProductVersion: 1
         Quantity: 1
     placed_tshirt:
         Order: =>Order.placed
         Product: =>Product.tshirt
+        ProductVersion: 1
         UnitPrice: 25
         Quantity: 4
         CalculatedTotal: 100
     placed_mp3player:
         Order: =>Order.placed
         Product: =>Product.mp3player
+        ProductVersion: 1
         UnitPrice: 200
         Quantity: 2
         CalculatedTotal: 400
     paid_socks:
         Order: =>Order.paid
         Product: =>Product.socks
+        ProductVersion: 1
         UnitPrice: 8
         Quantity: 100
         CalculatedTotal: 800
+    othercart_mp3player:
+        Order: =>Order.othercart
+        Product: =>Product.mp3player
+        ProductVersion: 1
+        UnitPrice: 200
+        Quantity: 1
+        CalculatedTotal: 200
 
-#TODO: test payments trigger email sends via ShopPayment onAfterWrite
+#TODO: prevent test payments from triggering email sends via ShopPayment onAfterWrite
 #ChequePayment:
 #    paid_success:
 #        Status: Success
@@ -146,3 +188,4 @@ SiteConfig:
         Title: Shop Testing Website
         ShopClosed: 0
         TermsPage: =>Page.termsandconditions
+        CustomerGroup: =>Group.customers

@@ -27,7 +27,6 @@ class CheckoutTest extends SapphireTest{
 		$this->assertEquals($this->cart->BillingAddressID,$this->address2->ID,"billing address was successfully added");
 	}
 
-	
 	function testSetShippingMethod(){
 		//TODO: combine shipping framework with core, or remove reliance
 		//$this->checkout->setShippingMethod(new ShippingMethod()); //see shippingframework submodule

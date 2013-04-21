@@ -89,3 +89,11 @@ class ShopPayment extends DataExtension {
 	}
 
 }
+
+class PaymentStatusUpdateField extends DropdownField{
+
+	function getSource() {
+		return singleton("Payment")->dbObject("Status")->enumValues();
+	}
+
+}

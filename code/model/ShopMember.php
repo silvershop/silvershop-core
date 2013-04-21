@@ -6,11 +6,7 @@
  */
 class ShopMember extends DataExtension {
 
-	protected static $group_name = "Customers";
-		static function set_group_name($v) {self::$group_name = $v;}
-		static function get_group_name(){return self::$group_name;}
-
-	protected static $login_joins_cart = false;
+	static $login_joins_cart = false;
 	static function associate_to_current_order($join = true){self::$login_joins_cart = $join;}
 	static function get_associate_to_current_order(){ return self::$login_joins_cart; }
 	
@@ -43,12 +39,12 @@ class ShopMember extends DataExtension {
 	 * Get member by unique field.
 	 * @return Member|null
 	 */
-	public static function get_by_identifier($value){
+	static function get_by_identifier($value){
 		$uniqueField = Member::get_unique_identifier_field();
 		return DataObject::get_one('Member', "\"$uniqueField\" = '{$value}'");
 	}
 	
-	public static function create_or_merge($data){
+	static function create_or_merge($data){
 		if(!isset($data[Member::get_unique_identifier_field()]) || empty($data[Member::get_unique_identifier_field()])){
 			return false;	
 		}
@@ -124,6 +120,11 @@ class ShopMember extends DataExtension {
 	}	
 	
 	//deprecated functions
+	
+	/**
+	 * @deprected - use ShopConfig customer group instead
+	 */
+	static function set_group_name($v){}
 	
 	/**
 	 * @deprecated - use CustomersToGroupTask
