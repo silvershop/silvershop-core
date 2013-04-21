@@ -55,10 +55,9 @@ class Zone extends DataObject{
 		$fields = parent::getCMSFields();
 		$fields->fieldByName("Root")->removeByName("Regions");
 		if($this->isInDB()){
-			$tablefield = new TableField("Regions", "ZoneRegion", RegionRestriction::$field_labels, RegionRestriction::get_table_field_types());
-			$tablefield->setCustomSourceItems($this->Regions());
+			$regionsTable = new GridField("Regions", "Regions", $this->Regions(), new GridFieldConfig_RelationEditor());
 			$fields->addFieldsToTab("Root.Main", array(
-				$tablefield
+				$regionsTable
 			));
 		}
 		return $fields;
