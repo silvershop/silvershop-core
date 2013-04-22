@@ -98,7 +98,6 @@ class OrderProcessor{
 		}
 		if($member){
 			$this->order->MemberID = $member->ID;
-			$this->order->setComponent("Member", $member);
 			if($cgroup = ShopConfig::current()->CustomerGroup()){
 				$member->Groups()->add($cgroup);
 			}

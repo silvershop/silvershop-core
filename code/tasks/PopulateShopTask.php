@@ -20,13 +20,14 @@ class PopulateShopTask extends BuildTask{
 			DB::alteration_message('Created an international zone', 'created');
 			return;
 		}
-		
 		$this->extend("beforePopulate");
+		
+		$factory = Injector::inst()->create('FixtureFactory');
 		
 		//create products
 		if(!DataObject::get_one('Product')){
 			$fixture = new YamlFixture(SHOP_DIR."/tests/fixtures/dummyproducts.yml");
-			$fixture->saveIntoDatabase(DataModel::inst());//needs to be a data model
+			$fixture->writeInto($factory);//needs to be a data model
 			$categoriestopublish = array(
 				'products',
 					'electronics',
@@ -45,7 +46,7 @@ class PopulateShopTask extends BuildTask{
 					'stationery'
 			);
 			foreach($categoriestopublish as $categoryname){
-				$fixture->objFromFixture("ProductCategory", $categoryname)->publish('Stage','Live');
+				$factory->get("ProductCategory", $categoryname)->publish('Stage','Live');
 			}
 			$productstopublish = array(
 				'mp3player', 'hdtv',
@@ -59,7 +60,7 @@ class PopulateShopTask extends BuildTask{
 				'paper','pens'
 			);
 			foreach($productstopublish as $productname){
-				$fixture->objFromFixture("Product", $productname)->publish('Stage','Live');
+				$factory->get("Product", $productname)->publish('Stage','Live');
 			}
 			DB::alteration_message('Created dummy products and categories', 'created');
 		}else{
@@ -69,8 +70,8 @@ class PopulateShopTask extends BuildTask{
 		//terms page
 		if(!$termsPage = DataObject::get_one('Page', "\"URLSegment\" = 'terms-and-conditions'")) {
 			$fixture = new YamlFixture(SHOP_DIR."/tests/fixtures/pages/TermsConditions.yml");
-			$fixture->saveIntoDatabase(DataModel::inst());
-			$page = $fixture->objFromFixture("Page", "termsconditions");
+			$fixture->writeInto($factory);
+			$page = $factory->get("Page", "termsconditions");
 			$page->writeToStage('Stage');
 			$page->publish('Stage', 'Live');
 			//set terms page id in config
@@ -83,8 +84,8 @@ class PopulateShopTask extends BuildTask{
 		//cart page
 		if(!$page = DataObject::get_one('CartPage')) {
 			$fixture = new YamlFixture(SHOP_DIR."/tests/fixtures/pages/Cart.yml");
-			$fixture->saveIntoDatabase(DataModel::inst());
-			$page = $fixture->objFromFixture("CartPage", "cart");
+			$fixture->writeInto($factory);
+			$page = $factory->get("CartPage", "cart");
 			$page->writeToStage('Stage');
 			$page->publish('Stage', 'Live');
 			DB::alteration_message('Cart page created', 'created');
@@ -93,8 +94,8 @@ class PopulateShopTask extends BuildTask{
 		//checkout page
 		if(!$page = DataObject::get_one('CheckoutPage')) {
 			$fixture = new YamlFixture(SHOP_DIR."/tests/fixtures/pages/Checkout.yml");
-			$fixture->saveIntoDatabase(DataModel::inst());
-			$page = $fixture->objFromFixture("CheckoutPage", "checkout");
+			$fixture->writeInto($factory);
+			$page = $factory->get("CheckoutPage", "checkout");
 			$page->writeToStage('Stage');
 			$page->publish('Stage', 'Live');
 			DB::alteration_message('Checkout page created', 'created');
@@ -103,8 +104,8 @@ class PopulateShopTask extends BuildTask{
 		//account page
 		if(!DataObject::get_one('AccountPage')) {
 			$fixture = new YamlFixture(SHOP_DIR."/tests/fixtures/pages/Account.yml");
-			$fixture->saveIntoDatabase(DataModel::inst());
-			$page = $fixture->objFromFixture("AccountPage", "account");
+			$fixture->writeInto($factory);
+			$page = $factory->get("AccountPage", "account");
 			$page->writeToStage('Stage');
 			$page->publish('Stage', 'Live');
 			DB::alteration_message('Account page \'Account\' created', 'created');

@@ -5,13 +5,15 @@ class ShopConfig extends DataExtension{
 	static $db = array(
 		'AllowedCountries' => 'Text'
 	);
-	static $has_one => array(
+	
+	static $has_one = array(
+		'TermsPage' => 'SiteTree',
 		"CustomerGroup" => "Group"
 	);
 	
-	static $has_one = array(
-		'TermsPage' => 'SiteTree'
-	);
+	static function current(){
+		return SiteConfig::current_site_config();
+	}
 	
 	function updateCMSFields(FieldList $fields) {
 		$fields->insertBefore($shoptab = new Tab('Shop', 'Shop'), 'Access');

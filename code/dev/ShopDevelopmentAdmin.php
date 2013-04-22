@@ -9,6 +9,7 @@ class ShopDevelopmentAdmin extends Controller{
 	static $url_handlers = array();
 
 	static $allowed_actions = array(
+		'index',
 		'populatecart'
 	);
 
