@@ -301,6 +301,18 @@ class Order extends DataObject {
 		}
 		return count($forms) > 0 ? new DataObjectSet($forms) : null;
 	}
+	
+	public function getComponents($componentName, $filter = "", $sort = "", $join = "", $limit = null) {
+		$components = parent::getComponents($componentName, $filter = "", $sort = "", $join = "", $limit = null);
+		if($componentName === "Items" && get_class($components) !== "UnsavedRelationList"){
+			$query = $components->dataQuery();
+			$components = new OrderItemList("OrderItem", "OrderID");
+			if($this->model) $components->setDataModel($this->model);
+			$components->setDataQuery($query);
+			$components = $components->forForeignID($this->ID);
+		}
+		return $components;		
+	}
 
 	/**
 	 * Returns the subtotal of the items for this order.

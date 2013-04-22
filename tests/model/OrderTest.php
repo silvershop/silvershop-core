@@ -49,9 +49,9 @@ class OrderTest extends SapphireTest {
 			array('ProductID' => $this->mp3player->ID,'Quantity' => 2, 'CalculatedTotal' => 400),
 			array('ProductID' => $this->socks->ID, 'Quantity' => 1, 'CalculatedTotal' => 8)
 		), $items);
-		$this->assertEquals($items->Quantity(),3);
-		$this->assertTrue($items->Plural());
-		$this->assertEquals($items->Sum('Weight', true), 0.7);
+		$this->assertEquals($items->Quantity(),3,"Quantity is 3");
+		$this->assertTrue($items->Plural(),"There is more than one item");
+		$this->assertEquals($items->Sum('Weight', true), 0.7,"Total order weight sums correctly");
 	}
 	
 	function testSubtotal() {

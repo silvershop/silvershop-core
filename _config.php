@@ -13,7 +13,6 @@ Page_Controller::add_extension("ViewableCart");
 ShoppingCart_Controller::add_extension("ViewableCart");
 OrderAttribute::add_extension("OrderAttributeAJAX");
 Order::add_extension("OrderAJAX");
-HasManyList::add_extension("OrderItemList");
 Member::add_extension('ShopMember');
 //variations
 Product::add_extension("ProductVariationDecorator");
