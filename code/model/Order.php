@@ -70,7 +70,7 @@ class Order extends DataObject {
 
 	public static $singular_name = "Order";
 	public static $plural_name = "Orders";
-	static $admin_template = "Order";
+	static $admin_template = "Order_admin";
 
 	/**
 	 * Statuses for orders that have been placed.
@@ -195,6 +195,7 @@ class Order extends DataObject {
 		$fields->insertBefore(new LiteralField('SubTitle',
 			"<h4 class=\"subtitle\">".$this->dbObject('Placed')->Nice()." - <a href=\"mailto:".$this->getLatestEmail()."\">".$this->getName()."</a></h4>"
 		),"Root");
+		Requirements::css(SHOP_DIR."/css/order.css");
 		$fields->addFieldsToTab('Root.Main', array(
 			new DropdownField("Status","Status", self::get_order_status_options()),
 			new LiteralField('MainDetails', $this->renderWith(self::$admin_template))
