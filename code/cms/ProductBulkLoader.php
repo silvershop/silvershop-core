@@ -58,12 +58,12 @@ class ProductBulkLoader extends CsvBulkLoader{
 
 	public $duplicateChecks = array(
 		'InternalItemID' => 'InternalItemID',
-		//'SKU' => 'InternalItemID',
-		//'Product ID' => 'InternalItemID',
-		//'ProductID' => 'InternalItemID',
+		'SKU' => 'InternalItemID',
+		'Product ID' => 'InternalItemID',
+		'ProductID' => 'InternalItemID',
 		'Title' => 'Title',
-		//'Page Title' => 'Title',
-		//'PageTitle' => 'Title'
+		'Page Title' => 'Title',
+		'PageTitle' => 'Title'
 	);
 
 	public $relationCallbacks = array(
