@@ -18,20 +18,26 @@ class DeleteProductsTask extends BuildTask{
 	function ormdelete(){
 		//TODO: convert to batch actions to handle large data sets
 		if($allproducts = DataObject::get('Product')){
+			$productcount = 0;
 			foreach($allproducts as $product){
 				$product->deleteFromStage('Live');
 				$product->deleteFromStage('Stage');
 				$product->destroy();
+				$productcount++;
 				//TODO: remove versions
 			}
+			echo $productcount." products deleted, ";
 		}
 		if($allcategories = DataObject::get('ProductCategory')){
+			$categorycount = 0;
 			foreach($allcategories as $category){
 				$category->deleteFromStage('Live');
 				$category->deleteFromStage('Stage');
 				$category->destroy();
+				$categorycount++;
 				//TODO: remove versions
 			}
+			echo $categorycount." categories deleted";
 		}
 	}
 	
