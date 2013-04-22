@@ -20,7 +20,7 @@ class ShopPeriodReport extends SS_Report{
 	
 	function parameterFields() {
 		$dateformat = Member::currentUser()->getDateFormat();
-		$fields = new FieldSet(
+		$fields = new FieldList(
 			$start = new DateField("StartPeriod","Start ($dateformat)"),
 			$end = new DateField("EndPeriod","End ($dateformat)")
 		);
@@ -39,6 +39,14 @@ class ShopPeriodReport extends SS_Report{
 		return $fields;
 	}
 	
+	function canView($member = null){
+		if(get_class($this) == "ShopPeriodReport"){
+			return false;
+		}
+		return parent::canView($member);
+	}
+	
+	
 	function getReportField(){
 		$field = parent::getReportField();
 		$field->setShowPagination(false);
@@ -47,7 +55,7 @@ class ShopPeriodReport extends SS_Report{
 	
 	function sourceRecords($params){
 		isset($params['Grouping']) || $params['Grouping'] = "Month";
-		$output = new DataObjectSet();
+		$output = new ArrayList();
 		$query = $this->query($params);
 		$results = $query->execute();
 		//TODO: push empty months and days to fill out gaps

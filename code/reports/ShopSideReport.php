@@ -108,6 +108,9 @@ class ShopSideReport_HeavyProducts extends SS_Report {
 				"Title" => array(
 						"title" => "Title",
 						"link" => true
+				),
+				"Weight" => array(
+					'title' => 'Weight'	
 				)
 		);
 	}
