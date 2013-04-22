@@ -449,23 +449,28 @@ class ShoppingCart_Controller extends Controller{
 	
 	protected function buyableFromRequest(){
 		$request = $this->getRequest();
-		/*
-		if(!SecurityToken::inst()->checkRequest($request)){
+		if(SecurityToken::is_enabled() && !SecurityToken::inst()->checkRequest($request)){
 			return $this->httpError(400, _t("ShoppingCart.CSRF", "Invalid security token, possible CSRF attack."));
 		}
-		*/
-		if($id = (int) $request->param('ID')){
-			$buyableclass = "Product";
-			if($class = $request->param('Buyable')){
-				$buyableclass = Convert::raw2sql($class);
-			}
-			if(ClassInfo::exists($buyableclass) && $buyable = DataObject::get_by_id($buyableclass,$id)){
-				if($buyable instanceof Buyable){
-					return $buyable;
-				}
-			}
+		$id = (int) $request->param('ID');
+		if(empty($id)){
+			//TODO: store error message
+			return null;
 		}
-		return null;
+		$buyableclass = "Product";
+		if($class = $request->param('Buyable')){
+			$buyableclass = Convert::raw2sql($class);
+		}
+		if(!ClassInfo::exists($buyableclass)){
+			//TODO: store error message
+			return null;
+		}
+		$buyable = Versioned::get_one_by_stage($buyableclass,"Live","\"Product_Live\".\"ID\" = $id");
+		if(!($buyable instanceof Buyable)){
+			//TODO: store error message
+			return null;
+		}
+		return $buyable;
 	}
 	
 	function add($request){
