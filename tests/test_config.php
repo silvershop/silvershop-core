@@ -15,8 +15,8 @@ ShopCurrency::setThousandDelimiter('');
 Object::useCustomClass('SS_Datetime','I18nDatetime', true);
 
 // * * * SHOPPING CART, ORDER, MODIFIERS
-Order::set_email(null);
-Order::set_receipt_subject("Shop Sale Information #%d");
+OrderProcessor::set_email_from(null);
+OrderProcessor::set_receipt_subject("Shop Sale Information #%d");
 Order::set_modifiers(array(),true); //empty modifiers
 
 Order::set_table_overview_fields(array(
@@ -27,7 +27,6 @@ Order::set_table_overview_fields(array(
 	'Total' => 'Total',
 	'Status' => 'Status'
 ));
-Order::set_maximum_ignorable_sales_payments_difference(0.01);
 
 Order::set_cancel_before_payment(true);
 Order::set_cancel_before_processing(false);

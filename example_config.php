@@ -21,12 +21,11 @@ ShopCurrency::setThousandDelimiter(','); //for Money formating
 Object::useCustomClass('SS_Datetime','I18nDatetime', true);
 
 //SHOPPING CART AND ORDER
-Order::set_email("sales@myshop.com");
-Order::set_receipt_subject("Thank you for your order at www.myshop.com - Order #%d");
+OrderProcessor::set_email_from("sales@myshop.com");
+OrderProcessor::set_receipt_subject("Thank you for your order at www.myshop.com - Order #%d");
 Order::set_modifiers(array("FlatTaxModifier", "SimpleShippingModifier"));
 
 Order::set_table_overview_fields(array('Total' => 'Total','Status' => 'Status'));//
-Order::set_maximum_ignorable_sales_payments_difference(0.001);//sometimes there are small discrepancies in total (for various reasons)- here you can set the max allowed differences
 
 Order::set_cancel_before_payment(false);
 Order::set_cancel_before_processing(false);

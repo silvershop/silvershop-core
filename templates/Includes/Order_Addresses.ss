@@ -5,10 +5,10 @@
 	</tr>
 	<tr>
 		<td>
-			$FullShippingAddress
+			$ShippingAddress
 		</td>
 		<td>
-			$FullBillingAddress
+			$BillingAddress
 		</td>
 	</tr>
 </table>

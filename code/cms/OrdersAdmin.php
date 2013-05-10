@@ -15,7 +15,5 @@ class OrdersAdmin extends ModelAdmin{
 			'title' => 'Orders'
 		)
 	);
-	
-
 
 }
