@@ -16,6 +16,10 @@ class Zone extends DataObject{
 		'Regions' => 'ZoneRegion'
 	);
 
+	static $summary_fields = array(
+		'Name','Description'
+	);
+
 	/*
 	 * Returns a DataSet of matching zones
 	*/
@@ -56,9 +60,7 @@ class Zone extends DataObject{
 		$fields->fieldByName("Root")->removeByName("Regions");
 		if($this->isInDB()){
 			$regionsTable = new GridField("Regions", "Regions", $this->Regions(), new GridFieldConfig_RelationEditor());
-			$fields->addFieldsToTab("Root.Main", array(
-				$regionsTable
-			));
+			$fields->addFieldsToTab("Root.Main", $regionsTable);
 		}
 		return $fields;
 	}
