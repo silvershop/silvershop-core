@@ -30,7 +30,7 @@ class OrderForm extends Form {
 		$order->extend('augmentEcommerceFields', $basefields); //deprecated
 		$orderFields = new CompositeField($basefields);		
 		
-		$requiredFields = $order->getRequiredFields(); //TODO: move to somewhere else
+		$requiredFields = $addressSingleton->getRequiredFields('Shipping');
 			
 		if($order && $order->SeparateBillingAddress) {
 			$orderFields->fieldByName("ShippingHeading")->setTitle(_t('OrderForm.ShippingAddress','Shipping Address'));
