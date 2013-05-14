@@ -465,7 +465,7 @@ class ShoppingCart_Controller extends Controller{
 			//TODO: store error message
 			return null;
 		}
-		$buyable = Versioned::get_one_by_stage($buyableclass,"Live","\"Product_Live\".\"ID\" = $id");
+		$buyable = DataObject::get($buyableclass)->filter(array("ID" => $id))->First();
 		if(!($buyable instanceof Buyable)){
 			//TODO: store error message
 			return null;
