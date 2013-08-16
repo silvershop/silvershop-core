@@ -35,7 +35,7 @@ class Product extends Page implements Buyable{
 	
 	
 	public static $has_one = array(
-		'Image' => 'Product_Image'
+		'Image' => 'Image'
 	);
 
 	public static $many_many = array(
@@ -291,44 +291,6 @@ class Product_Controller extends Page_Controller {
 	 */
 	function AddProductForm(){
 		return $this->Form();
-	}
-	
-}
-
-class Product_Image extends Image {
-
-	//default image sizes
-	protected static $thumbnail_width = 140;
-	protected static $thumbnail_height = 100;
-	protected static $content_image_width = 200;
-	protected static $large_image_width = 600;
-
-	static function set_thumbnail_size($width = 140, $height = 100){
-		self::$thumbnail_width = $width;
-		self::$thumbnail_height = $height;
-	}
-
-	static function set_content_image_width($width = 200){
-		self::$content_image_width = $width;
-	}
-
-	static function set_large_image_width($width = 600){
-		self::$large_image_width = $width;
-	}
-
-	function generateThumbnail($gd) {
-		$gd->setQuality(80);
-		return $gd->paddedResize(self::$thumbnail_width,self::$thumbnail_height);
-	}
-
-	function generateContentImage($gd) {
-		$gd->setQuality(90);
-		return $gd->resizeByWidth(self::$content_image_width);
-	}
-
-	function generateLargeImage($gd) {
-		$gd->setQuality(90);
-		return $gd->resizeByWidth(self::$large_image_width);
 	}
 
 }

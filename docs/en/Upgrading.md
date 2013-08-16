@@ -9,6 +9,14 @@ shop module:
     [yourdomain.com]/dev/build?flush=all
     [yourdomain.com]/tasks/ShopMigrationTask
 
+
+# 1.0
+
+# Images are lost
+
+This is because Product images are now Image dataobjects, instead of Product_Image dataobjects.
+Try running the ShopMigrationTask.
+
 # 0.9
 
 # Prices are missing

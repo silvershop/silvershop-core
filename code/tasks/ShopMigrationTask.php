@@ -17,28 +17,35 @@ class ShopMigrationTask extends MigrationTask{
 	 * Migrate upwards
 	 */
 	function up(){
-		$start = 0;
-		$count = 0;
-		//batch process orders
-		while($batch = DataObject::get('Order',"","\"Created\" ASC","",$start.",".self::$batch_size)){
+		$this->migrateOrders();
+		$this->migrateProductPrice();
+		$this->migrateProductVariationsAttribues();
+		$this->migrateProductImages();
+		//TODO: migrate CheckoutPage->TermsPageID to ShopConfig
+	}
+
+	/**
+	 * batch process orders
+	 */
+	function migrateOrders(){
+		$start = $count = 0;
+		$batch = Order::get()->sort("Created","ASC")->limit($start,self::$batch_size);
+		while($batch->exists()){
 			foreach($batch as $order){
 				$this->migrate($order);
 				echo ". ";
 				$count++;
 			}
 			$start += self::$batch_size;
-			echo "$count orders updated.\n<br/>";
+			$batch = $batch->limit($start,self::$batch_size);
 		};
-		$this->migrateProductPrice();
-		$this->migrateProductVariationsAttribues();
-		
-		//TODO: migrate CheckoutPage->TermsPageID to ShopConfig
+		echo "$count orders updated.\n<br/>";
 	}
 	
 	/**
 	 * Perform migration scripts on a single order.
 	 */
-	function migrate($order){
+	function migrate(Order $order){
 		//TODO: set a from / to version to preform a migration with
 		$this->migrateStatuses($order);
 		$this->migrateMemberFields($order);
@@ -58,6 +65,14 @@ class ShopMigrationTask extends MigrationTask{
 			//$db->renameField("Product","Price","Price_obselete");
 			//$db->renameField("Product_Live","Price","Price_obselete");
 		}
+	}
+
+	/**
+	 * Rename all Product_Image ClassNames to Image
+	 * Added in v1.0
+	 */
+	function migrateProductImages(){
+		DB::query('UPDATE "File" SET "ClassName"=\'Image\' WHERE "ClassName" = \'Product_Image\'');
 	}
 	
 	/**

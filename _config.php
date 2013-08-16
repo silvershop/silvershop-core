@@ -14,6 +14,7 @@ ShoppingCart_Controller::add_extension("ViewableCart");
 OrderAttribute::add_extension("OrderAttributeAJAX");
 Order::add_extension("OrderAJAX");
 Member::add_extension('ShopMember');
+Image::add_extension("Product_Image");
 //variations
 Product::add_extension("ProductVariationDecorator");
 Product_Controller::add_extension("ProductControllerVariationExtension");
