@@ -1,7 +1,7 @@
 <?php
 ob_start();
 
-define('SS_ENVIRONMENT_TYPE', 'test');
+define('SS_ENVIRONMENT_TYPE', 'dev');
 
 /* Database connection */
 define('SS_DATABASE_SERVER', 'localhost');
