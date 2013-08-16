@@ -161,17 +161,6 @@ class ProductVariationDecorator extends DataExtension{
 					)->where("TypeID = $type AND \"ProductVariation\".\"ProductID\" = ".$this->owner->ID);
 	}
 
-	/**
-	 * Make sure variations are deleted with product.
-	 */
-	function onBeforeDelete(){
-		foreach($this->owner->Variations() as $variation){
-			$variation->delete();
-			$variation->destroy();
-		}
-		//TODO: make this work...otherwise we get rouge variations that could mess up future imports
-	}
-	
 	function contentcontrollerInit($controller){
 		if($this->owner->Variations()->exists()){
 			$controller->formclass = 'VariationForm';
