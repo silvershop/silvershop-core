@@ -49,7 +49,7 @@ class ShopPeriodReport extends SS_Report{
 	
 	function getReportField(){
 		$field = parent::getReportField();
-		$field->setShowPagination(false);
+		$field->getConfig()->removeComponentsByType('GridFieldPaginator');
 		return $field;
 	}
 	
@@ -77,46 +77,46 @@ class ShopPeriodReport extends SS_Report{
 	
 	function query($params){
 		$query = new ShopReport_Query();
-		$query->select("$this->periodfield AS FilterPeriod");
-		$query->from("\"$this->dataClass\"");
+		$query->selectField($this->periodfield, 'FilterPeriod');
+		$query->setFrom('"' . $this->dataClass . '"');
 		$start = isset($params['StartPeriod']) && !empty($params['StartPeriod']) ? date('Y-m-d',strtotime($params["StartPeriod"])) : null;
 		$end = isset($params['EndPeriod']) && !empty($params['EndPeriod']) ? date('Y-m-d',strtotime($params["EndPeriod"]) + 86400) : null; //end day is inclusive
 		if($start && $end){
-			$query->having("FilterPeriod BETWEEN '$start' AND '$end'");
+			$query->addHaving("FilterPeriod BETWEEN '$start' AND '$end'");
 		}elseif($start){
-			$query->having("FilterPeriod > '$start'");
+			$query->addHaving("FilterPeriod > '$start'");
 		}elseif($end){
-			$query->having("FilterPeriod <= '$end'");
+			$query->addHaving("FilterPeriod <= '$end'");
 		}
 		if($start || $end){
-			$query->having("FilterPeriod IS NOT NULL"); //only include paid orders when we are doing specific period searching
+			$query->addHaving("FilterPeriod IS NOT NULL"); //only include paid orders when we are doing specific period searching
 		}
 		if($this->grouping){
 			switch($params['Grouping']){
 				case "Year":
-					$query->groupby("YEAR(FilterPeriod)");
+					$query->addGroupBy("YEAR(FilterPeriod)");
 					break;
 				case "Month":
 				default:
-					$query->groupby("YEAR(FilterPeriod),MONTH(FilterPeriod)");
+					$query->addGroupBy("YEAR(FilterPeriod),MONTH(FilterPeriod)");
 					break;
 				case "Week":
-					$query->groupby("YEAR(FilterPeriod),WEEK(FilterPeriod)");
+					$query->addGroupBy("YEAR(FilterPeriod),WEEK(FilterPeriod)");
 					break;
 				case "Day":
-					$query->limit("0,1000");
-					$query->groupby("YEAR(FilterPeriod),MONTH(FilterPeriod),DAY(FilterPeriod)");
+					$query->setLimit("0,1000");
+					$query->addGroupBy("YEAR(FilterPeriod),MONTH(FilterPeriod),DAY(FilterPeriod)");
 					break;
 			}
 		}
 		if(isset($params["ctf"]["ReportContent"]["sort"])){
 			$dir = isset($params["ctf"]["ReportContent"]["dir"]) ? $params["ctf"]["ReportContent"]["dir"] : "DESC";
-			$query->orderby($params["ctf"]["ReportContent"]["sort"]." $dir");
+			$query->addOrderBy($params["ctf"]["ReportContent"]["sort"], $dir);
 		}
 		if(isset($params["ctf"]["ReportContent"]["start"])){
-			$query->limit($params["ctf"]["ReportContent"]["start"].",".$this->pagesize);
+			$query->setLimit($params["ctf"]["ReportContent"]["start"].",".$this->pagesize);
 		}else{
-			$query->limit($this->pagesize);
+			$query->setLimit($this->pagesize);
 		}
 		return $query;
 	}

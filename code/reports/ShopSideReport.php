@@ -17,11 +17,13 @@ class ShopSideReport_FeaturedProducts extends SS_Report {
 	function group() {
 		return _t('ShopSideReport.ShopGROUP', "Shop");
 	}
+
 	function sort() {
 		return 0;
 	}
-	function records($params = null) {
-		return DataObject::get("Product", "\"FeaturedProduct\" = 1", "\"Title\"");
+
+	function sourceRecords($params = null) {
+		return Product::get()->filter('FeaturedProduct', 1)->sort("Title");
 	}
 
 	function columns() {
@@ -50,8 +52,9 @@ class ShopSideReport_AllProducts extends SS_Report {
 	function sort() {
 		return 0;
 	}
-	function records($params = null) {
-		return DataObject::get("Product", "", "\"Title\"");
+
+	function sourceRecords($params = null) {
+		return Product::get()->sort('Title');
 	}
 
 	function columns() {
@@ -77,7 +80,7 @@ class ShopSideReport_NoImageProducts extends SS_Report {
 		return 0;
 	}
 	function sourceRecords($params = null) {
-		return DataObject::get("Product", "\"Product\".\"ImageID\" IS NULL OR \"Product\".\"ImageID\" <= 0", "\"Title\" ASC");
+		return Product::get()->where("\"Product\".\"ImageID\" IS NULL OR \"Product\".\"ImageID\" <= 0")->sort("\"Title\" ASC");
 	}
 	function columns() {
 		return array(
@@ -101,7 +104,7 @@ class ShopSideReport_HeavyProducts extends SS_Report {
 		return 0;
 	}
 	function sourceRecords($params = null) {
-		return DataObject::get("Product", "\"Product\".\"Weight\" > 10", "\"Weight\" ASC");
+		return Product::get()->where("\"Product\".\"Weight\" > 10")->sort("\"Weight\" ASC");
 	}
 	function columns() {
 		return array(
