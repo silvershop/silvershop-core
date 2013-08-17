@@ -9,7 +9,7 @@ class ProductReport extends ShopPeriodReport{
 		
 	function getReportField(){
 		$reportfield = parent::getReportField();
-		$reportfield->setShowPagination(true);
+		$reportfield->getConfig()->removeComponentsByType('GridFieldPaginator');
 		return $reportfield;
 	}
 	
@@ -26,27 +26,27 @@ class ProductReport extends ShopPeriodReport{
 		);
 	}
 	
-	function sourceQuery($params){
+	function query($params){
 		$query = parent::query($params);
-		$query->select(
-			"$this->periodfield AS FilterPeriod",
-			"Product.ID",
-			"SiteTree.ClassName",
-			"SiteTree.Title",
-			"Product.BasePrice",
-			"SiteTree.Created",
-			"Count(OrderItem.Quantity) AS Quantity",
-			"Sum(OrderAttribute.CalculatedTotal) AS Sales"
-		);
-		$query->innerJoin("SiteTree","Product.ID = SiteTree.ID");
-		$query->leftJoin("Product_OrderItem","Product.ID = Product_OrderItem.ProductID");
-		$query->leftJoin("OrderItem","Product_OrderItem.ID = OrderItem.ID");
-		$query->leftJoin("OrderAttribute","Product_OrderItem.ID = OrderAttribute.ID");
-		$query->leftJoin("Order","OrderAttribute.OrderID = Order.ID");
-		$query->groupby("Product.ID");
-		$query->where("\"Order\".\"Paid\" IS NOT NULL OR \"Product_OrderItem\".\"ID\" IS NULL");
-		if(!$query->orderby){
-			$query->orderby("Sales DESC");
+		$query->selectField($this->periodfield, "FilterPeriod")
+			->addSelect(array(
+				"Product.ID",
+				"SiteTree.ClassName",
+				"SiteTree.Title",
+				"Product.BasePrice",
+				"SiteTree.Created",
+			))
+			->selectField("Count(OrderItem.Quantity)", "Quantity")
+			->selectField("Sum(OrderAttribute.CalculatedTotal)", "Sales");
+		$query->addInnerJoin("SiteTree","Product.ID = SiteTree.ID");
+		$query->addLeftJoin("Product_OrderItem","Product.ID = Product_OrderItem.ProductID");
+		$query->addLeftJoin("OrderItem","Product_OrderItem.ID = OrderItem.ID");
+		$query->addLeftJoin("OrderAttribute","Product_OrderItem.ID = OrderAttribute.ID");
+		$query->addLeftJoin("Order","OrderAttribute.OrderID = Order.ID");
+		$query->addGroupby("Product.ID");
+		$query->addWhere("\"Order\".\"Paid\" IS NOT NULL OR \"Product_OrderItem\".\"ID\" IS NULL");
+		if(!$query->getOrderBy()){
+			$query->setOrderBy("Sales DESC");
 		}
 		return $query;
 	}

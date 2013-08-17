@@ -36,20 +36,16 @@ class CustomerReport extends ShopPeriodReport{
 	
 	function query($params){
 		$query = parent::query($params);
-		$query->select(
-			"$this->periodfield AS FilterPeriod",
-			"Member.ID",
-			"Member.FirstName","Member.Surname","Member.Email",
-			"NumVisit","Member.Created",
-			"Count(Order.ID) AS Orders",
-			"Sum(Order.Total) AS Spent"
-		);
-		$query->innerJoin("Order", "Member.ID = Order.MemberID");
-		$query->groupby("Member.ID");
-		if(!$query->orderby){
-			$query->orderby("Spent DESC,Orders DESC");
+		$query->selectField($this->periodfield, "FilterPeriod")
+			->addSelect(array("Member.ID", "Member.FirstName", "Member.Surname", "Member.Email", "NumVisit", "Member.Created"))
+			->selectField("Count(Order.ID)", "Orders")
+			->selectField("Sum(Order.Total)", "Spent");
+		$query->addInnerJoin("Order", "Member.ID = Order.MemberID");
+		$query->addGroupBy("Member.ID");
+		if(!$query->getOrderBy()){
+			$query->setOrderBy("Spent DESC,Orders DESC");
 		}
-		$query->limit("50");
+		$query->setLimit("50");
 		return $query;
 	}
 

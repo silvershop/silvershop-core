@@ -18,11 +18,12 @@ class ShopSalesReport extends ShopPeriodReport{
 		
 	function getReportField(){
 		$reportfield = parent::getReportField();
-		$reportfield->setShowPagination(false);
-		$reportfield->addSummary("Totals",array(
-			"Sales" => array("sum","Currency->Nice"),
-			//"Count" => array("sum","Currency->Nice") //Not working! (TableListField error, when enabled)
-		));
+		$reportfield->getConfig()->removeComponentsByType('GridFieldPaginator');
+		// TODO: Add this back in - I'm not sure how this works in Gridfield
+//		$reportfield->addSummary("Totals",array(
+//			"Sales" => array("sum","Currency->Nice"),
+//			//"Count" => array("sum","Currency->Nice") //Not working! (TableListField error, when enabled)
+//		));
 		//TODO: add averages (not working, because you can't have more than one summary row)
 		return $reportfield;
 	}
@@ -37,12 +38,10 @@ class ShopSalesReport extends ShopPeriodReport{
 	
 	function query($params){
 		$query = parent::query($params);
-		$query->select(
-			"$this->periodfield AS FilterPeriod",
-			"Count(Order.ID) AS Count",
-			"Sum(Order.Total) AS Sales"
-		);
-		$query->where("\"Order\".\"Paid\" IS NOT NULL");
+		$query->selectField($this->periodfield, "FilterPeriod")
+			->selectField("Count(Order.ID)", "Count")
+			->selectField("Sum(Order.Total)", "Sales");
+		$query->setWhere("\"Order\".\"Paid\" IS NOT NULL");
 		return $query;
 	}
 	
