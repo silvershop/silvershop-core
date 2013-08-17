@@ -276,6 +276,11 @@ class Product extends Page implements Buyable{
 }
 
 class Product_Controller extends Page_Controller {
+
+	private static $allowed_actions = array(
+		'Form',
+		'AddProductForm'
+	);
 	
 	public $formclass = "AddProductForm"; //allow overriding the type of form used
 	
