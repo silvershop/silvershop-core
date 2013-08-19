@@ -11,8 +11,8 @@ Update CMS fields, so images can be added.
 		function extraStatics(){
 			return array(
 				'many_many' => array(
-							'AdditionalImages' => 'Product_Image'
-						)
+					'AdditionalImages' => 'Image'
+				)
 			);
 		}
 		

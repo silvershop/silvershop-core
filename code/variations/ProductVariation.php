@@ -17,7 +17,7 @@ class ProductVariation extends DataObject implements Buyable{
 	);
 	static $has_one = array(
 		'Product' => 'Product',
-		'Image' => 'Product_Image'
+		'Image' => 'Image'
 	);
 	static $many_many = array(
 		'AttributeValues' => 'ProductAttributeValue'
