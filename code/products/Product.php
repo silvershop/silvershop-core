@@ -110,7 +110,8 @@ class Product extends Page implements Buyable{
 		if($pagename = $fields->fieldByName('Root.Main.Title')){
 			$pagename->setTitle(_t('Product.PAGETITLE','Product Page Title'));
 		}
-		
+
+		$this->extend("updateProductCMSFields", $fields); // provide a better extension point
 		return $fields;
 	}
 
