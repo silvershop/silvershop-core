@@ -78,7 +78,7 @@ class PopulateShopTask extends BuildTask{
 			$config = SiteConfig::current_site_config();
 			$config->TermsPageID = $page->ID;
 			$config->write();
-			DB::alteration_message("Terms and conditions page created", 'changed');
+			DB::alteration_message("Terms and conditions page created", 'created');
 		}
 		
 		//cart page
