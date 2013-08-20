@@ -155,28 +155,19 @@ class Order extends DataObject {
 	);
 
 	public static $searchable_fields = array(
-		'Reference' => array(
-			'field' => 'TextField',
-			'filter' => 'PartialMatchFilter',
-			'title' => 'Reference'
-		),
+		'Reference' => array(),
 		'FirstName' => array(
 			'title' => 'Customer Name',
-			'filter' => 'PartialMatchFilter'
 		),
 		'Email' => array(
 			'title' => 'Customer Email',
-			'filter' => 'PartialMatchFilter'
-		),
-		'Placed' => array(
-			'field' => 'TextField',
-			'filter' => 'OrderFilters_AroundDateFilter',
-			'title' => "Date"
 		),
 		'Status' => array(
-			'filter' => 'OrderFilters_MultiOptionsetFilter',
+			'filter' => 'ExactMatchFilter',
+			'field' => 'CheckboxSetField'
 		)
 	);
+
 
 	public static $rounding_precision = 2;
 	public static $reference_id_padding = 5;
@@ -206,6 +197,29 @@ class Order extends DataObject {
 		$fields->addFieldToTab("Root.Payments", $paymentGrid);
 		$this->extend('updateCMSFields',$fields);
 		return $fields;
+	}
+
+	/**
+	 * Adjust scafolded search context
+	 * @return [type] [description]
+	 */
+	public function getDefaultSearchContext() {
+		$context = parent::getDefaultSearchContext();
+		$fields = $context->getFields();
+
+		$fields->fieldByName('Status')
+			->setSource(array_combine(self::$placed_status,self::$placed_status));
+
+		//add date range filtering
+		$fields->insertBefore(DateField::create("DateFrom","Date from")->setConfig('showcalendar',true),'Status');
+		$fields->insertBefore(DateField::create("DateTo","Date to")->setConfig('showcalendar',true), 'Status');
+
+		$filters = $context->getFilters(); //get the array, to maniplulate name, and fullname seperately
+		$filters['DateFrom'] = GreaterThanFilter::create('Placed');
+		$filters['DateTo'] = LessThanFilter::create('Placed');
+		$context->setFilters($filters);
+
+		return $context;
 	}
 
 	/**
