@@ -76,7 +76,7 @@ class Product extends Page implements Buyable{
 	static $global_allow_purchase = true;
 
 	function getCMSFields() {
-
+		self::disableCMSFieldsExtensions();
 		$fields = parent::getCMSFields();
 
 		// Standard product detail fields
@@ -111,7 +111,8 @@ class Product extends Page implements Buyable{
 			$pagename->setTitle(_t('Product.PAGETITLE','Product Page Title'));
 		}
 
-		$this->extend("updateProductCMSFields", $fields); // provide a better extension point
+		self::enableCMSFieldsExtensions();
+		$this->extend('updateCMSFields', $fields);
 		return $fields;
 	}
 
