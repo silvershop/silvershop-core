@@ -204,7 +204,7 @@ class ProductVariation_OrderItem extends Product_OrderItem {
 	 */
 	public function ProductVariation($forcecurrent = false) {
 		if($this->ProductVariationID && $this->ProductVariationVersion && !$forcecurrent){
-			return FixVersioned::get_version('ProductVariation', $this->ProductVariationID, $this->ProductVariationVersion);
+			return Versioned::get_version('ProductVariation', $this->ProductVariationID, $this->ProductVariationVersion);
 		}elseif($this->ProductVariationID && $product = DataObject::get_by_id('ProductVariation', $this->ProductVariationID)){
 			return $product;
 		}
