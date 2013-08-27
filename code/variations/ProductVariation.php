@@ -44,7 +44,8 @@ class ProductVariation extends DataObject implements Buyable{
 	);
 	
 	static $searchable_fields = array(
-		'Product.Title'
+		'Product.Title',
+		'InternalItemID'
 	);
 
 	public static $default_sort = "InternalItemID";
