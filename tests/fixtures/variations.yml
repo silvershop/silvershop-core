@@ -33,6 +33,7 @@ ProductAttributeValue:
 Product:
     ball:
         Title: Beach Ball
+        BasePrice: 22.00
         VariationAttributeTypes: =>ProductAttributeType.size,=>ProductAttributeType.color
     mp3player:
         Title: Mp3 Player
@@ -41,7 +42,6 @@ Product:
 ProductVariation:
     redlarge:
         Product: =>Product.ball
-        Price: 22.00
         AttributeValues: =>ProductAttributeValue.size_large,=>ProductAttributeValue.color_red
     redsmall:
         Product: =>Product.ball

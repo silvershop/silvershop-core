@@ -118,7 +118,7 @@ class ProductVariation extends DataObject implements Buyable{
 	function canPurchase($member = null) {
 		$allowpurchase = false;
 		if($product = $this->Product()){
-			$allowpurchase = ($this->Price > 0) && $product->AllowPurchase;
+			$allowpurchase = ($this->sellingPrice() > 0) && $product->AllowPurchase;
 		}
 		$extended = $this->extendedCan('canPurchase', $member);
 		if($allowpurchase && $extended !== null){
