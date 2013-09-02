@@ -7,6 +7,7 @@
 	<thead>
 		<tr>
 			<th scope="col"></th>
+			<th scope="col"><% _t("SKU","Sku") %></th>
 			<th scope="col"><% _t("PRODUCT","Product") %></th>
 			<th scope="col"><% _t("UNITPRICE","Unit Price") %></th>
 			<th scope="col"><% _t("QUANTITY", "Quantity") %></th>
