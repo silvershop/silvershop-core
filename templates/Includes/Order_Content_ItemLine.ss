@@ -8,6 +8,9 @@
 			</div>
 		<% end_if %>
 	</td>
+	<td>
+		$Buyable.InternalItemID
+	</td>
 	<td class="product title" scope="row">
 		<h3>
 		<% if Link %>
