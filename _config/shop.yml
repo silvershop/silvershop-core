@@ -1,0 +1,6 @@
+---
+Name: shopconfig
+After: framework/routes#coreroutes
+---
+ShopConfig:
+  base_currency: 'NZD'

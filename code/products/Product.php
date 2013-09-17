@@ -224,7 +224,7 @@ class Product extends Page implements Buyable{
 	 * Original price for template usage
 	 */
 	function getPrice(){
-		$currency = Payment::site_currency();
+		$currency = ShopConfig::get_site_currency();
 		$field = new Money("Price");
 		$field->setAmount($this->sellingPrice());
 		$field->setCurrency($currency);

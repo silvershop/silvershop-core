@@ -6,9 +6,6 @@ After: 'framework/*','cms/*'
 SiteConfig:
   extensions:
     - ShopConfig
-Payment:
-  extensions:
-    - ShopPayment
 Page_Controller:
   extensions:
     - ViewableCart

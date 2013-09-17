@@ -527,7 +527,7 @@ class Order extends DataObject {
 	 */
 	function Currency() {
 		if(class_exists('Payment')) {
-			return Payment::site_currency();
+			return ShopConfig::get_site_currency();
 		}
 	}
 

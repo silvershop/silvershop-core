@@ -115,7 +115,7 @@ class Checkout{
 	 * Get a dataobject of payment methods.
 	 */
 	function getPaymentMethods(){
-		return ShopPayment::get_method_dataset();
+		return PaymentProcessor::get_supported_methods();
 	}
 	
 	/**

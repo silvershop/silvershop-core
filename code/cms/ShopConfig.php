@@ -29,6 +29,14 @@ class ShopConfig extends DataExtension{
 		$fields->removeByName("CreateTopLevelGroups");
 		$countriestab->setTitle("Allowed Countries");
 	}
+
+	static function get_base_currency(){
+		return Config::inst()->get('ShopConfig','base_currency');
+	}
+
+	static function get_site_currency(){
+		return self::get_base_currency();
+	}
 	
 	/**
 	 * Get list of allowed countries
