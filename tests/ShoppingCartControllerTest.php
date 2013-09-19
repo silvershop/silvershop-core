@@ -29,7 +29,7 @@ class ShoppingCartControllerTest extends FunctionalTest {
 		$this->noPriceProduct->publish('Stage','Live');
 		//note that we don't publish 'tshirt'... we want it to remain in draft form.
 		
-		$this->cart = ShoppingCart::getInstance();
+		$this->cart = ShoppingCart::singleton();
 	}
 
 	function testAddToCart(){
@@ -42,7 +42,7 @@ class ShoppingCartControllerTest extends FunctionalTest {
 		$this->get(ShoppingCart_Controller::add_item_link($this->noPriceProduct));  //add a product that has no price
 
 		// See what's in the cart
-		$items = ShoppingCart::get_items();
+		$items = ShoppingCart::curr()->Items();
 		$this->assertNotNull($items);
 
 		$this->assertEquals($items->Count(), 2, 'There are 2 items in the cart');
@@ -50,17 +50,17 @@ class ShoppingCartControllerTest extends FunctionalTest {
 		$mp3playeritem = $items->innerJoin("Product_OrderItem","OrderItem.ID = Product_OrderItem.ID")->find('ProductID',$this->mp3player->ID);	//join needed to provide ProductID	
 		$this->assertNotNull($mp3playeritem, "Mp3 player is in cart");
 
-		/* We have the product that we asserted in our fixture file, with a quantity of 2 in the cart */
+		// We have the product that we asserted in our fixture file, with a quantity of 2 in the cart
 		$this->assertEquals($mp3playeritem->ProductID, $this->mp3player->ID, 'We have the correct Product ID in the cart.');
 		$this->assertEquals($mp3playeritem->Quantity, 2, 'We have 2 of this product in the cart.');
 
-		/* set item quantiy */
+		// set item quantiy
 		$this->get(ShoppingCart_Controller::set_quantity_item_link($this->mp3player,array('quantity' => 5))); //add item via url
-		$items = ShoppingCart::get_items();
+		$items = ShoppingCart::curr()->Items();
 		$mp3playeritem = $items->innerJoin("Product_OrderItem","OrderItem.ID = Product_OrderItem.ID")->find('ProductID',$this->mp3player->ID); //join needed to provide ProductID
 		$this->assertEquals($mp3playeritem->Quantity, 5, 'We have 5 of this product in the cart.');
 
-		/* non purchasable product checks */
+		// non purchasable product checks
 		$this->assertEquals($this->noPurchaseProduct->canPurchase(),false,'non-purcahseable product is not purchaseable');
 		$this->assertArrayNotHasKey($this->noPurchaseProduct->ID,$items->map('ProductID')->toArray(),'non-purcahable product is not in cart');
 		$this->assertEquals($this->draftProduct->canPurchase(),false,'draft product is not purchaseable');
@@ -73,13 +73,13 @@ class ShoppingCartControllerTest extends FunctionalTest {
 
 	function testRemoveFromCart(){
 
-		/* add items via url */
+		// add items via url
 		$this->get(ShoppingCart_Controller::set_quantity_item_link($this->mp3player,array('quantity' => 5)));
 		$this->assertTrue($this->cart->get($this->mp3player) !== false,"mp3player item now exists in cart");
 		$this->get(ShoppingCart_Controller::add_item_link($this->socks));
 		$this->assertTrue($this->cart->get($this->socks) !== false,"socks item now exists in cart");
 
-		/* remove items via url */
+		// remove items via url
 		$this->get(ShoppingCart_Controller::remove_item_link($this->socks)); //remove one different = remove completely
 		$this->assertFalse($this->cart->get($this->socks));
 		
@@ -89,11 +89,11 @@ class ShoppingCartControllerTest extends FunctionalTest {
 		$this->assertTrue($mp3playeritem !== false,"product still exists");
 		$this->assertEquals($mp3playeritem->Quantity,4,"only 4 of item left");
 		
-		$items = ShoppingCart::get_items();
+		$items = ShoppingCart::curr()->Items();
 		$this->assertNotNull($items,"Cart is not empty");
 
 		$this->cart->clear(); //test clearing cart
-		$this->assertEquals(ShoppingCart::get_items(), null, 'Cart is clear'); //items is a databoject set, and will therefore be null when cart is empty.
+		$this->assertEquals(ShoppingCart::curr(), null, 'Cart is clear'); //items is a databoject set, and will therefore be null when cart is empty.
 	}
 
 }

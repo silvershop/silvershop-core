@@ -188,7 +188,7 @@ class ShoppingCart{
 		if(!$item){
 			if(!$buyable->canPurchase(Member::currentUser())){
 				return $this->error(sprintf(_t("ShoppingCart.CANNOTPURCHASE","This %s cannot be purchased."),strtolower($buyable->i18n_singular_name())));
-				//TODO: get more specific message
+				//TODO: produce a more specific message
 			}
 			$item = $buyable->createItem(1,$filter);
 			$item->OrderID = $order->ID;
@@ -218,9 +218,7 @@ class ShoppingCart{
 		$relationship = $singletonorderitem->stat('buyable_relationship');
 		$filter[$singletonorderitem->stat('buyable_relationship')."ID"] = $buyable->ID;
 		$required = $singletonorderitem->stat('required_fields');
-		//TODO: $required = $itemclass::$required_fields; //php 5.3 isn't standard until SS3
 		$required = array_merge(array('Order',$singletonorderitem->stat('buyable_relationship')),$required);
-		//TODO: allow passing exact id
 		$query = new MatchObjectFilter($itemclass,array_merge($customfilter,$filter),$required);
 		$filter = $query->getFilter();
 		$item = DataObject::get_one($itemclass, $filter);
@@ -239,7 +237,6 @@ class ShoppingCart{
 		if(!$order){
 			return $this->error(_t("ShoppingCart.NOCARTFOUND","No cart found."));
 		}
-		//TODO: optionally delete the order from database
 		$order->SessionID = null;
 		$order->write();
 		Session::clear(self::$cartid_session_name);
@@ -275,82 +272,12 @@ class ShoppingCart{
 	}
 	
 	//singleton protection
-	
 	public function __clone(){
 		trigger_error('Clone is not allowed.', E_USER_ERROR);
 	}
 	
 	public function __wakeup(){
 		trigger_error('Unserializing is not allowed.', E_USER_ERROR);
-	}
-	
-	//Deprecated, but needed in the mean time for things to work
-	/**
-	 * @deprecated use $cart = ShoppingCart::getInstance()->current();
-	 */
-	static function current_order(){
-		return ShoppingCart::getInstance()->current();
-	}
-	
-	/**
-	 * @deprecated
-	 */
-	static function get_item_by_id(){}
-	
-	/**
-	 * @deprecated
-	 */
-	static function order_started(){
-		return (bool) ShoppingCart::getInstance()->current();
-	}
-	
-	/**
-	 * @deprecated this is checkout related
-	 */
-	static function uses_different_shipping_address(){
-		if($order = ShoppingCart::getInstance()->current())
-			return $order->UseShippingAddress;
-	}
-	
-	/**
-	 * @deprecated this is checkout related
-	 */
-	static function set_country_link(){}
-	
-	/**
-	 * @deprecated this is checkout related
-	 */
-	static function get_country(){
-		if($order = ShoppingCart::getInstance()->current())
-			return ($order->ShippingCountry) ? $order->ShippingCountry : $order->Country;
-	}
-	
-	/**
-	 * @deprecated this is checkout related
-	 */
-	static function set_country($country){
-		if($order = ShoppingCart::getInstance()->current()){
-			if($order->ShippingCountry){
-				$order->ShippingCountry = $country;
-			}else{
-				$order->Country = $country;
-			}
-		}
-	}
-	
-	/**
-	 * @deprecated
-	 */
-	static function get_items($filter = null) {
-		if($order = ShoppingCart::getInstance()->current())
-			return $order->Items($filter);
-	}
-	
-	/**
-	 * @deprecated use ShoppingCart::singleton() instead.
-	 */
-	static function getInstance(){
-		return self::singleton();
 	}
 	
 }
@@ -444,7 +371,7 @@ class ShoppingCart_Controller extends Controller{
 	
 	function init(){
 		parent::init();
-		$this->cart = ShoppingCart::getInstance();
+		$this->cart = ShoppingCart::singleton();
 	}
 	
 	protected function buyableFromRequest(){
@@ -527,37 +454,10 @@ class ShoppingCart_Controller extends Controller{
 		if(Director::isDev() || Permission::check("ADMIN")){
 			//TODO: allow specifying a particular id to debug
 			Requirements::css(SHOP_DIR."/css/cartdebug.css");
-			$order = ShoppingCart::getInstance()->current();
+			$order = ShoppingCart::curr();
 			$content = ($order) ? Debug::text($order) : "Cart has not been created yet. Add a product.";
 			return array('Content' => $content);
 		}
-	}
-	
-	//deprecated functions
-	
-	/**
-	 * @deprecated
-	 */
-	function additem($request){
-		$this->add($request);
-	}
-	/**
-	 * @deprecated
-	 */
-	function removeitem($request){
-		$this->remove($request);
-	}
-	/**
-	 * @deprecated
-	 */
-	function removeallitem($request){
-		$this->removeall($request);
-	}
-	/**
-	 * @deprecated
-	 */
-	function setquantityitem($request){
-		$this->setquantity($request);
 	}
 	
 }

@@ -161,29 +161,5 @@ class AccountPage_Controller extends Page_Controller {
 	function ChangePasswordForm(){
 		return new ChangePasswordForm($this, "ChangePasswordForm");
 	}
-	
-	//deprecated functions
-	
-	/**
-	 * Returns all {@link Order} records for this
-	 * member that are completed.
-	 *
-	 * @deprecated 0.9 - use PastOrders instead
-	 * @return DataObjectSet
-	 */
-	function CompleteOrders() {
-		return $this->PastOrders("\"Order\".\"Status\" = 'Complete'");
-	}
-	
-	/**
-	 * Returns all {@link Order} records for this
-	 * member that are incomplete.
-	 *
-	 * @deprecated 0.9 - use PastOrders instead
-	 * @return DataObjectSet
-	 */
-	function IncompleteOrders() {
-		return $this->PastOrders("\"Order\".\"Status\" != 'Complete'");
-	}
 
 }

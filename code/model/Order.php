@@ -293,29 +293,6 @@ class Order extends DataObject {
 		//TODO: check that the stati provided in array actually exist
 		self::$set_can_cancel_on_status = $array;
 	}
-
-	/**
-	 * Return a set of forms to add modifiers
-	 * to update the OrderInformation table.
-	 *
-	 * @TODO Make the above descrption clearer
-	 * after fully understanding what this
-	 * function does.
-	 *
-	 * @return DataObjectSet
-	 */
-	public static function get_modifier_forms($controller) {
-		$forms = array();
-		if(self::$modifiers && is_array(self::$modifiers) && count(self::$modifiers) > 0) {
-			foreach(self::$modifiers as $className) {
-				if(class_exists($className)) {
-					$modifier = new $className();
-					if($modifier instanceof OrderModifier && eval("return $className::show_form();") && $form = eval("return $className::get_form(\$controller);")) array_push($forms, $form);
-				}
-			}
-		}
-		return count($forms) > 0 ? new DataObjectSet($forms) : null;
-	}
 	
 	public function getComponents($componentName, $filter = "", $sort = "", $join = "", $limit = null) {
 		$components = parent::getComponents($componentName, $filter = "", $sort = "", $join = "", $limit = null);
@@ -680,27 +657,6 @@ class Order extends DataObject {
 	 */
 	function checkoutLink() {
 		return CheckoutPage::find_link();
-	}
-
-	/**
-	 * Returns the correct shipping address. If there is an alternate
-	 * shipping country then it uses that. Failing that, it returns
-	 * the country of the member.
-	 *
-	 * @TODO This is pretty complicated code. It can be simplified.
-	 *
-	 * @param boolean $codeOnly If true, returns only the country code, instead
-	 * 								of the full name.
-	 * @return string
-	 */
-	function findShippingCountry($codeOnly = false) {
-		if(!$this->isInDB()) {
-			$country = ShoppingCart::has_country() ? ShoppingCart::get_country() : ShopMember::find_country();
-		}
-		elseif(!$this->UseShippingAddress || !$country = $this->ShippingCountry) {
-			$country = ShopMember::find_country();
-		}
-		return $codeOnly ? $country : ShopMember::find_country_title($country);
 	}
 	
 	/**

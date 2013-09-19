@@ -79,14 +79,7 @@ class ShopMember extends DataExtension {
 	 */
 	static function find_country() {
 		$member = Member::currentUser();
-		if($member && $member->Country) {
-			$country = $member->Country;
-		} else {
-			if($country = ShoppingCart::get_country()){
-				return $country;
-			}
-		}
-		return $country;
+		return $member && $member->Country ? $member->Country : null;
 	}
 
 	/**
@@ -117,65 +110,6 @@ class ShopMember extends DataExtension {
 
 	function CountryTitle() {
 		return self::find_country_title($this->owner->Country);
-	}	
-	
-	//deprecated functions
-	
-	/**
-	 * @deprected - use ShopConfig customer group instead
-	 */
-	static function set_group_name($v){}
-	
-	/**
-	 * @deprecated - use CustomersToGroupTask
-	 */
-	static function add_members_to_customer_group() {}
-	
-	/**
-	 * @deprecated
-	 * @param unknown_type $code
-	 */
-	static function findCountryTitle($code) {
-		user_error("deprecated, please use ShopMember::find_country_title", E_USER_NOTICE);
-		return self::find_country_title($code);
-	}
-	/**
-	 * Find the member's country.
-	 *
-	 * If there is no member logged in, try to resolve
-	 * their IP address to a country.
-	 * @deprecated
-	 * @return string Found country of member
-	 */
-	static function findCountry() {
-		user_error("deprecated, please use ShopMember::find_country", E_USER_NOTICE);
-		return self::find_country();
-	}
-	
-	/**
-	 * Create a new member with given data for a new member,
-	 * or merge the data into the logged in member.
-	 *
-	 * IMPORTANT: Before creating a new Member record, we first
-	 * check that the request email address doesn't already exist.
-	 *
-	 * @deprecated
-	 * @param array $data Form request data to update the member with
-	 * @return boolean|object Member object or boolean FALSE
-	 */
-	public static function createOrMerge($data) {
-		user_error("deprecated, please use ShopMember::create_or_merge", E_USER_NOTICE);
-		return self::ecommerce_create_or_merge($data);
-	}
-	
-	static function ecommerce_create_or_merge(){
-		user_error("deprecated, please use ShopMember::create_or_merge", E_USER_NOTICE);
-		return self::create_or_merge($data);
 	}
 
 }
-
-/**
- * @deprecated use ShopMember
- */
-class EcommerceRole extends ShopMember{}

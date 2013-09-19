@@ -16,7 +16,7 @@ class ViewableCart extends Extension{
 	 * Get the cart, and do last minute calculation if necessary.
 	 */
 	function Cart(){
-		$order = ShoppingCart::getInstance()->current();
+		$order = ShoppingCart::curr();
 		if(!$order || !$order->Items() || !$order->Items()->exists()){
 			return false;
 		}

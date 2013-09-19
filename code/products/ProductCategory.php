@@ -210,18 +210,3 @@ class ProductCategory_Controller extends Page_Controller {
 	}
 
 }
-
-/**
-* @deprecated use ProductCategory instead
-*/
-class ProductGroup extends ProductCategory{
-	
-	function canCreate($member = null){
-		return false;
-	}
-}
-
-/**
- * @deprecated use ProductCategory_Controller instead
- */
-class ProductGroup_Controller extends ProductCategory_Controller{}

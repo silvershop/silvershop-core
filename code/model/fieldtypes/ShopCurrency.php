@@ -34,8 +34,3 @@ class ShopCurrency extends Currency {
 		return self::$thousand_delimiter;
 	}
 }
-
-/**
- * @deprecated use ShopCurrency
- */
-class EcommerceCurrency extends ShopCurrency{}

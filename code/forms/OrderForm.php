@@ -19,15 +19,13 @@ class OrderForm extends Form {
 		//Member and shipping fields
 		$member = Member::currentUser();
 		$addressSingleton = singleton('Address');
-		$order = ShoppingCart::current_order();
+		$order = ShoppingCart::curr();
 				
 		$basefields = $cff->getContactFields();
 		$basefields->push(
 			new HeaderField("ShippingHeading",_t('OrderForm.ShippingAndBillingAddress','Shipping and Billing Address'), 3)
 		);
 		$basefields->merge($cff->getAddressFields("Shipping"));
-		$order->extend('updateFormFields', $basefields); //deprecated
-		$order->extend('augmentEcommerceFields', $basefields); //deprecated
 		$orderFields = new CompositeField($basefields);		
 		
 		$requiredFields = $addressSingleton->getRequiredFields('Shipping');
@@ -165,7 +163,7 @@ class OrderForm extends Form {
 	 * Save in the session that the current member wants to use a different shipping address.
 	 */
 	function useDifferentShippingAddress($data, $form, $request) {
-		$order = ShoppingCart::current_order();
+		$order = ShoppingCart::curr();
 		$order->SeparateBillingAddress = true;
 		$order->write();
 		$this->saveDataToSession($data);
@@ -176,7 +174,7 @@ class OrderForm extends Form {
 	 * Save in the session that the current member wants to use his address as a shipping address.
 	 */
 	function useMemberShippingAddress($data, $form, $request) {
-		$order = ShoppingCart::current_order();
+		$order = ShoppingCart::curr();
 		$order->SeparateBillingAddress = false;
 		$order->write();
 		$this->saveDataToSession($data);
@@ -185,7 +183,7 @@ class OrderForm extends Form {
 
 	function updateShippingCountry($data, $form, $request) {
 		Session::set($this->FormName(), $data);
-		$order = ShoppingCart::current_order();
+		$order = ShoppingCart::curr();
 		$order->Country = $data['Country'];
 		$order->write();		
 		if(Director::is_ajax()){
@@ -376,24 +374,6 @@ JS;
 		if($this->validator)
 			Requirements::customScript($script);
 		return $form;
-	}
-	
-	//optional for user to become a member
-	protected static $user_membership_optional = false;
-	 /* 
-	 * @deprecated
-	 */
-	static function set_user_membership_optional($optional = true){
-		self::$user_membership_optional = $optional;
-	}
-	
-	//all users must become members if true, or won't become members if false
-	protected static $force_membership = true;
-	/*
-	 * @deprecated
-	*/
-	static function set_force_membership($force = false){
-		Checkout::$membership_required = $force;
 	}
 
 }

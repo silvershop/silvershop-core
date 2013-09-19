@@ -33,9 +33,6 @@ Order::set_cancel_before_processing(false);
 Order::set_cancel_before_sending(false);
 Order::set_cancel_after_sending(false);
 
-OrderForm::set_user_membership_optional(false);
-OrderForm::set_force_membership(true);
-
 OrderManipulation::set_allow_cancelling(false);
 OrderManipulation::set_allow_paying(false);
 
@@ -66,9 +63,6 @@ Address::$show_form_hints = true; //show form field hints
 ShopPayment::set_supported_methods(array(
 	'Cheque' => 'Cheque'
 ));
-
-// * * * MEMBER
-ShopMember::set_group_name("Shop ShopMembers");
 
 // * * * HELP
 Product::set_global_allow_purchase(true);

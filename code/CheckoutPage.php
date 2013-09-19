@@ -85,17 +85,6 @@ class CheckoutPage extends Page {
 		return $fields;
 	}
 	
-	/**
-	 * @deprecated - use SiteConfig::current_site_config()->TermsPage()
-	 */
-	function TermsPage(){
-		$terms = SiteConfig::current_site_config()->TermsPage();
-		if($terms->exists()){
-			return $terms;
-		}
-		return null;
-	}
-	
 }
 
 class CheckoutPage_Controller extends Page_Controller {
@@ -150,105 +139,6 @@ class CheckoutPage_Controller extends Page_Controller {
 			$form->loadDataFrom($data);
 		}
 		return $form;
-	}
-
-	/**
-	 * Returns any error messages produced during request.
-	 * @deprecated you should use SessionMessage instead (found in OrderManipulation.php)
-	 * @return string
-	 */
-	function Message() {
-		return $this->SessionMessage();
-	}
-
-	/**
-	 * Go here after order has been processed.
-	 *
-	 * @return Order - either the order specified by ID in url, or just the most recent order.
-	 * @deprecated - use OrderManipulation order instead
-	 */
-	function finish(){}
-	
-	/**
-	* Returns a DataObjectSet of {@link OrderModifierForm} objects. These
-	* forms are used in the OrderInformation HTML table for the user to fill
-	* out as needed for each modifier applied on the site.
-	* @deprecated add form to template manually
-	* @return DataObjectSet
-	*/
-	function ModifierForms() {
-		if(ShoppingCart::order_started()){
-			return Order::get_modifier_forms($this);
-		}
-		return null;
-	}
-	
-	/**
-	 * Inits the virtual methods from the name of the modifier forms to
-	 * redirect the action method to the form class
-	 * @deprecated add form to template manually
-	 */
-	protected function initVirtualMethods() {
-		if($forms = $this->ModifierForms()) {
-			foreach($forms as $form) {
-				$this->addWrapperMethod($form->Name(), 'getOrderModifierForm');
-				self::$allowed_actions[] = $form->Name(); // add all these forms to the list of allowed actions also
-			}
-		}
-	}
-	
-	/**
-	 * Return a specific {@link OrderModifierForm} by it's name.
-	 *@deprecated add form to template manually
-	 * @param string $name The name of the form to return
-	 * @return Form
-	 */
-	protected function getOrderModifierForm($name) {
-		if($forms = $this->ModifierForms()) {
-			foreach($forms as $form) {
-				if($form->Name() == $name) return $form;
-			}
-		}
-	}
-	
-	/**
-	 * 
-	 * @deprecated
-	 */
-	static function remove_modifier_link($id){
-		return self::$url_segment.'/removemodifier/'.$id;
-	}
-	
-	/**
-	 * 
-	 * @deprecated
-	 */
-	function removemodifier(){
-		$modifierId = $this->urlParams['ID'];
-		$order = ShoppingCart::current_order();
-		if($modifierId && $order && $modifier =  DataObject::get_one('OrderModifier',"\"OrderID\" = ".$order->ID." AND \"OrderModifier\".\"ID\" = $modifierId")){
-			if($modifier->canRemove()){	
-				$modifier->delete();
-				$modifier->destroy();
-				$this->redirectBack();
-				return;
-			}
-		}
-		$this->redirectBack();
-		return false;
-	}
-	
-	//deprecated functions
-	/**
-	 * Determine whether the user can checkout the
-	 * specified Order ID in the URL, that isn't
-	 * paid for yet.
-	 *
-	 * @deprecated use Cart instead
-	 * @return boolean
-	 */
-	function CanCheckout() {
-		return (bool)$this->Cart(); //see ViewableCart.php
 	}
 
 }

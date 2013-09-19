@@ -11,8 +11,6 @@ SiteConfig::add_extension("ShopConfig");
 Payment::add_extension("ShopPayment");
 Page_Controller::add_extension("ViewableCart");
 ShoppingCart_Controller::add_extension("ViewableCart");
-OrderAttribute::add_extension("OrderAttributeAJAX");
-Order::add_extension("OrderAJAX");
 Member::add_extension('ShopMember');
 Image::add_extension("Product_Image");
 //variations

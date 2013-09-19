@@ -143,7 +143,7 @@ class Product extends Page implements Buyable{
 	function getCart() {
 		if(!self::$global_allow_purchase) return false;
 		HTTP::set_cache_age(0);
-		return ShoppingCart::current_order();
+		return ShoppingCart::curr();
 	}
 
 	/**
@@ -199,7 +199,7 @@ class Product extends Page implements Buyable{
 	function Item() {
 		$filter = array();
 		$this->extend('updateItemFilter',$filter);
-		$item = ShoppingCart::getInstance()->get($this,$filter);
+		$item = ShoppingCart::singleton()->get($this,$filter);
 		if(!$item)
 			$item = $this->createItem(0); //return dummy item so that we can still make use of Item
 		$this->extend('updateDummyItem',$item);
@@ -265,11 +265,9 @@ class Product extends Page implements Buyable{
 	function removeallLink() {
 		return ShoppingCart_Controller::remove_all_item_link($this);
 	}
-
-	//Deprecated fields
 	
 	/**
-	* @deprecated v1.0 use canPurchase instead.
+	* @deprecated use canPurchase instead.
 	*/
 	function AllowPurchase(){
 		return $this->canPurchase();
@@ -291,13 +289,6 @@ class Product_Controller extends Page_Controller {
 		$form = new $formclass($this,"Form");
 		$this->extend('updateForm',$form);
 		return $form;
-	}
-
-	/**
-	 * @deprecated - use Form instead
-	 */
-	function AddProductForm(){
-		return $this->Form();
 	}
 
 }
@@ -357,22 +348,6 @@ class Product_OrderItem extends OrderItem {
 		if($product = $this->Product()){
 			return $product->Link();
 		}
-	}
-	
-	/**
-	 * @deprecated - use TableTitle instead
-	 */
-	function ProductTitle(){
-		return $this->TableTitle();
-	}
-	
-	/**
-	 * Recaulculates the number sold for all products. This should be run as a cron job perhaps daily.
-	 * @deprecated use CalculateProductPopularity task instead
-	 */
-	static function recalculate_numbersold(){
-		$task = new CalculateProductPopularity();
-		$task->viaphp();
 	}
 
 }

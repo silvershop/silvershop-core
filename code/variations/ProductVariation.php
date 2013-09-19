@@ -146,7 +146,7 @@ class ProductVariation extends DataObject implements Buyable{
 	function Item() {
 		$filter = array();
 		$this->extend('updateItemFilter',$filter);
-		$item = ShoppingCart::getInstance()->get($this,$filter);
+		$item = ShoppingCart::singleton()->get($this,$filter);
 		if(!$item)
 			$item = $this->createItem(0); //return dummy item so that we can still make use of Item
 		$this->extend('updateDummyItem',$item);

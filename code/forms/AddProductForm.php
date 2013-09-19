@@ -46,7 +46,7 @@ class AddProductForm extends Form{
 	
 	function addtocart($data,$form){
 		if($buyable = $this->getBuyable($data)){
-			$cart = ShoppingCart::getInstance();
+			$cart = ShoppingCart::singleton();
 			$saveabledata = (!empty($this->saveablefields)) ? Convert::raw2sql(array_intersect_key($data,array_combine($this->saveablefields,$this->saveablefields))) : $data;
 			$quantity = isset($data['Quantity']) ? (int) $data['Quantity']: 1;			
 			$cart->add($buyable,$quantity,$saveabledata);

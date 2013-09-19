@@ -14,7 +14,7 @@ class FlatTaxModifierTest extends FunctionalTest {
 		parent::setUp();
 		ShopTest::setConfiguration();
 		Order::set_modifiers(array("FlatTaxModifier"),true);
-		$this->cart = ShoppingCart::getInstance();
+		$this->cart = ShoppingCart::singleton();
 		$this->mp3player = $this->objFromFixture('Product', 'mp3player');
 		$this->mp3player->publish('Stage','Live');
 	}

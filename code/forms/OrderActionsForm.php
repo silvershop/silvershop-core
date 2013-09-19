@@ -106,21 +106,3 @@ class OrderActionsForm extends Form{
 	}
 	
 }
-
-/**
- * Form for paying outstanding orders.
- * @package shop
- * @subpackage forms
- *
- * @deprecated use OrderActionsForm
- */
-class OutstandingPaymentForm extends OrderActionsForm {}
-
-/**
- * Form for canceling an order.
- * @package shop
- * @subpackage forms
- * 
- * @deprecated use OrderActionsForm
- */
-class CancelOrderForm extends Form {}

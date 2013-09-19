@@ -52,11 +52,6 @@ class OrderModifier extends OrderAttribute {
 	public static $default_sort = "\"Sort\" ASC, \"Created\" ASC";
 	
 	/**
-	 * @deprecated
-	 */
-	protected static $is_chargable = true;
-	
-	/**
 	* Specifies whether this modifier is always required in an order.
 	*/
 	public function required(){
@@ -152,12 +147,8 @@ class OrderModifier extends OrderAttribute {
 	}
 	
 	/**
-	 * If the current instance of this OrderModifier
-	 * exists in the database, check if the Type in
-	 * the DB field is "Chargable", if it is, return
-	 * true, otherwise check the static "is_chargable",
-	 * since this instance currently isn't in the DB.
-	 *
+	 * Checks if this modifier has type = Chargable
+	 * 
 	 * @return boolean
 	 */
 	function IsChargable() {
@@ -174,56 +165,6 @@ class OrderModifier extends OrderAttribute {
 
 	function removeLink() {
 		return CheckoutPage_Controller::remove_modifier_link($this->ID);
-	}
-	
-	//deprecated functions
-	
-	/**
-	 * @deprecated use Title
-	 */
-	function CartValue() {
-		return $this->TableValue();
-	}
-	
-	/**
-	 * @deprecated use Amount
-	 */
-	protected function LiveAmount() {
-		return $this->value();
-	}
-
-	//TODO: remove these functions
-	
-	/**
-	* This determines whether the OrderModifierForm
-	* is shown or not. {@link OrderModifier::get_form()}.
-	*
-	* @return boolean
-	*/
-	static function show_form() {
-		return false;
-	}
-	
-	/**
-	 * This function returns a form that allows a user
-	 * to change the modifier to the order.
-	 *
-	 * @todo When is this used?
-	 * @todo How is this used?
-	 * @todo How does one create their own OrderModifierForm implementation?
-	 *
-	 * @param Controller $controller $controller The controller
-	 * @return OrderModifierForm or subclass
-	 */
-	static function get_form($controller) {
-		return new OrderModifierForm($controller, 'ModifierForm', new FieldList(), new FieldList());
-	}
-	
-	function updateForAjax(array &$js) {
-		$amount = $this->obj('Amount')->Nice();
-		$js[] = array('id' => $this->CartTotalID(), 'parameter' => 'innerHTML', 'value' => $amount);
-		$js[] = array('id' => $this->TableTotalID(), 'parameter' => 'innerHTML', 'value' => $amount);
-		$js[] = array('id' => $this->TableTitleID(), 'parameter' => 'innerHTML', 'value' => $this->TableTitle());
 	}
 	
 }

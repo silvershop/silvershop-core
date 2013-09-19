@@ -155,32 +155,5 @@ class OrderManipulation extends Extension{
 		}
 		return $this->sessionmessagetype;
 	}
-
-	/**
-	 * Returns the form to cancel the current order,
-	 * checking to see if they can cancel their order
-	 * first of all.
-	 *
-	 * @return CancelOrderForm
-	 * @deprecated use getActionsForm instead
-	 */
-	function CancelForm() {
-		if($form = $this->ActionsForm()){
-			$form->extend('updateCancelForm',$order);
-			return $form;
-		}
-	}
-	
-	/**
-	 * Creates form to pay for incomplete orders
-	 * @return Form (OrderForm_Payment) or Null
-	 * @deprecated use getActionsForm instead
-	 **/
-	function PaymentForm(){
-		if($form = $this->ActionsForm()){
-			$form->extend('updatePaymentForm',$order);
-			return $form;
-		}
-	}
 	
 }

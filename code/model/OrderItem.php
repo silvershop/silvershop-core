@@ -196,42 +196,4 @@ class OrderItem extends OrderAttribute {
 		return ShoppingCart_Controller::set_quantity_item_link($this->Buyable(),$this->uniquedata());
 	}
 	
-	//Deprecated, to be removed or factored out
-
-	/**
-	* @deprecated - use QuantityField instead
-	*/
-	function AjaxQuantityField(){
-		return $this->QuantityField();
-	}
-	
-	/**
-	 * @deprecated - use CheckoutPage::find_link
-	 */
-	function checkoutLink() {
-		return CheckoutPage::find_link();
-	}
-	
-	/**
-	 * @deprecated - use onPlace instead
-	 */
-	function place(){
-		return $this->onPlace();
-	}
-	
-	protected function QuantityFieldName() {
-		return $this->MainID() . '_Quantity';
-	}
-	
-	function CartQuantityID() {
-		return $this->CartID() . '_Quantity';
-	}
-	
-	function updateForAjax(array &$js) {
-		$total = DBField::create('Currency', $this->Total())->Nice();
-		$js[] = array('id' => $this->TableTotalID(), 'parameter' => 'innerHTML', 'value' => $total);
-		$js[] = array('id' => $this->CartTotalID(), 'parameter' => 'innerHTML', 'value' => $total);
-		$js[] = array('id' => $this->CartQuantityID(), 'parameter' => 'innerHTML', 'value' => $this->Quantity);
-		$js[] = array('name' => $this->QuantityFieldName(), 'parameter' => 'value', 'value' => $this->Quantity);
-	}
 }

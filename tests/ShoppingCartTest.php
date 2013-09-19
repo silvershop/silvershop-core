@@ -9,7 +9,7 @@ Class ShoppingCartTest extends SapphireTest{
 	function setUp(){
 		parent::setUp();
 		ShopTest::setConfiguration(); //reset config
-		$this->cart = ShoppingCart::getInstance();
+		$this->cart = ShoppingCart::singleton();
 		$this->product = $this->objFromFixture('Product', 'mp3player');
 		$this->product->publish('Stage','Live');
 	}

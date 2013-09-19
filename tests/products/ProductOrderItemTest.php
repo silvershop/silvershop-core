@@ -27,7 +27,7 @@ class ProductOrderItemTest extends FunctionalTest {
 		$this->beachball->publish('Stage','Live');
 		$this->hdtv->publish('Stage','Live');
 		
-		$this->cart = ShoppingCart::getInstance();
+		$this->cart = ShoppingCart::singleton();
 	}
 	
 	function testEmptyItem(){

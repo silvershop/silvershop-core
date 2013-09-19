@@ -7,10 +7,10 @@ You may want to display a small set of featured products somewhere on your site,
 [mysite]/code/HomePage.php:
 
 	:::php
-	class HomePage extends ProductGroup{
+	class HomePage extends ProductCategory{
 		//...
 	}
-	class HomePage_Controller extends ProductGroup_Controller{
+	class HomePage_Controller extends ProductCategory_Controller{
 		
 		/**
 		* Get all products marked as featured that can be purchased.

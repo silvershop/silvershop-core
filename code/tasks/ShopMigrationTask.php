@@ -122,13 +122,11 @@ class ShopMigrationTask extends MigrationTask{
 	 */
 	function migrateShippingValues($order){
 		//TODO: see if this actually works..it probably needs to be writeen to a SQL query
-		$country = $order->findShippingCountry(true);
 		if($order->hasShippingCost && abs($order->Shipping)){
 			$modifier1 = new ShippingModifier();
 			$modifier1->Amount = $order->Shipping < 0 ? abs($order->Shipping) : $order->Shipping;
 			$modifier1->Type = 'Chargable';
 			$modifier1->OrderID = $order->ID;
-			$modifier1->Country = $country;
 			$modifier1->ShippingChargeType = 'Default';
 			$modifier1->write();
 			$order->hasShippingCost = null;
@@ -139,7 +137,6 @@ class ShopMigrationTask extends MigrationTask{
 			$modifier2->Amount = $order->AddedTax < 0 ? abs($order->AddedTax) : $order->AddedTax;
 			$modifier2->Type = 'Chargable';
 			$modifier2->OrderID = $order->ID;
-			$modifier2->Country = $country;
 			//$modifier2->Name = 'Undefined After Ecommerce Upgrade';
 			$modifier2->TaxType = 'Exclusive';
 			$modifier2->write();

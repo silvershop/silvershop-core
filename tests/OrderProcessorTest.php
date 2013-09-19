@@ -27,7 +27,7 @@ class OrderProcessorTest extends SapphireTest {
 		$this->beachball->publish('Stage','Live');
 		$this->hdtv->publish('Stage','Live');
 	
-		$this->shoppingcart = ShoppingCart::getInstance();
+		$this->shoppingcart = ShoppingCart::singleton();
 	}
 	
 	function tearDown(){
@@ -121,7 +121,7 @@ class OrderProcessorTest extends SapphireTest {
 	
 		$joemember = $this->objFromFixture('Member', 'joebloggs');
 		$joemember->logIn();
-		$cart = ShoppingCart::current_order();
+		$cart = ShoppingCart::curr();
 		
 		$this->assertTrue($this->placeOrder(
 			'Joseph',
@@ -160,10 +160,7 @@ class OrderProcessorTest extends SapphireTest {
 	
 	
 	function testNoMemberOrder(){
-		
-		//adjust configuration to allow non member orders
-		OrderForm::set_user_membership_optional(true);
-		OrderForm::set_force_membership(false);
+
 		$this->shoppingcart->add($this->socks);
 		$order = $this->shoppingcart->current();
 		$success = $this->placeOrder(

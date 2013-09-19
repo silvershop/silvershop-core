@@ -53,12 +53,5 @@ class CartPage_Controller extends Page_Controller{
 			return $this->Title;
 		return _t('CartPage.TITLE',"Shopping Cart");
 	}
-		
-	/**
-	 * @deprecated use $this->Cart() instead
-	 */
-	function Order() {
-		return $this->Cart();
-	}
 
 }

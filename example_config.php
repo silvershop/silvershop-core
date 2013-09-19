@@ -32,9 +32,6 @@ Order::set_cancel_before_processing(false);
 Order::set_cancel_before_sending(false);
 Order::set_cancel_after_sending(false);
 
-OrderForm::set_user_membership_optional(); //optional for user to become a member
-OrderForm::set_force_membership(); //all users must become members if true, or won't become members if false
-
 OrderManipulation::set_allow_cancelling(); //shows a cancel button on the order page
 OrderManipulation::set_allow_paying(); //shows a payment form
 
@@ -49,9 +46,6 @@ ProductCategory::set_sort_options( array('Title' => 'Alphabetical','Price' => 'L
 
 //CHECKOUT
 ExpiryDateField::set_short_months(true); //uses short months (e.g. Jan instead of january) for credit card expiry date.
-
-//MEMBER
-ShopMember::set_group_name("ShopMembers");
 
 //MODIFIERS
 FlatTaxModifier::set_tax("0.15", "GST", $exclusive = false);
