@@ -193,19 +193,23 @@ class OrderProcessor{
 	 * Complete payment processing
 	 *    - send receipt
 	 * 	- update order status accordingling
+	 * 	- fire event hooks
 	 */
 	function completePayment(){
 		if($this->order->Status != 'Paid'){
 			if(!$this->order->ReceiptSent){
 				$this->sendReceipt();
 			}
+			$this->order->extend('onPayment'); //a payment has been made
 			if($this->order->GrandTotal() > 0 && $this->order->TotalOutstanding() <= 0){
+				//set order as paid
 				$this->order->Status = 'Paid';
 				$this->order->Paid = SS_Datetime::now()->Rfc2822();
 				$this->order->write();
 				foreach($this->order->Items() as $item){
 					$item->onPayment();
 				}
+				$this->order->extend('onPaid'); //all payment is settled
 			}
 		}
 	}	
