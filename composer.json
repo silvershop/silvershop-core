@@ -16,7 +16,7 @@
 	"require" : {
 		"silverstripe/cms": "3.1.*",
 		"silverstripe/framework": "3.1.*",
-		"burnbright/payment": "*"
+		"burnbright/silverstripe-payment": "*"
 	},
 	"extra" : {
 		"installer-name": "shop",
