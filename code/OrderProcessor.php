@@ -98,7 +98,8 @@ class OrderProcessor{
 		}
 		if($member){
 			$this->order->MemberID = $member->ID;
-			if($cgroup = ShopConfig::current()->CustomerGroup()){
+			$cgroup = ShopConfig::current()->CustomerGroup();
+			if($cgroup->exists()){
 				$member->Groups()->add($cgroup);
 			}
 		}
