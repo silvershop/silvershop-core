@@ -16,7 +16,7 @@
 	"require" : {
 		"silverstripe/cms": "3.1.*",
 		"silverstripe/framework": "3.1.*",
-		"silverstripe/payment": "dev-ss3"
+		"burnbright/silverstripe-omnipay" : "dev-master"
 	},
 	"extra" : {
 		"installer-name": "shop",

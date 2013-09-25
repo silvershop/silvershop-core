@@ -33,9 +33,9 @@ class CheckoutTest extends SapphireTest{
 	}
 	
 	function testSetPaymentMethod(){
-		ShopPayment::set_supported_methods(array(
-			'Cheque' => 'Cheque'
-		));
+		// ShopPayment::set_supported_methods(array(
+		// 	'Cheque' => 'Cheque'
+		// ));
 		$this->assertTrue($this->checkout->setPaymentMethod("Cheque"),"Valid method set correctly");
 		$this->assertEquals($this->checkout->getSelectedPaymentMethod(false),'Cheque');
 	}

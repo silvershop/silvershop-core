@@ -22,9 +22,16 @@ class CheckoutStep_PaymentMethod extends CheckoutStep{
 	
 	function PaymentMethodForm(){
 		$checkout = Checkout::get();
-		$fields = new FieldList(new OptionsetField(
-			'PaymentMethod','',$checkout->getPaymentMethods()->map('ClassName','Title'),$checkout->getPaymentMethods()->First()->ClassName
-		));
+		$fields = new FieldList();
+		$methods = $checkout->getPaymentMethods();
+		if(!empty($methods)){
+			$defaultmethod = array_shift(array_keys($methods));
+			$fields->push(new OptionsetField(
+				'PaymentMethod','',$methods, $defaultmethod
+			));
+		}else{
+			$fields->push(new LiteralField("nomethods","<p class=\"message warning\">"._t("Checkout.NOMETHODS","No payment methods have been set up")."<p>"));
+		}
 		$actions = new FieldList(
 			new FormAction("setpaymentmethod","Continue")
 		);
