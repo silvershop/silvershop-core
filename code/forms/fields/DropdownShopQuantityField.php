@@ -53,14 +53,14 @@ class DropdownShopQuantityField extends ViewableData{
 		for($r=1; $r<=20; $r++){
 			$qtyArray[$r] = $r;
 		}
-		return new DropdownField($this->item->MainID() . '_Quantity',"Qty",$qtyArray,($this->item->Quantity) ? $this->item->Quantity : "");
+		return new DropdownField($this->MainID() . '_Quantity',"Qty",$qtyArray,($this->item->Quantity) ? $this->item->Quantity : "");
 		
 		$size = 3; //make these customisable
 		$maxlength = 3;
 		$attributes = array(
 			'type' => 'text',
 			'class' => implode(' ',$this->classes),
-			'name' => $this->item->MainID() . '_Quantity',
+			'name' => $this->MainID() . '_Quantity',
 			'value' => ($this->item->Quantity) ? $this->item->Quantity : "",
 			'maxlength' => $maxlength,
 			'size' => $size 
@@ -78,12 +78,16 @@ class DropdownShopQuantityField extends ViewableData{
 			$attributes = array(
 				'type' => 'hidden',
 				'class' => 'ajaxQuantityField_qtylink',
-				'name' => $this->item->MainID() . '_Quantity_SetQuantityLink',
+				'name' => $this->MainID() . '_Quantity_SetQuantityLink',
 				'value' => $quantitylink
 			);
 			$formfield = new FormField('hack'); 
 			return $formfield->createTag('input', $attributes);
 		}
+	}
+
+	function MainID(){
+		return get_class($this->item).'_DB_'.$this->item->ID;
 	}
 	
 	function IncrementLink(){
