@@ -7,6 +7,11 @@
 */
 class OrderForm extends Form {
 
+	private static $allowed_actions = array(
+		'useDifferentShippingAddress',
+		'useMemberShippingAddress'
+	);
+
 	//actions that don't need validation
 	protected $validactions = array(
 		'useDifferentShippingAddress',
