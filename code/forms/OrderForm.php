@@ -60,10 +60,10 @@ class OrderForm extends Form {
 			$rightFields->push(new FieldGroup($pwf = new ConfirmedPasswordField('Password', _t('OrderForm.Password','Password'))));
 			//if user doesn't fill out password, we assume they don't want to become a member
 			//TODO: allow different ways of specifying that you want to become a member
-			if(self::$user_membership_optional){
+			if(!Checkout::membership_required()){
 				$pwf->setCanBeEmpty(true);
 			}
-			if(self::$force_membership || !self::$user_membership_optional){
+			if(Checkout::membership_required()){
 				$requiredFields[] = 'Password[_Password]';
 				$requiredFields[] = 'Password[_ConfirmPassword]';
 				//TODO: allow extending this to provide other ways of indicating that you want to become a member
