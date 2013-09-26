@@ -7,18 +7,17 @@
  */
 class ShopTest extends FunctionalTest {
 
-	static $fixture_file = 'shop/tests/shop.yml';
+	static $fixture_file = 'shop/tests/fixtures/shop.yml';
 	static $disable_theme = true;
 	static $use_draft_site = true;
 
 	function setUp() {
 		parent::setUp();
-		/* Let's check that we have the Payment module installed properly */
 		$this->assertTrue(class_exists('Payment'), 'Payment module is installed.');
 	}
 
 	function testExampleConfig(){
-		require_once(BASE_PATH.DIRECTORY_SEPARATOR.SHOP_DIR.DIRECTORY_SEPARATOR.'example_config.php');
+		require_once(SHOP_PATH.DIRECTORY_SEPARATOR.'example_config.php');
 		//TODO: test each configuration
 	}
 
@@ -26,21 +25,26 @@ class ShopTest extends FunctionalTest {
 		$this->get('checkout');
 		//TODO: check order hasn't started
 	}
+	
+	function testFindLink() {
+		$this->checkoutpage = $this->objFromFixture('CheckoutPage', 'checkout');
+		$this->checkoutpage->publish('Stage','Live');
+		$link = CheckoutPage::find_link();
+		$this->assertEquals(Director::baseURL() . 'checkout/', $link, 'find_link() returns the correct link to checkout.');
+	}
 
 	function testCanViewProductPage() {
 		$p1a = $this->objFromFixture('Product', 'tshirt');
 		$p2a = $this->objFromFixture('Product', 'socks');
 		$this->get(Director::makeRelative($p1a->Link()));
 		$this->get(Director::makeRelative($p2a->Link()));
-		//TODO: check order hasn't started
 	}
-
+	
 	function testCanViewProductCategoryPage() {
-		$g1 = $this->objFromFixture('ProductCategory', 'g1');
-		$g2 = $this->objFromFixture('ProductCategory', 'g2');
-		$this->get(Director::makeRelative($g1->Link()));
-		$this->get(Director::makeRelative($g2->Link()));
-		//TODO: check order hasn't started
+		$clothing = $this->objFromFixture('ProductCategory', 'clothing');
+		$musicplayers = $this->objFromFixture('ProductCategory', 'musicplayers');
+		$this->get(Director::makeRelative($clothing->Link()));
+		$this->get(Director::makeRelative($musicplayers->Link()));
 	}
 
 	function old_testCanViewAccountPage() {

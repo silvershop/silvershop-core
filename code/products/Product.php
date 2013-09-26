@@ -15,17 +15,27 @@
 class Product extends Page implements Buyable{
 
 	public static $db = array(
-		'Price' => 'Currency',
-		'Weight' => 'Decimal(9,2)',
+		'InternalItemID' => 'Varchar(30)', //ie SKU, ProductID etc (internal / existing recognition of product)
 		'Model' => 'Varchar(30)',
+		
+		'CostPrice' => 'Currency', // Wholesale cost of the product to the merchant
+		'BasePrice' => 'Currency', // Base retail price the item is marked at.
+		
+		//physical properties
+		'Weight' => 'Decimal(9,2)',
+		'Height' => 'Decimal(9,2)',
+		'Width' => 'Decimal(9,2)',
+		'Depth' => 'Decimal(9,2)',
+		
 		'FeaturedProduct' => 'Boolean',
 		'AllowPurchase' => 'Boolean',
-		'InternalItemID' => 'Varchar(30)', //ie SKU, ProductID etc (internal / existing recognition of product)
-		'NumberSold' => 'Int' //store number sold, so it doesn't have to be computed on the fly. Used for determining popularity.
+		
+		'Popularity' => 'Float' //storage for ClaculateProductPopularity task
 	);
-
+	
+	
 	public static $has_one = array(
-		'Image' => 'Product_Image'
+		'Image' => 'Image'
 	);
 
 	public static $many_many = array(
@@ -38,11 +48,17 @@ class Product extends Page implements Buyable{
 	);
 
 	public static $summary_fields = array(
-		'ID','InternalItemID','Title','Price','Weight','Model','NumberSold'
+		'InternalItemID','Title','BasePrice','Weight','Model'
 	);
 
 	public static $searchable_fields = array(
-		'ID','Title','InternalItemID','Weight','Model','Price'
+		'InternalItemID','Title','Weight','Model','BasePrice'
+	);
+	
+	public static $field_labels = array(
+		'InternalItemID' => 'SKU',
+		'Title' => 'Title',
+		'BasePrice' => 'Price'
 	);
 
 	public static $singular_name = "Product";
@@ -60,36 +76,43 @@ class Product extends Page implements Buyable{
 	static $global_allow_purchase = true;
 
 	function getCMSFields() {
-		//prevent calling updateCMSFields extend function too early
-		$tempextvar = $this->get_static('SiteTree','runCMSFieldsExtensions');
-		$this->disableCMSFieldsExtensions();
+		self::disableCMSFieldsExtensions();
 		$fields = parent::getCMSFields();
-		if($tempextvar){
-			$this->enableCMSFieldsExtensions();
-		}
+
 		// Standard product detail fields
-		$fields->addFieldToTab('Root.Content.Main',new TextField('Price', _t('Product.PRICE', 'Price'), '', 12),'Content');
-		$fields->addFieldToTab('Root.Content.Main',new TextField('Weight', _t('Product.WEIGHT', 'Weight (kg)'), '', 12),'Content');
-		$fields->addFieldToTab('Root.Content.Main',new TextField('Model', _t('Product.MODEL', 'Model'), '', 30),'Content');
-		$fields->addFieldToTab('Root.Content.Main',new TextField('InternalItemID', _t('Product.CODE', 'Product Code'), '', 30),'Price');
+		$fields->addFieldsToTab('Root.Pricing',array(
+			new TextField('BasePrice', _t('Product.PRICE', 'Price - base price to sell this product at'), '', 12),
+			new TextField('CostPrice', _t('Product.COSTPRICE', 'Cost Price - wholesale price before markup'), '', 12)
+		));
+		
+		//physical measurements
+		$weightunit = "kg"; //TODO: globalise / make custom
+		$lengthunit = "cm";  //TODO: globalise / make custom
+		$fields->addFieldsToTab('Root.Shipping',array(
+			new TextField('Weight', sprintf(_t('Product.WEIGHT', 'Weight (%s)'), $weightunit), '', 12),
+			new TextField('Height', sprintf(_t('Product.HEIGHT', 'Height (%s)'), $lengthunit), '', 12),
+			new TextField('Width', sprintf(_t('Product.WIDTH', 'Width (%s)'), $lengthunit), '', 12),
+			new TextField('Depth', sprintf(_t('Product.DEPTH', 'Depth (%s)'), $lengthunit), '', 12),
+		));
+		
+		$fields->addFieldToTab('Root.Main',new TextField('Model', _t('Product.MODEL', 'Model'), '', 30),'Content');
+		$fields->addFieldToTab('Root.Main',new TextField('InternalItemID', _t('Product.CODE', 'Product Code'), '', 30),'Model');
 		if(!$fields->dataFieldByName('Image')) {
-			$fields->addFieldToTab('Root.Content.Images', new ImageField('Image', _t('Product.IMAGE', 'Product Image')));
+			$fields->addFieldToTab('Root.Images', new UploadField('Image', _t('Product.IMAGE', 'Product Image')));
 		}
 		// Flags for this product which affect it's behaviour on the site
-		$fields->addFieldToTab('Root.Content.Main',new CheckboxField('FeaturedProduct', _t('Product.FEATURED', 'Featured Product')), 'Content');
-		$fields->addFieldToTab('Root.Content.Main',new CheckboxField('AllowPurchase', _t('Product.ALLOWPURCHASE', 'Allow product to be purchased'), 1),'Content');
-		$fields->addFieldsToTab(
-			'Root.Content.Categories',
-			array(
-				new LabelField('ProductCategoriesInstuctions', _t('Product.CATEGORIES',"Select the categories that this product should also show up in")),
-				$this->getProductCategoriesTable()
-			)
-		);
-		if($pagename = $fields->fieldByName('Root.Content.Main.Title'))
-			$pagename->setTitle(_t('Product.PAGENAME','Page/Product Name'));
+		$fields->addFieldToTab('Root.Main',new CheckboxField('FeaturedProduct', _t('Product.FEATURED', 'Featured Product')), 'Content');
+		$fields->addFieldToTab('Root.Main',new CheckboxField('AllowPurchase', _t('Product.ALLOWPURCHASE', 'Allow product to be purchased'), 1),'Content');
+		$fields->addFieldsToTab('Root.Categories',array(
+			new LabelField('ProductCategoriesInstuctions', _t('Product.CATEGORIES',"Select the categories that this product should also show up in")),
+			$this->getProductCategoriesTable()
+		));
+		if($pagename = $fields->fieldByName('Root.Main.Title')){
+			$pagename->setTitle(_t('Product.PAGETITLE','Product Page Title'));
+		}
 
-		if($tempextvar)
-			$this->extend('updateCMSFields', $fields);
+		self::enableCMSFieldsExtensions();
+		$this->extend('updateCMSFields', $fields);
 		return $fields;
 	}
 
@@ -99,52 +122,16 @@ class Product extends Page implements Buyable{
 	static function set_global_allow_purchase($allow = false){
 		self::$global_allow_purchase = $allow;
 	}
-
-	/**
-	 * Recaulculates the number sold for all products. This should be run as a cron job perhaps daily.
-	 */
-	static function recalculate_numbersold(){
-		$ps = singleton('Product');
-		$q = $ps->buildSQL("\"Product\".\"AllowPurchase\" = 1");
-		$select = $q->select;
-
-		$select['NewNumberSold'] = self::$number_sold_calculation_type."(\"OrderItem\".\"Quantity\") AS \"NewNumberSold\"";
-
-		$q->select($select);
-		$q->groupby("\"Product\".\"ID\"");
-		$q->orderby("\"NewNumberSold\" DESC");
-
-		$q->leftJoin('Product_OrderItem','"Product"."ID" = "Product_OrderItem"."ProductID"');
-		$q->leftJoin('OrderItem','"Product_OrderItem"."ID" = "OrderItem"."ID"');
-		$records = $q->execute();
-		$productssold = $ps->buildDataObjectSet($records, "DataObjectSet", $q, 'Product');
-
-		//TODO: this could be done faster with an UPDATE query (SQLQuery doesn't support this yet @11/06/2010)
-		foreach($productssold as $product){
-			if($product->NewNumberSold != $product->NumberSold){
-				$product->NumberSold = $product->NewNumberSold;
-				$product->writeToStage('Stage');
-				$product->publish('Stage', 'Live');
-			}
-		}
-
-	}
-	
+		
 	/**
 	 * Helper for creating the product groups table
 	 */
 	protected function getProductCategoriesTable() {
-		$tableField = new ManyManyComplexTableField(
-			$this,
-			'ProductCategories',
-			'ProductCategory',
-			array(
-				'Title' => 'Category'
-			)
-		);
-		$tableField->setPageSize(30);
-		$tableField->setPermissions(array());
-		return $tableField;
+		//TODO: SS3 has no support for GridField many_many, get more info
+		$productCategories = DataObject::get("ProductCategory");
+		$itemsTable = new CheckboxSetField("ProductCategories","Product Categories",$productCategories->map("ID", "Title"));
+		
+		return $itemsTable;
 	}
 
 	/**
@@ -156,7 +143,7 @@ class Product extends Page implements Buyable{
 	function getCart() {
 		if(!self::$global_allow_purchase) return false;
 		HTTP::set_cache_age(0);
-		return ShoppingCart::current_order();
+		return ShoppingCart::curr();
 	}
 
 	/**
@@ -175,22 +162,21 @@ class Product extends Page implements Buyable{
 		if(!$this->dbObject('AllowPurchase')->getValue()) return false;
 		if(!$this->isPublished()) return false;
 		$allowpurchase = false;
-
-		if($this->Variations()->exists()){
+		if(DataObject::get_one("ProductVariation","ProductID = ".$this->ID)){ // TODO: I get errors if I have not decorated product.php with variations... method does not exist
 			foreach($this->Variations() as $variation){
 				if($variation->canPurchase()){
 					$allowpurchase = true;
 					break;
 				}
 			}
-		}elseif($this->Price > 0){
+		}elseif($this->sellingPrice() > 0){
 			$allowpurchase = true;
 		}
-
 		// Standard mechanism for accepting permission changes from decorators
 		$extended = $this->extendedCan('canPurchase', $member);
-		if($allowpurchase && $extended !== null) $allowpurchase = $extended;
-
+		if($allowpurchase && $extended !== null){
+			$allowpurchase = $extended;
+		}
 		return $allowpurchase;
 	}
 
@@ -211,9 +197,9 @@ class Product extends Page implements Buyable{
 	 * Product_OrderItem only has a Product object in attribute
 	 */
 	function Item() {
-		$filter = null;
+		$filter = array();
 		$this->extend('updateItemFilter',$filter);
-		$item = ShoppingCart::getInstance()->get($this); //TODO: needs filter
+		$item = ShoppingCart::singleton()->get($this,$filter);
 		if(!$item)
 			$item = $this->createItem(0); //return dummy item so that we can still make use of Item
 		$this->extend('updateDummyItem',$item);
@@ -232,16 +218,33 @@ class Product extends Page implements Buyable{
 		}
 		$item->Quantity = $quantity;
 		return $item;
-	}	
-
+	}
+	
 	/**
-	 * Return the currency being used on the site.
-	 * @return string Currency code, e.g. "NZD" or "USD"
+	 * Original price for template usage
 	 */
-	function Currency() {
-		if(class_exists('Payment')) {
-			return Payment::site_currency();
-		}
+	function getPrice(){
+		$currency = Payment::site_currency();
+		$field = new Money("Price");
+		$field->setAmount($this->sellingPrice());
+		$field->setCurrency($currency);
+		return $field;
+	}
+	
+	function setPrice($val){
+		$this->setField("BasePrice", $val);
+	}
+	
+	/**
+	 * The raw retail price the visitor will get when they
+	 * add to cart. Can include discounts or markups on the base price.
+	 */
+	function sellingPrice(){
+		$price = $this->BasePrice;
+		$this->extend("updateSellingPrice",$price); //TODO: this is not ideal, because prices manipulations will not happen in a known order
+		if($price < 0)
+			$price = 0; //prevent negative sales
+		return $price;
 	}
 	
 	function Link(){
@@ -262,11 +265,9 @@ class Product extends Page implements Buyable{
 	function removeallLink() {
 		return ShoppingCart_Controller::remove_all_item_link($this);
 	}
-
-	//Deprecated fields
 	
 	/**
-	* @deprecated v1.0 use canPurchase instead.
+	* @deprecated use canPurchase instead.
 	*/
 	function AllowPurchase(){
 		return $this->canPurchase();
@@ -276,48 +277,18 @@ class Product extends Page implements Buyable{
 
 class Product_Controller extends Page_Controller {
 
-	static $allowed_actions = array();
+	private static $allowed_actions = array(
+		'Form',
+		'AddProductForm'
+	);
 	
-	function AddProductForm(){
-		return new AddProductForm($this,$this->dataRecord);
-	}
+	public $formclass = "AddProductForm"; //allow overriding the type of form used
 	
-}
-
-class Product_Image extends Image {
-
-	//default image sizes
-	protected static $thumbnail_width = 140;
-	protected static $thumbnail_height = 100;
-	protected static $content_image_width = 200;
-	protected static $large_image_width = 600;
-
-	static function set_thumbnail_size($width = 140, $height = 100){
-		self::$thumbnail_width = $width;
-		self::$thumbnail_height = $height;
-	}
-
-	static function set_content_image_width($width = 200){
-		self::$content_image_width = $width;
-	}
-
-	static function set_large_image_width($width = 600){
-		self::$large_image_width = $width;
-	}
-
-	function generateThumbnail($gd) {
-		$gd->setQuality(80);
-		return $gd->paddedResize(self::$thumbnail_width,self::$thumbnail_height);
-	}
-
-	function generateContentImage($gd) {
-		$gd->setQuality(90);
-		return $gd->resizeByWidth(self::$content_image_width);
-	}
-
-	function generateLargeImage($gd) {
-		$gd->setQuality(90);
-		return $gd->resizeByWidth(self::$large_image_width);
+	function Form(){
+		$formclass = $this->formclass;
+		$form = new $formclass($this,"Form");
+		$this->extend('updateForm',$form);
+		return $form;
 	}
 
 }
@@ -339,27 +310,33 @@ class Product_OrderItem extends OrderItem {
 	static $disable_versioned = true;
 
 	/**
-	 * Get related product, based on version info if it is not in the cart.
+	 * Get related product
+	 *  - live version if in cart, or
+	 *  - historical version if order is placed 
 	 *
 	 * @param boolean $forcecurrent - force getting latest version of the product.
 	 * @return Product
 	 */
 	public function Product($forcecurrent = false) {
+		
+		//TODO: this might need some unit testing to make sure it compliles with comment description
+			//ie use live if inn cart (however I see no logic for checking cart status)
+		
 		if($this->ProductID && $this->ProductVersion && !$forcecurrent){
-			return FixVersioned::get_version('Product', $this->ProductID, $this->ProductVersion);
-		}elseif($this->ProductID && $product = DataObject::get_by_id('Product', $this->ProductID)){
+			return Versioned::get_version('Product', $this->ProductID, $this->ProductVersion);
+		}elseif($this->ProductID && $product = Versioned::get_one_by_stage('Product','Live', "\"Product\".\"ID\"  = ".$this->ProductID)){
 			return $product;
 		}
 		return false;		
 	}
 
-	function UnitPrice() {
-		$product = $this->Product();
-		$unitprice = ($product) ? $product->Price : 0;
-		$this->extend('updateUnitPrice',$unitprice);
-		return $unitprice;
+	function onPlacement(){
+		parent::onPlacement();
+		if($product = $this->Product(true)){
+			$this->ProductVersion = $product->Version;
+		}
 	}
-
+	
 	function TableTitle() {
 		$product = $this->Product();
 		$tabletitle = ($product) ? $product->Title : $this->i18n_singular_name();
@@ -371,13 +348,6 @@ class Product_OrderItem extends OrderItem {
 		if($product = $this->Product()){
 			return $product->Link();
 		}
-	}
-	
-	/**
-	 * @deprecated - use TableTitle instead
-	 */
-	function ProductTitle(){
-		return $this->TableTitle();
 	}
 
 }

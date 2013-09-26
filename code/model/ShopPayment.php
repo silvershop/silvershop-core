@@ -5,7 +5,12 @@
  *
  * @package shop
  */
-class ShopPayment extends DataObjectDecorator {
+class ShopPayment extends DataExtension {
+	
+	
+	static $has_one = array(
+		'Order' => 'Order' //redundant...should be using PaidObject
+	);
 	
 	public static $summary_fields = array(
 		"OrderID" => "Order ID",
@@ -13,27 +18,41 @@ class ShopPayment extends DataObjectDecorator {
 		"Amount" => "Amount",
 		"Status" => "Status"
 	);
-		
-	function extraStatics() {
-
-		return array(
-			'has_one' => array(
-				'Order' => 'Order' //redundant...should be using PaidObject
-			),
-			'summary_fields' => self::$summary_fields,
-			'searchable_fields' => array(
-				'OrderID' => array(
-					'title' => 'Order ID',
-					'field' => 'TextField'
-				),
-				//'Created' => array('title' => 'Date','filter' => 'WithinDateRangeFilter','field' => 'DateRangeField'), //TODO: filter and field not implemented yet				
-				'IP' => array(
-					'title' => 'IP Address',
-					'filter' => 'PartialMatchFilter'
-				),
-				'Status'
-			)
-		);
+	
+	static function set_supported_methods($methods){
+		Payment::set_supported_methods($methods);
+	}
+	
+	static function get_supported_methods(){
+		return Payment::get_supported_methods(); //Warning: this is only available on a custom version of Payment module
+	}
+	
+	static function get_method_dataset(){
+		$set = new ArrayList();
+		foreach(self::get_supported_methods() as $method => $name){
+			$set->push(new ArrayData(array(
+				'Title' => self::method_title($method),
+				'ClassName' => $method
+				//TODO: introduce image, and other useful data
+			)));
+		}
+		return $set;
+	}
+	
+	/*
+	 * Return i18n string to represent payment type.
+	*/
+	static function method_title($method){
+		$paymentmethods = self::get_supported_methods();
+		if(isset($paymentmethods[$method])){
+			return _t("ShopPayment.".strtoupper($method),$paymentmethods[$method]);
+		}
+		return $method;
+	}
+	
+	static function has_method($method){
+		$methods = self::get_supported_methods();
+		return isset($methods[$method]);
 	}
 
 	function canCreate($member = null) {
@@ -43,22 +62,20 @@ class ShopPayment extends DataObjectDecorator {
 	function canDelete($member = null) {
 		return false;
 	}
-
-	//TODO: this function could get called multiple times, resulting in unwanted logs , changes etc.
+	
+	/**
+	 * Update order status when payment is sucessful.
+	 * This is called when payment status is updated in Payment.
+	 */
 	function onAfterWrite() {
 		if($this->owner->Status == 'Success' && $order = $this->owner->Order()) {
-
-			if(!$order->ReceiptSent){
-				$order->sendReceipt();
-				$order->updatePaymentStatus();
-			}
-
+			OrderProcessor::create($order)->completePayment();
 		}
 	}
 
 	function redirectToOrder() {
 		$order = $this->owner->Order();
-		Director::redirect($order->Link());
+		Controller::curr()->redirect($order->Link());
 		return;
 	}
 
@@ -68,8 +85,15 @@ class ShopPayment extends DataObjectDecorator {
 	}
 
 	function Status() {
-   		return _t('Payment.'.$this->owner->Status,$this->owner->Status);
+   	return _t('Payment.'.$this->owner->Status,$this->owner->Status);
 	}
 
+}
+
+class PaymentStatusUpdateField extends DropdownField{
+
+	function getSource() {
+		return singleton("Payment")->dbObject("Status")->enumValues();
+	}
 
 }

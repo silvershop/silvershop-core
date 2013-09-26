@@ -7,13 +7,10 @@
 */
 class OrderForm extends Form {
 
-	//optional for user to become a member
-	protected static $user_membership_optional = false;
-		static function set_user_membership_optional($optional = true){self::$user_membership_optional = $optional;}
-
-	//all users must become members if true, or won't become members if false
-	protected static $force_membership = true;
-		static function set_force_membership($force = false){self::$force_membership = $force;}
+	private static $allowed_actions = array(
+		'useDifferentShippingAddress',
+		'useMemberShippingAddress'
+	);
 
 	//actions that don't need validation
 	protected $validactions = array(
@@ -22,47 +19,42 @@ class OrderForm extends Form {
 	);
 
 	function __construct($controller, $name) {
+		$cff = CheckoutFieldFactory::singleton();
+		
 		//Member and shipping fields
 		$member = Member::currentUser();
-		$memberFields = new CompositeField(singleton('Member')->getEcommerceFields());
-		$requiredFields = singleton('Member')->getEcommerceRequiredFields();
-		$order = ShoppingCart::current_order();		
-		if($order && $order->UseShippingAddress) {
-			$countryField = new DropdownField('ShippingCountry',  _t('OrderForm.Country','Country'), Geoip::getCountryDropDown(), ShopMember::find_country());
-			$shippingFields = new CompositeField(
-				new HeaderField(_t('OrderForm.SendGoodsToDifferentAddress','Send goods to different address'), 3),
-				new LiteralField('ShippingNote', '<p class="message warning">'._t('OrderForm.ShippingNote','Your goods will be sent to the address below.').'</p>'),
-				new LiteralField('Help', '<p>'._t('OrderForm.Help','You can use this for gift giving. No billing information will be disclosed to this address.').'</p>'),
-				new TextField('ShippingName', _t('OrderForm.Name','Name')),
-				new TextField('ShippingAddress', _t('OrderForm.Address','Address')),
-				new TextField('ShippingAddress2', _t('OrderForm.Address2','')),
-				new TextField('ShippingCity', _t('OrderForm.City','City')),
-				$countryField,
-				new HiddenField('UseShippingAddress', '', true),
-				$changeshippingbutton = new FormAction_WithoutLabel('useMemberShippingAddress', _t('OrderForm.UseBillingAddress','Use Billing Address for Shipping'))
+		$addressSingleton = singleton('Address');
+		$order = ShoppingCart::curr();
+				
+		$basefields = $cff->getContactFields();
+		$basefields->push(
+			new HeaderField("ShippingHeading",_t('OrderForm.ShippingAndBillingAddress','Shipping and Billing Address'), 3)
+		);
+		$basefields->merge($cff->getAddressFields("Shipping"));
+		$orderFields = new CompositeField($basefields);		
+		
+		$requiredFields = $addressSingleton->getRequiredFields('Shipping');
+			
+		if($order && $order->SeparateBillingAddress) {
+			$orderFields->fieldByName("ShippingHeading")->setTitle(_t('OrderForm.ShippingAddress','Shipping Address'));
+			$billingFields = new CompositeField(
+				new HeaderField(_t('OrderForm.BillingAddress','Billing Address'), 3),
+				new HiddenField('SeparateBillingAddress', '', true)
 			);
+			$billingFields->FieldList()->merge($addressSingleton->getFormFields('Billing'));
+			$billingFields->push($changeshippingbutton = new FormAction('useMemberShippingAddress', _t('OrderForm.ShippingIsBilling','Use Shipping Address for Billing')));
 			//Need to to this because 'FormAction_WithoutLabel' has no text on the actual button
-			$changeshippingbutton->setButtonContent(_t('OrderForm.UseBillingAddress','Use Billing Address for Shipping'));
+			$changeshippingbutton->setButtonContent(_t('OrderForm.ShippingIsBilling','Use Shipping Address for Billing'));
 			$changeshippingbutton->useButtonTag = true;
-
-			$requiredFields[] = 'ShippingName';
-			$requiredFields[] = 'ShippingAddress';
-			$requiredFields[] = 'ShippingCity';
-			$requiredFields[] = 'ShippingCountry';
-		} else {
-			$countryField = $memberFields->fieldByName('Country');
-			$shippingFields = new FormAction_WithoutLabel('useDifferentShippingAddress', _t('OrderForm.useDifferentShippingAddress', 'Use Different Shipping Address'));
+			$requiredFields = array_merge($requiredFields,$addressSingleton->getRequiredFields('Billing'));
+		} else {		
+			$billingFields = new FormAction('useDifferentShippingAddress', _t('OrderForm.DifferentBillingAddress', 'Use Different Billing Address'));
 			//Need to to this because 'FormAction_WithoutLabel' has no text on the actual button
-			$shippingFields->setButtonContent(_t('OrderForm.useDifferentShippingAddress', 'Use Different Shipping Address'));
-			$shippingFields->useButtonTag = true;
+			$billingFields->setButtonContent(_t('OrderForm.DifferentBillingAddress', 'Use Different Billing Address'));
+			$billingFields->useButtonTag = true;
 		}
-		if($countryField){
-			$countryField->addExtraClass('ajaxCountryField');
-			$setCountryLinkID = $countryField->id() . '_SetCountryLink';
-			$setContryLink = ShoppingCart::set_country_link();
-			$memberFields->push(new HiddenField($setCountryLinkID, '', $setContryLink));
-		}
-		$leftFields = new CompositeField($memberFields, $shippingFields);
+
+		$leftFields = new CompositeField($orderFields, $billingFields);
 		$leftFields->setID('LeftOrder');
 		$rightFields = new CompositeField();
 		$rightFields->setID('RightOrder');
@@ -73,9 +65,10 @@ class OrderForm extends Form {
 			$rightFields->push(new FieldGroup($pwf = new ConfirmedPasswordField('Password', _t('OrderForm.Password','Password'))));
 			//if user doesn't fill out password, we assume they don't want to become a member
 			//TODO: allow different ways of specifying that you want to become a member
-			if(self::$user_membership_optional){ $pwf->setCanBeEmpty(true);	}
-
-			if(self::$force_membership || !self::$user_membership_optional){
+			if(!Checkout::membership_required()){
+				$pwf->setCanBeEmpty(true);
+			}
+			if(Checkout::membership_required()){
 				$requiredFields[] = 'Password[_Password]';
 				$requiredFields[] = 'Password[_ConfirmPassword]';
 				//TODO: allow extending this to provide other ways of indicating that you want to become a member
@@ -84,41 +77,28 @@ class OrderForm extends Form {
 			$rightFields->push(new LiteralField('MemberInfo', '<p class="message good">'.sprintf(_t('OrderForm.LoggedInAs','You are logged in as %s.'),$member->getName())." <a href=\"Security/logout?BackURL=" . CheckoutPage::find_link(true) . "/\">"._t('OrderForm.LogOut','log out').'</a>.</p>'));
 		}
 		//Payment fields
-		$currentOrder = ShoppingCart::current_order();
-		$totalobj = DBField::create('Currency',$currentOrder->Total()); //should instead be $totalobj = $currentOrder->dbObject('Total');
-		$paymentFields = Payment::combined_form_fields($totalobj->Nice());
-		foreach($paymentFields as $field){
-			$rightFields->push($field);
-		}
-		if($paymentRequiredFields = Payment::combined_form_requirements()){
-			$requiredFields = array_merge($requiredFields, $paymentRequiredFields);
-		}
-		//Put all the fields in one FieldSet
-		$fields = new FieldSet($leftFields, $rightFields);
+		$rightFields->push(new HeaderField(_t('Payment.PAYMENTTYPE', 'Payment Type'), 3));
+		$rightFields->push($cff->getPaymentMethodFields());
+		$rightFields->push(new ReadonlyField('Amount', _t('Payment.AMOUNT', 'Amount'), DBField::create_field('Currency',$order->Total())->Nice()));
+
+		//Put all the fields in one FieldList
+		$fields = new FieldList($leftFields, $rightFields);
+		$bottomFields = new CompositeField(
+			new TextareaField("Notes","Message")
+		);
+		$bottomFields->setID('BottomOrder');
+		
 		//Terms and conditions field
-		//If a terms and conditions page exists, we need to create a field to confirm the user has read it
-		if($controller->TermsPageID && $termsPage = $controller->TermsPage()) {
-			$bottomFields = new CompositeField(new CheckboxField('ReadTermsAndConditions', sprintf(_t('OrderForm.TERMSANDCONDITIONS',"I agree to the terms and conditions stated on the <a href=\"%s\" title=\"Read the shop terms and conditions for this site\">terms and conditions</a> page"),$termsPage->Link())));
-			$bottomFields->setID('BottomOrder');
-			$fields->push($bottomFields);
-			$requiredFields[] = 'ReadTermsAndConditions'; //TODO: this doesn't work for check-boxes
+		if($termsfield = $cff->getTermsConditionsField()){
+			$bottomFields->push($termsfield);
 		}
+		
+		$fields->push($bottomFields);
+		
 		//Actions and required fields creation
-		$actions = new FieldSet(new FormAction('processOrder', _t('OrderForm.processOrder','Place order and make payment')));
-		$requiredFields = new CustomRequiredFields($requiredFields);
-		$this->extend('updateValidator',$requiredFields);
-		$this->extend('updateFields',$fields);
-		parent::__construct($controller, $name, $fields, $actions, $requiredFields);
-		//Member details loading
-		if($member && $member->isInDB()){
-			$this->loadDataFrom($member);
-		}
-		//Country field value update
-		if($countryField){
-			$currentOrder = ShoppingCart::current_order();
-			$currentOrderCountry = $currentOrder->findShippingCountry(true);
-			$countryField->setValue($currentOrderCountry);
-		}
+		$actions = new FieldList(new FormAction('processOrder', _t('OrderForm.processOrder','Place order and make payment')));
+		$requiredFields = new RequiredFields();
+		parent::__construct($controller, $name, $fields, $actions, $requiredFields);	
 		//allow updating via decoration
 		$this->extend('updateForm',$this);
 	}
@@ -169,7 +149,7 @@ class OrderForm extends Form {
 	 		//TODO: check that member details are not already taken, if entered
 	 		//check terms have been accepted
 			$controller = $this->Controller();
-	 		if($controller->TermsPageID && $controller->TermsPage() && (!isset($data['ReadTermsAndConditions']) || !(bool)$data['ReadTermsAndConditions'])){
+	 		if(SiteConfig::current_site_config()->TermsPage()->exists() && (!isset($data['ReadTermsAndConditions']) || !(bool)$data['ReadTermsAndConditions'])){
 	 			$this->sessionMessage(_t("OrderForm.MUSTREADTERMS","You must agree to terms and conditions"), "bad");
 	 			return false;
 	 		}
@@ -188,33 +168,33 @@ class OrderForm extends Form {
 	 * Save in the session that the current member wants to use a different shipping address.
 	 */
 	function useDifferentShippingAddress($data, $form, $request) {
-		$order = ShoppingCart::current_order();
-		$order->UseShippingAddress = true;
+		$order = ShoppingCart::curr();
+		$order->SeparateBillingAddress = true;
 		$order->write();
 		$this->saveDataToSession($data);
-		Director::redirectBack();
+		Controller::curr()->redirectBack();
 	}
 
 	/**
 	 * Save in the session that the current member wants to use his address as a shipping address.
 	 */
 	function useMemberShippingAddress($data, $form, $request) {
-		$order = ShoppingCart::current_order();
-		$order->UseShippingAddress = false;
+		$order = ShoppingCart::curr();
+		$order->SeparateBillingAddress = false;
 		$order->write();
 		$this->saveDataToSession($data);
-		Director::redirectBack();
+		Controller::curr()->redirectBack();
 	}
 
 	function updateShippingCountry($data, $form, $request) {
 		Session::set($this->FormName(), $data);
-		$order = ShoppingCart::current_order();
+		$order = ShoppingCart::curr();
 		$order->Country = $data['Country'];
 		$order->write();		
 		if(Director::is_ajax()){
 			return "success";
 		}
-		Director::redirectBack();
+		Controller::curr()->redirectBack();
 	}
 
 	/**
@@ -230,63 +210,57 @@ class OrderForm extends Form {
 	 * @param HTTPRequest $request Request object for this action
 	 */
 	function processOrder($data, $form) {
+		$checkout = Checkout::get();
 		$this->saveDataToSession($data); //save for later if necessary ...shouldn't technically be needed, if order is being written?
-		$cart = ShoppingCart::getInstance();
+		$cart = ShoppingCart::singleton();
 		$order = $cart->current();
 		$form->saveInto($order);
-		$order->write();
+		
 		$member = Member::currentUser();
 		if(!$member){
-			if(self::$user_membership_optional){
-				if($this->userWantsToBecomeMember($data,$form)){
-					$member = ShopMember::ecommerce_create_or_merge($data);
-				}
-			}elseif(self::$force_membership){
-				$member = ShopMember::ecommerce_create_or_merge($data); //create member
+			$member = new DataObject(); //dummy dataobject to handle the goodness of $form->saveInto
+			$form->saveInto($member);
+			$member = $checkout->createMembership($member->toMap());
+			if(!$member){
+				$form->sessionMessage($checkout->getMessage(),$checkout->getMessageType());
+				Controller::curr()->redirectBack();
+				return;
 			}
+		}
+		//save addresses
+		$address = $this->saveAddress($order->getShippingAddress(),$form,$member);
+		$order->ShippingAddressID = $address->ID;
+		if(!$order->SeparateBillingAddress){
+			$order->BillingAddressID = $order->ShippingAddressID;
 		}else{
-			//TODO: make this configurable
-			$member = ShopMember::ecommerce_create_or_merge($data); //merge data
+			$address = $this->saveAddress($order->getBillingAddress(),$form,$member,true);
+			$order->BillingAddressID = $address->ID;
 		}
-		//if they are a member, or if they have filled out the member fields (password, save my details)
-		// Create new OR update logged in {@link Member} record
-		if($member === false) {
-			$form->sessionMessage(
-				_t('OrderForm.MEMBEREXISTS', 'Sorry, a member already exists with that email address.
-					If this is your email address, please log in first before placing your order.'.
-					' <a href="Security/lostpassword">Recover password.</a>'
-				),
-				'bad'
-			);
-			Director::redirectBack();
-			return false;
-		}
+		$order->write();
+		
 		//TODO: check that price hasn't changed
 		$processor = OrderProcessor::create($order);
-		if(!$processor->placeOrder()){
+		if(!$processor->placeOrder($member)){
 			$form->sessionMessage($processor->getError(), 'bad');
-			Director::redirectBack();
+			Controller::curr()->redirectBack();
 			return false;
 		}
 		$cart->clear();
 		$this->clearSessionData(); //clears the stored session form data that might have been needed if validation failed
-		//assiciate member with order, if there is a member now
-		if($member){
-			$member->write();
-			$member->logIn();
-			$order->MemberID = $member->ID;
-			$order->write();
-		}
 		// Save payment data from form and process payment
 		$paymentClass = (!empty($data['PaymentMethod'])) ? $data['PaymentMethod'] : null;
 		$payment = $processor->createPayment($paymentClass);
 		if(!$payment){
 			$form->sessionMessage($processor->getError(), 'bad');
-			Director::redirect($order->Link());
+			Controller::curr()->redirect($order->Link());
 			return false;
 		}
-		//TODO: end code here, and leave making payment to the next step
+		
+		$payment->ReturnURL = $order->Link(); //set payment return url
+		
 		//prepare $data - ie put into the $data array any fields that may need to be there for payment
+		$data['Reference'] = $order->Reference;
+		
 		// Process payment, get the result back
 		$result = $payment->processPayment($data, $form);
 		if($result->isProcessing()) { // isProcessing(): Long payment process redirected to another website (PayPal, Worldpay)
@@ -295,8 +269,73 @@ class OrderForm extends Form {
 		if($result->isSuccess()) {
 			$processor->sendReceipt();
 		}
-		Director::redirect($order->Link());
+		Controller::curr()->redirect($payment->ReturnURL);
 		return true;
+	}
+	
+	private function saveAddress($address = null,$form,$member,$billing = false){
+		if(!$address){
+			$address = new Address();
+		}
+		$prefix = ($billing) ? "Billing" : "Shipping";
+		$fieldmap = $address->getFieldMap($prefix);
+		
+		$form->saveInto($address,$fieldmap); //TODO: provide mapping of BillingFields => AddressFields
+		if($member){
+			$address->MemberID = $member->ID;
+		}
+		if(!$address->isInDB()){
+			$address->write();
+		}elseif($address->isChanged()){
+			$address = $address->duplicate(); //save a copy
+		}
+		return $address;
+	}
+	
+	/**
+	 * Override saveInto to allow custom form field to model field mapping.
+	 */
+	function saveInto(DataObjectInterface $dataObject, $fieldList = null){
+		$this->mapFieldNames($fieldList);
+		parent::saveInto($dataObject,$fieldList);
+		$this->restoreFieldNames($fieldList);
+	}
+	
+	/**
+	 * Override loadDataFrom to allow custom form field to model field mapping.
+	 */
+	function loadDataFrom($data,$clearMissingFields = false, $fieldList = null){
+		$this->mapFieldNames($fieldList);
+		parent::loadDataFrom($data,$clearMissingFields,$fieldList);
+		$this->restoreFieldNames($fieldList);
+	}
+	
+	protected function mapFieldNames($fieldList){
+		if(!is_array($fieldList) || empty($fieldList))
+			return false;
+		//rename other fields temporarly, incase they get overwritten
+		$savableFields = $this->fields->saveableFields();
+		foreach($savableFields as $field){
+			$field->originalFieldName = $field->getName();
+			$field->setName($field->originalFieldName."_renamed");
+		}
+		foreach($fieldList as $formfield => $modelfield){
+			if(!is_int($formfield) && isset($savableFields[$formfield]) && $field = $savableFields[$formfield]){
+				$field->originalFieldName = $formfield;
+				$field->setName($modelfield);
+			}
+		}
+	}
+	
+	protected function restoreFieldNames($fieldList){
+		if(!is_array($fieldList) || empty($fieldList))
+			return false;
+		foreach($this->fields->saveableFields() as $field){
+			if($field->originalFieldName){
+				$field->setName($field->originalFieldName);
+				$field->originalFieldName = null;
+			}
+		}
 	}
 
 	/**
@@ -320,6 +359,26 @@ class OrderForm extends Form {
 
 	function clearSessionData(){
 		Session::set("FormInfo.{$this->FormName()}.data", null);
+	}
+	
+	function forTemplate(){
+		$script =<<<JS
+        Behaviour.register({
+            '#OrderForm_OrderForm': {
+                onsubmit: function(e){
+                    var action = e.explicitOriginalTarget.attributes[0].value;
+                    if(action == "action_useDifferentShippingAddress" || action == "action_useMemberShippingAddress"){
+                        return;
+                    }
+                    return this.validate();
+                }
+            }
+        });
+JS;
+		$form =  parent::forTemplate();
+		if($this->validator)
+			Requirements::customScript($script);
+		return $form;
 	}
 
 }

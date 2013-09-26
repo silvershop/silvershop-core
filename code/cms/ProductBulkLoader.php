@@ -17,12 +17,13 @@ class ProductBulkLoader extends CsvBulkLoader{
 
 	static $parentpageid = null;
 	static $createnewproductgroups = false;
-
 	static $hasStockImpl = false;
 
 	// NB do NOT use functional indirection on any fields where they will be used in $duplicateChecks as well - they simply don't work. 
 	public $columnMap = array(
-
+		'Price' => 'BasePrice',
+		'Cost Price' => 'CostPrice',
+			
 		'Category' => '->setParent',
 		'ProductGroup' => '->setParent',
 		'ProductCategory' => '->setParent',
@@ -38,8 +39,9 @@ class ProductBulkLoader extends CsvBulkLoader{
 		'Short Title' => 'MenuTitle',
 
 		'Title' => 'Title',
+		'Page name' => 'Title',
+		'Page Name' => 'Title',
 		
-		//TODO: allow row-based variations rather than in cells
 		'Variation' => '->processVariation',
 		'Variation1' => '->processVariation1',
 		'Variation2' => '->processVariation2',
@@ -54,22 +56,14 @@ class ProductBulkLoader extends CsvBulkLoader{
 		'Sub ID' => '->variationRow'
 	);
 
-	/* 	NB there is a bug in CsvBulkLoader where it fails to apply Convert::raw2sql to the field value prior to a duplicate check. 
-	 	This results in a failed database call on any fields here that conatin quotes and causes whole load to fail.
-	 	Fix is to change CsvBulkLoader findExistingObject function
-	 	FROM
-	 		$SQL_fieldValue = $record[$fieldName];
-	 	TO
-	 		$SQL_fieldValue = Convert::raw2sql($record[$fieldName]);	
-	 	until patch gets applied by SS team
-	*/	   	
-	
 	public $duplicateChecks = array(
 		'InternalItemID' => 'InternalItemID',
-		//'Product ID' => 'InternalItemID', //TODO: can't check different fields until this patch is applied to CsvBulkLoader: http://open.silverstripe.org/ticket/6255
-		//'ProductID' => 'InternalItemID',
-		//'SKU' => 'InternalItemID',
-		'Title' => 'Title'
+		'SKU' => 'InternalItemID',
+		'Product ID' => 'InternalItemID',
+		'ProductID' => 'InternalItemID',
+		'Title' => 'Title',
+		'Page Title' => 'Title',
+		'PageTitle' => 'Title'
 	);
 
 	public $relationCallbacks = array(
@@ -90,7 +84,7 @@ class ProductBulkLoader extends CsvBulkLoader{
 		self::$hasStockImpl = Object::has_extension('Product', 'ProductStockDecorator');
 		$results = parent::processAll($filepath, $preview);	
 		//After results have been processed, publish all created & updated products
-		$objects = new DataObjectSet();
+		$objects = new ArrayList();
 		$objects->merge($results->Created());
 		$objects->merge($results->Updated());
 		foreach($objects as $object){
@@ -126,8 +120,7 @@ class ProductBulkLoader extends CsvBulkLoader{
 		$filename = trim(strtolower(Convert::raw2sql($val)));
 		$filenamedashes = str_replace(" ","-",$filename);
 		if($filename && $image = DataObject::get_one('Image',"LOWER(\"Filename\") LIKE '%$filename%' OR LOWER(\"Filename\") LIKE '%$filenamedashes%'")){ //ignore case
-			if($image->isInDB()){
-				$image->ClassName = 'Product_Image'; //must be this type of image
+			if($image instanceof Image && $image->isInDB()){
 				$image->write();
 				return $image;
 			}

@@ -1,34 +1,21 @@
 <?php
 
-define('SHOP_DIR','shop');
+define('SHOP_DIR',basename(__DIR__));
+define('SHOP_PATH',BASE_PATH.DIRECTORY_SEPARATOR.SHOP_DIR);
 
-// Extend the Member with e-commerce related fields.
-DataObject::add_extension('Member', 'ShopMember');
-// Extend Payment with e-commerce relationship.
-if(!class_exists('Payment')) user_error("You need to also install the Payment module to use the shop module", E_USER_ERROR);
-DataObject::add_extension('Payment', 'ShopPayment');
-//create controller for shopping cart
-Director::addRules(50, array(
-	ShoppingCart_Controller::$url_segment . '/$Action/$Buyable/$ID' => 'ShoppingCart_Controller',
-	'dev/shop' => 'ShopDevelopmentAdmin'
-));
+if(!class_exists('Payment'))
+	user_error("You need to also install the Payment module to use the shop module", E_USER_ERROR);
 
-Object::add_extension("Page_Controller","ViewableCart");
-Object::add_extension("ShoppingCart_Controller","ViewableCart");
-Object::add_extension("OrderAttribute","OrderAttributeAJAX");
-Object::add_extension("Order","OrderAJAX");
-Object::add_extension("ComponentSet","OrderItemList");
+//extensions
+SiteConfig::add_extension("ShopConfig");
+Payment::add_extension("ShopPayment");
+Page_Controller::add_extension("ViewableCart");
+ShoppingCart_Controller::add_extension("ViewableCart");
+Member::add_extension('ShopMember');
+Image::add_extension("Product_Image");
+//variations
+Product::add_extension("ProductVariationDecorator");
+Product_Controller::add_extension("ProductControllerVariationExtension");
 
 //custom classes
-Object::useCustomClass('Currency','EcommerceCurrency', true);
-Object::useCustomClass('Versioned','FixVersioned');
-
-//variations
-DataObject::add_extension("Product","ProductVariationDecorator");
-Object::add_extension("Product_Controller","ProductControllerVariationExtension");
-
-//reports
-SS_Report::register("SideReport", "ShopSideReport_AllProducts");
-SS_Report::register("SideReport", "ShopSideReport_FeaturedProducts");
-SS_Report::register("SideReport", "ShopSideReport_NoImageProducts");
-SS_Report::register("SideReport", "ShopSideReport_HeavyProducts");
+Object::useCustomClass('Currency','ShopCurrency', true);

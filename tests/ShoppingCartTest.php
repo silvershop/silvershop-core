@@ -2,14 +2,14 @@
 
 Class ShoppingCartTest extends SapphireTest{
 	
-	static $fixture_file = 'shop/tests/shop.yml';
+	static $fixture_file = 'shop/tests/fixtures/shop.yml';
 	static $disable_theme = true;
 	static $use_draft_site = false;
 	
 	function setUp(){
 		parent::setUp();
 		ShopTest::setConfiguration(); //reset config
-		$this->cart = ShoppingCart::getInstance();
+		$this->cart = ShoppingCart::singleton();
 		$this->product = $this->objFromFixture('Product', 'mp3player');
 		$this->product->publish('Stage','Live');
 	}

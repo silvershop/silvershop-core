@@ -9,36 +9,34 @@
 
 //NON-ECOMMERCE SETTINGS
 Payment::set_site_currency('NZD');
-Geoip::$default_country_code = "NZ";
+Payment::set_supported_methods(array(
+	'ChequePayment' => 'Cheque'
+));
 i18n::set_locale('en_NZ');
 setlocale (LC_TIME, 'en_NZ@dollar', 'en_NZ.UTF-8', 'en_NZ', 'nz', 'nz');
 
 //ECOMMERCE I18N SETTINGS
-EcommerceCurrency::setDecimalDelimiter('.'); //for Money formating
-EcommerceCurrency::setThousandDelimiter(','); //for Money formating
+ShopCurrency::setDecimalDelimiter('.'); //for Money formating
+ShopCurrency::setThousandDelimiter(','); //for Money formating
 Object::useCustomClass('SS_Datetime','I18nDatetime', true);
 
 //SHOPPING CART AND ORDER
-Order::set_email("sales@myshop.com");
-Order::set_receipt_subject("Thank you for your order at www.myshop.com - Order #%d");
+OrderProcessor::set_email_from("sales@myshop.com");
+OrderProcessor::set_receipt_subject("Thank you for your order at www.myshop.com - Order #%d");
 Order::set_modifiers(array("FlatTaxModifier", "SimpleShippingModifier"));
 
 Order::set_table_overview_fields(array('Total' => 'Total','Status' => 'Status'));//
-Order::set_maximum_ignorable_sales_payments_difference(0.001);//sometimes there are small discrepancies in total (for various reasons)- here you can set the max allowed differences
 
 Order::set_cancel_before_payment(false);
 Order::set_cancel_before_processing(false);
 Order::set_cancel_before_sending(false);
 Order::set_cancel_after_sending(false);
 
-OrderForm::set_user_membership_optional(); //optional for user to become a member
-OrderForm::set_force_membership(); //all users must become members if true, or won't become members if false
-
 OrderManipulation::set_allow_cancelling(); //shows a cancel button on the order page
 OrderManipulation::set_allow_paying(); //shows a payment form
 
 //PRODUCTS
-ProductsAndGroupsModelAdmin::set_managed_models(array("Product", "ProductCategory","ProductVariation"));
+ProductCatalogAdmin::set_managed_models(array("Product", "ProductCategory","ProductVariation"));
 Product_Image::set_thumbnail_size(140, 100);
 Product_Image::set_content_image_width(200);
 Product_Image::set_large_image_width(200);
@@ -48,9 +46,6 @@ ProductCategory::set_sort_options( array('Title' => 'Alphabetical','Price' => 'L
 
 //CHECKOUT
 ExpiryDateField::set_short_months(true); //uses short months (e.g. Jan instead of january) for credit card expiry date.
-
-//MEMBER
-ShopMember::set_group_name("ShopMembers");
 
 //MODIFIERS
 FlatTaxModifier::set_tax("0.15", "GST", $exclusive = false);

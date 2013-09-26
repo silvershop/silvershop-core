@@ -36,7 +36,7 @@ class ProductCategory extends Page {
 	protected static $sort_options = array(
 		'URLSegment' => 'Alphabetical',
 		'Price' => 'Lowest Price',
-		//'NumberSold' => 'Most Popular'
+		//'Popularity' => 'Most Popular'
 		//'Featured' => 'Featured',
 		//'Weight' => 'Weight'
 	);
@@ -109,13 +109,13 @@ class ProductCategory extends Page {
 		$this->extend('updateFilter',$extraFilter);
 
 		if($extraFilter) $filter.= " AND $extraFilter";
-		if(self::$must_have_price) $filter .= " AND \"Price\" > 0";
+		if(self::$must_have_price) $filter .= " AND \"BasePrice\" > 0";
 
 		$limit = (isset($_GET['start']) && (int)$_GET['start'] > 0) ? (int)$_GET['start'].",".self::$page_length : "0,".self::$page_length;
 		$sort = (isset($_GET['sortby'])) ? Convert::raw2sql($_GET['sortby']) : "\"FeaturedProduct\" DESC,\"URLSegment\"";
 
 		//hard coded sort configuration //TODO: make these custom
-		if($sort == "NumberSold") $sort .= " DESC";
+		if($sort == "Popularity") $sort .= " DESC";
 
 		$groupids = array($this->ID);
 
@@ -124,17 +124,13 @@ class ProductCategory extends Page {
 
 		$groupidsimpl = implode(',',$groupids);
 
-		$join = $this->getManyManyJoin('Products','Product');
-		$multicatfilter = $this->getManyManyFilter('Products','Product');
+		$products = Versioned::get_by_stage('Product','Live',"\"ParentID\" IN ($groupidsimpl) $filter",$sort,"",$limit);
+		$allproducts = Versioned::get_by_stage('Product','Live',"\"ParentID\" IN ($groupidsimpl) $filter","","");
 
-		//TODO: get products that appear in child groups (make this optional)
+		if($allproducts){
+			$products->TotalCount = $allproducts->Count(); //add total count to returned data for 'showing x to y of z products'
+		}
 
-		$products = DataObject::get('Product',"(\"ParentID\" IN ($groupidsimpl) OR $multicatfilter) $filter",$sort,$join,$limit);
-
-		$allproducts = DataObject::get('Product',"\"ParentID\" IN ($groupidsimpl) $filter","",$join);
-
-		if($allproducts) $products->TotalCount = $allproducts->Count(); //add total count to returned data for 'showing x to y of z products'
-		if($products && $products instanceof DataObjectSet) $products->removeDuplicates();
 		return $products;
 	}
 
@@ -144,8 +140,8 @@ class ProductCategory extends Page {
 	 */
 	function ChildGroups($recursive = false) {
 		if($recursive){
-			if($children = DataObject::get('ProductCategory', "\"ParentID\" = '$this->ID'")){
-				$output = unserialize(serialize($children));
+			if($children = Versioned::get_by_stage('ProductCategory','Live', "\"ParentID\" = '$this->ID'")){
+				$output = new ArrayList($children->toArray());
 				foreach($children as $group){
 					$output->merge($group->ChildGroups($recursive));
 				}
@@ -153,7 +149,7 @@ class ProductCategory extends Page {
 			}
 			return null;
 		}else{
-			return DataObject::get('ProductCategory', "\"ParentID\" = '$this->ID'");
+			return Versioned::get_by_stage('ProductCategory','Live', "\"ParentID\" = '$this->ID'");
 		}
 	}
 
@@ -198,13 +194,13 @@ class ProductCategory_Controller extends Page_Controller {
 	 * Provides a dataset of links for sorting products.
 	 */
 	function SortLinks(){
-		if(count(ProductCategory::get_sort_options()) <= 0) return null;
+		if(count($this->get_sort_options()) <= 0) return null;
 
 		$sort = (isset($_GET['sortby'])) ? Convert::raw2sql($_GET['sortby']) : "Title";
-		$dos = new DataObjectSet();
-		foreach(ProductCategory::get_sort_options() as $field => $name){
+		$dos = new ArrayList();
+		foreach($this->get_sort_options() as $field => $name){
 			$current = ($field == $sort) ? 'current' : false;
-			$dos->push(new ArrayData(array(
+			$dos->add(new ArrayData(array(
 				'Name' => $name,
 				'Link' => $this->Link()."?sortby=$field",
 				'Current' => $current
@@ -214,18 +210,3 @@ class ProductCategory_Controller extends Page_Controller {
 	}
 
 }
-
-/**
-* @deprecated use ProductCategory instead
-*/
-class ProductGroup extends ProductCategory{
-	
-	function canCreate(){
-		return false;
-	}
-}
-
-/**
- * @deprecated use ProductCategory_Controller instead
- */
-class ProductGroup_Controller extends ProductCategory_Controller{}

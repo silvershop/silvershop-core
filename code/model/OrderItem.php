@@ -10,7 +10,8 @@
 class OrderItem extends OrderAttribute {
 
 	public static $db = array(
-		'Quantity' => 'Int'
+		'Quantity' => 'Int',
+		'UnitPrice' => 'Currency'
 	);
 
 	public static $casting = array(
@@ -54,28 +55,129 @@ class OrderItem extends OrderAttribute {
 	static function disable_quantity_js(){
 		self::$disable_quantity_js = true;
 	}
+	
+	/**
+	 * Get the buyable object related to this item.
+	 */
+	function Buyable(){
+		return $this->{$this->stat('buyable_relationship')}();
+	}
+	
+	/**
+	 * Get unit price for this item.
+	 * Fetches from db, or Buyable, based on order status.
+	 */
+	function UnitPrice() {
+		if($this->Order()->IsCart()){
+			$buyable = $this->Buyable();
+			$unitprice = ($buyable) ? $buyable->sellingPrice() : $this->UnitPrice;
+			$this->extend('updateUnitPrice',$unitprice);
+			return $this->UnitPrice = $unitprice;
+		}
+		return $this->UnitPrice;
+	}
+	
+	/**
+	 * Prevent unit price ever being below 0
+	 */
+	function setUnitPrice($val){
+		if($val < 0){
+			$val = 0;
+		}
+		$this->setField("UnitPrice", $val);
+	}
 
 	/**
-	 * Populate some OrderItem object attributes before
-	 * writing them to the OrderItem DB record.
-	 *
-	 * PRECONDITION: The order item is not saved in the database yet.
+	 * Get calculated total, or stored total
+	 * depending on whether the order is in cart
+	 */
+	function Total() {
+		if($this->Order()->IsCart()){ //always calculate total if order is in cart
+			return $this->calculatetotal();
+		}
+		return $this->CalculatedTotal; //otherwise get value from database
+	}
+
+	/**
+	 * Calculates the total for this item.
+	 * Generally called by onBeforeWrite
+	 */
+	protected function calculatetotal(){
+		$total = $this->UnitPrice() * $this->Quantity;
+		$this->extend('updateTotal',$total);
+		$this->CalculatedTotal = $total;
+		return $total;
+	}
+	
+	/**
+	 * Intersects this item's required_fields with the data record.
+	 * This is used for uniquely adding items to the cart.
+	 */
+	function uniquedata(){
+		$required = $this->stat('required_fields'); //TODO: also combine with all ancestors of this->class
+		$data = $this->record;
+		$unique = array();
+		//reduce record to only required fields
+		if($required){
+			foreach($required as $field){
+				if($this->has_one($field)){
+					$field = $field."ID"; //add ID to hasones
+				}
+				$unique[$field] = $this->$field;
+			}
+		}
+		return $unique;
+	}
+	
+	/**
+	 * Force quantity to be at least 1, and recalculate total
+	 * before saving to database.
 	 */
 	function onBeforeWrite() {
 		parent::onBeforeWrite();
-		//always keep quantity above 0
-		if($this->Quantity < 1){
-			$this->Quantity = 1;
+		if($this->OrderID && $this->Order() && $this->Order()->isCart()){
+			//always keep quantity above 0
+			if($this->Quantity < 1){
+				$this->Quantity = 1;
+			}
+			$this->calculatetotal();
 		}
-		$this->CalculateTotal();
+	}
+	
+	/*
+	 * Event handler called when an order is fully paid for.
+	 */
+	function onPayment() {
+		$this->extend('onPayment');
+	}
+	
+	/**
+	 * Event handlier called for last time saving/processing,
+	 * before item permanently stored in database.
+	 * This should only be called when order is transformed from
+	 * Cart to Order, aka being 'placed'.
+	 */
+	function onPlacement() {
+		$this->extend('onPlacement');
+	}
+	
+	/**
+	 * Get the buyable image.
+	 * Also serves as a standardised placeholder for overriding in subclasses.
+	 */
+	function Image(){
+		if(method_exists($this->Buyable(),'Image')){
+			return $this->Buyable()->Image();
+		}
+		return null;
 	}
 
-	function UnitPrice() {
-		user_error("OrderItem::UnitPrice() called. Please implement UnitPrice() on $this->class", E_USER_ERROR);
+	function TableTitle() {
+		return $this->i18n_singular_name();
 	}
 
 	function QuantityField(){
-		return new EcomQuantityField($this);
+		return new DropdownShopQuantityField($this);
 	}
 	
 	function addLink() {
@@ -94,82 +196,4 @@ class OrderItem extends OrderAttribute {
 		return ShoppingCart_Controller::set_quantity_item_link($this->Buyable(),$this->uniquedata());
 	}
 	
-	/**
-	 * Intersects this item's required_fields with the data record.
-	 * This is used for uniquely adding items to the cart. 
-	 */
-	function uniquedata(){
-		$required = $this->stat('required_fields'); //TODO: also combine with all ancestors of this->class
-		$data = $this->record;
-		$unique = array();
-		//reduce record to only required fields
-		if($required){
-			foreach($required as $field){
-				if($this->has_one($field)){
-					$field = $field."ID"; //add ID to hasones
-				}
-				$unique[$field] = $this->$field;
-			}
-		}
-		return $unique;
-	}
-	
-	function Buyable(){
-		$buyable = $this->stat('buyable_relationship');
-		return $this->$buyable();
-	}
-
-	function Total() {
-		$order = $this->Order();
-		if($order && $order->IsCart()){ //always calculate total if order is in cart
-			return $this->CalculateTotal();
-		}elseif((int)$this->CalculatedTotal){
-			return $this->CalculatedTotal;
-		}
-		return $this->CalculateTotal(); //revert to calculating total if stored value not available
-	}
-
-	/**
-	 * Calculates the total for this item.
-	 * Generally called by onBeforeWrite
-	 */
-	function CalculateTotal(){
-		$total = $this->UnitPrice() * $this->Quantity;
-		$this->extend('updateTotal',$total);
-		$this->CalculatedTotal = $total;
-		return $total;
-	}
-
-	function TableTitle() {
-		return $this->i18n_singular_name();
-	}
-
-	function checkoutLink() {
-		return CheckoutPage::find_link();
-	}
-	
-	//Deprecated, to be removed or factored out
-
-	/**
-	* @deprecated 1.0 - use QuantityField instead
-	*/
-	function AjaxQuantityField(){
-		return $this->QuantityField();
-	}
-	
-	protected function QuantityFieldName() {
-		return $this->MainID() . '_Quantity';
-	}
-	
-	function CartQuantityID() {
-		return $this->CartID() . '_Quantity';
-	}
-	
-	function updateForAjax(array &$js) {
-		$total = DBField::create('Currency', $this->Total())->Nice();
-		$js[] = array('id' => $this->TableTotalID(), 'parameter' => 'innerHTML', 'value' => $total);
-		$js[] = array('id' => $this->CartTotalID(), 'parameter' => 'innerHTML', 'value' => $total);
-		$js[] = array('id' => $this->CartQuantityID(), 'parameter' => 'innerHTML', 'value' => $this->Quantity);
-		$js[] = array('name' => $this->QuantityFieldName(), 'parameter' => 'value', 'value' => $this->Quantity);
-	}
 }

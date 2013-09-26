@@ -28,6 +28,13 @@ class ShoppingCart{
 	}
 	
 	/**
+	 * Shortened alias for ShoppingCart::singleton()->current()
+	 */
+	public static function curr(){
+		return ShoppingCart::singleton()->current();
+	}
+	
+	/**
 	* Singleton prevents constructing a ShoppingCart any other way.
 	*/
 	private function __construct(){}
@@ -53,6 +60,18 @@ class ShoppingCart{
 	}
 	
 	/**
+	 * Set the current cart
+	 */
+	function setCurrent(Order $cart){
+		if(!$cart->IsCart()){
+			trigger_error("Passed Order object is not cart status", E_ERROR);
+		}
+		$this->order = $cart;
+		Session::set(self::$cartid_session_name, $cart->ID);
+		return $this;
+	}
+	
+	/**
 	 * Helper that only allows orders to be started internally.
 	 */
 	protected function findOrMake(){
@@ -64,6 +83,7 @@ class ShoppingCart{
 			$order->MemberID = Member::currentUserID(); // Set the Member relation to this order
 		}
 		$order->write();
+		$order->extend('onStartOrder');
 		Session::set(self::$cartid_session_name,$order->ID);
 		return $this->order = $order;
 	}
@@ -73,14 +93,16 @@ class ShoppingCart{
 	/**
 	 * Adds an item to the cart
 	 * 
-	 * @param product $item - #TODO: should this be an id, or object?
-	 * @param int $quantity
+	 * @param Buyable $buyable
+	 * @param number $quantity
+	 * @param unknown $filter
+	 * @return boolean
 	 */
 	public function add(Buyable $buyable,$quantity = 1,$filter = array()){
 		$order = $this->findOrMake();
+		$order->extend("beforeAdd",$buyable,$quantity,$filter);
 		if(!$buyable){ 
-			$this->error(_t("ShoppingCart.PRODUCTNOTFOUND","Product not found."));
-			return false;
+			return $this->error(_t("ShoppingCart.PRODUCTNOTFOUND","Product not found."));
 		}
 		$item = $this->findOrMakeItem($buyable,$filter);
 		if(!$item){	
@@ -92,6 +114,7 @@ class ShoppingCart{
 			$item->Quantity = $quantity;
 		}
 		$item->write();
+		$order->extend("afterAdd",$item,$buyable,$quantity,$filter);
 		$this->message(_t("ShoppingCart.ITEMADD","Item has been added successfully."));
 		return true;
 	}
@@ -105,9 +128,9 @@ class ShoppingCart{
 	 */
 	 public function remove(Buyable $buyable,$quantity = null,$filter = array()){
 		$order = $this->current();
+		$order->extend("beforeRemove",$buyable,$quantity,$filter);
 		if(!$order){
-			$this->error(_t("ShoppingCart.NOORDER","No current order."));
-			return false;
+			return $this->error(_t("ShoppingCart.NOORDER","No current order."));
 		}
 		$item = $this->get($buyable,$filter);
 		if(!$item){
@@ -120,6 +143,7 @@ class ShoppingCart{
 		}else{
 			$item->write();
 		}
+		$order->extend("afterRemove",$item,$buyable,$quantity,$filter);
 		$this->message(_t("ShoppingCart.ITEMREMOVED","Item has been successfully removed."));
 		return true;
 	}
@@ -133,6 +157,7 @@ class ShoppingCart{
 	 * @param int $quantity
 	 */
 	public function setQuantity(Buyable $buyable,$quantity = 1,$filter = array()){
+		
 		if($quantity <= 0){
 			return $this->remove($buyable,$quantity,$filter);
 		}
@@ -141,8 +166,10 @@ class ShoppingCart{
 		if(!$item){
 			return false;
 		}
+		$order->extend("beforeSetQuantity",$buyable,$quantity,$filter);
 		$item->Quantity = $quantity;
 		$item->write();
+		$order->extend("afterSetQuantity",$item,$buyable,$quantity,$filter);
 		$this->message(_t("ShoppingCart.QUANTITYSET","Quantity has been set."));
 		return true;
 	}
@@ -160,9 +187,8 @@ class ShoppingCart{
 		$item = $this->get($buyable,$filter);
 		if(!$item){
 			if(!$buyable->canPurchase(Member::currentUser())){
-				$this->message(sprintf(_t("ShoppingCart.CANNOTPURCHASE","This %s cannot be purchased."),strtolower($buyable->i18n_singular_name())),'bad');
-				//TODO: get more specific message
-				return false;
+				return $this->error(sprintf(_t("ShoppingCart.CANNOTPURCHASE","This %s cannot be purchased."),strtolower($buyable->i18n_singular_name())));
+				//TODO: produce a more specific message
 			}
 			$item = $buyable->createItem(1,$filter);
 			$item->OrderID = $order->ID;
@@ -192,15 +218,12 @@ class ShoppingCart{
 		$relationship = $singletonorderitem->stat('buyable_relationship');
 		$filter[$singletonorderitem->stat('buyable_relationship')."ID"] = $buyable->ID;
 		$required = $singletonorderitem->stat('required_fields');
-		//TODO: $required = $itemclass::$required_fields; //php 5.3 isn't standard until SS3
 		$required = array_merge(array('Order',$singletonorderitem->stat('buyable_relationship')),$required);
-		//TODO: allow passing exact id
 		$query = new MatchObjectFilter($itemclass,array_merge($customfilter,$filter),$required);
 		$filter = $query->getFilter();
 		$item = DataObject::get_one($itemclass, $filter);
 		if(!$item){
-			$this->error(_t("ShoppingCart.ITEMNOTFOUND","Item not found."));
-			return false;
+			return $this->error(_t("ShoppingCart.ITEMNOTFOUND","Item not found."));
 		}
 		return $item;
 	}
@@ -212,10 +235,8 @@ class ShoppingCart{
 	function clear() {
 		$order = $this->current();
 		if(!$order){
-			$this->error(_t("ShoppingCart.NOCARTFOUND","No cart found."));
-			return false;
+			return $this->error(_t("ShoppingCart.NOCARTFOUND","No cart found."));
 		}
-		//TODO: optionally delete the order from database
 		$order->SessionID = null;
 		$order->write();
 		Session::clear(self::$cartid_session_name);
@@ -229,6 +250,7 @@ class ShoppingCart{
 	 */
 	protected function error($message){
 		$this->message($message,"bad");
+		return false;
 	}
 	
 	/**
@@ -250,82 +272,12 @@ class ShoppingCart{
 	}
 	
 	//singleton protection
-	
 	public function __clone(){
 		trigger_error('Clone is not allowed.', E_USER_ERROR);
 	}
 	
 	public function __wakeup(){
 		trigger_error('Unserializing is not allowed.', E_USER_ERROR);
-	}
-	
-	//Deprecated, but needed in the mean time for things to work
-	/**
-	 * @deprecated use $cart = ShoppingCart::getInstance()->current();
-	 */
-	static function current_order(){
-		return ShoppingCart::getInstance()->current();
-	}
-	
-	/**
-	 * @deprecated
-	 */
-	static function get_item_by_id(){}
-	
-	/**
-	 * @deprecated
-	 */
-	static function order_started(){
-		return (bool) ShoppingCart::getInstance()->current();
-	}
-	
-	/**
-	 * @deprecated this is checkout related
-	 */
-	static function uses_different_shipping_address(){
-		if($order = ShoppingCart::getInstance()->current())
-			return $order->UseShippingAddress;
-	}
-	
-	/**
-	 * @deprecated this is checkout related
-	 */
-	static function set_country_link(){}
-	
-	/**
-	 * @deprecated this is checkout related
-	 */
-	static function get_country(){
-		if($order = ShoppingCart::getInstance()->current())
-			return ($order->ShippingCountry) ? $order->ShippingCountry : $order->Country;
-	}
-	
-	/**
-	 * @deprecated this is checkout related
-	 */
-	static function set_country($country){
-		if($order = ShoppingCart::getInstance()->current()){
-			if($order->ShippingCountry){
-				$order->ShippingCountry = $country;
-			}else{
-				$order->Country = $country;
-			}
-		}
-	}
-	
-	/**
-	 * @deprecated
-	 */
-	static function get_items($filter = null) {
-		if($order = ShoppingCart::getInstance()->current())
-			return $order->Items($filter);
-	}
-	
-	/**
-	 * @deprecated use ShoppingCart::singleton() instead.
-	 */
-	static function getInstance(){
-		return self::singleton();
 	}
 	
 }
@@ -338,6 +290,10 @@ class ShoppingCart_Controller extends Controller{
 	static $url_segment = "shoppingcart";
 	protected static $direct_to_cart_page = false;
 	protected $cart;
+	
+	private static $url_handlers = array(
+		'$Action/$Buyable/$ID' => 'handleAction',
+	);
 	
 	static $allowed_actions = array(
 		'add',
@@ -377,6 +333,9 @@ class ShoppingCart_Controller extends Controller{
 	 * Helper for creating a url
 	 */
 	protected static function build_url($action, $buyable, $params = array()){
+		if(!$action || !$buyable){
+			return false;
+		}
 		$params[SecurityToken::inst()->getName()] = SecurityToken::inst()->getValue();		
 		return self::$url_segment.'/'.$action.'/'.$buyable->class."/".$buyable->ID.self::params_to_get_string($params);
 	}
@@ -397,41 +356,48 @@ class ShoppingCart_Controller extends Controller{
 		return "";
 	}
 	
-	static function direct($status = "success"){
+	static function direct($status = true){
 		if(Director::is_ajax()){
 			return $status;
 		}
 		if(self::$direct_to_cart_page && $cartlink = CartPage::find_link()){
-			Director::redirect($cartlink);
+			Controller::curr()->redirect($cartlink);
 			return;
 		}else{
-			Director::redirectBack();
+			Controller::curr()->redirectBack();
 			return;
 		}
 	}
 	
 	function init(){
 		parent::init();
-		$this->cart = ShoppingCart::getInstance();
+		$this->cart = ShoppingCart::singleton();
 	}
 	
 	protected function buyableFromRequest(){
 		$request = $this->getRequest();
-		if(!SecurityToken::inst()->checkRequest($request)){
+		if(SecurityToken::is_enabled() && !SecurityToken::inst()->checkRequest($request)){
 			return $this->httpError(400, _t("ShoppingCart.CSRF", "Invalid security token, possible CSRF attack."));
 		}
-		if($id = (int) $request->param('ID')){
-			$buyableclass = "Product";
-			if($class = $request->param('Buyable')){
-				$buyableclass = Convert::raw2sql($class);
-			}
-			if(ClassInfo::exists($buyableclass) && $buyable = DataObject::get_by_id($buyableclass,$id)){
-				if($buyable instanceof Buyable){
-					return $buyable;
-				}
-			}
+		$id = (int) $request->param('ID');
+		if(empty($id)){
+			//TODO: store error message
+			return null;
 		}
-		return null;
+		$buyableclass = "Product";
+		if($class = $request->param('Buyable')){
+			$buyableclass = Convert::raw2sql($class);
+		}
+		if(!ClassInfo::exists($buyableclass)){
+			//TODO: store error message
+			return null;
+		}
+		$buyable = DataObject::get($buyableclass)->filter(array("ID" => $id))->First();
+		if(!($buyable instanceof Buyable)){
+			//TODO: store error message
+			return null;
+		}
+		return $buyable;
 	}
 	
 	function add($request){
@@ -473,7 +439,7 @@ class ShoppingCart_Controller extends Controller{
 	 */
 	function index(){
 		if($cart = $this->Cart()){
-			Director::redirect($cart->CartLink);
+			$this->redirect($cart->CartLink);
 			return;
 		}elseif($response = ErrorPage::response_for(404)) {
 			return $response;
@@ -488,37 +454,10 @@ class ShoppingCart_Controller extends Controller{
 		if(Director::isDev() || Permission::check("ADMIN")){
 			//TODO: allow specifying a particular id to debug
 			Requirements::css(SHOP_DIR."/css/cartdebug.css");
-			$order = ShoppingCart::getInstance()->current();
+			$order = ShoppingCart::curr();
 			$content = ($order) ? Debug::text($order) : "Cart has not been created yet. Add a product.";
 			return array('Content' => $content);
 		}
-	}
-	
-	//deprecated functions
-	
-	/**
-	 * @deprecated
-	 */
-	function additem($request){
-		$this->add($request);
-	}
-	/**
-	 * @deprecated
-	 */
-	function removeitem($request){
-		$this->remove($request);
-	}
-	/**
-	 * @deprecated
-	 */
-	function removeallitem($request){
-		$this->removeall($request);
-	}
-	/**
-	 * @deprecated
-	 */
-	function setquantityitem($request){
-		$this->setquantity($request);
 	}
 	
 }

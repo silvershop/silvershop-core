@@ -12,7 +12,6 @@ Here are some short tutorials explaining how to implement specific features.
  * [Limit Regions](LimitRegions) - limit where products can be sold or delivered.
  * [Multi-language](MultiLanguage) - shop module in any language
  * [Multiple Images per Product](MultipleImagesProduct) - give products more credibility and info with more images.
- * [Multi Step Checkout](MultiStepCheckout) - details progressively captured.
  * [Product Availability](ProductAvailability) - decide when, and to whom products can be sold to. 
  * [Related Products](RelatedProducts) - display products that are related
- * [Single Step Checkout](SingleStepCheckout) - all order and payment details captured in a single page.
+ * [Multi-Step Checkout](MultiStepCheckout) - place an order accross multiple steps.

@@ -3,11 +3,11 @@
 /**
  * Allows casting some template values to show "FREE" instead of $0.00.
  */
-class CanBeFreeCurrency extends EcommerceCurrency{
+class CanBeFreeCurrency extends ShopCurrency{
 	
 	function Nice(){
 		if($this->value == 0){
-			return _t("EcommerceCurrency.FREE","<span class=\"free\">FREE</span>");
+			return _t("ShopCurrency.FREE","<span class=\"free\">FREE</span>");
 		}
 		return parent::Nice();
 	}

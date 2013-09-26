@@ -19,13 +19,13 @@
 		</tr>
 	</thead>
 	<tbody>
-		<% control Items %><% if ShowInTable %>
+		<% loop Items %><% if ShowInTable %>
 			<tr id="$TableID" class="$Classes $EvenOdd $FirstLast">
 				<td>
-					<% if Product.Image %>
+					<% if Image %>
 						<div class="image">
-							<a href="$Link" title="<% sprintf(_t("READMORE","View &quot;%s&quot;"),$Title) %>">
-								<% control Product %>$Image.setWidth(45)<% end_control %>
+							<a href="$Link" title="<% sprintf(_t("READMORE","View &quot;%s&quot;"),$Buyable.Title) %>">
+								$Image.setWidth(45)
 							</a>
 						</div>
 					<% end_if %>
@@ -49,7 +49,7 @@
 					</a>
 				</td>
 			</tr>			
-		<% end_if %><% end_control %>
+		<% end_if %><% end_loop %>
 	</tbody>
 	<tfoot>
 		<tr class="subtotal">
@@ -58,7 +58,7 @@
 			<td>&nbsp;</td>
 		</tr>
 		<% if Modifiers %>
-			<% control Modifiers %>
+			<% loop Modifiers %>
 				<% if ShowInTable %>
 					<tr id="$TableID" class="$Classes">
 						<th id="$TableTitleID" colspan="4" scope="row">
@@ -85,7 +85,7 @@
 						</tr>
 					<% end_if %>
 				<% end_if %>
-			<% end_control %>
+			<% end_loop %>
 		<% end_if %>
 		<tr class="gap Total">
 			<th colspan="4" scope="row"><% _t("TOTAL","Total") %></th>

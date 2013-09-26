@@ -41,7 +41,7 @@ class SimpleShippingModifier extends ShippingModifier {
 
 	function TableTitle() {
 		if($country = $this->Country()) {
-			$countryList = Geoip::getCountryDropDown();
+			$countryList = SiteConfig::current_site_config()->getCountriesList();
 			return sprintf(_t("SimpleShippingModifier.SHIPTO","Ship to %s"),$countryList[$country]);
 		} else {
 			return parent::TableTitle();

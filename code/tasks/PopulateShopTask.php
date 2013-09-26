@@ -1,8 +1,10 @@
 <?php
 /**
+ * Populate shop task
  * 
+ * @todo Ideally this task should make use of Spyc, and a single Pages yml file
+ * instead of the YamlFixture class, which is intended for testing.
  * 
- * @author jeremy
  * @package shop
  * @subpackage tasks
  */
@@ -12,11 +14,20 @@ class PopulateShopTask extends BuildTask{
 	protected $description = 'Creates dummy account page, products, checkout page, terms page.';
 	
 	function run($request){
+		
+		if($request->getVar('createintzone')){
+			$this->populateInternationalZone();
+			DB::alteration_message('Created an international zone', 'created');
+			return;
+		}
+		$this->extend("beforePopulate");
+		
+		$factory = Injector::inst()->create('FixtureFactory');
+		
 		//create products
 		if(!DataObject::get_one('Product')){
-			$fixture = new YamlFixture(SHOP_DIR."/tests/dummyproducts.yml");
-			$fixture->saveIntoDatabase();
-			
+			$fixture = new YamlFixture(SHOP_DIR."/tests/fixtures/dummyproducts.yml");
+			$fixture->writeInto($factory);//needs to be a data model
 			$categoriestopublish = array(
 				'products',
 					'electronics',
@@ -35,7 +46,7 @@ class PopulateShopTask extends BuildTask{
 					'stationery'
 			);
 			foreach($categoriestopublish as $categoryname){
-				$fixture->objFromFixture("ProductCategory", $categoryname)->publish('Stage','Live');
+				$factory->get("ProductCategory", $categoryname)->publish('Stage','Live');
 			}
 			$productstopublish = array(
 				'mp3player', 'hdtv',
@@ -49,41 +60,42 @@ class PopulateShopTask extends BuildTask{
 				'paper','pens'
 			);
 			foreach($productstopublish as $productname){
-				$fixture->objFromFixture("Product", $productname)->publish('Stage','Live');
+				$factory->get("Product", $productname)->publish('Stage','Live');
 			}
 			DB::alteration_message('Created dummy products and categories', 'created');
 		}else{
 			echo "<p style=\"color:orange;\">Products and categories were not created because some already exist.</p>";
 		}
+				
+		//terms page
+		if(!$termsPage = DataObject::get_one('Page', "\"URLSegment\" = 'terms-and-conditions'")) {
+			$fixture = new YamlFixture(SHOP_DIR."/tests/fixtures/pages/TermsConditions.yml");
+			$fixture->writeInto($factory);
+			$page = $factory->get("Page", "termsconditions");
+			$page->writeToStage('Stage');
+			$page->publish('Stage', 'Live');
+			//set terms page id in config
+			$config = SiteConfig::current_site_config();
+			$config->TermsPageID = $page->ID;
+			$config->write();
+			DB::alteration_message("Terms and conditions page created", 'created');
+		}
 		
 		//cart page
 		if(!$page = DataObject::get_one('CartPage')) {
-			$page = new CartPage();
-			$page->Title = _t('CartPage.Title',"Cart");
-			$page->URLSegment = 'cart';
-			$page->ShowInMenus = 0;
+			$fixture = new YamlFixture(SHOP_DIR."/tests/fixtures/pages/Cart.yml");
+			$fixture->writeInto($factory);
+			$page = $factory->get("CartPage", "cart");
 			$page->writeToStage('Stage');
 			$page->publish('Stage', 'Live');
 			DB::alteration_message('Cart page created', 'created');
 		}
 		
-		//terms page
-		if($page->TermsPageID == 0 && $termsPage = DataObject::get_one('Page', "\"URLSegment\" = 'terms-and-conditions'")) {
-			$page->TermsPageID = $termsPage->ID;
-			$page->writeToStage('Stage');
-			$page->publish('Stage', 'Live');
-			DB::alteration_message("Page '{$termsPage->Title}' linked to the Checkout page '{$page->Title}'", 'changed');
-		}
-		
 		//checkout page
 		if(!$page = DataObject::get_one('CheckoutPage')) {
-			$page = new CheckoutPage();
-			$page->Title = _t('CheckoutPage.Title',"Checkout");
-			$page->Content = '<p>This is the checkout page. The order summary and order form appear below this content.</p>';
-			$page->PurchaseComplete = '<p>Your purchase is complete.</p>';
-			$page->ChequeMessage = '<p>Please note: Your goods will not be dispatched until we receive your payment.</p>';
-			$page->URLSegment = 'checkout';
-			$page->ShowInMenus = 0;
+			$fixture = new YamlFixture(SHOP_DIR."/tests/fixtures/pages/Checkout.yml");
+			$fixture->writeInto($factory);
+			$page = $factory->get("CheckoutPage", "checkout");
 			$page->writeToStage('Stage');
 			$page->publish('Stage', 'Live');
 			DB::alteration_message('Checkout page created', 'created');
@@ -91,14 +103,50 @@ class PopulateShopTask extends BuildTask{
 
 		//account page
 		if(!DataObject::get_one('AccountPage')) {
-			$page = new AccountPage();
-			$page->Title = 'Account';
-			$page->Content = '<p>This is the account page. It is used for shop users to login and change their member details if they have an account.</p>';
-			$page->URLSegment = 'account';
-			$page->ShowInMenus = 0;
+			$fixture = new YamlFixture(SHOP_DIR."/tests/fixtures/pages/Account.yml");
+			$fixture->writeInto($factory);
+			$page = $factory->get("AccountPage", "account");
 			$page->writeToStage('Stage');
 			$page->publish('Stage', 'Live');
 			DB::alteration_message('Account page \'Account\' created', 'created');
+		}
+		
+		//countries config - removes some countries
+		$siteconfig = SiteConfig::current_site_config();
+		if(empty($siteconfig->AllowedCountries)){
+			$siteconfig->AllowedCountries = 
+			"AF,AL,DZ,AS,AD,AO,AG,AR,AM,AU,AT,AZ,BS,BH,
+			BD,BB,BY,BE,BZ,BJ,BT,BO,BA,BW,BR,BN,BG,BF,BI,
+			KH,CM,CA,CV,CF,TD,CL,CN,CO,KM,CG,CR,CI,HR,CU,
+			CY,CZ,DK,DJ,DM,DO,EC,EG,SV,GQ,ER,EE,ET,FJ,FI,
+			FR,GA,GM,GE,DE,GH,GR,GD,GT,GN,GW,GY,HT,HN,HK,
+			HU,IS,IN,ID,IR,IQ,IE,IL,IT,JM,JP,JO,KZ,KE,KI,
+			KP,KR,KW,KG,LA,LV,LB,LS,LR,LY,LI,LT,LU,MG,MW,
+			MY,MV,ML,MT,MH,MR,MU,MX,FM,MD,MC,MN,MS,MA,MZ,
+			MM,NA,NR,NP,NL,NZ,NI,NE,NG,NO,OM,PK,PW,PA,PG,
+			PY,PE,PH,PL,PT,QA,RO,RU,RW,KN,LC,VC,WS,SM,ST,
+			SA,SN,SC,SL,SG,SK,SI,SB,SO,ZA,ES,LK,SD,SR,SZ,
+			SE,CH,SY,TJ,TZ,TH,TG,TO,TT,TN,TR,TM,TV,UG,UA,
+			AE,GB,US,UY,UZ,VU,VE,VN,YE,YU,ZM,ZW";
+			$siteconfig->write();
+		}
+		$this->extend("afterPopulate");
+	}
+	
+	function populateInternationalZone(){
+		$zone = new Zone(array(
+			'Name' => 'International'	
+		));
+		$zone->write();
+		
+		if($countries = SiteConfig::current_site_config()->getCountriesList()){
+			foreach($countries as $iso => $country){
+				$region = new ZoneRegion(array(
+					'Country' => $iso,
+					'ZoneID' => $zone->ID	
+				));
+				$region->write();
+			}
 		}
 	}
 	

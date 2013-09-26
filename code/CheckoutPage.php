@@ -38,10 +38,6 @@ class CheckoutPage extends Page {
 		'CheckoutFinishMessage' => 'HTMLText'
 	);
 
-	public static $has_one = array(
-		'TermsPage' => 'Page'
-	);
-
 	static $icon = 'shop/images/icons/money';
 
 	/**
@@ -58,7 +54,7 @@ class CheckoutPage extends Page {
 		return ($urlSegment) ? $page->URLSegment : Controller::join_links($page->Link($action),$id);
 	}
 
-	function canCreate() {
+	function canCreate($member = null) {
 		return !DataObject::get_one("SiteTree", "\"ClassName\" = 'CheckoutPage'");
 	}
 
@@ -79,8 +75,7 @@ class CheckoutPage extends Page {
 
 	function getCMSFields() {
 		$fields = parent::getCMSFields();
-		$fields->addFieldToTab('Root.Content.TermsAndConditions', new TreeDropdownField('TermsPageID', 'Terms and Conditions Page', 'SiteTree'));
-		$fields->addFieldsToTab('Root.Content.Messages', array(
+		$fields->addFieldsToTab('Root.Messages', array(
 			new HtmlEditorField('AlreadyCompletedMessage', 'Already Completed - shown when the customer tries to checkout an already completed order', $row = 4),
 			new HtmlEditorField('NonExistingOrderMessage', 'Non-existing Order - shown when the customer tries ', $row = 4),
 			new HtmlEditorField('MustLoginToCheckoutMessage', 'MustLoginToCheckoutMessage', $row = 4),
@@ -89,6 +84,7 @@ class CheckoutPage extends Page {
 		));
 		return $fields;
 	}
+	
 }
 
 class CheckoutPage_Controller extends Page_Controller {
@@ -101,9 +97,6 @@ class CheckoutPage_Controller extends Page_Controller {
 
 	static $allowed_actions = array(
 		'OrderForm',
-		'OrderFormWithoutShippingAddress',
-		'OrderFormWithShippingAddress',
-		'finish',
 		'removemodifier'
 	);
 	
@@ -116,32 +109,6 @@ class CheckoutPage_Controller extends Page_Controller {
 		return _t('CheckoutPage.TITLE',"Checkout");
 	}
 
-	public function index(){
-		Requirements::javascript(THIRDPARTY_DIR . '/jquery/jquery.js');
-		Requirements::javascript(SHOP_DIR.'/javascript/CheckoutPage.js');
-		Requirements::javascript(SHOP_DIR.'/javascript/ecommerce.js');
-		return array();
-	}
-
-	/**
-	 * Returns either the current order from the shopping cart or
-	 * by the specified Order ID in the URL.
-	 *
-	 * @return Order
-	 */
-	function Order() {
-		if($orderID = Director::urlParam('Action') && is_numeric(Director::urlParam('Action'))) {
-			$order = DataObject::get_by_id('Order', $orderID);
-			if($order && $order->MemberID == Member::currentUserID()) {
-				return $order;
-			}
-		}else{
-			//fallback for templates - to be deprecated
-			return $this->Cart();
-		}
-		return null;
-	}
-
 	/**
 	 * Returns a form allowing a user to enter their
 	 * details to checkout their order.
@@ -149,128 +116,29 @@ class CheckoutPage_Controller extends Page_Controller {
 	 * @return OrderForm object
 	 */
 	function OrderForm() {
-		if(!$this->CanCheckout()){
+		$cart = $this->Cart(); //see ViewableCart.php
+		if(!(bool)$cart){
 			return false;
 		}
 		$form = new OrderForm($this, 'OrderForm');
 		$this->data()->extend('updateOrderForm',$form);
+		$form->loadDataFrom($cart);
+		//prevent fields being populated with relation object class names
+		$form->loadDataFrom(array(
+			"BillingAddress" => "",
+			"ShippingAddress" => ""
+		));
+		
 		//load session data
+		if($member = Member::currentUser()){
+			$form->loadDataFrom($member->DefaultShippingAddress(),false,singleton('Address')->getFieldMap('Shipping'));
+			$form->loadDataFrom($member->DefaultBillingAddress(),false,singleton('Address')->getFieldMap('Billing'));
+			$form->loadDataFrom($member);
+		}
 		if($data = Session::get("FormInfo.{$form->FormName()}.data")){
 			$form->loadDataFrom($data);
 		}
 		return $form;
 	}
-
-	/**
-	 * Returns any error messages produced during request.
-	 * @deprecated you should use SessionMessage instead (found in OrderManipulation.php)
-	 * @return string
-	 */
-	function Message() {
-		return $this->SessionMessage();
-	}
-
-	/**
-	 * Go here after order has been processed.
-	 *
-	 * @return Order - either the order specified by ID in url, or just the most recent order.
-	 */
-	function finish(){
-		//TODO: make redirecting to account page optional
-		//TODO: could all this be moved to some central location where it can be used by other parts of the system?
-		$order = $this->orderfromid(); //stored in OrderManipulation extension
-		$message = $mtype = null;
-		if(!$order){
-			$message = _t("CheckoutPage.ORDERNOTFOUND","Order could not be found.");
-			$mtype = 'bad';
-		}
-		if($sm = $this->SessionMessage()){
-			$message = $sm;
-			$mtype = $this->SessionMessageType();
-		}
-		return array(
-			'Order' => $order,
-			'Message' => $message,
-			'MessageType' => $mtype,
-			'CompleteOrders' => $this->allorders("\"Status\" IN('Paid','Complete','Sent')"),
-			'IncompleteOrders' => $this->allorders("\"Status\" IN('Unpaid','Processing')")
-		);
-	}
-	
-	/**
-	* Returns a DataObjectSet of {@link OrderModifierForm} objects. These
-	* forms are used in the OrderInformation HTML table for the user to fill
-	* out as needed for each modifier applied on the site.
-	* @deprecated add form to template manually
-	* @return DataObjectSet
-	*/
-	function ModifierForms() {
-		if(ShoppingCart::order_started()){
-			return Order::get_modifier_forms($this);
-		}
-		return null;
-	}
-	
-	/**
-	 * Inits the virtual methods from the name of the modifier forms to
-	 * redirect the action method to the form class
-	 * @deprecated add form to template manually
-	 */
-	protected function initVirtualMethods() {
-		if($forms = $this->ModifierForms()) {
-			foreach($forms as $form) {
-				$this->addWrapperMethod($form->Name(), 'getOrderModifierForm');
-				self::$allowed_actions[] = $form->Name(); // add all these forms to the list of allowed actions also
-			}
-		}
-	}
-	
-	/**
-	 * Return a specific {@link OrderModifierForm} by it's name.
-	 *@deprecated add form to template manually
-	 * @param string $name The name of the form to return
-	 * @return Form
-	 */
-	protected function getOrderModifierForm($name) {
-		if($forms = $this->ModifierForms()) {
-			foreach($forms as $form) {
-				if($form->Name() == $name) return $form;
-			}
-		}
-	}
-	
-	static function remove_modifier_link($id){
-		return self::$url_segment.'/removemodifier/'.$id;
-	}
-	
-	function removemodifier(){
-		$modifierId = $this->urlParams['ID'];
-		$order = ShoppingCart::current_order();
-		if($modifierId && $order && $modifier =  DataObject::get_one('OrderModifier',"\"OrderID\" = ".$order->ID." AND \"OrderModifier\".\"ID\" = $modifierId")){
-			if($modifier->canRemove()){	
-				$modifier->delete();
-				$modifier->destroy();
-				Director::redirectBack();
-				return;
-			}
-		}
-		Director::redirectBack();
-		return false;
-	}
-	
-	
-	//deprecated functions
-	/**
-	 * Determine whether the user can checkout the
-	 * specified Order ID in the URL, that isn't
-	 * paid for yet.
-	 *
-	 * @deprecated use Cart instead
-	 * @return boolean
-	 */
-	function CanCheckout() {
-		return (bool)$this->Cart();
-	}
-	
 
 }

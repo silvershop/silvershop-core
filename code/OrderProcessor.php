@@ -9,10 +9,10 @@
  * @todo figure out reference issues ...if you store a reference to order in here, it can get stale.
  */
 class OrderProcessor{
-	
+
 	protected $order;
 	protected $error;
-	
+
 	/**
 	* This is the from address that the receipt
 	* email contains. e.g. "info@shopname.com"
@@ -20,12 +20,13 @@ class OrderProcessor{
 	* @var string
 	*/
 	protected static $email_from;
-	
+
 	/**
 	* This is the subject that the receipt
 	* email will contain. e.g. "Joe's Shop Receipt".
 	*
 	* @var string
+	* @deprecated - use translation instead via Order.EMAILSUBJECT
 	*/
 	protected static $receipt_subject = "Shop Sale Information #%d";
 	
@@ -37,7 +38,7 @@ class OrderProcessor{
 	static function create(Order $order){		
 		return new OrderProcessor($order);
 	}
-	
+
 	/**
 	* Set the from address for receipt emails.
 	*
@@ -46,11 +47,11 @@ class OrderProcessor{
 	public static function set_email_from($email) {
 		self::$email_from = $email;
 	}
-	
+
 	public static function set_receipt_subject($subject) {
 		self::$receipt_subject = $subject;
 	}
-	
+
 	/**
 	 * Assign the order to a local variable
 	 * @param Order $order
@@ -58,13 +59,13 @@ class OrderProcessor{
 	private function __construct(Order $order){
 		$this->order = $order;
 	}
-	
+
 	/**
 	 * Takes an order from being a cart to awaiting payment.
 	 * @param Member $member - assign a member to the order
 	 * @return boolean - success/failure
 	 */
-	function placeOrder(){
+	function placeOrder($member = null){
 		if(!$this->order){
 			$this->error(_t("OrderProcessor.NULL","A new order has not yet been started."));
 			return false;
@@ -75,48 +76,63 @@ class OrderProcessor{
 			return false;
 		}
 		$this->order->Status = 'Unpaid'; //update status
+		if(!$this->order->Placed){
+			$this->order->Placed = SS_Datetime::now()->Rfc2822(); //record placed order datetime
+			if($request = Controller::curr()->getRequest()){
+				$this->order->IPAddress = $request->getIP(); //record client IP
+			}
+		}
 		//re-write all attributes and modifiers to make sure they are up-to-date before they can't be changed again
-		$attributes = $this->order->Items();
-		if($attributes->exists()){
-			foreach($attributes as $attribute){
-				$attribute->write();
+		$items = $this->order->Items();
+		if($items->exists()){
+			foreach($items as $item){
+				$item->onPlacement();
+				$item->write();
 			}
 		}
-		$attributes = $this->order->Modifiers();
-		if($attributes->exists()){
-			foreach($attributes as $attribute){
-				$attribute->write();
+		$modifiers = $this->order->Modifiers();
+		if($modifiers->exists()){
+			foreach($modifiers as $modifier){
+				$modifier->write();
 			}
 		}
-		//TODO: add member to customer group
+		if($member){
+			$this->order->MemberID = $member->ID;
+			$cgroup = ShopConfig::current()->CustomerGroup();
+			if($cgroup->exists()){
+				$member->Groups()->add($cgroup);
+			}
+		}
 		OrderManipulation::add_session_order($this->order); //save order reference to session
 		$this->order->extend('onPlaceOrder'); //allow decorators to do stuff when order is saved.
 		$this->order->write();
 		return true; //report success
 	}
-	
+
 	/**
 	 * Create a new payment for an order
 	 */
 	function createPayment($paymentClass = "Payment"){
-		if($this->order->canPay(Member::currentUser())){
-			$payment = class_exists($paymentClass) ? new $paymentClass() : null;
-			if(!($payment && $payment instanceof Payment)) {
-				$this->error(_t("PaymentProcessor.NOTPAYMENT","Incorrect payment class."));
-				return false;
-			}
-			//TODO: check if chosen payment type is allowed
-			$payment->OrderID = $this->order->ID;
-			$payment->PaidForID = $this->order->ID;
-			$payment->PaidForClass = $this->order->class;
-			$payment->Amount->Amount = $this->order->TotalOutstanding();
-			$payment->write();
-			$this->order->Payments()->add($payment);
-			return $payment;
+		$payment = class_exists($paymentClass) ? new $paymentClass() : null;
+		if(!($payment && $payment instanceof Payment)) {
+			$this->error(_t("PaymentProcessor.NOTPAYMENT","`$paymentClass` isn't a valid payment method"));
+			return false;
 		}
-		return false;
+		if(!$this->order->canPay(Member::currentUser())){
+			$this->error(_t("PaymentProcessor.CANTPAY","Order can't be paid for"));
+			return false;
+		}
+		$payment->OrderID = $this->order->ID;
+		$payment->PaidForID = $this->order->ID;
+		$payment->PaidForClass = $this->order->class;
+		$payment->Amount->Amount = $this->order->TotalOutstanding();
+		$payment->Reference = $this->order->Reference;
+		$payment->write();
+		$this->order->Payments()->add($payment);
+		$payment->ReturnURL = $this->order->Link(); //store temp return url reference
+		return $payment;
 	}
-	
+
 	/**
 	 * Determine if an order can be placed.
 	 * @param unknown_type $order
@@ -142,6 +158,63 @@ class OrderProcessor{
 		return true;
 	}
 	
+	
+	/**
+	 * Create a payment model, and provide link to redirect to external gateway,
+	 * or redirect to order link.
+	 * @return string - url for redirection after payment has been made
+	 */
+	function makePayment($paymentClass){
+		//create payment
+		$payment = $this->createPayment($paymentClass);
+		if(!$payment){
+			$this->error("Payment could not be created");
+			return $this->order->Link();
+		}
+		//map data fields
+		$data = array(
+			'Reference' => $this->order->Reference,
+			'FirstName' => $this->order->FirstName,
+			'Surname' => $this->order->Surname,
+			'Email' => $this->order->Email
+			//TODO: there is probably more that needs to be mapped (billing address??)
+		);
+		// Process payment, get the result back
+		$result = $payment->processPayment($data, null); //TODO: payment shouldn't ask for a form!
+		if($result->isProcessing()) { // isProcessing(): Long payment process redirected to another website (PayPal, Worldpay)
+			return $result->getValue();
+		}
+		if($result->isSuccess()) {
+			$this->sendReceipt();
+		}
+		return $payment->ReturnURL;
+	}
+
+	/**
+	 * Complete payment processing
+	 *    - send receipt
+	 * 	- update order status accordingling
+	 * 	- fire event hooks
+	 */
+	function completePayment(){
+		if($this->order->Status != 'Paid'){
+			if(!$this->order->ReceiptSent){
+				$this->sendReceipt();
+			}
+			$this->order->extend('onPayment'); //a payment has been made
+			if($this->order->GrandTotal() > 0 && $this->order->TotalOutstanding() <= 0){
+				//set order as paid
+				$this->order->Status = 'Paid';
+				$this->order->Paid = SS_Datetime::now()->Rfc2822();
+				$this->order->write();
+				foreach($this->order->Items() as $item){
+					$item->onPayment();
+				}
+				$this->order->extend('onPaid'); //all payment is settled
+			}
+		}
+	}	
+
 	/**
 	* Send a mail of the order to the client (and another to the admin).
 	*
@@ -151,7 +224,7 @@ class OrderProcessor{
 	function sendEmail($emailClass, $copyToAdmin = true){
 		$from = self::$email_from ? self::$email_from : Email::getAdminEmail();
 		$to = $this->order->getLatestEmail();
-		$subject = sprintf(self::$receipt_subject ,$this->order->ID);
+		$subject = sprintf(_t("Order.EMAILSUBJECT",self::$receipt_subject) ,$this->order->Reference);
 		$purchaseCompleteMessage = DataObject::get_one('CheckoutPage')->PurchaseComplete;
 		$email = new $emailClass();
 		$email->setFrom($from);
@@ -166,17 +239,17 @@ class OrderProcessor{
 		));
 		return $email->send();
 	}
-	
+
 	/**
 	* Send the receipt of the order by mail.
 	* Precondition: The order payment has been successful
 	*/
 	function sendReceipt() {
 		$this->sendEmail('Order_ReceiptEmail');
-		$this->order->ReceiptSent = true;
+		$this->order->ReceiptSent = SS_Datetime::now()->Rfc2822();
 		$this->order->write();
 	}
-	
+
 	/**
 	* Send a message to the client containing the latest
 	* note of {@link OrderStatusLog} and the current status.
@@ -212,13 +285,13 @@ class OrderProcessor{
 		$e->setTo($member->Email);
 		$e->send();
 	}
-	
+
 	function getError(){
 		return $this->error;
 	}
-	
+
 	private function error($message){
 		$this->error = $message;
 	}
-	
+
 }

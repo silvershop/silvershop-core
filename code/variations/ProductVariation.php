@@ -17,7 +17,7 @@ class ProductVariation extends DataObject implements Buyable{
 	);
 	static $has_one = array(
 		'Product' => 'Product',
-		'Image' => 'Product_Image'
+		'Image' => 'Image'
 	);
 	static $many_many = array(
 		'AttributeValues' => 'ProductAttributeValue'
@@ -44,7 +44,8 @@ class ProductVariation extends DataObject implements Buyable{
 	);
 	
 	static $searchable_fields = array(
-		'Product.Title'
+		'Product.Title',
+		'InternalItemID'
 	);
 
 	public static $default_sort = "InternalItemID";
@@ -57,6 +58,7 @@ class ProductVariation extends DataObject implements Buyable{
 		$fields[] = new TextField('Price');
 		//add attributes dropdowns
 		if($this->Product()->VariationAttributeTypes()->exists() && $attributes = $this->Product()->VariationAttributeTypes()){
+			
 			foreach($attributes as $attribute){
 				if($field = $attribute->getDropDownField()){
 					if($value = $this->AttributeValues()->find('TypeID',$attribute->ID))
@@ -69,11 +71,11 @@ class ProductVariation extends DataObject implements Buyable{
 				//TODO: allow setting custom value, rather than visiting the products section
 			}
 		}
-		$set = new FieldSet($fields);
+		$set = new FieldList($fields);
 		$this->extend('updateCMSFields', $set);
 		return $set;
 	}
-
+	
 	function onBeforeWrite(){
 		parent::onBeforeWrite();
 		//TODO: perhaps move this to onAfterWrite, for the case when the variation has just been created, and thus has no ID to relate
@@ -116,7 +118,7 @@ class ProductVariation extends DataObject implements Buyable{
 	function canPurchase($member = null) {
 		$allowpurchase = false;
 		if($product = $this->Product()){
-			$allowpurchase = ($this->Price > 0) && $product->AllowPurchase;
+			$allowpurchase = ($this->sellingPrice() > 0) && $product->AllowPurchase;
 		}
 		$extended = $this->extendedCan('canPurchase', $member);
 		if($allowpurchase && $extended !== null){
@@ -142,9 +144,13 @@ class ProductVariation extends DataObject implements Buyable{
 	 * ProductVariation_OrderItem only has a ProductVariation object in attribute
 	 */
 	function Item() {
-		if($item = ShoppingCart::get_item_by_id($this->ProductID,$this->ID))
-			return $item;
-		return new ProductVariation_OrderItem($this,0); //return dummy item so that we can still make use of Item
+		$filter = array();
+		$this->extend('updateItemFilter',$filter);
+		$item = ShoppingCart::singleton()->get($this,$filter);
+		if(!$item)
+			$item = $this->createItem(0); //return dummy item so that we can still make use of Item
+		$this->extend('updateDummyItem',$item);
+		return $item;
 	}
 
 	function addLink() {
@@ -164,6 +170,15 @@ class ProductVariation extends DataObject implements Buyable{
 		return $item;
 	}
 	
+	function sellingPrice(){
+		$price = $this->Price;
+		if (!$price && $this->Product() && $this->Product()->sellingPrice())
+			$price = $this->Product()->sellingPrice();
+		if (!$price) $price = 0;
+		$this->extend("updateSellingPrice",$price); //TODO: this is not ideal, because prices manipulations will not happen in a known order
+		return $price;
+	}
+
 }
 
 /**
@@ -190,18 +205,10 @@ class ProductVariation_OrderItem extends Product_OrderItem {
 	 */
 	public function ProductVariation($forcecurrent = false) {
 		if($this->ProductVariationID && $this->ProductVariationVersion && !$forcecurrent){
-			return FixVersioned::get_version('ProductVariation', $this->ProductVariationID, $this->ProductVariationVersion);
+			return Versioned::get_version('ProductVariation', $this->ProductVariationID, $this->ProductVariationVersion);
 		}elseif($this->ProductVariationID && $product = DataObject::get_by_id('ProductVariation', $this->ProductVariationID)){
 			return $product;
 		}
-		return false;
-	}
-
-	function UnitPrice() {
-		if($this->ProductVariation() && $this->ProductVariation()->Price)
-			return $this->ProductVariation()->Price;
-		if($this->Product() && $this->Product()->Price)
-			return $this->Product()->Price;
 		return false;
 	}
 
@@ -209,6 +216,16 @@ class ProductVariation_OrderItem extends Product_OrderItem {
 		if($this->ProductVariation())
 			return $this->ProductVariation()->getTitle();
 		return false;
+	}
+	
+	function Image(){
+		if($this->ProductVariation() && $image = $this->ProductVariation()->Image()){
+			return $image;
+		}
+		if($this->Product()){
+			return $this->Product()->Image();
+		}
+		return null;
 	}
 
 }

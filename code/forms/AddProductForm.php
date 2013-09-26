@@ -2,28 +2,54 @@
 
 class AddProductForm extends Form{
 	
-	function __construct($controller,$buyable){
-		$fields = new FieldSet(
-			new NumericField("Quantity",_t("AddProductForm.QUANTITY","Quantity"),1),
-			new HiddenField("BuyableID","",$buyable->ID),
-			new HiddenField("BuyableClass","",$buyable->ClassName),
-			new LiteralField("Price", "<h2 class=\"price\">".$buyable->dbObject('Price')->Nice()."</h2>")
-		);
-		$actions = new FieldSet(
+	protected $maxquantity = 20; //populate quantity dropdown with this many values
+	
+	/**
+	 * Fields that can be saved to an order item.
+	 */
+	protected $saveablefields = array();
+	
+	function __construct($controller, $name = "AddProductForm"){
+		$fields = new FieldList();
+		
+		if($this->maxquantity){
+			$values = array();
+			$count = 1;
+			while($count <= $this->maxquantity){
+				$values[$count] = $count;
+				$count++;
+			}
+			$fields->push(new DropdownField('Quantity','Quantity',$values,1));
+		}else{
+			$fields->push(new NumericField('Quantity','Quantity',1));
+		}
+		$actions = new FieldList(
 			new FormAction('addtocart',_t("AddProductForm.ADDTOCART",'Add to Cart'))
 		);
 		$validator = new RequiredFields(array(
-			'Quantity',
-			'BuyableID'
+			'Quantity'
 		));
-		parent::__construct($controller,"AddProductForm",$fields,$actions,$validator);
+		parent::__construct($controller,$name,$fields,$actions,$validator);
+		$this->addExtraClass("addproductform");
+	}
+	
+	/**
+	 * Choose maximum value to populate quantity dropdown
+	 */
+	function setMaximumQuantity($qty){
+		$this->maxquantity = (int)$qty;
+	}
+	
+	function setSaveableFields($fields){
+		$this->saveablefields = $fields;
 	}
 	
 	function addtocart($data,$form){
-		if($buyable = $this->getBuyable()){
-			$cart = ShoppingCart::getInstance();
-			$quantity = isset($data['Quantity']) ? (int) $data['Quantity']: 1;
-			$cart->add($buyable,$quantity,$data);
+		if($buyable = $this->getBuyable($data)){
+			$cart = ShoppingCart::singleton();
+			$saveabledata = (!empty($this->saveablefields)) ? Convert::raw2sql(array_intersect_key($data,array_combine($this->saveablefields,$this->saveablefields))) : $data;
+			$quantity = isset($data['Quantity']) ? (int) $data['Quantity']: 1;			
+			$cart->add($buyable,$quantity,$saveabledata);
 			if(!ShoppingCart_Controller::get_direct_to_cart()){
 				$form->SessionMessage($cart->getMessage(),$cart->getMessageType());
 			}
@@ -31,7 +57,7 @@ class AddProductForm extends Form{
 		}
 	}
 	
-	protected function getBuyable(){
+	function getBuyable($data = null){
 		if($this->controller->dataRecord instanceof Buyable){
 			return $this->controller->dataRecord;
 		}

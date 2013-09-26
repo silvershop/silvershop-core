@@ -83,15 +83,6 @@
 			font-weight: normal;
 			font-family: Tahoma, Verdana, sans-serif;
 		}
-		table.infotable tr.Total {
-			background: #c9ebff;
-		}
-		table.infotable tr.Total td {
-			font-weight:bold;
-			font-size:14px;
-			color:#4EA3D7;
-			text-transform:uppercase;
-		}
 			table.infotable tr td,
 			table.infotable tr th {
 				padding:5px;

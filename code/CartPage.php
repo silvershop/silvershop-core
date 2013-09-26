@@ -16,10 +16,10 @@ class CartPage extends Page{
 	function getCMSFields(){
 		$fields = parent::getCMSFields();
 		if($checkouts = DataObject::get('CheckoutPage')) {
-			$fields->addFieldToTab('Root.Content.Links',new DropdownField('CheckoutPageID','Checkout Page',$checkouts->toDropDownMap()));
+			$fields->addFieldToTab('Root.Links',new DropdownField('CheckoutPageID','Checkout Page',$checkouts->map("ID","Title")));
 		}
 		if($pgroups = DataObject::get('ProductCategory')) {
-			$fields->addFieldToTab('Root.Content.Links',new DropdownField('ContinuePageID','Continue Product Group Page',$pgroups->toDropDownMap()));
+			$fields->addFieldToTab('Root.Links',new DropdownField('ContinuePageID','Continue Product Group Page',$pgroups->map("ID","Title")));
 		}
 		return $fields;
 	}
@@ -43,7 +43,7 @@ class CartPage extends Page{
 class CartPage_Controller extends Page_Controller{
 	
 	static $url_segment = 'cart';
-	static $allowed_actions = array();
+	static $allowed_actions = array("UpdateCartForm","doUpdateCartForm");
 	
 	/**
 	 * Display a title if there is no model, or no title.
@@ -53,18 +53,5 @@ class CartPage_Controller extends Page_Controller{
 			return $this->Title;
 		return _t('CartPage.TITLE',"Shopping Cart");
 	}
-	
-	public function init(){
-		parent::init();
-		// include extra js requirements for this page
-		Requirements::javascript(THIRDPARTY_DIR . '/jquery/jquery.js');
-		Requirements::javascript(SHOP_DIR.'/javascript/CheckoutPage.js');
-	}	
-	
-	/**
-	 * @deprecated use $this->Cart() instead
-	 */
-	function Order() {
-		return $this->Cart();
-	}
+
 }

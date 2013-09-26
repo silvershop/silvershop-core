@@ -5,68 +5,45 @@
  * @package shop
  * @subpackage variations
  */
-class ProductVariationDecorator extends DataObjectDecorator{
-
-	function extraStatics(){
-		return array(
-			'has_many' => array(
-				'Variations' => 'ProductVariation'
-			),
-			'many_many' => array(
-				'VariationAttributeTypes' => 'ProductAttributeType'
-			)
-		);
-	}
+class ProductVariationDecorator extends DataExtension{
+	
+	static $has_many = array(
+		'Variations' => 'ProductVariation'
+	);
+	
+	static $many_many = array(
+		'VariationAttributeTypes' => 'ProductAttributeType'
+	);
 
 	/**
 	 * Adds variations specific fields to the CMS.
 	 */
-	function updateCMSFields(&$fields){
-		$fields->addFieldToTab('Root.Content.Variations',new HeaderField("Variations"));
-		$fields->addFieldToTab('Root.Content.Variations',$this->getVariationsTable());
-		$fields->addFieldToTab('Root.Content.Variations',new HeaderField("Variation Attribute Types"));
-		$fields->addFieldToTab('Root.Content.Variations',new ManyManyComplexTableField($this->owner,'VariationAttributeTypes','ProductAttributeType'));
-
+	public function updateCMSFields(FieldList $fields) {
+		$productVariationAttributeTypes = DataObject::get("ProductAttributeType")->map("ID", "Title");
+		$fields->addFieldToTab('Root.Variations',$this->getVariationsTable());
+		$fields->addFieldToTab('Root.Variations',new HeaderField("Variation Attribute Types"));
+		$fields->addFieldToTab('Root.Variations',new CheckboxSetField("VariationAttributeTypes","Variation Attribute Types",$productVariationAttributeTypes));
+		
 		if($this->owner->Variations()->exists()){
-			$fields->addFieldToTab('Root.Content.Main',new LabelField('variationspriceinstructinos','Price - Because you have one or more variations, the price can be set in the "Variations" tab.'),'Price');
-			$fields->removeFieldsFromTab('Root.Content.Main',array('Price','InternalItemID'));
+			$fields->addFieldToTab('Root.Pricing',new LabelField('variationspriceinstructinos','Price - Because you have one or more variations, the price can be set in the "Variations" tab.'));
+			$fields->removeFieldFromTab('Root.Pricing','BasePrice');
+			$fields->removeFieldFromTab('Root.Pricing','CostPrice');
+			$fields->removeFieldFromTab('Root.Main','InternalItemID');
 		}
 	}
-
+	
 	/**
 	 * CMS fields helper function for getting the variations table.
 	 * @return HasManyComplexTableField
 	 */
 	function getVariationsTable() {
-		$singleton = singleton('ProductVariation');
-		$query = $singleton->buildVersionSQL("\"ProductID\" = '{$this->owner->ID}'");
-		$variations = $singleton->buildDataObjectSet($query->execute());
-		$filter = $variations ? "\"ID\" IN ('" . implode("','", $variations->column('RecordID')) . "')" : "\"ID\" < '0'";
-
-		$summaryfields= $singleton->summaryFields();
-
-		if($this->owner->VariationAttributeTypes()->exists())
-		foreach($this->owner->VariationAttributeTypes() as $attribute){
-			$summaryfields["AttributeProxy.Val".$attribute->Name] = $attribute->Title;
-		}
-
-		$tableField = new HasManyComplexTableField(
-			$this->owner,
-			'Variations',
-			'ProductVariation',
-			$summaryfields,
-			null,
-			$filter
-		);
-
-		if(method_exists($tableField, 'setRelationAutoSetting')) {
-			$tableField->setRelationAutoSetting(true);
-		}
-		return $tableField;
+		$variations = $this->owner->Variations();
+		$itemsConfig = new GridFieldConfig_RelationEditor();
+		$itemsTable = new GridField("Variations","Variations",$variations,$itemsConfig);
+		return $itemsTable;
 	}
 
 	function PriceRange(){
-
 		$maxprice = $minprice = $averageprice = $hasrange = null;
 		$variations = $this->owner->Variations();
 		if($variations->exists() && $variations->Count()){
@@ -77,17 +54,16 @@ class ProductVariationDecorator extends DataObjectDecorator{
 			$minprice = min($prices);
 			$hasrange = ($minprice != $maxprice);
 
-			$maxprice = DBField::create("Currency",$maxprice);
-			$minprice = DBField::create("Currency",$minprice);
+			$maxprice = ShopCurrency::create($maxprice);
+			$minprice = ShopCurrency::create($minprice);
 
 			if($count > 0){
 				$averageprice = $sum/$count;
-				$averageprice = DBField::create("Currency",$averageprice);
+				$averageprice = ShopCurrency::create($averageprice);
 			}
 		}else{
 			return null;
 		}
-
 		return new ArrayData(array(
 			'HasRange' => $hasrange,
 			'Max' => $maxprice,
@@ -106,18 +82,19 @@ class ProductVariationDecorator extends DataObjectDecorator{
 		if(!is_array($attributes)) return null;
 		$keyattributes = array_keys($attributes);
 		$id = $keyattributes[0];
-		$where = "\"ProductID\" = ".$this->owner->ID;
-		$join = "";
-
+		$variations = ProductVariation::get()->filter("ProductID",$this->owner->ID);
 		foreach($attributes as $typeid => $valueid){
 			if(!is_numeric($typeid) || !is_numeric($valueid))
 				return null; //ids MUST be numeric
 			$alias = "A$typeid";
-			$where .= " AND $alias.ProductAttributeValueID = $valueid";
-			$join .= "INNER JOIN ProductVariation_AttributeValues AS $alias ON ProductVariation.ID = $alias.ProductVariationID ";
+			$variations = $variations->innerJoin(
+				"ProductVariation_AttributeValues",
+				"ProductVariation.ID = $alias.ProductVariationID",
+				$alias
+			)->where("$alias.ProductAttributeValueID = $valueid");
 		}
-		if($variation = DataObject::get('ProductVariation',$where,"",$join))
-			return $variation->First();
+		if($variation = $variations->First())
+			return $variation;
 		return false;
 	}
 
@@ -156,7 +133,7 @@ class ProductVariationDecorator extends DataObjectDecorator{
 				foreach($avalues as $value){
 					$variation = new ProductVariation();
 					$variation->ProductID = $this->owner->ID;
-					$variation->Price = $this->owner->Price;
+					$variation->Price = $this->owner->BasePrice;
 					$variation->write();
 					$variation->InternalItemID = $this->owner->InternalItemID.'-'.$variation->ID;
 					$variation->AttributeValues()->add($value); //TODO: find or create actual value
@@ -165,6 +142,23 @@ class ProductVariationDecorator extends DataObjectDecorator{
 				}
 			}
 		}
+	}
+	
+	/**
+	 * Get all the values for a given attribute type,
+	 * based on this product's variations.
+	 */
+	function possibleValuesForAttributeType($type){
+		if(!is_numeric($type))
+			$type = $type->ID;
+		if(!$type) return null;
+		
+		return ProductAttributeValue::get()
+					->innerJoin("ProductVariation_AttributeValues",
+							"\"ProductAttributeValue\".\"ID\" = \"ProductVariation_AttributeValues\".\"ProductAttributeValueID\""
+					)->innerJoin("ProductVariation",
+							"\"ProductVariation_AttributeValues\".\"ProductVariationID\" = \"ProductVariation\".\"ID\""
+					)->where("TypeID = $type AND \"ProductVariation\".\"ProductID\" = ".$this->owner->ID);
 	}
 
 	/**
@@ -177,6 +171,12 @@ class ProductVariationDecorator extends DataObjectDecorator{
 		}
 		//TODO: make this work...otherwise we get rouge variations that could mess up future imports
 	}
+	
+	function contentcontrollerInit($controller){
+		if($this->owner->Variations()->exists()){
+			$controller->formclass = 'VariationForm';
+		}
+	}
 
 }
 
@@ -186,86 +186,18 @@ class ProductVariationDecorator extends DataObjectDecorator{
  */
 class ProductControllerVariationExtension extends Extension{
 
-	static $max_quantity = 50;
-
-	public static $allowed_actions = array(
-		'VariationForm',
-		'addVariation'
-	);
-
+	/**
+	 * @deprecated - use Form instead
+	 */
 	function VariationForm(){
-		$farray = array();
-		$requiredfields = array();
-		$attributes = $this->owner->VariationAttributeTypes();
-
-		foreach($attributes as $attribute){
-			$farray[] = $attribute->getDropDownField("choose $attribute->Label ...",$this->owner->possibleValuesForAttributeType($attribute));
-			$requiredfields[] = "ProductAttributes[$attribute->ID]";
-		}
-
-		$fields = new FieldSet($farray);
-		if($maxquantity = self::$max_quantity){
-			$values = array();
-			$count = 1;
-			while($count <= $maxquantity){
-				$values[$count] = $count;
-				$count++;
-			}
-			$fields->push(new DropdownField('Quantity','Quantity',$values,1));
-		}else{
-			$fields->push(new NumericField('Quantity','Quantity',1));
-		}
-
-		if(true){
-			//TODO: make javascript json inclusion optional
-			$vararray = array();
-			if($vars = $this->owner->Variations()){
-				foreach($vars as $var){
-					$vararray[$var->ID] = $var->AttributeValues()->map('ID','ID');
-				}
-			}
-			$fields->push(new HiddenField('VariationOptions','VariationOptions',json_encode($vararray)));
-		}
-
-		$actions = new FieldSet(
-			new FormAction('addVariation', _t("Product.ADDLINK","Add this item to cart"))
-		);
-
-		$requiredfields[] = 'Quantity';
-		$validator = new RequiredFields($requiredfields);
-
-		$form = new Form($this->owner,'VariationForm',$fields,$actions,$validator);
-		return $form;
+		return $this->owner->Form();
 	}
-
-	function addVariation($data,$form){
-		if(isset($data['ProductAttributes']) && $variation = $this->owner->getVariationByAttributes($data['ProductAttributes'])){
-			$quantity = (isset($data['Quantity']) && is_numeric($data['Quantity'])) ? (int) $data['Quantity'] : 1;
-			$cart = ShoppingCart::singleton();
-			if($cart->add($variation,$quantity)){
-				$form->sessionMessage("Successfully added to cart.","good");
-			}else{
-				$form->sessionMessage($cart->getMessage(),$cart->getMessageType());
-			}
-			
-		}else{
-			$form->sessionMessage("That variation is not available, sorry.","bad"); //validation fail
-		}
-		ShoppingCart_Controller::direct();
+	
+	/**
+	 * @deprecated - use Form instead
+	 */
+	function AddVariationForm(){
+		return $this->owner->Form();
 	}
-
-	function possibleValuesForAttributeType($type){
-		if(!is_numeric($type))
-		$type = $type->ID;
-
-		if(!$type) return null;
-
-		$where = "TypeID = $type AND \"ProductVariation\".\"ProductID\" = ".$this->owner->ID;
-		//TODO: is there a better place to obtain these joins?
-		$join = "INNER JOIN \"ProductVariation_AttributeValues\" ON \"ProductAttributeValue\".\"ID\" = \"ProductVariation_AttributeValues\".\"ProductAttributeValueID\"" .
-					" INNER JOIN \"ProductVariation\" ON \"ProductVariation_AttributeValues\".\"ProductVariationID\" = \"ProductVariation\".\"ID\"";
-
-		return DataObject::get('ProductAttributeValue',$where,$sort = "\"ProductAttributeValue\".\"Sort\",\"ProductAttributeValue\".\"Value\"",$join);
-	}
-
+	
 }

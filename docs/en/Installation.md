@@ -4,7 +4,7 @@ Assuming you have a [SilverStripe 2.4 installation](http://doc.silverstripe.org/
 
  * Put a copy of the shop code into your site directory. The directory must be called 'shop' for some links to work properly.
  * Also get a copy of the [http://silverstripe.org/payment-module/ Payment module], this is a requirement of shop. Make sure you get the right version of the Payment Module - currently this is /branches/0.3
- * Run mysite/db/build?flush=1
+ * Run [yoursite.tld]/dev/build?flush=1
 
 ## Configuration Options
 

@@ -12,7 +12,7 @@ class OrderModifierForm extends Form {
 	/*
 	protected $order;
 
-	function __construct(Order $order, CheckoutPage $checkoutPage, $name, FieldSet $fields, FieldSet $actions, $validator = null) {
+	function __construct(Order $order, CheckoutPage $checkoutPage, $name, FieldList $fields, FieldList $actions, $validator = null) {
 		$this->order = $order;
 
 		parent::__construct($checkoutPage, $name, $fields, $actions, $validator);
@@ -24,7 +24,7 @@ class OrderModifierForm extends Form {
 		if(Director::is_ajax()){
 			return $status; //TODO: allow for custom return types, eg json - similar to ShoppingCart::return_data()
 		}
-		Director::redirect(CheckoutPage::find_link());
+		Controller::curr()->redirect(CheckoutPage::find_link());
 		 
 	}
 	
