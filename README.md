@@ -44,3 +44,7 @@ In other words, only copy the lines which you need and understand.
 
 Visit [yoursite]/dev/tasks/ShopMigrationTask to migrate your database to work properly.
 Make sure you take a database backup, as perfect results aren't guaranteed.
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/burnbright/silverstripe-shop/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
