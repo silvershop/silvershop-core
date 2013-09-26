@@ -191,9 +191,8 @@ class Order extends DataObject {
 			new DropdownField("Status","Status", self::get_order_status_options()),
 			new LiteralField('MainDetails', $this->renderWith(self::$admin_template))
 		));
-		$payments = $this->owner->Payments();
 		$paymentConfig = new GridFieldConfig_RelationEditor();
-		$paymentGrid = new GridField("Payments","Payments",$payments,$paymentConfig);
+		$paymentGrid = new GridField("Payments","Payments", $this->Payments() ,$paymentConfig);
 		$fields->addFieldToTab("Root.Payments", $paymentGrid);
 		$this->extend('updateCMSFields',$fields);
 		return $fields;
