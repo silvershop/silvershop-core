@@ -35,7 +35,7 @@
 							$QuantityField
 							<ul class="productActions">
 								<li><a href="$removeallLink" title="<% sprintf(_t("REMOVE","Remove &quot;%s&quot; from your cart"),$Title) %>"><% _t("REMOVELINK","Remove from cart") %></a></li>
-								<li><a href="$checkoutLink" title="<% _t("GOTOCHECKOUT","Go to the checkout now") %>"><% _t("GOTOCHECKOUTLINK","Go to the checkout") %></a></li>
+								<li><a href="$Order.checkoutLink" title="<% _t("GOTOCHECKOUT","Go to the checkout now") %>"><% _t("GOTOCHECKOUTLINK","Go to the checkout") %></a></li>
 							</ul>
 						</div>
 					<% end_with %>
