@@ -392,6 +392,7 @@ class ShoppingCart_Controller extends Controller{
 			//TODO: store error message
 			return null;
 		}
+		
 		// #146 - ensure only live products are returned
 		$buyable = Versioned::get_by_stage($buyableclass, 'Live')->byID($id);
 		
