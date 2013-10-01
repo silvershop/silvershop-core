@@ -164,12 +164,30 @@ class ProductVariationDecorator extends DataExtension{
 	/**
 	 * Make sure variations are deleted with product.
 	 */
-	function onBeforeDelete(){
-		foreach($this->owner->Variations() as $variation){
-			$variation->delete();
-			$variation->destroy();
+	function onAfterDelete(){
+		$remove = false;
+
+		// if a record is staged or live, leave it's variations alone.
+		if(!property_exists($this, 'owner')) {
+			$remove = true;
 		}
-		//TODO: make this work...otherwise we get rouge variations that could mess up future imports
+		else {
+
+			$staged = Versioned::get_by_stage($this->owner->ClassName, 'Stage')->byID($this->owner->ID);
+			$live = Versioned::get_by_stage($this->owner->ClassName, 'Live')->byID($this->owner->ID);
+
+			if(!$staged && !$live) {
+				$remove = true;
+			}	
+		}
+
+		if($remove) {
+
+			foreach($this->owner->Variations() as $variation){
+				$variation->delete();
+				$variation->destroy();
+			}
+		}
 	}
 	
 	function contentcontrollerInit($controller){
