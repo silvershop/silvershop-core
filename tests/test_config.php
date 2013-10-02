@@ -1,10 +1,16 @@
 <?php
 /**
  * Reset to all default configuration settings.
+ *
  */
+$cfg = Config::inst();
 
 // * * * NON-ECOMMERCE SETTINGS
-Config::inst()->update('Email', 'admin_email', 'test@myshop.com');
+$cfg->update('Email', 'admin_email', 'test@myshop.com');
+$cfg->update('Payment', 'allowed_gateways', array(
+	'Dummy',
+	'Manual'
+));
 
 //i18n::set_locale('');
 
