@@ -25,9 +25,9 @@ class CalculateProductPopularity extends BuildTask{
 		foreach(array("_Live","") as $stage){
 			$sql =<<<SQL
 				UPDATE "Product$stage" SET "Popularity" = (
-					SELECT 
-						SUM(1 / DATEDIFF(NOW(),Order.Paid)) * SUM(`OrderItem`.`Quantity`)
-						#	/ DATEDIFF(SiteTree$stage.Created,NOW()) 
+					SELECT
+						SUM(1 / (DATEDIFF(NOW(),Order.Paid)+1)) * SUM(`OrderItem`.`Quantity`)
+						#	/ DATEDIFF(SiteTree$stage.Created,NOW())
 						AS Popularity
 					FROM "SiteTree$stage"
 						INNER JOIN "Product_OrderItem" ON "SiteTree$stage"."ID" = "Product_OrderItem"."ProductID"
