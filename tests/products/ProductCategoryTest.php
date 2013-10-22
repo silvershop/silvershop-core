@@ -40,6 +40,24 @@ class ProductCategoryTest extends SapphireTest{
 			//array('URLSegment' => 'mp3-player'), //music players category isn't published, therefore it shouldn't show up
 		), $products);
 	}
+
+	function testSecondaryMembership(){
+		$products = $this->electronics->ProductsShowable();
+		$this->assertDOSEquals(array(
+			array('URLSegment' => 'hdtv'),
+//			array('URLSegment' => 'mp3-player'),
+		), $products, 'Should initially contain only direct membership products');
+
+		$this->socks->ProductCategories()->add($this->electronics);
+		$this->socks->write();
+
+		$products = $this->electronics->ProductsShowable();
+		$this->assertDOSEquals(array(
+			array('URLSegment' => 'hdtv'),
+//			array('URLSegment' => 'mp3-player'),
+			array('URLSegment' => 'socks'),
+		), $products, 'After adding a category via many-many to socks, that should show up as well');
+	}
 	
 	//TODO: check filtering
 	//check published/ non published / allow purchase etc

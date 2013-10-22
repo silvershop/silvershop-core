@@ -5,7 +5,7 @@
 
 // * * * NON-ECOMMERCE SETTINGS
 Payment::set_site_currency('USD');
-Email::setAdminEmail('test@myshop.com');
+Config::inst()->update('Email', 'admin_email', 'test@myshop.com');
 
 //i18n::set_locale('');
 
