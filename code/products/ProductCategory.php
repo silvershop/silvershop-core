@@ -98,45 +98,49 @@ class ProductCategory extends Page {
 	 * Retrieve a set of products, based on the given parameters. Checks get query for sorting and pagination.
 	 *
 	 * @param string $extraFilter Additional SQL filters to apply to the Product retrieval
-	 * @param array $permissions
-	 * @return DataObjectSet
+	 * @param bool $recursive [optional]
+	 * @return PaginatedList
 	 */
-	 //TODO: optimise this where possible..perhaps use less joins
 	function ProductsShowable($extraFilter = '', $recursive = true){
-		$filter = ""; //
-		$join = "";
+		$filter = array();
 
-		$this->extend('updateFilter',$extraFilter);
+		$this->extend('updateFilter', $extraFilter);
+		if ($extraFilter) $filter[] = $extraFilter;
+		if (self::$must_have_price) $filter[] = '"BasePrice" > 0';
 
-		if($extraFilter) $filter.= " AND $extraFilter";
-		if(self::$must_have_price) $filter .= " AND \"BasePrice\" > 0";
-
-		$limit = (isset($_GET['start']) && (int)$_GET['start'] > 0) ? (int)$_GET['start'].",".self::$page_length : "0,".self::$page_length;
-		$sort = (isset($_GET['sortby'])) ? Convert::raw2sql($_GET['sortby']) : "\"FeaturedProduct\" DESC,\"URLSegment\"";
+		$sort = (isset($_GET['sortby'])) ? Convert::raw2sql($_GET['sortby']) : "\"FeaturedProduct\" DESC, \"URLSegment\"";
 
 		//hard coded sort configuration //TODO: make these custom
-		if($sort == "Popularity") $sort .= " DESC";
+		if ($sort == "Popularity") $sort .= " DESC";
 
+		// Figure out the categories to check
 		$groupids = array($this->ID);
-
-		if(($recursive === true || $recursive === 'true') && self::$include_child_groups && $childgroups = $this->ChildGroups(true))
-			$groupids = array_merge($groupids,$childgroups->map('ID','ID'));
-
-		$groupidsimpl = implode(',',$groupids);
-
-		$products = Versioned::get_by_stage('Product','Live',"\"ParentID\" IN ($groupidsimpl) $filter",$sort,"",$limit);
-		$allproducts = Versioned::get_by_stage('Product','Live',"\"ParentID\" IN ($groupidsimpl) $filter","","");
-
-		if($allproducts){
-			$products->TotalCount = $allproducts->Count(); //add total count to returned data for 'showing x to y of z products'
+		if (($recursive === true || $recursive === 'true')
+				&& self::$include_child_groups
+				&& $childgroups = $this->ChildGroups(true)) {
+			$groupids = array_merge($groupids, $childgroups->map('ID','ID'));
 		}
+
+		// Build the basic DataList
+		$products = Versioned::get_by_stage('Product','Live', implode(' AND ', $filter), $sort)
+			->leftJoin('Product_ProductCategories', '"Product_ProductCategories"."ProductID" = "Product"."ID"')
+			->filterAny(array(
+				'ParentID' => $groupids,
+				'Product_ProductCategories.ProductCategoryID' => $groupids,
+			));
+
+		// Convert to a paginated list
+		$products = new PaginatedList($products, Controller::curr()->getRequest());
+		$products->setPageLength(self::$page_length);
+		$products->TotalCount = $products->getTotalItems(); // this is just for compatibility
 
 		return $products;
 	}
 
 	/**
 	 * Return children ProductCategory pages of this group.
-	 * @return DataObjectSet
+	 * @param bool $recursive [optional]
+	 * @return DataList
 	 */
 	function ChildGroups($recursive = false) {
 		if($recursive){
@@ -155,7 +159,7 @@ class ProductCategory extends Page {
 
 	/**
 	 * Recursively generate a product menu.
-	 * @return DataObjectSet
+	 * @return DataList
 	 */
 	function GroupsMenu() {
 		if($parent = $this->Parent()) {
