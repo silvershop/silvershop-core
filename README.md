@@ -22,7 +22,9 @@ A tremendous thanks to [everyone that has already contributed](https://github.co
 ## Requirements
 
  * SilverStripe 3+ [sapphire](https://github.com/silverstripe/sapphire) & [cms](https://github.com/silverstripe/silverstripe-cms)
- * [Payment Module 0.3+](https://github.com/silverstripe-labs/silverstripe-payment)
+ * [Payment Module 0.3+](https://github.com/silverstripe-labs/silverstripe-payment) - read note below.
+
+__Important note about payment module:__ The temporary solution to payment module issues is to use the ss3 branch found [here](https://github.com/burnbright/silverstripe-payment/tree/ss3). The payment module is currently [undergoing a rewrite](https://github.com/burnbright/silverstripe-omnipay).
 
 ## Documentation
 
