@@ -35,7 +35,7 @@ class ProductCategory extends Page {
 	//TODO: allow grouping multiple sort fields under one 'sort option', and allow choosing direction of each
 	protected static $sort_options = array(
 		'URLSegment' => 'Alphabetical',
-		'Price' => 'Lowest Price',
+		'BasePrice' => 'Lowest Price',
 		//'Popularity' => 'Most Popular'
 		//'Featured' => 'Featured',
 		//'Weight' => 'Weight'
