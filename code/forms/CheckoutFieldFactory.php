@@ -59,7 +59,7 @@ class CheckoutFieldFactory{
 	function getPaymentMethodFields(){
 		//TODO: only get one field if there is no option
 		return new OptionsetField(
-			'PaymentMethod','',Payment::get_supported_methods(),array_keys(Payment::get_supported_methods())
+			'PaymentMethod','',Payment::get_supported_gateways(),array_keys(Payment::get_supported_gateways())
 		);
 	}
 	
