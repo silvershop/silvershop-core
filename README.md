@@ -24,8 +24,6 @@ A tremendous thanks to [everyone that has already contributed](https://github.co
  * SilverStripe 3+ [sapphire](https://github.com/silverstripe/sapphire) & [cms](https://github.com/silverstripe/silverstripe-cms)
  * [Omnipay Module](https://github.com/burnbright/silverstripe-omnipay)
 
-e payment module is currently [undergoing a rewrite](https://github.com/burnbright/silverstripe-omnipay).
-
 ## Documentation
 
  * http://demo.ss-shop.org/docs - for Developers & Users
