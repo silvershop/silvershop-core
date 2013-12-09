@@ -1,0 +1,26 @@
+---
+Name: shop
+After: 'framework/*','cms/*'
+---
+
+SiteConfig:
+  extensions:
+    - ShopConfig
+Payment:
+  extensions:
+    - ShopPayment
+Page_Controller:
+  extensions:
+    - ViewableCart
+ShoppingCart_Controller:
+  extensions:
+    - ViewableCart
+Member:
+  extensions:
+    - ShopMember
+Image:
+  extensions:
+    - Product_Image
+Product_Controller:
+  extensions:
+    - ProductControllerVariationExtension
