@@ -21,6 +21,9 @@ Member:
 Image:
   extensions:
     - Product_Image
+Product:
+  extensions:
+    - ProductVariationDecorator
 Product_Controller:
   extensions:
     - ProductControllerVariationExtension
