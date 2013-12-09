@@ -82,7 +82,7 @@
 												<% with Cart %>
 													$BillingAddress
 												<% end_with %>
-											<% end_with %>
+											<% end_if %>
 										</div>
 									</div>
 								<% end_if %>
