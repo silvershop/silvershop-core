@@ -122,11 +122,12 @@ class Checkout{
 	 * Set payment method
 	 */
 	function setPaymentMethod($paymentmethod){
-		//if(!Payment::has_method($paymentmethod)){ //assume method always exists for now
+		$methods = $this->getPaymentMethods();
+		if(!isset($methods[$paymentmethod])){
 			Session::clear("Checkout.PaymentMethod",null);
 			Session::clear("Checkout.PaymentMethod");
 			return $this->error(_t("Checkout.NOPAYMENTMETHOD","Payment method does not exist"));
-		//}
+		}
 		Session::set("Checkout.PaymentMethod",$paymentmethod);
 		return true;
 	}
@@ -137,9 +138,10 @@ class Checkout{
 	 */
 	function getSelectedPaymentMethod($nice = true){
 		$method = Session::get("Checkout.PaymentMethod");
-		// if($nice){
-		// 	$method = Payment::method_title($method);
-		// }
+		if($nice){
+			$methods = $this->getPaymentMethods();
+			$method = $methods[$method];
+		}
 		return $method;
 	}
 	

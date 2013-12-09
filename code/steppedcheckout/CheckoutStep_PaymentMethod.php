@@ -9,12 +9,14 @@ class CheckoutStep_PaymentMethod extends CheckoutStep{
 	
 	function paymentmethod(){
 		$methods = Checkout::get()->getPaymentMethods();
-		if($methods->Count() == 1){ //skip step if there is only one payment type
+		//skip this step if there is only one payment type
+		if(count($methods) == 1){
 			$this->setpaymentmethod(array(
-				'PaymentMethod' => $methods->First()->ClassName
+				'PaymentMethod' => key($methods)
 			), null);
 			return;
 		}
+		
 		return array(
 			'Form' => $this->PaymentMethodForm()
 		);
@@ -25,12 +27,16 @@ class CheckoutStep_PaymentMethod extends CheckoutStep{
 		$fields = new FieldList();
 		$methods = $checkout->getPaymentMethods();
 		if(!empty($methods)){
-			$defaultmethod = array_shift(array_keys($methods));
+			$defaultmethod = key($methods);
 			$fields->push(new OptionsetField(
 				'PaymentMethod','',$methods, $defaultmethod
 			));
 		}else{
-			$fields->push(new LiteralField("nomethods","<p class=\"message warning\">"._t("Checkout.NOMETHODS","No payment methods have been set up")."<p>"));
+			$fields->push(new LiteralField("nomethods",
+				"<p class=\"message warning\">".
+					_t("Checkout.NOMETHODS","No payment methods have been set up").
+				"<p>")
+			);
 		}
 		$actions = new FieldList(
 			new FormAction("setpaymentmethod","Continue")
