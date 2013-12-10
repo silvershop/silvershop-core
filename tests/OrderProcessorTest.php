@@ -40,7 +40,7 @@ class OrderProcessorTest extends SapphireTest {
 	function testCreatePayment(){
 		$order = $this->objFromFixture("Order", "placed");
 		$processor = OrderProcessor::create($order);
-		$payment = $processor->createPayment('ChequePayment');
+		$payment = $processor->createPayment('Dummy');
 		$this->assertTrue((boolean)$payment);
 	}
 	

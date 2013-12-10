@@ -113,11 +113,11 @@ class SteppedCheckoutTest extends FunctionalTest{
 	function testPaymentMethod(){
 		//$this->checkout->paymentmethod(); //doesn't work, because a redirect occurrs if there is only 1 payment type
 		$data = array(
-			'PaymentMethod' => 'Cheque',
+			'PaymentMethod' => 'Dummy',
 			'action_setpaymentmethod' => 1
 		);
 		$response = $this->post('/checkout/PaymentMethodForm', $data);
-		$this->assertEquals($this->checkout->getSelectedPaymentMethod(), 'Cheque');
+		$this->assertEquals($this->checkout->getSelectedPaymentMethod(), 'Dummy');
 	}
 	
 	function testSummary(){
@@ -126,13 +126,13 @@ class SteppedCheckoutTest extends FunctionalTest{
 		$data = array(
 			'Notes' => 'Leave it around the back',
 			'ReadTermsAndConditions' => 1,
-			'PaymentMethod' => 'Cheque',
+			'PaymentMethod' => 'Dummy',
 			'action_place' => "Confirm and Pay"
 		);
 		$member = $this->objFromFixture("Member", "joebloggs");
 		$member->logIn(); //log in member before processing
 		
-		Checkout::get($this->cart)->setPaymentMethod("Cheque"); //a selected payment method is required
+		Checkout::get($this->cart)->setPaymentMethod("Dummy"); //a selected payment method is required
 		$form->loadDataFrom($data);
 		$this->assertTrue($form->validate(),"Checkout data is valid");		
 		$response = $this->post('/checkout/ConfirmationForm', $data);

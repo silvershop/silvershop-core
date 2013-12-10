@@ -71,7 +71,7 @@ class OrderTest extends SapphireTest {
 	
 	function testTotalOutstanding(){
 		$order = self::createOrder();
-		$this->assertEquals($order->TotalOutstanding(), 208,"Outstanding total is correct");
+		$this->assertEquals(208, $order->TotalOutstanding(),"Outstanding total is correct");
 	}
 	
 	function testRounding(){

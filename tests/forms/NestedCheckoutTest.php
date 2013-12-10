@@ -11,7 +11,7 @@ class NestedCheckoutTest extends SapphireTest{
 	
 	function testNestedCheckoutForm(){
 		
-		$this->assertEquals('/shop/checkout/', CheckoutPage::find_link(), 'Link is: ' . CheckoutPage::find_link());
+		$this->assertEquals(Director::baseURL().'shop/checkout/', CheckoutPage::find_link(), 'Link is: ' . CheckoutPage::find_link());
 	}
 	
 }

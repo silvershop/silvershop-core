@@ -176,8 +176,7 @@ class OrderProcessor{
 		}
 		$payment = Payment::create()
 			->init($gateway, $this->order->TotalOutstanding(), $currency = "NZD")
-			->setReturnUrl($this->order->Link())
-			->setCancelUrl($this->Link()."?message=payment cancelled");
+			->setReturnUrl($this->order->Link());
 		$this->order->Payments()->add($payment);
 
 		return $payment;
