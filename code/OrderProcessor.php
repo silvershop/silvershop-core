@@ -110,30 +110,6 @@ class OrderProcessor{
 	}
 
 	/**
-	 * Create a new payment for an order
-	 */
-	function createPayment($paymentClass = "Payment"){
-		$payment = class_exists($paymentClass) ? new $paymentClass() : null;
-		if(!($payment && $payment instanceof Payment)) {
-			$this->error(_t("PaymentProcessor.NOTPAYMENT","`$paymentClass` isn't a valid payment method"));
-			return false;
-		}
-		if(!$this->order->canPay(Member::currentUser())){
-			$this->error(_t("PaymentProcessor.CANTPAY","Order can't be paid for"));
-			return false;
-		}
-		$payment->OrderID = $this->order->ID;
-		$payment->PaidForID = $this->order->ID;
-		$payment->PaidForClass = $this->order->class;
-		$payment->Amount->Amount = $this->order->TotalOutstanding();
-		$payment->Reference = $this->order->Reference;
-		$payment->write();
-		$this->order->Payments()->add($payment);
-		$payment->ReturnURL = $this->order->Link(); //store temp return url reference
-		return $payment;
-	}
-
-	/**
 	 * Determine if an order can be placed.
 	 * @param unknown_type $order
 	 */
@@ -177,17 +153,34 @@ class OrderProcessor{
 			'FirstName' => $this->order->FirstName,
 			'Surname' => $this->order->Surname,
 			'Email' => $this->order->Email
-			//TODO: there is probably more that needs to be mapped (billing address??)
 		);
 		// Process payment, get the result back
-		$result = $payment->processPayment($data, null); //TODO: payment shouldn't ask for a form!
-		if($result->isProcessing()) { // isProcessing(): Long payment process redirected to another website (PayPal, Worldpay)
-			return $result->getValue();
+		$response = $payment->purchase($data);
+		if($response->isSuccessful()) {
+			$this->completePayment();
 		}
-		if($result->isSuccess()) {
-			$this->sendReceipt();
+		return $response->redirect();
+	}
+
+	/**
+	 * Create a new payment for an order
+	 */
+	function createPayment($gateway){
+		if(!in_array($gateway, Payment::get_supported_gateways())) {
+			$this->error(_t("PaymentProcessor.INVALIDGATEWAY","`$paymentClass` isn't a valid payment gateway"));
+			return false;
 		}
-		return $payment->ReturnURL;
+		if(!$this->order->canPay(Member::currentUser())){
+			$this->error(_t("PaymentProcessor.CANTPAY","Order can't be paid for"));
+			return false;
+		}
+		$payment = Payment::create()
+			->init($gateway, $this->order->TotalOutstanding(), $currency = "NZD")
+			->setReturnUrl($this->order->Link())
+			->setCancelUrl($this->Link()."?message=payment cancelled");
+		$this->order->Payments()->add($payment);
+
+		return $payment;
 	}
 
 	/**

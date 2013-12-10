@@ -168,7 +168,6 @@ class Order extends DataObject {
 		)
 	);
 
-
 	public static $rounding_precision = 2;
 	public static $reference_id_padding = 5;
 	

@@ -24,3 +24,6 @@ Product:
 Product_Controller:
   extensions:
     - ProductControllerVariationExtension
+Payment:
+  extensions:
+    - ShopPayment
