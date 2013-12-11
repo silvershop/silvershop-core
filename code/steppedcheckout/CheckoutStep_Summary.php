@@ -20,7 +20,8 @@ class CheckoutStep_Summary extends CheckoutStep{
 
 		$gateway = Checkout::get()->getSelectedPaymentMethod(false);
 
-		$fields = $gateway ? (new GatewayFieldsFactory($gateway))->getFields() : new FieldList();
+		$factory = new GatewayFieldsFactory($gateway);
+		$fields = $gateway ? $factory->getFields() : new FieldList();
 		$fields->push($cff->getNotesField());
 
 		if($tf = $cff->getTermsConditionsField()){
