@@ -115,7 +115,7 @@ class Checkout{
 	 * Get a dataobject of payment methods.
 	 */
 	function getPaymentMethods(){
-		return Payment::get_supported_gateways();
+		return GatewayInfo::get_supported_gateways();
 	}
 	
 	/**
@@ -136,7 +136,7 @@ class Checkout{
 	 * Gets the sorted payment methdod from the session.
 	 * 
 	 */
-	function getSelectedPaymentMethod($nice = true){
+	function getSelectedPaymentMethod($nice = false){
 		$method = Session::get("Checkout.PaymentMethod");
 		if($nice){
 			$methods = $this->getPaymentMethods();

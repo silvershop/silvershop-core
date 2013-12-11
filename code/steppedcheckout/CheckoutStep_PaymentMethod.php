@@ -56,7 +56,7 @@ class CheckoutStep_PaymentMethod extends CheckoutStep{
 	
 	function getSelectedPaymentMethod(){
 		if($checkout = Checkout::get()){
-			return $checkout->getSelectedPaymentMethod();
+			return $checkout->getSelectedPaymentMethod(true);
 		}
 		return false;
 	}

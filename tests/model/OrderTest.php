@@ -141,8 +141,8 @@ class OrderTest extends SapphireTest {
 		//add a payment
 		$payment = new Payment();
 		$payment->OrderID = $order->ID;
-		$payment->AmountAmount = 200;
-		$payment->AmountCurrency = 'USD';
+		$payment->Amount = 200;
+		$payment->Currency = 'USD';
 		$payment->Status = 'Success';
 		$payment->write();
 		

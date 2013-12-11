@@ -3,7 +3,7 @@
 /**
  * Allows casting some template values to show "FREE" instead of $0.00.
  */
-class CanBeFreeCurrency extends ShopCurrency{
+class CanBeFreeCurrency extends Currency{
 	
 	function Nice(){
 		if($this->value == 0){

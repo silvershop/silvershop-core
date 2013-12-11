@@ -1,19 +1,17 @@
 language: php
 
 php:
-   - 5.3
+    - 5.3
 
 env:
-  matrix:
-    - DB=MYSQL CORE_RELEASE=3.0
     - DB=MYSQL CORE_RELEASE=3.1
-    - DB=MYSQL CORE_RELEASE=master
-    - DB=PGSQL CORE_RELEASE=master
 
 matrix:
   include:
+    - php: 5.3
+      env: DB=PGSQL CORE_RELEASE=3.1
     - php: 5.4
-      env: DB=MYSQL CORE_RELEASE=master
+      env: DB=SQLITE CORE_RELEASE=3.1
 
 before_script:
   - composer self-update
@@ -23,4 +21,4 @@ before_script:
   - cd ~/builds/ss
 
 script: 
-  - phpunit shop/tests/
+  - phpunit silverstripe-shop/tests

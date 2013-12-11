@@ -17,9 +17,18 @@
 				<td class="price">$Created.Nice</td>
 				<td class="price">$Amount.Nice $Currency</td>
 				<td class="price">$Status</td>
-				<td class="price">$PaymentMethod</td>
+				<td class="price">$Gateway</td>
 				<td class="price">$Message.NoHTML</td>
 			</tr>
+			<% if Messages %>
+				<% loop Messages %>
+					<tr colspan="5">
+						<td>
+							$ClassName $Message $User.Name
+						</td>
+					</tr>
+				<% end_loop %>
+			<% end_if %>
 		<% end_loop %>
 	</tbody>
 </table>

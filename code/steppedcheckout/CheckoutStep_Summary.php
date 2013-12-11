@@ -17,17 +17,21 @@ class CheckoutStep_Summary extends CheckoutStep{
 	
 	function ConfirmationForm(){
 		$cff = CheckoutFieldFactory::singleton();
-		$fields = new FieldList(
-			$cff->getNotesField()
-		);
+
+		$gateway = Checkout::get()->getSelectedPaymentMethod(false);
+
+		$fields = $gateway ? (new GatewayFieldsFactory($gateway))->getFields() : new FieldList();
+		$fields->push($cff->getNotesField());
+
 		if($tf = $cff->getTermsConditionsField()){
 			$fields->push($tf);
 		}
 		$actions = new FieldList(
-			new FormAction("place","Confirm and Pay")
+			new FormAction("place",_t("Checkout.CONFIRMANDPAY","Confirm and Pay"))
 		);
 		$validator = new CheckoutValidator();
-		$form = new Form($this->owner,"ConfirmationForm",$fields,$actions, $validator);
+
+		$form = new Form($this->owner,"ConfirmationForm",$fields,$actions,$validator);
 		$this->owner->extend('updateConfirmationForm',$form);
 		return $form;
 	}
@@ -43,7 +47,10 @@ class CheckoutStep_Summary extends CheckoutStep{
 			$this->owner->redirectBack();
 			return false;
 		}
-		$paymentredirect = $processor->makePayment(Checkout::get($order)->getSelectedPaymentMethod(false));
+		$paymentredirect = $processor->makePayment(
+			Checkout::get($order)->getSelectedPaymentMethod(false),
+			$form->getData()
+		);
 		if(!$this->owner->redirectedTo()){ //only redirect if one hasn't been done already
 			$this->owner->redirect($paymentredirect);
 		}

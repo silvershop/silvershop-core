@@ -124,9 +124,14 @@ class SteppedCheckoutTest extends FunctionalTest{
 		$this->checkout->summary();
 		$form = $this->checkout->ConfirmationForm();
 		$data = array(
+			//dummy card data
+			'number' => '4242424242424242', //this creditcard will succeed
+			'expiryMonth' => '5',
+			'expiryYear' => date("Y",strtotime("+1 year")),
+
 			'Notes' => 'Leave it around the back',
 			'ReadTermsAndConditions' => 1,
-			'PaymentMethod' => 'Dummy',
+
 			'action_place' => "Confirm and Pay"
 		);
 		$member = $this->objFromFixture("Member", "joebloggs");

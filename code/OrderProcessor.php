@@ -140,20 +140,21 @@ class OrderProcessor{
 	 * or redirect to order link.
 	 * @return string - url for redirection after payment has been made
 	 */
-	function makePayment($paymentClass){
+	function makePayment($gateway, $gatewaydata = array()){
 		//create payment
-		$payment = $this->createPayment($paymentClass);
+		$payment = $this->createPayment($gateway);
 		if(!$payment){
 			$this->error("Payment could not be created");
 			return $this->order->Link();
 		}
 		//map data fields
-		$data = array(
-			'Reference' => $this->order->Reference,
-			'FirstName' => $this->order->FirstName,
-			'Surname' => $this->order->Surname,
-			'Email' => $this->order->Email
-		);
+		$data = array_merge($gatewaydata, array(
+			'reference' => $this->order->Reference,
+			'firstName' => $this->order->FirstName,
+			'lastName' => $this->order->Surname,
+			'email' => $this->order->Email,
+			'company' => $this->order->Company
+		));
 		// Process payment, get the result back
 		$response = $payment->purchase($data);
 		if($response->isSuccessful()) {
@@ -166,7 +167,7 @@ class OrderProcessor{
 	 * Create a new payment for an order
 	 */
 	function createPayment($gateway){
-		if(!in_array($gateway, Payment::get_supported_gateways())) {
+		if(!in_array($gateway, GatewayInfo::get_supported_gateways())) {
 			$this->error(_t("PaymentProcessor.INVALIDGATEWAY","`$paymentClass` isn't a valid payment gateway"));
 			return false;
 		}
@@ -178,7 +179,6 @@ class OrderProcessor{
 			->init($gateway, $this->order->TotalOutstanding(), $currency = "NZD")
 			->setReturnUrl($this->order->Link());
 		$this->order->Payments()->add($payment);
-
 		return $payment;
 	}
 
