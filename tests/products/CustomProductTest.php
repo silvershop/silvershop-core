@@ -10,7 +10,6 @@ class CustomProductTest extends FunctionalTest{
 	}
 	
 	function testCustomProduct(){
-		
 		$cart = ShoppingCart::singleton();
 		
 		$options1 = array('Color' => 'Green','Size' => 5,'Premium' => true);
@@ -18,22 +17,22 @@ class CustomProductTest extends FunctionalTest{
 		$item = $cart->get($this->thing,$options1);
 		
 		$this->assertTrue((bool)$item,"item with customisation 1 exists");
-		$this->assertEquals($item->Quantity,1);
+		$this->assertEquals(1, $item->Quantity);
 		
 		$this->assertTrue($cart->add($this->thing,2,$options1),"add another two customisation 1");
 		$item = $cart->get($this->thing,$options1);
-		$this->assertEquals($item->Quantity,3, "quantity has updated correctly");
-		$this->assertEquals($item->Color,"Green");
-		$this->assertEquals($item->Size,5);
-		$this->assertEquals($item->Premium,1); //should be true?
-		
+		$this->assertEquals(3, $item->Quantity, "quantity has updated correctly");
+		$this->assertEquals("Green", $item->Color);
+		$this->assertEquals(5, $item->Size);
+		$this->assertEquals(1, $item->Premium); //should be true?
+
 		$this->assertFalse($cart->get($this->thing),"try to get a non-customised product");
 		
 		$options2 =  array('Color' => 'Blue','Size' => 6, 'Premium' => false);
 		$this->assertTrue($cart->add($this->thing,5,$options2),"add customisation 2 to cart");
 		$item = $cart->get($this->thing,$options2);
 		$this->assertTrue((bool)$item,"item with customisation 2 exists");
-		$this->assertEquals($item->Quantity,5);
+		$this->assertEquals(5, $item->Quantity);
 		
 		$options3 = array('Color' => 'Blue');
 		$this->assertTrue($cart->add($this->thing,1,$options3),"add a sub-variant of customisation 2");
@@ -44,47 +43,29 @@ class CustomProductTest extends FunctionalTest{
 		
 		$order = $cart->current();
 		$items = $order->Items();
-		
-		$this->assertEquals($items->Count(),4,"4 items in cart");
+		$this->assertEquals(4, $items->Count(),"4 items in cart");
 		
 		//remove
 		$cart->remove($this->thing,2,$options2);
 		$item = $cart->get($this->thing,$options2);
 		$this->assertNotNull($item,'item exists in cart');
-		$this->assertEquals($item->Quantity,3);
+		$this->assertEquals(3, $item->Quantity);
+
+		$cart->clear();
 		
 		//set quantity
-		$options4 = array('Size' => 12, 'Color' => 'Turquoise');
-		$cart->setQuantity($this->thing,5,$options4);
-		$item = $cart->get($this->thing,$options4);
-		$this->assertNotNull($item,'item exists in cart');
-		$this->assertEquals($item->Quantity,5,"quantity is 5");
+		$options4 = array('Size' => 12, 'Color' => 'Blue');
+		$resp = $cart->setQuantity($this->thing, 5, $options4);
+
+		$item = $cart->get($this->thing, $options4);
+		$this->assertTrue((bool)$item,'item exists in cart');
+
+		$this->assertEquals(5, $item->Quantity,"quantity is 5");
 		
 		//test by using urls
 		//add a partial match
 		//TODO: what about default values that have been set?
 	}
-	
-	/*
-	function testCustomProductURLs(){
-		
-		$options = array(
-			'Color' => 'Green',
-			'Size' => 3,
-			'Premium' => true
-		);
-		
-		$this->get(ShoppingCart_Controller::add_item_link($this->thing,$options));
-		
-		$cart = ShoppingCart::singleton();
-		
-		Debug::show($cart->current()->Items());
-		$item = $cart->get($this->thing);
-		$this->assertEquals($item->Quantity,1);
-		
-		//$this->get();
-	}
-	*/
 	
 }
 

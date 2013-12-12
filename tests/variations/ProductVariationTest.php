@@ -39,8 +39,8 @@ class ProductVariationTest extends SapphireTest{
 		$sizelarge = $this->objFromFixture("ProductAttributeValue", "size_large");
 		$attributes = array($colorred->ID, $sizelarge->ID);
 		$variation = $this->ball->getVariationByAttributes($attributes);
-		$this->assertTrue((bool)$variation,"Variation exists");
-		$this->assertEquals($variation->sellingPrice(),22,"Variation price is $22 (price of ball");
+		$this->assertTrue((bool)$variation, "Variation exists");
+		$this->assertEquals(22, $variation->sellingPrice(),"Variation price is $22 (price of ball");
 		
 		$attributes = array($colorred->ID, 999);
 		$variation = $this->ball->getVariationByAttributes($attributes);

@@ -54,23 +54,11 @@ class OrderTest extends SapphireTest {
 		$this->assertEquals($items->Sum('Weight', true), 0.7,"Total order weight sums correctly");
 	}
 	
-	function testSubtotal() {
+	function testTotals() {
 		$order = self::createOrder();
-		$this->assertEquals($order->SubTotal(), 408, "Subtotal is correct"); // 200 + 200 + 8
-	}
-	
-	function testGrandTotal(){
-		$order = self::createOrder();
-		$this->assertEquals($order->GrandTotal(), 408,"Grand total is correct");
-	}
-
-	function testTotalPaid(){
-		$order = self::createOrder();
-		$this->assertEquals($order->TotalPaid(), 200,"Outstanding total is correct");
-	}
-	
-	function testTotalOutstanding(){
-		$order = self::createOrder();
+		$this->assertEquals(408, $order->SubTotal(), "Subtotal is correct"); // 200 + 200 + 8
+		$this->assertEquals(408, $order->GrandTotal(),"Grand total is correct");
+		$this->assertEquals(200, $order->TotalPaid(),"Outstanding total is correct");
 		$this->assertEquals(208, $order->TotalOutstanding(),"Outstanding total is correct");
 	}
 	
@@ -81,8 +69,8 @@ class OrderTest extends SapphireTest {
 			'Status' => 'Unpaid'
 		));
 		$order->Total = 123.257323; //setTotal IS called here
-		$this->assertEquals(123.26,$order->Total(), "Check total rounds appropriately");
-		$this->assertEquals(123.26,$order->TotalOutstanding(),"Check total outstanding rounds appropriately");
+		$this->assertEquals(123.26, $order->Total(), "Check total rounds appropriately");
+		$this->assertEquals(123.26, $order->TotalOutstanding(),"Check total outstanding rounds appropriately");
 	}
 	
 	function testPlacedOrderImmutability(){
@@ -129,26 +117,27 @@ class OrderTest extends SapphireTest {
 	 * Total should be $408.00
 	 */
 	function createOrder(){
-		$order = new Order();
-		$order->write();
-		$item1a = $this->mp3player->createItem(2);
-		$item1a->write();
-		$order->Items()->add($item1a);
-		$item1b = $this->socks->createItem();
-		$item1b->write();
-		$order->Items()->add($item1b);
+		return $this->objFromFixture("Order", "paid");
+		// $order = new Order();
+		// $order->write();
+		// $item1a = $this->mp3player->createItem(2);
+		// $item1a->write();
+		// $order->Items()->add($item1a);
+		// $item1b = $this->socks->createItem();
+		// $item1b->write();
+		// $order->Items()->add($item1b);
 		
-		//add a payment
-		$payment = new Payment();
-		$payment->OrderID = $order->ID;
-		$payment->Amount = 200;
-		$payment->Currency = 'USD';
-		$payment->Status = 'Success';
-		$payment->write();
+		// //add a payment
+		// $payment = new Payment();
+		// $payment->OrderID = $order->ID;
+		// $payment->Amount = 200;
+		// $payment->Currency = 'USD';
+		// $payment->Status = 'Captured';
+		// $payment->write();
 		
-		$order->calculate();
-		$order->write();
-		return $order;
+		// $order->calculate();
+		// $order->write();
+		//return $order;
 	}
 	
 	function testCanFunctions(){

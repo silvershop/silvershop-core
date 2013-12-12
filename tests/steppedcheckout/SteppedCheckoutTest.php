@@ -111,7 +111,6 @@ class SteppedCheckoutTest extends FunctionalTest{
 	}
 	
 	function testPaymentMethod(){
-		//$this->checkout->paymentmethod(); //doesn't work, because a redirect occurrs if there is only 1 payment type
 		$data = array(
 			'PaymentMethod' => 'Dummy',
 			'action_setpaymentmethod' => 1
@@ -124,8 +123,8 @@ class SteppedCheckoutTest extends FunctionalTest{
 		$this->checkout->summary();
 		$form = $this->checkout->ConfirmationForm();
 		$data = array(
-			//dummy card data
-			'number' => '4242424242424242', //this creditcard will succeed
+			//dummy card data - which will cause successful payment
+			'number' => '4242424242424242',
 			'expiryMonth' => '5',
 			'expiryYear' => date("Y",strtotime("+1 year")),
 
@@ -141,9 +140,9 @@ class SteppedCheckoutTest extends FunctionalTest{
 		$form->loadDataFrom($data);
 		$this->assertTrue($form->validate(),"Checkout data is valid");		
 		$response = $this->post('/checkout/ConfirmationForm', $data);
-		$this->assertEquals($this->cart->Status,'Unpaid', "Order status is updated");
+		$this->assertEquals('Paid', $this->cart->Status, "Order status is now paid");
 		
-		$order = DataObject::get_by_id("Order",$this->cart->ID);
+		$order = Order::get()->byID($this->cart->ID);
 		$m = $order->Member();
 		$this->assertTrue($m->exists());
 		$this->assertEquals($m->Email,"test@example.com");

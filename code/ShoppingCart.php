@@ -52,10 +52,9 @@ class ShoppingCart{
 		if($this->order) return $this->order;
 		//find order by id saved to session (allows logging out and retaining cart contents)
 		$sessionid = Session::get(self::$cartid_session_name);
-		if ($sessionid && $order = DataObject::get_one('Order', "\"Status\" = 'Cart' AND \"ID\" = $sessionid")) {
+		if ($sessionid && $order = Order::get()->filter(array("Status"=>"Cart","ID"=>$sessionid))->first()) {
 			return $this->order = $order;
 		}
-		//TODO: get order by logged in member id?
 		return false;
 	}
 	
@@ -201,7 +200,7 @@ class ShoppingCart{
 	
 	/**
 	 * Finds an existing order item.
-	 * @param int or Buyable $buyable
+	 * @param Buyable $buyable
 	 * @param string $filter
 	 * @return the item requested, or false
 	 */
@@ -213,15 +212,19 @@ class ShoppingCart{
 		$filter = array(
 			'OrderID' => $order->ID
 		);
+
+
 		$itemclass = $buyable->stat('order_item');
 		$singletonorderitem = singleton($itemclass);
 		$relationship = $singletonorderitem->stat('buyable_relationship');
 		$filter[$singletonorderitem->stat('buyable_relationship')."ID"] = $buyable->ID;
-		$required = $singletonorderitem->stat('required_fields');
-		$required = array_merge(array('Order',$singletonorderitem->stat('buyable_relationship')),$required);
+		
+		$required = array_merge(
+						array('Order',$singletonorderitem->stat('buyable_relationship')),
+						$singletonorderitem->stat('required_fields')
+					);
 		$query = new MatchObjectFilter($itemclass,array_merge($customfilter,$filter),$required);
-		$filter = $query->getFilter();
-		$item = DataObject::get_one($itemclass, $filter);
+		$item = $itemclass::get()->where($query->getFilter())->first();
 		if(!$item){
 			return $this->error(_t("ShoppingCart.ITEMNOTFOUND","Item not found."));
 		}

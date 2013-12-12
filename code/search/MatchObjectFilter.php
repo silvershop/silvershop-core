@@ -89,7 +89,7 @@ class MatchObjectFilter{
 				
 			}
 		}
-		return implode(" AND ",$new);
+		return $new;
 	}
 	
 }

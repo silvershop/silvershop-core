@@ -122,10 +122,6 @@ Order:
     cart:
         Name: Cart
         Total: 8
-    othercart:
-        Name: Other cart
-        Member: =>Member.bobjones
-        Total: 200
     placed:
         Status: Unpaid
         Created: 2012-11-21 15:23:32
@@ -137,7 +133,11 @@ Order:
         Placed: 2012-10-02 07:33:21
         Paid: 2012-10-02 07:34:29
         Member: =>Member.joebloggs
-        Total: 800
+        Total: 408
+    othercart:
+        Name: Other cart
+        Member: =>Member.bobjones
+        Total: 200
 
 Product_OrderItem:
     cart_socks:
@@ -164,8 +164,15 @@ Product_OrderItem:
         Product: =>Product.socks
         ProductVersion: 1
         UnitPrice: 8
-        Quantity: 100
-        CalculatedTotal: 800
+        Quantity: 1
+        CalculatedTotal: 8
+    paid_mp3player:
+        Order: =>Order.paid
+        Product: =>Product.mp3player
+        ProductVersion: 1
+        UnitPrice: 200
+        Quantity: 2
+        CalculatedTotal: 400
     othercart_mp3player:
         Order: =>Order.othercart
         Product: =>Product.mp3player
@@ -173,15 +180,14 @@ Product_OrderItem:
         UnitPrice: 200
         Quantity: 1
         CalculatedTotal: 200
-
-#TODO: prevent test payments from triggering email sends via ShopPayment onAfterWrite
-#ChequePayment:
-#    paid_success:
-#        Status: Success
-#        AmountAmount: 800
-#        AmountCurrency: NZD
-#        Created: 2012-10-02 07:33:21
-#        Order: =>Order.paid
+Payment:
+    paid_success:
+        Gateway: Dummy
+        Status: Captured
+        MoneyAmount: 200
+        MoneyCurrency: USD
+        Created: 2012-10-02 07:33:21
+        Order: =>Order.paid
         
 SiteConfig:
     config:

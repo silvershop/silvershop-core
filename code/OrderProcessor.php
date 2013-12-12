@@ -160,7 +160,7 @@ class OrderProcessor{
 		if($response->isSuccessful()) {
 			$this->completePayment();
 		}
-		return $response->redirect();
+		return $response->redirectURL();
 	}
 
 	/**
@@ -168,7 +168,7 @@ class OrderProcessor{
 	 */
 	function createPayment($gateway){
 		if(!in_array($gateway, GatewayInfo::get_supported_gateways())) {
-			$this->error(_t("PaymentProcessor.INVALIDGATEWAY","`$paymentClass` isn't a valid payment gateway"));
+			$this->error(_t("PaymentProcessor.INVALIDGATEWAY","`$gateway` isn't a valid payment gateway"));
 			return false;
 		}
 		if(!$this->order->canPay(Member::currentUser())){
