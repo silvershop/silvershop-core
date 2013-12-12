@@ -47,7 +47,7 @@ class ShoppingCartControllerTest extends FunctionalTest {
 
 		$this->assertEquals($items->Count(), 2, 'There are 2 items in the cart');
 		//join needed to provide ProductID
-		$mp3playeritem = $items->innerJoin("Product_OrderItem","OrderItem.ID = Product_OrderItem.ID")->find('ProductID',$this->mp3player->ID);	//join needed to provide ProductID	
+		$mp3playeritem = $items->innerJoin("Product_OrderItem","\"OrderItem\".\"ID\" = \"Product_OrderItem\".\"ID\"")->find('ProductID',$this->mp3player->ID);	//join needed to provide ProductID	
 		$this->assertNotNull($mp3playeritem, "Mp3 player is in cart");
 
 		// We have the product that we asserted in our fixture file, with a quantity of 2 in the cart
@@ -57,7 +57,7 @@ class ShoppingCartControllerTest extends FunctionalTest {
 		// set item quantiy
 		$this->get(ShoppingCart_Controller::set_quantity_item_link($this->mp3player,array('quantity' => 5))); //add item via url
 		$items = ShoppingCart::curr()->Items();
-		$mp3playeritem = $items->innerJoin("Product_OrderItem","OrderItem.ID = Product_OrderItem.ID")->find('ProductID',$this->mp3player->ID); //join needed to provide ProductID
+		$mp3playeritem = $items->innerJoin("Product_OrderItem","\"OrderItem\".\"ID\" = \"Product_OrderItem\".\"ID\"")->find('ProductID',$this->mp3player->ID); //join needed to provide ProductID
 		$this->assertEquals($mp3playeritem->Quantity, 5, 'We have 5 of this product in the cart.');
 
 		// non purchasable product checks

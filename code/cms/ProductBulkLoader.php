@@ -219,7 +219,7 @@ class ProductBulkLoader extends CsvBulkLoader{
 		
 		$obj->write(); //make sure product is in DB
 		//TODO: or find existing variation
-		$variation = DataObject::get_one('ProductVariation',"InternalItemID = '$val'");
+		$variation = ProductVariation::get()->filter("InternalItemID",'$val')->first();
 		if(!$variation){
 			$variation = new ProductVariation();
 			$variation->InternalItemID = $val;
