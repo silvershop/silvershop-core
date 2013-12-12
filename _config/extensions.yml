@@ -27,3 +27,6 @@ Product_Controller:
 Payment:
   extensions:
     - ShopPayment
+Order:
+  extensions:
+    - Payable

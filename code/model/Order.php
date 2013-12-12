@@ -19,7 +19,7 @@ class Order extends DataObject {
  	 * AdminCancelled: Order cancelled by the administrator
  	 * MemberCancelled: Order cancelled by the customer (Member)
  	 */
-	public static $db = array(
+	private static $db = array(
 		'Total' => 'Currency',
 		'Reference' => 'Varchar', //allow for customised order numbering schemes
 		//status
@@ -39,22 +39,21 @@ class Order extends DataObject {
 		'SeparateBillingAddress' => 'Boolean'
 	);
 
-	public static $has_one = array(
+	private static $has_one = array(
 		'Member' => 'Member',
 		'ShippingAddress' => 'Address',
 		'BillingAddress' => 'Address'
 	);
 
-	public static $has_many = array(
+	private static $has_many = array(
 		'Items' => 'OrderItem',
 		'Modifiers' => 'OrderModifier',
-		'OrderStatusLogs' => 'OrderStatusLog',
-		'Payments' => 'Payment'
+		'OrderStatusLogs' => 'OrderStatusLog'
 	);
+
+	private static $default_sort = "\"Placed\" DESC, \"Created\" DESC";
 	
-	public static $default_sort = "\"Placed\" DESC, \"Created\" DESC";
-	
-	public static $defaults = array(
+	private static $defaults = array(
 		'Status' => 'Cart'
 	);
 	
@@ -190,9 +189,6 @@ class Order extends DataObject {
 			new DropdownField("Status","Status", self::get_order_status_options()),
 			new LiteralField('MainDetails', $this->renderWith(self::$admin_template))
 		));
-		$paymentConfig = new GridFieldConfig_RelationEditor();
-		$paymentGrid = new GridField("Payments","Payments", $this->Payments() ,$paymentConfig);
-		$fields->addFieldToTab("Root.Payments", $paymentGrid);
 		$this->extend('updateCMSFields',$fields);
 		return $fields;
 	}
@@ -438,21 +434,6 @@ class Order extends DataObject {
 		return round($this->GrandTotal() - $this->TotalPaid(), self::$rounding_precision);
 	}
 	
-	/**
-	 * Add up successful payments
-	 */
-	function TotalPaid() {
-		$paid = 0;
-		if($payments = $this->Payments()) {
-			foreach($payments as $payment) {
-				if($payment->Status == 'Success') {
-					$paid += $payment->Amount;
-				}
-			}
-		}
-		return $paid;
-	}
-
 	/**
 	 * Get the link for finishing order processing.
 	 */
