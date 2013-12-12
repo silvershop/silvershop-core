@@ -89,9 +89,9 @@ class ProductVariationDecorator extends DataExtension{
 			$alias = "A$typeid";
 			$variations = $variations->innerJoin(
 				"ProductVariation_AttributeValues",
-				"ProductVariation.ID = $alias.ProductVariationID",
+				"\"ProductVariation\".\"ID\" = \"$alias\".\"ProductVariationID\"",
 				$alias
-			)->where("$alias.ProductAttributeValueID = $valueid");
+			)->where("\"$alias\".\"ProductAttributeValueID\" = $valueid");
 		}
 		if($variation = $variations->First())
 			return $variation;

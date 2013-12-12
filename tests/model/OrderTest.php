@@ -94,7 +94,7 @@ class OrderTest extends SapphireTest {
 		$this->assertFalse($order->isCart());
 		
 		//item values don't change
-		$items = $order->Items()->innerJoin("Product_OrderItem","OrderItem.ID = Product_OrderItem.ID"); //TODO: why is this join needed?
+		$items = $order->Items()->innerJoin("Product_OrderItem",'"OrderItem"."ID" = "Product_OrderItem"."ID"'); //TODO: why is this join needed?
 		$this->assertNotNull($items);
 		$this->assertDOSEquals(array(
 			array('ProductID' => $this->mp3player->ID,'Quantity' => 2, 'CalculatedTotal' => 400),
