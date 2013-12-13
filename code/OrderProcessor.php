@@ -134,7 +134,6 @@ class OrderProcessor{
 		return true;
 	}
 	
-	
 	/**
 	 * Create a payment model, and provide link to redirect to external gateway,
 	 * or redirect to order link.
@@ -144,17 +143,33 @@ class OrderProcessor{
 		//create payment
 		$payment = $this->createPayment($gateway);
 		if(!$payment){
-			$this->error("Payment could not be created");
 			return $this->order->Link();
 		}
-		//map data fields
+		//map shop data to omnipay fields
+		$shipping = $this->order->getShippingAddress();
+		$billing = $this->order->getBillingAddress();
 		$data = array_merge($gatewaydata, array(
 			'reference' => $this->order->Reference,
 			'firstName' => $this->order->FirstName,
 			'lastName' => $this->order->Surname,
 			'email' => $this->order->Email,
-			'company' => $this->order->Company
+			'company' => $this->order->Company,
+			'billingAddress1' => $billing->Address,
+			'billingAddress2' => $billing->AddressLine2,
+			'billingCity' => $billing->City,
+			'billingPostcode' => $billing->PostalCode,
+			'billingState' => $billing->State,
+			'billingCountry' => $billing->Country,
+			'billingPhone' => $billing->Phone,
+			'shippingAddress1' => $shipping->Address,
+			'shippingAddress2' => $shipping->AddressLine2,
+			'shippingCity' => $shipping->City,
+			'shippingPostcode' => $shipping->PostalCode,
+			'shippingState' => $shipping->State,
+			'shippingCountry' => $shipping->Country,
+			'shippingPhone' => $shipping->Phone,
 		));
+
 		// Process payment, get the result back
 		$response = $payment->purchase($data);
 		if($response->isSuccessful()) {
