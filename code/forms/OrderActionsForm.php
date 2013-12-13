@@ -28,7 +28,7 @@ class OrderActionsForm extends Form{
 				sprintf(_t("OrderActionsForm.OUTSTANDING","Outstanding: %s"),DBField::create('Currency',$order->TotalOutstanding())->Nice())
 			));
 			$fields->push(new OptionsetField(
-				'PaymentMethod','Payment Method',Payment::get_supported_methods(),array_shift(array_keys(Payment::get_supported_methods()))
+				'PaymentMethod','Payment Method',GatewayInfo::get_supported_methods(),array_shift(array_keys(GatewayInfo::get_supported_methods()))
 			));
 		}
 		if(OrderManipulation::$allow_cancelling && $order->canCancel()){
@@ -41,8 +41,8 @@ class OrderActionsForm extends Form{
 	/**
 	 * Make payment for a place order, where payment had previously failed.
 	 * 
-	 * @param unknown_type $data
-	 * @param unknown_type $form
+	 * @param array $data
+	 * @param Form $form
 	 * @return boolean
 	 */
 	function dopayment($data, $form) {
