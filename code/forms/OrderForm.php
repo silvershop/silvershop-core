@@ -202,9 +202,6 @@ class OrderForm extends Form {
 	 * creating a new {@link Order} record, and updating the
 	 * customer's details {@link Member} record.
 	 *
-	 * {@link Payment} instance is created, linked to the order,
-	 * and payment is processed {@link Payment::processPayment()}
-	 *
 	 * @param array $data Form request data submitted from OrderForm
 	 * @param Form $form Form object for this action
 	 * @param HTTPRequest $request Request object for this action
