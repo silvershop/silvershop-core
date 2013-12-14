@@ -393,7 +393,12 @@ class ShoppingCart_Controller extends Controller{
 			return null;
 		}
 		// #146 - ensure only live products are returned
-		$buyable = Versioned::get_by_stage($buyableclass, 'Live')->byID($id);
+		//TODO: Product variations are not 'Live' versioned remove this silly if statment
+		if($buyableclass == "ProductVariation"){
+			$buyable = Versioned::get_by_stage($buyableclass, 'Stage')->byID($id);
+		}else{
+			$buyable = Versioned::get_by_stage($buyableclass, 'Live')->byID($id);
+		}
 		
 		if(!$buyable || !($buyable instanceof Buyable)){
 			//TODO: store error message
