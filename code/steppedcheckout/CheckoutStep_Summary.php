@@ -42,6 +42,9 @@ class CheckoutStep_Summary extends CheckoutStep{
 		$form->saveInto($order);
 		$order->write();
 		$processor = OrderProcessor::create($order);
+
+		//TODO: should payment details be validated first?
+
 		//try to place order
 		if(!$processor->placeOrder(Member::currentUser())){
 			$form->sessionMessage($processor->getError(), 'bad');
@@ -53,7 +56,7 @@ class CheckoutStep_Summary extends CheckoutStep{
 			$form->getData()
 		);
 		if(!$this->owner->redirectedTo()){ //only redirect if one hasn't been done already
-			return $this->owner->redirect($redirecturl);
+			return $this->owner->redirect($redirecturl."?message=".$processor->getError());
 		}
 		return;
 	}
