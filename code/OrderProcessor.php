@@ -182,7 +182,7 @@ class OrderProcessor{
 	 * Create a new payment for an order
 	 */
 	function createPayment($gateway){
-		if(!in_array($gateway, GatewayInfo::get_supported_gateways())) {
+		if(!GatewayInfo::is_supported($gateway)) {
 			$this->error(_t("PaymentProcessor.INVALIDGATEWAY","`$gateway` isn't a valid payment gateway"));
 			return false;
 		}
