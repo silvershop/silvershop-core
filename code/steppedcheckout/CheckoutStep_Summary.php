@@ -56,7 +56,7 @@ class CheckoutStep_Summary extends CheckoutStep{
 			$form->getData()
 		);
 		if(!$this->owner->redirectedTo()){ //only redirect if one hasn't been done already
-			return $this->owner->redirect($redirecturl."?message=".$processor->getError());
+			return $this->owner->redirect($redirecturl);
 		}
 		return;
 	}
