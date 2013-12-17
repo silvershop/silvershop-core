@@ -47,30 +47,18 @@ class CheckoutPage extends Page {
 	 * @return string Link to checkout page
 	 */
 	static function find_link($urlSegment = false, $action = null, $id = null) {
-		if(!$page = DataObject::get_one('CheckoutPage')) {
+		if(!$page = CheckoutPage::get()->first()) {
 			return Controller::join_links(Director::baseURL(),CheckoutPage_Controller::$url_segment);
 		}
 		$id = ($id)? "/".$id : "";
 		return ($urlSegment) ? $page->URLSegment : Controller::join_links($page->Link($action),$id);
 	}
 
-	function canCreate($member = null) {
-		return !DataObject::get_one("SiteTree", "\"ClassName\" = 'CheckoutPage'");
-	}
-
 	/**
-	 * Returns the link to the checkout page on this site, using
-	 * a specific Order ID that already exists in the database.
-	 *
-	 * @param int $orderID ID of the {@link Order}
-	 * @param boolean $urlSegment If set to TRUE, only returns the URLSegment field
-	 * @return string Link to checkout page
+	 * Only allow one checkout page
 	 */
-	static function get_checkout_order_link($orderID, $urlSegment = false) {
-		if(!$page = DataObject::get_one('CheckoutPage')) {
-			user_error('No CheckoutPage was found. Please create one in the CMS!', E_USER_ERROR);
-		}
-		return ($urlSegment ? $page->URLSegment . '/' : $page->Link()) . $orderID;
+	function canCreate($member = null) {
+		return !CheckoutPage::get()->exists();
 	}
 
 	function getCMSFields() {

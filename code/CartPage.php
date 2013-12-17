@@ -13,6 +13,13 @@ class CartPage extends Page{
 
 	static $icon = 'shop/images/icons/cart';
 
+	/**
+	 * Only allow one cart page
+	 */
+	function canCreate($member = null) {
+		return !CartPage::get()->exists();
+	}
+
 	function getCMSFields(){
 		$fields = parent::getCMSFields();
 		if($checkouts = DataObject::get('CheckoutPage')) {
