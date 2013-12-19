@@ -19,12 +19,12 @@ class CheckoutTest extends SapphireTest{
 	
 	function testSetUpShippingAddress(){		
 		$this->checkout->setShippingAddress($this->address1);
-		$this->assertEquals($this->cart->ShippingAddressID,$this->address1->ID,"shipping address was successfully added");
+		$this->assertEquals($this->address1->ID, $this->cart->ShippingAddressID,"shipping address was successfully added");
 	}
 	
 	function testSetUpBillingAddress(){
 		$this->checkout->setBillingAddress($this->address2);
-		$this->assertEquals($this->cart->BillingAddressID,$this->address2->ID,"billing address was successfully added");
+		$this->assertEquals($this->address2->ID, $this->cart->BillingAddressID,"billing address was successfully added");
 	}
 
 	function testSetShippingMethod(){
@@ -34,7 +34,7 @@ class CheckoutTest extends SapphireTest{
 	
 	function testSetPaymentMethod(){
 		$this->assertTrue($this->checkout->setPaymentMethod("Dummy"),"Valid method set correctly");
-		$this->assertEquals($this->checkout->getSelectedPaymentMethod(false),'Dummy');
+		$this->assertEquals('Dummy', $this->checkout->getSelectedPaymentMethod(false));
 	}
 	
 	/**

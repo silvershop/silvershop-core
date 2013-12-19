@@ -49,9 +49,9 @@ class OrderTest extends SapphireTest {
 			array('ProductID' => $this->mp3player->ID,'Quantity' => 2, 'CalculatedTotal' => 400),
 			array('ProductID' => $this->socks->ID, 'Quantity' => 1, 'CalculatedTotal' => 8)
 		), $items);
-		$this->assertEquals($items->Quantity(),3,"Quantity is 3");
+		$this->assertEquals(3, $items->Quantity(),"Quantity is 3");
 		$this->assertTrue($items->Plural(),"There is more than one item");
-		$this->assertEquals($items->Sum('Weight', true), 0.7,"Total order weight sums correctly");
+		$this->assertEquals(0.7, $items->Sum('Weight', true),"Total order weight sums correctly");
 	}
 	
 	function testTotals() {
@@ -81,7 +81,7 @@ class OrderTest extends SapphireTest {
 		$processor = OrderProcessor::create($order)->placeOrder();
 		
 		//check totals
-		$this->assertEquals($order->Total(),408);
+		$this->assertEquals(408, $order->Total());
 		
 		//make a changes to existing products
 		$this->mp3player->BasePrice = 100;
@@ -90,7 +90,7 @@ class OrderTest extends SapphireTest {
 		$this->socks->write();
 		
 		//total doesn't change
-		$this->assertEquals($order->Total(),408);
+		$this->assertEquals(408, $order->Total());
 		$this->assertFalse($order->isCart());
 		
 		//item values don't change
@@ -103,13 +103,13 @@ class OrderTest extends SapphireTest {
 		
 		$mp3player = $items->find('ProductID',$this->mp3player->ID);//join needed to provide ProductID
 		$this->assertNotNull($mp3player,"MP3 player is in order");
-		$this->assertEquals($mp3player->UnitPrice(),200,"Unit price remains the same");
-		$this->assertEquals($mp3player->Total(),400,"Total remains the same");
+		$this->assertEquals(200, $mp3player->UnitPrice(),"Unit price remains the same");
+		$this->assertEquals(400, $mp3player->Total(),"Total remains the same");
 		
 		$socks = $items->find('ProductID',$this->socks->ID);
 		$this->assertNotNull($socks,"Socks are in order");
-		$this->assertEquals($socks->UnitPrice(),8,"Unit price remains the same");
-		$this->assertEquals($socks->Total(),8,"Total remains the same");
+		$this->assertEquals(8, $socks->UnitPrice(), "Unit price remains the same");
+		$this->assertEquals(8, $socks->Total(), "Total remains the same");
 	}
 	
 	/**

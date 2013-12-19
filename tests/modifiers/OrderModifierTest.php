@@ -26,7 +26,7 @@ class OrderModifierTest extends FunctionalTest {
 	function testModifierCalculation(){
 		$order = $this->createOrder();
 		$order->calculate();		
-		$this->assertEquals($order->Total,510); //Total with 25% tax
+		$this->assertEquals(510, $order->Total); //Total with 25% tax
 	}
 	
 	/**

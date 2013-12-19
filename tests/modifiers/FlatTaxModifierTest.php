@@ -26,8 +26,8 @@ class FlatTaxModifierTest extends FunctionalTest {
 		$order = $this->cart->current();
 		$order->calculate();
 		$modifier = $order->getModifier('FlatTaxModifier');
-		$this->assertEquals($modifier->Amount,26.09); //remember that 15% tax inclusive is different to exclusive
-		$this->assertEquals($order->GrandTotal(),200);
+		$this->assertEquals(26.09, $modifier->Amount); //remember that 15% tax inclusive is different to exclusive
+		$this->assertEquals(200, $order->GrandTotal());
 	}
 	
 	function testExclusiveTax(){
@@ -37,8 +37,8 @@ class FlatTaxModifierTest extends FunctionalTest {
 		$order = $this->cart->current();
 		$order->calculate();
 		$modifier = $order->getModifier('FlatTaxModifier');
-		$this->assertEquals($modifier->Amount,30);
-		$this->assertEquals($order->GrandTotal(),230);
+		$this->assertEquals(30, $modifier->Amount);
+		$this->assertEquals(230, $order->GrandTotal());
 	}
 
 }

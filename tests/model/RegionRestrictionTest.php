@@ -11,21 +11,21 @@ class RegionRestrictionTest extends SapphireTest{
 		$address = $this->objFromFixture("Address", "wnz6012");
 		$rate = $this->getRate($address);
 		$this->assertTrue((boolean)$rate);
-		$this->assertEquals($rate->Rate,2);
+		$this->assertEquals(2,$rate->Rate);
 	}
 	
 	function testMatchRegional(){
 		$address = $this->objFromFixture("Address", "wnz6022");
 		$rate = $this->getRate($address);
 		$this->assertTrue((boolean)$rate);
-		$this->assertEquals($rate->Rate,10);
+		$this->assertEquals(10,$rate->Rate);
 	}
 	
 	function testMatchNational(){
 		$address = $this->objFromFixture("Address", "anz1010");
 		$rate = $this->getRate($address);
 		$this->assertTrue((boolean)$rate);
-		$this->assertEquals($rate->Rate,50);
+		$this->assertEquals(50,$rate->Rate);
 	}
 		
 	function testMatchDefault(){
@@ -37,7 +37,7 @@ class RegionRestrictionTest extends SapphireTest{
 		$address = $this->objFromFixture("Address", "bukhp193eq");
 		$rate = $this->getRate($address);
 		$this->assertTrue((boolean)$rate);
-		$this->assertEquals($rate->Rate,100);
+		$this->assertEquals(100, $rate->Rate);
 	}
 	
 	function testNoMatch(){

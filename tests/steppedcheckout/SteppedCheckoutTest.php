@@ -65,8 +65,8 @@ class SteppedCheckoutTest extends FunctionalTest{
 		$response = $this->post('/checkout/CreateAccountForm', $data); //redirect to next step
 		$member = ShopMember::get_by_identifier("mb@blahmail.com");
 		$this->assertTrue((boolean)$member, "Check new account was created");
-		$this->assertEquals($member->FirstName, 'Michael');
-		$this->assertEquals($member->Surname, 'Black');
+		$this->assertEquals('Michael', $member->FirstName);
+		$this->assertEquals('Black', $member->Surname);
 	}
 	
 	function testContactDetails(){

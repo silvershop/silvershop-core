@@ -13,8 +13,8 @@ class ShopMemberTest extends FunctionalTest{
 		Member::set_unique_identifier_field("Email");
 		$member = ShopMember::get_by_identifier('joe@bloggs.com');
 		$this->assertNotNull($member);
-		$this->assertEquals($member->Email,'joe@bloggs.com');
-		$this->assertEquals($member->FirstName,'Joe');		
+		$this->assertEquals('joe@bloggs.com', $member->Email);
+		$this->assertEquals('Joe', $member->FirstName);		
 	}
 	
 	function testCreateOrMerge(){
@@ -49,8 +49,8 @@ class ShopMemberTest extends FunctionalTest{
 			'FirstName' => 'Joey'
 		));
 		$this->assertTrue((boolean)$member,"Member has been found");
-		$this->assertEquals($member->Surname,'Bloggs','Surname remains the same');
-		$this->assertEquals($member->FirstName,'Joey','Firstname updated');
+		$this->assertEquals('Bloggs', $member->Surname,'Surname remains the same');
+		$this->assertEquals('Joey', $member->FirstName,'Firstname updated');
 		
 		$this->session()->inst_set('loggedInAs', null); //log out
 	}
