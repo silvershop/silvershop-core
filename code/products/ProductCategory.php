@@ -30,7 +30,6 @@ class ProductCategory extends Page {
 
 	protected static $include_child_groups = true;
 	protected static $page_length = 12;
-	protected static $must_have_price = true;
 
 	//TODO: allow grouping multiple sort fields under one 'sort option', and allow choosing direction of each
 	protected static $sort_options = array(
@@ -56,10 +55,6 @@ class ProductCategory extends Page {
 
 	static function set_page_length($length){
 		self::$page_length = $length;
-	}
-
-	static function set_must_have_price($must = true){
-		self::$must_have_price = $must;
 	}
 
 	static function set_sort_options(array $options){
@@ -106,7 +101,6 @@ class ProductCategory extends Page {
 
 		$this->extend('updateFilter', $extraFilter);
 		if ($extraFilter) $filter[] = $extraFilter;
-		if (self::$must_have_price) $filter[] = '"BasePrice" > 0';
 
 		$sort = (isset($_GET['sortby'])) ? Convert::raw2sql($_GET['sortby']) : "\"FeaturedProduct\" DESC, \"URLSegment\"";
 

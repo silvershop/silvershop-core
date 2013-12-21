@@ -118,7 +118,15 @@ class ProductVariation extends DataObject implements Buyable{
 	function canPurchase($member = null) {
 		$allowpurchase = false;
 		if($product = $this->Product()){
-			$allowpurchase = ($this->sellingPrice() > 0) && $product->AllowPurchase;
+			
+			if(Product::$global_must_have_price && $this->sellingPrice() > 0 && $product->AllowPurchase){
+				$allowpurchase = true;
+			}else if(Product::$global_must_have_price){
+				$allowpurchase = false;
+			}else if($product->AllowPurchase){
+				$allowpurchase = true;
+			}
+
 		}
 		$extended = $this->extendedCan('canPurchase', $member);
 		if($allowpurchase && $extended !== null){
@@ -172,8 +180,9 @@ class ProductVariation extends DataObject implements Buyable{
 	
 	function sellingPrice(){
 		$price = $this->Price;
-		if (!$price && $this->Product() && $this->Product()->sellingPrice())
+		if ($price == 0 && $this->Product() && $this->Product()->sellingPrice()){
 			$price = $this->Product()->sellingPrice();
+		}
 		if (!$price) $price = 0;
 		$this->extend("updateSellingPrice",$price); //TODO: this is not ideal, because prices manipulations will not happen in a known order
 		return $price;

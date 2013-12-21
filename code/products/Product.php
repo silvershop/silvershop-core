@@ -74,6 +74,7 @@ class Product extends Page implements Buyable{
 
 	static $number_sold_calculation_type = "SUM"; //SUM or COUNT
 	static $global_allow_purchase = true;
+	static $global_must_have_price = true;
 
 	function getCMSFields() {
 		self::disableCMSFieldsExtensions();
@@ -122,6 +123,13 @@ class Product extends Page implements Buyable{
 	static function set_global_allow_purchase($allow = false){
 		self::$global_allow_purchase = $allow;
 	}
+	
+	/**
+	 * If a product has no price or a price of 0 then hide it.
+	 */
+	static function set_global_must_have_price($allow = false){
+		self::$global_must_have_price = $allow;
+	}
 		
 	/**
 	 * Helper for creating the product groups table
@@ -162,16 +170,24 @@ class Product extends Page implements Buyable{
 		if(!$this->dbObject('AllowPurchase')->getValue()) return false;
 		if(!$this->isPublished()) return false;
 		$allowpurchase = false;
-		if(DataObject::get_one("ProductVariation","ProductID = ".$this->ID)){ // TODO: I get errors if I have not decorated product.php with variations... method does not exist
+		$variationsCheck = false;
+		if(ProductVariation::get()->filter("ProductID",$this->ID)->first()){ // TODO: I get errors if I have not decorated product.php with variations... method does not exist
 			foreach($this->Variations() as $variation){
-				if($variation->canPurchase()){
-					$allowpurchase = true;
-					break;
+				if($variation->canPurchase()){ // TODO: check that at least one variation has a price (not sure if this is the best rule?)
+					$variationsCheck = true;
 				}
 			}
-		}elseif($this->sellingPrice() > 0){
+			if($variationsCheck){
+				$allowpurchase = true;
+			}
+		}else if(self::$global_must_have_price && $this->sellingPrice() > 0){
+			$allowpurchase = true;
+		}else if(self::$global_must_have_price){
+			$allowpurchase = false;
+		}else{
 			$allowpurchase = true;
 		}
+		
 		// Standard mechanism for accepting permission changes from decorators
 		$extended = $this->extendedCan('canPurchase', $member);
 		if($allowpurchase && $extended !== null){
@@ -224,7 +240,7 @@ class Product extends Page implements Buyable{
 	 * Original price for template usage
 	 */
 	function getPrice(){
-		$currency = Payment::site_currency();
+		$currency = ShopConfig::get_site_currency();
 		$field = new Money("Price");
 		$field->setAmount($this->sellingPrice());
 		$field->setCurrency($currency);
