@@ -62,7 +62,5 @@ Address::$required_fields = array(
 	'PostalCode'
 );
 
-Address::$show_form_hints = true; //show form field hints
-
 // * * * HELP
 Product::set_global_allow_purchase(true);

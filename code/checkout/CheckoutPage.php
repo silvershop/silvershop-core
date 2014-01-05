@@ -76,33 +76,48 @@ class CheckoutPage_Controller extends Page_Controller {
 
 	static $allowed_actions = array(
 		'OrderForm',
-		'removemodifier'
+		'payment',
+		'PaymentForm'
 	);
 	
 	/**
 	 * Display a title if there is no model, or no title.
 	 */
-	public function Title(){
+	public function Title() {
 		if($this->Title)
 			return $this->Title;
 		return _t('CheckoutPage.TITLE',"Checkout");
 	}
 
-	/**
-	 * Returns a form allowing a user to enter their
-	 * details to checkout their order.
-	 *
-	 * @return OrderForm object
-	 */
 	function OrderForm() {
-		$cart = $this->Cart(); //see ViewableCart.php
-		if(!(bool)$cart){
+		$order = $this->Cart();
+		if(!(bool)$order){
 			return false;
 		}
-		$form = new OrderForm($this, 'OrderForm');
-		$this->data()->extend('updateOrderForm',$form);
-		$form->loadDataFrom(Checkout::get()->getData());
-		
+
+		return new CheckoutForm(
+			$this,
+			'OrderForm', 
+			new SinglePageCheckoutComponentConfig($order)
+		);
+	}
+
+	function payment(){
+		return array(
+			'Title' => 'Make Payment',
+			'OrderForm' => $this->PaymentForm()
+		);
+	}
+
+	function PaymentForm(){
+		$order = $this->Cart();
+		if(!(bool)$order){
+			return false;
+		}
+		$config = new CheckoutComponentConfig($order);
+		$config->AddComponent(new OnsitePaymentCheckoutComponent());
+		$form = new CheckoutForm($this, "PaymentForm", $config);
+
 		return $form;
 	}
 

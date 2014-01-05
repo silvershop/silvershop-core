@@ -85,8 +85,6 @@ class AccountPage_Controller extends Page_Controller {
 	}
 	
 	function addressbook(){
-		//select defaults
-		//new address form
 		return array(
 			'DefaultAddressForm' => $this->DefaultAddressForm(),
 			'CreateAddressForm' => $this->CreateAddressForm()
@@ -94,23 +92,21 @@ class AccountPage_Controller extends Page_Controller {
 	}
 	
 	function DefaultAddressForm(){
-		$addresses = $this->member->AddressBook();
+		$addresses = $this->member->AddressBook()->sort('Created','DESC');
 		if($addresses->exists()){
 			$fields = new FieldList(
-				$shipping = new DropdownField("DefaultShippingAddressID","Shipping Address",$addresses->map('ID','toString')),
-				$billing = new DropdownField("DefaultBillingAddressID","Billing Address",$addresses->map('ID','toString'))	
+				$shipping = new DropdownField("DefaultShippingAddressID","Shipping Address",$addresses->map('ID','toString')->toArray()),
+				$billing = new DropdownField("DefaultBillingAddressID","Billing Address",$addresses->map('ID','toString')->toArray())	
 			);
-			$shipping->setHasEmptyDefault(true);
-			$shipping->setEmptyString("no default");
-			$billing->setHasEmptyDefault(true);
-			$billing->setEmptyString("no default");
 			$actions = new FieldList(
 				new FormAction('savedefaultaddresses',"Save Defaults")	
 			);
 			$form = new Form($this,"DefaultAddressForm",$fields,$actions);
 			$form->loadDataFrom($this->member);
+
 			return $form;
 		}
+
 		return false;
 	}
 	
@@ -121,11 +117,14 @@ class AccountPage_Controller extends Page_Controller {
 	}
 	
 	function CreateAddressForm(){
-		$fields = singleton('Address')->getFormFields();
+		$singletonaddress = singleton('Address');
+		$fields = $singletonaddress->getFrontEndFields();
 		$actions = new FieldList(
 			new FormAction("saveaddress","Save New Address")	
 		);
-		return new Form($this,"CreateAddressForm",$fields,$actions);	
+		$validator = new RequiredFields($singletonaddress->getRequiredFields());
+
+		return new Form($this, "CreateAddressForm", $fields, $actions, $validator);	
 	}
 	
 	function saveaddress($data,$form){

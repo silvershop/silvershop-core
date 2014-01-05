@@ -209,13 +209,14 @@ class Checkout{
 	}
 	
 	/**
-	 * Gets the sorted payment methdod from the session.
-	 * 
+	 * Gets the selected payment method from the session,
+	 * or the only available method, if there is only one.
 	 */
 	function getSelectedPaymentMethod($nice = false){
-		$method = Session::get("Checkout.PaymentMethod");
+		$methods = $this->getPaymentMethods();
+		reset($methods);
+		$method = count($methods) === 1 ? key($methods) : Session::get("Checkout.PaymentMethod");
 		if($nice){
-			$methods = $this->getPaymentMethods();
 			$method = $methods[$method];
 		}
 		return $method;

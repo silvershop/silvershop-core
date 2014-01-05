@@ -83,7 +83,7 @@ class CheckoutFieldFactory{
 	}
 	
 	function getNotesField(){
-		return new TextareaField("Notes",_t("CheckoutField.NOTES","Message"));
+		return TextareaField::create("Notes",_t("CheckoutField.NOTES","Message"));
 	}
 	
 	function getTermsConditionsField(){

@@ -128,7 +128,7 @@ class OrderProcessor{
 			$this->error(_t("OrderProcessor.NOITEMS","Order has no items"));
 			return false;
 		}
-		//totals are >= 0?
+		//if total > 0, then payment has been made / started
 		//shipping has been selected (if required)
 		//modifiers have been calculated
 		return true;

@@ -6,6 +6,8 @@ class CheckedCheckboxField extends CheckboxField{
 	
 	function setRequiredMessage($message){
 		$this->reqmessage = $message;
+
+		return $this;
 	}
 	
 	function validate($validator){
