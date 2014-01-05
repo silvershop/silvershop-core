@@ -51,7 +51,6 @@ ProductCategory::set_must_have_price(true);
 ProductCategory::set_sort_options( array('Title' => 'Alphabetical','Price' => 'Lowest Price'));
 
 // * * * CHECKOUT
-ExpiryDateField::set_short_months(true);
 SteppedCheckout::$first_step = null; //disable stepped checkout first step
 
 Address::$required_fields = array(

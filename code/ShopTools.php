@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * Globally useful tools
+ */
 class ShopTools{
 	
 	static function price_for_display($price){
@@ -9,6 +12,5 @@ class ShopTools{
 		$field->setCurrency($currency);
 		return $field;
 	}
-	
 	
 }

@@ -40,9 +40,6 @@ ProductCategory::set_include_child_groups(true);
 ProductCategory::set_must_have_price(true);
 ProductCategory::set_sort_options( array('Title' => 'Alphabetical','Price' => 'Lowest Price'));
 
-//CHECKOUT
-ExpiryDateField::set_short_months(true); //uses short months (e.g. Jan instead of january) for credit card expiry date.
-
 //MODIFIERS
 FlatTaxModifier::set_tax("0.15", "GST", $exclusive = false);
 SimpleShippingModifier::set_default_charge(10);

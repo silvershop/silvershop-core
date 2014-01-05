@@ -1,6 +1,6 @@
 <?php
 /**
- * Collects and stores data about the user
+ * Collects and stores data about the user. Keep this data in session.
  */
 class ShopUserInfo extends Object{
 

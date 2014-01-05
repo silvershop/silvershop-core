@@ -17,9 +17,7 @@ class CheckoutStep_Summary extends CheckoutStep{
 	
 	function ConfirmationForm(){
 		$cff = CheckoutFieldFactory::singleton();
-
 		$gateway = Checkout::get()->getSelectedPaymentMethod(false);
-
 		$factory = new GatewayFieldsFactory($gateway);
 		$fields = $gateway ? $factory->getFields() : new FieldList();
 		$fields->push($cff->getNotesField());
