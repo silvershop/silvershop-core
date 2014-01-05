@@ -111,7 +111,9 @@ class Address extends DataObject{
 	}
 	
 	/**
-	 * Produces a map for loading/saving form fields.
+	 * Produces a map of prefixed field names to fields names.
+	 * Sourced from the form field's saveable fields.
+	 * @param string $prefix prefix each key fieldname with a string
 	 */
 	function getFieldMap($prefix = ''){
 		$map = $this->getFormFields()->saveableFields();
@@ -122,6 +124,21 @@ class Address extends DataObject{
 		return $map;
 	}
 	
+	/**
+	 * Get data for form out, with prefix, if desired.
+	 * @param  string $prefix prefix each field key with a string.
+	 * @return array         map of prefixed fieldnames to values
+	 */
+	function getMappedData($prefix = ''){
+		$data = array();
+		foreach($this->getFieldMap($prefix) as $prefixed => $field){
+			if(isset($this->record[$field])){
+				$data[$prefixed] = $this->record[$field];
+			}
+		}
+		return $data;
+	}
+
 	/**
 	 * Get full name associated with this Address
 	 */
@@ -136,18 +153,7 @@ class Address extends DataObject{
 	 * Convert address to a single string.
 	 */
 	function toString($separator = ", "){
-		$fields = array(
-			'FirstName' => $this->FirstName,
-			'Company' => $this->Company,
-			'Surname' => $this->Surname,
-			'Address' => $this->Address,
-			'AddressLine2' => $this->AddressLine2,
-			'City' => $this->City,
-			'PostalCode' => $this->PostalCode,
-			'State' => $this->State,
-			'Country' => $this->Country,
-			'Phone' => $this->Phone
-		);
+		$fields = $this->getMappedData();
 		$this->extend('updateToString',$fields);
 		return implode($separator,array_filter($fields));
 	}

@@ -101,22 +101,8 @@ class CheckoutPage_Controller extends Page_Controller {
 		}
 		$form = new OrderForm($this, 'OrderForm');
 		$this->data()->extend('updateOrderForm',$form);
-		$form->loadDataFrom($cart);
-		//prevent fields being populated with relation object class names
-		$form->loadDataFrom(array(
-			"BillingAddress" => "",
-			"ShippingAddress" => ""
-		));
+		$form->loadDataFrom(Checkout::get()->getData());
 		
-		//load session data
-		if($member = Member::currentUser()){
-			$form->loadDataFrom($member->DefaultShippingAddress(),false,singleton('Address')->getFieldMap('Shipping'));
-			$form->loadDataFrom($member->DefaultBillingAddress(),false,singleton('Address')->getFieldMap('Billing'));
-			$form->loadDataFrom($member);
-		}
-		if($data = Session::get("FormInfo.{$form->FormName()}.data")){
-			$form->loadDataFrom($data);
-		}
 		return $form;
 	}
 

@@ -224,16 +224,8 @@ class OrderForm extends Form {
 				return;
 			}
 		}
-		//save addresses
-		$address = $this->saveAddress($order->getShippingAddress(),$form,$member);
-		$order->ShippingAddressID = $address->ID;
-		if(!$order->SeparateBillingAddress){
-			$order->BillingAddressID = $order->ShippingAddressID;
-		}else{
-			$address = $this->saveAddress($order->getBillingAddress(),$form,$member,true);
-			$order->BillingAddressID = $address->ID;
-		}
-		$order->write();
+		
+		Checkout::get()->setData($form->getData());
 		
 		//TODO: check that price hasn't changed
 		$processor = OrderProcessor::create($order);
@@ -244,29 +236,13 @@ class OrderForm extends Form {
 		}
 		$cart->clear();
 		$this->clearSessionData(); //clears the stored session form data that might have been needed if validation failed
-		// Save payment data from form and process payment
-		$paymentClass = (!empty($data['PaymentMethod'])) ? $data['PaymentMethod'] : null;
-		$payment = $processor->createPayment($paymentClass);
-		if(!$payment){
-			$form->sessionMessage($processor->getError(), 'bad');
-			Controller::curr()->redirect($order->Link());
-			return false;
-		}
-		
-		$payment->ReturnURL = $order->Link(); //set payment return url
-		
-		//prepare $data - ie put into the $data array any fields that may need to be there for payment
-		$data['Reference'] = $order->Reference;
 		
 		// Process payment, get the result back
-		$result = $payment->processPayment($data, $form);
-		if($result->isProcessing()) { // isProcessing(): Long payment process redirected to another website (PayPal, Worldpay)
-			return $result->getValue();
-		}
-		if($result->isSuccess()) {
-			$processor->sendReceipt();
-		}
-		Controller::curr()->redirect($payment->ReturnURL);
+		$redirecturl = $processor->makePayment(
+			Checkout::get($order)->getSelectedPaymentMethod(false),
+			$form->getData()
+		);
+		Controller::curr()->redirect($redirecturl);
 		return true;
 	}
 	
