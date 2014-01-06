@@ -395,9 +395,10 @@ class ShoppingCart_Controller extends Controller{
 			//TODO: store error message
 			return null;
 		}
-		// #146 - ensure only live products are returned
-		$buyable = Versioned::get_by_stage($buyableclass, 'Live')->byID($id);
-		
+		//ensure only live products are returned, if they are versioned
+		 $buyable = Object::has_extension($buyableclass, 'Versioned') ?
+	  		Versioned::get_by_stage($buyableclass, 'Live')->byID($id) :
+			DataObject::get($buyableclass)->byID($id);
 		if(!$buyable || !($buyable instanceof Buyable)){
 			//TODO: store error message
 			return null;

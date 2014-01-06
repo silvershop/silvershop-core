@@ -29,11 +29,11 @@ class ProductVariation extends DataObject implements Buyable{
 	);
 
 	static $versioning = array(
-		'Stage'
+		'Live'
 	);
 
 	static $extensions = array(
-		"Versioned('Stage')"
+		"Versioned('Live')"
 	);
 
 	static $summary_fields = array(
