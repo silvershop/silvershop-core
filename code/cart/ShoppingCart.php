@@ -396,8 +396,31 @@ class ShoppingCart_Controller extends Controller{
 			return null;
 		}
 		// #146 - ensure only live products are returned
-		$buyable = Versioned::get_by_stage($buyableclass, 'Live')->byID($id);
-		
+		if (Object::has_extension($buyableclass, 'Versioned')) {
+			// There is a problem here because ProductVaration doesn't use a Live stage
+			// and Versioned doesn't provide any clean way to determine what stages are
+			// available for a given class.
+
+			// The following does work in the case that a _Live table doesn't exist, but
+			// to my mind it's not ideal because it will squash other errors. Leaving it
+			// here as an alternate option, though. MG 2014-01-06
+//			try {
+//				$buyable = Versioned::get_by_stage($buyableclass, 'Live')->byID($id);
+//			} catch (Exception $e) {
+//				$buyable = DataObject::get($buyableclass)->byID($id);
+//			}
+
+			// The following requires an extra query, but is cleaner than the above
+			$table = singleton($buyableclass)->baseTable() . '_Live';
+			if (DB::getConn()->hasTable($table)) {
+				$buyable = Versioned::get_by_stage($buyableclass, 'Live')->byID($id);
+			} else {
+				$buyable = DataObject::get($buyableclass)->byID($id);
+			}
+		} else {
+			$buyable = DataObject::get($buyableclass)->byID($id);
+		}
+
 		if(!$buyable || !($buyable instanceof Buyable)){
 			//TODO: store error message
 			return null;

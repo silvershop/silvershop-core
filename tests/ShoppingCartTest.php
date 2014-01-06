@@ -43,5 +43,16 @@ Class ShoppingCartTest extends SapphireTest{
 		$this->assertTrue($this->cart->clear(),"clear the cart");
 		$this->assertFalse($this->cart->current(),"there is no cart");
 	}
-	
+
+	function testProductVariations(){
+		$this->loadFixture('shop/tests/fixtures/variations.yml');
+		$ball1 = $this->objFromFixture('ProductVariation', 'redlarge');
+		$ball2 = $this->objFromFixture('ProductVariation', 'redsmall');
+
+		$this->assertTrue($this->cart->add($ball1),      "add one item");
+		$this->assertTrue($this->cart->add($ball2),      "add another item");
+		$this->assertTrue($this->cart->remove($ball1),   "remove first item");
+		$this->assertFalse($this->cart->get($ball1),     "first item not in cart");
+		$this->assertNotNull($this->cart->get($ball1),   "second item is in cart");
+	}
 }
