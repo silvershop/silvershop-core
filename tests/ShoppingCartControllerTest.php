@@ -96,4 +96,26 @@ class ShoppingCartControllerTest extends FunctionalTest {
 		$this->assertEquals(ShoppingCart::curr(), null, 'Cart is clear'); //items is a databoject set, and will therefore be null when cart is empty.
 	}
 
+
+	function testVariations(){
+		$this->loadFixture('shop/tests/fixtures/variations.yml');
+		$ballRoot = $this->objFromFixture('Product', 'ball');
+		$ballRoot->publish('Stage','Live');
+		$ball1 = $this->objFromFixture('ProductVariation', 'redlarge');
+		$ball2 = $this->objFromFixture('ProductVariation', 'redsmall');
+
+		// Add the two variation items
+		$this->get(ShoppingCart_Controller::add_item_link($ball1));
+		$this->get(ShoppingCart_Controller::add_item_link($ball2));
+		$items = ShoppingCart::curr()->Items();
+		$this->assertNotNull($items);
+		$this->assertEquals($items->Count(), 2,          'There are 2 items in the cart');
+
+		// Remove one and see what happens
+		$this->get(ShoppingCart_Controller::remove_all_item_link($ball1));
+		$this->assertEquals($items->Count(), 1,          'There is 1 item in the cart');
+		$this->assertFalse($this->cart->get($ball1),     "first item not in cart");
+		$this->assertNotNull($this->cart->get($ball1),   "second item is in cart");
+	}
+
 }
