@@ -17,7 +17,7 @@ ShopCurrency::setThousandDelimiter(','); //for Money formating
 Object::useCustomClass('SS_Datetime','I18nDatetime', true);
 
 //SHOPPING CART AND ORDER
-OrderProcessor::set_email_from("sales@myshop.com");
+$cfg->update('ShopConfig','email_from', "sales@myshop.com");
 OrderProcessor::set_receipt_subject("Thank you for your order at www.myshop.com - Order #%d");
 Order::set_modifiers(array("FlatTaxModifier", "SimpleShippingModifier"));
 

@@ -12,6 +12,12 @@ Page_Controller:
 ShoppingCart_Controller:
   extensions:
     - ViewableCart
+CheckoutPage_Controller:
+  extensions:
+    - OrderManipulation
+AccountPage:
+  extensions:
+    - OrderManipulation
 Member:
   extensions:
     - ShopMember

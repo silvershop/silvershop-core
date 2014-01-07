@@ -14,23 +14,6 @@ class OrderProcessor{
 	protected $error;
 
 	/**
-	* This is the from address that the receipt
-	* email contains. e.g. "info@shopname.com"
-	*
-	* @var string
-	*/
-	protected static $email_from;
-
-	/**
-	* This is the subject that the receipt
-	* email will contain. e.g. "Joe's Shop Receipt".
-	*
-	* @var string
-	* @deprecated - use translation instead via Order.EMAILSUBJECT
-	*/
-	protected static $receipt_subject = "Shop Sale Information #%d";
-	
-	/**
 	 * Static way to create the order processor.
 	 * Makes creating a processor easier.
 	 * @param Order $order
@@ -38,20 +21,6 @@ class OrderProcessor{
 	static function create(Order $order){		
 		return new OrderProcessor($order);
 	}
-
-	/**
-	* Set the from address for receipt emails.
-	*
-	* @param string $email From address. e.g. "info@myshop.com"
-	*/
-	public static function set_email_from($email) {
-		self::$email_from = $email;
-	}
-
-	public static function set_receipt_subject($subject) {
-		self::$receipt_subject = $subject;
-	}
-
 	/**
 	 * Assign the order to a local variable
 	 * @param Order $order
@@ -98,6 +67,7 @@ class OrderProcessor{
 		}
 		if($member){
 			$this->order->MemberID = $member->ID;
+			//add member to customers group
 			$cgroup = ShopConfig::current()->CustomerGroup();
 			if($cgroup->exists()){
 				$member->Groups()->add($cgroup);
@@ -229,9 +199,9 @@ class OrderProcessor{
 	* @param $copyToAdmin - true by default, whether it should send a copy to the admin
 	*/
 	function sendEmail($emailClass, $copyToAdmin = true){
-		$from = self::$email_from ? self::$email_from : Email::getAdminEmail();
+		$from = Config::get('ShopConfig')->email_from ? Config::get('ShopConfig')->email_from : Email::getAdminEmail();
 		$to = $this->order->getLatestEmail();
-		$subject = sprintf(_t("Order.EMAILSUBJECT",self::$receipt_subject) ,$this->order->Reference);
+		$subject = sprintf(_t("Order.EMAILSUBJECT", "Shop Sale Information #%d") ,$this->order->Reference);
 		$purchaseCompleteMessage = DataObject::get_one('CheckoutPage')->PurchaseComplete;
 		$email = new $emailClass();
 		$email->setFrom($from);

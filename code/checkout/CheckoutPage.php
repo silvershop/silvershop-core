@@ -52,10 +52,6 @@ class CheckoutPage_Controller extends Page_Controller {
 	
 	static $url_segment = "checkout";
 
-	public static $extensions = array(
-		'OrderManipulation'
-	);
-
 	static $allowed_actions = array(
 		'OrderForm',
 		'payment',

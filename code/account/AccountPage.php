@@ -55,10 +55,6 @@ class AccountPage_Controller extends Page_Controller {
 	);
 	
 	protected $member;
-	
-	public static $extensions = array(
-		'OrderManipulation'
-	);
 
 	function init() {
 		parent::init();

@@ -20,8 +20,7 @@ ShopCurrency::setThousandDelimiter('');
 Object::useCustomClass('SS_Datetime','I18nDatetime', true);
 
 // * * * SHOPPING CART, ORDER, MODIFIERS
-OrderProcessor::set_email_from(null);
-OrderProcessor::set_receipt_subject("Shop Sale Information #%d");
+$cfg->update('ShopConfig','email_from', null);
 Order::set_modifiers(array(),true); //empty modifiers
 
 Order::set_table_overview_fields(array(
