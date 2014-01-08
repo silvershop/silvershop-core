@@ -32,7 +32,7 @@ class MembershipCheckoutComponent extends CheckoutComponent{
 	}
 
 	public function getRequiredFields(Order $order) {
-		if(Member::currentUserID()){
+		if(Member::currentUserID() || !Checkout::membership_required()){
 			return array();
 		}
 		return array(
@@ -44,7 +44,8 @@ class MembershipCheckoutComponent extends CheckoutComponent{
 	public function getPasswordField(){
 		if($this->confirmed){
 			//relies on fix: https://github.com/silverstripe/silverstripe-framework/pull/2757
-			return ConfirmedPasswordField::create('Password', _t('CheckoutField.PASSWORD','Password'));
+			return ConfirmedPasswordField::create('Password', _t('CheckoutField.PASSWORD','Password'))
+					->setCanBeEmpty(!Checkout::membership_required());
 		}
 		return PasswordField::create('Password', _t('CheckoutField.PASSWORD','Password'));
 	}
@@ -67,9 +68,12 @@ class MembershipCheckoutComponent extends CheckoutComponent{
 		// 	$result->error(sprintf(_t("Checkout.MEMBEREXISTS","A member already exists with the %s %s"),$idfield,$idval), $idval);
 		// }
 
-		$passwordresult = $this->passwordvalidator->validate($data['Password'], $member);
-		if(!$passwordresult->valid()){
-			$result->error($passwordresult->message(), "Password");
+		if(Checkout::membership_required() || !empty($data['Password'])){
+
+			$passwordresult = $this->passwordvalidator->validate($data['Password'], $member);
+			if(!$passwordresult->valid()){
+				$result->error($passwordresult->message(), "Password");
+			}
 		}
 		
 		if(!$result->valid()){
