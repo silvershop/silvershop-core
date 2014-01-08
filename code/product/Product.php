@@ -72,8 +72,8 @@ class Product extends Page implements Buyable{
 	
 	static $order_item = "Product_OrderItem";
 
-	static $number_sold_calculation_type = "SUM"; //SUM or COUNT
-	static $global_allow_purchase = true;
+	private static $number_sold_calculation_type = "SUM"; //SUM or COUNT
+	private static $global_allow_purchase = true;
 
 	function getCMSFields() {
 		self::disableCMSFieldsExtensions();
@@ -117,13 +117,6 @@ class Product extends Page implements Buyable{
 	}
 
 	/**
-	 * Enables developers to completely turning off the ability to purcahse products.
-	 */
-	static function set_global_allow_purchase($allow = false){
-		self::$global_allow_purchase = $allow;
-	}
-		
-	/**
 	 * Helper for creating the product groups table
 	 */
 	protected function getProductCategoriesTable() {
@@ -158,7 +151,7 @@ class Product extends Page implements Buyable{
 	 * @return boolean
 	 */
 	function canPurchase($member = null) {
-		if(!self::$global_allow_purchase) return false;
+		if(!self::config()->global_allow_purchase) return false;
 		if(!$this->dbObject('AllowPurchase')->getValue()) return false;
 		if(!$this->isPublished()) return false;
 		$allowpurchase = false;

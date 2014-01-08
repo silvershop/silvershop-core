@@ -122,6 +122,27 @@ class Order extends DataObject {
 	 */
 	protected static $modifiers = array();
 	
+	/**
+	 * These are the fields, used for a {@link ComplexTableField}
+	 * in order to show for the table columns on a report.
+	 *
+	 * @see CurrentOrdersReport
+	 * @see UnprintedOrdersReport
+	 *
+	 * To customise these, simply define Order::set_table_overview_fields(Array)
+	 * inside your project _config.php where Array is a set of fields that
+	 * you want to display on the table.
+	 *
+	 * @var array
+	 */
+	public static $table_overview_fields = array(
+		'Reference' => 'Order No',
+		'Placed' => 'Date',
+		'FirstName' => 'First Name',
+		'Surname' => 'Surname',
+		'Total' => 'Total',
+		'Status' => 'Status'
+	);
 
 	public static $summary_fields = array(
 		'Reference' => 'Order No',
@@ -194,67 +215,6 @@ class Order extends DataObject {
 
 		return $context;
 	}
-
-	/**
-	 * Set the modifiers that apply to this site.
-	 *
-	 * @param array $modifiers An array of {@link OrderModifier} subclass names
-	 */
-	public static function set_modifiers($modifiers, $replace = false) {
-		if($replace) {
-			self::$modifiers = $modifiers;
-		}
-		else {
-			self::$modifiers =  array_merge(self::$modifiers,$modifiers);
-		}
-	}
-
-	/**
-	 * Set the flag to determine whether a user can
-	 * cancel their order before payment.
-	 *
-	 * @param boolean $value
-	 */
-	public static function set_cancel_before_payment($value) {
-		self::$can_cancel_before_payment = $value;
-	}
-
-	/**
-	 * Set the flag to determine whether a user can
-	 * cancel their order before processing begins.
-	 *
-	 * @param unknown_type $value
-	 */
-	public static function set_cancel_before_processing($value) {
-		self::$can_cancel_before_processing = $value;
-	}
-
-	/**
-	 * Set the flag to determine whether a user can
-	 * cancel their order before it is sent.
-	 *
-	 * @param boolean $value
-	 */
-	public static function set_cancel_before_sending($value) {
-		self::$can_cancel_before_sending = $value;
-	}
-
-	/**
-	 * Set the flag to determine whether a user can
-	 * cancel their order after it has been sent.
-	 *
-	 * @param boolean $value
-	 */
-	public static function set_cancel_after_sending($value) {
-		self::$can_cancel_after_sending = $value;
-	}
-
-	protected static $set_can_cancel_on_status = array();
-
-	static function set_can_cancel_on_status($array) {
-		//TODO: check that the stati provided in array actually exist
-		self::$set_can_cancel_on_status = $array;
-	}
 	
 	public function getComponents($componentName, $filter = "", $sort = "", $join = "", $limit = null) {
 		$components = parent::getComponents($componentName, $filter = "", $sort = "", $join = "", $limit = null);
@@ -297,11 +257,12 @@ class Order extends DataObject {
 		$existingmodifiers = $this->Modifiers();
 		
 		if($this->IsCart()){
+			$modifierclasses = self::config()->modifiers;
 			//check if modifiers are even in use
-			if(!self::$modifiers || !is_array(self::$modifiers) || count(self::$modifiers) <= 0){
+			if(!is_array($modifierclasses) || empty($modifierclasses)){
 				return $this->Total = $runningtotal;
 			}
-			foreach(self::$modifiers as $ClassName){
+			foreach($modifierclasses as $ClassName){
 				if($modifier = $this->getModifier($ClassName)){
 					$modifier->Sort = $sort;
 					$runningtotal = $modifier->modify($runningtotal);
@@ -315,7 +276,7 @@ class Order extends DataObject {
 				//TODO: it may be better to store/run this as a build task - remove all invalid modifiers from carts
 			if($existingmodifiers){
 				foreach($existingmodifiers as $modifier){
-					if(!in_array($modifier->ClassName,self::$modifiers)){
+					if(!in_array($modifier->ClassName, $modifierclasses)){
 						$modifier->delete();
 						$modifier->destroy();
 						return null;
@@ -420,10 +381,10 @@ class Order extends DataObject {
 	 */
 	function canCancel() {
 		switch($this->Status) {
-			case 'Unpaid' : return self::$can_cancel_before_payment;
-			case 'Paid' : return self::$can_cancel_before_processing;
-			case 'Processing' : case 'Query' : return self::$can_cancel_before_sending;
-			case 'Sent' : case 'Complete' : return self::$can_cancel_after_sending;
+			case 'Unpaid' : return self::config()->cancel_before_payment;
+			case 'Paid' : return self::config()->cancel_before_processing;
+			case 'Processing' : case 'Query' : return self::config()->cancel_before_sending;
+			case 'Sent' : case 'Complete' : return self::config()->cancel_after_sending;
 			default : return false;
 		}
 	}

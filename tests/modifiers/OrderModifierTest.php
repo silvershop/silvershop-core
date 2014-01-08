@@ -12,9 +12,9 @@ class OrderModifierTest extends FunctionalTest {
 
 	function setUp() {
 		parent::setUp();
-		Order::set_modifiers(array(
-			'FlatTaxModifier'
-		),true);
+		Config::inst()->update('Order', 'modifiers', array(
+			"FlatTaxModifier"
+		));
 		
 		FlatTaxModifier::set_tax(0.25,"GST");
 		$this->mp3player = $this->objFromFixture('Product', 'mp3player');
@@ -27,20 +27,6 @@ class OrderModifierTest extends FunctionalTest {
 		$order = $this->createOrder();
 		$order->calculate();		
 		$this->assertEquals(510, $order->Total); //Total with 25% tax
-	}
-	
-	/**
-	 * Modifiers change/don't change when master list is updated.
-	 */
-	function todo_testUpdateModiferList(){
-		
-	}
-	
-	/**
-	 * Make sure modifiers don't change, once added to the databse.
-	 */
-	function todo_testModifiersImmutable(){
-		
 	}
 	
 	function createOrder(){

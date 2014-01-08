@@ -7,9 +7,9 @@
  */
 class SteppedCheckout extends Extension{
 
-	static $first_step = null; //action to show on index
+	private static $first_step = null; //action to show on index
 	
-	static $steps = null;
+	private static $steps = null;
 	
 	/**
 	 * Set up CheckoutPage_Controller decorators for managing steps 
@@ -30,9 +30,9 @@ class SteppedCheckout extends Extension{
 		foreach($steps as $action => $classname){
 			Object::add_extension("CheckoutPage_Controller", $classname);
 		}
-		if(!self::$first_step){
+		if(!self::config()->first_step){
 			reset($steps);
-			self::$first_step = key($steps);
+			self::config()->first_step = key($steps);
 		}
 		self::$steps = $steps;
 	}
@@ -81,8 +81,8 @@ class SteppedCheckout extends Extension{
 	 * Get first step from stored steps
 	 */
 	function index(){
-		if(self::$first_step){
-			return $this->owner->{self::$first_step}();
+		if(self::config()->first_step){
+			return $this->owner->{self::config()->first_step}();
 		}
 		return array();
 	}

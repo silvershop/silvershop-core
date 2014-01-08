@@ -311,14 +311,6 @@ class ShoppingCart_Controller extends Controller{
 		'debug'
 	);
 	
-	static function set_direct_to_cart($direct = true){
-		self::$direct_to_cart_page = $direct;
-	}
-	
-	static function get_direct_to_cart(){
-		return self::$direct_to_cart_page;
-	}
-	
 	static function add_item_link(Buyable $buyable, $parameters = array()) {
 		return self::build_url("add", $buyable,$parameters);
 	}
@@ -363,7 +355,7 @@ class ShoppingCart_Controller extends Controller{
 		if(Director::is_ajax()){
 			return $status;
 		}
-		if(self::$direct_to_cart_page && $cartlink = CartPage::find_link()){
+		if(self::config()->direct_to_cart_page && $cartlink = CartPage::find_link()){
 			Controller::curr()->redirect($cartlink);
 			return;
 		}else{

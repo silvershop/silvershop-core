@@ -7,15 +7,11 @@
  */
 class OrderManipulation extends Extension{
 
-	static $allow_cancelling = false;
-	static $allow_paying = false;
-
-	static $session_variable = "OrderManipulation.historicalorders";
+	private static $allow_cancelling = false;
+	private static $allow_paying = false;
+	private static $session_variable = "OrderManipulation.historicalorders";
 	
-	static function set_allow_cancelling($cancel = true){self::$allow_cancelling = $cancel;}
-	static function set_allow_paying($pay = true){self::$allow_paying = $pay;}
-
-	static $allowed_actions = array(
+	private static $allowed_actions = array(
 		'ActionsForm',
 		'order'
 	);

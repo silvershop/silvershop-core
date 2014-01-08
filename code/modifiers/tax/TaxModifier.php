@@ -13,11 +13,11 @@ class TaxModifier extends OrderModifier{
 		'Rate' => 0.15 //15% tax
 	);
 	
-	public static $singular_name = "Tax";
+	public  static $singular_name = "Tax";
 	function i18n_singular_name() {
 		return _t("TaxModifier.SINGULAR", self::$singular_name);
 	}
-	public static $plural_name = "Taxes";
+	public  static $plural_name = "Taxes";
 	function i18n_plural_name() {
 		return _t("TaxModifier.PLURAL", self::$plural_name);
 	}

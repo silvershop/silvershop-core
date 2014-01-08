@@ -21,17 +21,20 @@ Product:
   global_allow_purchase: false
 
 Product_Image:
-  thumbnail_size:
-    width: 140
-    height: 100
+  thumbnail_width: 140
+  thumbnail_height: 100
   content_image_width: 200
   large_image_width: 200
 
 ProductCategory:
+  include_child_groups: true
   must_have_price: true
   sort_options:
     'Title' : 'Alphabetical'
     'Price' : 'Lowest Price'
+
+ShoppingCart_Controller:
+  direct_to_cart_page: true
 
 
 Order:

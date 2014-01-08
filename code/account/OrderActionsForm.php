@@ -8,9 +8,9 @@
  */
 class OrderActionsForm extends Form{
 	
-	static $email_notification = false;
+	private static $email_notification = false;
 	
-	static $allowed_actions = array(
+	private static $allowed_actions = array(
 		'docancel',
 		'dopayment',
 		'httpsubmission'
@@ -21,7 +21,7 @@ class OrderActionsForm extends Form{
 			new HiddenField('OrderID', '', $order->ID)
 		);
 		$actions = new FieldList();
-		if(OrderManipulation::$allow_paying && $order->canPay() && $order->canCancel()){
+		if(Config::get('OrderManipulation','allow_paying') && $order->canPay() && $order->canCancel()){
 			$actions->push(new FormAction('dopayment', _t('OrderActionsForm.PAYORDER','Pay outstanding balance')));
 			$fields->push(new HeaderField("MakePaymentHeader",_t("OrderActionsForm.MAKEPAYMENT", "Make Payment")));
 			$fields->push(new LiteralField("Outstanding",
@@ -31,7 +31,7 @@ class OrderActionsForm extends Form{
 				'PaymentMethod','Payment Method',GatewayInfo::get_supported_methods(),array_shift(array_keys(GatewayInfo::get_supported_methods()))
 			));
 		}
-		if(OrderManipulation::$allow_cancelling && $order->canCancel()){
+		if(Config::get('OrderManipulation','allow_cancelling') && $order->canCancel()){
 			$actions->push(new FormAction('docancel', _t('OrderActionsForm.CANCELORDER','Cancel this order')));
 		}
 		parent::__construct($controller, $name, $fields, $actions);
