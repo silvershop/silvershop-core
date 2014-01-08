@@ -11,17 +11,9 @@
 i18n::set_locale('en_NZ');
 setlocale (LC_TIME, 'en_NZ@dollar', 'en_NZ.UTF-8', 'en_NZ', 'nz', 'nz');
 
-//ECOMMERCE I18N SETTINGS
-ShopCurrency::setDecimalDelimiter('.'); //for Money formating
-ShopCurrency::setThousandDelimiter(','); //for Money formating
-Object::useCustomClass('SS_Datetime','I18nDatetime', true);
 
 //SHOPPING CART AND ORDER
-$cfg->update('ShopConfig','email_from', "sales@myshop.com");
-OrderProcessor::set_receipt_subject("Thank you for your order at www.myshop.com - Order #%d");
 Order::set_modifiers(array("FlatTaxModifier", "SimpleShippingModifier"));
-
-Order::set_table_overview_fields(array('Total' => 'Total','Status' => 'Status'));//
 
 Order::set_cancel_before_payment(false);
 Order::set_cancel_before_processing(false);

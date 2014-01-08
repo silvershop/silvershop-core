@@ -122,27 +122,6 @@ class Order extends DataObject {
 	 */
 	protected static $modifiers = array();
 	
-	/**
-	 * These are the fields, used for a {@link ComplexTableField}
-	 * in order to show for the table columns on a report.
-	 *
-	 * @see CurrentOrdersReport
-	 * @see UnprintedOrdersReport
-	 *
-	 * To customise these, simply define Order::set_table_overview_fields(Array)
-	 * inside your project _config.php where Array is a set of fields that
-	 * you want to display on the table.
-	 *
-	 * @var array
-	 */
-	public static $table_overview_fields = array(
-		'Reference' => 'Order No',
-		'Placed' => 'Date',
-		'FirstName' => 'First Name',
-		'Surname' => 'Surname',
-		'Total' => 'Total',
-		'Status' => 'Status'
-	);
 
 	public static $summary_fields = array(
 		'Reference' => 'Order No',
@@ -214,17 +193,6 @@ class Order extends DataObject {
 		$context->setFilters($filters);
 
 		return $context;
-	}
-
-	/**
-	 * Set the fields to be used for {@link ComplexTableField}
-	 * tables for Order instances, such as for reports. This
-	 * sets the {@link Order::$table_overview_fields} variable.
-	 *
-	 * @param array $fields An array of fields to show
-	 */
-	public static function set_table_overview_fields($fields) {
-		self::$table_overview_fields = $fields;
 	}
 
 	/**

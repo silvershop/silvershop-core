@@ -23,15 +23,6 @@ Object::useCustomClass('SS_Datetime','I18nDatetime', true);
 $cfg->update('ShopConfig','email_from', null);
 Order::set_modifiers(array(),true); //empty modifiers
 
-Order::set_table_overview_fields(array(
-	'ID' => 'Order No',
-	'Created' => 'Created',
-	'FirstName' => 'First Name',
-	'Surname' => 'Surname',
-	'Total' => 'Total',
-	'Status' => 'Status'
-));
-
 Order::set_cancel_before_payment(true);
 Order::set_cancel_before_processing(false);
 Order::set_cancel_before_sending(false);
