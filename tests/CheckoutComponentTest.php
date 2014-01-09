@@ -4,6 +4,8 @@ class CheckoutComponentTest extends SapphireTest {
 	
 	function testSinglePageConfig() {
 
+		ShopTest::setConfiguration();
+
 		//start a new order
 		$order = new Order();
 		$order->write();
