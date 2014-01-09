@@ -15,13 +15,16 @@ class OrderActionsForm extends Form{
 		'dopayment',
 		'httpsubmission'
 	);
+
+	private static $allow_paying = true;
+	private static $allow_cancelling = true;
 	
 	function __construct($controller, $name = "OrderActionsForm", Order $order) {
 		$fields = new FieldList(
 			new HiddenField('OrderID', '', $order->ID)
 		);
 		$actions = new FieldList();
-		if(Config::get('OrderManipulation','allow_paying') && $order->canPay() && $order->canCancel()){
+		if(OrderActionsForm::config()->allow_paying && $order->canPay()){
 			$actions->push(new FormAction('dopayment', _t('OrderActionsForm.PAYORDER','Pay outstanding balance')));
 			$fields->push(new HeaderField("MakePaymentHeader",_t("OrderActionsForm.MAKEPAYMENT", "Make Payment")));
 			$fields->push(new LiteralField("Outstanding",
@@ -31,7 +34,7 @@ class OrderActionsForm extends Form{
 				'PaymentMethod','Payment Method',GatewayInfo::get_supported_methods(),array_shift(array_keys(GatewayInfo::get_supported_methods()))
 			));
 		}
-		if(Config::get('OrderManipulation','allow_cancelling') && $order->canCancel()){
+		if(OrderActionsForm::config()->allow_cancelling && $order->canCancel()){
 			$actions->push(new FormAction('docancel', _t('OrderActionsForm.CANCELORDER','Cancel this order')));
 		}
 		parent::__construct($controller, $name, $fields, $actions);

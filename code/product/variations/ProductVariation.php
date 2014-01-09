@@ -10,47 +10,47 @@
  */
 class ProductVariation extends DataObject implements Buyable{
 
-	static $db = array(
+	private static $db = array(
 		//'Title' => 'Text',
 		'InternalItemID' => 'Varchar(30)',
 		'Price' => 'Currency'
 	);
-	static $has_one = array(
+	private static $has_one = array(
 		'Product' => 'Product',
 		'Image' => 'Image'
 	);
-	static $many_many = array(
+	private static $many_many = array(
 		'AttributeValues' => 'ProductAttributeValue'
 	);
 
-	static $casting = array(
+	private static $casting = array(
 		'Title' => 'Text',
 		'Price' => 'Currency'
 	);
 
-	static $versioning = array(
+	private static $versioning = array(
 		'Live'
 	);
 
-	static $extensions = array(
+	private static $extensions = array(
 		"Versioned('Live')"
 	);
 
-	static $summary_fields = array(
+	private static $summary_fields = array(
 		'InternalItemID' => 'Product Code',
 		//'Product.Title' => 'Product',
 		'Title' => 'Variation',
 		'Price' => 'Price'
 	);
 	
-	static $searchable_fields = array(
+	private static $searchable_fields = array(
 		'Product.Title',
 		'InternalItemID'
 	);
 
-	public static $default_sort = "InternalItemID";
+	private static $default_sort = "InternalItemID";
 	
-	static $order_item = "ProductVariation_OrderItem";
+	private static $order_item = "ProductVariation_OrderItem";
 
 	function getCMSFields() {
 		$fields = array();
@@ -158,7 +158,7 @@ class ProductVariation extends DataObject implements Buyable{
 	}
 	
 	function createItem($quantity = 1,$filter = array()){
-		$orderitem = $this->stat("order_item");
+		$orderitem = self::config()->order_item;
 		$item = new $orderitem();
 		$item->ProductID = $this->ProductID;
 		$item->ProductVariationID = $this->ID;

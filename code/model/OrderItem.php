@@ -32,8 +32,6 @@ class OrderItem extends OrderAttribute {
 		"Total"
 	);
 
-	private static $field_labels = array();
-
 	private static $summary_fields = array(
 		"Order.ID" => "Order ID",
 		"TableTitle" => "Title",
@@ -42,20 +40,20 @@ class OrderItem extends OrderAttribute {
 		"Total" => "Total Price" ,
 	);
 	
-	private $required_fields = array();
-	private $buyable_relationship = "Product";
+	private static $required_fields = array();
+	private static $buyable_relationship = "Product";
 	
 	private static $singular_name = "Order Item";
-	function i18n_singular_name() { return _t("OrderItem.SINGULAR", self::$singular_name); }
+	function i18n_singular_name() { return _t("OrderItem.SINGULAR", self::config()->singular_name); }
 	private static $plural_name = "Order Items";
-	function i18n_plural_name() { return _t("OrderItem.PLURAL", self::$plural_name); }
+	function i18n_plural_name() { return _t("OrderItem.PLURAL", self::config()->plural_name); }
 	private static $default_sort = "\"Created\" DESC";
 
 	/**
 	 * Get the buyable object related to this item.
 	 */
 	function Buyable(){
-		return $this->{$this->stat('buyable_relationship')}();
+		return $this->{self::config()->buyable_relationship}();
 	}
 	
 	/**
@@ -109,7 +107,7 @@ class OrderItem extends OrderAttribute {
 	 * This is used for uniquely adding items to the cart.
 	 */
 	function uniquedata(){
-		$required = $this->stat('required_fields'); //TODO: also combine with all ancestors of this->class
+		$required = self::config()->required_fields; //TODO: also combine with all ancestors of this->class
 		$data = $this->record;
 		$unique = array();
 		//reduce record to only required fields

@@ -18,11 +18,11 @@ class ProductCategory extends Page {
 
 	private static $singular_name = "Product Category";
 	function i18n_singular_name() {
-		return _t("ProductCategory.SINGULAR", $this->stat('singular_name'));
+		return _t("ProductCategory.SINGULAR", self::config()->singular_name);
 	}
 	private static $plural_name = "Product Categories";
 	function i18n_plural_name() {
-		return _t("ProductCategory.PLURAL", $this->stat('plural_name'));
+		return _t("ProductCategory.PLURAL", self::config()->plural_name);
 	}
 
 	private static $default_child = 'Product';
@@ -90,7 +90,7 @@ class ProductCategory extends Page {
 
 		$this->extend('updateFilter', $extraFilter);
 		if ($extraFilter) $filter[] = $extraFilter;
-		if (self::$must_have_price) $filter[] = '"BasePrice" > 0';
+		if (self::config()->must_have_price) $filter[] = '"BasePrice" > 0';
 
 		$sort = (isset($_GET['sortby'])) ? Convert::raw2sql($_GET['sortby']) : "\"FeaturedProduct\" DESC, \"URLSegment\"";
 
@@ -100,7 +100,7 @@ class ProductCategory extends Page {
 		// Figure out the categories to check
 		$groupids = array($this->ID);
 		if (($recursive === true || $recursive === 'true')
-				&& self::$include_child_groups
+				&& self::config()->include_child_groups
 				&& $childgroups = $this->ChildGroups(true)) {
 			$groupids = array_merge($groupids, $childgroups->map('ID','ID'));
 		}
@@ -115,7 +115,7 @@ class ProductCategory extends Page {
 
 		// Convert to a paginated list
 		$products = new PaginatedList($products, Controller::curr()->getRequest());
-		$products->setPageLength(self::$page_length);
+		$products->setPageLength(self::config()->page_length);
 		$products->TotalCount = $products->getTotalItems(); // this is just for compatibility
 
 		return $products;

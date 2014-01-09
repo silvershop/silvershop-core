@@ -29,7 +29,7 @@ class FlatTaxModifier extends TaxModifier {
 		$this->Rate = self::config()->rate;
 		if(self::config()->exclusive)
 			return $incoming * $this->Rate;
-		return $incoming - round($incoming/(1+$this->Rate), Order::$rounding_precision); //inclusive tax requires a different calculation
+		return $incoming - round($incoming/(1+$this->Rate), Order::config()->rounding_precision); //inclusive tax requires a different calculation
 	}
 
 }

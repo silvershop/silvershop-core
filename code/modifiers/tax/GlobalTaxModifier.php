@@ -26,7 +26,7 @@ class GlobalTaxModifier extends TaxModifier {
 		if(isset($rates[$this->Country()])) {
 			return $this->Rate = $rates[$this->Country()]['rate'];
 		}
-		$defaults = $this->stat('defaults');
+		$defaults = self::config()->defaults;
 		return $this->Rate = $defaults['Rate'];
 	}
 

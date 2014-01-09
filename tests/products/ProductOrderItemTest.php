@@ -64,4 +64,29 @@ class ProductOrderItemTest extends FunctionalTest {
 		$this->assertNull($brokenitem->Product(),"version does not exist");
 	}
 
+	/**
+	 * Check  the links are accurate
+	 */
+	function testLinks(){
+		SecurityToken::disable();
+		$product = $this->socks;
+		$item = $product->Item();
+		$this->assertEquals(
+			"shoppingcart/add/Product/{$product->ID}",
+			$item->addLink()
+		);
+		$this->assertEquals(
+			"shoppingcart/remove/Product/{$product->ID}",
+			$item->removeLink()
+		);
+		$this->assertEquals(
+			"shoppingcart/removeall/Product/{$product->ID}",
+			$item->removeallLink()
+		);
+		$this->assertEquals(
+			"shoppingcart/setquantity/Product/{$product->ID}",
+			$item->setquantityLink()
+		);
+	}
+
 }

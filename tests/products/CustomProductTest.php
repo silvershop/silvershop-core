@@ -71,15 +71,15 @@ class CustomProductTest extends FunctionalTest{
 
 class CustomProduct extends DataObject implements Buyable{
 	
-	static $order_item = 'CustomProduct_OrderItem';
-	
-	static $db = array(
+	private static $db = array(
 		'Title' => 'Varchar',
 		'Price' => 'Currency'
 	);
+
+	private static $order_item = 'CustomProduct_OrderItem';
 	
 	function createItem($quantity = 1, $filter = array()){
-		$itemclass = $this->stat('order_item');
+		$itemclass = self::config()->order_item;
 		$item = new $itemclass();
 		$item->ProductID = $this->ID;
 		if($filter){
@@ -100,26 +100,26 @@ class CustomProduct extends DataObject implements Buyable{
 
 class CustomProduct_OrderItem extends OrderItem{
 	
-	static $db = array(
+	private static $db = array(
 		'Color' => "Enum('Red,Green,Blue','Red')",
 		'Size' => 'Int',
 		'Premium' => 'Boolean'
 	);
 	
-	static $defaults = array(
+	private static $defaults = array(
 		'Color' => 'Red',
 		'Premium' => false
 	);
 	
-	static $has_one = array(
+	private static $has_one = array(
 		'Product' => 'CustomProduct',
 		'Recipient' => 'Member'
 	);
 	
-	static $buyable_relationship = "Product";
+	private static $buyable_relationship = "Product";
 	
 	//combintation of fields that must be unique
-	static $required_fields = array(
+	private static $required_fields = array(
 		'Color',
 		'Size',
 		'Premium',

@@ -29,20 +29,25 @@ class SteppedCheckout extends Extension{
 		foreach($steps as $action => $classname){
 			Object::add_extension("CheckoutPage_Controller", $classname);
 		}
-		$cfg = Config::inst();
-		if(!SteppedCheckout::config()->first_step){
+		if(!Config::inst()->get('ShopConfig','first_step')){
 			reset($steps);
-			SteppedCheckout::config()->first_step = key($steps);
+			Config::inst()->update('ShopConfig','first_step',key($steps));
 		}
-		SteppedCheckout::config()->steps = $steps;
+		Config::inst()->update('ShopConfig','steps', $steps);
 	}
 	
+	function getSteps(){
+		return Config::inst()->get('ShopConfig','steps');
+	}
+
+
 	/**
 	 * Redirect back to start of checkout if no cart started
 	 */
 	function onAfterInit(){
 		$action = $this->owner->getRequest()->param('Action');
-		if(!ShoppingCart::curr() && !empty($action) && isset(SteppedCheckout::config()->steps[$action])){
+		$steps = $this->getSteps();
+		if(!ShoppingCart::curr() && !empty($action) && isset($steps[$action])){
 			Controller::curr()->redirect($this->owner->Link());
 			return;
 		}
@@ -81,8 +86,8 @@ class SteppedCheckout extends Extension{
 	 * Get first step from stored steps
 	 */
 	function index(){
-		if(SteppedCheckout::config()->first_step){
-			return $this->owner->{SteppedCheckout::config()->first_step}();
+		if(Config::inst()->get('ShopConfig','first_step')){
+			return $this->owner->{Config::inst()->get('ShopConfig','first_step')}();
 		}
 		return array();
 	}
@@ -99,7 +104,7 @@ class SteppedCheckout extends Extension{
 	 */
 	private function actionPos($incoming){
 		$count = 0;
-		foreach(SteppedCheckout::config()->steps as $action => $step){
+		foreach($this->getSteps() as $action => $step){
 			if($action == $incoming){
 				return $count;
 			}

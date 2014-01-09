@@ -62,9 +62,9 @@ class Product extends Page implements Buyable{
 	);
 
 	private static $singular_name = "Product";
-	function i18n_singular_name() { return _t("Product.SINGULAR", $this->stat('singular_name')); }
+	function i18n_singular_name() { return _t("Product.SINGULAR", self::config()->singular_name); }
 	private static $plural_name = "Products";
-	function i18n_plural_name() { return _t("Product.PLURAL", $this->stat('plural_name')); }
+	function i18n_plural_name() { return _t("Product.PLURAL", self::config()->plural_name); }
 	
 	private static $icon = 'shop/images/icons/package';
 	private static $default_parent = 'ProductCategory';
@@ -95,17 +95,17 @@ class Product extends Page implements Buyable{
 			new TextField('Depth', sprintf(_t('Product.DEPTH', 'Depth (%s)'), $lengthunit), '', 12),
 		));
 		
-		$fields->addFieldToTab('Root.Main',new TextField('Model', _t('Product.MODEL', 'Model'), '', 30),'Content');
-		$fields->addFieldToTab('Root.Main',new TextField('InternalItemID', _t('Product.CODE', 'Product Code'), '', 30),'Model');
+		$fields->addFieldToTab('Root.Main', TextField::create('Model', _t('Product.MODEL', 'Model'), '', 30),'Content');
+		$fields->addFieldToTab('Root.Main', TextField::create('InternalItemID', _t('Product.CODE', 'Product Code'), '', 30),'Model');
 		if(!$fields->dataFieldByName('Image')) {
-			$fields->addFieldToTab('Root.Images', new UploadField('Image', _t('Product.IMAGE', 'Product Image')));
+			$fields->addFieldToTab('Root.Images',  UploadField::create('Image', _t('Product.IMAGE', 'Product Image')));
 		}
 		// Flags for this product which affect it's behaviour on the site
-		$fields->addFieldToTab('Root.Main',new CheckboxField('FeaturedProduct', _t('Product.FEATURED', 'Featured Product')), 'Content');
-		$fields->addFieldToTab('Root.Main',new CheckboxField('AllowPurchase', _t('Product.ALLOWPURCHASE', 'Allow product to be purchased'), 1),'Content');
+		$fields->addFieldToTab('Root.Main', CheckboxField::create('FeaturedProduct', _t('Product.FEATURED', 'Featured Product')), 'Content');
+		$fields->addFieldToTab('Root.Main', CheckboxField::create('AllowPurchase', _t('Product.ALLOWPURCHASE', 'Allow product to be purchased'), 1),'Content');
 		$fields->addFieldsToTab('Root.Categories',array(
-			new LabelField('ProductCategoriesInstuctions', _t('Product.CATEGORIES',"Select the categories that this product should also show up in")),
-			$this->getProductCategoriesTable()
+			LabelField::create('ProductCategoriesInstuctions', _t('Product.CATEGORIES',"Select the categories that this product should also show up in")),
+			CheckboxSetField::create("ProductCategories","Product Categories",DataObject::get("ProductCategory")->map("ID", "Title"))
 		));
 		if($pagename = $fields->fieldByName('Root.Main.Title')){
 			$pagename->setTitle(_t('Product.PAGETITLE','Product Page Title'));
@@ -114,17 +114,6 @@ class Product extends Page implements Buyable{
 		self::enableCMSFieldsExtensions();
 		$this->extend('updateCMSFields', $fields);
 		return $fields;
-	}
-
-	/**
-	 * Helper for creating the product groups table
-	 */
-	protected function getProductCategoriesTable() {
-		//TODO: SS3 has no support for GridField many_many, get more info
-		$productCategories = DataObject::get("ProductCategory");
-		$itemsTable = new CheckboxSetField("ProductCategories","Product Categories",$productCategories->map("ID", "Title"));
-		
-		return $itemsTable;
 	}
 
 	/**
@@ -203,7 +192,7 @@ class Product extends Page implements Buyable{
 	 * @see Buyable::createItem()
 	 */
 	function createItem($quantity = 1, $filter = null){
-		$orderitem = $this->stat("order_item");
+		$orderitem = self::config()->order_item;
 		$item = new $orderitem();
 		$item->ProductID = $this->ID;
 		if($filter){

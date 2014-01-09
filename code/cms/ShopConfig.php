@@ -36,7 +36,7 @@ class ShopConfig extends DataExtension{
 	}
 
 	static function get_base_currency(){
-		return SiteConfig::config()->base_currency;
+		return self::config()->base_currency;
 	}
 
 	static function get_site_currency(){
@@ -49,7 +49,7 @@ class ShopConfig extends DataExtension{
 	 * @return array
 	 */
 	function getCountriesList($prefixisocode = false){
-		$countries = SiteConfig::config()->iso_3166_country_codes;
+		$countries = self::config()->iso_3166_country_codes;
 		asort($countries);
 		if($allowed = $this->owner->AllowedCountries){
 			$allowed = explode(",",$allowed);
@@ -69,11 +69,20 @@ class ShopConfig extends DataExtension{
 	 * @return string - name of country
 	 */
 	static function countryCode2name($code){
-		$codes = SiteConfig::config()->iso_3166_country_codes;
+		$codes = self::config()->iso_3166_country_codes;
 		if(isset($codes[$code])){
 			return $codes[$code];
 		}
 		return $code;
+	}
+
+	/**
+	 * Helper for getting static shop config.
+	 * The 'config' static function isn't avaialbe on Extensions.
+	 * @return Config_ForClass configuration object
+	 */
+	public static function config(){
+		return new Config_ForClass("ShopConfig");
 	}
 	
 }

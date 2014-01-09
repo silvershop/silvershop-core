@@ -50,7 +50,7 @@ class AddProductForm extends Form{
 			$saveabledata = (!empty($this->saveablefields)) ? Convert::raw2sql(array_intersect_key($data,array_combine($this->saveablefields,$this->saveablefields))) : $data;
 			$quantity = isset($data['Quantity']) ? (int) $data['Quantity']: 1;			
 			$cart->add($buyable,$quantity,$saveabledata);
-			if(!Config::get('ShoppingCart_Controller','direct_to_cart_page')){
+			if(!ShoppingCart_Controller::config()->direct_to_cart_page){
 				$form->SessionMessage($cart->getMessage(),$cart->getMessageType());
 			}
 			ShoppingCart_Controller::direct($cart->getMessageType());

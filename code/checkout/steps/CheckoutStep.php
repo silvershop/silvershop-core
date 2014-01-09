@@ -11,7 +11,7 @@ class CheckoutStep extends Extension{
 	 * @return string|NULL
 	 */
 	private function nextstep(){
-		$steps = SteppedCheckout::$steps;
+		$steps = $this->owner->getSteps();
 		$found = false;
 		foreach($steps as $step => $class){
 			if(method_exists($this, $step)){ //determine if current step

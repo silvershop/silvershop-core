@@ -212,17 +212,13 @@ class ShoppingCart{
 		$filter = array(
 			'OrderID' => $order->ID
 		);
-
-
-		$itemclass = $buyable->stat('order_item');
-		$singletonorderitem = singleton($itemclass);
-		$relationship = $singletonorderitem->stat('buyable_relationship');
-		$filter[$singletonorderitem->stat('buyable_relationship')."ID"] = $buyable->ID;
-		
-		$required = array_merge(
-						array('Order',$singletonorderitem->stat('buyable_relationship')),
-						$singletonorderitem->stat('required_fields')
-					);
+		$itemclass = Config::inst()->get(get_class($buyable),'order_item');
+		$relationship = Config::inst()->get($itemclass,'buyable_relationship');
+		$filter[$relationship."ID"] = $buyable->ID;
+		$required = array('Order',$relationship);
+		if(is_array($itemclass::config()->required_fields)){
+			$required = array_merge($required, $itemclass::config()->required_fields);
+		}
 		$query = new MatchObjectFilter($itemclass,array_merge($customfilter,$filter),$required);
 		$item = $itemclass::get()->where($query->getFilter())->first();
 		if(!$item){
@@ -235,7 +231,7 @@ class ShoppingCart{
 	 * Empty / abandon the entire cart.
 	 * @return bool - true if successful, fale if no cart found
 	 */
-	function clear() {
+	public function clear() {
 		$order = $this->current();
 		if(!$order){
 			return $this->error(_t("ShoppingCart.NOCARTFOUND","No cart found."));
@@ -331,7 +327,9 @@ class ShoppingCart_Controller extends Controller{
 		if(!$action || !$buyable){
 			return false;
 		}
-		$params[SecurityToken::inst()->getName()] = SecurityToken::inst()->getValue();		
+		if(SecurityToken::is_enabled()){
+			$params[SecurityToken::inst()->getName()] = SecurityToken::inst()->getValue();		
+		}
 		return self::$url_segment.'/'.$action.'/'.$buyable->class."/".$buyable->ID.self::params_to_get_string($params);
 	}
 	

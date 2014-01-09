@@ -61,5 +61,5 @@ $cfg->update('Address','requiredfields',array(
 	'State',
 	'Country'
 ));
-$cfg->update('OrderMainpulation', 'set_allow_cancelling', false);
-$cfg->update('OrderMainpulation', 'set_allow_paying', false);
+$cfg->update('OrderActionsForm', 'set_allow_cancelling', false);
+$cfg->update('OrderActionsForm', 'set_allow_paying', false);

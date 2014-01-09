@@ -7,8 +7,8 @@
 */
 class FlatTaxModifierTest extends FunctionalTest {
 
-	static $fixture_file = 'shop/tests/fixtures/shop.yml';
-	static $disable_theme = true;
+	protected static $fixture_file = 'shop/tests/fixtures/shop.yml';
+	protected static $disable_theme = true;
 
 	function setUp(){
 		parent::setUp();

@@ -1,3 +1,8 @@
+---
+Name: countries
+After: 'framework/*','cms/*'
+---
+
 ShopConfig:
     iso_3166_country_codes:
         'AF' : "Afghanistan",
