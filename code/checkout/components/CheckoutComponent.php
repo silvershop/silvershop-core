@@ -13,7 +13,8 @@
  */
 abstract class CheckoutComponent {
 
-	protected $requiredfields = array();
+	protected $requiredfields = array(),
+			$dependson = array();
 
 	/**
 	 * Get form fields for manipulating the current order,
@@ -64,20 +65,54 @@ abstract class CheckoutComponent {
 		return $this->requiredfields;
 	}
 
-	//namespace wrappers - so form fields don't conflict.
-	//note: component subclasses shouldn't need to use any of these functions
-		//..so perhaps this can all be moved elsewhere
+	public function dependsOn(){
+		return $this->dependson;
+	}
 
-	public function getNamespacedFormFields(Order $order) {
-		$fields = $this->getFormFields($order);
+	public function name() {
+		return get_class($this);
+	}
+
+}
+
+
+/**
+ * Proxy class to handle namespacing field names for checkout components
+ */
+class CheckoutComponent_Namespaced extends CheckoutComponent{
+
+	protected $proxy;
+
+	function __construct(CheckoutComponent $component){
+		$this->proxy = $component;
+	}
+
+	public function Proxy(){
+		return $this->proxy;
+	}
+
+	public function getFormFields(Order $order){
+		$fields = $this->proxy->getFormFields($order);
 		foreach($fields as $field){
 			$field->setName($this->namespaceFieldName($field->getName()));
 		}
 		return $fields;
 	}
 
-	public function getNamespacedRequiredFields(Order $order) {
-		$fields = $this->getRequiredFields($order);
+	public function validateData(Order $order, array $data){
+		return $this->proxy->validateData($order, $this->unnamespaceData($data));
+	}
+
+	public function getData(Order $order){
+		return $this->namespaceData($this->proxy->getData($order));
+	}
+
+	public function setData(Order $order, array $data){
+		return $this->proxy->setData($order, $this->unnamespaceData($data));
+	}
+
+	public function getRequiredFields(Order $order) {
+		$fields = $this->proxy->getRequiredFields($order);
 		$namespaced = array();
 		foreach($fields as $field){
 			$namespaced[] = $this->namespaceFieldName($field);
@@ -85,13 +120,15 @@ abstract class CheckoutComponent {
 		return $namespaced;
 	}
 
-	public function getNamespacedData(Order $order) {
-		return $this->namespaceData($this->getData($order));
+	public function dependsOn(){
+		return $this->proxy->dependsOn();
 	}
 
-	public function setNamespacedData(Order $order, array $data) {
-		$this->setData($order, $this->unnamespaceData($data));
+	public function name(){
+		return $this->proxy->name();
 	}
+
+	//namespacing functions
 
 	public function namespaceData(array $data){
 		$newdata = array();
@@ -104,7 +141,7 @@ abstract class CheckoutComponent {
 	public function unnamespaceData(array $data){
 		$newdata = array();
 		foreach($data as $key => $value){
-			if(strpos($key, get_class($this)) === 0){
+			if(strpos($key, $this->name()) === 0){
 				$newdata[$this->unnamespaceFieldName($key)] = $value;
 			}
 		}
@@ -112,11 +149,11 @@ abstract class CheckoutComponent {
 	}
 
 	public function namespaceFieldName($name){
-		return get_class($this)."_".$name;
+		return $this->name()."_".$name;
 	}
 
 	public function unnamespaceFieldName($name){
-		return substr($name,strlen(get_class($this)."_"));
+		return substr($name,strlen($this->name()."_"));
 	}
 
 }

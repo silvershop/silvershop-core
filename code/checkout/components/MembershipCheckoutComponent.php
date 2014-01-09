@@ -4,6 +4,10 @@ class MembershipCheckoutComponent extends CheckoutComponent{
 
 	protected $confirmed, $passwordvalidator;
 
+	protected $dependson = array(
+		'CustomerDetailsCheckoutComponent'
+	);
+
 	function __construct($confirmed = true, $validator = null){
 		$this->confirmed = $confirmed;
 		if(!$validator){
@@ -40,7 +44,6 @@ class MembershipCheckoutComponent extends CheckoutComponent{
 		);
 	}
 
-
 	public function getPasswordField(){
 		if($this->confirmed){
 			//relies on fix: https://github.com/silverstripe/silverstripe-framework/pull/2757
@@ -51,31 +54,21 @@ class MembershipCheckoutComponent extends CheckoutComponent{
 	}
 
 	public function validateData(Order $order, array $data){
-
 		if(Member::currentUserID()){
 			return;
 		}
-
 		$result = new ValidationResult();
 		$member = new Member($data);
-
-		//TODO: check for an existing member using the same details
-		//Member::get_unique_identifier_field()
-		$idfield = Member::get_unique_identifier_field();
-		
-		// $idval = $data[$idfield];
-		// if(ShopMember::get_by_identifier($idval)){
-		// 	$result->error(sprintf(_t("Checkout.MEMBEREXISTS","A member already exists with the %s %s"),$idfield,$idval), $idval);
-		// }
-
+		$idval = $data[Member::get_unique_identifier_field()];
+		if(ShopMember::get_by_identifier($idval)){
+			$result->error(sprintf(_t("Checkout.MEMBEREXISTS","A member already exists with the %s %s"),$idfield,$idval), $idval);
+		}
 		if(Checkout::membership_required() || !empty($data['Password'])){
-
 			$passwordresult = $this->passwordvalidator->validate($data['Password'], $member);
 			if(!$passwordresult->valid()){
 				$result->error($passwordresult->message(), "Password");
 			}
 		}
-		
 		if(!$result->valid()){
 			throw new ValidationException($result);
 		}
@@ -91,17 +84,19 @@ class MembershipCheckoutComponent extends CheckoutComponent{
 		return $data;
 	}
 
+	/**
+	 * @throws ValidationException
+	 */
 	public function setData(Order $order, array $data){
-		//create member?? (don't really want to do this until order is placed)
-		
-		// actually, yes create a member!
-
-		$member = new Member($data);
-		$validation = $member->validate();
-		if(!$validation->valid()){
-			return $this->error($validation->message());	//TODO need to handle i18n here?
+		if(Member::currentUserID()){
+			return;
 		}
-
+		if(!Checkout::membership_required() && empty($data['Password'])){
+			return;
+		}
+		$member = Checkout::get($order)->createMembership($data);
+		$member->write();
+		$member->logIn();
 	}
 
 	function setConfirmed($confirmed){

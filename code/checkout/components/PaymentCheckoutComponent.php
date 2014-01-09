@@ -19,9 +19,19 @@ class PaymentCheckoutComponent extends CheckoutComponent{
 		return $fields;
 	}
 
+	public function getRequiredFields(Order $order) {
+		if(count(GatewayInfo::get_supported_gateways()) > 1){
+			return array();
+		}
+		return array(
+			'PaymentMethod'
+		);
+	}
+
 	public function validateData(Order $order, array $data){
 		$result = new ValidationResult();
 		$paymentmethod = isset($data['PaymentMethod']) ? $data['PaymentMethod'] : null;
+
 		if(!$paymentmethod){
 			$result->error("Payment method not provided", "PaymentMethod");
 			throw new ValidationException($result);
@@ -36,13 +46,12 @@ class PaymentCheckoutComponent extends CheckoutComponent{
 	public function getData(Order $order){
 		return array(
 			'PaymentMethod' => Checkout::get($order)->getSelectedPaymentMethod()
-			Session::get("Checkout.PaymentMethod")
 		);
 	}
 
 	public function setData(Order $order, array $data){
 		if(isset($data['PaymentMethod'])){
-			Checkout::get($order)->setPaymentMethod($data['PaymentMethod'])
+			Checkout::get($order)->setPaymentMethod($data['PaymentMethod']);
 		}	
 	}
 

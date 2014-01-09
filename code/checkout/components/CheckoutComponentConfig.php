@@ -2,19 +2,14 @@
 
 class CheckoutComponentConfig {
 	
-	/**
-	 * @var ArrayList
-	 */
-	protected $components = null;
-
+	protected $components;
 	protected $order;
+	protected $namespaced; //namespace fields according to their component
 
-	/**
-	 * 
-	 */
-	public function __construct(Order $order) {
-		$this->order = $order;
+	public function __construct(Order $order, $namespaced = true) {
 		$this->components = new ArrayList();
+		$this->order = $order;
+		$this->namespaced = $namespaced;
 	}
 
 	public function getOrder(){
@@ -26,6 +21,9 @@ class CheckoutComponentConfig {
 	 * @param string $insertBefore The class of the component to insert this one before
 	 */
 	public function addComponent(CheckoutComponent $component, $insertBefore = null) {
+		if($this->namespaced){
+			$component = new CheckoutComponent_Namespaced($component);
+		}
 		if($insertBefore) {
 			$existingItems = $this->getComponents();
 			$this->components = new ArrayList;
@@ -55,20 +53,6 @@ class CheckoutComponentConfig {
 	}
 
 	/**
-	 * Returns all components extending a certain class, or implementing a certain interface.
-	 * 
-	 * @param String Class name or interface
-	 * @return ArrayList Of GridFieldComponent
-	 */
-	public function getComponentsByType($type) {
-		$components = new ArrayList();
-		foreach($this->components as $component) {
-			if($component instanceof $type) $components->push($component);
-		}
-		return $components;
-	}
-
-	/**
 	 * Returns the first available component with the given class or interface.
 	 * 
 	 * @param String ClassName
@@ -76,7 +60,11 @@ class CheckoutComponentConfig {
 	 */
 	public function getComponentByType($type) {
 		foreach($this->components as $component) {
-			if($component instanceof $type) return $component;
+			if($this->namespaced){
+				if($component->Proxy() instanceof $type) return $component->Proxy();
+			}else{
+				if($component instanceof $type) return $component;
+			}
 		}
 	}
 
@@ -84,13 +72,10 @@ class CheckoutComponentConfig {
 	 * Get combined form fields
 	 * @return FieldList namespaced fields
 	 */
-	public function getFormFields($namespaced = true) {
+	public function getFormFields() {
 		$fields = new FieldList();
 		foreach($this->getComponents() as $component) {
-			$cfields = $namespaced ?
-						$component->getNamespacedFormFields($this->order) :
-						$component->getFormFields($this->order);
-			if($cfields){
+			if($cfields = $component->getFormFields($this->order)){
 				$fields->merge($cfields);
 			}else{
 				user_error("getFields on  ".get_class($component)." must return a FieldList");
@@ -99,13 +84,10 @@ class CheckoutComponentConfig {
 		return $fields;
 	}
 
-	public function getRequiredFields($namespaced = true) {
+	public function getRequiredFields() {
 		$required = array();
 		foreach($this->getComponents() as $component) {
-			$fields = $namespaced ?
-						$component->getNamespacedRequiredFields($this->order) :
-						$component->getRequiredFields($this->order);
-			$required = array_merge($required, $fields);
+			$required = array_merge($required, $component->getRequiredFields($this->order));
 		}
 		return $required;
 	}
@@ -116,18 +98,18 @@ class CheckoutComponentConfig {
 	 * @return boolean validation result
 	 * @throws ValidationException
 	 */
-	public function validateData($data, $namespaced = true) {
+	public function validateData($data) {
 		$result = new ValidationResult();
 		foreach($this->getComponents() as $component){
 			try{
-				$component->validateData($this->order, $component->unnamespaceData($data));
+				$component->validateData($this->order, $this->dependantData($component, $data));
 			}catch(ValidationException $e){
 				//transfer messages into a single result
 				foreach($e->getResult()->messageList() as $code => $message){
 					if(is_numeric($code)){
 						$code = null;
 					}
-					if($namespaced){
+					if($this->namespaced){
 						$code = $component->namespaceFieldName($code);
 					}
 					$result->error($message, $code);
@@ -141,34 +123,59 @@ class CheckoutComponentConfig {
 		return true;
 	}
 
-
 	/**
 	 * Get combined data
-	 * @param  boolean $namespaced [description]
-	 * @return [type]              [description]
+	 * @return array map of field names to data values
 	 */
-	public function getData($namespaced = true) {
+	public function getData() {
 		$data = array();
 		foreach($this->getComponents() as $component) {
-			$orderdata = $namespaced ?
-				$component->getNamespacedData($this->order) :
-				$component->getData($this->order);
+			$orderdata = $component->getData($this->order);
 			if(is_array($orderdata)){
 				$data = array_merge($data, $orderdata);
 			}else{
-				user_error("getData on  ".get_class($component)." must return an array");
+				user_error("getData on  ".$component->name()." must return an array");
 			}
 		}
 
 		return $data;
 	}
 
-	public function setData($data, $namespaced = true){
+	/**
+	 * Set data on all components
+	 * @param array $data map of field names to data values
+	 */
+	public function setData($data){
 		foreach($this->getComponents() as $component){
-			$namespaced ?
-				$component->setNamespacedData($this->order, $data) :
-				$component->setData($this->order, $data);
+			$component->setData($this->order, $this->dependantData($component, $data));
 		}
+	}
+
+	/**
+	 * Helper function for saving data from other components.
+	 */
+	protected function dependantData($component, $data){
+		if(!$this->namespaced){ //no need to try and get un-namespaced dependant data
+			return $data;
+		}
+		$dependantdata = array();
+		foreach($component->dependsOn() as $dependanttype){
+			$dependant = null;
+			foreach($this->components as $check){
+				if(get_class($check->Proxy()) == $dependanttype){
+					$dependant = $check;
+					break;
+				}
+			}
+			if(!$dependant){
+				user_error("Could not find a $dependanttype component, as depended by ".$component->name());
+			}
+			$dependantdata = array_merge(
+				$dependantdata,
+				$component->namespaceData($dependant->unnamespaceData($data))
+			);
+		}
+		return array_merge($dependantdata, $data);
 	}
 
 }

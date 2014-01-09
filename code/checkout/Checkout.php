@@ -175,11 +175,15 @@ class Checkout{
 	function setShippingMethod(ShippingMethod $option){
 		$package = $this->order->createShippingPackage();
 		if(!$package){
-			return $this->error(_t("Checkout.NOPACKAGE","Shipping package information not available"));
+			return $this->error(
+				_t("Checkout.NOPACKAGE","Shipping package information not available")
+			);
 		}
 		$address = $this->order->getShippingAddress();
 		if(!$address || !$address->exists()){
-			return $this->error(_t("Checkout.NOADDRESS","No address has been set"));
+			return $this->error(
+				_t("Checkout.NOADDRESS","No address has been set")
+			);
 		}
 		$this->order->ShippingTotal = $option->calculateRate($package,$address);
 		$this->order->ShippingMethodID = $option->ID;
@@ -229,25 +233,39 @@ class Checkout{
 	 * @return Member|boolean - new member (not saved to db), or false if there is an error.
 	 */
 	function createMembership($data){
+		$result = new ValidationResult();
 		if(!Checkout::$member_creation_enabled){
-			return $this->error(_t("Checkout.MEMBERSHIPSNOTALLOWED","Creating new memberships is not allowed"));
+			$result->error(
+				_t("Checkout.MEMBERSHIPSNOTALLOWED","Creating new memberships is not allowed")
+			);
 		}
 		$idfield = Member::get_unique_identifier_field();
 		if(!isset($data[$idfield]) || empty( $data[$idfield])){
-			return $this->error(sprintf(_t("Checkout.IDFIELDNOTFOUND","Required field not found: %s"),$idfield));
+			$result->error(
+				sprintf(_t("Checkout.IDFIELDNOTFOUND","Required field not found: %s"),$idfield)
+			);
 		}
-		if(!isset($data['Password']) || empty( $data['Password'])){
-			return $this->error(_t("Checkout.PASSWORDREQUIRED","A password is required"));
+		if(!isset($data['Password']) || empty($data['Password'])){
+			$result->error(_t("Checkout.PASSWORDREQUIRED","A password is required"));
 		}
 		$idval = $data[$idfield];
 		if(ShopMember::get_by_identifier($idval)){
-			return $this->error(sprintf(_t("Checkout.MEMBEREXISTS","A member already exists with the %s %s"),$idfield,$idval));
+			$result->error(sprintf(
+				_t("Checkout.MEMBEREXISTS","A member already exists with the %s %s"),
+				_t("Member.".$idfield),
+				$idval
+			));
 		}
 		$member = new Member(Convert::raw2sql($data));
 		$validation = $member->validate();
 		if(!$validation->valid()){
-			return $this->error($validation->message());	//TODO need to handle i18n here?
+			$result->error($validation->message());	//TODO need to handle i18n here?
 		}
+
+		if(!$result->valid()){
+			throw new ValidationException($result);
+		}
+
 		return $member;
 	}
 	
