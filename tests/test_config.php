@@ -1,11 +1,17 @@
 <?php
 
 Object::useCustomClass('SS_Datetime','I18nDatetime', true);
-//i18n::set_locale('');
 
 /// Reset to all default configuration settings.
 
 $cfg = Config::inst();
+
+//remove array configs (these get merged, rater than replaced)
+
+$cfg->remove("Payment","allowed_gateways");
+$cfg->remove("Order","modifiers");
+$cfg->remove("ProductCatalogAdmin","managed_models");
+$cfg->remove("ProductCategory","sort_options");
 
 // non-ecommerce
 $cfg->update('Member', 'unique_identifier_field', 'Email');

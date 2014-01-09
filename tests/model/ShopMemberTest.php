@@ -6,15 +6,16 @@
 class ShopMemberTest extends FunctionalTest{
 	
 	static $fixture_file = array(
-		'shop/tests/fixtures/ShopMembers.yml'
+		'shop/tests/fixtures/ShopMembers.yml',
+		'shop/tests/fixtures/shop.yml'
 	);
 	
 	function testGetByIdentifier(){
 		Member::config()->unique_identifier_field = 'Email';
-		$member = ShopMember::get_by_identifier('joe@bloggs.com');
+		$member = ShopMember::get_by_identifier('jeremy@peremy.com');
 		$this->assertNotNull($member);
-		$this->assertEquals('joe@bloggs.com', $member->Email);
-		$this->assertEquals('Joe', $member->FirstName);		
+		$this->assertEquals('jeremy@peremy.com', $member->Email);
+		$this->assertEquals('Jeremy', $member->FirstName);		
 	}
 	
 	function testCreateOrMerge(){
@@ -26,9 +27,9 @@ class ShopMemberTest extends FunctionalTest{
 		
 		//existing, but non-matching user
 		$member = ShopMember::create_or_merge(array(
-			'Email' => 'joe@bloggs.com',
-			'FirstName' => 'Joe',
-			'Surname' => 'Bloggs',
+			'Email' => 'jeremy@peremy.com',
+			'FirstName' => 'Jeremy',
+			'Surname' => 'Peremy',
 			'Password' => 'pass2234'	
 		));
 		$this->assertFalse($member, "Found member is not same as currently logged in member");
@@ -43,14 +44,14 @@ class ShopMemberTest extends FunctionalTest{
 		$this->assertFalse($member->isInDB(),"New member is not saved to db");
 		
 		//existing member
-		$this->session()->inst_set('loggedInAs', $this->objFromFixture("Member", "joebloggs")->ID); //log in existing 'joe bloggs' user
+		$this->session()->inst_set('loggedInAs', $this->objFromFixture("Member", "jeremyperemy")->ID); //log in existing 'joe bloggs' user
 		$member = ShopMember::create_or_merge(array(
-			'Email' => 'joe@bloggs.com',
-			'FirstName' => 'Joey'
+			'Email' => 'jeremy@peremy.com',
+			'FirstName' => 'Jerry'
 		));
 		$this->assertTrue((boolean)$member,"Member has been found");
-		$this->assertEquals('Bloggs', $member->Surname,'Surname remains the same');
-		$this->assertEquals('Joey', $member->FirstName,'Firstname updated');
+		$this->assertEquals('Peremy', $member->Surname,'Surname remains the same');
+		$this->assertEquals('Jerry', $member->FirstName,'Firstname updated');
 		
 		$this->session()->inst_set('loggedInAs', null); //log out
 	}
@@ -60,4 +61,12 @@ class ShopMemberTest extends FunctionalTest{
 		singleton("Member")->getMemberFormFields();
 	}
 	
+	function testPastOrders(){
+		$member = $this->objFromFixture("Member", "joebloggs");
+		$pastorders = $member->getPastOrders();
+		$this->assertEquals(1,$pastorders->count());
+	}
+
+	//TODO: test login joins cart
+
 }

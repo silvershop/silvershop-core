@@ -119,14 +119,14 @@ class CheckoutTest extends SapphireTest{
 
 	/**
 	 * @expectedException ValidationException
-	 * @expectedExceptionMessage A member already exists with the Email joe@bloggs.com
+	 * @expectedExceptionMessage A member already exists with the Email jeremy@peremy.com
 	 */
 	function testMemberAlreadyExists(){
 		$result = $this->checkout->createMembership(array(
-			'FirstName' => 'Joe',
-			'Surname' => 'Bloggs',
-			'Email' => 'joe@bloggs.com',
-			'Password' => 'joeblogga'
+			'FirstName' => 'Jeremy',
+			'Surname' => 'Peremy',
+			'Email' => 'jeremy@peremy.com',
+			'Password' => 'jeremyperemy'
 		));
 		$this->fail("Exception was expected here");
 

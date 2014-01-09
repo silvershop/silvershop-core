@@ -19,7 +19,8 @@ class FlatTaxModifier extends TaxModifier {
 	
 	function populateDefaults(){
 		parent::populateDefaults();
-		$this->Type = (self::config()->exclusive) ? 'Chargable' : 'Ignored';
+		$this->Type = self::config()->exclusive ? 'Chargable' : 'Ignored';
+		$this->TaxType = self::config()->exclusive ? 'Exclusive' : 'Inclusive';
 	}
 
 	/**
@@ -27,9 +28,10 @@ class FlatTaxModifier extends TaxModifier {
 	 */
 	function value($incoming) {
 		$this->Rate = self::config()->rate;
-		if(self::config()->exclusive)
-			return $incoming * $this->Rate;
-		return $incoming - round($incoming/(1+$this->Rate), Order::config()->rounding_precision); //inclusive tax requires a different calculation
+		//inclusive tax requires a different calculation
+		return self::config()->exclusive ? 
+			$incoming * $this->Rate :
+			$incoming - round($incoming/(1+$this->Rate), Order::config()->rounding_precision);
 	}
 
 }

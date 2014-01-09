@@ -23,19 +23,15 @@ class GlobalTaxModifier extends TaxModifier {
 	
 	function Rate(){
 		$rates = self::config()->country_rates;
-		if(isset($rates[$this->Country()])) {
-			return $this->Rate = $rates[$this->Country()]['rate'];
+		if(isset($rates[$this->Country])) {
+			return $this->Rate = $rates[$this->Country]['rate'];
 		}
 		$defaults = self::config()->defaults;
 		return $this->Rate = $defaults['Rate'];
 	}
 
-	protected function Country() {
-		return ShopMember::find_country();
-	}
-
 	function TableTitle() {
-		$country = ($this->Country()) ? " for ".$this->Country()." " : "";
+		$country = $this->Country ? " for ".$this->Country." " : "";
 		return parent::TableTitle().$country.
 			($this->Type == "Chargable" ? '' : _t("GlobalTaxModifier.INCLUDED",' (included in the above price)'));
 	}

@@ -12,10 +12,11 @@ class OrderModifierTest extends FunctionalTest {
 
 	function setUp() {
 		parent::setUp();
+		ShopTest::setConfiguration();
 		Order::config()->modifiers = array(
 			"FlatTaxModifier"
 		);
-		FlatTaxModifier::config()->rate = 0.15;
+		FlatTaxModifier::config()->rate = 0.25;
 		FlatTaxModifier::config()->name = "GST";
 
 		$this->mp3player = $this->objFromFixture('Product', 'mp3player');
@@ -26,7 +27,7 @@ class OrderModifierTest extends FunctionalTest {
 
 	function testModifierCalculation(){
 		$order = $this->createOrder();
-		$order->calculate();		
+		$order->calculate();
 		$this->assertEquals(510, $order->Total); //Total with 25% tax
 	}
 	

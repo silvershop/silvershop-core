@@ -339,7 +339,7 @@ class Order extends DataObject {
 	 * Enforces rounding precision.
 	 */
 	function TotalOutstanding(){
-		return round($this->GrandTotal() - $this->TotalPaid(), self::$rounding_precision);
+		return round($this->GrandTotal() - $this->TotalPaid(), self::config()->rounding_precision);
 	}
 	
 	/**

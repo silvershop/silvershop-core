@@ -97,7 +97,7 @@ Group:
     resellers:
         Title: Resellers
         Code: resellers
-        
+
 Member:
     joebloggs:
         FirstName: Joe
@@ -115,7 +115,7 @@ Member:
         Email: bob@somewhere.com
         Password: 3456sdfsd34
         Groups: =>Group.resellers,=>Group.customers
-        
+
 Order:
     emptycart:
         Name: Empty Cart
@@ -128,7 +128,7 @@ Order:
         Placed: 2012-11-21 15:33:02
         Total: 500
     paid:
-        Staus: Paid
+        Status: Paid
         Created: 2012-10-02 07:23:08
         Placed: 2012-10-02 07:33:21
         Paid: 2012-10-02 07:34:29
@@ -188,7 +188,7 @@ Payment:
         MoneyCurrency: USD
         Created: 2012-10-02 07:33:21
         Order: =>Order.paid
-        
+
 SiteConfig:
     config:
         Title: Shop Testing Website
