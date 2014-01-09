@@ -50,6 +50,13 @@ class Address extends DataObject{
 		'Country' => 'ShopCountry'	
 	);
 
+	private static $required_fields = array(
+		'Country',
+		'State',
+		'City',
+		'Address'
+	);
+
 	function getFrontEndFields($params = null){
 		$fields = new FieldList(
 			$this->getCountryField(),
@@ -124,5 +131,21 @@ class Address extends DataObject{
 	function forTemplate(){
 		return $this->renderWith('Address');
 	}
+	
+	/**
+	 * Add alias setters for fields which are synonymous
+	 */
+	function setProvince($val){$this->State = $val;}
+	function setTerritory($val){$this->State = $val;}
+	function setIsland($val){$this->State = $val;}
+	function setPostCode($val){$this->PostalCode = $val;}
+	function setZipCode($val){$this->PostalCode = $val;}
+	function setStreet($val){$this->Address = $val;}
+	function setStreet2($val){$this->AddressLine2 = $val;}
+	function setAddress2($val){$this->AddressLine2 = $val;}
+	function setInstitution($val){$this->Company = $val;}
+	function setBusiness($val){$this->Company = $val;}
+	function setOrganisation($val){$this->Company = $val;}
+	function setOrganization($val){$this->Company = $val;}
 	
 }

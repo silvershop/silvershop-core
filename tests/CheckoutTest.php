@@ -15,6 +15,9 @@ class CheckoutTest extends SapphireTest{
 		$this->address1 = $this->objFromFixture("Address", "address1");
 		$this->address2 = $this->objFromFixture("Address", "address2");
 		$this->checkout = new Checkout($this->cart);
+
+		Checkout::$member_creation_enabled = true;
+		Checkout::$membership_required = false;
 	}
 	
 	function testSetUpShippingAddress(){		
@@ -42,8 +45,6 @@ class CheckoutTest extends SapphireTest{
 	 * You can become a member, but it is not necessary
 	 */
 	function testCanBecomeMember(){
-		Checkout::$member_creation_enabled = true;
-		Checkout::$membership_required = false;
 		//check can proceeed with/without order
 		//check member exists
 		$result = $this->checkout->createMembership(array(
@@ -76,76 +77,72 @@ class CheckoutTest extends SapphireTest{
 		Checkout::$member_creation_enabled = false;
 		Checkout::$membership_required = false;
 		
+		$this->setExpectedException('ValidationException');
+
 		$member = $this->checkout->createMembership(array(
 			'FirstName' => 'Susan',
 			'Surname' => 'Jackson',
 			'Email' => 'susan@jmail.com',
 			'Password' => 'jaleho3htgll'
 		));
-		
-		//validate member returns true - any member or not is allowed
-		$this->assertTrue($this->checkout->validateMember($member));
-		//check can't proceed without being a member
-		$this->assertTrue($this->checkout->validateMember(false));
-		
-		//TODO: check membership does not get tied to order
 	}
 	
+	/**
+	 * @expectedException ValidationException
+	 * @expectedExceptionMessage Creating new memberships is not allowed
+	 */
 	function testMembersOnly(){
 		Checkout::$member_creation_enabled = false;
 		Checkout::$membership_required = true;
-		//check non-members can't do anything
 		$result = $this->checkout->createMembership(array(
 			'FirstName' => 'Some',
 			'Surname' => 'Body',
 			'Email' => 'somebody@somedomain.com',
 			'Password' => 'pass1234'
 		));
-		$this->assertFalse($result, "Can't create membership at all");
+
+		$this->fail("Exception was expected here");
 	}
-	
-	function testBadCreateMember(){
-		Checkout::$member_creation_enabled = true;
-		Checkout::$membership_required = false;
-		//no password
+
+	/**
+	 * @expectedException ValidationException
+	 * @expectedExceptionMessage A password is required
+	 */
+	function testMemberWithoutPassword(){
 		$result = $this->checkout->createMembership(array(
 			'FirstName' => 'Jim',
 			'Surname' => 'Smith',
 			'Email' => 'jim@smith.com'
 		));
-		$this->assertFalse($result, "Can't create membership without password");
-		
-		//member exists
+		$this->fail("Exception was expected here");
+	}
+
+	/**
+	 * @expectedException ValidationException
+	 * @expectedExceptionMessage A member already exists with the Email joe@bloggs.com
+	 */
+	function testMemberAlreadyExists(){
 		$result = $this->checkout->createMembership(array(
 			'FirstName' => 'Joe',
 			'Surname' => 'Bloggs',
 			'Email' => 'joe@bloggs.com',
 			'Password' => 'joeblogga'
 		));
-		$this->assertFalse($result, "Can't overwrite existing member");
-		
-		//identifier missing
+		$this->fail("Exception was expected here");
+
+	}
+
+	/**
+	 * @expectedException ValidationException
+	 * @expectedExceptionMessage Required field not found: Email
+	 */
+	function testMemberMissingIdentifier(){
 		$result = $this->checkout->createMembership(array(
 			'FirstName' => 'John',
 			'Surname' => 'Doe',
 			'Password' => 'johndoe1234'
 		));
-		$this->assertFalse($result, "Must provide unique identifier field");
-		
-		//non-validating identifier
-		//TODO: currently assumed to be valid because is handled by form validation
-		/*
-		$result = $this->checkout->createMembership(array(
-			'FirstName' => 'Foo',
-			'Surname' => 'Bar',
-			'Email' => 'badlyformedemail',
-			'Password' => 'foobar'
-		));
-		$this->assertFalse($result, "Unique identifier must be valid");
-		*/
-		//TODO: password validation - length etc (see PasswordValidator.php)
-		
-		//TODO: allow devs to define what member data is required, perhaps add $shopmember->
+		$this->fail("Exception was expected here");
 	}
 	
 }

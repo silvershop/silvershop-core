@@ -36,80 +36,6 @@ class Checkout{
 	}
 	
 	protected $message, $type;
-	
-	/**
-	 * Set many different data fields at once.
-	 * @param array $data [description]
-	 */
-	public function setData($data = array()){
-
-		$prefix = "Shipping";
-
-		//un-map shipping data
-		$shippingdata = array();
-		foreach (singleton('Address')->getFieldMap($prefix) as $field) {
-			if(isset($data[$prefix.$field])){
-				$shippingdata[$field] = $data[$prefix.$field];
-			}
-		}
-
-		//update data model
-		$shippingaddress = $this->order->ShippingAddress();
-		$shippingaddress->update($shippingdata);
-		if(!$shippingaddress->isInDB()){
-			$shippingaddress->write();
-		}elseif($shippingaddress->isChanged()){
-			$shippingaddress = $shippingaddress->duplicate();
-		}
-		$this->setShippingAddress($shippingaddress);
-		//TODO: what about setting the ShippingAddressID specifically? (eg from address dropdown)
-		
-		//TODO: handle billing address
-
-
-		//create a new address, if one doesn't exist
-		//if one does exist
-			//replace fields in existing, OR
-			//create a brand new address dataobject
-		
-		//what about removing fields? (ie all fields empty = remove / delete? address)
-
-		//handle ShippingAddressID, and BillingAddressID = check + assign existing address
-		
-		$orderfields = array(
-			'FirstName',
-			'Surname',
-			'Email',
-			'Notes'
-		);
-
-		$orderdata = array_intersect_key($data, array_flip($orderfields));
-		$this->order->update($orderdata);
-		$this->order->write();
-
-		//TODO: create membership?
-	}
-
-	public function getData($subset = array()){
-		$fields = array(
-			'FirstName' => $this->order->FirstName,
-			'Surname' => $this->order->Surname,
-			'Email' => $this->order->Email,
-			'Notes' => $this->order->Notes
-		);
-		$address = $this->order->ShippingAddress();
-		if($address->exists()){
-			$fields = array_merge($address->getMappedData('Shipping'),$fields);
-		}
-		$address = $this->order->BillingAddress();
-		if($address->exists()){
-			$fields = array_merge($address->getMappedData('Billing'),$fields);
-		}
-		if(!empty($subset)){
-			return array_intersect_key($fields, array_flip($subset));
-		}
-		return $fields;
-	}
 
 	/**
 	 * Get stored message
@@ -238,23 +164,29 @@ class Checkout{
 			$result->error(
 				_t("Checkout.MEMBERSHIPSNOTALLOWED","Creating new memberships is not allowed")
 			);
+			throw new ValidationException($result);
 		}
 		$idfield = Member::get_unique_identifier_field();
 		if(!isset($data[$idfield]) || empty( $data[$idfield])){
 			$result->error(
 				sprintf(_t("Checkout.IDFIELDNOTFOUND","Required field not found: %s"),$idfield)
 			);
+			throw new ValidationException($result);
 		}
+
 		if(!isset($data['Password']) || empty($data['Password'])){
 			$result->error(_t("Checkout.PASSWORDREQUIRED","A password is required"));
+			throw new ValidationException($result);
 		}
+
 		$idval = $data[$idfield];
 		if(ShopMember::get_by_identifier($idval)){
 			$result->error(sprintf(
 				_t("Checkout.MEMBEREXISTS","A member already exists with the %s %s"),
-				_t("Member.".$idfield),
+				_t("Member.".$idfield,$idfield),
 				$idval
 			));
+			throw new ValidationException($result);
 		}
 		$member = new Member(Convert::raw2sql($data));
 		$validation = $member->validate();

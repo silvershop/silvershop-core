@@ -53,14 +53,5 @@ ProductCategory::set_sort_options( array('Title' => 'Alphabetical','Price' => 'L
 // * * * CHECKOUT
 SteppedCheckout::$first_step = null; //disable stepped checkout first step
 
-Address::$required_fields = array(
-	'Address',
-	'AddressLine2',
-	'State',
-	'Country',
-	'City',
-	'PostalCode'
-);
-
 // * * * HELP
 Product::set_global_allow_purchase(true);
