@@ -13,19 +13,18 @@ class FlatTaxModifierTest extends FunctionalTest {
 	function setUp(){
 		parent::setUp();
 		ShopTest::setConfiguration();
-		Config::inst()->update('Order', 'modifiers', array(
+		Order::config()->modifiers = array(
 			"FlatTaxModifier"
-		));
-		Config::inst()->update('FlatTaxModifier', 'name', "GST");
-		Config::inst()->update('FlatTaxModifier', 'rate', 0.15);
-
+		);
+		FlatTaxModifier::config()->name = "GST";
+		FlatTaxModifier::config()->rate = 0.15;
 		$this->cart = ShoppingCart::singleton();
 		$this->mp3player = $this->objFromFixture('Product', 'mp3player');
 		$this->mp3player->publish('Stage','Live');
 	}
 
 	function testInclusiveTax(){
-		Config::inst()->update('FlatTaxModifier', 'exclusive', false);
+		FlatTaxModifier::config()->exclusive = false;
 		$this->cart->clear();
 		$this->cart->add($this->mp3player);
 		$order = $this->cart->current();
@@ -36,7 +35,7 @@ class FlatTaxModifierTest extends FunctionalTest {
 	}
 	
 	function testExclusiveTax(){
-		Config::inst()->update('FlatTaxModifier', 'exclusive', true);
+		FlatTaxModifier::config()->exclusive = true;
 		$this->cart->clear();
 		$this->cart->add($this->mp3player);
 		$order = $this->cart->current();

@@ -2,14 +2,17 @@
 
 class ShopConfig extends DataExtension{
 	
-	static $db = array(
+	private static $db = array(
 		'AllowedCountries' => 'Text'
 	);
 	
-	static $has_one = array(
+	private static $has_one = array(
 		'TermsPage' => 'SiteTree',
 		"CustomerGroup" => "Group"
 	);
+
+	private static $base_currency = 'NZD';
+	private static $email_from;
 	
 	static function current(){
 		return SiteConfig::current_site_config();
@@ -24,7 +27,7 @@ class ShopConfig extends DataExtension{
 			),
 			$countriestab = new Tab("Countries",
 				$allowed = new CheckboxSetField('AllowedCountries','Allowed Ordering and Shipping Countries',
-					Config::inst()->get('ShopConfig','iso_3166_country_codes')
+					SiteConfig::config()->iso_3166_country_codes
 				)
 			)
 		));
@@ -33,7 +36,7 @@ class ShopConfig extends DataExtension{
 	}
 
 	static function get_base_currency(){
-		return Config::inst()->get('ShopConfig','base_currency');
+		return SiteConfig::config()->base_currency;
 	}
 
 	static function get_site_currency(){
@@ -46,7 +49,7 @@ class ShopConfig extends DataExtension{
 	 * @return array
 	 */
 	function getCountriesList($prefixisocode = false){
-		$countries = Config::inst()->get('ShopConfig','iso_3166_country_codes');
+		$countries = SiteConfig::config()->iso_3166_country_codes;
 		asort($countries);
 		if($allowed = $this->owner->AllowedCountries){
 			$allowed = explode(",",$allowed);
@@ -66,7 +69,7 @@ class ShopConfig extends DataExtension{
 	 * @return string - name of country
 	 */
 	static function countryCode2name($code){
-		$codes = Config::inst()->get('ShopConfig','iso_3166_country_codes');
+		$codes = SiteConfig::config()->iso_3166_country_codes;
 		if(isset($codes[$code])){
 			return $codes[$code];
 		}

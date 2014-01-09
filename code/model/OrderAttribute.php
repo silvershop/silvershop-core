@@ -9,15 +9,15 @@
  */
 class OrderAttribute extends DataObject {
 
-	public static $db = array(
+	private static $db = array(
 		'CalculatedTotal' => 'Currency'
 	);
 
-	public static $has_one = array(
+	private static $has_one = array(
 		'Order' => 'Order'
 	);
 
-	public static $casting = array(
+	private static $casting = array(
 		'TableTitle' => 'Text',
 		'CartTitle' => 'Text'
 	);

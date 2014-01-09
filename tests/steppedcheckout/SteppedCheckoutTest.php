@@ -2,10 +2,8 @@
 
 class SteppedCheckoutTest extends FunctionalTest{
 	
-	static $fixture_file = 'shop/tests/fixtures/shop.yml';
-	
-	public static $use_draft_site = true; //so we don't need to publish
-	
+	protected static $fixture_file = 'shop/tests/fixtures/shop.yml';
+	protected static $use_draft_site = true; //so we don't need to publish
 	protected $autoFollowRedirection = false;
 	
 	function setUp(){

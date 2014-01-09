@@ -17,8 +17,7 @@ class ShopTest extends FunctionalTest {
 	}
 
 	function testExampleConfig(){
-		require_once(SHOP_PATH.DIRECTORY_SEPARATOR.'example_config.php');
-		//TODO: test each configuration
+		//TODO: get example from yaml
 	}
 
 	function testCanViewCheckoutPage() {

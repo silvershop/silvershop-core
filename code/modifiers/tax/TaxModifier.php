@@ -5,19 +5,19 @@
  */
 class TaxModifier extends OrderModifier{
 	
-	public static $db = array(
+	private static $db = array(
 		'Rate' => 'Double'
 	);
 	
-	public static $defaults = array(
+	private static $defaults = array(
 		'Rate' => 0.15 //15% tax
 	);
 	
-	public  static $singular_name = "Tax";
+	private  static $singular_name = "Tax";
 	function i18n_singular_name() {
 		return _t("TaxModifier.SINGULAR", self::$singular_name);
 	}
-	public  static $plural_name = "Taxes";
+	private  static $plural_name = "Taxes";
 	function i18n_plural_name() {
 		return _t("TaxModifier.PLURAL", self::$plural_name);
 	}

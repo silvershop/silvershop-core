@@ -14,7 +14,7 @@
  */
 class Product extends Page implements Buyable{
 
-	public static $db = array(
+	private static $db = array(
 		'InternalItemID' => 'Varchar(30)', //ie SKU, ProductID etc (internal / existing recognition of product)
 		'Model' => 'Varchar(30)',
 		
@@ -34,43 +34,43 @@ class Product extends Page implements Buyable{
 	);
 	
 	
-	public static $has_one = array(
+	private static $has_one = array(
 		'Image' => 'Image'
 	);
 
-	public static $many_many = array(
+	private static $many_many = array(
 		'ProductCategories' => 'ProductCategory'
 	);
 
-	public static $defaults = array(
+	private static $defaults = array(
 		'AllowPurchase' => true,
 		'ShowInMenus' => false
 	);
 
-	public static $summary_fields = array(
+	private static $summary_fields = array(
 		'InternalItemID','Title','BasePrice','Weight','Model'
 	);
 
-	public static $searchable_fields = array(
+	private static $searchable_fields = array(
 		'InternalItemID','Title','Weight','Model','BasePrice'
 	);
 	
-	public static $field_labels = array(
+	private static $field_labels = array(
 		'InternalItemID' => 'SKU',
 		'Title' => 'Title',
 		'BasePrice' => 'Price'
 	);
 
-	public static $singular_name = "Product";
+	private static $singular_name = "Product";
 	function i18n_singular_name() { return _t("Product.SINGULAR", $this->stat('singular_name')); }
-	public static $plural_name = "Products";
+	private static $plural_name = "Products";
 	function i18n_plural_name() { return _t("Product.PLURAL", $this->stat('plural_name')); }
 	
-	static $icon = 'shop/images/icons/package';
-	static $default_parent = 'ProductCategory';
-	static $default_sort = '"Title" ASC';
+	private static $icon = 'shop/images/icons/package';
+	private static $default_parent = 'ProductCategory';
+	private static $default_sort = '"Title" ASC';
 	
-	static $order_item = "Product_OrderItem";
+	private static $order_item = "Product_OrderItem";
 
 	private static $number_sold_calculation_type = "SUM"; //SUM or COUNT
 	private static $global_allow_purchase = true;
@@ -288,19 +288,19 @@ class Product_Controller extends Page_Controller {
 
 class Product_OrderItem extends OrderItem {
 
-	static $db = array(
+	private static $db = array(
 		'ProductVersion' => 'Int'
 	);
 
-	static $has_one = array(
+	private static $has_one = array(
 		'Product' => 'Product'
 	);
 	
 	/**
 	 * the has_one join field to identify the buyable
 	 */
-	static $buyable_relationship = "Product";
-	static $disable_versioned = true;
+	private static $buyable_relationship = "Product";
+	private static $disable_versioned = true;
 
 	/**
 	 * Get related product

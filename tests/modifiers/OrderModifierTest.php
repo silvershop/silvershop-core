@@ -12,11 +12,12 @@ class OrderModifierTest extends FunctionalTest {
 
 	function setUp() {
 		parent::setUp();
-		Config::inst()->update('Order', 'modifiers', array(
+		Order::config()->modifiers = array(
 			"FlatTaxModifier"
-		));
-		
-		FlatTaxModifier::set_tax(0.25,"GST");
+		);
+		FlatTaxModifier::config()->rate = 0.15;
+		FlatTaxModifier::config()->name = "GST";
+
 		$this->mp3player = $this->objFromFixture('Product', 'mp3player');
 		$this->socks = $this->objFromFixture('Product', 'socks');
 		$this->mp3player->publish('Stage','Live');

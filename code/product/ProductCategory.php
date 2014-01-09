@@ -8,25 +8,25 @@
   */
 class ProductCategory extends Page {
 
-	public static $db = array(
+	private static $db = array(
 		'ChildGroupsPermission' => "Enum('Show Only Featured Products,Show All Products')"
 	);
 
-	public static $belongs_many_many = array(
+	private static $belongs_many_many = array(
 		'Products' => 'Product'
 	);
 
-	public static $singular_name = "Product Category";
+	private static $singular_name = "Product Category";
 	function i18n_singular_name() {
 		return _t("ProductCategory.SINGULAR", $this->stat('singular_name'));
 	}
-	public static $plural_name = "Product Categories";
+	private static $plural_name = "Product Categories";
 	function i18n_plural_name() {
 		return _t("ProductCategory.PLURAL", $this->stat('plural_name'));
 	}
 
-	static $default_child = 'Product';
-	static $icon = 'cms/images/treeicons/folder';
+	private static $default_child = 'Product';
+	private static $icon = 'cms/images/treeicons/folder';
 
 	private static $include_child_groups = true;
 	private static $page_length = 12;

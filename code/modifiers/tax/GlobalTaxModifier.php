@@ -12,18 +12,19 @@ class GlobalTaxModifier extends TaxModifier {
 		'Country' => 'Varchar'
 	);
 
-	private static $countryrates = array();
+	private static $country_rates = array();
 	
 	function value($incoming){
 		$rate = $this->Type == "Chargable" ?
 			$this->Rate() :
-			round(1 - (1 / (1 + $this->Rate())),Order::$rounding_precision);
+			round(1 - (1 / (1 + $this->Rate())), Order::config()->rounding_precision);
 		return $incoming * $rate;	
 	}
 	
 	function Rate(){
-		if(isset(self::$rates_by_country[$this->Country()])) {
-			return $this->Rate = self::$rates_by_country[$this->Country()];
+		$rates = self::config()->country_rates;
+		if(isset($rates[$this->Country()])) {
+			return $this->Rate = $rates[$this->Country()]['rate'];
 		}
 		$defaults = $this->stat('defaults');
 		return $this->Rate = $defaults['Rate'];

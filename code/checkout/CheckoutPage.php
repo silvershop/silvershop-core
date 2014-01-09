@@ -10,11 +10,11 @@
  */
 class CheckoutPage extends Page {
 
-	public static $db = array(
+	private static $db = array(
 		'PurchaseComplete' => 'HTMLText'
 	);
 
-	static $icon = 'shop/images/icons/money';
+	private static $icon = 'shop/images/icons/money';
 
 	/**
 	 * Returns the link to the checkout page on this site
@@ -24,7 +24,7 @@ class CheckoutPage extends Page {
 	 */
 	static function find_link($urlSegment = false, $action = null, $id = null) {
 		if(!$page = CheckoutPage::get()->first()) {
-			return Controller::join_links(Director::baseURL(),CheckoutPage_Controller::$url_segment);
+			return Controller::join_links(Director::baseURL(), CheckoutPage_Controller::config()->url_segment);
 		}
 		$id = ($id)? "/".$id : "";
 		return ($urlSegment) ? $page->URLSegment : Controller::join_links($page->Link($action),$id);

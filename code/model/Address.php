@@ -23,7 +23,7 @@
  */
 class Address extends DataObject{
 
-	static $db = array(
+	private static $db = array(
 		'Country'		=> 'ShopCountry',  //level1: Country = ISO 2-character country code
 		'State'			=> 'Varchar(100)', //level2: Locality, Administrative Area, State, Province, Region, Territory, Island
 		'City'			=> 'Varchar(100)', //level3: Dependent Locality, City, Suburb, County, District
@@ -42,11 +42,11 @@ class Address extends DataObject{
 		'Phone'			=> 'Varchar(100)',
 	);
 	
-	static $has_one = array(
+	private static $has_one = array(
 		'Member' => 'Member'		
 	);
 	
-	static $casting = array(
+	private static $casting = array(
 		'Country' => 'ShopCountry'	
 	);
 

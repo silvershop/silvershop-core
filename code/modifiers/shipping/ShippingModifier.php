@@ -2,7 +2,7 @@
 
 class ShippingModifier extends OrderModifier{
 	
-	public static $singular_name = "Shipping";
+	private static $singular_name = "Shipping";
 	function i18n_singular_name() {
 		return _t("ShippingModifier.SINGULAR", self::$singular_name);
 	}

@@ -57,7 +57,7 @@ class Order extends DataObject {
 		'Status' => 'Cart'
 	);
 	
-	public static $casting = array(
+	private static $casting = array(
 		'FullBillingAddress' => 'Text',
 		'FullShippingAddress' => 'Text',
 		'Total' => 'Currency',
@@ -67,19 +67,19 @@ class Order extends DataObject {
 		'TotalOutstanding' => 'Currency'
 	);
 
-	public static $singular_name = "Order";
-	public static $plural_name = "Orders";
-	static $admin_template = "Order_admin";
+	private static $singular_name = "Order";
+	private static $plural_name = "Orders";
+	private static $admin_template = "Order_admin";
 
 	/**
 	 * Statuses for orders that have been placed.
 	 */
-	static $placed_status = array('Paid','Unpaid', 'Processing', 'Sent', 'Complete', 'MemberCancelled', 'AdminCancelled');
+	private static $placed_status = array('Paid','Unpaid', 'Processing', 'Sent', 'Complete', 'MemberCancelled', 'AdminCancelled');
 
 	/**
 	 * Statuses that shouldn't show in user account.
 	 */
-	static $hidden_status = array('Cart','Query');
+	private static $hidden_status = array('Cart','Query');
 
 	/**
 	 * Flag to determine whether the user can cancel
@@ -87,7 +87,7 @@ class Order extends DataObject {
 	 *
 	 * @var boolean
 	 */
-	protected static $can_cancel_before_payment = true;
+	private static $can_cancel_before_payment = true;
 
 	/**
 	 * Flag to determine whether the user can cancel
@@ -95,7 +95,7 @@ class Order extends DataObject {
 	 *
 	 * @var boolean
 	 */
-	protected static $can_cancel_before_processing = false;
+	private static $can_cancel_before_processing = false;
 
 	/**
 	 * Flag to determine whether the user can cancel
@@ -103,7 +103,7 @@ class Order extends DataObject {
 	 *
 	 * @var boolean
 	 */
-	protected static $can_cancel_before_sending = false;
+	private static $can_cancel_before_sending = false;
 
 	/**
 	 * Flag to determine whether the user can cancel
@@ -111,7 +111,7 @@ class Order extends DataObject {
 	 *
 	 * @var unknown_type
 	 */
-	protected static $can_cancel_after_sending = false;
+	private static $can_cancel_after_sending = false;
 
 	/**
 	 * Modifiers represent the additional charges or
@@ -120,31 +120,10 @@ class Order extends DataObject {
 	 *
 	 * @var array
 	 */
-	protected static $modifiers = array();
+	private static $modifiers = array();
 	
-	/**
-	 * These are the fields, used for a {@link ComplexTableField}
-	 * in order to show for the table columns on a report.
-	 *
-	 * @see CurrentOrdersReport
-	 * @see UnprintedOrdersReport
-	 *
-	 * To customise these, simply define Order::set_table_overview_fields(Array)
-	 * inside your project _config.php where Array is a set of fields that
-	 * you want to display on the table.
-	 *
-	 * @var array
-	 */
-	public static $table_overview_fields = array(
-		'Reference' => 'Order No',
-		'Placed' => 'Date',
-		'FirstName' => 'First Name',
-		'Surname' => 'Surname',
-		'Total' => 'Total',
-		'Status' => 'Status'
-	);
 
-	public static $summary_fields = array(
+	private static $summary_fields = array(
 		'Reference' => 'Order No',
 		'Placed' => 'Date',
 		'Name' => 'Customer',
@@ -153,7 +132,7 @@ class Order extends DataObject {
 		'Status' => 'Status'
 	);
 
-	public static $searchable_fields = array(
+	private static $searchable_fields = array(
 		'Reference' => array(),
 		'FirstName' => array(
 			'title' => 'Customer Name',
@@ -167,8 +146,8 @@ class Order extends DataObject {
 		)
 	);
 
-	public static $rounding_precision = 2;
-	public static $reference_id_padding = 5;
+	private static $rounding_precision = 2;
+	private static $reference_id_padding = 5;
 	
 	public static function get_order_status_options() {
 		return singleton('Order')->dbObject('Status')->enumValues(false);

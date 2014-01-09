@@ -9,17 +9,17 @@
  */
 class OrderItem extends OrderAttribute {
 
-	public static $db = array(
+	private static $db = array(
 		'Quantity' => 'Int',
 		'UnitPrice' => 'Currency'
 	);
 
-	public static $casting = array(
+	private static $casting = array(
 		'UnitPrice' => 'Currency',
 		'Total' => 'Currency'
 	);
 
-	public static $searchable_fields = array(
+	private static $searchable_fields = array(
 		'OrderID' => array(
 			'title' => 'Order ID',
 			'field' => 'TextField'
@@ -32,9 +32,9 @@ class OrderItem extends OrderAttribute {
 		"Total"
 	);
 
-	public static $field_labels = array();
+	private static $field_labels = array();
 
-	public static $summary_fields = array(
+	private static $summary_fields = array(
 		"Order.ID" => "Order ID",
 		"TableTitle" => "Title",
 		"UnitPrice" => "Unit Price" ,
@@ -42,20 +42,15 @@ class OrderItem extends OrderAttribute {
 		"Total" => "Total Price" ,
 	);
 	
-	static $required_fields = array();
-	static $buyable_relationship = "Product";
-	static $disable_quantity_js = false;
+	private $required_fields = array();
+	private $buyable_relationship = "Product";
 	
-	public static $singular_name = "Order Item";
+	private static $singular_name = "Order Item";
 	function i18n_singular_name() { return _t("OrderItem.SINGULAR", self::$singular_name); }
-	public static $plural_name = "Order Items";
+	private static $plural_name = "Order Items";
 	function i18n_plural_name() { return _t("OrderItem.PLURAL", self::$plural_name); }
-	public static $default_sort = "\"Created\" DESC";
+	private static $default_sort = "\"Created\" DESC";
 
-	static function disable_quantity_js(){
-		self::$disable_quantity_js = true;
-	}
-	
 	/**
 	 * Get the buyable object related to this item.
 	 */

@@ -9,21 +9,21 @@
  */
 class OrderModifier extends OrderAttribute {
 
-	public static $db = array(
+	private static $db = array(
 		'Amount' => 'Currency',
 		'Type' => "Enum('Chargable,Deductable,Ignored','Chargable')",
 		'Sort' => 'Int'
 	);
 	
-	public static $defaults = array(
+	private static $defaults = array(
 		'Type' => 'Chargable'
 	);
 
-	public static $casting = array(
+	private static $casting = array(
 		'TableValue' => 'Currency'
 	);
 
-	public static $searchable_fields = array(
+	private static $searchable_fields = array(
 		'OrderID' => array(
 			'title' => 'Order ID',
 			'field' => 'TextField'
@@ -35,8 +35,8 @@ class OrderModifier extends OrderAttribute {
 		"Type"
 	);
 
-	public static $field_labels = array();
-	public static $summary_fields = array(
+	private static $field_labels = array();
+	private static $summary_fields = array(
 		"Order.ID" => "Order ID",
 		"TableTitle" => "Table Title",
 		"ClassName" => "Type",
@@ -44,12 +44,12 @@ class OrderModifier extends OrderAttribute {
 		"Type" => "Type"
 	);
 
-	public static $singular_name = "Modifier";
+	private static $singular_name = "Modifier";
 	function i18n_singular_name() {	return _t("OrderModifier.SINGULAR", self::$singular_name); }
-	public static $plural_name = "Modifiers";
+	private static $plural_name = "Modifiers";
 	function i18n_plural_name() { return _t("OrderModifier.PLURAL", self::$plural_name); }
 
-	public static $default_sort = "\"Sort\" ASC, \"Created\" ASC";
+	private static $default_sort = "\"Sort\" ASC, \"Created\" ASC";
 	
 	/**
 	* Specifies whether this modifier is always required in an order.
@@ -81,7 +81,7 @@ class OrderModifier extends OrderAttribute {
 			case "Ignored":
 				break;
 		}
-		$value = round($value,Order::$rounding_precision);
+		$value = round($value,Order::config()->rounding_precision);
 		$this->Amount = $value;
 		return $subtotal;
 	}

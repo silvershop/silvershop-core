@@ -53,6 +53,7 @@ $cfg->update('SimpleShippingModifier','charges_for_countries', array('US' => 10,
 
 // checkout
 $cfg->update('ShopConfig','email_from', null);
+$cfg->update('ShopConfig','base_currency', 'NZD');
 $cfg->update('SteppedCheckout','first_step', null);
 $cfg->update('Address','requiredfields',array(
 	'Address',

@@ -7,7 +7,7 @@
  */
 class AccountPage extends Page {
 
-	static $icon = 'shop/images/icons/account';
+	private static $icon = 'shop/images/icons/account';
 
 	function canCreate($member = null) {
 		return !AccountPage::get()->exists();
@@ -17,7 +17,7 @@ class AccountPage extends Page {
 	 * Returns the link or the URLSegment to the account page on this site
 	 * @param boolean $urlSegment Return the URLSegment only
 	 */
-	static function find_link($urlSegment = false) {
+	public static function find_link($urlSegment = false) {
 		$page = self::get_if_account_page_exists();
 		return ($urlSegment) ? $page->URLSegment : $page->Link();
 	}
@@ -28,7 +28,7 @@ class AccountPage extends Page {
 	 * @param int|string $orderID ID of the order
 	 * @param boolean $urlSegment Return the URLSegment only
 	 */
-	static function get_order_link($orderID, $urlSegment = false) {
+	public static function get_order_link($orderID, $urlSegment = false) {
 		$page = self::get_if_account_page_exists();
 		return ($urlSegment ? $page->URLSegment . '/' : $page->Link()) . 'order/' . $orderID;
 	}
@@ -44,8 +44,8 @@ class AccountPage extends Page {
 
 class AccountPage_Controller extends Page_Controller {
 	
-	static $url_segment = 'account';
-	static $allowed_actions = array(
+	private static $url_segment = 'account';
+	private static $allowed_actions = array(
 		'addressbook',
 		'CreateAddressForm',
 		'DefaultAddressForm',

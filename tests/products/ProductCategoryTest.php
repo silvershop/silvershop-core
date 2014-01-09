@@ -8,7 +8,7 @@ class ProductCategoryTest extends SapphireTest{
 	
 	function setUp(){
 		parent::setUp();
-		ProductCategory::set_must_have_price(false);
+		ProductCategory::config()->set_must_have_price = false;
 		
 		$this->products = $this->objFromFixture('ProductCategory','products');
 		$this->products->publish('Stage','Live');
