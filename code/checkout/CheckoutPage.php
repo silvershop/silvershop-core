@@ -2,27 +2,9 @@
 /**
  * CheckoutPage is a CMS page-type that shows the order
  * details to the customer for their current shopping
- * cart on the site. It also lets the customer review
- * the items in their cart, and manipulate them (add more,
- * deduct or remove items completely). The most important
- * thing is that the {@link CheckoutPage_Controller} handles
- * the {@link OrderForm} form instance, allowing the customer
- * to fill out their shipping details, confirming their order
- * and making a payment.
+ * cart on the site. 
  *
  * @see CheckoutPage_Controller->Order()
- * @see OrderForm
- * @see CheckoutPage_Controller->OrderForm()
- *
- * The CheckoutPage_Controller is also responsible for setting
- * up the modifier forms for each of the OrderModifiers that are
- * enabled on the site (if applicable - some don't require a form
- * for user input). A usual implementation of a modifier form would
- * be something like allowing the customer to enter a discount code
- * so they can receive a discount on their order.
- *
- * @see OrderModifier
- * @see CheckoutPage_Controller->ModifierForms()
  *
  * @package shop
  */
@@ -90,15 +72,13 @@ class CheckoutPage_Controller extends Page_Controller {
 	}
 
 	function OrderForm() {
-		$order = $this->Cart();
-		if(!(bool)$order){
+		if(!(bool)$this->Cart()){
 			return false;
 		}
-
 		return new CheckoutForm(
 			$this,
 			'OrderForm', 
-			new SinglePageCheckoutComponentConfig($order)
+			new SinglePageCheckoutComponentConfig(ShoppingCart::curr())
 		);
 	}
 
@@ -110,11 +90,10 @@ class CheckoutPage_Controller extends Page_Controller {
 	}
 
 	function PaymentForm(){
-		$order = $this->Cart();
-		if(!(bool)$order){
+		if(!(bool)$this->Cart()){
 			return false;
 		}
-		$config = new CheckoutComponentConfig($order);
+		$config = new CheckoutComponentConfig(ShoppingCart::curr());
 		$config->AddComponent(new OnsitePaymentCheckoutComponent());
 		$form = new CheckoutForm($this, "PaymentForm", $config);
 
