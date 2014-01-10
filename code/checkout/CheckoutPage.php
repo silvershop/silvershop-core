@@ -49,10 +49,8 @@ class CheckoutPage extends Page {
 }
 
 class CheckoutPage_Controller extends Page_Controller {
-	
-	static $url_segment = "checkout";
 
-	static $allowed_actions = array(
+	private static $allowed_actions = array(
 		'OrderForm',
 		'payment',
 		'PaymentForm'
@@ -71,13 +69,17 @@ class CheckoutPage_Controller extends Page_Controller {
 		if(!(bool)$this->Cart()){
 			return false;
 		}
+		$class = self::config()->checkout_components;
 		return new CheckoutForm(
 			$this,
-			'OrderForm', 
-			new SinglePageCheckoutComponentConfig(ShoppingCart::curr())
+			'OrderForm',
+			Injector::inst()->create("CheckoutComponentConfig", ShoppingCart::curr())
 		);
 	}
 
+	/**
+	 * Action for making on-site payments
+	 */
 	function payment(){
 		return array(
 			'Title' => 'Make Payment',

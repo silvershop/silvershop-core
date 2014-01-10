@@ -187,7 +187,7 @@ class SinglePageCheckoutComponentConfig extends CheckoutComponentConfig {
 		$this->addComponent(new CustomerDetailsCheckoutComponent());
 		$this->addComponent(new ShippingAddressCheckoutComponent());
 		$this->addComponent(new BillingAddressCheckoutComponent());
-		if(Checkout::member_creation_enabled()){
+		if(Checkout::member_creation_enabled() && !Member::currentUserID()){
 			$this->addComponent(new MembershipCheckoutComponent());
 		}
 		if(count(GatewayInfo::get_supported_gateways()) > 1){

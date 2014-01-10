@@ -11,7 +11,6 @@ class ShopConfig extends DataExtension{
 		"CustomerGroup" => "Group"
 	);
 
-	private static $base_currency = 'NZD';
 	private static $email_from;
 	
 	static function current(){
