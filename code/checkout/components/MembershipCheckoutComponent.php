@@ -40,6 +40,7 @@ class MembershipCheckoutComponent extends CheckoutComponent{
 			return array();
 		}
 		return array(
+			Member::get_unique_identifier_field(),
 			'Password'
 		);
 	}
@@ -58,12 +59,12 @@ class MembershipCheckoutComponent extends CheckoutComponent{
 			return;
 		}
 		$result = new ValidationResult();
-		$member = new Member($data);
-		$idval = $data[Member::get_unique_identifier_field()];
-		if(ShopMember::get_by_identifier($idval)){
-			$result->error(sprintf(_t("Checkout.MEMBEREXISTS","A member already exists with the %s %s"),$idfield,$idval), $idval);
-		}
 		if(Checkout::membership_required() || !empty($data['Password'])){
+			$member = new Member($data);
+			$idval = $data[Member::get_unique_identifier_field()];
+			if(ShopMember::get_by_identifier($idval)){
+				$result->error(sprintf(_t("Checkout.MEMBEREXISTS","A member already exists with the %s %s"),$idfield,$idval), $idval);
+			}
 			$passwordresult = $this->passwordvalidator->validate($data['Password'], $member);
 			if(!$passwordresult->valid()){
 				$result->error($passwordresult->message(), "Password");
