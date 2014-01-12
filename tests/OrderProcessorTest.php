@@ -16,7 +16,7 @@ class OrderProcessorTest extends SapphireTest {
 	function setUp() {
 		parent::setUp();
 		ShopTest::setConfiguration();
-	
+
 		$this->mp3player = $this->objFromFixture('Product', 'mp3player');
 		$this->socks = $this->objFromFixture('Product', 'socks');
 		$this->beachball = $this->objFromFixture('Product', 'beachball');
@@ -28,13 +28,6 @@ class OrderProcessorTest extends SapphireTest {
 		$this->hdtv->publish('Stage','Live');
 	
 		$this->shoppingcart = ShoppingCart::singleton();
-	}
-	
-	function tearDown(){
-		$this->shoppingcart->clear();
-		if($member = Member::currentUser()){
-			$member->logOut();
-		}
 	}
 	
 	function testCreatePayment(){
@@ -116,6 +109,9 @@ class OrderProcessorTest extends SapphireTest {
 	}
 	
 	function testMemberOrder(){
+
+		//log out the admin user
+		Member::currentUser()->logOut();
 	
 		$this->shoppingcart->add($this->mp3player);
 	
@@ -160,6 +156,9 @@ class OrderProcessorTest extends SapphireTest {
 	
 	
 	function testNoMemberOrder(){
+
+		//log out the admin user
+		Member::currentUser()->logOut();
 
 		$this->shoppingcart->add($this->socks);
 		$order = $this->shoppingcart->current();
