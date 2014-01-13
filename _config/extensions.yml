@@ -15,7 +15,7 @@ ShoppingCart_Controller:
 CheckoutPage_Controller:
   extensions:
     - OrderManipulation
-AccountPage:
+AccountPage_Controller:
   extensions:
     - OrderManipulation
 Member:
