@@ -170,7 +170,7 @@ class OrderItem extends OrderAttribute {
 	}
 
 	function QuantityField(){
-		return new DropdownShopQuantityField($this);
+		return Injector::inst()->create('ShopQuantityField',$this);
 	}
 	
 	function addLink() {
