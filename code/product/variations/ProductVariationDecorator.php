@@ -38,7 +38,7 @@ class ProductVariationDecorator extends DataExtension{
 	 */
 	function getVariationsTable() {
 		$variations = $this->owner->Variations();
-		$itemsConfig = new GridFieldConfig_RelationEditor();
+		$itemsConfig = new GridFieldConfig_RecordEditor();
 		$itemsTable = new GridField("Variations","Variations",$variations,$itemsConfig);
 		return $itemsTable;
 	}
@@ -172,17 +172,14 @@ class ProductVariationDecorator extends DataExtension{
 			$remove = true;
 		}
 		else {
-
 			$staged = Versioned::get_by_stage($this->owner->ClassName, 'Stage')->byID($this->owner->ID);
 			$live = Versioned::get_by_stage($this->owner->ClassName, 'Live')->byID($this->owner->ID);
-
 			if(!$staged && !$live) {
 				$remove = true;
 			}	
 		}
 
 		if($remove) {
-
 			foreach($this->owner->Variations() as $variation){
 				$variation->delete();
 				$variation->destroy();
