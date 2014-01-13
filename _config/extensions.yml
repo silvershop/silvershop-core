@@ -27,9 +27,6 @@ Image:
 Product:
   extensions:
     - ProductVariationDecorator
-Product_Controller:
-  extensions:
-    - ProductControllerVariationExtension
 Payment:
   extensions:
     - ShopPayment

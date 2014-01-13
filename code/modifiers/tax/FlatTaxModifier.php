@@ -7,10 +7,6 @@
  */
 class FlatTaxModifier extends TaxModifier {
 
-	private static $db = array(
-		'TaxType' => "Enum('Exclusive,Inclusive')" //deprecated
-	);
-
 	private static $name = "GST";
 	private static $rate = 0.15;
 	private static $exclusive = true;
@@ -20,7 +16,6 @@ class FlatTaxModifier extends TaxModifier {
 	function populateDefaults(){
 		parent::populateDefaults();
 		$this->Type = self::config()->exclusive ? 'Chargable' : 'Ignored';
-		$this->TaxType = self::config()->exclusive ? 'Exclusive' : 'Inclusive';
 	}
 
 	/**

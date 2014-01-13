@@ -108,13 +108,6 @@ class ProductVariation extends DataObject implements Buyable{
 		return $do;
 	}
 
-	/**
-	 * @deprecated use canPurchase instead
-	 */
-	function AllowPurchase() {
-		return $this->canPurchase();
-	}
-
 	function canPurchase($member = null) {
 		$allowpurchase = false;
 		if($product = $this->Product()){

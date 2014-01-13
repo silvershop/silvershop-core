@@ -247,13 +247,6 @@ class Product extends Page implements Buyable{
 	function removeallLink() {
 		return ShoppingCart_Controller::remove_all_item_link($this);
 	}
-	
-	/**
-	* @deprecated use canPurchase instead.
-	*/
-	function AllowPurchase(){
-		return $this->canPurchase();
-	}
 
 }
 

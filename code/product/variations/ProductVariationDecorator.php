@@ -194,25 +194,3 @@ class ProductVariationDecorator extends DataExtension{
 	}
 
 }
-
-/**
- * 
- * @subpackage variations
- */
-class ProductControllerVariationExtension extends Extension{
-
-	/**
-	 * @deprecated - use Form instead
-	 */
-	function VariationForm(){
-		return $this->owner->Form();
-	}
-	
-	/**
-	 * @deprecated - use Form instead
-	 */
-	function AddVariationForm(){
-		return $this->owner->Form();
-	}
-	
-}
