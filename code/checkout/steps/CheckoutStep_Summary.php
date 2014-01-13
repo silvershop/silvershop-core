@@ -48,12 +48,12 @@ class CheckoutStep_Summary extends CheckoutStep{
 			$this->owner->redirectBack();
 			return false;
 		}
-		$redirecturl = $processor->makePayment(
+		$response = $processor->makePayment(
 			Checkout::get($order)->getSelectedPaymentMethod(false),
 			$form->getData()
 		);
 		if(!$this->owner->redirectedTo()){ //only redirect if one hasn't been done already
-			return $this->owner->redirect($redirecturl);
+			return $response->redirect();
 		}
 		return;
 	}

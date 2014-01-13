@@ -34,17 +34,20 @@ class OrderProcessor{
 	 * @param Member $member - assign a member to the order
 	 * @return boolean - success/failure
 	 */
-	function placeOrder($member = null){
+	function placeOrder(){
 		if(!$this->order){
 			$this->error(_t("OrderProcessor.NULL","A new order has not yet been started."));
 			return false;
 		}
-		//TODO: check price hasn't changed since last calculation??
-		$this->order->calculate(); //final re-calculation
 		if(!$this->canPlace($this->order)){ //final cart validation
 			return false;
 		}
-		$this->order->Status = 'Unpaid'; //update status
+		 //update status
+		if($this->order->TotalOutstanding()){
+			$this->order->Status = 'Unpaid';
+		}else{
+			$this->order->Status = 'Processing';
+		}
 		if(!$this->order->Placed){
 			$this->order->Placed = SS_Datetime::now()->Rfc2822(); //record placed order datetime
 			if($request = Controller::curr()->getRequest()){
@@ -65,9 +68,8 @@ class OrderProcessor{
 				$modifier->write();
 			}
 		}
-		if($member){
-			$this->order->MemberID = $member->ID;
-			//add member to customers group
+		//add member to customers group
+		if($member = $order->Member()){
 			$cgroup = ShopConfig::current()->CustomerGroup();
 			if($cgroup->exists()){
 				$member->Groups()->add($cgroup);
@@ -145,7 +147,7 @@ class OrderProcessor{
 		if($response->isSuccessful()) {
 			$this->completePayment();
 		}
-		return $response->redirectURL();
+		return $response;
 	}
 
 	/**
@@ -188,6 +190,10 @@ class OrderProcessor{
 					$item->onPayment();
 				}
 				$this->order->extend('onPaid'); //all payment is settled
+
+				if($this->canPlace($this->order)){
+					$this->placeOrder();
+				}
 			}
 		}
 	}	

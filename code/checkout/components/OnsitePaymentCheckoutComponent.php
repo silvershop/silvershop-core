@@ -9,13 +9,16 @@ use Omnipay\Common\Helper;
 class OnsitePaymentCheckoutComponent extends CheckoutComponent {
 
 	function getFormFields(Order $order) {
+		$gateway = Checkout::get($order)->getSelectedPaymentMethod();
+		$gatewayfieldsfactory = new GatewayFieldsFactory($gateway,array('Card'));
+		$fields = $gatewayfieldsfactory->getCardFields();
+		if($gateway === "Dummy"){
+			$fields->unshift(new LiteralField("dummypaymentmessage",
+				"<p class=\"message good\">Dummy data has been added to the form for testing convenience.</p>"
+			));
+		}
 
-		$gatewayfieldsfactory = new GatewayFieldsFactory(
-			Session::get("Checkout.PaymentMethod"),
-			array('Card')
-		);
-
-		return $gatewayfieldsfactory->getCardFields();
+		return $fields;
 	}
 
 	public function getRequiredFields(Order $order){
@@ -29,17 +32,24 @@ class OnsitePaymentCheckoutComponent extends CheckoutComponent {
 			$result->error('Credit card is invalid');
 			throw new ValidationException($result);
 		}
-
 	}
 
 	public function getData(Order $order){
-		return array();
+		$data = array();
+		$gateway = Checkout::get($order)->getSelectedPaymentMethod();
+		//provide valid dummy credit card data
+		if($gateway === "Dummy"){
+			$data = array_merge(array(
+				'name' => 'Joe Bloggs',
+				'number' => '4242424242424242',
+				'cvv' => 123
+			), $data);
+		}
+		return $data;
 	}
 
 	public function setData(Order $order, array $data){
-
 		//create payment?
-
 	}
 
 }

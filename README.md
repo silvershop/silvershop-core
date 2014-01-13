@@ -39,11 +39,7 @@ composer require -d myshop "burnbright/silverstripe-shop:dev-master"
 
 ## Configuration
 
-You can view various configuration options in the 'example_config.php' file.
-
-*WARNING:* do not copy and paste entire configuration example file without
-first understanding each line, otherwise the system may not work as documented.
-In other words, only copy the lines which you need and understand.
+You can view various configuration options in the 'example_config.yml' file.
 
 ## Migrating
 

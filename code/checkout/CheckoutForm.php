@@ -27,27 +27,35 @@ class CheckoutForm extends Form {
 		$this->config->setData($form->getData());
 		$order = $this->config->getOrder();
 		$gateway = Checkout::get($order)->getSelectedPaymentMethod(false);
-
-		if(!$order->canPay()){
-			//TODO: allow $0 orders
-				//process order
-			$this->controller->redirectBack();
-			return;
-		}
-
 		if(GatewayInfo::is_offsite($gateway)){
-			$redirecturl = OrderProcessor::create($order)->makePayment(
-				Checkout::get($order)->getSelectedPaymentMethod(false),
-				$form->getData()
-			);
-			//TODO: handle cancel or gateway failures
-			$this->controller->redirect($redirecturl);
-			return;
-		}
 
-		$this->controller->redirect(
+			return $this->submitpayment($data, $form);
+		}
+		return $this->controller->redirect(
 			$this->controller->Link('payment')
 		);		
+	}
+
+	function submitpayment($data, $form, $request){
+		$data = $form->getData();
+		$data['cancelURL'] = $this->controller->Link();
+		$order = $this->config->getOrder();
+		$processor = OrderProcessor::create($order);
+		$response = $processor->makePayment(
+			Checkout::get($order)->getSelectedPaymentMethod(false),
+			$data
+		);
+
+		die();
+		if($response->isRedirect()){
+			return $this->controller->redirect($redirecturl);
+		}
+		if($response->isSuccessful()){
+			return $response->redirect();
+		}
+		$form->sessionMessage($response->getMessage(),'bad');
+
+		return $this->controller->redirectBack();
 	}
 
 }
