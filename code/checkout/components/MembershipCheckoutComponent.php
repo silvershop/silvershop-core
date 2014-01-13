@@ -14,9 +14,8 @@ class MembershipCheckoutComponent extends CheckoutComponent{
 			$this->passwordvalidator = Member::password_validator();
 			if(!$this->passwordvalidator){
 				$this->passwordvalidator = new PasswordValidator();
-				$this->passwordvalidator->characterStrength(3,
-					array("lowercase", "uppercase", "digits", "punctuation")
-				);
+				$this->passwordvalidator->minLength(5);
+				$this->passwordvalidator->characterStrength(2,array("lowercase", "uppercase", "digits", "punctuation"));
 			}
 		}
 	}

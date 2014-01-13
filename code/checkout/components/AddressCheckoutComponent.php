@@ -25,6 +25,15 @@ abstract class AddressCheckoutComponent extends CheckoutComponent{
 		unset($data['ID']);
 		unset($data['ClassName']);
 		unset($data['RecordClassName']);
+		//merge data from multiple sources
+		$shopuser = ShopUserInfo::get_location();
+		$member = Member::currentUser();
+		$data = array_merge(
+			is_array($shopuser) ?	$shopuser :	array(),
+			$member ? $member->{"Default".$this->addresstype."Address"}()->toMap() : array(),
+			$data
+		);
+
 		return $data;
 	}
 

@@ -40,6 +40,7 @@ class CheckoutForm extends Form {
 		$data = $form->getData();
 		$data['cancelURL'] = $this->controller->Link();
 		$order = $this->config->getOrder();
+		$order->calculate();
 		$processor = OrderProcessor::create($order);
 		$response = $processor->makePayment(
 			Checkout::get($order)->getSelectedPaymentMethod(false),
@@ -55,7 +56,7 @@ class CheckoutForm extends Form {
 			$form->sessionMessage($response->getMessage(),'bad');
 
 		}else{
-			$form->sessionMessage("This order can't be paid for.",'bad');
+			$form->sessionMessage($processor->getError(),'bad');
 		}
 
 		return $this->controller->redirectBack();

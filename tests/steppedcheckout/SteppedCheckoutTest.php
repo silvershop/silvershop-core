@@ -122,9 +122,9 @@ class SteppedCheckoutTest extends FunctionalTest{
 		$form = $this->checkout->ConfirmationForm();
 		$data = array(
 			//dummy card data - which will cause successful payment
-			'number' => '4242424242424242',
-			'expiryMonth' => '5',
-			'expiryYear' => date("Y",strtotime("+1 year")),
+			//'number' => '4242424242424242',
+			//'expiryMonth' => '5',
+			//'expiryYear' => date("Y",strtotime("+1 year")),
 
 			'Notes' => 'Leave it around the back',
 			'ReadTermsAndConditions' => 1,

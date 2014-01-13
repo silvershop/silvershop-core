@@ -5,7 +5,7 @@
  */
 class CheckoutStep_Membership extends CheckoutStep{
 	
-	static $allowed_actions = array(
+	private static $allowed_actions = array(
 		'membership',
 		'MembershipForm',
 		'LoginForm',
@@ -51,6 +51,7 @@ class CheckoutStep_Membership extends CheckoutStep{
 	}
 	
 	function createaccount($requestdata){
+
 		if(Member::currentUser()){ //we shouldn't create an account if already a member
 			Controller::curr()->redirect($this->NextStepLink());
 			return;
@@ -63,34 +64,30 @@ class CheckoutStep_Membership extends CheckoutStep{
 			'Form' => $this->CreateAccountForm()
 		);
 	}
+
+	function registerconfig(){
+		$config = new CheckoutComponentConfig(ShoppingCart::curr(), false);
+		$config->addComponent(new CustomerDetailsCheckoutComponent());
+		$config->addComponent(new MembershipCheckoutComponent());
+
+		return $config;
+	}
 	
 	function CreateAccountForm(){
-		$fields = CheckoutFieldFactory::singleton()->getMembershipFields();
-		$actions = new FieldList(
+		$form = new CheckoutForm($this->owner,"CreateAccountForm",$this->registerconfig());
+		$form->setActions(new FieldList(
 			new FormAction('docreateaccount','Create New Account')
-		);
-		$validator = new RequiredFields(array_keys($fields->dataFields())); //require all fields
-		$form = new Form($this->owner,"CreateAccountForm",$fields,$actions, $validator);
+		));
+		$form->getValidator()->addRequiredField("Password");
+
 		$this->owner->extend('updateCreateAccountForm', $form);
 		return $form;
 	}
 	
 	function docreateaccount($data, Form $form){
-		$checkout = Checkout::get();
-		//we want to make use the goodness of $form->saveInto, so we need to use a dummy DataObject
-		$data = new DataObject();
-		$form->saveInto($data);
-		$member = $checkout->createMembership($data->toMap());
-		//check member was created, else send back error
-		if(!$member){
-			$form->sessionMessage($checkout->getMessage(), $checkout->getMessageType());
-			Controller::curr()->redirectBack();
-			return;
-		}
-		$member->write();
-		$member->logIn(); //log in member before continuing
-		Controller::curr()->redirect($this->NextStepLink());
-		return;
+		$this->registerconfig()->setData($form->getData());
+
+		return Controller::curr()->redirect($this->NextStepLink());
 	}
 	
 }

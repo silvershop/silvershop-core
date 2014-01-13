@@ -20,10 +20,10 @@
 				<td class="price">$Gateway</td>
 				<td class="price">$Message.NoHTML</td>
 			</tr>
-			<% if Messages %>
+			<% if ShowMessages %>
 				<% loop Messages %>
-					<tr colspan="5">
-						<td>
+					<tr>
+						<td colspan="5">
 							$ClassName $Message $User.Name
 						</td>
 					</tr>

@@ -69,7 +69,6 @@ class CheckoutPage_Controller extends Page_Controller {
 		if(!(bool)$this->Cart()){
 			return false;
 		}
-		$class = self::config()->checkout_components;
 		return new CheckoutForm(
 			$this,
 			'OrderForm',
@@ -81,6 +80,10 @@ class CheckoutPage_Controller extends Page_Controller {
 	 * Action for making on-site payments
 	 */
 	function payment(){
+		if(!$this->Cart()){
+			return $this->redirect($this->Link());
+		}
+
 		return array(
 			'Title' => 'Make Payment',
 			'OrderForm' => $this->PaymentForm()
@@ -88,9 +91,6 @@ class CheckoutPage_Controller extends Page_Controller {
 	}
 
 	function PaymentForm(){
-		if(!(bool)$this->Cart()){
-			return false;
-		}
 		$config = new CheckoutComponentConfig(ShoppingCart::curr(),false);
 		$config->AddComponent(new OnsitePaymentCheckoutComponent());
 		$form = new CheckoutForm($this, "PaymentForm", $config);

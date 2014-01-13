@@ -90,17 +90,17 @@ class OrderProcessor{
 	 */
 	function canPlace(Order $order){
 		if(!$order){
-			$this->error(_t("OrderProcessor.NULL","Order does not exist"));
+			$this->error(_t("OrderProcessor.NULL","Order does not exist."));
 			return false;
 		}
 		//order status is applicable	
 		if(!$order->IsCart()){
-			$this->error(_t("OrderProcessor.NOTCART","Order is not a cart"));
+			$this->error(_t("OrderProcessor.NOTCART","Order is not a cart."));
 			return false;
 		}
 		//order has products
 		if($order->Items()->Count() <= 0){
-			$this->error(_t("OrderProcessor.NOITEMS","Order has no items"));
+			$this->error(_t("OrderProcessor.NOITEMS","Order has no items."));
 			return false;
 		}
 		//if total > 0, then payment has been made / started
@@ -158,11 +158,15 @@ class OrderProcessor{
 	 */
 	function createPayment($gateway){
 		if(!GatewayInfo::is_supported($gateway)) {
-			$this->error(_t("PaymentProcessor.INVALIDGATEWAY","`$gateway` isn't a valid payment gateway"));
+			$this->error(_t("PaymentProcessor.INVALIDGATEWAY","`$gateway` isn't a valid payment gateway."));
 			return false;
 		}
 		if(!$this->order->canPay(Member::currentUser())){
-			$this->error(_t("PaymentProcessor.CANTPAY","Order can't be paid for"));
+
+			Debug::show($this->order->GrandTotal());
+			Debug::show($this->order->TotalOutstanding());
+			die();
+			$this->error(_t("PaymentProcessor.CANTPAY","Order can't be paid for."));
 			return false;
 		}
 		$payment = Payment::create()
