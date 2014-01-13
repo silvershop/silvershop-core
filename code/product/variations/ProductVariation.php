@@ -78,6 +78,7 @@ class ProductVariation extends DataObject implements Buyable{
 	
 	function onBeforeWrite(){
 		parent::onBeforeWrite();
+		
 		//TODO: perhaps move this to onAfterWrite, for the case when the variation has just been created, and thus has no ID to relate
 		//..but that might cause recursion
 		if(isset($_POST['ProductAttributes']) && is_array($_POST['ProductAttributes'])){

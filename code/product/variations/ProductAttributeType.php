@@ -7,21 +7,21 @@
  */
 class ProductAttributeType extends DataObject{
 
-	static $db = array(
+	private static $db = array(
 		'Name' => 'Varchar', //for back-end use
 		'Label' => 'Varchar' //for front-end use
 	);
 
-	static $has_many = array(
+	private static $has_many = array(
 		'Values' => 'ProductAttributeValue'
 	);
 
-	static $summary_fields = array(
+	private static $summary_fields = array(
 		'Name' => 'Name',
 		'Label' => 'Label'
 	);
 
-	static $default_sort = "ID ASC";
+	private static $default_sort = "ID ASC";
 
 	function getCMSFields(){
 		$fields = parent::getCMSFields();

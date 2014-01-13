@@ -30,8 +30,11 @@ class ProductVariationTest extends SapphireTest{
 		$cart->add($this->redlarge);
 		$item = $cart->get($this->redlarge);
 		$this->assertTrue((bool)$item,"item exists");
-		$this->assertEquals($item->Quantity,1);
-		$this->assertEquals($item->UnitPrice(), 22);
+		$this->assertEquals(1, $item->Quantity);
+		$this->assertEquals(22, $item->UnitPrice());
+		$this->assertEquals("Size:Large, Color:Red", $item->SubTitle());
+
+		
 	}
 	
 	function testGetVaraition(){
