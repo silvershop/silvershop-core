@@ -49,8 +49,11 @@ class ShopDevelopmentAdmin extends Controller{
 		$cart = ShoppingCart::singleton();
 		if($products = Versioned::get_by_stage("Product", "Live","","RAND()","",5)){
 			foreach($products as $product){
+				$variations = $product->Variations();
+				if($variations->exists()){
+					$product = $variations->sort("RAND()")->first();
+				}
 				$cart->add($product,(int)rand(1, 10));
-				//TODO: what about item attributes, variations, and custom buyables?
 			}
 		}
 		$this->redirect($this->join_links(Director::baseURL(),'checkout'));
