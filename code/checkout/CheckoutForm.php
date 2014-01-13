@@ -45,15 +45,18 @@ class CheckoutForm extends Form {
 			Checkout::get($order)->getSelectedPaymentMethod(false),
 			$data
 		);
+		if($response){
+			if($response->isRedirect()){
+				return $this->controller->redirect($redirecturl);
+			}
+			if($response->isSuccessful()){
+				return $response->redirect();
+			}
+			$form->sessionMessage($response->getMessage(),'bad');
 
-		die();
-		if($response->isRedirect()){
-			return $this->controller->redirect($redirecturl);
+		}else{
+			$form->sessionMessage("This order can't be paid for.",'bad');
 		}
-		if($response->isSuccessful()){
-			return $response->redirect();
-		}
-		$form->sessionMessage($response->getMessage(),'bad');
 
 		return $this->controller->redirectBack();
 	}

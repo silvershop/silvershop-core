@@ -42,6 +42,8 @@ class OrderProcessor{
 		if(!$this->canPlace($this->order)){ //final cart validation
 			return false;
 		}
+		//do a final calculation
+		$this->order->calculate();
 		 //update status
 		if($this->order->TotalOutstanding()){
 			$this->order->Status = 'Unpaid';
@@ -69,7 +71,8 @@ class OrderProcessor{
 			}
 		}
 		//add member to customers group
-		if($member = $order->Member()){
+		$member = $this->order->Member();
+		if($member->exists()){
 			$cgroup = ShopConfig::current()->CustomerGroup();
 			if($cgroup->exists()){
 				$member->Groups()->add($cgroup);
@@ -115,7 +118,7 @@ class OrderProcessor{
 		//create payment
 		$payment = $this->createPayment($gateway);
 		if(!$payment){
-			return $this->order->Link();
+			return false;
 		}
 		//map shop data to omnipay fields
 		$shipping = $this->order->getShippingAddress();
@@ -176,11 +179,15 @@ class OrderProcessor{
 	 * 	- fire event hooks
 	 */
 	function completePayment(){
-		if($this->order->Status != 'Paid'){
+		if(!$this->order->Paid){
 			if(!$this->order->ReceiptSent){
 				$this->sendReceipt();
 			}
 			$this->order->extend('onPayment'); //a payment has been made
+			//place the order, if not already placed
+			if($this->canPlace($this->order)){
+				$this->placeOrder();
+			}
 			if($this->order->GrandTotal() > 0 && $this->order->TotalOutstanding() <= 0){
 				//set order as paid
 				$this->order->Status = 'Paid';
@@ -190,10 +197,6 @@ class OrderProcessor{
 					$item->onPayment();
 				}
 				$this->order->extend('onPaid'); //all payment is settled
-
-				if($this->canPlace($this->order)){
-					$this->placeOrder();
-				}
 			}
 		}
 	}	
