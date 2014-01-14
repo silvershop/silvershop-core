@@ -32,7 +32,7 @@ class ProductOrderItemTest extends FunctionalTest {
 	
 	function testEmptyItem(){
 		$emptyitem = $this->mp3player->Item();
-		$this->assertEquals($emptyitem->Quantity,0);
+		$this->assertEquals(1, $emptyitem->Quantity,"Items always have a quantity of at least 1.");
 	}
 	
 	/**

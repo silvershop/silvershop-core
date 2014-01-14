@@ -49,8 +49,11 @@ class CartPage extends Page{
 
 class CartPage_Controller extends Page_Controller{
 	
-	static $url_segment = 'cart';
-	static $allowed_actions = array("UpdateCartForm","doUpdateCartForm");
+	private static $url_segment = 'cart';
+	private static $allowed_actions = array(
+		"CartForm",
+		"updatecart"
+	);
 	
 	/**
 	 * Display a title if there is no model, or no title.
@@ -59,6 +62,17 @@ class CartPage_Controller extends Page_Controller{
 		if($this->Title)
 			return $this->Title;
 		return _t('CartPage.TITLE',"Shopping Cart");
+	}
+
+	/**
+	 * A form for updating cart items
+	 */
+	public function CartForm(){
+		$cart = $this->Cart();
+		if(!$cart){
+			return false;
+		}
+		return new CartForm($this,"CartForm",$cart);
 	}
 
 }

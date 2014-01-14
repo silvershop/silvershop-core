@@ -36,7 +36,7 @@ class CheckoutForm extends Form {
 		);		
 	}
 
-	function submitpayment($data, $form, $request){
+	function submitpayment($data, $form){
 		$data = $form->getData();
 		$data['cancelURL'] = $this->controller->Link();
 		$order = $this->config->getOrder();

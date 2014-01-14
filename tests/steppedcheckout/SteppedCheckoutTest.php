@@ -41,7 +41,6 @@ class SteppedCheckoutTest extends FunctionalTest{
 	}
 	
 	function testMembershipStep(){
-		
 		$this->checkout->index();
 		$this->checkout->membership();
 		$this->post('/checkout/guestcontinue', array()); //redirect to next step
@@ -92,6 +91,8 @@ class SteppedCheckoutTest extends FunctionalTest{
 			'action_setaddress' => 1	
 		);
 		$response = $this->post('/checkout/AddressForm', $data);
+
+		//TODO: assertions!
 	}
 	
 	function testBillingAddress(){
@@ -106,6 +107,8 @@ class SteppedCheckoutTest extends FunctionalTest{
 			'action_setbillingaddress' => 1	
 		);
 		$response = $this->post('/checkout/AddressForm', $data);
+
+		//TODO: assertions!
 	}
 	
 	function testPaymentMethod(){
@@ -114,22 +117,15 @@ class SteppedCheckoutTest extends FunctionalTest{
 			'action_setpaymentmethod' => 1
 		);
 		$response = $this->post('/checkout/PaymentMethodForm', $data);
-		$this->assertEquals($this->checkout->getSelectedPaymentMethod(), 'Dummy');
+		$this->assertEquals('Dummy', Checkout::get($this->cart)->getSelectedPaymentMethod());
 	}
 	
 	function testSummary(){
 		$this->checkout->summary();
 		$form = $this->checkout->ConfirmationForm();
 		$data = array(
-			//dummy card data - which will cause successful payment
-			//'number' => '4242424242424242',
-			//'expiryMonth' => '5',
-			//'expiryYear' => date("Y",strtotime("+1 year")),
-
 			'Notes' => 'Leave it around the back',
-			'ReadTermsAndConditions' => 1,
-
-			'action_place' => "Confirm and Pay"
+			'ReadTermsAndConditions' => 1
 		);
 		$member = $this->objFromFixture("Member", "joebloggs");
 		$member->logIn(); //log in member before processing
@@ -138,7 +134,7 @@ class SteppedCheckoutTest extends FunctionalTest{
 		$form->loadDataFrom($data);
 		$this->assertTrue($form->validate(),"Checkout data is valid");		
 		$response = $this->post('/checkout/ConfirmationForm', $data);
-		$this->assertEquals('Paid', $this->cart->Status, "Order status is now paid");
+		$this->assertEquals('Cart', $this->cart->Status, "Order is still in cart");
 		
 		$order = Order::get()->byID($this->cart->ID);
 		$m = $order->Member();

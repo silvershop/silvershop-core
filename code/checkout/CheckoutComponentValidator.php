@@ -15,7 +15,6 @@ class CheckoutComponentValidator extends RequiredFields {
 
 	public function php($data){
 		$valid = parent::php($data);
-
 		//do component validation
 		try{
 			$this->config->validateData($data);
@@ -28,7 +27,6 @@ class CheckoutComponentValidator extends RequiredFields {
 			}
 			$valid = false;
 		}
-
 		if(!$valid){
 			$this->form->sessionMessage("There are problems with the data you entered. See below:","bad");
 		}
@@ -37,9 +35,11 @@ class CheckoutComponentValidator extends RequiredFields {
 	}
 
 	function fieldHasError($field) {
-		foreach($this->errors as $error){
-			if($error['fieldName'] === $field){
-				return true;
+		if($this->errors){
+			foreach($this->errors as $error){
+				if($error['fieldName'] === $field){
+					return true;
+				}
 			}
 		}
 		return false;

@@ -78,7 +78,7 @@ class ProductVariation extends DataObject implements Buyable{
 	
 	function onBeforeWrite(){
 		parent::onBeforeWrite();
-		
+
 		//TODO: perhaps move this to onAfterWrite, for the case when the variation has just been created, and thus has no ID to relate
 		//..but that might cause recursion
 		if(isset($_POST['ProductAttributes']) && is_array($_POST['ProductAttributes'])){
@@ -184,15 +184,15 @@ class ProductVariation extends DataObject implements Buyable{
  */
 class ProductVariation_OrderItem extends Product_OrderItem {
 
-	static $db = array(
+	private static $db = array(
 		'ProductVariationVersion' => 'Int'
 	);
 
-	static $has_one = array(
+	private static $has_one = array(
 		'ProductVariation' => 'ProductVariation'
 	);
 	
-	static $buyable_relationship = "ProductVariation";
+	private static $buyable_relationship = "ProductVariation";
 	
 	/**
 	 * Overloaded relationship, for getting versioned variations
@@ -207,13 +207,13 @@ class ProductVariation_OrderItem extends Product_OrderItem {
 		return false;
 	}
 
-	function SubTitle() {
+	public function SubTitle() {
 		if($this->ProductVariation())
 			return $this->ProductVariation()->getTitle();
 		return false;
 	}
 	
-	function Image(){
+	public function Image(){
 		if($this->ProductVariation() && $image = $this->ProductVariation()->Image()){
 			return $image;
 		}

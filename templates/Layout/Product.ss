@@ -19,31 +19,22 @@
 		<% if InternalItemID %><p><% _t("CODE","Product Code") %>: {$InternalItemID}</p><% end_if %>
 		<% if Model %><p><% _t("MODEL","Model") %>: $Model.XML</p><% end_if %>
 		<% if Size %><p><% _t("SIZE","Size") %>: $Size.XML</p><% end_if %>
-		<% if Variations %>
-			$VariationForm
+		<% if PriceRange %>
+			<div class="price">
+				<strong class="value">$PriceRange.Min.Nice</strong>
+				<% if PriceRange.HasRange %>
+					- <strong class="value">$PriceRange.Max.Nice</strong>
+				<% end_if %>
+				<span class="currency">$Price.Currency</span>
+			</div>
 		<% else %>
 			<% if Price %>
 				<div class="price">
 					<strong class="value">$Price.Nice</strong> <span class="currency">$Price.Currency</span>
 				</div>
 			<% end_if %>
-			<% if canPurchase %>
-				<% if IsInCart %>
-					<% with Item %>
-						<div class="quantityBox">
-							<span><% _t("QUANTITYCART","Quantity in cart") %>:</span> 
-							$QuantityField
-							<ul class="productActions">
-								<li><a href="$removeallLink" title="<% sprintf(_t("REMOVE","Remove &quot;%s&quot; from your cart"),$Title) %>"><% _t("REMOVELINK","Remove from cart") %></a></li>
-								<li><a href="$Order.checkoutLink" title="<% _t("GOTOCHECKOUT","Go to the checkout now") %>"><% _t("GOTOCHECKOUTLINK","Go to the checkout") %></a></li>
-							</ul>
-						</div>
-					<% end_with %>
-				<% else %>
-					<p class="quantityBox"><a href="$addLink" title="<% sprintf(_t("ADD","Add &quot;%s&quot; to your cart"),$Title) %>"><% _t("ADDLINK","Add this item to cart") %></a></p>
-				<% end_if %>
-			<% end_if %>
 		<% end_if %>
+		$Form
 	</div>
 	<% if Content %>
 		<div class="productContent typography">

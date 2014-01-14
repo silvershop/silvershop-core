@@ -25,7 +25,7 @@ class ProductVariationTest extends SapphireTest{
 		$cart = ShoppingCart::singleton();
 		
 		$emptyitem = $this->redlarge->Item();
-		$this->assertEquals($emptyitem->Quantity,0);
+		$this->assertEquals(1, $emptyitem->Quantity,"Items always have a quantity of at least 1.");
 		
 		$cart->add($this->redlarge);
 		$item = $cart->get($this->redlarge);
@@ -33,8 +33,6 @@ class ProductVariationTest extends SapphireTest{
 		$this->assertEquals(1, $item->Quantity);
 		$this->assertEquals(22, $item->UnitPrice());
 		$this->assertEquals("Size:Large, Color:Red", $item->SubTitle());
-
-		
 	}
 	
 	function testGetVaraition(){

@@ -8,7 +8,7 @@ class CheckoutStep_Summary extends CheckoutStep{
 	);
 	
 	protected function checkoutconfig(){
-		$config = new CheckoutComponentConfig(ShoppingCart::curr());
+		$config = new CheckoutComponentConfig(ShoppingCart::curr(),false);
 		$config->addComponent(new NotesCheckoutComponent());
 		$config->addComponent(new TermsCheckoutComponent());
 

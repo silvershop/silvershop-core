@@ -47,6 +47,14 @@ class ShopQuantityField extends ViewableData{
 		return $this->item->Quantity;
 	}
 
+	function Field() {
+		$qtyArray = array();
+		for($r=1; $r<= $this->max; $r++){
+			$qtyArray[$r] = $r;
+		}
+		return new NumericField($this->MainID() . '_Quantity',"Qty",$this->item->Quantity);
+	}
+
 	function MainID(){
 		return get_class($this->item).'_DB_'.$this->item->ID;
 	}
@@ -97,20 +105,6 @@ class DropdownShopQuantityField extends ShopQuantityField{
 			$qtyArray[$r] = $r;
 		}
 		return new DropdownField($this->MainID() . '_Quantity',"Qty",$qtyArray,($this->item->Quantity) ? $this->item->Quantity : "");
-		
-		$size = 3; //make these customisable
-		$maxlength = 3;
-		$attributes = array(
-			'type' => 'text',
-			'class' => implode(' ',$this->classes),
-			'name' => $this->MainID() . '_Quantity',
-			'value' => ($this->item->Quantity) ? $this->item->Quantity : "",
-			'maxlength' => $maxlength,
-			'size' => $size 
-		);
-		//IMPROVE ME: hack to use the form field createTag method ...perhaps this should become a form field instead
-		$formfield = new FormField('hack'); 
-		return $formfield->createTag('input', $attributes);
 	}
 	
 }

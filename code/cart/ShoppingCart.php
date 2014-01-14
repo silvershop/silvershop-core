@@ -135,11 +135,12 @@ class ShoppingCart{
 		if(!$item){
 			return false;
 		}
-		$item->Quantity -= $quantity;
-		if(!$quantity || $item->Quantity <= 0){ //if $quantity = 0, then remove all
+		 //if $quantity will become 0, then remove all
+		if(!$quantity || ($item->Quantity - $quantity) <= 0){
 			$item->delete();
 			$item->destroy();
 		}else{
+			$item->Quantity -= $quantity;
 			$item->write();
 		}
 		$order->extend("afterRemove",$item,$buyable,$quantity,$filter);

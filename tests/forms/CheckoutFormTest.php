@@ -50,20 +50,13 @@ class CheckoutFormTest extends SapphireTest{
 		$errors = $form->getValidator()->getErrors();
 		$this->assertTrue($valid);
 		$form->checkoutSubmit($data, $form);
-
 		$this->assertEquals("Jane",$order->FirstName);
-
 		$shipping = $order->ShippingAddress();
 		$this->assertEquals("NZ",$shipping->Country);
+		$this->assertEquals("Cart", $order->Status);
 
-
-		//dummy payment is an 'onsite' payment type
-		//$payment = $order->Payments()->first();
-		//$this->assertEquals("Dummy",$payment->Gateway);
-		
-		//TODO: test
-			//invalid data
-			//
+		//TODO: test invalid data
+		//TODO: test components individually
 	}
 	
 }

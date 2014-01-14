@@ -81,6 +81,18 @@ class OrderItem extends OrderAttribute {
 	}
 
 	/**
+	 * Prevent quantity being below 1.
+	 * 0 quantity means it should instead be deleted.
+	 * @param int $val new quantity to set
+	 */
+	function setQuantity($val){
+		if($val < 1){
+			$val = 1;
+		}
+		$this->setField("Quantity", $val);
+	}
+
+	/**
 	 * Get calculated total, or stored total
 	 * depending on whether the order is in cart
 	 */
@@ -123,16 +135,11 @@ class OrderItem extends OrderAttribute {
 	}
 	
 	/**
-	 * Force quantity to be at least 1, and recalculate total
-	 * before saving to database.
+	 * Recalculate total before saving to database.
 	 */
 	function onBeforeWrite() {
 		parent::onBeforeWrite();
 		if($this->OrderID && $this->Order() && $this->Order()->isCart()){
-			//always keep quantity above 0
-			if($this->Quantity < 1){
-				$this->Quantity = 1;
-			}
 			$this->calculatetotal();
 		}
 	}

@@ -2,7 +2,7 @@
 
 class AddProductForm extends Form{
 	
-	protected $maxquantity = 20; //populate quantity dropdown with this many values
+	protected $maxquantity = 0; //populate quantity dropdown with this many values
 	
 	/**
 	 * Fields that can be saved to an order item.

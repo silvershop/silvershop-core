@@ -23,9 +23,8 @@ class PaymentCheckoutComponent extends CheckoutComponent{
 		if(count(GatewayInfo::get_supported_gateways()) > 1){
 			return array();
 		}
-		return array(
-			'PaymentMethod'
-		);
+		
+		return array('PaymentMethod');
 	}
 
 	public function validateData(Order $order, array $data){
@@ -50,7 +49,7 @@ class PaymentCheckoutComponent extends CheckoutComponent{
 	public function setData(Order $order, array $data){
 		if(isset($data['PaymentMethod'])){
 			Checkout::get($order)->setPaymentMethod($data['PaymentMethod']);
-		}	
+		}
 	}
 
 }

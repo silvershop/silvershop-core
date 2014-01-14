@@ -37,40 +37,33 @@ class ProductVariationDecorator extends DataExtension{
 	 * @return HasManyComplexTableField
 	 */
 	function getVariationsTable() {
-		$variations = $this->owner->Variations();
-		$itemsConfig = new GridFieldConfig_RecordEditor();
-		$itemsTable = new GridField("Variations","Variations",$variations,$itemsConfig);
-		return $itemsTable;
+		return new GridField("Variations","Variations",$this->owner->Variations(),new GridFieldConfig_RecordEditor());
 	}
 
 	function PriceRange(){
-		$maxprice = $minprice = $averageprice = $hasrange = null;
 		$variations = $this->owner->Variations();
-		if($variations->exists() && $variations->Count()){
-			$prices = $variations->map('ID','Price');
-			$count = count($prices);
-			$sum = array_sum($prices);
-			$maxprice = max($prices);
-			$minprice = min($prices);
-			$hasrange = ($minprice != $maxprice);
-
-			$maxprice = ShopCurrency::create($maxprice);
-			$minprice = ShopCurrency::create($minprice);
-
-			if($count > 0){
-				$averageprice = $sum/$count;
-				$averageprice = ShopCurrency::create($averageprice);
-			}
-		}else{
+		if(!$variations->exists() || !$variations->Count()){
 			return null;
 		}
-		return new ArrayData(array(
-			'HasRange' => $hasrange,
-			'Max' => $maxprice,
-			'Min' => $minprice,
-			'Average' => $averageprice,
-			'Currency' => $this->owner->Currency()
-		));
+		$prices = $variations->map('ID','Price')->toArray();
+		$pricedata = array(
+			'HasRange' => false,
+			'Max' => ShopCurrency::create(),
+			'Min' => ShopCurrency::create(),
+			'Average' => ShopCurrency::create()
+		);
+		$count = count($prices);
+		$sum = array_sum($prices);
+		$maxprice = max($prices);
+		$minprice = min($prices);
+		$pricedata['HasRange'] = ($minprice != $maxprice);
+		$pricedata['Max']->setValue($maxprice);
+		$pricedata['Min']->setValue($minprice);
+		if($count > 0){
+			$pricedata['Average']->setValue($sum/$count);
+		}
+
+		return new ArrayData($pricedata);
 	}
 
 	/**
@@ -154,11 +147,11 @@ class ProductVariationDecorator extends DataExtension{
 		if(!$type) return null;
 		
 		return ProductAttributeValue::get()
-					->innerJoin("ProductVariation_AttributeValues",
-							"\"ProductAttributeValue\".\"ID\" = \"ProductVariation_AttributeValues\".\"ProductAttributeValueID\""
-					)->innerJoin("ProductVariation",
-							"\"ProductVariation_AttributeValues\".\"ProductVariationID\" = \"ProductVariation\".\"ID\""
-					)->where("TypeID = $type AND \"ProductVariation\".\"ProductID\" = ".$this->owner->ID);
+			->innerJoin("ProductVariation_AttributeValues",
+				"\"ProductAttributeValue\".\"ID\" = \"ProductVariation_AttributeValues\".\"ProductAttributeValueID\""
+			)->innerJoin("ProductVariation",
+				"\"ProductVariation_AttributeValues\".\"ProductVariationID\" = \"ProductVariation\".\"ID\""
+			)->where("TypeID = $type AND \"ProductVariation\".\"ProductID\" = ".$this->owner->ID);
 	}
 
 	/**
@@ -172,8 +165,10 @@ class ProductVariationDecorator extends DataExtension{
 			$remove = true;
 		}
 		else {
-			$staged = Versioned::get_by_stage($this->owner->ClassName, 'Stage')->byID($this->owner->ID);
-			$live = Versioned::get_by_stage($this->owner->ClassName, 'Live')->byID($this->owner->ID);
+			$staged = Versioned::get_by_stage($this->owner->ClassName, 'Stage')
+						->byID($this->owner->ID);
+			$live = Versioned::get_by_stage($this->owner->ClassName, 'Live')
+						->byID($this->owner->ID);
 			if(!$staged && !$live) {
 				$remove = true;
 			}	
