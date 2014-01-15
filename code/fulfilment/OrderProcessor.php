@@ -162,10 +162,6 @@ class OrderProcessor{
 			return false;
 		}
 		if(!$this->order->canPay(Member::currentUser())){
-
-			Debug::show($this->order->GrandTotal());
-			Debug::show($this->order->TotalOutstanding());
-			die();
 			$this->error(_t("PaymentProcessor.CANTPAY","Order can't be paid for."));
 			return false;
 		}
