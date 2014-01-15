@@ -44,9 +44,7 @@ class OrderItem extends OrderAttribute {
 	private static $buyable_relationship = "Product";
 	
 	private static $singular_name = "Order Item";
-	function i18n_singular_name() { return _t("OrderItem.SINGULAR", self::config()->singular_name); }
 	private static $plural_name = "Order Items";
-	function i18n_plural_name() { return _t("OrderItem.PLURAL", self::config()->plural_name); }
 	private static $default_sort = "\"Created\" DESC";
 
 	/**

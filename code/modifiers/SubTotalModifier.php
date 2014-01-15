@@ -11,13 +11,7 @@ class SubTotalModifier extends OrderModifier {
 	);
 	
 	private static $singular_name = "Sub Total";
-	function i18n_singular_name() {
-		return _t("SubTotalModifier.SINGULAR", self::$singular_name);
-	}
 	private static $plural_name = "Sub Totals";
-	function i18n_plural_name() {
-		return _t("SubTotalModifier.PLURAL", self::$plural_name);
-	}
 	
 	function value($incoming){
 		return $this->Amount = $incoming;

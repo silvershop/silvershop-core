@@ -17,13 +17,7 @@ class ProductCategory extends Page {
 	);
 
 	private static $singular_name = "Product Category";
-	function i18n_singular_name() {
-		return _t("ProductCategory.SINGULAR", self::config()->singular_name);
-	}
 	private static $plural_name = "Product Categories";
-	function i18n_plural_name() {
-		return _t("ProductCategory.PLURAL", self::config()->plural_name);
-	}
 
 	private static $default_child = 'Product';
 	private static $icon = 'cms/images/treeicons/folder';

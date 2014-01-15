@@ -62,9 +62,7 @@ class Product extends Page implements Buyable{
 	);
 
 	private static $singular_name = "Product";
-	function i18n_singular_name() { return _t("Product.SINGULAR", self::config()->singular_name); }
 	private static $plural_name = "Products";
-	function i18n_plural_name() { return _t("Product.PLURAL", self::config()->plural_name); }
 	
 	private static $icon = 'shop/images/icons/package';
 	private static $default_parent = 'ProductCategory';

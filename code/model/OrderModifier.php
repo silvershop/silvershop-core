@@ -45,9 +45,7 @@ class OrderModifier extends OrderAttribute {
 	);
 
 	private static $singular_name = "Modifier";
-	function i18n_singular_name() {	return _t("OrderModifier.SINGULAR", self::$singular_name); }
 	private static $plural_name = "Modifiers";
-	function i18n_plural_name() { return _t("OrderModifier.PLURAL", self::$plural_name); }
 
 	private static $default_sort = "\"Sort\" ASC, \"Created\" ASC";
 	
