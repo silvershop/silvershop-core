@@ -50,8 +50,6 @@ class Order extends DataObject {
 		'Modifiers' => 'OrderModifier',
 		'OrderStatusLogs' => 'OrderStatusLog'
 	);
-
-	private static $default_sort = "\"Placed\" DESC, \"Created\" DESC";
 	
 	private static $defaults = array(
 		'Status' => 'Cart'
@@ -66,62 +64,6 @@ class Order extends DataObject {
 		'Shipping' => 'Currency',
 		'TotalOutstanding' => 'Currency'
 	);
-
-	private static $singular_name = "Order";
-	private static $plural_name = "Orders";
-	private static $admin_template = "Order_admin";
-
-	/**
-	 * Statuses for orders that have been placed.
-	 */
-	private static $placed_status = array('Paid','Unpaid', 'Processing', 'Sent', 'Complete', 'MemberCancelled', 'AdminCancelled');
-
-	/**
-	 * Statuses that shouldn't show in user account.
-	 */
-	private static $hidden_status = array('Cart','Query');
-
-	/**
-	 * Flag to determine whether the user can cancel
-	 * this order before payment is received.
-	 *
-	 * @var boolean
-	 */
-	private static $can_cancel_before_payment = true;
-
-	/**
-	 * Flag to determine whether the user can cancel
-	 * this order before processing has begun.
-	 *
-	 * @var boolean
-	 */
-	private static $can_cancel_before_processing = false;
-
-	/**
-	 * Flag to determine whether the user can cancel
-	 * this order before the goods are sent.
-	 *
-	 * @var boolean
-	 */
-	private static $can_cancel_before_sending = false;
-
-	/**
-	 * Flag to determine whether the user can cancel
-	 * this order after the goods are sent.
-	 *
-	 * @var unknown_type
-	 */
-	private static $can_cancel_after_sending = false;
-
-	/**
-	 * Modifiers represent the additional charges or
-	 * deductions associated to an order, such as
-	 * shipping, taxes, vouchers etc.
-	 *
-	 * @var array
-	 */
-	private static $modifiers = array();
-	
 
 	private static $summary_fields = array(
 		'Reference' => 'Order No',
@@ -146,6 +88,58 @@ class Order extends DataObject {
 		)
 	);
 
+	private static $singular_name = "Order";
+	private static $plural_name = "Orders";
+
+	private static $default_sort = "\"Placed\" DESC, \"Created\" DESC";
+
+	/**
+	 * Statuses for orders that have been placed.
+	 */
+	private static $placed_status = array('Paid','Unpaid', 'Processing', 'Sent', 'Complete', 'MemberCancelled', 'AdminCancelled');
+
+	/**
+	 * Statuses that shouldn't show in user account.
+	 */
+	private static $hidden_status = array('Cart','Query');
+
+	/**
+	 * Flag to determine whether the user can cancel
+	 * this order before payment is received.
+	 * @var boolean
+	 */
+	private static $can_cancel_before_payment = true;
+
+	/**
+	 * Flag to determine whether the user can cancel
+	 * this order before processing has begun.
+	 * @var boolean
+	 */
+	private static $can_cancel_before_processing = false;
+
+	/**
+	 * Flag to determine whether the user can cancel
+	 * this order before the goods are sent.
+	 * @var boolean
+	 */
+	private static $can_cancel_before_sending = false;
+
+	/**
+	 * Flag to determine whether the user can cancel
+	 * this order after the goods are sent.
+	 * @var boolean
+	 */
+	private static $can_cancel_after_sending = false;
+
+	/**
+	 * Modifiers represent the additional charges or
+	 * deductions associated to an order, such as
+	 * shipping, taxes, vouchers etc.
+	 *
+	 * @var array
+	 */
+	private static $modifiers = array();
+
 	private static $rounding_precision = 2;
 	private static $reference_id_padding = 5;
 	
@@ -159,35 +153,39 @@ class Order extends DataObject {
 	 */
 	function getCMSFields(){
 		$fields = new FieldList(new TabSet('Root',new Tab('Main')));
-		$fields->insertBefore(new HeaderField('Title',"Order #".$this->Reference),'Root');
-		$fields->insertBefore(new LiteralField('SubTitle',
-			"<h4 class=\"subtitle\">".$this->dbObject('Placed')->Nice()." - <a href=\"mailto:".$this->getLatestEmail()."\">".$this->getName()."</a></h4>"
-		),"Root");
-		Requirements::css(SHOP_DIR."/css/order.css");
+		$fs = "<div class=\"field\">";
+		$fe = "</div>";
 		$fields->addFieldsToTab('Root.Main', array(
-			new DropdownField("Status","Status", self::get_order_status_options()),
-			new LiteralField('MainDetails', $this->renderWith(self::$admin_template))
+			DropdownField::create("Status", _t("STATUS","Status"), self::get_order_status_options()),
+			LiteralField::create('Customer', $fs.$this->renderWith("OrderAdmin_Customer").$fe),
+			LiteralField::create('Addresses', $fs.$this->renderWith("OrderAdmin_Addresses").$fe),
+			LiteralField::create('Content', $fs.$this->renderWith("OrderAdmin_Content").$fe),
+			LiteralField::create('Notes', $fs.$this->renderWith("OrderAdmin_Notes").$fe)
 		));
 		$this->extend('updateCMSFields',$fields);
+		$payments = $fields->fieldByName("Root.Payments.Payments");
+		$fields->removeByName("Payments");
+		$fields->insertBefore($payments, "Notes");
+
 		return $fields;
 	}
 
 	/**
 	 * Adjust scafolded search context
-	 * @return [type] [description]
+	 * @return SearchContext the updated search context
 	 */
 	public function getDefaultSearchContext() {
 		$context = parent::getDefaultSearchContext();
 		$fields = $context->getFields();
-
 		$fields->fieldByName('Status')
 			->setSource(array_combine(self::$placed_status,self::$placed_status));
-
 		//add date range filtering
-		$fields->insertBefore(DateField::create("DateFrom","Date from")->setConfig('showcalendar',true),'Status');
-		$fields->insertBefore(DateField::create("DateTo","Date to")->setConfig('showcalendar',true), 'Status');
-
-		$filters = $context->getFilters(); //get the array, to maniplulate name, and fullname seperately
+		$fields->insertBefore(DateField::create("DateFrom","Date from")
+			->setConfig('showcalendar',true),'Status');
+		$fields->insertBefore(DateField::create("DateTo","Date to")
+			->setConfig('showcalendar',true), 'Status');
+		//get the array, to maniplulate name, and fullname seperately
+		$filters = $context->getFilters(); 
 		$filters['DateFrom'] = GreaterThanFilter::create('Placed');
 		$filters['DateTo'] = LessThanFilter::create('Placed');
 		$context->setFilters($filters);
@@ -195,6 +193,9 @@ class Order extends DataObject {
 		return $context;
 	}
 	
+	/**
+	 * Hack for swapping out relation list with OrderItemList
+	 */
 	public function getComponents($componentName, $filter = "", $sort = "", $join = "", $limit = null) {
 		$components = parent::getComponents($componentName, $filter = "", $sort = "", $join = "", $limit = null);
 		if($componentName === "Items" && get_class($components) !== "UnsavedRelationList"){
@@ -436,6 +437,10 @@ class Order extends DataObject {
 		$firstname = $this->FirstName ? $this->FirstName : $this->Member()->FirstName;
 		$surname = $this->FirstName ? $this->Surname : $this->Member()->Surname;
 		return implode(" ",array_filter(array($firstname,$surname)));
+	}
+
+	function getTitle(){
+		return $this->Reference." - ".$this->dbObject('Placed')->Nice();
 	}
 	
 	/**
