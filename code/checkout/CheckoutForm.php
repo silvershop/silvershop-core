@@ -47,10 +47,7 @@ class CheckoutForm extends Form {
 			$data
 		);
 		if($response){
-			if($response->isRedirect()){
-				return $this->controller->redirect($redirecturl);
-			}
-			if($response->isSuccessful()){
+			if($response->isRedirect() || $response->isSuccessful()){
 				return $response->redirect();
 			}
 			$form->sessionMessage($response->getMessage(),'bad');

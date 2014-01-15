@@ -91,6 +91,9 @@ class CheckoutPage_Controller extends Page_Controller {
 	}
 
 	function PaymentForm(){
+		if(!(bool)$this->Cart()){
+			return false;
+		}
 		$config = new CheckoutComponentConfig(ShoppingCart::curr(),false);
 		$config->AddComponent(new OnsitePaymentCheckoutComponent());
 		$form = new CheckoutForm($this, "PaymentForm", $config);
