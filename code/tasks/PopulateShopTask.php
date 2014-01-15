@@ -23,11 +23,17 @@ class PopulateShopTask extends BuildTask{
 		$this->extend("beforePopulate");
 		
 		$factory = Injector::inst()->create('FixtureFactory');
-		
+
+		$parentid = 0;
+
 		//create products
 		if(!DataObject::get_one('Product')){
 			$fixture = new YamlFixture(SHOP_DIR."/tests/fixtures/dummyproducts.yml");
 			$fixture->writeInto($factory);//needs to be a data model
+
+			$shoppage = ProductCategory::get()->filter('URLSegment','shop')->first();
+			$parentid = $shoppage->ID;
+
 			$categoriestopublish = array(
 				'products',
 					'electronics',
@@ -66,26 +72,13 @@ class PopulateShopTask extends BuildTask{
 		}else{
 			echo "<p style=\"color:orange;\">Products and categories were not created because some already exist.</p>";
 		}
-				
-		//terms page
-		if(!$termsPage = DataObject::get_one('Page', "\"URLSegment\" = 'terms-and-conditions'")) {
-			$fixture = new YamlFixture(SHOP_DIR."/tests/fixtures/pages/TermsConditions.yml");
-			$fixture->writeInto($factory);
-			$page = $factory->get("Page", "termsconditions");
-			$page->writeToStage('Stage');
-			$page->publish('Stage', 'Live');
-			//set terms page id in config
-			$config = SiteConfig::current_site_config();
-			$config->TermsPageID = $page->ID;
-			$config->write();
-			DB::alteration_message("Terms and conditions page created", 'created');
-		}
-		
+
 		//cart page
 		if(!$page = DataObject::get_one('CartPage')) {
 			$fixture = new YamlFixture(SHOP_DIR."/tests/fixtures/pages/Cart.yml");
 			$fixture->writeInto($factory);
 			$page = $factory->get("CartPage", "cart");
+			$page->ParentID = $parentid;
 			$page->writeToStage('Stage');
 			$page->publish('Stage', 'Live');
 			DB::alteration_message('Cart page created', 'created');
@@ -96,6 +89,7 @@ class PopulateShopTask extends BuildTask{
 			$fixture = new YamlFixture(SHOP_DIR."/tests/fixtures/pages/Checkout.yml");
 			$fixture->writeInto($factory);
 			$page = $factory->get("CheckoutPage", "checkout");
+			$page->ParentID = $parentid;
 			$page->writeToStage('Stage');
 			$page->publish('Stage', 'Live');
 			DB::alteration_message('Checkout page created', 'created');
@@ -106,9 +100,25 @@ class PopulateShopTask extends BuildTask{
 			$fixture = new YamlFixture(SHOP_DIR."/tests/fixtures/pages/Account.yml");
 			$fixture->writeInto($factory);
 			$page = $factory->get("AccountPage", "account");
+			$page->ParentID = $parentid;
 			$page->writeToStage('Stage');
 			$page->publish('Stage', 'Live');
 			DB::alteration_message('Account page \'Account\' created', 'created');
+		}
+
+		//terms page
+		if(!$termsPage = DataObject::get_one('Page', "\"URLSegment\" = 'terms-and-conditions'")) {
+			$fixture = new YamlFixture(SHOP_DIR."/tests/fixtures/pages/TermsConditions.yml");
+			$fixture->writeInto($factory);
+			$page = $factory->get("Page", "termsconditions");
+			$page->ParentID = $parentid;
+			$page->writeToStage('Stage');
+			$page->publish('Stage', 'Live');
+			//set terms page id in config
+			$config = SiteConfig::current_site_config();
+			$config->TermsPageID = $page->ID;
+			$config->write();
+			DB::alteration_message("Terms and conditions page created", 'created');
 		}
 		
 		//countries config - removes some countries
