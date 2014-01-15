@@ -66,7 +66,7 @@
 			<tr class="subtotal">
 				<th colspan="4" scope="row"><% _t("SUBTOTAL","Sub-total") %></th>
 				<td id="$TableSubTotalID">$SubTotal.Nice</td>
-				<td>&nbsp;</td>
+				<% if Editable %><td>&nbsp;</td><% end_if %>
 			</tr>
 			<% if Modifiers %>
 				<% loop Modifiers %>
@@ -101,7 +101,7 @@
 			<tr class="gap Total">
 				<th colspan="4" scope="row"><% _t("TOTAL","Total") %></th>
 				<td id="$TableTotalID"><span class="value">$Total.Nice</span> <span class="currency">$Currency</span></td>
-				<td></td>
+				<% if Editable %><td>&nbsp;</td><% end_if %>
 			</tr>
 		</tfoot>
 	</table>
