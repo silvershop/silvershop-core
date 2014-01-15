@@ -22,7 +22,7 @@ class OnsitePaymentCheckoutComponent extends CheckoutComponent {
 	}
 
 	public function getRequiredFields(Order $order){
-		return GatewayInfo::required_fields(Session::get("Checkout.PaymentMethod"));
+		return GatewayInfo::required_fields(Checkout::get($order)->getSelectedPaymentMethod());
 	}
 
 	public function validateData(Order $order, array $data){
