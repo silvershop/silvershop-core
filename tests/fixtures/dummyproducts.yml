@@ -290,8 +290,10 @@ ProductVariation:
     tshirt_1:
         Product: =>Product.tshirt
         Price: 25
+        InternalItemID: abc128-lr
         AttributeValues: =>ProductAttributeValue.shirtsize_large,=>ProductAttributeValue.shirtcolor_red
     tshirt_2:
         Product: =>Product.tshirt
         Price: 25
+        InternalItemID: abc128-mb
         AttributeValues: =>ProductAttributeValue.shirtsize_medium,=>ProductAttributeValue.shirtcolor_blue
