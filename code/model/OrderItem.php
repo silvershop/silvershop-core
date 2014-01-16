@@ -164,10 +164,7 @@ class OrderItem extends OrderAttribute {
 	 * Also serves as a standardised placeholder for overriding in subclasses.
 	 */
 	function Image(){
-		if(method_exists($this->Buyable(),'Image')){
-			return $this->Buyable()->Image();
-		}
-		return null;
+		return $this->Buyable()->Image();
 	}
 
 	function TableTitle() {

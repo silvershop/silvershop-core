@@ -76,39 +76,37 @@ class Product extends Page implements Buyable{
 	function getCMSFields() {
 		self::disableCMSFieldsExtensions();
 		$fields = parent::getCMSFields();
-
 		// Standard product detail fields
 		$fields->addFieldsToTab('Root.Pricing',array(
-			new TextField('BasePrice', _t('Product.PRICE', 'Price - base price to sell this product at'), '', 12),
-			new TextField('CostPrice', _t('Product.COSTPRICE', 'Cost Price - wholesale price before markup'), '', 12)
+			TextField::create('BasePrice', _t('Product.PRICE', 'Price - base price to sell this product at'), '', 12),
+			TextField::create('CostPrice', _t('Product.COSTPRICE', 'Cost Price - wholesale price before markup'), '', 12)
 		));
-		
 		//physical measurements
 		$weightunit = "kg"; //TODO: globalise / make custom
 		$lengthunit = "cm";  //TODO: globalise / make custom
 		$fields->addFieldsToTab('Root.Shipping',array(
-			new TextField('Weight', sprintf(_t('Product.WEIGHT', 'Weight (%s)'), $weightunit), '', 12),
-			new TextField('Height', sprintf(_t('Product.HEIGHT', 'Height (%s)'), $lengthunit), '', 12),
-			new TextField('Width', sprintf(_t('Product.WIDTH', 'Width (%s)'), $lengthunit), '', 12),
-			new TextField('Depth', sprintf(_t('Product.DEPTH', 'Depth (%s)'), $lengthunit), '', 12),
+			TextField::create('Weight', sprintf(_t('Product.WEIGHT', 'Weight (%s)'), $weightunit), '', 12),
+			TextField::create('Height', sprintf(_t('Product.HEIGHT', 'Height (%s)'), $lengthunit), '', 12),
+			TextField::create('Width', sprintf(_t('Product.WIDTH', 'Width (%s)'), $lengthunit), '', 12),
+			TextField::create('Depth', sprintf(_t('Product.DEPTH', 'Depth (%s)'), $lengthunit), '', 12),
 		));
-		
-		$fields->addFieldToTab('Root.Main', TextField::create('Model', _t('Product.MODEL', 'Model'), '', 30),'Content');
+		$fields->addFieldToTab('Root.Main',TextField::create('Model', _t('Product.MODEL', 'Model'), '', 30),'Content');
 		$fields->addFieldToTab('Root.Main', TextField::create('InternalItemID', _t('Product.CODE', 'Product Code'), '', 30),'Model');
 		if(!$fields->dataFieldByName('Image')) {
-			$fields->addFieldToTab('Root.Images',  UploadField::create('Image', _t('Product.IMAGE', 'Product Image')));
+			$fields->addFieldToTab('Root.Images', 
+				UploadField::create('Image', _t('Product.IMAGE', 'Product Image'))
+			);
 		}
 		// Flags for this product which affect it's behaviour on the site
 		$fields->addFieldToTab('Root.Main', CheckboxField::create('FeaturedProduct', _t('Product.FEATURED', 'Featured Product')), 'Content');
 		$fields->addFieldToTab('Root.Main', CheckboxField::create('AllowPurchase', _t('Product.ALLOWPURCHASE', 'Allow product to be purchased'), 1),'Content');
 		$fields->addFieldsToTab('Root.Categories',array(
 			LabelField::create('ProductCategoriesInstuctions', _t('Product.CATEGORIES',"Select the categories that this product should also show up in")),
-			CheckboxSetField::create("ProductCategories","Product Categories",DataObject::get("ProductCategory")->map("ID", "Title"))
+			CheckboxSetField::create("ProductCategories","Product Categories",ProductCategory::get()->map("ID", "Title"))
 		));
 		if($pagename = $fields->fieldByName('Root.Main.Title')){
 			$pagename->setTitle(_t('Product.PAGETITLE','Product Page Title'));
 		}
-
 		self::enableCMSFieldsExtensions();
 		$this->extend('updateCMSFields', $fields);
 		return $fields;
@@ -162,19 +160,15 @@ class Product extends Page implements Buyable{
 
 	/**
 	 * Returns if the product is already in the shopping cart.
-	 * Note : This function is usable in the Product context because a
-	 * Product_OrderItem only has a Product object in attribute
-	 *
 	 * @return boolean
 	 */
 	function IsInCart() {
-		return ($this->Item() && $this->Item()->Quantity > 0) ? true : false;
+		return $this->Item() && $this->Item()->Quantity > 0;
 	}
 
 	/**
 	 * Returns the order item which contains the product
-	 * Note : This function is usable in the Product context because a
-	 * Product_OrderItem only has a Product object in attribute
+	 * @return  OrderItem
 	 */
 	function Item() {
 		$filter = array();

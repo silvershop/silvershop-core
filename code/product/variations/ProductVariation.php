@@ -11,7 +11,6 @@
 class ProductVariation extends DataObject implements Buyable{
 
 	private static $db = array(
-		//'Title' => 'Text',
 		'InternalItemID' => 'Varchar(30)',
 		'Price' => 'Currency'
 	);
@@ -22,65 +21,69 @@ class ProductVariation extends DataObject implements Buyable{
 	private static $many_many = array(
 		'AttributeValues' => 'ProductAttributeValue'
 	);
-
 	private static $casting = array(
 		'Title' => 'Text',
 		'Price' => 'Currency'
 	);
-
 	private static $versioning = array(
 		'Live'
 	);
-
 	private static $extensions = array(
 		"Versioned('Live')"
 	);
-
 	private static $summary_fields = array(
 		'InternalItemID' => 'Product Code',
 		//'Product.Title' => 'Product',
 		'Title' => 'Variation',
 		'Price' => 'Price'
 	);
-	
 	private static $searchable_fields = array(
 		'Product.Title',
 		'InternalItemID'
 	);
 
 	private static $default_sort = "InternalItemID";
-	
 	private static $order_item = "ProductVariation_OrderItem";
 
 	function getCMSFields() {
-		$fields = array();
-		$fields[] = new TextField('InternalItemID','Product Code');
-		$fields[] = new TextField('Price');
+		$fields = new FieldList(
+			TextField::create('InternalItemID','Product Code'),
+			TextField::create('Price')
+		);
 		//add attributes dropdowns
-		if($this->Product()->VariationAttributeTypes()->exists() && $attributes = $this->Product()->VariationAttributeTypes()){
-			
+		$attributes = $this->Product()->VariationAttributeTypes();
+		if($attributes->exists()){
 			foreach($attributes as $attribute){
 				if($field = $attribute->getDropDownField()){
-					if($value = $this->AttributeValues()->find('TypeID',$attribute->ID))
+					if($value = $this->AttributeValues()->find('TypeID',$attribute->ID)){
 						$field->setValue($value->ID);
-
-					$fields[] = $field;
+					}
+					$fields->push($field);
 				}else{
-					$fields[] = new LiteralField('novalues'.$attribute->Name,"<p class=\"message warning\">".$attribute->Name." has no values to choose from. You can create them in the \"Products\" &#62; \"Product Attribute Type\" section of the CMS.</p>");
+					$fields->push(LiteralField::create('novalues'.$attribute->Name,
+						"<p class=\"message warning\">".
+							$attribute->Name." has no values to choose from.
+							You can create them in the \"Products\" &#62; 
+							\"Product Attribute Type\" section of the CMS.
+						</p>"
+					));
 				}
 				//TODO: allow setting custom value, rather than visiting the products section
 			}
 		}
-		$set = new FieldList($fields);
-		$this->extend('updateCMSFields', $set);
-		return $set;
+		$fields->push(
+			UploadField::create('Image', _t('Product.IMAGE', 'Product Image'))
+		);
+		$this->extend('updateCMSFields', $fields);
+
+		return $fields;
 	}
 	
+	/**
+	 * Save selected attributes - somewhat of a hack.
+	 */
 	function onBeforeWrite(){
 		parent::onBeforeWrite();
-
-		//TODO: perhaps move this to onAfterWrite, for the case when the variation has just been created, and thus has no ID to relate
-		//..but that might cause recursion
 		if(isset($_POST['ProductAttributes']) && is_array($_POST['ProductAttributes'])){
 			$this->AttributeValues()->setByIDList(array_values($_POST['ProductAttributes']));
 		}
@@ -121,28 +124,26 @@ class ProductVariation extends DataObject implements Buyable{
 		return $allowpurchase;
 	}
 
-	//TODO: change this function to match Product->IsInCart
-
 	/*
 	 * Returns if the product variation is already in the shopping cart.
-	 * Note : This function is usable in the Product Variation context because a
-	 * ProductVariation_OrderItem only has a ProductVariation object in attribute
+	 * @return boolean
 	 */
 	function IsInCart() {
-		return ($this->Item() && $this->Item()->Quantity > 0) ? true : false;
+		return $this->Item() && $this->Item()->Quantity > 0;
 	}
 
 	/*
 	 * Returns the order item which contains the product variation
-	 * Note : This function is usable in the ProductVariation context because a
-	 * ProductVariation_OrderItem only has a ProductVariation object in attribute
+	 * @return  OrderItem
 	 */
 	function Item() {
 		$filter = array();
 		$this->extend('updateItemFilter',$filter);
 		$item = ShoppingCart::singleton()->get($this,$filter);
-		if(!$item)
-			$item = $this->createItem(0); //return dummy item so that we can still make use of Item
+		if(!$item) {
+			//return dummy item so that we can still make use of Item
+			$item = $this->createItem(0); 
+		}
 		$this->extend('updateDummyItem',$item);
 		return $item;
 	}
@@ -158,7 +159,8 @@ class ProductVariation extends DataObject implements Buyable{
 		$item->ProductVariationID = $this->ID;
 		//$item->ProductVariationVersion = $this->Version;
 		if($filter){
-			$item->update($filter); //TODO: make this a bit safer, perhaps intersect with allowed fields
+			//TODO: make this a bit safer, perhaps intersect with allowed fields
+			$item->update($filter); 
 		}
 		$item->Quantity = $quantity;
 		return $item;
@@ -170,7 +172,8 @@ class ProductVariation extends DataObject implements Buyable{
 			$price = $this->Product()->sellingPrice();
 		}
 		if (!$price) $price = 0;
-		$this->extend("updateSellingPrice",$price); //TODO: this is not ideal, because prices manipulations will not happen in a known order
+		//TODO: this is not ideal, because prices manipulations will not happen in a known order
+		$this->extend("updateSellingPrice",$price); 
 		return $price;
 	}
 
@@ -214,13 +217,10 @@ class ProductVariation_OrderItem extends Product_OrderItem {
 	}
 	
 	public function Image(){
-		if($this->ProductVariation() && $image = $this->ProductVariation()->Image()){
-			return $image;
+		if($this->ProductVariation()->Image()->exists()){
+			return $this->ProductVariation()->Image();
 		}
-		if($this->Product()){
-			return $this->Product()->Image();
-		}
-		return null;
+		return $this->Product()->Image();
 	}
 
 }
