@@ -23,6 +23,9 @@ class ProductAttributeType extends DataObject{
 
 	private static $default_sort = "ID ASC";
 
+	private static $singular_name = "Attribute Type";
+	private static $plural_name = "Attribute Types";
+
 	function getCMSFields(){
 		$fields = parent::getCMSFields();
 		if($this->isInDB()){
