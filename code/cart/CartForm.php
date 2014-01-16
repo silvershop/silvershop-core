@@ -57,7 +57,7 @@ class CartForm extends Form{
 					continue;
 				}
 				//delete lines
-				if(isset($fields['Remove'])){
+				if(isset($fields['Remove']) || (isset($fields['Quantity']) && (int)$fields['Quantity'] <= 0)){
 					$items->remove($item);
 					$removecount++;
 					continue;
@@ -68,7 +68,9 @@ class CartForm extends Form{
 				}
 				//update variations
 				if(isset($fields['ProductVariationID']) && $id = Convert::raw2sql($fields['ProductVariationID'])){
-					$item->ProductVariationID = $id;
+					if($item->ProductVariationID != $id){
+						$item->ProductVariationID = $id;
+					}
 				}
 				//TODO: make updates through ShoppingCart class
 				//TODO: combine with items that now match exactly
@@ -78,9 +80,10 @@ class CartForm extends Form{
 					$updatecount++;
 				}
 			}
+		
 		}
 		if($removecount){
-			$messages['remove'] = "Removed ".$updatecount." items.";
+			$messages['remove'] = "Removed ".$removecount." items.";
 		}
 		if($updatecount){
 			$messages['updatecount'] = "Updated ".$updatecount." items.";
