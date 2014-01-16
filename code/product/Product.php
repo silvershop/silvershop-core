@@ -33,7 +33,6 @@ class Product extends Page implements Buyable{
 		'Popularity' => 'Float' //storage for ClaculateProductPopularity task
 	);
 	
-	
 	private static $has_one = array(
 		'Image' => 'Image'
 	);
@@ -76,10 +75,26 @@ class Product extends Page implements Buyable{
 	function getCMSFields() {
 		self::disableCMSFieldsExtensions();
 		$fields = parent::getCMSFields();
-		// Standard product detail fields
+
+		$fields->fieldByName('Root.Main.Title')->setTitle(_t('Product.PAGETITLE','Product Title'));
+		//general fields
+		$fields->addFieldsToTab('Root.Main',array(
+			TextField::create('InternalItemID', _t('Product.CODE', 'Product Code/SKU'), '', 30),
+			TextField::create('Model', _t('Product.MODEL', 'Model'), '', 30),
+			CheckboxField::create('FeaturedProduct', _t('Product.FEATURED', 'Featured Product')),
+			CheckboxField::create('AllowPurchase', _t('Product.ALLOWPURCHASE', 'Allow product to be purchased'), 1),
+			ListBoxField::create('ProductCategories',_t("Product.CATEGORIES","Categories"), ProductCategory::get()->map()->toArray())
+				->setMultiple(true)
+				->setDescription(_t('Product.CATEGORIES',"Additional categories that this product should also show up in"))
+		),'Content');
+		//pricing
 		$fields->addFieldsToTab('Root.Pricing',array(
-			TextField::create('BasePrice', _t('Product.PRICE', 'Price - base price to sell this product at'), '', 12),
-			TextField::create('CostPrice', _t('Product.COSTPRICE', 'Cost Price - wholesale price before markup'), '', 12)
+			TextField::create('BasePrice', _t('Product.PRICE', 'Price'))
+				->setDescription(_t('Product.PRICEDESC',"Base price to sell this product at."))
+				->setMaxLength(12),
+			TextField::create('CostPrice', _t('Product.COSTPRICE', 'Cost Price'))
+				->setDescription(_t('Product.COSTPRICEDESC','Wholesale price before markup.'))
+				->setMaxLength(12)
 		));
 		//physical measurements
 		$weightunit = "kg"; //TODO: globalise / make custom
@@ -90,25 +105,15 @@ class Product extends Page implements Buyable{
 			TextField::create('Width', sprintf(_t('Product.WIDTH', 'Width (%s)'), $lengthunit), '', 12),
 			TextField::create('Depth', sprintf(_t('Product.DEPTH', 'Depth (%s)'), $lengthunit), '', 12),
 		));
-		$fields->addFieldToTab('Root.Main',TextField::create('Model', _t('Product.MODEL', 'Model'), '', 30),'Content');
-		$fields->addFieldToTab('Root.Main', TextField::create('InternalItemID', _t('Product.CODE', 'Product Code'), '', 30),'Model');
 		if(!$fields->dataFieldByName('Image')) {
 			$fields->addFieldToTab('Root.Images', 
 				UploadField::create('Image', _t('Product.IMAGE', 'Product Image'))
 			);
 		}
-		// Flags for this product which affect it's behaviour on the site
-		$fields->addFieldToTab('Root.Main', CheckboxField::create('FeaturedProduct', _t('Product.FEATURED', 'Featured Product')), 'Content');
-		$fields->addFieldToTab('Root.Main', CheckboxField::create('AllowPurchase', _t('Product.ALLOWPURCHASE', 'Allow product to be purchased'), 1),'Content');
-		$fields->addFieldsToTab('Root.Categories',array(
-			LabelField::create('ProductCategoriesInstuctions', _t('Product.CATEGORIES',"Select the categories that this product should also show up in")),
-			CheckboxSetField::create("ProductCategories","Product Categories",ProductCategory::get()->map("ID", "Title"))
-		));
-		if($pagename = $fields->fieldByName('Root.Main.Title')){
-			$pagename->setTitle(_t('Product.PAGETITLE','Product Page Title'));
-		}
+
 		self::enableCMSFieldsExtensions();
 		$this->extend('updateCMSFields', $fields);
+
 		return $fields;
 	}
 
@@ -285,10 +290,8 @@ class Product_OrderItem extends OrderItem {
 	 * @return Product
 	 */
 	public function Product($forcecurrent = false) {
-		
 		//TODO: this might need some unit testing to make sure it compliles with comment description
-			//ie use live if inn cart (however I see no logic for checking cart status)
-		
+			//ie use live if in cart (however I see no logic for checking cart status)
 		if($this->ProductID && $this->ProductVersion && !$forcecurrent){
 			return Versioned::get_version('Product', $this->ProductID, $this->ProductVersion);
 		}elseif($this->ProductID && $product = Versioned::get_one_by_stage('Product','Live', "\"Product\".\"ID\"  = ".$this->ProductID)){
