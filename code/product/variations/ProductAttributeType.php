@@ -16,6 +16,10 @@ class ProductAttributeType extends DataObject{
 		'Values' => 'ProductAttributeValue'
 	);
 
+	private static $belongs_many_many = array(
+		'Product' => 'Product'
+	);
+
 	private static $summary_fields = array(
 		'Name' => 'Name',
 		'Label' => 'Label'
@@ -25,6 +29,18 @@ class ProductAttributeType extends DataObject{
 
 	private static $singular_name = "Attribute Type";
 	private static $plural_name = "Attribute Types";
+
+	public static function find_or_make($name){
+		$name = strtolower($name);
+		if($type = DataObject::get_one('ProductAttributeType',"LOWER(\"Name\") = '$name'")){
+			return $type;
+		}
+		$type = new ProductAttributeType();
+		$type->Name = $name;
+		$type->Label = $name;
+		$type->write();
+		return $type;
+	}
 
 	function getCMSFields(){
 		$fields = parent::getCMSFields();
@@ -36,18 +52,6 @@ class ProductAttributeType extends DataObject{
 		}
 		$fields->addFieldToTab("Root.Values", $itemsTable);
 		return $fields;
-	}
-
-	static function find_or_make($name){
-		$name = strtolower($name);
-		if($type = DataObject::get_one('ProductAttributeType',"LOWER(\"Name\") = '$name'")){
-			return $type;
-		}
-		$type = new ProductAttributeType();
-		$type->Name = $name;
-		$type->Label = $name;
-		$type->write();
-		return $type;
 	}
 
 	function addValues(array $values){

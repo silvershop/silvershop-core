@@ -7,29 +7,25 @@
  */
 class ProductAttributeValue extends DataObject{
 
-	static $db = array(
+	private static $db = array(
 		'Value' => 'Varchar',
 		'Sort' => 'Int'
 	);
 
-	static $has_one = array(
+	private static $has_one = array(
 		'Type' => 'ProductAttributeType'
 	);
 
-	static $has_many = array();
-
-	static $belongs_to = array();
-
-	static $belongs_many_many = array(
+	private static $belongs_many_many = array(
 		'ProductVariation' => 'ProductVariation'
 	);
 
-	static $summary_fields = array(
+	private static $summary_fields = array(
 		'Value' => 'Value',
 
 	);
 
-	static $default_sort = "TypeID ASC, Sort ASC, Value ASC";
+	private static $default_sort = "TypeID ASC, Sort ASC, Value ASC";
 	
 	function getCMSFields(){
 		$fields = parent::getCMSFields();
