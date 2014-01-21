@@ -33,7 +33,7 @@ class ProductCategory extends Page {
 	 * Retrieve a set of products, based on the given parameters. Checks get query for sorting and pagination.
 	 *
 	 * @param string $extraFilter Additional SQL filters to apply to the Product retrieval
-	 * @param bool $recursive [optional]
+	 * @param bool $recursive include sub-categories
 	 * @return PaginatedList
 	 */
 	function ProductsShowable($extraFilter = '', $recursive = true){
@@ -47,7 +47,7 @@ class ProductCategory extends Page {
 		}
 		$sort = (isset($_GET['sortby'])) ? 
 					Convert::raw2sql($_GET['sortby']) : 
-					"\"FeaturedProduct\" DESC, \"URLSegment\"";
+					"\"Featured\" DESC, \"URLSegment\"";
 		//hard coded sort configuration //TODO: make these custom
 		if ($sort == "Popularity"){
 			$sort .= " DESC";	

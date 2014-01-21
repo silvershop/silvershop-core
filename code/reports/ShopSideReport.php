@@ -23,7 +23,7 @@ class ShopSideReport_FeaturedProducts extends SS_Report {
 	}
 
 	function sourceRecords($params = null) {
-		return Product::get()->filter('FeaturedProduct', 1)->sort("Title");
+		return Product::get()->filter('Featured', 1)->sort("Title");
 	}
 
 	function columns() {
