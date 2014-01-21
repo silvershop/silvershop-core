@@ -2,10 +2,11 @@
 
 class ZoneAdmin extends ModelAdmin{
 
-	static $menu_title = "Zones";
-	static $url_segment = "zones";
+	private static $menu_title = "Zones";
+	private static $url_segment = "zones";
+	private static $menu_icon = 'shop/images/icons/local-admin.png';
 
-	static $managed_models = array(
+	private static $managed_models = array(
 		'Zone'
 	);
 
