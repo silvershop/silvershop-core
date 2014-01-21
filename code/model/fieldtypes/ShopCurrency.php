@@ -20,5 +20,9 @@ class ShopCurrency extends Currency {
 		}
 		return $val;
 	}
+
+	function forTemplate(){
+		return $this->Nice();
+	}
 	
 }
