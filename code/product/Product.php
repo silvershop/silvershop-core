@@ -27,7 +27,7 @@ class Product extends Page implements Buyable{
 		'Width' => 'Decimal(9,2)',
 		'Depth' => 'Decimal(9,2)',
 		
-		'FeaturedProduct' => 'Boolean',
+		'Featured' => 'Boolean',
 		'AllowPurchase' => 'Boolean',
 		
 		'Popularity' => 'Float' //storage for ClaculateProductPopularity task
@@ -68,20 +68,20 @@ class Product extends Page implements Buyable{
 
 	private static $singular_name = "Product";
 	private static $plural_name = "Products";
-	
 	private static $icon = 'shop/images/icons/package';
 	private static $default_parent = 'ProductCategory';
 	private static $default_sort = '"Title" ASC';
 	
+	private static $global_allow_purchase = true;
 	private static $order_item = "Product_OrderItem";
 
-	private static $number_sold_calculation_type = "SUM"; //SUM or COUNT
-	private static $global_allow_purchase = true;
-
+	/**
+	 * Add product fields to CMS
+	 * @return FieldList updated field list
+	 */
 	function getCMSFields() {
 		self::disableCMSFieldsExtensions();
 		$fields = parent::getCMSFields();
-
 		$fields->fieldByName('Root.Main.Title')->setTitle(_t('Product.PAGETITLE','Product Title'));
 		//general fields
 		$fields->addFieldsToTab('Root.Main',array(
@@ -116,7 +116,6 @@ class Product extends Page implements Buyable{
 				UploadField::create('Image', _t('Product.IMAGE', 'Product Image'))
 			);
 		}
-
 		self::enableCMSFieldsExtensions();
 		$this->extend('updateCMSFields', $fields);
 
@@ -130,28 +129,37 @@ class Product extends Page implements Buyable{
 	 * @return Order
 	 */
 	function getCart() {
-		if(!self::$global_allow_purchase) return false;
+		if(!self::$global_allow_purchase){
+			return false;
+		} 
 		HTTP::set_cache_age(0);
+
 		return ShoppingCart::curr();
 	}
 
 	/**
-	 * Conditions for whether a product can be purchased.
-	 *
-	 * If it has the checkbox for 'Allow this product to be purchased',
-	 * as well as having a price, it can be purchased. Otherwise a user
-	 * can't buy it.
+	 * Conditions for whether a product can be purchased:
+	 *  - global allow purchase is enabled
+	 *  - product AllowPurchase field is true
+	 *  - product page is published
+	 *  - if variations, then one of them needs to be purchasable
+	 *  - if not variations, selling price must be above 0
 	 *
 	 * Other conditions may be added by decorating with the canPurcahse function
-	 *
 	 * @return boolean
 	 */
 	function canPurchase($member = null) {
-		if(!self::config()->global_allow_purchase) return false;
-		if(!$this->dbObject('AllowPurchase')->getValue()) return false;
-		if(!$this->isPublished()) return false;
+		if(!self::config()->global_allow_purchase ||
+			!$this->AllowPurchase ||
+			!$this->isPublished()
+		){
+			return false;
+		} 
 		$allowpurchase = false;
-		if(ProductVariation::get()->filter("ProductID",$this->ID)->first()){ // TODO: I get errors if I have not decorated product.php with variations... method does not exist
+		if(
+			self::has_extension("ProductVariationsExtension") &&
+			ProductVariation::get()->filter("ProductID",$this->ID)->first()
+		){ 
 			foreach($this->Variations() as $variation){
 				if($variation->canPurchase()){
 					$allowpurchase = true;
@@ -166,6 +174,7 @@ class Product extends Page implements Buyable{
 		if($allowpurchase && $extended !== null){
 			$allowpurchase = $extended;
 		}
+
 		return $allowpurchase;
 	}
 
@@ -282,7 +291,6 @@ class Product_OrderItem extends OrderItem {
 	 * the has_one join field to identify the buyable
 	 */
 	private static $buyable_relationship = "Product";
-	private static $disable_versioned = true;
 
 	/**
 	 * Get related product

@@ -17,6 +17,10 @@ shop module:
 This is because Product images are now Image dataobjects, instead of Product_Image dataobjects.
 Try running the ShopMigrationTask.
 
+# 'FeaturedProduct' field renamed to 'Featured' on Product model
+
+
+
 # 0.9
 
 # Prices are missing

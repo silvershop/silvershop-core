@@ -5,13 +5,13 @@
  * @package shop
  * @subpackage variations
  */
-class ProductVariationDecorator extends DataExtension{
+class ProductVariationsExtension extends DataExtension{
 	
-	static $has_many = array(
+	private static $has_many = array(
 		'Variations' => 'ProductVariation'
 	);
 	
-	static $many_many = array(
+	private static $many_many = array(
 		'VariationAttributeTypes' => 'ProductAttributeType'
 	);
 
@@ -19,25 +19,25 @@ class ProductVariationDecorator extends DataExtension{
 	 * Adds variations specific fields to the CMS.
 	 */
 	public function updateCMSFields(FieldList $fields) {
-		$productVariationAttributeTypes = DataObject::get("ProductAttributeType")->map("ID", "Title");
-		$fields->addFieldToTab('Root.Variations',$this->getVariationsTable());
-		$fields->addFieldToTab('Root.Variations',new HeaderField("Variation Attribute Types"));
-		$fields->addFieldToTab('Root.Variations',new CheckboxSetField("VariationAttributeTypes","Variation Attribute Types",$productVariationAttributeTypes));
-		
+		$attributes = ProductAttributeType::get()->map("ID", "Title");
+		$fields->addFieldsToTab('Root.Variations',array(
+			GridField::create("Variations","Variations",
+				$this->owner->Variations(),
+				GridFieldConfig_RecordEditor::create()
+			),
+			HeaderField::create("Variation Attribute Types"),
+			CheckboxSetField::create("VariationAttributeTypes","Variation Attribute Types",$attributes)
+		));
 		if($this->owner->Variations()->exists()){
-			$fields->addFieldToTab('Root.Pricing',new LabelField('variationspriceinstructinos','Price - Because you have one or more variations, the price can be set in the "Variations" tab.'));
+			$fields->addFieldToTab('Root.Pricing',
+				LabelField::create('variationspriceinstructinos','
+					Price - Because you have one or more variations, the price can be set in the "Variations" tab.'
+				)
+			);
 			$fields->removeFieldFromTab('Root.Pricing','BasePrice');
 			$fields->removeFieldFromTab('Root.Pricing','CostPrice');
 			$fields->removeFieldFromTab('Root.Main','InternalItemID');
 		}
-	}
-	
-	/**
-	 * CMS fields helper function for getting the variations table.
-	 * @return HasManyComplexTableField
-	 */
-	function getVariationsTable() {
-		return new GridField("Variations","Variations",$this->owner->Variations(),new GridFieldConfig_RecordEditor());
 	}
 
 	function PriceRange(){
@@ -159,12 +159,10 @@ class ProductVariationDecorator extends DataExtension{
 	 */
 	function onAfterDelete(){
 		$remove = false;
-
 		// if a record is staged or live, leave it's variations alone.
 		if(!property_exists($this, 'owner')) {
 			$remove = true;
-		}
-		else {
+		}else {
 			$staged = Versioned::get_by_stage($this->owner->ClassName, 'Stage')
 						->byID($this->owner->ID);
 			$live = Versioned::get_by_stage($this->owner->ClassName, 'Live')
@@ -173,7 +171,6 @@ class ProductVariationDecorator extends DataExtension{
 				$remove = true;
 			}	
 		}
-
 		if($remove) {
 			foreach($this->owner->Variations() as $variation){
 				$variation->delete();

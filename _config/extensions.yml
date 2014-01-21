@@ -26,7 +26,7 @@ Image:
     - Product_Image
 Product:
   extensions:
-    - ProductVariationDecorator
+    - ProductVariationsExtension
 Payment:
   extensions:
     - ShopPayment

@@ -4,15 +4,15 @@ class CalculateProductPopularity extends BuildTask{
 
 	protected $title = "Calculate Product Sales Popularity";
 	protected $description = "Count up total sales quantites for each product";
+
+	private static $number_sold_calculation_type = "SUM"; //SUM or COUNT
 	
 	function run($request){
-		
 		if($request->getVar('via') == "php"){
 			$this->viaphp();
 		}else{
 			$this->viasql();
 		}
-
 		echo "product sales counts updated";
 	}
 	
@@ -21,7 +21,6 @@ class CalculateProductPopularity extends BuildTask{
 	 * 	product popularity = sum(1/order_age) * sum(item_quantity)
 	 */
 	function viasql(){
-		
 		foreach(array("_Live","") as $stage){
 			$sql =<<<SQL
 				UPDATE "Product$stage" SET "Popularity" = (
@@ -41,7 +40,6 @@ class CalculateProductPopularity extends BuildTask{
 SQL;
 			DB::query($sql);
 		}
-		
 	}
 	
 	//legacy function  for working out popularity
@@ -49,18 +47,14 @@ SQL;
 		$ps = singleton('Product');
 		$q = $ps->buildSQL("\"Product\".\"AllowPurchase\" = 1");
 		$select = $q->select;
-		
-		$select['NewPopularity'] = self::$number_sold_calculation_type."(\"OrderItem\".\"Quantity\") AS \"NewPopularity\"";
-		
+		$select['NewPopularity'] = self::config()->number_sold_calculation_type."(\"OrderItem\".\"Quantity\") AS \"NewPopularity\"";
 		$q->select($select);
 		$q->groupby("\"Product\".\"ID\"");
 		$q->orderby("\"NewPopularity\" DESC");
-		
 		$q->leftJoin('Product_OrderItem','"Product"."ID" = "Product_OrderItem"."ProductID"');
 		$q->leftJoin('OrderItem','"Product_OrderItem"."ID" = "OrderItem"."ID"');
 		$records = $q->execute();
 		$productssold = $ps->buildDataObjectSet($records, "DataObjectSet", $q, 'Product');
-		
 		//TODO: this could be done faster with an UPDATE query (SQLQuery doesn't support this yet @11/06/2010)
 		foreach($productssold as $product){
 			if($product->NewPopularity != $product->Popularity){
