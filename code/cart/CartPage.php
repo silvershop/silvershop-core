@@ -49,7 +49,7 @@ class CartPage extends Page{
 
 class CartPage_Controller extends Page_Controller{
 	
-	private static $url_segment = 'cart';
+	public static $url_segment = 'cart';
 	private static $allowed_actions = array(
 		"CartForm",
 		"updatecart"
