@@ -6,28 +6,37 @@
  */
 class CartPage extends Page{
 
-	static $has_one = array(
+	private static $has_one = array(
 		'CheckoutPage' => 'CheckoutPage',
 		'ContinuePage' => 'SiteTree'
 	);
 
-	static $icon = 'shop/images/icons/cart';
+	private static $icon = 'shop/images/icons/cart';
 
 	/**
 	 * Only allow one cart page
 	 */
-	function canCreate($member = null) {
+	public function canCreate($member = null) {
 		return !CartPage::get()->exists();
 	}
 
-	function getCMSFields(){
+	public function getCMSFields(){
 		$fields = parent::getCMSFields();
-		if($checkouts = DataObject::get('CheckoutPage')) {
-			$fields->addFieldToTab('Root.Links',new DropdownField('CheckoutPageID','Checkout Page',$checkouts->map("ID","Title")));
+		if($checkouts = CheckoutPage::get()) {
+			$fields->addFieldToTab('Root.Links',
+				DropdownField::create('CheckoutPageID','Checkout Page',
+					$checkouts->map("ID","Title")
+				)
+			);
 		}
-		if($pgroups = DataObject::get('ProductCategory')) {
-			$fields->addFieldToTab('Root.Links',new DropdownField('ContinuePageID','Continue Product Group Page',$pgroups->map("ID","Title")));
+		if($pgroups = ProductCategory::get()) {
+			$fields->addFieldToTab('Root.Links',
+				DropdownField::create('ContinuePageID','Continue Product Group Page',
+					$pgroups->map("ID","Title")
+				)
+			);
 		}
+		
 		return $fields;
 	}
 	
@@ -37,12 +46,13 @@ class CartPage extends Page{
 	 * @param boolean $urlSegment If set to TRUE, only returns the URLSegment field
 	 * @return string Link to checkout page
 	 */
-	static function find_link($urlSegment = false, $action = null, $id = null) {
-		if(!$page = DataObject::get_one('CartPage')) {
-			return Controller::join_links(Director::baseURL(),CartPage_Controller::$url_segment);
+	public static function find_link($urlSegment = false, $action = false, $id = false) {
+		$page = CartPage::get()->first();
+		$base = $page->exists() ? $page->Link() : CartPage_Controller::config()->url_segment;
+		if($urlSegment){
+			return $base;
 		}
-		$id = ($id)? "/".$id : "";
-		return ($urlSegment) ? $page->URLSegment : Controller::join_links($page->Link($action),$id);
+		return Controller::join_links($base,$action,$id);
 	}
 
 }

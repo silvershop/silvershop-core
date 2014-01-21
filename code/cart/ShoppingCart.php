@@ -287,8 +287,8 @@ class ShoppingCart{
  */
 class ShoppingCart_Controller extends Controller{
 	
-	static $url_segment = "shoppingcart";
-	protected static $direct_to_cart_page = false;
+	private static $url_segment = "shoppingcart";
+	private static $direct_to_cart_page = false;
 	protected $cart;
 	
 	private static $url_handlers = array(
@@ -331,7 +331,7 @@ class ShoppingCart_Controller extends Controller{
 		if(SecurityToken::is_enabled()){
 			$params[SecurityToken::inst()->getName()] = SecurityToken::inst()->getValue();		
 		}
-		return self::$url_segment.'/'.$action.'/'.$buyable->class."/".$buyable->ID.self::params_to_get_string($params);
+		return self::config()->url_segment.'/'.$action.'/'.$buyable->class."/".$buyable->ID.self::params_to_get_string($params);
 	}
 	
 	/**

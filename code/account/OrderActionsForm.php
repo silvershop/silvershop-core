@@ -8,14 +8,13 @@
  */
 class OrderActionsForm extends Form{
 	
-	private static $email_notification = false;
-	
 	private static $allowed_actions = array(
 		'docancel',
 		'dopayment',
 		'httpsubmission'
 	);
 
+	private static $email_notification = false;
 	private static $allow_paying = true;
 	private static $allow_cancelling = true;
 	
@@ -94,7 +93,7 @@ class OrderActionsForm extends Form{
 			$order->Status = 'MemberCancelled';
 			$order->write();
 			//TODO: notify people via email?? Make it optional.
-			if(self::$email_notification){
+			if(self::config()->email_notification){
 				$email = new Email(Email::getAdminEmail(),Email::getAdminEmail(),sprintf(_t('Order.CANCELSUBJECT','Order #%d cancelled by member'),$order->ID),$order->renderWith('Order'));
 				$email->send();
 			}
