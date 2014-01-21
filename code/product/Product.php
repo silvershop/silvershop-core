@@ -89,7 +89,9 @@ class Product extends Page implements Buyable{
 			TextField::create('Model', _t('Product.MODEL', 'Model'), '', 30),
 			CheckboxField::create('FeaturedProduct', _t('Product.FEATURED', 'Featured Product')),
 			CheckboxField::create('AllowPurchase', _t('Product.ALLOWPURCHASE', 'Allow product to be purchased'), 1),
-			ListBoxField::create('ProductCategories',_t("Product.CATEGORIES","Categories"), ProductCategory::get()->map()->toArray())
+			DropdownField::create('ParentID',_t("Product.DEFAULTCATEGORY","Default Category"), ProductCategory::get()->map()->toArray())
+				->setDescription(_t('Product.DEFAULTCATEGORY',"Default category that this product will show up in")),
+			ListBoxField::create('ProductCategories',_t("Product.CATEGORIES","Additional Categories"), ProductCategory::get()->map()->toArray())
 				->setMultiple(true)
 				->setDescription(_t('Product.CATEGORIES',"Additional categories that this product should also show up in"))
 		),'Content');
