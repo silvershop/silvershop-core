@@ -8,19 +8,13 @@
   */
 class ProductCategory extends Page {
 
-	private static $db = array(
-		'ChildGroupsPermission' => "Enum('Show Only Featured Products,Show All Products')"
-	);
-
 	private static $belongs_many_many = array(
 		'Products' => 'Product'
 	);
-
 	private static $singular_name = "Category";
 	private static $plural_name = "Categories";
-
-	private static $default_child = 'Product';
 	private static $icon = 'cms/images/treeicons/folder';
+	private static $default_child = 'Product';
 
 	private static $include_child_groups = true;
 	private static $page_length = 12;
@@ -35,43 +29,6 @@ class ProductCategory extends Page {
 		//'Weight' => 'Weight'
 	);
 
-	private static $featured_products_permissions = array(
-		'Show Only Featured Products',
-		'Show All Products'
-	);
-
-	private static $non_featured_products_permissions = array(
-		'Show All Products'
-	);
-
-	function get_sort_options(){
-		return self::$sort_options;
-	}
-
-	function getCMSFields() {
-		$fields = parent::getCMSFields();
-
-		if(self::$include_child_groups === 'custom'){
-			$fields->addFieldToTab(
-				'Root.Content',
-				new Tab(
-					'Child Groups',
-					new HeaderField('How should products be presented in the child groups?'),
-					new DropdownField(
-	  					'ChildGroupsPermission',
-	  					'Permission',
-	  					$this->dbObject('ChildGroupsPermission')->enumValues(),
-	  					'',
-	  					null,
-	  					'Don\'t Show Any Products'
-					)
-				)
-			);
-		}
-
-		return $fields;
-	}
-
 	/**
 	 * Retrieve a set of products, based on the given parameters. Checks get query for sorting and pagination.
 	 *
@@ -81,16 +38,20 @@ class ProductCategory extends Page {
 	 */
 	function ProductsShowable($extraFilter = '', $recursive = true){
 		$filter = array();
-
 		$this->extend('updateFilter', $extraFilter);
-		if ($extraFilter) $filter[] = $extraFilter;
-		if (self::config()->must_have_price) $filter[] = '"BasePrice" > 0';
-
-		$sort = (isset($_GET['sortby'])) ? Convert::raw2sql($_GET['sortby']) : "\"FeaturedProduct\" DESC, \"URLSegment\"";
-
+		if ($extraFilter){
+			$filter[] = $extraFilter;
+		}
+		if (self::config()->must_have_price){
+			$filter[] = '"BasePrice" > 0';
+		}
+		$sort = (isset($_GET['sortby'])) ? 
+					Convert::raw2sql($_GET['sortby']) : 
+					"\"FeaturedProduct\" DESC, \"URLSegment\"";
 		//hard coded sort configuration //TODO: make these custom
-		if ($sort == "Popularity") $sort .= " DESC";
-
+		if ($sort == "Popularity"){
+			$sort .= " DESC";	
+		}
 		// Figure out the categories to check
 		$groupids = array($this->ID);
 		if (($recursive === true || $recursive === 'true')
@@ -98,7 +59,6 @@ class ProductCategory extends Page {
 				&& $childgroups = $this->ChildGroups(true)) {
 			$groupids = array_merge($groupids, $childgroups->map('ID','ID'));
 		}
-
 		// Build the basic DataList
 		$products = Versioned::get_by_stage('Product','Live', implode(' AND ', $filter), $sort)
 			->leftJoin('Product_ProductCategories', '"Product_ProductCategories"."ProductID" = "Product"."ID"')
@@ -106,7 +66,6 @@ class ProductCategory extends Page {
 				'ParentID' => $groupids,
 				'Product_ProductCategories.ProductCategoryID' => $groupids,
 			));
-
 		// Convert to a paginated list
 		$products = new PaginatedList($products, Controller::curr()->getRequest());
 		$products->setPageLength(self::config()->page_length);
@@ -117,7 +76,7 @@ class ProductCategory extends Page {
 
 	/**
 	 * Return children ProductCategory pages of this group.
-	 * @param bool $recursive [optional]
+	 * @param bool $recursive
 	 * @return DataList
 	 */
 	function ChildGroups($recursive = false) {
@@ -162,22 +121,23 @@ class ProductCategory_Controller extends Page_Controller {
 	 * Return products that are featured, that is products that have "FeaturedProduct = 1"
 	 */
 	function FeaturedProducts($recursive = true) {
-		return $this->ProductsShowable("\"FeaturedProduct\" = 1",$recursive);
+		return $this->ProductsShowable("\"Featured\" = 1",$recursive);
 	}
 
 	/**
 	 * Return products that are not featured, that is products that have "FeaturedProduct = 0"
 	 */
 	function NonFeaturedProducts($recursive = true) {
-		return $this->ProductsShowable("\"FeaturedProduct\" = 0",$recursive);
+		return $this->ProductsShowable("\"Featured\" = 0",$recursive);
 	}
 
-		/**
+	/**
 	 * Provides a dataset of links for sorting products.
 	 */
 	function SortLinks(){
-		if(count($this->get_sort_options()) <= 0) return null;
-
+		if(count($this->get_sort_options()) <= 0){
+			return null;
+		}
 		$sort = (isset($_GET['sortby'])) ? Convert::raw2sql($_GET['sortby']) : "Title";
 		$dos = new ArrayList();
 		foreach($this->get_sort_options() as $field => $name){
@@ -188,6 +148,7 @@ class ProductCategory_Controller extends Page_Controller {
 				'Current' => $current
 			)));
 		}
+
 		return $dos;
 	}
 
