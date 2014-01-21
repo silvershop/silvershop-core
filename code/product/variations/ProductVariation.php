@@ -42,6 +42,9 @@ class ProductVariation extends DataObject implements Buyable{
 		'InternalItemID'
 	);
 
+	private static $singular_name = "Variation";
+	private static $plural_name = "Variations";
+
 	private static $default_sort = "InternalItemID";
 	private static $order_item = "ProductVariation_OrderItem";
 

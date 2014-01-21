@@ -16,8 +16,8 @@ class ProductCategory extends Page {
 		'Products' => 'Product'
 	);
 
-	private static $singular_name = "Product Category";
-	private static $plural_name = "Product Categories";
+	private static $singular_name = "Category";
+	private static $plural_name = "Categories";
 
 	private static $default_child = 'Product';
 	private static $icon = 'cms/images/treeicons/folder';

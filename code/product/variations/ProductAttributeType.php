@@ -27,8 +27,8 @@ class ProductAttributeType extends DataObject{
 
 	private static $default_sort = "ID ASC";
 
-	private static $singular_name = "Attribute Type";
-	private static $plural_name = "Attribute Types";
+	private static $singular_name = "Attribute";
+	private static $plural_name = "Attributes";
 
 	public static function find_or_make($name){
 		$name = strtolower($name);
