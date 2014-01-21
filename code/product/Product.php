@@ -43,7 +43,13 @@ class Product extends Page implements Buyable{
 
 	private static $defaults = array(
 		'AllowPurchase' => true,
-		'ShowInMenus' => false
+		'ShowInMenus' => false,
+		//this ensures products don't show up in SiteTree, when creating via model admin
+		'ParentID' => -1 
+	);
+
+	private static $casting = array(
+		'Price' => 'Currency'
 	);
 
 	private static $summary_fields = array(
@@ -198,22 +204,7 @@ class Product extends Page implements Buyable{
 		$item->Quantity = $quantity;
 		return $item;
 	}
-	
-	/**
-	 * Original price for template usage
-	 */
-	function getPrice(){
-		$currency = ShopConfig::get_site_currency();
-		$field = new Money("Price");
-		$field->setAmount($this->sellingPrice());
-		$field->setCurrency($currency);
-		return $field;
-	}
-	
-	function setPrice($val){
-		$this->setField("BasePrice", $val);
-	}
-	
+
 	/**
 	 * The raw retail price the visitor will get when they
 	 * add to cart. Can include discounts or markups on the base price.
@@ -221,11 +212,23 @@ class Product extends Page implements Buyable{
 	function sellingPrice(){
 		$price = $this->BasePrice;
 		$this->extend("updateSellingPrice",$price); //TODO: this is not ideal, because prices manipulations will not happen in a known order
-		if($price < 0)
-			$price = 0; //prevent negative sales
+		if($price < 0){
+			$price = 0; //prevent negative values
+		}
 		return $price;
 	}
 	
+	/**
+	 * This value is cased to Currency in temlates.
+	 */
+	function getPrice(){
+		return $this->sellingPrice();
+	}
+	
+	function setPrice($val){
+		$this->setField("BasePrice", $val);
+	}
+
 	function Link(){
 		$link = parent::Link();
 		$this->extend('updateLink',$link);
