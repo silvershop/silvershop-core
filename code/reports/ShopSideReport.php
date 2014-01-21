@@ -108,13 +108,13 @@ class ShopSideReport_HeavyProducts extends SS_Report {
 	}
 	function columns() {
 		return array(
-				"Title" => array(
-						"title" => "Title",
-						"link" => true
-				),
-				"Weight" => array(
-					'title' => 'Weight'	
-				)
+			"Title" => array(
+					"title" => "Title",
+					"link" => true
+			),
+			"Weight" => array(
+				'title' => 'Weight'	
+			)
 		);
 	}
 }

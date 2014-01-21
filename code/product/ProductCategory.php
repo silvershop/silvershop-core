@@ -20,7 +20,6 @@ class ProductCategory extends Page {
 	private static $page_length = 12;
 	private static $must_have_price = true;
 
-	//TODO: allow grouping multiple sort fields under one 'sort option', and allow choosing direction of each
 	private static $sort_options = array(
 		'URLSegment' => 'Alphabetical',
 		'BasePrice' => 'Lowest Price',
@@ -48,7 +47,6 @@ class ProductCategory extends Page {
 		$sort = (isset($_GET['sortby'])) ? 
 					Convert::raw2sql($_GET['sortby']) : 
 					"\"Featured\" DESC, \"URLSegment\"";
-		//hard coded sort configuration //TODO: make these custom
 		if ($sort == "Popularity"){
 			$sort .= " DESC";	
 		}
@@ -66,10 +64,10 @@ class ProductCategory extends Page {
 				'ParentID' => $groupids,
 				'Product_ProductCategories.ProductCategoryID' => $groupids,
 			));
-		// Convert to a paginated list
+		// Convert to a PaginatedList
 		$products = new PaginatedList($products, Controller::curr()->getRequest());
 		$products->setPageLength(self::config()->page_length);
-		$products->TotalCount = $products->getTotalItems(); // this is just for compatibility
+		$products->TotalCount = $products->getTotalItems();
 
 		return $products;
 	}
