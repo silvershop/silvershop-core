@@ -18,6 +18,9 @@
 		"silverstripe/framework": "3.1.*",
 		"burnbright/silverstripe-omnipay" : "dev-master"
 	},
+	"suggest" : {
+		"burnbright/silverstripe-shop-comparison" : "Allow comparing products side-by-side,a nd introduces a model for detailed specifications."
+	},
 	"extra" : {
 		"installer-name": "shop",
 		"snapshot" : "https://raw.github.com/burnbright/silverstripe-shop/gh-pages/assets/screenshots/shipping%20estimate%20form.png"
