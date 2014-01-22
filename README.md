@@ -37,6 +37,11 @@ composer create-project silverstripe/installer myshop
 composer require -d myshop "burnbright/silverstripe-shop:dev-master"
 ```
 
+There are a few useful tasks that can be run via a url to help you test:
+
+ * {yoursite.com}/dev/tasks/PopulateShopTask - will create cart, checkout, account, category and product pages
+ * {yoursite.com}/dev/shop/populatecart - will add products to the cart, and navitate you to the checkout
+
 ## Configuration
 
 You can view various configuration options in the 'example_config.yml' file.
