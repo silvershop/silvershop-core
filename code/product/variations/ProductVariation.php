@@ -220,7 +220,7 @@ class ProductVariation_OrderItem extends Product_OrderItem {
 	}
 	
 	public function Image(){
-		if($this->ProductVariation()->Image()->exists()){
+		if(($this->ProductVariation()) && $this->ProductVariation()->Image()->exists()){
 			return $this->ProductVariation()->Image();
 		}
 		return $this->Product()->Image();
