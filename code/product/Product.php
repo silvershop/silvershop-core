@@ -81,20 +81,14 @@ class Product extends Page implements Buyable{
 		self::disableCMSFieldsExtensions();
 		$fields = parent::getCMSFields();
 		$fields->fieldByName('Root.Main.Title')->setTitle(_t('Product.PAGETITLE','Product Title'));
-		$categories = ProductCategory::get()->map('ID','NestedTitle')->toArray();
 		//general fields
 		$fields->addFieldsToTab('Root.Main',array(
 			TextField::create('InternalItemID', _t('Product.CODE', 'Product Code/SKU'), '', 30),
-			DropdownField::create('ParentID',_t("Product.CATEGORY","Category"),array(
-				//-1 => _t("Product.HIDDENFROMTREE","Hidden from the page tree"),
-				$this->ParentID => $this->Parent()->Title .
-					($this->Parent() instanceof ProductCategory ?  "" : 
-						" (".$this->Parent()->i18n_singular_name().")"),
-				0 => _t("SiteTree.PARENTTYPE_ROOT", "Top-level page")
-			) + $categories)
+			DropdownField::create('ParentID',_t("Product.CATEGORY","Category"), $this->categoryoptions())
 				->setDescription(_t("Product.CATEGORYDESCRIPTION","This is the parent page or default category.")),
-			ListBoxField::create('ProductCategories',_t("Product.ADDITIONALCATEGORIES","Additional Categories"), $categories)
-				->setMultiple(true),
+			ListBoxField::create('ProductCategories',_t("Product.ADDITIONALCATEGORIES","Additional Categories"),
+					ProductCategory::get()->map('ID','NestedTitle')->toArray()
+				)->setMultiple(true),
 			TextField::create('Model', _t('Product.MODEL', 'Model'), '', 30),
 			CheckboxField::create('FeaturedProduct', _t('Product.FEATURED', 'Featured Product')),
 			CheckboxField::create('AllowPurchase', _t('Product.ALLOWPURCHASE', 'Allow product to be purchased'), 1)
@@ -126,6 +120,25 @@ class Product extends Page implements Buyable{
 		$this->extend('updateCMSFields', $fields);
 
 		return $fields;
+	}
+
+	/**
+	 * Helper function for generating list of categories to select from.
+	 * @return array categories
+	 */
+	private function categoryoptions(){
+		$categories = ProductCategory::get()->map('ID','NestedTitle')->toArray();
+		$categories = array(
+			0 => _t("SiteTree.PARENTTYPE_ROOT", "Top-level page")
+		) + $categories;
+		
+		if($this->ParentID && !($this->Parent() instanceof ProductCategory)){
+			$categories = array(
+				$this->ParentID => $this->Parent()->Title." (".$this->Parent()->i18n_singular_name().")"
+			) + $categories;
+		}
+
+		return $categories;
 	}
 
 	/**
