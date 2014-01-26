@@ -83,15 +83,22 @@ class Product extends Page implements Buyable{
 		self::disableCMSFieldsExtensions();
 		$fields = parent::getCMSFields();
 		$fields->fieldByName('Root.Main.Title')->setTitle(_t('Product.PAGETITLE','Product Title'));
+		$categories = ProductCategory::get()->map('ID','NestedTitle')->toArray();
 		//general fields
 		$fields->addFieldsToTab('Root.Main',array(
 			TextField::create('InternalItemID', _t('Product.CODE', 'Product Code/SKU'), '', 30),
+			DropdownField::create('ParentID',_t("Product.CATEGORY","Category"),array(
+					$this->ParentID => ($this->Parent()->exists) ? 
+							$this->Parent()->i18n_singular_name().": ".$this->Parent()->Title :
+							_t("SiteTree.PARENTTYPE_ROOT", "Top-level page"),
+					-1 => _t("Product.HIDDENFROMTREE","Hidden from the page tree")
+				) + $categories)
+					->setDescription(_t("Product.CATEGORYDESCRIPTION","This is the parent page / default category.")),
+			ListBoxField::create('ProductCategories',_t("Product.ADDITIONALCATEGORIES","Additional Categories"), $categories)
+				->setMultiple(true),
 			TextField::create('Model', _t('Product.MODEL', 'Model'), '', 30),
 			CheckboxField::create('FeaturedProduct', _t('Product.FEATURED', 'Featured Product')),
-			CheckboxField::create('AllowPurchase', _t('Product.ALLOWPURCHASE', 'Allow product to be purchased'), 1),
-			ListBoxField::create('ProductCategories',_t("Product.CATEGORIES","Categories"), ProductCategory::get()->map('ID','NestedTitle')->toArray())
-				->setMultiple(true)
-				->setDescription(_t('Product.CATEGORIES',"Additional categories that this product should also show up in"))
+			CheckboxField::create('AllowPurchase', _t('Product.ALLOWPURCHASE', 'Allow product to be purchased'), 1)
 		),'Content');
 		//pricing
 		$fields->addFieldsToTab('Root.Pricing',array(

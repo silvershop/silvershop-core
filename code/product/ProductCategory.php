@@ -109,8 +109,14 @@ class ProductCategory extends Page {
 	 * @param integer $level     nesting level
 	 * @param string  $separator seperate nesting with this string
 	 */
-	public function NestedTitle($level = 10, $separator = " > ") {
-		return parent::NestedTitle($level,$separator);
+	public function NestedTitle($level = 10, $separator = " > ", $field = "MenuTitle") {
+		$item = $this;
+		while($item && $level > 0) {
+			$parts[] = $item->{$field};
+			$item = $item->Parent;
+			$level--;
+		}
+		return implode($separator, array_reverse($parts));
 	}
 
 
