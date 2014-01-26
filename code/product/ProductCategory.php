@@ -104,6 +104,16 @@ class ProductCategory extends Page {
 		}
 	}
 
+	/**
+	 * Override the nested title defaults, to show deeper nesting in the CMS.
+	 * @param integer $level     nesting level
+	 * @param string  $separator seperate nesting with this string
+	 */
+	public function NestedTitle($level = 10, $separator = " > ") {
+		return parent::NestedTitle($level,$separator);
+	}
+
+
 }
 
 class ProductCategory_Controller extends Page_Controller {
