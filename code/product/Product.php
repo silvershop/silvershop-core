@@ -43,9 +43,7 @@ class Product extends Page implements Buyable{
 
 	private static $defaults = array(
 		'AllowPurchase' => true,
-		'ShowInMenus' => false,
-		//this ensures products don't show up in SiteTree, when creating via model admin
-		'ParentID' => -1 
+		'ShowInMenus' => false
 	);
 
 	private static $casting = array(
@@ -88,12 +86,13 @@ class Product extends Page implements Buyable{
 		$fields->addFieldsToTab('Root.Main',array(
 			TextField::create('InternalItemID', _t('Product.CODE', 'Product Code/SKU'), '', 30),
 			DropdownField::create('ParentID',_t("Product.CATEGORY","Category"),array(
-					$this->ParentID => ($this->Parent()->exists) ? 
-							$this->Parent()->i18n_singular_name().": ".$this->Parent()->Title :
-							_t("SiteTree.PARENTTYPE_ROOT", "Top-level page"),
-					-1 => _t("Product.HIDDENFROMTREE","Hidden from the page tree")
-				) + $categories)
-					->setDescription(_t("Product.CATEGORYDESCRIPTION","This is the parent page / default category.")),
+				//-1 => _t("Product.HIDDENFROMTREE","Hidden from the page tree"),
+				$this->ParentID => $this->Parent()->Title .
+					($this->Parent() instanceof ProductCategory ?  "" : 
+						" (".$this->Parent()->i18n_singular_name().")"),
+				0 => _t("SiteTree.PARENTTYPE_ROOT", "Top-level page")
+			) + $categories)
+				->setDescription(_t("Product.CATEGORYDESCRIPTION","This is the parent page or default category.")),
 			ListBoxField::create('ProductCategories',_t("Product.ADDITIONALCATEGORIES","Additional Categories"), $categories)
 				->setMultiple(true),
 			TextField::create('Model', _t('Product.MODEL', 'Model'), '', 30),
