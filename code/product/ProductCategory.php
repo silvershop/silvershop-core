@@ -133,12 +133,13 @@ class ProductCategory_Controller extends Page_Controller {
 	 * Provides a dataset of links for sorting products.
 	 */
 	function SortLinks(){
-		if(count($this->get_sort_options()) <= 0){
+		$sortoptions = ProductCategory::config()->sort_options;
+		if(empty($sortoptions) || count($sortoptions) <= 0){
 			return null;
 		}
 		$sort = (isset($_GET['sortby'])) ? Convert::raw2sql($_GET['sortby']) : "Title";
 		$dos = new ArrayList();
-		foreach($this->get_sort_options() as $field => $name){
+		foreach($sortoptions as $field => $name){
 			$current = ($field == $sort) ? 'current' : false;
 			$dos->add(new ArrayData(array(
 				'Name' => $name,
