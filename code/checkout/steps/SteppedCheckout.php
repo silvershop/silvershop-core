@@ -11,6 +11,17 @@ class SteppedCheckout extends Extension{
 	private static $steps = null;
 	
 	/**
+	 * Set the first step to display
+	 */
+	static function setFirstStep($step = null){
+		if(!$step){
+			self::$first_step = "membership";
+		}else{
+			self::$first_step = $step;
+		}
+	}
+	
+	/**
 	 * Set up CheckoutPage_Controller decorators for managing steps 
 	 */
 	static function setupSteps($steps = null){
