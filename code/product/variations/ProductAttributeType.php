@@ -26,31 +26,41 @@ class ProductAttributeType extends DataObject{
 	);
 
 	private static $default_sort = "ID ASC";
-
 	private static $singular_name = "Attribute";
 	private static $plural_name = "Attributes";
 
 	public static function find_or_make($name){
-		$name = strtolower($name);
-		if($type = DataObject::get_one('ProductAttributeType',"LOWER(\"Name\") = '$name'")){
-			return $type;
+		if($type = ProductAttributeType::get()
+			->filter("Name:nocase",$name)
+			->first()){
+				return $type;
 		}
 		$type = new ProductAttributeType();
 		$type->Name = $name;
 		$type->Label = $name;
 		$type->write();
+
 		return $type;
 	}
 
 	function getCMSFields(){
-		$fields = parent::getCMSFields();
+		$fields = new FieldList(
+			TextField::create("Name"),
+			TextField::create("Label")
+		);
 		if($this->isInDB()){
-			$itemsConfig = new GridFieldConfig_RelationEditor();
-			$itemsTable = new GridField("Values","Values",$this->Values(),$itemsConfig);
+			$fields->push(GridField::create(
+				"Values","Values",$this->Values(),
+				GridFieldConfig_RecordEditor::create()
+			));
 		}else{
-			$itemsTable = new LiteralField("Values", "<p class=\"message warning\">Save first, then you can add values.</p>");
+			$fields->push(LiteralField::create("Values",
+				"<p class=\"message warning\">
+					Save first, then you can add values.
+				</p>"
+			));
 		}
-		$fields->addFieldToTab("Root.Values", $itemsTable);
+
 		return $fields;
 	}
 
@@ -76,10 +86,11 @@ class ProductAttributeType extends DataObject{
 			}
 			$set->push($val);
 		}
+
 		return $set;
 	}
 
-	function getDropDownField($emptystring = null,$values = null){
+	function getDropDownField($emptystring = null, $values = null){
 		$values = ($values) ? $values : $this->Values('','Sort ASC, Value ASC');
 		if($values->exists()){
 			$field = new DropdownField('ProductAttributes['.$this->ID.']',$this->Name,$values->map('ID','Value'));
@@ -87,6 +98,7 @@ class ProductAttributeType extends DataObject{
 				$field->setEmptyString($emptystring);
 			return $field;
 		}
+		
 		return null;
 	}
 	

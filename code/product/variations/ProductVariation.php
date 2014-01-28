@@ -71,8 +71,14 @@ class ProductVariation extends DataObject implements Buyable{
 						</p>"
 					));
 				}
-				//TODO: allow setting custom value, rather than visiting the products section
+				//TODO: allow setting custom values here, rather than visiting the products section
 			}
+		}else{
+			$fields->push(LiteralField::create('savefirst',
+				"<p class=\"message warning\">".
+					"You can choose variation attributes after saving for the first time
+				</p>"
+			));
 		}
 		$fields->push(
 			UploadField::create('Image', _t('Product.IMAGE', 'Product Image'))

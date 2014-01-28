@@ -26,11 +26,16 @@ class ProductAttributeValue extends DataObject{
 	);
 
 	private static $default_sort = "TypeID ASC, Sort ASC, Value ASC";
+
+	private static $singular_name = "Value";
+	private static $plural_name = "Values";
 	
 	function getCMSFields(){
-		$fields = parent::getCMSFields();
-		$fields->removeFieldFromTab("Root", "ProductVariation");
-		$fields->removeFieldFromTab("Root.Main", "TypeID");
+		$fields = $this->scaffoldFormFields();
+		$fields->removeByName("TypeID");
+		$fields->removeByName("Sort");
+		$this->extend('updateCMSFields', $fields);
+		
 		return $fields;
 	}
 	
