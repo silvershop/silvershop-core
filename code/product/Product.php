@@ -51,11 +51,11 @@ class Product extends Page implements Buyable{
 	);
 
 	private static $summary_fields = array(
-		'InternalItemID','Title','BasePrice','Weight','Model'
+		'InternalItemID','Title','BasePrice'
 	);
 
 	private static $searchable_fields = array(
-		'InternalItemID','Title','Weight','Model','BasePrice'
+		'InternalItemID','Title','BasePrice'
 	);
 	
 	private static $field_labels = array(
