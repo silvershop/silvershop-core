@@ -23,6 +23,9 @@ class CartForm extends Form{
 		$editables = new ArrayList();
 		$i = Injector::inst();
 		foreach($items as $item){
+			if(!$item->Product()){
+				continue;
+			}
 			$name = "Item[$item->ID]";
 			$quantity = NumericField::create($name."[Quantity]","Quantity",$item->Quantity);
 			$variation = false;

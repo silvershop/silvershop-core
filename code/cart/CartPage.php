@@ -48,7 +48,7 @@ class CartPage extends Page{
 	 */
 	public static function find_link($urlSegment = false, $action = false, $id = false) {
 		$page = CartPage::get()->first();
-		$base = $page->exists() ? $page->Link() : CartPage_Controller::config()->url_segment;
+		$base = $page ? $page->Link() : CartPage_Controller::config()->url_segment;
 		if($urlSegment){
 			return $base;
 		}

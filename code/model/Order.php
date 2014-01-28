@@ -178,7 +178,7 @@ class Order extends DataObject {
 		$context = parent::getDefaultSearchContext();
 		$fields = $context->getFields();
 		$fields->fieldByName('Status')
-			->setSource(array_combine(self::$placed_status,self::$placed_status));
+			->setSource(array_combine(self::config()->placed_status,self::config()->placed_status));
 		//add date range filtering
 		$fields->insertBefore(DateField::create("DateFrom","Date from")
 			->setConfig('showcalendar',true),'Status');
