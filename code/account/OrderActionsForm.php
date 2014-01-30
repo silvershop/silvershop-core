@@ -20,21 +20,28 @@ class OrderActionsForm extends Form{
 	
 	function __construct($controller, $name = "OrderActionsForm", Order $order) {
 		$fields = new FieldList(
-			new HiddenField('OrderID', '', $order->ID)
+			HiddenField::create('OrderID', '', $order->ID)
 		);
 		$actions = new FieldList();
 		if(OrderActionsForm::config()->allow_paying && $order->canPay()){
-			$actions->push(new FormAction('dopayment', _t('OrderActionsForm.PAYORDER','Pay outstanding balance')));
-			$fields->push(new HeaderField("MakePaymentHeader",_t("OrderActionsForm.MAKEPAYMENT", "Make Payment")));
-			$fields->push(new LiteralField("Outstanding",
-				sprintf(_t("OrderActionsForm.OUTSTANDING","Outstanding: %s"),DBField::create('Currency',$order->TotalOutstanding())->Nice())
+			$actions->push(FormAction::create('dopayment',
+				_t('OrderActionsForm.PAYORDER','Pay outstanding balance')
 			));
-			$fields->push(new OptionsetField(
-				'PaymentMethod','Payment Method',GatewayInfo::get_supported_methods(),array_shift(array_keys(GatewayInfo::get_supported_methods()))
+			$fields->push(HeaderField::create("MakePaymentHeader",
+				_t("OrderActionsForm.MAKEPAYMENT", "Make Payment"))
+			);
+			$outstandingfield = Currency::create();
+			$outstandingfield->setValue($order->TotalOutstanding());
+			$fields->push(LiteralField::create("Outstanding",
+				sprintf(_t("OrderActionsForm.OUTSTANDING","Outstanding: %s"),$outstandingfield->Nice())
+			));
+			$gateways = GatewayInfo::get_supported_gateways();
+			$fields->push(OptionsetField::create(
+				'PaymentMethod','Payment Method',$gateways,key($gateways)
 			));
 		}
 		if(OrderActionsForm::config()->allow_cancelling && $order->canCancel()){
-			$actions->push(new FormAction('docancel', _t('OrderActionsForm.CANCELORDER','Cancel this order')));
+			$actions->push(FormAction::create('docancel', _t('OrderActionsForm.CANCELORDER','Cancel this order')));
 		}
 		parent::__construct($controller, $name, $fields, $actions);
 		$this->extend("updateForm");

@@ -1,6 +1,27 @@
 <?php
 
-class CheckoutPageTest extends SapphireTest{
+class CheckoutPageTest extends FunctionalTest{
+
+	static $fixture_file = 'shop/tests/fixtures/shop.yml';
+	static $disable_theme = true;
+	static $use_draft_site = true;
+
+	protected $controller;
+	
+	function setUp() {
+		parent::setUp();
+		ShopTest::setConfiguration();
+	}
+
+	function testActionsForm(){
+		$order = $this->objFromFixture("Order","unpaid");
+		OrderManipulation::add_session_order($order);
+		$this->get("/checkout/order/".$order->ID);
+	}
+
+	//log user in
+	//set the current order
+	//visit order page
 	
 	function testPayment(){
 		
@@ -14,7 +35,6 @@ class CheckoutPageTest extends SapphireTest{
 		);
 
 		//$form->loadDataFrom($data);
-
 		//$form->submitPayment($data, $form);
 
 		//$payment = $order->Payments()->first();

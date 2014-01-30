@@ -122,7 +122,7 @@ Order:
     cart:
         Name: Cart
         Total: 8
-    placed:
+    unpaid:
         Status: Unpaid
         Created: 2012-11-21 15:23:32
         Placed: 2012-11-21 15:33:02
@@ -145,15 +145,15 @@ Product_OrderItem:
         Product: =>Product.socks
         ProductVersion: 1
         Quantity: 1
-    placed_tshirt:
-        Order: =>Order.placed
+    unpaid_tshirt:
+        Order: =>Order.unpaid
         Product: =>Product.tshirt
         ProductVersion: 1
         UnitPrice: 25
         Quantity: 4
         CalculatedTotal: 100
-    placed_mp3player:
-        Order: =>Order.placed
+    unpaid_mp3player:
+        Order: =>Order.unpaid
         Product: =>Product.mp3player
         ProductVersion: 1
         UnitPrice: 200

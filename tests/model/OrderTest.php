@@ -149,8 +149,8 @@ class OrderTest extends SapphireTest {
 		$this->assertTrue($order->canEdit(), "orders can be edited by anyone");
 		$this->assertFalse($order->canCreate(),"no body can create orders manually");
 		
-		$order = $this->objFromFixture("Order", "placed");
-		$this->assertTrue($order->canPay(),"can pay after order is placed");
+		$order = $this->objFromFixture("Order", "unpaid");
+		$this->assertTrue($order->canPay(),"can pay an order that is unpaid");
 		$this->assertTrue($order->canCancel());
 		$this->assertFalse($order->canDelete(),"never allow deleting orders");
 		
@@ -163,7 +163,7 @@ class OrderTest extends SapphireTest {
 	}
 	
 	function testDelete(){
-		$order = $this->objFromFixture("Order", "placed");
+		$order = $this->objFromFixture("Order", "unpaid");
 		$order->delete();
 	}
 

@@ -19,7 +19,7 @@ class OrderManipulation extends Extension{
 	/**
 	 * Add an order to the session-stored history of orders.
 	 */
-	static function add_session_order(Order $order){
+	public static function add_session_order(Order $order){
 		$history = self::get_session_order_ids();
 		if(!is_array($history)){
 			$history = array();
@@ -31,7 +31,7 @@ class OrderManipulation extends Extension{
 	/**
 	 * Get historical orders for current session.
 	 */
-	static function get_session_order_ids(){
+	public static function get_session_order_ids(){
 		$history = Session::get(self::$session_variable);
 		if(!is_array($history)){
 			$history = null;
@@ -39,7 +39,7 @@ class OrderManipulation extends Extension{
 		return $history;
 	}
 	
-	static function clear_session_order_ids(){
+	public static function clear_session_order_ids(){
 		Session::set(self::$session_variable,null);
 		Session::clear(self::$session_variable);
 	}
@@ -91,7 +91,7 @@ class OrderManipulation extends Extension{
 	/**
 	 * Return all past orders for current member / session.
 	 */
-	function PastOrders($extrafilter = null){
+	public function PastOrders($extrafilter = null){
 		$statusFilter = "\"Order\".\"Status\" IN ('" . implode("','", Order::$placed_status) . "')";
 		$statusFilter .= " AND \"Order\".\"Status\" NOT IN('". implode("','", Order::$hidden_status) ."')";
 		$statusFilter .= ($extrafilter) ? " AND $extrafilter" : "";
@@ -104,7 +104,7 @@ class OrderManipulation extends Extension{
 	 *
 	 * @return array of template variables
 	 */
-	function order(SS_HTTPRequest $request) {	
+	public function order(SS_HTTPRequest $request) {	
 		$message = null;
 		$order = $this->orderfromid();
 		if(!$order) {
@@ -120,7 +120,7 @@ class OrderManipulation extends Extension{
 	 * Build a form for cancelling, or retrying payment for a placed order.
 	 * @return Form
 	 */
-	function ActionsForm(){
+	public function ActionsForm(){
 		if($order = $this->orderfromid()){
 			$form = new OrderActionsForm($this->owner, "ActionsForm",$order);
 			$form->extend('updateActionsForm',$order);
