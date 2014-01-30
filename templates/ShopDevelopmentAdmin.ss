@@ -2,7 +2,7 @@
 <ul>
 	<li><a href="{$BaseHref}shoppingcart/clear"><% _t("CLEARCART","Clear the current shopping cart") %></a></li>
 	<li><a href="{$BaseHref}shoppingcart/debug"><% _t("DEBUGCART","Debug the shopping cart") %></a></li>
-	<li><a href="{$BaseHref}dev/shop/populatecart"><% _t("POPULATECART","Populate cart with some available products") %></a></li>
+	<li><a href="{$BaseHref}dev/tasks/PopulateCartTask"><% _t("POPULATECART","Populate cart with some available products") %></a></li>
 </ul>
 
 <h3><% _t("BUILDTASKS","Build Tasks") %></h3>

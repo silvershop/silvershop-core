@@ -9,8 +9,7 @@ class ShopDevelopmentAdmin extends Controller{
 	static $url_handlers = array();
 
 	static $allowed_actions = array(
-		'index',
-		'populatecart'
+		'index'
 	);
 
 	function init() {
@@ -40,24 +39,6 @@ class ShopDevelopmentAdmin extends Controller{
 		$renderer->writeHeader();
 		$renderer->writeInfo(_t("Shop.DEVTOOLSTITLE","Shop Development Tools"), Director::absoluteBaseURL());
 		
-	}
-	
-	/**
-	 * Add 5 random Live products to cart, with random quantities between 1 and 10.
-	 */
-	function populatecart(){
-		$cart = ShoppingCart::singleton();
-		if($products = Versioned::get_by_stage("Product", "Live","","RAND()","",5)){
-			foreach($products as $product){
-				$variations = $product->Variations();
-				if($variations->exists()){
-					$product = $variations->sort("RAND()")->first();
-				}
-				$cart->add($product,(int)rand(1, 10));
-			}
-		}
-		$this->redirect($this->join_links(Director::baseURL(),'checkout'));
-		return;
 	}
 
 	function ShopFolder(){
