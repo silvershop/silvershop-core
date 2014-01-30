@@ -18,7 +18,7 @@
 		"silverstripe/framework": "3.1.*",
 		"burnbright/silverstripe-omnipay" : "dev-master",
 		"icecaster/versioned-gridfield": "dev-master",
-		"burnbright/silverstripe-listsorter": "dev-master"
+		"burnbright/silverstripe-listsorter": "1.0.*"
 	},
 	"suggest" : {
 		"burnbright/silverstripe-shop-comparison" : "Allow comparing products side-by-side,a nd introduces a model for detailed specifications.",
