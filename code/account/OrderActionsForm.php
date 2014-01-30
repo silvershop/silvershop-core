@@ -55,7 +55,7 @@ class OrderActionsForm extends Form{
 	 * @return boolean
 	 */
 	function dopayment($data, $form) {
-		if(OrderManipulation::$allow_paying && $order = $this->Controller()->orderfromid()) {
+		if(OrderActionsForm::config()->allow_paying && $order = $this->Controller()->orderfromid()) {
 			//assumes that the controller is extended by OrderManipulation decorator
 			if($order->canPay()) {
 				// Save payment data from form and process payment
@@ -94,7 +94,7 @@ class OrderActionsForm extends Form{
 	 * @param Form $form The {@link Form} this was submitted on
 	 */
 	function docancel($data, $form) {
-		if(OrderManipulation::$allow_cancelling){
+		if(OrderActionsForm::config()->allow_cancelling){
 			$SQL_data = Convert::raw2sql($data);
 			$order = DataObject::get_by_id('Order', $SQL_data['OrderID']);
 			$order->Status = 'MemberCancelled';

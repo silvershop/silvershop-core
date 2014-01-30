@@ -17,6 +17,19 @@ class CheckoutPageTest extends FunctionalTest{
 		$order = $this->objFromFixture("Order","unpaid");
 		OrderManipulation::add_session_order($order);
 		$this->get("/checkout/order/".$order->ID);
+
+		//make payment action
+		$this->post("/checkout/order/ActionsForm",array(
+			'OrderID' => $order->ID,
+			'PaymentMethod' => 'Dummy'
+			'action_dopayment' => 'submit'
+		));
+
+		//cancel action
+		$this->post("/checkout/order/ActionsForm",array(
+			'OrderID' => $order->ID,
+			'action_docancel' => 'submit'
+		));
 	}
 
 	//log user in

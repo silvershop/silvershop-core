@@ -7,14 +7,12 @@
  */
 class OrderManipulation extends Extension{
 
-	private static $allow_cancelling = false;
-	private static $allow_paying = false;
-	private static $session_variable = "OrderManipulation.historicalorders";
-	
 	private static $allowed_actions = array(
 		'ActionsForm',
 		'order'
 	);
+
+	private static $sessname = "OrderManipulation.historicalorders";
 
 	/**
 	 * Add an order to the session-stored history of orders.
@@ -25,14 +23,14 @@ class OrderManipulation extends Extension{
 			$history = array();
 		}
 		$history[$order->ID] = $order->ID;
-		Session::set(self::$session_variable,$history);
+		Session::set(self::$sessname,$history);
 	}
 	
 	/**
 	 * Get historical orders for current session.
 	 */
 	public static function get_session_order_ids(){
-		$history = Session::get(self::$session_variable);
+		$history = Session::get(self::$sessname);
 		if(!is_array($history)){
 			$history = null;
 		}
@@ -40,8 +38,8 @@ class OrderManipulation extends Extension{
 	}
 	
 	public static function clear_session_order_ids(){
-		Session::set(self::$session_variable,null);
-		Session::clear(self::$session_variable);
+		Session::set(self::$sessname,null);
+		Session::clear(self::$sessname);
 	}
 	
 	/**
@@ -131,12 +129,12 @@ class OrderManipulation extends Extension{
 
 	protected $sessionmessage, $sessionmessagetype = null;
 
-	function setSessionMessage($message = "success",$type = "good"){
+	public function setSessionMessage($message = "success",$type = "good"){
 		Session::set('OrderManipulation.Message',$message);
 		Session::set('OrderManipulation.MessageType',$type);
 	}
 
-	function SessionMessage(){
+	public function SessionMessage(){
 		if($message = Session::get("OrderManipulation.Message")){
 			$this->sessionmessage = $message;
 			Session::clear("OrderManipulation.Message");
@@ -144,7 +142,7 @@ class OrderManipulation extends Extension{
 		return $this->sessionmessage;
 	}
 
-	function SessionMessageType(){
+	public function SessionMessageType(){
 		if($type = Session::get("OrderManipulation.MessageType")){
 			$this->sessionmessagetype = $type;
 			Session::clear("OrderManipulation.MessageType");
