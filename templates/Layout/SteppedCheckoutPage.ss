@@ -16,7 +16,7 @@
 					<div class="accordion-body">
 						<div class="accordion-inner">
 							<% with Cart %>
-								<% include Cart_ReadOnly %>
+								<% include Cart %>
 							<% end_with %>
 						</div>
 					</div>
