@@ -15,6 +15,11 @@ class PaymentCheckoutComponent extends CheckoutComponent{
 				)
 			);
 		}
+		if(count($gateways) == 1){
+			$fields->push(
+				HiddenField::create('PaymentMethod')->setValue(key($gateways))
+			);
+		}
 
 		return $fields;
 	}
