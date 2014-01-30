@@ -37,7 +37,7 @@
 							<div class="accordion-inner">
 								<% if IsCurrentStep(contactdetails) %>
 									<p>Supply your contact information</p>
-									$Form
+									$OrderForm
 								<% end_if %>
 								<% if IsPastStep(contactdetails) %>
 									<% with Cart %>
@@ -64,7 +64,7 @@
 							<div class="accordion-inner">
 								<% if IsCurrentStep(shippingaddress) %>
 									<p>Please enter your shipping address details.</p>
-									$Form
+									$OrderForm
 								<% end_if %>
 								<% if IsPastStep(shippingaddress) %>
 									<div class="row">
@@ -77,7 +77,7 @@
 										<div class="span4">
 										<h4>Bill To:</h4>
 											<% if IsCurrentStep(billingaddress) %>
-												$Form
+												$OrderForm
 											<% else %>
 												<% with Cart %>
 													$BillingAddress
@@ -105,7 +105,7 @@
 						<div class="accordion-body">
 							<div class="accordion-inner">
 								<% if IsCurrentStep(shippingmethod) %>
-									$Form
+									$OrderForm
 								<% end_if %>
 								<% if IsPastStep(shippingmethod) %>
 									<% with Cart %>
@@ -131,7 +131,7 @@
 						<div class="accordion-body">
 							<div class="accordion-inner">
 								<% if IsCurrentStep(paymentmethod) %>
-									$Form
+									$OrderForm
 								<% end_if %>
 								<% if IsPastStep(paymentmethod) %>
 									$SelectedPaymentMethod
@@ -169,7 +169,7 @@
 											</tfoot>
 										</table>
 									<% end_with %>
-									$Form
+									$OrderForm
 								<% end_if %>
 							</div>
 						</div>
