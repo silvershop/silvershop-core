@@ -6,16 +6,8 @@ class CheckoutStep_Summary extends CheckoutStep{
 		'summary',
 		'ConfirmationForm',
 	);
-	
-	protected function checkoutconfig(){
-		$config = new CheckoutComponentConfig(ShoppingCart::curr(),false);
-		$config->addComponent(new NotesCheckoutComponent());
-		$config->addComponent(new TermsCheckoutComponent());
 
-		return $config;
-	}
-
-	function summary(){
+	public function summary(){
 		$form = $this->ConfirmationForm();
 		$this->owner->extend('updateConfirmationForm',$form);
 
@@ -24,8 +16,12 @@ class CheckoutStep_Summary extends CheckoutStep{
 		);
 	}
 	
-	function ConfirmationForm(){
-		$form = new CheckoutForm($this->owner,"ConfirmationForm",$this->checkoutconfig());
+	public function ConfirmationForm(){
+		$config = new CheckoutComponentConfig(ShoppingCart::curr(),false);
+		$config->addComponent(new NotesCheckoutComponent());
+		$config->addComponent(new TermsCheckoutComponent());
+
+		$form = new PaymentForm($this->owner,"ConfirmationForm",$config());
 		$this->owner->extend('updateConfirmationForm',$form);
 		
 		return $form;

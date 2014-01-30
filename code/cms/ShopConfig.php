@@ -21,12 +21,16 @@ class ShopConfig extends DataExtension{
 		$fields->insertBefore($shoptab = new Tab('Shop', 'Shop'), 'Access');
 		$fields->addFieldsToTab("Root.Shop", new TabSet("ShopTabs",
 			$maintab = new Tab("Main",
-				new TreeDropdownField('TermsPageID', _t("ShopConfig.TERMSPAGE",'Terms and Conditions Page'), 'SiteTree'),
-				new TreeDropdownField("CustomerGroupID", _t("ShopConfig.CUSTOMERGROUP","Group to add new customers to"), "Group")
+				TreeDropdownField::create('TermsPageID', 
+					_t("ShopConfig.TERMSPAGE",'Terms and Conditions Page'), 
+				'SiteTree'),
+				TreeDropdownField::create("CustomerGroupID",
+					_t("ShopConfig.CUSTOMERGROUP","Group to add new customers to"),
+				"Group")
 			),
 			$countriestab = new Tab("Countries",
-				$allowed = new CheckboxSetField('AllowedCountries','Allowed Ordering and Shipping Countries',
-					SiteConfig::config()->iso_3166_country_codes
+				CheckboxSetField::create('AllowedCountries','Allowed Ordering and Shipping Countries',
+					self::config()->iso_3166_country_codes
 				)
 			)
 		));
