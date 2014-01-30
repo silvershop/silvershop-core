@@ -14,7 +14,8 @@ class SteppedCheckout extends Extension{
 	 * Set up CheckoutPage_Controller decorators for managing steps 
 	 */
 	static function setupSteps($steps = null){
-		if(!$steps){
+		if(!is_array($steps)){
+			//default steps
 			$steps = array(
 				'membership' => 'CheckoutStep_Membership',
 				'contactdetails' => 'CheckoutStep_ContactDetails',
@@ -29,15 +30,15 @@ class SteppedCheckout extends Extension{
 		foreach($steps as $action => $classname){
 			Object::add_extension("CheckoutPage_Controller", $classname);
 		}
-		if(!Config::inst()->get('ShopConfig','first_step')){
+		if(!ShopConfig::config()->first_step){
 			reset($steps);
-			Config::inst()->update('ShopConfig','first_step',key($steps));
+			ShopConfig::config()->first_step = key($steps);
 		}
-		Config::inst()->update('ShopConfig','steps', $steps);
+		ShopConfig::config()->steps = $steps;
 	}
 	
 	function getSteps(){
-		return Config::inst()->get('ShopConfig','steps');
+		return ShopConfig::config()->steps;
 	}
 
 
@@ -70,7 +71,6 @@ class SteppedCheckout extends Extension{
 	 * Check if passed action is for a step before current
 	 */
 	function IsPastStep($name){
-		//echo "ispast ";
 		return $this->compareActions($name,$this->owner->getAction()) < 0;
 	}
 	
@@ -78,7 +78,6 @@ class SteppedCheckout extends Extension{
 	 * Check if passed action is for a step after current
 	 */
 	function IsFutureStep($name){
-		//echo "isfuture ";
 		return $this->compareActions($name,$this->owner->getAction()) > 0;
 	}
 	
@@ -86,8 +85,8 @@ class SteppedCheckout extends Extension{
 	 * Get first step from stored steps
 	 */
 	function index(){
-		if(Config::inst()->get('ShopConfig','first_step')){
-			return $this->owner->{Config::inst()->get('ShopConfig','first_step')}();
+		if(ShopConfig::config()->first_step){
+			return $this->owner->{ShopConfig::config()->first_step}();
 		}
 		return array();
 	}
