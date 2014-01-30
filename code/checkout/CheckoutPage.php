@@ -24,10 +24,15 @@ class CheckoutPage extends Page {
 	 */
 	static function find_link($urlSegment = false, $action = null, $id = null) {
 		if(!$page = CheckoutPage::get()->first()) {
-			return Controller::join_links(Director::baseURL(), CheckoutPage_Controller::config()->url_segment);
+			return Controller::join_links(
+				Director::baseURL(),
+				CheckoutPage_Controller::config()->url_segment
+			);
 		}
 		$id = ($id)? "/".$id : "";
-		return ($urlSegment) ? $page->URLSegment : Controller::join_links($page->Link($action),$id);
+		return ($urlSegment) ?
+			$page->URLSegment :
+			Controller::join_links($page->Link($action),$id);
 	}
 
 	/**
@@ -41,7 +46,8 @@ class CheckoutPage extends Page {
 		$fields = parent::getCMSFields();
 		$fields->addFieldsToTab('Root.Main', array(
 			HtmlEditorField::create('PurchaseComplete', 'Purchase Complete', 4)
-				->setDescription("This message is included in reciept email, after the customer submits the checkout")
+				->setDescription("This message is included in reciept email, ".
+								"after the customer submits the checkout")
 		),'Metadata');
 		return $fields;
 	}
@@ -69,7 +75,7 @@ class CheckoutPage_Controller extends Page_Controller {
 		if(!(bool)$this->Cart()){
 			return false;
 		}
-		return new CheckoutForm(
+		return new PaymentForm(
 			$this,
 			'OrderForm',
 			Injector::inst()->create("CheckoutComponentConfig", ShoppingCart::curr())
@@ -96,7 +102,7 @@ class CheckoutPage_Controller extends Page_Controller {
 		}
 		$config = new CheckoutComponentConfig(ShoppingCart::curr(),false);
 		$config->AddComponent(new OnsitePaymentCheckoutComponent());
-		$form = new CheckoutForm($this, "PaymentForm", $config);
+		$form = new PaymentForm($this, "PaymentForm", $config);
 		$form->setActions(new FieldList(
 			FormAction::create("submitpayment","Submit Payment")
 		));
