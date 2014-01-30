@@ -91,7 +91,7 @@ class ProductCategory extends Page {
 	public function GroupsMenu() {
 		if($this->Parent() instanceof ProductCategory){
 
-			return $parent->GroupsMenu();
+			return $this->Parent()->GroupsMenu();
 		}
 		return ProductCategory::get()
 			->filter("ParentID",$this->ID);

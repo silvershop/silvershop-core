@@ -21,7 +21,7 @@ class CheckoutStep_Summary extends CheckoutStep{
 		$config->addComponent(new NotesCheckoutComponent());
 		$config->addComponent(new TermsCheckoutComponent());
 
-		$form = new PaymentForm($this->owner,"ConfirmationForm",$config());
+		$form = new PaymentForm($this->owner,"ConfirmationForm",$config);
 		$this->owner->extend('updateConfirmationForm',$form);
 		
 		return $form;

@@ -21,7 +21,7 @@ class CheckoutPageTest extends FunctionalTest{
 		//make payment action
 		$this->post("/checkout/order/ActionsForm",array(
 			'OrderID' => $order->ID,
-			'PaymentMethod' => 'Dummy'
+			'PaymentMethod' => 'Dummy',
 			'action_dopayment' => 'submit'
 		));
 
