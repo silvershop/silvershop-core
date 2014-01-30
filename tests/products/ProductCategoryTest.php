@@ -27,6 +27,8 @@ class ProductCategoryTest extends SapphireTest{
 		$this->beachball->publish('Stage','Live');
 		$this->mp3player = $this->objFromFixture('Product', 'mp3player');
 		$this->mp3player->publish('Stage','Live');
+
+		Versioned::reading_stage('Live');
 	}
 
 	function testGetAllProducts(){

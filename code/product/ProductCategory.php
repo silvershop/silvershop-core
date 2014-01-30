@@ -22,8 +22,8 @@ class ProductCategory extends Page {
 
 	private static $sort_options = array(
 		'URLSegment' => 'Alphabetical',
-		'BasePrice' => 'Lowest Price',
-		//'Popularity' => 'Most Popular'
+		'BasePrice' => 'Price',
+		//'Popularity' => 'Popularity'
 		//'Featured' => 'Featured',
 		//'Weight' => 'Weight'
 	);
@@ -35,73 +35,66 @@ class ProductCategory extends Page {
 	 * @param bool $recursive include sub-categories
 	 * @return PaginatedList
 	 */
-	function ProductsShowable($extraFilter = '', $recursive = true){
-		$filter = array();
-		$this->extend('updateFilter', $extraFilter);
-		if ($extraFilter){
-			$filter[] = $extraFilter;
-		}
-		if (self::config()->must_have_price){
-			$filter[] = '"BasePrice" > 0';
-		}
-		$sort = (isset($_GET['sortby'])) ? 
-					Convert::raw2sql($_GET['sortby']) : 
-					"\"Featured\" DESC, \"URLSegment\"";
-		if ($sort == "Popularity"){
-			$sort .= " DESC";	
-		}
+	public function ProductsShowable($recursive = true){
 		// Figure out the categories to check
 		$groupids = array($this->ID);
-		if (($recursive === true || $recursive === 'true')
-				&& self::config()->include_child_groups
-				&& $childgroups = $this->ChildGroups(true)) {
-			$groupids = array_merge($groupids, $childgroups->map('ID','ID'));
+		if(!empty($recursive) && self::config()->include_child_groups) {
+			$groupids += $this->AllChildCategoryIDs();
 		}
-		// Build the basic DataList
-		$products = Versioned::get_by_stage('Product','Live', implode(' AND ', $filter), $sort)
+		$products = Product::get()
 			->leftJoin('Product_ProductCategories', '"Product_ProductCategories"."ProductID" = "Product"."ID"')
 			->filterAny(array(
 				'ParentID' => $groupids,
-				'Product_ProductCategories.ProductCategoryID' => $groupids,
+				'Product_ProductCategories.ProductCategoryID' => $groupids
 			));
-		// Convert to a PaginatedList
-		$products = new PaginatedList($products, Controller::curr()->getRequest());
-		$products->setPageLength(self::config()->page_length);
-		$products->TotalCount = $products->getTotalItems();
+		if (self::config()->must_have_price){
+			$products =  $products->filter("BasePrice:GreaterThan", 0);
+		}
 
 		return $products;
 	}
 
 	/**
-	 * Return children ProductCategory pages of this group.
-	 * @param bool $recursive
-	 * @return DataList
+	 * Loop down each level of children to get all ids.
 	 */
-	function ChildGroups($recursive = false) {
-		if($recursive){
-			if($children = Versioned::get_by_stage('ProductCategory','Live', "\"ParentID\" = '$this->ID'")){
-				$output = new ArrayList($children->toArray());
-				foreach($children as $group){
-					$output->merge($group->ChildGroups($recursive));
-				}
-				return $output;
-			}
-			return null;
-		}else{
-			return Versioned::get_by_stage('ProductCategory','Live', "\"ParentID\" = '$this->ID'");
-		}
+	public function AllChildCategoryIDs(){
+		$ids = array($this->ID);
+		$allids = array();
+		do{
+			$ids = ProductCategory::get()
+				->filter('ParentID', $ids)
+				->getIDList();
+			$allids += $ids;
+		}while(!empty($ids));
+
+		return $allids;
 	}
 
 	/**
-	 * Recursively generate a product menu.
+	 * Return children ProductCategory pages of this category.
+	 * @param bool $recursive
 	 * @return DataList
 	 */
-	function GroupsMenu() {
-		if($parent = $this->Parent()) {
-			return $parent instanceof ProductCategory ? $parent->GroupsMenu() : $this->ChildGroups();
-		} else {
-			return $this->ChildGroups();
+	public function ChildCategories($recursive = false) {
+		$children = ProductCategory::get()->filter("ParentID",$this->ID);
+		if($recursive){
+			$children = $children->filter("ParentID",$this->AllChildCategoryIDs());
 		}
+		
+		return $children;
+	}
+
+	/**
+	 * Recursively generate a product menu, starting from the topmost category.
+	 * @return DataList
+	 */
+	public function GroupsMenu() {
+		if($this->Parent() instanceof ProductCategory){
+
+			return $parent->GroupsMenu();
+		}
+		return ProductCategory::get()
+			->filter("ParentID",$this->ID);
 	}
 
 	/**
@@ -119,7 +112,6 @@ class ProductCategory extends Page {
 		return implode($separator, array_reverse($parts));
 	}
 
-
 }
 
 class ProductCategory_Controller extends Page_Controller {
@@ -128,43 +120,39 @@ class ProductCategory_Controller extends Page_Controller {
 	 * Return the products for this group.
 	 */
 	public function Products($recursive = true){
-		return $this->ProductsShowable('',$recursive);
+		$products = $this->ProductsShowable($recursive);
+		//sort the products
+		$products = $this->getSorter()->sortList($products);
+		//paginate the products
+		$products = new PaginatedList($products, $this->request);
+		$products->setPageLength(ProductCategory::config()->page_length);
+		$products->TotalCount = $products->getTotalItems();
+		
+		return $products;
 	}
 
 	/**
 	 * Return products that are featured, that is products that have "FeaturedProduct = 1"
 	 */
-	function FeaturedProducts($recursive = true) {
-		return $this->ProductsShowable("\"Featured\" = 1",$recursive);
+	public function FeaturedProducts($recursive = true) {
+		return $this->ProductsShowable($recursive)
+			->filter("Featured",true);
 	}
 
 	/**
 	 * Return products that are not featured, that is products that have "FeaturedProduct = 0"
 	 */
-	function NonFeaturedProducts($recursive = true) {
-		return $this->ProductsShowable("\"Featured\" = 0",$recursive);
+	public function NonFeaturedProducts($recursive = true) {
+		return $this->ProductsShowable($recursive)
+			->filter("Featured",false);
 	}
 
 	/**
-	 * Provides a dataset of links for sorting products.
+	 * Sorting controls
+	 * @return ListSorter sorter
 	 */
-	function SortLinks(){
-		$sortoptions = ProductCategory::config()->sort_options;
-		if(empty($sortoptions) || count($sortoptions) <= 0){
-			return null;
-		}
-		$sort = (isset($_GET['sortby'])) ? Convert::raw2sql($_GET['sortby']) : "Title";
-		$dos = new ArrayList();
-		foreach($sortoptions as $field => $name){
-			$current = ($field == $sort) ? 'current' : false;
-			$dos->add(new ArrayData(array(
-				'Name' => $name,
-				'Link' => $this->Link()."?sortby=$field",
-				'Current' => $current
-			)));
-		}
-
-		return $dos;
+	public function getSorter(){
+	 	return new ListSorter($this->request, ProductCategory::config()->sort_options);
 	}
 
 }
