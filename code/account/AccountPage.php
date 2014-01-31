@@ -9,8 +9,8 @@ class AccountPage extends Page {
 
 	private static $icon = 'shop/images/icons/account';
 
-	function canCreate($member = null) {
-		return !AccountPage::get()->exists();
+	public function canCreate($member = null) {
+		return !self::get()->exists();
 	}
 
 	/**
@@ -43,7 +43,7 @@ class AccountPage extends Page {
 }
 
 class AccountPage_Controller extends Page_Controller {
-	
+
 	private static $url_segment = 'account';
 	private static $allowed_actions = array(
 		'addressbook',
@@ -53,51 +53,66 @@ class AccountPage_Controller extends Page_Controller {
 		'EditAccountForm',
 		'ChangePasswordForm'
 	);
-	
+
 	protected $member;
 
-	function init() {
+	public function init() {
 		parent::init();
 		if(!Member::currentUserID()) {
 			$messages = array(
-				'default' => _t('AccountPage.LOGIN', 'You\'ll need to login before you can access the account page. If you are not registered, you won\'t be able to access it until you make your first order, otherwise please enter your details below.'),
-				'logInAgain' => _t('AccountPage.LOGINAGAIN','You have been logged out. If you would like to log in again, please do so below.')
+				'default' => _t(
+					'AccountPage.LOGIN', 
+					'You\'ll need to login before you can access the account page.
+					If you are not registered, you won\'t be able to access it until
+					you make your first order, otherwise please enter your details below.'),
+				'logInAgain' => _t(
+					'AccountPage.LOGINAGAIN',
+					'You have been logged out. If you would like to log in again,
+					please do so below.')
 			);
 			Security::permissionFailure($this, $messages);
 			return false;
 		}
 		$this->member = Member::currentUser();
 	}
-	
-	function getTitle(){
+
+	public function getTitle() {
 		if($this->dataRecord && $title = $this->dataRecord->Title){
 			return $title;
 		}
 		return _t('AccountPage.Title', "Account");
 	}
-	
-	function getMember(){
+
+	public function getMember() {
 		return $this->member;
 	}
-	
-	function addressbook(){
+
+	public function addressbook() {
 		return array(
 			'DefaultAddressForm' => $this->DefaultAddressForm(),
 			'CreateAddressForm' => $this->CreateAddressForm()
 		);
 	}
-	
-	function DefaultAddressForm(){
-		$addresses = $this->member->AddressBook()->sort('Created','DESC');
+
+	public function DefaultAddressForm() {
+		$addresses = $this->member->AddressBook()->sort('Created', 'DESC');
 		if($addresses->exists()){
 			$fields = new FieldList(
-				$shipping = new DropdownField("DefaultShippingAddressID","Shipping Address",$addresses->map('ID','toString')->toArray()),
-				$billing = new DropdownField("DefaultBillingAddressID","Billing Address",$addresses->map('ID','toString')->toArray())	
+				DropdownField::create(
+					"DefaultShippingAddressID",
+					"Shipping Address",
+					$addresses->map('ID', 'toString')->toArray()
+				),
+				DropdownField::create(
+					"DefaultBillingAddressID",
+					"Billing Address",
+					$addresses->map('ID', 'toString')->toArray()
+				)
 			);
 			$actions = new FieldList(
-				new FormAction('savedefaultaddresses',"Save Defaults")	
+				new FormAction('savedefaultaddresses', "Save Defaults")
 			);
-			$form = new Form($this,"DefaultAddressForm",$fields,$actions);
+			$form = new Form($this, "DefaultAddressForm", $fields, $actions);
 			$form->loadDataFrom($this->member);
 
 			return $form;
@@ -105,25 +120,25 @@ class AccountPage_Controller extends Page_Controller {
 
 		return false;
 	}
-	
-	function savedefaultaddresses($data,$form){
+
+	public function savedefaultaddresses($data,$form) {
 		$form->saveInto($this->member);
 		$this->member->write();
 		$this->redirect($this->Link('addressbook'));
 	}
-	
-	function CreateAddressForm(){
+
+	public function CreateAddressForm() {
 		$singletonaddress = singleton('Address');
 		$fields = $singletonaddress->getFrontEndFields();
 		$actions = new FieldList(
-			new FormAction("saveaddress","Save New Address")	
+			new FormAction("saveaddress", "Save New Address")
 		);
 		$validator = new RequiredFields($singletonaddress->getRequiredFields());
 
-		return new Form($this, "CreateAddressForm", $fields, $actions, $validator);	
+		return new Form($this, "CreateAddressForm", $fields, $actions, $validator);
 	}
-	
-	function saveaddress($data,$form){
+
+	public function saveaddress($data,$form) {
 		$member = $this->getMember();
 		$address = new Address();
 		$form->saveInto($address);
@@ -139,8 +154,8 @@ class AccountPage_Controller extends Page_Controller {
 		}
 		$this->redirect($this->Link('addressbook'));
 	}
-	
-	function editprofile(){
+
+	public function editprofile() {
 		return array();
 	}
 
@@ -149,11 +164,11 @@ class AccountPage_Controller extends Page_Controller {
 	 *
 	 * @return ShopAccountForm
 	 */
-	function EditAccountForm() {
+	public function EditAccountForm() {
 		return new ShopAccountForm($this, 'EditAccountForm');
 	}
-	
-	function ChangePasswordForm(){
+
+	public function ChangePasswordForm() {
 		return new ChangePasswordForm($this, "ChangePasswordForm");
 	}
 

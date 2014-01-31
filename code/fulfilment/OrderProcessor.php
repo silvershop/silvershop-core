@@ -18,14 +18,14 @@ class OrderProcessor{
 	 * Makes creating a processor easier.
 	 * @param Order $order
 	 */
-	static function create(Order $order){		
+	static function create(Order $order) {		
 		return new OrderProcessor($order);
 	}
 	/**
 	 * Assign the order to a local variable
 	 * @param Order $order
 	 */
-	private function __construct(Order $order){
+	private function __construct(Order $order) {
 		$this->order = $order;
 	}
 
@@ -34,9 +34,9 @@ class OrderProcessor{
 	 * @param Member $member - assign a member to the order
 	 * @return boolean - success/failure
 	 */
-	function placeOrder(){
+	function placeOrder() {
 		if(!$this->order){
-			$this->error(_t("OrderProcessor.NULL","A new order has not yet been started."));
+			$this->error(_t("OrderProcessor.NULL", "A new order has not yet been started."));
 			return false;
 		}
 		if(!$this->canPlace($this->order)){ //final cart validation
@@ -44,7 +44,7 @@ class OrderProcessor{
 		}
 		//do a final calculation
 		$this->order->calculate();
-		 //update status
+		//update status
 		if($this->order->TotalOutstanding()){
 			$this->order->Status = 'Unpaid';
 		}else{
@@ -78,8 +78,10 @@ class OrderProcessor{
 				$member->Groups()->add($cgroup);
 			}
 		}
-		OrderManipulation::add_session_order($this->order); //save order reference to session
-		$this->order->extend('onPlaceOrder'); //allow decorators to do stuff when order is saved.
+		//save order reference to session
+		OrderManipulation::add_session_order($this->order);
+		//allow decorators to do stuff when order is saved.
+		$this->order->extend('onPlaceOrder');
 		$this->order->write();
 		return true; //report success
 	}
@@ -88,19 +90,19 @@ class OrderProcessor{
 	 * Determine if an order can be placed.
 	 * @param unknown_type $order
 	 */
-	function canPlace(Order $order){
+	function canPlace(Order $order) {
 		if(!$order){
-			$this->error(_t("OrderProcessor.NULL","Order does not exist."));
+			$this->error(_t("OrderProcessor.NULL", "Order does not exist."));
 			return false;
 		}
 		//order status is applicable	
 		if(!$order->IsCart()){
-			$this->error(_t("OrderProcessor.NOTCART","Order is not a cart."));
+			$this->error(_t("OrderProcessor.NOTCART", "Order is not a cart."));
 			return false;
 		}
 		//order has products
 		if($order->Items()->Count() <= 0){
-			$this->error(_t("OrderProcessor.NOITEMS","Order has no items."));
+			$this->error(_t("OrderProcessor.NOITEMS", "Order has no items."));
 			return false;
 		}
 		//if total > 0, then payment has been made / started
@@ -114,7 +116,7 @@ class OrderProcessor{
 	 * or redirect to order link.
 	 * @return string - url for redirection after payment has been made
 	 */
-	function makePayment($gateway, $gatewaydata = array()){
+	function makePayment($gateway, $gatewaydata = array()) {
 		//create payment
 		$payment = $this->createPayment($gateway);
 		if(!$payment){
@@ -156,13 +158,13 @@ class OrderProcessor{
 	/**
 	 * Create a new payment for an order
 	 */
-	function createPayment($gateway){
+	function createPayment($gateway) {
 		if(!GatewayInfo::is_supported($gateway)) {
-			$this->error(_t("PaymentProcessor.INVALIDGATEWAY","`$gateway` isn't a valid payment gateway."));
+			$this->error(_t("PaymentProcessor.INVALIDGATEWAY", "`$gateway` isn't a valid payment gateway."));
 			return false;
 		}
 		if(!$this->order->canPay(Member::currentUser())){
-			$this->error(_t("PaymentProcessor.CANTPAY","Order can't be paid for."));
+			$this->error(_t("PaymentProcessor.CANTPAY", "Order can't be paid for."));
 			return false;
 		}
 		$payment = Payment::create()
@@ -178,7 +180,7 @@ class OrderProcessor{
 	 * 	- update order status accordingling
 	 * 	- fire event hooks
 	 */
-	function completePayment(){
+	function completePayment() {
 		if(!$this->order->Paid){
 			if(!$this->order->ReceiptSent){
 				$this->sendReceipt();
@@ -207,10 +209,10 @@ class OrderProcessor{
 	* @param $emailClass - the class name of the email you wish to send
 	* @param $copyToAdmin - true by default, whether it should send a copy to the admin
 	*/
-	function sendEmail($emailClass, $copyToAdmin = true){
+	function sendEmail($emailClass, $copyToAdmin = true) {
 		$from = ShopConfig::config()->email_from ? ShopConfig::config()->email_from : Email::getAdminEmail();
 		$to = $this->order->getLatestEmail();
-		$subject = sprintf(_t("Order.EMAILSUBJECT", "Shop Sale Information #%d") ,$this->order->Reference);
+		$subject = sprintf(_t("Order.EMAILSUBJECT", "Shop Sale Information #%d"), $this->order->Reference);
 		$purchaseCompleteMessage = DataObject::get_one('CheckoutPage')->PurchaseComplete;
 		$email = new $emailClass();
 		$email->setFrom($from);
@@ -246,7 +248,9 @@ class OrderProcessor{
 	*/
 	function sendStatusChange($title, $note = null) {
 		if(!$note) {
-			$logs = DataObject::get('OrderStatusLog', "\"OrderID\" = {$this->order->ID} AND \"SentToCustomer\" = 1", "\"Created\" DESC", null, 1);
+			$logs = OrderStatusLog::get()
+				->filter("OrderID", $this->order->ID)
+				->filter("SentToCustomer", 1);
 			if($logs) {
 				$latestLog = $logs->First();
 				$note = $latestLog->Note;
@@ -272,11 +276,11 @@ class OrderProcessor{
 		$e->send();
 	}
 
-	function getError(){
+	function getError() {
 		return $this->error;
 	}
 
-	private function error($message){
+	private function error($message) {
 		$this->error = $message;
 	}
 
