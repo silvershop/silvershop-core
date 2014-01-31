@@ -7,7 +7,7 @@
  */
 class SimpleShippingModifier extends ShippingModifier {
 
-	public  static $db = array(
+	private static $db = array(
 		'Country' => 'Text',
 	);
 

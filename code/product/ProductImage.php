@@ -5,8 +5,8 @@
  */
 class Product_Image extends DataExtension {
 	
-	protected static $thumbnail_width = 140;
-	protected static $thumbnail_height = 100;
+	private static $thumbnail_width = 140;
+	private static $thumbnail_height = 100;
 	protected static $content_image_width = 200;
 	protected static $large_image_width = 600;
 
