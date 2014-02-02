@@ -149,7 +149,10 @@ class OrderProcessor{
 
 		// Process payment, get the result back
 		$response = $payment->purchase($data);
-		if($response->isSuccessful()) {
+		if(GatewayInfo::is_manual($gateway)){
+			//don't complete the payment at this stage, if payment is manual
+			$this->placeOrder();
+		}elseif($response->isSuccessful()) {
 			$this->completePayment();
 		}
 		return $response;
