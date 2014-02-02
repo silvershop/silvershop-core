@@ -4,11 +4,6 @@
  * Adds some image size functions to the Image DataObject.
  */
 class Product_Image extends DataExtension {
-	
-	private static $thumbnail_width = 140;
-	private static $thumbnail_height = 100;
-	protected static $content_image_width = 200;
-	protected static $large_image_width = 600;
 
 	public function getThumbnail() {
 		return $this->owner->SetSize(
