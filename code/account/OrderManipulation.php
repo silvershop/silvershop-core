@@ -49,12 +49,14 @@ class OrderManipulation extends Extension{
 	 *
 	 * @return the order
 	 */
-	public function orderfromid($extrafilter = null) {
+	public function orderfromid() {
 		$request = $this->owner->getRequest();
-		$orderid = (int)(($request->param('ID') ||
-							$request->postVar('OrderID')));
+		$id = (int)$request->param('ID');
+		if(!$id){
+			$id = (int)$request->postVar('OrderID');
+		}
 
-		return $this->allorders()->byID($orderid);
+		return $this->allorders()->byID($id);
 	}
 
 	/**
