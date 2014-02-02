@@ -3,14 +3,13 @@
 The SilverStripe Shop module aims to provide developers with a framework for building, and customising ecommerce-based projects.
 It includes facilities for customers to browse products and place orders, and for administrators to manage products and orders.
 
-Version(s):
-[![Latest Stable Version](https://poser.pugx.org/burnbright/silverstripe-shop/v/stable.png)](https://packagist.org/packages/burnbright/silverstripe-shop)
-[![Latest Unstable Version](https://poser.pugx.org/burnbright/silverstripe-shop/v/unstable.png)](https://packagist.org/packages/burnbright/silverstripe-shop)
-
-Quality:
+Version:
 [![Build Status](https://secure.travis-ci.org/burnbright/silverstripe-shop.png)](http://travis-ci.org/burnbright/silverstripe-shop)
 [![Coverage Status](https://coveralls.io/repos/burnbright/silverstripe-shop/badge.png)](https://coveralls.io/r/burnbright/silverstripe-shop)
-
+Quality:
+[![Build Status](https://secure.travis-ci.org/burnbright/silverstripe-shop.png)](http://travis-ci.org/burnbright/silverstripe-shop)
+[![Code Coverage](https://scrutinizer-ci.com/g/burnbright/silverstripe-shop/badges/coverage.png?s=1abe84b468ef3d96646a0546954adba8131d6459)](https://scrutinizer-ci.com/g/burnbright/silverstripe-shop/)
+[![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/burnbright/silverstripe-shop/badges/quality-score.png?s=d60753d6cca3817e80aca3dbb79eb5bd4140c981)](https://scrutinizer-ci.com/g/burnbright/silverstripe-shop/)
 Popularity:
 [![Total Downloads](https://poser.pugx.org/burnbright/silverstripe-shop/downloads.png)](https://packagist.org/packages/burnbright/silverstripe-shop)
 [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/burnbright/silverstripe-bootstrap-shop/trend.png)](https://bitdeli.com/free "Bitdeli Badge")

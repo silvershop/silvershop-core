@@ -8,10 +8,10 @@ env:
 
 matrix:
   include:
-    - php: 5.3
+    - php: 5.5
       env: DB=PGSQL CORE_RELEASE=3.1
     - php: 5.4
-      env: DB=SQLITE CORE_RELEASE=3.1
+      env: DB=SQLITE CORE_RELEASE=3.1 COVERAGE=1
 
 before_script:
   - composer self-update
@@ -19,7 +19,14 @@ before_script:
   - git clone git://github.com/silverstripe-labs/silverstripe-travis-support.git ~/travis-support
   - php ~/travis-support/travis_setup.php --source `pwd` --target ~/builds/ss
   - cd ~/builds/ss
-  - "if [ -d silverstripe-shop ]; then mv silverstripe-shop shop; fi;"
 
-script: 
-  - phpunit shop/tests
+script:
+  - "if [ \"$COVERAGE\" = \"\" ]; then phpunit -c shop/phpunit.xml.dist; fi"
+  - "if [ \"$COVERAGE\" = \"1\" ]; then phpunit -c shop/phpunit.xml.dist --coverage-clover shop/coverage.xml; fi"
+
+after_script:
+  - if [ "$COVERAGE" = "1" ]; then
+  - cd shop
+  - wget https://scrutinizer-ci.com/ocular.phar
+  - php ocular.phar code-coverage:upload -v --format=php-clover coverage.xml
+  - fi
