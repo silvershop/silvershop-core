@@ -17,7 +17,7 @@ class PaymentForm extends CheckoutForm{
 		);		
 	}
 
-	function submitpayment($data, $form){
+	function submitpayment($data, $form) {
 		$data = $form->getData();
 		$data['cancelURL'] = $this->controller->Link();
 		$order = $this->config->getOrder();
@@ -31,10 +31,10 @@ class PaymentForm extends CheckoutForm{
 			if($response->isRedirect() || $response->isSuccessful()){
 				return $response->redirect();
 			}
-			$form->sessionMessage($response->getMessage(),'bad');
+			$form->sessionMessage($response->getMessage(), 'bad');
 
 		}else{
-			$form->sessionMessage($processor->getError(),'bad');
+			$form->sessionMessage($processor->getError(), 'bad');
 		}
 
 		return $this->controller->redirectBack();

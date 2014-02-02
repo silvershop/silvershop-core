@@ -20,16 +20,16 @@ class OrderActionsForm extends Form{
 
 	protected $order;
 	
-	function __construct($controller, $name = "OrderActionsForm", Order $order) {
+	function __construct($controller, $name, Order $order) {
 		$this->order = $order;
 
 		$fields = new FieldList(
 			HiddenField::create('OrderID', '', $order->ID)
 		);
 		$actions = new FieldList();
-		if(OrderActionsForm::config()->allow_paying && $order->canPay()){
+		if(self::config()->allow_paying && $order->canPay()){
 			$actions->push(FormAction::create('dopayment',
-				_t('OrderActionsForm.PAYORDER','Pay outstanding balance')
+				_t('OrderActionsForm.PAYORDER', 'Pay outstanding balance')
 			));
 			$fields->push(HeaderField::create("MakePaymentHeader",
 				_t("OrderActionsForm.MAKEPAYMENT", "Make Payment"))
@@ -38,19 +38,19 @@ class OrderActionsForm extends Form{
 			$outstandingfield->setValue($order->TotalOutstanding());
 			$fields->push(LiteralField::create("Outstanding",
 				sprintf(
-					_t("OrderActionsForm.OUTSTANDING","Outstanding: %s"),
+					_t("OrderActionsForm.OUTSTANDING", "Outstanding: %s"),
 					$outstandingfield->Nice()
 				)
 			));
 			$gateways = GatewayInfo::get_supported_gateways();
 			$fields->push(OptionsetField::create(
-				'PaymentMethod','Payment Method',$gateways,key($gateways)
+				'PaymentMethod', 'Payment Method', $gateways, key($gateways)
 			));
 		}
-		if(OrderActionsForm::config()->allow_cancelling && $order->canCancel()){
+		if(self::config()->allow_cancelling && $order->canCancel()){
 			$actions->push(
 				FormAction::create('docancel', 
-					_t('OrderActionsForm.CANCELORDER','Cancel this order')
+					_t('OrderActionsForm.CANCELORDER', 'Cancel this order')
 				)
 			);
 		}
@@ -66,7 +66,8 @@ class OrderActionsForm extends Form{
 	 * @return boolean
 	 */
 	function dopayment($data, $form) {
-		if(OrderActionsForm::config()->allow_paying && $this->order) {
+		if(self::config()->allow_paying && $this->order) {
+
 			//assumes that the controller is extended by OrderManipulation decorator
 			if($this->order->canPay()) {
 				// Save payment data from form and process payment
@@ -75,7 +76,7 @@ class OrderActionsForm extends Form{
 				$payment = $processor->createPayment($paymentClass);
 				if(!$payment){
 					$form->sessionMessage($processor->getError(), 'bad');
-					Controller::curr()->redirect($this->order->Link());
+					$this->controller->redirect($this->order->Link());
 					return;
 				}
 				$payment->ReturnURL = $this->order->Link(); //set payment return url
@@ -86,7 +87,7 @@ class OrderActionsForm extends Form{
 				if($result->isSuccess()) {
 					$this->order->sendReceipt();
 				}
-				Controller::curr()->redirect($payment->ReturnURL);
+				$this->controller->redirect($payment->ReturnURL);
 				return;
 			}
 		}
@@ -94,7 +95,7 @@ class OrderActionsForm extends Form{
 			_t('OrderForm.COULDNOTPROCESSPAYMENT', 'Payment could not be processed.'),
 			'bad'
 		);
-		Controller::curr()->redirectBack();
+		$this->controller->redirectBack();
 	}
 	
 	/**
@@ -108,15 +109,15 @@ class OrderActionsForm extends Form{
 	 * @param Form $form The {@link Form} this was submitted on
 	 */
 	function docancel($data, $form) {
-		if(OrderActionsForm::config()->allow_cancelling &&
+		if(self::config()->allow_cancelling &&
 			$this->order->canCancel()){
 			$this->order->Status = 'MemberCancelled';
 			$this->order->write();
 			if(self::config()->email_notification){
 				$email = new Email(
-					Email::getAdminEmail(),Email::getAdminEmail(),
+					Email::getAdminEmail(), Email::getAdminEmail(),
 					sprintf(
-						_t('Order.CANCELSUBJECT','Order #%d cancelled by member'),
+						_t('Order.CANCELSUBJECT', 'Order #%d cancelled by member'),
 						$order->ID
 					),
 					$this->order->renderWith('Order')
@@ -128,9 +129,9 @@ class OrderActionsForm extends Form{
 				'warning'
 			);
 			if(Member::currentUser() && $link = $this->order->Link()){
-				Controller::curr()->redirect($link);
+				$this->controller->redirect($link);
 			}else{
-				Controller::curr()->redirectBack();
+				$this->controller->redirectBack();
 			}
 		}
 

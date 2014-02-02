@@ -18,7 +18,7 @@ class OrderProcessor{
 	 * Makes creating a processor easier.
 	 * @param Order $order
 	 */
-	static function create(Order $order) {		
+	public static function create(Order $order) {		
 		return new OrderProcessor($order);
 	}
 	/**
@@ -34,7 +34,7 @@ class OrderProcessor{
 	 * @param Member $member - assign a member to the order
 	 * @return boolean - success/failure
 	 */
-	function placeOrder() {
+	public function placeOrder() {
 		if(!$this->order){
 			$this->error(_t("OrderProcessor.NULL", "A new order has not yet been started."));
 			return false;
@@ -88,9 +88,9 @@ class OrderProcessor{
 
 	/**
 	 * Determine if an order can be placed.
-	 * @param unknown_type $order
+	 * @param boolean $order
 	 */
-	function canPlace(Order $order) {
+	public function canPlace(Order $order) {
 		if(!$order){
 			$this->error(_t("OrderProcessor.NULL", "Order does not exist."));
 			return false;
@@ -116,7 +116,7 @@ class OrderProcessor{
 	 * or redirect to order link.
 	 * @return string - url for redirection after payment has been made
 	 */
-	function makePayment($gateway, $gatewaydata = array()) {
+	public function makePayment($gateway, $gatewaydata = array()) {
 		//create payment
 		$payment = $this->createPayment($gateway);
 		if(!$payment){
@@ -180,7 +180,7 @@ class OrderProcessor{
 	 * 	- update order status accordingling
 	 * 	- fire event hooks
 	 */
-	function completePayment() {
+	public function completePayment() {
 		if(!$this->order->Paid){
 			if(!$this->order->ReceiptSent){
 				$this->sendReceipt();
@@ -209,7 +209,7 @@ class OrderProcessor{
 	* @param $emailClass - the class name of the email you wish to send
 	* @param $copyToAdmin - true by default, whether it should send a copy to the admin
 	*/
-	function sendEmail($emailClass, $copyToAdmin = true) {
+	public function sendEmail($emailClass, $copyToAdmin = true) {
 		$from = ShopConfig::config()->email_from ? ShopConfig::config()->email_from : Email::getAdminEmail();
 		$to = $this->order->getLatestEmail();
 		$subject = sprintf(_t("Order.EMAILSUBJECT", "Shop Sale Information #%d"), $this->order->Reference);
@@ -232,7 +232,7 @@ class OrderProcessor{
 	* Send the receipt of the order by mail.
 	* Precondition: The order payment has been successful
 	*/
-	function sendReceipt() {
+	public function sendReceipt() {
 		$this->sendEmail('Order_ReceiptEmail');
 		$this->order->ReceiptSent = SS_Datetime::now()->Rfc2822();
 		$this->order->write();
@@ -246,7 +246,7 @@ class OrderProcessor{
 	*
 	* @param string $note Optional note-content (instead of using the OrderStatusLog)
 	*/
-	function sendStatusChange($title, $note = null) {
+	public function sendStatusChange($title, $note = null) {
 		if(!$note) {
 			$logs = OrderStatusLog::get()
 				->filter("OrderID", $this->order->ID)
@@ -276,7 +276,7 @@ class OrderProcessor{
 		$e->send();
 	}
 
-	function getError() {
+	public function getError() {
 		return $this->error;
 	}
 
