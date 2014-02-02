@@ -71,7 +71,7 @@ class OrderManipulation extends Extension{
 			$filters['ID'] = $sessids;
 		}
 		if($memberid = Member::currentUserID()){
-			$filters['MemberID'] = $sessids;
+			$filters['MemberID'] = $memberid;
 		}
 
 		return Order::get()->filterAny($filters);
