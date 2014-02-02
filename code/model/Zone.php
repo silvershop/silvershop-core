@@ -7,16 +7,16 @@
  */
 class Zone extends DataObject{
 	
-	static $db = array(
+	private static $db = array(
 		'Name' => 'Varchar',
 		'Description' => 'Varchar'
 	);
 	
-	static $has_many = array(
+	private static $has_many = array(
 		'Regions' => 'ZoneRegion'
 	);
 
-	static $summary_fields = array(
+	private static $summary_fields = array(
 		'Name','Description'
 	);
 
@@ -69,7 +69,7 @@ class Zone extends DataObject{
 
 class ZoneRegion extends RegionRestriction{
 	
-	static $has_one = array(
+	private static $has_one = array(
 		'Zone' => 'Zone'
 	);
 	
