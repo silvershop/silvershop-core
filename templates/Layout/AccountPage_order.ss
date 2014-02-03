@@ -13,6 +13,6 @@
 		<% with Order %>				
 			<% include Order %>
 		<% end_with %>
-		$PaymentForm
+		$ActionsForm
 	<% end_if %>
 </div>

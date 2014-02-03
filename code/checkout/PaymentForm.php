@@ -13,7 +13,7 @@ class PaymentForm extends CheckoutForm{
 		}
 		
 		return $this->controller->redirect(
-			$this->controller->Link('payment')
+			$this->controller->Link('payment') //assumes CheckoutPage
 		);		
 	}
 

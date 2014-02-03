@@ -1,23 +1,26 @@
 <?php
 
-class OrderActionsFormTest extends SapphireTest{
+class OrderActionsFormTest extends FunctionalTest{
 	
-	static $fixture_file = "shop/tests/fixtures/shop.yml";
+	protected static $fixture_file = "shop/tests/fixtures/shop.yml";
 	
-	function testForm(){
+	function testForm() {
 
-		$order = $this->objFromFixture("Order","unpaid");
+		$order = $this->objFromFixture("Order", "unpaid");
 		OrderManipulation::add_session_order($order);
 
 		$controller = new CheckoutPage_Controller(
 			$this->objFromFixture("CheckoutPage", "checkout")
 		);
 
-		$form = $controller->ActionsForm();
+		$form = new OrderActionsForm($controller, "ActionsForm", $order);
 
-		$form->doPayment($data,$form);
+		$form->dopayment(array(
+			'OrderID' => $order->ID,
+			'PaymentMethod' => 'Dummy'
+		), $form);
 
-		//test if you can manipulate any order
+		$this->assertEquals(1, $order->Payments()->count());
 
 	}
 	

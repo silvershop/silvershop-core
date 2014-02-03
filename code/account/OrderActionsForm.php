@@ -22,11 +22,11 @@ class OrderActionsForm extends Form{
 	
 	function __construct($controller, $name, Order $order) {
 		$this->order = $order;
-
 		$fields = new FieldList(
 			HiddenField::create('OrderID', '', $order->ID)
 		);
 		$actions = new FieldList();
+		//payment
 		if(self::config()->allow_paying && $order->canPay()){
 			$actions->push(FormAction::create('dopayment',
 				_t('OrderActionsForm.PAYORDER', 'Pay outstanding balance')
@@ -47,6 +47,7 @@ class OrderActionsForm extends Form{
 				'PaymentMethod', 'Payment Method', $gateways, key($gateways)
 			));
 		}
+		//cancelling
 		if(self::config()->allow_cancelling && $order->canCancel()){
 			$actions->push(
 				FormAction::create('docancel', 
@@ -66,30 +67,29 @@ class OrderActionsForm extends Form{
 	 * @return boolean
 	 */
 	function dopayment($data, $form) {
-		if(self::config()->allow_paying && $this->order) {
-
+		if(self::config()->allow_paying &&
+			$this->order &&
+			$this->order->canPay()) {
 			//assumes that the controller is extended by OrderManipulation decorator
-			if($this->order->canPay()) {
-				// Save payment data from form and process payment
-				$paymentClass = (!empty($data['PaymentMethod'])) ? $data['PaymentMethod'] : null;
-				$processor = OrderProcessor::create($this->order);
-				$payment = $processor->createPayment($paymentClass);
-				if(!$payment){
-					$form->sessionMessage($processor->getError(), 'bad');
-					$this->controller->redirect($this->order->Link());
-					return;
+
+			// Save payment data from form and process payment
+			$data = $form->getData();
+			$gateway = (!empty($data['PaymentMethod'])) ? $data['PaymentMethod'] : null;
+			$data['cancelURL'] = $this->controller->Link();
+			$processor = OrderProcessor::create($this->order);
+			$response = $processor->makePayment($gateway,$data);
+			if($response){
+				if($response->isRedirect() || $response->isSuccessful()){
+					return $response->redirect();
 				}
-				$payment->ReturnURL = $this->order->Link(); //set payment return url
-				$result = $payment->processPayment($data, $form);
-				if($result->isProcessing()) {
-					return $result->getValue();
-				}
-				if($result->isSuccess()) {
-					$this->order->sendReceipt();
-				}
-				$this->controller->redirect($payment->ReturnURL);
-				return;
+				$form->sessionMessage($response->getMessage(), 'bad');
+
+			}else{
+				$form->sessionMessage($processor->getError(), 'bad');
 			}
+
+			return $this->controller->redirectBack();
+			
 		}
 		$form->sessionMessage(
 			_t('OrderForm.COULDNOTPROCESSPAYMENT', 'Payment could not be processed.'),
