@@ -120,6 +120,7 @@ class OrderProcessor{
 		//create payment
 		$payment = $this->createPayment($gateway);
 		if(!$payment){
+			//errors have been stored.
 			return false;
 		}
 		//map shop data to omnipay fields
@@ -147,8 +148,11 @@ class OrderProcessor{
 			'shippingPhone' => $shipping->Phone,
 		));
 
+		$service = PurchaseService::create($payment)
+					->setReturnUrl($this->order->Link());
+
 		// Process payment, get the result back
-		$response = $payment->purchase($data);
+		$response = $service->purchase($data);
 		if(GatewayInfo::is_manual($gateway)){
 			//don't complete the payment at this stage, if payment is manual
 			$this->placeOrder();
@@ -171,8 +175,7 @@ class OrderProcessor{
 			return false;
 		}
 		$payment = Payment::create()
-			->init($gateway, $this->order->TotalOutstanding(), $currency = "NZD")
-			->setReturnUrl($this->order->Link());
+			->init($gateway, $this->order->TotalOutstanding(), $currency = "NZD");
 		$this->order->Payments()->add($payment);
 		return $payment;
 	}
