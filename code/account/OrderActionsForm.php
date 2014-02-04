@@ -77,7 +77,7 @@ class OrderActionsForm extends Form{
 			$gateway = (!empty($data['PaymentMethod'])) ? $data['PaymentMethod'] : null;
 			$data['cancelURL'] = $this->controller->Link();
 			$processor = OrderProcessor::create($this->order);
-			$response = $processor->makePayment($gateway,$data);
+			$response = $processor->makePayment($gateway, $data);
 			if($response){
 				if($response->isRedirect() || $response->isSuccessful()){
 					return $response->redirect();
@@ -115,7 +115,7 @@ class OrderActionsForm extends Form{
 			$this->order->write();
 			if(self::config()->email_notification){
 				$email = new Email(
-					Email::getAdminEmail(), Email::getAdminEmail(),
+					Email::config()->admin_email, Email::config()->admin_email,
 					sprintf(
 						_t('Order.CANCELSUBJECT', 'Order #%d cancelled by member'),
 						$order->ID
