@@ -4,8 +4,9 @@ The SilverStripe Shop module aims to provide developers with a framework for bui
 It includes facilities for customers to browse products and place orders, and for administrators to manage products and orders.
 
 Version:
-[![Build Status](https://secure.travis-ci.org/burnbright/silverstripe-shop.png)](http://travis-ci.org/burnbright/silverstripe-shop)
-[![Coverage Status](https://coveralls.io/repos/burnbright/silverstripe-shop/badge.png)](https://coveralls.io/r/burnbright/silverstripe-shop)
+[![Latest Stable Version](https://poser.pugx.org/burnbright/silverstripe-shop/v/stable.png)](https://packagist.org/packages/burnbright/silverstripe-shop)
+[![Latest Unstable Version](https://poser.pugx.org/burnbright/silverstripe-shop/v/unstable.png)](https://packagist.org/packages/burnbright/silverstripe-shop)
+
 Quality:
 [![Build Status](https://secure.travis-ci.org/burnbright/silverstripe-shop.png)](http://travis-ci.org/burnbright/silverstripe-shop)
 [![Code Coverage](https://scrutinizer-ci.com/g/burnbright/silverstripe-shop/badges/coverage.png?s=1abe84b468ef3d96646a0546954adba8131d6459)](https://scrutinizer-ci.com/g/burnbright/silverstripe-shop/)
