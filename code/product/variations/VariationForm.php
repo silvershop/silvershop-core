@@ -1,10 +1,10 @@
 <?php
 
 class VariationForm extends AddProductForm{
-	
-	static $include_json = true;
-	
-	function __construct($controller, $name = "VariationForm"){
+
+	public static $include_json = true;
+
+	public function __construct($controller, $name = "VariationForm"){
 		parent::__construct($controller,$name);
 		$product = $controller->data();
 		$farray = array();
@@ -15,7 +15,7 @@ class VariationForm extends AddProductForm{
 			$requiredfields[] = "ProductAttributes[$attribute->ID]";
 		}
 		$fields = new FieldList($farray);
-		
+
 		if(self::$include_json){ //TODO: this should be included as js validation instead
 			$vararray = array();
 			if($vars = $product->Variations()){
@@ -31,8 +31,8 @@ class VariationForm extends AddProductForm{
 		$this->setValidator(new VariationFormValidator($requiredfields));
 		$this->extend('updateVariationForm');
 	}
-	
-	function addtocart($data,$form){
+
+	public function addtocart($data,$form){
 		if($variation = $this->getBuyable($data)){
 			$quantity = (isset($data['Quantity']) && is_numeric($data['Quantity'])) ? (int) $data['Quantity'] : 1;
 			$cart = ShoppingCart::singleton();
@@ -40,26 +40,26 @@ class VariationForm extends AddProductForm{
 				$form->sessionMessage("Successfully added to cart.","good");
 			}else{
 				$form->sessionMessage($cart->getMessage(),$cart->getMessageType());
-			}	
+			}
 		}else{
 			$form->sessionMessage("That variation is not available, sorry.","bad"); //validation fail
 		}
 		ShoppingCart_Controller::direct();
 	}
-	
-	function getBuyable($data = null){
+
+	public function getBuyable($data = null){
 		if(isset($data['ProductAttributes']) && $variation = $this->Controller()->getVariationByAttributes($data['ProductAttributes'])){
 			return $variation;
 		}
 		return null;
 	}
-	
+
 }
 
 class VariationFormValidator extends RequiredFields{
-	
-	function php($data){
-		$valid = parent::php($data);		
+
+	public function php($data){
+		$valid = parent::php($data);
 		if($valid && !$this->form->getBuyable($_POST)){
 			$this->validationError(
 				"","This product is not available with the selected options."
@@ -67,6 +67,6 @@ class VariationFormValidator extends RequiredFields{
 			$valid = false;
 		}
 		return $valid;
-	}	
-	
+	}
+
 }

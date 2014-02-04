@@ -44,7 +44,7 @@ Order:
         Status: Cart
         ShippingAddress: =>Address.address1
         BillingAddress: =>Address.address1
-        
+
 Product_OrderItem:
     item1:
         Order: =>Order.cart1

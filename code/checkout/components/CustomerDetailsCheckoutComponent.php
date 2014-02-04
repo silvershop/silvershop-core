@@ -21,7 +21,7 @@ class CustomerDetailsCheckoutComponent extends CheckoutComponent{
 
 		return $fields;
 	}
-		
+
 	public function validateData(Order $order, array $data){
 		//all fields are required
 	}
@@ -38,5 +38,5 @@ class CustomerDetailsCheckoutComponent extends CheckoutComponent{
 		$order->update($data);
 		$order->write();
 	}
-	
+
 }

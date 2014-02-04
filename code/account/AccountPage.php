@@ -61,7 +61,7 @@ class AccountPage_Controller extends Page_Controller {
 		if(!Member::currentUserID()) {
 			$messages = array(
 				'default' => _t(
-					'AccountPage.LOGIN', 
+					'AccountPage.LOGIN',
 					'You\'ll need to login before you can access the account page.
 					If you are not registered, you won\'t be able to access it until
 					you make your first order, otherwise please enter your details below.'),

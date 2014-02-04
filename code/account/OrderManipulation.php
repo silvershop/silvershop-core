@@ -2,7 +2,7 @@
 /**
  * Provides forms and processing to a controller for editing an
  * order that has been previously placed.
- * 
+ *
  * @package shop
  * @subpackage forms
  */
@@ -26,7 +26,7 @@ class OrderManipulation extends Extension{
 		$history[$order->ID] = $order->ID;
 		Session::set(self::$sessname, $history);
 	}
-	
+
 	/**
 	 * Get historical orders for current session.
 	 */
@@ -37,12 +37,12 @@ class OrderManipulation extends Extension{
 		}
 		return $history;
 	}
-	
+
 	public static function clear_session_order_ids() {
 		Session::set(self::$sessname, null);
 		Session::clear(self::$sessname);
 	}
-	
+
 	/**
 	 * Get the order via url 'ID' or form submission 'OrderID'.
 	 * It will check for permission based on session stored ids or member id.
@@ -85,14 +85,14 @@ class OrderManipulation extends Extension{
 				->filter("Status", Order::config()->placed_status)
 				->filter("Status:not", Order::config()->hidden_status);
 	}
-	
+
 	/**
 	 * Return the {@link Order} details for the current
 	 * Order ID that we're viewing (ID parameter in URL).
 	 *
 	 * @return array of template variables
 	 */
-	public function order(SS_HTTPRequest $request) {	
+	public function order(SS_HTTPRequest $request) {
 		$order = $this->orderfromid();
 		if(!$order) {
 
@@ -104,7 +104,7 @@ class OrderManipulation extends Extension{
 			'Form' => $this->ActionsForm() //see OrderManipulation extension
 		);
 	}
-	
+
 	/**
 	 * Build a form for cancelling, or retrying payment for a placed order.
 	 * @return Form
@@ -143,5 +143,5 @@ class OrderManipulation extends Extension{
 
 		return $this->sessionmessagetype;
 	}
-	
+
 }

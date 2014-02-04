@@ -1,7 +1,7 @@
 <?php
 /**
  * Address model using a generic format for storing international addresses.
- * 
+ *
  * Typical Address Hierarcy:
  * 	Continent
  * 	Country
@@ -28,26 +28,26 @@ class Address extends DataObject{
 		'State'			=> 'Varchar(100)', //level2: Locality, Administrative Area, State, Province, Region, Territory, Island
 		'City'			=> 'Varchar(100)', //level3: Dependent Locality, City, Suburb, County, District
 		'PostalCode' 	=> 'Varchar(20)',  //code: ZipCode, PostCode (could cross above levels within a country)
-		
+
 		'Address'		=> 'Varchar(255)', //Number + type of thoroughfare/street. P.O. box
 		'AddressLine2'	=> 'Varchar(255)', //Premises, Apartment, Building. Suite, Unit, Floor, Level, Side, Wing.
 
 		'Latitude'		=> 'Float(10,6)',  //GPS co-ordinates
 		'Longitude'		=> 'Float(10,6)',
-		
-		'Company'		=> 'Varchar(100)', //Business, Organisation, Group, Institution. 
-		
+
+		'Company'		=> 'Varchar(100)', //Business, Organisation, Group, Institution.
+
 		'FirstName'		=> 'Varchar(100)', //Individual, Person, Contact, Attention
 		'Surname'		=> 'Varchar(100)',
 		'Phone'			=> 'Varchar(100)',
 	);
-	
+
 	private static $has_one = array(
-		'Member' => 'Member'		
+		'Member' => 'Member'
 	);
-	
+
 	private static $casting = array(
-		'Country' => 'ShopCountry'	
+		'Country' => 'ShopCountry'
 	);
 
 	private static $required_fields = array(
@@ -57,7 +57,7 @@ class Address extends DataObject{
 		'Address'
 	);
 
-	function getFrontEndFields($params = null){
+	public function getFrontEndFields($params = null){
 		$fields = new FieldList(
 			$this->getCountryField(),
 			$addressfield = TextField::create('Address', _t('Address.ADDRESS','Address')),
@@ -78,7 +78,7 @@ class Address extends DataObject{
 		return $fields;
 	}
 
-	function getCountryField(){
+	public function getCountryField(){
 		$countries = SiteConfig::current_site_config()->getCountriesList();
 		$countryfield = new ReadonlyField("Country",_t('Address.COUNTRY','Country'));
 		if(count($countries) > 1){
@@ -87,21 +87,21 @@ class Address extends DataObject{
 		}
 		return $countryfield;
 	}
-	
+
 	/**
 	 * Get an array of data fields that must be populated for model to be valid.
 	 * Required fields can be customised via self::$required_fields
 	 */
-	function getRequiredFields(){
+	public function getRequiredFields(){
 		$fields = $this->config()->required_fields;
 		$this->extend('updateRequiredFields', $fields);
 		return $fields;
 	}
-	
+
 	/**
 	 * Get full name associated with this Address
 	 */
-	function getName(){
+	public function getName(){
 		return implode('',array_filter(array(
 			$this->FirstName,
 			$this->Surname
@@ -111,7 +111,7 @@ class Address extends DataObject{
 	/**
 	 * Convert address to a single string.
 	 */
-	function toString($separator = ", "){
+	public function toString($separator = ", "){
 		$fields = array(
 			$this->Address,
 			$this->AddressLine2,
@@ -124,28 +124,28 @@ class Address extends DataObject{
 		return implode($separator,array_filter($fields));
 	}
 
-	function getTitle(){
+	public function getTitle(){
 		return $this->toString();
 	}
-	
-	function forTemplate(){
+
+	public function forTemplate(){
 		return $this->renderWith('Address');
 	}
-	
+
 	/**
 	 * Add alias setters for fields which are synonymous
 	 */
-	function setProvince($val){$this->State = $val;}
-	function setTerritory($val){$this->State = $val;}
-	function setIsland($val){$this->State = $val;}
-	function setPostCode($val){$this->PostalCode = $val;}
-	function setZipCode($val){$this->PostalCode = $val;}
-	function setStreet($val){$this->Address = $val;}
-	function setStreet2($val){$this->AddressLine2 = $val;}
-	function setAddress2($val){$this->AddressLine2 = $val;}
-	function setInstitution($val){$this->Company = $val;}
-	function setBusiness($val){$this->Company = $val;}
-	function setOrganisation($val){$this->Company = $val;}
-	function setOrganization($val){$this->Company = $val;}
-	
+	public function setProvince($val){$this->State = $val;}
+	public function setTerritory($val){$this->State = $val;}
+	public function setIsland($val){$this->State = $val;}
+	public function setPostCode($val){$this->PostalCode = $val;}
+	public function setZipCode($val){$this->PostalCode = $val;}
+	public function setStreet($val){$this->Address = $val;}
+	public function setStreet2($val){$this->AddressLine2 = $val;}
+	public function setAddress2($val){$this->AddressLine2 = $val;}
+	public function setInstitution($val){$this->Company = $val;}
+	public function setBusiness($val){$this->Company = $val;}
+	public function setOrganisation($val){$this->Company = $val;}
+	public function setOrganization($val){$this->Company = $val;}
+
 }

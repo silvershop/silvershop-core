@@ -1,7 +1,7 @@
 <?php
 class GlobalTaxModifierTest extends SapphireTest{
-	
-	function setUp() {
+
+	public function setUp() {
 		parent::setUp();
 		Order::config()->modifiers = array(
 			'GlobalTaxModifier'
@@ -11,10 +11,10 @@ class GlobalTaxModifierTest extends SapphireTest{
 			'UK' => array('rate' => 0.175, 'name' => 'VAT', 'exclusive' => true)
 		);
 	}
-	
-	function testModification(){
+
+	public function testModification(){
 		$modifier = new GlobalTaxModifier();
 		$this->assertEquals(15, $modifier->value(100)); //15% tax default
 	}
-	
+
 }

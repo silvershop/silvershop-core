@@ -1,23 +1,23 @@
 <?php
 /**
  * Factory for generating checkout fields
- * 
- * @todo 
+ *
+ * @todo
  */
 class CheckoutFieldFactory{
-	
+
 	private static $inst;
-	
-	static function singleton(){
+
+	public static function singleton(){
 		if(!self::$inst)
-			self::$inst = new CheckoutFieldFactory(); 
-		return self::$inst; 
+			self::$inst = new CheckoutFieldFactory();
+		return self::$inst;
 	}
-	
+
 	//prevent instantiation
 	private function __construct(){}
-	
-	function getContactFields($subset = array()){
+
+	public function getContactFields($subset = array()){
 		return $this->getSubset(new FieldList(
 			new TextField('FirstName', _t('CheckoutField.FIRSTNAME','First Name')),
 			new TextField('Surname', _t('CheckoutField.SURNAME','Surname')),
@@ -25,13 +25,13 @@ class CheckoutFieldFactory{
 		),$subset);
 	}
 
-	function getAddressFields($type = "shipping", $subset = array()){
+	public function getAddressFields($type = "shipping", $subset = array()){
 		$address = singleton('Address');
 		$fields =  $address->getFormFields($type);
 		return $this->getSubset($fields, $subset);
 	}
-	
-	function getMembershipFields(){
+
+	public function getMembershipFields(){
 		$fields = $this->getContactFields();
 		$idfield = Member::get_unique_identifier_field();
 		if(!$fields->fieldByName($idfield)){
@@ -40,12 +40,12 @@ class CheckoutFieldFactory{
 		$fields->push($this->getPasswordField());
 		return $fields;
 	}
-	
-	function getPasswordFields(){
+
+	public function getPasswordFields(){
 		$loginlink = "Security/login?BackURL=".CheckoutPage::find_link(true);
 		$fields =  new FieldList(
 			new HeaderField(_t('CheckoutField.MEMBERSHIPDETAILS','Membership Details'), 3),
-			new LiteralField('MemberInfo', 
+			new LiteralField('MemberInfo',
 				'<p class="message warning">'.
 					_t('CheckoutField.MEMBERINFO','If you are already a member please')
 					." <a href=\"$loginlink\">".
@@ -58,15 +58,15 @@ class CheckoutFieldFactory{
 					'Please choose a password, so you can login and check your order history in the future'
 				).'</p>'
 			),
-			$this->getPasswordField() 
+			$this->getPasswordField()
 		);
 		if(!Checkout::user_membership_required()){
 			$pwf->setCanBeEmpty(true);
 		}
 		return $fields;
 	}
-	
-	function getPaymentMethodFields(){
+
+	public function getPaymentMethodFields(){
 		//TODO: only get one field if there is no option
 		return new OptionsetField(
 			'PaymentMethod',
@@ -75,24 +75,24 @@ class CheckoutFieldFactory{
 		);
 	}
 
-	function getPasswordField($confirmed = true){
+	public function getPasswordField($confirmed = true){
 		if($confirmed){
 			return ConfirmedPasswordField::create('Password', _t('CheckoutField.PASSWORD','Password'));
 		}
 		return PasswordField::create('Password', _t('CheckoutField.PASSWORD','Password'));
 	}
-	
-	function getNotesField(){
+
+	public function getNotesField(){
 		return TextareaField::create("Notes",_t("CheckoutField.NOTES","Message"));
 	}
-	
-	function getTermsConditionsField(){
+
+	public function getTermsConditionsField(){
 		$field = null;
 		if(SiteConfig::current_site_config()->TermsPage()->exists()) {
 			$termsPage = SiteConfig::current_site_config()->TermsPage();
-			$field = CheckedCheckboxField::create('ReadTermsAndConditions', 
+			$field = CheckedCheckboxField::create('ReadTermsAndConditions',
 				sprintf(_t('CheckoutField.TERMSANDCONDITIONS',
-					"I agree to the terms and conditions stated on the 
+					"I agree to the terms and conditions stated on the
 						<a href=\"%s\" target=\"new\" title=\"Read the shop terms and conditions for this site\">
 							terms and conditions
 						</a>
@@ -125,5 +125,5 @@ class CheckoutFieldFactory{
 		}
 		return $subfieldlist;
 	}
-	
+
 }

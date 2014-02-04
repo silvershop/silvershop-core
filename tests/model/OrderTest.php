@@ -1,16 +1,16 @@
 <?php
 /**
  * Order Unit Tests
- *  
+ *
  * @link Order
  * @package shop
  * @subpackage tests
  */
 class OrderTest extends SapphireTest {
 
-	static $fixture_file = 'shop/tests/fixtures/shop.yml';
+	public static $fixture_file = 'shop/tests/fixtures/shop.yml';
 
-	function setUp() {
+	public function setUp() {
 		parent::setUp();
 		ShopTest::setConfiguration();
 		$this->mp3player = $this->objFromFixture('Product', 'mp3player');
@@ -20,28 +20,28 @@ class OrderTest extends SapphireTest {
 		$this->beachball = $this->objFromFixture('Product', 'beachball');
 		$this->beachball->publish('Stage','Live');
 	}
-	
-	function tearDown(){
+
+	public function tearDown(){
 		parent::tearDown();
 		unset($this->mp3player);
 		unset($this->socks);
 		unset($this->beachball);
 	}
-	
-	function testCMSFields(){
+
+	public function testCMSFields(){
 		singleton('Order')->getCMSFields();
 	}
-	
-	function testSearchFields(){
+
+	public function testSearchFields(){
 		singleton('Order')->scaffoldSearchFields();
 	}
-	
-	function testDebug(){
+
+	public function testDebug(){
 		$order = $this->objFromFixture("Order", "cart");
 		$order->debug();
 	}
-	
-	function testOrderItems() {
+
+	public function testOrderItems() {
 		$order = self::createOrder();
 		$items = $order->Items();
 		$this->assertNotNull($items);
@@ -53,16 +53,16 @@ class OrderTest extends SapphireTest {
 		$this->assertTrue($items->Plural(),"There is more than one item");
 		$this->assertEquals(0.7, $items->Sum('Weight', true),"Total order weight sums correctly");
 	}
-	
-	function testTotals() {
+
+	public function testTotals() {
 		$order = self::createOrder();
 		$this->assertEquals(408, $order->SubTotal(), "Subtotal is correct"); // 200 + 200 + 8
 		$this->assertEquals(408, $order->GrandTotal(),"Grand total is correct");
 		$this->assertEquals(200, $order->TotalPaid(),"Outstanding total is correct");
 		$this->assertEquals(208, $order->TotalOutstanding(),"Outstanding total is correct");
 	}
-	
-	function testRounding(){
+
+	public function testRounding(){
 		//create an order with unrounded total
 		$order = new Order(array(
 			'Total' => 123.257323, //NOTE: setTotal isn't called here, so un-rounded data *could* get in to the object
@@ -72,27 +72,27 @@ class OrderTest extends SapphireTest {
 		$this->assertEquals(123.26, $order->Total(), "Check total rounds appropriately");
 		$this->assertEquals(123.26, $order->TotalOutstanding(),"Check total outstanding rounds appropriately");
 	}
-	
-	function testPlacedOrderImmutability(){
+
+	public function testPlacedOrderImmutability(){
 		//create order
 		$order = self::createOrder();
-		
+
 		//place order
 		$processor = OrderProcessor::create($order)->placeOrder();
-		
+
 		//check totals
 		$this->assertEquals(408, $order->Total());
-		
+
 		//make a changes to existing products
 		$this->mp3player->BasePrice = 100;
 		$this->mp3player->write();
 		$this->socks->BasePrice = 20;
 		$this->socks->write();
-		
+
 		//total doesn't change
 		$this->assertEquals(408, $order->Total());
 		$this->assertFalse($order->isCart());
-		
+
 		//item values don't change
 		$items = $order->Items()->innerJoin("Product_OrderItem",'"OrderItem"."ID" = "Product_OrderItem"."ID"'); //TODO: why is this join needed?
 		$this->assertNotNull($items);
@@ -100,23 +100,23 @@ class OrderTest extends SapphireTest {
 			array('ProductID' => $this->mp3player->ID,'Quantity' => 2, 'CalculatedTotal' => 400),
 			array('ProductID' => $this->socks->ID, 'Quantity' => 1, 'CalculatedTotal' => 8)
 		), $items);
-		
+
 		$mp3player = $items->find('ProductID',$this->mp3player->ID);//join needed to provide ProductID
 		$this->assertNotNull($mp3player,"MP3 player is in order");
 		$this->assertEquals(200, $mp3player->UnitPrice(),"Unit price remains the same");
 		$this->assertEquals(400, $mp3player->Total(),"Total remains the same");
-		
+
 		$socks = $items->find('ProductID',$this->socks->ID);
 		$this->assertNotNull($socks,"Socks are in order");
 		$this->assertEquals(8, $socks->UnitPrice(), "Unit price remains the same");
 		$this->assertEquals(8, $socks->Total(), "Total remains the same");
 	}
-	
+
 	/**
 	 * Helper for creating an order
 	 * Total should be $408.00
 	 */
-	function createOrder(){
+	public function createOrder(){
 		return $this->objFromFixture("Order", "paid");
 		// $order = new Order();
 		// $order->write();
@@ -126,7 +126,7 @@ class OrderTest extends SapphireTest {
 		// $item1b = $this->socks->createItem();
 		// $item1b->write();
 		// $order->Items()->add($item1b);
-		
+
 		// //add a payment
 		// $payment = new Payment();
 		// $payment->OrderID = $order->ID;
@@ -134,13 +134,13 @@ class OrderTest extends SapphireTest {
 		// $payment->Currency = 'USD';
 		// $payment->Status = 'Captured';
 		// $payment->write();
-		
+
 		// $order->calculate();
 		// $order->write();
 		//return $order;
 	}
-	
-	function testCanFunctions(){
+
+	public function testCanFunctions(){
 		$order = $this->objFromFixture("Order", "cart");
 		$order->calculate();
 		$this->assertTrue($order->canPay(),"can pay when order is in cart");
@@ -148,21 +148,21 @@ class OrderTest extends SapphireTest {
 		$this->assertFalse($order->canDelete(),"never allow deleting orders");
 		$this->assertTrue($order->canEdit(), "orders can be edited by anyone");
 		$this->assertFalse($order->canCreate(),"no body can create orders manually");
-		
+
 		$order = $this->objFromFixture("Order", "unpaid");
 		$this->assertTrue($order->canPay(),"can pay an order that is unpaid");
 		$this->assertTrue($order->canCancel());
 		$this->assertFalse($order->canDelete(),"never allow deleting orders");
-		
+
 		$order = $this->objFromFixture("Order", "paid");
 		$this->assertFalse($order->canPay(),"paid order can't be paid for");
 		$this->assertFalse($order->canCancel(),"paid order can't be cancelled");
 		$this->assertFalse($order->canDelete(),"never allow deleting orders");
-		
+
 		//TODO: check other statuses
 	}
-	
-	function testDelete(){
+
+	public function testDelete(){
 		$order = $this->objFromFixture("Order", "unpaid");
 		$order->delete();
 	}

@@ -109,7 +109,7 @@ Product:
             Our patented technology means quality you can trust.</p>
     hdtv: #This product has no price
         Title: 42inch 1080p LCD TV - 16:9 - HDTV
-        InternalItemID: 
+        InternalItemID:
         Parent: =>ProductCategory.electronics
         URLSegment: hdtv
         AllowPurchase: 1
@@ -137,7 +137,7 @@ Product:
         Stock: 1000
         Content: >
             <p>Branded 12 inch Beach Ball. Multicolor vinyl ball for Beach and outdoor play</p>
-            <p>NOTE: The manufacture calls this a 12 inch circumference ball. When fully inflated 
+            <p>NOTE: The manufacture calls this a 12 inch circumference ball. When fully inflated
             it is around 3 inches smaller.<br>
             For best results, do not over inflate.</p>
     mp3player:

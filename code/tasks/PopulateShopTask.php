@@ -1,27 +1,27 @@
 <?php
 /**
  * Populate shop task
- * 
+ *
  * @todo Ideally this task should make use of Spyc, and a single Pages yml file
  * instead of the YamlFixture class, which is intended for testing.
- * 
+ *
  * @package shop
  * @subpackage tasks
  */
 class PopulateShopTask extends BuildTask{
-	
+
 	protected $title = "Populate Shop";
 	protected $description = 'Creates dummy account page, products, checkout page, terms page.';
-	
-	function run($request){
-		
+
+	public function run($request){
+
 		if($request->getVar('createintzone')){
 			$this->populateInternationalZone();
 			DB::alteration_message('Created an international zone', 'created');
 			return;
 		}
 		$this->extend("beforePopulate");
-		
+
 		$factory = Injector::inst()->create('FixtureFactory');
 
 		$parentid = 0;
@@ -56,7 +56,7 @@ class PopulateShopTask extends BuildTask{
 			}
 			$productstopublish = array(
 				'mp3player', 'hdtv',
-				'socks', 'tshirt', 
+				'socks', 'tshirt',
 				'beachball','hoop','kite',
 				'genericmovie',
 				'lemonchicken',
@@ -83,7 +83,7 @@ class PopulateShopTask extends BuildTask{
 			$page->publish('Stage', 'Live');
 			DB::alteration_message('Cart page created', 'created');
 		}
-		
+
 		//checkout page
 		if(!$page = DataObject::get_one('CheckoutPage')) {
 			$fixture = new YamlFixture(SHOP_DIR."/tests/fixtures/pages/Checkout.yml");
@@ -120,11 +120,11 @@ class PopulateShopTask extends BuildTask{
 			$config->write();
 			DB::alteration_message("Terms and conditions page created", 'created');
 		}
-		
+
 		//countries config - removes some countries
 		$siteconfig = SiteConfig::current_site_config();
 		if(empty($siteconfig->AllowedCountries)){
-			$siteconfig->AllowedCountries = 
+			$siteconfig->AllowedCountries =
 			"AF,AL,DZ,AS,AD,AO,AG,AR,AM,AU,AT,AZ,BS,BH,
 			BD,BB,BY,BE,BZ,BJ,BT,BO,BA,BW,BR,BN,BG,BF,BI,
 			KH,CM,CA,CV,CF,TD,CL,CN,CO,KM,CG,CR,CI,HR,CU,
@@ -142,22 +142,22 @@ class PopulateShopTask extends BuildTask{
 		}
 		$this->extend("afterPopulate");
 	}
-	
-	function populateInternationalZone(){
+
+	public function populateInternationalZone(){
 		$zone = new Zone(array(
-			'Name' => 'International'	
+			'Name' => 'International'
 		));
 		$zone->write();
-		
+
 		if($countries = SiteConfig::current_site_config()->getCountriesList()){
 			foreach($countries as $iso => $country){
 				$region = new ZoneRegion(array(
 					'Country' => $iso,
-					'ZoneID' => $zone->ID	
+					'ZoneID' => $zone->ID
 				));
 				$region->write();
 			}
 		}
 	}
-	
+
 }

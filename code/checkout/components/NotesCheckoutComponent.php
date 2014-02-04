@@ -17,7 +17,7 @@ class NotesCheckoutComponent extends CheckoutComponent{
 			$order->Notes = $data['Notes'];
 		}
 		//TODO: save this to an order log
-		
+
 		$order->write();
 	}
 

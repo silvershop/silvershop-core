@@ -1,7 +1,7 @@
 <?php
  /**
   * Product Category provides a way to hierartically categorise products.
-  * 
+  *
   * It contains functions for versioning child products
   *
   * @package shop
@@ -80,7 +80,7 @@ class ProductCategory extends Page {
 		if($recursive){
 			$children = $children->filter("ParentID",$this->AllChildCategoryIDs());
 		}
-		
+
 		return $children;
 	}
 
@@ -127,7 +127,7 @@ class ProductCategory_Controller extends Page_Controller {
 		$products = new PaginatedList($products, $this->request);
 		$products->setPageLength(ProductCategory::config()->page_length);
 		$products->TotalCount = $products->getTotalItems();
-		
+
 		return $products;
 	}
 

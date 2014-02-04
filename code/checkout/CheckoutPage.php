@@ -2,7 +2,7 @@
 /**
  * CheckoutPage is a CMS page-type that shows the order
  * details to the customer for their current shopping
- * cart on the site. 
+ * cart on the site.
  *
  * @see CheckoutPage_Controller->Order()
  *
@@ -22,7 +22,7 @@ class CheckoutPage extends Page {
 	 * @param boolean $urlSegment If set to TRUE, only returns the URLSegment field
 	 * @return string Link to checkout page
 	 */
-	static function find_link($urlSegment = false, $action = null, $id = null) {
+	public static function find_link($urlSegment = false, $action = null, $id = null) {
 		if(!$page = CheckoutPage::get()->first()) {
 			return Controller::join_links(
 				Director::baseURL(),
@@ -38,11 +38,11 @@ class CheckoutPage extends Page {
 	/**
 	 * Only allow one checkout page
 	 */
-	function canCreate($member = null) {
+	public function canCreate($member = null) {
 		return !CheckoutPage::get()->exists();
 	}
 
-	function getCMSFields() {
+	public function getCMSFields() {
 		$fields = parent::getCMSFields();
 		$fields->addFieldsToTab('Root.Main', array(
 			HtmlEditorField::create('PurchaseComplete', 'Purchase Complete', 4)
@@ -51,7 +51,7 @@ class CheckoutPage extends Page {
 		),'Metadata');
 		return $fields;
 	}
-	
+
 }
 
 class CheckoutPage_Controller extends Page_Controller {
@@ -61,7 +61,7 @@ class CheckoutPage_Controller extends Page_Controller {
 		'payment',
 		'PaymentForm'
 	);
-	
+
 	/**
 	 * Display a title if there is no model, or no title.
 	 */
@@ -71,7 +71,7 @@ class CheckoutPage_Controller extends Page_Controller {
 		return _t('CheckoutPage.TITLE',"Checkout");
 	}
 
-	function OrderForm() {
+	public function OrderForm() {
 		if(!(bool)$this->Cart()){
 			return false;
 		}
@@ -85,7 +85,7 @@ class CheckoutPage_Controller extends Page_Controller {
 	/**
 	 * Action for making on-site payments
 	 */
-	function payment(){
+	public function payment(){
 		if(!$this->Cart()){
 			return $this->redirect($this->Link());
 		}
@@ -96,7 +96,7 @@ class CheckoutPage_Controller extends Page_Controller {
 		);
 	}
 
-	function PaymentForm(){
+	public function PaymentForm(){
 		if(!(bool)$this->Cart()){
 			return false;
 		}

@@ -1,26 +1,26 @@
 <?php
 
 class AccountPageTest extends SapphireTest{
-	
-	static $fixture_file = "shop/tests/fixtures/shop.yml";
-	
-	function setUp(){
+
+	public static $fixture_file = "shop/tests/fixtures/shop.yml";
+
+	public function setUp(){
 		parent::setUp();
 		$this->controller = new AccountPage_Controller($this->objFromFixture("AccountPage", "accountpage"));
 		$this->controller->init();
 	}
-	
-	function testAddressBook(){
+
+	public function testAddressBook(){
 		$this->controller->addressbook();
-		
+
 		//TODO: save address
 		//TODO: save default
 	}
-	
-	function testEditProfile(){
+
+	public function testEditProfile(){
 		$this->controller->editprofile();
 		$this->controller->EditAccountForm();
 		$this->controller->ChangePasswordForm();
 	}
-	
+
 }

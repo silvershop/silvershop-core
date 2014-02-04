@@ -1,7 +1,7 @@
 <?php
 
 class CheckoutComponentConfig {
-	
+
 	protected $components;
 	protected $order;
 	protected $namespaced; //namespace fields according to their component
@@ -17,7 +17,7 @@ class CheckoutComponentConfig {
 	}
 
 	/**
-	 * @param CheckoutComponent $component 
+	 * @param CheckoutComponent $component
 	 * @param string $insertBefore The class of the component to insert this one before
 	 */
 	public function addComponent(CheckoutComponent $component, $insertBefore = null) {
@@ -54,7 +54,7 @@ class CheckoutComponentConfig {
 
 	/**
 	 * Returns the first available component with the given class or interface.
-	 * 
+	 *
 	 * @param String ClassName
 	 * @return GridFieldComponent
 	 */

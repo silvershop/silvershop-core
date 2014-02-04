@@ -6,8 +6,8 @@ class CalculateProductPopularity extends BuildTask{
 	protected $description = "Count up total sales quantites for each product";
 
 	private static $number_sold_calculation_type = "SUM"; //SUM or COUNT
-	
-	function run($request){
+
+	public function run($request){
 		if($request->getVar('via') == "php"){
 			$this->viaphp();
 		}else{
@@ -15,12 +15,12 @@ class CalculateProductPopularity extends BuildTask{
 		}
 		echo "product sales counts updated";
 	}
-	
+
 	/**
 	 * Update both live and stage tables, based on the algorithm:
 	 * 	product popularity = sum(1/order_age) * sum(item_quantity)
 	 */
-	function viasql(){
+	public function viasql(){
 		foreach(array("_Live","") as $stage){
 			$sql =<<<SQL
 				UPDATE "Product$stage" SET "Popularity" = (
@@ -41,9 +41,9 @@ SQL;
 			DB::query($sql);
 		}
 	}
-	
+
 	//legacy function  for working out popularity
-	function viaphp(){
+	public function viaphp(){
 		$ps = singleton('Product');
 		$q = $ps->buildSQL("\"Product\".\"AllowPurchase\" = 1");
 		$select = $q->select;
@@ -64,5 +64,5 @@ SQL;
 			}
 		}
 	}
-	
+
 }

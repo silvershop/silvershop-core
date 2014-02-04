@@ -3,38 +3,38 @@
  * Helper class for getting an order throught the checkout process
  */
 class Checkout{
-	
+
 	//4 different membership schemes:
 		//1: creation disabled & membership not required = no body can, or is required to, becaome a member at checkout.
 		//2: creation disabled & membership required = only existing members can use checkout. (ideally the entire shop should be disabled in this case)
 		//3: creation enabled & membership required = everyone must be, or become a member at checkout.
 		//4: creation enabled & membership not required (default) = it is optional to be, or become a member at checkout.
 
-	static $member_creation_enabled = true;
-	static function member_creation_enabled(){
+	public static $member_creation_enabled = true;
+	public static function member_creation_enabled(){
 		return self::$member_creation_enabled;
 	}
-	
-	static $membership_required = false;
-	static function membership_required(){
+
+	public static $membership_required = false;
+	public static function membership_required(){
 		return self::$membership_required;
 	}
-	
-	static function get($order = null){
+
+	public static function get($order = null){
 		if($order === null){
 			$order = ShoppingCart::curr(); //roll back to current cart
-		}		
+		}
 		if($order->exists() && $order->isInDB()){//check if order can go through checkout
 			return new Checkout($order);
 		}
 		return false;
 	}
-	
+
 	protected $order;
-	function __construct(Order $order){
+	public function __construct(Order $order){
 		$this->order = $order;
 	}
-	
+
 	protected $message, $type;
 
 	/**
@@ -44,7 +44,7 @@ class Checkout{
 	public function getMessage(){
 		return $this->message;
 	}
-	
+
 	/**
 	 * Get type of stored message
 	 * @return string
@@ -52,19 +52,19 @@ class Checkout{
 	public function getMessageType(){
 		return $this->type;
 	}
-	
+
 	/**
 	 * contact information
 	 */
-	function setContactDetails($email, $firstname, $surname){
+	public function setContactDetails($email, $firstname, $surname){
 		$this->order->Email = $email;
 		$this->order->FirstName = $firstname;
 		$this->order->Surname = $surname;
 		$this->order->write();
 	}
-	
+
 	//save / set up addresses
-	function setShippingAddress(Address $address){
+	public function setShippingAddress(Address $address){
 		$this->order->ShippingAddressID = $address->ID;
 		$this->order->MemberID = Member::currentUserID();
 		$this->order->write();
@@ -74,31 +74,31 @@ class Checkout{
 		Zone::cache_zone_ids($address);
 	}
 
-	function setBillingAddress(Address $address){
+	public function setBillingAddress(Address $address){
 		$this->order->BillingAddressID = $address->ID;
 		$this->order->MemberID = Member::currentUserID();
 		$this->order->write();
 		$this->order->extend('onSetBillingAddress',$address);
 	}
-	
+
 	/**
 	 * Get shipping estimates
 	 * @return DataObjectSet
 	 */
-	function getShippingEstimates(){
+	public function getShippingEstimates(){
 		$package = $this->order->createShippingPackage();
 		$address = $this->order->getShippingAddress();
 		$estimator = new ShippingEstimator($package,$address);
 		$estimates = $estimator->getEstimates();
 		return $estimates;
 	}
-	
+
 	/*
 	 * Set shipping method and shipping cost
 	 * @param $option - shipping option to set, and calculate shipping from
 	 * @return boolean sucess/failure of setting
 	 */
-	function setShippingMethod(ShippingMethod $option){
+	public function setShippingMethod(ShippingMethod $option){
 		$package = $this->order->createShippingPackage();
 		if(!$package){
 			return $this->error(
@@ -116,18 +116,18 @@ class Checkout{
 		$this->order->write();
 		return true;
 	}
-	
+
 	/*
 	 * Get a dataobject of payment methods.
 	 */
-	function getPaymentMethods(){
+	public function getPaymentMethods(){
 		return GatewayInfo::get_supported_gateways();
 	}
-	
+
 	/**
 	 * Set payment method
 	 */
-	function setPaymentMethod($paymentmethod){
+	public function setPaymentMethod($paymentmethod){
 		$methods = $this->getPaymentMethods();
 		if(!isset($methods[$paymentmethod])){
 			Session::clear("Checkout.PaymentMethod",null);
@@ -137,12 +137,12 @@ class Checkout{
 		Session::set("Checkout.PaymentMethod",$paymentmethod);
 		return true;
 	}
-	
+
 	/**
 	 * Gets the selected payment method from the session,
 	 * or the only available method, if there is only one.
 	 */
-	function getSelectedPaymentMethod($nice = false){
+	public function getSelectedPaymentMethod($nice = false){
 		$methods = $this->getPaymentMethods();
 		reset($methods);
 		$method = count($methods) === 1 ? key($methods) : Session::get("Checkout.PaymentMethod");
@@ -151,14 +151,14 @@ class Checkout{
 		}
 		return $method;
 	}
-	
+
 	/**
 	 * Create member account from data array.
 	 * Data must contain unique identifier.
 	 * @param $data - map of member data
 	 * @return Member|boolean - new member (not saved to db), or false if there is an error.
 	 */
-	function createMembership($data){
+	public function createMembership($data){
 		$result = new ValidationResult();
 		if(!Checkout::$member_creation_enabled){
 			$result->error(
@@ -200,21 +200,21 @@ class Checkout{
 
 		return $member;
 	}
-	
+
 	/**
 	 * Checks if member (or not) is allowed, in accordance with configuration
 	 */
-	function validateMember($member){
+	public function validateMember($member){
 		if(!self::$membership_required){
 			return true;
 		}
 		if(empty($member) || !($member instanceof Member)){
 			return false;
 		}
-		
+
 		return true;
 	}
-	
+
 	/**
 	 * Store a new error & return false;
 	 */
@@ -222,7 +222,7 @@ class Checkout{
 		$this->message($message,"bad");
 		return false;
 	}
-	
+
 	/**
 	 * Store a message to be fed back to user.
 	 * @param string $message
@@ -232,5 +232,5 @@ class Checkout{
 		$this->message = $message;
 		$this->type = $type;
 	}
-	
+
 }

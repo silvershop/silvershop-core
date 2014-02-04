@@ -1,19 +1,19 @@
 <?php
 
 class ProductReport extends ShopPeriodReport{
-	
+
 	protected $title = "Products";
 	protected $description = "Understand which products are performing, and which aren't.";
 	protected $dataClass = "Product";
 	protected $periodfield = "SiteTree.Created";
-		
-	function getReportField(){
+
+	public function getReportField(){
 		$reportfield = parent::getReportField();
 		$reportfield->getConfig()->removeComponentsByType('GridFieldPaginator');
 		return $reportfield;
 	}
-	
-	function columns(){
+
+	public function columns(){
 		return array(
 			"Title" => array(
 				"title" => "Title",
@@ -25,8 +25,8 @@ class ProductReport extends ShopPeriodReport{
 			"Sales" => "Sales"
 		);
 	}
-	
-	function query($params){
+
+	public function query($params){
 		$query = parent::query($params);
 		$query->selectField($this->periodfield, "FilterPeriod")
 			->addSelect(array(
@@ -50,5 +50,5 @@ class ProductReport extends ShopPeriodReport{
 		}
 		return $query;
 	}
-	
+
 }

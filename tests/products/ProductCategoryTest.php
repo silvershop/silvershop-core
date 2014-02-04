@@ -1,22 +1,22 @@
 <?php
 
 class ProductCategoryTest extends SapphireTest{
-	
-	static $fixture_file = 'shop/tests/fixtures/shop.yml';
-	
-	static $disable_theme = true;
-	
-	function setUp(){
+
+	public static $fixture_file = 'shop/tests/fixtures/shop.yml';
+
+	public static $disable_theme = true;
+
+	public function setUp(){
 		parent::setUp();
 		ProductCategory::config()->must_have_price = false;
-		
+
 		$this->products = $this->objFromFixture('ProductCategory','products');
 		$this->products->publish('Stage','Live');
 		$this->clothing = $this->objFromFixture('ProductCategory','clothing');
 		$this->clothing->publish('Stage','Live');
 		$this->electronics = $this->objFromFixture('ProductCategory','electronics');
 		$this->electronics->publish('Stage','Live');
-		
+
 		$this->socks = $this->objFromFixture('Product', 'socks');
 		$this->socks->publish('Stage','Live');
 		$this->tshirt = $this->objFromFixture('Product', 'tshirt');
@@ -31,8 +31,8 @@ class ProductCategoryTest extends SapphireTest{
 		Versioned::reading_stage('Live');
 	}
 
-	function testGetAllProducts(){
-		$products = $this->products->ProductsShowable();		
+	public function testGetAllProducts(){
+		$products = $this->products->ProductsShowable();
 		$this->assertNotNull($products,"Products exist in category");
 		$this->assertDOSEquals(array(
 			array('URLSegment' => 'socks'),
@@ -43,7 +43,7 @@ class ProductCategoryTest extends SapphireTest{
 		), $products);
 	}
 
-	function testSecondaryMembership(){
+	public function testSecondaryMembership(){
 		$products = $this->electronics->ProductsShowable();
 		$this->assertDOSEquals(array(
 			array('URLSegment' => 'hdtv'),
@@ -60,7 +60,7 @@ class ProductCategoryTest extends SapphireTest{
 			array('URLSegment' => 'socks'),
 		), $products, 'After adding a category via many-many to socks, that should show up as well');
 	}
-	
+
 	//TODO: check filtering
 	//check published/ non published / allow purchase etc
 	//Hide product if no price...or if product has variations, allow viewing.

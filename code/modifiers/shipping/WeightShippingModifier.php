@@ -10,28 +10,28 @@
  * @subpackage modifiers
  */
 class WeightShippingModifier extends ShippingModifier {
-		
+
 	protected static $weight_cost = array(
 		0.5 => 10,
 		1 => 20,
 		999 => 50
 	);
 	protected $weight = 0;
-	
-	static function set_weight_costs($costs){
+
+	public static function set_weight_costs($costs){
 		self::$weight_cost = $costs;
 	}
-	
+
 	/**
 	* Calculates shipping cost based on Product Weight.
 	*/
-	function value($subtotal = 0){
+	public function value($subtotal = 0){
 		$totalWeight = $this->Weight();
 		if(!$totalWeight){
 			return $this->Amount = 0;
 		}
 		$amount = 0;
-		
+
 		foreach(self::$weight_cost as $weight => $cost) {
 			if($totalWeight <= $weight){
 				$amount =  $cost;
@@ -40,16 +40,16 @@ class WeightShippingModifier extends ShippingModifier {
 		}
 		return $this->Amount = $amount;
 	}
-	
-	function TableTitle(){
+
+	public function TableTitle(){
 		return  sprintf(_t("WeightShippingModifier.TABLETITLE","Shipping (%f kg)"),$this->Weight());
 	}
-	
+
 	/**
 	 * Calculate the total weight of the order
 	 * @return number
 	 */
-	function Weight(){
+	public function Weight(){
 		if($this->weight){
 			return $this->weight;
 		}

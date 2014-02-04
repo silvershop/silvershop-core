@@ -8,11 +8,11 @@ class ShopCurrency extends Currency {
 	private static $thousand_delimiter = ',';
 	private static $negative_value_format = "<span class=\"negative\">(%s)</span>";
 
-	function Nice() {
+	public function Nice() {
 		$val = $this->config()->currency_symbol .
 			number_format(
-				abs($this->value), 2, 
-				self::config()->decimal_delimiter, 
+				abs($this->value), 2,
+				self::config()->decimal_delimiter,
 				self::config()->thousand_delimiter
 			);
 		if($this->value < 0){
@@ -21,8 +21,8 @@ class ShopCurrency extends Currency {
 		return $val;
 	}
 
-	function forTemplate(){
+	public function forTemplate(){
 		return $this->Nice();
 	}
-	
+
 }

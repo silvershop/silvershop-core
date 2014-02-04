@@ -229,5 +229,3 @@ $lang['ar_SA']['ViewAllProducts.ss']['NOSUBJECTS'] = 'لايوجد مجموعة 
 $lang['ar_SA']['ViewAllProducts.ss']['PRICE'] = 'السعر';
 $lang['ar_SA']['ViewAllProducts.ss']['PRODUCTID'] = 'رقم المنتج';
 $lang['ar_SA']['ViewAllProducts.ss']['WEIGHT'] = 'الوزن';
-
-?>

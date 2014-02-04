@@ -1,7 +1,7 @@
 <?php
 /**
  * A single line in an order. This could be an item, or a subtotal line.
- * 
+ *
  * @see OrderItem
  * @see OrderModifier
  *
@@ -30,7 +30,7 @@ class OrderAttribute extends DataObject {
 		return false;
 	}
 
-	function isLive(){
+	public function isLive(){
 		return (!$this->isInDB() || $this->Order()->IsCart());
 	}
 
@@ -40,15 +40,15 @@ class OrderAttribute extends DataObject {
 	 *
 	 * @return string
 	 */
-	function TableTitle() {
+	public function TableTitle() {
 		return 'Attribute';
 	}
-	
-	function CartTitle() {
+
+	public function CartTitle() {
 		return $this->TableTitle();
 	}
-	
-	function ShowInTable() {
+
+	public function ShowInTable() {
 		return true;
 	}
 

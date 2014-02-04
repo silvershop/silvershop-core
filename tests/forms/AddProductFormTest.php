@@ -1,11 +1,11 @@
 <?php
 
 class AddProductFormTest extends SapphireTest{
-	
-	static $fixture_file = "shop/tests/fixtures/shop.yml";
-	
-	function testForm(){
-	
+
+	public static $fixture_file = "shop/tests/fixtures/shop.yml";
+
+	public function testForm(){
+
 		$controller = new Product_Controller($this->objFromFixture("Product", "socks"));
 		$form = new AddProductForm($controller);
 		$form->setMaximumQuantity(10);
@@ -16,5 +16,5 @@ class AddProductFormTest extends SapphireTest{
 		$form->addtocart($data, $form);
 		//TODO: check quantity
 	}
-	
+
 }

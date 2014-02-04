@@ -29,14 +29,14 @@ class ProductAttributeValue extends DataObject{
 
 	private static $singular_name = "Value";
 	private static $plural_name = "Values";
-	
-	function getCMSFields(){
+
+	public function getCMSFields(){
 		$fields = $this->scaffoldFormFields();
 		$fields->removeByName("TypeID");
 		$fields->removeByName("Sort");
 		$this->extend('updateCMSFields', $fields);
-		
+
 		return $fields;
 	}
-	
+
 }

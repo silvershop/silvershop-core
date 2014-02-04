@@ -1,7 +1,7 @@
 <?php
 
 class PaymentCheckoutComponent extends CheckoutComponent{
-	
+
 	public function getFormFields(Order $order) {
 		$fields = new FieldList();
 		$gateways = GatewayInfo::get_supported_gateways();
@@ -28,7 +28,7 @@ class PaymentCheckoutComponent extends CheckoutComponent{
 		if(count(GatewayInfo::get_supported_gateways()) > 1){
 			return array();
 		}
-		
+
 		return array('PaymentMethod');
 	}
 

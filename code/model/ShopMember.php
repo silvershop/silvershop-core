@@ -7,16 +7,16 @@
 class ShopMember extends DataExtension {
 
 	private static $login_joins_cart = true;
-	
+
 	private static $has_many = array(
 		'AddressBook' => 'Address'
 	);
-	
+
 	private static $has_one = array(
 		'DefaultShippingAddress' => 'Address',
 		'DefaultBillingAddress' => 'Address'
 	);
-		
+
 	/**
 	 * Get member by unique field.
 	 * @return Member|null
@@ -24,7 +24,7 @@ class ShopMember extends DataExtension {
 	public static function get_by_identifier($idvalue) {
 		return Member::get()->filter(Member::get_unique_identifier_field(), $idvalue)->first();
 	}
-	
+
 	/**
 	 * Create new member with data, or merge data with existing.
 	 * @param  array $data data to create or merge with
@@ -32,7 +32,7 @@ class ShopMember extends DataExtension {
 	 */
 	public static function create_or_merge($data) {
 		if(!isset($data[Member::get_unique_identifier_field()]) || empty($data[Member::get_unique_identifier_field()])){
-			return false;	
+			return false;
 		}
 		$existingmember = self::get_by_identifier($data[Member::get_unique_identifier_field()]);
 		if($existingmember && $existingmember->exists()){
@@ -46,7 +46,7 @@ class ShopMember extends DataExtension {
 		$member->update($data);
 		return $member;
 	}
-		
+
 	/**
 	 * Get country title by iso country code.
 	 */
@@ -54,14 +54,14 @@ class ShopMember extends DataExtension {
 		$countries = SiteConfig::current_site_config()->getCountriesList();
 		return ($code && $countries[$code]) ?  $countries[$code] : false;
 	}
-	
+
 	public function updateCMSFields(FieldList $fields) {
 		$fields->removeByName('Country');
 		$fields->removeByName("DefaultShippingAddressID");
 		$fields->removeByName("DefaultBillingAddressID");
 		$fields->addFieldToTab('Root.Main', new DropdownField('Country', 'Country', SiteConfig::current_site_config()->getCountriesList()));
 	}
-	
+
 	public function updateMemberFormFields($fields){
 		$fields->removeByName('DefaultShippingAddressID');
 		$fields->removeByName('DefaultBillingAddressID');
@@ -80,7 +80,7 @@ class ShopMember extends DataExtension {
 			$order->write();
 		}
 	}
-	
+
 	/**
 	 * Clear the cart, and session variables on member logout
 	 */
@@ -88,7 +88,7 @@ class ShopMember extends DataExtension {
 		ShoppingCart::singleton()->clear();
 		OrderManipulation::clear_session_order_ids();
 	}
-	
+
 	public function getPastOrders() {
 		return Order::get()
 				->filter("MemberID", $this->owner->ID)

@@ -12,7 +12,7 @@ abstract class AddressCheckoutComponent extends CheckoutComponent{
 		));
 	}
 
-	function getRequiredFields(Order $order){
+	public function getRequiredFields(Order $order){
 		return $this->getAddress($order)->getRequiredFields();
 	}
 
@@ -67,7 +67,7 @@ abstract class AddressCheckoutComponent extends CheckoutComponent{
 		$this->formfielddescriptions = $show;
 	}
 
-	function getAddress(Order $order){
+	public function getAddress(Order $order){
 		return $order->{$this->addresstype."Address"}();
 	}
 

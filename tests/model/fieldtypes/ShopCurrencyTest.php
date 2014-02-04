@@ -1,8 +1,8 @@
 <?php
 
 class ShopCurrencyTest extends SapphireTest{
-	
-	function testField(){
+
+	public function testField(){
 		ShopCurrency::config()->currency_symbol = "X";
 		ShopCurrency::config()->decimal_delimiter = "|";
 		ShopCurrency::config()->thousand_delimiter = "-";
@@ -12,5 +12,5 @@ class ShopCurrencyTest extends SapphireTest{
 		$field->setValue(-12345.56);
 		$this->assertEquals("- X12-345|56", $field->Nice());
 	}
-	
+
 }

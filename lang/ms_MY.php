@@ -132,5 +132,3 @@ $lang['ms_MY']['SSReport']['ALLCLICKHERE'] = 'Klik sini untuk memandang semua pr
 $lang['ms_MY']['SSReport']['INVOICE'] = 'Invois';
 $lang['ms_MY']['SSReport']['PRINT'] = 'Cetak';
 $lang['ms_MY']['SSReport']['VIEW'] = 'Pandang';
-
-?>

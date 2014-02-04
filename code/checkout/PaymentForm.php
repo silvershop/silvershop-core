@@ -1,8 +1,8 @@
 <?php
 
 class PaymentForm extends CheckoutForm{
-	
-	function checkoutSubmit($data, $form) {
+
+	public function checkoutSubmit($data, $form) {
 		//form validation has passed by this point, so we can save data
 		$this->config->setData($form->getData());
 		$order = $this->config->getOrder();
@@ -11,13 +11,13 @@ class PaymentForm extends CheckoutForm{
 
 			return $this->submitpayment($data, $form);
 		}
-		
+
 		return $this->controller->redirect(
 			$this->controller->Link('payment') //assumes CheckoutPage
-		);		
+		);
 	}
 
-	function submitpayment($data, $form) {
+	public function submitpayment($data, $form) {
 		$data = $form->getData();
 		$data['cancelURL'] = $this->controller->Link();
 		$order = $this->config->getOrder();

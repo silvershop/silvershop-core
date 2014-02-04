@@ -7,7 +7,7 @@
   */
 class ShopAccountForm extends Form {
 
-	function __construct($controller, $name) {
+	public function __construct($controller, $name) {
 		$member = Member::currentUser();
 		$requiredFields = null;
 		if($member && $member->exists()) {
@@ -31,16 +31,16 @@ class ShopAccountForm extends Form {
 		}
 		parent::__construct($controller, $name, $fields, $actions, $requiredFields);
 		if($member){
-			$member->Password = ""; //prevents password field from being populated with encrypted password data 
+			$member->Password = ""; //prevents password field from being populated with encrypted password data
 			$this->loadDataFrom($member);
 		}
-		
+
 	}
 
 	/**
 	 * Save the changes to the form
 	 */
-	function submit($data, $form, $request) {
+	public function submit($data, $form, $request) {
 		$member = Member::currentUser();
 		if(!$member) return false;
 
@@ -55,7 +55,7 @@ class ShopAccountForm extends Form {
 	/**
 	 * Save the changes to the form, and redirect to the checkout page
 	 */
-	function proceed($data, $form, $request) {
+	public function proceed($data, $form, $request) {
 		$member = Member::currentUser();
 		if(!$member) return false;
 		$form->saveInto($member);
@@ -76,7 +76,7 @@ class ShopAccountFormValidator extends RequiredFields{
 	/**
 	 * Ensures member unique id stays unique.
 	 */
-	function php($data){
+	public function php($data){
 		$valid = parent::php($data);
 		$field = Member::get_unique_identifier_field();
 		if(isset($data[$field])){

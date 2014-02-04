@@ -8,7 +8,7 @@ class MembershipCheckoutComponent extends CheckoutComponent{
 		'CustomerDetailsCheckoutComponent'
 	);
 
-	function __construct($confirmed = true, $validator = null){
+	public function __construct($confirmed = true, $validator = null){
 		$this->confirmed = $confirmed;
 		if(!$validator){
 			$this->passwordvalidator = Member::password_validator();
@@ -19,7 +19,7 @@ class MembershipCheckoutComponent extends CheckoutComponent{
 			}
 		}
 	}
-	
+
 	public function getFormFields(Order $order, Form $form = null){
 		$fields = new FieldList();
 		if(Member::currentUserID()){
@@ -99,7 +99,7 @@ class MembershipCheckoutComponent extends CheckoutComponent{
 		$member->logIn();
 	}
 
-	function setConfirmed($confirmed){
+	public function setConfirmed($confirmed){
 		$this->confirmed = $confirmed;
 
 		return $this;

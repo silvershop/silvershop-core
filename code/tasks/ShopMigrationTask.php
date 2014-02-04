@@ -3,20 +3,20 @@
  * Updates database to work with latest version of the code.
  */
 class ShopMigrationTask extends MigrationTask{
-	
+
 	/**
 	 * Choose how many orders get processed at a time.
 	 */
-	static $batch_size = 250;
-	
+	public static $batch_size = 250;
+
 	protected $title = "Migrate Shop";
 	protected $description = "Where dev/build is not enough, this task updates database to work with latest version of shop module.
 		You may want to run the CartCleanupTask before migrating if you want to discard past carts.";
-	
+
 	/**
 	 * Migrate upwards
 	 */
-	function up(){
+	public function up(){
 		$this->migrateOrders();
 		$this->migrateProductPrice();
 		$this->migrateProductVariationsAttribues();
@@ -27,7 +27,7 @@ class ShopMigrationTask extends MigrationTask{
 	/**
 	 * batch process orders
 	 */
-	function migrateOrders(){
+	public function migrateOrders(){
 		$start = $count = 0;
 		$batch = Order::get()->sort("Created","ASC")->limit($start,self::$batch_size);
 		while($batch->exists()){
@@ -41,11 +41,11 @@ class ShopMigrationTask extends MigrationTask{
 		};
 		echo "$count orders updated.\n<br/>";
 	}
-	
+
 	/**
 	 * Perform migration scripts on a single order.
 	 */
-	function migrate(Order $order){
+	public function migrate(Order $order){
 		//TODO: set a from / to version to preform a migration with
 		$this->migrateStatuses($order);
 		$this->migrateMemberFields($order);
@@ -53,8 +53,8 @@ class ShopMigrationTask extends MigrationTask{
 		$this->migrateOrderCalculation($order);
 		$order->write();
 	}
-	
-	function migrateProductPrice(){
+
+	public function migrateProductPrice(){
 		$db = DB::getConn();
 		//if BasePrice has no values, but Price does, then copy from Price
 		if($db->hasTable("Product") && !DataObject::get_one("Product","\"BasePrice\" > 0")){
@@ -71,15 +71,15 @@ class ShopMigrationTask extends MigrationTask{
 	 * Rename all Product_Image ClassNames to Image
 	 * Added in v1.0
 	 */
-	function migrateProductImages(){
+	public function migrateProductImages(){
 		DB::query('UPDATE "File" SET "ClassName"=\'Image\' WHERE "ClassName" = \'Product_Image\'');
 	}
-	
+
 	/**
 	 * Customer and shipping details have been added to Order,
 	 * so that memberless (guest) orders can be placed.
 	 */
-	function migrateMemberFields($order){
+	public function migrateMemberFields($order){
 		if($member = $order->Member()){
 			$fieldstocopy = array(
 				'FirstName',
@@ -100,11 +100,11 @@ class ShopMigrationTask extends MigrationTask{
 			}
 		}
 	}
-	
+
 	/**
 	 * Migrate old statuses
 	 */
-	function migrateStatuses($order){
+	public function migrateStatuses($order){
 		switch($order->Status){
 			case "Cancelled": //Pre version 0.5
 				$order->Status = 'AdminCancelled';
@@ -114,13 +114,13 @@ class ShopMigrationTask extends MigrationTask{
 				break;
 		}
 	}
-	
+
 	/**
 	 * Convert shipping and tax columns into modifiers
-	 * 
+	 *
 	 * Applies to pre 0.6 sites
 	 */
-	function migrateShippingValues($order){
+	public function migrateShippingValues($order){
 		//TODO: see if this actually works..it probably needs to be writeen to a SQL query
 		if($order->hasShippingCost && abs($order->Shipping)){
 			$modifier1 = new ShippingModifier();
@@ -143,18 +143,18 @@ class ShopMigrationTask extends MigrationTask{
 			$order->AddedTax = null;
 		}
 	}
-	
+
 	/**
 	 * Performs calculation function on un-calculated orders.
 	 */
-	function migrateOrderCalculation($order){
+	public function migrateOrderCalculation($order){
 		if(!is_numeric($order->Total) || $order->Total <= 0){
 			$order->calculate();
 			$order->write();
 		}
 	}
-	
-	function migrateProductVariationsAttribues(){
+
+	public function migrateProductVariationsAttribues(){
 		$db = DB::getConn();
 		//TODO: delete Product_VariationAttribute, if it's empty
 		if($db->hasTable("Product_VariationAttributes")){ //TODO: check if Product_VariationAttributeTypes table is empty
@@ -162,12 +162,12 @@ class ShopMigrationTask extends MigrationTask{
 			$db->renameTable("Product_VariationAttributes","Product_VariationAttributeTypes");
 		}
 	}
-	
-	function migrateShippingTaxValues(){
+
+	public function migrateShippingTaxValues(){
 		//rename obselete columns
 		//DB::query("ALTER TABLE \"Order\" CHANGE COLUMN \"hasShippingCost\" \"_obsolete_hasShippingCost\" tinyint(1)");
 		//DB::query("ALTER TABLE \"Order\" CHANGE COLUMN \"Shipping\" \"_obsolete_Shipping\" decimal(9,2)");
 		//DB::query("ALTER TABLE \"Order\" CHANGE COLUMN \"AddedTax\" \"_obsolete_AddedTax\" decimal(9,2)");
 	}
-	
+
 }

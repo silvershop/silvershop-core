@@ -3,19 +3,19 @@
  * Remove all products and categories from the site.
  */
 class DeleteProductsTask extends BuildTask{
-	
+
 	protected $title = "Delete Products";
 	protected $description = "Removes all Products and Categories from the database.";
-	
-	function run($request){
+
+	public function run($request){
 		if($request->getVar("sqldelete") == "1"){
 			$this->sqldelete();
 		}else{
 			$this->ormdelete();
 		}
 	}
-	
-	function ormdelete(){
+
+	public function ormdelete(){
 		//TODO: convert to batch actions to handle large data sets
 		if($allproducts = DataObject::get('Product')){
 			$productcount = 0;
@@ -40,8 +40,8 @@ class DeleteProductsTask extends BuildTask{
 			echo $categorycount." categories deleted";
 		}
 	}
-	
-	function sqldelete(){
+
+	public function sqldelete(){
 		$basetables = array(
 			'ProductCategory',
 			'Product',
@@ -69,5 +69,5 @@ class DeleteProductsTask extends BuildTask{
 			}
 		}
 	}
-	
+
 }

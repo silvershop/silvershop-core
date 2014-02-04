@@ -3,9 +3,9 @@
  * Base class for building steps for checkout processing
  */
 class CheckoutStep extends Extension{
-	
-	static $continue_anchor = "cont"; //indicates where to jump to on the page
-	
+
+	public static $continue_anchor = "cont"; //indicates where to jump to on the page
+
 	/**
 	 * Get the next step action
 	 * @return string|NULL
@@ -22,12 +22,12 @@ class CheckoutStep extends Extension{
 		}
 		return null;
 	}
-	
-	function NextStepLink($nextstep = null){
+
+	public function NextStepLink($nextstep = null){
 		if(!$nextstep){
 			$nextstep = $this->nextstep();
 		}
 		return $this->owner->Link($nextstep)."#".self::$continue_anchor;
 	}
-	
+
 }

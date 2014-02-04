@@ -15,7 +15,7 @@ if(class_exists("Widget")){
 		function Cart(){
 			return Controller::curr()->Cart();
 		}
-		
+
 	}
 
 }

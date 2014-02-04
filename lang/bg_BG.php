@@ -217,5 +217,3 @@ $lang['bg_BG']['ViewAllProducts.ss']['NOSUBJECTS'] = 'Няма нагласен�
 $lang['bg_BG']['ViewAllProducts.ss']['PRICE'] = 'Цена';
 $lang['bg_BG']['ViewAllProducts.ss']['PRODUCTID'] = 'Продукт ID';
 $lang['bg_BG']['ViewAllProducts.ss']['WEIGHT'] = 'Тежаст';
-
-?>

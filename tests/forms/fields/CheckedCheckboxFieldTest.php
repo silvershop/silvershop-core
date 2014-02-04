@@ -1,8 +1,8 @@
 <?php
 
 class CheckedCheckboxFieldTest extends SapphireTest{
-	
-	function testValidation(){
+
+	public function testValidation(){
 		$field = new CheckedCheckboxField("Name");
 		$field->setValue("");
 		$this->assertFalse($field->validate(new RequiredFields()));
@@ -11,5 +11,5 @@ class CheckedCheckboxFieldTest extends SapphireTest{
 		$field->setValue(1);
 		$this->assertTrue($field->validate(new RequiredFields()));
 	}
-	
-} 
+
+}

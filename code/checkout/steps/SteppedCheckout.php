@@ -1,7 +1,7 @@
 <?php
 /**
  * Stepped checkout provides multiple forms and actions for placing an order
- * 
+ *
  * @package shop
  * @subpackage steppedcheckout
  */
@@ -9,11 +9,11 @@ class SteppedCheckout extends Extension{
 
 	private static $first_step = null; //action to show on index
 	private static $steps = null;
-	
+
 	/**
-	 * Set up CheckoutPage_Controller decorators for managing steps 
+	 * Set up CheckoutPage_Controller decorators for managing steps
 	 */
-	static function setupSteps($steps = null){
+	public static function setupSteps($steps = null){
 		if(!is_array($steps)){
 			//default steps
 			$steps = array(
@@ -36,8 +36,8 @@ class SteppedCheckout extends Extension{
 		}
 		ShopConfig::config()->steps = $steps;
 	}
-	
-	function getSteps(){
+
+	public function getSteps(){
 		return ShopConfig::config()->steps;
 	}
 
@@ -45,7 +45,7 @@ class SteppedCheckout extends Extension{
 	/**
 	 * Redirect back to start of checkout if no cart started
 	 */
-	function onAfterInit(){
+	public function onAfterInit(){
 		$action = $this->owner->getRequest()->param('Action');
 		$steps = $this->getSteps();
 		if(!ShoppingCart::curr() && !empty($action) && isset($steps[$action])){
@@ -53,11 +53,11 @@ class SteppedCheckout extends Extension{
 			return;
 		}
 	}
-	
+
 	/**
 	 * Check if passed action is the same as the current step
 	 */
-	function IsCurrentStep($name){
+	public function IsCurrentStep($name){
 		if($this->owner->getAction() === $name){
 			return true;
 		}
@@ -66,38 +66,38 @@ class SteppedCheckout extends Extension{
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Check if passed action is for a step before current
 	 */
-	function IsPastStep($name){
+	public function IsPastStep($name){
 		return $this->compareActions($name,$this->owner->getAction()) < 0;
 	}
-	
+
 	/**
 	 * Check if passed action is for a step after current
 	 */
-	function IsFutureStep($name){
+	public function IsFutureStep($name){
 		return $this->compareActions($name,$this->owner->getAction()) > 0;
 	}
-	
+
 	/**
 	 * Get first step from stored steps
 	 */
-	function index(){
+	public function index(){
 		if(ShopConfig::config()->first_step){
 			return $this->owner->{ShopConfig::config()->first_step}();
 		}
 		return array();
 	}
-	
+
 	/**
 	 * Check if one step comes before or after the another
 	 */
 	private function compareActions($action1, $action2){
 		return $this->actionPos($action1) - $this->actionPos($action2);
 	}
-	
+
 	/**
 	 * Get the numerical position of a step
 	 */
@@ -110,5 +110,5 @@ class SteppedCheckout extends Extension{
 			$count++;
 		}
 	}
-	
+
 }

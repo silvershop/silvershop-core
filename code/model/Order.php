@@ -50,11 +50,11 @@ class Order extends DataObject {
 		'Modifiers' => 'OrderModifier',
 		'OrderStatusLogs' => 'OrderStatusLog'
 	);
-	
+
 	private static $defaults = array(
 		'Status' => 'Cart'
 	);
-	
+
 	private static $casting = array(
 		'FullBillingAddress' => 'Text',
 		'FullShippingAddress' => 'Text',
@@ -142,16 +142,16 @@ class Order extends DataObject {
 
 	private static $rounding_precision = 2;
 	private static $reference_id_padding = 5;
-	
+
 	public static function get_order_status_options() {
 		return singleton('Order')->dbObject('Status')->enumValues(false);
 	}
-	
+
 	/**
 	 * Create CMS fields for cms viewing and editing orders
-	 * Also note that some fields are introduced in OrdersAdmin_RecordController 
+	 * Also note that some fields are introduced in OrdersAdmin_RecordController
 	 */
-	function getCMSFields(){
+	public function getCMSFields(){
 		$fields = new FieldList(new TabSet('Root',new Tab('Main')));
 		$fs = "<div class=\"field\">";
 		$fe = "</div>";
@@ -185,14 +185,14 @@ class Order extends DataObject {
 		$fields->insertBefore(DateField::create("DateTo","Date to")
 			->setConfig('showcalendar',true), 'Status');
 		//get the array, to maniplulate name, and fullname seperately
-		$filters = $context->getFilters(); 
+		$filters = $context->getFilters();
 		$filters['DateFrom'] = GreaterThanFilter::create('Placed');
 		$filters['DateTo'] = LessThanFilter::create('Placed');
 		$context->setFilters($filters);
 
 		return $context;
 	}
-	
+
 	/**
 	 * Hack for swapping out relation list with OrderItemList
 	 */
@@ -205,13 +205,13 @@ class Order extends DataObject {
 			$components->setDataQuery($query);
 			$components = $components->forForeignID($this->ID);
 		}
-		return $components;		
+		return $components;
 	}
 
 	/**
 	 * Returns the subtotal of the items for this order.
 	 */
-	function SubTotal() {
+	public function SubTotal() {
 		$result = 0;
 		if($items = $this->Items()) {
 			foreach($items as $item){
@@ -220,22 +220,22 @@ class Order extends DataObject {
 		}
 		return $result;
 	}
-	
+
 	/**
 	 * Creates (if necessary) and calculates values for each modifier,
 	 * and subsequently the total of the order.
 	 * Caches to prevent recalculation, unless dirty.
-	 * 
+	 *
 	 * @return the final total
 	 * @todo remove empty modifiers? ...perhaps create some kind of 'cleanup' function?
 	 * @todo prevent this function from being run too many times
 	 */
-	function calculate(){
+	public function calculate(){
 		$runningtotal = $this->SubTotal();
 		$modifiertotal = 0;
 		$sort = 1;
 		$existingmodifiers = $this->Modifiers();
-		
+
 		if($this->IsCart()){
 			$modifierclasses = self::config()->modifiers;
 			//check if modifiers are even in use
@@ -263,7 +263,7 @@ class Order extends DataObject {
 					}
 				}
 			}
-			
+
 		}else{ //only use existing modifiers, if order has been placed
 			if($existingmodifiers){
 				foreach($existingmodifiers as $modifier){
@@ -278,12 +278,12 @@ class Order extends DataObject {
 		$this->Total = $runningtotal;
 		return $runningtotal;
 	}
-	
+
 	/**
 	 * Retrieve a modifier of a given class for this order.
-	 * Modifier will be retrieved from database if it already exists, 
+	 * Modifier will be retrieved from database if it already exists,
 	 * or created if it is always required.
-	 * 
+	 *
 	 * @param string $className
 	 * @param boolean $forcecreate - force the modifier to be created.
 	 */
@@ -305,33 +305,33 @@ class Order extends DataObject {
 				$modifier->OrderID = $this->ID;
 				$modifier->write();
 				$this->Modifiers()->add($modifier);
-				return $modifier;	
+				return $modifier;
 			}
 		}else{
 			user_error("Class \"$className\" does not exist.");
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Enforce rounding precision when setting total
 	 */
-	function setTotal($val){
+	public function setTotal($val){
 		$this->setField("Total", round($val, self::$rounding_precision));
 	}
-	
+
 	/**
 	 * Get final value of order.
 	 * Retrieves value from DataObject's record array.
 	 */
-	function Total(){
+	public function Total(){
 		return $this->getField("Total");
 	}
-	
+
 	/**
 	 * Alias for Total.
 	 */
-	function GrandTotal(){
+	public function GrandTotal(){
 		return $this->Total();
 	}
 
@@ -339,14 +339,14 @@ class Order extends DataObject {
 	 * Calculate how much is left to be paid on the order.
 	 * Enforces rounding precision.
 	 */
-	function TotalOutstanding(){
+	public function TotalOutstanding(){
 		return round($this->GrandTotal() - $this->TotalPaid(), self::config()->rounding_precision);
 	}
-	
+
 	/**
 	 * Get the link for finishing order processing.
 	 */
-	function Link() {
+	public function Link() {
 		if(Member::currentUser()){
 			return Controller::join_links(AccountPage::find_link(),'order',$this->ID);
 		}
@@ -359,7 +359,7 @@ class Order extends DataObject {
 	 *
 	 * @return boolean
 	 */
-	function canCancel() {
+	public function canCancel() {
 		switch($this->Status) {
 			case 'Unpaid' : return self::config()->cancel_before_payment;
 			case 'Paid' : return self::config()->cancel_before_processing;
@@ -368,10 +368,10 @@ class Order extends DataObject {
 			default : return false;
 		}
 	}
-	
+
 	/**
 	 * Check if an order can be paid for.
-	 * 
+	 *
 	 * @return boolean
 	 */
 	public function canPay($member = null){
@@ -380,19 +380,19 @@ class Order extends DataObject {
 		}
 		return false;
 	}
-	
+
 	/*
 	 * Prevent deleting orders.
-	 * 
+	 *
 	 * @return boolean
 	 */
 	public function canDelete($member = null) {
 		return false;
 	}
-	
+
 	/**
 	 * Check if an order can be edited.
-	 * 
+	 *
 	 * @return boolean
 	 */
 	public function canEdit($member = null) {
@@ -401,7 +401,7 @@ class Order extends DataObject {
 
 	/**
 	 * Prevent standard creation of orders.
-	 * 
+	 *
 	 * @return boolean
 	 */
 	public function canCreate($member = null) {
@@ -414,7 +414,7 @@ class Order extends DataObject {
 	 *
 	 * @return string
 	 */
-	function Currency() {
+	public function Currency() {
 		if(class_exists('Payment')) {
 			return ShopConfig::get_site_currency();
 		}
@@ -423,7 +423,7 @@ class Order extends DataObject {
 	/**
 	 * Get the latest email for this order.
 	 */
-	function getLatestEmail(){
+	public function getLatestEmail(){
 		if($this->MemberID && ($this->Member()->LastEdited > $this->LastEdited || !$this->Email)){
 			return $this->Member()->Email;
 		}
@@ -433,20 +433,20 @@ class Order extends DataObject {
 	/**
 	 * Gets the name of the customer.
 	 */
-	function getName(){
+	public function getName(){
 		$firstname = $this->FirstName ? $this->FirstName : $this->Member()->FirstName;
 		$surname = $this->FirstName ? $this->Surname : $this->Member()->Surname;
 		return implode(" ",array_filter(array($firstname,$surname)));
 	}
 
-	function getTitle(){
+	public function getTitle(){
 		return $this->Reference." - ".$this->dbObject('Placed')->Nice();
 	}
-	
+
 	/**
 	 * Get shipping address, or member default shipping address.
 	 */
-	function getShippingAddress(){
+	public function getShippingAddress(){
 		if($address = $this->ShippingAddress()){
 			return $address;
 		}elseif($this->Member() && $address = $this->Member()->DefaultShippingAddress()){
@@ -459,7 +459,7 @@ class Order extends DataObject {
 	 * Get billing address, if marked to use seperate address, otherwise use shipping address,
 	 * or the member default billing address.
 	 */
-	function getBillingAddress(){
+	public function getBillingAddress(){
 		if(!$this->SeparateBillingAddress && $this->ShippingAddressID === $this->BillingAddressID){
 			return $this->getShippingAddress();
 		}elseif($address = $this->BillingAddress()){
@@ -475,7 +475,7 @@ class Order extends DataObject {
 	/**
 	 * Will update payment status to "Paid if there is no outstanding amount".
 	 */
-	function updatePaymentStatus(){
+	public function updatePaymentStatus(){
 		if($this->GrandTotal() > 0 && $this->TotalOutstanding() <= 0){
 			//TODO: only run this if it is setting to Paid, and not cancelled or similar
 			$this->Status = 'Paid';
@@ -489,7 +489,7 @@ class Order extends DataObject {
 	 *
 	 * @return boolean
 	 */
-	function IsSent() {
+	public function IsSent() {
 		return $this->Status == 'Sent';
 	}
 
@@ -499,7 +499,7 @@ class Order extends DataObject {
 	 *
 	 * @return boolean
 	 */
-	function IsProcessing() {
+	public function IsProcessing() {
 		return $this->IsSent() || $this->Status == 'Processing';
 	}
 
@@ -510,18 +510,18 @@ class Order extends DataObject {
 	 *
 	 * @return boolean
 	 */
-	function IsPaid() {
+	public function IsPaid() {
 		return $this->IsProcessing() || $this->Status == 'Paid';
 	}
 
-	function IsCart(){
+	public function IsCart(){
 		return $this->Status == 'Cart';
 	}
-	
+
 	/**
 	 * Create a unique reference identifier string for this order.
 	 */
-	function generateReference(){
+	public function generateReference(){
 		$reference = str_pad($this->ID,self::$reference_id_padding,'0',STR_PAD_LEFT);
 		$this->extend('generateReference',$reference);
 		$candidate = $reference;
@@ -533,28 +533,28 @@ class Order extends DataObject {
 		}
 		$this->Reference = $candidate;
 	}
-	
+
 	/**
 	 * Get the reference for this order, or fall back to order ID.
 	 */
-	function getReference(){
+	public function getReference(){
 		return $this->getField('Reference') ? $this->getField('Reference') : $this->ID;
 	}
-	
+
 	/**
 	 * Return a link to the {@link CheckoutPage} instance
 	 * that exists in the database.
 	 *
 	 * @return string
 	 */
-	function checkoutLink() {
+	public function checkoutLink() {
 		return CheckoutPage::find_link();
 	}
-	
+
 	/**
 	 * Force creating an order reference
 	 */
-	function onBeforeWrite(){
+	public function onBeforeWrite(){
 		parent::onBeforeWrite();
 		if(!$this->getField("Reference") && in_array($this->Status,self::$placed_status)){
 			$this->generateReference();
@@ -564,7 +564,7 @@ class Order extends DataObject {
 	/**
 	 * delete attributes, statuslogs, and payments
 	 */
-	function onBeforeDelete(){
+	public function onBeforeDelete(){
 		$this->Items()->removeAll();
 		$this->Modifiers()->removeAll();
 		$this->OrderStatusLogs()->removeAll();
@@ -572,7 +572,7 @@ class Order extends DataObject {
 		parent::onBeforeDelete();
 	}
 
-	function debug(){
+	public function debug(){
 		$val = "<div class='order'><h1>$this->class</h1>\n<ul>\n";
 		if($this->record) foreach($this->record as $fieldName => $fieldVal) {
 			$val .= "\t<li>$fieldName: " . Debug::text($fieldVal) . "</li>\n";
@@ -597,8 +597,8 @@ class Order extends DataObject {
 			$val .= "</ul>";
 		}
 		$val .= "</div></div>";
-			
+
 		return $val;
 	}
-	
+
 }

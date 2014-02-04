@@ -1,10 +1,10 @@
 <?php
 
 class OrderActionsFormTest extends FunctionalTest{
-	
+
 	protected static $fixture_file = "shop/tests/fixtures/shop.yml";
-	
-	function testForm() {
+
+	public function testForm() {
 
 		$order = $this->objFromFixture("Order", "unpaid");
 		OrderManipulation::add_session_order($order);
@@ -23,5 +23,5 @@ class OrderActionsFormTest extends FunctionalTest{
 		$this->assertEquals(1, $order->Payments()->count());
 
 	}
-	
+
 }

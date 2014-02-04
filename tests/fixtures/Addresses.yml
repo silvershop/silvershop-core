@@ -11,7 +11,7 @@ Address:
     anz1010:
         Country:    NZ
         State:      Auckland
-        PostalCode: 1010    
+        PostalCode: 1010
     #a cross-section of international addresses
     #sourced from: http://www.bitboost.com/ref/international-address-formats.html
     bukhp193eq:
@@ -23,7 +23,7 @@ Address:
        PostalCode:  'HP19 3EQ'
        Country:     UK
     #'Uses 'PostCode' instead of 'PostalCode','Territory' instaed of 'State', and 'District' instead of 'City'
-    sau5024: 
+    sau5024:
         Name:       'MR W HEISENBERG'
         Address2:   'U 235'
         Address:    '201-203 BROADWAY AVE'
@@ -50,7 +50,7 @@ Address:
         Name:       NISWANDEE
         Company:    BITBOOST
         Address:    'POB 65502'
-        City:       TUCSON 
+        City:       TUCSON
         State:      ARIZONA
         ZipCode:    85728
         Country:    US

@@ -6,11 +6,11 @@
 
 class OrderModifierTest extends FunctionalTest {
 
-	static $fixture_file = 'shop/tests/fixtures/shop.yml';
-	static $disable_theme = true;
-	static $use_draft_site = true;
+	public static $fixture_file = 'shop/tests/fixtures/shop.yml';
+	public static $disable_theme = true;
+	public static $use_draft_site = true;
 
-	function setUp() {
+	public function setUp() {
 		parent::setUp();
 		ShopTest::setConfiguration();
 		Order::config()->modifiers = array(
@@ -25,13 +25,13 @@ class OrderModifierTest extends FunctionalTest {
 		$this->socks->publish('Stage','Live');
 	}
 
-	function testModifierCalculation(){
+	public function testModifierCalculation(){
 		$order = $this->createOrder();
 		$order->calculate();
 		$this->assertEquals(510, $order->Total); //Total with 25% tax
 	}
-	
-	function createOrder(){
+
+	public function createOrder(){
 		$order = new Order();
 		$order->write();
 		$item1a = $this->mp3player->createItem(2);

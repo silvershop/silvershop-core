@@ -15,7 +15,7 @@ class ProductCatalogAdmin extends ModelAdmin {
 		"Product","ProductCategory","ProductAttributeType"
 	);
 	private static $model_importers = array(
-		"Product" => "ProductBulkLoader"	
+		"Product" => "ProductBulkLoader"
 	);
 
 }

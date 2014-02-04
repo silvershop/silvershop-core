@@ -1,16 +1,16 @@
 <?php
 /**
  * Adds extra fields and relationships to Products for variations support.
- * 
+ *
  * @package shop
  * @subpackage variations
  */
 class ProductVariationsExtension extends DataExtension{
-	
+
 	private static $has_many = array(
 		'Variations' => 'ProductVariation'
 	);
-	
+
 	private static $many_many = array(
 		'VariationAttributeTypes' => 'ProductAttributeType'
 	);
@@ -40,7 +40,7 @@ class ProductVariationsExtension extends DataExtension{
 		}
 	}
 
-	function PriceRange(){
+	public function PriceRange(){
 		$variations = $this->owner->Variations();
 		if(!$variations->exists() || !$variations->Count()){
 			return null;
@@ -71,7 +71,7 @@ class ProductVariationsExtension extends DataExtension{
 	 * @param array $attributes
 	 * @return NULL
 	 */
-	function getVariationByAttributes(array $attributes){
+	public function getVariationByAttributes(array $attributes){
 		if(!is_array($attributes)) return null;
 		$keyattributes = array_keys($attributes);
 		$id = $keyattributes[0];
@@ -93,11 +93,11 @@ class ProductVariationsExtension extends DataExtension{
 
 	/**
 	 * Generates variations based on selected attributes.
-	 * 
+	 *
 	 * @param ProductAttributeType $attributetype
 	 * @param array $values
 	 */
-	function generateVariationsFromAttributes(ProductAttributeType $attributetype, array $values){
+	public function generateVariationsFromAttributes(ProductAttributeType $attributetype, array $values){
 		//TODO: introduce transactions here, in case objects get half made etc
 		//if product has variation attribute types
 		if(is_array($values)){
@@ -136,16 +136,16 @@ class ProductVariationsExtension extends DataExtension{
 			}
 		}
 	}
-	
+
 	/**
 	 * Get all the values for a given attribute type,
 	 * based on this product's variations.
 	 */
-	function possibleValuesForAttributeType($type){
+	public function possibleValuesForAttributeType($type){
 		if(!is_numeric($type))
 			$type = $type->ID;
 		if(!$type) return null;
-		
+
 		return ProductAttributeValue::get()
 			->innerJoin("ProductVariation_AttributeValues",
 				"\"ProductAttributeValue\".\"ID\" = \"ProductVariation_AttributeValues\".\"ProductAttributeValueID\""
@@ -157,7 +157,7 @@ class ProductVariationsExtension extends DataExtension{
 	/**
 	 * Make sure variations are deleted with product.
 	 */
-	function onAfterDelete(){
+	public function onAfterDelete(){
 		$remove = false;
 		// if a record is staged or live, leave it's variations alone.
 		if(!property_exists($this, 'owner')) {
@@ -169,7 +169,7 @@ class ProductVariationsExtension extends DataExtension{
 						->byID($this->owner->ID);
 			if(!$staged && !$live) {
 				$remove = true;
-			}	
+			}
 		}
 		if($remove) {
 			foreach($this->owner->Variations() as $variation){
@@ -178,8 +178,8 @@ class ProductVariationsExtension extends DataExtension{
 			}
 		}
 	}
-	
-	function contentcontrollerInit($controller){
+
+	public function contentcontrollerInit($controller){
 		if($this->owner->Variations()->exists()){
 			$controller->formclass = 'VariationForm';
 		}

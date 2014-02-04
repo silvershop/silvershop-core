@@ -10,7 +10,7 @@ class RecalculateAllOrdersTask extends BuildTask {
 	protected $title = "Recalculate All Orders";
 	protected $description = "Runs all price calculation functions on all orders.";
 
-	function run($request){
+	public function run($request){
 		$br = Director::is_cli() ? "\n" : "<br/>";
 		$verbose = true;
 

@@ -1,19 +1,19 @@
 <?php
 
 class CheckoutStep_ContactDetails extends CheckoutStep{
-	
-	static $allowed_actions = array(
+
+	public static $allowed_actions = array(
 		'contactdetails',
 		'ContactDetailsForm'
 	);
-	
-	function contactdetails(){
+
+	public function contactdetails(){
 		return array(
 			'OrderForm' => $this->ContactDetailsForm()
 		);
 	}
-	
-	function ContactDetailsForm(){
+
+	public function ContactDetailsForm(){
 		$form = new CheckoutForm($this->owner, 'ContactDetailsForm', $this->checkoutconfig());
 		$form->setActions(new FieldList(
 			new FormAction("setcontactdetails","Continue")
@@ -22,16 +22,16 @@ class CheckoutStep_ContactDetails extends CheckoutStep{
 
 		return $form;
 	}
-	
-	function setcontactdetails($data,$form){
+
+	public function setcontactdetails($data,$form){
 		$this->checkoutconfig()->setData($form->getData());
 		$this->owner->redirect($this->NextStepLink());
 	}
 
-	function checkoutconfig(){
+	public function checkoutconfig(){
 		$config = new CheckoutComponentConfig(ShoppingCart::curr());
 		$config->addComponent(new CustomerDetailsCheckoutComponent());
 		return $config;
 	}
-	
+
 }

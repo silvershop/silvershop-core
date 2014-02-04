@@ -4,21 +4,21 @@
  * Record grouping is also supported.
  */
 class ShopPeriodReport extends SS_Report{
-	
+
 	protected $dataClass = 'Order';
 	protected $periodfield = "Created";
 	protected $grouping = false;
 	protected $pagesize = 20;
-	
-	function title(){
+
+	public function title(){
 		return _t($this->class.".TITLE",$this->title);
 	}
-	
-	function description(){
+
+	public function description(){
 		return _t($this->class.".DESCRIPTION",$this->description);
 	}
-	
-	function parameterFields() {
+
+	public function parameterFields() {
 		$dateformat = Member::currentUser()->getDateFormat();
 		$fields = new FieldList(
 			$start = new DateField("StartPeriod","Start ($dateformat)"),
@@ -38,22 +38,22 @@ class ShopPeriodReport extends SS_Report{
 		$end->setConfig("showcalendar", true); //Not working!
 		return $fields;
 	}
-	
-	function canView($member = null){
+
+	public function canView($member = null){
 		if(get_class($this) == "ShopPeriodReport"){
 			return false;
 		}
 		return parent::canView($member);
 	}
-	
-	
-	function getReportField(){
+
+
+	public function getReportField(){
 		$field = parent::getReportField();
 		$field->getConfig()->removeComponentsByType('GridFieldPaginator');
 		return $field;
 	}
-	
-	function sourceRecords($params){
+
+	public function sourceRecords($params){
 		isset($params['Grouping']) || $params['Grouping'] = "Month";
 		$output = new ArrayList();
 		$query = $this->query($params);
@@ -74,8 +74,8 @@ class ShopPeriodReport extends SS_Report{
 		}
 		return $output;
 	}
-	
-	function query($params){
+
+	public function query($params){
 		$query = new ShopReport_Query();
 		$query->selectField($this->periodfield, 'FilterPeriod');
 		$query->setFrom('"' . $this->dataClass . '"');
@@ -120,12 +120,12 @@ class ShopPeriodReport extends SS_Report{
 		}
 		return $query;
 	}
-	
+
 }
 
 class ShopReport_Query extends SQLQuery{
 
-	function canSortBy($fieldName) {
+	public function canSortBy($fieldName) {
 		return true;
 	}
 }

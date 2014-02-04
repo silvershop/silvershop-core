@@ -11,7 +11,7 @@ class OrdersAdmin extends ModelAdmin{
 	private static $menu_priority = 1;
 	private static $menu_icon = 'shop/images/icons/order-admin.png';
 
-	private  static $managed_models = array(
+	private static $managed_models = array(
 		'Order' => array(
 			'title' => 'Orders'
 		)

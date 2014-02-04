@@ -8,7 +8,7 @@ class ShopQuantityField extends ViewableData{
 	protected $template = 'ShopQuantityField';
 	protected $buyable;
 
-	function __construct($object, $parameters = null){
+	public function __construct($object, $parameters = null){
 		if($object instanceof Buyable){
 			$this->item = ShoppingCart::singleton()->get($object,$parameters);
 			 //provide a 0-quantity facade item if there is no such item in cart
@@ -28,26 +28,26 @@ class ShopQuantityField extends ViewableData{
 		//TODO: include javascript for easy update
 	}
 
-	function setClasses($newclasses, $overwrite = false){
+	public function setClasses($newclasses, $overwrite = false){
 		if($overwrite)
 			$this->classes = array_merge($this->classes,$newclasses);
 		else
 			$this->classes = $newclasses;
 	}
-	
-	function setTemplate($template){
+
+	public function setTemplate($template){
 		$this->template = $template;
 	}
 
-	function Item() {
+	public function Item() {
 		return $this->item;
 	}
 
-	function Quantity() {
+	public function Quantity() {
 		return $this->item->Quantity;
 	}
 
-	function Field() {
+	public function Field() {
 		$qtyArray = array();
 		for($r=1; $r<= $this->max; $r++){
 			$qtyArray[$r] = $r;
@@ -55,26 +55,26 @@ class ShopQuantityField extends ViewableData{
 		return new NumericField($this->MainID() . '_Quantity',"Qty",$this->item->Quantity);
 	}
 
-	function MainID(){
+	public function MainID(){
 		return get_class($this->item).'_DB_'.$this->item->ID;
 	}
-	
-	function IncrementLink(){
+
+	public function IncrementLink(){
 		return $this->item->addLink();
 	}
-	
-	function DecrementLink(){
+
+	public function DecrementLink(){
 		return $this->item->removeLink();
 	}
-	
-	function forTemplate(){
-		return $this->renderWith($this->template);		
+
+	public function forTemplate(){
+		return $this->renderWith($this->template);
 	}
 
 	/**
 	 * Used for storing the quantity update link for ajax use.
 	 */
-	function AJAXLinkHiddenField(){
+	public function AJAXLinkHiddenField(){
 		if($quantitylink = $this->item->setquantityLink()){
 			$attributes = array(
 				'type' => 'hidden',
@@ -82,7 +82,7 @@ class ShopQuantityField extends ViewableData{
 				'name' => $this->MainID() . '_Quantity_SetQuantityLink',
 				'value' => $quantitylink
 			);
-			$formfield = new FormField('hack'); 
+			$formfield = new FormField('hack');
 			return $formfield->createTag('input', $attributes);
 		}
 	}
@@ -95,16 +95,16 @@ class ShopQuantityField extends ViewableData{
  */
 
 class DropdownShopQuantityField extends ShopQuantityField{
-	
+
 	protected $template = 'DropdownShopQuantityField';
 	protected $max = 100;
-	
-	function Field() {
+
+	public function Field() {
 		$qtyArray = array();
 		for($r=1; $r<= $this->max; $r++){
 			$qtyArray[$r] = $r;
 		}
 		return new DropdownField($this->MainID() . '_Quantity',"Qty",$qtyArray,($this->item->Quantity) ? $this->item->Quantity : "");
 	}
-	
+
 }

@@ -3,19 +3,19 @@
  * Additional functions for Item lists.
  */
 class OrderItemList extends HasManyList{
-	
-	function Quantity(){
+
+	public function Quantity(){
 		return $this->Sum('Quantity');
 	}
-	
-	function Plural(){
+
+	public function Plural(){
 		return $this->Quantity() > 1;
 	}
-	
+
 	/**
 	 * Sums up all of desired field for items, and multiply by quantity.
 	 * Optionally sum product field instead.
-	 * 
+	 *
 	 * @param $field - field to sum
 	 * @param boolean $onproduct - sum from product or not
 	 * @return number - sum total of field
@@ -32,5 +32,5 @@ class OrderItemList extends HasManyList{
 		}
 		return $total;
 	}
-	
+
 }

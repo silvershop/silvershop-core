@@ -7,46 +7,46 @@
  */
 class ShopTest extends FunctionalTest {
 
-	static $fixture_file = 'shop/tests/fixtures/shop.yml';
-	static $disable_theme = true;
-	static $use_draft_site = true;
+	public static $fixture_file = 'shop/tests/fixtures/shop.yml';
+	public static $disable_theme = true;
+	public static $use_draft_site = true;
 
-	function setUp() {
+	public function setUp() {
 		parent::setUp();
 		$this->assertTrue(class_exists('Payment'), 'Payment module is installed.');
 	}
 
-	function testExampleConfig(){
+	public function testExampleConfig(){
 		//TODO: get example from yaml
 	}
 
-	function testCanViewCheckoutPage() {
+	public function testCanViewCheckoutPage() {
 		$this->get('checkout');
 		//TODO: check order hasn't started
 	}
-	
-	function testFindLink() {
+
+	public function testFindLink() {
 		$this->checkoutpage = $this->objFromFixture('CheckoutPage', 'checkout');
 		$this->checkoutpage->publish('Stage','Live');
 		$link = CheckoutPage::find_link();
 		$this->assertEquals(Director::baseURL() . 'checkout/', $link, 'find_link() returns the correct link to checkout.');
 	}
 
-	function testCanViewProductPage() {
+	public function testCanViewProductPage() {
 		$p1a = $this->objFromFixture('Product', 'tshirt');
 		$p2a = $this->objFromFixture('Product', 'socks');
 		$this->get(Director::makeRelative($p1a->Link()));
 		$this->get(Director::makeRelative($p2a->Link()));
 	}
-	
-	function testCanViewProductCategoryPage() {
+
+	public function testCanViewProductCategoryPage() {
 		$clothing = $this->objFromFixture('ProductCategory', 'clothing');
 		$musicplayers = $this->objFromFixture('ProductCategory', 'musicplayers');
 		$this->get(Director::makeRelative($clothing->Link()));
 		$this->get(Director::makeRelative($musicplayers->Link()));
 	}
 
-	function old_testCanViewAccountPage() {
+	public function old_testCanViewAccountPage() {
 		/* If we're not logged in we get directed to the log-in page */
 		$this->get('account/');
 		$this->assertPartialMatchBySelector('p.message', array(
@@ -58,7 +58,7 @@ class ShopTest extends FunctionalTest {
 		$this->assertPartialMatchBySelector('#PastOrders h3', array('Your Order History'));
 	}
 
-	static function setConfiguration(){
+	public static function setConfiguration(){
 		$ds = DIRECTORY_SEPARATOR;
 		include(BASE_PATH.$ds.SHOP_DIR.$ds.'tests'.$ds.'test_config.php');
 	}

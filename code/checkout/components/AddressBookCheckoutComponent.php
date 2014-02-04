@@ -8,7 +8,7 @@
  */
 abstract class AddressBookCheckoutComponent extends AddressCheckoutComponent{
 
-	function getFormFields(Order $order){
+	public function getFormFields(Order $order){
 		$fields = parent::getFormFields($order);
 		if($existingaddressfields = $this->getExistingAddressFields()){
 			$existingaddressfields->merge($fields);
@@ -18,10 +18,10 @@ abstract class AddressBookCheckoutComponent extends AddressCheckoutComponent{
 
 		return $fields;
 	}
-	
+
 	/**
 	 * Allow choosing from an existing address
-	 * @return FieldList|null fields for 
+	 * @return FieldList|null fields for
 	 */
 	public function getExistingAddressFields(){
 		$member = Member::currentUser();
@@ -43,7 +43,7 @@ abstract class AddressBookCheckoutComponent extends AddressCheckoutComponent{
 	public function validateData(Order $order, array $data){
 		//TODO: if existing address selected, check that it exists in $member->AddressBook
 	}
-	
+
 
 }
 

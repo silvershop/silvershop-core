@@ -4,8 +4,8 @@
 * @subpackage tests
 */
 class SimpleShippingModifierTest extends SapphireTest{
-	
-	function setUp(){
+
+	public function setUp(){
 		parent::setUp();
 		SimpleShippingModifier::config()->default_charge = 10;
 		SimpleShippingModifier::config()->charges_for_countries = array(
@@ -13,11 +13,11 @@ class SimpleShippingModifierTest extends SapphireTest{
 			'UK' => 20
 		);
 	}
-	
-	function testShippingCalculation() {
+
+	public function testShippingCalculation() {
 		$modifier = new SimpleShippingModifier();
 		$this->assertEquals(10,$modifier->value(100));
 		$this->assertEquals(110,$modifier->modify(100));
 	}
-	
+
 }

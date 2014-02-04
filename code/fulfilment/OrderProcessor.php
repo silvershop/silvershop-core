@@ -2,7 +2,7 @@
 /**
  * Handles tasks to be performed on orders, particularly placing and processing/fulfilment.
  * Placing, Emailing Reciepts, Status Updates, Printing, Payments - things you do with a completed order.
- * 
+ *
  * @package shop
  * @todo split into different classes relating to individual concerns.
  * @todo bring over status updating code
@@ -18,7 +18,7 @@ class OrderProcessor{
 	 * Makes creating a processor easier.
 	 * @param Order $order
 	 */
-	public static function create(Order $order) {		
+	public static function create(Order $order) {
 		return new OrderProcessor($order);
 	}
 	/**
@@ -95,7 +95,7 @@ class OrderProcessor{
 			$this->error(_t("OrderProcessor.NULL", "Order does not exist."));
 			return false;
 		}
-		//order status is applicable	
+		//order status is applicable
 		if(!$order->IsCart()){
 			$this->error(_t("OrderProcessor.NOTCART", "Order is not a cart."));
 			return false;
@@ -110,7 +110,7 @@ class OrderProcessor{
 		//modifiers have been calculated
 		return true;
 	}
-	
+
 	/**
 	 * Create a payment model, and provide link to redirect to external gateway,
 	 * or redirect to order link.
@@ -165,7 +165,7 @@ class OrderProcessor{
 	/**
 	 * Create a new payment for an order
 	 */
-	function createPayment($gateway) {
+	public function createPayment($gateway) {
 		if(!GatewayInfo::is_supported($gateway)) {
 			$this->error(_t("PaymentProcessor.INVALIDGATEWAY", "`$gateway` isn't a valid payment gateway."));
 			return false;
@@ -207,7 +207,7 @@ class OrderProcessor{
 				$this->order->extend('onPaid'); //all payment is settled
 			}
 		}
-	}	
+	}
 
 	/**
 	* Send a mail of the order to the client (and another to the admin).

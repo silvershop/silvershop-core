@@ -14,7 +14,7 @@ class OrderModifier extends OrderAttribute {
 		'Type' => "Enum('Chargable,Deductable,Ignored','Chargable')",
 		'Sort' => 'Int'
 	);
-	
+
 	private static $defaults = array(
 		'Type' => 'Chargable'
 	);
@@ -48,28 +48,28 @@ class OrderModifier extends OrderAttribute {
 	private static $plural_name = "Modifiers";
 
 	private static $default_sort = "\"Sort\" ASC, \"Created\" ASC";
-	
+
 	/**
 	* Specifies whether this modifier is always required in an order.
 	*/
 	public function required(){
 		return true;
 	}
-	
+
 	/**
-	 * Modifies the incoming value by adding, 
+	 * Modifies the incoming value by adding,
 	 * subtracting or ignoring the value this modifier calculates.
-	 * 
+	 *
 	 * Sets $this->Amount to the calculated value;
 	 * @param $subtotal - running total to be modified
 	 * @param $forcecalculation - force calculating the value, if order isn't in cart
-	 * 
+	 *
 	 * @return $subtotal - updated subtotal
 	 */
 	public function modify($subtotal,$forcecalculation = false){
 		$order = $this->Order();
 		$value = ($order->IsCart() || $forcecalculation) ? $this->value($subtotal) : $this->Amount;
-		switch($this->Type){			
+		switch($this->Type){
 			case "Chargable":
 				$subtotal += $value;
 				break;
@@ -83,7 +83,7 @@ class OrderModifier extends OrderAttribute {
 		$this->Amount = $value;
 		return $subtotal;
 	}
-	
+
 	/**
 	 * Calculates value to store, based on incoming running total.
 	 * @param float $incoming the incoming running total.
@@ -91,7 +91,7 @@ class OrderModifier extends OrderAttribute {
 	public function value($incoming){
 		return 0;
 	}
-	
+
 	/**
 	 * Check if the modifier should be in the cart.
 	 */
@@ -113,22 +113,22 @@ class OrderModifier extends OrderAttribute {
 	 * the amount from $this->LiveAmount() which is a
 	 * calculation based on the order and it's items.
 	 */
-	function Amount() {
+	public function Amount() {
 		return $this->Amount;
 	}
-	
+
 	/**
 	 * Monetary to use in templates.
 	 */
-	function TableValue() {
+	public function TableValue() {
 		return $this->Total();
 	}
-	
+
 	/**
 	* Produces a title for use in templates.
 	* @return string
 	*/
-	function TableTitle(){
+	public function TableTitle(){
 		return $this->i18n_singular_name();
 	}
 
@@ -137,32 +137,32 @@ class OrderModifier extends OrderAttribute {
 	*
 	* @return boolean
 	*/
-	function Total() {
+	public function Total() {
 		if($this->Type == "Deductable"){
 			return $this->Amount * -1;
 		}
 		return $this->Amount;
 	}
-	
+
 	/**
 	 * Checks if this modifier has type = Chargable
-	 * 
+	 *
 	 * @return boolean
 	 */
-	function IsChargable() {
+	public function IsChargable() {
 		return $this->Type == "Chargable";
 	}
-	
+
 	/**
 	 * Checks if the modifier can be removed.
 	 * @return boolean
 	 */
-	function canRemove() {
+	public function canRemove() {
 		return false;
 	}
 
-	function removeLink() {
+	public function removeLink() {
 		return CheckoutPage_Controller::remove_modifier_link($this->ID);
 	}
-	
+
 }

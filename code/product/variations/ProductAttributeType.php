@@ -43,7 +43,7 @@ class ProductAttributeType extends DataObject{
 		return $type;
 	}
 
-	function getCMSFields(){
+	public function getCMSFields(){
 		$fields = new FieldList(
 			TextField::create("Name"),
 			TextField::create("Label")
@@ -64,18 +64,18 @@ class ProductAttributeType extends DataObject{
 		return $fields;
 	}
 
-	function addValues(array $values){
+	public function addValues(array $values){
 		$avalues = $this->convertArrayToValues($values);
 		$this->Values()->addMany($avalues);
 	}
 
 	/**
 	 * Finds or creates values for this type.
-	 * 
+	 *
 	 * @param array $values
 	 * @return DataObjectSet
 	 */
-	function convertArrayToValues(array $values){
+	public function convertArrayToValues(array $values){
 		$set = new ArrayList();
 		foreach($values as $value){
 			$val = $this->Values()->find('Value',$value);
@@ -90,7 +90,7 @@ class ProductAttributeType extends DataObject{
 		return $set;
 	}
 
-	function getDropDownField($emptystring = null, $values = null){
+	public function getDropDownField($emptystring = null, $values = null){
 		$values = ($values) ? $values : $this->Values('','Sort ASC, Value ASC');
 		if($values->exists()){
 			$field = new DropdownField('ProductAttributes['.$this->ID.']',$this->Name,$values->map('ID','Value'));
@@ -98,21 +98,21 @@ class ProductAttributeType extends DataObject{
 				$field->setEmptyString($emptystring);
 			return $field;
 		}
-		
+
 		return null;
 	}
-	
-	function onBeforeWrite(){
+
+	public function onBeforeWrite(){
 		parent::onBeforeWrite();
 		if($this->Name && !$this->Label){
 			$this->Label = $this->Name;
 		}elseif($this->Label && !$this->Name){
 			$this->Name = $this->Label;
 		}
-		
+
 	}
-	
-	function canDelete($member = null){
+
+	public function canDelete($member = null){
 		//TODO: prevent deleting if has been used
 		return true;
 	}

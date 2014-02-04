@@ -54,7 +54,7 @@ class OrderStatusLog extends DataObject {
 		return false;
 	}
 
-	function onBeforeSave() {
+	public function onBeforeSave() {
 		if(!$this->isInDB()) {
 			//TO DO - this does not seem to work
 			$this->AuthorID = Member::currentUser()->ID;
@@ -62,12 +62,12 @@ class OrderStatusLog extends DataObject {
 		parent::onBeforeSave();
 	}
 
-	function populateDefaults() {
+	public function populateDefaults() {
 		parent::populateDefaults();
 		$this->updateWithLastInfo();
 	}
 
-	function onBeforeWrite() {
+	public function onBeforeWrite() {
 		parent::onBeforeWrite();
 		if(!$this->AuthorID && $m = Member::currentUser()) {
 			$this->AuthorID = $m->ID;
@@ -80,7 +80,7 @@ class OrderStatusLog extends DataObject {
 		}
 	}
 
-	function onAfterWrite(){
+	public function onAfterWrite(){
 		if($this->SentToCustomer) {
 			$this->order()->sendStatusChange($this->Title, $this->Note);
 		}

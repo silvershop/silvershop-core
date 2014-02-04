@@ -9,7 +9,7 @@
  *  - provide form fields
  *  - validate entered data
  *  - save data from given form fields
- *  
+ *
  */
 abstract class CheckoutComponent {
 
@@ -19,7 +19,7 @@ abstract class CheckoutComponent {
 	/**
 	 * Get form fields for manipulating the current order,
 	 * according to the responsibilty of this component.
-	 * 
+	 *
 	 * @param  Form $form the form being updated
 	 * @throws Exception
 	 * @return FieldList fields for manipulating order
@@ -30,7 +30,7 @@ abstract class CheckoutComponent {
 	 * Is this data valid for saving into an order?
 	 *
 	 * This function should never rely on form.
-	 * 
+	 *
 	 * @param array $data data to be validated
 	 * @throws ValidationException
 	 * @return boolean the data is valid
@@ -48,7 +48,7 @@ abstract class CheckoutComponent {
 	 * Set the model data for this component.
 	 *
 	 * This function should never rely on form.
-	 * 
+	 *
 	 * @param array $data data to be saved into order object
 	 * @throws Exception
 	 * @return Order the updated order
@@ -83,7 +83,7 @@ class CheckoutComponent_Namespaced extends CheckoutComponent{
 
 	protected $proxy;
 
-	function __construct(CheckoutComponent $component){
+	public function __construct(CheckoutComponent $component){
 		$this->proxy = $component;
 	}
 

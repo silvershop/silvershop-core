@@ -34,7 +34,7 @@ class CheckoutComponentValidator extends RequiredFields {
 		return $valid;
 	}
 
-	function fieldHasError($field) {
+	public function fieldHasError($field) {
 		if($this->errors){
 			foreach($this->errors as $error){
 				if($error['fieldName'] === $field){
@@ -44,5 +44,5 @@ class CheckoutComponentValidator extends RequiredFields {
 		}
 		return false;
 	}
-	
+
 }

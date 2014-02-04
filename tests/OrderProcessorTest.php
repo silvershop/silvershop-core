@@ -1,19 +1,19 @@
 <?php
 /**
  * Test OrderProcessor
- * 
+ *
  * @package shop
  * @subpackage tests
  */
 class OrderProcessorTest extends SapphireTest {
 
-	static $fixture_file = 'shop/tests/fixtures/shop.yml';
-	static $disable_theme = true;
-	static $use_draft_site = true;
-	
+	public static $fixture_file = 'shop/tests/fixtures/shop.yml';
+	public static $disable_theme = true;
+	public static $use_draft_site = true;
+
 	protected $processor;
-	
-	function setUp() {
+
+	public function setUp() {
 		parent::setUp();
 		ShopTest::setConfiguration();
 
@@ -21,29 +21,29 @@ class OrderProcessorTest extends SapphireTest {
 		$this->socks = $this->objFromFixture('Product', 'socks');
 		$this->beachball = $this->objFromFixture('Product', 'beachball');
 		$this->hdtv = $this->objFromFixture('Product', 'hdtv');
-	
+
 		$this->mp3player->publish('Stage','Live');
 		$this->socks->publish('Stage','Live');
 		$this->beachball->publish('Stage','Live');
 		$this->hdtv->publish('Stage','Live');
-	
+
 		$this->shoppingcart = ShoppingCart::singleton();
 	}
-	
-	function testCreatePayment(){
+
+	public function testCreatePayment(){
 		$order = $this->objFromFixture("Order", "unpaid");
 		$processor = OrderProcessor::create($order);
 		$payment = $processor->createPayment('Dummy');
 		$this->assertTrue((boolean)$payment);
 	}
-	
-	function testPlaceOrder(){
+
+	public function testPlaceOrder(){
 		//place items in cart
 		$this->shoppingcart->add($this->mp3player,2);
 		$this->shoppingcart->add($this->socks);
-	
+
 		$order = $this->shoppingcart->current();
-		
+
 		$member = ShopMember::create_or_merge(array(
 			'FirstName' => 'James',
 			'Surname'	=> 'Brown',
@@ -51,8 +51,8 @@ class OrderProcessorTest extends SapphireTest {
 			'Password'	=> 'jbrown'
 		));
 		$this->assertTrue((bool)$member);
-		$member->write();	
-		
+		$member->write();
+
 		//submit checkout page
 		$this->assertTrue($this->placeOrder(
 			'James',
@@ -67,58 +67,58 @@ class OrderProcessorTest extends SapphireTest {
 			'jbrown',
 			$member
 		),"Order placed sucessfully");
-	
+
 		$order = DataObject::get_by_id('Order',$order->ID); //update order variable to db-stored version
 		$this->assertNotNull($order);
 		$this->assertEquals($order->GrandTotal(),408,'grand total');
 		$this->assertEquals($order->TotalOutstanding(),408,'total outstanding');
 		$this->assertEquals($order->TotalPaid(),0,'total outstanding');
-	
+
 		$this->assertEquals($order->Status,'Unpaid','status is "unpaid"');
-	
+
 		$this->assertEquals($order->IsSent(),false);
 		$this->assertEquals($order->IsProcessing(),false);
 		$this->assertEquals($order->IsPaid(),false);
 		$this->assertEquals($order->IsCart(),false);
-	
+
 		$this->assertEquals($order->FirstName,'James','order first name');
 		$this->assertEquals($order->Surname,'Brown','order surname');
 		$this->assertEquals($order->Email,'james@jamesbrown.net.xx','order email');
-		
+
 		$shippingaddress = $order->ShippingAddress();
-		
+
 		$this->assertEquals($shippingaddress->Address,'23 Small Street','order address');
 		$this->assertEquals($shippingaddress->AddressLine2,'North Beach','order address2');
 		$this->assertEquals($shippingaddress->City,'Springfield','order city');
 		$this->assertEquals($shippingaddress->PostalCode,'1234567','order postcode');
 		$this->assertEquals($shippingaddress->Country,'NZ','order country');
-	
+
 		$billingaddress = $order->BillingAddress();
-		
+
 		$this->assertEquals($billingaddress->Address,'23 Small Street','order address');
 		$this->assertEquals($billingaddress->AddressLine2,'North Beach','order address2');
 		$this->assertEquals($billingaddress->City,'Springfield','order city');
 		$this->assertEquals($billingaddress->PostalCode,'1234567','order postcode');
 		$this->assertEquals($billingaddress->Country,'NZ','order country');
-		
+
 		$this->assertNotNull($order->MemberID,'member exists now');
 		$this->assertEquals($order->Member()->FirstName,'James','member first name matches');
 		$this->assertEquals($order->Member()->Surname,'Brown','surname matches');
 		$this->assertEquals($order->Member()->Email,'james@jamesbrown.net.xx','email matches');
 		//$this->assertEquals($order->Member()->Password, Security::encrypt_password('jbrown'),'password matches'); //not finished...need to find out how to encrypt the same
 	}
-	
-	function testMemberOrder(){
+
+	public function testMemberOrder(){
 
 		//log out the admin user
 		Member::currentUser()->logOut();
-	
+
 		$this->shoppingcart->add($this->mp3player);
-	
+
 		$joemember = $this->objFromFixture('Member', 'joebloggs');
 		$joemember->logIn();
 		$cart = ShoppingCart::curr();
-		
+
 		$this->assertTrue($this->placeOrder(
 			'Joseph',
 			'Blog',
@@ -132,30 +132,30 @@ class OrderProcessorTest extends SapphireTest {
 			'newpassword',
 			$joemember
 		),"Member order placed successfully");
-	
+
 		$order = DataObject::get_by_id('Order',$cart->ID);
 		$this->assertTrue((boolean)$order,'Order exists');
 		$this->assertEquals($order->Status,'Unpaid','status is now "unpaid"');
 		$this->assertEquals($order->FirstName,'Joseph','order first name');
 		$this->assertEquals($order->Surname,'Blog','order surname');
 		$this->assertEquals($order->Email,'joe@blog.net.abz','order email');
-		
+
 		$shippingaddress = $order->ShippingAddress();
-		
+
 		$this->assertEquals($shippingaddress->Address,'100 Melrose Place','order address');
 		$this->assertNull($shippingaddress->AddressLine2,'order address2');
 		$this->assertEquals($shippingaddress->City,'Martinsonville','order city');
 		$this->assertNull($shippingaddress->PostalCode,'order postcode');
 		$this->assertEquals($shippingaddress->Country,'EG','order country');
-		
+
 		//ASSUMPTION: member details are NOT updated with order
 		$this->assertEquals($order->MemberID,$joemember->ID,'Order associated with member');
 		$this->assertEquals($order->Member()->FirstName,'Joe','member first name has not changed');
 		$this->assertTrue($order->Member()->inGroup($this->objFromFixture("Group", "customers"),true),"Member has been added to ShopMembers group");
 	}
-	
-	
-	function testNoMemberOrder(){
+
+
+	public function testNoMemberOrder(){
 
 		//log out the admin user
 		Member::currentUser()->logOut();
@@ -174,7 +174,7 @@ class OrderProcessorTest extends SapphireTest {
 		);
 		$error =  $this->processor->getError();
 		$this->assertTrue($success,"Non-member order placed successfully ...$error");
-	
+
 		$order = DataObject::get_by_id('Order',$order->ID); //update $order
 		$this->assertTrue((boolean)$order,'Order exists');
 		$this->assertEquals($order->Status,'Unpaid','status is now "unpaid"');
@@ -185,16 +185,16 @@ class OrderProcessorTest extends SapphireTest {
 		$this->assertEquals($order->FirstName,'Donald','order first name');
 		$this->assertEquals($order->Surname,'Duck','order surname');
 		$this->assertEquals($order->Email,'donald@pondcorp.edu.za','order email');
-		
+
 		$shippingaddress = $order->ShippingAddress();
-		
+
 		$this->assertEquals($shippingaddress->Address,'4 The Strand');
 		$this->assertNull($shippingaddress->AddressLine2,'order address2');
 		$this->assertEquals($shippingaddress->City,'Melbourne','order city');
 		$this->assertNull($shippingaddress->PostalCode,'order postcode');
 		$this->assertEquals($shippingaddress->Country,'AU','order country');
 	}
-	
+
 	/**
 	 * Helper function that populates a form with data and submits it.
 	 */

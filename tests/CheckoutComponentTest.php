@@ -1,8 +1,8 @@
 <?php
 
 class CheckoutComponentTest extends SapphireTest {
-	
-	function testSinglePageConfig() {
+
+	public function testSinglePageConfig() {
 
 		ShopTest::setConfiguration();
 
@@ -11,7 +11,7 @@ class CheckoutComponentTest extends SapphireTest {
 		$order->write();
 
 		$config = new SinglePageCheckoutComponentConfig($order);
-		
+
 		$components = $config->getComponents();
 		//todo: assertions
 
@@ -23,7 +23,7 @@ class CheckoutComponentTest extends SapphireTest {
 
 		//$validateData = $config->validateData($data);
 		//todo: assertions
-		
+
 		$data = $config->getData();
 		//todo: assertions
 

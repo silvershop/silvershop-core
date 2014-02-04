@@ -8,7 +8,7 @@ use Omnipay\Common\Helper;
  */
 class OnsitePaymentCheckoutComponent extends CheckoutComponent {
 
-	function getFormFields(Order $order) {
+	public function getFormFields(Order $order) {
 		$gateway = Checkout::get($order)->getSelectedPaymentMethod();
 		$gatewayfieldsfactory = new GatewayFieldsFactory($gateway,array('Card'));
 		$fields = $gatewayfieldsfactory->getCardFields();

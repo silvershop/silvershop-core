@@ -18,7 +18,7 @@ class CartForm extends Form{
 			FormAction::create("updatecart","Update Cart")
 		));
 	}
-	
+
 	public function editableItems($items){
 		$editables = new ArrayList();
 		$i = Injector::inst();
@@ -42,7 +42,7 @@ class CartForm extends Form{
 			$editables->push($item->customise(array(
 				"QuantityField" => $quantity,
 				"VariationField" => $variation,
-				"RemoveField" => $remove 
+				"RemoveField" => $remove
 			)));
 		}
 
@@ -83,7 +83,7 @@ class CartForm extends Form{
 					$updatecount++;
 				}
 			}
-		
+
 		}
 		if($removecount){
 			$messages['remove'] = "Removed ".$removecount." items.";
@@ -93,7 +93,7 @@ class CartForm extends Form{
 		}
 		if(count($messages)){
 			$form->sessionMessage(implode(" ", $messages),"good");
-		}		
+		}
 		$this->controller->redirectBack();
 	}
 

@@ -13,15 +13,15 @@ class GlobalTaxModifier extends TaxModifier {
 	);
 
 	private static $country_rates = array();
-	
-	function value($incoming){
+
+	public function value($incoming){
 		$rate = $this->Type == "Chargable" ?
 			$this->Rate() :
 			round(1 - (1 / (1 + $this->Rate())), Order::config()->rounding_precision);
-		return $incoming * $rate;	
+		return $incoming * $rate;
 	}
-	
-	function Rate(){
+
+	public function Rate(){
 		$rates = self::config()->country_rates;
 		if(isset($rates[$this->Country])) {
 			return $this->Rate = $rates[$this->Country]['rate'];
@@ -30,7 +30,7 @@ class GlobalTaxModifier extends TaxModifier {
 		return $this->Rate = $defaults['Rate'];
 	}
 
-	function TableTitle() {
+	public function TableTitle() {
 		$country = $this->Country ? " for ".$this->Country." " : "";
 		return parent::TableTitle().$country.
 			($this->Type == "Chargable" ? '' : _t("GlobalTaxModifier.INCLUDED",' (included in the above price)'));

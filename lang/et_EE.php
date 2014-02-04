@@ -66,7 +66,7 @@ $lang['et_EE']['CheckoutPage_OrderIncomplete.ss']['PROCESS'] = 'Asukoht';
 $lang['et_EE']['CheckoutPage_OrderSuccessful.ss']['BACKTOCHECKOUT'] = 'Vajuta siia, et minna tagasi kassasse';
 $lang['et_EE']['CheckoutPage_OrderSuccessful.ss']['CHECKOUT'] = 'Kassa';
 $lang['et_EE']['CheckoutPage_OrderSuccessful.ss']['EMAILDETAILS'] = 'Koopia tellimusest on saadetud teie e-posti aadressile koos tellimuse detailidega';
-$lang['et_EE']['CheckoutPage_OrderSuccessful.ss']['ORDERSTATUS'] = '	
+$lang['et_EE']['CheckoutPage_OrderSuccessful.ss']['ORDERSTATUS'] = '
 Tellimuse staatus';
 $lang['et_EE']['CheckoutPage_OrderSuccessful.ss']['PROCESS'] = 'Asukoht';
 $lang['et_EE']['CheckoutPage_OrderSuccessful.ss']['SUCCESSFULl'] = 'Tellimine õnnestus';
@@ -230,5 +230,3 @@ $lang['et_EE']['ViewAllProducts.ss']['NOSUBJECTS'] = 'Pealkiri puudub';
 $lang['et_EE']['ViewAllProducts.ss']['PRICE'] = 'Hind';
 $lang['et_EE']['ViewAllProducts.ss']['PRODUCTID'] = 'Toote ID';
 $lang['et_EE']['ViewAllProducts.ss']['WEIGHT'] = 'Kaal';
-
-?>

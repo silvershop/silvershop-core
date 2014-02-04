@@ -178,5 +178,3 @@ $lang['zh_TW']['ViewAllProducts.ss']['NOSUBJECTS'] = '沒有主題';
 $lang['zh_TW']['ViewAllProducts.ss']['PRICE'] = '單價';
 $lang['zh_TW']['ViewAllProducts.ss']['PRODUCTID'] = '產品ID';
 $lang['zh_TW']['ViewAllProducts.ss']['WEIGHT'] = '重量';
-
-?>

@@ -48,7 +48,7 @@ class ProductVariation extends DataObject implements Buyable{
 	private static $default_sort = "InternalItemID";
 	private static $order_item = "ProductVariation_OrderItem";
 
-	function getCMSFields() {
+	public function getCMSFields() {
 		$fields = new FieldList(
 			TextField::create('InternalItemID','Product Code'),
 			TextField::create('Price')
@@ -66,7 +66,7 @@ class ProductVariation extends DataObject implements Buyable{
 					$fields->push(LiteralField::create('novalues'.$attribute->Name,
 						"<p class=\"message warning\">".
 							$attribute->Name." has no values to choose from.
-							You can create them in the \"Products\" &#62; 
+							You can create them in the \"Products\" &#62;
 							\"Product Attribute Type\" section of the CMS.
 						</p>"
 					));
@@ -87,18 +87,18 @@ class ProductVariation extends DataObject implements Buyable{
 
 		return $fields;
 	}
-	
+
 	/**
 	 * Save selected attributes - somewhat of a hack.
 	 */
-	function onBeforeWrite(){
+	public function onBeforeWrite(){
 		parent::onBeforeWrite();
 		if(isset($_POST['ProductAttributes']) && is_array($_POST['ProductAttributes'])){
 			$this->AttributeValues()->setByIDList(array_values($_POST['ProductAttributes']));
 		}
 	}
 
-	function getTitle(){
+	public function getTitle(){
 		$values = $this->AttributeValues();
 		if($values->exists()){
 			$labelvalues = array();
@@ -111,7 +111,7 @@ class ProductVariation extends DataObject implements Buyable{
 	}
 
 	//this is used by TableListField to access attribute values.
-	function AttributeProxy(){
+	public function AttributeProxy(){
 		$do = new DataObject();
 		if($this->AttributeValues()->exists()){
 			foreach($this->AttributeValues() as $value){
@@ -121,7 +121,7 @@ class ProductVariation extends DataObject implements Buyable{
 		return $do;
 	}
 
-	function canPurchase($member = null) {
+	public function canPurchase($member = null) {
 		$allowpurchase = false;
 		if($product = $this->Product()){
 			$allowpurchase = ($this->sellingPrice() > 0) && $product->AllowPurchase;
@@ -137,7 +137,7 @@ class ProductVariation extends DataObject implements Buyable{
 	 * Returns if the product variation is already in the shopping cart.
 	 * @return boolean
 	 */
-	function IsInCart() {
+	public function IsInCart() {
 		return $this->Item() && $this->Item()->Quantity > 0;
 	}
 
@@ -145,23 +145,23 @@ class ProductVariation extends DataObject implements Buyable{
 	 * Returns the order item which contains the product variation
 	 * @return  OrderItem
 	 */
-	function Item() {
+	public function Item() {
 		$filter = array();
 		$this->extend('updateItemFilter',$filter);
 		$item = ShoppingCart::singleton()->get($this,$filter);
 		if(!$item) {
 			//return dummy item so that we can still make use of Item
-			$item = $this->createItem(0); 
+			$item = $this->createItem(0);
 		}
 		$this->extend('updateDummyItem',$item);
 		return $item;
 	}
 
-	function addLink() {
+	public function addLink() {
 		return $this->Item()->addLink($this->ProductID,$this->ID);
 	}
-	
-	function createItem($quantity = 1,$filter = array()){
+
+	public function createItem($quantity = 1,$filter = array()){
 		$orderitem = self::config()->order_item;
 		$item = new $orderitem();
 		$item->ProductID = $this->ProductID;
@@ -169,20 +169,20 @@ class ProductVariation extends DataObject implements Buyable{
 		//$item->ProductVariationVersion = $this->Version;
 		if($filter){
 			//TODO: make this a bit safer, perhaps intersect with allowed fields
-			$item->update($filter); 
+			$item->update($filter);
 		}
 		$item->Quantity = $quantity;
 		return $item;
 	}
-	
-	function sellingPrice(){
+
+	public function sellingPrice(){
 		$price = $this->Price;
 		if ($price == 0 && $this->Product() && $this->Product()->sellingPrice()){
 			$price = $this->Product()->sellingPrice();
 		}
 		if (!$price) $price = 0;
 		//TODO: this is not ideal, because prices manipulations will not happen in a known order
-		$this->extend("updateSellingPrice",$price); 
+		$this->extend("updateSellingPrice",$price);
 		return $price;
 	}
 
@@ -203,9 +203,9 @@ class ProductVariation_OrderItem extends Product_OrderItem {
 	private static $has_one = array(
 		'ProductVariation' => 'ProductVariation'
 	);
-	
+
 	private static $buyable_relationship = "ProductVariation";
-	
+
 	/**
 	 * Overloaded relationship, for getting versioned variations
 	 * @param unknown_type $current
@@ -224,7 +224,7 @@ class ProductVariation_OrderItem extends Product_OrderItem {
 			return $this->ProductVariation()->getTitle();
 		return false;
 	}
-	
+
 	public function Image(){
 		if(($this->ProductVariation()) && $this->ProductVariation()->Image()->exists()){
 			return $this->ProductVariation()->Image();

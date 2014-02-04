@@ -7,9 +7,9 @@ class TermsCheckoutComponent extends CheckoutComponent {
 		if(SiteConfig::current_site_config()->TermsPage()->exists()) {
 			$termsPage = SiteConfig::current_site_config()->TermsPage();
 			$fields->push(
-				CheckedCheckboxField::create('ReadTermsAndConditions', 
+				CheckedCheckboxField::create('ReadTermsAndConditions',
 					sprintf(_t('CheckoutField.TERMSANDCONDITIONS',
-						"I agree to the terms and conditions stated on the 
+						"I agree to the terms and conditions stated on the
 							<a href=\"%s\" target=\"new\" title=\"Read the shop terms and conditions for this site\">
 								terms and conditions
 							</a>

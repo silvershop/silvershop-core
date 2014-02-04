@@ -2,18 +2,18 @@
 
 class CheckoutPageTest extends FunctionalTest{
 
-	static $fixture_file = 'shop/tests/fixtures/shop.yml';
-	static $disable_theme = true;
-	static $use_draft_site = true;
+	public static $fixture_file = 'shop/tests/fixtures/shop.yml';
+	public static $disable_theme = true;
+	public static $use_draft_site = true;
 
 	protected $controller;
-	
-	function setUp() {
+
+	public function setUp() {
 		parent::setUp();
 		ShopTest::setConfiguration();
 	}
 
-	function testActionsForm(){
+	public function testActionsForm(){
 		$order = $this->objFromFixture("Order","unpaid");
 		OrderManipulation::add_session_order($order);
 		$this->get("/checkout/order/".$order->ID);
@@ -35,9 +35,9 @@ class CheckoutPageTest extends FunctionalTest{
 	//log user in
 	//set the current order
 	//visit order page
-	
-	function testPayment(){
-		
+
+	public function testPayment(){
+
 		//make payment
 		$data = array(
 			'name' => 'Joe Bloggs',

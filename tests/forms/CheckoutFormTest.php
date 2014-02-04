@@ -1,10 +1,10 @@
 <?php
 
 class CheckoutFormTest extends SapphireTest{
-	
-	static $fixture_file = 'shop/tests/fixtures/shop.yml';
-	
-	function setUp(){
+
+	public static $fixture_file = 'shop/tests/fixtures/shop.yml';
+
+	public function setUp(){
 		parent::setUp();
 		ShopTest::setConfiguration();
 		$this->mp3player = $this->objFromFixture('Product', 'mp3player');
@@ -13,13 +13,13 @@ class CheckoutFormTest extends SapphireTest{
 		$this->socks->publish('Stage','Live');
 		$this->beachball = $this->objFromFixture('Product', 'beachball');
 		$this->beachball->publish('Stage','Live');
-		
+
 		$this->checkoutcontroller = new CheckoutPage_Controller();
-		
+
 		ShoppingCart::singleton()->add($this->socks); //start cart
 	}
-	
-	function testCheckoutForm(){
+
+	public function testCheckoutForm(){
 		$order = ShoppingCart::curr();
 		$config = new SinglePageCheckoutComponentConfig($order);
 		$form = new CheckoutForm($this->checkoutcontroller, "OrderForm", $config);
@@ -58,5 +58,5 @@ class CheckoutFormTest extends SapphireTest{
 		//TODO: test invalid data
 		//TODO: test components individually
 	}
-	
+
 }

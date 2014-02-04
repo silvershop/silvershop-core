@@ -1,10 +1,10 @@
 <?php
 
 class CheckoutForm extends Form {
-	
+
 	protected $config, $redirectlink;
 
-	function __construct($controller, $name, CheckoutComponentConfig $config) {
+	public function __construct($controller, $name, CheckoutComponentConfig $config) {
 		$this->config = $config;
 		$fields = $config->getFormFields();
 
@@ -22,11 +22,11 @@ class CheckoutForm extends Form {
 		}
 	}
 
-	function setRedirectLink($link){
+	public function setRedirectLink($link){
 		$this->redirectlink = $link;
 	}
 
-	function checkoutSubmit($data, $form) {
+	public function checkoutSubmit($data, $form) {
 		//form validation has passed by this point, so we can save data
 		$this->config->setData($form->getData());
 		if($this->redirectlink){

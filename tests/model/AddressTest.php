@@ -1,7 +1,7 @@
 <?php
 class AddressTest extends SapphireTest{
-	
-	function testForm(){
+
+	public function testForm(){
 		$address = new Address(array(
 			'Country'		=> 'NZ',
 			'State'			=> 'Wellington',
@@ -23,5 +23,5 @@ class AddressTest extends SapphireTest{
 			$address->toString("|")
 		);
 	}
-	
+
 }

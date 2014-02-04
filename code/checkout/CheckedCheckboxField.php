@@ -1,16 +1,16 @@
 <?php
 
 class CheckedCheckboxField extends CheckboxField{
-	
+
 	protected $reqmessage = "You must check the box.";
-	
-	function setRequiredMessage($message){
+
+	public function setRequiredMessage($message){
 		$this->reqmessage = $message;
 
 		return $this;
 	}
-	
-	function validate($validator){
+
+	public function validate($validator){
 		$value = trim($this->value);
 		if(empty($value)){
  			$validator->validationError(
@@ -22,5 +22,5 @@ class CheckedCheckboxField extends CheckboxField{
 		}
 		return true;
 	}
-	
+
 }

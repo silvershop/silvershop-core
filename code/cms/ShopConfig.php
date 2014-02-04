@@ -1,28 +1,28 @@
 <?php
 
 class ShopConfig extends DataExtension{
-	
+
 	private static $db = array(
 		'AllowedCountries' => 'Text'
 	);
-	
+
 	private static $has_one = array(
 		'TermsPage' => 'SiteTree',
 		"CustomerGroup" => "Group"
 	);
 
 	private static $email_from;
-	
-	static function current(){
+
+	public static function current(){
 		return SiteConfig::current_site_config();
 	}
-	
-	function updateCMSFields(FieldList $fields) {
+
+	public function updateCMSFields(FieldList $fields) {
 		$fields->insertBefore($shoptab = new Tab('Shop', 'Shop'), 'Access');
 		$fields->addFieldsToTab("Root.Shop", new TabSet("ShopTabs",
 			$maintab = new Tab("Main",
-				TreeDropdownField::create('TermsPageID', 
-					_t("ShopConfig.TERMSPAGE",'Terms and Conditions Page'), 
+				TreeDropdownField::create('TermsPageID',
+					_t("ShopConfig.TERMSPAGE",'Terms and Conditions Page'),
 				'SiteTree'),
 				TreeDropdownField::create("CustomerGroupID",
 					_t("ShopConfig.CUSTOMERGROUP","Group to add new customers to"),
@@ -38,20 +38,20 @@ class ShopConfig extends DataExtension{
 		$countriestab->setTitle("Allowed Countries");
 	}
 
-	static function get_base_currency(){
+	public static function get_base_currency(){
 		return self::config()->base_currency;
 	}
 
-	static function get_site_currency(){
+	public static function get_site_currency(){
 		return self::get_base_currency();
 	}
-	
+
 	/**
 	 * Get list of allowed countries
 	 * @param boolean $prefixisocode - prefix the country code
 	 * @return array
 	 */
-	function getCountriesList($prefixisocode = false){
+	public function getCountriesList($prefixisocode = false){
 		$countries = self::config()->iso_3166_country_codes;
 		asort($countries);
 		if($allowed = $this->owner->AllowedCountries){
@@ -66,12 +66,12 @@ class ShopConfig extends DataExtension{
 		}
 		return $countries;
 	}
-	
+
 	/*
 	 * Convert iso country code to English country name
 	 * @return string - name of country
 	 */
-	static function countryCode2name($code){
+	public static function countryCode2name($code){
 		$codes = self::config()->iso_3166_country_codes;
 		if(isset($codes[$code])){
 			return $codes[$code];
@@ -87,5 +87,5 @@ class ShopConfig extends DataExtension{
 	public static function config(){
 		return new Config_ForClass("ShopConfig");
 	}
-	
+
 }

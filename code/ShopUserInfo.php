@@ -21,12 +21,12 @@ class ShopUserInfo extends Object{
 		$this->extend("onAfterSetLocation",$address);
 	}
 
-	static function set_location($address){
+	public static function set_location($address){
 		ShopUserInfo::singleton()->setLocation($address);
 	}
 
-	static function get_location(){
+	public static function get_location(){
 		return Session::get("UserInfo.Location");
-	}	
+	}
 
 }

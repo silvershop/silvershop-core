@@ -1,14 +1,14 @@
-<?php 
+<?php
 
 class ShopPaymentTest extends SapphireTest{
-	
-	function setUp(){
+
+	public function setUp(){
 		parent::setUp();
 		ShopTest::setConfiguration();
 	}
-	
-	function testPayment(){
+
+	public function testPayment(){
 		$payment = new Payment();
 	}
-	
+
 }

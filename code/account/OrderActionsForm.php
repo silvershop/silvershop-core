@@ -7,7 +7,7 @@
  * @subpackage forms
  */
 class OrderActionsForm extends Form{
-	
+
 	private static $allowed_actions = array(
 		'docancel',
 		'dopayment',
@@ -19,8 +19,8 @@ class OrderActionsForm extends Form{
 	private static $allow_cancelling = true;
 
 	protected $order;
-	
-	function __construct($controller, $name, Order $order) {
+
+	public function __construct($controller, $name, Order $order) {
 		$this->order = $order;
 		$fields = new FieldList(
 			HiddenField::create('OrderID', '', $order->ID)
@@ -50,7 +50,7 @@ class OrderActionsForm extends Form{
 		//cancelling
 		if(self::config()->allow_cancelling && $order->canCancel()){
 			$actions->push(
-				FormAction::create('docancel', 
+				FormAction::create('docancel',
 					_t('OrderActionsForm.CANCELORDER', 'Cancel this order')
 				)
 			);
@@ -58,15 +58,15 @@ class OrderActionsForm extends Form{
 		parent::__construct($controller, $name, $fields, $actions);
 		$this->extend("updateForm");
 	}
-	
+
 	/**
 	 * Make payment for a place order, where payment had previously failed.
-	 * 
+	 *
 	 * @param array $data
 	 * @param Form $form
 	 * @return boolean
 	 */
-	function dopayment($data, $form) {
+	public function dopayment($data, $form) {
 		if(self::config()->allow_paying &&
 			$this->order &&
 			$this->order->canPay()) {
@@ -89,7 +89,7 @@ class OrderActionsForm extends Form{
 			}
 
 			return $this->controller->redirectBack();
-			
+
 		}
 		$form->sessionMessage(
 			_t('OrderForm.COULDNOTPROCESSPAYMENT', 'Payment could not be processed.'),
@@ -97,7 +97,7 @@ class OrderActionsForm extends Form{
 		);
 		$this->controller->redirectBack();
 	}
-	
+
 	/**
 	 * Form action handler for CancelOrderForm.
 	 *
@@ -108,7 +108,7 @@ class OrderActionsForm extends Form{
 	 * @param array $data The form request data submitted
 	 * @param Form $form The {@link Form} this was submitted on
 	 */
-	function docancel($data, $form) {
+	public function docancel($data, $form) {
 		if(self::config()->allow_cancelling &&
 			$this->order->canCancel()){
 			$this->order->Status = 'MemberCancelled';
@@ -136,5 +136,5 @@ class OrderActionsForm extends Form{
 		}
 
 	}
-	
+
 }

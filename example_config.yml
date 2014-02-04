@@ -50,5 +50,3 @@ Order:
 OrderManipulation:
   allow_cancelling: true
   allow_paying: true
-
-

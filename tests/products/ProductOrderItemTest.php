@@ -5,41 +5,41 @@
  */
 class ProductOrderItemTest extends FunctionalTest {
 
-	static $fixture_file = 'shop/tests/fixtures/shop.yml';
+	public static $fixture_file = 'shop/tests/fixtures/shop.yml';
 
-	static $disable_theme = true;
-	static $orig = array();
-	
+	public static $disable_theme = true;
+	public static $orig = array();
+
 	/**
 	 * Create and publish some products.
 	 */
-	function setUp() {
+	public function setUp() {
 		parent::setUp();
 		ShopTest::setConfiguration();
-		
+
 		$this->mp3player = $this->objFromFixture('Product', 'mp3player');
 		$this->socks = $this->objFromFixture('Product', 'socks');
 		$this->beachball = $this->objFromFixture('Product', 'beachball');
 		$this->hdtv = $this->objFromFixture('Product', 'hdtv');
-		
+
 		$this->mp3player->publish('Stage','Live');
 		$this->socks->publish('Stage','Live');
 		$this->beachball->publish('Stage','Live');
 		$this->hdtv->publish('Stage','Live');
-		
+
 		$this->cart = ShoppingCart::singleton();
 	}
-	
-	function testEmptyItem(){
+
+	public function testEmptyItem(){
 		$emptyitem = $this->mp3player->Item();
 		$this->assertEquals(1, $emptyitem->Quantity,"Items always have a quantity of at least 1.");
 	}
-	
+
 	/**
 	 * Test product updates. These may be caused by an admin, causing everyone's cart to update.
 	 * @TODO: this feature needs to be implemented
 	 */
-	function testProductVersionUpdate() {
+	public function testProductVersionUpdate() {
 		$this->cart->add($this->socks);
 		$currentorder = $this->cart->current();
 		$itembefore = $this->cart->get($this->socks);
@@ -56,7 +56,7 @@ class ProductOrderItemTest extends FunctionalTest {
 	* Tries to create an order item with a non-existent version.
 	* @todo this generates a SilverStripe bug. It needs to be fixed in SS first.
 	*/
-	function testProductVersionDoesNotExist(){
+	public function testProductVersionDoesNotExist(){
 		$brokenitem = new Product_OrderItem(array(
 			"ProductID" => $this->socks->ID,
 			"ProductVersion" => 99999 //non existent version
@@ -67,7 +67,7 @@ class ProductOrderItemTest extends FunctionalTest {
 	/**
 	 * Check  the links are accurate
 	 */
-	function testLinks(){
+	public function testLinks(){
 		SecurityToken::disable();
 		$product = $this->socks;
 		$item = $product->Item();

@@ -7,12 +7,12 @@
  * @todo demographics
  */
 class CustomerReport extends ShopPeriodReport{
-	
+
 	protected $title = "Customers";
 	protected $dataClass = "Member";
 	protected $periodfield = "Order.Paid";
-	
-	function columns(){
+
+	public function columns(){
 		return array(
 			"FirstName" => "First Name",
 			"Surname" => "Surname",
@@ -25,16 +25,16 @@ class CustomerReport extends ShopPeriodReport{
 				"title" => "Edit",
 				"formatting" => '<a href=\"admin/security/EditForm/field/Members/item/$ID/edit\" target=\"_new\">edit</a>'
 			),
-			
+
 		);
 	}
-	
-	function getReportField(){
+
+	public function getReportField(){
 		$field = parent::getReportField();
 		return $field;
 	}
-	
-	function query($params){
+
+	public function query($params){
 		$query = parent::query($params);
 		$query->selectField($this->periodfield, "FilterPeriod")
 			->addSelect(array("Member.ID", "Member.FirstName", "Member.Surname", "Member.Email", "NumVisit", "Member.Created"))

@@ -10,7 +10,7 @@ class FlatTaxModifierTest extends FunctionalTest {
 	protected static $fixture_file = 'shop/tests/fixtures/shop.yml';
 	protected static $disable_theme = true;
 
-	function setUp(){
+	public function setUp(){
 		parent::setUp();
 		ShopTest::setConfiguration();
 		Order::config()->modifiers = array(
@@ -23,7 +23,7 @@ class FlatTaxModifierTest extends FunctionalTest {
 		$this->mp3player->publish('Stage','Live');
 	}
 
-	function testInclusiveTax(){
+	public function testInclusiveTax(){
 		FlatTaxModifier::config()->exclusive = false;
 		$this->cart->clear();
 		$this->cart->add($this->mp3player);
@@ -33,8 +33,8 @@ class FlatTaxModifierTest extends FunctionalTest {
 		$this->assertEquals(26.09, $modifier->Amount); //remember that 15% tax inclusive is different to exclusive
 		$this->assertEquals(200, $order->GrandTotal());
 	}
-	
-	function testExclusiveTax(){
+
+	public function testExclusiveTax(){
 		FlatTaxModifier::config()->exclusive = true;
 		$this->cart->clear();
 		$this->cart->add($this->mp3player);
