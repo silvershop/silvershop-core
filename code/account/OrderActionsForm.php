@@ -28,24 +28,33 @@ class OrderActionsForm extends Form{
 		$actions = new FieldList();
 		//payment
 		if(self::config()->allow_paying && $order->canPay()){
-			$actions->push(FormAction::create('dopayment',
-				_t('OrderActionsForm.PAYORDER', 'Pay outstanding balance')
-			));
-			$fields->push(HeaderField::create("MakePaymentHeader",
-				_t("OrderActionsForm.MAKEPAYMENT", "Make Payment"))
-			);
-			$outstandingfield = Currency::create();
-			$outstandingfield->setValue($order->TotalOutstanding());
-			$fields->push(LiteralField::create("Outstanding",
-				sprintf(
-					_t("OrderActionsForm.OUTSTANDING", "Outstanding: %s"),
-					$outstandingfield->Nice()
-				)
-			));
 			$gateways = GatewayInfo::get_supported_gateways();
-			$fields->push(OptionsetField::create(
-				'PaymentMethod', 'Payment Method', $gateways, key($gateways)
-			));
+			//remove manual gateways
+			foreach($gateways as $gateway => $name){
+				if(GatewayInfo::is_manual($gateway)){
+					unset($gateways[$gateway]);
+				}
+			}
+			if(!empty($gateways)){
+				$actions->push(FormAction::create('dopayment',
+					_t('OrderActionsForm.PAYORDER', 'Pay outstanding balance')
+				));
+				$fields->push(HeaderField::create("MakePaymentHeader",
+					_t("OrderActionsForm.MAKEPAYMENT", "Make Payment"))
+				);
+				$outstandingfield = Currency::create();
+				$outstandingfield->setValue($order->TotalOutstanding());
+				$fields->push(LiteralField::create("Outstanding",
+					sprintf(
+						_t("OrderActionsForm.OUTSTANDING", "Outstanding: %s"),
+						$outstandingfield->Nice()
+					)
+				));
+				$fields->push(OptionsetField::create(
+					'PaymentMethod', 'Payment Method', $gateways, key($gateways)
+				));
+			}
+
 		}
 		//cancelling
 		if(self::config()->allow_cancelling && $order->canCancel()){
@@ -75,21 +84,25 @@ class OrderActionsForm extends Form{
 			// Save payment data from form and process payment
 			$data = $form->getData();
 			$gateway = (!empty($data['PaymentMethod'])) ? $data['PaymentMethod'] : null;
-			$data['cancelURL'] = $this->controller->Link();
-			$processor = OrderProcessor::create($this->order);
-			$response = $processor->makePayment($gateway, $data);
-			if($response){
-				if($response->isRedirect() || $response->isSuccessful()){
-					return $response->redirect();
-				}
-				$form->sessionMessage($response->getMessage(), 'bad');
 
+			if(GatewayInfo::is_manual($gateway)){
+				$data['cancelURL'] = $this->controller->Link();
+				$processor = OrderProcessor::create($this->order);
+				$response = $processor->makePayment($gateway, $data);
+
+				if($response){
+					if($response->isRedirect() || $response->isSuccessful()){
+						return $response->redirect();
+					}
+					$form->sessionMessage($response->getMessage(), 'bad');
+				}else{
+					$form->sessionMessage($processor->getError(), 'bad');
+				}
 			}else{
-				$form->sessionMessage($processor->getError(), 'bad');
+				$form->sessionMessage("Manual payment not allowed", 'bad');
 			}
 
 			return $this->controller->redirectBack();
-
 		}
 		$form->sessionMessage(
 			_t('OrderForm.COULDNOTPROCESSPAYMENT', 'Payment could not be processed.'),
