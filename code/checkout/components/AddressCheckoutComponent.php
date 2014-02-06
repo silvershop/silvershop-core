@@ -57,7 +57,15 @@ abstract class AddressCheckoutComponent extends CheckoutComponent{
 			ShopUserInfo::set_location($address);
 			Zone::cache_zone_ids($address);
 		}
-		$order->extend('onSet'.$this->addresstype.'Address',$address);
+		//TODO: make this optional?
+		if($member = Member::currentUser()){
+			$default = $member->{"Default".$this->addresstype."Address"}();
+			if(!$default->exists()){
+				$member->{"Default".$this->addresstype."AddressID"} = $address->ID;
+				$member->write();
+			}
+		}
+		$order->extend('onSet'.$this->addresstype.'Address', $address);
 	}
 
 	/**
