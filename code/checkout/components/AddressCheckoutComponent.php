@@ -6,17 +6,17 @@ abstract class AddressCheckoutComponent extends CheckoutComponent{
 
 	protected $addresstype;
 
-	public function getFormFields(Order $order){
+	public function getFormFields(Order $order) {
 		return $this->getAddress($order)->getFrontEndFields(array(
 			'addfielddescriptions' => $this->formfielddescriptions
 		));
 	}
 
-	public function getRequiredFields(Order $order){
+	public function getRequiredFields(Order $order) {
 		return $this->getAddress($order)->getRequiredFields();
 	}
 
-	public function validateData(Order $order, array $data){
+	public function validateData(Order $order, array $data) {
 
 	}
 
@@ -54,8 +54,8 @@ abstract class AddressCheckoutComponent extends CheckoutComponent{
 		//$order->MemberID = Member::currentUserID(); //perhaps leave this until order placement
 		$order->write();
 		if($this->addresstype === "Shipping"){
-			ShopUserInfo::set_location($this->getAddress($order));
-			Zone::cache_zone_ids($this->getAddress($order));
+			ShopUserInfo::set_location($address);
+			Zone::cache_zone_ids($address);
 		}
 		$order->extend('onSet'.$this->addresstype.'Address',$address);
 	}
@@ -63,11 +63,11 @@ abstract class AddressCheckoutComponent extends CheckoutComponent{
 	/**
 	 * Enable adding form field descriptions
 	 */
-	public function setShowFormFieldDescriptions($show = true){
+	public function setShowFormFieldDescriptions($show = true) {
 		$this->formfielddescriptions = $show;
 	}
 
-	public function getAddress(Order $order){
+	public function getAddress(Order $order) {
 		return $order->{$this->addresstype."Address"}();
 	}
 

@@ -237,7 +237,6 @@ class ShoppingCart{
 		if(!$order){
 			return $this->error(_t("ShoppingCart.NOCARTFOUND","No cart found."));
 		}
-		$order->SessionID = null;
 		$order->write();
 		Session::clear(self::$cartid_session_name);
 		$this->order = null;

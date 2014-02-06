@@ -101,7 +101,7 @@ class Order extends DataObject {
 	/**
 	 * Statuses that shouldn't show in user account.
 	 */
-	private static $hidden_status = array('Cart','Query');
+	private static $hidden_status = array('Cart');
 
 	/**
 	 * Flag to determine whether the user can cancel
@@ -340,7 +340,10 @@ class Order extends DataObject {
 	 * Enforces rounding precision.
 	 */
 	public function TotalOutstanding(){
-		return round($this->GrandTotal() - $this->TotalPaid(), self::config()->rounding_precision);
+		return round(
+			$this->GrandTotal() - $this->TotalPaid(),
+			self::config()->rounding_precision
+		);
 	}
 
 	/**
@@ -363,7 +366,7 @@ class Order extends DataObject {
 		switch($this->Status) {
 			case 'Unpaid' : return self::config()->cancel_before_payment;
 			case 'Paid' : return self::config()->cancel_before_processing;
-			case 'Processing' : case 'Query' : return self::config()->cancel_before_sending;
+			case 'Processing' : return self::config()->cancel_before_sending;
 			case 'Sent' : case 'Complete' : return self::config()->cancel_after_sending;
 			default : return false;
 		}

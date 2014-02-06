@@ -22,7 +22,7 @@ class SetLocationForm extends Form{
 
 	public function setLocation($data,$form){
 		ShopUserInfo::set_location($data);
-		Controller::curr()->redirectBack();
+		$this->controller->redirectBack();
 	}
 
 }

@@ -125,14 +125,6 @@ class OrderModifier extends OrderAttribute {
 	}
 
 	/**
-	* Produces a title for use in templates.
-	* @return string
-	*/
-	public function TableTitle(){
-		return $this->i18n_singular_name();
-	}
-
-	/**
 	* Provides a modifier total that is positive or negative, depending on whether the modifier is chargable or not.
 	*
 	* @return boolean

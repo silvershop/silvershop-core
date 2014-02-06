@@ -9,6 +9,9 @@
  */
 class OrderAttribute extends DataObject {
 
+	private static $singular_name = "Attribute";
+	private static $plural_name = "Attributes";
+
 	private static $db = array(
 		'CalculatedTotal' => 'Currency'
 	);
@@ -30,18 +33,16 @@ class OrderAttribute extends DataObject {
 		return false;
 	}
 
-	public function isLive(){
+	public function isLive() {
 		return (!$this->isInDB() || $this->Order()->IsCart());
 	}
 
 	/**
-	 * Return a name of what this attribute is
-	 * called e.g. "Modifier", or "Product".
-	 *
-	 * @return string
-	 */
+	* Produces a title for use in templates.
+	* @return string
+	*/
 	public function TableTitle() {
-		return 'Attribute';
+		return $this->i18n_singular_name();
 	}
 
 	public function CartTitle() {

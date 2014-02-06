@@ -36,7 +36,6 @@ ProductCategory:
 ShoppingCart_Controller:
   direct_to_cart_page: true
 
-
 Order:
   modifiers:
     - 'FlatTaxModifier'

@@ -43,8 +43,8 @@ class OrderItem extends OrderAttribute {
 	private static $required_fields = array();
 	private static $buyable_relationship = "Product";
 
-	private static $singular_name = "Order Item";
-	private static $plural_name = "Order Items";
+	private static $singular_name = "Item";
+	private static $plural_name = "Items";
 	private static $default_sort = "\"Created\" DESC";
 
 	/**
@@ -165,10 +165,6 @@ class OrderItem extends OrderAttribute {
 	 */
 	public function Image(){
 		return $this->Buyable()->Image();
-	}
-
-	public function TableTitle() {
-		return $this->i18n_singular_name();
 	}
 
 	public function QuantityField(){

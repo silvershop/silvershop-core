@@ -10,7 +10,7 @@
 		<% with Cart %>
 			<% include Cart %>
 		<% end_with %>
-		<% if Cart.Items %>$OrderForm<% end_if %>
+		$OrderForm
 	<% else %>
 		<p class="message warning"><% _t('CheckoutPage.ss.CARTEMPTY','Your cart is empty.') %></p>
 	<% end_if %>
