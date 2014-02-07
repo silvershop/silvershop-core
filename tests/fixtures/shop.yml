@@ -89,6 +89,7 @@ Address:
         City: Farmville
         State: New Sandwich
         Country: US
+        #MemberID: can't be set, because it is below
 
 Group:
     customers:
