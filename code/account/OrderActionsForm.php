@@ -85,7 +85,7 @@ class OrderActionsForm extends Form{
 			$data = $form->getData();
 			$gateway = (!empty($data['PaymentMethod'])) ? $data['PaymentMethod'] : null;
 
-			if(GatewayInfo::is_manual($gateway)){
+			if(!GatewayInfo::is_manual($gateway)){
 				$data['cancelURL'] = $this->controller->Link();
 				$processor = OrderProcessor::create($this->order);
 				$response = $processor->makePayment($gateway, $data);
