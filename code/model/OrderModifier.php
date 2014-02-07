@@ -47,7 +47,8 @@ class OrderModifier extends OrderAttribute {
 	private static $singular_name = "Modifier";
 	private static $plural_name = "Modifiers";
 
-	private static $default_sort = "\"Sort\" ASC, \"Created\" ASC";
+	//Causes known bug: https://github.com/silverstripe/silverstripe-framework/issues/1682
+	//private static $default_sort = "\"Sort\" ASC, \"Created\" ASC";
 
 	/**
 	* Specifies whether this modifier is always required in an order.
