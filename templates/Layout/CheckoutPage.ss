@@ -8,7 +8,7 @@
 	</div>
 	<% if Cart %>
 		<% with Cart %>
-			<% include Cart %>
+			<% include Cart ShowSubtotals=true %>
 		<% end_with %>
 		$OrderForm
 	<% else %>

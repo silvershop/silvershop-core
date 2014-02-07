@@ -68,41 +68,45 @@
 				<td id="$TableSubTotalID">$SubTotal.Nice</td>
 				<% if Editable %><td>&nbsp;</td><% end_if %>
 			</tr>
-			<% if Modifiers %>
-				<% loop Modifiers %>
-					<% if ShowInTable %>
-						<tr id="$TableID" class="$Classes">
-							<th id="$TableTitleID" colspan="4" scope="row">
-								<% if Link %>
-									<a href="$Link" title="<% sprintf(_t("READMORE","Click here to read more on &quot;%s&quot;"),$TableTitle) %>">$TableTitle</a>
-								<% else %>
-									$TableTitle
+			<% if ShowSubtotals %>
+				<% if Modifiers %>
+					<% loop Modifiers %>
+						<% if ShowInTable %>
+							<tr id="$TableID" class="$Classes">
+								<th id="$TableTitleID" colspan="4" scope="row">
+									<% if Link %>
+										<a href="$Link" title="<% sprintf(_t("READMORE","Click here to read more on &quot;%s&quot;"),$TableTitle) %>">$TableTitle</a>
+									<% else %>
+										$TableTitle
+									<% end_if %>
+								</th>
+								<td id="$TableTotalID">$TableValue.Nice</td>
+								<% if Editable %>
+									<td>
+										<% if CanRemove %>
+											<strong>
+												<a class="ajaxQuantityLink" href="$removeLink" title="<% sprintf(_t("REMOVE","Remove &quot;%s&quot; from your order"),$TableTitle) %>">
+													<img src="shop/images/remove.gif" alt="x"/>
+												</a>
+											</strong>
+										<% end_if %>
+									</td>
 								<% end_if %>
-							</th>
-							<td id="$TableTotalID">$TableValue.Nice</td>
-							<td>
-								<% if CanRemove %>
-									<strong>
-										<a class="ajaxQuantityLink" href="$removeLink" title="<% sprintf(_t("REMOVE","Remove &quot;%s&quot; from your order"),$TableTitle) %>">
-											<img src="shop/images/remove.gif" alt="x"/>
-										</a>
-									</strong>
-								<% end_if %>
-							</td>
-						</tr>
-						<% if Form %>
-							<tr>
-								<td colspan="5">$Form</td><td colspan="10"></td>
 							</tr>
+							<% if Form %>
+								<tr>
+									<td colspan="5">$Form</td><td colspan="10"></td>
+								</tr>
+							<% end_if %>
 						<% end_if %>
-					<% end_if %>
-				<% end_loop %>
+					<% end_loop %>
+				<% end_if %>
+				<tr class="gap Total">
+					<th colspan="4" scope="row"><% _t("TOTAL","Total") %></th>
+					<td id="$TableTotalID"><span class="value">$Total.Nice</span> <span class="currency">$Currency</span></td>
+					<% if Editable %><td>&nbsp;</td><% end_if %>
+				</tr>
 			<% end_if %>
-			<tr class="gap Total">
-				<th colspan="4" scope="row"><% _t("TOTAL","Total") %></th>
-				<td id="$TableTotalID"><span class="value">$Total.Nice</span> <span class="currency">$Currency</span></td>
-				<% if Editable %><td>&nbsp;</td><% end_if %>
-			</tr>
 		</tfoot>
 	</table>
 <% else %>
