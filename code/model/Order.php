@@ -231,6 +231,11 @@ class Order extends DataObject {
 	 * @todo prevent this function from being run too many times
 	 */
 	public function calculate(){
+		if(!$this->IsCart()){
+			user_error("Orders (non-cart) should never be re-calculated.");
+			return $this->Total;
+		}
+
 		$runningtotal = $this->SubTotal();
 		$modifiertotal = 0;
 		$sort = 1;
