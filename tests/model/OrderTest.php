@@ -118,26 +118,6 @@ class OrderTest extends SapphireTest {
 	 */
 	public function createOrder(){
 		return $this->objFromFixture("Order", "paid");
-		// $order = new Order();
-		// $order->write();
-		// $item1a = $this->mp3player->createItem(2);
-		// $item1a->write();
-		// $order->Items()->add($item1a);
-		// $item1b = $this->socks->createItem();
-		// $item1b->write();
-		// $order->Items()->add($item1b);
-
-		// //add a payment
-		// $payment = new Payment();
-		// $payment->OrderID = $order->ID;
-		// $payment->Amount = 200;
-		// $payment->Currency = 'USD';
-		// $payment->Status = 'Captured';
-		// $payment->write();
-
-		// $order->calculate();
-		// $order->write();
-		//return $order;
 	}
 
 	public function testCanFunctions(){
