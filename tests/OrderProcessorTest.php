@@ -68,7 +68,9 @@ class OrderProcessorTest extends SapphireTest {
 			$member
 		),"Order placed sucessfully");
 
-		$order = DataObject::get_by_id('Order',$order->ID); //update order variable to db-stored version
+		$order = Order::get()->byID($order->ID); //update order variable to db-stored version
+
+		$this->assertFalse($this->shoppingcart->current(), "Shopping cart is empty");
 		$this->assertNotNull($order);
 		$this->assertEquals($order->GrandTotal(),408,'grand total');
 		$this->assertEquals($order->TotalOutstanding(),408,'total outstanding');
