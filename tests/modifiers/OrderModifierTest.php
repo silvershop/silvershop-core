@@ -21,17 +21,21 @@ class OrderModifierTest extends FunctionalTest {
 
 		$this->mp3player = $this->objFromFixture('Product', 'mp3player');
 		$this->socks = $this->objFromFixture('Product', 'socks');
-		$this->mp3player->publish('Stage','Live');
-		$this->socks->publish('Stage','Live');
+		$this->mp3player->publish('Stage', 'Live');
+		$this->socks->publish('Stage', 'Live');
 	}
 
-	public function testModifierCalculation(){
+	public function testModifierCalculation() {
 		$order = $this->createOrder();
+		$this->assertEquals(510, $order->calculate(), "Total with 25% tax");
+
+		//remove modifiers
+		Order::config()->modifiers = null;
 		$order->calculate();
-		$this->assertEquals(510, $order->Total); //Total with 25% tax
+		$this->assertEquals(408, $order->calculate(), "Total with no modification");
 	}
 
-	public function createOrder(){
+	public function createOrder() {
 		$order = new Order();
 		$order->write();
 		$item1a = $this->mp3player->createItem(2);
