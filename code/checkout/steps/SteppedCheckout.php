@@ -22,8 +22,10 @@ class SteppedCheckout extends Extension{
 				'paymentmethod' => 'CheckoutStep_PaymentMethod',
 				'summary' => 'CheckoutStep_Summary'
 			);
-			CheckoutPage::config()->steps = $steps;
 		}
+		
+		CheckoutPage::config()->steps = $steps;
+		
 		if(!CheckoutPage::config()->first_step){
 			reset($steps);
 			CheckoutPage::config()->first_step = key($steps);
