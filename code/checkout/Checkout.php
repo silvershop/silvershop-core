@@ -130,7 +130,7 @@ class Checkout{
 	public function setPaymentMethod($paymentmethod){
 		$methods = $this->getPaymentMethods();
 		if(!isset($methods[$paymentmethod])){
-			Session::clear("Checkout.PaymentMethod",null);
+			Session::set("Checkout.PaymentMethod",null);
 			Session::clear("Checkout.PaymentMethod");
 			return $this->error(_t("Checkout.NOPAYMENTMETHOD","Payment method does not exist"));
 		}

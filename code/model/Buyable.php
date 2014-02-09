@@ -25,7 +25,7 @@ interface Buyable{
 	 *
 	 * @return boolean
 	 */
-	public function canPurchase();
+	public function canPurchase($member = null);
 
 	/**
 	 * The price the customer gets this buyable for, with any additional additions or subtractions.

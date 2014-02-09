@@ -21,7 +21,6 @@ class CartForm extends Form{
 
 	public function editableItems($items){
 		$editables = new ArrayList();
-		$i = Injector::inst();
 		foreach($items as $item){
 			if(!$item->Product()){
 				continue;
