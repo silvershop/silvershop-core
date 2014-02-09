@@ -88,7 +88,7 @@ class CustomProduct extends DataObject implements Buyable{
 		return $item;
 	}
 
-	public function canPurchase(){
+	public function canPurchase($member = null){
 		return $this->Price > 0;
 	}
 
