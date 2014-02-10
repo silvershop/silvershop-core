@@ -2,7 +2,8 @@
 
 class CheckoutForm extends Form {
 
-	protected $config, $redirectlink;
+	protected $config;
+	protected $redirectlink;
 
 	public function __construct($controller, $name, CheckoutComponentConfig $config) {
 		$this->config = $config;
@@ -11,7 +12,7 @@ class CheckoutForm extends Form {
 		$actions = new FieldList(
 			FormAction::create(
 				'checkoutSubmit',
-				_t('CheckoutForm','Proceed to payment')
+				_t('CheckoutForm', 'Proceed to payment')
 			)
 		);
 		$validator = new CheckoutComponentValidator($this->config);
@@ -22,7 +23,7 @@ class CheckoutForm extends Form {
 		}
 	}
 
-	public function setRedirectLink($link){
+	public function setRedirectLink($link) {
 		$this->redirectlink = $link;
 	}
 

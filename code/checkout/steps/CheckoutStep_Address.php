@@ -11,32 +11,32 @@ class CheckoutStep_Address extends CheckoutStep{
 		'setbillingaddress'
 	);
 
-	public function shippingconfig(){
+	public function shippingconfig() {
 		$config = new CheckoutComponentConfig(ShoppingCart::curr());
 		$config->addComponent(new ShippingAddressCheckoutComponent());
 
 		return $config;
 	}
 
-	public function shippingaddress(){
+	public function shippingaddress() {
 		$form = $this->ShippingAddressForm();
 		$form->Fields()->push(new CheckboxField(
-			"SeperateBilling","Bill to a different address from this"
+			"SeperateBilling", "Bill to a different address from this"
 		));
 		return array('OrderForm' => $form);
 	}
 
-	public function ShippingAddressForm(){
+	public function ShippingAddressForm() {
 		$form = new CheckoutForm($this->owner, 'ShippingAddressForm', $this->shippingconfig());
 		$form->setActions(new FieldList(
-			new FormAction("setshippingaddress","Continue")
+			new FormAction("setshippingaddress", "Continue")
 		));
-		$this->owner->extend('updateAddressForm',$form);
+		$this->owner->extend('updateAddressForm', $form);
 
 		return $form;
 	}
 
-	public function setshippingaddress($data, $form){
+	public function setshippingaddress($data, $form) {
 		$this->shippingconfig()->setData($form->getData());
 		$step = null;
 		if(isset($data['SeperateBilling']) && $data['SeperateBilling']){
@@ -45,28 +45,28 @@ class CheckoutStep_Address extends CheckoutStep{
 		return $this->owner->redirect($this->NextStepLink($step));
 	}
 
-	public function billingconfig(){
+	public function billingconfig() {
 		$config = new CheckoutComponentConfig(ShoppingCart::curr());
 		$config->addComponent(new BillingAddressCheckoutComponent());
 
 		return $config;
 	}
 
-	public function billingaddress(){
+	public function billingaddress() {
 		return array('OrderForm' => $this->BillingAddressForm());
 	}
 
-	public function BillingAddressForm(){
+	public function BillingAddressForm() {
 		$form = new CheckoutForm($this->owner, 'BillingAddressForm', $this->billingconfig());
 		$form->setActions(new FieldList(
-			new FormAction("setbillingaddress","Continue")
+			new FormAction("setbillingaddress", "Continue")
 		));
-		$this->owner->extend('updateAddressForm',$form);
+		$this->owner->extend('updateAddressForm', $form);
 
 		return $form;
 	}
 
-	public function setbillingaddress($data, $form){
+	public function setbillingaddress($data, $form) {
 		$this->billingconfig()->setData($form->getData());
 		return $this->owner->redirect($this->NextStepLink($step));
 	}

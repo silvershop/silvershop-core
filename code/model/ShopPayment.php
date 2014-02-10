@@ -10,7 +10,7 @@ class ShopPayment extends DataExtension {
 		'Order' => 'Order'
 	);
 
-	public function onCaptured($response){
+	public function onCaptured($response) {
 		$order = $this->owner->Order();
 		if($order->exists()){
 			OrderProcessor::create($order)->completePayment();

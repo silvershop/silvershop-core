@@ -2,7 +2,7 @@
 
 class TermsCheckoutComponent extends CheckoutComponent {
 
-	public function getFormFields(Order $order){
+	public function getFormFields(Order $order) {
 		$fields = new FieldList();
 		if(SiteConfig::current_site_config()->TermsPage()->exists()) {
 			$termsPage = SiteConfig::current_site_config()->TermsPage();
@@ -13,10 +13,10 @@ class TermsCheckoutComponent extends CheckoutComponent {
 							<a href=\"%s\" target=\"new\" title=\"Read the shop terms and conditions for this site\">
 								terms and conditions
 							</a>
-						page"),$termsPage->Link()
+						page"), $termsPage->Link()
 					)
 				)->setRequiredMessage(
-					_t("CheckoutField.MUSTAGREETOTERMS","You must agree to the terms and conditions")
+					_t("CheckoutField.MUSTAGREETOTERMS", "You must agree to the terms and conditions")
 				)
 			);
 		}
@@ -32,6 +32,8 @@ class TermsCheckoutComponent extends CheckoutComponent {
 		return array();
 	}
 
-	public function setData(Order $order, array $data) { }
+	public function setData(Order $order, array $data) {
+
+	}
 
 }

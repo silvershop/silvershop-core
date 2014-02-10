@@ -7,7 +7,7 @@ class CalculateProductPopularity extends BuildTask{
 
 	private static $number_sold_calculation_type = "SUM"; //SUM or COUNT
 
-	public function run($request){
+	public function run($request) {
 		if($request->getVar('via') == "php"){
 			$this->viaphp();
 		}else{
@@ -20,7 +20,7 @@ class CalculateProductPopularity extends BuildTask{
 	 * Update both live and stage tables, based on the algorithm:
 	 * 	product popularity = sum(1/order_age) * sum(item_quantity)
 	 */
-	public function viasql(){
+	public function viasql() {
 		foreach(array("_Live","") as $stage){
 			$sql =<<<SQL
 				UPDATE "Product$stage" SET "Popularity" = (
@@ -43,7 +43,7 @@ SQL;
 	}
 
 	//legacy function  for working out popularity
-	public function viaphp(){
+	public function viaphp() {
 		$ps = singleton('Product');
 		$q = $ps->buildSQL("\"Product\".\"AllowPurchase\" = 1");
 		$select = $q->select;
@@ -51,8 +51,8 @@ SQL;
 		$q->select($select);
 		$q->groupby("\"Product\".\"ID\"");
 		$q->orderby("\"NewPopularity\" DESC");
-		$q->leftJoin('Product_OrderItem','"Product"."ID" = "Product_OrderItem"."ProductID"');
-		$q->leftJoin('OrderItem','"Product_OrderItem"."ID" = "OrderItem"."ID"');
+		$q->leftJoin('Product_OrderItem', '"Product"."ID" = "Product_OrderItem"."ProductID"');
+		$q->leftJoin('OrderItem', '"Product_OrderItem"."ID" = "OrderItem"."ID"');
 		$records = $q->execute();
 		$productssold = $ps->buildDataObjectSet($records, "DataObjectSet", $q, 'Product');
 		//TODO: this could be done faster with an UPDATE query (SQLQuery doesn't support this yet @11/06/2010)

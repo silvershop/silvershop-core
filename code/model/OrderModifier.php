@@ -53,7 +53,7 @@ class OrderModifier extends OrderAttribute {
 	/**
 	* Specifies whether this modifier is always required in an order.
 	*/
-	public function required(){
+	public function required() {
 		return true;
 	}
 
@@ -67,7 +67,7 @@ class OrderModifier extends OrderAttribute {
 	 *
 	 * @return $subtotal - updated subtotal
 	 */
-	public function modify($subtotal,$forcecalculation = false){
+	public function modify($subtotal, $forcecalculation = false) {
 		$order = $this->Order();
 		$value = ($order->IsCart() || $forcecalculation) ? $this->value($subtotal) : $this->Amount;
 		switch($this->Type){
@@ -80,7 +80,7 @@ class OrderModifier extends OrderAttribute {
 			case "Ignored":
 				break;
 		}
-		$value = round($value,Order::config()->rounding_precision);
+		$value = round($value, Order::config()->rounding_precision);
 		$this->Amount = $value;
 		return $subtotal;
 	}
@@ -89,14 +89,14 @@ class OrderModifier extends OrderAttribute {
 	 * Calculates value to store, based on incoming running total.
 	 * @param float $incoming the incoming running total.
 	 */
-	public function value($incoming){
+	public function value($incoming) {
 		return 0;
 	}
 
 	/**
 	 * Check if the modifier should be in the cart.
 	 */
-	public function valid(){
+	public function valid() {
 		return true;
 	}
 

@@ -23,7 +23,7 @@ class CheckoutPage extends Page {
 	 * @return string Link to checkout page
 	 */
 	public static function find_link($urlSegment = false, $action = null, $id = null) {
-		if(!$page = CheckoutPage::get()->first()) {
+		if(!$page = self::get()->first()) {
 			return Controller::join_links(
 				Director::baseURL(),
 				CheckoutPage_Controller::config()->url_segment
@@ -32,23 +32,24 @@ class CheckoutPage extends Page {
 		$id = ($id)? "/".$id : "";
 		return ($urlSegment) ?
 			$page->URLSegment :
-			Controller::join_links($page->Link($action),$id);
+			Controller::join_links($page->Link($action), $id);
 	}
 
 	/**
 	 * Only allow one checkout page
 	 */
 	public function canCreate($member = null) {
-		return !CheckoutPage::get()->exists();
+		return !self::get()->exists();
 	}
 
 	public function getCMSFields() {
 		$fields = parent::getCMSFields();
 		$fields->addFieldsToTab('Root.Main', array(
 			HtmlEditorField::create('PurchaseComplete', 'Purchase Complete', 4)
-				->setDescription("This message is included in reciept email, ".
-								"after the customer submits the checkout")
-		),'Metadata');
+				->setDescription(
+					"This message is included in reciept email, after the customer submits the checkout"
+				)
+		), 'Metadata');
 		return $fields;
 	}
 
@@ -66,9 +67,10 @@ class CheckoutPage_Controller extends Page_Controller {
 	 * Display a title if there is no model, or no title.
 	 */
 	public function Title() {
-		if($this->Title)
+		if($this->Title){
 			return $this->Title;
-		return _t('CheckoutPage.TITLE',"Checkout");
+		}
+		return _t('CheckoutPage.TITLE', "Checkout");
 	}
 
 	public function OrderForm() {
@@ -85,7 +87,7 @@ class CheckoutPage_Controller extends Page_Controller {
 	/**
 	 * Action for making on-site payments
 	 */
-	public function payment(){
+	public function payment() {
 		if(!$this->Cart()){
 			return $this->redirect($this->Link());
 		}
@@ -96,15 +98,15 @@ class CheckoutPage_Controller extends Page_Controller {
 		);
 	}
 
-	public function PaymentForm(){
+	public function PaymentForm() {
 		if(!(bool)$this->Cart()){
 			return false;
 		}
-		$config = new CheckoutComponentConfig(ShoppingCart::curr(),false);
+		$config = new CheckoutComponentConfig(ShoppingCart::curr(), false);
 		$config->AddComponent(new OnsitePaymentCheckoutComponent());
 		$form = new PaymentForm($this, "PaymentForm", $config);
 		$form->setActions(new FieldList(
-			FormAction::create("submitpayment","Submit Payment")
+			FormAction::create("submitpayment", "Submit Payment")
 		));
 		$form->setFailureLink($this->Link());
 

@@ -59,10 +59,14 @@ class ShopMember extends DataExtension {
 		$fields->removeByName('Country');
 		$fields->removeByName("DefaultShippingAddressID");
 		$fields->removeByName("DefaultBillingAddressID");
-		$fields->addFieldToTab('Root.Main', new DropdownField('Country', 'Country', SiteConfig::current_site_config()->getCountriesList()));
+		$fields->addFieldToTab('Root.Main',
+			new DropdownField('Country', 'Country',
+				SiteConfig::current_site_config()->getCountriesList()
+			)
+		);
 	}
 
-	public function updateMemberFormFields($fields){
+	public function updateMemberFormFields($fields) {
 		$fields->removeByName('DefaultShippingAddressID');
 		$fields->removeByName('DefaultBillingAddressID');
 		if($gender=$fields->fieldByName('Gender')){

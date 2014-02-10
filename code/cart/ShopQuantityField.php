@@ -8,34 +8,36 @@ class ShopQuantityField extends ViewableData{
 	protected $template = 'ShopQuantityField';
 	protected $buyable;
 
-	public function __construct($object, $parameters = null){
+	public function __construct($object, $parameters = null) {
 		if($object instanceof Buyable){
-			$this->item = ShoppingCart::singleton()->get($object,$parameters);
-			 //provide a 0-quantity facade item if there is no such item in cart
+			$this->item = ShoppingCart::singleton()->get($object, $parameters);
+			//provide a 0-quantity facade item if there is no such item in cart
 			if(!$this->item){
-				$this->item = new OrderItem($object,0);
+				$this->item = new OrderItem($object, 0);
 			}
 			$this->buyable = $object;
-			//TODO: perhaps we should just store the product itself, and do away with the facade, as it might be unnecessary complication
+			//TODO: perhaps we should just store the product itself,
+				//and do away with the facade, as it might be unnecessary complication
 		}elseif($object instanceof OrderItem){
 			$this->item = $object;
 			$this->buyable = $object->Buyable();
 		}
-		if(!$this->item)
+		if(!$this->item){
 			user_error("ShopQuantityField: no item or product passed to constructor.");
-
+		}
 		$this->parameters = $parameters;
 		//TODO: include javascript for easy update
 	}
 
-	public function setClasses($newclasses, $overwrite = false){
-		if($overwrite)
-			$this->classes = array_merge($this->classes,$newclasses);
-		else
+	public function setClasses($newclasses, $overwrite = false) {
+		if($overwrite){
+			$this->classes = array_merge($this->classes, $newclasses);
+		}else{
 			$this->classes = $newclasses;
+		}
 	}
 
-	public function setTemplate($template){
+	public function setTemplate($template) {
 		$this->template = $template;
 	}
 
@@ -52,29 +54,29 @@ class ShopQuantityField extends ViewableData{
 		for($r=1; $r<= $this->max; $r++){
 			$qtyArray[$r] = $r;
 		}
-		return new NumericField($this->MainID() . '_Quantity',"Qty",$this->item->Quantity);
+		return new NumericField($this->MainID() . '_Quantity', "Qty", $this->item->Quantity);
 	}
 
-	public function MainID(){
+	public function MainID() {
 		return get_class($this->item).'_DB_'.$this->item->ID;
 	}
 
-	public function IncrementLink(){
+	public function IncrementLink() {
 		return $this->item->addLink();
 	}
 
-	public function DecrementLink(){
+	public function DecrementLink() {
 		return $this->item->removeLink();
 	}
 
-	public function forTemplate(){
+	public function forTemplate() {
 		return $this->renderWith($this->template);
 	}
 
 	/**
 	 * Used for storing the quantity update link for ajax use.
 	 */
-	public function AJAXLinkHiddenField(){
+	public function AJAXLinkHiddenField() {
 		if($quantitylink = $this->item->setquantityLink()){
 			$attributes = array(
 				'type' => 'hidden',
@@ -104,7 +106,8 @@ class DropdownShopQuantityField extends ShopQuantityField{
 		for($r=1; $r<= $this->max; $r++){
 			$qtyArray[$r] = $r;
 		}
-		return new DropdownField($this->MainID() . '_Quantity',"Qty",$qtyArray,($this->item->Quantity) ? $this->item->Quantity : "");
+		return new DropdownField($this->MainID() . '_Quantity', "Qty", $qtyArray, ($this->item->Quantity)
+			? $this->item->Quantity : "");
 	}
 
 }

@@ -82,6 +82,4 @@ class CartCleanupTask extends BuildTask{
 		};
 	}
 
-
-
 }

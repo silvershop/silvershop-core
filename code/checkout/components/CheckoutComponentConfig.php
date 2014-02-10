@@ -12,7 +12,7 @@ class CheckoutComponentConfig {
 		$this->namespaced = $namespaced;
 	}
 
-	public function getOrder(){
+	public function getOrder() {
 		return $this->order;
 	}
 
@@ -145,7 +145,7 @@ class CheckoutComponentConfig {
 	 * Set data on all components
 	 * @param array $data map of field names to data values
 	 */
-	public function setData($data){
+	public function setData($data) {
 		foreach($this->getComponents() as $component){
 			$component->setData($this->order, $this->dependantData($component, $data));
 		}
@@ -154,7 +154,7 @@ class CheckoutComponentConfig {
 	/**
 	 * Helper function for saving data from other components.
 	 */
-	protected function dependantData($component, $data){
+	protected function dependantData($component, $data) {
 		if(!$this->namespaced){ //no need to try and get un-namespaced dependant data
 			return $data;
 		}
@@ -182,7 +182,7 @@ class CheckoutComponentConfig {
 
 class SinglePageCheckoutComponentConfig extends CheckoutComponentConfig {
 
-	public function __construct(Order $order){
+	public function __construct(Order $order) {
 		parent::__construct($order);
 		$this->addComponent(new CustomerDetailsCheckoutComponent());
 		$this->addComponent(new ShippingAddressCheckoutComponent());

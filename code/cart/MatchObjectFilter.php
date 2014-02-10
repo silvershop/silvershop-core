@@ -34,14 +34,16 @@
  */
 class MatchObjectFilter{
 
-	protected $className, $data, $required;
+	protected $className;
+	protected $data;
+	protected $required;
 
 	/**
 	 * @param string $className
 	 * @param array $data field values to use
 	 * @param array $requiredfields fields required to be included in the query
 	 */
-	public function __construct($className,array $data, array $requiredfields){
+	public function __construct($className, array $data, array $requiredfields) {
 		$this->className = $className;
 		$this->required = $requiredfields;
 		$this->data = $data;
@@ -51,7 +53,7 @@ class MatchObjectFilter{
 	 * Create SQL where filter
 	 * @return array of filter statements
 	 */
-	public function getFilter(){
+	public function getFilter() {
 
 		if(!is_array($this->data)){
 			return null;
@@ -60,8 +62,8 @@ class MatchObjectFilter{
 		$hasones = $singleton->has_one();
 
 		$db = $singleton->db();
-		$allowed = array_merge($db,$hasones); //fields that can be used
-		$fields = array_flip(array_intersect(array_keys($allowed),$this->required));
+		$allowed = array_merge($db, $hasones); //fields that can be used
+		$fields = array_flip(array_intersect(array_keys($allowed), $this->required));
 
 		//add 'ID' to has one relationship fields
 		foreach($hasones as $key => $value){
@@ -74,7 +76,7 @@ class MatchObjectFilter{
 		$new = array();
 		foreach($fields as $field => $value){
 			$field = Convert::raw2sql($field);
-			if(array_key_exists($field,$db)){
+			if(array_key_exists($field, $db)){
 				$dbfield = $singleton->dbObject($field);
 				$value = (isset($this->data[$field])) ? $this->data[$field] : null;
 				$value = $dbfield->prepValueForDB($value);	//product correct format for db values

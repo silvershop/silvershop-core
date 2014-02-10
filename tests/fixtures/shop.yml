@@ -139,6 +139,9 @@ Order:
         Name: Other cart
         Member: =>Member.bobjones
         Total: 200
+    modifiedcart:
+        Name: Modified cart
+        Total: 100
 
 Product_OrderItem:
     cart_socks:
@@ -181,6 +184,14 @@ Product_OrderItem:
         UnitPrice: 200
         Quantity: 1
         CalculatedTotal: 200
+    othercart_mp3player:
+        Order: =>Order.modifiedcart
+        Product: =>Product.mp3player
+        ProductVersion: 1
+        UnitPrice: 200
+        Quantity: 1
+        CalculatedTotal: 200
+
 Payment:
     paid_success:
         Gateway: Dummy

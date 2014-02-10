@@ -15,7 +15,7 @@ class ViewableCart extends Extension{
 	/**
 	 * Get the cart, and do last minute calculation if necessary.
 	 */
-	public function Cart(){
+	public function Cart() {
 		$order = ShoppingCart::curr();
 		if(!$order || !$order->Items() || !$order->Items()->exists()){
 			return false;
@@ -29,8 +29,8 @@ class ViewableCart extends Extension{
 		));
 	}
 
-	public function getContinueLink(){
-		if($maincategory = DataObject::get_one('ProductCategory',"",true,"ParentID ASC, ID ASC")){
+	public function getContinueLink() {
+		if($maincategory = DataObject::get_one('ProductCategory', "", true, "ParentID ASC, ID ASC")){
 			return $maincategory->Link();
 		}
 		return Director::baseURL();

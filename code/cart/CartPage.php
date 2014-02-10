@@ -17,22 +17,22 @@ class CartPage extends Page{
 	 * Only allow one cart page
 	 */
 	public function canCreate($member = null) {
-		return !CartPage::get()->exists();
+		return !self::get()->exists();
 	}
 
-	public function getCMSFields(){
+	public function getCMSFields() {
 		$fields = parent::getCMSFields();
 		if($checkouts = CheckoutPage::get()) {
 			$fields->addFieldToTab('Root.Links',
-				DropdownField::create('CheckoutPageID','Checkout Page',
-					$checkouts->map("ID","Title")
+				DropdownField::create('CheckoutPageID', 'Checkout Page',
+					$checkouts->map("ID", "Title")
 				)
 			);
 		}
 		if($pgroups = ProductCategory::get()) {
 			$fields->addFieldToTab('Root.Links',
-				DropdownField::create('ContinuePageID','Continue Product Group Page',
-					$pgroups->map("ID","Title")
+				DropdownField::create('ContinuePageID', 'Continue Product Group Page',
+					$pgroups->map("ID", "Title")
 				)
 			);
 		}
@@ -47,12 +47,12 @@ class CartPage extends Page{
 	 * @return string Link to checkout page
 	 */
 	public static function find_link($urlSegment = false, $action = false, $id = false) {
-		$page = CartPage::get()->first();
+		$page = self::get()->first();
 		$base = $page ? $page->Link() : CartPage_Controller::config()->url_segment;
 		if($urlSegment){
 			return $base;
 		}
-		return Controller::join_links($base,$action,$id);
+		return Controller::join_links($base, $action, $id);
 	}
 
 }
@@ -68,21 +68,22 @@ class CartPage_Controller extends Page_Controller{
 	/**
 	 * Display a title if there is no model, or no title.
 	 */
-	public function Title(){
-		if($this->Title)
+	public function Title() {
+		if($this->Title){
 			return $this->Title;
-		return _t('CartPage.TITLE',"Shopping Cart");
+		}
+		return _t('CartPage.TITLE', "Shopping Cart");
 	}
 
 	/**
 	 * A form for updating cart items
 	 */
-	public function CartForm(){
+	public function CartForm() {
 		$cart = $this->Cart();
 		if(!$cart){
 			return false;
 		}
-		return new CartForm($this,"CartForm",$cart);
+		return new CartForm($this, "CartForm", $cart);
 	}
 
 }

@@ -16,7 +16,7 @@ class CheckoutStep_Membership extends CheckoutStep{
 
 	public static $skip_if_logged_in = true;
 
-	public function membership(){
+	public function membership() {
 		//if logged in, then redirect to next step
 		if(ShoppingCart::curr() && self::$skip_if_logged_in && Member::currentUser()){
 			Controller::curr()->redirect($this->NextStepLink());
@@ -29,28 +29,28 @@ class CheckoutStep_Membership extends CheckoutStep{
 		))->renderWith(array("CheckoutPage_membership","CheckoutPage","Page")); //needed to make rendering work on index
 	}
 
-	public function MembershipForm(){
+	public function MembershipForm() {
 		$fields = new FieldList();
 		$actions = new FieldList(
-			new FormAction("createaccount","Create an Account"),
-			new FormAction("guestcontinue","Continue as Guest")
+			new FormAction("createaccount", "Create an Account"),
+			new FormAction("guestcontinue", "Continue as Guest")
 		);
-		$form = new Form($this->owner,'MembershipForm',$fields,$actions);
+		$form = new Form($this->owner, 'MembershipForm', $fields, $actions);
 		$this->owner->extend('updateMembershipForm', $form);
 		return $form;
 	}
 
-	public function guestcontinue(){
+	public function guestcontinue() {
 		$this->owner->redirect($this->NextStepLink());
 	}
 
-	public function LoginForm(){
-		$form = new MemberLoginForm($this->owner,'LoginForm');
+	public function LoginForm() {
+		$form = new MemberLoginForm($this->owner, 'LoginForm');
 		$this->owner->extend('updateLoginForm', $form);
 		return $form;
 	}
 
-	public function createaccount($requestdata){
+	public function createaccount($requestdata) {
 
 		if(Member::currentUser()){ //we shouldn't create an account if already a member
 			Controller::curr()->redirect($this->NextStepLink());
@@ -65,7 +65,7 @@ class CheckoutStep_Membership extends CheckoutStep{
 		);
 	}
 
-	public function registerconfig(){
+	public function registerconfig() {
 		$config = new CheckoutComponentConfig(ShoppingCart::curr(), false);
 		$config->addComponent(new CustomerDetailsCheckoutComponent());
 		$config->addComponent(new MembershipCheckoutComponent());
@@ -73,10 +73,10 @@ class CheckoutStep_Membership extends CheckoutStep{
 		return $config;
 	}
 
-	public function CreateAccountForm(){
-		$form = new CheckoutForm($this->owner,"CreateAccountForm",$this->registerconfig());
+	public function CreateAccountForm() {
+		$form = new CheckoutForm($this->owner, "CreateAccountForm", $this->registerconfig());
 		$form->setActions(new FieldList(
-			new FormAction('docreateaccount','Create New Account')
+			new FormAction('docreateaccount', 'Create New Account')
 		));
 		$form->getValidator()->addRequiredField("Password");
 
@@ -84,7 +84,7 @@ class CheckoutStep_Membership extends CheckoutStep{
 		return $form;
 	}
 
-	public function docreateaccount($data, Form $form){
+	public function docreateaccount($data, Form $form) {
 		$this->registerconfig()->setData($form->getData());
 
 		return Controller::curr()->redirect($this->NextStepLink());

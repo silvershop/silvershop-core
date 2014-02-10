@@ -50,7 +50,7 @@ class OrderItem extends OrderAttribute {
 	/**
 	 * Get the buyable object related to this item.
 	 */
-	public function Buyable(){
+	public function Buyable() {
 		return $this->{self::config()->buyable_relationship}();
 	}
 
@@ -62,7 +62,7 @@ class OrderItem extends OrderAttribute {
 		if($this->Order()->IsCart()){
 			$buyable = $this->Buyable();
 			$unitprice = ($buyable) ? $buyable->sellingPrice() : $this->UnitPrice;
-			$this->extend('updateUnitPrice',$unitprice);
+			$this->extend('updateUnitPrice', $unitprice);
 			return $this->UnitPrice = $unitprice;
 		}
 		return $this->UnitPrice;
@@ -71,7 +71,7 @@ class OrderItem extends OrderAttribute {
 	/**
 	 * Prevent unit price ever being below 0
 	 */
-	public function setUnitPrice($val){
+	public function setUnitPrice($val) {
 		if($val < 0){
 			$val = 0;
 		}
@@ -83,7 +83,7 @@ class OrderItem extends OrderAttribute {
 	 * 0 quantity means it should instead be deleted.
 	 * @param int $val new quantity to set
 	 */
-	public function setQuantity($val){
+	public function setQuantity($val) {
 		if($val < 1){
 			$val = 1;
 		}
@@ -105,9 +105,9 @@ class OrderItem extends OrderAttribute {
 	 * Calculates the total for this item.
 	 * Generally called by onBeforeWrite
 	 */
-	protected function calculatetotal(){
+	protected function calculatetotal() {
 		$total = $this->UnitPrice() * $this->Quantity;
-		$this->extend('updateTotal',$total);
+		$this->extend('updateTotal', $total);
 		$this->CalculatedTotal = $total;
 		return $total;
 	}
@@ -116,7 +116,7 @@ class OrderItem extends OrderAttribute {
 	 * Intersects this item's required_fields with the data record.
 	 * This is used for uniquely adding items to the cart.
 	 */
-	public function uniquedata(){
+	public function uniquedata() {
 		$required = self::config()->required_fields; //TODO: also combine with all ancestors of this->class
 		$data = $this->record;
 		$unique = array();
@@ -163,28 +163,28 @@ class OrderItem extends OrderAttribute {
 	 * Get the buyable image.
 	 * Also serves as a standardised placeholder for overriding in subclasses.
 	 */
-	public function Image(){
+	public function Image() {
 		return $this->Buyable()->Image();
 	}
 
-	public function QuantityField(){
-		return Injector::inst()->create('ShopQuantityField',$this);
+	public function QuantityField() {
+		return Injector::inst()->create('ShopQuantityField', $this);
 	}
 
 	public function addLink() {
-		return ShoppingCart_Controller::add_item_link($this->Buyable(),$this->uniquedata());
+		return ShoppingCart_Controller::add_item_link($this->Buyable(), $this->uniquedata());
 	}
 
 	public function removeLink() {
-		return ShoppingCart_Controller::remove_item_link($this->Buyable(),$this->uniquedata());
+		return ShoppingCart_Controller::remove_item_link($this->Buyable(), $this->uniquedata());
 	}
 
 	public function removeallLink() {
-		return ShoppingCart_Controller::remove_all_item_link($this->Buyable(),$this->uniquedata());
+		return ShoppingCart_Controller::remove_all_item_link($this->Buyable(), $this->uniquedata());
 	}
 
 	public function setquantityLink() {
-		return ShoppingCart_Controller::set_quantity_item_link($this->Buyable(),$this->uniquedata());
+		return ShoppingCart_Controller::set_quantity_item_link($this->Buyable(), $this->uniquedata());
 	}
 
 }

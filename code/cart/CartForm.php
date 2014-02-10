@@ -4,40 +4,40 @@ class CartForm extends Form{
 
 	protected $cart;
 
-	public function __construct($controller, $name = "CartForm", $cart, $template = "Cart"){
+	public function __construct($controller, $name = "CartForm", $cart = null, $template = "Cart") {
 		$this->cart = $cart;
 		parent::__construct($controller, $name, new FieldList(
 			LiteralField::create("cartcontent",
 				SSViewer::execute_template($template, $cart->customise(array(
 					'Items' => $this->editableItems($cart->Items())
-				)),array(
+				)), array(
 					'Editable' => true
 				))
 			)
-		),new FieldList(
-			FormAction::create("updatecart","Update Cart")
+		), new FieldList(
+			FormAction::create("updatecart", "Update Cart")
 		));
 	}
 
-	public function editableItems($items){
+	public function editableItems($items) {
 		$editables = new ArrayList();
 		foreach($items as $item){
 			if(!$item->Product()){
 				continue;
 			}
 			$name = "Item[$item->ID]";
-			$quantity = NumericField::create($name."[Quantity]","Quantity",$item->Quantity);
+			$quantity = NumericField::create($name."[Quantity]", "Quantity", $item->Quantity);
 			$variation = false;
 			$variations = $item->Product()->Variations();
 			if($variations->exists()){
 				$variation = DropdownField::create(
 					$name."[ProductVariationID]",
 					"Varaition",
-					$variations->map('ID','Title'),
+					$variations->map('ID', 'Title'),
 					$item->ProductVariationID
 				);
 			}
-			$remove = CheckboxField::create($name."[Remove]","Remove");
+			$remove = CheckboxField::create($name."[Remove]", "Remove");
 			$editables->push($item->customise(array(
 				"QuantityField" => $quantity,
 				"VariationField" => $variation,
@@ -48,7 +48,7 @@ class CartForm extends Form{
 		return $editables;
 	}
 
-	public function updatecart($data, $form){
+	public function updatecart($data, $form) {
 		$items = $this->cart->Items();
 		$updatecount = $removecount = 0;
 		$messages = array();
@@ -91,7 +91,7 @@ class CartForm extends Form{
 			$messages['updatecount'] = "Updated ".$updatecount." items.";
 		}
 		if(count($messages)){
-			$form->sessionMessage(implode(" ", $messages),"good");
+			$form->sessionMessage(implode(" ", $messages), "good");
 		}
 		$this->controller->redirectBack();
 	}

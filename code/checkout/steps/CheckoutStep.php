@@ -10,7 +10,7 @@ class CheckoutStep extends Extension{
 	 * Get the next step action
 	 * @return string|NULL
 	 */
-	private function nextstep(){
+	private function nextstep() {
 		$steps = $this->owner->getSteps();
 		$found = false;
 		foreach($steps as $step => $class){
@@ -23,7 +23,7 @@ class CheckoutStep extends Extension{
 		return null;
 	}
 
-	public function NextStepLink($nextstep = null){
+	public function NextStepLink($nextstep = null) {
 		if(!$nextstep){
 			$nextstep = $this->nextstep();
 		}

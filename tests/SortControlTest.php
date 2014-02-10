@@ -2,7 +2,6 @@
 
 class SortControlTest extends SapphireTest{
 
-
 	public function testCreateSort(){
 
 		$sorter = new SortControl("SortControlTest");
@@ -46,8 +45,5 @@ class SortControlTest extends SapphireTest{
 		$this->assertEquals($sorter->getSortOptions(),array(),"Sort options are empty");
 
 	}
-
-
-
 
 }

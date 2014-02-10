@@ -29,5 +29,4 @@ class ProductBulkLoaderTest extends FunctionalTest {
 		fclose($file);
 	}
 
-
 }

@@ -8,11 +8,11 @@ if(class_exists("Widget")){
 
 	class CartWidget extends Widget{
 
-		static $title = "Shopping Cart";
-		static $cmsTitle = "Shopping Cart";
-		static $description = "Displays the current contents of the user's cart.";
+		private static $title = "Shopping Cart";
+		private static $cmsTitle = "Shopping Cart";
+		private static $description = "Displays the current contents of the user's cart.";
 
-		function Cart(){
+		function Cart() {
 			return Controller::curr()->Cart();
 		}
 

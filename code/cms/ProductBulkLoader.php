@@ -2,7 +2,8 @@
 /**
  * ProductBulkLoader - allows loading products via CSV file.
  *
- * Images should be uploaded before import, where the Photo/Image field corresponds to the filename of a file that was uploaded.
+ * Images should be uploaded before import, where the Photo/Image field
+ * corresponds to the filename of a file that was uploaded.
  *
  * Variations can be specified in a "Variation" column this format:
  * Type:value,value,value
@@ -19,7 +20,8 @@ class ProductBulkLoader extends CsvBulkLoader{
 	public static $createnewproductgroups = false;
 	public static $hasStockImpl = false;
 
-	// NB do NOT use functional indirection on any fields where they will be used in $duplicateChecks as well - they simply don't work.
+	// NB do NOT use functional indirection on any fields where they
+		// will be used in $duplicateChecks as well - they simply don't work.
 	public $columnMap = array(
 		'Price' => 'BasePrice',
 		'Cost Price' => 'CostPrice',
@@ -78,7 +80,7 @@ class ProductBulkLoader extends CsvBulkLoader{
 	);
 
 	protected function processAll($filepath, $preview = false) {
-		$this->extend('updateColumnMap',$this->columnMap);
+		$this->extend('updateColumnMap', $this->columnMap);
 		// we have to check for the existence of this in case the stockcontrol module hasn't been loaded
 		// and the CSV still contains a Stock column
 		self::$hasStockImpl = Object::has_extension('Product', 'ProductStockDecorator');
@@ -89,17 +91,18 @@ class ProductBulkLoader extends CsvBulkLoader{
 		$objects->merge($results->Updated());
 		foreach($objects as $object){
 			if(!$object->ParentID){
-				 //set parent page
-				if(is_numeric(self::$parentpageid) &&  DataObject::get_by_id('ProductCategory',self::$parentpageid)) //cached option
+				//set parent page
+				if(is_numeric(self::$parentpageid) && DataObject::get_by_id('ProductCategory', self::$parentpageid)){ //cached option
 					$object->ParentID = self::$parentpageid;
-				elseif($parentpage = DataObject::get_one('ProductCategory',"\"Title\" = 'Products'",'"Created" DESC')){ //page called 'Products'
+				}elseif($parentpage = DataObject::get_one('ProductCategory', "\"Title\" = 'Products'", '"Created" DESC')){ //page called 'Products'
 					$object->ParentID = self::$parentpageid = $parentpage->ID;
-				}elseif($parentpage = DataObject::get_one('ProductCategory',"\"ParentID\" = 0",'"Created" DESC')){ //root page
+				}elseif($parentpage = DataObject::get_one('ProductCategory', "\"ParentID\" = 0", '"Created" DESC')){ //root page
 					$object->ParentID = self::$parentpageid = $parentpage->ID;
-				}elseif($parentpage = DataObject::get_one('ProductCategory',"",'"Created" DESC')){ //any product page
+				}elseif($parentpage = DataObject::get_one('ProductCategory', "", '"Created" DESC')){ //any product page
 					$object->ParentID = self::$parentpageid = $parentpage->ID;
-				}else
+				}else{
 					$object->ParentID = self::$parentpageid = 0;
+				}
 			}
 			$object->extend('updateImport'); //could be used for setting other attributes, such as stock level
 			$object->writeToStage('Stage');
@@ -108,7 +111,7 @@ class ProductBulkLoader extends CsvBulkLoader{
 		return $results;
 	}
 
-	public function processRecord($record, $columnMap, &$results, $preview = false){
+	public function processRecord($record, $columnMap, &$results, $preview = false) {
 		if(!$record || !isset($record['Title']) || $record['Title'] == ''){ //TODO: make required fields customisable
 			return null;
 		}
@@ -116,10 +119,10 @@ class ProductBulkLoader extends CsvBulkLoader{
 	}
 
 	// set image, based on filename
-	public function imageByFilename(&$obj, $val, $record){
+	public function imageByFilename(&$obj, $val, $record) {
 		$filename = trim(strtolower(Convert::raw2sql($val)));
-		$filenamedashes = str_replace(" ","-",$filename);
-		if($filename && $image = DataObject::get_one('Image',"LOWER(\"Filename\") LIKE '%$filename%' OR LOWER(\"Filename\") LIKE '%$filenamedashes%'")){ //ignore case
+		$filenamedashes = str_replace(" ", "-", $filename);
+		if($filename && $image = DataObject::get_one('Image', "LOWER(\"Filename\") LIKE '%$filename%' OR LOWER(\"Filename\") LIKE '%$filenamedashes%'")){ //ignore case
 			if($image instanceof Image && $image->isInDB()){
 				$image->write();
 				return $image;
@@ -129,10 +132,10 @@ class ProductBulkLoader extends CsvBulkLoader{
 	}
 
 	// find product group parent (ie Cateogry)
-	public function setParent(&$obj, $val, $record){
+	public function setParent(&$obj, $val, $record) {
 		$title = strtolower(Convert::raw2sql($val));
 		if($title){
-			if($parentpage = DataObject::get_one('ProductCategory',"LOWER(\"Title\") = '$title'",'"Created" DESC')){ // find or create parent category, if provided
+			if($parentpage = DataObject::get_one('ProductCategory', "LOWER(\"Title\") = '$title'", '"Created" DESC')){ // find or create parent category, if provided
 				$obj->ParentID = $parentpage->ID;
 				$obj->write();
 				$obj->writeToStage('Stage');
@@ -156,20 +159,20 @@ class ProductBulkLoader extends CsvBulkLoader{
 	/**
 	 * Adds paragraphs to content.
 	 */
-	public function setContent(&$obj, $val, $record){
+	public function setContent(&$obj, $val, $record) {
 		$val = trim($val);
 		if($val){
-			$paragraphs = explode("\n",$val);
-			$obj->Content = "<p>".implode("</p><p>",$paragraphs)."</p>";
+			$paragraphs = explode("\n", $val);
+			$obj->Content = "<p>".implode("</p><p>", $paragraphs)."</p>";
 		}
 	}
 
-	public function processVariation(&$obj, $val, $record){
+	public function processVariation(&$obj, $val, $record) {
 		if(isset($record['->variationRow'])) return; //don't use this technique for variation rows
-		$parts = explode(":",$val);
+		$parts = explode(":", $val);
 		if(count($parts) == 2){
 			$attributetype = trim($parts[0]);
-			$attributevalues = explode(",",$parts[1]);
+			$attributevalues = explode(",", $parts[1]);
 			//get rid of empty values
 			foreach($attributevalues as $key => $value){
 				if(!$value || trim($value) == ""){
@@ -180,15 +183,16 @@ class ProductBulkLoader extends CsvBulkLoader{
 				$attributetype = ProductAttributeType::find_or_make($attributetype);
 				foreach($attributevalues as $key => $value){
 					$val = trim($value);
-					if($val != "" && $val != null)
+					if($val != "" && $val != null){
 						$attributevalues[$key] = $val; //remove outside spaces from values
+					}
 				}
 				$attributetype->addValues($attributevalues);
 				$obj->VariationAttributeTypes()->add($attributetype);
 				//only generate variations if none exist yet
 				if(!$obj->Variations()->exists() || $obj->WeAreBuildingVariations){
 					//either start new variations, or multiply existing ones by new variations
-					$obj->generateVariationsFromAttributes($attributetype,$attributevalues);
+					$obj->generateVariationsFromAttributes($attributetype, $attributevalues);
 					$obj->WeAreBuildingVariations = true;
 				}
 			}
@@ -196,30 +200,30 @@ class ProductBulkLoader extends CsvBulkLoader{
 	}
 
 	//work around until I can figure out how to allow calling processVariation multiple times
-	public function processVariation1(&$obj, $val, $record){
+	public function processVariation1(&$obj, $val, $record) {
 		$this->processVariation($obj, $val, $record);
 	}
-	public function processVariation2(&$obj, $val, $record){
+	public function processVariation2(&$obj, $val, $record) {
 		$this->processVariation($obj, $val, $record);
 	}
-	public function processVariation3(&$obj, $val, $record){
+	public function processVariation3(&$obj, $val, $record) {
 		$this->processVariation($obj, $val, $record);
 	}
-	public function processVariation4(&$obj, $val, $record){
+	public function processVariation4(&$obj, $val, $record) {
 		$this->processVariation($obj, $val, $record);
 	}
-	public function processVariation5(&$obj, $val, $record){
+	public function processVariation5(&$obj, $val, $record) {
 		$this->processVariation($obj, $val, $record);
 	}
-	public function processVariation6(&$obj, $val, $record){
+	public function processVariation6(&$obj, $val, $record) {
 		$this->processVariation($obj, $val, $record);
 	}
 
-	public function variationRow(&$obj, $val, $record){
+	public function variationRow(&$obj, $val, $record) {
 
 		$obj->write(); //make sure product is in DB
 		//TODO: or find existing variation
-		$variation = ProductVariation::get()->filter("InternalItemID",'$val')->first();
+		$variation = ProductVariation::get()->filter("InternalItemID", '$val')->first();
 		if(!$variation){
 			$variation = new ProductVariation();
 			$variation->InternalItemID = $val;
@@ -237,10 +241,10 @@ class ProductBulkLoader extends CsvBulkLoader{
 		);
 		foreach($varcols as $col){
 			if(isset($record[$col])){
-				$parts = explode(":",$record[$col]);
+				$parts = explode(":", $record[$col]);
 				if(count($parts) == 2){
 					$attributetype = trim($parts[0]);
-					$attributevalues = explode(",",$parts[1]);
+					$attributevalues = explode(",", $parts[1]);
 					//get rid of empty values
 					foreach($attributevalues as $key => $value){
 						if(!$value || trim($value) == ""){
@@ -251,8 +255,9 @@ class ProductBulkLoader extends CsvBulkLoader{
 						$attributetype = ProductAttributeType::find_or_make($attributetype);
 						foreach($attributevalues as $key => $value){
 							$val = trim($value);
-							if($val != "" && $val != null)
+							if($val != "" && $val != null){
 								$attributevalues[$key] = $val; //remove outside spaces from values
+							}
 						}
 						$attributetype->addValues($attributevalues); //create and add values to attribute type
 						$obj->VariationAttributeTypes()->add($attributetype); //add variation attribute type to product

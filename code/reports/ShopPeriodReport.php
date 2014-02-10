@@ -46,7 +46,6 @@ class ShopPeriodReport extends SS_Report{
 		return parent::canView($member);
 	}
 
-
 	public function getReportField(){
 		$field = parent::getReportField();
 		$field->getConfig()->removeComponentsByType('GridFieldPaginator');

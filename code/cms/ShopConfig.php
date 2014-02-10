@@ -13,7 +13,7 @@ class ShopConfig extends DataExtension{
 
 	private static $email_from;
 
-	public static function current(){
+	public static function current() {
 		return SiteConfig::current_site_config();
 	}
 
@@ -22,14 +22,14 @@ class ShopConfig extends DataExtension{
 		$fields->addFieldsToTab("Root.Shop", new TabSet("ShopTabs",
 			$maintab = new Tab("Main",
 				TreeDropdownField::create('TermsPageID',
-					_t("ShopConfig.TERMSPAGE",'Terms and Conditions Page'),
+					_t("ShopConfig.TERMSPAGE", 'Terms and Conditions Page'),
 				'SiteTree'),
 				TreeDropdownField::create("CustomerGroupID",
-					_t("ShopConfig.CUSTOMERGROUP","Group to add new customers to"),
+					_t("ShopConfig.CUSTOMERGROUP", "Group to add new customers to"),
 				"Group")
 			),
 			$countriestab = new Tab("Countries",
-				CheckboxSetField::create('AllowedCountries','Allowed Ordering and Shipping Countries',
+				CheckboxSetField::create('AllowedCountries', 'Allowed Ordering and Shipping Countries',
 					self::config()->iso_3166_country_codes
 				)
 			)
@@ -38,11 +38,11 @@ class ShopConfig extends DataExtension{
 		$countriestab->setTitle("Allowed Countries");
 	}
 
-	public static function get_base_currency(){
+	public static function get_base_currency() {
 		return self::config()->base_currency;
 	}
 
-	public static function get_site_currency(){
+	public static function get_site_currency() {
 		return self::get_base_currency();
 	}
 
@@ -51,13 +51,14 @@ class ShopConfig extends DataExtension{
 	 * @param boolean $prefixisocode - prefix the country code
 	 * @return array
 	 */
-	public function getCountriesList($prefixisocode = false){
+	public function getCountriesList($prefixisocode = false) {
 		$countries = self::config()->iso_3166_country_codes;
 		asort($countries);
 		if($allowed = $this->owner->AllowedCountries){
-			$allowed = explode(",",$allowed);
-			if(count($allowed > 0))
-				$countries = array_intersect_key($countries,array_flip($allowed));
+			$allowed = explode(",", $allowed);
+			if(count($allowed > 0)){
+				$countries = array_intersect_key($countries, array_flip($allowed));
+			}
 		}
 		if($prefixisocode){
 			foreach($countries as $key => $value){
@@ -71,7 +72,7 @@ class ShopConfig extends DataExtension{
 	 * Convert iso country code to English country name
 	 * @return string - name of country
 	 */
-	public static function countryCode2name($code){
+	public static function countryCode2name($code) {
 		$codes = self::config()->iso_3166_country_codes;
 		if(isset($codes[$code])){
 			return $codes[$code];
@@ -84,7 +85,7 @@ class ShopConfig extends DataExtension{
 	 * The 'config' static function isn't avaialbe on Extensions.
 	 * @return Config_ForClass configuration object
 	 */
-	public static function config(){
+	public static function config() {
 		return new Config_ForClass("ShopConfig");
 	}
 

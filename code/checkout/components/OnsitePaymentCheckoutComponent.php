@@ -10,7 +10,7 @@ class OnsitePaymentCheckoutComponent extends CheckoutComponent {
 
 	public function getFormFields(Order $order) {
 		$gateway = Checkout::get($order)->getSelectedPaymentMethod();
-		$gatewayfieldsfactory = new GatewayFieldsFactory($gateway,array('Card'));
+		$gatewayfieldsfactory = new GatewayFieldsFactory($gateway, array('Card'));
 		$fields = $gatewayfieldsfactory->getCardFields();
 		if($gateway === "Dummy"){
 			$fields->unshift(new LiteralField("dummypaymentmessage",
@@ -21,11 +21,11 @@ class OnsitePaymentCheckoutComponent extends CheckoutComponent {
 		return $fields;
 	}
 
-	public function getRequiredFields(Order $order){
+	public function getRequiredFields(Order $order) {
 		return GatewayInfo::required_fields(Checkout::get($order)->getSelectedPaymentMethod());
 	}
 
-	public function validateData(Order $order, array $data){
+	public function validateData(Order $order, array $data) {
 		$result = new ValidationResult();
 		//TODO: validate credit card data
 		if(!Helper::validateLuhn($data['number'])){
@@ -34,7 +34,7 @@ class OnsitePaymentCheckoutComponent extends CheckoutComponent {
 		}
 	}
 
-	public function getData(Order $order){
+	public function getData(Order $order) {
 		$data = array();
 		$gateway = Checkout::get($order)->getSelectedPaymentMethod();
 		//provide valid dummy credit card data
@@ -48,7 +48,7 @@ class OnsitePaymentCheckoutComponent extends CheckoutComponent {
 		return $data;
 	}
 
-	public function setData(Order $order, array $data){
+	public function setData(Order $order, array $data) {
 		//create payment?
 	}
 

@@ -7,18 +7,18 @@
  */
 class Order extends DataObject {
 
- 	/**
- 	 * Status codes and what they mean:
- 	 *
- 	 * Unpaid (default): Order created but no successful payment by customer yet
- 	 * Query: Order not being processed yet (customer has a query, or could be out of stock)
- 	 * Paid: Order successfully paid for by customer
- 	 * Processing: Order paid for, package is currently being processed before shipping to customer
- 	 * Sent: Order paid for, processed for shipping, and now sent to the customer
- 	 * Complete: Order completed (paid and shipped). Customer assumed to have received their goods
- 	 * AdminCancelled: Order cancelled by the administrator
- 	 * MemberCancelled: Order cancelled by the customer (Member)
- 	 */
+	/**
+	* Status codes and what they mean:
+	*
+	* Unpaid (default): Order created but no successful payment by customer yet
+	* Query: Order not being processed yet (customer has a query, or could be out of stock)
+	* Paid: Order successfully paid for by customer
+	* Processing: Order paid for, package is currently being processed before shipping to customer
+	* Sent: Order paid for, processed for shipping, and now sent to the customer
+	* Complete: Order completed (paid and shipped). Customer assumed to have received their goods
+	* AdminCancelled: Order cancelled by the administrator
+	* MemberCancelled: Order cancelled by the customer (Member)
+	*/
 	private static $db = array(
 		'Total' => 'Currency',
 		'Reference' => 'Varchar', //allow for customised order numbering schemes
@@ -96,7 +96,9 @@ class Order extends DataObject {
 	/**
 	 * Statuses for orders that have been placed.
 	 */
-	private static $placed_status = array('Paid','Unpaid', 'Processing', 'Sent', 'Complete', 'MemberCancelled', 'AdminCancelled');
+	private static $placed_status = array(
+		'Paid', 'Unpaid', 'Processing', 'Sent', 'Complete', 'MemberCancelled', 'AdminCancelled'
+	);
 
 	/**
 	 * Statuses that shouldn't show in user account.
@@ -151,18 +153,18 @@ class Order extends DataObject {
 	 * Create CMS fields for cms viewing and editing orders
 	 * Also note that some fields are introduced in OrdersAdmin_RecordController
 	 */
-	public function getCMSFields(){
-		$fields = new FieldList(new TabSet('Root',new Tab('Main')));
+	public function getCMSFields() {
+		$fields = new FieldList(new TabSet('Root', new Tab('Main')));
 		$fs = "<div class=\"field\">";
 		$fe = "</div>";
 		$fields->addFieldsToTab('Root.Main', array(
-			DropdownField::create("Status", _t("STATUS","Status"), self::get_order_status_options()),
+			DropdownField::create("Status", _t("STATUS", "Status"), self::get_order_status_options()),
 			LiteralField::create('Customer', $fs.$this->renderWith("OrderAdmin_Customer").$fe),
 			LiteralField::create('Addresses', $fs.$this->renderWith("OrderAdmin_Addresses").$fe),
 			LiteralField::create('Content', $fs.$this->renderWith("OrderAdmin_Content").$fe),
 			LiteralField::create('Notes', $fs.$this->renderWith("OrderAdmin_Notes").$fe)
 		));
-		$this->extend('updateCMSFields',$fields);
+		$this->extend('updateCMSFields', $fields);
 		$payments = $fields->fieldByName("Root.Payments.Payments");
 		$fields->removeByName("Payments");
 		$fields->insertBefore($payments, "Notes");
@@ -178,12 +180,12 @@ class Order extends DataObject {
 		$context = parent::getDefaultSearchContext();
 		$fields = $context->getFields();
 		$fields->fieldByName('Status')
-			->setSource(array_combine(self::config()->placed_status,self::config()->placed_status));
+			->setSource(array_combine(self::config()->placed_status, self::config()->placed_status));
 		//add date range filtering
-		$fields->insertBefore(DateField::create("DateFrom","Date from")
-			->setConfig('showcalendar',true),'Status');
-		$fields->insertBefore(DateField::create("DateTo","Date to")
-			->setConfig('showcalendar',true), 'Status');
+		$fields->insertBefore(DateField::create("DateFrom", "Date from")
+			->setConfig('showcalendar', true), 'Status');
+		$fields->insertBefore(DateField::create("DateTo", "Date to")
+			->setConfig('showcalendar', true), 'Status');
 		//get the array, to maniplulate name, and fullname seperately
 		$filters = $context->getFilters();
 		$filters['DateFrom'] = GreaterThanFilter::create('Placed');
@@ -230,7 +232,7 @@ class Order extends DataObject {
 	 * @todo remove empty modifiers? ...perhaps create some kind of 'cleanup' function?
 	 * @todo prevent this function from being run too many times
 	 */
-	public function calculate(){
+	public function calculate() {
 		if(!$this->IsCart()){
 			user_error("Orders (non-cart) should never be re-calculated.");
 			return $this->Total;
@@ -292,10 +294,10 @@ class Order extends DataObject {
 	 * @param string $className
 	 * @param boolean $forcecreate - force the modifier to be created.
 	 */
-	public function getModifier($className, $forcecreate = false){
+	public function getModifier($className, $forcecreate = false) {
 		if(ClassInfo::exists($className)){
 			//search for existing
-			if($modifier = DataObject::get_one($className,"\"OrderID\" = ".$this->ID)){ //sort by?
+			if($modifier = DataObject::get_one($className, "\"OrderID\" = ".$this->ID)){ //sort by?
 				//remove if no longer valid
 				if(!$modifier->valid()){
 					//TODO: need to provide feedback message - why modifier was removed
@@ -321,7 +323,7 @@ class Order extends DataObject {
 	/**
 	 * Enforce rounding precision when setting total
 	 */
-	public function setTotal($val){
+	public function setTotal($val) {
 		$this->setField("Total", round($val, self::$rounding_precision));
 	}
 
@@ -329,14 +331,14 @@ class Order extends DataObject {
 	 * Get final value of order.
 	 * Retrieves value from DataObject's record array.
 	 */
-	public function Total(){
+	public function Total() {
 		return $this->getField("Total");
 	}
 
 	/**
 	 * Alias for Total.
 	 */
-	public function GrandTotal(){
+	public function GrandTotal() {
 		return $this->Total();
 	}
 
@@ -344,7 +346,7 @@ class Order extends DataObject {
 	 * Calculate how much is left to be paid on the order.
 	 * Enforces rounding precision.
 	 */
-	public function TotalOutstanding(){
+	public function TotalOutstanding() {
 		return round(
 			$this->GrandTotal() - $this->TotalPaid(),
 			self::config()->rounding_precision
@@ -356,9 +358,9 @@ class Order extends DataObject {
 	 */
 	public function Link() {
 		if(Member::currentUser()){
-			return Controller::join_links(AccountPage::find_link(),'order',$this->ID);
+			return Controller::join_links(AccountPage::find_link(), 'order', $this->ID);
 		}
-		return CheckoutPage::find_link(false,"order",$this->ID);
+		return CheckoutPage::find_link(false, "order", $this->ID);
 	}
 
 	/**
@@ -369,12 +371,17 @@ class Order extends DataObject {
 	 */
 	public function canCancel() {
 		switch($this->Status) {
-			case 'Unpaid' : return self::config()->cancel_before_payment;
-			case 'Paid' : return self::config()->cancel_before_processing;
-			case 'Processing' : return self::config()->cancel_before_sending;
-			case 'Sent' : case 'Complete' : return self::config()->cancel_after_sending;
-			default : return false;
+			case 'Unpaid' :
+				return self::config()->cancel_before_payment;
+			case 'Paid' :
+				return self::config()->cancel_before_processing;
+			case 'Processing' :
+				return self::config()->cancel_before_sending;
+			case 'Sent' :
+			case 'Complete' :
+				return self::config()->cancel_after_sending;
 		}
+		return false;
 	}
 
 	/**
@@ -382,7 +389,7 @@ class Order extends DataObject {
 	 *
 	 * @return boolean
 	 */
-	public function canPay($member = null){
+	public function canPay($member = null) {
 		if($this->TotalOutstanding() > 0 && empty($this->Paid)){
 			return true;
 		}
@@ -431,7 +438,7 @@ class Order extends DataObject {
 	/**
 	 * Get the latest email for this order.
 	 */
-	public function getLatestEmail(){
+	public function getLatestEmail() {
 		if($this->MemberID && ($this->Member()->LastEdited > $this->LastEdited || !$this->Email)){
 			return $this->Member()->Email;
 		}
@@ -441,20 +448,20 @@ class Order extends DataObject {
 	/**
 	 * Gets the name of the customer.
 	 */
-	public function getName(){
+	public function getName() {
 		$firstname = $this->FirstName ? $this->FirstName : $this->Member()->FirstName;
 		$surname = $this->FirstName ? $this->Surname : $this->Member()->Surname;
-		return implode(" ",array_filter(array($firstname,$surname)));
+		return implode(" ", array_filter(array($firstname, $surname)));
 	}
 
-	public function getTitle(){
+	public function getTitle() {
 		return $this->Reference." - ".$this->dbObject('Placed')->Nice();
 	}
 
 	/**
 	 * Get shipping address, or member default shipping address.
 	 */
-	public function getShippingAddress(){
+	public function getShippingAddress() {
 		if($address = $this->ShippingAddress()){
 			return $address;
 		}elseif($this->Member() && $address = $this->Member()->DefaultShippingAddress()){
@@ -467,7 +474,7 @@ class Order extends DataObject {
 	 * Get billing address, if marked to use seperate address, otherwise use shipping address,
 	 * or the member default billing address.
 	 */
-	public function getBillingAddress(){
+	public function getBillingAddress() {
 		if(!$this->SeparateBillingAddress && $this->ShippingAddressID === $this->BillingAddressID){
 			return $this->getShippingAddress();
 		}elseif($address = $this->BillingAddress()){
@@ -483,7 +490,7 @@ class Order extends DataObject {
 	/**
 	 * Will update payment status to "Paid if there is no outstanding amount".
 	 */
-	public function updatePaymentStatus(){
+	public function updatePaymentStatus() {
 		if($this->GrandTotal() > 0 && $this->TotalOutstanding() <= 0){
 			//TODO: only run this if it is setting to Paid, and not cancelled or similar
 			$this->Status = 'Paid';
@@ -522,20 +529,20 @@ class Order extends DataObject {
 		return $this->IsProcessing() || $this->Status == 'Paid';
 	}
 
-	public function IsCart(){
+	public function IsCart() {
 		return $this->Status == 'Cart';
 	}
 
 	/**
 	 * Create a unique reference identifier string for this order.
 	 */
-	public function generateReference(){
-		$reference = str_pad($this->ID,self::$reference_id_padding,'0',STR_PAD_LEFT);
-		$this->extend('generateReference',$reference);
+	public function generateReference() {
+		$reference = str_pad($this->ID, self::$reference_id_padding, '0', STR_PAD_LEFT);
+		$this->extend('generateReference', $reference);
 		$candidate = $reference;
 		//prevent generating references that are the same
 		$count = 0;
-		while(DataObject::get_one('Order',"\"Reference\" = '$candidate'")){
+		while(DataObject::get_one('Order', "\"Reference\" = '$candidate'")){
 			$count++;
 			$candidate = $reference."".$count;
 		}
@@ -545,7 +552,7 @@ class Order extends DataObject {
 	/**
 	 * Get the reference for this order, or fall back to order ID.
 	 */
-	public function getReference(){
+	public function getReference() {
 		return $this->getField('Reference') ? $this->getField('Reference') : $this->ID;
 	}
 
@@ -562,9 +569,9 @@ class Order extends DataObject {
 	/**
 	 * Force creating an order reference
 	 */
-	public function onBeforeWrite(){
+	public function onBeforeWrite() {
 		parent::onBeforeWrite();
-		if(!$this->getField("Reference") && in_array($this->Status,self::$placed_status)){
+		if(!$this->getField("Reference") && in_array($this->Status, self::$placed_status)){
 			$this->generateReference();
 		}
 	}
@@ -572,7 +579,7 @@ class Order extends DataObject {
 	/**
 	 * delete attributes, statuslogs, and payments
 	 */
-	public function onBeforeDelete(){
+	public function onBeforeDelete() {
 		$this->Items()->removeAll();
 		$this->Modifiers()->removeAll();
 		$this->OrderStatusLogs()->removeAll();
@@ -580,7 +587,7 @@ class Order extends DataObject {
 		parent::onBeforeDelete();
 	}
 
-	public function debug(){
+	public function debug() {
 		$val = "<div class='order'><h1>$this->class</h1>\n<ul>\n";
 		if($this->record) foreach($this->record as $fieldName => $fieldVal) {
 			$val .= "\t<li>$fieldName: " . Debug::text($fieldVal) . "</li>\n";

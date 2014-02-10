@@ -1,6 +1,5 @@
 <?php
 
-
 /**
  * Adds the ability to use the member's address book for choosing addresses
  *
@@ -8,7 +7,7 @@
  */
 abstract class AddressBookCheckoutComponent extends AddressCheckoutComponent{
 
-	public function getFormFields(Order $order){
+	public function getFormFields(Order $order) {
 		$fields = parent::getFormFields($order);
 		if($existingaddressfields = $this->getExistingAddressFields()){
 			$existingaddressfields->merge($fields);
@@ -23,14 +22,14 @@ abstract class AddressBookCheckoutComponent extends AddressCheckoutComponent{
 	 * Allow choosing from an existing address
 	 * @return FieldList|null fields for
 	 */
-	public function getExistingAddressFields(){
+	public function getExistingAddressFields() {
 		$member = Member::currentUser();
 		if($member && $member->AddressBook()->exists()){
-			$addressoptions = $member->AddressBook()->sort('Created','DESC')->map('ID','toString')->toArray();
+			$addressoptions = $member->AddressBook()->sort('Created', 'DESC')->map('ID', 'toString')->toArray();
 			$addressoptions['newaddress'] = 'Create new address';
 			$fieldtype = count($addressoptions) > 3 ? 'DropdownField' : 'OptionsetField';
 			return new FieldList(
-				$fieldtype::create($this->addresstype."AddressID","Existing Address",
+				$fieldtype::create($this->addresstype."AddressID", "Existing Address",
 					$addressoptions,
 					$member->{"Default".$this->addresstype."AddressID"}
 				)
@@ -40,10 +39,9 @@ abstract class AddressBookCheckoutComponent extends AddressCheckoutComponent{
 		return null;
 	}
 
-	public function validateData(Order $order, array $data){
+	public function validateData(Order $order, array $data) {
 		//TODO: if existing address selected, check that it exists in $member->AddressBook
 	}
-
 
 }
 

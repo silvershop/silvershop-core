@@ -46,7 +46,7 @@ class RegionRestriction extends DataObject{
 	 * Produce a SQL filter to get matching RegionRestrictions to a given address
 	 * @param Address $address
 	 */
-	public static function address_filter(Address $address){
+	public static function address_filter(Address $address) {
 		$restrictables = array(
 			"Country",
 			"State",
@@ -61,7 +61,7 @@ class RegionRestriction extends DataObject{
 		return "(".implode(") AND (", $where).")";
 	}
 
-	public static function get_table_field_types(){
+	public static function get_table_field_types() {
 		return self::$table_field_types;
 	}
 
@@ -70,11 +70,11 @@ class RegionRestriction extends DataObject{
 	 * Useful because we are only interested in the wildcard,
 	 * and not sorting of other values.
 	 */
-	public static function wildcard_sort($field, $direction = "ASC"){
+	public static function wildcard_sort($field, $direction = "ASC") {
 		return "CASE \"{$field}\" WHEN '*' THEN 1 ELSE 0 END $direction";
 	}
 
-	public function onBeforeWrite(){
+	public function onBeforeWrite() {
 		//prevent empty data - '*' must be used
 		foreach(self::$defaults as $field => $value){
 			if(empty($this->$field)){

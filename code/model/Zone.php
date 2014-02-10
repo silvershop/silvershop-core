@@ -23,24 +23,24 @@ class Zone extends DataObject{
 	/*
 	 * Returns a DataSet of matching zones
 	*/
-	public static function get_zones_for_address(Address $address){
+	public static function get_zones_for_address(Address $address) {
 		$where = RegionRestriction::address_filter($address);
-		return Zone::get()->where($where)
+		return self::get()->where($where)
 					->sort('PostalCode DESC, City DESC, State DESC, Country DESC')
-					->innerJoin("ZoneRegion","\"Zone\".\"ID\" = \"ZoneRegion\".\"ZoneID\"")
-					->innerJoin("RegionRestriction","\"ZoneRegion\".\"ID\" = \"RegionRestriction\".\"ID\"");
+					->innerJoin("ZoneRegion", "\"Zone\".\"ID\" = \"ZoneRegion\".\"ZoneID\"")
+					->innerJoin("RegionRestriction", "\"ZoneRegion\".\"ID\" = \"RegionRestriction\".\"ID\"");
 	}
 
 	/*
 	 * Get ids of zones, and store in session
 	 */
-	public static function cache_zone_ids(Address $address){
+	public static function cache_zone_ids(Address $address) {
 		if($zones = self::get_zones_for_address($address)){
-			$ids = $zones->map('ID','ID')->toArray();
-			Session::set("MatchingZoneIDs",implode(",",$ids));
+			$ids = $zones->map('ID', 'ID')->toArray();
+			Session::set("MatchingZoneIDs", implode(",", $ids));
 			return $ids;
 		}
-		Session::set("MatchingZoneIDs",null);
+		Session::set("MatchingZoneIDs", null);
 		Session::clear("MatchingZoneIDs");
 		return null;
 	}
@@ -48,14 +48,14 @@ class Zone extends DataObject{
 	/**
 	 * Get cached ids as array
 	 */
-	public static function get_zone_ids(){
+	public static function get_zone_ids() {
 		if($ids = Session::get("MatchingZoneIDs")){
-			return explode(",",$ids);
+			return explode(",", $ids);
 		}
 		return null;
 	}
 
-	public function getCMSFields(){
+	public function getCMSFields() {
 		$fields = parent::getCMSFields();
 		$fields->fieldByName("Root")->removeByName("Regions");
 		if($this->isInDB()){

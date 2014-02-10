@@ -23,9 +23,9 @@ class SteppedCheckout extends Extension{
 				'summary' => 'CheckoutStep_Summary'
 			);
 		}
-		
+
 		CheckoutPage::config()->steps = $steps;
-		
+
 		if(!CheckoutPage::config()->first_step){
 			reset($steps);
 			CheckoutPage::config()->first_step = key($steps);
