@@ -22,6 +22,7 @@ class CheckoutStep_Summary extends CheckoutStep{
 		$config->addComponent(new TermsCheckoutComponent());
 
 		$form = new PaymentForm($this->owner,"ConfirmationForm",$config);
+		$form->setFailureLink($this->owner->Link('summary'));
 		$this->owner->extend('updateConfirmationForm',$form);
 
 		return $form;

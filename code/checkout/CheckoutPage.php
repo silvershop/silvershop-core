@@ -106,6 +106,7 @@ class CheckoutPage_Controller extends Page_Controller {
 		$form->setActions(new FieldList(
 			FormAction::create("submitpayment","Submit Payment")
 		));
+		$form->setFailureLink($this->Link());
 
 		return $form;
 	}

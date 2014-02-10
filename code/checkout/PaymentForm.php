@@ -2,6 +2,12 @@
 
 class PaymentForm extends CheckoutForm{
 
+	protected $failurelink;
+
+	public function setFailureLink($link) {
+		$this->failurelink = $link;
+	}
+
 	public function checkoutSubmit($data, $form) {
 		//form validation has passed by this point, so we can save data
 		$this->config->setData($form->getData());
@@ -19,7 +25,7 @@ class PaymentForm extends CheckoutForm{
 
 	public function submitpayment($data, $form) {
 		$data = $form->getData();
-		$data['cancelUrl'] = $this->controller->Link();
+		$data['cancelUrl'] = $this->failurelink ? $this->failurelink : $this->controller->Link();
 		$order = $this->config->getOrder();
 		$order->calculate();
 		$processor = OrderProcessor::create($order);
