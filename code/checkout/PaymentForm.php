@@ -19,7 +19,7 @@ class PaymentForm extends CheckoutForm{
 
 	public function submitpayment($data, $form) {
 		$data = $form->getData();
-		$data['cancelURL'] = $this->controller->Link();
+		$data['cancelUrl'] = $this->controller->Link();
 		$order = $this->config->getOrder();
 		$order->calculate();
 		$processor = OrderProcessor::create($order);

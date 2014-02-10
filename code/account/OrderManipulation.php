@@ -74,7 +74,8 @@ class OrderManipulation extends Extension{
 			$filters['MemberID'] = $memberid;
 		}
 
-		return Order::get()->filterAny($filters);
+		return Order::get()->filterAny($filters)
+				->filter("Status:not", Order::config()->hidden_status);
 	}
 
 	/**
@@ -82,8 +83,7 @@ class OrderManipulation extends Extension{
 	 */
 	public function PastOrders() {
 		return $this->allorders()
-				->filter("Status", Order::config()->placed_status)
-				->filter("Status:not", Order::config()->hidden_status);
+				->filter("Status", Order::config()->placed_status);
 	}
 
 	/**
