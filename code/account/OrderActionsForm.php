@@ -30,15 +30,12 @@ class OrderActionsForm extends Form{
 		if(self::config()->allow_paying && $order->canPay()){
 			$gateways = GatewayInfo::get_supported_gateways();
 			//remove manual gateways
-			foreach($gateways as $gateway => $name){
+			foreach($gateways as $gateway => $gatewayname){
 				if(GatewayInfo::is_manual($gateway)){
 					unset($gateways[$gateway]);
 				}
 			}
 			if(!empty($gateways)){
-				$actions->push(FormAction::create('dopayment',
-					_t('OrderActionsForm.PAYORDER', 'Pay outstanding balance')
-				));
 				$fields->push(HeaderField::create("MakePaymentHeader",
 					_t("OrderActionsForm.MAKEPAYMENT", "Make Payment"))
 				);
@@ -52,6 +49,10 @@ class OrderActionsForm extends Form{
 				));
 				$fields->push(OptionsetField::create(
 					'PaymentMethod', 'Payment Method', $gateways, key($gateways)
+				));
+
+				$actions->push(FormAction::create('dopayment',
+					_t('OrderActionsForm.PAYORDER', 'Pay outstanding balance')
 				));
 			}
 
@@ -86,7 +87,7 @@ class OrderActionsForm extends Form{
 			$gateway = (!empty($data['PaymentMethod'])) ? $data['PaymentMethod'] : null;
 
 			if(!GatewayInfo::is_manual($gateway)){
-				$data['cancelURL'] = $this->controller->Link();
+				$data['cancelUrl'] = $this->controller->Link();
 				$processor = OrderProcessor::create($this->order);
 				$response = $processor->makePayment($gateway, $data);
 
