@@ -58,32 +58,32 @@ class Address extends DataObject{
 		'toString' => 'Address'
 	);
 
-	public function getFrontEndFields($params = null){
+	public function getFrontEndFields($params = null) {
 		$fields = new FieldList(
 			$this->getCountryField(),
-			$addressfield = TextField::create('Address', _t('Address.ADDRESS','Address')),
-			$address2field = TextField::create('AddressLine2', _t('Address.ADDRESSLINE2','&nbsp;')),
-			$cityfield = TextField::create('City', _t('Address.CITY','City')),
-			$statefield = TextField::create('State', _t('Address.STATE','State')),
-			$postcodefield = TextField::create('PostalCode', _t('Address.POSTALCODE','Postal Code')),
-			$phonefield = TextField::create('Phone', _t('Address.PHONE','Phone Number'))
+			$addressfield = TextField::create('Address', _t('Address.ADDRESS', 'Address')),
+			$address2field = TextField::create('AddressLine2', _t('Address.ADDRESSLINE2', '&nbsp;')),
+			$cityfield = TextField::create('City', _t('Address.CITY', 'City')),
+			$statefield = TextField::create('State', _t('Address.STATE', 'State')),
+			$postcodefield = TextField::create('PostalCode', _t('Address.POSTALCODE', 'Postal Code')),
+			$phonefield = TextField::create('Phone', _t('Address.PHONE', 'Phone Number'))
 		);
 		if(isset($params['addfielddescriptions']) && !empty($params['addfielddescriptions'])){
-			$addressfield->setDescription(_t("Address.ADDRESSHINT","street / thoroughfare number, name, and type or P.O. Box"));
-			$address2field->setDescription(_t("Address.ADDRESS2HINT","premises, building, apartment, unit, floor"));
-			$cityfield->setDescription(_t("Address.CITYHINT","or suburb, county, district"));
-			$statefield->setDescription(_t("Address.STATEHINT","or province, territory, island"));
+			$addressfield->setDescription(_t("Address.ADDRESSHINT", "street / thoroughfare number, name, and type or P.O. Box"));
+			$address2field->setDescription(_t("Address.ADDRESS2HINT", "premises, building, apartment, unit, floor"));
+			$cityfield->setDescription(_t("Address.CITYHINT", "or suburb, county, district"));
+			$statefield->setDescription(_t("Address.STATEHINT", "or province, territory, island"));
 		}
 
 		$this->extend('updateFormFields', $fields);
 		return $fields;
 	}
 
-	public function getCountryField(){
+	public function getCountryField() {
 		$countries = SiteConfig::current_site_config()->getCountriesList();
-		$countryfield = new ReadonlyField("Country",_t('Address.COUNTRY','Country'));
+		$countryfield = new ReadonlyField("Country", _t('Address.COUNTRY', 'Country'));
 		if(count($countries) > 1){
-			$countryfield = new DropdownField("Country",_t('Address.COUNTRY','Country'), $countries);
+			$countryfield = new DropdownField("Country", _t('Address.COUNTRY', 'Country'), $countries);
 			$countryfield->setHasEmptyDefault(true);
 		}
 		return $countryfield;
@@ -93,7 +93,7 @@ class Address extends DataObject{
 	 * Get an array of data fields that must be populated for model to be valid.
 	 * Required fields can be customised via self::$required_fields
 	 */
-	public function getRequiredFields(){
+	public function getRequiredFields() {
 		$fields = $this->config()->required_fields;
 		$this->extend('updateRequiredFields', $fields);
 		return $fields;
@@ -102,8 +102,8 @@ class Address extends DataObject{
 	/**
 	 * Get full name associated with this Address
 	 */
-	public function getName(){
-		return implode('',array_filter(array(
+	public function getName() {
+		return implode('', array_filter(array(
 			$this->FirstName,
 			$this->Surname
 		)));
@@ -112,7 +112,7 @@ class Address extends DataObject{
 	/**
 	 * Convert address to a single string.
 	 */
-	public function toString($separator = ", "){
+	public function toString($separator = ", ") {
 		$fields = array(
 			$this->Address,
 			$this->AddressLine2,
@@ -121,32 +121,56 @@ class Address extends DataObject{
 			$this->PostalCode,
 			$this->Country
 		);
-		$this->extend('updateToString',$fields);
-		return implode($separator,array_filter($fields));
+		$this->extend('updateToString', $fields);
+		return implode($separator, array_filter($fields));
 	}
 
-	public function getTitle(){
+	public function getTitle() {
 		return $this->toString();
 	}
 
-	public function forTemplate(){
+	public function forTemplate() {
 		return $this->renderWith('Address');
 	}
 
 	/**
 	 * Add alias setters for fields which are synonymous
 	 */
-	public function setProvince($val){$this->State = $val;}
-	public function setTerritory($val){$this->State = $val;}
-	public function setIsland($val){$this->State = $val;}
-	public function setPostCode($val){$this->PostalCode = $val;}
-	public function setZipCode($val){$this->PostalCode = $val;}
-	public function setStreet($val){$this->Address = $val;}
-	public function setStreet2($val){$this->AddressLine2 = $val;}
-	public function setAddress2($val){$this->AddressLine2 = $val;}
-	public function setInstitution($val){$this->Company = $val;}
-	public function setBusiness($val){$this->Company = $val;}
-	public function setOrganisation($val){$this->Company = $val;}
-	public function setOrganization($val){$this->Company = $val;}
+	public function setProvince($val) {
+		$this->State = $val;
+	}
+	public function setTerritory($val) {
+		$this->State = $val;
+	}
+	public function setIsland($val) {
+		$this->State = $val;
+	}
+	public function setPostCode($val) {
+		$this->PostalCode = $val;
+	}
+	public function setZipCode($val) {
+		$this->PostalCode = $val;
+	}
+	public function setStreet($val) {
+		$this->Address = $val;
+	}
+	public function setStreet2($val) {
+		$this->AddressLine2 = $val;
+	}
+	public function setAddress2($val) {
+		$this->AddressLine2 = $val;
+	}
+	public function setInstitution($val) {
+		$this->Company = $val;
+	}
+	public function setBusiness($val) {
+		$this->Company = $val;
+	}
+	public function setOrganisation($val) {
+		$this->Company = $val;
+	}
+	public function setOrganization($val) {
+		$this->Company = $val;
+	}
 
 }
