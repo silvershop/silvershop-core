@@ -9,8 +9,6 @@ class AddressTest extends SapphireTest{
 			'PostalCode' 	=> '1333',
 			'Address'		=> '23 Blah Street',
 			'AddressLine2'	=> 'Fitzgerald Building, Foor 3',
-			'Latitude'		=> '120',
-			'Longitude'		=> '-42',
 			'Company'		=> 'Ink inc',
 			'FirstName'		=> 'Jerald',
 			'Surname'		=> 'Smith',

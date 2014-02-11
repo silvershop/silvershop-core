@@ -32,9 +32,6 @@ class Address extends DataObject{
 		'Address'		=> 'Varchar(255)', //Number + type of thoroughfare/street. P.O. box
 		'AddressLine2'	=> 'Varchar(255)', //Premises, Apartment, Building. Suite, Unit, Floor, Level, Side, Wing.
 
-		'Latitude'		=> 'Float(10,6)',  //GPS co-ordinates
-		'Longitude'		=> 'Float(10,6)',
-
 		'Company'		=> 'Varchar(100)', //Business, Organisation, Group, Institution.
 
 		'FirstName'		=> 'Varchar(100)', //Individual, Person, Contact, Attention
@@ -55,6 +52,10 @@ class Address extends DataObject{
 		'State',
 		'City',
 		'Address'
+	);
+
+	private static $summary_fields = array(
+		'toString' => 'Address'
 	);
 
 	public function getFrontEndFields($params = null){
