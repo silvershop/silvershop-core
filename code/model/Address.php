@@ -58,6 +58,14 @@ class Address extends DataObject{
 		'toString' => 'Address'
 	);
 
+	public function getCMSFields() {
+		$fields = parent::getCMSFields();
+		$fields->addFieldToTab("Root.Main",
+			$this->getCountryField(), 'State'
+		);
+		return $fields;
+	}
+
 	public function getFrontEndFields($params = null) {
 		$fields = new FieldList(
 			$this->getCountryField(),
