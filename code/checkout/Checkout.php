@@ -78,7 +78,7 @@ class Checkout{
 		$this->order->write();
 		$this->order->extend('onSetShippingAddress', $address);
 		//update zones and userinfo
-		ShopUserInfo::set_location($address);
+		ShopUserInfo::singleton()->setAddress($address);
 		Zone::cache_zone_ids($address);
 	}
 

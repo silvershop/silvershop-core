@@ -4,13 +4,13 @@ class ShopUserInfoTest extends SapphireTest{
 
 	public function testSetLocation() {
 
-		ShopUserInfo::set_location(array(
+		ShopUserInfo::singleton()->setLocation(array(
 			'Country' => 'NZ',
 			'State' => 'Wellington',
 			'City' => 'Newton'
 		));
 
-		$location = ShopUserInfo::get_location();
+		$location = ShopUserInfo::singleton()->getAddress();
 
 		$this->assertEquals($location->Country, 'NZ');
 		$this->assertEquals($location->State, 'Wellington');

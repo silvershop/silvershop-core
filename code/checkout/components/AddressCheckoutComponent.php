@@ -26,10 +26,9 @@ abstract class AddressCheckoutComponent extends CheckoutComponent{
 		unset($data['ClassName']);
 		unset($data['RecordClassName']);
 		//merge data from multiple sources
-		$shopuser = ShopUserInfo::get_location();
 		$member = Member::currentUser();
 		$data = array_merge(
-			is_array($shopuser) ?	$shopuser :	array(),
+			ShopUserInfo::singleton()->getLocation(),
 			$member ? $member->{"Default".$this->addresstype."Address"}()->toMap() : array(),
 			$data
 		);
@@ -51,10 +50,9 @@ abstract class AddressCheckoutComponent extends CheckoutComponent{
 			$address = $address->duplicate();
 		}
 		$order->{$this->addresstype."AddressID"} = $address->ID;
-		//$order->MemberID = Member::currentUserID(); //perhaps leave this until order placement
 		$order->write();
 		if($this->addresstype === "Shipping"){
-			ShopUserInfo::set_location($address);
+			ShopUserInfo::singleton()->setAddress($address);
 			Zone::cache_zone_ids($address);
 		}
 		//TODO: make this optional?
