@@ -10,7 +10,6 @@
  */
 class ShoppingCart{
 
-	private static $instance;
 	private static $cartid_session_name = 'shoppingcartid';
 
 	private $order;
@@ -22,10 +21,11 @@ class ShoppingCart{
 	 * Access for only allowing access to one (singleton) ShoppingCart.
 	 */
 	public static function singleton() {
-		if(!self::$instance){
-			self::$instance = new ShoppingCart();
+		static $instance = null;
+		if($instance === null){
+			$instance = new ShoppingCart();
 		}
-		return self::$instance;
+		return $instance;
 	}
 
 	/**
