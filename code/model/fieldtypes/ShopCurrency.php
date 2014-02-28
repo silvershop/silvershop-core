@@ -18,11 +18,22 @@ class ShopCurrency extends Currency {
 		if($this->value < 0){
 			return sprintf(self::config()->negative_value_format,$val);
 		}
+
 		return $val;
 	}
 
-	public function forTemplate(){
+	public function forTemplate() {
 		return $this->Nice();
 	}
 
+
+	public function TrimCents() {
+		$val = $this->value;
+
+		if(floor($val) == $val) {
+			return floor($val);
+		}
+
+		return $val;
+	}
 }
