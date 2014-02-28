@@ -37,7 +37,7 @@ class VariationForm extends AddProductForm{
 			$quantity = (isset($data['Quantity']) && is_numeric($data['Quantity'])) ? (int) $data['Quantity'] : 1;
 			$cart = ShoppingCart::singleton();
 			if($cart->add($variation,$quantity)){
-				$form->sessionMessage("Successfully added to cart.","good");
+				$form->sessionMessage(sprintf("Successfully added to cart. <a href='%s'>Check out now</a>", CheckoutPage::get()->first()->Link()) ,"good");
 			}else{
 				$form->sessionMessage($cart->getMessage(),$cart->getMessageType());
 			}
