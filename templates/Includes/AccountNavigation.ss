@@ -5,6 +5,7 @@
 			<li class="$LinkingMode"><a href="$Link"><i class="icon icon-list"></i> Past Orders</a></li>
 			<li class="$LinkingMode"><a href="$Link(editprofile)"><i class="icon icon-user"></i> Edit Profile</a></li>
 			<li class="$LinkingMode"><a href="$Link(addressbook)"><i class="icon icon-book"></i> Address Book</a></li>
+			<li><a href="Security/logout"><i class="icon icon-off"></i> Log Out</a></li>
 		</ul>
 	</div>
 	<div class="memberdetails">	
@@ -18,6 +19,4 @@
 			</dl>
 		<% end_with %>
 	</div>
-	<a></a>
-	<a href="Security/logout" class="btn btn-inverted"><i class="icon icon-off"></i> Log Out</a>
 </div>
