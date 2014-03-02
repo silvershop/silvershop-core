@@ -90,7 +90,7 @@ class Product extends Page implements Buyable{
 					ProductCategory::get()->map('ID','NestedTitle')->toArray()
 				)->setMultiple(true),
 			TextField::create('Model', _t('Product.MODEL', 'Model'), '', 30),
-			CheckboxField::create('FeaturedProduct', _t('Product.FEATURED', 'Featured Product')),
+			CheckboxField::create('Featured', _t('Product.FEATURED', 'Featured Product')),
 			CheckboxField::create('AllowPurchase', _t('Product.ALLOWPURCHASE', 'Allow product to be purchased'), 1)
 		),'Content');
 		//pricing
