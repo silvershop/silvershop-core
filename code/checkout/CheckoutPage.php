@@ -61,6 +61,9 @@ class CheckoutPage extends Page {
 
 }
 
+/**
+ *  @package shop
+ */
 class CheckoutPage_Controller extends Page_Controller {
 
 	private static $url_segment = 'checkout';
@@ -70,32 +73,35 @@ class CheckoutPage_Controller extends Page_Controller {
 		'PaymentForm'
 	);
 
-	/**
-	 * Display a title if there is no model, or no title.
-	 */
 	public function Title() {
-		if($this->Title){
+		if($this->Title) {
 			return $this->Title;
 		}
+
 		return _t('CheckoutPage.TITLE', "Checkout");
 	}
 
 	public function OrderForm() {
-		if(!(bool)$this->Cart()){
+		if(!(bool)$this->Cart()) {
 			return false;
 		}
-		return new PaymentForm(
+
+		$form = new PaymentForm(
 			$this,
 			'OrderForm',
 			Injector::inst()->create("CheckoutComponentConfig", ShoppingCart::curr())
 		);
+
+		$form->Cart = $this->Cart();
+
+		return $form;
 	}
 
 	/**
 	 * Action for making on-site payments
 	 */
 	public function payment() {
-		if(!$this->Cart()){
+		if(!$this->Cart()) {
 			return $this->redirect($this->Link());
 		}
 
@@ -106,18 +112,21 @@ class CheckoutPage_Controller extends Page_Controller {
 	}
 
 	public function PaymentForm() {
-		if(!(bool)$this->Cart()){
+		if(!(bool) $this->Cart()) {
 			return false;
 		}
+
 		$config = new CheckoutComponentConfig(ShoppingCart::curr(), false);
 		$config->AddComponent(new OnsitePaymentCheckoutComponent());
+
 		$form = new PaymentForm($this, "PaymentForm", $config);
+
 		$form->setActions(new FieldList(
 			FormAction::create("submitpayment", "Submit Payment")
 		));
+
 		$form->setFailureLink($this->Link());
 
 		return $form;
 	}
-
 }
