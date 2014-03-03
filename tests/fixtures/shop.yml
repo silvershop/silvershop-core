@@ -147,7 +147,6 @@ Product_OrderItem:
     cart_socks:
         Order: =>Order.cart
         Product: =>Product.socks
-        ProductVersion: 1
         Quantity: 1
     unpaid_tshirt:
         Order: =>Order.unpaid
