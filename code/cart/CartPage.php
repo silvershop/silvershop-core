@@ -14,10 +14,17 @@ class CartPage extends Page{
 	private static $icon = 'shop/images/icons/cart';
 
 	/**
-	 * Only allow one cart page
+	 * Returns the link to the checkout page on this site
+	 *
+	 * @param boolean $urlSegment If set to TRUE, only returns the URLSegment field
+	 * @return string Link to checkout page
 	 */
-	public function canCreate($member = null) {
-		return !self::get()->exists();
+	public static function find_link($urlSegment = false, $action = false, $id = false) {
+		$base = CartPage_Controller::config()->url_segment;
+		if($page = self::get()->first()) {
+			$base = $page->Link();
+		}
+		return Controller::join_links($base, $action, $id);
 	}
 
 	public function getCMSFields() {
@@ -41,18 +48,29 @@ class CartPage extends Page{
 	}
 
 	/**
-	 * Returns the link to the checkout page on this site
-	 *
-	 * @param boolean $urlSegment If set to TRUE, only returns the URLSegment field
-	 * @return string Link to checkout page
+	 * Only allow one cart page
+	 * 
 	 */
-	public static function find_link($urlSegment = false, $action = false, $id = false) {
-		$page = self::get()->first();
-		$base = $page ? $page->Link() : CartPage_Controller::config()->url_segment;
-		if($urlSegment){
-			return $base;
+	public function canCreate($member = null) {
+		return !self::get()->exists();
+	}
+
+	/**
+	 * This module always requires a page model.
+	 */
+	public function requireDefaultRecords() {
+		parent::requireDefaultRecords();
+		if(!self::get()->exists() && $this->config()->create_default_pages){
+			$page = self::create(array(
+				'Title' => 'Shopping Cart',
+				'URLSegment' => CartPage_Controller::config()->url_segment,
+				'ShowInMenus' => 0
+			));
+			$page->write();
+			$page->publish('Stage', 'Live');
+			$page->flushCache();
+			DB::alteration_message('Cart page created', 'created');
 		}
-		return Controller::join_links($base, $action, $id);
 	}
 
 }

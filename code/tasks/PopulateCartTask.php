@@ -19,9 +19,7 @@ class PopulateCartTask extends BuildTask{
 				$cart->add($product,(int)rand(1, 10));
 			}
 		}
-		Controller::curr()->redirect(
-			Controller::join_links(Director::baseURL(),'checkout')
-		);
+		Controller::curr()->redirect(CheckoutPage::find_link());
 	}
 
 }

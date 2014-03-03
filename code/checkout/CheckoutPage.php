@@ -23,23 +23,11 @@ class CheckoutPage extends Page {
 	 * @return string Link to checkout page
 	 */
 	public static function find_link($urlSegment = false, $action = null, $id = null) {
-		if(!$page = self::get()->first()) {
-			return Controller::join_links(
-				Director::baseURL(),
-				CheckoutPage_Controller::config()->url_segment
-			);
+		$base = CheckoutPage_Controller::config()->url_segment;
+		if($page = self::get()->first()) {
+			$base = $page->Link();
 		}
-		$id = ($id)? "/".$id : "";
-		return ($urlSegment) ?
-			$page->URLSegment :
-			Controller::join_links($page->Link($action), $id);
-	}
-
-	/**
-	 * Only allow one checkout page
-	 */
-	public function canCreate($member = null) {
-		return !self::get()->exists();
+		return Controller::join_links($base, $action, $id);
 	}
 
 	public function getCMSFields() {
@@ -53,10 +41,29 @@ class CheckoutPage extends Page {
 		return $fields;
 	}
 
+	/**
+	 * This module always requires a page model.
+	 */
+	public function requireDefaultRecords() {
+		parent::requireDefaultRecords();
+		if(!self::get()->exists() && $this->config()->create_default_pages){
+			$page = self::create(array(
+				'Title' => 'Checkout',
+				'URLSegment' => CheckoutPage_Controller::config()->url_segment,
+				'ShowInMenus' => 0
+			));
+			$page->write();
+			$page->publish('Stage', 'Live');
+			$page->flushCache();
+			DB::alteration_message('Checkout page created', 'created');
+		}
+	}
+
 }
 
 class CheckoutPage_Controller extends Page_Controller {
 
+	private static $url_segment = 'checkout';
 	private static $allowed_actions = array(
 		'OrderForm',
 		'payment',

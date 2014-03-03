@@ -24,9 +24,8 @@ class ViewableCart extends Extension{
 			$this->calculateonce = true;
 			$order->calculate();
 		}
-		return $order->customise(array(
-			'CartLink' => CartPage::find_link()
-		));
+
+		return $order;
 	}
 
 	public function getContinueLink() {
@@ -34,6 +33,14 @@ class ViewableCart extends Extension{
 			return $maincategory->Link();
 		}
 		return Director::baseURL();
+	}
+
+	public function getCartLink() {
+		return CartPage::find_link();
+	}
+
+	public function getCheckoutLink() {
+		return CheckoutPage::find_link();
 	}
 
 }
