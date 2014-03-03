@@ -89,42 +89,6 @@ class Checkout{
 		$this->order->extend('onSetBillingAddress', $address);
 	}
 
-	/**
-	 * Get shipping estimates
-	 * @return DataObjectSet
-	 */
-	public function getShippingEstimates() {
-		$package = $this->order->createShippingPackage();
-		$address = $this->order->getShippingAddress();
-		$estimator = new ShippingEstimator($package, $address);
-		$estimates = $estimator->getEstimates();
-		return $estimates;
-	}
-
-	/*
-	 * Set shipping method and shipping cost
-	 * @param $option - shipping option to set, and calculate shipping from
-	 * @return boolean sucess/failure of setting
-	 */
-	public function setShippingMethod(ShippingMethod $option) {
-		$package = $this->order->createShippingPackage();
-		if(!$package){
-			return $this->error(
-				_t("Checkout.NOPACKAGE", "Shipping package information not available")
-			);
-		}
-		$address = $this->order->getShippingAddress();
-		if(!$address || !$address->exists()){
-			return $this->error(
-				_t("Checkout.NOADDRESS", "No address has been set")
-			);
-		}
-		$this->order->ShippingTotal = $option->calculateRate($package, $address);
-		$this->order->ShippingMethodID = $option->ID;
-		$this->order->write();
-		return true;
-	}
-
 	/*
 	 * Get a dataobject of payment methods.
 	 */
