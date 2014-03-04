@@ -195,10 +195,7 @@ class OrderProcessor{
 	 */
 	public function completePayment() {
 		if(!$this->order->Paid){
-			if(!$this->order->ReceiptSent){
-				$this->sendReceipt();
-			}
-			$this->order->extend('onPayment'); //a payment has been made
+			$this->order->extend('onPayment');
 			//place the order, if not already placed
 			if($this->canPlace($this->order)){
 				$this->placeOrder();
@@ -212,6 +209,9 @@ class OrderProcessor{
 					$item->onPayment();
 				}
 				$this->order->extend('onPaid'); //all payment is settled
+			}
+			if(!$this->order->ReceiptSent){
+				$this->sendReceipt();
 			}
 		}
 	}
