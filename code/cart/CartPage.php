@@ -48,14 +48,6 @@ class CartPage extends Page{
 	}
 
 	/**
-	 * Only allow one cart page
-	 * 
-	 */
-	public function canCreate($member = null) {
-		return !self::get()->exists();
-	}
-
-	/**
 	 * This module always requires a page model.
 	 */
 	public function requireDefaultRecords() {
