@@ -70,7 +70,7 @@ class Address extends DataObject{
 		$fields = new FieldList(
 			$this->getCountryField(),
 			$addressfield = TextField::create('Address', _t('Address.ADDRESS', 'Address')),
-			$address2field = TextField::create('AddressLine2', _t('Address.ADDRESSLINE2', '&nbsp;')),
+			$address2field = TextField::create('AddressLine2', _t('Address.ADDRESSLINE2', 'Address Line 2 (optional)')),
 			$cityfield = TextField::create('City', _t('Address.CITY', 'City')),
 			$statefield = TextField::create('State', _t('Address.STATE', 'State')),
 			$postcodefield = TextField::create('PostalCode', _t('Address.POSTALCODE', 'Postal Code')),
