@@ -75,7 +75,7 @@ class CheckoutComponentConfig {
 	public function getFormFields() {
 		$fields = new FieldList();
 		foreach($this->getComponents() as $component) {
-			if($cfields = $component->getFormFields($this->order)){
+			if($cfields = $component->getFormFields($this->order)) {
 				$fields->merge($cfields);
 			}else{
 				user_error("getFields on  ".get_class($component)." must return a FieldList");
@@ -129,15 +129,16 @@ class CheckoutComponentConfig {
 	 */
 	public function getData() {
 		$data = array();
+
 		foreach($this->getComponents() as $component) {
 			$orderdata = $component->getData($this->order);
-			if(is_array($orderdata)){
+
+			if(is_array($orderdata)) {
 				$data = array_merge($data, $orderdata);
-			}else{
+			} else {
 				user_error("getData on  ".$component->name()." must return an array");
 			}
 		}
-
 		return $data;
 	}
 

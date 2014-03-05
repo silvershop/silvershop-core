@@ -3,6 +3,7 @@
 class CheckoutForm extends Form {
 
 	protected $config;
+	
 	protected $redirectlink;
 
 	public function __construct($controller, $name, CheckoutComponentConfig $config) {
@@ -15,12 +16,21 @@ class CheckoutForm extends Form {
 				_t('CheckoutForm', 'Proceed to payment')
 			)
 		);
+
 		$validator = new CheckoutComponentValidator($this->config);
+
 		parent::__construct($controller, $name, $fields, $actions, $validator);
+
 		$this->loadDataFrom($this->config->getData(), Form::MERGE_IGNORE_FALSEISH);
+
+		if($member = Member::currentUser()) {
+			$this->loadDataFrom($member, Form::MERGE_IGNORE_FALSEISH);
+		}
+
 		if($sessiondata = Session::get("FormInfo.{$this->FormName()}.data")){
 			$this->loadDataFrom($sessiondata, Form::MERGE_IGNORE_FALSEISH);
 		}
+
 	}
 
 	public function setRedirectLink($link) {
@@ -30,7 +40,8 @@ class CheckoutForm extends Form {
 	public function checkoutSubmit($data, $form) {
 		//form validation has passed by this point, so we can save data
 		$this->config->setData($form->getData());
-		if($this->redirectlink){
+
+		if($this->redirectlink) {
 			return $this->controller->redirect($this->redirectlink);
 		}
 

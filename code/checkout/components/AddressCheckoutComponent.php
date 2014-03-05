@@ -27,6 +27,7 @@ abstract class AddressCheckoutComponent extends CheckoutComponent{
 		unset($data['RecordClassName']);
 		//merge data from multiple sources
 		$member = Member::currentUser();
+
 		$data = array_merge(
 			ShopUserInfo::singleton()->getLocation(),
 			$member ? $member->{"Default".$this->addresstype."Address"}()->toMap() : array(),
@@ -37,35 +38,42 @@ abstract class AddressCheckoutComponent extends CheckoutComponent{
 	}
 
 	/**
-	 * Create a new address if the existing address has changed, or is not yet created.
+	 * Create a new address if the existing address has changed, or is not yet 
+	 * created.
+	 *
 	 * @param Order $order order to get addresses from
 	 * @param array $data  data to set
 	 */
 	public function setData(Order $order, array $data) {
 		$address = $this->getAddress($order);
 		$address->update($data);
-		if(!$address->isInDB()){
+
+		if(!$address->isInDB()) {
 			$address->write();
-		}elseif($address->isChanged()){
+		} elseif($address->isChanged()){
 			$address = $address->duplicate();
 		}
+
 		$order->{$this->addresstype."AddressID"} = $address->ID;
 		if(!$order->BillingAddressID){
 			$order->BillingAddressID = $address->ID;
 		}
 		$order->write();
-		if($this->addresstype === "Shipping"){
+
+		if($this->addresstype === "Shipping") {
 			ShopUserInfo::singleton()->setAddress($address);
 			Zone::cache_zone_ids($address);
 		}
-		//TODO: make this optional?
+
 		if($member = Member::currentUser()){
 			$default = $member->{"Default".$this->addresstype."Address"}();
-			if(!$default->exists()){
+
+			if(!$default->exists()) {
 				$member->{"Default".$this->addresstype."AddressID"} = $address->ID;
 				$member->write();
 			}
 		}
+
 		$order->extend('onSet'.$this->addresstype.'Address', $address);
 	}
 
@@ -82,13 +90,13 @@ abstract class AddressCheckoutComponent extends CheckoutComponent{
 
 }
 
-class ShippingAddressCheckoutComponent extends AddressCheckoutComponent{
+class ShippingAddressCheckoutComponent extends AddressCheckoutComponent {
 
 	protected $addresstype = "Shipping";
 
 }
 
-class BillingAddressCheckoutComponent extends AddressCheckoutComponent{
+class BillingAddressCheckoutComponent extends AddressCheckoutComponent {
 
 	protected $addresstype = "Billing";
 

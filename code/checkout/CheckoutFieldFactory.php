@@ -91,9 +91,11 @@ class CheckoutFieldFactory{
 
 	public function getTermsConditionsField() {
 		$field = null;
+
 		if(SiteConfig::current_site_config()->TermsPage()->exists()) {
 			$termsPage = SiteConfig::current_site_config()->TermsPage();
-			$field = CheckedCheckboxField::create('ReadTermsAndConditions',
+			
+			$field = CheckboxField::create('ReadTermsAndConditions',
 				sprintf(_t('CheckoutField.TERMSANDCONDITIONS',
 					"I agree to the terms and conditions stated on the
 						<a href=\"%s\" target=\"new\" title=\"Read the shop terms and conditions for this site\">
@@ -102,10 +104,8 @@ class CheckoutFieldFactory{
 					page"), $termsPage->Link()
 				)
 			);
-			$field->setRequiredMessage(
-				_t("CheckoutField.MUSTAGREETOTERMS", "You must agree to the terms and conditions")
-			);
 		}
+		
 		return $field;
 	}
 

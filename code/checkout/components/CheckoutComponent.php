@@ -77,7 +77,7 @@ abstract class CheckoutComponent {
 /**
  * Proxy class to handle namespacing field names for checkout components
  */
-class CheckoutComponent_Namespaced extends CheckoutComponent{
+class CheckoutComponent_Namespaced extends CheckoutComponent {
 
 	protected $proxy;
 
