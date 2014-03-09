@@ -1,4 +1,5 @@
 <?php
+
 /**
  * The order class is a databound object for handling Orders
  * within SilverStripe.
@@ -129,7 +130,6 @@ class Order extends DataObject {
 
 	/**
 	 * Create CMS fields for cms viewing and editing orders
-	 * Also note that some fields are introduced in OrdersAdmin_RecordController
 	 */
 	public function getCMSFields() {
 		$fields = new FieldList(new TabSet('Root', new Tab('Main')));
