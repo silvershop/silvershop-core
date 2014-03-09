@@ -1,6 +1,7 @@
 <?php
 /**
  * Product Variation
+ *
  * Provides a means for specifying many variations on a product.
  * Used in combination with ProductAttributes, such as color, size.
  * A variation will specify one particular combination, such as red, and large.
@@ -8,7 +9,7 @@
  * @package shop
  * @subpackage variations
  */
-class ProductVariation extends DataObject implements Buyable{
+class ProductVariation extends DataObject implements Buyable {
 
 	private static $db = array(
 		'InternalItemID' => 'Varchar(30)',
@@ -121,15 +122,19 @@ class ProductVariation extends DataObject implements Buyable{
 		return $do;
 	}
 
-	public function canPurchase($member = null) {
+	public function canPurchase($member = null, $quantity = 1) {
 		$allowpurchase = false;
-		if($product = $this->Product()){
+
+		if($product = $this->Product()) {
 			$allowpurchase = ($this->sellingPrice() > 0) && $product->AllowPurchase;
 		}
-		$extended = $this->extendedCan('canPurchase', $member);
-		if($allowpurchase && $extended !== null){
+
+		$extended = $this->extendedCan('canPurchase', $member, $quantity);
+
+		if($allowpurchase && $extended !== null) {
 			$allowpurchase = $extended;
 		}
+
 		return $allowpurchase;
 	}
 

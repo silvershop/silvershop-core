@@ -1,11 +1,16 @@
 <?php
+
 /**
  * Improvements to Currency for presenting in templates.
+ *
+ * @package shop
  */
 class ShopCurrency extends Currency {
 
 	private static $decimal_delimiter = '.';
+
 	private static $thousand_delimiter = ',';
+	
 	private static $negative_value_format = "<span class=\"negative\">(%s)</span>";
 
 	public function Nice() {
@@ -26,7 +31,11 @@ class ShopCurrency extends Currency {
 		return $this->Nice();
 	}
 
-
+	/**
+	 * If no cents on the price, trim those off.
+	 *
+	 * @return string
+	 */
 	public function TrimCents() {
 		$val = $this->value;
 

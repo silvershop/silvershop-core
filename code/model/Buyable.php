@@ -9,7 +9,7 @@
  *
  * @package shop
  */
-interface Buyable{
+interface Buyable {
 
 	/**
 	 * Create a new OrderItem to add to an order.
@@ -21,14 +21,21 @@ interface Buyable{
 	public function createItem($quantity = 1, $filter = array());
 
 	/**
-	 * Checks if the buyable can be purchased.
+	 * Checks if the buyable can be purchased. If a buyable cannot be purchased
+	 * then the method should return a {@link ShopBuyableException} containing
+	 * the messaging.
+	 *
+	 * @throws ShopBuyableException
 	 *
 	 * @return boolean
 	 */
-	public function canPurchase($member = null);
+	public function canPurchase($member = null, $quantity = 1);
 
 	/**
-	 * The price the customer gets this buyable for, with any additional additions or subtractions.
+	 * The price the customer gets this buyable for, with any additional 
+	 * additions or subtractions.
+	 *
+	 * @return ShopCurrency
 	 */
 	public function sellingPrice();
 

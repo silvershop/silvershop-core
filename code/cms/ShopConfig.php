@@ -1,6 +1,11 @@
 <?php
 
-class ShopConfig extends DataExtension{
+/**
+ * @package shop
+ * @subpackage cms
+ */
+
+class ShopConfig extends DataExtension {
 
 	private static $db = array(
 		'AllowedCountries' => 'Text'

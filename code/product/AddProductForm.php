@@ -1,43 +1,62 @@
 <?php
 
-class AddProductForm extends Form{
+/**
+ * @package shop
+ */
+class AddProductForm extends Form {
 
-	protected $maxquantity = 0; //populate quantity dropdown with this many values
+	/**
+	 * Populates quantity dropdown with this many values
+	 *
+	 * @var int
+	 */
+	protected $maxquantity = 0; 
 
 	/**
 	 * Fields that can be saved to an order item.
+	 *
+	 * @var array
 	 */
 	protected $saveablefields = array();
 
-	public function __construct($controller, $name = "AddProductForm"){
+
+	public function __construct($controller, $name = "AddProductForm") {
 		$fields = new FieldList();
 
-		if($this->maxquantity){
+		if($this->maxquantity) {
 			$values = array();
 			$count = 1;
-			while($count <= $this->maxquantity){
+
+			while($count <= $this->maxquantity) {
 				$values[$count] = $count;
 				$count++;
 			}
-			$fields->push(new DropdownField('Quantity','Quantity',$values,1));
-		}else{
-			$fields->push(new NumericField('Quantity','Quantity',1));
+
+			$fields->push(new DropdownField('Quantity','Quantity', $values, 1));
+		} else {
+			$fields->push(new NumericField('Quantity','Quantity', 1));
 		}
 		$actions = new FieldList(
 			new FormAction('addtocart',_t("AddProductForm.ADDTOCART",'Add to Cart'))
 		);
+
 		$validator = new RequiredFields(array(
 			'Quantity'
 		));
+		
 		parent::__construct($controller,$name,$fields,$actions,$validator);
 		$this->addExtraClass("addproductform");
+
+		$this->extend('updateAddProductForm');
 	}
 
 	/**
 	 * Choose maximum value to populate quantity dropdown
 	 */
-	public function setMaximumQuantity($qty){
+	public function setMaximumQuantity($qty) {
 		$this->maxquantity = (int)$qty;
+
+		return $this;
 	}
 
 	public function setSaveableFields($fields){

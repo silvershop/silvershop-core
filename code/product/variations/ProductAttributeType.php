@@ -90,12 +90,28 @@ class ProductAttributeType extends DataObject{
 		return $set;
 	}
 
+	/**
+	 * Returns a dropdown field for the user to select a variant.
+	 *
+	 * @param string $emptyString
+	 * @param ArrayList $values
+	 *
+	 * @return DropdownField
+	*/
 	public function getDropDownField($emptystring = null, $values = null){
 		$values = ($values) ? $values : $this->Values('','Sort ASC, Value ASC');
-		if($values->exists()){
-			$field = new DropdownField('ProductAttributes['.$this->ID.']',$this->Name,$values->map('ID','Value'));
-			if($emptystring)
+	
+		if($values->exists()) {
+			$field = new DropdownField(
+				'ProductAttributes['.$this->ID.']',
+				$this->Name,
+				$values->map('ID','Value')
+			);
+	
+			if($emptystring) {
 				$field->setEmptyString($emptystring);
+			}
+
 			return $field;
 		}
 

@@ -1,6 +1,10 @@
 <?php
 
-class CustomProductTest extends FunctionalTest{
+/**
+ * @package shop
+ * @subpackage tests
+ */
+class CustomProductTest extends FunctionalTest {
 
 	public static $fixture_file = 'shop/tests/fixtures/customproduct.yml';
 
@@ -69,7 +73,11 @@ class CustomProductTest extends FunctionalTest{
 
 }
 
-class CustomProduct extends DataObject implements Buyable{
+/**
+ * @package shop
+ * @subpackage tests
+ */
+class CustomProduct extends DataObject implements Buyable, TestOnly {
 
 	private static $db = array(
 		'Title' => 'Varchar',
@@ -88,7 +96,7 @@ class CustomProduct extends DataObject implements Buyable{
 		return $item;
 	}
 
-	public function canPurchase($member = null) {
+	public function canPurchase($member = null, $quantity = 1) {
 		return $this->Price > 0;
 	}
 
@@ -98,7 +106,11 @@ class CustomProduct extends DataObject implements Buyable{
 
 }
 
-class CustomProduct_OrderItem extends OrderItem{
+/**
+ * @package shop
+ * @subpackage tests
+ */
+class CustomProduct_OrderItem extends OrderItem implements TestOnly {
 
 	private static $db = array(
 		'Color' => "Enum('Red,Green,Blue','Red')",
@@ -118,7 +130,6 @@ class CustomProduct_OrderItem extends OrderItem{
 
 	private static $buyable_relationship = "Product";
 
-	//combintation of fields that must be unique
 	private static $required_fields = array(
 		'Color',
 		'Size',

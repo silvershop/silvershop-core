@@ -12,7 +12,7 @@
  *
  * @package shop
  */
-class Product extends Page implements Buyable{
+class Product extends Page implements Buyable {
 
 	private static $db = array(
 		'InternalItemID' => 'Varchar(30)', //ie SKU, ProductID etc (internal / existing recognition of product)
@@ -155,30 +155,30 @@ class Product extends Page implements Buyable{
 	 * Other conditions may be added by decorating with the canPurcahse function
 	 * @return boolean
 	 */
-	public function canPurchase($member = null) {
-		if(!self::config()->global_allow_purchase ||
-			!$this->AllowPurchase ||
-			!$this->isPublished()
-		){
+	public function canPurchase($member = null, $quantity = 1) {
+		$global = self::config()->global_allow_purchase;
+		if(!$global || !$this->AllowPurchase || !$this->isPublished()) {
+
 			return false;
 		}
 		$allowpurchase = false;
-		if(
-			self::has_extension("ProductVariationsExtension") &&
-			ProductVariation::get()->filter("ProductID", $this->ID)->first()
+		$extension = self::has_extension("ProductVariationsExtension");
+		if($extension &&
+			ProductVariation::get()->filter("ProductID",$this->ID)->first()
 		){
-			foreach($this->Variations() as $variation){
-				if($variation->canPurchase()){
+			foreach($this->Variations() as $variation) {
+				if($variation->canPurchase($member, $quantity)) {
 					$allowpurchase = true;
+					
 					break;
 				}
 			}
-		}elseif($this->sellingPrice() > 0){
+		} else if($this->sellingPrice() > 0) {
 			$allowpurchase = true;
 		}
 		// Standard mechanism for accepting permission changes from decorators
-		$extended = $this->extendedCan('canPurchase', $member);
-		if($allowpurchase && $extended !== null){
+		$extended = $this->extendedCan('canPurchase', $member, $quantity);
+		if($allowpurchase && $extended !== null) {
 			$allowpurchase = $extended;
 		}
 

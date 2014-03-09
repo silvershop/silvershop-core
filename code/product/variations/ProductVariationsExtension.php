@@ -138,13 +138,19 @@ class ProductVariationsExtension extends DataExtension{
 	}
 
 	/**
-	 * Get all the values for a given attribute type,
+	 * Get all the {@link ProductAttributeValue} for a given attribute type, 
 	 * based on this product's variations.
+	 *
+	 * @return DataList
 	 */
 	public function possibleValuesForAttributeType($type){
-		if(!is_numeric($type))
+		if(!is_numeric($type)) {
 			$type = $type->ID;
-		if(!$type) return null;
+		}
+
+		if(!$type) {
+			return null;
+		}
 
 		return ProductAttributeValue::get()
 			->innerJoin("ProductVariation_AttributeValues",
