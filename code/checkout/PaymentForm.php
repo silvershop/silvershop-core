@@ -4,6 +4,17 @@ class PaymentForm extends CheckoutForm{
 
 	protected $failurelink;
 
+	/**
+	 * @var OrderProcessor
+	 */
+	protected $orderProcessor;
+
+	public function __construct($controller, $name, CheckoutComponentConfig $config) {
+		parent::__construct($controller, $name, $config);
+
+		$this->orderProcessor = Injector::inst()->create('OrderProcessor', $config->getOrder());
+	}
+
 	public function setFailureLink($link) {
 		$this->failurelink = $link;
 	}
@@ -28,8 +39,7 @@ class PaymentForm extends CheckoutForm{
 		$data['cancelUrl'] = $this->failurelink ? $this->failurelink : $this->controller->Link();
 		$order = $this->config->getOrder();
 		$order->calculate();
-		$processor = OrderProcessor::create($order);
-		$response = $processor->makePayment(
+		$response = $this->orderProcessor->makePayment(
 			Checkout::get($order)->getSelectedPaymentMethod(false),
 			$data
 		);
@@ -40,10 +50,24 @@ class PaymentForm extends CheckoutForm{
 			$form->sessionMessage($response->getMessage(), 'bad');
 
 		}else{
-			$form->sessionMessage($processor->getError(), 'bad');
+			$form->sessionMessage($this->orderProcessor->getError(), 'bad');
 		}
 
 		return $this->controller->redirectBack();
+	}
+
+	/**
+	 * @param OrderProcessor $processor
+	 */
+	public function setOrderProcessor(OrderProcessor $processor) {
+		$this->orderProcessor = $processor;
+	}
+
+	/**
+	 * @return OrderProcessor
+	 */
+	public function getOrderProcessor() {
+		return $this->orderProcessor;
 	}
 
 }
