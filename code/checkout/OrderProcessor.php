@@ -25,7 +25,7 @@ class OrderProcessor{
 	 * Assign the order to a local variable
 	 * @param Order $order
 	 */
-	private function __construct(Order $order) {
+	public function __construct(Order $order) {
 		$this->order = $order;
 	}
 
@@ -41,34 +41,14 @@ class OrderProcessor{
 			//errors have been stored.
 			return false;
 		}
+		
 		//map shop data to omnipay fields
 		$shipping = $this->order->getShippingAddress();
 		$billing = $this->order->getBillingAddress();
-		$data = array_merge($gatewaydata, array(
-			'reference' => $this->order->Reference,
-			'firstName' => $this->order->FirstName,
-			'lastName' => $this->order->Surname,
-			'email' => $this->order->Email,
-			'company' => $this->order->Company,
-			'billingAddress1' => $billing->Address,
-			'billingAddress2' => $billing->AddressLine2,
-			'billingCity' => $billing->City,
-			'billingPostcode' => $billing->PostalCode,
-			'billingState' => $billing->State,
-			'billingCountry' => $billing->Country,
-			'billingPhone' => $billing->Phone,
-			'shippingAddress1' => $shipping->Address,
-			'shippingAddress2' => $shipping->AddressLine2,
-			'shippingCity' => $shipping->City,
-			'shippingPostcode' => $shipping->PostalCode,
-			'shippingState' => $shipping->State,
-			'shippingCountry' => $shipping->Country,
-			'shippingPhone' => $shipping->Phone,
-		));
 		$service = PurchaseService::create($payment)
 					->setReturnUrl($this->order->Link());
 		// Process payment, get the result back
-		$response = $service->purchase($data);
+		$response = $service->purchase($this->getGatewayData($gatewaydata));
 		if(GatewayInfo::is_manual($gateway)){
 			//don't complete the payment at this stage, if payment is manual
 			$this->placeOrder();
@@ -77,6 +57,42 @@ class OrderProcessor{
 		}
 
 		return $response;
+	}
+
+	/**
+	 * Map shop data to omnipay fields
+	 * 
+	 * @param array $customData Usually user submitted data.
+	 * @return array
+	 */
+	protected function getGatewayData($customData) {
+		$shipping = $this->order->getShippingAddress();
+		$billing = $this->order->getBillingAddress();
+		
+		return array_merge(
+			$customData,
+			array(
+				'transactionReference' => $this->order->Reference,
+				'firstName' => $this->order->FirstName,
+				'lastName' => $this->order->Surname,
+				'email' => $this->order->Email,
+				'company' => $this->order->Company,
+				'billingAddress1' => $billing->Address,
+				'billingAddress2' => $billing->AddressLine2,
+				'billingCity' => $billing->City,
+				'billingPostcode' => $billing->PostalCode,
+				'billingState' => $billing->State,
+				'billingCountry' => $billing->Country,
+				'billingPhone' => $billing->Phone,
+				'shippingAddress1' => $shipping->Address,
+				'shippingAddress2' => $shipping->AddressLine2,
+				'shippingCity' => $shipping->City,
+				'shippingPostcode' => $shipping->PostalCode,
+				'shippingState' => $shipping->State,
+				'shippingCountry' => $shipping->Country,
+				'shippingPhone' => $shipping->Phone,
+			)
+		);
 	}
 
 	/**
