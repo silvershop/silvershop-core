@@ -21,23 +21,25 @@ class ShoppingCart {
 
 	private $type;
 
+	private static $instance;
+
 	/**
 	 * Access for only allowing access to one (singleton) ShoppingCart.
 	 *
 	 * @return ShoppingCart
 	 */
 	public static function singleton() {
-		static $instance = null;
-		if($instance === null){
-			$instance = new ShoppingCart();
+		if(self::$instance === null) {
+			self::$instance = new ShoppingCart();
 		}
-		return $instance;
+
+		return self::$instance;
 	}
 
 	/**
 	 * Shortened alias for ShoppingCart::singleton()->current()
 	 *
-	 * @return ShoppingCart
+	 * @return Order
 	 */
 	public static function curr() {
 		return self::singleton()->current();
