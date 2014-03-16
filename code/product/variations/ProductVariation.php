@@ -1,9 +1,12 @@
 <?php
+
 /**
  * Product Variation
  *
  * Provides a means for specifying many variations on a product.
+ *
  * Used in combination with ProductAttributes, such as color, size.
+ *
  * A variation will specify one particular combination, such as red, and large.
  *
  * @package shop
@@ -15,38 +18,47 @@ class ProductVariation extends DataObject implements Buyable {
 		'InternalItemID' => 'Varchar(30)',
 		'Price' => 'Currency'
 	);
+
 	private static $has_one = array(
 		'Product' => 'Product',
 		'Image' => 'Image'
 	);
+
 	private static $many_many = array(
 		'AttributeValues' => 'ProductAttributeValue'
 	);
+
 	private static $casting = array(
 		'Title' => 'Text',
 		'Price' => 'Currency'
 	);
+
 	private static $versioning = array(
 		'Live'
 	);
+
 	private static $extensions = array(
 		"Versioned('Live')"
 	);
+
 	private static $summary_fields = array(
 		'InternalItemID' => 'Product Code',
 		//'Product.Title' => 'Product',
 		'Title' => 'Variation',
 		'Price' => 'Price'
 	);
+
 	private static $searchable_fields = array(
 		'Product.Title',
 		'InternalItemID'
 	);
 
 	private static $singular_name = "Variation";
+
 	private static $plural_name = "Variations";
 
 	private static $default_sort = "InternalItemID";
+
 	private static $order_item = "ProductVariation_OrderItem";
 
 	public function getCMSFields() {

@@ -5,7 +5,7 @@
  * @package shop
  * @subpackage variations
  */
-class ProductVariationsExtension extends DataExtension{
+class ProductVariationsExtension extends DataExtension {
 
 	private static $has_many = array(
 		'Variations' => 'ProductVariation'
@@ -20,6 +20,7 @@ class ProductVariationsExtension extends DataExtension{
 	 */
 	public function updateCMSFields(FieldList $fields) {
 		$attributes = ProductAttributeType::get()->map("ID", "Title");
+
 		$fields->addFieldsToTab('Root.Variations',array(
 			GridField::create("Variations","Variations",
 				$this->owner->Variations(),
@@ -28,7 +29,8 @@ class ProductVariationsExtension extends DataExtension{
 			HeaderField::create("Variation Attribute Types"),
 			CheckboxSetField::create("VariationAttributeTypes","Variation Attribute Types",$attributes)
 		));
-		if($this->owner->Variations()->exists()){
+
+		if($this->owner->Variations()->exists()) {
 			$fields->addFieldToTab('Root.Pricing',
 				LabelField::create('variationspriceinstructinos','
 					Price - Because you have one or more variations, the price can be set in the "Variations" tab.'
