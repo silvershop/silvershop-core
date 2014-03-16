@@ -148,11 +148,16 @@ class Product extends Page implements Buyable {
 	 * Conditions for whether a product can be purchased:
 	 *  - global allow purchase is enabled
 	 *  - product AllowPurchase field is true
-	 *  - product page is published
 	 *  - if variations, then one of them needs to be purchasable
 	 *  - if not variations, selling price must be above 0
 	 *
 	 * Other conditions may be added by decorating with the canPurcahse function
+	 *
+	 * @param Member $member
+	 * @param int $quantity
+	 *
+	 * @throws ShopBuyableException
+	 *
 	 * @return boolean
 	 */
 	public function canPurchase($member = null, $quantity = 1) {
@@ -164,13 +169,24 @@ class Product extends Page implements Buyable {
 		$extension = self::has_extension("ProductVariationsExtension");
 		if($extension &&
 			ProductVariation::get()->filter("ProductID",$this->ID)->first()
-		){
+		) {
 			foreach($this->Variations() as $variation) {
-				if($variation->canPurchase($member, $quantity)) {
-					$allowpurchase = true;
+				try {
+					if($variation->canPurchase($member, $quantity)) {
+						$allowpurchase = true;
 					
-					break;
+						break;
+					}
+				} catch(ShopBuyableException $e) {
 				}
+			}
+
+			// if not allowed to buy after any variations then raise the last
+			// exception again
+			if(!$allowpurchase && isset($e)) {
+				throw $e;
+
+				return false;
 			}
 		} else if($this->sellingPrice() > 0) {
 			$allowpurchase = true;
