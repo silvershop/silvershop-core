@@ -2,6 +2,14 @@
 <h1 class="pageTitle">$Title</h1>
 <div id="Checkout">
 	<div class="typography">
+		
+		<% if PaymentErrorMessage %>
+		    <p class="message error">
+		    <% _t('CheckoutPage.PaymentErrorMessage', 'Received error from payment gateway:') %>
+		    $PaymentErrorMessage
+		    </p>
+		<% end_if %>
+
 		<% if Content %>
 			$Content
 		<% end_if %>
