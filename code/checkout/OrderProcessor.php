@@ -119,6 +119,16 @@ class OrderProcessor{
 	}
 
 	/**
+	 * URL to display success message to the user. 
+	 * Happens after any potential offsite gateway redirects.
+	 * 
+	 * @return String Relative URL
+	 */
+	public function getReturnUrl() {
+		return $this->order->Link();
+	}
+
+	/**
 	 * Create a payment model, and provide link to redirect to external gateway,
 	 * or redirect to order link.
 	 * @return string - url for redirection after payment has been made
@@ -131,8 +141,9 @@ class OrderProcessor{
 			return false;
 		}
 
+		// Create a purchase service, and set the user-facing success URL for redirects
 		$service = PurchaseService::create($payment)
-					->setReturnUrl($this->order->Link());
+					->setReturnUrl($this->getReturnUrl());
 
 		// Process payment, get the result back
 		$response = $service->purchase($this->getGatewayData($gatewaydata));
