@@ -30,6 +30,95 @@ class OrderProcessor{
 	}
 
 	/**
+	 * Takes an order from being a cart to awaiting payment.
+	 * @param Member $member - assign a member to the order
+	 * @return boolean - success/failure
+	 */
+	public function placeOrder() {
+		if(!$this->order){
+			$this->error(_t("OrderProcessor.NULL", "A new order has not yet been started."));
+			return false;
+		}
+		if(!$this->canPlace($this->order)){ //final cart validation
+			return false;
+		}
+
+		//remove from session
+		$cart = ShoppingCart::curr();
+		if($cart && $cart->ID == $this->order->ID){
+			ShoppingCart::singleton()->clear();
+		}
+
+		//do a final calculation
+		$this->order->calculate();
+		//update status
+		if($this->order->TotalOutstanding()){
+			$this->order->Status = 'Unpaid';
+		}else{
+			$this->order->Status = 'Processing';
+		}
+		if(!$this->order->Placed){
+			$this->order->Placed = SS_Datetime::now()->Rfc2822(); //record placed order datetime
+			if($request = Controller::curr()->getRequest()){
+				$this->order->IPAddress = $request->getIP(); //record client IP
+			}
+		}
+		//re-write all attributes and modifiers to make sure they are up-to-date before they can't be changed again
+		$items = $this->order->Items();
+		if($items->exists()){
+			foreach($items as $item){
+				$item->onPlacement();
+				$item->write();
+			}
+		}
+		$modifiers = $this->order->Modifiers();
+		if($modifiers->exists()){
+			foreach($modifiers as $modifier){
+				$modifier->write();
+			}
+		}
+		//add member to customers group
+		$member = $this->order->Member();
+		if($member->exists()){
+			$cgroup = ShopConfig::current()->CustomerGroup();
+			if($cgroup->exists()){
+				$member->Groups()->add($cgroup);
+			}
+		}
+		//save order reference to session
+		OrderManipulation::add_session_order($this->order);
+		//allow decorators to do stuff when order is saved.
+		$this->order->extend('onPlaceOrder');
+		$this->order->write();
+		return true; //report success
+	}
+
+	/**
+	 * Determine if an order can be placed.
+	 * @param boolean $order
+	 */
+	public function canPlace(Order $order) {
+		if(!$order){
+			$this->error(_t("OrderProcessor.NULL", "Order does not exist."));
+			return false;
+		}
+		//order status is applicable
+		if(!$order->IsCart()){
+			$this->error(_t("OrderProcessor.NOTCART", "Order is not a cart."));
+			return false;
+		}
+		//order has products
+		if($order->Items()->Count() <= 0){
+			$this->error(_t("OrderProcessor.NOITEMS", "Order has no items."));
+			return false;
+		}
+		//if total > 0, then payment has been made / started
+		//shipping has been selected (if required)
+		//modifiers have been calculated
+		return true;
+	}
+
+	/**
 	 * Create a payment model, and provide link to redirect to external gateway,
 	 * or redirect to order link.
 	 * @return string - url for redirection after payment has been made
@@ -41,12 +130,10 @@ class OrderProcessor{
 			//errors have been stored.
 			return false;
 		}
-		
-		//map shop data to omnipay fields
-		$shipping = $this->order->getShippingAddress();
-		$billing = $this->order->getBillingAddress();
+
 		$service = PurchaseService::create($payment)
 					->setReturnUrl($this->order->Link());
+
 		// Process payment, get the result back
 		$response = $service->purchase($this->getGatewayData($gatewaydata));
 		if(GatewayInfo::is_manual($gateway)){
@@ -55,7 +142,6 @@ class OrderProcessor{
 		}elseif($response->isSuccessful()) {
 			$this->completePayment();
 		}
-
 		return $response;
 	}
 
@@ -108,7 +194,7 @@ class OrderProcessor{
 			return false;
 		}
 		$payment = Payment::create()
-			->init($gateway, $this->order->TotalOutstanding(), ShopConfig::get_base_currency());
+			->init($gateway, $this->order->TotalOutstanding(), $currency = "NZD");
 		$this->order->Payments()->add($payment);
 		return $payment;
 	}
@@ -121,7 +207,10 @@ class OrderProcessor{
 	 */
 	public function completePayment() {
 		if(!$this->order->Paid){
-			$this->order->extend('onPayment');
+			if(!$this->order->ReceiptSent){
+				$this->sendReceipt();
+			}
+			$this->order->extend('onPayment'); //a payment has been made
 			//place the order, if not already placed
 			if($this->canPlace($this->order)){
 				$this->placeOrder();
@@ -136,105 +225,7 @@ class OrderProcessor{
 				}
 				$this->order->extend('onPaid'); //all payment is settled
 			}
-			if(!$this->order->ReceiptSent){
-				$this->sendReceipt();
-			}
 		}
-	}
-
-	/**
-	 * Determine if an order can be placed.
-	 * @param boolean $order
-	 */
-	public function canPlace(Order $order) {
-		if(!$order){
-			$this->error(_t("OrderProcessor.NULL", "Order does not exist."));
-			return false;
-		}
-		//order status is applicable
-		if(!$order->IsCart()){
-			$this->error(_t("OrderProcessor.NOTCART", "Order is not a cart."));
-			return false;
-		}
-		//order has products
-		if($order->Items()->Count() <= 0){
-			$this->error(_t("OrderProcessor.NOITEMS", "Order has no items."));
-			return false;
-		}
-		//if total > 0, then payment has been made / started
-		//shipping has been selected (if required)
-		//modifiers have been calculated
-		return true;
-	}
-
-
-	/**
-	 * Takes an order from being a cart to awaiting payment.
-	 * @param Member $member - assign a member to the order
-	 * @return boolean - success/failure
-	 */
-	public function placeOrder() {
-		if(!$this->order){
-			$this->error(_t("OrderProcessor.NULL", "A new order has not yet been started."));
-			return false;
-		}
-		if(!$this->canPlace($this->order)){ //final cart validation
-			return false;
-		}
-
-		//remove from session
-		$cart = ShoppingCart::curr();
-		if($cart && $cart->ID == $this->order->ID){
-			ShoppingCart::singleton()->clear();
-		}
-
-		//do a final calculation
-		$this->order->calculate();
-		//update status
-		if($this->order->TotalOutstanding()){
-			$this->order->Status = 'Unpaid';
-		}else{
-			$this->order->Status = 'Processing';
-		}
-		if(!$this->order->Placed){
-			$this->order->Placed = SS_Datetime::now()->Rfc2822(); //record placed order datetime
-			if($request = Controller::curr()->getRequest()){
-				$this->order->IPAddress = $request->getIP(); //record client IP
-			}
-		}
-		//re-write all attributes and modifiers to make sure they are up-to-date before they can't be changed again
-		$items = $this->order->Items();
-		if($items->exists()){
-			foreach($items as $item){
-				$item->onPlacement();
-				$item->write();
-			}
-		}
-		$modifiers = $this->order->Modifiers();
-		if($modifiers->exists()){
-			foreach($modifiers as $modifier){
-				$modifier->write();
-			}
-		}
-		//add member to order & customers group
-		if($member = Member::currentUser()){
-			if(!$this->order->MemberID){
-				$this->order->MemberID = $member->ID;
-			}
-			$cgroup = ShopConfig::current()->CustomerGroup();
-			if($cgroup->exists()){
-				$member->Groups()->add($cgroup);
-			}
-		}
-		//allow decorators to do stuff when order is saved.
-		$this->order->extend('onPlaceOrder');
-		$this->order->write();
-
-		//save order reference to session
-		//WARNING: what if this is a gateway server callback?
-		OrderManipulation::add_session_order($this->order);
-
-		return true; //report success
 	}
 
 	/**
@@ -247,8 +238,7 @@ class OrderProcessor{
 		$from = ShopConfig::config()->email_from ? ShopConfig::config()->email_from : Email::config()->admin_email;
 		$to = $this->order->getLatestEmail();
 		$subject = sprintf(_t("Order.EMAILSUBJECT", "Shop Sale Information #%d"), $this->order->Reference);
-		$checkoutpage = CheckoutPage::get()->first();
-		$completemessage = $checkoutpage ? $checkoutpage->PurchaseComplete : "";
+		$purchaseCompleteMessage = DataObject::get_one('CheckoutPage')->PurchaseComplete;
 		$email = new $emailClass();
 		$email->setFrom($from);
 		$email->setTo($to);
@@ -257,7 +247,7 @@ class OrderProcessor{
 			$email->setBcc(Email::config()->admin_email);
 		}
 		$email->populateTemplate(array(
-			'PurchaseCompleteMessage' => $completemessage,
+			'PurchaseCompleteMessage' => $purchaseCompleteMessage,
 			'Order' => $this->order
 		));
 		return $email->send();
