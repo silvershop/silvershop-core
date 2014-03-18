@@ -2,6 +2,16 @@
 
 class PaymentForm extends CheckoutForm{
 
+	/**
+	 * @var string URL to redirect the user to on payment success.
+	 * Not the same as the "confirm" action in {@link PaymentGatewayController}.
+	 */
+	protected $successlink;
+
+	/**
+	 * @var string URL to redirect the user to on payment failure.
+	 * Not the same as the "cancel" action in {@link PaymentGatewayController}.
+	 */
 	protected $failurelink;
 
 	/**
@@ -15,8 +25,20 @@ class PaymentForm extends CheckoutForm{
 		$this->orderProcessor = Injector::inst()->create('OrderProcessor', $config->getOrder());
 	}
 
+	public function setSuccessLink($link) {
+		$this->successlink = $link;
+	}
+
+	public function getSuccessLink() {
+		return $this->successlink;
+	}
+
 	public function setFailureLink($link) {
 		$this->failurelink = $link;
+	}
+
+	public function getFailureLink() {
+		return $this->failurelink;
 	}
 
 	public function checkoutSubmit($data, $form) {
@@ -41,7 +63,10 @@ class PaymentForm extends CheckoutForm{
 	 */
 	public function submitpayment($data, $form) {
 		$data = $form->getData();
-		$data['cancelUrl'] = $this->getFailureUrl() ? $this->getFailureUrl() : $this->controller->Link();
+		if($this->getSuccessLink()) {
+			$data['returnUrl'] = $this->getSuccessLink();
+		}
+		$data['cancelUrl'] = $this->getFailureLink() ? $this->getFailureLink() : $this->controller->Link();
 		$order = $this->config->getOrder();
 		$order->calculate();
 		$paymentResponse = $this->orderProcessor->makePayment(

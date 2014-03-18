@@ -10,7 +10,14 @@
  */
 class OrderProcessor{
 
+	/**
+	 * @var Order
+	 */
 	protected $order;
+
+	/**
+	 * @var string
+	 */
 	protected $error;
 
 	/**
@@ -310,6 +317,13 @@ class OrderProcessor{
 		$e->setSubject($title);
 		$e->setTo($member->Email);
 		$e->send();
+	}
+
+	/**
+	 * @return Order
+	 */
+	public function getOrder() {
+		return $this->order;
 	}
 
 	public function getError() {
