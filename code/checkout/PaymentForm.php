@@ -34,26 +34,37 @@ class PaymentForm extends CheckoutForm{
 		);
 	}
 
+	/**
+	 * Behaviour can be overwritten by creating a processPaymentResponse method
+	 * on the controller owning this form. It takes a Symfony\Component\HttpFoundation\Response argument,
+	 * and expects an SS_HTTPResponse in return.
+	 */
 	public function submitpayment($data, $form) {
 		$data = $form->getData();
-		$data['cancelUrl'] = $this->failurelink ? $this->failurelink : $this->controller->Link();
+		$data['cancelUrl'] = $this->getFailureUrl() ? $this->getFailureUrl() : $this->controller->Link();
 		$order = $this->config->getOrder();
 		$order->calculate();
-		$response = $this->orderProcessor->makePayment(
+		$paymentResponse = $this->orderProcessor->makePayment(
 			Checkout::get($order)->getSelectedPaymentMethod(false),
 			$data
 		);
-		if($response){
-			if($response->isRedirect() || $response->isSuccessful()){
-				return $response->redirect();
-			}
-			$form->sessionMessage($response->getMessage(), 'bad');
 
-		}else{
+		$response = null;
+		if($paymentResponse){
+			if($this->controller->hasMethod('processPaymentResponse')) {
+				$response = $this->controller->processPaymentResponse($paymentResponse);
+			} else if($paymentResponse->isRedirect() || $paymentResponse->isSuccessful()){
+				$response = $paymentResponse->redirect();
+			} else {
+				$form->sessionMessage($response->getMessage(), 'bad');
+				$response = $this->controller->redirectBack();
+			}
+		} else {
 			$form->sessionMessage($this->orderProcessor->getError(), 'bad');
+			$response = $this->controller->redirectBack();
 		}
 
-		return $this->controller->redirectBack();
+		return $response;
 	}
 
 	/**
