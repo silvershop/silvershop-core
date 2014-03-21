@@ -111,16 +111,24 @@ class ProductVariation extends DataObject implements Buyable {
 		}
 	}
 
-	public function getTitle(){
+	public function getTitle() {
 		$values = $this->AttributeValues();
-		if($values->exists()){
+
+		if($values->exists()) {
 			$labelvalues = array();
-			foreach($values as $value){
+
+			foreach($values as $value) {
 				$labelvalues[] = $value->Type()->Label.':'.$value->Value;
 			}
-			return implode(', ',$labelvalues);
+
+			$title = implode(', ',$labelvalues);
+		} else {
+			$title = $this->InternalItemID;
 		}
-		return $this->InternalItemID;
+
+		$this->extend('updateTitle', $title);
+
+		return $title;
 	}
 
 	//this is used by TableListField to access attribute values.
