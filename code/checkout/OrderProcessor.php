@@ -92,8 +92,7 @@ class OrderProcessor{
 				$member->Groups()->add($cgroup);
 			}
 		}
-		//save order reference to session
-		OrderManipulation::add_session_order($this->order);
+
 		//allow decorators to do stuff when order is saved.
 		$this->order->extend('onPlaceOrder');
 		$this->order->write();
@@ -151,6 +150,9 @@ class OrderProcessor{
 		// Create a purchase service, and set the user-facing success URL for redirects
 		$service = PurchaseService::create($payment)
 					->setReturnUrl($this->getReturnUrl());
+
+		// Save order reference to session
+		OrderManipulation::add_session_order($this->order);
 
 		// Process payment, get the result back
 		$response = $service->purchase($this->getGatewayData($gatewaydata));
