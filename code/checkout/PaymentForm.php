@@ -77,7 +77,7 @@ class PaymentForm extends CheckoutForm{
 		$response = null;
 		if($paymentResponse){
 			if($this->controller->hasMethod('processPaymentResponse')) {
-				$response = $this->controller->processPaymentResponse($paymentResponse);
+				$response = $this->controller->processPaymentResponse($paymentResponse, $form);
 			} else if($paymentResponse->isRedirect() || $paymentResponse->isSuccessful()){
 				$response = $paymentResponse->redirect();
 			} else {
