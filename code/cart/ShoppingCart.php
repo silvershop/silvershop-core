@@ -93,9 +93,7 @@ class ShoppingCart {
 		if(!$cart->IsCart()) {
 			trigger_error("Passed Order object is not cart status", E_ERROR);
 		}
-
 		$this->order = $cart;
-
 		Session::set(self::$cartid_session_name, $cart->ID);
 
 		return $this;
@@ -110,16 +108,15 @@ class ShoppingCart {
 		if($this->current()){
 			return $this->current();
 		}
-		//otherwise start a new order
-		$order = new Order();
-		if(Member::config()->login_joins_cart){
-			$order->MemberID = Member::currentUserID(); // Set the Member relation to this order
+		$this->order = new Order();
+		if(Member::config()->login_joins_cart && Member::currentUserID()) {
+			$this->order->MemberID = Member::currentUserID();
 		}
-		$order->write();
-		$order->extend('onStartOrder');
-		Session::set(self::$cartid_session_name, $order->ID);
+		$this->order->write();
+		$this->order->extend('onStartOrder');
+		Session::set(self::$cartid_session_name, $this->order->ID);
 
-		return $this->order = $order;
+		return $this->order;
 	}
 
 	/**

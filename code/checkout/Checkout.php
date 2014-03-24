@@ -72,6 +72,9 @@ class Checkout{
 	//save / set up addresses
 	public function setShippingAddress(Address $address) {
 		$this->order->ShippingAddressID = $address->ID;
+		if(Member::currentUserID()){
+			$this->order->MemberID = Member::currentUserID();	
+		} 
 		$this->order->write();
 		$this->order->extend('onSetShippingAddress', $address);
 		//update zones and userinfo
@@ -81,6 +84,9 @@ class Checkout{
 
 	public function setBillingAddress(Address $address) {
 		$this->order->BillingAddressID = $address->ID;
+		if(Member::currentUserID()){
+			$this->order->MemberID = Member::currentUserID();
+		}
 		$this->order->write();
 		$this->order->extend('onSetBillingAddress', $address);
 	}
