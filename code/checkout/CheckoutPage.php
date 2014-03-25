@@ -142,7 +142,7 @@ class CheckoutPage_Controller extends Page_Controller {
 		$lastPayment = $order->Payments()->sort('Created', 'DESC')->first();
 		if(!$lastPayment) return false;
 
-		$errorMessages = $lastPayment->Messages()->sort('Created', 'DESC');
+		$errorMessages = $lastPayment->Messages()->exclude('Message', '')->sort('Created', 'DESC');
 		$lastErrorMessage = null;
 		foreach($errorMessages as $errorMessage) {
 			if($errorMessage instanceof GatewayErrorMessage) {
