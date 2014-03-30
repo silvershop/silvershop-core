@@ -29,7 +29,8 @@ class MembershipCheckoutComponent extends CheckoutComponent{
 		$idfield = Member::get_unique_identifier_field();
 		if(!$order->{$idfield} &&
 			($form && !$form->Fields()->fieldByName($idfield))){
-				$fields->push(new TextField($idfield, $idfield)); //TODO: scaffold the correct id field
+				//TODO: scaffold the correct id field type
+				$fields->push(new TextField($idfield, $idfield));
 		}
 		$fields->push($this->getPasswordField());
 		return $fields;

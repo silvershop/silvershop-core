@@ -51,12 +51,13 @@ class CheckoutStep_Membership extends CheckoutStep{
 	}
 
 	public function createaccount($requestdata) {
-
-		if(Member::currentUser()){ //we shouldn't create an account if already a member
+		//we shouldn't create an account if already a member
+		if(Member::currentUser()){
 			Controller::curr()->redirect($this->NextStepLink());
 			return;
 		}
-		if(!($requestdata instanceof SS_HTTPRequest)){ //using this function to redirect, and display action
+		//using this function to redirect, and display action
+		if(!($requestdata instanceof SS_HTTPRequest)){
 			Controller::curr()->redirect($this->NextStepLink('createaccount'));
 			return;
 		}

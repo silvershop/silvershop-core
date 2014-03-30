@@ -242,7 +242,7 @@ class ShoppingCart{
 
 	/**
 	 * Empty / abandon the entire cart.
-	 * @return bool - true if successful, fale if no cart found
+	 * @return bool - true if successful, false if no cart found
 	 */
 	public function clear() {
 		$order = $this->current();

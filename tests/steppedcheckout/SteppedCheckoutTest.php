@@ -6,14 +6,14 @@ class SteppedCheckoutTest extends FunctionalTest{
 	protected static $use_draft_site = true; //so we don't need to publish
 	protected $autoFollowRedirection = false;
 
-	public function setUp(){
+	public function setUp() {
 		parent::setUp();
 		ShopTest::setConfiguration();
 		//set up steps
 		SteppedCheckout::setupSteps(); //use default steps
 
 		$this->socks = $this->objFromFixture("Product", "socks");
-		$this->socks->publish('Stage','Live');
+		$this->socks->publish('Stage', 'Live');
 
 		$this->checkout = new CheckoutPage_Controller($this->objFromFixture("CheckoutPage", "checkout"));
 		$this->checkout->handleRequest(new SS_HTTPRequest("GET", "checkout"), DataModel::inst());
@@ -22,8 +22,9 @@ class SteppedCheckoutTest extends FunctionalTest{
 		ShoppingCart::singleton()->setCurrent($this->cart);
 	}
 
-	public function testTemplateFunctions(){
-		$this->checkout->handleRequest(new SS_HTTPRequest('GET', ""), DataModel::inst()); //put us at the first step index == membership
+	public function testTemplateFunctions() {
+		//put us at the first step index == membership
+		$this->checkout->handleRequest(new SS_HTTPRequest('GET', ""), DataModel::inst());
 		$this->assertFalse($this->checkout->IsPastStep('membership'));
 		$this->assertTrue($this->checkout->IsCurrentStep('membership'));
 		$this->assertFalse($this->checkout->IsFutureStep('membership'));
@@ -40,7 +41,7 @@ class SteppedCheckoutTest extends FunctionalTest{
 		$this->assertFalse($this->checkout->IsFutureStep('summary'));
 	}
 
-	public function testMembershipStep(){
+	public function testMembershipStep() {
 		$this->checkout->index();
 		$this->checkout->membership();
 		$this->post('/checkout/guestcontinue', array()); //redirect to next step
@@ -60,13 +61,14 @@ class SteppedCheckoutTest extends FunctionalTest{
 			'action_docreateaccount' => 'Create New Account'
 		);
 		$response = $this->post('/checkout/CreateAccountForm', $data); //redirect to next step
+
 		$member = ShopMember::get_by_identifier("mb@blahmail.com");
 		$this->assertTrue((boolean)$member, "Check new account was created");
 		$this->assertEquals('Michael', $member->FirstName);
 		$this->assertEquals('Black', $member->Surname);
 	}
 
-	public function testContactDetails(){
+	public function testContactDetails() {
 		$this->objFromFixture("Member", "joebloggs")->logIn();
 		$this->checkout->contactdetails();
 		$data = array(
@@ -79,7 +81,7 @@ class SteppedCheckoutTest extends FunctionalTest{
 		//TODO: check order has been updated
 	}
 
-	public function testShippingAddress(){
+	public function testShippingAddress() {
 		$this->objFromFixture("Member", "joebloggs")->logIn();
 		$this->checkout->shippingaddress();
 		$data = array(
@@ -95,7 +97,7 @@ class SteppedCheckoutTest extends FunctionalTest{
 		//TODO: assertions!
 	}
 
-	public function testBillingAddress(){
+	public function testBillingAddress() {
 		$this->objFromFixture("Member", "joebloggs")->logIn();
 		$this->checkout->billingaddress();
 		$data = array(
@@ -111,7 +113,7 @@ class SteppedCheckoutTest extends FunctionalTest{
 		//TODO: assertions!
 	}
 
-	public function testPaymentMethod(){
+	public function testPaymentMethod() {
 		$data = array(
 			'PaymentMethod' => 'Dummy',
 			'action_setpaymentmethod' => 1
@@ -120,7 +122,7 @@ class SteppedCheckoutTest extends FunctionalTest{
 		$this->assertEquals('Dummy', Checkout::get($this->cart)->getSelectedPaymentMethod());
 	}
 
-	public function testSummary(){
+	public function testSummary() {
 		$this->checkout->summary();
 		$form = $this->checkout->ConfirmationForm();
 		$data = array(
@@ -132,14 +134,14 @@ class SteppedCheckoutTest extends FunctionalTest{
 
 		Checkout::get($this->cart)->setPaymentMethod("Dummy"); //a selected payment method is required
 		$form->loadDataFrom($data);
-		$this->assertTrue($form->validate(),"Checkout data is valid");
+		$this->assertTrue($form->validate(), "Checkout data is valid");
 		$response = $this->post('/checkout/ConfirmationForm', $data);
 		$this->assertEquals('Cart', $this->cart->Status, "Order is still in cart");
 
 		$order = Order::get()->byID($this->cart->ID);
 		$m = $order->Member();
 		$this->assertTrue($m->exists());
-		$this->assertEquals($m->Email,"test@example.com");
+		$this->assertEquals($m->Email, "test@example.com");
 
 		$member->logOut();
 	}
