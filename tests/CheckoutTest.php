@@ -8,7 +8,7 @@ class CheckoutTest extends SapphireTest{
 		'shop/tests/fixtures/ShopMembers.yml'
 	);
 
-	public function setUp(){
+	public function setUp() {
 		parent::setUp();
 		ShopTest::setConfiguration();
 		$this->cart = $this->objFromFixture("Order", "cart1");
@@ -16,27 +16,27 @@ class CheckoutTest extends SapphireTest{
 		$this->address2 = $this->objFromFixture("Address", "address2");
 		$this->checkout = new Checkout($this->cart);
 
-		Checkout::$member_creation_enabled = true;
-		Checkout::$membership_required = false;
+		CheckoutConfig::config()->member_creation_enabled = true;
+		CheckoutConfig::config()->membership_required = false;
 	}
 
-	public function testSetUpShippingAddress(){
+	public function testSetUpShippingAddress() {
 		$this->checkout->setShippingAddress($this->address1);
-		$this->assertEquals($this->address1->ID, $this->cart->ShippingAddressID,"shipping address was successfully added");
+		$this->assertEquals($this->address1->ID, $this->cart->ShippingAddressID, "shipping address was successfully added");
 	}
 
-	public function testSetUpBillingAddress(){
+	public function testSetUpBillingAddress() {
 		$this->checkout->setBillingAddress($this->address2);
-		$this->assertEquals($this->address2->ID, $this->cart->BillingAddressID,"billing address was successfully added");
+		$this->assertEquals($this->address2->ID, $this->cart->BillingAddressID, "billing address was successfully added");
 	}
 
-	public function testSetShippingMethod(){
+	public function testSetShippingMethod() {
 		//TODO: combine shipping framework with core, or remove reliance
 		//$this->checkout->setShippingMethod(new ShippingMethod()); //see shippingframework submodule
 	}
 
-	public function testSetPaymentMethod(){
-		$this->assertTrue($this->checkout->setPaymentMethod("Dummy"),"Valid method set correctly");
+	public function testSetPaymentMethod() {
+		$this->assertTrue($this->checkout->setPaymentMethod("Dummy"), "Valid method set correctly");
 		$this->assertEquals('Dummy', $this->checkout->getSelectedPaymentMethod(false));
 	}
 
@@ -44,7 +44,7 @@ class CheckoutTest extends SapphireTest{
 	 * Tests the default membership configuration.
 	 * You can become a member, but it is not necessary
 	 */
-	public function testCanBecomeMember(){
+	public function testCanBecomeMember() {
 		//check can proceeed with/without order
 		//check member exists
 		$result = $this->checkout->createMembership(array(
@@ -54,12 +54,11 @@ class CheckoutTest extends SapphireTest{
 			'Password' => 'janesmith2012'
 		));
 		$this->assertTrue(($result instanceof Member), $this->checkout->getMessage());
-		$this->assertTrue($this->checkout->validateMember($result));
 	}
 
-	public function testMustBecomeOrBeMember(){
-		Checkout::$member_creation_enabled = true;
-		Checkout::$membership_required = true;
+	public function testMustBecomeOrBeMember() {
+		CheckoutConfig::config()->member_creation_enabled = true;
+		CheckoutConfig::config()->membership_required = true;
 
 		$member = $this->checkout->createMembership(array(
 			'FirstName' => 'Susan',
@@ -73,9 +72,9 @@ class CheckoutTest extends SapphireTest{
 		$this->assertFalse($this->checkout->validateMember(false));
 	}
 
-	public function testNoMemberships(){
-		Checkout::$member_creation_enabled = false;
-		Checkout::$membership_required = false;
+	public function testNoMemberships() {
+		CheckoutConfig::config()->member_creation_enabled = false;
+		CheckoutConfig::config()->membership_required = false;
 
 		$this->setExpectedException('ValidationException');
 
@@ -91,9 +90,9 @@ class CheckoutTest extends SapphireTest{
 	 * @expectedException ValidationException
 	 * @expectedExceptionMessage Creating new memberships is not allowed
 	 */
-	public function testMembersOnly(){
-		Checkout::$member_creation_enabled = false;
-		Checkout::$membership_required = true;
+	public function testMembersOnly() {
+		CheckoutConfig::config()->member_creation_enabled = false;
+		CheckoutConfig::config()->membership_required = true;
 		$result = $this->checkout->createMembership(array(
 			'FirstName' => 'Some',
 			'Surname' => 'Body',
@@ -108,7 +107,7 @@ class CheckoutTest extends SapphireTest{
 	 * @expectedException ValidationException
 	 * @expectedExceptionMessage A password is required
 	 */
-	public function testMemberWithoutPassword(){
+	public function testMemberWithoutPassword() {
 		$result = $this->checkout->createMembership(array(
 			'FirstName' => 'Jim',
 			'Surname' => 'Smith',
@@ -121,7 +120,7 @@ class CheckoutTest extends SapphireTest{
 	 * @expectedException ValidationException
 	 * @expectedExceptionMessage A member already exists with the Email jeremy@peremy.com
 	 */
-	public function testMemberAlreadyExists(){
+	public function testMemberAlreadyExists() {
 		$result = $this->checkout->createMembership(array(
 			'FirstName' => 'Jeremy',
 			'Surname' => 'Peremy',
@@ -136,7 +135,7 @@ class CheckoutTest extends SapphireTest{
 	 * @expectedException ValidationException
 	 * @expectedExceptionMessage Required field not found: Email
 	 */
-	public function testMemberMissingIdentifier(){
+	public function testMemberMissingIdentifier() {
 		$result = $this->checkout->createMembership(array(
 			'FirstName' => 'John',
 			'Surname' => 'Doe',

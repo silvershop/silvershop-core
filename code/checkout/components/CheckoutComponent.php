@@ -39,8 +39,8 @@ abstract class CheckoutComponent {
 
 	/**
 	 * Get required data out of the model.
-	 * @param  Order  $order [description]
-	 * @return [type]        [description]
+	 * @param  Order  $order order to get data from.
+	 * @return array        get data from model(s)
 	 */
 	abstract public function getData(Order $order);
 

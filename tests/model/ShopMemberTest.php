@@ -10,7 +10,7 @@ class ShopMemberTest extends FunctionalTest{
 		'shop/tests/fixtures/shop.yml'
 	);
 
-	public function testGetByIdentifier(){
+	public function testGetByIdentifier() {
 		Member::config()->unique_identifier_field = 'Email';
 		$member = ShopMember::get_by_identifier('jeremy@peremy.com');
 		$this->assertNotNull($member);
@@ -18,55 +18,41 @@ class ShopMemberTest extends FunctionalTest{
 		$this->assertEquals('Jeremy', $member->FirstName);
 	}
 
-	public function testCreateOrMerge(){
-		$this->session()->inst_set('loggedInAs', null); //log out
-
-		//bad data
-		$member = ShopMember::create_or_merge(array());
-		$this->assertFalse($member, "Bad data provided");
-
-		//existing, but non-matching user
-		$member = ShopMember::create_or_merge(array(
-			'Email' => 'jeremy@peremy.com',
-			'FirstName' => 'Jeremy',
-			'Surname' => 'Peremy',
-			'Password' => 'pass2234'
-		));
-		$this->assertFalse($member, "Found member is not same as currently logged in member");
-
-		//non existing user
-		$member = ShopMember::create_or_merge(array(
-			'Email' => 'foo@barbabab.net',
-			'FirstName' =>	'Foo',
-			'Surname' => 'Bar',
-			'Password' => 'foobar'
-		));
-		$this->assertFalse($member->isInDB(),"New member is not saved to db");
-
-		//existing member
-		$this->session()->inst_set('loggedInAs', $this->objFromFixture("Member", "jeremyperemy")->ID); //log in existing 'joe bloggs' user
-		$member = ShopMember::create_or_merge(array(
-			'Email' => 'jeremy@peremy.com',
-			'FirstName' => 'Jerry'
-		));
-		$this->assertTrue((boolean)$member,"Member has been found");
-		$this->assertEquals('Peremy', $member->Surname,'Surname remains the same');
-		$this->assertEquals('Jerry', $member->FirstName,'Firstname updated');
-
-		$this->session()->inst_set('loggedInAs', null); //log out
-	}
-
-	public function testCMSFields(){
+	public function testCMSFields() {
 		singleton("Member")->getCMSFields();
 		singleton("Member")->getMemberFormFields();
 	}
 
-	public function testPastOrders(){
+	public function testPastOrders() {
 		$member = $this->objFromFixture("Member", "joebloggs");
 		$pastorders = $member->getPastOrders();
-		$this->assertEquals(1,$pastorders->count());
+		$this->assertEquals(1, $pastorders->count());
 	}
 
-	//TODO: test login joins cart
+	public function testLoginJoinsCart() {
+		Member::config()->login_joins_cart = true;
+		$order = $this->objFromFixture("Order", "cart");
+		ShoppingCart::singleton()->setCurrent($order);
+		$member = $this->objFromFixture("Member", "jeremyperemy");
+		$member->logIn();
+		$this->assertEquals($member->ID, $order->MemberID);
+
+		$member->logOut();
+
+		$this->assertFalse(ShoppingCart::curr());
+	}
+
+	public function testLoginDoesntJoinCart() {
+		Member::config()->login_joins_cart = false;
+		$order = $this->objFromFixture("Order", "cart");
+		ShoppingCart::singleton()->setCurrent($order);
+		$member = $this->objFromFixture("Member", "jeremyperemy");
+		$member->logIn();
+		$this->assertEquals(0, $order->MemberID);
+
+		$member->logOut();
+
+		$this->assertTrue((bool)ShoppingCart::curr());
+	}
 
 }

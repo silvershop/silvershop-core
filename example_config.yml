@@ -36,6 +36,10 @@ ProductCategory:
 ShoppingCart_Controller:
   direct_to_cart_page: true
 
+CheckoutConfig:
+  member_creation_enabled: true
+  membership_required: true
+
 Order:
   modifiers:
     - 'FlatTaxModifier'

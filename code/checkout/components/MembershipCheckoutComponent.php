@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * Provides:
+ * 	- member identifier, and password fields.
+ * 	- required membership fields
+ * 	- validating data
+ * 
+ */
 class MembershipCheckoutComponent extends CheckoutComponent{
 
 	protected $confirmed;
@@ -26,7 +33,7 @@ class MembershipCheckoutComponent extends CheckoutComponent{
 		if(Member::currentUserID()){
 			return $fields;
 		}
-		$idfield = Member::get_unique_identifier_field();
+		$idfield = Member::config()->unique_identifier_field;
 		if(!$order->{$idfield} &&
 			($form && !$form->Fields()->fieldByName($idfield))){
 				//TODO: scaffold the correct id field type
@@ -62,7 +69,7 @@ class MembershipCheckoutComponent extends CheckoutComponent{
 		$result = new ValidationResult();
 		if(Checkout::membership_required() || !empty($data['Password'])){
 			$member = new Member($data);
-			$idval = $data[Member::get_unique_identifier_field()];
+			$idval = $data[Member::config()->unique_identifier_field];
 			if(ShopMember::get_by_identifier($idval)){
 				$result->error(
 					sprintf(
@@ -85,7 +92,7 @@ class MembershipCheckoutComponent extends CheckoutComponent{
 		$data = array();
 
 		if($member = Member::currentUser()){
-			$idf = Member::get_unique_identifier_field();
+			$idf = Member::config()->unique_identifier_field;
 			$data[$idf] = $member->{$idf};
 		}
 		return $data;
@@ -101,7 +108,9 @@ class MembershipCheckoutComponent extends CheckoutComponent{
 		if(!Checkout::membership_required() && empty($data['Password'])){
 			return;
 		}
-		$member = Checkout::get($order)->createMembership($data);
+
+		$factory = new ShopMemberFactory();
+		$member = $factory->create($data);
 		$member->write();
 		$member->logIn();
 	}

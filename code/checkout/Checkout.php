@@ -7,7 +7,7 @@ class Checkout{
 	/**
 	 * 4 different membership schemes:
 	 * 	1: creation disabled & membership not required
-	 *		no body can, or is required to, becaome a member at checkout.
+	 *		no body can, or is required to, become a member at checkout.
 	 *	2: creation disabled & membership required
 	 *		only existing members can use checkout.
 	 *		(ideally the entire shop should be disabled in this case)
@@ -17,14 +17,12 @@ class Checkout{
 	 *		it is optional to be, or become a member at checkout.
 	 */
 
-	public static $member_creation_enabled = true;
 	public static function member_creation_enabled() {
-		return self::$member_creation_enabled;
+		return CheckoutConfig::config()->member_creation_enabled;
 	}
 
-	public static $membership_required = false;
 	public static function membership_required() {
-		return self::$membership_required;
+		return CheckoutConfig::config()->membership_required;
 	}
 
 	public static function get($order = null) {
@@ -125,59 +123,18 @@ class Checkout{
 	}
 
 	/**
-	 * Create member account from data array.
-	 * Data must contain unique identifier.
-	 * @param $data - map of member data
-	 * @return Member|boolean - new member (not saved to db), or false if there is an error.
+	 * @deprecated 1.0 use ShopMemberFactory
 	 */
 	public function createMembership($data) {
-		$result = new ValidationResult();
-		if(!self::$member_creation_enabled) {
-			$result->error(
-				_t("Checkout.MEMBERSHIPSNOTALLOWED", "Creating new memberships is not allowed")
-			);
-			throw new ValidationException($result);
-		}
-		$idfield = Member::get_unique_identifier_field();
-		if(!isset($data[$idfield]) || empty( $data[$idfield])){
-			$result->error(
-				sprintf(_t("Checkout.IDFIELDNOTFOUND", "Required field not found: %s"), $idfield)
-			);
-			throw new ValidationException($result);
-		}
-
-		if(!isset($data['Password']) || empty($data['Password'])){
-			$result->error(_t("Checkout.PASSWORDREQUIRED", "A password is required"));
-			throw new ValidationException($result);
-		}
-
-		$idval = $data[$idfield];
-		if(ShopMember::get_by_identifier($idval)){
-			$result->error(sprintf(
-				_t("Checkout.MEMBEREXISTS", "A member already exists with the %s %s"),
-				_t("Member.".$idfield, $idfield),
-				$idval
-			));
-			throw new ValidationException($result);
-		}
-		$member = new Member(Convert::raw2sql($data));
-		$validation = $member->validate();
-		if(!$validation->valid()){
-			$result->error($validation->message());	//TODO need to handle i18n here?
-		}
-
-		if(!$result->valid()){
-			throw new ValidationException($result);
-		}
-
-		return $member;
+		$factory = new ShopMemberFactory();
+		return $factory->create($data);
 	}
 
 	/**
 	 * Checks if member (or not) is allowed, in accordance with configuration
 	 */
 	public function validateMember($member) {
-		if(!self::$membership_required){
+		if(!CheckoutConfig::config()->membership_required){
 			return true;
 		}
 		if(empty($member) || !($member instanceof Member)){

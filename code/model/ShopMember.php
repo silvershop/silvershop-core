@@ -6,8 +6,6 @@
  */
 class ShopMember extends DataExtension {
 
-	private static $login_joins_cart = true;
-
 	private static $has_many = array(
 		'AddressBook' => 'Address'
 	);
@@ -22,37 +20,10 @@ class ShopMember extends DataExtension {
 	 * @return Member|null
 	 */
 	public static function get_by_identifier($idvalue) {
-		return Member::get()->filter(Member::get_unique_identifier_field(), $idvalue)->first();
-	}
-
-	/**
-	 * Create new member with data, or merge data with existing.
-	 * @param  array $data data to create or merge with
-	 * @return Member|false the newly created, or existing member
-	 */
-	public static function create_or_merge($data) {
-		if(!isset($data[Member::get_unique_identifier_field()]) || empty($data[Member::get_unique_identifier_field()])){
-			return false;
-		}
-		$existingmember = self::get_by_identifier($data[Member::get_unique_identifier_field()]);
-		if($existingmember && $existingmember->exists()){
-			if(Member::currentUserID() != $existingmember->ID) {
-				return false;
-			}
-		}
-		if(!$member = Member::currentUser()) {
-			$member = new Member();
-		}
-		$member->update($data);
-		return $member;
-	}
-
-	/**
-	 * Get country title by iso country code.
-	 */
-	public static function find_country_title($code) {
-		$countries = SiteConfig::current_site_config()->getCountriesList();
-		return ($code && $countries[$code]) ?  $countries[$code] : false;
+		return Member::get()->filter(
+			Member::config()->unique_identifier_field,
+			$idvalue
+		)->first();
 	}
 
 	public function updateCMSFields(FieldList $fields) {
@@ -89,10 +60,16 @@ class ShopMember extends DataExtension {
 	 * Clear the cart, and session variables on member logout
 	 */
 	public function memberLoggedOut() {
-		ShoppingCart::singleton()->clear();
-		OrderManipulation::clear_session_order_ids();
+		if(Member::config()->login_joins_cart){
+			ShoppingCart::singleton()->clear();
+			OrderManipulation::clear_session_order_ids();
+		}
 	}
 
+	/**
+	 * Get the past orders for this member
+	 * @return DataList list of orders
+	 */
 	public function getPastOrders() {
 		return Order::get()
 				->filter("MemberID", $this->owner->ID)

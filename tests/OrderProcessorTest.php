@@ -44,7 +44,8 @@ class OrderProcessorTest extends SapphireTest {
 
 		$order = $this->shoppingcart->current();
 
-		$member = ShopMember::create_or_merge(array(
+		$factory = new ShopMemberFactory();
+		$member = $factory->create(array(
 			'FirstName' => 'James',
 			'Surname'	=> 'Brown',
 			'Email'		=> 'james@jamesbrown.net.xx',
@@ -72,41 +73,41 @@ class OrderProcessorTest extends SapphireTest {
 
 		$this->assertFalse($this->shoppingcart->current(), "Shopping cart is empty");
 		$this->assertNotNull($order);
-		$this->assertEquals($order->GrandTotal(), 408, 'grand total');
-		$this->assertEquals($order->TotalOutstanding(), 408, 'total outstanding');
-		$this->assertEquals($order->TotalPaid(), 0, 'total outstanding');
+		$this->assertEquals(408, $order->GrandTotal(), 'grand total');
+		$this->assertEquals(408, $order->TotalOutstanding(), 'total outstanding');
+		$this->assertEquals(0, $order->TotalPaid(), 'total outstanding');
 
 		$this->assertEquals($order->Status, 'Unpaid', 'status is "unpaid"');
 
-		$this->assertEquals($order->IsSent(), false);
-		$this->assertEquals($order->IsProcessing(), false);
-		$this->assertEquals($order->IsPaid(), false);
-		$this->assertEquals($order->IsCart(), false);
+		$this->assertEquals(false, $order->IsSent());
+		$this->assertEquals(false, $order->IsProcessing());
+		$this->assertEquals(false, $order->IsPaid());
+		$this->assertEquals(false, $order->IsCart());
 
-		$this->assertEquals($order->FirstName, 'James', 'order first name');
-		$this->assertEquals($order->Surname, 'Brown', 'order surname');
-		$this->assertEquals($order->Email, 'james@jamesbrown.net.xx', 'order email');
+		$this->assertEquals('James', $order->FirstName, 'order first name');
+		$this->assertEquals('Brown', $order->Surname, 'order surname');
+		$this->assertEquals('james@jamesbrown.net.xx', $order->Email, 'order email');
 
 		$shippingaddress = $order->ShippingAddress();
 
-		$this->assertEquals($shippingaddress->Address, '23 Small Street', 'order address');
-		$this->assertEquals($shippingaddress->AddressLine2, 'North Beach', 'order address2');
-		$this->assertEquals($shippingaddress->City, 'Springfield', 'order city');
-		$this->assertEquals($shippingaddress->PostalCode, '1234567', 'order postcode');
-		$this->assertEquals($shippingaddress->Country, 'NZ', 'order country');
+		$this->assertEquals('23 Small Street', $shippingaddress->Address, 'order address');
+		$this->assertEquals('North Beach', $shippingaddress->AddressLine2, 'order address2');
+		$this->assertEquals('Springfield', $shippingaddress->City, 'order city');
+		$this->assertEquals('1234567', $shippingaddress->PostalCode, 'order postcode');
+		$this->assertEquals('NZ', $shippingaddress->Country, 'order country');
 
 		$billingaddress = $order->BillingAddress();
 
-		$this->assertEquals($billingaddress->Address, '23 Small Street', 'order address');
-		$this->assertEquals($billingaddress->AddressLine2, 'North Beach', 'order address2');
-		$this->assertEquals($billingaddress->City, 'Springfield', 'order city');
-		$this->assertEquals($billingaddress->PostalCode, '1234567', 'order postcode');
-		$this->assertEquals($billingaddress->Country, 'NZ', 'order country');
+		$this->assertEquals('23 Small Street', $billingaddress->Address, 'order address');
+		$this->assertEquals('North Beach', $billingaddress->AddressLine2, 'order address2');
+		$this->assertEquals('Springfield', $billingaddress->City, 'order city');
+		$this->assertEquals('1234567', $billingaddress->PostalCode, 'order postcode');
+		$this->assertEquals('NZ', $billingaddress->Country, 'order country');
 
-		$this->assertNotNull($order->MemberID, 'member exists now');
-		$this->assertEquals($order->Member()->FirstName, 'James', 'member first name matches');
-		$this->assertEquals($order->Member()->Surname, 'Brown', 'surname matches');
-		$this->assertEquals($order->Member()->Email, 'james@jamesbrown.net.xx', 'email matches');
+		$this->assertTrue($order->Member()->exists(), 'member exists now');
+		$this->assertEquals('James', $order->Member()->FirstName, 'member first name matches');
+		$this->assertEquals('Brown', $order->Member()->Surname, 'surname matches');
+		$this->assertEquals('james@jamesbrown.net.xx', $order->Member()->Email, 'email matches');
 		//not finished...need to find out how to encrypt the same
 		//$this->assertEquals($order->Member()->Password, Security::encrypt_password('jbrown'),'password matches');
 	}
@@ -223,9 +224,10 @@ class OrderProcessorTest extends SapphireTest {
 		$address->write();
 		$order->ShippingAddressID = $address->ID;
 		$order->BillingAddressID = $address->ID; //same (for now)
+		if($member) $order->MemberID = $member->ID;
 		$order->write();
 		$this->processor = OrderProcessor::create($order);
-		return $this->processor->placeOrder($member);
+		return $this->processor->placeOrder();
 	}
 
 }
