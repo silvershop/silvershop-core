@@ -182,7 +182,7 @@ class OrderProcessor{
 			return false;
 		}
 		$payment = Payment::create()
-			->init($gateway, $this->order->TotalOutstanding(), $currency = "NZD");
+			->init($gateway, $this->order->TotalOutstanding(), ShopConfig::get_base_currency());
 		$this->order->Payments()->add($payment);
 		return $payment;
 	}
