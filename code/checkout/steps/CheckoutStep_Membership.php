@@ -67,7 +67,12 @@ class CheckoutStep_Membership extends CheckoutStep{
 	}
 
 	public function registerconfig() {
-		$config = new CheckoutComponentConfig(ShoppingCart::curr(), false);
+		$order = ShoppingCart::curr();
+		//hack to make components work when there is no order
+		if(!$order){
+			$order = new Order();
+		}
+		$config = new CheckoutComponentConfig($order, false);
 		$config->addComponent(new CustomerDetailsCheckoutComponent());
 		$config->addComponent(new MembershipCheckoutComponent());
 

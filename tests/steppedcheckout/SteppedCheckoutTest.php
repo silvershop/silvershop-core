@@ -15,7 +15,9 @@ class SteppedCheckoutTest extends FunctionalTest{
 		$this->socks = $this->objFromFixture("Product", "socks");
 		$this->socks->publish('Stage', 'Live');
 
-		$this->checkout = new CheckoutPage_Controller($this->objFromFixture("CheckoutPage", "checkout"));
+		$checkoutpage = $this->objFromFixture("CheckoutPage", "checkout");
+		$checkoutpage->publish('Stage', 'Live');
+		$this->checkout = new CheckoutPage_Controller();
 		$this->checkout->handleRequest(new SS_HTTPRequest("GET", "checkout"), DataModel::inst());
 
 		$this->cart = $this->objFromFixture("Order", "cart");
@@ -42,13 +44,17 @@ class SteppedCheckoutTest extends FunctionalTest{
 	}
 
 	public function testMembershipStep() {
+		//this should still work if there is no cart
+		ShoppingCart::singleton()->clear();
+
 		$this->checkout->index();
 		$this->checkout->membership();
 		$this->post('/checkout/guestcontinue', array()); //redirect to next step
+		$this->checkout->createaccount(new SS_HTTPRequest('GET', "/checkout/createaccount"));
+
 		$form = $this->checkout->MembershipForm();
 		$data = array();
 		$form->loadDataFrom($data);
-		$this->checkout->createaccount(new SS_HTTPRequest('GET', "/checkout/createaccount")); //redirect to create checkout
 
 		$data = array(
 			'FirstName' => 'Michael',
@@ -139,11 +145,15 @@ class SteppedCheckoutTest extends FunctionalTest{
 		$this->assertEquals('Cart', $this->cart->Status, "Order is still in cart");
 
 		$order = Order::get()->byID($this->cart->ID);
-		$m = $order->Member();
-		$this->assertTrue($m->exists());
-		$this->assertEquals($m->Email, "test@example.com");
 
-		$member->logOut();
+		$this->assertEquals("Leave it around the back", $order->Notes);
+
+		//redirect to make payment
+		$this->assertEquals(302, $response->getStatusCode());
+		$this->assertEquals(
+				Director::baseURL()."checkout/payment",
+				$response->getHeader('Location')
+			);
 	}
 
 }
