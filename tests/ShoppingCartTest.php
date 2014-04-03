@@ -55,4 +55,8 @@ Class ShoppingCartTest extends SapphireTest{
 		$this->assertFalse($this->cart->get($ball1),     "first item not in cart");
 		$this->assertNotNull($this->cart->get($ball1),   "second item is in cart");
 	}
+
+	public function testNotInCart() {
+		$this->assertFalse($this->product->IsInCart());
+	}
 }
