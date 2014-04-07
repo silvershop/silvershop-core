@@ -104,7 +104,9 @@ class VariationForm extends AddProductForm {
 
 		$this->extend('updateVariationAddToCart', $form, $variation);
 
-		ShoppingCart_Controller::direct();
+		$request = $this->getRequest();
+		$this->extend('updateVariationFormResponse', $request, $response, $variation, $quantity, $form);
+		return $response ? $response : ShoppingCart_Controller::direct();
 	}
 
 	public function getBuyable($data = null) {
