@@ -310,7 +310,6 @@ class OrderProcessor{
 			$adminEmail = Email::config()->admin_email;
 		}
 		$e = new Order_statusEmail();
-		$e->populateTemplate($this);
 		$e->populateTemplate(array(
 			"Order" => $this->order,
 			"Member" => $member,
