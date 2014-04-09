@@ -293,11 +293,12 @@ class OrderProcessor{
 	*/
 	public function sendStatusChange($title, $note = null) {
 		if(!$note) {
-			$logs = OrderStatusLog::get()
+			$latestLog = OrderStatusLog::get()
 				->filter("OrderID", $this->order->ID)
-				->filter("SentToCustomer", 1);
-			if($logs) {
-				$latestLog = $logs->First();
+				->filter("SentToCustomer", 1)
+				->first();
+			
+			if($latestLog) {
 				$note = $latestLog->Note;
 				$title = $latestLog->Title;
 			}
