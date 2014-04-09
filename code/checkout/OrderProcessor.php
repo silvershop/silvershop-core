@@ -304,9 +304,9 @@ class OrderProcessor{
 			}
 		}
 		$member = $this->order->Member();
-		if(self::$receipt_email) {
-			$adminEmail = self::$receipt_email;
-		}else {
+		if(Config::inst()->get('OrderProcessor', 'receipt_email')) {
+			$adminEmail = Config::inst()->get('OrderProcessor', 'receipt_email');
+		} else {
 			$adminEmail = Email::config()->admin_email;
 		}
 		$e = new Order_statusEmail();
