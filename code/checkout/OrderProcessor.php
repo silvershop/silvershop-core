@@ -26,7 +26,7 @@ class OrderProcessor{
 	 * @param Order $order
 	 */
 	public static function create(Order $order) {
-		return new OrderProcessor($order);
+		return Injector::inst()->create('OrderProcessor', $order);
 	}
 	/**
 	 * Assign the order to a local variable
