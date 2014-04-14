@@ -77,11 +77,16 @@ class VariationForm extends AddProductForm {
 					$this->extend('updateVariationAddToCartMessage', $e, $message, $variation);
 				}
 
-				return json_encode(array(
+				$ret = json_encode(array(
 					'Message' => $message,
 					'Success' => $success,
 					'Price' => $variation->dbObject('Price')->TrimCents()
 				));
+
+				$this->extend('updateVariationAddToCartAjax', $ret, $variation, $form);
+
+				return $ret;
+
 			}
 
 			if($cart->add($variation, $quantity)) {
@@ -93,10 +98,11 @@ class VariationForm extends AddProductForm {
 				$form->sessionMessage($cart->getMessage(),$cart->getMessageType());
 			}
 		} else {
+			$variation = null;
 			$form->sessionMessage("That variation is not available, sorry.","bad"); //validation fail
 		}
 
-
+		$this->extend('updateVariationAddToCart', $form, $variation);
 
 		ShoppingCart_Controller::direct();
 	}
