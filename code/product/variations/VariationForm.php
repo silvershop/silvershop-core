@@ -77,15 +77,15 @@ class VariationForm extends AddProductForm {
 					$this->extend('updateVariationAddToCartMessage', $e, $message, $variation);
 				}
 
-				$ret = json_encode(array(
+				$ret = array(
 					'Message' => $message,
 					'Success' => $success,
 					'Price' => $variation->dbObject('Price')->TrimCents()
-				));
+				);
 
 				$this->extend('updateVariationAddToCartAjax', $ret, $variation, $form);
 
-				return $ret;
+				return json_encode($ret);
 
 			}
 
