@@ -71,9 +71,10 @@ class VariationForm extends AddProductForm {
 
 				try {
 					$success = $variation->canPurchase(null, $data['Quantity']);
-
-				}  catch(ShopBuyableException $e) {
+				} catch(ShopBuyableException $e) {
 					$message = get_class($e);
+					// added hook to update message
+					$this->extend('updateVariationAddToCartMessage', $e, $message, $variation);
 				}
 
 				return json_encode(array(
@@ -94,6 +95,8 @@ class VariationForm extends AddProductForm {
 		} else {
 			$form->sessionMessage("That variation is not available, sorry.","bad"); //validation fail
 		}
+
+
 
 		ShoppingCart_Controller::direct();
 	}
