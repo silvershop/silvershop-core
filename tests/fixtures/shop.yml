@@ -148,6 +148,18 @@ Product_OrderItem:
         Order: =>Order.cart
         Product: =>Product.socks
         Quantity: 1
+    othercart_mp3player:
+        Order: =>Order.othercart
+        Product: =>Product.mp3player
+        UnitPrice: 200
+        Quantity: 1
+        CalculatedTotal: 200
+    modifiedcart_mp3player:
+        Order: =>Order.modifiedcart
+        Product: =>Product.mp3player
+        UnitPrice: 200
+        Quantity: 1
+        CalculatedTotal: 200
     unpaid_tshirt:
         Order: =>Order.unpaid
         Product: =>Product.tshirt
@@ -176,20 +188,6 @@ Product_OrderItem:
         UnitPrice: 200
         Quantity: 2
         CalculatedTotal: 400
-    othercart_mp3player:
-        Order: =>Order.othercart
-        Product: =>Product.mp3player
-        ProductVersion: 1
-        UnitPrice: 200
-        Quantity: 1
-        CalculatedTotal: 200
-    othercart_mp3player:
-        Order: =>Order.modifiedcart
-        Product: =>Product.mp3player
-        ProductVersion: 1
-        UnitPrice: 200
-        Quantity: 1
-        CalculatedTotal: 200
 
 Payment:
     paid_success:
