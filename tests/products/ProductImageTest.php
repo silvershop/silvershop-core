@@ -10,7 +10,7 @@
  */
 class ProductImageTest extends SapphireTest {
 
-	protected static $fixture_file = 'shop/tests/fixtures/dummyproducts.yml';
+	protected static $fixture_file = 'shop/tests/fixtures/shop.yml';
 
 	function setUp() {
 		parent::setUp();
