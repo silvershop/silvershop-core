@@ -13,6 +13,13 @@
 			"role" : "Developer"
 		}
 	],
+	
+	"repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/wildflower/silverstripe-omnipay"
+        }
+    ],
 	"require" : {
 		"silverstripe/cms": "3.1.*",
 		"silverstripe/framework": "3.1.*",
