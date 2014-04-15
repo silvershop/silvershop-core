@@ -263,6 +263,21 @@ class Product extends Page implements Buyable{
 		return $link;
 	}
 
+
+	/**
+	 * If the product does not have an image, and a default image
+	 * is defined in SiteConfig, return that instead.
+	 * @return Image
+	 */
+	public function Image(){
+		$image = $this->getComponent('Image');
+		if ($image && $image->exists() && file_exists($image->getFullPath())) return $image;
+		$image = SiteConfig::current_site_config()->DefaultProductImage();
+		if ($image && $image->exists() && file_exists($image->getFullPath())) return $image;
+		return $this->model->Image->newObject();
+	}
+
+
 	//passing on shopping cart links ...is this necessary?? ...why not just pass the cart?
 	public function addLink() {
 		return ShoppingCart_Controller::add_item_link($this);
