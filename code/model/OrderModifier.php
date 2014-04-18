@@ -97,6 +97,10 @@ class OrderModifier extends OrderAttribute {
 	 * Check if the modifier should be in the cart.
 	 */
 	public function valid() {
+		$order = $this->Order();
+		if(!$order){
+			return false;
+		}
 		return true;
 	}
 
@@ -152,10 +156,6 @@ class OrderModifier extends OrderAttribute {
 	 */
 	public function canRemove() {
 		return false;
-	}
-
-	public function removeLink() {
-		return CheckoutPage_Controller::remove_modifier_link($this->ID);
 	}
 
 }
