@@ -488,7 +488,7 @@ class Order extends DataObject {
 	// Order Template and ajax Management
 
 	/**
-	 * Will update payment status to "Paid if there is no outstanding amount".
+	 * Will update payment status to Paid, if there is no outstanding amount.
 	 */
 	public function updatePaymentStatus() {
 		if($this->GrandTotal() > 0 && $this->TotalOutstanding() <= 0){

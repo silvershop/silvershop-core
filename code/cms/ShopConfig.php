@@ -8,7 +8,8 @@ class ShopConfig extends DataExtension{
 
 	private static $has_one = array(
 		'TermsPage' => 'SiteTree',
-		"CustomerGroup" => "Group"
+		"CustomerGroup" => "Group",
+		'DefaultProductImage' => 'Image',
 	);
 
 	private static $email_from;
@@ -26,7 +27,8 @@ class ShopConfig extends DataExtension{
 				'SiteTree'),
 				TreeDropdownField::create("CustomerGroupID",
 					_t("ShopConfig.CUSTOMERGROUP", "Group to add new customers to"),
-				"Group")
+				"Group"),
+				UploadField::create('DefaultProductImage', _t('ShopConfig.DEFAULTIMAGE', 'Default Product Image'))
 			),
 			$countriestab = new Tab("Countries",
 				CheckboxSetField::create('AllowedCountries', 'Allowed Ordering and Shipping Countries',

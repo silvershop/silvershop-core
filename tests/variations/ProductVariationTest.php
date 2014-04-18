@@ -29,7 +29,7 @@ class ProductVariationTest extends SapphireTest{
 
 		$cart->add($this->redlarge);
 		$item = $cart->get($this->redlarge);
-		$this->assertTrue((bool)$item,"item exists");
+		$this->assertTrue((bool)$item, "item exists");
 		$this->assertEquals(1, $item->Quantity);
 		$this->assertEquals(22, $item->UnitPrice());
 		$this->assertEquals("Size:Large, Color:Red", $item->SubTitle());
@@ -41,7 +41,7 @@ class ProductVariationTest extends SapphireTest{
 		$attributes = array($colorred->ID, $sizelarge->ID);
 		$variation = $this->ball->getVariationByAttributes($attributes);
 		$this->assertTrue((bool)$variation, "Variation exists");
-		$this->assertEquals(22, $variation->sellingPrice(),"Variation price is $22 (price of ball");
+		$this->assertEquals(22, $variation->sellingPrice(), "Variation price is $22 (price of ball");
 
 		$attributes = array($colorred->ID, 999);
 		$variation = $this->ball->getVariationByAttributes($attributes);
