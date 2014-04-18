@@ -74,6 +74,7 @@ class ShoppingCart{
 		}
 		$this->order = $cart;
 		Session::set(self::$cartid_session_name, $cart->ID);
+
 		return $this;
 	}
 
@@ -91,6 +92,7 @@ class ShoppingCart{
 		$order->write();
 		$order->extend('onStartOrder');
 		Session::set(self::$cartid_session_name, $order->ID);
+
 		return $this->order = $order;
 	}
 
@@ -102,7 +104,7 @@ class ShoppingCart{
 	 * @param Buyable $buyable
 	 * @param number $quantity
 	 * @param unknown $filter
-	 * @return boolean
+	 * @return boolean|OrderItem false or the new/existing item
 	 */
 	public function add(Buyable $buyable, $quantity = 1, $filter = array()) {
 		$order = $this->findOrMake();
@@ -122,7 +124,8 @@ class ShoppingCart{
 		$item->write();
 		$order->extend("afterAdd", $item, $buyable, $quantity, $filter);
 		$this->message(_t("ShoppingCart.ITEMADD", "Item has been added successfully."));
-		return true;
+
+		return $item;
 	}
 
 	/**
@@ -131,6 +134,7 @@ class ShoppingCart{
 	 * @param id or Buyable $buyable
 	 * @param $item
 	 * @param int $quantity - number of items to remove, or leave null for all items (default)
+	 * @return boolean success/failure
 	 */
 	public function remove(Buyable $buyable, $quantity = null, $filter = array()) {
 		$order = $this->current();
@@ -152,6 +156,7 @@ class ShoppingCart{
 		}
 		$order->extend("afterRemove", $item, $buyable, $quantity, $filter);
 		$this->message(_t("ShoppingCart.ITEMREMOVED", "Item has been successfully removed."));
+		
 		return true;
 	}
 
@@ -162,9 +167,9 @@ class ShoppingCart{
 	 * @param id or Buyable $buyable
 	 * @param $item
 	 * @param int $quantity
+	 * @return boolean|OrderItem false or the new/existing item
 	 */
 	public function setQuantity(Buyable $buyable, $quantity = 1, $filter = array()) {
-
 		if($quantity <= 0){
 			return $this->remove($buyable, $quantity, $filter);
 		}
@@ -178,13 +183,15 @@ class ShoppingCart{
 		$item->write();
 		$order->extend("afterSetQuantity", $item, $buyable, $quantity, $filter);
 		$this->message(_t("ShoppingCart.QUANTITYSET", "Quantity has been set."));
-		return true;
+		
+		return $item;
 	}
 
 	/**
 	 * Finds or makes an order item for a given product + filter.
 	 * @param id or Buyable $buyable
 	 * @param string $filter
+	 * @return OrderItem the found or created item
 	 */
 	private function findOrMakeItem(Buyable $buyable,$filter = array()) {
 		$order = $this->findOrMake();
@@ -208,6 +215,7 @@ class ShoppingCart{
 			$order->Items()->add($item);
 			$item->_brandnew = true; //flag as being new
 		}
+
 		return $item;
 	}
 
@@ -237,6 +245,7 @@ class ShoppingCart{
 		if(!$item){
 			return $this->error(_t("ShoppingCart.ITEMNOTFOUND", "Item not found."));
 		}
+
 		return $item;
 	}
 
@@ -253,6 +262,7 @@ class ShoppingCart{
 		Session::clear(self::$cartid_session_name);
 		$this->order = null;
 		$this->message(_t("ShoppingCart.CLEARED", "Cart was successfully cleared."));
+
 		return true;
 	}
 
@@ -261,6 +271,7 @@ class ShoppingCart{
 	 */
 	protected function error($message) {
 		$this->message($message, "bad");
+		
 		return false;
 	}
 
