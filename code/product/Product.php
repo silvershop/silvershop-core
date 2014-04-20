@@ -253,7 +253,6 @@ class Product extends Page implements Buyable{
 		return $link;
 	}
 
-
 	/**
 	 * If the product does not have an image, and a default image
 	 * is defined in SiteConfig, return that instead.
@@ -265,20 +264,6 @@ class Product extends Page implements Buyable{
 		$image = SiteConfig::current_site_config()->DefaultProductImage();
 		if ($image && $image->exists() && file_exists($image->getFullPath())) return $image;
 		return $this->model->Image->newObject();
-	}
-
-
-	//passing on shopping cart links ...is this necessary?? ...why not just pass the cart?
-	public function addLink() {
-		return ShoppingCart_Controller::add_item_link($this);
-	}
-
-	public function removeLink() {
-		return ShoppingCart_Controller::remove_item_link($this);
-	}
-
-	public function removeallLink() {
-		return ShoppingCart_Controller::remove_all_item_link($this);
 	}
 
 }
