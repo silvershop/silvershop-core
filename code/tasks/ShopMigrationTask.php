@@ -61,6 +61,7 @@ class ShopMigrationTask extends MigrationTask{
 			//TODO: warn against lost data
 			DB::query("UPDATE \"Product\" SET \"BasePrice\" = \"Price\";");
 			DB::query("UPDATE \"Product_Live\" SET \"BasePrice\" = \"Price\";");
+			DB::query("UPDATE \"Product_versions\" SET \"BasePrice\" = \"Price\";");
 			//TODO: rename, if possible without breaking migraton task next time it runs
 			//$db->renameField("Product","Price","Price_obselete");
 			//$db->renameField("Product_Live","Price","Price_obselete");
