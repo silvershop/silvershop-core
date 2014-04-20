@@ -84,10 +84,12 @@ class Product extends Page implements Buyable{
 		//general fields
 		$fields->addFieldsToTab('Root.Main',array(
 			TextField::create('InternalItemID', _t('Product.CODE', 'Product Code/SKU'), '', 30),
-			DropdownField::create('ParentID',_t("Product.CATEGORY","Category"), $this->categoryoptions())
-				->setDescription(_t("Product.CATEGORYDESCRIPTION","This is the parent page or default category.")),
-			ListBoxField::create('ProductCategories',_t("Product.ADDITIONALCATEGORIES","Additional Categories"),
-					ProductCategory::get()->map('ID','NestedTitle')->toArray()
+			DropdownField::create('ParentID', _t("Product.CATEGORY", "Category"), $this->categoryoptions())
+				->setDescription(_t("Product.CATEGORYDESCRIPTION", "This is the parent page or default category.")),
+			ListBoxField::create('ProductCategories', _t("Product.ADDITIONALCATEGORIES", "Additional Categories"),
+					ProductCategory::get()
+						->filter("ID:not", $this->getAncestors()->map('ID', 'ID'))
+						->map('ID', 'NestedTitle')->toArray()
 				)->setMultiple(true),
 			TextField::create('Model', _t('Product.MODEL', 'Model'), '', 30),
 			CheckboxField::create('Featured', _t('Product.FEATURED', 'Featured Product')),
