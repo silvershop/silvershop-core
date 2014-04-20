@@ -557,16 +557,6 @@ class Order extends DataObject {
 	}
 
 	/**
-	 * Return a link to the {@link CheckoutPage} instance
-	 * that exists in the database.
-	 *
-	 * @return string
-	 */
-	public function checkoutLink() {
-		return CheckoutPage::find_link();
-	}
-
-	/**
 	 * Force creating an order reference
 	 */
 	public function onBeforeWrite() {

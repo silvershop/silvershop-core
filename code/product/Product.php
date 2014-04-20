@@ -145,21 +145,6 @@ class Product extends Page implements Buyable{
 	}
 
 	/**
-	 * Returns the shopping cart.
-	 * @todo Does HTTP::set_cache_age() still need to be set here?
-	 *
-	 * @return Order
-	 */
-	public function getCart() {
-		if(!self::$global_allow_purchase){
-			return false;
-		}
-		HTTP::set_cache_age(0);
-
-		return ShoppingCart::curr();
-	}
-
-	/**
 	 * Conditions for whether a product can be purchased:
 	 *  - global allow purchase is enabled
 	 *  - product AllowPurchase field is true
