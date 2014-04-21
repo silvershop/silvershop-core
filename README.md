@@ -41,7 +41,7 @@ composer require -d myshop "burnbright/silverstripe-shop:dev-master"
 There are a few useful tasks that can be run via a url to help you test:
 
  * `{yoursite.com}/dev/tasks/PopulateShopTask` - will create cart, checkout, account, category and product pages
- * `{yoursite.com}/dev/shop/populatecart` - will add products to the cart, and navitate you to the checkout
+ * `{yoursite.com}/dev/tasks/PopulateCartTask` - will add products to the cart, and navitate you to the checkout
 
 ## Configuration
 
