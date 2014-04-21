@@ -266,6 +266,31 @@ class Product extends Page implements Buyable{
 		return $this->model->Image->newObject();
 	}
 
+
+	/**
+	 * Link to add this product to cart.
+	 * @return string link
+	 */
+	public function addLink() {
+		return ShoppingCart_Controller::add_item_link($this);
+	}
+
+	/**
+	 * Link to remove one of this product from cart.
+	 * @return string link
+	 */
+	public function removeLink() {
+		return ShoppingCart_Controller::remove_item_link($this);
+	}
+
+	/**
+	 * Link to remove all of this product from cart.
+	 * @return string link
+	 */
+	public function removeallLink() {
+		return ShoppingCart_Controller::remove_all_item_link($this);
+	}
+
 }
 
 class Product_Controller extends Page_Controller {
