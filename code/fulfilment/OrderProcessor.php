@@ -77,9 +77,11 @@ class OrderProcessor{
 				$modifier->write();
 			}
 		}
-		//add member to customers group
-		$member = $this->order->Member();
-		if($member->exists()){
+		//add member to order & customers group
+		if($member = Member::currentUser()){
+			if(!$this->order->MemberID){
+				$this->order->MemberID = $member->ID;
+			}
 			$cgroup = ShopConfig::current()->CustomerGroup();
 			if($cgroup->exists()){
 				$member->Groups()->add($cgroup);
@@ -154,10 +156,8 @@ class OrderProcessor{
 			'shippingCountry' => $shipping->Country,
 			'shippingPhone' => $shipping->Phone,
 		));
-
 		$service = PurchaseService::create($payment)
 					->setReturnUrl($this->order->Link());
-
 		// Process payment, get the result back
 		$response = $service->purchase($data);
 		if(GatewayInfo::is_manual($gateway)){
@@ -166,6 +166,7 @@ class OrderProcessor{
 		}elseif($response->isSuccessful()) {
 			$this->completePayment();
 		}
+
 		return $response;
 	}
 

@@ -53,7 +53,9 @@ class ShoppingCart{
 			$this->calculateonce = true;
 			$order->calculate();
 		}
-		if($this->order) return $this->order;
+		if($this->order){
+			return $this->order;
+		}
 		//find order by id saved to session (allows logging out and retaining cart contents)
 		$sessionid = Session::get(self::$cartid_session_name);
 		if ($sessionid && $order = Order::get()->filter(array(
@@ -82,10 +84,11 @@ class ShoppingCart{
 	 * Helper that only allows orders to be started internally.
 	 */
 	protected function findOrMake() {
-		if($this->current()) return $this->current();
+		if($this->current()){
+			return $this->current();
+		}
 		//otherwise start a new order
 		$order = new Order();
-		$order->SessionID = session_id();
 		if(Config::inst()->get('ShopMember', 'login_joins_cart')){
 			$order->MemberID = Member::currentUserID(); // Set the Member relation to this order
 		}
