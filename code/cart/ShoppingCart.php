@@ -253,17 +253,30 @@ class ShoppingCart{
 	}
 
 	/**
+	 * Store old cart id in session order history
+	 */
+	public function archiveorderid() {
+		$order = Order::get()
+			->filter("Status:not", "Cart")
+			->byId(Session::get(self::$cartid_session_name));
+		if($order && !$order->IsCart()){
+			OrderManipulation::add_session_order($order);
+		}
+		$this->clear();
+	}
+
+	/**
 	 * Empty / abandon the entire cart.
 	 * @return bool - true if successful, false if no cart found
 	 */
 	public function clear() {
+		Session::clear(self::$cartid_session_name);
 		$order = $this->current();
+		$this->order = null;
 		if(!$order){
 			return $this->error(_t("ShoppingCart.NOCARTFOUND", "No cart found."));
 		}
-		$order->write();
-		Session::clear(self::$cartid_session_name);
-		$this->order = null;
+		$order->write();	
 		$this->message(_t("ShoppingCart.CLEARED", "Cart was successfully cleared."));
 
 		return true;
