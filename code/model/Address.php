@@ -102,7 +102,15 @@ class Address extends DataObject{
 	 * Required fields can be customised via self::$required_fields
 	 */
 	public function getRequiredFields() {
-		$fields = $this->config()->required_fields;
+		$fields = self::config()->required_fields;
+		//hack to allow overriding arrays in ss config
+		if(self::$required_fields != $fields){
+			foreach(self::$required_fields as $requirement){
+				if(($key = array_search($requirement, $fields)) !== false) {
+				    unset($fields[$key]);
+				}
+			}
+		}
 		$this->extend('updateRequiredFields', $fields);
 		return $fields;
 	}
