@@ -16,7 +16,7 @@ class ShopTest extends FunctionalTest {
 		$this->assertTrue(class_exists('Payment'), 'Payment module is installed.');
 	}
 
-	public function testExampleConfig(){
+	public function testExampleConfig() {
 		//TODO: get example from yaml
 	}
 
@@ -27,7 +27,7 @@ class ShopTest extends FunctionalTest {
 
 	public function testFindLink() {
 		$this->checkoutpage = $this->objFromFixture('CheckoutPage', 'checkout');
-		$this->checkoutpage->publish('Stage','Live');
+		$this->checkoutpage->publish('Stage', 'Live');
 		$link = CheckoutPage::find_link();
 		$this->assertEquals(Director::baseURL() . 'checkout/', $link, 'find_link() returns the correct link to checkout.');
 	}
@@ -58,7 +58,7 @@ class ShopTest extends FunctionalTest {
 		$this->assertPartialMatchBySelector('#PastOrders h3', array('Your Order History'));
 	}
 
-	public static function setConfiguration(){
+	public static function setConfiguration() {
 		$ds = DIRECTORY_SEPARATOR;
 		include(BASE_PATH.$ds.SHOP_DIR.$ds.'tests'.$ds.'test_config.php');
 	}
