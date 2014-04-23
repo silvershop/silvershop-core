@@ -50,6 +50,9 @@ abstract class AddressCheckoutComponent extends CheckoutComponent{
 			$address = $address->duplicate();
 		}
 		$order->{$this->addresstype."AddressID"} = $address->ID;
+		if(!$order->BillingAddressID){
+			$order->BillingAddressID = $address->ID;
+		}
 		$order->write();
 		if($this->addresstype === "Shipping"){
 			ShopUserInfo::singleton()->setAddress($address);
