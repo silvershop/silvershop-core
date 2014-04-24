@@ -2,6 +2,10 @@
 
 /**
  * Handles the calculation of order totals.
+ *
+ * Creates (if necessary) and calculates values for each modifier,
+ * and subsequently the total of the order.
+ * Caches to prevent recalculation, unless dirty.
  */
 class OrderTotalCalculator{
 	
@@ -12,10 +16,6 @@ class OrderTotalCalculator{
 	}
 
 	function calculate() {
-		if(!$this->order->IsCart()){
-			user_error("Orders (non-cart) should never be re-calculated.");
-			return $this->order->Total;
-		}
 		$runningtotal = $this->order->SubTotal();
 		$modifiertotal = 0;
 		$sort = 1;
@@ -35,8 +35,7 @@ class OrderTotalCalculator{
 			}
 			$sort++;
 		}
-		//clear out modifiers that shouldn't be there, according to defined modifiers list
-			//TODO: it may be better to store/run this as a build task - remove all invalid modifiers from carts
+		//clear old modifiers out
 		if($existingmodifiers){
 			foreach($existingmodifiers as $modifier){
 				if(!in_array($modifier->ClassName, $modifierclasses)){

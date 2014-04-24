@@ -202,13 +202,8 @@ class Order extends DataObject {
 	}
 
 	/**
-	 * Creates (if necessary) and calculates values for each modifier,
-	 * and subsequently the total of the order.
-	 * Caches to prevent recalculation, unless dirty.
-	 *
+	 * Calculate the total
 	 * @return the final total
-	 * @todo remove empty modifiers? ...perhaps create some kind of 'cleanup' function?
-	 * @todo prevent this function from being run too many times
 	 */
 	public function calculate() {
 		if(!$this->IsCart()){
@@ -325,9 +320,7 @@ class Order extends DataObject {
 	 * @return string
 	 */
 	public function Currency() {
-		if(class_exists('Payment')) {
-			return ShopConfig::get_site_currency();
-		}
+		return ShopConfig::get_site_currency();
 	}
 
 	/**
@@ -379,8 +372,6 @@ class Order extends DataObject {
 		}
 		return null;
 	}
-
-	// Order Template and ajax Management
 
 	/**
 	 * Has this order been sent to the customer?
