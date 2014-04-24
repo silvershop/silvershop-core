@@ -214,6 +214,11 @@ class Order extends DataObject {
 		return $this->Total = $calculator->calculate();
 	}
 
+	public function getModifier($className, $forcecreate = false) {
+		$calculator = new OrderTotalCalculator($this);
+		return $calculator->getModifier($className, $forcecreate);
+	}
+
 	/**
 	 * Enforce rounding precision when setting total
 	 */
