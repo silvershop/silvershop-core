@@ -106,39 +106,17 @@ class Order extends DataObject {
 	private static $hidden_status = array('Cart');
 
 	/**
-	 * Flag to determine whether the user can cancel
-	 * this order before payment is received.
-	 * @var boolean
+	 * Flags to determine when an order can be cancelled.
 	 */
-	private static $can_cancel_before_payment = true;
-
-	/**
-	 * Flag to determine whether the user can cancel
-	 * this order before processing has begun.
-	 * @var boolean
-	 */
-	private static $can_cancel_before_processing = false;
-
-	/**
-	 * Flag to determine whether the user can cancel
-	 * this order before the goods are sent.
-	 * @var boolean
-	 */
-	private static $can_cancel_before_sending = false;
-
-	/**
-	 * Flag to determine whether the user can cancel
-	 * this order after the goods are sent.
-	 * @var boolean
-	 */
-	private static $can_cancel_after_sending = false;
+	private static $cancel_before_payment = true;
+	private static $cancel_before_processing = false;
+	private static $cancel_before_sending = false;
+	private static $cancel_after_sending = false;
 
 	/**
 	 * Modifiers represent the additional charges or
 	 * deductions associated to an order, such as
 	 * shipping, taxes, vouchers etc.
-	 *
-	 * @var array
 	 */
 	private static $modifiers = array();
 
@@ -237,87 +215,8 @@ class Order extends DataObject {
 			user_error("Orders (non-cart) should never be re-calculated.");
 			return $this->Total;
 		}
-
-		$runningtotal = $this->SubTotal();
-		$modifiertotal = 0;
-		$sort = 1;
-		$existingmodifiers = $this->Modifiers();
-
-		if($this->IsCart()){
-			$modifierclasses = self::config()->modifiers;
-			//check if modifiers are even in use
-			if(!is_array($modifierclasses) || empty($modifierclasses)){
-				return $this->Total = $runningtotal;
-			}
-			foreach($modifierclasses as $ClassName){
-				if($modifier = $this->getModifier($ClassName)){
-					$modifier->Sort = $sort;
-					$runningtotal = $modifier->modify($runningtotal);
-					if($modifier->isChanged()){
-						$modifier->write();
-					}
-				}
-				$sort++;
-			}
-			//clear out modifiers that shouldn't be there, according to defined modifiers list
-				//TODO: it may be better to store/run this as a build task - remove all invalid modifiers from carts
-			if($existingmodifiers){
-				foreach($existingmodifiers as $modifier){
-					if(!in_array($modifier->ClassName, $modifierclasses)){
-						$modifier->delete();
-						$modifier->destroy();
-						return null;
-					}
-				}
-			}
-
-		}else{ //only use existing modifiers, if order has been placed
-			if($existingmodifiers){
-				foreach($existingmodifiers as $modifier){
-					$modifier->Sort = $sort;
-					//TODO: prevent recalculating value if $this->Amount is present
-						//this will help historical records to not be altered
-					$runningtotal = $modifier->modify($runningtotal);
-					$modifier->write();
-				}
-			}
-		}
-		$this->Total = $runningtotal;
-		return $runningtotal;
-	}
-
-	/**
-	 * Retrieve a modifier of a given class for this order.
-	 * Modifier will be retrieved from database if it already exists,
-	 * or created if it is always required.
-	 *
-	 * @param string $className
-	 * @param boolean $forcecreate - force the modifier to be created.
-	 */
-	public function getModifier($className, $forcecreate = false) {
-		if(ClassInfo::exists($className)){
-			//search for existing
-			if($modifier = DataObject::get_one($className, "\"OrderID\" = ".$this->ID)){ //sort by?
-				//remove if no longer valid
-				if(!$modifier->valid()){
-					//TODO: need to provide feedback message - why modifier was removed
-					$modifier->delete();
-					$modifier->destroy();
-					return null;
-				}
-				return $modifier;
-			}
-			$modifier = new $className();
-			if($modifier->required() || $forcecreate){ //create any modifiers that are required for every order
-				$modifier->OrderID = $this->ID;
-				$modifier->write();
-				$this->Modifiers()->add($modifier);
-				return $modifier;
-			}
-		}else{
-			user_error("Class \"$className\" does not exist.");
-		}
-		return null;
+		$calculator = new OrderTotalCalculator($this);
+		return $this->Total = $calculator->calculate();
 	}
 
 	/**
@@ -398,7 +297,6 @@ class Order extends DataObject {
 
 	/*
 	 * Prevent deleting orders.
-	 *
 	 * @return boolean
 	 */
 	public function canDelete($member = null) {
@@ -407,7 +305,6 @@ class Order extends DataObject {
 
 	/**
 	 * Check if an order can be edited.
-	 *
 	 * @return boolean
 	 */
 	public function canEdit($member = null) {
@@ -416,7 +313,6 @@ class Order extends DataObject {
 
 	/**
 	 * Prevent standard creation of orders.
-	 *
 	 * @return boolean
 	 */
 	public function canCreate($member = null) {
@@ -426,7 +322,6 @@ class Order extends DataObject {
 	/**
 	 * Return the currency of this order.
 	 * Note: this is a fixed value across the entire site.
-	 *
 	 * @return string
 	 */
 	public function Currency() {
