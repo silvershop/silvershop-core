@@ -4,22 +4,22 @@ class CheckoutFormTest extends SapphireTest{
 
 	public static $fixture_file = 'shop/tests/fixtures/shop.yml';
 
-	public function setUp(){
+	public function setUp() {
 		parent::setUp();
 		ShopTest::setConfiguration();
 		$this->mp3player = $this->objFromFixture('Product', 'mp3player');
-		$this->mp3player->publish('Stage','Live');
+		$this->mp3player->publish('Stage', 'Live');
 		$this->socks = $this->objFromFixture('Product', 'socks');
-		$this->socks->publish('Stage','Live');
+		$this->socks->publish('Stage', 'Live');
 		$this->beachball = $this->objFromFixture('Product', 'beachball');
-		$this->beachball->publish('Stage','Live');
+		$this->beachball->publish('Stage', 'Live');
 
 		$this->checkoutcontroller = new CheckoutPage_Controller();
 
 		ShoppingCart::singleton()->add($this->socks); //start cart
 	}
 
-	public function testCheckoutForm(){
+	public function testCheckoutForm() {
 		$order = ShoppingCart::curr();
 		$config = new SinglePageCheckoutComponentConfig($order);
 		$form = new CheckoutForm($this->checkoutcontroller, "OrderForm", $config);
@@ -50,13 +50,13 @@ class CheckoutFormTest extends SapphireTest{
 		$errors = $form->getValidator()->getErrors();
 		$this->assertTrue($valid);
 		$form->checkoutSubmit($data, $form);
-		$this->assertEquals("Jane",$order->FirstName);
+		$this->assertEquals("Jane", $order->FirstName);
 		$shipping = $order->ShippingAddress();
-		$this->assertEquals("NZ",$shipping->Country);
+		$this->assertEquals("NZ", $shipping->Country);
 		$this->assertEquals("Cart", $order->Status);
 
-		//TODO: test invalid data
-		//TODO: test components individually
+		$this->markTestIncomplete('test invalid data');
+		$this->markTestIncomplete('test components individually');
 	}
 
 }

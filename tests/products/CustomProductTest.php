@@ -62,9 +62,9 @@ class CustomProductTest extends FunctionalTest{
 
 		$this->assertEquals(5, $item->Quantity, "quantity is 5");
 
+		$this->markTestIncomplete("what about default values that have been set");
 		//test by using urls
-		//add a partial match
-		//TODO: what about default values that have been set?
+		//add a partial match		
 	}
 
 }

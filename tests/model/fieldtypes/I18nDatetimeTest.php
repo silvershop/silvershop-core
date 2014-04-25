@@ -2,7 +2,7 @@
 
 class I18nDatetimeTest extends SapphireTest{
 
-	public function testField(){
+	public function testField() {
 
 		$field = new I18nDatetime();
 		$field->setValue('2012-11-21 11:54:13');
@@ -11,7 +11,7 @@ class I18nDatetimeTest extends SapphireTest{
 		$field->NiceDate();
 		$field->Nice24();
 
-		//TODO: assertions
+		$this->markTestIncomplete('assertions!');
 	}
 
 }

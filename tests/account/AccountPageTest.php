@@ -13,6 +13,10 @@ class AccountPageTest extends FunctionalTest{
 		$this->controller->init();
 	}
 
+	public function testCanViewAccountPage() {
+		$this->markTestIncomplete('Log in and view account page');
+	}
+
 	public function testGlobals() {
 		$this->assertFalse($this->accountpage->canCreate(), "account page exists");
 		$this->assertEquals(Director::baseURL()."account/", AccountPage::find_link());
@@ -39,14 +43,17 @@ class AccountPageTest extends FunctionalTest{
 		$this->assertTrue((boolean)$createform, "Create form exists");
 		$this->assertTrue((boolean)$defaultform, "Default form exists");
 
-		//$this->controller->saveaddresses($data, $createform); //TODO: save address
-		//$this->controller->savedefaultaddresses($data, $defaultform); //TODO: save default
+
+		//$this->controller->saveaddresses($data, $createform);
+		//$this->controller->savedefaultaddresses($data, $defaultform);
+		$this->markTestIncomplete("save address and save default");
 	}
 
 	public function testEditProfile() {
 		$this->controller->editprofile();
 		$this->controller->EditAccountForm();
 		$this->controller->ChangePasswordForm();
+		$this->markTestIncomplete("Add some assertions");
 	}
 
 }

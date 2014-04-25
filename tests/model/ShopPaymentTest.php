@@ -28,21 +28,17 @@ class ShopPaymentTest extends FunctionalTest{
 		//$this->objFromFixture("AccountPage", "accountpage")->publish('Stage', 'Live');
 	}
 
-	// public function testPayment() {
-	// 	$payment = new Payment();
-	// }
+	public function testManualPayment() {
+		$this->markTestIncomplete("Process a manual payment");
+	}
 
-	// public function testManualPayment() {
+	public function testOnsitePayment() {
+		$this->markTestIncomplete("Process an onsite payment");
+	}
 
-	// }
-
-	// public function testOnsitePayment() {
-
-	// }
-
-	// public function testOffsitePayment() {
-
-	// }
+	public function testOffsitePayment() {
+		$this->markTestIncomplete("Process an off-site payment");
+	}
 
 	public function testOffsitePaymentWithGatewayCallback() {
 		//set up cart
@@ -81,7 +77,8 @@ class ShopPaymentTest extends FunctionalTest{
 		$response = $this->get("paymentendpoint/$identifier/complete");
 		$this->assertNull(Session::get("shoppingcartid"), "cart session id should be removed");
 		$this->assertNotEquals(404, $response->getStatusCode(), "We shouldn't get page not found");
-		//TODO: add more tests
+		
+		$this->markTestIncomplete("Should assert other things");
 	}
 
 	protected $payment;

@@ -31,8 +31,8 @@ class CheckoutTest extends SapphireTest{
 	}
 
 	public function testSetShippingMethod() {
-		//TODO: combine shipping framework with core, or remove reliance
 		//$this->checkout->setShippingMethod(new ShippingMethod()); //see shippingframework submodule
+		$this->markTestIncomplete('combine shipping framework with core, or remove reliance');
 	}
 
 	public function testSetPaymentMethod() {
@@ -128,7 +128,6 @@ class CheckoutTest extends SapphireTest{
 			'Password' => 'jeremyperemy'
 		));
 		$this->fail("Exception was expected here");
-
 	}
 
 	/**
