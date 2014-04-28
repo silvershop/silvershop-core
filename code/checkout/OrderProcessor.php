@@ -268,7 +268,8 @@ class OrderProcessor{
 		}
 		$email->populateTemplate(array(
 			'PurchaseCompleteMessage' => $purchaseCompleteMessage,
-			'Order' => $this->order
+			'Order' => $this->order,
+			'BaseURL' => Director::absoluteBaseURL()
 		));
 		return $email->send();
 	}
