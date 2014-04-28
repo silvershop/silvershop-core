@@ -142,6 +142,9 @@ Order:
     modifiedcart:
         Name: Modified cart
         Total: 100
+    megacart:
+        Name: Mega cart
+        Total: 810
 
 Product_OrderItem:
     cart_socks:
@@ -188,6 +191,18 @@ Product_OrderItem:
         UnitPrice: 200
         Quantity: 2
         CalculatedTotal: 400
+    megacart_socks:
+        Order: =>Order.megacart
+        Product: =>Product.socks
+        Quantity: 20
+    megacart_tshirt:
+        Order: =>Order.megacart
+        Product: =>Product.tshirt
+        Quantity: 10
+    megacart_mp3player:
+        Order: =>Order.megacart
+        Product: =>Product.mp3player
+        Quantity: 2
 
 Payment:
     paid_success:
