@@ -89,7 +89,7 @@ class ShoppingCart{
 		}
 		//otherwise start a new order
 		$order = new Order();
-		if(Config::inst()->get('ShopMember', 'login_joins_cart')){
+		if(Member::config()->login_joins_cart){
 			$order->MemberID = Member::currentUserID(); // Set the Member relation to this order
 		}
 		$order->write();
