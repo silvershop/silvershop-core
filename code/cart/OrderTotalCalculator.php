@@ -80,6 +80,7 @@ class OrderTotalCalculator{
 			$modifier->OrderID = $this->order->ID;
 			$modifier->write();
 			$this->order->Modifiers()->add($modifier);
+
 			return $modifier;
 		}
 

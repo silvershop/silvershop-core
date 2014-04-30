@@ -27,6 +27,7 @@ class CheckoutStep extends Extension{
 		if(!$nextstep){
 			$nextstep = $this->nextstep();
 		}
+
 		return $this->owner->Link($nextstep)."#".self::$continue_anchor;
 	}
 
