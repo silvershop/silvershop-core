@@ -47,8 +47,11 @@ class OrderModifier extends OrderAttribute {
 	private static $singular_name = "Modifier";
 	private static $plural_name = "Modifiers";
 
-	//Causes known bug: https://github.com/silverstripe/silverstripe-framework/issues/1682
-	//private static $default_sort = "\"Sort\" ASC, \"Created\" ASC";
+	private static $default_sort = "\"OrderModifier\".\"Sort\" ASC, \"Created\" ASC";
+
+	private static $extensions = array(
+		"OrderModifierLazyLoadFix"
+	);
 
 	/**
 	* Specifies whether this modifier is always required in an order.
@@ -156,6 +159,18 @@ class OrderModifier extends OrderAttribute {
 	 */
 	public function canRemove() {
 		return false;
+	}
+
+}
+
+/**
+ * Hack to fix issue with lazy loding
+ * @see https://github.com/silverstripe/silverstripe-framework/issues/1682
+ */
+class OrderModifierLazyLoadFix extends DataExtension{
+
+	public function augmentSQL(SQLQuery &$query) {
+		$query->addLeftJoin("OrderModifier", "OrderModifier.ID = OrderAttribute.ID");
 	}
 
 }
