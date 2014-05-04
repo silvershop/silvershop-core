@@ -8,6 +8,11 @@ class CustomProductTest extends FunctionalTest {
 
 	public static $fixture_file = 'shop/tests/fixtures/customproduct.yml';
 
+	protected $extraDataObjects = array(
+		"CustomProduct",
+		"CustomProduct_OrderItem"
+	);
+
 	public function setUp() {
 		parent::setUp();
 		$this->thing = $this->objFromFixture("CustomProduct", "thing");
