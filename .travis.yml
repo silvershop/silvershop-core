@@ -21,8 +21,8 @@ before_script:
   - cd ~/builds/ss
 
 script:
-  - "if [ \"$COVERAGE\" = \"\" ]; then phpunit -c shop/phpunit.xml.dist; fi"
-  - "if [ \"$COVERAGE\" = \"1\" ]; then phpunit -c shop/phpunit.xml.dist --coverage-clover shop/coverage.xml; fi"
+  - "if [ \"$COVERAGE\" = \"\" ]; then vendor/bin/phpunit -c shop/phpunit.xml.dist; fi"
+  - "if [ \"$COVERAGE\" = \"1\" ]; then vendor/bin/phpunit -c shop/phpunit.xml.dist --coverage-clover shop/coverage.xml; fi"
 
 after_script:
   - if [ "$COVERAGE" = "1" ]; then
