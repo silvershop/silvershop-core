@@ -63,7 +63,7 @@ class ShoppingCartControllerTest extends FunctionalTest {
 		// non purchasable product checks
 		$this->assertEquals($this->noPurchaseProduct->canPurchase(),false,'non-purcahseable product is not purchaseable');
 		$this->assertArrayNotHasKey($this->noPurchaseProduct->ID,$items->map('ProductID')->toArray(),'non-purcahable product is not in cart');
-		$this->assertEquals($this->draftProduct->canPurchase(),false,'draft product is not purchaseable');
+		$this->assertEquals($this->draftProduct->canPurchase(), true, 'draft products can be purchased');
 		$this->assertArrayNotHasKey($this->draftProduct->ID,$items->map('ProductID')->toArray(),'draft product is not in cart');
 		$this->assertEquals($this->noPriceProduct->canPurchase(),false,'product without price is not purchaseable');
 		$this->assertArrayNotHasKey($this->noPriceProduct->ID,$items->map('ProductID')->toArray(),'product without price is not in cart');
