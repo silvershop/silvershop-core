@@ -61,11 +61,11 @@ class ProductVariation extends DataObject implements Buyable {
 
 	private static $order_item = "ProductVariation_OrderItem";
 
-	private static $title_has_label = false;
+	private static $title_has_label = true;
 
-	private static $title_separator = ' ';
+	private static $title_separator = ':';
 
-	private static $title_glue = ' ';
+	private static $title_glue = ', ';
 
 
 	public function getCMSFields() {
@@ -124,11 +124,7 @@ class ProductVariation extends DataObject implements Buyable {
 			$labelvalues = array();
 			foreach($values as $value){
 				if(self::config()->title_has_label) {
-					if(self::config()->title_separator) {
-						$labelvalues[] = $value->Type()->Label . self::config()->title_separator . $value->Value;
-					} else {
-						$labelvalues[] = $value->Type()->Label . ' ' . $value->Value;
-					}
+					$labelvalues[] = $value->Type()->Label . self::config()->title_separator . $value->Value;
 				} else {
 					$labelvalues[] = $value->Value;
 				}

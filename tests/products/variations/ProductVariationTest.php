@@ -21,8 +21,16 @@ class ProductVariationTest extends SapphireTest{
 		$this->redlarge = $this->objFromFixture("ProductVariation", "redlarge");
 	}
 
+	/**
+	 * @group testme
+	 */
 	public function testVariationOrderItem() {
 		$cart = ShoppingCart::singleton();
+
+		//config
+		ProductVariation::config()->title_has_label = true;
+		ProductVariation::config()->title_separator = ':';
+		ProductVariation::config()->title_glue = ', ';
 
 		$emptyitem = $this->redlarge->Item();
 		$this->assertEquals(1, $emptyitem->Quantity, "Items always have a quantity of at least 1.");
