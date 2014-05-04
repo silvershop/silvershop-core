@@ -69,7 +69,8 @@ class Product extends Page implements Buyable{
 	private static $icon = 'shop/images/icons/package';
 	private static $default_parent = 'ProductCategory';
 	private static $default_sort = '"Title" ASC';
-
+	
+	private static $can_purchase_if_zero = false;
 	private static $global_allow_purchase = true;
 	private static $order_item = "Product_OrderItem";
 
@@ -173,7 +174,7 @@ class Product extends Page implements Buyable{
 					break;
 				}
 			}
-		}elseif($this->sellingPrice() > 0){
+		}elseif($this->sellingPrice() > 0 || self::config()->can_purchase_if_zero){
 			$allowpurchase = true;
 		}
 		// Standard mechanism for accepting permission changes from decorators
