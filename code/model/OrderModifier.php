@@ -170,7 +170,7 @@ class OrderModifier extends OrderAttribute {
 class OrderModifierLazyLoadFix extends DataExtension{
 
 	public function augmentSQL(SQLQuery &$query) {
-		$query->addLeftJoin("OrderModifier", "OrderModifier.ID = OrderAttribute.ID");
+		$query->addLeftJoin("OrderModifier", "\"OrderModifier\".\"ID\" = \"OrderAttribute\".\"ID\"");
 	}
 
 }
