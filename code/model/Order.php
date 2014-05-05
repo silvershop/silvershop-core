@@ -406,7 +406,7 @@ class Order extends DataObject {
 	 * @return boolean
 	 */
 	public function IsPaid() {
-		return (boolean)$this->Paid;
+		return (boolean)$this->Paid || $this->Status == 'Paid';
 	}
 
 	public function IsCart() {
