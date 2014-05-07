@@ -214,6 +214,10 @@ class Order extends DataObject {
 		return $this->Total = $calculator->calculate();
 	}
 
+	/**
+	 * This is needed to maintain backwards compatiability with
+	 * some subsystems using modifiers. eg discounts
+	 */
 	public function getModifier($className, $forcecreate = false) {
 		$calculator = new OrderTotalCalculator($this);
 		return $calculator->getModifier($className, $forcecreate);
