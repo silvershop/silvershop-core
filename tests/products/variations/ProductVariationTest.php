@@ -21,9 +21,6 @@ class ProductVariationTest extends SapphireTest{
 		$this->redlarge = $this->objFromFixture("ProductVariation", "redlarge");
 	}
 
-	/**
-	 * @group testme
-	 */
 	public function testVariationOrderItem() {
 		$cart = ShoppingCart::singleton();
 

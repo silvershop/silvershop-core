@@ -58,28 +58,19 @@ class ShoppingCart {
 	 * @return Order
 	 */
 	public function current() {
-		if(!$this->calculateonce && SSViewer::topLevel() && $order = $this->order) {
-			$this->calculateonce = true;
-
-			$order->calculate();
-		}
-		if($this->order){
-			return $this->order;
-		}
 		//find order by id saved to session (allows logging out and retaining cart contents)
-		$sessionid = Session::get(self::$cartid_session_name);
-		if ($sessionid) {
+		if (!$this->order && $sessionid = Session::get(self::$cartid_session_name)) {
 			$this->order = Order::get()->filter(array(
 				"Status" => "Cart",
 				"ID" => $sessionid
 			))->first();
-
-			if($this->order) {
-				return $this->order;
-			}
+		}
+		if(!$this->calculateonce && $this->order) {
+			$this->order->calculate();
+			$this->calculateonce = true;
 		}
 
-		return false;
+		return $this->order ? $this->order : false;
 	}
 
 	/**
