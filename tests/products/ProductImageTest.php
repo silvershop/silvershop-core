@@ -12,6 +12,14 @@ class ProductImageTest extends SapphireTest {
 
 	protected static $fixture_file = 'shop/tests/fixtures/shop.yml';
 
+	/**
+	 * Set to true in {@link self::setUp()} if we created the assets folder, so we know to remove it in
+	 * {@link self::tearDown()}.
+	 *
+	 * @var bool
+	 */
+	private $createdAssetsFolder = false;
+
 	function setUp() {
 		parent::setUp();
 		$this->socks = $this->objFromFixture('Product', 'socks');
@@ -24,6 +32,13 @@ class ProductImageTest extends SapphireTest {
 		$this->siteConfig = SiteConfig::current_site_config();
 		$this->siteConfig->DefaultProductImageID = $this->img1->ID;
 		$this->siteConfig->write();
+
+		// Create assets/ folder if it doesn't exist
+		if(!is_dir(ASSETS_PATH)) {
+			Filesystem::makeFolder(ASSETS_PATH);
+			$this->createdAssetsFolder = true;
+		}
+
 		file_put_contents($this->img1->getFullPath(), 'dummy file');
 		file_put_contents($this->img2->getFullPath(), 'dummy file');
 	}
@@ -31,6 +46,11 @@ class ProductImageTest extends SapphireTest {
 	function tearDown() {
 		unlink($this->img1->getFullPath());
 		unlink($this->img2->getFullPath());
+
+		// Remove the assets/ folder if it was created during {@link self::setUp()}
+		if($this->createdAssetsFolder) {
+			Filesystem::removeFolder(ASSETS_PATH);
+		}
 	}
 
 	function testProductWithImage() {
