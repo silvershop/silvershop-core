@@ -16,7 +16,10 @@ class PopulateCartTask extends BuildTask{
 				if($variations->exists()){
 					$product = $variations->sort("RAND()")->first();
 				}
-				$cart->add($product,(int)rand(1, 10));
+				$quantity = (int)rand(1, 10);
+				if($product->canPurchase(Member::currentUser(), $quantity)){
+					$cart->add($product, $quantity);
+				}
 			}
 		}
 		Controller::curr()->redirect(CheckoutPage::find_link());
