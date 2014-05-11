@@ -28,7 +28,12 @@ class CheckoutComponentValidator extends RequiredFields {
 			$valid = false;
 		}
 		if(!$valid){
-			$this->form->sessionMessage("There are problems with the data you entered. See below:", "bad");
+			$this->form->sessionMessage(
+				_t(
+					"CheckoutComponentValidator.INVALIDMESSAGE",
+					"There are problems with the data you entered. See below:"
+				), "bad"
+			);
 		}
 
 		return $valid;

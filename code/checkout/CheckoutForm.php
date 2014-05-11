@@ -42,4 +42,8 @@ class CheckoutForm extends Form {
 		return $this->controller->redirectBack();
 	}
 
+	public function getConfig(){
+		return $this->config;
+	}
+
 }
