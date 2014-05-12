@@ -192,7 +192,11 @@ class Order extends DataObject {
 	 * Returns the subtotal of the items for this order.
 	 */
 	public function SubTotal() {
-		return $this->Items()->SubTotal();
+		if($this->Items()->exists()){
+			return $this->Items()->SubTotal();
+		}
+		
+		return 0;
 	}
 
 	/**
