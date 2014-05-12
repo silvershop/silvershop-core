@@ -195,10 +195,12 @@ Product_OrderItem:
         Order: =>Order.megacart
         Product: =>Product.socks
         Quantity: 20
+        #SubTotal: 160
     megacart_tshirt:
         Order: =>Order.megacart
         Product: =>Product.tshirt
         Quantity: 10
+        #SubTotal: 250
     megacart_mp3player:
         Order: =>Order.megacart
         Product: =>Product.mp3player

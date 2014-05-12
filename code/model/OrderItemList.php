@@ -33,4 +33,16 @@ class OrderItemList extends HasManyList{
 		return $total;
 	}
 
+	/**
+	 * Add up the totals of all the order items in this list.
+	 */
+	public function SubTotal() {
+		$result = 0;		
+		foreach($this->getIterator() as $item){
+			$result += $item->Total();
+		}
+
+		return $result;
+	}
+
 }
