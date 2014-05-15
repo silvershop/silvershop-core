@@ -3,9 +3,9 @@
 	<h3><% _t("HEADLINE","My Cart") %></h3>
 	<% if Cart %>
 		<% with Cart %>
-			<p class="itemcount">There <% if Items.Plural %>are<% else %>is<% end_if %> <a href="$CartLink">$Items.Quantity item<% if Items.Plural %>s<% end_if %></a> in your cart.</p>
+			<p class="itemcount">There <% if Items.Plural %>are<% else %>is<% end_if %> <a href="$Top.CartLink">$Items.Quantity item<% if Items.Plural %>s<% end_if %></a> in your cart.</p>
 			<div class="checkout">
-				<a href="$CheckoutLink">Checkout</a>
+				<a href="$Top.CheckoutLink">Checkout</a>
 			</div>
 			<% loop Items %>
 				<div class="item $EvenOdd $FirstLast">
