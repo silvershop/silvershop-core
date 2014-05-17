@@ -19,17 +19,16 @@ class ProductVariationsExtension extends DataExtension {
 	 * Adds variations specific fields to the CMS.
 	 */
 	public function updateCMSFields(FieldList $fields) {
-		$attributes = ProductAttributeType::get()->map("ID", "Title");
-
 		$fields->addFieldsToTab('Root.Variations',array(
+			ListboxField::create("VariationAttributeTypes", "Attributes", 
+				ProductAttributeType::get()->map("ID", "Title")->toArray()
+			)->setMultiple(true)
+			->setDescription("These are fields to indicate the way(s) each variation varies. Once selected, they can be edited on each variation."),
 			GridField::create("Variations","Variations",
 				$this->owner->Variations(),
 				GridFieldConfig_RecordEditor::create()
-			),
-			HeaderField::create("Variation Attribute Types"),
-			CheckboxSetField::create("VariationAttributeTypes","Variation Attribute Types",$attributes)
+			)
 		));
-
 		if($this->owner->Variations()->exists()) {
 			$fields->addFieldToTab('Root.Pricing',
 				LabelField::create('variationspriceinstructinos','

@@ -96,7 +96,7 @@ class ProductVariation extends DataObject implements Buyable {
 		}else{
 			$fields->push(LiteralField::create('savefirst',
 				"<p class=\"message warning\">".
-					"You can choose variation attributes after saving for the first time
+					"You can choose variation attributes after saving for the first time, if they exist.
 				</p>"
 			));
 		}
