@@ -73,6 +73,12 @@ class Product extends Page implements Buyable {
 	private static $global_allow_purchase = true;
 	private static $order_item = "Product_OrderItem";
 
+	private static $indexes = array(
+		'Featured' => true,
+		'AllowPurchase' => true,
+		'InternalItemID' => true,
+	);
+
 	/**
 	 * Add product fields to CMS
 	 * @return FieldList updated field list
