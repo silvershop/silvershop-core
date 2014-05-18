@@ -245,9 +245,9 @@ class Product extends Page implements Buyable {
 		$price = $this->BasePrice;
 		//TODO: this is not ideal, because prices manipulations will not happen in a known order
 		$this->extend("updateSellingPrice", $price);
-		if($price < 0){
-			$price = 0; //prevent negative values
-		}
+		//prevent negative values
+		$price = $price < 0 ? 0 : $price;
+
 		return $price;
 	}
 

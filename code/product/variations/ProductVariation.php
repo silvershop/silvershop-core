@@ -4,9 +4,7 @@
  * Product Variation
  *
  * Provides a means for specifying many variations on a product.
- *
  * Used in combination with ProductAttributes, such as color, size.
- *
  * A variation will specify one particular combination, such as red, and large.
  *
  * @package shop
@@ -78,7 +76,7 @@ class ProductVariation extends DataObject implements Buyable {
 		if($attributes->exists()){
 			foreach($attributes as $attribute){
 				if($field = $attribute->getDropDownField()){
-					if($value = $this->AttributeValues()->find('TypeID',$attribute->ID)){
+					if($value = $this->AttributeValues()->find('TypeID', $attribute->ID)){
 						$field->setValue($value->ID);
 					}
 					$fields->push($field);
@@ -150,13 +148,10 @@ class ProductVariation extends DataObject implements Buyable {
 
 	public function canPurchase($member = null, $quantity = 1) {
 		$allowpurchase = false;
-
 		if($product = $this->Product()) {
 			$allowpurchase = ($this->sellingPrice() > 0) && $product->AllowPurchase;
 		}
-
 		$extended = $this->extendedCan('canPurchase', $member, $quantity);
-
 		if($allowpurchase && $extended !== null) {
 			$allowpurchase = $extended;
 		}
@@ -179,7 +174,7 @@ class ProductVariation extends DataObject implements Buyable {
 	public function Item() {
 		$filter = array();
 		$this->extend('updateItemFilter',$filter);
-		$item = ShoppingCart::singleton()->get($this,$filter);
+		$item = ShoppingCart::singleton()->get($this, $filter);
 		if(!$item) {
 			//return dummy item so that we can still make use of Item
 			$item = $this->createItem(0);
@@ -189,7 +184,7 @@ class ProductVariation extends DataObject implements Buyable {
 	}
 
 	public function addLink() {
-		return $this->Item()->addLink($this->ProductID,$this->ID);
+		return $this->Item()->addLink($this->ProductID, $this->ID);
 	}
 
 	public function createItem($quantity = 1,$filter = array()){
@@ -211,9 +206,10 @@ class ProductVariation extends DataObject implements Buyable {
 		if ($price == 0 && $this->Product() && $this->Product()->sellingPrice()){
 			$price = $this->Product()->sellingPrice();
 		}
-		if (!$price) $price = 0;
-		//TODO: this is not ideal, because prices manipulations will not happen in a known order
 		$this->extend("updateSellingPrice",$price);
+		//prevent negative values
+		$price = $price < 0 ? 0 : $price;
+
 		return $price;
 	}
 
@@ -239,7 +235,7 @@ class ProductVariation_OrderItem extends Product_OrderItem {
 
 	/**
 	 * Overloaded relationship, for getting versioned variations
-	 * @param unknown_type $current
+	 * @param boolean $current
 	 */
 	public function ProductVariation($forcecurrent = false) {
 		if($this->ProductVariationID && $this->ProductVariationVersion && !$forcecurrent){

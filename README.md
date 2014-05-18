@@ -2,6 +2,7 @@
 
 The SilverStripe Shop module aims to provide developers with a framework for building, and customising ecommerce-based projects.
 It includes facilities for customers to browse products and place orders, and for administrators to manage products and orders.
+We've put a strong focus on testing, and thanks to TravisCI, you can see the [build status](https://travis-ci.org/burnbright/silverstripe-shop) of this project, running on MySQL, SQLite, Postgres, as well as a few different versions of PHP.
 
 [![Latest Stable Version](https://poser.pugx.org/burnbright/silverstripe-shop/v/stable.png)](https://packagist.org/packages/burnbright/silverstripe-shop)
 [![Latest Unstable Version](https://poser.pugx.org/burnbright/silverstripe-shop/v/unstable.png)](https://packagist.org/packages/burnbright/silverstripe-shop)
@@ -13,7 +14,7 @@ It includes facilities for customers to browse products and place orders, and fo
 Website: http://ss-shop.org
 Demo: http://demo.ss-shop.org
 
-We are looking for contributiors. There are many ways you can [contribute to this project](https://github.com/burnbright/silverstripe-shop/wiki/Contributing).
+Your contributions, and feedback are welcomed and appreciated. There are many ways you can [contribute to this project](https://github.com/burnbright/silverstripe-shop/wiki/Contributing).
 A tremendous thanks to [everyone that has already contributed](https://github.com/burnbright/silverstripe-shop/graphs/contributors).
 
 ## Maintainer Contact
@@ -22,7 +23,7 @@ A tremendous thanks to [everyone that has already contributed](https://github.co
 
 ## Requirements
 
- * SilverStripe 3+ [framework](https://github.com/silverstripe/silverstripe-framework) & [cms](https://github.com/silverstripe/silverstripe-cms)
+ * SilverStripe 3 [framework](https://github.com/silverstripe/silverstripe-framework) & [cms](https://github.com/silverstripe/silverstripe-cms)
  * [Omnipay Module](https://github.com/burnbright/silverstripe-omnipay) + it's dependencies.
 
 ## Documentation
