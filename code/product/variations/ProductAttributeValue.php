@@ -22,7 +22,11 @@ class ProductAttributeValue extends DataObject{
 
 	private static $summary_fields = array(
 		'Value' => 'Value',
+	);
 
+	private static $indexes = array(
+		'LastEdited' => true,
+		'Sort' => true,
 	);
 
 	private static $default_sort = "TypeID ASC, Sort ASC, Value ASC";

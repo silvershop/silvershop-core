@@ -25,6 +25,10 @@ class ProductAttributeType extends DataObject{
 		'Label' => 'Label'
 	);
 
+	private static $indexes = array(
+		'LastEdited' => true,
+	);
+
 	private static $default_sort = "ID ASC";
 	private static $singular_name = "Attribute";
 	private static $plural_name = "Attributes";

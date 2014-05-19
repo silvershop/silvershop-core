@@ -51,6 +51,11 @@ class ProductVariation extends DataObject implements Buyable {
 		'InternalItemID'
 	);
 
+	private static $indexes = array(
+		'InternalItemID' => true,
+		'LastEdited' => true,
+	);
+
 	private static $singular_name = "Variation";
 
 	private static $plural_name = "Variations";
