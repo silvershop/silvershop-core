@@ -205,7 +205,6 @@ class Order extends DataObject {
 	 */
 	public function calculate() {
 		if(!$this->IsCart()){
-			user_error("Orders (non-cart) should never be re-calculated.");
 			return $this->Total;
 		}
 		$calculator = new OrderTotalCalculator($this);
