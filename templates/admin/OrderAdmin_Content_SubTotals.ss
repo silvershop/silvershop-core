@@ -6,7 +6,10 @@
 	<% loop Modifiers %>
 		<% if ShowInTable %>
 			<tr class="ss-gridfield-item ss-gridfield-$EvenOdd $FirstLast $Classes">
-				<td colspan="4" class="main">$TableTitle</td>
+				<td colspan="4" class="main">
+					$TableTitle
+					<% if SubTitle %><small class="subtitle">($SubTitle)</small><% end_if %>
+				</td>
 				<td>$TableValue.Nice</td>
 			</tr>
 		<% end_if %>
