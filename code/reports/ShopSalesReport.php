@@ -29,20 +29,8 @@ class ShopSalesReport extends ShopPeriodReport{
 	}
 
 	public function columns(){
-		$period = "Paid.Long";
-		if(isset($_GET['filters']['Grouping'])){
-			switch($_GET['filters']['Grouping']){
-				case "Year":
-					$period = "Paid.Year";
-					break;
-				case "Month":
-					$period = "Paid.Month"; //TODO: this needs to include year
-					break;
-			}
-		}
-
 		return array(
-			$period => "Period",
+			"FilterPeriod" => "Period",
 			"Count" => "Count",
 			"Sales" => "Sales"
 		);

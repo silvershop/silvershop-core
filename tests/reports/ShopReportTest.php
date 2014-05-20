@@ -1,11 +1,8 @@
 <?php
 
-class ShopSalesReportTest extends SapphireTest{
+class ShopReportTest extends SapphireTest{
 	
-	/**
-	 * @group testme
-	 */
-	function testDiscountReport() {
+	function testSalesReport() {
 		$report = new ShopSalesReport();
 		$records = $report->sourceRecords(array('Grouping' => 'Year'));
 		$records = $report->sourceRecords(array('Grouping' => 'Month'));

@@ -68,7 +68,10 @@ class ShopPeriodReport extends SS_Report{
 					"Day" =>	"d F Y"
 				);
 				$dformat = $dformats[$params['Grouping']];
-				$record->FilterPeriod = (empty($result[$this->periodfield])) ? "uncategorised" : date($dformat, strtotime($result[$this->periodfield]));
+				//reduce period field to un-quoted column name
+				$pf = str_replace("\"","", $this->periodfield);
+				$pf = substr($pf, strpos($pf, '.') + 1);
+				$record->FilterPeriod = (empty($result[$pf])) ? "uncategorised" : date($dformat, strtotime($result[$pf]));
 			}
 		}
 		return $output;
@@ -77,6 +80,7 @@ class ShopPeriodReport extends SS_Report{
 	public function query($params){
 		$query = new ShopReport_Query();
 		$filterperiod = $this->periodfield;
+		$query->setSelect($filterperiod);
 		$query->setFrom('"' . $this->dataClass . '"');
 		$start = isset($params['StartPeriod']) && !empty($params['StartPeriod']) ? date('Y-m-d',strtotime($params["StartPeriod"])) : null;
 		$end = isset($params['EndPeriod']) && !empty($params['EndPeriod']) ? date('Y-m-d',strtotime($params["EndPeriod"]) + 86400) : null; //end day is inclusive
