@@ -6,7 +6,7 @@
 class ShopPeriodReport extends SS_Report{
 
 	protected $dataClass = 'Order';
-	protected $periodfield = "Created";
+	protected $periodfield = "\"Order\".\"Created\"";
 	protected $grouping = false;
 	protected $pagesize = 20;
 
@@ -68,7 +68,7 @@ class ShopPeriodReport extends SS_Report{
 					"Day" =>	"d F Y"
 				);
 				$dformat = $dformats[$params['Grouping']];
-				$record->FilterPeriod = (empty($result["FilterPeriod"])) ? "uncategorised" : date($dformat, strtotime($result["FilterPeriod"]));
+				$record->FilterPeriod = (empty($result[$this->periodfield])) ? "uncategorised" : date($dformat, strtotime($result[$this->periodfield]));
 			}
 		}
 		return $output;
@@ -76,35 +76,35 @@ class ShopPeriodReport extends SS_Report{
 
 	public function query($params){
 		$query = new ShopReport_Query();
-		$query->selectField($this->periodfield, 'FilterPeriod');
+		$filterperiod = $this->periodfield;
 		$query->setFrom('"' . $this->dataClass . '"');
 		$start = isset($params['StartPeriod']) && !empty($params['StartPeriod']) ? date('Y-m-d',strtotime($params["StartPeriod"])) : null;
 		$end = isset($params['EndPeriod']) && !empty($params['EndPeriod']) ? date('Y-m-d',strtotime($params["EndPeriod"]) + 86400) : null; //end day is inclusive
 		if($start && $end){
-			$query->addHaving("FilterPeriod BETWEEN '$start' AND '$end'");
+			$query->addHaving("$filterperiod BETWEEN '$start' AND '$end'");
 		}elseif($start){
-			$query->addHaving("FilterPeriod > '$start'");
+			$query->addHaving("$filterperiod > '$start'");
 		}elseif($end){
-			$query->addHaving("FilterPeriod <= '$end'");
+			$query->addHaving("$filterperiod <= '$end'");
 		}
 		if($start || $end){
-			$query->addHaving("FilterPeriod IS NOT NULL"); //only include paid orders when we are doing specific period searching
+			$query->addHaving("$filterperiod IS NOT NULL"); //only include paid orders when we are doing specific period searching
 		}
 		if($this->grouping){
 			switch($params['Grouping']){
 				case "Year":
-					$query->addGroupBy("YEAR(FilterPeriod)");
+					$query->addGroupBy("YEAR($filterperiod)");
 					break;
 				case "Month":
 				default:
-					$query->addGroupBy("YEAR(FilterPeriod),MONTH(FilterPeriod)");
+					$query->addGroupBy("YEAR($filterperiod),MONTH($filterperiod)");
 					break;
 				case "Week":
-					$query->addGroupBy("YEAR(FilterPeriod),WEEK(FilterPeriod)");
+					$query->addGroupBy("YEAR($filterperiod),WEEK($filterperiod)");
 					break;
 				case "Day":
 					$query->setLimit("0,1000");
-					$query->addGroupBy("YEAR(FilterPeriod),MONTH(FilterPeriod),DAY(FilterPeriod)");
+					$query->addGroupBy("YEAR($filterperiod),MONTH($filterperiod),DAY($filterperiod)");
 					break;
 			}
 		}

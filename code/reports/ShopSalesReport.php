@@ -13,7 +13,7 @@ class ShopSalesReport extends ShopPeriodReport{
 	protected $title = "Shop Sales";
 	protected $description = "Monitor shop sales performance for a particular period. Group results by year, month, or day.";
 	protected $dataClass = "Order";
-	protected $periodfield = "Order.Paid";
+	protected $periodfield = "\"Order\".\"Paid\"";
 	protected $grouping = true;
 
 	public function getReportField(){
@@ -30,19 +30,17 @@ class ShopSalesReport extends ShopPeriodReport{
 
 	public function columns(){
 		return array(
-			"FilterPeriod" => "Period",
+			$this->periodfield => "Period",
 			"Count" => "Count",
 			"Sales" => "Sales"
 		);
 	}
 
 	public function query($params){
-		$query = parent::query($params);
-		$query->selectField($this->periodfield, "FilterPeriod")
-			->selectField("Count(Order.ID)", "Count")
-			->selectField("Sum(Order.Total)", "Sales");
-		$query->setWhere("\"Order\".\"Paid\" IS NOT NULL");
-		return $query;
+		return parent::query($params)
+			->selectField("Count(\"Order\".\"ID\")", "Count")
+			->selectField("Sum(\"Order\".\"Total\")", "Sales")
+			->setWhere("\"Order\".\"Paid\" IS NOT NULL");
 	}
 
 }
