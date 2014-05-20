@@ -28,7 +28,7 @@ class ShopPeriodReport extends SS_Report{
 			$fields->push(new DropdownField("Grouping","Group By",array(
 				"Year" => "Year",
 				"Month" => "Month",
-				"Week" => "Week",
+				//"Week" => "Week",
 				"Day" => "Day"
 			)));
 		}
@@ -64,7 +64,7 @@ class ShopPeriodReport extends SS_Report{
 				$dformats = array(
 					"Year" => "Y",
 					"Month" => "Y - F",
-					"Week" => "o - W",
+					//"Week" => "o - W",
 					"Day" =>	"d F Y"
 				);
 				$dformat = $dformats[$params['Grouping']];
@@ -93,18 +93,18 @@ class ShopPeriodReport extends SS_Report{
 		if($this->grouping){
 			switch($params['Grouping']){
 				case "Year":
-					$query->addGroupBy("YEAR($filterperiod)");
+					$query->addGroupBy($this->fd($filterperiod, '%Y'));
 					break;
 				case "Month":
 				default:
-					$query->addGroupBy("YEAR($filterperiod),MONTH($filterperiod)");
+					$query->addGroupBy($this->fd($filterperiod, '%Y').",".$this->fd($filterperiod, '%m'));
 					break;
-				case "Week":
-					$query->addGroupBy("YEAR($filterperiod),WEEK($filterperiod)");
-					break;
+				// case "Week":
+				// 	$query->addGroupBy($this->fd($filterperiod, '%Y').",CAST(".$this->fd($filterperiod, '%d')."/365 * 52, INTEGER)");
+				// 	break;
 				case "Day":
 					$query->setLimit("0,1000");
-					$query->addGroupBy("YEAR($filterperiod),MONTH($filterperiod),DAY($filterperiod)");
+					$query->addGroupBy($this->fd($filterperiod, '%Y').",".$this->fd($filterperiod, '%m').",".$this->fd($filterperiod, '%d'));
 					break;
 			}
 		}
@@ -118,6 +118,10 @@ class ShopPeriodReport extends SS_Report{
 			$query->setLimit($this->pagesize);
 		}
 		return $query;
+	}
+
+	protected function fd($date, $format){
+		return DB::getConn()->formattedDatetimeClause($date, $format);
 	}
 
 }
