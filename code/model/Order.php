@@ -446,9 +446,6 @@ class Order extends DataObject {
 		if(!$this->getField("Reference") && in_array($this->Status, self::$placed_status)){
 			$this->generateReference();
 		}
-		if($this->Status = "Paid" && !$this->Paid){
-			$this->Paid = date('Y-m-d H:i:s');
-		}
 	}
 
 	/**
