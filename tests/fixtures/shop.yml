@@ -145,6 +145,13 @@ Order:
     megacart:
         Name: Mega cart
         Total: 810
+    payablecart:
+        Status: Cart
+        FirstName: Payable
+        Surname: Smith
+        ShippingAddressID: =>Address.foobar
+        BillingAddressID: =>Address.foobar
+        Total: 41
 
 Product_OrderItem:
     cart_socks:
@@ -205,6 +212,14 @@ Product_OrderItem:
         Order: =>Order.megacart
         Product: =>Product.mp3player
         Quantity: 2
+    payablecart_socks:
+        Order: =>Order.payablecart
+        Product: =>Product.socks
+        Quantity: 2
+    payablecart_tshirt:
+        Order: =>Order.payablecart
+        Product: =>Product.tshirt
+        Quantity: 1
 
 Payment:
     paid_success:
