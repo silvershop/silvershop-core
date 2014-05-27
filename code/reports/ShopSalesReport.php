@@ -38,6 +38,7 @@ class ShopSalesReport extends ShopPeriodReport{
 
 	public function query($params){
 		return parent::query($params)
+			->selectField("\"Order\".\"Paid\"")
 			->selectField("Count(\"Order\".\"ID\")", "Count")
 			->selectField("Sum(\"Order\".\"Total\")", "Sales")
 			->setWhere("\"Order\".\"Paid\" IS NOT NULL");
