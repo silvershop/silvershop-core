@@ -68,6 +68,7 @@ class PaymentForm extends CheckoutForm{
 		}
 		$data['cancelUrl'] = $this->getFailureLink() ? $this->getFailureLink() : $this->controller->Link();
 		$order = $this->config->getOrder();
+		//final recalculation, before making payment
 		$order->calculate();
 		$paymentResponse = $this->orderProcessor->makePayment(
 			Checkout::get($order)->getSelectedPaymentMethod(false),

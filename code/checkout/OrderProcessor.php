@@ -198,15 +198,11 @@ class OrderProcessor{
 		if(!$this->canPlace($this->order)){ //final cart validation
 			return false;
 		}
-
 		//remove from session
 		$cart = ShoppingCart::curr();
 		if($cart && $cart->ID == $this->order->ID){
 			ShoppingCart::singleton()->clear();
 		}
-
-		//do a final calculation
-		$this->order->calculate();
 		//update status
 		if($this->order->TotalOutstanding()){
 			$this->order->Status = 'Unpaid';

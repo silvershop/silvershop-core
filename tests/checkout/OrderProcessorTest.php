@@ -54,6 +54,7 @@ class OrderProcessorTest extends SapphireTest {
 		$this->assertTrue((bool)$member);
 		$member->write();
 
+		$order->calculate();
 		//submit checkout page
 		$this->assertTrue($this->placeOrder(
 			'James',
@@ -119,6 +120,7 @@ class OrderProcessorTest extends SapphireTest {
 		$joemember = $this->objFromFixture('Member', 'joebloggs');
 		$joemember->logIn();
 		$cart = ShoppingCart::curr();
+		$cart->calculate();
 		$this->assertTrue($this->placeOrder(
 			'Joseph',
 			'Blog',
@@ -163,6 +165,7 @@ class OrderProcessorTest extends SapphireTest {
 
 		$this->shoppingcart->add($this->socks);
 		$order = $this->shoppingcart->current();
+		$order->calculate();
 		$success = $this->placeOrder(
 			'Donald',
 			'Duck',
