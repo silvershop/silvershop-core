@@ -2,7 +2,7 @@
 /**
  * Cart Cleanup Task.
  *
- * Removes all orders (carts) that are older than a specific number of days.
+ * Removes all orders (carts) that are older than a specific time offset.
  *
  * @package shop
  * @subpackage tasks
@@ -14,7 +14,7 @@ class CartCleanupTask extends BuildTask {
 	 *
 	 * @var string
 	 */
-	private static $delete_after = "-2 HOURS";
+	private static $delete_after_mins = 120;
 
 	/**
 	 * @var string
@@ -28,22 +28,31 @@ class CartCleanupTask extends BuildTask {
 
 
 	public function run($request) {
+		if(!$this->config()->get('delete_after_mins')) {
+			throw new LogicException('No valid time specified in "delete_after_mins"');
+		}
+
 		$start = 0;
 		$count = 0;
-		$time = date('Y-m-d H:i:s', $this->config()->get('delete_after'));
+		$time = date('Y-m-d H:i:s', SS_Datetime::now()->Format('U') - $this->config()->get('delete_after_mins')*60);
+
+		$this->log("Deleting all orders since " . $time);
 
 		$orders = Order::get()->filter(array(
 			'Status' => 'Cart',
 			'LastEdited:LessThan' => $time
 		));
-
 		foreach($orders as $order) {
-			echo ". ";
-
-			$cart->delete();
-			$cart->destroy();
+			$this->log(sprintf('Deleting order #%s (Reference: %s)', $order->ID, $order->Reference));
+			$order->delete();
+			$order->destroy();
+			$count++;
 		}
 
-		echo "$count old carts removed.\n<br/>";
+		$this->log("$count old carts removed.");
+	}
+
+	protected function log($msg) {
+		echo $msg . "\n";
 	}
 }
