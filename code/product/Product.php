@@ -71,6 +71,7 @@ class Product extends Page implements Buyable {
 	private static $default_sort = '"Title" ASC';
 
 	private static $global_allow_purchase = true;
+	private static $allow_zero_price = false;
 	private static $order_item = "Product_OrderItem";
 
 	private static $indexes = array(
@@ -194,7 +195,7 @@ class Product extends Page implements Buyable {
 
 				return false;
 			}
-		} else if($this->sellingPrice() > 0) {
+		} else if($this->sellingPrice() > 0 || self::config()->allow_zero_price) {
 			$allowpurchase = true;
 		}
 		// Standard mechanism for accepting permission changes from decorators
@@ -223,7 +224,8 @@ class Product extends Page implements Buyable {
 		$this->extend('updateItemFilter', $filter);
 		$item = ShoppingCart::singleton()->get($this, $filter);
 		if(!$item){
-			$item = $this->createItem(0); //return dummy item so that we can still make use of Item
+			//return dummy item so that we can still make use of Item
+			$item = $this->createItem();
 		}
 		$this->extend('updateDummyItem', $item);
 		return $item;
@@ -237,7 +239,8 @@ class Product extends Page implements Buyable {
 		$item = new $orderitem();
 		$item->ProductID = $this->ID;
 		if($filter){
-			$item->update($filter); //TODO: make this a bit safer, perhaps intersect with allowed fields
+			//TODO: make this a bit safer, perhaps intersect with allowed fields
+			$item->update($filter);
 		}
 		$item->Quantity = $quantity;
 		return $item;
@@ -264,8 +267,9 @@ class Product extends Page implements Buyable {
 		return $this->sellingPrice();
 	}
 
-	public function setPrice($val) {
-		$this->setField("BasePrice", $val);
+	public function setPrice($price) {
+		$price = $price < 0 ? 0 : $price;
+		$this->setField("BasePrice", $price);
 	}
 
 	public function Link() {

@@ -60,6 +60,12 @@ Product:
         AllowPurchase: 1
         Weight: 0.3
         Stock: 1000 #You need stock levels if you have included the stock module, else the test will fail.
+    pdfbrochure:
+        Title: PDF Brochure
+        BasePrice: 0 #its free!
+        URLSegment: pdf-brochure
+        Parent: =>ProductCategory.products
+        AllowPurchase: 1
 
 CheckoutPage:
     checkout:
