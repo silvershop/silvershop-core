@@ -90,7 +90,9 @@ class ShopPeriodReport extends SS_Report{
 			$query->addHaving("$filterperiod <= '$end'");
 		}
 		if($start || $end){
-			$query->addHaving("$filterperiod IS NOT NULL"); //only include paid orders when we are doing specific period searching
+			//only include paid orders when we are doing specific period searching
+			$query->selectField("\"Order\".\"Paid\"");
+			$query->addHaving("$filterperiod IS NOT NULL");
 		}
 		if($this->grouping){
 			switch($params['Grouping']){
