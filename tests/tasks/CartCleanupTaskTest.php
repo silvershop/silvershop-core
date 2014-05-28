@@ -25,17 +25,17 @@ class CartCleanupTaskTest extends SapphireTest {
 		// less than two hours old
 		$orderRunningRecent = new Order(array('Status' => 'Cart'));
 		$orderRunningRecentID = $orderRunningRecent->write();
-		DB::query('UPDATE "ORDER" SET "LastEdited" = \'2014-01-31 12:30:00\' WHERE "ID" = ' . $orderRunningRecentID);
+		DB::query('UPDATE "Order" SET "LastEdited" = \'2014-01-31 12:30:00\' WHERE "ID" = ' . $orderRunningRecentID);
 
 		// three hours old
 		$orderRunningOld = new Order(array('Status' => 'Cart'));
 		$orderRunningOldID = $orderRunningOld->write();
-		DB::query('UPDATE "ORDER" SET "LastEdited" = \'2014-01-31 10:00:00\' WHERE "ID" = ' . $orderRunningOldID);
+		DB::query('UPDATE "Order" SET "LastEdited" = \'2014-01-31 10:00:00\' WHERE "ID" = ' . $orderRunningOldID);
 
 		// three hours old
 		$orderPaidOld = new Order(array('Status' => 'Paid'));
 		$orderPaidOldID = $orderPaidOld->write();
-		DB::query('UPDATE "ORDER" SET "LastEdited" = \'2014-01-31 10:00:00\' WHERE "ID" = ' . $orderPaidOldID);
+		DB::query('UPDATE "Order" SET "LastEdited" = \'2014-01-31 10:00:00\' WHERE "ID" = ' . $orderPaidOldID);
 
 		$task = new CartCleanupTaskTest_CartCleanupTaskFake();
 		$response = $task->run(new SS_HTTPRequest('GET', '/'));
