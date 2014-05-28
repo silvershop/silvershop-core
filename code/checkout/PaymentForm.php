@@ -70,6 +70,16 @@ class PaymentForm extends CheckoutForm{
 		$order = $this->config->getOrder();
 		//final recalculation, before making payment
 		$order->calculate();
+		//handle cases where order total is 0
+		if($order->GrandTotal() == 0 && Order::config()->allow_zero_order_total){
+			if($this->orderProcessor->placeOrder()){
+
+				return $this->controller->redirect($this->getSuccessLink());
+			}
+			//TODO: store error for display?
+			return $this->controller->redirectBack();
+		}
+
 		$paymentResponse = $this->orderProcessor->makePayment(
 			Checkout::get($order)->getSelectedPaymentMethod(false),
 			$data
