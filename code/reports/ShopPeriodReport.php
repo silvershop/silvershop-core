@@ -79,20 +79,19 @@ class ShopPeriodReport extends SS_Report{
 		$filterperiod = $this->periodfield;
 		$query = new ShopReport_Query();
 		$query->setSelect(array("FilterPeriod" => "MIN($filterperiod)"));
+
 		$query->setFrom('"' . $this->dataClass . '"');
 		$start = isset($params['StartPeriod']) && !empty($params['StartPeriod']) ? date('Y-m-d',strtotime($params["StartPeriod"])) : null;
 		$end = isset($params['EndPeriod']) && !empty($params['EndPeriod']) ? date('Y-m-d',strtotime($params["EndPeriod"]) + 86400) : null; //end day is inclusive
 		if($start && $end){
-			$query->addHaving("$filterperiod BETWEEN '$start' AND '$end'");
+			$query->addWhere("$filterperiod BETWEEN '$start' AND '$end'");
 		}elseif($start){
-			$query->addHaving("$filterperiod > '$start'");
+			$query->addWhere("$filterperiod > '$start'");
 		}elseif($end){
-			$query->addHaving("$filterperiod <= '$end'");
+			$query->addWhere("$filterperiod <= '$end'");
 		}
 		if($start || $end){
-			//only include paid orders when we are doing specific period searching
-			$query->selectField("\"Order\".\"Paid\"");
-			$query->addHaving("$filterperiod IS NOT NULL");
+			$query->addWhere("$filterperiod IS NOT NULL");
 		}
 		if($this->grouping){
 			switch($params['Grouping']){
@@ -121,6 +120,7 @@ class ShopPeriodReport extends SS_Report{
 		}else{
 			$query->setLimit($this->pagesize);
 		}
+
 		return $query;
 	}
 
