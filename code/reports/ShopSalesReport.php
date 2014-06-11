@@ -18,13 +18,7 @@ class ShopSalesReport extends ShopPeriodReport{
 
 	public function getReportField(){
 		$reportfield = parent::getReportField();
-		$reportfield->getConfig()->removeComponentsByType('GridFieldPaginator');
-		// TODO: Add this back in - I'm not sure how this works in Gridfield
-//		$reportfield->addSummary("Totals",array(
-//			"Sales" => array("sum","Currency->Nice"),
-//			//"Count" => array("sum","Currency->Nice") //Not working! (TableListField error, when enabled)
-//		));
-		//TODO: add averages (not working, because you can't have more than one summary row)
+		//$reportfield->getConfig()->removeComponentsByType('GridFieldPaginator');
 		return $reportfield;
 	}
 

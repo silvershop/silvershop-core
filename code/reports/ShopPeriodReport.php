@@ -8,7 +8,7 @@ class ShopPeriodReport extends SS_Report{
 	protected $dataClass = 'Order';
 	protected $periodfield = "\"Order\".\"Created\"";
 	protected $grouping = false;
-	protected $pagesize = 20;
+	protected $pagesize = 30;
 
 	public function title(){
 		return _t($this->class.".TITLE",$this->title);
@@ -56,8 +56,9 @@ class ShopPeriodReport extends SS_Report{
 		isset($params['Grouping']) || $params['Grouping'] = "Month";
 		$output = new ArrayList();
 		$query = $this->query($params);
+		//TODO: this breaks with large data sets
 		$results = $query->execute();
-		//TODO: push empty months and days to fill out gaps
+		//TODO: push empty months and days to fill out gaps?
 		foreach($results as $result){
 			$output->push($record = new $this->dataClass($result));
 			if($this->grouping){
@@ -111,16 +112,9 @@ class ShopPeriodReport extends SS_Report{
 					break;
 			}
 		}
-		if(isset($params["ctf"]["ReportContent"]["sort"])){
-			$dir = isset($params["ctf"]["ReportContent"]["dir"]) ? $params["ctf"]["ReportContent"]["dir"] : "DESC";
-			$query->addOrderBy($params["ctf"]["ReportContent"]["sort"], $dir);
-		}
-		if(isset($params["ctf"]["ReportContent"]["start"])){
-			$query->setLimit($params["ctf"]["ReportContent"]["start"].",".$this->pagesize);
-		}else{
-			$query->setLimit($this->pagesize);
-		}
+		$query->setLimit($this->pagesize);
 
+	
 		return $query;
 	}
 
