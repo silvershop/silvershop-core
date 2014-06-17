@@ -116,6 +116,9 @@ class CheckoutComponentConfig {
 				}
 			}
 		}
+
+        $this->order->extend('onValidateDataOnCheckout', $result);
+
 		if(!$result->valid()){
 			throw new ValidationException($result);
 		}
