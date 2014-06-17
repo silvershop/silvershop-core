@@ -99,7 +99,7 @@ class ShoppingCart {
 		if($this->current()){
 			return $this->current();
 		}
-		$this->order = new Order();
+		$this->order = Order::create();
 		if(Member::config()->login_joins_cart && Member::currentUserID()) {
 			$this->order->MemberID = Member::currentUserID();
 		}

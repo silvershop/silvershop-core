@@ -70,7 +70,7 @@ class CheckoutStep_Membership extends CheckoutStep{
 		$order = ShoppingCart::curr();
 		//hack to make components work when there is no order
 		if(!$order){
-			$order = new Order();
+			$order = Order::create();
 		}
 		$config = new CheckoutComponentConfig($order, false);
 		$config->addComponent(new CustomerDetailsCheckoutComponent());
