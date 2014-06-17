@@ -71,7 +71,7 @@ class RegionRestrictionTest extends SapphireTest{
 
 class RegionRestriction_RateTest extends RegionRestriction{
 
-	public static $db = array(
+	private static $db = array(
 		'Rate' => 'Currency'
 	);
 
