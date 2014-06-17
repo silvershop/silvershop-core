@@ -33,9 +33,12 @@
 	},
 	"extra" : {
 		"installer-name": "shop",
-		"snapshot" : "https://raw.github.com/burnbright/silverstripe-shop/gh-pages/assets/screenshots/shipping%20estimate%20form.png"
-   },
-   "support":{
+		"snapshot" : "https://raw.github.com/burnbright/silverstripe-shop/gh-pages/assets/screenshots/shipping%20estimate%20form.png",
+		"branch-alias": {
+			"dev-master": "1.0.x-dev"
+		}
+        },
+	"support":{
 		"issues" : "https://github.com/burnbright/silverstripe-shop/issues",
 		"source" : "https://github.com/burnbright/silverstripe-shop",
 		"forum" : "http://www.silverstripe.org/e-commerce-module-forum",
