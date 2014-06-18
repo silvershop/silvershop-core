@@ -141,7 +141,6 @@ class Product extends Page implements Buyable {
 		$categories = array(
 			0 => _t("SiteTree.PARENTTYPE_ROOT", "Top-level page")
 		) + $categories;
-
 		if($this->ParentID && !($this->Parent() instanceof ProductCategory)){
 			$categories = array(
 				$this->ParentID => $this->Parent()->Title." (".$this->Parent()->i18n_singular_name().")"
@@ -149,6 +148,30 @@ class Product extends Page implements Buyable {
 		}
 
 		return $categories;
+	}
+
+	/**
+	 * Get ids of all categories that this product appears in.
+	 * @return array ids list
+	 */
+	public function getCategoryIDs() {
+		$ids = array();
+		//ancestors
+		foreach($this->getAncestors() as $ancestor){
+			$ids[$ancestor->ID] = $ancestor->ID;
+		}
+		//additional categories
+		$ids += $this->ProductCategories()->getIDList();
+
+		return $ids;
+	}
+
+	/**
+	 * Get all categories that this product appears in.
+	 * @return DataList category data list
+	 */
+	public function getCategories(){
+		return  ProductCategory::get()->byIDs($this->getCategoryIDs());
 	}
 
 	/**

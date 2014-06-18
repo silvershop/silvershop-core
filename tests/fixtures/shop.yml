@@ -19,6 +19,8 @@ ProductCategory:
         Title: Music Players
         URLSegment: music-players
         Parent: =>ProductCategory.electronics
+    clearance:
+        Title: Clearance
 
 Product:
     socks:
@@ -57,6 +59,7 @@ Product:
         BasePrice: 200
         URLSegment: mp3-player
         Parent: =>ProductCategory.musicplayers
+        ProductCategories: =>ProductCategory.clearance
         AllowPurchase: 1
         Weight: 0.3
         Stock: 1000 #You need stock levels if you have included the stock module, else the test will fail.

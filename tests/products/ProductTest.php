@@ -16,6 +16,7 @@ class ProductTest extends FunctionalTest {
 		$this->socks = $this->objFromFixture('Product', 'socks');
 		$this->beachball = $this->objFromFixture('Product', 'beachball');
 		$this->pdfbrochure = $this->objFromFixture('Product', 'pdfbrochure');
+		$this->mp3player = $this->objFromFixture("Product", "mp3player");
 	}
 
 	public function testCMSFields() {
@@ -71,6 +72,26 @@ class ProductTest extends FunctionalTest {
 	public function testCanViewProductPage() {
 		$this->get(Director::makeRelative($this->tshirt->Link()));
 		$this->get(Director::makeRelative($this->socks->Link()));
+	}
+
+	public function testCategories() {
+		$expectedids = array(
+			$this->objFromFixture("ProductCategory", "products")->ID
+		);
+		$this->assertEquals(
+			array_combine($expectedids, $expectedids),
+			$this->beachball->getCategoryIDs()
+		);
+		$expectedids = array(
+			$this->objFromFixture("ProductCategory", "products")->ID,
+			$this->objFromFixture("ProductCategory", "electronics")->ID,
+			$this->objFromFixture("ProductCategory", "musicplayers")->ID,
+			$this->objFromFixture("ProductCategory", "clearance")->ID
+		);
+		$this->assertEquals(
+			array_combine($expectedids, $expectedids),
+			$this->mp3player->getCategoryIDs()
+		);
 	}
 	
 }
