@@ -1,8 +1,3 @@
-Page:
-    home:
-        Title: Home
-        URLSegment: home
-
 ProductCategory:
     products:
         Title: Products
@@ -69,27 +64,6 @@ Product:
         URLSegment: pdf-brochure
         Parent: =>ProductCategory.products
         AllowPurchase: 1
-
-CheckoutPage:
-    checkout:
-        Title: Checkout
-        URLSegment: checkout
-
-CartPage:
-    cart:
-        Title: Cart
-        URLSegment: cart
-
-AccountPage:
-    accountpage:
-        Title: Account
-        URLSegment: account
-
-Page:
-    termsandconditions:
-        Title: Terms and Conditions
-        URLSegment: terms-and-conditions
-        Content: Test terms and conditions.
 
 Address:
     foobar:
@@ -238,10 +212,3 @@ Payment:
         MoneyCurrency: USD
         Created: 2012-10-02 07:33:21
         Order: =>Order.paid
-
-SiteConfig:
-    config:
-        Title: Shop Testing Website
-        ShopClosed: 0
-        TermsPage: =>Page.termsandconditions
-        CustomerGroup: =>Group.customers

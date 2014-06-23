@@ -2,9 +2,11 @@
 
 class ShopPaymentTest extends FunctionalTest{
 
-	public static $fixture_file = 'shop/tests/fixtures/shop.yml';
+	protected static $fixture_file = array(
+		'shop/tests/fixtures/Pages.yml',
+		'shop/tests/fixtures/shop.yml'
+	);
 	public static $disable_theme = true;
-	//rotected $autoFollowRedirection = false;
 
 	public function setUp() {
 		parent::setUp();
@@ -25,7 +27,6 @@ class ShopPaymentTest extends FunctionalTest{
 		$this->objFromFixture("Product", "socks")->publish('Stage', 'Live');
 		$this->objFromFixture("CheckoutPage", "checkout")->publish('Stage', 'Live');
 		$this->objFromFixture("CartPage", "cart")->publish('Stage', 'Live');
-		//$this->objFromFixture("AccountPage", "accountpage")->publish('Stage', 'Live');
 	}
 
 	public function testManualPayment() {

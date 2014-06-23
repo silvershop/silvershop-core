@@ -2,8 +2,9 @@
 
 class CheckoutTest extends SapphireTest{
 
-	public static $fixture_file = array(
-		'shop/tests/fixtures/Cart.yml',
+	protected static $fixture_file = array(
+		'shop/tests/fixtures/Pages.yml',
+		'shop/tests/fixtures/Orders.yml',
 		'shop/tests/fixtures/Addresses.yml',
 		'shop/tests/fixtures/ShopMembers.yml'
 	);

@@ -2,9 +2,12 @@
 
 class CheckoutPageTest extends FunctionalTest{
 
-	public static $fixture_file = 'shop/tests/fixtures/shop.yml';
-	public static $disable_theme = true;
-	public static $use_draft_site = true;
+	protected static $fixture_file = array(
+		'shop/tests/fixtures/Pages.yml',
+		'shop/tests/fixtures/shop.yml'
+	);
+	protected static $disable_theme = true;
+	protected static $use_draft_site = true;
 
 	protected $controller;
 
