@@ -140,15 +140,12 @@ class ProductVariation extends DataObject implements Buyable {
 		return $title;
 	}
 
-	//this is used by TableListField to access attribute values.
-	public function AttributeProxy(){
-		$do = new DataObject();
-		if($this->AttributeValues()->exists()){
-			foreach($this->AttributeValues() as $value){
-				$do->{'Val'.$value->Type()->Name} = $value->Value;
-			}
-		}
-		return $do;
+	public function getCategoryIDs() {
+		return $this->Product() ? $this->Product()->getCategoryIDs() : array();
+	}
+
+	public function getCategories() {
+		return $this->Product() ? $this->Product()->getCategories() : new ArrayList();
 	}
 
 	public function canPurchase($member = null, $quantity = 1) {
