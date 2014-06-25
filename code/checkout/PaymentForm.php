@@ -92,7 +92,7 @@ class PaymentForm extends CheckoutForm{
 			} else if($paymentResponse->isRedirect() || $paymentResponse->isSuccessful()){
 				$response = $paymentResponse->redirect();
 			} else {
-				$form->sessionMessage($response->getMessage(), 'bad');
+				$form->sessionMessage($paymentResponse->getMessage(), 'bad');
 				$response = $this->controller->redirectBack();
 			}
 		} else {
