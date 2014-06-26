@@ -41,7 +41,6 @@ class OrderTotalCalculator{
 				if(!in_array($modifier->ClassName, $modifierclasses)){
 					$modifier->delete();
 					$modifier->destroy();
-					return null;
 				}
 			}
 		}
