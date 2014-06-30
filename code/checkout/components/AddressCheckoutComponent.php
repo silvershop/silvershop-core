@@ -33,6 +33,11 @@ abstract class AddressCheckoutComponent extends CheckoutComponent{
 			$member ? $member->{"Default".$this->addresstype."Address"}()->toMap() : array(),
 			$data
 		);
+		//ensure country is restricted if there is only one allowed country
+		$countries = SiteConfig::current_site_config()->getCountriesList();
+		if(count($countries) == 1){
+			$data['Country'] = array_pop($countries);
+		}
 
 		return $data;
 	}
