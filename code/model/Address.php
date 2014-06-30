@@ -63,6 +63,8 @@ class Address extends DataObject{
 		$fields->addFieldToTab("Root.Main",
 			$this->getCountryField(), 'State'
 		);
+		$fields->removeByName("MemberID");
+		
 		return $fields;
 	}
 
