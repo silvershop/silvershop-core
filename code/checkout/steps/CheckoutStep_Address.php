@@ -41,6 +41,11 @@ class CheckoutStep_Address extends CheckoutStep{
 		$step = null;
 		if(isset($data['SeperateBilling']) && $data['SeperateBilling']){
 			$step = "billingaddress";
+		}else{
+			//ensure billing address = shipping address, when appropriate
+			$order = $this->shippingconfig()->getOrder();
+			$order->BillingAddressID = $order->ShippingAddressID;
+			$order->write();
 		}
 		return $this->owner->redirect($this->NextStepLink($step));
 	}
