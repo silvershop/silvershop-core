@@ -113,7 +113,13 @@ class Address extends DataObject{
 				}
 			}
 		}
+		//set nicer keys for easier processing
+		$fields = array_combine($fields, $fields);
 		$this->extend('updateRequiredFields', $fields);
+		if(isset($fields['Country']) && count(SiteConfig::current_site_config()->getCountriesList()) == 1){
+			unset($fields['Country']);
+		}
+
 		return $fields;
 	}
 
