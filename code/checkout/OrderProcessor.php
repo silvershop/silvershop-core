@@ -63,9 +63,6 @@ class OrderProcessor{
 		$service = PurchaseService::create($payment)
 					->setReturnUrl($this->getReturnUrl());
 
-		// Save order reference to session
-		OrderManipulation::add_session_order($this->order);
-
 		// Process payment, get the result back
 		$response = $service->purchase($this->getGatewayData($gatewaydata));
 		if(GatewayInfo::is_manual($gateway)){
@@ -240,6 +237,10 @@ class OrderProcessor{
 		//allow decorators to do stuff when order is saved.
 		$this->order->extend('onPlaceOrder');
 		$this->order->write();
+
+		// Save order reference to session
+		OrderManipulation::add_session_order($this->order);
+
 		return true; //report success
 	}
 
