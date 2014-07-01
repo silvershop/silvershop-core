@@ -83,7 +83,8 @@ class ShopConfig extends DataExtension {
 	public function getSingleCountry() {
 		$countries = $this->getCountriesList();
 		if(count($countries) == 1){
-			return array_pop($countries);
+			reset($countries);
+			return key($countries);
 		}
 		return null;
 	}

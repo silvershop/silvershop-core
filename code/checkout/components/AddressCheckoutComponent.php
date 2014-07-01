@@ -51,13 +51,17 @@ abstract class AddressCheckoutComponent extends CheckoutComponent{
 	public function setData(Order $order, array $data) {
 		$address = $this->getAddress($order);
 		$address->update($data);
-
+		//if only one country is available, then set it
+		if($country = SiteConfig::current_site_config()->getSingleCountry()){
+			$address->Country = $country;
+		}
+		//write new address, or duplicate if changed
 		if(!$address->isInDB()) {
 			$address->write();
 		} elseif($address->isChanged()){
 			$address = $address->duplicate();
 		}
-
+		//set billing address, if not already set
 		$order->{$this->addresstype."AddressID"} = $address->ID;
 		if(!$order->BillingAddressID){
 			$order->BillingAddressID = $address->ID;
@@ -68,11 +72,7 @@ abstract class AddressCheckoutComponent extends CheckoutComponent{
 			ShopUserInfo::singleton()->setAddress($address);
 			Zone::cache_zone_ids($address);
 		}
-		//if only one country is available, then set it
-		if($country = SiteConfig::current_site_config()->getSingleCountry()){
-			$address->Country = $country;
-		}
-
+		//associate member to address
 		if($member = Member::currentUser()){
 			$default = $member->{"Default".$this->addresstype."Address"}();
 			if(!$default->exists()) {
@@ -80,7 +80,7 @@ abstract class AddressCheckoutComponent extends CheckoutComponent{
 				$member->write();
 			}
 		}
-
+		//extension hooks
 		$order->extend('onSet'.$this->addresstype.'Address', $address);
 	}
 
