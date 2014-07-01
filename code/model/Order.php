@@ -122,7 +122,17 @@ class Order extends DataObject {
 	private static $modifiers = array();
 
 	private static $rounding_precision = 2;
+
 	private static $reference_id_padding = 5;
+
+	/**
+	 * @var boolean Will allow completion of orders with GrandTotal=0,
+	 * which could be the case for orders paid with loyalty points or vouchers.
+	 * Will send the "Paid" date on the order, even though no actual payment was taken.
+	 * Will trigger the payment related extension points:
+	 * Order->onPayment, OrderItem->onPayment, Order->onPaid.
+	 */
+	private static $allow_zero_order_total = false;
 
 	public static function get_order_status_options() {
 		return singleton('Order')->dbObject('Status')->enumValues(false);

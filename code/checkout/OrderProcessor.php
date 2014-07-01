@@ -144,7 +144,13 @@ class OrderProcessor{
 			if($this->canPlace($this->order)){
 				$this->placeOrder();
 			}
-			if($this->order->GrandTotal() > 0 && $this->order->TotalOutstanding() <= 0){
+
+			if(
+				// Standard order
+				($this->order->GrandTotal() > 0 && $this->order->TotalOutstanding() <= 0)
+				// Zero-dollar order (e.g. paid with loyalty points)
+				|| ($this->order->GrandTotal() == 0 && Order::config()->allow_zero_order_total)
+			){
 				//set order as paid
 				$this->order->Status = 'Paid';
 				$this->order->Paid = SS_Datetime::now()->Rfc2822();
@@ -205,7 +211,7 @@ class OrderProcessor{
 		if($this->order->TotalOutstanding()){
 			$this->order->Status = 'Unpaid';
 		}else{
-			$this->order->Status = 'Processing';
+			$this->order->Status = 'Paid';
 		}
 		if(!$this->order->Placed){
 			$this->order->Placed = SS_Datetime::now()->Rfc2822(); //record placed order datetime

@@ -70,10 +70,10 @@ class PaymentForm extends CheckoutForm{
 		$order = $this->config->getOrder();
 		//final recalculation, before making payment
 		$order->calculate();
-		//handle cases where order total is 0
+		//handle cases where order total is 0. Note that the order will appear
+		//as "paid", but without a Payment record attached.
 		if($order->GrandTotal() == 0 && Order::config()->allow_zero_order_total){
 			if($this->orderProcessor->placeOrder()){
-
 				return $this->controller->redirect($this->getSuccessLink());
 			}
 			//TODO: store error for display?
