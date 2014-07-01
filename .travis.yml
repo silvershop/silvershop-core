@@ -20,12 +20,10 @@ before_script:
   - php ~/travis-support/travis_setup.php --source `pwd` --target ~/builds/ss
   - cd ~/builds/ss
 
-script:
-  - "if [ \"$COVERAGE\" = \"\" ]; then vendor/bin/phpunit -c shop/phpunit.xml.dist; fi"
-  - "if [ \"$COVERAGE\" = \"1\" ]; then vendor/bin/phpunit -c shop/phpunit.xml.dist --coverage-clover shop/coverage.xml; fi"
+script: ./shop/tests/travis/run_build.sh
 
 after_script:
-  - if [ "$COVERAGE" = "1" ]; then
+  - if [ "$COVERAGE" = "1" ] && [ "$TRAVIS_BRANCH" = "master" ]; then
   - cd shop
   - wget https://scrutinizer-ci.com/ocular.phar
   - php ocular.phar code-coverage:upload -v --format=php-clover coverage.xml
