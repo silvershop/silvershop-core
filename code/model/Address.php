@@ -91,12 +91,17 @@ class Address extends DataObject{
 
 	public function getCountryField() {
 		$countries = SiteConfig::current_site_config()->getCountriesList();
-		$countryfield = new ReadonlyField("Country", _t('Address.COUNTRY', 'Country'));
-		if(count($countries) > 1){
-			$countryfield = new DropdownField("Country", _t('Address.COUNTRY', 'Country'), $countries);
-			$countryfield->setHasEmptyDefault(true);
+		if(count($countries) == 1){
+			//field name is Country_readonly so it's value doesn't get updated
+			return new ReadonlyField("Country_readonly",
+				_t('Address.COUNTRY', 'Country'),
+				array_pop($countries)
+			);
 		}
-		return $countryfield;
+		return DropdownField::create("Country",
+			_t('Address.COUNTRY', 'Country'),
+				$countries
+		)->setHasEmptyDefault(true);
 	}
 
 	/**

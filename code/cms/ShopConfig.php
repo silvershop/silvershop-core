@@ -78,13 +78,19 @@ class ShopConfig extends DataExtension {
 	/**
 	 * For shops that only sell to a single country,
 	 * this will return the country code, otherwise null.
+	 *
+	 * @param fullname get long form name of country
 	 * @return string country code
 	 */
-	public function getSingleCountry() {
+	public function getSingleCountry($fullname = false) {
 		$countries = $this->getCountriesList();
 		if(count($countries) == 1){
-			reset($countries);
-			return key($countries);
+			if($fullname){
+				return array_pop($countries);
+			}else{
+				reset($countries);
+				return key($countries);
+			}
 		}
 		return null;
 	}
