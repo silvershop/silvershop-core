@@ -75,6 +75,19 @@ class ShopConfig extends DataExtension {
 		return $countries;
 	}
 
+	/**
+	 * For shops that only sell to a single country,
+	 * this will return the country code, otherwise null.
+	 * @return string country code
+	 */
+	public function getSingleCountry() {
+		$countries = $this->getCountriesList();
+		if(count($countries) == 1){
+			return array_pop($countries);
+		}
+		return null;
+	}
+
 	/*
 	 * Convert iso country code to English country name
 	 * @return string - name of country

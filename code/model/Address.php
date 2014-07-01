@@ -116,7 +116,8 @@ class Address extends DataObject{
 		//set nicer keys for easier processing
 		$fields = array_combine($fields, $fields);
 		$this->extend('updateRequiredFields', $fields);
-		if(isset($fields['Country']) && count(SiteConfig::current_site_config()->getCountriesList()) == 1){
+		//don't require country if shop config only specifies a single country
+		if(isset($fields['Country']) && SiteConfig::current_site_config()->getSingleCountry()){
 			unset($fields['Country']);
 		}
 

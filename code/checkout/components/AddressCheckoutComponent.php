@@ -34,9 +34,8 @@ abstract class AddressCheckoutComponent extends CheckoutComponent{
 			$data
 		);
 		//ensure country is restricted if there is only one allowed country
-		$countries = SiteConfig::current_site_config()->getCountriesList();
-		if(count($countries) == 1){
-			$data['Country'] = array_pop($countries);
+		if($country = SiteConfig::current_site_config()->getSingleCountry()){
+			$data['Country'] = $country;
 		}
 
 		return $data;
@@ -64,15 +63,18 @@ abstract class AddressCheckoutComponent extends CheckoutComponent{
 			$order->BillingAddressID = $address->ID;
 		}
 		$order->write();
-
+		//update user info based on shipping address
 		if($this->addresstype === "Shipping") {
 			ShopUserInfo::singleton()->setAddress($address);
 			Zone::cache_zone_ids($address);
 		}
+		//if only one country is available, then set it
+		if($country = SiteConfig::current_site_config()->getSingleCountry()){
+			$address->Country = $country;
+		}
 
 		if($member = Member::currentUser()){
 			$default = $member->{"Default".$this->addresstype."Address"}();
-
 			if(!$default->exists()) {
 				$member->{"Default".$this->addresstype."AddressID"} = $address->ID;
 				$member->write();
