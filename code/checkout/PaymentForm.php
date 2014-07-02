@@ -84,6 +84,17 @@ class PaymentForm extends CheckoutForm{
 			return $this->controller->redirectBack();
 		}
 
+		// if we got here from checkoutSubmit and there's a namespaced OnsitePaymentCheckoutComponent
+		// in there, we need to strip the inputs down to only the checkout component.
+		$components = $this->config->getComponents();
+		if ($components->first() instanceof CheckoutComponent_Namespaced) {
+			foreach ($components as $component) {
+				if ($component->Proxy() instanceof OnsitePaymentCheckoutComponent) {
+					$data = $component->unnamespaceData($data);
+				}
+			}
+		}
+
 		$paymentResponse = $this->orderProcessor->makePayment(
 			Checkout::get($order)->getSelectedPaymentMethod(false),
 			$data
