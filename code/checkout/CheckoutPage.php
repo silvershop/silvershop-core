@@ -86,11 +86,20 @@ class CheckoutPage_Controller extends Page_Controller {
 			return false;
 		}
 
-		$form = new PaymentForm(
-			$this,
-			'OrderForm',
-			Injector::inst()->create("CheckoutComponentConfig", ShoppingCart::curr())
-		);
+		/** @var CheckoutComponentConfig $config */
+		$config = Injector::inst()->create("CheckoutComponentConfig", ShoppingCart::curr());
+		$form = new PaymentForm($this, 'OrderForm', $config);
+
+		// Normally, the payment is on a second page, either offsite or through /checkout/payment
+		// If the site has customised the checkout component config to include an onsite payment
+		// component, we should honor that and change the button label. PaymentForm::checkoutSubmit
+		// will also check this and process payment if needed.
+		if ($config->getComponentByType('OnsitePaymentCheckoutComponent')) {
+			$form->setActions(new FieldList(
+				FormAction::create('checkoutSubmit', _t('CheckoutForm.SubmitPayment', 'Submit Payment'))
+			));
+		}
+
 		$form->Cart = $this->Cart();
 		$this->extend('updateOrderForm', $form);
 
@@ -121,7 +130,7 @@ class CheckoutPage_Controller extends Page_Controller {
 
 		$form = PaymentForm::create($this, "PaymentForm", $config);
 		$form->setActions(new FieldList(
-			FormAction::create("submitpayment", "Submit Payment")
+			FormAction::create("submitpayment", _t('CheckoutForm.SubmitPayment', 'Submit Payment'))
 		));
 		$form->setFailureLink($this->Link());
 		$this->extend('updatePaymentForm', $form);

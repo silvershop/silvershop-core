@@ -46,8 +46,12 @@ class PaymentForm extends CheckoutForm{
 		$this->config->setData($form->getData());
 		$order = $this->config->getOrder();
 		$gateway = Checkout::get($order)->getSelectedPaymentMethod(false);
-		if(GatewayInfo::is_offsite($gateway) || GatewayInfo::is_manual($gateway)){
 
+		if (
+			GatewayInfo::is_offsite($gateway) ||
+			GatewayInfo::is_manual($gateway) ||
+			$this->config->getComponentByType('OnsitePaymentCheckoutComponent')
+		) {
 			return $this->submitpayment($data, $form);
 		}
 
@@ -78,6 +82,17 @@ class PaymentForm extends CheckoutForm{
 			}
 			//TODO: store error for display?
 			return $this->controller->redirectBack();
+		}
+
+		// if we got here from checkoutSubmit and there's a namespaced OnsitePaymentCheckoutComponent
+		// in there, we need to strip the inputs down to only the checkout component.
+		$components = $this->config->getComponents();
+		if ($components->first() instanceof CheckoutComponent_Namespaced) {
+			foreach ($components as $component) {
+				if ($component->Proxy() instanceof OnsitePaymentCheckoutComponent) {
+					$data = $component->unnamespaceData($data);
+				}
+			}
 		}
 
 		$paymentResponse = $this->orderProcessor->makePayment(
