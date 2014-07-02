@@ -235,7 +235,8 @@ class Product extends Page implements Buyable {
 	 * @return boolean
 	 */
 	public function IsInCart() {
-		return $this->Item() && $this->Item()->Quantity > 0;
+		$item = $this->Item();
+		return $item && $item->exists() && $item->Quantity > 0;
 	}
 
 	/**

@@ -57,6 +57,8 @@ class ProductTest extends FunctionalTest {
 	}
 
 	public function testItem() {
+		$this->assertFalse($this->tshirt->IsInCart(), "tshirt is not in cart");
+
 		$item = $this->tshirt->Item();
 		$this->assertEquals(1, $item->Quantity);
 		$this->assertEquals(0, $item->ID);
@@ -64,7 +66,7 @@ class ProductTest extends FunctionalTest {
 		$sc = ShoppingCart::singleton();
 		$sc->add($this->tshirt, 15);
 
-		$this->assertTrue($this->tshirt->IsInCart());
+		$this->assertTrue($this->tshirt->IsInCart(), "tshirt is in cart");
 		$item = $this->tshirt->Item();
 		$this->assertEquals(15, $item->Quantity);
 	}
