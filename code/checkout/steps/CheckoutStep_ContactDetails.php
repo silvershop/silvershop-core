@@ -2,7 +2,7 @@
 
 class CheckoutStep_ContactDetails extends CheckoutStep{
 
-	public static $allowed_actions = array(
+	private static $allowed_actions = array(
 		'contactdetails',
 		'ContactDetailsForm'
 	);

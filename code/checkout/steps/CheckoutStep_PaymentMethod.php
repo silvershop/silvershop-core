@@ -2,7 +2,7 @@
 
 class CheckoutStep_PaymentMethod extends CheckoutStep{
 
-	public static $allowed_actions = array(
+	private static $allowed_actions = array(
 		'paymentmethod',
 		'PaymentMethodForm',
 	);
