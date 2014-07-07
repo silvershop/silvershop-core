@@ -209,6 +209,7 @@ class OrderProcessor{
 			$this->order->Status = 'Unpaid';
 		}else{
 			$this->order->Status = 'Paid';
+			$this->order->Paid = SS_Datetime::now()->Rfc2822();
 		}
 		if(!$this->order->Placed){
 			$this->order->Placed = SS_Datetime::now()->Rfc2822(); //record placed order datetime

@@ -113,6 +113,29 @@ class OrderProcessorTest extends SapphireTest {
 		//$this->assertEquals($order->Member()->Password, Security::encrypt_password('jbrown'),'password matches');
 	}
 
+	public function testPlaceOrderMarksAsPaidWithNoOutstandingAmount() {
+		$orderStub = $this->getMockBuilder('Order')
+			->setMethods(array('TotalOutstanding'))
+			->getMock();
+
+		// Set up test state
+		$orderStub->expects($this->any())
+			 ->method('TotalOutstanding')
+			 ->will($this->returnValue(0));
+		$processorStub = $this->getMockBuilder('OrderProcessor')
+			->setConstructorArgs(array($orderStub))
+			->setMethods(array('canPlace'))
+			->getMock();
+		$processorStub->expects($this->any())
+			 ->method('canPlace')
+			 ->will($this->returnValue(true));
+
+		$processorStub->placeOrder();
+
+		$this->assertNotNull($orderStub->Paid, 'Sets paid date');
+		$this->assertEquals('Paid', $orderStub->Status, 'Sets paid status');
+	}
+
 	public function testMemberOrder() {
 		//log out the admin user
 		Member::currentUser()->logOut();
