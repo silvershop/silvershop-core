@@ -53,9 +53,26 @@ class OnsitePaymentCheckoutComponent extends CheckoutComponent {
 		return $fields;
 	}
 
-	public function getRequiredFields(Order $order) {
-		return GatewayInfo::required_fields( $this->getGateway($order) );
+    /**
+     * We don't know at the front end which fields are required so we defer to validateData
+     * if there are saved cards.
+     * @param Order $order
+     * @return array
+     */
+    public function getRequiredFields(Order $order) {
+		return $this->hasExistingCards ? array() : $this->getRealRequiredFields($order);
 	}
+
+
+    /**
+     * This just centralizes the actual required fields in one place so it can be used
+     * by getRequiredFields and also validateData.
+     * @param Order $order
+     * @return array
+     */
+    protected function getRealRequiredFields(Order $order) {
+        return GatewayInfo::required_fields( $this->getGateway($order) );
+    }
 
     /**
      * Allow choosing from an existing credit cards
@@ -80,13 +97,42 @@ class OnsitePaymentCheckoutComponent extends CheckoutComponent {
         return null;
     }
 
+    /**
+     * @param Order $order
+     * @param array $data
+     * @throws ValidationException
+     */
     public function validateData(Order $order, array $data) {
 		$result = new ValidationResult();
-		//TODO: validate credit card data
-		if(!Helper::validateLuhn($data['number'])){
-			$result->error('Credit card is invalid');
-			throw new ValidationException($result);
-		}
+        $existingID = !empty($data['SavedCreditCardID']) ? (int)$data['SavedCreditCardID'] : 0;
+
+        if ($existingID) {
+            // If existing card selected, check that it exists in $member->SavedCreditCards
+            if (!Member::currentUserID() || !Member::currentUser()->SavedCreditCards()->byID($existingID)) {
+                $result->error("Invalid card supplied", 'SavedCreditCardID');
+                throw new ValidationException($result);
+            }
+        } else {
+            // Otherwise, require the normal card fields as defined by the gateway
+            $required = $this->getRealRequiredFields($order);
+            foreach ($required as $fieldName) {
+                if (empty($data[$fieldName])) {
+                    $errorMessage = _t(
+                        'Form.FIELDISREQUIRED',
+                        '{name} is required',
+                        array('name' => $fieldName)
+                    );
+
+                    $result->error($errorMessage, $fieldName);
+                    throw new ValidationException($result);
+                }
+            }
+
+            if (!empty($data['number']) && !Helper::validateLuhn($data['number'])) {
+                $result->error('Credit card is invalid');
+                throw new ValidationException($result);
+            }
+        }
 	}
 
 	public function getData(Order $order) {
