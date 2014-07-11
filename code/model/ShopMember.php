@@ -7,12 +7,14 @@
 class ShopMember extends DataExtension {
 
 	private static $has_many = array(
-		'AddressBook' => 'Address'
+		'AddressBook' => 'Address',
+        'SavedCreditCards' => 'SavedCreditCard',
 	);
 
 	private static $has_one = array(
 		'DefaultShippingAddress' => 'Address',
-		'DefaultBillingAddress' => 'Address'
+		'DefaultBillingAddress' => 'Address',
+        'DefaultCreditCard' => 'SavedCreditCard',
 	);
 
 	/**
