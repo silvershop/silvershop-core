@@ -87,14 +87,14 @@ class OrderProcessor{
      *
      * @param Payment $payment
      * @param array $data
-     * @return GatewayResponse|null
+     * @return \Omnipay\Common\Message\ResponseInterface|null
      */
     protected function saveCardIfNeeded($payment, $data) {
         if (
             $payment &&
             empty($data['SavedCardID']) &&
             CheckoutConfig::config()->save_credit_cards &&
-            GatewayInfo::can_save_cards($payment->getGatewayTitle())
+            GatewayInfo::can_save_cards($payment->Gateway)
         ) {
             // NOTE: This will create a SavedCreditCard record and associate it with the Payment
             return SavedCardService::create($payment)->createCard($data);
