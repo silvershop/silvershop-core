@@ -59,20 +59,47 @@ class OrderProcessor{
 			return false;
 		}
 
-		// Create a purchase service, and set the user-facing success URL for redirects
-		$service = PurchaseService::create($payment)
-					->setReturnUrl($this->getReturnUrl());
+        // Pull out the inputs
+        $data = $this->getGatewayData($gatewaydata);
 
-		// Process payment, get the result back
-		$response = $service->purchase($this->getGatewayData($gatewaydata));
+        // If not using a saved card and saving is allowed in the gateway and configuration, try to save the card
+        $cardResponse = $this->saveCardIfNeeded($payment, $data);
+        if ($cardResponse && !$cardResponse->isSuccessful()) return $cardResponse;
+
+        // Create a purchase service, and set the user-facing success URL for redirects
+        $service = PurchaseService::create($payment)
+            ->setReturnUrl($this->getReturnUrl());
+
+        // Process payment, get the result back
+		$response = $service->purchase($data);
 		if(GatewayInfo::is_manual($gateway)){
 			//don't complete the payment at this stage, if payment is manual
 			$this->placeOrder();
 		}elseif($response->isSuccessful()) {
 			$this->completePayment();
 		}
+
 		return $response;
 	}
+
+    /**
+     * If not using a saved card and saving is allowed in the gateway and configuration, try to save the card.
+     *
+     * @param Payment $payment
+     * @param array $data
+     * @return GatewayResponse|null
+     */
+    protected function saveCardIfNeeded($payment, $data) {
+        if (
+            $payment &&
+            empty($data['SavedCardID']) &&
+            CheckoutConfig::config()->save_credit_cards &&
+            GatewayInfo::can_save_cards($payment->getGatewayTitle())
+        ) {
+            // NOTE: This will create a SavedCreditCard record and associate it with the Payment
+            return SavedCardService::create($payment)->createCard($data);
+        }
+    }
 
 	/**
 	 * Map shop data to omnipay fields

@@ -30,9 +30,9 @@ class OnsitePaymentCheckoutComponentTest extends SapphireTest {
 	public function setUp() {
 		ShopTest::setConfiguration();
 		CheckoutConfig::config()->membership_required = false;
+        CheckoutConfig::config()->save_credit_cards = true;
         Config::inst()->remove('Payment', 'allowed_gateways');
         Config::inst()->update('Payment', 'allowed_gateways', array('Stripe'));
-        Config::inst()->update('OnsitePaymentCheckoutComponent', 'save_credit_cards', true);
 		parent::setUp();
 
 		$this->member   = $this->objFromFixture("Member", "jeremyperemy");

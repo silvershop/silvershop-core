@@ -8,9 +8,6 @@ use Omnipay\Common\Helper;
  */
 class OnsitePaymentCheckoutComponent extends CheckoutComponent {
 
-    /** @var bool - automatically save cards if available in the gateway */
-    private static $save_credit_cards = false;
-
     /** @var string - some might want this to be a fieldset? */
     private static $composite_field_tag = 'div';
 
@@ -31,7 +28,7 @@ class OnsitePaymentCheckoutComponent extends CheckoutComponent {
         // add existing cards if present and allowed
         if (
             GatewayInfo::can_save_cards($gateway) &&
-            Config::inst()->get('OnsitePaymentCheckoutComponent', 'save_credit_cards') &&
+            Config::inst()->get('CheckoutConfig', 'save_credit_cards') &&
             $existingCardFields = $this->getExistingCardsFields()
         ) {
             Requirements::javascript('shop/javascript/CheckoutPage.js');
