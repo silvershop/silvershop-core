@@ -296,6 +296,13 @@ class Product extends Page implements Buyable {
 		$this->setField("BasePrice", $price);
 	}
 
+	/**
+	 * Allow orphaned products to be viewed.
+	 */
+	public function isOrphaned() {
+		return false;
+	}
+
 	public function Link() {
 		$link = parent::Link();
 		$this->extend('updateLink', $link);
