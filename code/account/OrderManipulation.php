@@ -61,7 +61,7 @@ class OrderManipulation extends Extension{
 
 	/**
 	 * Get all orders for current member / session.
-	 * @return DataObjectSet of Orders
+	 * @return DataList of Orders
 	 */
 	public function allorders() {
 		$filters = array(
