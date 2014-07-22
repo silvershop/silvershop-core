@@ -59,18 +59,18 @@ class OrderProcessor{
 			return false;
 		}
 
-        // Pull out the inputs
-        $data = $this->getGatewayData($gatewaydata);
+		// Pull out the inputs
+		$data = $this->getGatewayData($gatewaydata);
 
-        // If not using a saved card and saving is allowed in the gateway and configuration, try to save the card
-        $cardResponse = $this->saveCardIfNeeded($payment, $data);
-        if ($cardResponse && !$cardResponse->isSuccessful()) return $cardResponse;
+		// If not using a saved card and saving is allowed in the gateway and configuration, try to save the card
+		$cardResponse = $this->saveCardIfNeeded($payment, $data);
+		if ($cardResponse && !$cardResponse->isSuccessful()) return $cardResponse;
 
-        // Create a purchase service, and set the user-facing success URL for redirects
-        $service = PurchaseService::create($payment)
-            ->setReturnUrl($this->getReturnUrl());
+		// Create a purchase service, and set the user-facing success URL for redirects
+		$service = PurchaseService::create($payment)
+			->setReturnUrl($this->getReturnUrl());
 
-        // Process payment, get the result back
+		// Process payment, get the result back
 		$response = $service->purchase($data);
 		if(GatewayInfo::is_manual($gateway)){
 			//don't complete the payment at this stage, if payment is manual
@@ -82,24 +82,29 @@ class OrderProcessor{
 		return $response;
 	}
 
-    /**
-     * If not using a saved card and saving is allowed in the gateway and configuration, try to save the card.
-     *
-     * @param Payment $payment
-     * @param array $data
-     * @return \Omnipay\Common\Message\ResponseInterface|null
-     */
-    protected function saveCardIfNeeded($payment, $data) {
-        if (
-            $payment &&
-            empty($data['SavedCardID']) &&
-            CheckoutConfig::config()->save_credit_cards &&
-            GatewayInfo::can_save_cards($payment->Gateway)
-        ) {
-            // NOTE: This will create a SavedCreditCard record and associate it with the Payment
-            return SavedCardService::create($payment)->createCard($data);
-        }
-    }
+	/**
+	 * If not using a saved card and saving is allowed in the gateway and configuration, try to save the card.
+	 *
+	 * @param Payment $payment
+	 * @param array $data
+	 * @return \Omnipay\Common\Message\ResponseInterface|null
+	 */
+	protected function saveCardIfNeeded($payment, $data) {
+		if (
+			$payment &&
+			CheckoutConfig::config()->save_credit_cards &&
+			GatewayInfo::can_save_cards($payment->Gateway)
+		) {
+			if (empty($data['SavedCreditCardID'])) {
+				// NOTE: This will create a SavedCreditCard record and associate it with the Payment
+				return SavedCardService::create($payment)->createCard($data);
+			} else {
+				// this will have been validated in OnsitePaymentCheckoutComponent
+				$payment->SavedCreditCardID = $data['SavedCreditCardID'];
+				$payment->write();
+			}
+		}
+	}
 
 	/**
 	 * Map shop data to omnipay fields
@@ -110,7 +115,7 @@ class OrderProcessor{
 	protected function getGatewayData($customData) {
 		$shipping = $this->order->getShippingAddress();
 		$billing = $this->order->getBillingAddress();
-		
+
 		return array_merge(
 			$customData,
 			array(
@@ -209,7 +214,7 @@ class OrderProcessor{
 			$this->error(_t("OrderProcessor.NOITEMS", "Order has no items."));
 			return false;
 		}
-		
+
 		return true;
 	}
 
@@ -328,7 +333,7 @@ class OrderProcessor{
 				->filter("OrderID", $this->order->ID)
 				->filter("SentToCustomer", 1)
 				->first();
-			
+
 			if($latestLog) {
 				$note = $latestLog->Note;
 				$title = $latestLog->Title;
