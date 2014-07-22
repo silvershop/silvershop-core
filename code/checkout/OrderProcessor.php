@@ -95,7 +95,7 @@ class OrderProcessor{
 			CheckoutConfig::config()->save_credit_cards &&
 			GatewayInfo::can_save_cards($payment->Gateway)
 		) {
-			if (empty($data['SavedCreditCardID'])) {
+			if (empty($data['SavedCreditCardID']) || $data['SavedCreditCardID'] == 'newcard') {
 				// NOTE: This will create a SavedCreditCard record and associate it with the Payment
 				return SavedCardService::create($payment)->createCard($data);
 			} else {
