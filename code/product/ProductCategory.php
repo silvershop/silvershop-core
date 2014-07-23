@@ -76,12 +76,12 @@ class ProductCategory extends Page {
 	 * @return DataList
 	 */
 	public function ChildCategories($recursive = false) {
-		$children = ProductCategory::get()->filter("ParentID",$this->ID);
+		$ids = array($this->ID);
 		if($recursive){
-			$children = $children->filter("ParentID",$this->AllChildCategoryIDs());
+			$ids += $this->AllChildCategoryIDs();
 		}
 
-		return $children;
+		return ProductCategory::get()->filter("ParentID", $ids);
 	}
 
 	/**
