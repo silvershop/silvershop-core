@@ -23,6 +23,11 @@ class CheckoutStep_Address extends CheckoutStep{
 		$form->Fields()->push(new CheckboxField(
 			"SeperateBilling", "Bill to a different address from this"
 		));
+		$order = $this->shippingconfig()->getOrder();
+		if($order->BillingAddressID !== $order->ShippingAddressID){
+			$form->loadDataFrom(array("SeperateBilling" => 1));
+		}
+
 		return array('OrderForm' => $form);
 	}
 

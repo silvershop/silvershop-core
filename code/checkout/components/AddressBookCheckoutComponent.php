@@ -3,24 +3,25 @@
 /**
  * Adds the ability to use the member's address book for choosing addresses
  *
- * @todo WIP / untested
  */
 abstract class AddressBookCheckoutComponent extends AddressCheckoutComponent{
 
 	private static $composite_field_tag = 'div';
+
+	protected $addtoaddressbook = true;
+
 
 	public function getFormFields(Order $order) {
 		$fields = parent::getFormFields($order);
 
 		if($existingaddressfields = $this->getExistingAddressFields()){
 			Requirements::javascript('shop/javascript/CheckoutPage.js');
-
 			// add the fields for a new address after the dropdown field
 			$existingaddressfields->merge($fields);
-
 			// group under a composite field (invisible by default) so we
 			// easily know which fields to show/hide
 			$label = _t("AddressBookCheckkoutComponent.{$this->addresstype}Address", "{$this->addresstype} Address");
+
 			return new FieldList(
 				CompositeField::create($existingaddressfields)
 					->addExtraClass('hasExistingValues')
@@ -43,6 +44,7 @@ abstract class AddressBookCheckoutComponent extends AddressCheckoutComponent{
 			$addressoptions['newaddress'] = 'Create new address';
 			$fieldtype = count($addressoptions) > 3 ? 'DropdownField' : 'OptionsetField';
 			$label = _t("AddressBookCheckoutComponent.Existing{$this->addresstype}Address", "Existing {$this->addresstype} Address");
+			
 			return new FieldList(
 				$fieldtype::create($this->addresstype."AddressID", $label,
 					$addressoptions,
@@ -62,7 +64,6 @@ abstract class AddressBookCheckoutComponent extends AddressCheckoutComponent{
 	public function getRequiredFields(Order $order) {
 		return array();
 	}
-
 
 	/**
 	 * @param Order $order

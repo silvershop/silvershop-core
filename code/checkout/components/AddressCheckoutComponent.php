@@ -6,6 +6,8 @@ abstract class AddressCheckoutComponent extends CheckoutComponent{
 
 	protected $addresstype;
 
+	protected $addtoaddressbook = false;
+
 	public function getFormFields(Order $order) {
 		return $this->getAddress($order)->getFrontEndFields(array(
 			'addfielddescriptions' => $this->formfielddescriptions
@@ -31,7 +33,10 @@ abstract class AddressCheckoutComponent extends CheckoutComponent{
 		$data = array_merge(
 			ShopUserInfo::singleton()->getLocation(),
 			$member ? $member->{"Default".$this->addresstype."Address"}()->toMap() : array(),
-			$data
+			$data,
+			array(
+				$this->addresstype."AddressID" => $order->{$this->addresstype."AddressID"}
+			)
 		);
 		//ensure country is restricted if there is only one allowed country
 		if($country = SiteConfig::current_site_config()->getSingleCountry()){
@@ -75,9 +80,13 @@ abstract class AddressCheckoutComponent extends CheckoutComponent{
 		//associate member to address
 		if($member = Member::currentUser()){
 			$default = $member->{"Default".$this->addresstype."Address"}();
+			//set default address
 			if(!$default->exists()) {
 				$member->{"Default".$this->addresstype."AddressID"} = $address->ID;
 				$member->write();
+			}
+			if($this->addtoaddressbook){
+				$member->AddressBook()->add($address);
 			}
 		}
 		//extension hooks
@@ -89,6 +98,13 @@ abstract class AddressCheckoutComponent extends CheckoutComponent{
 	 */
 	public function setShowFormFieldDescriptions($show = true) {
 		$this->formfielddescriptions = $show;
+	}
+
+	/**
+	 * Add new addresses to the address book.
+	 */
+	public function setAddToAddressBook($add = true){
+		$this->addtoaddressbook = $add;
 	}
 
 	public function getAddress(Order $order) {
