@@ -114,6 +114,22 @@ class MembershipCheckoutComponent extends CheckoutComponent{
 		$member = $factory->create($data);
 		$member->write();
 		$member->logIn();
+
+		if ($order->BillingAddressID) {
+			$address = $order->getBillingAddress();
+			$address->MemberID = $member->ID;
+			$address->write();
+			$member->DefaultBillingAddressID = $order->BillingAddressID;
+		}
+		if ($order->ShippingAddressID) {
+			$address = $order->getShippingAddress();
+			$address->MemberID = $member->ID;
+			$address->write();
+			$member->DefaultShippingAddressID = $order->ShippingAddressID;
+		}
+		if ($member->isChanged()) {
+			$member->write();
+		}
 	}
 
 	public function setConfirmed($confirmed) {
