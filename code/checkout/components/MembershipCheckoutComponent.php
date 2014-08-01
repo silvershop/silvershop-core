@@ -116,11 +116,15 @@ class MembershipCheckoutComponent extends CheckoutComponent{
 		$member->logIn();
 
 		if ($order->BillingAddressID) {
-			$order->BillingAddress()->MemberID = $member->ID;
+			$address = $order->getBillingAddress();
+			$address->MemberID = $member->ID;
+			$address->write();
 			$member->DefaultBillingAddressID = $order->BillingAddressID;
 		}
 		if ($order->ShippingAddressID) {
-			$order->ShippingAddress()->MemberID = $member->ID;
+			$address = $order->getShippingAddress();
+			$address->MemberID = $member->ID;
+			$address->write();
 			$member->DefaultShippingAddressID = $order->ShippingAddressID;
 		}
 		if ($member->isChanged()) {
