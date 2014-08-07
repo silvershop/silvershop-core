@@ -39,4 +39,8 @@ class CheckoutStep_PaymentMethod extends CheckoutStep{
 		return $this->owner->redirect($this->NextStepLink());
 	}
 
+	public function SelectedPaymentMethod() {
+		return Checkout::get($this->owner->Cart())->getSelectedPaymentMethod(true);
+	}
+
 }
