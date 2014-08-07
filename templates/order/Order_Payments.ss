@@ -17,7 +17,7 @@
 				<td class="price">$Created.Nice</td>
 				<td class="price">$Amount.Nice $Currency</td>
 				<td class="price">$Status</td>
-				<td class="price">$Gateway</td>
+				<td class="price">$GatewayTitle</td>
 				<td class="price">$Message.NoHTML</td>
 			</tr>
 			<% if ShowMessages %>
