@@ -73,6 +73,7 @@ class Product extends Page implements Buyable {
 	private static $global_allow_purchase = true;
 	private static $allow_zero_price = false;
 	private static $order_item = "Product_OrderItem";
+	private static $min_opengraph_img_size = 0;
 
 	private static $indexes = array(
 		'Featured' => true,
@@ -322,13 +323,26 @@ class Product extends Page implements Buyable {
 		return $this->model->Image->newObject();
 	}
 
+    /**
+     * Integration with opengraph module
+     * @see https://github.com/tractorcow/silverstripe-opengraph
+     * @return string opengraph type
+     */
+	public function getOGType() {
+		return 'product';
+	}
+
 	/**
-	 * Free integration with the opengraph module
-	 * @see https://github.com/tractorcow/silverstripe-opengraph
+	 * Integration with the opengraph module
 	 * @return string url of product image
 	 */
 	public function getOGImage() {
-        return $this->Image()->URL;
+		if($image = $this->Image()){
+			$min = self::config()->min_opengraph_img_size;
+			$image = $min && $image->getWidth() < $min ? $image->setWidth($min) : $image;
+
+			return $image->URL;
+		}
     }
 
 	/**
