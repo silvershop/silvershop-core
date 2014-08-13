@@ -341,7 +341,7 @@ class Product extends Page implements Buyable {
 			$min = self::config()->min_opengraph_img_size;
 			$image = $min && $image->getWidth() < $min ? $image->setWidth($min) : $image;
 
-			return $image->URL;
+			return Director::absoluteURL($image->URL);
 		}
     }
 
