@@ -29,7 +29,8 @@
 		"burnbright/silverstripe-shop-shipping": "Provide various shipping methods.",
 		"burnbright/silverstripe-shop-comparison" : "Allow comparing products side-by-side,a nd introduces a model for detailed specifications.",
 		"burnbright/silverstripe-shop-coloredvariations" : "Select colours for variations",
-		"burnbright/silverstripe-shop-geocoding" : "Geocoding support for addresses and visitors."
+		"burnbright/silverstripe-shop-geocoding" : "Geocoding support for addresses and visitors.",
+		"tractorcow/silverstripe-opengraph": "Implementation of the Facebook Opengraph protocol for Silverstripe"
 	},
 	"extra" : {
 		"installer-name": "shop",

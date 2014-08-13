@@ -322,6 +322,14 @@ class Product extends Page implements Buyable {
 		return $this->model->Image->newObject();
 	}
 
+	/**
+	 * Free integration with the opengraph module
+	 * @see https://github.com/tractorcow/silverstripe-opengraph
+	 * @return string url of product image
+	 */
+	public function getOGImage() {
+        return $this->Image()->URL;
+    }
 
 	/**
 	 * Link to add this product to cart.
