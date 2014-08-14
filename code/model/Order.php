@@ -145,13 +145,16 @@ class Order extends DataObject {
 		$fields = new FieldList(new TabSet('Root', new Tab('Main')));
 		$fs = "<div class=\"field\">";
 		$fe = "</div>";
-		$fields->addFieldsToTab('Root.Main', array(
+		$parts = array(
 			DropdownField::create("Status", _t("STATUS", "Status"), self::get_order_status_options()),
 			LiteralField::create('Customer', $fs.$this->renderWith("OrderAdmin_Customer").$fe),
 			LiteralField::create('Addresses', $fs.$this->renderWith("OrderAdmin_Addresses").$fe),
-			LiteralField::create('Content', $fs.$this->renderWith("OrderAdmin_Content").$fe),
-			LiteralField::create('Notes', $fs.$this->renderWith("OrderAdmin_Notes").$fe)
-		));
+			LiteralField::create('Content', $fs.$this->renderWith("OrderAdmin_Content").$fe)
+		);
+		if($this->Notes){
+			$parts[] = LiteralField::create('Notes', $fs.$this->renderWith("OrderAdmin_Notes").$fe);
+		}
+		$fields->addFieldsToTab('Root.Main', $parts);
 		$this->extend('updateCMSFields', $fields);
 		$payments = $fields->fieldByName("Root.Payments.Payments");
 		$fields->removeByName("Payments");
