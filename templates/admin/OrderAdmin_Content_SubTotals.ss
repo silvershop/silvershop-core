@@ -1,4 +1,4 @@
-<tfoot>
+<tfoot class="order-content-subtotals">
 	<tr class="ss-gridfield-item">
 		<th colspan="4" class="main"><% _t("SUBTOTAL","Sub-total") %></th>
 		<th class="main">$SubTotal.Nice</th>

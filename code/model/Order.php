@@ -159,6 +159,7 @@ class Order extends DataObject {
 		$payments = $fields->fieldByName("Root.Payments.Payments");
 		$fields->removeByName("Payments");
 		$fields->insertBefore($payments, "Notes");
+		$payments->addExtraClass("order-payments");
 
 		return $fields;
 	}

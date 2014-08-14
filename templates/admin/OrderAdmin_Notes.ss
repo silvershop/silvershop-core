@@ -1,4 +1,4 @@
-<table class="ss-gridfield-table">
+<table class="order-notes ss-gridfield-table">
 	<thead>
 		<tr class="title">
 			<th colspan="1">
@@ -7,7 +7,7 @@
 		</tr>
 	</thead>
 	<tbody>
-		<tr class="ss-gridfield-item ">
+		<tr class="ss-gridfield-item">
 			<td>$Notes</td>
 		</tr>
 	</tbody>

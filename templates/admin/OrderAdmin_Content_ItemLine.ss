@@ -1,4 +1,4 @@
-<tr class="ss-gridfield-item ss-gridfield-{$EvenOdd} $FirstLast">
+<tr class="order-content-itemline ss-gridfield-item ss-gridfield-{$EvenOdd} $FirstLast">
 	<td>
 		<% if Image %>
 			<div class="image">
