@@ -171,8 +171,14 @@ class Order extends DataObject {
 	public function getDefaultSearchContext() {
 		$context = parent::getDefaultSearchContext();
 		$fields = $context->getFields();
-		$fields->fieldByName('Status')
-			->setSource(array_combine(self::config()->placed_status, self::config()->placed_status));
+		$fields->push(
+			ListboxField::create("Status","Status")
+				->setSource(array_combine(
+					self::config()->placed_status, 
+					self::config()->placed_status
+				))
+				->setMultiple(true)
+		);
 		//add date range filtering
 		$fields->insertBefore(DateField::create("DateFrom", "Date from")
 			->setConfig('showcalendar', true), 'Status');
