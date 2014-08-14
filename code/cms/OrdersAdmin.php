@@ -45,19 +45,21 @@ class OrdersAdmin extends ModelAdmin{
 class OrderGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequest{
 
 	private static $allowed_actions = array(
+		'edit',
+		'view',
+		'ItemEditForm',
 		'printorder'
 	);
 		
 	public function ItemEditForm() {
 		$form = parent::ItemEditForm();
-
 		$printlink = $this->Link('printorder')."?print=1";
 		$printwindowjs =<<<JS
 			window.open('$printlink', 'print_order', 'toolbar=0,scrollbars=1,location=1,statusbar=0,menubar=0,resizable=1,width=800,height=600,left = 50,top = 50');return false;
 JS;
 		$form->Actions()->push(
 			new LiteralField("PrintOrder",
-				"<input class=\"action no-ajax grid-print-button\" data-icon=\"grid_print\" type=\"submit\" onclick=\"javascript:$printwindowjs\" value=\""._t("Order.PRINT","Print")."\" >"
+				"<button class=\"no-ajax grid-print-button\" data-icon=\"grid_print\" onclick=\"javascript:$printwindowjs\">"._t("Order.PRINT","Print")."</button>"
 			)
 		);
 
