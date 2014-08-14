@@ -18,6 +18,12 @@
 		<th colspan="4" class="main"><% _t("TOTAL","Total") %></th>
 		<th class="main">$Total.Nice $Currency</th>
 	</tr>
+	<% if TotalOutstanding %>
+		<tr class="ss-gridfield-item">
+			<td colspan="4" class="main"><% _t("TOTALOUTSTANDING","Outstanding") %></td>
+			<td class="main">$TotalOutstanding.Nice $Currency</td>
+		</tr>
+	<% end_if %>
 	<tr>
 		<td class="bottom-all" colspan="5"></td>
 	</tr>

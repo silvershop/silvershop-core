@@ -12,7 +12,7 @@
 		</tr>
 	</thead>
 	<tbody>
-		<% loop Payments %>	
+		<% loop Payments %>
 			<tr>
 				<td class="price">$Created.Nice</td>
 				<td class="price">$Amount.Nice $Currency</td>
@@ -23,9 +23,7 @@
 			<% if ShowMessages %>
 				<% loop Messages %>
 					<tr>
-						<td colspan="5">
-							$ClassName $Message $User.Name
-						</td>
+						<td colspan="5">$ClassName $Message $User.Name</td>
 					</tr>
 				<% end_loop %>
 			<% end_if %>

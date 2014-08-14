@@ -1,4 +1,4 @@
-<tr  class="ss-gridfield-item ss-gridfield-{$EvenOdd} $FirstLast">
+<tr class="ss-gridfield-item ss-gridfield-{$EvenOdd} $FirstLast">
 	<td>
 		<% if Image %>
 			<div class="image">
@@ -20,6 +20,6 @@
 		<% if $Buyable.InternalItemID %><div class="sku">SKU: $Buyable.InternalItemID</div><% end_if %>
 	</td>
 	<td class="unitprice">$UnitPrice.Nice</td>
-	<td class="quantity">$Quantity</td>
+	<td class="quantity count-$Quantity">$Quantity</td>
 	<td class="total">$Total.Nice</td>
 </tr>
