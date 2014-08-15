@@ -17,6 +17,9 @@ class OrdersAdmin extends ModelAdmin{
 		)
 	);
 
+	/**
+	 * Restrict list to non-hidden statuses
+	 */
 	public function getList() {
 		$context = $this->getSearchContext();
 		$params = $this->request->requestVar('q');
@@ -29,12 +32,32 @@ class OrdersAdmin extends ModelAdmin{
 		return $list;
 	}
 
+	/**
+	 * Replace gridfield detail form to include print functionality
+	 */
 	function getEditForm($id = null, $fields = null) {
 		$form = parent::getEditForm($id, $fields);
 		if($this->modelClass == "Order"){
 			$form->Fields()->fieldByName("Order")->getConfig()
 				->getComponentByType('GridFieldDetailForm')
 				->setItemRequestClass('OrderGridFieldDetailForm_ItemRequest'); //see below
+		}
+
+		return $form;
+	}
+
+	/**
+	 * Ensure that SearchForm selection remains populated.
+	 */
+	public function SearchForm() {
+		$form = parent::SearchForm();
+		$query = $this->request->getVar('q');
+		if($query && isset($query['Status'])){
+			$form->loadDataFrom(array(
+				'q' => array(
+					'Status' => implode(',', $query['Status'])
+				)
+			));
 		}
 
 		return $form;
@@ -50,7 +73,10 @@ class OrderGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemReque
 		'ItemEditForm',
 		'printorder'
 	);
-		
+	
+	/**
+	 * Add print button to order detail form
+	 */
 	public function ItemEditForm() {
 		$form = parent::ItemEditForm();
 		$printlink = $this->Link('printorder')."?print=1";
@@ -66,6 +92,9 @@ JS;
 		return $form;
 	}
 
+	/**
+	 * Render order for printing
+	 */
 	public function printorder() {
 		Requirements::clear();
 		//include print javascript, if print argument is provided
