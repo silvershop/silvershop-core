@@ -115,6 +115,12 @@ class Order extends DataObject {
 	private static $cancel_after_sending = false;
 
 	/**
+	 * Place an order before payment processing begins
+	 * @var boolean
+	 */
+	private static $place_before_payment = false;
+
+	/**
 	 * Modifiers represent the additional charges or
 	 * deductions associated to an order, such as
 	 * shipping, taxes, vouchers etc.
