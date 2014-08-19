@@ -120,7 +120,7 @@ class Checkout{
 		$methods = $this->getPaymentMethods();
 		reset($methods);
 		$method = count($methods) === 1 ? key($methods) : Session::get("Checkout.PaymentMethod");
-		if($nice){
+		if($nice && isset($methods[$method])){
 			$method = $methods[$method];
 		}
 		return $method;
