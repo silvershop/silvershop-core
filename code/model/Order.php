@@ -158,7 +158,7 @@ class Order extends DataObject {
 		$this->extend('updateCMSFields', $fields);
 		$payments = $fields->fieldByName("Root.Payments.Payments");
 		$fields->removeByName("Payments");
-		$fields->insertBefore($payments, "Notes");
+		$fields->insertAfter($payments, "Content");
 		$payments->addExtraClass("order-payments");
 
 		return $fields;
