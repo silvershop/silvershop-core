@@ -5,6 +5,8 @@
  */
 class ShopPeriodReport extends SS_Report{
 
+	private static $display_uncategorised_data = false;
+
 	protected $dataClass = 'Order';
 	protected $periodfield = "\"Order\".\"Created\"";
 	protected $grouping = false;
@@ -31,6 +33,12 @@ class ShopPeriodReport extends SS_Report{
 				//"Week" => "Week",
 				"Day" => "Day"
 			)));
+			if(self::config()->display_uncategorised_data){
+				$fields->push(
+					CheckboxField::create("IncludeUncategorised", "Include Uncategorised Data")
+						->setDescription("Display data that doesn't have a date.")
+				);
+			}
 		}
 		$start->setConfig("dateformat",$dateformat);
 		$end->setConfig("dateformat",$dateformat);
@@ -60,7 +68,7 @@ class ShopPeriodReport extends SS_Report{
 		$results = $query->execute();
 		//TODO: push empty months and days to fill out gaps?
 		foreach($results as $result){
-			$output->push($record = new $this->dataClass($result));
+			$record = new $this->dataClass($result);
 			if($this->grouping){
 				$dformats = array(
 					"Year" => "Y",
@@ -70,8 +78,16 @@ class ShopPeriodReport extends SS_Report{
 				);
 				$dformat = $dformats[$params['Grouping']];
 				$pf = "FilterPeriod";
-				$record->FilterPeriod = empty($result[$pf]) ? "uncategorised" : date($dformat, strtotime($result[$pf]));
+				if(empty($result[$pf])){
+					$record->FilterPeriod = "uncategorised";
+					if(!isset($params['IncludeUncategorised'])){
+						continue;
+					}
+				}else{
+					$record->FilterPeriod = date($dformat, strtotime($result[$pf]));
+				}
 			}
+			$output->push($record);
 		}
 		return $output;
 	}
@@ -91,7 +107,7 @@ class ShopPeriodReport extends SS_Report{
 		}elseif($end){
 			$query->addWhere("$filterperiod <= '$end'");
 		}
-		if($start || $end){
+		if($start || $end || !self::config()->display_uncategorised_data){
 			$query->addWhere("$filterperiod IS NOT NULL");
 		}
 		if($this->grouping){

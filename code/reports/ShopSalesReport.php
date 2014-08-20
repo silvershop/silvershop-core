@@ -16,12 +16,6 @@ class ShopSalesReport extends ShopPeriodReport{
 	protected $periodfield = "\"Order\".\"Paid\"";
 	protected $grouping = true;
 
-	public function getReportField(){
-		$reportfield = parent::getReportField();
-		//$reportfield->getConfig()->removeComponentsByType('GridFieldPaginator');
-		return $reportfield;
-	}
-
 	public function columns(){
 		return array(
 			"FilterPeriod" => "Period",
