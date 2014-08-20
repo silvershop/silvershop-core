@@ -102,6 +102,13 @@ class Order extends DataObject {
 	);
 
 	/**
+	 * Statuses for which an order can be paid for
+	 */
+	private static $payable_status = array(
+		'Cart', 'Unpaid', 'Processing', 'Sent'
+	);
+
+	/**
 	 * Statuses that shouldn't show in user account.
 	 */
 	private static $hidden_status = array('Cart');
@@ -316,6 +323,9 @@ class Order extends DataObject {
 	 * @return boolean
 	 */
 	public function canPay($member = null) {
+		if(!in_array($this->Status,self::config()->payable_status)){
+			return false;
+		}
 		if($this->TotalOutstanding() > 0 && empty($this->Paid)){
 			return true;
 		}
