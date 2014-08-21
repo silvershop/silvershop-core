@@ -1,6 +1,6 @@
 # Loading and modifying products via SpreadSheet
 
-Products can be created and updated via spreadsheet. This is done in the Products section
+Products can be created and updated via spreadsheet. This is done in the Catalog section
 of the CMS. Make sure "Product" is selected on the left tab, then use the import form
 at the bottom to load your product spreadsheet.
 
