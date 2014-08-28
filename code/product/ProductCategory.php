@@ -21,11 +21,8 @@ class ProductCategory extends Page {
 	private static $must_have_price = true;
 
 	private static $sort_options = array(
-		'URLSegment' => 'Alphabetical',
-		'BasePrice' => 'Price',
-		//'Popularity' => 'Popularity'
-		//'Featured' => 'Featured',
-		//'Weight' => 'Weight'
+		'Alphabetical' => 'URLSegment',
+		'Price' => 'BasePrice'
 	);
 
 	/**

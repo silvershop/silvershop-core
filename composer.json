@@ -18,7 +18,7 @@
 		"silverstripe/framework": "~3.1",
 		"burnbright/silverstripe-omnipay" : "~1.0",
 		"icecaster/versioned-gridfield": "~1.0",
-		"burnbright/silverstripe-listsorter": "~1.0"
+		"burnbright/silverstripe-listsorter": "~2.0"
 	},
 	"require-dev": {
 		"guzzle/plugin-mock": "~3.1",
