@@ -49,10 +49,6 @@ class OrderModifier extends OrderAttribute {
 
 	private static $default_sort = "\"OrderModifier\".\"Sort\" ASC, \"Created\" ASC";
 
-	private static $extensions = array(
-		"OrderModifierLazyLoadFix"
-	);
-
 	/**
 	* Specifies whether this modifier is always required in an order.
 	*/
