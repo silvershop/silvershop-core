@@ -109,7 +109,7 @@ JS;
 		return $this->record->customise(array(
 			'SiteConfig' => SiteConfig::current_site_config(),
 			'Title' => $title
-		))->renderWith('Order_Printable');
+		))->renderWith('OrderAdmin_Printable');
 	}
 
 }
