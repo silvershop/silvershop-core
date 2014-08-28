@@ -80,11 +80,11 @@ class MatchObjectFilter{
 				$dbfield = $singleton->dbObject($field);
 				$value = (isset($this->data[$field])) ? $this->data[$field] : null;
 				$value = $dbfield->prepValueForDB($value);	//product correct format for db values
-				$new[] = "\"$field\" = $value";
+				$new[] = "\"$field\" = '$value'";
 			}else{
 				if(isset($this->data[$field])){
 					$value = Convert::raw2sql($this->data[$field]);
-					$new[] = "\"{$field}\" = $value";
+					$new[] = "\"{$field}\" = '$value'";
 				}else{
 					$new[] = "(\"{$field}\" = 0 OR \"$field\" IS NULL)";
 				}

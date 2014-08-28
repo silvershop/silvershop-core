@@ -41,6 +41,9 @@ class CustomProductTest extends FunctionalTest {
 		$item = $cart->get($thing, $options2);
 		$this->assertTrue((bool)$item, "item with customisation 2 exists");
 		$this->assertEquals(5, $item->Quantity);
+		$this->assertEquals('Blue', $item->Color);
+		$this->assertEquals(6, $item->Size);
+		$this->assertEquals(false, $item->Premium);
 
 		$options3 = array('Color' => 'Blue');
 		$this->assertTrue((bool)$cart->add($thing, 1, $options3), "add a sub-variant of customisation 2");
