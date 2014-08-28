@@ -162,15 +162,3 @@ class OrderModifier extends OrderAttribute {
 	}
 
 }
-
-/**
- * Hack to fix issue with lazy loding
- * @see https://github.com/silverstripe/silverstripe-framework/issues/1682
- */
-class OrderModifierLazyLoadFix extends DataExtension{
-
-	public function augmentSQL(SQLQuery &$query) {
-		$query->addLeftJoin("OrderModifier", "\"OrderModifier\".\"ID\" = \"OrderAttribute\".\"ID\"");
-	}
-
-}
