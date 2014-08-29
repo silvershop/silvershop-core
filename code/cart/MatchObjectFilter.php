@@ -29,7 +29,7 @@
  * );
  *
  * Example output:
- * "FieldName" = 'data' AND  "AnotherField" = 32 AND "ARequiredField" IS NULL
+ * "FieldName" = 'data' AND  "AnotherField" = 32 AND ("ARequiredField" = 0 OR "ARequiredField" IS NULL)
  *
  */
 class MatchObjectFilter{
@@ -45,53 +45,56 @@ class MatchObjectFilter{
 	 */
 	public function __construct($className, array $data, array $requiredfields) {
 		$this->className = $className;
-		$this->required = $requiredfields;
-		$this->data = $data;
+		$this->setRequiredFields($requiredfields);
+		$this->setData($data);
 	}
 
 	/**
-	 * Create SQL where filter
-	 * @return array of filter statements
+	 * Set required fields
+	 * Adds ID to fields that are has_one fields
+	 * @param array $fields
 	 */
-	public function getFilter() {
+	public function setRequiredFields($fields) {
+		$hasones = singleton($this->className)->has_one();
+		$idfields = array_intersect($fields, array_keys($hasones));
+		$fields = array_diff($fields, $idfields);
+		foreach($idfields as $field){
+			$fields[] = $field."ID";
+		}
+		$this->required = $fields;
+	}
 
+	/**
+	 * Set data
+	 * Any required data that is missing will set to null.
+	 * Any data that is not required is removed.
+	 * @param array $data
+	 */
+	public function setData($data) {
+		$data = array_merge(array_fill_keys($this->required, null), $data);
+		$this->data = array_intersect_key($data, array_flip($this->required));
+	}
+
+	/**
+	 * Filter a given list to exactly match required fields,
+	 * including matching non-specfied data on 0 or NULL.
+	 */
+	public function filterList(DataList $list) {
 		if(!is_array($this->data)){
 			return null;
 		}
-		$singleton = singleton($this->className);
-		$hasones = $singleton->has_one();
-
-		$db = $singleton->db();
-		$allowed = array_merge($db, $hasones); //fields that can be used
-		$fields = array_flip(array_intersect(array_keys($allowed), $this->required));
-
-		//add 'ID' to has one relationship fields
-		foreach($hasones as $key => $value){
-			if(isset($fields[$key])){
-				$fields[$key."ID"] = $value;
-				unset($fields[$key]);
-			}
-		}
-
-		$new = array();
-		foreach($fields as $field => $value){
-			$field = Convert::raw2sql($field);
-			if(array_key_exists($field, $db)){
-				$dbfield = $singleton->dbObject($field);
-				$value = (isset($this->data[$field])) ? $this->data[$field] : null;
-				$value = $dbfield->prepValueForDB($value);	//product correct format for db values
-				$new[] = "\"$field\" = $value";
+		foreach($this->data as $field => $value){
+			if($value === null){
+				//null required data must be empty/null in db
+				$list = $list->where("\"{$field}\" = 0 OR \"$field\" IS NULL");
 			}else{
-				if(isset($this->data[$field])){
-					$value = Convert::raw2sql($this->data[$field]);
-					$new[] = "\"{$field}\" = $value";
-				}else{
-					$new[] = "(\"{$field}\" = 0 OR \"$field\" IS NULL)";
-				}
-
+				//force false to be 0 in SQL
+				$value = $value === false ? 0 : $value;
+				$list = $list->filter($field, $value);
 			}
 		}
-		return $new;
+
+		return $list;
 	}
 
 }

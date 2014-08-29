@@ -55,10 +55,10 @@ class ShoppingCartControllerTest extends FunctionalTest {
 		$this->assertEquals($mp3playeritem->Quantity, 2, 'We have 2 of this product in the cart.');
 
 		// set item quantiy
-		$this->get(ShoppingCart_Controller::set_quantity_item_link($this->mp3player,array('quantity' => 5))); //add item via url
+		$this->get(ShoppingCart_Controller::set_quantity_item_link($this->mp3player, array('quantity' => 5))); //add item via url
 		$items = ShoppingCart::curr()->Items();
-		$mp3playeritem = $items->innerJoin("Product_OrderItem","\"OrderItem\".\"ID\" = \"Product_OrderItem\".\"ID\"")->find('ProductID',$this->mp3player->ID); //join needed to provide ProductID
-		$this->assertEquals($mp3playeritem->Quantity, 5, 'We have 5 of this product in the cart.');
+		$mp3playeritem = $items->innerJoin("Product_OrderItem","\"OrderItem\".\"ID\" = \"Product_OrderItem\".\"ID\"")->find('ProductID', $this->mp3player->ID); //join needed to provide ProductID
+		$this->assertEquals(5, $mp3playeritem->Quantity, 'We have 5 of this product in the cart.');
 
 		// non purchasable product checks
 		$this->assertEquals($this->noPurchaseProduct->canPurchase(),false,'non-purcahseable product is not purchaseable');

@@ -263,12 +263,13 @@ class ShoppingCart {
 		$itemclass = Config::inst()->get(get_class($buyable), 'order_item');
 		$relationship = Config::inst()->get($itemclass, 'buyable_relationship');
 		$filter[$relationship."ID"] = $buyable->ID;
-		$required = array('Order',$relationship);
+		$required = array('Order', $relationship);
 		if(is_array($itemclass::config()->required_fields)){
 			$required = array_merge($required, $itemclass::config()->required_fields);
 		}
 		$query = new MatchObjectFilter($itemclass, array_merge($customfilter, $filter), $required);
-		$item = $itemclass::get()->where($query->getFilter())->first();
+		$item = $query->filterList($itemclass::get())->first();
+
 		if(!$item){
 			return $this->error(_t("ShoppingCart.ITEMNOTFOUND", "Item not found."));
 		}
