@@ -149,7 +149,9 @@ class ProductCategory_Controller extends Page_Controller {
 	 * @return ListSorter sorter
 	 */
 	public function getSorter(){
-	 	return new ListSorter($this->request, ProductCategory::config()->sort_options);
+	 	$sorter = new ListSorter($this->request, ProductCategory::config()->sort_options);
+		$this->extend('updateSorter', $sorter);
+		return $sorter;
 	}
 
 }
