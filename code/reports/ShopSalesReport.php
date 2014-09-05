@@ -15,6 +15,7 @@ class ShopSalesReport extends ShopPeriodReport{
 	protected $dataClass = "Order";
 	protected $periodfield = "\"Order\".\"Paid\"";
 	protected $grouping = true;
+	protected $pagesize = 365;
 
 	public function columns(){
 		return array(

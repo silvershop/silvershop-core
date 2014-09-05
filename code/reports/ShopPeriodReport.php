@@ -32,7 +32,7 @@ class ShopPeriodReport extends SS_Report{
 				"Month" => "Month",
 				//"Week" => "Week",
 				"Day" => "Day"
-			)));
+			), "Month"));
 			if(self::config()->display_uncategorised_data){
 				$fields->push(
 					CheckboxField::create("IncludeUncategorised", "Include Uncategorised Data")
@@ -56,12 +56,18 @@ class ShopPeriodReport extends SS_Report{
 
 	public function getReportField(){
 		$field = parent::getReportField();
-		$field->getConfig()->removeComponentsByType('GridFieldPaginator');
+		$conf = $field->getConfig();
+		$conf->removeComponentsByType('GridFieldPaginator')
+			->addComponent($pagi = new GridFieldLitePaginator(5));
+
+		$pagi->setTotalItems(100);
+
 		return $field;
 	}
 
 	public function sourceRecords($params){
 		isset($params['Grouping']) || $params['Grouping'] = "Month";
+
 		$output = new ArrayList();
 		$query = $this->query($params);
 		//TODO: this breaks with large data sets
@@ -128,10 +134,29 @@ class ShopPeriodReport extends SS_Report{
 					break;
 			}
 		}
-		$query->setLimit($this->pagesize);
-
+		$query->setLimit($this->pagesize, $this->getOffset());
 	
 		return $query;
+	}
+
+	public function getOffset(){
+		$state_json = isset($_REQUEST['Report']['GridState']) ? $_REQUEST['Report']['GridState'] : null;
+		$offset = 0;
+
+		if(!$state_json){
+			return $offset;
+		}
+		//hack up state object to use
+		$state = GridState::create(new GridField("Report"));
+		$state->setValue($state_json);
+
+		$state = $state->getData();
+		//var_dump($state_json);
+		//var_dump($state->Value());
+		//Debug::show($state->GridFieldPaginator->currentPage);
+		//TODO: return offset, based on this->pagesize
+
+		return $offset;
 	}
 
 	protected function fd($date, $format){
