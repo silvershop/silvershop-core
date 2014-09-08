@@ -4,9 +4,6 @@
  */
 class CheckoutStep extends Extension{
 
-	 //indicates where to jump to on the page
-	public static $continue_anchor;
-
 	/**
 	 * Get the next step action
 	 * @return string|NULL
@@ -29,7 +26,8 @@ class CheckoutStep extends Extension{
 		if(!$nextstep){
 			$nextstep = $this->nextstep();
 		}
-		$anchor = self::$continue_anchor ? "#".self::$continue_anchor: "";
+		$anchor = Config::inst()->get("SteppedCheckout", "continue_anchor");
+		$anchor = $anchor ? "#".$anchor : "";
 		return $this->owner->Link($nextstep).$anchor;
 	}
 
