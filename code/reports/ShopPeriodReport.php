@@ -15,7 +15,7 @@ class ShopPeriodReport extends SS_Report{
 	private static $groupingdateformats = array(
 		"Year" => "Y",
 		"Month" => "Y - F",
-		"Day" =>	"d F Y - l"
+		"Day" => "d F Y - l"
 	);
 
 	public function title(){
@@ -27,7 +27,8 @@ class ShopPeriodReport extends SS_Report{
 	}
 
 	public function parameterFields() {
-		$dateformat = Member::currentUser()->getDateFormat();
+		$member = Member::currentUserID() ? Member::currentUser() : new Member();
+		$dateformat = $member->getDateFormat();
 		$fields = new FieldList(
 			$start = new DateField("StartPeriod","Start Date"),
 			$end = new DateField("EndPeriod","End Date")
