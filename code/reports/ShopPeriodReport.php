@@ -12,6 +12,12 @@ class ShopPeriodReport extends SS_Report{
 	protected $grouping = false;
 	protected $pagesize = 30;
 
+	private static $groupingdateformats = array(
+		"Year" => "Y",
+		"Month" => "Y - F",
+		"Day" =>	"d F Y - l"
+	);
+
 	public function title(){
 		return _t($this->class.".TITLE",$this->title);
 	}
@@ -30,7 +36,6 @@ class ShopPeriodReport extends SS_Report{
 			$fields->push(new DropdownField("Grouping","Group By",array(
 				"Year" => "Year",
 				"Month" => "Month",
-				//"Week" => "Week",
 				"Day" => "Day"
 			)));
 			if(self::config()->display_uncategorised_data){
@@ -40,10 +45,10 @@ class ShopPeriodReport extends SS_Report{
 				);
 			}
 		}
-		$start->setConfig("dateformat",$dateformat);
-		$end->setConfig("dateformat",$dateformat);
-		$start->setConfig("showcalendar", true); //Not working! (js does not run)
-		$end->setConfig("showcalendar", true); //Not working!
+		$start->setConfig("dateformat", $dateformat);
+		$end->setConfig("dateformat", $dateformat);
+		$start->setConfig("showcalendar", true);
+		$end->setConfig("showcalendar", true);
 		return $fields;
 	}
 
@@ -56,40 +61,34 @@ class ShopPeriodReport extends SS_Report{
 
 	public function getReportField(){
 		$field = parent::getReportField();
-		$field->getConfig()->removeComponentsByType('GridFieldPaginator');
+		$config = $field->getConfig();
+		$columns = $config->getComponentByType("GridFieldDataColumns")
+			->getDisplayFields($field);
+		$config->getComponentByType('GridFieldExportButton')
+			->setExportColumns($columns);
 		return $field;
 	}
 
 	public function sourceRecords($params){
 		isset($params['Grouping']) || $params['Grouping'] = "Month";
-		$output = new ArrayList();
-		$query = $this->query($params);
-		//TODO: this breaks with large data sets
-		$results = $query->execute();
-		//TODO: push empty months and days to fill out gaps?
-		foreach($results as $result){
-			$record = new $this->dataClass($result);
-			if($this->grouping){
-				$dformats = array(
-					"Year" => "Y",
-					"Month" => "Y - F",
-					//"Week" => "o - W",
-					"Day" =>	"d F Y"
-				);
-				$dformat = $dformats[$params['Grouping']];
-				$pf = "FilterPeriod";
-				if(empty($result[$pf])){
-					$record->FilterPeriod = "uncategorised";
-					if(!isset($params['IncludeUncategorised'])){
-						continue;
-					}
-				}else{
-					$record->FilterPeriod = date($dformat, strtotime($result[$pf]));
-				}
-			}
-			$output->push($record);
+		$list = new SQLQueryList($this->query($params));
+		$grouping = $params['Grouping'];
+		$list->setOutputClosure(function($row) use ($grouping){
+			$row['FilterPeriod'] = $this->formatDateForGrouping($row['FilterPeriod'], $grouping);
+
+			return new $this->dataClass($row);
+		});
+
+		return $list;
+	}
+
+	public function formatDateForGrouping($date, $grouping) {
+		if(!$date){
+			return $date;
 		}
-		return $output;
+		$formats = self::config()->groupingdateformats;
+		$dformat = $formats[$grouping];
+		return date($dformat, strtotime($date));
 	}
 
 	public function query($params){
@@ -107,7 +106,7 @@ class ShopPeriodReport extends SS_Report{
 		}elseif($end){
 			$query->addWhere("$filterperiod <= '$end'");
 		}
-		if($start || $end || !self::config()->display_uncategorised_data){
+		if($start || $end || !self::config()->display_uncategorised_data || !isset($params['IncludeUncategorised'])){
 			$query->addWhere("$filterperiod IS NOT NULL");
 		}
 		if($this->grouping){
@@ -119,17 +118,13 @@ class ShopPeriodReport extends SS_Report{
 				default:
 					$query->addGroupBy($this->fd($filterperiod, '%Y').",".$this->fd($filterperiod, '%m'));
 					break;
-				// case "Week":
-				// 	$query->addGroupBy($this->fd($filterperiod, '%Y').",CAST(".$this->fd($filterperiod, '%d')."/365 * 52, INTEGER)");
-				// 	break;
 				case "Day":
 					$query->setLimit("0,1000");
 					$query->addGroupBy($this->fd($filterperiod, '%Y').",".$this->fd($filterperiod, '%m').",".$this->fd($filterperiod, '%d'));
 					break;
 			}
 		}
-		$query->setLimit($this->pagesize);
-
+		$query->setOrderBy("FilterPeriod","DESC");
 	
 		return $query;
 	}

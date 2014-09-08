@@ -7,17 +7,11 @@ class ProductReport extends ShopPeriodReport{
 	protected $dataClass = "Product";
 	protected $periodfield = "SiteTree.Created";
 
-	public function getReportField(){
-		$reportfield = parent::getReportField();
-		$reportfield->getConfig()->removeComponentsByType('GridFieldPaginator');
-		return $reportfield;
-	}
-
 	public function columns(){
 		return array(
 			"Title" => array(
 				"title" => "Title",
-				"formatting" => '<a href=\"admin/products/Product/$ID/edit\" target=\"_new\">$Title</a>'
+				"formatting" => '<a href=\"admin/catalog/Product/EditForm/field/Product/item/$ID/edit\" target=\"_new\">$Title</a>'
 			),
 			"BasePrice" => "Price",
 			"Created" => "Created",
@@ -45,9 +39,7 @@ class ProductReport extends ShopPeriodReport{
 		$query->addLeftJoin("Order","OrderAttribute.OrderID = Order.ID");
 		$query->addGroupby("Product.ID");
 		$query->addWhere("\"Order\".\"Paid\" IS NOT NULL OR \"Product_OrderItem\".\"ID\" IS NULL");
-		if(!$query->getOrderBy()){
-			$query->setOrderBy("Sales DESC");
-		}
+
 		return $query;
 	}
 
