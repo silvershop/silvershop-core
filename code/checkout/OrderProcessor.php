@@ -87,7 +87,7 @@ class OrderProcessor{
 		return array_merge(
 			$customData,
 			array(
-				'transactionReference' => $this->order->Reference,
+				'transactionId' => $this->order->Reference,
 				'firstName' => $this->order->FirstName,
 				'lastName' => $this->order->Surname,
 				'email' => $this->order->Email,
