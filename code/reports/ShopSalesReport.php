@@ -17,10 +17,11 @@ class ShopSalesReport extends ShopPeriodReport{
 	protected $grouping = true;
 
 	public function columns(){
+		$period = isset($_GET['filters']['Grouping']) ? $_GET['filters']['Grouping'] : "Month";
 		return array(
-			"FilterPeriod" => "Period",
-			"Count" => "Count",
-			"Sales" => "Sales"
+			"FilterPeriod" => $period,
+			"Count" => "Order Count",
+			"Sales" => "Total Sales"
 		);
 	}
 

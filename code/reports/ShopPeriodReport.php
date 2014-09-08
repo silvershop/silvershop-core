@@ -29,15 +29,15 @@ class ShopPeriodReport extends SS_Report{
 	public function parameterFields() {
 		$dateformat = Member::currentUser()->getDateFormat();
 		$fields = new FieldList(
-			$start = new DateField("StartPeriod","Start ($dateformat)"),
-			$end = new DateField("EndPeriod","End ($dateformat)")
+			$start = new DateField("StartPeriod","Start Date"),
+			$end = new DateField("EndPeriod","End Date")
 		);
 		if($this->grouping){
 			$fields->push(new DropdownField("Grouping","Group By",array(
 				"Year" => "Year",
 				"Month" => "Month",
 				"Day" => "Day"
-			)));
+			),'Month'));
 			if(self::config()->display_uncategorised_data){
 				$fields->push(
 					CheckboxField::create("IncludeUncategorised", "Include Uncategorised Data")
@@ -92,13 +92,21 @@ class ShopPeriodReport extends SS_Report{
 	}
 
 	public function query($params){
+		//convert dates to correct format
+		$fields = $this->parameterFields();
+		$fields->setValues($params);
+		$start = $fields->fieldByName("StartPeriod")->dataValue();
+		$end = $fields->fieldByName("EndPeriod")->dataValue();
+		//include the entire end day
+		if($end){
+			$end = date('Y-m-d',strtotime($end) + 86400);
+		}
 		$filterperiod = $this->periodfield;
 		$query = new ShopReport_Query();
 		$query->setSelect(array("FilterPeriod" => "MIN($filterperiod)"));
 
 		$query->setFrom('"' . $this->dataClass . '"');
-		$start = isset($params['StartPeriod']) && !empty($params['StartPeriod']) ? date('Y-m-d',strtotime($params["StartPeriod"])) : null;
-		$end = isset($params['EndPeriod']) && !empty($params['EndPeriod']) ? date('Y-m-d',strtotime($params["EndPeriod"]) + 86400) : null; //end day is inclusive
+
 		if($start && $end){
 			$query->addWhere("$filterperiod BETWEEN '$start' AND '$end'");
 		}elseif($start){
@@ -124,7 +132,7 @@ class ShopPeriodReport extends SS_Report{
 					break;
 			}
 		}
-		$query->setOrderBy("FilterPeriod","DESC");
+		$query->setOrderBy("FilterPeriod","ASC");
 	
 		return $query;
 	}
