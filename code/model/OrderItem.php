@@ -162,7 +162,9 @@ class OrderItem extends OrderAttribute {
 	 * Also serves as a standardised placeholder for overriding in subclasses.
 	 */
 	public function Image() {
-		return $this->Buyable()->Image();
+		if($this->Buyable()){
+			return $this->Buyable()->Image();
+		}
 	}
 
 	public function QuantityField() {
