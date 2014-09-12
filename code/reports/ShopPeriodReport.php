@@ -129,12 +129,11 @@ class ShopPeriodReport extends SS_Report{
 					$query->addGroupBy($this->fd($filterperiod, '%Y').",".$this->fd($filterperiod, '%m'));
 					break;
 				case "Day":
-					$query->setLimit("0,1000");
 					$query->addGroupBy($this->fd($filterperiod, '%Y').",".$this->fd($filterperiod, '%m').",".$this->fd($filterperiod, '%d'));
 					break;
 			}
 		}
-		$query->setOrderBy("FilterPeriod","ASC");
+		$query->setOrderBy("\"FilterPeriod\"","ASC");
 	
 		return $query;
 	}
