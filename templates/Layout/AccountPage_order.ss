@@ -1,4 +1,4 @@
-<% require themedCSS(account) %>
+<% require themedCSS(account,shop) %>
 <% include AccountNavigation %>
 <div class="typography">
 	<% if Order %>
