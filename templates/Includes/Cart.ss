@@ -1,4 +1,4 @@
-<% require themedCSS(cart) %>
+<% require themedCSS(cart,shop) %>
 <% if Items %>
 	<table class="cart" summary="<% _t("TABLESUMMARY","Current contents of your cart.") %>">
 		<colgroup class="image"/>
