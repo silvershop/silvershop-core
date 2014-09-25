@@ -7,7 +7,7 @@
  */
 class OrderStatusLog extends DataObject {
 
-	public static $db = array(
+	private static $db = array(
 		'Title' => 'Varchar(100)',
 		'Note' => 'Text',
 		'DispatchedBy' => 'Varchar(100)',
@@ -18,10 +18,34 @@ class OrderStatusLog extends DataObject {
 		'SentToCustomer' => 'Boolean'
 	);
 
-	public static $has_one = array(
+	private static $has_one = array(
 		'Author' => 'Member',
 		'Order' => 'Order'
 	);
+
+	private static $searchable_fields = array(
+		"Note" => "PartialMatchFilter",
+		'DispatchTicket' => 'PartialMatchFilter',
+		'PaymentCode' => 'PartialMatchFilter',
+		'PaymentOK'
+	);
+
+	private static $summary_fields = array(
+		"Created" => "Date",
+		"OrderID" => "OrderID",
+		"Title" => "Title",
+		"SentToCustomer" => "SentToCustomer"
+	);
+
+	private static $field_labels = array(
+		"SentToCustomer" => "Send this update as a message to the customer"
+	);
+
+	private static $singular_name = "Order Log Entry";
+
+	private static $plural_name = "Order Status Log Entries";
+
+	private static $default_sort = "\"Created\" DESC";
 
 	public function canDelete($member = null) {
 		return false;
@@ -30,31 +54,7 @@ class OrderStatusLog extends DataObject {
 		return false;
 	}
 
-	public static $searchable_fields = array(
-		"Note" => "PartialMatchFilter",
-		'DispatchTicket' => 'PartialMatchFilter',
-		'PaymentCode' => 'PartialMatchFilter',
-		'PaymentOK'
-	);
-
-	public static $summary_fields = array(
-		"Created" => "Date",
-		"OrderID" => "OrderID",
-		"Title" => "Title",
-		"SentToCustomer" => "SentToCustomer"
-	);
-
-	public static $field_labels = array(
-		"SentToCustomer" => "Send this update as a message to the customer"
-	);
-
-	public static $singular_name = "Order Log Entry";
-
-	public static $plural_name = "Order Status Log Entries";
-
-	public static $default_sort = "\"Created\" DESC";
-
-	function onBeforeSave() {
+	public function onBeforeSave() {
 		if(!$this->isInDB()) {
 			//TO DO - this does not seem to work
 			$this->AuthorID = Member::currentUser()->ID;
@@ -62,12 +62,12 @@ class OrderStatusLog extends DataObject {
 		parent::onBeforeSave();
 	}
 
-	function populateDefaults() {
+	public function populateDefaults() {
 		parent::populateDefaults();
 		$this->updateWithLastInfo();
 	}
 
-	function onBeforeWrite() {
+	public function onBeforeWrite() {
 		parent::onBeforeWrite();
 		if(!$this->AuthorID && $m = Member::currentUser()) {
 			$this->AuthorID = $m->ID;
@@ -80,7 +80,7 @@ class OrderStatusLog extends DataObject {
 		}
 	}
 
-	function onAfterWrite(){
+	public function onAfterWrite() {
 		if($this->SentToCustomer) {
 			$this->order()->sendStatusChange($this->Title, $this->Note);
 		}
@@ -89,7 +89,7 @@ class OrderStatusLog extends DataObject {
 	protected function updateWithLastInfo() {
 		if($this->OrderID) {
 			$logs = DataObject::get('OrderStatusLog', "\"OrderID\" = {$this->OrderID}", "\"Created\" DESC", null, 1);
-			if($logs) {
+			if($logs && $logs->Count()) {
 				$latestLog = $logs->First();
 				$this->DispatchedBy = $latestLog->DispatchedBy;
 				$this->DispatchedOn = $latestLog->DispatchedOn;

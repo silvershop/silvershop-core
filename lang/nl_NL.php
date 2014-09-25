@@ -229,5 +229,3 @@ $lang['nl_NL']['ViewAllProducts.ss']['NOSUBJECTS'] = 'Geen onderwerp ingesteld';
 $lang['nl_NL']['ViewAllProducts.ss']['PRICE'] = 'Prijs';
 $lang['nl_NL']['ViewAllProducts.ss']['PRODUCTID'] = 'Product ID';
 $lang['nl_NL']['ViewAllProducts.ss']['WEIGHT'] = 'Gewicht';
-
-?>

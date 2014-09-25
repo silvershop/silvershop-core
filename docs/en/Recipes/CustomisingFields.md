@@ -45,14 +45,16 @@ In [mysite]/code/ExtendedOrderForm.php
 	<?php
 	class ExtendedOrderForm extends Extension{
 	
-		function updateFields($fields){
-			$fields->push(new TextField("MyExtraField","My Extra Field"));
+		function updateForm($form){
+			$leftfields = $form->Fields()->fieldByName("LeftOrder")->FieldList();
+			$leftfields->insertAfter(new TextField("MyExtraField","My Extra Field"),"Country");
 		}
 	
 	}
 	
 To your _config.php file, add:
 
+	:::php
 	Object::add_extension('OrderForm','ExtendedOrderForm');
 
 <div class="warning" markdown="1">

@@ -108,13 +108,13 @@
 			</thead>
 			<tbody>
 				<% if Order %>
-				<% control Order %>
+				<% with Order %>
 					<tr>
 						<td scope="row" colspan="2" class="typography">	
 							<p><% sprintf(_t("STATUSCHANGE","Status changed to \"%s\" for Order #"),$Status) %>{$ID}</p>
 						</td>
 					</tr>
-				<% end_control %>
+				<% end_with %>
 				<% end_if %>
 				<tr>
 					<td scope="row" colspan="2" class="typography">

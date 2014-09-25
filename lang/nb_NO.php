@@ -230,5 +230,3 @@ $lang['nb_NO']['ViewAllProducts.ss']['NOSUBJECTS'] = 'Ingen emner satt';
 $lang['nb_NO']['ViewAllProducts.ss']['PRICE'] = 'Pris';
 $lang['nb_NO']['ViewAllProducts.ss']['PRODUCTID'] = 'Produkt-ID';
 $lang['nb_NO']['ViewAllProducts.ss']['WEIGHT'] = 'Vekt';
-
-?>

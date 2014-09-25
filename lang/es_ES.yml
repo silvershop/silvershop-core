@@ -1,0 +1,394 @@
+es:
+
+# Output for class or file: AccountPage
+  AccountPage:
+    Message: 'Porfavor ingrese sus datos para ingresar a la página de tu cuenta. <br/> Esta página solo es accesible después de tu primera compra, cuando asignes una contraseña.'
+    Title: 'Cuenta'
+
+# Output for class or file: CartPage
+  CartPage:
+    TITLE: 'Carro de compras'
+
+# Output for class or file: Checkout
+  Checkout:
+    NOPACKAGE: 'Información de envío no disponible'
+    NOADDRESS: 'No se ha definido dirección'
+    NOPAYMENTMETHOD: 'Método de pago no existe'
+    MEMBERSHIPSNOTALLOWED: 'Crear nuevos miembros no está permitido'
+    IDFIELDNOTFOUND: 'Campo requerido no encontrado: %s'
+    PASSWORDREQUIRED: 'Un password es requerido'
+    MEMBEREXISTS: 'Este miembro ya existe con estos datos: %s %s'
+
+# Output for class or file: CheckoutPage
+  CheckoutPage:
+    TITLE: 'Pagar'
+
+# Output for class or file: ShopConfig
+  ShopConfig:
+    TERMSPAGE: 'Términos y condiciones'
+    CUSTOMERGROUP: 'Grupo para agregar a los nuevos clientes'
+
+# Output for class or file: Shop
+  Shop:
+    DEVTOOLSTITLE: 'Herramientas de desarrollo para la tienda'
+
+# Output for class or file: ContactPage
+  ContactPage:
+    NAME: 'Nombre'
+    EMAIL: 'Email'
+    MESSAGE: 'Mensaje'
+
+# Output for class or file: AddProductForm
+  AddProductForm:
+    ADDTOCART: 'Agregar'
+
+# Output for class or file: CheckoutField
+  CheckoutField:
+    FIRSTNAME: 'Nombres'
+    SURNAME: 'Apellidos'
+    EMAIL: 'Email'
+    NOTES: 'Mensaje'
+    TERMSANDCONDITIONS: 'Acepto los <a href="%s" target="new" title="leer los términos y condiciones antes de pagar"> términos y condiciones</a> del sitio'
+    MUSTAGREETOTERMS: 'Debes aceptar los términos y condiciones del sitio'
+
+# Output for class or file: OrderForm
+  OrderForm:
+    MembershipDetails: 'Detalles de tu cuenta'
+    MemberInfo: 'Si ya tienes una cuenta, por favor '
+    LogIn: 'Ingresa'
+    AccountInfo: 'Por favor elije un password, así podrás ingresar al sitio y checkear tu historial de compras en el futuro'
+    Password: 'Password'
+    COULDNOTPROCESSPAYMENT: 'El pago no pudo ser procesado.'
+    ORDERCANCELLED: 'Tu orden ha cancelada'
+    ShippingAndBillingAddress: 'Dirección de envío y facturación'
+    ShippingAddress: 'Dirección de envío'
+    BillingAddress: 'Dirección de facturación'
+    ShippingIsBilling: 'Usar la dirección de envío para la facturación'
+    DifferentBillingAddress: 'Usar dirección de facturación diferente'
+    LoggedInAs: 'Estás logeado como %s.'
+    LogOut: 'salir'
+    processOrder: 'Aceptar la orden y pagar'
+    PRODUCTCANTPURCHASE: '%s no puede ser comprado'
+    EMPTYCART: 'Tu carro está vacío'
+    MUSTREADTERMS: 'Debes aceptar los términos y condiciones del sitio'
+
+# Output for class or file: OrderActionsForm
+  OrderActionsForm:
+    PAYORDER: 'Pagar saldo'
+    MAKEPAYMENT: 'Realizar pago'
+    OUTSTANDING: 'Saldo: %s'
+    CANCELORDER: 'Cancelar esta orden'
+
+# Output for class or file: Order
+  Order:
+    CANCELSUBJECT: 'Orden #%d cancelada por el cliente'
+
+# Output for class or file: Payment
+  Payment:
+    PAYMENTTYPE: 'Tipo de pago'
+    AMOUNT: 'Monto'
+
+# Output for class or file: SetLocationForm
+  SetLocationForm:
+    COUNTRY: 'País'
+    CHOOSECOUNTRY: 'Elegir país...'
+
+# Output for class or file: MemberForm
+  MemberForm:
+    SAVE: 'Guardar cambios'
+    SAVEANDPROCEED: 'Guardar y proceder al pago'
+    DETAILSSAVED: 'Tus detalles han sido guardados'
+
+# Output for class or file: Address
+  Address:
+    COUNTRY: 'País'
+    ADDRESS: 'Dirección'
+    ADDRESSLINE2: '&nbsp;'
+    CITY: 'Ciudad'
+    STATE: 'Estado'
+    POSTALCODE: 'Código postal'
+    PHONE: 'Número de teléfono'
+    ADDRESSHINT: 'calle / número, cuadra, casilla'
+    ADDRESS2HINT: 'nombre edificio, número departamento, etc'
+    CITYHINT: 'o suburbio, condado, distrito'
+    STATEHINT: 'o provincia, territorio, isla'
+
+# Output for class or file: ShopCurrency
+  ShopCurrency:
+    FREE: '<span class="free">Grátis!</span>'
+
+# Output for class or file: General
+  General:
+    DATETIMEFORMATNICE: '%d/%m/%G %I:%M%p'
+    DATEFORMATNICE: '%d/%m/%G'
+    DATETIMEFORMATNICE24: 'd/m/Y H:i'
+
+# Output for class or file: FreeShippingModifier
+  FreeShippingModifier:
+    FREE: 'Grátis'
+
+# Output for class or file: PickupShippingModifier
+  PickupShippingModifier:
+    SINGULAR: 'Recoger en la tienda'
+
+# Output for class or file: SimpleShippingModifier
+  SimpleShippingModifier:
+    SHIPTO: 'Enviar a %s'
+
+# Output for class or file: WeightShippingModifier
+  WeightShippingModifier:
+    TABLETITLE: 'Envío (%f kg)'
+
+# Output for class or file: GlobalTaxModifier
+  GlobalTaxModifier:
+    INCLUDED: ' (incluído en el precio de arriba)'
+
+# Output for class or file: TaxModifier
+  TaxModifier:
+    ATRATE: '@ %s'
+
+# Output for class or file: OrderProcessor
+  OrderProcessor:
+    NULL: 'No se ha iniciado nuevo pedido.'
+    NOTCART: 'La orden no proviene de un carro'
+    NOITEMS: 'La orden no tiene items'
+
+# Output for class or file: PaymentProcessor
+  PaymentProcessor:
+    NOTPAYMENT: '`$paymentClass` no es un método de pago válido'
+    CANTPAY: 'La orden no puede ser pagada'
+
+# Output for class or file: Product
+  Product:
+    PRICE: 'Precio - precio base al cual este producto se debe vender'
+    COSTPRICE: 'Precio de costo - precio al por mayor al cual se le agrega el margen'
+    WEIGHT: 'Peso (%s)'
+    HEIGHT: 'Altura (%s)'
+    WIDTH: 'Ancho (%s)'
+    DEPTH: 'Profundidad (%s)'
+    MODEL: 'Modelo'
+    CODE: 'Código del producto'
+    IMAGE: 'Imagen del producto'
+    FEATURED: 'Destacar producto'
+    ALLOWPURCHASE: 'Permitir que se compre el producto'
+    CATEGORIES: 'Seleccionar las categorías en donde este producto estará disponible'
+    PAGETITLE: 'Título de la página'
+
+# Output for class or file: ShopSideReport
+  ShopSideReport:
+    FEATUREDPRODUCTS: 'Productos destacados'
+    ShopGROUP: 'Tienda'
+    ALLPRODUCTS: 'Todos los productos'
+    NOIMAGE: 'Productos sin imagen'
+    HEAVY: 'Productos pesados'
+
+# Output for class or file: ShoppingCart
+  ShoppingCart:
+    PRODUCTNOTFOUND: 'No se ha encontrado el producto.'
+    ITEMADD: 'Agregado!'
+    NOORDER: 'No hay pedido.'
+    ITEMREMOVED: 'Ítem removido del pedido.'
+    QUANTITYSET: 'Cantidad modificada con éxito.'
+    CANNOTPURCHASE: '%s no puede ser comprado.'
+    ITEMNOTFOUND: 'Item no encontrado.'
+    NOCARTFOUND: 'Carro no encontrado.'
+    CLEARED: 'Carro vaciado correctamente.'
+    CSRF: 'Token de seguridad inválido, posible ataque de hackers.'
+    NOCARTINITIALISED: 'Carro sin inicializar'
+
+# Output for class or file: DropdownShopQuantityField.ss
+  DropdownShopQuantityField.ss:
+    REMOVEONE: 'Eliminado un &quot;%s&quot; de tu carro'
+    ADDONE: 'Agregar un &quot;%s&quot; a tu carro'
+
+# Output for class or file: Order_ReceiptEmail.ss
+  Order_ReceiptEmail.ss:
+    TITLE: 'Recibo de la tienda'
+
+# Output for class or file: Order_StatusEmail.ss
+  Order_StatusEmail.ss:
+    TITLE: 'Estado de la compra ha cambiado'
+    HEADLINE: 'Estado de la compra ha cambiado'
+    STATUSCHANGE: 'Estado ha cambiado a "%s" para la orden #'
+
+# Output for class or file: Cart.ss
+  Cart.ss:
+    ORDERINFORMATION: 'Información de la orden'
+    TABLESUMMARY: 'Contenido actual del carro'
+    PRODUCT: 'Producto'
+    UNITPRICE: 'Precio unitario'
+    QUANTITY: 'Cantidad'
+    TOTALPRICE: 'Precio Total'
+    READMORE: 'Ver &quot;%s&quot;'
+    REMOVEALL: 'Remover todos los &quot;%s&quot; de tu carro'
+    SUBTOTAL: 'Sub-total'
+    REMOVE: 'Remover &quot;%s&quot; de tu orden'
+    TOTAL: 'Total'
+    NOITEMS: 'No hay ítems en tu carro.'
+
+# Output for class or file: Cart_ReadOnly.ss
+  Cart_ReadOnly.ss:
+    TABLESUMMARY: 'Contenido actual de tu carro'
+    PRODUCT: 'Producto'
+    UNITPRICE: 'Precio unitario'
+    QUANTITY: 'Cantidad'
+    TOTALPRICE: 'Precio Total'
+    SUBTOTAL: 'Sub-total'
+
+# Output for class or file: Order.ss
+  Order.ss:
+    TOTALOUTSTANDING: 'Total pendiente'
+    ORDERNOTES: 'Notas'
+
+# Output for class or file: Order_Addresses.ss
+  Order_Addresses.ss:
+    SHIPTO: 'Enviar a'
+    BILLTO: 'Cobrar a'
+
+# Output for class or file: Order_admin.ss
+  Order_admin.ss:
+    TOTALOUTSTANDING: 'Total pendiente'
+    ORDERNOTES: 'Notas'
+
+# Output for class or file: Order_Content.ss
+  Order_Content.ss:
+    PRODUCT: 'Producto'
+    UNITPRICE: 'Precio unitario'
+    QUANTITY: 'Cantidad'
+    TOTALPRICE: 'Precio Total'
+
+# Output for class or file: Order_Content_ItemLine.ss
+  Order_Content_ItemLine.ss:
+    READMORE: 'ver &quot;%s&quot;'
+
+# Output for class or file: Order_Content_SubTotals.ss
+  Order_Content_SubTotals.ss:
+    SUBTOTAL: 'Sub-total'
+    TOTAL: 'Total'
+
+# Output for class or file: Order_ItemLine.ss
+  Order_ItemLine.ss:
+    READMORE: 'ver &quot;%s&quot;'
+
+# Output for class or file: Order_Member.ss
+  Order_Member.ss:
+    NAME: 'Nombre'
+    ADDRESS: 'Dirección'
+    CITY: 'Ciudad'
+    COUNTRY: 'País'
+    PHONE: 'Teléfono'
+    MOBILE: 'Celular'
+    EMAIL: 'Email'
+
+# Output for class or file: Order_Payments.ss
+  Order_Payments.ss:
+    PAYMENTS: 'Pagos(s)'
+    DATE: 'Fecha'
+    AMOUNT: 'Monto'
+    PAYMENTSTATUS: 'Estado de pago'
+    PAYMENTMETHOD: 'Método'
+    PAYMENTNOTE: 'Nota'
+
+# Output for class or file: Order_Printable.ss
+  Order_Printable.ss:
+    ORDER: 'Orden'
+
+# Output for class or file: ProductGroupItem.ss
+  ProductGroupItem.ss:
+    READMORE: 'Click acá para leer más acerca de &quot;%s&quot;'
+    IMAGE: '%s imagen'
+    MODEL: 'Modelo'
+    VIEW: 'Ver &quot;%s&quot;'
+    ADD: 'Agregar &quot;%s&quot; a tu carro'
+    ADDLINK: 'Agregar al carro'
+
+# Output for class or file: ProductGroup
+  ProductGroup:
+    PAGE: 'página'
+    PREVIOUS: 'previo'
+    NEXT: 'siguiente'
+    SORTBY: 'ordernar por'
+
+# Output for class or file: ProductMenu.ss
+  ProductMenu.ss:
+    GOTOPAGE: 'Ir a %s'
+
+# Output for class or file: SideCart.ss
+  SideCart.ss:
+    HEADLINE: 'Mi carro'
+    READMORE: 'Ver &quot;%s&quot;'
+    REMOVEALL: 'borrar del carro'
+    NOITEMS: 'No hay ítems en el carro'
+
+# Output for class or file: VariationsTable.ss
+  VariationsTable.ss:
+    QUANTITYCART: 'Cantidad en el carro'
+    ADD: 'Agregar &quot;%s&quot; al carro'
+    ADDLINK: 'Agregar al carro'
+
+# Output for class or file: AccountPage.ss
+  AccountPage.ss:
+    ORDER: 'Orden'
+
+# Output for class or file: CartPage.ss
+  CartPage.ss:
+    CARTEMPTY: 'Tu carro está vacío.'
+    CONTINUE: 'Continuar comprando'
+    PROCEEDTOCHECKOUT: 'Proceder al pago'
+
+# Output for class or file: CheckoutPage.ss
+  CheckoutPage.ss:
+    CARTEMPTY: 'Tu carro está vacío.'
+
+# Output for class or file: Product.ss
+  Product.ss:
+    IMAGE: '%s imagen'
+    CODE: 'Código de producto'
+    MODEL: 'Modelo'
+    SIZE: 'Tamaño'
+    QUANTITYCART: 'Cantidad en el carro'
+    REMOVE: 'Borrar &quot;%s&quot; del carro'
+    REMOVELINK: 'Borrar del carro'
+    GOTOCHECKOUT: 'Proceder al pago ahora'
+    GOTOCHECKOUTLINK: 'Pagar'
+    ADD: 'Agregar &quot;%s&quot; a tu carro'
+    ADDLINK: 'Agregar al carro'
+
+# Output for class or file: ShopDatabaseAdmin.ss
+  ShopDatabaseAdmin.ss:
+    CARTTASKS: 'Tareas del carro'
+    BUILDTASKS: 'Crear tareas'
+    CARTCLEANUP: 'Limpiar carros viejos'
+    CARTCLEANUPDESC: 'Remover carros abandonados.'
+    DELETEORDERS: 'Borrar todas las ordenes'
+    DELETEORDERSDESC: 'Borrar todas las ordenes, modificadores y pagos de la base de datos.'
+    DELETEPRODUCTS: 'Borrar todos los productos'
+    DELETEPRODUCTSDESC: 'Borrar todos los productos de la base de datos.'
+    RECALCULATEORDERS: 'Recalcular todas las Ordenes'
+    RECALCULATEORDERSDESC: 'Volver a calcular todos los valores de las ordenes. Advertencia: esto va a sobreescribir los valores históricos.'
+    UNITTESTS: 'Test unitarios'
+    RUNALLTESTS: 'Correr todos los tests unitarios de la tienda'
+
+# Output for class or file: SteppedCheckoutPage.ss
+  SteppedCheckoutPage.ss:
+    NOITEMS: 'No hay itams en el carro.'
+
+# Output for class or file: ShopDevelopmentAdmin.ss
+  ShopDevelopmentAdmin.ss:
+    CARTTASKS: 'Tareas del carro'
+    CLEARCART: 'Eliminar carro actual'
+    DEBUGCART: 'Debugear el carro'
+    POPULATECART: 'Poblar el carro con algunos productos'
+    BUILDTASKS: 'Crear tareas'
+    CARTCLEANUP: 'Limpiar carros viejos'
+    CARTCLEANUPDESC: 'Remover carros abandonados.'
+    DELETEORDERS: 'Borrar todas las ordenes'
+    DELETEORDERSDESC: 'Borrar todas las ordenes, modificadores y pagos de la base de datos.'
+    DELETEPRODUCTS: 'Borrar todos los productos'
+    DELETEPRODUCTSDESC: 'Borrar todos los productos de la base de datos.'
+    RECALCULATEORDERS: 'Recalcular todas las Ordenes'
+    RECALCULATEORDERSDESC: 'Volver a calcular todos los valores de las ordenes. Advertencia: esto va a sobreescribir los valores históricos.'
+    POPULATESHOP: 'Poblar tienda'
+    POPULATESHOPDESC: 'Poblar la tienda con productos de demostración, categorías y otras páginas necesarias.'
+    UNITTESTS: 'Test unitarios'
+    RUNALLTESTS: 'Correr todos los tests unitarios de la tienda'

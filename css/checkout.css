@@ -40,6 +40,13 @@
 	font-size:1.5em;
 }
 
+#Checkout #Notes .middleColumn textarea{
+	clear:left;
+	width:100%;
+	resize: vertical;
+}
+
+
 table.ordercontent{
 	width:100%;
 }

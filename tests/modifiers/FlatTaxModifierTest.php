@@ -7,38 +7,46 @@
 */
 class FlatTaxModifierTest extends FunctionalTest {
 
-	static $fixture_file = 'shop/tests/shop.yml';
-	static $disable_theme = true;
+	protected static $fixture_file = 'shop/tests/fixtures/shop.yml';
+	protected static $disable_theme = true;
 
-	function setUp(){
+	public function setUp() {
 		parent::setUp();
 		ShopTest::setConfiguration();
-		Order::set_modifiers(array("FlatTaxModifier"),true);
-		$this->cart = ShoppingCart::getInstance();
+		Order::config()->modifiers = array(
+			"FlatTaxModifier"
+		);
+		FlatTaxModifier::config()->name = "GST";
+		FlatTaxModifier::config()->rate = 0.15;
+		$this->cart = ShoppingCart::singleton();
 		$this->mp3player = $this->objFromFixture('Product', 'mp3player');
-		$this->mp3player->publish('Stage','Live');
+		$this->mp3player->publish('Stage', 'Live');
 	}
 
-	function testInclusiveTax(){
-		FlatTaxModifier::set_tax(0.15,"GST",false);
+	public function testInclusiveTax() {
+		FlatTaxModifier::config()->exclusive = false;
 		$this->cart->clear();
 		$this->cart->add($this->mp3player);
 		$order = $this->cart->current();
 		$order->calculate();
-		$modifier = $order->getModifier('FlatTaxModifier');
-		$this->assertEquals($modifier->Amount,26.09); //remember that 15% tax inclusive is different to exclusive
-		$this->assertEquals($order->GrandTotal(),200);
+		$modifier = $order->Modifiers()
+					->filter('ClassName', 'FlatTaxModifier')
+					->first();
+		$this->assertEquals(26.09, $modifier->Amount); //remember that 15% tax inclusive is different to exclusive
+		$this->assertEquals(200, $order->GrandTotal());
 	}
-	
-	function testExclusiveTax(){
-		FlatTaxModifier::set_tax(0.15,"GST",true);
+
+	public function testExclusiveTax() {
+		FlatTaxModifier::config()->exclusive = true;
 		$this->cart->clear();
 		$this->cart->add($this->mp3player);
 		$order = $this->cart->current();
 		$order->calculate();
-		$modifier = $order->getModifier('FlatTaxModifier');
-		$this->assertEquals($modifier->Amount,30);
-		$this->assertEquals($order->GrandTotal(),230);
+		$modifier = $order->Modifiers()
+					->filter('ClassName', 'FlatTaxModifier')
+					->first();
+		$this->assertEquals(30, $modifier->Amount);
+		$this->assertEquals(230, $order->GrandTotal());
 	}
 
 }

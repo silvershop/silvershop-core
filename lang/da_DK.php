@@ -193,5 +193,3 @@ $lang['da_DK']['ViewAllProducts.ss']['NOSUBJECTS'] = 'Intet emne tilføjet.';
 $lang['da_DK']['ViewAllProducts.ss']['PRICE'] = 'Pris';
 $lang['da_DK']['ViewAllProducts.ss']['PRODUCTID'] = 'Produktid';
 $lang['da_DK']['ViewAllProducts.ss']['WEIGHT'] = 'Vægt';
-
-?>

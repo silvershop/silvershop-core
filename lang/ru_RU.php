@@ -229,5 +229,3 @@ $lang['ru_RU']['ViewAllProducts.ss']['NOSUBJECTS'] = 'Объекты не зад
 $lang['ru_RU']['ViewAllProducts.ss']['PRICE'] = 'Стоимость';
 $lang['ru_RU']['ViewAllProducts.ss']['PRODUCTID'] = 'Идентификатор продукта';
 $lang['ru_RU']['ViewAllProducts.ss']['WEIGHT'] = 'Вес';
-
-?>

@@ -165,5 +165,3 @@ $lang['fi_FI']['ViewAllProducts.ss']['NOIMAGE'] = 'Valitettavasti &quot;%s&quot;
 $lang['fi_FI']['ViewAllProducts.ss']['PRICE'] = 'Hinta';
 $lang['fi_FI']['ViewAllProducts.ss']['PRODUCTID'] = 'Tuotetunnus';
 $lang['fi_FI']['ViewAllProducts.ss']['WEIGHT'] = 'Paino';
-
-?>

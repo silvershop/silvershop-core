@@ -229,5 +229,3 @@ $lang['tr_TR']['ViewAllProducts.ss']['NOSUBJECTS'] = 'Konu eklenmedi.';
 $lang['tr_TR']['ViewAllProducts.ss']['PRICE'] = 'Fiyat';
 $lang['tr_TR']['ViewAllProducts.ss']['PRODUCTID'] = 'Ürün ID';
 $lang['tr_TR']['ViewAllProducts.ss']['WEIGHT'] = 'Ağırlık';
-
-?>

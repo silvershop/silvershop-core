@@ -4,7 +4,7 @@
 			<img src="$Image.Thumbnail.URL" alt="<% sprintf(_t("IMAGE","%s image"),$Title) %>" />
 		</a>
 	<% else %>
-		<a href="$Link" title="<% sprintf(_t("READMORE"),$Title) %>" class="noimage">no image</a>
+		<a href="$Link" title="<% sprintf(_t("READMORE"),$Title) %>" class="noimage"><!-- no image --></a>
 	<% end_if %>
 	<h3 class="productTitle"><a href="$Link" title="<% sprintf(_t("READMORE"),$Title) %>">$Title</a></h3>
 	<% if Model %><p><strong><% _t("MODEL","Model") %>:</strong> $Model.XML</p><% end_if %>

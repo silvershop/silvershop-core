@@ -21,13 +21,13 @@
 					</td>
 				</tr>
 				<% if Order %>
-				<% control Order %>
+				<% loop Order %>
 					<tr>
 						<td>
 							<% include Order %>
 						</td>
 					</tr>
-				<% end_control %>
+				<% end_loop %>
 				<% end_if %>
 			</tbody>
 		</table>

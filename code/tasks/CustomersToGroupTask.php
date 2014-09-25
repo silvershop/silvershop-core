@@ -1,23 +1,22 @@
 <?php
 /**
  * Adds all customers to an assigned group.
- * 
+ *
  * @package shop
  * @subpackage tasks
  */
 class CustomersToGroupTask extends BuildTask{
-	
+
 	protected $title = "Customers to Group";
 	protected $description = "Adds all customers to an assigned group.";
-	
-	function run($request){
-		$gp = DataObject::get_one("Group", "\"Title\" = '".ShopMember::get_group_name()."'");
-		if(!$gp) {
-			$gp = new Group();
-			$gp->Title = ShopMember::get_group_name();
-			$gp->Sort = 999998;
-			$gp->write();
+
+	public function run($request){
+
+		$gp = ShopConfig::current()->CustomerGroup();
+		if(empty($gp)){
+			return false;
 		}
+
 		$allCombos = DB::query("Select \"ID\", \"MemberID\", \"GroupID\" FROM \"Group_Members\" WHERE \"Group_Members\".\"GroupID\" = ".$gp->ID.";");
 		//make an array of all combos
 		$alreadyAdded = array();
@@ -38,8 +37,11 @@ class CustomersToGroupTask extends BuildTask{
 			$existingMembers = $gp->Members();
 			foreach($unlistedMembers as $member) {
 				$existingMembers->add($member);
+				echo ".";
 			}
+		}else{
+			echo "no new members added";
 		}
 	}
-	
+
 }

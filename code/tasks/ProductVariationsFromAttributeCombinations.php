@@ -1,11 +1,11 @@
 <?php
 /**
- * 
+ *
  * @subpackage tasks
  */
 class ProductVariationsFromAttributeCombinations extends CliController{
 
-	function process(){
+	public function process(){
 
 		$products = DataObject::get('Product');
 		if(!$products) return;

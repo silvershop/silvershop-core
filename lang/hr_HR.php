@@ -139,5 +139,3 @@ $lang['hr_HR']['ViewAllProducts.ss']['NOIMAGE'] = 'Nažalst nema slike &quot;%s&
 $lang['hr_HR']['ViewAllProducts.ss']['PRICE'] = 'Cijena';
 $lang['hr_HR']['ViewAllProducts.ss']['PRODUCTID'] = 'ID proizvoda';
 $lang['hr_HR']['ViewAllProducts.ss']['WEIGHT'] = 'Težina';
-
-?>

@@ -41,18 +41,10 @@ If you have a large number of dataobjects, it may pay to run these tasks from th
 This will remove old carts from the database to help keep the number of carts down. You can specify the age of carts
 in days to clear from (default is 90 days old). 
 
-### DeleteOrdersTask
-
-Deletes all orders, order items, and payments from the system.
-
-### DeleteProductsTask
-
-Deletes all of the products
-
 ### CustomersToGroupTask
 
-Adds members who have placed orders to the "Shop Customers" group every hour. Useful for maintaining a distinction between
-shop customers and other members.
+Adds members who have placed orders to the selected customer group (see the shop config). Useful for maintaining a
+distinction between shop customers and other members.
 
 ## Decorator Hooks
 

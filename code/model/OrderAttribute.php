@@ -1,7 +1,7 @@
 <?php
 /**
  * A single line in an order. This could be an item, or a subtotal line.
- * 
+ *
  * @see OrderItem
  * @see OrderModifier
  *
@@ -9,15 +9,18 @@
  */
 class OrderAttribute extends DataObject {
 
-	public static $db = array(
+	private static $singular_name = "Attribute";
+	private static $plural_name = "Attributes";
+
+	private static $db = array(
 		'CalculatedTotal' => 'Currency'
 	);
 
-	public static $has_one = array(
+	private static $has_one = array(
 		'Order' => 'Order'
 	);
 
-	public static $casting = array(
+	private static $casting = array(
 		'TableTitle' => 'Text',
 		'CartTitle' => 'Text'
 	);
@@ -30,25 +33,27 @@ class OrderAttribute extends DataObject {
 		return false;
 	}
 
-	function isLive(){
+	public function isLive() {
 		return (!$this->isInDB() || $this->Order()->IsCart());
 	}
 
 	/**
-	 * Return a name of what this attribute is
-	 * called e.g. "Modifier", or "Product".
-	 *
-	 * @return string
-	 */
-	function TableTitle() {
-		return 'Attribute';
+	* Produces a title for use in templates.
+	* @return string
+	*/
+	public function TableTitle() {
+		$title = $this->i18n_singular_name();
+		$this->extend('updateTableTitle', $title);
+		return $title;
 	}
-	
-	function CartTitle() {
-		return $this->TableTitle();
+
+	public function CartTitle() {
+		$title = $this->TableTitle();
+		$this->extend('updateCartTitle', $title);
+		return $title;
 	}
-	
-	function ShowInTable() {
+
+	public function ShowInTable() {
 		return true;
 	}
 

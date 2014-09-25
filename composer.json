@@ -1,0 +1,50 @@
+{
+	"name" : "burnbright/silverstripe-shop",
+	"description" : "Provides an ecommerce product catalog, shopping cart, and order management system",
+	"license" : "BSD-2-Clause",
+	"type" : "silverstripe-module",
+	"homepage": "http://www.ss-shop.org/",
+	"keywords" : ["silverstripe","shop","shopping cart","ecommerce","online shopping","payment","ordering","silverstripe"],
+	"authors" : [
+		{
+			"name" : "Jeremy Shipman",
+			"email" : "jeremy@burnbright.net",
+			"homepage" : "https://github.com/jedateach",
+			"role" : "Developer"
+		}
+	],
+	"require" : {
+		"silverstripe/cms": "~3.1",
+		"silverstripe/framework": "~3.1",
+		"burnbright/silverstripe-omnipay" : "~1.0",
+		"icecaster/versioned-gridfield": "~1.0",
+		"burnbright/silverstripe-listsorter": "~2.0",
+		"burnbright/silverstripe-sqlquerylist": "dev-master"
+	},
+	"require-dev": {
+		"guzzle/plugin-mock": "~3.1",
+		"phpunit/PHPUnit": "~3.7"
+	},
+	"suggest" : {
+		"burnbright/silverstripe-shop-discount" : "Create coupons and generic discounts to be applied at checkout.",
+		"burnbright/silverstripe-shop-shipping": "Provide various shipping methods.",
+		"burnbright/silverstripe-shop-comparison" : "Allow comparing products side-by-side,a nd introduces a model for detailed specifications.",
+		"burnbright/silverstripe-shop-coloredvariations" : "Select colours for variations",
+		"burnbright/silverstripe-shop-geocoding" : "Geocoding support for addresses and visitors.",
+		"tractorcow/silverstripe-opengraph": "Implementation of the Facebook Opengraph protocol for Silverstripe"
+	},
+	"extra" : {
+		"installer-name": "shop",
+		"snapshot" : "https://raw.github.com/burnbright/silverstripe-shop/gh-pages/assets/screenshots/shipping%20estimate%20form.png",
+		"branch-alias": {
+			"dev-master": "1.0.x-dev"
+		}
+        },
+	"support":{
+		"issues" : "https://github.com/burnbright/silverstripe-shop/issues",
+		"source" : "https://github.com/burnbright/silverstripe-shop",
+		"forum" : "http://www.silverstripe.org/e-commerce-module-forum",
+		"email" : "jeremy@burnbright.net",
+		"docs" : "http://docs.ss-shop.org"
+	}
+}

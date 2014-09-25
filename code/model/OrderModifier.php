@@ -9,21 +9,21 @@
  */
 class OrderModifier extends OrderAttribute {
 
-	public static $db = array(
+	private static $db = array(
 		'Amount' => 'Currency',
 		'Type' => "Enum('Chargable,Deductable,Ignored','Chargable')",
 		'Sort' => 'Int'
 	);
-	
-	public static $defaults = array(
+
+	private static $defaults = array(
 		'Type' => 'Chargable'
 	);
 
-	public static $casting = array(
+	private static $casting = array(
 		'TableValue' => 'Currency'
 	);
 
-	public static $searchable_fields = array(
+	private static $searchable_fields = array(
 		'OrderID' => array(
 			'title' => 'Order ID',
 			'field' => 'TextField'
@@ -35,8 +35,8 @@ class OrderModifier extends OrderAttribute {
 		"Type"
 	);
 
-	public static $field_labels = array();
-	public static $summary_fields = array(
+	private static $field_labels = array();
+	private static $summary_fields = array(
 		"Order.ID" => "Order ID",
 		"TableTitle" => "Table Title",
 		"ClassName" => "Type",
@@ -44,39 +44,32 @@ class OrderModifier extends OrderAttribute {
 		"Type" => "Type"
 	);
 
-	public static $singular_name = "Modifier";
-	function i18n_singular_name() {	return _t("OrderModifier.SINGULAR", self::$singular_name); }
-	public static $plural_name = "Modifiers";
-	function i18n_plural_name() { return _t("OrderModifier.PLURAL", self::$plural_name); }
+	private static $singular_name = "Modifier";
+	private static $plural_name = "Modifiers";
 
-	public static $default_sort = "\"Sort\" ASC, \"Created\" ASC";
-	
-	/**
-	 * @deprecated
-	 */
-	protected static $is_chargable = true;
-	
+	private static $default_sort = "\"OrderModifier\".\"Sort\" ASC, \"Created\" ASC";
+
 	/**
 	* Specifies whether this modifier is always required in an order.
 	*/
-	public function required(){
+	public function required() {
 		return true;
 	}
-	
+
 	/**
-	 * Modifies the incoming value by adding, 
+	 * Modifies the incoming value by adding,
 	 * subtracting or ignoring the value this modifier calculates.
-	 * 
+	 *
 	 * Sets $this->Amount to the calculated value;
 	 * @param $subtotal - running total to be modified
 	 * @param $forcecalculation - force calculating the value, if order isn't in cart
-	 * 
+	 *
 	 * @return $subtotal - updated subtotal
 	 */
-	public function modify($subtotal,$forcecalculation = false){
+	public function modify($subtotal, $forcecalculation = false) {
 		$order = $this->Order();
 		$value = ($order->IsCart() || $forcecalculation) ? $this->value($subtotal) : $this->Amount;
-		switch($this->Type){			
+		switch($this->Type){
 			case "Chargable":
 				$subtotal += $value;
 				break;
@@ -86,23 +79,27 @@ class OrderModifier extends OrderAttribute {
 			case "Ignored":
 				break;
 		}
-		$value = round($value,Order::$rounding_precision);
+		$value = round($value, Order::config()->rounding_precision);
 		$this->Amount = $value;
 		return $subtotal;
 	}
-	
+
 	/**
 	 * Calculates value to store, based on incoming running total.
 	 * @param float $incoming the incoming running total.
 	 */
-	public function value($incoming){
+	public function value($incoming) {
 		return 0;
 	}
-	
+
 	/**
 	 * Check if the modifier should be in the cart.
 	 */
-	public function valid(){
+	public function valid() {
+		$order = $this->Order();
+		if(!$order){
+			return false;
+		}
 		return true;
 	}
 
@@ -120,23 +117,15 @@ class OrderModifier extends OrderAttribute {
 	 * the amount from $this->LiveAmount() which is a
 	 * calculation based on the order and it's items.
 	 */
-	function Amount() {
+	public function Amount() {
 		return $this->Amount;
 	}
-	
+
 	/**
 	 * Monetary to use in templates.
 	 */
-	function TableValue() {
+	public function TableValue() {
 		return $this->Total();
-	}
-	
-	/**
-	* Produces a title for use in templates.
-	* @return string
-	*/
-	function TableTitle(){
-		return $this->i18n_singular_name();
 	}
 
 	/**
@@ -144,86 +133,28 @@ class OrderModifier extends OrderAttribute {
 	*
 	* @return boolean
 	*/
-	function Total() {
+	public function Total() {
 		if($this->Type == "Deductable"){
 			return $this->Amount * -1;
 		}
 		return $this->Amount;
 	}
-	
+
 	/**
-	 * If the current instance of this OrderModifier
-	 * exists in the database, check if the Type in
-	 * the DB field is "Chargable", if it is, return
-	 * true, otherwise check the static "is_chargable",
-	 * since this instance currently isn't in the DB.
+	 * Checks if this modifier has type = Chargable
 	 *
 	 * @return boolean
 	 */
-	function IsChargable() {
+	public function IsChargable() {
 		return $this->Type == "Chargable";
 	}
-	
+
 	/**
 	 * Checks if the modifier can be removed.
 	 * @return boolean
 	 */
-	function canRemove() {
+	public function canRemove() {
 		return false;
 	}
 
-	function removeLink() {
-		return CheckoutPage_Controller::remove_modifier_link($this->ID);
-	}
-	
-	//deprecated functions
-	
-	/**
-	 * @deprecated use Title
-	 */
-	function CartValue() {
-		return $this->TableValue();
-	}
-	
-	/**
-	 * @deprecated use Amount
-	 */
-	protected function LiveAmount() {
-		return $this->value();
-	}
-
-	//TODO: remove these functions
-	
-	/**
-	* This determines whether the OrderModifierForm
-	* is shown or not. {@link OrderModifier::get_form()}.
-	*
-	* @return boolean
-	*/
-	static function show_form() {
-		return false;
-	}
-	
-	/**
-	 * This function returns a form that allows a user
-	 * to change the modifier to the order.
-	 *
-	 * @todo When is this used?
-	 * @todo How is this used?
-	 * @todo How does one create their own OrderModifierForm implementation?
-	 *
-	 * @param Controller $controller $controller The controller
-	 * @return OrderModifierForm or subclass
-	 */
-	static function get_form($controller) {
-		return new OrderModifierForm($controller, 'ModifierForm', new FieldSet(), new FieldSet());
-	}
-	
-	function updateForAjax(array &$js) {
-		$amount = $this->obj('Amount')->Nice();
-		$js[] = array('id' => $this->CartTotalID(), 'parameter' => 'innerHTML', 'value' => $amount);
-		$js[] = array('id' => $this->TableTotalID(), 'parameter' => 'innerHTML', 'value' => $amount);
-		$js[] = array('id' => $this->TableTitleID(), 'parameter' => 'innerHTML', 'value' => $this->TableTitle());
-	}
-	
 }

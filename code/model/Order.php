@@ -1,4 +1,5 @@
 <?php
+
 /**
  * The order class is a databound object for handling Orders
  * within SilverStripe.
@@ -7,68 +8,55 @@
  */
 class Order extends DataObject {
 
- 	/**
- 	 * Status codes and what they mean:
- 	 *
- 	 * Unpaid (default): Order created but no successful payment by customer yet
- 	 * Query: Order not being processed yet (customer has a query, or could be out of stock)
- 	 * Paid: Order successfully paid for by customer
- 	 * Processing: Order paid for, package is currently being processed before shipping to customer
- 	 * Sent: Order paid for, processed for shipping, and now sent to the customer
- 	 * Complete: Order completed (paid and shipped). Customer assumed to have received their goods
- 	 * AdminCancelled: Order cancelled by the administrator
- 	 * MemberCancelled: Order cancelled by the customer (Member)
- 	 */
-	public static $db = array(
-		//order
-		'Status' => "Enum('Unpaid,Query,Paid,Processing,Sent,Complete,AdminCancelled,MemberCancelled,Cart','Cart')",
-		'ReceiptSent' => 'Boolean',
-		'Printed' => 'Boolean',
+	/**
+	* Status codes and what they mean:
+	*
+	* Unpaid (default): Order created but no successful payment by customer yet
+	* Query: Order not being processed yet (customer has a query, or could be out of stock)
+	* Paid: Order successfully paid for by customer
+	* Processing: Order paid for, package is currently being processed before shipping to customer
+	* Sent: Order paid for, processed for shipping, and now sent to the customer
+	* Complete: Order completed (paid and shipped). Customer assumed to have received their goods
+	* AdminCancelled: Order cancelled by the administrator
+	* MemberCancelled: Order cancelled by the customer (Member)
+	*/
+	private static $db = array(
 		'Total' => 'Currency',
-		//customer
+		'Reference' => 'Varchar', //allow for customised order numbering schemes
+		//status
+		'Placed' => "SS_Datetime", //date the order was placed (went from Cart to Order)
+		'Paid' => 'SS_Datetime', //no outstanding payment left
+		'ReceiptSent' => 'SS_Datetime', //receipt emailed to customer
+		'Printed' => 'SS_Datetime',
+		'Dispatched' => 'SS_Datetime', //products have been sent to customer
+		'Status' => "Enum('Unpaid,Paid,Processing,Sent,Complete,AdminCancelled,MemberCancelled,Cart','Cart')",
+		//customer (for guest orders)
 		'FirstName' => 'Varchar',
 		'Surname' => 'Varchar',
 		'Email' => 'Varchar',
 		'Notes' => 'Text',
-		//invoice/shipping
-		'Address' => 'Varchar(255)',
-		'AddressLine2' => 'Varchar(255)',
-		'City' => 'Varchar(100)',
-		'PostalCode' => 'Varchar(30)',
-		'State' => 'Varchar(100)',
-		'Country' => 'Varchar',
-		'HomePhone' => 'Varchar(100)',
-		'MobilePhone' => 'Varchar(100)',
+		'IPAddress' => 'Varchar(15)',
 		//separate shipping
-		'UseShippingAddress' => 'Boolean',
-		'ShippingName' => 'Text',
-		'ShippingAddress' => 'Text',
-		'ShippingAddress2' => 'Text',
-		'ShippingCity' => 'Text',
-		'ShippingPostalCode' => 'Varchar(30)',
-		'ShippingState' => 'Varchar(30)',
-		'ShippingCountry' => 'Text',
-		'ShippingPhone' => 'Varchar(30)',
+		'SeparateBillingAddress' => 'Boolean'
 	);
 
-	public static $has_one = array(
-		'Member' => 'Member'
+	private static $has_one = array(
+		'Member' => 'Member',
+		'ShippingAddress' => 'Address',
+		'BillingAddress' => 'Address'
 	);
 
-	public static $has_many = array(
+	private static $has_many = array(
 		'Items' => 'OrderItem',
 		'Modifiers' => 'OrderModifier',
-		'OrderStatusLogs' => 'OrderStatusLog',
-		'Payments' => 'Payment'
+		'OrderStatusLogs' => 'OrderStatusLog'
 	);
-	
-	public static $default_sort = "\"Created\" DESC";
-	
-	public static $defaults = array(
+
+	private static $defaults = array(
 		'Status' => 'Cart'
 	);
-	
-	public static $casting = array(
+
+	private static $casting = array(
 		'FullBillingAddress' => 'Text',
 		'FullShippingAddress' => 'Text',
 		'Total' => 'Currency',
@@ -78,433 +66,234 @@ class Order extends DataObject {
 		'TotalOutstanding' => 'Currency'
 	);
 
-	public static $singular_name = "Order";
-	public static $plural_name = "Orders";
-	static $admin_template = "Order";
+	private static $summary_fields = array(
+		'Reference' => 'Order No',
+		'Placed' => 'Date',
+		'Name' => 'Customer',
+		'LatestEmail' => 'Email',
+		'Total' => 'Total',
+		'Status' => 'Status'
+	);
+
+	private static $searchable_fields = array(
+		'Reference' => array(),
+		'FirstName' => array(
+			'title' => 'Customer Name',
+		),
+		'Email' => array(
+			'title' => 'Customer Email',
+		),
+		'Status' => array(
+			'filter' => 'ExactMatchFilter',
+			'field' => 'CheckboxSetField'
+		)
+	);
+
+	private static $singular_name = "Order";
+	private static $plural_name = "Orders";
+
+	private static $default_sort = "\"Placed\" DESC, \"Created\" DESC";
 
 	/**
 	 * Statuses for orders that have been placed.
 	 */
-	static $placed_status = array('Paid','Unpaid', 'Processing', 'Sent', 'Complete');
+	private static $placed_status = array(
+		'Paid', 'Unpaid', 'Processing', 'Sent', 'Complete', 'MemberCancelled', 'AdminCancelled'
+	);
+
+	/**
+	 * Statuses for which an order can be paid for
+	 */
+	private static $payable_status = array(
+		'Cart', 'Unpaid', 'Processing', 'Sent'
+	);
 
 	/**
 	 * Statuses that shouldn't show in user account.
 	 */
-	static $hidden_status = array('Cart','AdminCancelled','MemberCancelled','Query');
+	private static $hidden_status = array('Cart');
 
 	/**
-	 * Flag to determine whether the user can cancel
-	 * this order before payment is received.
-	 *
+	 * Flags to determine when an order can be cancelled.
+	 */
+	private static $cancel_before_payment = true;
+	private static $cancel_before_processing = false;
+	private static $cancel_before_sending = false;
+	private static $cancel_after_sending = false;
+
+	/**
+	 * Place an order before payment processing begins
 	 * @var boolean
 	 */
-	protected static $can_cancel_before_payment = true;
-
-	/**
-	 * Flag to determine whether the user can cancel
-	 * this order before processing has begun.
-	 *
-	 * @var boolean
-	 */
-	protected static $can_cancel_before_processing = false;
-
-	/**
-	 * Flag to determine whether the user can cancel
-	 * this order before the goods are sent.
-	 *
-	 * @var boolean
-	 */
-	protected static $can_cancel_before_sending = false;
-
-	/**
-	 * Flag to determine whether the user can cancel
-	 * this order after the goods are sent.
-	 *
-	 * @var unknown_type
-	 */
-	protected static $can_cancel_after_sending = false;
+	private static $place_before_payment = false;
 
 	/**
 	 * Modifiers represent the additional charges or
 	 * deductions associated to an order, such as
 	 * shipping, taxes, vouchers etc.
-	 *
-	 * @var array
 	 */
-	protected static $modifiers = array();
-	
+	private static $modifiers = array();
+
+	private static $rounding_precision = 2;
+
+	private static $reference_id_padding = 5;
+
 	/**
-	 * Store total after calculation
-	 * @var unknown_type
+	 * @var boolean Will allow completion of orders with GrandTotal=0,
+	 * which could be the case for orders paid with loyalty points or vouchers.
+	 * Will send the "Paid" date on the order, even though no actual payment was taken.
+	 * Will trigger the payment related extension points:
+	 * Order->onPayment, OrderItem->onPayment, Order->onPaid.
 	 */
-	protected $total = 0;
-	
-	/**
-	 * These are the fields, used for a {@link ComplexTableField}
-	 * in order to show for the table columns on a report.
-	 *
-	 * @see CurrentOrdersReport
-	 * @see UnprintedOrdersReport
-	 *
-	 * To customise these, simply define Order::set_table_overview_fields(Array)
-	 * inside your project _config.php where Array is a set of fields that
-	 * you want to display on the table.
-	 *
-	 * @var array
-	 */
-	public static $table_overview_fields = array(
-		'ID' => 'Order No',
-		'Created' => 'Created',
-		'FirstName' => 'First Name',
-		'Surname' => 'Surname',
-		'Total' => 'Total',
-		'Status' => 'Status'
-	);
-
-	public static $summary_fields = array(
-		'ID' => 'Order No',
-		'Created' => 'Created',
-		'FirstName' => 'First Name',
-		'Surname' => 'Surname',
-		'LatestEmail' => 'Email',
-		'Total' => 'Total',
-		'TotalOutstanding' => 'Outstanding',
-		'Status' => 'Status'
-	);
-
-	public static $searchable_fields = array(
-		'ID' => array(
-			'field' => 'TextField',
-			'filter' => 'PartialMatchFilter',
-			'title' => 'Order Number'
-		),
-		'Printed',
-		'FirstName' => array(
-			'title' => 'Customer Name',
-			'filter' => 'PartialMatchFilter'
-		),
-		'Email' => array(
-			'title' => 'Customer Email',
-			'filter' => 'PartialMatchFilter'
-		),
-		'HomePhone' => array(
-			'title' => 'Customer Phone',
-			'filter' => 'PartialMatchFilter'
-		),
-		'Created' => array(
-			'field' => 'TextField',
-			'filter' => 'OrderFilters_AroundDateFilter',
-			'title' => "date"
-		),
-		'TotalPaid' => array(
-			'filter' => 'OrderFilters_MustHaveAtLeastOnePayment',
-		),
-		'Status' => array(
-			'filter' => 'OrderFilters_MultiOptionsetFilter',
-		)
-	);
-
-	public static $rounding_precision = 2;
-	
-	protected static $maximum_ignorable_sales_payments_difference = 0.01;
-	public static function set_maximum_ignorable_sales_payments_difference($difference){
-		self::$maximum_ignorable_sales_payments_difference = $difference;
-	}
+	private static $allow_zero_order_total = false;
 
 	public static function get_order_status_options() {
 		return singleton('Order')->dbObject('Status')->enumValues(false);
 	}
 
-	function scaffoldSearchFields(){
-		$fieldSet = parent::scaffoldSearchFields();
-		$fieldSet->push(new CheckboxSetField("Status", "Status", self::get_order_status_options()));
-		$fieldSet->push(new DropdownField("TotalPaid", "Has Payment", array(1 => "yes", 0 => "no")));
-		return $fieldSet;
-	}
-
-	function getCMSFields(){
-		$fields = new FieldSet(new TabSet('Root',new Tab('Main')));
-		$fields->insertBefore(new LiteralField('Title',"<h2>Order #$this->ID - ".$this->dbObject('Created')->Nice()." - ".$this->Member()->getName()."</h2>"),'Root');
-		$fieldsAndTabsToBeRemoved = array('Main','Payments','Status','Printed','MemberID','Attributes','SessionID');
-		foreach($fieldsAndTabsToBeRemoved as $field) {
-			$fields->removeByName($field);
-		}
-		$printlabel = (!$this->Printed) ? _t("Order.PRINT","Print Invoice") : _t("Order.PRINTAGAIN","Print Invoice Again");
-		$fields->addFieldsToTab('Root.Main', array(
-			new LiteralField("PrintInvoice",'<p class="print"><a href="OrderReport_Popup/index/'.$this->ID.'?print=1" onclick="javascript: window.open(this.href, \'print_order\', \'toolbar=0,scrollbars=1,location=1,statusbar=0,menubar=0,resizable=1,width=800,height=600,left = 50,top = 50\'); return false;">'.$printlabel.'</a></p>'),
-			new DropdownField("Status","Status", self::get_order_status_options()),
-			new LiteralField('MainDetails', $this->renderWith(self::$admin_template))
-		));
-		$payments = new TableListField(
-			"Payments", //$name
-			"Payment", //$sourceClass =
-			Payment::$summary_fields, //$fieldList =
-			"\"OrderID\" = ".$this->ID, //$sourceFilter =
-			"\"Created\" ASC", //$sourceSort =
-			null //$sourceJoin =
+	/**
+	 * Create CMS fields for cms viewing and editing orders
+	 */
+	public function getCMSFields() {
+		$fields = new FieldList(new TabSet('Root', new Tab('Main')));
+		$fs = "<div class=\"field\">";
+		$fe = "</div>";
+		$parts = array(
+			DropdownField::create("Status", _t("STATUS", "Status"), self::get_order_status_options()),
+			LiteralField::create('Customer', $fs.$this->renderWith("OrderAdmin_Customer").$fe),
+			LiteralField::create('Addresses', $fs.$this->renderWith("OrderAdmin_Addresses").$fe),
+			LiteralField::create('Content', $fs.$this->renderWith("OrderAdmin_Content").$fe)
 		);
-		$payments->setPermissions(array("view"));
-		$payments->setPageSize(20);
-		$payments->addSummary("Total",array("Total" => array("sum","Currency->Nice")));
-		$fields->addFieldToTab('Root.Payments',$payments);
-		if($m = $this->Member()) {
-			$lastv = new TextField("MemberLastLogin","Last login",$m->dbObject('LastVisited')->Nice());
-			$fields->addFieldsToTab('Root.Customer',array(
-				$lastv->performReadonlyTransformation(),
-				new LiteralField("MemberSummary", $m->renderWith("Order_Member"))
-			));
+		if($this->Notes){
+			$parts[] = LiteralField::create('Notes', $fs.$this->renderWith("OrderAdmin_Notes").$fe);
 		}
-		$this->extend('updateCMSFields',$fields);
+		$fields->addFieldsToTab('Root.Main', $parts);
+		$this->extend('updateCMSFields', $fields);
+		$payments = $fields->fieldByName("Root.Payments.Payments");
+		$fields->removeByName("Payments");
+		$fields->insertAfter($payments, "Content");
+		$payments->addExtraClass("order-payments");
+
 		return $fields;
 	}
 
 	/**
-	 * Set the fields to be used for {@link ComplexTableField}
-	 * tables for Order instances, such as for reports. This
-	 * sets the {@link Order::$table_overview_fields} variable.
-	 *
-	 * @param array $fields An array of fields to show
+	 * Adjust scafolded search context
+	 * @return SearchContext the updated search context
 	 */
-	public static function set_table_overview_fields($fields) {
-		self::$table_overview_fields = $fields;
+	public function getDefaultSearchContext() {
+		$context = parent::getDefaultSearchContext();
+		$fields = $context->getFields();
+		$fields->push(
+			ListboxField::create("Status","Status")
+				->setSource(array_combine(
+					self::config()->placed_status, 
+					self::config()->placed_status
+				))
+				->setMultiple(true)
+		);
+		//add date range filtering
+		$fields->insertBefore(DateField::create("DateFrom", "Date from")
+			->setConfig('showcalendar', true), 'Status');
+		$fields->insertBefore(DateField::create("DateTo", "Date to")
+			->setConfig('showcalendar', true), 'Status');
+		//get the array, to maniplulate name, and fullname seperately
+		$filters = $context->getFilters();
+		$filters['DateFrom'] = GreaterThanFilter::create('Placed');
+		$filters['DateTo'] = LessThanFilter::create('Placed');
+		$context->setFilters($filters);
+
+		return $context;
 	}
 
 	/**
-	 * Set the modifiers that apply to this site.
-	 *
-	 * @param array $modifiers An array of {@link OrderModifier} subclass names
+	 * Hack for swapping out relation list with OrderItemList
 	 */
-	public static function set_modifiers($modifiers, $replace = false) {
-		if($replace) {
-			self::$modifiers = $modifiers;
+	public function getComponents($componentName, $filter = "", $sort = "", $join = "", $limit = null) {
+		$components = parent::getComponents($componentName, $filter = "", $sort = "", $join = "", $limit = null);
+		if($componentName === "Items" && get_class($components) !== "UnsavedRelationList"){
+			$query = $components->dataQuery();
+			$components = new OrderItemList("OrderItem", "OrderID");
+			if($this->model) $components->setDataModel($this->model);
+			$components->setDataQuery($query);
+			$components = $components->forForeignID($this->ID);
 		}
-		else {
-			self::$modifiers =  array_merge(self::$modifiers,$modifiers);
-		}
+		return $components;
 	}
-
-	/**
-	 * Set the flag to determine whether a user can
-	 * cancel their order before payment.
-	 *
-	 * @param boolean $value
-	 */
-	public static function set_cancel_before_payment($value) {
-		self::$can_cancel_before_payment = $value;
-	}
-
-	/**
-	 * Set the flag to determine whether a user can
-	 * cancel their order before processing begins.
-	 *
-	 * @param unknown_type $value
-	 */
-	public static function set_cancel_before_processing($value) {
-		self::$can_cancel_before_processing = $value;
-	}
-
-	/**
-	 * Set the flag to determine whether a user can
-	 * cancel their order before it is sent.
-	 *
-	 * @param boolean $value
-	 */
-	public static function set_cancel_before_sending($value) {
-		self::$can_cancel_before_sending = $value;
-	}
-
-	/**
-	 * Set the flag to determine whether a user can
-	 * cancel their order after it has been sent.
-	 *
-	 * @param boolean $value
-	 */
-	public static function set_cancel_after_sending($value) {
-		self::$can_cancel_after_sending = $value;
-	}
-
-	protected static $set_can_cancel_on_status = array();
-
-	static function set_can_cancel_on_status($array) {
-		//TODO: check that the stati provided in array actually exist
-		self::$set_can_cancel_on_status = $array;
-	}
-
-	/**
-	 * Return a set of forms to add modifiers
-	 * to update the OrderInformation table.
-	 *
-	 * @TODO Make the above descrption clearer
-	 * after fully understanding what this
-	 * function does.
-	 *
-	 * @return DataObjectSet
-	 */
-	public static function get_modifier_forms($controller) {
-		$forms = array();
-		if(self::$modifiers && is_array(self::$modifiers) && count(self::$modifiers) > 0) {
-			foreach(self::$modifiers as $className) {
-				if(class_exists($className)) {
-					$modifier = new $className();
-					if($modifier instanceof OrderModifier && eval("return $className::show_form();") && $form = eval("return $className::get_form(\$controller);")) array_push($forms, $form);
-				}
-			}
-		}
-		return count($forms) > 0 ? new DataObjectSet($forms) : null;
-	}
-
-	// Items Management
 
 	/**
 	 * Returns the subtotal of the items for this order.
 	 */
-	function SubTotal() {
-		$result = 0;
-		if($items = $this->Items()) {
-			foreach($items as $item){
-				$result += $item->Total();
-			}
+	public function SubTotal() {
+		if($this->Items()->exists()){
+			return $this->Items()->SubTotal();
 		}
-		return $result;
-	}
-	
-	/**
-	 * Creates (if necessary) and calculates values for each modifier,
-	 * and subsequently the total of the order.
-	 * Caches to prevent recalculation, unless dirty.
-	 * 
-	 * @return the final total
-	 * @todo remove empty modifiers? ...perhaps create some kind of 'cleanup' function?
-	 * @todo prevent this function from being run too many times
-	 */
-	function calculate(){
-		$runningtotal = $this->SubTotal();
-		$modifiertotal = 0;
-		$sort = 1;
-		$existingmodifiers = $this->Modifiers();
 		
-		if($this->IsCart()){
-			//check if modifiers are even in use
-			if(!self::$modifiers || !is_array(self::$modifiers) || count(self::$modifiers) <= 0){
-				return $this->Total = $runningtotal;
-			}
-			foreach(self::$modifiers as $ClassName){
-				if($modifier = $this->getModifier($ClassName)){
-					$modifier->Sort = $sort;
-					$runningtotal = $modifier->modify($runningtotal);
-					if($modifier->isChanged()){
-						$modifier->write();
-					}
-				}
-				$sort++;
-			}
-			//clear out modifiers that shouldn't be there, according to defined modifiers list
-				//TODO: it may be better to store/run this as a build task - remove all invalid modifiers from carts
-			if($existingmodifiers){
-				foreach($existingmodifiers as $modifier){
-					if(!in_array($modifier->ClassName,self::$modifiers)){
-						$modifier->delete();
-						$modifier->destroy();
-						return null;
-					}
-				}
-			}
-			
-		}else{ //only use existing modifiers, if order has been placed
-			if($existingmodifiers){
-				foreach($existingmodifiers as $modifier){
-					$modifier->Sort = $sort;
-					//TODO: prevent recalculating value if $this->Amount is present
-						//this will help historical records to not be altered
-					$runningtotal = $modifier->modify($runningtotal);
-					$modifier->write();
-				}
-			}
-		}
-		$this->Total = $runningtotal;
-		return $runningtotal;
-	}
-	
-	/**
-	 * Retrieve a modifier of a given class for this order.
-	 * Modifier will be retrieved from database if it already exists, 
-	 * or created if it is always required.
-	 * 
-	 * @param string $className
-	 * @param boolean $forcecreate - force the modifier to be created.
-	 */
-	public function getModifier($className, $forcecreate = false){
-		if(ClassInfo::exists($className)){
-			//search for existing
-			if($modifier = DataObject::get_one($className,"\"OrderID\" = ".$this->ID)){ //sort by?
-				//remove if no longer valid
-				if(!$modifier->valid()){
-					//TODO: need to provide feedback message - why modifier was removed
-					$modifier->delete();
-					$modifier->destroy();
-					return null;
-				}
-				return $modifier;
-			}
-			$modifier = new $className();
-			if($modifier->required() || $forcecreate){ //create any modifiers that are required for every order
-				$modifier->OrderID = $this->ID;
-				$modifier->write();
-				$this->Modifiers()->add($modifier);
-				return $modifier;	
-			}
-		}else{
-			user_error("Class \"$className\" does not exist.");
-		}
-		return null;
-	}
-	
-	function GrandTotal(){
-		if($this->Total){
-			return $this->Total;
-		}
-		return $this->getField('Total');
-	}
-	
-	function Total(){
-		return $this->GrandTotal();
+		return 0;
 	}
 
 	/**
-	 * Checks to see if any payments have been made on this order
-	 * and if so, subracts the payment amount from the order
-	 * Precondition : The order is in DB
+	 * Calculate the total
+	 * @return the final total
 	 */
-	function TotalOutstanding(){
-		$total = $this->Total;
-		$paid = $this->TotalPaid();
-		$outstanding = $total - $paid;
-		if(abs($outstanding) < self::$maximum_ignorable_sales_payments_difference) {
-			return 0;
+	public function calculate() {
+		if(!$this->IsCart()){
+			return $this->Total;
 		}
-		return $outstanding;
+		$calculator = new OrderTotalCalculator($this);
+		return $this->Total = $calculator->calculate();
 	}
-	
+
 	/**
-	 * Add up successful payments
+	 * This is needed to maintain backwards compatiability with
+	 * some subsystems using modifiers. eg discounts
 	 */
-	function TotalPaid() {
-		$paid = 0;
-		if($payments = $this->Payments()) {
-			foreach($payments as $payment) {
-				if($payment->Status == 'Success') {
-					$paid += $payment->Amount->getAmount();
-				}
-			}
-		}
-		return $paid;
+	public function getModifier($className, $forcecreate = false) {
+		$calculator = new OrderTotalCalculator($this);
+		return $calculator->getModifier($className, $forcecreate);
+	}
+
+	/**
+	 * Enforce rounding precision when setting total
+	 */
+	public function setTotal($val) {
+		$this->setField("Total", round($val, self::$rounding_precision));
+	}
+
+	/**
+	 * Get final value of order.
+	 * Retrieves value from DataObject's record array.
+	 */
+	public function Total() {
+		return $this->getField("Total");
+	}
+
+	/**
+	 * Alias for Total.
+	 */
+	public function GrandTotal() {
+		return $this->Total();
+	}
+
+	/**
+	 * Calculate how much is left to be paid on the order.
+	 * Enforces rounding precision.
+	 */
+	public function TotalOutstanding() {
+		return round(
+			$this->GrandTotal() - $this->TotalPaid(),
+			self::config()->rounding_precision
+		);
 	}
 
 	/**
 	 * Get the link for finishing order processing.
 	 */
-	function Link() {
-		return CheckoutPage::find_link(false,"finish",$this->ID);
+	public function Link() {
+		if(Member::currentUser()){
+			return Controller::join_links(AccountPage::find_link(), 'order', $this->ID);
+		}
+		return CheckoutPage::find_link(false, "order", $this->ID);
 	}
 
 	/**
@@ -513,31 +302,56 @@ class Order extends DataObject {
 	 *
 	 * @return boolean
 	 */
-	function canCancel() {
+	public function canCancel() {
 		switch($this->Status) {
-			case 'Unpaid' : return self::$can_cancel_before_payment;
-			case 'Paid' : return self::$can_cancel_before_processing;
-			case 'Processing' : case 'Query' : return self::$can_cancel_before_sending;
-			case 'Sent' : case 'Complete' : return self::$can_cancel_after_sending;
-			default : return false;
+			case 'Unpaid' :
+				return self::config()->cancel_before_payment;
+			case 'Paid' :
+				return self::config()->cancel_before_processing;
+			case 'Processing' :
+				return self::config()->cancel_before_sending;
+			case 'Sent' :
+			case 'Complete' :
+				return self::config()->cancel_after_sending;
 		}
+		return false;
 	}
 
-	public function canPay($member = null){
-		if($this->TotalOutstanding() > 0){
+	/**
+	 * Check if an order can be paid for.
+	 *
+	 * @return boolean
+	 */
+	public function canPay($member = null) {
+		if(!in_array($this->Status,self::config()->payable_status)){
+			return false;
+		}
+		if($this->TotalOutstanding() > 0 && empty($this->Paid)){
 			return true;
 		}
 		return false;
 	}
 
+	/*
+	 * Prevent deleting orders.
+	 * @return boolean
+	 */
 	public function canDelete($member = null) {
 		return false;
 	}
 
+	/**
+	 * Check if an order can be edited.
+	 * @return boolean
+	 */
 	public function canEdit($member = null) {
 		return true;
 	}
 
+	/**
+	 * Prevent standard creation of orders.
+	 * @return boolean
+	 */
 	public function canCreate($member = null) {
 		return false;
 	}
@@ -545,21 +359,18 @@ class Order extends DataObject {
 	/**
 	 * Return the currency of this order.
 	 * Note: this is a fixed value across the entire site.
-	 *
 	 * @return string
 	 */
-	function Currency() {
-		if(class_exists('Payment')) {
-			return Payment::site_currency();
-		}
+	public function Currency() {
+		return ShopConfig::get_site_currency();
 	}
 
 	/**
 	 * Get the latest email for this order.
 	 */
-	function getLatestEmail(){
-		if($this->MemberID && $this->Member()->LastEdited > $this->LastEdited){
-			$this->Member()->Email;
+	public function getLatestEmail() {
+		if($this->MemberID && ($this->Member()->LastEdited > $this->LastEdited || !$this->Email)){
+			return $this->Member()->Email;
 		}
 		return $this->getField('Email');
 	}
@@ -567,72 +378,41 @@ class Order extends DataObject {
 	/**
 	 * Gets the name of the customer.
 	 */
-	function getName(){
-		return ($this->Surname) ? trim($this->FirstName . ' ' . $this->Surname) : $this->FirstName;
+	public function getName() {
+		$firstname = $this->FirstName ? $this->FirstName : $this->Member()->FirstName;
+		$surname = $this->FirstName ? $this->Surname : $this->Member()->Surname;
+		return implode(" ", array_filter(array($firstname, $surname)));
 	}
 
-	function getFullBillingAddress($separator = "",$insertnewlines = true){
-		//TODO: move this somewhere it can be customised
-		$touse = array(
-			'Name',
-			'Company',
-			'Address',
-			'AddressLine2',
-			'City',
-			'Country',
-			'Email',
-			'Phone',
-			'HomePhone',
-			'MobilePhone'
-		);
-		$fields = array();
-		$do = ($this->MemberID) ? $this->Member(): $this; //TODO: perhaps always use this??
-		foreach($touse as $field){
-			if($do && $do->$field)
-				$fields[] = $do->$field;
-		}
-		$separator = ($insertnewlines) ? $separator."\n" : $separator;
-		return implode($separator,$fields);
+	public function getTitle() {
+		return $this->Reference." - ".$this->dbObject('Placed')->Nice();
 	}
-	
-	function getFullShippingAddress($separator = "",$insertnewlines = true){
-		if(!$this->UseShippingAddress)
-			return $this->getFullBillingAddress($separator,$insertnewlines);
-		//TODO: move this list somewhere it can be customised
-		$touse = array(
-			'ShippingName',
-			'ShippingAddress',
-			'ShippingAddress2',
-			'ShippingCity',
-			'ShippingPostalCode',
-			'ShippingState',
-			'ShippingCountry',
-			'ShippingPhone'
-		);
-		$fields = array();
-		foreach($touse as $field){
-			if($this->$field)
-				$fields[] = $this->$field;
-		}
-		$separator = ($insertnewlines) ? $separator."\n" : $separator;
-		return implode($separator,$fields);
-	}
-
-	// Order Template and ajax Management
 
 	/**
-	 * Will update payment status to "Paid if there is no outstanding amount".
+	 * Get shipping address, or member default shipping address.
 	 */
-	function updatePaymentStatus(){
-		if($this->GrandTotal() > 0 && $this->TotalOutstanding() <= 0){
-			//TODO: only run this if it is setting to Paid, and not cancelled or similar
-			$this->Status = 'Paid';
-			$this->write();
-			$logEntry = new OrderStatusLog();
-			$logEntry->OrderID = $this->ID;
-			$logEntry->Status = 'Paid';
-			$logEntry->write();
+	public function getShippingAddress() {
+		if($address = $this->ShippingAddress()){
+			return $address;
+		}elseif($this->Member() && $address = $this->Member()->DefaultShippingAddress()){
+			return $address;
 		}
+		return null;
+	}
+
+	/**
+	 * Get billing address, if marked to use seperate address, otherwise use shipping address,
+	 * or the member default billing address.
+	 */
+	public function getBillingAddress() {
+		if(!$this->SeparateBillingAddress && $this->ShippingAddressID === $this->BillingAddressID){
+			return $this->getShippingAddress();
+		}elseif($address = $this->BillingAddress()){
+			return $address;
+		}elseif($this->Member() && $address = $this->Member()->DefaultBillingAddress()){
+			return $address;
+		}
+		return null;
 	}
 
 	/**
@@ -641,7 +421,7 @@ class Order extends DataObject {
 	 *
 	 * @return boolean
 	 */
-	function IsSent() {
+	public function IsSent() {
 		return $this->Status == 'Sent';
 	}
 
@@ -651,7 +431,7 @@ class Order extends DataObject {
 	 *
 	 * @return boolean
 	 */
-	function IsProcessing() {
+	public function IsProcessing() {
 		return $this->IsSent() || $this->Status == 'Processing';
 	}
 
@@ -662,49 +442,51 @@ class Order extends DataObject {
 	 *
 	 * @return boolean
 	 */
-	function IsPaid() {
-		return $this->IsProcessing() || $this->Status == 'Paid';
+	public function IsPaid() {
+		return (boolean)$this->Paid || $this->Status == 'Paid';
 	}
 
-	function IsCart(){
+	public function IsCart() {
 		return $this->Status == 'Cart';
 	}
-	
+
 	/**
-	 * Return a link to the {@link CheckoutPage} instance
-	 * that exists in the database.
-	 *
-	 * @return string
+	 * Create a unique reference identifier string for this order.
 	 */
-	function checkoutLink() {
-		return CheckoutPage::find_link();
+	public function generateReference() {
+		$reference = str_pad($this->ID, self::$reference_id_padding, '0', STR_PAD_LEFT);
+		$this->extend('generateReference', $reference);
+		$candidate = $reference;
+		//prevent generating references that are the same
+		$count = 0;
+		while(DataObject::get_one('Order', "\"Reference\" = '$candidate'")){
+			$count++;
+			$candidate = $reference."".$count;
+		}
+		$this->Reference = $candidate;
 	}
 
 	/**
-	 * Returns the correct shipping address. If there is an alternate
-	 * shipping country then it uses that. Failing that, it returns
-	 * the country of the member.
-	 *
-	 * @TODO This is pretty complicated code. It can be simplified.
-	 *
-	 * @param boolean $codeOnly If true, returns only the country code, instead
-	 * 								of the full name.
-	 * @return string
+	 * Get the reference for this order, or fall back to order ID.
 	 */
-	function findShippingCountry($codeOnly = false) {
-		if(!$this->isInDB()) {
-			$country = ShoppingCart::has_country() ? ShoppingCart::get_country() : ShopMember::find_country();
+	public function getReference() {
+		return $this->getField('Reference') ? $this->getField('Reference') : $this->ID;
+	}
+
+	/**
+	 * Force creating an order reference
+	 */
+	public function onBeforeWrite() {
+		parent::onBeforeWrite();
+		if(!$this->getField("Reference") && in_array($this->Status, self::$placed_status)){
+			$this->generateReference();
 		}
-		elseif(!$this->UseShippingAddress || !$country = $this->ShippingCountry) {
-			$country = ShopMember::find_country();
-		}
-		return $codeOnly ? $country : ShopMember::find_country_title($country);
 	}
 
 	/**
 	 * delete attributes, statuslogs, and payments
 	 */
-	function onBeforeDelete(){
+	public function onBeforeDelete() {
 		$this->Items()->removeAll();
 		$this->Modifiers()->removeAll();
 		$this->OrderStatusLogs()->removeAll();
@@ -712,13 +494,12 @@ class Order extends DataObject {
 		parent::onBeforeDelete();
 	}
 
-	function debug(){
+	public function debug() {
 		$val = "<div class='order'><h1>$this->class</h1>\n<ul>\n";
 		if($this->record) foreach($this->record as $fieldName => $fieldVal) {
 			$val .= "\t<li>$fieldName: " . Debug::text($fieldVal) . "</li>\n";
 		}
 		$val .= "</ul>\n";
-		
 		$val .= "<div class='items'><h2>Items</h2>";
 		if($items = $this->Items()){
 			$val .= $this->Items()->debug();
@@ -738,72 +519,8 @@ class Order extends DataObject {
 			$val .= "</ul>";
 		}
 		$val .= "</div></div>";
-			
-		return $val;
-	}
-	
-	//deprecated code
-	
-	/**
-	* @deprecated Use OrderProcessor
-	*/
-	public static function set_email($email) {
-		OrderProcessor::set_email_from($email);
-	}
-	/**
-	 * @deprecated Use OrderProcessor
-	 */
-	public static function set_receipt_subject($subject) {
-		OrderProcessor::set_receipt_subject($subject);
-	}
-	/**
-	 * @deprecated Use OrderProcessor
-	 */
-	public static function set_subject($subject){
-		OrderProcessor::set_receipt_subject($subject);
-	}
-	/**
-	* @deprecated use OrderProcessor
-	*/
-	function sendReceipt() {
-		OrderProcessor::create($this)->sendReceipt();
-	}
-	/**
-	 * @deprecated use OrderProcessor
-	 */
-	function sendStatusChange($title, $note = null) {
-		OrderProcessor::create($this)->sendStatusChange($title,$note);
-	}
 
-	/**
-	* @deprecated use OrderProcessor placeOrder
-	*/
-	function save() {
-		OrderProcessor::create($this)->placeOrder();
-	}
-	/**
-	* Returns the subtotal of the modifiers for this order.
-	* If a modifier appears in the excludedModifiers array, it is not counted.
-	*
-	* @param $excluded string|array Class(es) of modifier(s) to ignore in the calculation.
-	* @todo figure out what the return type is? double? float?
-	* @deprecated CreateModifiers will pass in subtotal
-	*/
-	function ModifiersSubTotal() {
-		return $this->modifiertotal;
-	}
-	/**
-	 * Initialise all the {@link OrderModifier} objects.
-	 * @deprecated use Calculate function instead.
-	 */
-	function initModifiers() {
-		$this->calculate();
-	}
-	/**
-	* @deprecated use OrderProcessor
-	*/
-	protected function sendEmail($emailClass, $copyToAdmin = true) {
-		OrderProcessor::create($this)->sendStatusChange($emailClass,$copyToAdmin);
+		return $val;
 	}
 
 }

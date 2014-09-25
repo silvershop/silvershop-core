@@ -6,13 +6,13 @@
  */
 class ShopDevelopmentAdmin extends Controller{
 
-	static $url_handlers = array();
+	public static $url_handlers = array();
 
-	static $allowed_actions = array(
-		'deleteproducts',
+	public static $allowed_actions = array(
+		'index'
 	);
 
-	function init() {
+	public function init() {
 		parent::init();
 
 		// We allow access to this controller regardless of live-status or ADMIN permission only
@@ -33,20 +33,15 @@ class ShopDevelopmentAdmin extends Controller{
 				"This page is secured and you need administrator rights to access it. " .
 				"Enter your credentials below and we will send you right along.");
 		}
-		
+
 		//render the debug view
 		$renderer = Object::create('DebugView');
 		$renderer->writeHeader();
-		$renderer->writeInfo(_t("Shop.DEVTOOLSTITLE","Shop Development Tools"), Director::absoluteBaseURL());
-		
+		$renderer->writeInfo(_t("Shop.DEVTOOLSTITLE", "Shop Development Tools"), Director::absoluteBaseURL());
+
 	}
 
-	function deleteproducts($request){
-		$task = new DeleteProductsTask();
-		$task->run($request);
-	}
-
-	function ShopFolder(){
+	public function ShopFolder() {
 		return SHOP_DIR;
 	}
 

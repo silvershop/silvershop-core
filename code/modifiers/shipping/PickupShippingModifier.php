@@ -5,17 +5,15 @@
  * @subpackage shipping
  */
 class PickupShippingModifier extends ShippingModifier{
-	
-	static $defaults = array(
+
+	private static $defaults = array(
 		'Type' => 'Ignored'
 	);
-	
-	static $casting = array(
+
+	private static $casting = array(
 		'TableValue' => 'CanBeFreeCurrency'
 	);
-	
-	public static $singular_name = "Pick Up Shipping";
-	function i18n_singular_name() { return _t("PickupShippingModifier.SINGULAR", "Pick up from store"); }
 
-	
+	private static $singular_name = "Pick Up Shipping";
+
 }

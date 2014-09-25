@@ -1,59 +1,83 @@
 <?php
-/**
- * Reset to all default configuration settings.
- */
 
-// * * * NON-ECOMMERCE SETTINGS
-Payment::set_site_currency('USD');
-Geoip::$default_country_code = false;
-Email::setAdminEmail('test@myshop.com');
-
-//i18n::set_locale('');
-
-// * * * ECOMMERCE I18N SETTINGS
-EcommerceCurrency::setDecimalDelimiter('.');
-EcommerceCurrency::setThousandDelimiter('');
 Object::useCustomClass('SS_Datetime','I18nDatetime', true);
 
-// * * * SHOPPING CART, ORDER, MODIFIERS
-Order::set_email(null);
-Order::set_receipt_subject("Shop Sale Information #%d");
-Order::set_modifiers(array(),true); //empty modifiers
+/// Reset to all default configuration settings.
 
-Order::set_table_overview_fields(array(
-	'ID' => 'Order No',
-	'Created' => 'Created',
-	'FirstName' => 'First Name',
-	'Surname' => 'Surname',
-	'Total' => 'Total',
-	'Status' => 'Status'
+$cfg = Config::inst();
+
+//remove array configs (these get merged, rater than replaced)
+
+$cfg->remove("Payment","allowed_gateways");
+$cfg->remove("Order","modifiers");
+$cfg->remove("ProductCatalogAdmin","managed_models");
+$cfg->remove("ProductCategory","sort_options");
+
+// non-ecommerce
+$cfg->update('Member', 'unique_identifier_field', 'Email');
+$cfg->update('Email', 'admin_email', 'test@myshop.com');
+$cfg->update('Payment', 'allowed_gateways', array(
+	'Dummy',
+	'Manual'
 ));
-Order::set_maximum_ignorable_sales_payments_difference(0.01);
 
-Order::set_cancel_before_payment(true);
-Order::set_cancel_before_processing(false);
-Order::set_cancel_before_sending(false);
-Order::set_cancel_after_sending(false);
+// i18n
+$cfg->update('ShopCurrency','decimal_delimiter','.');
+$cfg->update('ShopCurrency','thousand_delimiter','');
+$cfg->update('ShopCurrency','negative_value_format','-%s');
 
-OrderForm::set_user_membership_optional(false);
-OrderForm::set_force_membership(true);
+// products
+$cfg->update('Product','global_allow_purchase',true);
+$cfg->update('ProductCatalogAdmin','managed_models', array("Product", "ProductCategory","ProductVariation","ProductAttributeType"));
+$cfg->update('Product_image','thumbnail_width',140);
+$cfg->update('Product_image','thumbnail_height',100);
+$cfg->update('Product_image','large_image_width',200);
+$cfg->update('ProductCategory','include_child_groups',true);
+$cfg->update('ProductCategory','page_length',10);
+$cfg->update('ProductCategory','must_have_price',true);
+$cfg->update('ProductCategory','sort_options',array('Title' => 'Alphabetical','Price' => 'Lowest Price'));
 
-OrderManipulation::set_allow_cancelling(false);
-OrderManipulation::set_allow_paying(false);
+// cart, order
+$cfg->update('Order','modifiers',array());
+$cfg->update('Order','cancel_before_payment',true);
+$cfg->update('Order','cancel_before_processing',false);
+$cfg->update('Order','cancel_before_sending',false);
+$cfg->update('Order','cancel_after_sending',false);
+$cfg->update('ShoppingCart_Controller','direct_to_cart_page', false);
 
-// * * * PRODUCTS
-ProductsAndGroupsModelAdmin::set_managed_models(array("Product", "ProductCategory","ProductVariation","ProductAttributeType"));
-Product_Image::set_thumbnail_size(140, 100);
-Product_Image::set_content_image_width(200);
-Product_Image::set_large_image_width(200);
-ProductCategory::set_include_child_groups(true);
-ProductCategory::set_must_have_price(true);
-ProductCategory::set_sort_options( array('Title' => 'Alphabetical','Price' => 'Lowest Price'));
+//modifiers
+$cfg->update('FlatTaxModifier','name', 'NZD');
+$cfg->update('FlatTaxModifier','rate', 0.15);
+$cfg->update('FlatTaxModifier','exclusive', true);
 
-// * * * CHECKOUT
-ExpiryDateField::set_short_months(true);
-// * * * MEMBER
-ShopMember::set_group_name("Shop ShopMembers");
+$cfg->update('GlobalTaxModifier','country_rates', array(
+	"NZ" => array("rate" => 0.15, "name" => "GST", "exclusive" => false)
+));
 
-// * * * HELP
-Product::set_global_allow_purchase(true);
+$cfg->update('SimpleShippingModifier','default_charge', 10);
+$cfg->update('SimpleShippingModifier','charges_for_countries', array('US' => 10,'NZ' => 5));
+
+// checkout
+$cfg->update('ShopConfig','email_from', null);
+$cfg->update('ShopConfig','base_currency', 'NZD');
+$cfg->update('SteppedCheckout','first_step', null);
+$cfg->update('Address','requiredfields',array(
+	'Address',
+	'City',
+	'State',
+	'Country'
+));
+$cfg->update('OrderActionsForm', 'set_allow_cancelling', false);
+$cfg->update('OrderActionsForm', 'set_allow_paying', false);
+
+
+// injector resets
+$classes = array(
+	"OrderProcessor",
+	"CheckoutComponentConfig",
+	"Security",
+	"PurchaseService"
+);
+foreach($classes as $class){
+	$cfg->update('Injector',$class, array("class" => $class));
+}

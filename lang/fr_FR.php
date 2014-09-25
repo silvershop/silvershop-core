@@ -228,5 +228,3 @@ $lang['fr_FR']['ViewAllProducts.ss']['NOSUBJECTS'] = 'Pas de sujets définis';
 $lang['fr_FR']['ViewAllProducts.ss']['PRICE'] = 'Prix';
 $lang['fr_FR']['ViewAllProducts.ss']['PRODUCTID'] = 'ID du Produit';
 $lang['fr_FR']['ViewAllProducts.ss']['WEIGHT'] = 'Poids';
-
-?>

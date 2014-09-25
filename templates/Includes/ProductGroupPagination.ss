@@ -6,7 +6,7 @@
 		<% end_if %>
 
 		<span>
-	    	<% control Products.PaginationSummary(4) %>
+	    	<% loop Products.PaginationSummary(4) %>
 				<% if CurrentBool %>
 					$PageNum
 				<% else %>
@@ -16,7 +16,7 @@
 						&hellip;
 					<% end_if %>
 				<% end_if %>
-			<% end_control %>
+			<% end_loop %>
 		</span>
 
 		<% if Products.NotLastPage %>

@@ -210,5 +210,3 @@ $lang['id_ID']['ViewAllProducts.ss']['NOSUBJECTS'] = 'Tidak Ada Subyek yang Dite
 $lang['id_ID']['ViewAllProducts.ss']['PRICE'] = 'Harga';
 $lang['id_ID']['ViewAllProducts.ss']['PRODUCTID'] = 'ID Produk';
 $lang['id_ID']['ViewAllProducts.ss']['WEIGHT'] = 'Berat';
-
-?>

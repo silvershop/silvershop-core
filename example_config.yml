@@ -1,0 +1,55 @@
+---
+Name: app
+After: framework/routes#coreroutes
+---
+Email:
+  admin_email: example@example.com
+
+i18n:
+  default_locale: en_NZ
+
+ShopConfig:
+  base_currency: 'NZD'
+  email_from: sales@myshop.com
+  receipt_subject: "Thank you for your order at www.myshop.com - Order #%d"
+
+ShopCurrency:
+  decimal_delimiter: '.'
+  thousand_delimiter: ','
+
+Product:
+  global_allow_purchase: false
+
+Product_Image:
+  thumbnail_width: 140
+  thumbnail_height: 100
+  content_image_width: 200
+  large_image_width: 200
+
+ProductCategory:
+  include_child_groups: true
+  must_have_price: true
+  sort_options:
+    'Title' : 'Alphabetical'
+    'Price' : 'Lowest Price'
+
+ShoppingCart_Controller:
+  direct_to_cart_page: true
+
+CheckoutConfig:
+  member_creation_enabled: true
+  membership_required: true
+
+Order:
+  modifiers:
+    - 'FlatTaxModifier'
+    - 'SimpleShippingModifier'
+  cancel_before_payment: false
+  cancel_before_processing: false
+  cancel_before_sending: false
+  cancel_before_sending: false
+  cancel_after_sending: false
+
+OrderManipulation:
+  allow_cancelling: true
+  allow_paying: true
