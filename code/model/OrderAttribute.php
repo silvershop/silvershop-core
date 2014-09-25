@@ -42,11 +42,15 @@ class OrderAttribute extends DataObject {
 	* @return string
 	*/
 	public function TableTitle() {
-		return $this->i18n_singular_name();
+		$title = $this->i18n_singular_name();
+		$this->extend('updateTableTitle', $title);
+		return $title;
 	}
 
 	public function CartTitle() {
-		return $this->TableTitle();
+		$title = $this->TableTitle();
+		$this->extend('updateCartTitle', $title);
+		return $title;
 	}
 
 	public function ShowInTable() {

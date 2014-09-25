@@ -1,8 +1,3 @@
-Page:
-    home:
-        Title: Home
-        URLSegment: home
-
 ProductCategory:
     products:
         Title: Products
@@ -19,6 +14,8 @@ ProductCategory:
         Title: Music Players
         URLSegment: music-players
         Parent: =>ProductCategory.electronics
+    clearance:
+        Title: Clearance
 
 Product:
     socks:
@@ -57,30 +54,16 @@ Product:
         BasePrice: 200
         URLSegment: mp3-player
         Parent: =>ProductCategory.musicplayers
+        ProductCategories: =>ProductCategory.clearance
         AllowPurchase: 1
         Weight: 0.3
         Stock: 1000 #You need stock levels if you have included the stock module, else the test will fail.
-
-CheckoutPage:
-    checkout:
-        Title: Checkout
-        URLSegment: checkout
-
-CartPage:
-    cart:
-        Title: Cart
-        URLSegment: cart
-
-AccountPage:
-    accountpage:
-        Title: Account
-        URLSegment: account
-
-Page:
-    termsandconditions:
-        Title: Terms and Conditions
-        URLSegment: terms-and-conditions
-        Content: Test terms and conditions.
+    pdfbrochure:
+        Title: PDF Brochure
+        BasePrice: 0 #its free!
+        URLSegment: pdf-brochure
+        Parent: =>ProductCategory.products
+        AllowPurchase: 1
 
 Address:
     foobar:
@@ -142,6 +125,16 @@ Order:
     modifiedcart:
         Name: Modified cart
         Total: 100
+    megacart:
+        Name: Mega cart
+        Total: 810
+    payablecart:
+        Status: Cart
+        FirstName: Payable
+        Surname: Smith
+        ShippingAddressID: =>Address.foobar
+        BillingAddressID: =>Address.foobar
+        Total: 41
 
 Product_OrderItem:
     cart_socks:
@@ -188,6 +181,28 @@ Product_OrderItem:
         UnitPrice: 200
         Quantity: 2
         CalculatedTotal: 400
+    megacart_socks:
+        Order: =>Order.megacart
+        Product: =>Product.socks
+        Quantity: 20
+        #SubTotal: 160
+    megacart_tshirt:
+        Order: =>Order.megacart
+        Product: =>Product.tshirt
+        Quantity: 10
+        #SubTotal: 250
+    megacart_mp3player:
+        Order: =>Order.megacart
+        Product: =>Product.mp3player
+        Quantity: 2
+    payablecart_socks:
+        Order: =>Order.payablecart
+        Product: =>Product.socks
+        Quantity: 2
+    payablecart_tshirt:
+        Order: =>Order.payablecart
+        Product: =>Product.tshirt
+        Quantity: 1
 
 Payment:
     paid_success:
@@ -197,10 +212,3 @@ Payment:
         MoneyCurrency: USD
         Created: 2012-10-02 07:33:21
         Order: =>Order.paid
-
-SiteConfig:
-    config:
-        Title: Shop Testing Website
-        ShopClosed: 0
-        TermsPage: =>Page.termsandconditions
-        CustomerGroup: =>Group.customers

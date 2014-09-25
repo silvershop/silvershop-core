@@ -80,15 +80,13 @@ class OrderActionsForm extends Form{
 		if(self::config()->allow_paying &&
 			$this->order &&
 			$this->order->canPay()) {
-			//assumes that the controller is extended by OrderManipulation decorator
-
 			// Save payment data from form and process payment
 			$data = $form->getData();
 			$gateway = (!empty($data['PaymentMethod'])) ? $data['PaymentMethod'] : null;
 
 			if(!GatewayInfo::is_manual($gateway)){
-				$data['cancelUrl'] = $this->controller->Link();
 				$processor = OrderProcessor::create($this->order);
+				$data['cancelUrl'] = $processor->getReturnUrl();
 				$response = $processor->makePayment($gateway, $data);
 
 				if($response){

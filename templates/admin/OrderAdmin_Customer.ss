@@ -1,4 +1,4 @@
-<table class="ss-gridfield-table">
+<table class="order-customer ss-gridfield-table">
 	<thead>
 		<tr class="title">
 			<th colspan="2">

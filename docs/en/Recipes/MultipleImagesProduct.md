@@ -34,9 +34,9 @@ Update CMS fields, so images can be added.
 [mysite]/templates/Includes/AdditionalImages.ss
 
 	<% if AdditionalImages %>
-		<% control AdditionalImages %>
+		<% loop AdditionalImages %>
 			$Me
-		<% end_control %>
+		<% end_loop %>
 	<% end_if %>
 
 Add <% include AdditionalImages %> somewhere in your Product.ss template.

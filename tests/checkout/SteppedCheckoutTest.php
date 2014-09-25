@@ -2,7 +2,10 @@
 
 class SteppedCheckoutTest extends FunctionalTest{
 
-	protected static $fixture_file = 'shop/tests/fixtures/shop.yml';
+	protected static $fixture_file = array(
+		'shop/tests/fixtures/Pages.yml',
+		'shop/tests/fixtures/shop.yml'
+	);
 	protected static $use_draft_site = true; //so we don't need to publish
 	protected $autoFollowRedirection = false;
 
@@ -31,7 +34,7 @@ class SteppedCheckoutTest extends FunctionalTest{
 		$this->assertTrue($this->checkout->IsCurrentStep('membership'));
 		$this->assertFalse($this->checkout->IsFutureStep('membership'));
 
-		$this->checkout->NextStepLink(); //TODO: assertion
+		$this->checkout->NextStepLink(); 
 
 		$this->assertFalse($this->checkout->IsPastStep('contactdetails'));
 		$this->assertFalse($this->checkout->IsCurrentStep('contactdetails'));
@@ -84,7 +87,8 @@ class SteppedCheckoutTest extends FunctionalTest{
 			'action_setcontactdetails' => 1
 		);
 		$response = $this->post('/checkout/ContactDetailsForm', $data);
-		//TODO: check order has been updated
+		
+		$this->markTestIncomplete('check order has been updated');
 	}
 
 	public function testShippingAddress() {
@@ -100,7 +104,7 @@ class SteppedCheckoutTest extends FunctionalTest{
 		);
 		$response = $this->post('/checkout/AddressForm', $data);
 
-		//TODO: assertions!
+		$this->markTestIncomplete('assertions!');
 	}
 
 	public function testBillingAddress() {
@@ -116,7 +120,7 @@ class SteppedCheckoutTest extends FunctionalTest{
 		);
 		$response = $this->post('/checkout/AddressForm', $data);
 
-		//TODO: assertions!
+		$this->markTestIncomplete('assertions!');
 	}
 
 	public function testPaymentMethod() {

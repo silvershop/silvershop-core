@@ -9,14 +9,6 @@
 </p>
 
 <p>
-	<a href="{$BaseHref}dev/tasks/DeleteOrdersTask"><% _t("DELETEORDERS","Delete All Orders") %></a> 
-	- <% _t("DELETEORDERSDESC","Remove all orders, modifiers, and payments from the database.") %>
-</p>
-<p>
-	<a href="{$BaseHref}dev/tasks/DeleteProductsTask"><% _t("DELETEPRODUCTS","Delete All Products") %></a>
-	- <% _t("DELETEPRODUCTSDESC","Remove all products from the database.") %>
-</p>
-<p>
 	<a href="{$BaseHref}dev/tasks/RecalculateAllOrdersTask"><% _t("RECALCULATEORDERS","Recalculate All Orders") %></a>
 	- <% _t("RECALCULATEORDERSDESC","Recalculate all order values. Warning: this will overwrite any historical values.") %>
 </p>

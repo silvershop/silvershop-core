@@ -2,15 +2,22 @@
 
 class AccountPageTest extends FunctionalTest{
 
-	public static $fixture_file = "shop/tests/fixtures/shop.yml";
-	public static $disable_theme = true;
-	public static $use_draft_site = true;
+	protected static $fixture_file = array(
+		'shop/tests/fixtures/Pages.yml',
+		'shop/tests/fixtures/shop.yml'
+	);
+	protected static $disable_theme = true;
+	protected static $use_draft_site = true;
 
 	public function setUp() {
 		parent::setUp();
 		$this->accountpage = $this->objFromFixture("AccountPage", "accountpage");
 		$this->controller = new AccountPage_Controller($this->accountpage);
 		$this->controller->init();
+	}
+
+	public function testCanViewAccountPage() {
+		$this->markTestIncomplete('Log in and view account page');
 	}
 
 	public function testGlobals() {
@@ -20,7 +27,6 @@ class AccountPageTest extends FunctionalTest{
 	}
 
 	public function testAddressBook() {
-
 		$member = $this->objFromFixture("Member", "joebloggs");
 		$this->logInAs($member);
 
@@ -39,14 +45,16 @@ class AccountPageTest extends FunctionalTest{
 		$this->assertTrue((boolean)$createform, "Create form exists");
 		$this->assertTrue((boolean)$defaultform, "Default form exists");
 
-		//$this->controller->saveaddresses($data, $createform); //TODO: save address
-		//$this->controller->savedefaultaddresses($data, $defaultform); //TODO: save default
+		//$this->controller->saveaddresses($data, $createform);
+		//$this->controller->savedefaultaddresses($data, $defaultform);
+		$this->markTestIncomplete("save address and save default");
 	}
 
 	public function testEditProfile() {
 		$this->controller->editprofile();
 		$this->controller->EditAccountForm();
 		$this->controller->ChangePasswordForm();
+		$this->markTestIncomplete("Add some assertions");
 	}
 
 }

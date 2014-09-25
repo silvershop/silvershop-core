@@ -84,9 +84,7 @@ class OrderItem extends OrderAttribute {
 	 * @param int $val new quantity to set
 	 */
 	public function setQuantity($val) {
-		if($val < 1){
-			$val = 1;
-		}
+		$val = $val < 1 ? 1 : $val;
 		$this->setField("Quantity", $val);
 	}
 
@@ -164,7 +162,9 @@ class OrderItem extends OrderAttribute {
 	 * Also serves as a standardised placeholder for overriding in subclasses.
 	 */
 	public function Image() {
-		return $this->Buyable()->Image();
+		if($this->Buyable()){
+			return $this->Buyable()->Image();
+		}
 	}
 
 	public function QuantityField() {

@@ -2,7 +2,10 @@
 
 class OrderActionsFormTest extends FunctionalTest{
 
-	protected static $fixture_file = "shop/tests/fixtures/shop.yml";
+	protected static $fixture_file = array(
+		'shop/tests/fixtures/Pages.yml',
+		'shop/tests/fixtures/shop.yml'
+	);
 
 	public function setUp() {
 		parent::setUp();

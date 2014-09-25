@@ -10,13 +10,17 @@ class PopulateCartTask extends BuildTask{
 
 	public function run($request){
 		$cart = ShoppingCart::singleton();
-		if($products = Versioned::get_by_stage("Product", "Live","","RAND()","",5)){
+		$count = $request->getVar('count') ? $request->getVar('count') : 5;
+		if($products = Versioned::get_by_stage("Product", "Live","","RAND()","", $count)){
 			foreach($products as $product){
 				$variations = $product->Variations();
 				if($variations->exists()){
 					$product = $variations->sort("RAND()")->first();
 				}
-				$cart->add($product,(int)rand(1, 10));
+				$quantity = (int)rand(1, 5);
+				if($product->canPurchase(Member::currentUser(), $quantity)){
+					$cart->add($product, $quantity);
+				}
 			}
 		}
 		Controller::curr()->redirect(CheckoutPage::find_link());

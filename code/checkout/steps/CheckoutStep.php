@@ -4,8 +4,6 @@
  */
 class CheckoutStep extends Extension{
 
-	public static $continue_anchor = "cont"; //indicates where to jump to on the page
-
 	/**
 	 * Get the next step action
 	 * @return string|NULL
@@ -14,7 +12,8 @@ class CheckoutStep extends Extension{
 		$steps = $this->owner->getSteps();
 		$found = false;
 		foreach($steps as $step => $class){
-			if(method_exists($this, $step)){ //determine if current step
+			//determine if this is the current step
+			if(method_exists($this, $step)){
 				$found = true;
 			}elseif ($found){
 				return $step;
@@ -27,7 +26,9 @@ class CheckoutStep extends Extension{
 		if(!$nextstep){
 			$nextstep = $this->nextstep();
 		}
-		return $this->owner->Link($nextstep)."#".self::$continue_anchor;
+		$anchor = Config::inst()->get("SteppedCheckout", "continue_anchor");
+		$anchor = $anchor ? "#".$anchor : "";
+		return $this->owner->Link($nextstep).$anchor;
 	}
 
 }

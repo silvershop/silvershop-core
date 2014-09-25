@@ -63,6 +63,8 @@ class Address extends DataObject{
 		$fields->addFieldToTab("Root.Main",
 			$this->getCountryField(), 'State'
 		);
+		$fields->removeByName("MemberID");
+		
 		return $fields;
 	}
 
@@ -70,7 +72,7 @@ class Address extends DataObject{
 		$fields = new FieldList(
 			$this->getCountryField(),
 			$addressfield = TextField::create('Address', _t('Address.ADDRESS', 'Address')),
-			$address2field = TextField::create('AddressLine2', _t('Address.ADDRESSLINE2', '&nbsp;')),
+			$address2field = TextField::create('AddressLine2', _t('Address.ADDRESSLINE2', 'Address Line 2 (optional)')),
 			$cityfield = TextField::create('City', _t('Address.CITY', 'City')),
 			$statefield = TextField::create('State', _t('Address.STATE', 'State')),
 			$postcodefield = TextField::create('PostalCode', _t('Address.POSTALCODE', 'Postal Code')),
@@ -89,12 +91,17 @@ class Address extends DataObject{
 
 	public function getCountryField() {
 		$countries = SiteConfig::current_site_config()->getCountriesList();
-		$countryfield = new ReadonlyField("Country", _t('Address.COUNTRY', 'Country'));
-		if(count($countries) > 1){
-			$countryfield = new DropdownField("Country", _t('Address.COUNTRY', 'Country'), $countries);
-			$countryfield->setHasEmptyDefault(true);
+		if(count($countries) == 1){
+			//field name is Country_readonly so it's value doesn't get updated
+			return new ReadonlyField("Country_readonly",
+				_t('Address.COUNTRY', 'Country'),
+				array_pop($countries)
+			);
 		}
-		return $countryfield;
+		return DropdownField::create("Country",
+			_t('Address.COUNTRY', 'Country'),
+				$countries
+		)->setHasEmptyDefault(true);
 	}
 
 	/**
@@ -102,8 +109,23 @@ class Address extends DataObject{
 	 * Required fields can be customised via self::$required_fields
 	 */
 	public function getRequiredFields() {
-		$fields = $this->config()->required_fields;
+		$fields = self::config()->required_fields;
+		//hack to allow overriding arrays in ss config
+		if(self::$required_fields != $fields){
+			foreach(self::$required_fields as $requirement){
+				if(($key = array_search($requirement, $fields)) !== false) {
+				    unset($fields[$key]);
+				}
+			}
+		}
+		//set nicer keys for easier processing
+		$fields = array_combine($fields, $fields);
 		$this->extend('updateRequiredFields', $fields);
+		//don't require country if shop config only specifies a single country
+		if(isset($fields['Country']) && SiteConfig::current_site_config()->getSingleCountry()){
+			unset($fields['Country']);
+		}
+
 		return $fields;
 	}
 

@@ -7,9 +7,9 @@
  */
 class OrderProcessorTest extends SapphireTest {
 
-	public static $fixture_file = 'shop/tests/fixtures/shop.yml';
-	public static $disable_theme = true;
-	public static $use_draft_site = true;
+	protected static $fixture_file = 'shop/tests/fixtures/shop.yml';
+	protected static $disable_theme = true;
+	protected static $use_draft_site = true;
 
 	protected $processor;
 
@@ -54,6 +54,7 @@ class OrderProcessorTest extends SapphireTest {
 		$this->assertTrue((bool)$member);
 		$member->write();
 
+		$order->calculate();
 		//submit checkout page
 		$this->assertTrue($this->placeOrder(
 			'James',
@@ -119,6 +120,7 @@ class OrderProcessorTest extends SapphireTest {
 		$joemember = $this->objFromFixture('Member', 'joebloggs');
 		$joemember->logIn();
 		$cart = ShoppingCart::curr();
+		$cart->calculate();
 		$this->assertTrue($this->placeOrder(
 			'Joseph',
 			'Blog',
@@ -163,6 +165,7 @@ class OrderProcessorTest extends SapphireTest {
 
 		$this->shoppingcart->add($this->socks);
 		$order = $this->shoppingcart->current();
+		$order->calculate();
 		$success = $this->placeOrder(
 			'Donald',
 			'Duck',
@@ -224,7 +227,9 @@ class OrderProcessorTest extends SapphireTest {
 		$address->write();
 		$order->ShippingAddressID = $address->ID;
 		$order->BillingAddressID = $address->ID; //same (for now)
-		if($member) $order->MemberID = $member->ID;
+		if($member){
+			$order->MemberID = $member->ID;
+		}
 		$order->write();
 		$this->processor = OrderProcessor::create($order);
 		return $this->processor->placeOrder();

@@ -69,3 +69,15 @@ $cfg->update('Address','requiredfields',array(
 ));
 $cfg->update('OrderActionsForm', 'set_allow_cancelling', false);
 $cfg->update('OrderActionsForm', 'set_allow_paying', false);
+
+
+// injector resets
+$classes = array(
+	"OrderProcessor",
+	"CheckoutComponentConfig",
+	"Security",
+	"PurchaseService"
+);
+foreach($classes as $class){
+	$cfg->update('Injector',$class, array("class" => $class));
+}

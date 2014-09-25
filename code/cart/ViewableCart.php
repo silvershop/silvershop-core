@@ -20,10 +20,6 @@ class ViewableCart extends Extension{
 		if(!$order || !$order->Items() || !$order->Items()->exists()){
 			return false;
 		}
-		if(!$this->calculateonce && $order){
-			$this->calculateonce = true;
-			$order->calculate();
-		}
 
 		return $order;
 	}

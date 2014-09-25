@@ -2,7 +2,7 @@
 
 class CheckoutStep_PaymentMethod extends CheckoutStep{
 
-	public static $allowed_actions = array(
+	private static $allowed_actions = array(
 		'paymentmethod',
 		'PaymentMethodForm',
 	);
@@ -37,6 +37,10 @@ class CheckoutStep_PaymentMethod extends CheckoutStep{
 	public function setpaymentmethod($data, $form) {
 		$this->checkoutconfig()->setData($form->getData());
 		return $this->owner->redirect($this->NextStepLink());
+	}
+
+	public function SelectedPaymentMethod() {
+		return Checkout::get($this->owner->Cart())->getSelectedPaymentMethod(true);
 	}
 
 }

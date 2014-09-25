@@ -14,7 +14,7 @@
  * @subpackage cms
  */
 
-class ProductBulkLoader extends CsvBulkLoader{
+class ProductBulkLoader extends CsvBulkLoader {
 
 	public static $parentpageid = null;
 	public static $createnewproductgroups = false;

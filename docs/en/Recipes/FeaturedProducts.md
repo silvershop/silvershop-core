@@ -26,8 +26,8 @@ You may want to display a small set of featured products somewhere on your site,
 
 	<% if FeaturedProducts %>
 		<div class="featuredproducts">
-			<% control FeaturedProducts %>
+			<% loop FeaturedProducts %>
 				<% include ProductGroupItem %>
-			<% end_control %>
+			<% end_loop %>
 		</div>
 	<% end_if %>

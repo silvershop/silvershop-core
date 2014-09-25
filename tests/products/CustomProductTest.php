@@ -1,53 +1,61 @@
 <?php
 
-class CustomProductTest extends FunctionalTest{
+/**
+ * @package shop
+ * @subpackage tests
+ */
+class CustomProductTest extends FunctionalTest {
 
-	public static $fixture_file = 'shop/tests/fixtures/customproduct.yml';
-
-	public function setUp() {
-		parent::setUp();
-		$this->thing = $this->objFromFixture("CustomProduct", "thing");
-	}
+	protected $extraDataObjects = array(
+		"CustomProduct",
+		"CustomProduct_OrderItem"
+	);
 
 	public function testCustomProduct() {
+		$thing = CustomProduct::create(array(
+			"Title" => "Thing",
+			"Price" => 30
+		));
+		$thing->write();
+
 		$cart = ShoppingCart::singleton();
 
 		$options1 = array('Color' => 'Green','Size' => 5,'Premium' => true);
-		$this->assertTrue((bool)$cart->add($this->thing, 1, $options1), "add to customisation 1 to cart");
-		$item = $cart->get($this->thing, $options1);
+		$this->assertTrue((bool)$cart->add($thing, 1, $options1), "add to customisation 1 to cart");
+		$item = $cart->get($thing, $options1);
 
 		$this->assertTrue((bool)$item, "item with customisation 1 exists");
 		$this->assertEquals(1, $item->Quantity);
 
-		$this->assertTrue((bool)$cart->add($this->thing, 2, $options1), "add another two customisation 1");
-		$item = $cart->get($this->thing, $options1);
+		$this->assertTrue((bool)$cart->add($thing, 2, $options1), "add another two customisation 1");
+		$item = $cart->get($thing, $options1);
 		$this->assertEquals(3, $item->Quantity, "quantity has updated correctly");
 		$this->assertEquals("Green", $item->Color);
 		$this->assertEquals(5, $item->Size);
 		$this->assertEquals(1, $item->Premium); //should be true?
 
-		$this->assertFalse($cart->get($this->thing), "try to get a non-customised product");
+		$this->assertFalse($cart->get($thing), "try to get a non-customised product");
 
 		$options2 =  array('Color' => 'Blue','Size' => 6, 'Premium' => false);
-		$this->assertTrue((bool)$cart->add($this->thing, 5, $options2), "add customisation 2 to cart");
-		$item = $cart->get($this->thing, $options2);
+		$this->assertTrue((bool)$cart->add($thing, 5, $options2), "add customisation 2 to cart");
+		$item = $cart->get($thing, $options2);
 		$this->assertTrue((bool)$item, "item with customisation 2 exists");
 		$this->assertEquals(5, $item->Quantity);
 
 		$options3 = array('Color' => 'Blue');
-		$this->assertTrue((bool)$cart->add($this->thing, 1, $options3), "add a sub-variant of customisation 2");
-		$item = $cart->get($this->thing, $options3);
+		$this->assertTrue((bool)$cart->add($thing, 1, $options3), "add a sub-variant of customisation 2");
+		$item = $cart->get($thing, $options3);
 
-		$this->assertTrue((bool)$cart->add($this->thing), "add product with no customisation");
-		$item = $cart->get($this->thing);
+		$this->assertTrue((bool)$cart->add($thing), "add product with no customisation");
+		$item = $cart->get($thing);
 
 		$order = $cart->current();
 		$items = $order->Items();
 		$this->assertEquals(4, $items->Count(), "4 items in cart");
 
 		//remove
-		$cart->remove($this->thing, 2, $options2);
-		$item = $cart->get($this->thing, $options2);
+		$cart->remove($thing, 2, $options2);
+		$item = $cart->get($thing, $options2);
 		$this->assertNotNull($item, 'item exists in cart');
 		$this->assertEquals(3, $item->Quantity);
 
@@ -55,21 +63,25 @@ class CustomProductTest extends FunctionalTest{
 
 		//set quantity
 		$options4 = array('Size' => 12, 'Color' => 'Blue');
-		$resp = $cart->setQuantity($this->thing, 5, $options4);
+		$resp = $cart->setQuantity($thing, 5, $options4);
 
-		$item = $cart->get($this->thing, $options4);
+		$item = $cart->get($thing, $options4);
 		$this->assertTrue((bool)$item, 'item exists in cart');
 
 		$this->assertEquals(5, $item->Quantity, "quantity is 5");
 
+		$this->markTestIncomplete("what about default values that have been set");
 		//test by using urls
-		//add a partial match
-		//TODO: what about default values that have been set?
+		//add a partial match		
 	}
 
 }
 
-class CustomProduct extends DataObject implements Buyable{
+/**
+ * @package shop
+ * @subpackage tests
+ */
+class CustomProduct extends DataObject implements Buyable, TestOnly {
 
 	private static $db = array(
 		'Title' => 'Varchar',
@@ -88,7 +100,7 @@ class CustomProduct extends DataObject implements Buyable{
 		return $item;
 	}
 
-	public function canPurchase($member = null) {
+	public function canPurchase($member = null, $quantity = 1) {
 		return $this->Price > 0;
 	}
 
@@ -98,7 +110,11 @@ class CustomProduct extends DataObject implements Buyable{
 
 }
 
-class CustomProduct_OrderItem extends OrderItem{
+/**
+ * @package shop
+ * @subpackage tests
+ */
+class CustomProduct_OrderItem extends OrderItem implements TestOnly {
 
 	private static $db = array(
 		'Color' => "Enum('Red,Green,Blue','Red')",
@@ -118,7 +134,6 @@ class CustomProduct_OrderItem extends OrderItem{
 
 	private static $buyable_relationship = "Product";
 
-	//combintation of fields that must be unique
 	private static $required_fields = array(
 		'Color',
 		'Size',

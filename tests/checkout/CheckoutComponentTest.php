@@ -13,29 +13,30 @@ class CheckoutComponentTest extends SapphireTest {
 		$config = new SinglePageCheckoutComponentConfig($order);
 
 		$components = $config->getComponents();
-		//todo: assertions
+		//assertions!
 
 		$fields = $config->getFormFields();
-		//todo: assertions
+		//assertions!
 
 		$required = $config->getRequiredFields();
-		//todo: assertions
+		//assertions!
 
 		//$validateData = $config->validateData($data);
-		//todo: assertions
+		//assertions!
 
 		$data = $config->getData();
-		//todo: assertions
+		//assertions!
 
 		$config->setData($data);
-		//todo: assertions
+		//assertions!
 
-		//TODO: test
 		//form field generation
 		//validate data
 		//set data
 		//get data
+		$this->markTestIncomplete('Lots missing here');
 	}
+
 
 	//test namespaced config
 

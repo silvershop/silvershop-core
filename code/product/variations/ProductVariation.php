@@ -1,6 +1,8 @@
 <?php
+
 /**
  * Product Variation
+ *
  * Provides a means for specifying many variations on a product.
  * Used in combination with ProductAttributes, such as color, size.
  * A variation will specify one particular combination, such as red, and large.
@@ -8,45 +10,66 @@
  * @package shop
  * @subpackage variations
  */
-class ProductVariation extends DataObject implements Buyable{
+class ProductVariation extends DataObject implements Buyable {
 
 	private static $db = array(
 		'InternalItemID' => 'Varchar(30)',
 		'Price' => 'Currency'
 	);
+
 	private static $has_one = array(
 		'Product' => 'Product',
 		'Image' => 'Image'
 	);
+
 	private static $many_many = array(
 		'AttributeValues' => 'ProductAttributeValue'
 	);
+
 	private static $casting = array(
 		'Title' => 'Text',
 		'Price' => 'Currency'
 	);
+
 	private static $versioning = array(
 		'Live'
 	);
+
 	private static $extensions = array(
 		"Versioned('Live')"
 	);
+
 	private static $summary_fields = array(
 		'InternalItemID' => 'Product Code',
 		//'Product.Title' => 'Product',
 		'Title' => 'Variation',
 		'Price' => 'Price'
 	);
+
 	private static $searchable_fields = array(
 		'Product.Title',
 		'InternalItemID'
 	);
 
+	private static $indexes = array(
+		'InternalItemID' => true,
+		'LastEdited' => true,
+	);
+
 	private static $singular_name = "Variation";
+
 	private static $plural_name = "Variations";
 
 	private static $default_sort = "InternalItemID";
+
 	private static $order_item = "ProductVariation_OrderItem";
+
+	private static $title_has_label = true;
+
+	private static $title_separator = ':';
+
+	private static $title_glue = ', ';
+
 
 	public function getCMSFields() {
 		$fields = new FieldList(
@@ -58,7 +81,7 @@ class ProductVariation extends DataObject implements Buyable{
 		if($attributes->exists()){
 			foreach($attributes as $attribute){
 				if($field = $attribute->getDropDownField()){
-					if($value = $this->AttributeValues()->find('TypeID',$attribute->ID)){
+					if($value = $this->AttributeValues()->find('TypeID', $attribute->ID)){
 						$field->setValue($value->ID);
 					}
 					$fields->push($field);
@@ -76,7 +99,7 @@ class ProductVariation extends DataObject implements Buyable{
 		}else{
 			$fields->push(LiteralField::create('savefirst',
 				"<p class=\"message warning\">".
-					"You can choose variation attributes after saving for the first time
+					"You can choose variation attributes after saving for the first time, if they exist.
 				</p>"
 			));
 		}
@@ -98,38 +121,43 @@ class ProductVariation extends DataObject implements Buyable{
 		}
 	}
 
-	public function getTitle(){
+	public function getTitle() {
 		$values = $this->AttributeValues();
-		if($values->exists()){
+		if($values->exists()) {
 			$labelvalues = array();
 			foreach($values as $value){
-				$labelvalues[] = $value->Type()->Label.':'.$value->Value;
+				if(self::config()->title_has_label) {
+					$labelvalues[] = $value->Type()->Label . self::config()->title_separator . $value->Value;
+				} else {
+					$labelvalues[] = $value->Value;
+				}
 			}
-			return implode(', ',$labelvalues);
+
+			return implode(self::config()->title_glue, $labelvalues);
 		}
-		return $this->InternalItemID;
+		$this->extend('updateTitle', $title);
+
+		return $title;
 	}
 
-	//this is used by TableListField to access attribute values.
-	public function AttributeProxy(){
-		$do = new DataObject();
-		if($this->AttributeValues()->exists()){
-			foreach($this->AttributeValues() as $value){
-				$do->{'Val'.$value->Type()->Name} = $value->Value;
-			}
-		}
-		return $do;
+	public function getCategoryIDs() {
+		return $this->Product() ? $this->Product()->getCategoryIDs() : array();
 	}
 
-	public function canPurchase($member = null) {
+	public function getCategories() {
+		return $this->Product() ? $this->Product()->getCategories() : new ArrayList();
+	}
+
+	public function canPurchase($member = null, $quantity = 1) {
 		$allowpurchase = false;
-		if($product = $this->Product()){
-			$allowpurchase = ($this->sellingPrice() > 0) && $product->AllowPurchase;
+		if($product = $this->Product()) {
+			$allowpurchase = ($this->sellingPrice() > 0 || Product::config()->allow_zero_price) && $product->AllowPurchase;
 		}
-		$extended = $this->extendedCan('canPurchase', $member);
-		if($allowpurchase && $extended !== null){
+		$extended = $this->extendedCan('canPurchase', $member, $quantity);
+		if($allowpurchase && $extended !== null) {
 			$allowpurchase = $extended;
 		}
+
 		return $allowpurchase;
 	}
 
@@ -148,7 +176,7 @@ class ProductVariation extends DataObject implements Buyable{
 	public function Item() {
 		$filter = array();
 		$this->extend('updateItemFilter',$filter);
-		$item = ShoppingCart::singleton()->get($this,$filter);
+		$item = ShoppingCart::singleton()->get($this, $filter);
 		if(!$item) {
 			//return dummy item so that we can still make use of Item
 			$item = $this->createItem(0);
@@ -158,7 +186,7 @@ class ProductVariation extends DataObject implements Buyable{
 	}
 
 	public function addLink() {
-		return $this->Item()->addLink($this->ProductID,$this->ID);
+		return $this->Item()->addLink($this->ProductID, $this->ID);
 	}
 
 	public function createItem($quantity = 1,$filter = array()){
@@ -180,9 +208,10 @@ class ProductVariation extends DataObject implements Buyable{
 		if ($price == 0 && $this->Product() && $this->Product()->sellingPrice()){
 			$price = $this->Product()->sellingPrice();
 		}
-		if (!$price) $price = 0;
-		//TODO: this is not ideal, because prices manipulations will not happen in a known order
 		$this->extend("updateSellingPrice",$price);
+		//prevent negative values
+		$price = $price < 0 ? 0 : $price;
+
 		return $price;
 	}
 
@@ -208,7 +237,7 @@ class ProductVariation_OrderItem extends Product_OrderItem {
 
 	/**
 	 * Overloaded relationship, for getting versioned variations
-	 * @param unknown_type $current
+	 * @param boolean $current
 	 */
 	public function ProductVariation($forcecurrent = false) {
 		if($this->ProductVariationID && $this->ProductVariationVersion && !$forcecurrent){

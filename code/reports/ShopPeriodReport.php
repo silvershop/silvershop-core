@@ -5,10 +5,18 @@
  */
 class ShopPeriodReport extends SS_Report{
 
+	private static $display_uncategorised_data = false;
+
 	protected $dataClass = 'Order';
-	protected $periodfield = "Created";
+	protected $periodfield = "\"Order\".\"Created\"";
 	protected $grouping = false;
-	protected $pagesize = 20;
+	protected $pagesize = 30;
+
+	private static $groupingdateformats = array(
+		"Year" => "Y",
+		"Month" => "Y - F",
+		"Day" => "d F Y - l"
+	);
 
 	public function title(){
 		return _t($this->class.".TITLE",$this->title);
@@ -19,23 +27,29 @@ class ShopPeriodReport extends SS_Report{
 	}
 
 	public function parameterFields() {
-		$dateformat = Member::currentUser()->getDateFormat();
+		$member = Member::currentUserID() ? Member::currentUser() : new Member();
+		$dateformat = $member->getDateFormat();
 		$fields = new FieldList(
-			$start = new DateField("StartPeriod","Start ($dateformat)"),
-			$end = new DateField("EndPeriod","End ($dateformat)")
+			$start = new DateField("StartPeriod","Start Date"),
+			$end = new DateField("EndPeriod","End Date")
 		);
 		if($this->grouping){
 			$fields->push(new DropdownField("Grouping","Group By",array(
 				"Year" => "Year",
 				"Month" => "Month",
-				"Week" => "Week",
 				"Day" => "Day"
-			)));
+			),'Month'));
+			if(self::config()->display_uncategorised_data){
+				$fields->push(
+					CheckboxField::create("IncludeUncategorised", "Include Uncategorised Data")
+						->setDescription("Display data that doesn't have a date.")
+				);
+			}
 		}
-		$start->setConfig("dateformat",$dateformat);
-		$end->setConfig("dateformat",$dateformat);
-		$start->setConfig("showcalendar", true); //Not working! (js does not run)
-		$end->setConfig("showcalendar", true); //Not working!
+		$start->setConfig("dateformat", $dateformat);
+		$end->setConfig("dateformat", $dateformat);
+		$start->setConfig("showcalendar", true);
+		$end->setConfig("showcalendar", true);
 		return $fields;
 	}
 
@@ -48,76 +62,84 @@ class ShopPeriodReport extends SS_Report{
 
 	public function getReportField(){
 		$field = parent::getReportField();
-		$field->getConfig()->removeComponentsByType('GridFieldPaginator');
+		$config = $field->getConfig();
+		$columns = $config->getComponentByType("GridFieldDataColumns")
+			->getDisplayFields($field);
+		$config->getComponentByType('GridFieldExportButton')
+			->setExportColumns($columns);
 		return $field;
 	}
 
 	public function sourceRecords($params){
 		isset($params['Grouping']) || $params['Grouping'] = "Month";
-		$output = new ArrayList();
-		$query = $this->query($params);
-		$results = $query->execute();
-		//TODO: push empty months and days to fill out gaps
-		foreach($results as $result){
-			$output->push($record = new $this->dataClass($result));
-			if($this->grouping){
-				$dformats = array(
-					"Year" => "Y",
-					"Month" => "Y - F",
-					"Week" => "o - W",
-					"Day" =>	"d F Y"
-				);
-				$dformat = $dformats[$params['Grouping']];
-				$record->FilterPeriod = (empty($result["FilterPeriod"])) ? "uncategorised" : date($dformat, strtotime($result["FilterPeriod"]));
-			}
+		$list = new SQLQueryList($this->query($params));
+		$grouping = $params['Grouping'];
+		$self = $this;
+		$list->setOutputClosure(function($row) use ($grouping, $self){
+			$row['FilterPeriod'] = $self->formatDateForGrouping($row['FilterPeriod'], $grouping);
+
+			return new $self->dataClass($row);
+		});
+
+		return $list;
+	}
+
+	public function formatDateForGrouping($date, $grouping) {
+		if(!$date){
+			return $date;
 		}
-		return $output;
+		$formats = self::config()->groupingdateformats;
+		$dformat = $formats[$grouping];
+		return date($dformat, strtotime($date));
 	}
 
 	public function query($params){
-		$query = new ShopReport_Query();
-		$query->selectField($this->periodfield, 'FilterPeriod');
-		$query->setFrom('"' . $this->dataClass . '"');
-		$start = isset($params['StartPeriod']) && !empty($params['StartPeriod']) ? date('Y-m-d',strtotime($params["StartPeriod"])) : null;
-		$end = isset($params['EndPeriod']) && !empty($params['EndPeriod']) ? date('Y-m-d',strtotime($params["EndPeriod"]) + 86400) : null; //end day is inclusive
-		if($start && $end){
-			$query->addHaving("FilterPeriod BETWEEN '$start' AND '$end'");
-		}elseif($start){
-			$query->addHaving("FilterPeriod > '$start'");
-		}elseif($end){
-			$query->addHaving("FilterPeriod <= '$end'");
+		//convert dates to correct format
+		$fields = $this->parameterFields();
+		$fields->setValues($params);
+		$start = $fields->fieldByName("StartPeriod")->dataValue();
+		$end = $fields->fieldByName("EndPeriod")->dataValue();
+		//include the entire end day
+		if($end){
+			$end = date('Y-m-d',strtotime($end) + 86400);
 		}
-		if($start || $end){
-			$query->addHaving("FilterPeriod IS NOT NULL"); //only include paid orders when we are doing specific period searching
+		$filterperiod = $this->periodfield;
+		$query = new ShopReport_Query();
+		$query->setSelect(array("FilterPeriod" => "MIN($filterperiod)"));
+
+		$query->setFrom('"' . $this->dataClass . '"');
+
+		if($start && $end){
+			$query->addWhere("$filterperiod BETWEEN '$start' AND '$end'");
+		}elseif($start){
+			$query->addWhere("$filterperiod > '$start'");
+		}elseif($end){
+			$query->addWhere("$filterperiod <= '$end'");
+		}
+		if($start || $end || !self::config()->display_uncategorised_data || !isset($params['IncludeUncategorised'])){
+			$query->addWhere("$filterperiod IS NOT NULL");
 		}
 		if($this->grouping){
 			switch($params['Grouping']){
 				case "Year":
-					$query->addGroupBy("YEAR(FilterPeriod)");
+					$query->addGroupBy($this->fd($filterperiod, '%Y'));
 					break;
 				case "Month":
 				default:
-					$query->addGroupBy("YEAR(FilterPeriod),MONTH(FilterPeriod)");
-					break;
-				case "Week":
-					$query->addGroupBy("YEAR(FilterPeriod),WEEK(FilterPeriod)");
+					$query->addGroupBy($this->fd($filterperiod, '%Y').",".$this->fd($filterperiod, '%m'));
 					break;
 				case "Day":
-					$query->setLimit("0,1000");
-					$query->addGroupBy("YEAR(FilterPeriod),MONTH(FilterPeriod),DAY(FilterPeriod)");
+					$query->addGroupBy($this->fd($filterperiod, '%Y').",".$this->fd($filterperiod, '%m').",".$this->fd($filterperiod, '%d'));
 					break;
 			}
 		}
-		if(isset($params["ctf"]["ReportContent"]["sort"])){
-			$dir = isset($params["ctf"]["ReportContent"]["dir"]) ? $params["ctf"]["ReportContent"]["dir"] : "DESC";
-			$query->addOrderBy($params["ctf"]["ReportContent"]["sort"], $dir);
-		}
-		if(isset($params["ctf"]["ReportContent"]["start"])){
-			$query->setLimit($params["ctf"]["ReportContent"]["start"].",".$this->pagesize);
-		}else{
-			$query->setLimit($this->pagesize);
-		}
+		$query->setOrderBy("\"FilterPeriod\"","ASC");
+	
 		return $query;
+	}
+
+	protected function fd($date, $format){
+		return DB::getConn()->formattedDatetimeClause($date, $format);
 	}
 
 }

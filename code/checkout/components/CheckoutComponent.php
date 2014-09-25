@@ -77,7 +77,7 @@ abstract class CheckoutComponent {
 /**
  * Proxy class to handle namespacing field names for checkout components
  */
-class CheckoutComponent_Namespaced extends CheckoutComponent{
+class CheckoutComponent_Namespaced extends CheckoutComponent {
 
 	protected $proxy;
 
@@ -91,9 +91,13 @@ class CheckoutComponent_Namespaced extends CheckoutComponent{
 
 	public function getFormFields(Order $order) {
 		$fields = $this->proxy->getFormFields($order);
-		foreach($fields as $field){
-			$field->setName($this->namespaceFieldName($field->getName()));
+		$allFields = $fields->dataFields();
+		if($allFields) {
+			foreach($allFields as $field){
+				$field->setName($this->namespaceFieldName($field->getName()));
+			}	
 		}
+		
 		return $fields;
 	}
 

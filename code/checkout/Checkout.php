@@ -72,7 +72,9 @@ class Checkout{
 	//save / set up addresses
 	public function setShippingAddress(Address $address) {
 		$this->order->ShippingAddressID = $address->ID;
-		$this->order->MemberID = Member::currentUserID();
+		if(Member::currentUserID()){
+			$this->order->MemberID = Member::currentUserID();	
+		} 
 		$this->order->write();
 		$this->order->extend('onSetShippingAddress', $address);
 		//update zones and userinfo
@@ -82,7 +84,9 @@ class Checkout{
 
 	public function setBillingAddress(Address $address) {
 		$this->order->BillingAddressID = $address->ID;
-		$this->order->MemberID = Member::currentUserID();
+		if(Member::currentUserID()){
+			$this->order->MemberID = Member::currentUserID();
+		}
 		$this->order->write();
 		$this->order->extend('onSetBillingAddress', $address);
 	}
@@ -116,7 +120,7 @@ class Checkout{
 		$methods = $this->getPaymentMethods();
 		reset($methods);
 		$method = count($methods) === 1 ? key($methods) : Session::get("Checkout.PaymentMethod");
-		if($nice){
+		if($nice && isset($methods[$method])){
 			$method = $methods[$method];
 		}
 		return $method;

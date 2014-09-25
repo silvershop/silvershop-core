@@ -23,8 +23,8 @@
 		</a>
 	<% end_if %>
 	<% if Cart %>
-		<% if Cart.CheckoutLink %>
-			<a class="checkoutlink button" href="$Cart.CheckoutLink">
+		<% if CheckoutLink %>
+			<a class="checkoutlink button" href="$CheckoutLink">
 				<% _t('CartPage.ss.PROCEEDTOCHECKOUT','Proceed to Checkout') %>
 			</a>
 		<% end_if %>

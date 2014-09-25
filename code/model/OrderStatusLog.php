@@ -89,7 +89,7 @@ class OrderStatusLog extends DataObject {
 	protected function updateWithLastInfo() {
 		if($this->OrderID) {
 			$logs = DataObject::get('OrderStatusLog', "\"OrderID\" = {$this->OrderID}", "\"Created\" DESC", null, 1);
-			if($logs) {
+			if($logs && $logs->Count()) {
 				$latestLog = $logs->First();
 				$this->DispatchedBy = $latestLog->DispatchedBy;
 				$this->DispatchedOn = $latestLog->DispatchedOn;

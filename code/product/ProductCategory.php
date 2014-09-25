@@ -21,11 +21,8 @@ class ProductCategory extends Page {
 	private static $must_have_price = true;
 
 	private static $sort_options = array(
-		'URLSegment' => 'Alphabetical',
-		'BasePrice' => 'Price',
-		//'Popularity' => 'Popularity'
-		//'Featured' => 'Featured',
-		//'Weight' => 'Weight'
+		'Alphabetical' => 'URLSegment',
+		'Price' => 'BasePrice'
 	);
 
 	/**
@@ -76,12 +73,12 @@ class ProductCategory extends Page {
 	 * @return DataList
 	 */
 	public function ChildCategories($recursive = false) {
-		$children = ProductCategory::get()->filter("ParentID",$this->ID);
+		$ids = array($this->ID);
 		if($recursive){
-			$children = $children->filter("ParentID",$this->AllChildCategoryIDs());
+			$ids += $this->AllChildCategoryIDs();
 		}
 
-		return $children;
+		return ProductCategory::get()->filter("ParentID", $ids);
 	}
 
 	/**
@@ -152,7 +149,9 @@ class ProductCategory_Controller extends Page_Controller {
 	 * @return ListSorter sorter
 	 */
 	public function getSorter(){
-	 	return new ListSorter($this->request, ProductCategory::config()->sort_options);
+	 	$sorter = new ListSorter($this->request, ProductCategory::config()->sort_options);
+		$this->extend('updateSorter', $sorter);
+		return $sorter;
 	}
 
 }

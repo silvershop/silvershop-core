@@ -12,7 +12,7 @@
  *
  * @package shop
  */
-class Product extends Page implements Buyable{
+class Product extends Page implements Buyable {
 
 	private static $db = array(
 		'InternalItemID' => 'Varchar(30)', //ie SKU, ProductID etc (internal / existing recognition of product)
@@ -71,7 +71,15 @@ class Product extends Page implements Buyable{
 	private static $default_sort = '"Title" ASC';
 
 	private static $global_allow_purchase = true;
+	private static $allow_zero_price = false;
 	private static $order_item = "Product_OrderItem";
+	private static $min_opengraph_img_size = 0;
+
+	private static $indexes = array(
+		'Featured' => true,
+		'AllowPurchase' => true,
+		'InternalItemID' => true,
+	);
 
 	/**
 	 * Add product fields to CMS
@@ -80,32 +88,35 @@ class Product extends Page implements Buyable{
 	public function getCMSFields() {
 		self::disableCMSFieldsExtensions();
 		$fields = parent::getCMSFields();
-		$fields->fieldByName('Root.Main.Title')->setTitle(_t('Product.PAGETITLE','Product Title'));
+		$fields->fieldByName('Root.Main.Title')
+			->setTitle(_t('Product.PAGETITLE', 'Product Title'));
 		//general fields
-		$fields->addFieldsToTab('Root.Main',array(
+		$fields->addFieldsToTab('Root.Main', array(
 			TextField::create('InternalItemID', _t('Product.CODE', 'Product Code/SKU'), '', 30),
-			DropdownField::create('ParentID',_t("Product.CATEGORY","Category"), $this->categoryoptions())
-				->setDescription(_t("Product.CATEGORYDESCRIPTION","This is the parent page or default category.")),
-			ListBoxField::create('ProductCategories',_t("Product.ADDITIONALCATEGORIES","Additional Categories"),
-					ProductCategory::get()->map('ID','NestedTitle')->toArray()
+			DropdownField::create('ParentID', _t("Product.CATEGORY", "Category"), $this->categoryoptions())
+				->setDescription(_t("Product.CATEGORYDESCRIPTION", "This is the parent page or default category.")),
+			ListBoxField::create('ProductCategories', _t("Product.ADDITIONALCATEGORIES", "Additional Categories"),
+					ProductCategory::get()
+						->filter("ID:not", $this->getAncestors()->map('ID', 'ID'))
+						->map('ID', 'NestedTitle')->toArray()
 				)->setMultiple(true),
 			TextField::create('Model', _t('Product.MODEL', 'Model'), '', 30),
 			CheckboxField::create('Featured', _t('Product.FEATURED', 'Featured Product')),
 			CheckboxField::create('AllowPurchase', _t('Product.ALLOWPURCHASE', 'Allow product to be purchased'), 1)
-		),'Content');
+		), 'Content');
 		//pricing
-		$fields->addFieldsToTab('Root.Pricing',array(
+		$fields->addFieldsToTab('Root.Pricing', array(
 			TextField::create('BasePrice', _t('Product.PRICE', 'Price'))
-				->setDescription(_t('Product.PRICEDESC',"Base price to sell this product at."))
+				->setDescription(_t('Product.PRICEDESC', "Base price to sell this product at."))
 				->setMaxLength(12),
 			TextField::create('CostPrice', _t('Product.COSTPRICE', 'Cost Price'))
-				->setDescription(_t('Product.COSTPRICEDESC','Wholesale price before markup.'))
+				->setDescription(_t('Product.COSTPRICEDESC', 'Wholesale price before markup.'))
 				->setMaxLength(12)
 		));
 		//physical measurements
 		$weightunit = "kg"; //TODO: globalise / make custom
 		$lengthunit = "cm";  //TODO: globalise / make custom
-		$fields->addFieldsToTab('Root.Shipping',array(
+		$fields->addFieldsToTab('Root.Shipping', array(
 			TextField::create('Weight', sprintf(_t('Product.WEIGHT', 'Weight (%s)'), $weightunit), '', 12),
 			TextField::create('Height', sprintf(_t('Product.HEIGHT', 'Height (%s)'), $lengthunit), '', 12),
 			TextField::create('Width', sprintf(_t('Product.WIDTH', 'Width (%s)'), $lengthunit), '', 12),
@@ -126,12 +137,11 @@ class Product extends Page implements Buyable{
 	 * Helper function for generating list of categories to select from.
 	 * @return array categories
 	 */
-	private function categoryoptions(){
-		$categories = ProductCategory::get()->map('ID','NestedTitle')->toArray();
+	private function categoryoptions() {
+		$categories = ProductCategory::get()->map('ID', 'NestedTitle')->toArray();
 		$categories = array(
 			0 => _t("SiteTree.PARENTTYPE_ROOT", "Top-level page")
 		) + $categories;
-
 		if($this->ParentID && !($this->Parent() instanceof ProductCategory)){
 			$categories = array(
 				$this->ParentID => $this->Parent()->Title." (".$this->Parent()->i18n_singular_name().")"
@@ -142,55 +152,79 @@ class Product extends Page implements Buyable{
 	}
 
 	/**
-	 * Returns the shopping cart.
-	 * @todo Does HTTP::set_cache_age() still need to be set here?
-	 *
-	 * @return Order
+	 * Get ids of all categories that this product appears in.
+	 * @return array ids list
 	 */
-	public function getCart() {
-		if(!self::$global_allow_purchase){
-			return false;
+	public function getCategoryIDs() {
+		$ids = array();
+		//ancestors
+		foreach($this->getAncestors() as $ancestor){
+			$ids[$ancestor->ID] = $ancestor->ID;
 		}
-		HTTP::set_cache_age(0);
+		//additional categories
+		$ids += $this->ProductCategories()->getIDList();
 
-		return ShoppingCart::curr();
+		return $ids;
+	}
+
+	/**
+	 * Get all categories that this product appears in.
+	 * @return DataList category data list
+	 */
+	public function getCategories(){
+		return  ProductCategory::get()->byIDs($this->getCategoryIDs());
 	}
 
 	/**
 	 * Conditions for whether a product can be purchased:
 	 *  - global allow purchase is enabled
 	 *  - product AllowPurchase field is true
-	 *  - product page is published
 	 *  - if variations, then one of them needs to be purchasable
 	 *  - if not variations, selling price must be above 0
 	 *
 	 * Other conditions may be added by decorating with the canPurcahse function
+	 *
+	 * @param Member $member
+	 * @param int $quantity
+	 *
+	 * @throws ShopBuyableException
+	 *
 	 * @return boolean
 	 */
-	public function canPurchase($member = null) {
-		if(!self::config()->global_allow_purchase ||
-			!$this->AllowPurchase ||
-			!$this->isPublished()
-		){
+	public function canPurchase($member = null, $quantity = 1) {
+		$global = self::config()->global_allow_purchase;
+		if(!$global || !$this->AllowPurchase) {
 			return false;
 		}
 		$allowpurchase = false;
-		if(
-			self::has_extension("ProductVariationsExtension") &&
+		$extension = self::has_extension("ProductVariationsExtension");
+		if($extension &&
 			ProductVariation::get()->filter("ProductID",$this->ID)->first()
-		){
-			foreach($this->Variations() as $variation){
-				if($variation->canPurchase()){
-					$allowpurchase = true;
-					break;
+		) {
+			foreach($this->Variations() as $variation) {
+				try {
+					if($variation->canPurchase($member, $quantity)) {
+						$allowpurchase = true;
+					
+						break;
+					}
+				} catch(ShopBuyableException $e) {
 				}
 			}
-		}elseif($this->sellingPrice() > 0){
+
+			// if not allowed to buy after any variations then raise the last
+			// exception again
+			if(!$allowpurchase && isset($e)) {
+				throw $e;
+
+				return false;
+			}
+		} else if($this->sellingPrice() > 0 || self::config()->allow_zero_price) {
 			$allowpurchase = true;
 		}
 		// Standard mechanism for accepting permission changes from decorators
-		$extended = $this->extendedCan('canPurchase', $member);
-		if($allowpurchase && $extended !== null){
+		$extended = $this->extendedCan('canPurchase', $member, $quantity);
+		if($allowpurchase && $extended !== null) {
 			$allowpurchase = $extended;
 		}
 
@@ -202,7 +236,8 @@ class Product extends Page implements Buyable{
 	 * @return boolean
 	 */
 	public function IsInCart() {
-		return $this->Item() && $this->Item()->Quantity > 0;
+		$item = $this->Item();
+		return $item && $item->exists() && $item->Quantity > 0;
 	}
 
 	/**
@@ -211,23 +246,26 @@ class Product extends Page implements Buyable{
 	 */
 	public function Item() {
 		$filter = array();
-		$this->extend('updateItemFilter',$filter);
-		$item = ShoppingCart::singleton()->get($this,$filter);
-		if(!$item)
-			$item = $this->createItem(0); //return dummy item so that we can still make use of Item
-		$this->extend('updateDummyItem',$item);
+		$this->extend('updateItemFilter', $filter);
+		$item = ShoppingCart::singleton()->get($this, $filter);
+		if(!$item){
+			//return dummy item so that we can still make use of Item
+			$item = $this->createItem();
+		}
+		$this->extend('updateDummyItem', $item);
 		return $item;
 	}
 
 	/**
 	 * @see Buyable::createItem()
 	 */
-	public function createItem($quantity = 1, $filter = null){
+	public function createItem($quantity = 1, $filter = null) {
 		$orderitem = self::config()->order_item;
 		$item = new $orderitem();
 		$item->ProductID = $this->ID;
 		if($filter){
-			$item->update($filter); //TODO: make this a bit safer, perhaps intersect with allowed fields
+			//TODO: make this a bit safer, perhaps intersect with allowed fields
+			$item->update($filter);
 		}
 		$item->Quantity = $quantity;
 		return $item;
@@ -237,39 +275,47 @@ class Product extends Page implements Buyable{
 	 * The raw retail price the visitor will get when they
 	 * add to cart. Can include discounts or markups on the base price.
 	 */
-	public function sellingPrice(){
+	public function sellingPrice() {
 		$price = $this->BasePrice;
-		$this->extend("updateSellingPrice",$price); //TODO: this is not ideal, because prices manipulations will not happen in a known order
-		if($price < 0){
-			$price = 0; //prevent negative values
-		}
+		//TODO: this is not ideal, because prices manipulations will not happen in a known order
+		$this->extend("updateSellingPrice", $price);
+		//prevent negative values
+		$price = $price < 0 ? 0 : $price;
+
 		return $price;
 	}
 
 	/**
 	 * This value is cased to Currency in temlates.
 	 */
-	public function getPrice(){
+	public function getPrice() {
 		return $this->sellingPrice();
 	}
 
-	public function setPrice($val){
-		$this->setField("BasePrice", $val);
+	public function setPrice($price) {
+		$price = $price < 0 ? 0 : $price;
+		$this->setField("BasePrice", $price);
 	}
 
-	public function Link(){
+	/**
+	 * Allow orphaned products to be viewed.
+	 */
+	public function isOrphaned() {
+		return false;
+	}
+
+	public function Link() {
 		$link = parent::Link();
-		$this->extend('updateLink',$link);
+		$this->extend('updateLink', $link);
 		return $link;
 	}
-
 
 	/**
 	 * If the product does not have an image, and a default image
 	 * is defined in SiteConfig, return that instead.
 	 * @return Image
 	 */
-	public function Image(){
+	public function Image() {
 		$image = $this->getComponent('Image');
 		if ($image && $image->exists() && file_exists($image->getFullPath())) return $image;
 		$image = SiteConfig::current_site_config()->DefaultProductImage();
@@ -277,16 +323,48 @@ class Product extends Page implements Buyable{
 		return $this->model->Image->newObject();
 	}
 
+    /**
+     * Integration with opengraph module
+     * @see https://github.com/tractorcow/silverstripe-opengraph
+     * @return string opengraph type
+     */
+	public function getOGType() {
+		return 'product';
+	}
 
-	//passing on shopping cart links ...is this necessary?? ...why not just pass the cart?
+	/**
+	 * Integration with the opengraph module
+	 * @return string url of product image
+	 */
+	public function getOGImage() {
+		if($image = $this->Image()){
+			$min = self::config()->min_opengraph_img_size;
+			$image = $min && $image->getWidth() < $min ? $image->setWidth($min) : $image;
+
+			return Director::absoluteURL($image->URL);
+		}
+    }
+
+	/**
+	 * Link to add this product to cart.
+	 * @return string link
+	 */
 	public function addLink() {
 		return ShoppingCart_Controller::add_item_link($this);
 	}
 
+	/**
+	 * Link to remove one of this product from cart.
+	 * @return string link
+	 */
 	public function removeLink() {
 		return ShoppingCart_Controller::remove_item_link($this);
 	}
 
+	/**
+	 * Link to remove all of this product from cart.
+	 * @return string link
+	 */
 	public function removeallLink() {
 		return ShoppingCart_Controller::remove_all_item_link($this);
 	}
@@ -302,10 +380,10 @@ class Product_Controller extends Page_Controller {
 
 	public $formclass = "AddProductForm"; //allow overriding the type of form used
 
-	public function Form(){
+	public function Form() {
 		$formclass = $this->formclass;
 		$form = new $formclass($this,"Form");
-		$this->extend('updateForm',$form);
+		$this->extend('updateForm', $form);
 		return $form;
 	}
 
@@ -339,13 +417,18 @@ class Product_OrderItem extends OrderItem {
 			//ie use live if in cart (however I see no logic for checking cart status)
 		if($this->ProductID && $this->ProductVersion && !$forcecurrent){
 			return Versioned::get_version('Product', $this->ProductID, $this->ProductVersion);
-		}elseif($this->ProductID && $product = Versioned::get_one_by_stage('Product','Live', "\"Product\".\"ID\"  = ".$this->ProductID)){
+		}elseif(
+			$this->ProductID && 
+			$product = Versioned::get_one_by_stage("Product", "Live",
+				"\"Product\".\"ID\"  = ".$this->ProductID
+			)
+		){
 			return $product;
 		}
 		return false;
 	}
 
-	public function onPlacement(){
+	public function onPlacement() {
 		parent::onPlacement();
 		if($product = $this->Product(true)){
 			$this->ProductVersion = $product->Version;
@@ -355,7 +438,7 @@ class Product_OrderItem extends OrderItem {
 	public function TableTitle() {
 		$product = $this->Product();
 		$tabletitle = ($product) ? $product->Title : $this->i18n_singular_name();
-		$this->extend('updateTableTitle',$tabletitle);
+		$this->extend('updateTableTitle', $tabletitle);
 		return $tabletitle;
 	}
 

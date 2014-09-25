@@ -30,19 +30,22 @@ class OrderTest extends SapphireTest {
 
 	public function testCMSFields() {
 		singleton('Order')->getCMSFields();
+		$this->markTestIncomplete('assertions!');
 	}
 
 	public function testSearchFields() {
 		singleton('Order')->scaffoldSearchFields();
+		$this->markTestIncomplete('assertions!');
 	}
 
 	public function testDebug() {
 		$order = $this->objFromFixture("Order", "cart");
 		$order->debug();
+		$this->markTestIncomplete('assertions!');
 	}
 
 	public function testOrderItems() {
-		$order = self::createOrder();
+		$order = $this->objFromFixture("Order", "paid");
 		$items = $order->Items();
 		$this->assertNotNull($items);
 		$this->assertDOSEquals(array(
@@ -55,7 +58,7 @@ class OrderTest extends SapphireTest {
 	}
 
 	public function testTotals() {
-		$order = self::createOrder();
+		$order = $this->objFromFixture("Order", "paid");
 		$this->assertEquals(408, $order->SubTotal(), "Subtotal is correct"); // 200 + 200 + 8
 		$this->assertEquals(408, $order->GrandTotal(), "Grand total is correct");
 		$this->assertEquals(200, $order->TotalPaid(), "Outstanding total is correct");
@@ -75,7 +78,7 @@ class OrderTest extends SapphireTest {
 
 	public function testPlacedOrderImmutability() {
 	
-		$order = self::createOrder();
+		$order = $this->objFromFixture("Order", "paid");
 		$processor = OrderProcessor::create($order)->placeOrder();
 		$this->assertEquals(408, $order->Total(), "check totals");
 
@@ -91,7 +94,8 @@ class OrderTest extends SapphireTest {
 
 		//item values don't change
 		$items = $order->Items()
-			->innerJoin( //TODO: why is this join needed?
+			//hack join to make thigns work
+			->innerJoin(
 				"Product_OrderItem",
 				'"OrderItem"."ID" = "Product_OrderItem"."ID"'
 			); 
@@ -110,14 +114,6 @@ class OrderTest extends SapphireTest {
 		$this->assertNotNull($socks, "Socks are in order");
 		$this->assertEquals(8, $socks->UnitPrice(), "Unit price remains the same");
 		$this->assertEquals(8, $socks->Total(), "Total remains the same");
-	}
-
-	/**
-	 * Helper for creating an order
-	 * Total should be $408.00
-	 */
-	public function createOrder() {
-		return $this->objFromFixture("Order", "paid");
 	}
 
 	public function testCanFunctions() {
@@ -139,12 +135,13 @@ class OrderTest extends SapphireTest {
 		$this->assertFalse($order->canCancel(), "paid order can't be cancelled");
 		$this->assertFalse($order->canDelete(), "never allow deleting orders");
 
-		//TODO: check other statuses
+		$this->markTestIncomplete('check other statuses');
 	}
 
 	public function testDelete() {
 		$order = $this->objFromFixture("Order", "unpaid");
 		$order->delete();
+		$this->markTestIncomplete('assertions!');
 	}
 
 }
