@@ -1,4 +1,4 @@
-<% require themedCSS(sidecart) %>
+<% require themedCSS(sidecart,shop) %>
 <div class="sidecart">
 	<h3><% _t("HEADLINE","My Cart") %></h3>
 	<% if Cart %>
@@ -23,9 +23,7 @@
 					</p>
 					<p class="quantityprice"><span class="quantity">$Quantity</span> <span class="times">x</span> <span class="unitprice">$UnitPrice.Nice</span></p>
 					<% if SubTitle %><p class="subtitle">$SubTitle</p><% end_if %>
-					<a class="remove" href="$removeallLink" title="<% sprintf(_t("REMOVEALL","remove from cart"),$TableTitle) %>">
-						<img src="shop/images/remove.gif" alt="x"/>
-					</a>
+					<a class="remove" href="$removeallLink" title="<% sprintf(_t("REMOVEALL","remove from cart"),$TableTitle) %>">x</a>
 				</div>
 			<% end_loop %>
 		<% end_with %>

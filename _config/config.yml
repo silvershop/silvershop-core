@@ -14,6 +14,9 @@ Product_Image:
   content_image_width: 200
   large_image_width: 600
 
+OrderProcessor:
+  bcc_receipt_to_admin: true
+
 Injector:
   CheckoutComponentConfig:
     class: SinglePageCheckoutComponentConfig

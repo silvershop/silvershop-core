@@ -63,11 +63,7 @@ class ShopPaymentTest extends FunctionalTest{
 		ShoppingCart::singleton()->clear();
 		$this->setMockHttpResponse('PaymentExpress/Mock/PxPayCompletePurchaseSuccess.txt');
 		$this->getHttpRequest()->query->replace(array('result' => 'abc123'));
-		$identifier = $response->getPayment()->Messages()
-						->filter('ClassName', 'PurchaseRequest')
-						->innerJoin("GatewayMessage", "\"GatewayMessage\".\"ID\" = \"PaymentMessage\".\"ID\"")
-						->filter('Identifier:not', '')
-						->first()->Identifier;
+		$identifier = $response->getPayment()->Identifier;
 		$response = $this->get("paymentendpoint/$identifier/complete");
 		//reload cart as new order
 		$order = Order::get()->byId($cart->ID);
