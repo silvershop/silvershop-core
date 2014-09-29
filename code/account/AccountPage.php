@@ -156,6 +156,7 @@ class AccountPage_Controller extends Page_Controller {
 	}
 
 	public function editprofile() {
+	echo "running editprofile function";
 		return array();
 	}
 

@@ -19,9 +19,9 @@
 				<dt>Number of orders</dt> <dd><% if PastOrders %>$PastOrders.Count<% else %>0<% end_if %></dd>
 			</dl>
 			<% if PastOrders %>
-			<% control PastOrders %>
+			<% loop PastOrders %>
 				<% include PastOrders %>
-			<% end_control %>
+			<% end_loop %>
 			<% end_if %>
 		<% end_with %>
 	</div>
