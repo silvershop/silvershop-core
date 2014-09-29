@@ -282,7 +282,10 @@ class OrderProcessor{
 	* Precondition: The order payment has been successful
 	*/
 	public function sendReceipt() {
-		$this->sendEmail('Order_ReceiptEmail');
+		$this->sendEmail(
+			'Order_ReceiptEmail',
+			Config::inst()->get('OrderProcessor', 'bcc_receipt_to_admin')
+		);
 		$this->order->ReceiptSent = SS_Datetime::now()->Rfc2822();
 		$this->order->write();
 	}

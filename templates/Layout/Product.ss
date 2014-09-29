@@ -1,4 +1,4 @@
-<% require themedCSS(product) %>
+<% require themedCSS(product,shop) %>
 <div id="Sidebar">
 	<% with Parent %>
 		<% include ProductMenu %>
@@ -11,8 +11,8 @@
 	<h1 class="pageTitle">$Title</h1>
 	<div class="breadcrumbs">$Breadcrumbs</div>
 	<div class="productDetails">
-		<% if Image.ContentImage %>
-			<img class="productImage" src="$Image.ContentImage.URL" alt="<% sprintf(_t("IMAGE","%s image"),$Title) %>" />
+		<% if Image %>
+			<img class="productImage" src="$Image.URL" alt="<% sprintf(_t("IMAGE","%s image"),$Title) %>" />
 		<% else %>
 			<div class="noimage">no image</div>
 		<% end_if %>

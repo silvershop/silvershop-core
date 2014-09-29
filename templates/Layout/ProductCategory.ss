@@ -1,4 +1,4 @@
-<% require themedCSS(productcategory) %>
+<% require themedCSS(productcategory,shop) %>
 <div id="Sidebar">
 	<% include ProductMenu %>
 	<div class="cart">

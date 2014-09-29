@@ -1,4 +1,4 @@
-<% require ThemedCSS(checkout) %>
+<% require ThemedCSS(checkout,shop) %>
 <h1 class="pagetitle">$Title</h1>
 <div class="typography">
 	<% if Content %>
