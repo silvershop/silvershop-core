@@ -43,7 +43,7 @@ page / decorator requirements. This change was made to allow flexibility
 of what css files to include. All the default templates now have requires
 statements like this:
 
-    <% require themedCSS(product) %>
+    <% require themedCSS(product,shop) %>
     
 To fix in your site, update your templates to include the appropriate css
 files as per above. If you want a more advanced solution, you could

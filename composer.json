@@ -23,7 +23,7 @@
 	"require" : {
 		"silverstripe/cms": "~3.1",
 		"silverstripe/framework": "~3.1",
-		"burnbright/silverstripe-omnipay" : "~1.0",
+		"burnbright/silverstripe-omnipay" : "~1.1",
 		"icecaster/versioned-gridfield": "~1.0",
 		"burnbright/silverstripe-listsorter": "~2.0",
 		"burnbright/silverstripe-sqlquerylist": "dev-master"

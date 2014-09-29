@@ -1,4 +1,4 @@
-<% require ThemedCSS(checkout) %>
+<% require ThemedCSS(checkout,shop) %>
 <h1>$Title</h1>
 
 <% if Cart %>
