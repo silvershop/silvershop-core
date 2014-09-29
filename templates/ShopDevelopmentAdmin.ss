@@ -10,7 +10,7 @@
 	<li><a href="{$BaseHref}dev/tasks/CartCleanupTask"><% _t("CARTCLEANUP","Cleanup old carts") %></a> 
 	- <% _t("CARTCLEANUPDESC","Remove abandoned carts.") %></li>
 	<li><a href="{$BaseHref}dev/tasks/DeleteOrdersTask"><% _t("DELETEORDERS","Delete All Orders") %></a> 
-	- <% _t("DELETEORDERSDESC","Remove all orders, modifiers, and payments from the database.") %></li>
+	- <% _t("DELETEORDERSDESC","Remove all orders, modifiers, and payments from the database.  (you need to put ?type=sql on the end)") %></li>
 	<li><a href="{$BaseHref}dev/tasks/DeleteProductsTask"><% _t("DELETEPRODUCTS","Delete All Products") %></a>
 	- <% _t("DELETEPRODUCTSDESC","Remove all products from the database.") %></li>
 	<li><a href="{$BaseHref}dev/tasks/RecalculateAllOrdersTask"><% _t("RECALCULATEORDERS","Recalculate All Orders") %></a>
