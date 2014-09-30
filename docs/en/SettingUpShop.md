@@ -14,7 +14,7 @@ Follow the standard [SilverStripe installation guide](http://doc.silverstripe.or
 
 ## Install Shop & Payment modules
 
-Download the [shop module](http://ss-shop.org), and [payment module](http://www.silverstripe.org/payment-module).
+Download the [shop module](http://ss-shop.org), and [payment module](http://addons.silverstripe.org/add-ons/burnbright/silverstripe-omnipay).
 
 Extract the folders into your SilverStripe root directory. Your directory structure should look something like this:
 
@@ -28,16 +28,16 @@ Extract the folders into your SilverStripe root directory. Your directory struct
 
 ## Shipping and Tax setup
 
-
+http://addons.silverstripe.org/add-ons/burnbright/silverstripe-shop-shipping
 
 
 ## Choose payment types
 
-
+See [Payment](Payment)
 
 ## Set up automated tasks
 
-Some 
+
 
 ### Delete old carts
 

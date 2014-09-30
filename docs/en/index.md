@@ -18,7 +18,7 @@ This has been left for the store owner to collaborate with their developer.
 * [Ordering Process](OrderProcess) - catalogue selection, checkout, payment, account/fulfillment
 * [Architecture](Architecture)
  * [Modifiers](OrderModifiers) - All about modifiers. What they are, and how they work.
- * [Core changes](CoreChanges) that have been made to core SS - eg sitetree, etc
+ * [Core changes](Core_Changes) that have been made to core SS - eg sitetree, etc
 * Back-end administration
  * [Bulk loading products from a CSV spreadsheet](BulkLoading)
 * [Payment](Payment)
