@@ -1,0 +1,24 @@
+{
+    "title": "SilverStripe Shop Documentation",
+    "tagline": "Ecommerce for SilverStripe",
+    "author": "Jeremy Shipman",   
+    "theme": "daux-blue",
+    "template": "default",
+    "clean_urls": true,
+    "toggle_code": true,
+    "breadcrumbs": true,
+    "breadcrumb_separator": "Chevrons",
+    "date_modified": true,
+    "float": false,
+    "file_editor": true,
+    "repo": "burnbright/silverstripe-shop",
+    "ignore": {
+            "files": ["Work_In_Progress.md"],
+            "folders": ["99_Not_Ready"]
+    },
+    "links": {
+        "GitHub Repo": "https://github.com/silverstripe-shop",
+        "Help/Support/Bugs": "https://github.com/silverstripe-shop/issues",
+        "Homepage": "http://ss-shop.org"
+    }
+}

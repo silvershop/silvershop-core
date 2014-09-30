@@ -34,7 +34,7 @@ accessed from yoursite/dev/shop.
 
 If you have a large number of dataobjects, it may pay to run these tasks from the command line, for example:
 
-    [rootdir]: sapphire/sake dev/tasks/CartCleanupTask
+    [rootdir]: framework/sake dev/tasks/CartCleanupTask
 
 ### CartCleanupTask
 

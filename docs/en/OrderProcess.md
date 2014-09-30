@@ -1,10 +1,6 @@
-Order Process
-=============
+Here are some typical tasks that users of the shop might perform:
 
-Follow the entire ordering process from start to finish...
-
-Customer
---------
+## Customer
 
  - Visit product group / category page.
  - Browse, Filter, and Search catalogue.
@@ -20,8 +16,7 @@ Customer
  - (Return goods)
  - (Cancel order)
  
-Store Manager
--------------
+## Store Manager
  
  - Receive new order
  - Package

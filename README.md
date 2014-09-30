@@ -29,7 +29,6 @@ A tremendous thanks to [everyone that has already contributed](https://github.co
 ## Documentation
 
  * http://demo.ss-shop.org/docs - for Developers & Users
- * http://api.ss-shop.org - API
 
 ## Installation Instructions
 

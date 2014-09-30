@@ -10,7 +10,7 @@ If you are upgrading your shop, see [Upgrading](Upgrading).
 
 ## Web server and SilverStripe installation
 
-Follow the standard [SilverStripe installation guide](http://doc.silverstripe.org/sapphire/en/installation/)
+Follow the standard [SilverStripe installation guide](http://doc.silverstripe.org/framework/en/installation/)
 
 ## Install Shop & Payment modules
 
@@ -48,8 +48,8 @@ To run manually, in your browser visit:
 
 	[yoursiteurl.dom]/dev/tasks/CartCleanupTask
 
-To run automatically, trigger the following [sake script](http://doc.silverstripe.org/sapphire/en/topics/commandline) to run periodically on your sever:
+To run automatically, trigger the following [sake script](http://doc.silverstripe.org/framework/en/topics/commandline) to run periodically on your sever:
 
-	[yoursitepath]/sapphire/sake dev/tasks/CartCleanupTask
+	[yoursitepath]/framework/sake dev/tasks/CartCleanupTask
 
 If you add '?type=sql' to the end of the url, the deletion will use direct SQL satements, which is faster, but less secure.

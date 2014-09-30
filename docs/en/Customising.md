@@ -15,10 +15,9 @@ Here are some tips:
  * Look for the same idea already implemented in a [SilverStripe module](http://www.silverstripe.org/modules/),
  or [shop submodule](https://github.com/burnbright/silverstripe-shop/wiki/Sub-Modules).
  You can save time if you find the work has already been done.
- * Create extensions and [decorators](http://doc.silverstripe.org/sapphire/en/reference/dataobjectdecorator).
+ * Create Extensions and [DataExtensions](http://doc.silverstripe.org/framework/en/reference/dataextension).
  This is the cleanest way of creating customisations. It may introduce slight overhead processing time however.
- * You should [create themes](http://doc.silverstripe.org/sapphire/en/topics/theme-development) 
- 	in the themes directory, and split out into module directories, eg:
+ * You should [create themes](http://doc.silverstripe.org/framework/en/topics/theme-development) in the themes directory, and split out into module directories, eg:
  	* themes
  		* mytheme
  		* mytheme_shop
@@ -51,7 +50,7 @@ summaries of past orders, and it is also used with the email template.
 To make your customisations you need to create your own corresponding version of the
 template/partial-template with the same name in your mysite/templates folder or the themes folder.
 
-More about developing themes [here](http://doc.silverstripe.org/sapphire/en/topics/theme-development).
+More about developing themes [here](http://doc.silverstripe.org/framework/en/topics/theme-development).
 Note: some templates are needed in multiple places to work.
 
 ## Sub modules

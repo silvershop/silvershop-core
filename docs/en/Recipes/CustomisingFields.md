@@ -4,7 +4,7 @@ You may want to store additional information for each customer.
 In a nutshell you need to update your DataModel, and any places where the 
 data is entered. This can generally be done by creating extensions.
 
-First read the [SilverStripe documentation about decorators](http://doc.silverstripe.org/sapphire/en/reference/dataobjectdecorator).
+First read the [SilverStripe documentation about Extensions](http://doc.silverstripe.org/framework/en/reference/dataextension).
 
 ## Customer
 
@@ -16,18 +16,13 @@ In [mysite]/code/ExtendedCustomer.php
 
 	:::php
 	<?php
-	class ExtendedCustomer extends DataObjectDecorator{
-	
-		function extraStatics(){
-			return array(
-				'db' => array(
-					'MyExtraField' => 'Varchar'
-				)
-			);
-		}
-		
+	class ExtendedCustomer extends DataExtension{
+		private static $db = array(
+			'MyExtraField' => 'Varchar'
+		);
 	}
 	
+
 To your _config.php file, add:
 
 	:::php
