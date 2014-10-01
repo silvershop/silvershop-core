@@ -11,6 +11,8 @@ We've put a strong focus on testing, and thanks to TravisCI, you can see the [bu
 [![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/burnbright/silverstripe-shop/badges/quality-score.png?s=d60753d6cca3817e80aca3dbb79eb5bd4140c981)](https://scrutinizer-ci.com/g/burnbright/silverstripe-shop/)
 [![Total Downloads](https://poser.pugx.org/burnbright/silverstripe-shop/downloads.png)](https://packagist.org/packages/burnbright/silverstripe-shop)
 
+Live chat on Gitter! [![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/burnbright/silverstripe-shop?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 Website: http://ss-shop.org
 Demo: http://demo.ss-shop.org
 
