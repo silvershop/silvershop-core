@@ -1,4 +1,5 @@
 # Shop Module
+[![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/burnbright/silverstripe-shop?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 The SilverStripe Shop module aims to provide developers with a framework for building, and customising ecommerce-based projects.
 It includes facilities for customers to browse products and place orders, and for administrators to manage products and orders.
