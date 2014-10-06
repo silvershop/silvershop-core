@@ -120,10 +120,14 @@ class ProductCategory_Controller extends Page_Controller {
 		$products = $this->ProductsShowable($recursive);
 		//sort the products
 		$products = $this->getSorter()->sortList($products);
-		//paginate the products
-		$products = new PaginatedList($products, $this->request);
-		$products->setPageLength(ProductCategory::config()->page_length);
-		$products->TotalCount = $products->getTotalItems();
+
+		//paginate the products, if necessary
+		$pagelength = ProductCategory::config()->page_length;
+		if($pagelength > 0){
+			$products = new PaginatedList($products, $this->request);
+			$products->setPageLength($pagelength);
+			$products->TotalCount = $products->getTotalItems();
+		}
 
 		return $products;
 	}
