@@ -8,20 +8,16 @@ In [mysite]/code/ExtendedAddress.php
 
 	:::php
 	<?php
-	class ExtendedCustomer extends DataObjectDecorator{
+	class ExtendedAddress extends DataExtension{
 		
 		/**
 		* Add Company, Suburb, and Fax to Address data model
 		*/
-		function extraStatics(){
-			return array(
-				'db' => array(
-					'Company' => 'Varchar',
-					'Suburb' => 'Varchar',
-					'Fax' => 'Varchar'
-				)
-			);
-		}
+		private static $db = array(
+			'Company' => 'Varchar',
+			'Suburb' => 'Varchar',
+			'Fax' => 'Varchar'
+		);
 		
 		function updateFormFields(FieldList $fields,$nameprefix = ""){
 			$fields->insertBefore(new TextField($nameprefix.'Suburb',"Suburb"),$nameprefix.'City');
@@ -37,7 +33,7 @@ To your _config.php file, add:
 	:::php
 	Object::add_extension('Address','ExtendedAddress');
 
-## Address tempalte
+## Address Template
 
 Make a copy of shop/templates/Includes/Address.ss, and put this copy into your
 templates/Includes/ folder, either in mysite or a theme folder.
