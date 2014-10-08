@@ -78,7 +78,7 @@ class CheckoutStep_Address extends CheckoutStep{
 
 	public function setbillingaddress($data, $form) {
 		$this->billingconfig()->setData($form->getData());
-		return $this->owner->redirect($this->NextStepLink($step));
+		return $this->owner->redirect($this->NextStepLink());
 	}
 
 }
