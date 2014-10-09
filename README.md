@@ -59,7 +59,7 @@ You can view various configuration options in the 'example_config.yml' file.
 Don't reinvent the wheel! Get additional pre-built functionality with these sub modules:
 
 submodule | github | add-ons | packagist
-----------------------------------------
+----------|--------|---------|----------
 burnbright/silverstripe-shop-coloredvariations | [github](http://www.github.com/burnbright/silverstripe-shop-coloredvariations) | [add-ons](http://addons.silverstripe.org/add-ons/burnbright/silverstripe-shop-coloredvariations) | [packagist](https://packagist.org/packages/burnbright/silverstripe-shop-coloredvariations)
 burnbright/silverstripe-shop-comparison | [github](http://www.github.com/burnbright/silverstripe-shop-comparison) | [add-ons](http://addons.silverstripe.org/add-ons/burnbright/silverstripe-shop-comparison) | [packagist](https://packagist.org/packages/burnbright/silverstripe-shop-comparison)
 burnbright/silverstripe-shop-discount | [github](http://www.github.com/burnbright/silverstripe-shop-discount) | [add-ons](http://addons.silverstripe.org/add-ons/burnbright/silverstripe-shop-discount) | [packagist](https://packagist.org/packages/burnbright/silverstripe-shop-discount)
