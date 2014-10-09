@@ -86,7 +86,7 @@ markguinn/silverstripe-wishlist | [github](http://www.github.com/markguinn/silve
 burnbright/silverstripe-simple-shop | [github](http://www.github.com/burnbright/silverstripe-simple-shop) | [add-ons](http://addons.silverstripe.org/add-ons/burnbright/silverstripe-simple-shop) | [packagist](https://packagist.org/packages/burnbright/silverstripe-simple-shop)
 burnbright/silverstripe-bootstrap-shop | [github](http://www.github.com/burnbright/silverstripe-bootstrap-shop) | [add-ons](http://addons.silverstripe.org/add-ons/burnbright/silverstripe-bootstrap-shop) | [packagist](https://packagist.org/packages/burnbright/silverstripe-bootstrap-shop)
 
-You could also search [addons](http://addons.silverstripe.org/add-ons?search=shop) or [packgist](https://packagist.org/search/?q=silverstripe%20shop) or github for other submodules.
+You could also search [addons](http://addons.silverstripe.org/add-ons?search=shop) or [packgist](https://packagist.org/search/?q=silverstripe%20shop) or [github](https://github.com/search?q=silverstripe+shop) for other submodules.
 
 The code for the [shop demo site](http://demo.ss-shop.org/) is available here:
 
