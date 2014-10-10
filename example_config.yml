@@ -20,6 +20,7 @@ ShopCurrency:
 Product:
   global_allow_purchase: false
 
+# Change the dimensions of product thumbnails
 Product_Image:
   thumbnail_width: 140
   thumbnail_height: 100
@@ -33,6 +34,7 @@ ProductCategory:
     'Title' : 'Alphabetical'
     'Price' : 'Lowest Price'
 
+# Redirect to the cart page after manipulating the shopping cart
 ShoppingCart_Controller:
   direct_to_cart_page: true
 

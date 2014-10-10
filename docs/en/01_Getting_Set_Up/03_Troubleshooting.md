@@ -1,12 +1,8 @@
-# Troubleshooting
-
 If you have a common question needing a common answer, hopefully you can find it here.
 
 ## Which version of SilverStripe / shop / Payment should I use?
 
-This has been made much simpler with the introduction of composer.
-
-Please refer to the requirements found on GitHub https://github.com/burnbright/silverstripe-shop.
+This has been made much simpler with the introduction of [composer](https://getcomposer.org/).
 
 ## No products are showing up on my website!?
 
@@ -24,11 +20,14 @@ If the form has been built well, it should have extension hooks that allow you t
 
 ## How do I customise the country field? - change country list, remove field completely, set default
 
-see the [customising docs](Customising#CountryFeild)
+See the [customising docs](../Customisation).
 
 ## How do I set my site to use a different currency?
 
-	Payment::set_site_currency('CUR'); //where 'CUR' is the currency code
+```
+//where 'CUR' is the currency code
+Payment::set_site_currency('CUR');
+```
 
 ## I can't get payments to work? eg: PayPal, PaymentExpress, Other..
 
@@ -36,7 +35,7 @@ see [payment](Payment)
 
 ## How do I add shipping calculation to the checkout process? How do I customise fees for different locations / delivery zones?
 
-The default shop module provides a few shipping [modifiers](OrderModifiers). You can also have one custom built for your needs.
+The default shop module provides a few shipping [modifiers](../How_It_Works/Order_Modifiers). You can also have one custom built for your needs.
 
 ## How do I use in a different language?
 

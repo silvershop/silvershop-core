@@ -28,7 +28,7 @@ In most cases you will need to customise or create your own order items. These r
 	
 # Buyables
 
-The concept of something being buyable was introduced to allow things other than Products to be included in the cart. The Buyable interface enforces a few methods that are needed for objects to be added to the shopping cart. Product and ProductVariation are both examples of models implementing the Buyable interface. You can see another example at the bottom of the shop/tests/CustomProductTest.php file.
+The concept of something being buyable was introduced to allow things other than Products to be included in the cart. The Buyable interface enforces a few methods that are needed for objects to be added to the shopping cart. Product and ProductVariation are both examples of models implementing the Buyable interface. You can see another example at the bottom of the `shop/tests/CustomProductTest.php` file.
 
 To make your dataobject buyable:
 

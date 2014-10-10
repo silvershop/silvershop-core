@@ -5,33 +5,35 @@ Customisation is left to the developer, similar to how the SilverStripe CMS is c
 There is little in the way of online web-interface based configuration, tweaking and setup.
 This has been left for the store owner to collaborate with their developer. 
 
-## Contents
+## [Getting Set Up](Getting_Set_Up) < Start Here
 
-* [Installation & Configuration](Installation) - requirements, instructions
-* [Upgrading](Upgrading)
-* [Troubleshooting](Troubleshooting)
-* [Customising](Customising)
- * Shipping and Tax Calculation
- * Emails
- * Sub-modules - stock, discounts ...
- * Templates / Theming
-* [Ordering Process](OrderProcess) - catalogue selection, checkout, payment, account/fulfillment
-* [Architecture](Architecture)
- * [Modifiers](OrderModifiers) - All about modifiers. What they are, and how they work.
- * [Core changes](Core_Changes) that have been made to core SS - eg sitetree, etc
-* Back-end administration
- * [Bulk loading products from a CSV spreadsheet](BulkLoading)
-* [Payment](Payment)
-* [Development](Development) - Mission/aim, Coding style/conventions, Release process
- * [Recipes](Recipes) - how do build in various features.
+* [Installation & Configuration](Getting_Set_Up/Installation) - requirements, instructions
+* [Upgrading](Getting_Set_Up/Upgrading)
+* [Troubleshooting](Getting_Set_Up/Troubleshooting)
+* [Payment](Getting_Set_Up/Payment)
+* [Bulk loading products from a CSV spreadsheet](Getting_Set_Up/Bulk_Loading)
+* [Shipping](Getting_Set_Up/Shipping) and [Tax](Getting_Set_Up/Tax) Calculation
+
+## [Customisation](Customisation)
+
+* Emails
+* [Sub-modules - stock, discounts ...](Submodules)
+* [Templates and Theming](Templates_and_Themes)
+* [Recipes](Recipes) - how do build in various features.
+
+* [Contributing](Contributing) - get involved with development.
  * [Testing](Testing) - infrastructure / instructions
- * [Contribution Guidelines](Contributing)
+
+## How it works
+
+* [Architecture](How_It_Works/Architecture)
+ * [Modifiers](How_It_Works/OrderModifiers) - All about modifiers. What they are, and how they work.
+ * [Core changes](How_It_Works/Core_Changes) that have been made to core SS - eg sitetree, etc
+* [Ordering Process](How_It_Works/OrderProcess) - catalogue selection, checkout, payment, account/fulfillment
+* [Development](How_It_Works/Development) - Mission/aim, Coding style/conventions, Release process
  
 ## External Links
 
 * [Demo](http://demo.ss-shop.org/)
 * [Project Homepage](http://ss-shop.org/)
-* [GitHub](http://github.com/burnbright/silverstripe-shop)
-* [Developer Documetation](http://demo.ss-shop.org/docs/developer)
-* [User Documetation](http://demo.ss-shop.org/docs/user)
 * [Forum](http://silverstripe.org/e-commerce-module-forum/)

@@ -10,15 +10,15 @@
     "breadcrumb_separator": "Chevrons",
     "date_modified": true,
     "float": false,
-    "file_editor": true,
+    "file_editor": false,
     "repo": "burnbright/silverstripe-shop",
     "ignore": {
             "files": ["Work_In_Progress.md"],
-            "folders": ["99_Not_Ready"]
+            "folders": ["99_Not_Ready","images"]
     },
     "links": {
-        "GitHub Repo": "https://github.com/silverstripe-shop",
-        "Help/Support/Bugs": "https://github.com/silverstripe-shop/issues",
+        "GitHub Repo": "https://github.com/burnbright/silverstripe-shop",
+        "Help/Support/Bugs": "https://github.com/burnbright/silverstripe-shop/issues",
         "Homepage": "http://ss-shop.org"
     }
 }

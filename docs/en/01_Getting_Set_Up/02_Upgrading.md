@@ -1,10 +1,6 @@
-# Upgrading Information and Troubleshooting
+This page is intended to make you aware of upgrade issues you may face, and how to resolve them.
 
-This page is intended to make you aware of upgrade issues you may face,
-and how to resolve them.
-
-Don't forget to run the following url commands when you upgrade the
-shop module:
+Don't forget to run the following url commands when you upgrade the shop module:
 
     [yourdomain.com]/dev/build?flush=all
     [yourdomain.com]/tasks/ShopMigrationTask
@@ -14,11 +10,10 @@ shop module:
 
 # Images are lost
 
-This is because Product images are now Image dataobjects, instead of Product_Image dataobjects.
+This is because Product images are now Image DataObjects, instead of Product_Image DataObjects.
 Try running the ShopMigrationTask.
 
 # 'FeaturedProduct' field renamed to 'Featured' on Product model
-
 
 
 # 0.9

@@ -1,6 +1,6 @@
 # Shipping
 
-Shipping calculations can be introduced to an order with an [order modifier](OrderModifiers).
+Shipping calculations can be introduced to an order with an [order modifier](../How_It_Works/Order_Modifiers).
 
 Modifiers included with core code:
 
@@ -8,6 +8,9 @@ Modifiers included with core code:
  * PickupShippingModifier
  * SimpleShippingModifier
  * WeightShippingModifier
+
+There are more advanced shipping options available via submodules:
+https://github.com/burnbright/silverstripe-shop-shipping
 
 Common requirements for shipping are:
 
@@ -17,3 +20,4 @@ Common requirements for shipping are:
  * Calculate delivery price, based on: weight, volume, quantity, and value, or various combinations of.
  * Ship to a different address from the billed/invoiced address.
  * Allow pickup from store, in which case no charge is applied to order.
+
