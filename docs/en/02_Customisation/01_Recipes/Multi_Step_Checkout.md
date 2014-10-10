@@ -34,3 +34,20 @@ mysite/templates/Layout/CheckoutPage_paymentmethod.ss
 mysite/templates/Layout/CheckoutPage_summary.ss
 ```
 (templates could also be in your theme)
+
+## Configuring Steps
+
+Steps can be configured using yaml config:
+
+```
+CheckoutPage:
+    steps:
+        'membership' : 'CheckoutStep_Membership'
+        'contactdetails' : 'CheckoutStep_ContactDetails'
+        'shippingaddress' : 'CheckoutStep_Address'
+        'billingaddress' : 'CheckoutStep_Address'
+        'paymentmethod' : 'CheckoutStep_PaymentMethod'
+        'summary' : 'CheckoutStep_Summary'
+```
+
+Add/remove/reorder steps as you please, but keep in mind that the data from one step may be reliant on data from another.

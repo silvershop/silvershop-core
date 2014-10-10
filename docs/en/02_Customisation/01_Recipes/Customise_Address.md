@@ -4,29 +4,28 @@ You may want to store and display extra details for an Address
 
 ## Address Model DB Fields and form fields with a Decorator
 
-In [mysite]/code/ExtendedAddress.php
+In `[mysite]/code/ExtendedAddress.php`
 
-	:::php
-	<?php
-	class ExtendedAddress extends DataExtension{
-		
-		/**
-		* Add Company, Suburb, and Fax to Address data model
-		*/
-		private static $db = array(
-			'Company' => 'Varchar',
-			'Suburb' => 'Varchar',
-			'Fax' => 'Varchar'
-		);
-		
-		function updateFormFields(FieldList $fields,$nameprefix = ""){
-			$fields->insertBefore(new TextField($nameprefix.'Suburb',"Suburb"),$nameprefix.'City');
-			$fields->insertAfter(new TextField($nameprefix.'Fax',"Fax"),$nameprefix.'Phone');
-			$fields->insertFirst(new TextField($nameprefix.'Company',"Company"));
-		}
-		
-		
+```php
+<?php
+class ExtendedAddress extends DataExtension{
+	/**
+	* Add Company, Suburb, and Fax to Address data model
+	*/
+	private static $db = array(
+		'Company' => 'Varchar',
+		'Suburb' => 'Varchar',
+		'Fax' => 'Varchar'
+	);
+	
+	function updateFormFields(FieldList $fields,$nameprefix = ""){
+		$fields->insertBefore(new TextField($nameprefix.'Suburb',"Suburb"),$nameprefix.'City');
+		$fields->insertAfter(new TextField($nameprefix.'Fax',"Fax"),$nameprefix.'Phone');
+		$fields->insertFirst(new TextField($nameprefix.'Company',"Company"));
 	}
+}
+?>
+```
 
 To your _config.php file, add:
 
