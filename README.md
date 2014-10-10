@@ -19,14 +19,12 @@ Demo: http://demo.ss-shop.org
 Your contributions, and feedback are welcomed and appreciated. There are many ways you can [contribute to this project](https://github.com/burnbright/silverstripe-shop/wiki/Contributing).
 A tremendous thanks to [everyone that has already contributed](https://github.com/burnbright/silverstripe-shop/graphs/contributors).
 
-## Maintainer Contact
-
- * Jeremy Shipman (Jedateach, jeremy@burnbright.net)
-
 ## Requirements
 
  * SilverStripe 3 [framework](https://github.com/silverstripe/silverstripe-framework) & [cms](https://github.com/silverstripe/silverstripe-cms)
  * [Omnipay Module](https://github.com/burnbright/silverstripe-omnipay) + it's dependencies.
+
+See `composer.json` for exact set of dependencies.
 
 ## Documentation
 
@@ -92,3 +90,7 @@ The code for the [shop demo site](http://demo.ss-shop.org/) is available here:
 
 https://github.com/burnbright/silverstripe-shop-demo
 
+
+## Maintainer
+
+ * [Jeremy Shipman](http://www.jeremyshipman.com) (Jedateach, jeremy@burnbright.net)
