@@ -58,7 +58,7 @@ You can view various configuration options in the 'example_config.yml' file.
  * Cart Page - For viewing and updating your cart.
  * Checkout - Gather delivery/billing details and anything specific to the order. Can be single-page or multi-step.
  * Online Payments - Via the omnipay module.
- * CMS Administration - 
+ * Administration - Manage the catalog and orders in the CMS.
 
 Futher functionality is provided by add-on submodules.
 
