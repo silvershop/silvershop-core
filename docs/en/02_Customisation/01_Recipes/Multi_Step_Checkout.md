@@ -51,3 +51,74 @@ CheckoutPage:
 ```
 
 Add/remove/reorder steps as you please, but keep in mind that the data from one step may be reliant on data from another.
+
+
+## Additional Form Fields
+
+When needing additional Form Fields in a Multi-Step Checkout, your best bet is to extend the CheckoutStep class and point this to a custom Checkout Component.  Below is an example to demonstrate.  Say, we need an Organisation name in the contact details because the eCommerce website will sell products B2B.  
+
+1) Adjust the yaml config: 
+```
+CheckoutPage:
+  steps:
+    ...
+    'contactdetails' : 'CheckoutStep_ContactDetailsCustom'
+    ...
+```
+
+2) As recommended in [Customising_Fields](Custom_Fields), use a Data Extension to extend existing classes. In this example add Organisation to the Member and Order classes.
+```
+:::php
+<?php
+class ExtendedCustomer extends DataExtension{
+    private static $db = array(
+        'Organisation' => 'Varchar'
+    );
+    public function updateMemberFormFields(FieldList $fields) {
+    	$fields->insertBefore(new TextField('Organisation'), 'FirstName');
+    }
+}
+```
+In your config.yml file:
+```
+Member:
+  extensions:
+    - ExtendedCustomer
+    
+Order:
+  extensions:
+    - ExtendedCustomer
+```
+
+3) Copy CheckoutStep_ContactDetails.php and save under [mysite]/code as CheckoutStep_ContactDetailsCustom.php.  In addition, copy CustomerDetailsCheckoutComponent.php and save under [mysite]/code as CustomerDetailsCheckoutComponentCustom.php.
+
+4) Open CheckoutStep_ContactDetailsCustom.php and rename the class to CheckoutStep_ContactDetailsCustom.  Change one line in the ContactDetailsForm function to point to our custom Checkout Component.
+```
+:::php
+$config->addComponent(new CustomerDetailsCheckoutComponentCustom());
+```
+
+5) Open CustomerDetailsCheckoutComponent.php and rename the class to CustomerDetailsCheckoutComponentCustom.  Update two functions as below.
+- Add the Organisation to the form fields:
+```
+:::php
+public function getFormFields(Order $order) {
+	$fields = new FieldList(
+		$organisation = TextField::create('Organisation'),
+		...
+```
+- Add Organisation to the getData function:
+```
+:::php
+public function getData(Order $order) {	
+	if($order->Organisation || $order->FirstName || $order->Surname || $order->Email){
+		return array(
+			'Organisation' => $order->Organisation,
+			...
+	if($member = Member::currentUser()){
+		return array(
+			'Organisation' => $member->Organisation,
+			...
+```
+
+6) Flush the class manifest by adding ?flush=1 to your site url. 
