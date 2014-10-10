@@ -30,13 +30,13 @@ The concept of something being buyable was introduced to allow things other than
 
 To make your `DataObject` buyable:
 
- * Create/choose the class of what you want to become buyable. It must extend DataObject at some point.
+ * Create/choose the class of what you want to become buyable. It must extend `DataObject` at some point.
  * Add 'implements Buyable'
  * Introduce the functions required by the interface.
- * Extend OrderItem as something like MyBuyable_OrderItem.
- * Specify the buyable relationship on your MyBuyable_OrderItem
- * Create an array of required_fields, which tells the system which fields are unique, and should be
- matched when interacting with the shopping cart.
+ * Extend OrderItem as something like `MyBuyable_OrderItem`.
+ * Specify the buyable relationship on your `MyBuyable_OrderItem`.
+ * Create an array of `required_fields` on the `MyBuyable_OrderItem`, which tells the system which fields are unique, and should be matched when interacting with the shopping cart.
+ * You will also need to implement `TableTitle` if you want your custom item to show up in the cart.
+ * Implement `Link` if you want the item to link somewhere, such as viewing the buyable on your site.
 
-Completely custom products - every time you add one to cart, it doesn't attempt to combine with existing matches.
-Match on the OrderItemId for quantity changes.
+Completely custom products - every time you add one to cart, it doesn't attempt to combine with existing matches. Match on the OrderItemId for quantity changes.

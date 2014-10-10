@@ -1,5 +1,9 @@
 <?php
-
+/**
+ * Renders the cart inside a form, so that it is editable.
+ *
+ * @package shop
+ */
 class CartForm extends Form{
 
 	protected $cart;
@@ -22,25 +26,28 @@ class CartForm extends Form{
 	public function editableItems($items) {
 		$editables = new ArrayList();
 		foreach($items as $item){
-			if(!$item->Product()){
+			$buyable = $item->Product();
+			if(!$buyable){
 				continue;
 			}
 			$name = "Item[$item->ID]";
 			$quantity = NumericField::create($name."[Quantity]", "Quantity", $item->Quantity);
-			$variation = false;
-			$variations = $item->Product()->Variations();
-			if($variations->exists()){
-				$variation = DropdownField::create(
-					$name."[ProductVariationID]",
-					"Varaition",
-					$variations->map('ID', 'Title'),
-					$item->ProductVariationID
-				);
+			$variationfield = false;
+			if($buyable->has_many("Variations")){
+				$variations = $buyable->Variations();
+				if($variations->exists()){
+					$variationfield = DropdownField::create(
+						$name."[ProductVariationID]",
+						"Varaition",
+						$variations->map('ID', 'Title'),
+						$item->ProductVariationID
+					);
+				}
 			}
 			$remove = CheckboxField::create($name."[Remove]", "Remove");
 			$editables->push($item->customise(array(
 				"QuantityField" => $quantity,
-				"VariationField" => $variation,
+				"VariationField" => $variationfield,
 				"RemoveField" => $remove
 			)));
 		}
