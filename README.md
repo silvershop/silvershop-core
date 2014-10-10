@@ -52,6 +52,16 @@ There are a few useful tasks that can be run via a url to help you test:
 
 You can view various configuration options in the 'example_config.yml' file.
 
+## Core Features
+
+ * Product Catalog - Products extend Page, and can be browsed within Product Category pages.
+ * Cart Page - For viewing and updating your cart.
+ * Checkout - Gather delivery/billing details and anything specific to the order. Can be single-page or multi-step.
+ * Online Payments - Via the omnipay module.
+ * CMS Administration - 
+
+Futher functionality is provided by add-on submodules.
+
 ## Add-on Sub Modules
 
 Don't reinvent the wheel! Get additional pre-built functionality with these sub modules:
