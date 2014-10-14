@@ -16,9 +16,7 @@
 
 	<% if Products %>
 		<div id="Products" class="category">
-			<div class="resultsBar">
-				<% if SortLinks %><span class="sortOptions"><% _t('ProductGroup.SORTBY','sort by') %> <% loop SortLinks %><a href="$Link" class="sortlink $Current">$Name</a> <% end_loop %></span><% end_if %>
-			</div>
+			<% include Sorter %>
 			<div class="clear"><!-- --></div>
 			<ul class="productList">
 				<% loop Products %>
