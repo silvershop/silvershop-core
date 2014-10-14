@@ -8,7 +8,7 @@ Checkout components are a solution to encapsulate pieces of the checkout, includ
 
  * Form fields
  * Required form fields
- * Data vlidation
+ * Data validation
  * Data Retrieval (getting)
  * Data Storing (setting)
 
