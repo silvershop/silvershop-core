@@ -36,7 +36,7 @@ class CheckoutStep_Address extends CheckoutStep{
 		$form->setActions(new FieldList(
 			new FormAction("setshippingaddress", "Continue")
 		));
-		$this->owner->extend('updateAddressForm', $form);
+		$this->owner->extend('updateShippingAddressForm', $form);
 
 		return $form;
 	}
@@ -71,7 +71,7 @@ class CheckoutStep_Address extends CheckoutStep{
 		$form->setActions(new FieldList(
 			new FormAction("setbillingaddress", "Continue")
 		));
-		$this->owner->extend('updateAddressForm', $form);
+		$this->owner->extend('updateBillingAddressForm', $form);
 
 		return $form;
 	}
