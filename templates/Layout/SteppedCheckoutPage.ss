@@ -156,7 +156,7 @@
 											<tfoot>
 												<% loop Modifiers %>
 													<% if ShowInTable %>
-												<tr class="modifierRow $EvenOdd $FirstLast $Classes">
+												<tr class="modifierRow $EvenOdd $FirstLast $ClassName">
 													<td colspan="3">$TableTitle</td>
 													<td>$TableValue.Nice</td>
 												</tr>
