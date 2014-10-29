@@ -13,7 +13,7 @@ class ShopQuantityField extends ViewableData{
 			$this->item = ShoppingCart::singleton()->get($object, $parameters);
 			//provide a 0-quantity facade item if there is no such item in cart
 			if(!$this->item){
-				$this->item = new OrderItem($object, 0);
+				$this->item = $object->createItem();
 			}
 			$this->buyable = $object;
 			//TODO: perhaps we should just store the product itself,
