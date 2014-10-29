@@ -1,0 +1,96 @@
+nb:
+  AccountNavigation:
+    Title: 'Min konto'
+    PastOrders: 'Ordre arkiv'
+    EditProfile: 'Endre profil'
+    AddressBook: 'Adressebok'
+    LogOut: 'Logg ut'
+    MemberName: 'Navn'
+    MemberEmail: 'Epost'
+    MemberSince: 'Medlem siden'
+    MemberLastVisit: 'Siste besøk'
+    NumberOfOrders: 'Antall bestillinger'
+  AccountPage:
+    Title: 'Tidligere bestillingar'
+    NoPastOrders: 'Det finnes ingen bestillingar.'
+  AccountPage.ss:
+    ORDER: 'Bestilling'
+  AccountPage_EditProfile:
+    Title: 'Endre profil'
+  AccountPage_AddressBook:
+    Title: 'Adresser'
+    NoAddress: 'Det finnes ingen adresse.'
+    CreateNewTitle: 'Opprett ny adresse'
+  Address:
+    COUNTRY: 'Land'
+    ADDRESS: 'Adresse'
+    ADDRESSLINE2: 'Adresse 2 (valgfri)'
+    CITY: 'Sted'
+    STATE: 'Fylke'
+    POSTALCODE: 'Postnummer'
+    PHONE: 'Telefon'
+    ADDRESSHINT: 'gatenavn, postboks'
+    ADDRESS2HINT: 'bygning, leiligher, etasje, c.o.'
+    CITYHINT: 'eller tettsted, bygg, by'
+    STATEHINT: 'eller øy, provins'
+    ShippingAddress: 'Postadresse'
+    BillingAddress: 'Fakturaadresse'
+    SaveNew: 'Lagre ny adresse'
+    SaveDefaults: 'Lagre addresser'
+  Member:
+     # framework
+     FIRSTNAME: 'Navn'
+     SURNAME: 'Etternavn'
+     db_Locale: 'Språk'
+     EMAIL: 'Epost'
+     TIMEFORMAT: 'Tidsformat'
+     DATEFORMAT: 'Datoformat'
+     # end
+     YOUROLDPASSWORD: 'Ditt gamle passord'
+     NEWPASSWORD: 'Nytt passord'
+     CONFIRMNEWPASSWORD: 'Bekreft nytt passord'
+     BUTTONCHANGEPASSWORD: 'Endre passord'
+   MemberForm:
+     SAVE: 'Lagre endringer'
+     SAVEANDPROCEED: 'Lagre og gå til betaling'
+     DETAILSSAVED: 'Dine endringer er lagret'
+   Order:
+     TOTALOUTSTANDING: "Utestående beløp"
+     ORDERNOTES: 'Note'
+   Order_Address.ss:
+     SHIPTO: 'Fraktadresse'
+     BILLTO: 'Fakturaadresse'
+   Order_Content.ss:
+     PRODUCT: 'Produkt'
+     UNITPRICE: 'Pris'
+     QUANTITY: 'Antall'
+     TOTALPRICE: 'Total'
+   Order_Content_ItemLine.ss:
+     READMORE: 'Se mer om &quot;%s&quot;'
+   Order_Content_SubTotals.ss:
+     SUBTOTAL: 'Total ink mva'
+     TOTAL: 'Total'
+   Order_Payments.ss:
+     PAYMENTS: 'Betalingar'
+     DATE: 'Dato'
+     AMOUNT: 'Sum'
+     PAYMENTSTATUS: 'Status'
+     PAYMENTMETHOD: 'Betalingsmåte'
+     PAYMENTNOTE: 'Melding'
+   OrderHistory:
+     OrderReference: 'Referanse'
+     OrderDate: 'Dato'
+     OrderItems: 'Antall'
+     OrderTotal: 'Total'
+     OrderStatus: 'Status'
+     ViewOrder: 'vis bestilling'
+   ShippingModifier:
+     SINGULAR: 'Frakt'
+   PickupShippingModifier:
+     SINGULAR: 'Hent i butikk'
+   FreeShippingModifier:
+     FREE: 'Gratis'
+   SimpleShippingModifier:
+     SHIPTO: 'Send til %s'
+   WeightShippingModifier:
+     TABLETITLE: 'Frakt (%f kg)'

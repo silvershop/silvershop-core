@@ -1,0 +1,49 @@
+en:
+  AccountNavigation:
+    Title: 'My Account'
+    PastOrders: 'Past Orders'
+    EditProfile: 'Edit Profile'
+    AddressBook: 'Address Book'
+    LogOut: 'Log Out'
+    MemberName: 'Name'
+    MemberEmail: 'Email'
+    MemberSince: 'Member Since'
+    MemberLastVisit: 'Last Visit'
+    NumberOfOrders: 'Number of orders'
+  AccountPage:
+    Title: 'Past Orders'
+    NoPastOrders: 'No past orders found.'
+  AccountPage_EditProfile:
+    Title: 'Edit Profile'
+  AccountPage_AddressBook:
+    Title: 'Default Addresses'
+    NoAddress: 'No addresses found.'
+    CreateNewTitle: 'Create New Address'
+  Address:
+    COUNTRY: 'Country'
+    ADDRESS: 'Address'
+    ADDRESSLINE2: 'Address Line 2 (optional)'
+    CITY: 'City'
+    STATE: 'State'
+    POSTALCODE:
+    ShippingAddress: 'Shipping Address '
+    BillingAddress: 'Billing Address''Postal Code'
+    PHONE: 'Phone Number'
+    ADDRESSHINT: 'street / thoroughfare number, name, and type or P.O. Box'
+    ADDRESS2HINT: 'premises, building, apartment, unit, floor'
+    CITYHINT: 'or suburb, county, district'
+    STATEHINT: 'or province, territory, island'
+    SaveNew: 'Save New Address'
+    SaveDefaults: 'Save Defaults'
+  Member:
+    YOUROLDPASSWORD: 'Your old password'
+    NEWPASSWORD: 'New Password'
+    CONFIRMNEWPASSWORD: 'Confirm New Password'
+    BUTTONCHANGEPASSWORD: 'Change Password'
+  OrderHistory:
+    OrderReference: 'Reference'
+    OrderDate: 'Date'
+    OrderItems: 'Items'
+    OrderTotal: 'Total'
+    OrderStatus: 'Status'
+    ViewOrder: 'view'
