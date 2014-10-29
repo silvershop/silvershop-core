@@ -10,3 +10,6 @@ en:
     MemberSince: 'Member Since'
     MemberLastVisit: 'Last Visit'
     NumberOfOrders: 'Number of orders'
+  AccountPage:
+    Title: 'Past Orders'
+    NoPastOrders: 'No past orders found.'

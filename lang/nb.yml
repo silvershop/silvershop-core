@@ -10,3 +10,6 @@ nb:
     MemberSince: 'Medlem siden'
     MemberLastVisit: 'Siste besøk'
     NumberOfOrders: 'Antall bestillinger'
+  AccountPage:
+    Title: 'Tidligere bestillingar'
+    NoPastOrders: 'Det finnes ingen bestillingar.'
