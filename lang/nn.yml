@@ -10,3 +10,13 @@ nn:
     MemberSince: 'Medlem sida'
     MemberLastVisit: 'Siste besøk'
     NumberOfOrders: 'Antal bestillingar'
+  AccountPage:
+    Title: 'Tidligere bestillingar'
+    NoPastOrders: 'Det finnes ingen bestillingar.'
+  OrderHistory:
+    OrderReference: 'Referanse'
+    OrderDate: 'Dato'
+    OrderItems: 'Produkt'
+    OrderTotal: 'Total'
+    OrderStatus: 'Status'
+    ViewOrder: 'vis bestilling'

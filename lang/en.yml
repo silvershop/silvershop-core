@@ -13,3 +13,10 @@ en:
   AccountPage:
     Title: 'Past Orders'
     NoPastOrders: 'No past orders found.'
+  OrderHistory:
+    OrderReference: 'Reference'
+    OrderDate: 'Date'
+    OrderItems: 'Items'
+    OrderTotal: 'Total'
+    OrderStatus: 'Status'
+    ViewOrder: 'view'
