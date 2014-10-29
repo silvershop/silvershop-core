@@ -8,17 +8,20 @@ Don't forget to run the following url commands when you upgrade the shop module:
 
 # 1.0
 
-# Images are lost
+## Images are lost
 
 This is because Product images are now Image DataObjects, instead of Product_Image DataObjects.
 Try running the ShopMigrationTask.
 
-# 'FeaturedProduct' field renamed to 'Featured' on Product model
+## 'FeaturedProduct' field renamed to 'Featured' on Product model
 
+## OrderForm checkout template variable has been replaced with Form
+
+Also note that the OrderForm class is gone, and we now have CheckoutForm.
 
 # 0.9
 
-# Prices are missing
+## Prices are missing
 
 I've renamed Price database field to BasePrice, as part of work to make pricing system more flexible.
 Try running the ShopMigrationTask.
