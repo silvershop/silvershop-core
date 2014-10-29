@@ -1,0 +1,12 @@
+en:
+  AccountNavigation:
+    Title: 'My Account'
+    PastOrders: 'Past Orders'
+    EditProfile: 'Edit Profile'
+    AddressBook: 'Address Book'
+    LogOut: 'Log Out'
+    MemberName: 'Name'
+    MemberEmail: 'Email'
+    MemberSince: 'Member Since'
+    MemberLastVisit: 'Last Visit'
+    NumberOfOrders: 'Number of orders'

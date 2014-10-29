@@ -1,0 +1,12 @@
+nn:
+  AccountNavigation:
+    Title: 'Min konto'
+    PastOrders: 'Ordre arkiv'
+    EditProfile: 'Endre profil'
+    AddressBook: 'Adressebok'
+    LogOut: 'Logg ut'
+    MemberName: 'Namn'
+    MemberEmail: 'Epost'
+    MemberSince: 'Medlem sida'
+    MemberLastVisit: 'Siste besøk'
+    NumberOfOrders: 'Antal ordrar'
