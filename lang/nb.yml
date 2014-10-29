@@ -35,6 +35,11 @@ nb:
     BillingAddress: 'Fakturaadresse'
     SaveNew: 'Lagre ny adresse'
     SaveDefaults: 'Lagre addresser'
+  Member:
+    YOUROLDPASSWORD: 'Ditt gamle passord'
+    NEWPASSWORD: 'Nytt passord'
+    CONFIRMNEWPASSWORD: 'Bekreft nytt passord'
+    BUTTONCHANGEPASSWORD: 'Endre passord'
   OrderHistory:
     OrderReference: 'Referanse'
     OrderDate: 'Dato'

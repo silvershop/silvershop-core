@@ -35,6 +35,11 @@ en:
     STATEHINT: 'or province, territory, island'
     SaveNew: 'Save New Address'
     SaveDefaults: 'Save Defaults'
+  Member:
+    YOUROLDPASSWORD: 'Your old password'
+    NEWPASSWORD: 'New Password'
+    CONFIRMNEWPASSWORD: 'Confirm New Password'
+    BUTTONCHANGEPASSWORD: 'Change Password'
   OrderHistory:
     OrderReference: 'Reference'
     OrderDate: 'Date'
