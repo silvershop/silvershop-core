@@ -15,6 +15,10 @@ nn:
     NoPastOrders: 'Det finnes ingen bestillingar.'
   AccountPage_EditProfile:
     Title: 'Endre profil'
+  AccountPage_AddressBook:
+    Title: 'Adresser'
+    NoAddress: 'Det finnast inga adresse.'
+    CreateNewTitle: 'Opprett ny adresse'
   OrderHistory:
     OrderReference: 'Referanse'
     OrderDate: 'Dato'

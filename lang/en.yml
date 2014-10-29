@@ -15,6 +15,10 @@ en:
     NoPastOrders: 'No past orders found.'
   AccountPage_EditProfile:
     Title: 'Edit Profile'
+  AccountPage_AddressBook:
+    Title: 'Default Addresses'
+    NoAddress: 'No addresses found.'
+    CreateNewTitle: 'Create New Address'
   OrderHistory:
     OrderReference: 'Reference'
     OrderDate: 'Date'
