@@ -36,6 +36,12 @@ nn:
     SaveNew: 'Lagre ny adresse'
     SaveDefaults: 'Lagre addressar'
   Member:
+    FIRSTNAME: 'Navn'
+    SURNAME: 'Etternavn'
+    db_Locale: 'Språk'
+    EMAIL: 'Epost'
+    TIMEFORMAT: 'Tidsformat'
+    DATEFORMAT: 'Datoformat'
     YOUROLDPASSWORD: 'Ditt gamle passord'
     NEWPASSWORD: 'Nytt passord'
     CONFIRMNEWPASSWORD: 'Bekreft nytt passord'
