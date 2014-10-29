@@ -38,7 +38,7 @@ nn:
   OrderHistory:
     OrderReference: 'Referanse'
     OrderDate: 'Dato'
-    OrderItems: 'Produkt'
+    OrderItems: 'Antall'
     OrderTotal: 'Total'
     OrderStatus: 'Status'
     ViewOrder: 'vis bestilling'
