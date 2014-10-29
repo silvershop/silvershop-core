@@ -100,17 +100,17 @@ class AccountPage_Controller extends Page_Controller {
 			$fields = new FieldList(
 				DropdownField::create(
 					"DefaultShippingAddressID",
-					"Shipping Address",
+                    _t("Address.ShippingAddress", "Shipping Address"),
 					$addresses->map('ID', 'toString')->toArray()
 				),
 				DropdownField::create(
 					"DefaultBillingAddressID",
-					"Billing Address",
+                    _t("Address.BillingAddress", "Billing Address"),
 					$addresses->map('ID', 'toString')->toArray()
 				)
 			);
 			$actions = new FieldList(
-				new FormAction('savedefaultaddresses', "Save Defaults")
+                new FormAction("savedefaultaddresses", _t("Address.SaveDefaults", "Save Defaults"))
 			);
 			$form = new Form($this, "DefaultAddressForm", $fields, $actions);
 			$form->loadDataFrom($this->member);
@@ -131,7 +131,7 @@ class AccountPage_Controller extends Page_Controller {
 		$singletonaddress = singleton('Address');
 		$fields = $singletonaddress->getFrontEndFields();
 		$actions = new FieldList(
-			new FormAction("saveaddress", "Save New Address")
+            new FormAction("saveaddress", _t("Address.SaveNew", "Save New Address"))
 		);
 		$validator = new RequiredFields($singletonaddress->getRequiredFields());
 

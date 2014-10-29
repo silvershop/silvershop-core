@@ -19,6 +19,22 @@ en:
     Title: 'Default Addresses'
     NoAddress: 'No addresses found.'
     CreateNewTitle: 'Create New Address'
+  Address:
+    COUNTRY: 'Country'
+    ADDRESS: 'Address'
+    ADDRESSLINE2: 'Address Line 2 (optional)'
+    CITY: 'City'
+    STATE: 'State'
+    POSTALCODE:
+    ShippingAddress: 'Shipping Address '
+    BillingAddress: 'Billing Address''Postal Code'
+    PHONE: 'Phone Number'
+    ADDRESSHINT: 'street / thoroughfare number, name, and type or P.O. Box'
+    ADDRESS2HINT: 'premises, building, apartment, unit, floor'
+    CITYHINT: 'or suburb, county, district'
+    STATEHINT: 'or province, territory, island'
+    SaveNew: 'Save New Address'
+    SaveDefaults: 'Save Defaults'
   OrderHistory:
     OrderReference: 'Reference'
     OrderDate: 'Date'
