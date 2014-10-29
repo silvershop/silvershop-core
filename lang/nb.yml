@@ -13,6 +13,8 @@ nb:
   AccountPage:
     Title: 'Tidligere bestillingar'
     NoPastOrders: 'Det finnes ingen bestillingar.'
+  AccountPage_EditProfile:
+    Title: 'Endre profil'
   OrderHistory:
     OrderReference: 'Referanse'
     OrderDate: 'Dato'

@@ -1,7 +1,13 @@
-<% require themedCSS(account,shop) %>
+<% require themedCSS(account, shop) %>
 <% include AccountNavigation %>
+
 <div class="typography">
-	<h2 class="pagetitle">Edit Profile</h2>
-	$EditAccountForm
-	$ChangePasswordForm
+
+    <h2 class="pagetitle">
+        <%t AccountPage_EditProfile.Title 'Edit Profile' %>
+    </h2>
+
+    $EditAccountForm
+    $ChangePasswordForm
+
 </div>

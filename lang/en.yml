@@ -13,6 +13,8 @@ en:
   AccountPage:
     Title: 'Past Orders'
     NoPastOrders: 'No past orders found.'
+  AccountPage_EditProfile:
+    Title: 'Edit Profile'
   OrderHistory:
     OrderReference: 'Reference'
     OrderDate: 'Date'
