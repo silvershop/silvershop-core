@@ -29,7 +29,7 @@ class CheckoutStep_PaymentMethod extends CheckoutStep{
 		$form->setActions(new FieldList(
 			FormAction::create("setpaymentmethod", "Continue")
 		));
-		$this->owner->extend('updateConfirmationForm', $form);
+		$this->owner->extend('updatePaymentMethodForm', $form);
 
 		return $form;
 	}
