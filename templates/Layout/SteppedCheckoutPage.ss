@@ -120,9 +120,9 @@
 				<div class="accordion-group">
 					<div class="accordion-heading">
 						<% if IsPastStep(paymentmethod) %>
-							<h3><a class="accordion-toggle" title="choose payment method" href="$Link(paymentmethod)">Payment</a></h3>
+							<h3><a class="accordion-toggle" title="choose payment method" href="$Link(paymentmethod)">Payment Method</a></h3>
 						<% else %>
-							<h3 class="accordion-toggle">Payment</h3>
+							<h3 class="accordion-toggle">Payment Method</h3>
 						<% end_if %>
 					</div>
 					<% if IsFutureStep(paymentmethod) %>
