@@ -26,15 +26,14 @@ class ShopAccountForm extends Form {
 				new FormAction('proceed', _t('MemberForm.SAVEANDPROCEED', 'Save and proceed to checkout'))
 			);
 		}
-		if($record = $controller->data()){
-			$record->extend('updateShopAccountForm', $fields, $actions, $requiredFields);
-		}
 		parent::__construct($controller, $name, $fields, $actions, $requiredFields);
 		if($member){
 			$member->Password = ""; //prevents password field from being populated with encrypted password data
 			$this->loadDataFrom($member);
 		}
-
+		if($record = $controller->data()){
+			$record->extend('updateShopAccountForm', $fields, $actions, $requiredFields);
+		}
 	}
 
 	/**
