@@ -169,7 +169,9 @@ class AccountPage_Controller extends Page_Controller {
 	}
 
 	public function ChangePasswordForm() {
-		return new ChangePasswordForm($this, "ChangePasswordForm");
+		$form = new ChangePasswordForm($this, "ChangePasswordForm");
+		$this->data()->extend('updateChangePasswordForm', $form);
+		return $form;
 	}
 
 }
