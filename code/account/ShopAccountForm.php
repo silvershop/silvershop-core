@@ -14,6 +14,7 @@ class ShopAccountForm extends Form {
 			$fields = $member->getMemberFormFields();
 			$fields->removeByName('Password');
 			$requiredFields = $member->getValidator();
+			$requiredFields->addRequiredField('Surname');
 		} else {
 			$fields = new FieldList();
 		}
