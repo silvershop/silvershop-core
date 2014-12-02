@@ -22,10 +22,10 @@ class Product extends Page implements Buyable {
 		'BasePrice' => 'Currency', // Base retail price the item is marked at.
 
 		//physical properties
-		'Weight' => 'Decimal(9,2)',
-		'Height' => 'Decimal(9,2)',
-		'Width' => 'Decimal(9,2)',
-		'Depth' => 'Decimal(9,2)',
+		'Weight' => 'Float',
+		'Height' => 'Float',
+		'Width' => 'Float',
+		'Depth' => 'Float',
 
 		'Featured' => 'Boolean',
 		'AllowPurchase' => 'Boolean',
@@ -75,6 +75,10 @@ class Product extends Page implements Buyable {
 	private static $order_item = "Product_OrderItem";
 	private static $min_opengraph_img_size = 0;
 
+	// Physical Measurement
+	private static $weight_unit = "kg";
+	private static $length_unit = "cm";
+
 	private static $indexes = array(
 		'Featured' => true,
 		'AllowPurchase' => true,
@@ -114,13 +118,11 @@ class Product extends Page implements Buyable {
 				->setMaxLength(12)
 		));
 		//physical measurements
-		$weightunit = "kg"; //TODO: globalise / make custom
-		$lengthunit = "cm";  //TODO: globalise / make custom
 		$fields->addFieldsToTab('Root.Shipping', array(
-			TextField::create('Weight', sprintf(_t('Product.WEIGHT', 'Weight (%s)'), $weightunit), '', 12),
-			TextField::create('Height', sprintf(_t('Product.HEIGHT', 'Height (%s)'), $lengthunit), '', 12),
-			TextField::create('Width', sprintf(_t('Product.WIDTH', 'Width (%s)'), $lengthunit), '', 12),
-			TextField::create('Depth', sprintf(_t('Product.DEPTH', 'Depth (%s)'), $lengthunit), '', 12),
+			TextField::create('Weight', sprintf(_t('Product.WEIGHT', 'Weight (%s)'), self::config()->weight_unit), '', 12),
+			TextField::create('Height', sprintf(_t('Product.HEIGHT', 'Height (%s)'), self::config()->length_unit), '', 12),
+			TextField::create('Width', sprintf(_t('Product.WIDTH', 'Width (%s)'), self::config()->length_unit), '', 12),
+			TextField::create('Depth', sprintf(_t('Product.DEPTH', 'Depth (%s)'), self::config()->length_unit), '', 12),
 		));
 		if(!$fields->dataFieldByName('Image')) {
 			$fields->addFieldToTab('Root.Images',
