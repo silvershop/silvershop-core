@@ -417,6 +417,12 @@ class ShoppingCart_Controller extends Controller{
 		return "";
 	}
 
+
+	/**
+	 * This is used here and in VariationForm and AddProductForm
+	 * @param bool|string $status
+	 * @return bool
+	 */
 	public static function direct($status = true) {
 		if(Director::is_ajax()){
 			return $status;
@@ -435,6 +441,10 @@ class ShoppingCart_Controller extends Controller{
 		$this->cart = ShoppingCart::singleton();
 	}
 
+
+	/**
+	 * @return Product|ProductVariation|Buyable
+	 */
 	protected function buyableFromRequest() {
 		$request = $this->getRequest();
 		if(SecurityToken::is_enabled() && !SecurityToken::inst()->checkRequest($request)){
@@ -466,41 +476,78 @@ class ShoppingCart_Controller extends Controller{
 		return $buyable;
 	}
 
+
+	/**
+	 * Action: add item to cart
+	 * @param SS_HTTPRequest $request
+	 * @return SS_HTTPResponse
+	 */
 	public function add($request) {
-		if($product = $this->buyableFromRequest()){
+		if ($product = $this->buyableFromRequest()) {
 			$quantity = (int) $request->getVar('quantity');
 			if(!$quantity) $quantity = 1;
 			$this->cart->add($product, $quantity, $request->getVars());
 		}
-		return self::direct();
+
+		$this->extend('updateAddResponse', $request, $response, $product, $quantity);
+		return $response ? $response : self::direct();
 	}
 
+	/**
+	 * Action: remove a certain number of items from the cart
+	 * @param SS_HTTPRequest $request
+	 * @return SS_HTTPResponse
+	 */
 	public function remove($request) {
-		if($product = $this->buyableFromRequest()){
+		if ($product = $this->buyableFromRequest()) {
 			$this->cart->remove($product, $quantity = 1, $request->getVars());
 		}
-		return self::direct();
+
+		$this->extend('updateRemoveResponse', $request, $response, $product, $quantity);
+		return $response ? $response : self::direct();
 	}
 
+	/**
+	 * Action: remove all of an item from the cart
+	 * @param SS_HTTPRequest $request
+	 * @return SS_HTTPResponse
+	 */
 	public function removeall($request) {
-		if($product = $this->buyableFromRequest()){
+		if ($product = $this->buyableFromRequest()) {
 			$this->cart->remove($product, null, $request->getVars());
 		}
-		return self::direct();
+
+		$this->extend('updateRemoveAllResponse', $request, $response, $product);
+		return $response ? $response : self::direct();
 	}
 
+
+	/**
+	 * Action: update the quantity of an item in the cart
+	 * @param $request
+	 * @return AjaxHTTPResponse|bool
+	 */
 	public function setquantity($request) {
 		$product = $this->buyableFromRequest();
 		$quantity = (int) $request->getVar('quantity');
-		if($product){
+		if ($product) {
 			$this->cart->setQuantity($product, $quantity, $request->getVars());
 		}
-		return self::direct();
+
+		$this->extend('updateSetQuantityResponse', $request, $response, $product, $quantity);
+		return $response ? $response : self::direct();
 	}
 
+
+	/**
+	 * Action: clear the cart
+	 * @param $request
+	 * @return AjaxHTTPResponse|bool
+	 */
 	public function clear($request) {
 		$this->cart->clear();
-		return self::direct();
+		$this->extend('updateClearResponse', $request, $response);
+		return $response ? $response : self::direct();
 	}
 
 	/**
