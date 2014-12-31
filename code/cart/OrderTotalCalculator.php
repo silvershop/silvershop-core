@@ -47,7 +47,7 @@ class OrderTotalCalculator{
 		//prevent negative sales from ever occurring
 		if($runningtotal < 0){
 			SS_Log::log(
-				"Order (ID = $order->ID) was calculated to equal $runningtotal.\n
+				"Order (ID = {$this->order->ID}) was calculated to equal $runningtotal.\n
 				Order totals should never be negative!\n
 				The order total was set to $0",
 				SS_Log::ERR
