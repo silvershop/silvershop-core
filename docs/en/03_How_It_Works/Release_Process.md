@@ -1,5 +1,3 @@
-Adopting this model: http://nvie.com/posts/a-successful-git-branching-model/
-
 Here is a quick checklist of what needs to be done to create a new release of shop:
 
 ## Testing
@@ -8,13 +6,17 @@ Run the test suite, and ensure sure all tests pass.
 Complete a test order to see that everything is fine for the user.
 
 ## Generate Change Log
-
-	cd shop
-	git log --oneline | grep -i 'enhance\|NEW'
-	git log --oneline | grep -i 'api\|API'
-	git log --oneline | grep -i 'bug\|BUG'
-
-copy into change log up to last release commit.
+Create change logs since last tag:
+```sh
+cd shop
+#New stuff
+git log --pretty=format:" * %s" --since="$(git show -s --format=%ad `git rev-list --tags --max-count=1`)" --grep='^enhance\|^new\|^added' -i
+#API changes
+git log --pretty=format:" * %s" --since="$(git show -s --format=%ad `git rev-list --tags --max-count=1`)" --grep='^api'  -i
+#Bug fixes
+git log --pretty=format:" * %s" --since="$(git show -s --format=%ad `git rev-list --tags --max-count=1`)" --grep='^bug\|^fix' -i
+```
+Copy output into change log.
 
 ## Versioning
 
@@ -46,8 +48,7 @@ Upload to [github](https://github.com/burnbright/silverstripe-shop/downloads)
 
 ## Announce
 
-Include some release commentary, highlights of main big changes. Include a link to
-upgrading docs.
+Include some release commentary, highlights of main big changes. Include a link to upgrading docs.
 
 * [forums](http://silverstripe.org/e-commerce-module-forum/)
 * [mailing list](http://groups.google.com/group/silverstripe-ecommerce)
