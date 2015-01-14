@@ -51,7 +51,8 @@ class AccountPage_Controller extends Page_Controller {
 		'DefaultAddressForm',
 		'editprofile',
 		'EditAccountForm',
-		'ChangePasswordForm'
+		'ChangePasswordForm',
+		'changepassword', // redirects to editprofile
 	);
 
 	protected $member;
@@ -172,6 +173,16 @@ class AccountPage_Controller extends Page_Controller {
 		$form = new ChangePasswordForm($this, "ChangePasswordForm");
 		$this->data()->extend('updateChangePasswordForm', $form);
 		return $form;
+	}
+
+
+	/**
+	 * By default, ChangePasswordForm redirects to /account/changepassword when it's done.
+	 * This catches that and sends it back to editprofile, which seems easier and less error-prone
+	 * than the alternative of trying to manipulate the BackURL field.
+	 */
+	public function changepassword() {
+		$this->redirect($this->Link('editprofile'));
 	}
 
 }
