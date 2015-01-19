@@ -19,6 +19,8 @@ ShopCurrency:
 
 Product:
   global_allow_purchase: false
+  # length_unit: 'M'
+  # weight_unit: 'Pounds'
 
 # Change the dimensions of product thumbnails
 Product_Image:
