@@ -1,18 +1,23 @@
-# Multi-Step Checkout
+# Multi-Step "Stepped" Checkout
 
 Historically the checkout has only been based on a single OrderForm. Whilst its nice to place an order in a single form submission, in most cases different parts of the checkout process rely on the data of others. In particular, to provide prices for shipping, we first need an address. To do this in a single form, we require the aid of javascript/ajax.
 
-There is a multi-step version of the checkout available that can be enabled. See shop/code/steppedcheckout, which contains a number of decorators for CheckoutPage. Each step is stored in a class with an action to view the step, a form to gather data, and an action to process the form data.
+There is a multi-step version of the checkout available that can be enabled. See the code in `shop/code/steppedcheckout`, which contains a number of decorators for `CheckoutPage`. Each step is stored in a class with an action to view the step, a form to gather data, and an action to process the form data.
 
-To enable the multi-step checkout, first add this to your _config.php file:
- 
-```
-SteppedCheckout::setupSteps();
+To enable the multi-step checkout, define the steps in your config.yaml file. The config is a mapping from url `action` to `CheckoutStep`. For example:
+```yaml
+CheckoutPage:
+  steps:
+      membership: 'CheckoutStep_Membership'
+      shippingaddress: 'CheckoutStep_AddressBook'
+      billingaddress: 'CheckoutStep_AddressBook'
+      shippingmethod: 'CheckoutStep_ShippingMethod'
+      summary: 'CheckoutStep_Summary'
 ```
 	
-The SteppedCheckout::setupSteps() function adds all of the steps as extensions to CheckoutPage_Controller, and make sure the index action (yoursite.tld/checkout/) is the first step.
+The above configuration is picked up by the `SteppedCheckout::setupSteps()` function in `shop/_config.php`, and it adds all of the steps as extensions to `CheckoutPage_Controller`, and make sure the index action (yoursite.tld/checkout/) is the first step.
  
-Next, replace your `CheckoutPage.ss` template with one that uses steps. You can find such a template in `shop/templates/Layout/SteppedCheckoutPage.ss` you could put this in your mysite/templates/Layout folder and rename it to `CheckoutPage.ss`.
+Next, optionally replace your `CheckoutPage.ss` template with one that uses steps. You can find such a template in `shop/templates/Layout/SteppedCheckoutPage.ss` you could put this in your mysite/templates/Layout folder and rename it to `CheckoutPage.ss`.
  
 You may notice that the `SteppedCheckoutPage.ss` template contains statements like:
 
@@ -39,7 +44,7 @@ mysite/templates/Layout/CheckoutPage_summary.ss
 
 Steps can be configured using yaml config:
 
-```
+```yaml
 CheckoutPage:
     steps:
         'membership' : 'CheckoutStep_Membership'
@@ -58,7 +63,7 @@ Add/remove/reorder steps as you please, but keep in mind that the data from one 
 When needing additional Form Fields in a Multi-Step Checkout, your best bet is to extend the CheckoutStep class and point this to a custom Checkout Component.  Below is an example to demonstrate.  Say, we need an Organisation name in the contact details because the eCommerce website will sell products B2B.  
 
 1) Adjust the yaml config: 
-```
+```yaml
 CheckoutPage:
   steps:
     ...
@@ -67,9 +72,7 @@ CheckoutPage:
 ```
 
 2) As recommended in [Customising_Fields](Custom_Fields), use a Data Extension to extend existing classes. In this example add Organisation to the Member and Order classes.
-```
-:::php
-<?php
+```php
 class ExtendedCustomer extends DataExtension{
     private static $db = array(
         'Organisation' => 'Varchar'
@@ -79,12 +82,12 @@ class ExtendedCustomer extends DataExtension{
     }
 }
 ```
+
 In your config.yml file:
-```
+```yaml
 Member:
   extensions:
     - ExtendedCustomer
-    
 Order:
   extensions:
     - ExtendedCustomer
@@ -93,23 +96,20 @@ Order:
 3) Copy CheckoutStep_ContactDetails.php and save under [mysite]/code as CheckoutStep_ContactDetailsCustom.php.  In addition, copy CustomerDetailsCheckoutComponent.php and save under [mysite]/code as CustomerDetailsCheckoutComponentCustom.php.
 
 4) Open CheckoutStep_ContactDetailsCustom.php and rename the class to CheckoutStep_ContactDetailsCustom.  Change one line in the ContactDetailsForm function to point to our custom Checkout Component.
-```
-:::php
+```php
 $config->addComponent(new CustomerDetailsCheckoutComponentCustom());
 ```
 
 5) Open CustomerDetailsCheckoutComponent.php and rename the class to CustomerDetailsCheckoutComponentCustom.  Update two functions as below.
 - Add the Organisation to the form fields:
-```
-:::php
+```php
 public function getFormFields(Order $order) {
 	$fields = new FieldList(
 		$organisation = TextField::create('Organisation'),
 		...
 ```
 - Add Organisation to the getData function:
-```
-:::php
+```php
 public function getData(Order $order) {	
 	if($order->Organisation || $order->FirstName || $order->Surname || $order->Email){
 		return array(
