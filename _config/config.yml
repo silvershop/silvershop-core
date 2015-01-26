@@ -20,3 +20,7 @@ OrderProcessor:
 Injector:
   CheckoutComponentConfig:
     class: SinglePageCheckoutComponentConfig
+
+LeftAndMain:
+  extra_requirements_css:
+    - shop/css/shopcms.css
