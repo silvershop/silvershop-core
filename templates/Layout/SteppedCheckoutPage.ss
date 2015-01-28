@@ -1,6 +1,13 @@
 <% require ThemedCSS(checkout,shop) %>
 <h1>$Title</h1>
 
+<% if PaymentErrorMessage %>
+	<p class="message error">
+		<% _t('CheckoutPage.PaymentErrorMessage', 'Received error from payment gateway:') %>
+		$PaymentErrorMessage
+	</p>
+<% end_if %>
+
 <% if Cart %>
 
 	<div class="row">
