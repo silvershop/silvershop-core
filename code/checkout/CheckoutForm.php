@@ -12,7 +12,7 @@ class CheckoutForm extends Form {
 		$actions = new FieldList(
 			FormAction::create(
 				'checkoutSubmit',
-				_t('CheckoutForm', 'Proceed to payment')
+				_t('CheckoutForm.PROCEED', 'Proceed to payment')
 			)
 	);
 		$validator = new CheckoutComponentValidator($this->config);
