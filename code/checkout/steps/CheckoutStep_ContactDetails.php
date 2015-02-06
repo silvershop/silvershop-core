@@ -8,8 +8,19 @@ class CheckoutStep_ContactDetails extends CheckoutStep{
 	);
 
 	public function contactdetails() {
+		$form = $this->ContactDetailsForm();
+		$form->loadDataFrom(Member::currentUser());
+		if(
+			ShoppingCart::curr() &&
+			Config::inst()->get("CheckoutStep_ContactDetails", "skip_if_logged_in") &&
+			$form->validate()
+		){
+			Controller::curr()->redirect($this->NextStepLink());
+			return;
+		}
+
 		return array(
-			'OrderForm' => $this->ContactDetailsForm()
+			'OrderForm' => $form
 		);
 	}
 
