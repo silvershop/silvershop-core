@@ -87,4 +87,15 @@ class ProductOrderItemTest extends FunctionalTest {
 		);
 	}
 
+
+	/**
+	 * Coverage for a bug where there's an error generating the link when ProductID = 0
+	 */
+	public function testCorruptedOrderItemLinks() {
+		SecurityToken::disable();
+		$product = $this->socks;
+		$item = $product->Item();
+		$item->ProductID = 0;
+		$this->assertEquals('', $item->removeLink());
+	}
 }

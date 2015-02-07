@@ -167,24 +167,43 @@ class OrderItem extends OrderAttribute {
 		}
 	}
 
+	/**
+	 * @return ShopQuantityField
+	 */
 	public function QuantityField() {
 		return Injector::inst()->create('ShopQuantityField', $this);
 	}
 
+	/**
+	 * @return string
+	 */
 	public function addLink() {
-		return ShoppingCart_Controller::add_item_link($this->Buyable(), $this->uniquedata());
+		$buyable = $this->Buyable();
+		return $buyable ? ShoppingCart_Controller::add_item_link($buyable, $this->uniquedata()) : '';
 	}
 
+	/**
+	 * @return string
+	 */
 	public function removeLink() {
-		return ShoppingCart_Controller::remove_item_link($this->Buyable(), $this->uniquedata());
+		$buyable = $this->Buyable();
+		return $buyable ? ShoppingCart_Controller::remove_item_link($buyable, $this->uniquedata()) : '';
 	}
 
+	/**
+	 * @return string
+	 */
 	public function removeallLink() {
-		return ShoppingCart_Controller::remove_all_item_link($this->Buyable(), $this->uniquedata());
+		$buyable = $this->Buyable();
+		return $buyable ? ShoppingCart_Controller::remove_all_item_link($buyable, $this->uniquedata()) : '';
 	}
 
+	/**
+	 * @return string
+	 */
 	public function setquantityLink() {
-		return ShoppingCart_Controller::set_quantity_item_link($this->Buyable(), $this->uniquedata());
+		$buyable = $this->Buyable();
+		return $buyable ? ShoppingCart_Controller::set_quantity_item_link($buyable, $this->uniquedata()) : '';
 	}
 
 }
