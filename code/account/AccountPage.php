@@ -153,6 +153,7 @@ class AccountPage_Controller extends Page_Controller {
 			$member->DefaultBillingAddressID = $address->ID;
 			$member->write();
 		}
+		$form->sessionMessage(_t("CreateAddressForm.SAVED", "Your address has been saved"), "good");
 		$this->redirect($this->Link('addressbook'));
 	}
 
