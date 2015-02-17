@@ -21,30 +21,15 @@ class AddProductForm extends Form {
 
 
 	public function __construct($controller, $name = "AddProductForm") {
-		$fields = new FieldList();
-
-		if($this->maxquantity) {
-			$values = array();
-			$count = 1;
-
-			while($count <= $this->maxquantity) {
-				$values[$count] = $count;
-				$count++;
-			}
-
-			$fields->push(new DropdownField('Quantity','Quantity', $values, 1));
-		} else {
-			$fields->push(new NumericField('Quantity','Quantity', 1));
-		}
-		$actions = new FieldList(
-			new FormAction('addtocart',_t("AddProductForm.ADDTOCART",'Add to Cart'))
-		);
-
-		$validator = new RequiredFields(array(
-			'Quantity'
-		));
 		
-		parent::__construct($controller,$name,$fields,$actions,$validator);
+		parent::__construct(
+			$controller,
+			$name,
+			$this->getFormFields(),
+			$this->getFormActions(),
+			$this->getFormValidator()
+		);
+		
 		$this->addExtraClass("addproductform");
 
 		$this->extend('updateAddProductForm');
@@ -81,6 +66,47 @@ class AddProductForm extends Form {
 			return $this->controller->dataRecord;
 		}
 		return DataObject::get_by_id('Product',(int) $this->request->postVar("BuyableID")); //TODO: get buyable
+	}
+
+	/**
+	 * @return FieldList Fields for this form.
+	 */
+	protected function getFormFields(){
+		$fields = new FieldList();
+
+		if($this->maxquantity) {
+			$values = array();
+			$count = 1;
+
+			while($count <= $this->maxquantity) {
+				$values[$count] = $count;
+				$count++;
+			}
+
+			$fields->push(new DropdownField('Quantity','Quantity', $values, 1));
+		} else {
+			$fields->push(new NumericField('Quantity','Quantity', 1));
+		}
+
+		return $fields;
+	}
+
+	/**
+	 * @return FieldList Actions for this form.
+	 */
+	protected function getFormActions(){
+		return new FieldList(
+			new FormAction('addtocart',_t("AddProductForm.ADDTOCART",'Add to Cart'))
+		);
+	}
+
+	/**
+	 * @return Validator Validator for this form.
+	 */
+	protected function getFormValidator(){
+		return new RequiredFields(array(
+			'Quantity'
+		));
 	}
 
 }
