@@ -11,4 +11,3 @@
         <% end_if %>
     <% end_with %>
 </div>
-<div class="clear"></div>
