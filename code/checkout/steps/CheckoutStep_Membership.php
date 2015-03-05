@@ -14,6 +14,9 @@ class CheckoutStep_Membership extends CheckoutStep{
 		'CreateAccountForm'
 	);
 
+	public static $url_handlers = array(
+		'login' => 'index'
+	);
 	public static $skip_if_logged_in = true;
 
 	public function membership() {
