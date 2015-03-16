@@ -77,10 +77,13 @@ class MatchObjectFilter{
 		foreach($fields as $field => $value){
 			$field = Convert::raw2sql($field);
 			if(array_key_exists($field, $db)){
-				$dbfield = $singleton->dbObject($field);
-				$value = (isset($this->data[$field])) ? $this->data[$field] : null;
-				$value = $dbfield->prepValueForDB($value);	//product correct format for db values
-				$new[] = "\"$field\" = $value";
+				if(isset($this->data[$field])){
+					$dbfield = $singleton->dbObject($field);
+					$value = $dbfield->prepValueForDB($this->data[$field]);	//product correct format for db values
+					$new[] = "\"$field\" = $value";
+				}else{
+					$new[] = "\"$field\" IS NULL";
+				}
 			}else{
 				if(isset($this->data[$field])){
 					$value = Convert::raw2sql($this->data[$field]);

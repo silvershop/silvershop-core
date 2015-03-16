@@ -62,7 +62,7 @@ class CustomProductTest extends FunctionalTest {
 		$cart->clear();
 
 		//set quantity
-		$options4 = array('Size' => 12, 'Color' => 'Blue');
+		$options4 = array('Size' => 12, 'Color' => 'Blue', 'Premium' => false);
 		$resp = $cart->setQuantity($thing, 5, $options4);
 
 		$item = $cart->get($thing, $options4);
