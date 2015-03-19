@@ -110,7 +110,7 @@ class Product extends Page implements Buyable {
 						->filter("ID:not", $this->getAncestors()->map('ID', 'ID'))
 						->map('ID', 'NestedTitle')->toArray()
 				)->setMultiple(true),
-			TextField::create('Model', _t('Product.MODEL', 'Model'), '', 30),
+			TextField::create('Model', _t('Product.MODEL', 'Model'), '', 50),
 			CheckboxField::create('Featured', _t('Product.FEATURED', 'Featured Product')),
 			CheckboxField::create('AllowPurchase', _t('Product.ALLOWPURCHASE', 'Allow product to be purchased'), 1)
 		), 'Content');
