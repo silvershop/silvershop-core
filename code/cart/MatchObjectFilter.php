@@ -82,7 +82,7 @@ class MatchObjectFilter{
 					$value = $dbfield->prepValueForDB($this->data[$field]);	//product correct format for db values
 					$new[] = "\"$field\" = $value";
 				}else{
-					$new[] = "(\"{$field}\" = 0 OR \"$field\" IS NULL)";
+					$new[] = "\"$field\" IS NULL";
 				}
 			}else{
 				if(isset($this->data[$field])){
