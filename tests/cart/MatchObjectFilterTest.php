@@ -15,7 +15,7 @@ class MatchObjectFilterTest extends SapphireTest{
 		$this->assertEquals($filter->getFilter(), array('("ProductID" = 0 OR "ProductID" IS NULL)'), 'missing ID value became IS NULL or = 0');
 		// Missing value for a db field.
 		$filter = new MatchObjectFilter('Product_OrderItem', array(), array('ProductVersion'));
-		$this->assertEquals($filter->getFilter(), array('("ProductVersion" = 0 OR "ProductVersion" IS NULL)'), 'missing DB value became IS NULL or = 0');
+		$this->assertEquals($filter->getFilter(), array('"ProductVersion" IS NULL'), 'missing DB value became IS NULL or = 0');
 	}
 
 }
