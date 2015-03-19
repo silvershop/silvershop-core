@@ -16,7 +16,7 @@ class Product extends Page implements Buyable {
 
 	private static $db = array(
 		'InternalItemID' => 'Varchar(30)', //ie SKU, ProductID etc (internal / existing recognition of product)
-		'Model' => 'Varchar(30)',
+		'Model' => 'Varchar(50)',
 
 		'CostPrice' => 'Currency', // Wholesale cost of the product to the merchant
 		'BasePrice' => 'Currency', // Base retail price the item is marked at.
@@ -110,7 +110,7 @@ class Product extends Page implements Buyable {
 						->filter("ID:not", $this->getAncestors()->map('ID', 'ID'))
 						->map('ID', 'NestedTitle')->toArray()
 				)->setMultiple(true),
-			TextField::create('Model', _t('Product.MODEL', 'Model'), '', 30),
+			TextField::create('Model', _t('Product.MODEL', 'Model'), '', 50),
 			CheckboxField::create('Featured', _t('Product.FEATURED', 'Featured Product')),
 			CheckboxField::create('AllowPurchase', _t('Product.ALLOWPURCHASE', 'Allow product to be purchased'), 1)
 		), 'Content');
