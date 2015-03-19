@@ -16,7 +16,7 @@ class Product extends Page implements Buyable {
 
 	private static $db = array(
 		'InternalItemID' => 'Varchar(30)', //ie SKU, ProductID etc (internal / existing recognition of product)
-		'Model' => 'Varchar(30)',
+		'Model' => 'Varchar(50)',
 
 		'CostPrice' => 'Currency', // Wholesale cost of the product to the merchant
 		'BasePrice' => 'Currency', // Base retail price the item is marked at.
