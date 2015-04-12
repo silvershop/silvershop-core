@@ -341,6 +341,14 @@ class Order extends DataObject {
 	}
 
 	/**
+	 * Check if an order can be viewed.
+	 * @return boolean
+	 */
+	public function canView($member = null) {
+		return true;
+	}
+
+	/**
 	 * Check if an order can be edited.
 	 * @return boolean
 	 */
