@@ -53,21 +53,22 @@ class Product extends Page implements Buyable {
 	private static $summary_fields = array(
 		'InternalItemID',
 		'Title',
-		'BasePrice',
+		'BasePrice.NiceOrEmpty',
 		'canPurchase'
 	);
 
 	private static $searchable_fields = array(
 		'InternalItemID',
 		'Title' => array("title" => 'Title'),
-		'BasePrice',
 		'Featured'
 	);
 
 	private static $field_labels = array(
 		'InternalItemID' => 'SKU',
 		'Title' => 'Title',
-		'BasePrice' => 'Price'
+		'BasePrice' => 'Price',
+		'BasePrice.NiceOrEmpty' => 'Price',
+		'canPurchase' => 'Purchasable'
 	);
 
 	private static $singular_name = "Product";
