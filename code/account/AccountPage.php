@@ -40,6 +40,24 @@ class AccountPage extends Page {
 		user_error('No AccountPage was found. Please create one in the CMS!', E_USER_ERROR);
 	}
 
+	/**
+	 * This module always requires a page model.
+	 */
+	public function requireDefaultRecords() {
+		parent::requireDefaultRecords();
+		if(!self::get()->exists() && $this->config()->create_default_pages){
+			$page = self::create(array(
+				'Title' => 'Account',
+				'URLSegment' => AccountPage_Controller::config()->url_segment,
+				'ShowInMenus' => 0
+			));
+			$page->write();
+			$page->publish('Stage', 'Live');
+			$page->flushCache();
+			DB::alteration_message('Account page created', 'created');
+		}
+	}
+
 }
 
 class AccountPage_Controller extends Page_Controller {
