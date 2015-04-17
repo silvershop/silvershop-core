@@ -54,7 +54,7 @@ class AccountPage extends Page {
 			$page->write();
 			$page->publish('Stage', 'Live');
 			$page->flushCache();
-			DB::alteration_message('Checkout page created', 'created');
+			DB::alteration_message('Account page created', 'created');
 		}
 	}
 
