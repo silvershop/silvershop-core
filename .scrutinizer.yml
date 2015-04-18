@@ -1,9 +1,25 @@
 inherit: true
+build:
+  dependencies:
+    before:
+      - composer self-update
+      - phpenv rehash
+      - git clone git://github.com/silverstripe-labs/silverstripe-travis-support.git ~/travis-support
+      - php ~/travis-support/travis_setup.php --source `pwd` --target ~/builds/ss
+      - cd ~/builds/ss
+  tests:
+    override:
+	  -
+	    command: vendor/bin/phpunit -c shop/phpunit.xml.dist --coverage-clover shop/coverage.xml
+	    coverage:
+	      file: shop/coverage.xml
+	      format: php-clover
+
 tools:
-#  external_code_coverage: true
-  external_code_coverage:
-    enabled: true
-    timeout: 2500
+  external_code_coverage: false
+#  external_code_coverage:
+#    enabled: true
+#    timeout: 2500
 #    runs: 3
   php_analyzer:
     enabled: true
