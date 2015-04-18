@@ -1,13 +1,15 @@
 inherit: true
 tools:
+#  external_code_coverage: true
   external_code_coverage:
+    enabled: true
     timeout: 2500
-    runs: 3
+#    runs: 3
   php_analyzer:
     enabled: true
-    config:
-      phpunit_checks:
-        enabled: true
+#    config:
+#      phpunit_checks:
+#        enabled: true
   php_mess_detector:
     config:
       unused_code_rules:
@@ -24,3 +26,4 @@ tools:
         too_many_fields:      true
         too_many_methods:     true
         excessive_class_complexity:  true
+
