@@ -9,11 +9,11 @@ build:
       - cd ~/builds/ss
   tests:
     override:
-	  -
-	    command: vendor/bin/phpunit -c shop/phpunit.xml.dist --coverage-clover shop/coverage.xml
-	    coverage:
-	      file: shop/coverage.xml
-	      format: php-clover
+      -
+        command: vendor/bin/phpunit -c shop/phpunit.xml.dist --coverage-clover shop/coverage.xml
+        coverage:
+          file: shop/coverage.xml
+          format: php-clover
 
 tools:
   external_code_coverage: false
