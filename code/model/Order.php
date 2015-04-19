@@ -48,8 +48,7 @@ class Order extends DataObject {
 
 	private static $has_many = array(
 		'Items' => 'OrderItem',
-		'Modifiers' => 'OrderModifier',
-		'OrderStatusLogs' => 'OrderStatusLog'
+		'Modifiers' => 'OrderModifier'
 	);
 
 	private static $defaults = array(
@@ -497,7 +496,6 @@ class Order extends DataObject {
 	public function onBeforeDelete() {
 		$this->Items()->removeAll();
 		$this->Modifiers()->removeAll();
-		$this->OrderStatusLogs()->removeAll();
 		$this->Payments()->removeAll();
 		parent::onBeforeDelete();
 	}
