@@ -9,7 +9,7 @@ class PaymentCheckoutComponent extends CheckoutComponent{
 			$fields->push(
 				new OptionsetField(
 					'PaymentMethod',
-					_t("Checkout", "Payment Type"),
+					_t("CheckoutFields.PAYMENTTYPE", "Payment Type"),
 					$gateways,
 					array_keys($gateways)
 				)

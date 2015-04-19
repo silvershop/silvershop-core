@@ -41,7 +41,7 @@ abstract class AddressBookCheckoutComponent extends AddressCheckoutComponent{
 		$member = Member::currentUser();
 		if($member && $member->AddressBook()->exists()){
 			$addressoptions = $member->AddressBook()->sort('Created', 'DESC')->map('ID', 'toString')->toArray();
-			$addressoptions['newaddress'] = 'Create new address';
+			$addressoptions['newaddress'] = _t("AddressBookCheckoutComponent.CREATENEWADDRESS", "Create new address");
 			$fieldtype = count($addressoptions) > 3 ? 'DropdownField' : 'OptionsetField';
 			$label = _t("AddressBookCheckoutComponent.Existing{$this->addresstype}Address", "Existing {$this->addresstype} Address");
 			
