@@ -10,57 +10,26 @@ class CartForm extends Form{
 
 	public function __construct($controller, $name = "CartForm", $cart = null, $template = "Cart") {
 		$this->cart = $cart;
-		parent::__construct($controller, $name, new FieldList(
-			LiteralField::create("cartcontent",
-				SSViewer::execute_template($template, $cart->customise(array(
-					'Items' => $this->editableItems($cart->Items())
-				)), array(
-					'Editable' => true
-				))
-			)
-		), new FieldList(
+		$fields = new FieldList(
+			CartEditField::create("Items","",$this->cart)
+				->setTemplate($template)
+		);
+		$actions = new FieldList(
 			FormAction::create("updatecart", "Update Cart")
-		));
+		);
+
+		parent::__construct($controller, $name, $fields, $actions);
 	}
 
-	public function editableItems($items) {
-		$editables = new ArrayList();
-		foreach($items as $item){
-			$buyable = $item->Product();
-			if(!$buyable){
-				continue;
-			}
-			$name = "Item[$item->ID]";
-			$quantity = NumericField::create($name."[Quantity]", "Quantity", $item->Quantity);
-			$variationfield = false;
-			if($buyable->has_many("Variations")){
-				$variations = $buyable->Variations();
-				if($variations->exists()){
-					$variationfield = DropdownField::create(
-						$name."[ProductVariationID]",
-						"Varaition",
-						$variations->map('ID', 'Title'),
-						$item->ProductVariationID
-					);
-				}
-			}
-			$remove = CheckboxField::create($name."[Remove]", "Remove");
-			$editables->push($item->customise(array(
-				"QuantityField" => $quantity,
-				"VariationField" => $variationfield,
-				"RemoveField" => $remove
-			)));
-		}
-
-		return $editables;
-	}
-
+	/**
+	 * Update the cart using data collected
+	 */
 	public function updatecart($data, $form) {
 		$items = $this->cart->Items();
 		$updatecount = $removecount = 0;
 		$messages = array();
-		if(isset($data['Item']) && is_array($data['Item'])){
-			foreach($data['Item'] as $itemid => $fields){
+		if(isset($data['Items']) && is_array($data['Items'])){
+			foreach($data['Items'] as $itemid => $fields){
 				$item = $items->byID($itemid);
 				if(!$item){
 					continue;
@@ -89,7 +58,6 @@ class CartForm extends Form{
 					$updatecount++;
 				}
 			}
-
 		}
 		if($removecount){
 			$messages['remove'] = "Removed ".$removecount." items.";
