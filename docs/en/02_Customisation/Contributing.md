@@ -42,7 +42,7 @@ This project political model used for this project is a [Benevolent Dictatorship
 * Modular code: high cohesion, low coupling
 * Keep a record of everything - prices changes, transactions (posting table)
 * Allow site owner to change all prices. One-time configurations are done in code.
-
+* Install an [EditorConfig](http://editorconfig.org/#download) plugin for your editor or IDE.
 
 See also:
 
