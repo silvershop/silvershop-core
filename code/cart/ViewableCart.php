@@ -10,8 +10,6 @@
  */
 class ViewableCart extends Extension{
 
-	protected $calculateonce = false;
-
 	/**
 	 * Get the cart, and do last minute calculation if necessary.
 	 */
@@ -25,9 +23,15 @@ class ViewableCart extends Extension{
 	}
 
 	public function getContinueLink() {
-		if($maincategory = DataObject::get_one('ProductCategory', "", true, "ParentID ASC, ID ASC")){
+		$maincategory = ProductCategory::get()
+			->sort(array(
+				"ParentID" => "ASC",
+				"ID" => "ASC"
+			))->first();
+		if($maincategory){
 			return $maincategory->Link();
 		}
+
 		return Director::baseURL();
 	}
 
