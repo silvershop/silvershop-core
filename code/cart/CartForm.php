@@ -10,20 +10,28 @@ class CartForm extends Form{
 
 	public function __construct($controller, $name = "CartForm", $cart = null, $template = "Cart") {
 		$this->cart = $cart;
-		parent::__construct($controller, $name, new FieldList(
-			LiteralField::create("cartcontent",
-				SSViewer::execute_template($template, $cart->customise(array(
-					'Items' => $this->editableItems($cart->Items())
-				)), array(
-					'Editable' => true
-				))
-			)
-		), new FieldList(
+		$fields = new FieldList();
+		//only render the cart if it exists
+		if($this->cart){
+			$fields->push(LiteralField::create("cartcontent",
+				$this->getCartContent($template)
+			));
+		}
+
+		$actions = new FieldList(
 			FormAction::create("updatecart", "Update Cart")
-		));
+		);
+
+		parent::__construct($controller, $name, $fields, $actions);
 	}
 
-	public function editableItems($items) {
+	/**
+	 * Add quantity, variation and remove fields to the
+	 * item set.
+	 * This method is static so that it can be used externally.
+	 * @param SS_List $items
+	 */
+	public static function add_edit_fields(SS_List $items) {
 		$editables = new ArrayList();
 		foreach($items as $item){
 			$buyable = $item->Product();
@@ -55,6 +63,25 @@ class CartForm extends Form{
 		return $editables;
 	}
 
+	/**
+	 * Get the HTML cart content to add inside the form
+	 * @param  string $template
+	 * @return string rendered content
+	 */
+	protected function getCartContent($template) {
+		return SSViewer::execute_template(
+			$template,
+			$this->cart->customise(array(
+				'Items' => self::add_edit_fields($this->cart->Items())
+			)), array(
+				'Editable' => true
+			)
+		);
+	}
+
+	/**
+	 * Update the cart using data collected
+	 */
 	public function updatecart($data, $form) {
 		$items = $this->cart->Items();
 		$updatecount = $removecount = 0;
@@ -89,7 +116,6 @@ class CartForm extends Form{
 					$updatecount++;
 				}
 			}
-
 		}
 		if($removecount){
 			$messages['remove'] = "Removed ".$removecount." items.";
