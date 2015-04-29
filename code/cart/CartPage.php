@@ -93,7 +93,10 @@ class CartPage_Controller extends Page_Controller{
 		if(!$cart){
 			return false;
 		}
-		return new CartForm($this, "CartForm", $cart);
+		$form = new CartForm($this, "CartForm", $cart);
+		$this->dataRecord->extend('updateCartForm', $form, $cart);
+
+		return $form;
 	}
 
 }
