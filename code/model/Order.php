@@ -511,20 +511,10 @@ class Order extends DataObject {
 		$val .= "<div class='items'><h2>Items</h2>";
 		if($items = $this->Items()){
 			$val .= $this->Items()->debug();
-			$val .= "<ul>";
-			foreach($items as $item) { //extra debug info for items, since ComponentSet doesn't provdide this
-				$val .= "<li style=\"list-style-type: disc; margin-left: 20px\">" . Debug::text($item) . "</li>";
-			}
-			$val .= "</ul>";
 		}
 		$val .= "</div><div class='modifiers'><h2>Modifiers</h2>";
 		if($modifiers = $this->Modifiers()){
 			$val .= $modifiers->debug();
-			$val .= "<ul>";
-			foreach($modifiers as $item) { //extra debug info for items, since ComponentSet doesn't provdide this
-				$val .= "<li style=\"list-style-type: disc; margin-left: 20px\">" . Debug::text($item) . "</li>";
-			}
-			$val .= "</ul>";
 		}
 		$val .= "</div></div>";
 

@@ -54,7 +54,6 @@ class MatchObjectFilter{
 	 * @return array of filter statements
 	 */
 	public function getFilter() {
-
 		if(!is_array($this->data)){
 			return null;
 		}
@@ -62,9 +61,9 @@ class MatchObjectFilter{
 		$hasones = $singleton->has_one();
 
 		$db = $singleton->db();
-		$allowed = array_merge($db, $hasones); //fields that can be used
-		$fields = array_flip(array_intersect(array_keys($allowed), $this->required));
-
+		$allowed = array_keys(array_merge($db, $hasones)); //fields that can be used
+		$fields = array_flip(array_intersect($allowed, $this->required));
+		
 		//add 'ID' to has one relationship fields
 		foreach($hasones as $key => $value){
 			if(isset($fields[$key])){
