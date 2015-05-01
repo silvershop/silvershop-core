@@ -60,14 +60,15 @@ class CartEditField extends FormField{
 	 */
 	public function Field($properties = array()) {
 		$editables = $this->editableItems();
-		$this->extend('onBeforeRender', $editables);
+		$customcartdata = array(
+			'Items' => $editables
+		);
+		$this->extend('onBeforeRender', $editables, $customcartdata);
+
 		return SSViewer::execute_template(
 			$this->template,
-			$this->cart->customise(array(
-				'Items' => $this->editableItems()
-			)), array(
-				'Editable' => true
-			)
+			$this->cart->customise($customcartdata),
+			array('Editable' => true)
 		);
 	}
 
