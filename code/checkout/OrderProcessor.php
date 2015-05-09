@@ -4,9 +4,6 @@
  * Placing, Emailing Reciepts, Status Updates, Printing, Payments - things you do with a completed order.
  *
  * @package shop
- * @todo split into different classes relating to individual concerns.
- * @todo bring over status updating code
- * @todo figure out reference issues ...if you store a reference to order in here, it can get stale.
  */
 class OrderProcessor{
 
@@ -14,6 +11,11 @@ class OrderProcessor{
 	 * @var Order
 	 */
 	protected $order;
+
+	/**
+	 * @var OrderEmailNotifier
+	 */
+	protected $notifier;
 
 	/**
 	 * @var string
@@ -34,6 +36,7 @@ class OrderProcessor{
 	 */
 	public function __construct(Order $order) {
 		$this->order = $order;
+		$this->notifier = OrderEmailNotifier::create($order);
 	}
 
 	/**
@@ -155,10 +158,11 @@ class OrderProcessor{
 				foreach($this->order->Items() as $item){
 					$item->onPayment();
 				}
-				$this->order->extend('onPaid'); //all payment is settled
+				//all payment is settled
+				$this->order->extend('onPaid');
 			}
 			if(!$this->order->ReceiptSent){
-				$this->sendReceipt();
+				$this->notifier->sendReceipt();
 			}
 		}
 	}
@@ -244,88 +248,23 @@ class OrderProcessor{
 		$this->order->extend('onPlaceOrder');
 		$this->order->write();
 
+		//send confirmation if configured and receipt hasn't been sent
+		if(
+			self::config()->send_confirmation &&
+				!$this->order->ReceiptSent
+		) {
+			$this->notifier->sendConfirmation();
+		}
+
+		//notify admin, if configured
+		if(self::config()->send_admin_notification) {
+			$this->notifier->sendAdminNotification();
+		}
+
 		// Save order reference to session
 		OrderManipulation::add_session_order($this->order);
 
 		return true; //report success
-	}
-
-	/**
-	* Send a mail of the order to the client (and another to the admin).
-	*
-	* @param $emailClass - the class name of the email you wish to send
-	* @param $copyToAdmin - true by default, whether it should send a copy to the admin
-	*/
-	public function sendEmail($emailClass, $copyToAdmin = true) {
-		$from = ShopConfig::config()->email_from ? ShopConfig::config()->email_from : Email::config()->admin_email;
-		$to = $this->order->getLatestEmail();
-		$subject = sprintf(_t("Order.EMAILSUBJECT", "Shop Sale Information #%d"), $this->order->Reference);
-		$checkoutpage = CheckoutPage::get()->first();
-		$completemessage = $checkoutpage ? $checkoutpage->PurchaseComplete : "";
-		$email = new $emailClass();
-		$email->setFrom($from);
-		$email->setTo($to);
-		$email->setSubject($subject);
-		if($copyToAdmin){
-			$email->setBcc(Email::config()->admin_email);
-		}
-		$email->populateTemplate(array(
-			'PurchaseCompleteMessage' => $completemessage,
-			'Order' => $this->order,
-			'BaseURL' => Director::absoluteBaseURL()
-		));
-		return $email->send();
-	}
-
-	/**
-	* Send the receipt of the order by mail.
-	* Precondition: The order payment has been successful
-	*/
-	public function sendReceipt() {
-		$this->sendEmail(
-			'Order_ReceiptEmail',
-			Config::inst()->get('OrderProcessor', 'bcc_receipt_to_admin')
-		);
-		$this->order->ReceiptSent = SS_Datetime::now()->Rfc2822();
-		$this->order->write();
-	}
-
-	/**
-	* Send a message to the client containing the latest
-	* note of {@link OrderStatusLog} and the current status.
-	*
-	* Used in {@link OrderReport}.
-	*
-	* @param string $note Optional note-content (instead of using the OrderStatusLog)
-	*/
-	public function sendStatusChange($title, $note = null) {
-		if(!$note) {
-			$latestLog = OrderStatusLog::get()
-				->filter("OrderID", $this->order->ID)
-				->filter("SentToCustomer", 1)
-				->first();
-			
-			if($latestLog) {
-				$note = $latestLog->Note;
-				$title = $latestLog->Title;
-			}
-		}
-		$member = $this->order->Member();
-		if(Config::inst()->get('OrderProcessor', 'receipt_email')) {
-			$adminEmail = Config::inst()->get('OrderProcessor', 'receipt_email');
-		} else {
-			$adminEmail = Email::config()->admin_email;
-		}
-		$e = new Order_statusEmail();
-		$e->populateTemplate(array(
-			"Order" => $this->order,
-			"Member" => $member,
-			"Note" => $note
-		));
-		$e->setFrom($adminEmail);
-		$e->setSubject($title);
-		$e->setTo($member->Email);
-		$e->send();
 	}
 
 	/**
@@ -341,6 +280,42 @@ class OrderProcessor{
 
 	private function error($message) {
 		$this->error = $message;
+	}
+
+	public static function config() {
+		return new Config_ForClass("OrderProcessor");
+	}
+
+	/**
+	* @deprecated 2.0
+	*/
+	public function sendEmail($template, $subject, $copyToAdmin = true) {
+		Deprecation::notice('2.0', 'Use OrderEmailNotifier instead');
+		return $this->notifier->sendEmail($template, $subject, $copyToAdmin);
+	}
+
+	/**
+	 * @deprecated 2.0
+	 */
+	public function sendConfirmation() {
+		Deprecation::notice('2.0', 'Use OrderEmailNotifier instead');
+		$this->notifier->sendConfirmation();
+	}
+
+	/**
+	* @deprecated 2.0
+	*/
+	public function sendReceipt() {
+		Deprecation::notice('2.0', 'Use OrderEmailNotifier instead');
+		$this->notifier->sendReceipt();
+	}
+
+	/**
+	* @deprecated 2.0
+	*/
+	public function sendStatusChange($title, $note = null) {
+		Deprecation::notice('2.0', 'Use OrderEmailNotifier instead');
+		$this->notifier->sendStatusChange($title, $note);
 	}
 
 }

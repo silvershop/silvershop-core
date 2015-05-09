@@ -16,7 +16,7 @@ This has been left for the store owner to collaborate with their developer.
 
 ## [Customisation](Customisation)
 
-* Emails
+* [Emails](Emails)
 * [Sub-modules - stock, discounts ...](Submodules)
 * [Templates and Theming](Templates_and_Themes)
 * [Recipes](Recipes) - how do build in various features.
