@@ -45,4 +45,12 @@ class ShopCurrency extends Currency {
 
 		return $val;
 	}
+
+	public function NiceOrEmpty() {
+		if($this->value != 0){
+			return $this->Nice();
+		}
+		return "";
+	}
+
 }
