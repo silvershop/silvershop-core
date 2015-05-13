@@ -1,15 +1,15 @@
 <?php
 /**
  * Test {@link Product}
- * 
+ *
  * @package shop
  */
 class ProductTest extends FunctionalTest {
-	
+
 	protected static $fixture_file = 'shop/tests/fixtures/shop.yml';
 	protected static $disable_theme = true;
 	protected static $use_draft_site = true;
-	
+
 	function setUp() {
 		parent::setUp();
 		$this->tshirt = $this->objFromFixture('Product', 'tshirt');
@@ -22,7 +22,7 @@ class ProductTest extends FunctionalTest {
 	public function testCMSFields() {
 		$fields = $this->tshirt->getCMSFields();
 	}
-	
+
 	public function testCanPurchase() {
 		$this->assertTrue($this->tshirt->canPurchase());
 		$this->assertTrue($this->socks->canPurchase());
@@ -38,7 +38,7 @@ class ProductTest extends FunctionalTest {
 		Product::config()->allow_zero_price = false;
 		Product::config()->global_allow_purchase = true;
 	}
-	
+
 	public function testSellingPrice() {
 		$this->assertEquals(25, $this->tshirt->sellingPrice());
 		$this->assertEquals(8, $this->socks->sellingPrice());
@@ -71,6 +71,20 @@ class ProductTest extends FunctionalTest {
 		$this->assertEquals(15, $item->Quantity);
 	}
 
+	public function testDiscountRoundingError() {
+		// This extension adds a fractional discount, which could cause
+		// the displayed unit price not to match the charged price at
+		// large quantities.
+		Product::add_extension('ProductTest_FractionalDiscountExtension');
+		DataObject::flush_and_destroy_cache();
+		$tshirt = Product::get()->byID($this->tshirt->ID);
+		Config::inst()->update('Order','rounding_precision', 2);
+		$this->assertEquals(24.99, $tshirt->sellingPrice());
+		Config::inst()->update('Order','rounding_precision', 3);
+		$this->assertEquals(24.985, $tshirt->sellingPrice());
+		Product::remove_extension('ProductTest_FractionalDiscountExtension');
+	}
+
 	public function testCanViewProductPage() {
 		$this->get(Director::makeRelative($this->tshirt->Link()));
 		$this->get(Director::makeRelative($this->socks->Link()));
@@ -95,5 +109,12 @@ class ProductTest extends FunctionalTest {
 			$this->mp3player->getCategoryIDs()
 		);
 	}
-	
+
+}
+
+
+class ProductTest_FractionalDiscountExtension extends DataExtension implements TestOnly {
+	public function updateSellingPrice(&$price) {
+		$price -= 0.015;
+	}
 }
