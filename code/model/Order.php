@@ -187,7 +187,7 @@ class Order extends DataObject {
 		$fields->push(
 			ListboxField::create("Status","Status")
 				->setSource(array_combine(
-					self::config()->placed_status, 
+					self::config()->placed_status,
 					self::config()->placed_status
 				))
 				->setMultiple(true)
@@ -228,7 +228,7 @@ class Order extends DataObject {
 		if($this->Items()->exists()){
 			return $this->Items()->SubTotal();
 		}
-		
+
 		return 0;
 	}
 
@@ -421,6 +421,14 @@ class Order extends DataObject {
 			return $address;
 		}
 		return null;
+	}
+
+	/**
+	 * Check if the two addresses saved differ.
+	 * @return boolean
+	 */
+	public function getAddressesDiffer(){
+		return $this->SeparateBillingAddress || $this->ShippingAddressID !== $this->BillingAddressID;
 	}
 
 	/**
