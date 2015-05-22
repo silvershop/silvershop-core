@@ -10,7 +10,6 @@ abstract class AddressBookCheckoutComponent extends AddressCheckoutComponent{
 
 	protected $addtoaddressbook = true;
 
-
 	public function getFormFields(Order $order) {
 		$fields = parent::getFormFields($order);
 
@@ -20,7 +19,10 @@ abstract class AddressBookCheckoutComponent extends AddressCheckoutComponent{
 			$existingaddressfields->merge($fields);
 			// group under a composite field (invisible by default) so we
 			// easily know which fields to show/hide
-			$label = _t("AddressBookCheckkoutComponent.{$this->addresstype}Address", "{$this->addresstype} Address");
+			$label = _t(
+				"AddressBookCheckkoutComponent.{$this->addresstype}Address",
+				"{$this->addresstype} Address"
+			);
 
 			return new FieldList(
 				CompositeField::create($existingaddressfields)
@@ -44,7 +46,7 @@ abstract class AddressBookCheckoutComponent extends AddressCheckoutComponent{
 			$addressoptions['newaddress'] = _t("AddressBookCheckoutComponent.CREATENEWADDRESS", "Create new address");
 			$fieldtype = count($addressoptions) > 3 ? 'DropdownField' : 'OptionsetField';
 			$label = _t("AddressBookCheckoutComponent.Existing{$this->addresstype}Address", "Existing {$this->addresstype} Address");
-			
+
 			return new FieldList(
 				$fieldtype::create($this->addresstype."AddressID", $label,
 					$addressoptions,
