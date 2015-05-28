@@ -20,7 +20,7 @@ If the form has been built well, it should have extension hooks that allow you t
 
 ## How do I customise the country field? - change country list, remove field completely, set default
 
-See the [customising docs](../Customisation).
+See the [customising docs](../02_Customisation).
 
 ## How do I set my site to use a different currency?
 
@@ -31,15 +31,15 @@ Payment::set_site_currency('CUR');
 
 ## I can't get payments to work? eg: PayPal, PaymentExpress, Other..
 
-see [payment](Payment)
+see [payment](06_Payment.md)
 
 ## How do I add shipping calculation to the checkout process? How do I customise fees for different locations / delivery zones?
 
-The default shop module provides a few shipping [modifiers](../How_It_Works/Order_Modifiers). You can also have one custom built for your needs.
+The default shop module provides a few shipping [modifiers](../03_How_It_Works/Order_Modifiers.md). You can also have one custom built for your needs.
 
 ## How do I use in a different language?
 
-Follow the [Silverstripe internationalisation guide](http://doc.silverstripe.org/framework/en/topics/i18n)
+Follow the [Silverstripe internationalisation guide](http://docs.silverstripe.org/en/developer_guides/i18n/)
 We welcome your contribution of language files.
 
 ## When are cart/order totals recalculated?

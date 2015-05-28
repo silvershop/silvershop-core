@@ -4,7 +4,7 @@ You may want to store additional information for each customer.
 In a nutshell you need to update your DataModel, and any places where the 
 data is entered. This can generally be done by creating extensions.
 
-First read the [SilverStripe documentation about Extensions](http://doc.silverstripe.org/framework/en/reference/dataextension).
+First read the [SilverStripe documentation about Extensions](http://docs.silverstripe.org/en/developer_guides/model/extending_dataobjects/).
 
 ## Customer
 

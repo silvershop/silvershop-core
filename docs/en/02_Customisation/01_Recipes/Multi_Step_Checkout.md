@@ -21,7 +21,7 @@ Next, optionally replace your `CheckoutPage.ss` template with one that uses step
  
 You may notice that the `SteppedCheckoutPage.ss` template contains statements like:
 
-```
+```html
 <% if IsFutureStep(contactdetails) %> ... <% end_if %>
 <% if IsCurrentStep(contactdetails) %> ... <% end_if %>
 <% if IsPastStep(contactdetails) %> ... <% end_if %>
@@ -31,7 +31,7 @@ These functions have been set up to enable a single page template to handle mult
 
 You can also define individual templates if you like, eg:
 
-```
+```html
 mysite/templates/Layout/CheckoutPage_contactdetails.ss
 mysite/templates/Layout/CheckoutPage_shippingaddress.ss
 mysite/templates/Layout/CheckoutPage_billingaddress.ss

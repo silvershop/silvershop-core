@@ -19,7 +19,7 @@ Adds members who have placed orders to the selected customer group (see the shop
 
 ## Automated Tasks
 
-These tasks are intended to be [run via cron jobs](http://doc.silverstripe.org/framework/en/topics/commandline#running-regular-tasks-with-cron).
+These tasks are intended to be [run via cron jobs](http://docs.silverstripe.org/en/developer_guides/cli/).
 
 ### Delete old carts
 
@@ -30,7 +30,7 @@ To run manually, in your browser visit:
 
 	[yoursiteurl.dom]/dev/tasks/CartCleanupTask
 
-To run automatically, trigger the following [sake script](http://doc.silverstripe.org/framework/en/topics/commandline) to run periodically on your sever:
+To run automatically, trigger the following [sake script](http://docs.silverstripe.org/en/developer_guides/cli/) to run periodically on your sever:
 
 	[yoursitepath]/framework/sake dev/tasks/CartCleanupTask
 

@@ -22,4 +22,4 @@ A single step checkout is somewhat limited, because it requires the use of ajax 
 
 ## Multi Step Checkout
 
-See [Multi Step Checkout](Multi_Step_Checkout).
+See [Multi Step Checkout](Multi_Step_Checkout.md).

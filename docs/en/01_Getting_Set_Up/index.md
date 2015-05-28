@@ -1,29 +1,29 @@
-This tutorial explains start-to-finish how to set up an online shop with the SilverStripe shop module. If you are upgrading your shop, see [Upgrading](Getting_Set_Up/Upgrading).
+This tutorial explains start-to-finish how to set up an online shop with the SilverStripe shop module. If you are upgrading your shop, see [Upgrading](01_Getting_Set_Up/02_Upgrading.md).
 
 ## SilverStripe
 
-Follow the standard [SilverStripe installation guide](http://doc.silverstripe.org/framework/en/installation/) to get a SilverStripe website set up.
+Follow the standard [SilverStripe installation guide](http://docs.silverstripe.org/en/getting_started/installation/) to get a SilverStripe website set up.
 
 ## Install Shop
 
-[Install the shop module](Getting_Set_Up/Installation).
+[Install the shop module](01_Getting_Set_Up/01_Installation.md).
 
 ## Shipping and Tax
 
- * [Configure shipping](Getting_Set_Up/Shipping)
- * [Configure taxes](Getting_Set_Up/Tax)
+ * [Configure shipping](01_Getting_Set_Up/04_Shipping.md)
+ * [Configure taxes](01_Getting_Set_Up/05_Tax.md)
 
 ## Payment
 
-[Set up your payment provider](Getting_Set_Up/Payment), so customers can make online payments.
+[Set up your payment provider](01_Getting_Set_Up/06_Payment.md), so customers can make online payments.
 
 ## Automated Tasks
 
-Add some [automated tasks](Getting_Set_Up/Tasks) to handle some things automatically for you.
+Add some [automated tasks](01_Getting_Set_Up/Tasks.md) to handle some things automatically for you.
 
 ## Bulk Loading Products
 
-[Products can be bulk loaded](Getting_Set_Up/Bulk_Loading), saving time on larger websites.
+[Products can be bulk loaded](01_Getting_Set_Up/Bulk_Loading.md), saving time on larger websites.
 
 ## Testing / Development Environment
 Useful development tools are accessible via [yoursite]/dev/shop.

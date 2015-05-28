@@ -34,7 +34,7 @@ Product:
 
 `[mysite]/templates/Includes/AdditionalImages.ss`
 
-```
+```html
 <% if AdditionalImages %>
 	<% loop AdditionalImages %>
 		$Me

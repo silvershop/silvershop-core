@@ -1,6 +1,6 @@
 # Shipping
 
-Shipping calculations can be introduced to an order with an [order modifier](../How_It_Works/Order_Modifiers).
+Shipping calculations can be introduced to an order with an [order modifier](../03_How_It_Works/Order_Modifiers.md).
 
 Modifiers included with core code:
 
