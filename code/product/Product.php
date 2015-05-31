@@ -143,6 +143,15 @@ class Product extends Page implements Buyable {
 	}
 
 	/**
+	 * Fix grid field heading displaying "page name"
+	 */
+	public function fieldLabels($includerelations = true) {
+		$labels = parent::fieldLabels($includerelations);
+		$labels['Title'] = "Title";
+		return $labels;
+	}
+
+	/**
 	 * Helper function for generating list of categories to select from.
 	 * @return array categories
 	 */
