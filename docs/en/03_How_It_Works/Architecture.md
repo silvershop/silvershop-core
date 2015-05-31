@@ -2,7 +2,7 @@
 
 ## Basics to understand
 
-[ShoppingCart](Shopping_Cart) provides the API to add and remove items from the current order.
+[ShoppingCart](Shopping_Cart.md) provides the API to add and remove items from the current order.
 
 Products are pages, with some extra details, such as an image, and price.
 
@@ -27,7 +27,7 @@ Here is an overview of the model classes
   	* OrderItem
   	 * Product_OrderItem
    	 * ProductVariation_OrderItem
-   * OrderModifier - Shippping/Tax calculators etc... see [order modifiers](Order_Modifiers)
+   * OrderModifier - Shippping/Tax calculators etc... see [order modifiers](Order_Modifiers.md)
    * ProductVariation - variations in price/colour/shape etc for a product.
    
    * OrderStatusLog
@@ -52,7 +52,7 @@ Cart items are stored in the database. A new order is created when the first ite
 
 The checkout is a page type which includes an OrderForm, plus has the facility for displaying an order that has been placed. 
 
-Also see [core changes](Core_Changes).
+Also see [core changes](Core_Changes.md).
 
 ### Persisting order information
 

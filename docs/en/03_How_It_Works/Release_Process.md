@@ -44,7 +44,7 @@ Upload to [github](https://github.com/burnbright/silverstripe-shop/downloads)
 
 * [website](http://ss-shop.org) info
 * [demo site](http://demo.ss-shop.org)
-* silverstripe [extensions page](http://www.silverstripe.org/shop-module/)
+* silverstripe [extensions page](http://addons.silverstripe.org/add-ons/burnbright/silverstripe-shop)
 
 ## Announce
 

@@ -3,8 +3,8 @@ Testing is highly important for maintaining a quality product.
 ## Unit Testing
 
 We insist that the shop module contains a suite of unit tests that are updated with any changes to the code. Sub-Modules should also have their own test suites.
-See the [framework testing documentation](http://doc.silverstripe.org/framework/en/topics/testing/index) for setup information etc.
-See also: [http://www.phpunit.de/manual/3.5/en/index.html](http://www.phpunit.de/manual/3.5/en/index.html)
+See the [framework testing documentation](http://docs.silverstripe.org/en/developer_guides/testing/) for setup information etc.
+See also: [https://phpunit.de/manual/3.7/en/](https://phpunit.de/manual/3.7/en/)
 
 To run all shop tests visit `yoursite/dev/tests/module/shop`. If you intend on doing lots of development, it might be a good idea to run tests from the command line.
 

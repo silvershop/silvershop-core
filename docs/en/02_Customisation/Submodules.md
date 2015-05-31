@@ -6,4 +6,4 @@ See the README file for a list of some known submodules, or search in the releva
 
 [silverstripe addons](http://addons.silverstripe.org/add-ons?search=shop), or [packgist](https://packagist.org/search/?q=silverstripe%20shop), or [github](https://github.com/search?q=silverstripe+shop).
 
-If you are interested in contributing your own sub-module(s), see [contributing](Contributing) docs.
+If you are interested in contributing your own sub-module(s), see [contributing](Contributing.md) docs.

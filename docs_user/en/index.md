@@ -12,13 +12,13 @@ modified in any way.
 Contents
 --------
 
- * [Getting Started & Configuration](Configuration)
- * [Adding and editing products](AddingEditingProducts)
-  * [Images / Photos](AddingEditingProducts#ChoosingAnImage)
-  * [Creating and modifying products with a spreadsheet file](BulkLoadingProducts)
- * [Editing/understanding product variations](ProductVariations)
- * [Product categories](ProductCategories)
- * [Managing orders](OrderFulfilment)
+ * [Getting Started & Configuration](Configuration.md)
+ * [Adding and editing products](AddingEditingProducts.md)
+  * [Images / Photos](AddingEditingProducts.md#ChoosingAnImage)
+  * [Creating and modifying products with a spreadsheet file](BulkLoadingProducts.md)
+ * [Editing/understanding product variations](ProductVariations.md)
+ * [Product categories](ProductCategories.md)
+ * [Managing orders](OrderFulfilment.md)
   * Updating payment info
   * Cancelling an order
- * [Troubleshooting](Troubleshooting)
+ * [Troubleshooting](Troubleshooting.md)

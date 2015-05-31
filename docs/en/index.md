@@ -5,32 +5,39 @@ Customisation is left to the developer, similar to how the SilverStripe CMS is c
 There is little in the way of online web-interface based configuration, tweaking and setup.
 This has been left for the store owner to collaborate with their developer. 
 
-## [Getting Set Up](Getting_Set_Up) < Start Here
+## [Getting Set Up](01_Getting_Set_Up) < Start Here
 
-* [Installation & Configuration](Getting_Set_Up/Installation) - requirements, instructions
-* [Upgrading](Getting_Set_Up/Upgrading)
-* [Troubleshooting](Getting_Set_Up/Troubleshooting)
-* [Payment](Getting_Set_Up/Payment)
-* [Bulk loading products from a CSV spreadsheet](Getting_Set_Up/Bulk_Loading)
-* [Shipping](Getting_Set_Up/Shipping) and [Tax](Getting_Set_Up/Tax) Calculation
+* [Installation & Configuration](01_Getting_Set_Up/01_Installation.md) - requirements, instructions
+* [Upgrading](01_Getting_Set_Up/02_Upgrading.md)
+* [Troubleshooting](01_Getting_Set_Up/03_Troubleshooting.md)
+* [Payment](01_Getting_Set_Up/06_Payment.md)
+* [Bulk loading products from a CSV spreadsheet](01_Getting_Set_Up/Bulk_Loading.md)
+* [Shipping](01_Getting_Set_Up/04_Shipping.md) and [Tax](01_Getting_Set_Up/05_Tax.md) Calculation
 
-## [Customisation](Customisation)
+## [Customisation](02_Customisation)
 
-* [Emails](Emails)
-* [Sub-modules - stock, discounts ...](Submodules)
-* [Templates and Theming](Templates_and_Themes)
-* [Recipes](Recipes) - how do build in various features.
+* [Configuration](02_Customisation/Configuration.md) via your mysite.config.yml file.
+* [Emails](02_Customisation/Emails.md)
+* [Sub-modules - stock, discounts ...](02_Customisation/Submodules.md)
+* [Templates and Theming](02_Customisation/Templates_and_Themes.md)
+* [Hooks](02_Customisation/Hooks.md)
+* [Recipes](02_Customisation/01_Recipes) - how do build in various features.
+* [Migrating To Silverstripe](02_Customisation/Migrating_To_SilverStripe.md)
+* [Contributing](02_Customisation/Contributing.md) - get involved with development.  
+ * [Testing](02_Customisation/Testing.md) - infrastructure / instructions
 
-* [Contributing](Contributing) - get involved with development.
- * [Testing](Testing) - infrastructure / instructions
 
 ## How it works
 
-* [Architecture](How_It_Works/Architecture)
- * [Modifiers](How_It_Works/OrderModifiers) - All about modifiers. What they are, and how they work.
- * [Core changes](How_It_Works/Core_Changes) that have been made to core SS - eg sitetree, etc
-* [Ordering Process](How_It_Works/OrderProcess) - catalogue selection, checkout, payment, account/fulfillment
-* [Development](How_It_Works/Development) - Mission/aim, Coding style/conventions, Release process
+* [Architecture](03_How_It_Works/Architecture.md)
+ * [Modifiers](03_How_It_Works/Order_Modifiers.md) - All about modifiers. What they are, and how they work.
+ * [Core changes](03_How_It_Works/Core_Changes.md) that have been made to core SS - eg sitetree, etc
+ * [Member](03_How_It_Works/Member.md)
+ * [Pricing](03_How_It_Works/Pricing.md) for complex pricing structures and [Product Variations](03_How_It_Works/Product_Variations.md) for predefined customisations.
+* [Ordering Process](03_How_It_Works/Order_Process.md) - catalogue selection, checkout, payment, account/fulfillment and [Order Modifiers](03_How_It_Works/Order_Modifiers.md) to customise calculations.
+* [Shopping Cart](03_How_It_Works/Shopping_Cart.md)
+* [Development](03_How_It_Works/Development.md) - Mission/aim, Coding style/conventions, Release process
+* [Glossary](03_How_It_Works/Glossary.md)
  
 ## External Links
 

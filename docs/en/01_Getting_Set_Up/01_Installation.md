@@ -9,4 +9,4 @@ composer require burnbright/silverstripe-shop "*"
 
 The `example_config.yml` file gives an exhaustive list of the possible configuration options within the shop module.
 
-See the [customisation](../Customisation) section of this documentation or more advanced customisations.
+See the [customisation](../02_Customisation) section of this documentation or more advanced customisations.

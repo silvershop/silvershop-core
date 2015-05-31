@@ -66,4 +66,4 @@ you can create variations for it.
 Creating and updating variations from a spreadsheet
 ---------------------------------------------------
 
-See [Bulk Loading Products](BulkLoadingProducts#ProductVariations).
+See [Bulk Loading Products](BulkLoadingProducts#ProductVariations.md).

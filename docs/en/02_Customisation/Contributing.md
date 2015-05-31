@@ -15,7 +15,7 @@ If you would like to contribute code, please [fork this project](https://github.
 
 ## Development Guidelines
 
-We try to match [SilverStripe's guidelines](http://doc.silverstripe.org/sapphire/en/misc/contributing) 
+We try to match [SilverStripe's guidelines](http://docs.silverstripe.org/en/contributing/) 
 as closely as possible. In some ways our approach will differ, but it is a good idea to read their guidelines first.
 
 ## Workflow
@@ -46,4 +46,4 @@ This project political model used for this project is a [Benevolent Dictatorship
 
 See also:
 
- * [Development](Development)
+ * [Development](../03_How_It_Works/Development.md)

@@ -42,4 +42,4 @@ In the 'Content > Product Groups' tab you can specify secondary product groups t
 
 Another way to manage products is through the 'Products' section of the CMS. Here you can list products according to a number of search options, such as id,name, weight, price. 
 
-This is also where you can upload a spreadsheet of products. See [bulk loading products](BulkLoadingProducts)
+This is also where you can upload a spreadsheet of products. See [bulk loading products](BulkLoadingProducts.md)
