@@ -47,8 +47,10 @@ class OrderActionsForm extends Form{
 						$outstandingfield->Nice()
 					)
 				));
-				$fields->push(OptionsetField::create(
-					'PaymentMethod', 'Payment Method', $gateways, key($gateways)
+				$fields->push(OptionsetField::create('PaymentMethod',
+					_t("OrderActionsForm.PAYMENTMETHOD", "Payment Method"),
+					$gateways,
+					key($gateways)
 				));
 
 				$actions->push(FormAction::create('dopayment',
@@ -130,7 +132,7 @@ class OrderActionsForm extends Form{
 					Email::config()->admin_email, Email::config()->admin_email,
 					sprintf(
 						_t('Order.CANCELSUBJECT', 'Order #%d cancelled by member'),
-						$order->ID
+						$this->order->ID
 					),
 					$this->order->renderWith('Order')
 				);
