@@ -14,8 +14,8 @@
 		}
 	],
 	"require" : {
-		"silverstripe/cms": "~3.1",
-		"silverstripe/framework": "~3.1",
+		"silverstripe/cms": ">=3.1",
+		"silverstripe/framework": ">=3.1",
 		"burnbright/silverstripe-omnipay" : "~1.1",
 		"icecaster/versioned-gridfield": "~1.0",
 		"burnbright/silverstripe-listsorter": "~2.0",
@@ -41,7 +41,7 @@
 		"branch-alias": {
 			"dev-master": "1.0.x-dev"
 		}
-        },
+	},
 	"support":{
 		"issues" : "https://github.com/burnbright/silverstripe-shop/issues",
 		"source" : "https://github.com/burnbright/silverstripe-shop",
