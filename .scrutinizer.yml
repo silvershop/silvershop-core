@@ -1,6 +1,8 @@
 inherit: true
 tools:
+#  external_code_coverage: false
   external_code_coverage:
+    enabled: true
     timeout: 2500
     runs: 3
   php_analyzer:
@@ -24,3 +26,4 @@ tools:
         too_many_fields:      true
         too_many_methods:     true
         excessive_class_complexity:  true
+
