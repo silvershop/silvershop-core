@@ -19,7 +19,7 @@ matrix:
     - php: 5.6
       env: DB=SQLITE CORE_RELEASE=master
   allow_failures:
-    - env: DB=SQLITE CORE_RELEASE=master 
+    - env: DB=SQLITE CORE_RELEASE=master
 
 before_script:
   - composer self-update
@@ -31,10 +31,9 @@ before_script:
 script: ./shop/tests/travis/run_build.sh
 
 after_script:
-  - if [ "$COVERAGE" > 0 ] && [ "$TRAVIS_BRANCH" = "master" ]; then
+  - if [ "$COVERAGE" > 0 ]; then
   - cd shop
-  - wget https://scrutinizer-ci.com/ocular.phar
-  - php ocular.phar code-coverage:upload -v --format=php-clover coverage.xml
+  - ../vendor/bin/ocular code-coverage:upload -v --format=php-clover ~/builds/ss/shop/coverage.xml
   - fi
 
 notifications:
