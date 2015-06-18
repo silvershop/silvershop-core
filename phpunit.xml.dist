@@ -1,15 +1,15 @@
-<!-- 
+<!--
 	PHPUnit configuration for SilverStripe
 
 	Requires PHPUnit 3.5+
 
-	Usage: 
+	Usage:
 	 - "phpunit": Runs all tests in all folders
 	 - "phpunit framework/tests/": Run all tests of the framework module
 	 - "phpunit framework/tests/filesystem": Run all filesystem tests within the framework module
 	 - "phpunit framework/tests/filesystem/FolderTest.php": Run a single test
 	 - "phpunit <dash><dash>coverage-html assets/": Generate coverage report (replace <dash> with "-", requires xdebug)
-	
+
 	More information:
 	- http://www.phpunit.de/manual/current/en/textui.html
 	- http://doc.silverstripe.org/framework/en/topics/testing/#configuration
@@ -32,20 +32,19 @@
 		<testsuite name="Split3">
 			<directory>tests/account</directory>
 			<directory>tests/cart</directory>
-			
 			<directory>tests/products</directory>
 			<directory>tests/reports</directory>
 			<directory>tests/tasks</directory>
 			<file>tests/ShopTest.php</file>
 			<file>tests/ShopToolsTest.php</file>
 			<file>tests/ShopUserInfoTest.php</file>
-		</testsuite>		
+		</testsuite>
 	</testsuites>
 
 	<listeners>
 		<listener class="SS_TestListener" file="../framework/dev/TestListener.php" />
 	</listeners>
-	
+
 	<groups>
 		<exclude>
 			<group>sanitychecks</group>
