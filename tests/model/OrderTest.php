@@ -54,7 +54,7 @@ class OrderTest extends SapphireTest {
 		), $items);
 		$this->assertEquals(3, $items->Quantity(), "Quantity is 3");
 		$this->assertTrue($items->Plural(), "There is more than one item");
-		$this->assertEquals(0.7, $items->Sum('Weight', true), "Total order weight sums correctly");
+		$this->assertEquals(0.7, $items->Sum('Weight', true), "Total order weight sums correctly", 0.0001);
 	}
 
 	public function testTotals() {
@@ -77,7 +77,7 @@ class OrderTest extends SapphireTest {
 	}
 
 	public function testPlacedOrderImmutability() {
-	
+
 		$order = $this->objFromFixture("Order", "paid");
 		$processor = OrderProcessor::create($order)->placeOrder();
 		$this->assertEquals(408, $order->Total(), "check totals");
@@ -98,7 +98,7 @@ class OrderTest extends SapphireTest {
 			->innerJoin(
 				"Product_OrderItem",
 				'"OrderItem"."ID" = "Product_OrderItem"."ID"'
-			); 
+			);
 		$this->assertNotNull($items);
 		$this->assertDOSEquals(array(
 			array('ProductID' => $this->mp3player->ID,'Quantity' => 2, 'CalculatedTotal' => 400),

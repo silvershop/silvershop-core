@@ -39,7 +39,7 @@
 		"installer-name": "shop",
 		"snapshot" : "https://raw.github.com/burnbright/silverstripe-shop/gh-pages/assets/screenshots/shipping%20estimate%20form.png",
 		"branch-alias": {
-			"dev-develop": "1.x-dev",
+			"dev-develop": "1.2.x-dev",
 			"dev-master": "1.1.x-dev",
 			"1.0": "1.0.x-dev"
 		}

@@ -9,7 +9,7 @@ class AccountPage extends Page {
 
 	private static $icon = 'shop/images/icons/account';
 
-	public function canCreate($member = null) {
+	public function canCreate($member = null, $context = array()) {
 		return !self::get()->exists();
 	}
 
