@@ -223,7 +223,7 @@ class Product extends Page implements Buyable {
 				try {
 					if($variation->canPurchase($member, $quantity)) {
 						$allowpurchase = true;
-					
+
 						break;
 					}
 				} catch(ShopBuyableException $e) {
@@ -300,7 +300,14 @@ class Product extends Page implements Buyable {
 		//prevent negative values
 		$price = $price < 0 ? 0 : $price;
 
-		return $price;
+		// NOTE: Ideally, this would be dependent on the locale but as of
+		// now the Silverstripe Currency field type has 2 hardcoded all over
+		// the place. In the mean time there is an issue where the displayed
+		// unit price can not exactly equal the multiplied price on an order
+		// (i.e. if the calculated price is 3.145 it will display as 3.15.
+		// so if I put 10 of them in my cart I will expect the price to be
+		// 31.50 not 31.45).
+		return round($price, Order::config()->rounding_precision);
 	}
 
 	/**
@@ -436,7 +443,7 @@ class Product_OrderItem extends OrderItem {
 		if($this->ProductID && $this->ProductVersion && !$forcecurrent){
 			return Versioned::get_version('Product', $this->ProductID, $this->ProductVersion);
 		}elseif(
-			$this->ProductID && 
+			$this->ProductID &&
 			$product = Versioned::get_one_by_stage("Product", "Live",
 				"\"Product\".\"ID\"  = ".$this->ProductID
 			)
