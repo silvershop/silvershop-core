@@ -16,6 +16,13 @@ class CheckoutForm extends Form {
 			)
 	);
 		$validator = new CheckoutComponentValidator($this->config);
+		
+		// For single country sites, the Country field is readonly therefore no need to validate
+		if(SiteConfig::current_site_config()->getSingleCountry()){
+			$validator->removeRequiredField("ShippingAddressCheckoutComponent_Country");
+			$validator->removeRequiredField("BillingAddressCheckoutComponent_Country");
+		}
+
 		parent::__construct($controller, $name, $fields, $actions, $validator);
 		//load data from various sources
 		$this->loadDataFrom($this->config->getData(), Form::MERGE_IGNORE_FALSEISH);

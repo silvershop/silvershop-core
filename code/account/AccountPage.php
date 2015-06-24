@@ -162,7 +162,14 @@ class AccountPage_Controller extends Page_Controller {
 		$address = new Address();
 		$form->saveInto($address);
 		$address->MemberID = $member->ID;
+
+		// Add value for Country if missing (due readonly field in form)
+		if($country = SiteConfig::current_site_config()->getSingleCountry()){
+			$address->Country = $country;
+		}
+
 		$address->write();
+
 		if(!$member->DefaultShippingAddressID){
 			$member->DefaultShippingAddressID = $address->ID;
 			$member->write();

@@ -17,7 +17,20 @@ class AccountPageTest extends FunctionalTest{
 	}
 
 	public function testCanViewAccountPage() {
-		$this->markTestIncomplete('Log in and view account page');
+		$page = $this->get("account/");  // attempt to access the Account Page
+        $this->assertEquals(200, $page->getStatusCode(), "a page should load");
+        $this->assertContains('<form id="MemberLoginForm_LoginForm"', $page->getBody(), 'Need to login before accessing the account page');
+
+        // login using form
+        $this->submitForm("MemberLoginForm_LoginForm", "action_dologin", array(
+            'Email' => 'test@example.com',
+            'Password' => '23u90oijlJKsa'
+        ));
+
+        $page = $this->get("account/");  // try accessing the account page again
+        $this->assertEquals(200, $page->getStatusCode(), "a page should load");
+        $this->assertContains("Account", $page->getBody(), "Account Page should open");
+
 	}
 
 	public function testGlobals() {
@@ -48,6 +61,67 @@ class AccountPageTest extends FunctionalTest{
 		//$this->controller->saveaddresses($data, $createform);
 		//$this->controller->savedefaultaddresses($data, $defaultform);
 		$this->markTestIncomplete("save address and save default");
+	}
+
+	public function testAddressBookWithDropdownFieldToSelectCountry() {
+		$member = $this->objFromFixture("Member", "joebloggs");
+		$this->logInAs($member);
+		$this->controller->init(); //re-init to connect up member
+
+		// Open Address Book page
+		$page = $this->get("account/addressbook/"); // goto address book page
+		$this->assertEquals(200, $page->getStatusCode(), "a page should load");
+		$this->assertContains("Default Addresses", $page->getBody(), "Account Addresses page should open");
+		
+		// Create an address
+		$data = array(
+			"Country" => "AU",
+			"Address" => "Sydney Opera House",
+			"AddressLine2" => "Bennelong Point",
+	        "City" => "Sydney",
+	        "State" => "NSW",
+	        "PostalCode" => "2000",
+	        "Phone" => "1234 5678"
+	    );
+		$this->submitForm("Form_CreateAddressForm", "action_saveaddress", $data);
+		$this->assertEquals(200, $page->getStatusCode(), "a page should load");
+
+		$au_address = Address::get()->last();
+		$this->assertEquals("AU", $au_address->Country, "New address successfully saved, using dropdown to select the country");
+		$this->assertEquals("Sydney Opera House", $au_address->Address, "Ensure that the Address is the Sydney Opera House");
+	}
+
+	public function testAddressBookWithReadonlyFieldForCountry() {
+		$member = $this->objFromFixture("Member", "joebloggs");
+		$this->logInAs($member);
+		$this->controller->init(); //reinit to connect up member
+
+		// setup a single-country site
+		$siteconfig = DataObject::get_one('SiteConfig');
+		$siteconfig->AllowedCountries = "NZ";
+		$siteconfig->write();	
+		$singlecountry = SiteConfig::current_site_config();
+		$this->assertEquals("NZ", $singlecountry->getSingleCountry(), "Confirm that the website is setup as a single country site");
+	
+		// Open the Address Book page to test form submission with a readonly field
+		$page = $this->get("account/addressbook/"); // goto address book page
+		$this->assertEquals(200, $page->getStatusCode(), "a page should load");
+		$this->assertContains("Form_CreateAddressForm_Country_readonly", $page->getBody(), "The Country field is readonly");
+		$this->assertNotContains("<option value=\"NZ\">New Zealand</option>", $page->getBody(), "Dropdown field is not shown");
+
+		// Create an address
+		$data = array(
+        	"Address" => "234 Hereford Street",
+        	"City" => "Christchurch",
+        	"State" => "Canterbury",
+        	"PostalCode" => "8011"
+		);
+ 		$this->submitForm("Form_CreateAddressForm", "action_saveaddress", $data);
+ 		$this->assertEquals(200, $page->getStatusCode(), "a page should load");
+
+ 		$nz_address = Address::get()->last();
+		$this->assertEquals("NZ", $nz_address->Country, "New address successfully saved; even with a Country readonly field in the form");
+		$this->assertEquals("234 Hereford Street", $nz_address->Address, "Ensure that the Address is 234 Hereford Street");
 	}
 
 	public function testEditProfile() {
