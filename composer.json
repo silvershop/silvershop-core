@@ -20,9 +20,9 @@
 		}
 	],
 	"require" : {
-		"silverstripe/cms": "~3.1",
-		"silverstripe/framework": "~3.1",
-		"burnbright/silverstripe-omnipay" : "~1.1",
+		"silverstripe/cms": ">=3.1",
+		"silverstripe/framework": ">=3.1",
+		"burnbright/silverstripe-omnipay" : "dev-master",
 		"icecaster/versioned-gridfield": "dev-patch-1",
 		"burnbright/silverstripe-listsorter": "dev-master",
 		"burnbright/silverstripe-sqlquerylist": "dev-master"
