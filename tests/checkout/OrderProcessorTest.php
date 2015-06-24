@@ -63,6 +63,7 @@ class OrderProcessorTest extends SapphireTest {
 			'23 Small Street',
 			'North Beach',
 			'Springfield',
+			'Waikato',
 			'1234567',
 			'NZ',
 			'jbrown',
@@ -128,6 +129,7 @@ class OrderProcessorTest extends SapphireTest {
 			'100 Melrose Place',
 			null,
 			'Martinsonville',
+			'New Mexico',
 			null,
 			'EG',
 			'newpassword',
@@ -173,6 +175,7 @@ class OrderProcessorTest extends SapphireTest {
 			'4 The Strand',
 			null,
 			'Melbourne',
+			'Victoria',
 			null,
 			'AU'
 		);
@@ -204,7 +207,7 @@ class OrderProcessorTest extends SapphireTest {
 	 */
 	protected function placeOrder(
 		$firstname, $surname, $email,
-		$address1, $address2 = null, $city = null, $postcode = null, $country = null,
+		$address1, $address2 = null, $city = null, $state = null, $postcode = null, $country = null,
 		$password = null, $confirmpassword = null, $member = null
 	) {
 		$data = array(
@@ -212,7 +215,8 @@ class OrderProcessorTest extends SapphireTest {
 			'Surname' => $surname,
 			'Email' => $email,
 			'Address' => $address1,
-			'City' => $city
+			'City' => $city,
+			'State' => $state
 		);
 		if($address2) $data['AddressLine2'] = $address2;
 		if($postcode) $data['PostalCode'] = $postcode;

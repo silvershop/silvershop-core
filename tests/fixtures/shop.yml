@@ -68,11 +68,18 @@ Product:
 Address:
     foobar:
         Address: 12 Foo Street
-        Address2: Bar
+        AddressLine2: Bar
         City: Farmville
         State: New Sandwich
         Country: US
         #MemberID: can't be set, because it is below
+    pukekohe:
+        Address: 1 Queen Street
+        AddressLine2:
+        City: Pukekohe
+        State: Auckland
+        PostalCode: 2120
+        Phone: 5678 910
 
 Group:
     customers:
