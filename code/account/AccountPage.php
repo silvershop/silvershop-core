@@ -153,8 +153,9 @@ class AccountPage_Controller extends Page_Controller {
             new FormAction("saveaddress", _t("Address.SaveNew", "Save New Address"))
 		);
 		$validator = new RequiredFields($singletonaddress->getRequiredFields());
-
-		return new Form($this, "CreateAddressForm", $fields, $actions, $validator);
+		$form = new Form($this, "CreateAddressForm", $fields, $actions, $validator);
+		$this->data()->extend('updateCreateAddressForm', $form);
+		return $form;
 	}
 
 	public function saveaddress($data,$form) {
