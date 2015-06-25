@@ -154,7 +154,7 @@ class AccountPage_Controller extends Page_Controller {
 		);
 		$validator = new RequiredFields($singletonaddress->getRequiredFields());
 		$form = new Form($this, "CreateAddressForm", $fields, $actions, $validator);
-		$this->data()->extend('updateCreateAddressForm', $form);
+		$this->extend('updateCreateAddressForm', $form);
 		return $form;
 	}
 
@@ -198,7 +198,7 @@ class AccountPage_Controller extends Page_Controller {
 
 	public function ChangePasswordForm() {
 		$form = new ChangePasswordForm($this, "ChangePasswordForm");
-		$this->data()->extend('updateChangePasswordForm', $form);
+		$this->extend('updateChangePasswordForm', $form);
 		return $form;
 	}
 
