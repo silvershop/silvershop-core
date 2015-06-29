@@ -199,6 +199,12 @@ class AccountPage_Controller extends Page_Controller {
 	public function ChangePasswordForm() {
 		$form = new ChangePasswordForm($this, "ChangePasswordForm");
 		$this->extend('updateChangePasswordForm', $form);
+		$this->data()->extend('updateChangePasswordForm', $form);
+
+		if($this->data()->hasMethod('updateChangePasswordForm')){  // if accessing through the model
+			Deprecation::notice('2.0', 'Please access updateChangePasswordForm through AccountPage_Controller instead of AccountPage (this extension point is due to be removed)');
+		}
+
 		return $form;
 	}
 
