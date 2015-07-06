@@ -11,7 +11,9 @@ Your contribution to this project is highly encouraged.
  * __Provide translations__. This will allow people speaking other languages to use the shop module.
  * __Financial contribution__. Giving a donation, or financing the development of some features will help this module go further, faster.
 
-If you would like to contribute code, please [fork this project](https://github.com/burnbright/silverstripe-shop). You can then make changes in feature branches via git, and submit pull requests, which will be reviewed and merged into the code base. If merge is not appropriate, instruction will be given on the best action(s) to take.
+If you would like to contribute code, please [fork this project](https://github.com/burnbright/silverstripe-shop). You 
+can then make changes in feature branches via git, and submit pull requests, which will be reviewed and merged into the 
+code base. If merge is not appropriate, instruction will be given on the best action(s) to take.
 
 ## Development Guidelines
 
@@ -20,11 +22,15 @@ as closely as possible. In some ways our approach will differ, but it is a good 
 
 ## Workflow
 
-We will try to follow this branching approach http://nvie.com/posts/a-successful-git-branching-model/
+In most cases we'll use [Gitflow](https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow),
+meaning that most pull requests should be against the `develop` branch rather than `master` (which is the default
+anyway). Bug fixes for a specific version should be branched from the corresponding tag.
 
 ## Political
 
-This project political model used for this project is a [Benevolent Dictatorship](http://producingoss.com/en/social-infrastructure.html#benevolent-dictator). This basically means the project owner will have ultimate say in decision making. Discussion is still very much welcomed however, and if agreement can not be found, anyone can fork the project and start their own version.
+This project political model used for this project is a [Benevolent Dictatorship](http://producingoss.com/en/social-infrastructure.html#benevolent-dictator). 
+This basically means the project owner will have ultimate say in decision making. Discussion is still very much welcomed 
+however, and if agreement can not be found, anyone can fork the project and start their own version.
 
 ## Good development practices
 
@@ -46,4 +52,4 @@ This project political model used for this project is a [Benevolent Dictatorship
 
 See also:
 
- * [Development](../03_How_It_Works/Development.md)
+* [Development](../03_How_It_Works/Development.md)
