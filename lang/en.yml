@@ -25,9 +25,9 @@ en:
     ADDRESSLINE2: 'Address Line 2 (optional)'
     CITY: 'City'
     STATE: 'State'
-    POSTALCODE:
+    POSTALCODE: 'Postal Code'
     ShippingAddress: 'Shipping Address '
-    BillingAddress: 'Billing Address''Postal Code'
+    BillingAddress: 'Billing Address'
     PHONE: 'Phone Number'
     ADDRESSHINT: 'street / thoroughfare number, name, and type or P.O. Box'
     ADDRESS2HINT: 'premises, building, apartment, unit, floor'
