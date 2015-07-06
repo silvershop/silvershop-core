@@ -86,7 +86,7 @@ class AccountPageTest extends FunctionalTest{
 		$this->submitForm("Form_CreateAddressForm", "action_saveaddress", $data);
 		$this->assertEquals(200, $page->getStatusCode(), "a page should load");
 
-		$au_address = Address::get()->last();
+		$au_address = Address::get()->filter('PostalCode', '1234 5678')->sort('ID')->last();
 		$this->assertEquals("AU", $au_address->Country, "New address successfully saved, using dropdown to select the country");
 		$this->assertEquals("Sydney Opera House", $au_address->Address, "Ensure that the Address is the Sydney Opera House");
 	}
