@@ -131,7 +131,7 @@ class AccountPage_Controller extends Page_Controller {
 			$actions = new FieldList(
                 new FormAction("savedefaultaddresses", _t("Address.SaveDefaults", "Save Defaults"))
 			);
-			$form = new Form($this, "DefaultAddressForm", $fields, $actions);
+			$form = Form::create($this, "DefaultAddressForm", $fields, $actions);
 			$form->loadDataFrom($this->member);
 
 			return $form;
