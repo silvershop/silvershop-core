@@ -131,7 +131,7 @@ class AccountPage_Controller extends Page_Controller {
 			$actions = new FieldList(
                 new FormAction("savedefaultaddresses", _t("Address.SaveDefaults", "Save Defaults"))
 			);
-			$form = new Form($this, "DefaultAddressForm", $fields, $actions);
+			$form = Form::create($this, "DefaultAddressForm", $fields, $actions);
 			$form->loadDataFrom($this->member);
 
 			return $form;
@@ -153,7 +153,7 @@ class AccountPage_Controller extends Page_Controller {
             new FormAction("saveaddress", _t("Address.SaveNew", "Save New Address"))
 		);
 		$validator = new RequiredFields($singletonaddress->getRequiredFields());
-		$form = new Form($this, "CreateAddressForm", $fields, $actions, $validator);
+		$form = Form::create($this, "CreateAddressForm", $fields, $actions, $validator);
 		$this->extend('updateCreateAddressForm', $form);
 		return $form;
 	}
