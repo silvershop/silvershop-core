@@ -38,7 +38,7 @@ class CheckoutStep_Membership extends CheckoutStep{
 			new FormAction("createaccount", "Create an Account"),
 			new FormAction("guestcontinue", "Continue as Guest")
 		);
-		$form = new Form($this->owner, 'MembershipForm', $fields, $actions);
+		$form = Form::create($this->owner, 'MembershipForm', $fields, $actions);
 		$this->owner->extend('updateMembershipForm', $form);
 		return $form;
 	}
