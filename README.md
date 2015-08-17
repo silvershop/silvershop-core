@@ -100,7 +100,3 @@ The code for the [shop demo site](http://demo.ss-shop.org/) is available here:
 
 https://github.com/burnbright/silverstripe-shop-demo
 
-
-## Maintainer
-
- * [Jeremy Shipman](http://www.jeremyshipman.com) (Jedateach, jeremy@burnbright.net)
