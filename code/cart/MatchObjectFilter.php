@@ -63,7 +63,7 @@ class MatchObjectFilter{
 		$db = $singleton->db();
 		$allowed = array_keys(array_merge($db, $hasones)); //fields that can be used
 		$fields = array_flip(array_intersect($allowed, $this->required));
-		
+
 		//add 'ID' to has one relationship fields
 		foreach($hasones as $key => $value){
 			if(isset($fields[$key])){
@@ -79,14 +79,14 @@ class MatchObjectFilter{
 				if(isset($this->data[$field])){
 					$dbfield = $singleton->dbObject($field);
 					$value = $dbfield->prepValueForDB($this->data[$field]);	//product correct format for db values
-					$new[] = "\"$field\" = $value";
+					$new[] = "\"$field\" = '$value'";
 				}else{
 					$new[] = "\"$field\" IS NULL";
 				}
 			}else{
 				if(isset($this->data[$field])){
 					$value = Convert::raw2sql($this->data[$field]);
-					$new[] = "\"{$field}\" = $value";
+					$new[] = "\"{$field}\" = '$value'";
 				}else{
 					$new[] = "(\"{$field}\" = 0 OR \"$field\" IS NULL)";
 				}
