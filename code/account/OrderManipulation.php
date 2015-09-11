@@ -87,7 +87,7 @@ class OrderManipulation extends Extension{
 		if($paginated){
 			$orders = new PaginatedList($orders, $this->owner->getRequest());
 		}
-		
+
 		return $orders;
 	}
 
@@ -119,6 +119,9 @@ class OrderManipulation extends Extension{
 		if($order = $this->orderfromid()){
 			$form = new OrderActionsForm($this->owner, "ActionsForm", $order);
 			$form->extend('updateActionsForm', $order);
+			if(!$form->Actions()->exists()){
+				return null;
+			}
 
 			return $form;
 		}
