@@ -169,10 +169,11 @@ class Order extends DataObject {
 		}
 		$fields->addFieldsToTab('Root.Main', $parts);
 		$this->extend('updateCMSFields', $fields);
-		$payments = $fields->fieldByName("Root.Payments.Payments");
-		$fields->removeByName("Payments");
-		$fields->insertAfter($payments, "Content");
-		$payments->addExtraClass("order-payments");
+		if($payments = $fields->fieldByName("Root.Payments.Payments")){
+			$fields->removeByName("Payments");
+			$fields->insertAfter($payments, "Content");
+			$payments->addExtraClass("order-payments");
+		}
 
 		return $fields;
 	}

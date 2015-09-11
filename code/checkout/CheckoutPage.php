@@ -118,14 +118,14 @@ class CheckoutPage_Controller extends Page_Controller {
 		}
 
 		$config = CheckoutComponentConfig::create(ShoppingCart::curr(), false);
-		$config->AddComponent(OnsitePaymentCheckoutComponent::create());
+		$config->addComponent(OnsitePaymentCheckoutComponent::create());
 
 		$form = PaymentForm::create($this, "PaymentForm", $config);
 
 		$form->setActions(new FieldList(
 			FormAction::create("submitpayment", "Submit Payment")
 		));
-		
+
 		$form->setFailureLink($this->Link());
 		$this->extend('updatePaymentForm', $form);
 
@@ -135,7 +135,7 @@ class CheckoutPage_Controller extends Page_Controller {
 	/**
 	 * Retrieves error messages for the latest payment (if existing).
 	 * This can originate e.g. from an earlier offsite gateway API response.
-	 * 
+	 *
 	 * @return string
 	 */
 	public function PaymentErrorMessage() {
