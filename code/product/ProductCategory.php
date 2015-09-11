@@ -47,6 +47,8 @@ class ProductCategory extends Page {
 		if (self::config()->must_have_price){
 			$products =  $products->filter("BasePrice:GreaterThan", 0);
 		}
+		
+		$this->extend('updateProductsShowable', $products);
 
 		return $products;
 	}
