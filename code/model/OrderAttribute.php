@@ -25,7 +25,7 @@ class OrderAttribute extends DataObject {
 		'CartTitle' => 'Text'
 	);
 
-	public function canCreate($member = null) {
+	public function canCreate($member = null, $context = array()) {
 		return false;
 	}
 

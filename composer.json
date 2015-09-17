@@ -13,13 +13,19 @@
 			"role" : "Developer"
 		}
 	],
+	"repositories": [
+		{
+			"type": "vcs",
+			"url": "https://github.com/markguinn/silverstripe-versioned-gridfield.git"
+		}
+	],
 	"require" : {
-		"silverstripe/cms": "~3.1",
-		"silverstripe/framework": "~3.1",
-		"burnbright/silverstripe-omnipay" : "~1.1",
-		"icecaster/versioned-gridfield": "~1.0",
-		"burnbright/silverstripe-listsorter": "~2.0",
-		"burnbright/silverstripe-sqlquerylist": "~1.0"
+		"silverstripe/cms": ">=3.1",
+		"silverstripe/framework": ">=3.1",
+		"burnbright/silverstripe-omnipay" : "dev-master",
+		"icecaster/versioned-gridfield": "dev-patch-1",
+		"burnbright/silverstripe-listsorter": "dev-master",
+		"burnbright/silverstripe-sqlquerylist": "dev-master"
 	},
 	"require-dev": {
 		"guzzle/plugin-mock": "~3.1",

@@ -360,7 +360,7 @@ class Order extends DataObject {
 	 * Prevent standard creation of orders.
 	 * @return boolean
 	 */
-	public function canCreate($member = null) {
+	public function canCreate($member = null, $context = array()) {
 		return false;
 	}
 
