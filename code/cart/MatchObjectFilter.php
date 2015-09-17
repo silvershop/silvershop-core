@@ -79,7 +79,11 @@ class MatchObjectFilter{
 				if(isset($this->data[$field])){
 					$dbfield = $singleton->dbObject($field);
 					$value = $dbfield->prepValueForDB($this->data[$field]);	//product correct format for db values
-					$new[] = "\"$field\" = '$value'";
+					// These seems to be a difference in how this works between SS 3.1 and 3.2
+					// It would be great to actually remove this and use something that's more inline with the ORM
+					// But this will get us to 3.2 compatibility and work on every DB I'm aware of.
+					if ($value[0] != "'") $value = "'$value'";
+					$new[] = "\"$field\" = $value";
 				}else{
 					$new[] = "\"$field\" IS NULL";
 				}
