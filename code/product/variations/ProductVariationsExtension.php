@@ -46,7 +46,7 @@ class ProductVariationsExtension extends DataExtension {
 		if(!$variations->exists() || !$variations->Count()){
 			return null;
 		}
-		$prices = $variations->map('ID','Price')->toArray();
+		$prices = $variations->map('ID','SellingPrice')->toArray();
 		$pricedata = array(
 			'HasRange' => false,
 			'Max' => ShopCurrency::create(),
