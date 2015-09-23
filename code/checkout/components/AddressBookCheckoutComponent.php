@@ -14,7 +14,8 @@ abstract class AddressBookCheckoutComponent extends AddressCheckoutComponent{
 		$fields = parent::getFormFields($order);
 
 		if($existingaddressfields = $this->getExistingAddressFields()){
-			Requirements::javascript('shop/javascript/CheckoutPage.js');
+			Requirements::javascript(THIRDPARTY_DIR.'/jquery/jquery.min.js');
+			Requirements::javascript(SHOP_DIR.'/javascript/CheckoutPage.js');
 			// add the fields for a new address after the dropdown field
 			$existingaddressfields->merge($fields);
 			// group under a composite field (invisible by default) so we
