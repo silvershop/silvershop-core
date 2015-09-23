@@ -30,20 +30,25 @@ class SteppedCheckoutTest extends FunctionalTest{
 	public function testTemplateFunctions() {
 		//put us at the first step index == membership
 		$this->checkout->handleRequest(new SS_HTTPRequest('GET', ""), DataModel::inst());
+		$this->assertTrue($this->checkout->StepExists('membership'));
 		$this->assertFalse($this->checkout->IsPastStep('membership'));
 		$this->assertTrue($this->checkout->IsCurrentStep('membership'));
 		$this->assertFalse($this->checkout->IsFutureStep('membership'));
 
-		$this->checkout->NextStepLink(); 
+		$this->checkout->NextStepLink();
 
+		$this->assertTrue($this->checkout->StepExists('contactdetails'));
 		$this->assertFalse($this->checkout->IsPastStep('contactdetails'));
 		$this->assertFalse($this->checkout->IsCurrentStep('contactdetails'));
 		$this->assertTrue($this->checkout->IsFutureStep('contactdetails'));
 
 		$this->checkout->handleRequest(new SS_HTTPRequest('GET', "summary"), DataModel::inst()); //change to summary step
+		$this->assertTrue($this->checkout->StepExists('summary'));
 		$this->assertFalse($this->checkout->IsPastStep('summary'));
 		$this->assertTrue($this->checkout->IsCurrentStep('summary'));
 		$this->assertFalse($this->checkout->IsFutureStep('summary'));
+
+		$this->assertFalse($this->checkout->StepExists('nosuchstep'));
 	}
 
 	public function testMembershipStep() {
@@ -87,7 +92,7 @@ class SteppedCheckoutTest extends FunctionalTest{
 			'action_setcontactdetails' => 1
 		);
 		$response = $this->post('/checkout/ContactDetailsForm', $data);
-		
+
 		$this->markTestIncomplete('check order has been updated');
 	}
 
