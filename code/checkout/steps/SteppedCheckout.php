@@ -65,6 +65,11 @@ class SteppedCheckout extends Extension{
 		return false;
 	}
 
+	public function StepExists($name) {
+		$steps = $this->getSteps();
+		return isset($steps[$name]);
+	}
+
 	/**
 	 * Check if passed action is for a step before current
 	 */
