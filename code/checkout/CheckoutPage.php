@@ -24,9 +24,11 @@ class CheckoutPage extends Page {
 	 */
 	public static function find_link($urlSegment = false, $action = null, $id = null) {
 		$base = CheckoutPage_Controller::config()->url_segment;
+
 		if($page = self::get()->first()) {
 			$base = $page->Link();
 		}
+
 		return Controller::join_links($base, $action, $id);
 	}
 
@@ -67,6 +69,7 @@ class CheckoutPage extends Page {
 class CheckoutPage_Controller extends Page_Controller {
 
 	private static $url_segment = 'checkout';
+
 	private static $allowed_actions = array(
 		'OrderForm',
 		'payment',
@@ -86,7 +89,7 @@ class CheckoutPage_Controller extends Page_Controller {
 			return false;
 		}
 
-		$form = PaymentForm::create(
+		$form = CheckoutForm::create(
 			$this,
 			'OrderForm',
 			Injector::inst()->create("CheckoutComponentConfig", ShoppingCart::curr())
@@ -99,7 +102,8 @@ class CheckoutPage_Controller extends Page_Controller {
 	}
 
 	/**
-	 * Action for making on-site payments
+	 * Action for making on-site payments.
+	 *
 	 */
 	public function payment() {
 		if(!$this->Cart()) {
