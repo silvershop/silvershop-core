@@ -79,7 +79,7 @@ class ProductAttributeType extends DataObject{
 	 * Finds or creates values for this type.
 	 *
 	 * @param array $values
-	 * @return DataObjectSet
+	 * @return ArrayList
 	 */
 	public function convertArrayToValues(array $values){
 		$set = new ArrayList();
@@ -88,6 +88,7 @@ class ProductAttributeType extends DataObject{
 			if(!$val){  //TODO: ignore case, if possible
 				$val = new ProductAttributeValue();
 				$val->Value = $value;
+				$val->TypeID = $this->ID;
 				$val->write();
 			}
 			$set->push($val);
@@ -106,14 +107,14 @@ class ProductAttributeType extends DataObject{
 	*/
 	public function getDropDownField($emptystring = null, $values = null){
 		$values = ($values) ? $values : $this->Values('','Sort ASC, Value ASC');
-	
+
 		if($values->exists()) {
 			$field = new DropdownField(
 				'ProductAttributes['.$this->ID.']',
 				$this->Name,
 				$values->map('ID','Value')
 			);
-	
+
 			if($emptystring) {
 				$field->setEmptyString($emptystring);
 			}
