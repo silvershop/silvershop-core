@@ -1,7 +1,7 @@
 <?php
 
 class ShopMemberFactory{
-	
+
 	/**
 	 * Create member account from data array.
 	 * Data must contain unique identifier.
@@ -39,7 +39,8 @@ class ShopMemberFactory{
 			throw new ValidationException($result);
 		}
 		$member = new Member(Convert::raw2sql($data));
-		$validation = $member->validate();
+		// 3.2 changed validate to protected which made this fall through the DataExtension and error out
+		$validation = $member->hasMethod('doValidate') ? $member->doValidate() : $member->validate();
 		if(!$validation->valid()){
 			//TODO need to handle i18n here?
 			$result->error($validation->message());

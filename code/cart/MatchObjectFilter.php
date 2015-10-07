@@ -63,7 +63,7 @@ class MatchObjectFilter{
 		$db = $singleton->db();
 		$allowed = array_keys(array_merge($db, $hasones)); //fields that can be used
 		$fields = array_flip(array_intersect($allowed, $this->required));
-		
+
 		//add 'ID' to has one relationship fields
 		foreach($hasones as $key => $value){
 			if(isset($fields[$key])){
@@ -79,6 +79,10 @@ class MatchObjectFilter{
 				if(isset($this->data[$field])){
 					$dbfield = $singleton->dbObject($field);
 					$value = $dbfield->prepValueForDB($this->data[$field]);	//product correct format for db values
+					// These seems to be a difference in how this works between SS 3.1 and 3.2
+					// It would be great to actually remove this and use something that's more inline with the ORM
+					// But this will get us to 3.2 compatibility and work on every DB I'm aware of.
+					if ($value[0] != "'") $value = "'$value'";
 					$new[] = "\"$field\" = $value";
 				}else{
 					$new[] = "\"$field\" IS NULL";
@@ -86,7 +90,7 @@ class MatchObjectFilter{
 			}else{
 				if(isset($this->data[$field])){
 					$value = Convert::raw2sql($this->data[$field]);
-					$new[] = "\"{$field}\" = $value";
+					$new[] = "\"{$field}\" = '$value'";
 				}else{
 					$new[] = "(\"{$field}\" = 0 OR \"$field\" IS NULL)";
 				}
