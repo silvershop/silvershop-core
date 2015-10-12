@@ -1,5 +1,40 @@
 # SilverStripe Shop Change Log
 
+## 1.1.1
+
+ * Tests pass against SilverStripe 3.2 and increased coverage slightly
+ * Better use of Object::create and therefore the injector
+ * Fixes a few issue with translatability
+ * Added function to check if checkout step exists
+ * Added some extension hooks
+ 
+### Enhancements:
+
+ * Include jQuery javascript requirement in AddressBookCheckoutComponent
+ * Use `getRequiredFields` in the Address' validate method.
+ * Added CheckoutStep_Summary component config extension hook.
+ * Support DI in PaymentForm and CheckoutComponent
+ * Add extension point for ProductsShowable
+ * Change new Form to Form::create
+
+### Bug Fixes:
+
+ * Changed PriceRange value to be use sellingPrice not Price
+ * Increased Scrutinizer code coverage timeout
+ * Don't return a form if no actions are present in OrderManipulation
+ * FIX: ensure required fields are correctly looked up in the config
+ * Added translation to 2 missing strings
+
+## 1.1.0
+
+ * Units for physical measurements are customisable
+ * Hooks for better ajax support (see markguinn/silverstripe-ajax and markguinn/silverstripe-shop-ajax for one implementation)
+ * 2 new reports and 3 new dashboard panels
+ * Order processing emails refactored into OrderEmailNotifier (with some deprecations for 2.0)
+ * Fixed several issues with checkout
+ * Code cleanup in several places, most notably CartForm
+ * Bugs fixed
+
 ## 1.0.0
 
  * Upgraded to SilverStripe version 3.

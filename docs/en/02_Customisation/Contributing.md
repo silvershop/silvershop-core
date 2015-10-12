@@ -2,6 +2,8 @@
 
 Your contribution to this project is highly encouraged.
 
+**NOTE:** If in doubt, submit pull requests against the **develop** branch.
+
 ### Here is a quick list of ways you can contribute:
 
  * __Test the latest code__. Find out what branch is currently being worked on (usually 'develop'). Install it and try it out.

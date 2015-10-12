@@ -21,7 +21,7 @@ A tremendous thanks to [everyone that has already contributed](https://github.co
 
 ## Requirements
 
- * SilverStripe 3 [framework](https://github.com/silverstripe/silverstripe-framework) & [cms](https://github.com/silverstripe/silverstripe-cms)
+ * SilverStripe 3.1 or higher [framework](https://github.com/silverstripe/silverstripe-framework) & [cms](https://github.com/silverstripe/silverstripe-cms)
  * [Omnipay Module](https://github.com/burnbright/silverstripe-omnipay) + it's dependencies.
 
 See `composer.json` for exact set of dependencies.
