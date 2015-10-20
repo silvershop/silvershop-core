@@ -13,13 +13,13 @@
             </li>
 
             <li>
-                <a href="{$Link(editprofile)}">
+                <a href="{$Link('editprofile')}">
                     <i class="icon icon-user"></i><%t AccountNavigation.EditProfile 'Edit Profile' %>
                 </a>
             </li>
 
             <li>
-                <a href="{$Link(addressbook)}">
+                <a href="{$Link('addressbook')}">
                     <i class="icon icon-book"></i><%t AccountNavigation.AddressBook 'Address Book' %>
                 </a>
             </li>

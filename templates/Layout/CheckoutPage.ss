@@ -2,20 +2,20 @@
 <h1 class="pageTitle">$Title</h1>
 <div id="Checkout">
 	<div class="typography">
-		
-		<% if PaymentErrorMessage %>
+
+		<% if $PaymentErrorMessage %>
 		    <p class="message error">
 		    <% _t('CheckoutPage.PaymentErrorMessage', 'Received error from payment gateway:') %>
 		    $PaymentErrorMessage
 		    </p>
 		<% end_if %>
 
-		<% if Content %>
+		<% if $Content %>
 			$Content
 		<% end_if %>
 	</div>
-	<% if Cart %>
-		<% with Cart %>
+	<% if $Cart %>
+		<% with $Cart %>
 			<% include Cart ShowSubtotals=true %>
 		<% end_with %>
 		$OrderForm

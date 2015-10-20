@@ -14,7 +14,7 @@
 		</tr>
 	</thead>
 	<tbody>
-		<% loop Items %>
+		<% loop $Items %>
 			<% include Order_Content_ItemLine %>
 		<% end_loop %>
 	</tbody>
