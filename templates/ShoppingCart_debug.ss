@@ -1,9 +1,9 @@
 <html>
 	<head>
-		$MetaTags(false)
+		$MetaTags(0)
 		<title>Debugging ShoppingCart</title>
 	</head>
 	<body>
 		$Content
-	</body>	
+	</body>
 </html>

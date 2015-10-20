@@ -1,5 +1,5 @@
 <table id="PaymentTable" class="infotable">
-	<thead>			
+	<thead>
 		<tr class="gap mainHeader">
 				<th colspan="10" class="left"><% _t("PAYMENTS","Payment(s)") %></th>
 		</tr>
@@ -12,7 +12,7 @@
 		</tr>
 	</thead>
 	<tbody>
-		<% loop Payments %>	
+		<% loop $Payments %>
 			<tr>
 				<td class="price">$Created.Nice</td>
 				<td class="price">$Amount.Nice $Currency</td>
@@ -20,8 +20,8 @@
 				<td class="price">$GatewayTitle</td>
 				<td class="price">$Message.NoHTML</td>
 			</tr>
-			<% if ShowMessages %>
-				<% loop Messages %>
+			<% if $ShowMessages %>
+				<% loop $Messages %>
 					<tr>
 						<td colspan="5">
 							$ClassName $Message $User.Name
