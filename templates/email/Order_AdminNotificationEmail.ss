@@ -15,8 +15,8 @@
 				</tr>
 			</thead>
 			<tbody>
-				<% if Order %>
-					<% loop Order %>
+				<% if $Order %>
+					<% loop $Order %>
 						<tr>
 							<td>
 								<% include Order %>

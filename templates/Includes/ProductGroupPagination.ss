@@ -1,16 +1,16 @@
-<% if Products.MoreThanOnePage %>
+<% if $Products.MoreThanOnePage %>
 <div id="PageNumbers">
 	<p><% _t('ProductGroup.PAGE','page') %>:
-		<% if Products.NotFirstPage %>
+		<% if $Products.NotFirstPage %>
 			<a class="prev" href="$Products.PrevLink" title="View the previous page"><% _t('ProductGroup.PREVIOUS','previous') %></a>
 		<% end_if %>
 
 		<span>
-	    	<% loop Products.PaginationSummary(4) %>
-				<% if CurrentBool %>
+	    	<% loop $Products.PaginationSummary(4) %>
+				<% if $CurrentBool %>
 					$PageNum
 				<% else %>
-					<% if Link %>
+					<% if $Link %>
 						<a href="$Link" title="View page number $PageNum">$PageNum</a>
 					<% else %>
 						&hellip;
@@ -19,7 +19,7 @@
 			<% end_loop %>
 		</span>
 
-		<% if Products.NotLastPage %>
+		<% if $Products.NotLastPage %>
 			<a class="next" href="$Products.NextLink" title="View the next page"><% _t('ProductGroup.NEXT','next') %></a>
 		<% end_if %>
 	</p>

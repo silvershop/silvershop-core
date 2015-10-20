@@ -1,15 +1,15 @@
 <table class="variationstable">
 	<tr>
-		<th>Variation</th><th>Price</th><% if canPurchase %><th><% _t("QUANTITYCART","Quantity in cart") %></th><% end_if %>
+		<th>Variation</th><th>Price</th><% if $canPurchase %><th><% _t("QUANTITYCART","Quantity in cart") %></th><% end_if %>
 	</tr>
-	<% loop Variations %>
+	<% loop $Variations %>
 			<tr>
 				<td>$Title.XML</td>
 				<td>$Price.Nice $Currency</td>
 				<td>
-				<% if canPurchase %>
-					<% if IsInCart %>
-						<% with Item %>
+				<% if $canPurchase %>
+					<% if $IsInCart %>
+						<% with $Item %>
 							$QuantityField
 						<% end_with %>
 					<% else %>

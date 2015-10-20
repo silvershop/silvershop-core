@@ -3,8 +3,8 @@
 		<td colspan="4" scope="row" class="threeColHeader subtotal"><% _t("SUBTOTAL","Sub-total") %></td>
 		<td class="right">$SubTotal.Nice</td>
 	</tr>
-	<% loop Modifiers %>
-		<% if ShowInTable %>
+	<% loop $Modifiers %>
+		<% if $ShowInTable %>
 	<tr class="modifierRow $EvenOdd $FirstLast $Classes">
 		<td colspan="4" scope="row">$TableTitle</td>
 		<td class="right">$TableValue.Nice</td>

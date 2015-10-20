@@ -20,8 +20,8 @@
 						$PurchaseCompleteMessage
 					</td>
 				</tr>
-				<% if Order %>
-				<% loop Order %>
+				<% if $Order %>
+				<% loop $Order %>
 					<tr>
 						<td>
 							<% include Order %>

@@ -14,7 +14,7 @@
 		<tr class="ss-gridfield-item">
 			<td>$Name</td>
 			<td>
-				<% if LatestEmail %>
+				<% if $LatestEmail %>
 					<a href="mailto:$LatestEmail">$LatestEmail</a>
 				<% end_if %>
 			</td>
