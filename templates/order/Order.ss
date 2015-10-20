@@ -2,8 +2,8 @@
 <div id="OrderInformation">
 	<% include Order_Address %>
 	<% include Order_Content %>
-	<% if Total %>
-		<% if Payments %>
+	<% if $Total %>
+		<% if $Payments %>
 			<% include Order_Payments %>
 		<% end_if %>
 		<table id="OutstandingTable" class="infotable">
@@ -15,7 +15,7 @@
 			</tbody>
 		</table>
 	<% end_if %>
-	<% if Notes %>
+	<% if $Notes %>
 		<table id="NotesTable" class="infotable">
 			<thead>
 				<tr>

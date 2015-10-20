@@ -1,5 +1,5 @@
 <div class="pricetag">
-	<% if DiscountedPrice %>
+	<% if $DiscountedPrice %>
 		<span class="original strikeout">
 			<span class="symbol">$Price.Symbol</span>
 			<strong class="main">$Price.Main</strong>
@@ -10,5 +10,5 @@
 	<% else %>
 		<span class="original"><strong class="price">$Price.Nice</strong></span>
 	<% end_if %>
-	<% if RecommendedPrice %><span>$RecommendedPrice.Nice</span><% end_if %>
+	<% if $RecommendedPrice %><span>$RecommendedPrice.Nice</span><% end_if %>
 </div>

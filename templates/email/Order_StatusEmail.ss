@@ -38,7 +38,7 @@
 				}
 					#Content .typography a:hover {
 						text-decoration:none;
-					}	
+					}
 				#Content .typography ul { padding:2px 15px;}
 				#Content .typography ul li { padding:2px 5px;}
 				#Content .typography p {
@@ -50,7 +50,7 @@
 	border-bottom:1px solid #ccc;
 	width:600px;
 	background:#fff;
-}	
+}
 	#InformationTable tr.Total td {
 		font-weight:bold;
 		font-size:14px;
@@ -107,10 +107,10 @@
 				</tr>
 			</thead>
 			<tbody>
-				<% if Order %>
-				<% with Order %>
+				<% if $Order %>
+				<% with $Order %>
 					<tr>
-						<td scope="row" colspan="2" class="typography">	
+						<td scope="row" colspan="2" class="typography">
 							<p><% sprintf(_t("STATUSCHANGE","Status changed to \"%s\" for Order #"),$Status) %>{$ID}</p>
 						</td>
 					</tr>
