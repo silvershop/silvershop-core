@@ -47,6 +47,8 @@ class ProductCategory extends Page {
 		if (self::config()->must_have_price){
 			$products =  $products->filter("BasePrice:GreaterThan", 0);
 		}
+		
+		$this->extend('updateProductsShowable', $products);
 
 		return $products;
 	}
@@ -153,8 +155,16 @@ class ProductCategory_Controller extends Page_Controller {
 	 * @return ListSorter sorter
 	 */
 	public function getSorter(){
-	 	$sorter = new ListSorter($this->request, ProductCategory::config()->sort_options);
+		$options = array();
+		foreach (ProductCategory::config()->sort_options as $k => $v) {
+			// make the label translatable
+			$k = _t("ProductCategory.$k", $k);
+			$options[$k] = $v;
+		}
+
+	 	$sorter = new ListSorter($this->request, $options);
 		$this->extend('updateSorter', $sorter);
+
 		return $sorter;
 	}
 

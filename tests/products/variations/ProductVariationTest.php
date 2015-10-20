@@ -40,7 +40,7 @@ class ProductVariationTest extends SapphireTest{
 		$this->assertEquals("Size:Large, Color:Red", $item->SubTitle());
 	}
 
-	public function testGetVaraition() {
+	public function testGetVariation() {
 		$colorred = $this->objFromFixture("ProductAttributeValue", "color_red");
 		$sizelarge = $this->objFromFixture("ProductAttributeValue", "size_large");
 		$attributes = array($colorred->ID, $sizelarge->ID);
@@ -65,7 +65,19 @@ class ProductVariationTest extends SapphireTest{
 		$variations = $this->mp3player->Variations();
 		$this->assertEquals($variations->Count(), 4, "four variations created");
 
-		$this->markTestIncomplete('do a DOS match');
+		$titles = $variations->map('ID', 'Title')->toArray();
+		$this->assertContains('Color:Black, Capacity:120GB', $titles);
+		$this->assertContains('Color:Black, Capacity:300GB', $titles);
+		$this->assertContains('Color:Blue, Capacity:120GB', $titles);
+		$this->assertContains('Color:Blue, Capacity:300GB', $titles);
+	}
+
+	public function testPriceRange() {
+		$range = $this->ball->PriceRange();
+		$this->assertTrue($range->HasRange);
+		$this->assertEquals(20, $range->Min->getValue());
+		$this->assertEquals(22, $range->Max->getValue());
+		$this->assertEquals(21, $range->Average->getValue());
 	}
 
 	public function testVaraitionsBulkLoader() {

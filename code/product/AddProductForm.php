@@ -10,7 +10,7 @@ class AddProductForm extends Form {
 	 *
 	 * @var int
 	 */
-	protected $maxquantity = 0; 
+	protected $maxquantity = 0;
 
 	/**
 	 * Fields that can be saved to an order item.
@@ -21,7 +21,7 @@ class AddProductForm extends Form {
 
 
 	public function __construct($controller, $name = "AddProductForm") {
-		
+
 		parent::__construct(
 			$controller,
 			$name,
@@ -29,7 +29,7 @@ class AddProductForm extends Form {
 			$this->getFormActions(),
 			$this->getFormValidator()
 		);
-		
+
 		$this->addExtraClass("addproductform");
 
 		$this->extend('updateAddProductForm');
@@ -83,9 +83,9 @@ class AddProductForm extends Form {
 				$count++;
 			}
 
-			$fields->push(new DropdownField('Quantity','Quantity', $values, 1));
+			$fields->push(new DropdownField(_t('AddProductForm.Quantity', 'Quantity'),'Quantity', $values, 1));
 		} else {
-			$fields->push(new NumericField('Quantity','Quantity', 1));
+			$fields->push(new NumericField(_t('AddProductForm.Quantity', 'Quantity'), 'Quantity', 1));
 		}
 
 		return $fields;

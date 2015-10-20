@@ -20,7 +20,7 @@ class ProductVariationsExtension extends DataExtension {
 	 */
 	public function updateCMSFields(FieldList $fields) {
 		$fields->addFieldsToTab('Root.Variations',array(
-			ListboxField::create("VariationAttributeTypes", "Attributes", 
+			ListboxField::create("VariationAttributeTypes", "Attributes",
 				ProductAttributeType::get()->map("ID", "Title")->toArray()
 			)->setMultiple(true)
 			->setDescription("These are fields to indicate the way(s) each variation varies. Once selected, they can be edited on each variation."),
@@ -46,7 +46,7 @@ class ProductVariationsExtension extends DataExtension {
 		if(!$variations->exists() || !$variations->Count()){
 			return null;
 		}
-		$prices = $variations->map('ID','Price')->toArray();
+		$prices = $variations->map('ID','SellingPrice')->toArray();
 		$pricedata = array(
 			'HasRange' => false,
 			'Max' => ShopCurrency::create(),
@@ -101,7 +101,7 @@ class ProductVariationsExtension extends DataExtension {
 	public function generateVariationsFromAttributes(ProductAttributeType $attributetype, array $values){
 		//TODO: introduce transactions here, in case objects get half made etc
 		//if product has variation attribute types
-		if(is_array($values)){
+		if (!empty($values)) {
 			//TODO: get values dataobject set
 			$avalues = $attributetype->convertArrayToValues($values);
 			$existingvariations = $this->owner->Variations();
@@ -130,7 +130,7 @@ class ProductVariationsExtension extends DataExtension {
 					$variation->Price = $this->owner->BasePrice;
 					$variation->write();
 					$variation->InternalItemID = $this->owner->InternalItemID.'-'.$variation->ID;
-					$variation->AttributeValues()->add($value); //TODO: find or create actual value
+					$variation->AttributeValues()->add($value);
 					$variation->write();
 					$existingvariations->add($variation);
 				}
@@ -139,7 +139,7 @@ class ProductVariationsExtension extends DataExtension {
 	}
 
 	/**
-	 * Get all the {@link ProductAttributeValue} for a given attribute type, 
+	 * Get all the {@link ProductAttributeValue} for a given attribute type,
 	 * based on this product's variations.
 	 *
 	 * @return DataList

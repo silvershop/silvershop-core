@@ -205,10 +205,11 @@ class ProductVariation extends DataObject implements Buyable {
 
 	public function sellingPrice(){
 		$price = $this->Price;
-		if ($price == 0 && $this->Product() && $this->Product()->sellingPrice()){
-			$price = $this->Product()->sellingPrice();
+		if ($price == 0 && ($parentProduct = $this->Product())) {
+			$price = $parentProduct->sellingPrice();
 		}
 		$this->extend("updateSellingPrice",$price);
+
 		//prevent negative values
 		$price = $price < 0 ? 0 : $price;
 

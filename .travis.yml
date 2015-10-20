@@ -2,25 +2,27 @@ language: php
 sudo: false
 
 php:
-    - 5.3
+  - 5.3
 
 env:
-    - DB=MYSQL CORE_RELEASE=3.1
+  - DB=MYSQL CORE_RELEASE=3.2
 
 matrix:
   include:
+    - php: 5.4
+      env: DB=MYSQL CORE_RELEASE=3.1
     - php: 5.5
-      env: DB=PGSQL CORE_RELEASE=3.1
+      env: DB=SQLITE CORE_RELEASE=3.2
     - php: 5.6
-      env: DB=SQLITE CORE_RELEASE=3.1 COVERAGE=1
+      env: DB=PGSQL CORE_RELEASE=3.2 COVERAGE=1
     - php: 5.6
-      env: DB=SQLITE CORE_RELEASE=3.1 COVERAGE=2
+      env: DB=PGSQL CORE_RELEASE=3.2 COVERAGE=2
     - php: 5.6
-      env: DB=SQLITE CORE_RELEASE=3.1 COVERAGE=3
+      env: DB=PGSQL CORE_RELEASE=3.2 COVERAGE=3
     - php: 5.6
-      env: DB=SQLITE CORE_RELEASE=master
+      env: DB=PGSQL CORE_RELEASE=master
   allow_failures:
-    - env: DB=SQLITE CORE_RELEASE=master
+    - env: DB=PGSQL CORE_RELEASE=master
 
 before_script:
   - composer self-update

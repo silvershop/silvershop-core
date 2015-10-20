@@ -1,9 +1,14 @@
 <?php
 
-class CheckoutComponentConfig {
+/**
+ * @package shop
+ */
+class CheckoutComponentConfig extends Object {
 
 	protected $components;
+
 	protected $order;
+
 	protected $namespaced; //namespace fields according to their component
 
 	public function __construct(Order $order, $namespaced = true) {
