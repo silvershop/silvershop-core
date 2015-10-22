@@ -12,6 +12,9 @@ en:
     PastOrders: "Past Orders"
     Title: "My Account"
   AccountPage:
+    DESCRIPTION: "Generic content page"
+    LOGIN: "You'll need to login before you can access the account page. If you are not registered, you won't be able to access it until you make your first order, otherwise please enter your details below."
+    LOGINAGAIN: "You have been logged out. If you would like to log in again, please do so below."
     Message: "You'll need to login before you can access the account page. If you are not registered, you won't be able to access it until you make your first order, otherwise please enter your details below."
     NOPAGE: "No AccountPage on this site - please create one !"
     NoPastOrders: "No past orders found."
@@ -44,6 +47,9 @@ en:
     NAME: Name
     PAYMENTMETHOD: Method
     PAYMENTSTATUS: "Payment Status"
+  AddProductForm:
+    ADDTOCART: "Add to Cart"
+    Quantity: Quantity
   Address:
     ADDRESS: Address
     ADDRESS2HINT: "premises, building, apartment, unit, floor"
@@ -54,30 +60,91 @@ en:
     CITYHINT: "or suburb, county, district"
     COUNTRY: Country
     PHONE: "Phone Number"
+    PLURALNAME: Addresss
     POSTALCODE: "Postal Code"
+    SINGULARNAME: Address
     STATE: State
     STATEHINT: "or province, territory, island"
     SaveDefaults: "Save Defaults"
     SaveNew: "Save New Address"
     ShippingAddress: "Shipping Address "
+    db_Address: Address
+    db_AddressLine2: "Address Line2"
+    db_City: City
+    db_Company: Company
+    db_Country: Country
+    db_FirstName: "First Name"
+    db_Latitude: Latitude
+    db_Longitude: Longitude
+    db_Phone: Phone
+    db_PostalCode: "Postal Code"
+    db_State: State
+    db_Surname: Surname
+    has_one_Member: Member
+  AddressBookCheckoutComponent:
+    CREATENEWADDRESS: "Create new address"
   Cart.ss:
     ADDONE: "Add one more of \"%s\" to your cart"
     CheckoutClick: "Click here to go to the checkout"
     CheckoutGoTo: "Go to checkout"
     HEADLINE: "My Cart"
-    NOITEMS: "There are no items in your cart"
+    NOITEMS: "There are no items in your cart."
     PRICE: Price
+    PRODUCT: Product
+    QUANTITY: Quantity
     READMORE: "Click here to read more on \"%s\""
     REMOVE: "Remove \"%s\" from your order"
     REMOVEALL: "Remove all of \"%s\" from your cart"
     REMOVEONE: "Remove one of \"%s\" from your cart"
-    SUBTOTAL: Subtotal
+    SUBTOTAL: Sub-total
+    TABLESUMMARY: "Current contents of your cart."
     TOTAL: Total
+    TOTALPRICE: "Total Price"
+    UNITPRICE: "Unit Price"
+  CartPage:
+    DESCRIPTION: "Generic content page"
+    PLURALNAME: "Cart Pages"
+    SINGULARNAME: "Cart Page"
+    TITLE: "Shopping Cart"
+    has_one_CheckoutPage: "Checkout Page"
+    has_one_ContinuePage: "Continue Page"
+  CartPage.ss:
+    CARTEMPTY: "Your cart is empty."
+    CONTINUE: "Continue Shopping"
+    PROCEEDTOCHECKOUT: "Proceed to Checkout"
+  Checkout:
+    IDFIELDNOTFOUND: "Required field not found: %s"
+    MEMBEREXISTS: "A member already exists with the %s %s"
+    MEMBERSHIPSNOTALLOWED: "Creating new memberships is not allowed"
+    NOPAYMENTMETHOD: "Payment method does not exist"
+    PASSWORDREQUIRED: "A password is required"
+  CheckoutComponentValidator:
+    INVALIDMESSAGE: "There are problems with the data you entered. See below:"
+  CheckoutField:
+    ACCOUNTINFO: "Please choose a password, so you can login and check your order history in the future"
+    EMAIL: Email
+    FIRSTNAME: "First Name"
+    MEMBERINFO: "If you are already a member please"
+    MEMBERSHIPDETAILS: "Membership Details"
+    MUSTAGREETOTERMS: "You must agree to the terms and conditions"
+    NOTES: Message
+    PASSWORD: Password
+    SURNAME: Surname
+    TERMSANDCONDITIONS: "I agree to the terms and conditions stated on the <a href=\"%s\" target=\"new\" class=\"read_terms\" title=\"Read the shop terms and conditions for this site\">terms and conditions</a> page"
+  CheckoutFields:
+    PAYMENTTYPE: "Payment Type"
+  CheckoutForm:
+    PROCEED: "Proceed to payment"
   CheckoutPage:
+    DESCRIPTION: "Generic content page"
     NOPAGE: "No CheckoutPage on this site - please create one!"
     PLURALNAME: "Checkout Pages"
+    PaymentErrorMessage: "Received error from payment gateway:"
     SINGULARNAME: "Checkout Page"
+    TITLE: Checkout
+    db_PurchaseComplete: "Purchase Complete"
   CheckoutPage.ss:
+    CARTEMPTY: "Your cart is empty."
     CHECKOUT: Checkout
     ORDERSTATUS: "Order Status"
     PROCESS: Process
@@ -85,15 +152,32 @@ en:
     MESSAGE: "Payment accepted via Cheque. Please note : products will not be shipped until payment has been received."
     PLURALNAME: "Cheque Payments"
     SINGULARNAME: "Cheque Payment"
+  CreateAddressForm:
+    SAVED: "Your address has been saved"
   DPSPayment:
     PLURALNAME: "D P S Payments"
     SINGULARNAME: "D P S Payment"
   EwayXMLPayment:
     PLURALNAME: "Eway X M L Payments"
     SINGULARNAME: "Eway X M L Payment"
+  FlatTaxModifier:
+    PLURALNAME: Taxes
+    SINGULARNAME: Tax
+  FreeShippingModifier:
+    FREE: FREE
+    PLURALNAME: Modifiers
+    SINGULARNAME: Shipping
   General:
     DATEFORMATLONG: "%m/%d/%G %I:%M%p"
+    DATEFORMATNICE: "%m/%d/%G"
     DATEFORMATSHORT: "%m/%d/%G"
+    DATETIMEFORMATNICE: "%m/%d/%G %I:%M%p"
+    DATETIMEFORMATNICE24: "d/m/Y H:i"
+  GlobalTaxModifier:
+    INCLUDED: " (included in the above price)"
+    PLURALNAME: Taxes
+    SINGULARNAME: Tax
+    db_Country: Country
   Member:
     BUTTONCHANGEPASSWORD: "Change Password"
     CONFIRMNEWPASSWORD: "Confirm New Password"
@@ -102,14 +186,81 @@ en:
   MemberForm:
     DETAILSSAVED: "Your details have been saved"
     LOGGEDIN: "You are currently logged in as "
+    SAVE: "Save Changes"
+    SAVEANDPROCEED: "Save and proceed to checkout"
+  ORDER:
+    INVOICE: Invoice
   Order:
+    CANCELSUBJECT: "Order #%d cancelled by member"
     INCOMPLETE: "Order Incomplete"
     PLURALNAME: Orders
+    PRINT: Print
     SINGULARNAME: Order
     SUCCESSFULL: "Order Successful"
+    db_AnalyticsSubmitted: "Analytics Submitted"
+    db_Dispatched: Dispatched
+    db_Email: Email
+    db_FirstName: "First Name"
+    db_IPAddress: IPAddress
+    db_Notes: Notes
+    db_Paid: Paid
+    db_Placed: Placed
+    db_Printed: Printed
+    db_ReceiptSent: "Receipt Sent"
+    db_Reference: Reference
+    db_SeparateBillingAddress: "Separate Billing Address"
+    db_ShippingTotal: "Shipping Total"
+    db_Status: Status
+    db_Surname: Surname
+    db_Total: Total
+    has_many_Items: Items
+    has_many_Modifiers: Modifiers
+    has_many_OrderStatusLogs: "Order Status Logs"
+    has_many_Payments: Payments
+    has_one_BillingAddress: "Billing Address"
+    has_one_Member: Member
+    has_one_ShippingAddress: "Shipping Address"
+    has_one_ShippingMethod: "Shipping Method"
+  Order.ss:
+    ORDERNOTES: Notes
+    TOTALOUTSTANDING: "Total outstanding"
+  OrderActionsForm:
+    CANCELORDER: "Cancel this order"
+    MAKEPAYMENT: "Make Payment"
+    OUTSTANDING: "Outstanding: %s"
+    PAYMENTMETHOD: "Payment Method"
+    PAYORDER: "Pay outstanding balance"
+  OrderAdmin_Addresses.ss:
+    ADDRESS: Address
+    BILLTO: "Bill To"
+    SHIPTO: "Ship To"
+  OrderAdmin_Content.ss:
+    ITEMS: Items
+    PRODUCT: Product
+    QUANTITY: Quantity
+    TOTALPRICE: "Total Price"
+    UNITPRICE: "Unit Price"
+  OrderAdmin_Content_ItemLine.ss:
+    READMORE: "View \"%s\""
+  OrderAdmin_Content_SubTotals.ss:
+    SUBTOTAL: Sub-total
+    TOTAL: Total
+    TOTALOUTSTANDING: Outstanding
+  OrderAdmin_Customer.ss:
+    CUSTOMER: Customer
+  OrderAdmin_Notes.ss:
+    NOTES: Notes
+  OrderAdmin_Printable.ss:
+    ORDER: Order
   OrderAttribute:
-    PLURALNAME: "Order Attributs"
-    SINGULARNAME: "Order Attribute"
+    PLURALNAME: Attributes
+    SINGULARNAME: Attribute
+    db_CalculatedTotal: "Calculated Total"
+    has_one_Order: Order
+  OrderForm:
+    COULDNOTPROCESSPAYMENT: "Payment could not be processed."
+    LogIn: "log in"
+    ORDERCANCELLED: "Order sucessfully cancelled"
   OrderHistory:
     OrderDate: Date
     OrderItems: Items
@@ -182,18 +333,48 @@ en:
   OrderInformation_Print.ss:
     PAGETITLE: "Print Orders"
   OrderItem:
-    PLURALNAME: "Order Items"
-    SINGULARNAME: "Order Item"
+    PLURALNAME: Items
+    SINGULARNAME: Item
+    db_Quantity: Quantity
+    db_UnitPrice: "Unit Price"
   OrderModifier:
-    PLURALNAME: "Order Modifiers"
-    SINGULARNAME: "Order Modifier"
+    PLURALNAME: Modifiers
+    SINGULARNAME: Modifier
+    db_Amount: Amount
+    db_Sort: Sort
+    db_Type: Type
+  OrderNotifier:
+    ADMINNOTIFICATIONSUBJECT: "Order #%d Notification"
+    CONFIRMATIONSUBJECT: "Order #%d Confirmation"
+    RECEIPTSUBJECT: "Order #%d Receipt"
+  OrderProcessor:
+    NULL: "A new order has not yet been started."
+    NOITEMS: "Order has no items."
+    NOTCART: "Order is not a cart."
   OrderReport:
     CHANGESTATUS: "Change Order Status"
     NOTEEMAIL: Note/Email
     SENDNOTETO: "Send this note to %s (%s)"
   OrderStatusLog:
-    PLURALNAME: "Order Status Logs"
-    SINGULARNAME: "Order Status Log"
+    PLURALNAME: "Order Status Log Entries"
+    SINGULARNAME: "Order Log Entry"
+    db_DispatchTicket: "Dispatch Ticket"
+    db_DispatchedBy: "Dispatched By"
+    db_DispatchedOn: "Dispatched On"
+    db_Note: Note
+    db_PaymentCode: "Payment Code"
+    db_PaymentOK: "Payment OK"
+    db_SentToCustomer: "Sent To Customer"
+    db_Title: Title
+    has_one_Author: Author
+    has_one_Order: Order
+  Order_Address.ss:
+    BILLTO: "Bill To"
+    SHIPTO: "Ship To"
+  Order_AdminNotificationEmail.ss:
+    TITLE: "Shop Receipt"
+  Order_ConfirmationEmail.ss:
+    TITLE: "Order Confirmation"
   Order_Content.ss:
     NOITEMS: "There are <strong>no</strong> items in your order."
     PRICE: Price
@@ -204,6 +385,14 @@ en:
     TOTAL: Total
     TOTALOUTSTANDING: "Total outstanding"
     TOTALPRICE: "Total Price"
+    UNITPRICE: "Unit Price"
+  Order_Content_ItemLine.ss:
+    READMORE: "View \"%s\""
+  Order_Content_SubTotals.ss:
+    SUBTOTAL: Sub-total
+    TOTAL: Total
+  Order_ItemLine.ss:
+    READMORE: "View \"%s\""
   Order_Member.ss:
     ADDRESS: Address
     CITY: City
@@ -212,6 +401,12 @@ en:
     MOBILE: Mobile
     NAME: Name
     PHONE: Phone
+  Order_Payments.ss:
+    AMOUNT: Amount
+    DATE: Date
+    PAYMENTMETHOD: Method
+    PAYMENTNOTE: Note
+    PAYMENTSTATUS: "Payment Status"
   Order_ReceiptEmail.ss:
     HEADLINE: "Shop Order Receipt"
     TITLE: "Shop Receipt"
@@ -219,6 +414,8 @@ en:
     HEADLINE: "Shop Status Change"
     STATUSCHANGE: "Status changed to \"%s\" for Order #"
     TITLE: "Shop Status Change"
+  OrdersAdmin:
+    MENUTITLE: Orders
   PayPalPayment:
     PLURALNAME: "Pay Pal Payments"
     SINGULARNAME: "Pay Pal Payment"
@@ -237,20 +434,59 @@ en:
     PAYMENTMETHOD: Method
     PAYMENTSTATUS: "Payment Status"
     TABLESUMMARY: "The contents of your cart are displayed in this form and summary of all fees associated with an order and a rundown of payments options."
+  PaymentProcessor:
+    CANTPAY: "Order can't be paid for."
   PaystationHostedPayment:
     PLURALNAME: "Paystation Hosted Payments"
     SINGULARNAME: "Paystation Hosted Payment"
   PaystationPayment:
     PLURALNAME: "Paystation Payments"
     SINGULARNAME: "Paystation Payment"
+  PickupShippingModifier:
+    PLURALNAME: Modifiers
+    SINGULARNAME: "Pick Up Shipping"
   Product:
+    ADDITIONALCATEGORIES: "Additional Categories"
+    ALLOWPURCHASE: "Allow product to be purchased"
+    CATEGORY: Category
+    CATEGORYDESCRIPTION: "This is the parent page or default category."
+    CODE: "Product Code/SKU"
+    COSTPRICE: "Cost Price"
+    COSTPRICEDESC: "Wholesale price before markup."
+    DEPTH: "Depth (%s)"
+    DESCRIPTION: "Generic content page"
+    FEATURED: "Featured Product"
+    HEIGHT: "Height (%s)"
+    IMAGE: "Product Image"
+    MODEL: Model
+    PAGETITLE: "Product Title"
     PLURALNAME: Products
+    PRICE: Price
+    PRICEDESC: "Base price to sell this product at."
     SINGULARNAME: Product
+    WEIGHT: "Weight (%s)"
+    WIDTH: "Width (%s)"
+    db_AllowPurchase: "Allow Purchase"
+    db_BasePrice: "Base Price"
+    db_CostPrice: "Cost Price"
+    db_Depth: Depth
+    db_Featured: Featured
+    db_Height: Height
+    db_InternalItemID: "Internal Item ID"
+    db_Model: Model
+    db_Popularity: Popularity
+    db_Weight: Weight
+    db_Width: Width
+    has_many_Variations: Variations
+    has_one_Image: Image
+    many_many_ProductCategories: "Product Categories"
+    many_many_VariationAttributeTypes: "Variation Attribute Types"
   Product.ss:
     ADD: "Add \"%s\" to your cart"
     ADDLINK: "Add this item to cart"
     ADDONE: "Add one more of \"%s\" to your cart"
     AUTHOR: Author
+    CODE: "Product Code"
     FEATURED: "This is a featured product."
     GOTOCHECKOUT: "Go to the checkout now"
     GOTOCHECKOUTLINK: "» Go to the checkout"
@@ -263,9 +499,27 @@ en:
     REMOVEALL: "Remove one of \"%s\" from your cart"
     REMOVELINK: "» Remove from cart"
     SIZE: Size
+  ProductAttributeType:
+    PLURALNAME: Attributes
+    SINGULARNAME: Attribute
+    belongs_many_many_Product: Product
+    db_Label: Label
+    db_Name: Name
+    has_many_Values: Values
+  ProductAttributeValue:
+    PLURALNAME: Values
+    SINGULARNAME: Value
+    belongs_many_many_ProductVariation: "Product Variation"
+    db_Sort: Sort
+    db_Value: Value
+    has_one_Type: Type
+  ProductCatalogAdmin:
+    MENUTITLE: Catalog
   ProductCategory:
-    PLURALNAME: "Product Groups"
-    SINGULARNAME: "Product Group"
+    DESCRIPTION: "Generic content page"
+    PLURALNAME: Categories
+    SINGULARNAME: Category
+    belongs_many_many_Products: Products
   ProductCategory.ss:
     FEATURED: "Featured Products"
     OTHER: "Other Products"
@@ -284,20 +538,158 @@ en:
     REMOVE: "Remove \"%s\" from your cart"
     REMOVEALL: "Remove one of \"%s\" from your cart"
     REMOVELINK: "» Remove from cart"
+  ProductGroup:
+    NEXT: next
+    PAGE: page
+    PREVIOUS: previous
+  ProductGroupItem.ss:
+    ADD: "Add \"%s\" to your cart"
+    ADDLINK: "Add to Cart"
+    IMAGE: "%s image"
+    MODEL: Model
+    READMORE: "Click here to read more on \"%s\""
+    VIEW: "View Product"
   ProductMenu.ss:
     GOTOPAGE: "Go to the %s page"
   ProductVariation:
-    PLURALNAME: "Product Variations"
-    SINGULARNAME: "Product Variation"
+    PLURALNAME: Variations
+    SINGULARNAME: Variation
+    db_InternalItemID: "Internal Item ID"
+    db_Price: Price
+    db_Version: Version
+    has_one_Image: Image
+    has_one_Product: Product
+    many_many_AttributeValues: "Attribute Values"
+  ProductVariation_OrderItem:
+    PLURALNAME: Items
+    SINGULARNAME: Item
+    db_ProductVariationVersion: "Product Variation Version"
+    has_one_ProductVariation: "Product Variation"
+  Product_OrderItem:
+    PLURALNAME: Items
+    SINGULARNAME: Item
+    db_ProductVersion: "Product Version"
+    has_one_Product: Product
+  RegionRestriction:
+    PLURALNAME: "Region Restrictions"
+    SINGULARNAME: "Region Restriction"
+    db_City: City
+    db_Country: Country
+    db_PostalCode: "Postal Code"
+    db_State: State
+  SetLocationForm:
+    CHOOSECOUNTRY: "Choose country..."
+    COUNTRY: Country
+  ShippingModifier:
+    PLURALNAME: Modifiers
+    SINGULARNAME: Shipping
+  Shop:
+    DEVTOOLSTITLE: "Shop Development Tools"
+  ShopConfig:
+    CUSTOMERGROUP: "Group to add new customers to"
+    DEFAULTIMAGE: "Default Product Image"
+    TERMSPAGE: "Terms and Conditions Page"
+  ShopCurrency:
+    FREE: "<span class=\"free\">FREE</span>"
+  ShopDashboard:
+    RECENTORDERS: "Recent Orders"
+    RECENTORDERSDESCRIPTION: "Shows recent orders"
+    RecentAccounts: "Recent Accounts"
+    RecentAccountsDescription: "Shows recent account signups"
+    RecentOrdersChart: "Order History Chart"
+    RecentOrdersChartDescription: "Shows recent orders on a graph"
+  ShopDatabaseAdmin.ss:
+    BUILDTASKS: "Build Tasks"
+    CARTCLEANUP: "Cleanup old carts"
+    CARTCLEANUPDESC: "Remove abandoned carts."
+    CARTTASKS: "Cart tasks"
+    DEBUGCART: "Debug the shopping cart"
+    RECALCULATEORDERS: "Recalculate All Orders"
+    RECALCULATEORDERSDESC: "Recalculate all order values. Warning: this will overwrite any historical values."
+    RUNALLTESTS: "Run all shop unit tests"
+    UNITTESTS: "Unit Tests"
+  ShopDevelopmentAdmin.ss:
+    BUILDTASKS: "Build Tasks"
+    CARTCLEANUP: "Cleanup old carts"
+    CARTCLEANUPDESC: "Remove abandoned carts."
+    CARTTASKS: "Cart tasks"
+    CLEARCART: "Clear the current shopping cart"
+    DEBUGCART: "Debug the shopping cart"
+    DELETEORDERS: "Delete All Orders"
+    DELETEORDERSDESC: "Remove all orders, modifiers, and payments from the database."
+    DELETEPRODUCTS: "Delete All Products"
+    DELETEPRODUCTSDESC: "Remove all products from the database."
+    POPULATECART: "Populate cart with some available products"
+    POPULATESHOP: "Populate shop"
+    POPULATESHOPDESC: "Populate the shop with dummy products, categories, and other necessary pages."
+    RECALCULATEORDERS: "Recalculate All Orders"
+    RECALCULATEORDERSDESC: "Recalculate all order values. Warning: this will overwrite any historical values."
+    RUNALLTESTS: "Run all shop unit tests"
+    UNITTESTS: "Unit Tests"
+  ShopQuantityField.ss:
+    ADDONE: "Add one more of \"%s\" to your cart"
+    REMOVEONE: "Remove one of \"%s\" from your cart"
+  ShopSideReport:
+    ALLPRODUCTS: "All Products"
+    FEATUREDPRODUCTS: "Featured Products"
+    HEAVY: "Heavy Products"
+    NOIMAGE: "Products with no image"
+    ShopGROUP: Shop
+  ShoppingCart:
+    CANNOTPURCHASE: "This %s cannot be purchased."
+    CLEARED: "Cart was successfully cleared."
+    CSRF: "Invalid security token, possible CSRF attack."
+    ITEMADD: "Item has been added successfully."
+    ITEMNOTFOUND: "Item not found."
+    ITEMREMOVED: "Item has been successfully removed."
+    NOCARTFOUND: "No cart found."
+    NOCARTINITIALISED: "no cart initialised"
+    NOORDER: "No current order."
+    PRODUCTNOTFOUND: "Product not found."
+    QUANTITYSET: "Quantity has been set."
+  SideCart.ss:
+    HEADLINE: "My Cart"
+    NOITEMS: "There are no items in your cart"
+    READMORE: "View \"%s\""
+    REMOVEALL: "remove from cart"
   SimpleShippingModifier:
-    PLURALNAME: "Simple Shipping Modifiers"
-    SINGULARNAME: "Simple Shipping Modifier"
+    PLURALNAME: Modifiers
+    SHIPTO: "Ship to %s"
+    SINGULARNAME: Shipping
+    db_Country: Country
+  SteppedCheckoutPage.ss:
+    NOITEMS: "There are no items in your cart."
+  SubTotalModifier:
+    PLURALNAME: "Sub Totals"
+    SINGULARNAME: "Sub Total"
   TaxModifier:
-    PLURALNAME: "Tax Modifiers"
-    SINGULARNAME: "Tax Modifier"
+    ATRATE: "@ %s"
+    PLURALNAME: Taxes
+    SINGULARNAME: Tax
+    db_Rate: Rate
+  VariationsTable.ss:
+    ADD: "Add \"%s\" to your cart"
+    ADDLINK: "Add this item to cart"
+    QUANTITYCART: "Quantity in cart"
   WeightShippingModifier:
-    PLURALNAME: "Weight Shipping Modifiers"
-    SINGULARNAME: "Weight Shipping Modifier"
+    PLURALNAME: Modifiers
+    SINGULARNAME: Shipping
+    TABLETITLE: "Shipping (%f kg)"
   WorldpayPayment:
     PLURALNAME: "Worldpay Payments"
     SINGULARNAME: "Worldpay Payment"
+  Zone:
+    PLURALNAME: Zones
+    SINGULARNAME: Zone
+    db_Description: Description
+    db_Name: Name
+    has_many_Regions: Regions
+  ZoneAdmin:
+    MENUTITLE: Zones
+  ZoneRegion:
+    PLURALNAME: "Zone Regions"
+    SINGULARNAME: "Zone Region"
+    has_one_Zone: Zone
+  shop:
+    Checkout: "Payment Type"
+    STATUS: Status
