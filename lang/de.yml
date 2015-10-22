@@ -1,0 +1,115 @@
+---
+de:
+  AccountPage:
+    Message: "Sie müssen sich einloggen um auf Ihr Konto zugreifen zu können. Falls Sie nicht registriert sind, können Sie erst nach Ihrer ersten Bestellung auf Ihr Konto zugreifen. Fall Sie bereits registriert sind, geben Sie folgend Ihre Daten ein."
+    NOPAGE: "Keine AccountPage auf dieser Website - erstellen Sie bitte eine!"
+  AccountPage.ss:
+    COMPLETED: "Abgeschlossene Bestellungen"
+    HISTORY: "Ihr Bestellhistorie"
+    INCOMPLETE: "Offene Bestellungen"
+    NOCOMPLETED: "Es konnten keine abgeschlossenen Bestellungen gefunden werden."
+    NOINCOMPLETE: "Es konnten keine offenen Bestellungen gefunden werden."
+    ORDER: "Bestellung Nr."
+    READMORE: "Zur Detail-Ansicht der Bestellung #%s"
+  AccountPage_order.ss:
+    ADDRESS: Adresse
+    AMOUNT: Menge
+    BACKTOCHECKOUT: "Klicken Sie hier um zur Kasse zu gelangen"
+    CITY: Stadt
+    COUNTRY: Land
+    DATE: Datum
+    DETAILS: Details
+    EMAILDETAILS: "Zur Bestätigung Ihrer Bestellung wurde eine Kopie an Ihre E-Mail Adresse geschickt."
+    NAME: Name
+    PAYMENTMETHOD: Bezahlmethode
+    PAYMENTSTATUS: "Status der Zahlung"
+  Cart.ss:
+    ADDONE: "Hinzufügen eine oder mehr von  \"%s\"  in den Warenkorb"
+    CheckoutClick: "Hier klicken um auszuchecken"
+    CheckoutGoTo: "Zur Kasse"
+    HEADLINE: "Mein Warenkorb"
+    NOITEMS: "In Ihrem Warenkorb befinden sich zur Zeit keine Artikel"
+    PRICE: Preis
+    READMORE: "Erfahren Sie hier mehr über \"%s\""
+    REMOVE: "\"%s\" aus Ihrem Warenkorb entfernen"
+    REMOVEALL: "Entfernen alle von \"%s\" von dem Warenkorb"
+    REMOVEONE: "Entfernen Sie eines von \"%s\" aus Ihrem Warenkorb"
+    SUBTOTAL: Zwischensumme
+    TOTAL: Summe
+  CheckoutPage:
+    NOPAGE: "Auf dieser Site existiert keine Seite zum Ausschecken - bitte erstellen Sie eine neue Seite!"
+  CheckoutPage.ss:
+    CHECKOUT: Kasse
+    ORDERSTATUS: Bestellstatus
+    PROCESS: Prozess
+  ChequePayment:
+    MESSAGE: "Bezahlung per Scheck (Vorkasse). Bitte beachten: Der Versand der Produkte erfolgt erst nach Zahlungseingang."
+  General: ~
+  MemberForm:
+    DETAILSSAVED: "Ihre Daten wurden gespeichert"
+    LOGGEDIN: "Sie sind angemeldet als "
+  Order:
+    INCOMPLETE: "Bestellung unvollständig"
+    SUCCESSFULL: "Bestellung Erfolgreich"
+  Order_Content.ss:
+    NOITEMS: "Ihre Bestellung weist <strong>keine</strong> Artikel auf"
+    PRICE: Preis
+    PRODUCT: Produkt
+    QUANTITY: Menge
+    READMORE: "Wenn zu mehr über \"%s\" erfahren willst, klick hier"
+    SUBTOTAL: Zwischensumme
+    TOTAL: Gesamt
+    TOTALOUTSTANDING: "Gesamt ausstehend"
+    TOTALPRICE: Gesamtpreis
+  Order_Member.ss:
+    ADDRESS: Adresse
+    CITY: Stadt
+    COUNTRY: Land
+    EMAIL: E-Mail
+    MOBILE: Handy
+    NAME: Name
+    PHONE: Telefon
+  Order_ReceiptEmail.ss:
+    HEADLINE: Auftragsbestätigung
+    TITLE: "Shop Empfangsbestätigung"
+  Order_StatusEmail.ss:
+    HEADLINE: "Shop-Status Änderung"
+    STATUSCHANGE: "Status geändert zu \"%s\" für Bestellung Nr."
+    TITLE: "Shop-Status Änderung"
+  Payment: ~
+  Product.ss:
+    ADD: "\"%s\" zjm Warenkorb hinzufügen"
+    ADDLINK: "Diesen Artikel zum Warenkorb hinzufügen"
+    ADDONE: "\"%s\" zum Warenkorb hinzufügen"
+    AUTHOR: Autor
+    FEATURED: "Wir empfehlen diesen Artikel."
+    GOTOCHECKOUT: "Jetzt zur Kasse gehen"
+    GOTOCHECKOUTLINK: "» Zur Kasse"
+    IMAGE: "%s Bild"
+    ItemID: "Artikel Nr."
+    NOIMAGE: "Keine Produktabbildung vorhanden für \"%s\""
+    QUANTITYCART: "Menge im Warenkorb"
+    REMOVE: "\"%s\" vom Warenkorb entfernen"
+    REMOVEALL: "\"%s\" vom Warenkorb entfernen"
+    REMOVELINK: "» Aus dem Warenkorb entfernen"
+    SIZE: Größe
+  ProductCategory.ss:
+    FEATURED: "Empfohlene Artikel"
+    OTHER: "Andere Produkte"
+  ProductCategoryItem.ss:
+    ADD: "\"%s\" zum Warenkorb hinzufügen"
+    ADDLINK: "Diesen Artikel zum Warenkorb hinzufügen"
+    ADDONE: "\"%s\" zum Warenkorb hinzufügen"
+    AUTHOR: Autor
+    GOTOCHECKOUT: "Zur Kasse"
+    GOTOCHECKOUTLINK: "» Zur Kasse"
+    IMAGE: "%s Bild"
+    NOIMAGE: "Keine Produktabbildung vorhanden für \"%s\""
+    QUANTITYCART: "Menge im Warenkorb"
+    READMORE: "Erfahren Sie hier mehr über \"%s\""
+    READMORECONTENT: "mehr »"
+    REMOVE: "\"%s\" vom Warenkorb entfernen."
+    REMOVEALL: "1 Einheit von \"%s\" aus dem Warenkorb entferne"
+    REMOVELINK: "» Aus dem Warenkorb entfernen"
+  ProductMenu.ss:
+    GOTOPAGE: "Zur %s Seite"

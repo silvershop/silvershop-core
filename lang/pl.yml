@@ -1,0 +1,190 @@
+---
+pl:
+  AccountPage:
+    Message: "Musisz się najpierw zalogować aby uzyskać dostęp do strony profilu. Jeśli nie jesteś zarejestrowany, nie możesz się do niej dostać przed złożeniem pierwszego zamówienia. W przeciwnym przypadku, wpisz poniżej dane potrzebne do logowania."
+    NOPAGE: "Brak AccountPage na tej stronie - stwórz jedną !"
+  AccountPage.ss:
+    COMPLETED: "Zrealizowane Zamówienia"
+    HISTORY: "Historia Zamówień"
+    INCOMPLETE: "Nieukończone zamówienia"
+    NOCOMPLETED: "Brak zrealizowanych zamówień."
+    NOINCOMPLETE: "Brak nieukończonych zamówień"
+    ORDER: "Zamówienie #"
+    READMORE: "Czytaj więcej o zamówieniu #%s"
+  AccountPage_order.ss:
+    ADDRESS: Adres
+    AMOUNT: Ilość
+    BACKTOCHECKOUT: "Kliknij tutaj, aby przejść do kasy"
+    CITY: Miasto
+    COUNTRY: Państwo
+    DATE: Data
+    DETAILS: Szczegóły
+    EMAILDETAILS: "Kopia została wysłana na Twój adres e-mail w celu potwierdzenia szczegółów zamówienia."
+    NAME: "Imię i Nazwisko"
+    PAYMENTMETHOD: Metoda
+    PAYMENTSTATUS: "Status Płatności"
+  Cart.ss:
+    ADDONE: "Dodaj jedno  \"%s\" więcej do koszyka"
+    CheckoutClick: "Kliknij tutaj aby przejść do podsumowania"
+    CheckoutGoTo: "Przejdź do podsumowania"
+    HEADLINE: "Mój Koszyk"
+    NOITEMS: "Nie masz żadnych produktów w koszyku"
+    PRICE: Cena
+    READMORE: "Kliknij tutaj, aby przeczytać więcej o \"%s\""
+    REMOVE: "Usuń \"%s\" z zamówienia"
+    REMOVEALL: "Usuń wszystkie  \"%s\" z koszyka"
+    REMOVEONE: "Usuń jedno  \"%s\" z koszyka"
+    SUBTOTAL: Suma
+    TOTAL: "Całkowity Koszt"
+  CheckoutPage:
+    NOPAGE: "Brak CheckoutPage na tej stronie - stwórz ją!"
+  CheckoutPage.ss:
+    CHECKOUT: "Do kasy!"
+    ORDERSTATUS: "Status Zamówienia"
+    PROCESS: Przebieg
+  ChequePayment:
+    MESSAGE: "Akceptujemy czeki. Uwaga: produkty nie zostaną wysłane dopóki płatność nie zostanie otrzymana."
+  MemberForm:
+    DETAILSSAVED: "Szczegóły Twojego profilu zostały zapisane"
+    LOGGEDIN: "Jesteś aktualnie zalogowany."
+  Order:
+    INCOMPLETE: "Zamówienie Niekompletne"
+    SUCCESSFULL: "Zamówienie Poprawnie Złożone"
+  OrderInformation.ss:
+    ADDRESS: Adres
+    AMOUNT: Ilość
+    BUYERSADDRESS: "Adres Nabywcy"
+    CITY: Miasto
+    COUNTRY: Państwo
+    CUSTOMERDETAILS: "Szczegóły Klienta"
+    DATE: Data
+    DETAILS: Szczegóły
+    EMAIL: Email
+    MOBILE: "Telefon Komórkowy"
+    NAME: Imię
+    ORDERSUMMARY: "Podsumowanie Zamówienia"
+    PAYMENTID: "ID Płatności"
+    PAYMENTINFORMATION: "Informacje o płatnościach"
+    PAYMENTMETHOD: Forma
+    PAYMENTSTATUS: "Status Płatności"
+    PHONE: Telefon
+    PRICE: Cena
+    PRODUCT: Produkt
+    QUANTITY: Ilość
+    READMORE: "Czytaj więcej o  \"%s\""
+    SHIPPINGDETAILS: "Szczegóły wysyłki"
+    SUBTOTAL: Suma
+    TOTAL: Suma
+    TOTALOUTSTANDING: "Całkowita kwota"
+    TOTALPRICE: "Całkowita Cena"
+  OrderInformation_Editable.ss:
+    ADDONE: "Dodaj jeden \"%s\" więcej do koszyka"
+    NOITEMS: "Nie ma <strong>żadnych</strong> przedmiotów w Twoim koszyku."
+    ORDERINFORMATION: "Informacje o zamówieniu"
+    PRICE: Cena
+    PRODUCT: Produkt
+    QUANTITY: Ilość
+    READMORE: "Czytaj więcej o \"%s\""
+    REMOVE: "Usuń \"%s\" z zamówienia"
+    REMOVEALL: "Usuń wszystkie  \"%s\" z koszyka"
+    REMOVEONE: "Usuń jeden \"%s\" więcej z koszyka"
+    SUBTOTAL: Suma
+    TABLESUMMARY: "Zawartość Twojego koszyka jest wyświetlona, podobnie jak podsumowanie wszystkich opłat związanych z zamówieniem, a także wyszczególnienie możliwości płatności."
+    TOTAL: "Całkowity Koszt"
+    TOTALPRICE: "Całkowita Cena"
+  OrderInformation_NoPricing.ss:
+    ADDRESS: Adres
+    BUYERSADDRESS: "Adres Kupującego"
+    CITY: Miasto
+    COUNTRY: Państwo
+    CUSTOMERDETAILS: "Szczegóły Klienta"
+    EMAIL: Email
+    MOBILE: "Telefon Komórkowy"
+    NAME: Imię
+    ORDERINFO: "Informacje o Zamówieniu #"
+    PHONE: Telefon
+    TABLESUMMARY: "Zawartość Twojego koszyka jest wyświetlona, podobnie jak wszystkie kwoty związane z zamówieniem i lista wszystkich możliwych opcji płatności."
+  OrderInformation_PackingSlip.ss:
+    DESCRIPTION: Opis
+    ITEM: Przedmiot
+    ORDERDATE: "Data Zamówienia"
+    ORDERNUMBER: "Numer Zamówienia"
+    PAGETITLE: "Drukowanie Zamówień"
+    QUANTITY: Ilość
+    TABLESUMMARY: "Zawartość Twojego koszyka jest wyświetlona, podobnie jak podsumowanie wszystkich opłat związanych z zamówieniem, a także wyszczególnienie możliwości płatności."
+  OrderInformation_Print.ss:
+    PAGETITLE: "Drukowanie Zamówień"
+  OrderReport:
+    CHANGESTATUS: "Zmień status zamówienia"
+    NOTEEMAIL: List/Email
+    SENDNOTETO: "Wyślij do %s (%s)"
+  Order_Content.ss:
+    NOITEMS: "Nie ma <strong>żadnych</strong> obiektów w Twoim zamówieniu."
+    PRICE: Cena
+    PRODUCT: Produkt
+    QUANTITY: Ilość
+    READMORE: "Kliknij tutaj, aby przeczytać więcej o \"%s\""
+    SUBTOTAL: Suma
+    TOTAL: "Całkowity Koszt"
+    TOTALOUTSTANDING: "Łączna reszta"
+    TOTALPRICE: "Całkowita Cena"
+  Order_Member.ss:
+    ADDRESS: Adres
+    CITY: Miasto
+    COUNTRY: Państwo
+    EMAIL: Email
+    MOBILE: "Telefon Komórkowy"
+    NAME: "Imię i Nazwisko"
+    PHONE: Telefon
+  Order_ReceiptEmail.ss:
+    HEADLINE: "Potwierdzenie Zamówienia"
+    TITLE: "Potwierdzenie Zamówienia"
+  Order_StatusEmail.ss:
+    HEADLINE: "Zmiana Statusu Zamówienia"
+    STATUSCHANGE: "Status zamówienia zmieniony na  \"%s\" dla zamówienia #"
+    TITLE: "Zmiana Statusu Zamówienia"
+  PaymentInformation.ss:
+    AMOUNT: Ilość
+    DATE: Data
+    DETAILS: Szczegóły
+    PAYMENTID: "ID Płatności"
+    PAYMENTINFORMATION: "Informacje o Płatnościach"
+    PAYMENTMETHOD: Forma
+    PAYMENTSTATUS: "Status Płatności"
+    TABLESUMMARY: "Zawartość Twojego koszyka jest wyświetlona, podobnie jak podsumowanie wszystkich opłat związanych z zamówieniem, a także wyszczególnienie możliwości płatności."
+  Product.ss:
+    ADD: "Dodaj  \"%s\" do koszyka"
+    ADDLINK: "Dodaj ten przedmiot do koszyka"
+    ADDONE: "Dodaj jedno \"%s\" do koszyka"
+    AUTHOR: Autor
+    FEATURED: "To jest wybrany produkt."
+    GOTOCHECKOUT: "Idź teraz do kasy"
+    GOTOCHECKOUTLINK: "» Idź do kasy"
+    IMAGE: "obrazek %s"
+    ItemID: "Obiekt #"
+    NOIMAGE: "Niestety, nie ma obrazków produktu \"%s\""
+    QUANTITYCART: "Ilość w koszyku"
+    REMOVE: "Usuń \"%s\" z koszyka"
+    REMOVEALL: "Usuń jedno \"%s\" z koszyka"
+    REMOVELINK: "» Usuń z koszyka"
+    SIZE: Rozmiar
+  ProductCategory.ss:
+    FEATURED: "Wybrane Produkty"
+    OTHER: "Inne produkty"
+  ProductCategoryItem.ss:
+    ADD: "Dodaj \"%s\" do koszyka"
+    ADDLINK: "Dodaj do koszyka"
+    ADDONE: "Dodaj jeden \"%s\" więcej do koszyka"
+    AUTHOR: Autor
+    GOTOCHECKOUT: "Idź do kasy"
+    GOTOCHECKOUTLINK: "» Idź do kasy"
+    IMAGE: "obrazek %s"
+    NOIMAGE: "Niestety, nie ma obrazka dla \"%s\""
+    QUANTITYCART: "Ilość w koszyku"
+    READMORE: "Kliknij tutaj aby przeczytać więcej o \"%s\""
+    READMORECONTENT: "Czytaj więcej »"
+    REMOVE: "Usuń \"%s\" z koszyka"
+    REMOVEALL: "Usuń jedno  \"%s\" z koszyka"
+    REMOVELINK: "» Usuń z koszyka"
+  ProductMenu.ss:
+    GOTOPAGE: "Przejdź na stronę %s"

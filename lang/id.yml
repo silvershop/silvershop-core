@@ -1,0 +1,169 @@
+---
+id:
+  AccountPage:
+    Message: "Anda perlu login sebelon dapat mengakses halaman account. Jika anda tidak terdaftar, anda tidak akan dapat mengakses halaman tersebut sampai anda membuat pesanan pertama anda, atau anda bisa masukkan perincian anda di bawah ini."
+    NOPAGE: "Tidak ada HalamanAccount di situs ini - mohon dibuat!"
+  AccountPage.ss:
+    COMPLETED: "Pemesanan Yang Telah Diselesaikan"
+    HISTORY: "Sejarah Pesanan Anda"
+    INCOMPLETE: "Pemesanan yang Belum Selesai"
+    NOCOMPLETED: "Tidak ada pemesanan yang telah selesai yang ditemukan"
+    NOINCOMPLETE: "Tidak ada pemesanan yang belum selesai yang ditemukan."
+    ORDER: "# Pemesanan"
+    READMORE: "Baca lagi mengenai #%s Pemesanan"
+  AccountPage_order.ss:
+    ADDRESS: Alamat
+    AMOUNT: Jumlah
+    CITY: Kota
+    COUNTRY: Negara
+    DATE: Tanggal
+    DETAILS: Perincian
+    EMAILDETAILS: "Salinan ini telah dikirim ke alamat email anda untuk konfirmasi perincian pemesanan."
+    NAME: Nama
+    PAYMENTMETHOD: Metode
+    PAYMENTSTATUS: "Status Pembayaran"
+  Cart.ss:
+    CheckoutClick: "Klik disini untuk menuju pemeriksaan akhir"
+    CheckoutGoTo: "Ke pemeriksaan akhir"
+    HEADLINE: "Keranjang Saya"
+    NOITEMS: "Tidak ada barang dalam keranjang anda"
+    PRICE: Harga
+    READMORE: "Klik di sini untuk membaca kelanjutan dari \"%s\""
+    SUBTOTAL: "Sub total"
+    TOTAL: Total
+  CheckoutPage:
+    NOPAGE: "Tidak ada CheckoutPage di situs ini - mohon buatlah satu !"
+  CheckoutPage.ss:
+    CHECKOUT: Checkout
+    ORDERSTATUS: "Status Pemesanan"
+    PROCESS: Proses
+  ChequePayment:
+    MESSAGE: "Pembelian diterima melalui cek. Mohon dicatat: produk tidak akan dikirim sebelum pembelian sudah diterima."
+  MemberForm:
+    DETAILSSAVED: "Perincian anda telah disimpan."
+    LOGGEDIN: "Saat ini Anda masuk log sebagai"
+  Order:
+    INCOMPLETE: "Pemesanan Tidak Selesai"
+    SUCCESSFULL: "Pemesanan Sukses"
+  OrderInformation.ss:
+    ADDRESS: Alamat
+    AMOUNT: Nominal
+    BUYERSADDRESS: "Alamat Pembeli"
+    CITY: Kota
+    COUNTRY: Negara
+    CUSTOMERDETAILS: "Perincian Pelanggan"
+    DATE: Tanggal
+    DETAILS: Keterangan
+    EMAIL: Email
+    MOBILE: "Telepon Genggam"
+    NAME: Nama
+    ORDERSUMMARY: "Perincian Pemesanan"
+    PAYMENTID: "ID Pembayaran"
+    PAYMENTINFORMATION: "Informasi Pembayaran"
+    PAYMENTMETHOD: Metode
+    PAYMENTSTATUS: "Status Pembayaran"
+    PHONE: Telepon
+    PRICE: Harga
+    PRODUCT: Produk
+    QUANTITY: "Jumlah Barang"
+    READMORE: "Klik di sini untuk membaca lebih lanjut tentang \"%s\""
+    SHIPPINGDETAILS: "Perincian Pengiriman"
+    SUBTOTAL: Sub-total
+    TOTAL: Jumlah
+    TOTALOUTSTANDING: "Total Keseluruhan"
+    TOTALPRICE: "Jumlah Biaya"
+  OrderInformation_Editable.ss:
+    ADDONE: "Tambahkan satu \"%s\" ke keranjang Anda"
+    NOITEMS: "<strong>Tidak ada</strong> barang dalam keranjang Anda."
+    ORDERINFORMATION: "Informasi Pemesanan"
+    PRICE: Harga
+    PRODUCT: Produk
+    QUANTITY: Kuantitas
+    READMORE: "Klik di sini untuk membaca lebih lanjut tentang \"%s\""
+    REMOVEONE: "Buang satu \"%s\" dari keranjang Anda"
+    SUBTOTAL: Sub-total
+    TABLESUMMARY: "Isi keranjang Anda ditampilkan pada form ini dan ringkasan dari seluruh biaya terkait dengan suatu pesanan dan catatan pilihan pembayaran."
+    TOTAL: Total
+    TOTALPRICE: "Harga Total"
+  OrderInformation_NoPricing.ss:
+    ADDRESS: Alamat
+    BUYERSADDRESS: "Alamat Pembeli"
+    CITY: Kota
+    COUNTRY: Negara
+    CUSTOMERDETAILS: "Perincian Pelanggan"
+    EMAIL: Email
+    MOBILE: "Telepon Genggam"
+    NAME: Nama
+    ORDERINFO: "Informasi untuk Pemesanan #"
+    PHONE: Telepon
+    TABLESUMMARY: "Isi keranjang Anda ditampilkan pada form ini dan ringkasan dari seluruh biaya terkait dengan suatu pesanan dan catatan pilihan pembayaran."
+  OrderInformation_PackingSlip.ss:
+    DESCRIPTION: Deskripsi
+    ITEM: Barang
+    ORDERDATE: "Tanggal Pemesanan"
+    ORDERNUMBER: "Nomer Pemesanan"
+    PAGETITLE: "Cetakan Pesanan Toko"
+    QUANTITY: Kuantitas
+    TABLESUMMARY: "Isi keranjang Anda ditampilkan pada form ini dan ringkasan dari seluruh biaya terkait dengan suatu pesanan dan catatan pilihan pembayaran."
+  OrderInformation_Print.ss:
+    PAGETITLE: "Cetak Pesanan"
+  OrderReport:
+    CHANGESTATUS: "Ubah Status Pemesanan"
+    NOTEEMAIL: Catatan/Email
+    SENDNOTETO: "Kirim catatan ini kepada %s (%s)"
+  Order_Content.ss:
+    PRICE: Harga
+    PRODUCT: Produk
+    QUANTITY: Kuantitas
+    READMORE: "Klik di sini untuk membaca lebih lanjut tentang \"%s\""
+    TOTAL: Jumlah
+    TOTALPRICE: "Jumlah Harga"
+  Order_Member.ss:
+    ADDRESS: Alamat
+    CITY: Kota
+    COUNTRY: Negara
+    EMAIL: Email
+    MOBILE: "Telepon Genggam"
+    NAME: Nama
+    PHONE: Telepon
+  PaymentInformation.ss:
+    AMOUNT: Jumlah
+    DATE: Tanggal
+    DETAILS: Perincian
+    PAYMENTID: "ID Pembelian"
+    PAYMENTINFORMATION: "Informasi Pembelian"
+    PAYMENTMETHOD: Metode
+    PAYMENTSTATUS: "Status Pembelian"
+    TABLESUMMARY: "Isi keranjang Anda ditampilkan pada form ini dan ringkasan dari seluruh biaya terkait dengan suatu pesanan dan catatan pilihan pembayaran."
+  Product.ss:
+    ADD: "Masukkan \"%s\" ke kereta anda"
+    ADDLINK: "Masukkan barang ini ke kereta"
+    ADDONE: "Masukkan satu lagi dari \"%s\" ke kereta anda"
+    AUTHOR: Penulis
+    FEATURED: "Ini adalah produk yang difiturkan."
+    GOTOCHECKOUT: "Menuju bagian akhiri belanja sekarang"
+    GOTOCHECKOUTLINK: "» Menuju bagian akhiri belanja"
+    IMAGE: "%s gambar"
+    ItemID: "# Barang"
+    NOIMAGE: "Maaf, tidak ada gambar produk untuk \"%s\""
+    QUANTITYCART: "Kuantitas dalam kereta"
+    REMOVE: "Keluarkan \"%s\" dari kereta anda"
+    REMOVEALL: "Keluarkan satu \"%s\" dari kereta anda"
+    REMOVELINK: "» Keluarkan dari kereta"
+    SIZE: Ukuran
+  ProductCategory.ss:
+    FEATURED: "Produk-produk yang difiturkan"
+  ProductCategoryItem.ss:
+    ADD: "Masukkan \"%s\" ke kereta anda"
+    ADDLINK: "Masukkan barang ini ke kereta"
+    ADDONE: "Masukkan satu lagi dari \"%s\" ke kereta anda"
+    AUTHOR: Pemilik
+    IMAGE: "%s gambar"
+    NOIMAGE: "Maaf, tidak ada gambar produk untuk \"%s\""
+    QUANTITYCART: "Jumlah dalam kereta"
+    READMORE: "Klik di sini untuk membaca lebih lanjut tentang \"%s\""
+    READMORECONTENT: "Klik untuk membaca lebih lanjut »"
+    REMOVE: "Keluarkan \"%s\" dari kereta anda"
+    REMOVELINK: "» Keluarkan dari kereta"
+  ProductMenu.ss:
+    GOTOPAGE: "Pergi ke halaman %s"

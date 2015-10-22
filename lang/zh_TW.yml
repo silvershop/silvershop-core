@@ -1,0 +1,133 @@
+---
+zh_TW:
+  AccountPage.ss:
+    COMPLETED: 已完成的訂單
+    HISTORY: 您的訂單歷史
+    INCOMPLETE: 未完成的訂單
+    NOCOMPLETED: 找不到已完成的訂單
+    NOINCOMPLETE: 找不到未完成的訂單
+    ORDER: "訂單#"
+    READMORE: "訂單 #%s 明細"
+  Cart.ss:
+    CheckoutClick: 結帳
+    CheckoutGoTo: 結帳
+    HEADLINE: 我的購物推車
+    NOITEMS: 您的購物推車是空的。
+    PRICE: 單價
+    READMORE: "按這裡閱讀 \"%s\""
+    SUBTOTAL: 小計
+    TOTAL: 總計
+  CheckoutPage:
+    NOPAGE: "找不到 CheckoutPage，請建立此頁。"
+  CheckoutPage.ss:
+    CHECKOUT: 結帳
+    ORDERSTATUS: 訂單狀態
+    PROCESS: 步驟
+  ChequePayment:
+    MESSAGE: 已接受支票付款。注意：貨品會等收到付款才會運出去。
+  MemberForm:
+    DETAILSSAVED: 您的資料已被儲存了。
+    LOGGEDIN: 您已登入。
+  OrderInformation.ss:
+    ADDRESS: 郵寄地址
+    AMOUNT: 數量
+    BUYERSADDRESS: 地址
+    CITY: 鄉鎮市
+    COUNTRY: 國家
+    CUSTOMERDETAILS: 消費者明細
+    DATE: 日期
+    DETAILS: 明細
+    EMAIL: 電子郵件
+    MOBILE: 手機
+    NAME: 姓名
+    ORDERSUMMARY: 訂購清單
+    PAYMENTID: 付款ID
+    PAYMENTINFORMATION: 付款資料
+    PAYMENTMETHOD: 方式
+    PAYMENTSTATUS: 付款狀態
+    PHONE: 電話
+    PRICE: 單價
+    PRODUCT: 產品
+    QUANTITY: 數量
+    SUBTOTAL: 小計
+    TOTALOUTSTANDING: 尚未繳清
+    TOTALPRICE: 總價格
+  OrderInformation_Editable.ss:
+    ADDONE: "加入一個 \"%s\" 至您的購物推車"
+    NOITEMS: 您的購物推車是空的。
+    ORDERINFORMATION: 訂單資料
+    PRICE: 單價
+    PRODUCT: 產品
+    QUANTITY: 數量
+    READMORE: "按此閱讀 \"%s\""
+    REMOVEONE: "從您的購物推車移除一個 \"%s\""
+    SUBTOTAL: 小計
+    TABLESUMMARY: 在此，您可以檢視您的購物推車、費用明細、及付款方式。
+    TOTAL: 總計
+    TOTALPRICE: 總價
+  OrderInformation_NoPricing.ss:
+    ADDRESS: 郵件地址
+    BUYERSADDRESS: 地址
+    CITY: 鄉鎮市
+    COUNTRY: 國家
+    CUSTOMERDETAILS: 消費者明細
+    EMAIL: 電子郵件
+    MOBILE: 手機
+    NAME: 姓名
+    ORDERINFO: "訂單#"
+    PHONE: 電話
+    TABLESUMMARY: 在此，您可以檢視您的購物推車、費用明細、及付款方式。
+  OrderInformation_PackingSlip.ss:
+    DESCRIPTION: 敘述
+    ITEM: 項目
+    ORDERDATE: 訂單日期
+    ORDERNUMBER: 訂單號瑪
+    PAGETITLE: 列印訂單表
+    QUANTITY: 數量
+    TABLESUMMARY: 在此，您可以檢視您的購物推車、費用明細、及付款方式。
+  OrderInformation_Print.ss:
+    PAGETITLE: 列印訂單表
+  OrderReport:
+    CHANGESTATUS: 修改訂單狀態
+    NOTEEMAIL: 筆記/電子郵件
+    SENDNOTETO: "將此筆記寄給 %s (%s)"
+  PaymentInformation.ss:
+    AMOUNT: 數量
+    DATE: 日期
+    DETAILS: 明細
+    PAYMENTID: 付款ID
+    PAYMENTINFORMATION: 付款資料
+    PAYMENTMETHOD: 方式
+    PAYMENTSTATUS: 付款狀態
+    TABLESUMMARY: 在此，您可以檢視您的購物推車、費用明細、及付款方式。
+  Product.ss:
+    ADD: "加入 \"%s\" 至 您的購物推車"
+    ADDLINK: 加入至您的購物推車
+    ADDONE: "加入一個 \"%s\" 至您的購物推車"
+    AUTHOR: 作者
+    FEATURED: 這是一的推銷產品
+    GOTOCHECKOUT: 結帳
+    GOTOCHECKOUTLINK: "» 結帳"
+    IMAGE: "%s的圖片"
+    ItemID: "項目#"
+    NOIMAGE: 抱歉，沒有%s的圖片
+    QUANTITYCART: 在購物推車裡的數量
+    REMOVE: "從您的購物推車移除 \"%s\""
+    REMOVEALL: "從您的購物推車移除一個 \"%s\""
+    REMOVELINK: "» 從購物推車移除"
+    SIZE: 尺寸
+  ProductCategory.ss:
+    FEATURED: 推銷產品
+  ProductCategoryItem.ss:
+    ADD: "加入 \"%s\" 至您的購物推車"
+    ADDLINK: 加入至購物推車
+    ADDONE: "加入一個 \"%s\" 至您的購物推車"
+    AUTHOR: 作者
+    IMAGE: "%s 圖片"
+    NOIMAGE: "抱歉，沒有 %s 的圖片"
+    READMORE: "按此閱讀 \"%s\""
+    READMORECONTENT: "按此閱讀 »"
+    REMOVE: "從您的購物推車移除 \"%s\""
+    REMOVELINK: "» 從購物推車移除"
+  ProductMenu.ss:
+    GOTOPAGE: 到第%s頁

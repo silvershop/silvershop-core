@@ -1,0 +1,177 @@
+---
+bg:
+  AccountPage:
+    Message: "Ще трябва да влезнете в система преди да влезнете в профила си. Ако не сте регистриран, няма да може да влезните преди да направите първата си покупка, по друг начин можете да въведете данните си по-долу."
+    NOPAGE: "Няма ПрофилСтраница на този сайт - моля създайте една !"
+  AccountPage.ss:
+    COMPLETED: "Завършени поръчки"
+    HISTORY: "Хронология на вашите поръчки"
+    INCOMPLETE: "Неизпълнени поръчки"
+    NOCOMPLETED: "Не са открити никакви завършени поръчки."
+    NOINCOMPLETE: "Не са намерени неизпълнени поръчки."
+    ORDER: "Поръчка номер"
+    READMORE: "Прочетете още за поръчка #%s"
+  AccountPage_order.ss:
+    ADDRESS: Адрес
+    AMOUNT: Количество
+    BACKTOCHECKOUT: "Натиснете тук за да отидите при страницата за разплащане"
+    CITY: Град
+    COUNTRY: Държава
+    DATE: Дата
+    DETAILS: Детайли
+    EMAILDETAILS: "Копие от това беше изпратено на вашият мейл адрес за да подтвърдите детайлите за покупката."
+    NAME: Име
+    PAYMENTMETHOD: Метод
+  Cart.ss:
+    ADDONE: "Добави още едно \"%s\" към вашата количка"
+    CheckoutClick: "Натиснете тук за да отидите при страницата за поръчване"
+    CheckoutGoTo: Поръчайте
+    HEADLINE: "Моята количка"
+    NOITEMS: "Няма никакви продукти във вашата количка"
+    PRICE: Цена
+    READMORE: "Натиснете тук за да научите още за \"%s\""
+    REMOVEALL: "Премахни всички \"%s\" от вашата количка"
+    REMOVEONE: "Премахни едно \"%s\" от вашата количка"
+    SUBTOTAL: Общо
+    TOTAL: Общо
+  CheckoutPage:
+    NOPAGE: "Няма страница за поръчки на този сайт - моля създайте една!"
+  CheckoutPage.ss:
+    CHECKOUT: Поръчай
+    ORDERSTATUS: "Състояние на поръчката"
+    PROCESS: Процедирай
+  ChequePayment:
+    MESSAGE: "Разплащане прието през чек. Моля запомнете: продуктите няма да бъдат изпратени до като не се получи разплащането."
+  MemberForm:
+    DETAILSSAVED: "Вашите детайли бяха запазени"
+    LOGGEDIN: "Вие сте влязъл като"
+  Order:
+    INCOMPLETE: "Неуспашна поръчка"
+    SUCCESSFULL: "Успешна поръчка"
+  OrderInformation.ss:
+    ADDRESS: Адрес
+    AMOUNT: Сума
+    BUYERSADDRESS: "Адрес на копувача"
+    CITY: Град
+    COUNTRY: Страна
+    CUSTOMERDETAILS: "Детайли на клиента"
+    DATE: Дата
+    DETAILS: Детайли
+    EMAIL: мейл
+    MOBILE: "Мобилен телефон"
+    NAME: Име
+    ORDERSUMMARY: "Преглед на поръчката"
+    PAYMENTID: "ID за разплащане"
+    PAYMENTINFORMATION: "Информация за разплащане"
+    PAYMENTMETHOD: Метод
+    PAYMENTSTATUS: "Ситуация на разплащане"
+    PHONE: Телефон
+    PRICE: Цена
+    PRODUCT: Продукт
+    QUANTITY: Брой
+    READMORE: "Натиснете тук зада прочетете повече за \"%s\""
+    SHIPPINGDETAILS: "Детайли за изпращане"
+    SUBTOTAL: Общо
+    TOTAL: Общо
+    TOTALOUTSTANDING: "Общо висящо"
+    TOTALPRICE: "Обща цена"
+  OrderInformation_Editable.ss:
+    ADDONE: "Добавете още едно от \"%s\" във вашата количка"
+    NOITEMS: "Няма <strong>никакви</strong> продукти във вашата количка."
+    ORDERINFORMATION: "Информация за поръчката"
+    PRICE: Цена
+    PRODUCT: Продукт
+    QUANTITY: Брой
+    READMORE: "Натиснете тук за да прочетете ощe за \"%s\""
+    REMOVEALL: "Премахни всички \"%s\" от вашата количка"
+    REMOVEONE: "Премахнете едно от \"%s\" от вашата количка"
+    SUBTOTAL: Общо
+    TABLESUMMARY: "Съдържанието на вашата количка е показано в този формуляр също както и резюме от всички такси свързани с поръчката и разплащането."
+    TOTAL: Общо
+    TOTALPRICE: "Обща цена"
+  OrderInformation_NoPricing.ss:
+    ADDRESS: Адрес
+    BUYERSADDRESS: "Адрес на копувача"
+    CITY: Град
+    COUNTRY: Страна
+    CUSTOMERDETAILS: "Детайли на копувача"
+    EMAIL: мейл
+    MOBILE: "Мобилен телефон"
+    NAME: Име
+    ORDERINFO: "Информация за поръчка номер"
+    PHONE: Телефон
+    TABLESUMMARY: "Съдържанието на вашата количка е показано в този формуляр всъщо така и резюме на всички цени свързани с поръчката и метод на разплащането."
+  OrderInformation_PackingSlip.ss:
+    DESCRIPTION: Описание
+    ITEM: Продукт
+    ORDERDATE: "Дата на поръчката"
+    ORDERNUMBER: "Номер на поръчка"
+    PAGETITLE: "Принтирай покупката на поръчките"
+    QUANTITY: Брой
+    TABLESUMMARY: "Съдържанието на вашата количка е показано в този формуляр всъщо така и резюме на всички цени свързани с поръчката и метод на разплащането."
+  OrderInformation_Print.ss:
+    PAGETITLE: "Принтирай поръчките"
+  OrderReport:
+    CHANGESTATUS: "Промени състоянието на поръчката"
+    NOTEEMAIL: Бележка/мейл
+    SENDNOTETO: "Изпрати тази бележка на  %s (%s)"
+  Order_Member.ss:
+    ADDRESS: Адрес
+    CITY: Град
+    COUNTRY: Държава
+    EMAIL: Email
+    MOBILE: GSM
+    NAME: Име
+    PHONE: Телефон
+  Order_ReceiptEmail.ss:
+    HEADLINE: "Разписка от поръчката"
+    TITLE: "Разписка от поръчката"
+  Order_StatusEmail.ss:
+    HEADLINE: "Смяна на статута на покупа"
+    STATUSCHANGE: "Статута променен на \"%s\" за поръчка #"
+    TITLE: "Смяна на статута на покупа"
+  PaymentInformation.ss:
+    AMOUNT: Сума
+    DATE: Дата
+    DETAILS: Детайли
+    PAYMENTID: "ID за разплащане"
+    PAYMENTINFORMATION: "Информация на разплащане"
+    PAYMENTMETHOD: Метод
+    PAYMENTSTATUS: "Състояние на разплащане"
+    TABLESUMMARY: "Съдържанието на вашата количка е показано в този формуляр всъщо така и резюме на всички цени свързани с поръчката и метод на разплащането."
+  Product.ss:
+    ADD: "Добави \"%s\" към вашата количка"
+    ADDLINK: "Добави този продукт към количката"
+    ADDONE: "Добави още едно от \"%s\" към вашата количка"
+    AUTHOR: Автор
+    FEATURED: "Това е отличен продукт. "
+    GOTOCHECKOUT: "Отиди към поръчките сега"
+    GOTOCHECKOUTLINK: "» Отидете към поръчките"
+    IMAGE: "%s изображение"
+    ItemID: "Продукт #"
+    NOIMAGE: "Съжелявам, няма изображение за \"%s\""
+    QUANTITYCART: "Брой в количката"
+    REMOVE: "Премахни \"%s\" от вашата количка"
+    REMOVEALL: "Премахни едно от \"%s\" от вашата количка"
+    REMOVELINK: "» Премахни от количката"
+    SIZE: Размер
+  ProductCategory.ss:
+    FEATURED: "Отличени продукти"
+    OTHER: "Други Продукти"
+  ProductCategoryItem.ss:
+    ADD: "Добави \"%s\" към вашата количка"
+    ADDLINK: "Добави този продукт към количката"
+    ADDONE: "Добави още едно от \"%s\" към вашата количка"
+    AUTHOR: Автор
+    GOTOCHECKOUT: "Отиди при разплащане"
+    GOTOCHECKOUTLINK: "» Отиди при разплащане"
+    IMAGE: "%s изображение"
+    NOIMAGE: "Съжелявам, няма изображение за \"%s\""
+    QUANTITYCART: "Брой в количката"
+    READMORE: "Натиснете тук за да прочетете още за \"%s\""
+    READMORECONTENT: "Натиснете за да прочетете още »"
+    REMOVE: "Премахни \"%s\" от вашата количка"
+    REMOVEALL: "Премахни едно \"%s\" от вашата количка"
+    REMOVELINK: "» Премахни от количката"
+  ProductMenu.ss:
+    GOTOPAGE: "Отиди на %s страница"

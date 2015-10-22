@@ -1,0 +1,190 @@
+---
+ru:
+  AccountPage:
+    Message: "Вы должны авторизоваться до того, как получите доступ к странице счета. Если вы не зарегистрированы, то сможете зайти на нее только после того, как сделаете ваш первый заказ. Если зарегистрированы, введите ваши данные ниже."
+    NOPAGE: "На этом сайте нет страницы счета - пожалуйста, создайте ее!"
+  AccountPage.ss:
+    COMPLETED: "Выполненные заказы"
+    HISTORY: "История ваших заказов"
+    INCOMPLETE: "Невыполненные заказы"
+    NOCOMPLETED: "Выполненных заказов не найдено."
+    NOINCOMPLETE: "Невыполненных заказов не найдено."
+    ORDER: "Заказ #"
+    READMORE: "Подробнее о заказе #%s"
+  AccountPage_order.ss:
+    ADDRESS: Адрес
+    AMOUNT: Итог
+    BACKTOCHECKOUT: "Нажмите здесь для перхода на страницу платежа"
+    CITY: Город
+    COUNTRY: Страна
+    DATE: Дата
+    DETAILS: Подробнее
+    EMAILDETAILS: "Копия этого с подтверждением информации о заказе была выслана вам на email."
+    NAME: Имя
+    PAYMENTMETHOD: "Способ оплаты"
+    PAYMENTSTATUS: "Статус платежа"
+  Cart.ss:
+    ADDONE: "Добавить еще одно наименование \"%s\" в вашу корзину"
+    CheckoutClick: "Нажмите здесь для подсчета стоимости"
+    CheckoutGoTo: "Перейти к подсчету стоимости"
+    HEADLINE: "Моя корзина"
+    NOITEMS: "Ваша корзина пуста"
+    PRICE: Стоимость
+    READMORE: "Нажмите здесь, чтобы узнать больше о \"%s\""
+    REMOVE: "Удалить «%s» из вашего заказа"
+    REMOVEALL: "Удалить все наименования \"%s\" из вашей корзины"
+    REMOVEONE: "Удалить одно наименование \"%s\" из вашей корзины"
+    SUBTOTAL: "Промежуточная сумма"
+    TOTAL: Итого
+  CheckoutPage:
+    NOPAGE: "На сайте нет страницы подсчета стоимости. Пожалуйста, создайте ее!"
+  CheckoutPage.ss:
+    CHECKOUT: "Расчет стоимости"
+    ORDERSTATUS: "Статус заказа"
+    PROCESS: Оформить
+  ChequePayment:
+    MESSAGE: "Принимается оплата чеком. Внимание: покупки будут отправлены только после получения оплаты."
+  MemberForm:
+    DETAILSSAVED: "Выши данные сохранены"
+    LOGGEDIN: "Вы вошли в систему как"
+  Order:
+    INCOMPLETE: "Заказ незавершен"
+    SUCCESSFULL: "Заказ успешен"
+  OrderInformation.ss:
+    ADDRESS: Адрес
+    AMOUNT: Сумма
+    BUYERSADDRESS: "Адрес покупателя"
+    CITY: Город
+    COUNTRY: Страна
+    CUSTOMERDETAILS: "Данные покупателя"
+    DATE: Дата
+    DETAILS: Детали
+    EMAIL: "Электр. почта"
+    MOBILE: Мобильный
+    NAME: Имя
+    ORDERSUMMARY: "Сводка заказа"
+    PAYMENTID: "Идентификатор платежа"
+    PAYMENTINFORMATION: "Платежная информация"
+    PAYMENTMETHOD: Способ
+    PAYMENTSTATUS: "Статус платежа"
+    PHONE: Телефон
+    PRICE: Стоимость
+    PRODUCT: Товар
+    QUANTITY: Количество
+    READMORE: "Нажмите здесь для дополнительной информации о \"%s\""
+    SHIPPINGDETAILS: "Информация о доставке"
+    SUBTOTAL: "Промежуточная сумма"
+    TOTAL: Всего
+    TOTALOUTSTANDING: "Итого не оплачено"
+    TOTALPRICE: "Общая сумма"
+  OrderInformation_Editable.ss:
+    ADDONE: "Добавить ещё один экземпляр \"%s\" в вашу корзину"
+    NOITEMS: "Ваша корзина <strong>пуста</strong>."
+    ORDERINFORMATION: "Информация о заказе"
+    PRICE: Стоимость
+    PRODUCT: Товар
+    QUANTITY: Количество
+    READMORE: "Нажмите, чтобы узнать больше о \"%s\""
+    REMOVE: "Удалить «%s» из вашего заказа"
+    REMOVEALL: "Удалить все наименования \"%s\" из вашей корзины"
+    REMOVEONE: "Убрать один экземпляр \"%s\" из вашей корзины"
+    SUBTOTAL: "Промежуточная сумма"
+    TABLESUMMARY: "В этой форме отражены содержимое вашей корзины, список всех сборов, связанных с заказом, и сводка вариантов платежа."
+    TOTAL: Итого
+    TOTALPRICE: Итого
+  OrderInformation_NoPricing.ss:
+    ADDRESS: Адрес
+    BUYERSADDRESS: "Адрес покупателя"
+    CITY: Город
+    COUNTRY: Страна
+    CUSTOMERDETAILS: "Данные покупателя"
+    EMAIL: "Электр. почта"
+    MOBILE: Мобильный
+    NAME: Имя
+    ORDERINFO: "Информация о заказе #"
+    PHONE: Телефон
+    TABLESUMMARY: "В этой форме отражены содержимое вашей корзины, список всех сборов, связанных с заказом, и сводка вариантов платежа."
+  OrderInformation_PackingSlip.ss:
+    DESCRIPTION: Описание
+    ITEM: Предмет
+    ORDERDATE: "Дата заказа"
+    ORDERNUMBER: "Номер заказа"
+    PAGETITLE: "Печать заказов"
+    QUANTITY: Количество
+    TABLESUMMARY: "В этой форме отражены содержимое вашей корзины, список всех сборов, связанных с заказом, и сводка вариантов платежа."
+  OrderInformation_Print.ss:
+    PAGETITLE: "Печать заказов"
+  OrderReport:
+    CHANGESTATUS: "Изменить статус заказа"
+    NOTEEMAIL: "Извещение/Электр. почта"
+    SENDNOTETO: "Отправить извещение для: %s (%s)"
+  Order_Content.ss:
+    NOITEMS: "Ваша <strong>корзина пуста</strong>."
+    PRICE: Цена
+    PRODUCT: Товар
+    QUANTITY: Количество
+    READMORE: "Нажмите сюда, чтобы узнать о «%s» подробнее"
+    SUBTOTAL: Подитог
+    TOTAL: Всего
+    TOTALOUTSTANDING: "Общая сумма задолженности"
+    TOTALPRICE: Итог
+  Order_Member.ss:
+    ADDRESS: Адрес
+    CITY: Город
+    COUNTRY: Страна
+    EMAIL: Email
+    MOBILE: "Моб. тел."
+    NAME: Имя
+    PHONE: Тел.
+  Order_ReceiptEmail.ss:
+    HEADLINE: "Квитанция заказа"
+    TITLE: "Квитанция магазина"
+  Order_StatusEmail.ss:
+    HEADLINE: "Изменение статуса заказа"
+    STATUSCHANGE: "Статус Заказа # изменен на \"%s\""
+    TITLE: "Изменение статуса заказа"
+  PaymentInformation.ss:
+    AMOUNT: Сумма
+    DATE: Дата
+    DETAILS: Детали
+    PAYMENTID: "Идентификатор платежа"
+    PAYMENTINFORMATION: "Платежная информация"
+    PAYMENTMETHOD: Способ
+    PAYMENTSTATUS: "Статус платежа"
+    TABLESUMMARY: "В этой форме отражены содержимое вашей корзины, список всех сборов, связанных с заказом, и сводка вариантов оплаты."
+  Product.ss:
+    ADD: "Добавить \"%s\" в вашу корзину"
+    ADDLINK: "Добавить это наименование в корзину"
+    ADDONE: "Добавить ещё один экземпляр \"%s\" в вашу корзину"
+    AUTHOR: Автор
+    FEATURED: "Мы рекомендуем этот товар."
+    GOTOCHECKOUT: "Перейти к расчету стоимости"
+    GOTOCHECKOUTLINK: "» Перейти к расчету стоимости"
+    IMAGE: "Изображение: %s"
+    ItemID: "Предмет #"
+    NOIMAGE: "Извините, \"%s\" не имеет изображения"
+    QUANTITYCART: "Количество в корзине"
+    REMOVE: "Убрать \"%s\" из вашей корзины"
+    REMOVEALL: "Убрать один экземпляр \"%s\" из вашей корзины"
+    REMOVELINK: "» Убрать из корзины"
+    SIZE: Размер
+  ProductCategory.ss:
+    FEATURED: "Рекомендованные товары"
+    OTHER: "Другие товары"
+  ProductCategoryItem.ss:
+    ADD: "Добавить \"%s\" в вашу корзину"
+    ADDLINK: "Добавить это наименование в вашу корзину"
+    ADDONE: "Добавить в вашу корзину еще один экземпляр \"%s\""
+    AUTHOR: Автор
+    GOTOCHECKOUT: "Перейти к платежу сейчас"
+    GOTOCHECKOUTLINK: "» Перейти к платежу"
+    IMAGE: "Изображение: %s"
+    NOIMAGE: "Извините, \"%s\" не имеет изображения"
+    QUANTITYCART: "Количество в корзине"
+    READMORE: "Нажмите здесь, чтобы узнать больше о \"%s\""
+    READMORECONTENT: "Нажмите, чтобы узнать больше »"
+    REMOVE: "Убрать \"%s\" из вашей корзины"
+    REMOVEALL: "Удалить одно наименование \"%s\" из вашей корзины"
+    REMOVELINK: "» Убрать из корзины"
+  ProductMenu.ss:
+    GOTOPAGE: "Перейти на страницу описания для %s"

@@ -1,0 +1,105 @@
+---
+ms:
+  AccountPage_order.ss:
+    EMAILDETAILS: "Salinan maklumat ini telah dihantar ke alamat emel anda untuk pengesahan perincian pesanan."
+  Cart.ss:
+    NOITEMS: "Tiada barang dalam pedati anda"
+    PRICE: Harga
+    READMORE: "Klik sini untuk membaca \"%s\" dengan lebih lanjut"
+    SUBTOTAL: "Jumlah Kecil"
+    TOTAL: Jumlah
+  ChequePayment:
+    MESSAGE: "Bayaran diluluskan melalui Cek. Sila catat: produk-produk tidak akan dikirimkan sehingga bayaran diterima."
+  MemberForm:
+    DETAILSSAVED: "Butir-butir anda telah disimpan"
+    LOGGEDIN: "Anda didaftarkan masuk sebagai"
+  OrderInformation.ss:
+    ADDRESS: Alamat
+    AMOUNT: Jumlah
+    BUYERSADDRESS: "Alamt pembeli"
+    CITY: Bandar
+    COUNTRY: Negara
+    CUSTOMERDETAILS: "Butiran Pelanggan"
+    DATE: Tarikh
+    DETAILS: Butir-butiran
+    EMAIL: Emel
+    MOBILE: "Telefon Bimbit"
+    NAME: Nama
+    ORDERSUMMARY: "Rumusan Pesanan"
+    PAYMENTID: "ID Bayaran"
+    PAYMENTINFORMATION: "Butiran Bayaran"
+    PAYMENTMETHOD: Cara
+    PAYMENTSTATUS: "Taraf Bayaran"
+    PHONE: Telefon
+    PRICE: Harga
+    PRODUCT: Produk
+    QUANTITY: Kuantiti
+    SUBTOTAL: "Jumlah Kecil"
+    TOTALPRICE: "Jumlah Harga"
+  OrderInformation_Editable.ss:
+    ADDONE: "Tambah satu lagi \"%s\" kedalam bakul anda"
+    NOITEMS: "<strong>Tiada</strong> barangan dalam bakul anda."
+    ORDERINFORMATION: "Maklumat pesanan"
+    PRICE: Harga
+    PRODUCT: Barangan
+    QUANTITY: Bilangan
+    READMORE: "Klik sini untuk membaca \"%s\" dengan lebih lanjut"
+    REMOVEONE: "Keluarkan salah satu daripada \"%s\" daripada bakul anda"
+    SUBTOTAL: "Jumlah kecil"
+    TABLESUMMARY: "Kandungan bakul anda dipaparkan menggunakan borang ini, mengandungi maklumat pesanan, bayaran terlibat serta pilihan cara bayaran."
+    TOTAL: Jumlah
+    TOTALPRICE: "Jumlah Harga"
+  OrderInformation_NoPricing.ss:
+    ADDRESS: Alamat
+    BUYERSADDRESS: "Alamat pembeli"
+    CITY: Bandar
+    COUNTRY: Negara
+    CUSTOMERDETAILS: "Maklumat pelanggan"
+    EMAIL: Emel
+    MOBILE: "Telefin Bimbit"
+    NAME: Nama
+    ORDERINFO: "Maklumat untuk # Pesanan"
+    PHONE: Telefon
+    TABLESUMMARY: "Kandungan bakul anda dipaparkan menggunakan borang ini, mengandungi maklumat bayaran terlibat serta pilihan cara bayaran."
+  OrderInformation_PackingSlip.ss:
+    DESCRIPTION: Keterangan
+    ITEM: Barangan
+    ORDERDATE: "Tarikh pesanan"
+    ORDERNUMBER: "Nombor pesanan"
+    PAGETITLE: "Cetak Pesanan-pesanan Kedai"
+    QUANTITY: Bilangan
+    TABLESUMMARY: "Kandungan bakul anda dipaparkan menggunakan borang ini, mengandungi maklumat pesanan, bayaran terlibat serta pilihan cara bayaran."
+  OrderInformation_Print.ss:
+    PAGETITLE: "Cetak Pesanan-pesanan"
+  OrderReport:
+    CHANGESTATUS: "Ubah Status Tertib"
+    NOTEEMAIL: Nota/Emel
+    SENDNOTETO: "Hantar nota ini kepada %s (%s)"
+  Order_Member.ss:
+    EMAIL: Emel
+  PaymentInformation.ss:
+    AMOUNT: Jumlah
+    DATE: Tarikh
+    PAYMENTID: "ID Bayaran"
+    PAYMENTINFORMATION: "Maklumat Bayaran"
+    TABLESUMMARY: "Kandungan pedati anda dipamerkan dalam borang ini bersama-sama rumusan semua yuran yang berkaitan dengan sesuatu pesanan dan ringkasan pilihan bayaran."
+  Product.ss:
+    ADD: "Tambah \"%s\" ke dalam bakul"
+    ADDLINK: "Tambah barangan ke dalam bakul"
+    ADDONE: "Tambahkan satu \"%s\" ke dalam bakul"
+    AUTHOR: Penulis
+    FEATURED: "Ini adalah produk pilihan"
+    GOTOCHECKOUT: "Teruskan ke checkout sekarang"
+    GOTOCHECKOUTLINK: "» Teruskan ke checkout"
+    IMAGE: "Imej %s"
+    ItemID: "Item #"
+    NOIMAGE: "Maaf, tiada imej produk \"%s\""
+    QUANTITYCART: "Bilangan dalam bakul"
+    REMOVE: "Keluarkan \"%s\" dari dalam bakul"
+    REMOVEALL: "Keluarkan satu daripada \"%s\" dari dalam bakul"
+    REMOVELINK: "» telah dikeluarkan dari bakul"
+    SIZE: Saiz
+  ProductCategory.ss:
+    FEATURED: "Produk-produk pilihan"
+  ProductMenu.ss:
+    GOTOPAGE: "Teruskan ke halaman %s"
