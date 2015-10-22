@@ -1,0 +1,190 @@
+---
+nl:
+  AccountPage:
+    Message: "U dient zich in te loggen voordat u toegang krijgt tot de account pagina. Als u niet geregistreerd bent, zult u niet in staat zijn om deze te openen totdat u uw eerste bestelling maakt, vul anders hieronder je gegevens in."
+    NOPAGE: "Geen account pagina op deze site - maak er een A.U.B.!"
+  AccountPage.ss:
+    COMPLETED: "Afgeronde bestellingen"
+    HISTORY: "Uw vorige aankopen"
+    INCOMPLETE: "Lopende bestellingen"
+    NOCOMPLETED: "Er zijn geen afgeronde bestellingen gevonden."
+    NOINCOMPLETE: "Er zijn geen lopende bestellingen gevonden"
+    ORDER: "Offerte #"
+    READMORE: "Lees meer over Bestelling #%s"
+  AccountPage_order.ss:
+    ADDRESS: adres
+    AMOUNT: Aantal
+    BACKTOCHECKOUT: "Klik hier om naar de kassa te gaan"
+    CITY: Stad
+    COUNTRY: Land
+    DATE: Datum
+    DETAILS: Details
+    EMAILDETAILS: "Een kopie is verstuurd naar uw emailadres om de bestelling te bevestigen."
+    NAME: Naam
+    PAYMENTMETHOD: Methode
+    PAYMENTSTATUS: "Betalings status"
+  Cart.ss:
+    ADDONE: "Voeg één van \"%s\" toe aan uw winkelwagentje"
+    CheckoutClick: "Klik hier om naar de kassa te gaan"
+    CheckoutGoTo: "Ga naar de kassa"
+    HEADLINE: "Mijn Winkelwagen"
+    NOITEMS: "Je winkelwagen is leeg"
+    PRICE: Prijs
+    READMORE: "Klik hier om meer over \"%s\" te lezen"
+    REMOVE: "Verwijder \"% s\" van uw bestelling"
+    REMOVEALL: "Verwijder alle \"%s\" van uw winkelwagentje"
+    REMOVEONE: "Verwijder één \"%s\" van uw winkelwagentje"
+    SUBTOTAL: Subtotaal
+    TOTAL: Totaal
+  CheckoutPage:
+    NOPAGE: "Er is geen CheckoutPage op deze site - maak er een aan a.u.b. !"
+  CheckoutPage.ss:
+    CHECKOUT: Kassa
+    ORDERSTATUS: "Offerte Status"
+    PROCESS: Verwerk
+  ChequePayment:
+    MESSAGE: "Betaling geaccepteerd via Cheque. NB: de producten zullen niet worden verzonden voordat de betaling is ontvangen."
+  MemberForm:
+    DETAILSSAVED: "Uw gegevens zijn opgeslagen"
+    LOGGEDIN: "Je bent momenteel ingelogd als"
+  Order:
+    INCOMPLETE: "Bestelling onvolledig"
+    SUCCESSFULL: "Bestelling succesvol"
+  OrderInformation.ss:
+    ADDRESS: Adres
+    AMOUNT: Hoeveelheid
+    BUYERSADDRESS: "Adres van koper"
+    CITY: Stad
+    COUNTRY: Land
+    CUSTOMERDETAILS: "Klant gegevens"
+    DATE: Datum
+    DETAILS: Details
+    EMAIL: Email
+    MOBILE: Mobiel
+    NAME: Naam
+    ORDERSUMMARY: "Samenvatting Offerte"
+    PAYMENTID: "Betalings ID"
+    PAYMENTINFORMATION: "Betalings gegevens"
+    PAYMENTMETHOD: Methode
+    PAYMENTSTATUS: "Betalings Status"
+    PHONE: Telefoon
+    PRICE: Prijs
+    PRODUCT: Product
+    QUANTITY: Hoeveelheid
+    READMORE: "Klik hier om meer te lezen over \"%s\""
+    SHIPPINGDETAILS: "Verzend Details"
+    SUBTOTAL: Subtotaal
+    TOTAL: Totaal
+    TOTALOUTSTANDING: "Totaal te betalen"
+    TOTALPRICE: "Totale Prijs"
+  OrderInformation_Editable.ss:
+    ADDONE: "Plaats één \"%s\" in je winkelwagen"
+    NOITEMS: "Er zijn <strong>géén</strong> dingen in je winkelwagen"
+    ORDERINFORMATION: "Offerte Informatie"
+    PRICE: Prijs
+    PRODUCT: Product
+    QUANTITY: Hoeveelheid
+    READMORE: "Klik hier om meer over \"%s\" te lezen"
+    REMOVE: "Verwijder \"% s\" van uw bestelling"
+    REMOVEALL: "Verwijder alle \"%s\" van uw winkelwagentje"
+    REMOVEONE: "Haal één \"%s\" uit je winkelwagen"
+    SUBTOTAL: Subtotaal
+    TABLESUMMARY: "De inhoud van je winkelwagen is hier te zien, inclusief alle bijkomende kosten en betalings mogelijkheden."
+    TOTAL: Totaal
+    TOTALPRICE: "Totale Prijs"
+  OrderInformation_NoPricing.ss:
+    ADDRESS: Adres
+    BUYERSADDRESS: "Kopers adres"
+    CITY: Stad
+    COUNTRY: Land
+    CUSTOMERDETAILS: "Klant gegevens"
+    EMAIL: Email
+    MOBILE: Mobiel
+    NAME: Naam
+    ORDERINFO: "Informatie over Offerte %"
+    PHONE: Telefoon
+    TABLESUMMARY: "De inhoud van uw winkelwagen word getoond, inclusief een samenvatting van alle kosten die verband houden met de opdracht en de betalingsopties."
+  OrderInformation_PackingSlip.ss:
+    DESCRIPTION: Beschrijving
+    ITEM: Item
+    ORDERDATE: "Bestel Datum"
+    ORDERNUMBER: "Offerte Nummer"
+    PAGETITLE: "Print Bestellingen"
+    QUANTITY: Hoeveelheid
+    TABLESUMMARY: "De inhoud van uw winkelwagen word getoond, inclusief een samenvatting van alle kosten die verband houden met de opdracht en de betalingsopties."
+  OrderInformation_Print.ss:
+    PAGETITLE: "Print Bestellingen"
+  OrderReport:
+    CHANGESTATUS: "Verander Status van Offerte"
+    NOTEEMAIL: Notitie/Email
+    SENDNOTETO: "Verstuur deze notitie naar %s (%s)"
+  Order_Content.ss:
+    NOITEMS: "Er zijn <strong>geen</ strong> items in uw bestelling."
+    PRICE: Prijs
+    PRODUCT: Product
+    QUANTITY: Hoeveelheid
+    READMORE: "Klik hier om meer te lezen over \"% s\""
+    SUBTOTAL: Sub-totaal
+    TOTAL: Totaal
+    TOTALOUTSTANDING: "Totaal uitstaand"
+    TOTALPRICE: "Totaal prijs"
+  Order_Member.ss:
+    ADDRESS: Adres
+    CITY: Stad
+    COUNTRY: Land
+    EMAIL: Email
+    MOBILE: Mobiel
+    NAME: Naam
+    PHONE: Telefoon
+  Order_ReceiptEmail.ss:
+    HEADLINE: "Winkel Order ontvangst"
+    TITLE: "Winkel Ontvangst"
+  Order_StatusEmail.ss:
+    HEADLINE: "Winkel status wijzigen"
+    STATUSCHANGE: "Status gewijzigd in \"%s\" voor bestelling #"
+    TITLE: "Winkel status wijzigen"
+  PaymentInformation.ss:
+    AMOUNT: Hoeveelheid
+    DATE: Datum
+    DETAILS: Details
+    PAYMENTID: "Betalings ID"
+    PAYMENTINFORMATION: "Betalings informatie"
+    PAYMENTMETHOD: Methode
+    PAYMENTSTATUS: "Betalings status"
+    TABLESUMMARY: "De inhoud van uw winkelwagen word getoond, inclusief een samenvatting van alle kosten die verband houden met de opdracht en de betalingsopties."
+  Product.ss:
+    ADD: "Voeg \"%s\" toe aan je winkelwagen"
+    ADDLINK: "Voeg dit item toe aan je winkelwagen"
+    ADDONE: "Voeg één \"%s\" toe aan je winkelwagen"
+    AUTHOR: Auteur
+    FEATURED: "Dit is een uitgelicht product."
+    GOTOCHECKOUT: "Ga nu naar de kassa"
+    GOTOCHECKOUTLINK: "» Ga naar de kassa"
+    IMAGE: "%s afbeelding"
+    ItemID: "Item #"
+    NOIMAGE: "Sorry, afbeelding voor product \"%s\" ontbreekt"
+    QUANTITYCART: "Hoeveelheid in winkelwagen"
+    REMOVE: "Haal \"%s\" uit je winkelwagen"
+    REMOVEALL: "Haal één \"%s\" uit je winkelwagen"
+    REMOVELINK: "» Haal uit winkelwagen"
+    SIZE: Grootte
+  ProductCategory.ss:
+    FEATURED: "Uitgelichte Producten"
+    OTHER: "Andere producten"
+  ProductCategoryItem.ss:
+    ADD: "Plaats \"%s\" in je winkelwagen"
+    ADDLINK: "Plaats dit item in je winkelwagen"
+    ADDONE: "Plaats nog één \"%s\" in je winkelwagen"
+    AUTHOR: Auteur
+    GOTOCHECKOUT: "Ga naar de kassa"
+    GOTOCHECKOUTLINK: "» Ga naar de kassa"
+    IMAGE: "%s afbeelding"
+    NOIMAGE: "Excuses, geen product afbeeldingen voor \"%s\""
+    QUANTITYCART: "Hoeveelheid in winkelwagentje"
+    READMORE: "Klik hier om meer te lezen over \"%s\""
+    READMORECONTENT: "Klik voor informatie »"
+    REMOVE: "Haal \"%s\" uit je winkelwagen"
+    REMOVEALL: "Verwijder één \"%s\" van uw winkelwagentje"
+    REMOVELINK: "» Haal uit winkelwagen"
+  ProductMenu.ss:
+    GOTOPAGE: "Ga naar pagina %s"

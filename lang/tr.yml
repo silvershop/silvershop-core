@@ -1,0 +1,190 @@
+---
+tr:
+  AccountPage:
+    Message: "Hesap sayfasına ulaşabilmek icin oturum açmalısınız. Henüz kayıt olmadıysanız, ilk siparişinizi verene kadar erişemeyeceksiniz, kayıtlı iseniz, lütfen detaylarınızı aşagıya giriniz."
+    NOPAGE: "Bu sitede herhangi bir AccountPage bulunamadı - lütfen oluşturunuz !"
+  AccountPage.ss:
+    COMPLETED: "Tamamlanan Siparişler"
+    HISTORY: "Sipariş Geçmişiniz"
+    INCOMPLETE: "Tamamlanmamış Siparişler"
+    NOCOMPLETED: "Tamamlanmış sipariş bulunmuyor."
+    NOINCOMPLETE: "Tamamlanmamış sipariş bulunmuyor."
+    ORDER: "Sipariş #"
+    READMORE: "#%s siparişi detayları"
+  AccountPage_order.ss:
+    ADDRESS: Adres
+    AMOUNT: Miktar
+    BACKTOCHECKOUT: "Ödeme sayfasına gitmek için buraya tıklayınız"
+    CITY: Şehir
+    COUNTRY: Ülke
+    DATE: Tarih
+    DETAILS: Ayrıntılar
+    EMAILDETAILS: "Bu işlemin bir kopyası siparişin detayları ile birlikte e-posta adresinize gönderildi."
+    NAME: Ad
+    PAYMENTMETHOD: "Ödeme Şekli"
+    PAYMENTSTATUS: "Ödeme Durumu"
+  Cart.ss:
+    ADDONE: "Sepetinize 1 adet daha %s ekleyin"
+    CheckoutClick: "Ödeme için tıklayınız"
+    CheckoutGoTo: "Ödeme sayfasına git"
+    HEADLINE: Sepetim
+    NOITEMS: "Sepetinizde ürün bulunmuyor"
+    PRICE: Fiyat
+    READMORE: "\"%s\" detayları için tıklayınız"
+    REMOVE: "Listeden \"%s\" öğesini çıkart"
+    REMOVEALL: "Sepetinizdeki %s lerin hepsini silin"
+    REMOVEONE: "Sepetinizdeki %s lerden birini silin"
+    SUBTOTAL: "Ara Toplam"
+    TOTAL: Toplam
+  CheckoutPage:
+    NOPAGE: "Bu sitede CheckoutPage sayfası bulunamıyor - lütfen bir adet oluşturun!"
+  CheckoutPage.ss:
+    CHECKOUT: Ödeme
+    ORDERSTATUS: "Sipariş Durumu"
+    PROCESS: İşlem
+  ChequePayment:
+    MESSAGE: "Cheque aracılığı ile yaptığınız ödeme kabul edildi. Lütfen dikkat: ödemeniz hesabınızdan çekilmeden ürünler kargoya verilmeyecektir."
+  MemberForm:
+    DETAILSSAVED: "Bilgileriniz kaydedildi"
+    LOGGEDIN: "Oturum açtınız, kullanıcı: "
+  Order:
+    INCOMPLETE: "Sipariş tamamlanmamış"
+    SUCCESSFULL: "Sipariş Başarılı"
+  OrderInformation.ss:
+    ADDRESS: Adres
+    AMOUNT: Tutar
+    BUYERSADDRESS: "Alıcının Adresi"
+    CITY: Şehir
+    COUNTRY: Ülke
+    CUSTOMERDETAILS: "Müşteri Bilgileri"
+    DATE: Tarih
+    DETAILS: Detaylar
+    EMAIL: Eposta
+    MOBILE: GSM
+    NAME: Ad
+    ORDERSUMMARY: "Sipariş Özeti"
+    PAYMENTID: "Ödeme ID"
+    PAYMENTINFORMATION: "Ödeme Bilgisi"
+    PAYMENTMETHOD: Method
+    PAYMENTSTATUS: "Ödeme Durumu"
+    PHONE: Telefon
+    PRICE: Fiyat
+    PRODUCT: Ürün
+    QUANTITY: Miktar
+    READMORE: "%s hakkında daha fazla bilgi için buraya tıkyayın"
+    SHIPPINGDETAILS: "Nakliye Detayları"
+    SUBTOTAL: "Ara Toplam"
+    TOTAL: Toplam
+    TOTALOUTSTANDING: "toplam kalan borç"
+    TOTALPRICE: "Toplam Ücret"
+  OrderInformation_Editable.ss:
+    ADDONE: "\"%s\" ürününden bir adet daha sepete ekle"
+    NOITEMS: "Sepetinizde ürün <strong>bulunmuyor</strong>"
+    ORDERINFORMATION: "Sipariş Bilgisi"
+    PRICE: Fiyat
+    PRODUCT: Ürün
+    QUANTITY: Miktar
+    READMORE: "\"%s\" detayları için tıklayınız"
+    REMOVE: "Listeden \"%s\" öğesini çıkart"
+    REMOVEALL: "Sepetinizdeki %s lerin hepsini silin"
+    REMOVEONE: "\"%s\" ürününün birini sepetten kaldır"
+    SUBTOTAL: "Ara Toplam"
+    TABLESUMMARY: "Sepet içeriği, ücretlendirme ve ödeme seçenekleri aşağıdaki formda gösterilmektedir."
+    TOTAL: Toplam
+    TOTALPRICE: "Toplam Fiyat"
+  OrderInformation_NoPricing.ss:
+    ADDRESS: Adres
+    BUYERSADDRESS: "Alıcının Adresi"
+    CITY: Şehir
+    COUNTRY: Ülke
+    CUSTOMERDETAILS: "Müşteri Bilgileri"
+    EMAIL: Eposta
+    MOBILE: GSM
+    NAME: Ad
+    ORDERINFO: "# sipariş bilgileri"
+    PHONE: Telefon
+    TABLESUMMARY: "Sepet içeriği, ücretlendirme ve ödeme seçenekleri aşağıdaki formda gösterilmektedir."
+  OrderInformation_PackingSlip.ss:
+    DESCRIPTION: Açıklama
+    ITEM: Ürün
+    ORDERDATE: "Sipariş Tarihi"
+    ORDERNUMBER: "Sipariş No"
+    PAGETITLE: "Dükkan Sipariş Yazdırma"
+    QUANTITY: Miktar
+    TABLESUMMARY: "Sepet içeriği, ücretlendirme ve ödeme seçenekleri aşağıdaki formda gösterilmektedir."
+  OrderInformation_Print.ss:
+    PAGETITLE: "Siparişleri Yazdır"
+  OrderReport:
+    CHANGESTATUS: "Sipariş durumunu değiştir"
+    NOTEEMAIL: Not/Eposta
+    SENDNOTETO: "Notu %s (%s) gönder"
+  Order_Content.ss:
+    NOITEMS: "Listenizde <strong>no</strong> öğe bulunmaktadır"
+    PRICE: Fiyat
+    PRODUCT: Ürün
+    QUANTITY: Miktar
+    READMORE: "\"%s\" hakkında daha fazla bilgi almak için tıklayınız"
+    SUBTOTAL: "Alt Toplam"
+    TOTAL: Toplam
+    TOTALOUTSTANDING: "Kalan toplamı"
+    TOTALPRICE: "Toplam Fiyat"
+  Order_Member.ss:
+    ADDRESS: Adres
+    CITY: Şehir
+    COUNTRY: Ülke
+    EMAIL: E-posta
+    MOBILE: "Cep Telefonu"
+    NAME: İsim
+    PHONE: Telefon
+  Order_ReceiptEmail.ss:
+    HEADLINE: "Sipariş Makbuzu"
+    TITLE: "Alışveriş Makbuzu"
+  Order_StatusEmail.ss:
+    HEADLINE: "Alışveriş Durumu Değişti"
+    STATUSCHANGE: "# numarali sipariş için durum \"%s\" olarak değişti"
+    TITLE: "Alışveriş Durumu Değişti"
+  PaymentInformation.ss:
+    AMOUNT: Tutar
+    DATE: Tarih
+    DETAILS: Detaylar
+    PAYMENTID: "Ödeme ID"
+    PAYMENTINFORMATION: "Ödeme Bilgileri"
+    PAYMENTMETHOD: Method
+    PAYMENTSTATUS: "Ödeme Durumu"
+    TABLESUMMARY: "Sepet içeriği, ücretlendirme ve ödeme seçenekleri aşağıdaki formda gösterilmektedir."
+  Product.ss:
+    ADD: "\"%s\" ürününü sepete ekle"
+    ADDLINK: "Ürünü sepete ekle"
+    ADDONE: "\"%s\" ürününden bir adet daha sepete ekle"
+    AUTHOR: Yazan
+    FEATURED: "Güncel üründür."
+    GOTOCHECKOUT: "Ödeme sayfasına git"
+    GOTOCHECKOUTLINK: "» Ödeme sayfasına git"
+    IMAGE: "%s resim"
+    ItemID: "Ürün #"
+    NOIMAGE: "\"%s\" ürünü için resim bulunamadı"
+    QUANTITYCART: "Sepetteki miktar"
+    REMOVE: "\"%s\" ürününü sepetten kaldır"
+    REMOVEALL: "\"%s\" ürününü birini sepetten kaldır"
+    REMOVELINK: "» Sepetten kaldır"
+    SIZE: Boyut
+  ProductCategory.ss:
+    FEATURED: "Güncel Ürünler"
+    OTHER: "Diğer Ürünler"
+  ProductCategoryItem.ss:
+    ADD: "\"%s\" ürününü sepete ekle"
+    ADDLINK: "Sepete ekle"
+    ADDONE: "\"%s\" ürününden bir adet daha sepete ekle"
+    AUTHOR: Yazan
+    GOTOCHECKOUT: "Ödeme sayfasina git"
+    GOTOCHECKOUTLINK: "» Ödeme sayfasina git"
+    IMAGE: "%s resim"
+    NOIMAGE: "\"%s\" için ürün bulunamadı, üzgünüz"
+    QUANTITYCART: "Sepetteki adet"
+    READMORE: "\"%s\" detayları için tıklayınız"
+    READMORECONTENT: "Detaylar »"
+    REMOVE: "\"%s\" ürününü sepetten kaldır"
+    REMOVEALL: "Sepetinizdeki %s lerden birini silin"
+    REMOVELINK: "» Sepetten kaldır"
+  ProductMenu.ss:
+    GOTOPAGE: "%s sayfasına git"

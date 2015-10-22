@@ -1,0 +1,152 @@
+---
+da:
+  AccountPage:
+    NOPAGE: "Ingen kontoside på dette site. Opret venligst en!"
+  AccountPage.ss:
+    COMPLETED: "Fuldførte ordrer"
+    HISTORY: "Din ordrehistorie"
+    INCOMPLETE: "Mangelfuld ordre"
+    NOCOMPLETED: "Ingen fuldførte ordrer blev fundet."
+    NOINCOMPLETE: "Ingen mangelfulde ordre blev fundet."
+    ORDER: "Ordre #"
+    READMORE: "Læs mere om ordre #%s"
+  AccountPage_order.ss:
+    BACKTOCHECKOUT: "Klik her for at gå til checkout"
+    EMAILDETAILS: "En bekræftende kopi er blevet sendt til din emailadresse"
+  Cart.ss:
+    ADDONE: "Tilføj endnu en \"%s\" til din kurv"
+    CheckoutClick: "Klik her for at gå til kassen"
+    CheckoutGoTo: "Gå til kassen"
+    HEADLINE: "Min indkøbsvogn"
+    NOITEMS: "Der er ingen varer i indkøbskurven"
+    PRICE: Pris
+    READMORE: "Klik her for at læse mere om \"%s\""
+    REMOVEALL: "Fjern alle \"%s\" fra din kurv"
+    REMOVEONE: "Fjern \"%s\" fra din kurv"
+    SUBTOTAL: Subtotal
+    TOTAL: Total
+  CheckoutPage:
+    NOPAGE: "Ingen Checkout Side på dette site - Lav venligst en!"
+  CheckoutPage.ss:
+    CHECKOUT: "Check ud"
+    ORDERSTATUS: Ordrestatus
+    PROCESS: Proces
+  ChequePayment:
+    MESSAGE: "Betaling med check mulig. Bemærk: din ordre vil ikke blive sendt før betalingen er modtaget."
+  MemberForm:
+    DETAILSSAVED: "Dine detajler er blevet gemt"
+    LOGGEDIN: "Du er i øjeblikket logget ind som "
+  Order:
+    INCOMPLETE: "Ordren er ikke komplet"
+    SUCCESSFULL: "Ordre modtaget succesfuldt"
+  OrderInformation.ss:
+    ADDRESS: Adresse
+    AMOUNT: Antal
+    BUYERSADDRESS: "Købers adresse"
+    CITY: By
+    COUNTRY: Land
+    CUSTOMERDETAILS: Kundedetaljer
+    DATE: Dato
+    DETAILS: Detaljer
+    EMAIL: Email
+    MOBILE: Mobil
+    NAME: Navn
+    ORDERSUMMARY: Ordresammendrag
+    PAYMENTID: Betalingsid
+    PAYMENTINFORMATION: Betalingsinformationer
+    PAYMENTMETHOD: Metode
+    PAYMENTSTATUS: Betalingsstatus
+    PHONE: Telefon
+    PRICE: Pris
+    PRODUCT: Produkt
+    QUANTITY: Antal
+    READMORE: "Klik her for at læse mere om \"%s\""
+    SHIPPINGDETAILS: Leveringsinformation
+    SUBTOTAL: Subtotal
+    TOTAL: Total
+    TOTALOUTSTANDING: "Udestående totalt"
+    TOTALPRICE: "Total pris"
+  OrderInformation_Editable.ss:
+    ADDONE: "Tilføj en \"%s\" mere til indkøbskurven"
+    NOITEMS: "Der er <strong>ingen</strong> varer i indkøbskurven"
+    ORDERINFORMATION: Ordreinformation
+    PRICE: Pris
+    PRODUCT: Produkt
+    QUANTITY: Antal
+    READMORE: "Klik her for at læse mere om \"%s\""
+    REMOVEALL: "Fjern alle \"%s\" fra din kurv"
+    REMOVEONE: "Fjern en af \"%s\" fra indkøbskurven"
+    SUBTOTAL: Subtotal
+    TABLESUMMARY: "Indholdet af din indkøbsvogn vises i denne form og resumé af alle gebyrer i forbindelse med en ordre og et sammendrag af betalingsmulighederne."
+    TOTAL: Total
+    TOTALPRICE: "Total pris"
+  OrderInformation_NoPricing.ss:
+    ADDRESS: Adresse
+    BUYERSADDRESS: "Købers adresse"
+    CITY: By
+    COUNTRY: Land
+    CUSTOMERDETAILS: Kundedetaljer
+    EMAIL: Email
+    MOBILE: Mobil
+    NAME: Navn
+    ORDERINFO: "Information tilhørende ordre #"
+    PHONE: Telefon
+    TABLESUMMARY: "Indholdet af din indkøbsvogn vises i denne form og resumé af alle gebyrer i forbindelse med en ordre og et sammendrag af betalingsmulighederne."
+  OrderInformation_PackingSlip.ss:
+    DESCRIPTION: Beskrivelse
+    ITEM: Artikel
+    ORDERDATE: Ordredato
+    ORDERNUMBER: "Ordre nummer"
+    QUANTITY: Antal
+    TABLESUMMARY: "Indholdet af din indkøbsvogn vises i denne form og resumé af alle gebyrer i forbindelse med en ordre og et sammendrag af betalingsmulighederne."
+  OrderInformation_Print.ss:
+    PAGETITLE: "Print  ordrer"
+  OrderReport:
+    CHANGESTATUS: "Ændr ordrestatus"
+    NOTEEMAIL: Note/Email
+    SENDNOTETO: "Send denne note til %s (%s)"
+  Order_ReceiptEmail.ss:
+    HEADLINE: Ordrekvittering
+    TITLE: Kvittering
+  PaymentInformation.ss:
+    AMOUNT: Antal
+    DATE: Dato
+    DETAILS: Detaljer
+    PAYMENTID: Betalingsid
+    PAYMENTINFORMATION: Betalingsinformationer
+    PAYMENTMETHOD: Metode
+    PAYMENTSTATUS: Betalingsstatus
+    TABLESUMMARY: "Indholdet af din indkøbsvogn vises i denne form og resumé af alle gebyrer i forbindelse med en ordre og et sammendrag af betalingsmulighederne."
+  Product.ss:
+    ADD: "Tilføj \"%s\" til din indkøbsvogn"
+    ADDLINK: "Læg denne vare i indkøbsvognen"
+    ADDONE: "Tilføj en af \"%s\" fra din kurv"
+    AUTHOR: Forfatter
+    GOTOCHECKOUT: "Gå til Checkout"
+    GOTOCHECKOUTLINK: "» gå til Checkout"
+    IMAGE: "%s billede"
+    ItemID: "Produkt  #"
+    NOIMAGE: "Desværre, intet produktbillede af \"%s\""
+    QUANTITYCART: "Antal i kurv"
+    REMOVE: "Fjern \"%s\" fra din kurv"
+    REMOVEALL: "Fjern en af \"%s\" fra din kurv"
+    REMOVELINK: "» Fjern fra kurv"
+    SIZE: Størrelse
+  ProductCategory.ss: ~
+  ProductCategoryItem.ss:
+    ADD: "Tilføj \"%s\" til indkøbskurven"
+    ADDLINK: "Tilføj til indkøbskurven"
+    ADDONE: "Tilføj en \"%s\" mere til indkøbskurven"
+    AUTHOR: Forfatter
+    GOTOCHECKOUT: "Gå til checkout nu"
+    GOTOCHECKOUTLINK: "» Gå til checkout nu"
+    IMAGE: "%s billede"
+    NOIMAGE: "Desværre, intet billede af \"%s\""
+    QUANTITYCART: "Antal i kurv"
+    READMORE: "Klik her for at læse mere om \"%s\""
+    READMORECONTENT: "Klik for at læse mere »"
+    REMOVE: "Fjern \"%s\" fra indkøbskurven"
+    REMOVEALL: "Fjern én af \"%s\" fra din kurv"
+    REMOVELINK: "» Fjern fra indkøbskurven"
+  ProductMenu.ss:
+    GOTOPAGE: "Gå til %s side"

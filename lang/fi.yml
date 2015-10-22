@@ -1,0 +1,132 @@
+---
+fi:
+  AccountPage.ss:
+    COMPLETED: "Suoritetut tilaukset"
+    HISTORY: "Sinun Tilaushistoriasi"
+    INCOMPLETE: "Suorittamattomat tilaukset"
+    NOCOMPLETED: "Suoritettuja tilauksia ei löytynyt."
+    NOINCOMPLETE: "Suorittamattomia tilauksia ei löytynyt"
+    ORDER: "Tilaus #"
+    READMORE: "Lue lisää tilauksesta #%s"
+  AccountPage_order.ss:
+    ADDRESS: Katuosoite
+    CITY: Kaupunki
+    COUNTRY: Valtio
+    DATE: Päiväys
+    NAME: Nimi
+  Cart.ss:
+    CheckoutClick: "Paina tästä mennäksi kassalle"
+    CheckoutGoTo: "Mene kassalle"
+    HEADLINE: Ostoskärry
+    NOITEMS: "Ostoskärryssäsi ei ole tuotteita"
+    PRICE: Hinta
+    READMORE: "Paina tästä lukeaksi lisää tuotteesta \"%s\""
+    SUBTOTAL: Yhteensä
+    TOTAL: Yhteensä
+  CheckoutPage:
+    NOPAGE: "Tällä sivustolla ei ole KassaSivua - ole hyvä ja luo sellainen!"
+  CheckoutPage.ss:
+    CHECKOUT: Kassa
+    ORDERSTATUS: "Tilauksen tila"
+  ChequePayment:
+    MESSAGE: "Maksu hyväksytty shekin välityksellä. Huomaa: Tuotteita ei lähetetä ennen maksun saapumista."
+  MemberForm:
+    DETAILSSAVED: "Tietosi on tallennettu"
+    LOGGEDIN: "Olet kirjautuneena sisään."
+  OrderInformation.ss:
+    ADDRESS: Osoite
+    AMOUNT: Määrä
+    BUYERSADDRESS: "Maksajan osoite"
+    CITY: Kaupunki
+    COUNTRY: Maa
+    CUSTOMERDETAILS: "Asiakkaan tiedot"
+    DATE: Päivämäärä
+    DETAILS: Yksityiskohdat
+    EMAIL: Sähköposti
+    MOBILE: Matkapuhelin
+    NAME: Nimi
+    ORDERSUMMARY: "Tilauksen yhteenveto"
+    PAYMENTID: "Maksun tunniste"
+    PAYMENTINFORMATION: Maksutiedot
+    PAYMENTMETHOD: Menetelmä
+    PAYMENTSTATUS: "Maksun tila"
+    PHONE: Puhelin
+    PRICE: Hinta
+    PRODUCT: Tuote
+    QUANTITY: Määrä
+    SUBTOTAL: Yhteensä
+    TOTALOUTSTANDING: "Maksamatonta yhteensä"
+    TOTALPRICE: Yhteishinta
+  OrderInformation_Editable.ss:
+    ADDONE: "Lisää yksi \"%s\" ostoskärryysi"
+    NOITEMS: "Osotoskärryssäsi <strong>ei</strong> ole tuotteita"
+    ORDERINFORMATION: Tilaustiedot
+    PRICE: Hinta
+    PRODUCT: Tuote
+    QUANTITY: Määrä
+    READMORE: "Paina tästä lukeaksesi lisää tuotteesta \"%s\""
+    REMOVEONE: "Poista yksi \"%s\" ostoskärrystäsi"
+    SUBTOTAL: Yhteensä
+    TOTAL: Yhteensä
+    TOTALPRICE: "Hinta yhteensä"
+  OrderInformation_NoPricing.ss:
+    ADDRESS: Osoite
+    BUYERSADDRESS: "Ostajan Osoite"
+    CITY: Kaupunki
+    COUNTRY: Maa
+    CUSTOMERDETAILS: "Asiakkaan Tiedot"
+    EMAIL: Sähköposti
+    MOBILE: Matkapuhelin
+    NAME: Nimi
+    ORDERINFO: "Tietoja Tilauksesta"
+    PHONE: Puhelin
+  OrderInformation_PackingSlip.ss:
+    DESCRIPTION: Kuvaus
+    ITEM: Tuote
+    ORDERDATE: "Tilauksen päivämäärä"
+    ORDERNUMBER: Tilausnumero
+    QUANTITY: Määrä
+  OrderInformation_Print.ss:
+    PAGETITLE: "Tulosta tilaukset"
+  OrderReport:
+    CHANGESTATUS: "Vaihda tilauksen tilaa"
+    NOTEEMAIL: Muistio/Sähköposti
+  PaymentInformation.ss:
+    AMOUNT: Määrä
+    DATE: Päivämäärä
+    DETAILS: Yksityiskohdat
+    PAYMENTID: "Maksun tunnus"
+    PAYMENTINFORMATION: "Maksun tiedot"
+    PAYMENTMETHOD: Menetelmä
+    PAYMENTSTATUS: "Maksun tila"
+  Product.ss:
+    ADD: "Lisää \"%s\" ostoskärryysi"
+    ADDLINK: "Lisää tämä tuote ostoskärryyn"
+    ADDONE: "Lisää yksi \"%s\" ostoskärryysi"
+    AUTHOR: Kirjoittaja
+    FEATURED: "Tämä tuote on tarjouksessa."
+    GOTOCHECKOUT: "Mene kassalle nyt"
+    GOTOCHECKOUTLINK: "» Mene kassalle"
+    IMAGE: "%s kuva"
+    ItemID: "Tuote #"
+    NOIMAGE: "Valitettavasti tuotteelle \"%s%quot; ei ole tuotekuvaa"
+    QUANTITYCART: Ostoskärryssä
+    REMOVE: "Poista \"%s\" ostoskärrystäsi"
+    REMOVEALL: "Poista yksi \"%s\" ostoskärrystäsi"
+    REMOVELINK: "» Poista ostoskärrystäsi"
+    SIZE: Koko
+  ProductCategory.ss:
+    FEATURED: "Tarjouksessa olevat tuotteet"
+  ProductCategoryItem.ss:
+    ADD: "Lisää \"%s\" ostoskärryysi"
+    ADDLINK: "Lisää tämä tuote ostoskärryysi"
+    ADDONE: "Lisää yksi \"%s\" ostoskärryysi"
+    AUTHOR: Kirjoittaja
+    IMAGE: "%s kuva"
+    NOIMAGE: "Valitettavasti tuotteelle \"%s\" ei ole tuotekuvaa"
+    READMORE: "Paina tästä lukeaksesi lisää tuotteesta \"%s\""
+    READMORECONTENT: "Paina tästä lukeaksesi lisää »"
+    REMOVE: "Poista \"%s\" ostoskärrystäsi"
+    REMOVELINK: "» Poista ostoskärrystä"
+  ProductMenu.ss:
+    GOTOPAGE: "Mene %s sivulle"

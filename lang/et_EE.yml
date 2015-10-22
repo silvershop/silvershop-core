@@ -1,0 +1,190 @@
+---
+et_EE:
+  AccountPage:
+    Message: "Te peate sisse logima, enne kui saate tutvuda konto lehega. Kui olete siin esimest korda sisestage andmed allool"
+    NOPAGE: "Kontolehte pole - loo kontoleht"
+  AccountPage.ss:
+    COMPLETED: "Lõpetatud tellimused"
+    HISTORY: "Tellimuste ajalugu"
+    INCOMPLETE: "Lõpetamata tellimused"
+    NOCOMPLETED: "Ei leidnud lõpetatud tellimusi"
+    NOINCOMPLETE: "Ei leidnud lõpetamata tellimusi"
+    ORDER: "Tellimus #"
+    READMORE: "Täpsemalt tellimusest #%s"
+  AccountPage_order.ss:
+    ADDRESS: Aadress
+    AMOUNT: Kokku
+    BACKTOCHECKOUT: "Edasi kassasse"
+    CITY: Linn
+    COUNTRY: Riik
+    DATE: Kuupäev
+    DETAILS: Detailid
+    EMAILDETAILS: "Koopia tellimusest on saadetud e-posti aadressile, et kinnitada tellimuse andmeid."
+    NAME: Nimi
+    PAYMENTMETHOD: "Makse meetod"
+    PAYMENTSTATUS: "Makse staatus"
+  Cart.ss:
+    ADDONE: "Lisa üks \"%s\" ostukorvi"
+    CheckoutClick: "Edasi kassasse"
+    CheckoutGoTo: "Mine kassasse"
+    HEADLINE: "Minu ostukorv"
+    NOITEMS: "Ostukorv on tühi"
+    PRICE: Hind
+    READMORE: "Täpsemalt \"%s\""
+    REMOVE: "Eemalda \"%s\" Tellimusest"
+    REMOVEALL: "Eemalda kõik \"%s\" ostukorvist"
+    REMOVEONE: "Eemalda üks \"%s\" ostukorvist"
+    SUBTOTAL: Vahesumma
+    TOTAL: Kokku
+  CheckoutPage:
+    NOPAGE: "Ostukorv Puudub - loo ostukorv"
+  CheckoutPage.ss:
+    CHECKOUT: Ostukorv
+    ORDERSTATUS: "Tellimuse staatus"
+    PROCESS: Asukoht
+  ChequePayment:
+    MESSAGE: "Maksmine ülekandega. NB!: Tooted pannakse teele peale makse laekumist"
+  MemberForm:
+    DETAILSSAVED: "Sinu andmed on salvestatud"
+    LOGGEDIN: "Oled siselogitud nimega"
+  Order:
+    INCOMPLETE: "Tellimus poolik"
+    SUCCESSFULL: "Tellimus lõppetatud"
+  OrderInformation.ss:
+    ADDRESS: Aadress
+    AMOUNT: Kokku
+    BUYERSADDRESS: "Ostja aadress"
+    CITY: Linn
+    COUNTRY: Riik
+    CUSTOMERDETAILS: "Kliendi Andmed"
+    DATE: Kuupäev
+    DETAILS: Täpsemalt
+    EMAIL: E-post
+    MOBILE: Mobiil
+    NAME: Nimi
+    ORDERSUMMARY: "Tellimuse sisu"
+    PAYMENTID: "Makse ID"
+    PAYMENTINFORMATION: "Makse info"
+    PAYMENTMETHOD: "Makse meetod"
+    PAYMENTSTATUS: "Makse staatus"
+    PHONE: Telefon
+    PRICE: Hind
+    PRODUCT: Toode
+    QUANTITY: Kogus
+    READMORE: "Täpsemalt \"%s\""
+    SHIPPINGDETAILS: "Transpordi detailid"
+    SUBTOTAL: Vahesumma
+    TOTAL: Kokku
+    TOTALOUTSTANDING: "Kokku täitmata"
+    TOTALPRICE: "Hind kokku"
+  OrderInformation_Editable.ss:
+    ADDONE: "Lisa üks \"%s\" ostukorvi"
+    NOITEMS: "<strong>Ostukorv on tühi</strong>"
+    ORDERINFORMATION: "Tellimuse Info"
+    PRICE: Hind
+    PRODUCT: Toode
+    QUANTITY: Kogus
+    READMORE: "Täpsemalt \"%s\""
+    REMOVE: "Eemalda \"%s\" Tellimusest"
+    REMOVEALL: "Eemalda kõik \"%s\" ostukorvist"
+    REMOVEONE: "Eemalda üks \"%s\" Ostukorvist"
+    SUBTOTAL: Vahesumma
+    TABLESUMMARY: "Teie Ostukorvi sisu näidatakse käesolevas vormis ja kokkuvõte kõikidest seotud tasudest tellimuses."
+    TOTAL: Kokku
+    TOTALPRICE: "Hind Kokku"
+  OrderInformation_NoPricing.ss:
+    ADDRESS: Aadress
+    BUYERSADDRESS: "Ostja aadress"
+    CITY: Linn
+    COUNTRY: Riik
+    CUSTOMERDETAILS: "Kliendi amdned"
+    EMAIL: E-post
+    MOBILE: Mobiil
+    NAME: Nimi
+    ORDERINFO: "Tellimuse info #"
+    PHONE: Telefon
+    TABLESUMMARY: "Teie Ostukorvi sisu näidatakse käesolevas vormis ja kokkuvõte kõikidest seotud tasudest tellimuses."
+  OrderInformation_PackingSlip.ss:
+    DESCRIPTION: Kirjeldus
+    ITEM: Toode
+    ORDERDATE: "Tellimuse kuupäev"
+    ORDERNUMBER: "Tellimuse number"
+    PAGETITLE: "Shop Prindi Tellimused"
+    QUANTITY: Kogus
+    TABLESUMMARY: "Teie Ostukorvi sisu näidatakse käesolevas vormis ja kokkuvõte kõikidest seotud tasudest tellimuses."
+  OrderInformation_Print.ss:
+    PAGETITLE: "Prindi Tellimused"
+  OrderReport:
+    CHANGESTATUS: "Muuda tellimuse staatust"
+    NOTEEMAIL: Märge/email
+    SENDNOTETO: "Saada see märge %s (%s)"
+  Order_Content.ss:
+    NOITEMS: "<strong>ostukorv on tühi</strong>"
+    PRICE: Hind
+    PRODUCT: Toode
+    QUANTITY: Kogus
+    READMORE: "Täpsemalt \"%s\""
+    SUBTOTAL: Vahesumma
+    TOTAL: Kokku
+    TOTALOUTSTANDING: "Kokku täitmata"
+    TOTALPRICE: "Hind kokku"
+  Order_Member.ss:
+    ADDRESS: Aadress
+    CITY: Linn
+    COUNTRY: Riik
+    EMAIL: E-post
+    MOBILE: Mobiil
+    NAME: Nimi
+    PHONE: Telefon
+  Order_ReceiptEmail.ss:
+    HEADLINE: "Poe tellimuse arve"
+    TITLE: Arve
+  Order_StatusEmail.ss:
+    HEADLINE: "Poe staatus muudetud"
+    STATUSCHANGE: "Staatus muudetud:  \"%s\" tellimusele #"
+    TITLE: "Poe staatus muudetud"
+  PaymentInformation.ss:
+    AMOUNT: Kokku
+    DATE: Kuupäev
+    DETAILS: Detailid
+    PAYMENTID: "Makse ID"
+    PAYMENTINFORMATION: "Makse info"
+    PAYMENTMETHOD: "Makse meetod"
+    PAYMENTSTATUS: "Makse staatus"
+    TABLESUMMARY: "Teie Ostukorvi sisu näidatakse käesolevas vormis ja kokkuvõte kõikidest seotud tasudest tellimuses."
+  Product.ss:
+    ADD: "Lisa \"%s\" ostukorvi"
+    ADDLINK: "Lisa see toode ostukorvi"
+    ADDONE: "Lisa üks \"%s\" ostukorvi"
+    AUTHOR: Tootja
+    FEATURED: "See on esiletõstetud toode"
+    GOTOCHECKOUT: "Edasi kassasse"
+    GOTOCHECKOUTLINK: "Edasi kassasse"
+    IMAGE: "%s Pilt"
+    ItemID: "Toode #"
+    NOIMAGE: "Pilt puudub \"%s\" tootest"
+    QUANTITYCART: "Kogus ostukorvis"
+    REMOVE: "Eemalda \"%s\" ostukorvist"
+    REMOVEALL: "Eemalda üks \"%s\" ostukorvis"
+    REMOVELINK: "» eemalda ostukorvist"
+    SIZE: Suurus
+  ProductCategory.ss:
+    FEATURED: "Esiletõstetud tooted"
+    OTHER: "Teised tooted"
+  ProductCategoryItem.ss:
+    ADD: "Lisa \"%s\" ostukorvi"
+    ADDLINK: "Lisa see toode ostukorvi"
+    ADDONE: "Lisa üks \"%s\" ostukorvi"
+    AUTHOR: Tootja
+    GOTOCHECKOUT: "Mine kohe kassasse"
+    GOTOCHECKOUTLINK: "» Mine kassasse"
+    IMAGE: "%s pilt"
+    NOIMAGE: "Tootepilt puudub \"%s\" tootest"
+    QUANTITYCART: "Kogus astukorvis"
+    READMORE: "Täpsemalt \"%s\""
+    READMORECONTENT: "Täpsemalt »"
+    REMOVE: "Eemalda \"%s\" ostukorvist"
+    REMOVEALL: "Eemalda üks \"%s\" ostukorvist"
+    REMOVELINK: "» eemalda ostukorvist"
+  ProductMenu.ss:
+    GOTOPAGE: "Mine %s lehele"

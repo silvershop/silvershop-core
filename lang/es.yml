@@ -1,0 +1,409 @@
+---
+es:
+  AccountPage:
+    Message: "Porfavor ingrese sus datos para ingresar a la página de tu cuenta. <br/> Esta página solo es accesible después de tu primera compra, cuando asignes una contraseña."
+    Title: Cuenta
+  AccountPage.ss:
+    COMPLETED: "Ordenes Completadas"
+    HISTORY: "Su Historial de Ordenes"
+    INCOMPLETE: "Ordenes Incompletas"
+    NOCOMPLETED: "No se encontraron ordenes completadas"
+    NOINCOMPLETE: "No se encontraron ordenes incompletas"
+    ORDER: Orden
+    READMORE: "Leer más sobre la Orden #%s"
+  AccountPage_order.ss:
+    ADDRESS: Dirección
+    AMOUNT: Cantidad
+    CITY: Ciudad
+    COUNTRY: País
+    DATE: Fecha
+    DETAILS: Detalles
+    NAME: Nombre
+    PAYMENTMETHOD: "Forma de pago"
+    PAYMENTSTATUS: "Estado del Pago"
+  AddProductForm:
+    ADDTOCART: Agregar
+  Address:
+    ADDRESS: Dirección
+    ADDRESS2HINT: "nombre edificio, número departamento, etc"
+    ADDRESSHINT: "calle / número, cuadra, casilla"
+    ADDRESSLINE2: " "
+    CITY: Ciudad
+    CITYHINT: "o suburbio, condado, distrito"
+    COUNTRY: País
+    PHONE: "Número de teléfono"
+    POSTALCODE: "Código postal"
+    STATE: Estado
+    STATEHINT: "o provincia, territorio, isla"
+  Cart.ss:
+    CheckoutClick: "click aquí para chequearte"
+    CheckoutGoTo: chequearse
+    HEADLINE: "Mi Carro"
+    NOITEMS: "No hay ítems en tu carro."
+    ORDERINFORMATION: "Información de la orden"
+    PRICE: Precio
+    PRODUCT: Producto
+    QUANTITY: Cantidad
+    READMORE: "Ver \"%s\""
+    REMOVE: "Remover \"%s\" de tu orden"
+    REMOVEALL: "Remover todos los \"%s\" de tu carro"
+    SUBTOTAL: Sub-total
+    TABLESUMMARY: "Contenido actual del carro"
+    TOTAL: Total
+    TOTALPRICE: "Precio Total"
+    UNITPRICE: "Precio unitario"
+  CartPage:
+    TITLE: "Carro de compras"
+  CartPage.ss:
+    CARTEMPTY: "Tu carro está vacío."
+    CONTINUE: "Continuar comprando"
+    PROCEEDTOCHECKOUT: "Proceder al pago"
+  Cart_ReadOnly.ss:
+    PRODUCT: Producto
+    QUANTITY: Cantidad
+    SUBTOTAL: Sub-total
+    TABLESUMMARY: "Contenido actual de tu carro"
+    TOTALPRICE: "Precio Total"
+    UNITPRICE: "Precio unitario"
+  Checkout:
+    IDFIELDNOTFOUND: "Campo requerido no encontrado: %s"
+    MEMBEREXISTS: "Este miembro ya existe con estos datos: %s %s"
+    MEMBERSHIPSNOTALLOWED: "Crear nuevos miembros no está permitido"
+    NOADDRESS: "No se ha definido dirección"
+    NOPACKAGE: "Información de envío no disponible"
+    NOPAYMENTMETHOD: "Método de pago no existe"
+    PASSWORDREQUIRED: "Un password es requerido"
+  CheckoutField:
+    EMAIL: Email
+    FIRSTNAME: Nombres
+    MUSTAGREETOTERMS: "Debes aceptar los términos y condiciones del sitio"
+    NOTES: Mensaje
+    SURNAME: Apellidos
+    TERMSANDCONDITIONS: "Acepto los <a href=\"%s\" target=\"new\" title=\"leer los términos y condiciones antes de pagar\"> términos y condiciones</a> del sitio"
+  CheckoutPage:
+    NOPAGE: "No existe una página para chequearse en este sitio, porfavor crear una!"
+    TITLE: Pagar
+  CheckoutPage.ss:
+    CARTEMPTY: "Tu carro está vacío."
+    CHECKOUT: chequearse
+    ORDERSTATUS: "Orden Status"
+    PROCESS: Proceso
+  ChequePayment:
+    MESSAGE: "Pago aceptado vía Cheque. Tenga en cuenta: los productos no serán enviados hasta que el pago sea recibido."
+  ContactPage:
+    EMAIL: Email
+    MESSAGE: Mensaje
+    NAME: Nombre
+  DropdownShopQuantityField.ss:
+    ADDONE: "Agregar un \"%s\" a tu carro"
+    REMOVEONE: "Eliminado un \"%s\" de tu carro"
+  FreeShippingModifier:
+    FREE: Grátis
+  General:
+    DATEFORMATNICE: "%d/%m/%G"
+    DATETIMEFORMATNICE: "%d/%m/%G %I:%M%p"
+    DATETIMEFORMATNICE24: "d/m/Y H:i"
+  GlobalTaxModifier:
+    INCLUDED: " (incluído en el precio de arriba)"
+  MemberForm:
+    DETAILSSAVED: "Tus detalles han sido guardados"
+    LOGGEDIN: "Actualmente ingresado como"
+    SAVE: "Guardar cambios"
+    SAVEANDPROCEED: "Guardar y proceder al pago"
+  Order:
+    CANCELSUBJECT: "Orden #%d cancelada por el cliente"
+  Order.ss:
+    ORDERNOTES: Notas
+    TOTALOUTSTANDING: "Total pendiente"
+  OrderActionsForm:
+    CANCELORDER: "Cancelar esta orden"
+    MAKEPAYMENT: "Realizar pago"
+    OUTSTANDING: "Saldo: %s"
+    PAYORDER: "Pagar saldo"
+  OrderForm:
+    AccountInfo: "Por favor elije un password, así podrás ingresar al sitio y checkear tu historial de compras en el futuro"
+    BillingAddress: "Dirección de facturación"
+    COULDNOTPROCESSPAYMENT: "El pago no pudo ser procesado."
+    DifferentBillingAddress: "Usar dirección de facturación diferente"
+    EMPTYCART: "Tu carro está vacío"
+    LogIn: Ingresa
+    LogOut: salir
+    LoggedInAs: "Estás logeado como %s."
+    MUSTREADTERMS: "Debes aceptar los términos y condiciones del sitio"
+    MemberInfo: "Si ya tienes una cuenta, por favor "
+    MembershipDetails: "Detalles de tu cuenta"
+    ORDERCANCELLED: "Tu orden ha cancelada"
+    PRODUCTCANTPURCHASE: "%s no puede ser comprado"
+    Password: Password
+    ShippingAddress: "Dirección de envío"
+    ShippingAndBillingAddress: "Dirección de envío y facturación"
+    ShippingIsBilling: "Usar la dirección de envío para la facturación"
+    processOrder: "Aceptar la orden y pagar"
+  OrderInformation.ss:
+    ADDRESS: Dirección
+    AMOUNT: Importe
+    BUYERSADDRESS: "Dirección del comprador"
+    CITY: Ciudad
+    COUNTRY: País
+    CUSTOMERDETAILS: "Información del cliente"
+    DATE: Fecha
+    DETAILS: Detalles
+    EMAIL: Email
+    MOBILE: Movil
+    NAME: Nombre
+    ORDERSUMMARY: "Resumen de la orden"
+    PAYMENTID: "Nro de Pago"
+    PAYMENTINFORMATION: "Información de pago"
+    PAYMENTMETHOD: Método
+    PAYMENTSTATUS: "Estado del pago"
+    PHONE: Teléfono
+    PRICE: Precio
+    PRODUCT: Producto
+    QUANTITY: Cantidad
+    SUBTOTAL: Sub-Total
+    TOTAL: Total
+    TOTALOUTSTANDING: "Total pendiente"
+    TOTALPRICE: "Precio Total"
+  OrderInformation_Editable.ss:
+    ADDONE: "Agregar una o más \"%s\" a su carro"
+    NOITEMS: "<strong>No</strong> hay items en su carro."
+    ORDERINFORMATION: "Información de la orden"
+    PRICE: Precio
+    PRODUCT: Producto
+    QUANTITY: Cantidad
+    READMORE: "Clic aquí para leer más sobre \"%s\""
+    REMOVE: "Eliminar \"%s\" de tu pedido"
+    REMOVEONE: "Quitar uno de \"%s\" de su carro"
+    SUBTOTAL: Sub-total
+    TABLESUMMARY: "El contenido de tu carro aparece en este formulario con un resumen de todos los costos asociados y con una lista de formas de pago"
+    TOTAL: Total
+    TOTALPRICE: "Precio Total"
+  OrderInformation_NoPricing.ss:
+    ADDRESS: Dirección
+    BUYERSADDRESS: "Dirección del comprador"
+    CITY: Ciudad
+    COUNTRY: País
+    CUSTOMERDETAILS: "Información del Cliente"
+    EMAIL: Email
+    MOBILE: Movil
+    NAME: Nombre
+    ORDERINFO: "Información de la Orden Nro"
+    PHONE: Teléfono
+    TABLESUMMARY: "El contenido de tu carro aparece en este formulario con un resumen de todos los costos asociados y con una lista de formas de pago"
+  OrderInformation_PackingSlip.ss:
+    DESCRIPTION: Descripción
+    ITEM: Item
+    ORDERDATE: "Fecha de la Orden"
+    ORDERNUMBER: "Número de la Orden"
+    PAGETITLE: "Comprar ordenes impresas"
+    QUANTITY: Cantidad
+    TABLESUMMARY: "El contenido de tu carro aparece en este formulario con un resumen de todos los costos asociados y con una lista de formas de pago"
+  OrderInformation_Print.ss:
+    PAGETITLE: "Imprimir Ordenes"
+  OrderProcessor:
+    ~: "No se ha iniciado nuevo pedido."
+    NOITEMS: "La orden no tiene items"
+    NOTCART: "La orden no proviene de un carro"
+  OrderReport:
+    CHANGESTATUS: "Cambiar el estado de la orden"
+    NOTEEMAIL: Nota/Email
+    SENDNOTETO: "Enviar esta nota a  %s (%s)"
+  Order_Addresses.ss:
+    BILLTO: "Cobrar a"
+    SHIPTO: "Enviar a"
+  Order_Content.ss:
+    NOITEMS: "<strong>No</strong> hay productos en tu pedido."
+    PRICE: Precio
+    PRODUCT: Producto
+    QUANTITY: Cantidad
+    READMORE: "Haz clic aquí para leer más de \"%s\""
+    SUBTOTAL: Subtotal
+    TOTAL: Total
+    TOTALPRICE: "Precio Total"
+    UNITPRICE: "Precio unitario"
+  Order_Content_ItemLine.ss:
+    READMORE: "ver \"%s\""
+  Order_Content_SubTotals.ss:
+    SUBTOTAL: Sub-total
+    TOTAL: Total
+  Order_ItemLine.ss:
+    READMORE: "ver \"%s\""
+  Order_Member.ss:
+    ADDRESS: Dirección
+    CITY: Ciudad
+    COUNTRY: País
+    EMAIL: Email
+    MOBILE: Celular
+    NAME: Nombre
+    PHONE: Teléfono
+  Order_Payments.ss:
+    AMOUNT: Monto
+    DATE: Fecha
+    PAYMENTMETHOD: Método
+    PAYMENTNOTE: Nota
+    PAYMENTS: Pagos(s)
+    PAYMENTSTATUS: "Estado de pago"
+  Order_Printable.ss:
+    ORDER: Orden
+  Order_ReceiptEmail.ss:
+    TITLE: "Recibo de la tienda"
+  Order_StatusEmail.ss:
+    HEADLINE: "Estado de la compra ha cambiado"
+    STATUSCHANGE: "Estado ha cambiado a \"%s\" para la orden #"
+    TITLE: "Estado de la compra ha cambiado"
+  Order_admin.ss:
+    ORDERNOTES: Notas
+    TOTALOUTSTANDING: "Total pendiente"
+  Payment:
+    AMOUNT: Monto
+    PAYMENTTYPE: "Tipo de pago"
+  PaymentInformation.ss:
+    AMOUNT: Importe
+    DATE: Fecha
+    DETAILS: Detalles
+    PAYMENTID: "Número de Pago"
+    PAYMENTINFORMATION: "Información de Pago"
+    PAYMENTMETHOD: Método
+    PAYMENTSTATUS: "Estado del Pago"
+    TABLESUMMARY: "El contenido de tu carro aparece en este formulario con un resumen de todos los costos asociados y con una lista de formas de pago"
+  PaymentProcessor:
+    CANTPAY: "La orden no puede ser pagada"
+    NOTPAYMENT: "`$paymentClass` no es un método de pago válido"
+  PickupShippingModifier:
+    SINGULAR: "Recoger en la tienda"
+  Product:
+    ALLOWPURCHASE: "Permitir que se compre el producto"
+    CATEGORIES: "Seleccionar las categorías en donde este producto estará disponible"
+    CODE: "Código del producto"
+    COSTPRICE: "Precio de costo - precio al por mayor al cual se le agrega el margen"
+    DEPTH: "Profundidad (%s)"
+    FEATURED: "Destacar producto"
+    HEIGHT: "Altura (%s)"
+    IMAGE: "Imagen del producto"
+    MODEL: Modelo
+    PAGETITLE: "Título de la página"
+    PRICE: "Precio - precio base al cual este producto se debe vender"
+    WEIGHT: "Peso (%s)"
+    WIDTH: "Ancho (%s)"
+  Product.ss:
+    ADD: "Agregar \"%s\" a tu carro"
+    ADDLINK: "Agregar al carro"
+    ADDONE: "agrega uno más de \"%s\" de tu carro"
+    AUTHOR: Autor
+    CODE: "Código de producto"
+    FEATURED: "este es un producto destacado"
+    GOTOCHECKOUT: "Proceder al pago ahora"
+    GOTOCHECKOUTLINK: Pagar
+    IMAGE: "%s imagen"
+    ItemID: "Item Nro"
+    MODEL: Modelo
+    NOIMAGE: "Disulpe, no hay imagen del producto para \"%s\""
+    QUANTITYCART: "Cantidad en el carro"
+    REMOVE: "Borrar \"%s\" del carro"
+    REMOVEALL: "remover uno de \"%s\" de tu carro"
+    REMOVELINK: "Borrar del carro"
+    SIZE: Tamaño
+  ProductCategory.ss:
+    FEATURED: "Productos destacados"
+    OTHER: "Otros Productos"
+  ProductCategoryItem.ss:
+    ADD: "Agregar \"%s\" a su carro"
+    ADDLINK: "Agregar este item al carro"
+    ADDONE: "Agregar uno más de \"%s\" a su carro"
+    AUTHOR: Autor
+    IMAGE: "%s imagen"
+    NOIMAGE: "Disculpas, no hay imagen para \"%s\""
+    READMORE: "Click aquí para leer más sobre \"%s\""
+    READMORECONTENT: "Clic para leer más »"
+    REMOVE: "Quitar  \"%s\" desde su carro"
+    REMOVELINK: "» Quitar del carro"
+  ProductGroup:
+    NEXT: siguiente
+    PAGE: página
+    PREVIOUS: previo
+    SORTBY: "ordernar por"
+  ProductGroupItem.ss:
+    ADD: "Agregar \"%s\" a tu carro"
+    ADDLINK: "Agregar al carro"
+    IMAGE: "%s imagen"
+    MODEL: Modelo
+    READMORE: "Click acá para leer más acerca de \"%s\""
+    VIEW: "Ver \"%s\""
+  ProductMenu.ss:
+    GOTOPAGE: "Ir a %s"
+  SetLocationForm:
+    CHOOSECOUNTRY: "Elegir país..."
+    COUNTRY: País
+  Shop:
+    DEVTOOLSTITLE: "Herramientas de desarrollo para la tienda"
+  ShopConfig:
+    CUSTOMERGROUP: "Grupo para agregar a los nuevos clientes"
+    TERMSPAGE: "Términos y condiciones"
+  ShopCurrency:
+    FREE: "<span class=\"free\">Grátis!</span>"
+  ShopDatabaseAdmin.ss:
+    BUILDTASKS: "Crear tareas"
+    CARTCLEANUP: "Limpiar carros viejos"
+    CARTCLEANUPDESC: "Remover carros abandonados."
+    CARTTASKS: "Tareas del carro"
+    DELETEORDERS: "Borrar todas las ordenes"
+    DELETEORDERSDESC: "Borrar todas las ordenes, modificadores y pagos de la base de datos."
+    DELETEPRODUCTS: "Borrar todos los productos"
+    DELETEPRODUCTSDESC: "Borrar todos los productos de la base de datos."
+    RECALCULATEORDERS: "Recalcular todas las Ordenes"
+    RECALCULATEORDERSDESC: "Volver a calcular todos los valores de las ordenes. Advertencia: esto va a sobreescribir los valores históricos."
+    RUNALLTESTS: "Correr todos los tests unitarios de la tienda"
+    UNITTESTS: "Test unitarios"
+  ShopDevelopmentAdmin.ss:
+    BUILDTASKS: "Crear tareas"
+    CARTCLEANUP: "Limpiar carros viejos"
+    CARTCLEANUPDESC: "Remover carros abandonados."
+    CARTTASKS: "Tareas del carro"
+    CLEARCART: "Eliminar carro actual"
+    DEBUGCART: "Debugear el carro"
+    DELETEORDERS: "Borrar todas las ordenes"
+    DELETEORDERSDESC: "Borrar todas las ordenes, modificadores y pagos de la base de datos."
+    DELETEPRODUCTS: "Borrar todos los productos"
+    DELETEPRODUCTSDESC: "Borrar todos los productos de la base de datos."
+    POPULATECART: "Poblar el carro con algunos productos"
+    POPULATESHOP: "Poblar tienda"
+    POPULATESHOPDESC: "Poblar la tienda con productos de demostración, categorías y otras páginas necesarias."
+    RECALCULATEORDERS: "Recalcular todas las Ordenes"
+    RECALCULATEORDERSDESC: "Volver a calcular todos los valores de las ordenes. Advertencia: esto va a sobreescribir los valores históricos."
+    RUNALLTESTS: "Correr todos los tests unitarios de la tienda"
+    UNITTESTS: "Test unitarios"
+  ShopSideReport:
+    ALLPRODUCTS: "Todos los productos"
+    FEATUREDPRODUCTS: "Productos destacados"
+    HEAVY: "Productos pesados"
+    NOIMAGE: "Productos sin imagen"
+    ShopGROUP: Tienda
+  ShoppingCart:
+    CANNOTPURCHASE: "%s no puede ser comprado."
+    CLEARED: "Carro vaciado correctamente."
+    CSRF: "Token de seguridad inválido, posible ataque de hackers."
+    ITEMADD: Agregado!
+    ITEMNOTFOUND: "Item no encontrado."
+    ITEMREMOVED: "Ítem removido del pedido."
+    NOCARTFOUND: "Carro no encontrado."
+    NOCARTINITIALISED: "Carro sin inicializar"
+    NOORDER: "No hay pedido."
+    PRODUCTNOTFOUND: "No se ha encontrado el producto."
+    QUANTITYSET: "Cantidad modificada con éxito."
+  SideCart.ss:
+    HEADLINE: "Mi carro"
+    NOITEMS: "No hay ítems en el carro"
+    READMORE: "Ver \"%s\""
+    REMOVEALL: "borrar del carro"
+  SimpleShippingModifier:
+    SHIPTO: "Enviar a %s"
+  SteppedCheckoutPage.ss:
+    NOITEMS: "No hay itams en el carro."
+  TaxModifier:
+    ATRATE: "@ %s"
+  VariationsTable.ss:
+    ADD: "Agregar \"%s\" al carro"
+    ADDLINK: "Agregar al carro"
+    QUANTITYCART: "Cantidad en el carro"
+  WeightShippingModifier:
+    TABLETITLE: "Envío (%f kg)"

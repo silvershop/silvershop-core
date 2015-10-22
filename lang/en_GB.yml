@@ -1,23 +1,8 @@
 ---
-en:
-  AccountNavigation:
-    AddressBook: "Address Book"
-    EditProfile: "Edit Profile"
-    LogOut: "Log Out"
-    MemberEmail: Email
-    MemberLastVisit: "Last Visit"
-    MemberName: Name
-    MemberSince: "Member Since"
-    NumberOfOrders: "Number of orders"
-    PastOrders: "Past Orders"
-    Title: "My Account"
+en_GB:
   AccountPage:
-    Message: "You'll need to login before you can access the account page. If you are not registered, you won't be able to access it until you make your first order, otherwise please enter your details below."
+    Message: "You'll need to login before you can access the account page. If you are not registered, you won't be able to access it until you'll make your first order, otherwise please enter your details below."
     NOPAGE: "No AccountPage on this site - please create one !"
-    NoPastOrders: "No past orders found."
-    PLURALNAME: "Account Pages"
-    SINGULARNAME: "Account Page"
-    Title: "Past Orders"
   AccountPage.ss:
     COMPLETED: "Completed Orders"
     HISTORY: "Your Order History"
@@ -26,40 +11,9 @@ en:
     NOINCOMPLETE: "No incomplete orders were found."
     ORDER: Order
     READMORE: "Read more on Order #%s"
-  AccountPage_AddressBook:
-    CreateNewTitle: "Create New Address"
-    NoAddress: "No addresses found."
-    Title: "Default Addresses"
-  AccountPage_EditProfile:
-    Title: "Edit Profile"
   AccountPage_order.ss:
-    ADDRESS: Address
-    AMOUNT: Amount
     BACKTOCHECKOUT: "Click here to go to the checkout page"
-    CITY: City
-    COUNTRY: Country
-    DATE: Date
-    DETAILS: Details
     EMAILDETAILS: "A copy of this has been sent to your email address confirming the order details."
-    NAME: Name
-    PAYMENTMETHOD: Method
-    PAYMENTSTATUS: "Payment Status"
-  Address:
-    ADDRESS: Address
-    ADDRESS2HINT: "premises, building, apartment, unit, floor"
-    ADDRESSHINT: "street / thoroughfare number, name, and type or P.O. Box"
-    ADDRESSLINE2: "Address Line 2 (optional)"
-    BillingAddress: "Billing Address"
-    CITY: City
-    CITYHINT: "or suburb, county, district"
-    COUNTRY: Country
-    PHONE: "Phone Number"
-    POSTALCODE: "Postal Code"
-    STATE: State
-    STATEHINT: "or province, territory, island"
-    SaveDefaults: "Save Defaults"
-    SaveNew: "Save New Address"
-    ShippingAddress: "Shipping Address "
   Cart.ss:
     ADDONE: "Add one more of \"%s\" to your cart"
     CheckoutClick: "Click here to go to the checkout"
@@ -68,55 +22,24 @@ en:
     NOITEMS: "There are no items in your cart"
     PRICE: Price
     READMORE: "Click here to read more on \"%s\""
-    REMOVE: "Remove \"%s\" from your order"
     REMOVEALL: "Remove all of \"%s\" from your cart"
     REMOVEONE: "Remove one of \"%s\" from your cart"
     SUBTOTAL: Subtotal
     TOTAL: Total
   CheckoutPage:
-    NOPAGE: "No CheckoutPage on this site - please create one!"
-    PLURALNAME: "Checkout Pages"
-    SINGULARNAME: "Checkout Page"
+    NOPAGE: "No CheckoutPage on this site - please create one !"
   CheckoutPage.ss:
     CHECKOUT: Checkout
     ORDERSTATUS: "Order Status"
     PROCESS: Process
   ChequePayment:
     MESSAGE: "Payment accepted via Cheque. Please note : products will not be shipped until payment has been received."
-    PLURALNAME: "Cheque Payments"
-    SINGULARNAME: "Cheque Payment"
-  DPSPayment:
-    PLURALNAME: "D P S Payments"
-    SINGULARNAME: "D P S Payment"
-  EwayXMLPayment:
-    PLURALNAME: "Eway X M L Payments"
-    SINGULARNAME: "Eway X M L Payment"
-  General:
-    DATEFORMATLONG: "%m/%d/%G %I:%M%p"
-    DATEFORMATSHORT: "%m/%d/%G"
-  Member:
-    BUTTONCHANGEPASSWORD: "Change Password"
-    CONFIRMNEWPASSWORD: "Confirm New Password"
-    NEWPASSWORD: "New Password"
-    YOUROLDPASSWORD: "Your old password"
   MemberForm:
     DETAILSSAVED: "Your details have been saved"
-    LOGGEDIN: "You are currently logged in as "
+    LOGGEDIN: "You are currently logged in as"
   Order:
     INCOMPLETE: "Order Incomplete"
-    PLURALNAME: Orders
-    SINGULARNAME: Order
     SUCCESSFULL: "Order Successful"
-  OrderAttribute:
-    PLURALNAME: "Order Attributs"
-    SINGULARNAME: "Order Attribute"
-  OrderHistory:
-    OrderDate: Date
-    OrderItems: Items
-    OrderReference: Reference
-    OrderStatus: Status
-    OrderTotal: Total
-    ViewOrder: view
   OrderInformation.ss:
     ADDRESS: Address
     AMOUNT: Amount
@@ -152,7 +75,6 @@ en:
     PRODUCT: Product
     QUANTITY: Quantity
     READMORE: "Click here to read more on \"%s\""
-    REMOVE: "Remove \"%s\" from your order"
     REMOVEALL: "Remove all of \"%s\" from your cart"
     REMOVEONE: "Remove one of \"%s\" from your cart"
     SUBTOTAL: Sub-total
@@ -181,37 +103,10 @@ en:
     TABLESUMMARY: "The contents of your cart are displayed in this form and summary of all fees associated with an order and a rundown of payments options."
   OrderInformation_Print.ss:
     PAGETITLE: "Print Orders"
-  OrderItem:
-    PLURALNAME: "Order Items"
-    SINGULARNAME: "Order Item"
-  OrderModifier:
-    PLURALNAME: "Order Modifiers"
-    SINGULARNAME: "Order Modifier"
   OrderReport:
     CHANGESTATUS: "Change Order Status"
     NOTEEMAIL: Note/Email
     SENDNOTETO: "Send this note to %s (%s)"
-  OrderStatusLog:
-    PLURALNAME: "Order Status Logs"
-    SINGULARNAME: "Order Status Log"
-  Order_Content.ss:
-    NOITEMS: "There are <strong>no</strong> items in your order."
-    PRICE: Price
-    PRODUCT: Product
-    QUANTITY: Quantity
-    READMORE: "Click here to read more on \"%s\""
-    SUBTOTAL: Sub-total
-    TOTAL: Total
-    TOTALOUTSTANDING: "Total outstanding"
-    TOTALPRICE: "Total Price"
-  Order_Member.ss:
-    ADDRESS: Address
-    CITY: City
-    COUNTRY: Country
-    EMAIL: Email
-    MOBILE: Mobile
-    NAME: Name
-    PHONE: Phone
   Order_ReceiptEmail.ss:
     HEADLINE: "Shop Order Receipt"
     TITLE: "Shop Receipt"
@@ -219,15 +114,6 @@ en:
     HEADLINE: "Shop Status Change"
     STATUSCHANGE: "Status changed to \"%s\" for Order #"
     TITLE: "Shop Status Change"
-  PayPalPayment:
-    PLURALNAME: "Pay Pal Payments"
-    SINGULARNAME: "Pay Pal Payment"
-  Payment:
-    AMOUNT: Amount
-    PAYMENTTYPE: "Payment Type"
-    PLURALNAME: Payments
-    SINGULARNAME: Payment
-    SUBTOTAL: Subtotal
   PaymentInformation.ss:
     AMOUNT: Amount
     DATE: Date
@@ -237,15 +123,6 @@ en:
     PAYMENTMETHOD: Method
     PAYMENTSTATUS: "Payment Status"
     TABLESUMMARY: "The contents of your cart are displayed in this form and summary of all fees associated with an order and a rundown of payments options."
-  PaystationHostedPayment:
-    PLURALNAME: "Paystation Hosted Payments"
-    SINGULARNAME: "Paystation Hosted Payment"
-  PaystationPayment:
-    PLURALNAME: "Paystation Payments"
-    SINGULARNAME: "Paystation Payment"
-  Product:
-    PLURALNAME: Products
-    SINGULARNAME: Product
   Product.ss:
     ADD: "Add \"%s\" to your cart"
     ADDLINK: "Add this item to cart"
@@ -263,12 +140,8 @@ en:
     REMOVEALL: "Remove one of \"%s\" from your cart"
     REMOVELINK: "» Remove from cart"
     SIZE: Size
-  ProductCategory:
-    PLURALNAME: "Product Groups"
-    SINGULARNAME: "Product Group"
   ProductCategory.ss:
     FEATURED: "Featured Products"
-    OTHER: "Other Products"
   ProductCategoryItem.ss:
     ADD: "Add \"%s\" to your cart"
     ADDLINK: "Add this item to cart"
@@ -286,18 +159,3 @@ en:
     REMOVELINK: "» Remove from cart"
   ProductMenu.ss:
     GOTOPAGE: "Go to the %s page"
-  ProductVariation:
-    PLURALNAME: "Product Variations"
-    SINGULARNAME: "Product Variation"
-  SimpleShippingModifier:
-    PLURALNAME: "Simple Shipping Modifiers"
-    SINGULARNAME: "Simple Shipping Modifier"
-  TaxModifier:
-    PLURALNAME: "Tax Modifiers"
-    SINGULARNAME: "Tax Modifier"
-  WeightShippingModifier:
-    PLURALNAME: "Weight Shipping Modifiers"
-    SINGULARNAME: "Weight Shipping Modifier"
-  WorldpayPayment:
-    PLURALNAME: "Worldpay Payments"
-    SINGULARNAME: "Worldpay Payment"

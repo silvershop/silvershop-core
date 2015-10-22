@@ -1,0 +1,109 @@
+---
+pt:
+  AccountPage.ss:
+    HISTORY: "Histórico de pedidos"
+  Cart.ss:
+    CheckoutClick: "Carregue aqui para ir para a caixa"
+    CheckoutGoTo: "Ir para a caixa"
+    HEADLINE: "Carrinho de compras"
+    NOITEMS: "Não existem produtos no seu carrinho"
+    PRICE: Preço
+    READMORE: "Clique aqui para ler mais sobre \"%s\""
+    SUBTOTAL: Subtotal
+    TOTAL: Total
+  CheckoutPage.ss:
+    PROCESS: Processar
+  ChequePayment:
+    MESSAGE: "Pagamento aceite via Cheque. Por favor note: os produtos não serão enviados até que o pagamento tenha sido recebido"
+  MemberForm:
+    DETAILSSAVED: "Os seus detalhes foram guardados"
+    LOGGEDIN: "Está autenticado como"
+  OrderInformation.ss:
+    ADDRESS: Morada
+    AMOUNT: Quantia
+    BUYERSADDRESS: "Morada do Comprador"
+    CITY: Localidade
+    COUNTRY: País
+    CUSTOMERDETAILS: "Detalhes do Cliente"
+    DATE: Data
+    DETAILS: Detalhes
+    EMAIL: Email
+    MOBILE: Telemóvel
+    NAME: Nome
+    ORDERSUMMARY: "Sumário do Pedido"
+    PAYMENTID: "ID do pagamento"
+    PAYMENTINFORMATION: "Informação do pagamento"
+    PAYMENTMETHOD: Método
+    PAYMENTSTATUS: "Estado do pagamento"
+    PHONE: Telefone
+    PRICE: Preço
+    PRODUCT: Produto
+    QUANTITY: Quantidade
+    READMORE: "Clique aqui para ler mais sobre \"%s\""
+    SUBTOTAL: Sub-total
+    TOTAL: Total
+    TOTALOUTSTANDING: "Valor Total "
+    TOTALPRICE: "Preço Total"
+  OrderInformation_Editable.ss:
+    NOITEMS: "Não existem produtos no seu carrinho"
+    ORDERINFORMATION: "Informação do pedido"
+    PRICE: Preço
+    PRODUCT: Produto
+    QUANTITY: Quantidade
+    READMORE: "Clique aqui para ler mais sobre \"%s\""
+    SUBTOTAL: Sub-total
+    TOTAL: Total
+    TOTALPRICE: "Preço Total"
+  OrderInformation_NoPricing.ss:
+    ADDRESS: Morada
+    BUYERSADDRESS: "Morada do Comprador"
+    CITY: Localidade
+    COUNTRY: País
+    CUSTOMERDETAILS: "Detalhes do Cliente"
+    EMAIL: Email
+    MOBILE: Telemóvel
+    NAME: Nome
+    ORDERINFO: "Informação do Pedido #"
+    PHONE: Telefone
+  OrderInformation_PackingSlip.ss:
+    DESCRIPTION: Descrição
+    ITEM: Produto
+    ORDERDATE: "Data do pedido"
+    ORDERNUMBER: "Número do pedido"
+    QUANTITY: Quantidade
+  OrderInformation_Print.ss:
+    PAGETITLE: "Imprimir Encomendas"
+  OrderReport:
+    CHANGESTATUS: "Mudar o estado da ordem"
+    NOTEEMAIL: Nota/Email
+    SENDNOTETO: "Enviar esta nota para %s(%s)"
+  PaymentInformation.ss:
+    AMOUNT: Quantia
+    DATE: Data
+    DETAILS: Detalhes
+    PAYMENTID: "ID do pagamento"
+    PAYMENTINFORMATION: "Informação do pagamento"
+    PAYMENTMETHOD: Método
+    PAYMENTSTATUS: "Estado do Pagamento"
+  Product.ss:
+    ADD: "Adicionar \"%s\" para o carrinho"
+    ADDLINK: "Adicionar este produto para o carrinho"
+    AUTHOR: Autor
+    IMAGE: "imagem %s "
+    ItemID: "Produto #"
+    NOIMAGE: "Imagem do produto \"%s\" não disponível "
+    QUANTITYCART: "Quantidade no carrinho"
+    REMOVE: "Remover \"%s\" do seu carrinho"
+    REMOVELINK: "» Remover do carrinho"
+  ProductCategory.ss: ~
+  ProductCategoryItem.ss:
+    ADD: "Adicionar \"%s\" para o seu carrinho"
+    ADDLINK: "Adicionar este produto para o carrinho"
+    AUTHOR: Autor
+    IMAGE: "%s imagem"
+    NOIMAGE: "Imagem não disponível para \"%s\""
+    READMORE: "Clique aqui para ler mais sobre \"%s\""
+    REMOVE: "Remover \"%s\" do seu carrinho"
+    REMOVELINK: "» Remover do carrinho"
+  ProductMenu.ss:
+    GOTOPAGE: "Ir para a página %s"

@@ -1,0 +1,190 @@
+---
+ar:
+  AccountPage:
+    Message: "يجب عليك التسجيل قبل الدخول لصفحة الحساب, وإذا لم تكن مسجلاً من قبل فلا يمكنك الدخولحتى ترسل طلبك الأول ,, إذا كنت تغرب في التسجيل فملأ المطلوب بالأسفل"
+    NOPAGE: "لايوجد صفحة حساب لهذا الموقع .. فضلاً أنشئ صفحة حساب جديدة"
+  AccountPage.ss:
+    COMPLETED: "الطلبات المكتملة"
+    HISTORY: "تاريخ الطلب"
+    INCOMPLETE: "الطلبات غير المكتملة"
+    NOCOMPLETED: "لايوجد طلبات مكتملة"
+    NOINCOMPLETE: "لايوجد طلبات غير مكتملة"
+    ORDER: "الطلب #"
+    READMORE: "اقرأ المزيد للطلب #%s"
+  AccountPage_order.ss:
+    ADDRESS: العنوان
+    AMOUNT: المبلغ
+    BACKTOCHECKOUT: "اضغط هنا لصفحة الحساب النهائي "
+    CITY: المدينة
+    COUNTRY: الدولة
+    DATE: التاريخ
+    DETAILS: التفاصيل
+    EMAILDETAILS: "تم إرسال نسخة إلى بريدك الإلكتروني للتأكيد على تفاصيل الطلب"
+    NAME: الاسم
+    PAYMENTMETHOD: الطريقة
+    PAYMENTSTATUS: "حالة الدفع"
+  Cart.ss:
+    ADDONE: "إضافة \"%s\" آخر إلى عربة الشراء"
+    CheckoutClick: "اضغط هنا للخروج"
+    CheckoutGoTo: "اذهب للخروج من النظام"
+    HEADLINE: "عربة الشراء"
+    NOITEMS: "لايوجد أدوات في عربة الشراء"
+    PRICE: السعر
+    READMORE: "اضغط هنا لقراءة المزيد \"%s\""
+    REMOVE: "حذف \"%s\" من عربة الشراء"
+    REMOVEALL: "حذف جميع \"%s\" من عربة الشراء"
+    REMOVEONE: "حذف أحد \"%s\" من عربة الشراء"
+    SUBTOTAL: المجموع
+    TOTAL: المجموع
+  CheckoutPage:
+    NOPAGE: "لايجد صفحة خروج لهذا الموقع - فضلاً قم بإنشاء صفحة خروج"
+  CheckoutPage.ss:
+    CHECKOUT: الخروج
+    ORDERSTATUS: "حالة الطلب"
+    PROCESS: العملية
+  ChequePayment:
+    MESSAGE: "يقبل الدفع بواسطة الشيكات. ملاحظة : المنتجات لن تشحن حتى يتم استلام المبلغ"
+  MemberForm:
+    DETAILSSAVED: "تم حفظ التفاصيل"
+    LOGGEDIN: "حالياً أنت مسجل كـ"
+  Order:
+    INCOMPLETE: "الطلب غير مكتمل"
+    SUCCESSFULL: "تم الطلب بنجاح"
+  OrderInformation.ss:
+    ADDRESS: العنوان
+    AMOUNT: المبلغ
+    BUYERSADDRESS: "عنوان المشتري"
+    CITY: المدينة
+    COUNTRY: الدولة
+    CUSTOMERDETAILS: "تفاصيل العميل"
+    DATE: التاريخ
+    DETAILS: التفاصيل
+    EMAIL: "البريد الإلكتروني"
+    MOBILE: الجوال
+    NAME: الاسم
+    ORDERSUMMARY: "ملخص الطلب"
+    PAYMENTID: "رقم الدفع"
+    PAYMENTINFORMATION: "معلومات الدفع"
+    PAYMENTMETHOD: الطريقة
+    PAYMENTSTATUS: "حالة الدفع"
+    PHONE: الهاتف
+    PRICE: السعر
+    PRODUCT: المنتج
+    QUANTITY: الكمية
+    READMORE: "اضغط هنا لقراءة المزيد عن \"%s\""
+    SHIPPINGDETAILS: "تفاصيل الشحن"
+    SUBTOTAL: المجموع
+    TOTAL: المجموع
+    TOTALOUTSTANDING: "إجمالي المعلقات"
+    TOTALPRICE: "السعر الإجمالي"
+  OrderInformation_Editable.ss:
+    ADDONE: "إضافة \"%s\" آخر إلى عربة الشراء"
+    NOITEMS: "لاتوجد عناصر في عربة الشراء"
+    ORDERINFORMATION: "معلومات الطلب"
+    PRICE: السعر
+    PRODUCT: المنتج
+    QUANTITY: الكمية
+    READMORE: "اضغط هنا لقراءة المزيد عن \"%s\""
+    REMOVE: "حذف \"%s\" من عربة الشراء"
+    REMOVEALL: "حذف جميع \"%s\" من عربة الشراء"
+    REMOVEONE: "حذف أحد \"%s\" من عربة الشراء"
+    SUBTOTAL: المجموع
+    TABLESUMMARY: "محتويات عربة الشراء تظهر في هذا الموذج و ملخص جميع الرسوم ترتبط بالطلب و خيارات الدفع"
+    TOTAL: المجموع
+    TOTALPRICE: "السعر الإجمالي"
+  OrderInformation_NoPricing.ss:
+    ADDRESS: العنوان
+    BUYERSADDRESS: "عنوان المشتري"
+    CITY: المدينة
+    COUNTRY: الدولة
+    CUSTOMERDETAILS: "تفاصيل العميل"
+    EMAIL: "البريد الإلكتروني"
+    MOBILE: الجوال
+    NAME: الاسم
+    ORDERINFO: "معلومات للطلب #"
+    PHONE: الهاتف
+    TABLESUMMARY: "محتويات عربة الشراء تظهر في هذا الموذج و ملخص جميع الرسوم ترتبط بالطلب و خيارات الدفع"
+  OrderInformation_PackingSlip.ss:
+    DESCRIPTION: الوصف
+    ITEM: العنصر
+    ORDERDATE: "تاريخ الطلب"
+    ORDERNUMBER: "رقم الطلب"
+    PAGETITLE: "طلبات طباعة المتجر"
+    QUANTITY: الكمية
+    TABLESUMMARY: "محتويات عربة الشراء تظهر في هذا الموذج و ملخص جميع الرسوم ترتبط بالطلب و خيارات الدفع"
+  OrderInformation_Print.ss:
+    PAGETITLE: "طباعة الطلبات"
+  OrderReport:
+    CHANGESTATUS: "تغيير حالة الطلب"
+    NOTEEMAIL: "البريد الإلكتروني / ملاحظة"
+    SENDNOTETO: "إرسال ههذه الملاحظة إلى %s (%s)"
+  Order_Content.ss:
+    NOITEMS: "لايوجد عناصر في طلبك"
+    PRICE: السعر
+    PRODUCT: المنتج
+    QUANTITY: الكمية
+    READMORE: "اضغط هنا لقراءة المزيد \"%s\""
+    SUBTOTAL: المجموع
+    TOTAL: المجموع
+    TOTALOUTSTANDING: "مجموع الطلبات المعلقة"
+    TOTALPRICE: "السعر الإجمالي"
+  Order_Member.ss:
+    ADDRESS: العنوان
+    CITY: المدينة
+    COUNTRY: الدولة
+    EMAIL: "البريد الإلكتروني"
+    MOBILE: الجوال
+    NAME: الاسم
+    PHONE: الهاتف
+  Order_ReceiptEmail.ss:
+    HEADLINE: "إيصال طلب المتجر"
+    TITLE: "إيصال المتجر"
+  Order_StatusEmail.ss:
+    HEADLINE: "تغيير حالة المتجر"
+    STATUSCHANGE: "تم تغيير الحالة إلى  \"%s\" للطلب رقم #"
+    TITLE: "تغيير حالة المتجر"
+  PaymentInformation.ss:
+    AMOUNT: المبلغ
+    DATE: التاريخ
+    DETAILS: التفاصيل
+    PAYMENTID: "رقم الدفع"
+    PAYMENTINFORMATION: "معلومات الدفع"
+    PAYMENTMETHOD: الطريقة
+    PAYMENTSTATUS: "حالة الدفع"
+    TABLESUMMARY: "محتويات عربة الشراء تظهر في هذا الموذج و ملخص جميع الرسوم ترتبط بالطلب و خيارات الدفع"
+  Product.ss:
+    ADD: "إضافة \"%s\" إلى عربة الشراء"
+    ADDLINK: "أضف هذا العنصر إلى عربة الشراء"
+    ADDONE: "إضافة \"%s\" آخر إلى عربة الشراء"
+    AUTHOR: الكاتب
+    FEATURED: "هذا منتج مميز"
+    GOTOCHECKOUT: "الخروج الآن"
+    GOTOCHECKOUTLINK: "الذهاب إلى الحساب النهائي للخروج"
+    IMAGE: "%s صورة"
+    ItemID: "العنصر #"
+    NOIMAGE: "عذراً , لا توجد صورة للمنتج \"%s\""
+    QUANTITYCART: "الكمية في عربة الشراء"
+    REMOVE: "حذف \"%s\"من عربة الشراء"
+    REMOVEALL: "حذف أحد \"%s\" من عربة الشراء"
+    REMOVELINK: "» حذف من عربة الشراء"
+    SIZE: الحجم
+  ProductCategory.ss:
+    FEATURED: "المنتجات المميزة"
+    OTHER: "المنتجات الأخرى"
+  ProductCategoryItem.ss:
+    ADD: "أضف \"%s\" إلى عربة الشراء"
+    ADDLINK: "أضف هذا العنصر إلى عربة الشراء"
+    ADDONE: "أضف \"%s\" آخر إلى عربة الشراء"
+    AUTHOR: الكاتب
+    GOTOCHECKOUT: "الذهاب لصفحة الحساب النهائي للخروج"
+    GOTOCHECKOUTLINK: "الحساب النهائي للخروج"
+    IMAGE: "الصورة %s"
+    NOIMAGE: "عذراً. لايوجد صورة للمنتج \"%s\""
+    QUANTITYCART: "الكمية في عربة الشراء"
+    READMORE: "اضغط هنا لقراءة المزيد \"%s\""
+    READMORECONTENT: "اضغط لقراءة المزيد »"
+    REMOVE: "حذف \"%s\" من عربة الشراء"
+    REMOVEALL: "حذف أحد \"%s\" من عربة الشراء"
+    REMOVELINK: "» إزالة من عربة الشراء"
+  ProductMenu.ss:
+    GOTOPAGE: "اذهب إلى صفحة %s "

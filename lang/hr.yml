@@ -1,0 +1,111 @@
+---
+hr:
+  AccountPage.ss:
+    COMPLETED: "Realizirane narudžbe"
+    HISTORY: "Pregled vaših narudžbi"
+    INCOMPLETE: "Nepotpune narudžbe"
+    NOCOMPLETED: "Nisu pronađene realizirane narudžbe"
+    NOINCOMPLETE: "Nisu pronađenje nerealizirane narudžbe"
+    ORDER: "Narudžba #"
+    READMORE: "Pročitajte više o narudžbi #%s"
+  Cart.ss:
+    HEADLINE: "Moja košarica"
+    NOITEMS: "U vaša košarica je prazna"
+    PRICE: Cijena
+    READMORE: "Klikni ovdje za detalje o \"%s\""
+    SUBTOTAL: "Među suma"
+    TOTAL: Ukupno
+  CheckoutPage.ss:
+    ORDERSTATUS: "Status narudžbe"
+    PROCESS: Proces
+  ChequePayment:
+    MESSAGE: "Prihvaćena uplata čekom. Primite na znanje: proizvod neće biti dostavljen sve dok se uplate ne uknjiži."
+  MemberForm:
+    DETAILSSAVED: "Vaši detalji su snimljeni"
+    LOGGEDIN: "Trenutno ste logirani kao"
+  Order:
+    INCOMPLETE: "Nepotpuna narudžba"
+    SUCCESSFULL: "Narudžba uspjela"
+  OrderInformation.ss:
+    ADDRESS: Adresa
+    BUYERSADDRESS: "Adresa kupca"
+    CITY: Grad
+    COUNTRY: Država
+    CUSTOMERDETAILS: "Detalji o kupcu"
+    DATE: Datum
+    DETAILS: Datalji
+    EMAIL: Email
+    MOBILE: Mobitel
+    NAME: Ime
+    ORDERSUMMARY: "Pregled narudžbe"
+    PAYMENTINFORMATION: "Informazije o plaćanju"
+    PAYMENTMETHOD: Metoda
+    PAYMENTSTATUS: "Status plaćanja"
+    PHONE: Telefon
+    PRICE: Cijena
+    PRODUCT: Proizvod
+    QUANTITY: Količina
+    SHIPPINGDETAILS: "Detalji dostave"
+    SUBTOTAL: "Među suma"
+    TOTALPRICE: "Ukupna cijena"
+  OrderInformation_Editable.ss:
+    ADDONE: "Dodaj jedan \"%s\" u košaricu"
+    NOITEMS: "Vaša košarica je <strong>prazna</strong>"
+    ORDERINFORMATION: "Informacije o narudžbi"
+    PRICE: Cijena
+    PRODUCT: Proizvod
+    QUANTITY: Količina
+    READMORE: "Kliknite ovdje za detalje o \"%s\""
+    REMOVEONE: "Makni iz košarice jedan \"%s\""
+    SUBTOTAL: "Među suma"
+    TABLESUMMARY: "Sadržaj vaše košarice je prikazan ovdje u formi sa svim troškovima vezanim uz narudžbu te detaljima plaćanja"
+    TOTAL: Ukupno
+    TOTALPRICE: "Ukupna cijena"
+  OrderInformation_NoPricing.ss:
+    ADDRESS: Adresa
+    BUYERSADDRESS: "Adresa kupca"
+    CITY: Grad
+    COUNTRY: Država
+    CUSTOMERDETAILS: "Detalji o kupcu"
+    EMAIL: Email
+    MOBILE: Mobitel
+    NAME: Ime
+    ORDERINFO: "Informazije o narudđbi #"
+    PHONE: Telefon
+    TABLESUMMARY: "Sadržaj vaše košarice je prikazan ovdje u formi sa svim troškovima vezanim uz narudžbu te detaljima plaćanja"
+  OrderInformation_PackingSlip.ss:
+    DESCRIPTION: Opis
+    ORDERDATE: "Datum narudžbe"
+    ORDERNUMBER: "Broj narudžbe"
+    QUANTITY: Količina
+  OrderInformation_Print.ss:
+    PAGETITLE: "Ispiši narudžbe"
+  OrderReport:
+    CHANGESTATUS: "Promijeni status narudžbe"
+    NOTEEMAIL: Poruka/Email
+    SENDNOTETO: "Pošalji poruku %s (%s)"
+  PaymentInformation.ss:
+    DATE: Datum
+    DETAILS: Detalji
+    PAYMENTINFORMATION: "Informacije o plačanju"
+    PAYMENTMETHOD: Metoda
+    PAYMENTSTATUS: "Status plačanja"
+  Product.ss:
+    AUTHOR: Autor
+    IMAGE: "Slika %s"
+    NOIMAGE: "Nažalost nema slike \"%s\""
+    QUANTITYCART: "Količina u košarici"
+    SIZE: Veličina
+  ProductCategoryItem.ss:
+    ADD: "Dodaj \"%s\" u vašu košaricu"
+    ADDLINK: "Dodaj u košaricu"
+    ADDONE: "Dodaj još jedan  \"%s\" u košaricu"
+    AUTHOR: Autor
+    IMAGE: "Slika %s"
+    NOIMAGE: "Nažalost nema slike za \"%s\""
+    QUANTITYCART: "Količina u košarici"
+    READMORE: "Klikni ovdje za detalje o \"%s\""
+    REMOVE: "Odstrani  \"%s\"  iz košarice"
+    REMOVELINK: "» Odstrani iz košarice"
+  ProductMenu.ss:
+    GOTOPAGE: "Idi na %s stranicu"
