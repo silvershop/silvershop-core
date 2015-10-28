@@ -31,14 +31,14 @@ class CartPage extends Page{
 		$fields = parent::getCMSFields();
 		if($checkouts = CheckoutPage::get()) {
 			$fields->addFieldToTab('Root.Links',
-				DropdownField::create('CheckoutPageID', 'Checkout Page',
+				DropdownField::create('CheckoutPageID', _t('CartPage.has_one_CheckoutPage', 'Checkout Page'),
 					$checkouts->map("ID", "Title")
 				)
 			);
 		}
 		if($pgroups = ProductCategory::get()) {
 			$fields->addFieldToTab('Root.Links',
-				DropdownField::create('ContinuePageID', 'Continue Product Group Page',
+				DropdownField::create('ContinuePageID', _t('CartPage.has_one_ContinuePage', 'Continue Product Group Page'),
 					$pgroups->map("ID", "Title")
 				)
 			);

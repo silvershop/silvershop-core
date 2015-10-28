@@ -1,6 +1,10 @@
 <table class="variationstable">
 	<tr>
-		<th>Variation</th><th>Price</th><% if $canPurchase %><th><% _t("QUANTITYCART","Quantity in cart") %></th><% end_if %>
+		<th><%t ProductVariation.SINGULARNAME "Variation" %></th>
+		<th><%t Product.PRICE "Price" %></th>
+		<% if $canPurchase %>
+			<th><% _t("QUANTITYCART","Quantity in cart") %></th>
+		<% end_if %>
 	</tr>
 	<% loop $Variations %>
 			<tr>

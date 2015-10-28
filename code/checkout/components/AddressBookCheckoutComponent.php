@@ -46,7 +46,18 @@ abstract class AddressBookCheckoutComponent extends AddressCheckoutComponent{
 			$addressoptions = $member->AddressBook()->sort('Created', 'DESC')->map('ID', 'toString')->toArray();
 			$addressoptions['newaddress'] = _t("AddressBookCheckoutComponent.CREATENEWADDRESS", "Create new address");
 			$fieldtype = count($addressoptions) > 3 ? 'DropdownField' : 'OptionsetField';
-			$label = _t("AddressBookCheckoutComponent.Existing{$this->addresstype}Address", "Existing {$this->addresstype} Address");
+
+			$label = '';
+			switch($this->addresstype){
+				case 'Billing':
+					$label = _t("AddressBookCheckoutComponent.EXISTING_BILLING_ADDRESS", "Existing Billing Address");
+					break;
+				case 'Shipping':
+					$label = _t("AddressBookCheckoutComponent.EXISTING_SHIPPING_ADDRESS", "Existing Shipping Address");
+					break;
+				default:
+					$label = _t("AddressBookCheckoutComponent.EXISTING_ADDRESS", "Existing Address");
+			}
 
 			return new FieldList(
 				$fieldtype::create($this->addresstype."AddressID", $label,

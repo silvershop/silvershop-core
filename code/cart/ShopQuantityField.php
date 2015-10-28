@@ -54,7 +54,11 @@ class ShopQuantityField extends ViewableData{
 		for($r=1; $r<= $this->max; $r++){
 			$qtyArray[$r] = $r;
 		}
-		return new NumericField($this->MainID() . '_Quantity', "Qty", $this->item->Quantity);
+		return new NumericField(
+			$this->MainID() . '_Quantity',
+			// this title currently doesn't show up in the front end, better assign a translation anyway.
+			_t('AddProductForm.Quantity', "Quantity"),
+			$this->item->Quantity);
 	}
 
 	public function MainID() {
@@ -106,8 +110,11 @@ class DropdownShopQuantityField extends ShopQuantityField{
 		for($r=1; $r<= $this->max; $r++){
 			$qtyArray[$r] = $r;
 		}
-		return new DropdownField($this->MainID() . '_Quantity', "Qty", $qtyArray, ($this->item->Quantity)
-			? $this->item->Quantity : "");
+		return new DropdownField(
+			$this->MainID() . '_Quantity',
+			// this title currently doesn't show up in the front end, better assign a translation anyway.
+			_t('AddProductForm.Quantity', "Quantity"),
+			$qtyArray, ($this->item->Quantity) ? $this->item->Quantity : "");
 	}
 
 }

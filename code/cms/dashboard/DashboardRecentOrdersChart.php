@@ -26,7 +26,7 @@ if (class_exists('DashboardPanel')) {
 
 		public function getConfiguration() {
 			$fields = parent::getConfiguration();
-			$fields->push(TextField::create("Days", "Number of days to show"));
+			$fields->push(TextField::create("Days", _t('ShopDashboard.NUMBER_OF_DAYS', "Number of days to show")));
 			return $fields;
 		}
 

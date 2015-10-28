@@ -49,19 +49,21 @@ class ProductAttributeType extends DataObject{
 
 	public function getCMSFields(){
 		$fields = new FieldList(
-			TextField::create("Name"),
-			TextField::create("Label")
+			TextField::create("Name", _t('ProductAttributeType.db_Name', 'Name')),
+			TextField::create("Label", _t('ProductAttributeType.db_Label', 'Label'))
 		);
 		if($this->isInDB()){
 			$fields->push(GridField::create(
-				"Values","Values",$this->Values(),
+				"Values",
+				_t('ProductAttributeType.has_many_Values',"Values"),
+				$this->Values(),
 				GridFieldConfig_RecordEditor::create()
 			));
 		}else{
 			$fields->push(LiteralField::create("Values",
-				"<p class=\"message warning\">
-					Save first, then you can add values.
-				</p>"
+				'<p class="message warning">' .
+					_t('ProductAttributeType.SAVE_FIRST_MESSAGE', 'Save first, then you can add values.') .
+				'</p>'
 			));
 		}
 

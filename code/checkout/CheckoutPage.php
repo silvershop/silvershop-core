@@ -33,9 +33,10 @@ class CheckoutPage extends Page {
 	public function getCMSFields() {
 		$fields = parent::getCMSFields();
 		$fields->addFieldsToTab('Root.Main', array(
-			HtmlEditorField::create('PurchaseComplete', 'Purchase Complete', 4)
+			HtmlEditorField::create('PurchaseComplete', _t('CheckoutPage.db_PurchaseComplete', 'Purchase Complete'), 4)
 				->setDescription(
-					"This message is included in reciept email, after the customer submits the checkout"
+					_t('CheckoutPage.PURCHASE_COMPLETE_DESCRIPTION',
+						"This message is included in reciept email, after the customer submits the checkout")
 				)
 		), 'Metadata');
 		return $fields;
@@ -123,7 +124,7 @@ class CheckoutPage_Controller extends Page_Controller {
 		$form = PaymentForm::create($this, "PaymentForm", $config);
 
 		$form->setActions(new FieldList(
-			FormAction::create("submitpayment", "Submit Payment")
+			FormAction::create("submitpayment", _t('CheckoutPage.SUBMIT_PAYMENT', "Submit Payment"))
 		));
 
 		$form->setFailureLink($this->Link());

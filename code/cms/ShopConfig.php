@@ -36,13 +36,13 @@ class ShopConfig extends DataExtension {
 				UploadField::create('DefaultProductImage', _t('ShopConfig.DEFAULTIMAGE', 'Default Product Image'))
 			),
 			$countriestab = new Tab("Countries",
-				CheckboxSetField::create('AllowedCountries', 'Allowed Ordering and Shipping Countries',
+				CheckboxSetField::create('AllowedCountries', _t('ShopConfig.ALLOWED_COUNTRIES', 'Allowed Ordering and Shipping Countries'),
 					self::config()->iso_3166_country_codes
 				)
 			)
 		));
 		$fields->removeByName("CreateTopLevelGroups");
-		$countriestab->setTitle("Allowed Countries");
+		$countriestab->setTitle(_t('ShopConfig.ALLOWED_COUNTRIES_TAB_TITLE', "Allowed Countries"));
 	}
 
 	public static function get_base_currency() {

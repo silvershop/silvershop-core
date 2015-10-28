@@ -50,7 +50,7 @@ class CartEditField extends FormField{
 	 * before it is rendered.
 	 * @param Closure $callback
 	 */
-	public function setEditableItemsCallback(Clousre $callback){
+	public function setEditableItemsCallback(Closure $callback){
 		$this->editableItemsCallback = $callback;
 	}
 
@@ -94,13 +94,13 @@ class CartEditField extends FormField{
 				if($variations->exists()){
 					$variationfield = DropdownField::create(
 						$name."[ProductVariationID]",
-						"Varaition",
+						_t('CartEditField.VARIATION', "Variation"),
 						$variations->map('ID', 'Title'),
 						$item->ProductVariationID
 					);
 				}
 			}
-			$remove = CheckboxField::create($name."[Remove]", "Remove");
+			$remove = CheckboxField::create($name."[Remove]", _t('CartEditField.REMOVE', "Remove"));
 			$editables->push($item->customise(array(
 				"QuantityField" => $quantity,
 				"VariationField" => $variationfield,

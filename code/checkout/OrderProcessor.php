@@ -40,9 +40,9 @@ class OrderProcessor{
 	}
 
 	/**
-	 * URL to display success message to the user. 
+	 * URL to display success message to the user.
 	 * Happens after any potential offsite gateway redirects.
-	 * 
+	 *
 	 * @return String Relative URL
 	 */
 	public function getReturnUrl() {
@@ -79,14 +79,14 @@ class OrderProcessor{
 
 	/**
 	 * Map shop data to omnipay fields
-	 * 
+	 *
 	 * @param array $customData Usually user submitted data.
 	 * @return array
 	 */
 	protected function getGatewayData($customData) {
 		$shipping = $this->order->getShippingAddress();
 		$billing = $this->order->getBillingAddress();
-		
+
 		return array_merge(
 			$customData,
 			array(
@@ -118,7 +118,11 @@ class OrderProcessor{
 	 */
 	public function createPayment($gateway) {
 		if(!GatewayInfo::is_supported($gateway)) {
-			$this->error(_t("PaymentProcessor.INVALIDGATEWAY", "`$gateway` isn't a valid payment gateway."));
+			$this->error(_t(
+				"PaymentProcessor.INVALID_GATEWAY",
+				"`{gateway}` isn't a valid payment gateway.",
+				'gateway is the name of the payment gateway',
+				array('gateway' => $gateway)));
 			return false;
 		}
 		if(!$this->order->canPay(Member::currentUser())){
@@ -186,7 +190,7 @@ class OrderProcessor{
 			$this->error(_t("OrderProcessor.NOITEMS", "Order has no items."));
 			return false;
 		}
-		
+
 		return true;
 	}
 

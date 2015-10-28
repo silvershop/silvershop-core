@@ -14,7 +14,7 @@
 		<% if $Image.ContentImage %>
 			<img class="productImage" src="$Image.ContentImage.URL" alt="<% sprintf(_t("IMAGE","%s image"),$Title) %>" />
 		<% else %>
-			<div class="noimage">no image</div>
+			<div class="noimage"><%t Product.NO_IMAGE "no image" %></div>
 		<% end_if %>
 		<% if $InternalItemID %><p><% _t("CODE","Product Code") %>: {$InternalItemID}</p><% end_if %>
 		<% if $Model %><p><% _t("MODEL","Model") %>: $Model.XML</p><% end_if %>

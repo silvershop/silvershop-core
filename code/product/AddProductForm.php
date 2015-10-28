@@ -83,9 +83,9 @@ class AddProductForm extends Form {
 				$count++;
 			}
 
-			$fields->push(new DropdownField(_t('AddProductForm.Quantity', 'Quantity'),'Quantity', $values, 1));
+			$fields->push(new DropdownField('Quantity', _t('AddProductForm.Quantity', 'Quantity'), $values, 1));
 		} else {
-			$fields->push(new NumericField(_t('AddProductForm.Quantity', 'Quantity'), 'Quantity', 1));
+			$fields->push(new NumericField('Quantity', _t('AddProductForm.Quantity', 'Quantity'), 1));
 		}
 
 		return $fields;

@@ -73,8 +73,8 @@ class ProductVariation extends DataObject implements Buyable {
 
 	public function getCMSFields() {
 		$fields = new FieldList(
-			TextField::create('InternalItemID','Product Code'),
-			TextField::create('Price')
+			TextField::create('InternalItemID', _t('Product.CODE', 'Product Code')),
+			TextField::create('Price', _t('Product.PRICE', 'Price'))
 		);
 		//add attributes dropdowns
 		$attributes = $this->Product()->VariationAttributeTypes();
@@ -87,20 +87,26 @@ class ProductVariation extends DataObject implements Buyable {
 					$fields->push($field);
 				}else{
 					$fields->push(LiteralField::create('novalues'.$attribute->Name,
-						"<p class=\"message warning\">".
-							$attribute->Name." has no values to choose from.
-							You can create them in the \"Products\" &#62;
-							\"Product Attribute Type\" section of the CMS.
-						</p>"
+						'<p class="message warning">'.
+							_t(
+								'ProductVariation.NO_ATTRIBUTE_VALUES_MESSAGE',
+								'{attribute} has no values to choose from. You can create them in the "Products" &#62; "Product Attribute Type" section of the CMS.',
+								'Warning that will be shown if an attribute doesn\'t have any values',
+								array('attribute' => $attribute->Name)
+							) .
+						'</p>'
 					));
 				}
 				//TODO: allow setting custom values here, rather than visiting the products section
 			}
 		}else{
 			$fields->push(LiteralField::create('savefirst',
-				"<p class=\"message warning\">".
-					"You can choose variation attributes after saving for the first time, if they exist.
-				</p>"
+				'<p class="message warning">'.
+					_t(
+						'ProductVariation.SAVE_FIRST_MESSAGE',
+						"You can choose variation attributes after saving for the first time, if they exist."
+					) .
+				'</p>'
 			));
 		}
 		$fields->push(

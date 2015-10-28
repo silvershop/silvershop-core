@@ -17,13 +17,18 @@ class VariationForm extends AddProductForm {
 
 		foreach($attributes as $attribute){
 			$farray[] = $attribute->getDropDownField(
-				"Choose $attribute->Label ...", 
+				_t(
+					'VariationForm.CHOOSE_ATTRIBUTE',
+					"Choose {attribute} …",
+					'',
+					array('attribute' => $attribute->Label)
+				),
 				$product->possibleValuesForAttributeType($attribute)
 			);
-			
+
 			$requiredfields[] = "ProductAttributes[$attribute->ID]";
 		}
-		
+
 		$fields = new FieldList($farray);
 
 		if(self::$include_json) {
@@ -53,7 +58,7 @@ class VariationForm extends AddProductForm {
 	}
 
 	/**
-	 * Adds a given product to the cart. If a hidden field is passed 
+	 * Adds a given product to the cart. If a hidden field is passed
 	 * (ValidateVariant) then simply a validation of the user including that
 	 * product is done and the users cart isn't actually changed.
 	 *
@@ -63,7 +68,7 @@ class VariationForm extends AddProductForm {
 		if($variation = $this->getBuyable($data)) {
 			$quantity = (isset($data['Quantity']) && is_numeric($data['Quantity'])) ? (int) $data['Quantity'] : 1;
 			$cart = ShoppingCart::singleton();
-			
+
 			// if we are in just doing a validation step then check
 			if($this->request->requestVar('ValidateVariant')) {
 				$message = '';
@@ -91,7 +96,7 @@ class VariationForm extends AddProductForm {
 
 			if($cart->add($variation, $quantity)) {
 				$form->sessionMessage(
-					"Successfully added to cart.",
+					_t('ShoppingCart.ITEMADD', "Item has been added successfully."),
 					"good"
 				);
 			} else {
@@ -99,7 +104,10 @@ class VariationForm extends AddProductForm {
 			}
 		} else {
 			$variation = null;
-			$form->sessionMessage("That variation is not available, sorry.","bad"); //validation fail
+			$form->sessionMessage(
+				_t('VariationForm.VARIATION_NOT_AVAILABLE', "That variation is not available, sorry."),
+				"bad"
+			); //validation fail
 		}
 
 		$this->extend('updateVariationAddToCart', $form, $variation);

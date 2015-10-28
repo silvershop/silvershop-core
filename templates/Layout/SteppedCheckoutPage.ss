@@ -43,7 +43,7 @@
 						<div class="accordion-body">
 							<div class="accordion-inner">
 								<% if $IsCurrentStep('contactdetails') %>
-									<p>Supply your contact information</p>
+									<p><%t CheckoutStep_Address.SUPPLY_CONTACT_INFO "Supply your contact information" %></p>
 									$OrderForm
 								<% end_if %>
 								<% if $IsPastStep('contactdetails') %>
@@ -59,9 +59,11 @@
 				<div class="accordion-group">
 					<div class="accordion-heading">
 						<% if $IsPastStep('shippingaddress') %>
-							<h3><a class="accordion-toggle" title="edit address(es)" href="$Link('shippingaddress')">Address</a></h3>
+							<h3><a class="accordion-toggle" title="edit address(es)" href="$Link('shippingaddress')">
+								<%t Address.SINGULARNAME "Address" %>
+							</a></h3>
 						<% else %>
-							<h3 class="accordion-toggle">Address</h3>
+							<h3 class="accordion-toggle"><%t Address.SINGULARNAME "Address" %></h3>
 						<% end_if %>
 					</div>
 					<% if $IsFutureStep('shippingaddress') %>
@@ -70,19 +72,19 @@
 						<div class="accordion-body">
 							<div class="accordion-inner">
 								<% if $IsCurrentStep('shippingaddress') %>
-									<p>Please enter your shipping address details.</p>
+									<p><%t CheckoutStep_Address.ENTER_SHIPPING_ADDRESS "Please enter your shipping address details." %></p>
 									$OrderForm
 								<% end_if %>
 								<% if $IsPastStep('shippingaddress') %>
 									<div class="row">
 										<div class="span4">
 											<% with $Cart %>
-												<h4>Ship To:</h4>
+												<h4><%t CheckoutStep_Address.SHIP_TO "Ship To:" %></h4>
 												$ShippingAddress
 											<% end_with %>
 										</div>
 										<div class="span4">
-										<h4>Bill To:</h4>
+										<h4><%t CheckoutStep_Address.BILL_TO "Bill To:" %></h4>
 											<% if $IsCurrentStep('billingaddress') %>
 												$OrderForm
 											<% else %>
@@ -101,9 +103,11 @@
 				<div class="accordion-group">
 					<div class="accordion-heading">
 						<% if $IsPastStep('shippingmethod') %>
-							<h3><a class="accordion-toggle" title="choose shipping method" href="$Link('shippingmethod')">Shipping</a></h3>
+							<h3><a class="accordion-toggle" title="choose shipping method" href="$Link('shippingmethod')">
+								<%t CheckoutStep.SHIPPING "Shipping" %>
+							</a></h3>
 						<% else %>
-							<h3 class="accordion-toggle">Shipping</h3>
+							<h3 class="accordion-toggle"><%t CheckoutStep.SHIPPING "Shipping" %></h3>
 						<% end_if %>
 					</div>
 					<% if $IsFutureStep('shippingmethod') %>
@@ -127,9 +131,11 @@
 				<div class="accordion-group">
 					<div class="accordion-heading">
 						<% if $IsPastStep('paymentmethod') %>
-							<h3><a class="accordion-toggle" title="choose payment method" href="$Link('paymentmethod')">Payment Method</a></h3>
+							<h3><a class="accordion-toggle" title="choose payment method" href="$Link('paymentmethod')">
+								<%t OrderActionsForm.PAYMENTMETHOD "Payment Method" %>
+							</a></h3>
 						<% else %>
-							<h3 class="accordion-toggle">Payment Method</h3>
+							<h3 class="accordion-toggle"><%t OrderActionsForm.PAYMENTMETHOD "Payment Method" %></h3>
 						<% end_if %>
 					</div>
 					<% if $IsFutureStep('paymentmethod') %>
@@ -150,7 +156,7 @@
 
 				<div class="accordion-group">
 					<div class="accordion-heading">
-						<h3 class="accordion-toggle">Summary</h3>
+						<h3 class="accordion-toggle"><%t CheckoutStep.SUMMARY "Summary" %></h3>
 					</div>
 					<% if $IsFutureStep('summary') %>
 
@@ -170,7 +176,7 @@
 													<% end_if %>
 												<% end_loop %>
 												<tr>
-													<th colspan="3">Grand Total</th>
+													<th colspan="3"><%t CheckoutStep.GRAND_TOTAL "Grand Total" %></th>
 													<td>$Total.Nice $Currency</td>
 												</tr>
 											</tfoot>
@@ -191,7 +197,8 @@
 <% else %>
 
 	<div class="message warning alert alert-block alert-info">
-		<h4 class="alert-heading">Your cart is empty</h4>
+		<h4 class="alert-heading">
+			<% _t('CartPage.ss.CARTEMPTY','Your cart is empty') %></h4>
 		<i class="icon icon-info-sign"></i> <% _t("NOITEMS","There are no items in your cart.") %>
 	</div>
 
