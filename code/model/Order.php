@@ -159,7 +159,7 @@ class Order extends DataObject {
 		$fs = "<div class=\"field\">";
 		$fe = "</div>";
 		$parts = array(
-			DropdownField::create("Status", _t("STATUS", "Status"), self::get_order_status_options()),
+			DropdownField::create("Status", _t('Order.db_Status', "Status"), self::get_order_status_options()),
 			LiteralField::create('Customer', $fs.$this->renderWith("OrderAdmin_Customer").$fe),
 			LiteralField::create('Addresses', $fs.$this->renderWith("OrderAdmin_Addresses").$fe),
 			LiteralField::create('Content', $fs.$this->renderWith("OrderAdmin_Content").$fe)
@@ -186,7 +186,7 @@ class Order extends DataObject {
 		$context = parent::getDefaultSearchContext();
 		$fields = $context->getFields();
 		$fields->push(
-			ListboxField::create("Status","Status")
+			ListboxField::create("Status",_t('Order.db_Status', "Status"))
 				->setSource(array_combine(
 					self::config()->placed_status,
 					self::config()->placed_status
@@ -194,9 +194,9 @@ class Order extends DataObject {
 				->setMultiple(true)
 		);
 		//add date range filtering
-		$fields->insertBefore(DateField::create("DateFrom", "Date from")
+		$fields->insertBefore(DateField::create("DateFrom", _t('Order.DATE_FROM', "Date from"))
 			->setConfig('showcalendar', true), 'Status');
-		$fields->insertBefore(DateField::create("DateTo", "Date to")
+		$fields->insertBefore(DateField::create("DateTo", _t('Order.DATE_TO', "Date to"))
 			->setConfig('showcalendar', true), 'Status');
 		//get the array, to maniplulate name, and fullname seperately
 		$filters = $context->getFilters();

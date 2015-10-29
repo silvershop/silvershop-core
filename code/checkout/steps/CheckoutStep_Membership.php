@@ -35,8 +35,9 @@ class CheckoutStep_Membership extends CheckoutStep{
 	public function MembershipForm() {
 		$fields = new FieldList();
 		$actions = new FieldList(
-			new FormAction("createaccount", "Create an Account"),
-			new FormAction("guestcontinue", "Continue as Guest")
+			new FormAction("createaccount",
+				_t('CheckoutStep_Membership.CREATE_ACCOUNT', "Create an Account", 'This is an option presented to the user')),
+			new FormAction("guestcontinue", _t('CheckoutStep_Membership.CONTINUE_AS_GUEST', "Continue as Guest"))
 		);
 		$form = Form::create($this->owner, 'MembershipForm', $fields, $actions);
 		$this->owner->extend('updateMembershipForm', $form);
@@ -85,7 +86,8 @@ class CheckoutStep_Membership extends CheckoutStep{
 	public function CreateAccountForm() {
 		$form = new CheckoutForm($this->owner, "CreateAccountForm", $this->registerconfig());
 		$form->setActions(new FieldList(
-			new FormAction('docreateaccount', 'Create New Account')
+			new FormAction('docreateaccount',
+				_t('CheckoutStep_Membership.CREATE_NEW_ACCOUNT', 'Create New Account', 'This is an action (Button label)'))
 		));
 		$form->getValidator()->addRequiredField("Password");
 

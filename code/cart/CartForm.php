@@ -15,7 +15,7 @@ class CartForm extends Form{
 				->setTemplate($template)
 		);
 		$actions = new FieldList(
-			FormAction::create("updatecart", "Update Cart")
+			FormAction::create("updatecart", _t('CartForm.UPDATE_CART', "Update Cart"))
 		);
 
 		parent::__construct($controller, $name, $fields, $actions);
@@ -60,10 +60,20 @@ class CartForm extends Form{
 			}
 		}
 		if($removecount){
-			$messages['remove'] = "Removed ".$removecount." items.";
+			$messages['remove'] = _t(
+				'CartForm.REMOVED_ITEMS',
+				"Removed {count} items.",
+				"count is the amount that was removed",
+				array('count' => $removecount)
+			);
 		}
 		if($updatecount){
-			$messages['updatecount'] = "Updated ".$updatecount." items.";
+			$messages['updatecount'] = _t(
+				'CartForm.UPDATED_ITEMS',
+				"Updated {count} items.",
+				"count is the amount that was updated",
+				array('count' => $updatecount)
+			);
 		}
 		if(count($messages)){
 			$form->sessionMessage(implode(" ", $messages), "good");

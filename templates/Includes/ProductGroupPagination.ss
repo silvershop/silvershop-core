@@ -2,7 +2,7 @@
 <div id="PageNumbers">
 	<p><% _t('ProductGroup.PAGE','page') %>:
 		<% if $Products.NotFirstPage %>
-			<a class="prev" href="$Products.PrevLink" title="View the previous page"><% _t('ProductGroup.PREVIOUS','previous') %></a>
+			<a class="prev" href="$Products.PrevLink" title="<%t ProductGroup.VIEW_PREVIOUS "View the previous page" %>"><% _t('ProductGroup.PREVIOUS','previous') %></a>
 		<% end_if %>
 
 		<span>
@@ -11,7 +11,7 @@
 					$PageNum
 				<% else %>
 					<% if $Link %>
-						<a href="$Link" title="View page number $PageNum">$PageNum</a>
+						<a href="$Link" title="<%t ProductGroup.VIEW_PAGE "View page number {pageNum}" pageNum=$PageNum %>">$PageNum</a>
 					<% else %>
 						&hellip;
 					<% end_if %>
@@ -20,7 +20,7 @@
 		</span>
 
 		<% if $Products.NotLastPage %>
-			<a class="next" href="$Products.NextLink" title="View the next page"><% _t('ProductGroup.NEXT','next') %></a>
+			<a class="next" href="$Products.NextLink" title="<%t ProductGroup.VIEW_NEXT "View the next page" %>"><% _t('ProductGroup.NEXT','next') %></a>
 		<% end_if %>
 	</p>
 </div>

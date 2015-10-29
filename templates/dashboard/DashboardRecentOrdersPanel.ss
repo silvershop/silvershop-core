@@ -3,13 +3,13 @@
 		<table class="table table-bordered orderhistory">
 			<thead>
 				<tr>
-					<th>Reference</th>
-					<th>Date</th>
-					<th>Customer</th>
-					<th>Email</th>
-					<th>Items</th>
-					<th>Total</th>
-					<th>Status</th>
+					<th><%t Order.db_Reference "Reference" %></th>
+					<th><%t ShopDashboard.DATE "Date" %></th>
+					<th><%t ShopDashboard.CUSTOMER "Customer" %></th>
+					<th><%t AccountNavigation.EMAIL "Email" %></th>
+					<th><%t Order.has_many_Items "Items" %></th>
+					<th><%t Order.db_Total "Total" %></th>
+					<th><%t Order.db_Status "Status" %></th>
 					<th></th>
 				</tr>
 			</thead>
@@ -24,7 +24,9 @@
 						<td>$Total.Nice</td>
 						<td>$Status</td>
 						<td>
-							<a class="ss-ui-button ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false" href="admin/orders/Order/EditForm/field/Order/item/$ID/edit">Edit</a>
+							<a class="ss-ui-button ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false" href="admin/orders/Order/EditForm/field/Order/item/$ID/edit">
+								<%t ShopDashboard.EDIT "Edit" %>
+							</a>
 						</td>
 					</tr>
 				<% end_loop %>
@@ -36,9 +38,9 @@
 		<table class="table table-bordered orderhistory">
 			<thead>
 				<tr>
-					<th>Reference</th>
-					<th>Customer</th>
-					<th>Total</th>
+          <th><%t Order.db_Reference "Reference" %></th>
+          <th><%t ShopDashboard.CUSTOMER "Customer" %></th>
+          <th><%t Order.db_Total "Total" %></th>
 					<th></th>
 				</tr>
 			</thead>
@@ -49,7 +51,9 @@
 						<td>$Surname, $FirstName</td>
 						<td>$Total.Nice</td>
 						<td>
-							<a class="ss-ui-button ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false" href="admin/orders/Order/EditForm/field/Order/item/$ID/edit">Edit</a>
+							<a class="ss-ui-button ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false" href="admin/orders/Order/EditForm/field/Order/item/$ID/edit">
+								<%t ShopDashboard.EDIT "Edit" %>
+							</a>
 						</td>
 					</tr>
 				<% end_loop %>

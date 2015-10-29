@@ -21,6 +21,7 @@ en:
     PLURALNAME: "Account Pages"
     SINGULARNAME: "Account Page"
     Title: "Past Orders"
+    NO_PAGE: "No AccountPage was found. Please create one in the CMS!"
   AccountPage.ss:
     COMPLETED: "Completed Orders"
     HISTORY: "Your Order History"
@@ -60,7 +61,7 @@ en:
     CITYHINT: "or suburb, county, district"
     COUNTRY: Country
     PHONE: "Phone Number"
-    PLURALNAME: Addresss
+    PLURALNAME: Addresses
     POSTALCODE: "Postal Code"
     SINGULARNAME: Address
     STATE: State
@@ -83,6 +84,9 @@ en:
     has_one_Member: Member
   AddressBookCheckoutComponent:
     CREATENEWADDRESS: "Create new address"
+    EXISTING_BILLING_ADDRESS: "Existing Billing Address"
+    EXISTING_SHIPPING_ADDRESS: "Existing Shipping Address"
+    EXISTING_ADDRESS: "Existing Address"
   Cart.ss:
     ADDONE: "Add one more of \"%s\" to your cart"
     CheckoutClick: "Click here to go to the checkout"
@@ -131,6 +135,7 @@ en:
     PASSWORD: Password
     SURNAME: Surname
     TERMSANDCONDITIONS: "I agree to the terms and conditions stated on the <a href=\"%s\" target=\"new\" class=\"read_terms\" title=\"Read the shop terms and conditions for this site\">terms and conditions</a> page"
+    PAYMENT_TYPE: "Payment Type"
   CheckoutFields:
     PAYMENTTYPE: "Payment Type"
   CheckoutForm:
@@ -143,6 +148,8 @@ en:
     SINGULARNAME: "Checkout Page"
     TITLE: Checkout
     db_PurchaseComplete: "Purchase Complete"
+    PURCHASE_COMPLETE_DESCRIPTION: "This message is included in reciept email, after the customer submits the checkout"
+    SUBMIT_PAYMENT: "Submit Payment"
   CheckoutPage.ss:
     CARTEMPTY: "Your cart is empty."
     CHECKOUT: Checkout
@@ -197,6 +204,8 @@ en:
     PRINT: Print
     SINGULARNAME: Order
     SUCCESSFULL: "Order Successful"
+    DATE_FROM: "Date from"
+    DATE_TO: "Date to"
     db_AnalyticsSubmitted: "Analytics Submitted"
     db_Dispatched: Dispatched
     db_Email: Email
@@ -230,6 +239,7 @@ en:
     OUTSTANDING: "Outstanding: %s"
     PAYMENTMETHOD: "Payment Method"
     PAYORDER: "Pay outstanding balance"
+    MANUAL_NOT_ALLOWED: "Manual payment not allowed"
   OrderAdmin_Addresses.ss:
     ADDRESS: Address
     BILLTO: "Bill To"
@@ -435,6 +445,7 @@ en:
     PAYMENTSTATUS: "Payment Status"
     TABLESUMMARY: "The contents of your cart are displayed in this form and summary of all fees associated with an order and a rundown of payments options."
   PaymentProcessor:
+    INVALID_GATEWAY: "`{gateway}` isn't a valid payment gateway."
     CANTPAY: "Order can't be paid for."
   PaystationHostedPayment:
     PLURALNAME: "Paystation Hosted Payments"
@@ -451,6 +462,7 @@ en:
     CATEGORY: Category
     CATEGORYDESCRIPTION: "This is the parent page or default category."
     CODE: "Product Code/SKU"
+    CODE_SHORT: "SKU"
     COSTPRICE: "Cost Price"
     COSTPRICEDESC: "Wholesale price before markup."
     DEPTH: "Depth (%s)"
@@ -466,6 +478,7 @@ en:
     SINGULARNAME: Product
     WEIGHT: "Weight (%s)"
     WIDTH: "Width (%s)"
+    NO_IMAGE: "no image"
     db_AllowPurchase: "Allow Purchase"
     db_BasePrice: "Base Price"
     db_CostPrice: "Cost Price"
@@ -502,6 +515,7 @@ en:
   ProductAttributeType:
     PLURALNAME: Attributes
     SINGULARNAME: Attribute
+    SAVE_FIRST_MESSAGE: "Save first, then you can add values."
     belongs_many_many_Product: Product
     db_Label: Label
     db_Name: Name
@@ -542,6 +556,9 @@ en:
     NEXT: next
     PAGE: page
     PREVIOUS: previous
+    VIEW_PREVIOUS: "View the previous page"
+    VIEW_NEXT: "View the next page"
+    VIEW_PAGE: "View page number {pageNum}"
   ProductGroupItem.ss:
     ADD: "Add \"%s\" to your cart"
     ADDLINK: "Add to Cart"
@@ -560,6 +577,13 @@ en:
     has_one_Image: Image
     has_one_Product: Product
     many_many_AttributeValues: "Attribute Values"
+    NO_ATTRIBUTE_VALUES_MESSAGE: "{attribute} has no values to choose from. You can create them in the \"Products\" &#62; \"Product Attribute Type\" section of the CMS."
+    SAVE_FIRST_MESSAGE: "You can choose variation attributes after saving for the first time, if they exist."
+  ProductVariationsExtension:
+    ATTRIBUTES: "Attributes"
+    ATTRIBUTES_DESCRIPTION: "These are fields to indicate the way(s) each variation varies. Once selected, they can be edited on each variation."
+    VARIATIONS: "Variations"
+    VARIATIONS_INSTRUCTIONS: "Price - Because you have one or more variations, the price can be set in the \"Variations\" tab."
   ProductVariation_OrderItem:
     PLURALNAME: Items
     SINGULARNAME: Item
@@ -589,6 +613,8 @@ en:
     CUSTOMERGROUP: "Group to add new customers to"
     DEFAULTIMAGE: "Default Product Image"
     TERMSPAGE: "Terms and Conditions Page"
+    ALLOWED_COUNTRIES: "Allowed Ordering and Shipping Countries"
+    ALLOWED_COUNTRIES_TAB_TITLE: "Allowed Countries"
   ShopCurrency:
     FREE: "<span class=\"free\">FREE</span>"
   ShopDashboard:
@@ -598,6 +624,13 @@ en:
     RecentAccountsDescription: "Shows recent account signups"
     RecentOrdersChart: "Order History Chart"
     RecentOrdersChartDescription: "Shows recent orders on a graph"
+    NUMBER_OF_ACCOUNTS: "Number of accounts to show"
+    NUMBER_OF_DAYS: "Number of days to show"
+    NUMBER_OF_ORDERS: "Number of orders to show"
+    # These should probably be moved into a more generic category, since they can be used in a lot of places
+    EDIT: "Edit"
+    CUSTOMER: "Customer"
+    DATE: "Date"
   ShopDatabaseAdmin.ss:
     BUILDTASKS: "Build Tasks"
     CARTCLEANUP: "Cleanup old carts"
@@ -647,6 +680,11 @@ en:
     NOORDER: "No current order."
     PRODUCTNOTFOUND: "Product not found."
     QUANTITYSET: "Quantity has been set."
+    # Pretty generic translation, could be moved to a more generic category
+    CHANGE: "Change"
+    ITEMS_IN_CART_PLURAL: "There are <a href=\"{link}\">{quantity} items</a> in your cart."
+    ITEMS_IN_CART_SINGULAR: "There is <a href=\"{link}\">1 item</a> in your cart."
+    CHECKOUT: "Checkout"
   SideCart.ss:
     HEADLINE: "My Cart"
     NOITEMS: "There are no items in your cart"
@@ -693,3 +731,40 @@ en:
   shop:
     Checkout: "Payment Type"
     STATUS: Status
+  CartEditField:
+    REMOVE: "Remove"
+    VARIATION: "Variation"
+  CartForm:
+    UPDATE_CART: "Update Cart"
+    REMOVED_ITEMS: "Removed {count} items."
+    UPDATED_ITEMS: "Updated {count} items."
+  OnsitePaymentCheckoutComponent:
+    CREDIT_CARD_INVALID: "Credit card is invalid"
+  PaymentCheckoutComponent:
+    NO_PAYMENT_METHOD: "Payment method not provided"
+    UNSUPPORTED_GATEWAY: "Gateway not supported"
+  CheckoutStep:
+    # These should probably go somewhere else, as they are pretty generic.
+    CONTINUE: "Continue"
+    SHIPPING: "Shipping"
+    SUMMARY: "Summary"
+    GRAND_TOTAL: "Grand Total"
+  CheckoutStep_Address:
+    SUPPLY_CONTACT_INFO: "Supply your contact information"
+    SEPARATE_BILLING: "Bill to a different address from this"
+    ENTER_SHIPPING_ADDRESS: "Please enter your shipping address details."
+    BILL_TO: "Bill To:"
+    SHIP_TO: "Ship To:"
+  CheckoutStep_Membership:
+    CONTINUE_AS_GUEST: "Continue as Guest"
+    # This is an option presented to the user
+    CREATE_ACCOUNT: "Create an Account"
+    # This is an action (Button label)
+    CREATE_NEW_ACCOUNT: 'Create new Account'
+  VariationForm:
+    CHOOSE_ATTRIBUTE: "Choose {attribute} …"
+    VARIATION_NOT_AVAILABLE: "That variation is not available, sorry."
+    PRODUCT_NOT_AVAILABLE: "This product is not available with the selected options."
+  PriceTag:
+    # Save as in savings (you saved this much from the original price)
+    SAVE: "Save"

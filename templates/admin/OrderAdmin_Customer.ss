@@ -6,8 +6,8 @@
 			</th>
 		</tr>
 		<tr class="header">
-			<th class="main">Name</th>
-			<th class="main">Email</th>
+			<th class="main"><%t AccountNavigation.MemberName "Name" %></th>
+			<th class="main"><%t AccountNavigation.MemberEmail "Email" %></th>
 		</tr>
 	</thead>
 	<tbody>

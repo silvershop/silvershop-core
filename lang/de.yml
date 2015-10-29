@@ -21,6 +21,7 @@ de:
     PLURALNAME: Kundenkonto
     SINGULARNAME: Kundenkonto
     Title: "Frühere Bestellungen"
+    NO_PAGE: "Es wurde keine Kundenkonto-Seite gefunden. Bitte erstellen Sie eine im CMS!"
   AccountPage.ss:
     COMPLETED: "Abgeschlossene Bestellungen"
     HISTORY: "Ihr Bestellhistorie"
@@ -60,7 +61,7 @@ de:
     CITYHINT: ""
     COUNTRY: Land
     PHONE: Telefonnummer
-    PLURALNAME: Adresse
+    PLURALNAME: Adressen
     POSTALCODE: Postleitzahl
     SINGULARNAME: Adresse
     STATE: "Staat"
@@ -83,6 +84,9 @@ de:
     has_one_Member: Kunde
   AddressBookCheckoutComponent:
     CREATENEWADDRESS: "Adresse ändern"
+    EXISTING_BILLING_ADDRESS: "Vorhandene Rechnungsadresse"
+    EXISTING_SHIPPING_ADDRESS: "Vorhandene Lieferadresse"
+    EXISTING_ADDRESS: "Vorhandene Adresse"
   Cart.ss:
     ADDONE: "Hinzufügen eine oder mehr von  \"%s\"  in den Warenkorb"
     CheckoutClick: "Hier klicken um auszuchecken"
@@ -131,6 +135,7 @@ de:
     PASSWORD: Passwort
     SURNAME: Nachname
     TERMSANDCONDITIONS: "Ich habe die <a href=\"AGB\" title=\"Allgemeine Geschäftsbedingungen anzeigen\">Allgemeine Geschäftsbedingungen</a> und die <a href=/widerrufsbelehrung-formular>Wiederufsbelehrung</a> gelesen und akzeptiert."
+    PAYMENT_TYPE: Zahlungsart
   CheckoutFields:
     PAYMENTTYPE: Zahlungsart
   CheckoutForm:
@@ -143,6 +148,8 @@ de:
     SINGULARNAME: Kassenseite
     TITLE: Kasse
     db_PurchaseComplete: "Bestellung abgeschlossen"
+    PURCHASE_COMPLETE_DESCRIPTION: "Diese Meldung wird dem Kunden im Bestätigungs-E-Mail gesendet, nachdem der Bestellvorgang abgeschlossen wurde."
+    SUBMIT_PAYMENT: "Bezahlen"
   CheckoutPage.ss:
     CARTEMPTY: "Ihr Warenkorb ist leer."
     CHECKOUT: Kasse
@@ -214,6 +221,7 @@ de:
     OUTSTANDING: "Ausstehend: %s"
     PAYMENTMETHOD: Zahlungsart
     PAYORDER: "Restbetrag bezahlen"
+    MANUAL_NOT_ALLOWED: "Bezahlung gegen Rechnung nicht erlaubt."
   OrderAdmin_Addresses.ss:
     ADDRESS: Adresse
     BILLTO: "Rechnung an"
@@ -332,6 +340,7 @@ de:
     MENUTITLE: Bestellungen
   Payment: ~
   PaymentProcessor:
+    INVALID_GATEWAY: "`{gateway}` ist kein gültiges Bezahl-Gateway."
     CANTPAY: "Diese Bestellung kann nicht bezahlt werden."
   PickupShippingModifier:
     PLURALNAME: Modifikatoren
@@ -342,6 +351,7 @@ de:
     CATEGORY: Category
     CATEGORYDESCRIPTION: "Dies ist die übergeordnete Seite oder Standardkategorie."
     CODE: Artikelnummer
+    CODE_SHORT: "Art. Nr."
     COSTPRICE: Kostenpreis
     COSTPRICEDESC: "Großhandelspreis ohne Preisaufschlag."
     DEPTH: "Tiefe. (%s)"
@@ -357,6 +367,7 @@ de:
     SINGULARNAME: Produkt
     WEIGHT: "Gewicht (%s)"
     WIDTH: "Breite (%s)"
+    NO_IMAGE: "kein Bild"
     db_AllowPurchase: "Kaufen erlauben"
     db_BasePrice: Basispreis
     db_CostPrice: Kostenpreis
@@ -392,6 +403,7 @@ de:
   ProductAttributeType:
     PLURALNAME: Eigenschaften
     SINGULARNAME: Eigenschaft
+    SAVE_FIRST_MESSAGE: "Werte können nach erstmaligem Speichern erfasst werden."
     belongs_many_many_Product: Produkt
     db_Label: Label
     db_Name: Name
@@ -432,6 +444,9 @@ de:
     NEXT: Nächste
     PAGE: Seite
     PREVIOUS: Vorherige
+    VIEW_PREVIOUS: "Zur vorherigen Seite"
+    VIEW_NEXT: "Zur nächsten Seite"
+    VIEW_PAGE: "Zeige Seite {pageNum}"
   ProductGroupItem.ss:
     ADD: "\"%s\" zum Warenkorb hinzufügen"
     ADDLINK: "In den Warenkorb"
@@ -450,11 +465,18 @@ de:
     has_one_Image: Bild
     has_one_Product: Produkt
     many_many_AttributeValues: Eigenschaften
+    NO_ATTRIBUTE_VALUES_MESSAGE: "Es gibt keine Werte für {attribute}. Diese können im 'Katalog' erstellt werden."
+    SAVE_FIRST_MESSAGE: "Attribute können erst nach dem ersten Speichern ausgewählt werden (gesetzt der Fall, sie existieren)."
+  ProductVariationsExtension:
+    ATTRIBUTES: "Attribute"
+    ATTRIBUTES_DESCRIPTION: "Diese Felder definieren die Attribute welche die Variationen ausmachen. Sobald sie ausgewählt wurden, können sie in jeder Variation erfasst werden."
+    VARIATIONS: "Variationen"
+    VARIATIONS_INSTRUCTIONS: "Da mehrere Variationen vorhanden sind, muss der Preis bei den Variationen erfasst werden."
   ProductVariation_OrderItem:
     PLURALNAME: Artikel
     SINGULARNAME: Artikel
     db_ProductVariationVersion: "Produkt Variations Version"
-    has_one_ProductVariation: "ProduKt Variation"
+    has_one_ProductVariation: "Produkt Variation"
   Product_OrderItem:
     PLURALNAME: Artikel
     SINGULARNAME: Artikel
@@ -479,6 +501,8 @@ de:
     CUSTOMERGROUP: "Gruppe, um neue Kunden zu ergänzen"
     DEFAULTIMAGE: "Standard Produktbild"
     TERMSPAGE: "Allgemeine Geschäftsbedingungen"
+    ALLOWED_COUNTRIES: "Länder für Bestellungen und Lieferungen"
+    ALLOWED_COUNTRIES_TAB_TITLE: "Erlaubte Länder"
   ShopCurrency:
     FREE: "<span class=\"frei\">FREI</span>"
   ShopDashboard:
@@ -488,6 +512,13 @@ de:
     RecentAccountsDescription: "Die letzten Anmeldungen in Kundenkonten anzeigen"
     RecentOrdersChart: "Bestellhistorie sortieren"
     RecentOrdersChartDescription: "Zeigt die letzten Bestellungen in einem Diagramm"
+    NUMBER_OF_ACCOUNTS: "Anzahl anzuzeigender Benutzer"
+    NUMBER_OF_DAYS: "Anzahl anzuzeigender Tage"
+    NUMBER_OF_ORDERS: "Anzahl anzuzeigender Bestellungen"
+    # These should probably be moved into a more generic category, since they can be used in a lot of places
+    EDIT: "Bearbeiten"
+    CUSTOMER: "Kunde"
+    DATE: "Datum"
   ShopDatabaseAdmin.ss:
     BUILDTASKS: "Aufgaben anlegen"
     CARTCLEANUP: "Alte Warenkörbe bereinigen"
@@ -536,6 +567,11 @@ de:
     NOORDER: "Keine aktuelle Bestellung."
     PRODUCTNOTFOUND: "Produkt nich gefunden."
     QUANTITYSET: "Die Menge wurde eingegeben."
+    # Pretty generic translation, could be moved to a more generic category
+    CHANGE: "Wechsel"
+    ITEMS_IN_CART_PLURAL: "In Ihrem Warenkorb befinden sich <a href=\"{link}\">{quantity} Artikel</a>."
+    ITEMS_IN_CART_SINGULAR: "In Ihrem Warenkorb befindet sich <a href=\"{link}\">1 Artikel</a>."
+    CHECKOUT: "Zur Kasse"
   SideCart.ss:
     HEADLINE: Warenkorb
     NOITEMS: "Es befinden sich keine Produkte im Warenkorb"
@@ -579,3 +615,40 @@ de:
   shop:
     Checkout: Zahlungsart
     STATUS: Status
+  CartEditField:
+    REMOVE: "Entfernen"
+    VARIATION: "Variationen"
+  CartForm:
+    UPDATE_CART: "Warenkorb aktualisieren"
+    REMOVED_ITEMS: "{count} Artikel entfernt"
+    UPDATED_ITEMS: "{count} Artikel aktualisiert."
+  OnsitePaymentCheckoutComponent:
+    CREDIT_CARD_INVALID: "Kreditkarte ist ungültig"
+  PaymentCheckoutComponent:
+    NO_PAYMENT_METHOD: "Bezahlmethode wurde nicht angegeben"
+    UNSUPPORTED_GATEWAY: "Bezahl-Gateway wird nicht unterstützt"
+  CheckoutStep:
+    # These should probably go somewhere else, as they are pretty generic.
+    CONTINUE: "Weiter"
+    SHIPPING: "Lieferung"
+    SUMMARY: "Zusammenfassung"
+    GRAND_TOTAL: "Gesamtbetrag"
+  CheckoutStep_Address:
+    SUPPLY_CONTACT_INFO: "Bitte geben Sie ihre Kontaktdaten an"
+    SEPARATE_BILLING: "Andere Rechnungsadresse angeben"
+    ENTER_SHIPPING_ADDRESS: "Bitte geben sie ihre gewünschte Lieferadresse ein."
+    BILL_TO: "Rechnung an:"
+    SHIP_TO: "Lieferung an:"
+  CheckoutStep_Membership:
+    CONTINUE_AS_GUEST: "Weiter als Gast"
+    # This is an option presented to the user
+    CREATE_ACCOUNT: "Neues Konto erstellen"
+    # This is an action (Button label)
+    CREATE_NEW_ACCOUNT: 'Konto erstellen'
+  VariationForm:
+    CHOOSE_ATTRIBUTE: "Wähle {attribute} …"
+    VARIATION_NOT_AVAILABLE: "Diese Variante ist leider nicht verfügbar."
+    PRODUCT_NOT_AVAILABLE: "Das Produkt ist mit den ausgewählten Optionen nicht verfügbar."
+  PriceTag:
+    # Save as in savings (you saved this much from the original price)
+    SAVE: "Gespart"

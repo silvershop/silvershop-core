@@ -73,7 +73,7 @@ class CheckoutFieldFactory{
 		//TODO: only get one field if there is no option
 		return new OptionsetField(
 			'PaymentMethod',
-			_t("Checkout", "Payment Type"),
+			_t('CheckoutField.PAYMENT_TYPE', "Payment Type"),
 			GatewayInfo::get_supported_gateways(), array_keys(GatewayInfo::get_supported_gateways())
 		);
 	}
@@ -94,7 +94,7 @@ class CheckoutFieldFactory{
 
 		if(SiteConfig::current_site_config()->TermsPage()->exists()) {
 			$termsPage = SiteConfig::current_site_config()->TermsPage();
-			
+
 			$field = CheckboxField::create('ReadTermsAndConditions',
 				sprintf(_t('CheckoutField.TERMSANDCONDITIONS',
 					"I agree to the terms and conditions stated on the
@@ -105,7 +105,7 @@ class CheckoutFieldFactory{
 				)
 			);
 		}
-		
+
 		return $field;
 	}
 

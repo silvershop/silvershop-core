@@ -100,7 +100,7 @@ class OrderActionsForm extends Form{
 					$form->sessionMessage($processor->getError(), 'bad');
 				}
 			}else{
-				$form->sessionMessage("Manual payment not allowed", 'bad');
+				$form->sessionMessage(_t('OrderActionsForm.MANUAL_NOT_ALLOWED', "Manual payment not allowed"), 'bad');
 			}
 
 			return $this->controller->redirectBack();

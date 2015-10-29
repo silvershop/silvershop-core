@@ -20,20 +20,24 @@ class ProductVariationsExtension extends DataExtension {
 	 */
 	public function updateCMSFields(FieldList $fields) {
 		$fields->addFieldsToTab('Root.Variations',array(
-			ListboxField::create("VariationAttributeTypes", "Attributes",
+			ListboxField::create("VariationAttributeTypes", _t('ProductVariationsExtension.ATTRIBUTES', "Attributes"),
 				ProductAttributeType::get()->map("ID", "Title")->toArray()
 			)->setMultiple(true)
-			->setDescription("These are fields to indicate the way(s) each variation varies. Once selected, they can be edited on each variation."),
-			GridField::create("Variations","Variations",
+			->setDescription(_t(
+				'ProductVariationsExtension.ATTRIBUTES_DESCRIPTION',
+				"These are fields to indicate the way(s) each variation varies. Once selected, they can be edited on each variation."
+			)),
+			GridField::create("Variations", _t('ProductVariationsExtension.VARIATIONS', "Variations"),
 				$this->owner->Variations(),
 				GridFieldConfig_RecordEditor::create()
 			)
 		));
 		if($this->owner->Variations()->exists()) {
 			$fields->addFieldToTab('Root.Pricing',
-				LabelField::create('variationspriceinstructinos','
-					Price - Because you have one or more variations, the price can be set in the "Variations" tab.'
-				)
+				LabelField::create('variationspriceinstructinos', _t(
+					'ProductVariationsExtension.VARIATIONS_INSTRUCTIONS',
+					"Price - Because you have one or more variations, the price can be set in the \"Variations\" tab."
+				))
 			);
 			$fields->removeFieldFromTab('Root.Pricing','BasePrice');
 			$fields->removeFieldFromTab('Root.Pricing','CostPrice');

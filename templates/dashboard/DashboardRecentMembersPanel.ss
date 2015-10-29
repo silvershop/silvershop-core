@@ -2,9 +2,9 @@
 	<table class="table table-bordered">
 		<thead>
 			<tr>
-				<td>Date</td>
-				<th>Email</th>
-				<th>Name</th>
+				<td><%t AccountNavigation.MemberSince "Member Since" %></td>
+				<th><%t AccountNavigation.MemberEmail "Email" %></th>
+				<th><%t AccountNavigation.MemberName "Name" %></th>
 				<th></th>
 			</tr>
 		</thead>
@@ -15,7 +15,9 @@
 					<td>$Email</td>
 					<td>$Surname, $FirstName</td>
 					<td>
-						<a class="ss-ui-button ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false" href="admin/security/EditForm/field/Members/item/$ID/edit">Edit</a>
+						<a class="ss-ui-button ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false" href="admin/security/EditForm/field/Members/item/$ID/edit">
+							<%t ShopDashboard.EDIT "Edit" %>
+						</a>
 					</td>
 				</tr>
 			<% end_loop %>

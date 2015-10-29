@@ -37,7 +37,7 @@ class AccountPage extends Page {
 		if($page = DataObject::get_one('AccountPage')) {
 			return $page;
 		}
-		user_error('No AccountPage was found. Please create one in the CMS!', E_USER_ERROR);
+		user_error(_t('AccountPage.NO_PAGE', 'No AccountPage was found. Please create one in the CMS!'), E_USER_ERROR);
 	}
 
 	/**

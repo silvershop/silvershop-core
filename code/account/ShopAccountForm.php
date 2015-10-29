@@ -86,7 +86,11 @@ class ShopAccountFormValidator extends RequiredFields{
 			if(DataObject::get_one('Member', "$field = '$uid' AND ID != ".$currentmember->ID)){
 				$this->validationError(
 					$field,
-					"\"$uid\" is already taken by another member. Try another.",
+					// re-use the message from checkout
+					sprintf(
+						_t("Checkout.MEMBEREXISTS", "A member already exists with the %s %s"),
+						$field, $uid
+					),
 					"required"
 				);
 				$valid = false;

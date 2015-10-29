@@ -15,7 +15,7 @@
 				<th scope="col"><% _t("QUANTITY", "Quantity") %></th>
 				<th scope="col"><% _t("TOTALPRICE","Total Price") %> ($Currency)</th>
 				<% if $Editable %>
-					<th scope="col"><% _t("REMOVE","Remove") %></th>
+					<th scope="col"><%t CartEditField.REMOVE "Remove" %></th>
 				<% end_if %>
 			</tr>
 		</thead>
@@ -41,7 +41,7 @@
 						</h3>
 						<% if $SubTitle %><p class="subtitle">$SubTitle</p><% end_if %>
 						<% if $Product.Variations && $Editable %>
-							Change: $VariationField
+							<%t ShoppingCart.CHANGE "Change" %>: $VariationField
 						<% end_if %>
 					</td>
 					<td>$UnitPrice.Nice</td>
