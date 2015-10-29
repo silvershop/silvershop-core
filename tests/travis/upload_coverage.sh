@@ -2,6 +2,8 @@
 echo "coverage = $COVERAGE, slug = $TRAVIS_REPO_SLUG, commit=$TRAVIS_COMMIT"
 if [ -n "$COVERAGE" ]; then
 	cd shop
+	# this is needed because currently the travis-support module uses --prefer-dist and the real .git seems to get overwritten
+	tar xf ~/gitbackup.tar
 	wget https://scrutinizer-ci.com/ocular.phar
-	php ocular.phar code-coverage:upload -v --format=php-clover --repository=g/$TRAVIS_REPO_SLUG --revision=$TRAVIS_COMMIT ~/builds/ss/shop/coverage.xml
+	php ocular.phar code-coverage:upload -v --format=php-clover ~/builds/ss/shop/coverage.xml
 fi
