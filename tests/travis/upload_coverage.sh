@@ -5,6 +5,9 @@ if [ -n "$COVERAGE" ]; then
 	cd ~/builds/ss/shop
 	wget https://scrutinizer-ci.com/ocular.phar
 	pwd
-	ls -al
+	ls -al ~
+	ls -al ~/builds
+	ls -al ~/builds/ss
+	ls -al ~/builds/ss/shop
 	php ocular.phar code-coverage:upload -v --format=php-clover ~/builds/ss/shop/coverage.xml
 fi
