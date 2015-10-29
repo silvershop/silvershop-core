@@ -30,11 +30,15 @@ class ShopMemberFactory{
 			throw new ValidationException($result);
 		}
 		$idval = $data[$idfield];
-		if(ShopMember::get_by_identifier($idval)){
+		if($member = ShopMember::get_by_identifier($idval)){
+			// get localized field labels
+			$fieldLabels = $member->fieldLabels(false);
+			// if a localized value exists, use this for our error-message
+			$fieldLabel = isset($fieldLabels[$idfield]) ? $fieldLabels[$idfield] : $idfield;
+
 			$result->error(sprintf(
 				_t("Checkout.MEMBEREXISTS", "A member already exists with the %s %s"),
-				_t("Member.".$idfield, $idfield),
-				$idval
+				$fieldLabel, $idval
 			));
 			throw new ValidationException($result);
 		}
