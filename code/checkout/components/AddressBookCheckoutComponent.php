@@ -97,12 +97,16 @@ abstract class AddressBookCheckoutComponent extends AddressCheckoutComponent{
 		} else {
 			// Otherwise, require the normal address fields
 			$required = parent::getRequiredFields($order);
+			$addressLabels = singleton('Address')->fieldLabels(false);
+
 			foreach ($required as $fieldName) {
 				if (empty($data[$fieldName])) {
+					// attempt to get the translated field name
+					$fieldLabel = isset($addressLabels[$fieldName]) ? $addressLabels[$fieldName] : $fieldName;
 					$errorMessage = _t(
 						'Form.FIELDISREQUIRED',
 						'{name} is required',
-						array('name' => $fieldName)
+						array('name' => $fieldLabel)
 					);
 
 					$result->error($errorMessage, $fieldName);

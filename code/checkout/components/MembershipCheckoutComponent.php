@@ -5,7 +5,7 @@
  * 	- member identifier, and password fields.
  * 	- required membership fields
  * 	- validating data
- * 
+ *
  */
 class MembershipCheckoutComponent extends CheckoutComponent{
 
@@ -72,10 +72,14 @@ class MembershipCheckoutComponent extends CheckoutComponent{
 			$idfield = Member::config()->unique_identifier_field;
 			$idval = $data[$idfield];
 			if(ShopMember::get_by_identifier($idval)){
+				// get localized field labels
+				$fieldLabels = $member->fieldLabels(false);
+				// if a localized value exists, use this for our error-message
+				$fieldLabel = isset($fieldLabels[$idfield]) ? $fieldLabels[$idfield] : $idfield;
 				$result->error(
 					sprintf(
 						_t("Checkout.MEMBEREXISTS", "A member already exists with the %s %s"),
-						$idfield, $idval
+						$fieldLabel, $idval
 					), $idval
 				);
 			}

@@ -84,12 +84,17 @@ class ShopAccountFormValidator extends RequiredFields{
 			$currentmember = Member::currentUser();
 			//can't be taken
 			if(DataObject::get_one('Member', "$field = '$uid' AND ID != ".$currentmember->ID)){
+				// get localized field labels
+				$fieldLabels = $currentmember->fieldLabels(false);
+				// if a localized value exists, use this for our error-message
+				$fieldLabel = isset($fieldLabels[$field]) ? $fieldLabels[$field] : $field;
+
 				$this->validationError(
 					$field,
 					// re-use the message from checkout
 					sprintf(
 						_t("Checkout.MEMBEREXISTS", "A member already exists with the %s %s"),
-						$field, $uid
+						$fieldLabel, $uid
 					),
 					"required"
 				);
