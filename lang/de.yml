@@ -4,7 +4,7 @@ de:
     AddressBook: Adressbuch
     EditProfile: "Nutzerprofil bearbeiten"
     LogOut: Abmelden
-    MemberEmail: Email
+    MemberEmail: E-Mail
     MemberLastVisit: "Letzte Anmeldung"
     MemberName: Name
     MemberSince: "Kunde seit"
@@ -12,13 +12,13 @@ de:
     PastOrders: "Frühere Bestellungen"
     Title: "Mein Kundenkonto"
   AccountPage:
-    DESCRIPTION: "Generic content page"
-    LOGIN: "Sie müssen sich einloggen um auf Ihr Konto zugreifen zu können. Wenn Sie nicht als Kunde registriert sind, können Sie sich hier nicht anmelden bis Sie Ihre erste Bestellung abgesendet haben."
+    DESCRIPTION: "Kundenkonto-Seite"
+    LOGIN: "Sie müssen sich einloggen, um auf Ihr Konto zugreifen zu können. Wenn Sie nicht als Kunde registriert sind, können Sie sich hier nicht anmelden bis Sie Ihre erste Bestellung getätigt haben."
     LOGINAGAIN: "Sie sind abgemeldet. Wen Sie sich wieder anmelden möchten, können Sie es weiter unten tun."
     Message: "Sie müssen sich einloggen um auf Ihr Konto zugreifen zu können. Falls Sie nicht registriert sind, können Sie erst nach Ihrer ersten Bestellung auf Ihr Konto zugreifen. Fall Sie bereits registriert sind, geben Sie folgend Ihre Daten ein."
-    NOPAGE: "Keine AccountPage auf dieser Website - erstellen Sie bitte eine!"
-    NoPastOrders: "Keien früheren Bestellungen gefunden."
-    PLURALNAME: Kundenkonto
+    NOPAGE: "Keine Kundenkonto-Seite auf dieser Website - erstellen Sie bitte eine!"
+    NoPastOrders: "Keine früheren Bestellungen gefunden."
+    PLURALNAME: Kundenkontos
     SINGULARNAME: Kundenkonto
     Title: "Frühere Bestellungen"
     NO_PAGE: "Es wurde keine Kundenkonto-Seite gefunden. Bitte erstellen Sie eine im CMS!"
@@ -28,7 +28,7 @@ de:
     INCOMPLETE: "Offene Bestellungen"
     NOCOMPLETED: "Es konnten keine abgeschlossenen Bestellungen gefunden werden."
     NOINCOMPLETE: "Es konnten keine offenen Bestellungen gefunden werden."
-    ORDER: Order
+    ORDER: Bestellung
     READMORE: "Zur Detail-Ansicht der Bestellung #%s"
   AccountPage_AddressBook:
     CreateNewTitle: "Neue Adresse eingeben"
@@ -66,17 +66,17 @@ de:
     SINGULARNAME: Adresse
     STATE: "Staat"
     STATEHINT: "…oder Provinz, Gemeinde, Kanton, Insel"
-    SaveDefaults: "Standarts speichern"
+    SaveDefaults: "Standards speichern"
     SaveNew: "Neue Adresse speichern"
-    ShippingAddress: Lieferanschrift
+    ShippingAddress: Lieferadresse
     db_Address: Adresse
     db_AddressLine2: " "
     db_City: Stadt
     db_Company: Firma
     db_Country: Land
     db_FirstName: Vorname
-    db_Latitude: Breite
-    db_Longitude: Länge
+    db_Latitude: Breitengrad
+    db_Longitude: Längengrad
     db_Phone: Telefonnummer
     db_PostalCode: Postleitzahl
     db_State: "Staat"
@@ -88,8 +88,8 @@ de:
     EXISTING_SHIPPING_ADDRESS: "Vorhandene Lieferadresse"
     EXISTING_ADDRESS: "Vorhandene Adresse"
   Cart.ss:
-    ADDONE: "Hinzufügen eine oder mehr von  \"%s\"  in den Warenkorb"
-    CheckoutClick: "Hier klicken um auszuchecken"
+    ADDONE: "Eines oder mehr von \"%s\" zum Warenkorb hinzufügen"
+    CheckoutClick: "Hier klicken um zur Kasse zu gelangen"
     CheckoutGoTo: "Zur Kasse"
     HEADLINE: "Mein Warenkorb"
     NOITEMS: "In Ihrem Warenkorb befinden sich zur Zeit keine Artikel"
@@ -106,7 +106,7 @@ de:
     TOTALPRICE: Gesamtpreis
     UNITPRICE: Einzelpreis
   CartPage:
-    DESCRIPTION: "Generic content page"
+    DESCRIPTION: "Warenkorb-Seite"
     PLURALNAME: Warenkorb
     SINGULARNAME: Warenkorb
     TITLE: Warenkorb
@@ -118,32 +118,32 @@ de:
     PROCEEDTOCHECKOUT: "Zur Kasse"
   Checkout:
     IDFIELDNOTFOUND: "Pflichtfeld nicht gefunden: %s"
-    MEMBEREXISTS: "Mit diesen Datumn existiert schon ein Kundenkonto %s %s"
-    MEMBERSHIPSNOTALLOWED: "Das Erstellen von neuen Kundenkonten ist nicht erlaubt, bitte kontaktieren Sie uns Telefonisch oder per Email"
+    MEMBEREXISTS: "Es existiert bereits ein Kundenkonto mit der %s %s"
+    MEMBERSHIPSNOTALLOWED: "Das Erstellen von neuen Kundenkonten ist nicht erlaubt, bitte kontaktieren Sie uns telefonisch oder per E-Mail"
     NOPAYMENTMETHOD: "Die Zahlungsart existiert nicht"
     PASSWORDREQUIRED: "Passwort ist erforderlich"
   CheckoutComponentValidator:
-    INVALIDMESSAGE: "Es gibt Probleme mit der von Ihnen eingegebenen Datumn. Siehe unten:"
+    INVALIDMESSAGE: "Es gibt Probleme mit den von Ihnen eingegebenen Daten. Siehe unten:"
   CheckoutField:
     ACCOUNTINFO: "Bitte wählen Sie ein Passwort, damit Sie sich zukünftig im Kundenkonto einloggen können."
-    EMAIL: Email
+    EMAIL: E-Mail
     FIRSTNAME: Vorname
-    MEMBERINFO: "Wenn Sie schon Kunde bei uns sind klicken Sie bitte hier um sich anzumelden."
+    MEMBERINFO: "Wenn Sie schon Kunde bei uns sind, klicken Sie bitte hier um sich anzumelden."
     MEMBERSHIPDETAILS: Kundeninformationen
-    MUSTAGREETOTERMS: "Bitte bestätigen Sie, dass sie die AGB und die Widerrufsbelehrung gelesen haben"
-    NOTES: "Farbwünsche, Terminwünsche, ..."
+    MUSTAGREETOTERMS: "Bitte bestätigen Sie, dass sie die AGB gelesen haben"
+    NOTES: Bemerkungen
     PASSWORD: Passwort
     SURNAME: Nachname
-    TERMSANDCONDITIONS: "Ich habe die <a href=\"AGB\" title=\"Allgemeine Geschäftsbedingungen anzeigen\">Allgemeine Geschäftsbedingungen</a> und die <a href=/widerrufsbelehrung-formular>Wiederufsbelehrung</a> gelesen und akzeptiert."
+    TERMSANDCONDITIONS: "Ich habe die <a href=\"%s\" target=\"_blank\" title=\"Allgemeine Geschäftsbedingungen anzeigen\">Allgemeinen Geschäftsbedingungen</a> gelesen und akzeptiert."
     PAYMENT_TYPE: Zahlungsart
   CheckoutFields:
     PAYMENTTYPE: Zahlungsart
   CheckoutForm:
     PROCEED: "Weiter zur Zahlung"
   CheckoutPage:
-    DESCRIPTION: "Generic content page"
-    NOPAGE: "Auf dieser Site existiert keine Seite zum Ausschecken - bitte erstellen Sie eine neue Seite!"
-    PLURALNAME: Kassenseite
+    DESCRIPTION: "Kassenseite"
+    NOPAGE: "Auf dieser Site existiert keine Kassenseite - bitte erstellen Sie eine neue Seite!"
+    PLURALNAME: Kassenseiten
     PaymentErrorMessage: "Fehler von Payment-Gateway empfangen:"
     SINGULARNAME: Kassenseite
     TITLE: Kasse
@@ -167,9 +167,9 @@ de:
     PLURALNAME: Modifikatoren
     SINGULARNAME: Versand
   General:
-    DATEFORMATNICE: "%m/%d/%G"
-    DATETIMEFORMATNICE: "%m/%d/%G %I:%M%p"
-    DATETIMEFORMATNICE24: "d/m/Y H:i"
+    DATEFORMATNICE: "%d.%m.%Y"
+    DATETIMEFORMATNICE: "%d.%m.%Y %H:%M"
+    DATETIMEFORMATNICE24: "d.m.Y H:i"
   GlobalTaxModifier:
     INCLUDED: " (im Preis enthalten)"
     PLURALNAME: Steuern
@@ -178,7 +178,7 @@ de:
   MemberForm:
     DETAILSSAVED: "Ihre Angaben wurden gespeichert"
     LOGGEDIN: "Sie sind angemeldet als "
-    SAVE: "Änderungen Speichern"
+    SAVE: "Änderungen speichern"
     SAVEANDPROCEED: "Speichern und weiter zur Kasse"
   ORDER:
     INVOICE: Rechnung
@@ -196,10 +196,10 @@ de:
     db_Gesamt: Zwischensumme
     db_IPAddress: IP-Adresse
     db_Paid: Bezahlt
-    db_Placed: Plaziert
+    db_Placed: Platziert
     db_Printed: Gedruckt
     db_ReceiptSent: "Bestätigung gesendet"
-    db_Reference: Hinweis
+    db_Reference: Bestellnummer
     db_SeparateBillingAddress: "Abweichende Lieferadresse"
     db_ShippingGesamt: "Gesamtkosten für den Versand"
     db_Status: Status
@@ -213,7 +213,7 @@ de:
     has_one_ShippingAddress: Lieferadresse
     has_one_ShippingZahlungsart: Versandart
   Order.ss:
-    ORDERNOTES: "Farbwünsche, Terminwünsche, ..."
+    ORDERNOTES: Bemerkungen
     TOTALOUTSTANDING: "Gesamt ausstehend"
   OrderActionsForm:
     CANCELORDER: "Diese Bestellung stornieren"
@@ -240,7 +240,7 @@ de:
     TOTALOUTSTANDING: Ausstehend
   OrderAdmin_Customer.ss:
     CUSTOMER: Kunde
-    NOTES: "Farbwünsche, Terminwünsche, ..."
+    NOTES: Bemerkungen
   OrderAdmin_Printable.ss:
     ORDER: Bestellung
   OrderAttribute:
@@ -250,13 +250,13 @@ de:
     has_one_Order: Bestellung
   OrderForm:
     COULDNOTPROCESSPAYMENT: "Die Zahlung konnte nicht verarbeitet werden."
-    LogIn: "log in"
+    LogIn: Anmelden
     ORDERCANCELLED: "Bestellung erfolgreich storniert"
   OrderHistory:
     OrderDatum: Datum
     OrderGesamt: Zwischensumme
     OrderItems: Produkte
-    OrderReference: Hinweis
+    OrderReference: Bestellnummer
     OrderStatus: Status
     ViewOrder: anzeigen
   OrderItem:
@@ -302,7 +302,7 @@ de:
     PRICE: Preis
     PRODUCT: Produkt
     QUANTITY: Menge
-    READMORE: "Wenn zu mehr über \"%s\" erfahren willst, klick hier"
+    READMORE: "Wenn Sie mehr über \"%s\" erfahren möchten, klicken Sie hier"
     SUBTOTAL: Zwischensumme
     TOTAL: Gesamt
     TOTALOUTSTANDING: "Gesamt ausstehend"
@@ -327,14 +327,14 @@ de:
     AMOUNT: Betrag
     DATE: Datum
     PAYMENTMETHOD: Zahlungsart
-    PAYMENTNOTE: "Farbwünsche, Terminwünsche, ..."
+    PAYMENTNOTE: Bemerkungen
     PAYMENTSTATUS: Zahlungsstatus
   Order_ReceiptEmail.ss:
     HEADLINE: Auftragsbestätigung
     TITLE: Shop-Eingang
   Order_StatusEmail.ss:
     HEADLINE: "Shop Status geändert"
-    STATUSCHANGE: "Status geändert in \"%s\" für Bestellung Nummer #"
+    STATUSCHANGE: "Status geändert zu \"%s\" für Bestellung Nummer #"
     TITLE: "Shop Status geändert"
   OrdersAdmin:
     MENUTITLE: Bestellungen
@@ -383,7 +383,7 @@ de:
     many_many_ProductCategories: Produktkategorien
     many_many_VariationAttributeTypes: Variationsattributtypen
   Product.ss:
-    ADD: "\"%s\" zjm Warenkorb hinzufügen"
+    ADD: "\"%s\" zum Warenkorb hinzufügen"
     ADDLINK: "Diesen Artikel zum Warenkorb hinzufügen"
     ADDONE: "\"%s\" zum Warenkorb hinzufügen"
     AUTHOR: Autor
@@ -525,7 +525,7 @@ de:
     CARTCLEANUPDESC: "Abgebrochene Warenkörbe entfernen"
     CARTTASKS: "Warenkorbaufgaben anzeigen"
     RECALCULATEORDERS: "Alle Bestellungen rekalkulieren"
-    RECALCULATEORDERSDESC: "Neu berechnen aller Bestellwerte. Warnung: Dies wird jegliche historische Werte überschreiben."
+    RECALCULATEORDERSDESC: "Neu berechnen aller Bestellwerte. Warnung: Dies wird alle vorhergehenden Werte überschreiben."
     RUNALLTESTS: "Alle Shop-Tests starten"
     UNITTESTS: "Test der Einheit"
   ShopDevelopmentAdmin.ss:
@@ -539,11 +539,11 @@ de:
     DELETEORDERSDESC: "Alle Bestellungen, Modifikatoren und Zahlungen aus der Datenbank löschen."
     DELETEPRODUCTS: "Delete All Products"
     DELETEPRODUCTSDESC: "Alle Produkte aus der Datenbank löschen."
-    POPULATECART: "Füllen Sie den Warenkorb mit einigen erhältlichen Produkten"
-    POPULATESHOP: "Füllen Sie Shop"
-    POPULATESHOPDESC: "Füllen Sie den Shop mit Dummy-Produkten, Kategorien und andere notwendige Seiten."
+    POPULATECART: "Befülle den Warenkorb mit einigen erhältlichen Produkten"
+    POPULATESHOP: "Befülle den Shop"
+    POPULATESHOPDESC: "Befülle den Shop mit Dummy-Produkten, Kategorien und erstelle andere notwendige Seiten."
     RECALCULATEORDERS: "Alle Bestellungen rekalkulieren"
-    RECALCULATEORDERSDESC: "Neu berechnen aller Bestellwerte. Warnung: Dies wird jegliche historische Werte überschreiben."
+    RECALCULATEORDERSDESC: "Neu berechnen aller Bestellwerte. Warnung: Dies wird alle vorhergehenden Werte überschreiben."
     RUNALLTESTS: "Alle Shop-Tests starten"
     UNITTESTS: "Test der Einheit"
   ShopQuantityField.ss:
@@ -558,8 +558,8 @@ de:
   ShoppingCart:
     CANNOTPURCHASE: "Das Produkt %s kann nicht gekauft werden."
     CLEARED: "Der Warenkorb wurde erfolgreich gelöscht."
-    CSRF: "Ungültige Sicherheitstoken, möglicher CSRF-Angriff."
-    ITEMADD: "Der Produkt wurde soeben aufgenommen."
+    CSRF: "Ungültiger Sicherheitstoken, möglicher CSRF-Angriff."
+    ITEMADD: "Das Produkt wurde soeben aufgenommen."
     ITEMNOTFOUND: "Produkt nicht gefunden."
     ITEMREMOVED: "Produkt erfolgreich entfernt."
     NOCARTFOUND: "Kein Warenkorb gefunden."
@@ -607,7 +607,7 @@ de:
     db_Name: Name
     has_many_Regions: Regionen
   ZoneAdmin:
-    MENUTITLE: Zohnen
+    MENUTITLE: Zonen
   ZoneRegion:
     PLURALNAME: "Zonen Regionen"
     SINGULARNAME: "Zonen Region"
@@ -634,9 +634,9 @@ de:
     SUMMARY: "Zusammenfassung"
     GRAND_TOTAL: "Gesamtbetrag"
   CheckoutStep_Address:
-    SUPPLY_CONTACT_INFO: "Bitte geben Sie ihre Kontaktdaten an"
-    SEPARATE_BILLING: "Andere Rechnungsadresse angeben"
-    ENTER_SHIPPING_ADDRESS: "Bitte geben sie ihre gewünschte Lieferadresse ein."
+    SUPPLY_CONTACT_INFO: "Bitte geben Sie Ihre Kontaktdaten an"
+    SEPARATE_BILLING: "Abweichende Rechnungsadresse angeben"
+    ENTER_SHIPPING_ADDRESS: "Bitte geben Sie Ihre gewünschte Lieferadresse ein."
     BILL_TO: "Rechnung an:"
     SHIP_TO: "Lieferung an:"
   CheckoutStep_Membership:
