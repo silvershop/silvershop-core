@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 echo "coverage = $COVERAGE, slug = $TRAVIS_REPO_SLUG, commit = $TRAVIS_COMMIT"
 if [ -n "$COVERAGE" ]; then
-	rm -rf .git
+#	rm -rf .git
 	cd ~/builds/ss/shop
 	wget https://scrutinizer-ci.com/ocular.phar
 	pwd
