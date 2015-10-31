@@ -7,15 +7,15 @@ php:
 env:
   - DB=MYSQL CORE_RELEASE=3.2
 
-#matrix:
-#  include:
+matrix:
+  include:
 #    - php: 5.4
 #      env: DB=MYSQL CORE_RELEASE=3.1
 #    - php: 5.5
 #      env: DB=SQLITE CORE_RELEASE=3.2
 #    - php: 5.6
-#      env: DB=PGSQL CORE_RELEASE=3.1 COVERAGE=1
-#    - php: 5.6
+      env: DB=PGSQL CORE_RELEASE=3.2 COVERAGE=1
+    - php: 5.6
 #      env: DB=PGSQL CORE_RELEASE=3.1 COVERAGE=2
 #    - php: 5.6
 #      env: DB=PGSQL CORE_RELEASE=3.1 COVERAGE=3
@@ -27,10 +27,10 @@ env:
 before_script:
   - composer self-update
   - phpenv rehash
-  - ls -al
-  - git log --pretty="%P" -n1 HEAD
+  - tar cf gitbackup.tar .git
   - git clone git://github.com/silverstripe-labs/silverstripe-travis-support.git ~/travis-support
   - php ~/travis-support/travis_setup.php --source `pwd` --target ~/builds/ss
+  - ls -al
   - cd ~/builds/ss
 
 script: ./shop/tests/travis/run_build.sh
