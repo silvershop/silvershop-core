@@ -13,9 +13,9 @@ matrix:
 #      env: DB=MYSQL CORE_RELEASE=3.1
 #    - php: 5.5
 #      env: DB=SQLITE CORE_RELEASE=3.2
-#    - php: 5.6
-      env: DB=PGSQL CORE_RELEASE=3.2 COVERAGE=1
     - php: 5.6
+      env: DB=PGSQL CORE_RELEASE=3.2 COVERAGE=1
+#    - php: 5.6
 #      env: DB=PGSQL CORE_RELEASE=3.1 COVERAGE=2
 #    - php: 5.6
 #      env: DB=PGSQL CORE_RELEASE=3.1 COVERAGE=3
