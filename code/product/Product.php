@@ -104,12 +104,10 @@ class Product extends Page implements Buyable {
 		//general fields
 		$fields->addFieldsToTab('Root.Main', array(
 			TextField::create('InternalItemID', _t('Product.CODE', 'Product Code/SKU'), '', 30),
-			DropdownField::create('ParentID', _t("Product.CATEGORY", "Category"), $this->categoryoptions())
+			DropdownField::create('ParentID', _t("Product.CATEGORY", "Category"), $this->getCategoryOptions())
 				->setDescription(_t("Product.CATEGORYDESCRIPTION", "This is the parent page or default category.")),
 			ListBoxField::create('ProductCategories', _t("Product.ADDITIONALCATEGORIES", "Additional Categories"),
-					ProductCategory::get()
-						->filter("ID:not", $this->getAncestors()->map('ID', 'ID'))
-						->map('ID', 'NestedTitle')->toArray()
+					$this->getCategoryOptionsNoParent()
 				)->setMultiple(true),
 			TextField::create('Model', _t('Product.MODEL', 'Model'), '', 30),
 			CheckboxField::create('Featured', _t('Product.FEATURED', 'Featured Product')),
@@ -155,7 +153,7 @@ class Product extends Page implements Buyable {
 	 * Helper function for generating list of categories to select from.
 	 * @return array categories
 	 */
-	private function categoryoptions() {
+	private function getCategoryOptions() {
 		$categories = ProductCategory::get()->map('ID', 'NestedTitle')->toArray();
 		$categories = array(
 			0 => _t("SiteTree.PARENTTYPE_ROOT", "Top-level page")
@@ -167,6 +165,18 @@ class Product extends Page implements Buyable {
 		}
 
 		return $categories;
+	}
+
+	/**
+	 * Helper function for generating a list of additional categories excluding the main parent.
+	 * @return array categories
+	 */
+	private function getCategoryOptionsNoParent() {
+		$ancestors = $this->getAncestors()->map('ID', 'ID');
+		$categories = ProductCategory::get();
+		if(!empty($ancestors))
+			$categories->filter("ID:not", $ancestors);
+		return $categories->map('ID', 'NestedTitle')->toArray();
 	}
 
 	/**
