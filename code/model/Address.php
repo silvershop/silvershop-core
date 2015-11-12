@@ -98,10 +98,14 @@ class Address extends DataObject{
 				array_pop($countries)
 			);
 		}
-		return DropdownField::create("Country",
+		$field = DropdownField::create("Country",
 			_t('Address.COUNTRY', 'Country'),
-				$countries
+			$countries
 		)->setHasEmptyDefault(true);
+
+		$this->extend('updateCountryField', $field);
+
+		return $field;
 	}
 
 	/**
