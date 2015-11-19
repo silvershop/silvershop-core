@@ -57,7 +57,13 @@ class AddProductForm extends Form {
 			if(!ShoppingCart_Controller::config()->direct_to_cart_page){
 				$form->SessionMessage($cart->getMessage(),$cart->getMessageType());
 			}
-			ShoppingCart_Controller::direct($cart->getMessageType());
+
+			$this->extend('updateAddToCart', $form, $buyable);
+			
+			$request = $this->getRequest();
+			$this->extend('updateAddProductFormResponse', $request, $response, $buyable, $quantity, $form);
+
+			return $response ? $response : ShoppingCart_Controller::direct($cart->getMessageType());
 		}
 	}
 
