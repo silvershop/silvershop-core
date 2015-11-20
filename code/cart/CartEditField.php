@@ -87,7 +87,10 @@ class CartEditField extends FormField{
 			$name = $this->name."[$item->ID]";
 			$quantity = NumericField::create(
 				$name."[Quantity]", "Quantity", $item->Quantity
-			);
+			)
+			->setAttribute('type','number')
+			->setAttribute('min', '0');
+
 			$variationfield = false;
 			if($buyable->has_many("Variations")){
 				$variations = $buyable->Variations();
