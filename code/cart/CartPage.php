@@ -94,7 +94,14 @@ class CartPage_Controller extends Page_Controller{
 			return false;
 		}
 		$form = new CartForm($this, "CartForm", $cart);
+
+		$this->extend('updateCartForm', $form);
+
+		// if accessing through the model, warn that the hook is going to go away
 		$this->dataRecord->extend('updateCartForm', $form, $cart);
+		if($this->dataRecord->hasMethod('updateCartForm')){
+			Deprecation::notice('2.0', 'Please access updateCartForm through CartPage_Controller instead of CartPage (this extension point is due to be removed)');
+		}
 
 		return $form;
 	}
