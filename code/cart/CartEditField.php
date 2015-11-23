@@ -63,7 +63,9 @@ class CartEditField extends FormField{
 		$customcartdata = array(
 			'Items' => $editables
 		);
-		$this->extend('onBeforeRender', $editables, $customcartdata);
+		// NOTE: this was originally incorrect - passing just $editables and $customcartdata
+		// which broke modules like Display_Logic.
+		$this->extend('onBeforeRender', $this, $editables, $customcartdata);
 
 		return SSViewer::execute_template(
 			$this->template,
