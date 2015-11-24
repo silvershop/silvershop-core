@@ -334,6 +334,10 @@ class ShoppingCart {
 		return $this->type;
 	}
 
+	public function clearMessage() {
+		$this->message  = null;
+	}
+	
 	//singleton protection
 	public function __clone() {
 		trigger_error('Clone is not allowed.', E_USER_ERROR);
