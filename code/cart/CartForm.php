@@ -78,7 +78,11 @@ class CartForm extends Form{
 		if(count($messages)){
 			$form->sessionMessage(implode(" ", $messages), "good");
 		}
-		$this->controller->redirectBack();
+
+		$request = $this->getRequest();
+		$this->extend('updateCartFormResponse', $request, $response, $form);
+
+		return $response ? $response : $this->controller->redirectBack();
 	}
 
 }
