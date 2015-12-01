@@ -5,10 +5,18 @@
  *
  * @package shop
  */
-class OrderEmailNotifier{
+class OrderEmailNotifier {
 
+	/**
+	 * @var Order $order
+	 */
 	protected $order;
 
+
+	/**
+	 * @param Order $order
+	 * @return OrderEmailNotifier
+	 */
 	public static function create(Order $order) {
 		return Injector::inst()->create('OrderEmailNotifier', $order);
 	}
@@ -21,32 +29,45 @@ class OrderEmailNotifier{
 		$this->order = $order;
 	}
 
-	
 	/**
-	* Send a mail of the order to the client (and another to the admin).
-	*
-	* @param $template - the class name of the email you wish to send
-	* @param $subject - subject of the email
-	* @param $copyToAdmin - true by default, whether it should send a copy to the admin
-	*/
-	public function sendEmail($template, $subject, $copyToAdmin = true) {
+	 * @param string $template
+	 * @param string $subject
+	 * @return Email
+	 */
+	private function buildEmail($template, $subject) {
 		$from = ShopConfig::config()->email_from ? ShopConfig::config()->email_from : Email::config()->admin_email;
 		$to = $this->order->getLatestEmail();
 		$checkoutpage = CheckoutPage::get()->first();
-		$completemessage = $checkoutpage ? $checkoutpage->PurchaseComplete : "";
+		$completemessage = $checkoutpage ? $checkoutpage->PurchaseComplete : '';
+
 		$email = new Email();
 		$email->setTemplate($template);
 		$email->setFrom($from);
 		$email->setTo($to);
 		$email->setSubject($subject);
-		if($copyToAdmin){
-			$email->setBcc(Email::config()->admin_email);
-		}
 		$email->populateTemplate(array(
 			'PurchaseCompleteMessage' => $completemessage,
 			'Order' => $this->order,
 			'BaseURL' => Director::absoluteBaseURL()
 		));
+
+		return $email;
+	}
+
+	/**
+	 * Send a mail of the order to the client (and another to the admin).
+	 *
+	 * @param $template - the class name of the email you wish to send
+	 * @param $subject - subject of the email
+	 * @param $copyToAdmin - true by default, whether it should send a copy to the admin
+	 * @return bool
+	 */
+	public function sendEmail($template, $subject, $copyToAdmin = true) {
+		$email = $this->buildEmail($template, $subject);
+
+		if($copyToAdmin) {
+			$email->setBcc(Email::config()->admin_email);
+		}
 
 		return $email->send();
 	}
@@ -74,9 +95,10 @@ class OrderEmailNotifier{
 			_t("OrderNotifier.ADMINNOTIFICATIONSUBJECT", "Order #%d Notification"),
 			$this->order->Reference
 		);
-		$this->sendEmail(
-			'Order_AdminNotificationEmail', $subject, false
-		);
+
+		$this->buildEmail('Order_AdminNotificationEmail', $subject)
+			->setTo(Email::config()->admin_email)
+			->send();
 	}
 
 	/**
@@ -111,7 +133,7 @@ class OrderEmailNotifier{
 				->filter("OrderID", $this->order->ID)
 				->filter("SentToCustomer", 1)
 				->first();
-			
+
 			if($latestLog) {
 				$note = $latestLog->Note;
 				$title = $latestLog->Title;
