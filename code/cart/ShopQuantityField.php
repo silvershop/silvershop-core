@@ -54,11 +54,12 @@ class ShopQuantityField extends ViewableData{
 		for($r=1; $r<= $this->max; $r++){
 			$qtyArray[$r] = $r;
 		}
-		return new NumericField(
+		return NumericField::create(
 			$this->MainID() . '_Quantity',
 			// this title currently doesn't show up in the front end, better assign a translation anyway.
 			_t('AddProductForm.Quantity', "Quantity"),
-			$this->item->Quantity);
+			$this->item->Quantity
+		)->setAttribute('type','number');
 	}
 
 	public function MainID() {
