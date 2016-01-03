@@ -82,7 +82,7 @@ class OrderStatusLog extends DataObject {
 
 	public function onAfterWrite() {
 		if($this->SentToCustomer) {
-			$this->order()->sendStatusChange($this->Title, $this->Note);
+			$this->order()->notifier->sendStatusChange($this->Title, $this->Note);
 		}
 	}
 
