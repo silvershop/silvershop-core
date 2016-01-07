@@ -4,9 +4,9 @@
 			<thead>
 				<tr>
 					<th><%t Order.db_Reference "Reference" %></th>
-					<th><%t ShopDashboard.DATE "Date" %></th>
-					<th><%t ShopDashboard.CUSTOMER "Customer" %></th>
-					<th><%t AccountNavigation.EMAIL "Email" %></th>
+					<th><%t Shop.Date "Date" %></th>
+					<th><%t Shop.Customer "Customer" %></th>
+					<th><%t AccountPage.MemberEmail "Email" %></th>
 					<th><%t Order.has_many_Items "Items" %></th>
 					<th><%t Order.db_Total "Total" %></th>
 					<th><%t Order.db_Status "Status" %></th>
@@ -22,10 +22,10 @@
 						<td>$Email</td>
 						<td>$Items.Quantity</td>
 						<td>$Total.Nice</td>
-						<td>$Status</td>
+						<td>$StatusI18N</td>
 						<td>
 							<a class="ss-ui-button ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false" href="admin/orders/Order/EditForm/field/Order/item/$ID/edit">
-								<%t ShopDashboard.EDIT "Edit" %>
+								<%t Shop.Edit "Edit" %>
 							</a>
 						</td>
 					</tr>
@@ -39,7 +39,7 @@
 			<thead>
 				<tr>
           <th><%t Order.db_Reference "Reference" %></th>
-          <th><%t ShopDashboard.CUSTOMER "Customer" %></th>
+          <th><%t Shop.Customer "Customer" %></th>
           <th><%t Order.db_Total "Total" %></th>
 					<th></th>
 				</tr>
@@ -52,7 +52,7 @@
 						<td>$Total.Nice</td>
 						<td>
 							<a class="ss-ui-button ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false" href="admin/orders/Order/EditForm/field/Order/item/$ID/edit">
-								<%t ShopDashboard.EDIT "Edit" %>
+								<%t Shop.Edit "Edit" %>
 							</a>
 						</td>
 					</tr>

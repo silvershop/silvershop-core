@@ -14,19 +14,24 @@ class ShopMemberFactory{
 		$result = new ValidationResult();
 		if(!Checkout::member_creation_enabled()) {
 			$result->error(
-				_t("Checkout.MEMBERSHIPSNOTALLOWED", "Creating new memberships is not allowed")
+				_t("Checkout.MembershipIsNotAllowed", "Creating new memberships is not allowed")
 			);
 			throw new ValidationException($result);
 		}
 		$idfield = Config::inst()->get('Member', 'unique_identifier_field');
 		if(!isset($data[$idfield]) || empty( $data[$idfield])){
 			$result->error(
-				sprintf(_t("Checkout.IDFIELDNOTFOUND", "Required field not found: %s"), $idfield)
+                _t(
+                    'Checkout.IdFieldNotFound',
+                    'Required field not found: {IdentifierField}',
+                    'Identifier is the field that holds the unique user-identifier, commonly this is \'Email\'',
+                    array('IdentifierField' => $idfield)
+                )
 			);
 			throw new ValidationException($result);
 		}
 		if(!isset($data['Password']) || empty($data['Password'])){
-			$result->error(_t("Checkout.PASSWORDREQUIRED", "A password is required"));
+			$result->error(_t("Checkout.PasswordRequired", "A password is required"));
 			throw new ValidationException($result);
 		}
 		$idval = $data[$idfield];
@@ -36,10 +41,14 @@ class ShopMemberFactory{
 			// if a localized value exists, use this for our error-message
 			$fieldLabel = isset($fieldLabels[$idfield]) ? $fieldLabels[$idfield] : $idfield;
 
-			$result->error(sprintf(
-				_t("Checkout.MEMBEREXISTS", "A member already exists with the %s %s"),
-				$fieldLabel, $idval
-			));
+			$result->error(
+                _t(
+                    'Checkout.MemberExists',
+                    'A member already exists with the {Field} {Identifier}',
+                    '',
+                    array('Field' => $fieldLabel, 'Identifier' => $idval)
+                )
+			);
 			throw new ValidationException($result);
 		}
 		$member = new Member(Convert::raw2sql($data));

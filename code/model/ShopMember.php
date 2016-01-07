@@ -31,7 +31,7 @@ class ShopMember extends DataExtension {
 		$fields->removeByName("DefaultShippingAddressID");
 		$fields->removeByName("DefaultBillingAddressID");
 		$fields->addFieldToTab('Root.Main',
-			new DropdownField('Country', _t('Address.COUNTRY', 'Country'),
+			new DropdownField('Country', _t('Address.db_Country', 'Country'),
 				SiteConfig::current_site_config()->getCountriesList()
 			)
 		);

@@ -15,7 +15,7 @@ class CartForm extends Form{
 				->setTemplate($template)
 		);
 		$actions = new FieldList(
-			FormAction::create("updatecart", _t('CartForm.UPDATE_CART', "Update Cart"))
+			FormAction::create("updatecart", _t('CartForm.UpdateCart', "Update Cart"))
 		);
 
 		parent::__construct($controller, $name, $fields, $actions);

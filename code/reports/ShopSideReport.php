@@ -11,11 +11,11 @@
 class ShopSideReport_FeaturedProducts extends SS_Report {
 
 	public function title() {
-		return _t('ShopSideReport.FEATUREDPRODUCTS', "Featured Products");
+		return _t('ShopSideReport.FeaturedProducts', "Featured Products");
 	}
 
 	public function group() {
-		return _t('ShopSideReport.ShopGROUP', "Shop");
+		return _t('ShopSideReport.ShopGroup', "Shop");
 	}
 
 	public function sort() {
@@ -43,11 +43,11 @@ class ShopSideReport_FeaturedProducts extends SS_Report {
 class ShopSideReport_AllProducts extends SS_Report {
 
 	public function title() {
-		return _t('ShopSideReport.ALLPRODUCTS', "All Products");
+		return _t('ShopSideReport.AllProducts', "All Products");
 	}
 
 	public function group() {
-		return _t('ShopSideReport.ShopGROUP', "Shop");
+		return _t('ShopSideReport.ShopGroup', "Shop");
 	}
 	public function sort() {
 		return 0;
@@ -71,10 +71,10 @@ class ShopSideReport_AllProducts extends SS_Report {
 class ShopSideReport_NoImageProducts extends SS_Report {
 
 	public function title() {
-		return _t('ShopSideReport.NOIMAGE',"Products with no image");
+		return _t('ShopSideReport.NoImage',"Products with no image");
 	}
 	public function group() {
-		return _t('ShopSideReport.ShopGROUP', "Shop");
+		return _t('ShopSideReport.ShopGroup', "Shop");
 	}
 	public function sort() {
 		return 0;
@@ -95,10 +95,10 @@ class ShopSideReport_NoImageProducts extends SS_Report {
 class ShopSideReport_HeavyProducts extends SS_Report {
 
 	public function title() {
-		return _t('ShopSideReport.HEAVY',"Heavy Products");
+		return _t('ShopSideReport.Heavy',"Heavy Products");
 	}
 	public function group() {
-		return _t('ShopSideReport.ShopGROUP', "Shop");
+		return _t('ShopSideReport.ShopGroup', "Shop");
 	}
 	public function sort() {
 		return 0;

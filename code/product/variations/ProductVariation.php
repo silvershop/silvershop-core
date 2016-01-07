@@ -73,8 +73,8 @@ class ProductVariation extends DataObject implements Buyable {
 
 	public function getCMSFields() {
 		$fields = new FieldList(
-			TextField::create('InternalItemID', _t('Product.CODE', 'Product Code')),
-			TextField::create('Price', _t('Product.PRICE', 'Price'))
+			TextField::create('InternalItemID', _t('Product.Code', 'Product Code')),
+			TextField::create('Price', _t('Product.db_BasePrice', 'Price'))
 		);
 		//add attributes dropdowns
 		$attributes = $this->Product()->VariationAttributeTypes();
@@ -89,7 +89,7 @@ class ProductVariation extends DataObject implements Buyable {
 					$fields->push(LiteralField::create('novalues'.$attribute->Name,
 						'<p class="message warning">'.
 							_t(
-								'ProductVariation.NO_ATTRIBUTE_VALUES_MESSAGE',
+								'ProductVariation.NoAttributeValuesMessage',
 								'{attribute} has no values to choose from. You can create them in the "Products" &#62; "Product Attribute Type" section of the CMS.',
 								'Warning that will be shown if an attribute doesn\'t have any values',
 								array('attribute' => $attribute->Name)
@@ -103,14 +103,14 @@ class ProductVariation extends DataObject implements Buyable {
 			$fields->push(LiteralField::create('savefirst',
 				'<p class="message warning">'.
 					_t(
-						'ProductVariation.SAVE_FIRST_MESSAGE',
+						'ProductVariation.MustSaveFirstMessage',
 						"You can choose variation attributes after saving for the first time, if they exist."
 					) .
 				'</p>'
 			));
 		}
 		$fields->push(
-			UploadField::create('Image', _t('Product.IMAGE', 'Product Image'))
+			UploadField::create('Image', _t('Product.Image', 'Product Image'))
 		);
 		$this->extend('updateCMSFields', $fields);
 

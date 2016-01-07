@@ -34,7 +34,7 @@ class CheckoutStep_ContactDetails extends CheckoutStep{
 		$form = new CheckoutForm($this->owner, 'ContactDetailsForm', $config);
 		$form->setRedirectLink($this->NextStepLink());
 		$form->setActions(new FieldList(
-			new FormAction("checkoutSubmit", _t('CheckoutStep.CONTINUE', "Continue"))
+			new FormAction("checkoutSubmit", _t('CheckoutStep.Continue', "Continue"))
 		));
 		$this->owner->extend('updateContactDetailsForm', $form);
 

@@ -1,9 +1,9 @@
 <table class="variationstable">
 	<tr>
 		<th><%t ProductVariation.SINGULARNAME "Variation" %></th>
-		<th><%t Product.PRICE "Price" %></th>
+		<th><%t Product.Price "Price" %></th>
 		<% if $canPurchase %>
-			<th><% _t("QUANTITYCART","Quantity in cart") %></th>
+			<th><%t Order.Quantity "Quantity" %></th>
 		<% end_if %>
 	</tr>
 	<% loop $Variations %>
@@ -17,7 +17,9 @@
 							$QuantityField
 						<% end_with %>
 					<% else %>
-						<a href="$Item.addLink" title="<% sprintf(_t("ADD","Add &quot;%s&quot; to your cart"),$Title.XML) %>"><% _t("ADDLINK","Add this item to cart") %></a>
+						<a href="$Item.addLink" title="<%t Product.AddToCartTitle "Add &quot;{Title}&quot; to your cart" Title=$Title.XML %>">
+                            <%t Product.AddToCart "Add to Cart" %>
+						</a>
 					<% end_if %>
 
 				<% end_if %>

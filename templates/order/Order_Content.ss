@@ -7,10 +7,10 @@
 	<thead>
 		<tr>
 			<th scope="col"></th>
-			<th scope="col"><% _t("PRODUCT","Product") %></th>
-			<th scope="col"><% _t("UNITPRICE","Unit Price") %></th>
-			<th scope="col"><% _t("QUANTITY", "Quantity") %></th>
-			<th scope="col"><% _t("TOTALPRICE","Total Price") %> ($Currency)</th>
+			<th scope="col"><%t Product.SINGULARNAME "Product" %></th>
+			<th scope="col"><%t Order.UnitPrice "Unit Price" %></th>
+			<th scope="col"><%t Order.Quantity "Quantity" %></th>
+			<th scope="col"><%t Order.TotalPriceWithCurrency "Total Price ({Currency})" Currency=$Currency %></th>
 		</tr>
 	</thead>
 	<tbody>

@@ -12,12 +12,12 @@ class I18nDatetime extends SS_Datetime{
 	 * locale sould be set
 	 */
 	public function Nice() {
-		if($this->value) return $this->FormatI18N(_t('General.DATETIMEFORMATNICE','%m/%d/%G %I:%M%p'));
+		if($this->value) return $this->FormatI18N(_t('Shop.DateTimeFormatNice','%m/%d/%G %I:%M%p'));
 	}
 	public function NiceDate() {
-		if($this->value) return $this->FormatI18N(_t('General.DATEFORMATNICE','%m/%d/%G'));
+		if($this->value) return $this->FormatI18N(_t('Shop.DateFormatNice','%m/%d/%G'));
 	}
 	public function Nice24() {
-		return date(_t('General.DATETIMEFORMATNICE24','d/m/Y H:i'), strtotime($this->value));
+		return date(_t('Shop.DateTimeFormatNice24','d/m/Y H:i'), strtotime($this->value));
 	}
 }

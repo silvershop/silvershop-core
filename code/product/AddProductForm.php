@@ -59,7 +59,7 @@ class AddProductForm extends Form {
 			}
 
 			$this->extend('updateAddToCart', $form, $buyable);
-			
+
 			$request = $this->getRequest();
 			$this->extend('updateAddProductFormResponse', $request, $response, $buyable, $quantity, $form);
 
@@ -89,10 +89,10 @@ class AddProductForm extends Form {
 				$count++;
 			}
 
-			$fields->push(new DropdownField('Quantity', _t('AddProductForm.Quantity', 'Quantity'), $values, 1));
+			$fields->push(new DropdownField('Quantity', _t('Shop.Quantity', 'Quantity'), $values, 1));
 		} else {
 			$fields->push(
-				NumericField::create(_t('AddProductForm.Quantity', 'Quantity'), 'Quantity', 1)
+				NumericField::create(_t('Shop.Quantity', 'Quantity'), 'Quantity', 1)
 					->setAttribute('type','number')
 					->setAttribute('min', '0')
 			);
@@ -106,7 +106,7 @@ class AddProductForm extends Form {
 	 */
 	protected function getFormActions(){
 		return new FieldList(
-			new FormAction('addtocart',_t("AddProductForm.ADDTOCART",'Add to Cart'))
+			new FormAction('addtocart',_t("Product.AddToCart",'Add to Cart'))
 		);
 	}
 
