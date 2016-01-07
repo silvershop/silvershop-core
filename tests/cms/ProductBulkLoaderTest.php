@@ -9,7 +9,8 @@ class ProductBulkLoaderTest extends FunctionalTest {
 	public function testLoad() {
 		$loader = new ProductBulkLoader('Product');
 
-		$filepath = Director::baseFolder() . '/'.SHOP_DIR.'/tests/test_products.csv';
+		$ds = DIRECTORY_SEPARATOR;
+        $filepath = realpath(__DIR__ . $ds . '..' . $ds . 'test_products.csv');
 		$file = fopen($filepath, 'r');
 
 		fgetcsv($file); // pop header row
