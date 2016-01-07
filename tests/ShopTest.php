@@ -8,8 +8,6 @@
 class ShopTest{
 
 	public static function setConfiguration() {
-		$ds = DIRECTORY_SEPARATOR;
-		include BASE_PATH.$ds.SHOP_DIR.$ds.'tests'.$ds.'test_config.php';
+        include __DIR__ . DIRECTORY_SEPARATOR . 'test_config.php';
 	}
-
 }
