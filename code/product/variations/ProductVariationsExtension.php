@@ -25,18 +25,18 @@ class ProductVariationsExtension extends DataExtension
             array(
                 ListboxField::create(
                     "VariationAttributeTypes",
-                    _t('ProductVariationsExtension.ATTRIBUTES', "Attributes"),
+                    _t('ProductVariationsExtension.Attributes', "Attributes"),
                     ProductAttributeType::get()->map("ID", "Title")->toArray()
                 )->setMultiple(true)
                     ->setDescription(
                         _t(
-                            'ProductVariationsExtension.ATTRIBUTES_DESCRIPTION',
+                            'ProductVariationsExtension.AttributesDescription',
                             "These are fields to indicate the way(s) each variation varies. Once selected, they can be edited on each variation."
                         )
                     ),
                 GridField::create(
                     "Variations",
-                    _t('ProductVariationsExtension.VARIATIONS', "Variations"),
+                    _t('ProductVariationsExtension.Variations', "Variations"),
                     $this->owner->Variations(),
                     GridFieldConfig_RecordEditor::create()
                 ),
@@ -48,7 +48,7 @@ class ProductVariationsExtension extends DataExtension
                 LabelField::create(
                     'variationspriceinstructinos',
                     _t(
-                        'ProductVariationsExtension.VARIATIONS_INSTRUCTIONS',
+                        'ProductVariationsExtension.VariationsInfo',
                         "Price - Because you have one or more variations, the price can be set in the \"Variations\" tab."
                     )
                 )

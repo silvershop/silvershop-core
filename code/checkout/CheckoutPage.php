@@ -45,7 +45,7 @@ class CheckoutPage extends Page
                 )
                     ->setDescription(
                         _t(
-                            'CheckoutPage.PURCHASE_COMPLETE_DESCRIPTION',
+                            'CheckoutPage.PurchaseCompleteDescription',
                             "This message is included in reciept email, after the customer submits the checkout"
                         )
                     ),
@@ -103,7 +103,7 @@ class CheckoutPage_Controller extends Page_Controller
             return $this->Title;
         }
 
-        return _t('CheckoutPage.TITLE', "Checkout");
+        return _t('CheckoutPage.DefaultTitle', "Checkout");
     }
 
     public function OrderForm()
@@ -152,7 +152,7 @@ class CheckoutPage_Controller extends Page_Controller
 
         $form->setActions(
             FieldList::create(
-                FormAction::create("submitpayment", _t('CheckoutPage.SUBMIT_PAYMENT', "Submit Payment"))
+                FormAction::create("submitpayment", _t('CheckoutPage.SubmitPayment', "Submit Payment"))
             )
         );
 

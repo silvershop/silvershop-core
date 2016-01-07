@@ -93,7 +93,7 @@ class CartPage_Controller extends Page_Controller
         if ($this->Title) {
             return $this->Title;
         }
-        return _t('CartPage.TITLE', "Shopping Cart");
+        return _t('CartPage.DefaultTitle', "Shopping Cart");
     }
 
     /**

@@ -8,7 +8,7 @@
  */
 class SubTotalModifier extends OrderModifier
 {
-    private static $defaults = array(
+    private static $defaults      = array(
         'Type' => 'Ignored',
     );
     private static $singular_name = "Sub Total";

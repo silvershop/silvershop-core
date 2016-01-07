@@ -14,18 +14,18 @@
 	<% end_if %>
 
 <% else %>
-	<p class="message warning"><% _t('CartPage.ss.CARTEMPTY','Your cart is empty.') %></p>
+	<p class="message warning"><%t ShoppingCart.NoItems "There are no items in your cart." %></p>
 <% end_if %>
 <div class="cartfooter">
 	<% if $ContinueLink %>
 		<a class="continuelink button" href="$ContinueLink">
-			<% _t('CartPage.ss.CONTINUE','Continue Shopping') %>
+			<%t ShoppingCart.ContinueShopping 'Continue Shopping' %>
 		</a>
 	<% end_if %>
 	<% if $Cart %>
 		<% if $CheckoutLink %>
 			<a class="checkoutlink button" href="$CheckoutLink">
-				<% _t('CartPage.ss.PROCEEDTOCHECKOUT','Proceed to Checkout') %>
+				<%t ShoppingCart.ProceedToCheckout 'Proceed to Checkout' %>
 			</a>
 		<% end_if %>
 	<% end_if %>

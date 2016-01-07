@@ -15,7 +15,7 @@
 abstract class CheckoutComponent extends Object
 {
     protected $requiredfields = array();
-    protected $dependson = array();
+    protected $dependson      = array();
 
     /**
      * Get form fields for manipulating the current order,

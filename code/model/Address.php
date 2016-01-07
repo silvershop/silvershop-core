@@ -81,20 +81,23 @@ class Address extends DataObject
     {
         $fields = new FieldList(
             $this->getCountryField(),
-            $addressfield = TextField::create('Address', _t('Address.ADDRESS', 'Address')),
-            $address2field = TextField::create('AddressLine2', _t('Address.ADDRESSLINE2', 'Address Line 2 (optional)')),
-            $cityfield = TextField::create('City', _t('Address.CITY', 'City')),
-            $statefield = TextField::create('State', _t('Address.STATE', 'State')),
-            $postcodefield = TextField::create('PostalCode', _t('Address.POSTALCODE', 'Postal Code')),
-            $phonefield = TextField::create('Phone', _t('Address.PHONE', 'Phone Number'))
+            $addressfield = TextField::create('Address', _t('Address.db_Address', 'Address')),
+            $address2field =
+                TextField::create('AddressLine2', _t('Address.db_AddressLine2', 'Address Line 2 (optional)')),
+            $cityfield = TextField::create('City', _t('Address.db_City', 'City')),
+            $statefield = TextField::create('State', _t('Address.db_State', 'State')),
+            $postcodefield = TextField::create('PostalCode', _t('Address.db_PostalCode', 'Postal Code')),
+            $phonefield = TextField::create('Phone', _t('Address.db_Phone', 'Phone Number'))
         );
         if (isset($params['addfielddescriptions']) && !empty($params['addfielddescriptions'])) {
             $addressfield->setDescription(
-                _t("Address.ADDRESSHINT", "street / thoroughfare number, name, and type or P.O. Box")
+                _t("Address.AddressHint", "street / thoroughfare number, name, and type or P.O. Box")
             );
-            $address2field->setDescription(_t("Address.ADDRESS2HINT", "premises, building, apartment, unit, floor"));
-            $cityfield->setDescription(_t("Address.CITYHINT", "or suburb, county, district"));
-            $statefield->setDescription(_t("Address.STATEHINT", "or province, territory, island"));
+            $address2field->setDescription(
+                _t("Address.AddressLine2Hint", "premises, building, apartment, unit, floor")
+            );
+            $cityfield->setDescription(_t("Address.CityHint", "or suburb, county, district"));
+            $statefield->setDescription(_t("Address.StateHint", "or province, territory, island"));
         }
 
         $this->extend('updateFormFields', $fields);
@@ -108,13 +111,13 @@ class Address extends DataObject
             //field name is Country_readonly so it's value doesn't get updated
             return ReadonlyField::create(
                 "Country_readonly",
-                _t('Address.COUNTRY', 'Country'),
+                _t('Address.db_Country', 'Country'),
                 array_pop($countries)
             );
         }
         $field = DropdownField::create(
             "Country",
-            _t('Address.COUNTRY', 'Country'),
+            _t('Address.db_Country', 'Country'),
             $countries
         )->setHasEmptyDefault(true);
 

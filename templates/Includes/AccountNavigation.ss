@@ -2,31 +2,31 @@
 
     <div class="nav">
 
-        <h2><%t AccountNavigation.Title 'My Account' %></h2>
+        <h2><%t AccountPage.Title 'My Account' %></h2>
 
         <ul class="nav nav-list">
 
             <li>
                 <a href="{$Link}">
-                    <i class="icon icon-list"></i><%t AccountNavigation.PastOrders 'Past Orders' %>
+                    <i class="icon icon-list"></i><%t AccountPage.PastOrders 'Past Orders' %>
                 </a>
             </li>
 
             <li>
                 <a href="{$Link('editprofile')}">
-                    <i class="icon icon-user"></i><%t AccountNavigation.EditProfile 'Edit Profile' %>
+                    <i class="icon icon-user"></i><%t AccountPage.EditProfile 'Edit Profile' %>
                 </a>
             </li>
 
             <li>
                 <a href="{$Link('addressbook')}">
-                    <i class="icon icon-book"></i><%t AccountNavigation.AddressBook 'Address Book' %>
+                    <i class="icon icon-book"></i><%t AccountPage.AddressBook 'Address Book' %>
                 </a>
             </li>
 
             <li>
                 <a href="Security/logout">
-                    <i class="icon icon-off"></i><%t AccountNavigation.LogOut 'Log Out' %>
+                    <i class="icon icon-off"></i><%t AccountPage.LogOut 'Log Out' %>
                 </a>
             </li>
 
@@ -40,19 +40,19 @@
 
             <dl>
 
-                <dt><%t AccountNavigation.MemberName 'Name' %></dt>
+                <dt><%t AccountPage.MemberName 'Name' %></dt>
                 <dd>$Name</dd>
 
-                <dt><%t AccountNavigation.MemberEmail 'Email' %></dt>
+                <dt><%t AccountPage.MemberEmail 'Email' %></dt>
                 <dd>$Email</dd>
 
-                <dt><%t AccountNavigation.MemberSince 'Member Since' %></dt>
+                <dt><%t AccountPage.MemberSince 'Member Since' %></dt>
                 <dd>$Created.Nice</dd>
 
-                <dt><%t AccountNavigation.MemberLastVisit 'Last Visit' %></dt>
+                <dt><%t AccountPage.MemberLastVisit 'Last Visit' %></dt>
                 <dd>$LastVisited.Nice</dd>
 
-                <dt> <%t AccountNavigation.NumberOfOrders 'Number of orders' %></dt>
+                <dt> <%t AccountPage.NumberOfOrders 'Number of orders' %></dt>
                 <dd><% if $PastOrders %>{$PastOrders.Count}<% else %>0<% end_if %></dd>
 
             </dl>

@@ -4,7 +4,7 @@
  * Adds the ability to use the member's address book for choosing addresses
  *
  */
-abstract class AddressBookCheckoutComponent extends AddressCheckoutComponent
+abstract class AddressBookCheckoutComponent extends AddressCheckoutComponent implements i18nEntityProvider
 {
     private static $composite_field_tag = 'div';
     protected $addtoaddressbook = true;
@@ -21,7 +21,7 @@ abstract class AddressBookCheckoutComponent extends AddressCheckoutComponent
             // group under a composite field (invisible by default) so we
             // easily know which fields to show/hide
             $label = _t(
-                "AddressBookCheckkoutComponent.{$this->addresstype}Address",
+                "Address.{$this->addresstype}Address",
                 "{$this->addresstype} Address"
             );
 
@@ -46,20 +46,10 @@ abstract class AddressBookCheckoutComponent extends AddressCheckoutComponent
         $member = Member::currentUser();
         if ($member && $member->AddressBook()->exists()) {
             $addressoptions = $member->AddressBook()->sort('Created', 'DESC')->map('ID', 'toString')->toArray();
-            $addressoptions['newaddress'] = _t("AddressBookCheckoutComponent.CREATENEWADDRESS", "Create new address");
+            $addressoptions['newaddress'] = _t("Address.CreateNewAddress", "Create new address");
             $fieldtype = count($addressoptions) > 3 ? 'DropdownField' : 'OptionsetField';
 
-            $label = '';
-            switch ($this->addresstype) {
-                case 'Billing':
-                    $label = _t("AddressBookCheckoutComponent.EXISTING_BILLING_ADDRESS", "Existing Billing Address");
-                    break;
-                case 'Shipping':
-                    $label = _t("AddressBookCheckoutComponent.EXISTING_SHIPPING_ADDRESS", "Existing Shipping Address");
-                    break;
-                default:
-                    $label = _t("AddressBookCheckoutComponent.EXISTING_ADDRESS", "Existing Address");
-            }
+            $label = _t("Address.Existing{$this->addresstype}Address", "Existing {$this->addresstype} Address");
 
             return FieldList::create(
                 $fieldtype::create(
@@ -144,6 +134,29 @@ abstract class AddressBookCheckoutComponent extends AddressCheckoutComponent
         } else {
             parent::setData($order, $data);
         }
+    }
+
+    /**
+     * Provide translatable entities for this class
+     *
+     * @return array
+     */
+    public function provideI18nEntities()
+    {
+        if ($this->addresstype) {
+            return array(
+                "Address.{$this->addresstype}Address"         => array(
+                    "{$this->addresstype} Address",
+                    "Label for the {$this->addresstype} address",
+                ),
+                "Address.Existing{$this->addresstype}Address" => array(
+                    "Existing {$this->addresstype} Address",
+                    "Label to select an existing {$this->addresstype} Address",
+                ),
+            );
+        }
+
+        return array();
     }
 }
 

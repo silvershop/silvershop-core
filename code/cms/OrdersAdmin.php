@@ -93,7 +93,7 @@ JS;
             LiteralField::create(
                 "PrintOrder",
                 "<button class=\"no-ajax grid-print-button\" data-icon=\"grid_print\" onclick=\"javascript:$printwindowjs\">"
-                . _t("Order.PRINT", "Print") . "</button>"
+                . _t("Order.Print", "Print") . "</button>"
             )
         );
 
@@ -110,7 +110,7 @@ JS;
         if (isset($_REQUEST['print']) && $_REQUEST['print']) {
             Requirements::customScript("if(document.location.href.indexOf('print=1') > 0) {window.print();}");
         }
-        $title = i18n::_t("ORDER.INVOICE", "Invoice");
+        $title = i18n::_t("Order.Invoice", "Invoice");
         if ($id = $this->popupController->getRequest()->param('ID')) {
             $title .= " #$id";
         }

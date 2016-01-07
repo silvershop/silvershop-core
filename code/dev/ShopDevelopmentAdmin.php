@@ -41,7 +41,7 @@ class ShopDevelopmentAdmin extends Controller
         //render the debug view
         $renderer = Object::create('DebugView');
         $renderer->writeHeader();
-        $renderer->writeInfo(_t("Shop.DEVTOOLSTITLE", "Shop Development Tools"), Director::absoluteBaseURL());
+        $renderer->writeInfo(_t("Shop.DevToolsTitle", "Shop Development Tools"), Director::absoluteBaseURL());
     }
 
     public function ShopFolder()

@@ -38,6 +38,6 @@ class GlobalTaxModifier extends TaxModifier
     {
         $country = $this->Country ? " for " . $this->Country . " " : "";
         return parent::TableTitle() . $country .
-        ($this->Type == "Chargable" ? '' : _t("GlobalTaxModifier.INCLUDED", ' (included in the above price)'));
+        ($this->Type == "Chargable" ? '' : _t("GlobalTaxModifier.Included", ' (included in the above price)'));
     }
 }

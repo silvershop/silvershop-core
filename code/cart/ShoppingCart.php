@@ -127,7 +127,7 @@ class ShoppingCart
         $order->extend("beforeAdd", $buyable, $quantity, $filter);
         if (!$buyable) {
 
-            return $this->error(_t("ShoppingCart.PRODUCTNOTFOUND", "Product not found."));
+            return $this->error(_t("ShoppingCart.ProductNotFound", "Product not found."));
         }
         $item = $this->findOrMakeItem($buyable, $filter);
         if (!$item) {
@@ -141,7 +141,7 @@ class ShoppingCart
         }
         $item->write();
         $order->extend("afterAdd", $item, $buyable, $quantity, $filter);
-        $this->message(_t("ShoppingCart.ITEMADD", "Item has been added successfully."));
+        $this->message(_t("ShoppingCart.ItemAdded", "Item has been added successfully."));
 
         return $item;
     }
@@ -160,7 +160,7 @@ class ShoppingCart
         $order = $this->current();
 
         if (!$order) {
-            return $this->error(_t("ShoppingCart.NOORDER", "No current order."));
+            return $this->error(_t("ShoppingCart.NoOrder", "No current order."));
         }
 
         $order->extend("beforeRemove", $buyable, $quantity, $filter);
@@ -180,7 +180,7 @@ class ShoppingCart
             $item->write();
         }
         $order->extend("afterRemove", $item, $buyable, $quantity, $filter);
-        $this->message(_t("ShoppingCart.ITEMREMOVED", "Item has been successfully removed."));
+        $this->message(_t("ShoppingCart.ItemRemoved", "Item has been successfully removed."));
 
         return true;
     }
@@ -210,7 +210,7 @@ class ShoppingCart
         $item->Quantity = $quantity;
         $item->write();
         $order->extend("afterSetQuantity", $item, $buyable, $quantity, $filter);
-        $this->message(_t("ShoppingCart.QUANTITYSET", "Quantity has been set."));
+        $this->message(_t("ShoppingCart.QuantitySet", "Quantity has been set."));
 
         return $item;
     }
@@ -238,12 +238,11 @@ class ShoppingCart
 
             if (!$buyable->canPurchase($member)) {
                 return $this->error(
-                    sprintf(
-                        _t(
-                            "ShoppingCart.CANNOTPURCHASE",
-                            "This %s cannot be purchased."
-                        ),
-                        strtolower($buyable->i18n_singular_name())
+                    _t(
+                        'ShoppingCart.CannotPurchase',
+                        'This {Title} cannot be purchased.',
+                        '',
+                        array('Title' => $buyable->i18n_singular_name())
                     )
                 );
                 //TODO: produce a more specific message
@@ -288,7 +287,7 @@ class ShoppingCart
         $query = new MatchObjectFilter($itemclass, array_merge($customfilter, $filter), $required);
         $item = $itemclass::get()->where($query->getFilter())->first();
         if (!$item) {
-            return $this->error(_t("ShoppingCart.ITEMNOTFOUND", "Item not found."));
+            return $this->error(_t("ShoppingCart.ItemNotFound", "Item not found."));
         }
 
         return $item;
@@ -319,10 +318,10 @@ class ShoppingCart
         $order = $this->current();
         $this->order = null;
         if (!$order) {
-            return $this->error(_t("ShoppingCart.NOCARTFOUND", "No cart found."));
+            return $this->error(_t("ShoppingCart.NoCartFound", "No cart found."));
         }
         $order->write();
-        $this->message(_t("ShoppingCart.CLEARED", "Cart was successfully cleared."));
+        $this->message(_t("ShoppingCart.Cleared", "Cart was successfully cleared."));
 
         return true;
     }
@@ -491,7 +490,7 @@ class ShoppingCart_Controller extends Controller
         if (SecurityToken::is_enabled() && !SecurityToken::inst()->checkRequest($request)) {
             return $this->httpError(
                 400,
-                _t("ShoppingCart.CSRF", "Invalid security token, possible CSRF attack.")
+                _t("ShoppingCart.InvalidSecurityToken", "Invalid security token, possible CSRF attack.")
             );
         }
         $id = (int)$request->param('ID');
@@ -624,7 +623,7 @@ class ShoppingCart_Controller extends Controller
         } elseif ($response = ErrorPage::response_for(404)) {
             return $response;
         }
-        return $this->httpError(404, _t("ShoppingCart.NOCARTINITIALISED", "no cart initialised"));
+        return $this->httpError(404, _t("ShoppingCart.NoCartInitialised", "no cart initialised"));
     }
 
     /**

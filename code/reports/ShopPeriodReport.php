@@ -4,7 +4,7 @@
  * Base class for creating reports that can be filtered to a specific range.
  * Record grouping is also supported.
  */
-class ShopPeriodReport extends SS_Report
+class ShopPeriodReport extends SS_Report implements i18nEntityProvider
 {
     private static $display_uncategorised_data = false;
     protected $dataClass   = 'Order';
@@ -19,12 +19,12 @@ class ShopPeriodReport extends SS_Report
 
     public function title()
     {
-        return _t($this->class . ".TITLE", $this->title);
+        return _t($this->class . ".Title", $this->title);
     }
 
     public function description()
     {
-        return _t($this->class . ".DESCRIPTION", $this->description);
+        return _t($this->class . ".Description", $this->description);
     }
 
     public function parameterFields()
@@ -162,6 +162,25 @@ class ShopPeriodReport extends SS_Report
     protected function fd($date, $format)
     {
         return DB::getConn()->formattedDatetimeClause($date, $format);
+    }
+
+    /**
+     * Provide translatable entities for this class and all subclasses
+     *
+     * @return array
+     */
+    public function provideI18nEntities()
+    {
+        return array(
+            "{$this->class}.Title"       => array(
+                $this->title,
+                "Title for the {$this->class} report",
+            ),
+            "{$this->class}.Description" => array(
+                $this->description,
+                "Description for the {$this->class} report",
+            ),
+        );
     }
 }
 

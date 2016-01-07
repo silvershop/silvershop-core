@@ -11,19 +11,14 @@ class TermsCheckoutComponent extends CheckoutComponent
             $fields->push(
                 CheckboxField::create(
                     'ReadTermsAndConditions',
-                    sprintf(
-                        _t(
-                            'CheckoutField.TERMSANDCONDITIONS',
-                            "I agree to the terms and conditions stated on the
-							<a href=\"%s\" target=\"new\" class=\"read_terms\" title=\"Read the shop terms and conditions for this site\">
-								terms and conditions
-							</a>
-						page"
-                        ),
-                        $page->Link()
+                    _t(
+                        'Checkout.TermsAndConditionsLink',
+                        'I agree to the terms and conditions stated on the <a href="{TermsPageLink}" target="new" title="Read the shop terms and conditions for this site">{TermsPageTitle}</a> page',
+                        '',
+                        array('TermsPageLink' => $page->Link(), 'TermsPageTitle' => $page->Title)
                     )
                 )->setCustomValidationMessage(
-                    _t("CheckoutField.MUSTAGREETOTERMS", "You must agree to the terms and conditions")
+                    _t("CheckoutField.MustAgreeToTerms", "You must agree to the terms and conditions")
                 )
             );
         }

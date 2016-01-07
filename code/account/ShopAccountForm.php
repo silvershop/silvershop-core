@@ -21,11 +21,11 @@ class ShopAccountForm extends Form
             $fields = FieldList::create();
         }
         if (get_class($controller) == 'AccountPage_Controller') {
-            $actions = FieldList::create(FormAction::create('submit', _t('MemberForm.SAVE', 'Save Changes')));
+            $actions = FieldList::create(FormAction::create('submit', _t('MemberForm.Save', 'Save Changes')));
         } else {
             $actions = FieldList::create(
-                FormAction::create('submit', _t('MemberForm.SAVE', 'Save Changes')),
-                FormAction::create('proceed', _t('MemberForm.SAVEANDPROCEED', 'Save and proceed to checkout'))
+                FormAction::create('submit', _t('MemberForm.Save', 'Save Changes')),
+                FormAction::create('proceed', _t('MemberForm.SaveAndProceed', 'Save and proceed to checkout'))
             );
         }
         parent::__construct($controller, $name, $fields, $actions, $requiredFields);
@@ -70,7 +70,7 @@ class ShopAccountForm extends Form
 
         $form->saveInto($member);
         $member->write();
-        $form->sessionMessage(_t("MemberForm.DETAILSSAVED", 'Your details have been saved'), 'good');
+        $form->sessionMessage(_t("MemberForm.DetailsSaved", 'Your details have been saved'), 'good');
 
         $this->extend('updateShopAccountFormResponse', $request, $form, $data, $response);
 
@@ -95,7 +95,7 @@ class ShopAccountForm extends Form
 
         $form->saveInto($member);
         $member->write();
-        $form->sessionMessage(_t("MemberForm.DETAILSSAVED", 'Your details have been saved'), 'good');
+        $form->sessionMessage(_t("MemberForm.DetailsSaved", 'Your details have been saved'), 'good');
 
         $this->extend('updateShopAccountFormResponse', $request, $form, $data, $response);
 
@@ -130,10 +130,11 @@ class ShopAccountFormValidator extends RequiredFields
                 $this->validationError(
                     $field,
                     // re-use the message from checkout
-                    sprintf(
-                        _t("Checkout.MEMBEREXISTS", "A member already exists with the %s %s"),
-                        $fieldLabel,
-                        $uid
+                    _t(
+                        'Checkout.MemberExists',
+                        'A member already exists with the {Field} {Identifier}',
+                        '',
+                        array('Field' => $fieldLabel, 'Identifier' => $uid)
                     ),
                     "required"
                 );

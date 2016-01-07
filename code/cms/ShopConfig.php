@@ -32,28 +32,28 @@ class ShopConfig extends DataExtension
                     "Main",
                     TreeDropdownField::create(
                         'TermsPageID',
-                        _t("ShopConfig.TERMSPAGE", 'Terms and Conditions Page'),
+                        _t("ShopConfig.TermsPage", 'Terms and Conditions Page'),
                         'SiteTree'
                     ),
                     TreeDropdownField::create(
                         "CustomerGroupID",
-                        _t("ShopConfig.CUSTOMERGROUP", "Group to add new customers to"),
+                        _t("ShopConfig.CustomerGroup", "Group to add new customers to"),
                         "Group"
                     ),
-                    UploadField::create('DefaultProductImage', _t('ShopConfig.DEFAULTIMAGE', 'Default Product Image'))
+                    UploadField::create('DefaultProductImage', _t('ShopConfig.DefaultImage', 'Default Product Image'))
                 ),
                 $countriestab = Tab::create(
                     "Countries",
                     CheckboxSetField::create(
                         'AllowedCountries',
-                        _t('ShopConfig.ALLOWED_COUNTRIES', 'Allowed Ordering and Shipping Countries'),
+                        _t('ShopConfig.AllowedCountries', 'Allowed Ordering and Shipping Countries'),
                         self::config()->iso_3166_country_codes
                     )
                 )
             )
         );
         $fields->removeByName("CreateTopLevelGroups");
-        $countriestab->setTitle(_t('ShopConfig.ALLOWED_COUNTRIES_TAB_TITLE', "Allowed Countries"));
+        $countriestab->setTitle(_t('ShopConfig.AllowedCountriesTabTitle', "Allowed Countries"));
     }
 
     public static function get_base_currency()
