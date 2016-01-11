@@ -11,6 +11,7 @@ class AccountPageTest extends FunctionalTest{
 
 	public function setUp() {
 		parent::setUp();
+        Controller::add_extension('ShopTestControllerExtension');
 		$this->accountpage = $this->objFromFixture("AccountPage", "accountpage");
 		$this->controller = new AccountPage_Controller($this->accountpage);
 		$this->controller->init();
@@ -19,7 +20,11 @@ class AccountPageTest extends FunctionalTest{
 	public function testCanViewAccountPage() {
 		$page = $this->get("account/");  // attempt to access the Account Page
         $this->assertEquals(200, $page->getStatusCode(), "a page should load");
-        $this->assertContains('<form id="MemberLoginForm_LoginForm"', $page->getBody(), 'Need to login before accessing the account page');
+        $this->assertTrue(
+            $page->getHeader('X-TestPageClass') == 'Security' &&
+            $page->getHeader('X-TestPageAction') == 'login',
+            'Need to login before accessing the account page'
+        );
 
         // login using form
         $this->submitForm("MemberLoginForm_LoginForm", "action_dologin", array(
@@ -29,8 +34,8 @@ class AccountPageTest extends FunctionalTest{
 
         $page = $this->get("account/");  // try accessing the account page again
         $this->assertEquals(200, $page->getStatusCode(), "a page should load");
-        $this->assertContains("Account", $page->getBody(), "Account Page should open");
 
+        $this->assertEquals('AccountPage', $page->getHeader('X-TestPageClass'), "Account Page should open");
 	}
 
 	public function testGlobals() {
@@ -71,7 +76,8 @@ class AccountPageTest extends FunctionalTest{
 		// Open Address Book page
 		$page = $this->get("account/addressbook/"); // goto address book page
 		$this->assertEquals(200, $page->getStatusCode(), "a page should load");
-		$this->assertContains("Default Addresses", $page->getBody(), "Account Addresses page should open");
+        $this->assertEquals('AccountPage', $page->getHeader('X-TestPageClass'), "Account page should open");
+        $this->assertEquals('addressbook', $page->getHeader('X-TestPageAction'), "Account addressbook should open");
 
 		// Create an address
 		$data = array(
