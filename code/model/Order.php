@@ -37,7 +37,9 @@ class Order extends DataObject {
 		'Notes' => 'Text',
 		'IPAddress' => 'Varchar(15)',
 		//separate shipping
-		'SeparateBillingAddress' => 'Boolean'
+		'SeparateBillingAddress' => 'Boolean',
+        // keep track of customer locale
+        'Locale' => 'DBLocale'
 	);
 
 	private static $has_one = array(
@@ -510,6 +512,12 @@ class Order extends DataObject {
 		if(!$this->getField("Reference") && in_array($this->Status, self::$placed_status)){
 			$this->generateReference();
 		}
+
+        // While the order is unfinished/cart, always store the current locale with the order.
+        // We do this everytime an order is saved, because the user might change locale (language-switch).
+        if($this->Status == 'Cart'){
+            $this->Locale = ShopTools::get_current_locale();
+        }
 	}
 
 	/**

@@ -68,6 +68,12 @@ class VariationForm extends AddProductForm {
 		if($variation = $this->getBuyable($data)) {
 			$quantity = (isset($data['Quantity']) && is_numeric($data['Quantity'])) ? (int) $data['Quantity'] : 1;
 			$cart = ShoppingCart::singleton();
+		    $request = $this->getRequest();
+
+            $order = $cart->current();
+            if($request && $request->isAjax() && $order){
+                ShopTools::install_locale($order->Locale);
+            }
 
 			// if we are in just doing a validation step then check
 			if($this->request->requestVar('ValidateVariant')) {
@@ -112,7 +118,6 @@ class VariationForm extends AddProductForm {
 
 		$this->extend('updateVariationAddToCart', $form, $variation);
 
-		$request = $this->getRequest();
 		$this->extend('updateVariationFormResponse', $request, $response, $variation, $quantity, $form);
 		return $response ? $response : ShoppingCart_Controller::direct();
 	}
