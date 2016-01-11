@@ -12,13 +12,13 @@
 	<div class="breadcrumbs">$Breadcrumbs</div>
 	<div class="productDetails">
 		<% if $Image.ContentImage %>
-			<img class="productImage" src="$Image.ContentImage.URL" alt="<% sprintf(_t("IMAGE","%s image"),$Title) %>" />
+			<img class="productImage" src="$Image.ContentImage.URL" alt="<%t Product.ImageAltText "{Title} image" Title=$Title %>" />
 		<% else %>
-			<div class="noimage"><%t Product.NO_IMAGE "no image" %></div>
+			<div class="noimage"><%t Product.NoImage "no image" %></div>
 		<% end_if %>
-		<% if $InternalItemID %><p><% _t("CODE","Product Code") %>: {$InternalItemID}</p><% end_if %>
-		<% if $Model %><p><% _t("MODEL","Model") %>: $Model.XML</p><% end_if %>
-		<% if $Size %><p><% _t("SIZE","Size") %>: $Size.XML</p><% end_if %>
+		<% if $InternalItemID %><p><%t Product.Code "Product Code" %> : {$InternalItemID}</p><% end_if %>
+		<% if $Model %><p><%t Product.Model "Model" %> : $Model.XML</p><% end_if %>
+		<% if $Size %><p><%t Product.Size "Size" %> : $Size.XML</p><% end_if %>
 		<% if $PriceRange %>
 			<div class="price">
 				<strong class="value">$PriceRange.Min.Nice</strong>

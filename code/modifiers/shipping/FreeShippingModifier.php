@@ -10,7 +10,7 @@ class FreeShippingModifier extends ShippingModifier{
 	}
 
 	public function TableValue() {
-		return _t("FreeShippingModifier.FREE", "FREE");
+		return _t("FreeShippingModifier.Free", "FREE");
 	}
 
 }

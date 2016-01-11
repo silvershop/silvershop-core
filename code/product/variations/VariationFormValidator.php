@@ -12,7 +12,7 @@ class VariationFormValidator extends RequiredFields {
 		if($valid && !$this->form->getBuyable($_POST)) {
 			$this->validationError(
 				"",
-				_t('VariationForm.PRODUCT_NOT_AVAILABLE', "This product is not available with the selected options.")
+				_t('VariationForm.ProductNotAvailable', "This product is not available with the selected options.")
 			);
 
 			$valid = false;

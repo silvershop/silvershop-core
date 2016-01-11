@@ -19,12 +19,12 @@ class ShopAccountForm extends Form {
 			$fields = new FieldList();
 		}
 		if(get_class($controller) == 'AccountPage_Controller'){
-			$actions = new FieldList(new FormAction('submit', _t('MemberForm.SAVE', 'Save Changes')));
+			$actions = new FieldList(new FormAction('submit', _t('MemberForm.Save', 'Save Changes')));
 		}
 		else{
 			$actions = new FieldList(
-				new FormAction('submit', _t('MemberForm.SAVE', 'Save Changes')),
-				new FormAction('proceed', _t('MemberForm.SAVEANDPROCEED', 'Save and proceed to checkout'))
+				new FormAction('submit', _t('MemberForm.Save', 'Save Changes')),
+				new FormAction('proceed', _t('MemberForm.SaveAndProceed', 'Save and proceed to checkout'))
 			);
 		}
 		parent::__construct($controller, $name, $fields, $actions, $requiredFields);
@@ -46,7 +46,7 @@ class ShopAccountForm extends Form {
 
 		$form->saveInto($member);
 		$member->write();
-		$form->sessionMessage(_t("MemberForm.DETAILSSAVED", 'Your details have been saved'), 'good');
+		$form->sessionMessage(_t("MemberForm.DetailsSaved", 'Your details have been saved'), 'good');
 
 		Controller::curr()->redirectBack();
 		return true;
@@ -60,7 +60,7 @@ class ShopAccountForm extends Form {
 		if(!$member) return false;
 		$form->saveInto($member);
 		$member->write();
-		$form->sessionMessage(_t("MemberForm.DETAILSSAVED", 'Your details have been saved'), 'good');
+		$form->sessionMessage(_t("MemberForm.DetailsSaved", 'Your details have been saved'), 'good');
 		Controller::curr()->redirect(CheckoutPage::find_link());
 		return true;
 	}
@@ -92,10 +92,12 @@ class ShopAccountFormValidator extends RequiredFields{
 				$this->validationError(
 					$field,
 					// re-use the message from checkout
-					sprintf(
-						_t("Checkout.MEMBEREXISTS", "A member already exists with the %s %s"),
-						$fieldLabel, $uid
-					),
+                    _t(
+                        'Checkout.MemberExists',
+                        'A member already exists with the {Field} {Identifier}',
+                        '',
+                        array('Field' => $fieldLabel, 'Identifier' => $uid)
+                    ),
 					"required"
 				);
 				$valid = false;

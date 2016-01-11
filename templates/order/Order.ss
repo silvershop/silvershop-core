@@ -9,7 +9,7 @@
 		<table id="OutstandingTable" class="infotable">
 			<tbody>
 				<tr class="gap summary" id="Outstanding">
-					<th colspan="4" scope="row" class="threeColHeader"><strong><% _t("TOTALOUTSTANDING","Total outstanding") %></strong></th>
+					<th colspan="4" scope="row" class="threeColHeader"><strong><%t Order.TotalOutstanding "Total outstanding" %></strong></th>
 					<td class="right"><strong>$TotalOutstanding.Nice </strong></td>
 				</tr>
 			</tbody>
@@ -19,7 +19,7 @@
 		<table id="NotesTable" class="infotable">
 			<thead>
 				<tr>
-					<th><% _t("ORDERNOTES","Notes") %></th>
+					<th><%t Order.db_Notes "Notes" %></th>
 				</tr>
 			</thead>
 			</tbody>

@@ -8,9 +8,9 @@ class CustomerDetailsCheckoutComponent extends CheckoutComponent{
 
 	public function getFormFields(Order $order) {
 		$fields = new FieldList(
-			$firstname = TextField::create('FirstName', _t('CheckoutField.FIRSTNAME', 'First Name')),
-			$surname = TextField::create('Surname', _t('CheckoutField.SURNAME', 'Surname')),
-			$email = EmailField::create('Email', _t('CheckoutField.EMAIL', 'Email'))
+			$firstname = TextField::create('FirstName', _t('Order.db_FirstName', 'First Name')),
+			$surname = TextField::create('Surname', _t('Order.db_Surname', 'Surname')),
+			$email = EmailField::create('Email', _t('Order.db_Email', 'Email'))
 		);
 
 		return $fields;

@@ -73,7 +73,7 @@ class OrderGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemReque
 		'ItemEditForm',
 		'printorder'
 	);
-	
+
 	/**
 	 * Add print button to order detail form
 	 */
@@ -85,7 +85,7 @@ class OrderGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemReque
 JS;
 		$form->Actions()->push(
 			new LiteralField("PrintOrder",
-				"<button class=\"no-ajax grid-print-button\" data-icon=\"grid_print\" onclick=\"javascript:$printwindowjs\">"._t("Order.PRINT","Print")."</button>"
+				"<button class=\"no-ajax grid-print-button\" data-icon=\"grid_print\" onclick=\"javascript:$printwindowjs\">"._t("Order.Print","Print")."</button>"
 			)
 		);
 
@@ -101,11 +101,11 @@ JS;
 		if(isset($_REQUEST['print']) && $_REQUEST['print']) {
 			Requirements::customScript("if(document.location.href.indexOf('print=1') > 0) {window.print();}");
 		}
-		$title = i18n::_t("ORDER.INVOICE","Invoice");
+		$title = i18n::_t("Order.Invoice","Invoice");
 		if($id = $this->popupController->getRequest()->param('ID')) {
 			$title .= " #$id";
 		}
-		
+
 		return $this->record->customise(array(
 			'SiteConfig' => SiteConfig::current_site_config(),
 			'Title' => $title

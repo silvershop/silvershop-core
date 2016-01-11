@@ -57,7 +57,7 @@ class ShopQuantityField extends ViewableData{
 		return NumericField::create(
 			$this->MainID() . '_Quantity',
 			// this title currently doesn't show up in the front end, better assign a translation anyway.
-			_t('AddProductForm.Quantity', "Quantity"),
+			_t('Order.Quantity', "Quantity"),
 			$this->item->Quantity
 		)->setAttribute('type','number');
 	}
@@ -114,7 +114,7 @@ class DropdownShopQuantityField extends ShopQuantityField{
 		return new DropdownField(
 			$this->MainID() . '_Quantity',
 			// this title currently doesn't show up in the front end, better assign a translation anyway.
-			_t('AddProductForm.Quantity', "Quantity"),
+			_t('Order.Quantity', "Quantity"),
 			$qtyArray, ($this->item->Quantity) ? $this->item->Quantity : "");
 	}
 

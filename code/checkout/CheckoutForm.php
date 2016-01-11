@@ -3,7 +3,7 @@
 class CheckoutForm extends Form {
 
 	protected $config;
-	
+
 	protected $redirectlink;
 
 	public function __construct($controller, $name, CheckoutComponentConfig $config) {
@@ -12,11 +12,11 @@ class CheckoutForm extends Form {
 		$actions = new FieldList(
 			FormAction::create(
 				'checkoutSubmit',
-				_t('CheckoutForm.PROCEED', 'Proceed to payment')
+				_t('CheckoutPage.ProceedToPayment', 'Proceed to payment')
 			)
 	);
 		$validator = new CheckoutComponentValidator($this->config);
-		
+
 		// For single country sites, the Country field is readonly therefore no need to validate
 		if(SiteConfig::current_site_config()->getSingleCountry()){
 			$validator->removeRequiredField("ShippingAddressCheckoutComponent_Country");

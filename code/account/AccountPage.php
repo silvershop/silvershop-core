@@ -37,7 +37,7 @@ class AccountPage extends Page {
 		if($page = DataObject::get_one('AccountPage')) {
 			return $page;
 		}
-		user_error(_t('AccountPage.NO_PAGE', 'No AccountPage was found. Please create one in the CMS!'), E_USER_ERROR);
+		user_error(_t('AccountPage.NoPage', 'No AccountPage was found. Please create one in the CMS!'), E_USER_ERROR);
 	}
 
 	/**
@@ -80,12 +80,12 @@ class AccountPage_Controller extends Page_Controller {
 		if(!Member::currentUserID()) {
 			$messages = array(
 				'default' => _t(
-					'AccountPage.LOGIN',
+					'AccountPage.Login',
 					'You\'ll need to login before you can access the account page.
 					If you are not registered, you won\'t be able to access it until
 					you make your first order, otherwise please enter your details below.'),
 				'logInAgain' => _t(
-					'AccountPage.LOGINAGAIN',
+					'AccountPage.LoginAgain',
 					'You have been logged out. If you would like to log in again,
 					please do so below.')
 			);
@@ -99,7 +99,7 @@ class AccountPage_Controller extends Page_Controller {
 		if($this->dataRecord && $title = $this->dataRecord->Title){
 			return $title;
 		}
-		return _t('AccountPage.Title', "Account");
+		return _t('AccountPage.DefaultTitle', "Account");
 	}
 
 	public function getMember() {
@@ -179,7 +179,7 @@ class AccountPage_Controller extends Page_Controller {
 			$member->DefaultBillingAddressID = $address->ID;
 			$member->write();
 		}
-		$form->sessionMessage(_t("CreateAddressForm.SAVED", "Your address has been saved"), "good");
+		$form->sessionMessage(_t("CreateAddressForm.AddressSaved", "Your address has been saved"), "good");
 		$this->redirect($this->Link('addressbook'));
 	}
 

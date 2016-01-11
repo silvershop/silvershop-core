@@ -2,7 +2,7 @@
 	<thead>
 		<tr class="title">
 			<th colspan="1">
-				<h2><% _t("NOTES","Notes") %></h2>
+				<h2><%t Order.db_Notes "Notes" %></h2>
 			</th>
 		</tr>
 	</thead>

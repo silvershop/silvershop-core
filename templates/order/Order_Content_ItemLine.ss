@@ -2,7 +2,7 @@
 	<td>
 		<% if $Image %>
 			<div class="image">
-				<a href="$Link" title="<% sprintf(_t("READMORE","View &quot;%s&quot;"),$Title) %>">
+				<a href="$Link" title="<%t Shop.ReadMoreTitle "Click here to read more on &quot;{Title}&quot;" Title=$TableTitle %>">
 					<img src="<% with $Image.setWidth(45) %>$Me.AbsoluteURL<% end_with %>" alt="$Buyable.Title"/>
 				</a>
 			</div>
@@ -11,7 +11,7 @@
 	<td class="product title" scope="row">
 		<h3>
 		<% if $Link %>
-			<a href="$Link" title="<% sprintf(_t("READMORE","View &quot;%s&quot;"),$Title) %>">$TableTitle</a>
+			<a href="$Link" title="<%t Shop.ReadMoreTitle "Click here to read more on &quot;{Title}&quot;" Title=$TableTitle %>">$TableTitle</a>
 		<% else %>
 			$TableTitle
 		<% end_if %>

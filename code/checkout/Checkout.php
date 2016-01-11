@@ -73,8 +73,8 @@ class Checkout{
 	public function setShippingAddress(Address $address) {
 		$this->order->ShippingAddressID = $address->ID;
 		if(Member::currentUserID()){
-			$this->order->MemberID = Member::currentUserID();	
-		} 
+			$this->order->MemberID = Member::currentUserID();
+		}
 		$this->order->write();
 		$this->order->extend('onSetShippingAddress', $address);
 		//update zones and userinfo
@@ -106,7 +106,7 @@ class Checkout{
 		if(!isset($methods[$paymentmethod])){
 			Session::set("Checkout.PaymentMethod", null);
 			Session::clear("Checkout.PaymentMethod");
-			return $this->error(_t("Checkout.NOPAYMENTMETHOD", "Payment method does not exist"));
+			return $this->error(_t("Checkout.NoPaymentMethod", "Payment method does not exist"));
 		}
 		Session::set("Checkout.PaymentMethod", $paymentmethod);
 		return true;

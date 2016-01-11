@@ -2,7 +2,7 @@
 <% include AccountNavigation %>
 <div class="typography">
     $Content
-    <h2 class="pagetitle"><%t AccountPage.Title 'Past Orders' %></h2>
+    <h2 class="pagetitle"><%t AccountPage.PastOrders 'Past Orders' %></h2>
     <% with $Member %>
         <% if $PastOrders %>
             <% include OrderHistory %>

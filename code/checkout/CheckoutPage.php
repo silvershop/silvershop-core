@@ -35,7 +35,7 @@ class CheckoutPage extends Page {
 		$fields->addFieldsToTab('Root.Main', array(
 			HtmlEditorField::create('PurchaseComplete', _t('CheckoutPage.db_PurchaseComplete', 'Purchase Complete'), 4)
 				->setDescription(
-					_t('CheckoutPage.PURCHASE_COMPLETE_DESCRIPTION',
+					_t('CheckoutPage.PurchaseCompleteDescription',
 						"This message is included in reciept email, after the customer submits the checkout")
 				)
 		), 'Metadata');
@@ -79,7 +79,7 @@ class CheckoutPage_Controller extends Page_Controller {
 			return $this->Title;
 		}
 
-		return _t('CheckoutPage.TITLE', "Checkout");
+		return _t('CheckoutPage.DefaultTitle', "Checkout");
 	}
 
 	public function OrderForm() {
@@ -124,7 +124,7 @@ class CheckoutPage_Controller extends Page_Controller {
 		$form = PaymentForm::create($this, "PaymentForm", $config);
 
 		$form->setActions(new FieldList(
-			FormAction::create("submitpayment", _t('CheckoutPage.SUBMIT_PAYMENT', "Submit Payment"))
+			FormAction::create("submitpayment", _t('CheckoutPage.SubmitPayment', "Submit Payment"))
 		));
 
 		$form->setFailureLink($this->Link());

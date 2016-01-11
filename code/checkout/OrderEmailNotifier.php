@@ -76,9 +76,11 @@ class OrderEmailNotifier {
 	 * Send customer a confirmation that the order has been received
 	 */
 	public function sendConfirmation() {
-		$subject = sprintf(
-			_t("OrderNotifier.CONFIRMATIONSUBJECT", "Order #%d Confirmation"),
-			$this->order->Reference
+		$subject = _t(
+            'ShopEmail.ConfirmationSubject',
+            'Order #{OrderNo} confirmation',
+            '',
+            array('OrderNo' => $this->order->Reference)
 		);
 		$this->sendEmail(
 			'Order_ConfirmationEmail',
@@ -91,10 +93,12 @@ class OrderEmailNotifier {
 	 * Notify store owner about new order.
 	 */
 	public function sendAdminNotification() {
-		$subject = sprintf(
-			_t("OrderNotifier.ADMINNOTIFICATIONSUBJECT", "Order #%d Notification"),
-			$this->order->Reference
-		);
+        $subject = _t(
+            'ShopEmail.AdminNotificationSubject',
+            'Order #{OrderNo} notification',
+            '',
+            array('OrderNo' => $this->order->Reference)
+        );
 
 		$this->buildEmail('Order_AdminNotificationEmail', $subject)
 			->setTo(Email::config()->admin_email)
@@ -106,10 +110,13 @@ class OrderEmailNotifier {
 	* Precondition: The order payment has been successful
 	*/
 	public function sendReceipt() {
-		$subject = sprintf(
-			_t("OrderNotifier.RECEIPTSUBJECT", "Order #%d Receipt"),
-			$this->order->Reference
-		);
+        $subject = _t(
+            'ShopEmail.ReceiptSubject',
+            'Order #{OrderNo} receipt',
+            '',
+            array('OrderNo' => $this->order->Reference)
+        );
+
 		$this->sendEmail(
 			'Order_ReceiptEmail',
 			$subject,

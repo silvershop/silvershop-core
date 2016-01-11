@@ -18,7 +18,7 @@ class VariationForm extends AddProductForm {
 		foreach($attributes as $attribute){
 			$farray[] = $attribute->getDropDownField(
 				_t(
-					'VariationForm.CHOOSE_ATTRIBUTE',
+					'VariationForm.ChooseAttribute',
 					"Choose {attribute} …",
 					'',
 					array('attribute' => $attribute->Label)
@@ -96,7 +96,7 @@ class VariationForm extends AddProductForm {
 
 			if($cart->add($variation, $quantity)) {
 				$form->sessionMessage(
-					_t('ShoppingCart.ITEMADD', "Item has been added successfully."),
+					_t('ShoppingCart.ItemAdded', "Item has been added successfully."),
 					"good"
 				);
 			} else {
@@ -105,7 +105,7 @@ class VariationForm extends AddProductForm {
 		} else {
 			$variation = null;
 			$form->sessionMessage(
-				_t('VariationForm.VARIATION_NOT_AVAILABLE', "That variation is not available, sorry."),
+				_t('VariationForm.VariationNotAvailable', "That variation is not available, sorry."),
 				"bad"
 			); //validation fail
 		}
