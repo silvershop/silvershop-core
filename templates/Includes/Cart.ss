@@ -13,7 +13,7 @@
 				<th scope="col"><%t Product.SINGULARNAME "Product" %></th>
 				<th scope="col"><%t Order.UnitPrice "Unit Price" %></th>
 				<th scope="col"><%t Order.Quantity "Quantity" %></th>
-				<th scope="col"><%t Order.TotalPrice "Total Price" %> ($Currency)</th>
+				<th scope="col"><%t Order.TotalPriceWithCurrency "Total Price ({Currency})" Currency=$Currency %></th>
 				<% if $Editable %>
 					<th scope="col"><%t Shop.Remove "Remove" %></th>
 				<% end_if %>
