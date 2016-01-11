@@ -301,12 +301,12 @@ en:
     SINGULARNAME: Category
     belongs_many_many_Products: Products
   ProductGroup:
-    NEXT: next
-    PAGE: page
-    PREVIOUS: previous
-    VIEW_NEXT: 'View the next page'
-    VIEW_PAGE: 'View page number {pageNum}'
-    VIEW_PREVIOUS: 'View the previous page'
+    Next: next
+    Page: Page
+    Previous: previous
+    ViewNext: 'View the next page'
+    ViewPage: 'View page number {pageNum}'
+    ViewPrevious: 'View the previous page'
   ProductMenu:
     GotoPageTitle: 'Go to the {Title} page'
   ProductReport:
