@@ -27,6 +27,13 @@ class CartForm extends Form{
 	public function updatecart($data, $form) {
 		$items = $this->cart->Items();
 		$updatecount = $removecount = 0;
+
+        $request = $this->getRequest();
+        $order = ShoppingCart::curr();
+        if($request && $request->isAjax() && $order){
+            ShopTools::install_locale($order->Locale);
+        }
+
 		$messages = array();
 		if(isset($data['Items']) && is_array($data['Items'])){
 			foreach($data['Items'] as $itemid => $fields){
@@ -79,7 +86,7 @@ class CartForm extends Form{
 			$form->sessionMessage(implode(" ", $messages), "good");
 		}
 
-		$request = $this->getRequest();
+
 		$this->extend('updateCartFormResponse', $request, $response, $form);
 
 		return $response ? $response : $this->controller->redirectBack();

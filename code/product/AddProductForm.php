@@ -51,6 +51,13 @@ class AddProductForm extends Form {
 	public function addtocart($data,$form){
 		if($buyable = $this->getBuyable($data)){
 			$cart = ShoppingCart::singleton();
+			$request = $this->getRequest();
+
+            $order = $cart->current();
+            if($request && $request->isAjax() && $order){
+                ShopTools::install_locale($order->Locale);
+            }
+
 			$saveabledata = (!empty($this->saveablefields)) ? Convert::raw2sql(array_intersect_key($data,array_combine($this->saveablefields,$this->saveablefields))) : $data;
 			$quantity = isset($data['Quantity']) ? (int) $data['Quantity']: 1;
 			$cart->add($buyable,$quantity,$saveabledata);
@@ -59,8 +66,7 @@ class AddProductForm extends Form {
 			}
 
 			$this->extend('updateAddToCart', $form, $buyable);
-			
-			$request = $this->getRequest();
+
 			$this->extend('updateAddProductFormResponse', $request, $response, $buyable, $quantity, $form);
 
 			return $response ? $response : ShoppingCart_Controller::direct($cart->getMessageType());
