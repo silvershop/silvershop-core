@@ -493,6 +493,7 @@ class ShoppingCart_Controller extends Controller{
 			$this->cart->add($product, $quantity, $request->getVars());
 		}
 
+        $this->updateLocale($request);
 		$this->extend('updateAddResponse', $request, $response, $product, $quantity);
 		return $response ? $response : self::direct();
 	}
@@ -507,6 +508,7 @@ class ShoppingCart_Controller extends Controller{
 			$this->cart->remove($product, $quantity = 1, $request->getVars());
 		}
 
+        $this->updateLocale($request);
 		$this->extend('updateRemoveResponse', $request, $response, $product, $quantity);
 		return $response ? $response : self::direct();
 	}
@@ -521,6 +523,7 @@ class ShoppingCart_Controller extends Controller{
 			$this->cart->remove($product, null, $request->getVars());
 		}
 
+        $this->updateLocale($request);
 		$this->extend('updateRemoveAllResponse', $request, $response, $product);
 		return $response ? $response : self::direct();
 	}
@@ -538,6 +541,7 @@ class ShoppingCart_Controller extends Controller{
 			$this->cart->setQuantity($product, $quantity, $request->getVars());
 		}
 
+        $this->updateLocale($request);
 		$this->extend('updateSetQuantityResponse', $request, $response, $product, $quantity);
 		return $response ? $response : self::direct();
 	}
@@ -549,6 +553,7 @@ class ShoppingCart_Controller extends Controller{
 	 * @return AjaxHTTPResponse|bool
 	 */
 	public function clear($request) {
+        $this->updateLocale($request);
 		$this->cart->clear();
 		$this->extend('updateClearResponse', $request, $response);
 		return $response ? $response : self::direct();
@@ -581,5 +586,13 @@ class ShoppingCart_Controller extends Controller{
 			return array('Content' => $content);
 		}
 	}
+
+    protected function updateLocale($request)
+    {
+        $order = $this->cart->current();
+        if($request && $request->isAjax() && $order){
+            ShopTools::install_locale($order->Locale);
+        }
+    }
 
 }

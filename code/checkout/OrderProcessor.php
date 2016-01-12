@@ -147,7 +147,9 @@ class OrderProcessor{
 			//place the order, if not already placed
 			if($this->canPlace($this->order)){
 				$this->placeOrder();
-			}
+			} else if($this->order->Locale){
+                ShopTools::install_locale($this->order->Locale);
+            }
 
 			if(
 				// Standard order
@@ -207,6 +209,11 @@ class OrderProcessor{
 		if(!$this->canPlace($this->order)){ //final cart validation
 			return false;
 		}
+
+        if($this->order->Locale){
+            ShopTools::install_locale($this->order->Locale);
+        }
+
 		//remove from session
 		$cart = ShoppingCart::curr();
 		if($cart && $cart->ID == $this->order->ID){
