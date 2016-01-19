@@ -8,7 +8,7 @@ class CheckoutStep_PaymentMethod extends CheckoutStep{
 	);
 
 	protected function checkoutconfig() {
-		$config = CheckoutComponentConfig::create(ShoppingCart::curr(), false);
+		$config = new CheckoutComponentConfig(ShoppingCart::curr(), false);
 		$config->addComponent(PaymentCheckoutComponent::create());
 
 		return $config;

@@ -12,15 +12,15 @@ class CheckoutStep_AddressBook extends CheckoutStep_Address{
 	);
 
 	public function shippingconfig() {
-		$config = CheckoutComponentConfig::create(ShoppingCart::curr());
+		$config = new CheckoutComponentConfig(ShoppingCart::curr());
 		$config->addComponent(ShippingAddressBookCheckoutComponent::create());
 
 		return $config;
 	}
 
 	public function billingconfig() {
-		$config = CheckoutComponentConfig::create(ShoppingCart::curr());
-		$config->addComponent(new BillingAddressBookCheckoutComponent());
+		$config = new CheckoutComponentConfig(ShoppingCart::curr());
+		$config->addComponent(BillingAddressBookCheckoutComponent::create());
 
 		return $config;
 	}

@@ -29,7 +29,7 @@ class CheckoutStep_ContactDetails extends CheckoutStep{
 		if(!$cart){
 			return false;
 		}
-		$config = CheckoutComponentConfig::create(ShoppingCart::curr());
+		$config = new CheckoutComponentConfig(ShoppingCart::curr());
 		$config->addComponent(CustomerDetailsCheckoutComponent::create());
 		$form = CheckoutForm::create($this->owner, 'ContactDetailsForm', $config);
 		$form->setRedirectLink($this->NextStepLink());
