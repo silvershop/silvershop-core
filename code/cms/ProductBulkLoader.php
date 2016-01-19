@@ -86,7 +86,7 @@ class ProductBulkLoader extends CsvBulkLoader {
 		self::$hasStockImpl = Object::has_extension('Product', 'ProductStockDecorator');
 		$results = parent::processAll($filepath, $preview);
 		//After results have been processed, publish all created & updated products
-		$objects = new ArrayList();
+		$objects = ArrayList::create();
 		$objects->merge($results->Created());
 		$objects->merge($results->Updated());
 		foreach($objects as $object){
@@ -143,7 +143,7 @@ class ProductBulkLoader extends CsvBulkLoader {
 				//TODO: otherwise assign it to the first prodcut group found
 			}elseif(self::$createnewproductgroups){
 				//create parent product group
-				$pg = new ProductCategory();
+				$pg = ProductCategory::create();
 				$pg->setTitle($title);
 				$pg->ParentID = (self::$parentpageid) ? $parentpageid :0;
 				$pg->writeToStage('Stage');
@@ -225,7 +225,7 @@ class ProductBulkLoader extends CsvBulkLoader {
 		//TODO: or find existing variation
 		$variation = ProductVariation::get()->filter("InternalItemID", '$val')->first();
 		if(!$variation){
-			$variation = new ProductVariation();
+			$variation = ProductVariation::create();
 			$variation->InternalItemID = $val;
 			$variation->ProductID = $obj->ID; //link to product
 			$variation->write();

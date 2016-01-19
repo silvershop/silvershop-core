@@ -29,12 +29,12 @@ class CheckoutStep_ContactDetails extends CheckoutStep{
 		if(!$cart){
 			return false;
 		}
-		$config = new CheckoutComponentConfig(ShoppingCart::curr());
-		$config->addComponent(new CustomerDetailsCheckoutComponent());
-		$form = new CheckoutForm($this->owner, 'ContactDetailsForm', $config);
+		$config = CheckoutComponentConfig::create(ShoppingCart::curr());
+		$config->addComponent(CustomerDetailsCheckoutComponent::create());
+		$form = CheckoutForm::create($this->owner, 'ContactDetailsForm', $config);
 		$form->setRedirectLink($this->NextStepLink());
-		$form->setActions(new FieldList(
-			new FormAction("checkoutSubmit", _t('CheckoutStep.CONTINUE', "Continue"))
+		$form->setActions(FieldList::create(
+			FormAction::create("checkoutSubmit", _t('CheckoutStep.CONTINUE', "Continue"))
 		));
 		$this->owner->extend('updateContactDetailsForm', $form);
 

@@ -24,9 +24,9 @@ class ShopConfig extends DataExtension {
 	}
 
 	public function updateCMSFields(FieldList $fields) {
-		$fields->insertBefore($shoptab = new Tab('Shop', 'Shop'), 'Access');
-		$fields->addFieldsToTab("Root.Shop", new TabSet("ShopTabs",
-			$maintab = new Tab("Main",
+		$fields->insertBefore($shoptab = Tab::create('Shop', 'Shop'), 'Access');
+		$fields->addFieldsToTab("Root.Shop", TabSet::create("ShopTabs",
+			$maintab = Tab::create("Main",
 				TreeDropdownField::create('TermsPageID',
 					_t("ShopConfig.TERMSPAGE", 'Terms and Conditions Page'),
 				'SiteTree'),
@@ -35,7 +35,7 @@ class ShopConfig extends DataExtension {
 				"Group"),
 				UploadField::create('DefaultProductImage', _t('ShopConfig.DEFAULTIMAGE', 'Default Product Image'))
 			),
-			$countriestab = new Tab("Countries",
+			$countriestab = Tab::create("Countries",
 				CheckboxSetField::create('AllowedCountries', _t('ShopConfig.ALLOWED_COUNTRIES', 'Allowed Ordering and Shipping Countries'),
 					self::config()->iso_3166_country_codes
 				)

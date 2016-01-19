@@ -8,8 +8,8 @@ class CheckoutStep_PaymentMethod extends CheckoutStep{
 	);
 
 	protected function checkoutconfig() {
-		$config = new CheckoutComponentConfig(ShoppingCart::curr(), false);
-		$config->addComponent(new PaymentCheckoutComponent());
+		$config = CheckoutComponentConfig::create(ShoppingCart::curr(), false);
+		$config->addComponent(PaymentCheckoutComponent::create());
 
 		return $config;
 	}
@@ -25,8 +25,8 @@ class CheckoutStep_PaymentMethod extends CheckoutStep{
 	}
 
 	public function PaymentMethodForm() {
-		$form = new CheckoutForm($this->owner, "PaymentMethodForm", $this->checkoutconfig());
-		$form->setActions(new FieldList(
+		$form = CheckoutForm::create($this->owner, "PaymentMethodForm", $this->checkoutconfig());
+		$form->setActions(FieldList::create(
 			FormAction::create("setpaymentmethod",  _t('CheckoutStep.CONTINUE', "Continue"))
 		));
 		$this->owner->extend('updatePaymentMethodForm', $form);

@@ -123,7 +123,7 @@ class CheckoutPage_Controller extends Page_Controller {
 
 		$form = PaymentForm::create($this, "PaymentForm", $config);
 
-		$form->setActions(new FieldList(
+		$form->setActions(FieldList::create(
 			FormAction::create("submitpayment", _t('CheckoutPage.SUBMIT_PAYMENT', "Submit Payment"))
 		));
 

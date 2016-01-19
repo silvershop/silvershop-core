@@ -4,13 +4,13 @@ class SetLocationForm extends Form{
 
 	public function __construct($controller, $name = "SetLocationForm") {
 		$countries = SiteConfig::current_site_config()->getCountriesList();
-		$fields = new FieldList(
-			$countryfield = new DropdownField("Country", _t('SetLocationForm.COUNTRY', 'Country'), $countries)
+		$fields = FieldList::create(
+			$countryfield = DropdownField::create("Country", _t('SetLocationForm.COUNTRY', 'Country'), $countries)
 		);
 		$countryfield->setHasEmptyDefault(true);
 		$countryfield->setEmptyString(_t('SetLocationForm.CHOOSECOUNTRY', 'Choose country...'));
-		$actions = new FieldList(
-			new FormAction("setLocation", "set")
+		$actions = FieldList::create(
+			FormAction::create("setLocation", "set")
 		);
 		parent::__construct($controller, $name, $fields, $actions);
 		//load currently set location
@@ -34,7 +34,7 @@ class LocationFormPageDecorator extends Extension{
 	);
 
 	public function SetLocationForm() {
-		return new SetLocationForm($this->owner);
+		return SetLocationForm::create($this->owner);
 	}
 
 }

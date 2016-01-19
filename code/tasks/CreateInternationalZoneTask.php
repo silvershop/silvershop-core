@@ -6,7 +6,7 @@ class CreateInternationalZoneTask extends BuildTask{
 	protected $description = 'Quickly creates an international zone, based on all available countries.';
 
 	public function run($request){
-		$zone = new Zone();
+		$zone = Zone::create();
 		$zone->Name = "International";
 		$zone->Description = "All countries";
 		$zone->write();
@@ -14,7 +14,7 @@ class CreateInternationalZoneTask extends BuildTask{
 		$countries = ShopConfig::current()->getCountriesList();
 
 		foreach($countries as $code => $country){
-			$zoneregion = new ZoneRegion(array(
+			$zoneregion = ZoneRegion::create(array(
 				'ZoneID' => $zone->ID,
 				'Country' => $code
 			));

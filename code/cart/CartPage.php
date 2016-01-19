@@ -93,7 +93,7 @@ class CartPage_Controller extends Page_Controller{
 		if(!$cart){
 			return false;
 		}
-		$form = new CartForm($this, "CartForm", $cart);
+		$form = CartForm::create($this, "CartForm", $cart);
 
 		$this->extend('updateCartForm', $form);
 

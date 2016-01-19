@@ -37,7 +37,7 @@ class ShopUserInfo{
 	public function getAddress() {
 		$address = null;
 		if($data = $this->getLocationData()){
-			$address = new Address();
+			$address = Address::create();
 			$address->update($data);
 			$address->ID = 0; //ensure not in db
 		}

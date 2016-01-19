@@ -124,7 +124,7 @@ class ShopMigrationTask extends MigrationTask{
 	public function migrateShippingValues($order){
 		//TODO: see if this actually works..it probably needs to be writeen to a SQL query
 		if($order->hasShippingCost && abs($order->Shipping)){
-			$modifier1 = new ShippingModifier();
+			$modifier1 = ShippingModifier::create();
 			$modifier1->Amount = $order->Shipping < 0 ? abs($order->Shipping) : $order->Shipping;
 			$modifier1->Type = 'Chargable';
 			$modifier1->OrderID = $order->ID;
@@ -134,7 +134,7 @@ class ShopMigrationTask extends MigrationTask{
 			$order->Shipping = null;
 		}
 		if($order->AddedTax) {
-			$modifier2 = new TaxModifier();
+			$modifier2 = TaxModifier::create();
 			$modifier2->Amount = $order->AddedTax < 0 ? abs($order->AddedTax) : $order->AddedTax;
 			$modifier2->Type = 'Chargable';
 			$modifier2->OrderID = $order->ID;

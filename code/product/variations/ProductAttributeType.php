@@ -39,7 +39,7 @@ class ProductAttributeType extends DataObject{
 			->first()){
 				return $type;
 		}
-		$type = new ProductAttributeType();
+		$type = ProductAttributeType::create();
 		$type->Name = $name;
 		$type->Label = $name;
 		$type->write();
@@ -48,7 +48,7 @@ class ProductAttributeType extends DataObject{
 	}
 
 	public function getCMSFields(){
-		$fields = new FieldList(
+		$fields = FieldList::create(
 			TextField::create("Name", _t('ProductAttributeType.db_Name', 'Name')),
 			TextField::create("Label", _t('ProductAttributeType.db_Label', 'Label'))
 		);
@@ -84,11 +84,11 @@ class ProductAttributeType extends DataObject{
 	 * @return ArrayList
 	 */
 	public function convertArrayToValues(array $values){
-		$set = new ArrayList();
+		$set = ArrayList::create();
 		foreach($values as $value){
 			$val = $this->Values()->find('Value',$value);
 			if(!$val){  //TODO: ignore case, if possible
-				$val = new ProductAttributeValue();
+				$val = ProductAttributeValue::create();
 				$val->Value = $value;
 				$val->TypeID = $this->ID;
 				$val->write();
@@ -111,7 +111,7 @@ class ProductAttributeType extends DataObject{
 		$values = ($values) ? $values : $this->Values('','Sort ASC, Value ASC');
 
 		if($values->exists()) {
-			$field = new DropdownField(
+			$field = DropdownField::create(
 				'ProductAttributes['.$this->ID.']',
 				$this->Name,
 				$values->map('ID','Value')

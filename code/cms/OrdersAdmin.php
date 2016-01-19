@@ -84,7 +84,7 @@ class OrderGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemReque
 			window.open('$printlink', 'print_order', 'toolbar=0,scrollbars=1,location=1,statusbar=0,menubar=0,resizable=1,width=800,height=600,left = 50,top = 50');return false;
 JS;
 		$form->Actions()->push(
-			new LiteralField("PrintOrder",
+			LiteralField::create("PrintOrder",
 				"<button class=\"no-ajax grid-print-button\" data-icon=\"grid_print\" onclick=\"javascript:$printwindowjs\">"._t("Order.PRINT","Print")."</button>"
 			)
 		);

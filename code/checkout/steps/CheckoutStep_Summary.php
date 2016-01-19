@@ -17,12 +17,12 @@ class CheckoutStep_Summary extends CheckoutStep{
 	}
 
 	public function ConfirmationForm() {
-		$config = new CheckoutComponentConfig(ShoppingCart::curr(), false);
-		$config->addComponent(new NotesCheckoutComponent());
-		$config->addComponent(new TermsCheckoutComponent());
+		$config = CheckoutComponentConfig::create(ShoppingCart::curr(), false);
+		$config->addComponent(NotesCheckoutComponent::create());
+		$config->addComponent(TermsCheckoutComponent::create());
 		$this->owner->extend('updateConfirmationComponentConfig', $config);
 
-		$form = new PaymentForm($this->owner, "ConfirmationForm", $config);
+		$form = PaymentForm::create($this->owner, "ConfirmationForm", $config);
 		$form->setFailureLink($this->owner->Link('summary'));
 		$this->owner->extend('updateConfirmationForm', $form);
 

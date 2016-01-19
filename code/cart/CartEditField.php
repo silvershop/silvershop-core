@@ -80,7 +80,7 @@ class CartEditField extends FormField{
 	 * @param SS_List $items
 	 */
 	protected function editableItems() {
-		$editables = new ArrayList();
+		$editables = ArrayList::create();
 		foreach($this->items as $item){
 			$buyable = $item->Product();
 			if(!$buyable){
