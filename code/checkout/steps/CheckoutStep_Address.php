@@ -12,7 +12,7 @@ class CheckoutStep_Address extends CheckoutStep{
 	);
 
 	public function shippingconfig() {
-		$config = CheckoutComponentConfig::create(ShoppingCart::curr());
+		$config = new CheckoutComponentConfig(ShoppingCart::curr());
 		$config->addComponent(ShippingAddressCheckoutComponent::create());
 
 		return $config;
@@ -56,7 +56,7 @@ class CheckoutStep_Address extends CheckoutStep{
 	}
 
 	public function billingconfig() {
-		$config = CheckoutComponentConfig::create(ShoppingCart::curr());
+		$config = new CheckoutComponentConfig(ShoppingCart::curr());
 		$config->addComponent(BillingAddressCheckoutComponent::create());
 
 		return $config;

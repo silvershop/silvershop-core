@@ -76,7 +76,7 @@ class CheckoutStep_Membership extends CheckoutStep{
 		if(!$order){
 			$order = Order::create();
 		}
-		$config = CheckoutComponentConfig::create($order, false);
+		$config = new CheckoutComponentConfig($order, false);
 		$config->addComponent(CustomerDetailsCheckoutComponent::create());
 		$config->addComponent(MembershipCheckoutComponent::create());
 

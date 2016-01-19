@@ -17,7 +17,7 @@ class CheckoutStep_Summary extends CheckoutStep{
 	}
 
 	public function ConfirmationForm() {
-		$config = CheckoutComponentConfig::create(ShoppingCart::curr(), false);
+		$config = new CheckoutComponentConfig(ShoppingCart::curr(), false);
 		$config->addComponent(NotesCheckoutComponent::create());
 		$config->addComponent(TermsCheckoutComponent::create());
 		$this->owner->extend('updateConfirmationComponentConfig', $config);
