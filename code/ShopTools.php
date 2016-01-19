@@ -7,7 +7,7 @@ class ShopTools{
 
 	public static function price_for_display($price) {
 		$currency = ShopConfig::get_site_currency();
-		$field = new Money("Price");
+		$field = Money::create("Price");
 		$field->setAmount($price);
 		$field->setCurrency($currency);
 		return $field;

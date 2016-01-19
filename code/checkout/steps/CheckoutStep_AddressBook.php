@@ -10,16 +10,16 @@ class CheckoutStep_AddressBook extends CheckoutStep_Address{
 		'BillingAddressForm',
 		'setbillingaddress'
 	);
-	
+
 	public function shippingconfig() {
-		$config = new CheckoutComponentConfig(ShoppingCart::curr());
-		$config->addComponent(new ShippingAddressBookCheckoutComponent());
+		$config = CheckoutComponentConfig::create(ShoppingCart::curr());
+		$config->addComponent(ShippingAddressBookCheckoutComponent::create());
 
 		return $config;
 	}
 
 	public function billingconfig() {
-		$config = new CheckoutComponentConfig(ShoppingCart::curr());
+		$config = CheckoutComponentConfig::create(ShoppingCart::curr());
 		$config->addComponent(new BillingAddressBookCheckoutComponent());
 
 		return $config;

@@ -89,7 +89,7 @@ class ShopQuantityField extends ViewableData{
 				'name' => $this->MainID() . '_Quantity_SetQuantityLink',
 				'value' => $quantitylink
 			);
-			$formfield = new FormField('hack');
+			$formfield = FormField::create('hack');
 			return $formfield->createTag('input', $attributes);
 		}
 	}
@@ -111,7 +111,7 @@ class DropdownShopQuantityField extends ShopQuantityField{
 		for($r=1; $r<= $this->max; $r++){
 			$qtyArray[$r] = $r;
 		}
-		return new DropdownField(
+		return DropdownField::create(
 			$this->MainID() . '_Quantity',
 			// this title currently doesn't show up in the front end, better assign a translation anyway.
 			_t('AddProductForm.Quantity', "Quantity"),

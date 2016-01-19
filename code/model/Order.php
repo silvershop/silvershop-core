@@ -157,7 +157,7 @@ class Order extends DataObject {
 	 * Create CMS fields for cms viewing and editing orders
 	 */
 	public function getCMSFields() {
-		$fields = new FieldList(new TabSet('Root', new Tab('Main')));
+		$fields = FieldList::create(TabSet::create('Root', Tab::create('Main')));
 		$fs = "<div class=\"field\">";
 		$fe = "</div>";
 		$parts = array(
@@ -216,7 +216,7 @@ class Order extends DataObject {
 		$components = parent::getComponents($componentName, $filter = "", $sort = "", $join = "", $limit = null);
 		if($componentName === "Items" && get_class($components) !== "UnsavedRelationList"){
 			$query = $components->dataQuery();
-			$components = new OrderItemList("OrderItem", "OrderID");
+			$components = OrderItemList::create("OrderItem", "OrderID");
 			if($this->model) $components->setDataModel($this->model);
 			$components->setDataQuery($query);
 			$components = $components->forForeignID($this->ID);

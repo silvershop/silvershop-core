@@ -13,7 +13,7 @@ class OnsitePaymentCheckoutComponent extends CheckoutComponent {
 		$gatewayfieldsfactory = new GatewayFieldsFactory($gateway, array('Card'));
 		$fields = $gatewayfieldsfactory->getCardFields();
 		if($gateway === "Dummy"){
-			$fields->unshift(new LiteralField("dummypaymentmessage",
+			$fields->unshift(LiteralField::create("dummypaymentmessage",
 				"<p class=\"message good\">Dummy data has been added to the form for testing convenience.</p>"
 			));
 		}
@@ -26,7 +26,7 @@ class OnsitePaymentCheckoutComponent extends CheckoutComponent {
 	}
 
 	public function validateData(Order $order, array $data) {
-		$result = new ValidationResult();
+		$result = ValidationResult::create();
 		//TODO: validate credit card data
 		if(!Helper::validateLuhn($data['number'])){
 			$result->error(_t('OnsitePaymentCheckoutComponent.CREDIT_CARD_INVALID','Credit card is invalid'));

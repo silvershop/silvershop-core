@@ -25,7 +25,7 @@ abstract class AddressBookCheckoutComponent extends AddressCheckoutComponent{
 				"{$this->addresstype} Address"
 			);
 
-			return new FieldList(
+			return FieldList::create(
 				CompositeField::create($existingaddressfields)
 					->addExtraClass('hasExistingValues')
 					->setLegend($label)
@@ -59,7 +59,7 @@ abstract class AddressBookCheckoutComponent extends AddressCheckoutComponent{
 					$label = _t("AddressBookCheckoutComponent.EXISTING_ADDRESS", "Existing Address");
 			}
 
-			return new FieldList(
+			return FieldList::create(
 				$fieldtype::create($this->addresstype."AddressID", $label,
 					$addressoptions,
 					$member->{"Default".$this->addresstype."AddressID"}
@@ -85,7 +85,7 @@ abstract class AddressBookCheckoutComponent extends AddressCheckoutComponent{
 	 * @throws ValidationException
 	 */
 	public function validateData(Order $order, array $data) {
-		$result = new ValidationResult();
+		$result = ValidationResult::create();
 		$existingID = !empty($data[$this->addresstype."AddressID"]) ? (int)$data[$this->addresstype."AddressID"] : 0;
 
 		if ($existingID) {

@@ -68,7 +68,7 @@ class ProductVariationsExtension extends DataExtension {
 			$pricedata['Average']->setValue($sum/$count);
 		}
 
-		return new ArrayData($pricedata);
+		return ArrayData::create($pricedata);
 	}
 
 	/**
@@ -129,7 +129,7 @@ class ProductVariationsExtension extends DataExtension {
 				}
 			}else{
 				foreach($avalues as $value){
-					$variation = new ProductVariation();
+					$variation = ProductVariation::create();
 					$variation->ProductID = $this->owner->ID;
 					$variation->Price = $this->owner->BasePrice;
 					$variation->write();

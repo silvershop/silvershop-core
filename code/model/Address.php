@@ -93,7 +93,7 @@ class Address extends DataObject{
 		$countries = SiteConfig::current_site_config()->getCountriesList();
 		if(count($countries) == 1){
 			//field name is Country_readonly so it's value doesn't get updated
-			return new ReadonlyField("Country_readonly",
+			return ReadonlyField::create("Country_readonly",
 				_t('Address.COUNTRY', 'Country'),
 				array_pop($countries)
 			);

@@ -59,8 +59,8 @@ class Zone extends DataObject{
 		$fields = parent::getCMSFields();
 		$fields->fieldByName("Root")->removeByName("Regions");
 		if($this->isInDB()){
-			$regionsTable = new GridField("Regions",
-				_t('Zone.has_many_Regions', "Regions"), $this->Regions(), new GridFieldConfig_RelationEditor());
+			$regionsTable = GridField::create("Regions",
+				_t('Zone.has_many_Regions', "Regions"), $this->Regions(), GridFieldConfig_RelationEditor::create());
 			$fields->addFieldsToTab("Root.Main", $regionsTable);
 		}
 		return $fields;

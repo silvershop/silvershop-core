@@ -22,10 +22,10 @@ class OrderActionsForm extends Form{
 
 	public function __construct($controller, $name, Order $order) {
 		$this->order = $order;
-		$fields = new FieldList(
+		$fields = FieldList::create(
 			HiddenField::create('OrderID', '', $order->ID)
 		);
-		$actions = new FieldList();
+		$actions = FieldList::create();
 		//payment
 		if(self::config()->allow_paying && $order->canPay()){
 			$gateways = GatewayInfo::get_supported_gateways();
@@ -128,7 +128,7 @@ class OrderActionsForm extends Form{
 			$this->order->Status = 'MemberCancelled';
 			$this->order->write();
 			if(self::config()->email_notification){
-				$email = new Email(
+				$email = Email::create(
 					Email::config()->admin_email, Email::config()->admin_email,
 					sprintf(
 						_t('Order.CANCELSUBJECT', 'Order #%d cancelled by member'),

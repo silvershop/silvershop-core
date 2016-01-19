@@ -40,7 +40,7 @@ class OrderEmailNotifier {
 		$checkoutpage = CheckoutPage::get()->first();
 		$completemessage = $checkoutpage ? $checkoutpage->PurchaseComplete : '';
 
-		$email = new Email();
+		$email = Email::create();
 		$email->setTemplate($template);
 		$email->setFrom($from);
 		$email->setTo($to);
@@ -145,7 +145,7 @@ class OrderEmailNotifier {
 		} else {
 			$adminEmail = Email::config()->admin_email;
 		}
-		$e = new Order_statusEmail();
+		$e = Order_statusEmail::create();
 		$e->populateTemplate(array(
 			"Order" => $this->order,
 			"Member" => $member,

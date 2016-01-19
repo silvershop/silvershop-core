@@ -11,7 +11,7 @@ class ShopMemberFactory{
 	 * @return Member|boolean - new member (not saved to db), or false if there is an error.
 	 */
 	public function create($data) {
-		$result = new ValidationResult();
+		$result = ValidationResult::create();
 		if(!Checkout::member_creation_enabled()) {
 			$result->error(
 				_t("Checkout.MEMBERSHIPSNOTALLOWED", "Creating new memberships is not allowed")
@@ -42,7 +42,7 @@ class ShopMemberFactory{
 			));
 			throw new ValidationException($result);
 		}
-		$member = new Member(Convert::raw2sql($data));
+		$member = Member::create(Convert::raw2sql($data));
 		// 3.2 changed validate to protected which made this fall through the DataExtension and error out
 		$validation = $member->hasMethod('doValidate') ? $member->doValidate() : $member->validate();
 		if(!$validation->valid()){

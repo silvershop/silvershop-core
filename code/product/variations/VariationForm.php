@@ -29,7 +29,7 @@ class VariationForm extends AddProductForm {
 			$requiredfields[] = "ProductAttributes[$attribute->ID]";
 		}
 
-		$fields = new FieldList($farray);
+		$fields = FieldList::create($farray);
 
 		if(self::$include_json) {
 			$vararray = array();
@@ -40,7 +40,7 @@ class VariationForm extends AddProductForm {
 				}
 			}
 
-			$fields->push(new HiddenField('VariationOptions','VariationOptions',
+			$fields->push(HiddenField::create('VariationOptions','VariationOptions',
 				json_encode($vararray)
 			));
 		}
@@ -50,7 +50,7 @@ class VariationForm extends AddProductForm {
 		$this->setFields($fields);
 		$requiredfields[] = 'Quantity';
 
-		$this->setValidator(new VariationFormValidator(
+		$this->setValidator(VariationFormValidator::create(
 			$requiredfields
 		));
 

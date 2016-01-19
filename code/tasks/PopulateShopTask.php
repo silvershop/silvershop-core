@@ -144,14 +144,14 @@ class PopulateShopTask extends BuildTask{
 	}
 
 	public function populateInternationalZone(){
-		$zone = new Zone(array(
+		$zone = Zone::create(array(
 			'Name' => 'International'
 		));
 		$zone->write();
 
 		if($countries = SiteConfig::current_site_config()->getCountriesList()){
 			foreach($countries as $iso => $country){
-				$region = new ZoneRegion(array(
+				$region = ZoneRegion::create(array(
 					'Country' => $iso,
 					'ZoneID' => $zone->ID
 				));

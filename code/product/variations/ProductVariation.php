@@ -72,7 +72,7 @@ class ProductVariation extends DataObject implements Buyable {
 
 
 	public function getCMSFields() {
-		$fields = new FieldList(
+		$fields = FieldList::create(
 			TextField::create('InternalItemID', _t('Product.CODE', 'Product Code')),
 			TextField::create('Price', _t('Product.PRICE', 'Price'))
 		);
@@ -151,7 +151,7 @@ class ProductVariation extends DataObject implements Buyable {
 	}
 
 	public function getCategories() {
-		return $this->Product() ? $this->Product()->getCategories() : new ArrayList();
+		return $this->Product() ? $this->Product()->getCategories() : ArrayList::create();
 	}
 
 	public function canPurchase($member = null, $quantity = 1) {

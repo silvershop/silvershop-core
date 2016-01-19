@@ -21,7 +21,7 @@ class MembershipCheckoutComponent extends CheckoutComponent{
 		if(!$validator){
 			$this->passwordvalidator = Member::password_validator();
 			if(!$this->passwordvalidator){
-				$this->passwordvalidator = new PasswordValidator();
+				$this->passwordvalidator = PasswordValidator::create();
 				$this->passwordvalidator->minLength(5);
 				$this->passwordvalidator->characterStrength(2, array("lowercase", "uppercase", "digits", "punctuation"));
 			}
@@ -29,7 +29,7 @@ class MembershipCheckoutComponent extends CheckoutComponent{
 	}
 
 	public function getFormFields(Order $order, Form $form = null) {
-		$fields = new FieldList();
+		$fields = FieldList::create();
 		if(Member::currentUserID()){
 			return $fields;
 		}
@@ -37,7 +37,7 @@ class MembershipCheckoutComponent extends CheckoutComponent{
 		if(!$order->{$idfield} &&
 			($form && !$form->Fields()->fieldByName($idfield))){
 				//TODO: scaffold the correct id field type
-				$fields->push(new TextField($idfield, $idfield));
+				$fields->push(TextField::create($idfield, $idfield));
 		}
 		$fields->push($this->getPasswordField());
 		return $fields;
@@ -66,9 +66,9 @@ class MembershipCheckoutComponent extends CheckoutComponent{
 		if(Member::currentUserID()){
 			return;
 		}
-		$result = new ValidationResult();
+		$result = ValidationResult::create();
 		if(Checkout::membership_required() || !empty($data['Password'])){
-			$member = new Member($data);
+			$member = Member::create($data);
 			$idfield = Member::config()->unique_identifier_field;
 			$idval = $data[$idfield];
 			if(ShopMember::get_by_identifier($idval)){

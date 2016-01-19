@@ -27,14 +27,14 @@ class ShopPeriodReport extends SS_Report{
 	}
 
 	public function parameterFields() {
-		$member = Member::currentUserID() ? Member::currentUser() : new Member();
+		$member = Member::currentUserID() ? Member::currentUser() : Member::create();
 		$dateformat = $member->getDateFormat();
-		$fields = new FieldList(
-			$start = new DateField("StartPeriod","Start Date"),
-			$end = new DateField("EndPeriod","End Date")
+		$fields = FieldList::create(
+			$start = DateField::create("StartPeriod","Start Date"),
+			$end = DateField::create("EndPeriod","End Date")
 		);
 		if($this->grouping){
-			$fields->push(new DropdownField("Grouping","Group By",array(
+			$fields->push(DropdownField::create("Grouping","Group By",array(
 				"Year" => "Year",
 				"Month" => "Month",
 				"Day" => "Day"

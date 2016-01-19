@@ -16,15 +16,15 @@ class ShopAccountForm extends Form {
 			$requiredFields = $member->getValidator();
 			$requiredFields->addRequiredField('Surname');
 		} else {
-			$fields = new FieldList();
+			$fields = FieldList::create();
 		}
 		if(get_class($controller) == 'AccountPage_Controller'){
-			$actions = new FieldList(new FormAction('submit', _t('MemberForm.SAVE', 'Save Changes')));
+			$actions = FieldList::create(FormAction::create('submit', _t('MemberForm.SAVE', 'Save Changes')));
 		}
 		else{
-			$actions = new FieldList(
-				new FormAction('submit', _t('MemberForm.SAVE', 'Save Changes')),
-				new FormAction('proceed', _t('MemberForm.SAVEANDPROCEED', 'Save and proceed to checkout'))
+			$actions = FieldList::create(
+				FormAction::create('submit', _t('MemberForm.SAVE', 'Save Changes')),
+				FormAction::create('proceed', _t('MemberForm.SAVEANDPROCEED', 'Save and proceed to checkout'))
 			);
 		}
 		parent::__construct($controller, $name, $fields, $actions, $requiredFields);

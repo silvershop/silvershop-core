@@ -85,7 +85,7 @@ class OrderManipulation extends Extension{
 		$orders = $this->allorders()
 				->filter("Status", Order::config()->placed_status);
 		if($paginated){
-			$orders = new PaginatedList($orders, $this->owner->getRequest());
+			$orders = PaginatedList::create($orders, $this->owner->getRequest());
 		}
 
 		return $orders;
@@ -117,7 +117,7 @@ class OrderManipulation extends Extension{
 	 */
 	public function ActionsForm() {
 		if($order = $this->orderfromid()){
-			$form = new OrderActionsForm($this->owner, "ActionsForm", $order);
+			$form = OrderActionsForm::create($this->owner, "ActionsForm", $order);
 			$form->extend('updateActionsForm', $order);
 			if(!$form->Actions()->exists()){
 				return null;

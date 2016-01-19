@@ -116,7 +116,7 @@ class AccountPage_Controller extends Page_Controller {
 	public function DefaultAddressForm() {
 		$addresses = $this->member->AddressBook()->sort('Created', 'DESC');
 		if($addresses->exists()){
-			$fields = new FieldList(
+			$fields = FieldList::create(
 				DropdownField::create(
 					"DefaultShippingAddressID",
                     _t("Address.ShippingAddress", "Shipping Address"),
@@ -128,8 +128,8 @@ class AccountPage_Controller extends Page_Controller {
 					$addresses->map('ID', 'toString')->toArray()
 				)
 			);
-			$actions = new FieldList(
-                new FormAction("savedefaultaddresses", _t("Address.SaveDefaults", "Save Defaults"))
+			$actions = FieldList::create(
+                FormAction::create("savedefaultaddresses", _t("Address.SaveDefaults", "Save Defaults"))
 			);
 			$form = Form::create($this, "DefaultAddressForm", $fields, $actions);
 			$form->loadDataFrom($this->member);
@@ -149,10 +149,10 @@ class AccountPage_Controller extends Page_Controller {
 	public function CreateAddressForm() {
 		$singletonaddress = singleton('Address');
 		$fields = $singletonaddress->getFrontEndFields();
-		$actions = new FieldList(
-            new FormAction("saveaddress", _t("Address.SaveNew", "Save New Address"))
+		$actions = FieldList::create(
+            FormAction::create("saveaddress", _t("Address.SaveNew", "Save New Address"))
 		);
-		$validator = new RequiredFields($singletonaddress->getRequiredFields());
+		$validator = RequiredFields::create($singletonaddress->getRequiredFields());
 		$form = Form::create($this, "CreateAddressForm", $fields, $actions, $validator);
 		$this->extend('updateCreateAddressForm', $form);
 		return $form;
@@ -160,7 +160,7 @@ class AccountPage_Controller extends Page_Controller {
 
 	public function saveaddress($data,$form) {
 		$member = $this->getMember();
-		$address = new Address();
+		$address = Address::create();
 		$form->saveInto($address);
 		$address->MemberID = $member->ID;
 
@@ -193,11 +193,11 @@ class AccountPage_Controller extends Page_Controller {
 	 * @return ShopAccountForm
 	 */
 	public function EditAccountForm() {
-		return new ShopAccountForm($this, 'EditAccountForm');
+		return ShopAccountForm::create($this, 'EditAccountForm');
 	}
 
 	public function ChangePasswordForm() {
-		$form = new ChangePasswordForm($this, "ChangePasswordForm");
+		$form = ChangePasswordForm::create($this, "ChangePasswordForm");
 		$this->extend('updateChangePasswordForm', $form);
 		$this->data()->extend('updateChangePasswordForm', $form);
 

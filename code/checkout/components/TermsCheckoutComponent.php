@@ -3,7 +3,7 @@
 class TermsCheckoutComponent extends CheckoutComponent {
 
 	public function getFormFields(Order $order) {
-		$fields = new FieldList();
+		$fields = FieldList::create();
 		$page = SiteConfig::current_site_config()->TermsPage();
 
 		if($page->exists()) {

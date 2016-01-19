@@ -21,10 +21,10 @@ class CheckoutFieldFactory{
 	}
 
 	public function getContactFields($subset = array()) {
-		return $this->getSubset(new FieldList(
-			new TextField('FirstName', _t('CheckoutField.FIRSTNAME', 'First Name')),
-			new TextField('Surname', _t('CheckoutField.SURNAME', 'Surname')),
-			new EmailField('Email', _t('CheckoutField.EMAIL', 'Email'))
+		return $this->getSubset(FieldList::create(
+			TextField::create('FirstName', _t('CheckoutField.FIRSTNAME', 'First Name')),
+			TextField::create('Surname', _t('CheckoutField.SURNAME', 'Surname')),
+			EmailField::create('Email', _t('CheckoutField.EMAIL', 'Email'))
 		), $subset);
 	}
 
@@ -38,7 +38,7 @@ class CheckoutFieldFactory{
 		$fields = $this->getContactFields();
 		$idfield = Member::get_unique_identifier_field();
 		if(!$fields->fieldByName($idfield)){
-			$fields->push(new TextField($idfield, $idfield)); //TODO: scaffold the correct id field
+			$fields->push(TextField::create($idfield, $idfield)); //TODO: scaffold the correct id field
 		}
 		$fields->push($this->getPasswordField());
 		return $fields;
@@ -46,9 +46,9 @@ class CheckoutFieldFactory{
 
 	public function getPasswordFields() {
 		$loginlink = "Security/login?BackURL=".CheckoutPage::find_link(true);
-		$fields =  new FieldList(
-			new HeaderField(_t('CheckoutField.MEMBERSHIPDETAILS', 'Membership Details'), 3),
-			new LiteralField('MemberInfo',
+		$fields =  FieldList::create(
+			HeaderField::create(_t('CheckoutField.MEMBERSHIPDETAILS', 'Membership Details'), 3),
+			LiteralField::create('MemberInfo',
 				'<p class="message warning">'.
 					_t('CheckoutField.MEMBERINFO', 'If you are already a member please')
 					." <a href=\"$loginlink\">".
@@ -56,7 +56,7 @@ class CheckoutFieldFactory{
 					'</a>.'.
 				'</p>'
 			),
-			new LiteralField('AccountInfo',
+			LiteralField::create('AccountInfo',
 				'<p>'._t('CheckoutField.ACCOUNTINFO',
 					'Please choose a password, so you can login and check your order history in the future'
 				).'</p>'
@@ -71,7 +71,7 @@ class CheckoutFieldFactory{
 
 	public function getPaymentMethodFields() {
 		//TODO: only get one field if there is no option
-		return new OptionsetField(
+		return OptionsetField::create(
 			'PaymentMethod',
 			_t('CheckoutField.PAYMENT_TYPE', "Payment Type"),
 			GatewayInfo::get_supported_gateways(), array_keys(GatewayInfo::get_supported_gateways())
@@ -120,7 +120,7 @@ class CheckoutFieldFactory{
 		if(empty($subset)){
 			return $fields;
 		}
-		$subfieldlist = new FieldList();
+		$subfieldlist = FieldList::create();
 		foreach ($subset as $field) {
 			if($field = $fields->fieldByName($field)){
 				$subfieldlist->push($field);

@@ -12,15 +12,15 @@ class CheckoutStep_Address extends CheckoutStep{
 	);
 
 	public function shippingconfig() {
-		$config = new CheckoutComponentConfig(ShoppingCart::curr());
-		$config->addComponent(new ShippingAddressCheckoutComponent());
+		$config = CheckoutComponentConfig::create(ShoppingCart::curr());
+		$config->addComponent(ShippingAddressCheckoutComponent::create());
 
 		return $config;
 	}
 
 	public function shippingaddress() {
 		$form = $this->ShippingAddressForm();
-		$form->Fields()->push(new CheckboxField(
+		$form->Fields()->push(CheckboxField::create(
 			"SeperateBilling", _t('CheckoutStep_Address.SEPARATE_BILLING',"Bill to a different address from this")
 		));
 		$order = $this->shippingconfig()->getOrder();
@@ -32,9 +32,9 @@ class CheckoutStep_Address extends CheckoutStep{
 	}
 
 	public function ShippingAddressForm() {
-		$form = new CheckoutForm($this->owner, 'ShippingAddressForm', $this->shippingconfig());
-		$form->setActions(new FieldList(
-			new FormAction("setshippingaddress", _t('CheckoutStep.CONTINUE', "Continue"))
+		$form = CheckoutForm::create($this->owner, 'ShippingAddressForm', $this->shippingconfig());
+		$form->setActions(FieldList::create(
+			FormAction::create("setshippingaddress", _t('CheckoutStep.CONTINUE', "Continue"))
 		));
 		$this->owner->extend('updateShippingAddressForm', $form);
 
@@ -56,8 +56,8 @@ class CheckoutStep_Address extends CheckoutStep{
 	}
 
 	public function billingconfig() {
-		$config = new CheckoutComponentConfig(ShoppingCart::curr());
-		$config->addComponent(new BillingAddressCheckoutComponent());
+		$config = CheckoutComponentConfig::create(ShoppingCart::curr());
+		$config->addComponent(BillingAddressCheckoutComponent::create());
 
 		return $config;
 	}
@@ -67,9 +67,9 @@ class CheckoutStep_Address extends CheckoutStep{
 	}
 
 	public function BillingAddressForm() {
-		$form = new CheckoutForm($this->owner, 'BillingAddressForm', $this->billingconfig());
-		$form->setActions(new FieldList(
-			new FormAction("setbillingaddress", _t('CheckoutStep.CONTINUE', "Continue"))
+		$form = CheckoutForm::create($this->owner, 'BillingAddressForm', $this->billingconfig());
+		$form->setActions(FieldList::create(
+			FormAction::create("setbillingaddress", _t('CheckoutStep.CONTINUE', "Continue"))
 		));
 		$this->owner->extend('updateBillingAddressForm', $form);
 

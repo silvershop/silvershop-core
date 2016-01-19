@@ -3,11 +3,11 @@
 class PaymentCheckoutComponent extends CheckoutComponent{
 
 	public function getFormFields(Order $order) {
-		$fields = new FieldList();
+		$fields = FieldList::create();
 		$gateways = GatewayInfo::get_supported_gateways();
 		if(count($gateways) > 1){
 			$fields->push(
-				new OptionsetField(
+				OptionsetField::create(
 					'PaymentMethod',
 					_t("CheckoutFields.PAYMENTTYPE", "Payment Type"),
 					$gateways,
@@ -33,7 +33,7 @@ class PaymentCheckoutComponent extends CheckoutComponent{
 	}
 
 	public function validateData(Order $order, array $data) {
-		$result = new ValidationResult();
+		$result = ValidationResult::create();
 		if(!isset($data['PaymentMethod'])){
 			$result->error(_t('PaymentCheckoutComponent.NO_PAYMENT_METHOD',"Payment method not provided"), "PaymentMethod");
 			throw new ValidationException($result);

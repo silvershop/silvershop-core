@@ -126,7 +126,7 @@ class ProductCategory_Controller extends Page_Controller {
 		//paginate the products, if necessary
 		$pagelength = ProductCategory::config()->page_length;
 		if($pagelength > 0){
-			$products = new PaginatedList($products, $this->request);
+			$products = PaginatedList::create($products, $this->request);
 			$products->setPageLength($pagelength);
 			$products->TotalCount = $products->getTotalItems();
 		}
@@ -162,7 +162,7 @@ class ProductCategory_Controller extends Page_Controller {
 			$options[$k] = $v;
 		}
 
-	 	$sorter = new ListSorter($this->request, $options);
+	 	$sorter = ListSorter::create($this->request, $options);
 		$this->extend('updateSorter', $sorter);
 
 		return $sorter;

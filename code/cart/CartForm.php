@@ -10,11 +10,11 @@ class CartForm extends Form{
 
 	public function __construct($controller, $name = "CartForm", $cart = null, $template = "Cart") {
 		$this->cart = $cart;
-		$fields = new FieldList(
+		$fields = FieldList::create(
 			CartEditField::create("Items","",$this->cart)
 				->setTemplate($template)
 		);
-		$actions = new FieldList(
+		$actions = FieldList::create(
 			FormAction::create("updatecart", _t('CartForm.UPDATE_CART', "Update Cart"))
 		);
 

@@ -33,11 +33,11 @@ class CheckoutStep_Membership extends CheckoutStep{
 	}
 
 	public function MembershipForm() {
-		$fields = new FieldList();
-		$actions = new FieldList(
-			new FormAction("createaccount",
+		$fields = FieldList::create();
+		$actions = FieldList::create(
+			FormAction::create("createaccount",
 				_t('CheckoutStep_Membership.CREATE_ACCOUNT', "Create an Account", 'This is an option presented to the user')),
-			new FormAction("guestcontinue", _t('CheckoutStep_Membership.CONTINUE_AS_GUEST', "Continue as Guest"))
+			FormAction::create("guestcontinue", _t('CheckoutStep_Membership.CONTINUE_AS_GUEST', "Continue as Guest"))
 		);
 		$form = Form::create($this->owner, 'MembershipForm', $fields, $actions);
 		$this->owner->extend('updateMembershipForm', $form);
@@ -49,7 +49,7 @@ class CheckoutStep_Membership extends CheckoutStep{
 	}
 
 	public function LoginForm() {
-		$form = new MemberLoginForm($this->owner, 'LoginForm');
+		$form = MemberLoginForm::create($this->owner, 'LoginForm');
 		$this->owner->extend('updateLoginForm', $form);
 		return $form;
 	}
@@ -76,17 +76,17 @@ class CheckoutStep_Membership extends CheckoutStep{
 		if(!$order){
 			$order = Order::create();
 		}
-		$config = new CheckoutComponentConfig($order, false);
-		$config->addComponent(new CustomerDetailsCheckoutComponent());
-		$config->addComponent(new MembershipCheckoutComponent());
+		$config = CheckoutComponentConfig::create($order, false);
+		$config->addComponent(CustomerDetailsCheckoutComponent::create());
+		$config->addComponent(MembershipCheckoutComponent::create());
 
 		return $config;
 	}
 
 	public function CreateAccountForm() {
-		$form = new CheckoutForm($this->owner, "CreateAccountForm", $this->registerconfig());
-		$form->setActions(new FieldList(
-			new FormAction('docreateaccount',
+		$form = CheckoutForm::create($this->owner, "CreateAccountForm", $this->registerconfig());
+		$form->setActions(FieldList::create(
+			FormAction::create('docreateaccount',
 				_t('CheckoutStep_Membership.CREATE_NEW_ACCOUNT', 'Create New Account', 'This is an action (Button label)'))
 		));
 		$form->getValidator()->addRequiredField("Password");

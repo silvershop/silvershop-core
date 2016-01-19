@@ -12,7 +12,7 @@ class CheckoutComponentConfig extends Object {
 	protected $namespaced; //namespace fields according to their component
 
 	public function __construct(Order $order, $namespaced = true) {
-		$this->components = new ArrayList();
+		$this->components = ArrayList::create();
 		$this->order = $order;
 		$this->namespaced = $namespaced;
 	}
@@ -52,7 +52,7 @@ class CheckoutComponentConfig extends Object {
 	 */
 	public function getComponents() {
 		if(!$this->components) {
-			$this->components = new ArrayList();
+			$this->components = ArrayList::create();
 		}
 		return $this->components;
 	}
@@ -78,7 +78,7 @@ class CheckoutComponentConfig extends Object {
 	 * @return FieldList namespaced fields
 	 */
 	public function getFormFields() {
-		$fields = new FieldList();
+		$fields = FieldList::create();
 		foreach($this->getComponents() as $component) {
 			if($cfields = $component->getFormFields($this->order)) {
 				$fields->merge($cfields);
@@ -104,7 +104,7 @@ class CheckoutComponentConfig extends Object {
 	 * @throws ValidationException
 	 */
 	public function validateData($data) {
-		$result = new ValidationResult();
+		$result = ValidationResult::create();
 		foreach($this->getComponents() as $component){
 			try{
 				$component->validateData($this->order, $this->dependantData($component, $data));
@@ -193,17 +193,17 @@ class SinglePageCheckoutComponentConfig extends CheckoutComponentConfig {
 
 	public function __construct(Order $order) {
 		parent::__construct($order);
-		$this->addComponent(new CustomerDetailsCheckoutComponent());
-		$this->addComponent(new ShippingAddressCheckoutComponent());
-		$this->addComponent(new BillingAddressCheckoutComponent());
+		$this->addComponent(CustomerDetailsCheckoutComponent::create());
+		$this->addComponent(ShippingAddressCheckoutComponent::create());
+		$this->addComponent(BillingAddressCheckoutComponent::create());
 		if(Checkout::member_creation_enabled() && !Member::currentUserID()){
-			$this->addComponent(new MembershipCheckoutComponent());
+			$this->addComponent(MembershipCheckoutComponent::create());
 		}
 		if(count(GatewayInfo::get_supported_gateways()) > 1){
-			$this->addComponent(new PaymentCheckoutComponent());
+			$this->addComponent(PaymentCheckoutComponent::create());
 		}
-		$this->addComponent(new NotesCheckoutComponent());
-		$this->addComponent(new TermsCheckoutComponent());
+		$this->addComponent(NotesCheckoutComponent::create());
+		$this->addComponent(TermsCheckoutComponent::create());
 	}
 
 }

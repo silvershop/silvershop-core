@@ -84,7 +84,7 @@ class AddProductForm extends Form {
 	 * @return FieldList Fields for this form.
 	 */
 	protected function getFormFields(){
-		$fields = new FieldList();
+		$fields = FieldList::create();
 
 		if($this->maxquantity) {
 			$values = array();
@@ -95,7 +95,7 @@ class AddProductForm extends Form {
 				$count++;
 			}
 
-			$fields->push(new DropdownField('Quantity', _t('AddProductForm.Quantity', 'Quantity'), $values, 1));
+			$fields->push(DropdownField::create('Quantity', _t('AddProductForm.Quantity', 'Quantity'), $values, 1));
 		} else {
 			$fields->push(
 				NumericField::create(_t('AddProductForm.Quantity', 'Quantity'), 'Quantity', 1)
@@ -111,8 +111,8 @@ class AddProductForm extends Form {
 	 * @return FieldList Actions for this form.
 	 */
 	protected function getFormActions(){
-		return new FieldList(
-			new FormAction('addtocart',_t("AddProductForm.ADDTOCART",'Add to Cart'))
+		return FieldList::create(
+			FormAction::create('addtocart',_t("AddProductForm.ADDTOCART",'Add to Cart'))
 		);
 	}
 
@@ -120,7 +120,7 @@ class AddProductForm extends Form {
 	 * @return Validator Validator for this form.
 	 */
 	protected function getFormValidator(){
-		return new RequiredFields(array(
+		return RequiredFields::create(array(
 			'Quantity'
 		));
 	}
