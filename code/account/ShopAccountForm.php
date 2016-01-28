@@ -32,9 +32,12 @@ class ShopAccountForm extends Form {
 			$member->Password = ""; //prevents password field from being populated with encrypted password data
 			$this->loadDataFrom($member);
 		}
-		if($record = $controller->data()){
-			$record->extend('updateShopAccountForm', $fields, $actions, $requiredFields);
-		}
+
+        $this->extend('updateShopAccountForm');
+
+        if($controller->data() && $controller->data()->hasMethod('updateShopAccountForm')){  // if accessing through the model
+            Deprecation::notice('2.0', 'Please access updateShopAccountForm through ShopAccountForm instead of AccountPage (this extension point is due to be removed)');
+        }
 	}
 
 	/**
