@@ -35,6 +35,9 @@ class ShopAccountForm extends Form {
 
         $this->extend('updateShopAccountForm');
 
+        if($record = $controller->data()){
+            $record->extend('updateShopAccountForm', $fields, $actions, $requiredFields);
+        }
         if($controller->data() && $controller->data()->hasMethod('updateShopAccountForm')){  // if accessing through the model
             Deprecation::notice('2.0', 'Please access updateShopAccountForm through ShopAccountForm instead of AccountPage (this extension point is due to be removed)');
         }
