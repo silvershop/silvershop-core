@@ -38,10 +38,7 @@ composer create-project silverstripe/installer myshop
 composer require -d myshop "burnbright/silverstripe-shop:dev-master"
 ```
 
-### Migrating
-
-Visit [yoursite]/dev/tasks/ShopMigrationTask to migrate your database to work properly.
-Make sure you take a database backup, as perfect results aren't guaranteed.
+### Build Tasks
 
 There are a few useful tasks that can be run via a url to help you test:
 
