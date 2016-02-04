@@ -22,7 +22,7 @@
 					<th><% _t("ORDERNOTES","Notes") %></th>
 				</tr>
 			</thead>
-			</tbody>
+			<tbody>
 				<tr>
 					<td>$Notes</td>
 				</tr>
