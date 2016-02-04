@@ -143,6 +143,9 @@ class AccountPage_Controller extends Page_Controller {
 	public function savedefaultaddresses($data,$form) {
 		$form->saveInto($this->member);
 		$this->member->write();
+
+        $this->extend('updateDefaultAddressFormResponse', $form, $data);
+
 		$this->redirect($this->Link('addressbook'));
 	}
 
@@ -180,6 +183,9 @@ class AccountPage_Controller extends Page_Controller {
 			$member->write();
 		}
 		$form->sessionMessage(_t("CreateAddressForm.SAVED", "Your address has been saved"), "good");
+
+        $this->extend('updateCreateAddressFormResponse', $form, $data);
+
 		$this->redirect($this->Link('addressbook'));
 	}
 

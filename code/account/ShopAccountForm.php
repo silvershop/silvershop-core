@@ -55,6 +55,8 @@ class ShopAccountForm extends Form {
 		$member->write();
 		$form->sessionMessage(_t("MemberForm.DETAILSSAVED", 'Your details have been saved'), 'good');
 
+        $this->extend('updateShopAccountFormResponse', $request, $form, $data);
+
 		Controller::curr()->redirectBack();
 		return true;
 	}
