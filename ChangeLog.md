@@ -1,5 +1,15 @@
 # SilverStripe Shop Change Log
 
+## 1.2.0
+
+ * Translations updated from old format
+ * Additional extension hooks added
+ * Templates updated to use the correct translation keys
+ * Other improvements to the default tmeplates
+ * `Object::create` syntax is used more consistently to allow use of the Injector
+ * Fixes some compatibility bugs with SS3.2
+ * Fixed bug where some admin notifications were sent to customer
+
 ## 1.1.1
 
  * Tests pass against SilverStripe 3.2 and increased coverage slightly
