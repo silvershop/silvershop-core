@@ -20,6 +20,8 @@ matrix:
     - php: 5.6
       env: DB=PGSQL CORE_RELEASE=3.2 COVERAGE=3
     - php: 5.6
+      env: DB=PGSQL CORE_RELEASE=3.3
+    - php: 5.6
       env: DB=PGSQL CORE_RELEASE=master
   allow_failures:
     - env: DB=PGSQL CORE_RELEASE=master
