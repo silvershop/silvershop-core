@@ -1,9 +1,15 @@
-Currently you must use [composer](https://getcomposer.org/) to install the shop module. Composer will handle installing module/library dependencies for you automatically. Composer does require some basic knowledge of the terminal, and git. Take the time to learn composer, as it will benefit you greatly as a PHP developer.
-
 In a terminal window, in the website root, type:
 ```sh
-composer require burnbright/silverstripe-shop "*"
+composer require burnbright/silverstripe-shop
 ```
+Then in a browser `{yoursite.com}/dev/build`.  
+
+
+## Demo in Localhost
+
+Always a good idea to have a demo on hand.  Test data can be loaded by visiting `{yoursite.com}/dev/tasks/PopulateShopTask`.
+The Shop will now available in the global navigation.
+
 
 ## Configuration Options
 
