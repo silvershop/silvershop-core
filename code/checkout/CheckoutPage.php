@@ -63,7 +63,15 @@ class CheckoutPage extends Page {
 }
 
 /**
- *  @package shop
+ * @package shop
+ * @mixin CheckoutPage
+ * @mixin SteppedCheckout
+ * @mixin CheckoutStep_Address
+ * @mixin CheckoutStep_AddressBook
+ * @mixin CheckoutStep_ContactDetails
+ * @mixin CheckoutStep_Membership
+ * @mixin CheckoutStep_PaymentMethod
+ * @mixin CheckoutStep_Summary
  */
 class CheckoutPage_Controller extends Page_Controller {
 

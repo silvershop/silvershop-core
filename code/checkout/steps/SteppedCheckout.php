@@ -7,6 +7,9 @@
  */
 class SteppedCheckout extends Extension{
 
+    /** @var CheckoutPage_Controller */
+    protected $owner;
+
 	/**
 	 * Set up CheckoutPage_Controller decorators for managing steps
 	 */
@@ -56,13 +59,12 @@ class SteppedCheckout extends Extension{
 	 * Check if passed action is the same as the current step
 	 */
 	public function IsCurrentStep($name) {
-		if($this->owner->getAction() === $name){
+		if ($this->owner->getAction() === $name) {
 			return true;
+		} elseif (!$this->owner->getAction() || $this->owner->getAction() === "index") {
+            return $this->actionPos($name) === 0;
 		}
-		if($this->owner->getAction() == "index" && $this->actionPos($name) === 0){
-			return true;
-		}
-		return false;
+        return false;
 	}
 
 	public function StepExists($name) {
