@@ -44,9 +44,16 @@ class ShopAccountForm extends Form {
         }
 	}
 
-	/**
-	 * Save the changes to the form
-	 */
+
+    /**
+     * Save the changes to the form
+     *
+     * @param array          $data
+     * @param Form           $form
+     * @param SS_HTTPRequest $request
+     *
+     * @return bool|SS_HTTPResponse
+     */
 	public function submit($data, $form, $request) {
 		$member = Member::currentUser();
 		if(!$member) return false;
@@ -55,23 +62,31 @@ class ShopAccountForm extends Form {
 		$member->write();
 		$form->sessionMessage(_t("MemberForm.DETAILSSAVED", 'Your details have been saved'), 'good');
 
-        $this->extend('updateShopAccountFormResponse', $request, $form, $data);
+        $this->extend('updateShopAccountFormResponse', $request, $form, $data, $response);
 
-		Controller::curr()->redirectBack();
-		return true;
+        return $response ?: $this->getController()->redirectBack();
 	}
 
 	/**
 	 * Save the changes to the form, and redirect to the checkout page
+     *
+     * @param array          $data
+     * @param Form           $form
+     * @param SS_HTTPRequest $request
+     *
+     * @return bool|SS_HTTPResponse
 	 */
 	public function proceed($data, $form, $request) {
 		$member = Member::currentUser();
 		if(!$member) return false;
+
 		$form->saveInto($member);
 		$member->write();
 		$form->sessionMessage(_t("MemberForm.DETAILSSAVED", 'Your details have been saved'), 'good');
-		Controller::curr()->redirect(CheckoutPage::find_link());
-		return true;
+
+        $this->extend('updateShopAccountFormResponse', $request, $form, $data, $response);
+
+        return $response ?: $this->getController()->redirect(CheckoutPage::find_link());
 	}
 
 }
