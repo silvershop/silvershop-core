@@ -8,9 +8,9 @@
 		<tr>
 			<th scope="col"></th>
 			<th scope="col"><% _t("PRODUCT","Product") %></th>
-			<th scope="col"><% _t("UNITPRICE","Unit Price") %></th>
-			<th scope="col"><% _t("QUANTITY", "Quantity") %></th>
-			<th scope="col"><% _t("TOTALPRICE","Total Price") %> ($Currency)</th>
+			<th class="center" scope="col"><% _t("UNITPRICE","Unit Price") %></th>
+			<th class="center" scope="col"><% _t("QUANTITY", "Quantity") %></th>
+			<th class="right" scope="col"><% _t("TOTALPRICE","Total Price") %> ($Currency)</th>
 		</tr>
 	</thead>
 	<tbody>
