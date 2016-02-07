@@ -1,7 +1,7 @@
 <table id="PaymentTable" class="infotable">
 	<thead>
 		<tr class="gap mainHeader">
-				<th colspan="10" class="left"><% _t("PAYMENTS","Payment(s)") %></th>
+			<th colspan="5" class="left"><% _t("PAYMENTS","Payment(s)") %></th>
 		</tr>
 		<tr>
 			<th scope="row" class="twoColHeader"><% _t("DATE","Date") %></th>
