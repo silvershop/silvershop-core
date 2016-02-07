@@ -1,17 +1,16 @@
-
 /* create a box floated to the right */
-.accountcontent{
-	float:left;
-	width:70%;
+.accountcontent {
+    float: left;
+    width: 70%;
 }
 
-.accountnav{
-	float:right;
-	width:25%;
+.accountnav {
+    float: right;
+    width: 25%;
 }
 
-table.orderhistory{
-	width:100%;
+table.orderhistory {
+    width: 100%;
 }
 
 /*
@@ -19,10 +18,10 @@ table.orderhistory{
  */
 #ShopAccountForm_EditAccountForm,
 #ChangePasswordForm_ChangePasswordForm {
-	width: 45%;
-	float:left;
+    width: 45%;
+    float: left;
 }
 
-#ChangePasswordForm_ChangePasswordForm{
-	margin-left:5%;
+#ChangePasswordForm_ChangePasswordForm {
+    margin-left: 5%;
 }

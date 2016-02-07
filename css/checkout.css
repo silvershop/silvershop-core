@@ -1,52 +1,59 @@
 /** Minimal Checkout Page Styling **/
 
-#OrderForm_OrderForm{
-	clear:left;	
+#OrderForm_OrderForm {
+    clear: left;
 }
 
 /* CheckoutPage form styling */
-#LeftOrder,#RightOrder {
-	float: left;
-	
+#LeftOrder, #RightOrder {
+    float: left;
+
 }
-	#LeftOrder {width: 50%;}
-	#RightOrder {width: 50%;}
-	
-#LeftOrder .CompositeField{
-	margin-right:10px;
+
+#LeftOrder {
+    width: 50%;
 }
-	
+
+#RightOrder {
+    width: 50%;
+}
+
+#LeftOrder .CompositeField {
+    margin-right: 10px;
+}
+
 #BottomOrder {
-	clear: both;
+    clear: both;
 }
 
-	#Checkout form label.left {
-		float: left;
-		width: 30%;
-		font-weight: bold;
-	}
-	#Checkout form input.nolabel{
-		margin-left:30%;
-	}
-	
-	#Checkout form input.text{
-		width:50%;
-	}
-
-#Checkout form #PaymentMethod li{
-	list-style:none;
-}
-#Checkout form #Amount{
-	font-size:1.5em;
+#Checkout form label.left {
+    float: left;
+    width: 30%;
+    font-weight: bold;
 }
 
-#Checkout #Notes .middleColumn textarea{
-	clear:left;
-	width:100%;
-	resize: vertical;
+#Checkout form input.nolabel {
+    margin-left: 30%;
 }
 
+#Checkout form input.text {
+    width: 50%;
+}
 
-table.ordercontent{
-	width:100%;
+#Checkout form #PaymentMethod li {
+    list-style: none;
+}
+
+#Checkout form #Amount {
+    font-size: 1.5em;
+}
+
+#Checkout #Notes .middleColumn textarea {
+    clear: left;
+    width: 100%;
+    resize: vertical;
+}
+
+table.ordercontent {
+    width: 100%;
 }

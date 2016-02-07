@@ -1,9 +1,11 @@
 .shop-dashboard table {
-	width: 100%;
+    width: 100%;
 }
+
 .shop-dashboard table th {
-	font-weight: bold;
+    font-weight: bold;
 }
+
 .shop-dashboard .ss-ui-button {
-	margin: 2px 0;
+    margin: 2px 0;
 }

@@ -8,39 +8,44 @@
  *
  * @package shop
  */
-class ViewableCart extends Extension{
+class ViewableCart extends Extension
+{
+    /**
+     * Get the cart, and do last minute calculation if necessary.
+     */
+    public function Cart()
+    {
+        $order = ShoppingCart::curr();
+        if (!$order || !$order->Items() || !$order->Items()->exists()) {
+            return false;
+        }
 
-	/**
-	 * Get the cart, and do last minute calculation if necessary.
-	 */
-	public function Cart() {
-		$order = ShoppingCart::curr();
-		if(!$order || !$order->Items() || !$order->Items()->exists()){
-			return false;
-		}
+        return $order;
+    }
 
-		return $order;
-	}
+    public function getContinueLink()
+    {
+        $maincategory = ProductCategory::get()
+            ->sort(
+                array(
+                    "ParentID" => "ASC",
+                    "ID"       => "ASC",
+                )
+            )->first();
+        if ($maincategory) {
+            return $maincategory->Link();
+        }
 
-	public function getContinueLink() {
-		$maincategory = ProductCategory::get()
-			->sort(array(
-				"ParentID" => "ASC",
-				"ID" => "ASC"
-			))->first();
-		if($maincategory){
-			return $maincategory->Link();
-		}
+        return Director::baseURL();
+    }
 
-		return Director::baseURL();
-	}
+    public function getCartLink()
+    {
+        return CartPage::find_link();
+    }
 
-	public function getCartLink() {
-		return CartPage::find_link();
-	}
-
-	public function getCheckoutLink() {
-		return CheckoutPage::find_link();
-	}
-
+    public function getCheckoutLink()
+    {
+        return CheckoutPage::find_link();
+    }
 }

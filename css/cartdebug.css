@@ -1,19 +1,19 @@
-body{
-	font-family:tahoma;
-	font-size:1em;	
+body {
+    font-family: tahoma;
+    font-size: 1em;
 }
 
-pre{
-	display:inline;
-	font-weight:bold;
-	color:blue;
+pre {
+    display: inline;
+    font-weight: bold;
+    color: blue;
 }
 
-.order >ul{
-	-moz-column-count: 3;
+.order > ul {
+    -moz-column-count: 3;
 }
 
-h2{
-	margin-top:2px;
-	border-bottom:1px solid grey;	
+h2 {
+    margin-top: 2px;
+    border-bottom: 1px solid grey;
 }

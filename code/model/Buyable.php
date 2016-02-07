@@ -9,34 +9,34 @@
  *
  * @package shop
  */
-interface Buyable {
+interface Buyable
+{
+    /**
+     * Create a new OrderItem to add to an order.
+     *
+     * @param int     $quantity
+     * @param boolean $write
+     *
+     * @return OrderItem new OrderItem object
+     */
+    public function createItem($quantity = 1, $filter = array());
 
-	/**
-	 * Create a new OrderItem to add to an order.
-	 *
-	 * @param int $quantity
-	 * @param boolean $write
-	 * @return OrderItem new OrderItem object
-	 */
-	public function createItem($quantity = 1, $filter = array());
+    /**
+     * Checks if the buyable can be purchased. If a buyable cannot be purchased
+     * then the method should return a {@link ShopBuyableException} containing
+     * the messaging.
+     *
+     * @throws ShopBuyableException
+     *
+     * @return boolean
+     */
+    public function canPurchase($member = null, $quantity = 1);
 
-	/**
-	 * Checks if the buyable can be purchased. If a buyable cannot be purchased
-	 * then the method should return a {@link ShopBuyableException} containing
-	 * the messaging.
-	 *
-	 * @throws ShopBuyableException
-	 *
-	 * @return boolean
-	 */
-	public function canPurchase($member = null, $quantity = 1);
-
-	/**
-	 * The price the customer gets this buyable for, with any additional 
-	 * additions or subtractions.
-	 *
-	 * @return ShopCurrency
-	 */
-	public function sellingPrice();
-
+    /**
+     * The price the customer gets this buyable for, with any additional
+     * additions or subtractions.
+     *
+     * @return ShopCurrency
+     */
+    public function sellingPrice();
 }

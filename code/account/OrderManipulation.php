@@ -1,156 +1,168 @@
 <?php
+
 /**
  * Provides forms and processing to a controller for editing an
  * order that has been previously placed.
  *
- * @package shop
+ * @package    shop
  * @subpackage forms
  */
-class OrderManipulation extends Extension{
+class OrderManipulation extends Extension
+{
+    private static $allowed_actions = array(
+        'ActionsForm',
+        'order',
+    );
+    private static $sessname = "OrderManipulation.historicalorders";
 
-	private static $allowed_actions = array(
-		'ActionsForm',
-		'order'
-	);
+    /**
+     * Add an order to the session-stored history of orders.
+     */
+    public static function add_session_order(Order $order)
+    {
+        $history = self::get_session_order_ids();
+        if (!is_array($history)) {
+            $history = array();
+        }
+        $history[$order->ID] = $order->ID;
+        Session::set(self::$sessname, $history);
+    }
 
-	private static $sessname = "OrderManipulation.historicalorders";
+    /**
+     * Get historical orders for current session.
+     */
+    public static function get_session_order_ids()
+    {
+        $history = Session::get(self::$sessname);
+        if (!is_array($history)) {
+            $history = null;
+        }
+        return $history;
+    }
 
-	/**
-	 * Add an order to the session-stored history of orders.
-	 */
-	public static function add_session_order(Order $order) {
-		$history = self::get_session_order_ids();
-		if(!is_array($history)){
-			$history = array();
-		}
-		$history[$order->ID] = $order->ID;
-		Session::set(self::$sessname, $history);
-	}
+    public static function clear_session_order_ids()
+    {
+        Session::set(self::$sessname, null);
+        Session::clear(self::$sessname);
+    }
 
-	/**
-	 * Get historical orders for current session.
-	 */
-	public static function get_session_order_ids() {
-		$history = Session::get(self::$sessname);
-		if(!is_array($history)){
-			$history = null;
-		}
-		return $history;
-	}
+    /**
+     * Get the order via url 'ID' or form submission 'OrderID'.
+     * It will check for permission based on session stored ids or member id.
+     *
+     * @return the order
+     */
+    public function orderfromid()
+    {
+        $request = $this->owner->getRequest();
+        $id = (int)$request->param('ID');
+        if (!$id) {
+            $id = (int)$request->postVar('OrderID');
+        }
 
-	public static function clear_session_order_ids() {
-		Session::set(self::$sessname, null);
-		Session::clear(self::$sessname);
-	}
+        return $this->allorders()->byID($id);
+    }
 
-	/**
-	 * Get the order via url 'ID' or form submission 'OrderID'.
-	 * It will check for permission based on session stored ids or member id.
-	 *
-	 * @return the order
-	 */
-	public function orderfromid() {
-		$request = $this->owner->getRequest();
-		$id = (int)$request->param('ID');
-		if(!$id){
-			$id = (int)$request->postVar('OrderID');
-		}
+    /**
+     * Get all orders for current member / session.
+     *
+     * @return DataList of Orders
+     */
+    public function allorders()
+    {
+        $filters = array(
+            'ID' => -1 //ensures no results are returned
+        );
+        if ($sessids = self::get_session_order_ids()) {
+            $filters['ID'] = $sessids;
+        }
+        if ($memberid = Member::currentUserID()) {
+            $filters['MemberID'] = $memberid;
+        }
 
-		return $this->allorders()->byID($id);
-	}
+        return Order::get()->filterAny($filters)
+            ->filter("Status:not", Order::config()->hidden_status);
+    }
 
-	/**
-	 * Get all orders for current member / session.
-	 * @return DataList of Orders
-	 */
-	public function allorders() {
-		$filters = array(
-			'ID' => -1 //ensures no results are returned
-		);
-		if($sessids = self::get_session_order_ids()){
-			$filters['ID'] = $sessids;
-		}
-		if($memberid = Member::currentUserID()){
-			$filters['MemberID'] = $memberid;
-		}
+    /**
+     * Return all past orders for current member / session.
+     */
+    public function PastOrders($paginated = false)
+    {
+        $orders = $this->allorders()
+            ->filter("Status", Order::config()->placed_status);
+        if ($paginated) {
+            $orders = PaginatedList::create($orders, $this->owner->getRequest());
+        }
 
-		return Order::get()->filterAny($filters)
-				->filter("Status:not", Order::config()->hidden_status);
-	}
+        return $orders;
+    }
 
-	/**
-	 * Return all past orders for current member / session.
-	 */
-	public function PastOrders($paginated = false) {
-		$orders = $this->allorders()
-				->filter("Status", Order::config()->placed_status);
-		if($paginated){
-			$orders = PaginatedList::create($orders, $this->owner->getRequest());
-		}
+    /**
+     * Return the {@link Order} details for the current
+     * Order ID that we're viewing (ID parameter in URL).
+     *
+     * @return array of template variables
+     */
+    public function order(SS_HTTPRequest $request)
+    {
+        //move the shopping cart session id to past order ids, if it is now an order
+        ShoppingCart::singleton()->archiveorderid();
+        $order = $this->orderfromid();
+        if (!$order) {
+            return $this->owner->httpError(404, "Order could not be found");
+        }
 
-		return $orders;
-	}
+        return array(
+            'Order' => $order,
+            'Form'  => $this->ActionsForm() //see OrderManipulation extension
+        );
+    }
 
-	/**
-	 * Return the {@link Order} details for the current
-	 * Order ID that we're viewing (ID parameter in URL).
-	 *
-	 * @return array of template variables
-	 */
-	public function order(SS_HTTPRequest $request) {
-		//move the shopping cart session id to past order ids, if it is now an order
-		ShoppingCart::singleton()->archiveorderid();
-		$order = $this->orderfromid();
-		if(!$order) {
-			return $this->owner->httpError(404, "Order could not be found");
-		}
+    /**
+     * Build a form for cancelling, or retrying payment for a placed order.
+     *
+     * @return Form
+     */
+    public function ActionsForm()
+    {
+        if ($order = $this->orderfromid()) {
+            $form = OrderActionsForm::create($this->owner, "ActionsForm", $order);
+            $form->extend('updateActionsForm', $order);
+            if (!$form->Actions()->exists()) {
+                return null;
+            }
 
-		return array(
-			'Order' => $order,
-			'Form' => $this->ActionsForm() //see OrderManipulation extension
-		);
-	}
+            return $form;
+        }
+    }
 
-	/**
-	 * Build a form for cancelling, or retrying payment for a placed order.
-	 * @return Form
-	 */
-	public function ActionsForm() {
-		if($order = $this->orderfromid()){
-			$form = OrderActionsForm::create($this->owner, "ActionsForm", $order);
-			$form->extend('updateActionsForm', $order);
-			if(!$form->Actions()->exists()){
-				return null;
-			}
+    protected $sessionmessage;
+    protected $sessionmessagetype = null;
 
-			return $form;
-		}
-	}
+    public function setSessionMessage($message = "success", $type = "good")
+    {
+        Session::set('OrderManipulation.Message', $message);
+        Session::set('OrderManipulation.MessageType', $type);
+    }
 
-	protected $sessionmessage;
-	protected $sessionmessagetype = null;
+    public function SessionMessage()
+    {
+        if ($message = Session::get("OrderManipulation.Message")) {
+            $this->sessionmessage = $message;
+            Session::clear("OrderManipulation.Message");
+        }
 
-	public function setSessionMessage($message = "success",$type = "good") {
-		Session::set('OrderManipulation.Message', $message);
-		Session::set('OrderManipulation.MessageType', $type);
-	}
+        return $this->sessionmessage;
+    }
 
-	public function SessionMessage() {
-		if($message = Session::get("OrderManipulation.Message")){
-			$this->sessionmessage = $message;
-			Session::clear("OrderManipulation.Message");
-		}
+    public function SessionMessageType()
+    {
+        if ($type = Session::get("OrderManipulation.MessageType")) {
+            $this->sessionmessagetype = $type;
+            Session::clear("OrderManipulation.MessageType");
+        }
 
-		return $this->sessionmessage;
-	}
-
-	public function SessionMessageType() {
-		if($type = Session::get("OrderManipulation.MessageType")){
-			$this->sessionmessagetype = $type;
-			Session::clear("OrderManipulation.MessageType");
-		}
-
-		return $this->sessionmessagetype;
-	}
-
+        return $this->sessionmessagetype;
+    }
 }

@@ -1,62 +1,64 @@
 <?php
+
 /**
- * @package shop
+ * @package    shop
  * @subpackage tests
  */
+class CartCleanupTaskTest extends SapphireTest
+{
+    public function setUp()
+    {
+        parent::setUp();
 
-class CartCleanupTaskTest extends SapphireTest {
+        Config::nest();
+        Config::inst()->update('CartCleanupTask', 'delete_after_mins', 120);
+    }
 
-	public function setUp() {
-		parent::setUp();
+    public function tearDown()
+    {
+        parent::tearDown();
 
-		Config::nest();
-		Config::inst()->update('CartCleanupTask', 'delete_after_mins', 120);
-	}
+        Config::unnest();
+    }
 
-	public function tearDown() {
-		parent::tearDown();
+    public function testRun()
+    {
+        SS_Datetime::set_mock_now('2014-01-31 13:00:00');
 
-		Config::unnest();
-	}
+        // less than two hours old
+        $orderRunningRecent = new Order(array('Status' => 'Cart'));
+        $orderRunningRecentID = $orderRunningRecent->write();
+        DB::query('UPDATE "Order" SET "LastEdited" = \'2014-01-31 12:30:00\' WHERE "ID" = ' . $orderRunningRecentID);
 
-	public function testRun() {
-		SS_Datetime::set_mock_now('2014-01-31 13:00:00');
+        // three hours old
+        $orderRunningOld = new Order(array('Status' => 'Cart'));
+        $orderRunningOldID = $orderRunningOld->write();
+        DB::query('UPDATE "Order" SET "LastEdited" = \'2014-01-31 10:00:00\' WHERE "ID" = ' . $orderRunningOldID);
 
-		// less than two hours old
-		$orderRunningRecent = new Order(array('Status' => 'Cart'));
-		$orderRunningRecentID = $orderRunningRecent->write();
-		DB::query('UPDATE "Order" SET "LastEdited" = \'2014-01-31 12:30:00\' WHERE "ID" = ' . $orderRunningRecentID);
+        // three hours old
+        $orderPaidOld = new Order(array('Status' => 'Paid'));
+        $orderPaidOldID = $orderPaidOld->write();
+        DB::query('UPDATE "Order" SET "LastEdited" = \'2014-01-31 10:00:00\' WHERE "ID" = ' . $orderPaidOldID);
 
-		// three hours old
-		$orderRunningOld = new Order(array('Status' => 'Cart'));
-		$orderRunningOldID = $orderRunningOld->write();
-		DB::query('UPDATE "Order" SET "LastEdited" = \'2014-01-31 10:00:00\' WHERE "ID" = ' . $orderRunningOldID);
+        $task = new CartCleanupTaskTest_CartCleanupTaskFake();
+        $response = $task->run(new SS_HTTPRequest('GET', '/'));
 
-		// three hours old
-		$orderPaidOld = new Order(array('Status' => 'Paid'));
-		$orderPaidOldID = $orderPaidOld->write();
-		DB::query('UPDATE "Order" SET "LastEdited" = \'2014-01-31 10:00:00\' WHERE "ID" = ' . $orderPaidOldID);
+        $this->assertInstanceOf('Order', Order::get()->byID($orderRunningRecentID));
+        $this->assertNull(Order::get()->byID($orderRunningOldID));
+        $this->assertInstanceOf('Order', Order::get()->byID($orderPaidOldID));
 
-		$task = new CartCleanupTaskTest_CartCleanupTaskFake();
-		$response = $task->run(new SS_HTTPRequest('GET', '/'));
+        $this->assertEquals('1 old carts removed.', $task->log[count($task->log) - 1]);
 
-		$this->assertInstanceOf('Order', Order::get()->byID($orderRunningRecentID));
-		$this->assertNull(Order::get()->byID($orderRunningOldID));
-		$this->assertInstanceOf('Order', Order::get()->byID($orderPaidOldID));
-
-		$this->assertEquals('1 old carts removed.', $task->log[count($task->log)-1]);
-
-		SS_Datetime::clear_mock_now();
-	}
-
+        SS_Datetime::clear_mock_now();
+    }
 }
 
-class CartCleanupTaskTest_CartCleanupTaskFake extends CartCleanupTask {
+class CartCleanupTaskTest_CartCleanupTaskFake extends CartCleanupTask
+{
+    public $log = array();
 
-	public $log = array();
-
-	public function log($msg) {
-		$this->log[] = $msg;
-	}
-
+    public function log($msg)
+    {
+        $this->log[] = $msg;
+    }
 }

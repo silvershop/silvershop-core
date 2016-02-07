@@ -1,128 +1,136 @@
 <?php
 
-class PaymentForm extends CheckoutForm{
+class PaymentForm extends CheckoutForm
+{
+    /**
+     * @var string URL to redirect the user to on payment success.
+     * Not the same as the "confirm" action in {@link PaymentGatewayController}.
+     */
+    protected $successlink;
+    /**
+     * @var string URL to redirect the user to on payment failure.
+     * Not the same as the "cancel" action in {@link PaymentGatewayController}.
+     */
+    protected $failurelink;
+    /**
+     * @var OrderProcessor
+     */
+    protected $orderProcessor;
 
-	/**
-	 * @var string URL to redirect the user to on payment success.
-	 * Not the same as the "confirm" action in {@link PaymentGatewayController}.
-	 */
-	protected $successlink;
+    public function __construct($controller, $name, CheckoutComponentConfig $config)
+    {
+        parent::__construct($controller, $name, $config);
 
-	/**
-	 * @var string URL to redirect the user to on payment failure.
-	 * Not the same as the "cancel" action in {@link PaymentGatewayController}.
-	 */
-	protected $failurelink;
+        $this->orderProcessor = Injector::inst()->create('OrderProcessor', $config->getOrder());
+    }
 
-	/**
-	 * @var OrderProcessor
-	 */
-	protected $orderProcessor;
+    public function setSuccessLink($link)
+    {
+        $this->successlink = $link;
+    }
 
-	public function __construct($controller, $name, CheckoutComponentConfig $config) {
-		parent::__construct($controller, $name, $config);
+    public function getSuccessLink()
+    {
+        return $this->successlink;
+    }
 
-		$this->orderProcessor = Injector::inst()->create('OrderProcessor', $config->getOrder());
-	}
+    public function setFailureLink($link)
+    {
+        $this->failurelink = $link;
+    }
 
-	public function setSuccessLink($link) {
-		$this->successlink = $link;
-	}
+    public function getFailureLink()
+    {
+        return $this->failurelink;
+    }
 
-	public function getSuccessLink() {
-		return $this->successlink;
-	}
+    public function checkoutSubmit($data, $form)
+    {
+        //form validation has passed by this point, so we can save data
+        $this->config->setData($form->getData());
+        $order = $this->config->getOrder();
+        $gateway = Checkout::get($order)->getSelectedPaymentMethod(false);
+        if (GatewayInfo::is_offsite($gateway) || GatewayInfo::is_manual($gateway)) {
 
-	public function setFailureLink($link) {
-		$this->failurelink = $link;
-	}
+            return $this->submitpayment($data, $form);
+        }
 
-	public function getFailureLink() {
-		return $this->failurelink;
-	}
+        return $this->controller->redirect(
+            $this->controller->Link('payment') //assumes CheckoutPage
+        );
+    }
 
-	public function checkoutSubmit($data, $form) {
-		//form validation has passed by this point, so we can save data
-		$this->config->setData($form->getData());
-		$order = $this->config->getOrder();
-		$gateway = Checkout::get($order)->getSelectedPaymentMethod(false);
-		if(GatewayInfo::is_offsite($gateway) || GatewayInfo::is_manual($gateway)){
+    /**
+     * Behaviour can be overwritten by creating a processPaymentResponse method
+     * on the controller owning this form. It takes a Symfony\Component\HttpFoundation\Response argument,
+     * and expects an SS_HTTPResponse in return.
+     */
+    public function submitpayment($data, $form)
+    {
+        $data = $form->getData();
+        if ($this->getSuccessLink()) {
+            $data['returnUrl'] = $this->getSuccessLink();
+        }
+        $data['cancelUrl'] = $this->getFailureLink() ? $this->getFailureLink() : $this->controller->Link();
+        $order = $this->config->getOrder();
+        //final recalculation, before making payment
+        $order->calculate();
+        //handle cases where order total is 0. Note that the order will appear
+        //as "paid", but without a Payment record attached.
+        if ($order->GrandTotal() == 0 && Order::config()->allow_zero_order_total) {
+            if (!$this->orderProcessor->placeOrder()) {
+                $form->sessionMessage($this->orderProcessor->getError());
+                return $this->controller->redirectBack();
+            }
+            return $this->controller->redirect($this->getSuccessLink());
+        }
+        //try to place order before payment, if configured
+        if (Order::config()->place_before_payment) {
+            if (!$this->orderProcessor->placeOrder()) {
+                $form->sessionMessage($this->orderProcessor->getError());
+                return $this->controller->redirectBack();
+            }
+            $data['cancelUrl'] = $this->orderProcessor->getReturnUrl();
+        }
 
-			return $this->submitpayment($data, $form);
-		}
+        $paymentResponse = $this->orderProcessor->makePayment(
+            Checkout::get($order)->getSelectedPaymentMethod(false),
+            $data
+        );
 
-		return $this->controller->redirect(
-			$this->controller->Link('payment') //assumes CheckoutPage
-		);
-	}
+        $response = null;
+        if ($paymentResponse) {
+            if ($this->controller->hasMethod('processPaymentResponse')) {
+                $response = $this->controller->processPaymentResponse($paymentResponse, $form);
+            } else {
+                if ($paymentResponse->isRedirect() || $paymentResponse->isSuccessful()) {
+                    $response = $paymentResponse->redirect();
+                } else {
+                    $form->sessionMessage($paymentResponse->getMessage(), 'bad');
+                    $response = $this->controller->redirectBack();
+                }
+            }
+        } else {
+            $form->sessionMessage($this->orderProcessor->getError(), 'bad');
+            $response = $this->controller->redirectBack();
+        }
 
-	/**
-	 * Behaviour can be overwritten by creating a processPaymentResponse method
-	 * on the controller owning this form. It takes a Symfony\Component\HttpFoundation\Response argument,
-	 * and expects an SS_HTTPResponse in return.
-	 */
-	public function submitpayment($data, $form) {
-		$data = $form->getData();
-		if($this->getSuccessLink()) {
-			$data['returnUrl'] = $this->getSuccessLink();
-		}
-		$data['cancelUrl'] = $this->getFailureLink() ? $this->getFailureLink() : $this->controller->Link();
-		$order = $this->config->getOrder();
-		//final recalculation, before making payment
-		$order->calculate();
-		//handle cases where order total is 0. Note that the order will appear
-		//as "paid", but without a Payment record attached.
-		if($order->GrandTotal() == 0 && Order::config()->allow_zero_order_total){
-			if(!$this->orderProcessor->placeOrder()){
-				$form->sessionMessage($this->orderProcessor->getError());
-				return $this->controller->redirectBack();
-			}
-			return $this->controller->redirect($this->getSuccessLink());
-		}
-		//try to place order before payment, if configured
-		if(Order::config()->place_before_payment){
-			if(!$this->orderProcessor->placeOrder()){
-				$form->sessionMessage($this->orderProcessor->getError());
-				return $this->controller->redirectBack();
-			}
-			$data['cancelUrl'] = $this->orderProcessor->getReturnUrl();
-		}
+        return $response;
+    }
 
-		$paymentResponse = $this->orderProcessor->makePayment(
-			Checkout::get($order)->getSelectedPaymentMethod(false),
-			$data
-		);
+    /**
+     * @param OrderProcessor $processor
+     */
+    public function setOrderProcessor(OrderProcessor $processor)
+    {
+        $this->orderProcessor = $processor;
+    }
 
-		$response = null;
-		if($paymentResponse){
-			if($this->controller->hasMethod('processPaymentResponse')) {
-				$response = $this->controller->processPaymentResponse($paymentResponse, $form);
-			} else if($paymentResponse->isRedirect() || $paymentResponse->isSuccessful()){
-				$response = $paymentResponse->redirect();
-			} else {
-				$form->sessionMessage($paymentResponse->getMessage(), 'bad');
-				$response = $this->controller->redirectBack();
-			}
-		} else {
-			$form->sessionMessage($this->orderProcessor->getError(), 'bad');
-			$response = $this->controller->redirectBack();
-		}
-
-		return $response;
-	}
-
-	/**
-	 * @param OrderProcessor $processor
-	 */
-	public function setOrderProcessor(OrderProcessor $processor) {
-		$this->orderProcessor = $processor;
-	}
-
-	/**
-	 * @return OrderProcessor
-	 */
-	public function getOrderProcessor() {
-		return $this->orderProcessor;
-	}
-
+    /**
+     * @return OrderProcessor
+     */
+    public function getOrderProcessor()
+    {
+        return $this->orderProcessor;
+    }
 }

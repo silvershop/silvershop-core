@@ -1,25 +1,27 @@
-.sidecart{}
+.sidecart {
+}
 
-	.sidecart .item{
-		clear:both;
-		position:relative;
-		padding-right:16px;
-	}
+.sidecart .item {
+    clear: both;
+    position: relative;
+    padding-right: 16px;
+}
 
-		.sidecart .image{
-			float:left;
-			margin-right:1em;
-		}
-		
-		.sidecart .remove{
-			position:absolute;
-			top:0;
-			right:0;
-		}
-	
-	.sidecart p{
-		margin-bottom:0.1em;
-	}
-		.sidecart .quantity{
-			font-weight:bold;
-		}
+.sidecart .image {
+    float: left;
+    margin-right: 1em;
+}
+
+.sidecart .remove {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+.sidecart p {
+    margin-bottom: 0.1em;
+}
+
+.sidecart .quantity {
+    font-weight: bold;
+}

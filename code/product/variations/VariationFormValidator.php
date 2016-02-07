@@ -3,22 +3,21 @@
 /**
  * @package shop
  */
+class VariationFormValidator extends RequiredFields
+{
+    public function php($data)
+    {
+        $valid = parent::php($data);
 
-class VariationFormValidator extends RequiredFields {
+        if ($valid && !$this->form->getBuyable($_POST)) {
+            $this->validationError(
+                "",
+                _t('VariationForm.PRODUCT_NOT_AVAILABLE', "This product is not available with the selected options.")
+            );
 
-	public function php($data) {
-		$valid = parent::php($data);
+            $valid = false;
+        }
 
-		if($valid && !$this->form->getBuyable($_POST)) {
-			$this->validationError(
-				"",
-				_t('VariationForm.PRODUCT_NOT_AVAILABLE', "This product is not available with the selected options.")
-			);
-
-			$valid = false;
-		}
-
-		return $valid;
-	}
-
+        return $valid;
+    }
 }

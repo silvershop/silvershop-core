@@ -1,20 +1,21 @@
 #Product {
 
 }
-	.price .value{
-		font-weight:bold;
-		font-size:1.2em;
-	}
-	
-	/* Image placeholder */
-	#Product .noimage{
-		padding:60px 20px;
-		height:40px;
-		width:200px;
-		text-align:center;
-		background:#eeeeee;
-		color:#d3d3d3;
-		display:block;
-		text-decoration:none;
-		font-size:20px;
-	}
+
+.price .value {
+    font-weight: bold;
+    font-size: 1.2em;
+}
+
+/* Image placeholder */
+#Product .noimage {
+    padding: 60px 20px;
+    height: 40px;
+    width: 200px;
+    text-align: center;
+    background: #eeeeee;
+    color: #d3d3d3;
+    display: block;
+    text-decoration: none;
+    font-size: 20px;
+}

@@ -3,23 +3,24 @@
 /**
  * Globally useful tools
  */
-class ShopTools{
-
-	public static function price_for_display($price) {
-		$currency = ShopConfig::get_site_currency();
-		$field = Money::create("Price");
-		$field->setAmount($price);
-		$field->setCurrency($currency);
-		return $field;
-	}
+class ShopTools
+{
+    public static function price_for_display($price)
+    {
+        $currency = ShopConfig::get_site_currency();
+        $field = Money::create("Price");
+        $field->setAmount($price);
+        $field->setCurrency($currency);
+        return $field;
+    }
 
     public static function get_current_locale()
     {
-        if(class_exists('Translatable')){
+        if (class_exists('Translatable')) {
             return Translatable::get_current_locale();
         }
 
-        if(class_exists('Fluent')){
+        if (class_exists('Fluent')) {
             return Fluent::current_locale();
         }
 
@@ -29,14 +30,16 @@ class ShopTools{
     public static function install_locale($locale)
     {
         // If the locale isn't given, silently fail (there might be carts that still have locale set to null)
-        if(empty($locale)){
+        if (empty($locale)) {
             return;
         }
 
-        if(class_exists('Translatable')){
+        if (class_exists('Translatable')) {
             Translatable::set_current_locale($locale);
-        } else if(class_exists('Fluent')){
-            Fluent::set_persist_locale($locale);
+        } else {
+            if (class_exists('Fluent')) {
+                Fluent::set_persist_locale($locale);
+            }
         }
 
         // Do something like Fluent does to install the locale
@@ -51,5 +54,4 @@ class ShopTools{
         i18n::config()->date_format = Zend_Locale_Format::getDateFormat($locale);
         i18n::config()->time_format = Zend_Locale_Format::getTimeFormat($locale);
     }
-
 }

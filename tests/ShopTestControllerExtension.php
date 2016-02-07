@@ -14,10 +14,8 @@ class ShopTestControllerExtension extends Extension
                 : $this->owner->class
         );
         $params = $this->owner->getURLParams();
-        if(isset($params['Action'])){
+        if (isset($params['Action'])) {
             $this->owner->response->addHeader('X-TestPageAction', $params['Action']);
         }
-
-
     }
 }

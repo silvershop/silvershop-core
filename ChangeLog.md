@@ -9,6 +9,7 @@
  * `Object::create` syntax is used more consistently to allow use of the Injector
  * Fixes some compatibility bugs with SS3.2
  * Fixed bug where some admin notifications were sent to customer
+ * Reformatted code to use spaces instead of tabs as a first step towards PSR-2
 
 ## 1.1.1
 
@@ -17,7 +18,7 @@
  * Fixes a few issue with translatability
  * Added function to check if checkout step exists
  * Added some extension hooks
- 
+
 ### Enhancements:
 
  * Include jQuery javascript requirement in AddressBookCheckoutComponent
@@ -52,7 +53,7 @@
  * Single form and multi-step checkout system.
  * Documentation has been updated.
  * Many shop sub-modules have been developed and updated and improved in conjunction with this release.
- 
+
 ### Enhancements:
 
  * Added analytics to suggested modules
@@ -94,7 +95,7 @@
  * Added CheckoutPage_payment template for independently styling the on-site payment entry page.
  * Added suggested submodule: comparison
  * Added instructions for populating shop
- * Added default ID to product of ‘-1’ . This will hide products from the site tree when they are created in model admin. Useful 
+ * Added default ID to product of ‘-1’ . This will hide products from the site tree when they are created in model admin. Useful
  * Added forTemplate function to ShopCurrency.
  * Added CMS icons for orders, catalog, and zone sections
  * Updated statics in ProductAttributeValue Added ‘Product’ reverse belongs_many_many relationship to ProductAttributeType
@@ -113,7 +114,7 @@
  * Added allowed actions to Product_Controller for compatibility with silverstripe 3.1
  * Added summary fields to Zone
  * Updated DeleteProductsTask to show delete count
- * create international zone task, useful for quickly creating an international zone that can be customised to exclude some 
+ * create international zone task, useful for quickly creating an international zone that can be customised to exclude some
  * Introduced helper class "SortControl", for managing data that can be used in sort drop downs, and produce appropriate SQL
  * Allow setting default string to som
  * Allow the shop base folder to be something other than 'shop'
@@ -128,7 +129,7 @@
  * Added minor note about contributing to read me.
  GrandTotal functions. Added docs to explain rounding.
  * Added cart page to shop fixture, and ProductVersion to order items.
- * Added option to PopulateShopTask to create an international Zone, with every AllowedCountry enabled. This is a quick way 
+ * Added option to PopulateShopTask to create an international Zone, with every AllowedCountry enabled. This is a quick way
  * Added 'docreateaccount' to list of CheckoutStep_Membership allowed actions
  * Provided hooks for all CheckoutStep forms
  * Added SetLocationForm, which is useful for getting location data from the user.
@@ -186,7 +187,7 @@
  * Merge commit 'ed68ce113385bb6ab3faee85a90fbef5390a8550'
  * Removed AccountNavigation $LinkingMode template calls, because they don't work. fixes #235 thanks @nimeso!
  * Fixing case where add_session_order() isn't called on $0 orders
- * display full country name in address readonly field updated shopconfig->getSingleCountry to allow returning full country 
+ * display full country name in address readonly field updated shopconfig->getSingleCountry to allow returning full country
  * address country was not saving properly with previous `getSingleCountry` improvement
  * Country address field should not be required if it is the only field available (and is read-only).
  * If there is only one country allowed, then we need to ensure that country overrides ShopUserInfo location.
@@ -241,7 +242,7 @@
  * Fixed Image function if variation deleted
  * updated FeaturedProduct references
  * statics config changes fixes #209
- * allow removing items via CartForm by entering 0 or less for quantity. VaraitionField was always causing a ‘change’, 
+ * allow removing items via CartForm by entering 0 or less for quantity. VaraitionField was always causing a ‘change’,
  * update order after offsite payment has been made
  * Fixed Cart template to hide additional column, when not needed.
  * removed debugging code
@@ -294,7 +295,7 @@
  * Re-introduced ProductBulkLoader fixes #136
  * Merge pull request #142 from nimeso/orderitemlist_fix
  * quantiy function to use new method name
- * Fixed routes.yml for shoppingcart controller Changed all references Director::redirect… to Controller::curr()->redirect Fixed 
+ * Fixed routes.yml for shoppingcart controller Changed all references Director::redirect… to Controller::curr()->redirect Fixed
  * Fixed structure of template list
  * Prevent RestrictionRegionCountryDropdownField from being set to visitor country. NEW: Allow setting default string to som
  * unchecked order status checkboxes were including 'Cart' statuses. Forced only specific statuses, if none are checked. BUG
@@ -396,7 +397,7 @@
  * Introduced the ability to pay and cancel incomplete orders
  * Introduced ECOMMERCE_DIR constant to allow ecommerce directory to be different. Note that some paths are still make use of 'ecommerce'.
 
-## 0.7 - 0.8.1	
+## 0.7 - 0.8.1
 
  * Variations working again
  * Re-structured default templates to be more hierartical and extensible. Removed redundant templates.
@@ -430,7 +431,7 @@
  * Include shopping cart page type
  * Removed quantity selectors from products on group page, as they can be updated using the cart on the left.
  * Added support for calculating and storing the number of products sold
-	
+
 0.6
 
  * Data model changes (see http://doc.silverstripe.com/doku.php?id=ecommerce:overview&s=ecommerce)
@@ -455,10 +456,10 @@
  * Changed reports to use TableListField, and fixed printing
  * Removed old CheckoutPage.js code that was broken, replaced with working version
  * Renamed MemberForm to ShopAccountForm since this is too general
- * Removed specifically set CMS fields, these are now scaffolded. 
+ * Removed specifically set CMS fields, these are now scaffolded.
  * Moved payment class URL rules to payment module _config.php
- * Product title not displayed in Receipt Email. Ticket #3680 
- * Fixed price still showing even if price set to 0 in product 
+ * Product title not displayed in Receipt Email. Ticket #3680
+ * Fixed price still showing even if price set to 0 in product
  * Moved Eway.js from ecommerce to payment module
  * Moved Eway payments to payments module
  * Removed restrictive decimal for Tax Rate field and replaced with double type
@@ -472,7 +473,7 @@
  * Make sure array in set_payment_methods() is associative
  * Cleaned up OrderReport to use non-deprecated APIs, refactored to use TableListField
  * Update i18n entities since the Report class was renamed
- * Updated ecommerce report classes to reflect change from Report to SSReport 
+ * Updated ecommerce report classes to reflect change from Report to SSReport
  * removed ecommerce jquery directory that isn't being used anymore
  * Removed javascript that shouldn't be done until we've got more of a stable platform
  * Instead of hardcoding css/js requirements into Report.php

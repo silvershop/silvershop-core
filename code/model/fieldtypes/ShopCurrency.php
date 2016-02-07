@@ -5,52 +5,54 @@
  *
  * @package shop
  */
-class ShopCurrency extends Currency {
+class ShopCurrency extends Currency
+{
+    private static $decimal_delimiter = '.';
+    private static $thousand_delimiter = ',';
+    private static $negative_value_format = "<span class=\"negative\">(%s)</span>";
 
-	private static $decimal_delimiter = '.';
+    public function Nice()
+    {
+        $val = $this->config()->currency_symbol .
+            number_format(
+                abs($this->value),
+                2,
+                self::config()->decimal_delimiter,
+                self::config()->thousand_delimiter
+            );
+        if ($this->value < 0) {
+            return sprintf(self::config()->negative_value_format, $val);
+        }
 
-	private static $thousand_delimiter = ',';
-	
-	private static $negative_value_format = "<span class=\"negative\">(%s)</span>";
+        return $val;
+    }
 
-	public function Nice() {
-		$val = $this->config()->currency_symbol .
-			number_format(
-				abs($this->value), 2,
-				self::config()->decimal_delimiter,
-				self::config()->thousand_delimiter
-			);
-		if($this->value < 0){
-			return sprintf(self::config()->negative_value_format,$val);
-		}
+    public function forTemplate()
+    {
+        return $this->Nice();
+    }
 
-		return $val;
-	}
+    /**
+     * If no cents on the price, trim those off.
+     *
+     * @return string
+     */
+    public function TrimCents()
+    {
+        $val = $this->value;
 
-	public function forTemplate() {
-		return $this->Nice();
-	}
+        if (floor($val) == $val) {
+            return floor($val);
+        }
 
-	/**
-	 * If no cents on the price, trim those off.
-	 *
-	 * @return string
-	 */
-	public function TrimCents() {
-		$val = $this->value;
+        return $val;
+    }
 
-		if(floor($val) == $val) {
-			return floor($val);
-		}
-
-		return $val;
-	}
-
-	public function NiceOrEmpty() {
-		if($this->value != 0){
-			return $this->Nice();
-		}
-		return "";
-	}
-
+    public function NiceOrEmpty()
+    {
+        if ($this->value != 0) {
+            return $this->Nice();
+        }
+        return "";
+    }
 }

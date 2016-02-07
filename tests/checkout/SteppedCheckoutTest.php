@@ -6,14 +6,10 @@ class SteppedCheckoutTest extends FunctionalTest
         'shop/tests/fixtures/Pages.yml',
         'shop/tests/fixtures/shop.yml',
     );
-
     protected static $use_draft_site = true; //so we don't need to publish
-
     protected $autoFollowRedirection = false;
-
     /** @var CheckoutPage_Controller */
     protected $checkout;
-
     /** @var Product */
     protected $socks;
 
@@ -35,7 +31,6 @@ class SteppedCheckoutTest extends FunctionalTest
         $this->cart = $this->objFromFixture("Order", "cart");
         ShoppingCart::singleton()->setCurrent($this->cart);
     }
-
 
     public function testTemplateFunctionsForFirstStep()
     {
@@ -69,7 +64,6 @@ class SteppedCheckoutTest extends FunctionalTest
         $this->assertFalse($this->checkout->StepExists('nosuchstep'));
     }
 
-
     public function testMembershipStep()
     {
         //this should still work if there is no cart
@@ -102,7 +96,6 @@ class SteppedCheckoutTest extends FunctionalTest
         $this->assertEquals('Black', $member->Surname);
     }
 
-
     public function testContactDetails()
     {
         $this->objFromFixture("Member", "joebloggs")->logIn();
@@ -117,7 +110,6 @@ class SteppedCheckoutTest extends FunctionalTest
 
         $this->markTestIncomplete('check order has been updated');
     }
-
 
     public function testShippingAddress()
     {
@@ -136,7 +128,6 @@ class SteppedCheckoutTest extends FunctionalTest
         $this->markTestIncomplete('assertions!');
     }
 
-
     public function testBillingAddress()
     {
         $this->objFromFixture("Member", "joebloggs")->logIn();
@@ -154,7 +145,6 @@ class SteppedCheckoutTest extends FunctionalTest
         $this->markTestIncomplete('assertions!');
     }
 
-
     public function testPaymentMethod()
     {
         $data = array(
@@ -164,7 +154,6 @@ class SteppedCheckoutTest extends FunctionalTest
         $response = $this->post('/checkout/PaymentMethodForm', $data);
         $this->assertEquals('Dummy', Checkout::get($this->cart)->getSelectedPaymentMethod());
     }
-
 
     public function testSummary()
     {
@@ -194,5 +183,4 @@ class SteppedCheckoutTest extends FunctionalTest
             $response->getHeader('Location')
         );
     }
-
 }
