@@ -46,12 +46,15 @@ class PaymentForm extends CheckoutForm
 
     public function checkoutSubmit($data, $form)
     {
-        //form validation has passed by this point, so we can save data
+        // form validation has passed by this point, so we can save data
         $this->config->setData($form->getData());
         $order = $this->config->getOrder();
         $gateway = Checkout::get($order)->getSelectedPaymentMethod(false);
-        if (GatewayInfo::is_offsite($gateway) || GatewayInfo::is_manual($gateway)) {
-
+        if (
+            GatewayInfo::is_offsite($gateway) ||
+            GatewayInfo::is_manual($gateway) ||
+            $this->config->getComponentByType('OnsitePaymentCheckoutComponent')
+        ) {
             return $this->submitpayment($data, $form);
         }
 
@@ -73,10 +76,12 @@ class PaymentForm extends CheckoutForm
         }
         $data['cancelUrl'] = $this->getFailureLink() ? $this->getFailureLink() : $this->controller->Link();
         $order = $this->config->getOrder();
-        //final recalculation, before making payment
+
+        // final recalculation, before making payment
         $order->calculate();
-        //handle cases where order total is 0. Note that the order will appear
-        //as "paid", but without a Payment record attached.
+
+        // handle cases where order total is 0. Note that the order will appear
+        // as "paid", but without a Payment record attached.
         if ($order->GrandTotal() == 0 && Order::config()->allow_zero_order_total) {
             if (!$this->orderProcessor->placeOrder()) {
                 $form->sessionMessage($this->orderProcessor->getError());
@@ -84,7 +89,8 @@ class PaymentForm extends CheckoutForm
             }
             return $this->controller->redirect($this->getSuccessLink());
         }
-        //try to place order before payment, if configured
+
+        // try to place order before payment, if configured
         if (Order::config()->place_before_payment) {
             if (!$this->orderProcessor->placeOrder()) {
                 $form->sessionMessage($this->orderProcessor->getError());
@@ -93,6 +99,18 @@ class PaymentForm extends CheckoutForm
             $data['cancelUrl'] = $this->orderProcessor->getReturnUrl();
         }
 
+        // if we got here from checkoutSubmit and there's a namespaced OnsitePaymentCheckoutComponent
+        // in there, we need to strip the inputs down to only the checkout component.
+        $components = $this->config->getComponents();
+        if ($components->first() instanceof CheckoutComponent_Namespaced) {
+            foreach ($components as $component) {
+                if ($component->Proxy() instanceof OnsitePaymentCheckoutComponent) {
+                    $data = $component->unnamespaceData($data);
+                }
+            }
+        }
+
+        // This is where the payment is actually attempted
         $paymentResponse = $this->orderProcessor->makePayment(
             Checkout::get($order)->getSelectedPaymentMethod(false),
             $data
