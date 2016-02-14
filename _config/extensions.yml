@@ -1,6 +1,8 @@
 ---
 Name: shop
-After: 'framework/*','cms/*'
+After:
+  - 'framework/*'
+  - 'cms/*'
 ---
 
 SiteConfig:
