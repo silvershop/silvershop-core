@@ -155,7 +155,7 @@ it:
   Product.ss:
     ADD: "Aggiungi \"%s\" al carrello"
     ADDLINK: "Aggiungi questo articolo al carrello"
-    ADDONE: "Aggiungi un \"%s" al tuo carrello"
+    ADDONE: "Aggiungi un \"%s\" al tuo carrello"
     AUTHOR: Autore
     FEATURED: "Questo è un prodotto in vetrina."
     GOTOCHECKOUT: "Vai al riepilogo ordine ora"

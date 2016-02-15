@@ -192,7 +192,7 @@ nb:
     TOTALPRICE: Total
     UNITPRICE: Pris
   Order_Content_ItemLine.ss:
-    READMORE: "Se mer om "%s""
+    READMORE: "Se mer om \"%s\""
   Order_Content_SubTotals.ss:
     SUBTOTAL: "Total ink mva"
     TOTAL: Total

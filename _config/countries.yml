@@ -1,6 +1,8 @@
 ---
 Name: countries
-After: 'framework/*','cms/*'
+After:
+  - 'framework/*'
+  - 'cms/*'
 ---
 
 ShopConfig:
