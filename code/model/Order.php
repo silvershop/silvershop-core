@@ -20,7 +20,7 @@ class Order extends DataObject
      * AdminCancelled: Order cancelled by the administrator
      * MemberCancelled: Order cancelled by the customer (Member)
      */
-    private static $db = array(
+    private static $db                = array(
         'Total'                  => 'Currency',
         'Reference'              => 'Varchar', //allow for customised order numbering schemes
         //status
@@ -41,20 +41,24 @@ class Order extends DataObject
         // keep track of customer locale
         'Locale'                 => 'DBLocale',
     );
-    private static $has_one = array(
+
+    private static $has_one           = array(
         'Member'          => 'Member',
         'ShippingAddress' => 'Address',
         'BillingAddress'  => 'Address',
     );
-    private static $has_many = array(
+
+    private static $has_many          = array(
         'Items'           => 'OrderItem',
         'Modifiers'       => 'OrderModifier',
         'OrderStatusLogs' => 'OrderStatusLog',
     );
-    private static $defaults = array(
+
+    private static $defaults          = array(
         'Status' => 'Cart',
     );
-    private static $casting = array(
+
+    private static $casting           = array(
         'FullBillingAddress'  => 'Text',
         'FullShippingAddress' => 'Text',
         'Total'               => 'Currency',
@@ -63,7 +67,8 @@ class Order extends DataObject
         'Shipping'            => 'Currency',
         'TotalOutstanding'    => 'Currency',
     );
-    private static $summary_fields = array(
+
+    private static $summary_fields    = array(
         'Reference'   => 'Order No',
         'Placed'      => 'Date',
         'Name'        => 'Customer',
@@ -71,6 +76,7 @@ class Order extends DataObject
         'Total'       => 'Total',
         'Status'      => 'Status',
     );
+
     private static $searchable_fields = array(
         'Reference' => array(),
         'FirstName' => array(
@@ -84,9 +90,13 @@ class Order extends DataObject
             'field'  => 'CheckboxSetField',
         ),
     );
-    private static $singular_name = "Order";
-    private static $plural_name   = "Orders";
-    private static $default_sort = "\"Placed\" DESC, \"Created\" DESC";
+
+    private static $singular_name     = "Order";
+
+    private static $plural_name       = "Orders";
+
+    private static $default_sort      = "\"Placed\" DESC, \"Created\" DESC";
+
     /**
      * Statuses for orders that have been placed.
      */
@@ -99,6 +109,7 @@ class Order extends DataObject
         'MemberCancelled',
         'AdminCancelled',
     );
+
     /**
      * Statuses for which an order can be paid for
      */
@@ -108,31 +119,41 @@ class Order extends DataObject
         'Processing',
         'Sent',
     );
+
     /**
      * Statuses that shouldn't show in user account.
      */
     private static $hidden_status = array('Cart');
+
     /**
      * Flags to determine when an order can be cancelled.
      */
     private static $cancel_before_payment    = true;
+
     private static $cancel_before_processing = false;
+
     private static $cancel_before_sending    = false;
+
     private static $cancel_after_sending     = false;
+
     /**
      * Place an order before payment processing begins
      *
      * @var boolean
      */
     private static $place_before_payment = false;
+
     /**
      * Modifiers represent the additional charges or
      * deductions associated to an order, such as
      * shipping, taxes, vouchers etc.
      */
-    private static $modifiers = array();
-    private static $rounding_precision = 2;
+    private static $modifiers            = array();
+
+    private static $rounding_precision   = 2;
+
     private static $reference_id_padding = 5;
+
     /**
      * @var boolean Will allow completion of orders with GrandTotal=0,
      * which could be the case for orders paid with loyalty points or vouchers.

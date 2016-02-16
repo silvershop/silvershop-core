@@ -17,11 +17,14 @@
 class ProductBulkLoader extends CsvBulkLoader
 {
     public static $parentpageid           = null;
+
     public static $createnewproductgroups = false;
+
     public static $hasStockImpl           = false;
+
     // NB do NOT use functional indirection on any fields where they
     // will be used in $duplicateChecks as well - they simply don't work.
-    public $columnMap = array(
+    public $columnMap         = array(
         'Price'      => 'BasePrice',
         'Cost Price' => 'CostPrice',
 
@@ -56,7 +59,8 @@ class ProductBulkLoader extends CsvBulkLoader
         'SubID'        => '->variationRow',
         'Sub ID'       => '->variationRow',
     );
-    public $duplicateChecks = array(
+
+    public $duplicateChecks   = array(
         'InternalItemID' => 'InternalItemID',
         'SKU'            => 'InternalItemID',
         'Product ID'     => 'InternalItemID',
@@ -65,6 +69,7 @@ class ProductBulkLoader extends CsvBulkLoader
         'Page Title'     => 'Title',
         'PageTitle'      => 'Title',
     );
+
     public $relationCallbacks = array(
         'Image' => array(
             'relationname' => 'Image', // relation accessor name

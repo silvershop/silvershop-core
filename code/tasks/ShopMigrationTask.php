@@ -8,9 +8,11 @@ class ShopMigrationTask extends MigrationTask
     /**
      * Choose how many orders get processed at a time.
      */
-    public static $batch_size = 250;
-    protected $title       = "Migrate Shop";
-    protected $description = "Where dev/build is not enough, this task updates database to work with latest version of shop module.
+    public static $batch_size  = 250;
+
+    protected     $title       = "Migrate Shop";
+
+    protected     $description = "Where dev/build is not enough, this task updates database to work with latest version of shop module.
 		You may want to run the CartCleanupTask before migrating if you want to discard past carts.";
 
     /**

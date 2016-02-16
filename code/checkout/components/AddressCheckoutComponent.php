@@ -3,8 +3,10 @@
 abstract class AddressCheckoutComponent extends CheckoutComponent
 {
     protected $formfielddescriptions = true;
+
     protected $addresstype;
-    protected $addtoaddressbook = false;
+
+    protected $addtoaddressbook      = false;
 
     public function getFormFields(Order $order)
     {

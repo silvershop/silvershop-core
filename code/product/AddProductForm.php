@@ -11,6 +11,7 @@ class AddProductForm extends Form
      * @var int
      */
     protected $maxquantity = 0;
+
     /**
      * Fields that can be saved to an order item.
      *

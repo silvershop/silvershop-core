@@ -10,15 +10,17 @@
  */
 class OrderItem extends OrderAttribute
 {
-    private static $db = array(
+    private static $db                   = array(
         'Quantity'  => 'Int',
         'UnitPrice' => 'Currency',
     );
-    private static $casting = array(
+
+    private static $casting              = array(
         'UnitPrice' => 'Currency',
         'Total'     => 'Currency',
     );
-    private static $searchable_fields = array(
+
+    private static $searchable_fields    = array(
         'OrderID'    => array(
             'title' => 'Order ID',
             'field' => 'TextField',
@@ -30,18 +32,24 @@ class OrderItem extends OrderAttribute
         "Quantity",
         "Total",
     );
-    private static $summary_fields = array(
+
+    private static $summary_fields       = array(
         "Order.ID"   => "Order ID",
         "TableTitle" => "Title",
         "UnitPrice"  => "Unit Price",
         "Quantity"   => "Quantity",
         "Total"      => "Total Price",
     );
+
     private static $required_fields      = array();
+
     private static $buyable_relationship = "Product";
-    private static $singular_name = "Item";
-    private static $plural_name   = "Items";
-    private static $default_sort  = "\"Created\" DESC";
+
+    private static $singular_name        = "Item";
+
+    private static $plural_name          = "Items";
+
+    private static $default_sort         = "\"Created\" DESC";
 
     /**
      * Get the buyable object related to this item.

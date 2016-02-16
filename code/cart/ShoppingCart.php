@@ -12,10 +12,15 @@
 class ShoppingCart
 {
     private static $cartid_session_name = 'shoppingcartid';
-    private $order;
-    private $calculateonce = false;
-    private $message;
-    private $type;
+
+    private        $order;
+
+    private        $calculateonce       = false;
+
+    private        $message;
+
+    private        $type;
+
     private static $instance;
 
     /**
@@ -382,12 +387,16 @@ class ShoppingCart
 class ShoppingCart_Controller extends Controller
 {
     private static $url_segment         = "shoppingcart";
+
     private static $direct_to_cart_page = false;
+
     protected      $cart;
-    private static $url_handlers = array(
+
+    private static $url_handlers        = array(
         '$Action/$Buyable/$ID' => 'handleAction',
     );
-    private static $allowed_actions = array(
+
+    private static $allowed_actions     = array(
         'add',
         'additem',
         'remove',

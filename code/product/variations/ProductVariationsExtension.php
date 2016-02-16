@@ -8,9 +8,10 @@
  */
 class ProductVariationsExtension extends DataExtension
 {
-    private static $has_many = array(
+    private static $has_many  = array(
         'Variations' => 'ProductVariation',
     );
+
     private static $many_many = array(
         'VariationAttributeTypes' => 'ProductAttributeType',
     );

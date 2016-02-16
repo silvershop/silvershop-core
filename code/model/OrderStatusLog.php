@@ -8,7 +8,7 @@
  */
 class OrderStatusLog extends DataObject
 {
-    private static $db = array(
+    private static $db                = array(
         'Title'          => 'Varchar(100)',
         'Note'           => 'Text',
         'DispatchedBy'   => 'Varchar(100)',
@@ -18,28 +18,35 @@ class OrderStatusLog extends DataObject
         'PaymentOK'      => 'Boolean',
         'SentToCustomer' => 'Boolean',
     );
-    private static $has_one = array(
+
+    private static $has_one           = array(
         'Author' => 'Member',
         'Order'  => 'Order',
     );
+
     private static $searchable_fields = array(
         "Note"           => "PartialMatchFilter",
         'DispatchTicket' => 'PartialMatchFilter',
         'PaymentCode'    => 'PartialMatchFilter',
         'PaymentOK',
     );
-    private static $summary_fields = array(
+
+    private static $summary_fields    = array(
         "Created"        => "Date",
         "OrderID"        => "OrderID",
         "Title"          => "Title",
         "SentToCustomer" => "SentToCustomer",
     );
-    private static $field_labels = array(
+
+    private static $field_labels      = array(
         "SentToCustomer" => "Send this update as a message to the customer",
     );
-    private static $singular_name = "Order Log Entry";
-    private static $plural_name = "Order Status Log Entries";
-    private static $default_sort = "\"Created\" DESC";
+
+    private static $singular_name     = "Order Log Entry";
+
+    private static $plural_name       = "Order Status Log Entries";
+
+    private static $default_sort      = "\"Created\" DESC";
 
     public function canDelete($member = null)
     {

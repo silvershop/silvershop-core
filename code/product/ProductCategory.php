@@ -9,17 +9,25 @@
  */
 class ProductCategory extends Page
 {
-    private static $belongs_many_many = array(
+    private static $belongs_many_many    = array(
         'Products' => 'Product',
     );
-    private static $singular_name     = "Category";
-    private static $plural_name       = "Categories";
-    private static $icon              = 'cms/images/treeicons/folder';
-    private static $default_child     = 'Product';
+
+    private static $singular_name        = "Category";
+
+    private static $plural_name          = "Categories";
+
+    private static $icon                 = 'cms/images/treeicons/folder';
+
+    private static $default_child        = 'Product';
+
     private static $include_child_groups = true;
+
     private static $page_length          = 12;
+
     private static $must_have_price      = true;
-    private static $sort_options = array(
+
+    private static $sort_options         = array(
         'Alphabetical' => 'URLSegment',
         'Price'        => 'BasePrice',
     );

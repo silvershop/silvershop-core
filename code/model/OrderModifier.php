@@ -10,17 +10,20 @@
  */
 class OrderModifier extends OrderAttribute
 {
-    private static $db = array(
+    private static $db                = array(
         'Amount' => 'Currency',
         'Type'   => "Enum('Chargable,Deductable,Ignored','Chargable')",
         'Sort'   => 'Int',
     );
-    private static $defaults = array(
+
+    private static $defaults          = array(
         'Type' => 'Chargable',
     );
-    private static $casting = array(
+
+    private static $casting           = array(
         'TableValue' => 'Currency',
     );
+
     private static $searchable_fields = array(
         'OrderID'    => array(
             'title' => 'Order ID',
@@ -32,17 +35,22 @@ class OrderModifier extends OrderAttribute
         "Amount",
         "Type",
     );
-    private static $field_labels   = array();
-    private static $summary_fields = array(
+
+    private static $field_labels      = array();
+
+    private static $summary_fields    = array(
         "Order.ID"   => "Order ID",
         "TableTitle" => "Table Title",
         "ClassName"  => "Type",
         "Amount"     => "Amount",
         "Type"       => "Type",
     );
-    private static $singular_name = "Modifier";
-    private static $plural_name   = "Modifiers";
-    private static $default_sort = "\"OrderModifier\".\"Sort\" ASC, \"Created\" ASC";
+
+    private static $singular_name     = "Modifier";
+
+    private static $plural_name       = "Modifiers";
+
+    private static $default_sort      = "\"OrderModifier\".\"Sort\" ASC, \"Created\" ASC";
 
     /**
      * Specifies whether this modifier is always required in an order.

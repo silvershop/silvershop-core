@@ -8,11 +8,13 @@
  */
 class PickupShippingModifier extends ShippingModifier
 {
-    private static $defaults = array(
+    private static $defaults      = array(
         'Type' => 'Ignored',
     );
-    private static $casting = array(
+
+    private static $casting       = array(
         'TableValue' => 'CanBeFreeCurrency',
     );
+
     private static $singular_name = "Pick Up Shipping";
 }

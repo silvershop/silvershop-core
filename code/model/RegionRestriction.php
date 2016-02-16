@@ -2,31 +2,36 @@
 
 class RegionRestriction extends DataObject
 {
-    private static $db = array(
+    private static $db             = array(
         "Country"    => "ShopCountry",
         "State"      => "Varchar",
         "City"       => "Varchar",
         "PostalCode" => "Varchar(10)",
     );
-    private static $defaults = array(
+
+    private static $defaults       = array(
         "Country"    => "*",
         "State"      => "*",
         "City"       => "*",
         "PostalCode" => "*",
     );
-    private static $default_sort = "\"Country\" ASC, \"State\" ASC, \"City\" ASC, \"PostalCode\" ASC";
+
+    private static $default_sort   = "\"Country\" ASC, \"State\" ASC, \"City\" ASC, \"PostalCode\" ASC";
+
     private static $summary_fields = array(
         'Country',
         'State',
         'City',
         'PostalCode',
     );
-    private static $field_labels = array(
+
+    private static $field_labels   = array(
         'Country'    => 'Country',
         'State'      => 'State/Region',
         'City'       => 'City/Sub-Region',
         'PostalCode' => 'Post/Zip Code',
     );
+
     /*
      * Specifies form field types to use in TableFields
      */

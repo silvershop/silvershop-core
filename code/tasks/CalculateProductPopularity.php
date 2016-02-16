@@ -2,8 +2,10 @@
 
 class CalculateProductPopularity extends BuildTask
 {
-    protected $title       = "Calculate Product Sales Popularity";
-    protected $description = "Count up total sales quantites for each product";
+    protected      $title                        = "Calculate Product Sales Popularity";
+
+    protected      $description                  = "Count up total sales quantites for each product";
+
     private static $number_sold_calculation_type = "SUM"; //SUM or COUNT
 
     public function run($request)

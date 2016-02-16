@@ -17,6 +17,7 @@ class WeightShippingModifier extends ShippingModifier
         1   => 20,
         999 => 50,
     );
+
     protected        $weight      = 0;
 
     public static function set_weight_costs($costs)

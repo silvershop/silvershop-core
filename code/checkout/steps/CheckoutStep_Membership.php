@@ -5,7 +5,7 @@
  */
 class CheckoutStep_Membership extends CheckoutStep
 {
-    private static $allowed_actions = array(
+    private static $allowed_actions   = array(
         'membership',
         'MembershipForm',
         'LoginForm',
@@ -13,10 +13,12 @@ class CheckoutStep_Membership extends CheckoutStep
         'docreateaccount',
         'CreateAccountForm',
     );
-    public static $url_handlers      = array(
+
+    public static  $url_handlers      = array(
         'login' => 'index',
     );
-    public static $skip_if_logged_in = true;
+
+    public static  $skip_if_logged_in = true;
 
     public function membership()
     {

@@ -7,11 +7,16 @@
 class ShopPeriodReport extends SS_Report
 {
     private static $display_uncategorised_data = false;
-    protected $dataClass   = 'Order';
-    protected $periodfield = "\"Order\".\"Created\"";
-    protected $grouping    = false;
-    protected $pagesize    = 30;
-    private static $groupingdateformats = array(
+
+    protected      $dataClass                  = 'Order';
+
+    protected      $periodfield                = "\"Order\".\"Created\"";
+
+    protected      $grouping                   = false;
+
+    protected      $pagesize                   = 30;
+
+    private static $groupingdateformats        = array(
         "Year"  => "Y",
         "Month" => "Y - F",
         "Day"   => "d F Y - l",

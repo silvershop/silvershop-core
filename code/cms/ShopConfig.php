@@ -6,14 +6,16 @@
  */
 class ShopConfig extends DataExtension
 {
-    private static $db = array(
+    private static $db      = array(
         'AllowedCountries' => 'Text',
     );
+
     private static $has_one = array(
         'TermsPage'           => 'SiteTree',
         "CustomerGroup"       => "Group",
         'DefaultProductImage' => 'Image',
     );
+
     private static $email_from;
 
     public static function current()

@@ -40,7 +40,9 @@ class Checkout
     }
 
     protected $order;
+
     protected $message;
+
     protected $type;
 
     public function __construct(Order $order)

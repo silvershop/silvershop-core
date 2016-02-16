@@ -11,9 +11,10 @@
  */
 class CheckoutPage extends Page
 {
-    private static $db = array(
+    private static $db   = array(
         'PurchaseComplete' => 'HTMLText',
     );
+
     private static $icon = 'shop/images/icons/money';
 
     /**
@@ -91,6 +92,7 @@ class CheckoutPage extends Page
 class CheckoutPage_Controller extends Page_Controller
 {
     private static $url_segment     = 'checkout';
+
     private static $allowed_actions = array(
         'OrderForm',
         'payment',
@@ -121,9 +123,11 @@ class CheckoutPage_Controller extends Page_Controller
         // component, we should honor that and change the button label. PaymentForm::checkoutSubmit
         // will also check this and process payment if needed.
         if ($config->getComponentByType('OnsitePaymentCheckoutComponent')) {
-            $form->setActions(new FieldList(
-                FormAction::create('checkoutSubmit', _t('CheckoutForm.SubmitPayment', 'Submit Payment'))
-            ));
+            $form->setActions(
+                new FieldList(
+                    FormAction::create('checkoutSubmit', _t('CheckoutForm.SubmitPayment', 'Submit Payment'))
+                )
+            );
         }
 
         $form->Cart = $this->Cart();

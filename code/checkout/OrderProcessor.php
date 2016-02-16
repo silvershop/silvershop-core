@@ -12,10 +12,12 @@ class OrderProcessor
      * @var Order
      */
     protected $order;
+
     /**
      * @var OrderEmailNotifier
      */
     protected $notifier;
+
     /**
      * @var string
      */

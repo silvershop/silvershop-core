@@ -8,13 +8,15 @@
 
 class Zone extends DataObject
 {
-    private static $db = array(
+    private static $db             = array(
         'Name'        => 'Varchar',
         'Description' => 'Varchar',
     );
-    private static $has_many = array(
+
+    private static $has_many       = array(
         'Regions' => 'ZoneRegion',
     );
+
     private static $summary_fields = array(
         'Name',
         'Description',

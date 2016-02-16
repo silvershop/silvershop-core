@@ -12,9 +12,13 @@
 class ShopSalesReport extends ShopPeriodReport
 {
     protected $title       = "Shop Sales";
+
     protected $description = "Monitor shop sales performance for a particular period. Group results by year, month, or day.";
+
     protected $dataClass   = "Order";
+
     protected $periodfield = "\"Order\".\"Paid\"";
+
     protected $grouping    = true;
 
     public function columns()

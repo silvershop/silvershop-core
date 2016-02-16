@@ -12,48 +12,63 @@
  */
 class ProductVariation extends DataObject implements Buyable
 {
-    private static $db = array(
+    private static $db                = array(
         'InternalItemID' => 'Varchar(30)',
         'Price'          => 'Currency',
     );
-    private static $has_one = array(
+
+    private static $has_one           = array(
         'Product' => 'Product',
         'Image'   => 'Image',
     );
-    private static $many_many = array(
+
+    private static $many_many         = array(
         'AttributeValues' => 'ProductAttributeValue',
     );
-    private static $casting = array(
+
+    private static $casting           = array(
         'Title' => 'Text',
         'Price' => 'Currency',
     );
-    private static $versioning = array(
+
+    private static $versioning        = array(
         'Live',
     );
-    private static $extensions = array(
+
+    private static $extensions        = array(
         "Versioned('Live')",
     );
-    private static $summary_fields = array(
+
+    private static $summary_fields    = array(
         'InternalItemID' => 'Product Code',
         //'Product.Title' => 'Product',
         'Title'          => 'Variation',
         'Price'          => 'Price',
     );
+
     private static $searchable_fields = array(
         'Product.Title',
         'InternalItemID',
     );
-    private static $indexes = array(
+
+    private static $indexes           = array(
         'InternalItemID' => true,
         'LastEdited'     => true,
     );
-    private static $singular_name = "Variation";
-    private static $plural_name = "Variations";
-    private static $default_sort = "InternalItemID";
-    private static $order_item = "ProductVariation_OrderItem";
-    private static $title_has_label = true;
-    private static $title_separator = ':';
-    private static $title_glue = ', ';
+
+    private static $singular_name     = "Variation";
+
+    private static $plural_name       = "Variations";
+
+    private static $default_sort      = "InternalItemID";
+
+    private static $order_item        = "ProductVariation_OrderItem";
+
+    private static $title_has_label   = true;
+
+    private static $title_separator   = ':';
+
+    private static $title_glue        = ', ';
 
     public function getCMSFields()
     {
@@ -241,12 +256,14 @@ class ProductVariation extends DataObject implements Buyable
  */
 class ProductVariation_OrderItem extends Product_OrderItem
 {
-    private static $db = array(
+    private static $db                   = array(
         'ProductVariationVersion' => 'Int',
     );
-    private static $has_one = array(
+
+    private static $has_one              = array(
         'ProductVariation' => 'ProductVariation',
     );
+
     private static $buyable_relationship = "ProductVariation";
 
     /**

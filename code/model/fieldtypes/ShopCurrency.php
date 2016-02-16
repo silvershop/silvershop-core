@@ -7,8 +7,10 @@
  */
 class ShopCurrency extends Currency
 {
-    private static $decimal_delimiter = '.';
-    private static $thousand_delimiter = ',';
+    private static $decimal_delimiter     = '.';
+
+    private static $thousand_delimiter    = ',';
+
     private static $negative_value_format = "<span class=\"negative\">(%s)</span>";
 
     public function Nice()

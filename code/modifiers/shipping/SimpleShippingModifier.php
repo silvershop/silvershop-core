@@ -8,10 +8,12 @@
  */
 class SimpleShippingModifier extends ShippingModifier
 {
-    private static $db = array(
+    private static $db                 = array(
         'Country' => 'Text',
     );
+
     private static $default_charge     = 10;
+
     private static $charges_by_country = array();
 
     public function value($subtotal = null)

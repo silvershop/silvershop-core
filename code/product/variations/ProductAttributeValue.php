@@ -9,26 +9,33 @@
  */
 class ProductAttributeValue extends DataObject
 {
-    private static $db = array(
+    private static $db                = array(
         'Value' => 'Varchar',
         'Sort'  => 'Int',
     );
-    private static $has_one = array(
+
+    private static $has_one           = array(
         'Type' => 'ProductAttributeType',
     );
+
     private static $belongs_many_many = array(
         'ProductVariation' => 'ProductVariation',
     );
-    private static $summary_fields = array(
+
+    private static $summary_fields    = array(
         'Value' => 'Value',
     );
-    private static $indexes = array(
+
+    private static $indexes           = array(
         'LastEdited' => true,
         'Sort'       => true,
     );
-    private static $default_sort = "TypeID ASC, Sort ASC, Value ASC";
-    private static $singular_name = "Value";
-    private static $plural_name   = "Values";
+
+    private static $default_sort      = "TypeID ASC, Sort ASC, Value ASC";
+
+    private static $singular_name     = "Value";
+
+    private static $plural_name       = "Values";
 
     public function getCMSFields()
     {

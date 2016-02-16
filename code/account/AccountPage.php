@@ -71,6 +71,7 @@ class AccountPage extends Page
 class AccountPage_Controller extends Page_Controller
 {
     private static $url_segment     = 'account';
+
     private static $allowed_actions = array(
         'addressbook',
         'CreateAddressForm',
@@ -80,7 +81,8 @@ class AccountPage_Controller extends Page_Controller
         'ChangePasswordForm',
         'changepassword', // redirects to editprofile
     );
-    protected $member;
+
+    protected      $member;
 
     public function init()
     {

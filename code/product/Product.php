@@ -15,7 +15,7 @@
  */
 class Product extends Page implements Buyable
 {
-    private static $db = array(
+    private static $db                     = array(
         'InternalItemID' => 'Varchar(30)', //ie SKU, ProductID etc (internal / existing recognition of product)
         'Model'          => 'Varchar(30)',
 
@@ -33,50 +33,69 @@ class Product extends Page implements Buyable
 
         'Popularity' => 'Float' //storage for ClaculateProductPopularity task
     );
-    private static $has_one = array(
+
+    private static $has_one                = array(
         'Image' => 'Image',
     );
-    private static $many_many = array(
+
+    private static $many_many              = array(
         'ProductCategories' => 'ProductCategory',
     );
-    private static $defaults = array(
+
+    private static $defaults               = array(
         'AllowPurchase' => true,
         'ShowInMenus'   => false,
     );
-    private static $casting = array(
+
+    private static $casting                = array(
         'Price' => 'Currency',
     );
-    private static $summary_fields = array(
+
+    private static $summary_fields         = array(
         'InternalItemID',
         'Title',
         'BasePrice.NiceOrEmpty',
         'canPurchase',
     );
-    private static $searchable_fields = array(
+
+    private static $searchable_fields      = array(
         'InternalItemID',
         'Title' => array("title" => 'Title'),
         'Featured',
     );
-    private static $field_labels = array(
+
+    private static $field_labels           = array(
         'InternalItemID'        => 'SKU',
         'Title'                 => 'Title',
         'BasePrice'             => 'Price',
         'BasePrice.NiceOrEmpty' => 'Price',
         'canPurchase'           => 'Purchasable',
     );
-    private static $singular_name  = "Product";
-    private static $plural_name    = "Products";
-    private static $icon           = 'shop/images/icons/package';
-    private static $default_parent = 'ProductCategory';
-    private static $default_sort   = '"Title" ASC';
+
+    private static $singular_name          = "Product";
+
+    private static $plural_name            = "Products";
+
+    private static $icon                   = 'shop/images/icons/package';
+
+    private static $default_parent         = 'ProductCategory';
+
+    private static $default_sort           = '"Title" ASC';
+
     private static $global_allow_purchase  = true;
+
     private static $allow_zero_price       = false;
+
     private static $order_item             = "Product_OrderItem";
+
     private static $min_opengraph_img_size = 0;
+
     // Physical Measurement
     private static $weight_unit = "kg";
+
     private static $length_unit = "cm";
-    private static $indexes = array(
+
+    private static $indexes     = array(
         'Featured'       => true,
         'AllowPurchase'  => true,
         'InternalItemID' => true,
@@ -474,7 +493,8 @@ class Product_Controller extends Page_Controller
         'Form',
         'AddProductForm',
     );
-    public $formclass = "AddProductForm"; //allow overriding the type of form used
+
+    public         $formclass       = "AddProductForm"; //allow overriding the type of form used
 
     public function Form()
     {
@@ -487,12 +507,14 @@ class Product_Controller extends Page_Controller
 
 class Product_OrderItem extends OrderItem
 {
-    private static $db = array(
+    private static $db      = array(
         'ProductVersion' => 'Int',
     );
+
     private static $has_one = array(
         'Product' => 'Product',
     );
+
     /**
      * the has_one join field to identify the buyable
      */

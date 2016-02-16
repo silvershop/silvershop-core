@@ -7,7 +7,8 @@
 abstract class AddressBookCheckoutComponent extends AddressCheckoutComponent
 {
     private static $composite_field_tag = 'div';
-    protected $addtoaddressbook = true;
+
+    protected      $addtoaddressbook    = true;
 
     public function getFormFields(Order $order)
     {

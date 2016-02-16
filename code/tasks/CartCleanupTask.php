@@ -16,10 +16,12 @@ class CartCleanupTask extends BuildTask
      * @var string
      */
     private static $delete_after_mins = 120;
+
     /**
      * @var string
      */
     protected $title = "Delete abandoned carts";
+
     /**
      * @var string
      */

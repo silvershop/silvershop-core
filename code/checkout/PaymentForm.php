@@ -7,11 +7,13 @@ class PaymentForm extends CheckoutForm
      * Not the same as the "confirm" action in {@link PaymentGatewayController}.
      */
     protected $successlink;
+
     /**
      * @var string URL to redirect the user to on payment failure.
      * Not the same as the "cancel" action in {@link PaymentGatewayController}.
      */
     protected $failurelink;
+
     /**
      * @var OrderProcessor
      */
@@ -51,9 +53,9 @@ class PaymentForm extends CheckoutForm
         $order = $this->config->getOrder();
         $gateway = Checkout::get($order)->getSelectedPaymentMethod(false);
         if (
-            GatewayInfo::is_offsite($gateway) ||
-            GatewayInfo::is_manual($gateway) ||
-            $this->config->getComponentByType('OnsitePaymentCheckoutComponent')
+            GatewayInfo::is_offsite($gateway)
+            || GatewayInfo::is_manual($gateway)
+            || $this->config->getComponentByType('OnsitePaymentCheckoutComponent')
         ) {
             return $this->submitpayment($data, $form);
         }
