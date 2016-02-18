@@ -37,7 +37,7 @@ class VariationForm extends AddProductForm
 
             if ($vars = $product->Variations()) {
                 foreach ($vars as $var) {
-                    $vararray[$var->ID] = $var->AttributeValues()->map('ID', 'ID');
+                    $vararray[$var->ID] = $var->AttributeValues()->map('ID', 'ID')->toArray();
                 }
             }
 
