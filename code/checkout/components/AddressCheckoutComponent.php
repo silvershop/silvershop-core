@@ -29,20 +29,32 @@ abstract class AddressCheckoutComponent extends CheckoutComponent
     public function getData(Order $order)
     {
         $data = $this->getAddress($order)->toMap();
-        unset($data['ID']);
-        unset($data['ClassName']);
-        unset($data['RecordClassName']);
-        //merge data from multiple sources
-        $member = Member::currentUser();
 
+        //merge data from multiple sources
         $data = array_merge(
             ShopUserInfo::singleton()->getLocation(),
-            $member ? $member->{"Default" . $this->addresstype . "Address"}()->toMap() : array(),
             $data,
             array(
                 $this->addresstype . "AddressID" => $order->{$this->addresstype . "AddressID"},
             )
         );
+
+        //merge in default address if an address isn't available
+        $member = Member::currentUser();
+        if(!$order->{$this->addresstype . "AddressID"}) {
+            $data = array_merge(
+                ShopUserInfo::singleton()->getLocation(),
+                $member ? $member->{"Default" . $this->addresstype . "Address"}()->toMap() : array(),
+                array(
+                    $this->addresstype . "AddressID" => $order->{$this->addresstype . "AddressID"},
+                )
+            );
+        }
+
+        unset($data['ID']);
+        unset($data['ClassName']);
+        unset($data['RecordClassName']);
+
         //ensure country is restricted if there is only one allowed country
         if ($country = SiteConfig::current_site_config()->getSingleCountry()) {
             $data['Country'] = $country;
@@ -61,6 +73,14 @@ abstract class AddressCheckoutComponent extends CheckoutComponent
     public function setData(Order $order, array $data)
     {
         $address = $this->getAddress($order);
+        //if the value matches the current address then unset
+        //this is to fix issues with blank fields & the readonly Country field
+        $addressfields = Address::database_fields(get_class($address));
+        foreach($data as $key => $value) {
+            if(!isset($addressfields[$key]) || (!$value && !$address->{$key})) {
+                unset($data[$key]);
+            }
+        }
         $address->update($data);
         //if only one country is available, then set it
         if ($country = SiteConfig::current_site_config()->getSingleCountry()) {
