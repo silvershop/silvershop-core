@@ -61,6 +61,14 @@ abstract class AddressCheckoutComponent extends CheckoutComponent
     public function setData(Order $order, array $data)
     {
         $address = $this->getAddress($order);
+        //if the value matches the current address then unset
+        //this is to fix issues with blank fields & the readonly Country field
+        $addressinfo = $address->toMap();
+        foreach($data as $key => $value) {
+            if(!isset($addressinfo[$key]) || $addressinfo[$key] === $value) {
+                unset($data[$key]);
+            }
+        }
         $address->update($data);
         //if only one country is available, then set it
         if ($country = SiteConfig::current_site_config()->getSingleCountry()) {

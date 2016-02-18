@@ -68,6 +68,18 @@ class Address extends DataObject
         'toString' => 'Address',
     );
 
+    public function toMap() {
+        $address = parent::toMap();
+
+        $fields = self::database_fields(get_class($this));
+        foreach(array_keys($fields) as $field) {
+            if(!isset($address[$field])) {
+                $address[$field] = '';
+            }
+        }
+        return $address;
+    }
+
     public function getCMSFields()
     {
         $fields = parent::getCMSFields();
