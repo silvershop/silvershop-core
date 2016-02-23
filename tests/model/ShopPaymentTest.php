@@ -3,8 +3,8 @@
 class ShopPaymentTest extends FunctionalTest
 {
     protected static $fixture_file  = array(
-        'shop/tests/fixtures/Pages.yml',
-        'shop/tests/fixtures/shop.yml',
+        SHOP_DIR . '/tests/fixtures/Pages.yml',
+        SHOP_DIR . '/tests/fixtures/shop.yml',
     );
     public static    $disable_theme = true;
 

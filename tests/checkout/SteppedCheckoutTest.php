@@ -3,8 +3,8 @@
 class SteppedCheckoutTest extends FunctionalTest
 {
     protected static $fixture_file = array(
-        'shop/tests/fixtures/Pages.yml',
-        'shop/tests/fixtures/shop.yml',
+        SHOP_DIR . '/tests/fixtures/Pages.yml',
+        SHOP_DIR . '/tests/fixtures/shop.yml',
     );
     protected static $use_draft_site = true; //so we don't need to publish
     protected $autoFollowRedirection = false;

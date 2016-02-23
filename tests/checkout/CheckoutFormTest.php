@@ -2,7 +2,7 @@
 
 class CheckoutFormTest extends SapphireTest
 {
-    public static $fixture_file = 'shop/tests/fixtures/shop.yml';
+    public static $fixture_file = SHOP_DIR . '/tests/fixtures/shop.yml';
 
     public function setUp()
     {
