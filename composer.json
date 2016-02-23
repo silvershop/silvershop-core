@@ -25,7 +25,7 @@
 		"guzzle/plugin-mock": "~3.1",
         "omnipay/dummy": "~2.1",
         "omnipay/paymentexpress": "~2.1",
-        "phpunit/phunit": "~3.7"
+        "phpunit/phpunit": "~3.7"
 	},
 	"replace": {
 	    "burnbright/silverstripe-shop": "1.*"
