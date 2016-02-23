@@ -3,10 +3,10 @@
 class CheckoutTest extends SapphireTest
 {
     protected static $fixture_file = array(
-        SHOP_DIR . '/tests/fixtures/Pages.yml',
-        SHOP_DIR . '/tests/fixtures/Orders.yml',
-        SHOP_DIR . '/tests/fixtures/Addresses.yml',
-        SHOP_DIR . '/tests/fixtures/ShopMembers.yml',
+        'silvershop/tests/fixtures/Pages.yml',
+        'silvershop/tests/fixtures/Orders.yml',
+        'silvershop/tests/fixtures/Addresses.yml',
+        'silvershop/tests/fixtures/ShopMembers.yml',
     );
 
     public function setUp()

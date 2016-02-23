@@ -6,8 +6,8 @@
 class ShopMemberTest extends FunctionalTest
 {
     public static $fixture_file = array(
-        SHOP_DIR . '/tests/fixtures/ShopMembers.yml',
-        SHOP_DIR . '/tests/fixtures/shop.yml',
+        'silvershop/tests/fixtures/ShopMembers.yml',
+        'silvershop/tests/fixtures/shop.yml',
     );
 
     public function testGetByIdentifier()
