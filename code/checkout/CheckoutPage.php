@@ -15,7 +15,7 @@ class CheckoutPage extends Page
         'PurchaseComplete' => 'HTMLText',
     );
 
-    private static $icon = 'shop/images/icons/money';
+    private static $icon = 'silvershop/images/icons/money';
 
     /**
      * Returns the link to the checkout page on this site
