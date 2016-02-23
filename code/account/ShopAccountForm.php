@@ -29,10 +29,6 @@ class ShopAccountForm extends Form
             );
         }
         parent::__construct($controller, $name, $fields, $actions, $requiredFields);
-        if ($member) {
-            $member->Password = ""; //prevents password field from being populated with encrypted password data
-            $this->loadDataFrom($member);
-        }
 
         $this->extend('updateShopAccountForm');
 
@@ -49,6 +45,11 @@ class ShopAccountForm extends Form
                 '2.0',
                 'Please access updateShopAccountForm through ShopAccountForm instead of AccountPage (this extension point is due to be removed)'
             );
+        }
+
+        if ($member) {
+            $member->Password = ""; //prevents password field from being populated with encrypted password data
+            $this->loadDataFrom($member);
         }
     }
 
