@@ -2,17 +2,26 @@
 
 abstract class AddressCheckoutComponent extends CheckoutComponent
 {
-    protected $formfielddescriptions = true;
-
+    /** @var string - Shipping or Billing */
     protected $addresstype;
 
-    protected $addtoaddressbook      = false;
+    /** @var bool */
+    private static $form_field_descriptions = true;
+
+    /** @var bool */
+    protected $formfielddescriptions = true;
+
+    /** @var bool - allows this to be overridden by config */
+    private static $add_to_addressbook = true;
+
+    /** @var bool - allows this to be overridden at runtime */
+    protected $addtoaddressbook;
 
     public function getFormFields(Order $order)
     {
         return $this->getAddress($order)->getFrontEndFields(
             array(
-                'addfielddescriptions' => $this->formfielddescriptions,
+                'addfielddescriptions' => $this->useFormFieldDescriptions(),
             )
         );
     }
@@ -69,6 +78,8 @@ abstract class AddressCheckoutComponent extends CheckoutComponent
      *
      * @param Order $order order to get addresses from
      * @param array $data  data to set
+     *
+     * @return Order
      */
     public function setData(Order $order, array $data)
     {
@@ -111,30 +122,71 @@ abstract class AddressCheckoutComponent extends CheckoutComponent
                 $member->{"Default" . $this->addresstype . "AddressID"} = $address->ID;
                 $member->write();
             }
-            if ($this->addtoaddressbook) {
+            if ($this->getAddToAddressBook()) {
                 $member->AddressBook()->add($address);
             }
         }
+
         //extension hooks
         $order->extend('onSet' . $this->addresstype . 'Address', $address);
-    }
 
-    /**
-     * Enable adding form field descriptions
-     */
-    public function setShowFormFieldDescriptions($show = true)
-    {
-        $this->formfielddescriptions = $show;
+        return $order;
     }
 
     /**
      * Add new addresses to the address book.
+     *
+     * @param bool $add
+     *
+     * @return $this
      */
     public function setAddToAddressBook($add = true)
     {
         $this->addtoaddressbook = $add;
+        return $this;
     }
 
+    /**
+     * @return bool
+     */
+    public function getAddToAddressBook()
+    {
+        if (isset($this->addtoaddressbook)) {
+            return $this->addtoaddressbook;
+        } else {
+            return $this->config()->add_to_addressbook;
+        }
+    }
+
+    /**
+     * @return boolean
+     */
+    public function useFormFieldDescriptions()
+    {
+        if (isset($this->formfielddescriptions)) {
+            return $this->formfielddescriptions;
+        } else {
+            return $this->config()->form_field_descriptions;
+        }
+    }
+
+    /**
+     * @param boolean $formfielddescriptions
+     *
+     * @return $this
+     */
+    public function setFormFieldDescriptions($formfielddescriptions)
+    {
+        $this->formfielddescriptions = $formfielddescriptions;
+        return $this;
+    }
+
+
+    /**
+     * @param Order $order
+     *
+     * @return Address
+     */
     public function getAddress(Order $order)
     {
         return $order->{$this->addresstype . "Address"}();

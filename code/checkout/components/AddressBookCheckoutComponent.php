@@ -8,8 +8,11 @@ abstract class AddressBookCheckoutComponent extends AddressCheckoutComponent
 {
     private static $composite_field_tag = 'div';
 
-    protected      $addtoaddressbook    = true;
-
+    /**
+     * @param Order $order
+     *
+     * @return FieldList
+     */
     public function getFormFields(Order $order)
     {
         $fields = parent::getFormFields($order);
@@ -91,6 +94,7 @@ abstract class AddressBookCheckoutComponent extends AddressCheckoutComponent
      * @param Order $order
      * @param array $data
      *
+     * @return bool|void
      * @throws ValidationException
      */
     public function validateData(Order $order, array $data)
@@ -133,6 +137,8 @@ abstract class AddressBookCheckoutComponent extends AddressCheckoutComponent
      *
      * @param Order $order order to get addresses from
      * @param array $data  data to set
+     *
+     * @return Order
      */
     public function setData(Order $order, array $data)
     {
@@ -145,6 +151,8 @@ abstract class AddressBookCheckoutComponent extends AddressCheckoutComponent
         } else {
             parent::setData($order, $data);
         }
+
+        return $order;
     }
 }
 
