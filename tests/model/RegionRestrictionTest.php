@@ -3,8 +3,8 @@
 class RegionRestrictionTest extends SapphireTest
 {
     public static $fixture_file = array(
-        'shop/tests/fixtures/RegionRestriction.yml',
-        'shop/tests/fixtures/Addresses.yml',
+        'silvershop/tests/fixtures/RegionRestriction.yml',
+        'silvershop/tests/fixtures/Addresses.yml',
     );
 
     public function testMatchLocal()

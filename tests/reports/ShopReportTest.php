@@ -2,7 +2,7 @@
 
 class ShopReportTest extends SapphireTest
 {
-    protected static $fixture_file = 'shop/tests/fixtures/shop.yml';
+    protected static $fixture_file = 'silvershop/tests/fixtures/shop.yml';
 
     function testSalesReport()
     {

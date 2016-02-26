@@ -76,7 +76,7 @@ class Product extends Page implements Buyable
 
     private static $plural_name            = "Products";
 
-    private static $icon                   = 'shop/images/icons/package';
+    private static $icon                   = 'silvershop/images/icons/package';
 
     private static $default_parent         = 'ProductCategory';
 

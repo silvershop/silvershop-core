@@ -8,7 +8,7 @@
  */
 class AccountPage extends Page
 {
-    private static $icon = 'shop/images/icons/account';
+    private static $icon = 'silvershop/images/icons/account';
 
     public function canCreate($member = null, $context = array())
     {
