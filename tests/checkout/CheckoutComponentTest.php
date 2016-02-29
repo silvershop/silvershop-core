@@ -3,10 +3,10 @@
 class CheckoutComponentTest extends SapphireTest
 {
     protected static $fixture_file = array(
-        'shop/tests/fixtures/Orders.yml',
-        'shop/tests/fixtures/Addresses.yml',
-        'shop/tests/fixtures/shop.yml',
-        'shop/tests/fixtures/ShopMembers.yml',
+        'silvershop/tests/fixtures/Orders.yml',
+        'silvershop/tests/fixtures/Addresses.yml',
+        'silvershop/tests/fixtures/shop.yml',
+        'silvershop/tests/fixtures/ShopMembers.yml',
     );
 
     public function setUp()
@@ -199,7 +199,7 @@ class CheckoutComponentTest extends SapphireTest
     public function testSinglePageConfigForSingleCountrySiteWithReadonlyFieldsForCountry()
     {
         // Set as a single country site
-        $this->loadFixture("shop/tests/fixtures/singlecountry.yml");
+        $this->loadFixture("silvershop/tests/fixtures/singlecountry.yml");
         $singlecountry = SiteConfig::current_site_config();
         $this->assertEquals(
             "NZ",

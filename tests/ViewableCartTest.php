@@ -2,7 +2,7 @@
 
 class ViewableCartTest extends SapphireTest
 {
-    public static $fixture_file  = 'shop/tests/fixtures/shop.yml';
+    public static $fixture_file  = 'silvershop/tests/fixtures/shop.yml';
     public static $disable_theme = true;
 
     function setUp()

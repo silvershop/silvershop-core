@@ -10,7 +10,7 @@
  */
 class ProductVariationVersionTest extends SapphireTest
 {
-    public static $fixture_file   = 'shop/tests/fixtures/variations.yml';
+    public static $fixture_file   = 'silvershop/tests/fixtures/variations.yml';
     public static $disable_theme  = true;
     public static $use_draft_site = true;
 

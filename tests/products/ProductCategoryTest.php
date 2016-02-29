@@ -2,7 +2,7 @@
 
 class ProductCategoryTest extends FunctionalTest
 {
-    public static $fixture_file  = 'shop/tests/fixtures/shop.yml';
+    public static $fixture_file  = 'silvershop/tests/fixtures/shop.yml';
     public static $disable_theme = true;
 
     public function setUp()

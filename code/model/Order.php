@@ -456,12 +456,7 @@ class Order extends DataObject
      */
     public function getShippingAddress()
     {
-        if ($address = $this->ShippingAddress()) {
-            return $address;
-        } elseif ($this->Member() && $address = $this->Member()->DefaultShippingAddress()) {
-            return $address;
-        }
-        return null;
+        return $this->getAddress('Shipping');
     }
 
     /**
@@ -472,12 +467,30 @@ class Order extends DataObject
     {
         if (!$this->SeparateBillingAddress && $this->ShippingAddressID === $this->BillingAddressID) {
             return $this->getShippingAddress();
-        } elseif ($address = $this->BillingAddress()) {
-            return $address;
-        } elseif ($this->Member() && $address = $this->Member()->DefaultBillingAddress()) {
-            return $address;
+        } else {
+            return $this->getAddress('Billing');
         }
-        return null;
+    }
+
+    /**
+     * @param string $type - Billing or Shipping
+     * @return Address
+     * @throws Exception
+     */
+    protected function getAddress($type)
+    {
+        $address = $this->getComponent($type . 'Address');
+
+        if (!$address || !$address->exists() && $this->Member()) {
+            $address = $this->Member()->{"Default${type}Address"}();
+        }
+
+        if (empty($address->Surname) && empty($address->FirstName)) {
+            $address->FirstName = $this->FirstName;
+            $address->Surname = $this->Surname;
+        }
+
+        return $address;
     }
 
     /**

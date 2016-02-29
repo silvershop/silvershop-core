@@ -2,7 +2,7 @@
 
 class ShoppingCartTest extends SapphireTest
 {
-    public static $fixture_file   = 'shop/tests/fixtures/shop.yml';
+    public static $fixture_file   = 'silvershop/tests/fixtures/shop.yml';
     public static $disable_theme  = true;
     public static $use_draft_site = false;
 
@@ -51,7 +51,7 @@ class ShoppingCartTest extends SapphireTest
 
     public function testProductVariations()
     {
-        $this->loadFixture('shop/tests/fixtures/variations.yml');
+        $this->loadFixture('silvershop/tests/fixtures/variations.yml');
         $ball1 = $this->objFromFixture('ProductVariation', 'redlarge');
         $ball2 = $this->objFromFixture('ProductVariation', 'redsmall');
 

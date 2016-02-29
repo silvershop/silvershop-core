@@ -34,9 +34,9 @@ before_script:
   - php ~/travis-support/travis_setup.php --source `pwd` --target ~/builds/ss
   - cd ~/builds/ss
 
-script: ./shop/tests/travis/run_build.sh
+script: ./silvershop/tests/travis/run_build.sh
 
-after_success: ./shop/tests/travis/upload_coverage.sh
+after_success: ./silvershop/tests/travis/upload_coverage.sh
 
 notifications:
   webhooks:

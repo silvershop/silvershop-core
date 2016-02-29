@@ -11,7 +11,7 @@ class CartPage extends Page
         'ContinuePage' => 'SiteTree',
     );
 
-    private static $icon    = 'shop/images/icons/cart';
+    private static $icon    = 'silvershop/images/icons/cart';
 
     /**
      * Returns the link to the checkout page on this site

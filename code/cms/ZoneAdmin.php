@@ -6,7 +6,7 @@ class ZoneAdmin extends ModelAdmin
 
     private static $url_segment    = "zones";
 
-    private static $menu_icon      = 'shop/images/icons/local-admin.png';
+    private static $menu_icon      = 'silvershop/images/icons/local-admin.png';
 
     private static $menu_priority  = 2;
 

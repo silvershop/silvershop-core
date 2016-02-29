@@ -11,7 +11,7 @@
  */
 class ProductImageTest extends SapphireTest
 {
-    protected static $fixture_file = 'shop/tests/fixtures/shop.yml';
+    protected static $fixture_file = 'silvershop/tests/fixtures/shop.yml';
     /**
      * Set to true in {@link self::setUp()} if we created the assets folder, so we know to remove it in
      * {@link self::tearDown()}.

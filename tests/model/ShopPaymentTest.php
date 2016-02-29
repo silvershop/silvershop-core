@@ -3,8 +3,8 @@
 class ShopPaymentTest extends FunctionalTest
 {
     protected static $fixture_file  = array(
-        'shop/tests/fixtures/Pages.yml',
-        'shop/tests/fixtures/shop.yml',
+        'silvershop/tests/fixtures/Pages.yml',
+        'silvershop/tests/fixtures/shop.yml',
     );
     public static    $disable_theme = true;
 
@@ -62,13 +62,13 @@ class ShopPaymentTest extends FunctionalTest
         $cart->write();
         //pay for order with external gateway
         $processor = OrderProcessor::create($cart);
-        $this->setMockHttpResponse('PaymentExpress/Mock/PxPayPurchaseSuccess.txt');
+        $this->setMockHttpResponse('paymentexpress/tests/Mock/PxPayPurchaseSuccess.txt');
         $response = $processor->makePayment("PaymentExpress_PxPay", array());
         //gateway responds (in a different session)
         $oldsession = $this->mainSession;
         $this->mainSession = new TestSession();
         ShoppingCart::singleton()->clear();
-        $this->setMockHttpResponse('PaymentExpress/Mock/PxPayCompletePurchaseSuccess.txt');
+        $this->setMockHttpResponse('paymentexpress/tests/Mock/PxPayCompletePurchaseSuccess.txt');
         $this->getHttpRequest()->query->replace(array('result' => 'abc123'));
         $identifier = $response->getPayment()->Identifier;
         $response = $this->get("paymentendpoint/$identifier/complete");
@@ -109,7 +109,7 @@ class ShopPaymentTest extends FunctionalTest
 
     protected function setMockHttpResponse($paths)
     {
-        $testspath = BASE_PATH . '/vendor/omnipay/omnipay/tests/Omnipay';
+        $testspath = BASE_PATH . '/vendor/omnipay';
         $mock = new Guzzle\Plugin\Mock\MockPlugin(null, true);
         $this->getHttpClient()->getEventDispatcher()->removeSubscriber($mock);
         foreach ((array)$paths as $path) {

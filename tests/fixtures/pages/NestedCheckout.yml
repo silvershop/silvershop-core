@@ -1,7 +1,7 @@
 Page:
     shop:
         Title: Shop
-        URLSegment: shop
+        URLSegment: myshop
 
 CheckoutPage:
     checkout:

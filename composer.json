@@ -1,5 +1,5 @@
 {
-	"name" : "burnbright/silverstripe-shop",
+	"name" : "silvershop/core",
 	"description" : "Provides an ecommerce product catalog, shopping cart, and order management system",
 	"license" : "BSD-2-Clause",
 	"type" : "silverstripe-module",
@@ -16,14 +16,19 @@
 	"require" : {
 		"silverstripe/cms": "~3.1",
 		"silverstripe/framework": "~3.1",
-		"burnbright/silverstripe-omnipay" : "~1.1",
+		"burnbright/silverstripe-omnipay" : "~1.1|~2.0",
 		"icecaster/versioned-gridfield": "~1.0",
 		"burnbright/silverstripe-listsorter": "~2.0",
 		"burnbright/silverstripe-sqlquerylist": "~1.0"
 	},
 	"require-dev": {
 		"guzzle/plugin-mock": "~3.1",
-		"phpunit/PHPUnit": "~3.7"
+        "omnipay/dummy": "~2.1",
+        "omnipay/paymentexpress": "~2.1",
+        "phpunit/phpunit": "~3.7"
+	},
+	"replace": {
+	    "burnbright/silverstripe-shop": "1.*"
 	},
 	"suggest" : {
 		"burnbright/silverstripe-shop-discount" : "Create coupons and generic discounts to be applied at checkout.",
@@ -36,17 +41,17 @@
 		"markguinn/silverstripe-shop-ajax": "Basic ajax behaviours for add to cart, etc"
 	},
 	"extra" : {
-		"installer-name": "shop",
-		"snapshot" : "https://raw.github.com/burnbright/silverstripe-shop/gh-pages/assets/screenshots/shipping%20estimate%20form.png",
+		"installer-name": "silvershop",
+		"snapshot" : "https://raw.github.com/silvershop/silvershop-core/gh-pages/assets/screenshots/shipping%20estimate%20form.png",
 		"branch-alias": {
 			"dev-master": "1.2.x-dev"
 		}
 	},
 	"support":{
-		"issues" : "https://github.com/burnbright/silverstripe-shop/issues",
-		"source" : "https://github.com/burnbright/silverstripe-shop",
+		"issues" : "https://github.com/silvershop/silvershop-core/issues",
+		"source" : "https://github.com/silvershop/silvershop-core",
 		"forum" : "http://www.silverstripe.org/e-commerce-module-forum",
-		"email" : "jeremy@burnbright.net",
+		"email" : "mark@adaircreative.com",
 		"docs" : "http://docs.ss-shop.org"
 	}
 }
