@@ -98,10 +98,16 @@ class OrderProcessor
         $shipping = $this->order->getShippingAddress();
         $billing = $this->order->getBillingAddress();
 
+        $numPayments = Payment::get()
+            ->filter(array('OrderID' => $this->order->ID))
+            ->count() - 1;
+
+        $transactionId = $this->order->Reference . ($numPayments > 0 ? "-$numPayments" : '');
+
         return array_merge(
             $customData,
             array(
-                'transactionId'    => $this->order->Reference,
+                'transactionId'    => $transactionId,
                 'firstName'        => $this->order->FirstName,
                 'lastName'         => $this->order->Surname,
                 'email'            => $this->order->Email,
