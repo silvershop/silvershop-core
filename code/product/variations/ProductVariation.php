@@ -15,6 +15,12 @@ class ProductVariation extends DataObject implements Buyable
     private static $db                = array(
         'InternalItemID' => 'Varchar(30)',
         'Price'          => 'Currency',
+
+        //physical properties
+        'Weight'    => 'Float',
+        'Height'    => 'Float',
+        'Width'     => 'Float',
+        'Depth'     => 'Float',
     );
 
     private static $has_one           = array(
@@ -118,6 +124,41 @@ class ProductVariation extends DataObject implements Buyable
         $fields->push(
             UploadField::create('Image', _t('Product.IMAGE', 'Product Image'))
         );
+
+        //physical measurements
+        $fields->push(
+            TextField::create(
+                'Weight',
+                sprintf(_t('Product.WEIGHT', 'Weight (%s)'), Product::config()->weight_unit),
+                '',
+                12
+            )
+        );
+        $fields->push(
+            TextField::create(
+                'Height',
+                sprintf(_t('Product.HEIGHT', 'Height (%s)'), Product::config()->length_unit),
+                '',
+                12
+            )
+        );
+        $fields->push(
+            TextField::create(
+                'Width',
+                sprintf(_t('Product.WIDTH', 'Width (%s)'), Product::config()->length_unit),
+                '',
+                12
+            )
+        );
+        $fields->push(
+            TextField::create(
+                'Depth',
+                sprintf(_t('Product.DEPTH', 'Depth (%s)'), Product::config()->length_unit),
+                '',
+                12
+            )
+        );
+
         $this->extend('updateCMSFields', $fields);
 
         return $fields;
@@ -301,5 +342,33 @@ class ProductVariation_OrderItem extends Product_OrderItem
             return $this->ProductVariation()->Image();
         }
         return $this->Product()->Image();
+    }
+
+    public function Width() {
+        if($this->ProductVariation()->Width) {
+            return $this->ProductVariation()->Width;
+        }
+        return $this->Product()->Width;
+    }
+
+    public function Height() {
+        if($this->ProductVariation()->Height) {
+            return $this->ProductVariation()->Height;
+        }
+        return $this->Product()->Height;
+    }
+
+    public function Depth() {
+        if($this->ProductVariation()->Depth) {
+            return $this->ProductVariation()->Depth;
+        }
+        return $this->Product()->Depth;
+    }
+
+    public function Weight() {
+        if($this->ProductVariation()->Weight) {
+            return $this->ProductVariation()->Weight;
+        }
+        return $this->Product()->Weight;
     }
 }

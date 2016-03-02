@@ -31,6 +31,8 @@ class OrderItemList extends HasManyList
             $quantity = ($field == "Quantity") ? 1 : $item->Quantity;
             if (!$onproduct) {
                 $total += $item->$field * $quantity;
+            } elseif ($item->hasMethod($field)) {
+                $total += $item->$field() * $quantity;
             } elseif ($product = $item->Product()) {
                 $total += $product->$field * $quantity;
             }
