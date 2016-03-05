@@ -212,12 +212,10 @@ class ProductVariation extends DataObject implements Buyable
             $allowpurchase =
                 ($this->sellingPrice() > 0 || Product::config()->allow_zero_price) && $product->AllowPurchase;
         }
-        $extended = $this->extendedCan('canPurchase', $member, $quantity);
-        if ($allowpurchase && $extended !== null) {
-            $allowpurchase = $extended;
-        }
 
-        return $allowpurchase;
+        $permissions = $this->extend('canPurchase', $member, $quantity);
+        $permissions[] = $allowpurchase;
+        return min($permissions);
     }
 
     /*
