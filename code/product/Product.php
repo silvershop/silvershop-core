@@ -284,6 +284,7 @@ class Product extends Page implements Buyable
         if ($extension && ProductVariation::get()->filter("ProductID", $this->ID)->first()
         ) {
             foreach ($this->Variations() as $variation) {
+                // TODO: 2.0, Remove exception handling
                 try {
                     if ($variation->canPurchase($member, $quantity)) {
                         $allowpurchase = true;
@@ -297,6 +298,7 @@ class Product extends Page implements Buyable
             // if not allowed to buy after any variations then raise the last
             // exception again
             if (!$allowpurchase && isset($e)) {
+                Deprecation::notice('2.0', 'Throwing exceptions from within canPurchase will be removed');
                 throw $e;
 
                 return false;
@@ -307,12 +309,9 @@ class Product extends Page implements Buyable
             }
         }
         // Standard mechanism for accepting permission changes from decorators
-        $extended = $this->extendedCan('canPurchase', $member, $quantity);
-        if ($allowpurchase && $extended !== null) {
-            $allowpurchase = $extended;
-        }
-
-        return $allowpurchase;
+        $permissions = $this->extend('canPurchase', $member, $quantity);
+        $permissions[] = $allowpurchase;
+        return min($permissions);
     }
 
     /**
