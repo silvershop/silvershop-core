@@ -14,10 +14,12 @@ class OrderItem extends OrderAttribute
         'Quantity'  => 'Int',
         'UnitPrice' => 'Currency',
     );
+
     private static $casting              = array(
         'UnitPrice' => 'Currency',
         'Total'     => 'Currency',
     );
+
     private static $searchable_fields    = array(
         'OrderID'    => array(
             'title' => 'Order ID',
@@ -30,6 +32,7 @@ class OrderItem extends OrderAttribute
         "Quantity",
         "Total",
     );
+
     private static $summary_fields       = array(
         "Order.ID"   => "Order ID",
         "TableTitle" => "Title",
@@ -37,10 +40,15 @@ class OrderItem extends OrderAttribute
         "Quantity"   => "Quantity",
         "Total"      => "Total Price",
     );
+
     private static $required_fields      = array();
+
     private static $buyable_relationship = "Product";
+
     private static $singular_name        = "Item";
+
     private static $plural_name          = "Items";
+
     private static $default_sort         = "\"Created\" DESC";
 
     /**

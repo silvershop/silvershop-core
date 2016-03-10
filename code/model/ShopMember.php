@@ -10,7 +10,8 @@ class ShopMember extends DataExtension
     private static $has_many = array(
         'AddressBook' => 'Address',
     );
-    private static $has_one = array(
+
+    private static $has_one  = array(
         'DefaultShippingAddress' => 'Address',
         'DefaultBillingAddress'  => 'Address',
     );

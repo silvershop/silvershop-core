@@ -9,9 +9,13 @@
 class FlatTaxModifier extends TaxModifier
 {
     private static $name            = "GST";
+
     private static $rate            = 0.15;
+
     private static $exclusive       = true;
+
     private static $includedmessage = "%.1f%% %s (inclusive)";
+
     private static $excludedmessage = "%.1f%% %s";
 
     public function populateDefaults()

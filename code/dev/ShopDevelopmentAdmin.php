@@ -8,7 +8,8 @@
  */
 class ShopDevelopmentAdmin extends Controller
 {
-    public static $url_handlers = array();
+    public static $url_handlers    = array();
+
     public static $allowed_actions = array(
         'index',
     );

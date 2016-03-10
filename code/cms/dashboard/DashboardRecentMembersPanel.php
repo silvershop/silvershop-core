@@ -10,7 +10,8 @@ if (class_exists('DashboardPanel')) {
     class DashboardRecentMembersPanel extends DashboardPanel
     {
         private static $exclude_status = array('Cart');
-        private static $db = array(
+
+        private static $db             = array(
             'Count' => 'Int',
         );
 

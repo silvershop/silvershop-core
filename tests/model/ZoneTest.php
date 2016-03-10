@@ -3,8 +3,8 @@
 class ZoneTest extends SapphireTest
 {
     public static $fixture_file = array(
-        'shop/tests/fixtures/Zones.yml',
-        'shop/tests/fixtures/Addresses.yml',
+        'silvershop/tests/fixtures/Zones.yml',
+        'silvershop/tests/fixtures/Addresses.yml',
     );
 
     public function testMatchingZones()

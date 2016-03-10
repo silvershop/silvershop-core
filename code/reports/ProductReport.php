@@ -3,8 +3,11 @@
 class ProductReport extends ShopPeriodReport
 {
     protected $title       = "Products";
+
     protected $description = "Understand which products are performing, and which aren't.";
+
     protected $dataClass   = "Product";
+
     protected $periodfield = "SiteTree.Created";
 
     public function columns()

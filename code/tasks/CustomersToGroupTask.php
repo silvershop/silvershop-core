@@ -9,6 +9,7 @@
 class CustomersToGroupTask extends BuildTask
 {
     protected $title       = "Customers to Group";
+
     protected $description = "Adds all customers to an assigned group.";
 
     public function run($request)
@@ -20,7 +21,7 @@ class CustomersToGroupTask extends BuildTask
         }
 
         $allCombos = DB::query(
-            "Select \"ID\", \"MemberID\", \"GroupID\" FROM \"Group_Members\" WHERE \"Group_Members\".\"GroupID\" = "
+            "SELECT \"ID\", \"MemberID\", \"GroupID\" FROM \"Group_Members\" WHERE \"Group_Members\".\"GroupID\" = "
             . $gp->ID . ";"
         );
         //make an array of all combos

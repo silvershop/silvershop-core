@@ -2,7 +2,7 @@
 
 class CheckoutFormTest extends SapphireTest
 {
-    public static $fixture_file = 'shop/tests/fixtures/shop.yml';
+    public static $fixture_file = 'silvershop/tests/fixtures/shop.yml';
 
     public function setUp()
     {
@@ -65,7 +65,7 @@ class CheckoutFormTest extends SapphireTest
     {
 
         // Set as a single country site
-        $this->loadFixture("shop/tests/fixtures/singlecountry.yml");
+        $this->loadFixture("silvershop/tests/fixtures/singlecountry.yml");
         $singlecountry = SiteConfig::current_site_config();
         $this->assertEquals(
             "NZ",

@@ -7,7 +7,7 @@
  */
 class ShoppingCartControllerTest extends FunctionalTest
 {
-    public static $fixture_file   = 'shop/tests/fixtures/shop.yml';
+    public static $fixture_file   = 'silvershop/tests/fixtures/shop.yml';
     public static $disable_theme  = true;
     public static $use_draft_site = false;
 
@@ -138,7 +138,7 @@ class ShoppingCartControllerTest extends FunctionalTest
 
     public function testVariations()
     {
-        $this->loadFixture('shop/tests/fixtures/variations.yml');
+        $this->loadFixture('silvershop/tests/fixtures/variations.yml');
         $ballRoot = $this->objFromFixture('Product', 'ball');
         $ballRoot->publish('Stage', 'Live');
         $ball1 = $this->objFromFixture('ProductVariation', 'redlarge');

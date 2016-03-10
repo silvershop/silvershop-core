@@ -11,7 +11,9 @@
 class CustomerReport extends ShopPeriodReport
 {
     protected $title       = "Customers";
+
     protected $dataClass   = "Member";
+
     protected $periodfield = "Order.Paid";
 
     public function columns()

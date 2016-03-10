@@ -12,9 +12,11 @@ class Zone extends DataObject
         'Name'        => 'Varchar',
         'Description' => 'Varchar',
     );
+
     private static $has_many       = array(
         'Regions' => 'ZoneRegion',
     );
+
     private static $summary_fields = array(
         'Name',
         'Description',

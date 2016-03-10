@@ -12,48 +12,69 @@
  */
 class ProductVariation extends DataObject implements Buyable
 {
-    private static $db = array(
+    private static $db                = array(
         'InternalItemID' => 'Varchar(30)',
         'Price'          => 'Currency',
+
+        //physical properties
+        'Weight'    => 'Float',
+        'Height'    => 'Float',
+        'Width'     => 'Float',
+        'Depth'     => 'Float',
     );
-    private static $has_one = array(
+
+    private static $has_one           = array(
         'Product' => 'Product',
         'Image'   => 'Image',
     );
-    private static $many_many = array(
+
+    private static $many_many         = array(
         'AttributeValues' => 'ProductAttributeValue',
     );
-    private static $casting = array(
+
+    private static $casting           = array(
         'Title' => 'Text',
         'Price' => 'Currency',
     );
-    private static $versioning = array(
+
+    private static $versioning        = array(
         'Live',
     );
-    private static $extensions = array(
+
+    private static $extensions        = array(
         "Versioned('Live')",
     );
-    private static $summary_fields = array(
+
+    private static $summary_fields    = array(
         'InternalItemID' => 'Product Code',
         //'Product.Title' => 'Product',
         'Title'          => 'Variation',
         'Price'          => 'Price',
     );
+
     private static $searchable_fields = array(
         'Product.Title',
         'InternalItemID',
     );
-    private static $indexes = array(
+
+    private static $indexes           = array(
         'InternalItemID' => true,
         'LastEdited'     => true,
     );
-    private static $singular_name = "Variation";
-    private static $plural_name = "Variations";
-    private static $default_sort = "InternalItemID";
-    private static $order_item = "ProductVariation_OrderItem";
-    private static $title_has_label = true;
-    private static $title_separator = ':';
-    private static $title_glue = ', ';
+
+    private static $singular_name     = "Variation";
+
+    private static $plural_name       = "Variations";
+
+    private static $default_sort      = "InternalItemID";
+
+    private static $order_item        = "ProductVariation_OrderItem";
+
+    private static $title_has_label   = true;
+
+    private static $title_separator   = ':';
+
+    private static $title_glue        = ', ';
 
     public function getCMSFields()
     {
@@ -103,6 +124,41 @@ class ProductVariation extends DataObject implements Buyable
         $fields->push(
             UploadField::create('Image', _t('Product.Image', 'Product Image'))
         );
+
+        //physical measurements
+        $fields->push(
+            TextField::create(
+                'Weight',
+                sprintf(_t('Product.WEIGHT', 'Weight (%s)'), Product::config()->weight_unit),
+                '',
+                12
+            )
+        );
+        $fields->push(
+            TextField::create(
+                'Height',
+                sprintf(_t('Product.HEIGHT', 'Height (%s)'), Product::config()->length_unit),
+                '',
+                12
+            )
+        );
+        $fields->push(
+            TextField::create(
+                'Width',
+                sprintf(_t('Product.WIDTH', 'Width (%s)'), Product::config()->length_unit),
+                '',
+                12
+            )
+        );
+        $fields->push(
+            TextField::create(
+                'Depth',
+                sprintf(_t('Product.DEPTH', 'Depth (%s)'), Product::config()->length_unit),
+                '',
+                12
+            )
+        );
+
         $this->extend('updateCMSFields', $fields);
 
         return $fields;
@@ -156,12 +212,10 @@ class ProductVariation extends DataObject implements Buyable
             $allowpurchase =
                 ($this->sellingPrice() > 0 || Product::config()->allow_zero_price) && $product->AllowPurchase;
         }
-        $extended = $this->extendedCan('canPurchase', $member, $quantity);
-        if ($allowpurchase && $extended !== null) {
-            $allowpurchase = $extended;
-        }
 
-        return $allowpurchase;
+        $permissions = $this->extend('canPurchase', $member, $quantity);
+        $permissions[] = $allowpurchase;
+        return min($permissions);
     }
 
     /*
@@ -241,12 +295,14 @@ class ProductVariation extends DataObject implements Buyable
  */
 class ProductVariation_OrderItem extends Product_OrderItem
 {
-    private static $db = array(
+    private static $db                   = array(
         'ProductVariationVersion' => 'Int',
     );
-    private static $has_one = array(
+
+    private static $has_one              = array(
         'ProductVariation' => 'ProductVariation',
     );
+
     private static $buyable_relationship = "ProductVariation";
 
     /**
@@ -284,5 +340,33 @@ class ProductVariation_OrderItem extends Product_OrderItem
             return $this->ProductVariation()->Image();
         }
         return $this->Product()->Image();
+    }
+
+    public function Width() {
+        if($this->ProductVariation()->Width) {
+            return $this->ProductVariation()->Width;
+        }
+        return $this->Product()->Width;
+    }
+
+    public function Height() {
+        if($this->ProductVariation()->Height) {
+            return $this->ProductVariation()->Height;
+        }
+        return $this->Product()->Height;
+    }
+
+    public function Depth() {
+        if($this->ProductVariation()->Depth) {
+            return $this->ProductVariation()->Depth;
+        }
+        return $this->Product()->Depth;
+    }
+
+    public function Weight() {
+        if($this->ProductVariation()->Weight) {
+            return $this->ProductVariation()->Weight;
+        }
+        return $this->Product()->Weight;
     }
 }

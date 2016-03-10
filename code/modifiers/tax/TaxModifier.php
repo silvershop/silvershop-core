@@ -5,13 +5,16 @@
  */
 class TaxModifier extends OrderModifier
 {
-    private static $db = array(
+    private static $db            = array(
         'Rate' => 'Double',
     );
-    private static $defaults = array(
+
+    private static $defaults      = array(
         'Rate' => 0.15 //15% tax
     );
+
     private static $singular_name = "Tax";
+
     private static $plural_name   = "Taxes";
 
     public function TableTitle()

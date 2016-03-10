@@ -9,26 +9,33 @@
  */
 class ProductAttributeType extends DataObject
 {
-    private static $db = array(
+    private static $db                = array(
         'Name'  => 'Varchar', //for back-end use
         'Label' => 'Varchar' //for front-end use
     );
-    private static $has_many = array(
+
+    private static $has_many          = array(
         'Values' => 'ProductAttributeValue',
     );
+
     private static $belongs_many_many = array(
         'Product' => 'Product',
     );
-    private static $summary_fields = array(
+
+    private static $summary_fields    = array(
         'Name'  => 'Name',
         'Label' => 'Label',
     );
-    private static $indexes = array(
+
+    private static $indexes           = array(
         'LastEdited' => true,
     );
-    private static $default_sort  = "ID ASC";
-    private static $singular_name = "Attribute";
-    private static $plural_name   = "Attributes";
+
+    private static $default_sort      = "ID ASC";
+
+    private static $singular_name     = "Attribute";
+
+    private static $plural_name       = "Attributes";
 
     public static function find_or_make($name)
     {

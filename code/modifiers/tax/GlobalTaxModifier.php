@@ -9,9 +9,10 @@
  */
 class GlobalTaxModifier extends TaxModifier
 {
-    private static $db = array(
+    private static $db            = array(
         'Country' => 'Varchar',
     );
+
     private static $country_rates = array();
 
     public function value($incoming)

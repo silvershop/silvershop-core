@@ -25,7 +25,7 @@
  */
 class Address extends DataObject
 {
-    private static $db = array(
+    private static $db              = array(
         'Country'    => 'ShopCountry',
         //level1: Country = ISO 2-character country code
         'State'      => 'Varchar(100)',
@@ -48,19 +48,23 @@ class Address extends DataObject
         'Surname'   => 'Varchar(100)',
         'Phone'     => 'Varchar(100)',
     );
-    private static $has_one = array(
+
+    private static $has_one         = array(
         'Member' => 'Member',
     );
-    private static $casting = array(
+
+    private static $casting         = array(
         'Country' => 'ShopCountry',
     );
+
     private static $required_fields = array(
         'Country',
         'State',
         'City',
         'Address',
     );
-    private static $summary_fields = array(
+
+    private static $summary_fields  = array(
         'toString' => 'Address',
     );
 

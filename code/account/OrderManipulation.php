@@ -13,6 +13,7 @@ class OrderManipulation extends Extension
         'ActionsForm',
         'order',
     );
+
     private static $sessname        = "OrderManipulation.historicalorders";
 
     /**
@@ -138,6 +139,7 @@ class OrderManipulation extends Extension
     }
 
     protected $sessionmessage;
+
     protected $sessionmessagetype = null;
 
     public function setSessionMessage($message = "success", $type = "good")

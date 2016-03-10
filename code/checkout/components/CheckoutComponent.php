@@ -15,6 +15,7 @@
 abstract class CheckoutComponent extends Object
 {
     protected $requiredfields = array();
+
     protected $dependson      = array();
 
     /**

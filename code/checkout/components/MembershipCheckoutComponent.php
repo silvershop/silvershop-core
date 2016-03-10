@@ -10,7 +10,9 @@
 class MembershipCheckoutComponent extends CheckoutComponent
 {
     protected $confirmed;
+
     protected $passwordvalidator;
+
     protected $dependson = array(
         'CustomerDetailsCheckoutComponent',
     );

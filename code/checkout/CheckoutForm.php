@@ -3,6 +3,7 @@
 class CheckoutForm extends Form
 {
     protected $config;
+
     protected $redirectlink;
 
     public function __construct($controller, $name, CheckoutComponentConfig $config)

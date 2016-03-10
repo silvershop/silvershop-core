@@ -1,6 +1,6 @@
 ---
 Name: app
-After: framework/routes#coreroutes
+After: shop/config#shopconfig
 ---
 Email:
   admin_email: example@example.com

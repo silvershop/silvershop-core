@@ -9,6 +9,7 @@
 class RecalculateAllOrdersTask extends BuildTask
 {
     protected $title       = "Recalculate All Orders";
+
     protected $description = "Runs all price calculation functions on all orders.";
 
     public function run($request)

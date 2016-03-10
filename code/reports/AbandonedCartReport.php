@@ -10,9 +10,13 @@
 class AbandonedCartReport extends ShopPeriodReport
 {
     protected $title       = "Abandoned Carts";
+
     protected $description = "Monitor abandoned carts for a particular period. Group results by year, month, or day.";
+
     protected $dataClass   = "Order";
+
     protected $periodfield = "\"Order\".\"Created\"";
+
     protected $grouping    = true;
 
     public function columns()

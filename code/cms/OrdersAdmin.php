@@ -8,10 +8,14 @@
  */
 class OrdersAdmin extends ModelAdmin
 {
-    private static $url_segment   = 'orders';
-    private static $menu_title    = 'Orders';
-    private static $menu_priority = 1;
-    private static $menu_icon     = 'shop/images/icons/order-admin.png';
+    private static $url_segment    = 'orders';
+
+    private static $menu_title     = 'Orders';
+
+    private static $menu_priority  = 1;
+
+    private static $menu_icon      = 'silvershop/images/icons/order-admin.png';
+
     private static $managed_models = array(
         'Order' => array(
             'title' => 'Orders',

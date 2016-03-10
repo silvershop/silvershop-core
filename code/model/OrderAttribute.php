@@ -11,13 +11,17 @@
 class OrderAttribute extends DataObject
 {
     private static $singular_name = "Attribute";
+
     private static $plural_name   = "Attributes";
+
     private static $db            = array(
         'CalculatedTotal' => 'Currency',
     );
+
     private static $has_one       = array(
         'Order' => 'Order',
     );
+
     private static $casting       = array(
         'TableTitle' => 'Text',
         'CartTitle'  => 'Text',

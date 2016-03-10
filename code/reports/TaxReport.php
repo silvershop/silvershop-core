@@ -10,9 +10,13 @@
 class TaxReport extends ShopPeriodReport
 {
     protected $title       = "Tax";
+
     protected $description = "Report tax charged on orders. Only includes orders that have been paid.";
+
     protected $dataClass   = "Order";
+
     protected $periodfield = "\"Order\".\"Paid\"";
+
     protected $grouping    = true;
 
     public function columns()

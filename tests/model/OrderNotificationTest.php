@@ -7,7 +7,7 @@
  */
 class OrderNotificationTest extends SapphireTest
 {
-    protected static $fixture_file = 'shop/tests/fixtures/shop.yml';
+    protected static $fixture_file = 'silvershop/tests/fixtures/shop.yml';
     /** @var Order */
     protected $order;
     /** @var OrderEmailNotifier */

@@ -3,6 +3,7 @@
 class CreateInternationalZoneTask extends BuildTask
 {
     protected $title       = "Create International Zone";
+
     protected $description = 'Quickly creates an international zone, based on all available countries.';
 
     public function run($request)

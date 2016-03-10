@@ -8,8 +8,11 @@
 class CartEditField extends FormField
 {
     protected $cart;
+
     protected $items;
+
     protected $template = "Cart";
+
     protected $editableItemsCallback;
 
     public function __construct($name, $title, $cart)

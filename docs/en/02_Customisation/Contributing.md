@@ -34,9 +34,8 @@ We use [Github Flow](https://guides.github.com/introduction/flow/) which basical
 ### Branches
 
 * `master` will always be the newest development. Use it for more PR's.
-* `develop-2.0` is kept up to date with master but also contains breaking changes for the upcoming 2.0 release. Only
-   base your work on this branch if it definitely includes a backwards-incompatible change. This branch will probably
-   be renamed just "2.0" in the near future.
+* `2.0` is kept up to date with master but also contains breaking changes for the upcoming 2.0 release. Only
+   base your work on this branch if it definitely includes a backwards-incompatible change.
 
 ### Releases
 

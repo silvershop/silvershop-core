@@ -12,6 +12,7 @@
 class PopulateShopTask extends BuildTask
 {
     protected $title       = "Populate Shop";
+
     protected $description = 'Creates dummy account page, products, checkout page, terms page.';
 
     public function run($request)

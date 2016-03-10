@@ -8,7 +8,7 @@
  */
 class OrderProcessorTest extends SapphireTest
 {
-    protected static $fixture_file   = 'shop/tests/fixtures/shop.yml';
+    protected static $fixture_file   = 'silvershop/tests/fixtures/shop.yml';
     protected static $disable_theme  = true;
     protected static $use_draft_site = true;
     protected $processor;

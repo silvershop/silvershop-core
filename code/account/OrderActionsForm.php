@@ -8,15 +8,19 @@
  */
 class OrderActionsForm extends Form
 {
-    private static $allowed_actions = array(
+    private static $allowed_actions    = array(
         'docancel',
         'dopayment',
         'httpsubmission',
     );
+
     private static $email_notification = false;
+
     private static $allow_paying       = true;
+
     private static $allow_cancelling   = true;
-    protected $order;
+
+    protected      $order;
 
     public function __construct($controller, $name, Order $order)
     {

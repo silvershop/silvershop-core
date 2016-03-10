@@ -8,7 +8,7 @@
  */
 class AccountPage extends Page
 {
-    private static $icon = 'shop/images/icons/account';
+    private static $icon = 'silvershop/images/icons/account';
 
     public function canCreate($member = null, $context = array())
     {
@@ -71,6 +71,7 @@ class AccountPage extends Page
 class AccountPage_Controller extends Page_Controller
 {
     private static $url_segment     = 'account';
+
     private static $allowed_actions = array(
         'addressbook',
         'CreateAddressForm',
@@ -80,7 +81,8 @@ class AccountPage_Controller extends Page_Controller
         'ChangePasswordForm',
         'changepassword', // redirects to editprofile
     );
-    protected $member;
+
+    protected      $member;
 
     public function init()
     {

@@ -10,7 +10,8 @@ class CartPage extends Page
         'CheckoutPage' => 'CheckoutPage',
         'ContinuePage' => 'SiteTree',
     );
-    private static $icon = 'shop/images/icons/cart';
+
+    private static $icon    = 'silvershop/images/icons/cart';
 
     /**
      * Returns the link to the checkout page on this site
@@ -80,6 +81,7 @@ class CartPage extends Page
 class CartPage_Controller extends Page_Controller
 {
     private static $url_segment     = 'cart';
+
     private static $allowed_actions = array(
         "CartForm",
         "updatecart",

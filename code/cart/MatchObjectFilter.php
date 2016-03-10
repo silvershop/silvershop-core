@@ -35,7 +35,9 @@
 class MatchObjectFilter
 {
     protected $className;
+
     protected $data;
+
     protected $required;
 
     /**

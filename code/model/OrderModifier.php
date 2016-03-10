@@ -15,12 +15,15 @@ class OrderModifier extends OrderAttribute
         'Type'   => "Enum('Chargable,Deductable,Ignored','Chargable')",
         'Sort'   => 'Int',
     );
+
     private static $defaults          = array(
         'Type' => 'Chargable',
     );
+
     private static $casting           = array(
         'TableValue' => 'Currency',
     );
+
     private static $searchable_fields = array(
         'OrderID'    => array(
             'title' => 'Order ID',
@@ -32,7 +35,9 @@ class OrderModifier extends OrderAttribute
         "Amount",
         "Type",
     );
+
     private static $field_labels      = array();
+
     private static $summary_fields    = array(
         "Order.ID"   => "Order ID",
         "TableTitle" => "Table Title",
@@ -40,8 +45,11 @@ class OrderModifier extends OrderAttribute
         "Amount"     => "Amount",
         "Type"       => "Type",
     );
+
     private static $singular_name     = "Modifier";
+
     private static $plural_name       = "Modifiers";
+
     private static $default_sort      = "\"OrderModifier\".\"Sort\" ASC, \"Created\" ASC";
 
     /**

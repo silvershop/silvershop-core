@@ -3,9 +3,13 @@
 class ShopQuantityField extends ViewableData
 {
     protected $item;
+
     protected $parameters;
+
     protected $classes  = array('ajaxQuantityField');
+
     protected $template = 'ShopQuantityField';
+
     protected $buyable;
 
     public function __construct($object, $parameters = null)
@@ -114,6 +118,7 @@ class ShopQuantityField extends ViewableData
 class DropdownShopQuantityField extends ShopQuantityField
 {
     protected $template = 'DropdownShopQuantityField';
+
     protected $max      = 100;
 
     public function Field()

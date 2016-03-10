@@ -2,7 +2,7 @@
 
 class NestedCheckoutTest extends SapphireTest
 {
-    public static $fixture_file = 'shop/tests/fixtures/pages/NestedCheckout.yml';
+    public static $fixture_file = 'silvershop/tests/fixtures/pages/NestedCheckout.yml';
 
     public function setUp()
     {
@@ -12,9 +12,9 @@ class NestedCheckoutTest extends SapphireTest
 
     public function testNestedCheckoutForm()
     {
-
+        // NOTE: the "myshop" here comes from the fixtures
         $this->assertEquals(
-            Director::baseURL() . 'shop/checkout/',
+            Director::baseURL() . 'myshop/checkout/',
             CheckoutPage::find_link(),
             'Link is: ' . CheckoutPage::find_link()
         );
