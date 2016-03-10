@@ -40,17 +40,38 @@ class ShopAccountForm extends Form {
 	/**
 	 * Save the changes to the form
 	 */
-	public function submit($data, $form, $request) {
-		$member = Member::currentUser();
-		if(!$member) return false;
+    public function submit($data, $form, $request)
+    {
+        $currentmember = Member::currentUser();
+        if (!$currentmember) {
+            return false;
+        }
 
-		$form->saveInto($member);
-		$member->write();
-		$form->sessionMessage(_t("MemberForm.DETAILSSAVED", 'Your details have been saved'), 'good');
+        $idfield = Member::get_unique_identifier_field();
+        $idval = $data[$idfield];
+        $current_identifier = $currentmember->$idfield;
 
-		Controller::curr()->redirectBack();
-		return true;
-	}
+        if(DataObject::get_one('Member', "$idfield = '$idval' AND $idfield != '$current_identifier'")){
+            // Get localized field labels
+            $fieldLabels = $currentmember->fieldLabels(false);
+            // If a localized value exists, use this for our error-message
+            $fieldLabel = isset($fieldLabels[$idfield]) ? $fieldLabels[$idfield] : $idfield;
+
+            $form->sessionMessage(sprintf(
+                _t("Checkout.MEMBEREXISTS", "A member already exists with the %s %s"),
+                $fieldLabel,
+                $idval
+            ), 'bad');
+        } else {
+            $form->saveInto($currentmember);
+            $currentmember->write();
+            $form->sessionMessage(_t("MemberForm.DETAILSSAVED", 'Your details have been saved'), 'good');
+        }
+
+        $this->extend('updateShopAccountFormResponse', $request, $form, $data, $response);
+
+        return $response ?: $this->getController()->redirectBack();
+    }
 
 	/**
 	 * Save the changes to the form, and redirect to the checkout page
