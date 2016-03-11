@@ -35,7 +35,7 @@ See `composer.json` for exact set of dependencies.
 To install silverstripe + shop into a directory called 'myshop', using [composer](http://doc.silverstripe.org/framework/en/installation/composer), run the following commands:
 ```
 composer create-project silverstripe/installer myshop
-composer require -d myshop "silvershop/silvershop-core:dev-master"
+composer require -d myshop "silvershop/core:dev-master"
 ```
 
 ### Build Tasks
