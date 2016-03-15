@@ -1,6 +1,6 @@
 ---
 Name: app
-After: shop/config#shopconfig
+After: silvershop/config#shopconfig
 ---
 Email:
   admin_email: example@example.com
