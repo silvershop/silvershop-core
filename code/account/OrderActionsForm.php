@@ -83,7 +83,7 @@ class OrderActionsForm extends Form
             );
         }
         parent::__construct($controller, $name, $fields, $actions);
-        $this->extend("updateForm");
+        $this->extend("updateForm", $order);
     }
 
     /**
