@@ -107,7 +107,7 @@ class PaymentForm extends CheckoutForm
         if ($components->first() instanceof CheckoutComponent_Namespaced) {
             foreach ($components as $component) {
                 if ($component->Proxy() instanceof OnsitePaymentCheckoutComponent) {
-                    $data = $component->unnamespaceData($data);
+                    $data = array_merge($data, $component->unnamespaceData($data));
                 }
             }
         }
