@@ -1,4 +1,6 @@
-<% require themedCSS(account,shop) %>
+<% require css("silvershop/css/account.css") %>
+<% require themedCSS("shop") %>
+<% require themedCSS("account") %>
 <% include AccountNavigation %>
 <div class="typography">
 	<% if $Order %>
