@@ -19,6 +19,8 @@ class AccountPage extends Page
      * Returns the link or the URLSegment to the account page on this site
      *
      * @param boolean $urlSegment Return the URLSegment only
+     *
+     * @return mixed
      */
     public static function find_link($urlSegment = false)
     {
@@ -31,6 +33,8 @@ class AccountPage extends Page
      *
      * @param int|string $orderID    ID of the order
      * @param boolean    $urlSegment Return the URLSegment only
+     *
+     * @return string
      */
     public static function get_order_link($orderID, $urlSegment = false)
     {
@@ -38,12 +42,16 @@ class AccountPage extends Page
         return ($urlSegment ? $page->URLSegment . '/' : $page->Link()) . 'order/' . $orderID;
     }
 
+    /**
+     * @return AccountPage
+     */
     protected static function get_if_account_page_exists()
     {
         if ($page = DataObject::get_one('AccountPage')) {
             return $page;
         }
         user_error(_t('AccountPage.NoPage', 'No AccountPage was found. Please create one in the CMS!'), E_USER_ERROR);
+        return null; // just to keep static analysis happy
     }
 
     /**
@@ -53,6 +61,7 @@ class AccountPage extends Page
     {
         parent::requireDefaultRecords();
         if (!self::get()->exists() && $this->config()->create_default_pages) {
+            /** @var AccountPage $page */
             $page = self::create(
                 array(
                     'Title'       => 'Account',
@@ -80,9 +89,13 @@ class AccountPage_Controller extends Page_Controller
         'EditAccountForm',
         'ChangePasswordForm',
         'changepassword', // redirects to editprofile
+        'deleteaddress',
+        'setdefaultbilling',
+        'setdefaultshipping',
     );
 
-    protected      $member;
+    /** @var Member|ShopMember */
+    protected $member;
 
     public function init()
     {
@@ -102,9 +115,9 @@ class AccountPage_Controller extends Page_Controller
                 ),
             );
             Security::permissionFailure($this, $messages);
-            return false;
+        } else {
+            $this->member = Member::currentUser();
         }
-        $this->member = Member::currentUser();
     }
 
     public function getTitle()
@@ -211,6 +224,47 @@ class AccountPage_Controller extends Page_Controller
     public function editprofile()
     {
         return array();
+    }
+
+    /**
+     * @param SS_HTTPRequest $req
+     * @return SS_HTTPResponse
+     */
+    function deleteaddress($req)
+    {
+        // NOTE: we don't want to fully delete the address because it's presumably still
+        // attached to an order. Setting MemberID to 0 means it won't show up in the address
+        // book any longer.
+        $address = $this->member->AddressBook()->byID($req->param('ID'));
+        if ($address) {
+            $address->MemberID = 0;
+            $address->write();
+        } else {
+            $this->httpError(404, 'Address not found');
+        }
+        return $this->redirectBack();
+    }
+
+    /**
+     * @param SS_HTTPRequest $req
+     * @return SS_HTTPResponse
+     */
+    function setdefaultbilling($req)
+    {
+        $this->member->DefaultBillingAddressID = $req->param('ID');
+        $this->member->write();
+        return $this->redirectBack();
+    }
+
+    /**
+     * @param SS_HTTPRequest $req
+     * @return SS_HTTPResponse
+     */
+    function setdefaultshipping($req)
+    {
+        $this->member->DefaultShippingAddressID = $req->param('ID');
+        $this->member->write();
+        return $this->redirectBack();
     }
 
     /**
