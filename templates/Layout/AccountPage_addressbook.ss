@@ -1,10 +1,14 @@
-<% require themedCSS(account,shop) %>
+<% require css("silvershop/css/account.css") %>
+<% require themedCSS("shop") %>
+<% require themedCSS("account") %>
+
 <% include AccountNavigation %>
 
 <div class="typography">
     <h2 class="pagetitle">
         <%t AccountPage_AddressBook.Title 'Default Addresses' %>
     </h2>
+    <%-- If you want the old dropdown system back you can just use $DefaultAddressForm here instead --%>
     <% if $CurrentMember.AddressBook %>
         <% loop $CurrentMember.AddressBook %>
             <div class="panel radius address-panel $EvenOdd">
@@ -19,25 +23,25 @@
                     </span>
                 <% end_if %>
                 <div class="panel-body">
-                    <% include $Address %>
+                    <% include Address %>
                 </div>
-                <div class="panel-footer">
+                <div class="panel-footer cf">
                     <% if $ID != $CurrentMember.DefaultShippingAddressID %>
                         <a title="<%t AccountPage_AddressBook.MakeDefaultShippingTitle 'Make this my default shipping address' %>"
-                           href="/account/setdefaultshipping/{$ID}" class="btn">
+                           href="account/setdefaultshipping/{$ID}" class="btn">
                             <%t AccountPage_AddressBook.MakeDefaultShipping 'Make Default Shipping' %>
                         </a>
                     <% end_if %>
                     <% if $ID != $CurrentMember.DefaultBillingAddressID %>
                         <a title="<%t AccountPage_AddressBook.MakeDefaultBillingTitle 'Make this my default billing address' %>"
-                           href="/account/setdefaultbilling/{$ID}" class="btn">
+                           href="account/setdefaultbilling/{$ID}" class="btn">
                             <%t AccountPage_AddressBook.MakeDefaultBilling 'Make Default Billing' %>
                         </a>
                     <% end_if %>
-                    <a href="/account/deleteaddress/{$ID}"
-                       class="right remove-address"
+                    <a href="account/deleteaddress/{$ID}"
+                       class="remove-address"
                        title="<%t AccountPage_AddressBook.DeleteAddress 'Delete this address' %>">
-                        <img src="/silvershop/images/remove.gif" alt="X">
+                        <img src="silvershop/images/remove.gif" alt="X">
                     </a>
                 </div>
             </div>

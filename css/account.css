@@ -25,3 +25,75 @@ table.orderhistory {
 #ChangePasswordForm_ChangePasswordForm {
     margin-left: 5%;
 }
+
+
+/* address book panels ************************************************************/
+.AccountPage h2 {
+    clear: left;
+}
+
+.address-panel {
+    position: relative;
+    float: left;
+    width: 48%;
+    background: #eee;
+    border: 1px solid #ccc;
+    border-radius:2px;
+    padding: 20px;
+    margin-bottom: 5px;
+}
+.address-panel.odd {
+    margin-right:2%;
+}
+
+.address-panel .panel-body {
+    font-size:14px;
+    line-height:17px;
+}
+.address-panel .panel-footer {
+    border-top: 1px solid #d9d9d9;
+    padding: 8px 20px;
+    bottom: 0px;
+    margin: 15px -20px -20px;
+}
+
+/*@include clearfix;*/
+.cf:before,
+.cf:after {
+    content: " "; /* 1 */
+    display: table; /* 2 */
+}
+.cf:after {
+    clear: both;
+}
+
+.address-panel .panel-footer .btn {
+    line-height: 32px;
+    padding: 0 9px;
+    font-size: 10px;
+    margin: 0 9px 0 0;
+}
+
+.address-panel .remove-address {
+    float: right;
+    line-height: 32px;
+    border:none;
+}
+
+.address-panel .remove-address img {
+    background: none;
+    border: none;
+}
+
+.address-panel .tag {
+    position: relative;
+    top: -21px;
+    background: #f7931e;
+    color: white;
+    font-size: 10px;
+    padding: 4px 10px;
+    border-radius: 0 0 2px 2px;
+    float: right;
+    right: -10px;
+    margin-left: 10px;
+}
