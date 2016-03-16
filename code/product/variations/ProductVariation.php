@@ -20,46 +20,46 @@ class ProductVariation extends DataObject implements Buyable
         'Weight'    => 'Float',
         'Height'    => 'Float',
         'Width'     => 'Float',
-        'Depth'     => 'Float',
+        'Depth'     => 'Float'
     );
 
     private static $has_one           = array(
         'Product' => 'Product',
-        'Image'   => 'Image',
+        'Image'   => 'Image'
     );
 
     private static $many_many         = array(
-        'AttributeValues' => 'ProductAttributeValue',
+        'AttributeValues' => 'ProductAttributeValue'
     );
 
     private static $casting           = array(
         'Title' => 'Text',
-        'Price' => 'Currency',
+        'Price' => 'Currency'
     );
 
     private static $versioning        = array(
-        'Live',
+        'Live'
     );
 
     private static $extensions        = array(
-        "Versioned('Live')",
+        "Versioned('Live')"
     );
 
     private static $summary_fields    = array(
         'InternalItemID' => 'Product Code',
         //'Product.Title' => 'Product',
         'Title'          => 'Variation',
-        'Price'          => 'Price',
+        'Price'          => 'Price'
     );
 
     private static $searchable_fields = array(
         'Product.Title',
-        'InternalItemID',
+        'InternalItemID'
     );
 
     private static $indexes           = array(
         'InternalItemID' => true,
-        'LastEdited'     => true,
+        'LastEdited'     => true
     );
 
     private static $singular_name     = "Variation";
@@ -125,35 +125,44 @@ class ProductVariation extends DataObject implements Buyable
             UploadField::create('Image', _t('Product.Image', 'Product Image'))
         );
 
+        //physical measurement units
+        $fieldSubstitutes = array(
+            'LengthUnit' => Product::config()->length_unit,
+            'WeightUnit' => Product::config()->weight_unit,
+        );
+
         //physical measurements
         $fields->push(
             TextField::create(
                 'Weight',
-                sprintf(_t('Product.WEIGHT', 'Weight (%s)'), Product::config()->weight_unit),
+                _t('Product.WeightWithUnit', 'Weight ({WeightUnit})', '', $fieldSubstitutes),
                 '',
                 12
             )
         );
+
         $fields->push(
             TextField::create(
                 'Height',
-                sprintf(_t('Product.HEIGHT', 'Height (%s)'), Product::config()->length_unit),
+                _t('Product.HeightWithUnit', 'Height ({LengthUnit})', '', $fieldSubstitutes),
                 '',
                 12
             )
         );
+
         $fields->push(
             TextField::create(
                 'Width',
-                sprintf(_t('Product.WIDTH', 'Width (%s)'), Product::config()->length_unit),
+                _t('Product.WidthWithUnit', 'Width ({LengthUnit})', '', $fieldSubstitutes),
                 '',
                 12
             )
         );
+
         $fields->push(
             TextField::create(
                 'Depth',
-                sprintf(_t('Product.DEPTH', 'Depth (%s)'), Product::config()->length_unit),
+                _t('Product.DepthWithUnit', 'Depth ({LengthUnit})', '', $fieldSubstitutes),
                 '',
                 12
             )
