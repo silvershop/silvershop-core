@@ -1,0 +1,654 @@
+---
+de:
+  AccountNavigation:
+    AddressBook: Adressbuch
+    EditProfile: "Nutzerprofil bearbeiten"
+    LogOut: Abmelden
+    MemberEmail: E-Mail
+    MemberLastVisit: "Letzte Anmeldung"
+    MemberName: Name
+    MemberSince: "Kunde seit"
+    NumberOfOrders: "Anzahl der Bestellungen"
+    PastOrders: "Frühere Bestellungen"
+    Title: "Mein Kundenkonto"
+  AccountPage:
+    DESCRIPTION: "Kundenkonto-Seite"
+    LOGIN: "Sie müssen sich einloggen, um auf Ihr Konto zugreifen zu können. Wenn Sie nicht als Kunde registriert sind, können Sie sich hier nicht anmelden bis Sie Ihre erste Bestellung getätigt haben."
+    LOGINAGAIN: "Sie sind abgemeldet. Wen Sie sich wieder anmelden möchten, können Sie es weiter unten tun."
+    Message: "Sie müssen sich einloggen um auf Ihr Konto zugreifen zu können. Falls Sie nicht registriert sind, können Sie erst nach Ihrer ersten Bestellung auf Ihr Konto zugreifen. Fall Sie bereits registriert sind, geben Sie folgend Ihre Daten ein."
+    NOPAGE: "Keine Kundenkonto-Seite auf dieser Website - erstellen Sie bitte eine!"
+    NoPastOrders: "Keine früheren Bestellungen gefunden."
+    PLURALNAME: Kundenkontos
+    SINGULARNAME: Kundenkonto
+    Title: "Frühere Bestellungen"
+    NO_PAGE: "Es wurde keine Kundenkonto-Seite gefunden. Bitte erstellen Sie eine im CMS!"
+  AccountPage.ss:
+    COMPLETED: "Abgeschlossene Bestellungen"
+    HISTORY: "Ihr Bestellhistorie"
+    INCOMPLETE: "Offene Bestellungen"
+    NOCOMPLETED: "Es konnten keine abgeschlossenen Bestellungen gefunden werden."
+    NOINCOMPLETE: "Es konnten keine offenen Bestellungen gefunden werden."
+    ORDER: Bestellung
+    READMORE: "Zur Detail-Ansicht der Bestellung #%s"
+  AccountPage_AddressBook:
+    CreateNewTitle: "Neue Adresse eingeben"
+    NoAddress: "Keine Adresse gefunden."
+    Title: Standardadresse
+  AccountPage_EditProfile:
+    Title: "Nutzerprofil bearbeiten"
+  AccountPage_order.ss:
+    ADDRESS: Adresse
+    AMOUNT: Menge
+    BACKTOCHECKOUT: "Klicken Sie hier um zur Kasse zu gelangen"
+    CITY: Stadt
+    COUNTRY: Land
+    DATE: Datum
+    DETAILS: Details
+    EMAILDETAILS: "Zur Bestätigung Ihrer Bestellung wurde eine Kopie an Ihre E-Mail Adresse geschickt."
+    NAME: Name
+    PAYMENTMETHOD: Bezahlmethode
+    PAYMENTSTATUS: "Status der Zahlung"
+  AddProductForm:
+    ADDTOCART: "In den Warenkorb"
+    Quantity: Menge
+  Address:
+    ADDRESS: Adresse
+    ADDRESS2HINT: "Gebäude, Wohnung, Etage, Zimmer,..."
+    ADDRESSHINT: "Straße und Nr."
+    ADDRESSLINE2: " "
+    BillingAddress: Rechnungsadresse
+    CITY: Stadt
+    CITYHINT: ""
+    COUNTRY: Land
+    PHONE: Telefonnummer
+    PLURALNAME: Adressen
+    POSTALCODE: Postleitzahl
+    SINGULARNAME: Adresse
+    STATE: "Staat"
+    STATEHINT: "…oder Provinz, Gemeinde, Kanton, Insel"
+    SaveDefaults: "Standards speichern"
+    SaveNew: "Neue Adresse speichern"
+    ShippingAddress: Lieferadresse
+    db_Address: Adresse
+    db_AddressLine2: " "
+    db_City: Stadt
+    db_Company: Firma
+    db_Country: Land
+    db_FirstName: Vorname
+    db_Latitude: Breitengrad
+    db_Longitude: Längengrad
+    db_Phone: Telefonnummer
+    db_PostalCode: Postleitzahl
+    db_State: "Staat"
+    db_Surname: Nachname
+    has_one_Member: Kunde
+  AddressBookCheckoutComponent:
+    CREATENEWADDRESS: "Adresse ändern"
+    EXISTING_BILLING_ADDRESS: "Vorhandene Rechnungsadresse"
+    EXISTING_SHIPPING_ADDRESS: "Vorhandene Lieferadresse"
+    EXISTING_ADDRESS: "Vorhandene Adresse"
+  Cart.ss:
+    ADDONE: "Eines oder mehr von \"%s\" zum Warenkorb hinzufügen"
+    CheckoutClick: "Hier klicken um zur Kasse zu gelangen"
+    CheckoutGoTo: "Zur Kasse"
+    HEADLINE: "Mein Warenkorb"
+    NOITEMS: "In Ihrem Warenkorb befinden sich zur Zeit keine Artikel"
+    PRICE: Preis
+    PRODUCT: Produkt
+    QUANTITY: Menge
+    READMORE: "Erfahren Sie hier mehr über \"%s\""
+    REMOVE: "\"%s\" aus dem Warenkorb entfernen"
+    REMOVEALL: "Alle \"%s\" aus dem Warenkorb entfernen"
+    REMOVEONE: "Entfernen Sie eines von \"%s\" aus Ihrem Warenkorb"
+    SUBTOTAL: Zwischensumme
+    TABLESUMMARY: "Im Warenkorb befindliche Produkte"
+    TOTAL: Gesamt
+    TOTALPRICE: Gesamtpreis
+    UNITPRICE: Einzelpreis
+  CartPage:
+    DESCRIPTION: "Warenkorb-Seite"
+    PLURALNAME: Warenkorb
+    SINGULARNAME: Warenkorb
+    TITLE: Warenkorb
+    has_one_CheckoutPage: Kassenseite
+    has_one_ContinuePage: Weiterleitungsseite
+  CartPage.ss:
+    CARTEMPTY: "Ihr Warenkorb ist leer."
+    CONTINUE: "Den Einkauf fortsetzen"
+    PROCEEDTOCHECKOUT: "Zur Kasse"
+  Checkout:
+    IDFIELDNOTFOUND: "Pflichtfeld nicht gefunden: %s"
+    MEMBEREXISTS: "Es existiert bereits ein Kundenkonto mit der %s %s"
+    MEMBERSHIPSNOTALLOWED: "Das Erstellen von neuen Kundenkonten ist nicht erlaubt, bitte kontaktieren Sie uns telefonisch oder per E-Mail"
+    NOPAYMENTMETHOD: "Die Zahlungsart existiert nicht"
+    PASSWORDREQUIRED: "Passwort ist erforderlich"
+  CheckoutComponentValidator:
+    INVALIDMESSAGE: "Es gibt Probleme mit den von Ihnen eingegebenen Daten. Siehe unten:"
+  CheckoutField:
+    ACCOUNTINFO: "Bitte wählen Sie ein Passwort, damit Sie sich zukünftig im Kundenkonto einloggen können."
+    EMAIL: E-Mail
+    FIRSTNAME: Vorname
+    MEMBERINFO: "Wenn Sie schon Kunde bei uns sind, klicken Sie bitte hier um sich anzumelden."
+    MEMBERSHIPDETAILS: Kundeninformationen
+    MUSTAGREETOTERMS: "Bitte bestätigen Sie, dass sie die AGB gelesen haben"
+    NOTES: Bemerkungen
+    PASSWORD: Passwort
+    SURNAME: Nachname
+    TERMSANDCONDITIONS: "Ich habe die <a href=\"%s\" target=\"_blank\" title=\"Allgemeine Geschäftsbedingungen anzeigen\">Allgemeinen Geschäftsbedingungen</a> gelesen und akzeptiert."
+    PAYMENT_TYPE: Zahlungsart
+  CheckoutFields:
+    PAYMENTTYPE: Zahlungsart
+  CheckoutForm:
+    PROCEED: "Weiter zur Zahlung"
+  CheckoutPage:
+    DESCRIPTION: "Kassenseite"
+    NOPAGE: "Auf dieser Site existiert keine Kassenseite - bitte erstellen Sie eine neue Seite!"
+    PLURALNAME: Kassenseiten
+    PaymentErrorMessage: "Fehler von Payment-Gateway empfangen:"
+    SINGULARNAME: Kassenseite
+    TITLE: Kasse
+    db_PurchaseComplete: "Bestellung abgeschlossen"
+    PURCHASE_COMPLETE_DESCRIPTION: "Diese Meldung wird dem Kunden im Bestätigungs-E-Mail gesendet, nachdem der Bestellvorgang abgeschlossen wurde."
+    SUBMIT_PAYMENT: "Bezahlen"
+  CheckoutPage.ss:
+    CARTEMPTY: "Ihr Warenkorb ist leer."
+    CHECKOUT: Kasse
+    ORDERSTATUS: Bestellstatus
+    PROCESS: Prozess
+  ChequePayment:
+    MESSAGE: "Bezahlung per Scheck (Vorkasse). Bitte beachten: Der Versand der Produkte erfolgt erst nach Zahlungseingang."
+  CreateAddressForm:
+    SAVED: "Ihre Adresse wurde gespeichert"
+  FlatTaxModifier:
+    PLURALNAME: Steuern
+    SINGULARNAME: MwSt.
+  FreeShippingModifier:
+    FREE: Kostenlos
+    PLURALNAME: Modifikatoren
+    SINGULARNAME: Versand
+  General:
+    DATEFORMATNICE: "%d.%m.%Y"
+    DATETIMEFORMATNICE: "%d.%m.%Y %H:%M"
+    DATETIMEFORMATNICE24: "d.m.Y H:i"
+  GlobalTaxModifier:
+    INCLUDED: " (im Preis enthalten)"
+    PLURALNAME: Steuern
+    SINGULARNAME: MwSt.
+    db_Country: Land
+  MemberForm:
+    DETAILSSAVED: "Ihre Angaben wurden gespeichert"
+    LOGGEDIN: "Sie sind angemeldet als "
+    SAVE: "Änderungen speichern"
+    SAVEANDPROCEED: "Speichern und weiter zur Kasse"
+  ORDER:
+    INVOICE: Rechnung
+  Order:
+    CANCELSUBJECT: "Die Bestellung Nummer #%d wurde vom Kunden storniert."
+    INCOMPLETE: "Bestellung unvollständig"
+    PLURALNAME: Bestellungen
+    PRINT: Drucken
+    SINGULARNAME: Bestellung
+    SUCCESSFULL: "Bestellung Erfolgreich"
+    db_AnalyticsSubmitted: "Analytics eingereicht"
+    db_Dispatched: "Wird ausgelöst"
+    db_Email: Email
+    db_FirstName: Vorname
+    db_Gesamt: Zwischensumme
+    db_IPAddress: IP-Adresse
+    db_Paid: Bezahlt
+    db_Placed: Platziert
+    db_Printed: Gedruckt
+    db_ReceiptSent: "Bestätigung gesendet"
+    db_Reference: Bestellnummer
+    db_SeparateBillingAddress: "Abweichende Lieferadresse"
+    db_ShippingGesamt: "Gesamtkosten für den Versand"
+    db_Status: Status
+    db_Surname: Nachname
+    has_many_Items: Artikel
+    has_many_Modifikatoren: Modifikatoren
+    has_many_OrderStatusLogs: "Bestell-Status Logs"
+    has_many_Payments: Zahlungen
+    has_one_BillingAddress: Rechnungsadresse
+    has_one_Member: Kunde
+    has_one_ShippingAddress: Lieferadresse
+    has_one_ShippingZahlungsart: Versandart
+  Order.ss:
+    ORDERNOTES: Bemerkungen
+    TOTALOUTSTANDING: "Gesamt ausstehend"
+  OrderActionsForm:
+    CANCELORDER: "Diese Bestellung stornieren"
+    MAKEPAYMENT: Zahlen
+    OUTSTANDING: "Ausstehend: %s"
+    PAYMENTMETHOD: Zahlungsart
+    PAYORDER: "Restbetrag bezahlen"
+    MANUAL_NOT_ALLOWED: "Bezahlung gegen Rechnung nicht erlaubt."
+  OrderAdmin_Addresses.ss:
+    ADDRESS: Adresse
+    BILLTO: "Rechnung an"
+    SHIPTO: "Liefern an"
+  OrderAdmin_Content.ss:
+    ITEMS: Artikel
+    PRODUCT: Produkt
+    QUANTITY: Menge
+    TOTALPRICE: Gesamtpreis
+    UNITPRICE: Stückpreis
+  OrderAdmin_Content_ItemLine.ss:
+    READMORE: "Zeige \"%s\""
+  OrderAdmin_Content_SubGesamts.ss:
+    SUBTOTAL: Zwischensumme
+    TOTAL: Gesamt
+    TOTALOUTSTANDING: Ausstehend
+  OrderAdmin_Customer.ss:
+    CUSTOMER: Kunde
+    NOTES: Bemerkungen
+  OrderAdmin_Printable.ss:
+    ORDER: Bestellung
+  OrderAttribute:
+    PLURALNAME: Attribute
+    SINGULARNAME: Attribut
+    db_CalculatedGesamt: Gesamtbetrag
+    has_one_Order: Bestellung
+  OrderForm:
+    COULDNOTPROCESSPAYMENT: "Die Zahlung konnte nicht verarbeitet werden."
+    LogIn: Anmelden
+    ORDERCANCELLED: "Bestellung erfolgreich storniert"
+  OrderHistory:
+    OrderDatum: Datum
+    OrderGesamt: Zwischensumme
+    OrderItems: Produkte
+    OrderReference: Bestellnummer
+    OrderStatus: Status
+    ViewOrder: anzeigen
+  OrderItem:
+    PLURALNAME: Produkte
+    SINGULARNAME: Produkt
+    db_Quantity: Menge
+    db_UnitPrice: Stückpreis
+  OrderModifier:
+    PLURALNAME: Modifikatoren
+    SINGULARNAME: Modifikator
+    db_Betrag: Betrag
+    db_Sort: Sortieren
+    db_Type: Art
+  OrderNotifier:
+    ADMINNOTIFICATIONSUBJECT: "Bestellbenachrichtigung #%d"
+    CONFIRMATIONSUBJECT: "Bestellbestätigung #%d"
+    RECEIPTSUBJECT: "Bestellungseingang #%d"
+  OrderProcessor:
+    NULL: "Eine neue Bestellung wurde noch nicht begonnen"
+    NOITEMS: "Die Bestellung beinhaltet keine Artikel."
+    NOTCART: "Die Bestellung beinhaltet keinen Warenkorb."
+  OrderStatusLog:
+    PLURALNAME: "Bestell Status Log Einträge"
+    SINGULARNAME: "Bestell Log Einträge"
+    db_DispatchTicket: "Versand Ticket"
+    db_DispatchedBy: "Versand von"
+    db_DispatchedOn: "Versand mit"
+    db_PaymentCode: "Zahlungs ID"
+    db_PaymentOK: "Zahlung OK"
+    db_SentToCustomer: "An Kunden verschickt"
+    db_Title: Titel
+    has_one_Author: Autor
+    has_one_Order: Bestellung
+  Order_Address.ss:
+    BILLTO: "Rechnung an"
+    SHIPTO: "Lieferung an"
+  Order_AdminNotificationEmail.ss:
+    TITLE: Shop-Eingang
+  Order_ConfirmationEmail.ss:
+    TITLE: Bestellbestätigung
+  Order_Content.ss:
+    NOITEMS: "Ihre Bestellung weist <strong>keine</strong> Artikel auf"
+    PRICE: Preis
+    PRODUCT: Produkt
+    QUANTITY: Menge
+    READMORE: "Wenn Sie mehr über \"%s\" erfahren möchten, klicken Sie hier"
+    SUBTOTAL: Zwischensumme
+    TOTAL: Gesamt
+    TOTALOUTSTANDING: "Gesamt ausstehend"
+    TOTALPRICE: Gesamtpreis
+    UNITPRICE: Stückpreis
+  Order_Content_ItemLine.ss:
+    READMORE: "Zeige \"%s\""
+  Order_Content_SubGesamts.ss:
+    SUBTOTAL: Zwischensumme
+    TOTAL: Gesamt
+  Order_ItemLine.ss:
+    READMORE: "Zeige \"%s\""
+  Order_Member.ss:
+    ADDRESS: Adresse
+    CITY: Stadt
+    COUNTRY: Land
+    EMAIL: E-Mail
+    MOBILE: Handy
+    NAME: Name
+    PHONE: Telefon
+  Order_Payments.ss:
+    AMOUNT: Betrag
+    DATE: Datum
+    PAYMENTMETHOD: Zahlungsart
+    PAYMENTNOTE: Bemerkungen
+    PAYMENTSTATUS: Zahlungsstatus
+  Order_ReceiptEmail.ss:
+    HEADLINE: Auftragsbestätigung
+    TITLE: Shop-Eingang
+  Order_StatusEmail.ss:
+    HEADLINE: "Shop Status geändert"
+    STATUSCHANGE: "Status geändert zu \"%s\" für Bestellung Nummer #"
+    TITLE: "Shop Status geändert"
+  OrdersAdmin:
+    MENUTITLE: Bestellungen
+  Payment: ~
+  PaymentProcessor:
+    INVALID_GATEWAY: "`{gateway}` ist kein gültiges Bezahl-Gateway."
+    CANTPAY: "Diese Bestellung kann nicht bezahlt werden."
+  PickupShippingModifier:
+    PLURALNAME: Modifikatoren
+    SINGULARNAME: Selbstabholung
+  Product:
+    ADDITIONALCATEGORIES: "Zusätzliche Produktkategorien"
+    ALLOWPURCHASE: "Zulassen, dass dieses Produkt bestellt werden darf"
+    CATEGORY: Category
+    CATEGORYDESCRIPTION: "Dies ist die übergeordnete Seite oder Standardkategorie."
+    CODE: Artikelnummer
+    CODE_SHORT: "Art. Nr."
+    COSTPRICE: Kostenpreis
+    COSTPRICEDESC: "Großhandelspreis ohne Preisaufschlag."
+    DEPTH: "Tiefe. (%s)"
+    DESCRIPTION: "Generic content page"
+    FEATURED: "Hervorgehobenes Produkt"
+    HEIGHT: "Height (%s)"
+    IMAGE: Produktabbildung
+    MODEL: "Die wichtigsten Artikelmerkmale"
+    PAGETITLE: Produktname
+    PLURALNAME: Produkte
+    PRICE: Price
+    PRICEDESC: Basisverkaufspreis.
+    SINGULARNAME: Produkt
+    WEIGHT: "Gewicht (%s)"
+    WIDTH: "Breite (%s)"
+    NO_IMAGE: "kein Bild"
+    db_AllowPurchase: "Kaufen erlauben"
+    db_BasePrice: Basispreis
+    db_CostPrice: Kostenpreis
+    db_Height: Höhe
+    db_Hervorgehoben: Hervorgehoben
+    db_InternalItemID: "Interne Produkt ID"
+    db_Popularity: Popularität
+    db_Tiefe.: Tiefe.
+    db_Weight: Gewicht
+    db_Width: Breite
+    has_many_Variations: Variationen
+    has_one_Image: Bild
+    many_many_ProductCategories: Produktkategorien
+    many_many_VariationAttributeTypes: Variationsattributtypen
+  Product.ss:
+    ADD: "\"%s\" zum Warenkorb hinzufügen"
+    ADDLINK: "Diesen Artikel zum Warenkorb hinzufügen"
+    ADDONE: "\"%s\" zum Warenkorb hinzufügen"
+    AUTHOR: Autor
+    CODE: Artikelnummer
+    FEATURED: "Wir empfehlen diesen Artikel."
+    GOTOCHECKOUT: "Jetzt zur Kasse gehen"
+    GOTOCHECKOUTLINK: "» Zur Kasse"
+    IMAGE: "%s Bild"
+    ItemID: "Artikel Nr."
+    MODEL: "Die wichtigsten Artikelmerkmale"
+    NOIMAGE: "Keine Produktabbildung vorhanden für \"%s\""
+    QUANTITYCART: "Menge im Warenkorb"
+    REMOVE: "\"%s\" vom Warenkorb entfernen"
+    REMOVEALL: "\"%s\" vom Warenkorb entfernen"
+    REMOVELINK: "» Aus dem Warenkorb entfernen"
+    SIZE: Größe
+  ProductAttributeType:
+    PLURALNAME: Eigenschaften
+    SINGULARNAME: Eigenschaft
+    SAVE_FIRST_MESSAGE: "Werte können nach erstmaligem Speichern erfasst werden."
+    belongs_many_many_Product: Produkt
+    db_Label: Label
+    db_Name: Name
+    has_many_Values: Daten
+  ProductAttributeValue:
+    PLURALNAME: Daten
+    SINGULARNAME: Daten
+    belongs_many_many_ProductVariation: "Produkt Variationen"
+    db_Sort: Sortieren
+    db_Value: Daten
+    has_one_Type: Art
+  ProductCatalogAdmin:
+    MENUTITLE: Katalog
+  ProductCategory:
+    DESCRIPTION: "Generic content page"
+    PLURALNAME: Kategorien
+    SINGULARNAME: Kategorie
+    belongs_many_many_Products: Produkte
+  ProductCategory.ss:
+    FEATURED: "Empfohlene Artikel"
+    OTHER: "Andere Produkte"
+  ProductCategoryItem.ss:
+    ADD: "\"%s\" zum Warenkorb hinzufügen"
+    ADDLINK: "Diesen Artikel zum Warenkorb hinzufügen"
+    ADDONE: "\"%s\" zum Warenkorb hinzufügen"
+    AUTHOR: Autor
+    GOTOCHECKOUT: "Zur Kasse"
+    GOTOCHECKOUTLINK: "» Zur Kasse"
+    IMAGE: "%s Bild"
+    NOIMAGE: "Keine Produktabbildung vorhanden für \"%s\""
+    QUANTITYCART: "Menge im Warenkorb"
+    READMORE: "Erfahren Sie hier mehr über \"%s\""
+    READMORECONTENT: "mehr »"
+    REMOVE: "\"%s\" vom Warenkorb entfernen."
+    REMOVEALL: "1 Einheit von \"%s\" aus dem Warenkorb entferne"
+    REMOVELINK: "» Aus dem Warenkorb entfernen"
+  ProductGroup:
+    NEXT: Nächste
+    PAGE: Seite
+    PREVIOUS: Vorherige
+    VIEW_PREVIOUS: "Zur vorherigen Seite"
+    VIEW_NEXT: "Zur nächsten Seite"
+    VIEW_PAGE: "Zeige Seite {pageNum}"
+  ProductGroupItem.ss:
+    ADD: "\"%s\" zum Warenkorb hinzufügen"
+    ADDLINK: "In den Warenkorb"
+    IMAGE: "%s Bild"
+    MODEL: "Die wichtigsten Artikelmerkmale"
+    READMORE: "Erfahren Sie hier mehr über \"%s\""
+    VIEW: "Produkt öffnen"
+  ProductMenu.ss:
+    GOTOPAGE: "Gehe zur %s Seite"
+  ProductVariation:
+    PLURALNAME: Variationen
+    SINGULARNAME: Variation
+    db_InternalItemID: "Interne Artikel ID"
+    db_Price: Preis
+    db_Version: Version
+    has_one_Image: Bild
+    has_one_Product: Produkt
+    many_many_AttributeValues: Eigenschaften
+    NO_ATTRIBUTE_VALUES_MESSAGE: "Es gibt keine Werte für {attribute}. Diese können im 'Katalog' erstellt werden."
+    SAVE_FIRST_MESSAGE: "Attribute können erst nach dem ersten Speichern ausgewählt werden (gesetzt der Fall, sie existieren)."
+  ProductVariationsExtension:
+    ATTRIBUTES: "Attribute"
+    ATTRIBUTES_DESCRIPTION: "Diese Felder definieren die Attribute welche die Variationen ausmachen. Sobald sie ausgewählt wurden, können sie in jeder Variation erfasst werden."
+    VARIATIONS: "Variationen"
+    VARIATIONS_INSTRUCTIONS: "Da mehrere Variationen vorhanden sind, muss der Preis bei den Variationen erfasst werden."
+  ProductVariation_OrderItem:
+    PLURALNAME: Artikel
+    SINGULARNAME: Artikel
+    db_ProductVariationVersion: "Produkt Variations Version"
+    has_one_ProductVariation: "Produkt Variation"
+  Product_OrderItem:
+    PLURALNAME: Artikel
+    SINGULARNAME: Artikel
+    db_ProductVersion: "Produkt Version"
+    has_one_Product: Produkt
+  RegionRestriction:
+    PLURALNAME: "Regionale Restriktionen"
+    SINGULARNAME: "Regionale Restriktion"
+    db_City: Stadt
+    db_Country: Land
+    db_PostalCode: Postleitzahl
+    db_State: Staat
+  SetLocationForm:
+    CHOOSECOUNTRY: "Land auswählen..."
+    COUNTRY: Land
+  ShippingModifier:
+    PLURALNAME: Modifikatoren
+    SINGULARNAME: Versandkosten
+  Shop:
+    DEVTOOLSTITLE: Shop-Entwicklungstools
+  ShopConfig:
+    CUSTOMERGROUP: "Gruppe, um neue Kunden zu ergänzen"
+    DEFAULTIMAGE: "Standard Produktbild"
+    TERMSPAGE: "Allgemeine Geschäftsbedingungen"
+    ALLOWED_COUNTRIES: "Länder für Bestellungen und Lieferungen"
+    ALLOWED_COUNTRIES_TAB_TITLE: "Erlaubte Länder"
+  ShopCurrency:
+    FREE: "<span class=\"frei\">FREI</span>"
+  ShopDashboard:
+    RECENTORDERS: "Letzte Bestellungen"
+    RECENTORDERSDESCRIPTION: "Letzte Bestellungen anzeigen"
+    RecentAccounts: "Neue Kundenkonten"
+    RecentAccountsDescription: "Die letzten Anmeldungen in Kundenkonten anzeigen"
+    RecentOrdersChart: "Bestellhistorie sortieren"
+    RecentOrdersChartDescription: "Zeigt die letzten Bestellungen in einem Diagramm"
+    NUMBER_OF_ACCOUNTS: "Anzahl anzuzeigender Benutzer"
+    NUMBER_OF_DAYS: "Anzahl anzuzeigender Tage"
+    NUMBER_OF_ORDERS: "Anzahl anzuzeigender Bestellungen"
+    # These should probably be moved into a more generic category, since they can be used in a lot of places
+    EDIT: "Bearbeiten"
+    CUSTOMER: "Kunde"
+    DATE: "Datum"
+  ShopDatabaseAdmin.ss:
+    BUILDTASKS: "Aufgaben anlegen"
+    CARTCLEANUP: "Alte Warenkörbe bereinigen"
+    CARTCLEANUPDESC: "Abgebrochene Warenkörbe entfernen"
+    CARTTASKS: "Warenkorbaufgaben anzeigen"
+    RECALCULATEORDERS: "Alle Bestellungen rekalkulieren"
+    RECALCULATEORDERSDESC: "Neu berechnen aller Bestellwerte. Warnung: Dies wird alle vorhergehenden Werte überschreiben."
+    RUNALLTESTS: "Alle Shop-Tests starten"
+    UNITTESTS: "Test der Einheit"
+  ShopDevelopmentAdmin.ss:
+    BUILDTASKS: "Aufgaben anlegen"
+    CARTCLEANUP: "Alte Warenkörbe bereinigen"
+    CARTCLEANUPDESC: "Abgebrochene Warenkörbe entfernen."
+    CARTTASKS: "Warenkorbaufgaben anzeigen"
+    CLEARCART: "Den aktuellen Warenkorb löschen"
+    DEBUGCART: "Den Warenkorb zurücksetzen"
+    DELETEORDERS: "Alle Bestellungen löschen"
+    DELETEORDERSDESC: "Alle Bestellungen, Modifikatoren und Zahlungen aus der Datenbank löschen."
+    DELETEPRODUCTS: "Delete All Products"
+    DELETEPRODUCTSDESC: "Alle Produkte aus der Datenbank löschen."
+    POPULATECART: "Befülle den Warenkorb mit einigen erhältlichen Produkten"
+    POPULATESHOP: "Befülle den Shop"
+    POPULATESHOPDESC: "Befülle den Shop mit Dummy-Produkten, Kategorien und erstelle andere notwendige Seiten."
+    RECALCULATEORDERS: "Alle Bestellungen rekalkulieren"
+    RECALCULATEORDERSDESC: "Neu berechnen aller Bestellwerte. Warnung: Dies wird alle vorhergehenden Werte überschreiben."
+    RUNALLTESTS: "Alle Shop-Tests starten"
+    UNITTESTS: "Test der Einheit"
+  ShopQuantityField.ss:
+    ADDONE: "\"%s\" zum Warenkorb hinzufügen"
+    REMOVEONE: "\"%s\" aus Warenkorb entferrnen"
+  ShopSideReport:
+    ALLPRODUCTS: "Alle Produkte"
+    FEATUREDPRODUCTS: "Hervorgehobene Produkte"
+    HEAVY: "Schwere Produkte"
+    NOIMAGE: "Keine Produktabbildung vorhanden"
+    ShopGROUP: Shop
+  ShoppingCart:
+    CANNOTPURCHASE: "Das Produkt %s kann nicht gekauft werden."
+    CLEARED: "Der Warenkorb wurde erfolgreich gelöscht."
+    CSRF: "Ungültiger Sicherheitstoken, möglicher CSRF-Angriff."
+    ITEMADD: "Das Produkt wurde soeben aufgenommen."
+    ITEMNOTFOUND: "Produkt nicht gefunden."
+    ITEMREMOVED: "Produkt erfolgreich entfernt."
+    NOCARTFOUND: "Kein Warenkorb gefunden."
+    NOCARTINITIALISED: "kein Warenkorb initialisiert"
+    NOORDER: "Keine aktuelle Bestellung."
+    PRODUCTNOTFOUND: "Produkt nich gefunden."
+    QUANTITYSET: "Die Menge wurde eingegeben."
+    # Pretty generic translation, could be moved to a more generic category
+    CHANGE: "Wechsel"
+    ITEMS_IN_CART_PLURAL: "In Ihrem Warenkorb befinden sich <a href=\"{link}\">{quantity} Artikel</a>."
+    ITEMS_IN_CART_SINGULAR: "In Ihrem Warenkorb befindet sich <a href=\"{link}\">1 Artikel</a>."
+    CHECKOUT: "Zur Kasse"
+  SideCart.ss:
+    HEADLINE: Warenkorb
+    NOITEMS: "Es befinden sich keine Produkte im Warenkorb"
+    READMORE: "Zeige \"%s\""
+    REMOVEALL: "aus dem Warenkorb löschen"
+  SimpleShippingModifier:
+    PLURALNAME: Modifikatoren
+    SHIPTO: "Senden an %s"
+    SINGULARNAME: Versandkosten
+    db_Country: Land
+  SteppedCheckoutPage.ss:
+    NOITEMS: "Ihr Warenkorb ist leer."
+  SubGesamtModifier:
+    PLURALNAME: Zwischensumme
+    SINGULARNAME: Zwischensumme
+  TaxModifier:
+    ATRATE: "@ %s"
+    PLURALNAME: Steuern
+    SINGULARNAME: MwSt.
+    db_Rate: Rate
+  VariationsTable.ss:
+    ADD: "\"%s\" zum Warenkorb hinzufügen"
+    ADDLINK: "Diese Produkt zum Warenkorb hinzufügen"
+    QUANTITYCART: "Menge im Warenkorb"
+  WeightShippingModifier:
+    PLURALNAME: Modifikatoren
+    SINGULARNAME: Versandkosten
+    TABLETITLE: "Versandkosten (%f kg)"
+  Zone:
+    PLURALNAME: Zonen
+    SINGULARNAME: Zone
+    db_Description: Beschreibung
+    db_Name: Name
+    has_many_Regions: Regionen
+  ZoneAdmin:
+    MENUTITLE: Zonen
+  ZoneRegion:
+    PLURALNAME: "Zonen Regionen"
+    SINGULARNAME: "Zonen Region"
+    has_one_Zone: Zone
+  shop:
+    Checkout: Zahlungsart
+    STATUS: Status
+  CartEditField:
+    REMOVE: "Entfernen"
+    VARIATION: "Variationen"
+  CartForm:
+    UPDATE_CART: "Warenkorb aktualisieren"
+    REMOVED_ITEMS: "{count} Artikel entfernt"
+    UPDATED_ITEMS: "{count} Artikel aktualisiert."
+  OnsitePaymentCheckoutComponent:
+    CREDIT_CARD_INVALID: "Kreditkarte ist ungültig"
+  PaymentCheckoutComponent:
+    NO_PAYMENT_METHOD: "Bezahlmethode wurde nicht angegeben"
+    UNSUPPORTED_GATEWAY: "Bezahl-Gateway wird nicht unterstützt"
+  CheckoutStep:
+    # These should probably go somewhere else, as they are pretty generic.
+    CONTINUE: "Weiter"
+    SHIPPING: "Lieferung"
+    SUMMARY: "Zusammenfassung"
+    GRAND_TOTAL: "Gesamtbetrag"
+  CheckoutStep_Address:
+    SUPPLY_CONTACT_INFO: "Bitte geben Sie Ihre Kontaktdaten an"
+    SEPARATE_BILLING: "Abweichende Rechnungsadresse angeben"
+    ENTER_SHIPPING_ADDRESS: "Bitte geben Sie Ihre gewünschte Lieferadresse ein."
+    BILL_TO: "Rechnung an:"
+    SHIP_TO: "Lieferung an:"
+  CheckoutStep_Membership:
+    CONTINUE_AS_GUEST: "Weiter als Gast"
+    # This is an option presented to the user
+    CREATE_ACCOUNT: "Neues Konto erstellen"
+    # This is an action (Button label)
+    CREATE_NEW_ACCOUNT: 'Konto erstellen'
+  VariationForm:
+    CHOOSE_ATTRIBUTE: "Wähle {attribute} …"
+    VARIATION_NOT_AVAILABLE: "Diese Variante ist leider nicht verfügbar."
+    PRODUCT_NOT_AVAILABLE: "Das Produkt ist mit den ausgewählten Optionen nicht verfügbar."
+  PriceTag:
+    # Save as in savings (you saved this much from the original price)
+    SAVE: "Gespart"
