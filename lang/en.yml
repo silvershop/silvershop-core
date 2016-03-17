@@ -250,7 +250,7 @@ en:
     CategoryDescription: 'This is the parent page or default category.'
     Code: 'Product Code'
     CostPriceDescription: 'Wholesale price before markup.'
-    DESCRIPTION: 'Generic content page'
+    DESCRIPTION: 'Product page in the shop'
     Featured: 'Featured Product'
     Image: 'Product Image'
     ImageAltText: '{Title} image'
@@ -296,7 +296,7 @@ en:
     db_Value: Value
     has_one_Type: Type
   ProductCategory:
-    DESCRIPTION: 'Generic content page'
+    DESCRIPTION: 'Product category in the shop'
     PLURALNAME: Categories
     SINGULARNAME: Category
     belongs_many_many_Products: Products
