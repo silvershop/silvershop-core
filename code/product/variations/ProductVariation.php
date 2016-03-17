@@ -127,15 +127,16 @@ class ProductVariation extends DataObject implements Buyable
 
         //physical measurement units
         $fieldSubstitutes = array(
-            'LengthUnit' => Product::config()->length_unit,
-            'WeightUnit' => Product::config()->weight_unit,
+            'LengthUnit' => Product::config()->length_unit
         );
 
         //physical measurements
         $fields->push(
             TextField::create(
                 'Weight',
-                _t('Product.WeightWithUnit', 'Weight ({WeightUnit})', '', $fieldSubstitutes),
+                _t('Product.WeightWithUnit', 'Weight ({WeightUnit})', '', array(
+                    'WeightUnit' => Product::config()->weight_unit
+                )),
                 '',
                 12
             )

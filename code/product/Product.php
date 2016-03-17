@@ -144,15 +144,16 @@ class Product extends Page implements Buyable
         );
         //physical measurements
         $fieldSubstitutes = array(
-            'LengthUnit' => self::config()->length_unit,
-            'WeightUnit' => self::config()->weight_unit,
+            'LengthUnit' => self::config()->length_unit
         );
         $fields->addFieldsToTab(
             'Root.Shipping',
             array(
                 TextField::create(
                     'Weight',
-                    _t('Product.WeightWithUnit', 'Weight ({WeightUnit})', '', $fieldSubstitutes),
+                    _t('Product.WeightWithUnit', 'Weight ({WeightUnit})', '', array(
+                        'WeightUnit' => self::config()->weight_unit
+                    )),
                     '',
                     12
                 ),
