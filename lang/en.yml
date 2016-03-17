@@ -31,6 +31,13 @@ en:
     CreateNewTitle: 'Create new address'
     NoAddress: 'No addresses found.'
     Title: 'Default addresses'
+    DefaultShippingAddress: 'Default Shipping Address'
+    DefaultBillingAddress: 'Default Billing Address'
+    MakeDefaultShipping: 'Make Default Shipping'
+    MakeDefaultShippingTitle: 'Make this my default shipping address'
+    MakeDefaultBilling: 'Make Default Billing'
+    MakeDefaultBillingTitle: 'Make this my default billing address'
+    DeleteAddress: 'Delete this address'
   AccountPage_EditProfile:
     Title: 'Edit Profile'
   Address:
