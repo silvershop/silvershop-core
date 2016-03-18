@@ -108,7 +108,8 @@ class OrderManipulation extends Extension
     public function order(SS_HTTPRequest $request)
     {
         //move the shopping cart session id to past order ids, if it is now an order
-        ShoppingCart::singleton()->archiveorderid();
+        ShoppingCart::singleton()->archiveorderid($request->param('ID'));
+
         $order = $this->orderfromid();
         if (!$order) {
             return $this->owner->httpError(404, "Order could not be found");
