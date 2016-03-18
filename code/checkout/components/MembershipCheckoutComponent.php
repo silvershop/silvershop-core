@@ -54,7 +54,7 @@ class MembershipCheckoutComponent extends CheckoutComponent
             return array();
         }
         return array(
-            Member::get_unique_identifier_field(),
+            Member::config()->unique_identifier_field,
             'Password',
         );
     }
@@ -90,7 +90,8 @@ class MembershipCheckoutComponent extends CheckoutComponent
                         'A member already exists with the {Field} {Identifier}',
                         '',
                         array('Field' => $fieldLabel, 'Identifier' => $idval)
-                    )
+                    ),
+                    $idfield
                 );
             }
             $passwordresult = $this->passwordvalidator->validate($data['Password'], $member);

@@ -15,7 +15,9 @@ class ShopAccountForm extends Form
         if ($member && $member->exists()) {
             $fields = $member->getMemberFormFields();
             $fields->removeByName('Password');
-            $requiredFields = $member->getValidator();
+            //TODO: This can be reverted to be $member->getValidator() as soon as this fix lands in framework
+            // (most likely 3.4) https://github.com/silverstripe/silverstripe-framework/pull/5098
+            $requiredFields = ShopAccountFormValidator::create();
             $requiredFields->addRequiredField('Surname');
         } else {
             $fields = FieldList::create();
@@ -119,12 +121,13 @@ class ShopAccountFormValidator extends RequiredFields
         $valid = parent::php($data);
         $field = (string)Member::config()->unique_identifier_field;
         if (isset($data[$field])) {
-            $uid = $data[(string)Member::config()->unique_identifier_field];
-            $currentmember = Member::currentUser();
+            $uid = $data[$field];
+            $currentMember = Member::currentUser();
+
             //can't be taken
-            if (DataObject::get_one('Member', "$field = '$uid' AND ID != " . $currentmember->ID)) {
+            if (Member::get()->filter($field, $uid)->exclude('ID', $currentMember->ID)->count() > 0) {
                 // get localized field labels
-                $fieldLabels = $currentmember->fieldLabels(false);
+                $fieldLabels = $currentMember->fieldLabels(false);
                 // if a localized value exists, use this for our error-message
                 $fieldLabel = isset($fieldLabels[$field]) ? $fieldLabels[$field] : $field;
 
