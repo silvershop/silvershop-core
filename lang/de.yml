@@ -31,6 +31,13 @@ de:
     CreateNewTitle: 'Neue Adresse erstellen'
     NoAddress: 'Keine Adresse gefunden.'
     Title: 'Standard Adressen'
+    DefaultShippingAddress: 'Standard-Lieferadresse'
+    DefaultBillingAddress: 'Standard-Rechnungsadresse'
+    MakeDefaultShipping: 'Als Standard-Lieferadresse'
+    MakeDefaultShippingTitle: 'Verwendet diese Adresse als Standard-Lieferadresse'
+    MakeDefaultBilling: 'Als Standard-Rechnungsadresse'
+    MakeDefaultBillingTitle: 'Verwendet diese Adresse als Standard-Rechnungsadresse'
+    DeleteAddress: 'Lösche diese Adresse'
   AccountPage_EditProfile:
     Title: 'Nutzerprofil bearbeiten'
   Address:
@@ -90,7 +97,7 @@ de:
     DefaultTitle: Kasse
     PLURALNAME: 'Kassenseiten'
     PaymentErrorMessage: 'Fehler von Payment-Gateway empfangen:'
-    ProceedToPayment: 'Weiter zur Kasse'
+    ProceedToPayment: 'Weiter zur Bezahlseite'
     PurchaseCompleteDescription: 'Diese Meldung wird dem Kunden im Bestätigungs-E-Mail gesendet, nachdem der Bestellvorgang abgeschlossen wurde.'
     SINGULARNAME: 'Kassenseite'
     SubmitPayment: 'Bezahlen'
