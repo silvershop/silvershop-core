@@ -8,6 +8,13 @@ class ShopPaymentTest extends FunctionalTest
     );
     public static    $disable_theme = true;
 
+    public function setUpOnce()
+    {
+        parent::setUpOnce();
+        // clear session
+        ShoppingCart::singleton()->clear();
+    }
+
     public function setUp()
     {
         parent::setUp();

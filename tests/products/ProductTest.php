@@ -11,6 +11,13 @@ class ProductTest extends FunctionalTest
     protected static $disable_theme  = true;
     protected static $use_draft_site = true;
 
+    public function setUpOnce()
+    {
+        parent::setUpOnce();
+        // clear session
+        ShoppingCart::singleton()->clear();
+    }
+
     function setUp()
     {
         parent::setUp();
