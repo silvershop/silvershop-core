@@ -13,6 +13,13 @@ class SteppedCheckoutTest extends FunctionalTest
     /** @var Product */
     protected $socks;
 
+    public function setUpOnce()
+    {
+        parent::setUpOnce();
+        // clear session
+        ShoppingCart::singleton()->clear();
+    }
+
     public function setUp()
     {
         parent::setUp();
