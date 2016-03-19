@@ -10,6 +10,13 @@ class ShopMemberTest extends FunctionalTest
         'silvershop/tests/fixtures/shop.yml',
     );
 
+    public function setUpOnce()
+    {
+        parent::setUpOnce();
+        // clear session
+        ShoppingCart::singleton()->clear();
+    }
+
     public function testGetByIdentifier()
     {
         Member::config()->unique_identifier_field = 'Email';

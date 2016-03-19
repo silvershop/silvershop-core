@@ -5,6 +5,13 @@ class ViewableCartTest extends SapphireTest
     public static $fixture_file  = 'silvershop/tests/fixtures/shop.yml';
     public static $disable_theme = true;
 
+    public function setUpOnce()
+    {
+        parent::setUpOnce();
+        // clear session
+        ShoppingCart::singleton()->clear();
+    }
+
     function setUp()
     {
         parent::setUp();

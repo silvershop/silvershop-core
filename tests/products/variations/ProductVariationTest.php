@@ -14,6 +14,13 @@ class ProductVariationTest extends SapphireTest
     public static $disable_theme  = true;
     public static $use_draft_site = true;
 
+    public function setUpOnce()
+    {
+        parent::setUpOnce();
+        // clear session
+        ShoppingCart::singleton()->clear();
+    }
+
     public function setUp()
     {
         parent::setUp();
