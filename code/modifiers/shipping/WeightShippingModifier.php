@@ -12,17 +12,31 @@
  */
 class WeightShippingModifier extends ShippingModifier
 {
-    protected static $weight_cost = array(
-        0.5 => 10,
-        1   => 20,
-        999 => 50,
-    );
+    /**
+     * Weight to price mapping.
+     * Should be an associative array, with the weight as key (KG) and the corresponding price as value.
+     * Can be set via Config API, eg.
+     * <code>
+     * WeightShippingModifier:
+     *   weight_cost:
+     *     '0.5': 12
+     *     '1.0': 15
+     *     '2.0': 20
+     * </code>
+     * @config
+     * @var array
+     */
+    protected static $weight_cost = array();
 
-    protected        $weight      = 0;
+    protected $weight = 0;
 
+    /**
+     * @deprecated 2.0 please use the SilverStripe config API to set these values (eg. via YAML)
+     * @param array $costs costs as associative array where the keys are values in kg, and values are the matching price
+     */
     public static function set_weight_costs($costs)
     {
-        self::$weight_cost = $costs;
+        Config::inst()->update('WeightShippingModifier', 'weight_cost', $costs);
     }
 
     /**
@@ -36,10 +50,19 @@ class WeightShippingModifier extends ShippingModifier
         }
         $amount = 0;
 
-        foreach (self::$weight_cost as $weight => $cost) {
-            if ($totalWeight <= $weight) {
-                $amount = $cost;
-                break;
+        $table = $this->config()->weight_cost;
+        if(!empty($table) && is_array($table)){
+            // ensure table is sorted
+            ksort($table, SORT_NUMERIC);
+            // set the amount to the highest value. In case the weight is higher than the max value in
+            // the table, use the highest shipping cost and not 0!
+            $amount = end($table);
+            reset($table);
+            foreach ($table as $weight => $cost) {
+                if ($totalWeight <= $weight) {
+                    $amount = $cost;
+                    break;
+                }
             }
         }
         return $this->Amount = $amount;
