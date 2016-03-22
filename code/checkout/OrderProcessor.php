@@ -329,40 +329,4 @@ class OrderProcessor
     {
         return new Config_ForClass("OrderProcessor");
     }
-
-    /**
-     * @deprecated 2.0
-     */
-    public function sendEmail($template, $subject, $copyToAdmin = true)
-    {
-        Deprecation::notice('2.0', 'Use OrderEmailNotifier instead');
-        return $this->notifier->sendEmail($template, $subject, $copyToAdmin);
-    }
-
-    /**
-     * @deprecated 2.0
-     */
-    public function sendConfirmation()
-    {
-        Deprecation::notice('2.0', 'Use OrderEmailNotifier instead');
-        $this->notifier->sendConfirmation();
-    }
-
-    /**
-     * @deprecated 2.0
-     */
-    public function sendReceipt()
-    {
-        Deprecation::notice('2.0', 'Use OrderEmailNotifier instead');
-        $this->notifier->sendReceipt();
-    }
-
-    /**
-     * @deprecated 2.0
-     */
-    public function sendStatusChange($title, $note = null)
-    {
-        Deprecation::notice('2.0', 'Use OrderEmailNotifier instead');
-        $this->notifier->sendStatusChange($title, $note);
-    }
 }
