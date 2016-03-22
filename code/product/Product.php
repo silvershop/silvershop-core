@@ -269,12 +269,10 @@ class Product extends Page implements Buyable
      *  - if variations, then one of them needs to be purchasable
      *  - if not variations, selling price must be above 0
      *
-     * Other conditions may be added by decorating with the canPurcahse function
+     * Other conditions may be added by decorating with the canPurchase function
      *
      * @param Member $member
      * @param int    $quantity
-     *
-     * @throws ShopBuyableException
      *
      * @return boolean
      */
@@ -286,33 +284,17 @@ class Product extends Page implements Buyable
         }
         $allowpurchase = false;
         $extension = self::has_extension("ProductVariationsExtension");
-        if ($extension && ProductVariation::get()->filter("ProductID", $this->ID)->first()
-        ) {
+        if ($extension && ProductVariation::get()->filter("ProductID", $this->ID)->first()) {
             foreach ($this->Variations() as $variation) {
-                // TODO: 2.0, Remove exception handling
-                try {
-                    if ($variation->canPurchase($member, $quantity)) {
-                        $allowpurchase = true;
-
-                        break;
-                    }
-                } catch (ShopBuyableException $e) {
+                if ($variation->canPurchase($member, $quantity)) {
+                    $allowpurchase = true;
+                    break;
                 }
             }
-
-            // if not allowed to buy after any variations then raise the last
-            // exception again
-            if (!$allowpurchase && isset($e)) {
-                Deprecation::notice('2.0', 'Throwing exceptions from within canPurchase will be removed');
-                throw $e;
-
-                return false;
-            }
         } else {
-            if ($this->sellingPrice() > 0 || self::config()->allow_zero_price) {
-                $allowpurchase = true;
-            }
+            $allowpurchase = ($this->sellingPrice() > 0 || self::config()->allow_zero_price);
         }
+
         // Standard mechanism for accepting permission changes from decorators
         $permissions = $this->extend('canPurchase', $member, $quantity);
         $permissions[] = $allowpurchase;

@@ -144,15 +144,6 @@ class Checkout
     }
 
     /**
-     * @deprecated 1.0 use ShopMemberFactory
-     */
-    public function createMembership($data)
-    {
-        $factory = new ShopMemberFactory();
-        return $factory->create($data);
-    }
-
-    /**
      * Checks if member (or not) is allowed, in accordance with configuration
      */
     public function validateMember($member)

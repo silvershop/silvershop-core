@@ -165,7 +165,8 @@ class OrderEmailNotifier
         } else {
             $adminEmail = Email::config()->admin_email;
         }
-        $e = Order_statusEmail::create();
+        $e = Email::create();
+        $e->setTemplate('Order_StatusEmail');
         $e->populateTemplate(
             array(
                 "Order"  => $this->order,
