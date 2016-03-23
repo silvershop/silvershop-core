@@ -4,6 +4,31 @@
  * The order class is a databound object for handling Orders
  * within SilverStripe.
  *
+ * @property string|float Currency
+ * @property string Reference
+ * @property string Placed
+ * @property string Paid
+ * @property string ReceiptSent
+ * @property string Printed
+ * @property string Dispatched
+ * @property string Status
+ * @property string FirstName
+ * @property string Surname
+ * @property string Email
+ * @property string Notes
+ * @property string IPAddress
+ * @property string|bool SeparateBillingAddress
+ * @property string Locale
+ * @property string|int MemberID
+ * @property string|int ShippingAddressID
+ * @property string|int BillingAddressID
+ * @method Member|ShopMember Member
+ * @method Address BillingAddress
+ * @method Address ShippingAddress
+ * @method OrderItem[]|HasManyList Items
+ * @method OrderModifier[]|HasManyList Modifiers
+ * @method OrderStatusLog[]|HasManyList OrderStatusLogs
+ * 
  * @package shop
  */
 class Order extends DataObject
