@@ -80,9 +80,11 @@ class OrderProcessor
         if (GatewayInfo::is_manual($gateway)) {
             //don't complete the payment at this stage, if payment is manual
             $this->placeOrder();
-        } elseif ($response->isSuccessful()) {
-            $this->completePayment();
         }
+
+        // For an OFFSITE payment, response will now contain a redirect
+        // For an ONSITE payment, ShopPayment::onCapture will have been called, which will have called completePayment
+
         return $response;
     }
 
