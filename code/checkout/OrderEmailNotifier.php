@@ -45,7 +45,8 @@ class OrderEmailNotifier
         $checkoutpage = CheckoutPage::get()->first();
         $completemessage = $checkoutpage ? $checkoutpage->PurchaseComplete : '';
 
-        $email = Email::create();
+        /** @var Email $email */
+        $email = Injector::inst()->create('ShopEmail');
         $email->setTemplate($template);
         $email->setFrom($from);
         $email->setTo($to);
@@ -132,6 +133,26 @@ class OrderEmailNotifier
     }
 
     /**
+     * Sends an email to the admin that an order has been cancelled
+     */
+    public function sendCancelNotification()
+    {
+        $email = Injector::inst()->create(
+            'ShopEmail',
+            Email::config()->admin_email,
+            Email::config()->admin_email,
+            _t(
+                'ShopEmail.CancelSubject',
+                'Order #{OrderNo} cancelled by member',
+                '',
+                array('OrderNo' => $this->order->Reference)
+            ),
+            $this->order->renderWith('Order')
+        );
+        $email->send();
+    }
+
+    /**
      * Send a message to the client containing the latest
      * note of {@link OrderStatusLog} and the current status.
      *
@@ -158,7 +179,8 @@ class OrderEmailNotifier
         } else {
             $adminEmail = Email::config()->admin_email;
         }
-        $e = Order_statusEmail::create();
+        $e = Injector::inst()->create('ShopEmail');
+        $e->setTemplate('Order_StatusEmail');
         $e->populateTemplate(
             array(
                 "Order"  => $this->order,
