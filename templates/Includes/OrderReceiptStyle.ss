@@ -1,5 +1,4 @@
 <style>
-<!--
 /** Global resetting for Design **/
 	html {
 		font-size:1em;
@@ -11,7 +10,7 @@
 		margin:0;
 	}
 	a img { border:0; }
-	
+
 	h1.title{
 		font-size:1.5em;
 		display:block;
@@ -19,7 +18,7 @@
 		border-bottom:1px solid #CDDDDD;
 		text-transform:uppercase;
 	}
-	
+
 	#Content {
 		text-align:left;
 		margin:auto;
@@ -32,15 +31,15 @@
 		table#SenderTable .meta{
 			width:50%;
 		}
-	
+
 	table#MetaTable{
 		margin-left:auto;
 	}
-		
+
 	table#MetaTable .label{
 		font-weight:bold;
 	}
-	
+
 	table.infotable{
 		border:1px solid #CDDDDD;
 		border-collapse:collapse;
@@ -57,7 +56,7 @@
 			color: #DC1313;
 			border: 4px solid #FF7373;
 			background: #FED0D0;
-		}		
+		}
 		table.infotable h3 {
 			color: #4EA3D7;
 			font-size: 15px;
@@ -103,8 +102,8 @@
 		table.infotable .modifierRow,
 		table.infotable .threeColHeader{
 			text-align:right;
-		}			
-		
+		}
+
 		table.infotable .right {
 			text-align:right;
 		}
@@ -115,10 +114,9 @@
 		table.infotable th {
 			text-align:left;
 		}
-		
+
 		#ShippingTable td,
 		#ShippingTable th{
 			width:50%;
 		}
--->
 </style>

@@ -149,20 +149,11 @@ class OrderActionsForm extends Form
         ) {
             $this->order->Status = 'MemberCancelled';
             $this->order->write();
+
             if (self::config()->email_notification) {
-                $email = Email::create(
-                    Email::config()->admin_email,
-                    Email::config()->admin_email,
-                    _t(
-                        'ShopEmail.CancelSubject',
-                        'Order #{OrderNo} cancelled by member',
-                        '',
-                        array('OrderNo' => $this->order->Reference)
-                    ),
-                    $this->order->renderWith('Order')
-                );
-                $email->send();
+                OrderEmailNotifier::create($this->order)->sendCancelNotification();
             }
+
             $this->controller->sessionMessage(
                 _t("OrderForm.OrderCancelled", "Order sucessfully cancelled"),
                 'warning'
