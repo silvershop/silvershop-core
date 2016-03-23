@@ -44,7 +44,7 @@ class CheckoutFieldFactory
     public function getMembershipFields()
     {
         $fields = $this->getContactFields();
-        $idfield = Member::get_unique_identifier_field();
+        $idfield = Member::config()->unique_identifier_field;
         if (!$fields->fieldByName($idfield)) {
             $fields->push(TextField::create($idfield, $idfield)); //TODO: scaffold the correct id field
         }
@@ -89,8 +89,8 @@ class CheckoutFieldFactory
         return OptionsetField::create(
             'PaymentMethod',
             _t('CheckoutField.PaymentType', "Payment Type"),
-            GatewayInfo::get_supported_gateways(),
-            array_keys(GatewayInfo::get_supported_gateways())
+            GatewayInfo::getSupportedGateways(),
+            array_keys(GatewayInfo::getSupportedGateways())
         );
     }
 

@@ -17,7 +17,7 @@ class CheckoutStep_PaymentMethod extends CheckoutStep
 
     public function paymentmethod()
     {
-        $gateways = GatewayInfo::get_supported_gateways();
+        $gateways = GatewayInfo::getSupportedGateways();
         if (count($gateways) == 1) {
             return $this->owner->redirect($this->NextStepLink());
         }

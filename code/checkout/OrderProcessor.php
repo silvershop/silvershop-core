@@ -77,7 +77,7 @@ class OrderProcessor
 
         // Process payment, get the result back
         $response = $service->purchase($this->getGatewayData($gatewaydata));
-        if (GatewayInfo::is_manual($gateway)) {
+        if (GatewayInfo::isManual($gateway)) {
             //don't complete the payment at this stage, if payment is manual
             $this->placeOrder();
         }
@@ -137,7 +137,7 @@ class OrderProcessor
      */
     public function createPayment($gateway)
     {
-        if (!GatewayInfo::is_supported($gateway)) {
+        if (!GatewayInfo::isSupported($gateway)) {
             $this->error(
                 _t(
                     "PaymentProcessor.InvalidGateway",

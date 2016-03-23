@@ -28,8 +28,8 @@ class ShopPaymentTest extends FunctionalTest
             'PaymentExpress_PxPost' //onsite
         );
 
-        PaymentService::set_http_client($this->getHttpClient());
-        PaymentService::set_http_request($this->getHttpRequest());
+        PaymentService::setHttpClient($this->getHttpClient());
+        PaymentService::setHttpRequest($this->getHttpRequest());
 
         //publish products
         $this->objFromFixture("Product", "socks")->publish('Stage', 'Live');
