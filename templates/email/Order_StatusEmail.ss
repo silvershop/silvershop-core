@@ -4,7 +4,6 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" >
 		<title><%t ShopEmail.StatusChangeTitle "Shop Status Change" %></title>
 		<style>
-			<!--
 			/** Global resetting for Design **/
 				html {
 					font-size:1em;
@@ -89,7 +88,6 @@
 	#InformationTable .left {
 		text-align:left;
 	}
-			-->
 		</style>
 	</head>
 	<body>
