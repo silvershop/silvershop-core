@@ -6,30 +6,36 @@
 		<% include OrderReceiptStyle %>
 	</head>
 	<body>
-		<table id="Content" cellspacing="0" cellpadding="0" summary="Email Information">
-			<thead>
-				<tr>
-					<th scope="col" colspan="2">
-						<h1 class="title">$Subject</h1>
-					</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr>
-					<td scope="row" colspan="2" class="typography">
-						$PurchaseCompleteMessage
-					</td>
-				</tr>
-				<% if $Order %>
-				<% loop $Order %>
-					<tr>
-						<td>
-							<% include Order %>
-						</td>
-					</tr>
-				<% end_loop %>
-				<% end_if %>
-			</tbody>
+		<table id="container" cellpadding="0" cellspacing="0" border="0" >
+			<tr>
+				<td>
+					<table id="Content" cellspacing="0" cellpadding="0" summary="Email Information">
+						<thead>
+							<tr>
+								<th scope="col" colspan="2">
+									<h1 class="title">$Subject</h1>
+								</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td scope="row" colspan="2" class="typography">
+									$PurchaseCompleteMessage
+								</td>
+							</tr>
+							<% if $Order %>
+							<% loop $Order %>
+								<tr>
+									<td>
+										<% include Order %>
+									</td>
+								</tr>
+							<% end_loop %>
+							<% end_if %>
+						</tbody>
+					</table>
+				</td>
+			</tr>
 		</table>
 	</body>
 </html>

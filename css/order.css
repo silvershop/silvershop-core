@@ -3,6 +3,7 @@ h1.title {
     text-align: right;
     border-bottom: 1px solid #CDDDDD;
     text-transform: uppercase;
+    line-height: 1.5em;
 }
 
 .warningMessage {

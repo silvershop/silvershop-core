@@ -93,37 +93,43 @@
 		</style>
 	</head>
 	<body>
-		<table id="Content" cellspacing="0" cellpadding="0" summary="Email Information">
-			<thead>
-				<tr>
-					<th scope="col" colspan="2">
-						<h1><%t ShopEmail.StatusChangeTitle "Shop Status Change" %></h1>
-					</th>
-				</tr>
-				<tr>
-					<td scope="col">
-						<h1 class="PageTitle">$Subject</h1>
-					</td>
-				</tr>
-			</thead>
-			<tbody>
-				<% if $Order %>
-				<% with $Order %>
-					<tr>
-						<td scope="row" colspan="2" class="typography">
-							<p>
-                                <%t ShopEmail.StatusChanged 'Status for order #{OrderNo} changed to "{OrderStatus}"' OrderNo=$Reference OrderStatus=$StatusI18N %>
-                            </p>
-						</td>
-					</tr>
-				<% end_with %>
-				<% end_if %>
-				<tr>
-					<td scope="row" colspan="2" class="typography">
-						<p>$Note</p>
-					</td>
-				</tr>
-			</tbody>
+		<table id="container" cellpadding="0" cellspacing="0" border="0" >
+			<tr>
+				<td>
+					<table id="Content" cellspacing="0" cellpadding="0" summary="Email Information">
+						<thead>
+							<tr>
+								<th scope="col" colspan="2">
+                                    <h1><%t ShopEmail.StatusChangeTitle "Shop Status Change" %></h1>
+								</th>
+							</tr>
+							<tr>
+								<td scope="col">
+									<h1 class="PageTitle">$Subject</h1>
+								</td>
+							</tr>
+						</thead>
+						<tbody>
+							<% if $Order %>
+							<% with $Order %>
+								<tr>
+									<td scope="row" colspan="2" class="typography">
+										<p>
+                                            <%t ShopEmail.StatusChanged 'Status for order #{OrderNo} changed to "{OrderStatus}"' OrderNo=$Reference OrderStatus=$StatusI18N %>
+                                        </p>
+									</td>
+								</tr>
+							<% end_with %>
+							<% end_if %>
+							<tr>
+								<td scope="row" colspan="2" class="typography">
+									<p>$Note</p>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</td>
+			</tr>
 		</table>
 	</body>
 </html>
