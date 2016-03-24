@@ -15,7 +15,7 @@ de:
     EditProfile: 'Nutzerprofil bearbeiten'
     LogOut: 'Abmelden'
     Login: "Sie müssen sich einloggen um auf Ihr Konto zugreifen zu können. Falls Sie nicht registriert sind, können Sie erst nach Ihrer ersten Bestellung auf Ihr Konto zugreifen. Fall Sie bereits registriert sind, geben Sie folgend Ihre Daten ein."
-    LoginAgain: 'Sie sind abgemeldet. Wen Sie sich wieder anmelden möchten, können Sie es weiter unten tun.'
+    LoginAgain: 'Sie sind abgemeldet. Wenn Sie sich wieder anmelden möchten, können Sie es weiter unten tun.'
     MemberEmail: E-Mail
     MemberLastVisit: 'Letzte Anmeldung'
     MemberName: Name
@@ -87,7 +87,7 @@ de:
     InvalidDataMessage: 'Es gibt Probleme mit den von Ihnen eingegebenen Daten. Siehe unten:'
   CheckoutField:
     AccountInfo: 'Bitte wählen Sie ein Passwort, damit Sie sich zukünftig im Kundenkonto einloggen können.'
-    MemberLoginInfo: 'Wenn Sie schon Kunde bei uns sind, <a href="{LoginUrl">klicken Sie bitte hier um sich anzumelden</a>.'
+    MemberLoginInfo: 'Wenn Sie schon Kunde bei uns sind, <a href="{LoginUrl}">klicken Sie bitte hier um sich anzumelden</a>.'
     MembershipDetails: 'Kundeninformationen'
     MustAgreeToTerms: 'Bitte bestätigen Sie, dass sie die AGB gelesen haben.'
     Password: Passwort

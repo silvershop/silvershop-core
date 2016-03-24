@@ -62,7 +62,7 @@ class CheckoutFieldFactory
                 '<p class="message warning">' .
                 _t(
                     'CheckoutField.MemberLoginInfo',
-                    'If you are already a member please <a href="{LoginUrl">log in</a>',
+                    'If you are already a member please <a href="{LoginUrl}">log in</a>',
                     '',
                     array('LoginUrl' => $loginlink)
                 ) .
