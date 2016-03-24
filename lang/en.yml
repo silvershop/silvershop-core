@@ -87,7 +87,7 @@ en:
     InvalidDataMessage: 'There are problems with the data you entered. See below:'
   CheckoutField:
     AccountInfo: 'Please choose a password, so you can login and check your order history in the future'
-    MemberLoginInfo: 'If you are already a member please <a href="{LoginUrl">log in</a>'
+    MemberLoginInfo: 'If you are already a member please <a href="{LoginUrl}">log in</a>'
     MembershipDetails: 'Membership Details'
     MustAgreeToTerms: 'You must agree to the terms and conditions'
     Password: Password
