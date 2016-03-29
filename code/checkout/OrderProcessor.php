@@ -322,7 +322,7 @@ class OrderProcessor
         return $this->error;
     }
 
-    private function error($message)
+    protected function error($message)
     {
         $this->error = $message;
     }
