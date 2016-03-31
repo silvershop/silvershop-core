@@ -28,7 +28,7 @@
  * @method OrderItem[]|HasManyList Items
  * @method OrderModifier[]|HasManyList Modifiers
  * @method OrderStatusLog[]|HasManyList OrderStatusLogs
- * 
+ *
  * @package shop
  */
 class Order extends DataObject
@@ -244,7 +244,8 @@ class Order extends DataObject
                 )
                 ->setMultiple(true)
         );
-        //add date range filtering
+
+        // add date range filtering
         $fields->insertBefore(
             DateField::create("DateFrom", _t('Order.DateFrom', "Date from"))
                 ->setConfig('showcalendar', true),
@@ -255,10 +256,27 @@ class Order extends DataObject
                 ->setConfig('showcalendar', true),
             'Status'
         );
-        //get the array, to maniplulate name, and fullname seperately
+
+        // get the array, to maniplulate name, and fullname seperately
         $filters = $context->getFilters();
         $filters['DateFrom'] = GreaterThanFilter::create('Placed');
         $filters['DateTo'] = LessThanFilter::create('Placed');
+
+        // filter customer need to use a bunch of different sources
+        $filters['FirstName'] = new MultiFieldPartialMatchFilter(
+            'FirstName', false,
+            array('SplitWords'),
+            array(
+                'Surname',
+                'Member.FirstName',
+                'Member.Surname',
+                'BillingAddress.FirstName',
+                'BillingAddress.Surname',
+                'ShippingAddress.FirstName',
+                'ShippingAddress.Surname',
+            )
+        );
+
         $context->setFilters($filters);
 
         return $context;
