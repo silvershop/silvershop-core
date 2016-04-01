@@ -21,6 +21,7 @@ A tremendous thanks to [everyone that has already contributed](https://github.co
 ## Stay up to date / get in touch
 
 * [Planning Trello Board](https://trello.com/b/85ZyINqI/silvershop-development-planning)
+* [Roadmap](ROADMAP.md)
 * Live chat on Gitter! [![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/silvershop/silvershop-core?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 * [Twitter](https://twitter.com/silvershopcore)
 
