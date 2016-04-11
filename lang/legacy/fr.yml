@@ -1,0 +1,189 @@
+---
+fr:
+  AccountPage:
+    Message: "Vous devez avoir un login avant d'avoir accès à votre page de profile. Si vous n'êtes pas enregistré, vous ne pourrez avoir accès qu'à partir du moment ou vous ferez votre première commande, sinon veuillez écrire vos renseignements ci-dessous."
+    NOPAGE: "Aucun compte sur ce site - créez-en un s'il vous plaît!"
+  AccountPage.ss:
+    COMPLETED: "Commandes terminées"
+    HISTORY: "Historique de vos commandes"
+    INCOMPLETE: "Commandes incomplètes"
+    NOCOMPLETED: "Aucune commande n'a été trouvée."
+    NOINCOMPLETE: "Aucune commande incomplète n'a été trouvée"
+    ORDER: "Commande #"
+    READMORE: "En savoir plus sur la commande #%s"
+  AccountPage_order.ss:
+    ADDRESS: Adresse
+    AMOUNT: Somme
+    BACKTOCHECKOUT: "Cliquer ici pour vous rendre à la page de la caisse"
+    CITY: Ville
+    COUNTRY: Pays
+    DATE: Date
+    DETAILS: Détails
+    EMAILDETAILS: "Une copie confirmant les détails a été envoyé  vers votre adresse email."
+    NAME: Nom
+    PAYMENTMETHOD: Methode
+    PAYMENTSTATUS: "Statut du payement"
+  Cart.ss:
+    ADDONE: "Ajouter un ou plusieurs \"%s\" à votre panier"
+    CheckoutClick: "Cliquez ici pour passer au paiement"
+    CheckoutGoTo: "Passer au paiement"
+    HEADLINE: "Mon Panier"
+    NOITEMS: "Il ya aucun article dans votre panier"
+    PRICE: Prix
+    READMORE: "Cliquez ici pour en savoir plus sur \"%s\""
+    REMOVE: "Enlève \"%s\" de votre commande"
+    REMOVEALL: "Supprimer tous les \"%s\" de votre panier"
+    REMOVEONE: "Supprimer un des  \"%s\" de votre panier"
+    SUBTOTAL: Sous-Total
+    TOTAL: Total
+  CheckoutPage:
+    NOPAGE: "Pas de paiement sur la page de ce site, veuillez en créer un!"
+  CheckoutPage.ss:
+    CHECKOUT: Commander
+    ORDERSTATUS: "Etat de la commande"
+    PROCESS: Processus
+  ChequePayment:
+    MESSAGE: "Paiement par Chèque. Veuillez prendre note que les produits ne seront expédiés qu'après réception de votre paiement."
+  MemberForm:
+    DETAILSSAVED: "Vos coordonnées ont été enregistrées"
+    LOGGEDIN: "Vous êtes actuellement connecté en tant que"
+  Order:
+    INCOMPLETE: "Commande incomplète"
+    SUCCESSFULL: "Commande réussie"
+  OrderInformation.ss:
+    ADDRESS: Adresse
+    AMOUNT: Quantité
+    BUYERSADDRESS: "Adresse de l'acheteur"
+    CITY: Ville
+    COUNTRY: Pays
+    CUSTOMERDETAILS: "Détails du Client"
+    DATE: Date
+    DETAILS: Détails
+    EMAIL: "Courrier électronique"
+    MOBILE: GSM
+    NAME: Nom
+    ORDERSUMMARY: "Récapitulatif des commandes"
+    PAYMENTID: "ID du Paiement"
+    PAYMENTINFORMATION: "Information de Paiement"
+    PAYMENTMETHOD: Méthode
+    PAYMENTSTATUS: "Statut du Paiement"
+    PHONE: Téléphone
+    PRICE: Prix
+    PRODUCT: Produit
+    QUANTITY: Quantité
+    READMORE: "Cliquez ici pour lire plus de \"%s\""
+    SHIPPINGDETAILS: "Détails des achats"
+    SUBTOTAL: Sous-Total
+    TOTAL: Total
+    TOTALOUTSTANDING: "Total encours"
+    TOTALPRICE: "Prix Total"
+  OrderInformation_Editable.ss:
+    ADDONE: "Ajoutez un \"%s\" à votre panier"
+    NOITEMS: "Il n'y a <strong>pas</strong> d'article dans votre panier."
+    ORDERINFORMATION: "Information Pour commander"
+    PRICE: Prix
+    PRODUCT: Produit
+    QUANTITY: Quantité
+    READMORE: "Cliquez ici pour lire la suite sur \"%s\""
+    REMOVE: "Enlève \"%s\" de votre commande"
+    REMOVEALL: "Supprimer tous les \"%s\" du panier"
+    REMOVEONE: "Supprimez un \"%s\" de votre panier"
+    SUBTOTAL: Sous-Total
+    TABLESUMMARY: "Le contenu de votre panier est affiché dans ce formulaire, ainsi qu'un résumé de tous les frais associés à cet achat et un aperçu des options de paiements."
+    TOTAL: Total
+    TOTALPRICE: "Prix Total"
+  OrderInformation_NoPricing.ss:
+    ADDRESS: Adresse
+    BUYERSADDRESS: "Adresse de l'acheteur"
+    CITY: Ville
+    COUNTRY: Pays
+    CUSTOMERDETAILS: "Détails du Client"
+    EMAIL: "Courrier électronique"
+    MOBILE: GSM
+    NAME: Nom
+    ORDERINFO: "Information pour Commander #"
+    PHONE: Téléphone
+    TABLESUMMARY: "Le contenu de votre panier est affiché dans ce formulaire, ainsi qu'un résumé de tous les frais associés à cet achat et un aperçu des options de paiements."
+  OrderInformation_PackingSlip.ss:
+    DESCRIPTION: Description
+    ITEM: Article
+    ORDERDATE: "Date de la commande"
+    ORDERNUMBER: "Numéro de Commande"
+    PAGETITLE: "Imprimer la commande"
+    QUANTITY: Quantité
+    TABLESUMMARY: "Le contenu de votre panier est affiché dans ce formulaire, ainsi qu'un résumé de tous les frais associés à cet achat et un aperçu des options de paiements."
+  OrderInformation_Print.ss:
+    PAGETITLE: "Imprimez votre commande"
+  OrderReport:
+    CHANGESTATUS: "Changement d'état des commandes"
+    NOTEEMAIL: "Note/Courrier électronique"
+    SENDNOTETO: "Envoyer cette note à %s (%s)"
+  Order_Content.ss:
+    NOITEMS: "Il n'y a aucun article dans votre ordre."
+    PRICE: Prix
+    PRODUCT: Produit
+    QUANTITY: Quantité
+    READMORE: "Clique ici pour lire plus sur \"%s\""
+    SUBTOTAL: Sous-total
+    TOTAL: Total
+    TOTALPRICE: "Prix Total"
+  Order_Member.ss:
+    ADDRESS: Adresse
+    CITY: Ville
+    COUNTRY: Pays
+    EMAIL: Email
+    MOBILE: Mobile
+    NAME: Nom
+    PHONE: Téléphone
+  Order_ReceiptEmail.ss:
+    HEADLINE: "Reçu pour votre commande sur ce magasin"
+    TITLE: "Réception de la boutique"
+  Order_StatusEmail.ss:
+    HEADLINE: "Changement du statut du magasin"
+    STATUSCHANGE: "Status modifié à \"%s\" pour la commande #"
+    TITLE: "Changement du statut du magasin"
+  PaymentInformation.ss:
+    AMOUNT: Montant
+    DATE: Date
+    DETAILS: Détails
+    PAYMENTID: "ID du Paiement"
+    PAYMENTINFORMATION: "Information sur le paiement"
+    PAYMENTMETHOD: Méthode
+    PAYMENTSTATUS: "Etat du paiement"
+    TABLESUMMARY: "Le contenu de votre panier est affiché dans ce formulaire, ainsi qu'un résumé de tous les frais associés à cet achat et un aperçu des options de paiements."
+  Product.ss:
+    ADD: "Ajouter \"%s\" dans votre panier"
+    ADDLINK: "Ajouter un article à votre panier"
+    ADDONE: "Ajouter un ou plusieurs \"%s\" de votre panier"
+    AUTHOR: Auteur
+    FEATURED: "Il s'agit d'une description du produit."
+    GOTOCHECKOUT: "Aller au paiement maintenant"
+    GOTOCHECKOUTLINK: "» Aller au paiement"
+    IMAGE: "%s image"
+    ItemID: "Article #"
+    NOIMAGE: "Désolé, pas d'image disponible du produit pour \"%s\""
+    QUANTITYCART: "Quantité dans le panier"
+    REMOVE: "Supprimer \"%s\" de votre panier"
+    REMOVEALL: "Supprimez un \"%s\" de votre panier"
+    REMOVELINK: "» Retiré de votre panier"
+    SIZE: Taille
+  ProductCategory.ss:
+    FEATURED: "Produits "
+    OTHER: "Autres Produits"
+  ProductCategoryItem.ss:
+    ADD: "Ajouter un \"%s\" dans votre panier"
+    ADDLINK: "Ajouter un article au panier"
+    ADDONE: "Ajouter un ou plusieurs \"%s\" dans votre panier"
+    AUTHOR: Auteur
+    GOTOCHECKOUT: "Aller à la caisse maintenant"
+    GOTOCHECKOUTLINK: "» Aller à la caisse"
+    IMAGE: "%s image"
+    NOIMAGE: "Désolé, il n'y a pas d'image pour le produit \"%s\""
+    QUANTITYCART: "Quantité dans le panier"
+    READMORE: "Cliquez ici pour en savoir plus sur \"%s\""
+    READMORECONTENT: "CLiquez pour en savoir plus »"
+    REMOVE: "Supprimer un \"%s\" de votre panier"
+    REMOVEALL: "Supprimer un des \"%s\" du panier"
+    REMOVELINK: "» Retiré du panier"
+  ProductMenu.ss:
+    GOTOPAGE: "Aller à la page %s"

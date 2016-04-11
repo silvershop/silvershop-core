@@ -4,6 +4,31 @@
  * The order class is a databound object for handling Orders
  * within SilverStripe.
  *
+ * @property string|float Currency
+ * @property string Reference
+ * @property string Placed
+ * @property string Paid
+ * @property string ReceiptSent
+ * @property string Printed
+ * @property string Dispatched
+ * @property string Status
+ * @property string FirstName
+ * @property string Surname
+ * @property string Email
+ * @property string Notes
+ * @property string IPAddress
+ * @property string|bool SeparateBillingAddress
+ * @property string Locale
+ * @property string|int MemberID
+ * @property string|int ShippingAddressID
+ * @property string|int BillingAddressID
+ * @method Member|ShopMember Member
+ * @method Address BillingAddress
+ * @method Address ShippingAddress
+ * @method OrderItem[]|HasManyList Items
+ * @method OrderModifier[]|HasManyList Modifiers
+ * @method OrderStatusLog[]|HasManyList OrderStatusLogs
+ *
  * @package shop
  */
 class Order extends DataObject
@@ -165,7 +190,11 @@ class Order extends DataObject
 
     public static function get_order_status_options()
     {
-        return singleton('Order')->dbObject('Status')->enumValues(false);
+        $values = array();
+        foreach (singleton('Order')->dbObject('Status')->enumValues(false) as $value) {
+            $values[$value] = _t('Order.STATUS_' . strtoupper($value), $value);
+        }
+        return $values;
     }
 
     /**
@@ -215,21 +244,39 @@ class Order extends DataObject
                 )
                 ->setMultiple(true)
         );
-        //add date range filtering
+
+        // add date range filtering
         $fields->insertBefore(
-            DateField::create("DateFrom", _t('Order.DATE_FROM', "Date from"))
+            DateField::create("DateFrom", _t('Order.DateFrom', "Date from"))
                 ->setConfig('showcalendar', true),
             'Status'
         );
         $fields->insertBefore(
-            DateField::create("DateTo", _t('Order.DATE_TO', "Date to"))
+            DateField::create("DateTo", _t('Order.DateTo', "Date to"))
                 ->setConfig('showcalendar', true),
             'Status'
         );
-        //get the array, to maniplulate name, and fullname seperately
+
+        // get the array, to maniplulate name, and fullname seperately
         $filters = $context->getFilters();
         $filters['DateFrom'] = GreaterThanFilter::create('Placed');
         $filters['DateTo'] = LessThanFilter::create('Placed');
+
+        // filter customer need to use a bunch of different sources
+        $filters['FirstName'] = new MultiFieldPartialMatchFilter(
+            'FirstName', false,
+            array('SplitWords'),
+            array(
+                'Surname',
+                'Member.FirstName',
+                'Member.Surname',
+                'BillingAddress.FirstName',
+                'BillingAddress.Surname',
+                'ShippingAddress.FirstName',
+                'ShippingAddress.Surname',
+            )
+        );
+
         $context->setFilters($filters);
 
         return $context;
@@ -324,6 +371,16 @@ class Order extends DataObject
             $this->GrandTotal() - $this->TotalPaid(),
             self::config()->rounding_precision
         );
+    }
+
+    /**
+     * Get the order status. This will return a localized value if available.
+     *
+     * @return string the payment status
+     */
+    public function getStatusI18N()
+    {
+        return _t('Order.STATUS_' . strtoupper($this->Status), $this->Status);
     }
 
     /**
@@ -616,5 +673,26 @@ class Order extends DataObject
         $val .= "</div></div>";
 
         return $val;
+    }
+
+    /**
+     * Provide i18n entities for the order class
+     *
+     * @return array
+     */
+    public function provideI18nEntities()
+    {
+        $entities = parent::provideI18nEntities();
+
+        // collect all the payment status values
+        foreach ($this->dbObject('Status')->enumValues() as $value) {
+            $key = strtoupper($value);
+            $entities["Order.STATUS_$key"] = array(
+                $value,
+                "Translation of the order status '$value'",
+            );
+        }
+
+        return $entities;
     }
 }

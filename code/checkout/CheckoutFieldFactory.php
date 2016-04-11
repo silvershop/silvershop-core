@@ -26,9 +26,9 @@ class CheckoutFieldFactory
     {
         return $this->getSubset(
             FieldList::create(
-                TextField::create('FirstName', _t('CheckoutField.FIRSTNAME', 'First Name')),
-                TextField::create('Surname', _t('CheckoutField.SURNAME', 'Surname')),
-                EmailField::create('Email', _t('CheckoutField.EMAIL', 'Email'))
+                TextField::create('FirstName', _t('Order.db_FirstName', 'First Name')),
+                TextField::create('Surname', _t('Order.db_Surname', 'Surname')),
+                EmailField::create('Email', _t('Order.db_Email', 'Email'))
             ),
             $subset
         );
@@ -56,24 +56,26 @@ class CheckoutFieldFactory
     {
         $loginlink = "Security/login?BackURL=" . CheckoutPage::find_link(true);
         $fields = FieldList::create(
-            HeaderField::create(_t('CheckoutField.MEMBERSHIPDETAILS', 'Membership Details'), 3),
+            HeaderField::create(_t('CheckoutField.MembershipDetails', 'Membership Details'), 3),
             LiteralField::create(
                 'MemberInfo',
                 '<p class="message warning">' .
-                _t('CheckoutField.MEMBERINFO', 'If you are already a member please')
-                . " <a href=\"$loginlink\">" .
-                _t('OrderForm.LogIn', 'log in') .
-                '</a>.' .
+                _t(
+                    'CheckoutField.MemberLoginInfo',
+                    'If you are already a member please <a href="{LoginUrl}">log in</a>',
+                    '',
+                    array('LoginUrl' => $loginlink)
+                ) .
                 '</p>'
             ),
             LiteralField::create(
                 'AccountInfo',
                 '<p>' . _t(
-                    'CheckoutField.ACCOUNTINFO',
+                    'CheckoutField.AccountInfo',
                     'Please choose a password, so you can login and check your order history in the future'
                 ) . '</p>'
             ),
-            $this->getPasswordField()
+            $pwf = $this->getPasswordField()
         );
         if (!Checkout::user_membership_required()) {
             $pwf->setCanBeEmpty(true);
@@ -86,7 +88,7 @@ class CheckoutFieldFactory
         //TODO: only get one field if there is no option
         return OptionsetField::create(
             'PaymentMethod',
-            _t('CheckoutField.PAYMENT_TYPE', "Payment Type"),
+            _t('CheckoutField.PaymentType', "Payment Type"),
             GatewayInfo::get_supported_gateways(),
             array_keys(GatewayInfo::get_supported_gateways())
         );
@@ -95,14 +97,14 @@ class CheckoutFieldFactory
     public function getPasswordField($confirmed = true)
     {
         if ($confirmed) {
-            return ConfirmedPasswordField::create('Password', _t('CheckoutField.PASSWORD', 'Password'));
+            return ConfirmedPasswordField::create('Password', _t('CheckoutField.Password', 'Password'));
         }
-        return PasswordField::create('Password', _t('CheckoutField.PASSWORD', 'Password'));
+        return PasswordField::create('Password', _t('CheckoutField.Password', 'Password'));
     }
 
     public function getNotesField()
     {
-        return TextareaField::create("Notes", _t("CheckoutField.NOTES", "Message"));
+        return TextareaField::create("Notes", _t("Order.db_Notes", "Message"));
     }
 
     public function getTermsConditionsField()
@@ -114,16 +116,11 @@ class CheckoutFieldFactory
 
             $field = CheckboxField::create(
                 'ReadTermsAndConditions',
-                sprintf(
-                    _t(
-                        'CheckoutField.TERMSANDCONDITIONS',
-                        "I agree to the terms and conditions stated on the
-						<a href=\"%s\" target=\"new\" title=\"Read the shop terms and conditions for this site\">
-							terms and conditions
-						</a>
-					page"
-                    ),
-                    $termsPage->Link()
+                _t(
+                    'Checkout.TermsAndConditionsLink',
+                    'I agree to the terms and conditions stated on the <a href="{TermsPageLink}" target="new" title="Read the shop terms and conditions for this site">{TermsPageTitle}</a> page',
+                    '',
+                    array('TermsPageLink' => $termsPage->Link(), 'TermsPageTitle' => $termsPage->Title)
                 )
             );
         }

@@ -9,6 +9,8 @@ class CheckoutTest extends SapphireTest
         'silvershop/tests/fixtures/ShopMembers.yml',
     );
 
+    private $memberFactory;
+
     public function setUp()
     {
         parent::setUp();
@@ -17,6 +19,7 @@ class CheckoutTest extends SapphireTest
         $this->address1 = $this->objFromFixture("Address", "address1");
         $this->address2 = $this->objFromFixture("Address", "address2");
         $this->checkout = new Checkout($this->cart);
+        $this->memberFactory = new ShopMemberFactory();
 
         CheckoutConfig::config()->member_creation_enabled = true;
         CheckoutConfig::config()->membership_required = false;
@@ -62,7 +65,7 @@ class CheckoutTest extends SapphireTest
     {
         //check can proceeed with/without order
         //check member exists
-        $result = $this->checkout->createMembership(
+        $result = $this->memberFactory->create(
             array(
                 'FirstName' => 'Jane',
                 'Surname'   => 'Smith',
@@ -78,7 +81,7 @@ class CheckoutTest extends SapphireTest
         CheckoutConfig::config()->member_creation_enabled = true;
         CheckoutConfig::config()->membership_required = true;
 
-        $member = $this->checkout->createMembership(
+        $member = $this->memberFactory->create(
             array(
                 'FirstName' => 'Susan',
                 'Surname'   => 'Jackson',
@@ -99,7 +102,7 @@ class CheckoutTest extends SapphireTest
 
         $this->setExpectedException('ValidationException');
 
-        $member = $this->checkout->createMembership(
+        $member = $this->memberFactory->create(
             array(
                 'FirstName' => 'Susan',
                 'Surname'   => 'Jackson',
@@ -117,7 +120,7 @@ class CheckoutTest extends SapphireTest
     {
         CheckoutConfig::config()->member_creation_enabled = false;
         CheckoutConfig::config()->membership_required = true;
-        $result = $this->checkout->createMembership(
+        $result = $this->memberFactory->create(
             array(
                 'FirstName' => 'Some',
                 'Surname'   => 'Body',
@@ -135,7 +138,7 @@ class CheckoutTest extends SapphireTest
      */
     public function testMemberWithoutPassword()
     {
-        $result = $this->checkout->createMembership(
+        $result = $this->memberFactory->create(
             array(
                 'FirstName' => 'Jim',
                 'Surname'   => 'Smith',
@@ -151,7 +154,7 @@ class CheckoutTest extends SapphireTest
      */
     public function testMemberAlreadyExists()
     {
-        $result = $this->checkout->createMembership(
+        $result = $this->memberFactory->create(
             array(
                 'FirstName' => 'Jeremy',
                 'Surname'   => 'Peremy',
@@ -168,7 +171,7 @@ class CheckoutTest extends SapphireTest
      */
     public function testMemberMissingIdentifier()
     {
-        $result = $this->checkout->createMembership(
+        $result = $this->memberFactory->create(
             array(
                 'FirstName' => 'John',
                 'Surname'   => 'Doe',

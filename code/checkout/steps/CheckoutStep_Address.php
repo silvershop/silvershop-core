@@ -25,7 +25,7 @@ class CheckoutStep_Address extends CheckoutStep
         $form->Fields()->push(
             CheckboxField::create(
                 "SeperateBilling",
-                _t('CheckoutStep_Address.SEPARATE_BILLING', "Bill to a different address from this")
+                _t('CheckoutStep_Address.SeperateBilling', "Bill to a different address from this")
             )
         );
         $order = $this->shippingconfig()->getOrder();
@@ -41,7 +41,7 @@ class CheckoutStep_Address extends CheckoutStep
         $form = CheckoutForm::create($this->owner, 'ShippingAddressForm', $this->shippingconfig());
         $form->setActions(
             FieldList::create(
-                FormAction::create("setshippingaddress", _t('CheckoutStep.CONTINUE', "Continue"))
+                FormAction::create("setshippingaddress", _t('CheckoutStep.Continue', "Continue"))
             )
         );
         $this->owner->extend('updateShippingAddressForm', $form);
@@ -82,7 +82,7 @@ class CheckoutStep_Address extends CheckoutStep
         $form = CheckoutForm::create($this->owner, 'BillingAddressForm', $this->billingconfig());
         $form->setActions(
             FieldList::create(
-                FormAction::create("setbillingaddress", _t('CheckoutStep.CONTINUE', "Continue"))
+                FormAction::create("setbillingaddress", _t('CheckoutStep.Continue', "Continue"))
             )
         );
         $this->owner->extend('updateBillingAddressForm', $form);

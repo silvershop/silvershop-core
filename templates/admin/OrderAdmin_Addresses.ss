@@ -2,12 +2,12 @@
 	<thead>
 		<tr class="title">
 			<th colspan="2">
-				<h2><% _t("ADDRESS","Address") %></h2>
+				<h2><%t Address.SINGULARNAME "Address" %></h2>
 			</th>
 		</tr>
 		<tr class="header">
-			<th class="main"><% _t("SHIPTO","Ship To") %></th>
-			<th class="main"><% _t("BILLTO","Bill To") %></th>
+			<th class="main"><%t Order.ShipTo "Ship To" %></th>
+			<th class="main"><%t Order.BillTo "Bill To" %></th>
 		</tr>
 	</thead>
 	<tbody>

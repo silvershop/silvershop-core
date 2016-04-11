@@ -23,12 +23,11 @@ interface Buyable
 
     /**
      * Checks if the buyable can be purchased. If a buyable cannot be purchased
-     * then the method should return a {@link ShopBuyableException} containing
-     * the messaging.
+     * then the method should return false
      *
-     * @throws ShopBuyableException
-     *
-     * @return boolean
+     * @param Member|null $member the Member that wants to purchase the buyable. Defaults to null
+     * @param int $quantity the quantity to purchase. Defaults to 1
+     * @return boolean true if the buyable can be purchased
      */
     public function canPurchase($member = null, $quantity = 1);
 

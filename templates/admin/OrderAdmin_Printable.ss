@@ -6,7 +6,9 @@
 	</head>
 	<body>
 		<div style="page-break-after: always;">
-			<h1 class="title">$SiteConfig.Title <% _t("ORDER","Order") %> $Reference</h1>
+			<h1 class="title">
+                <%t OrderAdmin.ReceiptTitle "{SiteTitle} Order {OrderNo}" SiteTitle=$SiteConfig.Title OrderNo=$Reference %>
+            </h1>
 			<% include Order %>
 		</div>
 	</body>

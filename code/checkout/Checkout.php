@@ -122,7 +122,7 @@ class Checkout
         if (!isset($methods[$paymentmethod])) {
             Session::set("Checkout.PaymentMethod", null);
             Session::clear("Checkout.PaymentMethod");
-            return $this->error(_t("Checkout.NOPAYMENTMETHOD", "Payment method does not exist"));
+            return $this->error(_t("Checkout.NoPaymentMethod", "Payment method does not exist"));
         }
         Session::set("Checkout.PaymentMethod", $paymentmethod);
         return true;
@@ -141,15 +141,6 @@ class Checkout
             $method = $methods[$method];
         }
         return $method;
-    }
-
-    /**
-     * @deprecated 1.0 use ShopMemberFactory
-     */
-    public function createMembership($data)
-    {
-        $factory = new ShopMemberFactory();
-        return $factory->create($data);
     }
 
     /**

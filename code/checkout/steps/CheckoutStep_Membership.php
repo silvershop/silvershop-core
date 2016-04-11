@@ -45,12 +45,12 @@ class CheckoutStep_Membership extends CheckoutStep
             FormAction::create(
                 "createaccount",
                 _t(
-                    'CheckoutStep_Membership.CREATE_ACCOUNT',
+                    'CheckoutStep_Membership.CreateAccount',
                     "Create an Account",
                     'This is an option presented to the user'
                 )
             ),
-            FormAction::create("guestcontinue", _t('CheckoutStep_Membership.CONTINUE_AS_GUEST', "Continue as Guest"))
+            FormAction::create("guestcontinue", _t('CheckoutStep_Membership.ContinueAsGuest', "Continue as Guest"))
         );
         $form = Form::create($this->owner, 'MembershipForm', $fields, $actions);
         $this->owner->extend('updateMembershipForm', $form);
@@ -108,7 +108,7 @@ class CheckoutStep_Membership extends CheckoutStep
                 FormAction::create(
                     'docreateaccount',
                     _t(
-                        'CheckoutStep_Membership.CREATE_NEW_ACCOUNT',
+                        'CheckoutStep_Membership.CreateNewAccount',
                         'Create New Account',
                         'This is an action (Button label)'
                     )

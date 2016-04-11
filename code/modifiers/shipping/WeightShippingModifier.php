@@ -31,15 +31,6 @@ class WeightShippingModifier extends ShippingModifier
     protected $weight = 0;
 
     /**
-     * @deprecated 2.0 please use the SilverStripe config API to set these values (eg. via YAML)
-     * @param array $costs costs as associative array where the keys are values in kg, and values are the matching price
-     */
-    public static function set_weight_costs($costs)
-    {
-        Config::inst()->update('WeightShippingModifier', 'weight_cost', $costs);
-    }
-
-    /**
      * Calculates shipping cost based on Product Weight.
      */
     public function value($subtotal = 0)
@@ -70,7 +61,12 @@ class WeightShippingModifier extends ShippingModifier
 
     public function TableTitle()
     {
-        return sprintf(_t("WeightShippingModifier.TABLETITLE", "Shipping (%f kg)"), $this->Weight());
+        return _t(
+            'WeightShippingModifier.TableTitle',
+            'Shipping ({Kilograms} kg)',
+            '',
+            array('Kilograms' => $this->Weight())
+        );
     }
 
     /**

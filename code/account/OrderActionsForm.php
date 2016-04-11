@@ -42,7 +42,7 @@ class OrderActionsForm extends Form
                 $fields->push(
                     HeaderField::create(
                         "MakePaymentHeader",
-                        _t("OrderActionsForm.MAKEPAYMENT", "Make Payment")
+                        _t("OrderActionsForm.MakePayment", "Make Payment")
                     )
                 );
                 $outstandingfield = Currency::create();
@@ -50,16 +50,18 @@ class OrderActionsForm extends Form
                 $fields->push(
                     LiteralField::create(
                         "Outstanding",
-                        sprintf(
-                            _t("OrderActionsForm.OUTSTANDING", "Outstanding: %s"),
-                            $outstandingfield->Nice()
+                        _t(
+                            'Order.OutstandingWithAmount',
+                            'Outstanding: {Amount}',
+                            '',
+                            array('Amount' => $outstandingfield->Nice())
                         )
                     )
                 );
                 $fields->push(
                     OptionsetField::create(
                         'PaymentMethod',
-                        _t("OrderActionsForm.PAYMENTMETHOD", "Payment Method"),
+                        _t("OrderActionsForm.PaymentMethod", "Payment Method"),
                         $gateways,
                         key($gateways)
                     )
@@ -68,7 +70,7 @@ class OrderActionsForm extends Form
                 $actions->push(
                     FormAction::create(
                         'dopayment',
-                        _t('OrderActionsForm.PAYORDER', 'Pay outstanding balance')
+                        _t('OrderActionsForm.PayOrder', 'Pay outstanding balance')
                     )
                 );
             }
@@ -78,7 +80,7 @@ class OrderActionsForm extends Form
             $actions->push(
                 FormAction::create(
                     'docancel',
-                    _t('OrderActionsForm.CANCELORDER', 'Cancel this order')
+                    _t('OrderActionsForm.CancelOrder', 'Cancel this order')
                 )
             );
         }
@@ -118,13 +120,13 @@ class OrderActionsForm extends Form
                     $form->sessionMessage($processor->getError(), 'bad');
                 }
             } else {
-                $form->sessionMessage(_t('OrderActionsForm.MANUAL_NOT_ALLOWED', "Manual payment not allowed"), 'bad');
+                $form->sessionMessage(_t('OrderActionsForm.ManualNotAllowed', "Manual payment not allowed"), 'bad');
             }
 
             return $this->controller->redirectBack();
         }
         $form->sessionMessage(
-            _t('OrderForm.COULDNOTPROCESSPAYMENT', 'Payment could not be processed.'),
+            _t('OrderForm.CouldNotProcessPayment', 'Payment could not be processed.'),
             'bad'
         );
         $this->controller->redirectBack();
@@ -147,20 +149,13 @@ class OrderActionsForm extends Form
         ) {
             $this->order->Status = 'MemberCancelled';
             $this->order->write();
+
             if (self::config()->email_notification) {
-                $email = Email::create(
-                    Email::config()->admin_email,
-                    Email::config()->admin_email,
-                    sprintf(
-                        _t('Order.CANCELSUBJECT', 'Order #%d cancelled by member'),
-                        $this->order->ID
-                    ),
-                    $this->order->renderWith('Order')
-                );
-                $email->send();
+                OrderEmailNotifier::create($this->order)->sendCancelNotification();
             }
+
             $this->controller->sessionMessage(
-                _t("OrderForm.ORDERCANCELLED", "Order sucessfully cancelled"),
+                _t("OrderForm.OrderCancelled", "Order sucessfully cancelled"),
                 'warning'
             );
             if (Member::currentUser() && $link = $this->order->Link()) {

@@ -20,46 +20,46 @@ class ProductVariation extends DataObject implements Buyable
         'Weight'    => 'Float',
         'Height'    => 'Float',
         'Width'     => 'Float',
-        'Depth'     => 'Float',
+        'Depth'     => 'Float'
     );
 
     private static $has_one           = array(
         'Product' => 'Product',
-        'Image'   => 'Image',
+        'Image'   => 'Image'
     );
 
     private static $many_many         = array(
-        'AttributeValues' => 'ProductAttributeValue',
+        'AttributeValues' => 'ProductAttributeValue'
     );
 
     private static $casting           = array(
         'Title' => 'Text',
-        'Price' => 'Currency',
+        'Price' => 'Currency'
     );
 
     private static $versioning        = array(
-        'Live',
+        'Live'
     );
 
     private static $extensions        = array(
-        "Versioned('Live')",
+        "Versioned('Live')"
     );
 
     private static $summary_fields    = array(
         'InternalItemID' => 'Product Code',
         //'Product.Title' => 'Product',
         'Title'          => 'Variation',
-        'Price'          => 'Price',
+        'Price'          => 'Price'
     );
 
     private static $searchable_fields = array(
         'Product.Title',
-        'InternalItemID',
+        'InternalItemID'
     );
 
     private static $indexes           = array(
         'InternalItemID' => true,
-        'LastEdited'     => true,
+        'LastEdited'     => true
     );
 
     private static $singular_name     = "Variation";
@@ -79,8 +79,8 @@ class ProductVariation extends DataObject implements Buyable
     public function getCMSFields()
     {
         $fields = FieldList::create(
-            TextField::create('InternalItemID', _t('Product.CODE', 'Product Code')),
-            TextField::create('Price', _t('Product.PRICE', 'Price'))
+            TextField::create('InternalItemID', _t('Product.Code', 'Product Code')),
+            TextField::create('Price', _t('Product.db_BasePrice', 'Price'))
         );
         //add attributes dropdowns
         $attributes = $this->Product()->VariationAttributeTypes();
@@ -97,7 +97,7 @@ class ProductVariation extends DataObject implements Buyable
                             'novalues' . $attribute->Name,
                             '<p class="message warning">' .
                             _t(
-                                'ProductVariation.NO_ATTRIBUTE_VALUES_MESSAGE',
+                                'ProductVariation.NoAttributeValuesMessage',
                                 '{attribute} has no values to choose from. You can create them in the "Products" &#62; "Product Attribute Type" section of the CMS.',
                                 'Warning that will be shown if an attribute doesn\'t have any values',
                                 array('attribute' => $attribute->Name)
@@ -114,7 +114,7 @@ class ProductVariation extends DataObject implements Buyable
                     'savefirst',
                     '<p class="message warning">' .
                     _t(
-                        'ProductVariation.SAVE_FIRST_MESSAGE',
+                        'ProductVariation.MustSaveFirstMessage',
                         "You can choose variation attributes after saving for the first time, if they exist."
                     ) .
                     '</p>'
@@ -122,38 +122,48 @@ class ProductVariation extends DataObject implements Buyable
             );
         }
         $fields->push(
-            UploadField::create('Image', _t('Product.IMAGE', 'Product Image'))
+            UploadField::create('Image', _t('Product.Image', 'Product Image'))
+        );
+
+        //physical measurement units
+        $fieldSubstitutes = array(
+            'LengthUnit' => Product::config()->length_unit
         );
 
         //physical measurements
         $fields->push(
             TextField::create(
                 'Weight',
-                sprintf(_t('Product.WEIGHT', 'Weight (%s)'), Product::config()->weight_unit),
+                _t('Product.WeightWithUnit', 'Weight ({WeightUnit})', '', array(
+                    'WeightUnit' => Product::config()->weight_unit
+                )),
                 '',
                 12
             )
         );
+
         $fields->push(
             TextField::create(
                 'Height',
-                sprintf(_t('Product.HEIGHT', 'Height (%s)'), Product::config()->length_unit),
+                _t('Product.HeightWithUnit', 'Height ({LengthUnit})', '', $fieldSubstitutes),
                 '',
                 12
             )
         );
+
         $fields->push(
             TextField::create(
                 'Width',
-                sprintf(_t('Product.WIDTH', 'Width (%s)'), Product::config()->length_unit),
+                _t('Product.WidthWithUnit', 'Width ({LengthUnit})', '', $fieldSubstitutes),
                 '',
                 12
             )
         );
+
         $fields->push(
             TextField::create(
                 'Depth',
-                sprintf(_t('Product.DEPTH', 'Depth (%s)'), Product::config()->length_unit),
+                _t('Product.DepthWithUnit', 'Depth ({LengthUnit})', '', $fieldSubstitutes),
                 '',
                 12
             )

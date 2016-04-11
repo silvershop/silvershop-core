@@ -4,6 +4,13 @@ class CheckoutFormTest extends SapphireTest
 {
     public static $fixture_file = 'silvershop/tests/fixtures/shop.yml';
 
+    public function setUpOnce()
+    {
+        parent::setUpOnce();
+        // clear session
+        ShoppingCart::singleton()->clear();
+    }
+
     public function setUp()
     {
         parent::setUp();

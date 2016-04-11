@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" >
-		<title><% _t("TITLE", "Order Confirmation") %></title>
+		<title><%t ShopEmail.ConfirmationTitle "Order Confirmation" %></title>
 		<% include OrderReceiptStyle %>
 	</head>
 	<body>

@@ -45,7 +45,8 @@ class OrderEmailNotifier
         $checkoutpage = CheckoutPage::get()->first();
         $completemessage = $checkoutpage ? $checkoutpage->PurchaseComplete : '';
 
-        $email = Email::create();
+        /** @var Email $email */
+        $email = Injector::inst()->create('ShopEmail');
         $email->setTemplate($template);
         $email->setFrom($from);
         $email->setTo($to);
@@ -86,9 +87,11 @@ class OrderEmailNotifier
      */
     public function sendConfirmation()
     {
-        $subject = sprintf(
-            _t("OrderNotifier.CONFIRMATIONSUBJECT", "Order #%d Confirmation"),
-            $this->order->Reference
+        $subject = _t(
+            'ShopEmail.ConfirmationSubject',
+            'Order #{OrderNo} confirmation',
+            '',
+            array('OrderNo' => $this->order->Reference)
         );
         $this->sendEmail(
             'Order_ConfirmationEmail',
@@ -102,9 +105,11 @@ class OrderEmailNotifier
      */
     public function sendAdminNotification()
     {
-        $subject = sprintf(
-            _t("OrderNotifier.ADMINNOTIFICATIONSUBJECT", "Order #%d Notification"),
-            $this->order->Reference
+        $subject = _t(
+            'ShopEmail.AdminNotificationSubject',
+            'Order #{OrderNo} notification',
+            '',
+            array('OrderNo' => $this->order->Reference)
         );
 
         $this->buildEmail('Order_AdminNotificationEmail', $subject)
@@ -118,10 +123,13 @@ class OrderEmailNotifier
      */
     public function sendReceipt()
     {
-        $subject = sprintf(
-            _t("OrderNotifier.RECEIPTSUBJECT", "Order #%d Receipt"),
-            $this->order->Reference
+        $subject = _t(
+            'ShopEmail.ReceiptSubject',
+            'Order #{OrderNo} receipt',
+            '',
+            array('OrderNo' => $this->order->Reference)
         );
+
         $this->sendEmail(
             'Order_ReceiptEmail',
             $subject,
@@ -129,6 +137,26 @@ class OrderEmailNotifier
         );
         $this->order->ReceiptSent = SS_Datetime::now()->Rfc2822();
         $this->order->write();
+    }
+
+    /**
+     * Sends an email to the admin that an order has been cancelled
+     */
+    public function sendCancelNotification()
+    {
+        $email = Injector::inst()->create(
+            'ShopEmail',
+            Email::config()->admin_email,
+            Email::config()->admin_email,
+            _t(
+                'ShopEmail.CancelSubject',
+                'Order #{OrderNo} cancelled by member',
+                '',
+                array('OrderNo' => $this->order->Reference)
+            ),
+            $this->order->renderWith('Order')
+        );
+        $email->send();
     }
 
     /**
@@ -158,7 +186,8 @@ class OrderEmailNotifier
         } else {
             $adminEmail = Email::config()->admin_email;
         }
-        $e = Order_statusEmail::create();
+        $e = Injector::inst()->create('ShopEmail');
+        $e->setTemplate('Order_StatusEmail');
         $e->populateTemplate(
             array(
                 "Order"  => $this->order,

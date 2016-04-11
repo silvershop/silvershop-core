@@ -29,7 +29,12 @@ class SimpleShippingModifier extends ShippingModifier
     {
         if ($country = $this->Country()) {
             $countryList = SiteConfig::current_site_config()->getCountriesList();
-            return sprintf(_t("SimpleShippingModifier.SHIPTO", "Ship to %s"), $countryList[$country]);
+            return _t(
+                'SimpleShippingModifier.ShipToCountry',
+                'Ship to {Country}',
+                '',
+                array('Country' => $countryList[$country])
+            );
         } else {
             return parent::TableTitle();
         }

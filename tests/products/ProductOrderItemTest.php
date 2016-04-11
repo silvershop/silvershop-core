@@ -10,6 +10,13 @@ class ProductOrderItemTest extends FunctionalTest
     public static $disable_theme = true;
     public static $orig          = array();
 
+    public function setUpOnce()
+    {
+        parent::setUpOnce();
+        // clear session
+        ShoppingCart::singleton()->clear();
+    }
+
     /**
      * Create and publish some products.
      */

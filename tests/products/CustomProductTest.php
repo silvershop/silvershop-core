@@ -11,6 +11,13 @@ class CustomProductTest extends FunctionalTest
         "CustomProduct_OrderItem",
     );
 
+    public function setUpOnce()
+    {
+        parent::setUpOnce();
+        // clear session
+        ShoppingCart::singleton()->clear();
+    }
+
     public function testCustomProduct()
     {
         $thing = CustomProduct::create(
