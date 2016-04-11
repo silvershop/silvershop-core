@@ -1,0 +1,492 @@
+fr:
+  OrdersAdmin:
+    MENUTITLE: Commandes
+  ProductCatalogAdmin:
+    MENUTITLE: Catalogue
+  ZoneAdmin:
+    MENUTITLE: Zones
+  AbandonedCartReport:
+    Description: 'Aperçu des paniers abandonnés pendant une période donnée. Grouper les résultats par année, mois, jour.'
+    Title: 'Paniers abandonnés'
+  AccountPage:
+    AddressBook: 'Carnet d''adresses'
+    DESCRIPTION: 'Ici, l''utilisateur peut consulter les données de son compte ainsi qu''un aperçu des commandes passées. '
+    DefaultTitle: Compte
+    EditProfile: 'Éditer le profil'
+    LogOut: 'Déconnexion'
+    Login: "Vous devez vous connecter avant de pouvoir accéder à votre compte. Si vous n'êtes pas enregistré, vous pourrez y accéder seulement avant d'avoir passé une première commande. Si vous possédez déjà un compte, entrez vos données ci-dessous."
+    LoginAgain: 'Vous avez été déconnecté. Si vous souhaitez vous reconnecter, veuillez le faire ci-dessous.'
+    MemberEmail: Courriel
+    MemberLastVisit: 'Dernière visite'
+    MemberName: Nom
+    MemberSince: 'Membre depuis'
+    NoPage: 'Aucune AccountPage n''a été trouvée. Veuillez en créer une dans le CMS!'
+    NoPastOrders: 'Pas de commandes passées trouvées.'
+    NumberOfOrders: 'Nombre de commandes'
+    PLURALNAME: 'Pages du compte'
+    PastOrders: 'Commandes passées'
+    SINGULARNAME: 'Page du compte'
+    Title: 'Mon compte'
+  AccountPage_AddressBook:
+    CreateNewTitle: 'Créer une nouvelle adresse'
+    NoAddress: 'Pas d''adresses trouvées'
+    Title: 'Adresse par défaut'
+    DefaultShippingAddress: 'Adresse de livraison par défaut'
+    DefaultBillingAddress: 'Adresse de facturation par défaut'
+    MakeDefaultShipping: 'Définir comme adresse de livraison par défaut'
+    MakeDefaultShippingTitle: 'Définir cette adresse comme adresse de livraison par défaut'
+    MakeDefaultBilling: 'Définir comme adresse de paiement par défaut'
+    MakeDefaultBillingTitle: 'Définir cette adresse comme adresse de paiement par défaut'
+    DeleteAddress: 'Effacer cette adresse'
+  AccountPage_EditProfile:
+    Title: 'Éditer le profil'
+  Address:
+    AddressHint: 'Rue et numéro'
+    AddressLine2Hint: 'locaux, bâtiment, appartement, unité, étage, etc.'
+    BillingAddress: 'Adresse de facturation'
+    CityHint: 'Ville, département, division administrative, district'
+    CreateNewAddress: 'Créer une nouvelle adresse'
+    ExistingBillingAddress: 'Adresse de facturation existante'
+    ExistingShippingAddress: 'Adresse de livraison existante'
+    PLURALNAME: Adresses
+    SINGULARNAME: Adresse
+    SaveDefaults: 'Enregistrer comme réglages par défaut'
+    SaveNew: 'Enregistrer la nouvelle adresse'
+    ShippingAddress: 'Adresse de livraison'
+    StateHint: 'ou province, territoire, canton, île'
+    db_Address: Adresse
+    db_AddressLine2: 'Complément d''adresse (optionnel)'
+    db_City: Ville
+    db_Company: Companie
+    db_Country: Pays
+    db_FirstName: 'Prénom'
+    db_Phone: 'Numéro de téléphone'
+    db_PostalCode: 'Numéro postal'
+    db_State: État
+    db_Surname: Nom
+    has_one_Member: Membre
+  CartForm:
+    REMOVED_ITEMS: '{count} articles supprimés.'
+    UPDATED_ITEMS: '{count} articles mis à jour'
+    UpdateCart: 'Mettre à jour le panier'
+  CartPage:
+    DESCRIPTION: 'Une page sur laquelle l''utilisateur pourra consulter et modifier le contenu de son panier.'
+    DefaultTitle: 'Panier'
+    PLURALNAME: 'Pages du panier'
+    SINGULARNAME: 'Page du panier'
+    has_one_CheckoutPage: 'Page de check-out'
+    has_one_ContinuePage: 'Page continuer'
+  Checkout:
+    IdFieldNotFound: 'Champ obligatoire manquant : {IdentifierField}'
+    MemberExists: 'Un membre avec ces données existe déjà {Field} {Identifier}'
+    MembershipIsNotAllowed: 'Créer de nouveaux comptes n''est pas permis'
+    NoPaymentMethod: 'Cette méthode de paiement n''existe pas'
+    PasswordRequired: 'Un mot de passe est nécessaire'
+    TermsAndConditionsLink: 'J''accepte les conditions générales formulées sur la page <a href="{TermsPageLink}" target="new" title="Lire les conditions générales de ce site">{TermsPageTitle}</a>'
+  CheckoutComponentValidator:
+    InvalidDataMessage: 'Des problèmes ont été rencontrées avec les données entrées. Voir ci-dessous'
+  CheckoutField:
+    AccountInfo: 'Veuillez choisir un mot de passe, afin de pouvoir vous connecter et vérifier l''état de vos commandes dans le futur'
+    MemberLoginInfo: 'Si vous êtes déjà membre, veuillez <a href="{LoginUrl}">vous connecter</a>'
+    MembershipDetails: 'Détails du compte'
+    MustAgreeToTerms: 'Vous devez accepter les conditions générales'
+    Password: Mot de passe
+    PaymentType: 'Type de paiement'
+  CheckoutPage:
+    DESCRIPTION: 'Page gérant le processus de check-out'
+    DefaultTitle: Check-out
+    PLURALNAME: 'Pages de check-out'
+    PaymentErrorMessage: 'Erreur reçue de la passerelle de paiement.'
+    ProceedToPayment: 'Continuer vers le paiement'
+    PurchaseCompleteDescription: 'Ce message est inclus dans le courriel de confirmation, une fois le check-out effectué par le client.'
+    SINGULARNAME: 'Page de check-out'
+    SubmitPayment: 'Soumettre le paiement'
+    db_PurchaseComplete: 'Achat terminé'
+  CheckoutStep:
+    Continue: Continuer
+    Shipping: Livraison
+    Summary: Résumé
+  CheckoutStep_Address:
+    BillTo: 'Facturer à :'
+    EnterShippingAddress: 'Entrer les détails de votre adresse de livraison'
+    SeperateBilling: 'Facturer à une adresse différente de celle-ci'
+    ShipTo: 'Envoyer à :'
+    SupplyContactInformation: 'Entrer vos informations de contact'
+  CheckoutStep_Membership:
+    ContinueAsGuest: 'Continuer comme invité'
+    CreateAccount: 'Créer un compte'
+    CreateNewAccount: 'Créer un nouveau compte'
+  CreateAddressForm:
+    AddressSaved: 'Votre adresse a été enregistrée'
+  CustomerReport:
+    Description: 'Rapport des clients'
+    Title: Clients
+  FlatTaxModifier:
+    PLURALNAME: Taxes
+    SINGULARNAME: Taxe
+  FreeShippingModifier:
+    Free: GRATUIT
+    PLURALNAME: 'Livraison gratuite'
+    SINGULARNAME: Livraison
+  GlobalTaxModifier:
+    Included: '(inclu dans le prix ci-dessus)'
+    PLURALNAME: Taxes
+    SINGULARNAME: Taxe
+    db_Country: Pays
+  MemberForm:
+    DetailsSaved: 'Vos données ont été enregistrées'
+    Save: 'Enregistrer les modifications'
+    SaveAndProceed: 'Enregistrer et passer à la caisse'
+  OnsitePaymentCheckoutComponent:
+    InvalidCreditCard: 'La carte de crédit est invalide'
+  Order:
+    BillTo: 'Facturer à'
+    Date: Date
+    DateFrom: 'Date du'
+    DateTo: 'Date au'
+    GrandTotal: 'Total'
+    Invoice: Reçu
+    OrderHeadline: 'Commande #{OrderNo} {OrderDate}'
+    Outstanding: Impayé
+    OutstandingWithAmount: 'Impayé:  {Amount}'
+    PLURALNAME: Commandes
+    Print: Imprimer
+    Quantity: Quantité
+    SINGULARNAME: Commande
+    STATUS_ADMINCANCELLED: 'Annulé par admin'
+    STATUS_CART: Panier
+    STATUS_COMPLETE: Terminé
+    STATUS_MEMBERCANCELLED: 'Annulé par le membre'
+    STATUS_PAID: Payé
+    STATUS_PROCESSING: En cours de traitement
+    STATUS_SENT: Envoyé
+    STATUS_UNPAID: Impayé
+    ShipTo: 'Envoyer à'
+    SubTotal: Sous-total
+    Total: Total
+    TotalOutstanding: 'Total impayé'
+    TotalPrice: 'Prix total'
+    TotalPriceWithCurrency: 'Prix total ({Currency})'
+    UnitPrice: 'Prix unitaire'
+    db_Dispatched: Expédié
+    db_Email: Courriel
+    db_FirstName: 'Nom'
+    db_IPAddress: 'Adresse IP'
+    db_Notes: Message
+    db_Paid: Payé
+    db_Placed: Placé
+    db_Printed: Imprimé
+    db_ReceiptSent: 'Reçu envoyé'
+    db_Reference: Référence
+    db_SeparateBillingAddress: 'Adresse de facturation différente'
+    db_Status: Statut
+    db_Surname: Nom
+    db_Total: Total
+    has_many_Items: Articles
+    has_many_Modifiers: Modificateur
+    has_many_OrderStatusLogs: 'Logs des statuts de commandes'
+    has_many_Payments: Paiements
+    has_one_BillingAddress: 'Adresse de facturation'
+    has_one_Member: Membre
+    has_one_ShippingAddress: 'Adresse de livraison'
+  OrderActionsForm:
+    CancelOrder: 'Annuler cette commande'
+    MakePayment: 'Effectuer le paiement'
+    ManualNotAllowed: 'Paiement manuel non autorisé'
+    PayOrder: 'Payer le solde'
+    PaymentMethod: 'Méthode de paiement'
+  OrderAdmin:
+    ReceiptTitle: '{SiteTitle} Commande {OrderNo}'
+  OrderAttribute:
+    PLURALNAME: Caractéristiques
+    SINGULARNAME: Caractéristique
+    db_CalculatedTotal: 'Total calculé'
+    has_one_Order: Commande
+  OrderForm:
+    CouldNotProcessPayment: 'Le paiement n''a pas pu être effectué'
+    OrderCancelled: 'Commande annulée avec succès'
+  OrderItem:
+    PLURALNAME: Articles
+    SINGULARNAME: Article
+    db_Quantity: Quantité
+    db_UnitPrice: 'Prix unitaire'
+  OrderModifier:
+    PLURALNAME: Modificateur
+    SINGULARNAME: Paramètre
+    db_Amount: Quantité
+    db_Sort: Trier
+    db_Type: Type
+  OrderProcessor:
+    NoItems: 'La commande n''a aucun article'
+    NoOrder: 'La commande n''existe pas'
+    NoOrderStarted: 'Une nouvelle commande n''a pas encore été commencée'
+    NotCart: 'La commande n''est pas un panier'
+  OrderStatusLog:
+    PLURALNAME: 'Entrées de journal des statuts de commandes'
+    SINGULARNAME: 'Entrée du journal des commandes'
+    db_DispatchTicket: 'Envoyer le ticket'
+    db_DispatchedBy: 'Envoyé par'
+    db_DispatchedOn: 'Envoyé le'
+    db_Note: Note
+    db_PaymentCode: 'Code de paiement'
+    db_PaymentOK: 'Paiement OK'
+    db_SentToCustomer: 'Envoyé au client'
+    db_Title: Titre
+    has_one_Author: Auteur
+    has_one_Order: Commande
+  Payment:
+    Note: Note
+    PaymentsHeadline: Paiement(s)
+  PaymentCheckoutComponent:
+    NoPaymentMethod: 'Méthode de paiement non sélectionnée'
+    UnsupportedGateway: 'Passerelle non supportée'
+  PaymentProcessor:
+    CantPay: "La commande ne peut pas être payée"
+    InvalidGateway: "`{gateway}` n'est pas une passerelle de paiement valide"
+  PickupShippingModifier:
+    PLURALNAME: Modificateur
+    SINGULARNAME: 'Retirer l''envoi'
+  PriceTag:
+    SAVE: Enregistrer
+  Product:
+    AddToCart: 'Ajouter au panier'
+    AddToCartTitle: 'Ajouter &quot;{Title}&quot; au panier'
+    AdditionalCategories: 'Catégories supplémentaires'
+    AllowPurchase: 'Autoriser le produit pour l''achat'
+    Category: Catégorie
+    CategoryDescription: 'Ceci est la page parente ou la catégorie par défaut'
+    Code: 'Code du produit'
+    CostPriceDescription: 'Prix de gros avant majoration.'
+    DESCRIPTION: 'Page du produit dans la boutique'
+    Featured: 'Produit phare'
+    Image: 'Image du produit'
+    ImageAltText: '{Title} image'
+    InternalItemID: 'Code de produit/SKU'
+    Model: Modèle
+    NoImage: 'pas d''image'
+    PLURALNAME: Produits
+    PageTitle: 'Titre du produit'
+    Price: Prix
+    PriceDesc: 'Prix de vente de base de ce produit'
+    ProductCodeShort: SKU
+    SINGULARNAME: Produit
+    Size: Taille
+    View: 'Voir le produit'
+    db_AllowPurchase: 'Autoriser l''achat'
+    db_BasePrice: Prix
+    db_CostPrice: 'Prix de revient'
+    db_Depth: Profondeur
+    db_Featured: Vedette
+    db_Height: Hauteur
+    db_InternalItemID: 'ID interne de l''article'
+    db_Model: Model
+    db_Popularity: Popularité
+    db_Weight: Poids
+    db_Width: Largeur
+    has_many_Variations: Variantes
+    has_one_Image: Image
+    many_many_ProductCategories: 'Catégories de produits'
+    many_many_VariationAttributeTypes: 'Types d''attributs de variantes'
+  ProductAttributeType:
+    PLURALNAME: Attributs
+    SINGULARNAME: Attribut
+    SaveFirstInfo: 'Enregistrez d''abord, vous pourrez ensuite ajouter des valeurs.'
+    belongs_many_many_Product: Produit
+    db_Label: Labe
+    db_Name: Nom
+    has_many_Values: Valeurs
+  ProductAttributeValue:
+    PLURALNAME: Valeurs
+    SINGULARNAME: Valeur
+    belongs_many_many_ProductVariation: 'Variante de produit'
+    db_Sort: Trier
+    db_Value: Valeur
+    has_one_Type: Type
+  ProductCategory:
+    DESCRIPTION: 'Catégorie de produit dans la boutique'
+    PLURALNAME: Catégories
+    SINGULARNAME: Catégorie
+    belongs_many_many_Products: Produits
+  ProductGroup:
+    Next: Suivant
+    Page: Page
+    Previous: précédent
+    ViewNext: 'Voir la page suivante'
+    ViewPage: 'Voir la page No {pageNum}'
+    ViewPrevious: 'Voir la page précédente'
+  ProductMenu:
+    GotoPageTitle: 'Aller à la page  {Title}'
+  ProductReport:
+    Description: "Comprendre quels produits sont performants et lesquels ne le sont pas."
+    Title: Produits
+  ProductVariation:
+    MustSaveFirstMessage: 'Vous pourrez choisir des attributs de variantes, s''ils existent, après avoir enregistré pour la première fois.'
+    NoAttributeValuesMessage: '{attribute} n''a pas de valeurs à choisir. Vous pouvez les créer dans la section "Produits" &#62; "Types d''attributs du produit" du CMS.'
+    PLURALNAME: Variantes
+    SINGULARNAME: Variante
+    db_InternalItemID: 'ID interne de l''article'
+    db_Price: Prix
+    db_Version: Version
+    has_one_Image: Image
+    has_one_Product: Produit
+    many_many_AttributeValues: 'Valeurs d''attribut'
+  ProductVariation_OrderItem:
+    PLURALNAME: Articles
+    SINGULARNAME: Article
+    db_ProductVariationVersion: 'Version de la variante d''article'
+    has_one_ProductVariation: 'Variante d''article'
+  ProductVariationsExtension:
+    Attributes: Caractéristiques
+    AttributesDescription: 'Ces champs indiquent la manière dont les variantes diffèrent. Une fois sélectionnées, ils peuvent être édités pour chaque variante.'
+    Variations: Variantes
+    VariationsInfo: 'Prix - Comme vous avez au moins une variante de produit, le prix peut être choisi sous l''onglet "Variantes".'
+  Product_OrderItem:
+    PLURALNAME: Articles
+    SINGULARNAME: Article
+    db_ProductVersion: 'Version du produit'
+    has_one_Product: Produit
+  RegionRestriction:
+    PLURALNAME: 'Restrictions régionales'
+    SINGULARNAME: 'Restriction régionale'
+    db_City: Ville
+    db_Country: Pays
+    db_PostalCode: 'Code postal'
+    db_State: État
+  SetLocationForm:
+    ChooseCountry: 'Choisir un pays...'
+    Country: Pays
+  ShippingModifier:
+    PLURALNAME: Modificateurs
+    SINGULARNAME: Livraison
+  Shop:
+    Change: Change
+    Customer: Client
+    Date: Date
+    DateFormatNice: '%m/%d/%G'
+    DateTimeFormatNice: '%m/%d/%G %I:%M%p'
+    DateTimeFormatNice24: 'j/m/A H:i'
+    DevToolsTitle: 'Rechercher des outils de développement'
+    Edit: Éditer
+    Quantity: Quantité
+    ReadMoreTitle: 'Cliquer ici pour en savoir plus sur &quot;{Title}&quot;'
+    Remove: Retirer
+    View: Voir
+  ShopConfig:
+    AllowedCountries: 'Pays autorisés pour la commande et l''expédition'
+    AllowedCountriesTabTitle: 'Pays autorisés'
+    CustomerGroup: 'Groupe pour ajouter les nouveaux clients à'
+    DefaultImage: 'Image de produit par défaut'
+    TermsPage: 'Page des conditions générales'
+  ShopCurrency:
+    Free: 'GRATUIT'
+  ShopDashboard:
+    NumberOfAccounts: 'Nombre de comptes à afficher'
+    NumberOfDays: 'Nombre de jours à afficher'
+    NumberOfOrders: 'Nombre de commandes à afficher'
+    RecentAccounts: 'Comptes récents'
+    RecentAccountsDescription: 'Montre les inscriptions récentes'
+    RecentOrders: 'Commandes récentes'
+    RecentOrdersChart: 'Historique des commandes'
+    RecentOrdersChartDescription: 'Affiche les commandes récentes sur un graphique'
+    RecentOrdersDescription: 'Affiche les commandes récentes'
+  ShopDevelopmentAdmin:
+    BuildTasks: 'Construit des tâches'
+    CartCleanup: 'Effacer les anciens paniers'
+    CartCleanupDesc: 'Supprimer les paniers abandonnés'
+    CartTasks: 'Paniers'
+    ClearCart: 'Vider le panier actuel'
+    DebugCart: 'Déboguer le panier d''achat'
+    DeleteOrders: 'Effacer toutes les commandes'
+    DeleteOrdersDesc: 'Supprimer toutes les commandes, modificateurs et paiements de la base de données.'
+    DeleteProducts: 'Supprimer tous les produits'
+    DeleteProductsDesc: 'Supprimer tous les produits de la base de données'
+    PopulateCart: 'Remplir le panier avec quelques articles disponibles'
+    PopulateShop: 'Alimenter le shop'
+    PopulateShopDesc: 'Alimenter la boutique avec des produits, catégories et pages nécessaires fictifs.'
+    RecalculateOrders: 'Recalculer toutes les commandes'
+    RecalculateOrdersDesc: 'Recalculer toutes les valeurs des commandes. Attention: ceci va écraser l''historique de ces valeurs.'
+    RunAllTests: 'Exécuter toutes les unités de test de la boutique'
+    UnitTests: 'Unité de test'
+  ShopEmail:
+    AdminNotificationSubject: 'Notification de commande #{OrderNo}'
+    AdminNotificationTitle: 'Reçu'
+    CancelSubject: 'Commande #{OrderNo} annulée par le membre'
+    ConfirmationSubject: 'Confirmation de commande #{OrderNo}'
+    ConfirmationTitle: 'Confirmation de commande'
+    ReceiptSubject: 'Reçu pour la commande #{OrderNo} '
+    ReceiptTitle: 'Reçu'
+    StatusChangeTitle: 'Changement de statuts de la boutique'
+    StatusChanged: 'Statut de la commander #{OrderNo} changé en "{OrderStatus}"'
+  ShopPeriodReport:
+    Description: 'Rapport périodique de la boutique'
+    Title: 'Rapport périodique de la boutique'
+  ShopQuantityField:
+    AddOne: 'Ajouter une pièce ou plus de &quot;{ItemTitle}&quot; à votre panier'
+    RemoveOne: 'Supprimer une pièce ou plus de &quot;{ItemTitle}&quot; de votre panier'
+  ShopSalesReport:
+    Description: 'Monitorer les performances de vente pour une période donnée. Grouper les résultats par année, mois ou jour.'
+    Title: 'Ventes'
+  ShopSideReport:
+    AllProducts: 'Tous les produits'
+    FeaturedProducts: 'Produits vedettes'
+    Heavy: 'Produits lourds'
+    NoImage: 'Produits sans image'
+    ShopGroup: Boutique
+  ShoppingCart:
+    CannotPurchase: 'Ce/cette {Title} ne peut pas être acheté'
+    Checkout: Check-out
+    Cleared: 'Le panier a été vidé avec succès.'
+    ContinueShopping: 'Continuer les achats'
+    Headline: 'Panier d''achats'
+    InvalidSecurityToken: 'Jeton de sécurité invalide. Attaque CSRF possible.'
+    ItemAdded: 'L''article a bien été ajouté.'
+    ItemNotFound: 'Article non trouvé.'
+    ItemRemoved: 'L''article a été supprimé avec succès.'
+    ItemsInCartPlural: 'Il y a <a href="{link}">{quantity} articles</a> dans votre panier'
+    ItemsInCartSingular: 'Il y a <a href="{link}">1 article</a> dans votre panier.'
+    NoCartFound: 'Pas de panier trouvé.'
+    NoCartInitialised: 'Pas de panier initialisé'
+    NoItems: 'Il n''y a aucun article dans votre panier.'
+    NoOrder: 'Pas de commandes en cours.'
+    ProceedToCheckout: 'Passer à la caisse'
+    ProductNotFound: 'Aucun produit n''a été trouvé. '
+    QuantitySet: 'La quantité a été fixée.'
+    RemoveAllTitle: 'Supprimer tous les &quot;{Title}&quot; de votre panier.'
+    RemoveTitle: 'Supprimer &quot;{Title}&quot; de votre panier.'
+    TableSummary: 'Contenu de votre panier.'
+  SimpleShippingModifier:
+    PLURALNAME: 'Modificateurs de frais de livraison'
+    SINGULARNAME: Expédition
+    ShipToCountry: 'Expédier vers {Country}'
+    db_Country: Pays
+  SubTotalModifier:
+    PLURALNAME: 'Sous-totaux'
+    SINGULARNAME: 'Sous-total'
+  TaxModifier:
+    AtRate: 'taux'
+    PLURALNAME: Taxes
+    SINGULARNAME: Taxe
+    db_Rate: Taux
+  TaxReport:
+    Description: 'Rapport des taxes appliquées aux commandes. Inclus seulement les commandes ayant été payées.'
+    Title: Taxe
+  Variation:
+    SINGULARNAME: Variante
+  VariationForm:
+    ChooseAttribute: 'Choisir {attribute} ...'
+    ProductNotAvailable: 'Cet article n''est pas disponible avec les options sélectionnées.'
+    VariationNotAvailable: 'Cette variante n''est pas disponible, désolé.'
+  WeightShippingModifier:
+    PLURALNAME: 'Frais de livraison selon le poids'
+    SINGULARNAME: Livraison
+    TableTitle: 'Livraison ({Kilograms} kg)'
+  Zone:
+    PLURALNAME: Zones
+    SINGULARNAME: Zone
+    db_Description: Description
+    db_Name: Nom
+    has_many_Regions: Régions
+  ZoneRegion:
+    PLURALNAME: 'Zones régionales'
+    SINGULARNAME: 'Zone régionale'
+    has_one_Zone: Zone
