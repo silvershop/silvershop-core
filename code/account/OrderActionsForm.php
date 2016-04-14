@@ -31,10 +31,10 @@ class OrderActionsForm extends Form
         $actions = FieldList::create();
         //payment
         if (self::config()->allow_paying && $order->canPay()) {
-            $gateways = GatewayInfo::get_supported_gateways();
+            $gateways = GatewayInfo::getSupportedGateways();
             //remove manual gateways
             foreach ($gateways as $gateway => $gatewayname) {
-                if (GatewayInfo::is_manual($gateway)) {
+                if (GatewayInfo::isManual($gateway)) {
                     unset($gateways[$gateway]);
                 }
             }
@@ -106,7 +106,7 @@ class OrderActionsForm extends Form
             $data = $form->getData();
             $gateway = (!empty($data['PaymentMethod'])) ? $data['PaymentMethod'] : null;
 
-            if (!GatewayInfo::is_manual($gateway)) {
+            if (!GatewayInfo::isManual($gateway)) {
                 $processor = OrderProcessor::create($this->order);
                 $data['cancelUrl'] = $processor->getReturnUrl();
                 $response = $processor->makePayment($gateway, $data);

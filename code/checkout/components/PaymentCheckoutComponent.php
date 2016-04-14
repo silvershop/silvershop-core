@@ -5,7 +5,7 @@ class PaymentCheckoutComponent extends CheckoutComponent
     public function getFormFields(Order $order)
     {
         $fields = FieldList::create();
-        $gateways = GatewayInfo::get_supported_gateways();
+        $gateways = GatewayInfo::getSupportedGateways();
         if (count($gateways) > 1) {
             $fields->push(
                 OptionsetField::create(
@@ -27,7 +27,7 @@ class PaymentCheckoutComponent extends CheckoutComponent
 
     public function getRequiredFields(Order $order)
     {
-        if (count(GatewayInfo::get_supported_gateways()) > 1) {
+        if (count(GatewayInfo::getSupportedGateways()) > 1) {
             return array();
         }
 
@@ -44,7 +44,7 @@ class PaymentCheckoutComponent extends CheckoutComponent
             );
             throw new ValidationException($result);
         }
-        $methods = GatewayInfo::get_supported_gateways();
+        $methods = GatewayInfo::getSupportedGateways();
         if (!isset($methods[$data['PaymentMethod']])) {
             $result->error(_t('PaymentCheckoutComponent.UnsupportedGateway', "Gateway not supported"), "PaymentMethod");
             throw new ValidationException($result);

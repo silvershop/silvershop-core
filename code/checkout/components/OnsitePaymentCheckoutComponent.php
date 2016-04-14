@@ -27,7 +27,7 @@ class OnsitePaymentCheckoutComponent extends CheckoutComponent
 
     public function getRequiredFields(Order $order)
     {
-        return GatewayInfo::required_fields(Checkout::get($order)->getSelectedPaymentMethod());
+        return GatewayInfo::requiredFields(Checkout::get($order)->getSelectedPaymentMethod());
     }
 
     public function validateData(Order $order, array $data)

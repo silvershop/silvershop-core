@@ -110,7 +110,7 @@ class Checkout
      */
     public function getPaymentMethods()
     {
-        return GatewayInfo::get_supported_gateways();
+        return GatewayInfo::getSupportedGateways();
     }
 
     /**
