@@ -53,5 +53,6 @@
 		"forum" : "http://www.silverstripe.org/e-commerce-module-forum",
 		"email" : "mark@adaircreative.com",
 		"docs" : "http://docs.ss-shop.org"
-	}
+	},
+	"prefer-stable": true
 }
