@@ -1,5 +1,7 @@
 <?php
 
+use SilverStripe\Omnipay\GatewayInfo;
+
 class PaymentCheckoutComponent extends CheckoutComponent
 {
     public function getFormFields(Order $order)

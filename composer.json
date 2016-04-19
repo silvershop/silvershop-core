@@ -17,7 +17,7 @@
         "php": ">=5.4",
 		"silverstripe/cms": "~3.1",
 		"silverstripe/framework": "~3.1",
-		"burnbright/silverstripe-omnipay" : "2.0.x-dev",
+		"silverstripe/silverstripe-omnipay" : "2.0.x-dev",
 		"icecaster/versioned-gridfield": "~1.0",
 		"burnbright/silverstripe-listsorter": "~2.0",
 		"burnbright/silverstripe-sqlquerylist": "~1.0",

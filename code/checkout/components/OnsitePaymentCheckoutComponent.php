@@ -1,6 +1,7 @@
 <?php
 
 use Omnipay\Common\Helper;
+use SilverStripe\Omnipay\GatewayInfo;
 
 /**
  *

@@ -1,5 +1,9 @@
 <?php
 
+use SilverStripe\Omnipay\GatewayInfo;
+use SilverStripe\Omnipay\Service\ServiceFactory;
+use SilverStripe\Omnipay\Service\ServiceResponse;
+
 /**
  * Handles tasks to be performed on orders, particularly placing and processing/fulfilment.
  * Placing, Emailing Reciepts, Status Updates, Printing, Payments - things you do with a completed order.
@@ -60,32 +64,66 @@ class OrderProcessor
      * Create a payment model, and provide link to redirect to external gateway,
      * or redirect to order link.
      *
-     * @return string - url for redirection after payment has been made
+     * @param string $gateway the gateway to use
+     * @param array $gatewaydata the data that should be passed to the gateway
+     * @param string $successUrl (optional) return URL for successful payments.
+     *  If left blank, the default return URL will be used @see getReturnUrl
+     * @param string $cancelUrl (optional) return URL for cancelled/failed payments
+     *
+     * @return ServiceResponse|null
      */
-    public function makePayment($gateway, $gatewaydata = array())
+    public function makePayment($gateway, $gatewaydata = array(), $successUrl = null, $cancelUrl = null)
     {
         //create payment
         $payment = $this->createPayment($gateway);
         if (!$payment) {
             //errors have been stored.
-            return false;
+            return null;
         }
 
-        // Create a purchase service, and set the user-facing success URL for redirects
-        $service = PurchaseService::create($payment)
-            ->setReturnUrl($this->getReturnUrl());
+        // Create a payment service, by using the Service Factory. This will automatically choose an
+        // AuthorizeService or PurchaseService, depending on Gateway configuration.
+        // Set the user-facing success URL for redirects
+        /** @var ServiceFactory $factory */
+        $factory = ServiceFactory::create();
+        $service = $factory->getService($payment, ServiceFactory::INTENT_PAYMENT);
 
-        // Process payment, get the result back
-        $response = $service->purchase($this->getGatewayData($gatewaydata));
-        if (GatewayInfo::isManual($gateway)) {
-            //don't complete the payment at this stage, if payment is manual
+        $service->setReturnUrl($successUrl ? $successUrl : $this->getReturnUrl());
+
+        // Explicitly set the cancel URL
+        if ($cancelUrl) {
+            $service->setCancelUrl($cancelUrl);
+        }
+
+        // Initiate payment, get the result back
+        try {
+            $serviceResponse = $service->initiate($this->getGatewayData($gatewaydata));
+        } catch (SilverStripe\Omnipay\Exception\Exception $ex) {
+            // error out when an exception occurs
+            $this->error($ex->getMessage());
+            return null;
+        }
+
+        // Check if the service response itself contains an error
+        if ($serviceResponse->isError()) {
+            if ($opResponse = $serviceResponse->getOmnipayResponse()) {
+                $this->error($opResponse->getMessage());
+            } else {
+                $this->error('An unspecified payment error occurred. Please check the payment messages.');
+            }
+
+            return $serviceResponse;
+        }
+
+        // The order should be placed if the response isn't a redirect and if the payment isn't captured yet
+        if (!$serviceResponse->isRedirect() && $serviceResponse->getPayment()->Status != 'Captured') {
             $this->placeOrder();
         }
 
-        // For an OFFSITE payment, response will now contain a redirect
-        // For an ONSITE payment, ShopPayment::onCapture will have been called, which will have called completePayment
+        // For an OFFSITE payment, serviceResponse will now contain a redirect
+        // For an ONSITE payment, ShopPayment::onCaptured will have been called, which will have called completePayment
 
-        return $response;
+        return $serviceResponse;
     }
 
     /**
@@ -153,7 +191,7 @@ class OrderProcessor
             return false;
         }
         $payment = Payment::create()
-            ->init($gateway, $this->order->TotalOutstanding(), ShopConfig::get_base_currency());
+            ->init($gateway, $this->order->TotalOutstanding(true), ShopConfig::get_base_currency());
         $this->order->Payments()->add($payment);
         return $payment;
     }
@@ -167,6 +205,9 @@ class OrderProcessor
     public function completePayment()
     {
         if (!$this->order->Paid) {
+            // recalculate order to be sure we have the correct total
+            $this->order->calculate();
+
             $this->order->extend('onPayment'); //a payment has been made
             //place the order, if not already placed
             if ($this->canPlace($this->order)) {
@@ -178,8 +219,8 @@ class OrderProcessor
             }
 
             if (
-                // Standard order
-                ($this->order->GrandTotal() > 0 && $this->order->TotalOutstanding() <= 0)
+                // Standard order. Only change to 'Paid' once all payments are captured
+                ($this->order->GrandTotal() > 0 && $this->order->TotalOutstanding(false) <= 0)
                 // Zero-dollar order (e.g. paid with loyalty points)
                 || ($this->order->GrandTotal() == 0 && Order::config()->allow_zero_order_total)
             ) {
@@ -245,13 +286,17 @@ class OrderProcessor
             ShopTools::install_locale($this->order->Locale);
         }
 
+        // recalculate order to be sure we have the correct total
+        $this->order->calculate();
+
         //remove from session
         $cart = ShoppingCart::curr();
         if ($cart && $cart->ID == $this->order->ID) {
             ShoppingCart::singleton()->clear();
         }
+
         //update status
-        if ($this->order->TotalOutstanding()) {
+        if ($this->order->TotalOutstanding(false)) {
             $this->order->Status = 'Unpaid';
         } else {
             $this->order->Status = 'Paid';
