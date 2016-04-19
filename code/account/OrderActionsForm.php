@@ -1,5 +1,7 @@
 <?php
 
+use SilverStripe\Omnipay\GatewayInfo;
+
 /**
  * Perform actions on placed orders
  *
@@ -46,7 +48,7 @@ class OrderActionsForm extends Form
                     )
                 );
                 $outstandingfield = Currency::create();
-                $outstandingfield->setValue($order->TotalOutstanding());
+                $outstandingfield->setValue($order->TotalOutstanding(true));
                 $fields->push(
                     LiteralField::create(
                         "Outstanding",
@@ -107,15 +109,11 @@ class OrderActionsForm extends Form
             $gateway = (!empty($data['PaymentMethod'])) ? $data['PaymentMethod'] : null;
 
             if (!GatewayInfo::isManual($gateway)) {
+                /** @var OrderProcessor $processor */
                 $processor = OrderProcessor::create($this->order);
-                $data['cancelUrl'] = $processor->getReturnUrl();
-                $response = $processor->makePayment($gateway, $data);
-
-                if ($response) {
-                    if ($response->isRedirect() || $response->isSuccessful()) {
-                        return $response->redirect();
-                    }
-                    $form->sessionMessage($response->getMessage(), 'bad');
+                $response = $processor->makePayment($gateway, $data, $processor->getReturnUrl());
+                if($response && !$response->isError()){
+                    return $response->redirectOrRespond();
                 } else {
                     $form->sessionMessage($processor->getError(), 'bad');
                 }

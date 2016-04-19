@@ -364,11 +364,19 @@ class Order extends DataObject
     /**
      * Calculate how much is left to be paid on the order.
      * Enforces rounding precision.
+     *
+     * Payments that have been authorized via a non-manual gateway should count towards the total paid amount.
+     * However, it's possible to exclude these by setting the $includeAuthorized parameter to false, which is
+     * useful to determine the status of the Order. Order status should only change to 'Paid' when all
+     * payments are 'Captured'.
+     *
+     * @param bool $includeAuthorized whether or not to include authorized payments (excluding manual payments)
+     * @return float
      */
-    public function TotalOutstanding()
+    public function TotalOutstanding($includeAuthorized = true)
     {
         return round(
-            $this->GrandTotal() - $this->TotalPaid(),
+            $this->GrandTotal() - ($includeAuthorized ? $this->TotalPaidOrAuthorized() : $this->TotalPaid()),
             self::config()->rounding_precision
         );
     }
@@ -426,7 +434,7 @@ class Order extends DataObject
         if (!in_array($this->Status, self::config()->payable_status)) {
             return false;
         }
-        if ($this->TotalOutstanding() > 0 && empty($this->Paid)) {
+        if ($this->TotalOutstanding(true) > 0 && empty($this->Paid)) {
             return true;
         }
         return false;
