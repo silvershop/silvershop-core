@@ -36,9 +36,11 @@ ProductCategory:
     'Title' : 'Alphabetical'
     'Price' : 'Lowest Price'
 
-# Redirect to the cart page after manipulating the shopping cart
 ShoppingCart_Controller:
+  # Redirect to the cart page after manipulating the shopping cart
   direct_to_cart_page: true
+  # disable security token for cart-links
+  disable_security_token: true
 
 CheckoutConfig:
   member_creation_enabled: true
