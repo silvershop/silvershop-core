@@ -10,6 +10,7 @@ class ShoppingCartControllerTest extends FunctionalTest
     public static $fixture_file   = 'silvershop/tests/fixtures/shop.yml';
     public static $disable_theme  = true;
     public static $use_draft_site = false;
+    protected $autoFollowRedirection = false;
 
     public function setUp()
     {
@@ -156,5 +157,51 @@ class ShoppingCartControllerTest extends FunctionalTest
         $this->assertEquals($items->Count(), 1, 'There is 1 item in the cart');
         $this->assertFalse($this->cart->get($ball1), "first item not in cart");
         $this->assertNotNull($this->cart->get($ball1), "second item is in cart");
+    }
+
+    public function testSecurityToken()
+    {
+        $enabled = SecurityToken::is_enabled();
+        // enable security tokens
+        SecurityToken::enable();
+
+        $productId = $this->mp3player->ID;
+        // link should contain the security-token
+        $link = ShoppingCart_Controller::add_item_link($this->mp3player);
+        $this->assertRegExp('{^shoppingcart/add/Product/'.$productId.'\?SecurityID=[a-f0-9]+$}', $link);
+
+        // should redirect back to the shop
+        $response = $this->get($link);
+        $this->assertEquals($response->getStatusCode(), 302);
+
+        // disable security token for cart-links
+        Config::inst()->update('ShoppingCart_Controller', 'disable_security_token', true);
+
+        $link = ShoppingCart_Controller::add_item_link($this->mp3player);
+        $this->assertEquals('shoppingcart/add/Product/'.$productId, $link);
+
+        // should redirect back to the shop
+        $response = $this->get($link);
+        $this->assertEquals($response->getStatusCode(), 302);
+
+        SecurityToken::disable();
+
+        Config::inst()->update('ShoppingCart_Controller', 'disable_security_token', false);
+        $link = ShoppingCart_Controller::add_item_link($this->mp3player);
+        $this->assertEquals('shoppingcart/add/Product/'.$productId , $link);
+
+        // should redirect back to the shop
+        $response = $this->get($link);
+        $this->assertEquals($response->getStatusCode(), 302);
+
+        SecurityToken::enable();
+        // should now return a 400 status
+        $response = $this->get($link);
+        $this->assertEquals($response->getStatusCode(), 400);
+
+        // restore previous setting
+        if(!$enabled){
+            SecurityToken::disable();
+        }
     }
 }
