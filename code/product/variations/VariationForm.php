@@ -17,7 +17,7 @@ class VariationForm extends AddProductForm
         $attributes = $product->VariationAttributeTypes();
 
         foreach ($attributes as $attribute) {
-            $farray[] = $attribute->getDropDownField(
+            $attributeDropdown = $attribute->getDropDownField(
                 _t(
                     'VariationForm.ChooseAttribute',
                     "Choose {attribute} …",
@@ -27,7 +27,10 @@ class VariationForm extends AddProductForm
                 $product->possibleValuesForAttributeType($attribute)
             );
 
-            $requiredfields[] = "ProductAttributes[$attribute->ID]";
+            if($attributeDropdown){
+                $farray[] = $attributeDropdown;
+                $requiredfields[] = "ProductAttributes[$attribute->ID]";
+            }
         }
 
         $fields = FieldList::create($farray);

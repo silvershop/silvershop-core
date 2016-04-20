@@ -11,13 +11,19 @@ We've put a strong focus on testing, and thanks to TravisCI, you can see the [bu
 [![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/silvershop/silvershop-core/badges/quality-score.png?s=d60753d6cca3817e80aca3dbb79eb5bd4140c981)](https://scrutinizer-ci.com/g/silvershop/silvershop-core/)
 [![Total Downloads](https://poser.pugx.org/silvershop/core/downloads.png)](https://packagist.org/packages/silvershop/core)
 
-Live chat on Gitter! [![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/silvershop/silvershop-core?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
-Website: http://ss-shop.org
-Demo: http://demo.ss-shop.org
+* Website: http://ss-shop.org
+* Demo: http://demo.ss-shop.org
 
 Your contributions, and feedback are welcomed and appreciated. There are many ways you can [contribute to this project](https://github.com/silvershop/silvershop-core/wiki/Contributing).
 A tremendous thanks to [everyone that has already contributed](https://github.com/silvershop/silvershop-core/graphs/contributors).
+
+
+## Stay up to date / get in touch
+
+* [Planning Trello Board](https://trello.com/b/85ZyINqI/silvershop-development-planning)
+* [Roadmap](ROADMAP.md)
+* Live chat on Gitter! [![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/silvershop/silvershop-core?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+* [Twitter](https://twitter.com/silvershopcore)
 
 ## Requirements
 

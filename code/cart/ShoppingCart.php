@@ -444,7 +444,7 @@ class ShoppingCart_Controller extends Controller
         if (!$action || !$buyable) {
             return false;
         }
-        if (SecurityToken::is_enabled()) {
+        if (SecurityToken::is_enabled() && !self::config()->disable_security_token) {
             $params[SecurityToken::inst()->getName()] = SecurityToken::inst()->getValue();
         }
         return self::config()->url_segment . '/' .
@@ -504,7 +504,11 @@ class ShoppingCart_Controller extends Controller
     protected function buyableFromRequest()
     {
         $request = $this->getRequest();
-        if (SecurityToken::is_enabled() && !SecurityToken::inst()->checkRequest($request)) {
+        if (
+            SecurityToken::is_enabled() &&
+            !self::config()->disable_security_token &&
+            !SecurityToken::inst()->checkRequest($request)
+        ) {
             return $this->httpError(
                 400,
                 _t("ShoppingCart.InvalidSecurityToken", "Invalid security token, possible CSRF attack.")
