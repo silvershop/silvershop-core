@@ -16,15 +16,13 @@
 	"require" : {
 		"silverstripe/cms": "~3.1",
 		"silverstripe/framework": "~3.1",
-		"burnbright/silverstripe-omnipay" : "~1.1||~2.0",
+		"silverstripe/silverstripe-omnipay" : "~1.1",
 		"icecaster/versioned-gridfield": "~1.0",
 		"burnbright/silverstripe-listsorter": "~2.0",
 		"burnbright/silverstripe-sqlquerylist": "~1.0"
 	},
 	"require-dev": {
 		"guzzle/plugin-mock": "~3.1",
-        "omnipay/dummy": "~2.1",
-        "omnipay/paymentexpress": "~2.1",
         "phpunit/phpunit": "~3.7"
 	},
 	"replace": {
