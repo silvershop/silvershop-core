@@ -1,5 +1,7 @@
 <?php
 
+use SilverStripe\Omnipay\GatewayInfo;
+
 class CheckoutStep_PaymentMethod extends CheckoutStep
 {
     private static $allowed_actions = array(

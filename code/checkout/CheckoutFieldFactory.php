@@ -1,5 +1,7 @@
 <?php
 
+use SilverStripe\Omnipay\GatewayInfo;
+
 /**
  * Factory for generating checkout fields
  *
