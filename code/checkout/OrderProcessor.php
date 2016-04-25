@@ -81,19 +81,19 @@ class OrderProcessor
             return null;
         }
 
+        $payment->setSuccessUrl($successUrl ? $successUrl : $this->getReturnUrl());
+
+        // Explicitly set the cancel URL
+        if ($cancelUrl) {
+            $payment->setFailureUrl($cancelUrl);
+        }
+
         // Create a payment service, by using the Service Factory. This will automatically choose an
         // AuthorizeService or PurchaseService, depending on Gateway configuration.
         // Set the user-facing success URL for redirects
         /** @var ServiceFactory $factory */
         $factory = ServiceFactory::create();
         $service = $factory->getService($payment, ServiceFactory::INTENT_PAYMENT);
-
-        $service->setReturnUrl($successUrl ? $successUrl : $this->getReturnUrl());
-
-        // Explicitly set the cancel URL
-        if ($cancelUrl) {
-            $service->setCancelUrl($cancelUrl);
-        }
 
         // Initiate payment, get the result back
         try {
