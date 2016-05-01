@@ -6,7 +6,17 @@ Here is a (possibly incomplete) list of hooks you can use by extending various c
 
 Product
 
- - updateImport - called from ProductBulkLoader
+ - updateCMSFields - update the default CMS fields
+ - canPurchase
+ - updateItemFilter
+ - updateDummyItem
+ - updateLink
+ - updateImage - override/manipulate the Product::Image relation
+ - updateForm
+
+Product_Controller
+
+ - updateForm
 
 Product_OrderItem
 
