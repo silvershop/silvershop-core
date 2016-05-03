@@ -13,6 +13,13 @@ class OrderProcessorTest extends SapphireTest
     protected static $use_draft_site = true;
     protected $processor;
 
+    public function setUpOnce()
+    {
+        parent::setUpOnce();
+        // clear session
+        ShoppingCart::singleton()->clear();
+    }
+
     public function setUp()
     {
         parent::setUp();

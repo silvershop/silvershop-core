@@ -301,16 +301,24 @@ class ShoppingCart
 
     /**
      * Store old cart id in session order history
+     * @param int|null $requestedOrderId optional parameter that denotes the order that was requested
      */
-    public function archiveorderid()
+    public function archiveorderid($requestedOrderId = null)
     {
+        $sessionId = Session::get(self::$cartid_session_name);
         $order = Order::get()
             ->filter("Status:not", "Cart")
-            ->byId(Session::get(self::$cartid_session_name));
+            ->byId($sessionId);
         if ($order && !$order->IsCart()) {
             OrderManipulation::add_session_order($order);
         }
-        $this->clear();
+        // in case there was no order requested
+        // OR there was an order requested AND it's the same one as currently in the session,
+        // then clear the cart. This check is here to prevent clearing of the cart if the user just
+        // wants to view an old order (via AccountPage).
+        if (!$requestedOrderId || ($sessionId == $requestedOrderId)) {
+            $this->clear();
+        }
     }
 
     /**

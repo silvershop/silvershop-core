@@ -12,6 +12,13 @@ class ShoppingCartControllerTest extends FunctionalTest
     public static $use_draft_site = false;
     protected $autoFollowRedirection = false;
 
+    public function setUpOnce()
+    {
+        parent::setUpOnce();
+        // clear session
+        ShoppingCart::singleton()->clear();
+    }
+
     public function setUp()
     {
         parent::setUp();
