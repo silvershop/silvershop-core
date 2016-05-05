@@ -68,4 +68,12 @@ class ShoppingCartTest extends SapphireTest
         $this->assertFalse($this->cart->get($ball1), "first item not in cart");
         $this->assertNotNull($this->cart->get($ball1), "second item is in cart");
     }
+
+    public function testCartSingleton()
+    {
+        $this->assertTrue((boolean)$this->cart->add($this->product), "add one item");
+        $order = $this->cart->current();
+
+        $this->assertEquals($order->ID, ShoppingCart::curr()->ID, "if singleton order ids will match");
+    }
 }
