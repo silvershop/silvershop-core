@@ -19,14 +19,14 @@ class Product extends Page implements Buyable
         'InternalItemID' => 'Varchar(30)', //ie SKU, ProductID etc (internal / existing recognition of product)
         'Model'          => 'Varchar(30)',
 
-        'CostPrice' => 'Currency', // Wholesale cost of the product to the merchant
-        'BasePrice' => 'Currency', // Base retail price the item is marked at.
+        'CostPrice' => 'Currency(19,4)', // Wholesale cost of the product to the merchant
+        'BasePrice' => 'Currency(19,4)', // Base retail price the item is marked at.
 
         //physical properties
-        'Weight'    => 'Float',
-        'Height'    => 'Float',
-        'Width'     => 'Float',
-        'Depth'     => 'Float',
+        'Weight'    => 'Decimal(12,5)',
+        'Height'    => 'Decimal(12,5)',
+        'Width'     => 'Decimal(12,5)',
+        'Depth'     => 'Decimal(12,5)',
 
         'Featured'      => 'Boolean',
         'AllowPurchase' => 'Boolean',

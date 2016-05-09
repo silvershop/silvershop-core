@@ -14,13 +14,13 @@ class ProductVariation extends DataObject implements Buyable
 {
     private static $db                = array(
         'InternalItemID' => 'Varchar(30)',
-        'Price'          => 'Currency',
+        'Price'          => 'Currency(19,4)',
 
         //physical properties
-        'Weight'    => 'Float',
-        'Height'    => 'Float',
-        'Width'     => 'Float',
-        'Depth'     => 'Float'
+        'Weight'    => 'Decimal(12,5)',
+        'Height'    => 'Decimal(12,5)',
+        'Width'     => 'Decimal(12,5)',
+        'Depth'     => 'Decimal(12,5)'
     );
 
     private static $has_one           = array(
