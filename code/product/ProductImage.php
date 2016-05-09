@@ -44,6 +44,15 @@ class Product_Image extends DataExtension
         }
     }
 
+    /**
+     * @return bool - is the image large enough that a "large" image makes sense?
+     */
+    public function HasLargeImage()
+    {
+        $imageWidth = intval($this->owner->getWidth());
+        return $imageWidth > self::config()->content_image_width;
+    }
+
     public static function config()
     {
         return new Config_ForClass("Product_Image");
