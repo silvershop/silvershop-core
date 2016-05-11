@@ -279,6 +279,7 @@ class Order extends DataObject
 
         $context->setFilters($filters);
 
+        $this->extend('updateDefaultSearchContext', $context);
         return $context;
     }
 
