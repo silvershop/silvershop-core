@@ -1,0 +1,492 @@
+nb:
+  OrdersAdmin:
+    MENUTITLE: Ordrer
+  ProductCatalogAdmin:
+    MENUTITLE: Katalog
+  ZoneAdmin:
+    MENUTITLE: Soner
+  AbandonedCartReport:
+    Description: 'Overvåk forlatte handlekurver for en bestemt periode. Grupper resultatene for et år, måned eller dag.'
+    Title: 'Forlatte handlekurver'
+  AccountPage:
+    AddressBook: 'Adressebok'
+    DESCRIPTION: 'Gi bruker tilgang til å se sine kontodetaljer og ordrer.'
+    DefaultTitle: Konto
+    EditProfile: 'Rediger profil'
+    LogOut: 'Logg ut'
+    Login: "Du må være logget inn for å få tilgang til kontoen. Om du ikke er registrert vil du få tilbud om det når bestiller din første ordre."
+    LoginAgain: 'Du er blitt logget ut. Logg inn igjen om du vil!'
+    MemberEmail: E-post
+    MemberLastVisit: 'Siste besøk'
+    MemberName: Navn
+    MemberSince: 'Medlem siden'
+    NoPage: 'Ingen Kontoside ble funnet. Vennligst lag ei i adminpanlet.'
+    NoPastOrders: 'Ingen ordrer ble funnet. '
+    NumberOfOrders: 'Antall ordrer'
+    PLURALNAME: 'Kontosider'
+    PastOrders: 'Tidligere ordrer'
+    SINGULARNAME: 'Kontoside'
+    Title: 'Min konto'
+  AccountPage_AddressBook:
+    CreateNewTitle: 'Lag en ny adresse'
+    NoAddress: 'Det finnes ingen adresse'
+    Title: 'Standard adresse'
+    DefaultShippingAddress: 'Standard fraktadresse'
+    DefaultBillingAddress: 'Standard betalingsadresse'
+    MakeDefaultShipping: 'Gjør denne til standard frakt'
+    MakeDefaultShippingTitle: 'Gjør denne til standard fraktadresse'
+    MakeDefaultBilling: 'Gjør denne til standard betaling'
+    MakeDefaultBillingTitle: 'Gjør denne til standard betalingadresse'
+    DeleteAddress: 'Slett adresse'
+  AccountPage_EditProfile:
+    Title: 'Endre profil'
+  Address:
+    AddressHint: 'gate / nummer, navn og type eller postboks '
+    AddressLine2Hint: 'byggning, leilighet, etasje'
+    BillingAddress: 'Betalingsadresse'
+    CityHint: 'sted, kommune'
+    CreateNewAddress: 'Lag ny adresse'
+    ExistingBillingAddress: 'Eksisterende betalingsadresse'
+    ExistingShippingAddress: 'Eksisterende fraktadresse'
+    PLURALNAME: Adresser
+    SINGULARNAME: Adresse
+    SaveDefaults: 'Lagre som standard'
+    SaveNew: 'Lagre ny adresse'
+    ShippingAddress: 'Fraktadresse'
+    StateHint: 'eller provins, område, øy'
+    db_Address: Adresse
+    db_AddressLine2: 'Adresse linje 2 (valgfri) '
+    db_City: By
+    db_Company: Bedrift
+    db_Country: Land
+    db_FirstName: 'Fornavn'
+    db_Phone: 'Telefonnummer'
+    db_PostalCode: 'Postkode'
+    db_State: Fylke
+    db_Surname: Etternavn
+    has_one_Member: Medlem
+  CartForm:
+    REMOVED_ITEMS: 'Fjernet {count} produkt.'
+    UPDATED_ITEMS: 'Oppdater {count} produkt.'
+    UpdateCart: 'Oppdater handlekurv'
+  CartPage:
+    DESCRIPTION: 'En side hvor en kunde kan se og redigere innholdet i handlekurven sin.'
+    DefaultTitle: 'Handlekurv'
+    PLURALNAME: 'Handlekurvsider'
+    SINGULARNAME: 'Handlekurvside'
+    has_one_CheckoutPage: 'Kasseside'
+    has_one_ContinuePage: 'Fortsettside'
+  Checkout:
+    IdFieldNotFound: 'Obligatorisk felt er ikke funnet: {IdentifierField}'
+    MemberExists: 'Et medlem finnes allerede med {Field} {Identifier}'
+    MembershipIsNotAllowed: 'Det stengt for å lage ny konto'
+    NoPaymentMethod: 'Betalingsmåte eksisterer ikke'
+    PasswordRequired: 'Det er nødvendig med et passord'
+    TermsAndConditionsLink: 'Jeg godtar salgsvilkår <a href="{TermsPageLink}" target="new" title="Les salvilkår">{TermsPageTitle}</a> page'
+  CheckoutComponentValidator:
+    InvalidDataMessage: 'Noe av dataen du har skrevet er feil, se under:'
+  CheckoutField:
+    AccountInfo: 'Vennligst vel et passord, du kan senere logge inn og se ordrehistorikken din'
+    MemberLoginInfo: 'Hvis du allerede har en konto, vennligst <a href="{LoginUrl}">logg inn</a>'
+    MembershipDetails: 'Kontodetaljer'
+    MustAgreeToTerms: 'Du må godta vilkår og betalingsbetingelser'
+    Password: Passord
+    PaymentType: 'Betalingsmåte'
+  CheckoutPage:
+    DESCRIPTION: 'Siden som behandler kasse funksjonen '
+    DefaultTitle: Kasse
+    PLURALNAME: 'Kasseside'
+    PaymentErrorMessage: 'En feil skjedde ved betaling, error fra betaling gateway:'
+    ProceedToPayment: 'Fortsett til betaling'
+    PurchaseCompleteDescription: 'Denne beskjeden blir inkludert i kvittering som blir sendt på epost etter at ordren er betalt.'
+    SINGULARNAME: 'Kasseside'
+    SubmitPayment: 'Send betaling'
+    db_PurchaseComplete: 'Ordre er betalt'
+  CheckoutStep:
+    Continue: Fortsett
+    Shipping: Frakt
+    Summary: Oppsummering
+  CheckoutStep_Address:
+    BillTo: 'Send regning til:'
+    EnterShippingAddress: 'Venligst skriv inn din fraktadresse'
+    SeperateBilling: 'Send regning til en annen adresse'
+    ShipTo: 'Send forsendelse til:'
+    SupplyContactInformation: 'Skriv inn din kontaktinformasjon'
+  CheckoutStep_Membership:
+    ContinueAsGuest: 'Fortsett som gjest'
+    CreateAccount: 'Lag en konto'
+    CreateNewAccount: 'Lag en ny konto'
+  CreateAddressForm:
+    AddressSaved: 'Din adresse er lagret'
+  CustomerReport:
+    Description: 'Kunden sin rapport'
+    Title: Kunden
+  FlatTaxModifier:
+    PLURALNAME: Momsen
+    SINGULARNAME: Moms
+  FreeShippingModifier:
+    Free: Gratis
+    PLURALNAME: 'Gratis fraktmodifikator'
+    SINGULARNAME: Frakt
+  GlobalTaxModifier:
+    Included: '(inkludert i prisen over)'
+    PLURALNAME: Momsen
+    SINGULARNAME: Moms
+    db_Country: Land
+  MemberForm:
+    DetailsSaved: 'Dine detaljer er lagret'
+    Save: 'Lagre endringer'
+    SaveAndProceed: 'Lagre og fortsett til kassen'
+  OnsitePaymentCheckoutComponent:
+    InvalidCreditCard: 'Kredittkort er ugyldig'
+  Order:
+    BillTo: 'Regning til:'
+    Date: Dato
+    DateFrom: 'Dato fra'
+    DateTo: 'Dato til'
+    GrandTotal: 'Pris total'
+    Invoice: Faktura
+    OrderHeadline: 'Ordre #{OrderNo} {OrderDate}'
+    Outstanding: Utestående
+    OutstandingWithAmount: 'Utestående beløp: {Amount}'
+    PLURALNAME: Ordrer
+    Print: Print
+    Quantity: Antall
+    SINGULARNAME: Ordre
+    STATUS_ADMINCANCELLED: 'Kansellert av admin'
+    STATUS_CART: Handlekurv
+    STATUS_COMPLETE: Ferdig
+    STATUS_MEMBERCANCELLED: 'Kansellert av bruker'
+    STATUS_PAID: Betalt
+    STATUS_PROCESSING: Under behandling
+    STATUS_SENT: Sendt
+    STATUS_UNPAID: Ubetalt
+    ShipTo: 'Send til'
+    SubTotal: Sum total
+    Total: Pris
+    TotalOutstanding: 'Total utestående'
+    TotalPrice: 'Pris'
+    TotalPriceWithCurrency: 'Pris  ({Currency})'
+    UnitPrice: 'Enhet pris'
+    db_Dispatched: Pakke sendt
+    db_Email: E-post
+    db_FirstName: 'Fornavn'
+    db_IPAddress: 'IP-adresse'
+    db_Notes: Beskjed
+    db_Paid: Betalt
+    db_Placed: Plassert
+    db_Printed: Printet
+    db_ReceiptSent: 'Kvittering sendt'
+    db_Reference: Referanse
+    db_SeparateBillingAddress: 'Egen betalingsadresse'
+    db_Status: Status
+    db_Surname: Etternavn
+    db_Total: Pris
+    has_many_Items: Produkter
+    has_many_Modifiers: Modifikatorer
+    has_many_OrderStatusLogs: 'Ordrestatus log'
+    has_many_Payments: Betalinger
+    has_one_BillingAddress: 'Betalingsadresse'
+    has_one_Member: Medlem
+    has_one_ShippingAddress: 'Fraktadresse'
+  OrderActionsForm:
+    CancelOrder: 'Avbestill ordre'
+    MakePayment: 'Betal'
+    ManualNotAllowed: 'Manuell betaling er ikke tillatt'
+    PayOrder: 'Betal utestående balanse'
+    PaymentMethod: 'Betalingmåte'
+  OrderAdmin:
+    ReceiptTitle: '{SiteTitle} Ordre {OrderNo}'
+  OrderAttribute:
+    PLURALNAME: Atributter
+    SINGULARNAME: Attributt
+    db_CalculatedTotal: 'Kalkulert total'
+    has_one_Order: Ordrer
+  OrderForm:
+    CouldNotProcessPayment: 'Betaling kunne ikke bli gjennomført'
+    OrderCancelled: 'Ordre er avbestilt'
+  OrderItem:
+    PLURALNAME: Produkter
+    SINGULARNAME: Produkt
+    db_Quantity: Antall
+    db_UnitPrice: 'Enhet pris'
+  OrderModifier:
+    PLURALNAME: Modifikatorer
+    SINGULARNAME: Modifikatorer
+    db_Amount: Beløp
+    db_Sort: Sortere
+    db_Type: Type
+  OrderProcessor:
+    NoItems: 'Ordre har ingen produkter'
+    NoOrder: 'Ordre finnes ikke.'
+    NoOrderStarted: 'Den nye ordren har ikke begynt ennå'
+    NotCart: 'Ordre er ikke ei handlekurv.'
+  OrderStatusLog:
+    PLURALNAME: 'Ordrestatuslogglinje'
+    SINGULARNAME: 'Ordrelogglinje'
+    db_DispatchTicket: 'Send billett'
+    db_DispatchedBy: 'Sendt av'
+    db_DispatchedOn: 'Sendt den'
+    db_Note: Melding
+    db_PaymentCode: 'Betalingskode'
+    db_PaymentOK: 'Betaling OK'
+    db_SentToCustomer: 'Send til kunde'
+    db_Title: Tittel
+    has_one_Author: Forfatter
+    has_one_Order: Ordre
+  Payment:
+    Note: Melding
+    PaymentsHeadline: Betaling(er)
+  PaymentCheckoutComponent:
+    NoPaymentMethod: 'Betlingsmåte er ikke gitt'
+    UnsupportedGateway: 'Gateway er ikke støttet'
+  PaymentProcessor:
+    CantPay: "Ordre kan ikke bli betalt for"
+    InvalidGateway: "`{gateway}` er ikke en godkjent gateway."
+  PickupShippingModifier:
+    PLURALNAME: Modifikatorer
+    SINGULARNAME: 'Hent i butikk'
+  PriceTag:
+    SAVE: Lagre
+  Product:
+    AddToCart: 'Legg til handlekurv'
+    AddToCartTitle: 'Legg &quot;{Title}&quot; til handlekurven'
+    AdditionalCategories: 'Lignende kategorier'
+    AllowPurchase: 'Tillat at produkt kan kjøpes'
+    Category: Kategori
+    CategoryDescription: 'Dette er ei foreldreside eller standardkategori.'
+    Code: 'Produktkode'
+    CostPriceDescription: 'Veiledende pris, leverandørpris eller pris før varen har blitt rabattert.'
+    DESCRIPTION: 'Produktside i butikken'
+    Featured: 'Fremhevet produkt'
+    Image: 'Produktbilde'
+    ImageAltText: '{Title} bilde'
+    InternalItemID: 'InternID'
+    Model: Modell
+    NoImage: 'ingen bilde'
+    PLURALNAME: Produkt
+    PageTitle: 'Produkttittel'
+    Price: Pris
+    PriceDesc: 'Prisen varen blir solgt for (salgspris).'
+    ProductCodeShort: SKU
+    SINGULARNAME: Produkt
+    Size: Størrelse
+    View: 'Vis produkt'
+    db_AllowPurchase: 'Tillat kjøp'
+    db_BasePrice: Pris
+    db_CostPrice: 'Veiledende pris'
+    db_Depth: Dybde
+    db_Featured: Fremhevet
+    db_Height: Høyde
+    db_InternalItemID: 'Intern-ID'
+    db_Model: Modell
+    db_Popularity: Popularitet
+    db_Weight: Vekt
+    db_Width: Bredde
+    has_many_Variations: Varianter
+    has_one_Image: Bilde
+    many_many_ProductCategories: 'Produktkategorier'
+    many_many_VariationAttributeTypes: 'Variasjonattributttype'
+  ProductAttributeType:
+    PLURALNAME: Atributter
+    SINGULARNAME: Attributt
+    SaveFirstInfo: 'Du må lagre først, så kan du legge til verdier'
+    belongs_many_many_Product: Produkt
+    db_Label: Merkelapp
+    db_Name: Navn
+    has_many_Values: Verdier
+  ProductAttributeValue:
+    PLURALNAME: Verdier
+    SINGULARNAME: Verdi
+    belongs_many_many_ProductVariation: 'Produktvariant'
+    db_Sort: Om rokere
+    db_Value: Verdier
+    has_one_Type: Type
+  ProductCategory:
+    DESCRIPTION: 'Produktkategori i butikken'
+    PLURALNAME: Kategorier
+    SINGULARNAME: Kategori
+    belongs_many_many_Products: Produkter
+  ProductGroup:
+    Next: neste
+    Page: Side
+    Previous: tilbake
+    ViewNext: 'Vis neste side'
+    ViewPage: 'Vis side {pageNum}'
+    ViewPrevious: 'Vis forrige side'
+  ProductMenu:
+    GotoPageTitle: 'Gå til {Title} '
+  ProductReport:
+    Description: "Forstå hvilke produkt som gjøre det bra og ikke"
+    Title: Produkter
+  ProductVariation:
+    MustSaveFirstMessage: 'Du kan velge en variant-attributt etter du har lagret første gang, om det finnes en. '
+    NoAttributeValuesMessage: '{attribute} har ingen verdier. Du kan lage dem hos "Products" &#62; "Product Attribute Type" seksjonen i adminpanelet.'
+    PLURALNAME: Varianter
+    SINGULARNAME: Variant
+    db_InternalItemID: 'Intern ID'
+    db_Price: Pris
+    db_Version: Versjon
+    has_one_Image: Bilde
+    has_one_Product: Produkt
+    many_many_AttributeValues: 'Attributtverdi'
+  ProductVariation_OrderItem:
+    PLURALNAME: Produkter
+    SINGULARNAME: Produkt
+    db_ProductVariationVersion: 'Produktvariantversjon'
+    has_one_ProductVariation: 'Produktvariant'
+  ProductVariationsExtension:
+    Attributes: Attributter
+    AttributesDescription: 'Disse feltene viser måten hver variasjon varierer. Etter at en av de er valgt, kan man redigere hver variasjon.'
+    Variations: Varianter
+    VariationsInfo: 'Pris - Siden du har en eller flere varianter må prisen bli satt under "Variasjon" fanen. '
+  Product_OrderItem:
+    PLURALNAME: Produkter
+    SINGULARNAME: Produkt
+    db_ProductVersion: 'Produktversjon'
+    has_one_Product: Produkt
+  RegionRestriction:
+    PLURALNAME: 'Regionale restriksjoner'
+    SINGULARNAME: 'Regional restriksjon'
+    db_City: By
+    db_Country: Land
+    db_PostalCode: 'Postkode'
+    db_State: Fylke
+  SetLocationForm:
+    ChooseCountry: 'Velg land...'
+    Country: Land
+  ShippingModifier:
+    PLURALNAME: Modifikatorer
+    SINGULARNAME: Frakt
+  Shop:
+    Change: Endre
+    Customer: Kunde
+    Date: Dato
+    DateFormatNice: '%m/%d/%G'
+    DateTimeFormatNice: '%m/%d/%G %I:%M%p'
+    DateTimeFormatNice24: 'd/m/Y H:i'
+    DevToolsTitle: 'Vis SilverShop utviklingsverktøy'
+    Edit: Endre
+    Quantity: Antall
+    ReadMoreTitle: 'Klikk her for å lese mer om &quot;{Title}&quot;'
+    Remove: Fjern
+    View: vis
+  ShopConfig:
+    AllowedCountries: 'Gi tilgang til sortering og fraktland.'
+    AllowedCountriesTabTitle: 'Tillate land'
+    CustomerGroup: 'Gruppe for å legge nye kunder i'
+    DefaultImage: 'Standard produktbilde'
+    TermsPage: 'Vilkår og betalingsbetingelser side'
+  ShopCurrency:
+    Free: '<span class="free">Gratis!</span>'
+  ShopDashboard:
+    NumberOfAccounts: 'Antall konti å vise'
+    NumberOfDays: 'Antall dager å vise'
+    NumberOfOrders: 'Antall ordrer å vise'
+    RecentAccounts: 'Siste konti'
+    RecentAccountsDescription: 'Vis siste konti'
+    RecentOrders: 'Siste ordrer'
+    RecentOrdersChart: 'Ordrehistorie'
+    RecentOrdersChartDescription: 'Vi siste ordrer som graf'
+    RecentOrdersDescription: 'Vis siste ordrer'
+  ShopDevelopmentAdmin:
+    BuildTasks: 'Byggeoppgaver'
+    CartCleanup: 'Rengjør gamle handlekurver'
+    CartCleanupDesc: 'Fjern forlatte handlekurver'
+    CartTasks: 'Handlekurvoppgaver'
+    ClearCart: 'Fjern nåværende handlekurv'
+    DebugCart: 'Debug handlekurven'
+    DeleteOrders: 'Slett alle ordrer'
+    DeleteOrdersDesc: 'Fjern alle ordre, modifikatorer og betalinger fra databasen.'
+    DeleteProducts: 'Fjern alle produkt'
+    DeleteProductsDesc: 'Fjern alle produkt fra databasen.'
+    PopulateCart: 'Bygg handlekurv men noen produkter'
+    PopulateShop: 'Bygg SilverShop'
+    PopulateShopDesc: 'Bygg SilverShop med ''dummy''-produkter, -kategorier og andre nødvendige sider.'
+    RecalculateOrders: 'Kalkuler alle ordre på ny.'
+    RecalculateOrdersDesc: 'Kalkuler alle ordreverdier. Obs: dette vi skrive over alle verdier og kan ikke bli omgjort!!'
+    RunAllTests: 'Kjør alle SilverShop unit tester'
+    UnitTests: 'Unit Tests'
+  ShopEmail:
+    AdminNotificationSubject: 'Ordre #{OrderNo} beskjed'
+    AdminNotificationTitle: 'Kvittering'
+    CancelSubject: 'Ordre #{OrderNo} kansellert av bruker'
+    ConfirmationSubject: 'Ordre #{OrderNo} stadfesting'
+    ConfirmationTitle: 'Ordrestadfesting'
+    ReceiptSubject: 'Ordre #{OrderNo} kvittering'
+    ReceiptTitle: 'Kvittering'
+    StatusChangeTitle: 'Statusendring'
+    StatusChanged: 'Status for ordre #{OrderNo} er endret til "{OrderStatus}"'
+  ShopPeriodReport:
+    Description: 'Perioderapport'
+    Title: 'Perioderapport'
+  ShopQuantityField:
+    AddOne: 'Legg &quot;{ItemTitle}&quot; til handlekurven din'
+    RemoveOne: 'Fjern &quot;{ItemTitle}&quot; fra handlekurven din'
+  ShopSalesReport:
+    Description: 'Følg butikksalg ytelse for en periode. Filtere resultatet på år, måned eller dag.'
+    Title: 'Salg'
+  ShopSideReport:
+    AllProducts: 'Alle produkter'
+    FeaturedProducts: 'Fremhevet produkt'
+    Heavy: 'Tunge produkt'
+    NoImage: 'Produkt uten bilde'
+    ShopGroup: SilverShop
+  ShoppingCart:
+    CannotPurchase: '{Title} er utilgjengelig for kjøp.'
+    Checkout: Kasse
+    Cleared: 'Handlekurv ble tømt.'
+    ContinueShopping: 'Fortsett å handle'
+    Headline: 'Handlekurv'
+    InvalidSecurityToken: 'Feil sikkerhetstoken, et mulig CSRF angrep.'
+    ItemAdded: 'Produkt ble lagt til.'
+    ItemNotFound: 'Finner ikke produkt.'
+    ItemRemoved: 'Produkt ble fjernet.'
+    ItemsInCartPlural: 'Det er <a href="{link}">{quantity} produkt</a> i handlekurven'
+    ItemsInCartSingular: 'Det er <a href="{link}">1 produkt</a> i handlekurven.'
+    NoCartFound: 'Handlekurv finnes ikke.'
+    NoCartInitialised: 'ingen handlekurv ble startet'
+    NoItems: 'Handlekurven er tom.'
+    NoOrder: 'Ingen ordrer.'
+    ProceedToCheckout: 'Fortsett til kasse'
+    ProductNotFound: 'Produkt finnes ikke.'
+    QuantitySet: 'Antall må ha en verdi.'
+    RemoveAllTitle: 'Fjern alle &quot;{Title}&quot; fra handlekurven'
+    RemoveTitle: 'Fjern &quot;{Title}&quot; fra handlekurven.'
+    TableSummary: 'Din handlekurv inneholder'
+  SimpleShippingModifier:
+    PLURALNAME: 'Enkel fraktmodifikator.'
+    SINGULARNAME: Frakt
+    ShipToCountry: 'Send til (Land)'
+    db_Country: Land
+  SubTotalModifier:
+    PLURALNAME: 'Sum'
+    SINGULARNAME: 'Sum'
+  TaxModifier:
+    AtRate: '@ {Rate}%'
+    PLURALNAME: Moms
+    SINGULARNAME: Moms
+    db_Rate: Sats
+  TaxReport:
+    Description: 'Momsrapport på belastede ordrer. Inkluderer bare ordre som har status betalt.'
+    Title: Moms
+  Variation:
+    SINGULARNAME: Variant
+  VariationForm:
+    ChooseAttribute: 'Velg {attribute} ...'
+    ProductNotAvailable: 'Dette produktet er ikke tilgjengelig med dette valget.'
+    VariationNotAvailable: 'Denne varianten er ikke tilgjengelig.'
+  WeightShippingModifier:
+    PLURALNAME: 'Vekt fraktmodifikator.'
+    SINGULARNAME: Frakt
+    TableTitle: 'Frakt ({Kilograms} kg)'
+  Zone:
+    PLURALNAME: Soner
+    SINGULARNAME: Soner
+    db_Description: Beskrivelse
+    db_Name: Navn
+    has_many_Regions: Regioner
+  ZoneRegion:
+    PLURALNAME: 'Soneregioner'
+    SINGULARNAME: 'Soneregion'
+    has_one_Zone: Sone
