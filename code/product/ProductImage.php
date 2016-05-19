@@ -7,6 +7,9 @@
  */
 class Product_Image extends DataExtension
 {
+    /** @var Image */
+    protected $owner;
+
     /**
      * @param bool $upscale [optional]
      * @return Image
@@ -59,21 +62,22 @@ class Product_Image extends DataExtension
             return $this->owner;
         }
 
-        $dim = explode('x', $this->owner->getDimensions());
+        $realWidth = $this->owner->getWidth();
+        $realHeight = $this->owner->getHeight();
 
         if ($width && $height) {
-            return $dim[0] < $width && $dim[1] < $height && !$upscale
+            return $realWidth < $width && $realHeight < $height && !$upscale
                 ? $this->owner
-                : $this->owner->SetSize($width, $height);
+                : $this->owner->Fit($width, $height);
         } else {
             if ($width) {
-                return $dim[0] < $width && !$upscale
+                return $realWidth < $width && !$upscale
                     ? $this->owner
-                    : $this->owner->SetWidth($width);
+                    : $this->owner->ScaleWidth($width);
             } else {
-                return $dim[1] < $width && !$upscale
+                return $realHeight < $height && !$upscale
                     ? $this->owner
-                    : $this->owner->SetHeight($height);
+                    : $this->owner->ScaleWidth($height);
             }
         }
     }
