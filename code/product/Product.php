@@ -406,6 +406,8 @@ class Product extends Page implements Buyable
     public function Image()
     {
         $image = $this->getComponent('Image');
+        $this->extend('updateImage', $image);
+
         if ($image && $image->exists() && file_exists($image->getFullPath())) {
             return $image;
         }

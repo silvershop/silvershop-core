@@ -25,4 +25,4 @@ Injector:
 
 LeftAndMain:
   extra_requirements_css:
-    - shop/css/shopcms.css
+    - silvershop/css/shopcms.css

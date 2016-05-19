@@ -9,7 +9,7 @@
  *
  * @package shop
  */
-class ShoppingCart
+class ShoppingCart extends Object
 {
     private static $cartid_session_name = 'shoppingcartid';
 
@@ -21,8 +21,6 @@ class ShoppingCart
 
     private        $type;
 
-    private static $instance;
-
     /**
      * Access for only allowing access to one (singleton) ShoppingCart.
      *
@@ -30,11 +28,7 @@ class ShoppingCart
      */
     public static function singleton()
     {
-        if (self::$instance === null) {
-            self::$instance = new ShoppingCart();
-        }
-
-        return self::$instance;
+        return Injector::inst()->get('ShoppingCart');
     }
 
     /**
@@ -48,13 +42,6 @@ class ShoppingCart
     }
 
     /**
-     * Singleton prevents constructing a ShoppingCart any other way.
-     */
-    private function __construct()
-    {
-    }
-
-    /**
      * Get the current order, or return null if it doesn't exist.
      *
      * @return Order
@@ -62,7 +49,7 @@ class ShoppingCart
     public function current()
     {
         //find order by id saved to session (allows logging out and retaining cart contents)
-        if (!$this->order && $sessionid = Session::get(self::$cartid_session_name)) {
+        if (!$this->order && $sessionid = Session::get(self::config()->cartid_session_name)) {
             $this->order = Order::get()->filter(
                 array(
                     "Status" => "Cart",
@@ -91,7 +78,7 @@ class ShoppingCart
             trigger_error("Passed Order object is not cart status", E_ERROR);
         }
         $this->order = $cart;
-        Session::set(self::$cartid_session_name, $cart->ID);
+        Session::set(self::config()->cartid_session_name, $cart->ID);
 
         return $this;
     }
@@ -112,7 +99,7 @@ class ShoppingCart
         }
         $this->order->write();
         $this->order->extend('onStartOrder');
-        Session::set(self::$cartid_session_name, $this->order->ID);
+        Session::set(self::config()->cartid_session_name, $this->order->ID);
 
         return $this->order;
     }
@@ -304,7 +291,7 @@ class ShoppingCart
      */
     public function archiveorderid($requestedOrderId = null)
     {
-        $sessionId = Session::get(self::$cartid_session_name);
+        $sessionId = Session::get(self::config()->cartid_session_name);
         $order = Order::get()
             ->filter("Status:not", "Cart")
             ->byId($sessionId);
@@ -327,7 +314,7 @@ class ShoppingCart
      */
     public function clear()
     {
-        Session::clear(self::$cartid_session_name);
+        Session::clear(self::config()->cartid_session_name);
         $order = $this->current();
         $this->order = null;
         if (!$order) {
