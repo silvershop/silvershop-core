@@ -105,7 +105,7 @@ class AddProductForm extends Form
             $fields->push(DropdownField::create('Quantity', _t('AddProductForm.Quantity', 'Quantity'), $values, 1));
         } else {
             $fields->push(
-                NumericField::create(_t('AddProductForm.Quantity', 'Quantity'), 'Quantity', 1)
+                NumericField::create('Quantity', _t('AddProductForm.Quantity', 'Quantity'), 1)
                     ->setAttribute('type', 'number')
                     ->setAttribute('min', '0')
             );
