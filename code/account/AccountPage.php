@@ -279,7 +279,17 @@ class AccountPage_Controller extends Page_Controller
 
     public function ChangePasswordForm()
     {
+        /** @var ChangePasswordForm $form */
         $form = ChangePasswordForm::create($this, "ChangePasswordForm");
+
+        // The default form tries to redirect to /account/login which doesn't exist
+        $backURL = $form->Fields()->fieldByName('BackURL');
+        if (!$backURL) {
+            $backURL = new HiddenField('BackURL', 'BackURL');
+            $form->Fields()->push($backURL);
+        }
+        $backURL->setValue($this->Link('editprofile'));
+
         $this->extend('updateChangePasswordForm', $form);
         $this->data()->extend('updateChangePasswordForm', $form);
 
