@@ -30,16 +30,20 @@ class ShopPayment extends DataExtension
 
     public function onCaptured(ServiceResponse $response)
     {
-        $order = $this->owner->Order();
-        if ($order->exists()) {
+        // ensure order is being reloaded from DB, to prevent dealing with stale data!
+        /** @var Order $order */
+        $order = Order::get()->byID($this->owner->OrderID);
+        if ($order && $order->exists()) {
             OrderProcessor::create($order)->completePayment();
         }
     }
 
     protected function placeOrder()
     {
-        $order = $this->owner->Order();
-        if ($order->exists()) {
+        // ensure order is being reloaded from DB, to prevent dealing with stale data!
+        /** @var Order $order */
+        $order = Order::get()->byID($this->owner->OrderID);
+        if ($order && $order->exists()) {
             OrderProcessor::create($order)->placeOrder();
         }
     }
