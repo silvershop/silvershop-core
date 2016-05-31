@@ -111,13 +111,6 @@ class OrderProcessor
             } else {
                 $this->error('An unspecified payment error occurred. Please check the payment messages.');
             }
-
-            return $serviceResponse;
-        }
-
-        // The order should be placed if the response isn't a redirect and if the payment isn't captured yet
-        if (!$serviceResponse->isRedirect() && $serviceResponse->getPayment()->Status != 'Captured') {
-            $this->placeOrder();
         }
 
         // For an OFFSITE payment, serviceResponse will now contain a redirect
