@@ -7,10 +7,8 @@
 	"keywords" : ["silverstripe","shop","shopping cart","ecommerce","online shopping","payment","ordering","silverstripe"],
 	"authors" : [
 		{
-			"name" : "Jeremy Shipman",
-			"email" : "jeremy@burnbright.net",
-			"homepage" : "https://github.com/jedateach",
-			"role" : "Developer"
+			"name" : "SilverShop Contributors",
+			"homepage" : "https://github.com/silvershop/silvershop-core/graphs/contributors"
 		}
 	],
 	"require" : {
