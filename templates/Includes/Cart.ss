@@ -40,20 +40,20 @@
 						<% end_if %>
 						</h3>
 						<% if $SubTitle %><p class="subtitle">$SubTitle</p><% end_if %>
-						<% if $Product.Variations && $Editable %>
+						<% if $Product.Variations && $Up.Editable %>
 							<%t ShoppingCart.CHANGE "Change" %>: $VariationField
 						<% end_if %>
 					</td>
 					<td>$UnitPrice.Nice</td>
-					<td><% if $Editable %>$QuantityField<% else %>$Quantity<% end_if %></td>
+					<td><% if $Up.Editable %>$QuantityField<% else %>$Quantity<% end_if %></td>
 					<td id="$TableTotalID">$Total.Nice</td>
-					<% if $Editable %>
+					<% if $Up.Editable %>
 						<td>
 							<% if $RemoveField %>
 								$RemoveField
 							<% else %>
 								<a href="$removeallLink" title="<% sprintf(_t("REMOVEALL","Remove all of &quot;%s&quot; from your cart"),$TableTitle) %>">
-									<img src="shop/images/remove.gif" alt="x"/>
+									<img src="silvershop/images/remove.gif" alt="x"/>
 								</a>
 							<% end_if %>
 
@@ -81,12 +81,12 @@
 									<% end_if %>
 								</th>
 								<td id="$TableTotalID">$TableValue.Nice</td>
-								<% if $Editable %>
+								<% if $Up.Editable %>
 									<td>
 										<% if $CanRemove %>
 											<strong>
 												<a class="ajaxQuantityLink" href="$removeLink" title="<% sprintf(_t("REMOVE","Remove &quot;%s&quot; from your order"),$TableTitle) %>">
-													<img src="shop/images/remove.gif" alt="x"/>
+													<img src="silvershop/images/remove.gif" alt="x"/>
 												</a>
 											</strong>
 										<% end_if %>
