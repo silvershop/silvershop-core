@@ -25,6 +25,12 @@ class ViewableCart extends Extension
 
     public function getContinueLink()
     {
+        if($cartPage = CartPage::get()->first()){
+            if($cartPage->ContinuePageID){
+                return $cartPage->ContinuePage()->Link();
+            }
+        }
+
         $maincategory = ProductCategory::get()
             ->sort(
                 array(
