@@ -310,9 +310,10 @@ class ShoppingCart extends Object
     /**
      * Empty / abandon the entire cart.
      *
+     * @param bool $write whether or not to write the abandoned order
      * @return bool - true if successful, false if no cart found
      */
-    public function clear()
+    public function clear($write = true)
     {
         Session::clear(self::config()->cartid_session_name);
         $order = $this->current();
@@ -320,7 +321,9 @@ class ShoppingCart extends Object
         if (!$order) {
             return $this->error(_t("ShoppingCart.NoCartFound", "No cart found."));
         }
-        $order->write();
+        if($write){
+            $order->write();
+        }
         $this->message(_t("ShoppingCart.Cleared", "Cart was successfully cleared."));
 
         return true;
