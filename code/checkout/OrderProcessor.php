@@ -282,10 +282,8 @@ class OrderProcessor
         // recalculate order to be sure we have the correct total
         $this->order->calculate();
 
-        //remove from session
-        $cart = ShoppingCart::curr();
-        if ($cart && $cart->ID == $this->order->ID) {
-            ShoppingCart::singleton()->clear();
+        if (ShopTools::DBConn()->supportsTransactions()) {
+            ShopTools::DBConn()->transactionStart();
         }
 
         //update status
@@ -300,33 +298,64 @@ class OrderProcessor
                 $this->order->IPAddress = $request->getIP(); //record client IP
             }
         }
-        //re-write all attributes and modifiers to make sure they are up-to-date before they can't be changed again
-        $items = $this->order->Items();
-        if ($items->exists()) {
-            foreach ($items as $item) {
-                $item->onPlacement();
-                $item->write();
+
+        // Add an error handler that throws an exception upon error, so that we can catch errors as exceptions
+        // in the following block.
+        set_error_handler(function ($severity, $message, $file, $line) {
+            throw new ErrorException($message, 0, $severity, $file, $line);
+        }, E_ALL & ~(E_STRICT | E_NOTICE));
+
+        try {
+            //re-write all attributes and modifiers to make sure they are up-to-date before they can't be changed again
+            $items = $this->order->Items();
+            if ($items->exists()) {
+                foreach ($items as $item) {
+                    $item->onPlacement();
+                    $item->write();
+                }
             }
+            $modifiers = $this->order->Modifiers();
+            if ($modifiers->exists()) {
+                foreach ($modifiers as $modifier) {
+                    $modifier->write();
+                }
+            }
+            //add member to order & customers group
+            if ($member = Member::currentUser()) {
+                if (!$this->order->MemberID) {
+                    $this->order->MemberID = $member->ID;
+                }
+                $cgroup = ShopConfig::current()->CustomerGroup();
+                if ($cgroup->exists()) {
+                    $member->Groups()->add($cgroup);
+                }
+            }
+            //allow decorators to do stuff when order is saved.
+            $this->order->extend('onPlaceOrder');
+            $this->order->write();
+        } catch (Exception $ex) {
+            // Rollback the transaction if an error occurred
+            if (ShopTools::DBConn()->supportsTransactions()) {
+                ShopTools::DBConn()->transactionRollback();
+            }
+            $this->error($ex->getMessage());
+            return false;
+        } finally {
+            // restore the error handler, no matter what
+            restore_error_handler();
         }
-        $modifiers = $this->order->Modifiers();
-        if ($modifiers->exists()) {
-            foreach ($modifiers as $modifier) {
-                $modifier->write();
-            }
+
+        // Everything went through fine, complete the transaction
+        if (ShopTools::DBConn()->supportsTransactions()) {
+            ShopTools::DBConn()->transactionEnd();
         }
-        //add member to order & customers group
-        if ($member = Member::currentUser()) {
-            if (!$this->order->MemberID) {
-                $this->order->MemberID = $member->ID;
-            }
-            $cgroup = ShopConfig::current()->CustomerGroup();
-            if ($cgroup->exists()) {
-                $member->Groups()->add($cgroup);
-            }
+
+        //remove from session
+        $cart = ShoppingCart::curr();
+        if ($cart && $cart->ID == $this->order->ID) {
+            // clear the cart, but don't write the order in the process (order is finalized and should NOT be overwritten)
+            ShoppingCart::singleton()->clear(false);
         }
-        //allow decorators to do stuff when order is saved.
-        $this->order->extend('onPlaceOrder');
-        $this->order->write();
 
         //send confirmation if configured and receipt hasn't been sent
         if (

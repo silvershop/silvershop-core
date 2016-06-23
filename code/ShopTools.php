@@ -5,6 +5,19 @@
  */
 class ShopTools
 {
+    /**
+     * Get the DB connection in a SS 3.1 and 3.2+ compatible way
+     * @param string $name
+     * @return SS_Database
+     */
+    public static function DBConn($name = 'default')
+    {
+        if (method_exists('DB', 'get_conn')) {
+            return DB::get_conn($name);
+        }
+        return DB::getConn($name);
+    }
+
     public static function price_for_display($price)
     {
         $currency = ShopConfig::get_site_currency();
