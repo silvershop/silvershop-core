@@ -42,16 +42,15 @@ class CartPage extends Page
                 )
             );
         }
-        if ($pgroups = ProductCategory::get()) {
-            $fields->addFieldToTab(
-                'Root.Links',
-                DropdownField::create(
-                    'ContinuePageID',
-                    _t('CartPage.has_one_ContinuePage', 'Continue Product Group Page'),
-                    $pgroups->map("ID", "Title")
-                )
-            );
-        }
+
+        $fields->addFieldToTab(
+            'Root.Links',
+            TreeDropdownField::create(
+                'ContinuePageID',
+                _t('CartPage.has_one_ContinuePage', 'Continue Shopping Page'),
+                'SiteTree'
+            )
+        );
 
         return $fields;
     }
