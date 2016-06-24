@@ -197,7 +197,7 @@ class OrderProcessor
      */
     public function completePayment()
     {
-        if (!$this->order->Paid) {
+        if (!$this->order->IsPaid()) {
             // recalculate order to be sure we have the correct total
             $this->order->calculate();
 
@@ -219,16 +219,7 @@ class OrderProcessor
             ) {
                 //set order as paid
                 $this->order->Status = 'Paid';
-                $this->order->Paid = SS_Datetime::now()->Rfc2822();
                 $this->order->write();
-                foreach ($this->order->Items() as $item) {
-                    $item->onPayment();
-                }
-                //all payment is settled
-                $this->order->extend('onPaid');
-            }
-            if (!$this->order->ReceiptSent) {
-                $this->notifier->sendReceipt();
             }
         }
     }

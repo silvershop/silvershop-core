@@ -135,8 +135,6 @@ class OrderEmailNotifier
             $subject,
             self::config()->bcc_receipt_to_admin
         );
-        $this->order->ReceiptSent = SS_Datetime::now()->Rfc2822();
-        $this->order->write();
     }
 
     /**

@@ -241,9 +241,52 @@ class OrderTest extends SapphireTest
         $this->assertEquals(0, Product_OrderItem::get()->filter('ID', $itemIds)->count());
         $this->assertEquals(0, OrderModifier::get()->filter('ID', $modifierIds)->count());
         $this->assertEquals(0, OrderStatusLog::get()->filter('ID', $statusLogId)->count());
-        
+
         // Keep the payment… it might be relevant for book keeping
         $this->assertEquals(1, Payment::get()->filter('ID', $paymentId)->count());
+    }
 
+    public function testStatusChange()
+    {
+        Config::inst()->update('Order', 'extensions', array('OrderTest_TestStatusChangeExtension'));
+
+        $order = Order::create();
+        $orderId = $order->write();
+
+        $order->Status = 'Unpaid';
+        $order->write();
+
+        $this->assertEquals(array(
+            array('Cart' => 'Unpaid')
+        ), OrderTest_TestStatusChangeExtension::$stack);
+
+        OrderTest_TestStatusChangeExtension::reset();
+
+        $order = Order::get()->byID($orderId);
+        $order->Status = 'Paid';
+        $order->write();
+
+        $this->assertEquals(array(
+            array('Unpaid' => 'Paid')
+        ), OrderTest_TestStatusChangeExtension::$stack);
+
+        $this->assertTrue((boolean)$order->Paid, 'Order paid date should be set');
+    }
+}
+
+class OrderTest_TestStatusChangeExtension extends DataExtension implements TestOnly
+{
+    public static $stack = array();
+
+    public static function reset()
+    {
+        self::$stack = array();
+    }
+
+    public function onStatusChange($fromStatus, $toStatus)
+    {
+        self::$stack[] = array(
+            $fromStatus => $toStatus
+        );
     }
 }

@@ -636,11 +636,19 @@ class Order extends DataObject
     /**
      * Force creating an order reference
      */
-    public function onBeforeWrite()
+    protected function onBeforeWrite()
     {
         parent::onBeforeWrite();
         if (!$this->getField("Reference") && in_array($this->Status, self::$placed_status)) {
             $this->generateReference();
+        }
+
+        // perform status transition
+        if ($this->isInDB() && $this->isChanged('Status')) {
+            $this->statusTransition(
+                empty($this->original['Status']) ? 'Cart' : $this->original['Status'],
+                $this->Status
+            );
         }
 
         // While the order is unfinished/cart, always store the current locale with the order.
@@ -651,9 +659,34 @@ class Order extends DataObject
     }
 
     /**
+     * Called from @see onBeforeWrite whenever status changes
+     * @param string $fromStatus status to transition away from
+     * @param string $toStatus target status
+     */
+    protected function statusTransition($fromStatus, $toStatus)
+    {
+        // Add extension hook to react to order status transitions.
+        $this->extend('onStatusChange', $fromStatus, $toStatus);
+
+        if ($toStatus == 'Paid' && !$this->Paid) {
+            $this->Paid = SS_Datetime::now()->Rfc2822();
+            foreach ($this->Items() as $item) {
+                $item->onPayment();
+            }
+            //all payment is settled
+            $this->extend('onPaid');
+
+            if (!$this->ReceiptSent) {
+                OrderEmailNotifier::create($this)->sendReceipt();
+                $this->ReceiptSent = SS_Datetime::now()->Rfc2822();
+            }
+        }
+    }
+
+    /**
      * delete attributes, statuslogs, and payments
      */
-    public function onBeforeDelete()
+    protected function onBeforeDelete()
     {
         foreach ($this->Items() as $item) {
             $item->delete();
