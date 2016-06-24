@@ -655,10 +655,22 @@ class Order extends DataObject
      */
     public function onBeforeDelete()
     {
-        $this->Items()->removeAll();
-        $this->Modifiers()->removeAll();
-        $this->OrderStatusLogs()->removeAll();
+        foreach ($this->Items() as $item) {
+            $item->delete();
+        }
+
+        foreach ($this->Modifiers() as $modifier) {
+            $modifier->delete();
+        }
+
+        foreach ($this->OrderStatusLogs() as $logEntry) {
+            $logEntry->delete();
+        }
+
+        // just remove the payment relations…
+        // that way payment objects still persist (they might be relevant for book-keeping?)
         $this->Payments()->removeAll();
+
         parent::onBeforeDelete();
     }
 

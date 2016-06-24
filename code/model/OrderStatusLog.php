@@ -58,15 +58,6 @@ class OrderStatusLog extends DataObject
         return false;
     }
 
-    public function onBeforeSave()
-    {
-        if (!$this->isInDB()) {
-            //TO DO - this does not seem to work
-            $this->AuthorID = Member::currentUser()->ID;
-        }
-        parent::onBeforeSave();
-    }
-
     public function populateDefaults()
     {
         parent::populateDefaults();
@@ -76,15 +67,21 @@ class OrderStatusLog extends DataObject
     public function onBeforeWrite()
     {
         parent::onBeforeWrite();
-        if (!$this->AuthorID && $m = Member::currentUser()) {
-            $this->AuthorID = $m->ID;
+        if (!$this->AuthorID && $memberID = Member::currentUserID()) {
+            $this->AuthorID = $memberID;
         }
         if (!$this->Title) {
             $this->Title = "Order Update";
         }
+    }
+
+    public function validate()
+    {
+        $validationResult = parent::validate();
         if (!$this->OrderID) {
-            user_error("there is no order id for Order Status Log", E_USER_NOTICE);
+            $validationResult->error('there is no order id for Order Status Log');
         }
+        return $validationResult;
     }
 
     public function onAfterWrite()
@@ -97,9 +94,9 @@ class OrderStatusLog extends DataObject
     protected function updateWithLastInfo()
     {
         if ($this->OrderID) {
-            $logs = DataObject::get('OrderStatusLog', "\"OrderID\" = {$this->OrderID}", "\"Created\" DESC", null, 1);
-            if ($logs && $logs->Count()) {
-                $latestLog = $logs->First();
+            if (
+                $latestLog = OrderStatusLog::get()->filter('OrderID', $this->OrderID)->sort('Created', 'DESC')->first()
+            ) {
                 $this->DispatchedBy = $latestLog->DispatchedBy;
                 $this->DispatchedOn = $latestLog->DispatchedOn;
                 $this->DispatchTicket = $latestLog->DispatchTicket;
