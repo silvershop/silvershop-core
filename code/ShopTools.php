@@ -18,6 +18,11 @@ class ShopTools
         return DB::getConn($name);
     }
 
+    /**
+     * Convert a numeric price to the shop currency
+     * @param mixed $price the price to convert
+     * @return Money the price wrapped in a Money DBField to be used for templates or similar
+     */
     public static function price_for_display($price)
     {
         $currency = ShopConfig::get_site_currency();
@@ -27,6 +32,11 @@ class ShopTools
         return $field;
     }
 
+    /**
+     * Get the current locale.
+     * Tries to get the locale from Translatable, Fluent or the default i18n (depending on what is installed)
+     * @return string the locale in use
+     */
     public static function get_current_locale()
     {
         if (class_exists('Translatable')) {
@@ -40,6 +50,12 @@ class ShopTools
         return i18n::get_locale();
     }
 
+    /**
+     * Set/Install the given locale.
+     * This does set the i18n locale as well as the Translatable or Fluent locale (if any of these modules is installed)
+     * @param string $locale the locale to install
+     * @throws Zend_Locale_Exception @see Zend_Locale_Format::getDateFormat and @see Zend_Locale_Format::getTimeFormat
+     */
     public static function install_locale($locale)
     {
         // If the locale isn't given, silently fail (there might be carts that still have locale set to null)
