@@ -24,10 +24,17 @@ See the [customising docs](../02_Customisation).
 
 ## How do I set my site to use a different currency?
 
+in `mysite\_config\config.yml`
+
 ```
-//where 'CUR' is the currency code
-Payment::set_site_currency('CUR');
+# Example for EURO
+ShopConfig:
+  base_currency: 'EUR'
+ShopCurrency:
+  currency_symbol: '€'
 ```
+
+then run `dev/build`
 
 ## I can't get payments to work? eg: PayPal, PaymentExpress, Other..
 
