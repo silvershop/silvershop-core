@@ -55,6 +55,9 @@ Order:
   cancel_before_sending: false
   cancel_before_sending: false
   cancel_after_sending: false
+  # Change / add order status, added Refunded
+  db:
+    Status: Enum('Unpaid,Paid,Processing,Refunded,Sent,Complete,AdminCancelled,MemberCancelled,Cart','Cart')
 
 OrderManipulation:
   allow_cancelling: true
