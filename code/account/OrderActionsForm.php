@@ -1,6 +1,7 @@
 <?php
 
 use SilverStripe\Omnipay\GatewayInfo;
+use SilverStripe\Omnipay\GatewayFieldsFactory;
 
 /**
  * Perform actions on placed orders
@@ -21,6 +22,8 @@ class OrderActionsForm extends Form
     private static $allow_paying       = true;
 
     private static $allow_cancelling   = true;
+
+    private static $include_jquery = true;
 
     protected      $order;
 
@@ -69,6 +72,14 @@ class OrderActionsForm extends Form
                     )
                 );
 
+                if ($ccFields = $this->getCCFields($gateways)) {
+                    if ($this->config()->include_jquery) {
+                       Requirements::javascript(THIRDPARTY_DIR . '/jquery/jquery.min.js');
+                    }
+                    Requirements::javascript(SHOP_DIR . '/javascript/OrderActionsForm.js');
+                    $fields->push($ccFields);
+                }
+
                 $actions->push(
                     FormAction::create(
                         'dopayment',
@@ -86,7 +97,9 @@ class OrderActionsForm extends Form
                 )
             );
         }
-        parent::__construct($controller, $name, $fields, $actions);
+        parent::__construct($controller, $name, $fields, $actions, OrderActionsForm_Validator::create(array(
+            'PaymentMethod'
+        )));
         $this->extend("updateForm", $order);
     }
 
@@ -162,5 +175,82 @@ class OrderActionsForm extends Form
                 $this->controller->redirectBack();
             }
         }
+    }
+
+    /**
+     * Get credit card fields for the given gateways
+     * @param array $gateways
+     * @return CompositeField|null
+     */
+    protected function getCCFields(array $gateways)
+    {
+        $onsiteGateways = array();
+        $allRequired = array();
+        foreach ($gateways as $gateway => $title) {
+            if (!GatewayInfo::isOffsite($gateway)) {
+                $required = GatewayInfo::requiredFields($gateway);
+                $onsiteGateways[$gateway] = $required;
+                $allRequired += $required;
+            }
+        }
+
+        $allRequired = array_unique($allRequired);
+
+        if (empty($onsiteGateways)) {
+            return null;
+        }
+
+        $factory = new GatewayFieldsFactory(null, array('Card'));
+        $ccFields = $factory->getCardFields();
+
+        // Remove all the credit card fields that aren't required by any gateway
+        foreach ($ccFields->dataFields() as $name => $field) {
+            if ($name && !in_array($name, $allRequired)) {
+                $ccFields->removeByName($name, true);
+            }
+        }
+
+        $lookupField = LiteralField::create(
+            '_CCLookupField',
+            sprintf(
+                '<span class="gateway-lookup" data-gateways=\'%s\'></span>',
+                json_encode($onsiteGateways, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP)
+            )
+        );
+
+        $ccFields->push($lookupField);
+
+        return CompositeField::create($ccFields)->setTag('fieldset')->addExtraClass('credit-card');
+    }
+}
+
+class OrderActionsForm_Validator extends RequiredFields
+{
+    public function php($data)
+    {
+        // Check if we should do a payment
+        if (Form::current_action() == 'dopayment' && !empty($data['PaymentMethod'])) {
+            $gateway = $data['PaymentMethod'];
+            // If the gateway isn't manual and not offsite, Check for credit-card fields!
+            if (!GatewayInfo::isManual($gateway) && !GatewayInfo::isOffsite($gateway)) {
+                // Merge the required fields and the Credit-Card fields that are required for the gateway
+                $this->required = array_merge($this->required, array_intersect(
+                    array(
+                        'type',
+                        'name',
+                        'number',
+                        'startMonth',
+                        'startYear',
+                        'expiryMonth',
+                        'expiryYear',
+                        'cvv',
+                        'issueNumber'
+                    ),
+                    GatewayInfo::requiredFields($gateway)
+                ));
+            }
+        }
+
+        return parent::php($data);
     }
 }
