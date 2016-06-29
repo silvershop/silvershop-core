@@ -37,11 +37,18 @@ class VariationForm extends AddProductForm
 
         if (self::$include_json) {
             $vararray = array();
-
-            if ($vars = $product->Variations()) {
-                foreach ($vars as $var) {
-                    $vararray[$var->ID] = $var->AttributeValues()->map('ID', 'ID')->toArray();
-                }
+            
+            $query = $query2 = new SQLQuery();
+            
+            $query->setSelect('ID')
+                ->setFrom('ProductVariation')
+                ->setWhere(array('ProductID' => $product->ID));
+                
+            foreach ($query->execute()->column('ID') as $variationID) {
+                $query2->setSelect('ProductAttributeValueID')
+                    ->setFrom('ProductVariation_AttributeValues')
+                    ->setWhere(array('ProductVariationID' => $variationID));
+                $vararray[$variationID] = $query2->execute()->keyedColumn();
             }
 
             $fields->push(
