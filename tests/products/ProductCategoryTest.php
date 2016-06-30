@@ -5,6 +5,30 @@ class ProductCategoryTest extends FunctionalTest
     public static $fixture_file  = 'silvershop/tests/fixtures/shop.yml';
     public static $disable_theme = true;
 
+    /** @var ProductCategory */
+    protected $products;
+
+    /** @var ProductCategory */
+    protected $clothing;
+
+    /** @var ProductCategory */
+    protected $electronics;
+
+    /** @var Product */
+    protected $socks;
+
+    /** @var Product */
+    protected $tshirt;
+
+    /** @var Product */
+    protected $hdtv;
+
+    /** @var Product */
+    protected $beachball;
+
+    /** @var Product */
+    protected $mp3player;
+
     public function setUp()
     {
         parent::setUp();
@@ -74,6 +98,60 @@ class ProductCategoryTest extends FunctionalTest
             ),
             $products,
             'After adding a category via many-many to socks, that should show up as well'
+        );
+    }
+
+    public function testZeroPrice()
+    {
+        Config::inst()->update('ProductCategory', 'must_have_price', true);
+
+        $products = $this->products->ProductsShowable();
+        $this->assertNotNull($products, "Products exist in category");
+        // hdtv not in the list, since it doesn't have a base-price set
+        $this->assertDOSEquals(
+            array(
+                array('URLSegment' => 'socks'),
+                array('URLSegment' => 't-shirt'),
+                array('URLSegment' => 'beach-ball'),
+            ),
+            $products
+        );
+
+        $this->socks->BasePrice = '';
+        $this->socks->write();
+
+        $products = $this->products->ProductsShowable();
+        $this->assertDOSEquals(
+            array(
+                array('URLSegment' => 't-shirt'),
+                array('URLSegment' => 'beach-ball'),
+            ),
+            $products
+        );
+    }
+
+    public function testZeroPriceWithVariations()
+    {
+        Config::inst()->update('ProductCategory', 'must_have_price', true);
+
+        $products = $this->electronics->ProductsShowable();
+        $this->assertEquals(0, $products->count(), 'No product should be returned as there\'s no price set');
+
+        // Create a variation for HDTV
+        ProductVariation::create(array(
+            'InternalItemID' => '50-Inch',
+            'Price'          => 1200,
+            'ProductID'      => $this->hdtv->ID
+        ))->write();
+
+        $products = $this->electronics->ProductsShowable();
+
+        $this->assertDOSEquals(
+            array(
+                array('URLSegment' => 'hdtv')
+            ),
+            $products,
+            'HDTV has a priced extension and should now show up in the list of products'
         );
     }
 
