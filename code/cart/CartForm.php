@@ -37,6 +37,8 @@ class CartForm extends Form
             ShopTools::install_locale($order->Locale);
         }
 
+        $numericConverter = NumericField::create('_temp');
+
         $messages = array();
         if (isset($data['Items']) && is_array($data['Items'])) {
             foreach ($data['Items'] as $itemid => $fields) {
@@ -52,7 +54,8 @@ class CartForm extends Form
                 }
                 //update quantities
                 if (isset($fields['Quantity']) && $quantity = Convert::raw2sql($fields['Quantity'])) {
-                    $item->Quantity = $quantity;
+                    $numericConverter->setValue($quantity);
+                    $item->Quantity = $numericConverter->dataValue();
                 }
                 //update variations
                 if (isset($fields['ProductVariationID']) && $id = Convert::raw2sql($fields['ProductVariationID'])) {
