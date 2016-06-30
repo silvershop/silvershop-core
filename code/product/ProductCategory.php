@@ -56,7 +56,15 @@ class ProductCategory extends Page
                 )
             );
         if (self::config()->must_have_price) {
-            $products = $products->filter("BasePrice:GreaterThan", 0);
+            if (Product::has_extension('ProductVariationsExtension')) {
+                $products = $products->filterAny(array(
+                    "BasePrice:GreaterThan" => 0,
+                    "Variations.Price:GreaterThan" => 0
+                ));
+            } else {
+                $products = $products->filter("BasePrice:GreaterThan", 0);
+            }
+
         }
 
         $this->extend('updateProductsShowable', $products);
