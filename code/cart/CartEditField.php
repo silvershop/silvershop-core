@@ -101,11 +101,12 @@ class CartEditField extends FormField
                 continue;
             }
             $name = $this->name . "[$item->ID]";
-            $quantity = NumericField::create(
+            $quantity = TextField::create(
                 $name . "[Quantity]",
                 "Quantity",
                 $item->Quantity
             )
+                ->addExtraClass('numeric')
                 ->setAttribute('type', 'number')
                 ->setAttribute('min', '0');
 
