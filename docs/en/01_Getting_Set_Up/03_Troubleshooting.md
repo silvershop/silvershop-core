@@ -47,7 +47,11 @@ The default shop module provides a few shipping [modifiers](../03_How_It_Works/O
 ## How do I use in a different language?
 
 Follow the [Silverstripe internationalisation guide](http://docs.silverstripe.org/en/developer_guides/i18n/)
-We welcome your contribution of language files.
+
+
+The translation of the silvershop module is being done via Transifex. You can see the current translation progress on: [www.transifex.com/silvershop/silverstripe-shop](https://www.transifex.com/silvershop/silverstripe-shop). 
+If your language isn't translated yet, we welcome your contribution on transifex! Just click the **"Help Translate "SilverShop"** button to get started.
+
 
 ## When are cart/order totals recalculated?
 

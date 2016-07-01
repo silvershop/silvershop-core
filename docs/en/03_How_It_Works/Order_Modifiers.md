@@ -39,9 +39,9 @@ Modifiers are introduced using the SilverStripe config system:
 
 ```yaml
 Order:
-     modifiers:
-          - SimpleShippingModifier
-          - FlatTaxModifier
+  modifiers:
+    - SimpleShippingModifier
+    - FlatTaxModifier
 ```
 
 Note that you may need to clear the current order to see updates to modifiers. You can do this by visiting `mysite.com/shoppingcart/clear`

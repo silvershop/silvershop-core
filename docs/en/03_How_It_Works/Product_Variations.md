@@ -11,13 +11,10 @@ This is because not every website will need variations support, and thus it shou
 simple to disable / remove.
 
  * Product
- 	
  	* has_many ProductVariation
- 		
- 		* many_many AttributeValues
+ 	   * many_many AttributeValues
  	* many_many VariationAttributeTypes
- 	
- 		* has_many AttributeValues
+ 	   * has_many AttributeValues
  	
 ## Front-end Choosing a Variation
 

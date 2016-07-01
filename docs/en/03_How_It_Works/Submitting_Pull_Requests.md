@@ -5,11 +5,11 @@ Fork the project: Visit the [shop project page](https://github.com/burnbright/si
 Clone to your local machine, indie your silverstripe root directory.
 
     $ cd www/silverstripe
-    $ git clone git@github.com:jedateach/silverstripe-shop.git shop
+    $ git clone git@github.com:silvershop/silvershop-core.git silvershop
 
 Change folder
 
-    $ cd shop
+    $ cd silvershop
 
 Create a branch for your changes
 
@@ -42,7 +42,7 @@ Done.
 
 The owner will receive your request, and merge in your code, or reject it, with some reason.
 
-Here it is: https://github.com/burnbright/silverstripe-shop/pull/57
+Here it is: https://github.com/silvershop/silvershop-core/pull/57
 
 ## Why make changes on a separate branch?
 
