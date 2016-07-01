@@ -307,6 +307,8 @@ de:
     PLURALNAME: Kategorien
     SINGULARNAME: Kategorie
     belongs_many_many_Products: Produkte
+    Alphabetical: Alphabetisch
+    Price: Preis
   ProductGroup:
     Next: Nächste
     Page: Seite
