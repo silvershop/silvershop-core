@@ -9,10 +9,6 @@
 <ul>
 	<li><a href="{$BaseHref}dev/tasks/CartCleanupTask"><%t ShopDevelopmentAdmin.CartCleanup "Cleanup old carts" %></a>
 	- <%t ShopDevelopmentAdmin.CartCleanupDesc "Remove abandoned carts." %></li>
-	<li><a href="{$BaseHref}dev/tasks/DeleteOrdersTask"><%t ShopDevelopmentAdmin.DeleteOrders "Delete all orders" %></a>
-	- <%t ShopDevelopmentAdmin.DeleteOrdersDesc "Remove all orders, modifiers, and payments from the database." %></li>
-	<li><a href="{$BaseHref}dev/tasks/DeleteProductsTask"><%t ShopDevelopmentAdmin.DeleteProducts "Delete all products" %></a>
-	- <%t ShopDevelopmentAdmin.DeleteProductsDesc "Remove all products from the database." %></li>
 	<li><a href="{$BaseHref}dev/tasks/RecalculateAllOrdersTask"><%t ShopDevelopmentAdmin.RecalculateOrders "Recalculate all orders" %></a>
 	- <%t ShopDevelopmentAdmin.RecalculateOrdersDesc "Recalculate all order values. Warning: this will overwrite any historical values." %></li>
 	<li><a href="{$BaseHref}dev/tasks/PopulateShopTask"><%t ShopDevelopmentAdmin.PopulateShop "Populate shop" %></a>
