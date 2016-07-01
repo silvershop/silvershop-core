@@ -76,4 +76,22 @@ class ShoppingCartTest extends SapphireTest
 
         $this->assertEquals($order->ID, ShoppingCart::curr()->ID, "if singleton order ids will match");
     }
+
+    public function testAddProductWithVariations()
+    {
+        $this->loadFixture('silvershop/tests/fixtures/variations.yml');
+        $ball = $this->objFromFixture('Product', 'ball');
+        $redlarge = $this->objFromFixture('ProductVariation', 'redlarge');
+        // setting price of variation to zero, so it can't be added to cart.
+        $redlarge->Price = 0;
+        $redlarge->write();
+
+        $ball->BasePrice = 0;
+        $ball->write();
+
+        $item = $this->cart->add($ball);
+        $this->assertNotNull($item, "Product with variations can be added to cart");
+        $this->assertInstanceOf('ProductVariation_OrderItem', $item, 'A variation should be added to cart.');
+        $this->assertEquals(20, $item->Buyable()->Price, 'The buyable variation was added');
+    }
 }
