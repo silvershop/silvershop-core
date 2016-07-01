@@ -13,13 +13,13 @@ class ShoppingCart extends Object
 {
     private static $cartid_session_name = 'shoppingcartid';
 
-    private        $order;
+    private $order;
 
-    private        $calculateonce       = false;
+    private $calculateonce = false;
 
-    private        $message;
+    private $message;
 
-    private        $type;
+    private $type;
 
     /**
      * Access for only allowing access to one (singleton) ShoppingCart.
@@ -53,7 +53,7 @@ class ShoppingCart extends Object
             $this->order = Order::get()->filter(
                 array(
                     "Status" => "Cart",
-                    "ID"     => $sessionid,
+                    "ID" => $sessionid,
                 )
             )->first();
         }
@@ -108,7 +108,7 @@ class ShoppingCart extends Object
      * Adds an item to the cart
      *
      * @param Buyable $buyable
-     * @param number  $quantity
+     * @param number $quantity
      * @param unknown $filter
      *
      * @return boolean|OrderItem false or the new/existing item
@@ -228,6 +228,8 @@ class ShoppingCart extends Object
         if (!$item) {
             $member = Member::currentUser();
 
+            $buyable = $this->getCorrectBuyable($buyable);
+
             if (!$buyable->canPurchase($member)) {
                 return $this->error(
                     _t(
@@ -256,7 +258,7 @@ class ShoppingCart extends Object
      * Finds an existing order item.
      *
      * @param Buyable $buyable
-     * @param string  $filter
+     * @param string $filter
      *
      * @return the item requested, or false
      */
@@ -266,6 +268,9 @@ class ShoppingCart extends Object
         if (!$buyable || !$order) {
             return false;
         }
+
+        $buyable = $this->getCorrectBuyable($buyable);
+
         $filter = array(
             'OrderID' => $order->ID,
         );
@@ -283,6 +288,30 @@ class ShoppingCart extends Object
         }
 
         return $item;
+    }
+
+    /**
+     * Ensure the proper buyable will be returned for a given buyable…
+     * This is being used to ensure a product with variations cannot be added to the cart…
+     * a Variation has to be added instead!
+     * @param Buyable $buyable
+     * @return Buyable
+     */
+    public function getCorrectBuyable(Buyable $buyable)
+    {
+        if (
+            $buyable instanceof Product &&
+            $buyable->hasExtension('ProductVariationsExtension') &&
+            $buyable->Variations()->count() > 0
+        ) {
+            foreach ($buyable->Variations() as $variation) {
+                if ($variation->canPurchase()) {
+                    return $variation;
+                }
+            }
+        }
+
+        return $buyable;
     }
 
     /**
@@ -321,7 +350,7 @@ class ShoppingCart extends Object
         if (!$order) {
             return $this->error(_t("ShoppingCart.NoCartFound", "No cart found."));
         }
-        if($write){
+        if ($write) {
             $order->write();
         }
         $this->message(_t("ShoppingCart.Cleared", "Cart was successfully cleared."));
@@ -527,7 +556,8 @@ class ShoppingCart_Controller extends Controller
             //TODO: store error message
             return null;
         }
-        return $buyable;
+
+        return $this->cart->getCorrectBuyable($buyable);
     }
 
     /**
