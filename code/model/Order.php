@@ -492,7 +492,7 @@ class Order extends DataObject
     }
 
     /**
-     * Get the latest email for this order.
+     * Get the latest email for this order.z
      */
     public function getLatestEmail()
     {
@@ -552,8 +552,15 @@ class Order extends DataObject
         }
 
         if (empty($address->Surname) && empty($address->FirstName)) {
-            $address->FirstName = $this->FirstName;
-            $address->Surname = $this->Surname;
+            if ($member = $this->Member()) {
+                // If there's a member object, use information from the Member.
+                // The information from Order should have precendence if set though!
+                $address->FirstName = $this->FirstName ?: $member->FirstName;
+                $address->Surname = $this->Surname ?: $member->Surname;
+            } else {
+                $address->FirstName = $this->FirstName;
+                $address->Surname = $this->Surname;
+            }
         }
 
         return $address;

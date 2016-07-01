@@ -272,6 +272,49 @@ class OrderTest extends SapphireTest
 
         $this->assertTrue((boolean)$order->Paid, 'Order paid date should be set');
     }
+
+    public function testOrderAddress()
+    {
+        $order = $this->objFromFixture('Order', 'paid');
+
+        // assert that order doesn't contain user information
+        $this->assertNull($order->FirstName);
+        $this->assertNull($order->Surname);
+        $this->assertNull($order->Email);
+
+        // The shipping address should use the members default shipping address
+        $this->assertEquals(
+            'Joe Bloggs, 12 Foo Street, Bar, Farmville, New Sandwich, US',
+            $order->getShippingAddress()->toString()
+        );
+
+        $address = $this->objFromFixture('Address', 'pukekohe');
+        $order->ShippingAddressID = $address->ID;
+        $order->write();
+
+        // Address doesn't have firstname and surname
+        $this->assertNull(Address::get()->byID($order->ShippingAddressID)->FirstName);
+        $this->assertNull(Address::get()->byID($order->ShippingAddressID)->Surname);
+
+        // Shipping address should contain the name from the member object and new address information
+        $this->assertEquals(
+            'Joe Bloggs, 1 Queen Street, Pukekohe, Auckland, 2120',
+            $order->getShippingAddress()->toString()
+        );
+
+        // changing fields on the Order will have precendence!
+        $order->FirstName = 'Tester';
+        $order->Surname = 'Mc. Testerson';
+        $order->write();
+
+        // Reset caches, otherwise the previously set name will persist (eg. Joe Bloggs)
+        DataObject::reset();
+
+        $this->assertEquals(
+            'Tester Mc. Testerson, 1 Queen Street, Pukekohe, Auckland, 2120',
+            $order->getShippingAddress()->toString()
+        );
+    }
 }
 
 class OrderTest_TestStatusChangeExtension extends DataExtension implements TestOnly

@@ -7,8 +7,8 @@
     </thead>
     <tbody>
         <tr>
-            <td>$ShippingAddress</td>
-            <td>$BillingAddress</td>
+            <td>$getShippingAddress</td>
+            <td>$getBillingAddress</td>
         </tr>
     </tbody>
 </table>

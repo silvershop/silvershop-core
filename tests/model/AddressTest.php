@@ -21,7 +21,7 @@ class AddressTest extends SapphireTest
         $fields = $address->getFrontEndFields();
         $requiremetns = $address->getRequiredFields();
         $this->assertEquals(
-            "23 Blah Street|Fitzgerald Building, Foor 3|TeAro|Wellington|1333|NZ",
+            "Ink inc|Jerald Smith|23 Blah Street|Fitzgerald Building, Foor 3|TeAro|Wellington|1333|NZ",
             $address->toString("|")
         );
     }

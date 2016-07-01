@@ -178,12 +178,14 @@ class Address extends DataObject
     public function toString($separator = ", ")
     {
         $fields = array(
+            $this->Company,
+            $this->getName(),
             $this->Address,
             $this->AddressLine2,
             $this->City,
             $this->State,
             $this->PostalCode,
-            $this->Country,
+            $this->Country
         );
         $this->extend('updateToString', $fields);
         return implode($separator, array_filter($fields));

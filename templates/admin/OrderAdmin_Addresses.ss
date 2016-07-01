@@ -12,8 +12,8 @@
 	</thead>
 	<tbody>
 		<tr class="ss-gridfield-item ">
-			<td>$ShippingAddress</td>
-			<td>$BillingAddress</td>
+			<td>$getShippingAddress</td>
+			<td>$getBillingAddress</td>
 		</tr>
 	</tbody>
 	<tfoot>
