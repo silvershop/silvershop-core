@@ -307,6 +307,8 @@ en:
     PLURALNAME: Categories
     SINGULARNAME: Category
     belongs_many_many_Products: Products
+    Alphabetical: Alphabetical
+    Price: Price
   ProductGroup:
     Next: next
     Page: Page

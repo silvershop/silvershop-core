@@ -19,7 +19,7 @@ nn:
     MemberEmail: E-post
     MemberLastVisit: 'Siste besøk'
     MemberName: Namn
-    MemberSince: 'Medlam sidan'
+    MemberSince: 'Medlem sidan'
     NoPage: 'Inga kontoside blei funne. Venleg lag ei i adminpanelet.'
     NoPastOrders: 'Inga ordrar blei funne'
     NumberOfOrders: 'Mengde av ordrar'
@@ -370,7 +370,7 @@ nn:
     Quantity: Antall
     ReadMoreTitle: 'Klikk her for å lese meir om &quot;{Title}&quot;'
     Remove: Fjern
-    View: cis
+    View: vis
   ShopConfig:
     AllowedCountries: 'Gi tilgang til sortering og fraktland.'
     AllowedCountriesTabTitle: 'Tillate land'
