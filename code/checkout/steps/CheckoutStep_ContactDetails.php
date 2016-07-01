@@ -14,9 +14,12 @@ class CheckoutStep_ContactDetails extends CheckoutStep
             ShoppingCart::curr()
             && Config::inst()->get("CheckoutStep_ContactDetails", "skip_if_logged_in")
         ) {
-            if (Member::currentUser() && !$form->getValidator()->validate()) {
-                Controller::curr()->redirect($this->NextStepLink());
-                return;
+            if (Member::currentUser()) {
+                if(!$form->getValidator()->validate()) {
+                    return Controller::curr()->redirect($this->NextStepLink());
+                } else {
+                    $form->clearMessage();
+                }
             }
         }
 
