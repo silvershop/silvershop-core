@@ -57,7 +57,12 @@ class OrderModifierTest extends FunctionalTest
         // 408 from items + 10 from modifier + 25% from tax
         $this->assertEquals('522.5', $order->Total);
 
-        $this->assertEquals(array('10', '104.5'), $order->Modifiers()->column('Amount'));
+        $amounts = array();
+        foreach ($order->Modifiers()->sort('Sort') as $modifier) {
+            $amounts[] = (string)$modifier->Amount;
+        }
+
+        $this->assertEquals(array('10', '104.5'), $amounts);
 
         OrderModifierTest_TestModifier::$value = 42;
 
