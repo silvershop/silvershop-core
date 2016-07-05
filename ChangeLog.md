@@ -1,5 +1,27 @@
 # SilverStripe Shop Change Log
 
+## 1.3.1
+
+ * Improve variation-form performance (#512)
+ * Fix Cart template issue showing up in SilverStripe 3.4 (#503)
+ * Better extensibility of ShoppingCart (#494)
+ * Some documentation improvements
+
+## 1.3.0
+
+ * Update to SilverShop organization, cleaned up config files, updated composer.json and readme files.
+ * Added support for including `OnsitePaymentCheckoutComponent` on first page of single page checkout (#266).
+ * Fixed issue with address duplication due to blank or readonly fields (#431)
+ * Names on shipping and billing address will now default to the main order name (#435)
+ *  `transactionId` now changes for subsequent payments on the same order (#439)
+ * Physical properties have been added to variations (#437)
+ * WeightShippingModifier can now be configured via Config files (#462)
+ * Added support for partial postcodes within GB (#440)
+ * Cleaned up order-receipt email styles (#441, #469)
+ * Security tokens can now be disabled for shopping-cart links (#482)
+ * Fixed issue where cart was cleared after viewing archived order (#492)
+ * Several other small fixes and improvements.
+
 ## 1.2.0
 
  * Translations updated from old format
