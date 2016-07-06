@@ -1,5 +1,17 @@
 # SilverStripe Shop Change Log
 
+## 2.0
+
+ * Overhaul of the localization of the module. (#379, #381, #383, #384, #408, #410, #411, #451, #453, #456, #457, #470, #486)
+ * Better Addressbook UI (#452)
+ * Use `::create` syntax for object instantiation (#415)
+ * Shop Emails use inline CSS by using Emogrifier (#466)
+ * Order-calculations and order-placement are now wrapped in Database transactions (#506)
+ * Products that have Variations can not be added to cart, only a Variation can (#516)
+ * Products with no price (`0.0`) will now be displayed if they have Variations (#516)
+ * Variations without a price will no longer show up, unless `Product.allow_zero_price` is set to `true` (#516)
+ * Updated codebase to use the 2.0 version of silverstripe-omnipay
+
 ## 1.3.1
 
  * Improve variation-form performance (#512)
