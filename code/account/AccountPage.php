@@ -291,14 +291,6 @@ class AccountPage_Controller extends Page_Controller
         $backURL->setValue($this->Link('editprofile'));
 
         $this->extend('updateChangePasswordForm', $form);
-        $this->data()->extend('updateChangePasswordForm', $form);
-
-        if ($this->data()->hasMethod('updateChangePasswordForm')) {  // if accessing through the model
-            Deprecation::notice(
-                '2.0',
-                'Please access updateChangePasswordForm through AccountPage_Controller instead of AccountPage (this extension point is due to be removed)'
-            );
-        }
 
         return $form;
     }
