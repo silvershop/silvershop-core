@@ -77,9 +77,14 @@ class OrderModifierTest extends FunctionalTest
         // Order Total should not have changed
         $this->assertEquals('522.5', $order->Total);
 
+        $amounts = array();
+        foreach ($order->Modifiers()->sort('Sort') as $modifier) {
+            $amounts[] = (string)$modifier->Amount;
+        }
+
         $this->assertEquals(
             array('10', '104.5'),
-            $order->Modifiers()->column('Amount'),
+            $amounts,
             'Modifiers aren\'t allowed to change upon failure'
         );
     }
