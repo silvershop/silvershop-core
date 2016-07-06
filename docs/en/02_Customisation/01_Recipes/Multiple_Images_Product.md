@@ -28,8 +28,8 @@ Add the extension in `_config/config.yml`
 
 ```yaml
 Product:
-	extensions:
-		- MultipleProductImages
+  extensions:
+    - MultipleProductImages
 ```
 
 `[mysite]/templates/Includes/AdditionalImages.ss`
@@ -42,4 +42,4 @@ Product:
 <% end_if %>
 ```
 
-Add <% include AdditionalImages %> somewhere in your Product.ss template.
+Add `<% include AdditionalImages %>` somewhere in your Product.ss template.

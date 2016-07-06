@@ -8,7 +8,8 @@ In `[mysite]/code/ExtendedAddress.php`
 
 ```php
 <?php
-class ExtendedAddress extends DataExtension{
+class ExtendedAddress extends DataExtension
+{
 	/**
 	* Add Company, Suburb, and Fax to Address data model
 	*/
@@ -29,13 +30,13 @@ class ExtendedAddress extends DataExtension{
 
 To your _config.php file, add:
 
-	:::php
-	Object::add_extension('Address','ExtendedAddress');
+```php
+Object::add_extension('Address','ExtendedAddress');
+```
 
 ## Address Template
 
-Make a copy of shop/templates/Includes/Address.ss, and put this copy into your
-templates/Includes/ folder, either in mysite or a theme folder.
+Make a copy of `shop/templates/Includes/Address.ss`, and put this copy into your `templates/Includes/` folder in mysite (mysite should be preferred over the themes folder here, since the themes folder won't be included in the Orders ModelAdmin)
 
 Add new data fields, as desired:
 
