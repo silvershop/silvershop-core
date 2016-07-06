@@ -38,7 +38,7 @@ class ShopMember extends DataExtension
             'Root.Main',
             DropdownField::create(
                 'Country',
-                _t('Address.COUNTRY', 'Country'),
+                _t('Address.db_Country', 'Country'),
                 SiteConfig::current_site_config()->getCountriesList()
             )
         );

@@ -17,18 +17,18 @@ if (class_exists('DashboardPanel')) {
 
         public function getLabel()
         {
-            return _t('ShopDashboard.RECENTORDERS', 'Recent Orders');
+            return _t('ShopDashboard.RecentOrders', 'Recent Orders');
         }
 
         public function getDescription()
         {
-            return _t('ShopDashboard.RECENTORDERSDESCRIPTION', 'Shows recent orders');
+            return _t('ShopDashboard.RecentOrdersDescription', 'Shows recent orders');
         }
 
         public function getConfiguration()
         {
             $fields = parent::getConfiguration();
-            $fields->push(TextField::create("Count", _t('ShopDashboard.NUMBER_OF_ORDERS', "Number of orders to show")));
+            $fields->push(TextField::create("Count", _t('ShopDashboard.NumberOfOrders', "Number of orders to show")));
             return $fields;
         }
 

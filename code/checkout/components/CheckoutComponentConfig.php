@@ -1,5 +1,7 @@
 <?php
 
+use SilverStripe\Omnipay\GatewayInfo;
+
 /**
  * @package shop
  */
@@ -222,7 +224,7 @@ class SinglePageCheckoutComponentConfig extends CheckoutComponentConfig
         if (Checkout::member_creation_enabled() && !Member::currentUserID()) {
             $this->addComponent(MembershipCheckoutComponent::create());
         }
-        if (count(GatewayInfo::get_supported_gateways()) > 1) {
+        if (count(GatewayInfo::getSupportedGateways()) > 1) {
             $this->addComponent(PaymentCheckoutComponent::create());
         }
         $this->addComponent(NotesCheckoutComponent::create());

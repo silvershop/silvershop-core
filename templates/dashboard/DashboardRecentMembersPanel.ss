@@ -2,9 +2,9 @@
 	<table class="table table-bordered">
 		<thead>
 			<tr>
-				<td><%t AccountNavigation.MemberSince "Member Since" %></td>
-				<th><%t AccountNavigation.MemberEmail "Email" %></th>
-				<th><%t AccountNavigation.MemberName "Name" %></th>
+				<td><%t AccountPage.MemberSince "Member Since" %></td>
+				<th><%t AccountPage.MemberEmail "Email" %></th>
+				<th><%t AccountPage.MemberName "Name" %></th>
 				<th></th>
 			</tr>
 		</thead>
@@ -16,7 +16,7 @@
 					<td>$Surname, $FirstName</td>
 					<td>
 						<a class="ss-ui-button ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false" href="admin/security/EditForm/field/Members/item/$ID/edit">
-							<%t ShopDashboard.EDIT "Edit" %>
+							<%t Shop.Edit "Edit" %>
 						</a>
 					</td>
 				</tr>

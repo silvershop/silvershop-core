@@ -150,18 +150,186 @@ class OrderTest extends SapphireTest
         $this->assertTrue($order->canCancel());
         $this->assertFalse($order->canDelete(), "never allow deleting orders");
 
+        // Override config
+        Config::inst()->update('Order', 'cancel_before_payment', false);
+        $this->assertFalse($order->canCancel());
+
         $order = $this->objFromFixture("Order", "paid");
         $this->assertFalse($order->canPay(), "paid order can't be paid for");
         $this->assertFalse($order->canCancel(), "paid order can't be cancelled");
         $this->assertFalse($order->canDelete(), "never allow deleting orders");
 
-        $this->markTestIncomplete('check other statuses');
+        Config::inst()->update('Order', 'cancel_before_processing', true);
+        $this->assertTrue($order->canCancel(), "paid order can be cancelled when expcicitly set via config");
+
+        $order->Status = 'Processing';
+        $this->assertFalse($order->canPay(), "Processing order can't be paid for");
+        $this->assertFalse($order->canCancel(), "Processing order can't be cancelled");
+        $this->assertFalse($order->canDelete(), "never allow deleting orders");
+
+        Config::inst()->update('Order', 'cancel_before_sending', true);
+        $this->assertTrue($order->canCancel(), "Processing order can be cancelled when expcicitly set via config");
+
+        $order->Status = 'Sent';
+        $this->assertFalse($order->canPay(), "Sent order can't be paid for");
+        $this->assertFalse($order->canCancel(), "Sent order can't be cancelled");
+        $this->assertFalse($order->canDelete(), "never allow deleting orders");
+
+        Config::inst()->update('Order', 'cancel_after_sending', true);
+        $this->assertTrue($order->canCancel(), "Sent order can be cancelled when expcicitly set via config");
+        Config::inst()->update('Order', 'cancel_after_sending', false);
+
+        $order->Status = 'Complete';
+        $this->assertFalse($order->canPay(), "Complete order can't be paid for");
+        $this->assertFalse($order->canCancel(), "Complete order can't be cancelled");
+        $this->assertFalse($order->canDelete(), "never allow deleting orders");
+
+        Config::inst()->update('Order', 'cancel_after_sending', true);
+        $this->assertTrue($order->canCancel(), "Completed order can be cancelled when expcicitly set via config");
+
+        $order->Status = 'AdminCancelled';
+        $this->assertFalse($order->canPay(), "Cancelled order can't be paid for");
+        $this->assertFalse($order->canCancel(), "Cancelled order can't be cancelled");
+        $this->assertFalse($order->canDelete(), "never allow deleting orders");
+
+        $order->Status = 'MemberCancelled';
+        $this->assertFalse($order->canPay(), "Cancelled order can't be paid for");
+        $this->assertFalse($order->canCancel(), "Cancelled order can't be cancelled");
+        $this->assertFalse($order->canDelete(), "never allow deleting orders");
     }
 
     public function testDelete()
     {
-        $order = $this->objFromFixture("Order", "unpaid");
+        Config::inst()->update('FlatTaxModifier', 'rate', 0.25);
+        Config::inst()->update('Order', 'modifiers', array('FlatTaxModifier'));
+
+        $order = Order::create();
+        $shirt = $this->objFromFixture("Product", "tshirt");
+        $mp3player = $this->objFromFixture("Product", "mp3player");
+        $order->Items()->add($shirt->createItem(3));
+        $order->Items()->add($mp3player->createItem(1));
+        $order->write();
+        $order->calculate();
+
+        $statusLogId = OrderStatusLog::create(array(
+            'Title' => 'Test status log',
+            'OrderID' => $order->ID
+        ))->write();
+
+        $paymentId = Payment::create(array(
+            'OrderID' => $order->ID
+        ))->init('Manual', 343.75, 'NZD')->write();
+
+
+        $this->assertEquals(4, $order->Items()->Quantity());
+        $this->assertEquals(1, $order->Modifiers()->count());
+        $this->assertEquals(1, $order->OrderStatusLogs()->count());
+        $this->assertEquals(1, $order->Payments()->count());
+
+        $itemIds = Product_OrderItem::get()->filter('OrderID', $order->ID)->column('ID');
+        $modifierIds = OrderModifier::get()->filter('OrderID', $order->ID)->column('ID');
+
         $order->delete();
-        $this->markTestIncomplete('assertions!');
+
+        // Items should no longer be linked to order
+        $this->assertEquals(0, $order->Items()->count());
+        $this->assertEquals(0, $order->Modifiers()->count());
+        $this->assertEquals(0, $order->OrderStatusLogs()->count());
+        $this->assertEquals(0, $order->Payments()->count());
+
+        // Ensure the order items have been deleted!
+        $this->assertEquals(0, Product_OrderItem::get()->filter('ID', $itemIds)->count());
+        $this->assertEquals(0, OrderModifier::get()->filter('ID', $modifierIds)->count());
+        $this->assertEquals(0, OrderStatusLog::get()->filter('ID', $statusLogId)->count());
+
+        // Keep the payment… it might be relevant for book keeping
+        $this->assertEquals(1, Payment::get()->filter('ID', $paymentId)->count());
+    }
+
+    public function testStatusChange()
+    {
+        Config::inst()->update('Order', 'extensions', array('OrderTest_TestStatusChangeExtension'));
+
+        $order = Order::create();
+        $orderId = $order->write();
+
+        $order->Status = 'Unpaid';
+        $order->write();
+
+        $this->assertEquals(array(
+            array('Cart' => 'Unpaid')
+        ), OrderTest_TestStatusChangeExtension::$stack);
+
+        OrderTest_TestStatusChangeExtension::reset();
+
+        $order = Order::get()->byID($orderId);
+        $order->Status = 'Paid';
+        $order->write();
+
+        $this->assertEquals(array(
+            array('Unpaid' => 'Paid')
+        ), OrderTest_TestStatusChangeExtension::$stack);
+
+        $this->assertTrue((boolean)$order->Paid, 'Order paid date should be set');
+    }
+
+    public function testOrderAddress()
+    {
+        $order = $this->objFromFixture('Order', 'paid');
+
+        // assert that order doesn't contain user information
+        $this->assertNull($order->FirstName);
+        $this->assertNull($order->Surname);
+        $this->assertNull($order->Email);
+
+        // The shipping address should use the members default shipping address
+        $this->assertEquals(
+            'Joe Bloggs, 12 Foo Street, Bar, Farmville, New Sandwich, US',
+            $order->getShippingAddress()->toString()
+        );
+
+        $address = $this->objFromFixture('Address', 'pukekohe');
+        $order->ShippingAddressID = $address->ID;
+        $order->write();
+
+        // Address doesn't have firstname and surname
+        $this->assertNull(Address::get()->byID($order->ShippingAddressID)->FirstName);
+        $this->assertNull(Address::get()->byID($order->ShippingAddressID)->Surname);
+
+        // Shipping address should contain the name from the member object and new address information
+        $this->assertEquals(
+            'Joe Bloggs, 1 Queen Street, Pukekohe, Auckland, 2120',
+            $order->getShippingAddress()->toString()
+        );
+
+        // changing fields on the Order will have precendence!
+        $order->FirstName = 'Tester';
+        $order->Surname = 'Mc. Testerson';
+        $order->write();
+
+        // Reset caches, otherwise the previously set name will persist (eg. Joe Bloggs)
+        DataObject::reset();
+
+        $this->assertEquals(
+            'Tester Mc. Testerson, 1 Queen Street, Pukekohe, Auckland, 2120',
+            $order->getShippingAddress()->toString()
+        );
+    }
+}
+
+class OrderTest_TestStatusChangeExtension extends DataExtension implements TestOnly
+{
+    public static $stack = array();
+
+    public static function reset()
+    {
+        self::$stack = array();
+    }
+
+    public function onStatusChange($fromStatus, $toStatus)
+    {
+        self::$stack[] = array(
+            $fromStatus => $toStatus
+        );
     }
 }

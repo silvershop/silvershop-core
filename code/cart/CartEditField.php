@@ -116,13 +116,13 @@ class CartEditField extends FormField
                 if ($variations->exists()) {
                     $variationfield = DropdownField::create(
                         $name . "[ProductVariationID]",
-                        _t('CartEditField.VARIATION', "Variation"),
+                        _t('Variation.SINGULARNAME', "Variation"),
                         $variations->map('ID', 'Title'),
                         $item->ProductVariationID
                     );
                 }
             }
-            $remove = CheckboxField::create($name . "[Remove]", _t('CartEditField.REMOVE', "Remove"));
+            $remove = CheckboxField::create($name . "[Remove]", _t('Shop.Remove', "Remove"));
             $editables->push(
                 $item->customise(
                     array(

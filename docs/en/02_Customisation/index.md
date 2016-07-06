@@ -32,17 +32,21 @@ Hopefully you don't need to override core SilverStripe, or shop module code, but
  * Rewrite the file directly. Not recommended if you aren't using a version control system
  like git. Git allows creating branches of code, which you can use to store your customisations. You should aim to submit these changes back to the project as improvements.
  * Create Sub-classes. Extend the parent class, and overwrite whatever methods you need to. For example:
- MyCustomCategory might extend ProductCategory. Or MyCustomProduct might extend Product.
- You can sometimes replace the use of one class with another by adding the following to your _config.php
- file: Object::useCustomClass("OldObject","NewObject");
+ `MyCustomCategory` might extend `ProductCategory`. Or `MyCustomProduct` might extend `Product`. 
+ * You can also use the [Injector](https://docs.silverstripe.org/en/developer_guides/extending/injector/) to override/replace classes with your custom implementation.
+
+This should *always* be your preferred order of doing things:
+
+ 1. Look if there's a config setting that already does what you need.
+ 2. Try to add your custom functionality with Extensions (`DataExtension` or `Extension`) and by implementing the hooks provided by the shop-module.
+ 3. Write a custom class and use the Injector to swap out the class you want to replace.
  
- If these are bugfixes, or additional features that the core code would benefit from, please feel
- free to [contribute back](02_Customisation/Contributing.md).
+If these are bugfixes, or additional features that the core code would benefit from, please feel free to [contribute back](02_Customisation/Contributing.md).
 
 ## Theming / Templates
 
 There are a number of templates you can customise to create your desired look for the shop module.
-The Order template has been modularised using SilverStripe's <% include TemplateName %> tag to provide
+The Order template has been modularised using SilverStripe's `<% include TemplateName %>` tag to provide
 varying degrees of freedom to customise. The order template is used in both the Account page to display
 summaries of past orders, and it is also used with the email template.
 To make your customisations you need to create your own corresponding version of the

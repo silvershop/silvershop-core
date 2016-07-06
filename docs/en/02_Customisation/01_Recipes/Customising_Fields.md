@@ -14,20 +14,27 @@ Customer fields are saved to both Members and Orders.
 
 In [mysite]/code/ExtendedCustomer.php
 
-	:::php
-	<?php
-	class ExtendedCustomer extends DataExtension{
-		private static $db = array(
-			'MyExtraField' => 'Varchar'
-		);
-	}
-	
+```php
+<?php
+class ExtendedCustomer extends DataExtension
+{
+	private static $db = array(
+		'MyExtraField' => 'Varchar'
+	);
+}
+```
 
-To your _config.php file, add:
+To your `config.yml` file, add:
 
-	:::php
-	Object::add_extension('Member','ExtendedCustomer');
-	Object::add_extension('Order','ExtendedCustomer');
+```yaml
+Member:
+  extensions:
+    - ExtendedCustomer
+
+Order:
+  extensions:
+    - ExtendedCustomer
+```
 
 ### Update form(s)
 
@@ -36,21 +43,24 @@ various forms.
 
 In [mysite]/code/ExtendedOrderForm.php
 
-	:::php
-	<?php
-	class ExtendedOrderForm extends Extension{
-	
-		function updateForm($form){
-			$leftfields = $form->Fields()->fieldByName("LeftOrder")->FieldList();
-			$leftfields->insertAfter(new TextField("MyExtraField","My Extra Field"),"Country");
-		}
-	
+```php
+<?php
+class ExtendedOrderForm extends Extension
+{
+	function updateForm($form){
+		$leftfields = $form->Fields()->fieldByName("LeftOrder")->FieldList();
+		$leftfields->insertAfter(new TextField("MyExtraField","My Extra Field"),"Country");
 	}
+}
+```
 	
-To your _config.php file, add:
+To your `config.yml` file, add:
 
-	:::php
-	Object::add_extension('OrderForm','ExtendedOrderForm');
+```yaml
+OrderForm:
+  extensions:
+    - ExtendedOrderForm
+```
 
 <div class="warning" markdown="1">
 Note: remember to flush the class manifest by adding ?flush=1 to your site url.

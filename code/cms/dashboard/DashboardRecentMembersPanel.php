@@ -29,7 +29,7 @@ if (class_exists('DashboardPanel')) {
         {
             $fields = parent::getConfiguration();
             $fields->push(
-                TextField::create("Count", _t('ShopDashboard.NUMBER_OF_ACCOUNTS', "Number of accounts to show"))
+                TextField::create("Count", _t('ShopDashboard.NumberOfAccounts', "Number of accounts to show"))
             );
             return $fields;
         }

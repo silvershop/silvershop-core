@@ -4,6 +4,31 @@
  * The order class is a databound object for handling Orders
  * within SilverStripe.
  *
+ * @property string|float Currency
+ * @property string Reference
+ * @property string Placed
+ * @property string Paid
+ * @property string ReceiptSent
+ * @property string Printed
+ * @property string Dispatched
+ * @property string Status
+ * @property string FirstName
+ * @property string Surname
+ * @property string Email
+ * @property string Notes
+ * @property string IPAddress
+ * @property string|bool SeparateBillingAddress
+ * @property string Locale
+ * @property string|int MemberID
+ * @property string|int ShippingAddressID
+ * @property string|int BillingAddressID
+ * @method Member|ShopMember Member
+ * @method Address BillingAddress
+ * @method Address ShippingAddress
+ * @method OrderItem[]|HasManyList Items
+ * @method OrderModifier[]|HasManyList Modifiers
+ * @method OrderStatusLog[]|HasManyList OrderStatusLogs
+ *
  * @package shop
  */
 class Order extends DataObject
@@ -165,7 +190,11 @@ class Order extends DataObject
 
     public static function get_order_status_options()
     {
-        return singleton('Order')->dbObject('Status')->enumValues(false);
+        $values = array();
+        foreach (singleton('Order')->dbObject('Status')->enumValues(false) as $value) {
+            $values[$value] = _t('Order.STATUS_' . strtoupper($value), $value);
+        }
+        return $values;
     }
 
     /**
@@ -215,23 +244,42 @@ class Order extends DataObject
                 )
                 ->setMultiple(true)
         );
-        //add date range filtering
+
+        // add date range filtering
         $fields->insertBefore(
-            DateField::create("DateFrom", _t('Order.DATE_FROM', "Date from"))
+            DateField::create("DateFrom", _t('Order.DateFrom', "Date from"))
                 ->setConfig('showcalendar', true),
             'Status'
         );
         $fields->insertBefore(
-            DateField::create("DateTo", _t('Order.DATE_TO', "Date to"))
+            DateField::create("DateTo", _t('Order.DateTo', "Date to"))
                 ->setConfig('showcalendar', true),
             'Status'
         );
-        //get the array, to maniplulate name, and fullname seperately
+
+        // get the array, to maniplulate name, and fullname seperately
         $filters = $context->getFilters();
         $filters['DateFrom'] = GreaterThanFilter::create('Placed');
         $filters['DateTo'] = LessThanFilter::create('Placed');
+
+        // filter customer need to use a bunch of different sources
+        $filters['FirstName'] = new MultiFieldPartialMatchFilter(
+            'FirstName', false,
+            array('SplitWords'),
+            array(
+                'Surname',
+                'Member.FirstName',
+                'Member.Surname',
+                'BillingAddress.FirstName',
+                'BillingAddress.Surname',
+                'ShippingAddress.FirstName',
+                'ShippingAddress.Surname',
+            )
+        );
+
         $context->setFilters($filters);
 
+        $this->extend('updateDefaultSearchContext', $context);
         return $context;
     }
 
@@ -317,13 +365,31 @@ class Order extends DataObject
     /**
      * Calculate how much is left to be paid on the order.
      * Enforces rounding precision.
+     *
+     * Payments that have been authorized via a non-manual gateway should count towards the total paid amount.
+     * However, it's possible to exclude these by setting the $includeAuthorized parameter to false, which is
+     * useful to determine the status of the Order. Order status should only change to 'Paid' when all
+     * payments are 'Captured'.
+     *
+     * @param bool $includeAuthorized whether or not to include authorized payments (excluding manual payments)
+     * @return float
      */
-    public function TotalOutstanding()
+    public function TotalOutstanding($includeAuthorized = true)
     {
         return round(
-            $this->GrandTotal() - $this->TotalPaid(),
+            $this->GrandTotal() - ($includeAuthorized ? $this->TotalPaidOrAuthorized() : $this->TotalPaid()),
             self::config()->rounding_precision
         );
+    }
+
+    /**
+     * Get the order status. This will return a localized value if available.
+     *
+     * @return string the payment status
+     */
+    public function getStatusI18N()
+    {
+        return _t('Order.STATUS_' . strtoupper($this->Status), $this->Status);
     }
 
     /**
@@ -369,7 +435,7 @@ class Order extends DataObject
         if (!in_array($this->Status, self::config()->payable_status)) {
             return false;
         }
-        if ($this->TotalOutstanding() > 0 && empty($this->Paid)) {
+        if ($this->TotalOutstanding(true) > 0 && empty($this->Paid)) {
             return true;
         }
         return false;
@@ -426,7 +492,7 @@ class Order extends DataObject
     }
 
     /**
-     * Get the latest email for this order.
+     * Get the latest email for this order.z
      */
     public function getLatestEmail()
     {
@@ -486,8 +552,15 @@ class Order extends DataObject
         }
 
         if (empty($address->Surname) && empty($address->FirstName)) {
-            $address->FirstName = $this->FirstName;
-            $address->Surname = $this->Surname;
+            if ($member = $this->Member()) {
+                // If there's a member object, use information from the Member.
+                // The information from Order should have precendence if set though!
+                $address->FirstName = $this->FirstName ?: $member->FirstName;
+                $address->Surname = $this->Surname ?: $member->Surname;
+            } else {
+                $address->FirstName = $this->FirstName;
+                $address->Surname = $this->Surname;
+            }
         }
 
         return $address;
@@ -570,11 +643,19 @@ class Order extends DataObject
     /**
      * Force creating an order reference
      */
-    public function onBeforeWrite()
+    protected function onBeforeWrite()
     {
         parent::onBeforeWrite();
         if (!$this->getField("Reference") && in_array($this->Status, self::$placed_status)) {
             $this->generateReference();
+        }
+
+        // perform status transition
+        if ($this->isInDB() && $this->isChanged('Status')) {
+            $this->statusTransition(
+                empty($this->original['Status']) ? 'Cart' : $this->original['Status'],
+                $this->Status
+            );
         }
 
         // While the order is unfinished/cart, always store the current locale with the order.
@@ -585,14 +666,51 @@ class Order extends DataObject
     }
 
     /**
+     * Called from @see onBeforeWrite whenever status changes
+     * @param string $fromStatus status to transition away from
+     * @param string $toStatus target status
+     */
+    protected function statusTransition($fromStatus, $toStatus)
+    {
+        // Add extension hook to react to order status transitions.
+        $this->extend('onStatusChange', $fromStatus, $toStatus);
+
+        if ($toStatus == 'Paid' && !$this->Paid) {
+            $this->Paid = SS_Datetime::now()->Rfc2822();
+            foreach ($this->Items() as $item) {
+                $item->onPayment();
+            }
+            //all payment is settled
+            $this->extend('onPaid');
+
+            if (!$this->ReceiptSent) {
+                OrderEmailNotifier::create($this)->sendReceipt();
+                $this->ReceiptSent = SS_Datetime::now()->Rfc2822();
+            }
+        }
+    }
+
+    /**
      * delete attributes, statuslogs, and payments
      */
-    public function onBeforeDelete()
+    protected function onBeforeDelete()
     {
-        $this->Items()->removeAll();
-        $this->Modifiers()->removeAll();
-        $this->OrderStatusLogs()->removeAll();
+        foreach ($this->Items() as $item) {
+            $item->delete();
+        }
+
+        foreach ($this->Modifiers() as $modifier) {
+            $modifier->delete();
+        }
+
+        foreach ($this->OrderStatusLogs() as $logEntry) {
+            $logEntry->delete();
+        }
+
+        // just remove the payment relations…
+        // that way payment objects still persist (they might be relevant for book-keeping?)
         $this->Payments()->removeAll();
+
         parent::onBeforeDelete();
     }
 
@@ -616,5 +734,26 @@ class Order extends DataObject
         $val .= "</div></div>";
 
         return $val;
+    }
+
+    /**
+     * Provide i18n entities for the order class
+     *
+     * @return array
+     */
+    public function provideI18nEntities()
+    {
+        $entities = parent::provideI18nEntities();
+
+        // collect all the payment status values
+        foreach ($this->dbObject('Status')->enumValues() as $value) {
+            $key = strtoupper($value);
+            $entities["Order.STATUS_$key"] = array(
+                $value,
+                "Translation of the order status '$value'",
+            );
+        }
+
+        return $entities;
     }
 }

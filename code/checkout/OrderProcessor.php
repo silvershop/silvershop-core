@@ -1,5 +1,9 @@
 <?php
 
+use SilverStripe\Omnipay\GatewayInfo;
+use SilverStripe\Omnipay\Service\ServiceFactory;
+use SilverStripe\Omnipay\Service\ServiceResponse;
+
 /**
  * Handles tasks to be performed on orders, particularly placing and processing/fulfilment.
  * Placing, Emailing Reciepts, Status Updates, Printing, Payments - things you do with a completed order.
@@ -60,32 +64,59 @@ class OrderProcessor
      * Create a payment model, and provide link to redirect to external gateway,
      * or redirect to order link.
      *
-     * @return string - url for redirection after payment has been made
+     * @param string $gateway the gateway to use
+     * @param array $gatewaydata the data that should be passed to the gateway
+     * @param string $successUrl (optional) return URL for successful payments.
+     *  If left blank, the default return URL will be used @see getReturnUrl
+     * @param string $cancelUrl (optional) return URL for cancelled/failed payments
+     *
+     * @return ServiceResponse|null
      */
-    public function makePayment($gateway, $gatewaydata = array())
+    public function makePayment($gateway, $gatewaydata = array(), $successUrl = null, $cancelUrl = null)
     {
         //create payment
         $payment = $this->createPayment($gateway);
         if (!$payment) {
             //errors have been stored.
-            return false;
+            return null;
         }
 
-        // Create a purchase service, and set the user-facing success URL for redirects
-        $service = PurchaseService::create($payment)
-            ->setReturnUrl($this->getReturnUrl());
+        $payment->setSuccessUrl($successUrl ? $successUrl : $this->getReturnUrl());
 
-        // Process payment, get the result back
-        $response = $service->purchase($this->getGatewayData($gatewaydata));
-        if (GatewayInfo::is_manual($gateway)) {
-            //don't complete the payment at this stage, if payment is manual
-            $this->placeOrder();
+        // Explicitly set the cancel URL
+        if ($cancelUrl) {
+            $payment->setFailureUrl($cancelUrl);
         }
 
-        // For an OFFSITE payment, response will now contain a redirect
-        // For an ONSITE payment, ShopPayment::onCapture will have been called, which will have called completePayment
+        // Create a payment service, by using the Service Factory. This will automatically choose an
+        // AuthorizeService or PurchaseService, depending on Gateway configuration.
+        // Set the user-facing success URL for redirects
+        /** @var ServiceFactory $factory */
+        $factory = ServiceFactory::create();
+        $service = $factory->getService($payment, ServiceFactory::INTENT_PAYMENT);
 
-        return $response;
+        // Initiate payment, get the result back
+        try {
+            $serviceResponse = $service->initiate($this->getGatewayData($gatewaydata));
+        } catch (SilverStripe\Omnipay\Exception\Exception $ex) {
+            // error out when an exception occurs
+            $this->error($ex->getMessage());
+            return null;
+        }
+
+        // Check if the service response itself contains an error
+        if ($serviceResponse->isError()) {
+            if ($opResponse = $serviceResponse->getOmnipayResponse()) {
+                $this->error($opResponse->getMessage());
+            } else {
+                $this->error('An unspecified payment error occurred. Please check the payment messages.');
+            }
+        }
+
+        // For an OFFSITE payment, serviceResponse will now contain a redirect
+        // For an ONSITE payment, ShopPayment::onCaptured will have been called, which will have called completePayment
+
+        return $serviceResponse;
     }
 
     /**
@@ -137,10 +168,10 @@ class OrderProcessor
      */
     public function createPayment($gateway)
     {
-        if (!GatewayInfo::is_supported($gateway)) {
+        if (!GatewayInfo::isSupported($gateway)) {
             $this->error(
                 _t(
-                    "PaymentProcessor.INVALID_GATEWAY",
+                    "PaymentProcessor.InvalidGateway",
                     "`{gateway}` isn't a valid payment gateway.",
                     'gateway is the name of the payment gateway',
                     array('gateway' => $gateway)
@@ -149,11 +180,11 @@ class OrderProcessor
             return false;
         }
         if (!$this->order->canPay(Member::currentUser())) {
-            $this->error(_t("PaymentProcessor.CANTPAY", "Order can't be paid for."));
+            $this->error(_t("PaymentProcessor.CantPay", "Order can't be paid for."));
             return false;
         }
         $payment = Payment::create()
-            ->init($gateway, $this->order->TotalOutstanding(), ShopConfig::get_base_currency());
+            ->init($gateway, $this->order->TotalOutstanding(true), ShopConfig::get_base_currency());
         $this->order->Payments()->add($payment);
         return $payment;
     }
@@ -166,8 +197,8 @@ class OrderProcessor
      */
     public function completePayment()
     {
-        if (!$this->order->Paid) {
-        	// recalculate order to be sure we have the correct total
+        if (!$this->order->IsPaid()) {
+            // recalculate order to be sure we have the correct total
             $this->order->calculate();
 
             $this->order->extend('onPayment'); //a payment has been made
@@ -181,23 +212,14 @@ class OrderProcessor
             }
 
             if (
-                // Standard order
-                ($this->order->GrandTotal() > 0 && $this->order->TotalOutstanding() <= 0)
+                // Standard order. Only change to 'Paid' once all payments are captured
+                ($this->order->GrandTotal() > 0 && $this->order->TotalOutstanding(false) <= 0)
                 // Zero-dollar order (e.g. paid with loyalty points)
                 || ($this->order->GrandTotal() == 0 && Order::config()->allow_zero_order_total)
             ) {
                 //set order as paid
                 $this->order->Status = 'Paid';
-                $this->order->Paid = SS_Datetime::now()->Rfc2822();
                 $this->order->write();
-                foreach ($this->order->Items() as $item) {
-                    $item->onPayment();
-                }
-                //all payment is settled
-                $this->order->extend('onPaid');
-            }
-            if (!$this->order->ReceiptSent) {
-                $this->notifier->sendReceipt();
             }
         }
     }
@@ -210,17 +232,17 @@ class OrderProcessor
     public function canPlace(Order $order)
     {
         if (!$order) {
-            $this->error(_t("OrderProcessor.NULL", "Order does not exist."));
+            $this->error(_t("OrderProcessor.NoOrder", "Order does not exist."));
             return false;
         }
         //order status is applicable
         if (!$order->IsCart()) {
-            $this->error(_t("OrderProcessor.NOTCART", "Order is not a cart."));
+            $this->error(_t("OrderProcessor.NotCart", "Order is not a cart."));
             return false;
         }
         //order has products
         if ($order->Items()->Count() <= 0) {
-            $this->error(_t("OrderProcessor.NOITEMS", "Order has no items."));
+            $this->error(_t("OrderProcessor.NoItems", "Order has no items."));
             return false;
         }
 
@@ -237,7 +259,7 @@ class OrderProcessor
     public function placeOrder()
     {
         if (!$this->order) {
-            $this->error(_t("OrderProcessor.NULL", "A new order has not yet been started."));
+            $this->error(_t("OrderProcessor.NoOrderStarted", "A new order has not yet been started."));
             return false;
         }
         if (!$this->canPlace($this->order)) { //final cart validation
@@ -251,13 +273,12 @@ class OrderProcessor
         // recalculate order to be sure we have the correct total
         $this->order->calculate();
 
-        //remove from session
-        $cart = ShoppingCart::curr();
-        if ($cart && $cart->ID == $this->order->ID) {
-            ShoppingCart::singleton()->clear();
+        if (ShopTools::DBConn()->supportsTransactions()) {
+            ShopTools::DBConn()->transactionStart();
         }
+
         //update status
-        if ($this->order->TotalOutstanding()) {
+        if ($this->order->TotalOutstanding(false)) {
             $this->order->Status = 'Unpaid';
         } else {
             $this->order->Status = 'Paid';
@@ -268,33 +289,64 @@ class OrderProcessor
                 $this->order->IPAddress = $request->getIP(); //record client IP
             }
         }
-        //re-write all attributes and modifiers to make sure they are up-to-date before they can't be changed again
-        $items = $this->order->Items();
-        if ($items->exists()) {
-            foreach ($items as $item) {
-                $item->onPlacement();
-                $item->write();
+
+        // Add an error handler that throws an exception upon error, so that we can catch errors as exceptions
+        // in the following block.
+        set_error_handler(function ($severity, $message, $file, $line) {
+            throw new ErrorException($message, 0, $severity, $file, $line);
+        }, E_ALL & ~(E_STRICT | E_NOTICE));
+
+        try {
+            //re-write all attributes and modifiers to make sure they are up-to-date before they can't be changed again
+            $items = $this->order->Items();
+            if ($items->exists()) {
+                foreach ($items as $item) {
+                    $item->onPlacement();
+                    $item->write();
+                }
             }
+            $modifiers = $this->order->Modifiers();
+            if ($modifiers->exists()) {
+                foreach ($modifiers as $modifier) {
+                    $modifier->write();
+                }
+            }
+            //add member to order & customers group
+            if ($member = Member::currentUser()) {
+                if (!$this->order->MemberID) {
+                    $this->order->MemberID = $member->ID;
+                }
+                $cgroup = ShopConfig::current()->CustomerGroup();
+                if ($cgroup->exists()) {
+                    $member->Groups()->add($cgroup);
+                }
+            }
+            //allow decorators to do stuff when order is saved.
+            $this->order->extend('onPlaceOrder');
+            $this->order->write();
+        } catch (Exception $ex) {
+            // Rollback the transaction if an error occurred
+            if (ShopTools::DBConn()->supportsTransactions()) {
+                ShopTools::DBConn()->transactionRollback();
+            }
+            $this->error($ex->getMessage());
+            return false;
+        } finally {
+            // restore the error handler, no matter what
+            restore_error_handler();
         }
-        $modifiers = $this->order->Modifiers();
-        if ($modifiers->exists()) {
-            foreach ($modifiers as $modifier) {
-                $modifier->write();
-            }
+
+        // Everything went through fine, complete the transaction
+        if (ShopTools::DBConn()->supportsTransactions()) {
+            ShopTools::DBConn()->transactionEnd();
         }
-        //add member to order & customers group
-        if ($member = Member::currentUser()) {
-            if (!$this->order->MemberID) {
-                $this->order->MemberID = $member->ID;
-            }
-            $cgroup = ShopConfig::current()->CustomerGroup();
-            if ($cgroup->exists()) {
-                $member->Groups()->add($cgroup);
-            }
+
+        //remove from session
+        $cart = ShoppingCart::curr();
+        if ($cart && $cart->ID == $this->order->ID) {
+            // clear the cart, but don't write the order in the process (order is finalized and should NOT be overwritten)
+            ShoppingCart::singleton()->clear(false);
         }
-        //allow decorators to do stuff when order is saved.
-        $this->order->extend('onPlaceOrder');
-        $this->order->write();
 
         //send confirmation if configured and receipt hasn't been sent
         if (
@@ -328,7 +380,7 @@ class OrderProcessor
         return $this->error;
     }
 
-    private function error($message)
+    protected function error($message)
     {
         $this->error = $message;
     }
@@ -336,41 +388,5 @@ class OrderProcessor
     public static function config()
     {
         return new Config_ForClass("OrderProcessor");
-    }
-
-    /**
-     * @deprecated 2.0
-     */
-    public function sendEmail($template, $subject, $copyToAdmin = true)
-    {
-        Deprecation::notice('2.0', 'Use OrderEmailNotifier instead');
-        return $this->notifier->sendEmail($template, $subject, $copyToAdmin);
-    }
-
-    /**
-     * @deprecated 2.0
-     */
-    public function sendConfirmation()
-    {
-        Deprecation::notice('2.0', 'Use OrderEmailNotifier instead');
-        $this->notifier->sendConfirmation();
-    }
-
-    /**
-     * @deprecated 2.0
-     */
-    public function sendReceipt()
-    {
-        Deprecation::notice('2.0', 'Use OrderEmailNotifier instead');
-        $this->notifier->sendReceipt();
-    }
-
-    /**
-     * @deprecated 2.0
-     */
-    public function sendStatusChange($title, $note = null)
-    {
-        Deprecation::notice('2.0', 'Use OrderEmailNotifier instead');
-        $this->notifier->sendStatusChange($title, $note);
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+use SilverStripe\Omnipay\GatewayInfo;
+
 class CheckoutStep_PaymentMethod extends CheckoutStep
 {
     private static $allowed_actions = array(
@@ -17,7 +19,7 @@ class CheckoutStep_PaymentMethod extends CheckoutStep
 
     public function paymentmethod()
     {
-        $gateways = GatewayInfo::get_supported_gateways();
+        $gateways = GatewayInfo::getSupportedGateways();
         if (count($gateways) == 1) {
             return $this->owner->redirect($this->NextStepLink());
         }
@@ -31,7 +33,7 @@ class CheckoutStep_PaymentMethod extends CheckoutStep
         $form = CheckoutForm::create($this->owner, "PaymentMethodForm", $this->checkoutconfig());
         $form->setActions(
             FieldList::create(
-                FormAction::create("setpaymentmethod", _t('CheckoutStep.CONTINUE', "Continue"))
+                FormAction::create("setpaymentmethod", _t('CheckoutStep.Continue', "Continue"))
             )
         );
         $this->owner->extend('updatePaymentMethodForm', $form);

@@ -102,10 +102,10 @@ class AddProductForm extends Form
                 $count++;
             }
 
-            $fields->push(DropdownField::create('Quantity', _t('AddProductForm.Quantity', 'Quantity'), $values, 1));
+            $fields->push(DropdownField::create('Quantity', _t('Shop.Quantity', 'Quantity'), $values, 1));
         } else {
             $fields->push(
-                NumericField::create('Quantity', _t('AddProductForm.Quantity', 'Quantity'), 1)
+                NumericField::create('Quantity', _t('Shop.Quantity', 'Quantity'), 1)
                     ->setAttribute('type', 'number')
                     ->setAttribute('min', '0')
             );
@@ -120,7 +120,7 @@ class AddProductForm extends Form
     protected function getFormActions()
     {
         return FieldList::create(
-            FormAction::create('addtocart', _t("AddProductForm.ADDTOCART", 'Add to Cart'))
+            FormAction::create('addtocart', _t("Product.AddToCart", 'Add to Cart'))
         );
     }
 

@@ -1,16 +1,18 @@
 <?php
 
+use SilverStripe\Omnipay\GatewayInfo;
+
 class PaymentCheckoutComponent extends CheckoutComponent
 {
     public function getFormFields(Order $order)
     {
         $fields = FieldList::create();
-        $gateways = GatewayInfo::get_supported_gateways();
+        $gateways = GatewayInfo::getSupportedGateways();
         if (count($gateways) > 1) {
             $fields->push(
                 OptionsetField::create(
                     'PaymentMethod',
-                    _t("CheckoutFields.PAYMENTTYPE", "Payment Type"),
+                    _t("CheckoutField.PaymentType", "Payment Type"),
                     $gateways,
                     array_keys($gateways)
                 )
@@ -27,7 +29,7 @@ class PaymentCheckoutComponent extends CheckoutComponent
 
     public function getRequiredFields(Order $order)
     {
-        if (count(GatewayInfo::get_supported_gateways()) > 1) {
+        if (count(GatewayInfo::getSupportedGateways()) > 1) {
             return array();
         }
 
@@ -39,17 +41,14 @@ class PaymentCheckoutComponent extends CheckoutComponent
         $result = ValidationResult::create();
         if (!isset($data['PaymentMethod'])) {
             $result->error(
-                _t('PaymentCheckoutComponent.NO_PAYMENT_METHOD', "Payment method not provided"),
+                _t('PaymentCheckoutComponent.NoPaymentMethod', "Payment method not provided"),
                 "PaymentMethod"
             );
             throw new ValidationException($result);
         }
-        $methods = GatewayInfo::get_supported_gateways();
+        $methods = GatewayInfo::getSupportedGateways();
         if (!isset($methods[$data['PaymentMethod']])) {
-            $result->error(
-                _t('PaymentCheckoutComponent.UNSUPPORTED_GATEWAY', "Gateway not supported"),
-                "PaymentMethod"
-            );
+            $result->error(_t('PaymentCheckoutComponent.UnsupportedGateway', "Gateway not supported"), "PaymentMethod");
             throw new ValidationException($result);
         }
     }

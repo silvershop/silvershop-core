@@ -28,7 +28,7 @@ A tremendous thanks to [everyone that has already contributed](https://github.co
 ## Requirements
 
  * SilverStripe 3.1 or higher [framework](https://github.com/silverstripe/silverstripe-framework) & [cms](https://github.com/silverstripe/silverstripe-cms)
- * [Omnipay Module](https://github.com/burnbright/silverstripe-omnipay) + it's dependencies.
+ * [Omnipay Module](https://github.com/burnbright/silverstripe-omnipay) + its dependencies.
 
 See `composer.json` for exact set of dependencies.
 
@@ -41,7 +41,7 @@ See `composer.json` for exact set of dependencies.
 To install silverstripe + shop into a directory called 'myshop', using [composer](http://doc.silverstripe.org/framework/en/installation/composer), run the following commands:
 ```
 composer create-project silverstripe/installer myshop
-composer require -d myshop "silvershop/core:dev-master"
+composer require -d myshop "silvershop/core"
 ```
 
 ### Build Tasks

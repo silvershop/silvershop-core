@@ -3,8 +3,17 @@ This page is intended to make you aware of upgrade issues you may face, and how 
 Don't forget to run the following url commands when you upgrade the shop module:
 
     [yourdomain.com]/dev/build?flush=all
-    [yourdomain.com]/tasks/ShopMigrationTask
+    [yourdomain.com]/dev/tasks/ShopMigrationTask
 
+# 2.0
+
+## Translations no longer appear
+
+You translated your shop to another language than english, now your translations no longer work? This is, because a lot of the translation keys have changed to be compatible with the new SilverStripe translation syntax. Instead of using `<% _t('KEY','VALUE') %>` calls in templates, one should now use: `<%t KEY 'VALUE' %>` instead.
+
+It's best to look at the current shop templates and adjust your custom templates accordingly. You can also look at the language files within the `silvershop/lang` folder to get an idea of the current translation keys/values.
+
+Sadly, there's no automatic task that will fix these issues for you.
 
 # 1.0
 

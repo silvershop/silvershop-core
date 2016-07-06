@@ -54,7 +54,7 @@ class MembershipCheckoutComponent extends CheckoutComponent
             return array();
         }
         return array(
-            Member::get_unique_identifier_field(),
+            Member::config()->unique_identifier_field,
             'Password',
         );
     }
@@ -63,10 +63,10 @@ class MembershipCheckoutComponent extends CheckoutComponent
     {
         if ($this->confirmed) {
             //relies on fix: https://github.com/silverstripe/silverstripe-framework/pull/2757
-            return ConfirmedPasswordField::create('Password', _t('CheckoutField.PASSWORD', 'Password'))
+            return ConfirmedPasswordField::create('Password', _t('CheckoutField.Password', 'Password'))
                 ->setCanBeEmpty(!Checkout::membership_required());
         }
-        return PasswordField::create('Password', _t('CheckoutField.PASSWORD', 'Password'));
+        return PasswordField::create('Password', _t('CheckoutField.Password', 'Password'));
     }
 
     public function validateData(Order $order, array $data)
@@ -85,12 +85,13 @@ class MembershipCheckoutComponent extends CheckoutComponent
                 // if a localized value exists, use this for our error-message
                 $fieldLabel = isset($fieldLabels[$idfield]) ? $fieldLabels[$idfield] : $idfield;
                 $result->error(
-                    sprintf(
-                        _t("Checkout.MEMBEREXISTS", "A member already exists with the %s %s"),
-                        $fieldLabel,
-                        $idval
+                    _t(
+                        'Checkout.MemberExists',
+                        'A member already exists with the {Field} {Identifier}',
+                        '',
+                        array('Field' => $fieldLabel, 'Identifier' => $idval)
                     ),
-                    $idval
+                    $idfield
                 );
             }
             $passwordresult = $this->passwordvalidator->validate($data['Password'], $member);

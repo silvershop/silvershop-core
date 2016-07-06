@@ -42,16 +42,15 @@ class CartPage extends Page
                 )
             );
         }
-        if ($pgroups = ProductCategory::get()) {
-            $fields->addFieldToTab(
-                'Root.Links',
-                DropdownField::create(
-                    'ContinuePageID',
-                    _t('CartPage.has_one_ContinuePage', 'Continue Product Group Page'),
-                    $pgroups->map("ID", "Title")
-                )
-            );
-        }
+
+        $fields->addFieldToTab(
+            'Root.Links',
+            TreeDropdownField::create(
+                'ContinuePageID',
+                _t('CartPage.has_one_ContinuePage', 'Continue Shopping Page'),
+                'SiteTree'
+            )
+        );
 
         return $fields;
     }
@@ -95,7 +94,7 @@ class CartPage_Controller extends Page_Controller
         if ($this->Title) {
             return $this->Title;
         }
-        return _t('CartPage.TITLE', "Shopping Cart");
+        return _t('CartPage.DefaultTitle', "Shopping Cart");
     }
 
     /**
@@ -110,15 +109,6 @@ class CartPage_Controller extends Page_Controller
         $form = CartForm::create($this, "CartForm", $cart);
 
         $this->extend('updateCartForm', $form);
-
-        // if accessing through the model, warn that the hook is going to go away
-        $this->dataRecord->extend('updateCartForm', $form, $cart);
-        if ($this->dataRecord->hasMethod('updateCartForm')) {
-            Deprecation::notice(
-                '2.0',
-                'Please access updateCartForm through CartPage_Controller instead of CartPage (this extension point is due to be removed)'
-            );
-        }
 
         return $form;
     }

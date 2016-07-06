@@ -1,0 +1,273 @@
+---
+nb:
+  AccountNavigation:
+    AddressBook: Adressebok
+    EditProfile: "Endre profil"
+    LogOut: "Logg ut"
+    MemberEmail: Epost
+    MemberLastVisit: "Siste besøk"
+    MemberName: Navn
+    MemberSince: "Medlem siden"
+    NumberOfOrders: "Antall bestillinger"
+    PastOrders: "Ordre arkiv"
+    Title: "Min konto"
+  AccountPage:
+    Message: "Du må logge inn for å få tilgang til denne kontosiden. Hvis du er registrert, vil du ikke kunne få tilgang til denne før du har opprettet din første ordre. Ellers tast inn detaljene nedenunder."
+    NOPAGE: "Ingen kontoside på denne nettsiden, vennligst opprett en!"
+    NoPastOrders: "Det finnes ingen bestillingar."
+    Title: "Tidligere bestillingar"
+  AccountPage.ss:
+    COMPLETED: "Fullførte bestillinger"
+    HISTORY: "Din ordrehistorikk"
+    INCOMPLETE: "Ukomplette Ordre"
+    NOCOMPLETED: "Ingen komplette ordre ble funnet"
+    NOINCOMPLETE: "Ingen ukomplette ordre ble funnet"
+    ORDER: Bestilling
+    READMORE: "Les mer på Ordre #%s"
+  AccountPage_AddressBook:
+    CreateNewTitle: "Opprett ny adresse"
+    NoAddress: "Det finnes ingen adresse."
+    Title: Adresser
+  AccountPage_EditProfile:
+    Title: "Endre profil"
+  AccountPage_order.ss:
+    ADDRESS: Adresse
+    AMOUNT: Beløp
+    BACKTOCHECKOUT: "klikk her for å gå til kasse"
+    CITY: By
+    COUNTRY: Land
+    DATE: Dato
+    DETAILS: Detaljer
+    EMAILDETAILS: "En kopi av denne er sendt til din epost adresse for å bekrefte bestillingens innhold."
+    NAME: Navn
+    PAYMENTMETHOD: Metode
+    PAYMENTSTATUS: Betalingsstatus
+  Address:
+    ADDRESS: Adresse
+    ADDRESS2HINT: "bygning, leiligher, etasje, c.o."
+    ADDRESSHINT: "gatenavn, postboks"
+    ADDRESSLINE2: "Adresse 2 (valgfri)"
+    BillingAddress: Fakturaadresse
+    CITY: Sted
+    CITYHINT: "eller tettsted, bygg, by"
+    COUNTRY: Land
+    PHONE: Telefon
+    POSTALCODE: Postnummer
+    STATE: Fylke
+    STATEHINT: "eller øy, provins"
+    SaveDefaults: "Lagre addresser"
+    SaveNew: "Lagre ny adresse"
+    ShippingAddress: Postadresse
+  Cart.ss:
+    ADDONE: "Legg til en mer av \"%s\" til handlekurven."
+    CheckoutClick: "Klikk her for å gå til kassen"
+    CheckoutGoTo: "Gå til kassen"
+    HEADLINE: "Min handlevogn"
+    NOITEMS: "Handlevognen er tom"
+    PRICE: Pris
+    READMORE: "Klikk her for å lese mer om  \"%s\""
+    REMOVE: "Fjern \"%s\" fra din bestilling"
+    REMOVEALL: "Fjern alle av \"%s\" fra handlekurven"
+    REMOVEONE: "Fjern en av \"%s\" fra handlekurven"
+    SUBTOTAL: Delsum
+    TOTAL: Sum
+  CheckoutPage:
+    NOPAGE: "Finnes ingen ChecoutPage for dette nettstedet - vennligst opprett en!"
+  CheckoutPage.ss:
+    CHECKOUT: "Sjekk ut"
+    ORDERSTATUS: Bestillingsstatus
+    PROCESS: Prosess
+  ChequePayment:
+    MESSAGE: "Betalingen er akspetert med sjekk. Merk: varene vil ikke bli sendt før betalingen er motatt"
+  FreeShippingModifier:
+    FREE: Gratis
+  Member:
+    BUTTONCHANGEPASSWORD: "Endre passord"
+    CONFIRMNEWPASSWORD: "Bekreft nytt passord"
+    DATEFORMAT: Datoformat
+    EMAIL: Epost
+    FIRSTNAME: Navn
+    NEWPASSWORD: "Nytt passord"
+    SURNAME: Etternavn
+    TIMEFORMAT: Tidsformat
+    YOUROLDPASSWORD: "Ditt gamle passord"
+    db_Locale: Språk
+  MemberForm:
+    DETAILSSAVED: "Dine endringer er lagret"
+    LOGGEDIN: "Du er logget inn som"
+    SAVE: "Lagre endringer"
+    SAVEANDPROCEED: "Lagre og gå til betaling"
+  Order:
+    INCOMPLETE: "Ordre Ufullkommen"
+    ORDERNOTES: Note
+    SUCCESSFULL: "Ordre Vellykket"
+    TOTALOUTSTANDING: "Utestående beløp"
+  OrderHistory:
+    OrderDate: Dato
+    OrderItems: Antall
+    OrderReference: Referanse
+    OrderStatus: Status
+    OrderTotal: Total
+    ViewOrder: "vis bestilling"
+  OrderInformation.ss:
+    ADDRESS: Adresse
+    AMOUNT: Beløp
+    BUYERSADDRESS: Kundeadresse
+    CITY: By
+    COUNTRY: Land
+    CUSTOMERDETAILS: Kundedetaljer
+    DATE: Dato
+    DETAILS: Detaljer
+    EMAIL: E-postadresse
+    MOBILE: Mobilnr.
+    NAME: NAvn
+    ORDERSUMMARY: "Sammendrag av bestillingen"
+    PAYMENTID: Betalings-ID
+    PAYMENTINFORMATION: Betalingsinformasjon
+    PAYMENTMETHOD: Metode
+    PAYMENTSTATUS: Betalingsstatus
+    PHONE: Telefonnr.
+    PRICE: Pris
+    PRODUCT: Produkt
+    QUANTITY: Antall
+    READMORE: "Klikk her for å lese mer om \"%s\""
+    SHIPPINGDETAILS: Fraktdetaljer
+    SUBTOTAL: Delsum
+    TOTAL: Total
+    TOTALOUTSTANDING: "Totalt utestående"
+    TOTALPRICE: Totalpris
+  OrderInformation_Editable.ss:
+    ADDONE: "Legg til en til av \"%s\" til handelvognen"
+    NOITEMS: "Det er <strong>ingenting</strong> i handlekurven."
+    ORDERINFORMATION: Bestillingsinformasjon
+    PRICE: Pris
+    PRODUCT: Produkt
+    QUANTITY: Antall
+    READMORE: "Klikk her for å lese mer om \"%s\""
+    REMOVE: "Fjern \"%s\" fra din bestilling"
+    REMOVEALL: "Fjern alle \"%s\" fra din handlevogn"
+    REMOVEONE: "Fjern en av \"%s\" fra handlevognen"
+    SUBTOTAL: Delsum
+    TABLESUMMARY: "Innholdet i handlekurven vises i denne seksjonen pluss oppsummering av alle avgifter og valg assossiert med en ordre."
+    TOTAL: Sum
+    TOTALPRICE: Totalpris
+  OrderInformation_NoPricing.ss:
+    ADDRESS: Adresse
+    BUYERSADDRESS: "Kjøpers adresse"
+    CITY: By
+    COUNTRY: Land
+    CUSTOMERDETAILS: Kundedetaljer
+    EMAIL: E-postadresse
+    MOBILE: Mobilnummer
+    NAME: Navn
+    ORDERINFO: "Informasjon om bestilling #"
+    PHONE: Telefonnummer
+    TABLESUMMARY: "Innholdet i handlekurven vises i denne seksjonen pluss oppsummering av alle avgifter og valg assossiert med en ordre."
+  OrderInformation_PackingSlip.ss:
+    DESCRIPTION: Beskrivelse
+    ITEM: Enhet
+    ORDERDATE: Bestillingsdato
+    ORDERNUMBER: Bestillingsnummer
+    PAGETITLE: "Butikk Print Ordre"
+    QUANTITY: Antall
+    TABLESUMMARY: "Innholdet i handlekurven vises i denne seksjonen pluss oppsummering av alle avgifter og valg assossiert med en ordre."
+  OrderInformation_Print.ss:
+    PAGETITLE: "Skriv ut bestillinger"
+  OrderReport:
+    CHANGESTATUS: "Endre bestillingsstatus"
+    NOTEEMAIL: Merknad/e-post
+    SENDNOTETO: "Send merknaden til %s (%s)"
+  Order_Address.ss:
+    BILLTO: Fakturaadresse
+    SHIPTO: Fraktadresse
+  Order_Content.ss:
+    NOITEMS: "Det er <strong>ingen</strong>varer i din bestilling"
+    PRICE: Pris
+    PRODUCT: Produkt
+    QUANTITY: Antall
+    READMORE: "Klikk her for å lese mere på \"%s\""
+    SUBTOTAL: Sub-total
+    TOTAL: Total
+    TOTALOUTSTANDING: "Totalt utestående"
+    TOTALPRICE: Total
+    UNITPRICE: Pris
+  Order_Content_ItemLine.ss:
+    READMORE: "Se mer om \"%s\""
+  Order_Content_SubTotals.ss:
+    SUBTOTAL: "Total ink mva"
+    TOTAL: Total
+  Order_Member.ss:
+    ADDRESS: Adresse
+    CITY: By
+    COUNTRY: Land
+    EMAIL: Epost
+    MOBILE: Mobil
+    NAME: Navn
+    PHONE: Telefon
+  Order_Payments.ss:
+    AMOUNT: Sum
+    DATE: Dato
+    PAYMENTMETHOD: Betalingsmåte
+    PAYMENTNOTE: Melding
+    PAYMENTS: Betalingar
+    PAYMENTSTATUS: Status
+  Order_ReceiptEmail.ss:
+    HEADLINE: Bestillingskvittering
+    TITLE: "Handle kvittering"
+  Order_StatusEmail.ss:
+    HEADLINE: "Handlestatus endres"
+    STATUSCHANGE: "Status endret til \"%s\" for bestilling #"
+    TITLE: "Handlestatus endres"
+  PaymentInformation.ss:
+    AMOUNT: Beløp
+    DATE: Dato
+    DETAILS: Detaljer
+    PAYMENTID: Betalings-ID
+    PAYMENTINFORMATION: Betalingsinformasjon
+    PAYMENTMETHOD: Metode
+    PAYMENTSTATUS: Betalingsstatus
+    TABLESUMMARY: "Innholdet i handlekurven vises i denne seksjonen pluss oppsummering av alle avgifter og valg assossiert med en ordre."
+  PickupShippingModifier:
+    SINGULAR: "Hent i butikk"
+  Product.ss:
+    ADD: "Legg til \"%s\" til din handlekurv"
+    ADDLINK: "Legg i handlekurv"
+    ADDONE: "Legg til en mer av \"%s\" til din handlekurv"
+    AUTHOR: Forfatter
+    FEATURED: "Dette er et anbefalt produkt"
+    GOTOCHECKOUT: "Gå til kassen"
+    GOTOCHECKOUTLINK: "» Gå til kassen"
+    IMAGE: "%s bilde"
+    ItemID: "Vare #"
+    NOIMAGE: "Beklager, ingen produktbilde for \"%s\""
+    QUANTITYCART: "Antall i handlekurv"
+    REMOVE: "Fjern \"%s\" fra din handlekurv"
+    REMOVEALL: "Fjern en av \"%s\" fra din handlekurv"
+    REMOVELINK: "» Fjern fra handlekurv"
+    SIZE: Størrelse
+  ProductCategory.ss:
+    FEATURED: "Anbefalte produkter"
+    OTHER: "Andre produkter"
+  ProductCategoryItem.ss:
+    ADD: "Legg \"%s\" i handlekurven"
+    ADDLINK: "Legg i handlevognen"
+    ADDONE: "Legg til en til av \"%s\" i handlevognen"
+    AUTHOR: Forfatter
+    GOTOCHECKOUT: "Gå til kassa nå"
+    GOTOCHECKOUTLINK: "» Gå til kassa"
+    IMAGE: "%s bilde"
+    NOIMAGE: "Beklager, det finnes ikke noe bilde av \"%s\""
+    QUANTITYCART: "Antall i handlevogn"
+    READMORE: "Trykk her for å lese mer om \"%s\""
+    READMORECONTENT: "Trykk her for å lese mer »"
+    REMOVE: "Fjern \"%s\" fra handlekurven"
+    REMOVEALL: "Fjern en \"%s\" fra din handlevogn"
+    REMOVELINK: "» Fjern fra handlevognen"
+  ProductMenu.ss:
+    GOTOPAGE: "Gå til %s"
+  ShippingModifier:
+    SINGULAR: Frakt
+  SimpleShippingModifier:
+    SHIPTO: "Send til %s"
+  WeightShippingModifier:
+    TABLETITLE: "Frakt (%f kg)"

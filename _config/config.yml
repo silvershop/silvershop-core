@@ -20,6 +20,8 @@ OrderProcessor:
 Injector:
   CheckoutComponentConfig:
     class: SinglePageCheckoutComponentConfig
+  ShopEmail:
+    class: StyledHtmlEmail
 
 LeftAndMain:
   extra_requirements_css:

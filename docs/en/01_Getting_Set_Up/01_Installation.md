@@ -1,8 +1,10 @@
 In a terminal window, in the website root, type:
+
 ```sh
-composer require burnbright/silverstripe-shop
+composer require silvershop/core
 ```
-Then in a browser `{yoursite.com}/dev/build`.  
+
+Then in a browser `{yoursite.com}/dev/build`.
 
 
 ## Demo in Localhost

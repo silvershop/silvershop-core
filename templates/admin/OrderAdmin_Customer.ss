@@ -2,12 +2,12 @@
 	<thead>
 		<tr class="title">
 			<th colspan="2">
-				<h2><% _t("CUSTOMER","Customer") %></h2>
+				<h2><%t Shop.Customer "Customer" %></h2>
 			</th>
 		</tr>
 		<tr class="header">
-			<th class="main"><%t AccountNavigation.MemberName "Name" %></th>
-			<th class="main"><%t AccountNavigation.MemberEmail "Email" %></th>
+			<th class="main"><%t AccountPage.MemberName "Name" %></th>
+			<th class="main"><%t AccountPage.MemberEmail "Email" %></th>
 		</tr>
 	</thead>
 	<tbody>

@@ -35,3 +35,6 @@ Payment:
 Order:
   extensions:
     - Payable
+SilverStripe\Omnipay\Service\PaymentService:
+  extensions:
+    - ShopPaymentService

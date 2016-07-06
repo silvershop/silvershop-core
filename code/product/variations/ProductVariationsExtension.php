@@ -26,18 +26,18 @@ class ProductVariationsExtension extends DataExtension
             array(
                 ListboxField::create(
                     "VariationAttributeTypes",
-                    _t('ProductVariationsExtension.ATTRIBUTES', "Attributes"),
+                    _t('ProductVariationsExtension.Attributes', "Attributes"),
                     ProductAttributeType::get()->map("ID", "Title")->toArray()
                 )->setMultiple(true)
                     ->setDescription(
                         _t(
-                            'ProductVariationsExtension.ATTRIBUTES_DESCRIPTION',
+                            'ProductVariationsExtension.AttributesDescription',
                             "These are fields to indicate the way(s) each variation varies. Once selected, they can be edited on each variation."
                         )
                     ),
                 GridField::create(
                     "Variations",
-                    _t('ProductVariationsExtension.VARIATIONS', "Variations"),
+                    _t('ProductVariationsExtension.Variations', "Variations"),
                     $this->owner->Variations(),
                     GridFieldConfig_RecordEditor::create()
                 ),
@@ -49,7 +49,7 @@ class ProductVariationsExtension extends DataExtension
                 LabelField::create(
                     'variationspriceinstructinos',
                     _t(
-                        'ProductVariationsExtension.VARIATIONS_INSTRUCTIONS',
+                        'ProductVariationsExtension.VariationsInfo',
                         "Price - Because you have one or more variations, the price can be set in the \"Variations\" tab."
                     )
                 )
@@ -63,9 +63,15 @@ class ProductVariationsExtension extends DataExtension
     public function PriceRange()
     {
         $variations = $this->owner->Variations();
+
+        if (!Product::config()->allow_zero_price) {
+            $variations = $variations->filter('Price:GreaterThan', 0);
+        }
+
         if (!$variations->exists() || !$variations->Count()) {
             return null;
         }
+
         $prices = $variations->map('ID', 'SellingPrice')->toArray();
         $pricedata = array(
             'HasRange' => false,
@@ -102,6 +108,7 @@ class ProductVariationsExtension extends DataExtension
         $keyattributes = array_keys($attributes);
         $id = $keyattributes[0];
         $variations = ProductVariation::get()->filter("ProductID", $this->owner->ID);
+
         foreach ($attributes as $typeid => $valueid) {
             if (!is_numeric($typeid) || !is_numeric($valueid)) {
                 return null;
@@ -182,7 +189,7 @@ class ProductVariationsExtension extends DataExtension
             return null;
         }
 
-        return ProductAttributeValue::get()
+        $list = ProductAttributeValue::get()
             ->innerJoin(
                 "ProductVariation_AttributeValues",
                 "\"ProductAttributeValue\".\"ID\" = \"ProductVariation_AttributeValues\".\"ProductAttributeValueID\""
@@ -190,6 +197,11 @@ class ProductVariationsExtension extends DataExtension
                 "ProductVariation",
                 "\"ProductVariation_AttributeValues\".\"ProductVariationID\" = \"ProductVariation\".\"ID\""
             )->where("TypeID = $type AND \"ProductVariation\".\"ProductID\" = " . $this->owner->ID);
+
+        if (!Product::config()->allow_zero_price) {
+            $list = $list->where('"ProductVariation"."Price" > 0');
+        }
+        return $list;
     }
 
     /**

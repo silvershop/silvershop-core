@@ -7,41 +7,88 @@
  */
 class Product_Image extends DataExtension
 {
-    public function getThumbnail()
+    /** @var Image */
+    protected $owner;
+
+    /**
+     * @param bool $upscale [optional]
+     * @return Image
+     */
+    public function getThumbnail($upscale = false)
     {
         $width = self::config()->thumbnail_width;
         $height = self::config()->thumbnail_height;
 
-        return $this->getImageAt($width, $height);
+        return $this->getImageAt($width, $height, $upscale);
     }
 
-    public function getContentImage()
+    /**
+     * @param bool $upscale [optional]
+     * @return Image
+     */
+    public function getContentImage($upscale = false)
     {
         $width = self::config()->content_image_width;
         $height = self::config()->content_image_height;
 
-        return $this->getImageAt($width, $height);
+        return $this->getImageAt($width, $height, $upscale);
     }
 
-    public function getLargeImage()
+    /**
+     * @param bool $upscale [optional]
+     * @return Image
+     */
+    public function getLargeImage($upscale = false)
     {
         $width = self::config()->large_image_width;
         $height = self::config()->large_image_height;
 
-        return $this->getImageAt($width, $height);
+        return $this->getImageAt($width, $height, $upscale);
     }
 
-    public function getImageAt($width = null, $height = null)
+    /**
+     * Resizes image by width or height only if the source image is bigger than the given width/height.
+     * This prevents ugly upscaling.
+     *
+     * @param int  $width [optional]
+     * @param int  $height [optional]
+     * @param bool $upscale [optional]
+     *
+     * @return Image
+     */
+    public function getImageAt($width = null, $height = null, $upscale = false)
     {
+        if (!$this->owner->exists()) {
+            return $this->owner;
+        }
+
+        $realWidth = $this->owner->getWidth();
+        $realHeight = $this->owner->getHeight();
+
         if ($width && $height) {
-            return $this->owner->SetSize($width, $height);
+            return $realWidth < $width && $realHeight < $height && !$upscale
+                ? $this->owner
+                : $this->owner->Fit($width, $height);
         } else {
             if ($width) {
-                return $this->owner->SetWidth($width);
+                return $realWidth < $width && !$upscale
+                    ? $this->owner
+                    : $this->owner->ScaleWidth($width);
             } else {
-                return $this->owner->SetHeight($height);
+                return $realHeight < $height && !$upscale
+                    ? $this->owner
+                    : $this->owner->ScaleWidth($height);
             }
         }
+    }
+
+    /**
+     * @return bool - is the image large enough that a "large" image makes sense?
+     */
+    public function HasLargeImage()
+    {
+        $imageWidth = intval($this->owner->getWidth());
+        return $imageWidth > self::config()->content_image_width;
     }
 
     public static function config()

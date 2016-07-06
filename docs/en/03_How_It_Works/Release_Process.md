@@ -7,6 +7,7 @@ Complete a test order to see that everything is fine for the user.
 
 ## Generate Change Log
 Create change logs since last tag:
+
 ```sh
 cd shop
 #New stuff
@@ -16,6 +17,7 @@ git log --pretty=format:" * %s" --since="$(git show -s --format=%ad `git rev-lis
 #Bug fixes
 git log --pretty=format:" * %s" --since="$(git show -s --format=%ad `git rev-list --tags --max-count=1`)" --grep='^bug\|^fix' -i
 ```
+
 Copy output into change log.
 
 ## Versioning

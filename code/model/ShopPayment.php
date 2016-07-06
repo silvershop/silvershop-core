@@ -1,5 +1,7 @@
 <?php
 
+use SilverStripe\Omnipay\Service\ServiceResponse;
+
 /**
  * Customisations to {@link Payment} specifically for the shop module.
  *
@@ -11,11 +13,38 @@ class ShopPayment extends DataExtension
         'Order' => 'Order',
     );
 
-    public function onCaptured($response)
+    public function onAwaitingAuthorized(ServiceResponse $response)
     {
-        $order = $this->owner->Order();
-        if ($order->exists()) {
+        $this->placeOrder();
+    }
+
+    public function onAwaitingCaptured(ServiceResponse $response)
+    {
+        $this->placeOrder();
+    }
+
+    public function onAuthorized(ServiceResponse $response)
+    {
+        $this->placeOrder();
+    }
+
+    public function onCaptured(ServiceResponse $response)
+    {
+        // ensure order is being reloaded from DB, to prevent dealing with stale data!
+        /** @var Order $order */
+        $order = Order::get()->byID($this->owner->OrderID);
+        if ($order && $order->exists()) {
             OrderProcessor::create($order)->completePayment();
+        }
+    }
+
+    protected function placeOrder()
+    {
+        // ensure order is being reloaded from DB, to prevent dealing with stale data!
+        /** @var Order $order */
+        $order = Order::get()->byID($this->owner->OrderID);
+        if ($order && $order->exists()) {
+            OrderProcessor::create($order)->placeOrder();
         }
     }
 }

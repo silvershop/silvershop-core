@@ -1,5 +1,7 @@
 <?php
 
+use SilverStripe\Omnipay\Service\PaymentService;
+
 class ShopPaymentTest extends FunctionalTest
 {
     protected static $fixture_file  = array(
@@ -28,8 +30,8 @@ class ShopPaymentTest extends FunctionalTest
             'PaymentExpress_PxPost' //onsite
         );
 
-        PaymentService::set_http_client($this->getHttpClient());
-        PaymentService::set_http_request($this->getHttpRequest());
+        PaymentService::setHttpClient($this->getHttpClient());
+        PaymentService::setHttpRequest($this->getHttpRequest());
 
         //publish products
         $this->objFromFixture("Product", "socks")->publish('Stage', 'Live');
@@ -69,23 +71,25 @@ class ShopPaymentTest extends FunctionalTest
         $cart->write();
         //pay for order with external gateway
         $processor = OrderProcessor::create($cart);
-        $this->setMockHttpResponse('PaymentExpress/Mock/PxPayPurchaseSuccess.txt');
+        $this->setMockHttpResponse('paymentexpress/tests/Mock/PxPayPurchaseSuccess.txt');
         $response = $processor->makePayment("PaymentExpress_PxPay", array());
         //gateway responds (in a different session)
         $oldsession = $this->mainSession;
         $this->mainSession = new TestSession();
         ShoppingCart::singleton()->clear();
-        $this->setMockHttpResponse('PaymentExpress/Mock/PxPayCompletePurchaseSuccess.txt');
+        $this->setMockHttpResponse('paymentexpress/tests/Mock/PxPayCompletePurchaseSuccess.txt');
         $this->getHttpRequest()->query->replace(array('result' => 'abc123'));
         $identifier = $response->getPayment()->Identifier;
+
+        //bring back client session
+        $this->mainSession = $oldsession;
+        // complete the order
         $response = $this->get("paymentendpoint/$identifier/complete");
+
         //reload cart as new order
         $order = Order::get()->byId($cart->ID);
         $this->assertFalse($order->isCart(), "order is no longer in cart");
         $this->assertTrue($order->isPaid(), "order is paid");
-        //bring back client session
-        $this->mainSession = $oldsession;
-        $response = $this->get("paymentendpoint/$identifier/complete");
         $this->assertNull(Session::get("shoppingcartid"), "cart session id should be removed");
         $this->assertNotEquals(404, $response->getStatusCode(), "We shouldn't get page not found");
 
@@ -116,7 +120,7 @@ class ShopPaymentTest extends FunctionalTest
 
     protected function setMockHttpResponse($paths)
     {
-        $testspath = BASE_PATH.'/vendor/omnipay/omnipay/tests/Omnipay';
+        $testspath = BASE_PATH . '/vendor/omnipay';
         $mock = new Guzzle\Plugin\Mock\MockPlugin(null, true);
         $this->getHttpClient()->getEventDispatcher()->removeSubscriber($mock);
         foreach ((array)$paths as $path) {

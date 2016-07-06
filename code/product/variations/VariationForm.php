@@ -19,7 +19,7 @@ class VariationForm extends AddProductForm
         foreach ($attributes as $attribute) {
             $attributeDropdown = $attribute->getDropDownField(
                 _t(
-                    'VariationForm.CHOOSE_ATTRIBUTE',
+                    'VariationForm.ChooseAttribute',
                     "Choose {attribute} …",
                     '',
                     array('attribute' => $attribute->Label)
@@ -37,13 +37,17 @@ class VariationForm extends AddProductForm
 
         if (self::$include_json) {
             $vararray = array();
-            
+
             $query = $query2 = new SQLQuery();
-            
+
             $query->setSelect('ID')
                 ->setFrom('ProductVariation')
-                ->setWhere(array('ProductID' => $product->ID));
-                
+                ->addWhere(array('ProductID' => $product->ID));
+
+            if (!Product::config()->allow_zero_price) {
+                $query->addWhere('"Price" > 0');
+            }
+
             foreach ($query->execute()->column('ID') as $variationID) {
                 $query2->setSelect('ProductAttributeValueID')
                     ->setFrom('ProductVariation_AttributeValues')
@@ -100,7 +104,7 @@ class VariationForm extends AddProductForm
 
                 try {
                     $success = $variation->canPurchase(null, $data['Quantity']);
-                } catch (ShopBuyableException $e) {
+                } catch (Exception $e) {
                     $message = get_class($e);
                     // added hook to update message
                     $this->extend('updateVariationAddToCartMessage', $e, $message, $variation);
@@ -119,7 +123,7 @@ class VariationForm extends AddProductForm
 
             if ($cart->add($variation, $quantity)) {
                 $form->sessionMessage(
-                    _t('ShoppingCart.ITEMADD', "Item has been added successfully."),
+                    _t('ShoppingCart.ItemAdded', "Item has been added successfully."),
                     "good"
                 );
             } else {
@@ -128,7 +132,7 @@ class VariationForm extends AddProductForm
         } else {
             $variation = null;
             $form->sessionMessage(
-                _t('VariationForm.VARIATION_NOT_AVAILABLE', "That variation is not available, sorry."),
+                _t('VariationForm.VariationNotAvailable', "That variation is not available, sorry."),
                 "bad"
             ); //validation fail
         }
@@ -142,7 +146,7 @@ class VariationForm extends AddProductForm
     public function getBuyable($data = null)
     {
         if (isset($data['ProductAttributes'])
-            && $variation = $this->Controller()->getVariationByAttributes($data['ProductAttributes'])
+            && $variation = $this->getController()->getVariationByAttributes($data['ProductAttributes'])
         ) {
             return $variation;
         }

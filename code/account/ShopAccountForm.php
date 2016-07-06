@@ -15,37 +15,24 @@ class ShopAccountForm extends Form
         if ($member && $member->exists()) {
             $fields = $member->getMemberFormFields();
             $fields->removeByName('Password');
-            $requiredFields = $member->getValidator();
+            //TODO: This can be reverted to be $member->getValidator() as soon as this fix lands in framework
+            // (most likely 3.4) https://github.com/silverstripe/silverstripe-framework/pull/5098
+            $requiredFields = ShopAccountFormValidator::create();
             $requiredFields->addRequiredField('Surname');
         } else {
             $fields = FieldList::create();
         }
         if (get_class($controller) == 'AccountPage_Controller') {
-            $actions = FieldList::create(FormAction::create('submit', _t('MemberForm.SAVE', 'Save Changes')));
+            $actions = FieldList::create(FormAction::create('submit', _t('MemberForm.Save', 'Save Changes')));
         } else {
             $actions = FieldList::create(
-                FormAction::create('submit', _t('MemberForm.SAVE', 'Save Changes')),
-                FormAction::create('proceed', _t('MemberForm.SAVEANDPROCEED', 'Save and proceed to checkout'))
+                FormAction::create('submit', _t('MemberForm.Save', 'Save Changes')),
+                FormAction::create('proceed', _t('MemberForm.SaveAndProceed', 'Save and proceed to checkout'))
             );
         }
         parent::__construct($controller, $name, $fields, $actions, $requiredFields);
 
         $this->extend('updateShopAccountForm');
-
-        if ($record = $controller->data()) {
-            $record->extend('updateShopAccountForm', $fields, $actions, $requiredFields);
-        }
-
-        if ($controller->data()
-            && $controller->data()->hasMethod(
-                'updateShopAccountForm'
-            )
-        ) {  // if accessing through the model
-            Deprecation::notice(
-                '2.0',
-                'Please access updateShopAccountForm through ShopAccountForm instead of AccountPage (this extension point is due to be removed)'
-            );
-        }
 
         if ($member) {
             $member->Password = ""; //prevents password field from being populated with encrypted password data
@@ -71,7 +58,7 @@ class ShopAccountForm extends Form
 
         $form->saveInto($member);
         $member->write();
-        $form->sessionMessage(_t("MemberForm.DETAILSSAVED", 'Your details have been saved'), 'good');
+        $form->sessionMessage(_t("MemberForm.DetailsSaved", 'Your details have been saved'), 'good');
 
         $this->extend('updateShopAccountFormResponse', $request, $form, $data, $response);
 
@@ -96,7 +83,7 @@ class ShopAccountForm extends Form
 
         $form->saveInto($member);
         $member->write();
-        $form->sessionMessage(_t("MemberForm.DETAILSSAVED", 'Your details have been saved'), 'good');
+        $form->sessionMessage(_t("MemberForm.DetailsSaved", 'Your details have been saved'), 'good');
 
         $this->extend('updateShopAccountFormResponse', $request, $form, $data, $response);
 
@@ -119,22 +106,24 @@ class ShopAccountFormValidator extends RequiredFields
         $valid = parent::php($data);
         $field = (string)Member::config()->unique_identifier_field;
         if (isset($data[$field])) {
-            $uid = $data[(string)Member::config()->unique_identifier_field];
-            $currentmember = Member::currentUser();
+            $uid = $data[$field];
+            $currentMember = Member::currentUser();
+
             //can't be taken
-            if (DataObject::get_one('Member', "$field = '$uid' AND ID != " . $currentmember->ID)) {
+            if (Member::get()->filter($field, $uid)->exclude('ID', $currentMember->ID)->count() > 0) {
                 // get localized field labels
-                $fieldLabels = $currentmember->fieldLabels(false);
+                $fieldLabels = $currentMember->fieldLabels(false);
                 // if a localized value exists, use this for our error-message
                 $fieldLabel = isset($fieldLabels[$field]) ? $fieldLabels[$field] : $field;
 
                 $this->validationError(
                     $field,
                     // re-use the message from checkout
-                    sprintf(
-                        _t("Checkout.MEMBEREXISTS", "A member already exists with the %s %s"),
-                        $fieldLabel,
-                        $uid
+                    _t(
+                        'Checkout.MemberExists',
+                        'A member already exists with the {Field} {Identifier}',
+                        '',
+                        array('Field' => $fieldLabel, 'Identifier' => $uid)
                     ),
                     "required"
                 );

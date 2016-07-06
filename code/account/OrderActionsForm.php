@@ -1,5 +1,8 @@
 <?php
 
+use SilverStripe\Omnipay\GatewayInfo;
+use SilverStripe\Omnipay\GatewayFieldsFactory;
+
 /**
  * Perform actions on placed orders
  *
@@ -20,6 +23,8 @@ class OrderActionsForm extends Form
 
     private static $allow_cancelling   = true;
 
+    private static $include_jquery = true;
+
     protected      $order;
 
     public function __construct($controller, $name, Order $order)
@@ -31,10 +36,10 @@ class OrderActionsForm extends Form
         $actions = FieldList::create();
         //payment
         if (self::config()->allow_paying && $order->canPay()) {
-            $gateways = GatewayInfo::get_supported_gateways();
+            $gateways = GatewayInfo::getSupportedGateways();
             //remove manual gateways
             foreach ($gateways as $gateway => $gatewayname) {
-                if (GatewayInfo::is_manual($gateway)) {
+                if (GatewayInfo::isManual($gateway)) {
                     unset($gateways[$gateway]);
                 }
             }
@@ -42,33 +47,43 @@ class OrderActionsForm extends Form
                 $fields->push(
                     HeaderField::create(
                         "MakePaymentHeader",
-                        _t("OrderActionsForm.MAKEPAYMENT", "Make Payment")
+                        _t("OrderActionsForm.MakePayment", "Make Payment")
                     )
                 );
                 $outstandingfield = Currency::create();
-                $outstandingfield->setValue($order->TotalOutstanding());
+                $outstandingfield->setValue($order->TotalOutstanding(true));
                 $fields->push(
                     LiteralField::create(
                         "Outstanding",
-                        sprintf(
-                            _t("OrderActionsForm.OUTSTANDING", "Outstanding: %s"),
-                            $outstandingfield->Nice()
+                        _t(
+                            'Order.OutstandingWithAmount',
+                            'Outstanding: {Amount}',
+                            '',
+                            array('Amount' => $outstandingfield->Nice())
                         )
                     )
                 );
                 $fields->push(
                     OptionsetField::create(
                         'PaymentMethod',
-                        _t("OrderActionsForm.PAYMENTMETHOD", "Payment Method"),
+                        _t("OrderActionsForm.PaymentMethod", "Payment Method"),
                         $gateways,
                         key($gateways)
                     )
                 );
 
+                if ($ccFields = $this->getCCFields($gateways)) {
+                    if ($this->config()->include_jquery) {
+                       Requirements::javascript(THIRDPARTY_DIR . '/jquery/jquery.min.js');
+                    }
+                    Requirements::javascript(SHOP_DIR . '/javascript/OrderActionsForm.js');
+                    $fields->push($ccFields);
+                }
+
                 $actions->push(
                     FormAction::create(
                         'dopayment',
-                        _t('OrderActionsForm.PAYORDER', 'Pay outstanding balance')
+                        _t('OrderActionsForm.PayOrder', 'Pay outstanding balance')
                     )
                 );
             }
@@ -78,11 +93,13 @@ class OrderActionsForm extends Form
             $actions->push(
                 FormAction::create(
                     'docancel',
-                    _t('OrderActionsForm.CANCELORDER', 'Cancel this order')
+                    _t('OrderActionsForm.CancelOrder', 'Cancel this order')
                 )
             );
         }
-        parent::__construct($controller, $name, $fields, $actions);
+        parent::__construct($controller, $name, $fields, $actions, OrderActionsForm_Validator::create(array(
+            'PaymentMethod'
+        )));
         $this->extend("updateForm", $order);
     }
 
@@ -104,27 +121,23 @@ class OrderActionsForm extends Form
             $data = $form->getData();
             $gateway = (!empty($data['PaymentMethod'])) ? $data['PaymentMethod'] : null;
 
-            if (!GatewayInfo::is_manual($gateway)) {
+            if (!GatewayInfo::isManual($gateway)) {
+                /** @var OrderProcessor $processor */
                 $processor = OrderProcessor::create($this->order);
-                $data['cancelUrl'] = $processor->getReturnUrl();
-                $response = $processor->makePayment($gateway, $data);
-
-                if ($response) {
-                    if ($response->isRedirect() || $response->isSuccessful()) {
-                        return $response->redirect();
-                    }
-                    $form->sessionMessage($response->getMessage(), 'bad');
+                $response = $processor->makePayment($gateway, $data, $processor->getReturnUrl());
+                if($response && !$response->isError()){
+                    return $response->redirectOrRespond();
                 } else {
                     $form->sessionMessage($processor->getError(), 'bad');
                 }
             } else {
-                $form->sessionMessage(_t('OrderActionsForm.MANUAL_NOT_ALLOWED', "Manual payment not allowed"), 'bad');
+                $form->sessionMessage(_t('OrderActionsForm.ManualNotAllowed', "Manual payment not allowed"), 'bad');
             }
 
             return $this->controller->redirectBack();
         }
         $form->sessionMessage(
-            _t('OrderForm.COULDNOTPROCESSPAYMENT', 'Payment could not be processed.'),
+            _t('OrderForm.CouldNotProcessPayment', 'Payment could not be processed.'),
             'bad'
         );
         $this->controller->redirectBack();
@@ -147,20 +160,13 @@ class OrderActionsForm extends Form
         ) {
             $this->order->Status = 'MemberCancelled';
             $this->order->write();
+
             if (self::config()->email_notification) {
-                $email = Email::create(
-                    Email::config()->admin_email,
-                    Email::config()->admin_email,
-                    sprintf(
-                        _t('Order.CANCELSUBJECT', 'Order #%d cancelled by member'),
-                        $this->order->ID
-                    ),
-                    $this->order->renderWith('Order')
-                );
-                $email->send();
+                OrderEmailNotifier::create($this->order)->sendCancelNotification();
             }
+
             $this->controller->sessionMessage(
-                _t("OrderForm.ORDERCANCELLED", "Order sucessfully cancelled"),
+                _t("OrderForm.OrderCancelled", "Order sucessfully cancelled"),
                 'warning'
             );
             if (Member::currentUser() && $link = $this->order->Link()) {
@@ -169,5 +175,82 @@ class OrderActionsForm extends Form
                 $this->controller->redirectBack();
             }
         }
+    }
+
+    /**
+     * Get credit card fields for the given gateways
+     * @param array $gateways
+     * @return CompositeField|null
+     */
+    protected function getCCFields(array $gateways)
+    {
+        $onsiteGateways = array();
+        $allRequired = array();
+        foreach ($gateways as $gateway => $title) {
+            if (!GatewayInfo::isOffsite($gateway)) {
+                $required = GatewayInfo::requiredFields($gateway);
+                $onsiteGateways[$gateway] = $required;
+                $allRequired += $required;
+            }
+        }
+
+        $allRequired = array_unique($allRequired);
+
+        if (empty($onsiteGateways)) {
+            return null;
+        }
+
+        $factory = new GatewayFieldsFactory(null, array('Card'));
+        $ccFields = $factory->getCardFields();
+
+        // Remove all the credit card fields that aren't required by any gateway
+        foreach ($ccFields->dataFields() as $name => $field) {
+            if ($name && !in_array($name, $allRequired)) {
+                $ccFields->removeByName($name, true);
+            }
+        }
+
+        $lookupField = LiteralField::create(
+            '_CCLookupField',
+            sprintf(
+                '<span class="gateway-lookup" data-gateways=\'%s\'></span>',
+                json_encode($onsiteGateways, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP)
+            )
+        );
+
+        $ccFields->push($lookupField);
+
+        return CompositeField::create($ccFields)->setTag('fieldset')->addExtraClass('credit-card');
+    }
+}
+
+class OrderActionsForm_Validator extends RequiredFields
+{
+    public function php($data)
+    {
+        // Check if we should do a payment
+        if (Form::current_action() == 'dopayment' && !empty($data['PaymentMethod'])) {
+            $gateway = $data['PaymentMethod'];
+            // If the gateway isn't manual and not offsite, Check for credit-card fields!
+            if (!GatewayInfo::isManual($gateway) && !GatewayInfo::isOffsite($gateway)) {
+                // Merge the required fields and the Credit-Card fields that are required for the gateway
+                $this->required = array_merge($this->required, array_intersect(
+                    array(
+                        'type',
+                        'name',
+                        'number',
+                        'startMonth',
+                        'startYear',
+                        'expiryMonth',
+                        'expiryYear',
+                        'cvv',
+                        'issueNumber'
+                    ),
+                    GatewayInfo::requiredFields($gateway)
+                ));
+            }
+        }
+
+        return parent::php($data);
     }
 }

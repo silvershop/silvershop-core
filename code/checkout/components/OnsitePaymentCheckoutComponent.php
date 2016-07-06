@@ -1,6 +1,8 @@
 <?php
 
 use Omnipay\Common\Helper;
+use SilverStripe\Omnipay\GatewayInfo;
+use SilverStripe\Omnipay\GatewayFieldsFactory;
 
 /**
  *
@@ -27,7 +29,7 @@ class OnsitePaymentCheckoutComponent extends CheckoutComponent
 
     public function getRequiredFields(Order $order)
     {
-        return GatewayInfo::required_fields(Checkout::get($order)->getSelectedPaymentMethod());
+        return GatewayInfo::requiredFields(Checkout::get($order)->getSelectedPaymentMethod());
     }
 
     public function validateData(Order $order, array $data)
@@ -35,7 +37,7 @@ class OnsitePaymentCheckoutComponent extends CheckoutComponent
         $result = ValidationResult::create();
         //TODO: validate credit card data
         if (!Helper::validateLuhn($data['number'])) {
-            $result->error(_t('OnsitePaymentCheckoutComponent.CREDIT_CARD_INVALID', 'Credit card is invalid'));
+            $result->error(_t('OnsitePaymentCheckoutComponent.InvalidCreditCard', 'Credit card is invalid'));
             throw new ValidationException($result);
         }
     }

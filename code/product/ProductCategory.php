@@ -7,7 +7,7 @@
  *
  * @package shop
  */
-class ProductCategory extends Page
+class ProductCategory extends Page implements i18nEntityProvider
 {
     private static $belongs_many_many    = array(
         'Products' => 'Product',
@@ -56,7 +56,15 @@ class ProductCategory extends Page
                 )
             );
         if (self::config()->must_have_price) {
-            $products = $products->filter("BasePrice:GreaterThan", 0);
+            if (Product::has_extension('ProductVariationsExtension')) {
+                $products = $products->filterAny(array(
+                    "BasePrice:GreaterThan" => 0,
+                    "Variations.Price:GreaterThan" => 0
+                ));
+            } else {
+                $products = $products->filter("BasePrice:GreaterThan", 0);
+            }
+
         }
 
         $this->extend('updateProductsShowable', $products);
@@ -128,6 +136,21 @@ class ProductCategory extends Page
             $level--;
         }
         return implode($separator, array_reverse($parts));
+    }
+
+    public function provideI18nEntities()
+    {
+        $entities = parent::provideI18nEntities();
+
+        // add the sort option keys
+        foreach ($this->config()->sort_options as $key => $value) {
+            $entities["ProductCategory.$key"] = array(
+                $key,
+                "Sort by the '$value' field",
+            );
+        }
+
+        return $entities;
     }
 }
 

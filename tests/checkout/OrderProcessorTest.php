@@ -12,6 +12,7 @@ class OrderProcessorTest extends SapphireTest
     protected static $disable_theme  = true;
     protected static $use_draft_site = true;
     protected $processor;
+    protected $extraDataObjects = array('OrderProcessorTest_CustomOrderItem');
 
     public function setUpOnce()
     {
@@ -125,8 +126,82 @@ class OrderProcessorTest extends SapphireTest
         $this->assertEquals('James', $order->Member()->FirstName, 'member first name matches');
         $this->assertEquals('Brown', $order->Member()->Surname, 'surname matches');
         $this->assertEquals('james@jamesbrown.net.xx', $order->Member()->Email, 'email matches');
-        //not finished...need to find out how to encrypt the same
-        //$this->assertEquals($order->Member()->Password, Security::encrypt_password('jbrown'),'password matches');
+    }
+
+    public function testPlaceFailure()
+    {
+        if (!ShopTools::DBConn()->supportsTransactions()) {
+            $this->markTestSkipped(
+                'The Database doesn\'t support transactions.'
+            );
+        }
+
+        // Add the erroneous extension
+        Order::add_extension('OrderProcessorTest_PlaceFailExtension');
+
+        Config::inst()->update('Product', 'order_item', 'OrderProcessorTest_CustomOrderItem');
+
+        //log out the admin user
+        Member::currentUser()->logOut();
+        $joemember = $this->objFromFixture('Member', 'joebloggs');
+        $joemember->logIn();
+
+
+        $this->shoppingcart->add($this->mp3player);
+        $cart = ShoppingCart::curr();
+        $cart->calculate();
+
+        $this->assertDOSContains(array(
+            array('ClassName' => 'OrderProcessorTest_CustomOrderItem')
+        ), $cart->Items());
+
+        $versions = Product_OrderItem::get()->filter('OrderID', $cart->ID)->column('ProductVersion');
+
+        // The Product_OrderItem should not reference a product version while the order is not placed
+        $this->assertEquals(array(0), $versions);
+
+        $this->assertTrue($cart->has_extension('OrderProcessorTest_PlaceFailExtension'));
+
+        // Placing the order will fail.
+        $this->assertFalse(
+            $this->placeOrder(
+                'Joseph',
+                'Blog',
+                'joe@blog.net.abz',
+                '100 Melrose Place',
+                null,
+                'Martinsonville',
+                'New Mexico',
+                null,
+                'EG',
+                'newpassword',
+                'newpassword',
+                $joemember
+            ),
+            "Member order placed successfully"
+        );
+
+        $order = Order::get()->byID($cart->ID); //update order variable to db-stored version
+
+        $this->assertNotNull($this->shoppingcart->current(), "Shopping is still present");
+        $this->assertNotNull($order);
+        $this->assertNull($order->Placed);
+        $this->assertEquals($order->Status, 'Cart', 'Status should still be "Cart"');
+
+        // When order failed, everything that was written during the placement should be rolled back
+
+        $versions = Product_OrderItem::get()->filter('OrderID', $cart->ID)->column('ProductVersion');
+
+        // The Product_OrderItem should still not reference a product if the rollback worked
+        $this->assertEquals(array(0), $versions);
+
+        $this->assertEquals(
+            0,
+            OrderProcessorTest_CustomOrderItem::get()->filter('OrderID', $cart->ID)->first()->IsPlaced
+        );
+
+        Order::remove_extension('OrderProcessorTest_PlaceFailExtension');
+        $this->shoppingcart->clear(false);
     }
 
     public function testMemberOrder()
@@ -276,5 +351,39 @@ class OrderProcessorTest extends SapphireTest
         $order->write();
         $this->processor = OrderProcessor::create($order);
         return $this->processor->placeOrder();
+    }
+}
+
+// Class that writes order-item data to the DB upon placement
+class OrderProcessorTest_CustomOrderItem extends Product_OrderItem implements TestOnly
+{
+    private static $db = array(
+        'IsPlaced' => 'Boolean'
+    );
+
+    public function onPlacement()
+    {
+        parent::onPlacement();
+        $this->isPlaced = true;
+    }
+}
+
+// Extension to Order that will allow us a failed placement
+class OrderProcessorTest_PlaceFailExtension extends DataExtension implements TestOnly
+{
+    private $willFail = false;
+
+    public function onPlaceOrder()
+    {
+        // flag this order to fail
+        $this->willFail = true;
+    }
+
+    public function onAfterWrite()
+    {
+        // fail after writing, so that we can test if DB rollback works as intended
+        if($this->willFail){
+            user_error('Order failed');
+        }
     }
 }
