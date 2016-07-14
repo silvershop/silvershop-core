@@ -77,7 +77,7 @@ class Product_Image extends DataExtension
             } else {
                 return $realHeight < $height && !$upscale
                     ? $this->owner
-                    : $this->owner->ScaleWidth($height);
+                    : $this->owner->ScaleHeight($height);
             }
         }
     }
