@@ -6,6 +6,34 @@ Don't forget to run the following url commands when you upgrade the shop module:
     [yourdomain.com]/dev/tasks/ShopMigrationTask
 
 # 2.0
+## Payment Gateway Settings
+Your payment gateway parameters need to be set on the GatewayInfo class.  For example, in your `config.yml`:
+```yaml
+GatewayInfo:
+  NameOfPaymentGateway:
+    parameters:
+      api: 'XXXXX'
+      description: 'XXXXX'
+      merchant_id: 'XXXXX'
+```
+In addition, if overriding the name of your payment gateway within a language file then switch the Payment class for the Gateway class.  For example, in `en.yml`:
+```yaml
+en:
+  Gateway:
+    NameOfPaymentGateway: 'Credit Card'
+```
+## Decimal Places
+The Product pricing and measurement properties have generous decimal place settings.  Customise as required in `config.yml`.  Example below:
+```yaml
+Product:
+  db:
+    CostPrice: 'Currency(19,2)'
+    BasePrice: 'Currency(19,2)'
+    Weight: 'Decimal(12,3)'
+    Height: 'Decimal(12,3)'
+    Width: 'Decimal(12,3)'
+    Depth: 'Decimal(12,3)'
+```
 
 ## Translations no longer appear
 
