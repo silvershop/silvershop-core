@@ -7,15 +7,8 @@ Don't forget to run the following url commands when you upgrade the shop module:
 
 # 2.0
 ## Payment Gateway Settings
-Your payment gateway parameters need to be set on the GatewayInfo class.  For example, in your `config.yml`:
-```yaml
-GatewayInfo:
-  NameOfPaymentGateway:
-    parameters:
-      api: 'XXXXX'
-      description: 'XXXXX'
-      merchant_id: 'XXXXX'
-```
+Your payment gateway parameters need to be set on the GatewayInfo class.  See [Silverstripe-Omnipay 2 Upgrading Instructions](https://github.com/silverstripe/silverstripe-omnipay/blob/master/docs/changelogs/2.0.md#configuration-api) for details.
+
 In addition, if overriding the name of your payment gateway within a language file then switch the Payment class for the Gateway class.  For example, in `en.yml`:
 ```yaml
 en:
