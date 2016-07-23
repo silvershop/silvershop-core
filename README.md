@@ -11,7 +11,7 @@ We've put a strong focus on testing, and thanks to TravisCI, you can see the [bu
 [![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/silvershop/silvershop-core/badges/quality-score.png?s=d60753d6cca3817e80aca3dbb79eb5bd4140c981)](https://scrutinizer-ci.com/g/silvershop/silvershop-core/)
 [![Total Downloads](https://poser.pugx.org/silvershop/core/downloads.png)](https://packagist.org/packages/silvershop/core)
 
-* Website: http://ss-shop.org
+* Website: http://silvershop.github.io
 * Demo: http://demo.ss-shop.org
 
 Your contributions, and feedback are welcomed and appreciated. There are many ways you can [contribute to this project](https://github.com/silvershop/silvershop-core/wiki/Contributing).
@@ -67,37 +67,7 @@ Futher functionality is provided by add-on submodules.
 
 ## Add-on Sub Modules
 
-Don't reinvent the wheel! Get additional pre-built functionality with these sub modules:
-
-submodule | github | add-ons | packagist
-----------|--------|---------|----------
-burnbright/silverstripe-shop-coloredvariations | [github](http://www.github.com/burnbright/silverstripe-shop-coloredvariations) | [add-ons](http://addons.silverstripe.org/add-ons/burnbright/silverstripe-shop-coloredvariations) | [packagist](https://packagist.org/packages/burnbright/silverstripe-shop-coloredvariations)
-burnbright/silverstripe-shop-comparison | [github](http://www.github.com/burnbright/silverstripe-shop-comparison) | [add-ons](http://addons.silverstripe.org/add-ons/burnbright/silverstripe-shop-comparison) | [packagist](https://packagist.org/packages/burnbright/silverstripe-shop-comparison)
-burnbright/silverstripe-shop-discount | [github](http://www.github.com/burnbright/silverstripe-shop-discount) | [add-ons](http://addons.silverstripe.org/add-ons/burnbright/silverstripe-shop-discount) | [packagist](https://packagist.org/packages/burnbright/silverstripe-shop-discount)
-burnbright/silverstripe-shop-dispatchit | [github](http://www.github.com/burnbright/silverstripe-shop-dispatchit) | [add-ons](http://addons.silverstripe.org/add-ons/burnbright/silverstripe-shop-dispatchit) | [packagist](https://packagist.org/packages/burnbright/silverstripe-shop-dispatchit)
-burnbright/silverstripe-shop-enquiry | [github](http://www.github.com/burnbright/silverstripe-shop-enquiry) | [add-ons](http://addons.silverstripe.org/add-ons/burnbright/silverstripe-shop-enquiry) | [packagist](https://packagist.org/packages/burnbright/silverstripe-shop-enquiry)
-burnbright/silverstripe-shop-geocoding | [github](http://www.github.com/burnbright/silverstripe-shop-geocoding) | [add-ons](http://addons.silverstripe.org/add-ons/burnbright/silverstripe-shop-geocoding) | [packagist](https://packagist.org/packages/burnbright/silverstripe-shop-geocoding)
-burnbright/silverstripe-shop-googleanalytics | [github](http://www.github.com/burnbright/silverstripe-shop-googleanalytics) | [add-ons](http://addons.silverstripe.org/add-ons/burnbright/silverstripe-shop-googleanalytics) | [packagist](https://packagist.org/packages/burnbright/silverstripe-shop-googleanalytics)
-burnbright/silverstripe-shop-productfinder | [github](http://www.github.com/burnbright/silverstripe-shop-productfinder) | [add-ons](http://addons.silverstripe.org/add-ons/burnbright/silverstripe-shop-productfinder) | [packagist](https://packagist.org/packages/burnbright/silverstripe-shop-productfinder)
-burnbright/silverstripe-shop-shipping | [github](http://www.github.com/burnbright/silverstripe-shop-shipping) | [add-ons](http://addons.silverstripe.org/add-ons/burnbright/silverstripe-shop-shipping) | [packagist](https://packagist.org/packages/burnbright/silverstripe-shop-shipping)
-markguinn/silverstripe-shop-search | [github](http://www.github.com/markguinn/silverstripe-shop-search) | [add-ons](http://addons.silverstripe.org/add-ons/markguinn/silverstripe-shop-search) | [packagist](https://packagist.org/packages/markguinn/silverstripe-shop-search)
-markguinn/silverstripe-shop-extendedpricing | [github](http://www.github.com/markguinn/silverstripe-shop-extendedpricing) | [add-ons](http://addons.silverstripe.org/add-ons/markguinn/silverstripe-shop-extendedpricing) | [packagist](https://packagist.org/packages/markguinn/silverstripe-shop-extendedpricing)
-markguinn/silverstripe-shop-extendedimages | [github](http://www.github.com/markguinn/silverstripe-shop-extendedimages) | [add-ons](http://addons.silverstripe.org/add-ons/markguinn/silverstripe-shop-extendedimages) | [packagist](https://packagist.org/packages/markguinn/silverstripe-shop-extendedimages)
-markguinn/silverstripe-shop-livepub | [github](http://www.github.com/markguinn/silverstripe-shop-livepub) | [add-ons](http://addons.silverstripe.org/add-ons/markguinn/silverstripe-shop-livepub) | [packagist](https://packagist.org/packages/markguinn/silverstripe-shop-livepub)
-tylerkidd/silverstripe-shop-google-base | [github](http://www.github.com/tylerkidd/silverstripe-shop-google-base) | [add-ons](http://addons.silverstripe.org/add-ons/tylerkidd/silverstripe-shop-google-base) | [packagist](https://packagist.org/packages/tylerkidd/silverstripe-shop-google-base)
-webtorque7/silverstripe-shop-shipping-matrix | [github](http://www.github.com/webtorque7/silverstripe-shop-shipping-matrix) | [add-ons](http://addons.silverstripe.org/add-ons/webtorque7/silverstripe-shop-shipping-matrix) | [packagist](https://packagist.org/packages/webtorque7/silverstripe-shop-shipping-matrix)
-markguinn/silverstripe-shop-downloadable | [github](http://www.github.com/markguinn/silverstripe-shop-downloadable) | [add-ons](http://addons.silverstripe.org/add-ons/markguinn/silverstripe-shop-downloadable) | [packagist](https://packagist.org/packages/markguinn/silverstripe-shop-downloadable)
-markguinn/silverstripe-shop-groupedproducts | [github](http://www.github.com/markguinn/silverstripe-shop-groupedproducts) | [add-ons](http://addons.silverstripe.org/add-ons/markguinn/silverstripe-shop-groupedproducts) | [packagist](https://packagist.org/packages/markguinn/silverstripe-shop-groupedproducts)
-markguinn/silverstripe-shop-ajax | [github](http://www.github.com/markguinn/silverstripe-shop-ajax) | [add-ons](http://addons.silverstripe.org/add-ons/markguinn/silverstripe-shop-ajax) | [packagist](https://packagist.org/packages/markguinn/silverstripe-shop-ajax)
-milkyway-multimedia/ss-shop-recommended | [github](http://www.github.com/milkyway-multimedia/ss-shop-recommended) | [add-ons](http://addons.silverstripe.org/add-ons/milkyway-multimedia/ss-shop-recommended) | [packagist](https://packagist.org/packages/milkyway-multimedia/ss-shop-recommended)
-clintLandrum/silverstripe-productreviews | [github](http://www.github.com/clintLandrum/silverstripe-productreviews) | [add-ons](http://addons.silverstripe.org/add-ons/clintLandrum/silverstripe-productreviews) | [packagist](https://packagist.org/packages/clintLandrum/silverstripe-productreviews)
-milkyway-multimedia/ss-shop-inventory | [github](http://www.github.com/milkyway-multimedia/ss-shop-inventory) | [add-ons](http://addons.silverstripe.org/add-ons/milkyway-multimedia/ss-shop-inventory) | [packagist](https://packagist.org/packages/milkyway-multimedia/ss-shop-inventory)
-milkyway-multimedia/ss-shop-checkout-extras | [github](http://www.github.com/milkyway-multimedia/ss-shop-checkout-extras) | [add-ons](http://addons.silverstripe.org/add-ons/milkyway-multimedia/ss-shop-checkout-extras) | [packagist](https://packagist.org/packages/milkyway-multimedia/ss-shop-checkout-extras)
-markguinn/silverstripe-wishlist | [github](http://www.github.com/markguinn/silverstripe-wishlist) | [add-ons](http://addons.silverstripe.org/add-ons/markguinn/silverstripe-wishlist) | [packagist](https://packagist.org/packages/markguinn/silverstripe-wishlist)
-burnbright/silverstripe-simple-shop | [github](http://www.github.com/burnbright/silverstripe-simple-shop) | [add-ons](http://addons.silverstripe.org/add-ons/burnbright/silverstripe-simple-shop) | [packagist](https://packagist.org/packages/burnbright/silverstripe-simple-shop)
-burnbright/silverstripe-bootstrap-shop | [github](http://www.github.com/burnbright/silverstripe-bootstrap-shop) | [add-ons](http://addons.silverstripe.org/add-ons/burnbright/silverstripe-bootstrap-shop) | [packagist](https://packagist.org/packages/burnbright/silverstripe-bootstrap-shop)
-
-You could also search [addons](http://addons.silverstripe.org/add-ons?search=shop) or [packgist](https://packagist.org/search/?q=silverstripe%20shop) or [github](https://github.com/search?q=silverstripe+shop) for other submodules.
+Don't reinvent the wheel! Get additional pre-built functionality with sub modules. All additional functional will be tagged on [packgist](https://packagist.org/search/?q=silverstripe%20shop) or [github](https://github.com/search?q=silverstripe+shop).
 
 The code for the [shop demo site](http://demo.ss-shop.org/) is available here:
 
