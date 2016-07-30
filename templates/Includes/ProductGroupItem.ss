@@ -21,6 +21,9 @@
             <div class="add">
                 <a href="$addLink" title="<%t Product.AddToCartTitle "Add &quot;{Title}&quot; to your cart" Title=$Title %>">
                     <%t Product.AddToCart "Add to Cart" %>
+                    <% if $IsInCart %>
+                        ($Item.Quantity)
+                    <% end_if %>
                 </a>
             </div>
             <% end_if %>
