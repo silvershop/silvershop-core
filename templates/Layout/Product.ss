@@ -34,6 +34,15 @@
                 </div>
             <% end_if %>
         <% end_if %>
+        <% if $IsInCart %>
+            <p class="NumItemsInCart">
+                <% if $Item.Quantity == 1 %>
+                    <%t Product.NumItemsInCartSingular "You have this item in your cart" %>
+                <% else %>
+                    <%t Product.NumItemsInCartPlural "You have {Quantity} items in your cart" Quantity=$Item.Quantity %>
+                <% end_if %>
+            </p>
+        <% end_if %>
         $Form
     </div>
     <% if $Content %>
