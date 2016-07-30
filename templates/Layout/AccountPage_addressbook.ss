@@ -4,7 +4,7 @@
 
 <% include AccountNavigation %>
 
-<div class="typography">
+<div id="Account" class="typography">
     <h2 class="pagetitle">
         <%t AccountPage_AddressBook.Title 'Default Addresses' %>
     </h2>
