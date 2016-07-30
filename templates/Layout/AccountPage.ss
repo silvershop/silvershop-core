@@ -2,7 +2,7 @@
 <% require themedCSS("shop") %>
 <% require themedCSS("account") %>
 <% include AccountNavigation %>
-<div class="typography">
+<div id="Account" class="typography">
     $Content
     <h2 class="pagetitle"><%t AccountPage.PastOrders 'Past Orders' %></h2>
     <% with $Member %>
