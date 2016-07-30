@@ -1,16 +1,16 @@
 <html>
-	<head>
-		<% base_tag %>
-		$MetaTags
-		<% include OrderReceiptStyle %>
-	</head>
-	<body>
-		<div style="page-break-after: always;">
-			<h1 class="title">
+    <head>
+        <% base_tag %>
+        $MetaTags
+        <% include OrderReceiptStyle %>
+    </head>
+    <body>
+        <div style="page-break-after: always;">
+            <h1 class="title">
                 <%t OrderAdmin.ReceiptTitle "{SiteTitle} Order {OrderNo}" SiteTitle=$SiteConfig.Title OrderNo=$Reference %>
             </h1>
-			<% include Order %>
-		</div>
-	</body>
+            <% include Order %>
+        </div>
+    </body>
 </html>
 

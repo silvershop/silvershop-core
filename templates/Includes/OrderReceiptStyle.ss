@@ -1,12 +1,12 @@
 <style>
     /** Global Resets for Email Design **/
     /** Reference: https://github.com/seanpowell/Email-Boilerplate/blob/master/email.html **/
-    
+
     html {
         font-size: 1em;
         font-family: Tahoma, Verdana, sans-serif;
     }
-    
+
     body, table#container {
         font-size: 12px;
         line-height: 100% !important;
@@ -19,7 +19,7 @@
         -webkit-text-size-adjust: 100%;
         -ms-text-size-adjust:100%;
     }
-    
+
     table td {border-collapse: collapse;}  /* Outlook 07 & 10 padding issue */
 
     table {     /* Remove spacing around Outlook 07, 10 tables */
@@ -31,13 +31,13 @@
     img {
         border:0;
         outline:none;
-        text-decoration:none; 
+        text-decoration:none;
         -ms-interpolation-mode: bicubic;
         display:block;
     }
 
     a img { border: none; }
-    
+
     table#container {
         margin: auto;
     }
@@ -55,7 +55,7 @@
         border-bottom:1px solid #CDDDDD;
         text-transform:uppercase;
     }
-    
+
     #Content {
         text-align:left;
         margin:auto;
@@ -68,15 +68,15 @@
         table#SenderTable .meta{
             width:50%;
         }
-    
+
     table#MetaTable{
         margin-left:auto;
     }
-        
+
     table#MetaTable .label{
         font-weight:bold;
     }
-    
+
     table.infotable{
         border:1px solid #CDDDDD;
         border-collapse:collapse;
@@ -93,7 +93,7 @@
         color: #DC1313;
         border: 4px solid #FF7373;
         background: #FED0D0;
-    }       
+    }
     table.infotable h3 {
         color: #4EA3D7;
         font-size: 15px;
@@ -139,8 +139,8 @@
     table.infotable .modifierRow,
     table.infotable .threeColHeader{
         text-align:right;
-    }           
-    
+    }
+
     table.infotable .right {
         text-align:right;
     }
@@ -151,7 +151,7 @@
     table.infotable th {
         text-align:left;
     }
-    
+
     #ShippingTable td,
     #ShippingTable th{
         width:50%;
