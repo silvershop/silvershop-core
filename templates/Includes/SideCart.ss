@@ -34,6 +34,6 @@
 			<% end_loop %>
 		<% end_with %>
 	<% else %>
-		<p class="noItems"><%t ShoppingCart.NoItems "There are no items in your cart" %>.</p>
+		<p class="noItems"><%t ShoppingCart.NoItems "There are no items in your cart." %></p>
 	<% end_if %>
 </div>
