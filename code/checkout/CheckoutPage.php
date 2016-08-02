@@ -116,7 +116,7 @@ class CheckoutPage_Controller extends Page_Controller
 
         /** @var CheckoutComponentConfig $config */
         $config = Injector::inst()->create("CheckoutComponentConfig", ShoppingCart::curr());
-        $form = new PaymentForm($this, 'OrderForm', $config);
+        $form = PaymentForm::create($this, 'OrderForm', $config);
 
         // Normally, the payment is on a second page, either offsite or through /checkout/payment
         // If the site has customised the checkout component config to include an onsite payment
@@ -124,7 +124,7 @@ class CheckoutPage_Controller extends Page_Controller
         // will also check this and process payment if needed.
         if ($config->getComponentByType('OnsitePaymentCheckoutComponent')) {
             $form->setActions(
-                new FieldList(
+                FieldList::create(
                     FormAction::create('checkoutSubmit', _t('CheckoutForm.SubmitPayment', 'Submit Payment'))
                 )
             );
