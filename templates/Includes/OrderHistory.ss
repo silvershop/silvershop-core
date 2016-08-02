@@ -25,7 +25,7 @@
             <td>$StatusI18N</td>
             <td>
                 <a class="btn btn-mini btn-primary" href="$Link">
-                    <i class="icon icon-white icon-eye-open"></i> <%t Shop.View 'view' %>
+                    <i class="icon icon-white icon-eye-open fa fa-eye"></i> <%t Shop.View 'view' %>
                 </a>
             </td>
         </tr>
