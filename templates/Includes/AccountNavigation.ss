@@ -8,25 +8,25 @@
 
             <li>
                 <a href="{$Link}">
-                    <i class="icon icon-list"></i><%t AccountPage.PastOrders 'Past Orders' %>
+                    <i class="icon icon-list fa fa-list"></i><%t AccountPage.PastOrders 'Past Orders' %>
                 </a>
             </li>
 
             <li>
                 <a href="{$Link('editprofile')}">
-                    <i class="icon icon-user"></i><%t AccountPage.EditProfile 'Edit Profile' %>
+                    <i class="icon icon-user fa fa-user"></i><%t AccountPage.EditProfile 'Edit Profile' %>
                 </a>
             </li>
 
             <li>
                 <a href="{$Link('addressbook')}">
-                    <i class="icon icon-book"></i><%t AccountPage.AddressBook 'Address Book' %>
+                    <i class="icon icon-book fa fa-book"></i><%t AccountPage.AddressBook 'Address Book' %>
                 </a>
             </li>
 
             <li>
                 <a href="Security/logout">
-                    <i class="icon icon-off"></i><%t AccountPage.LogOut 'Log Out' %>
+                    <i class="icon icon-off fa fa-sign-out"></i><%t AccountPage.LogOut 'Log Out' %>
                 </a>
             </li>
 
