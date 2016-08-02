@@ -150,6 +150,13 @@ class Order extends DataObject
      */
     private static $hidden_status = array('Cart');
 
+
+    /**
+     * Status for logging changes
+     * @var array
+     */
+    private static $log_status = array();
+
     /**
      * Flags to determine when an order can be cancelled.
      */
@@ -712,6 +719,31 @@ class Order extends DataObject
         $this->Payments()->removeAll();
 
         parent::onBeforeDelete();
+    }
+
+    public function onAfterWrite()
+    {
+        parent::onAfterWrite();
+
+        /**
+         * create an OrderStatusLog
+         */
+        if (in_array($this->Status, self::config()->log_status)) {
+            $log = OrderStatusLog::create();
+
+            // populate OrderStatusLog
+            $log->Title = _t(
+                'ShopEmail.StatusChanged',
+                'Status for order #{OrderNo} changed to "{OrderStatus}"',
+                '',
+                array('OrderNo' => $this->Reference, 'OrderStatus' => $this->getStatusI18N())
+            );
+            $log->Note = _t('ShopEmail.StatusChange' . $this->Status . 'Note');
+            $log->OrderID = $this->ID;
+            $log->SentToCustomer = true; // triggers the sending of an email.  See OrderStatusLog onAfterWrite function.
+            $this->extend('updateOrderStatusLog', $log);
+            $log->write();
+        }
     }
 
     public function debug()
