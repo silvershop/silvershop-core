@@ -42,6 +42,6 @@ class OrderNotificationTest extends SapphireTest
     public function testStatusUpdate()
     {
         $this->notifier->sendStatusChange('test subject');
-        $this->assertEmailSent('test@example.com', 'admin@ss-shop.org', 'test subject');
+        $this->assertEmailSent('test@example.com', 'admin@ss-shop.org', _t('ShopEmail.StatusChangeSubject') . 'test subject');
     }
 }

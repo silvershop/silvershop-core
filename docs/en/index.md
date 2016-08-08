@@ -18,6 +18,7 @@ This has been left for the store owner to collaborate with their developer.
 
 * [Configuration](02_Customisation/Configuration.md) via your mysite.config.yml file.
 * [Emails](02_Customisation/Emails.md)
+* [Order Status Email Notifications](02_Customisation/OrderStatusEmailNotifications.md) - send emails upon order status changes
 * [Sub-modules - stock, discounts ...](02_Customisation/Submodules.md)
 * [Templates and Theming](02_Customisation/Templates_and_Themes.md)
 * [Hooks](02_Customisation/Hooks.md)

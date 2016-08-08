@@ -158,11 +158,9 @@ class OrderEmailNotifier
     }
 
     /**
-     * Send a message to the client containing the latest
-     * note of {@link OrderStatusLog} and the current status.
+     * Send an email to the customer containing the latest note of {@link OrderStatusLog} and the current status.
      *
-     * Used in {@link OrderReport}.
-     *
+     * @param string $title Subject for email
      * @param string $note Optional note-content (instead of using the OrderStatusLog)
      */
     public function sendStatusChange($title, $note = null)
@@ -178,24 +176,24 @@ class OrderEmailNotifier
                 $title = $latestLog->Title;
             }
         }
-        $member = $this->order->Member();
+
         if (Config::inst()->get('OrderProcessor', 'receipt_email')) {
             $adminEmail = Config::inst()->get('OrderProcessor', 'receipt_email');
         } else {
             $adminEmail = Email::config()->admin_email;
         }
+
         $e = Injector::inst()->create('ShopEmail');
         $e->setTemplate('Order_StatusEmail');
         $e->populateTemplate(
             array(
-                "Order"  => $this->order,
-                "Member" => $member,
-                "Note"   => $note,
+                "Order" => $this->order,
+                "Note" => $note
             )
         );
         $e->setFrom($adminEmail);
-        $e->setSubject($title);
-        $e->setTo($member->Email);
+        $e->setSubject(_t('ShopEmail.StatusChangeSubject') . $title);
+        $e->setTo($this->order->getLatestEmail());
         $e->send();
     }
 

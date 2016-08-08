@@ -1,127 +1,129 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html>
+<!-- Reference: https://github.com/mailgun/transactional-email-templates -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
     <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" >
+        <meta name="viewport" content="width=device-width" />
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <title><%t ShopEmail.StatusChangeTitle "Shop Status Change" %></title>
-        <style>
-            /** Global resetting for Design **/
-                html {
-                    font-size:1em;
-                    font-family:Arial,Helvetica,sans-serif;
-                }
-                body {
-                    font-size:62.5%;
-                    padding:0;
-                    margin:0;
-                }
-                a img { border:0; }
-                #Content {
-                    text-align:left;
-                    margin:auto;
-                    padding-left:20px;
-                }
-                #Content td {
-                }
-                #Content h1.PageTitle {
-                    padding:5px;
-                    font-size:14px;
-                }
-                #Content .footer td {
-                    padding:10px;
-                }
-                #Content .footer td.right{ text-align:right;}
-                #Content .typography { padding:0px 10px; }
-                #Content .typography a {
-                    font-size:1em;
-                    text-decoration:underline;
-                }
-                    #Content .typography a:hover {
-                        text-decoration:none;
-                    }
-                #Content .typography ul { padding:2px 15px;}
-                #Content .typography ul li { padding:2px 5px;}
-                #Content .typography p {
-                    margin:0.75em 0em;
-                    font-size:12px;
-                }
-#InformationTable {
-    border-top:1px solid #ccc;
-    border-bottom:1px solid #ccc;
-    width:600px;
-    background:#fff;
-}
-    #InformationTable tr.Total td {
-        font-weight:bold;
-        font-size:14px;
-        color:#006e7f;
-        text-transform:uppercase;
-    }
-        #InformationTable tr td,
-        #InformationTable tr th {
-            padding:5px;
-        }
-            #InformationTable td {
-                font-size:12px;
+        <style type="text/css">
+            table {     /* Remove spacing around Outlook 07, 10 tables */
+                border-collapse:collapse;
+                mso-table-lspace:0pt;
+                mso-table-rspace:0pt;
             }
-            #InformationTable td.ordersummary {
-                font-size:1em;
-                border-bottom:1px solid #ccc;
+            table td {border-collapse: collapse;}  /* Outlook 07 & 10 padding issue */
+            tr {
+                box-sizing: border-box;
+                margin: 0;
             }
-            #InformationTable th {
-                font-weight:bold;
-                font-size:14px;
-                color:#006e7f;
+            td {
+                box-sizing: border-box;
+                margin: 0;
+                vertical-align: top;
             }
-            #InformationTable tr td a {
-                color:#006e7f;
-                text-decoration:underline;
+            body, table#container {
+                font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+                background-color: #f6f6f6;
+                font-size: 14px;
+                line-height: 1.6em;
+                padding: 0;
+                margin: auto;
+                width: 100% !important;
+                height: 100%;
+                box-sizing: border-box;
+                -webkit-font-smoothing: antialiased;
+                -webkit-text-size-adjust: 100%;
+                -ms-text-size-adjust:100%;
             }
-                #InformationTable tr td a:hover {
-                    text-decoration:none;
+            table#container > tr > td {
+                padding: 0 5px 0 5px;
+            }
+            td.max-width {
+                max-width: 600px !important;
+                display: block !important;
+                clear: both !important;
+                margin: 0 auto;
+            }
+
+            table.main {
+                border: 1px solid #e9e9e9;
+                border-radius: 3px;
+                background-color: #fff;
+                margin: 0;
+            }
+            td.banner {
+                color: #fff;
+                background-color: #659726;
+                font-size: 14px;
+                font-weight: 500;
+                text-align: center;
+                border-radius: 3px 3px 0 0;
+                padding: 20px;
+            }
+            td#Content {
+                padding: 20px;
+                text-align:left;
+                margin:auto;
+            }
+            td.content-block {
+                padding: 0 0 20px;
+            }
+            @media only screen and (max-width: 640px) {
+                body, table#container {
+                    padding: 0 !important;
+                    width: 100% !important;
                 }
-    #InformationTable .right {
-        text-align:right;
-    }
-    #InformationTable .center {
-        text-align:center;
-    }
-    #InformationTable .left {
-        text-align:left;
-    }
+                td#Content {
+                    padding: 10px !important;
+                }
+            }
         </style>
     </head>
     <body>
-        <table id="container" cellpadding="0" cellspacing="0" border="0" >
+        <table id="container">
             <tr>
-                <td>
-                    <table id="Content" cellspacing="0" cellpadding="0" summary="Email Information">
-                        <thead>
+                <td class="max-width">
+                    <table class="main" width="100%" cellpadding="0" cellspacing="0">
+                        <tbody>
                             <tr>
-                                <th scope="col" colspan="2">
-                                    <h1><%t ShopEmail.StatusChangeTitle "Shop Status Change" %></h1>
-                                </th>
-                            </tr>
-                            <tr>
-                                <td scope="col">
-                                    <h1 class="PageTitle">$Subject</h1>
+                                <td class="banner" align="center" valign="top">
+                                    <strong><%t ShopEmail.StatusChangeTitle 'Shop Status Change' %></strong>
                                 </td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            <% if $Order %>
-                            <% with $Order %>
-                                <tr>
-                                    <td scope="row" colspan="2" class="typography">
-                                        <p>
-                                            <%t ShopEmail.StatusChanged 'Status for order #{OrderNo} changed to "{OrderStatus}"' OrderNo=$Reference OrderStatus=$StatusI18N %>
-                                        </p>
-                                    </td>
-                                </tr>
-                            <% end_with %>
-                            <% end_if %>
                             <tr>
-                                <td scope="row" colspan="2" class="typography">
-                                    <p>$Note</p>
+                                <td id="Content" valign="top">
+                                    <table width="100%" cellpadding="0" cellspacing="0">
+                                        <% with Order %>
+                                            <tr>
+                                                <td class="content-block" valign="top">
+                                                    <%t LeftAndMain_Menu_ss.Hello %> <% if $FirstName %>$FirstName<% else %>$Member.FirstName<% end_if %>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="content-block" valign="top">
+                                                    <%t ShopEmail.StatusChanged 'Status for order #{OrderNo} changed to "{OrderStatus}"' OrderNo=$Reference OrderStatus=$StatusI18N %>
+                                                </td>
+                                            </tr>
+                                        <% end_with %>
+                                        <tr>
+                                            <td class="content-block" valign="top">
+                                                $Note
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="content-block" valign="top">
+                                                <%t ShopEmail.Regards "Kind regards" %>
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <td class="content-block" valign="top">
+                                                $SiteConfig.Title<br/>
+                                                $from<br/>
+                                                <%t ShopEmail.PhoneNumber "PhoneNumber" %>
+                                            </td>
+                                        </tr>
+                                    </table>
                                 </td>
                             </tr>
                         </tbody>
