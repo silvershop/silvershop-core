@@ -25,21 +25,27 @@ class OrderStatusLog extends DataObject
     );
 
     private static $searchable_fields = array(
-        "Note"           => "PartialMatchFilter",
-        'DispatchTicket' => 'PartialMatchFilter',
-        'PaymentCode'    => 'PartialMatchFilter',
-        'PaymentOK',
+        'Order.Reference' => array(
+            'filter' => 'PartialMatchFilter',
+            'title' => 'Order No'
+        ),
+        'Order.FirstName' => array(
+            'filter' => 'PartialMatchFilter',
+            'title' => 'First Name'
+        ),
+        'Order.Email' => array(
+            'filter' => 'PartialMatchFilter',
+            'title' => 'Email'
+        )
     );
 
-    private static $summary_fields    = array(
-        "Created"        => "Date",
-        "OrderID"        => "OrderID",
-        "Title"          => "Title",
-        "SentToCustomer" => "SentToCustomer",
-    );
-
-    private static $field_labels      = array(
-        "SentToCustomer" => "Send this update as a message to the customer",
+    private static $summary_fields = array(
+        'Order.Reference' => 'Order No',
+        'Created' => 'Created',
+        'Order.Name' => 'Name',
+        'Order.LatestEmail' => 'Email',
+        'Title' => 'Title',
+        'SentToCustomer' => 'Emailed'
     );
 
     private static $singular_name     = "Order Log Entry";

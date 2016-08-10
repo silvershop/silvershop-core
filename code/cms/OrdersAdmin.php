@@ -20,22 +20,28 @@ class OrdersAdmin extends ModelAdmin
         'Order' => array(
             'title' => 'Orders',
         ),
+        'OrderStatusLog'
     );
+
+    private static $model_importers = array();
 
     /**
      * Restrict list to non-hidden statuses
      */
     public function getList()
     {
-        $context = $this->getSearchContext();
-        $params = $this->request->requestVar('q');
-        //TODO update params DateTo, to include the day, ie 23:59:59
-        $list = $context->getResults($params)
-            ->exclude("Status", Order::config()->hidden_status); //exclude hidden statuses
+        if ($this->modelClass == "Order") {
+            $context = $this->getSearchContext();
+            $params = $this->request->requestVar('q');
+            //TODO update params DateTo, to include the day, ie 23:59:59
+            $list = $context->getResults($params)
+                ->exclude("Status", Order::config()->hidden_status); //exclude hidden statuses
 
-        $this->extend('updateList', $list);
-
-        return $list;
+            $this->extend('updateList', $list);
+            return $list;
+        } else {
+            return parent::getList();
+        }
     }
 
     /**
@@ -48,6 +54,11 @@ class OrdersAdmin extends ModelAdmin
             $form->Fields()->fieldByName("Order")->getConfig()
                 ->getComponentByType('GridFieldDetailForm')
                 ->setItemRequestClass('OrderGridFieldDetailForm_ItemRequest'); //see below
+        }
+        if ($this->modelClass == "OrderStatusLog") {
+            // Remove add new button
+            $config = $form->Fields()->fieldByName("OrderStatusLog")->getConfig();
+            $config->removeComponentsByType($config->getComponentByType('GridFieldAddNewButton'));
         }
 
         return $form;
@@ -91,7 +102,7 @@ class OrderGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemReque
         $form = parent::ItemEditForm();
         $printlink = $this->Link('printorder') . "?print=1";
         $printwindowjs = <<<JS
-			window.open('$printlink', 'print_order', 'toolbar=0,scrollbars=1,location=1,statusbar=0,menubar=0,resizable=1,width=800,height=600,left = 50,top = 50');return false;
+            window.open('$printlink', 'print_order', 'toolbar=0,scrollbars=1,location=1,statusbar=0,menubar=0,resizable=1,width=800,height=600,left = 50,top = 50');return false;
 JS;
         $form->Actions()->push(
             LiteralField::create(
