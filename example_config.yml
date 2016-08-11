@@ -65,6 +65,12 @@ Order:
   # Change / add order status, added Refunded
   db:
     Status: Enum('Unpaid,Paid,Processing,Refunded,Sent,Complete,AdminCancelled,MemberCancelled,Cart','Cart')
+  # For logging order status changes & emailing notifications to customers
+  log_status:
+    - Processing
+    - Sent
+    - MemberCancelled
+    - AdminCancelled
 
 OrderManipulation:
   allow_cancelling: true
