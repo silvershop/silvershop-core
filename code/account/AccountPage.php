@@ -162,7 +162,9 @@ class AccountPage_Controller extends Page_Controller
             );
             $form = Form::create($this, "DefaultAddressForm", $fields, $actions);
             $form->loadDataFrom($this->member);
-
+            
+            $this->extend('updateDefaultAddressForm', $form);
+            
             return $form;
         }
 
