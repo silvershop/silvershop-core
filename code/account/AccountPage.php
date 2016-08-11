@@ -162,7 +162,7 @@ class AccountPage_Controller extends Page_Controller
             );
             $form = Form::create($this, "DefaultAddressForm", $fields, $actions);
             $form->loadDataFrom($this->member);
-
+            $this->extend('updateDefaultAddressForm', $form);
             return $form;
         }
 
@@ -274,7 +274,10 @@ class AccountPage_Controller extends Page_Controller
      */
     public function EditAccountForm()
     {
-        return ShopAccountForm::create($this, 'EditAccountForm');
+        $form = ShopAccountForm::create($this, 'EditAccountForm');
+        $this->extend('updateEditAccountForm', $form);
+
+        return $form;
     }
 
     public function ChangePasswordForm()
