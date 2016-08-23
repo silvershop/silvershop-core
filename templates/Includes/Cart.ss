@@ -1,12 +1,14 @@
 <% require themedCSS(cart,shop) %>
 <% if $Items %>
     <table class="cart" summary="<%t ShoppingCart.TableSummary "Current contents of your cart." %>">
-        <colgroup class="image"/>
-        <colgroup class="product title"/>
-        <colgroup class="unitprice" />
-        <colgroup class="quantity" />
-        <colgroup class="total"/>
-        <colgroup class="remove"/>
+        <colgroup>
+            <col class="image"/>
+            <col class="product title"/>
+            <col class="unitprice" />
+            <col class="quantity" />
+            <col class="total"/>
+            <col class="remove"/>
+        </colgroup>
         <thead>
             <tr>
                 <th scope="col"></th>
