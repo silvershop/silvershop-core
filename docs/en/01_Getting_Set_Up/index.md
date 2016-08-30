@@ -6,7 +6,7 @@ Follow the standard [SilverStripe installation guide](http://docs.silverstripe.o
 
 ## Install Shop
 
-[Install the shop module](01_Getting_Set_Up/01_Installation.md).
+[Install the shop module](01_Getting_Set_Up/01_InstallationConfiguration.md).
 
 ## Shipping and Tax
 

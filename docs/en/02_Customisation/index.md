@@ -1,6 +1,4 @@
-It is most likely that you as a website developer/designer will want to customise the shop module to look and work as your client would like.
-
-There are a number of configuration options to be set in your _config files. See [Configuration](02_Customisation/Configuration.md)
+It is most likely that you as a website developer/designer will want to customise the shop module to look and work as your client would like.  There are a number of configuration options to be set in your _config files.
 
 [Recipes](02_Customisation/01_Recipes) contains a number of instructions for implementing specific features.
 
