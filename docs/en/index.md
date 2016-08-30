@@ -7,7 +7,7 @@ This has been left for the store owner to collaborate with their developer.
 
 ## [Getting Set Up](01_Getting_Set_Up) < Start Here
 
-* [Installation & Configuration](01_Getting_Set_Up/01_Installation.md) - requirements, instructions
+* [Installation & Configuration](01_Getting_Set_Up/01_InstallationConfiguration.md) - requirements, instructions
 * [Upgrading](01_Getting_Set_Up/02_Upgrading.md)
 * [Troubleshooting](01_Getting_Set_Up/03_Troubleshooting.md)
 * [Payment](01_Getting_Set_Up/06_Payment.md)
@@ -16,7 +16,6 @@ This has been left for the store owner to collaborate with their developer.
 
 ## [Customisation](02_Customisation)
 
-* [Configuration](02_Customisation/Configuration.md) via your mysite.config.yml file.
 * [Emails](02_Customisation/Emails.md)
 * [Order Status Email Notifications](02_Customisation/OrderStatusEmailNotifications.md) - send emails upon order status changes
 * [Sub-modules - stock, discounts ...](02_Customisation/Submodules.md)
