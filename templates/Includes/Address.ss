@@ -1,4 +1,5 @@
 <% if $Name %>$Name<br/><% end_if %>
+<% if $Company %>$Company<br/><% end_if %>
 <% if $Address %>$Address<br/><% end_if %>
 <% if $AddressLine2 %>$AddressLine2<br/><% end_if %>
 <% if $City %>$City<br/><% end_if %>
