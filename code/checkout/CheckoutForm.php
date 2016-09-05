@@ -6,14 +6,23 @@ class CheckoutForm extends Form
 
     protected $redirectlink;
 
+    private static $submit_button_text;
+
     public function __construct($controller, $name, CheckoutComponentConfig $config)
     {
         $this->config = $config;
         $fields = $config->getFormFields();
+
+        if($text = $this->config()->get('submit_button_text')) {
+            $submitBtnText = $text;
+        } else {
+            $submitBtnText = _t('CheckoutPage.ProceedToPayment', 'Proceed to payment');
+        }
+
         $actions = FieldList::create(
             FormAction::create(
                 'checkoutSubmit',
-                _t('CheckoutPage.ProceedToPayment', 'Proceed to payment')
+                $submitBtnText
             )
         );
         $validator = CheckoutComponentValidator::create($this->config);
