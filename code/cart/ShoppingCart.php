@@ -121,7 +121,7 @@ class ShoppingCart extends Object
 
             return $this->error(_t("ShoppingCart.ProductNotFound", "Product not found."));
         }
-        $item = $this->findOrMakeItem($buyable, $filter);
+        $item = $this->findOrMakeItem($buyable, $quantity, $filter);
         if (!$item) {
 
             return false;
@@ -193,7 +193,7 @@ class ShoppingCart extends Object
             return $this->remove($buyable, $quantity, $filter);
         }
         $order = $this->findOrMake();
-        $item = $this->findOrMakeItem($buyable, $filter);
+        $item = $this->findOrMakeItem($buyable, $quantity, $filter);
         if (!$item) {
 
             return false;
@@ -215,7 +215,7 @@ class ShoppingCart extends Object
      *
      * @return OrderItem the found or created item
      */
-    private function findOrMakeItem(Buyable $buyable, $filter = array())
+    private function findOrMakeItem(Buyable $buyable, $quantity = 1, $filter = array())
     {
         $order = $this->findOrMake();
 
@@ -230,7 +230,7 @@ class ShoppingCart extends Object
 
             $buyable = $this->getCorrectBuyable($buyable);
 
-            if (!$buyable->canPurchase($member)) {
+            if (!$buyable->canPurchase($member, $quantity)) {
                 return $this->error(
                     _t(
                         'ShoppingCart.CannotPurchase',
