@@ -16,9 +16,24 @@
         <% else %>
             <div class="noimage"><%t Product.NoImage "no image" %></div>
         <% end_if %>
-        <% if $InternalItemID %><p class="InternalItemID"><%t Product.Code "Product Code" %> : {$InternalItemID}</p><% end_if %>
-        <% if $Model %><p class="Model"><%t Product.Model "Model" %> : $Model.XML</p><% end_if %>
-        <% if $Size %><p class="Size"><%t Product.Size "Size" %> : $Size.XML</p><% end_if %>
+        <% if $InternalItemID %>
+            <p class="InternalItemID">
+                <span class="title"><%t Product.Code "Product Code" %>:</span>
+                <span class="value">{$InternalItemID}</span>
+            </p>
+        <% end_if %>
+        <% if $Model %>
+            <p class="Model">
+                <span class="title"><%t Product.Model "Model" %>:</span>
+                <span class="value">$Model.XML</span>
+            </p>
+        <% end_if %>
+        <% if $Size %>
+            <p class="Size">
+                <span class="title"><%t Product.Size "Size" %>:</span>
+                <span class="value">$Size.XML</span>
+            </p>
+        <% end_if %>
         <% if $PriceRange %>
             <div class="price">
                 <strong class="value">$PriceRange.Min.Nice</strong>
