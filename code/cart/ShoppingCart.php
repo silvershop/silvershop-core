@@ -210,8 +210,9 @@ class ShoppingCart extends Object
     /**
      * Finds or makes an order item for a given product + filter.
      *
-     * @param        id or Buyable $buyable
-     * @param string $filter
+     * @param Buyable $buyable the buyable
+     * @param int $quantity quantity to add
+     * @param array $filter
      *
      * @return OrderItem the found or created item
      */
@@ -242,7 +243,7 @@ class ShoppingCart extends Object
                 //TODO: produce a more specific message
             }
 
-            $item = $buyable->createItem(1, $filter);
+            $item = $buyable->createItem($quantity, $filter);
             $item->OrderID = $order->ID;
             $item->write();
 
@@ -258,9 +259,9 @@ class ShoppingCart extends Object
      * Finds an existing order item.
      *
      * @param Buyable $buyable
-     * @param string $filter
+     * @param array $filter
      *
-     * @return the item requested, or false
+     * @return OrderItem the item requested, or false
      */
     public function get(Buyable $buyable, $customfilter = array())
     {
