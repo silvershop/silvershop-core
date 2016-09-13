@@ -54,6 +54,12 @@ class OrderStatusLog extends DataObject
 
     private static $default_sort      = "\"Created\" DESC";
 
+    /**
+     * Flag indicating that an order-status email should be sent
+     * @var bool
+     */
+    protected $flagSendEmail = false;
+
     public function canDelete($member = null)
     {
         return false;
@@ -79,6 +85,11 @@ class OrderStatusLog extends DataObject
         if (!$this->Title) {
             $this->Title = "Order Update";
         }
+
+        if (!$this->SentToCustomer) {
+            $this->flagSendEmail = true;
+            $this->SentToCustomer = true;
+        }
     }
 
     public function validate()
@@ -92,9 +103,11 @@ class OrderStatusLog extends DataObject
 
     public function onAfterWrite()
     {
-        if ($this->SentToCustomer) {
-            parent::onAfterWrite();
+        parent::onAfterWrite();
+
+        if ($this->flagSendEmail) {
             OrderEmailNotifier::create($this->Order())->sendStatusChange($this->Title, $this->Note);
+            $this->flagSendEmail = false;
         }
     }
 

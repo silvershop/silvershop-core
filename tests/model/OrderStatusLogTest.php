@@ -193,6 +193,58 @@ class OrderStatusLogTest extends SapphireTest
         );
     }
 
+    public function testEmailSentOnce()
+    {
+        $order = $this->objFromFixture("Order", "cart1");
+        $member = $this->objFromFixture('Member', 'jeremyperemy');
+        $order->MemberID = $member->ID;
+
+        $order->Status = 'Processing';
+        $order->write();
+
+        $logEntry = OrderStatusLog::get()->sort('ID')->last();
+
+        $this->assertEquals(
+            OrderStatusLog::get()->count(),
+            1,
+            "An item has been added to the status-log"
+        );
+
+        $this->assertEmailSent(
+            'jeremy@example.com',
+            'shopadmin@example.com',
+            _t('ShopEmail.StatusChangeSubject') . $logEntry->Title
+        );
+
+        // clear sent emails
+        $this->mailer->clearEmails();
+
+        // force another write on the order
+        $order->Notes = 'Random Test Notes';
+        $order->write();
+
+        // Status hasn't changed, so there should be just one log entry still
+        $this->assertEquals(
+            OrderStatusLog::get()->count(),
+            1,
+            "An item has been added to the status-log"
+        );
+
+        $this->assertFalse(
+            (bool)$this->findEmail('jeremy@example.com', 'shopadmin@example.com'),
+            'No additional email should be sent'
+        );
+
+        // Try re-writing the Log entry
+        $logEntry->Note = 'Some random notes';
+        $logEntry->write();
+
+        $this->assertFalse(
+            (bool)$this->findEmail('jeremy@example.com', 'shopadmin@example.com'),
+            'No additional email should be sent'
+        );
+    }
+
     public function testOrderPlacedByGuest()
     {
         // start a new order
