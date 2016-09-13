@@ -88,7 +88,7 @@ class SteppedCheckoutTest extends FunctionalTest
         $data = array(
             'FirstName'              => 'Michael',
             'Surname'                => 'Black',
-            'Email'                  => 'mb@blahmail.com',
+            'Email'                  => 'mb@example.com',
             'Password'               => array(
                 '_Password'        => 'pass1234',
                 '_ConfirmPassword' => 'pass1234',
@@ -97,7 +97,7 @@ class SteppedCheckoutTest extends FunctionalTest
         );
         $response = $this->post('/checkout/CreateAccountForm', $data); //redirect to next step
 
-        $member = ShopMember::get_by_identifier("mb@blahmail.com");
+        $member = ShopMember::get_by_identifier("mb@example.com");
         $this->assertTrue((boolean)$member, "Check new account was created");
         $this->assertEquals('Michael', $member->FirstName);
         $this->assertEquals('Black', $member->Surname);
@@ -110,7 +110,7 @@ class SteppedCheckoutTest extends FunctionalTest
         $data = array(
             'FirstName'                => 'Pauline',
             'Surname'                  => 'Richardson',
-            'Email'                    => 'p.richardson@mail.co',
+            'Email'                    => 'p.richardson@example.com',
             'action_setcontactdetails' => 1,
         );
         $response = $this->post('/checkout/ContactDetailsForm', $data);

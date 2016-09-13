@@ -16,7 +16,7 @@ class OrderNotificationTest extends SapphireTest
     public function setUp()
     {
         parent::setUp();
-        Config::inst()->update('Email', 'admin_email', 'admin@ss-shop.org');
+        Config::inst()->update('Email', 'admin_email', 'shop-admin@example.com');
         $this->order = $this->objFromFixture('Order', 'paid');
         $this->notifier = OrderEmailNotifier::create($this->order);
     }
@@ -24,24 +24,24 @@ class OrderNotificationTest extends SapphireTest
     public function testAdminNotification()
     {
         $this->notifier->sendAdminNotification();
-        $this->assertEmailSent('admin@ss-shop.org', 'admin@ss-shop.org');
+        $this->assertEmailSent('shop-admin@example.com', 'shop-admin@example.com');
     }
 
     public function testConfirmation()
     {
         $this->notifier->sendConfirmation();
-        $this->assertEmailSent('test@example.com', 'admin@ss-shop.org');
+        $this->assertEmailSent('test@example.com', 'shop-admin@example.com');
     }
 
     public function testReceipt()
     {
         $this->notifier->sendReceipt();
-        $this->assertEmailSent('test@example.com', 'admin@ss-shop.org');
+        $this->assertEmailSent('test@example.com', 'shop-admin@example.com');
     }
 
     public function testStatusUpdate()
     {
         $this->notifier->sendStatusChange('test subject');
-        $this->assertEmailSent('test@example.com', 'admin@ss-shop.org', _t('ShopEmail.StatusChangeSubject') . 'test subject');
+        $this->assertEmailSent('test@example.com', 'shop-admin@example.com', _t('ShopEmail.StatusChangeSubject') . 'test subject');
     }
 }

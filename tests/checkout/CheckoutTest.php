@@ -69,7 +69,7 @@ class CheckoutTest extends SapphireTest
             array(
                 'FirstName' => 'Jane',
                 'Surname'   => 'Smith',
-                'Email'     => 'jane@smith.net',
+                'Email'     => 'jane@example.com',
                 'Password'  => 'janesmith2012',
             )
         );
@@ -85,7 +85,7 @@ class CheckoutTest extends SapphireTest
             array(
                 'FirstName' => 'Susan',
                 'Surname'   => 'Jackson',
-                'Email'     => 'susan@jmail.com',
+                'Email'     => 'susan@example.com',
                 'Password'  => 'jaleho3htgll',
             )
         );
@@ -106,7 +106,7 @@ class CheckoutTest extends SapphireTest
             array(
                 'FirstName' => 'Susan',
                 'Surname'   => 'Jackson',
-                'Email'     => 'susan@jmail.com',
+                'Email'     => 'susan@example.com',
                 'Password'  => 'jaleho3htgll',
             )
         );
@@ -124,7 +124,7 @@ class CheckoutTest extends SapphireTest
             array(
                 'FirstName' => 'Some',
                 'Surname'   => 'Body',
-                'Email'     => 'somebody@somedomain.com',
+                'Email'     => 'somebody@example.com',
                 'Password'  => 'pass1234',
             )
         );
@@ -142,7 +142,7 @@ class CheckoutTest extends SapphireTest
             array(
                 'FirstName' => 'Jim',
                 'Surname'   => 'Smith',
-                'Email'     => 'jim@smith.com',
+                'Email'     => 'jim@example.com',
             )
         );
         $this->fail("Exception was expected here");
@@ -150,7 +150,7 @@ class CheckoutTest extends SapphireTest
 
     /**
      * @expectedException ValidationException
-     * @expectedExceptionMessage A member already exists with the Email jeremy@peremy.com
+     * @expectedExceptionMessage A member already exists with the Email jeremy@example.com
      */
     public function testMemberAlreadyExists()
     {
@@ -158,7 +158,7 @@ class CheckoutTest extends SapphireTest
             array(
                 'FirstName' => 'Jeremy',
                 'Surname'   => 'Peremy',
-                'Email'     => 'jeremy@peremy.com',
+                'Email'     => 'jeremy@example.com',
                 'Password'  => 'jeremyperemy',
             )
         );

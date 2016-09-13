@@ -33,7 +33,7 @@ class CheckoutComponentTest extends SapphireTest
             array(
                 "FirstName" => "Ed",
                 "Surname"   => "Hillary",
-                "Email"     => "ed@everest.net.xx",
+                "Email"     => "ed@example.com",
             )
         );
 
@@ -163,7 +163,7 @@ class CheckoutComponentTest extends SapphireTest
 
         $this->assertEquals("Ed", $data["CustomerDetailsCheckoutComponent_FirstName"]);
         $this->assertEquals("Hillary", $data["CustomerDetailsCheckoutComponent_Surname"]);
-        $this->assertEquals("ed@everest.net.xx", $data["CustomerDetailsCheckoutComponent_Email"]);
+        $this->assertEquals("ed@example.com", $data["CustomerDetailsCheckoutComponent_Email"]);
         $this->assertEquals("AU", $data["ShippingAddressCheckoutComponent_Country"]);
         $this->assertEquals("South Australia", $data["ShippingAddressCheckoutComponent_State"]);
         $this->assertEquals("WEST BEACH", $data["ShippingAddressCheckoutComponent_City"]);
@@ -217,7 +217,7 @@ class CheckoutComponentTest extends SapphireTest
             array(
                 "FirstName" => "John",
                 "Surname"   => "Walker",
-                "Email"     => "jw@onehundedsubfourminutemiles.nz",
+                "Email"     => "jw@example.com",
             )
         );
 
