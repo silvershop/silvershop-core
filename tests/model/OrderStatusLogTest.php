@@ -16,8 +16,7 @@ class OrderStatusLogTest extends SapphireTest
     {
         parent::setUp();
         ShopTest::setConfiguration();
-        Order::config()->log_status = array('Processing', 'Sent', 'AdminCancelled', 'MemberCancelled');
-
+        Config::inst()->update('Order', 'log_status', array('Processing', 'Sent', 'AdminCancelled', 'MemberCancelled'));
     }
 
     public function testOrderStatusLogItemsWithMember()
@@ -32,7 +31,7 @@ class OrderStatusLogTest extends SapphireTest
             $no_log_generated_with_order_status_cart,
             "no log generated with Status of 'Cart'"
         );
- 
+
         $order->Status = "Unpaid";
         $order->write();
 
@@ -79,8 +78,8 @@ class OrderStatusLogTest extends SapphireTest
             'Processing title is recorded'
         );
         $this->assertEmailSent(
-            'jeremy@peremy.com',
-            'test@myshop.com',
+            'jeremy@example.com',
+            'shopadmin@example.com',
             _t('ShopEmail.StatusChangeSubject') . $log_order_status_processing->Title
         );
         $order->Status = "Sent";
@@ -113,8 +112,8 @@ class OrderStatusLogTest extends SapphireTest
         );
 
         $this->assertEmailSent(
-            "jeremy@peremy.com",
-            "test@myshop.com",
+            "jeremy@example.com",
+            "shopadmin@example.com",
             _t('ShopEmail.StatusChangeSubject') . $log_order_status_sent->Title
         );
 
@@ -128,7 +127,7 @@ class OrderStatusLogTest extends SapphireTest
 
         $order->Status = "AdminCancelled";
         $order->write();
-        
+
         $log_order_status_admin_cancelled = OrderStatusLog::get()->sort('ID')->last();
         $this->assertEquals(
             OrderStatusLog::get()->count(),
@@ -155,8 +154,8 @@ class OrderStatusLogTest extends SapphireTest
             "Admin Cancelled title is recorded"
         );
         $this->assertEmailSent(
-            "jeremy@peremy.com",
-            "test@myshop.com",
+            "jeremy@example.com",
+            "shopadmin@example.com",
             _t('ShopEmail.StatusChangeSubject') . $log_order_status_admin_cancelled->Title
         );
 
@@ -188,8 +187,8 @@ class OrderStatusLogTest extends SapphireTest
             "Member Cancelled title is recorded"
         );
         $this->assertEmailSent(
-            'jeremy@peremy.com',
-            'test@myshop.com',
+            'jeremy@example.com',
+            'shopadmin@example.com',
             _t('ShopEmail.StatusChangeSubject') . $log_order_status_member_cancelled->Title
         );
     }
@@ -200,7 +199,7 @@ class OrderStatusLogTest extends SapphireTest
         $order = $this->objFromFixture("Order", "cart1");
         $order->FirstName = "Edmund";
         $order->Surname = "Hillary";
-        $order->Email = "ed@everest.net";
+        $order->Email = "ed@example.com";
         $order->Status = "Unpaid";
         $order->write();
 
@@ -247,8 +246,8 @@ class OrderStatusLogTest extends SapphireTest
             "Processing title is recorded"
         );
         $this->assertEmailSent(
-            "ed@everest.net",
-            "test@myshop.com",
+            "ed@example.com",
+            "shopadmin@example.com",
             _t('ShopEmail.StatusChangeSubject') . $log_order_status_processing->Title
         );
     }

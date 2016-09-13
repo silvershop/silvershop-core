@@ -15,7 +15,7 @@ $cfg->remove("ProductCategory", "sort_options");
 
 // non-ecommerce
 $cfg->update('Member', 'unique_identifier_field', 'Email');
-$cfg->update('Email', 'admin_email', 'test@myshop.com');
+$cfg->update('Email', 'admin_email', 'shopadmin@example.com');
 $cfg->update(
     'Payment',
     'allowed_gateways',

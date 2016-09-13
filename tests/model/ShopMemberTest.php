@@ -20,9 +20,9 @@ class ShopMemberTest extends FunctionalTest
     public function testGetByIdentifier()
     {
         Member::config()->unique_identifier_field = 'Email';
-        $member = ShopMember::get_by_identifier('jeremy@peremy.com');
+        $member = ShopMember::get_by_identifier('jeremy@example.com');
         $this->assertNotNull($member);
-        $this->assertEquals('jeremy@peremy.com', $member->Email);
+        $this->assertEquals('jeremy@example.com', $member->Email);
         $this->assertEquals('Jeremy', $member->FirstName);
     }
 

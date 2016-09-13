@@ -65,7 +65,7 @@ class ShopPaymentTest extends FunctionalTest
             array(
                 'FirstName' => 'Foo',
                 'Surname'   => 'Bar',
-                'Email'     => 'foo@bar.com',
+                'Email'     => 'foo@example.com',
             )
         );
         $cart->write();

@@ -103,7 +103,7 @@ Member:
         FirstName: Bob
         Surname: Jones
         Country: US
-        Email: bob@somewhere.com
+        Email: bob@example.com
         Password: 3456sdfsd34
         Groups: =>Group.resellers,=>Group.customers
 

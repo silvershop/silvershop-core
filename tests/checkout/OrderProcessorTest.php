@@ -60,7 +60,7 @@ class OrderProcessorTest extends SapphireTest
             array(
                 'FirstName' => 'James',
                 'Surname'   => 'Brown',
-                'Email'     => 'james@jamesbrown.net.xx',
+                'Email'     => 'james@example.com',
                 'Password'  => 'jbrown',
             )
         );
@@ -73,7 +73,7 @@ class OrderProcessorTest extends SapphireTest
             $this->placeOrder(
                 'James',
                 'Brown',
-                'james@jamesbrown.net.xx',
+                'james@example.com',
                 '23 Small Street',
                 'North Beach',
                 'Springfield',
@@ -104,7 +104,7 @@ class OrderProcessorTest extends SapphireTest
 
         $this->assertEquals('James', $order->FirstName, 'order first name');
         $this->assertEquals('Brown', $order->Surname, 'order surname');
-        $this->assertEquals('james@jamesbrown.net.xx', $order->Email, 'order email');
+        $this->assertEquals('james@example.com', $order->Email, 'order email');
 
         $shippingaddress = $order->ShippingAddress();
 
@@ -125,7 +125,7 @@ class OrderProcessorTest extends SapphireTest
         $this->assertTrue($order->Member()->exists(), 'member exists now');
         $this->assertEquals('James', $order->Member()->FirstName, 'member first name matches');
         $this->assertEquals('Brown', $order->Member()->Surname, 'surname matches');
-        $this->assertEquals('james@jamesbrown.net.xx', $order->Member()->Email, 'email matches');
+        $this->assertEquals('james@example.com', $order->Member()->Email, 'email matches');
     }
 
     public function testPlaceFailure()
@@ -167,7 +167,7 @@ class OrderProcessorTest extends SapphireTest
             $this->placeOrder(
                 'Joseph',
                 'Blog',
-                'joe@blog.net.abz',
+                'joe@example.com',
                 '100 Melrose Place',
                 null,
                 'Martinsonville',
@@ -217,7 +217,7 @@ class OrderProcessorTest extends SapphireTest
             $this->placeOrder(
                 'Joseph',
                 'Blog',
-                'joe@blog.net.abz',
+                'joe@example.com',
                 '100 Melrose Place',
                 null,
                 'Martinsonville',
@@ -236,7 +236,7 @@ class OrderProcessorTest extends SapphireTest
         $this->assertEquals($order->Status, 'Unpaid', 'status is now "unpaid"');
         $this->assertEquals($order->FirstName, 'Joseph', 'order first name');
         $this->assertEquals($order->Surname, 'Blog', 'order surname');
-        $this->assertEquals($order->Email, 'joe@blog.net.abz', 'order email');
+        $this->assertEquals($order->Email, 'joe@example.com', 'order email');
 
         $shippingaddress = $order->ShippingAddress();
 
@@ -266,7 +266,7 @@ class OrderProcessorTest extends SapphireTest
         $success = $this->placeOrder(
             'Donald',
             'Duck',
-            'donald@pondcorp.edu.za',
+            'donald@example.com',
             '4 The Strand',
             null,
             'Melbourne',
@@ -286,7 +286,7 @@ class OrderProcessorTest extends SapphireTest
         $this->assertEquals($order->TotalPaid(), 0, 'total outstanding');
         $this->assertEquals($order->FirstName, 'Donald', 'order first name');
         $this->assertEquals($order->Surname, 'Duck', 'order surname');
-        $this->assertEquals($order->Email, 'donald@pondcorp.edu.za', 'order email');
+        $this->assertEquals($order->Email, 'donald@example.com', 'order email');
 
         $shippingaddress = $order->ShippingAddress();
 
