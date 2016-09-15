@@ -108,8 +108,8 @@ nn:
     Summary: Oppsummering
   CheckoutStep_Address:
     BillTo: 'Send rekning til:'
-    EnterShippingAddress: 'Ver venleg og skriv inn din fraktadresse'
-    SeperateBilling: 'Send rekning til ein annen adresse'
+    EnterShippingAddress: 'Ver venleg og skriv inn di fraktadresse'
+    SeperateBilling: 'Send rekning til ei anna adresse'
     ShipTo: 'Send sending til:'
     SupplyContactInformation: 'Skriv inn din kontakt informasjon'
   CheckoutStep_Membership:
