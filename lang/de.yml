@@ -364,8 +364,8 @@ de:
     Change: Ändern
     Customer: Kunde
     Date: Datum
-    DateFormatNice: '%e. %B %G'
-    DateTimeFormatNice: '%e. %B %G %H:%M'
+    DateFormatNice: '%d.%M.%Y'
+    DateTimeFormatNice: '%d.%M.%Y %H:%M'
     DateTimeFormatNice24: 'd.m.Y H:i'
     DevToolsTitle: 'Shop Entwickler Tools'
     Edit: Bearbeiten
