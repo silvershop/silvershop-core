@@ -750,7 +750,8 @@ class Order extends DataObject
             );
             $log->Note = _t('ShopEmail.StatusChange' . $this->Status . 'Note');
             $log->OrderID = $this->ID;
-            $log->SentToCustomer = false; // triggers the sending of an email.  See OrderStatusLog onAfterWrite function.
+            OrderEmailNotifier::create($this)->sendStatusChange($log->Title, $log->Note);
+            $log->SentToCustomer = true;
             $this->extend('updateOrderStatusLog', $log);
             $log->write();
         }
