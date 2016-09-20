@@ -195,6 +195,12 @@ class Order extends DataObject
      */
     private static $allow_zero_order_total = false;
 
+    /**
+     * A flag indicating that an order-status-log entry should be written
+     * @var bool
+     */
+    protected $flagOrderStatusWrite = false;
+
     public static function get_order_status_options()
     {
         $values = array();
@@ -695,6 +701,11 @@ class Order extends DataObject
                 $this->ReceiptSent = SS_Datetime::now()->Rfc2822();
             }
         }
+
+        $logStatus = $this->config()->log_status;
+        if (!empty($logStatus) && in_array($toStatus, $logStatus)) {
+            $this->flagOrderStatusWrite = $fromStatus != $toStatus;
+        }
     }
 
     /**
@@ -725,10 +736,9 @@ class Order extends DataObject
     {
         parent::onAfterWrite();
 
-        /**
-         * create an OrderStatusLog
-         */
-        if (in_array($this->Status, self::config()->log_status)) {
+        //create an OrderStatusLog
+        if ($this->flagOrderStatusWrite) {
+            $this->flagOrderStatusWrite = false;
             $log = OrderStatusLog::create();
 
             // populate OrderStatusLog
@@ -740,7 +750,8 @@ class Order extends DataObject
             );
             $log->Note = _t('ShopEmail.StatusChange' . $this->Status . 'Note');
             $log->OrderID = $this->ID;
-            $log->SentToCustomer = true; // triggers the sending of an email.  See OrderStatusLog onAfterWrite function.
+            OrderEmailNotifier::create($this)->sendStatusChange($log->Title, $log->Note);
+            $log->SentToCustomer = true;
             $this->extend('updateOrderStatusLog', $log);
             $log->write();
         }

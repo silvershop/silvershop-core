@@ -54,6 +54,7 @@ class OrderStatusLog extends DataObject
 
     private static $default_sort      = "\"Created\" DESC";
 
+
     public function canDelete($member = null)
     {
         return false;
@@ -88,14 +89,6 @@ class OrderStatusLog extends DataObject
             $validationResult->error('there is no order id for Order Status Log');
         }
         return $validationResult;
-    }
-
-    public function onAfterWrite()
-    {
-        if ($this->SentToCustomer) {
-            parent::onAfterWrite();
-            OrderEmailNotifier::create($this->Order())->sendStatusChange($this->Title, $this->Note);
-        }
     }
 
     protected function updateWithLastInfo()
