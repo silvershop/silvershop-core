@@ -264,6 +264,8 @@ de:
     InternalItemID: 'Artikelnummer'
     Model: Wichtigste Artikelmerkmale
     NoImage: 'Kein Bild vorhanden'
+    NumItemsInCartSingular: 'Sie haben dieses Produkt in Ihrem Warenkorb'
+    NumItemsInCartPlural: 'Sie haben {Quantity} Produkte in Ihrem Warekorb'
     PLURALNAME: Produkte
     PageTitle: 'Produktname'
     Price: Preis

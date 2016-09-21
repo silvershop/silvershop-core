@@ -264,6 +264,8 @@ da:
     InternalItemID: 'Varenummer'
     Model: Model
     NoImage: 'Intet billede'
+    NumItemsInCartSingular: 'Du har dette produkt i din kurv'
+    NumItemsInCartPlural: 'Du har {Quantity} produkter i din kurv'
     PLURALNAME: Produkter
     PageTitle: 'Produkttitel'
     Price: Pris
