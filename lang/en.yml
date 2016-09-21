@@ -264,6 +264,8 @@ en:
     InternalItemID: 'Product Code/SKU'
     Model: Model
     NoImage: 'no image'
+    NumItemsInCartSingular: 'You have this item in your cart'
+    NumItemsInCartPlural: 'You have {Quantity} items in your cart'
     PLURALNAME: Products
     PageTitle: 'Product Title'
     Price: Price
