@@ -53,6 +53,11 @@ class Address extends DataObject
         'Member' => 'Member',
     );
 
+    private static $has_many = array(
+        'ShippingAddressOrders' => 'Order.ShippingAddress',
+        'BillingAddressOrders' => 'Order.BillingAddress'
+    );
+
     private static $casting         = array(
         'Country' => 'ShopCountry',
     );
