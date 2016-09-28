@@ -78,6 +78,8 @@ ShopConfig:
 ShopCurrency:
   decimal_delimiter: '.'
   thousand_delimiter: ','
+  # european style currencies, e.g. 45,00 € instead of €45,00
+  append_symbol: true
 
 ShoppingCart_Controller:
   # Redirect to the cart page after manipulating the shopping cart
