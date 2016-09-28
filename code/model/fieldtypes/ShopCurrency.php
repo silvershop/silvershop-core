@@ -11,17 +11,24 @@ class ShopCurrency extends Currency
 
     private static $thousand_delimiter    = ',';
 
+    private static $append_symbol         = false;
+
     private static $negative_value_format = "<span class=\"negative\">(%s)</span>";
 
     public function Nice()
     {
-        $val = $this->config()->currency_symbol .
-            number_format(
+        $symbol = $this->config()->currency_symbol;
+        $val = number_format(
                 abs($this->value),
                 2,
                 self::config()->decimal_delimiter,
                 self::config()->thousand_delimiter
             );
+        if ($this->config()->append_symbol) {
+            $val = $val . ' ' . $symbol;
+        } else {
+            $val = $symbol . $val;
+        }
         if ($this->value < 0) {
             return sprintf(self::config()->negative_value_format, $val);
         }
