@@ -3,7 +3,7 @@
 /**
  * Test OrderProcessor
  *
- * @package    shop
+ * @package    silvershop
  * @subpackage tests
  */
 class OrderProcessorTest extends SapphireTest
@@ -295,6 +295,26 @@ class OrderProcessorTest extends SapphireTest
         $this->assertEquals($shippingaddress->City, 'Melbourne', 'order city');
         $this->assertNull($shippingaddress->PostalCode, 'order postcode');
         $this->assertEquals($shippingaddress->Country, 'AU', 'order country');
+    }
+
+    public function testPlaceOrderMarksAsPaidWithNoOutstandingAmount() {
+        $orderStub = $this->getMockBuilder('Order')
+            ->setMethods(array('TotalOutstanding'))
+            ->getMock();
+        // Set up test state
+        $orderStub->expects($this->any())
+             ->method('TotalOutstanding')
+             ->will($this->returnValue(0));
+        $processorStub = $this->getMockBuilder('OrderProcessor')
+            ->setConstructorArgs(array($orderStub))
+            ->setMethods(array('canPlace'))
+            ->getMock();
+        $processorStub->expects($this->any())
+             ->method('canPlace')
+             ->will($this->returnValue(true));
+        $processorStub->placeOrder();
+        $this->assertNotNull($orderStub->Paid, 'Sets paid date');
+        $this->assertEquals('Paid', $orderStub->Status, 'Sets paid status');
     }
 
     /**

@@ -3,8 +3,7 @@
 /**
  * Order Unit Tests
  *
- * @link       Order
- * @package    shop
+ * @package    silvershop
  * @subpackage tests
  */
 class OrderTest extends SapphireTest
