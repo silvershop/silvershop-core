@@ -3,7 +3,7 @@
 	"description" : "Provides an ecommerce product catalog, shopping cart, and order management system",
 	"license" : "BSD-2-Clause",
 	"type" : "silverstripe-module",
-	"homepage": "http://www.ss-shop.org/",
+	"homepage": "http://silvershop.github.io/",
 	"keywords" : ["silverstripe","shop","shopping cart","ecommerce","online shopping","payment","ordering","silverstripe"],
 	"authors" : [
 		{
@@ -52,7 +52,6 @@
 		"issues" : "https://github.com/silvershop/silvershop-core/issues",
 		"source" : "https://github.com/silvershop/silvershop-core",
 		"forum" : "http://www.silverstripe.org/e-commerce-module-forum",
-		"email" : "mark@adaircreative.com",
-		"docs" : "http://docs.ss-shop.org"
+		"docs" : "https://github.com/silvershop/silvershop-core/tree/master/docs/en"
 	}
 }
