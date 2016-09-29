@@ -38,7 +38,7 @@ class OrderEmailNotifier
      *
      * @return Email
      */
-    private function buildEmail($template, $subject)
+    protected function buildEmail($template, $subject)
     {
         $from = ShopConfig::config()->email_from ? ShopConfig::config()->email_from : Email::config()->admin_email;
         $to = $this->order->getLatestEmail();
