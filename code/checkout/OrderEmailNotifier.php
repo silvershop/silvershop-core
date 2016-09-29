@@ -13,6 +13,11 @@ class OrderEmailNotifier
     protected $order;
 
     /**
+     * @var bool
+     */
+    protected $debugMode = false;
+
+    /**
      * @param Order $order
      *
      * @return OrderEmailNotifier
@@ -30,6 +35,15 @@ class OrderEmailNotifier
     public function __construct(Order $order)
     {
         $this->order = $order;
+    }
+
+    /**
+     * @param $bool
+     */
+    public function setDebugMode($bool)
+    {
+        $this->debugMode = $bool;
+        return $this;
     }
 
     /**
@@ -78,8 +92,11 @@ class OrderEmailNotifier
         if ($copyToAdmin) {
             $email->setBcc(Email::config()->admin_email);
         }
-
-        return $email->send();
+        if ($this->debugMode) {
+            return $email->debug();
+        } else {
+            return $email->send();
+        }
     }
 
     /**
@@ -93,7 +110,7 @@ class OrderEmailNotifier
             '',
             array('OrderNo' => $this->order->Reference)
         );
-        $this->sendEmail(
+        return $this->sendEmail(
             'Order_ConfirmationEmail',
             $subject,
             self::config()->bcc_confirmation_to_admin
@@ -112,9 +129,14 @@ class OrderEmailNotifier
             array('OrderNo' => $this->order->Reference)
         );
 
-        $this->buildEmail('Order_AdminNotificationEmail', $subject)
-            ->setTo(Email::config()->admin_email)
-            ->send();
+        $email = $this->buildEmail('Order_AdminNotificationEmail', $subject)
+            ->setTo(Email::config()->admin_email);
+
+        if ($this->debugMode) {
+            return $email->debug();
+        } else {
+            return $email->send();
+        }
     }
 
     /**
@@ -130,7 +152,7 @@ class OrderEmailNotifier
             array('OrderNo' => $this->order->Reference)
         );
 
-        $this->sendEmail(
+        return $this->sendEmail(
             'Order_ReceiptEmail',
             $subject,
             self::config()->bcc_receipt_to_admin
