@@ -3,7 +3,7 @@
 /**
  * Adds extra fields and relationships to Products for variations support.
  *
- * @package    shop
+ * @package    silvershop
  * @subpackage variations
  */
 class ProductVariationsExtension extends DataExtension

@@ -121,16 +121,21 @@ class VariationForm extends AddProductForm
                 return json_encode($ret);
             }
 
-            if ($cart->add($variation, $quantity)) {
-                $form->sessionMessage(
-                    _t('ShoppingCart.ItemAdded', "Item has been added successfully."),
-                    "good"
-                );
-            } else {
-                $form->sessionMessage($cart->getMessage(), $cart->getMessageType());
+            try {
+                if ($cart->add($variation, $quantity)) {
+                    $form->sessionMessage(
+                        _t('ShoppingCart.ItemAdded', "Item has been added successfully."),
+                        "good"
+                    );
+                } else {
+                    $form->sessionMessage($cart->getMessage(), $cart->getMessageType());
+                }
+            } catch(ShopBuyableException $e) {
+                $form->sessionMessage($e->getMessage(), 'bad');
             }
         } else {
             $variation = null;
+
             $form->sessionMessage(
                 _t('VariationForm.VariationNotAvailable', "That variation is not available, sorry."),
                 "bad"
