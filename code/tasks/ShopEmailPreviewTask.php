@@ -21,7 +21,8 @@ class ShopEmailPreviewTask extends BuildTask
 
     protected $previewableEmails = array(
         'Confirmation',
-        'Receipt'
+        'Receipt',
+        'AdminNotification'
     );
 
 
@@ -33,8 +34,15 @@ class ShopEmailPreviewTask extends BuildTask
         $email = $request->remaining();
         $params = $request->allParams();
         $url = "/dev/{$params['Action']}/{$params['TaskName']}";
+
+        echo '<h2>Choose Email</h2>';
+        echo '<ul>';
+        foreach ($this->previewableEmails as $key => $method) {
+            echo '<li><a href="' . $url . '/' . $method . '">' . $method . '</a></li>';
+        }
+        echo '</ul><hr>';
+
         if ($email && in_array($email,$this->previewableEmails)) {
-            echo '<a href="' . $url . '">back</a><hr>';
             $order = Order::get()->first();
             $notifier = OrderEmailNotifier::create($order)
                 ->setDebugMode(true);
@@ -42,12 +50,7 @@ class ShopEmailPreviewTask extends BuildTask
             echo $notifier->$method();
 
         } else {
-            echo '<h2>Choose Email</h2>';
-            echo '<ul>';
-            foreach ($this->previewableEmails as $key => $method) {
-                echo '<li><a href="' . $url . '/' . $method . '">' . $method . '</a></li>';
-            }
-            echo '</ul><hr>';
+
         }
         //this is a little hardcore way of ending the party,
         //but as it's only used for styling, it works for now

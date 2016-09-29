@@ -129,9 +129,14 @@ class OrderEmailNotifier
             array('OrderNo' => $this->order->Reference)
         );
 
-        $this->buildEmail('Order_AdminNotificationEmail', $subject)
-            ->setTo(Email::config()->admin_email)
-            ->send();
+        $email = $this->buildEmail('Order_AdminNotificationEmail', $subject)
+            ->setTo(Email::config()->admin_email);
+
+        if ($this->debugMode) {
+            return $email->debug();
+        } else {
+            return $email->send();
+        }
     }
 
     /**
