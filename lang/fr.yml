@@ -14,7 +14,7 @@ fr:
     DefaultTitle: Compte
     EditProfile: 'Éditer le profil'
     LogOut: 'Déconnexion'
-    Login: "Vous devez vous connecter avant de pouvoir accéder à votre compte. Si vous n'êtes pas enregistré, vous pourrez y accéder seulement avant d'avoir passé une première commande. Si vous possédez déjà un compte, entrez vos données ci-dessous."
+    Login: "Vous devez vous connecter avant de pouvoir accéder à votre compte. Si vous n'êtes pas enregistré, vous pourrez y accéder seulement après avoir passé une première commande. Si vous possédez déjà un compte, entrez vos données ci-dessous."
     LoginAgain: 'Vous avez été déconnecté. Si vous souhaitez vous reconnecter, veuillez le faire ci-dessous.'
     MemberEmail: Courriel
     MemberLastVisit: 'Dernière visite'
@@ -23,13 +23,13 @@ fr:
     NoPage: 'Aucune AccountPage n''a été trouvée. Veuillez en créer une dans le CMS!'
     NoPastOrders: 'Pas de commandes passées trouvées.'
     NumberOfOrders: 'Nombre de commandes'
-    PLURALNAME: 'Pages du compte'
+    PLURALNAME: 'Pages du compte client'
     PastOrders: 'Commandes passées'
-    SINGULARNAME: 'Page du compte'
+    SINGULARNAME: 'Page du compte client'
     Title: 'Mon compte'
   AccountPage_AddressBook:
     CreateNewTitle: 'Créer une nouvelle adresse'
-    NoAddress: 'Pas d''adresses trouvées'
+    NoAddress: 'Pas d''adresse trouvée'
     Title: 'Adresse par défaut'
     DefaultShippingAddress: 'Adresse de livraison par défaut'
     DefaultBillingAddress: 'Adresse de facturation par défaut'
@@ -55,7 +55,7 @@ fr:
     ShippingAddress: 'Adresse de livraison'
     StateHint: 'ou province, territoire, canton, île'
     db_Address: Adresse
-    db_AddressLine2: 'Complément d''adresse (optionnel)'
+    db_AddressLine2: 'Complément d''adresse (facultatif)'
     db_City: Ville
     db_Company: Companie
     db_Country: Pays
@@ -79,27 +79,27 @@ fr:
   Checkout:
     IdFieldNotFound: 'Champ obligatoire manquant : {IdentifierField}'
     MemberExists: 'Un membre avec ces données existe déjà {Field} {Identifier}'
-    MembershipIsNotAllowed: 'Créer de nouveaux comptes n''est pas permis'
+    MembershipIsNotAllowed: 'Créer de nouveaux comptes n''est pas permis. Veuillez nous contacter par téléphone ou courrier électronique.'
     NoPaymentMethod: 'Cette méthode de paiement n''existe pas'
     PasswordRequired: 'Un mot de passe est nécessaire'
     TermsAndConditionsLink: 'J''accepte les conditions générales formulées sur la page <a href="{TermsPageLink}" target="new" title="Lire les conditions générales de ce site">{TermsPageTitle}</a>'
   CheckoutComponentValidator:
-    InvalidDataMessage: 'Des problèmes ont été rencontrées avec les données entrées. Voir ci-dessous'
+    InvalidDataMessage: 'Des problèmes ont été rencontrés avec les données entrées. Voir ci-dessous.'
   CheckoutField:
-    AccountInfo: 'Veuillez choisir un mot de passe, afin de pouvoir vous connecter et vérifier l''état de vos commandes dans le futur'
+    AccountInfo: 'Veuillez choisir un mot de passe, afin de pouvoir vous connecter à votre compte dans le futur.'
     MemberLoginInfo: 'Si vous êtes déjà membre, veuillez <a href="{LoginUrl}">vous connecter</a>'
     MembershipDetails: 'Détails du compte'
-    MustAgreeToTerms: 'Vous devez accepter les conditions générales'
+    MustAgreeToTerms: 'Vous devez accepter les conditions générales.'
     Password: Mot de passe
     PaymentType: 'Type de paiement'
   CheckoutPage:
-    DESCRIPTION: 'Page gérant le processus de check-out'
-    DefaultTitle: Check-out
-    PLURALNAME: 'Pages de check-out'
+    DESCRIPTION: 'Page gérant le processus de check-out.'
+    DefaultTitle: Caisse
+    PLURALNAME: 'Pages de la caisse'
     PaymentErrorMessage: 'Erreur reçue de la passerelle de paiement.'
     ProceedToPayment: 'Continuer vers le paiement'
-    PurchaseCompleteDescription: 'Ce message est inclus dans le courriel de confirmation, une fois le check-out effectué par le client.'
-    SINGULARNAME: 'Page de check-out'
+    PurchaseCompleteDescription: 'Ce message est inclus dans le courriel de confirmation, après que le paiement ait été effectué par le client.'
+    SINGULARNAME: 'Page de la caisse'
     SubmitPayment: 'Soumettre le paiement'
     db_PurchaseComplete: 'Achat terminé'
   CheckoutStep:
@@ -108,7 +108,7 @@ fr:
     Summary: Résumé
   CheckoutStep_Address:
     BillTo: 'Facturer à :'
-    EnterShippingAddress: 'Entrer les détails de votre adresse de livraison'
+    EnterShippingAddress: 'Entrer les détails de votre adresse de livraison.'
     SeperateBilling: 'Facturer à une adresse différente de celle-ci'
     ShipTo: 'Envoyer à :'
     SupplyContactInformation: 'Entrer vos informations de contact'
@@ -125,13 +125,13 @@ fr:
     PLURALNAME: Taxes
     SINGULARNAME: Taxe
   FreeShippingModifier:
-    Free: GRATUIT
+    Free: Gratuit
     PLURALNAME: 'Livraison gratuite'
     SINGULARNAME: Livraison
   GlobalTaxModifier:
-    Included: '(inclu dans le prix ci-dessus)'
+    Included: '(inclu dans le prix)'
     PLURALNAME: Taxes
-    SINGULARNAME: Taxe
+    SINGULARNAME: TVA
     db_Country: Pays
   MemberForm:
     DetailsSaved: 'Vos données ont été enregistrées'
@@ -153,7 +153,7 @@ fr:
     Print: Imprimer
     Quantity: Quantité
     SINGULARNAME: Commande
-    STATUS_ADMINCANCELLED: 'Annulé par admin'
+    STATUS_ADMINCANCELLED: 'Annulé par l''administrateur'
     STATUS_CART: Panier
     STATUS_COMPLETE: Terminé
     STATUS_MEMBERCANCELLED: 'Annulé par le membre'
@@ -177,13 +177,13 @@ fr:
     db_Placed: Placé
     db_Printed: Imprimé
     db_ReceiptSent: 'Reçu envoyé'
-    db_Reference: Référence
+    db_Reference: Numéro de référence
     db_SeparateBillingAddress: 'Adresse de facturation différente'
     db_Status: Statut
     db_Surname: Nom
     db_Total: Total
     has_many_Items: Articles
-    has_many_Modifiers: Modificateur
+    has_many_Modifiers: Modificateurs
     has_many_OrderStatusLogs: 'Logs des statuts de commandes'
     has_many_Payments: Paiements
     has_one_BillingAddress: 'Adresse de facturation'
@@ -198,9 +198,9 @@ fr:
   OrderAdmin:
     ReceiptTitle: '{SiteTitle} Commande {OrderNo}'
   OrderAttribute:
-    PLURALNAME: Caractéristiques
-    SINGULARNAME: Caractéristique
-    db_CalculatedTotal: 'Total calculé'
+    PLURALNAME: Propriétés
+    SINGULARNAME: Propriété
+    db_CalculatedTotal: 'Total'
     has_one_Order: Commande
   OrderForm:
     CouldNotProcessPayment: 'Le paiement n''a pas pu être effectué'
@@ -219,8 +219,8 @@ fr:
   OrderProcessor:
     NoItems: 'La commande n''a aucun article'
     NoOrder: 'La commande n''existe pas'
-    NoOrderStarted: 'Une nouvelle commande n''a pas encore été commencée'
-    NotCart: 'La commande n''est pas un panier'
+    NoOrderStarted: 'Aucune nouvelle commande n''a été démarrée.'
+    NotCart: 'La commande ne comprend pas de panier'
   OrderStatusLog:
     PLURALNAME: 'Entrées de journal des statuts de commandes'
     SINGULARNAME: 'Entrée du journal des commandes'
@@ -239,7 +239,7 @@ fr:
     PaymentsHeadline: Paiement(s)
   PaymentCheckoutComponent:
     NoPaymentMethod: 'Méthode de paiement non sélectionnée'
-    UnsupportedGateway: 'Passerelle non supportée'
+    UnsupportedGateway: 'Passerelle de paiement non pris en charge'
   PaymentProcessor:
     CantPay: "La commande ne peut pas être payée"
     InvalidGateway: "`{gateway}` n'est pas une passerelle de paiement valide"
@@ -264,6 +264,8 @@ fr:
     InternalItemID: 'Code de produit/SKU'
     Model: Modèle
     NoImage: 'pas d''image'
+    NumItemsInCartSingular: 'Cet article se trouve déjà dans votre panier'
+    NumItemsInCartPlural: 'Il y a {Quantity} dans votre panier'
     PLURALNAME: Produits
     PageTitle: 'Titre du produit'
     Price: Prix
@@ -286,10 +288,10 @@ fr:
     has_many_Variations: Variantes
     has_one_Image: Image
     many_many_ProductCategories: 'Catégories de produits'
-    many_many_VariationAttributeTypes: 'Types d''attributs de variantes'
+    many_many_VariationAttributeTypes: 'Propriétés des variantes'
   ProductAttributeType:
     PLURALNAME: Attributs
-    SINGULARNAME: Attribut
+    SINGULARNAME: Propriété
     SaveFirstInfo: 'Enregistrez d''abord, vous pourrez ensuite ajouter des valeurs.'
     belongs_many_many_Product: Produit
     db_Label: Labe
@@ -307,6 +309,8 @@ fr:
     PLURALNAME: Catégories
     SINGULARNAME: Catégorie
     belongs_many_many_Products: Produits
+    Alphabetical: Alphabétique
+    Price: Prix
   ProductGroup:
     Next: Suivant
     Page: Page
@@ -320,8 +324,8 @@ fr:
     Description: "Comprendre quels produits sont performants et lesquels ne le sont pas."
     Title: Produits
   ProductVariation:
-    MustSaveFirstMessage: 'Vous pourrez choisir des attributs de variantes, s''ils existent, après avoir enregistré pour la première fois.'
-    NoAttributeValuesMessage: '{attribute} n''a pas de valeurs à choisir. Vous pouvez les créer dans la section "Produits" &#62; "Types d''attributs du produit" du CMS.'
+    MustSaveFirstMessage: 'Vous pourrez choisir des propriétés, si elles existent, après avoir enregistré une première fois.'
+    NoAttributeValuesMessage: 'Il n''existe aucune valeur pour {attribute}. Celles-ci peuvent être créés aux pages "Produits" &#62; "Propriétés du produit" du CMS.'
     PLURALNAME: Variantes
     SINGULARNAME: Variante
     db_InternalItemID: 'ID interne de l''article'
@@ -329,14 +333,14 @@ fr:
     db_Version: Version
     has_one_Image: Image
     has_one_Product: Produit
-    many_many_AttributeValues: 'Valeurs d''attribut'
+    many_many_AttributeValues: 'Propriétés'
   ProductVariation_OrderItem:
     PLURALNAME: Articles
     SINGULARNAME: Article
     db_ProductVariationVersion: 'Version de la variante d''article'
     has_one_ProductVariation: 'Variante d''article'
   ProductVariationsExtension:
-    Attributes: Caractéristiques
+    Attributes: Propriétés
     AttributesDescription: 'Ces champs indiquent la manière dont les variantes diffèrent. Une fois sélectionnées, ils peuvent être édités pour chaque variante.'
     Variations: Variantes
     VariationsInfo: 'Prix - Comme vous avez au moins une variante de produit, le prix peut être choisi sous l''onglet "Variantes".'
@@ -365,7 +369,7 @@ fr:
     DateFormatNice: '%m/%d/%G'
     DateTimeFormatNice: '%m/%d/%G %I:%M%p'
     DateTimeFormatNice24: 'j/m/A H:i'
-    DevToolsTitle: 'Rechercher des outils de développement'
+    DevToolsTitle: 'Rechercher des outils de développeur'
     Edit: Éditer
     Quantity: Quantité
     ReadMoreTitle: 'Cliquer ici pour en savoir plus sur &quot;{Title}&quot;'
@@ -378,7 +382,7 @@ fr:
     DefaultImage: 'Image de produit par défaut'
     TermsPage: 'Page des conditions générales'
   ShopCurrency:
-    Free: 'GRATUIT'
+    Free: '<span class="free">Gratuit</span>'
   ShopDashboard:
     NumberOfAccounts: 'Nombre de comptes à afficher'
     NumberOfDays: 'Nombre de jours à afficher'
@@ -402,27 +406,34 @@ fr:
     DeleteProductsDesc: 'Supprimer tous les produits de la base de données'
     PopulateCart: 'Remplir le panier avec quelques articles disponibles'
     PopulateShop: 'Alimenter le shop'
-    PopulateShopDesc: 'Alimenter la boutique avec des produits, catégories et pages nécessaires fictifs.'
+    PopulateShopDesc: 'Alimenter la boutique avec des produits,des catégories et autres pages fictives nécessaires.'
     RecalculateOrders: 'Recalculer toutes les commandes'
     RecalculateOrdersDesc: 'Recalculer toutes les valeurs des commandes. Attention: ceci va écraser l''historique de ces valeurs.'
-    RunAllTests: 'Exécuter toutes les unités de test de la boutique'
-    UnitTests: 'Unité de test'
+    RunAllTests: 'Exécuter tous les tests de la boutique'
+    UnitTests: 'Tests'
   ShopEmail:
     AdminNotificationSubject: 'Notification de commande #{OrderNo}'
     AdminNotificationTitle: 'Reçu'
     CancelSubject: 'Commande #{OrderNo} annulée par le membre'
     ConfirmationSubject: 'Confirmation de commande #{OrderNo}'
     ConfirmationTitle: 'Confirmation de commande'
+    PhoneNumber: 'Numéro de téléphone'
     ReceiptSubject: 'Reçu pour la commande #{OrderNo} '
     ReceiptTitle: 'Reçu'
+    Regards: 'Cordialement'
+    StatusChangeSubject: 'Silvershop'
     StatusChangeTitle: 'Changement de statuts de la boutique'
     StatusChanged: 'Statut de la commander #{OrderNo} changé en "{OrderStatus}"'
+    StatusChangeAdminCancelledNote: 'Votre commande a été annulée par notre équipe. Veuillez prendre contact avec nous si vous avez des questions à propos de cette commande. '
+    StatusChangeMemberCancelledNote: 'Votre annulation de la commande a été enregistrée. Veuillez nous contacter en cas de questions.'
+    StatusChangeProcessingNote: 'L''état de votre commande est passé à "En traitement". Veuillez nous contacter en cas de questions à propos de cette commande.'
+    StatusChangeSentNote: 'Votre commande a été envoyée. Nous visons une livraison rapide. Veuillez nous contacter si vos produits ne devaient pas être arrivés dans les cinq jours.'
   ShopPeriodReport:
-    Description: 'Rapport périodique de la boutique'
-    Title: 'Rapport périodique de la boutique'
+    Description: 'Rapport périodique'
+    Title: 'Rapport périodique'
   ShopQuantityField:
-    AddOne: 'Ajouter une pièce ou plus de &quot;{ItemTitle}&quot; à votre panier'
-    RemoveOne: 'Supprimer une pièce ou plus de &quot;{ItemTitle}&quot; de votre panier'
+    AddOne: 'Ajouter &quot;{ItemTitle}&quot; à votre panier'
+    RemoveOne: 'Supprimer &quot;{ItemTitle}&quot; de votre panier'
   ShopSalesReport:
     Description: 'Monitorer les performances de vente pour une période donnée. Grouper les résultats par année, mois ou jour.'
     Title: 'Ventes'
@@ -433,12 +444,12 @@ fr:
     NoImage: 'Produits sans image'
     ShopGroup: Boutique
   ShoppingCart:
-    CannotPurchase: 'Ce/cette {Title} ne peut pas être acheté'
-    Checkout: Check-out
+    CannotPurchase: '{Title} ne peut pas être acheté'
+    Checkout: Caisse
     Cleared: 'Le panier a été vidé avec succès.'
     ContinueShopping: 'Continuer les achats'
     Headline: 'Panier d''achats'
-    InvalidSecurityToken: 'Jeton de sécurité invalide. Attaque CSRF possible.'
+    InvalidSecurityToken: 'Jeton de sécurité invalide. Possible attaque CSRF.'
     ItemAdded: 'L''article a bien été ajouté.'
     ItemNotFound: 'Article non trouvé.'
     ItemRemoved: 'L''article a été supprimé avec succès.'
@@ -468,7 +479,7 @@ fr:
     SINGULARNAME: Taxe
     db_Rate: Taux
   TaxReport:
-    Description: 'Rapport des taxes appliquées aux commandes. Inclus seulement les commandes ayant été payées.'
+    Description: 'Affiche toutes les taxes prélevées. Seules les commandes payées sont incluses.'
     Title: Taxe
   Variation:
     SINGULARNAME: Variante
@@ -487,6 +498,6 @@ fr:
     db_Name: Nom
     has_many_Regions: Régions
   ZoneRegion:
-    PLURALNAME: 'Zones régionales'
-    SINGULARNAME: 'Zone régionale'
+    PLURALNAME: 'Régions'
+    SINGULARNAME: 'Région'
     has_one_Zone: Zone
