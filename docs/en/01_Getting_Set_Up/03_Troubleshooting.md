@@ -20,7 +20,7 @@ If the form has been built well, it should have extension hooks that allow you t
 
 ## How do I customise the country field? - change country list, remove field completely, set default
 
-See the [customising docs](../02_Customisation).
+See the [customising docs](../02_Customisation/index.md).
 
 ## How do I set my site to use a different currency?
 

@@ -67,4 +67,4 @@ Change the system to handle small or large, simple or complex. Or at least make 
 
 See also:
 
- * [Release Process](../03_How_It_Works/Release_Process.md)
+ * [Release Process](Release_Process.md)

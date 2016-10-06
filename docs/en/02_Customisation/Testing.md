@@ -12,7 +12,7 @@ To run all shop tests visit `yoursite/dev/tests/module/shop`. If you intend on d
 
 Every change to this module is [tested using the Travis Continuous Integration service](https://travis-ci.org/burnbright/silverstripe-shop).
 
-Current status: [![Build Status](https://secure.travis-ci.org/burnbright/silverstripe-shop.png)](http://travis-ci.org/burnbright/silverstripe-shop)
+Current status: [![Build Status](https://travis-ci.org/silvershop/silvershop-core.svg?branch=master)](http://travis-ci.org/silvershop/silvershop-core)
 
 ### Writing Tests
 
