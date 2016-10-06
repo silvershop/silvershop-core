@@ -5,7 +5,7 @@ Customisation is left to the developer, similar to how the SilverStripe CMS is c
 There is little in the way of online web-interface based configuration, tweaking and setup.
 This has been left for the store owner to collaborate with their developer. 
 
-## [Getting Set Up](01_Getting_Set_Up) < Start Here
+## [Getting Set Up](01_Getting_Set_Up/index.md) < Start Here
 
 * [Installation & Configuration](01_Getting_Set_Up/01_InstallationConfiguration.md) - requirements, instructions
 * [Upgrading](01_Getting_Set_Up/02_Upgrading.md)
@@ -14,7 +14,7 @@ This has been left for the store owner to collaborate with their developer.
 * [Bulk loading products from a CSV spreadsheet](01_Getting_Set_Up/Bulk_Loading.md)
 * [Shipping](01_Getting_Set_Up/04_Shipping.md) and [Tax](01_Getting_Set_Up/05_Tax.md) Calculation
 
-## [Customisation](02_Customisation)
+## [Customisation](02_Customisation/index.md)
 
 * [Emails](02_Customisation/Emails.md)
 * [Order Status Email Notifications](02_Customisation/OrderStatusEmailNotifications.md) - send emails upon order status changes
@@ -27,7 +27,7 @@ This has been left for the store owner to collaborate with their developer.
  * [Testing](02_Customisation/Testing.md) - infrastructure / instructions
 
 
-## How it works
+## [How it works](03_How_It_Works)
 
 * [Architecture](03_How_It_Works/Architecture.md)
  * [Modifiers](03_How_It_Works/Order_Modifiers.md) - All about modifiers. What they are, and how they work.
@@ -43,4 +43,4 @@ This has been left for the store owner to collaborate with their developer.
 
 * [Demo](http://demo.ss-shop.org/)
 * [Project Homepage](http://ss-shop.org/)
-* [Forum](http://silverstripe.org/e-commerce-module-forum/)
+* [Forum](https://www.silverstripe.org/community/forums/e-commerce-modules/)

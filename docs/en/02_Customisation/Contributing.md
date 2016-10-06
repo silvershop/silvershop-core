@@ -11,7 +11,7 @@ This module only moves forward as we each build the features we need. We love pu
  * __Provide translations__. This will allow people speaking other languages to use the shop module: https://www.transifex.com/silvershop/silverstripe-shop/
  * __Financial contribution__. Giving a donation, or financing the development of some features will help this module go further, faster.
 
-If you would like to contribute code, please [fork this project](https://github.com/burnbright/silverstripe-shop). You
+If you would like to contribute code, please [fork this project](https://github.com/silvershop/silvershop-core). You
 can then make changes in feature branches via git, and submit pull requests, which will be reviewed and merged into the
 code base. If merge is not appropriate, instruction will be given on the best action(s) to take.
 
@@ -49,7 +49,7 @@ This basically means the project owner will have ultimate say in decision making
 however, and if agreement can not be found, anyone can fork the project and start their own version.
 
 We are actively moving towards creating a team of core committers and moving away from depending on one maintainer.
-Expect more news soon and watch this Trello board: https://trello.com/b/85ZyINqI/shop-development-planning
+Expect more news soon and watch this [Trello board](https://trello.com/b/85ZyINqI/shop-development-planning)
 
 ## Good development practices
 

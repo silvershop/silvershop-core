@@ -46,11 +46,11 @@ Upload to [github](https://github.com/burnbright/silverstripe-shop/downloads)
 
 * [website](http://ss-shop.org) info
 * [demo site](http://demo.ss-shop.org)
-* silverstripe [extensions page](http://addons.silverstripe.org/add-ons/burnbright/silverstripe-shop)
+
 
 ## Announce
 
 Include some release commentary, highlights of main big changes. Include a link to upgrading docs.
 
-* [forums](http://silverstripe.org/e-commerce-module-forum/)
+* [forums](https://www.silverstripe.org/community/forums/e-commerce-modules/)
 * [mailing list](http://groups.google.com/group/silverstripe-ecommerce)

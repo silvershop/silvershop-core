@@ -10,7 +10,7 @@ Modifiers included with core code:
  * WeightShippingModifier
 
 There are more advanced shipping options available via submodules:
-https://github.com/burnbright/silverstripe-shop-shipping
+https://github.com/silvershop/silvershop-shipping/blob/master/README.md
 
 Common requirements for shipping are:
 

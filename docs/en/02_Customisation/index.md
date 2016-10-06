@@ -1,17 +1,17 @@
 It is most likely that you as a website developer/designer will want to customise the shop module to look and work as your client would like.  There are a number of configuration options to be set in your _config files.
 
-[Recipes](02_Customisation/01_Recipes) contains a number of instructions for implementing specific features.
+[Recipes](01_Recipes) contains a number of instructions for implementing specific features.
 
-See also: [Customisation/Submodules](02_Customisation/Submodules.md).
+See also: [Customisation/Submodules](Submodules.md).
 
-See [Development](02_Customisation/Development.md) to understand the mission of this module.
+See [Development](../03_How_It_Works/Development.md) to understand the mission of this module.
 
 ## Where to put your customisations?
 
 It may not be clear where to put your customisations of SilverStripe, and the shop module.
 Here are some tips:
 
- * Look for the same idea already implemented in a [shop submodule](02_Customisation/Submodules.md) or a [SilverStripe module](http://addons.silverstripe.org/).
+ * Look for the same idea already implemented in a [shop submodule](Submodules.md) or a [SilverStripe module](http://addons.silverstripe.org/).
  You can save time if you find the work has already been done.
  * Create Extensions and [DataExtensions](http://doc.silverstripe.org/framework/en/reference/dataextension).
  This is the cleanest way of creating customisations. It may introduce slight overhead processing time however.
@@ -39,7 +39,7 @@ This should *always* be your preferred order of doing things:
  2. Try to add your custom functionality with Extensions (`DataExtension` or `Extension`) and by implementing the hooks provided by the shop-module.
  3. Write a custom class and use the Injector to swap out the class you want to replace.
  
-If these are bugfixes, or additional features that the core code would benefit from, please feel free to [contribute back](02_Customisation/Contributing.md).
+If these are bugfixes, or additional features that the core code would benefit from, please feel free to [contribute back](Contributing.md).
 
 ## Theming / Templates
 
@@ -55,4 +55,4 @@ Note: some templates are needed in multiple places to work.
 
 ## Modifiers
 
-Shipping and tax, etc see [Order Modifiers](03_How_It_Works/Order_Modifiers.md)
+Shipping and tax, etc see [Order Modifiers](../03_How_It_Works/Order_Modifiers.md)

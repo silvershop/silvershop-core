@@ -1,4 +1,4 @@
-This tutorial explains start-to-finish how to set up an online shop with the SilverStripe shop module. If you are upgrading your shop, see [Upgrading](01_Getting_Set_Up/02_Upgrading.md).
+This tutorial explains start-to-finish how to set up an online shop with the SilverStripe shop module. If you are upgrading your shop, see [Upgrading](02_Upgrading.md).
 
 ## SilverStripe
 
@@ -6,24 +6,24 @@ Follow the standard [SilverStripe installation guide](http://docs.silverstripe.o
 
 ## Install Shop
 
-[Install the shop module](01_Getting_Set_Up/01_InstallationConfiguration.md).
+[Install the shop module](01_InstallationConfiguration.md).
 
 ## Shipping and Tax
 
- * [Configure shipping](01_Getting_Set_Up/04_Shipping.md)
- * [Configure taxes](01_Getting_Set_Up/05_Tax.md)
+ * [Configure shipping](04_Shipping.md)
+ * [Configure taxes](05_Tax.md)
 
 ## Payment
 
-[Set up your payment provider](01_Getting_Set_Up/06_Payment.md), so customers can make online payments.
+[Set up your payment provider](06_Payment.md), so customers can make online payments.
 
 ## Automated Tasks
 
-Add some [automated tasks](01_Getting_Set_Up/Tasks.md) to handle some things automatically for you.
+Add some [automated tasks](Tasks.md) to handle some things automatically for you.
 
 ## Bulk Loading Products
 
-[Products can be bulk loaded](01_Getting_Set_Up/Bulk_Loading.md), saving time on larger websites.
+[Products can be bulk loaded](Bulk_Loading.md), saving time on larger websites.
 
 ## Testing / Development Environment
 Useful development tools are accessible via `[yoursite]/dev/shop`.
@@ -61,5 +61,5 @@ After running `dev/build` your emails should now be sent to mailtrap.
 Alternatively, you can:
 
  * Windows - you can run the "Antix SMTP Server For Developers", and open the emails in your preferred email client.
- * Linux,Mac - pipe emails to a custom php script, such as [this one](http://blogs.bigfish.tv/adam/2009/12/03/setup-a-testing-mail-server-using-php-on-mac-os-x/).
+ * Linux,Mac - pipe emails to a custom php script.
 
