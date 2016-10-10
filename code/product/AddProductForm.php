@@ -65,15 +65,9 @@ class AddProductForm extends Form
                 array_intersect_key($data, array_combine($this->saveablefields, $this->saveablefields))
             ) : $data;
             $quantity = isset($data['Quantity']) ? (int)$data['Quantity'] : 1;
-
-            try {
-                $cart->add($buyable, $quantity, $saveabledata);
-
-                if (!ShoppingCart_Controller::config()->direct_to_cart_page) {
-                    $form->SessionMessage($cart->getMessage(), $cart->getMessageType());
-                }
-            } catch(ShopBuyableException $e) {
-                $form->sessionMessage($e->getMessage(), 'bad');
+            $cart->add($buyable, $quantity, $saveabledata);
+            if (!ShoppingCart_Controller::config()->direct_to_cart_page) {
+                $form->SessionMessage($cart->getMessage(), $cart->getMessageType());
             }
 
             $this->extend('updateAddToCart', $form, $buyable);

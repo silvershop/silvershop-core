@@ -43,51 +43,31 @@ class CartForm extends Form
         if (isset($data['Items']) && is_array($data['Items'])) {
             foreach ($data['Items'] as $itemid => $fields) {
                 $item = $items->byID($itemid);
-
                 if (!$item) {
                     continue;
                 }
-
-
-                // delete lines
+                //delete lines
                 if (isset($fields['Remove']) || (isset($fields['Quantity']) && (int)$fields['Quantity'] <= 0)) {
-
-                    try {
-                        ShoppingCart::singleton()->remove($item->Buyable());
-
-                        $removecount++;
-                    } catch(ShopBuyableException $e) {
-                         $form->sessionMessage($e->getMessage(), "bad");
-
-                         break;
-                    }
-
+                    $items->remove($item);
+                    $removecount++;
                     continue;
                 }
-
-                // update quantities
+                //update quantities
                 if (isset($fields['Quantity']) && $quantity = Convert::raw2sql($fields['Quantity'])) {
                     $numericConverter->setValue($quantity);
-
-                    try {
-                        ShoppingCart::singleton()
-                            ->setQuantity($item->Buyable(), $numericConverter->dataValue());
-                    } catch(ShopBuyableException $e) {
-                         $form->sessionMessage($e->getMessage(), "bad");
-
-                         break;
-                    }
+                    $item->Quantity = $numericConverter->dataValue();
                 }
-
-                // update variations
+                //update variations
                 if (isset($fields['ProductVariationID']) && $id = Convert::raw2sql($fields['ProductVariationID'])) {
                     if ($item->ProductVariationID != $id) {
                         $item->ProductVariationID = $id;
-                        $item->write();
                     }
                 }
-
+                //TODO: make updates through ShoppingCart class
+                //TODO: combine with items that now match exactly
+                //TODO: validate changes
                 if ($item->isChanged()) {
+                    $item->write();
                     $updatecount++;
                 }
             }
