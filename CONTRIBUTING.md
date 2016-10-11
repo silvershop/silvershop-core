@@ -33,9 +33,9 @@ We use [Github Flow](https://guides.github.com/introduction/flow/) which basical
 
 ### Branches
 
-* `master` will always be the newest development. Use it for more PR's.
-* `3.0` (planned) is kept up to date with master but also contains breaking changes for the upcoming 3.0 release. Only
-   base your work on this branch if it definitely includes a backwards-incompatible change.
+Our branching scheme follows the one used by SilverStripe. `master` will always be the branch for newest development and separate branches will be created for older releases. 
+
+Example: If the current development in `master` goes towards version 3, there will be a `2` and `1` branch for fixes to these older versions. If needed, branches for minor versions can be created as well (eg. a 2.x branch for work on a new minor release).
 
 ### Releases
 
