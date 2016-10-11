@@ -33,7 +33,7 @@ class ShopEmailPreviewTask extends BuildTask
     {
         $email = $request->remaining();
         $params = $request->allParams();
-        $url = "/dev/{$params['Action']}/{$params['TaskName']}";
+        $url = Director::absoluteURL("dev/{$params['Action']}/{$params['TaskName']}", true);
 
         echo '<h2>Choose Email</h2>';
         echo '<ul>';
