@@ -116,14 +116,20 @@ class ShoppingCart extends Object
     public function add(Buyable $buyable, $quantity = 1, $filter = array())
     {
         $order = $this->findOrMake();
-        $order->extend("beforeAdd", $buyable, $quantity, $filter);
-        if (!$buyable) {
 
+        // If an extension throws an exception, error out
+        try {
+            $order->extend("beforeAdd", $buyable, $quantity, $filter);
+        } catch (Exception $exception){
+            return $this->error($exception->getMessage());
+        }
+
+        if (!$buyable) {
             return $this->error(_t("ShoppingCart.ProductNotFound", "Product not found."));
         }
+
         $item = $this->findOrMakeItem($buyable, $quantity, $filter);
         if (!$item) {
-
             return false;
         }
         if (!$item->_brandnew) {
@@ -131,8 +137,15 @@ class ShoppingCart extends Object
         } else {
             $item->Quantity = $quantity;
         }
+
+        // If an extension throws an exception, error out
+        try {
+            $order->extend("afterAdd", $item, $buyable, $quantity, $filter);
+        } catch (Exception $exception){
+            return $this->error($exception->getMessage());
+        }
+
         $item->write();
-        $order->extend("afterAdd", $item, $buyable, $quantity, $filter);
         $this->message(_t("ShoppingCart.ItemAdded", "Item has been added successfully."));
 
         return $item;
@@ -155,7 +168,12 @@ class ShoppingCart extends Object
             return $this->error(_t("ShoppingCart.NoOrder", "No current order."));
         }
 
-        $order->extend("beforeRemove", $buyable, $quantity, $filter);
+        // If an extension throws an exception, error out
+        try {
+            $order->extend("beforeRemove", $buyable, $quantity, $filter);
+        } catch (Exception $exception){
+            return $this->error($exception->getMessage());
+        }
 
         $item = $this->get($buyable, $filter);
 
@@ -171,7 +189,15 @@ class ShoppingCart extends Object
             $item->Quantity -= $quantity;
             $item->write();
         }
-        $order->extend("afterRemove", $item, $buyable, $quantity, $filter);
+
+        // If an extension throws an exception, error out
+        // TODO: There should be a rollback
+        try {
+            $order->extend("afterRemove", $item, $buyable, $quantity, $filter);
+        } catch (Exception $exception){
+            return $this->error($exception->getMessage());
+        }
+
         $this->message(_t("ShoppingCart.ItemRemoved", "Item has been successfully removed."));
 
         return true;
@@ -198,10 +224,24 @@ class ShoppingCart extends Object
 
             return false;
         }
-        $order->extend("beforeSetQuantity", $buyable, $quantity, $filter);
+
+        // If an extension throws an exception, error out
+        try {
+            $order->extend("beforeSetQuantity", $buyable, $quantity, $filter);
+        } catch (Exception $exception){
+            return $this->error($exception->getMessage());
+        }
+
         $item->Quantity = $quantity;
+
+        // If an extension throws an exception, error out
+        try {
+            $order->extend("afterSetQuantity", $item, $buyable, $quantity, $filter);
+        } catch (Exception $exception){
+            return $this->error($exception->getMessage());
+        }
+
         $item->write();
-        $order->extend("afterSetQuantity", $item, $buyable, $quantity, $filter);
         $this->message(_t("ShoppingCart.QuantitySet", "Quantity has been set."));
 
         return $item;

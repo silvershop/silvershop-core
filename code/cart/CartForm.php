@@ -39,7 +39,8 @@ class CartForm extends Form
 
         $numericConverter = NumericField::create('_temp');
 
-        $messages = array();
+        $messages = [];
+        $badMessages = [];
         if (isset($data['Items']) && is_array($data['Items'])) {
             foreach ($data['Items'] as $itemid => $fields) {
                 $item = $items->byID($itemid);
@@ -48,14 +49,20 @@ class CartForm extends Form
                 }
                 //delete lines
                 if (isset($fields['Remove']) || (isset($fields['Quantity']) && (int)$fields['Quantity'] <= 0)) {
-                    $items->remove($item);
-                    $removecount++;
+                    if (ShoppingCart::singleton()->remove($item->Buyable())) {
+                        $removecount++;
+                    } else {
+                        $badMessages[] = ShoppingCart::singleton()->getMessage();
+                    }
+
                     continue;
                 }
                 //update quantities
                 if (isset($fields['Quantity']) && $quantity = Convert::raw2sql($fields['Quantity'])) {
                     $numericConverter->setValue($quantity);
-                    $item->Quantity = $numericConverter->dataValue();
+                    if (!ShoppingCart::singleton()->setQuantity($item->Buyable(), $numericConverter->dataValue())) {
+                        $badMessages[] = ShoppingCart::singleton()->getMessage();
+                    }
                 }
                 //update variations
                 if (isset($fields['ProductVariationID']) && $id = Convert::raw2sql($fields['ProductVariationID'])) {
@@ -90,6 +97,10 @@ class CartForm extends Form
         }
         if (count($messages)) {
             $form->sessionMessage(implode(" ", $messages), "good");
+        }
+
+        if (count($badMessages)) {
+            $form->sessionMessage(implode(" ", $badMessages), "bad");
         }
 
         $this->extend('updateCartFormResponse', $request, $response, $form);
