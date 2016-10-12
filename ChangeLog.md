@@ -1,5 +1,16 @@
 # SilverStripe Shop Change Log
 
+## 2.1
+
+ * Order-Status Email notifications #534
+ * Improve previewing and developing of Email templates #551 
+ * append symbol setting for European style currencies #549 
+ * Improve order-hooks #557 
+ * FIX: Set Order->Paid Date alongside Order->Status
+ * FIX: Add reverse relation for addresses
+ * Updates to templates (validating markup, proper indentation)
+ * Improvements to documentation and example files. 
+
 ## 2.0
 
  * Overhaul of the localization of the module. (#379, #381, #383, #384, #408, #410, #411, #451, #453, #456, #457, #470, #486)
