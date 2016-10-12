@@ -1,5 +1,4 @@
 <% require themedCSS(product,shop) %>
-<% include SideBar %>
 <div id="Product" class="typography">
     <h1 class="pageTitle">$Title</h1>
     <div class="breadcrumbs">$Breadcrumbs</div>
@@ -59,3 +58,5 @@
         </div>
     <% end_if %>
 </div>
+<% include SideBar %>
+

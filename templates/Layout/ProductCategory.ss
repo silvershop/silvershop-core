@@ -1,5 +1,4 @@
 <% require themedCSS(productcategory,shop) %>
-<% include SideBar %>
 <div id="ProductGroup" class="typography">
     <h1 class="pageTitle">$Title</h1>
     <% if $Content %>
@@ -22,3 +21,4 @@
         </div>
     <% end_if %>
 </div>
+<% include SideBar %>
