@@ -297,24 +297,38 @@ class OrderProcessorTest extends SapphireTest
         $this->assertEquals($shippingaddress->Country, 'AU', 'order country');
     }
 
-    public function testPlaceOrderMarksAsPaidWithNoOutstandingAmount() {
-        $orderStub = $this->getMockBuilder('Order')
-            ->setMethods(array('TotalOutstanding'))
-            ->getMock();
-        // Set up test state
-        $orderStub->expects($this->any())
-             ->method('TotalOutstanding')
-             ->will($this->returnValue(0));
-        $processorStub = $this->getMockBuilder('OrderProcessor')
-            ->setConstructorArgs(array($orderStub))
-            ->setMethods(array('canPlace'))
-            ->getMock();
-        $processorStub->expects($this->any())
-             ->method('canPlace')
-             ->will($this->returnValue(true));
-        $processorStub->placeOrder();
-        $this->assertNotNull($orderStub->Paid, 'Sets paid date');
-        $this->assertEquals('Paid', $orderStub->Status, 'Sets paid status');
+    public function testPlaceOrderMarksAsPaidWithNoOutstandingAmount()
+    {
+        Config::inst()->update('ShopConfig', 'email_from', 'shopadmin@example.com');
+
+        // Create a new order
+        $this->shoppingcart->add($this->socks);
+        $order = $this->shoppingcart->current();
+        $order->Email = 'receipt@example.com';
+        $order->calculate();
+
+        // Create a payment for the order
+        $payment = Payment::create()->init('Dummy', 8, 'NZD');
+        $payment->Status = 'Captured';
+        $payment->OrderID = $order->ID;
+        $payment->write();
+
+        // Complete the payment with the order processor
+        $processor = OrderProcessor::create($order);
+        $processor->completePayment();
+
+        // Order paid date and status should be updated
+        $this->assertNotNull($order->Paid, 'Sets paid date');
+        $this->assertEquals('Paid', $order->Status, 'Sets paid status');
+
+        $subject = _t(
+            'ShopEmail.ReceiptSubject',
+            'Order #{OrderNo} receipt',
+            '',
+            array('OrderNo' => $order->Reference)
+        );
+        // Ensure receipt was sent
+        $this->assertEmailSent('receipt@example.com', 'shopadmin@example.com', $subject);
     }
 
     /**
