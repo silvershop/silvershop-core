@@ -219,8 +219,10 @@ class OrderProcessor
             ) {
                 //set order as paid
                 $this->order->Status = 'Paid';
-                $this->order->Paid = SS_Datetime::now()->Rfc2822();
+                // Perform a separate write before setting $this->order->Paid so the receipt email can be sent.
+                $this->order->write(); 
 
+                $this->order->Paid = SS_Datetime::now()->Rfc2822();
                 $this->order->write();
             }
         }
@@ -282,9 +284,6 @@ class OrderProcessor
         //update status
         if ($this->order->TotalOutstanding(false)) {
             $this->order->Status = 'Unpaid';
-        } else {
-            $this->order->Status = 'Paid';
-            $this->order->Paid = SS_Datetime::now()->Rfc2822();
         }
 
         if (!$this->order->Placed) {
