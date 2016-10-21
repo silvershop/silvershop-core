@@ -219,8 +219,6 @@ class OrderProcessor
             ) {
                 //set order as paid
                 $this->order->Status = 'Paid';
-                $this->order->Paid = SS_Datetime::now()->Rfc2822();
-
                 $this->order->write();
             }
         }
@@ -284,7 +282,6 @@ class OrderProcessor
             $this->order->Status = 'Unpaid';
         } else {
             $this->order->Status = 'Paid';
-            $this->order->Paid = SS_Datetime::now()->Rfc2822();
         }
 
         if (!$this->order->Placed) {
