@@ -1,5 +1,10 @@
 # SilverStripe Shop Change Log
 
+## 2.1.1
+
+ * Fix issue (introduced with 2.1) where Order receipt was never sent #563
+ * Minor templating update.
+
 ## 2.1
 
  * Order-Status Email notifications #534
