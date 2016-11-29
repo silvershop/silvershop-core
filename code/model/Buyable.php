@@ -15,8 +15,7 @@ interface Buyable
      * Create a new OrderItem to add to an order.
      *
      * @param int     $quantity
-     * @param boolean $write
-     *
+     * @param array   $filter
      * @return OrderItem new OrderItem object
      */
     public function createItem($quantity = 1, $filter = array());
