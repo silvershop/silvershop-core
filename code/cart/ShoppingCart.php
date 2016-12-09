@@ -108,8 +108,8 @@ class ShoppingCart extends Object
      * Adds an item to the cart
      *
      * @param Buyable $buyable
-     * @param number $quantity
-     * @param unknown $filter
+     * @param int $quantity
+     * @param array $filter
      *
      * @return boolean|OrderItem false or the new/existing item
      */
@@ -154,9 +154,9 @@ class ShoppingCart extends Object
     /**
      * Remove an item from the cart.
      *
-     * @param     id        or Buyable $buyable
-     * @param     $item
+     * @param Buyable $buyable
      * @param int $quantity - number of items to remove, or leave null for all items (default)
+     * @param array $filter
      *
      * @return boolean success/failure
      */
@@ -207,9 +207,9 @@ class ShoppingCart extends Object
      * Sets the quantity of an item in the cart.
      * Will automatically add or remove item, if necessary.
      *
-     * @param     id or Buyable $buyable
-     * @param     $item
+     * @param Buyable $buyable
      * @param int $quantity
+     * @param array $filter
      *
      * @return boolean|OrderItem false or the new/existing item
      */
@@ -299,7 +299,7 @@ class ShoppingCart extends Object
      * Finds an existing order item.
      *
      * @param Buyable $buyable
-     * @param array $filter
+     * @param array $customfilter
      *
      * @return OrderItem the item requested, or false
      */
@@ -662,7 +662,7 @@ class ShoppingCart_Controller extends Controller
     /**
      * Action: update the quantity of an item in the cart
      *
-     * @param $request
+     * @param SS_HTTPRequest $request
      *
      * @return AjaxHTTPResponse|bool
      */
@@ -682,7 +682,7 @@ class ShoppingCart_Controller extends Controller
     /**
      * Action: clear the cart
      *
-     * @param $request
+     * @param SS_HTTPRequest $request
      *
      * @return AjaxHTTPResponse|bool
      */
