@@ -22,7 +22,7 @@ abstract class CheckoutComponent extends Object
      * Get form fields for manipulating the current order,
      * according to the responsibilty of this component.
      *
-     * @param  Form $form the form being updated
+     * @param  Order $order the form being updated
      *
      * @throws Exception
      * @return FieldList fields for manipulating order
@@ -34,6 +34,7 @@ abstract class CheckoutComponent extends Object
      *
      * This function should never rely on form.
      *
+     * @param Order $order the form being updated
      * @param array $data data to be validated
      *
      * @throws ValidationException
@@ -44,7 +45,7 @@ abstract class CheckoutComponent extends Object
     /**
      * Get required data out of the model.
      *
-     * @param  Order $order order to get data from.
+     * @param  Order $order
      *
      * @return array        get data from model(s)
      */
@@ -55,6 +56,7 @@ abstract class CheckoutComponent extends Object
      *
      * This function should never rely on form.
      *
+     * @param Order $order
      * @param array $data data to be saved into order object
      *
      * @throws Exception
@@ -74,11 +76,17 @@ abstract class CheckoutComponent extends Object
         return $this->requiredfields;
     }
 
+    /**
+     * @returns array
+     */
     public function dependsOn()
     {
         return $this->dependson;
     }
 
+    /**
+     * @return string
+     */
     public function name()
     {
         return get_class($this);
