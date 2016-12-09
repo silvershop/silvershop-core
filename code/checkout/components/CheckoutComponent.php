@@ -77,7 +77,7 @@ abstract class CheckoutComponent extends Object
     }
 
     /**
-     * @returns array
+     * @return array
      */
     public function dependsOn()
     {
