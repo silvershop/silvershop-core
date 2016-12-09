@@ -20,7 +20,7 @@ abstract class CheckoutComponent extends Object
 
     /**
      * Get form fields for manipulating the current order,
-     * according to the responsibilty of this component.
+     * according to the responsibility of this component.
      *
      * @param  Order $order the form being updated
      *
