@@ -1,6 +1,7 @@
 <?php
 
 use SilverStripe\Omnipay\GatewayInfo;
+use SilverStripe\Omnipay\GatewayFieldsFactory;
 
 class PaymentForm extends CheckoutForm
 {
@@ -113,10 +114,13 @@ class PaymentForm extends CheckoutForm
             }
         }
 
+        $gateway = Checkout::get($order)->getSelectedPaymentMethod(false);
+        $fieldFactory = new GatewayFieldsFactory($gateway);
+
         // This is where the payment is actually attempted
         $paymentResponse = $this->orderProcessor->makePayment(
-            Checkout::get($order)->getSelectedPaymentMethod(false),
-            $data,
+            $gateway,
+            $fieldFactory->normalizeFormData($data),
             $this->getSuccessLink(),
             $cancelUrl
         );
