@@ -366,8 +366,8 @@ de:
     Change: Ändern
     Customer: Kunde
     Date: Datum
-    DateFormatNice: '%d.%M.%Y'
-    DateTimeFormatNice: '%d.%M.%Y %H:%M'
+    DateFormatNice: '%d.%m.%Y'
+    DateTimeFormatNice: '%d.%m.%Y %H:%M'
     DateTimeFormatNice24: 'd.m.Y H:i'
     DevToolsTitle: 'Shop Entwickler Tools'
     Edit: Bearbeiten
@@ -415,11 +415,11 @@ de:
     AdminNotificationSubject: 'Benachrichtigung für Bestellung Nr. {OrderNo}'
     AdminNotificationTitle: 'Shop Benachrichtigung'
     CancelSubject: 'Bestellung Nr. {OrderNo} wurde vom Kunden storniert'
-    ConfirmationSubject: 'Bestätigung der Bestellung Nr. {OrderNo}'
-    ConfirmationTitle: 'Bestellbestätigung'
+    ConfirmationSubject: 'Bestellung Nr. {OrderNo} eingegangen.'
+    ConfirmationTitle: 'Bestellungseingang'
     PhoneNumber: 'Telefonnummer'
-    ReceiptSubject: 'Bestellung Nr. {OrderNo} eingegangen.'
-    ReceiptTitle: 'Bestellungseingang'
+    ReceiptSubject: 'Bestätigung der Bestellung Nr. {OrderNo}'
+    ReceiptTitle: 'Bestellbestätigung'
     Regards: 'Mit freundlichen Grüssen'
     StatusChangeSubject: 'Silvershop – '
     StatusChangeTitle: 'Statusänderung'
