@@ -46,10 +46,7 @@ class OrderProcessor
     public function __construct(Order $order)
     {
         $this->order = $order;
-        $customNotifierClass = ShopConfig::config()->get('email_notifier');
-        $this->notifier =  $customNotifierClass
-            ? Injector::inst()->create($customNotifierClass, $order)
-            : OrderEmailNotifier::create($order);
+        $this->notifier = OrderEmailNotifier::create($order);
     }
 
     /**
