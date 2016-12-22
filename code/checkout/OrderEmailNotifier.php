@@ -38,7 +38,8 @@ class OrderEmailNotifier
     }
 
     /**
-     * @param $bool
+     * @param bool $bool
+     * @return $this
      */
     public function setDebugMode($bool)
     {

@@ -38,3 +38,14 @@ en:
     CancelSubject: 'My Website Order #{OrderNo} cancelled by member'  
 ```
 
+## Making your own Notifier
+
+There may be times when you want to add custom logic around the e-mail. For instance if your purchase requires your user to enter e-mail addresses and each of those addresses receives a different confirmation e-mail. In this situation make a `MyCustomOrderEmailNotifier` that can optionally extend `OrderEmailNotifier` and add custom logic into it then declare it to replace the current notifier
+
+```yaml
+# in mysite/config.yml
+Injector:
+  OrderEmailNotifier:
+    class: MyCustomOrderEmailNotifier
+```
+
