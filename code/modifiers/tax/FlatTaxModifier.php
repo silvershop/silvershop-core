@@ -18,9 +18,9 @@ class FlatTaxModifier extends TaxModifier
 
     private static $excludedmessage = "%.1f%% %s";
 
-    public function populateDefaults()
+    public function __construct($record = null, $isSingleton = false, $model = null)
     {
-        parent::populateDefaults();
+        parent::__construct($record, $isSingleton, $model);
         $this->Type = self::config()->exclusive ? 'Chargable' : 'Ignored';
     }
 
