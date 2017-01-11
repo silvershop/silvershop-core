@@ -80,9 +80,9 @@ class OrderEmailNotifier
     /**
      * Send a mail of the order to the client (and another to the admin).
      *
-     * @param $template    - the class name of the email you wish to send
-     * @param $subject     - subject of the email
-     * @param $copyToAdmin - true by default, whether it should send a copy to the admin
+     * @param string $template    - the class name of the email you wish to send
+     * @param string $subject     - subject of the email
+     * @param bool $copyToAdmin - true by default, whether it should send a copy to the admin
      *
      * @return bool
      */
@@ -102,6 +102,7 @@ class OrderEmailNotifier
 
     /**
      * Send customer a confirmation that the order has been received
+     * @return bool
      */
     public function sendConfirmation()
     {
