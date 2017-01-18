@@ -198,7 +198,7 @@ class ProductVariation extends DataObject implements Buyable
                 }
             }
 
-            return implode(self::config()->title_glue, $labelvalues);
+            $title = implode(self::config()->title_glue, $labelvalues);
         }
         $this->extend('updateTitle', $title);
 
