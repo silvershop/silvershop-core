@@ -8,11 +8,7 @@
  */
 class SimpleShippingModifier extends ShippingModifier
 {
-    private static $db                 = array(
-        'Country' => 'Text',
-    );
-
-    private static $default_charge     = 10;
+    private static $default_charge = 10;
 
     private static $charges_by_country = array();
 
@@ -22,6 +18,7 @@ class SimpleShippingModifier extends ShippingModifier
         if ($country && isset(self::config()->charges_by_country[$country])) {
             return self::config()->charges_by_country[$country];
         }
+
         return self::config()->default_charge;
     }
 
@@ -29,6 +26,7 @@ class SimpleShippingModifier extends ShippingModifier
     {
         if ($country = $this->Country()) {
             $countryList = SiteConfig::current_site_config()->getCountriesList();
+
             return _t(
                 'SimpleShippingModifier.ShipToCountry',
                 'Ship to {Country}',
@@ -40,15 +38,17 @@ class SimpleShippingModifier extends ShippingModifier
         }
     }
 
+    /**
+     * @return string | null
+     */
     public function Country()
     {
         if ($order = $this->Order()) {
-            return ($order->UseShippingAddress && $order->ShippingCountry)
-                ?
-                $order->ShippingCountry
-                :
-                $order->Country;
+            if ($order->getShippingAddress()->exists() && $order->getShippingAddress()->Country) {
+                return $order->getShippingAddress()->Country;
+            }
         }
+
         return null;
     }
 }
