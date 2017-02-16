@@ -266,6 +266,9 @@ class ProductVariation extends DataObject implements Buyable
         $item->ProductID = $this->ProductID;
         $item->ProductVariationID = $this->ID;
         //$item->ProductVariationVersion = $this->Version;
+
+        $this->extend('updateCreateItem', $item);
+
         if ($filter) {
             //TODO: make this a bit safer, perhaps intersect with allowed fields
             $item->update($filter);

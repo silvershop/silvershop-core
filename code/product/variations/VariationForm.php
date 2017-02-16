@@ -121,6 +121,8 @@ class VariationForm extends AddProductForm
                 return json_encode($ret);
             }
 
+            $this->extend('beforeVariationAddToCart', $form, $variation);
+
             if ($cart->add($variation, $quantity)) {
                 $form->sessionMessage(
                     _t('ShoppingCart.ItemAdded', "Item has been added successfully."),
