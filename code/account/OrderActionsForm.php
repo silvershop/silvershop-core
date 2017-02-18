@@ -124,7 +124,12 @@ class OrderActionsForm extends Form
             if (!GatewayInfo::isManual($gateway)) {
                 /** @var OrderProcessor $processor */
                 $processor = OrderProcessor::create($this->order);
-                $response = $processor->makePayment($gateway, $data, $processor->getReturnUrl());
+                $fieldFactory = new GatewayFieldsFactory(null);
+                $response = $processor->makePayment(
+                    $gateway,
+                    $fieldFactory->normalizeFormData($data),
+                    $processor->getReturnUrl()
+                );
                 if($response && !$response->isError()){
                     return $response->redirectOrRespond();
                 } else {
@@ -184,24 +189,25 @@ class OrderActionsForm extends Form
      */
     protected function getCCFields(array $gateways)
     {
+        $fieldFactory = new GatewayFieldsFactory(null, array('Card'));
         $onsiteGateways = array();
         $allRequired = array();
         foreach ($gateways as $gateway => $title) {
             if (!GatewayInfo::isOffsite($gateway)) {
                 $required = GatewayInfo::requiredFields($gateway);
-                $onsiteGateways[$gateway] = $required;
+                $onsiteGateways[$gateway] = $fieldFactory->getFieldName($required);
                 $allRequired += $required;
             }
         }
 
         $allRequired = array_unique($allRequired);
+        $allRequired = $fieldFactory->getFieldName(array_combine($allRequired, $allRequired));
 
         if (empty($onsiteGateways)) {
             return null;
         }
 
-        $factory = new GatewayFieldsFactory(null, array('Card'));
-        $ccFields = $factory->getCardFields();
+        $ccFields = $fieldFactory->getCardFields();
 
         // Remove all the credit card fields that aren't required by any gateway
         foreach ($ccFields->dataFields() as $name => $field) {
@@ -233,8 +239,9 @@ class OrderActionsForm_Validator extends RequiredFields
             $gateway = $data['PaymentMethod'];
             // If the gateway isn't manual and not offsite, Check for credit-card fields!
             if (!GatewayInfo::isManual($gateway) && !GatewayInfo::isOffsite($gateway)) {
+                $fieldFactory = new GatewayFieldsFactory(null);
                 // Merge the required fields and the Credit-Card fields that are required for the gateway
-                $this->required = array_merge($this->required, array_intersect(
+                $this->required = $fieldFactory->getFieldName(array_merge($this->required, array_intersect(
                     array(
                         'type',
                         'name',
@@ -247,7 +254,7 @@ class OrderActionsForm_Validator extends RequiredFields
                         'issueNumber'
                     ),
                     GatewayInfo::requiredFields($gateway)
-                ));
+                )));
             }
         }
 
