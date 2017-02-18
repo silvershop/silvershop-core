@@ -49,7 +49,7 @@ class CartForm extends Form
                 }
                 //delete lines
                 if (isset($fields['Remove']) || (isset($fields['Quantity']) && (int)$fields['Quantity'] <= 0)) {
-                    if (ShoppingCart::singleton()->remove($item->Buyable())) {
+                    if (ShoppingCart::singleton()->removeOrderItem($item)) {
                         $removecount++;
                     } else {
                         $badMessages[] = ShoppingCart::singleton()->getMessage();
@@ -60,7 +60,7 @@ class CartForm extends Form
                 //update quantities
                 if (isset($fields['Quantity']) && $quantity = Convert::raw2sql($fields['Quantity'])) {
                     $numericConverter->setValue($quantity);
-                    if (!ShoppingCart::singleton()->setQuantity($item->Buyable(), $numericConverter->dataValue())) {
+                    if (!ShoppingCart::singleton()->updateOrderItemQuantity($item, $numericConverter->dataValue())) {
                         $badMessages[] = ShoppingCart::singleton()->getMessage();
                     }
                 }
