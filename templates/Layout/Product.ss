@@ -26,21 +26,7 @@
                 <span class="value">$Size.XML</span>
             </p>
         <% end_if %>
-        <% if $PriceRange %>
-            <div class="price">
-                <strong class="value">$PriceRange.Min.Nice</strong>
-                <% if $PriceRange.HasRange %>
-                    - <strong class="value">$PriceRange.Max.Nice</strong>
-                <% end_if %>
-                <span class="currency">$Price.Currency</span>
-            </div>
-        <% else %>
-            <% if $Price %>
-                <div class="price">
-                    <strong class="value">$Price.Nice</strong> <span class="currency">$Price.Currency</span>
-                </div>
-            <% end_if %>
-        <% end_if %>
+        <% include Price %>
         <% if $IsInCart %>
             <p class="NumItemsInCart">
                 <% if $Item.Quantity == 1 %>
