@@ -82,6 +82,10 @@ class MatchObjectFilter
             $field = Convert::raw2sql($field);
             if (array_key_exists($field, $db)) {
                 if (isset($this->data[$field])) {
+                    // allow wildcard in filter
+                    if ($this->data[$field] === '*') {
+                        continue;
+                    }
                     $dbfield = $singleton->dbObject($field);
                     $value = $dbfield->prepValueForDB($this->data[$field]);    //product correct format for db values
                     // These seems to be a difference in how this works between SS 3.1 and 3.2

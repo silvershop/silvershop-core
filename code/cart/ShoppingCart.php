@@ -177,17 +177,8 @@ class ShoppingCart extends Object
 
         $item = $this->get($buyable, $filter);
 
-        if (!$item) {
+        if (!$item || !$this->removeOrderItem($item, $quantity)) {
             return false;
-        }
-
-        //if $quantity will become 0, then remove all
-        if (!$quantity || ($item->Quantity - $quantity) <= 0) {
-            $item->delete();
-            $item->destroy();
-        } else {
-            $item->Quantity -= $quantity;
-            $item->write();
         }
 
         // If an extension throws an exception, error out
@@ -199,6 +190,36 @@ class ShoppingCart extends Object
         }
 
         $this->message(_t("ShoppingCart.ItemRemoved", "Item has been successfully removed."));
+
+        return true;
+    }
+
+    /**
+     * Remove a specific order item from cart
+     * @param OrderItem $item
+     * @param int $quantity - number of items to remove or leave `null` to remove all items (default)
+     * @return boolean success/failure
+     */
+    public function removeOrderItem(OrderItem $item, $quantity = null)
+    {
+        $order = $this->current();
+
+        if (!$order) {
+            return $this->error(_t("ShoppingCart.NoOrder", "No current order."));
+        }
+
+        if (!$item || $item->OrderID != $order->ID) {
+            return $this->error(_t("ShoppingCart.ItemNotFound", "Item not found."));
+        }
+
+        //if $quantity will become 0, then remove all
+        if (!$quantity || ($item->Quantity - $quantity) <= 0) {
+            $item->delete();
+            $item->destroy();
+        } else {
+            $item->Quantity -= $quantity;
+            $item->write();
+        }
 
         return true;
     }
@@ -220,11 +241,34 @@ class ShoppingCart extends Object
         }
         $order = $this->findOrMake();
         $item = $this->findOrMakeItem($buyable, $quantity, $filter);
-        if (!$item) {
 
+        if (!$item || !$this->updateOrderItemQuantity($item, $quantity, $filter)) {
             return false;
         }
 
+        return $item;
+    }
+
+    /**
+     * Update quantity of a given order item
+     * @param OrderItem $item
+     * @param int $quantity the new quantity to use
+     * @param array $filter
+     * @return boolean success/failure
+     */
+    public function updateOrderItemQuantity(OrderItem $item, $quantity = 1, $filter = array())
+    {
+        $order = $this->current();
+
+        if (!$order) {
+            return $this->error(_t("ShoppingCart.NoOrder", "No current order."));
+        }
+
+        if (!$item || $item->OrderID != $order->ID) {
+            return $this->error(_t("ShoppingCart.ItemNotFound", "Item not found."));
+        }
+
+        $buyable = $item->Buyable();
         // If an extension throws an exception, error out
         try {
             $order->extend("beforeSetQuantity", $buyable, $quantity, $filter);
@@ -244,7 +288,7 @@ class ShoppingCart extends Object
         $item->write();
         $this->message(_t("ShoppingCart.QuantitySet", "Quantity has been set."));
 
-        return $item;
+        return true;
     }
 
     /**

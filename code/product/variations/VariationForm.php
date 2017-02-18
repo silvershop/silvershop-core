@@ -121,7 +121,11 @@ class VariationForm extends AddProductForm
                 return json_encode($ret);
             }
 
-            if ($cart->add($variation, $quantity)) {
+            $saveabledata = (!empty($this->saveablefields)) ? Convert::raw2sql(
+                array_intersect_key($data, array_combine($this->saveablefields, $this->saveablefields))
+            ) : $data;
+
+            if ($cart->add($variation, $quantity, $saveabledata)) {
                 $form->sessionMessage(
                     _t('ShoppingCart.ItemAdded', "Item has been added successfully."),
                     "good"
