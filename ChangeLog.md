@@ -1,5 +1,18 @@
 # SilverStripe Shop Change Log
 
+## 2.2.0
+
+ * Fix GlobalTaxModifier (Roman Schmid)
+ * Improve/enable custom properties on OrderItems. (Roman Schmid)
+ * fix price in templates (rasstislav)
+ * Ensure payment forms use the field renaming feature added to the omnipay module. Updated composer.json (Roman Schmid)
+ * removed old code from SimpleShippingModifier. It now simply looks at order shipping adress country to determine the shipping cost (Sander Hagenaars)
+ * Fix variation title so it can be extended (Adrian Stein)
+ * Improving the PHPDocs (Chris Lock)
+ * Setting the Type in constructor (Bram de Leeuw)
+ * Added a config hook to use a custom notifier (#570) (Chris Lock)
+ * Fix german translation file. (Roman Schmid)
+ 
 ## 2.1.1
 
  * Fix issue (introduced with 2.1) where Order receipt was never sent #563
