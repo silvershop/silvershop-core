@@ -27,9 +27,15 @@ class GlobalTaxModifier extends TaxModifier
 
     public function Rate()
     {
+        // If the order is no longer in cart, rely on the saved data
+        if ($this->OrderID && !$this->Order()->IsCart()){
+            return $this->getField('Rate');
+        }
+
         $rates = self::config()->country_rates;
-        if (isset($rates[$this->Country])) {
-            return $this->Rate = $rates[$this->Country]['rate'];
+        $country = $this->Country();
+        if ($country && isset($rates[$country])) {
+            return $this->Rate = $rates[$country]['rate'];
         }
         $defaults = self::config()->defaults;
         return $this->Rate = $defaults['Rate'];
@@ -37,8 +43,26 @@ class GlobalTaxModifier extends TaxModifier
 
     public function TableTitle()
     {
-        $country = $this->Country ? " for " . $this->Country . " " : "";
+        $country = $this->Country() ? ' (' . $this->Country() . ') ' : '';
         return parent::TableTitle() . $country .
-        ($this->Type == "Chargable" ? '' : _t("GlobalTaxModifier.Included", ' (included in the above price)'));
+            ($this->Type == "Chargable" ? '' : _t("GlobalTaxModifier.Included", ' (included in the above price)'));
+    }
+
+    public function Country()
+    {
+        if ($this->OrderID && $address = $this->Order()->getBillingAddress()) {
+            return $address->Country;
+        }
+
+        return null;
+    }
+
+    public function onBeforeWrite()
+    {
+        parent::onBeforeWrite();
+        // While the order is still in "Cart" status, persist country code to DB
+        if ($this->OrderID && $this->Order()->IsCart()){
+            $this->setField('Country', $this->Country());
+        }
     }
 }
