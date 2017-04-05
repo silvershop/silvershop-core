@@ -67,6 +67,7 @@ class VariationForm extends AddProductForm
         $fields->merge($this->Fields());
 
         $this->setFields($fields);
+        $fields->setForm($this);
         $requiredfields[] = 'Quantity';
 
         $this->setValidator(
