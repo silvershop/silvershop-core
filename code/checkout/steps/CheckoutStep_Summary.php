@@ -10,8 +10,6 @@ class CheckoutStep_Summary extends CheckoutStep
     public function summary()
     {
         $form = $this->ConfirmationForm();
-        $this->owner->extend('updateConfirmationForm', $form);
-
         return array(
             'OrderForm' => $form,
         );
@@ -26,6 +24,7 @@ class CheckoutStep_Summary extends CheckoutStep
 
         $form = PaymentForm::create($this->owner, "ConfirmationForm", $config);
         $form->setFailureLink($this->owner->Link('summary'));
+        $this->owner->extend('updateConfirmationForm', $form);
 
         return $form;
     }
