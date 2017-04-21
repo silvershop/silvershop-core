@@ -10,8 +10,6 @@ class CheckoutStep_Summary extends CheckoutStep
     public function summary()
     {
         $form = $this->ConfirmationForm();
-        $this->owner->extend('updateConfirmationForm', $form);
-
         return array(
             'OrderForm' => $form,
         );
