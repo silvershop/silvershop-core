@@ -17,6 +17,53 @@ You can find a test spreadsheet in shop/tests/test_products.csv , which was expo
 
 If you specify a 'Category' or 'ProductGroup' column, the loader will look for a ProductGroup with a title matching the specified category name. If you desire to use this system, it is recommended building your ProductGroup structure before loading the products.
 
+## Additional Categories
+
+If you have Additional Categories you would like to import you will need to Extend ProductBulkLoader to add "AdditionalCategories" to the ColumnMap.
+
+The following will need the "AdditionalCategories" Column to be made up of page ID's. However there is an example below for using the Title.
+
+    :::PHP
+    class CSVImportingMap extends Extension {
+
+        public function updateColumnMap(&$columnMap) {
+
+            $columnMap['AdditionalCategories'] = '->processAdditionalCategories';
+            return $columnMap;
+
+        }
+
+        public function processAdditionalCategories($obj, $val, $record) { 
+            $categories = explode(",", $val); 
+            foreach($categories as $category) { 
+                if($category = ProductCategory::get()->byID($category)) {
+                    $obj->ProductCategories()->add($category->ID); 
+                } 
+            } 
+            return $obj; 
+        }
+    }
+    
+Use the following for "AdditionalCategories" Column made up of page Titles:
+
+    ::PHP
+    public function processAdditionalCategories($obj, $val, $record) { 
+    $categories = explode(",", $val); 
+        foreach($categories as $category) { 
+            if($category = ProductCategory::get()->filter('Title', $category)->first()) {
+                $obj->ProductCategories()->add($category->ID); 
+            } 
+        } 
+        return $obj; 
+    }
+
+Then add the following to your .yml file:
+
+    ::PHP
+    ProductBulkLoader:
+      extensions:
+        - CSVImportingMap
+
 ## Product Images
 
 Specifying a filename in a 'Image' or 'Photo' will link the product up to an image with the same filename that has been previously uploaded. This means you need to upload the product photos somewhere in the assets folder structure before doing the product bulk load.
