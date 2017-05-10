@@ -219,7 +219,9 @@ class SinglePageCheckoutComponentConfig extends CheckoutComponentConfig
     {
         parent::__construct($order);
         $this->addComponent(CustomerDetailsCheckoutComponent::create());
-        $this->addComponent(ShippingAddressCheckoutComponent::create());
+         if(!CheckoutConfig::config()->ShippingOptional){ 
+			$this->addComponent(ShippingAddressCheckoutComponent::create());
+		}
         $this->addComponent(BillingAddressCheckoutComponent::create());
         if (Checkout::member_creation_enabled() && !Member::currentUserID()) {
             $this->addComponent(MembershipCheckoutComponent::create());
