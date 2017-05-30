@@ -7,75 +7,11 @@ class VariationForm extends AddProductForm
 {
     public static $include_json = true;
 
+    protected $requiredFields = ['Quantity'];
+
     public function __construct($controller, $name = "VariationForm")
     {
         parent::__construct($controller, $name);
-
-        $product = $controller->data();
-        $farray = array();
-        $requiredfields = array();
-        $attributes = $product->VariationAttributeTypes();
-
-        foreach ($attributes as $attribute) {
-            $attributeDropdown = $attribute->getDropDownField(
-                _t(
-                    'VariationForm.ChooseAttribute',
-                    "Choose {attribute} …",
-                    '',
-                    array('attribute' => $attribute->Label)
-                ),
-                $product->possibleValuesForAttributeType($attribute)
-            );
-
-            if($attributeDropdown){
-                $farray[] = $attributeDropdown;
-                $requiredfields[] = "ProductAttributes[$attribute->ID]";
-            }
-        }
-
-        $fields = FieldList::create($farray);
-
-        if (self::$include_json) {
-            $vararray = array();
-
-            $query = $query2 = new SQLQuery();
-
-            $query->setSelect('ID')
-                ->setFrom('ProductVariation')
-                ->addWhere(array('ProductID' => $product->ID));
-
-            if (!Product::config()->allow_zero_price) {
-                $query->addWhere('"Price" > 0');
-            }
-
-            foreach ($query->execute()->column('ID') as $variationID) {
-                $query2->setSelect('ProductAttributeValueID')
-                    ->setFrom('ProductVariation_AttributeValues')
-                    ->setWhere(array('ProductVariationID' => $variationID));
-                $vararray[$variationID] = $query2->execute()->keyedColumn();
-            }
-
-            $fields->push(
-                HiddenField::create(
-                    'VariationOptions',
-                    'VariationOptions',
-                    json_encode($vararray)
-                )
-            );
-        }
-
-        $fields->merge($this->Fields());
-
-        $this->setFields($fields);
-        $fields->setForm($this);
-        $requiredfields[] = 'Quantity';
-
-        $this->setValidator(
-            VariationFormValidator::create(
-                $requiredfields
-            )
-        );
-
         $this->extend('updateVariationForm');
     }
 
@@ -157,5 +93,71 @@ class VariationForm extends AddProductForm
         }
 
         return null;
+    }
+
+    protected function getFormFields($controller = null)
+    {
+        $fields = parent::getFormFields($controller);
+
+        if (!$controller) {
+            return $fields;
+        }
+        $product = $controller->data();
+        $attributes = $product->VariationAttributeTypes();
+
+        foreach ($attributes as $attribute) {
+            $attributeDropdown = $attribute->getDropDownField(
+                _t(
+                    'VariationForm.ChooseAttribute',
+                    "Choose {attribute} …",
+                    '',
+                    array('attribute' => $attribute->Label)
+                ),
+                $product->possibleValuesForAttributeType($attribute)
+            );
+
+            if($attributeDropdown){
+                $fields->push($attributeDropdown);
+                $this->requiredFields[] = "ProductAttributes[$attribute->ID]";
+            }
+        }
+
+        if (self::$include_json) {
+            $vararray = array();
+
+            $query = $query2 = new SQLQuery();
+
+            $query->setSelect('ID')
+                ->setFrom('ProductVariation')
+                ->addWhere(array('ProductID' => $product->ID));
+
+            if (!Product::config()->allow_zero_price) {
+                $query->addWhere('"Price" > 0');
+            }
+
+            foreach ($query->execute()->column('ID') as $variationID) {
+                $query2->setSelect('ProductAttributeValueID')
+                    ->setFrom('ProductVariation_AttributeValues')
+                    ->setWhere(array('ProductVariationID' => $variationID));
+                $vararray[$variationID] = $query2->execute()->keyedColumn();
+            }
+
+            $fields->push(
+                HiddenField::create(
+                    'VariationOptions',
+                    'VariationOptions',
+                    json_encode($vararray)
+                )
+            );
+        }
+
+        return $fields;
+    }
+
+    protected function getFormValidator()
+    {
+        return VariationFormValidator::create(
+            array_unique($this->requiredFields)
+        );
     }
 }
