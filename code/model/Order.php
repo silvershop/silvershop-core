@@ -422,8 +422,13 @@ class Order extends DataObject
      *
      * @return boolean
      */
-    public function canCancel()
+    public function canCancel($member = null)
     {
+        $extended = $this->extendedCan(__FUNCTION__, $member);
+        if($extended !== null) {
+            return $extended;
+        }
+
         switch ($this->Status) {
             case 'Unpaid' :
                 return self::config()->cancel_before_payment;
@@ -445,6 +450,11 @@ class Order extends DataObject
      */
     public function canPay($member = null)
     {
+        $extended = $this->extendedCan(__FUNCTION__, $member);
+        if($extended !== null) {
+            return $extended;
+        }
+
         if (!in_array($this->Status, self::config()->payable_status)) {
             return false;
         }
@@ -460,6 +470,11 @@ class Order extends DataObject
      */
     public function canDelete($member = null)
     {
+        $extended = $this->extendedCan(__FUNCTION__, $member);
+        if($extended !== null) {
+            return $extended;
+        }
+
         return false;
     }
 
@@ -470,6 +485,11 @@ class Order extends DataObject
      */
     public function canView($member = null)
     {
+        $extended = $this->extendedCan(__FUNCTION__, $member);
+        if($extended !== null) {
+            return $extended;
+        }
+
         return true;
     }
 
@@ -480,6 +500,11 @@ class Order extends DataObject
      */
     public function canEdit($member = null)
     {
+        $extended = $this->extendedCan(__FUNCTION__, $member);
+        if($extended !== null) {
+            return $extended;
+        }
+
         return true;
     }
 
@@ -490,6 +515,11 @@ class Order extends DataObject
      */
     public function canCreate($member = null, $context = array())
     {
+        $extended = $this->extendedCan(__FUNCTION__, $member, $context);
+        if($extended !== null) {
+            return $extended;
+        }
+
         return false;
     }
 
