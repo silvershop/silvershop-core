@@ -25,7 +25,7 @@ class AddProductForm extends Form
         parent::__construct(
             $controller,
             $name,
-            $this->getFormFields(),
+            $this->getFormFields($controller),
             $this->getFormActions(),
             $this->getFormValidator()
         );
@@ -87,9 +87,10 @@ class AddProductForm extends Form
     }
 
     /**
+     * @param Controller $controller the controller instance that is being passed to the form
      * @return FieldList Fields for this form.
      */
-    protected function getFormFields()
+    protected function getFormFields($controller = null)
     {
         $fields = FieldList::create();
 
