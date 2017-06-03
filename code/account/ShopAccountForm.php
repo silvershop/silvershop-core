@@ -32,7 +32,7 @@ class ShopAccountForm extends Form
         }
         parent::__construct($controller, $name, $fields, $actions, $requiredFields);
 
-        $this->extend('updateShopAccountForm');
+        $this->extend('updateShopAccountForm',$this);
 
         if ($member) {
             $member->Password = ""; //prevents password field from being populated with encrypted password data
