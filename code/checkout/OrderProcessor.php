@@ -10,7 +10,7 @@ use SilverStripe\Omnipay\Service\ServiceResponse;
  *
  * @package shop
  */
-class OrderProcessor
+class OrderProcessor extends Object
 {
     /**
      * @var Order
@@ -28,17 +28,6 @@ class OrderProcessor
     protected $error;
 
     /**
-     * Static way to create the order processor.
-     * Makes creating a processor easier.
-     *
-     * @param Order $order
-     */
-    public static function create(Order $order)
-    {
-        return Injector::inst()->create('OrderProcessor', $order);
-    }
-
-    /**
      * Assign the order to a local variable
      *
      * @param Order $order
@@ -47,6 +36,7 @@ class OrderProcessor
     {
         $this->order = $order;
         $this->notifier = OrderEmailNotifier::create($order);
+        parent::__construct();
     }
 
     /**
@@ -137,7 +127,7 @@ class OrderProcessor
 
         $transactionId = $this->order->Reference . ($numPayments > 0 ? "-$numPayments" : '');
 
-        return array_merge(
+        $gatewayData = new ArrayData(array_merge(
             $customData,
             array(
                 'transactionId'    => $transactionId,
@@ -160,7 +150,10 @@ class OrderProcessor
                 'shippingCountry'  => $shipping->Country,
                 'shippingPhone'    => $shipping->Phone,
             )
-        );
+        ));
+        
+        $this->extend('updateGatewayData', $gatewayData);
+        return $gatewayData->toMap();
     }
 
     /**
