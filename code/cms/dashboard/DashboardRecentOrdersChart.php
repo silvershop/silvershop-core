@@ -47,7 +47,7 @@ if (class_exists('DashboardPanel')) {
                         ->get('DashboardRecentOrdersPanel', 'exclude_status')
                 ) . "')
 					AND \"Placed\" > date_sub(now(), interval {$this->Days} day)
-				GROUP BY \"Date\"
+				GROUP BY \"Date\", \"Placed\"
 				ORDER BY \"Placed\"
 			"
             );
