@@ -130,7 +130,7 @@ class ShopConfig extends DataExtension
 
     /**
      * Helper for getting static shop config.
-     * The 'config' static function isn't avaialbe on Extensions.
+     * The 'config' static function isn't available on Extensions.
      *
      * @return Config_ForClass configuration object
      */
