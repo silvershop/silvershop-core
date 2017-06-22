@@ -96,7 +96,7 @@ class CartEditField extends FormField
     {
         $editables = ArrayList::create();
         foreach ($this->items as $item) {
-            $buyable = $item->Product();
+            $buyable = $item->Buyable();
             if (!$buyable) {
                 continue;
             }
