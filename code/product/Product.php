@@ -48,7 +48,7 @@ class Product extends Page implements Buyable
     );
 
     private static $casting                = array(
-        'Price' => 'Currency',
+        'Price' => 'ShopCurrency',
     );
 
     private static $summary_fields         = array(
