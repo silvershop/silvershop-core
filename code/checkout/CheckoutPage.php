@@ -103,8 +103,8 @@ class CheckoutPage_Controller extends Page_Controller
 
     public function Title()
     {
-        if ($this->Title) {
-            return $this->Title;
+        if ($this->failover && $this->failover->Title) {
+            return $this->failover->Title;
         }
 
         return _t('CheckoutPage.DefaultTitle', "Checkout");
