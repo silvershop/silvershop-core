@@ -75,15 +75,19 @@ class Address extends DataObject
 
     public function getCMSFields()
     {
-        $fields = parent::getCMSFields();
-        $fields->addFieldToTab(
-            "Root.Main",
-            $this->getCountryField(),
-            'State'
-        );
-        $fields->removeByName("MemberID");
+        $self = $this;
 
-        return $fields;
+        $this->beforeUpdateCMSFields(function(FieldList $fields) use ($self) {
+            $fields->addFieldToTab(
+                "Root.Main",
+                $self->getCountryField(),
+                'State'
+            );
+
+            $fields->removeByName("MemberID");
+        });
+
+        return parent::getCMSFields();
     }
 
     public function getFrontEndFields($params = null)

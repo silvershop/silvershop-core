@@ -108,47 +108,40 @@ class Product extends Page implements Buyable
      */
     public function getCMSFields()
     {
-        self::disableCMSFieldsExtensions();
-        $fields = parent::getCMSFields();
-        $fields->fieldByName('Root.Main.Title')
-            ->setTitle(_t('Product.PageTitle', 'Product Title'));
-        //general fields
-        $fields->addFieldsToTab(
-            'Root.Main',
-            array(
+        $self = $this;
+
+        $this->beforeUpdateCMSFields(function(FieldList $fields) use ($self) {
+            $fields->fieldByName('Root.Main.Title')
+                ->setTitle(_t('Product.PageTitle', 'Product Title'));
+
+            $fields->addFieldsToTab('Root.Main', [
                 TextField::create('InternalItemID', _t('Product.InternalItemID', 'Product Code/SKU'), '', 30),
-                DropdownField::create('ParentID', _t("Product.Category", "Category"), $this->getCategoryOptions())
+                DropdownField::create('ParentID', _t("Product.Category", "Category"), $self->getCategoryOptions())
                     ->setDescription(_t("Product.CategoryDescription", "This is the parent page or default category.")),
                 ListBoxField::create(
                     'ProductCategories',
                     _t("Product.AdditionalCategories", "Additional Categories"),
-                    $this->getCategoryOptionsNoParent()
+                    $self->getCategoryOptionsNoParent()
                 )->setMultiple(true),
                 TextField::create('Model', _t('Product.Model', 'Model'), '', 30),
                 CheckboxField::create('Featured', _t('Product.Featured', 'Featured Product')),
                 CheckboxField::create('AllowPurchase', _t('Product.AllowPurchase', 'Allow product to be purchased'), 1),
-            ),
-            'Content'
-        );
-        //pricing
-        $fields->addFieldsToTab(
-            'Root.Pricing',
-            array(
+            ]);
+
+            $fields->addFieldsToTab('Root.Pricing', [
                 TextField::create('BasePrice', _t('Product.db_BasePrice', 'Price'))
                     ->setDescription(_t('Product.PriceDesc', "Base price to sell this product at."))
                     ->setMaxLength(12),
                 TextField::create('CostPrice', _t('Product.db_CostPrice', 'Cost Price'))
                     ->setDescription(_t('Product.CostPriceDescription', 'Wholesale price before markup.'))
                     ->setMaxLength(12),
-            )
-        );
-        //physical measurements
-        $fieldSubstitutes = array(
-            'LengthUnit' => self::config()->length_unit
-        );
-        $fields->addFieldsToTab(
-            'Root.Shipping',
-            array(
+            ]);
+
+            $fieldSubstitutes = [
+                'LengthUnit' => $self::config()->length_unit
+            ];
+
+            $fields->addFieldsToTab('Root.Shipping', [
                 TextField::create(
                     'Weight',
                     _t('Product.WeightWithUnit', 'Weight ({WeightUnit})', '', array(
@@ -175,18 +168,17 @@ class Product extends Page implements Buyable
                     '',
                     12
                 ),
-            )
-        );
-        if (!$fields->dataFieldByName('Image')) {
-            $fields->addFieldToTab(
-                'Root.Images',
-                UploadField::create('Image', _t('Product.Image', 'Product Image'))
-            );
-        }
-        self::enableCMSFieldsExtensions();
-        $this->extend('updateCMSFields', $fields);
+            ]);
 
-        return $fields;
+            if (!$fields->dataFieldByName('Image')) {
+                $fields->addFieldToTab(
+                    'Root.Images',
+                    UploadField::create('Image', _t('Product.Image', 'Product Image'))
+                );
+            }
+        });
+
+        return parent::getCMSFields();
     }
 
     /**
