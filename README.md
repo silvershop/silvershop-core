@@ -34,7 +34,8 @@ See `composer.json` for exact set of dependencies.
 
 ## Documentation
 
- * http://demo.ss-shop.org/docs - for Developers & Users
+ * https://github.com/silvershop/silvershop-core/blob/master/docs/en/index.md - for Developers
+ * https://github.com/silvershop/silvershop-core/blob/master/docs_user/en/index.md - for Users
 
 ## Installation Instructions
 
