@@ -45,7 +45,7 @@
 		"installer-name": "silvershop",
 		"snapshot" : "https://raw.github.com/silvershop/silvershop-core/gh-pages/assets/screenshots/shipping%20estimate%20form.png",
 		"branch-alias": {
-			"dev-master": "1.2.x-dev"
+			"dev-master": "2.x-dev"
 		}
 	},
 	"support":{
