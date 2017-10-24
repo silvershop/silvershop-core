@@ -100,6 +100,10 @@ class CartEditField extends FormField
             if (!$buyable) {
                 continue;
             }
+            // If the buyable is a variation, use the belonging product instead for variation-form generation
+            if ($buyable instanceof ProductVariation) {
+                $buyable = $buyable->Product();
+            }
             $name = $this->name . "[$item->ID]";
             $quantity = TextField::create(
                 $name . "[Quantity]",
