@@ -127,7 +127,7 @@ class CheckoutPage_Controller extends Page_Controller
         if ($config->getComponentByType('OnsitePaymentCheckoutComponent')) {
             $form->setActions(
                 FieldList::create(
-                    FormAction::create('checkoutSubmit', _t('CheckoutForm.SubmitPayment', 'Submit Payment'))
+                    FormAction::create('checkoutSubmit', _t('CheckoutPage.SubmitPayment', 'Submit Payment'))
                 )
             );
         }
