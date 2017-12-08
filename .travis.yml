@@ -25,8 +25,8 @@ before_script:
   # Install composer dependencies
   - export PATH=~/.composer/vendor/bin:$PATH
   - composer validate
-  - composer require --prefer-dist silverstripe/recipe-cms:1.0.x-dev  --no-update
-  - if [[ $DB == PGSQL ]]; then composer require silverstripe/postgresql:2.0.x-dev --no-update; fi
+  - composer require --prefer-dist silverstripe/recipe-cms:^1.0  --no-update
+  - if [[ $DB == PGSQL ]]; then composer require silverstripe/postgresql:^2.0 --no-update; fi
   - composer update
 
 script:
