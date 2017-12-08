@@ -1,5 +1,15 @@
 <?php
 
+use SilverStripe\Security\Member;
+use SilverStripe\Security\PasswordValidator;
+use SilverStripe\Forms\Form;
+use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\TextField;
+use SilverStripe\Forms\ConfirmedPasswordField;
+use SilverStripe\Forms\PasswordField;
+use SilverStripe\ORM\ValidationResult;
+use SilverStripe\ORM\ValidationException;
+
 /**
  * Provides:
  *    - member identifier, and password fields.

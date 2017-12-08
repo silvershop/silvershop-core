@@ -1,6 +1,12 @@
 <?php
 
 use SilverStripe\Omnipay\GatewayInfo;
+use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\OptionsetField;
+use SilverStripe\Forms\HiddenField;
+use SilverStripe\ORM\ValidationResult;
+use SilverStripe\ORM\ValidationException;
+
 
 class PaymentCheckoutComponent extends CheckoutComponent
 {

@@ -1,5 +1,10 @@
 <?php
 
+use SilverStripe\Versioned\Versioned;
+use SilverStripe\Control\Director;
+use SilverStripe\Core\Config\Config;
+use SilverStripe\Dev\FunctionalTest;
+
 class ProductCategoryTest extends FunctionalTest
 {
     public static $fixture_file  = 'silvershop/tests/fixtures/shop.yml';

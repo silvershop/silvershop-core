@@ -1,9 +1,11 @@
 <?php
 
+use SilverStripe\ORM\FieldType\DBCurrency;
+
 /**
  * Allows casting some template values to show "FREE" instead of $0.00.
  */
-class CanBeFreeCurrency extends Currency
+class CanBeFreeCurrency extends DBCurrency
 {
     public function Nice()
     {

@@ -1,12 +1,14 @@
 <?php
 
+use SilverStripe\ORM\FieldType\DBDatetime;
+
 /**
  * provides I18n formating
  *
  * @package    shop
  * @subpackage i18n
  */
-class I18nDatetime extends SS_Datetime
+class I18nDatetime extends DBDatetime
 {
     /**
      * Returns the datetime in the format given in the lang file

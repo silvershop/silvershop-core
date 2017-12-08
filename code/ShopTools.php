@@ -1,5 +1,8 @@
 <?php
 
+use SilverStripe\ORM\DB;
+use SilverStripe\i18n\i18n;
+
 /**
  * Globally useful tools
  */
@@ -12,7 +15,7 @@ class ShopTools
      */
     public static function DBConn($name = 'default')
     {
-        if (method_exists('DB', 'get_conn')) {
+        if (method_exists(DB::class, 'get_conn')) {
             return DB::get_conn($name);
         }
         return DB::getConn($name);

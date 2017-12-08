@@ -1,5 +1,9 @@
 <?php
 
+use SilverStripe\Forms\TextField;
+use SilverStripe\Core\Convert;
+use SilverStripe\ORM\DataObject;
+
 class RegionRestriction extends DataObject
 {
     private static $db             = array(
@@ -37,9 +41,9 @@ class RegionRestriction extends DataObject
      */
     private static $table_field_types = array(
         'Country'    => 'RestrictionRegionCountryDropdownField',
-        'State'      => 'TextField',
-        'City'       => 'TextField',
-        'PostalCode' => 'TextField',
+        'State'      => TextField::class,
+        'City'       => TextField::class,
+        'PostalCode' => TextField::class,
     );
 
     /**

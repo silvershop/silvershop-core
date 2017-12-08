@@ -1,5 +1,13 @@
 <?php
 
+use SilverStripe\CMS\Model\SiteTree;
+use SilverStripe\Control\Controller;
+use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\DropdownField;
+use SilverStripe\Forms\TreeDropdownField;
+use SilverStripe\ORM\DB;
+//use PageController;
+
 /**
  * View and edit the cart in a full page.
  * Visitor can continue shopping, or proceed to checkout.
@@ -8,7 +16,7 @@ class CartPage extends Page
 {
     private static $has_one = array(
         'CheckoutPage' => 'CheckoutPage',
-        'ContinuePage' => 'SiteTree',
+        'ContinuePage' => SiteTree::class,
     );
 
     private static $icon    = 'silvershop/images/icons/cart';
@@ -48,7 +56,7 @@ class CartPage extends Page
                 TreeDropdownField::create(
                     'ContinuePageID',
                     _t('CartPage.has_one_ContinuePage', 'Continue Shopping Page'),
-                    'SiteTree'
+                    SiteTree::class
                 )
             );
         });
@@ -78,7 +86,7 @@ class CartPage extends Page
     }
 }
 
-class CartPage_Controller extends Page_Controller
+class CartPage_Controller extends PageController
 {
     private static $url_segment     = 'cart';
 

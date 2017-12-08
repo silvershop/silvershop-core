@@ -1,5 +1,16 @@
 <?php
 
+use SilverStripe\View\Requirements;
+use SilverStripe\Forms\CompositeField;
+use SilverStripe\Core\Config\Config;
+use SilverStripe\Forms\FieldList;
+use SilverStripe\Security\Member;
+use SilverStripe\Forms\DropdownField;
+use SilverStripe\Forms\OptionsetField;
+use SilverStripe\ORM\ValidationResult;
+use SilverStripe\ORM\ValidationException;
+use SilverStripe\i18n\i18nEntityProvider;
+
 /**
  * Adds the ability to use the member's address book for choosing addresses
  *
@@ -48,7 +59,7 @@ abstract class AddressBookCheckoutComponent extends AddressCheckoutComponent imp
         if ($member && $member->AddressBook()->exists()) {
             $addressoptions = $member->AddressBook()->sort('Created', 'DESC')->map('ID', 'toString')->toArray();
             $addressoptions['newaddress'] = _t("Address.CreateNewAddress", "Create new address");
-            $fieldtype = count($addressoptions) > 3 ? 'DropdownField' : 'OptionsetField';
+            $fieldtype = count($addressoptions) > 3 ? DropdownField::class : OptionsetField::class;
 
             $label = _t("Address.Existing{$this->addresstype}Address", "Existing {$this->addresstype} Address");
 

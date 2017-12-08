@@ -1,5 +1,10 @@
 <?php
 
+use SilverStripe\Assets\Image;
+use SilverStripe\SiteConfig\SiteConfig;
+use SilverStripe\Assets\Filesystem;
+use SilverStripe\Dev\SapphireTest;
+
 /**
  * Tests for product image. These could be easily merged into the main
  * Product tests if desired, but those tests are currently non-functional.

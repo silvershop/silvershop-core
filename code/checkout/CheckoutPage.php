@@ -1,5 +1,12 @@
 <?php
 
+use SilverStripe\Control\Controller;
+use SilverStripe\Forms\FieldList;
+use SilverStripe\ORM\DB;
+use SilverStripe\Core\Injector\Injector;
+use SilverStripe\Forms\FormAction;
+//use PageController;
+
 /**
  * CheckoutPage is a CMS page-type that shows the order
  * details to the customer for their current shopping
@@ -91,7 +98,7 @@ class CheckoutPage extends Page
  * @mixin CheckoutStep_PaymentMethod
  * @mixin CheckoutStep_Summary
  */
-class CheckoutPage_Controller extends Page_Controller
+class CheckoutPage_Controller extends PageController
 {
     private static $url_segment     = 'checkout';
 

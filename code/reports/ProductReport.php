@@ -1,5 +1,7 @@
 <?php
 
+use SilverStripe\CMS\Model\SiteTree;
+
 class ProductReport extends ShopPeriodReport
 {
     protected $title       = "Products";
@@ -39,7 +41,7 @@ class ProductReport extends ShopPeriodReport
             )
             ->selectField("Count(OrderItem.Quantity)", "Quantity")
             ->selectField("Sum(OrderAttribute.CalculatedTotal)", "Sales");
-        $query->addInnerJoin("SiteTree", "Product.ID = SiteTree.ID");
+        $query->addInnerJoin(SiteTree::class, "Product.ID = SiteTree.ID");
         $query->addLeftJoin("Product_OrderItem", "Product.ID = Product_OrderItem.ProductID");
         $query->addLeftJoin("OrderItem", "Product_OrderItem.ID = OrderItem.ID");
         $query->addLeftJoin("OrderAttribute", "Product_OrderItem.ID = OrderAttribute.ID");

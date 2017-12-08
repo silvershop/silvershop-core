@@ -1,5 +1,11 @@
 <?php
 
+use SilverStripe\Control\Session;
+use SilverStripe\Security\Member;
+use SilverStripe\ORM\PaginatedList;
+use SilverStripe\Control\HTTPRequest;
+use SilverStripe\Core\Extension;
+
 /**
  * Provides forms and processing to a controller for editing an
  * order that has been previously placed.
@@ -105,7 +111,7 @@ class OrderManipulation extends Extension
      *
      * @return array of template variables
      */
-    public function order(SS_HTTPRequest $request)
+    public function order(HTTPRequest $request)
     {
         //move the shopping cart session id to past order ids, if it is now an order
         ShoppingCart::singleton()->archiveorderid($request->param('ID'));

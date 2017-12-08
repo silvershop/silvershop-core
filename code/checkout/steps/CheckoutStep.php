@@ -1,5 +1,8 @@
 <?php
 
+use SilverStripe\Core\Config\Config;
+use SilverStripe\Core\Extension;
+
 /**
  * Base class for building steps for checkout processing
  */

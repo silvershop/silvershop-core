@@ -2,6 +2,8 @@
 
 use SilverStripe\Omnipay\GatewayInfo;
 use SilverStripe\Omnipay\GatewayFieldsFactory;
+use SilverStripe\Core\Injector\Injector;
+
 
 class PaymentForm extends CheckoutForm
 {

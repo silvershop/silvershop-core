@@ -1,5 +1,13 @@
 <?php
 
+use SilverStripe\ORM\SS_List;
+use SilverStripe\View\SSViewer;
+use SilverStripe\ORM\ArrayList;
+use SilverStripe\Forms\TextField;
+use SilverStripe\Forms\DropdownField;
+use SilverStripe\Forms\CheckboxField;
+use SilverStripe\Forms\FormField;
+
 /**
  * Field for editing cart/items within a form
  *
@@ -115,7 +123,7 @@ class CartEditField extends FormField
                 ->setAttribute('min', '0');
 
             $variationfield = false;
-            if ($buyable->has_many("Variations")) {
+            if ($buyable->hasMany("Variations")) {
                 $variations = $buyable->Variations();
                 if ($variations->exists()) {
                     $variationfield = DropdownField::create(

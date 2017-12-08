@@ -1,5 +1,7 @@
 <?php
 
+use SilverStripe\Dev\SapphireTest;
+
 class ShopToolsTest extends SapphireTest
 {
     public function setUp()

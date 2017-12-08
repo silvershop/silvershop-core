@@ -1,5 +1,7 @@
 <?php
 
+use SilverStripe\Core\Extension;
+
 /**
  */
 class ShopPaymentService extends Extension

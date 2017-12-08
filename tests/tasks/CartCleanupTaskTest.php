@@ -1,5 +1,11 @@
 <?php
 
+use SilverStripe\Core\Config\Config;
+use SilverStripe\ORM\FieldType\DBDatetime;
+use SilverStripe\ORM\DB;
+use SilverStripe\Control\HTTPRequest;
+use SilverStripe\Dev\SapphireTest;
+
 /**
  * @package    shop
  * @subpackage tests
@@ -23,7 +29,7 @@ class CartCleanupTaskTest extends SapphireTest
 
     public function testRun()
     {
-        SS_Datetime::set_mock_now('2014-01-31 13:00:00');
+        DBDatetime::set_mock_now('2014-01-31 13:00:00');
 
         // less than two hours old
         $orderRunningRecent = new Order(array('Status' => 'Cart'));
@@ -41,7 +47,7 @@ class CartCleanupTaskTest extends SapphireTest
         DB::query('UPDATE "Order" SET "LastEdited" = \'2014-01-31 10:00:00\' WHERE "ID" = ' . $orderPaidOldID);
 
         $task = new CartCleanupTaskTest_CartCleanupTaskFake();
-        $response = $task->run(new SS_HTTPRequest('GET', '/'));
+        $response = $task->run(new HTTPRequest('GET', '/'));
 
         $this->assertInstanceOf('Order', Order::get()->byID($orderRunningRecentID));
         $this->assertNull(Order::get()->byID($orderRunningOldID));
@@ -49,7 +55,7 @@ class CartCleanupTaskTest extends SapphireTest
 
         $this->assertEquals('1 old carts removed.', $task->log[count($task->log) - 1]);
 
-        SS_Datetime::clear_mock_now();
+        DBDatetime::clear_mock_now();
     }
 }
 

@@ -1,5 +1,13 @@
 <?php
 
+use SilverStripe\Security\Member;
+use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\TextField;
+use SilverStripe\SiteConfig\SiteConfig;
+use SilverStripe\Forms\ReadonlyField;
+use SilverStripe\Forms\DropdownField;
+use SilverStripe\ORM\DataObject;
+
 /**
  * Address model using a generic format for storing international addresses.
  *
@@ -50,7 +58,7 @@ class Address extends DataObject
     );
 
     private static $has_one         = array(
-        'Member' => 'Member',
+        'Member' => Member::class,
     );
 
     private static $has_many = array(

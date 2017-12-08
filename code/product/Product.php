@@ -1,5 +1,17 @@
 <?php
 
+use SilverStripe\Assets\Image;
+use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\TextField;
+use SilverStripe\Forms\DropdownField;
+use SilverStripe\Forms\CheckboxField;
+use SilverStripe\AssetAdmin\Forms\UploadField;
+use SilverStripe\SiteConfig\SiteConfig;
+use SilverStripe\Control\Director;
+use SilverStripe\Forms\Form;
+//use PageController;
+use SilverStripe\Versioned\Versioned;
+
 /**
  * This is a standard Product page-type with fields like
  * Price, Weight, Model and basic management of
@@ -35,7 +47,7 @@ class Product extends Page implements Buyable
     );
 
     private static $has_one                = array(
-        'Image' => 'Image',
+        'Image' => Image::class,
     );
 
     private static $many_many              = array(
@@ -382,9 +394,9 @@ class Product extends Page implements Buyable
         return false;
     }
 
-    public function Link()
+    public function Link($action = null)
     {
-        $link = parent::Link();
+        $link = parent::Link($action);
         $this->extend('updateLink', $link);
         return $link;
     }
@@ -407,7 +419,7 @@ class Product extends Page implements Buyable
         if ($image && $image->exists() && file_exists($image->getFullPath())) {
             return $image;
         }
-        return $this->model->Image->newObject();
+        return new Image();
     }
 
     /**
@@ -467,87 +479,3 @@ class Product extends Page implements Buyable
     }
 }
 
-class Product_Controller extends Page_Controller
-{
-    private static $allowed_actions = array(
-        'Form',
-        'AddProductForm',
-    );
-
-    public         $formclass       = "AddProductForm"; //allow overriding the type of form used
-
-    public function Form()
-    {
-        $formclass = $this->formclass;
-        $form = new $formclass($this, "Form");
-        $this->extend('updateForm', $form);
-        return $form;
-    }
-}
-
-class Product_OrderItem extends OrderItem
-{
-    private static $db      = array(
-        'ProductVersion' => 'Int',
-    );
-
-    private static $has_one = array(
-        'Product' => 'Product',
-    );
-
-    /**
-     * the has_one join field to identify the buyable
-     */
-    private static $buyable_relationship = "Product";
-
-    /**
-     * Get related product
-     *  - live version if in cart, or
-     *  - historical version if order is placed
-     *
-     * @param boolean $forcecurrent - force getting latest version of the product.
-     *
-     * @return Product
-     */
-    public function Product($forcecurrent = false)
-    {
-        //TODO: this might need some unit testing to make sure it compliles with comment description
-        //ie use live if in cart (however I see no logic for checking cart status)
-        if ($this->ProductID && $this->ProductVersion && !$forcecurrent) {
-            return Versioned::get_version('Product', $this->ProductID, $this->ProductVersion);
-        } elseif (
-            $this->ProductID
-            && $product = Versioned::get_one_by_stage(
-                "Product",
-                "Live",
-                "\"Product\".\"ID\"  = " . $this->ProductID
-            )
-        ) {
-            return $product;
-        }
-        return false;
-    }
-
-    public function onPlacement()
-    {
-        parent::onPlacement();
-        if ($product = $this->Product(true)) {
-            $this->ProductVersion = $product->Version;
-        }
-    }
-
-    public function TableTitle()
-    {
-        $product = $this->Product();
-        $tabletitle = ($product) ? $product->Title : $this->i18n_singular_name();
-        $this->extend('updateTableTitle', $tabletitle);
-        return $tabletitle;
-    }
-
-    public function Link()
-    {
-        if ($product = $this->Product()) {
-            return $product->Link();
-        }
-    }
-}

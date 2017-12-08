@@ -1,5 +1,8 @@
 <?php
 
+use SilverStripe\SiteConfig\SiteConfig;
+use SilverStripe\Forms\DropdownField;
+
 class RestrictionRegionCountryDropdownField extends DropdownField
 {
     public static $defaultname = "-- International --";

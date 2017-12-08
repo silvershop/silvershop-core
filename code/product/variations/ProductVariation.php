@@ -1,5 +1,14 @@
 <?php
 
+use SilverStripe\Assets\Image;
+use SilverStripe\Forms\TextField;
+use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\LiteralField;
+use SilverStripe\AssetAdmin\Forms\UploadField;
+use SilverStripe\ORM\ArrayList;
+use SilverStripe\ORM\DataObject;
+use SilverStripe\Versioned\Versioned;
+
 /**
  * Product Variation
  *
@@ -25,7 +34,7 @@ class ProductVariation extends DataObject implements Buyable
 
     private static $has_one           = array(
         'Product' => 'Product',
-        'Image'   => 'Image'
+        'Image'   => Image::class
     );
 
     private static $many_many         = array(
@@ -42,7 +51,7 @@ class ProductVariation extends DataObject implements Buyable
     );
 
     private static $extensions        = array(
-        "Versioned('Live')"
+        Versioned::class . "('Live')"
     );
 
     private static $summary_fields    = array(

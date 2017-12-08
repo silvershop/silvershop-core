@@ -1,5 +1,9 @@
 <?php
 
+use SilverStripe\Security\Member;
+use SilverStripe\ORM\ValidationException;
+use SilverStripe\Dev\SapphireTest;
+
 class AddressBookCheckoutComponentTest extends SapphireTest
 {
     protected static $fixture_file = array(
@@ -33,7 +37,7 @@ class AddressBookCheckoutComponentTest extends SapphireTest
         CheckoutConfig::config()->membership_required = false;
         parent::setUp();
 
-        $this->member = $this->objFromFixture("Member", "jeremyperemy");
+        $this->member = $this->objFromFixture(Member::class, "jeremyperemy");
         $this->cart = $this->objFromFixture("Order", "cart1");
         $this->address1 = $this->objFromFixture("Address", "address1");
         $this->address2 = $this->objFromFixture("Address", "address2");
@@ -54,7 +58,7 @@ class AddressBookCheckoutComponentTest extends SapphireTest
 
     public function testIncompleteNewAddress()
     {
-        $this->setExpectedException('ValidationException');
+        $this->setExpectedException(ValidationException::class);
         $data = $this->fixtureNewAddress;
         $data['BillingAddressBookCheckoutComponent_Country'] = '';
 
@@ -75,7 +79,7 @@ class AddressBookCheckoutComponentTest extends SapphireTest
 
     public function testShouldRejectExistingIfNotLoggedIn()
     {
-        $this->setExpectedException('ValidationException');
+        $this->setExpectedException(ValidationException::class);
         $this->assertTrue(
             $this->config->validateData(
                 array(
@@ -87,7 +91,7 @@ class AddressBookCheckoutComponentTest extends SapphireTest
 
     public function testShouldRejectExistingIfNotOwnedByMember()
     {
-        $this->setExpectedException('ValidationException');
+        $this->setExpectedException(ValidationException::class);
         $this->member->logIn();
         $this->address1->MemberID = 0;
         $this->address1->write();

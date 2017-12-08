@@ -1,5 +1,13 @@
 <?php
 
+use SilverStripe\Core\Config\Config;
+use SilverStripe\Security\Member;
+use SilverStripe\Security\Group;
+use SilverStripe\Dev\SapphireTest;
+use SilverStripe\Dev\TestOnly;
+use SilverStripe\ORM\DataExtension;
+use SilverStripe\Omnipay\Model\Payment;
+
 /**
  * Test OrderProcessor
  *
@@ -143,7 +151,7 @@ class OrderProcessorTest extends SapphireTest
 
         //log out the admin user
         Member::currentUser()->logOut();
-        $joemember = $this->objFromFixture('Member', 'joebloggs');
+        $joemember = $this->objFromFixture(Member::class, 'joebloggs');
         $joemember->logIn();
 
 
@@ -209,7 +217,7 @@ class OrderProcessorTest extends SapphireTest
         //log out the admin user
         Member::currentUser()->logOut();
         $this->shoppingcart->add($this->mp3player);
-        $joemember = $this->objFromFixture('Member', 'joebloggs');
+        $joemember = $this->objFromFixture(Member::class, 'joebloggs');
         $joemember->logIn();
         $cart = ShoppingCart::curr();
         $cart->calculate();
@@ -250,7 +258,7 @@ class OrderProcessorTest extends SapphireTest
         $this->assertEquals($order->MemberID, $joemember->ID, 'Order associated with member');
         $this->assertEquals($order->Member()->FirstName, 'Joe', 'member first name has not changed');
         $this->assertTrue(
-            $order->Member()->inGroup($this->objFromFixture("Group", "customers"), true),
+            $order->Member()->inGroup($this->objFromFixture(Group::class, "customers"), true),
             "Member has been added to ShopMembers group"
         );
     }

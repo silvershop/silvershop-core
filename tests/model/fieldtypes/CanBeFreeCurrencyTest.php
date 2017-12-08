@@ -1,5 +1,7 @@
 <?php
 
+use SilverStripe\Dev\SapphireTest;
+
 class CanBeFreeCurrencyTest extends SapphireTest
 {
     public function testField()

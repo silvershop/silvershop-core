@@ -1,5 +1,11 @@
 <?php
 
+use SilverStripe\Core\Config\Config;
+use SilverStripe\Security\Member;
+use SilverStripe\Control\Controller;
+use SilverStripe\Forms\FormAction;
+use SilverStripe\Forms\FieldList;
+
 class CheckoutStep_ContactDetails extends CheckoutStep
 {
     private static $allowed_actions = array(

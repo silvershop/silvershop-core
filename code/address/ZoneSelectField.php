@@ -1,5 +1,8 @@
 <?php
 
+use SilverStripe\ORM\DataObject;
+use SilverStripe\Forms\DropdownField;
+
 class ZoneSelectField extends DropdownField
 {
     public function getSource()

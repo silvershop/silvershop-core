@@ -1,5 +1,8 @@
 <?php
 
+use SilverStripe\Core\Config\Config_ForClass;
+use SilverStripe\ORM\DataExtension;
+
 /**
  * Adds some image size functions to the Image DataObject.
  *

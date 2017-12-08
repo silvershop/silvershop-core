@@ -2,6 +2,18 @@
 
 use SilverStripe\Omnipay\GatewayInfo;
 use SilverStripe\Omnipay\GatewayFieldsFactory;
+use SilverStripe\Forms\HiddenField;
+use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\HeaderField;
+use SilverStripe\Forms\LiteralField;
+use SilverStripe\Forms\OptionsetField;
+use SilverStripe\View\Requirements;
+use SilverStripe\Forms\FormAction;
+use SilverStripe\Security\Member;
+use SilverStripe\Forms\CompositeField;
+use SilverStripe\Forms\Form;
+use SilverStripe\Forms\RequiredFields;
+
 
 /**
  * Perform actions on placed orders

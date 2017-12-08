@@ -1,4 +1,9 @@
 <?php
+
+use SilverStripe\Forms\TextField;
+use SilverStripe\ORM\FieldType\DBDate;
+use SilverStripe\Core\Config\Config;
+use SilverStripe\ORM\DB;
 /**
  * Shows a chart of recent orders
  *

@@ -1,5 +1,9 @@
 <?php
 
+use SilverStripe\Security\Member;
+use SilverStripe\ORM\ValidationException;
+use SilverStripe\Dev\SapphireTest;
+
 class CheckoutTest extends SapphireTest
 {
     protected static $fixture_file = array(
@@ -100,7 +104,7 @@ class CheckoutTest extends SapphireTest
         CheckoutConfig::config()->member_creation_enabled = false;
         CheckoutConfig::config()->membership_required = false;
 
-        $this->setExpectedException('ValidationException');
+        $this->setExpectedException(ValidationException::class);
 
         $member = $this->memberFactory->create(
             array(

@@ -1,5 +1,7 @@
 <?php
 
+use SilverStripe\Admin\ModelAdmin;
+
 /**
  * Product Catalog Admin
  *

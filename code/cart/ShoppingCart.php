@@ -1,5 +1,24 @@
 <?php
 
+use SilverStripe\Core\Injector\Injector;
+use SilverStripe\Core\Config\Configurable;
+use SilverStripe\Control\HTTPRequest;
+use SilverStripe\Control\Session;
+use SilverStripe\Security\Member;
+use SilverStripe\Core\Config\Config;
+use SilverStripe\Security\SecurityToken;
+use SilverStripe\Control\Director;
+use SilverStripe\Control\Controller;
+use SilverStripe\Core\Convert;
+use SilverStripe\Core\ClassInfo;
+use SilverStripe\Versioned\Versioned;
+use SilverStripe\ORM\DataObject;
+use SilverStripe\ErrorPage\ErrorPage;
+use SilverStripe\Security\Permission;
+use SilverStripe\View\Requirements;
+use SilverStripe\Dev\Debug;
+use SilverStripe\Core\Injector\Injectable;
+
 /**
  * Encapsulated manipulation of the current order using a singleton pattern.
  *
@@ -9,8 +28,12 @@
  *
  * @package shop
  */
-class ShoppingCart extends Object
+class ShoppingCart
 {
+
+    use Injectable;
+    use Configurable;
+
     private static $cartid_session_name = 'shoppingcartid';
 
     private $order;
@@ -48,8 +71,9 @@ class ShoppingCart extends Object
      */
     public function current()
     {
+        $session = Injector::inst()->get(HTTPRequest::class)->getSession();
         //find order by id saved to session (allows logging out and retaining cart contents)
-        if (!$this->order && $sessionid = Session::get(self::config()->cartid_session_name)) {
+        if (!$this->order && $sessionid = $session->get(self::config()->cartid_session_name)) {
             $this->order = Order::get()->filter(
                 array(
                     "Status" => "Cart",
@@ -78,7 +102,8 @@ class ShoppingCart extends Object
             trigger_error("Passed Order object is not cart status", E_ERROR);
         }
         $this->order = $cart;
-        Session::set(self::config()->cartid_session_name, $cart->ID);
+        $session = Injector::inst()->get(HTTPRequest::class)->getSession();
+        $session->set(self::config()->cartid_session_name, $cart->ID);
 
         return $this;
     }
@@ -99,7 +124,9 @@ class ShoppingCart extends Object
         }
         $this->order->write();
         $this->order->extend('onStartOrder');
-        Session::set(self::config()->cartid_session_name, $this->order->ID);
+
+        $session = Injector::inst()->get(HTTPRequest::class)->getSession();
+        $session->set(self::config()->cartid_session_name, $this->order->ID);
 
         return $this->order;
     }
@@ -405,7 +432,8 @@ class ShoppingCart extends Object
      */
     public function archiveorderid($requestedOrderId = null)
     {
-        $sessionId = Session::get(self::config()->cartid_session_name);
+        $session = Injector::inst()->get(HTTPRequest::class)->getSession();
+        $sessionId = $session->get(self::config()->cartid_session_name);
         $order = Order::get()
             ->filter("Status:not", "Cart")
             ->byId($sessionId);
@@ -429,7 +457,8 @@ class ShoppingCart extends Object
      */
     public function clear($write = true)
     {
-        Session::clear(self::config()->cartid_session_name);
+        $session = Injector::inst()->get(HTTPRequest::class)->getSession();
+        $session->clear(self::config()->cartid_session_name);
         $order = $this->current();
         $this->order = null;
         if (!$order) {
@@ -632,7 +661,7 @@ class ShoppingCart_Controller extends Controller
             return null;
         }
         //ensure only live products are returned, if they are versioned
-        $buyable = Object::has_extension($buyableclass, 'Versioned')
+        $buyable = Object::has_extension($buyableclass, Versioned::class)
             ?
             Versioned::get_by_stage($buyableclass, 'Live')->byID($id)
             :

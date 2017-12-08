@@ -1,5 +1,10 @@
 <?php
 
+use SilverStripe\Versioned\Versioned;
+use SilverStripe\Security\Member;
+use SilverStripe\Control\Controller;
+use SilverStripe\Dev\BuildTask;
+
 /**
  * Add 5 random Live products to cart, with random quantities between 1 and 10.
  */

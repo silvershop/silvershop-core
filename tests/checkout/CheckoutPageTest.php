@@ -1,5 +1,8 @@
 <?php
 
+use SilverStripe\Control\Director;
+use SilverStripe\Dev\FunctionalTest;
+
 class CheckoutPageTest extends FunctionalTest
 {
     protected static $fixture_file   = array(

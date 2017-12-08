@@ -1,5 +1,7 @@
 <?php
 
+use SilverStripe\Dev\SapphireTest;
+
 class ShopCurrencyTest extends SapphireTest
 {
     public function testField()

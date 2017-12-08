@@ -1,5 +1,9 @@
 <?php
 
+use SilverStripe\Core\Config\Config;
+use SilverStripe\Control\Email\Email;
+use SilverStripe\Dev\SapphireTest;
+
 /**
  * @date       12.01.2015
  * @package    shop
@@ -16,7 +20,7 @@ class OrderNotificationTest extends SapphireTest
     public function setUp()
     {
         parent::setUp();
-        Config::inst()->update('Email', 'admin_email', 'shop-admin@example.com');
+        Config::inst()->update(Email::class, 'admin_email', 'shop-admin@example.com');
         $this->order = $this->objFromFixture('Order', 'paid');
         $this->notifier = OrderEmailNotifier::create($this->order);
     }

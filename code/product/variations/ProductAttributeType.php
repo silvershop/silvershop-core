@@ -1,5 +1,14 @@
 <?php
 
+use SilverStripe\Forms\TextField;
+use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\GridField\GridFieldConfig_RecordEditor;
+use SilverStripe\Forms\GridField\GridField;
+use SilverStripe\Forms\LiteralField;
+use SilverStripe\ORM\ArrayList;
+use SilverStripe\Forms\DropdownField;
+use SilverStripe\ORM\DataObject;
+
 /**
  * Producte Attribute Type
  * Types of product attributes.

@@ -1,5 +1,11 @@
 <?php
 
+use SilverStripe\Assets\Image;
+use SilverStripe\ORM\ArrayList;
+use SilverStripe\ORM\DataObject;
+use SilverStripe\Core\Convert;
+use SilverStripe\Dev\CsvBulkLoader;
+
 /**
  * ProductBulkLoader - allows loading products via CSV file.
  *
@@ -140,7 +146,7 @@ class ProductBulkLoader extends CsvBulkLoader
         $filenamedashes = str_replace(" ", "-", $filename);
         if ($filename
             && $image = DataObject::get_one(
-                'Image',
+                Image::class,
                 "LOWER(\"Filename\") LIKE '%$filename%' OR LOWER(\"Filename\") LIKE '%$filenamedashes%'"
             )
         ) { //ignore case

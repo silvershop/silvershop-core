@@ -1,5 +1,8 @@
 <?php
 
+use SilverStripe\ORM\DataObject;
+use SilverStripe\Dev\SapphireTest;
+
 class RegionRestrictionTest extends SapphireTest
 {
     public static $fixture_file = array(

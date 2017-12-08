@@ -1,5 +1,14 @@
 <?php
 
+use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\ListboxField;
+use SilverStripe\Forms\GridField\GridFieldConfig_RecordEditor;
+use SilverStripe\Forms\GridField\GridField;
+use SilverStripe\Forms\LabelField;
+use SilverStripe\View\ArrayData;
+use SilverStripe\Versioned\Versioned;
+use SilverStripe\ORM\DataExtension;
+
 /**
  * Adds extra fields and relationships to Products for variations support.
  *

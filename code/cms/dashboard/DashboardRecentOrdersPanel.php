@@ -1,4 +1,7 @@
 <?php
+
+use SilverStripe\Forms\TextField;
+use SilverStripe\Core\Config\Config;
 /**
  * Shows a table of recent orders
  *

@@ -1,5 +1,7 @@
 <?php
 
+use SilverStripe\Reports\Report;
+
 /**
  * Shop Side Report classes are to allow quick reports that can be accessed
  * on the Reports tab to the left inside the SilverStripe CMS.
@@ -9,7 +11,7 @@
  * @package    shop
  * @subpackage reports
  */
-class ShopSideReport_FeaturedProducts extends SS_Report
+class ShopSideReport_FeaturedProducts extends Report
 {
     public function title()
     {
@@ -47,7 +49,7 @@ class ShopSideReport_FeaturedProducts extends SS_Report
  *
  * @subpackage reports
  */
-class ShopSideReport_AllProducts extends SS_Report
+class ShopSideReport_AllProducts extends Report
 {
     public function title()
     {
@@ -80,7 +82,7 @@ class ShopSideReport_AllProducts extends SS_Report
     }
 }
 
-class ShopSideReport_NoImageProducts extends SS_Report
+class ShopSideReport_NoImageProducts extends Report
 {
     public function title()
     {
@@ -115,7 +117,7 @@ class ShopSideReport_NoImageProducts extends SS_Report
     }
 }
 
-class ShopSideReport_HeavyProducts extends SS_Report
+class ShopSideReport_HeavyProducts extends Report
 {
     public function title()
     {

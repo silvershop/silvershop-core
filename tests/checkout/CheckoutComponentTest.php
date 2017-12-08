@@ -1,5 +1,8 @@
 <?php
 
+use SilverStripe\SiteConfig\SiteConfig;
+use SilverStripe\Dev\SapphireTest;
+
 class CheckoutComponentTest extends SapphireTest
 {
     protected static $fixture_file = array(

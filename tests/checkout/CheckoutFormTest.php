@@ -1,5 +1,8 @@
 <?php
 
+use SilverStripe\SiteConfig\SiteConfig;
+use SilverStripe\Dev\SapphireTest;
+
 class CheckoutFormTest extends SapphireTest
 {
     public static $fixture_file = 'silvershop/tests/fixtures/shop.yml';

@@ -1,5 +1,8 @@
 <?php
 
+use SilverStripe\ORM\DB;
+use SilverStripe\Dev\BuildTask;
+
 class CalculateProductPopularity extends BuildTask
 {
     protected      $title                        = "Calculate Product Sales Popularity";

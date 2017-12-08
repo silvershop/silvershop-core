@@ -1,5 +1,8 @@
 <?php
 
+use SilverStripe\ORM\FieldType\DBDatetime;
+use SilverStripe\Dev\BuildTask;
+
 /**
  * Cart Cleanup Task.
  *
@@ -35,7 +38,7 @@ class CartCleanupTask extends BuildTask
 
         $start = 0;
         $count = 0;
-        $time = date('Y-m-d H:i:s', SS_Datetime::now()->Format('U') - $this->config()->get('delete_after_mins') * 60);
+        $time = date('Y-m-d H:i:s', DBDatetime::now()->Format('U') - $this->config()->get('delete_after_mins') * 60);
 
         $this->log("Deleting all orders since " . $time);
 

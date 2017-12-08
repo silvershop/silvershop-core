@@ -1,11 +1,17 @@
 <?php
 
 use SilverStripe\Omnipay\GatewayInfo;
+use SilverStripe\ORM\ArrayList;
+use SilverStripe\Forms\FieldList;
+use SilverStripe\ORM\ValidationResult;
+use SilverStripe\ORM\ValidationException;
+use SilverStripe\Security\Member;
+
 
 /**
  * @package shop
  */
-class CheckoutComponentConfig extends Object
+class CheckoutComponentConfig
 {
     protected $components;
 

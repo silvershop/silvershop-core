@@ -1,5 +1,10 @@
 <?php
 
+use SilverStripe\ORM\DB;
+use SilverStripe\Security\Member;
+use SilverStripe\ORM\DataObject;
+use SilverStripe\Dev\BuildTask;
+
 /**
  * Adds all customers to an assigned group.
  *
@@ -33,7 +38,7 @@ class CustomersToGroupTask extends BuildTask
             }
         }
         $unlistedMembers = DataObject::get(
-            "Member",
+            Member::class,
             $where = "\"Member\".\"ID\" NOT IN (" . implode(",", $alreadyAdded) . ")",
             $sort = null,
             $join = "INNER JOIN \"Order\" ON \"Order\".\"MemberID\" = \"Member\".\"ID\""

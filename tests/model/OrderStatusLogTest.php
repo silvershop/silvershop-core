@@ -1,4 +1,8 @@
 <?php
+
+use SilverStripe\Core\Config\Config;
+use SilverStripe\Security\Member;
+use SilverStripe\Dev\SapphireTest;
 /**
  * @link OrderStatusLog
  * @package shop_statuschangeemail
@@ -23,7 +27,7 @@ class OrderStatusLogTest extends SapphireTest
     {
         // start a new order
         $order = $this->objFromFixture("Order", "cart1");
-        $member = $this->objFromFixture('Member', 'jeremyperemy');
+        $member = $this->objFromFixture(Member::class, 'jeremyperemy');
         $order->MemberID = $member->ID;
 
         $no_log_generated_with_order_status_cart = OrderStatusLog::get()->sort('ID')->last();
@@ -196,7 +200,7 @@ class OrderStatusLogTest extends SapphireTest
     public function testEmailSentOnce()
     {
         $order = $this->objFromFixture("Order", "cart1");
-        $member = $this->objFromFixture('Member', 'jeremyperemy');
+        $member = $this->objFromFixture(Member::class, 'jeremyperemy');
         $order->MemberID = $member->ID;
 
         $order->Status = 'Processing';

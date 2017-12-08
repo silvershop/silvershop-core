@@ -1,5 +1,12 @@
 <?php
 
+use SilverStripe\ORM\DataObject;
+use SilverStripe\Core\Config\Config;
+use SilverStripe\Control\Director;
+use SilverStripe\Dev\FunctionalTest;
+use SilverStripe\ORM\DataExtension;
+use SilverStripe\Dev\TestOnly;
+
 /**
  * Test {@link Product}
  *

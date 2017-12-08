@@ -1,10 +1,22 @@
 <?php
 
+use SilverStripe\Security\Member;
+use SilverStripe\Forms\DateField;
+use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\DropdownField;
+use SilverStripe\Forms\CheckboxField;
+use SilverStripe\Forms\GridField\GridFieldDataColumns;
+use SilverStripe\Forms\GridField\GridFieldExportButton;
+use SilverStripe\ORM\DB;
+use SilverStripe\Reports\Report;
+use SilverStripe\i18n\i18nEntityProvider;
+use SilverStripe\ORM\Queries\SQLSelect;
+
 /**
  * Base class for creating reports that can be filtered to a specific range.
  * Record grouping is also supported.
  */
-class ShopPeriodReport extends SS_Report implements i18nEntityProvider
+class ShopPeriodReport extends Report implements i18nEntityProvider
 {
     private static $display_uncategorised_data = false;
 
@@ -79,9 +91,9 @@ class ShopPeriodReport extends SS_Report implements i18nEntityProvider
     {
         $field = parent::getReportField();
         $config = $field->getConfig();
-        $columns = $config->getComponentByType("GridFieldDataColumns")
+        $columns = $config->getComponentByType(GridFieldDataColumns::class)
             ->getDisplayFields($field);
-        $config->getComponentByType('GridFieldExportButton')
+        $config->getComponentByType(GridFieldExportButton::class)
             ->setExportColumns($columns);
         return $field;
     }
@@ -189,7 +201,7 @@ class ShopPeriodReport extends SS_Report implements i18nEntityProvider
     }
 }
 
-class ShopReport_Query extends SQLQuery
+class ShopReport_Query extends SQLSelect
 {
     public function canSortBy($fieldName)
     {

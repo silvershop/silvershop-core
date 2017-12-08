@@ -2,7 +2,7 @@
 Name: shoproutes
 After: framework/routes#coreroutes
 ---
-Director:
+SilverStripe\Control\Director:
   rules:
-    'shoppingcart' : 'ShoppingCart_Controller'
-    'dev/shop' : 'ShopDevelopmentAdmin'
+    shoppingcart: ShoppingCart_Controller
+    dev/shop: ShopDevelopmentAdmin

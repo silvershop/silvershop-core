@@ -1,5 +1,10 @@
 <?php
 
+use SilverStripe\Core\Config\Config;
+use SilverStripe\Dev\SapphireTest;
+use SilverStripe\Core\Extension;
+use SilverStripe\Dev\TestOnly;
+
 class ShoppingCartTest extends SapphireTest
 {
     public static $fixture_file   = 'silvershop/tests/fixtures/shop.yml';

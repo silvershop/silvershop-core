@@ -1,5 +1,7 @@
 <?php
 
+use SilverStripe\SiteConfig\SiteConfig;
+
 /**
  * Flat shipping to specific countries.
  *

@@ -1,5 +1,18 @@
 <?php
 
+use SilverStripe\CMS\Model\SiteTree;
+use SilverStripe\Security\Group;
+use SilverStripe\Assets\Image;
+use SilverStripe\SiteConfig\SiteConfig;
+use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\Tab;
+use SilverStripe\Forms\TreeDropdownField;
+use SilverStripe\AssetAdmin\Forms\UploadField;
+use SilverStripe\Forms\CheckboxSetField;
+use SilverStripe\Forms\TabSet;
+use SilverStripe\Core\Config\Config_ForClass;
+use SilverStripe\ORM\DataExtension;
+
 /**
  * @package    shop
  * @subpackage cms
@@ -11,9 +24,9 @@ class ShopConfig extends DataExtension
     );
 
     private static $has_one = array(
-        'TermsPage'           => 'SiteTree',
-        "CustomerGroup"       => "Group",
-        'DefaultProductImage' => 'Image',
+        'TermsPage'           => SiteTree::class,
+        "CustomerGroup"       => Group::class,
+        'DefaultProductImage' => Image::class,
     );
 
     private static $email_from;
@@ -35,12 +48,12 @@ class ShopConfig extends DataExtension
                     TreeDropdownField::create(
                         'TermsPageID',
                         _t("ShopConfig.TermsPage", 'Terms and Conditions Page'),
-                        'SiteTree'
+                        SiteTree::class
                     ),
                     TreeDropdownField::create(
                         "CustomerGroupID",
                         _t("ShopConfig.CustomerGroup", "Group to add new customers to"),
-                        "Group"
+                        Group::class
                     ),
                     UploadField::create('DefaultProductImage', _t('ShopConfig.DefaultImage', 'Default Product Image'))
                 ),

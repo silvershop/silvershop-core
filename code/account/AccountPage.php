@@ -1,5 +1,19 @@
 <?php
 
+use SilverStripe\ORM\DataObject;
+use SilverStripe\ORM\DB;
+use SilverStripe\Security\Member;
+use SilverStripe\Security\Security;
+use SilverStripe\Forms\DropdownField;
+use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\FormAction;
+use SilverStripe\Forms\Form;
+use SilverStripe\Forms\RequiredFields;
+use SilverStripe\SiteConfig\SiteConfig;
+use SilverStripe\Security\MemberAuthenticator\ChangePasswordForm;
+use SilverStripe\Forms\HiddenField;
+//use PageController;
+
 /**
  * Account page shows order history and a form to allow
  * the member to edit his/her details.
@@ -77,7 +91,7 @@ class AccountPage extends Page
     }
 }
 
-class AccountPage_Controller extends Page_Controller
+class AccountPage_Controller extends PageController
 {
     private static $url_segment     = 'account';
 
@@ -162,9 +176,9 @@ class AccountPage_Controller extends Page_Controller
             );
             $form = Form::create($this, "DefaultAddressForm", $fields, $actions);
             $form->loadDataFrom($this->member);
-            
+
             $this->extend('updateDefaultAddressForm', $form);
-            
+
             return $form;
         }
 

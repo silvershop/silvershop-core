@@ -1,5 +1,7 @@
 <?php
 
+use SilverStripe\Dev\SapphireTest;
+
 class AddressTest extends SapphireTest
 {
     public function testForm()

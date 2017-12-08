@@ -1,5 +1,10 @@
 <?php
 
+use SilverStripe\Control\HTTPRequest;
+use SilverStripe\Security\Member;
+use SilverStripe\Control\Director;
+use SilverStripe\Dev\FunctionalTest;
+
 class SteppedCheckoutTest extends FunctionalTest
 {
     protected static $fixture_file = array(
@@ -33,7 +38,7 @@ class SteppedCheckoutTest extends FunctionalTest
         $checkoutpage = $this->objFromFixture("CheckoutPage", "checkout");
         $checkoutpage->publish('Stage', 'Live');
         $this->checkout = new CheckoutPage_Controller();
-        $this->checkout->handleRequest(new SS_HTTPRequest("GET", "checkout"), DataModel::inst());
+        $this->checkout->handleRequest(new HTTPRequest("GET", "checkout"), DataModel::inst());
 
         $this->cart = $this->objFromFixture("Order", "cart");
         ShoppingCart::singleton()->setCurrent($this->cart);
@@ -42,7 +47,7 @@ class SteppedCheckoutTest extends FunctionalTest
     public function testTemplateFunctionsForFirstStep()
     {
         //put us at the first step index == membership
-        $indexRequest = new SS_HTTPRequest('GET', "");
+        $indexRequest = new HTTPRequest('GET', "");
         $this->checkout = new CheckoutPage_Controller(); // from 3.3 on it's necessary to have a clean controller here
         $this->checkout->handleRequest($indexRequest, DataModel::inst());
         $this->assertTrue($this->checkout->StepExists('membership'));
@@ -60,7 +65,7 @@ class SteppedCheckoutTest extends FunctionalTest
 
     public function testTemplateFunctionsForOtherSteps()
     {
-        $summaryRequest = new SS_HTTPRequest('GET', "summary");
+        $summaryRequest = new HTTPRequest('GET', "summary");
         $this->checkout = new CheckoutPage_Controller();
         $this->checkout->handleRequest($summaryRequest, DataModel::inst()); //change to summary step
         $this->assertTrue($this->checkout->StepExists('summary'));
@@ -79,7 +84,7 @@ class SteppedCheckoutTest extends FunctionalTest
         $this->checkout->index();
         $this->checkout->membership();
         $this->post('/checkout/guestcontinue', array()); //redirect to next step
-        $this->checkout->createaccount(new SS_HTTPRequest('GET', "/checkout/createaccount"));
+        $this->checkout->createaccount(new HTTPRequest('GET', "/checkout/createaccount"));
 
         $form = $this->checkout->MembershipForm();
         $data = array();
@@ -105,7 +110,7 @@ class SteppedCheckoutTest extends FunctionalTest
 
     public function testContactDetails()
     {
-        $this->objFromFixture("Member", "joebloggs")->logIn();
+        $this->objFromFixture(Member::class, "joebloggs")->logIn();
         $this->checkout->contactdetails();
         $data = array(
             'FirstName'                => 'Pauline',
@@ -120,7 +125,7 @@ class SteppedCheckoutTest extends FunctionalTest
 
     public function testShippingAddress()
     {
-        $this->objFromFixture("Member", "joebloggs")->logIn();
+        $this->objFromFixture(Member::class, "joebloggs")->logIn();
         $this->checkout->shippingaddress();
         $data = array(
             'Address'           => '2b Baba place',
@@ -137,7 +142,7 @@ class SteppedCheckoutTest extends FunctionalTest
 
     public function testBillingAddress()
     {
-        $this->objFromFixture("Member", "joebloggs")->logIn();
+        $this->objFromFixture(Member::class, "joebloggs")->logIn();
         $this->checkout->billingaddress();
         $data = array(
             'Address'                  => '3 Art Cresent',
@@ -170,7 +175,7 @@ class SteppedCheckoutTest extends FunctionalTest
             'Notes'                  => 'Leave it around the back',
             'ReadTermsAndConditions' => 1,
         );
-        $member = $this->objFromFixture("Member", "joebloggs");
+        $member = $this->objFromFixture(Member::class, "joebloggs");
         $member->logIn(); //log in member before processing
 
         Checkout::get($this->cart)->setPaymentMethod("Dummy"); //a selected payment method is required

@@ -1,5 +1,11 @@
 <?php
 
+use SilverStripe\Control\Email\Email;
+use SilverStripe\Forms\TextField;
+use SilverStripe\Forms\EmailField;
+use SilverStripe\Forms\FieldList;
+use SilverStripe\Security\Member;
+
 class CustomerDetailsCheckoutComponent extends CheckoutComponent
 {
     protected $requiredfields = array(

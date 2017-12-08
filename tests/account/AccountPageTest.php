@@ -1,5 +1,13 @@
 <?php
 
+use SilverStripe\Control\Controller;
+use SilverStripe\Security\Security;
+use SilverStripe\Control\Director;
+use SilverStripe\Security\Member;
+use SilverStripe\SiteConfig\SiteConfig;
+use SilverStripe\ORM\DataObject;
+use SilverStripe\Dev\FunctionalTest;
+
 class AccountPageTest extends FunctionalTest
 {
     protected static $fixture_file   = array(
@@ -23,7 +31,7 @@ class AccountPageTest extends FunctionalTest
         $page = $this->get("account/");  // attempt to access the Account Page
         $this->assertEquals(200, $page->getStatusCode(), "a page should load");
         $this->assertTrue(
-            $page->getHeader('X-TestPageClass') == 'Security' && $page->getHeader('X-TestPageAction') == 'login',
+            $page->getHeader('X-TestPageClass') == Security::class && $page->getHeader('X-TestPageAction') == 'login',
             'Need to login before accessing the account page'
         );
 
@@ -52,7 +60,7 @@ class AccountPageTest extends FunctionalTest
 
     public function testAddressBook()
     {
-        $member = $this->objFromFixture("Member", "joebloggs");
+        $member = $this->objFromFixture(Member::class, "joebloggs");
         $this->logInAs($member);
 
         $this->controller->init(); //reinit to connect up member
@@ -77,7 +85,7 @@ class AccountPageTest extends FunctionalTest
 
     public function testAddressBookWithDropdownFieldToSelectCountry()
     {
-        $member = $this->objFromFixture("Member", "joebloggs");
+        $member = $this->objFromFixture(Member::class, "joebloggs");
         $this->logInAs($member);
         $this->controller->init(); //re-init to connect up member
 
@@ -115,12 +123,12 @@ class AccountPageTest extends FunctionalTest
 
     public function testAddressBookWithReadonlyFieldForCountry()
     {
-        $member = $this->objFromFixture("Member", "joebloggs");
+        $member = $this->objFromFixture(Member::class, "joebloggs");
         $this->logInAs($member);
         $this->controller->init(); //reinit to connect up member
 
         // setup a single-country site
-        $siteconfig = DataObject::get_one('SiteConfig');
+        $siteconfig = DataObject::get_one(SiteConfig::class);
         $siteconfig->AllowedCountries = "NZ";
         $siteconfig->write();
         $singlecountry = SiteConfig::current_site_config();

@@ -1,5 +1,7 @@
 <?php
 
+use SilverStripe\Admin\ModelAdmin;
+
 class ZoneAdmin extends ModelAdmin
 {
     private static $menu_title     = "Zones";

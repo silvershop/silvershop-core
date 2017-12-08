@@ -1,5 +1,8 @@
 <?php
 
+use SilverStripe\Control\Director;
+use SilverStripe\Core\Extension;
+
 /**
  * ViewableData extension that provides access to the cart from anywhere.
  * Also handles last-minute recalculation, if required.

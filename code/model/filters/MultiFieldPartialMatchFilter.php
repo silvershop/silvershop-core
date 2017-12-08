@@ -1,5 +1,8 @@
 <?php
 
+use SilverStripe\ORM\Filters\PartialMatchFilter;
+use SilverStripe\ORM\DataQuery;
+
 /**
  * This must be created manually OR the subfilters set manually
  * because of the way SS cleans up the filter definitions before

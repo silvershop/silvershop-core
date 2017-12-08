@@ -1,5 +1,11 @@
 <?php
 
+use SilverStripe\Security\Member;
+use SilverStripe\Forms\FieldList;
+use SilverStripe\SiteConfig\SiteConfig;
+use SilverStripe\Forms\DropdownField;
+use SilverStripe\ORM\DataExtension;
+
 /**
  * ShopMember provides customisations to {@link Member} for shop purposes
  *

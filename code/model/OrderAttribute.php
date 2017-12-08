@@ -1,5 +1,7 @@
 <?php
 
+use SilverStripe\ORM\DataObject;
+
 /**
  * A single line in an order. This could be an item, or a subtotal line.
  *

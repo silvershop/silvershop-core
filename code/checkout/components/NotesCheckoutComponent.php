@@ -1,5 +1,8 @@
 <?php
 
+use SilverStripe\Forms\TextareaField;
+use SilverStripe\Forms\FieldList;
+
 class NotesCheckoutComponent extends CheckoutComponent
 {
     public function getFormFields(Order $order)

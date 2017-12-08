@@ -1,5 +1,8 @@
 <?php
 
+use SilverStripe\Core\Convert;
+use SilverStripe\Forms\HiddenField;
+
 /**
  * @package shop
  */

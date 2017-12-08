@@ -1,5 +1,10 @@
 <?php
 
+use SilverStripe\Dev\FunctionalTest;
+use SilverStripe\ORM\DataObject;
+use SilverStripe\Dev\TestOnly;
+use SilverStripe\Security\Member;
+
 /**
  * @package    shop
  * @subpackage tests
@@ -137,7 +142,7 @@ class CustomProduct_OrderItem extends OrderItem implements TestOnly
     );
     private static $has_one = array(
         'Product'   => 'CustomProduct',
-        'Recipient' => 'Member',
+        'Recipient' => Member::class,
     );
     private static $buyable_relationship = "Product";
     private static $required_fields = array(

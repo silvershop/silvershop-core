@@ -1,5 +1,8 @@
 <?php
 
+use SilverStripe\Core\Convert;
+use SilverStripe\ORM\DataObject;
+
 /**
  * Helper class to create a filter for matching a dataobject,
  * using field values or relationship ids and only those ids.
@@ -62,25 +65,13 @@ class MatchObjectFilter
         if (!is_array($this->data)) {
             return null;
         }
-        $singleton = singleton($this->className);
-        $hasones = $singleton->has_one();
-
-        $db = $singleton->db();
-        $allowed = array_keys(array_merge($db, $hasones)); //fields that can be used
+        $allowed = array_keys(DataObject::getSchema()->databaseFields($this->className));
         $fields = array_flip(array_intersect($allowed, $this->required));
-
-        //add 'ID' to has one relationship fields
-        foreach ($hasones as $key => $value) {
-            if (isset($fields[$key])) {
-                $fields[$key . "ID"] = $value;
-                unset($fields[$key]);
-            }
-        }
 
         $new = array();
         foreach ($fields as $field => $value) {
             $field = Convert::raw2sql($field);
-            if (array_key_exists($field, $db)) {
+            if (array_key_exists($field, $allowed)) {
                 if (isset($this->data[$field])) {
                     // allow wildcard in filter
                     if ($this->data[$field] === '*') {

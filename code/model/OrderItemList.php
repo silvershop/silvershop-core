@@ -1,5 +1,7 @@
 <?php
 
+use SilverStripe\ORM\HasManyList;
+
 /**
  * Additional functions for Item lists.
  */

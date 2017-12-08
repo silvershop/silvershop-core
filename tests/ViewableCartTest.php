@@ -1,5 +1,8 @@
 <?php
 
+//use PageController;
+use SilverStripe\Dev\SapphireTest;
+
 class ViewableCartTest extends SapphireTest
 {
     public static $fixture_file  = 'silvershop/tests/fixtures/shop.yml';
@@ -23,7 +26,7 @@ class ViewableCartTest extends SapphireTest
     {
         $cart = $this->objFromFixture("Order", "cart");
         ShoppingCart::singleton()->setCurrent($cart);
-        $page = new Page_Controller();
+        $page = new PageController();
         $this->assertEquals("$8.00", (string)$page->renderWith("CartTestTemplate"));
     }
 }

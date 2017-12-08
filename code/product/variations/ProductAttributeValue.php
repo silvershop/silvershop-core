@@ -1,5 +1,7 @@
 <?php
 
+use SilverStripe\ORM\DataObject;
+
 /**
  * Product Attribute Value
  * The actual values for a type of product attribute.

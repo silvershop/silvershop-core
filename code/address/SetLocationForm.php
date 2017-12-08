@@ -1,5 +1,12 @@
 <?php
 
+use SilverStripe\SiteConfig\SiteConfig;
+use SilverStripe\Forms\DropdownField;
+use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\FormAction;
+use SilverStripe\Forms\Form;
+use SilverStripe\Core\Extension;
+
 class SetLocationForm extends Form
 {
     public function __construct($controller, $name = "SetLocationForm")
@@ -30,7 +37,7 @@ class SetLocationForm extends Form
 
 class LocationFormPageDecorator extends Extension
 {
-    public static $allowed_actions = array(
+    private static $allowed_actions = array(
         "SetLocationForm",
     );
 

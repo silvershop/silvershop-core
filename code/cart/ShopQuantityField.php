@@ -1,5 +1,10 @@
 <?php
 
+use SilverStripe\Forms\NumericField;
+use SilverStripe\Forms\FormField;
+use SilverStripe\View\ViewableData;
+use SilverStripe\Forms\DropdownField;
+
 class ShopQuantityField extends ViewableData
 {
     protected $item;

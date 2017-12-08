@@ -1,6 +1,8 @@
 <?php
 
 use SilverStripe\Omnipay\Service\ServiceResponse;
+use SilverStripe\ORM\DataExtension;
+
 
 /**
  * Customisations to {@link Payment} specifically for the shop module.

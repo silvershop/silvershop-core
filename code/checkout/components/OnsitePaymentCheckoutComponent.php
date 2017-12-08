@@ -3,6 +3,10 @@
 use Omnipay\Common\Helper;
 use SilverStripe\Omnipay\GatewayInfo;
 use SilverStripe\Omnipay\GatewayFieldsFactory;
+use SilverStripe\Forms\LiteralField;
+use SilverStripe\ORM\ValidationResult;
+use SilverStripe\ORM\ValidationException;
+
 
 /**
  *

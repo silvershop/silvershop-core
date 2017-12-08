@@ -1,5 +1,7 @@
 <?php
 
+use SilverStripe\Core\ClassInfo;
+
 /**
  * Handles the calculation of order totals.
  *

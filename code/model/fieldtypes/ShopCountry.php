@@ -1,8 +1,11 @@
 <?php
 
-class ShopCountry extends Varchar
+use SilverStripe\Core\Convert;
+use SilverStripe\ORM\FieldType\DBVarchar;
+
+class ShopCountry extends DBVarchar
 {
-    public function __construct($name, $size = 3, $options = array())
+    public function __construct($name = null, $size = 3, $options = array())
     {
         parent::__construct($name, $size = 3, $options);
     }

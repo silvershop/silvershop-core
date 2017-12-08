@@ -3,6 +3,14 @@
 use SilverStripe\Omnipay\GatewayInfo;
 use SilverStripe\Omnipay\Service\ServiceFactory;
 use SilverStripe\Omnipay\Service\ServiceResponse;
+use SilverStripe\Core\Injector\Injector;
+use SilverStripe\Security\Member;
+use SilverStripe\ORM\FieldType\DBDatetime;
+use SilverStripe\Control\Controller;
+use SilverStripe\Core\Config\Config_ForClass;
+use SilverStripe\Omnipay\Model\Payment;
+
+
 
 /**
  * Handles tasks to be performed on orders, particularly placing and processing/fulfilment.
@@ -285,7 +293,7 @@ class OrderProcessor
         }
 
         if (!$this->order->Placed) {
-            $this->order->Placed = SS_Datetime::now()->Rfc2822(); //record placed order datetime
+            $this->order->Placed = DBDatetime::now()->Rfc2822(); //record placed order datetime
             if ($request = Controller::curr()->getRequest()) {
                 $this->order->IPAddress = $request->getIP(); //record client IP
             }

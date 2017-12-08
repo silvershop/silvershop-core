@@ -1,5 +1,11 @@
 <?php
 
+use SilverStripe\Security\Member;
+use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\FormAction;
+use SilverStripe\Forms\Form;
+use SilverStripe\Forms\RequiredFields;
+
 /**
  * Allows shop members to update their details with the shop.
  *

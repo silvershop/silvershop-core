@@ -1,5 +1,9 @@
 <?php
 
+use SilverStripe\Security\Member;
+use SilverStripe\Control\Email\Email;
+use SilverStripe\Dev\FunctionalTest;
+
 /**
  * Test member functionality added via ShopMember extension
  */
@@ -19,7 +23,7 @@ class ShopMemberTest extends FunctionalTest
 
     public function testGetByIdentifier()
     {
-        Member::config()->unique_identifier_field = 'Email';
+        Member::config()->unique_identifier_field = Email::class;
         $member = ShopMember::get_by_identifier('jeremy@example.com');
         $this->assertNotNull($member);
         $this->assertEquals('jeremy@example.com', $member->Email);
@@ -28,13 +32,13 @@ class ShopMemberTest extends FunctionalTest
 
     public function testCMSFields()
     {
-        singleton("Member")->getCMSFields();
-        singleton("Member")->getMemberFormFields();
+        singleton(Member::class)->getCMSFields();
+        singleton(Member::class)->getMemberFormFields();
     }
 
     public function testPastOrders()
     {
-        $member = $this->objFromFixture("Member", "joebloggs");
+        $member = $this->objFromFixture(Member::class, "joebloggs");
         $pastorders = $member->getPastOrders();
         $this->assertEquals(1, $pastorders->count());
     }
@@ -44,7 +48,7 @@ class ShopMemberTest extends FunctionalTest
         Member::config()->login_joins_cart = true;
         $order = $this->objFromFixture("Order", "cart");
         ShoppingCart::singleton()->setCurrent($order);
-        $member = $this->objFromFixture("Member", "jeremyperemy");
+        $member = $this->objFromFixture(Member::class, "jeremyperemy");
         $member->logIn();
         $this->assertEquals($member->ID, $order->MemberID);
 
@@ -58,7 +62,7 @@ class ShopMemberTest extends FunctionalTest
         Member::config()->login_joins_cart = false;
         $order = $this->objFromFixture("Order", "cart");
         ShoppingCart::singleton()->setCurrent($order);
-        $member = $this->objFromFixture("Member", "jeremyperemy");
+        $member = $this->objFromFixture(Member::class, "jeremyperemy");
         $member->logIn();
         $this->assertEquals(0, $order->MemberID);
 

@@ -1,5 +1,7 @@
 <?php
 
+use SilverStripe\Dev\SapphireTest;
+
 class ShopReportTest extends SapphireTest
 {
     protected static $fixture_file = 'silvershop/tests/fixtures/shop.yml';

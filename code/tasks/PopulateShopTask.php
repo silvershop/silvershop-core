@@ -1,5 +1,13 @@
 <?php
 
+use SilverStripe\ORM\DB;
+use SilverStripe\Core\Injector\Injector;
+use SilverStripe\Dev\FixtureFactory;
+use SilverStripe\ORM\DataObject;
+use SilverStripe\Dev\YamlFixture;
+use SilverStripe\SiteConfig\SiteConfig;
+use SilverStripe\Dev\BuildTask;
+
 /**
  * Populate shop task
  *
@@ -25,7 +33,7 @@ class PopulateShopTask extends BuildTask
         }
         $this->extend("beforePopulate");
 
-        $factory = Injector::inst()->create('FixtureFactory');
+        $factory = Injector::inst()->create(FixtureFactory::class);
 
         $parentid = 0;
 

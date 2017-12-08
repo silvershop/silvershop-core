@@ -1,6 +1,15 @@
 <?php
 
-Object::useCustomClass('SS_Datetime', 'I18nDatetime', true);
+use SilverStripe\ORM\FieldType\DBDatetime;
+use SilverStripe\Core\Config\Config;
+use SilverStripe\Security\Member;
+use SilverStripe\Control\Email\Email;
+use SilverStripe\Security\Security;
+use SilverStripe\Core\Injector\Injector;
+use SilverStripe\Omnipay\Model\Payment;
+
+
+Object::useCustomClass(DBDatetime::class, 'I18nDatetime', true);
 
 /// Reset to all default configuration settings.
 
@@ -8,16 +17,16 @@ $cfg = Config::inst();
 
 //remove array configs (these get merged, rater than replaced)
 
-$cfg->remove("Payment", "allowed_gateways");
+$cfg->remove(Payment::class, "allowed_gateways");
 $cfg->remove("Order", "modifiers");
 $cfg->remove("ProductCatalogAdmin", "managed_models");
 $cfg->remove("ProductCategory", "sort_options");
 
 // non-ecommerce
-$cfg->update('Member', 'unique_identifier_field', 'Email');
-$cfg->update('Email', 'admin_email', 'shopadmin@example.com');
+$cfg->update(Member::class, 'unique_identifier_field', Email::class);
+$cfg->update(Email::class, 'admin_email', 'shopadmin@example.com');
 $cfg->update(
-    'Payment',
+    Payment::class,
     'allowed_gateways',
     array(
         'Dummy',
@@ -90,9 +99,9 @@ $cfg->update('OrderActionsForm', 'set_allow_paying', false);
 $classes = array(
     "OrderProcessor",
     "CheckoutComponentConfig",
-    "Security",
+    Security::class,
     "PurchaseService",
 );
 foreach ($classes as $class) {
-    $cfg->update('Injector', $class, array("class" => $class));
+    $cfg->update(Injector::class, $class, array("class" => $class));
 }

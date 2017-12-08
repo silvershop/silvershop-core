@@ -1,5 +1,7 @@
 <?php
 
+use SilverStripe\Dev\BuildTask;
+
 class CreateInternationalZoneTask extends BuildTask
 {
     protected $title       = "Create International Zone";

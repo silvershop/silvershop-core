@@ -1,5 +1,14 @@
 <?php
 
+use SilverStripe\Security\Member;
+use SilverStripe\Control\Controller;
+use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\FormAction;
+use SilverStripe\Forms\Form;
+use SilverStripe\Security\LoginForm;
+use SilverStripe\Security\MemberAuthenticator\MemberLoginForm;
+use SilverStripe\Control\HTTPRequest;
+
 /**
  * Login, sign-up, or proceed as guest
  */
@@ -77,7 +86,7 @@ class CheckoutStep_Membership extends CheckoutStep
             return;
         }
         //using this function to redirect, and display action
-        if (!($requestdata instanceof SS_HTTPRequest)) {
+        if (!($requestdata instanceof HTTPRequest)) {
             Controller::curr()->redirect($this->NextStepLink('createaccount'));
             return;
         }

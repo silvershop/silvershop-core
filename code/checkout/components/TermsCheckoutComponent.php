@@ -1,5 +1,9 @@
 <?php
 
+use SilverStripe\Forms\FieldList;
+use SilverStripe\SiteConfig\SiteConfig;
+use SilverStripe\Forms\CheckboxField;
+
 class TermsCheckoutComponent extends CheckoutComponent
 {
     public function getFormFields(Order $order)

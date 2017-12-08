@@ -1,5 +1,7 @@
 <?php
 
+use SilverStripe\Dev\SapphireTest;
+
 class ShopUserInfoTest extends SapphireTest
 {
     public function testSetLocation()

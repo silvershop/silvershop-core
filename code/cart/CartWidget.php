@@ -1,4 +1,6 @@
 <?php
+
+use SilverStripe\Control\Controller;
 /**
  * CartWidget displays the current contents of the user's cart.
  *

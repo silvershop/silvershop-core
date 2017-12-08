@@ -1,5 +1,22 @@
 <?php
 
+use SilverStripe\Security\Member;
+use SilverStripe\Forms\Tab;
+use SilverStripe\Forms\TabSet;
+use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\DropdownField;
+use SilverStripe\Forms\LiteralField;
+use SilverStripe\Forms\ListboxField;
+use SilverStripe\Forms\DateField;
+use SilverStripe\ORM\Filters\GreaterThanFilter;
+use SilverStripe\ORM\Filters\LessThanFilter;
+use SilverStripe\ORM\UnsavedRelationList;
+use SilverStripe\Control\Controller;
+use SilverStripe\Control\Email\Email;
+use SilverStripe\ORM\DataObject;
+use SilverStripe\ORM\FieldType\DBDatetime;
+use SilverStripe\Dev\Debug;
+
 /**
  * The order class is a databound object for handling Orders
  * within SilverStripe.
@@ -49,11 +66,11 @@ class Order extends DataObject
         'Total'                  => 'Currency',
         'Reference'              => 'Varchar', //allow for customised order numbering schemes
         //status
-        'Placed'                 => "SS_Datetime", //date the order was placed (went from Cart to Order)
-        'Paid'                   => 'SS_Datetime', //no outstanding payment left
-        'ReceiptSent'            => 'SS_Datetime', //receipt emailed to customer
-        'Printed'                => 'SS_Datetime',
-        'Dispatched'             => 'SS_Datetime', //products have been sent to customer
+        'Placed'                 => "Datetime", //date the order was placed (went from Cart to Order)
+        'Paid'                   => 'Datetime', //no outstanding payment left
+        'ReceiptSent'            => 'Datetime', //receipt emailed to customer
+        'Printed'                => 'Datetime',
+        'Dispatched'             => 'Datetime', //products have been sent to customer
         'Status'                 => "Enum('Unpaid,Paid,Processing,Sent,Complete,AdminCancelled,MemberCancelled,Cart','Cart')",
         //customer (for guest orders)
         'FirstName'              => 'Varchar',
@@ -68,7 +85,7 @@ class Order extends DataObject
     );
 
     private static $has_one           = array(
-        'Member'          => 'Member',
+        'Member'          => Member::class,
         'ShippingAddress' => 'Address',
         'BillingAddress'  => 'Address',
     );
@@ -302,12 +319,9 @@ class Order extends DataObject
     public function getComponents($componentName, $filter = "", $sort = "", $join = "", $limit = null)
     {
         $components = parent::getComponents($componentName, $filter = "", $sort = "", $join = "", $limit = null);
-        if ($componentName === "Items" && get_class($components) !== "UnsavedRelationList") {
+        if ($componentName === "Items" && get_class($components) !== UnsavedRelationList::class) {
             $query = $components->dataQuery();
             $components = OrderItemList::create("OrderItem", "OrderID");
-            if ($this->model) {
-                $components->setDataModel($this->model);
-            }
             $components->setDataQuery($query);
             $components = $components->forForeignID($this->ID);
         }
@@ -719,7 +733,7 @@ class Order extends DataObject
         $this->extend('onStatusChange', $fromStatus, $toStatus);
 
         if ($toStatus == 'Paid' && !$this->Paid) {
-            $this->Paid = SS_Datetime::now()->Rfc2822();
+            $this->Paid = DBDatetime::now()->Rfc2822();
             foreach ($this->Items() as $item) {
                 $item->onPayment();
             }
@@ -728,7 +742,7 @@ class Order extends DataObject
 
             if (!$this->ReceiptSent) {
                 OrderEmailNotifier::create($this)->sendReceipt();
-                $this->ReceiptSent = SS_Datetime::now()->Rfc2822();
+                $this->ReceiptSent = DBDatetime::now()->Rfc2822();
             }
         }
 

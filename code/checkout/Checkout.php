@@ -1,6 +1,9 @@
 <?php
 
 use SilverStripe\Omnipay\GatewayInfo;
+use SilverStripe\Security\Member;
+use SilverStripe\Control\Session;
+
 
 /**
  * Helper class for getting an order throught the checkout process

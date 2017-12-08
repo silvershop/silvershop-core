@@ -1,5 +1,14 @@
 <?php
 
+use SilverStripe\Forms\GridField\GridFieldDetailForm;
+use SilverStripe\Forms\GridField\GridFieldAddNewButton;
+use SilverStripe\Admin\ModelAdmin;
+use SilverStripe\Forms\LiteralField;
+use SilverStripe\View\Requirements;
+use SilverStripe\i18n\i18n;
+use SilverStripe\SiteConfig\SiteConfig;
+use SilverStripe\Forms\GridField\GridFieldDetailForm_ItemRequest;
+
 /**
  * Order administration interface, based on ModelAdmin
  *
@@ -52,13 +61,13 @@ class OrdersAdmin extends ModelAdmin
         $form = parent::getEditForm($id, $fields);
         if ($this->modelClass == "Order") {
             $form->Fields()->fieldByName("Order")->getConfig()
-                ->getComponentByType('GridFieldDetailForm')
+                ->getComponentByType(GridFieldDetailForm::class)
                 ->setItemRequestClass('OrderGridFieldDetailForm_ItemRequest'); //see below
         }
         if ($this->modelClass == "OrderStatusLog") {
             // Remove add new button
             $config = $form->Fields()->fieldByName("OrderStatusLog")->getConfig();
-            $config->removeComponentsByType($config->getComponentByType('GridFieldAddNewButton'));
+            $config->removeComponentsByType($config->getComponentByType(GridFieldAddNewButton::class));
         }
 
         return $form;

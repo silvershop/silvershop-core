@@ -1,5 +1,7 @@
 <?php
 
+use SilverStripe\Dev\SapphireTest;
+
 class MatchObjectFilterTest extends SapphireTest
 {
     public function testRelationId()

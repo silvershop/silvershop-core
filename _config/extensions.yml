@@ -4,11 +4,10 @@ After:
   - 'framework/*'
   - 'cms/*'
 ---
-
-SiteConfig:
+SilverStripe\SiteConfig\SiteConfig:
   extensions:
     - ShopConfig
-Page_Controller:
+PageController:
   extensions:
     - ViewableCart
 ShoppingCart_Controller:
@@ -20,21 +19,21 @@ CheckoutPage_Controller:
 AccountPage_Controller:
   extensions:
     - OrderManipulation
-Member:
+SilverStripe\Security\Member:
   extensions:
     - ShopMember
-Image:
+SilverStripe\Assets\Image:
   extensions:
     - Product_Image
 Product:
   extensions:
     - ProductVariationsExtension
-Payment:
+SilverStripe\Omnipay\Model\Payment:
   extensions:
     - ShopPayment
 Order:
   extensions:
-    - Payable
+    - SilverStripe\Omnipay\Extensions\Payable
 SilverStripe\Omnipay\Service\PaymentService:
   extensions:
     - ShopPaymentService

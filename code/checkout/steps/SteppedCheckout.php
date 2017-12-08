@@ -1,5 +1,8 @@
 <?php
 
+use SilverStripe\Control\Controller;
+use SilverStripe\Core\Extension;
+
 /**
  * Stepped checkout provides multiple forms and actions for placing an order
  *

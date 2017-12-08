@@ -1,5 +1,8 @@
 <?php
 
+use SilverStripe\Security\Member;
+use SilverStripe\ORM\DataObject;
+
 /**
  * Data class that keeps a log of a single
  * status of an order.
@@ -20,7 +23,7 @@ class OrderStatusLog extends DataObject
     );
 
     private static $has_one           = array(
-        'Author' => 'Member',
+        'Author' => Member::class,
         'Order'  => 'Order',
     );
 

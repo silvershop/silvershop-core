@@ -1,5 +1,8 @@
 <?php
 
+use SilverStripe\Security\SecurityToken;
+use SilverStripe\Dev\FunctionalTest;
+
 /**
  * @package    shop
  * @subpackage tests

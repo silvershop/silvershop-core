@@ -3,26 +3,23 @@ Name: shopconfig
 After: framework/routes#coreroutes
 ---
 ShopConfig:
-  base_currency: 'NZD'
-
-Member:
+  base_currency: NZD
+SilverStripe\Security\Member:
   login_joins_cart: true
-
 Product_Image:
   thumbnail_width: 140
   thumbnail_height: 100
   content_image_width: 200
   large_image_width: 600
-
 OrderProcessor:
   bcc_receipt_to_admin: true
-
-Injector:
+SilverStripe\Core\Injector\Injector:
   CheckoutComponentConfig:
     class: SinglePageCheckoutComponentConfig
+  Currency:
+    class: ShopCurrency
   ShopEmail:
     class: StyledHtmlEmail
-
-LeftAndMain:
+SilverStripe\Admin\LeftAndMain:
   extra_requirements_css:
     - silvershop/css/shopcms.css

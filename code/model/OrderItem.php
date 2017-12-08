@@ -1,5 +1,7 @@
 <?php
 
+use SilverStripe\Core\Injector\Injector;
+
 /**
  * An order item is a product which has been added to an order,
  * ready for purchase. An order item is typically a product itself,

@@ -1,6 +1,9 @@
 <?php
 
 use SilverStripe\Omnipay\GatewayInfo;
+use SilverStripe\Forms\FormAction;
+use SilverStripe\Forms\FieldList;
+
 
 class CheckoutStep_PaymentMethod extends CheckoutStep
 {

@@ -1,5 +1,7 @@
 <?php
 
+use SilverStripe\Dev\SapphireTest;
+
 /**
  * @package    shop
  * @subpackage tests

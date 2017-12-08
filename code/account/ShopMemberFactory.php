@@ -1,5 +1,11 @@
 <?php
 
+use SilverStripe\ORM\ValidationResult;
+use SilverStripe\ORM\ValidationException;
+use SilverStripe\Core\Config\Config;
+use SilverStripe\Security\Member;
+use SilverStripe\Core\Convert;
+
 class ShopMemberFactory
 {
     /**
@@ -21,7 +27,7 @@ class ShopMemberFactory
             );
             throw new ValidationException($result);
         }
-        $idfield = Config::inst()->get('Member', 'unique_identifier_field');
+        $idfield = Config::inst()->get(Member::class, 'unique_identifier_field');
         if (!isset($data[$idfield]) || empty($data[$idfield])) {
             $result->error(
                 _t(

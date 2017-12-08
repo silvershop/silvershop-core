@@ -1,5 +1,9 @@
 <?php
 
+use SilverStripe\i18n\i18nEntityProvider;
+use SilverStripe\ORM\PaginatedList;
+///use PageController;
+
 /**
  * Product Category provides a way to hierartically categorise products.
  *
@@ -49,10 +53,10 @@ class ProductCategory extends Page implements i18nEntityProvider
         }
         $products = Product::get()
             ->leftJoin('Product_ProductCategories', '"Product_ProductCategories"."ProductID" = "Product"."ID"')
-            ->filterAny(
+            ->whereAny(
                 array(
-                    'ParentID'                                    => $groupids,
-                    'Product_ProductCategories.ProductCategoryID' => $groupids,
+                    '"ParentID"'                                    => $groupids,
+                    '"Product_ProductCategories"."ProductCategoryID"' => $groupids,
                 )
             );
         if (self::config()->must_have_price) {
@@ -154,7 +158,7 @@ class ProductCategory extends Page implements i18nEntityProvider
     }
 }
 
-class ProductCategory_Controller extends Page_Controller
+class ProductCategory_Controller extends PageController
 {
     /**
      * Return the products for this group.

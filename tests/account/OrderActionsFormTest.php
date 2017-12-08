@@ -1,5 +1,14 @@
 <?php
 
+use SilverStripe\Core\Config\Config;
+use SilverStripe\Core\Injector\Injector;
+use SilverStripe\CMS\Controllers\ModelAsController;
+use SilverStripe\Control\Director;
+use SilverStripe\Forms\Form;
+use SilverStripe\Dev\FunctionalTest;
+use SilverStripe\Omnipay\Model\Payment;
+
+
 class OrderActionsFormTest extends FunctionalTest
 {
     protected static $fixture_file = array(
@@ -25,7 +34,7 @@ class OrderActionsFormTest extends FunctionalTest
         $this->checkoutPage = $this->objFromFixture("CheckoutPage", "checkout");
         $this->checkoutPage->publish('Stage', 'Live');
 
-        Config::inst()->update('Payment', 'allowed_gateways', array('Dummy'));
+        Config::inst()->update(Payment::class, 'allowed_gateways', array('Dummy'));
     }
 
     public function testOffsitePayment()

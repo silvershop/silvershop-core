@@ -1,5 +1,9 @@
 <?php
 
+use SilverStripe\Forms\CheckboxField;
+use SilverStripe\Forms\FormAction;
+use SilverStripe\Forms\FieldList;
+
 class CheckoutStep_Address extends CheckoutStep
 {
     private static $allowed_actions = array(

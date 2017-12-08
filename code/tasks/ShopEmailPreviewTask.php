@@ -1,5 +1,8 @@
 <?php
 
+use SilverStripe\Control\Director;
+use SilverStripe\Dev\BuildTask;
+
 /**
  * ShopEmailPreviewTask
  *

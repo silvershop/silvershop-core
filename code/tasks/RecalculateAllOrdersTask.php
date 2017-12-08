@@ -1,5 +1,9 @@
 <?php
 
+use SilverStripe\Control\Director;
+use SilverStripe\ORM\DataObject;
+use SilverStripe\Dev\BuildTask;
+
 /**
  * Recalculate All Orders
  * Re-runs all calculation functions on all orders so that database is populated with pre-calculated values.

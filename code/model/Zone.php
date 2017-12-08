@@ -1,5 +1,10 @@
 <?php
 
+use SilverStripe\Control\Session;
+use SilverStripe\Forms\GridField\GridFieldConfig_RelationEditor;
+use SilverStripe\Forms\GridField\GridField;
+use SilverStripe\ORM\DataObject;
+
 /*
  * A zone is a collection of regions. Zones can cross over each other.
  * Zone matching is prioritised by specificity. For example, a matching post code

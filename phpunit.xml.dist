@@ -14,7 +14,7 @@
 	- http://www.phpunit.de/manual/current/en/textui.html
 	- http://doc.silverstripe.org/framework/en/topics/testing/#configuration
 -->
-<phpunit bootstrap="../framework/tests/bootstrap.php" colors="true">
+<phpunit bootstrap="vendor/framework/tests/bootstrap.php" colors="true">
 
 	<testsuites>
 		<testsuite name="Default">

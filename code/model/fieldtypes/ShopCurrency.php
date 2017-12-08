@@ -1,11 +1,13 @@
 <?php
 
+use SilverStripe\ORM\FieldType\DBCurrency;
+
 /**
  * Improvements to Currency for presenting in templates.
  *
  * @package shop
  */
-class ShopCurrency extends Currency
+class ShopCurrency extends DBCurrency
 {
     private static $decimal_delimiter     = '.';
 

@@ -1,5 +1,8 @@
 <?php
 
+use SilverStripe\Security\Member;
+use SilverStripe\SiteConfig\SiteConfig;
+
 abstract class AddressCheckoutComponent extends CheckoutComponent
 {
     protected $formfielddescriptions = true;

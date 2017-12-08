@@ -1,5 +1,8 @@
 <?php
 
+use SilverStripe\Control\Director;
+use SilverStripe\Dev\SapphireTest;
+
 class NestedCheckoutTest extends SapphireTest
 {
     public static $fixture_file = 'silvershop/tests/fixtures/pages/NestedCheckout.yml';

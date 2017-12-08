@@ -1,5 +1,7 @@
 <?php
 
+use SilverStripe\Forms\RequiredFields;
+
 /**
  * @package shop
  */

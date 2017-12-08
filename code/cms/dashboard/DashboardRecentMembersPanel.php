@@ -1,4 +1,7 @@
 <?php
+
+use SilverStripe\Forms\TextField;
+use SilverStripe\Security\Member;
 /**
  * Shows a table of recent signups
  *

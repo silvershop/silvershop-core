@@ -1,5 +1,7 @@
 <?php
 
+use SilverStripe\Dev\SapphireTest;
+
 class ZoneTest extends SapphireTest
 {
     public static $fixture_file = array(

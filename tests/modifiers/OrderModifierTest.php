@@ -1,5 +1,9 @@
 <?php
 
+use SilverStripe\Core\Config\Config;
+use SilverStripe\Dev\FunctionalTest;
+use SilverStripe\Dev\TestOnly;
+
 /**
  * @package    shop
  * @subpackage tests

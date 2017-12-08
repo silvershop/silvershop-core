@@ -1,5 +1,11 @@
 <?php
 
+use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\FormAction;
+use SilverStripe\Forms\NumericField;
+use SilverStripe\Core\Convert;
+use SilverStripe\Forms\Form;
+
 /**
  * Renders the cart inside a form, so that it is editable.
  *

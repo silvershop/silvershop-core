@@ -1,5 +1,12 @@
 <?php
 
+use SilverStripe\Dev\SapphireTest;
+use SilverStripe\Control\Director;
+use SilverStripe\Security\Security;
+use SilverStripe\Security\Permission;
+use SilverStripe\Dev\DebugView;
+use SilverStripe\Control\Controller;
+
 /**
  * Provides a list of development tasks to perform.
  *
@@ -8,9 +15,9 @@
  */
 class ShopDevelopmentAdmin extends Controller
 {
-    public static $url_handlers    = array();
+    private static $url_handlers    = array();
 
-    public static $allowed_actions = array(
+    private static $allowed_actions = array(
         'index',
     );
 
@@ -22,7 +29,7 @@ class ShopDevelopmentAdmin extends Controller
         // if on CLI or with the database not ready. The latter makes it less errorprone to do an
         // initial schema build without requiring a default-admin login.
         // Access to this controller is always allowed in "dev-mode", or of the user is ADMIN.
-        $isRunningTests = (class_exists('SapphireTest', false) && SapphireTest::is_running_test());
+        $isRunningTests = (class_exists(SapphireTest::class, false) && SapphireTest::is_running_test());
         $canAccess = (
             Director::isDev()
             || !Security::database_is_ready()
@@ -40,7 +47,7 @@ class ShopDevelopmentAdmin extends Controller
         }
 
         //render the debug view
-        $renderer = Object::create('DebugView');
+        $renderer = Object::create(DebugView::class);
         $renderer->writeHeader();
         $renderer->writeInfo(_t("Shop.DevToolsTitle", "Shop Development Tools"), Director::absoluteBaseURL());
     }
