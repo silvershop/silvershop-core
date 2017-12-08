@@ -130,11 +130,11 @@ class Product extends Page implements Buyable
                 TextField::create('InternalItemID', _t('Product.InternalItemID', 'Product Code/SKU'), '', 30),
                 DropdownField::create('ParentID', _t("Product.Category", "Category"), $self->getCategoryOptions())
                     ->setDescription(_t("Product.CategoryDescription", "This is the parent page or default category.")),
-                ListBoxField::create(
-                    'ProductCategories',
-                    _t("Product.AdditionalCategories", "Additional Categories"),
-                    $self->getCategoryOptionsNoParent()
-                )->setMultiple(true),
+                // ListBoxField::create(
+                //     'ProductCategories',
+                //     _t("Product.AdditionalCategories", "Additional Categories"),
+                //     $self->getCategoryOptionsNoParent()
+                // )->setMultiple(true),
                 TextField::create('Model', _t('Product.Model', 'Model'), '', 30),
                 CheckboxField::create('Featured', _t('Product.Featured', 'Featured Product')),
                 CheckboxField::create('AllowPurchase', _t('Product.AllowPurchase', 'Allow product to be purchased'), 1),

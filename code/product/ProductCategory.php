@@ -167,7 +167,7 @@ class ProductCategory_Controller extends PageController
     {
         $products = $this->ProductsShowable($recursive);
         //sort the products
-        $products = $this->getSorter()->sortList($products);
+        //$products = $this->getSorter()->sortList($products);
 
         //paginate the products, if necessary
         $pagelength = ProductCategory::config()->page_length;

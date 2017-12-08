@@ -14,7 +14,7 @@
 	"require" : {
         "php": ">=5.5",
 		"silverstripe/cms": "^4",
-		"silverstripe/silverstripe-omnipay" : "^3"
+		"silverstripe/silverstripe-omnipay" : "^3@dev"
 	},
 	"require-dev": {
 		"guzzle/plugin-mock": "~3.1",

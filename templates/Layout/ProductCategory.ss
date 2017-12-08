@@ -9,7 +9,7 @@
 
     <% if $Products %>
         <div id="Products" class="category">
-            <% include Sorter %>
+            <%-- include Sorter --%>
             <div class="clear"><!-- --></div>
             <ul class="productList">
                 <% loop $Products %>
