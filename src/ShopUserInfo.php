@@ -5,7 +5,7 @@ namespace SilverShop\Core;
 
 use SilverStripe\Control\Session;
 use SilverStripe\Core\Convert;
-
+use SilverStripe\Core\Injector\Injectable;
 
 
 /**
@@ -13,14 +13,8 @@ use SilverStripe\Core\Convert;
  */
 class ShopUserInfo
 {
-    public static function singleton()
-    {
-        static $singleton = null;
-        if ($singleton === null) {
-            $singleton = new ShopUserInfo();
-        }
-        return $singleton;
-    }
+    use Injectable;
+
 
     private function __construct()
     {

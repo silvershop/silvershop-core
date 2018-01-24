@@ -3,16 +3,15 @@
 namespace SilverShop\Core\Cart;
 
 
+use Page;
+use SilverShop\Core\Checkout\CheckoutPage;
 use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\Control\Controller;
-use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\DropdownField;
+use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\TreeDropdownField;
 use SilverStripe\ORM\DB;
-use Page;
-use PageController;
 
-//use PageController;
 
 /**
  * View and edit the cart in a full page.
@@ -20,12 +19,12 @@ use PageController;
  */
 class CartPage extends Page
 {
-    private static $has_one = array(
-        'CheckoutPage' => 'CheckoutPage',
+    private static $has_one = [
+        'CheckoutPage' => CheckoutPage::class,
         'ContinuePage' => SiteTree::class,
-    );
+    ];
 
-    private static $icon    = 'silvershop/images/icons/cart';
+    private static $icon = 'silvershop/core: images/icons/cart.gif';
 
     /**
      * Returns the link to the checkout page on this site
@@ -36,7 +35,7 @@ class CartPage extends Page
      */
     public static function find_link($urlSegment = false, $action = false, $id = false)
     {
-        $base = CartPage_Controller::config()->url_segment;
+        $base = CartPageController::config()->url_segment;
         if ($page = self::get()->first()) {
             $base = $page->Link();
         }
@@ -45,7 +44,7 @@ class CartPage extends Page
 
     public function getCMSFields()
     {
-        $this->beforeUpdateCMSFields(function(FieldList $fields) {
+        $this->beforeUpdateCMSFields(function (FieldList $fields) {
             if ($checkouts = CheckoutPage::get()) {
                 $fields->addFieldToTab(
                     'Root.Links',
@@ -79,13 +78,13 @@ class CartPage extends Page
         if (!self::get()->exists() && $this->config()->create_default_pages) {
             $page = self::create(
                 array(
-                    'Title'       => 'Shopping Cart',
-                    'URLSegment'  => CartPage_Controller::config()->url_segment,
+                    'Title' => 'Shopping Cart',
+                    'URLSegment' => CartPageController::config()->url_segment,
                     'ShowInMenus' => 0,
                 )
             );
             $page->write();
-            $page->publish('Stage', 'Live');
+            $page->publishSingle();
             $page->flushCache();
             DB::alteration_message('Cart page created', 'created');
         }

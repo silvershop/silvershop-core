@@ -1,14 +1,14 @@
 <?php
 
-namespace SilverShop\Core;
+namespace SilverShop\Core\Account;
 
 
-use SilverStripe\ORM\ValidationResult;
-use SilverStripe\ORM\ValidationException;
+use SilverShop\Core\Checkout\Checkout;
+use SilverShop\Core\Model\ShopMember;
 use SilverStripe\Core\Config\Config;
+use SilverStripe\ORM\ValidationException;
+use SilverStripe\ORM\ValidationResult;
 use SilverStripe\Security\Member;
-use SilverStripe\Core\Convert;
-
 
 
 class ShopMemberFactory
@@ -21,31 +21,31 @@ class ShopMemberFactory
      *
      * @param $data - map of member data
      *
-     * @return Member|boolean - new member (not saved to db), or false if there is an error.
+     * @return Member - new member (not saved to db)
      */
     public function create($data)
     {
         $result = ValidationResult::create();
         if (!Checkout::member_creation_enabled()) {
-            $result->error(
-                _t("Checkout.MembershipIsNotAllowed", "Creating new memberships is not allowed")
+            $result->addError(
+                _t('SilverShop\Core\Checkout\Checkout.MembershipIsNotAllowed', 'Creating new memberships is not allowed')
             );
             throw new ValidationException($result);
         }
         $idfield = Config::inst()->get(Member::class, 'unique_identifier_field');
         if (!isset($data[$idfield]) || empty($data[$idfield])) {
-            $result->error(
+            $result->addError(
                 _t(
-                    'Checkout.IdFieldNotFound',
+                    'SilverShop\Core\Checkout\Checkout.IdFieldNotFound',
                     'Required field not found: {IdentifierField}',
                     'Identifier is the field that holds the unique user-identifier, commonly this is \'Email\'',
-                    array('IdentifierField' => $idfield)
+                    ['IdentifierField' => $idfield]
                 )
             );
             throw new ValidationException($result);
         }
         if (!isset($data['Password']) || empty($data['Password'])) {
-            $result->error(_t("Checkout.PasswordRequired", "A password is required"));
+            $result->addError(_t('SilverShop\Core\Checkout\Checkout.PasswordRequired', 'A password is required'));
             throw new ValidationException($result);
         }
         $idval = $data[$idfield];
@@ -55,24 +55,28 @@ class ShopMemberFactory
             // if a localized value exists, use this for our error-message
             $fieldLabel = isset($fieldLabels[$idfield]) ? $fieldLabels[$idfield] : $idfield;
 
-            $result->error(
+            $result->addError(
                 _t(
-                    'Checkout.MemberExists',
+                    'SilverShop\Core\Checkout\Checkout.MemberExists',
                     'A member already exists with the {Field} {Identifier}',
                     '',
-                    array('Field' => $fieldLabel, 'Identifier' => $idval)
+                    ['Field' => $fieldLabel, 'Identifier' => $idval]
                 )
             );
             throw new ValidationException($result);
         }
-        $member = Member::create(Convert::raw2sql($data));
+
+        /** @var Member $member */
+        $member = Member::create()->update($data);
         // 3.2 changed validate to protected which made this fall through the DataExtension and error out
-        $validation = $member->hasMethod('doValidate') ? $member->doValidate() : $member->validate();
-        if (!$validation->valid()) {
+        $validation = $member->doValidate();
+        if (!$validation->isValid()) {
             //TODO need to handle i18n here?
-            $result->error($validation->message());
+            foreach ($validation->getMessages() as $message) {
+                $result->addError($message);
+            }
         }
-        if (!$result->valid()) {
+        if (!$result->isValid()) {
             throw new ValidationException($result);
         }
 

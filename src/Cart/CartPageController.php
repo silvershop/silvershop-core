@@ -6,11 +6,11 @@ use PageController;
 
 class CartPageController extends PageController
 {
-    private static $url_segment     = 'cart';
+    private static $url_segment = 'cart';
 
     private static $allowed_actions = array(
-        "CartForm",
-        "updatecart",
+        'CartForm',
+        'updatecart',
     );
 
     /**
@@ -21,7 +21,7 @@ class CartPageController extends PageController
         if ($this->Title) {
             return $this->Title;
         }
-        return _t('CartPage.DefaultTitle', "Shopping Cart");
+        return _t('CartPage.DefaultTitle', 'Shopping Cart');
     }
 
     /**
@@ -33,7 +33,7 @@ class CartPageController extends PageController
         if (!$cart) {
             return false;
         }
-        $form = CartForm::create($this, "CartForm", $cart);
+        $form = CartForm::create($this, 'CartForm', $cart);
 
         $this->extend('updateCartForm', $form);
 

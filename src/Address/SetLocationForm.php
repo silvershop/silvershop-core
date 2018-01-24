@@ -3,13 +3,12 @@
 namespace SilverShop\Core\Address;
 
 
-use SilverStripe\SiteConfig\SiteConfig;
+use SilverShop\Core\ShopUserInfo;
 use SilverStripe\Forms\DropdownField;
 use SilverStripe\Forms\FieldList;
-use SilverStripe\Forms\FormAction;
 use SilverStripe\Forms\Form;
-use SilverStripe\Core\Extension;
-
+use SilverStripe\Forms\FormAction;
+use SilverStripe\SiteConfig\SiteConfig;
 
 
 class SetLocationForm extends Form
@@ -27,7 +26,7 @@ class SetLocationForm extends Form
         );
         parent::__construct($controller, $name, $fields, $actions);
         //load currently set location
-        if ($location = ShopUserInfo::singleton()->getLocation()) {
+        if ($location = singleton(ShopUserInfo::class)->getLocation()) {
             $countryfield->setHasEmptyDefault(false);
             $this->loadDataFrom($location);
         }
@@ -35,7 +34,7 @@ class SetLocationForm extends Form
 
     public function setLocation($data, $form)
     {
-        ShopUserInfo::singleton()->setLocation($data);
+        singleton(ShopUserInfo::class)->setLocation($data);
         $this->controller->redirectBack();
     }
 }

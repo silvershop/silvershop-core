@@ -1,12 +1,11 @@
 mappings:
-  AccountPage: SilverShop\Core\AccountPage
-  AccountPage_Controller: SilverShop\Core\AccountPage_Controller
-  OrderActionsForm: SilverShop\Core\OrderActionsForm
-  OrderActionsForm_Validator: SilverShop\Core\OrderActionsForm_Validator
-  OrderManipulation: SilverShop\Core\OrderManipulation
-  ShopAccountForm: SilverShop\Core\ShopAccountForm
-  ShopAccountFormValidator: SilverShop\Core\ShopAccountFormValidator
-  ShopMemberFactory: SilverShop\Core\ShopMemberFactory
+  AccountPage: SilverShop\Core\Account\AccountPage
+  AccountPage_Controller: SilverShop\Core\Account\AccountPageController
+  OrderActionsForm: SilverShop\Core\Account\OrderActionsForm
+  OrderActionsForm_Validator: SilverShop\Core\Account\OrderActionsFormValidator
+  OrderManipulation: SilverShop\Core\Account\OrderManipulation
+  ShopAccountForm: SilverShop\Core\Account\ShopAccountForm
+  ShopMemberFactory: SilverShop\Core\Account\ShopMemberFactory
   RestrictionRegionCountryDropdownField: SilverShop\Core\RestrictionRegionCountryDropdownField
   SetLocationForm: SilverShop\Core\SetLocationForm
   LocationFormPageDecorator: SilverShop\Core\LocationFormPageDecorator

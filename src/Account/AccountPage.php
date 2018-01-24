@@ -53,7 +53,7 @@ class AccountPage extends Page
      */
     protected static function get_if_account_page_exists()
     {
-        if ($page = DataObject::get_one('AccountPage')) {
+        if ($page = DataObject::get_one(self::class)) {
             return $page;
         }
         user_error(_t(__CLASS__ . '.NoPage', 'No AccountPage was found. Please create one in the CMS!'), E_USER_ERROR);

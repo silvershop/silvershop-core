@@ -3,23 +3,21 @@
 namespace SilverShop\Core\Model;
 
 
-use SilverStripe\Security\Member;
+use SilverStripe\Control\Controller;
+use SilverStripe\Dev\Debug;
+use SilverStripe\Forms\DateField;
+use SilverStripe\Forms\DropdownField;
+use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\ListboxField;
+use SilverStripe\Forms\LiteralField;
 use SilverStripe\Forms\Tab;
 use SilverStripe\Forms\TabSet;
-use SilverStripe\Forms\FieldList;
-use SilverStripe\Forms\DropdownField;
-use SilverStripe\Forms\LiteralField;
-use SilverStripe\Forms\ListboxField;
-use SilverStripe\Forms\DateField;
+use SilverStripe\ORM\DataObject;
+use SilverStripe\ORM\FieldType\DBDatetime;
 use SilverStripe\ORM\Filters\GreaterThanFilter;
 use SilverStripe\ORM\Filters\LessThanFilter;
 use SilverStripe\ORM\UnsavedRelationList;
-use SilverStripe\Control\Controller;
-use SilverStripe\Control\Email\Email;
-use SilverStripe\ORM\DataObject;
-use SilverStripe\ORM\FieldType\DBDatetime;
-use SilverStripe\Dev\Debug;
-
+use SilverStripe\Security\Member;
 
 
 /**

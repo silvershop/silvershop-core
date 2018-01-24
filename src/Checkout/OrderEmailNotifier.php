@@ -3,6 +3,8 @@
 namespace SilverShop\Core\Checkout;
 
 
+use SilverShop\Core\Model\Order;
+use SilverStripe\Core\Injector\Injectable;
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Control\Email\Email;
 use SilverStripe\Control\Director;
@@ -18,6 +20,8 @@ use SilverStripe\Core\Config\Config_ForClass;
  */
 class OrderEmailNotifier
 {
+    use Injectable;
+
     /**
      * @var Order $order
      */
@@ -27,16 +31,6 @@ class OrderEmailNotifier
      * @var bool
      */
     protected $debugMode = false;
-
-    /**
-     * @param Order $order
-     *
-     * @return OrderEmailNotifier
-     */
-    public static function create(Order $order)
-    {
-        return Injector::inst()->create('OrderEmailNotifier', $order);
-    }
 
     /**
      * Assign the order to a local variable

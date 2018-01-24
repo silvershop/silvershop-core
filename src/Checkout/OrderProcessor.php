@@ -3,6 +3,8 @@
 namespace SilverShop\Core\Checkout;
 
 
+use SilverShop\Core\Model\Order;
+use SilverStripe\Core\Injector\Injectable;
 use SilverStripe\Omnipay\GatewayInfo;
 use SilverStripe\Omnipay\Service\ServiceFactory;
 use SilverStripe\Omnipay\Service\ServiceResponse;
@@ -26,6 +28,8 @@ use Exception;
  */
 class OrderProcessor
 {
+    use Injectable;
+
     /**
      * @var Order
      */
@@ -41,16 +45,6 @@ class OrderProcessor
      */
     protected $error;
 
-    /**
-     * Static way to create the order processor.
-     * Makes creating a processor easier.
-     *
-     * @param Order $order
-     */
-    public static function create(Order $order)
-    {
-        return Injector::inst()->create('OrderProcessor', $order);
-    }
 
     /**
      * Assign the order to a local variable

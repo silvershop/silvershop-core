@@ -3,10 +3,19 @@
 namespace SilverShop\Core\Account;
 
 use PageController;
+use SilverShop\Core\Model\Address;
 use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Control\HTTPResponse;
+use SilverStripe\Forms\DropdownField;
+use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\Form;
+use SilverStripe\Forms\FormAction;
+use SilverStripe\Forms\HiddenField;
+use SilverStripe\Forms\RequiredFields;
 use SilverStripe\Security\Member;
+use SilverStripe\Security\MemberAuthenticator\ChangePasswordForm;
 use SilverStripe\Security\Security;
+use SilverStripe\SiteConfig\SiteConfig;
 
 class AccountPageController extends PageController
 {
@@ -25,7 +34,7 @@ class AccountPageController extends PageController
         'setdefaultshipping',
     );
 
-    /** @var Member|ShopMember */
+    /** @var Member */
     protected $member;
 
     public function init()
@@ -113,7 +122,7 @@ class AccountPageController extends PageController
 
     public function CreateAddressForm()
     {
-        $singletonaddress = singleton('Address');
+        $singletonaddress = singleton(Address::class);
         $fields = $singletonaddress->getFrontEndFields();
         $actions = FieldList::create(
             FormAction::create('saveaddress', _t('Address.SaveNew', 'Save New Address'))

@@ -3,6 +3,7 @@
 namespace SilverShop\Core\Model;
 
 
+use SilverShop\Core\Address\RestrictionRegionCountryDropdownField;
 use SilverStripe\Forms\TextField;
 use SilverStripe\Core\Convert;
 use SilverStripe\ORM\DataObject;
@@ -45,7 +46,7 @@ class RegionRestriction extends DataObject
      * Specifies form field types to use in TableFields
      */
     private static $table_field_types = array(
-        'Country'    => 'RestrictionRegionCountryDropdownField',
+        'Country'    => RestrictionRegionCountryDropdownField::class,
         'State'      => TextField::class,
         'City'       => TextField::class,
         'PostalCode' => TextField::class,

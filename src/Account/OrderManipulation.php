@@ -2,14 +2,16 @@
 
 namespace SilverShop\Core\Account;
 
-
-use SilverStripe\Control\Session;
-use SilverStripe\Security\Member;
-use SilverStripe\ORM\PaginatedList;
+use SilverShop\Core\Cart\ShoppingCart;
+use SilverShop\Core\Model\Order;
+use SilverStripe\Control\Controller;
 use SilverStripe\Control\HTTPRequest;
+use SilverStripe\Control\Session;
 use SilverStripe\Core\Extension;
-
-
+use SilverStripe\Forms\Form;
+use SilverStripe\ORM\DataList;
+use SilverStripe\ORM\PaginatedList;
+use SilverStripe\Security\Security;
 
 /**
  * Provides forms and processing to a controller for editing an
@@ -17,6 +19,7 @@ use SilverStripe\Core\Extension;
  *
  * @package    shop
  * @subpackage forms
+ * @property Controller $owner
  */
 class OrderManipulation extends Extension
 {
@@ -25,7 +28,7 @@ class OrderManipulation extends Extension
         'order',
     );
 
-    private static $sessname        = "OrderManipulation.historicalorders";
+    private static $sessname = 'OrderManipulation.historicalorders';
 
     /**
      * Add an order to the session-stored history of orders.
@@ -37,7 +40,7 @@ class OrderManipulation extends Extension
             $history = array();
         }
         $history[$order->ID] = $order->ID;
-        Session::set(self::$sessname, $history);
+        self::getSession()->set(self::$sessname, $history);
     }
 
     /**
@@ -45,7 +48,7 @@ class OrderManipulation extends Extension
      */
     public static function get_session_order_ids()
     {
-        $history = Session::get(self::$sessname);
+        $history = self::getSession()->get(self::$sessname);
         if (!is_array($history)) {
             $history = null;
         }
@@ -54,15 +57,14 @@ class OrderManipulation extends Extension
 
     public static function clear_session_order_ids()
     {
-        Session::set(self::$sessname, null);
-        Session::clear(self::$sessname);
+        self::getSession()->set(self::$sessname, null)->clear(self::$sessname);
     }
 
     /**
      * Get the order via url 'ID' or form submission 'OrderID'.
      * It will check for permission based on session stored ids or member id.
      *
-     * @return the order
+     * @return Order order
      */
     public function orderfromid()
     {
@@ -88,12 +90,12 @@ class OrderManipulation extends Extension
         if ($sessids = self::get_session_order_ids()) {
             $filters['ID'] = $sessids;
         }
-        if ($memberid = Member::currentUserID()) {
-            $filters['MemberID'] = $memberid;
+        if ($member = Security::getCurrentUser()) {
+            $filters['MemberID'] = $member->ID;
         }
 
         return Order::get()->filterAny($filters)
-            ->filter("Status:not", Order::config()->hidden_status);
+            ->filter('Status:not', Order::config()->hidden_status);
     }
 
     /**
@@ -102,7 +104,7 @@ class OrderManipulation extends Extension
     public function PastOrders($paginated = false)
     {
         $orders = $this->allorders()
-            ->filter("Status", Order::config()->placed_status);
+            ->filter('Status', Order::config()->placed_status);
         if ($paginated) {
             $orders = PaginatedList::create($orders, $this->owner->getRequest());
         }
@@ -114,7 +116,9 @@ class OrderManipulation extends Extension
      * Return the {@link Order} details for the current
      * Order ID that we're viewing (ID parameter in URL).
      *
+     * @param HTTPRequest $request
      * @return array of template variables
+     * @throws \SilverStripe\Control\HTTPResponse_Exception
      */
     public function order(HTTPRequest $request)
     {
@@ -123,12 +127,12 @@ class OrderManipulation extends Extension
 
         $order = $this->orderfromid();
         if (!$order) {
-            return $this->owner->httpError(404, "Order could not be found");
+            return $this->owner->httpError(404, 'Order could not be found');
         }
 
         return array(
             'Order' => $order,
-            'Form'  => $this->ActionsForm() //see OrderManipulation extension
+            'Form' => $this->ActionsForm() //see OrderManipulation extension
         );
     }
 
@@ -140,7 +144,7 @@ class OrderManipulation extends Extension
     public function ActionsForm()
     {
         if ($order = $this->orderfromid()) {
-            $form = OrderActionsForm::create($this->owner, "ActionsForm", $order);
+            $form = OrderActionsForm::create($this->owner, 'ActionsForm', $order);
             $form->extend('updateActionsForm', $order);
             if (!$form->Actions()->exists()) {
                 return null;
@@ -148,23 +152,26 @@ class OrderManipulation extends Extension
 
             return $form;
         }
+        return null;
     }
 
     protected $sessionmessage;
 
     protected $sessionmessagetype = null;
 
-    public function setSessionMessage($message = "success", $type = "good")
+    public function setSessionMessage($message = 'success', $type = 'good')
     {
-        Session::set('OrderManipulation.Message', $message);
-        Session::set('OrderManipulation.MessageType', $type);
+        $this->owner->getRequest()->getSession()
+            ->set('OrderManipulation.Message', $message)
+            ->set('OrderManipulation.MessageType', $type);
     }
 
     public function SessionMessage()
     {
-        if ($message = Session::get("OrderManipulation.Message")) {
+        $session = $this->owner->getRequest()->getSession();
+        if ($session && ($message = $session->get('OrderManipulation.Message'))) {
             $this->sessionmessage = $message;
-            Session::clear("OrderManipulation.Message");
+            $session->clear('OrderManipulation.Message');
         }
 
         return $this->sessionmessage;
@@ -172,11 +179,21 @@ class OrderManipulation extends Extension
 
     public function SessionMessageType()
     {
-        if ($type = Session::get("OrderManipulation.MessageType")) {
+        $session = $this->owner->getRequest()->getSession();
+        if ($session && ($type = $session->get('OrderManipulation.MessageType'))) {
             $this->sessionmessagetype = $type;
-            Session::clear("OrderManipulation.MessageType");
+            $session->clear('OrderManipulation.MessageType');
         }
 
         return $this->sessionmessagetype;
+    }
+
+    private static function getSession()
+    {
+        if ($request = Controller::curr()->getRequest()) {
+            return $request->getSession();
+        }
+
+        return new Session([]);
     }
 }

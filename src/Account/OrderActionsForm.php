@@ -2,20 +2,23 @@
 
 namespace SilverShop\Core\Account;
 
-use SilverStripe\Omnipay\GatewayInfo;
-use SilverStripe\Omnipay\GatewayFieldsFactory;
-use SilverStripe\Forms\HiddenField;
+use SilverShop\Core\Checkout\OrderEmailNotifier;
+use SilverShop\Core\Checkout\OrderProcessor;
+use SilverShop\Core\Model\Order;
+use SilverStripe\Control\HTTPResponse;
+use SilverStripe\Forms\CompositeField;
 use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\Form;
+use SilverStripe\Forms\FormAction;
 use SilverStripe\Forms\HeaderField;
+use SilverStripe\Forms\HiddenField;
 use SilverStripe\Forms\LiteralField;
 use SilverStripe\Forms\OptionsetField;
+use SilverStripe\Omnipay\GatewayFieldsFactory;
+use SilverStripe\Omnipay\GatewayInfo;
+use SilverStripe\ORM\FieldType\DBCurrency;
+use SilverStripe\Security\Security;
 use SilverStripe\View\Requirements;
-use SilverStripe\Forms\FormAction;
-use SilverStripe\Security\Member;
-use SilverStripe\Forms\CompositeField;
-use SilverStripe\Forms\Form;
-use SilverStripe\Forms\RequiredFields;
-use Currency;
 
 /**
  * Perform actions on placed orders
@@ -25,22 +28,32 @@ use Currency;
  */
 class OrderActionsForm extends Form
 {
-    private static $allowed_actions    = array(
+    private static $allowed_actions = [
         'docancel',
         'dopayment',
         'httpsubmission',
-    );
+    ];
 
     private static $email_notification = false;
 
-    private static $allow_paying       = true;
+    private static $allow_paying = true;
 
-    private static $allow_cancelling   = true;
+    private static $allow_cancelling = true;
 
     private static $include_jquery = true;
 
-    protected      $order;
+    /**
+     * @var Order the order
+     */
+    protected $order;
 
+    /**
+     * OrderActionsForm constructor.
+     * @param $controller
+     * @param $name
+     * @param Order $order
+     * @throws \SilverStripe\Omnipay\Exception\InvalidConfigurationException
+     */
     public function __construct($controller, $name, Order $order)
     {
         $this->order = $order;
@@ -60,27 +73,26 @@ class OrderActionsForm extends Form
             if (!empty($gateways)) {
                 $fields->push(
                     HeaderField::create(
-                        "MakePaymentHeader",
-                        _t("OrderActionsForm.MakePayment", "Make Payment")
+                        'MakePaymentHeader',
+                        _t(__CLASS__ . '.MakePayment', 'Make Payment')
                     )
                 );
-                $outstandingfield = Currency::create();
-                $outstandingfield->setValue($order->TotalOutstanding(true));
+                $outstandingfield = DBCurrency::create_field(DBCurrency::class, $order->TotalOutstanding(true));
                 $fields->push(
                     LiteralField::create(
-                        "Outstanding",
+                        'Outstanding',
                         _t(
-                            'Order.OutstandingWithAmount',
+                            'SilverShop\Core\Model\Order.OutstandingWithAmount',
                             'Outstanding: {Amount}',
                             '',
-                            array('Amount' => $outstandingfield->Nice())
+                            ['Amount' => $outstandingfield->Nice()]
                         )
                     )
                 );
                 $fields->push(
                     OptionsetField::create(
                         'PaymentMethod',
-                        _t("OrderActionsForm.PaymentMethod", "Payment Method"),
+                        _t(__CLASS__ . '.PaymentMethod', 'Payment Method'),
                         $gateways,
                         key($gateways)
                     )
@@ -88,16 +100,16 @@ class OrderActionsForm extends Form
 
                 if ($ccFields = $this->getCCFields($gateways)) {
                     if ($this->config()->include_jquery) {
-                       Requirements::javascript(THIRDPARTY_DIR . '/jquery/jquery.min.js');
+                        Requirements::javascript('https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js');
                     }
-                    Requirements::javascript(SHOP_DIR . '/javascript/OrderActionsForm.js');
+                    Requirements::javascript('silvershop/core: javascript/OrderActionsForm.js');
                     $fields->push($ccFields);
                 }
 
                 $actions->push(
                     FormAction::create(
                         'dopayment',
-                        _t('OrderActionsForm.PayOrder', 'Pay outstanding balance')
+                        _t(__CLASS__ . '.PayOrder', 'Pay outstanding balance')
                     )
                 );
             }
@@ -107,23 +119,23 @@ class OrderActionsForm extends Form
             $actions->push(
                 FormAction::create(
                     'docancel',
-                    _t('OrderActionsForm.CancelOrder', 'Cancel this order')
+                    _t(__CLASS__ . '.CancelOrder', 'Cancel this order')
                 )
             );
         }
-        parent::__construct($controller, $name, $fields, $actions, OrderActionsForm_Validator::create(array(
+        parent::__construct($controller, $name, $fields, $actions, OrderActionsFormValidator::create([
             'PaymentMethod'
-        )));
-        $this->extend("updateForm", $order);
+        ]));
+        $this->extend('updateForm', $order);
     }
 
     /**
      * Make payment for a place order, where payment had previously failed.
      *
      * @param array $data
-     * @param Form  $form
+     * @param Form $form
      *
-     * @return boolean
+     * @return HTTPResponse
      */
     public function dopayment($data, $form)
     {
@@ -144,13 +156,13 @@ class OrderActionsForm extends Form
                     $fieldFactory->normalizeFormData($data),
                     $processor->getReturnUrl()
                 );
-                if($response && !$response->isError()){
+                if ($response && !$response->isError()) {
                     return $response->redirectOrRespond();
                 } else {
                     $form->sessionMessage($processor->getError(), 'bad');
                 }
             } else {
-                $form->sessionMessage(_t('OrderActionsForm.ManualNotAllowed', "Manual payment not allowed"), 'bad');
+                $form->sessionMessage(_t(__CLASS__ . '.ManualNotAllowed', 'Manual payment not allowed'), 'bad');
             }
 
             return $this->controller->redirectBack();
@@ -159,7 +171,7 @@ class OrderActionsForm extends Form
             _t('OrderForm.CouldNotProcessPayment', 'Payment could not be processed.'),
             'bad'
         );
-        $this->controller->redirectBack();
+        return $this->controller->redirectBack();
     }
 
     /**
@@ -170,7 +182,8 @@ class OrderActionsForm extends Form
      * the form request data.
      *
      * @param array $data The form request data submitted
-     * @param Form  $form The {@link Form} this was submitted on
+     * @param Form $form The {@link Form} this was submitted on
+     * @throws \SilverStripe\ORM\ValidationException
      */
     public function docancel($data, $form)
     {
@@ -185,10 +198,10 @@ class OrderActionsForm extends Form
             }
 
             $this->controller->sessionMessage(
-                _t("OrderForm.OrderCancelled", "Order sucessfully cancelled"),
+                _t('OrderForm.OrderCancelled', 'Order sucessfully cancelled'),
                 'warning'
             );
-            if (Member::currentUser() && $link = $this->order->Link()) {
+            if (Security::getCurrentUser() && $link = $this->order->Link()) {
                 $this->controller->redirect($link);
             } else {
                 $this->controller->redirectBack();

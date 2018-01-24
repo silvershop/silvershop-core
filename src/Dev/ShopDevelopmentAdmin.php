@@ -3,12 +3,11 @@
 namespace SilverShop\Core\Dev;
 
 
-use SilverStripe\Dev\SapphireTest;
-use SilverStripe\Control\Director;
-use SilverStripe\Security\Security;
-use SilverStripe\Security\Permission;
-use SilverStripe\Dev\DebugView;
 use SilverStripe\Control\Controller;
+use SilverStripe\Control\Director;
+use SilverStripe\Dev\DebugView;
+use SilverStripe\Security\Permission;
+use SilverStripe\Security\Security;
 
 
 /**
@@ -33,27 +32,26 @@ class ShopDevelopmentAdmin extends Controller
         // if on CLI or with the database not ready. The latter makes it less errorprone to do an
         // initial schema build without requiring a default-admin login.
         // Access to this controller is always allowed in "dev-mode", or of the user is ADMIN.
-        $isRunningTests = (class_exists(SapphireTest::class, false) && SapphireTest::is_running_test());
         $canAccess = (
             Director::isDev()
             || !Security::database_is_ready()
             // We need to ensure that DevelopmentAdminTest can simulate permission failures when running
             // "dev/tests" from CLI.
-            || (Director::is_cli() && !$isRunningTests)
-            || Permission::check("ADMIN")
+            || (Director::is_cli() && Director::isTest())
+            || Permission::check('ADMIN')
         );
         if (!$canAccess) {
             return Security::permissionFailure(
                 $this,
-                "This page is secured and you need administrator rights to access it. " .
-                "Enter your credentials below and we will send you right along."
+                'This page is secured and you need administrator rights to access it. ' .
+                'Enter your credentials below and we will send you right along.'
             );
         }
 
         //render the debug view
-        $renderer = Object::create(DebugView::class);
-        $renderer->writeHeader();
-        $renderer->writeInfo(_t("Shop.DevToolsTitle", "Shop Development Tools"), Director::absoluteBaseURL());
+        $renderer = DebugView::create();
+        $renderer->renderHeader();
+        $renderer->renderInfo(_t('Shop.DevToolsTitle', 'Shop Development Tools'), Director::absoluteBaseURL());
     }
 
     public function ShopFolder()
@@ -63,7 +61,7 @@ class ShopDevelopmentAdmin extends Controller
 
     public function Link($action = null)
     {
-        $action = ($action) ? $action : "";
+        $action = ($action) ? $action : '';
         return Controller::join_links(Director::absoluteBaseURL(), 'dev/' . $this->ShopFolder() . '/' . $action);
     }
 }

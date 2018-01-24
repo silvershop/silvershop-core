@@ -3,12 +3,13 @@
 namespace SilverShop\Core\Model;
 
 
-use SilverStripe\Security\Member;
-use SilverStripe\Forms\FieldList;
-use SilverStripe\SiteConfig\SiteConfig;
+use SilverShop\Core\Account\OrderManipulation;
+use SilverShop\Core\Cart\ShoppingCart;
 use SilverStripe\Forms\DropdownField;
+use SilverStripe\Forms\FieldList;
 use SilverStripe\ORM\DataExtension;
-
+use SilverStripe\Security\Member;
+use SilverStripe\SiteConfig\SiteConfig;
 
 
 /**
@@ -18,14 +19,14 @@ use SilverStripe\ORM\DataExtension;
  */
 class ShopMember extends DataExtension
 {
-    private static $has_many = array(
-        'AddressBook' => 'Address',
-    );
+    private static $has_many = [
+        'AddressBook' => Address::class,
+    ];
 
-    private static $has_one  = array(
-        'DefaultShippingAddress' => 'Address',
-        'DefaultBillingAddress'  => 'Address',
-    );
+    private static $has_one  = [
+        'DefaultShippingAddress' => Address::class,
+        'DefaultBillingAddress'  => Address::class,
+    ];
 
     /**
      * Get member by unique field.
@@ -43,13 +44,13 @@ class ShopMember extends DataExtension
     public function updateCMSFields(FieldList $fields)
     {
         $fields->removeByName('Country');
-        $fields->removeByName("DefaultShippingAddressID");
-        $fields->removeByName("DefaultBillingAddressID");
+        $fields->removeByName('DefaultShippingAddressID');
+        $fields->removeByName('DefaultBillingAddressID');
         $fields->addFieldToTab(
             'Root.Main',
             DropdownField::create(
                 'Country',
-                _t('Address.db_Country', 'Country'),
+                _t('SilverShop\Core\Model\Address.db_Country', 'Country'),
                 SiteConfig::current_site_config()->getCountriesList()
             )
         );
@@ -59,7 +60,7 @@ class ShopMember extends DataExtension
     {
         $fields->removeByName('DefaultShippingAddressID');
         $fields->removeByName('DefaultBillingAddressID');
-        if ($gender = $fields->fieldByName('Gender')) {
+        if ($gender = $fields->dataFieldByName('Gender')) {
             $gender->setHasEmptyDefault(true);
         }
     }
@@ -95,7 +96,7 @@ class ShopMember extends DataExtension
     public function getPastOrders()
     {
         return Order::get()
-            ->filter("MemberID", $this->owner->ID)
-            ->filter("Status:not", Order::config()->hidden_status);
+            ->filter('MemberID', $this->owner->ID)
+            ->filter('Status:not', Order::config()->hidden_status);
     }
 }

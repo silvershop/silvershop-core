@@ -3,6 +3,8 @@
 namespace SilverShop\Core\Cart;
 
 
+use SilverShop\Core\Model\Order;
+use SilverShop\Core\Product\Variation\Variation;
 use SilverStripe\ORM\SS_List;
 use SilverStripe\View\SSViewer;
 use SilverStripe\ORM\ArrayList;
@@ -20,11 +22,12 @@ use Closure;
  */
 class CartEditField extends FormField
 {
+    /** @var Order */
     protected $cart;
 
     protected $items;
 
-    protected $template = "Cart";
+    protected $template = 'Cart';
 
     protected $editableItemsCallback;
 
@@ -114,13 +117,13 @@ class CartEditField extends FormField
                 continue;
             }
             // If the buyable is a variation, use the belonging product instead for variation-form generation
-            if ($buyable instanceof ProductVariation) {
+            if ($buyable instanceof Variation) {
                 $buyable = $buyable->Product();
             }
             $name = $this->name . "[$item->ID]";
             $quantity = TextField::create(
-                $name . "[Quantity]",
-                "Quantity",
+                $name . '[Quantity]',
+                'Quantity',
                 $item->Quantity
             )
                 ->addExtraClass('numeric')
@@ -128,24 +131,24 @@ class CartEditField extends FormField
                 ->setAttribute('min', '0');
 
             $variationfield = false;
-            if ($buyable->hasMany("Variations")) {
+            if ($buyable->hasMany('Variations')) {
                 $variations = $buyable->Variations();
                 if ($variations->exists()) {
                     $variationfield = DropdownField::create(
-                        $name . "[ProductVariationID]",
-                        _t('Variation.SINGULARNAME', "Variation"),
+                        $name . '[ProductVariationID]',
+                        _t('Variation.SINGULARNAME', 'Variation'),
                         $variations->map('ID', 'Title'),
                         $item->ProductVariationID
                     );
                 }
             }
-            $remove = CheckboxField::create($name . "[Remove]", _t('Shop.Remove', "Remove"));
+            $remove = CheckboxField::create($name . '[Remove]', _t('Shop.Remove', 'Remove'));
             $editables->push(
                 $item->customise(
                     array(
-                        "QuantityField"  => $quantity,
-                        "VariationField" => $variationfield,
-                        "RemoveField"    => $remove,
+                        'QuantityField' => $quantity,
+                        'VariationField' => $variationfield,
+                        'RemoveField' => $remove,
                     )
                 )
             );

@@ -20,15 +20,15 @@ class CartForm extends Form
 {
     protected $cart;
 
-    public function __construct($controller, $name = "CartForm", $cart = null, $template = "Cart")
+    public function __construct($controller, $name = 'CartForm', $cart = null, $template = 'Cart')
     {
         $this->cart = $cart;
         $fields = FieldList::create(
-            CartEditField::create("Items", "", $this->cart)
+            CartEditField::create('Items', '', $this->cart)
                 ->setTemplate($template)
         );
         $actions = FieldList::create(
-            FormAction::create("updatecart", _t('CartForm.UpdateCart', "Update Cart"))
+            FormAction::create('updatecart', _t('CartForm.UpdateCart', 'Update Cart'))
         );
 
         parent::__construct($controller, $name, $fields, $actions);
@@ -93,25 +93,25 @@ class CartForm extends Form
         if ($removecount) {
             $messages['remove'] = _t(
                 'CartForm.REMOVED_ITEMS',
-                "Removed {count} items.",
-                "count is the amount that was removed",
+                'Removed {count} items.',
+                'count is the amount that was removed',
                 array('count' => $removecount)
             );
         }
         if ($updatecount) {
             $messages['updatecount'] = _t(
                 'CartForm.UPDATED_ITEMS',
-                "Updated {count} items.",
-                "count is the amount that was updated",
+                'Updated {count} items.',
+                'count is the amount that was updated',
                 array('count' => $updatecount)
             );
         }
         if (count($messages)) {
-            $form->sessionMessage(implode(" ", $messages), "good");
+            $form->sessionMessage(implode(' ', $messages), 'good');
         }
 
         if (count($badMessages)) {
-            $form->sessionMessage(implode(" ", $badMessages), "bad");
+            $form->sessionMessage(implode(' ', $badMessages), 'bad');
         }
 
         $this->extend('updateCartFormResponse', $request, $response, $form);
