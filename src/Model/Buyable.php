@@ -1,5 +1,10 @@
 <?php
 
+namespace SilverShop\Core\Model;
+
+
+
+
 /**
  * A buyable class implies it as an associated order item that can be added
  * to an order.

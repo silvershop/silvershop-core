@@ -1,14 +1,19 @@
 <?php
 
+namespace SilverShop\Core\Product;
+
+
 use SilverStripe\Core\Config\Config_ForClass;
 use SilverStripe\ORM\DataExtension;
+
+
 
 /**
  * Adds some image size functions to the Image DataObject.
  *
  * @package shop
  */
-class Product_Image extends DataExtension
+class ProductImage extends DataExtension
 {
     /** @var Image */
     protected $owner;

@@ -1,5 +1,10 @@
 <?php
 
+namespace SilverShop\Core;
+
+
+
+
 /**
  * SubTotal modifier provides a way to display subtotal within the list of modifiers.
  *

@@ -1,5 +1,7 @@
 <?php
 
+namespace SilverShop\Core\Account;
+
 use SilverStripe\Omnipay\GatewayInfo;
 use SilverStripe\Omnipay\GatewayFieldsFactory;
 use SilverStripe\Forms\HiddenField;
@@ -13,7 +15,7 @@ use SilverStripe\Security\Member;
 use SilverStripe\Forms\CompositeField;
 use SilverStripe\Forms\Form;
 use SilverStripe\Forms\RequiredFields;
-
+use Currency;
 
 /**
  * Perform actions on placed orders
@@ -239,37 +241,5 @@ class OrderActionsForm extends Form
         $ccFields->push($lookupField);
 
         return CompositeField::create($ccFields)->setTag('fieldset')->addExtraClass('credit-card');
-    }
-}
-
-class OrderActionsForm_Validator extends RequiredFields
-{
-    public function php($data)
-    {
-        // Check if we should do a payment
-        if (Form::current_action() == 'dopayment' && !empty($data['PaymentMethod'])) {
-            $gateway = $data['PaymentMethod'];
-            // If the gateway isn't manual and not offsite, Check for credit-card fields!
-            if (!GatewayInfo::isManual($gateway) && !GatewayInfo::isOffsite($gateway)) {
-                $fieldFactory = new GatewayFieldsFactory(null);
-                // Merge the required fields and the Credit-Card fields that are required for the gateway
-                $this->required = $fieldFactory->getFieldName(array_merge($this->required, array_intersect(
-                    array(
-                        'type',
-                        'name',
-                        'number',
-                        'startMonth',
-                        'startYear',
-                        'expiryMonth',
-                        'expiryYear',
-                        'cvv',
-                        'issueNumber'
-                    ),
-                    GatewayInfo::requiredFields($gateway)
-                )));
-            }
-        }
-
-        return parent::php($data);
     }
 }

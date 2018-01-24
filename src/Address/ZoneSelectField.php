@@ -1,5 +1,7 @@
 <?php
 
+namespace SilverShop\Core\Address;
+
 use SilverStripe\ORM\DataObject;
 use SilverStripe\Forms\DropdownField;
 

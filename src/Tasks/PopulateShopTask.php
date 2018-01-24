@@ -1,5 +1,8 @@
 <?php
 
+namespace SilverShop\Core\Tasks;
+
+
 use SilverStripe\ORM\DB;
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Dev\FixtureFactory;
@@ -7,6 +10,8 @@ use SilverStripe\ORM\DataObject;
 use SilverStripe\Dev\YamlFixture;
 use SilverStripe\SiteConfig\SiteConfig;
 use SilverStripe\Dev\BuildTask;
+
+
 
 /**
  * Populate shop task

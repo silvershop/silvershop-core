@@ -1,7 +1,12 @@
 <?php
 
+namespace SilverShop\Core\Cart;
+
+
 use SilverStripe\Control\Director;
 use SilverStripe\Core\Extension;
+
+
 
 /**
  * ViewableData extension that provides access to the cart from anywhere.

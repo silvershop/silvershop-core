@@ -1,10 +1,15 @@
 <?php
 
+namespace SilverShop\Core\Tests\Model;
+
+
 use SilverStripe\Omnipay\Service\PaymentService;
 use SilverStripe\Dev\TestSession;
 use SilverStripe\Control\Session;
 use SilverStripe\Dev\FunctionalTest;
 use SilverStripe\Omnipay\Model\Payment;
+
+
 
 
 

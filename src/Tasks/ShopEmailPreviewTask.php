@@ -1,7 +1,12 @@
 <?php
 
+namespace SilverShop\Core\Tasks;
+
+
 use SilverStripe\Control\Director;
 use SilverStripe\Dev\BuildTask;
+
+
 
 /**
  * ShopEmailPreviewTask

@@ -1,10 +1,15 @@
 <?php
 
+namespace SilverShop\Core\Account;
+
+
 use SilverStripe\Control\Session;
 use SilverStripe\Security\Member;
 use SilverStripe\ORM\PaginatedList;
 use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Core\Extension;
+
+
 
 /**
  * Provides forms and processing to a controller for editing an

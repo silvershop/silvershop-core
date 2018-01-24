@@ -1,9 +1,14 @@
 <?php
 
+namespace SilverShop\Core\Tasks;
+
+
 use SilverStripe\ORM\DB;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\Control\Email\Email;
 use SilverStripe\Dev\MigrationTask;
+
+
 
 /**
  * Updates database to work with latest version of the code.

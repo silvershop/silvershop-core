@@ -1,5 +1,8 @@
 <?php
 
+namespace SilverShop\Core\Model;
+
+
 use SilverStripe\Security\Member;
 use SilverStripe\Forms\Tab;
 use SilverStripe\Forms\TabSet;
@@ -16,6 +19,8 @@ use SilverStripe\Control\Email\Email;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\FieldType\DBDatetime;
 use SilverStripe\Dev\Debug;
+
+
 
 /**
  * The order class is a databound object for handling Orders

@@ -1,9 +1,14 @@
 <?php
 
+namespace SilverShop\Core\Tasks;
+
+
 use SilverStripe\ORM\DB;
 use SilverStripe\Security\Member;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\Dev\BuildTask;
+
+
 
 /**
  * Adds all customers to an assigned group.

@@ -1,5 +1,8 @@
 <?php
 
+namespace SilverShop\Core\Checkout;
+
+
 use SilverStripe\Omnipay\GatewayInfo;
 use SilverStripe\Forms\TextField;
 use SilverStripe\Control\Email\Email;
@@ -14,6 +17,8 @@ use SilverStripe\Forms\PasswordField;
 use SilverStripe\Forms\TextareaField;
 use SilverStripe\SiteConfig\SiteConfig;
 use SilverStripe\Forms\CheckboxField;
+
+
 
 
 /**

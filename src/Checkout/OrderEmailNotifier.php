@@ -1,10 +1,15 @@
 <?php
 
+namespace SilverShop\Core\Checkout;
+
+
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Control\Email\Email;
 use SilverStripe\Control\Director;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Config\Config_ForClass;
+
+
 
 /**
  * Handles email notifications to customers and / or admins.

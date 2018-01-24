@@ -1,11 +1,16 @@
 <?php
 
+namespace SilverShop\Core\Checkout;
+
+
 use SilverStripe\Forms\FormAction;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\SiteConfig\SiteConfig;
 use SilverStripe\Forms\Form;
 use SilverStripe\Security\Member;
 use SilverStripe\Control\Session;
+
+
 
 class CheckoutForm extends Form
 {

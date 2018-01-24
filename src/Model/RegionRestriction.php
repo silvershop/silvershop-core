@@ -1,8 +1,13 @@
 <?php
 
+namespace SilverShop\Core\Model;
+
+
 use SilverStripe\Forms\TextField;
 use SilverStripe\Core\Convert;
 use SilverStripe\ORM\DataObject;
+
+
 
 class RegionRestriction extends DataObject
 {

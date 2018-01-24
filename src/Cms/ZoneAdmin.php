@@ -1,6 +1,11 @@
 <?php
 
+namespace SilverShop\Core\Cms;
+
+
 use SilverStripe\Admin\ModelAdmin;
+
+
 
 class ZoneAdmin extends ModelAdmin
 {

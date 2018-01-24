@@ -1,5 +1,8 @@
 <?php
 
+namespace SilverShop\Core\Tests;
+
+
 use SilverStripe\ORM\FieldType\DBDatetime;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Security\Member;
@@ -7,6 +10,8 @@ use SilverStripe\Control\Email\Email;
 use SilverStripe\Security\Security;
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Omnipay\Model\Payment;
+use Object;
+
 
 
 Object::useCustomClass(DBDatetime::class, 'I18nDatetime', true);

@@ -1,6 +1,11 @@
 <?php
 
+namespace SilverShop\Core;
+
+
 use SilverStripe\SiteConfig\SiteConfig;
+
+
 
 /**
  * Flat shipping to specific countries.

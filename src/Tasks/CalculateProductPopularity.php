@@ -1,7 +1,12 @@
 <?php
 
+namespace SilverShop\Core\Tasks;
+
+
 use SilverStripe\ORM\DB;
 use SilverStripe\Dev\BuildTask;
+
+
 
 class CalculateProductPopularity extends BuildTask
 {

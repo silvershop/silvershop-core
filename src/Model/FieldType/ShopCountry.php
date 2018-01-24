@@ -1,7 +1,12 @@
 <?php
 
+namespace SilverShop\Core\Model\FieldType;
+
+
 use SilverStripe\Core\Convert;
 use SilverStripe\ORM\FieldType\DBVarchar;
+
+
 
 class ShopCountry extends DBVarchar
 {

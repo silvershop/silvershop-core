@@ -1,7 +1,15 @@
 <?php
 
+namespace SilverShop\Core;
+
+
 use SilverStripe\ORM\DB;
 use SilverStripe\i18n\i18n;
+use Money;
+use Translatable;
+use Fluent;
+use Zend_Locale_Format;
+
 
 /**
  * Globally useful tools

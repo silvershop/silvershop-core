@@ -1,7 +1,12 @@
 <?php
 
+namespace SilverShop\Core\Tests\Cms;
+
+
 use SilverStripe\ORM\DataObject;
 use SilverStripe\Dev\FunctionalTest;
+
+
 
 class ProductBulkLoaderTest extends FunctionalTest
 {

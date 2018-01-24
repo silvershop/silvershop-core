@@ -1,7 +1,12 @@
 <?php
 
+namespace SilverShop\Core\Model;
+
+
 use SilverStripe\Security\Member;
 use SilverStripe\ORM\DataObject;
+
+
 
 /**
  * Data class that keeps a log of a single

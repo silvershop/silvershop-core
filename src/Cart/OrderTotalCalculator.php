@@ -1,6 +1,13 @@
 <?php
 
+namespace SilverShop\Core\Cart;
+
+
 use SilverStripe\Core\ClassInfo;
+use ErrorException;
+use Exception;
+use SS_Log;
+
 
 /**
  * Handles the calculation of order totals.

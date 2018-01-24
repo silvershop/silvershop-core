@@ -1,5 +1,10 @@
 <?php
 
+namespace SilverShop\Core\Reports;
+
+
+
+
 /**
  * Order sales for the entire shop.
  *

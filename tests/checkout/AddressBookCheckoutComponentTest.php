@@ -1,8 +1,13 @@
 <?php
 
+namespace SilverShop\Core\Tests\Checkout;
+
+
 use SilverStripe\Security\Member;
 use SilverStripe\ORM\ValidationException;
 use SilverStripe\Dev\SapphireTest;
+
+
 
 class AddressBookCheckoutComponentTest extends SapphireTest
 {

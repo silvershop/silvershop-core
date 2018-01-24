@@ -1,5 +1,10 @@
 <?php
 
+namespace SilverShop\Core;
+
+
+
+
 class ShippingModifier extends OrderModifier
 {
     private static $singular_name = "Shipping";

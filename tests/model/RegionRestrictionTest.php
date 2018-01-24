@@ -1,7 +1,12 @@
 <?php
 
+namespace SilverShop\Core\Tests\Model;
+
+
 use SilverStripe\ORM\DataObject;
 use SilverStripe\Dev\SapphireTest;
+
+
 
 class RegionRestrictionTest extends SapphireTest
 {

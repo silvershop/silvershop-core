@@ -1,8 +1,13 @@
 <?php
 
+namespace SilverShop\Core\Tests\Model;
+
+
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Security\Member;
 use SilverStripe\Dev\SapphireTest;
+
+
 /**
  * @link OrderStatusLog
  * @package shop_statuschangeemail

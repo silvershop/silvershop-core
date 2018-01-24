@@ -1,5 +1,10 @@
 <?php
 
+namespace SilverShop\Core;
+
+
+
+
 class FreeShippingModifier extends ShippingModifier
 {
     /**

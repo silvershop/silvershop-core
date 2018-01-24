@@ -1,5 +1,8 @@
 <?php
 
+namespace SilverShop\Core\Cart;
+
+
 use SilverStripe\ORM\SS_List;
 use SilverStripe\View\SSViewer;
 use SilverStripe\ORM\ArrayList;
@@ -7,6 +10,8 @@ use SilverStripe\Forms\TextField;
 use SilverStripe\Forms\DropdownField;
 use SilverStripe\Forms\CheckboxField;
 use SilverStripe\Forms\FormField;
+use Closure;
+
 
 /**
  * Field for editing cart/items within a form

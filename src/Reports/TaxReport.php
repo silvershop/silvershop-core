@@ -1,5 +1,10 @@
 <?php
 
+namespace SilverShop\Core\Reports;
+
+
+
+
 /**
  * Tax report
  *

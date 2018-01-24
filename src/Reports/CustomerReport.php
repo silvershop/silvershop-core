@@ -1,7 +1,12 @@
 <?php
 
+namespace SilverShop\Core\Reports;
+
+
 use SilverStripe\Security\Member;
 use SilverStripe\Control\Email\Email;
+
+
 
 /**
  * List top customers, especially those who spend alot, and those who buy alot.

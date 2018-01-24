@@ -1,9 +1,14 @@
 <?php
 
+namespace SilverShop\Core\Model;
+
+
 use SilverStripe\Control\Session;
 use SilverStripe\Forms\GridField\GridFieldConfig_RelationEditor;
 use SilverStripe\Forms\GridField\GridField;
 use SilverStripe\ORM\DataObject;
+
+
 
 /*
  * A zone is a collection of regions. Zones can cross over each other.
@@ -82,9 +87,4 @@ class Zone extends DataObject
     }
 }
 
-class ZoneRegion extends RegionRestriction
-{
-    private static $has_one = array(
-        'Zone' => 'Zone',
-    );
-}
+

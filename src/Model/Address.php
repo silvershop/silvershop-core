@@ -1,5 +1,8 @@
 <?php
 
+namespace SilverShop\Core\Model;
+
+
 use SilverStripe\Security\Member;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\TextField;
@@ -7,6 +10,8 @@ use SilverStripe\SiteConfig\SiteConfig;
 use SilverStripe\Forms\ReadonlyField;
 use SilverStripe\Forms\DropdownField;
 use SilverStripe\ORM\DataObject;
+
+
 
 /**
  * Address model using a generic format for storing international addresses.

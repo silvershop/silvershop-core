@@ -1,5 +1,8 @@
 <?php
 
+namespace SilverShop\Core\Tests\Account;
+
+
 use SilverStripe\Control\Controller;
 use SilverStripe\Security\Security;
 use SilverStripe\Control\Director;
@@ -7,6 +10,8 @@ use SilverStripe\Security\Member;
 use SilverStripe\SiteConfig\SiteConfig;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\Dev\FunctionalTest;
+
+
 
 class AccountPageTest extends FunctionalTest
 {

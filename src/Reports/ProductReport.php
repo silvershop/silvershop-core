@@ -1,6 +1,11 @@
 <?php
 
+namespace SilverShop\Core\Reports;
+
+
 use SilverStripe\CMS\Model\SiteTree;
+
+
 
 class ProductReport extends ShopPeriodReport
 {

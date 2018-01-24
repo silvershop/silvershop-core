@@ -1,7 +1,12 @@
 <?php
 
+namespace SilverShop\Core\Tests\Checkout;
+
+
 use SilverStripe\SiteConfig\SiteConfig;
 use SilverStripe\Dev\SapphireTest;
+
+
 
 class CheckoutFormTest extends SapphireTest
 {

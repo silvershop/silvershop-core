@@ -1,10 +1,15 @@
 <?php
 
+namespace SilverShop\Core;
+
+
 use SilverStripe\ORM\ValidationResult;
 use SilverStripe\ORM\ValidationException;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Security\Member;
 use SilverStripe\Core\Convert;
+
+
 
 class ShopMemberFactory
 {

@@ -1,6 +1,11 @@
 <?php
 
+namespace SilverShop\Core\Tests\Cart;
+
+
 use SilverStripe\Dev\SapphireTest;
+
+
 
 class MatchObjectFilterTest extends SapphireTest
 {

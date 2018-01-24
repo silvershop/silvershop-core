@@ -1,5 +1,10 @@
 <?php
 
+namespace SilverShop\Core;
+
+
+
+
 /**
  * Base class for creating tax modifiers with.
  */

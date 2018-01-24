@@ -1,7 +1,12 @@
 <?php
 
+namespace SilverShop\Core\Model;
+
+
 use SilverStripe\Omnipay\Service\ServiceResponse;
 use SilverStripe\ORM\DataExtension;
+
+
 
 
 /**

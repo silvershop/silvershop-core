@@ -1,7 +1,12 @@
 <?php
 
+namespace SilverShop\Core\Tasks;
+
+
 use SilverStripe\ORM\FieldType\DBDatetime;
 use SilverStripe\Dev\BuildTask;
+use LogicException;
+
 
 /**
  * Cart Cleanup Task.

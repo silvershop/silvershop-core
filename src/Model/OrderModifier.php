@@ -1,5 +1,10 @@
 <?php
 
+namespace SilverShop\Core\Model;
+
+
+
+
 /**
  * The OrderModifier class is a databound object for
  * handling the additional charges or deductions of

@@ -1,8 +1,13 @@
 <?php
 
+namespace SilverShop\Core\Tests\Model;
+
+
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Control\Email\Email;
 use SilverStripe\Dev\SapphireTest;
+
+
 
 /**
  * @date       12.01.2015

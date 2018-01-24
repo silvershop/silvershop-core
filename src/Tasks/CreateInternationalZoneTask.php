@@ -1,6 +1,11 @@
 <?php
 
+namespace SilverShop\Core\Tasks;
+
+
 use SilverStripe\Dev\BuildTask;
+
+
 
 class CreateInternationalZoneTask extends BuildTask
 {

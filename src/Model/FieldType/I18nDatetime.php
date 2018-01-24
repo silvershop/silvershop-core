@@ -1,6 +1,11 @@
 <?php
 
+namespace SilverShop\Core\Model\FieldType;
+
+
 use SilverStripe\ORM\FieldType\DBDatetime;
+
+
 
 /**
  * provides I18n formating

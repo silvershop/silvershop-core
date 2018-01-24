@@ -1,11 +1,15 @@
 <?php
 
+namespace SilverShop\Core\Dev;
+
+
 use SilverStripe\Dev\SapphireTest;
 use SilverStripe\Control\Director;
 use SilverStripe\Security\Security;
 use SilverStripe\Security\Permission;
 use SilverStripe\Dev\DebugView;
 use SilverStripe\Control\Controller;
+
 
 /**
  * Provides a list of development tasks to perform.

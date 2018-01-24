@@ -1,5 +1,8 @@
 <?php
 
+namespace SilverShop\Core\Checkout;
+
+
 use SilverStripe\Omnipay\GatewayInfo;
 use SilverStripe\Omnipay\Service\ServiceFactory;
 use SilverStripe\Omnipay\Service\ServiceResponse;
@@ -9,6 +12,9 @@ use SilverStripe\ORM\FieldType\DBDatetime;
 use SilverStripe\Control\Controller;
 use SilverStripe\Core\Config\Config_ForClass;
 use SilverStripe\Omnipay\Model\Payment;
+use ErrorException;
+use Exception;
+
 
 
 

@@ -1,8 +1,13 @@
 <?php
 
+namespace SilverShop\Core\Tests\Cart;
+
+
 use SilverStripe\Security\SecurityToken;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\FunctionalTest;
+
+
 
 /**
  * @link ShoppingCart_Controller

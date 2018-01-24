@@ -1,6 +1,11 @@
 <?php
 
+namespace SilverShop\Core\Model;
+
+
 use SilverStripe\Core\Extension;
+
+
 
 /**
  */

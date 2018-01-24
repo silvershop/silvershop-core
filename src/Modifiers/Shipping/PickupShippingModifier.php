@@ -1,5 +1,10 @@
 <?php
 
+namespace SilverShop\Core;
+
+
+
+
 /**
  * Pickup the order from the store.
  *

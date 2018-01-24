@@ -1,6 +1,11 @@
 <?php
 
+namespace SilverShop\Core\Tests\Model;
+
+
 use SilverStripe\Dev\SapphireTest;
+
+
 
 class ZoneTest extends SapphireTest
 {

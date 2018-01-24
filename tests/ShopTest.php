@@ -1,5 +1,10 @@
 <?php
 
+namespace SilverShop\Core\Tests;
+
+
+
+
 /**
  * Helper class for setting up shop tests
  *

@@ -1,8 +1,13 @@
 <?php
 
+namespace SilverShop\Core\Checkout;
+
+
 use SilverStripe\Omnipay\GatewayInfo;
 use SilverStripe\Security\Member;
 use SilverStripe\Control\Session;
+
+
 
 
 /**

@@ -1,8 +1,13 @@
 <?php
 
+namespace SilverShop\Core\Tests\Model;
+
+
 use SilverStripe\Security\Member;
 use SilverStripe\Control\Email\Email;
 use SilverStripe\Dev\FunctionalTest;
+
+
 
 /**
  * Test member functionality added via ShopMember extension

@@ -1,6 +1,11 @@
 <?php
 
+namespace SilverShop\Core\Model;
+
+
 use SilverStripe\ORM\HasManyList;
+
+
 
 /**
  * Additional functions for Item lists.

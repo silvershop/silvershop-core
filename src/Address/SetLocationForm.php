@@ -1,11 +1,16 @@
 <?php
 
+namespace SilverShop\Core\Address;
+
+
 use SilverStripe\SiteConfig\SiteConfig;
 use SilverStripe\Forms\DropdownField;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\FormAction;
 use SilverStripe\Forms\Form;
 use SilverStripe\Core\Extension;
+
+
 
 class SetLocationForm extends Form
 {
@@ -35,14 +40,3 @@ class SetLocationForm extends Form
     }
 }
 
-class LocationFormPageDecorator extends Extension
-{
-    private static $allowed_actions = array(
-        "SetLocationForm",
-    );
-
-    public function SetLocationForm()
-    {
-        return SetLocationForm::create($this->owner);
-    }
-}

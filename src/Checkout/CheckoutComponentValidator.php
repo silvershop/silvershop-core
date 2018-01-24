@@ -1,7 +1,12 @@
 <?php
 
+namespace SilverShop\Core\Checkout;
+
+
 use SilverStripe\ORM\ValidationException;
 use SilverStripe\Forms\RequiredFields;
+
+
 
 /**
  * Order validator makes sure everything is set correctly

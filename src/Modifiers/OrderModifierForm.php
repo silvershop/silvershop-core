@@ -1,8 +1,13 @@
 <?php
 
+namespace SilverShop\Core;
+
+
 use SilverStripe\Control\Director;
 use SilverStripe\Control\Controller;
 use SilverStripe\Forms\Form;
+
+
 
 /**
  * Base class for modifier forms.

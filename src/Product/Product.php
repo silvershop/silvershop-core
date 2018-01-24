@@ -1,5 +1,8 @@
 <?php
 
+namespace SilverShop\Core\Product;
+
+
 use SilverStripe\Assets\Image;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\TextField;
@@ -11,6 +14,8 @@ use SilverStripe\Control\Director;
 use SilverStripe\Forms\Form;
 //use PageController;
 use SilverStripe\Versioned\Versioned;
+use Page;
+
 
 /**
  * This is a standard Product page-type with fields like

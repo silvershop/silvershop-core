@@ -1,5 +1,8 @@
 <?php
 
+namespace SilverShop\Core\Cms;
+
+
 use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\Security\Group;
 use SilverStripe\Assets\Image;
@@ -12,6 +15,8 @@ use SilverStripe\Forms\CheckboxSetField;
 use SilverStripe\Forms\TabSet;
 use SilverStripe\Core\Config\Config_ForClass;
 use SilverStripe\ORM\DataExtension;
+
+
 
 /**
  * @package    shop

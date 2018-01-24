@@ -1,9 +1,14 @@
 <?php
 
+namespace SilverShop\Core\Tests\Cart;
+
+
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\SapphireTest;
 use SilverStripe\Core\Extension;
 use SilverStripe\Dev\TestOnly;
+use Exception;
+
 
 class ShoppingCartTest extends SapphireTest
 {

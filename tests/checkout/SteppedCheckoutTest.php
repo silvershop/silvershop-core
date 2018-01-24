@@ -1,9 +1,14 @@
 <?php
 
+namespace SilverShop\Core\Tests\Checkout;
+
+
 use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Security\Member;
 use SilverStripe\Control\Director;
 use SilverStripe\Dev\FunctionalTest;
+use DataModel;
+
 
 class SteppedCheckoutTest extends FunctionalTest
 {

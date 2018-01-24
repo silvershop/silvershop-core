@@ -1,6 +1,11 @@
 <?php
 
+namespace SilverShop\Core\Tests\Modifiers;
+
+
 use SilverStripe\Dev\SapphireTest;
+
+
 
 class GlobalTaxModifierTest extends SapphireTest
 {

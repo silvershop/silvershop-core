@@ -1,6 +1,11 @@
 <?php
 
+namespace SilverShop\Core\Model\FieldType;
+
+
 use SilverStripe\ORM\FieldType\DBCurrency;
+
+
 
 /**
  * Allows casting some template values to show "FREE" instead of $0.00.

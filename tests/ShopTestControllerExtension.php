@@ -1,7 +1,12 @@
 <?php
 
+namespace SilverShop\Core\Tests;
+
+
 use SilverStripe\CMS\Controllers\ContentController;
 use SilverStripe\Core\Extension;
+
+
 
 /**
  * Test Extension that can be applied to controllers to test if a requested page returns the desired page-class.

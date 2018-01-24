@@ -1,10 +1,15 @@
 <?php
 
+namespace SilverShop\Core\Cms;
+
+
 use SilverStripe\Assets\Image;
 use SilverStripe\ORM\ArrayList;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\Core\Convert;
 use SilverStripe\Dev\CsvBulkLoader;
+use Object;
+
 
 /**
  * ProductBulkLoader - allows loading products via CSV file.

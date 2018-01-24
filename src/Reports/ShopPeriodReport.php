@@ -1,5 +1,8 @@
 <?php
 
+namespace SilverShop\Core\Reports;
+
+
 use SilverStripe\Security\Member;
 use SilverStripe\Forms\DateField;
 use SilverStripe\Forms\FieldList;
@@ -11,6 +14,8 @@ use SilverStripe\ORM\DB;
 use SilverStripe\Reports\Report;
 use SilverStripe\i18n\i18nEntityProvider;
 use SilverStripe\ORM\Queries\SQLSelect;
+use SQLQueryList;
+
 
 /**
  * Base class for creating reports that can be filtered to a specific range.
@@ -201,10 +206,3 @@ class ShopPeriodReport extends Report implements i18nEntityProvider
     }
 }
 
-class ShopReport_Query extends SQLSelect
-{
-    public function canSortBy($fieldName)
-    {
-        return true;
-    }
-}

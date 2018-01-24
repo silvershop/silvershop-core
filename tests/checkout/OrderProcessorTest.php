@@ -1,5 +1,8 @@
 <?php
 
+namespace SilverShop\Core\Tests\Checkout;
+
+
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Security\Member;
 use SilverStripe\Security\Group;
@@ -7,6 +10,8 @@ use SilverStripe\Dev\SapphireTest;
 use SilverStripe\Dev\TestOnly;
 use SilverStripe\ORM\DataExtension;
 use SilverStripe\Omnipay\Model\Payment;
+
+
 
 /**
  * Test OrderProcessor

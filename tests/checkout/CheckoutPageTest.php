@@ -1,7 +1,12 @@
 <?php
 
+namespace SilverShop\Core\Tests\Checkout;
+
+
 use SilverStripe\Control\Director;
 use SilverStripe\Dev\FunctionalTest;
+
+
 
 class CheckoutPageTest extends FunctionalTest
 {

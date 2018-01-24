@@ -1,5 +1,10 @@
 <?php
 
+namespace SilverShop\Core;
+
+
+
+
 /**
  * Handles calculation of sales tax on Orders.
  *

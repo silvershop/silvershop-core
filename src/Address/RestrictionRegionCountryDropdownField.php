@@ -1,7 +1,12 @@
 <?php
 
+namespace SilverShop\Core\Address;
+
+
 use SilverStripe\SiteConfig\SiteConfig;
 use SilverStripe\Forms\DropdownField;
+
+
 
 class RestrictionRegionCountryDropdownField extends DropdownField
 {

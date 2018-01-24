@@ -1,7 +1,12 @@
 <?php
 
+namespace SilverShop\Core\Tasks;
+
+
 use SilverStripe\ORM\DataObject;
 use SilverStripe\Control\CliController;
+
+
 
 /**
  *

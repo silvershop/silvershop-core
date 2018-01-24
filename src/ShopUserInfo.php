@@ -1,7 +1,12 @@
 <?php
 
+namespace SilverShop\Core;
+
+
 use SilverStripe\Control\Session;
 use SilverStripe\Core\Convert;
+
+
 
 /**
  * Collects and stores data about the user. Keep this data in session.

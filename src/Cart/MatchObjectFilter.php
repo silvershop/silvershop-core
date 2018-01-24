@@ -1,7 +1,12 @@
 <?php
 
+namespace SilverShop\Core\Cart;
+
+
 use SilverStripe\Core\Convert;
 use SilverStripe\ORM\DataObject;
+
+
 
 /**
  * Helper class to create a filter for matching a dataobject,

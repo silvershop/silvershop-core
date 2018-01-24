@@ -1,6 +1,11 @@
 <?php
 
+namespace SilverShop\Core\Model;
+
+
 use SilverStripe\Core\Injector\Injector;
+
+
 
 /**
  * An order item is a product which has been added to an order,

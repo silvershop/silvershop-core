@@ -1,5 +1,10 @@
 <?php
 
+namespace SilverShop\Core\Reports;
+
+
+
+
 /**
  * Report on the number of abandoned carts.
  *

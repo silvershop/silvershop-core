@@ -1,8 +1,13 @@
 <?php
 
+namespace SilverShop\Core\Tests\Modifiers;
+
+
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\FunctionalTest;
 use SilverStripe\Dev\TestOnly;
+use Exception;
+
 
 /**
  * @package    shop

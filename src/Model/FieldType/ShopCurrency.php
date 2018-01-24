@@ -1,6 +1,11 @@
 <?php
 
+namespace SilverShop\Core\Model\FieldType;
+
+
 use SilverStripe\ORM\FieldType\DBCurrency;
+
+
 
 /**
  * Improvements to Currency for presenting in templates.
