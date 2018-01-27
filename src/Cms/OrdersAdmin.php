@@ -3,15 +3,10 @@
 namespace SilverShop\Core\Cms;
 
 
-use SilverStripe\Forms\GridField\GridFieldDetailForm;
-use SilverStripe\Forms\GridField\GridFieldAddNewButton;
+use SilverShop\Core\Model\Order;
 use SilverStripe\Admin\ModelAdmin;
-use SilverStripe\Forms\LiteralField;
-use SilverStripe\View\Requirements;
-use SilverStripe\i18n\i18n;
-use SilverStripe\SiteConfig\SiteConfig;
-use SilverStripe\Forms\GridField\GridFieldDetailForm_ItemRequest;
-
+use SilverStripe\Forms\GridField\GridFieldAddNewButton;
+use SilverStripe\Forms\GridField\GridFieldDetailForm;
 
 
 /**

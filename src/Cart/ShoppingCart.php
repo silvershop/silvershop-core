@@ -3,26 +3,19 @@
 namespace SilverShop\Core\Cart;
 
 
-use SilverStripe\Core\Injector\Injector;
-use SilverStripe\Core\Config\Configurable;
-use SilverStripe\Control\HTTPRequest;
-use SilverStripe\Control\Session;
-use SilverStripe\Security\Member;
-use SilverStripe\Core\Config\Config;
-use SilverStripe\Security\SecurityToken;
-use SilverStripe\Control\Director;
-use SilverStripe\Control\Controller;
-use SilverStripe\Core\Convert;
-use SilverStripe\Core\ClassInfo;
-use SilverStripe\Versioned\Versioned;
-use SilverStripe\ORM\DataObject;
-use SilverStripe\ErrorPage\ErrorPage;
-use SilverStripe\Security\Permission;
-use SilverStripe\View\Requirements;
-use SilverStripe\Dev\Debug;
-use SilverStripe\Core\Injector\Injectable;
 use Exception;
-use Object;
+use SilverShop\Core\Account\OrderManipulation;
+use SilverShop\Core\Model\Buyable;
+use SilverShop\Core\Model\Order;
+use SilverShop\Core\Model\OrderItem;
+use SilverShop\Core\Product\Product;
+use SilverShop\Core\Product\Variation\ProductVariationsExtension;
+use SilverShop\Core\ShopTools;
+use SilverStripe\Core\Config\Config;
+use SilverStripe\Core\Config\Configurable;
+use SilverStripe\Core\Injector\Injectable;
+use SilverStripe\Security\Member;
+use SilverStripe\Security\Security;
 
 
 /**
@@ -42,6 +35,7 @@ class ShoppingCart
 
     private static $cartid_session_name = 'shoppingcartid';
 
+    /** @var Order */
     private $order;
 
     private $calculateonce = false;
@@ -50,15 +44,6 @@ class ShoppingCart
 
     private $type;
 
-    /**
-     * Access for only allowing access to one (singleton) ShoppingCart.
-     *
-     * @return ShoppingCart
-     */
-    public static function singleton()
-    {
-        return Injector::inst()->get('ShoppingCart');
-    }
 
     /**
      * Shortened alias for ShoppingCart::singleton()->current()
@@ -77,38 +62,36 @@ class ShoppingCart
      */
     public function current()
     {
-        $session = Injector::inst()->get(HTTPRequest::class)->getSession();
+        $session = ShopTools::getSession();
         //find order by id saved to session (allows logging out and retaining cart contents)
         if (!$this->order && $sessionid = $session->get(self::config()->cartid_session_name)) {
-            $this->order = Order::get()->filter(
-                array(
-                    "Status" => "Cart",
-                    "ID" => $sessionid,
-                )
-            )->first();
+            $this->order = Order::get()->filter([
+                'Status' => 'Cart',
+                'ID' => $sessionid,
+            ])->first();
         }
         if (!$this->calculateonce && $this->order) {
             $this->order->calculate();
             $this->calculateonce = true;
         }
 
-        return $this->order ? $this->order : false;
+        return $this->order ? $this->order : null;
     }
 
     /**
      * Set the current cart
      *
-     * @param Order
+     * @param Order $cart the Order to use as the current cart-content
      *
      * @return ShoppingCart
      */
     public function setCurrent(Order $cart)
     {
         if (!$cart->IsCart()) {
-            trigger_error("Passed Order object is not cart status", E_ERROR);
+            trigger_error('Passed Order object is not cart status', E_ERROR);
         }
         $this->order = $cart;
-        $session = Injector::inst()->get(HTTPRequest::class)->getSession();
+        $session = ShopTools::getSession();
         $session->set(self::config()->cartid_session_name, $cart->ID);
 
         return $this;
@@ -125,13 +108,13 @@ class ShoppingCart
             return $this->current();
         }
         $this->order = Order::create();
-        if (Member::config()->login_joins_cart && Member::currentUserID()) {
-            $this->order->MemberID = Member::currentUserID();
+        if (Member::config()->login_joins_cart && ($member = Security::getCurrentUser())) {
+            $this->order->MemberID = $member->ID;
         }
         $this->order->write();
         $this->order->extend('onStartOrder');
 
-        $session = Injector::inst()->get(HTTPRequest::class)->getSession();
+        $session = ShopTools::getSession();
         $session->set(self::config()->cartid_session_name, $this->order->ID);
 
         return $this->order;
@@ -146,19 +129,19 @@ class ShoppingCart
      *
      * @return boolean|OrderItem false or the new/existing item
      */
-    public function add(Buyable $buyable, $quantity = 1, $filter = array())
+    public function add(Buyable $buyable, $quantity = 1, $filter = [])
     {
         $order = $this->findOrMake();
 
         // If an extension throws an exception, error out
         try {
-            $order->extend("beforeAdd", $buyable, $quantity, $filter);
+            $order->extend('beforeAdd', $buyable, $quantity, $filter);
         } catch (Exception $exception){
             return $this->error($exception->getMessage());
         }
 
         if (!$buyable) {
-            return $this->error(_t("ShoppingCart.ProductNotFound", "Product not found."));
+            return $this->error(_t(__CLASS__ . '.ProductNotFound', 'Product not found.'));
         }
 
         $item = $this->findOrMakeItem($buyable, $quantity, $filter);
@@ -173,13 +156,13 @@ class ShoppingCart
 
         // If an extension throws an exception, error out
         try {
-            $order->extend("afterAdd", $item, $buyable, $quantity, $filter);
+            $order->extend('afterAdd', $item, $buyable, $quantity, $filter);
         } catch (Exception $exception){
             return $this->error($exception->getMessage());
         }
 
         $item->write();
-        $this->message(_t("ShoppingCart.ItemAdded", "Item has been added successfully."));
+        $this->message(_t(__CLASS__ . '.ItemAdded', 'Item has been added successfully.'));
 
         return $item;
     }
@@ -193,17 +176,17 @@ class ShoppingCart
      *
      * @return boolean success/failure
      */
-    public function remove(Buyable $buyable, $quantity = null, $filter = array())
+    public function remove(Buyable $buyable, $quantity = null, $filter = [])
     {
         $order = $this->current();
 
         if (!$order) {
-            return $this->error(_t("ShoppingCart.NoOrder", "No current order."));
+            return $this->error(_t(__CLASS__ . '.NoOrder', 'No current order.'));
         }
 
         // If an extension throws an exception, error out
         try {
-            $order->extend("beforeRemove", $buyable, $quantity, $filter);
+            $order->extend('beforeRemove', $buyable, $quantity, $filter);
         } catch (Exception $exception){
             return $this->error($exception->getMessage());
         }
@@ -217,12 +200,12 @@ class ShoppingCart
         // If an extension throws an exception, error out
         // TODO: There should be a rollback
         try {
-            $order->extend("afterRemove", $item, $buyable, $quantity, $filter);
+            $order->extend('afterRemove', $item, $buyable, $quantity, $filter);
         } catch (Exception $exception){
             return $this->error($exception->getMessage());
         }
 
-        $this->message(_t("ShoppingCart.ItemRemoved", "Item has been successfully removed."));
+        $this->message(_t(__CLASS__ . '.ItemRemoved', 'Item has been successfully removed.'));
 
         return true;
     }
@@ -238,11 +221,11 @@ class ShoppingCart
         $order = $this->current();
 
         if (!$order) {
-            return $this->error(_t("ShoppingCart.NoOrder", "No current order."));
+            return $this->error(_t(__CLASS__ . '.NoOrder', 'No current order.'));
         }
 
         if (!$item || $item->OrderID != $order->ID) {
-            return $this->error(_t("ShoppingCart.ItemNotFound", "Item not found."));
+            return $this->error(_t(__CLASS__ . '.ItemNotFound', 'Item not found.'));
         }
 
         //if $quantity will become 0, then remove all
@@ -267,12 +250,12 @@ class ShoppingCart
      *
      * @return boolean|OrderItem false or the new/existing item
      */
-    public function setQuantity(Buyable $buyable, $quantity = 1, $filter = array())
+    public function setQuantity(Buyable $buyable, $quantity = 1, $filter = [])
     {
         if ($quantity <= 0) {
             return $this->remove($buyable, $quantity, $filter);
         }
-        $order = $this->findOrMake();
+
         $item = $this->findOrMakeItem($buyable, $quantity, $filter);
 
         if (!$item || !$this->updateOrderItemQuantity($item, $quantity, $filter)) {
@@ -289,22 +272,22 @@ class ShoppingCart
      * @param array $filter
      * @return boolean success/failure
      */
-    public function updateOrderItemQuantity(OrderItem $item, $quantity = 1, $filter = array())
+    public function updateOrderItemQuantity(OrderItem $item, $quantity = 1, $filter = [])
     {
         $order = $this->current();
 
         if (!$order) {
-            return $this->error(_t("ShoppingCart.NoOrder", "No current order."));
+            return $this->error(_t(__CLASS__ . '.NoOrder', 'No current order.'));
         }
 
         if (!$item || $item->OrderID != $order->ID) {
-            return $this->error(_t("ShoppingCart.ItemNotFound", "Item not found."));
+            return $this->error(_t(__CLASS__ . '.ItemNotFound', 'Item not found.'));
         }
 
         $buyable = $item->Buyable();
         // If an extension throws an exception, error out
         try {
-            $order->extend("beforeSetQuantity", $buyable, $quantity, $filter);
+            $order->extend('beforeSetQuantity', $buyable, $quantity, $filter);
         } catch (Exception $exception){
             return $this->error($exception->getMessage());
         }
@@ -313,13 +296,13 @@ class ShoppingCart
 
         // If an extension throws an exception, error out
         try {
-            $order->extend("afterSetQuantity", $item, $buyable, $quantity, $filter);
+            $order->extend('afterSetQuantity', $item, $buyable, $quantity, $filter);
         } catch (Exception $exception){
             return $this->error($exception->getMessage());
         }
 
         $item->write();
-        $this->message(_t("ShoppingCart.QuantitySet", "Quantity has been set."));
+        $this->message(_t(__CLASS__ . '.QuantitySet', 'Quantity has been set.'));
 
         return true;
     }
@@ -332,29 +315,30 @@ class ShoppingCart
      * @param array $filter
      *
      * @return OrderItem the found or created item
+     * @throws \SilverStripe\ORM\ValidationException
      */
-    private function findOrMakeItem(Buyable $buyable, $quantity = 1, $filter = array())
+    private function findOrMakeItem(Buyable $buyable, $quantity = 1, $filter = [])
     {
         $order = $this->findOrMake();
 
         if (!$buyable || !$order) {
-            return false;
+            return null;
         }
 
         $item = $this->get($buyable, $filter);
 
         if (!$item) {
-            $member = Member::currentUser();
+            $member = Security::getCurrentUser();
 
             $buyable = $this->getCorrectBuyable($buyable);
 
             if (!$buyable->canPurchase($member, $quantity)) {
                 return $this->error(
                     _t(
-                        'ShoppingCart.CannotPurchase',
+                        __CLASS__ . '.CannotPurchase',
                         'This {Title} cannot be purchased.',
                         '',
-                        array('Title' => $buyable->i18n_singular_name())
+                        ['Title' => $buyable->i18n_singular_name()]
                     )
                 );
                 //TODO: produce a more specific message
@@ -378,13 +362,13 @@ class ShoppingCart
      * @param Buyable $buyable
      * @param array $customfilter
      *
-     * @return OrderItem the item requested, or false
+     * @return OrderItem the item requested or null
      */
     public function get(Buyable $buyable, $customfilter = array())
     {
         $order = $this->current();
         if (!$buyable || !$order) {
-            return false;
+            return null;
         }
 
         $buyable = $this->getCorrectBuyable($buyable);
@@ -392,17 +376,18 @@ class ShoppingCart
         $filter = array(
             'OrderID' => $order->ID,
         );
+
         $itemclass = Config::inst()->get(get_class($buyable), 'order_item');
         $relationship = Config::inst()->get($itemclass, 'buyable_relationship');
-        $filter[$relationship . "ID"] = $buyable->ID;
-        $required = array('Order', $relationship);
+        $filter[$relationship . 'ID'] = $buyable->ID;
+        $required = ['Order', $relationship];
         if (is_array($itemclass::config()->required_fields)) {
             $required = array_merge($required, $itemclass::config()->required_fields);
         }
         $query = new MatchObjectFilter($itemclass, array_merge($customfilter, $filter), $required);
         $item = $itemclass::get()->where($query->getFilter())->first();
         if (!$item) {
-            return $this->error(_t("ShoppingCart.ItemNotFound", "Item not found."));
+            return $this->error(_t(__CLASS__ . '.ItemNotFound', 'Item not found.'));
         }
 
         return $item;
@@ -419,7 +404,7 @@ class ShoppingCart
     {
         if (
             $buyable instanceof Product &&
-            $buyable->hasExtension('ProductVariationsExtension') &&
+            $buyable->hasExtension(ProductVariationsExtension::class) &&
             $buyable->Variations()->count() > 0
         ) {
             foreach ($buyable->Variations() as $variation) {
@@ -438,11 +423,12 @@ class ShoppingCart
      */
     public function archiveorderid($requestedOrderId = null)
     {
-        $session = Injector::inst()->get(HTTPRequest::class)->getSession();
+        $session = ShopTools::getSession();
         $sessionId = $session->get(self::config()->cartid_session_name);
         $order = Order::get()
-            ->filter("Status:not", "Cart")
+            ->filter('Status:not', 'Cart')
             ->byId($sessionId);
+
         if ($order && !$order->IsCart()) {
             OrderManipulation::add_session_order($order);
         }
@@ -463,17 +449,17 @@ class ShoppingCart
      */
     public function clear($write = true)
     {
-        $session = Injector::inst()->get(HTTPRequest::class)->getSession();
+        $session = ShopTools::getSession();
         $session->clear(self::config()->cartid_session_name);
         $order = $this->current();
         $this->order = null;
         if (!$order) {
-            return $this->error(_t("ShoppingCart.NoCartFound", "No cart found."));
+            return $this->error(_t(__CLASS__ . '.NoCartFound', 'No cart found.'));
         }
         if ($write) {
             $order->write();
         }
-        $this->message(_t("ShoppingCart.Cleared", "Cart was successfully cleared."));
+        $this->message(_t(__CLASS__ . '.Cleared', 'Cart was successfully cleared.'));
 
         return true;
     }
@@ -483,9 +469,9 @@ class ShoppingCart
      */
     protected function error($message)
     {
-        $this->message($message, "bad");
+        $this->message($message, 'bad');
 
-        return false;
+        return null;
     }
 
     /**
@@ -494,7 +480,7 @@ class ShoppingCart
      * @param string $message
      * @param string $type - good, bad, warning
      */
-    protected function message($message, $type = "good")
+    protected function message($message, $type = 'good')
     {
         $this->message = $message;
         $this->type = $type;

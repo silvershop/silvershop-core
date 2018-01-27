@@ -1,15 +1,14 @@
 <?php
 
-namespace SilverShop\Core;
+namespace SilverShop\Core\Checkout\Component;
 
-
+use SilverShop\Core\Model\Order;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\SiteConfig\SiteConfig;
 use SilverStripe\Forms\CheckboxField;
 
 
-
-class TermsCheckoutComponent extends CheckoutComponent
+class Terms extends CheckoutComponent
 {
     public function getFormFields(Order $order)
     {
@@ -24,10 +23,10 @@ class TermsCheckoutComponent extends CheckoutComponent
                         'Checkout.TermsAndConditionsLink',
                         'I agree to the terms and conditions stated on the <a href="{TermsPageLink}" target="new" title="Read the shop terms and conditions for this site">{TermsPageTitle}</a> page',
                         '',
-                        array('TermsPageLink' => $page->Link(), 'TermsPageTitle' => $page->Title)
+                        ['TermsPageLink' => $page->Link(), 'TermsPageTitle' => $page->Title]
                     )
                 )->setCustomValidationMessage(
-                    _t("CheckoutField.MustAgreeToTerms", "You must agree to the terms and conditions")
+                    _t('CheckoutField.MustAgreeToTerms', 'You must agree to the terms and conditions')
                 )
             );
         }
@@ -42,7 +41,7 @@ class TermsCheckoutComponent extends CheckoutComponent
 
     public function getData(Order $order)
     {
-        return array();
+        return [];
     }
 
     public function setData(Order $order, array $data)

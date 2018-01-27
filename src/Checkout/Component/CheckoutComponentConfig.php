@@ -2,15 +2,12 @@
 
 namespace SilverShop\Core\Checkout\Component;
 
-
-use SilverStripe\Omnipay\GatewayInfo;
-use SilverStripe\ORM\ArrayList;
+use SilverShop\Core\Model\Order;
+use SilverStripe\Core\Injector\Injectable;
 use SilverStripe\Forms\FieldList;
-use SilverStripe\ORM\ValidationResult;
+use SilverStripe\ORM\ArrayList;
 use SilverStripe\ORM\ValidationException;
-use SilverStripe\Security\Member;
-
-
+use SilverStripe\ORM\ValidationResult;
 
 
 /**
@@ -18,6 +15,8 @@ use SilverStripe\Security\Member;
  */
 class CheckoutComponentConfig
 {
+    use Injectable;
+
     protected $components;
 
     protected $order;
@@ -38,16 +37,16 @@ class CheckoutComponentConfig
 
     /**
      * @param CheckoutComponent $component
-     * @param string            $insertBefore The class of the component to insert this one before
+     * @param string $insertBefore The class of the component to insert this one before
      */
     public function addComponent(CheckoutComponent $component, $insertBefore = null)
     {
         if ($this->namespaced) {
-            $component = new CheckoutComponent_Namespaced($component);
+            $component = new CheckoutComponentNamespaced($component);
         }
         if ($insertBefore) {
             $existingItems = $this->getComponents();
-            $this->components = new ArrayList;
+            $this->components = ArrayList::create();
             $inserted = false;
             foreach ($existingItems as $existingItem) {
                 if (!$inserted && $existingItem instanceof $insertBefore) {
@@ -110,7 +109,7 @@ class CheckoutComponentConfig
             if ($cfields = $component->getFormFields($this->order)) {
                 $fields->merge($cfields);
             } else {
-                user_error("getFields on  " . get_class($component) . " must return a FieldList");
+                user_error('getFields on  ' . get_class($component) . ' must return a FieldList');
             }
         }
         return $fields;
@@ -177,7 +176,7 @@ class CheckoutComponentConfig
             if (is_array($orderdata)) {
                 $data = array_merge($data, $orderdata);
             } else {
-                user_error("getData on  " . $component->name() . " must return an array");
+                user_error('getData on  ' . $component->name() . ' must return an array');
             }
         }
         return $data;

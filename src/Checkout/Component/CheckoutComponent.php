@@ -2,7 +2,10 @@
 
 namespace SilverShop\Core\Checkout\Component;
 
-
+use SilverShop\Core\Model\Order;
+use SilverStripe\Core\Injector\Injectable;
+use SilverStripe\Forms\FieldList;
+use SilverStripe\ORM\ValidationException;
 
 
 /**
@@ -19,9 +22,11 @@ namespace SilverShop\Core\Checkout\Component;
  */
 abstract class CheckoutComponent
 {
-    protected $requiredfields = array();
+    use Injectable;
 
-    protected $dependson      = array();
+    protected $requiredfields = [];
+
+    protected $dependson = [];
 
     /**
      * Get form fields for manipulating the current order,
@@ -29,7 +34,7 @@ abstract class CheckoutComponent
      *
      * @param  Order $order the form being updated
      *
-     * @throws Exception
+     * @throws \Exception
      * @return FieldList fields for manipulating order
      */
     abstract public function getFormFields(Order $order);
@@ -64,7 +69,7 @@ abstract class CheckoutComponent
      * @param Order $order
      * @param array $data data to be saved into order object
      *
-     * @throws Exception
+     * @throws \Exception
      * @return Order the updated order
      */
     abstract public function setData(Order $order, array $data);

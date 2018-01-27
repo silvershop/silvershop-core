@@ -4,6 +4,7 @@ namespace SilverShop\Core\Checkout\Step;
 
 
 use SilverStripe\Core\Config\Config;
+use SilverStripe\Core\Config\Configurable;
 use SilverStripe\Core\Extension;
 
 
@@ -13,6 +14,8 @@ use SilverStripe\Core\Extension;
  */
 class CheckoutStep extends Extension
 {
+    use Configurable;
+
     /**
      * Get the next step action
      *
@@ -38,8 +41,8 @@ class CheckoutStep extends Extension
         if (!$nextstep) {
             $nextstep = $this->nextstep();
         }
-        $anchor = Config::inst()->get("SteppedCheckout", "continue_anchor");
-        $anchor = $anchor ? "#" . $anchor : "";
+        $anchor = Config::inst()->get(SteppedCheckout::class, 'continue_anchor');
+        $anchor = $anchor ? '#' . $anchor : '';
         return $this->owner->Link($nextstep) . $anchor;
     }
 }

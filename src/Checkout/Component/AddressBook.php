@@ -3,34 +3,39 @@
 namespace SilverShop\Core\Checkout\Component;
 
 
-use SilverStripe\View\Requirements;
-use SilverStripe\Forms\CompositeField;
+use SilverShop\Core\Model\Order;
 use SilverStripe\Core\Config\Config;
-use SilverStripe\Forms\FieldList;
-use SilverStripe\Security\Member;
+use SilverStripe\Forms\CompositeField;
 use SilverStripe\Forms\DropdownField;
+use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\OptionsetField;
-use SilverStripe\ORM\ValidationResult;
-use SilverStripe\ORM\ValidationException;
 use SilverStripe\i18n\i18nEntityProvider;
-
+use SilverStripe\ORM\ValidationException;
+use SilverStripe\ORM\ValidationResult;
+use SilverStripe\Security\Security;
+use SilverStripe\View\Requirements;
 
 
 /**
  * Adds the ability to use the member's address book for choosing addresses
  *
  */
-abstract class AddressBook extends AddressCheckoutComponent implements i18nEntityProvider
+abstract class AddressBook extends Address implements i18nEntityProvider
 {
+    /**
+     * @config the composite field tag to use
+     * @var string
+     */
     private static $composite_field_tag = 'div';
 
-    protected      $addtoaddressbook    = true;
+    protected $addtoaddressbook = true;
 
     public function getFormFields(Order $order)
     {
         $fields = parent::getFormFields($order);
 
         if ($existingaddressfields = $this->getExistingAddressFields()) {
+            //TODO: Get rid of JavaScript here
             Requirements::javascript(THIRDPARTY_DIR . '/jquery/jquery.min.js');
             Requirements::javascript(SHOP_DIR . '/javascript/CheckoutPage.js');
             // add the fields for a new address after the dropdown field
@@ -38,7 +43,7 @@ abstract class AddressBook extends AddressCheckoutComponent implements i18nEntit
             // group under a composite field (invisible by default) so we
             // easily know which fields to show/hide
             $label = _t(
-                "Address.{$this->addresstype}Address",
+                "SilverShop\Core\Model\Address.{$this->addresstype}Address",
                 "{$this->addresstype} Address"
             );
 
@@ -46,7 +51,7 @@ abstract class AddressBook extends AddressCheckoutComponent implements i18nEntit
                 CompositeField::create($existingaddressfields)
                     ->addExtraClass('hasExistingValues')
                     ->setLegend($label)
-                    ->setTag(Config::inst()->get('AddressBookCheckoutComponent', 'composite_field_tag'))
+                    ->setTag(Config::inst()->get(self::class, 'composite_field_tag'))
             );
         }
 
@@ -60,20 +65,20 @@ abstract class AddressBook extends AddressCheckoutComponent implements i18nEntit
      */
     public function getExistingAddressFields()
     {
-        $member = Member::currentUser();
+        $member = Security::getCurrentUser();
         if ($member && $member->AddressBook()->exists()) {
             $addressoptions = $member->AddressBook()->sort('Created', 'DESC')->map('ID', 'toString')->toArray();
-            $addressoptions['newaddress'] = _t("Address.CreateNewAddress", "Create new address");
+            $addressoptions['newaddress'] = _t('SilverShop\Core\Model\Address.CreateNewAddress', 'Create new address');
             $fieldtype = count($addressoptions) > 3 ? DropdownField::class : OptionsetField::class;
 
-            $label = _t("Address.Existing{$this->addresstype}Address", "Existing {$this->addresstype} Address");
+            $label = _t("SilverShop\Core\Model\Address.Existing{$this->addresstype}Address", "Existing {$this->addresstype} Address");
 
             return FieldList::create(
                 $fieldtype::create(
-                    $this->addresstype . "AddressID",
+                    $this->addresstype . 'AddressID',
                     $label,
                     $addressoptions,
-                    $member->{"Default" . $this->addresstype . "AddressID"}
+                    $member->{'Default' . $this->addresstype . 'AddressID'}
                 )->addExtraClass('existingValues')
             );
         }
@@ -90,7 +95,7 @@ abstract class AddressBook extends AddressCheckoutComponent implements i18nEntit
      */
     public function getRequiredFields(Order $order)
     {
-        return array();
+        return [];
     }
 
     /**
@@ -103,12 +108,13 @@ abstract class AddressBook extends AddressCheckoutComponent implements i18nEntit
     {
         $result = ValidationResult::create();
         $existingID =
-            !empty($data[$this->addresstype . "AddressID"]) ? (int)$data[$this->addresstype . "AddressID"] : 0;
+            !empty($data[$this->addresstype . 'AddressID']) ? (int)$data[$this->addresstype . 'AddressID'] : 0;
 
         if ($existingID) {
+            $member = Security::getCurrentUser();
             // If existing address selected, check that it exists in $member->AddressBook
-            if (!Member::currentUserID() || !Member::currentUser()->AddressBook()->byID($existingID)) {
-                $result->error("Invalid address supplied", $this->addresstype . "AddressID");
+            if (!$member || !$member->AddressBook()->byID($existingID)) {
+                $result->error('Invalid address supplied', $this->addresstype . 'AddressID');
                 throw new ValidationException($result);
             }
         } else {
@@ -121,7 +127,7 @@ abstract class AddressBook extends AddressCheckoutComponent implements i18nEntit
                     // attempt to get the translated field name
                     $fieldLabel = isset($addressLabels[$fieldName]) ? $addressLabels[$fieldName] : $fieldName;
                     $errorMessage = _t(
-                        'Form.FIELDISREQUIRED',
+                        'SilverStripe\\Forms\\Form.FIELDISREQUIRED',
                         '{name} is required',
                         array('name' => $fieldLabel)
                     );
@@ -138,14 +144,15 @@ abstract class AddressBook extends AddressCheckoutComponent implements i18nEntit
      * created.
      *
      * @param Order $order order to get addresses from
-     * @param array $data  data to set
+     * @param array $data data to set
+     * @throws ValidationException
      */
     public function setData(Order $order, array $data)
     {
         $existingID =
-            !empty($data[$this->addresstype . "AddressID"]) ? (int)$data[$this->addresstype . "AddressID"] : 0;
+            !empty($data[$this->addresstype . 'AddressID']) ? (int)$data[$this->addresstype . 'AddressID'] : 0;
         if ($existingID > 0) {
-            $order->{$this->addresstype . "AddressID"} = $existingID;
+            $order->{$this->addresstype . 'AddressID'} = $existingID;
             $order->write();
             $order->extend('onSet' . $this->addresstype . 'Address', $address);
         } else {
@@ -161,16 +168,17 @@ abstract class AddressBook extends AddressCheckoutComponent implements i18nEntit
     public function provideI18nEntities()
     {
         if ($this->addresstype) {
-            return array(
-                "Address.{$this->addresstype}Address"         => array(
+            return [
+
+                "SilverShop\Core\Model\Address.{$this->addresstype}Address" => [
                     "{$this->addresstype} Address",
                     "Label for the {$this->addresstype} address",
-                ),
-                "Address.Existing{$this->addresstype}Address" => array(
+                ],
+                "SilverShop\Core\Model\Address.Existing{$this->addresstype}Address" => [
                     "Existing {$this->addresstype} Address",
                     "Label to select an existing {$this->addresstype} Address",
-                ),
-            );
+                ],
+            ];
         }
 
         return array();

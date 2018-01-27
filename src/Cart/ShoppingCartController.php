@@ -1,7 +1,23 @@
 <?php
 
 namespace SilverShop\Core\Cart;
+
+use SilverShop\Core\Model\Buyable;
+use SilverShop\Core\Product\Product;
+use SilverShop\Core\Product\Variation\Variation;
+use SilverShop\Core\ShopTools;
 use SilverStripe\Control\Controller;
+use SilverStripe\Control\Director;
+use SilverStripe\Control\HTTPRequest;
+use SilverStripe\Control\HTTPResponse;
+use SilverStripe\Core\ClassInfo;
+use SilverStripe\Dev\Debug;
+use SilverStripe\ErrorPage\ErrorPage;
+use SilverStripe\ORM\DataObject;
+use SilverStripe\Security\Permission;
+use SilverStripe\Security\SecurityToken;
+use SilverStripe\Versioned\Versioned;
+use SilverStripe\View\Requirements;
 
 
 /**
@@ -9,17 +25,30 @@ use SilverStripe\Control\Controller;
  */
 class ShoppingCartController extends Controller
 {
-    private static $url_segment         = "shoppingcart";
+    private static $url_segment = 'shoppingcart';
 
+    /**
+     * @config whether or not this controller redirects to the cart-page whenever an item was added
+     * @var bool
+     */
     private static $direct_to_cart_page = false;
 
-    protected      $cart;
+    /** @var ShoppingCart */
+    protected $cart;
 
-    private static $url_handlers        = array(
+    /**
+     * @config
+     * @var array
+     */
+    private static $url_handlers = [
         '$Action/$Buyable/$ID' => 'handleAction',
-    );
+    ];
 
-    private static $allowed_actions     = array(
+    /**
+     * @config
+     * @var array
+     */
+    private static $allowed_actions = [
         'add',
         'additem',
         'remove',
@@ -30,61 +59,48 @@ class ShoppingCartController extends Controller
         'setquantityitem',
         'clear',
         'debug',
-    );
+    ];
 
     public static function add_item_link(Buyable $buyable, $parameters = array())
     {
-        return self::build_url("add", $buyable, $parameters);
+        return self::build_url('add', $buyable, $parameters);
     }
 
     public static function remove_item_link(Buyable $buyable, $parameters = array())
     {
-        return self::build_url("remove", $buyable, $parameters);
+        return self::build_url('remove', $buyable, $parameters);
     }
 
     public static function remove_all_item_link(Buyable $buyable, $parameters = array())
     {
-        return self::build_url("removeall", $buyable, $parameters);
+        return self::build_url('removeall', $buyable, $parameters);
     }
 
     public static function set_quantity_item_link(Buyable $buyable, $parameters = array())
     {
-        return self::build_url("setquantity", $buyable, $parameters);
+        return self::build_url('setquantity', $buyable, $parameters);
     }
 
     /**
      * Helper for creating a url
      */
-    protected static function build_url($action, $buyable, $params = array())
+    protected static function build_url($action, $buyable, $params = [])
     {
         if (!$action || !$buyable) {
             return false;
         }
+
         if (SecurityToken::is_enabled() && !self::config()->disable_security_token) {
             $params[SecurityToken::inst()->getName()] = SecurityToken::inst()->getValue();
         }
-        return self::config()->url_segment . '/' .
-            $action . '/' .
-            $buyable->class . "/" .
-            $buyable->ID .
-            self::params_to_get_string($params);
-    }
 
-    /**
-     * Creates the appropriate string parameters for links from array
-     *
-     * Produces string such as: MyParam%3D11%26OtherParam%3D1
-     *     ...which decodes to: MyParam=11&OtherParam=1
-     *
-     * you will need to decode the url with javascript before using it.
-     */
-    protected static function params_to_get_string($array)
-    {
-        if ($array & count($array > 0)) {
-            array_walk($array, create_function('&$v,$k', '$v = $k."=".$v ;'));
-            return "?" . implode("&", $array);
-        }
-        return "";
+        $link = Controller::join_links([
+            self::config()->url_segment,
+            ShopTools::sanitiseClassName($buyable->class),
+            $buyable->ID
+        ]);
+
+        return empty($params) ? $link : $link . '?' . http_build_query($params);
     }
 
     /**
@@ -92,19 +108,17 @@ class ShoppingCartController extends Controller
      *
      * @param bool|string $status
      *
-     * @return bool
+     * @return string|HTTPResponse
      */
     public static function direct($status = true)
     {
         if (Director::is_ajax()) {
-            return $status;
+            return (string)$status;
         }
-        if (self::config()->direct_to_cart_page && $cartlink = CartPage::find_link()) {
-            Controller::curr()->redirect($cartlink);
-            return;
+        if (self::config()->direct_to_cart_page && ($cartlink = CartPage::find_link())) {
+            return Controller::curr()->redirect($cartlink);
         } else {
-            Controller::curr()->redirectBack();
-            return;
+            return Controller::curr()->redirectBack();
         }
     }
 
@@ -115,7 +129,8 @@ class ShoppingCartController extends Controller
     }
 
     /**
-     * @return Product|ProductVariation|Buyable
+     * @return Product|Variation|Buyable
+     * @throws \SilverStripe\Control\HTTPResponse_Exception
      */
     protected function buyableFromRequest()
     {
@@ -127,7 +142,10 @@ class ShoppingCartController extends Controller
         ) {
             return $this->httpError(
                 400,
-                _t("ShoppingCart.InvalidSecurityToken", "Invalid security token, possible CSRF attack.")
+                _t(
+                    'SilverShop\Core\Cart\ShoppingCart.InvalidSecurityToken',
+                    'Invalid security token, possible CSRF attack.'
+                )
             );
         }
         $id = (int)$request->param('ID');
@@ -135,20 +153,19 @@ class ShoppingCartController extends Controller
             //TODO: store error message
             return null;
         }
-        $buyableclass = "Product";
+        $buyableclass = Product::class;
         if ($class = $request->param('Buyable')) {
-            $buyableclass = Convert::raw2sql($class);
+            $buyableclass = ShopTools::unsanitiseClassName($class);
         }
         if (!ClassInfo::exists($buyableclass)) {
             //TODO: store error message
             return null;
         }
         //ensure only live products are returned, if they are versioned
-        $buyable = Object::has_extension($buyableclass, Versioned::class)
-            ?
-            Versioned::get_by_stage($buyableclass, 'Live')->byID($id)
-            :
-            DataObject::get($buyableclass)->byID($id);
+        $buyable = $buyableclass::has_extension(Versioned::class)
+            ? Versioned::get_by_stage($buyableclass, 'Live')->byID($id)
+            : DataObject::get($buyableclass)->byID($id);
+
         if (!$buyable || !($buyable instanceof Buyable)) {
             //TODO: store error message
             return null;
@@ -160,9 +177,10 @@ class ShoppingCartController extends Controller
     /**
      * Action: add item to cart
      *
-     * @param SS_HTTPRequest $request
+     * @param HTTPRequest $request
      *
-     * @return SS_HTTPResponse
+     * @return HTTPResponse
+     * @throws \SilverStripe\Control\HTTPResponse_Exception
      */
     public function add($request)
     {
@@ -182,9 +200,10 @@ class ShoppingCartController extends Controller
     /**
      * Action: remove a certain number of items from the cart
      *
-     * @param SS_HTTPRequest $request
+     * @param HTTPRequest $request
      *
-     * @return SS_HTTPResponse
+     * @return HTTPResponse
+     * @throws \SilverStripe\Control\HTTPResponse_Exception
      */
     public function remove($request)
     {
@@ -200,9 +219,10 @@ class ShoppingCartController extends Controller
     /**
      * Action: remove all of an item from the cart
      *
-     * @param SS_HTTPRequest $request
+     * @param HTTPRequest $request
      *
-     * @return SS_HTTPResponse
+     * @return HTTPResponse
+     * @throws \SilverStripe\Control\HTTPResponse_Exception
      */
     public function removeall($request)
     {
@@ -218,9 +238,10 @@ class ShoppingCartController extends Controller
     /**
      * Action: update the quantity of an item in the cart
      *
-     * @param SS_HTTPRequest $request
+     * @param HTTPRequest $request
      *
-     * @return AjaxHTTPResponse|bool
+     * @return HTTPResponse
+     * @throws \SilverStripe\Control\HTTPResponse_Exception
      */
     public function setquantity($request)
     {
@@ -238,9 +259,9 @@ class ShoppingCartController extends Controller
     /**
      * Action: clear the cart
      *
-     * @param SS_HTTPRequest $request
+     * @param HTTPRequest $request
      *
-     * @return AjaxHTTPResponse|bool
+     * @return HTTPResponse
      */
     public function clear($request)
     {
@@ -252,16 +273,16 @@ class ShoppingCartController extends Controller
 
     /**
      * Handle index requests
+     * @throws \SilverStripe\Control\HTTPResponse_Exception
      */
     public function index()
     {
         if ($cart = $this->Cart()) {
-            $this->redirect($cart->CartLink);
-            return;
+            return $this->redirect($cart->CartLink);
         } elseif ($response = ErrorPage::response_for(404)) {
             return $response;
         }
-        return $this->httpError(404, _t("ShoppingCart.NoCartInitialised", "no cart initialised"));
+        return $this->httpError(404, _t('SilverShop\Core\Cart\ShoppingCart.NoCartInitialised', 'no cart initialised'));
     }
 
     /**
@@ -269,16 +290,14 @@ class ShoppingCartController extends Controller
      */
     public function debug()
     {
-        if (Director::isDev() || Permission::check("ADMIN")) {
+        if (Director::isDev() || Permission::check('ADMIN')) {
             //TODO: allow specifying a particular id to debug
-            Requirements::css(SHOP_DIR . "/css/cartdebug.css");
+            Requirements::css('silvershop/core: css/cartdebug.css');
             $order = ShoppingCart::curr();
             $content = ($order)
-                ?
-                Debug::text($order)
-                :
-                "Cart has not been created yet. Add a product.";
-            return array('Content' => $content);
+                ? Debug::text($order)
+                : 'Cart has not been created yet. Add a product.';
+            return ['Content' => $content];
         }
     }
 

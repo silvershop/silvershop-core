@@ -2,12 +2,15 @@
 
 namespace SilverShop\Core\Checkout\Component;
 
+use SilverShop\Core\Model\Order;
+
 
 /**
  * Proxy class to handle namespacing field names for checkout components
  */
 class CheckoutComponentNamespaced extends CheckoutComponent
 {
+    /** @var CheckoutComponent */
     protected $proxy;
 
     public function __construct(CheckoutComponent $component)

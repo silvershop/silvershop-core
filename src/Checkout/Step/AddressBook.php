@@ -2,8 +2,10 @@
 
 namespace SilverShop\Core\Checkout\Step;
 
-
-
+use SilverShop\Core\Cart\ShoppingCart;
+use SilverShop\Core\Checkout\Component\AddressBookBilling;
+use SilverShop\Core\Checkout\Component\AddressBookShipping;
+use SilverShop\Core\Checkout\Component\CheckoutComponentConfig;
 
 class AddressBook extends Address
 {
@@ -18,16 +20,16 @@ class AddressBook extends Address
 
     public function shippingconfig()
     {
-        $config = new CheckoutComponentConfig(ShoppingCart::curr());
-        $config->addComponent(ShippingAddressBookCheckoutComponent::create());
+        $config = CheckoutComponentConfig::create(ShoppingCart::curr());
+        $config->addComponent(AddressBookShipping::create());
 
         return $config;
     }
 
     public function billingconfig()
     {
-        $config = new CheckoutComponentConfig(ShoppingCart::curr());
-        $config->addComponent(BillingAddressBookCheckoutComponent::create());
+        $config = CheckoutComponentConfig::create(ShoppingCart::curr());
+        $config->addComponent(AddressBookBilling::create());
 
         return $config;
     }

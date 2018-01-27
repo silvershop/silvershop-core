@@ -2,12 +2,13 @@
 
 namespace SilverShop\Core\Cart;
 
-
-use SilverStripe\Core\ClassInfo;
 use ErrorException;
 use Exception;
-use SS_Log;
-
+use Psr\Log\LoggerInterface;
+use SilverShop\Core\Model\Order;
+use SilverStripe\Core\ClassInfo;
+use SilverStripe\Core\Injector\Injector;
+use SilverStripe\ORM\DB;
 
 /**
  * Handles the calculation of order totals.
@@ -25,20 +26,25 @@ class OrderTotalCalculator
         $this->order = $order;
     }
 
+    /**
+     * @return int
+     * @throws Exception
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     */
     function calculate()
     {
         $runningtotal = $this->order->SubTotal();
-        $modifiertotal = 0;
         $sort = 1;
         $existingmodifiers = $this->order->Modifiers();
         $modifierclasses = Order::config()->modifiers;
+
         //check if modifiers are even in use
         if (!is_array($modifierclasses) || empty($modifierclasses)) {
             return $runningtotal;
         }
 
-        if (ShopTools::DBConn()->supportsTransactions()) {
-            ShopTools::DBConn()->transactionStart();
+        if (DB::get_conn()->supportsTransactions()) {
+            DB::get_conn()->transactionStart();
         }
 
         set_error_handler(function ($severity, $message, $file, $line) {
@@ -67,8 +73,8 @@ class OrderTotalCalculator
             }
         } catch (Exception $ex) {
             // Rollback the transaction if an error occurred
-            if (ShopTools::DBConn()->supportsTransactions()) {
-                ShopTools::DBConn()->transactionRollback();
+            if (DB::get_conn()->supportsTransactions()) {
+                DB::get_conn()->transactionRollback();
             }
             // throw the exception after rollback
             throw $ex;
@@ -78,18 +84,18 @@ class OrderTotalCalculator
         }
 
         // Everything went through fine, complete the transaction
-        if (ShopTools::DBConn()->supportsTransactions()) {
-            ShopTools::DBConn()->transactionEnd();
+        if (DB::get_conn()->supportsTransactions()) {
+            DB::get_conn()->transactionEnd();
         }
 
         //prevent negative sales from ever occurring
         if ($runningtotal < 0) {
-            SS_Log::log(
+            Injector::inst()->get(LoggerInterface::class)->error(
                 "Order (ID = {$this->order->ID}) was calculated to equal $runningtotal.\n
 				Order totals should never be negative!\n
-				The order total was set to $0",
-                SS_Log::ERR
+				The order total was set to $0"
             );
+
             $runningtotal = 0;
         }
 

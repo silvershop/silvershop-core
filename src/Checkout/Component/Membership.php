@@ -3,6 +3,8 @@
 namespace SilverShop\Core\Checkout\Component;
 
 
+use SilverShop\Core\Checkout\Checkout;
+use SilverShop\Core\Model\Order;
 use SilverStripe\Security\Member;
 use SilverStripe\Security\PasswordValidator;
 use SilverStripe\Forms\Form;
@@ -12,7 +14,7 @@ use SilverStripe\Forms\ConfirmedPasswordField;
 use SilverStripe\Forms\PasswordField;
 use SilverStripe\ORM\ValidationResult;
 use SilverStripe\ORM\ValidationException;
-
+use SilverStripe\Security\Security;
 
 
 /**
@@ -28,9 +30,9 @@ class Membership extends CheckoutComponent
 
     protected $passwordvalidator;
 
-    protected $dependson = array(
-        'CustomerDetailsCheckoutComponent',
-    );
+    protected $dependson = [
+        CustomerDetails::class,
+    ];
 
     public function __construct($confirmed = true, $validator = null)
     {
@@ -42,7 +44,7 @@ class Membership extends CheckoutComponent
                 $this->passwordvalidator->minLength(5);
                 $this->passwordvalidator->characterStrength(
                     2,
-                    array("lowercase", "uppercase", "digits", "punctuation")
+                    ["lowercase", "uppercase", "digits", "punctuation"]
                 );
             }
         }
@@ -51,7 +53,7 @@ class Membership extends CheckoutComponent
     public function getFormFields(Order $order, Form $form = null)
     {
         $fields = FieldList::create();
-        if (Member::currentUserID()) {
+        if (Security::getCurrentUser()) {
             return $fields;
         }
         $idfield = Member::config()->unique_identifier_field;

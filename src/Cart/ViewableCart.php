@@ -3,9 +3,10 @@
 namespace SilverShop\Core\Cart;
 
 
+use SilverShop\Core\Checkout\CheckoutPage;
+use SilverShop\Core\Product\ProductCategory;
 use SilverStripe\Control\Director;
 use SilverStripe\Core\Extension;
-
 
 
 /**
@@ -33,19 +34,17 @@ class ViewableCart extends Extension
 
     public function getContinueLink()
     {
-        if($cartPage = CartPage::get()->first()){
-            if($cartPage->ContinuePageID){
+        if ($cartPage = CartPage::get()->first()) {
+            if ($cartPage->ContinuePageID) {
                 return $cartPage->ContinuePage()->Link();
             }
         }
 
         $maincategory = ProductCategory::get()
-            ->sort(
-                array(
-                    "ParentID" => "ASC",
-                    "ID"       => "ASC",
-                )
-            )->first();
+            ->sort([
+                'ParentID' => 'ASC',
+                'ID' => 'ASC',
+            ])->first();
         if ($maincategory) {
             return $maincategory->Link();
         }

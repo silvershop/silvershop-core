@@ -2,25 +2,27 @@
 
 namespace SilverShop\Core\Checkout\Step;
 
-
+use SilverShop\Core\Cart\ShoppingCart;
+use SilverShop\Core\Checkout\Checkout;
+use SilverShop\Core\Checkout\CheckoutForm;
+use SilverShop\Core\Checkout\Component\CheckoutComponentConfig;
+use SilverShop\Core\Checkout\Component\Payment;
 use SilverStripe\Omnipay\GatewayInfo;
 use SilverStripe\Forms\FormAction;
 use SilverStripe\Forms\FieldList;
 
 
-
-
 class PaymentMethod extends CheckoutStep
 {
-    private static $allowed_actions = array(
+    private static $allowed_actions = [
         'paymentmethod',
         'PaymentMethodForm',
-    );
+    ];
 
     protected function checkoutconfig()
     {
-        $config = new CheckoutComponentConfig(ShoppingCart::curr(), false);
-        $config->addComponent(PaymentCheckoutComponent::create());
+        $config = CheckoutComponentConfig::create(ShoppingCart::curr(), false);
+        $config->addComponent(Payment::create());
 
         return $config;
     }
@@ -38,10 +40,10 @@ class PaymentMethod extends CheckoutStep
 
     public function PaymentMethodForm()
     {
-        $form = CheckoutForm::create($this->owner, "PaymentMethodForm", $this->checkoutconfig());
+        $form = CheckoutForm::create($this->owner, 'PaymentMethodForm', $this->checkoutconfig());
         $form->setActions(
             FieldList::create(
-                FormAction::create("setpaymentmethod", _t('CheckoutStep.Continue', "Continue"))
+                FormAction::create('setpaymentmethod', _t('CheckoutStep.Continue', 'Continue'))
             )
         );
         $this->owner->extend('updatePaymentMethodForm', $form);

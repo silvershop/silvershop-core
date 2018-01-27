@@ -2,25 +2,24 @@
 
 namespace SilverShop\Core\Checkout;
 
-
-use SilverStripe\Forms\FormAction;
+use SilverShop\Core\Checkout\Component\CheckoutComponentConfig;
+use SilverStripe\Control\RequestHandler;
 use SilverStripe\Forms\FieldList;
-use SilverStripe\SiteConfig\SiteConfig;
 use SilverStripe\Forms\Form;
-use SilverStripe\Security\Member;
-use SilverStripe\Control\Session;
-
+use SilverStripe\Forms\FormAction;
+use SilverStripe\Security\Security;
 
 
 class CheckoutForm extends Form
 {
+    /** @var CheckoutComponentConfig  */
     protected $config;
 
     protected $redirectlink;
 
     private static $submit_button_text;
 
-    public function __construct($controller, $name, CheckoutComponentConfig $config)
+    public function __construct(RequestHandler $controller, $name, CheckoutComponentConfig $config)
     {
         $this->config = $config;
         $fields = $config->getFormFields();
@@ -28,7 +27,7 @@ class CheckoutForm extends Form
         if($text = $this->config()->get('submit_button_text')) {
             $submitBtnText = $text;
         } else {
-            $submitBtnText = _t('CheckoutPage.ProceedToPayment', 'Proceed to payment');
+            $submitBtnText = _t('SilverShop\Core\Checkout\CheckoutPage.ProceedToPayment', 'Proceed to payment');
         }
 
         $actions = FieldList::create(
@@ -39,20 +38,16 @@ class CheckoutForm extends Form
         );
         $validator = CheckoutComponentValidator::create($this->config);
 
-        // For single country sites, the Country field is readonly therefore no need to validate
-        if (SiteConfig::current_site_config()->getSingleCountry()) {
-            $validator->removeRequiredField("ShippingAddressCheckoutComponent_Country");
-            $validator->removeRequiredField("BillingAddressCheckoutComponent_Country");
-        }
-
         parent::__construct($controller, $name, $fields, $actions, $validator);
         //load data from various sources
         $this->loadDataFrom($this->config->getData(), Form::MERGE_IGNORE_FALSEISH);
-        if ($member = Member::currentUser()) {
+        if ($member = Security::getCurrentUser()) {
             $this->loadDataFrom($member, Form::MERGE_IGNORE_FALSEISH);
         }
-        if ($sessiondata = Session::get("FormInfo.{$this->FormName()}.data")) {
-            $this->loadDataFrom($sessiondata, Form::MERGE_IGNORE_FALSEISH);
+        if ($controller && ($session = $controller->getRequest()->getSession())) {
+            if ($sessiondata = $session->get("FormInfo.{$this->FormName()}.data")) {
+                $this->loadDataFrom($sessiondata, Form::MERGE_IGNORE_FALSEISH);
+            }
         }
     }
 

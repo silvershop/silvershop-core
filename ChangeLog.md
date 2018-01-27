@@ -1,5 +1,35 @@
 # SilverStripe Shop Change Log
 
+
+## 3.0.0
+
+### Removals
+
+ - Removed all Dashboard classes. The dashboard module is not yet ready for SilverStripe 4. 
+ This functionality should be added via a separate module whenever the need for it arises.
+ - `ShopAccountFormValidator` was removed. It was there to fix a core issue that no longer exists in SS4
+ 
+## 2.3.1
+
+Fix a bug (regression) where the variation-form was no longer displayed in cart.
+
+## 2.3.0
+
+ - Fix issue with unset failover object. Improve travis config. (#611)
+ - Migrate to using beforeUpdateCMSFields
+ - Use Buyable instead of Product in CartEditField (#606)
+ - Placed added to group by (#603)
+ - Fix message encoding issue with VariationForm (#601)
+ - Fix issue with potentailly non-existing failover object. (#600)
+ - Allow extensions to hook into the permission methods of Order. (#599)
+ - Some minor documentation improvements. Added a section about CSV import and additional categories (#592)
+ - Fix issue in CheckoutStep_Summary.php (#591)
+ - Fix issue where VariationForm fields had no form value set (#589)
+
+## 2.2.1
+
+Security Update: Updated indirect PHPMailer dependency that fixes a critical security issue.
+
 ## 2.2.0
 
  * Fix GlobalTaxModifier (Roman Schmid)

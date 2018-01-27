@@ -2,10 +2,12 @@
 
 namespace SilverShop\Core\Checkout\Component;
 
-
-use SilverStripe\Security\Member;
+use SilverShop\Core\Model\Order;
+use SilverShop\Core\Model\Zone;
+use SilverShop\Core\ShopUserInfo;
+use SilverStripe\ORM\DataObject;
+use SilverStripe\Security\Security;
 use SilverStripe\SiteConfig\SiteConfig;
-
 
 
 abstract class Address extends CheckoutComponent
@@ -14,15 +16,13 @@ abstract class Address extends CheckoutComponent
 
     protected $addresstype;
 
-    protected $addtoaddressbook      = false;
+    protected $addtoaddressbook = false;
 
     public function getFormFields(Order $order)
     {
-        return $this->getAddress($order)->getFrontEndFields(
-            array(
-                'addfielddescriptions' => $this->formfielddescriptions,
-            )
-        );
+        return $this->getAddress($order)->getFrontEndFields([
+            'addfielddescriptions' => $this->formfielddescriptions,
+        ]);
     }
 
     public function getRequiredFields(Order $order)
@@ -42,20 +42,16 @@ abstract class Address extends CheckoutComponent
         $data = array_merge(
             ShopUserInfo::singleton()->getLocation(),
             $data,
-            array(
-                $this->addresstype . "AddressID" => $order->{$this->addresstype . "AddressID"},
-            )
+            [$this->addresstype . 'AddressID' => $order->{$this->addresstype . 'AddressID'}]
         );
 
         //merge in default address if an address isn't available
-        $member = Member::currentUser();
-        if(!$order->{$this->addresstype . "AddressID"}) {
+        $member = Security::getCurrentUser();
+        if (!$order->{$this->addresstype . 'AddressID'}) {
             $data = array_merge(
                 ShopUserInfo::singleton()->getLocation(),
-                $member ? $member->{"Default" . $this->addresstype . "Address"}()->toMap() : array(),
-                array(
-                    $this->addresstype . "AddressID" => $order->{$this->addresstype . "AddressID"},
-                )
+                $member ? $member->{'Default' . $this->addresstype . 'Address'}()->toMap() : array(),
+                [$this->addresstype . 'AddressID' => $order->{$this->addresstype . 'AddressID'}]
             );
         }
 
@@ -76,16 +72,17 @@ abstract class Address extends CheckoutComponent
      * created.
      *
      * @param Order $order order to get addresses from
-     * @param array $data  data to set
+     * @param array $data data to set
+     * @throws \SilverStripe\ORM\ValidationException
      */
     public function setData(Order $order, array $data)
     {
         $address = $this->getAddress($order);
         //if the value matches the current address then unset
         //this is to fix issues with blank fields & the readonly Country field
-        $addressfields = Address::database_fields(get_class($address));
-        foreach($data as $key => $value) {
-            if(!isset($addressfields[$key]) || (!$value && !$address->{$key})) {
+        $addressFields = DataObject::getSchema()->databaseFields(\SilverShop\Core\Model\Address::class);
+        foreach ($data as $key => $value) {
+            if (!isset($addressFields[$key]) || (!$value && !$address->{$key})) {
                 unset($data[$key]);
             }
         }
@@ -101,22 +98,22 @@ abstract class Address extends CheckoutComponent
             $address = $address->duplicate();
         }
         //set billing address, if not already set
-        $order->{$this->addresstype . "AddressID"} = $address->ID;
+        $order->{$this->addresstype . 'AddressID'} = $address->ID;
         if (!$order->BillingAddressID) {
             $order->BillingAddressID = $address->ID;
         }
         $order->write();
         //update user info based on shipping address
-        if ($this->addresstype === "Shipping") {
+        if ($this->addresstype === 'Shipping') {
             ShopUserInfo::singleton()->setAddress($address);
             Zone::cache_zone_ids($address);
         }
         //associate member to address
-        if ($member = Member::currentUser()) {
-            $default = $member->{"Default" . $this->addresstype . "Address"}();
+        if ($member = Security::getCurrentUser()) {
+            $default = $member->{'Default' . $this->addresstype . 'Address'}();
             //set default address
             if (!$default->exists()) {
-                $member->{"Default" . $this->addresstype . "AddressID"} = $address->ID;
+                $member->{'Default' . $this->addresstype . 'AddressID'} = $address->ID;
                 $member->write();
             }
             if ($this->addtoaddressbook) {
@@ -143,8 +140,12 @@ abstract class Address extends CheckoutComponent
         $this->addtoaddressbook = $add;
     }
 
+    /**
+     * @param Order $order
+     * @return \SilverShop\Core\Model\Address
+     */
     public function getAddress(Order $order)
     {
-        return $order->{$this->addresstype . "Address"}();
+        return $order->{$this->addresstype . 'Address'}();
     }
 }

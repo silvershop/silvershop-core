@@ -3,29 +3,39 @@
 namespace SilverShop\Core\Checkout\Step;
 
 
+use SilverShop\Core\Cart\ShoppingCart;
+use SilverShop\Core\Checkout\CheckoutForm;
+use SilverShop\Core\Checkout\Component\CheckoutComponentConfig;
+use SilverShop\Core\Checkout\Component\CustomerDetails;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Security\Member;
 use SilverStripe\Control\Controller;
 use SilverStripe\Forms\FormAction;
 use SilverStripe\Forms\FieldList;
-
+use SilverStripe\Security\Security;
 
 
 class ContactDetails extends CheckoutStep
 {
-    private static $allowed_actions = array(
+    /**
+     * @config whether or not this step should be skipped if user is logged in
+     * @var bool
+     */
+    private static $skip_if_logged_in = false;
+
+    private static $allowed_actions = [
         'contactdetails',
         'ContactDetailsForm',
-    );
+    ];
 
     public function contactdetails()
     {
         $form = $this->ContactDetailsForm();
         if (
             ShoppingCart::curr()
-            && Config::inst()->get("CheckoutStep_ContactDetails", "skip_if_logged_in")
+            && self::config()->skip_if_logged_in
         ) {
-            if (Member::currentUser()) {
+            if (Security::getCurrentUser()) {
                 if(!$form->getValidator()->validate()) {
                     return Controller::curr()->redirect($this->NextStepLink());
                 } else {
@@ -34,9 +44,9 @@ class ContactDetails extends CheckoutStep
             }
         }
 
-        return array(
+        return [
             'OrderForm' => $form,
-        );
+        ];
     }
 
     public function ContactDetailsForm()
@@ -45,13 +55,13 @@ class ContactDetails extends CheckoutStep
         if (!$cart) {
             return false;
         }
-        $config = new CheckoutComponentConfig(ShoppingCart::curr());
-        $config->addComponent(CustomerDetailsCheckoutComponent::create());
+        $config = CheckoutComponentConfig::create(ShoppingCart::curr());
+        $config->addComponent(CustomerDetails::create());
         $form = CheckoutForm::create($this->owner, 'ContactDetailsForm', $config);
         $form->setRedirectLink($this->NextStepLink());
         $form->setActions(
             FieldList::create(
-                FormAction::create("checkoutSubmit", _t('CheckoutStep.Continue', "Continue"))
+                FormAction::create('checkoutSubmit', _t('CheckoutStep.Continue', 'Continue'))
             )
         );
         $this->owner->extend('updateContactDetailsForm', $form);

@@ -3,6 +3,8 @@
 namespace SilverShop\Core\Checkout\Component;
 
 
+use SilverShop\Core\Checkout\Checkout;
+use SilverShop\Core\Model\Order;
 use SilverStripe\Omnipay\GatewayInfo;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\OptionsetField;
@@ -41,7 +43,7 @@ class Payment extends CheckoutComponent
     public function getRequiredFields(Order $order)
     {
         if (count(GatewayInfo::getSupportedGateways()) > 1) {
-            return array();
+            return [];
         }
 
         return array('PaymentMethod');

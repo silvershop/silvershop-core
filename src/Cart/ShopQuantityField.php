@@ -3,23 +3,26 @@
 namespace SilverShop\Core\Cart;
 
 
+use SilverShop\Core\Model\Buyable;
+use SilverShop\Core\Model\OrderItem;
+use SilverShop\Core\ShopTools;
+use SilverStripe\Forms\HiddenField;
 use SilverStripe\Forms\NumericField;
-use SilverStripe\Forms\FormField;
 use SilverStripe\View\ViewableData;
-use SilverStripe\Forms\DropdownField;
-
 
 
 class ShopQuantityField extends ViewableData
 {
+    /** @var OrderItem  */
     protected $item;
 
     protected $parameters;
 
-    protected $classes  = array('ajaxQuantityField');
+    protected $classes = ['ajaxQuantityField'];
 
     protected $template = 'ShopQuantityField';
 
+    /** @var Buyable */
     protected $buyable;
 
     public function __construct($object, $parameters = null)
@@ -38,7 +41,7 @@ class ShopQuantityField extends ViewableData
             $this->buyable = $object->Buyable();
         }
         if (!$this->item) {
-            user_error("ShopQuantityField: no item or product passed to constructor.");
+            user_error('ShopQuantityField: no item or product passed to constructor.');
         }
         $this->parameters = $parameters;
         //TODO: include javascript for easy update
@@ -77,14 +80,14 @@ class ShopQuantityField extends ViewableData
         return NumericField::create(
             $this->MainID() . '_Quantity',
             // this title currently doesn't show up in the front end, better assign a translation anyway.
-            _t('Order.Quantity', "Quantity"),
+            _t('SilverShop\Core\Model\Order.Quantity', 'Quantity'),
             $this->item->Quantity
-        )->setAttribute('type', 'number');
+        )->setHTML5(true);
     }
 
     public function MainID()
     {
-        return get_class($this->item) . '_DB_' . $this->item->ID;
+        return ShopTools::sanitiseClassName($this->item->class) . '_DB_' . $this->item->ID;
     }
 
     public function IncrementLink()
@@ -108,14 +111,9 @@ class ShopQuantityField extends ViewableData
     public function AJAXLinkHiddenField()
     {
         if ($quantitylink = $this->item->setquantityLink()) {
-            $attributes = array(
-                'type'  => 'hidden',
-                'class' => 'ajaxQuantityField_qtylink',
-                'name'  => $this->MainID() . '_Quantity_SetQuantityLink',
-                'value' => $quantitylink,
-            );
-            $formfield = FormField::create('hack');
-            return $formfield->createTag('input', $attributes);
+            return HiddenField::create(
+                $this->MainID() . '_Quantity_SetQuantityLink'
+            )->setValue($quantitylink)->addExtraClass('ajaxQuantityField_qtylink');
         }
     }
 }

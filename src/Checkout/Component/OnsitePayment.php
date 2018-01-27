@@ -4,14 +4,13 @@ namespace SilverShop\Core\Checkout\Component;
 
 
 use Omnipay\Common\Helper;
+use SilverShop\Core\Checkout\Checkout;
+use SilverShop\Core\Model\Order;
 use SilverStripe\Omnipay\GatewayInfo;
 use SilverStripe\Omnipay\GatewayFieldsFactory;
 use SilverStripe\Forms\LiteralField;
 use SilverStripe\ORM\ValidationResult;
 use SilverStripe\ORM\ValidationException;
-
-
-
 
 /**
  *
@@ -22,13 +21,13 @@ class OnsitePayment extends CheckoutComponent
     public function getFormFields(Order $order)
     {
         $gateway = Checkout::get($order)->getSelectedPaymentMethod();
-        $gatewayfieldsfactory = new GatewayFieldsFactory($gateway, array('Card'));
+        $gatewayfieldsfactory = new GatewayFieldsFactory($gateway, ['Card']);
         $fields = $gatewayfieldsfactory->getCardFields();
-        if ($gateway === "Dummy") {
+        if ($gateway === 'Dummy') {
             $fields->unshift(
                 LiteralField::create(
-                    "dummypaymentmessage",
-                    "<p class=\"message good\">Dummy data has been added to the form for testing convenience.</p>"
+                    'dummypaymentmessage',
+                    '<p class=\"message good\">Dummy data has been added to the form for testing convenience.</p>'
                 )
             );
         }
@@ -40,7 +39,7 @@ class OnsitePayment extends CheckoutComponent
     {
         $gateway = Checkout::get($order)->getSelectedPaymentMethod();
         $required = GatewayInfo::requiredFields($gateway);
-        $fieldsFactory = new GatewayFieldsFactory($gateway, array('Card'));
+        $fieldsFactory = new GatewayFieldsFactory($gateway, ['Card']);
         return $fieldsFactory->getFieldName(array_combine($required, $required));
     }
 
@@ -49,7 +48,7 @@ class OnsitePayment extends CheckoutComponent
         $result = ValidationResult::create();
         //TODO: validate credit card data
         if (!Helper::validateLuhn($data['number'])) {
-            $result->error(_t('OnsitePaymentCheckoutComponent.InvalidCreditCard', 'Credit card is invalid'));
+            $result->error(_t(__CLASS__ . '.InvalidCreditCard', 'Credit card is invalid'));
             throw new ValidationException($result);
         }
     }
@@ -59,13 +58,13 @@ class OnsitePayment extends CheckoutComponent
         $data = array();
         $gateway = Checkout::get($order)->getSelectedPaymentMethod();
         //provide valid dummy credit card data
-        if ($gateway === "Dummy") {
+        if ($gateway === 'Dummy') {
             $data = array_merge(
-                array(
-                    'name'   => 'Joe Bloggs',
+                [
+                    'name' => 'Joe Bloggs',
                     'number' => '4242424242424242',
-                    'cvv'    => 123,
-                ),
+                    'cvv' => 123,
+                ],
                 $data
             );
         }

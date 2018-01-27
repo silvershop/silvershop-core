@@ -4,9 +4,9 @@ namespace SilverShop\Core\Account;
 
 use SilverShop\Core\Cart\ShoppingCart;
 use SilverShop\Core\Model\Order;
+use SilverShop\Core\ShopTools;
 use SilverStripe\Control\Controller;
 use SilverStripe\Control\HTTPRequest;
-use SilverStripe\Control\Session;
 use SilverStripe\Core\Extension;
 use SilverStripe\Forms\Form;
 use SilverStripe\ORM\DataList;
@@ -40,7 +40,7 @@ class OrderManipulation extends Extension
             $history = array();
         }
         $history[$order->ID] = $order->ID;
-        self::getSession()->set(self::$sessname, $history);
+        ShopTools::getSession()->set(self::$sessname, $history);
     }
 
     /**
@@ -48,7 +48,7 @@ class OrderManipulation extends Extension
      */
     public static function get_session_order_ids()
     {
-        $history = self::getSession()->get(self::$sessname);
+        $history = ShopTools::getSession()->get(self::$sessname);
         if (!is_array($history)) {
             $history = null;
         }
@@ -57,7 +57,7 @@ class OrderManipulation extends Extension
 
     public static function clear_session_order_ids()
     {
-        self::getSession()->set(self::$sessname, null)->clear(self::$sessname);
+        ShopTools::getSession()->set(self::$sessname, null)->clear(self::$sessname);
     }
 
     /**
@@ -186,14 +186,5 @@ class OrderManipulation extends Extension
         }
 
         return $this->sessionmessagetype;
-    }
-
-    private static function getSession()
-    {
-        if ($request = Controller::curr()->getRequest()) {
-            return $request->getSession();
-        }
-
-        return new Session([]);
     }
 }

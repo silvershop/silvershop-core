@@ -3,15 +3,18 @@
 namespace SilverShop\Core\Checkout\Step;
 
 
-use SilverStripe\Security\Member;
+use SilverShop\Core\Cart\ShoppingCart;
+use SilverShop\Core\Checkout\CheckoutForm;
+use SilverShop\Core\Checkout\Component\CheckoutComponentConfig;
+use SilverShop\Core\Checkout\Component\CustomerDetails;
+use SilverShop\Core\Model\Order;
 use SilverStripe\Control\Controller;
-use SilverStripe\Forms\FieldList;
-use SilverStripe\Forms\FormAction;
-use SilverStripe\Forms\Form;
-use SilverStripe\Security\LoginForm;
-use SilverStripe\Security\MemberAuthenticator\MemberLoginForm;
 use SilverStripe\Control\HTTPRequest;
-
+use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\Form;
+use SilverStripe\Forms\FormAction;
+use SilverStripe\Security\MemberAuthenticator\MemberLoginForm;
+use SilverStripe\Security\Security;
 
 
 /**
@@ -19,37 +22,38 @@ use SilverStripe\Control\HTTPRequest;
  */
 class Membership extends CheckoutStep
 {
-    private static $allowed_actions   = array(
+    private static $allowed_actions = [
         'membership',
         'MembershipForm',
         'LoginForm',
         'createaccount',
         'docreateaccount',
         'CreateAccountForm',
-    );
+    ];
 
-    public static  $url_handlers      = array(
+    public static $url_handlers = [
         'login' => 'index',
-    );
+    ];
 
-    public static  $skip_if_logged_in = true;
+    /**
+     * @config whether or not this step should be skipped if user is logged in
+     * @var bool
+     */
+    public static $skip_if_logged_in = true;
 
     public function membership()
     {
         //if logged in, then redirect to next step
-        if (ShoppingCart::curr() && self::$skip_if_logged_in && Member::currentUser()) {
-            Controller::curr()->redirect($this->NextStepLink());
-            return;
+        if (ShoppingCart::curr() && self::config()->skip_if_logged_in && Security::getCurrentUser()) {
+            return Controller::curr()->redirect($this->NextStepLink());
         }
-        return $this->owner->customise(
-            array(
-                'Form'      => $this->MembershipForm(),
-                'LoginForm' => $this->LoginForm(),
-                'GuestLink' => $this->NextStepLink(),
-            )
-        )->renderWith(
-            array("CheckoutPage_membership", "CheckoutPage", "Page")
-        ); //needed to make rendering work on index
+        return $this->owner->customise([
+            'Form' => $this->MembershipForm(),
+            'LoginForm' => $this->LoginForm(),
+            'GuestLink' => $this->NextStepLink(),
+        ])->renderWith([
+            'CheckoutPage_membership', 'CheckoutPage', 'Page'
+        ]); //needed to make rendering work on index
     }
 
     public function MembershipForm()
@@ -57,14 +61,14 @@ class Membership extends CheckoutStep
         $fields = FieldList::create();
         $actions = FieldList::create(
             FormAction::create(
-                "createaccount",
+                'createaccount',
                 _t(
-                    'CheckoutStep_Membership.CreateAccount',
-                    "Create an Account",
+                    __CLASS__ . '.CreateAccount',
+                    'Create an Account',
                     'This is an option presented to the user'
                 )
             ),
-            FormAction::create("guestcontinue", _t('CheckoutStep_Membership.ContinueAsGuest', "Continue as Guest"))
+            FormAction::create('guestcontinue', _t(__CLASS__ . '.ContinueAsGuest', 'Continue as Guest'))
         );
         $form = Form::create($this->owner, 'MembershipForm', $fields, $actions);
         $this->owner->extend('updateMembershipForm', $form);
@@ -86,18 +90,16 @@ class Membership extends CheckoutStep
     public function createaccount($requestdata)
     {
         //we shouldn't create an account if already a member
-        if (Member::currentUser()) {
-            Controller::curr()->redirect($this->NextStepLink());
-            return;
+        if (Security::getCurrentUser()) {
+            return Controller::curr()->redirect($this->NextStepLink());
         }
         //using this function to redirect, and display action
         if (!($requestdata instanceof HTTPRequest)) {
-            Controller::curr()->redirect($this->NextStepLink('createaccount'));
-            return;
+            return Controller::curr()->redirect($this->NextStepLink('createaccount'));
         }
-        return array(
+        return [
             'Form' => $this->CreateAccountForm(),
-        );
+        ];
     }
 
     public function registerconfig()
@@ -107,29 +109,29 @@ class Membership extends CheckoutStep
         if (!$order) {
             $order = Order::create();
         }
-        $config = new CheckoutComponentConfig($order, false);
-        $config->addComponent(CustomerDetailsCheckoutComponent::create());
-        $config->addComponent(MembershipCheckoutComponent::create());
+        $config = CheckoutComponentConfig::create($order, false);
+        $config->addComponent(CustomerDetails::create());
+        $config->addComponent(Membership::create());
 
         return $config;
     }
 
     public function CreateAccountForm()
     {
-        $form = CheckoutForm::create($this->owner, "CreateAccountForm", $this->registerconfig());
+        $form = CheckoutForm::create($this->owner, 'CreateAccountForm', $this->registerconfig());
         $form->setActions(
             FieldList::create(
                 FormAction::create(
                     'docreateaccount',
                     _t(
-                        'CheckoutStep_Membership.CreateNewAccount',
+                        __CLASS__ . '.CreateNewAccount',
                         'Create New Account',
                         'This is an action (Button label)'
                     )
                 )
             )
         );
-        $form->getValidator()->addRequiredField("Password");
+        $form->getValidator()->addRequiredField('Password');
 
         $this->owner->extend('updateCreateAccountForm', $form);
         return $form;

@@ -2,11 +2,8 @@
 
 namespace SilverShop\Core;
 
-
-use SilverStripe\Control\Session;
-use SilverStripe\Core\Convert;
+use SilverShop\Core\Model\Address;
 use SilverStripe\Core\Injector\Injectable;
-
 
 /**
  * Collects and stores data about the user. Keep this data in session.
@@ -14,11 +11,6 @@ use SilverStripe\Core\Injector\Injectable;
 class ShopUserInfo
 {
     use Injectable;
-
-
-    private function __construct()
-    {
-    }
 
     /**
      * Get an array of location data
@@ -41,6 +33,7 @@ class ShopUserInfo
      * Get location of user
      *
      * @param Address $address location
+     * @return null|Address
      */
     public function getAddress()
     {
@@ -58,6 +51,7 @@ class ShopUserInfo
      * Set location of user
      *
      * @param Address $address location
+     * @return $this
      */
     public function setAddress(Address $address)
     {
@@ -68,12 +62,12 @@ class ShopUserInfo
 
     protected function getLocationData()
     {
-        $data = Session::get("UserInfo.Location");
-        return is_array($data) ? $data : array();
+        $data = ShopTools::getSession()->get('UserInfo.Location');
+        return is_array($data) ? $data : [];
     }
 
     protected function setLocationData(array $data)
     {
-        Session::set("UserInfo.Location", Convert::raw2sql($data));
+        ShopTools::getSession()->set('UserInfo.Location', $data);
     }
 }

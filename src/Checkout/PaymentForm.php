@@ -3,6 +3,10 @@
 namespace SilverShop\Core\Checkout;
 
 
+use SilverShop\Core\Checkout\Component\CheckoutComponentConfig;
+use SilverShop\Core\Checkout\Component\CheckoutComponentNamespaced;
+use SilverShop\Core\Checkout\Component\OnsitePayment;
+use SilverShop\Core\Model\Order;
 use SilverStripe\Omnipay\GatewayInfo;
 use SilverStripe\Omnipay\GatewayFieldsFactory;
 use SilverStripe\Core\Injector\Injector;
@@ -110,12 +114,12 @@ class PaymentForm extends CheckoutForm
             $cancelUrl = $this->orderProcessor->getReturnUrl();
         }
 
-        // if we got here from checkoutSubmit and there's a namespaced OnsitePaymentCheckoutComponent
+        // if we got here from checkoutSubmit and there's a namespaced OnsitePayment Component
         // in there, we need to strip the inputs down to only the checkout component.
         $components = $this->config->getComponents();
-        if ($components->first() instanceof CheckoutComponent_Namespaced) {
+        if ($components->first() instanceof CheckoutComponentNamespaced) {
             foreach ($components as $component) {
-                if ($component->Proxy() instanceof OnsitePaymentCheckoutComponent) {
+                if ($component->Proxy() instanceof OnsitePayment) {
                     $data = array_merge($data, $component->unnamespaceData($data));
                 }
             }

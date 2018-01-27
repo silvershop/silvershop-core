@@ -3,9 +3,11 @@
 namespace SilverShop\Core\Checkout\Step;
 
 
+use SilverShop\Core\Cart\ShoppingCart;
+use SilverShop\Core\Checkout\CheckoutPage;
+use SilverShop\Core\Checkout\CheckoutPageController;
 use SilverStripe\Control\Controller;
 use SilverStripe\Core\Extension;
-use Object;
 
 
 /**
@@ -16,7 +18,13 @@ use Object;
  */
 class SteppedCheckout extends Extension
 {
-    /** @var CheckoutPage_Controller */
+    /**
+     * @config anchor string to add to continue links
+     * @var string
+     */
+    private static $continue_anchor;
+
+    /** @var CheckoutPageController */
     protected $owner;
 
     /**
@@ -26,14 +34,14 @@ class SteppedCheckout extends Extension
     {
         if (!is_array($steps)) {
             //default steps
-            $steps = array(
-                'membership'      => 'CheckoutStep_Membership',
-                'contactdetails'  => 'CheckoutStep_ContactDetails',
-                'shippingaddress' => 'CheckoutStep_Address',
-                'billingaddress'  => 'CheckoutStep_Address',
-                'paymentmethod'   => 'CheckoutStep_PaymentMethod',
-                'summary'         => 'CheckoutStep_Summary',
-            );
+            $steps =[
+                'membership'      => Membership::class,
+                'contactdetails'  => ContactDetails::class,
+                'shippingaddress' => Address::class,
+                'billingaddress'  => Address::class,
+                'paymentmethod'   => PaymentMethod::class,
+                'summary'         => Summary::class,
+            ];
         }
 
         CheckoutPage::config()->steps = $steps;
@@ -43,9 +51,9 @@ class SteppedCheckout extends Extension
             CheckoutPage::config()->first_step = key($steps);
         }
         //initiate extensions
-        Object::add_extension("CheckoutPage_Controller", "SteppedCheckout");
+        CheckoutPageController::add_extension(SteppedCheckout::class);
         foreach ($steps as $action => $classname) {
-            Object::add_extension("CheckoutPage_Controller", $classname);
+            CheckoutPageController::add_extension($classname);
         }
     }
 
@@ -74,7 +82,7 @@ class SteppedCheckout extends Extension
     {
         if ($this->owner->getAction() === $name) {
             return true;
-        } elseif (!$this->owner->getAction() || $this->owner->getAction() === "index") {
+        } elseif (!$this->owner->getAction() || $this->owner->getAction() === 'index') {
             return $this->actionPos($name) === 0;
         }
         return false;

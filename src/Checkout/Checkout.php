@@ -2,12 +2,16 @@
 
 namespace SilverShop\Core\Checkout;
 
-
+use SilverShop\Core\Cart\ShoppingCart;
+use SilverShop\Core\Model\Address;
+use SilverShop\Core\Model\Order;
+use SilverShop\Core\Model\Zone;
+use SilverShop\Core\ShopTools;
+use SilverShop\Core\ShopUserInfo;
+use SilverStripe\Core\Injector\Injectable;
 use SilverStripe\Omnipay\GatewayInfo;
 use SilverStripe\Security\Member;
-use SilverStripe\Control\Session;
-
-
+use SilverStripe\Security\Security;
 
 
 /**
@@ -15,6 +19,8 @@ use SilverStripe\Control\Session;
  */
 class Checkout
 {
+    use Injectable;
+
     /**
      * 4 different membership schemes:
      *    1: creation disabled & membership not required
@@ -44,15 +50,24 @@ class Checkout
             $order = ShoppingCart::curr(); //roll back to current cart
         }
         if ($order->exists() && $order->isInDB()) {//check if order can go through checkout
-            return new Checkout($order);
+            return Checkout::create($order);
         }
         return false;
     }
 
+    /**
+     * @var Order
+     */
     protected $order;
 
+    /**
+     * @var string
+     */
     protected $message;
 
+    /**
+     * @var string
+     */
     protected $type;
 
     public function __construct(Order $order)
@@ -95,8 +110,8 @@ class Checkout
     public function setShippingAddress(Address $address)
     {
         $this->order->ShippingAddressID = $address->ID;
-        if (Member::currentUserID()) {
-            $this->order->MemberID = Member::currentUserID();
+        if ($member = Security::getCurrentUser()) {
+            $this->order->MemberID = $member->ID;
         }
         $this->order->write();
         $this->order->extend('onSetShippingAddress', $address);
@@ -108,45 +123,40 @@ class Checkout
     public function setBillingAddress(Address $address)
     {
         $this->order->BillingAddressID = $address->ID;
-        if (Member::currentUserID()) {
-            $this->order->MemberID = Member::currentUserID();
+        if ($member = Security::getCurrentUser()) {
+            $this->order->MemberID = $member->ID;
         }
         $this->order->write();
         $this->order->extend('onSetBillingAddress', $address);
     }
 
-    /*
-     * Get a dataobject of payment methods.
-     */
-    public function getPaymentMethods()
-    {
-        return GatewayInfo::getSupportedGateways();
-    }
-
     /**
      * Set payment method
+     * @throws \SilverStripe\Omnipay\Exception\InvalidConfigurationException
      */
     public function setPaymentMethod($paymentmethod)
     {
-        $methods = $this->getPaymentMethods();
+        $methods = GatewayInfo::getSupportedGateways();
         if (!isset($methods[$paymentmethod])) {
-            Session::set("Checkout.PaymentMethod", null);
-            Session::clear("Checkout.PaymentMethod");
-            return $this->error(_t("Checkout.NoPaymentMethod", "Payment method does not exist"));
+            ShopTools::getSession()
+                ->set('Checkout.PaymentMethod', null)
+                ->clear('Checkout.PaymentMethod');
+            return $this->error(_t(__CLASS__ . '.NoPaymentMethod', 'Payment method does not exist'));
         }
-        Session::set("Checkout.PaymentMethod", $paymentmethod);
+        ShopTools::getSession()->set('Checkout.PaymentMethod', $paymentmethod);
         return true;
     }
 
     /**
      * Gets the selected payment method from the session,
      * or the only available method, if there is only one.
+     * @throws \SilverStripe\Omnipay\Exception\InvalidConfigurationException
      */
     public function getSelectedPaymentMethod($nice = false)
     {
-        $methods = $this->getPaymentMethods();
+        $methods = GatewayInfo::getSupportedGateways();
         reset($methods);
-        $method = count($methods) === 1 ? key($methods) : Session::get("Checkout.PaymentMethod");
+        $method = count($methods) === 1 ? key($methods) : ShopTools::getSession()->get('Checkout.PaymentMethod');
         if ($nice && isset($methods[$method])) {
             $method = $methods[$method];
         }
@@ -173,7 +183,7 @@ class Checkout
      */
     protected function error($message)
     {
-        $this->message($message, "bad");
+        $this->message($message, 'bad');
         return false;
     }
 
@@ -183,7 +193,7 @@ class Checkout
      * @param string $message
      * @param string $type - good, bad, warning
      */
-    protected function message($message, $type = "good")
+    protected function message($message, $type = 'good')
     {
         $this->message = $message;
         $this->type = $type;

@@ -33,6 +33,12 @@ class CheckoutPage extends Page
     private static $icon = 'silvershop/images/icons/money';
 
     /**
+     * @config
+     * @var array
+     */
+    private static $steps;
+
+    /**
      * Returns the link to the checkout page on this site
      *
      * @param boolean $urlSegment If set to TRUE, only returns the URLSegment field
@@ -41,7 +47,7 @@ class CheckoutPage extends Page
      */
     public static function find_link($urlSegment = false, $action = null, $id = null)
     {
-        $base = CheckoutPage_Controller::config()->url_segment;
+        $base = CheckoutPageController::config()->url_segment;
         if ($page = self::get()->first()) {
             $base = $page->Link();
         }
