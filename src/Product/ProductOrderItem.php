@@ -3,24 +3,24 @@
 namespace SilverShop\Core\Product;
 
 
+use SilverShop\Core\Model\OrderItem;
 use SilverStripe\Versioned\Versioned;
-
 
 
 class ProductOrderItem extends OrderItem
 {
-    private static $db      = array(
+    private static $db = [
         'ProductVersion' => 'Int',
-    );
+    ];
 
-    private static $has_one = array(
+    private static $has_one = [
         'Product' => 'Product',
-    );
+    ];
 
     /**
      * the has_one join field to identify the buyable
      */
-    private static $buyable_relationship = "Product";
+    private static $buyable_relationship = 'Product';
 
     /**
      * Get related product
@@ -40,9 +40,9 @@ class ProductOrderItem extends OrderItem
         } elseif (
             $this->ProductID
             && $product = Versioned::get_one_by_stage(
-                "Product",
-                "Live",
-                "\"Product\".\"ID\"  = " . $this->ProductID
+                'Product',
+                'Live',
+                '"Product"."ID"  = ' . $this->ProductID
             )
         ) {
             return $product;

@@ -2,18 +2,19 @@
 
 namespace SilverShop\Core\Reports\SideReport;
 
+use SilverShop\Core\Product\Product;
 use SilverStripe\Reports\Report;
 
 class HeavyProducts extends Report
 {
     public function title()
     {
-        return _t('ShopSideReport.Heavy', "Heavy Products");
+        return _t('ShopSideReport.Heavy', 'Heavy Products');
     }
 
     public function group()
     {
-        return _t('ShopSideReport.ShopGroup', "Shop");
+        return _t('ShopSideReport.ShopGroup', 'Shop');
     }
 
     public function sort()
@@ -23,19 +24,19 @@ class HeavyProducts extends Report
 
     public function sourceRecords($params = null)
     {
-        return Product::get()->where("\"Product\".\"Weight\" > 10")->sort("\"Weight\" ASC");
+        return Product::get()->filter('Weight:GreaterThan', 10)->sort('Weight', 'ASC');
     }
 
     public function columns()
     {
-        return array(
-            "Title" => array(
-                "title" => "Title",
-                "link"  => true,
-            ),
-            "Weight" => array(
+        return [
+            'Title' => [
+                'title' => 'Title',
+                'link' => true,
+            ],
+            'Weight' => [
                 'title' => 'Weight',
-            ),
-        );
+            ],
+        ];
     }
 }

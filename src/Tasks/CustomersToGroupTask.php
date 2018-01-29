@@ -9,7 +9,6 @@ use SilverStripe\ORM\DataObject;
 use SilverStripe\Dev\BuildTask;
 
 
-
 /**
  * Adds all customers to an assigned group.
  *
@@ -18,9 +17,9 @@ use SilverStripe\Dev\BuildTask;
  */
 class CustomersToGroupTask extends BuildTask
 {
-    protected $title       = "Customers to Group";
+    protected $title = 'Customers to Group';
 
-    protected $description = "Adds all customers to an assigned group.";
+    protected $description = 'Adds all customers to an assigned group.';
 
     public function run($request)
     {
@@ -31,32 +30,32 @@ class CustomersToGroupTask extends BuildTask
         }
 
         $allCombos = DB::query(
-            "SELECT \"ID\", \"MemberID\", \"GroupID\" FROM \"Group_Members\" WHERE \"Group_Members\".\"GroupID\" = "
-            . $gp->ID . ";"
+            'SELECT "ID", "MemberID", "GroupID" FROM "Group_Members" WHERE "Group_Members"."GroupID" = '
+            . $gp->ID . ';'
         );
         //make an array of all combos
         $alreadyAdded = array();
         $alreadyAdded[-1] = -1;
         if ($allCombos) {
             foreach ($allCombos as $combo) {
-                $alreadyAdded[$combo["MemberID"]] = $combo["MemberID"];
+                $alreadyAdded[$combo['MemberID']] = $combo['MemberID'];
             }
         }
         $unlistedMembers = DataObject::get(
             Member::class,
-            $where = "\"Member\".\"ID\" NOT IN (" . implode(",", $alreadyAdded) . ")",
+            $where = '"Member"."ID" NOT IN (' . implode(',', $alreadyAdded) . ')',
             $sort = null,
-            $join = "INNER JOIN \"Order\" ON \"Order\".\"MemberID\" = \"Member\".\"ID\""
+            $join = 'INNER JOIN "Order" ON "Order"."MemberID" = "Member"."ID"'
         );
         //add combos
         if ($unlistedMembers) {
             $existingMembers = $gp->Members();
             foreach ($unlistedMembers as $member) {
                 $existingMembers->add($member);
-                echo ".";
+                echo '.';
             }
         } else {
-            echo "no new members added";
+            echo 'no new members added';
         }
     }
 }

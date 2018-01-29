@@ -3,9 +3,8 @@
 namespace SilverShop\Core\Tasks;
 
 
-use SilverStripe\ORM\DataObject;
+use SilverShop\Core\Product\Product;
 use SilverStripe\Control\CliController;
-
 
 
 /**
@@ -16,9 +15,8 @@ class ProductVariationsFromAttributeCombinations extends CliController
 {
     public function process()
     {
-
-        $products = DataObject::get('Product');
-        if (!$products) {
+        $products = Product::get();
+        if (!$products->count()) {
             return;
         }
 

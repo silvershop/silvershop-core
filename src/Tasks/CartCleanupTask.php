@@ -3,6 +3,7 @@
 namespace SilverShop\Core\Tasks;
 
 
+use SilverShop\Core\Model\Order;
 use SilverStripe\ORM\FieldType\DBDatetime;
 use SilverStripe\Dev\BuildTask;
 use LogicException;
@@ -28,12 +29,12 @@ class CartCleanupTask extends BuildTask
     /**
      * @var string
      */
-    protected $title = "Delete abandoned carts";
+    protected $title = 'Delete abandoned carts';
 
     /**
      * @var string
      */
-    protected $description = "Deletes abandoned carts.";
+    protected $description = 'Deletes abandoned carts.';
 
     public function run($request)
     {
@@ -41,18 +42,15 @@ class CartCleanupTask extends BuildTask
             throw new LogicException('No valid time specified in "delete_after_mins"');
         }
 
-        $start = 0;
         $count = 0;
         $time = date('Y-m-d H:i:s', DBDatetime::now()->Format('U') - $this->config()->get('delete_after_mins') * 60);
 
-        $this->log("Deleting all orders since " . $time);
+        $this->log('Deleting all orders since ' . $time);
 
-        $orders = Order::get()->filter(
-            array(
-                'Status'              => 'Cart',
-                'LastEdited:LessThan' => $time,
-            )
-        );
+        $orders = Order::get()->filter([
+            'Status' => 'Cart',
+            'LastEdited:LessThan' => $time,
+        ]);
         foreach ($orders as $order) {
             $this->log(sprintf('Deleting order #%s (Reference: %s)', $order->ID, $order->Reference));
             $order->delete();

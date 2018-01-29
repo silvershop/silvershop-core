@@ -3,15 +3,16 @@
 namespace SilverShop\Core\Product\Variation;
 
 
+use SilverShop\Core\Model\FieldType\ShopCurrency;
+use SilverShop\Core\Product\Product;
 use SilverStripe\Forms\FieldList;
-use SilverStripe\Forms\ListboxField;
-use SilverStripe\Forms\GridField\GridFieldConfig_RecordEditor;
 use SilverStripe\Forms\GridField\GridField;
+use SilverStripe\Forms\GridField\GridFieldConfig_RecordEditor;
 use SilverStripe\Forms\LabelField;
-use SilverStripe\View\ArrayData;
-use SilverStripe\Versioned\Versioned;
 use SilverStripe\ORM\DataExtension;
-
+use SilverStripe\ORM\DataList;
+use SilverStripe\Versioned\Versioned;
+use SilverStripe\View\ArrayData;
 
 
 /**
@@ -22,39 +23,26 @@ use SilverStripe\ORM\DataExtension;
  */
 class ProductVariationsExtension extends DataExtension
 {
-    private static $has_many  = array(
-        'Variations' => 'ProductVariation',
-    );
+    private static $has_many = [
+        'Variations' => Variation::class,
+    ];
 
-    private static $many_many = array(
-        'VariationAttributeTypes' => 'ProductAttributeType',
-    );
+    private static $many_many = [
+        'VariationAttributeTypes' => AttributeType::class,
+    ];
 
     /**
      * Adds variations specific fields to the CMS.
      */
     public function updateCMSFields(FieldList $fields)
     {
-        $fields->addFieldsToTab(
+        $fields->addFieldToTab(
             'Root.Variations',
-            array(
-                // ListboxField::create(
-                //     "VariationAttributeTypes",
-                //     _t('ProductVariationsExtension.Attributes', "Attributes"),
-                //     ProductAttributeType::get()->map("ID", "Title")->toArray()
-                // )->setMultiple(true)
-                //     ->setDescription(
-                //         _t(
-                //             'ProductVariationsExtension.AttributesDescription',
-                //             "These are fields to indicate the way(s) each variation varies. Once selected, they can be edited on each variation."
-                //         )
-                //     ),
-                GridField::create(
-                    "Variations",
-                    _t('ProductVariationsExtension.Variations', "Variations"),
-                    $this->owner->Variations(),
-                    GridFieldConfig_RecordEditor::create()
-                ),
+            GridField::create(
+                'Variations',
+                _t(__CLASS__ . '.Variations', 'Variations'),
+                $this->owner->Variations(),
+                GridFieldConfig_RecordEditor::create()
             )
         );
         if ($this->owner->Variations()->exists()) {
@@ -64,7 +52,7 @@ class ProductVariationsExtension extends DataExtension
                     'variationspriceinstructinos',
                     _t(
                         'ProductVariationsExtension.VariationsInfo',
-                        "Price - Because you have one or more variations, the price can be set in the \"Variations\" tab."
+                        'Price - Because you have one or more variations, the price can be set in the "Variations" tab.'
                     )
                 )
             );
@@ -89,9 +77,9 @@ class ProductVariationsExtension extends DataExtension
         $prices = $variations->map('ID', 'SellingPrice')->toArray();
         $pricedata = array(
             'HasRange' => false,
-            'Max'      => ShopCurrency::create(),
-            'Min'      => ShopCurrency::create(),
-            'Average'  => ShopCurrency::create(),
+            'Max' => ShopCurrency::create(),
+            'Min' => ShopCurrency::create(),
+            'Average' => ShopCurrency::create(),
         );
         $count = count($prices);
         $sum = array_sum($prices);
@@ -112,41 +100,28 @@ class ProductVariationsExtension extends DataExtension
      *
      * @param array $attributes
      *
-     * @return NULL
+     * @return Variation|null
      */
     public function getVariationByAttributes(array $attributes)
     {
         if (!is_array($attributes)) {
             return null;
         }
-        $keyattributes = array_keys($attributes);
-        $id = $keyattributes[0];
-        $variations = ProductVariation::get()->filter("ProductID", $this->owner->ID);
 
-        foreach ($attributes as $typeid => $valueid) {
-            if (!is_numeric($typeid) || !is_numeric($valueid)) {
-                return null;
-            } //ids MUST be numeric
-            $alias = "A$typeid";
-            $variations = $variations->innerJoin(
-                "ProductVariation_AttributeValues",
-                "\"ProductVariation\".\"ID\" = \"$alias\".\"ProductVariationID\"",
-                $alias
-            )->where("\"$alias\".\"ProductAttributeValueID\" = $valueid");
-        }
-        if ($variation = $variations->First()) {
-            return $variation;
-        }
-        return false;
+        return Variation::get()->filter([
+            'ProductID' => $this->owner->ID,
+            'AttributeValues.ID' => array_filter(array_values($attributes))
+        ])->first();
     }
 
     /**
      * Generates variations based on selected attributes.
      *
-     * @param ProductAttributeType $attributetype
-     * @param array                $values
+     * @param AttributeType $attributetype
+     * @param array $values
+     * @throws \SilverStripe\ORM\ValidationException
      */
-    public function generateVariationsFromAttributes(ProductAttributeType $attributetype, array $values)
+    public function generateVariationsFromAttributes(AttributeType $attributetype, array $values)
     {
         //TODO: introduce transactions here, in case objects get half made etc
         //if product has variation attribute types
@@ -174,7 +149,7 @@ class ProductVariationsExtension extends DataExtension
                 }
             } else {
                 foreach ($avalues as $value) {
-                    $variation = ProductVariation::create();
+                    $variation = Variation::create();
                     $variation->ProductID = $this->owner->ID;
                     $variation->Price = $this->owner->BasePrice;
                     $variation->write();
@@ -205,11 +180,11 @@ class ProductVariationsExtension extends DataExtension
 
         $list = AttributeValue::get()
             ->innerJoin(
-                "ProductVariation_AttributeValues",
-                "\"ProductAttributeValue\".\"ID\" = \"ProductVariation_AttributeValues\".\"ProductAttributeValueID\""
+                'ProductVariation_AttributeValues',
+                '"ProductAttributeValue"."ID" = "ProductVariation_AttributeValues"."ProductAttributeValueID"'
             )->innerJoin(
-                "ProductVariation",
-                "\"ProductVariation_AttributeValues\".\"ProductVariationID\" = \"ProductVariation\".\"ID\""
+                'ProductVariation',
+                '"ProductVariation_AttributeValues"."ProductVariationID" = "ProductVariation"."ID"'
             )->where("TypeID = $type AND \"ProductVariation\".\"ProductID\" = " . $this->owner->ID);
 
         if (!Product::config()->allow_zero_price) {

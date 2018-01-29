@@ -3,15 +3,19 @@
 namespace SilverShop\Core\Product;
 
 
+use SilverShop\Core\Cart\ShoppingCart;
+use SilverShop\Core\Cart\ShoppingCartController;
+use SilverShop\Core\Model\Buyable;
+use SilverShop\Core\ShopTools;
 use SilverStripe\Core\Convert;
-use SilverStripe\ORM\DataObject;
-use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\DropdownField;
-use SilverStripe\Forms\NumericField;
-use SilverStripe\Forms\FormAction;
-use SilverStripe\Forms\RequiredFields;
+use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\Form;
-
+use SilverStripe\Forms\FormAction;
+use SilverStripe\Forms\NumericField;
+use SilverStripe\Forms\RequiredFields;
+use SilverStripe\Forms\Validator;
+use SilverStripe\ORM\DataObject;
 
 
 /**
@@ -80,7 +84,7 @@ class AddProductForm extends Form
             ) : $data;
             $quantity = isset($data['Quantity']) ? (int)$data['Quantity'] : 1;
             $cart->add($buyable, $quantity, $saveabledata);
-            if (!ShoppingCart_Controller::config()->direct_to_cart_page) {
+            if (!ShoppingCartController::config()->direct_to_cart_page) {
                 $form->SessionMessage($cart->getMessage(), $cart->getMessageType());
             }
 
@@ -88,7 +92,7 @@ class AddProductForm extends Form
 
             $this->extend('updateAddProductFormResponse', $request, $response, $buyable, $quantity, $form);
 
-            return $response ? $response : ShoppingCart_Controller::direct($cart->getMessageType());
+            return $response ? $response : ShoppingCartController::direct($cart->getMessageType());
         }
     }
 
@@ -144,10 +148,8 @@ class AddProductForm extends Form
      */
     protected function getFormValidator()
     {
-        return RequiredFields::create(
-            array(
-                'Quantity',
-            )
-        );
+        return RequiredFields::create([
+            'Quantity',
+        ]);
     }
 }

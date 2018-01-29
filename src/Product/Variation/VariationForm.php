@@ -3,10 +3,16 @@
 namespace SilverShop\Core\Product\Variation;
 
 
-use SilverStripe\Core\Convert;
-use SilverStripe\Forms\HiddenField;
 use Exception;
-use SQLQuery;
+use SilverShop\Core\Cart\ShoppingCart;
+use SilverShop\Core\Cart\ShoppingCartController;
+use SilverShop\Core\Product\AddProductForm;
+use SilverShop\Core\Product\Product;
+use SilverShop\Core\ShopTools;
+use SilverStripe\Core\Convert;
+use SilverStripe\Forms\Form;
+use SilverStripe\Forms\HiddenField;
+use SilverStripe\ORM\Queries\SQLSelect;
 
 
 /**
@@ -14,11 +20,15 @@ use SQLQuery;
  */
 class VariationForm extends AddProductForm
 {
-    public static $include_json = true;
+    /**
+     * @config
+     * @var bool
+     */
+    private static $include_json = true;
 
     protected $requiredFields = ['Quantity'];
 
-    public function __construct($controller, $name = "VariationForm")
+    public function __construct($controller, $name = 'VariationForm')
     {
         parent::__construct($controller, $name);
         $this->extend('updateVariationForm');
@@ -29,6 +39,8 @@ class VariationForm extends AddProductForm
      * (ValidateVariant) then simply a validation of the user including that
      * product is done and the users cart isn't actually changed.
      *
+     * @param array $data
+     * @param Form $form
      * @return mixed
      */
     public function addtocart($data, $form)
@@ -56,11 +68,11 @@ class VariationForm extends AddProductForm
                     $this->extend('updateVariationAddToCartMessage', $e, $message, $variation);
                 }
 
-                $ret = array(
+                $ret = [
                     'Message' => $message,
                     'Success' => $success,
-                    'Price'   => $variation->dbObject('Price')->TrimCents(),
-                );
+                    'Price' => $variation->dbObject('Price')->TrimCents(),
+                ];
 
                 $this->extend('updateVariationAddToCartAjax', $ret, $variation, $form);
 
@@ -73,8 +85,8 @@ class VariationForm extends AddProductForm
 
             if ($cart->add($variation, $quantity, $saveabledata)) {
                 $form->sessionMessage(
-                    _t('ShoppingCart.ItemAdded', "Item has been added successfully."),
-                    "good"
+                    _t('ShoppingCart.ItemAdded', 'Item has been added successfully.'),
+                    'good'
                 );
             } else {
                 $form->sessionMessage($cart->getMessage(), $cart->getMessageType());
@@ -82,15 +94,15 @@ class VariationForm extends AddProductForm
         } else {
             $variation = null;
             $form->sessionMessage(
-                _t('VariationForm.VariationNotAvailable', "That variation is not available, sorry."),
-                "bad"
+                _t(__CLASS__ . '.VariationNotAvailable', 'That variation is not available, sorry.'),
+                'bad'
             ); //validation fail
         }
 
         $this->extend('updateVariationAddToCart', $form, $variation);
 
         $this->extend('updateVariationFormResponse', $request, $response, $variation, $quantity, $form);
-        return $response ? $response : ShoppingCart_Controller::direct();
+        return $response ? $response : ShoppingCartController::direct();
     }
 
     public function getBuyable($data = null)
@@ -117,28 +129,28 @@ class VariationForm extends AddProductForm
         foreach ($attributes as $attribute) {
             $attributeDropdown = $attribute->getDropDownField(
                 _t(
-                    'VariationForm.ChooseAttribute',
-                    "Choose {attribute} …",
+                    __CLASS__ . '.ChooseAttribute',
+                    'Choose {attribute} …',
                     '',
-                    array('attribute' => $attribute->Label)
+                    ['attribute' => $attribute->Label]
                 ),
                 $product->possibleValuesForAttributeType($attribute)
             );
 
-            if($attributeDropdown){
+            if ($attributeDropdown) {
                 $fields->push($attributeDropdown);
                 $this->requiredFields[] = "ProductAttributes[$attribute->ID]";
             }
         }
 
-        if (self::$include_json) {
-            $vararray = array();
+        if ($this->config()->include_json) {
+            $vararray = [];
 
-            $query = $query2 = new SQLQuery();
+            $query = $query2 = new SQLSelect();
 
             $query->setSelect('ID')
-                ->setFrom('ProductVariation')
-                ->addWhere(array('ProductID' => $product->ID));
+                ->setFrom('SilverShop_Variation')
+                ->addWhere(['"ProductID" = ?' => $product->ID]);
 
             if (!Product::config()->allow_zero_price) {
                 $query->addWhere('"Price" > 0');

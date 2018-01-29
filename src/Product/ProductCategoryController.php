@@ -3,6 +3,8 @@
 namespace SilverShop\Core\Product;
 
 use PageController;
+use SilverShop\ListSorter\ListSorter;
+use SilverStripe\ORM\PaginatedList;
 
 class ProductCategoryController extends PageController
 {
@@ -32,7 +34,7 @@ class ProductCategoryController extends PageController
     public function FeaturedProducts($recursive = true)
     {
         return $this->ProductsShowable($recursive)
-            ->filter("Featured", true);
+            ->filter('Featured', true);
     }
 
     /**
@@ -41,7 +43,7 @@ class ProductCategoryController extends PageController
     public function NonFeaturedProducts($recursive = true)
     {
         return $this->ProductsShowable($recursive)
-            ->filter("Featured", false);
+            ->filter('Featured', false);
     }
 
     /**
@@ -54,7 +56,7 @@ class ProductCategoryController extends PageController
         $options = array();
         foreach (ProductCategory::config()->sort_options as $k => $v) {
             // make the label translatable
-            $k = _t("ProductCategory.$k", $k);
+            $k = _t(ProductCategory::class . '.' . $k, $k);
             $options[$k] = $v;
         }
 

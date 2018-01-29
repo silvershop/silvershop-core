@@ -2,10 +2,9 @@
 
 namespace SilverShop\Core\Product;
 
-
-use SilverStripe\Core\Config\Config_ForClass;
+use SilverStripe\Assets\Image;
+use SilverStripe\Core\Config\Configurable;
 use SilverStripe\ORM\DataExtension;
-
 
 
 /**
@@ -15,6 +14,8 @@ use SilverStripe\ORM\DataExtension;
  */
 class ProductImage extends DataExtension
 {
+    use Configurable;
+
     /** @var Image */
     protected $owner;
 
@@ -97,10 +98,5 @@ class ProductImage extends DataExtension
     {
         $imageWidth = intval($this->owner->getWidth());
         return $imageWidth > self::config()->content_image_width;
-    }
-
-    public static function config()
-    {
-        return new Config_ForClass("Product_Image");
     }
 }

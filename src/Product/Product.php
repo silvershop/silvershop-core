@@ -3,18 +3,21 @@
 namespace SilverShop\Core\Product;
 
 
+use Page;
+use SilverShop\Core\Cart\ShoppingCart;
+use SilverShop\Core\Cart\ShoppingCartController;
+use SilverShop\Core\Model\Buyable;
+use SilverShop\Core\Product\Variation\Variation;
+use SilverStripe\AssetAdmin\Forms\UploadField;
 use SilverStripe\Assets\Image;
+use SilverStripe\Control\Director;
+use SilverStripe\Forms\CheckboxField;
+use SilverStripe\Forms\DropdownField;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\TextField;
-use SilverStripe\Forms\DropdownField;
-use SilverStripe\Forms\CheckboxField;
-use SilverStripe\AssetAdmin\Forms\UploadField;
+use SilverStripe\ORM\DataList;
+use SilverStripe\Security\Member;
 use SilverStripe\SiteConfig\SiteConfig;
-use SilverStripe\Control\Director;
-use SilverStripe\Forms\Form;
-//use PageController;
-use SilverStripe\Versioned\Versioned;
-use Page;
 
 
 /**
@@ -32,91 +35,94 @@ use Page;
  */
 class Product extends Page implements Buyable
 {
-    private static $db                     = array(
+    private static $db = [
         'InternalItemID' => 'Varchar(30)', //ie SKU, ProductID etc (internal / existing recognition of product)
-        'Model'          => 'Varchar(30)',
+        'Model' => 'Varchar(30)',
 
         'CostPrice' => 'Currency(19,4)', // Wholesale cost of the product to the merchant
         'BasePrice' => 'Currency(19,4)', // Base retail price the item is marked at.
 
         //physical properties
-        'Weight'    => 'Decimal(12,5)',
-        'Height'    => 'Decimal(12,5)',
-        'Width'     => 'Decimal(12,5)',
-        'Depth'     => 'Decimal(12,5)',
+        // TODO: Move these to an extension (used in Variations as well)
+        'Weight' => 'Decimal(12,5)',
+        'Height' => 'Decimal(12,5)',
+        'Width' => 'Decimal(12,5)',
+        'Depth' => 'Decimal(12,5)',
 
-        'Featured'      => 'Boolean',
+        'Featured' => 'Boolean',
         'AllowPurchase' => 'Boolean',
 
-        'Popularity' => 'Float' //storage for ClaculateProductPopularity task
-    );
+        'Popularity' => 'Float' //storage for CalculateProductPopularity task
+    ];
 
-    private static $has_one                = array(
+    private static $has_one = [
         'Image' => Image::class,
-    );
+    ];
 
-    private static $many_many              = array(
-        'ProductCategories' => 'ProductCategory',
-    );
+    private static $many_many = [
+        'ProductCategories' => ProductCategory::class,
+    ];
 
-    private static $defaults               = array(
+    private static $defaults = [
         'AllowPurchase' => true,
-        'ShowInMenus'   => false,
-    );
+        'ShowInMenus' => false,
+    ];
 
-    private static $casting                = array(
+    private static $casting = [
         'Price' => 'Currency',
-    );
+    ];
 
-    private static $summary_fields         = array(
+    private static $summary_fields = [
         'InternalItemID',
         'Title',
         'BasePrice.NiceOrEmpty',
         'canPurchase',
-    );
+    ];
 
-    private static $searchable_fields      = array(
+    private static $searchable_fields = [
         'InternalItemID',
-        'Title' => array("title" => 'Title'),
+        'Title' => ['title' => 'Title'],
         'Featured',
-    );
+    ];
 
-    private static $field_labels           = array(
-        'InternalItemID'        => 'SKU',
-        'Title'                 => 'Title',
-        'BasePrice'             => 'Price',
+    private static $field_labels = [
+        'InternalItemID' => 'SKU',
+        'Title' => 'Title',
+        'BasePrice' => 'Price',
         'BasePrice.NiceOrEmpty' => 'Price',
-        'canPurchase'           => 'Purchasable',
-    );
+        'canPurchase' => 'Purchasable',
+    ];
 
-    private static $singular_name          = "Product";
+    private static $table_name = 'SilverShop_Product';
 
-    private static $plural_name            = "Products";
+    private static $singular_name = 'Product';
 
-    private static $icon                   = 'silvershop/images/icons/package';
+    private static $plural_name = 'Products';
 
-    private static $default_parent         = 'ProductCategory';
+    private static $icon = 'silvershop/core: images/icons/package.gif';
 
-    private static $default_sort           = '"Title" ASC';
+    private static $default_parent = ProductCategory::class;
 
-    private static $global_allow_purchase  = true;
+    private static $default_sort = '"Title" ASC';
 
-    private static $allow_zero_price       = false;
+    private static $global_allow_purchase = true;
 
-    private static $order_item             = "Product_OrderItem";
+    private static $allow_zero_price = false;
+
+    private static $order_item = ProductOrderItem::class;
 
     private static $min_opengraph_img_size = 0;
 
     // Physical Measurement
-    private static $weight_unit = "kg";
+    private static $weight_unit = 'kg';
 
-    private static $length_unit = "cm";
+    private static $length_unit = 'cm';
 
-    private static $indexes     = array(
-        'Featured'       => true,
-        'AllowPurchase'  => true,
+    private static $indexes = [
+        'Featured' => true,
+        'AllowPurchase' => true,
         'InternalItemID' => true,
-    );
+    ];
 
     /**
      * Add product fields to CMS
@@ -127,30 +133,25 @@ class Product extends Page implements Buyable
     {
         $self = $this;
 
-        $this->beforeUpdateCMSFields(function(FieldList $fields) use ($self) {
+        $this->beforeUpdateCMSFields(function (FieldList $fields) use ($self) {
             $fields->fieldByName('Root.Main.Title')
                 ->setTitle(_t('Product.PageTitle', 'Product Title'));
 
             $fields->addFieldsToTab('Root.Main', [
-                TextField::create('InternalItemID', _t('Product.InternalItemID', 'Product Code/SKU'), '', 30),
-                DropdownField::create('ParentID', _t("Product.Category", "Category"), $self->getCategoryOptions())
-                    ->setDescription(_t("Product.CategoryDescription", "This is the parent page or default category.")),
-                // ListBoxField::create(
-                //     'ProductCategories',
-                //     _t("Product.AdditionalCategories", "Additional Categories"),
-                //     $self->getCategoryOptionsNoParent()
-                // )->setMultiple(true),
-                TextField::create('Model', _t('Product.Model', 'Model'), '', 30),
-                CheckboxField::create('Featured', _t('Product.Featured', 'Featured Product')),
-                CheckboxField::create('AllowPurchase', _t('Product.AllowPurchase', 'Allow product to be purchased'), 1),
+                TextField::create('InternalItemID', _t(__CLASS__ . '.InternalItemID', 'Product Code/SKU'), '', 30),
+                DropdownField::create('ParentID', _t(__CLASS__ . '.Category', 'Category'), $self->getCategoryOptions())
+                    ->setDescription(_t(__CLASS__ . '.CategoryDescription', 'This is the parent page or default category.')),
+                TextField::create('Model', _t(__CLASS__ . '.Model', 'Model'), '', 30),
+                CheckboxField::create('Featured', _t(__CLASS__ . '.Featured', 'Featured Product')),
+                CheckboxField::create('AllowPurchase', _t(__CLASS__ . '.AllowPurchase', 'Allow product to be purchased'), 1),
             ]);
 
             $fields->addFieldsToTab('Root.Pricing', [
-                TextField::create('BasePrice', _t('Product.db_BasePrice', 'Price'))
-                    ->setDescription(_t('Product.PriceDesc', "Base price to sell this product at."))
+                TextField::create('BasePrice', $this->fieldLabel('BasePrice'))
+                    ->setDescription(_t(__CLASS__ . '.PriceDesc', 'Base price to sell this product at.'))
                     ->setMaxLength(12),
-                TextField::create('CostPrice', _t('Product.db_CostPrice', 'Cost Price'))
-                    ->setDescription(_t('Product.CostPriceDescription', 'Wholesale price before markup.'))
+                TextField::create('CostPrice', $this->fieldLabel('CostPrice'))
+                    ->setDescription(_t(__CLASS__ . '.CostPriceDescription', 'Wholesale price before markup.'))
                     ->setMaxLength(12),
             ]);
 
@@ -161,27 +162,27 @@ class Product extends Page implements Buyable
             $fields->addFieldsToTab('Root.Shipping', [
                 TextField::create(
                     'Weight',
-                    _t('Product.WeightWithUnit', 'Weight ({WeightUnit})', '', array(
+                    _t(__CLASS__ . '.WeightWithUnit', 'Weight ({WeightUnit})', '', [
                         'WeightUnit' => self::config()->weight_unit
-                    )),
+                    ]),
                     '',
                     12
                 ),
                 TextField::create(
                     'Height',
-                    _t('Product.HeightWithUnit', 'Height ({LengthUnit})', '', $fieldSubstitutes),
+                    _t(__CLASS__ . '.HeightWithUnit', 'Height ({LengthUnit})', '', $fieldSubstitutes),
                     '',
                     12
                 ),
                 TextField::create(
                     'Width',
-                    _t('Product.WidthWithUnit', 'Width ({LengthUnit})', '', $fieldSubstitutes),
+                    _t(__CLASS__ . '.WidthWithUnit', 'Width ({LengthUnit})', '', $fieldSubstitutes),
                     '',
                     12
                 ),
                 TextField::create(
                     'Depth',
-                    _t('Product.DepthWithUnit', 'Depth ({LengthUnit})', '', $fieldSubstitutes),
+                    _t(__CLASS__ . '.DepthWithUnit', 'Depth ({LengthUnit})', '', $fieldSubstitutes),
                     '',
                     12
                 ),
@@ -190,7 +191,7 @@ class Product extends Page implements Buyable
             if (!$fields->dataFieldByName('Image')) {
                 $fields->addFieldToTab(
                     'Root.Images',
-                    UploadField::create('Image', _t('Product.Image', 'Product Image'))
+                    UploadField::create('Image', _t(__CLASS__ . '.Image', 'Product Image'))
                 );
             }
         });
@@ -204,7 +205,7 @@ class Product extends Page implements Buyable
     public function fieldLabels($includerelations = true)
     {
         $labels = parent::fieldLabels($includerelations);
-        $labels['Title'] = "Title";
+        $labels['Title'] = 'Title';
         return $labels;
     }
 
@@ -216,13 +217,13 @@ class Product extends Page implements Buyable
     private function getCategoryOptions()
     {
         $categories = ProductCategory::get()->map('ID', 'NestedTitle')->toArray();
-        $categories = array(
-                0 => _t("SiteTree.PARENTTYPE_ROOT", "Top-level page"),
-            ) + $categories;
+        $categories = [
+            0 => _t('SiteTree.PARENTTYPE_ROOT', 'Top-level page'),
+        ] + $categories;
         if ($this->ParentID && !($this->Parent() instanceof ProductCategory)) {
-            $categories = array(
-                    $this->ParentID => $this->Parent()->Title . " (" . $this->Parent()->i18n_singular_name() . ")",
-                ) + $categories;
+            $categories = [
+                $this->ParentID => $this->Parent()->Title . ' (' . $this->Parent()->i18n_singular_name() . ')',
+            ] + $categories;
         }
 
         return $categories;
@@ -238,7 +239,7 @@ class Product extends Page implements Buyable
         $ancestors = $this->getAncestors()->map('ID', 'ID');
         $categories = ProductCategory::get();
         if (!empty($ancestors)) {
-            $categories->filter("ID:not", $ancestors);
+            $categories->filter('ID:not', $ancestors);
         }
         return $categories->map('ID', 'NestedTitle')->toArray();
     }
@@ -281,7 +282,7 @@ class Product extends Page implements Buyable
      * Other conditions may be added by decorating with the canPurchase function
      *
      * @param Member $member
-     * @param int    $quantity
+     * @param int $quantity
      *
      * @return boolean
      */
@@ -292,8 +293,8 @@ class Product extends Page implements Buyable
             return false;
         }
         $allowpurchase = false;
-        $extension = self::has_extension("ProductVariationsExtension");
-        if ($extension && ProductVariation::get()->filter("ProductID", $this->ID)->first()) {
+        $extension = self::has_extension('ProductVariationsExtension');
+        if ($extension && Variation::get()->filter('ProductID', $this->ID)->first()) {
             foreach ($this->Variations() as $variation) {
                 if ($variation->canPurchase($member, $quantity)) {
                     $allowpurchase = true;
@@ -363,7 +364,7 @@ class Product extends Page implements Buyable
     {
         $price = $this->BasePrice;
         //TODO: this is not ideal, because prices manipulations will not happen in a known order
-        $this->extend("updateSellingPrice", $price);
+        $this->extend('updateSellingPrice', $price);
         //prevent negative values
         $price = $price < 0 ? 0 : $price;
 
@@ -388,7 +389,7 @@ class Product extends Page implements Buyable
     public function setPrice($price)
     {
         $price = $price < 0 ? 0 : $price;
-        $this->setField("BasePrice", $price);
+        $this->setField('BasePrice', $price);
     }
 
     /**
@@ -411,24 +412,26 @@ class Product extends Page implements Buyable
      * is defined in SiteConfig, return that instead.
      *
      * @return Image
+     * @throws \Exception
      */
     public function Image()
     {
         $image = $this->getComponent('Image');
         $this->extend('updateImage', $image);
 
-        if ($image && $image->exists() && file_exists($image->getFullPath())) {
+        if ($image && $image->exists()) {
             return $image;
         }
         $image = SiteConfig::current_site_config()->DefaultProductImage();
-        if ($image && $image->exists() && file_exists($image->getFullPath())) {
+        if ($image && $image->exists()) {
             return $image;
         }
-        return new Image();
+        return null;
     }
 
     /**
      * Integration with opengraph module
+     * TODO: Move this feature into a module
      *
      * @see https://github.com/tractorcow/silverstripe-opengraph
      * @return string opengraph type
@@ -440,6 +443,7 @@ class Product extends Page implements Buyable
 
     /**
      * Integration with the opengraph module
+     * TODO: Move this feature into a module
      *
      * @return string url of product image
      */
@@ -460,7 +464,7 @@ class Product extends Page implements Buyable
      */
     public function addLink()
     {
-        return ShoppingCart_Controller::add_item_link($this);
+        return ShoppingCartController::add_item_link($this);
     }
 
     /**
@@ -470,7 +474,7 @@ class Product extends Page implements Buyable
      */
     public function removeLink()
     {
-        return ShoppingCart_Controller::remove_item_link($this);
+        return ShoppingCartController::remove_item_link($this);
     }
 
     /**
@@ -480,7 +484,6 @@ class Product extends Page implements Buyable
      */
     public function removeallLink()
     {
-        return ShoppingCart_Controller::remove_all_item_link($this);
+        return ShoppingCartController::remove_all_item_link($this);
     }
 }
-

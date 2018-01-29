@@ -3,8 +3,6 @@
 namespace SilverShop\Core\Reports;
 
 
-
-
 /**
  * Report on the number of abandoned carts.
  *
@@ -14,31 +12,31 @@ namespace SilverShop\Core\Reports;
  */
 class AbandonedCartReport extends ShopPeriodReport
 {
-    protected $title       = "Abandoned Carts";
+    protected $title = 'Abandoned Carts';
 
-    protected $description = "Monitor abandoned carts for a particular period. Group results by year, month, or day.";
+    protected $description = 'Monitor abandoned carts for a particular period. Group results by year, month, or day.';
 
-    protected $dataClass   = "Order";
+    protected $dataClass = 'Order';
 
-    protected $periodfield = "\"Order\".\"Created\"";
+    protected $periodfield = '"Order"."Created"';
 
-    protected $grouping    = true;
+    protected $grouping = true;
 
     public function columns()
     {
-        $period = isset($_GET['filters']['Grouping']) ? $_GET['filters']['Grouping'] : "Month";
+        $period = isset($_GET['filters']['Grouping']) ? $_GET['filters']['Grouping'] : 'Month';
         return array(
-            "FilterPeriod" => $period,
-            "Count"        => "Count",
-            "TotalValue"   => "Total Value",
+            'FilterPeriod' => $period,
+            'Count' => 'Count',
+            'TotalValue' => 'Total Value',
         );
     }
 
     public function query($params)
     {
         return parent::query($params)
-            ->selectField("Count(\"Order\".\"ID\")", "Count")
-            ->selectField("Sum(\"Order\".\"Total\")", "TotalValue")
-            ->addWhere("\"Status\" = 'Cart'");
+            ->selectField('COUNT("SilverShop_Order"."ID")', 'Count')
+            ->selectField('SUM("SilverShop_Order"."Total")', 'TotalValue')
+            ->addWhere(['"Status" = ?' => 'Cart']);
     }
 }

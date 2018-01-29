@@ -3,9 +3,11 @@
 namespace SilverShop\Core\Tasks;
 
 
+use SilverShop\Core\Checkout\OrderEmailNotifier;
+use SilverShop\Core\Model\Order;
 use SilverStripe\Control\Director;
+use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Dev\BuildTask;
-
 
 
 /**
@@ -23,7 +25,7 @@ use SilverStripe\Dev\BuildTask;
  */
 class ShopEmailPreviewTask extends BuildTask
 {
-    protected $title       = "Preview Shop Emails";
+    protected $title = 'Preview Shop Emails';
 
     protected $description = 'Previews shop emails';
 
@@ -33,9 +35,8 @@ class ShopEmailPreviewTask extends BuildTask
         'AdminNotification'
     );
 
-
     /**
-     * @param SS_HTTPRequest $request
+     * @param HTTPRequest $request
      */
     public function run($request)
     {
@@ -50,15 +51,12 @@ class ShopEmailPreviewTask extends BuildTask
         }
         echo '</ul><hr>';
 
-        if ($email && in_array($email,$this->previewableEmails)) {
+        if ($email && in_array($email, $this->previewableEmails)) {
             $order = Order::get()->first();
             $notifier = OrderEmailNotifier::create($order)
                 ->setDebugMode(true);
             $method = "send$email";
             echo $notifier->$method();
-
-        } else {
-
         }
         //this is a little hardcore way of ending the party,
         //but as it's only used for styling, it works for now

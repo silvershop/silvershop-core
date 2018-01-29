@@ -3,14 +3,17 @@
 namespace SilverShop\Core\Tasks;
 
 
+use SilverShop\Core\Model\Order;
+use SilverShop\Core\ShippingModifier;
+use SilverShop\Core\TaxModifier;
 use SilverStripe\ORM\DB;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\Control\Email\Email;
 use SilverStripe\Dev\MigrationTask;
 
 
-
 /**
+ * TODO: Implement for 2.x to 3.x
  * Updates database to work with latest version of the code.
  */
 class ShopMigrationTask extends MigrationTask
@@ -18,12 +21,12 @@ class ShopMigrationTask extends MigrationTask
     /**
      * Choose how many orders get processed at a time.
      */
-    public static $batch_size  = 250;
+    public static $batch_size = 250;
 
-    protected     $title       = "Migrate Shop";
+    protected $title = 'Migrate Shop';
 
-    protected     $description = "Where dev/build is not enough, this task updates database to work with latest version of shop module.
-		You may want to run the CartCleanupTask before migrating if you want to discard past carts.";
+    protected $description = 'Where dev/build is not enough, this task updates database to work with latest version of shop module.
+		You may want to run the CartCleanupTask before migrating if you want to discard past carts.';
 
     /**
      * Migrate upwards
@@ -43,11 +46,11 @@ class ShopMigrationTask extends MigrationTask
     public function migrateOrders()
     {
         $start = $count = 0;
-        $batch = Order::get()->sort("Created", "ASC")->limit($start, self::$batch_size);
+        $batch = Order::get()->sort('Created', 'ASC')->limit($start, self::$batch_size);
         while ($batch->exists()) {
             foreach ($batch as $order) {
                 $this->migrate($order);
-                echo ". ";
+                echo '. ';
                 $count++;
             }
             $start += self::$batch_size;
@@ -71,13 +74,13 @@ class ShopMigrationTask extends MigrationTask
 
     public function migrateProductPrice()
     {
-        $db = DB::getConn();
+        $db = DB::get_conn();
         //if BasePrice has no values, but Price does, then copy from Price
-        if ($db->hasTable("Product") && !DataObject::get_one("Product", "\"BasePrice\" > 0")) {
+        if ($db->hasTable('Product') && !DataObject::get_one('Product', '"BasePrice" > 0')) {
             //TODO: warn against lost data
-            DB::query("UPDATE \"Product\" SET \"BasePrice\" = \"Price\";");
-            DB::query("UPDATE \"Product_Live\" SET \"BasePrice\" = \"Price\";");
-            DB::query("UPDATE \"Product_versions\" SET \"BasePrice\" = \"Price\";");
+            DB::query('UPDATE "Product" SET "BasePrice" = "Price";');
+            DB::query('UPDATE "Product_Live" SET "BasePrice" = "Price";');
+            DB::query('UPDATE "Product_versions" SET "BasePrice" = "Price";');
             //TODO: rename, if possible without breaking migraton task next time it runs
             //$db->renameField("Product","Price","Price_obselete");
             //$db->renameField("Product_Live","Price","Price_obselete");
@@ -178,14 +181,14 @@ class ShopMigrationTask extends MigrationTask
 
     public function migrateProductVariationsAttribues()
     {
-        $db = DB::getConn();
+        $db = DB::get_conn();
         //TODO: delete Product_VariationAttribute, if it's empty
         if ($db->hasTable(
-            "Product_VariationAttributes"
+            'Product_VariationAttributes'
         )
         ) { //TODO: check if Product_VariationAttributeTypes table is empty
-            DB::query("DROP TABLE \"Product_VariationAttributeTypes\"");
-            $db->renameTable("Product_VariationAttributes", "Product_VariationAttributeTypes");
+            DB::query('DROP TABLE "Product_VariationAttributeTypes"');
+            $db->renameTable('Product_VariationAttributes', 'Product_VariationAttributeTypes');
         }
     }
 

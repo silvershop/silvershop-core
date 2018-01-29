@@ -3,8 +3,6 @@
 namespace SilverShop\Core\Reports;
 
 
-
-
 /**
  * Order sales for the entire shop.
  *
@@ -16,30 +14,30 @@ namespace SilverShop\Core\Reports;
  */
 class ShopSalesReport extends ShopPeriodReport
 {
-    protected $title       = "Shop Sales";
+    protected $title = 'Shop Sales';
 
-    protected $description = "Monitor shop sales performance for a particular period. Group results by year, month, or day.";
+    protected $description = 'Monitor shop sales performance for a particular period. Group results by year, month, or day.';
 
-    protected $dataClass   = "Order";
+    protected $dataClass = 'Order';
 
-    protected $periodfield = "\"Order\".\"Paid\"";
+    protected $periodfield = '"Order"."Paid"';
 
-    protected $grouping    = true;
+    protected $grouping = true;
 
     public function columns()
     {
-        $period = isset($_GET['filters']['Grouping']) ? $_GET['filters']['Grouping'] : "Month";
+        $period = isset($_GET['filters']['Grouping']) ? $_GET['filters']['Grouping'] : 'Month';
         return array(
-            "FilterPeriod" => $period,
-            "Count"        => "Order Count",
-            "Sales"        => "Total Sales",
+            'FilterPeriod' => $period,
+            'Count' => 'Order Count',
+            'Sales' => 'Total Sales',
         );
     }
 
     public function query($params)
     {
         return parent::query($params)
-            ->selectField("Count(\"Order\".\"ID\")", "Count")
-            ->selectField("Sum(\"Order\".\"Total\")", "Sales");
+            ->selectField('COUNT("Order"."ID")', 'Count')
+            ->selectField('SUM("Order"."Total")', 'Sales');
     }
 }

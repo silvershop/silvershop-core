@@ -2,6 +2,7 @@
 
 namespace SilverShop\Core\Reports\SideReport;
 
+use SilverShop\Core\Product\Product;
 use SilverStripe\Reports\Report;
 
 /**
@@ -17,12 +18,12 @@ class FeaturedProducts extends Report
 {
     public function title()
     {
-        return _t('ShopSideReport.FeaturedProducts', "Featured Products");
+        return _t('ShopSideReport.FeaturedProducts', 'Featured Products');
     }
 
     public function group()
     {
-        return _t('ShopSideReport.ShopGroup', "Shop");
+        return _t('ShopSideReport.ShopGroup', 'Shop');
     }
 
     public function sort()
@@ -32,16 +33,16 @@ class FeaturedProducts extends Report
 
     public function sourceRecords($params = null)
     {
-        return Product::get()->filter('Featured', 1)->sort("Title");
+        return Product::get()->filter('Featured', 1)->sort('Title');
     }
 
     public function columns()
     {
-        return array(
-            "Title" => array(
-                "title" => "Title",
-                "link"  => true,
-            ),
-        );
+        return [
+            'Title' => [
+                'title' => 'Title',
+                'link' => true,
+            ],
+        ];
     }
 }

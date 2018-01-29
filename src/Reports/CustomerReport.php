@@ -7,7 +7,6 @@ use SilverStripe\Security\Member;
 use SilverStripe\Control\Email\Email;
 
 
-
 /**
  * List top customers, especially those who spend alot, and those who buy alot.
  *
@@ -18,28 +17,27 @@ use SilverStripe\Control\Email\Email;
  */
 class CustomerReport extends ShopPeriodReport
 {
-    protected $title       = "Customers";
+    protected $title = 'Customers';
 
-    protected $dataClass   = Member::class;
+    protected $dataClass = Member::class;
 
-    protected $periodfield = "Order.Paid";
+    protected $periodfield = 'Order.Paid';
 
     public function columns()
     {
-        return array(
-            "FirstName" => "First Name",
-            "Surname"   => "Surname",
-            "Email"     => "Email",
-            "Created"   => "Joined",
-            "Spent"     => "Spent",
-            "Orders"    => "Orders",
-            "NumVisit"  => "Visits",
-            "edit"      => array(
-                "title"      => "Edit",
-                "formatting" => '<a href=\"admin/security/EditForm/field/Members/item/$ID/edit\" target=\"_new\">edit</a>',
-            ),
-
-        );
+        return [
+            'FirstName' => 'First Name',
+            'Surname' => 'Surname',
+            'Email' => 'Email',
+            'Created' => 'Joined',
+            'Spent' => 'Spent',
+            'Orders' => 'Orders',
+            'NumVisit' => 'Visits',
+            'edit' => [
+                'title' => 'Edit',
+                'formatting' => '<a href=\"admin/security/EditForm/field/Members/item/$ID/edit\" target=\"_new\">edit</a>',
+            ],
+        ];
     }
 
     public function getReportField()
@@ -51,18 +49,21 @@ class CustomerReport extends ShopPeriodReport
     public function query($params)
     {
         $query = parent::query($params);
-        $query->selectField($this->periodfield, "FilterPeriod")
+        $query->selectField($this->periodfield, 'FilterPeriod')
             ->addSelect(
-                array("Member.ID", "Member.FirstName", "Member.Surname", "Member.Email", "NumVisit", "Member.Created")
+                ['"Member"."ID"', '"Member"."FirstName"', '"Member"."Surname"', '"Member"."Email"', '"Member"."NumVisit"', '"Member"."Created"']
             )
-            ->selectField("Count(Order.ID)", "Orders")
-            ->selectField("Sum(Order.Total)", "Spent");
-        $query->addInnerJoin("Order", "Member.ID = Order.MemberID");
-        $query->addGroupBy("Member.ID");
+            ->selectField('COUNT("SilverShop_Order"."ID")', 'Orders')
+            ->selectField('SUM("SilverShop_Order"."Total")', 'Spent');
+        $query->addInnerJoin('Order', '"Member"."ID" = "SilverShop_Order"."MemberID"');
+        $query->addGroupBy('"Member"."ID"');
         if (!$query->getOrderBy()) {
-            $query->setOrderBy("Spent DESC,Orders DESC");
+            $query->setOrderBy([
+                'Spent' => 'DESC',
+                'Orders' => 'DESC'
+            ]);
         }
-        $query->setLimit("50");
+        $query->setLimit(50);
         return $query;
     }
 }

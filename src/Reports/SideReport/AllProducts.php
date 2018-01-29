@@ -2,6 +2,7 @@
 
 namespace SilverShop\Core\Reports\SideReport;
 
+use SilverShop\Core\Product\Product;
 use SilverStripe\Reports\Report;
 
 /**
@@ -13,12 +14,12 @@ class AllProducts extends Report
 {
     public function title()
     {
-        return _t('ShopSideReport.AllProducts', "All Products");
+        return _t('ShopSideReport.AllProducts', 'All Products');
     }
 
     public function group()
     {
-        return _t('ShopSideReport.ShopGroup', "Shop");
+        return _t('ShopSideReport.ShopGroup', 'Shop');
     }
 
     public function sort()
@@ -33,11 +34,11 @@ class AllProducts extends Report
 
     public function columns()
     {
-        return array(
-            "Title" => array(
-                "title" => "Title",
-                "link"  => true,
-            ),
-        );
+        return [
+            'Title' => [
+                'title' => 'Title',
+                'link' => true,
+            ],
+        ];
     }
 }

@@ -3,6 +3,14 @@
 namespace SilverShop\Core\Tasks;
 
 
+use Page;
+use SilverShop\Core\Account\AccountPage;
+use SilverShop\Core\Cart\CartPage;
+use SilverShop\Core\Checkout\CheckoutPage;
+use SilverShop\Core\Model\Zone;
+use SilverShop\Core\Model\ZoneRegion;
+use SilverShop\Core\Product\Product;
+use SilverShop\Core\Product\ProductCategory;
 use SilverStripe\ORM\DB;
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Dev\FixtureFactory;
@@ -10,7 +18,6 @@ use SilverStripe\ORM\DataObject;
 use SilverStripe\Dev\YamlFixture;
 use SilverStripe\SiteConfig\SiteConfig;
 use SilverStripe\Dev\BuildTask;
-
 
 
 /**
@@ -24,7 +31,7 @@ use SilverStripe\Dev\BuildTask;
  */
 class PopulateShopTask extends BuildTask
 {
-    protected $title       = "Populate Shop";
+    protected $title = 'Populate Shop';
 
     protected $description = 'Creates dummy account page, products, checkout page, terms page.';
 
@@ -36,15 +43,17 @@ class PopulateShopTask extends BuildTask
             DB::alteration_message('Created an international zone', 'created');
             return;
         }
-        $this->extend("beforePopulate");
+        $this->extend('beforePopulate');
 
         $factory = Injector::inst()->create(FixtureFactory::class);
 
         $parentid = 0;
 
+        $fixtureDir = realpath(__DIR__ . '/../../tests/fixtures');
+
         //create products
-        if (!DataObject::get_one('Product')) {
-            $fixture = new YamlFixture(SHOP_DIR . "/tests/fixtures/dummyproducts.yml");
+        if (!Product::get()->count()) {
+            $fixture = YamlFixture::create($fixtureDir . '/dummyproducts.yml');
             $fixture->writeInto($factory);//needs to be a data model
 
             $shoppage = ProductCategory::get()->filter('URLSegment', 'shop')->first();
@@ -68,9 +77,9 @@ class PopulateShopTask extends BuildTask
                 'stationery',
             );
             foreach ($categoriestopublish as $categoryname) {
-                $factory->get("ProductCategory", $categoryname)->publish('Stage', 'Live');
+                $factory->get(ProductCategory::class, $categoryname)->publishSingle();
             }
-            $productstopublish = array(
+            $productstopublish = [
                 'mp3player',
                 'hdtv',
                 'socks',
@@ -85,68 +94,68 @@ class PopulateShopTask extends BuildTask
                 'lamp',
                 'paper',
                 'pens',
-            );
+            ];
             foreach ($productstopublish as $productname) {
-                $factory->get("Product", $productname)->publish('Stage', 'Live');
+                $factory->get(Product::class, $productname)->publishSingle();
             }
             DB::alteration_message('Created dummy products and categories', 'created');
         } else {
-            echo "<p style=\"color:orange;\">Products and categories were not created because some already exist.</p>";
+            echo '<p style="color:orange;">Products and categories were not created because some already exist.</p>';
         }
 
         //cart page
-        if (!$page = DataObject::get_one('CartPage')) {
-            $fixture = new YamlFixture(SHOP_DIR . "/tests/fixtures/pages/Cart.yml");
+        if (!$page = CartPage::get()->first()) {
+            $fixture = YamlFixture::create($fixtureDir . '/pages/Cart.yml');
             $fixture->writeInto($factory);
-            $page = $factory->get("CartPage", "cart");
+            $page = $factory->get(CartPage::class, 'cart');
             $page->ParentID = $parentid;
             $page->writeToStage('Stage');
-            $page->publish('Stage', 'Live');
+            $page->publishSingle();
             DB::alteration_message('Cart page created', 'created');
         }
 
         //checkout page
-        if (!$page = DataObject::get_one('CheckoutPage')) {
-            $fixture = new YamlFixture(SHOP_DIR . "/tests/fixtures/pages/Checkout.yml");
+        if (!$page = CheckoutPage::get()->first()) {
+            $fixture = YamlFixture::create($fixtureDir . '/pages/Checkout.yml');
             $fixture->writeInto($factory);
-            $page = $factory->get("CheckoutPage", "checkout");
+            $page = $factory->get(CheckoutPage::class, 'checkout');
             $page->ParentID = $parentid;
             $page->writeToStage('Stage');
-            $page->publish('Stage', 'Live');
+            $page->publishSingle();
             DB::alteration_message('Checkout page created', 'created');
         }
 
         //account page
-        if (!DataObject::get_one('AccountPage')) {
-            $fixture = new YamlFixture(SHOP_DIR . "/tests/fixtures/pages/Account.yml");
+        if (!AccountPage::get()->first()) {
+            $fixture = YamlFixture::create($fixtureDir . '/pages/Account.yml');
             $fixture->writeInto($factory);
-            $page = $factory->get("AccountPage", "account");
+            $page = $factory->get(AccountPage::class, 'account');
             $page->ParentID = $parentid;
             $page->writeToStage('Stage');
-            $page->publish('Stage', 'Live');
+            $page->publishSingle();
             DB::alteration_message('Account page \'Account\' created', 'created');
         }
 
         //terms page
-        if (!$termsPage = DataObject::get_one('Page', "\"URLSegment\" = 'terms-and-conditions'")) {
-            $fixture = new YamlFixture(SHOP_DIR . "/tests/fixtures/pages/TermsConditions.yml");
+        if (!$termsPage = Page::get()->filter('URLSegment', 'terms-and-conditions')->first()) {
+            $fixture = YamlFixture::create($fixtureDir . '/pages/TermsConditions.yml');
             $fixture->writeInto($factory);
-            $page = $factory->get("Page", "termsconditions");
+            $page = $factory->get('Page', 'termsconditions');
             $page->ParentID = $parentid;
             $page->writeToStage('Stage');
-            $page->publish('Stage', 'Live');
+            $page->publishSingle();
             //set terms page id in config
             $config = SiteConfig::current_site_config();
             $config->TermsPageID = $page->ID;
             $config->write();
-            DB::alteration_message("Terms and conditions page created", 'created');
+            DB::alteration_message('Terms and conditions page created', 'created');
         }
 
         //countries config - removes some countries
         $siteconfig = SiteConfig::current_site_config();
         if (empty($siteconfig->AllowedCountries)) {
             $siteconfig->AllowedCountries =
-                "AF,AL,DZ,AS,AD,AO,AG,AR,AM,AU,AT,AZ,BS,BH,
+                'AF,AL,DZ,AS,AD,AO,AG,AR,AM,AU,AT,AZ,BS,BH,
 			BD,BB,BY,BE,BZ,BJ,BT,BO,BA,BW,BR,BN,BG,BF,BI,
 			KH,CM,CA,CV,CF,TD,CL,CN,CO,KM,CG,CR,CI,HR,CU,
 			CY,CZ,DK,DJ,DM,DO,EC,EG,SV,GQ,ER,EE,ET,FJ,FI,
@@ -158,30 +167,24 @@ class PopulateShopTask extends BuildTask
 			PY,PE,PH,PL,PT,QA,RO,RU,RW,KN,LC,VC,WS,SM,ST,
 			SA,SN,SC,SL,SG,SK,SI,SB,SO,ZA,ES,LK,SD,SR,SZ,
 			SE,CH,SY,TJ,TZ,TH,TG,TO,TT,TN,TR,TM,TV,UG,UA,
-			AE,GB,US,UY,UZ,VU,VE,VN,YE,YU,ZM,ZW";
+			AE,GB,US,UY,UZ,VU,VE,VN,YE,YU,ZM,ZW';
             $siteconfig->write();
         }
-        $this->extend("afterPopulate");
+        $this->extend('afterPopulate');
     }
 
     public function populateInternationalZone()
     {
-        $zone = Zone::create(
-            array(
-                'Name' => 'International',
-            )
-        );
-        $zone->write();
+        $zoneId = Zone::create()->update([
+            'Name' => 'International',
+        ])->write();
 
         if ($countries = SiteConfig::current_site_config()->getCountriesList()) {
             foreach ($countries as $iso => $country) {
-                $region = ZoneRegion::create(
-                    array(
-                        'Country' => $iso,
-                        'ZoneID'  => $zone->ID,
-                    )
-                );
-                $region->write();
+                ZoneRegion::create()->update([
+                    'Country' => $iso,
+                    'ZoneID' => $zoneId
+                ])->write();
             }
         }
     }
