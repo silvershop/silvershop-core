@@ -4,8 +4,8 @@ namespace SilverShop\Core\Tasks;
 
 
 use SilverShop\Core\Model\Order;
-use SilverShop\Core\ShippingModifier;
-use SilverShop\Core\TaxModifier;
+use SilverShop\Core\Base;
+use SilverShop\Core\Base;
 use SilverStripe\ORM\DB;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\Control\Email\Email;
@@ -147,7 +147,7 @@ class ShopMigrationTask extends MigrationTask
     {
         //TODO: see if this actually works..it probably needs to be writeen to a SQL query
         if ($order->hasShippingCost && abs($order->Shipping)) {
-            $modifier1 = ShippingModifier::create();
+            $modifier1 = Base::create();
             $modifier1->Amount = $order->Shipping < 0 ? abs($order->Shipping) : $order->Shipping;
             $modifier1->Type = 'Chargable';
             $modifier1->OrderID = $order->ID;
@@ -157,7 +157,7 @@ class ShopMigrationTask extends MigrationTask
             $order->Shipping = null;
         }
         if ($order->AddedTax) {
-            $modifier2 = TaxModifier::create();
+            $modifier2 = Base::create();
             $modifier2->Amount = $order->AddedTax < 0 ? abs($order->AddedTax) : $order->AddedTax;
             $modifier2->Type = 'Chargable';
             $modifier2->OrderID = $order->ID;

@@ -1,8 +1,8 @@
 ---
-Name: shoproutes
+Name: silvershop-routes
 After: framework/routes#coreroutes
 ---
 SilverStripe\Control\Director:
   rules:
-    shoppingcart: ShoppingCart_Controller
+    shoppingcart: ShoppingCartController
     dev/shop: ShopDevelopmentAdmin

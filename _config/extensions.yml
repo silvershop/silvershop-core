@@ -1,12 +1,9 @@
 ---
-Name: shop
-After:
-  - 'framework/*'
-  - 'cms/*'
+Name: silvershop-extensions
 ---
 SilverStripe\SiteConfig\SiteConfig:
   extensions:
-    - ShopConfig
+    - SilverShop\Core\Cms\ShopConfig
 PageController:
   extensions:
     - ViewableCart

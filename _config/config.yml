@@ -1,5 +1,5 @@
 ---
-Name: shopconfig
+Name: silvershop-config
 After: framework/routes#coreroutes
 ---
 

@@ -221,7 +221,7 @@ class Address extends DataObject
 
     public function forTemplate()
     {
-        return $this->renderWith('Address');
+        return $this->renderWith(__CLASS__);
     }
 
     /**
