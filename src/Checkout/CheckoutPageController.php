@@ -2,6 +2,8 @@
 
 namespace SilverShop\Core\Checkout;
 
+use PageController;
+
 /**
  * @package shop
  * @mixin CheckoutPage

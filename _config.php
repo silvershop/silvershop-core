@@ -1,8 +1,5 @@
 <?php
 
-namespace SilverShop\Core;
-
-
 use SilverShop\Core\Checkout\CheckoutPage;
 use SilverShop\Core\Checkout\Step\SteppedCheckout;
 

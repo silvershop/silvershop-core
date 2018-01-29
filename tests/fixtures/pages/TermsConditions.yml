@@ -1,8 +1,0 @@
-Page:
-    termsconditions:
-        URLSegment: terms-and-conditions
-        Title: 'Terms and Conditions'
-        MenuTitle: 'Terms & Conditions'
-        ShowInMenus: 0
-        ShowInSearch: 1
-        Content: 'You agree to...'

@@ -1,0 +1,221 @@
+SilverShop\Core\Product\ProductCategory:
+  products:
+    Title: Products
+    URLSegment: products
+  clothing:
+    Title: Clothing
+    URLSegment: clothing
+    Parent: =>SilverShop\Core\Product\ProductCategory.products #Sub page of products
+  electronics:
+    Title: Electronics
+    URLSegment: electronics
+    Parent: =>SilverShop\Core\Product\ProductCategory.products
+  musicplayers:
+    Title: Music Players
+    URLSegment: music-players
+    Parent: =>SilverShop\Core\Product\ProductCategory.electronics
+  clearance:
+    Title: Clearance
+
+SilverShop\Core\Product\Product:
+  socks:
+    Title: Socks
+    BasePrice: 8
+    URLSegment: socks
+    Parent: =>SilverShop\Core\Product\ProductCategory.clothing
+    AllowPurchase: 1
+    Weight: 0.1
+    Stock: 50
+  tshirt:
+    Title: T-Shirt
+    BasePrice: 25
+    Parent: =>SilverShop\Core\Product\ProductCategory.clothing
+    URLSegment: t-shirt
+    AllowPurchase: 1
+    Weight: 0.3
+    Stock: 1000
+  hdtv: #This product has no price
+    Title: High Definition Television
+    Parent: =>SilverShop\Core\Product\ProductCategory.electronics
+    URLSegment: hdtv
+    AllowPurchase: 1
+    Weight: 50
+    Stock: 3
+  beachball:
+    Title: Beach Ball
+    BasePrice: 10
+    URLSegment: beach-ball
+    Parent: =>SilverShop\Core\Product\ProductCategory.products
+    AllowPurchase: 0 #This product has AllowPurchase set to 0
+    Weight: 0.4
+    Stock: 1000
+  mp3player:
+    Title: Mp3 Player
+    BasePrice: 200
+    URLSegment: mp3-player
+    Parent: =>SilverShop\Core\Product\ProductCategory.musicplayers
+    ProductCategories: =>SilverShop\Core\Product\ProductCategory.clearance
+    AllowPurchase: 1
+    Weight: 0.3
+    Stock: 1000 #You need stock levels if you have included the stock module, else the test will fail.
+  pdfbrochure:
+    Title: PDF Brochure
+    BasePrice: 0 #its free!
+    URLSegment: pdf-brochure
+    Parent: =>SilverShop\Core\Product\ProductCategory.products
+    AllowPurchase: 1
+
+SilverShop\Core\Model\Address:
+  foobar:
+    Address: 12 Foo Street
+    AddressLine2: Bar
+    City: Farmville
+    State: New Sandwich
+    Country: US
+    #MemberID: can't be set, because it is below
+  pukekohe:
+    Address: 1 Queen Street
+    AddressLine2:
+    City: Pukekohe
+    State: Auckland
+    PostalCode: 2120
+    Phone: 5678 910
+
+SilverStripe\Security\Group:
+  customers:
+    Title: Customers
+    Code: customers
+  resellers:
+    Title: Resellers
+    Code: resellers
+
+SilverStripe\Security\Member:
+  joebloggs:
+    FirstName: Joe
+    Surname: Bloggs
+    Country: NZ
+    Email: test@example.com
+    Password: 23u90oijlJKsa
+    DefaultShippingAddress: =>SilverShop\Core\Model\Address.foobar
+    DefaultBillingAddress: =>SilverShop\Core\Model\Address.foobar
+    Groups: =>SilverStripe\Security\Group.customers
+  bobjones:
+    FirstName: Bob
+    Surname: Jones
+    Country: US
+    Email: bob@example.com
+    Password: 3456sdfsd34
+    Groups: =>SilverStripe\Security\Group.resellers,=>SilverStripe\Security\Group.customers
+
+SilverShop\Core\Model\Order:
+  emptycart:
+    Name: Empty Cart
+  cart:
+    Name: Cart
+    Total: 8
+  unpaid:
+    Status: Unpaid
+    Created: 2012-11-21 15:23:32
+    Placed: 2012-11-21 15:33:02
+    Total: 500
+  paid:
+    Status: Paid
+    Created: 2012-10-02 07:23:08
+    Placed: 2012-10-02 07:33:21
+    Paid: 2012-10-02 07:34:29
+    Member: =>SilverStripe\Security\Member.joebloggs
+    Total: 408
+  othercart:
+    Name: Other cart
+    Member: =>SilverStripe\Security\Member.bobjones
+    Total: 200
+  modifiedcart:
+    Name: Modified cart
+    Total: 100
+  megacart:
+    Name: Mega cart
+    Total: 810
+  payablecart:
+    Status: Cart
+    FirstName: Payable
+    Surname: Smith
+    ShippingAddressID: =>SilverShop\Core\Model\Address.foobar
+    BillingAddressID: =>SilverShop\Core\Model\Address.foobar
+    Total: 41
+
+SilverShop\Core\Product\ProductOrderItem:
+  cart_socks:
+    Order: =>SilverShop\Core\Model\Order.cart
+    Product: =>SilverShop\Core\Product\Product.socks
+    Quantity: 1
+  othercart_mp3player:
+    Order: =>SilverShop\Core\Model\Order.othercart
+    Product: =>SilverShop\Core\Product\Product.mp3player
+    UnitPrice: 200
+    Quantity: 1
+    CalculatedTotal: 200
+  modifiedcart_mp3player:
+    Order: =>SilverShop\Core\Model\Order.modifiedcart
+    Product: =>SilverShop\Core\Product\Product.mp3player
+    UnitPrice: 200
+    Quantity: 1
+    CalculatedTotal: 200
+  unpaid_tshirt:
+    Order: =>SilverShop\Core\Model\Order.unpaid
+    Product: =>SilverShop\Core\Product\Product.tshirt
+    ProductVersion: 1
+    UnitPrice: 25
+    Quantity: 4
+    CalculatedTotal: 100
+  unpaid_mp3player:
+    Order: =>SilverShop\Core\Model\Order.unpaid
+    Product: =>SilverShop\Core\Product\Product.mp3player
+    ProductVersion: 1
+    UnitPrice: 200
+    Quantity: 2
+    CalculatedTotal: 400
+  paid_socks:
+    Order: =>SilverShop\Core\Model\Order.paid
+    Product: =>SilverShop\Core\Product\Product.socks
+    ProductVersion: 1
+    UnitPrice: 8
+    Quantity: 1
+    CalculatedTotal: 8
+  paid_mp3player:
+    Order: =>SilverShop\Core\Model\Order.paid
+    Product: =>SilverShop\Core\Product\Product.mp3player
+    ProductVersion: 1
+    UnitPrice: 200
+    Quantity: 2
+    CalculatedTotal: 400
+  megacart_socks:
+    Order: =>SilverShop\Core\Model\Order.megacart
+    Product: =>SilverShop\Core\Product\Product.socks
+    Quantity: 20
+    #SubTotal: 160
+  megacart_tshirt:
+    Order: =>SilverShop\Core\Model\Order.megacart
+    Product: =>SilverShop\Core\Product\Product.tshirt
+    Quantity: 10
+    #SubTotal: 250
+  megacart_mp3player:
+    Order: =>SilverShop\Core\Model\Order.megacart
+    Product: =>SilverShop\Core\Product\Product.mp3player
+    Quantity: 2
+  payablecart_socks:
+    Order: =>SilverShop\Core\Model\Order.payablecart
+    Product: =>SilverShop\Core\Product\Product.socks
+    Quantity: 2
+  payablecart_tshirt:
+    Order: =>SilverShop\Core\Model\Order.payablecart
+    Product: =>SilverShop\Core\Product\Product.tshirt
+    Quantity: 1
+
+SilverStripe\Omnipay\Model\Payment:
+  paid_success:
+    Gateway: Dummy
+    Status: Captured
+    MoneyAmount: 200
+    MoneyCurrency: USD
+    Created: 2012-10-02 07:33:21
+    Order: =>SilverShop\Core\Model\Order.paid

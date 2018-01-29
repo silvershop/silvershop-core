@@ -1,6 +1,6 @@
 <?php
 
-namespace SilverShop\Core;
+namespace SilverShop\Core\Modifiers\Shipping;
 use SilverShop\Core\Model\FieldType\CanBeFreeCurrency;
 
 

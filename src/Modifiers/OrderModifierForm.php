@@ -1,6 +1,6 @@
 <?php
 
-namespace SilverShop\Core;
+namespace SilverShop\Core\Modifiers;
 
 
 use SilverShop\Core\Checkout\CheckoutPage;

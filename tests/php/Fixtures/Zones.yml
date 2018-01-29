@@ -1,0 +1,33 @@
+SilverShop\Core\Model\Zone:
+  transtasman:
+    Name: TransTasman
+  asia:
+    Name: Asia
+  america:
+    Name: America
+  local:
+    Name: Local
+  special:
+    Name: Special
+
+SilverShop\Core\Model\ZoneRegion:
+  nz:
+    Country: NZ
+    Zone: =>SilverShop\Core\Model\Zone.transtasman
+  aus:
+    Country: AU
+    Zone: =>SilverShop\Core\Model\Zone.transtasman
+  jap:
+    Country: JP
+    Zone: =>SilverShop\Core\Model\Zone.asia
+  china:
+    Country: CN
+    Zone: =>SilverShop\Core\Model\Zone.asia
+  local:
+    Country: NZ
+    State: Wellington
+    Zone: =>SilverShop\Core\Model\Zone.local
+  special:
+    Country: AU
+    State: SA
+    Zone: =>SilverShop\Core\Model\Zone.special

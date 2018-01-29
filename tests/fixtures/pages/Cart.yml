@@ -1,7 +1,0 @@
-CartPage:
-    cart:
-        URLSegment: cart
-        Title: Shopping Cart
-        MenuTitle: Cart
-        ShowInMenus: 0
-        ShowInSearch: 0

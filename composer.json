@@ -39,7 +39,7 @@
   "autoload": {
     "psr-4": {
       "SilverShop\\Core\\": "src/",
-      "SilverShop\\Core\\Tests\\": "tests/"
+      "SilverShop\\Core\\Tests\\": "tests/php/"
     }
   },
   "suggest": {

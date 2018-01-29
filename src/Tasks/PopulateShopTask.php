@@ -49,7 +49,7 @@ class PopulateShopTask extends BuildTask
 
         $parentid = 0;
 
-        $fixtureDir = realpath(__DIR__ . '/../../tests/fixtures');
+        $fixtureDir = realpath(__DIR__ . '/../../tests/php/Fixtures');
 
         //create products
         if (!Product::get()->count()) {
