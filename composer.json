@@ -51,7 +51,6 @@
 	"support":{
 		"issues" : "https://github.com/silvershop/silvershop-core/issues",
 		"source" : "https://github.com/silvershop/silvershop-core",
-		"forum" : "http://www.silverstripe.org/e-commerce-module-forum",
 		"docs" : "https://github.com/silvershop/silvershop-core/tree/master/docs/en"
 	}
 }
