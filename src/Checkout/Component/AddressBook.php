@@ -23,7 +23,8 @@ use SilverStripe\View\Requirements;
 abstract class AddressBook extends Address implements i18nEntityProvider
 {
     /**
-     * @config the composite field tag to use
+     * The composite field tag to use
+     * @config
      * @var string
      */
     private static $composite_field_tag = 'div';

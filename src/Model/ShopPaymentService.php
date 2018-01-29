@@ -6,7 +6,6 @@ namespace SilverShop\Core\Model;
 use SilverStripe\Core\Extension;
 
 
-
 /**
  */
 class ShopPaymentService extends Extension

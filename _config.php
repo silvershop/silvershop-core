@@ -3,10 +3,8 @@
 namespace SilverShop\Core;
 
 
-
-
-define('SHOP_DIR',basename(__DIR__));
-define('SHOP_PATH',BASE_PATH.DIRECTORY_SEPARATOR.SHOP_DIR);
+use SilverShop\Core\Checkout\CheckoutPage;
+use SilverShop\Core\Checkout\Step\SteppedCheckout;
 
 if($checkoutsteps = CheckoutPage::config()->steps){
 	SteppedCheckout::setupSteps($checkoutsteps);

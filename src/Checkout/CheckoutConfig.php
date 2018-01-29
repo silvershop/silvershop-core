@@ -10,13 +10,15 @@ class CheckoutConfig
     use Configurable;
 
     /**
-     * @config whether or not members can be created
+     * Whether or not members can be created
+     * @config
      * @var bool
      */
     private static $member_creation_enabled = true;
 
     /**
-     * @config whether or not membership is required for checkout (eg. no guest checkout)
+     * Whether or not membership is required for checkout (eg. no guest checkout)
+     * @config
      * @var bool
      */
     private static $membership_required     = false;

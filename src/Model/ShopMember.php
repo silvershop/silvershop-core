@@ -23,9 +23,9 @@ class ShopMember extends DataExtension
         'AddressBook' => Address::class,
     ];
 
-    private static $has_one  = [
+    private static $has_one = [
         'DefaultShippingAddress' => Address::class,
-        'DefaultBillingAddress'  => Address::class,
+        'DefaultBillingAddress' => Address::class,
     ];
 
     /**

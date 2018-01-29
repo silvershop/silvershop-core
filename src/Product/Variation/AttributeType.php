@@ -3,6 +3,7 @@
 namespace SilverShop\Core\Product\Variation;
 
 
+use SilverShop\Core\Product\Product;
 use SilverStripe\Forms\TextField;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\GridField\GridFieldConfig_RecordEditor;
@@ -11,7 +12,6 @@ use SilverStripe\Forms\LiteralField;
 use SilverStripe\ORM\ArrayList;
 use SilverStripe\Forms\DropdownField;
 use SilverStripe\ORM\DataObject;
-
 
 
 /**
@@ -23,43 +23,45 @@ use SilverStripe\ORM\DataObject;
  */
 class AttributeType extends DataObject
 {
-    private static $db                = array(
-        'Name'  => 'Varchar', //for back-end use
+    private static $db = [
+        'Name' => 'Varchar', //for back-end use
         'Label' => 'Varchar' //for front-end use
-    );
+    ];
 
-    private static $has_many          = array(
-        'Values' => 'ProductAttributeValue',
-    );
+    private static $has_many = [
+        'Values' => AttributeValue::class,
+    ];
 
-    private static $belongs_many_many = array(
-        'Product' => 'Product',
-    );
+    private static $belongs_many_many = [
+        'Product' => Product::class,
+    ];
 
-    private static $summary_fields    = array(
-        'Name'  => 'Name',
+    private static $summary_fields = [
+        'Name' => 'Name',
         'Label' => 'Label',
-    );
+    ];
 
-    private static $indexes           = array(
+    private static $indexes = [
         'LastEdited' => true,
-    );
+    ];
 
-    private static $default_sort      = "ID ASC";
+    private static $default_sort = 'ID ASC';
 
-    private static $singular_name     = "Attribute";
+    private static $singular_name = 'Attribute';
 
-    private static $plural_name       = "Attributes";
+    private static $plural_name = 'Attributes';
+
+    private static $table_name = 'SilverShop_AttributeType';
 
     public static function find_or_make($name)
     {
-        if ($type = ProductAttributeType::get()
-            ->filter("Name:nocase", $name)
+        if ($type = AttributeType::get()
+            ->filter('Name:nocase', $name)
             ->first()
         ) {
             return $type;
         }
-        $type = ProductAttributeType::create();
+        $type = AttributeType::create();
         $type->Name = $name;
         $type->Label = $name;
         $type->write();
@@ -70,14 +72,14 @@ class AttributeType extends DataObject
     public function getCMSFields()
     {
         $fields = FieldList::create(
-            TextField::create("Name", _t('ProductAttributeType.db_Name', 'Name')),
-            TextField::create("Label", _t('ProductAttributeType.db_Label', 'Label'))
+            TextField::create('Name', $this->fieldLabel('Name')),
+            TextField::create('Label', $this->fieldLabel('Label'))
         );
         if ($this->isInDB()) {
             $fields->push(
                 GridField::create(
-                    "Values",
-                    _t('ProductAttributeType.has_many_Values', "Values"),
+                    'Values',
+                    $this->fieldLabel('Values'),
                     $this->Values(),
                     GridFieldConfig_RecordEditor::create()
                 )
@@ -85,7 +87,7 @@ class AttributeType extends DataObject
         } else {
             $fields->push(
                 LiteralField::create(
-                    "Values",
+                    'Values',
                     '<p class="message warning">' .
                     _t('ProductAttributeType.SaveFirstInfo', 'Save first, then you can add values.') .
                     '</p>'
@@ -117,7 +119,7 @@ class AttributeType extends DataObject
         foreach ($values as $value) {
             $val = $this->Values()->find('Value', $value);
             if (!$val) {  //TODO: ignore case, if possible
-                $val = ProductAttributeValue::create();
+                $val = AttributeValue::create();
                 $val->Value = $value;
                 $val->TypeID = $this->ID;
                 $val->write();
@@ -131,7 +133,7 @@ class AttributeType extends DataObject
     /**
      * Returns a dropdown field for the user to select a variant.
      *
-     * @param string    $emptyString
+     * @param string $emptyString
      * @param ArrayList $values
      *
      * @return DropdownField

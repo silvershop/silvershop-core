@@ -2,7 +2,7 @@
 
 namespace SilverShop\Core;
 
-
+use SilverShop\Core\Model\OrderModifier;
 
 
 /**
@@ -10,28 +10,30 @@ namespace SilverShop\Core;
  */
 class TaxModifier extends OrderModifier
 {
-    private static $db            = array(
+    private static $db = [
         'Rate' => 'Double',
-    );
+    ];
 
-    private static $defaults      = array(
+    private static $defaults = [
         'Rate' => 0.15 //15% tax
-    );
+    ];
 
-    private static $singular_name = "Tax";
+    private static $table_name = 'SilverShop_TaxModifier';
 
-    private static $plural_name   = "Taxes";
+    private static $singular_name = 'Tax';
+
+    private static $plural_name = 'Taxes';
 
     public function TableTitle()
     {
         $title = parent::TableTitle();
         if ($this->Rate) {
             $title .= ' ' . _t(
-                    'TaxModifier.AtRate',
-                    '@ {Rate}%',
-                    '',
-                    array('Rate' => number_format($this->Rate * 100, 1))
-                );
+                'TaxModifier.AtRate',
+                '@ {Rate}%',
+                '',
+                ['Rate' => number_format($this->Rate * 100, 1)]
+            );
         }
         return $title;
     }

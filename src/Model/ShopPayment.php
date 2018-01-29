@@ -3,10 +3,9 @@
 namespace SilverShop\Core\Model;
 
 
+use SilverShop\Core\Checkout\OrderProcessor;
 use SilverStripe\Omnipay\Service\ServiceResponse;
 use SilverStripe\ORM\DataExtension;
-
-
 
 
 /**
@@ -16,9 +15,9 @@ use SilverStripe\ORM\DataExtension;
  */
 class ShopPayment extends DataExtension
 {
-    private static $has_one = array(
+    private static $has_one = [
         'Order' => 'Order',
-    );
+    ];
 
     public function onAwaitingAuthorized(ServiceResponse $response)
     {

@@ -3,6 +3,7 @@
 namespace SilverShop\Core\Model;
 
 
+use SilverShop\Core\Model\FieldType\ShopCountry;
 use SilverStripe\Security\Member;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\TextField;
@@ -10,7 +11,6 @@ use SilverStripe\SiteConfig\SiteConfig;
 use SilverStripe\Forms\ReadonlyField;
 use SilverStripe\Forms\DropdownField;
 use SilverStripe\ORM\DataObject;
-
 
 
 /**
@@ -38,17 +38,17 @@ use SilverStripe\ORM\DataObject;
  */
 class Address extends DataObject
 {
-    private static $db              = array(
-        'Country'    => 'ShopCountry',
+    private static $db = [
+        'Country' => 'ShopCountry',
         //level1: Country = ISO 2-character country code
-        'State'      => 'Varchar(100)',
+        'State' => 'Varchar(100)',
         //level2: Locality, Administrative Area, State, Province, Region, Territory, Island
-        'City'       => 'Varchar(100)',
+        'City' => 'Varchar(100)',
         //level3: Dependent Locality, City, Suburb, County, District
         'PostalCode' => 'Varchar(20)',
         //code: ZipCode, PostCode (could cross above levels within a country)
 
-        'Address'      => 'Varchar(255)',
+        'Address' => 'Varchar(255)',
         //Number + type of thoroughfare/street. P.O. box
         'AddressLine2' => 'Varchar(255)',
         //Premises, Apartment, Building. Suite, Unit, Floor, Level, Side, Wing.
@@ -58,46 +58,48 @@ class Address extends DataObject
 
         'FirstName' => 'Varchar(100)',
         //Individual, Person, Contact, Attention
-        'Surname'   => 'Varchar(100)',
-        'Phone'     => 'Varchar(100)',
-    );
+        'Surname' => 'Varchar(100)',
+        'Phone' => 'Varchar(100)',
+    ];
 
-    private static $has_one         = array(
+    private static $has_one = [
         'Member' => Member::class,
-    );
+    ];
 
-    private static $has_many = array(
-        'ShippingAddressOrders' => 'Order.ShippingAddress',
-        'BillingAddressOrders' => 'Order.BillingAddress'
-    );
+    private static $has_many = [
+        'ShippingAddressOrders' => Order::class . '.ShippingAddress',
+        'BillingAddressOrders' => Order::class . '.BillingAddress'
+    ];
 
-    private static $casting         = array(
-        'Country' => 'ShopCountry',
-    );
+    private static $casting = [
+        'Country' => ShopCountry::class,
+    ];
 
-    private static $required_fields = array(
+    private static $required_fields = [
         'Country',
         'State',
         'City',
         'Address',
-    );
+    ];
 
-    private static $summary_fields  = array(
+    private static $summary_fields = [
         'toString' => 'Address',
-    );
+    ];
+
+    private static $table_name = 'SilverShop_Address';
 
     public function getCMSFields()
     {
         $self = $this;
 
-        $this->beforeUpdateCMSFields(function(FieldList $fields) use ($self) {
+        $this->beforeUpdateCMSFields(function (FieldList $fields) use ($self) {
             $fields->addFieldToTab(
-                "Root.Main",
+                'Root.Main',
                 $self->getCountryField(),
                 'State'
             );
 
-            $fields->removeByName("MemberID");
+            $fields->removeByName('MemberID');
         });
 
         return parent::getCMSFields();
@@ -107,23 +109,23 @@ class Address extends DataObject
     {
         $fields = new FieldList(
             $this->getCountryField(),
-            $addressfield = TextField::create('Address', _t('Address.db_Address', 'Address')),
+            $addressfield = TextField::create('Address', $this->fieldLabel('Address')),
             $address2field =
-                TextField::create('AddressLine2', _t('Address.db_AddressLine2', 'Address Line 2 (optional)')),
-            $cityfield = TextField::create('City', _t('Address.db_City', 'City')),
-            $statefield = TextField::create('State', _t('Address.db_State', 'State')),
-            $postcodefield = TextField::create('PostalCode', _t('Address.db_PostalCode', 'Postal Code')),
-            $phonefield = TextField::create('Phone', _t('Address.db_Phone', 'Phone Number'))
+                TextField::create('AddressLine2', $this->fieldLabel('AddressLine2')),
+            $cityfield = TextField::create('City', $this->fieldLabel('City')),
+            $statefield = TextField::create('State', $this->fieldLabel('State')),
+            $postcodefield = TextField::create('PostalCode', $this->fieldLabel('PostalCode')),
+            $phonefield = TextField::create('Phone', $this->fieldLabel('Phone'))
         );
-        if (isset($params['addfielddescriptions']) && !empty($params['addfielddescriptions'])) {
+        if (!empty($params['addfielddescriptions'])) {
             $addressfield->setDescription(
-                _t("Address.AddressHint", "street / thoroughfare number, name, and type or P.O. Box")
+                _t(__CLASS__ . '.AddressHint', 'street / thoroughfare number, name, and type or P.O. Box')
             );
             $address2field->setDescription(
-                _t("Address.AddressLine2Hint", "premises, building, apartment, unit, floor")
+                _t(__CLASS__ . '.AddressLine2Hint', 'premises, building, apartment, unit, floor')
             );
-            $cityfield->setDescription(_t("Address.CityHint", "or suburb, county, district"));
-            $statefield->setDescription(_t("Address.StateHint", "or province, territory, island"));
+            $cityfield->setDescription(_t(__CLASS__ . '.CityHint', 'or suburb, county, district'));
+            $statefield->setDescription(_t(__CLASS__ . '.StateHint', 'or province, territory, island'));
         }
 
         $this->extend('updateFormFields', $fields);
@@ -136,14 +138,14 @@ class Address extends DataObject
         if (count($countries) == 1) {
             //field name is Country_readonly so it's value doesn't get updated
             return ReadonlyField::create(
-                "Country_readonly",
-                _t('Address.db_Country', 'Country'),
+                'Country_readonly',
+                $this->fieldLabel('Country'),
                 array_pop($countries)
             );
         }
         $field = DropdownField::create(
-            "Country",
-            _t('Address.db_Country', 'Country'),
+            'Country',
+            $this->fieldLabel('Country'),
             $countries
         )->setHasEmptyDefault(true);
 
@@ -185,19 +187,18 @@ class Address extends DataObject
     {
         return implode(
             ' ',
-            array_filter(
-                array(
-                    $this->FirstName,
-                    $this->Surname,
-                )
-            )
+            array_filter([
+
+                $this->FirstName,
+                $this->Surname,
+            ])
         );
     }
 
     /**
      * Convert address to a single string.
      */
-    public function toString($separator = ", ")
+    public function toString($separator = ', ')
     {
         $fields = array(
             $this->Company,
@@ -225,65 +226,79 @@ class Address extends DataObject
 
     /**
      * Add alias setters for fields which are synonymous
+     * @param string $val
+     * @return $this
      */
     public function setProvince($val)
     {
         $this->State = $val;
+        return $this;
     }
 
     public function setTerritory($val)
     {
         $this->State = $val;
+        return $this;
     }
 
     public function setIsland($val)
     {
         $this->State = $val;
+        return $this;
     }
 
     public function setPostCode($val)
     {
         $this->PostalCode = $val;
+        return $this;
     }
 
     public function setZipCode($val)
     {
         $this->PostalCode = $val;
+        return $this;
     }
 
     public function setStreet($val)
     {
         $this->Address = $val;
+        return $this;
     }
 
     public function setStreet2($val)
     {
         $this->AddressLine2 = $val;
+        return $this;
     }
 
     public function setAddress2($val)
     {
         $this->AddressLine2 = $val;
+        return $this;
     }
 
     public function setInstitution($val)
     {
         $this->Company = $val;
+        return $this;
     }
 
     public function setBusiness($val)
     {
         $this->Company = $val;
+        return $this;
     }
 
     public function setOrganisation($val)
     {
         $this->Company = $val;
+        return $this;
     }
 
     public function setOrganization($val)
     {
         $this->Company = $val;
+        return $this;
     }
 
     function validate()

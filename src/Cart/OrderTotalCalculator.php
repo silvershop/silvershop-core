@@ -4,10 +4,10 @@ namespace SilverShop\Core\Cart;
 
 use ErrorException;
 use Exception;
-use Psr\Log\LoggerInterface;
+use Monolog\Logger;
 use SilverShop\Core\Model\Order;
 use SilverStripe\Core\ClassInfo;
-use SilverStripe\Core\Injector\Injector;
+use SilverStripe\Core\Injector\Injectable;
 use SilverStripe\ORM\DB;
 
 /**
@@ -19,6 +19,20 @@ use SilverStripe\ORM\DB;
  */
 class OrderTotalCalculator
 {
+    use Injectable;
+
+    private static $dependencies = [
+        'logger' => '%SilverShop\Logger',
+    ];
+
+    /**
+     * @var Logger
+     */
+    public $logger;
+
+    /**
+     * @var Order
+     */
     protected $order;
 
     function __construct(Order $order)
@@ -90,7 +104,7 @@ class OrderTotalCalculator
 
         //prevent negative sales from ever occurring
         if ($runningtotal < 0) {
-            Injector::inst()->get(LoggerInterface::class)->error(
+            $this->logger->error(
                 "Order (ID = {$this->order->ID}) was calculated to equal $runningtotal.\n
 				Order totals should never be negative!\n
 				The order total was set to $0"

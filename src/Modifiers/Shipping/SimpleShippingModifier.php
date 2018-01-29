@@ -6,7 +6,6 @@ namespace SilverShop\Core;
 use SilverStripe\SiteConfig\SiteConfig;
 
 
-
 /**
  * Flat shipping to specific countries.
  *
@@ -38,7 +37,7 @@ class SimpleShippingModifier extends ShippingModifier
                 'SimpleShippingModifier.ShipToCountry',
                 'Ship to {Country}',
                 '',
-                array('Country' => $countryList[$country])
+                ['Country' => $countryList[$country]]
             );
         } else {
             return parent::TableTitle();

@@ -3,6 +3,13 @@
 namespace SilverShop\Core\Model;
 
 
+use SilverShop\Core\Account\AccountPage;
+use SilverShop\Core\Cart\OrderTotalCalculator;
+use SilverShop\Core\Checkout\CheckoutPage;
+use SilverShop\Core\Checkout\OrderEmailNotifier;
+use SilverShop\Core\Cms\ShopConfig;
+use SilverShop\Core\Model\Filter\MultiFieldPartialMatchFilter;
+use SilverShop\Core\ShopTools;
 use SilverStripe\Control\Controller;
 use SilverStripe\Dev\Debug;
 use SilverStripe\Forms\DateField;
@@ -16,8 +23,10 @@ use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\FieldType\DBDatetime;
 use SilverStripe\ORM\Filters\GreaterThanFilter;
 use SilverStripe\ORM\Filters\LessThanFilter;
+use SilverStripe\ORM\Search\SearchContext;
 use SilverStripe\ORM\UnsavedRelationList;
 use SilverStripe\Security\Member;
+use SilverStripe\Security\Security;
 
 
 /**
@@ -65,87 +74,90 @@ class Order extends DataObject
      * AdminCancelled: Order cancelled by the administrator
      * MemberCancelled: Order cancelled by the customer (Member)
      */
-    private static $db                = array(
-        'Total'                  => 'Currency',
-        'Reference'              => 'Varchar', //allow for customised order numbering schemes
+    private static $db = [
+        'Total' => 'Currency',
+        'Reference' => 'Varchar', //allow for customised order numbering schemes
         //status
-        'Placed'                 => "Datetime", //date the order was placed (went from Cart to Order)
-        'Paid'                   => 'Datetime', //no outstanding payment left
-        'ReceiptSent'            => 'Datetime', //receipt emailed to customer
-        'Printed'                => 'Datetime',
-        'Dispatched'             => 'Datetime', //products have been sent to customer
-        'Status'                 => "Enum('Unpaid,Paid,Processing,Sent,Complete,AdminCancelled,MemberCancelled,Cart','Cart')",
+        'Placed' => 'Datetime', //date the order was placed (went from Cart to Order)
+        'Paid' => 'Datetime', //no outstanding payment left
+        'ReceiptSent' => 'Datetime', //receipt emailed to customer
+        'Printed' => 'Datetime',
+        'Dispatched' => 'Datetime', //products have been sent to customer
+        'Status' => "Enum('Unpaid,Paid,Processing,Sent,Complete,AdminCancelled,MemberCancelled,Cart','Cart')",
         //customer (for guest orders)
-        'FirstName'              => 'Varchar',
-        'Surname'                => 'Varchar',
-        'Email'                  => 'Varchar',
-        'Notes'                  => 'Text',
-        'IPAddress'              => 'Varchar(15)',
+        'FirstName' => 'Varchar',
+        'Surname' => 'Varchar',
+        'Email' => 'Varchar',
+        'Notes' => 'Text',
+        'IPAddress' => 'Varchar(15)',
         //separate shipping
         'SeparateBillingAddress' => 'Boolean',
         // keep track of customer locale
-        'Locale'                 => 'DBLocale',
-    );
+        'Locale' => 'Locale',
+    ];
 
-    private static $has_one           = array(
-        'Member'          => Member::class,
-        'ShippingAddress' => 'Address',
-        'BillingAddress'  => 'Address',
-    );
+    private static $has_one = [
+        'Member' => Member::class,
+        'ShippingAddress' => Address::class,
+        'BillingAddress' => Address::class,
+    ];
 
-    private static $has_many          = array(
-        'Items'           => 'OrderItem',
-        'Modifiers'       => 'OrderModifier',
-        'OrderStatusLogs' => 'OrderStatusLog',
-    );
+    private static $has_many = [
+        'Items' => OrderItem::class,
+        'Modifiers' => OrderModifier::class,
+        'OrderStatusLogs' => OrderStatusLog::class,
+    ];
 
-    private static $defaults          = array(
+    private static $defaults = [
         'Status' => 'Cart',
-    );
+    ];
 
-    private static $casting           = array(
-        'FullBillingAddress'  => 'Text',
+    private static $casting = [
+        'FullBillingAddress' => 'Text',
         'FullShippingAddress' => 'Text',
-        'Total'               => 'Currency',
-        'SubTotal'            => 'Currency',
-        'TotalPaid'           => 'Currency',
-        'Shipping'            => 'Currency',
-        'TotalOutstanding'    => 'Currency',
-    );
+        'Total' => 'Currency',
+        'SubTotal' => 'Currency',
+        'TotalPaid' => 'Currency',
+        'Shipping' => 'Currency',
+        'TotalOutstanding' => 'Currency',
+    ];
 
-    private static $summary_fields    = array(
-        'Reference'   => 'Order No',
-        'Placed'      => 'Date',
-        'Name'        => 'Customer',
+    private static $summary_fields = [
+        'Reference' => 'Order No',
+        'Placed' => 'Date',
+        'Name' => 'Customer',
         'LatestEmail' => 'Email',
-        'Total'       => 'Total',
-        'Status'      => 'Status',
-    );
+        'Total' => 'Total',
+        'Status' => 'Status',
+    ];
 
-    private static $searchable_fields = array(
-        'Reference' => array(),
-        'FirstName' => array(
+    private static $searchable_fields = [
+        'Reference' => [],
+        'FirstName' => [
             'title' => 'Customer Name',
-        ),
-        'Email'     => array(
+        ],
+        'Email' => [
             'title' => 'Customer Email',
-        ),
-        'Status'    => array(
+        ],
+        'Status' => [
             'filter' => 'ExactMatchFilter',
-            'field'  => 'CheckboxSetField',
-        ),
-    );
+            'field' => 'CheckboxSetField',
+        ],
+    ];
 
-    private static $singular_name     = "Order";
+    private static $table_name = 'SilverShop_Order';
 
-    private static $plural_name       = "Orders";
+    private static $singular_name = 'Order';
 
-    private static $default_sort      = "\"Placed\" DESC, \"Created\" DESC";
+    private static $plural_name = 'Orders';
+
+    private static $default_sort = '"Placed" DESC, "Created" DESC';
 
     /**
      * Statuses for orders that have been placed.
+     * @config
      */
-    private static $placed_status = array(
+    private static $placed_status = [
         'Paid',
         'Unpaid',
         'Processing',
@@ -153,44 +165,65 @@ class Order extends DataObject
         'Complete',
         'MemberCancelled',
         'AdminCancelled',
-    );
+    ];
 
     /**
      * Statuses for which an order can be paid for
+     * @config
      */
-    private static $payable_status = array(
+    private static $payable_status = [
         'Cart',
         'Unpaid',
         'Processing',
         'Sent',
-    );
+    ];
 
     /**
      * Statuses that shouldn't show in user account.
+     * @config
      */
-    private static $hidden_status = array('Cart');
+    private static $hidden_status = ['Cart'];
 
 
     /**
-     * Status for logging changes
+     * Statuses that should be logged in the Order-Status-Log
+     * @config
      * @var array
      */
-    private static $log_status = array();
+    private static $log_status = [];
 
     /**
-     * Flags to determine when an order can be cancelled.
+     * Whether or not an order can be cancelled before payment
+     * @config
+     * @var bool
      */
-    private static $cancel_before_payment    = true;
+    private static $cancel_before_payment = true;
 
+    /**
+     * Whether or not an order can be cancelled before processing
+     * @config
+     * @var bool
+     */
     private static $cancel_before_processing = false;
 
-    private static $cancel_before_sending    = false;
+    /**
+     * Whether or not an order can be cancelled before sending
+     * @config
+     * @var bool
+     */
+    private static $cancel_before_sending = false;
 
-    private static $cancel_after_sending     = false;
+    /**
+     * Whether or not an order can be cancelled after sending
+     * @config
+     * @var bool
+     */
+    private static $cancel_after_sending = false;
 
     /**
      * Place an order before payment processing begins
      *
+     * @config
      * @var boolean
      */
     private static $place_before_payment = false;
@@ -199,19 +232,36 @@ class Order extends DataObject
      * Modifiers represent the additional charges or
      * deductions associated to an order, such as
      * shipping, taxes, vouchers etc.
+     *
+     * @config
+     * @var array
      */
-    private static $modifiers            = array();
+    private static $modifiers = [];
 
-    private static $rounding_precision   = 2;
+    /**
+     * Rounding precision of order amounts
+     * @config
+     * @var int
+     */
+    private static $rounding_precision = 2;
 
+    /**
+     * Minimal length (number of decimals) of order reference ids
+     *
+     * @config
+     * @var int
+     */
     private static $reference_id_padding = 5;
 
     /**
-     * @var boolean Will allow completion of orders with GrandTotal=0,
+     * Will allow completion of orders with GrandTotal=0,
      * which could be the case for orders paid with loyalty points or vouchers.
      * Will send the "Paid" date on the order, even though no actual payment was taken.
      * Will trigger the payment related extension points:
      * Order->onPayment, OrderItem->onPayment, Order->onPaid.
+     *
+     * @config
+     * @var boolean
      */
     private static $allow_zero_order_total = false;
 
@@ -224,7 +274,7 @@ class Order extends DataObject
     public static function get_order_status_options()
     {
         $values = array();
-        foreach (singleton('Order')->dbObject('Status')->enumValues(false) as $value) {
+        foreach (singleton(Order::class)->dbObject('Status')->enumValues(false) as $value) {
             $values[$value] = _t('Order.STATUS_' . strtoupper($value), $value);
         }
         return $values;
@@ -236,23 +286,23 @@ class Order extends DataObject
     public function getCMSFields()
     {
         $fields = FieldList::create(TabSet::create('Root', Tab::create('Main')));
-        $fs = "<div class=\"field\">";
-        $fe = "</div>";
+        $fs = '<div class="field">';
+        $fe = '</div>';
         $parts = array(
-            DropdownField::create("Status", _t('Order.db_Status', "Status"), self::get_order_status_options()),
-            LiteralField::create('Customer', $fs . $this->renderWith("OrderAdmin_Customer") . $fe),
-            LiteralField::create('Addresses', $fs . $this->renderWith("OrderAdmin_Addresses") . $fe),
-            LiteralField::create('Content', $fs . $this->renderWith("OrderAdmin_Content") . $fe),
+            DropdownField::create('Status', $this->fieldLabel('Status'), self::get_order_status_options()),
+            LiteralField::create('Customer', $fs . $this->renderWith('OrderAdmin_Customer') . $fe),
+            LiteralField::create('Addresses', $fs . $this->renderWith('OrderAdmin_Addresses') . $fe),
+            LiteralField::create('Content', $fs . $this->renderWith('OrderAdmin_Content') . $fe),
         );
         if ($this->Notes) {
-            $parts[] = LiteralField::create('Notes', $fs . $this->renderWith("OrderAdmin_Notes") . $fe);
+            $parts[] = LiteralField::create('Notes', $fs . $this->renderWith('OrderAdmin_Notes') . $fe);
         }
         $fields->addFieldsToTab('Root.Main', $parts);
         $this->extend('updateCMSFields', $fields);
-        if ($payments = $fields->fieldByName("Root.Payments.Payments")) {
-            $fields->removeByName("Payments");
-            $fields->insertAfter($payments, "Content");
-            $payments->addExtraClass("order-payments");
+        if ($payments = $fields->fieldByName('Root.Payments.Payments')) {
+            $fields->removeByName('Payments');
+            $fields->insertAfter($payments, 'Content');
+            $payments->addExtraClass('order-payments');
         }
 
         return $fields;
@@ -268,26 +318,24 @@ class Order extends DataObject
         $context = parent::getDefaultSearchContext();
         $fields = $context->getFields();
         $fields->push(
-            ListboxField::create("Status", _t('Order.db_Status', "Status"))
+            ListboxField::create('Status', $this->fieldLabel('Status'))
                 ->setSource(
                     array_combine(
                         self::config()->placed_status,
                         self::config()->placed_status
                     )
                 )
-                ->setMultiple(true)
         );
 
         // add date range filtering
         $fields->insertBefore(
-            DateField::create("DateFrom", _t('Order.DateFrom', "Date from"))
-                ->setConfig('showcalendar', true),
-            'Status'
+            'Status',
+            DateField::create('DateFrom', $this->fieldLabel('DateFrom'))
         );
+
         $fields->insertBefore(
-            DateField::create("DateTo", _t('Order.DateTo', "Date to"))
-                ->setConfig('showcalendar', true),
-            'Status'
+            'Status',
+            DateField::create('DateTo', $this->fieldLabel('DateTo'))
         );
 
         // get the array, to maniplulate name, and fullname seperately
@@ -296,10 +344,10 @@ class Order extends DataObject
         $filters['DateTo'] = LessThanFilter::create('Placed');
 
         // filter customer need to use a bunch of different sources
-        $filters['FirstName'] = new MultiFieldPartialMatchFilter(
+        $filters['FirstName'] = MultiFieldPartialMatchFilter::create(
             'FirstName', false,
-            array('SplitWords'),
-            array(
+            ['SplitWords'],
+            [
                 'Surname',
                 'Member.FirstName',
                 'Member.Surname',
@@ -307,7 +355,7 @@ class Order extends DataObject
                 'BillingAddress.Surname',
                 'ShippingAddress.FirstName',
                 'ShippingAddress.Surname',
-            )
+            ]
         );
 
         $context->setFilters($filters);
@@ -318,13 +366,14 @@ class Order extends DataObject
 
     /**
      * Hack for swapping out relation list with OrderItemList
+     * @inheritdoc
      */
-    public function getComponents($componentName, $filter = "", $sort = "", $join = "", $limit = null)
+    public function getComponents($componentName)
     {
-        $components = parent::getComponents($componentName, $filter = "", $sort = "", $join = "", $limit = null);
-        if ($componentName === "Items" && get_class($components) !== UnsavedRelationList::class) {
+        $components = parent::getComponents($componentName);
+        if ($componentName === 'Items' && get_class($components) !== UnsavedRelationList::class) {
             $query = $components->dataQuery();
-            $components = OrderItemList::create("OrderItem", "OrderID");
+            $components = OrderItemList::create('OrderItem', 'OrderID');
             $components->setDataQuery($query);
             $components = $components->forForeignID($this->ID);
         }
@@ -353,7 +402,7 @@ class Order extends DataObject
         if (!$this->IsCart()) {
             return $this->Total;
         }
-        $calculator = new OrderTotalCalculator($this);
+        $calculator = OrderTotalCalculator::create($this);
         return $this->Total = $calculator->calculate();
     }
 
@@ -363,7 +412,7 @@ class Order extends DataObject
      */
     public function getModifier($className, $forcecreate = false)
     {
-        $calculator = new OrderTotalCalculator($this);
+        $calculator = OrderTotalCalculator::create($this);
         return $calculator->getModifier($className, $forcecreate);
     }
 
@@ -372,7 +421,7 @@ class Order extends DataObject
      */
     public function setTotal($val)
     {
-        $this->setField("Total", round($val, self::$rounding_precision));
+        $this->setField('Total', round($val, self::$rounding_precision));
     }
 
     /**
@@ -381,7 +430,7 @@ class Order extends DataObject
      */
     public function Total()
     {
-        return $this->getField("Total");
+        return $this->getField('Total');
     }
 
     /**
@@ -427,10 +476,10 @@ class Order extends DataObject
      */
     public function Link()
     {
-        if (Member::currentUser()) {
+        if (Security::getCurrentUser()) {
             return Controller::join_links(AccountPage::find_link(), 'order', $this->ID);
         }
-        return CheckoutPage::find_link(false, "order", $this->ID);
+        return CheckoutPage::find_link(false, 'order', $this->ID);
     }
 
     /**
@@ -442,7 +491,7 @@ class Order extends DataObject
     public function canCancel($member = null)
     {
         $extended = $this->extendedCan(__FUNCTION__, $member);
-        if($extended !== null) {
+        if ($extended !== null) {
             return $extended;
         }
 
@@ -468,7 +517,7 @@ class Order extends DataObject
     public function canPay($member = null)
     {
         $extended = $this->extendedCan(__FUNCTION__, $member);
-        if($extended !== null) {
+        if ($extended !== null) {
             return $extended;
         }
 
@@ -481,14 +530,14 @@ class Order extends DataObject
         return false;
     }
 
-    /*
+    /**
      * Prevent deleting orders.
      * @return boolean
      */
     public function canDelete($member = null)
     {
         $extended = $this->extendedCan(__FUNCTION__, $member);
-        if($extended !== null) {
+        if ($extended !== null) {
             return $extended;
         }
 
@@ -503,7 +552,7 @@ class Order extends DataObject
     public function canView($member = null)
     {
         $extended = $this->extendedCan(__FUNCTION__, $member);
-        if($extended !== null) {
+        if ($extended !== null) {
             return $extended;
         }
 
@@ -518,7 +567,7 @@ class Order extends DataObject
     public function canEdit($member = null)
     {
         $extended = $this->extendedCan(__FUNCTION__, $member);
-        if($extended !== null) {
+        if ($extended !== null) {
             return $extended;
         }
 
@@ -533,7 +582,7 @@ class Order extends DataObject
     public function canCreate($member = null, $context = array())
     {
         $extended = $this->extendedCan(__FUNCTION__, $member, $context);
-        if($extended !== null) {
+        if ($extended !== null) {
             return $extended;
         }
 
@@ -569,12 +618,12 @@ class Order extends DataObject
     {
         $firstname = $this->FirstName ? $this->FirstName : $this->Member()->FirstName;
         $surname = $this->FirstName ? $this->Surname : $this->Member()->Surname;
-        return implode(" ", array_filter(array($firstname, $surname)));
+        return implode(' ', array_filter(array($firstname, $surname)));
     }
 
     public function getTitle()
     {
-        return $this->Reference . " - " . $this->dbObject('Placed')->Nice();
+        return $this->Reference . ' - ' . $this->dbObject('Placed')->Nice();
     }
 
     /**
@@ -601,7 +650,7 @@ class Order extends DataObject
     /**
      * @param string $type - Billing or Shipping
      * @return Address
-     * @throws Exception
+     * @throws \Exception
      */
     protected function getAddress($type)
     {
@@ -687,7 +736,7 @@ class Order extends DataObject
         $count = 0;
         while (DataObject::get_one('Order', "\"Reference\" = '$candidate'")) {
             $count++;
-            $candidate = $reference . "" . $count;
+            $candidate = $reference . '' . $count;
         }
         $this->Reference = $candidate;
     }
@@ -706,7 +755,7 @@ class Order extends DataObject
     protected function onBeforeWrite()
     {
         parent::onBeforeWrite();
-        if (!$this->getField("Reference") && in_array($this->Status, self::$placed_status)) {
+        if (!$this->getField('Reference') && in_array($this->Status, self::$placed_status)) {
             $this->generateReference();
         }
 
@@ -793,7 +842,7 @@ class Order extends DataObject
                 'ShopEmail.StatusChanged',
                 'Status for order #{OrderNo} changed to "{OrderStatus}"',
                 '',
-                array('OrderNo' => $this->Reference, 'OrderStatus' => $this->getStatusI18N())
+                ['OrderNo' => $this->Reference, 'OrderStatus' => $this->getStatusI18N()]
             );
             $log->Note = _t('ShopEmail.StatusChange' . $this->Status . 'Note');
             $log->OrderID = $this->ID;

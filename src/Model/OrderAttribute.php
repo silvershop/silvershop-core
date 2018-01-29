@@ -4,7 +4,7 @@ namespace SilverShop\Core\Model;
 
 
 use SilverStripe\ORM\DataObject;
-
+use SilverStripe\ORM\FieldType\DBCurrency;
 
 
 /**
@@ -14,25 +14,28 @@ use SilverStripe\ORM\DataObject;
  * @see     OrderModifier
  *
  * @package shop
+ * @method Order Order() the related order
  */
 class OrderAttribute extends DataObject
 {
-    private static $singular_name = "Attribute";
+    private static $singular_name = 'Attribute';
 
-    private static $plural_name   = "Attributes";
+    private static $plural_name = 'Attributes';
 
-    private static $db            = array(
+    private static $db = [
         'CalculatedTotal' => 'Currency',
-    );
+    ];
 
-    private static $has_one       = array(
-        'Order' => 'Order',
-    );
+    private static $has_one = [
+        'Order' => Order::class,
+    ];
 
-    private static $casting       = array(
+    private static $casting = [
         'TableTitle' => 'Text',
-        'CartTitle'  => 'Text',
-    );
+        'CartTitle' => 'Text',
+    ];
+
+    private static $table_name = 'SilverShop_OrderAttribute';
 
     public function canCreate($member = null, $context = array())
     {

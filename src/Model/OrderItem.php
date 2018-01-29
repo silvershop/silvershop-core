@@ -3,8 +3,8 @@
 namespace SilverShop\Core\Model;
 
 
-use SilverStripe\Core\Injector\Injector;
-
+use SilverShop\Core\Cart\ShoppingCartController;
+use SilverShop\Core\Cart\ShopQuantityField;
 
 
 /**
@@ -17,46 +17,53 @@ use SilverStripe\Core\Injector\Injector;
  */
 class OrderItem extends OrderAttribute
 {
-    private static $db                   = array(
-        'Quantity'  => 'Int',
+    private static $db = [
+        'Quantity' => 'Int',
         'UnitPrice' => 'Currency',
-    );
+    ];
 
-    private static $casting              = array(
+    private static $casting = [
         'UnitPrice' => 'Currency',
-        'Total'     => 'Currency',
-    );
+        'Total' => 'Currency',
+    ];
 
-    private static $searchable_fields    = array(
-        'OrderID'    => array(
+    private static $searchable_fields = [
+        'OrderID' => [
             'title' => 'Order ID',
             'field' => 'TextField',
-        ),
-        "Title"      => "PartialMatchFilter",
-        "TableTitle" => "PartialMatchFilter",
-        "CartTitle"  => "PartialMatchFilter",
-        "UnitPrice",
-        "Quantity",
-        "Total",
-    );
+        ],
+        'Title' => 'PartialMatchFilter',
+        'TableTitle' => 'PartialMatchFilter',
+        'CartTitle' => 'PartialMatchFilter',
+        'UnitPrice',
+        'Quantity',
+        'Total',
+    ];
 
-    private static $summary_fields       = array(
-        "Order.ID"   => "Order ID",
-        "TableTitle" => "Title",
-        "UnitPrice"  => "Unit Price",
-        "Quantity"   => "Quantity",
-        "Total"      => "Total Price",
-    );
+    private static $summary_fields = [
+        'Order.ID' => 'Order ID',
+        'TableTitle' => 'Title',
+        'UnitPrice' => 'Unit Price',
+        'Quantity' => 'Quantity',
+        'Total' => 'Total Price',
+    ];
 
-    private static $required_fields      = array();
+    private static $required_fields = array();
 
-    private static $buyable_relationship = "Product";
+    /**
+     * The ORM relationship to the buyable item
+     * @config
+     * @var string
+     */
+    private static $buyable_relationship = 'Product';
 
-    private static $singular_name        = "Item";
+    private static $singular_name = 'Item';
 
-    private static $plural_name          = "Items";
+    private static $plural_name = 'Items';
 
-    private static $default_sort         = "\"Created\" DESC";
+    private static $default_sort = '"Created" DESC';
+
+    private static $table_name = 'SilverShop_OrderItem';
 
     /**
      * Get the buyable object related to this item.
@@ -89,7 +96,7 @@ class OrderItem extends OrderAttribute
         if ($val < 0) {
             $val = 0;
         }
-        $this->setField("UnitPrice", $val);
+        $this->setField('UnitPrice', $val);
     }
 
     /**
@@ -101,7 +108,7 @@ class OrderItem extends OrderAttribute
     public function setQuantity($val)
     {
         $val = $val < 1 ? 1 : $val;
-        $this->setField("Quantity", $val);
+        $this->setField('Quantity', $val);
     }
 
     /**
@@ -141,7 +148,7 @@ class OrderItem extends OrderAttribute
         if ($required) {
             foreach ($required as $field) {
                 if ($this->has_one($field)) {
-                    $field = $field . "ID"; //add ID to hasones
+                    $field = $field . 'ID'; //add ID to hasones
                 }
                 $unique[$field] = $this->$field;
             }
@@ -195,7 +202,7 @@ class OrderItem extends OrderAttribute
      */
     public function QuantityField()
     {
-        return Injector::inst()->create('ShopQuantityField', $this);
+        return ShopQuantityField::create($this);
     }
 
     /**
@@ -204,7 +211,7 @@ class OrderItem extends OrderAttribute
     public function addLink()
     {
         $buyable = $this->Buyable();
-        return $buyable ? ShoppingCart_Controller::add_item_link($buyable, $this->uniquedata()) : '';
+        return $buyable ? ShoppingCartController::add_item_link($buyable, $this->uniquedata()) : '';
     }
 
     /**
@@ -213,7 +220,7 @@ class OrderItem extends OrderAttribute
     public function removeLink()
     {
         $buyable = $this->Buyable();
-        return $buyable ? ShoppingCart_Controller::remove_item_link($buyable, $this->uniquedata()) : '';
+        return $buyable ? ShoppingCartController::remove_item_link($buyable, $this->uniquedata()) : '';
     }
 
     /**
@@ -222,7 +229,7 @@ class OrderItem extends OrderAttribute
     public function removeallLink()
     {
         $buyable = $this->Buyable();
-        return $buyable ? ShoppingCart_Controller::remove_all_item_link($buyable, $this->uniquedata()) : '';
+        return $buyable ? ShoppingCartController::remove_all_item_link($buyable, $this->uniquedata()) : '';
     }
 
     /**
@@ -231,6 +238,6 @@ class OrderItem extends OrderAttribute
     public function setquantityLink()
     {
         $buyable = $this->Buyable();
-        return $buyable ? ShoppingCart_Controller::set_quantity_item_link($buyable, $this->uniquedata()) : '';
+        return $buyable ? ShoppingCartController::set_quantity_item_link($buyable, $this->uniquedata()) : '';
     }
 }

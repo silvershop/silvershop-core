@@ -22,15 +22,15 @@ class MultiFieldPartialMatchFilter extends PartialMatchFilter
     protected $subfilterModifiers;
 
     /**
-     * @param string $fullName    Determines the name of the field, as well as the searched database
+     * @param string $fullName Determines the name of the field, as well as the searched database
      *                            column. Can contain a relation name in dot notation, which will automatically join
      *                            the necessary tables (e.g. "Comments.Name" to join the "Comments" has-many relationship and
      *                            search the "Name" column when applying this filter to a SiteTree class).
-     * @param mixed  $value       [optional]
-     * @param array  $modifiers   [optional]
-     * @param array  $otherFields [optional]
+     * @param mixed $value [optional]
+     * @param array $modifiers [optional]
+     * @param array $otherFields [optional]
      */
-    public function __construct($fullName, $value = false, array $modifiers = array(), array $otherFields = array())
+    public function __construct($fullName, $value = false, array $modifiers = [], array $otherFields = [])
     {
         parent::__construct($fullName, $value, $modifiers);
         if ($value !== false) {
@@ -48,7 +48,7 @@ class MultiFieldPartialMatchFilter extends PartialMatchFilter
     {
         $modifiers = array_map('strtolower', $modifiers);
 
-        if (($extras = array_diff($modifiers, array('not', 'nocase', 'case', 'splitwords'))) != array()) {
+        if (($extras = array_diff($modifiers, ['not', 'nocase', 'case', 'splitwords'])) != array()) {
             throw new InvalidArgumentException(
                 get_class($this) . ' does not accept ' . implode(', ', $extras) . ' as modifiers'
             );

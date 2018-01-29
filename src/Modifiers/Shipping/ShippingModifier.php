@@ -3,11 +3,11 @@
 namespace SilverShop\Core;
 
 
-
+use SilverShop\Core\Model\OrderModifier;
 
 class ShippingModifier extends OrderModifier
 {
-    private static $singular_name = "Shipping";
+    private static $singular_name = 'Shipping';
 
     public function required()
     {

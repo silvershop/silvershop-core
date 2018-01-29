@@ -19,7 +19,8 @@ use SilverStripe\Core\Extension;
 class SteppedCheckout extends Extension
 {
     /**
-     * @config anchor string to add to continue links
+     * Anchor string to add to continue links
+     * @config
      * @var string
      */
     private static $continue_anchor;

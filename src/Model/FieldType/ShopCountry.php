@@ -3,14 +3,14 @@
 namespace SilverShop\Core\Model\FieldType;
 
 
+use SilverShop\Core\Cms\ShopConfig;
 use SilverStripe\Core\Convert;
 use SilverStripe\ORM\FieldType\DBVarchar;
 
 
-
 class ShopCountry extends DBVarchar
 {
-    public function __construct($name = null, $size = 3, $options = array())
+    public function __construct($name = null, $size = 3, $options = [])
     {
         parent::__construct($name, $size = 3, $options);
     }
@@ -29,7 +29,7 @@ class ShopCountry extends DBVarchar
         if (!$val) {
             $val = $this->value;
         }
-        return _t("ShopCountry." . $this->value, $val);
+        return _t(__CLASS__ . '.' . $this->value, $val);
     }
 
     public function XML()

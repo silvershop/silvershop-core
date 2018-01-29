@@ -21,7 +21,7 @@ class AccountPageController extends PageController
 {
     private static $url_segment     = 'account';
 
-    private static $allowed_actions = array(
+    private static $allowed_actions = [
         'addressbook',
         'CreateAddressForm',
         'DefaultAddressForm',
@@ -32,7 +32,7 @@ class AccountPageController extends PageController
         'deleteaddress',
         'setdefaultbilling',
         'setdefaultshipping',
-    );
+    ];
 
     /** @var Member */
     protected $member;

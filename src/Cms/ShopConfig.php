@@ -4,6 +4,7 @@ namespace SilverShop\Core\Cms;
 
 
 use SilverStripe\CMS\Model\SiteTree;
+use SilverStripe\Core\Config\Configurable;
 use SilverStripe\Security\Group;
 use SilverStripe\Assets\Image;
 use SilverStripe\SiteConfig\SiteConfig;
@@ -13,9 +14,7 @@ use SilverStripe\Forms\TreeDropdownField;
 use SilverStripe\AssetAdmin\Forms\UploadField;
 use SilverStripe\Forms\CheckboxSetField;
 use SilverStripe\Forms\TabSet;
-use SilverStripe\Core\Config\Config_ForClass;
 use SilverStripe\ORM\DataExtension;
-
 
 
 /**
@@ -24,66 +23,75 @@ use SilverStripe\ORM\DataExtension;
  */
 class ShopConfig extends DataExtension
 {
-    private static $db      = array(
+    use Configurable;
+
+    private static $db = [
         'AllowedCountries' => 'Text',
-    );
+    ];
 
-    private static $has_one = array(
-        'TermsPage'           => SiteTree::class,
-        "CustomerGroup"       => Group::class,
+    private static $has_one = [
+        'TermsPage' => SiteTree::class,
+        'CustomerGroup' => Group::class,
         'DefaultProductImage' => Image::class,
-    );
+    ];
 
+    /**
+     * Email address where shop emails should be sent from
+     * @config
+     * @var
+     */
     private static $email_from;
+
+    /**
+     * The shop base currency
+     * @config
+     * @var
+     */
+    private static $base_currency = 'NZD';
 
     public static function current()
     {
         return SiteConfig::current_site_config();
     }
 
+    public static function get_site_currency()
+    {
+        return self::config()->base_currency;
+    }
+
     public function updateCMSFields(FieldList $fields)
     {
-        $fields->insertBefore($shoptab = Tab::create('Shop', 'Shop'), 'Access');
-        $fields->addFieldsToTab(
-            "Root.Shop",
+        $fields->insertBefore('Access', $shoptab = Tab::create('Shop', 'Shop'));
+        $fields->addFieldToTab(
+            'Root.Shop',
             TabSet::create(
-                "ShopTabs",
+                'ShopTabs',
                 $maintab = Tab::create(
-                    "Main",
+                    'Main',
                     TreeDropdownField::create(
                         'TermsPageID',
-                        _t("ShopConfig.TermsPage", 'Terms and Conditions Page'),
+                        _t(__CLASS__ . '.TermsPage', 'Terms and Conditions Page'),
                         SiteTree::class
                     ),
                     TreeDropdownField::create(
-                        "CustomerGroupID",
-                        _t("ShopConfig.CustomerGroup", "Group to add new customers to"),
+                        'CustomerGroupID',
+                        _t(__CLASS__ . '.CustomerGroup', 'Group to add new customers to'),
                         Group::class
                     ),
-                    UploadField::create('DefaultProductImage', _t('ShopConfig.DefaultImage', 'Default Product Image'))
+                    UploadField::create('DefaultProductImage', _t(__CLASS__ . '.DefaultImage', 'Default Product Image'))
                 ),
-                $countriestab = Tab::create(
-                    "Countries",
+                $countriesTab = Tab::create(
+                    'Countries',
                     CheckboxSetField::create(
                         'AllowedCountries',
-                        _t('ShopConfig.AllowedCountries', 'Allowed Ordering and Shipping Countries'),
+                        _t(__CLASS__ . '.AllowedCountries', 'Allowed Ordering and Shipping Countries'),
                         self::config()->iso_3166_country_codes
                     )
                 )
             )
         );
-        $fields->removeByName("CreateTopLevelGroups");
-        $countriestab->setTitle(_t('ShopConfig.AllowedCountriesTabTitle', "Allowed Countries"));
-    }
-
-    public static function get_base_currency()
-    {
-        return self::config()->base_currency;
-    }
-
-    public static function get_site_currency()
-    {
-        return self::get_base_currency();
+        $fields->removeByName('CreateTopLevelGroups');
+        $countriesTab->setTitle(_t(__CLASS__ . '.AllowedCountriesTabTitle', 'Allowed Countries'));
     }
 
     /**
@@ -98,8 +106,8 @@ class ShopConfig extends DataExtension
         $countries = self::config()->iso_3166_country_codes;
         asort($countries);
         if ($allowed = $this->owner->AllowedCountries) {
-            $allowed = explode(",", $allowed);
-            if (count($allowed > 0)) {
+            $allowed = explode(',', $allowed);
+            if (count($allowed) > 0) {
                 $countries = array_intersect_key($countries, array_flip($allowed));
             }
         }
@@ -115,7 +123,7 @@ class ShopConfig extends DataExtension
      * For shops that only sell to a single country,
      * this will return the country code, otherwise null.
      *
-     * @param fullname get long form name of country
+     * @param string fullname get long form name of country
      *
      * @return string country code
      */
@@ -133,7 +141,7 @@ class ShopConfig extends DataExtension
         return null;
     }
 
-    /*
+    /**
      * Convert iso country code to English country name
      * @return string - name of country
      */
@@ -144,16 +152,5 @@ class ShopConfig extends DataExtension
             return $codes[$code];
         }
         return $code;
-    }
-
-    /**
-     * Helper for getting static shop config.
-     * The 'config' static function isn't available on Extensions.
-     *
-     * @return Config_ForClass configuration object
-     */
-    public static function config()
-    {
-        return new Config_ForClass("ShopConfig");
     }
 }

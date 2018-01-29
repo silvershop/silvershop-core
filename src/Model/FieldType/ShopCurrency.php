@@ -6,7 +6,6 @@ namespace SilverShop\Core\Model\FieldType;
 use SilverStripe\ORM\FieldType\DBCurrency;
 
 
-
 /**
  * Improvements to Currency for presenting in templates.
  *
@@ -14,23 +13,43 @@ use SilverStripe\ORM\FieldType\DBCurrency;
  */
 class ShopCurrency extends DBCurrency
 {
-    private static $decimal_delimiter     = '.';
+    /**
+     * The shop currency decimal delimiter
+     * @config
+     * @var string
+     */
+    private static $decimal_delimiter = '.';
 
-    private static $thousand_delimiter    = ',';
+    /**
+     * The shop currency thousands delimiter
+     * @config
+     * @var string
+     */
+    private static $thousand_delimiter = ',';
 
-    private static $append_symbol         = false;
+    /**
+     * Whether or not to append the currency symbol to
+     * @config
+     * @var string
+     */
+    private static $append_symbol = false;
 
-    private static $negative_value_format = "<span class=\"negative\">(%s)</span>";
+    /**
+     * HTML to use for negative numbers
+     * @config
+     * @var string
+     */
+    private static $negative_value_format = '<span class="negative">(%s)</span>';
 
     public function Nice()
     {
         $symbol = $this->config()->currency_symbol;
         $val = number_format(
-                abs($this->value),
-                2,
-                self::config()->decimal_delimiter,
-                self::config()->thousand_delimiter
-            );
+            abs($this->value),
+            2,
+            self::config()->decimal_delimiter,
+            self::config()->thousand_delimiter
+        );
         if ($this->config()->append_symbol) {
             $val = $val . ' ' . $symbol;
         } else {
@@ -69,6 +88,6 @@ class ShopCurrency extends DBCurrency
         if ($this->value != 0) {
             return $this->Nice();
         }
-        return "";
+        return '';
     }
 }

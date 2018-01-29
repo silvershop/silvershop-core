@@ -1,8 +1,7 @@
 <?php
 
 namespace SilverShop\Core;
-
-
+use SilverShop\Core\Model\FieldType\CanBeFreeCurrency;
 
 
 /**
@@ -13,13 +12,13 @@ namespace SilverShop\Core;
  */
 class PickupShippingModifier extends ShippingModifier
 {
-    private static $defaults      = array(
+    private static $defaults = [
         'Type' => 'Ignored',
-    );
+    ];
 
-    private static $casting       = array(
-        'TableValue' => 'CanBeFreeCurrency',
-    );
+    private static $casting = [
+        'TableValue' => CanBeFreeCurrency::class,
+    ];
 
-    private static $singular_name = "Pick Up Shipping";
+    private static $singular_name = 'Pick Up Shipping';
 }

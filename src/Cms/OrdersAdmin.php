@@ -4,6 +4,7 @@ namespace SilverShop\Core\Cms;
 
 
 use SilverShop\Core\Model\Order;
+use SilverShop\Core\Model\OrderStatusLog;
 use SilverStripe\Admin\ModelAdmin;
 use SilverStripe\Forms\GridField\GridFieldAddNewButton;
 use SilverStripe\Forms\GridField\GridFieldDetailForm;
@@ -17,20 +18,20 @@ use SilverStripe\Forms\GridField\GridFieldDetailForm;
  */
 class OrdersAdmin extends ModelAdmin
 {
-    private static $url_segment    = 'orders';
+    private static $url_segment = 'orders';
 
-    private static $menu_title     = 'Orders';
+    private static $menu_title = 'Orders';
 
-    private static $menu_priority  = 1;
+    private static $menu_priority = 1;
 
-    private static $menu_icon      = 'silvershop/images/icons/order-admin.png';
+    private static $menu_icon = 'silvershop/core: images/icons/order-admin.png';
 
-    private static $managed_models = array(
-        'Order' => array(
+    private static $managed_models = [
+        Order::class => [
             'title' => 'Orders',
-        ),
-        'OrderStatusLog'
-    );
+        ],
+        OrderStatusLog::class
+    ];
 
     private static $model_importers = array();
 
@@ -39,12 +40,12 @@ class OrdersAdmin extends ModelAdmin
      */
     public function getList()
     {
-        if ($this->modelClass == "Order") {
+        if ($this->modelClass == 'Order') {
             $context = $this->getSearchContext();
             $params = $this->request->requestVar('q');
             //TODO update params DateTo, to include the day, ie 23:59:59
             $list = $context->getResults($params)
-                ->exclude("Status", Order::config()->hidden_status); //exclude hidden statuses
+                ->exclude('Status', Order::config()->hidden_status); //exclude hidden statuses
 
             $this->extend('updateList', $list);
             return $list;
@@ -59,14 +60,14 @@ class OrdersAdmin extends ModelAdmin
     function getEditForm($id = null, $fields = null)
     {
         $form = parent::getEditForm($id, $fields);
-        if ($this->modelClass == "Order") {
-            $form->Fields()->fieldByName("Order")->getConfig()
+        if ($this->modelClass == $this->sanitiseClassName(Order::class)) {
+            $form->Fields()->fieldByName($this->modelClass)->getConfig()
                 ->getComponentByType(GridFieldDetailForm::class)
-                ->setItemRequestClass('OrderGridFieldDetailForm_ItemRequest'); //see below
+                ->setItemRequestClass(OrderGridFieldDetailForm_ItemRequest::class); //see below
         }
-        if ($this->modelClass == "OrderStatusLog") {
+        if ($this->modelClass == $this->sanitiseClassName(OrderStatusLog::class)) {
             // Remove add new button
-            $config = $form->Fields()->fieldByName("OrderStatusLog")->getConfig();
+            $config = $form->Fields()->fieldByName($this->modelClass)->getConfig();
             $config->removeComponentsByType($config->getComponentByType(GridFieldAddNewButton::class));
         }
 

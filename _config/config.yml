@@ -2,8 +2,7 @@
 Name: shopconfig
 After: framework/routes#coreroutes
 ---
-ShopConfig:
-  base_currency: NZD
+
 SilverStripe\Security\Member:
   login_joins_cart: true
 Product_Image:

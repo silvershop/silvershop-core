@@ -3,8 +3,8 @@
 namespace SilverShop\Core\Product\Variation;
 
 
+use SilverStripe\Forms\FieldList;
 use SilverStripe\ORM\DataObject;
-
 
 
 /**
@@ -16,41 +16,44 @@ use SilverStripe\ORM\DataObject;
  */
 class AttributeValue extends DataObject
 {
-    private static $db                = array(
+    private static $db = [
         'Value' => 'Varchar',
-        'Sort'  => 'Int',
-    );
+        'Sort' => 'Int',
+    ];
 
-    private static $has_one           = array(
-        'Type' => 'ProductAttributeType',
-    );
+    private static $has_one = [
+        'Type' => AttributeType::class,
+    ];
 
-    private static $belongs_many_many = array(
-        'ProductVariation' => 'ProductVariation',
-    );
+    private static $belongs_many_many = [
+        'ProductVariation' => Variation::class,
+    ];
 
-    private static $summary_fields    = array(
+    private static $summary_fields = [
         'Value' => 'Value',
-    );
+    ];
 
-    private static $indexes           = array(
+    private static $indexes = [
         'LastEdited' => true,
-        'Sort'       => true,
-    );
+        'Sort' => true,
+    ];
 
-    private static $default_sort      = "TypeID ASC, Sort ASC, Value ASC";
+    private static $table_name = 'SilverShop_AttributeValue';
 
-    private static $singular_name     = "Value";
+    private static $default_sort = '"TypeID" ASC, "Sort" ASC, "Value" ASC';
 
-    private static $plural_name       = "Values";
+    private static $singular_name = 'Value';
+
+    private static $plural_name = 'Values';
 
     public function getCMSFields()
     {
-        $fields = $this->scaffoldFormFields();
-        $fields->removeByName("TypeID");
-        $fields->removeByName("Sort");
-        $this->extend('updateCMSFields', $fields);
+        $this->beforeUpdateCMSFields(function(FieldList $fields) {
 
-        return $fields;
+            $fields->removeByName('TypeID');
+            $fields->removeByName('Sort');
+        });
+
+        return parent::getCMSFields();
     }
 }

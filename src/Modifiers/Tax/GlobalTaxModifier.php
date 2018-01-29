@@ -2,7 +2,7 @@
 
 namespace SilverShop\Core;
 
-
+use SilverShop\Core\Model\Order;
 
 
 /**
@@ -14,15 +14,22 @@ namespace SilverShop\Core;
  */
 class GlobalTaxModifier extends TaxModifier
 {
-    private static $db            = array(
+    private static $db = [
         'Country' => 'Varchar',
-    );
+    ];
 
-    private static $country_rates = array();
+    private static $table_name = 'SilverShop_GlobalTaxModifier';
+
+    /**
+     * Tax rates per country
+     * @config
+     * @var array
+     */
+    private static $country_rates = [];
 
     public function value($incoming)
     {
-        $rate = $this->Type == "Chargable"
+        $rate = $this->Type == 'Chargable'
             ?
             $this->Rate()
             :
@@ -33,7 +40,7 @@ class GlobalTaxModifier extends TaxModifier
     public function Rate()
     {
         // If the order is no longer in cart, rely on the saved data
-        if ($this->OrderID && !$this->Order()->IsCart()){
+        if ($this->OrderID && !$this->Order()->IsCart()) {
             return $this->getField('Rate');
         }
 
@@ -50,7 +57,7 @@ class GlobalTaxModifier extends TaxModifier
     {
         $country = $this->Country() ? ' (' . $this->Country() . ') ' : '';
         return parent::TableTitle() . $country .
-            ($this->Type == "Chargable" ? '' : _t("GlobalTaxModifier.Included", ' (included in the above price)'));
+            ($this->Type == 'Chargable' ? '' : _t('GlobalTaxModifier.Included', ' (included in the above price)'));
     }
 
     public function Country()
@@ -66,7 +73,7 @@ class GlobalTaxModifier extends TaxModifier
     {
         parent::onBeforeWrite();
         // While the order is still in "Cart" status, persist country code to DB
-        if ($this->OrderID && $this->Order()->IsCart()){
+        if ($this->OrderID && $this->Order()->IsCart()) {
             $this->setField('Country', $this->Country());
         }
     }

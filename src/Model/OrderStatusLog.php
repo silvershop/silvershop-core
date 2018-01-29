@@ -5,7 +5,7 @@ namespace SilverShop\Core\Model;
 
 use SilverStripe\Security\Member;
 use SilverStripe\ORM\DataObject;
-
+use SilverStripe\Security\Security;
 
 
 /**
@@ -16,51 +16,53 @@ use SilverStripe\ORM\DataObject;
  */
 class OrderStatusLog extends DataObject
 {
-    private static $db                = array(
-        'Title'          => 'Varchar(100)',
-        'Note'           => 'Text',
-        'DispatchedBy'   => 'Varchar(100)',
-        'DispatchedOn'   => 'Date',
+    private static $db = [
+        'Title' => 'Varchar(100)',
+        'Note' => 'Text',
+        'DispatchedBy' => 'Varchar(100)',
+        'DispatchedOn' => 'Date',
         'DispatchTicket' => 'Varchar(100)',
-        'PaymentCode'    => 'Varchar(100)',
-        'PaymentOK'      => 'Boolean',
+        'PaymentCode' => 'Varchar(100)',
+        'PaymentOK' => 'Boolean',
         'SentToCustomer' => 'Boolean',
-    );
+    ];
 
-    private static $has_one           = array(
+    private static $has_one = [
         'Author' => Member::class,
-        'Order'  => 'Order',
-    );
+        'Order' => Order::class,
+    ];
 
-    private static $searchable_fields = array(
-        'Order.Reference' => array(
+    private static $searchable_fields = [
+        'Order.Reference' => [
             'filter' => 'PartialMatchFilter',
             'title' => 'Order No'
-        ),
-        'Order.FirstName' => array(
+        ],
+        'Order.FirstName' => [
             'filter' => 'PartialMatchFilter',
             'title' => 'First Name'
-        ),
-        'Order.Email' => array(
+        ],
+        'Order.Email' => [
             'filter' => 'PartialMatchFilter',
             'title' => 'Email'
-        )
-    );
+        ]
+    ];
 
-    private static $summary_fields = array(
+    private static $summary_fields = [
         'Order.Reference' => 'Order No',
         'Created' => 'Created',
         'Order.Name' => 'Name',
         'Order.LatestEmail' => 'Email',
         'Title' => 'Title',
         'SentToCustomer' => 'Emailed'
-    );
+    ];
 
-    private static $singular_name     = "Order Log Entry";
+    private static $singular_name = 'Order Log Entry';
 
-    private static $plural_name       = "Order Status Log Entries";
+    private static $plural_name = 'Order Status Log Entries';
 
-    private static $default_sort      = "\"Created\" DESC";
+    private static $default_sort = '"Created" DESC';
+
+    private static $table_name = 'SilverShop_OrderStatusLog';
 
 
     public function canDelete($member = null)
@@ -82,11 +84,11 @@ class OrderStatusLog extends DataObject
     public function onBeforeWrite()
     {
         parent::onBeforeWrite();
-        if (!$this->AuthorID && $memberID = Member::currentUserID()) {
-            $this->AuthorID = $memberID;
+        if (!$this->AuthorID && ($member = Security::getCurrentUser())) {
+            $this->AuthorID = $member->ID;
         }
         if (!$this->Title) {
-            $this->Title = "Order Update";
+            $this->Title = 'Order Update';
         }
     }
 
@@ -94,7 +96,7 @@ class OrderStatusLog extends DataObject
     {
         $validationResult = parent::validate();
         if (!$this->OrderID) {
-            $validationResult->error('there is no order id for Order Status Log');
+            $validationResult->addError('there is no order id for Order Status Log');
         }
         return $validationResult;
     }

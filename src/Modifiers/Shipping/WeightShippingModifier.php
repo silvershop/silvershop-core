@@ -3,8 +3,6 @@
 namespace SilverShop\Core;
 
 
-
-
 /**
  * Calculates the shipping cost of an order, by taking the products
  * and calculating the shipping weight, based on an array set in _config
@@ -31,7 +29,7 @@ class WeightShippingModifier extends ShippingModifier
      * @config
      * @var array
      */
-    protected static $weight_cost = array();
+    private static $weight_cost = [];
 
     protected $weight = 0;
 
@@ -47,7 +45,7 @@ class WeightShippingModifier extends ShippingModifier
         $amount = 0;
 
         $table = $this->config()->weight_cost;
-        if(!empty($table) && is_array($table)){
+        if (!empty($table) && is_array($table)) {
             // ensure table is sorted
             ksort($table, SORT_NUMERIC);
             // set the amount to the highest value. In case the weight is higher than the max value in
@@ -70,7 +68,7 @@ class WeightShippingModifier extends ShippingModifier
             'WeightShippingModifier.TableTitle',
             'Shipping ({Kilograms} kg)',
             '',
-            array('Kilograms' => $this->Weight())
+            ['Kilograms' => $this->Weight()]
         );
     }
 

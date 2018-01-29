@@ -18,11 +18,11 @@ use SilverStripe\Security\Security;
  */
 class ShopDevelopmentAdmin extends Controller
 {
-    private static $url_handlers    = array();
+    private static $url_segment = 'silvershop';
 
-    private static $allowed_actions = array(
-        'index',
-    );
+    private static $allowed_actions = [
+        'index' => true
+    ];
 
     public function init()
     {
@@ -52,16 +52,5 @@ class ShopDevelopmentAdmin extends Controller
         $renderer = DebugView::create();
         $renderer->renderHeader();
         $renderer->renderInfo(_t('Shop.DevToolsTitle', 'Shop Development Tools'), Director::absoluteBaseURL());
-    }
-
-    public function ShopFolder()
-    {
-        return SHOP_DIR;
-    }
-
-    public function Link($action = null)
-    {
-        $action = ($action) ? $action : '';
-        return Controller::join_links(Director::absoluteBaseURL(), 'dev/' . $this->ShopFolder() . '/' . $action);
     }
 }

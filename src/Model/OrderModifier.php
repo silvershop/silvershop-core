@@ -3,8 +3,6 @@
 namespace SilverShop\Core\Model;
 
 
-
-
 /**
  * The OrderModifier class is a databound object for
  * handling the additional charges or deductions of
@@ -15,47 +13,47 @@ namespace SilverShop\Core\Model;
  */
 class OrderModifier extends OrderAttribute
 {
-    private static $db                = array(
+    private static $db = [
         'Amount' => 'Currency',
-        'Type'   => "Enum('Chargable,Deductable,Ignored','Chargable')",
-        'Sort'   => 'Int',
-    );
+        'Type' => "Enum('Chargable,Deductable,Ignored','Chargable')",
+        'Sort' => 'Int',
+    ];
 
-    private static $defaults          = array(
+    private static $defaults = [
         'Type' => 'Chargable',
-    );
+    ];
 
-    private static $casting           = array(
+    private static $casting = [
         'TableValue' => 'Currency',
-    );
+    ];
 
-    private static $searchable_fields = array(
-        'OrderID'    => array(
+    private static $searchable_fields = [
+        'OrderID' => array(
             'title' => 'Order ID',
             'field' => 'TextField',
         ),
-        "Title"      => "PartialMatchFilter",
-        "TableTitle" => "PartialMatchFilter",
-        "CartTitle"  => "PartialMatchFilter",
-        "Amount",
-        "Type",
-    );
+        'Title' => 'PartialMatchFilter',
+        'TableTitle' => 'PartialMatchFilter',
+        'CartTitle' => 'PartialMatchFilter',
+        'Amount',
+        'Type',
+    ];
 
-    private static $field_labels      = array();
+    private static $summary_fields = [
+        'Order.ID' => 'Order ID',
+        'TableTitle' => 'Table Title',
+        'ClassName' => 'Type',
+        'Amount' => 'Amount',
+        'Type' => 'Type',
+    ];
 
-    private static $summary_fields    = array(
-        "Order.ID"   => "Order ID",
-        "TableTitle" => "Table Title",
-        "ClassName"  => "Type",
-        "Amount"     => "Amount",
-        "Type"       => "Type",
-    );
+    private static $singular_name = 'Modifier';
 
-    private static $singular_name     = "Modifier";
+    private static $plural_name = 'Modifiers';
 
-    private static $plural_name       = "Modifiers";
+    private static $default_sort = '"OrderModifier"."Sort" ASC, "Created" ASC';
 
-    private static $default_sort      = "\"OrderModifier\".\"Sort\" ASC, \"Created\" ASC";
+    private static $table_name = 'SilverShop_OrderModifier';
 
     /**
      * Specifies whether this modifier is always required in an order.
@@ -71,7 +69,7 @@ class OrderModifier extends OrderAttribute
      *
      * Sets $this->Amount to the calculated value;
      *
-     * @param $subtotal         - running total to be modified
+     * @param $subtotal - running total to be modified
      * @param $forcecalculation - force calculating the value, if order isn't in cart
      *
      * @return $subtotal - updated subtotal
@@ -81,13 +79,13 @@ class OrderModifier extends OrderAttribute
         $order = $this->Order();
         $value = ($order->IsCart() || $forcecalculation) ? $this->value($subtotal) : $this->Amount;
         switch ($this->Type) {
-            case "Chargable":
+            case 'Chargable':
                 $subtotal += $value;
                 break;
-            case "Deductable":
+            case 'Deductable':
                 $subtotal -= $value;
                 break;
-            case "Ignored":
+            case 'Ignored':
                 break;
         }
         $value = round($value, Order::config()->rounding_precision);
@@ -151,7 +149,7 @@ class OrderModifier extends OrderAttribute
      */
     public function Total()
     {
-        if ($this->Type == "Deductable") {
+        if ($this->Type == 'Deductable') {
             return $this->Amount * -1;
         }
         return $this->Amount;
@@ -164,7 +162,7 @@ class OrderModifier extends OrderAttribute
      */
     public function IsChargable()
     {
-        return $this->Type == "Chargable";
+        return $this->Type == 'Chargable';
     }
 
     /**

@@ -28,7 +28,8 @@ class ShoppingCartController extends Controller
     private static $url_segment = 'shoppingcart';
 
     /**
-     * @config whether or not this controller redirects to the cart-page whenever an item was added
+     * Whether or not this controller redirects to the cart-page whenever an item was added
+     * @config
      * @var bool
      */
     private static $direct_to_cart_page = false;

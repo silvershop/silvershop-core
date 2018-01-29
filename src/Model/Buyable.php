@@ -2,7 +2,8 @@
 
 namespace SilverShop\Core\Model;
 
-
+use SilverShop\Core\Model\FieldType\ShopCurrency;
+use SilverStripe\Security\Member;
 
 
 /**
@@ -19,11 +20,11 @@ interface Buyable
     /**
      * Create a new OrderItem to add to an order.
      *
-     * @param int     $quantity
-     * @param array   $filter
+     * @param int $quantity
+     * @param array $filter
      * @return OrderItem new OrderItem object
      */
-    public function createItem($quantity = 1, $filter = array());
+    public function createItem($quantity = 1, $filter = []);
 
     /**
      * Checks if the buyable can be purchased. If a buyable cannot be purchased

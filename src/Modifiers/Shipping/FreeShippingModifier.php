@@ -3,8 +3,6 @@
 namespace SilverShop\Core;
 
 
-
-
 class FreeShippingModifier extends ShippingModifier
 {
     /**
@@ -16,6 +14,6 @@ class FreeShippingModifier extends ShippingModifier
 
     public function TableValue()
     {
-        return _t("FreeShippingModifier.Free", "FREE");
+        return _t(__CLASS__ . '.Free', 'FREE');
     }
 }

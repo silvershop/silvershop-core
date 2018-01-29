@@ -18,7 +18,8 @@ use SilverStripe\Security\Security;
 class ContactDetails extends CheckoutStep
 {
     /**
-     * @config whether or not this step should be skipped if user is logged in
+     * Whether or not this step should be skipped if user is logged in
+     * @config
      * @var bool
      */
     private static $skip_if_logged_in = false;
