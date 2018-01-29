@@ -340,39 +340,39 @@ class ProductVariation_OrderItem extends Product_OrderItem
         }
         return false;
     }
-
+    
     public function Image()
     {
-        if (($this->ProductVariation()) && $this->ProductVariation()->Image()->exists()) {
-            return $this->ProductVariation()->Image();
+        if (($variation = $this->ProductVariation()) && $variation->Image()->exists()) {
+            return $variation->Image();
         }
         return $this->Product()->Image();
     }
 
     public function Width() {
-        if($this->ProductVariation()->Width) {
-            return $this->ProductVariation()->Width;
+        if (($variation = $this->ProductVariation()) && $variation->Width) {
+            return $variation->Width;
         }
         return $this->Product()->Width;
     }
 
     public function Height() {
-        if($this->ProductVariation()->Height) {
-            return $this->ProductVariation()->Height;
+        if (($variation = $this->ProductVariation()) && $variation->Height) {
+            return $variation->Height;
         }
         return $this->Product()->Height;
     }
 
     public function Depth() {
-        if($this->ProductVariation()->Depth) {
-            return $this->ProductVariation()->Depth;
+        if (($variation = $this->ProductVariation()) && $variation->Depth) {
+            return $variation->Depth;
         }
         return $this->Product()->Depth;
     }
 
     public function Weight() {
-        if($this->ProductVariation()->Weight) {
-            return $this->ProductVariation()->Weight;
+        if (($variation = $this->ProductVariation()) && $variation->Weight) {
+            return $variation->Weight;
         }
         return $this->Product()->Weight;
     }
