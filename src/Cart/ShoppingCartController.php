@@ -96,9 +96,12 @@ class ShoppingCartController extends Controller
             $params[SecurityToken::inst()->getName()] = SecurityToken::inst()->getValue();
         }
 
+        $className = empty($buyable->ClassName) ? $buyable->class : $buyable->ClassName;
+
         $link = Controller::join_links([
             self::config()->url_segment,
-            ShopTools::sanitiseClassName($buyable->class),
+            $action,
+            ShopTools::sanitiseClassName($className),
             $buyable->ID
         ]);
 

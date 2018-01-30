@@ -15,6 +15,7 @@ use SilverShop\Page\CheckoutPage;
 use SilverShop\ShopTools;
 use SilverStripe\Control\Controller;
 use SilverStripe\Dev\Debug;
+use SilverStripe\Forms\CheckboxSetField;
 use SilverStripe\Forms\DateField;
 use SilverStripe\Forms\DropdownField;
 use SilverStripe\Forms\FieldList;
@@ -145,7 +146,7 @@ class Order extends DataObject
         ],
         'Status' => [
             'filter' => 'ExactMatchFilter',
-            'field' => 'CheckboxSetField',
+            'field' => CheckboxSetField::class,
         ],
     ];
 
@@ -294,12 +295,12 @@ class Order extends DataObject
         $fe = '</div>';
         $parts = array(
             DropdownField::create('Status', $this->fieldLabel('Status'), self::get_order_status_options()),
-            LiteralField::create('Customer', $fs . $this->renderWith('OrderAdmin_Customer') . $fe),
-            LiteralField::create('Addresses', $fs . $this->renderWith('OrderAdmin_Addresses') . $fe),
-            LiteralField::create('Content', $fs . $this->renderWith('OrderAdmin_Content') . $fe),
+            LiteralField::create('Customer', $fs . $this->renderWith('SilverShop\Admin\OrderAdmin_Customer') . $fe),
+            LiteralField::create('Addresses', $fs . $this->renderWith('SilverShop\Admin\OrderAdmin_Addresses') . $fe),
+            LiteralField::create('Content', $fs . $this->renderWith('SilverShop\Admin\OrderAdmin_Content') . $fe),
         );
         if ($this->Notes) {
-            $parts[] = LiteralField::create('Notes', $fs . $this->renderWith('OrderAdmin_Notes') . $fe);
+            $parts[] = LiteralField::create('Notes', $fs . $this->renderWith('SilverShop\Admin\OrderAdmin_Notes') . $fe);
         }
         $fields->addFieldsToTab('Root.Main', $parts);
         $this->extend('updateCMSFields', $fields);
@@ -377,7 +378,7 @@ class Order extends DataObject
         $components = parent::getComponents($componentName);
         if ($componentName === 'Items' && get_class($components) !== UnsavedRelationList::class) {
             $query = $components->dataQuery();
-            $components = OrderItemList::create('OrderItem', 'OrderID');
+            $components = OrderItemList::create(OrderItem::class, 'OrderID');
             $components->setDataQuery($query);
             $components = $components->forForeignID($this->ID);
         }

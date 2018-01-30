@@ -95,7 +95,7 @@ class RegionRestriction extends DataObject
         ];
         $where = [];
         //TODO: Get proper table-name
-        $rr = '\"RegionRestriction\".';
+        $rr = '"SilverShop_RegionRestriction".';
         foreach ($restrictables as $field) {
             $where[] = "TRIM(LOWER($rr\"$field\")) = TRIM(LOWER('" . Convert::raw2sql($address->$field)
                 . "')) OR $rr\"$field\" = '*' OR $rr\"$field\" = ''";

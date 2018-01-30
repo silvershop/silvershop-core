@@ -5,7 +5,11 @@ namespace SilverShop\Checkout;
 
 use ErrorException;
 use Exception;
+use SilverShop\Cart\ShoppingCart;
+use SilverShop\Extension\OrderManipulationExtension;
+use SilverShop\Extension\ShopConfigExtension;
 use SilverShop\Model\Order;
+use SilverShop\ShopTools;
 use SilverStripe\Control\Controller;
 use SilverStripe\Core\Config\Config_ForClass;
 use SilverStripe\Core\Injector\Injectable;
@@ -13,6 +17,7 @@ use SilverStripe\Omnipay\GatewayInfo;
 use SilverStripe\Omnipay\Model\Payment;
 use SilverStripe\Omnipay\Service\ServiceFactory;
 use SilverStripe\Omnipay\Service\ServiceResponse;
+use SilverStripe\ORM\DB;
 use SilverStripe\ORM\FieldType\DBDatetime;
 use SilverStripe\Security\Member;
 
@@ -103,7 +108,7 @@ class OrderProcessor
         // Initiate payment, get the result back
         try {
             $serviceResponse = $service->initiate($this->getGatewayData($gatewaydata));
-        } catch (SilverStripe\Omnipay\Exception\Exception $ex) {
+        } catch (\SilverStripe\Omnipay\Exception\Exception $ex) {
             // error out when an exception occurs
             $this->error($ex->getMessage());
             return null;
@@ -188,8 +193,11 @@ class OrderProcessor
             $this->error(_t("PaymentProcessor.CantPay", "Order can't be paid for."));
             return false;
         }
-        $payment = Payment::create()
-            ->init($gateway, $this->order->TotalOutstanding(true), ShopConfig::get_base_currency());
+        $payment = Payment::create()->init(
+            $gateway,
+            $this->order->TotalOutstanding(true),
+            ShopConfigExtension::config()->base_currency
+        );
         $this->order->Payments()->add($payment);
         return $payment;
     }
@@ -278,8 +286,8 @@ class OrderProcessor
         // recalculate order to be sure we have the correct total
         $this->order->calculate();
 
-        if (ShopTools::DBConn()->supportsTransactions()) {
-            ShopTools::DBConn()->transactionStart();
+        if (DB::get_conn()->supportsTransactions()) {
+            DB::get_conn()->transactionStart();
         }
 
         //update status
@@ -322,7 +330,7 @@ class OrderProcessor
                 if (!$this->order->MemberID) {
                     $this->order->MemberID = $member->ID;
                 }
-                $cgroup = ShopConfig::current()->CustomerGroup();
+                $cgroup = ShopConfigExtension::current()->CustomerGroup();
                 if ($cgroup->exists()) {
                     $member->Groups()->add($cgroup);
                 }
@@ -332,8 +340,8 @@ class OrderProcessor
             $this->order->write();
         } catch (Exception $ex) {
             // Rollback the transaction if an error occurred
-            if (ShopTools::DBConn()->supportsTransactions()) {
-                ShopTools::DBConn()->transactionRollback();
+            if (DB::get_conn()->supportsTransactions()) {
+                DB::get_conn()->transactionRollback();
             }
             $this->error($ex->getMessage());
             return false;
@@ -343,8 +351,8 @@ class OrderProcessor
         }
 
         // Everything went through fine, complete the transaction
-        if (ShopTools::DBConn()->supportsTransactions()) {
-            ShopTools::DBConn()->transactionEnd();
+        if (DB::get_conn()->supportsTransactions()) {
+            DB::get_conn()->transactionEnd();
         }
 
         //remove from session
@@ -368,7 +376,7 @@ class OrderProcessor
         }
 
         // Save order reference to session
-        OrderManipulation::add_session_order($this->order);
+        OrderManipulationExtension::add_session_order($this->order);
 
         return true; //report success
     }

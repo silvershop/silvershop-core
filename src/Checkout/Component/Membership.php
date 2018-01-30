@@ -112,11 +112,11 @@ class Membership extends CheckoutComponent
                 );
             }
             $passwordresult = $this->passwordvalidator->validate($data['Password'], $member);
-            if (!$passwordresult->valid()) {
+            if (!$passwordresult->isValid()) {
                 $result->error($passwordresult->message(), "Password");
             }
         }
-        if (!$result->valid()) {
+        if (!$result->isValid()) {
             throw new ValidationException($result);
         }
     }

@@ -3,6 +3,7 @@
 namespace SilverShop\Reports;
 
 
+use SilverShop\Page\Product;
 use SilverStripe\CMS\Model\SiteTree;
 
 
@@ -12,9 +13,9 @@ class ProductReport extends ShopPeriodReport
 
     protected $description = 'Understand which products are performing, and which aren\'t.';
 
-    protected $dataClass = 'Product';
+    protected $dataClass = Product::class;
 
-    protected $periodfield = 'SiteTree.Created';
+    protected $periodfield = '"SiteTree"."Created"';
 
     public function columns()
     {
@@ -43,7 +44,7 @@ class ProductReport extends ShopPeriodReport
             ])
             ->selectField('COUNT("SilverShop_OrderItem"."Quantity")', 'Quantity')
             ->selectField('SUM("SilverShop_OrderAttribute"."CalculatedTotal")', 'Sales');
-        $query->addInnerJoin(SiteTree::class, '"SilverShop_Product"."ID" = "SiteTree"."ID"');
+        $query->addInnerJoin('SiteTree', '"SilverShop_Product"."ID" = "SiteTree"."ID"');
         $query->addLeftJoin('SilverShop_Product_OrderItem', 'SilverShop_Product.ID = "SilverShop_Product_OrderItem"."ProductID"');
         $query->addLeftJoin('SilverShop_OrderItem', '"SilverShop_Product_OrderItem"."ID" = "SilverShop_OrderItem"."ID"');
         $query->addLeftJoin('SilverShop_OrderAttribute', '"SilverShop_Product_OrderItem"."ID" = "SilverShop_OrderAttribute"."ID"');

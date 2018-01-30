@@ -17,10 +17,11 @@ use SilverStripe\Security\Member;
 class CustomerReport extends ShopPeriodReport
 {
     protected $title = 'Customers';
+    protected $description = 'Understand which customers spend the most.';
 
     protected $dataClass = Member::class;
 
-    protected $periodfield = 'Order.Paid';
+    protected $periodfield = '"SilverShop_Order"."Paid"';
 
     public function columns()
     {
@@ -54,7 +55,7 @@ class CustomerReport extends ShopPeriodReport
             )
             ->selectField('COUNT("SilverShop_Order"."ID")', 'Orders')
             ->selectField('SUM("SilverShop_Order"."Total")', 'Spent');
-        $query->addInnerJoin('Order', '"Member"."ID" = "SilverShop_Order"."MemberID"');
+        $query->addInnerJoin('SilverShop_Order', '"Member"."ID" = "SilverShop_Order"."MemberID"');
         $query->addGroupBy('"Member"."ID"');
         if (!$query->getOrderBy()) {
             $query->setOrderBy([

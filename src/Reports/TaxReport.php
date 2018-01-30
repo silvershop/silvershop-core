@@ -2,6 +2,8 @@
 
 namespace SilverShop\Reports;
 
+use SilverShop\Model\Order;
+
 
 /**
  * Tax report
@@ -16,9 +18,9 @@ class TaxReport extends ShopPeriodReport
 
     protected $description = 'Report tax charged on orders. Only includes orders that have been paid.';
 
-    protected $dataClass = 'Order';
+    protected $dataClass = Order::class;
 
-    protected $periodfield = '"Order"."Paid"';
+    protected $periodfield = '"SilverShop_Order"."Paid"';
 
     protected $grouping = true;
 

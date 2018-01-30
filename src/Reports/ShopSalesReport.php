@@ -1,6 +1,7 @@
 <?php
 
 namespace SilverShop\Reports;
+use SilverShop\Model\Order;
 
 
 /**
@@ -18,9 +19,9 @@ class ShopSalesReport extends ShopPeriodReport
 
     protected $description = 'Monitor shop sales performance for a particular period. Group results by year, month, or day.';
 
-    protected $dataClass = 'Order';
+    protected $dataClass = Order::class;
 
-    protected $periodfield = '"Order"."Paid"';
+    protected $periodfield = '"SilverShop_Order"."Paid"';
 
     protected $grouping = true;
 
@@ -37,7 +38,7 @@ class ShopSalesReport extends ShopPeriodReport
     public function query($params)
     {
         return parent::query($params)
-            ->selectField('COUNT("Order"."ID")', 'Count')
-            ->selectField('SUM("Order"."Total")', 'Sales');
+            ->selectField('COUNT("SilverShop_Order"."ID")', 'Count')
+            ->selectField('SUM("SilverShop_Order"."Total")', 'Sales');
     }
 }

@@ -3,7 +3,7 @@
 namespace SilverShop\Forms;
 
 
-use SilverShop\Checkout\Component\CheckoutComponentConfig;
+use SilverShop\Checkout\CheckoutComponentConfig;
 use SilverStripe\Forms\RequiredFields;
 use SilverStripe\ORM\ValidationException;
 

@@ -1,5 +1,5 @@
-<% require themedCSS("sidecart") %>
-<% require themedCSS("shop") %>
+<% require css("silvershop/core: css/sidecart.css") %>
+
 <div class="sidecart">
     <h3><%t ShoppingCart.Headline "Shopping cart" %></h3>
     <% if $Cart %>

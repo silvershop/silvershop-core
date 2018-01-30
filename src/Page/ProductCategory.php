@@ -57,20 +57,16 @@ class ProductCategory extends Page implements i18nEntityProvider
         if (!empty($recursive) && self::config()->include_child_groups) {
             $groupids += $this->AllChildCategoryIDs();
         }
-        $products = Product::get()
-            ->leftJoin('Product_ProductCategories', '"Product_ProductCategories"."ProductID" = "Product"."ID"')
-            ->whereAny(
-                array(
-                    '"ParentID"' => $groupids,
-                    '"Product_ProductCategories"."ProductCategoryID"' => $groupids,
-                )
-            );
+        $products = Product::get()->filterAny([
+            'ParentID' => $groupids,
+            'ProductCategories.ID' => $groupids
+        ]);
         if (self::config()->must_have_price) {
             if (Product::has_extension(ProductVariationsExtension::class)) {
-                $products = $products->filterAny(array(
+                $products = $products->filterAny([
                     'BasePrice:GreaterThan' => 0,
                     'Variations.Price:GreaterThan' => 0
-                ));
+                ]);
             } else {
                 $products = $products->filter('BasePrice:GreaterThan', 0);
             }

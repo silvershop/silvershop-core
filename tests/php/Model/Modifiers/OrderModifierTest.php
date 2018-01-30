@@ -3,14 +3,14 @@
 namespace SilverShop\Tests\Model\Modifiers;
 
 
+use Exception;
 use SilverShop\Model\Modifiers\Tax\FlatTax;
 use SilverShop\Model\Order;
 use SilverShop\Model\OrderModifier;
-use SilverShop\ShopTools;
 use SilverShop\Tests\ShopTest;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\FunctionalTest;
-use Exception;
+use SilverStripe\ORM\DB;
 
 
 /**
@@ -59,7 +59,7 @@ class OrderModifierTest extends FunctionalTest
 
     public function testModifierFailure()
     {
-        if (!ShopTools::DBConn()->supportsTransactions()) {
+        if (!DB::get_conn()->supportsTransactions()) {
             $this->markTestSkipped(
                 'The Database doesn\'t support transactions.'
             );

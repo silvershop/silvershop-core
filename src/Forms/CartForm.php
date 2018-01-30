@@ -21,7 +21,7 @@ class CartForm extends Form
 {
     protected $cart;
 
-    public function __construct($controller, $name = 'CartForm', $cart = null, $template = 'Cart')
+    public function __construct($controller, $name = 'CartForm', $cart = null, $template = 'SilverShop\Cart\Cart')
     {
         $this->cart = $cart;
         $fields = FieldList::create(

@@ -180,7 +180,7 @@ class OrderEmailNotifier
                 '',
                 array('OrderNo' => $this->order->Reference)
             ),
-            $this->order->renderWith('Order')
+            $this->order->renderWith(Order::class)
         );
         $email->send();
     }

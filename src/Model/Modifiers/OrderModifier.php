@@ -54,7 +54,7 @@ class OrderModifier extends OrderAttribute
 
     private static $plural_name = 'Modifiers';
 
-    private static $default_sort = '"OrderModifier"."Sort" ASC, "Created" ASC';
+    private static $default_sort = '"Sort" ASC, "Created" ASC';
 
     private static $table_name = 'SilverShop_OrderModifier';
 

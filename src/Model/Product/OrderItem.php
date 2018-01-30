@@ -3,6 +3,7 @@
 namespace SilverShop\Model\Product;
 
 
+use SilverShop\Page\Product;
 use SilverStripe\Versioned\Versioned;
 
 
@@ -13,7 +14,7 @@ class OrderItem extends \SilverShop\Model\OrderItem
     ];
 
     private static $has_one = [
-        'Product' => 'Product',
+        'Product' => Product::class,
     ];
 
     private static $table_name = 'SilverShop_Product_OrderItem';
@@ -37,13 +38,13 @@ class OrderItem extends \SilverShop\Model\OrderItem
         //TODO: this might need some unit testing to make sure it compliles with comment description
         //ie use live if in cart (however I see no logic for checking cart status)
         if ($this->ProductID && $this->ProductVersion && !$forcecurrent) {
-            return Versioned::get_version('Product', $this->ProductID, $this->ProductVersion);
+            return Versioned::get_version(Product::class, $this->ProductID, $this->ProductVersion);
         } elseif (
             $this->ProductID
             && $product = Versioned::get_one_by_stage(
-                'Product',
+                Product::class,
                 'Live',
-                '"Product"."ID"  = ' . $this->ProductID
+                '"SilverShop_Product"."ID"  = ' . $this->ProductID
             )
         ) {
             return $product;

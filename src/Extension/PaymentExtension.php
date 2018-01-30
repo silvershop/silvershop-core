@@ -15,7 +15,7 @@ use SilverStripe\ORM\DataExtension;
 class PaymentExtension extends DataExtension
 {
     private static $has_one = [
-        'Order' => 'Order',
+        'Order' => Order::class,
     ];
 
     public function onAwaitingAuthorized(ServiceResponse $response)

@@ -4,12 +4,11 @@ namespace SilverShop\Forms;
 
 
 use SilverShop\Checkout\Checkout;
-use SilverShop\Checkout\Component\CheckoutComponentConfig;
+use SilverShop\Checkout\CheckoutComponentConfig;
 use SilverShop\Checkout\Component\CheckoutComponentNamespaced;
 use SilverShop\Checkout\Component\OnsitePayment;
 use SilverShop\Checkout\OrderProcessor;
 use SilverShop\Model\Order;
-use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Omnipay\GatewayFieldsFactory;
 use SilverStripe\Omnipay\GatewayInfo;
 
@@ -37,7 +36,7 @@ class PaymentForm extends CheckoutForm
     {
         parent::__construct($controller, $name, $config);
 
-        $this->orderProcessor = Injector::inst()->create('OrderProcessor', $config->getOrder());
+        $this->orderProcessor = OrderProcessor::create($config->getOrder());
     }
 
     public function setSuccessLink($link)

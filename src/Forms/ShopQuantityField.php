@@ -21,7 +21,7 @@ class ShopQuantityField extends ViewableData
 
     protected $classes = ['ajaxQuantityField'];
 
-    protected $template = 'ShopQuantityField';
+    protected $template = ShopQuantityField::class;
 
     /** @var Buyable */
     protected $buyable;

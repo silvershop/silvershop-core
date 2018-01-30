@@ -2,6 +2,8 @@
 
 namespace SilverShop\Reports;
 
+use SilverShop\Model\Order;
+
 
 /**
  * Report on the number of abandoned carts.
@@ -16,9 +18,9 @@ class AbandonedCartReport extends ShopPeriodReport
 
     protected $description = 'Monitor abandoned carts for a particular period. Group results by year, month, or day.';
 
-    protected $dataClass = 'Order';
+    protected $dataClass = Order::class;
 
-    protected $periodfield = '"Order"."Created"';
+    protected $periodfield = '"SilverShop_Order"."Created"';
 
     protected $grouping = true;
 

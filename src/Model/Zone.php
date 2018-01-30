@@ -41,8 +41,8 @@ class Zone extends DataObject
         $where = RegionRestriction::address_filter($address);
         return self::get()->where($where)
             ->sort('PostalCode DESC, City DESC, State DESC, Country DESC')
-            ->innerJoin('ZoneRegion', "\"Zone\".\"ID\" = \"ZoneRegion\".\"ZoneID\"")
-            ->innerJoin('RegionRestriction', "\"ZoneRegion\".\"ID\" = \"RegionRestriction\".\"ID\"");
+            ->innerJoin('SilverShop_ZoneRegion', "\"SilverShop_Zone\".\"ID\" = \"SilverShop_ZoneRegion\".\"ZoneID\"")
+            ->innerJoin('SilverShop_RegionRestriction', "\"SilverShop_ZoneRegion\".\"ID\" = \"SilverShop_RegionRestriction\".\"ID\"");
     }
 
     /*

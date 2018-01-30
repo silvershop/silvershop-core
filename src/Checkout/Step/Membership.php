@@ -8,6 +8,7 @@ use SilverShop\Forms\CheckoutForm;
 use SilverShop\Checkout\Component\CheckoutComponentConfig;
 use SilverShop\Checkout\Component\CustomerDetails;
 use SilverShop\Model\Order;
+use SilverShop\Page\CheckoutPage;
 use SilverStripe\Control\Controller;
 use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Forms\FieldList;
@@ -53,7 +54,7 @@ class Membership extends CheckoutStep
             'LoginForm' => $this->LoginForm(),
             'GuestLink' => $this->NextStepLink(),
         ])->renderWith([
-            'CheckoutPage_membership', 'CheckoutPage', 'Page'
+            'SilverShop\Page\Layout\CheckoutPage_membership', CheckoutPage::class, 'Page'
         ]); //needed to make rendering work on index
     }
 

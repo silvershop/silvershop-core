@@ -55,7 +55,7 @@ JS;
         return $this->record->customise([
             'SiteConfig' => SiteConfig::current_site_config(),
             'Title'      => $title,
-        ])->renderWith('OrderAdmin_Printable');
+        ])->renderWith('SilverShop\Admin\OrderAdmin_Printable');
     }
 }
 

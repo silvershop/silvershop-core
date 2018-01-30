@@ -3,14 +3,17 @@
 namespace SilverShop\Reports;
 
 
+use SilverShop\Model\Order;
 use SilverShop\SQLQueryList\SQLQueryList;
 use SilverStripe\Forms\CheckboxField;
 use SilverStripe\Forms\DateField;
 use SilverStripe\Forms\DropdownField;
 use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\GridField\GridFieldConfig;
 use SilverStripe\Forms\GridField\GridFieldDataColumns;
 use SilverStripe\Forms\GridField\GridFieldExportButton;
 use SilverStripe\i18n\i18nEntityProvider;
+use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\DB;
 use SilverStripe\Reports\Report;
 use SilverStripe\Security\Member;
@@ -21,11 +24,11 @@ use SilverStripe\Security\Security;
  * Base class for creating reports that can be filtered to a specific range.
  * Record grouping is also supported.
  */
-class ShopPeriodReport extends Report implements i18nEntityProvider
+abstract class ShopPeriodReport extends Report implements i18nEntityProvider
 {
     private static $display_uncategorised_data = false;
 
-    protected $dataClass = 'Order';
+    protected $dataClass = Order::class;
 
     protected $periodfield = '"SilverShop_Order"."Created"';
 
@@ -93,11 +96,13 @@ class ShopPeriodReport extends Report implements i18nEntityProvider
     public function getReportField()
     {
         $field = parent::getReportField();
+        /** @var GridFieldConfig $config */
         $config = $field->getConfig();
-        $columns = $config->getComponentByType(GridFieldDataColumns::class)
-            ->getDisplayFields($field);
-        $config->getComponentByType(GridFieldExportButton::class)
-            ->setExportColumns($columns);
+        if ($dataColumns = $config->getComponentByType(GridFieldDataColumns::class)) {
+            $config->getComponentByType(GridFieldExportButton::class)
+                ->setExportColumns($dataColumns->getDisplayFields($field));
+        }
+
         return $field;
     }
 
@@ -143,7 +148,9 @@ class ShopPeriodReport extends Report implements i18nEntityProvider
         $query = new ShopReportQuery();
         $query->setSelect(['FilterPeriod' => "MIN($filterperiod)"]);
 
-        $query->setFrom('"' . $this->dataClass . '"');
+        $table = DataObject::getSchema()->tableName($this->dataClass);
+
+        $query->setFrom('"' . $table . '"');
 
         if ($start && $end) {
             $query->addWhere("$filterperiod BETWEEN '$start' AND '$end'");

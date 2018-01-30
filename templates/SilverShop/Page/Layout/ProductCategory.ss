@@ -20,4 +20,4 @@
         </div>
     <% end_if %>
 </div>
-<% include SilverStripe\Includes\SideBar %>
+<% include SilverShop\Includes\SideBar %>
