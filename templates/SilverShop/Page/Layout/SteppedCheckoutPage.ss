@@ -1,5 +1,5 @@
-<% require themedCSS("checkout") %>
-<% require themedCSS("shop") %>
+<% require css("silvershop/core: css/checkout.css") %>
+
 <h1>$Title</h1>
 
 <% if $PaymentErrorMessage %>

@@ -1,5 +1,5 @@
-<% require themedCSS("checkout") %>
-<% require themedCSS("shop") %>
+<% require css("silvershop/core: css/checkout.css") %>
+
 <h1 class="pageTitle">$Title</h1>
 <div id="Checkout">
     <div class="typography">

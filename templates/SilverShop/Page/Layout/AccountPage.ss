@@ -1,8 +1,6 @@
 <% require css("silvershop/core: css/account.css") %>
-<% require themedCSS("shop") %>
-<% require themedCSS("account") %>
 
-<% include SilverStripe\Includes\AccountNavigation %>
+<% include SilverShop\Includes\AccountNavigation %>
 <div id="Account" class="typography">
     $Content
     <h2 class="pagetitle"><%t SilverShop\Page\AccountPage.PastOrders 'Past Orders' %></h2>
