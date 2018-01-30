@@ -5,3 +5,5 @@ After: corefieldtypes
 SilverStripe\Core\Injector\Injector:
   Currency:
     class: SilverShop\ORM\FieldType\ShopCurrency
+  ShopCountry:
+    class: SilverShop\ORM\FieldType\ShopCountry

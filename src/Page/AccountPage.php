@@ -16,6 +16,8 @@ class AccountPage extends Page
 {
     private static $icon = 'silvershop/core: images/icons/account.gif';
 
+    private static $table_name = 'SilverShop_AccountPage';
+
     public function canCreate($member = null, $context = array())
     {
         return !self::get()->exists();

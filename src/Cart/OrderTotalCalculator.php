@@ -22,7 +22,7 @@ class OrderTotalCalculator
     use Injectable;
 
     private static $dependencies = [
-        'logger' => '%SilverShop\Logger',
+        'logger' => '%$SilverShop\Logger',
     ];
 
     /**

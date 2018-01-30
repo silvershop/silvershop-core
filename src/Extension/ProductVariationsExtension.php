@@ -3,7 +3,9 @@
 namespace SilverShop\Extension;
 
 
-use SilverShop\Model\FieldType\ShopCurrency;
+use SilverShop\Model\Variation\AttributeType;
+use SilverShop\Model\Variation\Variation;
+use SilverShop\ORM\FieldType\ShopCurrency;
 use SilverShop\Page\Product;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\GridField\GridField;

@@ -14,8 +14,16 @@ use SilverStripe\SiteConfig\SiteConfig;
  */
 class Simple extends Base
 {
+    /**
+     * @config
+     * @var float
+     */
     private static $default_charge = 10;
 
+    /**
+     * @config
+     * @var array
+     */
     private static $charges_by_country = array();
 
     public function value($subtotal = null)

@@ -25,6 +25,8 @@ class CartPage extends Page
 
     private static $icon = 'silvershop/core: images/icons/cart.gif';
 
+    private static $table_name = 'SilverShop_CartPage';
+
     /**
      * Returns the link to the checkout page on this site
      *

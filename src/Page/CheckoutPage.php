@@ -26,7 +26,9 @@ class CheckoutPage extends Page
         'PurchaseComplete' => 'HTMLText',
     );
 
-    private static $icon = 'silvershop/images/icons/money';
+    private static $icon = 'silvershop/core: images/icons/money.gif';
+
+    private static $table_name = 'SilverShop_CheckoutPage';
 
     /**
      * @config

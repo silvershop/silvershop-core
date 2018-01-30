@@ -13,14 +13,34 @@ use SilverShop\Model\Order;
  */
 class FlatTax extends Base
 {
+    /**
+     * @config
+     * @var string
+     */
     private static $name            = 'GST';
 
+    /**
+     * @config
+     * @var float
+     */
     private static $rate            = 0.15;
 
+    /**
+     * @config
+     * @var bool
+     */
     private static $exclusive       = true;
 
+    /**
+     * @config
+     * @var string
+     */
     private static $includedmessage = '%.1f%% %s (inclusive)';
 
+    /**
+     * @config
+     * @var string
+     */
     private static $excludedmessage = '%.1f%% %s';
 
     public function __construct($record = null, $isSingleton = false, $model = null)
