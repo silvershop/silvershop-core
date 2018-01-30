@@ -1,8 +1,8 @@
 <?php
 
-namespace SilverShop\Core\Checkout\Component;
+namespace SilverShop\Checkout\Component;
 
-use SilverShop\Core\Model\Order;
+use SilverShop\Model\Order;
 use SilverStripe\Core\Injector\Injectable;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\ORM\ValidationException;

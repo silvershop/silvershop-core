@@ -1,10 +1,10 @@
 <?php
 
-namespace SilverShop\Core\Tests\Product\Variation;
+namespace SilverShop\Tests\Product\Variation;
 
 
-use SilverShop\Core\Cart\ShoppingCart;
-use SilverShop\Core\Product\Variation\Variation;
+use SilverShop\Cart\ShoppingCart;
+use SilverShop\Model\Variation\Variation;
 use SilverStripe\Dev\SapphireTest;
 
 

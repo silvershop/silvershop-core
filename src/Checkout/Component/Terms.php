@@ -1,11 +1,11 @@
 <?php
 
-namespace SilverShop\Core\Checkout\Component;
+namespace SilverShop\Checkout\Component;
 
-use SilverShop\Core\Model\Order;
+use SilverShop\Model\Order;
+use SilverStripe\Forms\CheckboxField;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\SiteConfig\SiteConfig;
-use SilverStripe\Forms\CheckboxField;
 
 
 class Terms extends CheckoutComponent

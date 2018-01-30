@@ -1,17 +1,15 @@
 <?php
 
-namespace SilverShop\Core\Checkout\Step;
+namespace SilverShop\Checkout\Step;
 
 
-use SilverShop\Core\Cart\ShoppingCart;
-use SilverShop\Core\Checkout\CheckoutForm;
-use SilverShop\Core\Checkout\Component\CheckoutComponentConfig;
-use SilverShop\Core\Checkout\Component\CustomerDetails;
-use SilverStripe\Core\Config\Config;
-use SilverStripe\Security\Member;
+use SilverShop\Cart\ShoppingCart;
+use SilverShop\Forms\CheckoutForm;
+use SilverShop\Checkout\Component\CheckoutComponentConfig;
+use SilverShop\Checkout\Component\CustomerDetails;
 use SilverStripe\Control\Controller;
-use SilverStripe\Forms\FormAction;
 use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\FormAction;
 use SilverStripe\Security\Security;
 
 

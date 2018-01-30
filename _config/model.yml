@@ -1,0 +1,7 @@
+---
+Name: silvershop-fieldtypes
+After: corefieldtypes
+---
+SilverStripe\Core\Injector\Injector:
+  Currency:
+    class: SilverShop\ORM\FieldType\ShopCurrency

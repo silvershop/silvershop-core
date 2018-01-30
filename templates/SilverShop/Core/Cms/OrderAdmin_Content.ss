@@ -15,8 +15,8 @@
     </thead>
     <tbody>
         <% loop $Items %>
-            <% include SilverShop\Core\Cms\OrderAdmin_Content_ItemLine %>
+            <% include SilverShop\Cms\OrderAdmin_Content_ItemLine %>
         <% end_loop %>
     </tbody>
-    <% include SilverShop\Core\Cms\OrderAdmin_Content_SubTotals %>
+    <% include SilverShop\Cms\OrderAdmin_Content_SubTotals %>
 </table>

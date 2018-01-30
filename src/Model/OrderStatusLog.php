@@ -1,10 +1,10 @@
 <?php
 
-namespace SilverShop\Core\Model;
+namespace SilverShop\Model;
 
 
-use SilverStripe\Security\Member;
 use SilverStripe\ORM\DataObject;
+use SilverStripe\Security\Member;
 use SilverStripe\Security\Security;
 
 

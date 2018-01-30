@@ -2,7 +2,7 @@
 <% require themedCSS("shop") %>
 <% require themedCSS("account") %>
 
-<% include SilverShop\Core\Account\AccountNavigation %>
+<% include SilverShop\Account\AccountNavigation %>
 <div id="Account" class="typography">
     <h2 class="pagetitle">
         <%t AccountPage_AddressBook.Title 'Default Addresses' %>
@@ -22,7 +22,7 @@
                     </span>
                 <% end_if %>
                 <div class="panel-body">
-                    <% include SilverShop\Core\Model\Address %>
+                    <% include SilverShop\Model\Address %>
                 </div>
                 <div class="panel-footer cf">
                     <% if $ID != $CurrentMember.DefaultShippingAddressID %>

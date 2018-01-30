@@ -1,13 +1,13 @@
 <?php
 
-namespace SilverShop\Core\Tests\Modifiers;
+namespace SilverShop\Tests\Modifiers;
 
 
-use SilverShop\Core\Model\Order;
-use SilverShop\Core\Model\OrderModifier;
-use SilverShop\Core\Modifiers\Tax\FlatTax;
-use SilverShop\Core\ShopTools;
-use SilverShop\Core\Tests\ShopTest;
+use SilverShop\Model\Order;
+use SilverShop\Model\OrderModifier;
+use SilverShop\Modifiers\Tax\FlatTax;
+use SilverShop\ShopTools;
+use SilverShop\Tests\ShopTest;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\FunctionalTest;
 use SilverStripe\Dev\TestOnly;

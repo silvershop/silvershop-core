@@ -1,11 +1,11 @@
 <?php
 
-namespace SilverShop\Core\Checkout\Component;
+namespace SilverShop\Checkout\Component;
 
 
-use SilverShop\Core\Model\Order;
-use SilverStripe\Forms\TextareaField;
+use SilverShop\Model\Order;
 use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\TextareaField;
 
 
 class Notes extends CheckoutComponent
@@ -13,7 +13,7 @@ class Notes extends CheckoutComponent
     public function getFormFields(Order $order)
     {
         return FieldList::create(
-            TextareaField::create('Notes', _t('SilverShop\Core\Model\Order.db_Notes', 'Message'))
+            TextareaField::create('Notes', _t('SilverShop\Model\Order.db_Notes', 'Message'))
         );
     }
 

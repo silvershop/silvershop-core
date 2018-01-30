@@ -3,7 +3,7 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" >
         <title><%t ShopEmail.ConfirmationTitle "Order Confirmation" %></title>
-        <% include SilverShop\Core\OrderReceiptStyle %>
+        <% include SilverShop\OrderReceiptStyle %>
     </head>
     <body>
         <table id="container" cellpadding="0" cellspacing="0" border="0" >

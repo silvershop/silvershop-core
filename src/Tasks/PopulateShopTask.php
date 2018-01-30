@@ -1,23 +1,22 @@
 <?php
 
-namespace SilverShop\Core\Tasks;
+namespace SilverShop\Tasks;
 
 
 use Page;
-use SilverShop\Core\Account\AccountPage;
-use SilverShop\Core\Cart\CartPage;
-use SilverShop\Core\Checkout\CheckoutPage;
-use SilverShop\Core\Model\Zone;
-use SilverShop\Core\Model\ZoneRegion;
-use SilverShop\Core\Product\Product;
-use SilverShop\Core\Product\ProductCategory;
-use SilverStripe\ORM\DB;
+use SilverShop\Model\Zone;
+use SilverShop\Model\ZoneRegion;
+use SilverShop\Page\AccountPage;
+use SilverShop\Page\CartPage;
+use SilverShop\Page\CheckoutPage;
+use SilverShop\Page\Product;
+use SilverShop\Page\ProductCategory;
 use SilverStripe\Core\Injector\Injector;
-use SilverStripe\Dev\FixtureFactory;
-use SilverStripe\ORM\DataObject;
-use SilverStripe\Dev\YamlFixture;
-use SilverStripe\SiteConfig\SiteConfig;
 use SilverStripe\Dev\BuildTask;
+use SilverStripe\Dev\FixtureFactory;
+use SilverStripe\Dev\YamlFixture;
+use SilverStripe\ORM\DB;
+use SilverStripe\SiteConfig\SiteConfig;
 
 
 /**

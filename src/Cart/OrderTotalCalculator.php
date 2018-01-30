@@ -1,11 +1,11 @@
 <?php
 
-namespace SilverShop\Core\Cart;
+namespace SilverShop\Cart;
 
 use ErrorException;
 use Exception;
 use Monolog\Logger;
-use SilverShop\Core\Model\Order;
+use SilverShop\Model\Order;
 use SilverStripe\Core\ClassInfo;
 use SilverStripe\Core\Injector\Injectable;
 use SilverStripe\ORM\DB;

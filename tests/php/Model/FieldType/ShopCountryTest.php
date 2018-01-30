@@ -1,9 +1,9 @@
 <?php
 
-namespace SilverShop\Core\Tests\Model\FieldType;
+namespace SilverShop\Tests\Model\FieldType;
 
 
-use SilverShop\Core\Model\FieldType\ShopCountry;
+use SilverShop\Model\FieldType\ShopCountry;
 use SilverStripe\Dev\SapphireTest;
 
 

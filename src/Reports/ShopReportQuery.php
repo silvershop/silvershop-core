@@ -1,6 +1,6 @@
 <?php
 
-namespace SilverShop\Core\Reports;
+namespace SilverShop\Reports;
 
 use SilverStripe\ORM\Queries\SQLSelect;
 

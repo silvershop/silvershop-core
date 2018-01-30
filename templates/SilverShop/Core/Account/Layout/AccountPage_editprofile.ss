@@ -2,7 +2,7 @@
 <% require themedCSS("shop") %>
 <% require themedCSS("account") %>
 
-<% include SilverShop\Core\Account\AccountNavigation %>
+<% include SilverShop\Account\AccountNavigation %>
 <div id="Account" class="typography">
 
     <h2 class="pagetitle">

@@ -1,8 +1,8 @@
 <?php
 
-namespace SilverShop\Core\Reports\SideReport;
+namespace SilverShop\Reports\SideReport;
 
-use SilverShop\Core\Product\Product;
+use SilverShop\Page\Product;
 use SilverStripe\Reports\Report;
 
 class HeavyProducts extends Report

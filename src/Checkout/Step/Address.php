@@ -1,16 +1,16 @@
 <?php
 
-namespace SilverShop\Core\Checkout\Step;
+namespace SilverShop\Checkout\Step;
 
 
-use SilverShop\Core\Cart\ShoppingCart;
-use SilverShop\Core\Checkout\CheckoutForm;
-use SilverShop\Core\Checkout\Component\BillingAddress;
-use SilverShop\Core\Checkout\Component\CheckoutComponentConfig;
-use SilverShop\Core\Checkout\Component\ShippingAddress;
+use SilverShop\Cart\ShoppingCart;
+use SilverShop\Checkout\CheckoutForm;
+use SilverShop\Checkout\Component\BillingAddress;
+use SilverShop\Checkout\Component\CheckoutComponentConfig;
+use SilverShop\Checkout\Component\ShippingAddress;
 use SilverStripe\Forms\CheckboxField;
-use SilverStripe\Forms\FormAction;
 use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\FormAction;
 
 
 class Address extends CheckoutStep

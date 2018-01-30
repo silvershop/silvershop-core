@@ -1,9 +1,9 @@
 <?php
 
-namespace SilverShop\Core\Tests\Model;
+namespace SilverShop\Tests\Model;
 
 
-use SilverShop\Core\Model\Address;
+use SilverShop\Model\Address;
 use SilverStripe\Dev\TestOnly;
 
 class ExtendedTestAddress extends Address implements TestOnly

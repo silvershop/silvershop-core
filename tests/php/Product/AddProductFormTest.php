@@ -1,10 +1,10 @@
 <?php
 
-namespace SilverShop\Core\Tests\Product;
+namespace SilverShop\Tests\Product;
 
 
-use SilverShop\Core\Product\AddProductForm;
-use SilverShop\Core\Product\ProductController;
+use SilverShop\Product\AddProductForm;
+use SilverShop\Page\ProductController;
 use SilverStripe\Dev\SapphireTest;
 
 

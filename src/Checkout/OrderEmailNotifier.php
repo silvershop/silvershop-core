@@ -1,16 +1,15 @@
 <?php
 
-namespace SilverShop\Core\Checkout;
+namespace SilverShop\Checkout;
 
 
-use SilverShop\Core\Model\Order;
-use SilverStripe\Core\Injector\Injectable;
-use SilverStripe\Core\Injector\Injector;
-use SilverStripe\Control\Email\Email;
+use SilverShop\Model\Order;
 use SilverStripe\Control\Director;
+use SilverStripe\Control\Email\Email;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Config\Config_ForClass;
-
+use SilverStripe\Core\Injector\Injectable;
+use SilverStripe\Core\Injector\Injector;
 
 
 /**

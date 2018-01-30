@@ -1,6 +1,6 @@
 <?php
 
-namespace SilverShop\Core\Tests\Cart;
+namespace SilverShop\Tests\Cart;
 
 
 use SilverStripe\Security\SecurityToken;

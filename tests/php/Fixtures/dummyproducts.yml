@@ -1,4 +1,4 @@
-SilverShop\Core\Product\ProductCategory:
+SilverShop\Page\ProductCategory:
   products:
     Title: Shop
     URLSegment: shop
@@ -9,81 +9,81 @@ SilverShop\Core\Product\ProductCategory:
   electronics:
     Title: Electronics
     URLSegment: electronics
-    Parent: =>SilverShop\Core\Product\ProductCategory.products
+    Parent: =>SilverShop\Page\ProductCategory.products
   food:
     Title: Food
     URLSegment: food
-    Parent: =>SilverShop\Core\Product\ProductCategory.products
+    Parent: =>SilverShop\Page\ProductCategory.products
   beverages:
     Title: Beverages
     URLSegment: beverages
-    Parent: =>SilverShop\Core\Product\ProductCategory.products
+    Parent: =>SilverShop\Page\ProductCategory.products
   apparel:
     Title: Apparel
     URLSegment: apparel
-    Parent: =>SilverShop\Core\Product\ProductCategory.products
+    Parent: =>SilverShop\Page\ProductCategory.products
   homewares:
     Title: Homewares
     URLSegment: homewares
-    Parent: =>SilverShop\Core\Product\ProductCategory.products
+    Parent: =>SilverShop\Page\ProductCategory.products
   jewellery:
     Title: Jewellery
     URLSegment: jewellery
-    Parent: =>SilverShop\Core\Product\ProductCategory.apparel
+    Parent: =>SilverShop\Page\ProductCategory.apparel
   books:
     Title: Books
     URLSegment: books
-    Parent: =>SilverShop\Core\Product\ProductCategory.products
+    Parent: =>SilverShop\Page\ProductCategory.products
   toys:
     Title: Toys
     URLSegment: toys
-    Parent: =>SilverShop\Core\Product\ProductCategory.products
+    Parent: =>SilverShop\Page\ProductCategory.products
   furniture:
     Title: Furniture
     URLSegment: furniture
-    Parent: =>SilverShop\Core\Product\ProductCategory.products
+    Parent: =>SilverShop\Page\ProductCategory.products
   kitchen:
     Title: Kitchen
     URLSegment: kitchen
-    Parent: =>SilverShop\Core\Product\ProductCategory.furniture
+    Parent: =>SilverShop\Page\ProductCategory.furniture
   bedroom:
     Title: Bedroom
     URLSegment: bedroom
-    Parent: =>SilverShop\Core\Product\ProductCategory.furniture
+    Parent: =>SilverShop\Page\ProductCategory.furniture
   ebooks:
     Title: E-Books
     URLSegment: ebooks
-    Parent: =>SilverShop\Core\Product\ProductCategory.books
+    Parent: =>SilverShop\Page\ProductCategory.books
   entertainment:
     Title: Entertainment
     URLSegment: entertainment
-    Parent: =>SilverShop\Core\Product\ProductCategory.products
+    Parent: =>SilverShop\Page\ProductCategory.products
   music:
     Title: Music
     URLSegment: music
-    Parent: =>SilverShop\Core\Product\ProductCategory.entertainment
+    Parent: =>SilverShop\Page\ProductCategory.entertainment
   movies:
     Title: Movies
     URLSegment: movies
-    Parent: =>SilverShop\Core\Product\ProductCategory.entertainment
+    Parent: =>SilverShop\Page\ProductCategory.entertainment
   drama:
     Title: Drama
     URLSegment: drama
-    Parent: =>SilverShop\Core\Product\ProductCategory.movies
+    Parent: =>SilverShop\Page\ProductCategory.movies
   automotive:
     Title: Automotive
     URLSegment: automotive
-    Parent: =>SilverShop\Core\Product\ProductCategory.products
+    Parent: =>SilverShop\Page\ProductCategory.products
   flowers:
     Title: Flowers
     URLSegment: flowers
-    Parent: =>SilverShop\Core\Product\ProductCategory.products
+    Parent: =>SilverShop\Page\ProductCategory.products
   stationery:
     Title: Stationery
     URLSegment: stationery
-    Parent: =>SilverShop\Core\Product\ProductCategory.products
+    Parent: =>SilverShop\Page\ProductCategory.products
 
-SilverShop\Core\Product\Variation\AttributeType:
+SilverShop\Model\Variation\AttributeType:
   shirtsize:
     Name: Shirt Size
     Label: Size
@@ -91,13 +91,13 @@ SilverShop\Core\Product\Variation\AttributeType:
     Name: Shirt Colour
     Label: Colour
 
-SilverShop\Core\Product\Product:
+SilverShop\Page\Product:
   socks:
     Title: Socks
     InternalItemID: abc136
     Price: 8
     URLSegment: socks
-    Parent: =>SilverShop\Core\Product\ProductCategory.apparel
+    Parent: =>SilverShop\Page\ProductCategory.apparel
     AllowPurchase: 1
     Weight: 0.1
     Width: 15
@@ -110,7 +110,7 @@ SilverShop\Core\Product\Product:
   hdtv: #This product has no price
     Title: 42inch 1080p LCD TV - 16:9 - HDTV
     InternalItemID:
-    Parent: =>SilverShop\Core\Product\ProductCategory.electronics
+    Parent: =>SilverShop\Page\ProductCategory.electronics
     URLSegment: hdtv
     AllowPurchase: 1
     Weight: 45
@@ -128,7 +128,7 @@ SilverShop\Core\Product\Product:
     InternalItemID: abc130
     Price: 10
     URLSegment: beach-ball
-    Parent: =>SilverShop\Core\Product\ProductCategory.toys
+    Parent: =>SilverShop\Page\ProductCategory.toys
     AllowPurchase: 0 #This product has AllowPurchase set to 0
     Weight: 0.4
     Width: 23
@@ -144,7 +144,7 @@ SilverShop\Core\Product\Product:
     Title: Apple iPod touch 8GB (4th Generation) - Black
     Price: 200
     URLSegment: mp3-player
-    Parent: =>SilverShop\Core\Product\ProductCategory.electronics
+    Parent: =>SilverShop\Page\ProductCategory.electronics
     AllowPurchase: 1
     Weight: 0.3
     Width: 10
@@ -160,7 +160,7 @@ SilverShop\Core\Product\Product:
   genericmovie:
     Title: Generic Movie
     InternalItemID: abc137
-    Parent: =>SilverShop\Core\Product\ProductCategory.drama
+    Parent: =>SilverShop\Page\ProductCategory.drama
     Price: 23.00
     AllowPurchase: 1
     Weight: 0.100
@@ -173,7 +173,7 @@ SilverShop\Core\Product\Product:
   lemonchicken:
     Title: Lemon Chicken
     InternalItemID: abc140
-    Parent: =>SilverShop\Core\Product\ProductCategory.food
+    Parent: =>SilverShop\Page\ProductCategory.food
     Price: 16.99
     Weight: 0.250
     Width: 23
@@ -189,7 +189,7 @@ SilverShop\Core\Product\Product:
     Title: The Lion, the Witch and the Wardrobe
     InternalItemID: abc126
     Price: 8.99
-    Parent: =>SilverShop\Core\Product\ProductCategory.books
+    Parent: =>SilverShop\Page\ProductCategory.books
     Weight: 0.6
     Width: 15
     Height: 20
@@ -200,7 +200,7 @@ SilverShop\Core\Product\Product:
     Title: Desk Lamp
     InternalItemID: abc125
     Price: 32.99
-    Parent: =>SilverShop\Core\Product\ProductCategory.bedroom
+    Parent: =>SilverShop\Page\ProductCategory.bedroom
     Weight: 4.3
     Width: 30
     Height: 30
@@ -211,7 +211,7 @@ SilverShop\Core\Product\Product:
     Title: Round Diamond Solitaire Ring in 14K White Gold
     InternalItemID: abc135
     Price: 1236.30
-    Parent: =>SilverShop\Core\Product\ProductCategory.jewellery
+    Parent: =>SilverShop\Page\ProductCategory.jewellery
     Weight: 0.01
     Width: 10
     Height: 10
@@ -226,7 +226,7 @@ SilverShop\Core\Product\Product:
     Width: 15
     Height: 20
     Depth: 2
-    Parent: =>SilverShop\Core\Product\ProductCategory.toys
+    Parent: =>SilverShop\Page\ProductCategory.toys
   hoop:
     Title: Hula Hoop
     InternalItemID: abc131
@@ -234,7 +234,7 @@ SilverShop\Core\Product\Product:
     Width: 150
     Height: 150
     Depth: 2
-    Parent: =>SilverShop\Core\Product\ProductCategory.toys
+    Parent: =>SilverShop\Page\ProductCategory.toys
   paper:
     Title: Paper Roll
     InternalItemID: abc132
@@ -243,7 +243,7 @@ SilverShop\Core\Product\Product:
     Width: 7
     Height: 7
     Depth: 120
-    Parent: =>SilverShop\Core\Product\ProductCategory.stationery
+    Parent: =>SilverShop\Page\ProductCategory.stationery
   pens:
     Title: Ball Point Pens (7 pack)
     InternalItemID: abc123
@@ -252,12 +252,12 @@ SilverShop\Core\Product\Product:
     Width: 5
     Height: 10
     Depth: 3
-    Parent: =>SilverShop\Core\Product\ProductCategory.stationery
+    Parent: =>SilverShop\Page\ProductCategory.stationery
   tshirt:
     Title: T-Shirt
     InternalItemID: abc128
     Price: 25
-    Parent: =>SilverShop\Core\Product\ProductCategory.apparel
+    Parent: =>SilverShop\Page\ProductCategory.apparel
     URLSegment: t-shirt
     AllowPurchase: 1
     Weight: 0.3
@@ -267,33 +267,33 @@ SilverShop\Core\Product\Product:
     Stock: 1000
     Content: >
         <p>This popular t-shirt could make you popular.</p>
-    VariationAttributeTypes: =>SilverShop\Core\Product\Variation\AttributeType.shirtsize,=>SilverShop\Core\Product\Variation\AttributeType.shirtcolor
+    VariationAttributeTypes: =>SilverShop\Model\Variation\AttributeType.shirtsize,=>SilverShop\Model\Variation\AttributeType.shirtcolor
 
-SilverShop\Core\Product\Variation\AttributeValue:
+SilverShop\Model\Variation\AttributeValue:
   shirtsize_large:
     Value: Large
-    Type: =>SilverShop\Core\Product\Variation\AttributeType.shirtsize
+    Type: =>SilverShop\Model\Variation\AttributeType.shirtsize
   shirtsize_medium:
     Value: Medium
-    Type: =>SilverShop\Core\Product\Variation\AttributeType.shirtsize
+    Type: =>SilverShop\Model\Variation\AttributeType.shirtsize
   shirtsize_small:
     Value: Small
-    Type: =>SilverShop\Core\Product\Variation\AttributeType.shirtsize
+    Type: =>SilverShop\Model\Variation\AttributeType.shirtsize
   shirtcolor_red:
     Value: Red
-    Type: =>SilverShop\Core\Product\Variation\AttributeType.shirtcolor
+    Type: =>SilverShop\Model\Variation\AttributeType.shirtcolor
   shirtcolor_blue:
     Value: Blue
-    Type: =>SilverShop\Core\Product\Variation\AttributeType.shirtcolor
+    Type: =>SilverShop\Model\Variation\AttributeType.shirtcolor
 
-SilverShop\Core\Product\Variation\Variation:
+SilverShop\Model\Variation\Variation:
   tshirt_1:
-    Product: =>SilverShop\Core\Product\Product.tshirt
+    Product: =>SilverShop\Page\Product.tshirt
     Price: 25
     InternalItemID: abc128-lr
-    AttributeValues: =>SilverShop\Core\Product\Variation\AttributeValue.shirtsize_large,=>SilverShop\Core\Product\Variation\AttributeValue.shirtcolor_red
+    AttributeValues: =>SilverShop\Model\Variation\AttributeValue.shirtsize_large,=>SilverShop\Model\Variation\AttributeValue.shirtcolor_red
   tshirt_2:
-    Product: =>SilverShop\Core\Product\Product.tshirt
+    Product: =>SilverShop\Page\Product.tshirt
     Price: 25
     InternalItemID: abc128-mb
-    AttributeValues: =>SilverShop\Core\Product\Variation\AttributeValue.shirtsize_medium,=>SilverShop\Core\Product\Variation\AttributeValue.shirtcolor_blue
+    AttributeValues: =>SilverShop\Model\Variation\AttributeValue.shirtsize_medium,=>SilverShop\Model\Variation\AttributeValue.shirtcolor_blue

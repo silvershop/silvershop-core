@@ -1,10 +1,10 @@
 <?php
 
-namespace SilverShop\Core\Tests\Account;
+namespace SilverShop\Tests\Account;
 
 
-use SilverShop\Core\Account\AccountPage;
-use SilverShop\Core\Account\AccountPageController;
+use SilverShop\Page\AccountPage;
+use SilverShop\Page\AccountPageController;
 use SilverStripe\Control\Controller;
 use SilverStripe\Security\Security;
 use SilverStripe\Control\Director;

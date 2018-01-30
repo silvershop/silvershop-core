@@ -1,15 +1,18 @@
 <?php
 
-namespace SilverShop\Core\Model;
+namespace SilverShop\Model;
 
 
-use SilverShop\Core\Account\AccountPage;
-use SilverShop\Core\Cart\OrderTotalCalculator;
-use SilverShop\Core\Checkout\CheckoutPage;
-use SilverShop\Core\Checkout\OrderEmailNotifier;
-use SilverShop\Core\Cms\ShopConfig;
-use SilverShop\Core\Model\Filter\MultiFieldPartialMatchFilter;
-use SilverShop\Core\ShopTools;
+use SilverShop\Cart\OrderTotalCalculator;
+use SilverShop\Checkout\OrderEmailNotifier;
+use SilverShop\Extension\MemberExtension;
+use SilverShop\Extension\ShopConfigExtension;
+use SilverShop\Model\Modifiers\OrderModifier;
+use SilverShop\ORM\Filters\MultiFieldPartialMatchFilter;
+use SilverShop\ORM\OrderItemList;
+use SilverShop\Page\AccountPage;
+use SilverShop\Page\CheckoutPage;
+use SilverShop\ShopTools;
 use SilverStripe\Control\Controller;
 use SilverStripe\Dev\Debug;
 use SilverStripe\Forms\DateField;
@@ -23,6 +26,7 @@ use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\FieldType\DBDatetime;
 use SilverStripe\ORM\Filters\GreaterThanFilter;
 use SilverStripe\ORM\Filters\LessThanFilter;
+use SilverStripe\ORM\HasManyList;
 use SilverStripe\ORM\Search\SearchContext;
 use SilverStripe\ORM\UnsavedRelationList;
 use SilverStripe\Security\Member;
@@ -51,7 +55,7 @@ use SilverStripe\Security\Security;
  * @property string|int MemberID
  * @property string|int ShippingAddressID
  * @property string|int BillingAddressID
- * @method Member|ShopMember Member
+ * @method Member|MemberExtension Member
  * @method Address BillingAddress
  * @method Address ShippingAddress
  * @method OrderItem[]|HasManyList Items
@@ -597,7 +601,7 @@ class Order extends DataObject
      */
     public function Currency()
     {
-        return ShopConfig::get_site_currency();
+        return ShopConfigExtension::get_site_currency();
     }
 
     /**

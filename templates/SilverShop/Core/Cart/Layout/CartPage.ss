@@ -11,7 +11,7 @@
     <% if $CartForm %>
         $CartForm
     <% else %>
-        <% with $Cart %><% include SilverShop\Core\Cart\Cart Editable=true %><% end_with %>
+        <% with $Cart %><% include SilverShop\Cart\Cart Editable=true %><% end_with %>
     <% end_if %>
 
 <% else %>

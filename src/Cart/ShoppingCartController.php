@@ -1,11 +1,12 @@
 <?php
 
-namespace SilverShop\Core\Cart;
+namespace SilverShop\Cart;
 
-use SilverShop\Core\Model\Buyable;
-use SilverShop\Core\Product\Product;
-use SilverShop\Core\Product\Variation\Variation;
-use SilverShop\Core\ShopTools;
+use SilverShop\Model\Buyable;
+use SilverShop\Model\Variation\Variation;
+use SilverShop\Page\CartPage;
+use SilverShop\Page\Product;
+use SilverShop\ShopTools;
 use SilverStripe\Control\Controller;
 use SilverStripe\Control\Director;
 use SilverStripe\Control\HTTPRequest;
@@ -144,7 +145,7 @@ class ShoppingCartController extends Controller
             return $this->httpError(
                 400,
                 _t(
-                    'SilverShop\Core\Cart\ShoppingCart.InvalidSecurityToken',
+                    'SilverShop\Cart\ShoppingCart.InvalidSecurityToken',
                     'Invalid security token, possible CSRF attack.'
                 )
             );
@@ -283,7 +284,7 @@ class ShoppingCartController extends Controller
         } elseif ($response = ErrorPage::response_for(404)) {
             return $response;
         }
-        return $this->httpError(404, _t('SilverShop\Core\Cart\ShoppingCart.NoCartInitialised', 'no cart initialised'));
+        return $this->httpError(404, _t('SilverShop\Cart\ShoppingCart.NoCartInitialised', 'no cart initialised'));
     }
 
     /**

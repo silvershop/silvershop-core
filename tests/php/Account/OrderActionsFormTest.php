@@ -1,6 +1,6 @@
 <?php
 
-namespace SilverShop\Core\Tests\Account;
+namespace SilverShop\Tests\Account;
 
 
 use SilverStripe\Core\Config\Config;

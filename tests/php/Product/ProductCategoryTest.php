@@ -1,20 +1,20 @@
 <?php
 
-namespace SilverShop\Core\Tests\Product;
+namespace SilverShop\Tests\Product;
 
 
-use SilverShop\Core\Product\ProductCategory;
-use SilverShop\Core\Product\Variation\Variation;
-use SilverStripe\Versioned\Versioned;
+use SilverShop\Model\Variation\Variation;
+use SilverShop\Page\Product;
+use SilverShop\Page\ProductCategory;
 use SilverStripe\Control\Director;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\FunctionalTest;
-
+use SilverStripe\Versioned\Versioned;
 
 
 class ProductCategoryTest extends FunctionalTest
 {
-    public static $fixture_file  = 'silvershop/tests/fixtures/shop.yml';
+    public static $fixture_file = 'silvershop/tests/fixtures/shop.yml';
     public static $disable_theme = true;
 
     /** @var ProductCategory */
@@ -47,22 +47,22 @@ class ProductCategoryTest extends FunctionalTest
         ProductCategory::config()->must_have_price = false;
 
         $this->products = $this->objFromFixture('ProductCategory', 'products');
-        $this->products->publish('Stage', 'Live');
+        $this->products->publishSingle();
         $this->clothing = $this->objFromFixture('ProductCategory', 'clothing');
-        $this->clothing->publish('Stage', 'Live');
+        $this->clothing->publishSingle();
         $this->electronics = $this->objFromFixture('ProductCategory', 'electronics');
         $this->electronics->publish('Stage', 'Live');
 
         $this->socks = $this->objFromFixture('Product', 'socks');
-        $this->socks->publish('Stage', 'Live');
+        $this->socks->publishSingle();
         $this->tshirt = $this->objFromFixture('Product', 'tshirt');
-        $this->tshirt->publish('Stage', 'Live');
+        $this->tshirt->publishSingle();
         $this->hdtv = $this->objFromFixture('Product', 'hdtv');
-        $this->hdtv->publish('Stage', 'Live');
+        $this->hdtv->publishSingle();
         $this->beachball = $this->objFromFixture('Product', 'beachball');
-        $this->beachball->publish('Stage', 'Live');
+        $this->beachball->publishSingle();
         $this->mp3player = $this->objFromFixture('Product', 'mp3player');
-        $this->mp3player->publish('Stage', 'Live');
+        $this->mp3player->publishSingle();
 
         Versioned::reading_stage('Live');
     }
@@ -77,7 +77,7 @@ class ProductCategoryTest extends FunctionalTest
     {
         $products = $this->products->ProductsShowable();
         $this->assertNotNull($products, "Products exist in category");
-        $this->assertDOSEquals(
+        $this->assertListEquals(
             array(
                 array('URLSegment' => 'socks'),
                 array('URLSegment' => 't-shirt'),
@@ -91,7 +91,7 @@ class ProductCategoryTest extends FunctionalTest
     public function testSecondaryMembership()
     {
         $products = $this->electronics->ProductsShowable();
-        $this->assertDOSEquals(
+        $this->assertListEquals(
             array(
                 array('URLSegment' => 'hdtv'),
             ),
@@ -103,7 +103,7 @@ class ProductCategoryTest extends FunctionalTest
         $this->socks->write();
 
         $products = $this->electronics->ProductsShowable();
-        $this->assertDOSEquals(
+        $this->assertListEquals(
             array(
                 array('URLSegment' => 'hdtv'),
                 array('URLSegment' => 'socks'),
@@ -120,7 +120,7 @@ class ProductCategoryTest extends FunctionalTest
         $products = $this->products->ProductsShowable();
         $this->assertNotNull($products, "Products exist in category");
         // hdtv not in the list, since it doesn't have a base-price set
-        $this->assertDOSEquals(
+        $this->assertListEquals(
             array(
                 array('URLSegment' => 'socks'),
                 array('URLSegment' => 't-shirt'),
@@ -133,7 +133,7 @@ class ProductCategoryTest extends FunctionalTest
         $this->socks->write();
 
         $products = $this->products->ProductsShowable();
-        $this->assertDOSEquals(
+        $this->assertListEquals(
             array(
                 array('URLSegment' => 't-shirt'),
                 array('URLSegment' => 'beach-ball'),
@@ -150,15 +150,15 @@ class ProductCategoryTest extends FunctionalTest
         $this->assertEquals(0, $products->count(), 'No product should be returned as there\'s no price set');
 
         // Create a variation for HDTV
-        Variation::create(array(
+        Variation::create()->update([
             'InternalItemID' => '50-Inch',
-            'Price'          => 1200,
-            'ProductID'      => $this->hdtv->ID
-        ))->write();
+            'Price' => 1200,
+            'ProductID' => $this->hdtv->ID
+        ])->write();
 
         $products = $this->electronics->ProductsShowable();
 
-        $this->assertDOSEquals(
+        $this->assertListEquals(
             array(
                 array('URLSegment' => 'hdtv')
             ),

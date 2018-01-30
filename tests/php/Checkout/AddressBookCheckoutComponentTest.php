@@ -1,6 +1,6 @@
 <?php
 
-namespace SilverShop\Core\Tests\Checkout;
+namespace SilverShop\Tests\Checkout;
 
 
 use SilverStripe\Security\Member;

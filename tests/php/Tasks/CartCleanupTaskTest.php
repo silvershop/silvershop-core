@@ -1,16 +1,15 @@
 <?php
 
-namespace SilverShop\Core\Tests\Tasks;
+namespace SilverShop\Tests\Tasks;
 
 
-use SilverShop\Core\Model\Order;
-use SilverShop\Core\Tasks\CartCleanupTask;
-use SilverStripe\Core\Config\Config;
-use SilverStripe\ORM\FieldType\DBDatetime;
-use SilverStripe\ORM\DB;
+use SilverShop\Model\Order;
+use SilverShop\Tasks\CartCleanupTask;
 use SilverStripe\Control\HTTPRequest;
+use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\SapphireTest;
-
+use SilverStripe\ORM\DB;
+use SilverStripe\ORM\FieldType\DBDatetime;
 
 
 /**

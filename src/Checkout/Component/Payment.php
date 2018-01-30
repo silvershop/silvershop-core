@@ -1,18 +1,16 @@
 <?php
 
-namespace SilverShop\Core\Checkout\Component;
+namespace SilverShop\Checkout\Component;
 
 
-use SilverShop\Core\Checkout\Checkout;
-use SilverShop\Core\Model\Order;
-use SilverStripe\Omnipay\GatewayInfo;
+use SilverShop\Checkout\Checkout;
+use SilverShop\Model\Order;
 use SilverStripe\Forms\FieldList;
-use SilverStripe\Forms\OptionsetField;
 use SilverStripe\Forms\HiddenField;
-use SilverStripe\ORM\ValidationResult;
+use SilverStripe\Forms\OptionsetField;
+use SilverStripe\Omnipay\GatewayInfo;
 use SilverStripe\ORM\ValidationException;
-
-
+use SilverStripe\ORM\ValidationResult;
 
 
 class Payment extends CheckoutComponent

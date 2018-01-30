@@ -1,9 +1,9 @@
 <?php
 
-namespace SilverShop\Core\Tests\Tasks;
+namespace SilverShop\Tests\Tasks;
 
 
-use SilverShop\Core\Tasks\CartCleanupTask;
+use SilverShop\Tasks\CartCleanupTask;
 use SilverStripe\Dev\TestOnly;
 
 class FakeCartCleanupTask extends CartCleanupTask implements TestOnly

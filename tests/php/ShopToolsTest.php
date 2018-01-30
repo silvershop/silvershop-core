@@ -1,11 +1,10 @@
 <?php
 
-namespace SilverShop\Core\Tests;
+namespace SilverShop\Tests;
 
 
-use SilverShop\Core\ShopTools;
+use SilverShop\ShopTools;
 use SilverStripe\Dev\SapphireTest;
-
 
 
 class ShopToolsTest extends SapphireTest

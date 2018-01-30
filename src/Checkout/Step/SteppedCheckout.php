@@ -1,11 +1,11 @@
 <?php
 
-namespace SilverShop\Core\Checkout\Step;
+namespace SilverShop\Checkout\Step;
 
 
-use SilverShop\Core\Cart\ShoppingCart;
-use SilverShop\Core\Checkout\CheckoutPage;
-use SilverShop\Core\Checkout\CheckoutPageController;
+use SilverShop\Cart\ShoppingCart;
+use SilverShop\Page\CheckoutPage;
+use SilverShop\Page\CheckoutPageController;
 use SilverStripe\Control\Controller;
 use SilverStripe\Core\Extension;
 

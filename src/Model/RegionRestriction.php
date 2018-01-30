@@ -1,11 +1,11 @@
 <?php
 
-namespace SilverShop\Core\Model;
+namespace SilverShop\Model;
 
 
-use SilverShop\Core\Address\RestrictionRegionCountryDropdownField;
-use SilverStripe\Forms\TextField;
+use SilverShop\Forms\RestrictionRegionCountryDropdownField;
 use SilverStripe\Core\Convert;
+use SilverStripe\Forms\TextField;
 use SilverStripe\ORM\DataObject;
 
 

@@ -1,12 +1,10 @@
 <?php
 
-namespace SilverShop\Core\Tests;
+namespace SilverShop\Tests;
 
-
-//use PageController;
-use SilverShop\Core\Cart\ShoppingCart;
-use SilverStripe\Dev\SapphireTest;
 use PageController;
+use SilverShop\Cart\ShoppingCart;
+use SilverStripe\Dev\SapphireTest;
 
 
 class ViewableCartTest extends SapphireTest

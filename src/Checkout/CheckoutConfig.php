@@ -1,6 +1,6 @@
 <?php
 
-namespace SilverShop\Core\Checkout;
+namespace SilverShop\Checkout;
 
 
 use SilverStripe\Core\Config\Configurable;

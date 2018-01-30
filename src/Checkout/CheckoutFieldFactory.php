@@ -1,24 +1,21 @@
 <?php
 
-namespace SilverShop\Core\Checkout;
+namespace SilverShop\Checkout;
 
 
-use SilverStripe\Omnipay\GatewayInfo;
-use SilverStripe\Forms\TextField;
-use SilverStripe\Control\Email\Email;
+use SilverStripe\Forms\CheckboxField;
+use SilverStripe\Forms\ConfirmedPasswordField;
 use SilverStripe\Forms\EmailField;
 use SilverStripe\Forms\FieldList;
-use SilverStripe\Security\Member;
 use SilverStripe\Forms\HeaderField;
 use SilverStripe\Forms\LiteralField;
 use SilverStripe\Forms\OptionsetField;
-use SilverStripe\Forms\ConfirmedPasswordField;
 use SilverStripe\Forms\PasswordField;
 use SilverStripe\Forms\TextareaField;
+use SilverStripe\Forms\TextField;
+use SilverStripe\Omnipay\GatewayInfo;
+use SilverStripe\Security\Member;
 use SilverStripe\SiteConfig\SiteConfig;
-use SilverStripe\Forms\CheckboxField;
-
-
 
 
 /**

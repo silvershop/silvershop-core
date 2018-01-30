@@ -1,8 +1,8 @@
 <?php
 
-namespace SilverShop\Core;
+namespace SilverShop;
 
-use SilverShop\Core\Model\Address;
+use SilverShop\Model\Address;
 use SilverStripe\Core\Injector\Injectable;
 
 /**

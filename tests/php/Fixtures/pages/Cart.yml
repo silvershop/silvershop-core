@@ -1,4 +1,4 @@
-SilverShop\Core\Cart\CartPage:
+SilverShop\Page\CartPage:
   cart:
     URLSegment: cart
     Title: Shopping Cart

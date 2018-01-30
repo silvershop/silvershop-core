@@ -1,14 +1,14 @@
 <?php
 
-namespace SilverShop\Core\Tests\Product;
+namespace SilverShop\Tests\Product;
 
 
-use SilverStripe\Assets\Image;
-use SilverStripe\SiteConfig\SiteConfig;
 use SilverStripe\Assets\Filesystem;
+use SilverStripe\Assets\Image;
 use SilverStripe\Dev\SapphireTest;
+use SilverStripe\SiteConfig\SiteConfig;
 
-
+//TODO: Rewrite for SS4
 
 /**
  * Tests for product image. These could be easily merged into the main

@@ -1,8 +1,8 @@
 <?php
 
-namespace SilverShop\Core\Model;
+namespace SilverShop\Model;
 
-use SilverShop\Core\Model\FieldType\ShopCurrency;
+use SilverShop\ORM\FieldType\ShopCurrency;
 use SilverStripe\Security\Member;
 
 

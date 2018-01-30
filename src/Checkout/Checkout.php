@@ -1,13 +1,13 @@
 <?php
 
-namespace SilverShop\Core\Checkout;
+namespace SilverShop\Checkout;
 
-use SilverShop\Core\Cart\ShoppingCart;
-use SilverShop\Core\Model\Address;
-use SilverShop\Core\Model\Order;
-use SilverShop\Core\Model\Zone;
-use SilverShop\Core\ShopTools;
-use SilverShop\Core\ShopUserInfo;
+use SilverShop\Cart\ShoppingCart;
+use SilverShop\Model\Address;
+use SilverShop\Model\Order;
+use SilverShop\Model\Zone;
+use SilverShop\ShopTools;
+use SilverShop\ShopUserInfo;
 use SilverStripe\Core\Injector\Injectable;
 use SilverStripe\Omnipay\GatewayInfo;
 use SilverStripe\Security\Member;

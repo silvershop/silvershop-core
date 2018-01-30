@@ -1,11 +1,11 @@
 <?php
 
-namespace SilverShop\Core\Checkout\Step;
+namespace SilverShop\Checkout\Step;
 
-use SilverShop\Core\Cart\ShoppingCart;
-use SilverShop\Core\Checkout\Component\AddressBookBilling;
-use SilverShop\Core\Checkout\Component\AddressBookShipping;
-use SilverShop\Core\Checkout\Component\CheckoutComponentConfig;
+use SilverShop\Cart\ShoppingCart;
+use SilverShop\Checkout\Component\AddressBookBilling;
+use SilverShop\Checkout\Component\AddressBookShipping;
+use SilverShop\Checkout\Component\CheckoutComponentConfig;
 
 class AddressBook extends Address
 {

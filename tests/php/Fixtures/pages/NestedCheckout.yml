@@ -3,7 +3,7 @@ Page:
     Title: Shop
     URLSegment: myshop
 
-SilverShop\Core\Checkout\CheckoutPage:
+SilverShop\Page\CheckoutPage:
   checkout:
     URLSegment: checkout
     Title: Checkout

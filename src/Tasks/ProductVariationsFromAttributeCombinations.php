@@ -1,9 +1,9 @@
 <?php
 
-namespace SilverShop\Core\Tasks;
+namespace SilverShop\Tasks;
 
 
-use SilverShop\Core\Product\Product;
+use SilverShop\Page\Product;
 use SilverStripe\Control\CliController;
 
 

@@ -1,16 +1,16 @@
 <?php
 
-namespace SilverShop\Core\Model;
+namespace SilverShop\Model;
 
 
-use SilverShop\Core\Model\FieldType\ShopCountry;
-use SilverStripe\Security\Member;
-use SilverStripe\Forms\FieldList;
-use SilverStripe\Forms\TextField;
-use SilverStripe\SiteConfig\SiteConfig;
-use SilverStripe\Forms\ReadonlyField;
+use SilverShop\ORM\FieldType\ShopCountry;
 use SilverStripe\Forms\DropdownField;
+use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\ReadonlyField;
+use SilverStripe\Forms\TextField;
 use SilverStripe\ORM\DataObject;
+use SilverStripe\Security\Member;
+use SilverStripe\SiteConfig\SiteConfig;
 
 
 /**

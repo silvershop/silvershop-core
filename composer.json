@@ -38,8 +38,8 @@
   },
   "autoload": {
     "psr-4": {
-      "SilverShop\\Core\\": "src/",
-      "SilverShop\\Core\\Tests\\": "tests/php/"
+      "SilverShop\\": "src/",
+      "SilverShop\\Tests\\": "tests/php/"
     }
   },
   "suggest": {

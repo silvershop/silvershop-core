@@ -1,6 +1,6 @@
 <?php
 
-namespace SilverShop\Core\Dev;
+namespace SilverShop\Dev;
 
 
 use SilverStripe\Control\Controller;

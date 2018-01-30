@@ -1,12 +1,12 @@
 <?php
 
-namespace SilverShop\Core\Tasks;
+namespace SilverShop\Tasks;
 
 
-use SilverShop\Core\Model\Order;
-use SilverStripe\ORM\FieldType\DBDatetime;
-use SilverStripe\Dev\BuildTask;
 use LogicException;
+use SilverShop\Model\Order;
+use SilverStripe\Dev\BuildTask;
+use SilverStripe\ORM\FieldType\DBDatetime;
 
 
 /**

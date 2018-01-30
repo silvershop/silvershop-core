@@ -1,9 +1,9 @@
 <?php
 
-namespace SilverShop\Core\Tests\Modifiers;
+namespace SilverShop\Tests\Modifiers;
 
 
-use SilverShop\Core\Modifiers\Shipping\Simple;
+use SilverShop\Modifiers\Shipping\Simple;
 use SilverStripe\Dev\SapphireTest;
 
 

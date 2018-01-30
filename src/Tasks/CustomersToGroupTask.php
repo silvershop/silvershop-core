@@ -1,12 +1,12 @@
 <?php
 
-namespace SilverShop\Core\Tasks;
+namespace SilverShop\Tasks;
 
 
+use SilverStripe\Dev\BuildTask;
+use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\DB;
 use SilverStripe\Security\Member;
-use SilverStripe\ORM\DataObject;
-use SilverStripe\Dev\BuildTask;
 
 
 /**

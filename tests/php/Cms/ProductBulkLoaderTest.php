@@ -1,6 +1,6 @@
 <?php
 
-namespace SilverShop\Core\Tests\Cms;
+namespace SilverShop\Tests\Cms;
 
 
 use SilverStripe\ORM\DataObject;

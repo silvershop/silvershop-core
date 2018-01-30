@@ -1,11 +1,12 @@
 <?php
 
-namespace SilverShop\Core\Tests\Product;
+namespace SilverShop\Tests\Product;
 
 
-use SilverStripe\Security\SecurityToken;
+use SilverShop\Cart\ShoppingCart;
+use SilverShop\Tests\ShopTest;
 use SilverStripe\Dev\FunctionalTest;
-
+use SilverStripe\Security\SecurityToken;
 
 
 /**

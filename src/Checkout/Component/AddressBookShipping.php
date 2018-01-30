@@ -1,6 +1,6 @@
 <?php
 
-namespace SilverShop\Core\Checkout\Component;
+namespace SilverShop\Checkout\Component;
 
 class AddressBookShipping extends AddressBook
 {

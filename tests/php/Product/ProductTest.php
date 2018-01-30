@@ -1,15 +1,14 @@
 <?php
 
-namespace SilverShop\Core\Tests\Product;
+namespace SilverShop\Tests\Product;
 
 
-use SilverStripe\ORM\DataObject;
-use SilverStripe\Core\Config\Config;
+use SilverShop\Cart\ShoppingCart;
+use SilverShop\Page\Product;
 use SilverStripe\Control\Director;
+use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\FunctionalTest;
-use SilverStripe\ORM\DataExtension;
-use SilverStripe\Dev\TestOnly;
-
+use SilverStripe\ORM\DataObject;
 
 
 /**
@@ -102,7 +101,7 @@ class ProductTest extends FunctionalTest
         // This extension adds a fractional discount, which could cause
         // the displayed unit price not to match the charged price at
         // large quantities.
-        Product::add_extension('ProductTest_FractionalDiscountExtension');
+        Product::add_extension(ProductTest_FractionalDiscountExtension::class);
         DataObject::flush_and_destroy_cache();
         $tshirt = Product::get()->byID($this->tshirt->ID);
         Config::inst()->update('Order', 'rounding_precision', 2);
@@ -140,10 +139,3 @@ class ProductTest extends FunctionalTest
     }
 }
 
-class ProductTest_FractionalDiscountExtension extends DataExtension implements TestOnly
-{
-    public function updateSellingPrice(&$price)
-    {
-        $price -= 0.015;
-    }
-}

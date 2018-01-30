@@ -3,34 +3,44 @@ Name: silvershop-extensions
 ---
 SilverStripe\SiteConfig\SiteConfig:
   extensions:
-    - SilverShop\Core\Cms\ShopConfig
+    - SilverShop\Extension\ShopConfigExtension
+
 PageController:
   extensions:
-    - ViewableCart
-ShoppingCart_Controller:
+    - SilverShop\Extension\ViewableCartExtension
+
+SilverShop\Cart\ShoppingCartController:
   extensions:
-    - ViewableCart
-CheckoutPage_Controller:
+    - SilverShop\Extension\ViewableCartExtension
+
+SilverShop\Page\CheckoutPageController:
   extensions:
-    - OrderManipulation
-AccountPage_Controller:
+    - SilverShop\Extension\OrderManipulationExtension
+
+SilverShop\Page\AccountPageController:
   extensions:
-    - OrderManipulation
+    - SilverShop\Extension\OrderManipulationExtension
+
 SilverStripe\Security\Member:
   extensions:
-    - ShopMember
+    - SilverShop\Extension\ShopMemberExtension
+
 SilverStripe\Assets\Image:
   extensions:
-    - Product_Image
-Product:
+    - SilverShop\Extension\ProductImageExtension
+
+SilverShop\Page\Product:
   extensions:
-    - ProductVariationsExtension
+    - SilverShop\Extension\ProductVariationsExtension
+
 SilverStripe\Omnipay\Model\Payment:
   extensions:
-    - ShopPayment
-Order:
+    - SilverShop\Extension\PaymentExension
+
+SilverShop\Model\Order:
   extensions:
     - SilverStripe\Omnipay\Extensions\Payable
+
 SilverStripe\Omnipay\Service\PaymentService:
   extensions:
-    - ShopPaymentService
+    - SilverShop\Extension\PaymentServiceExtension

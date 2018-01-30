@@ -1,16 +1,16 @@
 <?php
 
-namespace SilverShop\Core\Checkout\Component;
+namespace SilverShop\Checkout\Component;
 
 
 use Omnipay\Common\Helper;
-use SilverShop\Core\Checkout\Checkout;
-use SilverShop\Core\Model\Order;
-use SilverStripe\Omnipay\GatewayInfo;
-use SilverStripe\Omnipay\GatewayFieldsFactory;
+use SilverShop\Checkout\Checkout;
+use SilverShop\Model\Order;
 use SilverStripe\Forms\LiteralField;
-use SilverStripe\ORM\ValidationResult;
+use SilverStripe\Omnipay\GatewayFieldsFactory;
+use SilverStripe\Omnipay\GatewayInfo;
 use SilverStripe\ORM\ValidationException;
+use SilverStripe\ORM\ValidationResult;
 
 /**
  *

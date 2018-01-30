@@ -1,10 +1,10 @@
 <?php
 
-namespace SilverShop\Core\Model;
+namespace SilverShop\Model;
 
 
-use SilverShop\Core\Cart\ShoppingCartController;
-use SilverShop\Core\Cart\ShopQuantityField;
+use SilverShop\Cart\ShoppingCartController;
+use SilverShop\Forms\ShopQuantityField;
 
 
 /**

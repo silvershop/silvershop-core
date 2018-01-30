@@ -1,18 +1,16 @@
 <?php
 
-namespace SilverShop\Core\Tests;
+namespace SilverShop\Tests;
 
 
-use SilverShop\Core\ShopUserInfo;
+use SilverShop\ShopUserInfo;
 use SilverStripe\Dev\SapphireTest;
-
 
 
 class ShopUserInfoTest extends SapphireTest
 {
     public function testSetLocation()
     {
-
         ShopUserInfo::singleton()->setLocation([
             'Country' => 'NZ',
             'State'   => 'Wellington',

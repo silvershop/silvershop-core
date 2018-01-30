@@ -1,4 +1,4 @@
-SilverShop\Core\Account\AccountPage:
+SilverShop\Page\AccountPage:
   account:
     URLSegment: account
     Title: Account

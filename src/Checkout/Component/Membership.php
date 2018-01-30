@@ -1,19 +1,19 @@
 <?php
 
-namespace SilverShop\Core\Checkout\Component;
+namespace SilverShop\Checkout\Component;
 
 
-use SilverShop\Core\Checkout\Checkout;
-use SilverShop\Core\Model\Order;
+use SilverShop\Checkout\Checkout;
+use SilverShop\Model\Order;
+use SilverStripe\Forms\ConfirmedPasswordField;
+use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\Form;
+use SilverStripe\Forms\PasswordField;
+use SilverStripe\Forms\TextField;
+use SilverStripe\ORM\ValidationException;
+use SilverStripe\ORM\ValidationResult;
 use SilverStripe\Security\Member;
 use SilverStripe\Security\PasswordValidator;
-use SilverStripe\Forms\Form;
-use SilverStripe\Forms\FieldList;
-use SilverStripe\Forms\TextField;
-use SilverStripe\Forms\ConfirmedPasswordField;
-use SilverStripe\Forms\PasswordField;
-use SilverStripe\ORM\ValidationResult;
-use SilverStripe\ORM\ValidationException;
 use SilverStripe\Security\Security;
 
 

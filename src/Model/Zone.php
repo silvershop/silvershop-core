@@ -1,12 +1,11 @@
 <?php
 
-namespace SilverShop\Core\Model;
+namespace SilverShop\Model;
 
 
-use SilverShop\Core\ShopTools;
-use SilverStripe\Control\Session;
-use SilverStripe\Forms\GridField\GridFieldConfig_RelationEditor;
+use SilverShop\ShopTools;
 use SilverStripe\Forms\GridField\GridField;
+use SilverStripe\Forms\GridField\GridFieldConfig_RelationEditor;
 use SilverStripe\ORM\DataObject;
 
 

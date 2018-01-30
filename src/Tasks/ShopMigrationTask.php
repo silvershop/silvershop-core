@@ -1,10 +1,10 @@
 <?php
 
-namespace SilverShop\Core\Tasks;
+namespace SilverShop\Tasks;
 
 
-use SilverShop\Core\Model\Order;
-use SilverShop\Core\Modifiers\Shipping\Base;
+use SilverShop\Model\Modifiers\Shipping\Base;
+use SilverShop\Model\Order;
 use SilverStripe\Dev\MigrationTask;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\DB;
@@ -155,7 +155,7 @@ class ShopMigrationTask extends MigrationTask
             $order->Shipping = null;
         }
         if ($order->AddedTax) {
-            $modifier2 = \SilverShop\Core\Modifiers\Tax\Base::create();
+            $modifier2 = \SilverShop\Model\Modifiers\Tax\Base::create();
             $modifier2->Amount = $order->AddedTax < 0 ? abs($order->AddedTax) : $order->AddedTax;
             $modifier2->Type = 'Chargable';
             $modifier2->OrderID = $order->ID;

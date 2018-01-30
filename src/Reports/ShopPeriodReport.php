@@ -1,6 +1,6 @@
 <?php
 
-namespace SilverShop\Core\Reports;
+namespace SilverShop\Reports;
 
 
 use SilverShop\SQLQueryList\SQLQueryList;

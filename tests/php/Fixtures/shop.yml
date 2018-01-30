@@ -1,42 +1,42 @@
-SilverShop\Core\Product\ProductCategory:
+SilverShop\Page\ProductCategory:
   products:
     Title: Products
     URLSegment: products
   clothing:
     Title: Clothing
     URLSegment: clothing
-    Parent: =>SilverShop\Core\Product\ProductCategory.products #Sub page of products
+    Parent: =>SilverShop\Page\ProductCategory.products #Sub page of products
   electronics:
     Title: Electronics
     URLSegment: electronics
-    Parent: =>SilverShop\Core\Product\ProductCategory.products
+    Parent: =>SilverShop\Page\ProductCategory.products
   musicplayers:
     Title: Music Players
     URLSegment: music-players
-    Parent: =>SilverShop\Core\Product\ProductCategory.electronics
+    Parent: =>SilverShop\Page\ProductCategory.electronics
   clearance:
     Title: Clearance
 
-SilverShop\Core\Product\Product:
+SilverShop\Page\Product:
   socks:
     Title: Socks
     BasePrice: 8
     URLSegment: socks
-    Parent: =>SilverShop\Core\Product\ProductCategory.clothing
+    Parent: =>SilverShop\Page\ProductCategory.clothing
     AllowPurchase: 1
     Weight: 0.1
     Stock: 50
   tshirt:
     Title: T-Shirt
     BasePrice: 25
-    Parent: =>SilverShop\Core\Product\ProductCategory.clothing
+    Parent: =>SilverShop\Page\ProductCategory.clothing
     URLSegment: t-shirt
     AllowPurchase: 1
     Weight: 0.3
     Stock: 1000
   hdtv: #This product has no price
     Title: High Definition Television
-    Parent: =>SilverShop\Core\Product\ProductCategory.electronics
+    Parent: =>SilverShop\Page\ProductCategory.electronics
     URLSegment: hdtv
     AllowPurchase: 1
     Weight: 50
@@ -45,7 +45,7 @@ SilverShop\Core\Product\Product:
     Title: Beach Ball
     BasePrice: 10
     URLSegment: beach-ball
-    Parent: =>SilverShop\Core\Product\ProductCategory.products
+    Parent: =>SilverShop\Page\ProductCategory.products
     AllowPurchase: 0 #This product has AllowPurchase set to 0
     Weight: 0.4
     Stock: 1000
@@ -53,8 +53,8 @@ SilverShop\Core\Product\Product:
     Title: Mp3 Player
     BasePrice: 200
     URLSegment: mp3-player
-    Parent: =>SilverShop\Core\Product\ProductCategory.musicplayers
-    ProductCategories: =>SilverShop\Core\Product\ProductCategory.clearance
+    Parent: =>SilverShop\Page\ProductCategory.musicplayers
+    ProductCategories: =>SilverShop\Page\ProductCategory.clearance
     AllowPurchase: 1
     Weight: 0.3
     Stock: 1000 #You need stock levels if you have included the stock module, else the test will fail.
@@ -62,10 +62,10 @@ SilverShop\Core\Product\Product:
     Title: PDF Brochure
     BasePrice: 0 #its free!
     URLSegment: pdf-brochure
-    Parent: =>SilverShop\Core\Product\ProductCategory.products
+    Parent: =>SilverShop\Page\ProductCategory.products
     AllowPurchase: 1
 
-SilverShop\Core\Model\Address:
+SilverShop\Model\Address:
   foobar:
     Address: 12 Foo Street
     AddressLine2: Bar
@@ -96,8 +96,8 @@ SilverStripe\Security\Member:
     Country: NZ
     Email: test@example.com
     Password: 23u90oijlJKsa
-    DefaultShippingAddress: =>SilverShop\Core\Model\Address.foobar
-    DefaultBillingAddress: =>SilverShop\Core\Model\Address.foobar
+    DefaultShippingAddress: =>SilverShop\Model\Address.foobar
+    DefaultBillingAddress: =>SilverShop\Model\Address.foobar
     Groups: =>SilverStripe\Security\Group.customers
   bobjones:
     FirstName: Bob
@@ -107,7 +107,7 @@ SilverStripe\Security\Member:
     Password: 3456sdfsd34
     Groups: =>SilverStripe\Security\Group.resellers,=>SilverStripe\Security\Group.customers
 
-SilverShop\Core\Model\Order:
+SilverShop\Model\Order:
   emptycart:
     Name: Empty Cart
   cart:
@@ -139,76 +139,76 @@ SilverShop\Core\Model\Order:
     Status: Cart
     FirstName: Payable
     Surname: Smith
-    ShippingAddressID: =>SilverShop\Core\Model\Address.foobar
-    BillingAddressID: =>SilverShop\Core\Model\Address.foobar
+    ShippingAddressID: =>SilverShop\Model\Address.foobar
+    BillingAddressID: =>SilverShop\Model\Address.foobar
     Total: 41
 
-SilverShop\Core\Product\ProductOrderItem:
+SilverShop\Model\Product\OrderItem:
   cart_socks:
-    Order: =>SilverShop\Core\Model\Order.cart
-    Product: =>SilverShop\Core\Product\Product.socks
+    Order: =>SilverShop\Model\Order.cart
+    Product: =>SilverShop\Page\Product.socks
     Quantity: 1
   othercart_mp3player:
-    Order: =>SilverShop\Core\Model\Order.othercart
-    Product: =>SilverShop\Core\Product\Product.mp3player
+    Order: =>SilverShop\Model\Order.othercart
+    Product: =>SilverShop\Page\Product.mp3player
     UnitPrice: 200
     Quantity: 1
     CalculatedTotal: 200
   modifiedcart_mp3player:
-    Order: =>SilverShop\Core\Model\Order.modifiedcart
-    Product: =>SilverShop\Core\Product\Product.mp3player
+    Order: =>SilverShop\Model\Order.modifiedcart
+    Product: =>SilverShop\Page\Product.mp3player
     UnitPrice: 200
     Quantity: 1
     CalculatedTotal: 200
   unpaid_tshirt:
-    Order: =>SilverShop\Core\Model\Order.unpaid
-    Product: =>SilverShop\Core\Product\Product.tshirt
+    Order: =>SilverShop\Model\Order.unpaid
+    Product: =>SilverShop\Page\Product.tshirt
     ProductVersion: 1
     UnitPrice: 25
     Quantity: 4
     CalculatedTotal: 100
   unpaid_mp3player:
-    Order: =>SilverShop\Core\Model\Order.unpaid
-    Product: =>SilverShop\Core\Product\Product.mp3player
+    Order: =>SilverShop\Model\Order.unpaid
+    Product: =>SilverShop\Page\Product.mp3player
     ProductVersion: 1
     UnitPrice: 200
     Quantity: 2
     CalculatedTotal: 400
   paid_socks:
-    Order: =>SilverShop\Core\Model\Order.paid
-    Product: =>SilverShop\Core\Product\Product.socks
+    Order: =>SilverShop\Model\Order.paid
+    Product: =>SilverShop\Page\Product.socks
     ProductVersion: 1
     UnitPrice: 8
     Quantity: 1
     CalculatedTotal: 8
   paid_mp3player:
-    Order: =>SilverShop\Core\Model\Order.paid
-    Product: =>SilverShop\Core\Product\Product.mp3player
+    Order: =>SilverShop\Model\Order.paid
+    Product: =>SilverShop\Page\Product.mp3player
     ProductVersion: 1
     UnitPrice: 200
     Quantity: 2
     CalculatedTotal: 400
   megacart_socks:
-    Order: =>SilverShop\Core\Model\Order.megacart
-    Product: =>SilverShop\Core\Product\Product.socks
+    Order: =>SilverShop\Model\Order.megacart
+    Product: =>SilverShop\Page\Product.socks
     Quantity: 20
     #SubTotal: 160
   megacart_tshirt:
-    Order: =>SilverShop\Core\Model\Order.megacart
-    Product: =>SilverShop\Core\Product\Product.tshirt
+    Order: =>SilverShop\Model\Order.megacart
+    Product: =>SilverShop\Page\Product.tshirt
     Quantity: 10
     #SubTotal: 250
   megacart_mp3player:
-    Order: =>SilverShop\Core\Model\Order.megacart
-    Product: =>SilverShop\Core\Product\Product.mp3player
+    Order: =>SilverShop\Model\Order.megacart
+    Product: =>SilverShop\Page\Product.mp3player
     Quantity: 2
   payablecart_socks:
-    Order: =>SilverShop\Core\Model\Order.payablecart
-    Product: =>SilverShop\Core\Product\Product.socks
+    Order: =>SilverShop\Model\Order.payablecart
+    Product: =>SilverShop\Page\Product.socks
     Quantity: 2
   payablecart_tshirt:
-    Order: =>SilverShop\Core\Model\Order.payablecart
-    Product: =>SilverShop\Core\Product\Product.tshirt
+    Order: =>SilverShop\Model\Order.payablecart
+    Product: =>SilverShop\Page\Product.tshirt
     Quantity: 1
 
 SilverStripe\Omnipay\Model\Payment:
@@ -218,4 +218,4 @@ SilverStripe\Omnipay\Model\Payment:
     MoneyAmount: 200
     MoneyCurrency: USD
     Created: 2012-10-02 07:33:21
-    Order: =>SilverShop\Core\Model\Order.paid
+    Order: =>SilverShop\Model\Order.paid

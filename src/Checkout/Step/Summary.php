@@ -1,12 +1,12 @@
 <?php
 
-namespace SilverShop\Core\Checkout\Step;
+namespace SilverShop\Checkout\Step;
 
-use SilverShop\Core\Cart\ShoppingCart;
-use SilverShop\Core\Checkout\Component\CheckoutComponentConfig;
-use SilverShop\Core\Checkout\Component\Notes;
-use SilverShop\Core\Checkout\Component\Terms;
-use SilverShop\Core\Checkout\PaymentForm;
+use SilverShop\Cart\ShoppingCart;
+use SilverShop\Checkout\Component\CheckoutComponentConfig;
+use SilverShop\Checkout\Component\Notes;
+use SilverShop\Checkout\Component\Terms;
+use SilverShop\Forms\PaymentForm;
 
 class Summary extends CheckoutStep
 {

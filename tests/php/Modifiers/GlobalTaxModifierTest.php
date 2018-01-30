@@ -1,10 +1,10 @@
 <?php
 
-namespace SilverShop\Core\Tests\Modifiers;
+namespace SilverShop\Tests\Modifiers;
 
 
-use SilverShop\Core\Model\Order;
-use SilverShop\Core\Modifiers\Tax\GlobalTax;
+use SilverShop\Model\Order;
+use SilverShop\Modifiers\Tax\GlobalTax;
 use SilverStripe\Dev\SapphireTest;
 
 

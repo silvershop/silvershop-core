@@ -1,10 +1,9 @@
 <?php
 
-namespace SilverShop\Core\Reports;
+namespace SilverShop\Reports;
 
 
 use SilverStripe\Security\Member;
-use SilverStripe\Control\Email\Email;
 
 
 /**

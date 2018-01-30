@@ -2,7 +2,7 @@
 Name: silvershop-countries
 ---
 
-SilverShop\Core\Cms\ShopConfig:
+SilverShop\Extension\ShopConfigExtension:
   iso_3166_country_codes:
     'AF' : "Afghanistan"
     'AX' : "Åland Islands"

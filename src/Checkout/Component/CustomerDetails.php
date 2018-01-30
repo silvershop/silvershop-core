@@ -1,9 +1,9 @@
 <?php
 
-namespace SilverShop\Core\Checkout\Component;
+namespace SilverShop\Checkout\Component;
 
 
-use SilverShop\Core\Model\Order;
+use SilverShop\Model\Order;
 use SilverStripe\Forms\EmailField;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\TextField;
@@ -21,9 +21,9 @@ class CustomerDetails extends CheckoutComponent
     public function getFormFields(Order $order)
     {
         $fields = FieldList::create(
-            $firstname = TextField::create('FirstName', _t('SilverShop\Core\Model\Order.db_FirstName', 'First Name')),
-            $surname = TextField::create('Surname', _t('SilverShop\Core\Model\Order.db_Surname', 'Surname')),
-            $email = EmailField::create('Email', _t('SilverShop\Core\Model\Order.db_Email', 'Email'))
+            $firstname = TextField::create('FirstName', _t('SilverShop\Model\Order.db_FirstName', 'First Name')),
+            $surname = TextField::create('Surname', _t('SilverShop\Model\Order.db_Surname', 'Surname')),
+            $email = EmailField::create('Email', _t('SilverShop\Model\Order.db_Email', 'Email'))
         );
 
         return $fields;

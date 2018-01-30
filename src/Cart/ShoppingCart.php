@@ -1,16 +1,17 @@
 <?php
 
-namespace SilverShop\Core\Cart;
+namespace SilverShop\Cart;
 
 
 use Exception;
-use SilverShop\Core\Account\OrderManipulation;
-use SilverShop\Core\Model\Buyable;
-use SilverShop\Core\Model\Order;
-use SilverShop\Core\Model\OrderItem;
-use SilverShop\Core\Product\Product;
-use SilverShop\Core\Product\Variation\ProductVariationsExtension;
-use SilverShop\Core\ShopTools;
+use SilverShop\Extension\OrderManipulationExtension;
+use SilverShop\Extension\ProductVariationsExtension;
+use SilverShop\Model\Buyable;
+use SilverShop\Model\Order;
+use SilverShop\Model\OrderItem;
+use SilverShop\ORM\Filters\MatchObjectFilter;
+use SilverShop\Page\Product;
+use SilverShop\ShopTools;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Config\Configurable;
 use SilverStripe\Core\Injector\Injectable;
@@ -430,7 +431,7 @@ class ShoppingCart
             ->byId($sessionId);
 
         if ($order && !$order->IsCart()) {
-            OrderManipulation::add_session_order($order);
+            OrderManipulationExtension::add_session_order($order);
         }
         // in case there was no order requested
         // OR there was an order requested AND it's the same one as currently in the session,

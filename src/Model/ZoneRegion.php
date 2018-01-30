@@ -1,6 +1,6 @@
 <?php
 
-namespace SilverShop\Core\Model;
+namespace SilverShop\Model;
 
 
 class ZoneRegion extends RegionRestriction

@@ -5,12 +5,12 @@
 <% include SilverStripe\Core\Account\AccountNavigation %>
 <div id="Account" class="typography">
     $Content
-    <h2 class="pagetitle"><%t SilverShop\Core\Account\AccountPage.PastOrders 'Past Orders' %></h2>
+    <h2 class="pagetitle"><%t SilverShop\Page\AccountPage.PastOrders 'Past Orders' %></h2>
     <% with $Member %>
         <% if $PastOrders %>
-            <% include SilverShop\Core\OrderHistory %>
+            <% include SilverShop\OrderHistory %>
         <% else %>
-            <p class="message warning"><%t SilverShop\Core\Account\AccountPage.NoPastOrders 'No past orders found.' %></p>
+            <p class="message warning"><%t SilverShop\Page\AccountPage.NoPastOrders 'No past orders found.' %></p>
         <% end_if %>
     <% end_with %>
 </div>

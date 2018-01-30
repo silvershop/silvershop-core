@@ -1,9 +1,9 @@
 <?php
 
-namespace SilverShop\Core\Tests\Reports;
+namespace SilverShop\Tests\Reports;
 
 
-use SilverShop\Core\Reports\ShopSalesReport;
+use SilverShop\Reports\ShopSalesReport;
 use SilverStripe\Dev\SapphireTest;
 
 

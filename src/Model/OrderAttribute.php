@@ -1,10 +1,9 @@
 <?php
 
-namespace SilverShop\Core\Model;
+namespace SilverShop\Model;
 
 
 use SilverStripe\ORM\DataObject;
-use SilverStripe\ORM\FieldType\DBCurrency;
 
 
 /**

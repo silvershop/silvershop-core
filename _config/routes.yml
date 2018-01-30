@@ -4,5 +4,5 @@ After: framework/routes#coreroutes
 ---
 SilverStripe\Control\Director:
   rules:
-    shoppingcart: ShoppingCartController
-    dev/shop: ShopDevelopmentAdmin
+    shoppingcart: SilverShop\Cart\ShoppingCartController
+    dev/shop: SilverShop\Dev\ShopDevelopmentAdmin

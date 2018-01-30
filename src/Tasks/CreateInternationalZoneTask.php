@@ -1,11 +1,11 @@
 <?php
 
-namespace SilverShop\Core\Tasks;
+namespace SilverShop\Tasks;
 
 
-use SilverShop\Core\Cms\ShopConfig;
-use SilverShop\Core\Model\Zone;
-use SilverShop\Core\Model\ZoneRegion;
+use SilverShop\Extension\ShopConfigExtension;
+use SilverShop\Model\Zone;
+use SilverShop\Model\ZoneRegion;
 use SilverStripe\Dev\BuildTask;
 
 
@@ -22,7 +22,7 @@ class CreateInternationalZoneTask extends BuildTask
         $zone->Description = 'All countries';
         $zone->write();
 
-        $countries = ShopConfig::current()->getCountriesList();
+        $countries = ShopConfigExtension::current()->getCountriesList();
 
         foreach ($countries as $code => $country) {
             ZoneRegion::create()->update([

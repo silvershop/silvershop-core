@@ -24,7 +24,7 @@
                     <div class="accordion-body">
                         <div class="accordion-inner">
                             <% with $Cart %>
-                                <% include SilverShop\Core\Cart\Cart %>
+                                <% include SilverShop\Cart\Cart %>
                             <% end_with %>
                         </div>
                     </div>

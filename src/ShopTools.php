@@ -1,9 +1,9 @@
 <?php
 
-namespace SilverShop\Core;
+namespace SilverShop;
 
 use Psr\Container\NotFoundExceptionInterface;
-use SilverShop\Core\Cms\ShopConfig;
+use SilverShop\Cms\ShopConfigExtension;
 use SilverStripe\Control\Controller;
 use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Control\Session;
@@ -24,7 +24,7 @@ class ShopTools
      */
     public static function price_for_display($price)
     {
-        $currency = ShopConfig::get_site_currency();
+        $currency = ShopConfigExtension::get_site_currency();
         $field = DBMoney::create_field(DBMoney::class, 0, 'Price' );
         $field->setAmount($price);
         $field->setCurrency($currency);

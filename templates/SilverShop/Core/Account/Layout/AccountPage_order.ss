@@ -14,7 +14,7 @@
     <% end_if %>
     <% if $Order %>
         <% with $Order %>
-            <% include SilverShop\Core\Model\Order %>
+            <% include SilverShop\Model\Order %>
         <% end_with %>
         $ActionsForm
     <% end_if %>

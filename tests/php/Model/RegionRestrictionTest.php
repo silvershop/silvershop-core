@@ -1,10 +1,10 @@
 <?php
 
-namespace SilverShop\Core\Tests\Model;
+namespace SilverShop\Tests\Model;
 
 
-use SilverShop\Core\Model\Address;
-use SilverShop\Core\Model\RegionRestriction;
+use SilverShop\Model\Address;
+use SilverShop\Model\RegionRestriction;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\Dev\SapphireTest;
 

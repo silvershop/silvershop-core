@@ -12,11 +12,11 @@
             <div class="clear"><!-- --></div>
             <ul class="productList">
                 <% loop $Products %>
-                    <% include SilverShop\Core\ProductGroupItem %>
+                    <% include SilverShop\ProductGroupItem %>
                 <% end_loop %>
             </ul>
             <div class="clear"><!-- --></div>
-            <% include SilverShop\Core\ProductGroupPagination %>
+            <% include SilverShop\ProductGroupPagination %>
         </div>
     <% end_if %>
 </div>

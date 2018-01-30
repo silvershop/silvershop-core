@@ -1,6 +1,6 @@
 <?php
 
-namespace SilverShop\Core\Tests\Model;
+namespace SilverShop\Tests\Model;
 
 
 use SilverStripe\Core\Config\Config;
@@ -67,7 +67,7 @@ class OrderTest extends SapphireTest
         $order = $this->objFromFixture("Order", "paid");
         $items = $order->Items();
         $this->assertNotNull($items);
-        $this->assertDOSEquals(
+        $this->assertListEquals(
             array(
                 array('ProductID' => $this->mp3player->ID, 'Quantity' => 2, 'CalculatedTotal' => 400),
                 array('ProductID' => $this->socks->ID, 'Quantity' => 1, 'CalculatedTotal' => 8),
@@ -128,7 +128,7 @@ class OrderTest extends SapphireTest
                 '"OrderItem"."ID" = "Product_OrderItem"."ID"'
             );
         $this->assertNotNull($items);
-        $this->assertDOSEquals(
+        $this->assertListEquals(
             array(
                 array('ProductID' => $this->mp3player->ID, 'Quantity' => 2, 'CalculatedTotal' => 400),
                 array('ProductID' => $this->socks->ID, 'Quantity' => 1, 'CalculatedTotal' => 8),

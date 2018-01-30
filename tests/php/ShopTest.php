@@ -1,6 +1,6 @@
 <?php
 
-namespace SilverShop\Core\Tests;
+namespace SilverShop\Tests;
 
 
 

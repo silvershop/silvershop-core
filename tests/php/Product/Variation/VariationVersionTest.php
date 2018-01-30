@@ -1,6 +1,6 @@
 <?php
 
-namespace SilverShop\Core\Tests\Product\Variation;
+namespace SilverShop\Tests\Product\Variation;
 
 
 use SilverStripe\Dev\SapphireTest;

@@ -1,4 +1,4 @@
-SilverShop\Core\Product\Product:
+SilverShop\Page\Product:
   laptop:
     Title: Laptop
     BasePrice: 1940.00
@@ -23,7 +23,7 @@ SilverShop\Core\Product\Product:
     Depth: 1
     Weight: 0.06
 
-SilverShop\Core\Model\Address:
+SilverShop\Model\Address:
   address1:
     Address: '201-203 BROADWAY AVE'
     Address2: 'U 235'
@@ -37,24 +37,24 @@ SilverShop\Core\Model\Address:
     State: Ipsum
     PostCode: 1234
     Country: NZ
-SilverShop\Core\Model\Order:
+SilverShop\Model\Order:
   #$2000 order
   cart1:
     Name: Blah
     Status: Cart
-    ShippingAddress: =>SilverShop\Core\Model\Address.address1
-    BillingAddress: =>SilverShop\Core\Model\Address.address1
+    ShippingAddress: =>SilverShop\Model\Address.address1
+    BillingAddress: =>SilverShop\Model\Address.address1
 
-SilverShop\Core\Product\ProductOrderItem:
+SilverShop\Model\Product\OrderItem:
   item1:
-    Order: =>SilverShop\Core\Model\Order.cart1
-    Product: =>SilverShop\Core\Product\Product.laptop
+    Order: =>SilverShop\Model\Order.cart1
+    Product: =>SilverShop\Page\Product.laptop
     Quantity: 1
   item2:
-    Order: =>SilverShop\Core\Model\Order.cart1
-    Product: =>SilverShop\Core\Product\Product.bag
+    Order: =>SilverShop\Model\Order.cart1
+    Product: =>SilverShop\Page\Product.bag
     Quantity: 1
   item3:
-    Order: =>SilverShop\Core\Model\Order.cart1
-    Product: =>SilverShop\Core\Product\Product.battery
+    Order: =>SilverShop\Model\Order.cart1
+    Product: =>SilverShop\Page\Product.battery
     Quantity: 6

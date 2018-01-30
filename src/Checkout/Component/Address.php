@@ -1,10 +1,10 @@
 <?php
 
-namespace SilverShop\Core\Checkout\Component;
+namespace SilverShop\Checkout\Component;
 
-use SilverShop\Core\Model\Order;
-use SilverShop\Core\Model\Zone;
-use SilverShop\Core\ShopUserInfo;
+use SilverShop\Model\Order;
+use SilverShop\Model\Zone;
+use SilverShop\ShopUserInfo;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\Security\Security;
 use SilverStripe\SiteConfig\SiteConfig;
@@ -80,7 +80,7 @@ abstract class Address extends CheckoutComponent
         $address = $this->getAddress($order);
         //if the value matches the current address then unset
         //this is to fix issues with blank fields & the readonly Country field
-        $addressFields = DataObject::getSchema()->databaseFields(\SilverShop\Core\Model\Address::class);
+        $addressFields = DataObject::getSchema()->databaseFields(\SilverShop\Model\Address::class);
         foreach ($data as $key => $value) {
             if (!isset($addressFields[$key]) || (!$value && !$address->{$key})) {
                 unset($data[$key]);
@@ -142,7 +142,7 @@ abstract class Address extends CheckoutComponent
 
     /**
      * @param Order $order
-     * @return \SilverShop\Core\Model\Address
+     * @return \SilverShop\Model\Address
      */
     public function getAddress(Order $order)
     {

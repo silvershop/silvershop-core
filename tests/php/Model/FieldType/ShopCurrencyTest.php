@@ -1,9 +1,9 @@
 <?php
 
-namespace SilverShop\Core\Tests\Model\FieldType;
+namespace SilverShop\Tests\Model\FieldType;
 
 
-use SilverShop\Core\Model\FieldType\ShopCurrency;
+use SilverShop\Model\FieldType\ShopCurrency;
 use SilverStripe\Dev\SapphireTest;
 
 

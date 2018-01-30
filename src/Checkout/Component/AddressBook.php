@@ -1,9 +1,9 @@
 <?php
 
-namespace SilverShop\Core\Checkout\Component;
+namespace SilverShop\Checkout\Component;
 
 
-use SilverShop\Core\Model\Order;
+use SilverShop\Model\Order;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Forms\CompositeField;
 use SilverStripe\Forms\DropdownField;
@@ -44,7 +44,7 @@ abstract class AddressBook extends Address implements i18nEntityProvider
             // group under a composite field (invisible by default) so we
             // easily know which fields to show/hide
             $label = _t(
-                "SilverShop\Core\Model\Address.{$this->addresstype}Address",
+                "SilverShop\Model\Address.{$this->addresstype}Address",
                 "{$this->addresstype} Address"
             );
 
@@ -69,10 +69,10 @@ abstract class AddressBook extends Address implements i18nEntityProvider
         $member = Security::getCurrentUser();
         if ($member && $member->AddressBook()->exists()) {
             $addressoptions = $member->AddressBook()->sort('Created', 'DESC')->map('ID', 'toString')->toArray();
-            $addressoptions['newaddress'] = _t('SilverShop\Core\Model\Address.CreateNewAddress', 'Create new address');
+            $addressoptions['newaddress'] = _t('SilverShop\Model\Address.CreateNewAddress', 'Create new address');
             $fieldtype = count($addressoptions) > 3 ? DropdownField::class : OptionsetField::class;
 
-            $label = _t("SilverShop\Core\Model\Address.Existing{$this->addresstype}Address", "Existing {$this->addresstype} Address");
+            $label = _t("SilverShop\Model\Address.Existing{$this->addresstype}Address", "Existing {$this->addresstype} Address");
 
             return FieldList::create(
                 $fieldtype::create(
@@ -171,11 +171,11 @@ abstract class AddressBook extends Address implements i18nEntityProvider
         if ($this->addresstype) {
             return [
 
-                "SilverShop\Core\Model\Address.{$this->addresstype}Address" => [
+                "SilverShop\Model\Address.{$this->addresstype}Address" => [
                     "{$this->addresstype} Address",
                     "Label for the {$this->addresstype} address",
                 ],
-                "SilverShop\Core\Model\Address.Existing{$this->addresstype}Address" => [
+                "SilverShop\Model\Address.Existing{$this->addresstype}Address" => [
                     "Existing {$this->addresstype} Address",
                     "Label to select an existing {$this->addresstype} Address",
                 ],

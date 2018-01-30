@@ -1,10 +1,11 @@
 <?php
 
-namespace SilverShop\Core\Tasks;
+namespace SilverShop\Tasks;
 
 
-use SilverShop\Core\Cart\ShoppingCart;
-use SilverShop\Core\Checkout\CheckoutPage;
+use SilverShop\Cart\ShoppingCart;
+use SilverShop\Page\CheckoutPage;
+use SilverShop\Page\Product;
 use SilverStripe\Control\Controller;
 use SilverStripe\Dev\BuildTask;
 use SilverStripe\Security\Member;

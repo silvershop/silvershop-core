@@ -1,15 +1,10 @@
 <?php
 
-namespace SilverShop\Core\Tests\Product;
+namespace SilverShop\Tests\Product;
 
 
-use SilverShop\Core\Cart\ShoppingCart;
-use SilverShop\Core\Model\Buyable;
-use SilverShop\Core\Model\OrderItem;
+use SilverShop\Cart\ShoppingCart;
 use SilverStripe\Dev\FunctionalTest;
-use SilverStripe\ORM\DataObject;
-use SilverStripe\Dev\TestOnly;
-use SilverStripe\Security\Member;
 
 
 /**
@@ -19,8 +14,8 @@ use SilverStripe\Security\Member;
 class CustomProductTest extends FunctionalTest
 {
     protected $extraDataObjects = array(
-        "CustomProduct",
-        "CustomProduct_OrderItem",
+        CustomProduct::class,
+        CustomProduct_OrderItem::class,
     );
 
     public function setUpOnce()
@@ -32,12 +27,10 @@ class CustomProductTest extends FunctionalTest
 
     public function testCustomProduct()
     {
-        $thing = CustomProduct::create(
-            array(
-                "Title" => "Thing",
-                "Price" => 30,
-            )
-        );
+        $thing = CustomProduct::create()->update([
+            "Title" => "Thing",
+            "Price" => 30,
+        ]);
         $thing->write();
 
         $cart = ShoppingCart::singleton();
@@ -95,75 +88,5 @@ class CustomProductTest extends FunctionalTest
         $this->markTestIncomplete("what about default values that have been set");
         //test by using urls
         //add a partial match
-    }
-}
-
-/**
- * @package    shop
- * @subpackage tests
- */
-class CustomProduct extends DataObject implements Buyable, TestOnly
-{
-    private static $db = array(
-        'Title' => 'Varchar',
-        'Price' => 'Currency',
-    );
-    private static $order_item = 'CustomProduct_OrderItem';
-
-    public function createItem($quantity = 1, $filter = array())
-    {
-        $itemclass = self::config()->order_item;
-        $item = new $itemclass();
-        $item->ProductID = $this->ID;
-        if ($filter) {
-            $item->update($filter);
-        }
-        return $item;
-    }
-
-    public function canPurchase($member = null, $quantity = 1)
-    {
-        return $this->Price > 0;
-    }
-
-    public function sellingPrice()
-    {
-        return $this->Price;
-    }
-}
-
-/**
- * @package    shop
- * @subpackage tests
- */
-class CustomProduct_OrderItem extends OrderItem implements TestOnly
-{
-    private static $db = array(
-        'Color' => "Enum('Red,Green,Blue','Red')",
-        'Size' => 'Int',
-        'Premium' => 'Boolean',
-    );
-    private static $defaults = array(
-        'Color' => 'Red',
-        'Premium' => false,
-    );
-    private static $has_one = array(
-        'Product' => 'CustomProduct',
-        'Recipient' => Member::class,
-    );
-    private static $buyable_relationship = "Product";
-    private static $required_fields = array(
-        'Color',
-        'Size',
-        'Premium',
-        'Recipient',
-    );
-
-    public function UnitPrice()
-    {
-        if ($product = $this->Product()) {
-            return $product->Price;
-        }
-        return 0;
     }
 }

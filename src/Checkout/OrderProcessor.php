@@ -1,23 +1,20 @@
 <?php
 
-namespace SilverShop\Core\Checkout;
+namespace SilverShop\Checkout;
 
 
-use SilverShop\Core\Model\Order;
-use SilverStripe\Core\Injector\Injectable;
-use SilverStripe\Omnipay\GatewayInfo;
-use SilverStripe\Omnipay\Service\ServiceFactory;
-use SilverStripe\Omnipay\Service\ServiceResponse;
-use SilverStripe\Core\Injector\Injector;
-use SilverStripe\Security\Member;
-use SilverStripe\ORM\FieldType\DBDatetime;
-use SilverStripe\Control\Controller;
-use SilverStripe\Core\Config\Config_ForClass;
-use SilverStripe\Omnipay\Model\Payment;
 use ErrorException;
 use Exception;
-
-
+use SilverShop\Model\Order;
+use SilverStripe\Control\Controller;
+use SilverStripe\Core\Config\Config_ForClass;
+use SilverStripe\Core\Injector\Injectable;
+use SilverStripe\Omnipay\GatewayInfo;
+use SilverStripe\Omnipay\Model\Payment;
+use SilverStripe\Omnipay\Service\ServiceFactory;
+use SilverStripe\Omnipay\Service\ServiceResponse;
+use SilverStripe\ORM\FieldType\DBDatetime;
+use SilverStripe\Security\Member;
 
 
 /**

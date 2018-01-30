@@ -1,10 +1,10 @@
 <?php
 
-namespace SilverShop\Core\Tasks;
+namespace SilverShop\Tasks;
 
 
-use SilverShop\Core\Checkout\OrderEmailNotifier;
-use SilverShop\Core\Model\Order;
+use SilverShop\Checkout\OrderEmailNotifier;
+use SilverShop\Model\Order;
 use SilverStripe\Control\Director;
 use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Dev\BuildTask;
