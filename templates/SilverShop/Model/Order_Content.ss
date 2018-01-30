@@ -15,8 +15,8 @@
     </thead>
     <tbody>
         <% loop $Items %>
-            <% include SilverStripe\Core\Model\Order_Content_ItemLine %>
+            <% include SilverStripe\Model\Order_Content_ItemLine %>
         <% end_loop %>
     </tbody>
-    <% include SilverStripe\Core\Model\Order_Content_SubTotals %>
+    <% include SilverStripe\Model\Order_Content_SubTotals %>
 </table>

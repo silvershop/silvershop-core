@@ -2,7 +2,7 @@
     <head>
         <% base_tag %>
         $MetaTags
-        <% include SilverShop\OrderReceiptStyle %>
+        <% include SilverShop\Includes\OrderReceiptStyle %>
     </head>
     <body>
         <div style="page-break-after: always;">

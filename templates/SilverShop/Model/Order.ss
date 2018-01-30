@@ -1,7 +1,7 @@
 <% require themedCSS("order") %>
 <% require themedCSS("shop") %>
 <%-- As Order.ss is also used in emails, avoid div, paragraph and heading elements --%>
-<% include SilverStripe\Core\Model\Order_Address %>
+<% include SilverStripe\Model\Order_Address %>
 <% include SilverShop\Model\Order_Content %>
 <% if $Total %>
     <% if $Payments %>

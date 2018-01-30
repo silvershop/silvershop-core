@@ -17,7 +17,7 @@
     </div>
     <% if $Cart %>
         <% with $Cart %>
-            <% include SilverStripe\Core\Cart\Cart ShowSubtotals=true %>
+            <% include SilverStripe\Cart\Cart ShowSubtotals=true %>
         <% end_with %>
         $OrderForm
     <% else %>

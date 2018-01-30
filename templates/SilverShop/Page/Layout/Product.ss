@@ -25,7 +25,7 @@
                 <span class="value">$Size.XML</span>
             </p>
         <% end_if %>
-        <% include SilverStripe\Core\Price %>
+        <% include SilverStripe\Includes\Price %>
         <% if $IsInCart %>
             <p class="NumItemsInCart">
                 <% if $Item.Quantity == 1 %>
@@ -43,5 +43,5 @@
         </div>
     <% end_if %>
 </div>
-<% include SilverStripe\Core\SideBar %>
+<% include SilverStripe\Includes\SideBar %>
 

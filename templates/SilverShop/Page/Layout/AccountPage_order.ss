@@ -2,7 +2,7 @@
 <% require themedCSS("shop") %>
 <% require themedCSS("account") %>
 
-<% include SilverStripe\Core\Account\AccountNavigation %>
+<% include SilverStripe\Includes\AccountNavigation %>
 <div id="Account" class="typography">
     <% if $Order %>
         <% with $Order %>

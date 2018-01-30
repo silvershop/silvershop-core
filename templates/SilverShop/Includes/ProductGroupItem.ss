@@ -9,7 +9,7 @@
     <h3 class="productTitle"><a href="$Link" title="<%t Shop.ReadMoreTitle "Click here to read more on &quot;{Title}&quot;" Title=$Title %>">$Title</a></h3>
     <% if $Model %><p><strong><%t Product.Model "Model" %>:</strong> $Model.XML</p><% end_if %>
     <div>
-        <% include SilverStripe\Core\Price %>
+        <% include SilverStripe\Includes\Price %>
         <% if $View %>
             <div class="view">
                 <a href="$Link" title="<%t Shop.ReadMoreTitle "Click here to read more on &quot;{Title}&quot;" Title=$Title %>">

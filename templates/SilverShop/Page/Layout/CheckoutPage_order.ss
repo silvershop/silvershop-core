@@ -10,7 +10,7 @@
         <% end_if %>
         <% if $Order %>
             <% with $Order %>
-                <% include SilverStripe\Core\Model\Order %>
+                <% include SilverStripe\Model\Order %>
             <% end_with %>
             $Form
         <% end_if %>

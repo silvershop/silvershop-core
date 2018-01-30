@@ -3,7 +3,7 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" >
         <title><%t ShopEmail.ReceiptTitle "Shop Receipt" %></title>
-        <% include SilverShop\OrderReceiptStyle %>
+        <% include SilverShop\Includes\OrderReceiptStyle %>
     </head>
     <body>
         <table id="container" cellpadding="0" cellspacing="0" border="0" >
@@ -27,7 +27,7 @@
                             <% loop $Order %>
                                 <tr>
                                     <td>
-                                        <% include SilverStripe\Core\Model\Order %>
+                                        <% include SilverStripe\Model\Order %>
                                     </td>
                                 </tr>
                             <% end_loop %>

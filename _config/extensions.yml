@@ -23,7 +23,7 @@ SilverShop\Page\AccountPageController:
 
 SilverStripe\Security\Member:
   extensions:
-    - SilverShop\Extension\ShopMemberExtension
+    - SilverShop\Extension\MemberExtension
 
 SilverStripe\Assets\Image:
   extensions:
@@ -35,7 +35,7 @@ SilverShop\Page\Product:
 
 SilverStripe\Omnipay\Model\Payment:
   extensions:
-    - SilverShop\Extension\PaymentExension
+    - SilverShop\Extension\PaymentExtension
 
 SilverShop\Model\Order:
   extensions:

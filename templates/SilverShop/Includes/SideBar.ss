@@ -1,9 +1,9 @@
 <div id="Sidebar">
     <% if $GroupsMenu %>
-        <% include SilverShop\ProductMenu %>
+        <% include SilverShop\Includes\ProductMenu %>
     <% else %>
         <% with $Parent %>
-            <% include SilverShop\ProductMenu %>
+            <% include SilverShop\Includes\ProductMenu %>
         <% end_with %>
     <% end_if %>
     <div class="cart">
