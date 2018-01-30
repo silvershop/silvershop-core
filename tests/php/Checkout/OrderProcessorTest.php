@@ -3,14 +3,21 @@
 namespace SilverShop\Tests\Checkout;
 
 
+use SilverShop\Cart\ShoppingCart;
+use SilverShop\Checkout\OrderProcessor;
+use SilverShop\Checkout\ShopMemberFactory;
+use SilverShop\Extension\ShopConfigExtension;
+use SilverShop\Model\Order;
 use SilverShop\Model\Product\OrderItem;
+use SilverShop\Page\Product;
+use SilverShop\Tests\ShopTest;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\SapphireTest;
-use SilverStripe\Dev\TestOnly;
 use SilverStripe\Omnipay\Model\Payment;
-use SilverStripe\ORM\DataExtension;
+use SilverStripe\ORM\DB;
 use SilverStripe\Security\Group;
 use SilverStripe\Security\Member;
+use SilverStripe\Security\Security;
 
 
 /**
@@ -25,36 +32,31 @@ class OrderProcessorTest extends SapphireTest
     protected static $disable_theme  = true;
     protected static $use_draft_site = true;
     protected $processor;
-    protected $extraDataObjects = array('OrderProcessorTest_CustomOrderItem');
+    protected static $extra_dataobjects = [OrderProcessorTest_CustomOrderItem::class];
 
-    public function setUpOnce()
-    {
-        parent::setUpOnce();
-        // clear session
-        ShoppingCart::singleton()->clear();
-    }
 
     public function setUp()
     {
         parent::setUp();
+        ShoppingCart::singleton()->clear();
         ShopTest::setConfiguration();
 
-        $this->mp3player = $this->objFromFixture('Product', 'mp3player');
-        $this->socks = $this->objFromFixture('Product', 'socks');
-        $this->beachball = $this->objFromFixture('Product', 'beachball');
-        $this->hdtv = $this->objFromFixture('Product', 'hdtv');
+        $this->mp3player = $this->objFromFixture(Product::class, 'mp3player');
+        $this->socks = $this->objFromFixture(Product::class, 'socks');
+        $this->beachball = $this->objFromFixture(Product::class, 'beachball');
+        $this->hdtv = $this->objFromFixture(Product::class, 'hdtv');
 
-        $this->mp3player->publish('Stage', 'Live');
-        $this->socks->publish('Stage', 'Live');
-        $this->beachball->publish('Stage', 'Live');
-        $this->hdtv->publish('Stage', 'Live');
+        $this->mp3player->publishSingle();
+        $this->socks->publishSingle();
+        $this->beachball->publishSingle();
+        $this->hdtv->publishSingle();
 
         $this->shoppingcart = ShoppingCart::singleton();
     }
 
     public function testCreatePayment()
     {
-        $order = $this->objFromFixture("Order", "unpaid");
+        $order = $this->objFromFixture(Order::class, "unpaid");
         $processor = OrderProcessor::create($order);
         $payment = $processor->createPayment('Dummy');
         $this->assertTrue((boolean)$payment);
@@ -69,14 +71,12 @@ class OrderProcessorTest extends SapphireTest
         $order = $this->shoppingcart->current();
 
         $factory = new ShopMemberFactory();
-        $member = $factory->create(
-            array(
+        $member = $factory->create([
                 'FirstName' => 'James',
                 'Surname'   => 'Brown',
                 'Email'     => 'james@example.com',
                 'Password'  => 'jbrown',
-            )
-        );
+        ]);
         $this->assertTrue((bool)$member);
         $member->write();
 
@@ -143,37 +143,36 @@ class OrderProcessorTest extends SapphireTest
 
     public function testPlaceFailure()
     {
-        if (!ShopTools::DBConn()->supportsTransactions()) {
+        if (!DB::get_conn()->supportsTransactions()) {
             $this->markTestSkipped(
                 'The Database doesn\'t support transactions.'
             );
         }
 
         // Add the erroneous extension
-        Order::add_extension('OrderProcessorTest_PlaceFailExtension');
+        Order::add_extension(OrderProcessorTest_PlaceFailExtension::class);
 
-        Config::inst()->update('Product', 'order_item', 'OrderProcessorTest_CustomOrderItem');
+        Config::modify()->set(Product::class, 'order_item', OrderProcessorTest_CustomOrderItem::class);
 
         //log out the admin user
-        Member::currentUser()->logOut();
+        Security::setCurrentUser(null);
         $joemember = $this->objFromFixture(Member::class, 'joebloggs');
-        $joemember->logIn();
-
+        Security::setCurrentUser($joemember);
 
         $this->shoppingcart->add($this->mp3player);
         $cart = ShoppingCart::curr();
         $cart->calculate();
 
-        $this->assertDOSContains(array(
+        $this->assertListContains(array(
             array('ClassName' => 'OrderProcessorTest_CustomOrderItem')
         ), $cart->Items());
 
-        $versions = Product_OrderItem::get()->filter('OrderID', $cart->ID)->column('ProductVersion');
+        $versions = OrderItem::get()->filter('OrderID', $cart->ID)->column('ProductVersion');
 
         // The Product_OrderItem should not reference a product version while the order is not placed
         $this->assertEquals(array(0), $versions);
 
-        $this->assertTrue($cart->has_extension('OrderProcessorTest_PlaceFailExtension'));
+        $this->assertTrue($cart->has_extension(OrderProcessorTest_PlaceFailExtension::class));
 
         // Placing the order will fail.
         $this->assertFalse(
@@ -203,7 +202,7 @@ class OrderProcessorTest extends SapphireTest
 
         // When order failed, everything that was written during the placement should be rolled back
 
-        $versions = Product_OrderItem::get()->filter('OrderID', $cart->ID)->column('ProductVersion');
+        $versions = OrderItem::get()->filter('OrderID', $cart->ID)->column('ProductVersion');
 
         // The Product_OrderItem should still not reference a product if the rollback worked
         $this->assertEquals(array(0), $versions);
@@ -213,17 +212,17 @@ class OrderProcessorTest extends SapphireTest
             OrderProcessorTest_CustomOrderItem::get()->filter('OrderID', $cart->ID)->first()->IsPlaced
         );
 
-        Order::remove_extension('OrderProcessorTest_PlaceFailExtension');
+        Order::remove_extension(OrderProcessorTest_PlaceFailExtension::class);
         $this->shoppingcart->clear(false);
     }
 
     public function testMemberOrder()
     {
         //log out the admin user
-        Member::currentUser()->logOut();
+        Security::setCurrentUser(null);
         $this->shoppingcart->add($this->mp3player);
         $joemember = $this->objFromFixture(Member::class, 'joebloggs');
-        $joemember->logIn();
+        Security::setCurrentUser($joemember);
         $cart = ShoppingCart::curr();
         $cart->calculate();
         $this->assertTrue(
@@ -271,7 +270,7 @@ class OrderProcessorTest extends SapphireTest
     public function testNoMemberOrder()
     {
         //log out the admin user
-        Member::currentUser()->logOut();
+        Security::setCurrentUser(null);
 
         $this->shoppingcart->add($this->socks);
         $order = $this->shoppingcart->current();
@@ -312,7 +311,7 @@ class OrderProcessorTest extends SapphireTest
 
     public function testPlaceOrderMarksAsPaidWithNoOutstandingAmount()
     {
-        Config::inst()->update('ShopConfig', 'email_from', 'shopadmin@example.com');
+        Config::modify()->set(ShopConfigExtension::class, 'email_from', 'shopadmin@example.com');
 
         // Create a new order
         $this->shoppingcart->add($this->socks);
@@ -398,39 +397,5 @@ class OrderProcessorTest extends SapphireTest
         $order->write();
         $this->processor = OrderProcessor::create($order);
         return $this->processor->placeOrder();
-    }
-}
-
-// Class that writes order-item data to the DB upon placement
-class OrderProcessorTest_CustomOrderItem extends OrderItem implements TestOnly
-{
-    private static $db = array(
-        'IsPlaced' => 'Boolean'
-    );
-
-    public function onPlacement()
-    {
-        parent::onPlacement();
-        $this->isPlaced = true;
-    }
-}
-
-// Extension to Order that will allow us a failed placement
-class OrderProcessorTest_PlaceFailExtension extends DataExtension implements TestOnly
-{
-    private $willFail = false;
-
-    public function onPlaceOrder()
-    {
-        // flag this order to fail
-        $this->willFail = true;
-    }
-
-    public function onAfterWrite()
-    {
-        // fail after writing, so that we can test if DB rollback works as intended
-        if($this->willFail){
-            user_error('Order failed');
-        }
     }
 }

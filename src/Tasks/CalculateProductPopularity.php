@@ -73,7 +73,7 @@ SQL;
             if ($product->NewPopularity != $product->Popularity) {
                 $product->Popularity = $product->NewPopularity;
                 $product->writeToStage('Stage');
-                $product->publish('Stage', 'Live');
+                $product->publishSingle();
             }
         }
     }

@@ -20,13 +20,13 @@ class ShoppingCartTest extends SapphireTest
     {
         parent::setUp();
         ShopTest::setConfiguration(); //reset config
-        Config::inst()->update('Order', 'extensions', ['ShoppingCartTest_TestShoppingCartHooksExtension']);
+        Config::modify()->set(Order::class, 'extensions', ['ShoppingCartTest_TestShoppingCartHooksExtension']);
 
         ShoppingCart::singleton()->clear();
         ShoppingCartTest_TestShoppingCartHooksExtension::reset();
         $this->cart = ShoppingCart::singleton();
-        $this->product = $this->objFromFixture('Product', 'mp3player');
-        $this->product->publish('Stage', 'Live');
+        $this->product = $this->objFromFixture(Product::class, 'mp3player');
+        $this->product->publishSingle();
     }
 
     public function testAddToCart()
@@ -92,8 +92,8 @@ class ShoppingCartTest extends SapphireTest
     public function testProductVariations()
     {
         $this->loadFixture('silvershop/tests/fixtures/variations.yml');
-        $ball1 = $this->objFromFixture('ProductVariation', 'redlarge');
-        $ball2 = $this->objFromFixture('ProductVariation', 'redsmall');
+        $ball1 = $this->objFromFixture(ProductVariation::class, 'redlarge');
+        $ball2 = $this->objFromFixture(ProductVariation::class, 'redsmall');
 
         $this->assertTrue((boolean)$this->cart->add($ball1), "add one item");
 
@@ -125,8 +125,8 @@ class ShoppingCartTest extends SapphireTest
     public function testAddProductWithVariations()
     {
         $this->loadFixture('silvershop/tests/fixtures/variations.yml');
-        $ball = $this->objFromFixture('Product', 'ball');
-        $redlarge = $this->objFromFixture('ProductVariation', 'redlarge');
+        $ball = $this->objFromFixture(Product::class, 'ball');
+        $redlarge = $this->objFromFixture(ProductVariation::class, 'redlarge');
         // setting price of variation to zero, so it can't be added to cart.
         $redlarge->Price = 0;
         $redlarge->write();
@@ -142,7 +142,7 @@ class ShoppingCartTest extends SapphireTest
 
     public function testErrorInCartHooks()
     {
-        Config::inst()->update('Order', 'extensions', ['ShoppingCartTest_TestShoppingCartErroringHooksExtension']);
+        Config::modify()->set(Order::class, 'extensions', ['ShoppingCartTest_TestShoppingCartErroringHooksExtension']);
 
         ShoppingCart::singleton()->clear();
         $cart = ShoppingCart::singleton();
@@ -164,66 +164,3 @@ class ShoppingCartTest extends SapphireTest
         $this->assertEquals($item->Quantity, 10, "quantity is 10");
     }
 }
-
-class ShoppingCartTest_TestShoppingCartHooksExtension extends Extension implements TestOnly
-{
-    public static $stack = [];
-
-    public static function reset()
-    {
-        self::$stack = [];
-    }
-
-    public function onStartOrder()
-    {
-        self::$stack[] = 'onStartOrder';
-    }
-
-    public function beforeAdd($buyable, $quantity, $filter)
-    {
-        self::$stack[] = 'beforeAdd';
-    }
-
-    public function afterAdd($item, $buyable, $quantity, $filter)
-    {
-        self::$stack[] = 'afterAdd';
-    }
-
-    public function beforeRemove($buyable, $quantity, $filter)
-    {
-        self::$stack[] = 'beforeRemove';
-    }
-
-    public function afterRemove($buyable, $quantity, $filter)
-    {
-        self::$stack[] = 'afterRemove';
-    }
-
-    public function beforeSetQuantity($buyable, $quantity, $filter)
-    {
-        self::$stack[] = 'beforeSetQuantity';
-    }
-
-    public function afterSetQuantity($item, $buyable, $quantity, $filter)
-    {
-        self::$stack[] = 'afterSetQuantity';
-    }
-}
-
-class ShoppingCartTest_TestShoppingCartErroringHooksExtension extends Extension implements TestOnly
-{
-    public function beforeSetQuantity($buyable, $quantity, $filter)
-    {
-        if($quantity > 10) {
-            throw new Exception('Invalid quantity');
-        }
-    }
-
-    public function afterAdd($item, $buyable, $quantity, $filter)
-    {
-        if($item->Quantity > 1) {
-            throw new Exception('Invalid quantity');
-        }
-    }
-}
-

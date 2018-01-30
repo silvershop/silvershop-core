@@ -34,18 +34,18 @@ class ShoppingCartControllerTest extends FunctionalTest
 
         ShopTest::setConfiguration(); //reset config
 
-        $this->mp3player = $this->objFromFixture('Product', 'mp3player');
-        $this->socks = $this->objFromFixture('Product', 'socks');
+        $this->mp3player = $this->objFromFixture(Product::class, 'mp3player');
+        $this->socks = $this->objFromFixture(Product::class, 'socks');
         //products that can't be purchased
-        $this->noPurchaseProduct = $this->objFromFixture('Product', 'beachball');
-        $this->draftProduct = $this->objFromFixture('Product', 'tshirt');
-        $this->noPriceProduct = $this->objFromFixture('Product', 'hdtv');
+        $this->noPurchaseProduct = $this->objFromFixture(Product::class, 'beachball');
+        $this->draftProduct = $this->objFromFixture(Product::class, 'tshirt');
+        $this->noPriceProduct = $this->objFromFixture(Product::class, 'hdtv');
 
         //publish some products
-        $this->mp3player->publish('Stage', 'Live');
-        $this->socks->publish('Stage', 'Live');
-        $this->noPurchaseProduct->publish('Stage', 'Live');
-        $this->noPriceProduct->publish('Stage', 'Live');
+        $this->mp3player->publishSingle();
+        $this->socks->publishSingle();
+        $this->noPurchaseProduct->publishSingle();
+        $this->noPriceProduct->publishSingle();
         //note that we don't publish 'tshirt'... we want it to remain in draft form.
 
         $this->cart = ShoppingCart::singleton();
@@ -156,10 +156,10 @@ class ShoppingCartControllerTest extends FunctionalTest
     public function testVariations()
     {
         $this->loadFixture('silvershop/tests/fixtures/variations.yml');
-        $ballRoot = $this->objFromFixture('Product', 'ball');
-        $ballRoot->publish('Stage', 'Live');
-        $ball1 = $this->objFromFixture('ProductVariation', 'redlarge');
-        $ball2 = $this->objFromFixture('ProductVariation', 'redsmall');
+        $ballRoot = $this->objFromFixture(Product::class, 'ball');
+        $ballRoot->publishSingle();
+        $ball1 = $this->objFromFixture(ProductVariation::class, 'redlarge');
+        $ball2 = $this->objFromFixture(ProductVariation::class, 'redsmall');
 
         // Add the two variation items
         $this->get(ShoppingCart_Controller::add_item_link($ball1));
@@ -191,7 +191,7 @@ class ShoppingCartControllerTest extends FunctionalTest
         $this->assertEquals($response->getStatusCode(), 302);
 
         // disable security token for cart-links
-        Config::inst()->update('ShoppingCart_Controller', 'disable_security_token', true);
+        Config::modify()->set(ShoppingCart_Controller::class, 'disable_security_token', true);
 
         $link = ShoppingCart_Controller::add_item_link($this->mp3player);
         $this->assertEquals('shoppingcart/add/Product/'.$productId, $link);
@@ -202,7 +202,7 @@ class ShoppingCartControllerTest extends FunctionalTest
 
         SecurityToken::disable();
 
-        Config::inst()->update('ShoppingCart_Controller', 'disable_security_token', false);
+        Config::modify()->set(ShoppingCart_Controller::class, 'disable_security_token', false);
         $link = ShoppingCart_Controller::add_item_link($this->mp3player);
         $this->assertEquals('shoppingcart/add/Product/'.$productId , $link);
 

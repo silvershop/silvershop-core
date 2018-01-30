@@ -3,6 +3,15 @@
 namespace SilverShop\Tests\Model;
 
 
+use SilverShop\Checkout\OrderProcessor;
+use SilverShop\Model\Address;
+use SilverShop\Model\Modifiers\OrderModifier;
+use SilverShop\Model\Modifiers\Tax\FlatTax;
+use SilverShop\Model\Order;
+use SilverShop\Model\OrderStatusLog;
+use SilverShop\Model\Product\OrderItem;
+use SilverShop\Page\Product;
+use SilverShop\Tests\ShopTest;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\Dev\SapphireTest;
@@ -27,12 +36,12 @@ class OrderTest extends SapphireTest
     {
         parent::setUp();
         ShopTest::setConfiguration();
-        $this->mp3player = $this->objFromFixture('Product', 'mp3player');
-        $this->mp3player->publish('Stage', 'Live');
-        $this->socks = $this->objFromFixture('Product', 'socks');
-        $this->socks->publish('Stage', 'Live');
-        $this->beachball = $this->objFromFixture('Product', 'beachball');
-        $this->beachball->publish('Stage', 'Live');
+        $this->mp3player = $this->objFromFixture(Product::class, 'mp3player');
+        $this->mp3player->publishSingle();
+        $this->socks = $this->objFromFixture(Product::class, 'socks');
+        $this->socks->publishSingle();
+        $this->beachball = $this->objFromFixture(Product::class, 'beachball');
+        $this->beachball->publishSingle();
     }
 
     public function tearDown()
@@ -57,14 +66,14 @@ class OrderTest extends SapphireTest
 
     public function testDebug()
     {
-        $order = $this->objFromFixture("Order", "cart");
+        $order = $this->objFromFixture(Order::class, "cart");
         $order->debug();
         $this->markTestIncomplete('assertions!');
     }
 
     public function testOrderItems()
     {
-        $order = $this->objFromFixture("Order", "paid");
+        $order = $this->objFromFixture(Order::class, "paid");
         $items = $order->Items();
         $this->assertNotNull($items);
         $this->assertListEquals(
@@ -81,7 +90,7 @@ class OrderTest extends SapphireTest
 
     public function testTotals()
     {
-        $order = $this->objFromFixture("Order", "paid");
+        $order = $this->objFromFixture(Order::class, "paid");
         $this->assertEquals(408, $order->SubTotal(), "Subtotal is correct"); // 200 + 200 + 8
         $this->assertEquals(408, $order->GrandTotal(), "Grand total is correct");
         $this->assertEquals(200, $order->TotalPaid(), "Outstanding total is correct");
@@ -106,7 +115,7 @@ class OrderTest extends SapphireTest
     public function testPlacedOrderImmutability()
     {
 
-        $order = $this->objFromFixture("Order", "paid");
+        $order = $this->objFromFixture(Order::class, "paid");
         $processor = OrderProcessor::create($order)->placeOrder();
         $this->assertEquals(408, $order->Total(), "check totals");
 
@@ -149,7 +158,7 @@ class OrderTest extends SapphireTest
 
     public function testCanFunctions()
     {
-        $order = $this->objFromFixture("Order", "cart");
+        $order = $this->objFromFixture(Order::class, "cart");
         $order->calculate();
         $this->assertTrue($order->canPay(), "can pay when order is in cart");
         $this->assertFalse($order->canCancel(), "can't cancel when order is in cart");
@@ -157,21 +166,21 @@ class OrderTest extends SapphireTest
         $this->assertTrue($order->canEdit(), "orders can be edited by anyone");
         $this->assertFalse($order->canCreate(), "no body can create orders manually");
 
-        $order = $this->objFromFixture("Order", "unpaid");
+        $order = $this->objFromFixture(Order::class, "unpaid");
         $this->assertTrue($order->canPay(), "can pay an order that is unpaid");
         $this->assertTrue($order->canCancel());
         $this->assertFalse($order->canDelete(), "never allow deleting orders");
 
         // Override config
-        Config::inst()->update('Order', 'cancel_before_payment', false);
+        Config::modify()->set(Order::class, 'cancel_before_payment', false);
         $this->assertFalse($order->canCancel());
 
-        $order = $this->objFromFixture("Order", "paid");
+        $order = $this->objFromFixture(Order::class, "paid");
         $this->assertFalse($order->canPay(), "paid order can't be paid for");
         $this->assertFalse($order->canCancel(), "paid order can't be cancelled");
         $this->assertFalse($order->canDelete(), "never allow deleting orders");
 
-        Config::inst()->update('Order', 'cancel_before_processing', true);
+        Config::modify()->set(Order::class, 'cancel_before_processing', true);
         $this->assertTrue($order->canCancel(), "paid order can be cancelled when expcicitly set via config");
 
         $order->Status = 'Processing';
@@ -179,7 +188,7 @@ class OrderTest extends SapphireTest
         $this->assertFalse($order->canCancel(), "Processing order can't be cancelled");
         $this->assertFalse($order->canDelete(), "never allow deleting orders");
 
-        Config::inst()->update('Order', 'cancel_before_sending', true);
+        Config::modify()->set(Order::class, 'cancel_before_sending', true);
         $this->assertTrue($order->canCancel(), "Processing order can be cancelled when expcicitly set via config");
 
         $order->Status = 'Sent';
@@ -187,16 +196,16 @@ class OrderTest extends SapphireTest
         $this->assertFalse($order->canCancel(), "Sent order can't be cancelled");
         $this->assertFalse($order->canDelete(), "never allow deleting orders");
 
-        Config::inst()->update('Order', 'cancel_after_sending', true);
+        Config::modify()->set(Order::class, 'cancel_after_sending', true);
         $this->assertTrue($order->canCancel(), "Sent order can be cancelled when expcicitly set via config");
-        Config::inst()->update('Order', 'cancel_after_sending', false);
+        Config::modify()->set(Order::class, 'cancel_after_sending', false);
 
         $order->Status = 'Complete';
         $this->assertFalse($order->canPay(), "Complete order can't be paid for");
         $this->assertFalse($order->canCancel(), "Complete order can't be cancelled");
         $this->assertFalse($order->canDelete(), "never allow deleting orders");
 
-        Config::inst()->update('Order', 'cancel_after_sending', true);
+        Config::modify()->set(Order::class, 'cancel_after_sending', true);
         $this->assertTrue($order->canCancel(), "Completed order can be cancelled when expcicitly set via config");
 
         $order->Status = 'AdminCancelled';
@@ -212,25 +221,25 @@ class OrderTest extends SapphireTest
 
     public function testDelete()
     {
-        Config::inst()->update('FlatTaxModifier', 'rate', 0.25);
-        Config::inst()->update('Order', 'modifiers', array('FlatTaxModifier'));
+        Config::modify()->set(FlatTax::class, 'rate', 0.25);
+        Config::modify()->merge(Order::class, 'modifiers', array('FlatTaxModifier'));
 
         $order = Order::create();
-        $shirt = $this->objFromFixture("Product", "tshirt");
-        $mp3player = $this->objFromFixture("Product", "mp3player");
+        $shirt = $this->objFromFixture(Product::class, "tshirt");
+        $mp3player = $this->objFromFixture(Product::class, "mp3player");
         $order->Items()->add($shirt->createItem(3));
         $order->Items()->add($mp3player->createItem(1));
         $order->write();
         $order->calculate();
 
-        $statusLogId = OrderStatusLog::create(array(
+        $statusLogId = OrderStatusLog::create()->update([
             'Title' => 'Test status log',
             'OrderID' => $order->ID
-        ))->write();
+        ])->write();
 
-        $paymentId = Payment::create(array(
+        $paymentId = Payment::create()->update([
             'OrderID' => $order->ID
-        ))->init('Manual', 343.75, 'NZD')->write();
+        ])->init('Manual', 343.75, 'NZD')->write();
 
 
         $this->assertEquals(4, $order->Items()->Quantity());
@@ -238,7 +247,7 @@ class OrderTest extends SapphireTest
         $this->assertEquals(1, $order->OrderStatusLogs()->count());
         $this->assertEquals(1, $order->Payments()->count());
 
-        $itemIds = Product_OrderItem::get()->filter('OrderID', $order->ID)->column('ID');
+        $itemIds = OrderItem::get()->filter('OrderID', $order->ID)->column('ID');
         $modifierIds = OrderModifier::get()->filter('OrderID', $order->ID)->column('ID');
 
         $order->delete();
@@ -250,7 +259,7 @@ class OrderTest extends SapphireTest
         $this->assertEquals(0, $order->Payments()->count());
 
         // Ensure the order items have been deleted!
-        $this->assertEquals(0, Product_OrderItem::get()->filter('ID', $itemIds)->count());
+        $this->assertEquals(0, OrderItem::get()->filter('ID', $itemIds)->count());
         $this->assertEquals(0, OrderModifier::get()->filter('ID', $modifierIds)->count());
         $this->assertEquals(0, OrderStatusLog::get()->filter('ID', $statusLogId)->count());
 
@@ -260,7 +269,7 @@ class OrderTest extends SapphireTest
 
     public function testStatusChange()
     {
-        Config::inst()->update('Order', 'extensions', array('OrderTest_TestStatusChangeExtension'));
+        Config::modify()->merge(Order::class, 'extensions', array('OrderTest_TestStatusChangeExtension'));
 
         $order = Order::create();
         $orderId = $order->write();
@@ -287,7 +296,7 @@ class OrderTest extends SapphireTest
 
     public function testOrderAddress()
     {
-        $order = $this->objFromFixture('Order', 'paid');
+        $order = $this->objFromFixture(Order::class, 'paid');
 
         // assert that order doesn't contain user information
         $this->assertNull($order->FirstName);
@@ -300,7 +309,7 @@ class OrderTest extends SapphireTest
             $order->getShippingAddress()->toString()
         );
 
-        $address = $this->objFromFixture('Address', 'pukekohe');
+        $address = $this->objFromFixture(Address::class, 'pukekohe');
         $order->ShippingAddressID = $address->ID;
         $order->write();
 
@@ -329,19 +338,4 @@ class OrderTest extends SapphireTest
     }
 }
 
-class OrderTest_TestStatusChangeExtension extends DataExtension implements TestOnly
-{
-    public static $stack = array();
 
-    public static function reset()
-    {
-        self::$stack = array();
-    }
-
-    public function onStatusChange($fromStatus, $toStatus)
-    {
-        self::$stack[] = array(
-            $fromStatus => $toStatus
-        );
-    }
-}

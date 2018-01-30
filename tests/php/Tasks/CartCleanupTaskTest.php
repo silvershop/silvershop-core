@@ -23,7 +23,7 @@ class CartCleanupTaskTest extends SapphireTest
         parent::setUp();
 
         Config::nest();
-        Config::inst()->update(CartCleanupTask::class, 'delete_after_mins', 120);
+        Config::modify()->set(CartCleanupTask::class, 'delete_after_mins', 120);
     }
 
     public function tearDown()

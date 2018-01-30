@@ -15,7 +15,7 @@ class NestedCheckoutTest extends SapphireTest
     public function setUp()
     {
         parent::setUp();
-        $this->checkoutpage = $this->objFromFixture('CheckoutPage', 'checkout');
+        $this->checkoutpage = $this->objFromFixture(CheckoutPage::class, 'checkout');
     }
 
     public function testNestedCheckoutForm()

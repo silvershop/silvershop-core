@@ -25,13 +25,13 @@ class OrderStatusLogTest extends SapphireTest
     {
         parent::setUp();
         ShopTest::setConfiguration();
-        Config::inst()->update('Order', 'log_status', array('Processing', 'Sent', 'AdminCancelled', 'MemberCancelled'));
+        Config::modify()->set(Order::class, 'log_status', array('Processing', 'Sent', 'AdminCancelled', 'MemberCancelled'));
     }
 
     public function testOrderStatusLogItemsWithMember()
     {
         // start a new order
-        $order = $this->objFromFixture("Order", "cart1");
+        $order = $this->objFromFixture(Order::class, "cart1");
         $member = $this->objFromFixture(Member::class, 'jeremyperemy');
         $order->MemberID = $member->ID;
 
@@ -204,7 +204,7 @@ class OrderStatusLogTest extends SapphireTest
 
     public function testEmailSentOnce()
     {
-        $order = $this->objFromFixture("Order", "cart1");
+        $order = $this->objFromFixture(Order::class, "cart1");
         $member = $this->objFromFixture(Member::class, 'jeremyperemy');
         $order->MemberID = $member->ID;
 
@@ -257,7 +257,7 @@ class OrderStatusLogTest extends SapphireTest
     public function testOrderPlacedByGuest()
     {
         // start a new order
-        $order = $this->objFromFixture("Order", "cart1");
+        $order = $this->objFromFixture(Order::class, "cart1");
         $order->FirstName = "Edmund";
         $order->Surname = "Hillary";
         $order->Email = "ed@example.com";
