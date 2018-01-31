@@ -3,6 +3,7 @@
 namespace SilverShop\Checkout;
 
 
+use SilverShop\Model\Address;
 use SilverShop\Page\CheckoutPage;
 use SilverStripe\Forms\CheckboxField;
 use SilverStripe\Forms\ConfirmedPasswordField;
@@ -55,7 +56,7 @@ class CheckoutFieldFactory
 
     public function getAddressFields($type = "shipping", $subset = array())
     {
-        $address = singleton('Address');
+        $address = singleton(Address::class);
         $fields = $address->getFormFields($type);
         return $this->getSubset($fields, $subset);
     }

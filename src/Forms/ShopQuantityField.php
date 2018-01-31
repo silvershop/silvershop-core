@@ -99,7 +99,7 @@ class ShopQuantityField extends ViewableData
 
     public function MainID()
     {
-        return ShopTools::sanitiseClassName($this->item->class) . '_DB_' . $this->item->ID;
+        return ShopTools::sanitiseClassName(get_class($this->item)) . '_DB_' . $this->item->ID;
     }
 
     public function IncrementLink()

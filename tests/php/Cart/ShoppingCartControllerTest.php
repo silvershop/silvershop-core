@@ -7,6 +7,8 @@ use SilverShop\Cart\ShoppingCart;
 use SilverShop\Cart\ShoppingCartController;
 use SilverShop\Model\Variation\Variation;
 use SilverShop\Page\Product;
+use SilverShop\Tests\Model\Product\CustomProduct;
+use SilverShop\Tests\Model\Product\CustomProduct_OrderItem;
 use SilverShop\Tests\ShopTest;
 use SilverStripe\Security\SecurityToken;
 use SilverStripe\Core\Config\Config;
@@ -21,7 +23,13 @@ use SilverStripe\Dev\FunctionalTest;
  */
 class ShoppingCartControllerTest extends FunctionalTest
 {
-    public static $fixture_file   = 'silvershop/tests/fixtures/shop.yml';
+    public static $fixture_file   = __DIR__ . '/../Fixtures/shop.yml';
+
+    protected static $extra_dataobjects = [
+        CustomProduct::class,
+        CustomProduct_OrderItem::class,
+    ];
+
     public static $disable_theme  = true;
     public static $use_draft_site = false;
     protected $autoFollowRedirection = false;
@@ -44,12 +52,16 @@ class ShoppingCartControllerTest extends FunctionalTest
     /** @var ShoppingCart */
     protected $cart;
 
+
     public function setUp()
     {
         parent::setUp();
 
-        ShoppingCart::singleton()->clear();
         ShopTest::setConfiguration(); //reset config
+        ShoppingCart::singleton()->clear();
+
+        // Needed, so that products can be published
+        $this->logInWithPermission('ADMIN');
 
         $this->mp3player = $this->objFromFixture(Product::class, 'mp3player');
         $this->socks = $this->objFromFixture(Product::class, 'socks');
@@ -63,7 +75,6 @@ class ShoppingCartControllerTest extends FunctionalTest
         $this->socks->publishSingle();
         $this->noPurchaseProduct->publishSingle();
         $this->noPriceProduct->publishSingle();
-        //note that we don't publish 'tshirt'... we want it to remain in draft form.
 
         $this->cart = ShoppingCart::singleton();
     }
@@ -85,7 +96,7 @@ class ShoppingCartControllerTest extends FunctionalTest
         $this->assertEquals($items->Count(), 2, 'There are 2 items in the cart');
         //join needed to provide ProductID
         $mp3playeritem =
-            $items->innerJoin("Product_OrderItem", "\"OrderItem\".\"ID\" = \"Product_OrderItem\".\"ID\"")->find(
+            $items->innerJoin("SilverShop_Product_OrderItem", "\"SilverShop_OrderItem\".\"ID\" = \"SilverShop_Product_OrderItem\".\"ID\"")->find(
                 'ProductID',
                 $this->mp3player->ID
             );    //join needed to provide ProductID
@@ -105,7 +116,7 @@ class ShoppingCartControllerTest extends FunctionalTest
         ); //add item via url
         $items = ShoppingCart::curr()->Items();
         $mp3playeritem =
-            $items->innerJoin("Product_OrderItem", "\"OrderItem\".\"ID\" = \"Product_OrderItem\".\"ID\"")->find(
+            $items->innerJoin("SilverShop_Product_OrderItem", "\"SilverShop_OrderItem\".\"ID\" = \"SilverShop_Product_OrderItem\".\"ID\"")->find(
                 'ProductID',
                 $this->mp3player->ID
             ); //join needed to provide ProductID
@@ -154,7 +165,7 @@ class ShoppingCartControllerTest extends FunctionalTest
         $this->get(ShoppingCartController::remove_item_link($this->mp3player)); //remove one product = 4 left
 
         $mp3playeritem = $this->cart->get($this->mp3player);
-        $this->assertTrue($mp3playeritem !== false, "product still exists");
+        $this->assertNotNull($mp3playeritem, "product still exists");
         $this->assertEquals($mp3playeritem->Quantity, 4, "only 4 of item left");
 
         $items = ShoppingCart::curr()->Items();
@@ -170,7 +181,7 @@ class ShoppingCartControllerTest extends FunctionalTest
 
     public function testVariations()
     {
-        $this->loadFixture('silvershop/tests/fixtures/variations.yml');
+        $this->loadFixture(__DIR__ . '/../Fixtures/variations.yml');
         /** @var Product $ballRoot */
         $ballRoot = $this->objFromFixture(Product::class, 'ball');
         $ballRoot->publishSingle();
@@ -178,6 +189,10 @@ class ShoppingCartControllerTest extends FunctionalTest
         $ball1 = $this->objFromFixture(Variation::class, 'redlarge');
         /** @var Product $ball2 */
         $ball2 = $this->objFromFixture(Variation::class, 'redsmall');
+
+        $this->logInWithPermission('ADMIN');
+        $ball1->publishSingle();
+        $ball2->publishSingle();
 
         // Add the two variation items
         $this->get(ShoppingCartController::add_item_link($ball1));
@@ -190,7 +205,7 @@ class ShoppingCartControllerTest extends FunctionalTest
         $this->get(ShoppingCartController::remove_all_item_link($ball1));
         $this->assertEquals($items->Count(), 1, 'There is 1 item in the cart');
         $this->assertFalse((bool)$this->cart->get($ball1), "first item not in cart");
-        $this->assertNotNull($this->cart->get($ball1), "second item is in cart");
+        $this->assertNotNull($this->cart->get($ball2), "second item is in cart");
     }
 
     public function testSecurityToken()
@@ -202,7 +217,7 @@ class ShoppingCartControllerTest extends FunctionalTest
         $productId = $this->mp3player->ID;
         // link should contain the security-token
         $link = ShoppingCartController::add_item_link($this->mp3player);
-        $this->assertRegExp('{^shoppingcart/add/Product/'.$productId.'\?SecurityID=[a-f0-9]+$}', $link);
+        $this->assertRegExp('{^shoppingcart/add/SilverShop-Page-Product/'.$productId.'\?SecurityID=[a-f0-9]+$}', $link);
 
         // should redirect back to the shop
         $response = $this->get($link);
@@ -212,7 +227,7 @@ class ShoppingCartControllerTest extends FunctionalTest
         Config::modify()->set(ShoppingCartController::class, 'disable_security_token', true);
 
         $link = ShoppingCartController::add_item_link($this->mp3player);
-        $this->assertEquals('shoppingcart/add/Product/'.$productId, $link);
+        $this->assertEquals('shoppingcart/add/SilverShop-Page-Product/'.$productId, $link);
 
         // should redirect back to the shop
         $response = $this->get($link);
@@ -222,7 +237,7 @@ class ShoppingCartControllerTest extends FunctionalTest
 
         Config::modify()->set(ShoppingCartController::class, 'disable_security_token', false);
         $link = ShoppingCartController::add_item_link($this->mp3player);
-        $this->assertEquals('shoppingcart/add/Product/'.$productId , $link);
+        $this->assertEquals('shoppingcart/add/SilverShop-Page-Product/'.$productId , $link);
 
         // should redirect back to the shop
         $response = $this->get($link);

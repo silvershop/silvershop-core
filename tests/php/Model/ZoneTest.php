@@ -11,8 +11,8 @@ use SilverStripe\Dev\SapphireTest;
 class ZoneTest extends SapphireTest
 {
     public static $fixture_file = array(
-        '../Fixtures/Zones.yml',
-        '../Fixtures/Addresses.yml',
+        __DIR__ . '/../Fixtures/Zones.yml',
+        __DIR__ . '/../Fixtures/Addresses.yml',
     );
 
     public function testMatchingZones()

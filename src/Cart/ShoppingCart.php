@@ -30,7 +30,6 @@ use SilverStripe\Security\Security;
  */
 class ShoppingCart
 {
-
     use Injectable;
     use Configurable;
 

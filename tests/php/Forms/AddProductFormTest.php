@@ -6,10 +6,10 @@ namespace SilverShop\Tests\Forms;
 use SilverShop\Forms\AddProductForm;
 use SilverShop\Page\Product;
 use SilverShop\Page\ProductController;
-use SilverStripe\Dev\SapphireTest;
+use SilverStripe\Dev\FunctionalTest;
 
 
-class AddProductFormTest extends SapphireTest
+class AddProductFormTest extends FunctionalTest
 {
     public static $fixture_file = "../Fixtures/shop.yml";
 

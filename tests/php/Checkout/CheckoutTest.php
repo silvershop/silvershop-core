@@ -11,19 +11,18 @@ use SilverShop\Model\Address;
 use SilverShop\Model\Order;
 use SilverShop\Tests\ShopTest;
 use SilverStripe\Core\Config\Config;
-use SilverStripe\Security\Member;
-use SilverStripe\ORM\ValidationException;
 use SilverStripe\Dev\SapphireTest;
-
+use SilverStripe\ORM\ValidationException;
+use SilverStripe\Security\Member;
 
 
 class CheckoutTest extends SapphireTest
 {
     protected static $fixture_file = array(
-        '../Fixtures/Pages.yml',
-        '../Fixtures/Orders.yml',
-        '../Fixtures/Addresses.yml',
-        '../Fixtures/ShopMembers.yml',
+        __DIR__ . '/../Fixtures/Pages.yml',
+        __DIR__ . '/../Fixtures/Orders.yml',
+        __DIR__ . '/../Fixtures/Addresses.yml',
+        __DIR__ . '/../Fixtures/ShopMembers.yml',
     );
 
     /** @var ShoppingCart */
@@ -144,7 +143,7 @@ class CheckoutTest extends SapphireTest
     }
 
     /**
-     * @expectedException ValidationException
+     * @expectedException \SilverStripe\ORM\ValidationException
      * @expectedExceptionMessage Creating new memberships is not allowed
      */
     public function testMembersOnly()
@@ -164,7 +163,7 @@ class CheckoutTest extends SapphireTest
     }
 
     /**
-     * @expectedException ValidationException
+     * @expectedException \SilverStripe\ORM\ValidationException
      * @expectedExceptionMessage A password is required
      */
     public function testMemberWithoutPassword()
@@ -180,7 +179,7 @@ class CheckoutTest extends SapphireTest
     }
 
     /**
-     * @expectedException ValidationException
+     * @expectedException \SilverStripe\ORM\ValidationException
      * @expectedExceptionMessage A member already exists with the Email jeremy@example.com
      */
     public function testMemberAlreadyExists()
@@ -197,7 +196,7 @@ class CheckoutTest extends SapphireTest
     }
 
     /**
-     * @expectedException ValidationException
+     * @expectedException \SilverStripe\ORM\ValidationException
      * @expectedExceptionMessage Required field not found: Email
      */
     public function testMemberMissingIdentifier()

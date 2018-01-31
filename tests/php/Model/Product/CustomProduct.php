@@ -17,7 +17,9 @@ class CustomProduct extends DataObject implements Buyable, TestOnly
         'Title' => 'Varchar',
         'Price' => 'Currency',
     );
-    private static $order_item = 'CustomProduct_OrderItem';
+
+    private static $order_item = CustomProduct_OrderItem::class;
+    private static $table_name = 'SilverShop_Test_CustomProduct';
 
     public function createItem($quantity = 1, $filter = array())
     {

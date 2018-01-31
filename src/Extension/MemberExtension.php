@@ -69,7 +69,7 @@ class MemberExtension extends DataExtension
      * Link the current order to the current member on login,
      * if there is one, and if configuration is set to do so.
      */
-    public function memberLoggedIn()
+    public function afterMemberLoggedIn()
     {
         if (Member::config()->login_joins_cart && $order = ShoppingCart::singleton()->current()) {
             $order->MemberID = $this->owner->ID;
@@ -80,7 +80,7 @@ class MemberExtension extends DataExtension
     /**
      * Clear the cart, and session variables on member logout
      */
-    public function memberLoggedOut()
+    public function beforeMemberLoggedOut()
     {
         if (Member::config()->login_joins_cart) {
             ShoppingCart::singleton()->clear();

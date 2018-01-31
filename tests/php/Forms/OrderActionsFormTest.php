@@ -21,8 +21,8 @@ use SilverStripe\Omnipay\Model\Payment;
 class OrderActionsFormTest extends FunctionalTest
 {
     protected static $fixture_file = array(
-        '../Fixtures/Pages.yml',
-        '../Fixtures/shop.yml',
+        __DIR__ . '/../Fixtures/Pages.yml',
+        __DIR__ . '/../Fixtures/shop.yml',
     );
 
     protected $order;

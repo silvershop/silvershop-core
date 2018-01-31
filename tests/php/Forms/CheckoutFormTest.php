@@ -15,7 +15,7 @@ use SilverStripe\SiteConfig\SiteConfig;
 
 class CheckoutFormTest extends SapphireTest
 {
-    public static $fixture_file = '../Fixtures/shop.yml';
+    public static $fixture_file = __DIR__ . '/../Fixtures/shop.yml';
 
     /** @var Product */
     protected $mp3player;
@@ -91,7 +91,7 @@ class CheckoutFormTest extends SapphireTest
     {
 
         // Set as a single country site
-        $this->loadFixture("silvershop/tests/fixtures/singlecountry.yml");
+        $this->loadFixture(__DIR__ . "/../Fixtures/singlecountry.yml");
         $singlecountry = SiteConfig::current_site_config();
         $this->assertEquals(
             "NZ",

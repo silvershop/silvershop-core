@@ -12,6 +12,7 @@ use SilverShop\Page\CheckoutPage;
 use SilverShop\Page\CheckoutPageController;
 use SilverShop\Page\Product;
 use SilverShop\Tests\ShopTest;
+use SilverStripe\Control\Controller;
 use SilverStripe\Control\Director;
 use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Dev\FunctionalTest;
@@ -22,8 +23,8 @@ use SilverStripe\Security\Security;
 class SteppedCheckoutExtensionTest extends FunctionalTest
 {
     protected static $fixture_file = array(
-        '../Fixtures/Pages.yml',
-        '../Fixtures/shop.yml',
+        __DIR__ . '/../Fixtures/Pages.yml',
+        __DIR__ . '/../Fixtures/shop.yml',
     );
     protected static $use_draft_site = true; //so we don't need to publish
     protected $autoFollowRedirection = false;
@@ -40,6 +41,8 @@ class SteppedCheckoutExtensionTest extends FunctionalTest
     public function setUp()
     {
         parent::setUp();
+        $this->logInWithPermission('ADMIN');
+
         ShopTest::setConfiguration();
         ShoppingCart::singleton()->clear();
         //set up steps
@@ -51,7 +54,8 @@ class SteppedCheckoutExtensionTest extends FunctionalTest
         /** @var CheckoutPage $checkoutpage */
         $checkoutpage = $this->objFromFixture(CheckoutPage::class, "checkout");
         $checkoutpage->publishSingle();
-        $this->checkout = new CheckoutPageController();
+        $this->checkout = CheckoutPageController::create();
+        $this->get('checkout');
         $this->checkout->handleRequest(new HTTPRequest("GET", "checkout"));
 
         $this->cart = $this->objFromFixture(Order::class, "cart");
@@ -64,6 +68,8 @@ class SteppedCheckoutExtensionTest extends FunctionalTest
         $indexRequest = new HTTPRequest('GET', "");
         $this->checkout = new CheckoutPageController(); // from 3.3 on it's necessary to have a clean controller here
         $this->checkout->handleRequest($indexRequest);
+
+
         $this->assertTrue($this->checkout->StepExists('membership'));
         $this->assertFalse($this->checkout->IsPastStep('membership'));
         $this->assertTrue($this->checkout->IsCurrentStep('membership'));

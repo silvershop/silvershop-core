@@ -17,9 +17,12 @@ use SilverStripe\Security\Security;
 
 class AddressBookCheckoutComponentTest extends SapphireTest
 {
+    // Component namespace
+    const COMPONENT_NS = 'SilverShop-Checkout-Component-AddressBookBilling';
+
     protected static $fixture_file = array(
-        'silvershop/tests/fixtures/Orders.yml',
-        'silvershop/tests/fixtures/ShopMembers.yml',
+        '../../Fixtures/Orders.yml',
+        '../../Fixtures/ShopMembers.yml',
     );
 
     /** @var Order $cart */
@@ -38,14 +41,14 @@ class AddressBookCheckoutComponentTest extends SapphireTest
     protected $config;
 
     protected $fixtureNewAddress = array(
-        'BillingAddressBookCheckoutComponent_BillingAddressID' => 'newaddress',
-        'BillingAddressBookCheckoutComponent_Country'          => 'US',
-        'BillingAddressBookCheckoutComponent_Address'          => '123 Test St',
-        'BillingAddressBookCheckoutComponent_AddressLine2'     => 'Apt 4',
-        'BillingAddressBookCheckoutComponent_City'             => 'Siloam Springs',
-        'BillingAddressBookCheckoutComponent_State'            => 'AR',
-        'BillingAddressBookCheckoutComponent_PostalCode'       => '72761',
-        'BillingAddressBookCheckoutComponent_Phone'            => '11231231234',
+        self::COMPONENT_NS . '_BillingAddressID' => 'newaddress',
+        self::COMPONENT_NS . '_Country'          => 'US',
+        self::COMPONENT_NS . '_Address'          => '123 Test St',
+        self::COMPONENT_NS . '_AddressLine2'     => 'Apt 4',
+        self::COMPONENT_NS . '_City'             => 'Siloam Springs',
+        self::COMPONENT_NS . '_State'            => 'AR',
+        self::COMPONENT_NS . '_PostalCode'       => '72761',
+        self::COMPONENT_NS . '_Phone'            => '11231231234',
     );
 
     public function setUp()
@@ -77,7 +80,7 @@ class AddressBookCheckoutComponentTest extends SapphireTest
     {
         $this->expectException(ValidationException::class);
         $data = $this->fixtureNewAddress;
-        $data['BillingAddressBookCheckoutComponent_Country'] = '';
+        $data[self::COMPONENT_NS . '_Country'] = '';
 
         $this->config->validateData($data);
     }
@@ -88,7 +91,7 @@ class AddressBookCheckoutComponentTest extends SapphireTest
         $this->assertTrue(
             $this->config->validateData(
                 array(
-                    'BillingAddressBookCheckoutComponent_BillingAddressID' => $this->address1->ID,
+                    self::COMPONENT_NS . '_BillingAddressID' => $this->address1->ID,
                 )
             )
         );
@@ -100,7 +103,7 @@ class AddressBookCheckoutComponentTest extends SapphireTest
         $this->assertTrue(
             $this->config->validateData(
                 array(
-                    'BillingAddressBookCheckoutComponent_BillingAddressID' => $this->address1->ID,
+                    self::COMPONENT_NS . '_BillingAddressID' => $this->address1->ID,
                 )
             )
         );
@@ -116,7 +119,7 @@ class AddressBookCheckoutComponentTest extends SapphireTest
         $this->assertTrue(
             $this->config->validateData(
                 array(
-                    'BillingAddressBookCheckoutComponent_BillingAddressID' => $this->address1->ID,
+                    self::COMPONENT_NS . '_BillingAddressID' => $this->address1->ID,
                 )
             )
         );
@@ -127,7 +130,7 @@ class AddressBookCheckoutComponentTest extends SapphireTest
         $beforeCount = Address::get()->count();
         $this->config->setData(
             array(
-                'BillingAddressBookCheckoutComponent_BillingAddressID' => $this->address1->ID,
+                self::COMPONENT_NS . '_BillingAddressID' => $this->address1->ID,
             )
         );
 

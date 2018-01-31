@@ -21,7 +21,7 @@ use SilverStripe\Dev\SapphireTest;
  */
 class VariationTest extends SapphireTest
 {
-    public static $fixture_file   = '../Fixtures/variations.yml';
+    public static $fixture_file   = __DIR__ . '/../Fixtures/variations.yml';
     public static $disable_theme  = true;
     public static $use_draft_site = true;
 

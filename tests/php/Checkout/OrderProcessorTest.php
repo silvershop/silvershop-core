@@ -29,11 +29,13 @@ use SilverStripe\Security\Security;
  */
 class OrderProcessorTest extends SapphireTest
 {
-    protected static $fixture_file   = 'silvershop/tests/fixtures/shop.yml';
+    protected static $fixture_file   = __DIR__ . '/../Fixtures/shop.yml';
     protected static $disable_theme  = true;
     protected static $use_draft_site = true;
     protected $processor;
-    protected static $extra_dataobjects = [OrderProcessorTest_CustomOrderItem::class];
+    protected static $extra_dataobjects = [
+        OrderProcessorTest_CustomOrderItem::class
+    ];
 
     /** @var Product */
     protected $mp3player;
@@ -179,7 +181,7 @@ class OrderProcessorTest extends SapphireTest
         $cart->calculate();
 
         $this->assertListContains(array(
-            array('ClassName' => 'OrderProcessorTest_CustomOrderItem')
+            array('ClassName' => OrderProcessorTest_CustomOrderItem::class)
         ), $cart->Items());
 
         $versions = OrderItem::get()->filter('OrderID', $cart->ID)->column('ProductVersion');

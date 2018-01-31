@@ -121,7 +121,7 @@ abstract class AddressBook extends Address implements i18nEntityProvider
         } else {
             // Otherwise, require the normal address fields
             $required = parent::getRequiredFields($order);
-            $addressLabels = singleton('Address')->fieldLabels(false);
+            $addressLabels = singleton(\SilverShop\Model\Address::class)->fieldLabels(false);
 
             foreach ($required as $fieldName) {
                 if (empty($data[$fieldName])) {

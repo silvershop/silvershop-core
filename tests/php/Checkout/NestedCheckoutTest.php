@@ -10,7 +10,7 @@ use SilverStripe\Dev\SapphireTest;
 
 class NestedCheckoutTest extends SapphireTest
 {
-    public static $fixture_file = '../Fixtures/pages/NestedCheckout.yml';
+    public static $fixture_file = __DIR__ . '/../Fixtures/pages/NestedCheckout.yml';
 
     public function setUp()
     {

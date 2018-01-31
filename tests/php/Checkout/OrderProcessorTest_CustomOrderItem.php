@@ -12,6 +12,8 @@ class OrderProcessorTest_CustomOrderItem extends OrderItem implements TestOnly
         'IsPlaced' => 'Boolean'
     );
 
+    private static $table_name = 'SilverShop_Test_CustomOrderItem';
+
     public function onPlacement()
     {
         parent::onPlacement();

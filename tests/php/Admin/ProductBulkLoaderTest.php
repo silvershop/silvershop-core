@@ -6,21 +6,20 @@ namespace SilverShop\Tests\Admin;
 use SilverShop\Admin\ProductBulkLoader;
 use SilverShop\Page\Product;
 use SilverStripe\Dev\FunctionalTest;
-use SilverStripe\ORM\DataObject;
 
 
 class ProductBulkLoaderTest extends FunctionalTest
 {
-    public static $fixture_file   = 'silvershop/tests/fixtures/shop.yml';
+    public static $fixture_file   = __DIR__ . '/../Fixtures/shop.yml';
     public static $disable_theme  = true;
     public static $use_draft_site = true;
 
     public function testLoad()
     {
-        $loader = new ProductBulkLoader('Product');
+        $loader = new ProductBulkLoader(Product::class);
 
         $ds = DIRECTORY_SEPARATOR;
-        $filepath = realpath(__DIR__ . $ds . '..' . $ds . 'test_products.csv');
+        $filepath = realpath(__DIR__ . $ds . 'test_products.csv');
         $file = fopen($filepath, 'r');
 
         fgetcsv($file); // pop header row

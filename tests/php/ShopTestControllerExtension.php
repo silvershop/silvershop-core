@@ -15,9 +15,7 @@ class ShopTestControllerExtension extends Extension implements TestOnly
     {
         $this->owner->response->addHeader(
             'X-TestPageClass',
-            $this->owner instanceof ContentController
-                ? $this->owner->ClassName
-                : $this->owner->class
+            get_class($this->owner)
         );
         $params = $this->owner->getURLParams();
         if (isset($params['Action'])) {

@@ -21,8 +21,8 @@ use Symfony\Component\HttpFoundation\Request;
 class ShopPaymentTest extends FunctionalTest
 {
     protected static $fixture_file = array(
-        '../Fixtures/Pages.yml',
-        '../Fixtures/shop.yml',
+        __DIR__ . '/../Fixtures/Pages.yml',
+        __DIR__ . '/../Fixtures/shop.yml',
     );
     public static $disable_theme = true;
 

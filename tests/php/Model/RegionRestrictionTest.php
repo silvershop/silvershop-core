@@ -12,8 +12,8 @@ use SilverStripe\ORM\DataObject;
 class RegionRestrictionTest extends SapphireTest
 {
     public static $fixture_file = array(
-        '../Fixtures/RegionRestriction.yml',
-        '../Fixtures/Addresses.yml',
+        __DIR__ . '/../Fixtures/RegionRestriction.yml',
+        __DIR__ . '/../Fixtures/Addresses.yml',
     );
 
     public function testMatchLocal()

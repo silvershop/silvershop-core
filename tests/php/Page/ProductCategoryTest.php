@@ -14,7 +14,7 @@ use SilverStripe\Versioned\Versioned;
 
 class ProductCategoryTest extends FunctionalTest
 {
-    public static $fixture_file = '../Fixtures/shop.yml';
+    public static $fixture_file = __DIR__ . '/../Fixtures/shop.yml';
     public static $disable_theme = true;
 
     /** @var ProductCategory */

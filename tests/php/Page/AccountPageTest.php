@@ -19,8 +19,8 @@ use SilverStripe\SiteConfig\SiteConfig;
 class AccountPageTest extends FunctionalTest
 {
     protected static $fixture_file = [
-        '../Fixtures/Pages.yml',
-        '../Fixtures/shop.yml',
+        __DIR__ . '/../Fixtures/Pages.yml',
+        __DIR__ . '/../Fixtures/shop.yml',
     ];
     protected static $disable_theme = true;
     protected static $use_draft_site = true;

@@ -10,7 +10,7 @@ use SilverStripe\Dev\SapphireTest;
 
 class ShopReportTest extends SapphireTest
 {
-    protected static $fixture_file = '../Fixtures/shop.yml';
+    protected static $fixture_file = __DIR__ . '/../Fixtures/shop.yml';
 
     function testSalesReport()
     {

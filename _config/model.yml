@@ -7,3 +7,5 @@ SilverStripe\Core\Injector\Injector:
     class: SilverShop\ORM\FieldType\ShopCurrency
   ShopCountry:
     class: SilverShop\ORM\FieldType\ShopCountry
+  ShopEmail:
+    class: SilverStripe\Control\Email\Email

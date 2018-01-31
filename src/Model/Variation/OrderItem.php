@@ -21,7 +21,7 @@ class OrderItem extends \SilverShop\Model\Product\OrderItem
         'ProductVariation' => Variation::class
     ];
 
-    private static $buyable_relationship = Variation::class;
+    private static $buyable_relationship = 'ProductVariation';
 
     private static $table_name = 'SilverShop_Variation_OrderItem';
 

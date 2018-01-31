@@ -76,7 +76,7 @@ class ShopTools
      */
     public static function getSession()
     {
-        if ($request = Controller::curr()->getRequest()) {
+        if (Controller::has_curr() && ($request = Controller::curr()->getRequest())) {
             return $request->getSession();
         }
 

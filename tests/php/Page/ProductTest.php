@@ -21,7 +21,7 @@ use SilverStripe\ORM\DataObject;
  */
 class ProductTest extends FunctionalTest
 {
-    protected static $fixture_file   = '../Fixtures/shop.yml';
+    protected static $fixture_file   = __DIR__ . '/../Fixtures/shop.yml';
     protected static $disable_theme  = true;
     protected static $use_draft_site = true;
 

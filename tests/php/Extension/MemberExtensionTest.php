@@ -18,8 +18,8 @@ use SilverStripe\Security\Security;
 class MemberExtensionTest extends FunctionalTest
 {
     public static $fixture_file = array(
-        '../Fixtures/ShopMembers.yml',
-        '../Fixtures/shop.yml',
+        __DIR__ . '/../Fixtures/ShopMembers.yml',
+        __DIR__ . '/../Fixtures/shop.yml',
     );
 
     public function setUp()
@@ -31,7 +31,7 @@ class MemberExtensionTest extends FunctionalTest
 
     public function testGetByIdentifier()
     {
-        Member::config()->unique_identifier_field = Email::class;
+        Member::config()->unique_identifier_field = 'Email';
         $member = MemberExtension::get_by_identifier('jeremy@example.com');
         $this->assertNotNull($member);
         $this->assertEquals('jeremy@example.com', $member->Email);

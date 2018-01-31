@@ -3,6 +3,7 @@
 namespace SilverShop\Checkout\Component;
 
 use SilverShop\Model\Order;
+use SilverShop\ShopTools;
 use SilverStripe\Core\Injector\Injectable;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\ORM\ValidationException;
@@ -99,7 +100,7 @@ abstract class CheckoutComponent
      */
     public function name()
     {
-        return get_class($this);
+        return ShopTools::sanitiseClassName(static::class);
     }
 }
 

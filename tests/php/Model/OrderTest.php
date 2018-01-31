@@ -26,7 +26,7 @@ use SilverStripe\ORM\DataObject;
  */
 class OrderTest extends SapphireTest
 {
-    public static $fixture_file = '../Fixtures/shop.yml';
+    public static $fixture_file = __DIR__ . '/../Fixtures/shop.yml';
 
     /** @var Product */
     protected $mp3player;
@@ -139,8 +139,8 @@ class OrderTest extends SapphireTest
         $items = $order->Items()
             //hack join to make thigns work
             ->innerJoin(
-                "Product_OrderItem",
-                '"OrderItem"."ID" = "Product_OrderItem"."ID"'
+                "SilverShop_Product_OrderItem",
+                '"OrderItem"."ID" = "SilverShop_Product_OrderItem"."ID"'
             );
         $this->assertNotNull($items);
         $this->assertListEquals(

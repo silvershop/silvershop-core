@@ -19,7 +19,7 @@ class CustomProduct_OrderItem extends OrderItem implements TestOnly
         'Premium' => false,
     );
     private static $has_one = array(
-        'Product' => 'CustomProduct',
+        'Product' => CustomProduct::class,
         'Recipient' => Member::class,
     );
     private static $buyable_relationship = "Product";
@@ -29,6 +29,7 @@ class CustomProduct_OrderItem extends OrderItem implements TestOnly
         'Premium',
         'Recipient',
     );
+    private static $table_name = 'SilverShop_Test_CustomProduct_OrderItem';
 
     public function UnitPrice()
     {

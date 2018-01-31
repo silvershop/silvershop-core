@@ -14,8 +14,8 @@ use SilverStripe\Dev\FunctionalTest;
 class CheckoutPageTest extends FunctionalTest
 {
     protected static $fixture_file   = array(
-        '../Fixtures/Pages.yml',
-        '../Fixtures/shop.yml',
+        __DIR__ . '/../Fixtures/Pages.yml',
+        __DIR__ . '/../Fixtures/shop.yml',
     );
     protected static $disable_theme  = true;
     protected static $use_draft_site = true;

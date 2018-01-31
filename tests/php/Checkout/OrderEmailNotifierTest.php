@@ -15,7 +15,7 @@ use SilverStripe\Dev\SapphireTest;
  */
 class OrderEmailNotifierTest extends SapphireTest
 {
-    protected static $fixture_file = '../Fixtures/shop.yml';
+    protected static $fixture_file = __DIR__ . '/../Fixtures/shop.yml';
 
     /** @var Order */
     protected $order;

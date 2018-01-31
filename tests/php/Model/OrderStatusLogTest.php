@@ -23,9 +23,9 @@ use SilverStripe\Dev\SapphireTest;
 class OrderStatusLogTest extends SapphireTest
 {
     protected static $fixture_file = array(
-        '../Fixtures/Orders.yml',
-        '../Fixtures/ShopMembers.yml',
-        '../Fixtures/Pages.yml'
+        __DIR__ . '/../Fixtures/Orders.yml',
+        __DIR__ . '/../Fixtures/ShopMembers.yml',
+        __DIR__ . '/../Fixtures/Pages.yml'
     );
 
     public function setUp()
