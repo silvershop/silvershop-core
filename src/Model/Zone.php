@@ -16,9 +16,9 @@ use SilverStripe\ORM\HasManyList;
  * Zone matching is prioritised by specificity. For example, a matching post code
  * will take priority over a matching country.
  *
- * @property string Name
- * @property string Description
- * @method ZoneRegion[]|HasManyList Regions
+ * @property string $Name
+ * @property string $Description
+ * @method ZoneRegion[]|HasManyList Regions()
  */
 class Zone extends DataObject
 {

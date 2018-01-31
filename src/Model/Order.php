@@ -25,7 +25,9 @@ use SilverStripe\Forms\Tab;
 use SilverStripe\Forms\TabSet;
 use SilverStripe\Omnipay\Extensions\Payable;
 use SilverStripe\ORM\DataObject;
+use SilverStripe\ORM\FieldType\DBCurrency;
 use SilverStripe\ORM\FieldType\DBDatetime;
+use SilverStripe\ORM\FieldType\DBEnum;
 use SilverStripe\ORM\Filters\GreaterThanFilter;
 use SilverStripe\ORM\Filters\LessThanFilter;
 use SilverStripe\ORM\HasManyList;
@@ -41,30 +43,30 @@ use SilverStripe\Security\Security;
  *
  * @mixin Payable
  *
- * @property string|float Currency
- * @property string Reference
- * @property string Placed
- * @property string Paid
- * @property string ReceiptSent
- * @property string Printed
- * @property string Dispatched
- * @property string Status
- * @property string FirstName
- * @property string Surname
- * @property string Email
- * @property string Notes
- * @property string IPAddress
- * @property string|bool SeparateBillingAddress
- * @property string Locale
- * @property string|int MemberID
- * @property string|int ShippingAddressID
- * @property string|int BillingAddressID
- * @method Member|MemberExtension Member
- * @method Address BillingAddress
- * @method Address ShippingAddress
- * @method OrderItem[]|HasManyList Items
- * @method OrderModifier[]|HasManyList Modifiers
- * @method OrderStatusLog[]|HasManyList OrderStatusLogs
+ * @property DBCurrency $Total
+ * @property string $Reference
+ * @property DBDatetime $Placed
+ * @property DBDatetime $Paid
+ * @property DBDatetime $ReceiptSent
+ * @property DBDatetime $Printed
+ * @property DBDatetime $Dispatched
+ * @property DBEnum $Status
+ * @property string $FirstName
+ * @property string $Surname
+ * @property string $Email
+ * @property string $Notes
+ * @property string $IPAddress
+ * @property bool $SeparateBillingAddress
+ * @property string $Locale
+ * @property int $MemberID
+ * @property int $ShippingAddressID
+ * @property int $BillingAddressID
+ * @method Member|MemberExtension Member()
+ * @method Address BillingAddress()
+ * @method Address ShippingAddress()
+ * @method OrderItem[]|HasManyList Items()
+ * @method OrderModifier[]|HasManyList Modifiers()
+ * @method OrderStatusLog[]|HasManyList OrderStatusLogs()
  *
  */
 class Order extends DataObject
@@ -862,7 +864,7 @@ class Order extends DataObject
 
     public function debug()
     {
-        $val = "<div class='order'><h1>$this->class</h1>\n<ul>\n";
+        $val = "<div class='order'><h1>" . static::class ."</h1>\n<ul>\n";
         if ($this->record) {
             foreach ($this->record as $fieldName => $fieldVal) {
                 $val .= "\t<li>$fieldName: " . Debug::text($fieldVal) . "</li>\n";

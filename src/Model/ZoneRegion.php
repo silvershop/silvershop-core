@@ -5,8 +5,8 @@ namespace SilverShop\Model;
 /**
  * Class ZoneRegion
  *
- * @property int ZoneID
- * @method Zone Zone
+ * @property int $ZoneID
+ * @method Zone Zone()
  */
 class ZoneRegion extends RegionRestriction
 {

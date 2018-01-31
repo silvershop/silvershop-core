@@ -25,8 +25,8 @@ class CartPageController extends PageController
      */
     public function Title()
     {
-        if ($this->Title) {
-            return $this->Title;
+        if ($this->getFailover()->Title) {
+            return $this->getFailover()->Title;
         }
         return _t('CartPage.DefaultTitle', 'Shopping Cart');
     }

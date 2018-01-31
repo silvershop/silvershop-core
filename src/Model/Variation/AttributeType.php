@@ -21,10 +21,10 @@ use SilverStripe\ORM\ManyManyList;
  * Types of product attributes.
  * eg: color, size, length
  *
- * @property string Name
- * @property string Label
- * @method AttributeValue[]|HasManyList Values
- * @method Product[]|ManyManyList Product
+ * @property string $Name
+ * @property string $Label
+ * @method AttributeValue[]|HasManyList Values()
+ * @method Product[]|ManyManyList Product()
  */
 class AttributeType extends DataObject
 {
@@ -145,7 +145,7 @@ class AttributeType extends DataObject
      */
     public function getDropDownField($emptystring = null, $values = null)
     {
-        $values = ($values) ? $values : $this->Values('', 'Sort ASC, Value ASC');
+        $values = ($values) ? $values : $this->Values()->sort(['Sort' => 'ASC', 'Value' => 'ASC']);
 
         if ($values->exists()) {
             $field = DropdownField::create(

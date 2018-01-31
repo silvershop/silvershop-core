@@ -27,17 +27,17 @@ use SilverStripe\Versioned\Versioned;
  * Used in combination with ProductAttributes, such as color, size.
  * A variation will specify one particular combination, such as red, and large.
  *
- * @property string InternalItemID
- * @property DBCurrency Price
- * @property DBDecimal Weight
- * @property DBDecimal Height
- * @property DBDecimal Width
- * @property DBDecimal Depth
- * @property int ProductID
- * @property int ImageID
- * @method Product Product
- * @method Image Image
- * @method AttributeValue[]|ManyManyList AttributeValues
+ * @property string $InternalItemID
+ * @property DBCurrency $Price
+ * @property DBDecimal $Weight
+ * @property DBDecimal $Height
+ * @property DBDecimal $Width
+ * @property DBDecimal $Depth
+ * @property int $ProductID
+ * @property int $ImageID
+ * @method Product Product()
+ * @method Image Image()
+ * @method AttributeValue[]|ManyManyList AttributeValues()
  */
 class Variation extends DataObject implements Buyable
 {

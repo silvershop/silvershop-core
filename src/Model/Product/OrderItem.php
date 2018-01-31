@@ -10,7 +10,8 @@ use SilverStripe\Versioned\Versioned;
  * Product - Order Item
  * Connects a product to an orde.
  *
- * @property int ProductVersion
+ * @property int $ProductVersion
+ * @property int $ProductID
  */
 class OrderItem extends \SilverShop\Model\OrderItem
 {

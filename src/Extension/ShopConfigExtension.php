@@ -18,8 +18,14 @@ use SilverStripe\SiteConfig\SiteConfig;
 
 
 /**
- * @package    shop
- * @subpackage cms
+ * @property string $AllowedCountries
+ * @property int $TermsPageID
+ * @property int $CustomerGroupID
+ * @property int $DefaultProductImageID
+ *
+ * @method SiteTree TermsPage()
+ * @method Group CustomerGroup()
+ * @method Image DefaultProductImage()
  */
 class ShopConfigExtension extends DataExtension
 {

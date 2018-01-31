@@ -13,17 +13,19 @@ use SilverStripe\Security\Security;
  * Data class that keeps a log of a single
  * status of an order.
  *
- * @property string Title
- * @property string Note
- * @property string DispatchedBy
- * @property DBDate DispatchedOn
- * @property string DispatchTicket
- * @property string PaymentCode
- * @property bool PaymentOK
- * @property bool SentToCustomer
+ * @property string $Title
+ * @property string $Note
+ * @property string $DispatchedBy
+ * @property DBDate $DispatchedOn
+ * @property string $DispatchTicket
+ * @property string $PaymentCode
+ * @property bool $PaymentOK
+ * @property bool $SentToCustomer
+ * @property int $AuthorID
+ * @property int $OrderID
  *
- * @method Member Author
- * @method Order Order
+ * @method Member Author()
+ * @method Order Order()
  */
 class OrderStatusLog extends DataObject
 {

@@ -14,8 +14,8 @@ use SilverStripe\ORM\FieldType\DBCurrency;
  * but also can include references to other information such as
  * product attributes like colour, size, or type.
  *
- * @property int Quantity
- * @property DBCurrency Currency
+ * @property int $Quantity
+ * @property DBCurrency $UnitPrice
  */
 class OrderItem extends OrderAttribute
 {

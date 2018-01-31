@@ -14,9 +14,9 @@ use SilverStripe\ORM\FieldType\DBEnum;
  * handling the additional charges or deductions of
  * an order.
  *
- * @property DBCurrency Amount
- * @property DBEnum Type
- * @property int Sort
+ * @property DBCurrency $Amount
+ * @property DBEnum $Type
+ * @property int $Sort
  */
 class OrderModifier extends OrderAttribute
 {

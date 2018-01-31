@@ -151,7 +151,7 @@ class Membership extends CheckoutComponent
         $factory = new ShopMemberFactory();
         $member = $factory->create($data);
         $member->write();
-        $member->logIn();
+        Security::setCurrentUser($member);
 
         if ($order->BillingAddressID) {
             $address = $order->getBillingAddress();

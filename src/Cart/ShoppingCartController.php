@@ -25,7 +25,7 @@ use SilverStripe\View\Requirements;
 /**
  * Manipulate the cart via urls.
  * @mixin ViewableCartExtension
- * @method ShoppingCart Cart
+ * @method ShoppingCart Cart()
  */
 class ShoppingCartController extends Controller
 {

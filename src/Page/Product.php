@@ -39,20 +39,20 @@ use SilverStripe\SiteConfig\SiteConfig;
  *
  * @mixin ProductVariationsExtension
  *
- * @property string InternalItemID
- * @property string Model
- * @property DBCurrency CostPrice
- * @property DBCurrency BasePrice
- * @property DBDecimal Weight
- * @property DBDecimal Height
- * @property DBDecimal Width
- * @property DBDecimal Depth
- * @property bool Featured
- * @property bool AllowPurchase
- * @property float Popularity
- * @property int ImageID
+ * @property string $InternalItemID
+ * @property string $Model
+ * @property DBCurrency $CostPrice
+ * @property DBCurrency $BasePrice
+ * @property DBDecimal $Weight
+ * @property DBDecimal $Height
+ * @property DBDecimal $Width
+ * @property DBDecimal $Depth
+ * @property bool $Featured
+ * @property bool $AllowPurchase
+ * @property float $Popularity
+ * @property int $ImageID
  *
- * @method ProductCategory[]|ManyManyList ProductCategories
+ * @method ProductCategory[]|ManyManyList ProductCategories()
  */
 class Product extends Page implements Buyable
 {

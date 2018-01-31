@@ -4,6 +4,7 @@ namespace SilverShop\Model;
 
 
 use SilverStripe\ORM\DataObject;
+use SilverStripe\ORM\FieldType\DBCurrency;
 
 
 /**
@@ -12,8 +13,9 @@ use SilverStripe\ORM\DataObject;
  * @see     OrderItem
  * @see     OrderModifier
  *
- * @package shop
- * @method Order Order() the related order
+ * @property DBCurrency $CalculatedTotal
+ * @property int $OrderID
+ * @method Order Order()
  */
 class OrderAttribute extends DataObject
 {

@@ -7,7 +7,6 @@ use SilverShop\Checkout\Component\CheckoutComponentNamespaced;
 use SilverShop\Model\Order;
 use SilverStripe\Core\Injector\Injectable;
 use SilverStripe\Forms\FieldList;
-use SilverStripe\Forms\GridField\GridFieldComponent;
 use SilverStripe\ORM\ArrayList;
 use SilverStripe\ORM\ValidationException;
 use SilverStripe\ORM\ValidationResult;
@@ -41,6 +40,7 @@ class CheckoutComponentConfig
     /**
      * @param CheckoutComponent $component
      * @param string $insertBefore The class of the component to insert this one before
+     * @return $this
      */
     public function addComponent(CheckoutComponent $component, $insertBefore = null)
     {
@@ -68,7 +68,7 @@ class CheckoutComponentConfig
     }
 
     /**
-     * @return ArrayList Of GridFieldComponent
+     * @return ArrayList Of CheckoutComponent
      */
     public function getComponents()
     {
@@ -83,7 +83,7 @@ class CheckoutComponentConfig
      *
      * @param String ClassName
      *
-     * @return GridFieldComponent
+     * @return CheckoutComponent
      */
     public function getComponentByType($type)
     {
