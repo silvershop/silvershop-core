@@ -15,6 +15,6 @@ class OrderProcessorTest_CustomOrderItem extends OrderItem implements TestOnly
     public function onPlacement()
     {
         parent::onPlacement();
-        $this->isPlaced = true;
+        $this->IsPlaced = true;
     }
 }

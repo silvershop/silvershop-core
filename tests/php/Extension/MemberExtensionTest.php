@@ -9,6 +9,7 @@ use SilverShop\Model\Order;
 use SilverStripe\Control\Email\Email;
 use SilverStripe\Dev\FunctionalTest;
 use SilverStripe\Security\Member;
+use SilverStripe\Security\Security;
 
 
 /**
@@ -56,7 +57,7 @@ class MemberExtensionTest extends FunctionalTest
         $order = $this->objFromFixture(Order::class, "cart");
         ShoppingCart::singleton()->setCurrent($order);
         $member = $this->objFromFixture(Member::class, "jeremyperemy");
-        $member->logIn();
+        Security::setCurrentUser($member);
         $this->assertEquals($member->ID, $order->MemberID);
 
         $member->logOut();
@@ -70,7 +71,7 @@ class MemberExtensionTest extends FunctionalTest
         $order = $this->objFromFixture(Order::class, "cart");
         ShoppingCart::singleton()->setCurrent($order);
         $member = $this->objFromFixture(Member::class, "jeremyperemy");
-        $member->logIn();
+        Security::setCurrentUser($member);
         $this->assertEquals(0, $order->MemberID);
 
         $member->logOut();

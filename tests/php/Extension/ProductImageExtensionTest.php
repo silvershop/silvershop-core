@@ -21,7 +21,7 @@ use SilverStripe\SiteConfig\SiteConfig;
  */
 class ProductImageExtensionTest extends SapphireTest
 {
-    protected static $fixture_file = 'silvershop/tests/fixtures/shop.yml';
+    protected static $fixture_file = '../Fixtures/shop.yml';
     /**
      * Set to true in {@link self::setUp()} if we created the assets folder, so we know to remove it in
      * {@link self::tearDown()}.
@@ -29,6 +29,12 @@ class ProductImageExtensionTest extends SapphireTest
      * @var bool
      */
     private $createdAssetsFolder = false;
+
+    /** @var Image */
+    protected $img;
+
+    /** @var Image */
+    protected $img2;
 
     function setUp()
     {

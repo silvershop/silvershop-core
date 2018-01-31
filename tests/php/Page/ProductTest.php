@@ -25,15 +25,30 @@ class ProductTest extends FunctionalTest
     protected static $disable_theme  = true;
     protected static $use_draft_site = true;
 
+    /** @var Product */
+    protected $mp3player;
+
+    /** @var Product */
+    protected $socks;
+
+    /** @var Product */
+    protected $beachball;
+
+    /** @var Product */
+    protected $tshirt;
+
+    /** @var Product */
+    protected $pdfbrochure;
+
     function setUp()
     {
         parent::setUp();
         ShoppingCart::singleton()->clear();
-        $this->tshirt = $this->objFromFixture(Product::class, 'tshirt');
+        $this->mp3player = $this->objFromFixture(Product::class, "mp3player");
         $this->socks = $this->objFromFixture(Product::class, 'socks');
         $this->beachball = $this->objFromFixture(Product::class, 'beachball');
+        $this->tshirt = $this->objFromFixture(Product::class, 'tshirt');
         $this->pdfbrochure = $this->objFromFixture(Product::class, 'pdfbrochure');
-        $this->mp3player = $this->objFromFixture(Product::class, "mp3player");
     }
 
     public function testCMSFields()

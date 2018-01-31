@@ -19,8 +19,19 @@ class ProductOrderItemTest extends FunctionalTest
 {
     public static $fixture_file = '../Fixtures/shop.yml';
     public static $disable_theme = true;
-    public static $orig          = array();
+    public static $orig = array();
 
+    /** @var Product */
+    protected $mp3player;
+
+    /** @var Product */
+    protected $socks;
+
+    /** @var Product */
+    protected $beachball;
+
+    /** @var Product */
+    protected $hdtv;
 
     /**
      * Create and publish some products.
@@ -73,7 +84,7 @@ class ProductOrderItemTest extends FunctionalTest
     public function testProductVersionDoesNotExist()
     {
         $brokenitem = OrderItem::create()->update([
-            "ProductID"      => $this->socks->ID,
+            "ProductID" => $this->socks->ID,
             "ProductVersion" => 99999 //non existent version
         ]);
         $this->assertNull($brokenitem->Product(), "version does not exist");

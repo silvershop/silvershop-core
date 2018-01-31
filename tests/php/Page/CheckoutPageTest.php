@@ -63,8 +63,8 @@ class CheckoutPageTest extends FunctionalTest
 
     public function testFindLink()
     {
-        $this->checkoutpage = $this->objFromFixture(CheckoutPage::class, 'checkout');
-        $this->checkoutpage->publishSingle();
+        $checkoutpage = $this->objFromFixture(CheckoutPage::class, 'checkout');
+        $checkoutpage->publishSingle();
         $link = CheckoutPage::find_link();
         $this->assertEquals(
             Director::baseURL() . 'checkout/',

@@ -3,7 +3,14 @@
 namespace SilverShop\Tests\Model;
 
 
+use SilverShop\Checkout\OrderProcessor;
+use SilverShop\Model\Order;
+use SilverShop\Model\OrderStatusLog;
+use SilverShop\Tests\ShopTest;
+use SilverStripe\Control\Email\Mailer;
 use SilverStripe\Core\Config\Config;
+use SilverStripe\Core\Injector\Injector;
+use SilverStripe\Dev\TestMailer;
 use SilverStripe\Security\Member;
 use SilverStripe\Dev\SapphireTest;
 
@@ -226,7 +233,9 @@ class OrderStatusLogTest extends SapphireTest
         );
 
         // clear sent emails
-        $this->mailer->clearEmails();
+        /** @var TestMailer $mailer */
+        $mailer = Injector::inst()->get(Mailer::class);
+        $mailer->clearEmails();
 
         // force another write on the order
         $order->Notes = 'Random Test Notes';

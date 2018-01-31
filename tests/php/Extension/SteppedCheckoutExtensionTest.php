@@ -27,10 +27,15 @@ class SteppedCheckoutExtensionTest extends FunctionalTest
     );
     protected static $use_draft_site = true; //so we don't need to publish
     protected $autoFollowRedirection = false;
+
     /** @var CheckoutPageController */
     protected $checkout;
+
     /** @var Product */
     protected $socks;
+
+    /** @var Order */
+    protected $cart;
 
     public function setUp()
     {
@@ -43,6 +48,7 @@ class SteppedCheckoutExtensionTest extends FunctionalTest
         $this->socks = $this->objFromFixture(Product::class, "socks");
         $this->socks->publishSingle();
 
+        /** @var CheckoutPage $checkoutpage */
         $checkoutpage = $this->objFromFixture(CheckoutPage::class, "checkout");
         $checkoutpage->publishSingle();
         $this->checkout = new CheckoutPageController();
@@ -187,7 +193,7 @@ class SteppedCheckoutExtensionTest extends FunctionalTest
             'ReadTermsAndConditions' => 1,
         );
         $member = $this->objFromFixture(Member::class, "joebloggs");
-        $member->logIn(); //log in member before processing
+        Security::setCurrentUser($member);
 
         Checkout::get($this->cart)->setPaymentMethod("Dummy"); //a selected payment method is required
         $form->loadDataFrom($data);

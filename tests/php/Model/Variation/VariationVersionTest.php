@@ -23,6 +23,15 @@ class VariationVersionTest extends SapphireTest
     public static $disable_theme  = true;
     public static $use_draft_site = true;
 
+    /** @var Product */
+    protected $mp3player;
+
+    /** @var Product */
+    protected $ball;
+
+    /** @var Variation */
+    protected $redlarge;
+
     public function setUp()
     {
         parent::setUp();

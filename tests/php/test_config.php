@@ -5,9 +5,9 @@ namespace SilverShop\Tests;
 
 use SilverShop\Admin\ProductCatalogAdmin;
 use SilverShop\Cart\ShoppingCartController;
-use SilverShop\Checkout\Step\SteppedCheckout;
 use SilverShop\Extension\ProductImageExtension;
 use SilverShop\Extension\ShopConfigExtension;
+use SilverShop\Extension\SteppedCheckoutExtension;
 use SilverShop\Forms\OrderActionsForm;
 use SilverShop\Model\Address;
 use SilverShop\Model\Modifiers\Shipping\Simple;
@@ -105,7 +105,7 @@ $cfg->set(Simple::class, 'charges_for_countries', array('US' => 10, 'NZ' => 5));
 // checkout
 $cfg->set(ShopConfigExtension::class, 'email_from', null);
 $cfg->set(ShopConfigExtension::class, 'base_currency', 'NZD');
-$cfg->set(SteppedCheckout::class, 'first_step', null);
+$cfg->set(SteppedCheckoutExtension::class, 'first_step', null);
 $cfg->set(
     Address::class,
     'requiredfields',

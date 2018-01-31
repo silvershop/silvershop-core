@@ -7,6 +7,7 @@ use Exception;
 use SilverShop\Model\Modifiers\Tax\FlatTax;
 use SilverShop\Model\Order;
 use SilverShop\Model\OrderModifier;
+use SilverShop\Page\Product;
 use SilverShop\Tests\ShopTest;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\FunctionalTest;
@@ -22,6 +23,12 @@ class OrderModifierTest extends FunctionalTest
     public static $fixture_file   = '../Fixtures/shop.yml';
     public static $disable_theme  = true;
     public static $use_draft_site = true;
+
+    /** @var Product */
+    protected $mp3player;
+
+    /** @var Product */
+    protected $socks;
 
     protected $extraDataObjects = [
         OrderModifierTest_TestModifier::class

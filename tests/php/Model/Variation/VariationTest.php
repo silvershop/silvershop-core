@@ -25,6 +25,14 @@ class VariationTest extends SapphireTest
     public static $disable_theme  = true;
     public static $use_draft_site = true;
 
+    /** @var Product */
+    protected $mp3player;
+
+    /** @var Product */
+    protected $socks;
+
+    /** @var Variation */
+    protected $redlarge;
 
     public function setUp()
     {

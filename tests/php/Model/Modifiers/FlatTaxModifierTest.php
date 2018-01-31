@@ -4,6 +4,7 @@ namespace SilverShop\Tests\Model\Modifiers;
 
 
 use SilverShop\Cart\ShoppingCart;
+use SilverShop\Model\Modifiers\OrderModifier;
 use SilverShop\Model\Modifiers\Tax\FlatTax;
 use SilverShop\Model\Order;
 use SilverShop\Page\Product;
@@ -21,6 +22,12 @@ class FlatTaxModifierTest extends FunctionalTest
 {
     protected static $fixture_file  = '../Fixtures/shop.yml';
     protected static $disable_theme = true;
+
+    /** @var Product */
+    protected $mp3player;
+
+    /** @var ShoppingCart */
+    protected $cart;
 
     public function setUp()
     {
@@ -47,6 +54,7 @@ class FlatTaxModifierTest extends FunctionalTest
         $this->cart->add($this->mp3player);
         $order = $this->cart->current();
         $order->calculate();
+        /** @var OrderModifier $modifier */
         $modifier = $order->Modifiers()
             ->filter('ClassName', FlatTax::class)
             ->first();
@@ -61,6 +69,7 @@ class FlatTaxModifierTest extends FunctionalTest
         $this->cart->add($this->mp3player);
         $order = $this->cart->current();
         $order->calculate();
+        /** @var OrderModifier $modifier */
         $modifier = $order->Modifiers()
             ->filter('ClassName', FlatTax::class)
             ->first();

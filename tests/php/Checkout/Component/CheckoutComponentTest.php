@@ -3,6 +3,12 @@
 namespace SilverShop\Tests\Checkout\Component;
 
 
+use SilverShop\Checkout\CheckoutConfig;
+use SilverShop\Checkout\SinglePageCheckoutComponentConfig;
+use SilverShop\Model\Address;
+use SilverShop\Model\Order;
+use SilverShop\Tests\ShopTest;
+use SilverStripe\Core\Config\Config;
 use SilverStripe\SiteConfig\SiteConfig;
 use SilverStripe\Dev\SapphireTest;
 
@@ -11,11 +17,23 @@ use SilverStripe\Dev\SapphireTest;
 class CheckoutComponentTest extends SapphireTest
 {
     protected static $fixture_file = array(
-        'silvershop/tests/fixtures/Orders.yml',
-        'silvershop/tests/fixtures/Addresses.yml',
-        'silvershop/tests/fixtures/shop.yml',
-        'silvershop/tests/fixtures/ShopMembers.yml',
+        '../Fixtures/Orders.yml',
+        '../Fixtures/Addresses.yml',
+        '../Fixtures/shop.yml',
+        '../Fixtures/ShopMembers.yml',
     );
+
+    /** @var Order */
+    protected $cart;
+
+    /** @var Address */
+    protected $address1;
+
+    /** @var Address */
+    protected $address2;
+
+    /** @var Address */
+    protected $addressNoCountry;
 
     public function setUp()
     {
@@ -25,8 +43,10 @@ class CheckoutComponentTest extends SapphireTest
         $this->address1 = $this->objFromFixture(Address::class, "address1");
         $this->address2 = $this->objFromFixture(Address::class, "address2");
         $this->addressNoCountry = $this->objFromFixture(Address::class, "pukekohe");
-        CheckoutConfig::config()->member_creation_enabled = true;
-        CheckoutConfig::config()->membership_required = false;
+
+        Config::modify()
+            ->set(CheckoutConfig::class, 'member_creation_enabled', true)
+            ->set(CheckoutConfig::class, 'membership_required', false);
     }
 
     public function testSinglePageConfig()
@@ -190,7 +210,6 @@ class CheckoutComponentTest extends SapphireTest
         $validateData = $config->validateData($data);
         $this->assertTrue(
             $validateData,
-            print_r($validateData, true),
             "Data validation must return true" . print_r($validateData, true)
         );
 
@@ -285,7 +304,6 @@ class CheckoutComponentTest extends SapphireTest
         $validateData = $config->validateData($data);
         $this->assertTrue(
             $validateData,
-            print_r($validateData, true),
             "Data validation must return true.  Note: should not be testing a country field here as validation of a readonly field is not necessary"
             . print_r($validateData, true)
         );

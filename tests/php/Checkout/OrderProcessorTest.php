@@ -7,6 +7,7 @@ use SilverShop\Cart\ShoppingCart;
 use SilverShop\Checkout\OrderProcessor;
 use SilverShop\Checkout\ShopMemberFactory;
 use SilverShop\Extension\ShopConfigExtension;
+use SilverShop\Model\Address;
 use SilverShop\Model\Order;
 use SilverShop\Model\Product\OrderItem;
 use SilverShop\Page\Product;
@@ -34,6 +35,20 @@ class OrderProcessorTest extends SapphireTest
     protected $processor;
     protected static $extra_dataobjects = [OrderProcessorTest_CustomOrderItem::class];
 
+    /** @var Product */
+    protected $mp3player;
+
+    /** @var Product */
+    protected $socks;
+
+    /** @var Product */
+    protected $beachball;
+
+    /** @var Product */
+    protected $hdtv;
+
+    /** @var ShoppingCart */
+    protected $shoppingcart;
 
     public function setUp()
     {
@@ -102,7 +117,7 @@ class OrderProcessorTest extends SapphireTest
 
         $order = Order::get()->byID($order->ID); //update order variable to db-stored version
 
-        $this->assertFalse($this->shoppingcart->current(), "Shopping cart is empty");
+        $this->assertFalse((bool)$this->shoppingcart->current(), "Shopping cart is empty");
         $this->assertNotNull($order);
         $this->assertEquals(408, $order->GrandTotal(), 'grand total');
         $this->assertEquals(408, $order->TotalOutstanding(), 'total outstanding');

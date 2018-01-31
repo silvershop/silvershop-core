@@ -13,13 +13,9 @@ use SilverShop\Model\Product\OrderItem;
 use SilverShop\Page\Product;
 use SilverShop\Tests\ShopTest;
 use SilverStripe\Core\Config\Config;
-use SilverStripe\ORM\DataObject;
 use SilverStripe\Dev\SapphireTest;
-use SilverStripe\ORM\DataExtension;
-use SilverStripe\Dev\TestOnly;
 use SilverStripe\Omnipay\Model\Payment;
-
-
+use SilverStripe\ORM\DataObject;
 
 
 /**
@@ -31,6 +27,16 @@ use SilverStripe\Omnipay\Model\Payment;
 class OrderTest extends SapphireTest
 {
     public static $fixture_file = '../Fixtures/shop.yml';
+
+    /** @var Product */
+    protected $mp3player;
+
+    /** @var Product */
+    protected $socks;
+
+    /** @var Product */
+    protected $beachball;
+
 
     public function setUp()
     {

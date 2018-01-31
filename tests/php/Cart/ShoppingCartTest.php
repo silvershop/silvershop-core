@@ -3,11 +3,13 @@
 namespace SilverShop\Tests\Cart;
 
 
+use SilverShop\Cart\ShoppingCart;
+use SilverShop\Model\Order;
+use SilverShop\Model\Variation\Variation;
+use SilverShop\Page\Product;
+use SilverShop\Tests\ShopTest;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\SapphireTest;
-use SilverStripe\Core\Extension;
-use SilverStripe\Dev\TestOnly;
-use Exception;
 
 
 class ShoppingCartTest extends SapphireTest
@@ -15,6 +17,12 @@ class ShoppingCartTest extends SapphireTest
     public static $fixture_file   = 'silvershop/tests/fixtures/shop.yml';
     public static $disable_theme  = true;
     public static $use_draft_site = false;
+
+    /** @var Product */
+    protected $product;
+
+    /** @var ShoppingCart */
+    protected $cart;
 
     public function setUp()
     {
@@ -61,7 +69,7 @@ class ShoppingCartTest extends SapphireTest
             ShoppingCartTest_TestShoppingCartHooksExtension::$stack
         );
         $item = $this->cart->get($this->product);
-        $this->assertFalse($item, "item not in cart");
+        $this->assertFalse((bool)$item, "item not in cart");
         $this->assertFalse($this->cart->remove($this->product), "try remove non-existent item");
     }
 
@@ -86,14 +94,14 @@ class ShoppingCartTest extends SapphireTest
         $this->assertTrue((boolean)$this->cart->add($this->product), "add another item");
         $this->assertEquals($this->cart->current()->class, Order::class, "there a cart");
         $this->assertTrue($this->cart->clear(), "clear the cart");
-        $this->assertFalse($this->cart->current(), "there is no cart");
+        $this->assertFalse((bool)$this->cart->current(), "there is no cart");
     }
 
     public function testProductVariations()
     {
-        $this->loadFixture('silvershop/tests/fixtures/variations.yml');
-        $ball1 = $this->objFromFixture(ProductVariation::class, 'redlarge');
-        $ball2 = $this->objFromFixture(ProductVariation::class, 'redsmall');
+        $this->loadFixture('../Fixtures/variations.yml');
+        $ball1 = $this->objFromFixture(Variation::class, 'redlarge');
+        $ball2 = $this->objFromFixture(Variation::class, 'redsmall');
 
         $this->assertTrue((boolean)$this->cart->add($ball1), "add one item");
 
@@ -110,7 +118,7 @@ class ShoppingCartTest extends SapphireTest
             ShoppingCartTest_TestShoppingCartHooksExtension::$stack
         );
 
-        $this->assertFalse($this->cart->get($ball1), "first item not in cart");
+        $this->assertFalse((bool)$this->cart->get($ball1), "first item not in cart");
         $this->assertNotNull($this->cart->get($ball1), "second item is in cart");
     }
 
@@ -126,7 +134,7 @@ class ShoppingCartTest extends SapphireTest
     {
         $this->loadFixture('silvershop/tests/fixtures/variations.yml');
         $ball = $this->objFromFixture(Product::class, 'ball');
-        $redlarge = $this->objFromFixture(ProductVariation::class, 'redlarge');
+        $redlarge = $this->objFromFixture(Variation::class, 'redlarge');
         // setting price of variation to zero, so it can't be added to cart.
         $redlarge->Price = 0;
         $redlarge->write();

@@ -3,10 +3,16 @@
 namespace SilverShop\Tests\Checkout\Component;
 
 
+use SilverShop\Checkout\CheckoutComponentConfig;
+use SilverShop\Checkout\CheckoutConfig;
+use SilverShop\Checkout\Component\AddressBookBilling;
+use SilverShop\Model\Address;
+use SilverShop\Model\Order;
+use SilverShop\Tests\ShopTest;
 use SilverStripe\Security\Member;
 use SilverStripe\ORM\ValidationException;
 use SilverStripe\Dev\SapphireTest;
-
+use SilverStripe\Security\Security;
 
 
 class AddressBookCheckoutComponentTest extends SapphireTest
@@ -15,16 +21,22 @@ class AddressBookCheckoutComponentTest extends SapphireTest
         'silvershop/tests/fixtures/Orders.yml',
         'silvershop/tests/fixtures/ShopMembers.yml',
     );
+
     /** @var Order $cart */
     protected $cart;
+
     /** @var Member $member */
     protected $member;
+
     /** @var Address $address1 */
     protected $address1;
+
     /** @var Address $address2 */
     protected $address2;
+
     /** @var CheckoutComponentConfig $config */
     protected $config;
+
     protected $fixtureNewAddress = array(
         'BillingAddressBookCheckoutComponent_BillingAddressID' => 'newaddress',
         'BillingAddressBookCheckoutComponent_Country'          => 'US',
@@ -48,7 +60,7 @@ class AddressBookCheckoutComponentTest extends SapphireTest
         $this->address2 = $this->objFromFixture(Address::class, "address2");
         $this->config = new CheckoutComponentConfig($this->cart, true);
 
-        $this->config->addComponent(new BillingAddressBookCheckoutComponent());
+        $this->config->addComponent(new AddressBookBilling());
 
         $this->address1->MemberID = $this->member->ID;
         $this->address1->write();
@@ -63,7 +75,7 @@ class AddressBookCheckoutComponentTest extends SapphireTest
 
     public function testIncompleteNewAddress()
     {
-        $this->setExpectedException(ValidationException::class);
+        $this->expectException(ValidationException::class);
         $data = $this->fixtureNewAddress;
         $data['BillingAddressBookCheckoutComponent_Country'] = '';
 
@@ -72,7 +84,7 @@ class AddressBookCheckoutComponentTest extends SapphireTest
 
     public function testUseExistingAddress()
     {
-        $this->member->logIn();
+        Security::setCurrentUser($this->member);
         $this->assertTrue(
             $this->config->validateData(
                 array(
@@ -84,7 +96,7 @@ class AddressBookCheckoutComponentTest extends SapphireTest
 
     public function testShouldRejectExistingIfNotLoggedIn()
     {
-        $this->setExpectedException(ValidationException::class);
+        $this->expectException(ValidationException::class);
         $this->assertTrue(
             $this->config->validateData(
                 array(
@@ -96,8 +108,8 @@ class AddressBookCheckoutComponentTest extends SapphireTest
 
     public function testShouldRejectExistingIfNotOwnedByMember()
     {
-        $this->setExpectedException(ValidationException::class);
-        $this->member->logIn();
+        $this->expectException(ValidationException::class);
+        Security::setCurrentUser($this->member);
         $this->address1->MemberID = 0;
         $this->address1->write();
 

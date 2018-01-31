@@ -3,25 +3,36 @@
 namespace SilverShop\Tests\Forms;
 
 
-use SilverStripe\SiteConfig\SiteConfig;
+use SilverShop\Cart\ShoppingCart;
+use SilverShop\Checkout\SinglePageCheckoutComponentConfig;
+use SilverShop\Forms\CheckoutForm;
+use SilverShop\Page\CheckoutPageController;
+use SilverShop\Page\Product;
+use SilverShop\Tests\ShopTest;
 use SilverStripe\Dev\SapphireTest;
-
+use SilverStripe\SiteConfig\SiteConfig;
 
 
 class CheckoutFormTest extends SapphireTest
 {
-    public static $fixture_file = 'silvershop/tests/fixtures/shop.yml';
+    public static $fixture_file = '../Fixtures/shop.yml';
 
-    public function setUpOnce()
-    {
-        parent::setUpOnce();
-        // clear session
-        ShoppingCart::singleton()->clear();
-    }
+    /** @var Product */
+    protected $mp3player;
+
+    /** @var Product */
+    protected $socks;
+
+    /** @var Product */
+    protected $beachball;
+
+    /** @var CheckoutPageController */
+    protected $checkoutcontroller;
 
     public function setUp()
     {
         parent::setUp();
+        ShoppingCart::singleton()->clear();
         ShopTest::setConfiguration();
         $this->mp3player = $this->objFromFixture(Product::class, 'mp3player');
         $this->mp3player->publishSingle();
@@ -30,7 +41,7 @@ class CheckoutFormTest extends SapphireTest
         $this->beachball = $this->objFromFixture(Product::class, 'beachball');
         $this->beachball->publishSingle();
 
-        $this->checkoutcontroller = new CheckoutPage_Controller();
+        $this->checkoutcontroller = new CheckoutPageController();
 
         ShoppingCart::singleton()->add($this->socks); //start cart
     }
@@ -41,26 +52,26 @@ class CheckoutFormTest extends SapphireTest
         $config = new SinglePageCheckoutComponentConfig($order);
         $form = new CheckoutForm($this->checkoutcontroller, "OrderForm", $config);
         $data = array(
-            "CustomerDetailsCheckoutComponent_FirstName"    => "Jane",
-            "CustomerDetailsCheckoutComponent_Surname"      => "Smith",
-            "CustomerDetailsCheckoutComponent_Email"        => "janesmith@example.com",
-            "ShippingAddressCheckoutComponent_Country"      => "NZ",
-            "ShippingAddressCheckoutComponent_Address"      => "1234 Green Lane",
-            "ShippingAddressCheckoutComponent_AddressLine2" => "Building 2",
-            "ShippingAddressCheckoutComponent_City"         => "Bleasdfweorville",
-            "ShippingAddressCheckoutComponent_State"        => "Trumpo",
-            "ShippingAddressCheckoutComponent_PostalCode"   => "4123",
-            "ShippingAddressCheckoutComponent_Phone"        => "032092277",
-            "BillingAddressCheckoutComponent_Country"       => "NZ",
-            "BillingAddressCheckoutComponent_Address"       => "1234 Green Lane",
-            "BillingAddressCheckoutComponent_AddressLine2"  => "Building 2",
-            "BillingAddressCheckoutComponent_City"          => "Bleasdfweorville",
-            "BillingAddressCheckoutComponent_State"         => "Trumpo",
-            "BillingAddressCheckoutComponent_PostalCode"    => "4123",
-            "BillingAddressCheckoutComponent_Phone"         => "032092277",
-            "PaymentCheckoutComponent_PaymentMethod"        => "Dummy",
-            "NotesCheckoutComponent_Notes"                  => "Leave it around the back",
-            "TermsCheckoutComponent_ReadTermsAndConditions" => "1",
+            "CustomerDetails_FirstName"    => "Jane",
+            "CustomerDetails_Surname"      => "Smith",
+            "CustomerDetails_Email"        => "janesmith@example.com",
+            "ShippingAddress_Country"      => "NZ",
+            "ShippingAddress_Address"      => "1234 Green Lane",
+            "ShippingAddress_AddressLine2" => "Building 2",
+            "ShippingAddress_City"         => "Bleasdfweorville",
+            "ShippingAddress_State"        => "Trumpo",
+            "ShippingAddress_PostalCode"   => "4123",
+            "ShippingAddress_Phone"        => "032092277",
+            "BillingAddress_Country"       => "NZ",
+            "BillingAddress_Address"       => "1234 Green Lane",
+            "BillingAddress_AddressLine2"  => "Building 2",
+            "BillingAddress_City"          => "Bleasdfweorville",
+            "BillingAddress_State"         => "Trumpo",
+            "BillingAddress_PostalCode"    => "4123",
+            "BillingAddress_Phone"         => "032092277",
+            "Payment_PaymentMethod"        => "Dummy",
+            "Notes_Notes"                  => "Leave it around the back",
+            "Terms_ReadTermsAndConditions" => "1",
         );
         $form->loadDataFrom($data, true);
         $valid = $form->validate();

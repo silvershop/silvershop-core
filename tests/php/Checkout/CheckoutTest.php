@@ -3,6 +3,14 @@
 namespace SilverShop\Tests\Checkout;
 
 
+use SilverShop\Cart\ShoppingCart;
+use SilverShop\Checkout\Checkout;
+use SilverShop\Checkout\CheckoutConfig;
+use SilverShop\Checkout\ShopMemberFactory;
+use SilverShop\Model\Address;
+use SilverShop\Model\Order;
+use SilverShop\Tests\ShopTest;
+use SilverStripe\Core\Config\Config;
 use SilverStripe\Security\Member;
 use SilverStripe\ORM\ValidationException;
 use SilverStripe\Dev\SapphireTest;
@@ -18,7 +26,20 @@ class CheckoutTest extends SapphireTest
         '../Fixtures/ShopMembers.yml',
     );
 
-    private $memberFactory;
+    /** @var ShoppingCart */
+    protected $cart;
+
+    /** @var Address */
+    protected $address1;
+
+    /** @var Address */
+    protected $address2;
+
+    /** @var Checkout */
+    protected $checkout;
+
+    /** @var ShopMemberFactory */
+    protected $memberFactory;
 
     public function setUp()
     {
@@ -30,8 +51,9 @@ class CheckoutTest extends SapphireTest
         $this->checkout = new Checkout($this->cart);
         $this->memberFactory = new ShopMemberFactory();
 
-        CheckoutConfig::config()->member_creation_enabled = true;
-        CheckoutConfig::config()->membership_required = false;
+        Config::modify()
+            ->set(CheckoutConfig::class, 'member_creation_enabled', true)
+            ->set(CheckoutConfig::class, 'membership_required', false);
     }
 
     public function testSetUpShippingAddress()
@@ -109,7 +131,7 @@ class CheckoutTest extends SapphireTest
         CheckoutConfig::config()->member_creation_enabled = false;
         CheckoutConfig::config()->membership_required = false;
 
-        $this->setExpectedException(ValidationException::class);
+        $this->expectException(ValidationException::class);
 
         $member = $this->memberFactory->create(
             array(

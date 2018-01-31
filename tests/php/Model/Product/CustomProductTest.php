@@ -18,9 +18,9 @@ class CustomProductTest extends FunctionalTest
         CustomProduct_OrderItem::class,
     ];
 
-    public function setUpOnce()
+    public function setUp()
     {
-        parent::setUpOnce();
+        parent::setUp();
         // clear session
         ShoppingCart::singleton()->clear();
     }
@@ -49,7 +49,7 @@ class CustomProductTest extends FunctionalTest
         $this->assertEquals(5, $item->Size);
         $this->assertEquals(1, $item->Premium); //should be true?
 
-        $this->assertFalse($cart->get($thing), "try to get a non-customised product");
+        $this->assertFalse((bool)$cart->get($thing), "try to get a non-customised product");
 
         $options2 = array('Color' => 'Blue', 'Size' => 6, 'Premium' => false);
         $this->assertTrue((bool)$cart->add($thing, 5, $options2), "add customisation 2 to cart");
