@@ -3,6 +3,7 @@
 namespace SilverShop\Page;
 
 use PageController;
+use SilverShop\Forms\ShopAccountForm;
 use SilverShop\Model\Address;
 use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Control\HTTPResponse;
@@ -19,7 +20,7 @@ use SilverStripe\SiteConfig\SiteConfig;
 
 class AccountPageController extends PageController
 {
-    private static $url_segment     = 'account';
+    private static $url_segment = 'account';
 
     private static $allowed_actions = [
         'addressbook',
@@ -43,7 +44,7 @@ class AccountPageController extends PageController
         $this->member = Security::getCurrentUser();
         if (!$this->member) {
             $messages = array(
-                'default'    => _t(
+                'default' => _t(
                     'SilverShop\Page\AccountPage.Login',
                     'You\'ll need to login before you can access the account page.
 					If you are not registered, you won\'t be able to access it until
@@ -76,7 +77,7 @@ class AccountPageController extends PageController
     {
         return array(
             'DefaultAddressForm' => $this->DefaultAddressForm(),
-            'CreateAddressForm'  => $this->CreateAddressForm(),
+            'CreateAddressForm' => $this->CreateAddressForm(),
         );
     }
 

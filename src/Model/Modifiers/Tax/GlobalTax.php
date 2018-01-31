@@ -9,8 +9,7 @@ use SilverShop\Model\Order;
  * Handles calculation of sales tax on Orders on
  * a per-country basis.
  *
- * @package    shop
- * @subpackage modifiers
+ * @property string Country
  */
 class GlobalTax extends Base
 {

@@ -4,9 +4,9 @@ namespace SilverShop\Checkout\Step;
 
 
 use SilverShop\Cart\ShoppingCart;
-use SilverShop\Checkout\CheckoutForm;
+use SilverShop\Forms\CheckoutForm;
 use SilverShop\Checkout\Component\BillingAddress;
-use SilverShop\Checkout\Component\CheckoutComponentConfig;
+use SilverShop\Checkout\CheckoutComponentConfig;
 use SilverShop\Checkout\Component\ShippingAddress;
 use SilverStripe\Forms\CheckboxField;
 use SilverStripe\Forms\FieldList;

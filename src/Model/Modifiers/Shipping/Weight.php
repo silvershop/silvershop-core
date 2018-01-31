@@ -9,9 +9,6 @@ namespace SilverShop\Model\Modifiers\Shipping;
  *
  * ASSUMPTION: The total order weight can be at maximum the last item
  * in the $shippingCosts array.
- *
- * @package    shop
- * @subpackage modifiers
  */
 class Weight extends Base
 {

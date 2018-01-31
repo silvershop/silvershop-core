@@ -27,7 +27,7 @@
                             <% loop $Order %>
                                 <tr>
                                     <td>
-                                        <% include SilverStripe\Model\Order %>
+                                        <% include SilverShop\Model\Order %>
                                     </td>
                                 </tr>
                             <% end_loop %>

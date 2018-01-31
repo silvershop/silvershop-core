@@ -3,6 +3,7 @@
 namespace SilverShop\Checkout;
 
 
+use SilverShop\Page\CheckoutPage;
 use SilverStripe\Forms\CheckboxField;
 use SilverStripe\Forms\ConfirmedPasswordField;
 use SilverStripe\Forms\EmailField;
@@ -95,7 +96,7 @@ class CheckoutFieldFactory
             ),
             $pwf = $this->getPasswordField()
         );
-        if (!Checkout::user_membership_required()) {
+        if (!Checkout::membership_required()) {
             $pwf->setCanBeEmpty(true);
         }
         return $fields;

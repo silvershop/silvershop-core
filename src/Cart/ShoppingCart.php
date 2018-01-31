@@ -381,7 +381,7 @@ class ShoppingCart
         $itemclass = Config::inst()->get(get_class($buyable), 'order_item');
         $relationship = Config::inst()->get($itemclass, 'buyable_relationship');
         $filter[$relationship . 'ID'] = $buyable->ID;
-        $required = ['Order', $relationship];
+        $required = ['OrderID', $relationship . 'ID'];
         if (is_array($itemclass::config()->required_fields)) {
             $required = array_merge($required, $itemclass::config()->required_fields);
         }

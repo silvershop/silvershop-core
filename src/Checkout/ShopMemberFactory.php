@@ -72,7 +72,7 @@ class ShopMemberFactory
         if (!$validation->isValid()) {
             //TODO need to handle i18n here?
             foreach ($validation->getMessages() as $message) {
-                $result->addError($message);
+                $result->addError($message['message']);
             }
         }
         if (!$result->isValid()) {

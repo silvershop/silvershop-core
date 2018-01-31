@@ -2,7 +2,12 @@
 
 namespace SilverShop\Model;
 
-
+/**
+ * Class ZoneRegion
+ *
+ * @property int ZoneID
+ * @method Zone Zone
+ */
 class ZoneRegion extends RegionRestriction
 {
     private static $has_one = [

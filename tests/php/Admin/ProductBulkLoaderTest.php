@@ -4,6 +4,7 @@ namespace SilverShop\Tests\Admin;
 
 
 use SilverShop\Admin\ProductBulkLoader;
+use SilverShop\Page\Product;
 use SilverStripe\Dev\FunctionalTest;
 use SilverStripe\ORM\DataObject;
 
@@ -30,7 +31,7 @@ class ProductBulkLoaderTest extends FunctionalTest
         //$this->assertEquals(4, $results->Count(), 'Test correct count of imported data');
 
         // Test that columns were correctly imported
-        $obj = DataObject::get_one("Product", "\"Title\" = 'Socks'");
+        $obj = Product::get()->filter('Title', 'Socks')->first();
         $this->assertNotNull($obj, "New product exists");
         $this->assertEquals("<p>The comfiest pair of socks you'll ever own.</p>", $obj->Content, "Content matches");
         $this->assertEquals(12, $obj->BasePrice, "Checking price matches.");

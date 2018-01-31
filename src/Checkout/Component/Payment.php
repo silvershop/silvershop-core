@@ -51,7 +51,7 @@ class Payment extends CheckoutComponent
     {
         $result = ValidationResult::create();
         if (!isset($data['PaymentMethod'])) {
-            $result->error(
+            $result->addError(
                 _t('PaymentCheckoutComponent.NoPaymentMethod', "Payment method not provided"),
                 "PaymentMethod"
             );
@@ -59,7 +59,7 @@ class Payment extends CheckoutComponent
         }
         $methods = GatewayInfo::getSupportedGateways();
         if (!isset($methods[$data['PaymentMethod']])) {
-            $result->error(_t('PaymentCheckoutComponent.UnsupportedGateway', "Gateway not supported"), "PaymentMethod");
+            $result->addError(_t('PaymentCheckoutComponent.UnsupportedGateway', "Gateway not supported"), "PaymentMethod");
             throw new ValidationException($result);
         }
     }

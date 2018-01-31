@@ -23,6 +23,7 @@ use SilverStripe\Forms\ListboxField;
 use SilverStripe\Forms\LiteralField;
 use SilverStripe\Forms\Tab;
 use SilverStripe\Forms\TabSet;
+use SilverStripe\Omnipay\Extensions\Payable;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\FieldType\DBDatetime;
 use SilverStripe\ORM\Filters\GreaterThanFilter;
@@ -37,6 +38,8 @@ use SilverStripe\Security\Security;
 /**
  * The order class is a databound object for handling Orders
  * within SilverStripe.
+ *
+ * @mixin Payable
  *
  * @property string|float Currency
  * @property string Reference
@@ -63,7 +66,6 @@ use SilverStripe\Security\Security;
  * @method OrderModifier[]|HasManyList Modifiers
  * @method OrderStatusLog[]|HasManyList OrderStatusLogs
  *
- * @package shop
  */
 class Order extends DataObject
 {
@@ -306,7 +308,7 @@ class Order extends DataObject
         $this->extend('updateCMSFields', $fields);
         if ($payments = $fields->fieldByName('Root.Payments.Payments')) {
             $fields->removeByName('Payments');
-            $fields->insertAfter($payments, 'Content');
+            $fields->insertAfter('Content', $payments);
             $payments->addExtraClass('order-payments');
         }
 
@@ -400,7 +402,7 @@ class Order extends DataObject
     /**
      * Calculate the total
      *
-     * @return the final total
+     * @return float the final total
      */
     public function calculate()
     {
@@ -739,7 +741,7 @@ class Order extends DataObject
         $candidate = $reference;
         //prevent generating references that are the same
         $count = 0;
-        while (DataObject::get_one('Order', "\"Reference\" = '$candidate'")) {
+        while (Order::get()->filter('Reference', $candidate)->count() > 0) {
             $count++;
             $candidate = $reference . '' . $count;
         }

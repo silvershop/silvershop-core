@@ -30,9 +30,9 @@ class CheckoutComponentValidator extends RequiredFields
             $this->config->validateData($data);
         } catch (ValidationException $e) {
             $result = $e->getResult();
-            foreach ($result->messageList() as $fieldname => $message) {
-                if (!$this->fieldHasError($fieldname)) {
-                    $this->validationError($fieldname, $message, 'bad');
+            foreach ($result->getMessages() as $message) {
+                if (!$this->fieldHasError($message['fieldName'])) {
+                    $this->validationError($message['fieldName'], $message['message'], 'bad');
                 }
             }
             $valid = false;
@@ -52,8 +52,8 @@ class CheckoutComponentValidator extends RequiredFields
 
     public function fieldHasError($field)
     {
-        if ($this->errors) {
-            foreach ($this->errors as $error) {
+        if ($this->getErrors()) {
+            foreach ($this->getErrors() as $error) {
                 if ($error['fieldName'] === $field) {
                     return true;
                 }

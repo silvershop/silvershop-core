@@ -21,13 +21,22 @@ class ShopQuantityField extends ViewableData
 
     protected $classes = ['ajaxQuantityField'];
 
-    protected $template = ShopQuantityField::class;
+    protected $template = self::class;
 
     /** @var Buyable */
     protected $buyable;
 
+    /**
+     * The max amount to enter
+     * @config
+     * @var int
+     */
+    private static $max = 0;
+
     public function __construct($object, $parameters = null)
     {
+        parent::__construct();
+
         if ($object instanceof Buyable) {
             $this->item = ShoppingCart::singleton()->get($object, $parameters);
             //provide a 0-quantity facade item if there is no such item in cart
@@ -74,16 +83,18 @@ class ShopQuantityField extends ViewableData
 
     public function Field()
     {
-        $qtyArray = array();
-        for ($r = 1; $r <= $this->max; $r++) {
-            $qtyArray[$r] = $r;
-        }
-        return NumericField::create(
+        $field = NumericField::create(
             $this->MainID() . '_Quantity',
             // this title currently doesn't show up in the front end, better assign a translation anyway.
             _t('SilverShop\Model\Order.Quantity', 'Quantity'),
             $this->item->Quantity
         )->setHTML5(true);
+
+        if ($this->config()->max > 0) {
+            $field->setAttribute("max", $this->config()->max);
+        }
+
+        return $field;
     }
 
     public function MainID()

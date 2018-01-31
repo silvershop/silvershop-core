@@ -14,6 +14,9 @@ use SilverStripe\Forms\LiteralField;
 use SilverStripe\Forms\TextField;
 use SilverStripe\ORM\ArrayList;
 use SilverStripe\ORM\DataObject;
+use SilverStripe\ORM\FieldType\DBCurrency;
+use SilverStripe\ORM\FieldType\DBDecimal;
+use SilverStripe\ORM\ManyManyList;
 use SilverStripe\Versioned\Versioned;
 
 
@@ -24,8 +27,17 @@ use SilverStripe\Versioned\Versioned;
  * Used in combination with ProductAttributes, such as color, size.
  * A variation will specify one particular combination, such as red, and large.
  *
- * @package    shop
- * @subpackage variations
+ * @property string InternalItemID
+ * @property DBCurrency Price
+ * @property DBDecimal Weight
+ * @property DBDecimal Height
+ * @property DBDecimal Width
+ * @property DBDecimal Depth
+ * @property int ProductID
+ * @property int ImageID
+ * @method Product Product
+ * @method Image Image
+ * @method AttributeValue[]|ManyManyList AttributeValues
  */
 class Variation extends DataObject implements Buyable
 {

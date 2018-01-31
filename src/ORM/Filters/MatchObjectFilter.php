@@ -71,8 +71,9 @@ class MatchObjectFilter
         }
         $allowed = array_keys(DataObject::getSchema()->databaseFields($this->className));
         $fields = array_flip(array_intersect($allowed, $this->required));
+        $singleton = singleton($this->className);
 
-        $new = array();
+        $new = [];
         foreach ($fields as $field => $value) {
             $field = Convert::raw2sql($field);
             if (array_key_exists($field, $allowed)) {

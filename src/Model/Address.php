@@ -8,7 +8,9 @@ use SilverStripe\Forms\DropdownField;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\ReadonlyField;
 use SilverStripe\Forms\TextField;
+use SilverStripe\ORM\DataList;
 use SilverStripe\ORM\DataObject;
+use SilverStripe\ORM\HasManyList;
 use SilverStripe\Security\Member;
 use SilverStripe\SiteConfig\SiteConfig;
 
@@ -35,6 +37,20 @@ use SilverStripe\SiteConfig\SiteConfig;
  * @see https://www.oasis-open.org/committees/ciq/ciq.html#6
  *      Universal Postal Union addressing standards:
  * @see http://www.upu.int/nc/en/activities/addressing/standards.html
+ *
+ * @property ShopCountry Country
+ * @property string State
+ * @property string City
+ * @property string PostalCode
+ * @property string Address
+ * @property string AddressLine2
+ * @property string Company
+ * @property string FirstName
+ * @property string Surname
+ * @property string Phone
+ * @method Member Member
+ * @method Order[]|HasManyList ShippingAddressOrders
+ * @method Order[]|HasManyList BillingAddressOrders
  */
 class Address extends DataObject
 {
@@ -307,7 +323,7 @@ class Address extends DataObject
 
         foreach ($this->getRequiredFields() as $requirement) {
             if (empty($this->$requirement)) {
-                $result->error("Address Model validate function - missing required field: $requirement");
+                $result->addError("Address Model validate function - missing required field: $requirement");
             }
         }
 

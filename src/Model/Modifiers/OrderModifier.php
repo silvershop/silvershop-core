@@ -3,7 +3,10 @@
 namespace SilverShop\Model\Modifiers;
 
 
+use SilverShop\Model\Order;
 use SilverShop\Model\OrderAttribute;
+use SilverStripe\ORM\FieldType\DBCurrency;
+use SilverStripe\ORM\FieldType\DBEnum;
 
 
 /**
@@ -11,8 +14,9 @@ use SilverShop\Model\OrderAttribute;
  * handling the additional charges or deductions of
  * an order.
  *
- * @package    shop
- * @subpackage modifiers
+ * @property DBCurrency Amount
+ * @property DBEnum Type
+ * @property int Sort
  */
 class OrderModifier extends OrderAttribute
 {

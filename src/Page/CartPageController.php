@@ -3,16 +3,22 @@
 namespace SilverShop\Page;
 
 use PageController;
+use SilverShop\Extension\ViewableCartExtension;
 use SilverShop\Forms\CartForm;
 
+/**
+ * Class CartPageController
+ *
+ * @mixin ViewableCartExtension
+ */
 class CartPageController extends PageController
 {
     private static $url_segment = 'cart';
 
-    private static $allowed_actions = array(
+    private static $allowed_actions = [
         'CartForm',
         'updatecart',
-    );
+    ];
 
     /**
      * Display a title if there is no model, or no title.

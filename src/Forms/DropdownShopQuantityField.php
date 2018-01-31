@@ -11,16 +11,22 @@ use SilverStripe\Forms\DropdownField;
  */
 class DropdownShopQuantityField extends ShopQuantityField
 {
-    protected $template = 'DropdownShopQuantityField';
+    protected $template = self::class;
 
-    protected $max      = 100;
+    /**
+     * The max amount to enter
+     * @config
+     * @var int
+     */
+    private static $max = 100;
 
     public function Field()
     {
         $qtyArray = array();
-        for ($r = 1; $r <= $this->max; $r++) {
+        for ($r = 1; $r <= $this->config()->max; $r++) {
             $qtyArray[$r] = $r;
         }
+
         return DropdownField::create(
             $this->MainID() . '_Quantity',
             // this title currently doesn't show up in the front end, better assign a translation anyway.

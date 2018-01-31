@@ -3,7 +3,7 @@
 namespace SilverShop\Checkout\Step;
 
 use SilverShop\Cart\ShoppingCart;
-use SilverShop\Checkout\Component\CheckoutComponentConfig;
+use SilverShop\Checkout\CheckoutComponentConfig;
 use SilverShop\Checkout\Component\Notes;
 use SilverShop\Checkout\Component\Terms;
 use SilverShop\Forms\PaymentForm;

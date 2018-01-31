@@ -5,6 +5,7 @@ namespace SilverShop\Model\Variation;
 
 use SilverStripe\Forms\FieldList;
 use SilverStripe\ORM\DataObject;
+use SilverStripe\ORM\ManyManyList;
 
 
 /**
@@ -12,7 +13,10 @@ use SilverStripe\ORM\DataObject;
  * The actual values for a type of product attribute.
  * eg: red, green, blue... 12, 13, 15
  *
- * @subpackage variations
+ * @property string Value
+ * @property int Sort
+ * @method AttributeType Type
+ * @method Variation[]|ManyManyList ProductVariation
  */
 class AttributeValue extends DataObject
 {

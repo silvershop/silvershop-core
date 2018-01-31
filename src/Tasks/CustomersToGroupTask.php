@@ -3,6 +3,7 @@
 namespace SilverShop\Tasks;
 
 
+use SilverShop\Extension\ShopConfigExtension;
 use SilverStripe\Dev\BuildTask;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\DB;
@@ -24,7 +25,7 @@ class CustomersToGroupTask extends BuildTask
     public function run($request)
     {
 
-        $gp = ShopConfig::current()->CustomerGroup();
+        $gp = ShopConfigExtension::current()->CustomerGroup();
         if (empty($gp)) {
             return false;
         }
@@ -45,7 +46,7 @@ class CustomersToGroupTask extends BuildTask
             Member::class,
             $where = '"Member"."ID" NOT IN (' . implode(',', $alreadyAdded) . ')',
             $sort = null,
-            $join = 'INNER JOIN "Order" ON "Order"."MemberID" = "Member"."ID"'
+            $join = 'INNER JOIN "SilverShop_Order" ON "SilverShop_Order"."MemberID" = "Member"."ID"'
         );
         //add combos
         if ($unlistedMembers) {

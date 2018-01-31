@@ -5,6 +5,7 @@ namespace SilverShop\Model;
 
 use SilverShop\Cart\ShoppingCartController;
 use SilverShop\Forms\ShopQuantityField;
+use SilverStripe\ORM\FieldType\DBCurrency;
 
 
 /**
@@ -13,7 +14,8 @@ use SilverShop\Forms\ShopQuantityField;
  * but also can include references to other information such as
  * product attributes like colour, size, or type.
  *
- * @package shop
+ * @property int Quantity
+ * @property DBCurrency Currency
  */
 class OrderItem extends OrderAttribute
 {
@@ -142,12 +144,12 @@ class OrderItem extends OrderAttribute
     public function uniquedata()
     {
         $required = self::config()->required_fields; //TODO: also combine with all ancestors of this->class
-        $data = $this->record;
-        $unique = array();
+        $unique = [];
+        $hasOnes = $this->hasOne();
         //reduce record to only required fields
         if ($required) {
             foreach ($required as $field) {
-                if ($this->has_one($field)) {
+                if ($hasOnes === $field || isset($hasOnes[$field])) {
                     $field = $field . 'ID'; //add ID to hasones
                 }
                 $unique[$field] = $this->$field;

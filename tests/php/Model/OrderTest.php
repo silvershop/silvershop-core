@@ -54,13 +54,13 @@ class OrderTest extends SapphireTest
 
     public function testCMSFields()
     {
-        singleton('Order')->getCMSFields();
+        singleton(Order::class)->getCMSFields();
         $this->markTestIncomplete('assertions!');
     }
 
     public function testSearchFields()
     {
-        singleton('Order')->scaffoldSearchFields();
+        singleton(Order::class)->scaffoldSearchFields();
         $this->markTestIncomplete('assertions!');
     }
 

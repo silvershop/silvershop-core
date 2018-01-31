@@ -6,6 +6,7 @@ namespace SilverShop\Page;
 use Page;
 use SilverShop\Cart\ShoppingCart;
 use SilverShop\Cart\ShoppingCartController;
+use SilverShop\Extension\ProductVariationsExtension;
 use SilverShop\Model\Buyable;
 use SilverShop\Model\Order;
 use SilverShop\Model\Product\OrderItem;
@@ -18,6 +19,9 @@ use SilverStripe\Forms\DropdownField;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\TextField;
 use SilverStripe\ORM\DataList;
+use SilverStripe\ORM\FieldType\DBCurrency;
+use SilverStripe\ORM\FieldType\DBDecimal;
+use SilverStripe\ORM\ManyManyList;
 use SilverStripe\Security\Member;
 use SilverStripe\SiteConfig\SiteConfig;
 
@@ -33,7 +37,22 @@ use SilverStripe\SiteConfig\SiteConfig;
  * eCommerce platform. This means you can add an instance
  * of this page type to the shopping cart.
  *
- * @package shop
+ * @mixin ProductVariationsExtension
+ *
+ * @property string InternalItemID
+ * @property string Model
+ * @property DBCurrency CostPrice
+ * @property DBCurrency BasePrice
+ * @property DBDecimal Weight
+ * @property DBDecimal Height
+ * @property DBDecimal Width
+ * @property DBDecimal Depth
+ * @property bool Featured
+ * @property bool AllowPurchase
+ * @property float Popularity
+ * @property int ImageID
+ *
+ * @method ProductCategory[]|ManyManyList ProductCategories
  */
 class Product extends Page implements Buyable
 {

@@ -4,6 +4,8 @@ namespace SilverShop\Checkout\Component;
 
 
 use SilverShop\Checkout\Checkout;
+use SilverShop\Checkout\ShopMemberFactory;
+use SilverShop\Extension\MemberExtension;
 use SilverShop\Model\Order;
 use SilverStripe\Forms\ConfirmedPasswordField;
 use SilverStripe\Forms\FieldList;
@@ -67,7 +69,7 @@ class Membership extends CheckoutComponent
 
     public function getRequiredFields(Order $order)
     {
-        if (Member::currentUserID() || !Checkout::membership_required()) {
+        if (Security::getCurrentUser() || !Checkout::membership_required()) {
             return array();
         }
         return array(
@@ -88,7 +90,7 @@ class Membership extends CheckoutComponent
 
     public function validateData(Order $order, array $data)
     {
-        if (Member::currentUserID()) {
+        if (Security::getCurrentUser()) {
             return;
         }
         $result = ValidationResult::create();
@@ -96,12 +98,12 @@ class Membership extends CheckoutComponent
             $member = Member::create($data);
             $idfield = Member::config()->unique_identifier_field;
             $idval = $data[$idfield];
-            if (ShopMember::get_by_identifier($idval)) {
+            if (MemberExtension::get_by_identifier($idval)) {
                 // get localized field labels
                 $fieldLabels = $member->fieldLabels(false);
                 // if a localized value exists, use this for our error-message
                 $fieldLabel = isset($fieldLabels[$idfield]) ? $fieldLabels[$idfield] : $idfield;
-                $result->error(
+                $result->addError(
                     _t(
                         'Checkout.MemberExists',
                         'A member already exists with the {Field} {Identifier}',
@@ -113,7 +115,9 @@ class Membership extends CheckoutComponent
             }
             $passwordresult = $this->passwordvalidator->validate($data['Password'], $member);
             if (!$passwordresult->isValid()) {
-                $result->error($passwordresult->message(), "Password");
+                foreach ($passwordresult->getMessages() as $message) {
+                    $result->addError($message['message'], "Password");
+                }
             }
         }
         if (!$result->isValid()) {
@@ -125,7 +129,7 @@ class Membership extends CheckoutComponent
     {
         $data = array();
 
-        if ($member = Member::currentUser()) {
+        if ($member = Security::getCurrentUser()) {
             $idf = Member::config()->unique_identifier_field;
             $data[$idf] = $member->{$idf};
         }
@@ -137,7 +141,7 @@ class Membership extends CheckoutComponent
      */
     public function setData(Order $order, array $data)
     {
-        if (Member::currentUserID()) {
+        if (Security::getCurrentUser()) {
             return;
         }
         if (!Checkout::membership_required() && empty($data['Password'])) {

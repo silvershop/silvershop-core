@@ -5,7 +5,7 @@ namespace SilverShop\Checkout\Step;
 use SilverShop\Cart\ShoppingCart;
 use SilverShop\Checkout\Component\AddressBookBilling;
 use SilverShop\Checkout\Component\AddressBookShipping;
-use SilverShop\Checkout\Component\CheckoutComponentConfig;
+use SilverShop\Checkout\CheckoutComponentConfig;
 
 class AddressBook extends Address
 {

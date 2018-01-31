@@ -6,7 +6,12 @@ namespace SilverShop\Model\Product;
 use SilverShop\Page\Product;
 use SilverStripe\Versioned\Versioned;
 
-
+/**
+ * Product - Order Item
+ * Connects a product to an orde.
+ *
+ * @property int ProductVersion
+ */
 class OrderItem extends \SilverShop\Model\OrderItem
 {
     private static $db = [
@@ -49,7 +54,7 @@ class OrderItem extends \SilverShop\Model\OrderItem
         ) {
             return $product;
         }
-        return false;
+        return null;
     }
 
     public function onPlacement()

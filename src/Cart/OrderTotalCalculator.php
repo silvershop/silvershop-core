@@ -41,7 +41,7 @@ class OrderTotalCalculator
     }
 
     /**
-     * @return int
+     * @return float
      * @throws Exception
      * @throws \Psr\Container\NotFoundExceptionInterface
      */

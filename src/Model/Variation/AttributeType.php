@@ -12,6 +12,8 @@ use SilverStripe\Forms\LiteralField;
 use SilverStripe\Forms\TextField;
 use SilverStripe\ORM\ArrayList;
 use SilverStripe\ORM\DataObject;
+use SilverStripe\ORM\HasManyList;
+use SilverStripe\ORM\ManyManyList;
 
 
 /**
@@ -19,7 +21,10 @@ use SilverStripe\ORM\DataObject;
  * Types of product attributes.
  * eg: color, size, length
  *
- * @subpackage variations
+ * @property string Name
+ * @property string Label
+ * @method AttributeValue[]|HasManyList Values
+ * @method Product[]|ManyManyList Product
  */
 class AttributeType extends DataObject
 {

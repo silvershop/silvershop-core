@@ -84,7 +84,7 @@ class ShoppingCartTest extends SapphireTest
         //$this->assertFalse($this->cart->current(),"there is no cart initally");
         $this->assertTrue((boolean)$this->cart->add($this->product), "add one item");
         $this->assertTrue((boolean)$this->cart->add($this->product), "add another item");
-        $this->assertEquals($this->cart->current()->class, "Order", "there a cart");
+        $this->assertEquals($this->cart->current()->class, Order::class, "there a cart");
         $this->assertTrue($this->cart->clear(), "clear the cart");
         $this->assertFalse($this->cart->current(), "there is no cart");
     }

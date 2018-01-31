@@ -44,12 +44,12 @@ abstract class ShopPeriodReport extends Report implements i18nEntityProvider
 
     public function title()
     {
-        return _t($this->class . ".Title", $this->title);
+        return _t(static::class . ".Title", $this->title);
     }
 
     public function description()
     {
-        return _t($this->class . ".Description", $this->description);
+        return _t(static::class . ".Description", $this->description);
     }
 
     public function parameterFields()
@@ -87,7 +87,7 @@ abstract class ShopPeriodReport extends Report implements i18nEntityProvider
 
     public function canView($member = null)
     {
-        if ($this->class === self::class) {
+        if (static::class === self::class) {
             return false;
         }
         return parent::canView($member);
@@ -198,14 +198,15 @@ abstract class ShopPeriodReport extends Report implements i18nEntityProvider
      */
     public function provideI18nEntities()
     {
+        $cls = static::class;
         return [
-            "{$this->class}.Title" => [
+            "{$cls}.Title" => [
                 $this->title,
-                "Title for the {$this->class} report",
+                "Title for the {$cls} report",
             ],
-            "{$this->class}.Description" => [
+            "{$cls}.Description" => [
                 $this->description,
-                "Description for the {$this->class} report",
+                "Description for the {$cls} report",
             ],
         ];
     }

@@ -9,6 +9,7 @@ use SilverShop\Model\Order;
 use SilverStripe\Forms\DropdownField;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\ORM\DataExtension;
+use SilverStripe\ORM\DataList;
 use SilverStripe\Security\Member;
 use SilverStripe\SiteConfig\SiteConfig;
 

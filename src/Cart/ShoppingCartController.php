@@ -2,6 +2,7 @@
 
 namespace SilverShop\Cart;
 
+use SilverShop\Extension\ViewableCartExtension;
 use SilverShop\Model\Buyable;
 use SilverShop\Model\Variation\Variation;
 use SilverShop\Page\CartPage;
@@ -23,6 +24,8 @@ use SilverStripe\View\Requirements;
 
 /**
  * Manipulate the cart via urls.
+ * @mixin ViewableCartExtension
+ * @method ShoppingCart Cart
  */
 class ShoppingCartController extends Controller
 {
@@ -306,6 +309,9 @@ class ShoppingCartController extends Controller
         }
     }
 
+    /**
+     * @param HTTPRequest $request
+     */
     protected function updateLocale($request)
     {
         $order = $this->cart->current();

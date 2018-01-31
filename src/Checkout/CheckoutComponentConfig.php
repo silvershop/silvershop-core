@@ -143,14 +143,14 @@ class CheckoutComponentConfig
                 $component->validateData($this->order, $this->dependantData($component, $data));
             } catch (ValidationException $e) {
                 //transfer messages into a single result
-                foreach ($e->getResult()->messageList() as $code => $message) {
+                foreach ($e->getResult()->getMessages() as $code => $message) {
                     if (is_numeric($code)) {
                         $code = null;
                     }
                     if ($this->namespaced) {
                         $code = $component->namespaceFieldName($code);
                     }
-                    $result->error($message, $code);
+                    $result->addError($message['message'], $code);
                 }
             }
         }

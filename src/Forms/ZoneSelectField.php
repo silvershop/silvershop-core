@@ -2,14 +2,14 @@
 
 namespace SilverShop\Forms;
 
+use SilverShop\Model\Zone;
 use SilverStripe\Forms\DropdownField;
-use SilverStripe\ORM\DataObject;
 
 class ZoneSelectField extends DropdownField
 {
     public function getSource()
     {
-        $zones = DataObject::get('Zone');
+        $zones = Zone::get();
         if ($zones && $zones->exists()) {
             return ['' => $this->emptyString] + $zones->map('ID', 'Name');
         }

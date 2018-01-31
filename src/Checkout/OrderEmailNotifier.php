@@ -3,7 +3,10 @@
 namespace SilverShop\Checkout;
 
 
+use SilverShop\Extension\ShopConfigExtension;
 use SilverShop\Model\Order;
+use SilverShop\Model\OrderStatusLog;
+use SilverShop\Page\CheckoutPage;
 use SilverStripe\Control\Director;
 use SilverStripe\Control\Email\Email;
 use SilverStripe\Core\Config\Config;
@@ -59,7 +62,7 @@ class OrderEmailNotifier
      */
     protected function buildEmail($template, $subject)
     {
-        $from = ShopConfig::config()->email_from ? ShopConfig::config()->email_from : Email::config()->admin_email;
+        $from = ShopConfigExtension::config()->email_from ? ShopConfigExtension::config()->email_from : Email::config()->admin_email;
         $to = $this->order->getLatestEmail();
         $checkoutpage = CheckoutPage::get()->first();
         $completemessage = $checkoutpage ? $checkoutpage->PurchaseComplete : '';
@@ -73,8 +76,8 @@ class OrderEmailNotifier
         $email->populateTemplate(
             array(
                 'PurchaseCompleteMessage' => $completemessage,
-                'Order'                   => $this->order,
-                'BaseURL'                 => Director::absoluteBaseURL(),
+                'Order' => $this->order,
+                'BaseURL' => Director::absoluteBaseURL(),
             )
         );
 
@@ -84,8 +87,8 @@ class OrderEmailNotifier
     /**
      * Send a mail of the order to the client (and another to the admin).
      *
-     * @param string $template    - the class name of the email you wish to send
-     * @param string $subject     - subject of the email
+     * @param string $template - the class name of the email you wish to send
+     * @param string $subject - subject of the email
      * @param bool $copyToAdmin - true by default, whether it should send a copy to the admin
      *
      * @return bool

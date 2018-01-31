@@ -13,6 +13,8 @@ use SilverShop\Checkout\Step\Membership;
 use SilverShop\Checkout\Step\PaymentMethod;
 use SilverShop\Checkout\Step\SteppedCheckout;
 use SilverShop\Checkout\Step\Summary;
+use SilverShop\Extension\SteppedCheckoutExtension;
+use SilverShop\Extension\ViewableCartExtension;
 use SilverShop\Forms\PaymentForm;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\FormAction;
@@ -21,13 +23,14 @@ use SilverStripe\Omnipay\Model\Message\GatewayErrorMessage;
 /**
  * @package shop
  * @mixin CheckoutPage
- * @mixin SteppedCheckout
+ * @mixin SteppedCheckoutExtension
  * @mixin Address
  * @mixin AddressBook
  * @mixin ContactDetails
  * @mixin Membership
  * @mixin PaymentMethod
  * @mixin Summary
+ * @mixin ViewableCartExtension
  */
 class CheckoutPageController extends PageController
 {

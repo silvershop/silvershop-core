@@ -4,6 +4,7 @@ namespace SilverShop\Model;
 
 
 use SilverStripe\ORM\DataObject;
+use SilverStripe\ORM\FieldType\DBDate;
 use SilverStripe\Security\Member;
 use SilverStripe\Security\Security;
 
@@ -12,7 +13,17 @@ use SilverStripe\Security\Security;
  * Data class that keeps a log of a single
  * status of an order.
  *
- * @package shop
+ * @property string Title
+ * @property string Note
+ * @property string DispatchedBy
+ * @property DBDate DispatchedOn
+ * @property string DispatchTicket
+ * @property string PaymentCode
+ * @property bool PaymentOK
+ * @property bool SentToCustomer
+ *
+ * @method Member Author
+ * @method Order Order
  */
 class OrderStatusLog extends DataObject
 {

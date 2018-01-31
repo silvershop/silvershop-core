@@ -6,7 +6,9 @@ namespace SilverShop\Forms;
 use SilverShop\Cart\ShoppingCart;
 use SilverShop\Cart\ShoppingCartController;
 use SilverShop\Model\Buyable;
+use SilverShop\Page\Product;
 use SilverShop\ShopTools;
+use SilverStripe\Control\Controller;
 use SilverStripe\Core\Convert;
 use SilverStripe\Forms\DropdownField;
 use SilverStripe\Forms\FieldList;
@@ -101,7 +103,7 @@ class AddProductForm extends Form
         if ($this->controller->dataRecord instanceof Buyable) {
             return $this->controller->dataRecord;
         }
-        return DataObject::get_by_id('Product', (int)$this->request->postVar("BuyableID")); //TODO: get buyable
+        return Product::get()->byID((int)$this->getRequest()->postVar('BuyableID'));
     }
 
     /**

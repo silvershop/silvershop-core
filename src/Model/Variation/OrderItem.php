@@ -7,6 +7,9 @@ use SilverStripe\Versioned\Versioned;
 /**
  * Product Variation - Order Item
  * Connects a variation to an order, as a line in the order specifying the particular variation.
+ *
+ * @property int ProductVariationVersion
+ * @property int ProductVariationID
  */
 class OrderItem extends \SilverShop\Model\Product\OrderItem
 {

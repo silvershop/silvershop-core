@@ -4,9 +4,9 @@ namespace SilverShop\Checkout\Step;
 
 
 use SilverShop\Cart\ShoppingCart;
-use SilverShop\Forms\CheckoutForm;
-use SilverShop\Checkout\Component\CheckoutComponentConfig;
+use SilverShop\Checkout\CheckoutComponentConfig;
 use SilverShop\Checkout\Component\CustomerDetails;
+use SilverShop\Forms\CheckoutForm;
 use SilverShop\Model\Order;
 use SilverShop\Page\CheckoutPage;
 use SilverStripe\Control\Controller;
@@ -113,7 +113,7 @@ class Membership extends CheckoutStep
         }
         $config = CheckoutComponentConfig::create($order, false);
         $config->addComponent(CustomerDetails::create());
-        $config->addComponent(Membership::create());
+        $config->addComponent(\SilverShop\Checkout\Component\Membership::create());
 
         return $config;
     }

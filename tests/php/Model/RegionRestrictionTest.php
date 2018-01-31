@@ -83,7 +83,7 @@ class RegionRestrictionTest extends SapphireTest
     public function getRate(Address $address)
     {
         $where = RegionRestriction::address_filter($address);
-        return DataObject::get_one("RegionRestriction_RateTest", $where, true, "Rate ASC");
+        return RegionRestriction_RateTest::get()->where($where)->sort('Rate','ASC');
     }
 }
 

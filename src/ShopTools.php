@@ -3,7 +3,7 @@
 namespace SilverShop;
 
 use Psr\Container\NotFoundExceptionInterface;
-use SilverShop\Cms\ShopConfigExtension;
+use SilverShop\Extension\ShopConfigExtension;
 use SilverStripe\Control\Controller;
 use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Control\Session;

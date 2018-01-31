@@ -7,6 +7,8 @@ use SilverShop\Model\Modifiers\OrderModifier;
 
 /**
  * Base class for creating tax modifiers with.
+ *
+ * @property double Rate
  */
 class Base extends OrderModifier
 {
