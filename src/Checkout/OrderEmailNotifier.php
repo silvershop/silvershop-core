@@ -11,6 +11,7 @@ use SilverStripe\Control\Director;
 use SilverStripe\Control\Email\Email;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Config\Config_ForClass;
+use SilverStripe\Core\Config\Configurable;
 use SilverStripe\Core\Injector\Injectable;
 use SilverStripe\Core\Injector\Injector;
 
@@ -23,6 +24,7 @@ use SilverStripe\Core\Injector\Injector;
 class OrderEmailNotifier
 {
     use Injectable;
+    use Configurable;
 
     /**
      * @var Order $order
@@ -69,17 +71,16 @@ class OrderEmailNotifier
 
         /** @var Email $email */
         $email = Injector::inst()->create('ShopEmail');
-        $email->setTemplate($template);
+        $email->setHTMLTemplate($template);
         $email->setFrom($from);
         $email->setTo($to);
         $email->setSubject($subject);
-        $email->populateTemplate(
-            array(
-                'PurchaseCompleteMessage' => $completemessage,
-                'Order' => $this->order,
-                'BaseURL' => Director::absoluteBaseURL(),
-            )
-        );
+
+        $email->setData([
+            'PurchaseCompleteMessage' => $completemessage,
+            'Order' => $this->order,
+            'BaseURL' => Director::absoluteBaseURL(),
+        ]);
 
         return $email;
     }
@@ -120,7 +121,7 @@ class OrderEmailNotifier
             array('OrderNo' => $this->order->Reference)
         );
         return $this->sendEmail(
-            'Order_ConfirmationEmail',
+            'SilverShop/Model/Order_ConfirmationEmail',
             $subject,
             self::config()->bcc_confirmation_to_admin
         );
@@ -138,7 +139,7 @@ class OrderEmailNotifier
             array('OrderNo' => $this->order->Reference)
         );
 
-        $email = $this->buildEmail('Order_AdminNotificationEmail', $subject)
+        $email = $this->buildEmail('SilverShop/Model/Order_AdminNotificationEmail', $subject)
             ->setTo(Email::config()->admin_email);
 
         if ($this->debugMode) {
@@ -162,7 +163,7 @@ class OrderEmailNotifier
         );
 
         return $this->sendEmail(
-            'Order_ReceiptEmail',
+            'SilverShop/Model/Order_ReceiptEmail',
             $subject,
             self::config()->bcc_receipt_to_admin
         );
@@ -208,14 +209,14 @@ class OrderEmailNotifier
             }
         }
 
-        if (Config::inst()->get('OrderProcessor', 'receipt_email')) {
-            $adminEmail = Config::inst()->get('OrderProcessor', 'receipt_email');
+        if (Config::inst()->get(OrderProcessor::class, 'receipt_email')) {
+            $adminEmail = Config::inst()->get(OrderProcessor::class, 'receipt_email');
         } else {
             $adminEmail = Email::config()->admin_email;
         }
 
         $e = Injector::inst()->create('ShopEmail');
-        $e->setTemplate('Order_StatusEmail');
+        $e->setTemplate('SilverShop/Model/Order_StatusEmail');
         $e->populateTemplate(
             array(
                 "Order" => $this->order,
@@ -226,10 +227,5 @@ class OrderEmailNotifier
         $e->setSubject(_t('ShopEmail.StatusChangeSubject') . $title);
         $e->setTo($this->order->getLatestEmail());
         $e->send();
-    }
-
-    public static function config()
-    {
-        return new Config_ForClass("OrderEmailNotifier");
     }
 }

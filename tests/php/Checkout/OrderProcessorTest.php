@@ -33,6 +33,7 @@ class OrderProcessorTest extends SapphireTest
     protected static $disable_theme  = true;
     protected static $use_draft_site = true;
     protected $processor;
+
     protected static $extra_dataobjects = [
         OrderProcessorTest_CustomOrderItem::class
     ];

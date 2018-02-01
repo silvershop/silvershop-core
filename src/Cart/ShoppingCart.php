@@ -450,13 +450,14 @@ class ShoppingCart
     public function clear($write = true)
     {
         $session = ShopTools::getSession();
-        $session->clear(self::config()->cartid_session_name);
+        $session->set(self::config()->cartid_session_name, null)->clear(self::config()->cartid_session_name);
         $order = $this->current();
         $this->order = null;
-        if (!$order) {
-            return $this->error(_t(__CLASS__ . '.NoCartFound', 'No cart found.'));
-        }
+
         if ($write) {
+            if (!$order) {
+                return $this->error(_t(__CLASS__ . '.NoCartFound', 'No cart found.'));
+            }
             $order->write();
         }
         $this->message(_t(__CLASS__ . '.Cleared', 'Cart was successfully cleared.'));

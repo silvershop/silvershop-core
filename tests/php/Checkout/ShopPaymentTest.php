@@ -8,14 +8,21 @@ use Guzzle\Plugin\Mock\MockPlugin;
 use SilverShop\Cart\ShoppingCart;
 use SilverShop\Checkout\OrderProcessor;
 use SilverShop\Model\Order;
+use SilverShop\Model\OrderItem;
 use SilverShop\Page\CartPage;
 use SilverShop\Page\CheckoutPage;
 use SilverShop\Page\Product;
 use SilverShop\Tests\ShopTest;
+use SilverStripe\Core\ClassInfo;
+use SilverStripe\Core\Config\Config;
+use SilverStripe\Core\Manifest\ClassLoader;
+use SilverStripe\Core\Manifest\ClassManifest;
+use SilverStripe\Dev\Debug;
 use SilverStripe\Dev\FunctionalTest;
 use SilverStripe\Dev\TestSession;
 use SilverStripe\Omnipay\Model\Payment;
 use SilverStripe\Omnipay\Service\PaymentService;
+use SilverStripe\ORM\DataObject;
 use Symfony\Component\HttpFoundation\Request;
 
 class ShopPaymentTest extends FunctionalTest
@@ -26,25 +33,29 @@ class ShopPaymentTest extends FunctionalTest
     );
     public static $disable_theme = true;
 
-
     public function setUp()
     {
         parent::setUp();
+
+        DataObject::reset();
+        ClassLoader::inst()->init(false, true);
+        Debug::dump(ClassInfo::subclassesFor(OrderItem::class));
         ShoppingCart::singleton()->clear();
         ShopTest::setConfiguration();
 
         //set supported gateways
-        Payment::config()->allowed_gateways = array(
+        Config::modify()->set(Payment::class, 'allowed_gateways', [
             'Dummy', //onsite
             'Manual', //manual
             'PaymentExpress_PxPay', //offsite
             'PaymentExpress_PxPost' //onsite
-        );
+        ]);
 
         PaymentService::setHttpClient($this->getHttpClient());
         PaymentService::setHttpRequest($this->getHttpRequest());
 
         //publish products
+        $this->logInWithPermission('ADMIN');
         $this->objFromFixture(Product::class, "socks")->publishSingle();
         $this->objFromFixture(CheckoutPage::class, "checkout")->publishSingle();
         $this->objFromFixture(CartPage::class, "cart")->publishSingle();
@@ -95,7 +106,7 @@ class ShopPaymentTest extends FunctionalTest
         //bring back client session
         $this->mainSession = $oldsession;
         // complete the order
-        $response = $this->get("paymentendpoint/$identifier/complete");
+        $response = $this->get("paymentendpoint/$identifier/complete", $oldsession->session());
 
         //reload cart as new order
         $order = Order::get()->byId($cart->ID);

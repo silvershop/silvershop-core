@@ -6,8 +6,7 @@ namespace SilverShop\Tests\Extension;
 use SilverShop\Cart\ShoppingCart;
 use SilverShop\Extension\MemberExtension;
 use SilverShop\Model\Order;
-use SilverStripe\Control\Email\Email;
-use SilverStripe\Dev\FunctionalTest;
+use SilverStripe\Dev\SapphireTest;
 use SilverStripe\Security\Member;
 use SilverStripe\Security\Security;
 
@@ -15,19 +14,12 @@ use SilverStripe\Security\Security;
 /**
  * Test member functionality added via ShopMember extension
  */
-class MemberExtensionTest extends FunctionalTest
+class MemberExtensionTest extends SapphireTest
 {
     public static $fixture_file = array(
         __DIR__ . '/../Fixtures/ShopMembers.yml',
         __DIR__ . '/../Fixtures/shop.yml',
     );
-
-    public function setUp()
-    {
-        parent::setUp();
-        // clear session
-        ShoppingCart::singleton()->clear();
-    }
 
     public function testGetByIdentifier()
     {
@@ -57,12 +49,11 @@ class MemberExtensionTest extends FunctionalTest
         $order = $this->objFromFixture(Order::class, "cart");
         ShoppingCart::singleton()->setCurrent($order);
         $member = $this->objFromFixture(Member::class, "jeremyperemy");
-        Security::setCurrentUser($member);
+        $this->logInAs($member);
         $this->assertEquals($member->ID, $order->MemberID);
+        $this->logOut();
 
-        $member->logOut();
-
-        $this->assertFalse(ShoppingCart::curr());
+        $this->assertNull(ShoppingCart::curr());
     }
 
     public function testLoginDoesntJoinCart()

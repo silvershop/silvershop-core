@@ -7,13 +7,10 @@ use SilverShop\Cart\ShoppingCart;
 use SilverShop\Cart\ShoppingCartController;
 use SilverShop\Model\Variation\Variation;
 use SilverShop\Page\Product;
-use SilverShop\Tests\Model\Product\CustomProduct;
-use SilverShop\Tests\Model\Product\CustomProduct_OrderItem;
 use SilverShop\Tests\ShopTest;
-use SilverStripe\Security\SecurityToken;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\FunctionalTest;
-
+use SilverStripe\Security\SecurityToken;
 
 
 /**
@@ -24,11 +21,6 @@ use SilverStripe\Dev\FunctionalTest;
 class ShoppingCartControllerTest extends FunctionalTest
 {
     public static $fixture_file   = __DIR__ . '/../Fixtures/shop.yml';
-
-    protected static $extra_dataobjects = [
-        CustomProduct::class,
-        CustomProduct_OrderItem::class,
-    ];
 
     public static $disable_theme  = true;
     public static $use_draft_site = false;

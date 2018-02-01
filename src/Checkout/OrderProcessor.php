@@ -20,6 +20,7 @@ use SilverStripe\Omnipay\Service\ServiceResponse;
 use SilverStripe\ORM\DB;
 use SilverStripe\ORM\FieldType\DBDatetime;
 use SilverStripe\Security\Member;
+use SilverStripe\Security\Security;
 
 
 /**
@@ -189,7 +190,7 @@ class OrderProcessor
             );
             return false;
         }
-        if (!$this->order->canPay(Member::currentUser())) {
+        if (!$this->order->canPay(Security::getCurrentUser())) {
             $this->error(_t("PaymentProcessor.CantPay", "Order can't be paid for."));
             return false;
         }
@@ -356,11 +357,13 @@ class OrderProcessor
         }
 
         //remove from session
+        ShoppingCart::singleton()->clear(false);
+        /*
         $cart = ShoppingCart::curr();
         if ($cart && $cart->ID == $this->order->ID) {
             // clear the cart, but don't write the order in the process (order is finalized and should NOT be overwritten)
-            ShoppingCart::singleton()->clear(false);
         }
+        */
 
         //send confirmation if configured and receipt hasn't been sent
         if (
