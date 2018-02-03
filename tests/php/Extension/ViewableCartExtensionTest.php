@@ -21,6 +21,7 @@ class ViewableCartExtensionTest extends FunctionalTest
         parent::setUp();
         ShoppingCart::singleton()->clear();
         ShopTest::setConfiguration();
+        $this->logInWithPermission('ADMIN');
         $this->objFromFixture(Product::class, "socks")->publishSingle();
     }
 

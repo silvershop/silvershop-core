@@ -111,10 +111,19 @@ class ProductVariationsExtension extends DataExtension
             return null;
         }
 
-        return Variation::get()->filter([
-            'ProductID' => $this->owner->ID,
-            'AttributeValues.ID' => array_filter(array_values($attributes))
-        ])->first();
+        $attrs = array_filter(array_values($attributes));
+        $set = Variation::get()->filter('ProductID', $this->owner->ID);
+
+        foreach ($attrs as $i => $valueid) {
+            $alias = "A$i";
+            $set = $set->innerJoin(
+                'SilverShop_Variation_AttributeValues',
+                "\"SilverShop_Variation\".\"ID\" = \"$alias\".\"SilverShop_VariationID\"",
+                $alias
+            )->where(["\"$alias\".\"SilverShop_AttributeValueID\" = ?" => $valueid]);
+        }
+
+        return $set->first();
     }
 
     /**

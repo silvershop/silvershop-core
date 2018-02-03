@@ -853,7 +853,7 @@ class Order extends DataObject
                 '',
                 ['OrderNo' => $this->Reference, 'OrderStatus' => $this->getStatusI18N()]
             );
-            $log->Note = _t('ShopEmail.StatusChange' . $this->Status . 'Note');
+            $log->Note = _t('ShopEmail.StatusChange' . $this->Status . 'Note', $this->Status . 'Note');
             $log->OrderID = $this->ID;
             OrderEmailNotifier::create($this)->sendStatusChange($log->Title, $log->Note);
             $log->SentToCustomer = true;

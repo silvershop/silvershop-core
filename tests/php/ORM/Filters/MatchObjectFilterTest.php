@@ -14,7 +14,7 @@ class MatchObjectFilterTest extends SapphireTest
     public function testRelationId()
     {
         // Tests that an ID is automatically added to any relation fields in the DataObject's has_one.
-        $filter = new MatchObjectFilter(OrderItem::class, array('ProductID' => 5), array('Product'));
+        $filter = new MatchObjectFilter(OrderItem::class, array('ProductID' => 5), array('ProductID'));
         $this->assertEquals($filter->getFilter(), array('"ProductID" = \'5\''), 'ID was added to filter');
     }
 
@@ -22,7 +22,7 @@ class MatchObjectFilterTest extends SapphireTest
     {
         // Tests that missing values are included in the filter as IS NULL or = 0
         // Missing value for a has_one relationship field.
-        $filter = new MatchObjectFilter(OrderItem::class, array(), array('Product'));
+        $filter = new MatchObjectFilter(OrderItem::class, array(), array('ProductID'));
         $this->assertEquals(
             $filter->getFilter(),
             array('("ProductID" = 0 OR "ProductID" IS NULL)'),
@@ -32,7 +32,7 @@ class MatchObjectFilterTest extends SapphireTest
         $filter = new MatchObjectFilter(OrderItem::class, array(), array('ProductVersion'));
         $this->assertEquals(
             $filter->getFilter(),
-            array('"ProductVersion" IS NULL'),
+            array('("ProductVersion" = 0 OR "ProductVersion" IS NULL)'),
             'missing DB value became IS NULL or = 0'
         );
     }

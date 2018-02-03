@@ -18,23 +18,11 @@ use SilverStripe\ORM\FieldType\DBDatetime;
  */
 class CartCleanupTaskTest extends SapphireTest
 {
-    public function setUp()
-    {
-        parent::setUp();
-
-        Config::nest();
-        Config::modify()->set(CartCleanupTask::class, 'delete_after_mins', 120);
-    }
-
-    public function tearDown()
-    {
-        parent::tearDown();
-
-        Config::unnest();
-    }
+    protected $usesDatabase = true;
 
     public function testRun()
     {
+        Config::modify()->set(CartCleanupTask::class, 'delete_after_mins', 120);
         DBDatetime::set_mock_now('2014-01-31 13:00:00');
 
         // less than two hours old
@@ -53,7 +41,7 @@ class CartCleanupTaskTest extends SapphireTest
         DB::query('UPDATE "SilverShop_Order" SET "LastEdited" = \'2014-01-31 10:00:00\' WHERE "ID" = ' . $orderPaidOldID);
 
         $task = new FakeCartCleanupTask();
-        $response = $task->run(new HTTPRequest('GET', '/'));
+        $response = $task->run(null);
 
         $this->assertInstanceOf(Order::class, Order::get()->byID($orderRunningRecentID));
         $this->assertNull(Order::get()->byID($orderRunningOldID));

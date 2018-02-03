@@ -96,7 +96,7 @@
                                         <% with Order %>
                                             <tr>
                                                 <td class="content-block" valign="top">
-                                                    <%t LeftAndMain_Menu_ss.Hello %> <% if $FirstName %>$FirstName<% else %>$Member.FirstName<% end_if %>
+                                                    <%t SilverStripe\Control\ChangePasswordEmail_ss.Hello 'Hello' %> <% if $FirstName %>$FirstName<% else %>$Member.FirstName<% end_if %>
                                                 </td>
                                             </tr>
                                             <tr>
@@ -119,7 +119,7 @@
                                         <tr>
                                             <td class="content-block" valign="top">
                                                 $SiteConfig.Title<br/>
-                                                $from<br/>
+                                                $FromEmail<br/>
                                                 <%t ShopEmail.PhoneNumber "PhoneNumber" %>
                                             </td>
                                         </tr>

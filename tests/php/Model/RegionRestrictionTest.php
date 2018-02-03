@@ -6,7 +6,6 @@ namespace SilverShop\Tests\Model;
 use SilverShop\Model\Address;
 use SilverShop\Model\RegionRestriction;
 use SilverStripe\Dev\SapphireTest;
-use SilverStripe\ORM\DataObject;
 
 
 class RegionRestrictionTest extends SapphireTest
@@ -15,6 +14,10 @@ class RegionRestrictionTest extends SapphireTest
         __DIR__ . '/../Fixtures/RegionRestriction.yml',
         __DIR__ . '/../Fixtures/Addresses.yml',
     );
+
+    protected static $extra_dataobjects = [
+        RegionRestriction_RateTest::class
+    ];
 
     public function testMatchLocal()
     {

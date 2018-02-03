@@ -46,6 +46,8 @@ class ProductCategoryTest extends FunctionalTest
         parent::setUp();
         Config::modify()->set(ProductCategory::class, 'must_have_price', false);
 
+        $this->logInWithPermission('ADMIN');
+
         $this->products = $this->objFromFixture(ProductCategory::class, 'products');
         $this->products->publishSingle();
         $this->clothing = $this->objFromFixture(ProductCategory::class, 'clothing');
@@ -63,6 +65,8 @@ class ProductCategoryTest extends FunctionalTest
         $this->beachball->publishSingle();
         $this->mp3player = $this->objFromFixture(Product::class, 'mp3player');
         $this->mp3player->publishSingle();
+
+        $this->logOut();
 
         Versioned::set_stage('Live');
     }

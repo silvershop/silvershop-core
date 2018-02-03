@@ -8,21 +8,15 @@ use Guzzle\Plugin\Mock\MockPlugin;
 use SilverShop\Cart\ShoppingCart;
 use SilverShop\Checkout\OrderProcessor;
 use SilverShop\Model\Order;
-use SilverShop\Model\OrderItem;
 use SilverShop\Page\CartPage;
 use SilverShop\Page\CheckoutPage;
 use SilverShop\Page\Product;
 use SilverShop\Tests\ShopTest;
-use SilverStripe\Core\ClassInfo;
 use SilverStripe\Core\Config\Config;
-use SilverStripe\Core\Manifest\ClassLoader;
-use SilverStripe\Core\Manifest\ClassManifest;
-use SilverStripe\Dev\Debug;
 use SilverStripe\Dev\FunctionalTest;
 use SilverStripe\Dev\TestSession;
 use SilverStripe\Omnipay\Model\Payment;
 use SilverStripe\Omnipay\Service\PaymentService;
-use SilverStripe\ORM\DataObject;
 use Symfony\Component\HttpFoundation\Request;
 
 class ShopPaymentTest extends FunctionalTest
@@ -32,14 +26,17 @@ class ShopPaymentTest extends FunctionalTest
         __DIR__ . '/../Fixtures/shop.yml',
     );
     public static $disable_theme = true;
+    protected $autoFollowRedirection = false;
 
     public function setUp()
     {
         parent::setUp();
 
+        /*
         DataObject::reset();
         ClassLoader::inst()->init(false, true);
         Debug::dump(ClassInfo::subclassesFor(OrderItem::class));
+        */
         ShoppingCart::singleton()->clear();
         ShopTest::setConfiguration();
 

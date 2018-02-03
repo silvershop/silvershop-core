@@ -7,6 +7,7 @@ use SilverShop\Cart\ShoppingCart;
 use SilverShop\Cart\ShoppingCartController;
 use SilverShop\Model\Variation\Variation;
 use SilverShop\Page\Product;
+use SilverShop\Tests\Model\Product\CustomProduct_OrderItem;
 use SilverShop\Tests\ShopTest;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\FunctionalTest;
@@ -25,6 +26,12 @@ class ShoppingCartControllerTest extends FunctionalTest
     public static $disable_theme  = true;
     public static $use_draft_site = false;
     protected $autoFollowRedirection = false;
+
+    // This seems to be required, because we query the OrderItem table and thus this gets included…
+    // TODO: Remove once we figure out how to circumvent that…
+    protected static $extra_dataobjects = [
+        CustomProduct_OrderItem::class,
+    ];
 
     /** @var Product */
     protected $mp3player;
@@ -87,11 +94,10 @@ class ShoppingCartControllerTest extends FunctionalTest
 
         $this->assertEquals($items->Count(), 2, 'There are 2 items in the cart');
         //join needed to provide ProductID
-        $mp3playeritem =
-            $items->innerJoin("SilverShop_Product_OrderItem", "\"SilverShop_OrderItem\".\"ID\" = \"SilverShop_Product_OrderItem\".\"ID\"")->find(
-                'ProductID',
-                $this->mp3player->ID
-            );    //join needed to provide ProductID
+        $mp3playeritem = $items
+            ->innerJoin("SilverShop_Product_OrderItem", "\"SilverShop_OrderItem\".\"ID\" = \"SilverShop_Product_OrderItem\".\"ID\"")
+            ->find('ProductID', $this->mp3player->ID);
+
         $this->assertNotNull($mp3playeritem, "Mp3 player is in cart");
 
         // We have the product that we asserted in our fixture file, with a quantity of 2 in the cart

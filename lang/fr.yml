@@ -421,7 +421,7 @@ fr:
     ReceiptSubject: 'Reçu pour la commande #{OrderNo} '
     ReceiptTitle: 'Reçu'
     Regards: 'Cordialement'
-    StatusChangeSubject: 'Silvershop'
+    StatusChangeSubject: 'Silvershop - {Title}'
     StatusChangeTitle: 'Changement de statuts de la boutique'
     StatusChanged: 'Statut de la commander #{OrderNo} changé en "{OrderStatus}"'
     StatusChangeAdminCancelledNote: 'Votre commande a été annulée par notre équipe. Veuillez prendre contact avec nous si vous avez des questions à propos de cette commande. '

@@ -1,12 +1,6 @@
 ---
 Name: silvershop-logging
 ---
-# Set up a logger for silvershop that logs to a separate channel named "silvershop-log"
+# Set up a logger for silvershop, but map it to the default implementation
 SilverStripe\Core\Injector\Injector:
-  SilverShop\Logger:
-    type: singleton
-    class: Monolog\Logger
-    constructor:
-      - 'silvershop-log'
-    calls:
-      pushDisplayErrorHandler: [ pushHandler, [ '%$Monolog\Handler\HandlerInterface' ] ]
+  SilverShop\Logger: '%$Psr\Log\LoggerInterface'

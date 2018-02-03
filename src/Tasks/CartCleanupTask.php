@@ -43,7 +43,7 @@ class CartCleanupTask extends BuildTask
         }
 
         $count = 0;
-        $time = date('Y-m-d H:i:s', DBDatetime::now()->Format('U') - $this->config()->get('delete_after_mins') * 60);
+        $time = date('Y-m-d H:i:s', DBDatetime::now()->getTimestamp() - $this->config()->get('delete_after_mins') * 60);
 
         $this->log('Deleting all orders since ' . $time);
 

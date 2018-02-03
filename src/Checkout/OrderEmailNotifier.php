@@ -10,7 +10,6 @@ use SilverShop\Page\CheckoutPage;
 use SilverStripe\Control\Director;
 use SilverStripe\Control\Email\Email;
 use SilverStripe\Core\Config\Config;
-use SilverStripe\Core\Config\Config_ForClass;
 use SilverStripe\Core\Config\Configurable;
 use SilverStripe\Core\Injector\Injectable;
 use SilverStripe\Core\Injector\Injector;
@@ -215,16 +214,16 @@ class OrderEmailNotifier
             $adminEmail = Email::config()->admin_email;
         }
 
+        /** @var Email $e */
         $e = Injector::inst()->create('ShopEmail');
-        $e->setTemplate('SilverShop/Model/Order_StatusEmail');
-        $e->populateTemplate(
-            array(
-                "Order" => $this->order,
-                "Note" => $note
-            )
-        );
+        $e->setHTMLTemplate('SilverShop/Model/Order_StatusEmail');
+        $e->setData([
+            'Order' => $this->order,
+            'Note' => $note,
+            'FromEmail' => $adminEmail
+        ]);
         $e->setFrom($adminEmail);
-        $e->setSubject(_t('ShopEmail.StatusChangeSubject') . $title);
+        $e->setSubject(_t('ShopEmail.StatusChangeSubject', 'SilverShop – {Title}', ['Title' => $title]));
         $e->setTo($this->order->getLatestEmail());
         $e->send();
     }

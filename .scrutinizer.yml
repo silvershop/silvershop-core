@@ -1,26 +1,15 @@
 inherit: true
-tools:
-  external_code_coverage:
-    timeout: 1500
-    runs: 3
-  php_analyzer:
-    enabled: true
-    config:
-      phpunit_checks:
-        enabled: true
-  php_mess_detector:
-    config:
-      unused_code_rules:
-        unused_private_field:  false
-        unused_local_variable:  true
-        unused_private_method:  true
-        unused_formal_parameter:  true
-      code_size_rules:
-        npath_complexity:     true
-        excessive_method_length:  true
-        excessive_class_length:  true
-        excessive_parameter_list:  true
-        excessive_public_count:  true
-        too_many_fields:      true
-        too_many_methods:     true
-        excessive_class_complexity:  true
+
+checks:
+  php: true
+
+build:
+  nodes:
+    analysis:
+      tests:
+        override: [php-scrutinizer-run]
+
+filter:
+  paths:
+    - src/*
+    - tests/*

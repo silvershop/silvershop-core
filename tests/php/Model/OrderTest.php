@@ -275,7 +275,7 @@ class OrderTest extends SapphireTest
 
     public function testStatusChange()
     {
-        Config::modify()->merge(Order::class, 'extensions', array('OrderTest_TestStatusChangeExtension'));
+        Config::modify()->merge(Order::class, 'extensions', [OrderTest_TestStatusChangeExtension::class]);
 
         $order = Order::create();
         $orderId = $order->write();

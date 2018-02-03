@@ -8,6 +8,7 @@ use SilverShop\Model\Variation\AttributeType;
 use SilverShop\Model\Variation\AttributeValue;
 use SilverShop\Model\Variation\Variation;
 use SilverShop\Page\Product;
+use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\SapphireTest;
 
 
@@ -21,7 +22,7 @@ use SilverStripe\Dev\SapphireTest;
  */
 class VariationTest extends SapphireTest
 {
-    public static $fixture_file   = __DIR__ . '/../Fixtures/variations.yml';
+    public static $fixture_file   = __DIR__ . '/../../Fixtures/variations.yml';
     public static $disable_theme  = true;
     public static $use_draft_site = true;
 
@@ -48,9 +49,10 @@ class VariationTest extends SapphireTest
         $cart = ShoppingCart::singleton();
 
         //config
-        Variation::config()->title_has_label = true;
-        Variation::config()->title_separator = ':';
-        Variation::config()->title_glue = ', ';
+        Config::modify()
+            ->set(Variation::class, 'title_has_label', true)
+            ->set(Variation::class, 'title_separator', ':')
+            ->set(Variation::class, 'title_glue', ', ');
 
         $emptyitem = $this->redlarge->Item();
         $this->assertEquals(1, $emptyitem->Quantity, "Items always have a quantity of at least 1.");
@@ -69,12 +71,12 @@ class VariationTest extends SapphireTest
         $sizelarge = $this->objFromFixture(AttributeValue::class, "size_large");
         $attributes = array($colorred->ID, $sizelarge->ID);
         $variation = $this->ball->getVariationByAttributes($attributes);
-        $this->assertTrue((bool)$variation, "Variation exists");
+        $this->assertInstanceOf(Variation::class, $variation, "Variation exists");
         $this->assertEquals(22, $variation->sellingPrice(), "Variation price is $22 (price of ball");
 
         $attributes = array($colorred->ID, 999);
         $variation = $this->ball->getVariationByAttributes($attributes);
-        $this->assertFalse($variation, "Variation does not exist");
+        $this->assertNull($variation, "Variation does not exist");
     }
 
     public function testGenerateVariations()

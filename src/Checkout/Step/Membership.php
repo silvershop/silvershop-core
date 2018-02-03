@@ -14,6 +14,7 @@ use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\Form;
 use SilverStripe\Forms\FormAction;
+use SilverStripe\Security\MemberAuthenticator\MemberAuthenticator;
 use SilverStripe\Security\MemberAuthenticator\MemberLoginForm;
 use SilverStripe\Security\Security;
 
@@ -84,7 +85,7 @@ class Membership extends CheckoutStep
 
     public function LoginForm()
     {
-        $form = MemberLoginForm::create($this->owner, 'LoginForm');
+        $form = MemberLoginForm::create($this->owner, MemberAuthenticator::class, 'LoginForm');
         $this->owner->extend('updateLoginForm', $form);
         return $form;
     }

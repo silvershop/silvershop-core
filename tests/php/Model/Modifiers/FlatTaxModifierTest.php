@@ -20,7 +20,7 @@ use SilverStripe\Dev\FunctionalTest;
  */
 class FlatTaxModifierTest extends FunctionalTest
 {
-    protected static $fixture_file  = __DIR__ . '/../Fixtures/shop.yml';
+    protected static $fixture_file  = __DIR__ . '/../../Fixtures/shop.yml';
     protected static $disable_theme = true;
 
     /** @var Product */

@@ -96,7 +96,7 @@ class OrderStatusLogTest extends SapphireTest
         $this->assertEmailSent(
             'jeremy@example.com',
             'shopadmin@example.com',
-            _t('ShopEmail.StatusChangeSubject') . $log_order_status_processing->Title
+            'Silvershop - ' . $log_order_status_processing->Title
         );
         $order->Status = "Sent";
         $order->write();
@@ -130,7 +130,7 @@ class OrderStatusLogTest extends SapphireTest
         $this->assertEmailSent(
             "jeremy@example.com",
             "shopadmin@example.com",
-            _t('ShopEmail.StatusChangeSubject') . $log_order_status_sent->Title
+            'Silvershop - ' . $log_order_status_sent->Title
         );
 
         $order->Status = "Complete";
@@ -172,7 +172,7 @@ class OrderStatusLogTest extends SapphireTest
         $this->assertEmailSent(
             "jeremy@example.com",
             "shopadmin@example.com",
-            _t('ShopEmail.StatusChangeSubject') . $log_order_status_admin_cancelled->Title
+            'Silvershop - ' . $log_order_status_admin_cancelled->Title
         );
 
         $order->Status = "MemberCancelled";
@@ -205,7 +205,7 @@ class OrderStatusLogTest extends SapphireTest
         $this->assertEmailSent(
             'jeremy@example.com',
             'shopadmin@example.com',
-            _t('ShopEmail.StatusChangeSubject') . $log_order_status_member_cancelled->Title
+            'Silvershop - ' . $log_order_status_member_cancelled->Title
         );
     }
 
@@ -229,7 +229,7 @@ class OrderStatusLogTest extends SapphireTest
         $this->assertEmailSent(
             'jeremy@example.com',
             'shopadmin@example.com',
-            _t('ShopEmail.StatusChangeSubject') . $logEntry->Title
+            'Silvershop - ' . $logEntry->Title
         );
 
         // clear sent emails
@@ -318,7 +318,7 @@ class OrderStatusLogTest extends SapphireTest
         $this->assertEmailSent(
             "ed@example.com",
             "shopadmin@example.com",
-            _t('ShopEmail.StatusChangeSubject') . $log_order_status_processing->Title
+            'Silvershop - ' . $log_order_status_processing->Title
         );
     }
 }

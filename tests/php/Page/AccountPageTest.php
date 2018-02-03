@@ -37,7 +37,7 @@ class AccountPageTest extends FunctionalTest
         Controller::add_extension(ShopTestControllerExtension::class);
         $this->accountpage = $this->objFromFixture(AccountPage::class, "accountpage");
         $this->controller = new AccountPageController($this->accountpage);
-        $this->controller->init();
+        //$this->controller->init();
     }
 
     public function testCanViewAccountPage()
@@ -52,7 +52,7 @@ class AccountPageTest extends FunctionalTest
         // login using form
         $this->submitForm(
             "MemberLoginForm_LoginForm",
-            "action_dologin",
+            "action_doLogin",
             array(
                 'Email' => 'test@example.com',
                 'Password' => '23u90oijlJKsa',
@@ -62,7 +62,7 @@ class AccountPageTest extends FunctionalTest
         $page = $this->get("account/");  // try accessing the account page again
         $this->assertEquals(200, $page->getStatusCode(), "a page should load");
 
-        $this->assertEquals('AccountPage', $page->getHeader('X-TestPageClass'), "Account Page should open");
+        $this->assertEquals(AccountPageController::class, $page->getHeader('X-TestPageClass'), "Account Page should open");
     }
 
     public function testGlobals()
@@ -77,16 +77,14 @@ class AccountPageTest extends FunctionalTest
         $member = $this->objFromFixture(Member::class, "joebloggs");
         $this->logInAs($member);
 
-        $this->controller->init(); //reinit to connect up member
-
         $address = $this->objFromFixture(Address::class, "foobar");
         $address->MemberID = $member->ID;
         $address->write();
 
+        $this->controller->init();
         $forms = $this->controller->addressbook();
         $createform = $forms['CreateAddressForm'];
         $defaultform = $forms['DefaultAddressForm'];
-
         $this->assertTrue($member->AddressBook()->exists());
 
         $this->assertTrue((boolean)$createform, "Create form exists");
@@ -101,12 +99,11 @@ class AccountPageTest extends FunctionalTest
     {
         $member = $this->objFromFixture(Member::class, "joebloggs");
         $this->logInAs($member);
-        $this->controller->init(); //re-init to connect up member
 
         // Open Address Book page
         $page = $this->get("account/addressbook/"); // goto address book page
         $this->assertEquals(200, $page->getStatusCode(), "a page should load");
-        $this->assertEquals('AccountPage', $page->getHeader('X-TestPageClass'), "Account page should open");
+        $this->assertEquals(AccountPageController::class, $page->getHeader('X-TestPageClass'), "Account page should open");
         $this->assertEquals('addressbook', $page->getHeader('X-TestPageAction'), "Account addressbook should open");
 
         // Create an address
@@ -139,7 +136,6 @@ class AccountPageTest extends FunctionalTest
     {
         $member = $this->objFromFixture(Member::class, "joebloggs");
         $this->logInAs($member);
-        $this->controller->init(); //reinit to connect up member
 
         // setup a single-country site
         $siteconfig = DataObject::get_one(SiteConfig::class);
@@ -191,9 +187,9 @@ class AccountPageTest extends FunctionalTest
 
     public function testEditProfile()
     {
-        $this->controller->editprofile();
-        $this->controller->EditAccountForm();
-        $this->controller->ChangePasswordForm();
+        //$this->controller->editprofile();
+        //$this->controller->EditAccountForm();
+        //$this->controller->ChangePasswordForm();
         $this->markTestIncomplete("Add some assertions");
     }
 }

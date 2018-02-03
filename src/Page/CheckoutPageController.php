@@ -6,12 +6,12 @@ use PageController;
 use SilverShop\Cart\ShoppingCart;
 use SilverShop\Checkout\CheckoutComponentConfig;
 use SilverShop\Checkout\Component\OnsitePayment;
+use SilverShop\Checkout\SinglePageCheckoutComponentConfig;
 use SilverShop\Checkout\Step\Address;
 use SilverShop\Checkout\Step\AddressBook;
 use SilverShop\Checkout\Step\ContactDetails;
 use SilverShop\Checkout\Step\Membership;
 use SilverShop\Checkout\Step\PaymentMethod;
-use SilverShop\Checkout\Step\SteppedCheckout;
 use SilverShop\Checkout\Step\Summary;
 use SilverShop\Extension\SteppedCheckoutExtension;
 use SilverShop\Extension\ViewableCartExtension;
@@ -58,14 +58,15 @@ class CheckoutPageController extends PageController
         }
 
         /** @var CheckoutComponentConfig $config */
-        $config = CheckoutComponentConfig::create(ShoppingCart::curr());
+        $config = SinglePageCheckoutComponentConfig::create(ShoppingCart::curr());
         $form = PaymentForm::create($this, 'OrderForm', $config);
 
         // Normally, the payment is on a second page, either offsite or through /checkout/payment
         // If the site has customised the checkout component config to include an onsite payment
         // component, we should honor that and change the button label. PaymentForm::checkoutSubmit
         // will also check this and process payment if needed.
-        if ($config->getComponentByType('OnsitePaymentCheckoutComponent')) {
+        //TODO: Make this independent of a specific checkout component class
+        if ($config->getComponentByType(OnsitePayment::class)) {
             $form->setActions(
                 FieldList::create(
                     FormAction::create('checkoutSubmit', _t('CheckoutPage.SubmitPayment', 'Submit Payment'))

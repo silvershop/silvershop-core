@@ -7,10 +7,12 @@ use SilverShop\Cart\ShoppingCart;
 use SilverShop\Checkout\Checkout;
 use SilverShop\Extension\MemberExtension;
 use SilverShop\Extension\SteppedCheckoutExtension;
+use SilverShop\Forms\PaymentForm;
 use SilverShop\Model\Order;
 use SilverShop\Page\CheckoutPage;
 use SilverShop\Page\CheckoutPageController;
 use SilverShop\Page\Product;
+use SilverShop\Tests\Model\Product\CustomProduct_OrderItem;
 use SilverShop\Tests\ShopTest;
 use SilverStripe\Control\Controller;
 use SilverStripe\Control\Director;
@@ -26,6 +28,13 @@ class SteppedCheckoutExtensionTest extends FunctionalTest
         __DIR__ . '/../Fixtures/Pages.yml',
         __DIR__ . '/../Fixtures/shop.yml',
     );
+
+    // This seems to be required, because we query the OrderItem table and thus this gets included…
+    // TODO: Remove once we figure out how to circumvent that…
+    protected static $extra_dataobjects = [
+        CustomProduct_OrderItem::class,
+    ];
+
     protected static $use_draft_site = true; //so we don't need to publish
     protected $autoFollowRedirection = false;
 
@@ -54,9 +63,7 @@ class SteppedCheckoutExtensionTest extends FunctionalTest
         /** @var CheckoutPage $checkoutpage */
         $checkoutpage = $this->objFromFixture(CheckoutPage::class, "checkout");
         $checkoutpage->publishSingle();
-        $this->checkout = CheckoutPageController::create();
-        $this->get('checkout');
-        $this->checkout->handleRequest(new HTTPRequest("GET", "checkout"));
+        $this->checkout = CheckoutPageController::create($checkoutpage);
 
         $this->cart = $this->objFromFixture(Order::class, "cart");
         ShoppingCart::singleton()->setCurrent($this->cart);
@@ -65,10 +72,7 @@ class SteppedCheckoutExtensionTest extends FunctionalTest
     public function testTemplateFunctionsForFirstStep()
     {
         //put us at the first step index == membership
-        $indexRequest = new HTTPRequest('GET', "");
-        $this->checkout = new CheckoutPageController(); // from 3.3 on it's necessary to have a clean controller here
-        $this->checkout->handleRequest($indexRequest);
-
+        $this->checkout->handleRequest($this->buildTestRequest(''));
 
         $this->assertTrue($this->checkout->StepExists('membership'));
         $this->assertFalse($this->checkout->IsPastStep('membership'));
@@ -85,9 +89,7 @@ class SteppedCheckoutExtensionTest extends FunctionalTest
 
     public function testTemplateFunctionsForOtherSteps()
     {
-        $summaryRequest = new HTTPRequest('GET', "summary");
-        $this->checkout = new CheckoutPageController();
-        $this->checkout->handleRequest($summaryRequest); //change to summary step
+        $this->checkout->handleRequest($this->buildTestRequest('summary')); //change to summary step
         $this->assertTrue($this->checkout->StepExists('summary'));
         $this->assertFalse($this->checkout->IsPastStep('summary'));
         $this->assertTrue($this->checkout->IsCurrentStep('summary'));
@@ -98,24 +100,25 @@ class SteppedCheckoutExtensionTest extends FunctionalTest
 
     public function testMembershipStep()
     {
+        $this->logOut();
         //this should still work if there is no cart
         ShoppingCart::singleton()->clear();
-
+        /*
         $this->checkout->index();
         $this->checkout->membership();
         $this->post('/checkout/guestcontinue', array()); //redirect to next step
-        $this->checkout->createaccount(new HTTPRequest('GET', "/checkout/createaccount"));
-
+        $this->checkout->handleRequest($this->buildTestRequest('checkout/createaccount'));
+        */
         $form = $this->checkout->MembershipForm();
         $data = array();
         $form->loadDataFrom($data);
 
         $data = array(
-            'FirstName'              => 'Michael',
-            'Surname'                => 'Black',
-            'Email'                  => 'mb@example.com',
-            'Password'               => array(
-                '_Password'        => 'pass1234',
+            'FirstName' => 'Michael',
+            'Surname' => 'Black',
+            'Email' => 'mb@example.com',
+            'Password' => array(
+                '_Password' => 'pass1234',
                 '_ConfirmPassword' => 'pass1234',
             ),
             'action_docreateaccount' => 'Create New Account',
@@ -132,11 +135,11 @@ class SteppedCheckoutExtensionTest extends FunctionalTest
     {
         $user = $this->objFromFixture(Member::class, "joebloggs");
         Security::setCurrentUser($user);
-        $this->checkout->contactdetails();
+        $this->checkout->handleRequest($this->buildTestRequest('contactdetails'));
         $data = array(
-            'FirstName'                => 'Pauline',
-            'Surname'                  => 'Richardson',
-            'Email'                    => 'p.richardson@example.com',
+            'FirstName' => 'Pauline',
+            'Surname' => 'Richardson',
+            'Email' => 'p.richardson@example.com',
             'action_setcontactdetails' => 1,
         );
         $response = $this->post('/checkout/ContactDetailsForm', $data);
@@ -148,13 +151,13 @@ class SteppedCheckoutExtensionTest extends FunctionalTest
     {
         $user = $this->objFromFixture(Member::class, "joebloggs");
         Security::setCurrentUser($user);
-        $this->checkout->shippingaddress();
+        $this->checkout->handleRequest($this->buildTestRequest('shippingaddress'));
         $data = array(
-            'Address'           => '2b Baba place',
-            'AddressLine2'      => 'Level 2',
-            'City'              => 'Newton',
-            'State'             => 'Wellington',
-            'Country'           => 'NZ',
+            'Address' => '2b Baba place',
+            'AddressLine2' => 'Level 2',
+            'City' => 'Newton',
+            'State' => 'Wellington',
+            'Country' => 'NZ',
             'action_setaddress' => 1,
         );
         $response = $this->post('/checkout/AddressForm', $data);
@@ -166,13 +169,13 @@ class SteppedCheckoutExtensionTest extends FunctionalTest
     {
         $user = $this->objFromFixture(Member::class, "joebloggs");
         Security::setCurrentUser($user);
-        $this->checkout->billingaddress();
+        $this->checkout->handleRequest($this->buildTestRequest('billingaddress'));
         $data = array(
-            'Address'                  => '3 Art Cresent',
-            'AddressLine2'             => '',
-            'City'                     => 'Walkworth',
-            'State'                    => 'New Caliphoneya',
-            'Country'                  => 'ZA',
+            'Address' => '3 Art Cresent',
+            'AddressLine2' => '',
+            'City' => 'Walkworth',
+            'State' => 'New Caliphoneya',
+            'Country' => 'ZA',
             'action_setbillingaddress' => 1,
         );
         $response = $this->post('/checkout/AddressForm', $data);
@@ -183,7 +186,7 @@ class SteppedCheckoutExtensionTest extends FunctionalTest
     public function testPaymentMethod()
     {
         $data = array(
-            'PaymentMethod'           => 'Dummy',
+            'PaymentMethod' => 'Dummy',
             'action_setpaymentmethod' => 1,
         );
         $response = $this->post('/checkout/PaymentMethodForm', $data);
@@ -192,10 +195,11 @@ class SteppedCheckoutExtensionTest extends FunctionalTest
 
     public function testSummary()
     {
-        $this->checkout->summary();
+        $this->checkout->handleRequest($this->buildTestRequest('summary'));
+        /** @var PaymentForm $form */
         $form = $this->checkout->ConfirmationForm();
         $data = array(
-            'Notes'                  => 'Leave it around the back',
+            'Notes' => 'Leave it around the back',
             'ReadTermsAndConditions' => 1,
         );
         $member = $this->objFromFixture(Member::class, "joebloggs");
@@ -203,7 +207,7 @@ class SteppedCheckoutExtensionTest extends FunctionalTest
 
         Checkout::get($this->cart)->setPaymentMethod("Dummy"); //a selected payment method is required
         $form->loadDataFrom($data);
-        $this->assertTrue($form->validate(), "Checkout data is valid");
+        $this->assertTrue($form->validationResult()->isValid(), "Checkout data is valid");
         $response = $this->post('/checkout/ConfirmationForm', $data);
         $this->assertEquals('Cart', $this->cart->Status, "Order is still in cart");
 
@@ -213,9 +217,16 @@ class SteppedCheckoutExtensionTest extends FunctionalTest
 
         //redirect to make payment
         $this->assertEquals(302, $response->getStatusCode());
-        $this->assertEquals(
-            Director::baseURL() . "checkout/payment",
-            $response->getHeader('Location')
+        $this->assertStringEndsWith(
+            'checkout/payment',
+            $response->getHeader('location')
         );
+    }
+
+    protected function buildTestRequest($url, $method = 'GET')
+    {
+        $request = new HTTPRequest($method, $url);
+        $request->setSession($this->mainSession->session());
+        return $request;
     }
 }

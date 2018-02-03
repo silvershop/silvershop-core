@@ -17,7 +17,7 @@ use SilverStripe\Security\SecurityToken;
  */
 class ProductOrderItemTest extends FunctionalTest
 {
-    public static $fixture_file = __DIR__ . '/../Fixtures/shop.yml';
+    public static $fixture_file = __DIR__ . '/../../Fixtures/shop.yml';
     public static $disable_theme = true;
     public static $orig = array();
 

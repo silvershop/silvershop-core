@@ -9,11 +9,13 @@ use SilverShop\Forms\CheckoutForm;
 use SilverShop\Page\CheckoutPageController;
 use SilverShop\Page\Product;
 use SilverShop\Tests\ShopTest;
+use SilverStripe\Control\HTTPRequest;
+use SilverStripe\Dev\FunctionalTest;
 use SilverStripe\Dev\SapphireTest;
 use SilverStripe\SiteConfig\SiteConfig;
 
 
-class CheckoutFormTest extends SapphireTest
+class CheckoutFormTest extends FunctionalTest
 {
     public static $fixture_file = __DIR__ . '/../Fixtures/shop.yml';
 
@@ -41,7 +43,10 @@ class CheckoutFormTest extends SapphireTest
         $this->beachball = $this->objFromFixture(Product::class, 'beachball');
         $this->beachball->publishSingle();
 
+        $request = new HTTPRequest('GET', '');
+        $request->setSession($this->mainSession->session());
         $this->checkoutcontroller = new CheckoutPageController();
+        $this->checkoutcontroller->setRequest($request);
 
         ShoppingCart::singleton()->add($this->socks); //start cart
     }
@@ -51,30 +56,31 @@ class CheckoutFormTest extends SapphireTest
         $order = ShoppingCart::curr();
         $config = new SinglePageCheckoutComponentConfig($order);
         $form = new CheckoutForm($this->checkoutcontroller, "OrderForm", $config);
+        $ns = 'SilverShop-Checkout-Component-';
         $data = array(
-            "CustomerDetails_FirstName"    => "Jane",
-            "CustomerDetails_Surname"      => "Smith",
-            "CustomerDetails_Email"        => "janesmith@example.com",
-            "ShippingAddress_Country"      => "NZ",
-            "ShippingAddress_Address"      => "1234 Green Lane",
-            "ShippingAddress_AddressLine2" => "Building 2",
-            "ShippingAddress_City"         => "Bleasdfweorville",
-            "ShippingAddress_State"        => "Trumpo",
-            "ShippingAddress_PostalCode"   => "4123",
-            "ShippingAddress_Phone"        => "032092277",
-            "BillingAddress_Country"       => "NZ",
-            "BillingAddress_Address"       => "1234 Green Lane",
-            "BillingAddress_AddressLine2"  => "Building 2",
-            "BillingAddress_City"          => "Bleasdfweorville",
-            "BillingAddress_State"         => "Trumpo",
-            "BillingAddress_PostalCode"    => "4123",
-            "BillingAddress_Phone"         => "032092277",
-            "Payment_PaymentMethod"        => "Dummy",
-            "Notes_Notes"                  => "Leave it around the back",
-            "Terms_ReadTermsAndConditions" => "1",
+            "{$ns}CustomerDetails_FirstName"    => "Jane",
+            "{$ns}CustomerDetails_Surname"      => "Smith",
+            "{$ns}CustomerDetails_Email"        => "janesmith@example.com",
+            "{$ns}ShippingAddress_Country"      => "NZ",
+            "{$ns}ShippingAddress_Address"      => "1234 Green Lane",
+            "{$ns}ShippingAddress_AddressLine2" => "Building 2",
+            "{$ns}ShippingAddress_City"         => "Bleasdfweorville",
+            "{$ns}ShippingAddress_State"        => "Trumpo",
+            "{$ns}ShippingAddress_PostalCode"   => "4123",
+            "{$ns}ShippingAddress_Phone"        => "032092277",
+            "{$ns}BillingAddress_Country"       => "NZ",
+            "{$ns}BillingAddress_Address"       => "1234 Green Lane",
+            "{$ns}BillingAddress_AddressLine2"  => "Building 2",
+            "{$ns}BillingAddress_City"          => "Bleasdfweorville",
+            "{$ns}BillingAddress_State"         => "Trumpo",
+            "{$ns}BillingAddress_PostalCode"    => "4123",
+            "{$ns}BillingAddress_Phone"         => "032092277",
+            "{$ns}Payment_PaymentMethod"        => "Dummy",
+            "{$ns}Notes_Notes"                  => "Leave it around the back",
+            "{$ns}Terms_ReadTermsAndConditions" => "1",
         );
         $form->loadDataFrom($data, true);
-        $valid = $form->validate();
+        $valid = $form->validationResult()->isValid();
         $errors = $form->getValidator()->getErrors();
         $this->assertTrue($valid, print_r($errors, true));
         $form->checkoutSubmit($data, $form);
@@ -102,37 +108,38 @@ class CheckoutFormTest extends SapphireTest
         $order = ShoppingCart::curr();
         $config = new SinglePageCheckoutComponentConfig($order);
         $form = new CheckoutForm($this->checkoutcontroller, "OrderForm", $config);
+        $ns = 'SilverShop-Checkout-Component-';
         // no country fields due to readonly field
         $dataCountryAbsent = array(
-            "CustomerDetailsCheckoutComponent_FirstName"    => "Jane",
-            "CustomerDetailsCheckoutComponent_Surname"      => "Smith",
-            "CustomerDetailsCheckoutComponent_Email"        => "janesmith@example.com",
-            "ShippingAddressCheckoutComponent_Address"      => "1234 Green Lane",
-            "ShippingAddressCheckoutComponent_AddressLine2" => "Building 2",
-            "ShippingAddressCheckoutComponent_City"         => "Bleasdfweorville",
-            "ShippingAddressCheckoutComponent_State"        => "Trumpo",
-            "ShippingAddressCheckoutComponent_PostalCode"   => "4123",
-            "ShippingAddressCheckoutComponent_Phone"        => "032092277",
-            "BillingAddressCheckoutComponent_Address"       => "1234 Green Lane",
-            "BillingAddressCheckoutComponent_AddressLine2"  => "Building 2",
-            "BillingAddressCheckoutComponent_City"          => "Bleasdfweorville",
-            "BillingAddressCheckoutComponent_State"         => "Trumpo",
-            "BillingAddressCheckoutComponent_PostalCode"    => "4123",
-            "BillingAddressCheckoutComponent_Phone"         => "032092277",
-            "PaymentCheckoutComponent_PaymentMethod"        => "Dummy",
-            "NotesCheckoutComponent_Notes"                  => "Leave it around the back",
-            "TermsCheckoutComponent_ReadTermsAndConditions" => "1",
+            "{$ns}CustomerDetails_FirstName"    => "Jane",
+            "{$ns}CustomerDetails_Surname"      => "Smith",
+            "{$ns}CustomerDetails_Email"        => "janesmith@example.com",
+            "{$ns}ShippingAddress_Address"      => "1234 Green Lane",
+            "{$ns}ShippingAddress_AddressLine2" => "Building 2",
+            "{$ns}ShippingAddress_City"         => "Bleasdfweorville",
+            "{$ns}ShippingAddress_State"        => "Trumpo",
+            "{$ns}ShippingAddress_PostalCode"   => "4123",
+            "{$ns}ShippingAddress_Phone"        => "032092277",
+            "{$ns}BillingAddress_Address"       => "1234 Green Lane",
+            "{$ns}BillingAddress_AddressLine2"  => "Building 2",
+            "{$ns}BillingAddress_City"          => "Bleasdfweorville",
+            "{$ns}BillingAddress_State"         => "Trumpo",
+            "{$ns}BillingAddress_PostalCode"    => "4123",
+            "{$ns}BillingAddress_Phone"         => "032092277",
+            "{$ns}Payment_PaymentMethod"        => "Dummy",
+            "{$ns}Notes_Notes"                  => "Leave it around the back",
+            "{$ns}Terms_ReadTermsAndConditions" => "1",
         );
         $form->loadDataFrom($dataCountryAbsent, true);
-        $valid = $form->validate();
+        $valid = $form->validationResult()->isValid();
         $errors = $form->getValidator()->getErrors();
         $this->assertTrue($valid, print_r($errors, true));
         $this->assertTrue(
-            $form->Fields()->fieldByName("ShippingAddressCheckoutComponent_Country_readonly")->isReadonly(),
+            $form->Fields()->fieldByName("{$ns}ShippingAddress_Country_readonly")->isReadonly(),
             "Shipping Address Country field is readonly"
         );
         $this->assertTrue(
-            $form->Fields()->fieldByName("BillingAddressCheckoutComponent_Country_readonly")->isReadonly(),
+            $form->Fields()->fieldByName("{$ns}BillingAddress_Country_readonly")->isReadonly(),
             "Billing Address Country field is readonly"
         );
         $form->checkoutSubmit($dataCountryAbsent, $form);

@@ -3,6 +3,7 @@
 namespace SilverShop\Tests\Extension;
 
 
+use SilverShop\Page\Product;
 use SilverStripe\Assets\Filesystem;
 use SilverStripe\Assets\Image;
 use SilverStripe\Dev\SapphireTest;

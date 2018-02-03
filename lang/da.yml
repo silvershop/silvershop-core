@@ -421,7 +421,7 @@ da:
     ReceiptSubject: 'Ordre #{OrderNo} kvittering'
     ReceiptTitle: 'Shop kvittering'
     Regards: 'Med venlig hilse'
-    StatusChangeSubject: 'Silvershop - '
+    StatusChangeSubject: 'Silvershop - {Title}'
     StatusChangeTitle: 'Shop Status skifte'
     StatusChanged: 'Status for ordre #{OrderNo} ændret til "{OrderStatus}"'
     StatusChangeAdminCancelledNote: 'Din ordre er blevet annulleret af vores ansatte. Kontakt os venligst hvis du har nogle spørgsmål vedr. denne ordre.'
