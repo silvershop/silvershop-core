@@ -105,92 +105,96 @@ class AccountPageTest extends FunctionalTest
 
     public function testAddressBookWithDropdownFieldToSelectCountry()
     {
-        $member = $this->objFromFixture(Member::class, "joebloggs");
-        $this->logInAs($member);
+        $this->useTestTheme(__DIR__ . '/../', 'shoptest', function () {
+            $member = $this->objFromFixture(Member::class, "joebloggs");
+            $this->logInAs($member);
 
-        // Open Address Book page
-        $page = $this->get("account/addressbook/"); // goto address book page
-        $this->assertEquals(200, $page->getStatusCode(), "a page should load");
-        $this->assertEquals(AccountPageController::class, $page->getHeader('X-TestPageClass'), "Account page should open");
-        $this->assertEquals('addressbook', $page->getHeader('X-TestPageAction'), "Account addressbook should open");
+            // Open Address Book page
+            $page = $this->get("account/addressbook/"); // goto address book page
+            $this->assertEquals(200, $page->getStatusCode(), "a page should load");
+            $this->assertEquals(AccountPageController::class, $page->getHeader('X-TestPageClass'), "Account page should open");
+            $this->assertEquals('addressbook', $page->getHeader('X-TestPageAction'), "Account addressbook should open");
 
-        // Create an address
-        $data = array(
-            "Country" => "AU",
-            "Address" => "Sydney Opera House",
-            "AddressLine2" => "Bennelong Point",
-            "City" => "Sydney",
-            "State" => "NSW",
-            "PostalCode" => "2000",
-            "Phone" => "1234 5678",
-        );
-        $this->submitForm("Form_CreateAddressForm", "action_saveaddress", $data);
-        $this->assertEquals(200, $page->getStatusCode(), "a page should load");
+            // Create an address
+            $data = array(
+                "Country" => "AU",
+                "Address" => "Sydney Opera House",
+                "AddressLine2" => "Bennelong Point",
+                "City" => "Sydney",
+                "State" => "NSW",
+                "PostalCode" => "2000",
+                "Phone" => "1234 5678",
+            );
+            $this->submitForm("Form_CreateAddressForm", "action_saveaddress", $data);
+            $this->assertEquals(200, $page->getStatusCode(), "a page should load");
 
-        $au_address = Address::get()->filter('PostalCode', '2000')->sort('ID')->last();
-        $this->assertEquals(
-            "AU",
-            $au_address->Country,
-            "New address successfully saved, using dropdown to select the country"
-        );
-        $this->assertEquals(
-            "Sydney Opera House",
-            $au_address->Address,
-            "Ensure that the Address is the Sydney Opera House"
-        );
+            $au_address = Address::get()->filter('PostalCode', '2000')->sort('ID')->last();
+            $this->assertEquals(
+                "AU",
+                $au_address->Country,
+                "New address successfully saved, using dropdown to select the country"
+            );
+            $this->assertEquals(
+                "Sydney Opera House",
+                $au_address->Address,
+                "Ensure that the Address is the Sydney Opera House"
+            );
+        });
     }
 
     public function testAddressBookWithReadonlyFieldForCountry()
     {
-        $member = $this->objFromFixture(Member::class, "joebloggs");
-        $this->logInAs($member);
+        $this->useTestTheme(__DIR__ . '/../', 'shoptest', function (){
+            $member = $this->objFromFixture(Member::class, "joebloggs");
+            $this->logInAs($member);
 
-        // setup a single-country site
-        $siteconfig = DataObject::get_one(SiteConfig::class);
-        $siteconfig->AllowedCountries = "NZ";
-        $siteconfig->write();
-        $singlecountry = SiteConfig::current_site_config();
-        $this->assertEquals(
-            "NZ",
-            $singlecountry->getSingleCountry(),
-            "Confirm that the website is setup as a single country site"
-        );
+            // setup a single-country site
+            $siteconfig = DataObject::get_one(SiteConfig::class);
+            $siteconfig->AllowedCountries = "NZ";
+            $siteconfig->write();
+            $singlecountry = SiteConfig::current_site_config();
+            $this->assertEquals(
+                "NZ",
+                $singlecountry->getSingleCountry(),
+                "Confirm that the website is setup as a single country site"
+            );
 
-        // Open the Address Book page to test form submission with a readonly field
-        $page = $this->get("account/addressbook/"); // goto address book page
-        $this->assertEquals(200, $page->getStatusCode(), "a page should load");
-        $this->assertContains(
-            "Form_CreateAddressForm_Country_readonly",
-            $page->getBody(),
-            "The Country field is readonly"
-        );
-        $this->assertNotContains(
-            "<option value=\"NZ\">New Zealand</option>",
-            $page->getBody(),
-            "Dropdown field is not shown"
-        );
+            // Open the Address Book page to test form submission with a readonly field
+            $page = $this->get("account/addressbook/"); // goto address book page
+            $this->assertEquals(200, $page->getStatusCode(), "a page should load");
+            $this->assertContains(
+                "Form_CreateAddressForm_Country_readonly",
+                $page->getBody(),
+                "The Country field is readonly"
+            );
+            $this->assertNotContains(
+                "<option value=\"NZ\">New Zealand</option>",
+                $page->getBody(),
+                "Dropdown field is not shown"
+            );
 
-        // Create an address
-        $data = array(
-            "Address" => "234 Hereford Street",
-            "City" => "Christchurch",
-            "State" => "Canterbury",
-            "PostalCode" => "8011",
-        );
-        $this->submitForm("Form_CreateAddressForm", "action_saveaddress", $data);
-        $this->assertEquals(200, $page->getStatusCode(), "a page should load");
+            // Create an address
+            $data = array(
+                "Address" => "234 Hereford Street",
+                "City" => "Christchurch",
+                "State" => "Canterbury",
+                "PostalCode" => "8011",
+            );
+            $this->submitForm("Form_CreateAddressForm", "action_saveaddress", $data);
+            $this->assertEquals(200, $page->getStatusCode(), "a page should load");
 
-        $nz_address = Address::get()->filter('PostalCode', '8011')->sort('ID')->last();
-        $this->assertEquals(
-            "NZ",
-            $nz_address->Country,
-            "New address successfully saved; even with a Country readonly field in the form"
-        );
-        $this->assertEquals(
-            "234 Hereford Street",
-            $nz_address->Address,
-            "Ensure that the Address is 234 Hereford Street"
-        );
+            $nz_address = Address::get()->filter('PostalCode', '8011')->sort('ID')->last();
+            $this->assertEquals(
+                "NZ",
+                $nz_address->Country,
+                "New address successfully saved; even with a Country readonly field in the form"
+            );
+            $this->assertEquals(
+                "234 Hereford Street",
+                $nz_address->Address,
+                "Ensure that the Address is 234 Hereford Street"
+            );
+        });
     }
 
     public function testEditProfile()
