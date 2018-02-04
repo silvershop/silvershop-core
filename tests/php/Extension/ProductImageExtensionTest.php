@@ -6,30 +6,25 @@ namespace SilverShop\Tests\Extension;
 use SilverShop\Page\Product;
 use SilverStripe\Assets\Filesystem;
 use SilverStripe\Assets\Image;
+use SilverStripe\Assets\InterventionBackend;
+use SilverStripe\Assets\Tests\Storage\AssetStoreTest\TestAssetStore;
 use SilverStripe\Dev\SapphireTest;
 use SilverStripe\SiteConfig\SiteConfig;
 
-//TODO: Rewrite for SS4
 
 /**
  * Tests for product image. These could be easily merged into the main
  * Product tests if desired, but those tests are currently non-functional.
- *
- * @author     Mark Guinn <mark@adaircreative.com>
- * @date       04.14.2014
- * @package    shop
- * @subpackage tests
  */
 class ProductImageExtensionTest extends SapphireTest
 {
-    protected static $fixture_file = __DIR__ . '/../Fixtures/shop.yml';
-    /**
-     * Set to true in {@link self::setUp()} if we created the assets folder, so we know to remove it in
-     * {@link self::tearDown()}.
-     *
-     * @var bool
-     */
-    private $createdAssetsFolder = false;
+    protected static $fixture_file = [
+        __DIR__ . '/../Fixtures/shop.yml',
+        __DIR__ . '/../Fixtures/Images.yml',
+    ];
+
+    /** @var Product */
+    protected $socks;
 
     /** @var Image */
     protected $img;
@@ -37,39 +32,36 @@ class ProductImageExtensionTest extends SapphireTest
     /** @var Image */
     protected $img2;
 
-    function setUp()
+    /** @var SiteConfig */
+    protected $siteConfig;
+
+    public function setUp()
     {
         parent::setUp();
+
+        // Set backend root to /images
+        TestAssetStore::activate('images');
+
+        // Copy test images for each of the fixture references
+        foreach (Image::get() as $image) {
+            $sourcePath = __DIR__ . '/images/' . $image->Name;
+            $image->setFromLocalFile($sourcePath, $image->Filename);
+        }
+
+        // Set default config
+        InterventionBackend::config()->set('error_cache_ttl', [
+            InterventionBackend::FAILED_INVALID => 0,
+            InterventionBackend::FAILED_MISSING => '5,10',
+            InterventionBackend::FAILED_UNKNOWN => 300,
+        ]);
+
         $this->socks = $this->objFromFixture(Product::class, 'socks');
-        $this->img1 = new Image;
-        $this->img1->Filename = 'assets/ProductImageTest1.png';
-        $this->img1->write();
-        $this->img2 = new Image;
-        $this->img2->Filename = 'assets/ProductImageTest2.png';
-        $this->img2->write();
+        $this->img1 = Image::get()->filter('Name', 'ImageA.png')->first();
+        $this->img2 = Image::get()->filter('Name', 'ImageB.png')->first();
+
         $this->siteConfig = SiteConfig::current_site_config();
         $this->siteConfig->DefaultProductImageID = $this->img1->ID;
         $this->siteConfig->write();
-
-        // Create assets/ folder if it doesn't exist
-        if (!is_dir(ASSETS_PATH)) {
-            Filesystem::makeFolder(ASSETS_PATH);
-            $this->createdAssetsFolder = true;
-        }
-
-        file_put_contents($this->img1->getFullPath(), 'dummy file');
-        file_put_contents($this->img2->getFullPath(), 'dummy file');
-    }
-
-    function tearDown()
-    {
-        unlink($this->img1->getFullPath());
-        unlink($this->img2->getFullPath());
-
-        // Remove the assets/ folder if it was created during {@link self::setUp()}
-        if ($this->createdAssetsFolder) {
-            Filesystem::removeFolder(ASSETS_PATH);
-        }
     }
 
     function testProductWithImage()

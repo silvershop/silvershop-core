@@ -117,9 +117,10 @@ class OrderActionsForm extends Form
                 FormAction::create(
                     'docancel',
                     _t(__CLASS__ . '.CancelOrder', 'Cancel this order')
-                )
+                )->setValidationExempt(true)
             );
         }
+
         parent::__construct($controller, $name, $fields, $actions, OrderActionsFormValidator::create([
             'PaymentMethod'
         ]));

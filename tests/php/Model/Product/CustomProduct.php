@@ -25,7 +25,7 @@ class CustomProduct extends DataObject implements Buyable, TestOnly
     {
         $itemclass = self::config()->order_item;
         $item = new $itemclass();
-        $item->ProductID = $this->ID;
+        $item->CustomProductID = $this->ID;
         if ($filter) {
             $item->update($filter);
         }

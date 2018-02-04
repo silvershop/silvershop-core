@@ -11,6 +11,7 @@ use SilverShop\Model\Order;
 use SilverShop\Model\OrderStatusLog;
 use SilverShop\Model\Product\OrderItem;
 use SilverShop\Page\Product;
+use SilverShop\Tests\Model\Product\CustomProduct_OrderItem;
 use SilverShop\Tests\ShopTest;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\SapphireTest;
@@ -28,6 +29,12 @@ class OrderTest extends SapphireTest
 {
     public static $fixture_file = __DIR__ . '/../Fixtures/shop.yml';
 
+    // This seems to be required, because we query the OrderItem table and thus this gets included…
+    // TODO: Remove once we figure out how to circumvent that…
+    protected static $extra_dataobjects = [
+        CustomProduct_OrderItem::class,
+    ];
+
     /** @var Product */
     protected $mp3player;
 
@@ -42,6 +49,7 @@ class OrderTest extends SapphireTest
     {
         parent::setUp();
         ShopTest::setConfiguration();
+        $this->logInWithPermission('ADMIN');
         $this->mp3player = $this->objFromFixture(Product::class, 'mp3player');
         $this->mp3player->publishSingle();
         $this->socks = $this->objFromFixture(Product::class, 'socks');
@@ -72,8 +80,8 @@ class OrderTest extends SapphireTest
 
     public function testDebug()
     {
-        $order = $this->objFromFixture(Order::class, "cart");
-        $order->debug();
+        //$order = $this->objFromFixture(Order::class, "cart");
+        //$order->debug();
         $this->markTestIncomplete('assertions!');
     }
 
@@ -140,7 +148,7 @@ class OrderTest extends SapphireTest
             //hack join to make thigns work
             ->innerJoin(
                 "SilverShop_Product_OrderItem",
-                '"OrderItem"."ID" = "SilverShop_Product_OrderItem"."ID"'
+                '"SilverShop_OrderItem"."ID" = "SilverShop_Product_OrderItem"."ID"'
             );
         $this->assertNotNull($items);
         $this->assertListEquals(
@@ -227,8 +235,9 @@ class OrderTest extends SapphireTest
 
     public function testDelete()
     {
-        Config::modify()->set(FlatTax::class, 'rate', 0.25);
-        Config::modify()->merge(Order::class, 'modifiers', array('FlatTaxModifier'));
+        Config::modify()
+            ->set(FlatTax::class, 'rate', 0.25)
+            ->merge(Order::class, 'modifiers', [FlatTax::class]);
 
         $order = Order::create();
         $shirt = $this->objFromFixture(Product::class, "tshirt");

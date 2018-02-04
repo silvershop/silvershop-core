@@ -19,10 +19,10 @@ class CustomProduct_OrderItem extends OrderItem implements TestOnly
         'Premium' => false,
     );
     private static $has_one = array(
-        'Product' => CustomProduct::class,
+        'CustomProduct' => CustomProduct::class,
         'Recipient' => Member::class,
     );
-    private static $buyable_relationship = "Product";
+    private static $buyable_relationship = "CustomProduct";
     private static $required_fields = array(
         'Color',
         'Size',
@@ -33,7 +33,7 @@ class CustomProduct_OrderItem extends OrderItem implements TestOnly
 
     public function UnitPrice()
     {
-        if ($product = $this->Product()) {
+        if ($product = $this->CustomProduct()) {
             return $product->Price;
         }
         return 0;

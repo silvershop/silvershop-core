@@ -12,7 +12,7 @@ class OrderActionsFormValidator extends RequiredFields
     public function php($data)
     {
         // Check if we should do a payment
-        if (Controller::curr()->getAction() == 'dopayment' && !empty($data['PaymentMethod'])) {
+        if (!empty($data['PaymentMethod'])) {
             $gateway = $data['PaymentMethod'];
             // If the gateway isn't manual and not offsite, Check for credit-card fields!
             if (!GatewayInfo::isManual($gateway) && !GatewayInfo::isOffsite($gateway)) {

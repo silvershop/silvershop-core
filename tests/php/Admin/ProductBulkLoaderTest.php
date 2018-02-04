@@ -12,7 +12,7 @@ class ProductBulkLoaderTest extends FunctionalTest
 {
     public static $fixture_file   = __DIR__ . '/../Fixtures/shop.yml';
     public static $disable_theme  = true;
-    public static $use_draft_site = true;
+    protected static $use_draft_site = true;
 
     public function testLoad()
     {

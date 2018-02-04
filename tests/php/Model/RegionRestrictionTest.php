@@ -62,7 +62,7 @@ class RegionRestrictionTest extends SapphireTest
     {
         $address = $this->objFromFixture(Address::class, "bukhp193eq");
         $rate = $this->getRate($address);
-        $this->assertFalse($rate);
+        $this->assertNull($rate);
     }
 
     public function testMatchSQLEscaping()
@@ -85,8 +85,7 @@ class RegionRestrictionTest extends SapphireTest
 
     public function getRate(Address $address)
     {
-        $where = RegionRestriction::address_filter($address);
-        return RegionRestriction_RateTest::get()->where($where)->sort('Rate','ASC');
+        return RegionRestriction_RateTest::filteredByAddress($address)->sort('Rate','ASC')->first();
     }
 }
 

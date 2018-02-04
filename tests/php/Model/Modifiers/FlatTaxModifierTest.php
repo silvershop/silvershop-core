@@ -8,6 +8,7 @@ use SilverShop\Model\Modifiers\OrderModifier;
 use SilverShop\Model\Modifiers\Tax\FlatTax;
 use SilverShop\Model\Order;
 use SilverShop\Page\Product;
+use SilverShop\Tests\Model\Product\CustomProduct_OrderItem;
 use SilverShop\Tests\ShopTest;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\FunctionalTest;
@@ -22,6 +23,10 @@ class FlatTaxModifierTest extends FunctionalTest
 {
     protected static $fixture_file  = __DIR__ . '/../../Fixtures/shop.yml';
     protected static $disable_theme = true;
+
+    protected static $extra_dataobjects = [
+        CustomProduct_OrderItem::class
+    ];
 
     /** @var Product */
     protected $mp3player;
@@ -42,6 +47,7 @@ class FlatTaxModifierTest extends FunctionalTest
             ->set(FlatTax::class, 'name', 'GST')
             ->set(FlatTax::class, 'rate', 0.15);
 
+        $this->logInWithPermission('ADMIN');
         $this->cart = ShoppingCart::singleton();
         $this->mp3player = $this->objFromFixture(Product::class, 'mp3player');
         $this->mp3player->publishSingle();

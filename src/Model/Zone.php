@@ -43,11 +43,12 @@ class Zone extends DataObject
     */
     public static function get_zones_for_address(Address $address)
     {
-        $where = RegionRestriction::address_filter($address);
-        return self::get()->where($where)
-            ->sort('PostalCode DESC, City DESC, State DESC, Country DESC')
-            ->innerJoin('SilverShop_ZoneRegion', "\"SilverShop_Zone\".\"ID\" = \"SilverShop_ZoneRegion\".\"ZoneID\"")
-            ->innerJoin('SilverShop_RegionRestriction', "\"SilverShop_ZoneRegion\".\"ID\" = \"SilverShop_RegionRestriction\".\"ID\"");
+        $zones = ZoneRegion::filteredByAddress($address);
+        $zoneIds = $zones->column('ZoneID');
+        if (empty($zoneIds)) {
+            return null;
+        }
+        return self::get()->byIDs($zoneIds);
     }
 
     /*

@@ -42,6 +42,7 @@ class ProductOrderItemTest extends FunctionalTest
         ShoppingCart::singleton()->clear();
         ShopTest::setConfiguration();
 
+        $this->logInWithPermission('ADMIN');
         $this->mp3player = $this->objFromFixture(Product::class, 'mp3player');
         $this->socks = $this->objFromFixture(Product::class, 'socks');
         $this->beachball = $this->objFromFixture(Product::class, 'beachball');
@@ -99,19 +100,19 @@ class ProductOrderItemTest extends FunctionalTest
         $product = $this->socks;
         $item = $product->Item();
         $this->assertEquals(
-            "shoppingcart/add/Product/{$product->ID}",
+            "shoppingcart/add/SilverShop-Page-Product/{$product->ID}",
             $item->addLink()
         );
         $this->assertEquals(
-            "shoppingcart/remove/Product/{$product->ID}",
+            "shoppingcart/remove/SilverShop-Page-Product/{$product->ID}",
             $item->removeLink()
         );
         $this->assertEquals(
-            "shoppingcart/removeall/Product/{$product->ID}",
+            "shoppingcart/removeall/SilverShop-Page-Product/{$product->ID}",
             $item->removeallLink()
         );
         $this->assertEquals(
-            "shoppingcart/setquantity/Product/{$product->ID}",
+            "shoppingcart/setquantity/SilverShop-Page-Product/{$product->ID}",
             $item->setquantityLink()
         );
     }

@@ -24,7 +24,7 @@ class ShoppingCartControllerTest extends FunctionalTest
     public static $fixture_file   = __DIR__ . '/../Fixtures/shop.yml';
 
     public static $disable_theme  = true;
-    public static $use_draft_site = false;
+    protected static $use_draft_site = false;
     protected $autoFollowRedirection = false;
 
     // This seems to be required, because we query the OrderItem table and thus this gets included…

@@ -864,6 +864,10 @@ class Order extends DataObject
 
     public function debug()
     {
+        // Temporarily disabled.
+        // TODO: Reactivate when the following issue got fixed: https://github.com/silverstripe/silverstripe-framework/issues/7827
+        return '';
+
         $val = "<div class='order'><h1>" . static::class ."</h1>\n<ul>\n";
         if ($this->record) {
             foreach ($this->record as $fieldName => $fieldVal) {

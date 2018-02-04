@@ -6,6 +6,7 @@ namespace SilverShop\ORM\Filters;
 use SilverStripe\Core\Convert;
 use SilverStripe\ORM\DataObject;
 
+//TODO: Rewrite this with ORM in mind… reduce the amount of raw queries.
 
 /**
  * Helper class to create a filter for matching a dataobject,
@@ -76,30 +77,26 @@ class MatchObjectFilter
         $new = [];
         foreach ($fields as $field => $value) {
             $field = Convert::raw2sql($field);
-            if (array_key_exists($field, $allowed)) {
+            if (in_array($field, $allowed)) {
                 if (isset($this->data[$field])) {
                     // allow wildcard in filter
                     if ($this->data[$field] === '*') {
                         continue;
                     }
+
                     $dbfield = $singleton->dbObject($field);
-                    $value = $dbfield->prepValueForDB($this->data[$field]);    //product correct format for db values
-                    // These seems to be a difference in how this works between SS 3.1 and 3.2
-                    // It would be great to actually remove this and use something that's more inline with the ORM
-                    // But this will get us to 3.2 compatibility and work on every DB I'm aware of.
-                    if ($value[0] != "'") {
-                        $value = "'$value'";
-                    }
-                    $new[] = "\"$field\" = $value";
+                    $value = $dbfield->prepValueForDB($this->data[$field]);
+
+                    $new[] = "\"$field\" = '$value'";
                 } else {
                     $new[] = "\"$field\" IS NULL";
                 }
             } else {
                 if (isset($this->data[$field])) {
                     $value = Convert::raw2sql($this->data[$field]);
-                    $new[] = "\"{$field}\" = '$value'";
+                    $new[] = "\"$field\" = '$value'";
                 } else {
-                    $new[] = "(\"{$field}\" = 0 OR \"$field\" IS NULL)";
+                    $new[] = "\"$field\" IS NULL";
                 }
             }
         }

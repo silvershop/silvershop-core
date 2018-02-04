@@ -7,7 +7,9 @@ use SilverShop\Extension\OrderManipulationExtension;
 use SilverShop\Forms\OrderActionsForm;
 use SilverShop\Forms\OrderActionsFormValidator;
 use SilverShop\Model\Order;
+use SilverShop\Page\AccountPage;
 use SilverShop\Page\CheckoutPage;
+use SilverShop\Tests\Model\Product\CustomProduct_OrderItem;
 use SilverShop\Tests\ShopTest;
 use SilverStripe\CMS\Controllers\ModelAsController;
 use SilverStripe\Control\Director;
@@ -25,6 +27,12 @@ class OrderActionsFormTest extends FunctionalTest
         __DIR__ . '/../Fixtures/shop.yml',
     );
 
+    // This seems to be required, because we query the OrderItem table and thus this gets included…
+    // TODO: Remove once we figure out how to circumvent that…
+    protected static $extra_dataobjects = [
+        CustomProduct_OrderItem::class,
+    ];
+
     protected $order;
     protected $checkoutPage;
 
@@ -33,16 +41,19 @@ class OrderActionsFormTest extends FunctionalTest
         parent::setUp();
         ShopTest::setConfiguration();
 
+        $this->logInWithPermission('ADMIN');
         // create order from fixture and persist to DB
         $this->order = $this->objFromFixture(Order::class, "unpaid");
         $this->order->write();
 
-        OrderManipulationExtension::add_session_order($this->order);
 
         // create checkoug page from fixture and publish it
         $this->checkoutPage = $this->objFromFixture(CheckoutPage::class, "checkout");
         $this->checkoutPage->publishSingle();
 
+        $this->logOut();
+
+        OrderManipulationExtension::add_session_order($this->order);
         Config::modify()->set(Payment::class, 'allowed_gateways', array('Dummy'));
     }
 
@@ -93,7 +104,7 @@ class OrderActionsFormTest extends FunctionalTest
         // The status of the payment should be Captured
         $this->assertEquals('Captured', $this->order->Payments()->first()->Status);
         // The response we get from submitting the form should be a redirect to the paid order
-        $this->assertEquals($ctrl->Link('order/' . $this->order->ID), $response->getHeader('Location'));
+        $this->assertStringEndsWith($ctrl->Link('order/' . $this->order->ID), $response->getHeader('location'));
     }
 
     public function testValidation()
@@ -105,7 +116,6 @@ class OrderActionsFormTest extends FunctionalTest
             $this->order
         );
         $validator->setForm($form);
-        $form->setFormAction('dopayment');
         $validator->php(array(
             'OrderID'       => $this->order->ID,
             'PaymentMethod' => 'Dummy',

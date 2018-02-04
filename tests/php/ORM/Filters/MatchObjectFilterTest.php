@@ -25,15 +25,15 @@ class MatchObjectFilterTest extends SapphireTest
         $filter = new MatchObjectFilter(OrderItem::class, array(), array('ProductID'));
         $this->assertEquals(
             $filter->getFilter(),
-            array('("ProductID" = 0 OR "ProductID" IS NULL)'),
-            'missing ID value became IS NULL or = 0'
+            array('"ProductID" IS NULL'),
+            'missing ID value became IS NULL'
         );
         // Missing value for a db field.
         $filter = new MatchObjectFilter(OrderItem::class, array(), array('ProductVersion'));
         $this->assertEquals(
             $filter->getFilter(),
-            array('("ProductVersion" = 0 OR "ProductVersion" IS NULL)'),
-            'missing DB value became IS NULL or = 0'
+            array('"ProductVersion" IS NULL'),
+            'missing DB value became IS NULL'
         );
     }
 }

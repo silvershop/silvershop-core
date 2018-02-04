@@ -1,0 +1,11 @@
+SilverStripe\Assets\Image:
+  imageA:
+    Title: 'Test Image A'
+    Name: ImageA.png
+    FileFilename: ImageA.png
+    FileHash: 5018c2cd7f0d2a58b1d5c956db7ced624def6d28
+  imageB:
+    Title: 'Test Image B'
+    Name: ImageB.png
+    FileFilename: ImageB.png
+    FileHash: 97670e66d73f828d2d3c885669692af30736f2e5

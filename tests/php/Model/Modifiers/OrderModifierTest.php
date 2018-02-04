@@ -8,6 +8,7 @@ use SilverShop\Model\Modifiers\Tax\FlatTax;
 use SilverShop\Model\Order;
 use SilverShop\Model\OrderModifier;
 use SilverShop\Page\Product;
+use SilverShop\Tests\Model\Product\CustomProduct_OrderItem;
 use SilverShop\Tests\ShopTest;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\FunctionalTest;
@@ -22,7 +23,7 @@ class OrderModifierTest extends FunctionalTest
 {
     public static $fixture_file   = __DIR__ . '/../../Fixtures/shop.yml';
     public static $disable_theme  = true;
-    public static $use_draft_site = true;
+    protected static $use_draft_site = true;
 
     /** @var Product */
     protected $mp3player;
@@ -30,7 +31,8 @@ class OrderModifierTest extends FunctionalTest
     /** @var Product */
     protected $socks;
 
-    protected $extraDataObjects = [
+    protected static $extra_dataobjects = [
+        CustomProduct_OrderItem::class,
         OrderModifierTest_TestModifier::class
     ];
 
@@ -47,6 +49,7 @@ class OrderModifierTest extends FunctionalTest
             ->set(FlatTax::class, 'name', 'GST');
 
 
+        $this->logInWithPermission('ADMIN');
         $this->mp3player = $this->objFromFixture(Product::class, 'mp3player');
         $this->socks = $this->objFromFixture(Product::class, 'socks');
         $this->mp3player->publishSingle();
@@ -72,8 +75,9 @@ class OrderModifierTest extends FunctionalTest
             );
         }
 
-        Config::modify()->merge(Order::class, 'modifiers', [
-            OrderModifierTest_TestModifier::class
+        Config::modify()->set(Order::class, 'modifiers', [
+            OrderModifierTest_TestModifier::class,
+            FlatTax::class
         ]);
 
         $order = $this->createOrder();

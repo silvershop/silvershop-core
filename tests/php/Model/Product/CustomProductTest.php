@@ -13,6 +13,8 @@ use SilverStripe\Dev\FunctionalTest;
  */
 class CustomProductTest extends FunctionalTest
 {
+    protected static $use_draft_site = true;
+
     protected static $extra_dataobjects = [
         CustomProduct::class,
         CustomProduct_OrderItem::class,

@@ -17,7 +17,7 @@ class ShoppingCartTest extends SapphireTest
 {
     public static $fixture_file   = __DIR__ . '/../Fixtures/shop.yml';
     public static $disable_theme  = true;
-    public static $use_draft_site = false;
+    protected static $use_draft_site = false;
 
     /** @var Product */
     protected $product;
