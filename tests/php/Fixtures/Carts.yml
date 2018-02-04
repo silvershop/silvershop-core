@@ -1,0 +1,43 @@
+SilverShop\Page\ProductCategory:
+  kites:
+    Title: Kites
+    UrlSegment: kites
+
+SilverShop\Model\Variation\AttributeType:
+  kitesize:
+    Name: Kite Size
+    Label: Size
+  color:
+    Name: Color
+    Label: Color
+
+SilverShop\Model\Variation\AttributeValue:
+  kitesize_small:
+    Value: Small
+    Type: =>SilverShop\Model\Variation\AttributeType.kitesize
+  color_red:
+    Value: Red
+    Type: =>SilverShop\Model\Variation\AttributeType.color
+
+SilverShop\Page\Product:
+  extremekite2000:
+    Title: Extereme Kite 2000
+    BasePrice: 35.00
+    Parent: =>SilverShop\Page\ProductCategory.kites
+    VariationAttributeTypes: =>SilverShop\Model\Variation\AttributeType.kitesize,=>SilverShop\Model\Variation\AttributeType.color
+
+SilverShop\Model\Variation\Variation:
+  extremekite2000_redsmall:
+    Product: =>SilverShop\Page\Product.extremekite2000
+    AttributeValues: =>SilverShop\Model\Variation\AttributeValue.kitesize_small,=>SilverShop\Model\Variation\AttributeValue.color_red
+
+SilverShop\Model\Order:
+  kitecart:
+    Name: Cart with small red kite
+
+SilverShop\Model\Variation\OrderItem:
+  vcart_extremekite2000_redsmall:
+    Product: =>SilverShop\Page\Product.extremekite2000
+    ProductVariation: =>SilverShop\Model\Variation\Variation.extremekite2000_redsmall
+    Quantity: 1
+    Order: =>SilverShop\Model\Order.kitecart

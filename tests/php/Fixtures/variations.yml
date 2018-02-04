@@ -1,0 +1,58 @@
+SilverShop\Model\Variation\AttributeType:
+  size:
+    Name: Ball Size
+    Label: Size
+  color:
+    Name: Color
+    Label: Color
+  capacity:
+    Name: Device Capacity
+    Label: Capacity
+  shape:
+    Name: Shape
+    Label: Shape
+
+SilverShop\Model\Variation\AttributeValue:
+  size_small:
+    Value: Small
+    Type: =>SilverShop\Model\Variation\AttributeType.size
+  size_medium:
+    Value: Medium
+    Type: =>SilverShop\Model\Variation\AttributeType.size
+  size_large:
+    Value: Large
+    Type: =>SilverShop\Model\Variation\AttributeType.size
+  color_red:
+    Value: Red
+    Type: =>SilverShop\Model\Variation\AttributeType.color
+  color_blue:
+    Value: Blue
+    Type: =>SilverShop\Model\Variation\AttributeType.color
+  color_yellow:
+    Value: Yellow
+    Type: =>SilverShop\Model\Variation\AttributeType.color
+  capacity_60:
+    Value: 60GB
+    Type: =>SilverShop\Model\Variation\AttributeType.capacity
+  capacity_120:
+    Value: 120GB
+    Type: =>SilverShop\Model\Variation\AttributeType.capacity
+
+SilverShop\Page\Product:
+  ball:
+    Title: Beach Ball
+    BasePrice: 22.00
+    VariationAttributeTypes: =>SilverShop\Model\Variation\AttributeType.size,=>SilverShop\Model\Variation\AttributeType.color
+  mp3player:
+    Title: Mp3 Player
+    VariationAttributeTypes: =>SilverShop\Model\Variation\AttributeType.capacity,=>SilverShop\Model\Variation\AttributeType.color
+
+SilverShop\Model\Variation\Variation:
+  redlarge:
+    Product: =>SilverShop\Page\Product.ball
+    Price: 22.00
+    AttributeValues: =>SilverShop\Model\Variation\AttributeValue.size_large,=>SilverShop\Model\Variation\AttributeValue.color_red
+  redsmall:
+    Product: =>SilverShop\Page\Product.ball
+    Price: 20.00
+    AttributeValues: =>SilverShop\Model\Variation\AttributeValue.size_small,=>SilverShop\Model\Variation\AttributeValue.color_red

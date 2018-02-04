@@ -16,7 +16,7 @@ en:
   ShopEmail:
     PhoneNumber: 123 4567
     Regards: Regards
-    StatusChangeSubject: 'Business Name - '
+    StatusChangeSubject: 'Business Name - {Title}'
     StatusChangeTitle: 'Order Status Change'
     StatusChangeAdminCancelledNote: 'Your note for the email body when order status is AdminCancelled'
     StatusChangeMemberCancelledNote: 'Your note for the email body when order status is MemberCancelled'

@@ -1,40 +1,40 @@
 language: php
-sudo: false
 
-php:
-  - 5.5
+dist: trusty
 
 env:
-  - DB=MYSQL CORE_RELEASE=3.5
+  global:
+    - COMPOSER_ROOT_VERSION=3.0.x-dev
 
 matrix:
   include:
     - php: 5.6
-      env: DB=PGSQL CORE_RELEASE=3.2 COVERAGE=1
-    - php: 5.6
-      env: DB=PGSQL CORE_RELEASE=3.2 COVERAGE=2
-    - php: 5.6
-      env: DB=PGSQL CORE_RELEASE=3.2 COVERAGE=3
+      env: DB=MYSQL PHPCS_TEST=1 PHPUNIT_TEST=1
     - php: 7.0
-      env: DB=PGSQL CORE_RELEASE=3.6
-    - php: 5.5
-      env: DB=SQLITE CORE_RELEASE=3.1
+      env: DB=PGSQL PHPUNIT_TEST=1
     - php: 7.0
-      env: DB=PGSQL CORE_RELEASE=master
-  allow_failures:
-    - env: DB=PGSQL CORE_RELEASE=master
+      env: DB=MYSQL PHPUNIT_TEST=1
+    - php: 7.1
+      env: DB=MYSQL PHPUNIT_COVERAGE_TEST=1
 
 before_script:
-  - composer self-update
+ # Init PHP
   - phpenv rehash
-  - tar cf ~/gitbackup.tar .git
-  - git clone git://github.com/silverstripe-labs/silverstripe-travis-support.git ~/travis-support
-  - php ~/travis-support/travis_setup.php --source `pwd` --target ~/builds/ss
-  - cd ~/builds/ss
+  - phpenv config-rm xdebug.ini
 
-script: ./silvershop/tests/travis/run_build.sh
+  # Install composer dependencies
+  - export PATH=~/.composer/vendor/bin:$PATH
+  - composer validate
+  - if [[ $DB == PGSQL ]]; then composer require silverstripe/postgresql:^2.0 --no-update; fi
+  - composer update
 
-after_success: ./silvershop/tests/travis/upload_coverage.sh
+script:
+  - if [[ $PHPUNIT_TEST ]]; then vendor/bin/phpunit; fi
+  - if [[ $PHPUNIT_COVERAGE_TEST ]]; then phpdbg -qrr vendor/bin/phpunit --coverage-clover=coverage.xml; fi
+#  - if [[ $PHPCS_TEST ]]; then vendor/bin/phpcs src/ tests/; fi
+
+after_success:
+  - if [[ $PHPUNIT_COVERAGE_TEST ]]; then bash <(curl -s https://codecov.io/bash) -f coverage.xml; fi
 
 notifications:
   webhooks:

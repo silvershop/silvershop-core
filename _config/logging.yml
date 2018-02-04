@@ -1,0 +1,6 @@
+---
+Name: silvershop-logging
+---
+# Set up a logger for silvershop, but map it to the default implementation
+SilverStripe\Core\Injector\Injector:
+  SilverShop\Logger: '%$Psr\Log\LoggerInterface'

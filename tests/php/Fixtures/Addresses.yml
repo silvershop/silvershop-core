@@ -1,0 +1,70 @@
+SilverShop\Model\Address:
+  wnz6012:
+    Country:    NZ
+    State:      Wellington
+    PostalCode: 6012
+  #Has an un-trimmed + uppercase state
+  wnz6022:
+    Country:    NZ
+    State:      ' WELLINGTON '
+    PostalCode: 6022
+  anz1010:
+    Country:    NZ
+    State:      Auckland
+    PostalCode: 1010
+  #a cross-section of international addresses
+  #sourced from: http://www.bitboost.com/ref/international-address-formats.html
+  bukhp193eq:
+   Company:     'Nildram Ltd'
+   Address:     'Ardenham Court'
+   Address2:    'Oxford Road'
+   City:        AYLESBURY
+   State:       BUCKINGHAMSHIRE
+   PostalCode:  'HP19 3EQ'
+   Country:     UK
+  #'Uses 'PostCode' instead of 'PostalCode','Territory' instaed of 'State', and 'District' instead of 'City'
+  sau5024:
+    Name:       'MR W HEISENBERG'
+    Address2:   'U 235'
+    Address:    '201-203 BROADWAY AVE'
+    District:   'WEST BEACH'
+    Territory:  SA
+    PostCode:   5024
+    Country:    AU
+  scn266033:
+    Name:       'MR. ZHIMIN LI'
+    Address:    '63 RENMIN LU'
+    City:       'QINGDAO SHI'
+    Province:   SHANDONG
+    PostCode:   266033
+    Country:    CN
+  #Swizerland - doesn't have a state / province
+  zch1234:
+    Title:      Herr
+    Name:       'Hans Katze'
+    Address:    'Tastentanzenstrasse 5/16'
+    PostalCode: 1234
+    City:       Zuerich
+    Country:    CH
+  aus85728:
+    Name:       NISWANDEE
+    Company:    BITBOOST
+    Address:    'POB 65502'
+    City:       TUCSON
+    State:      ARIZONA
+    ZipCode:    85728
+    Country:    US
+  wus98102:
+    Name:       'JOHN SMITH'
+    Address:    '300 BOYLSTON AVE E'
+    City:       SEATTLE
+    State:      WA
+    ZipCode:    98102
+    Country:    US
+  nus11230:
+    Name:       Bobbie O'Neil
+    Address:    '1000 Coney Island Ave'
+    City:       Brooklyn
+    State:      NY
+    ZipCode:    11230
+    Country:    US

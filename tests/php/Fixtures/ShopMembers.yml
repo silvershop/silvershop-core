@@ -1,0 +1,6 @@
+SilverStripe\Security\Member:
+  jeremyperemy:
+    FirstName: Jeremy
+    Surname: Peremy
+    Email: jeremy@example.com
+    Password: jeremyperemy

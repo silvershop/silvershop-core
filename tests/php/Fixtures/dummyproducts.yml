@@ -1,0 +1,299 @@
+SilverShop\Page\ProductCategory:
+  products:
+    Title: Shop
+    URLSegment: shop
+    Content: >
+        <p>This is the top level products category, it uses the <em>product category</em> page type.
+        By default it displays prodcuts within this category, and all categories below it.
+        You can nest other product categories inside it.</p>
+  electronics:
+    Title: Electronics
+    URLSegment: electronics
+    Parent: =>SilverShop\Page\ProductCategory.products
+  food:
+    Title: Food
+    URLSegment: food
+    Parent: =>SilverShop\Page\ProductCategory.products
+  beverages:
+    Title: Beverages
+    URLSegment: beverages
+    Parent: =>SilverShop\Page\ProductCategory.products
+  apparel:
+    Title: Apparel
+    URLSegment: apparel
+    Parent: =>SilverShop\Page\ProductCategory.products
+  homewares:
+    Title: Homewares
+    URLSegment: homewares
+    Parent: =>SilverShop\Page\ProductCategory.products
+  jewellery:
+    Title: Jewellery
+    URLSegment: jewellery
+    Parent: =>SilverShop\Page\ProductCategory.apparel
+  books:
+    Title: Books
+    URLSegment: books
+    Parent: =>SilverShop\Page\ProductCategory.products
+  toys:
+    Title: Toys
+    URLSegment: toys
+    Parent: =>SilverShop\Page\ProductCategory.products
+  furniture:
+    Title: Furniture
+    URLSegment: furniture
+    Parent: =>SilverShop\Page\ProductCategory.products
+  kitchen:
+    Title: Kitchen
+    URLSegment: kitchen
+    Parent: =>SilverShop\Page\ProductCategory.furniture
+  bedroom:
+    Title: Bedroom
+    URLSegment: bedroom
+    Parent: =>SilverShop\Page\ProductCategory.furniture
+  ebooks:
+    Title: E-Books
+    URLSegment: ebooks
+    Parent: =>SilverShop\Page\ProductCategory.books
+  entertainment:
+    Title: Entertainment
+    URLSegment: entertainment
+    Parent: =>SilverShop\Page\ProductCategory.products
+  music:
+    Title: Music
+    URLSegment: music
+    Parent: =>SilverShop\Page\ProductCategory.entertainment
+  movies:
+    Title: Movies
+    URLSegment: movies
+    Parent: =>SilverShop\Page\ProductCategory.entertainment
+  drama:
+    Title: Drama
+    URLSegment: drama
+    Parent: =>SilverShop\Page\ProductCategory.movies
+  automotive:
+    Title: Automotive
+    URLSegment: automotive
+    Parent: =>SilverShop\Page\ProductCategory.products
+  flowers:
+    Title: Flowers
+    URLSegment: flowers
+    Parent: =>SilverShop\Page\ProductCategory.products
+  stationery:
+    Title: Stationery
+    URLSegment: stationery
+    Parent: =>SilverShop\Page\ProductCategory.products
+
+SilverShop\Model\Variation\AttributeType:
+  shirtsize:
+    Name: Shirt Size
+    Label: Size
+  shirtcolor:
+    Name: Shirt Colour
+    Label: Colour
+
+SilverShop\Page\Product:
+  socks:
+    Title: Socks
+    InternalItemID: abc136
+    Price: 8
+    URLSegment: socks
+    Parent: =>SilverShop\Page\ProductCategory.apparel
+    AllowPurchase: 1
+    Weight: 0.1
+    Width: 15
+    Height: 20
+    Depth: 2
+    Stock: 50
+    Content: >
+        <p>This sock has cushioned sole for extra comfort with comfortable stay-up top.
+        Our patented technology means quality you can trust.</p>
+  hdtv: #This product has no price
+    Title: 42inch 1080p LCD TV - 16:9 - HDTV
+    InternalItemID:
+    Parent: =>SilverShop\Page\ProductCategory.electronics
+    URLSegment: hdtv
+    AllowPurchase: 1
+    Weight: 45
+    Width: 115.5
+    Height: 85
+    Depth: 12.4
+    Stock: 3
+    Content: >
+        <p>Whatever room, whatever light, LGs 42 CS560 LCD television adjusts its picture to look
+        crisp, clear, and glare-free! Its sharp pixel resolution at 1920 x 1080p yields a detailed
+        picture while its fast refresh rate at 60 Hz ensures you wont miss a play in the basketball
+        game. Surround sound matches that quality picture with quality sound.</p>
+  beachball:
+    Title: Beach Ball
+    InternalItemID: abc130
+    Price: 10
+    URLSegment: beach-ball
+    Parent: =>SilverShop\Page\ProductCategory.toys
+    AllowPurchase: 0 #This product has AllowPurchase set to 0
+    Weight: 0.4
+    Width: 23
+    Height: 30
+    Depth: 1
+    Stock: 1000
+    Content: >
+        <p>Branded 12 inch Beach Ball. Multicolor vinyl ball for Beach and outdoor play</p>
+        <p>NOTE: The manufacture calls this a 12 inch circumference ball. When fully inflated
+        it is around 3 inches smaller.<br>
+        For best results, do not over inflate.</p>
+  mp3player:
+    Title: Apple iPod touch 8GB (4th Generation) - Black
+    Price: 200
+    URLSegment: mp3-player
+    Parent: =>SilverShop\Page\ProductCategory.electronics
+    AllowPurchase: 1
+    Weight: 0.3
+    Width: 10
+    Height: 14
+    Depth: 10
+    Stock: 1000 #You need stock levels if you have included the stock module, else the test will fail.
+    Content: >
+        <p>The world's most popular portable gaming device is even more fun. Now available in black and white,
+        iPod touch includes iOS 5 with over 200 new features, like iMessage, Notification Center, and Twitter integration.
+        Send free, unlimited text messages over Wi-Fi with iMessage. Record HD video and make FaceTime calls. Visit the
+        App Store to choose from over 500,000 apps. iPod touch also features iCloud, which stores your music, photos, apps,
+          and more�and wirelessly pushes them to all your devices.</p>
+  genericmovie:
+    Title: Generic Movie
+    InternalItemID: abc137
+    Parent: =>SilverShop\Page\ProductCategory.drama
+    Price: 23.00
+    AllowPurchase: 1
+    Weight: 0.100
+    Width: 13.5
+    Height: 19
+    Depth: 1.5
+    Content: >
+        <p>The most generic meta-movie you'll ever watch. Inspired by every drama movie ever made.</a>
+        <a href="http://www.youtube.com/watch?v=AcD292xrpjY">Watch trailer</a>
+  lemonchicken:
+    Title: Lemon Chicken
+    InternalItemID: abc140
+    Parent: =>SilverShop\Page\ProductCategory.food
+    Price: 16.99
+    Weight: 0.250
+    Width: 23
+    Height: 14
+    Depth: 6
+    Stock: 30
+    Content: >
+        <p>Boneless, skinless chicken breast cutlets marinated in a delicious lemon herbal sauce.</p>
+        <p>After cooking, try slicing and adding to your salad.</p>
+        <h3>Cooking Instructions</h3>
+        <p>(From frozen): Grill or saute approximately 6 minutes per side or bake 25 minutes at 400&deg;.</p>
+  book:
+    Title: The Lion, the Witch and the Wardrobe
+    InternalItemID: abc126
+    Price: 8.99
+    Parent: =>SilverShop\Page\ProductCategory.books
+    Weight: 0.6
+    Width: 15
+    Height: 20
+    Depth: 3
+    Content: >
+        <p>They open a door and enter a world.</p>
+  lamp:
+    Title: Desk Lamp
+    InternalItemID: abc125
+    Price: 32.99
+    Parent: =>SilverShop\Page\ProductCategory.bedroom
+    Weight: 4.3
+    Width: 30
+    Height: 30
+    Depth:  50
+    Content: >
+        <p>Product materials: Shade: Paper Tube/ Base plate: Steel, Brush finish nickel-plated, Clear lacquer</p>
+  ring:
+    Title: Round Diamond Solitaire Ring in 14K White Gold
+    InternalItemID: abc135
+    Price: 1236.30
+    Parent: =>SilverShop\Page\ProductCategory.jewellery
+    Weight: 0.01
+    Width: 10
+    Height: 10
+    Depth: 6
+    Content: >
+        <p>Say I love you with this stunning piece that will stun you if you are not careful.</p>
+  kite:
+    Title: Kite
+    InternalItemID: abc134
+    Price: 20
+    Weight: 0.03
+    Width: 15
+    Height: 20
+    Depth: 2
+    Parent: =>SilverShop\Page\ProductCategory.toys
+  hoop:
+    Title: Hula Hoop
+    InternalItemID: abc131
+    Price: 4
+    Width: 150
+    Height: 150
+    Depth: 2
+    Parent: =>SilverShop\Page\ProductCategory.toys
+  paper:
+    Title: Paper Roll
+    InternalItemID: abc132
+    Price: 12
+    Weight: 1.4
+    Width: 7
+    Height: 7
+    Depth: 120
+    Parent: =>SilverShop\Page\ProductCategory.stationery
+  pens:
+    Title: Ball Point Pens (7 pack)
+    InternalItemID: abc123
+    Price: 12
+    Weight: 0.1
+    Width: 5
+    Height: 10
+    Depth: 3
+    Parent: =>SilverShop\Page\ProductCategory.stationery
+  tshirt:
+    Title: T-Shirt
+    InternalItemID: abc128
+    Price: 25
+    Parent: =>SilverShop\Page\ProductCategory.apparel
+    URLSegment: t-shirt
+    AllowPurchase: 1
+    Weight: 0.3
+    Height: 28
+    Width: 18.5
+    Depth: 2
+    Stock: 1000
+    Content: >
+        <p>This popular t-shirt could make you popular.</p>
+    VariationAttributeTypes: =>SilverShop\Model\Variation\AttributeType.shirtsize,=>SilverShop\Model\Variation\AttributeType.shirtcolor
+
+SilverShop\Model\Variation\AttributeValue:
+  shirtsize_large:
+    Value: Large
+    Type: =>SilverShop\Model\Variation\AttributeType.shirtsize
+  shirtsize_medium:
+    Value: Medium
+    Type: =>SilverShop\Model\Variation\AttributeType.shirtsize
+  shirtsize_small:
+    Value: Small
+    Type: =>SilverShop\Model\Variation\AttributeType.shirtsize
+  shirtcolor_red:
+    Value: Red
+    Type: =>SilverShop\Model\Variation\AttributeType.shirtcolor
+  shirtcolor_blue:
+    Value: Blue
+    Type: =>SilverShop\Model\Variation\AttributeType.shirtcolor
+
+SilverShop\Model\Variation\Variation:
+  tshirt_1:
+    Product: =>SilverShop\Page\Product.tshirt
+    Price: 25
+    InternalItemID: abc128-lr
+    AttributeValues: =>SilverShop\Model\Variation\AttributeValue.shirtsize_large,=>SilverShop\Model\Variation\AttributeValue.shirtcolor_red
+  tshirt_2:
+    Product: =>SilverShop\Page\Product.tshirt
+    Price: 25
+    InternalItemID: abc128-mb
+    AttributeValues: =>SilverShop\Model\Variation\AttributeValue.shirtsize_medium,=>SilverShop\Model\Variation\AttributeValue.shirtcolor_blue

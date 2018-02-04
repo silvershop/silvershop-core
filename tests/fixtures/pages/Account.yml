@@ -1,6 +1,0 @@
-AccountPage:
-    account:
-        URLSegment: account
-        Title: Account
-        Content: '<p>This is the account page. It is used for shop users to login and change their member details if they have an account.</p>'
-        ShowInMenus: 0

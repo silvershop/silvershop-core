@@ -1,0 +1,15 @@
+Page:
+  shop:
+    Title: Shop
+    URLSegment: myshop
+
+SilverShop\Page\CheckoutPage:
+  checkout:
+    URLSegment: checkout
+    Title: Checkout
+    Content: '<p>This is the checkout page. The order summary and order form appear below this content.</p>'
+    PurchaseComplete: '<p>Your purchase is complete.</p>'
+    ChequeMessage: '<p>Please note: Your goods will not be dispatched until we receive your payment.</p>'
+    ShowInMenus: 0
+    ShowInSearch: 0
+    Parent: =>Page.shop

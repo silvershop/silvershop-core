@@ -421,7 +421,7 @@ de:
     ReceiptSubject: 'Bestätigung der Bestellung Nr. {OrderNo}'
     ReceiptTitle: 'Bestellbestätigung'
     Regards: 'Mit freundlichen Grüssen'
-    StatusChangeSubject: 'Silvershop – '
+    StatusChangeSubject: 'Silvershop – {Title}'
     StatusChangeTitle: 'Statusänderung'
     StatusChanged: 'Statusänderung der Bestellung Nr. {OrderNo} zu "{OrderStatus}".'
     StatusChangeAdminCancelledNote: 'Ihre Bestellung wurde durch einen Mitarbeiter storniert. Bitte treten Sie mit uns in Kontakt, falls Sie Fragen zu dieser Bestellung haben.'

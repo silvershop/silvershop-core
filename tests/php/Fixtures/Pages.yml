@@ -1,0 +1,27 @@
+Page:
+  termsandconditions:
+    Title: Terms and Conditions
+    URLSegment: terms-and-conditions
+    Content: Test terms and conditions.
+
+SilverShop\Page\CheckoutPage:
+  checkout:
+    Title: Checkout
+    URLSegment: checkout
+
+SilverShop\Page\CartPage:
+  cart:
+    Title: Cart
+    URLSegment: cart
+
+SilverShop\Page\AccountPage:
+  accountpage:
+    Title: Account
+    URLSegment: account
+
+SilverStripe\SiteConfig\SiteConfig:
+  config:
+    Title: Shop Testing Website
+    ShopClosed: 0
+    TermsPage: =>Page.termsandconditions
+    #CustomerGroup: =>Group.customers

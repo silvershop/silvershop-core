@@ -421,7 +421,7 @@ en:
     ReceiptSubject: 'Order #{OrderNo} receipt'
     ReceiptTitle: 'Shop Receipt'
     Regards: 'Kind regards'
-    StatusChangeSubject: 'Silvershop - '
+    StatusChangeSubject: 'Silvershop - {Title}'
     StatusChangeTitle: 'Shop Status Change'
     StatusChanged: 'Status for order #{OrderNo} changed to "{OrderStatus}"'
     StatusChangeAdminCancelledNote: 'Your order has been cancelled by our staff.  Please contact us if you have any questions about this order.'
