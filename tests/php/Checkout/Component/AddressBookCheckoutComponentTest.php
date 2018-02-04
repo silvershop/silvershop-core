@@ -25,19 +25,29 @@ class AddressBookCheckoutComponentTest extends SapphireTest
         '../../Fixtures/ShopMembers.yml',
     );
 
-    /** @var Order $cart */
+    /**
+     * @var Order $cart 
+     */
     protected $cart;
 
-    /** @var Member $member */
+    /**
+     * @var Member $member 
+     */
     protected $member;
 
-    /** @var Address $address1 */
+    /**
+     * @var Address $address1 
+     */
     protected $address1;
 
-    /** @var Address $address2 */
+    /**
+     * @var Address $address2 
+     */
     protected $address2;
 
-    /** @var CheckoutComponentConfig $config */
+    /**
+     * @var CheckoutComponentConfig $config 
+     */
     protected $config;
 
     protected $fixtureNewAddress = array(

@@ -15,29 +15,33 @@ class ShopCurrency extends DBCurrency
 {
     /**
      * The shop currency decimal delimiter
+     *
      * @config
-     * @var string
+     * @var    string
      */
     private static $decimal_delimiter = '.';
 
     /**
      * The shop currency thousands delimiter
+     *
      * @config
-     * @var string
+     * @var    string
      */
     private static $thousand_delimiter = ',';
 
     /**
      * Whether or not to append the currency symbol to
+     *
      * @config
-     * @var string
+     * @var    string
      */
     private static $append_symbol = false;
 
     /**
      * HTML to use for negative numbers
+     *
      * @config
-     * @var string
+     * @var    string
      */
     private static $negative_value_format = '<span class="negative">(%s)</span>';
 

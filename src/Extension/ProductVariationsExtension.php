@@ -129,8 +129,8 @@ class ProductVariationsExtension extends DataExtension
     /**
      * Generates variations based on selected attributes.
      *
-     * @param AttributeType $attributetype
-     * @param array $values
+     * @param  AttributeType $attributetype
+     * @param  array         $values
      * @throws \SilverStripe\ORM\ValidationException
      */
     public function generateVariationsFromAttributes(AttributeType $attributetype, array $values)

@@ -14,7 +14,9 @@ use SilverStripe\View\ViewableData;
 
 class ShopQuantityField extends ViewableData
 {
-    /** @var OrderItem  */
+    /**
+     * @var OrderItem
+     */
     protected $item;
 
     protected $parameters;
@@ -23,13 +25,16 @@ class ShopQuantityField extends ViewableData
 
     protected $template = self::class;
 
-    /** @var Buyable */
+    /**
+     * @var Buyable
+     */
     protected $buyable;
 
     /**
      * The max amount to enter
+     *
      * @config
-     * @var int
+     * @var    int
      */
     private static $max = 0;
 

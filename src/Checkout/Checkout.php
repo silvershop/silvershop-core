@@ -132,6 +132,7 @@ class Checkout
 
     /**
      * Set payment method
+     *
      * @throws \SilverStripe\Omnipay\Exception\InvalidConfigurationException
      */
     public function setPaymentMethod($paymentmethod)
@@ -150,6 +151,7 @@ class Checkout
     /**
      * Gets the selected payment method from the session,
      * or the only available method, if there is only one.
+     *
      * @throws \SilverStripe\Omnipay\Exception\InvalidConfigurationException
      */
     public function getSelectedPaymentMethod($nice = false)
@@ -191,7 +193,7 @@ class Checkout
      * Store a message to be fed back to user.
      *
      * @param string $message
-     * @param string $type - good, bad, warning
+     * @param string $type    - good, bad, warning
      */
     protected function message($message, $type = 'good')
     {

@@ -65,8 +65,7 @@ class PaymentForm extends CheckoutForm
         $this->config->setData($form->getData());
         $order = $this->config->getOrder();
         $gateway = Checkout::get($order)->getSelectedPaymentMethod(false);
-        if (
-            GatewayInfo::isOffsite($gateway)
+        if (GatewayInfo::isOffsite($gateway)
             || GatewayInfo::isManual($gateway)
             || $this->config->getComponentByType('OnsitePaymentCheckoutComponent')
         ) {

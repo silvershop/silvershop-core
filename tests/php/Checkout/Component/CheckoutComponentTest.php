@@ -30,16 +30,24 @@ class CheckoutComponentTest extends SapphireTest
         __DIR__ . '/../../Fixtures/ShopMembers.yml',
     );
 
-    /** @var Order */
+    /**
+     * @var Order
+     */
     protected $cart;
 
-    /** @var Address */
+    /**
+     * @var Address
+     */
     protected $address1;
 
-    /** @var Address */
+    /**
+     * @var Address
+     */
     protected $address2;
 
-    /** @var Address */
+    /**
+     * @var Address
+     */
     protected $addressNoCountry;
 
     public function setUp()
@@ -72,7 +80,7 @@ class CheckoutComponentTest extends SapphireTest
             )
         );
 
-        $shippingaddresscomponent = $config->getComponentByType( ShippingAddress::class);
+        $shippingaddresscomponent = $config->getComponentByType(ShippingAddress::class);
         $shippingaddresscomponent->setData($order, $this->address1->toMap());
 
         $billingaddresscomponent = $config->getComponentByType(BillingAddress::class);

@@ -35,7 +35,9 @@ class AccountPageController extends PageController
         'setdefaultshipping',
     ];
 
-    /** @var Member */
+    /**
+     * @var Member
+     */
     protected $member;
 
     public function init()
@@ -220,7 +222,9 @@ class AccountPageController extends PageController
 
     public function ChangePasswordForm()
     {
-        /** @var ChangePasswordForm $form */
+        /**
+         * @var ChangePasswordForm $form
+         */
         $form = ChangePasswordForm::create($this, 'ChangePasswordForm');
 
         // The default form tries to redirect to /account/login which doesn't exist

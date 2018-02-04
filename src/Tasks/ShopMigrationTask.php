@@ -127,12 +127,12 @@ You may want to run the CartCleanupTask before migrating if you want to discard 
     public function migrateStatuses($order)
     {
         switch ($order->Status) {
-            case "Cancelled": //Pre version 0.5
-                $order->Status = 'AdminCancelled';
-                break;
-            case "":
-                $order->Status = 'Cart';
-                break;
+        case "Cancelled": //Pre version 0.5
+            $order->Status = 'AdminCancelled';
+            break;
+        case "":
+            $order->Status = 'Cart';
+            break;
         }
     }
 

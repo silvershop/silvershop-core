@@ -20,7 +20,7 @@ class OrderProcessorTest_PlaceFailExtension extends DataExtension implements Tes
     public function onAfterWrite()
     {
         // fail after writing, so that we can test if DB rollback works as intended
-        if($this->willFail){
+        if($this->willFail) {
             user_error('Order failed');
         }
     }

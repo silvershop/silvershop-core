@@ -35,13 +35,19 @@ class OrderTest extends SapphireTest
         CustomProduct_OrderItem::class,
     ];
 
-    /** @var Product */
+    /**
+     * @var Product
+     */
     protected $mp3player;
 
-    /** @var Product */
+    /**
+     * @var Product
+     */
     protected $socks;
 
-    /** @var Product */
+    /**
+     * @var Product
+     */
     protected $beachball;
 
 
@@ -116,7 +122,7 @@ class OrderTest extends SapphireTest
         //create an order with unrounded total
         $order = new Order(
             array(
-                'Total'  => 123.257323,
+                'Total' => 123.257323,
                 //NOTE: setTotal isn't called here, so un-rounded data *could* get in to the object
                 'Status' => 'Unpaid',
             )
@@ -247,14 +253,18 @@ class OrderTest extends SapphireTest
         $order->write();
         $order->calculate();
 
-        $statusLogId = OrderStatusLog::create()->update([
-            'Title' => 'Test status log',
-            'OrderID' => $order->ID
-        ])->write();
+        $statusLogId = OrderStatusLog::create()->update(
+            [
+                'Title' => 'Test status log',
+                'OrderID' => $order->ID
+            ]
+        )->write();
 
-        $paymentId = Payment::create()->update([
-            'OrderID' => $order->ID
-        ])->init('Manual', 343.75, 'NZD')->write();
+        $paymentId = Payment::create()->update(
+            [
+                'OrderID' => $order->ID
+            ]
+        )->init('Manual', 343.75, 'NZD')->write();
 
 
         $this->assertEquals(4, $order->Items()->Quantity());
@@ -292,9 +302,11 @@ class OrderTest extends SapphireTest
         $order->Status = 'Unpaid';
         $order->write();
 
-        $this->assertEquals(array(
-            array('Cart' => 'Unpaid')
-        ), OrderTest_TestStatusChangeExtension::$stack);
+        $this->assertEquals(
+            array(
+                array('Cart' => 'Unpaid')
+            ), OrderTest_TestStatusChangeExtension::$stack
+        );
 
         OrderTest_TestStatusChangeExtension::reset();
 
@@ -302,9 +314,11 @@ class OrderTest extends SapphireTest
         $order->Status = 'Paid';
         $order->write();
 
-        $this->assertEquals(array(
-            array('Unpaid' => 'Paid')
-        ), OrderTest_TestStatusChangeExtension::$stack);
+        $this->assertEquals(
+            array(
+                array('Unpaid' => 'Paid')
+            ), OrderTest_TestStatusChangeExtension::$stack
+        );
 
         $this->assertTrue((boolean)$order->Paid, 'Order paid date should be set');
     }

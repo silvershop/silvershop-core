@@ -26,10 +26,14 @@ class AccountPageTest extends FunctionalTest
     protected static $disable_theme = true;
     protected static $use_draft_site = true;
 
-    /** @var AccountPage */
+    /**
+     * @var AccountPage
+     */
     protected $accountpage;
 
-    /** @var AccountPageController */
+    /**
+     * @var AccountPageController
+     */
     protected $controller;
 
     public function setUp()

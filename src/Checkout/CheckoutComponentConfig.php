@@ -39,7 +39,7 @@ class CheckoutComponentConfig
 
     /**
      * @param CheckoutComponent $component
-     * @param string $insertBefore The class of the component to insert this one before
+     * @param string            $insertBefore The class of the component to insert this one before
      * @return $this
      */
     public function addComponent(CheckoutComponent $component, $insertBefore = null)
@@ -130,7 +130,7 @@ class CheckoutComponentConfig
     /**
      * Validate every component against given data.
      *
-     * @param  array $data data to validate
+     * @param array $data data to validate
      *
      * @return boolean validation result
      * @throws ValidationException

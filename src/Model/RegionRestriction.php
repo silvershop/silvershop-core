@@ -57,7 +57,7 @@ class RegionRestriction extends DataObject
      * Parses a UK postcode to give you the different sections
      * TODO: Very specific functionality. Consider moving this to a separate module
      *
-     * @param string $postcode
+     * @param  string $postcode
      * @return array
      */
     public static function parse_uk_postcode($postcode)
@@ -106,12 +106,14 @@ class RegionRestriction extends DataObject
             if (isset($postcode['validate']) && $postcode['validate']) {
                 $region = preg_replace('/[^a-z]+/i', '', substr($postcode['prefix'], 0, 2));
 
-                $set = $set->filter('PostalCode:nocase', [
-                    $region,
-                    $postcode['prefix'],
-                    $postcode['prefix'] . $postcode['suffix'],
-                    '*', ''
-                ]);
+                $set = $set->filter(
+                    'PostalCode:nocase', [
+                        $region,
+                        $postcode['prefix'],
+                        $postcode['prefix'] . $postcode['suffix'],
+                        '*', ''
+                    ]
+                );
             }
         } else {
             $set = $set->filter('PostalCode:nocase', [trim($address->PostalCode), '*', '']);

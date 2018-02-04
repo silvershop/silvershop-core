@@ -11,7 +11,7 @@ use SilverStripe\ORM\FieldType\DBDatetime;
  *
  * @package    shop
  * @subpackage fieldtype
- * @property DBDatetime $owner
+ * @property   DBDatetime $owner
  */
 class I18nDatetime extends DBDatetime
 {

@@ -13,7 +13,6 @@ use SilverStripe\ORM\ValidationException;
 use SilverStripe\ORM\ValidationResult;
 
 /**
- *
  * This component should only ever be used on SSL encrypted pages!
  */
 class OnsitePayment extends CheckoutComponent

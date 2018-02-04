@@ -35,7 +35,9 @@ class ShoppingCart
 
     private static $cartid_session_name = 'shoppingcartid';
 
-    /** @var Order */
+    /**
+     * @var Order
+     */
     private $order;
 
     private $calculateonce = false;
@@ -65,10 +67,12 @@ class ShoppingCart
         $session = ShopTools::getSession();
         //find order by id saved to session (allows logging out and retaining cart contents)
         if (!$this->order && $sessionid = $session->get(self::config()->cartid_session_name)) {
-            $this->order = Order::get()->filter([
-                'Status' => 'Cart',
-                'ID' => $sessionid,
-            ])->first();
+            $this->order = Order::get()->filter(
+                [
+                    'Status' => 'Cart',
+                    'ID' => $sessionid,
+                ]
+            )->first();
         }
         if (!$this->calculateonce && $this->order) {
             $this->order->calculate();
@@ -124,8 +128,8 @@ class ShoppingCart
      * Adds an item to the cart
      *
      * @param Buyable $buyable
-     * @param int $quantity
-     * @param array $filter
+     * @param int     $quantity
+     * @param array   $filter
      *
      * @return boolean|OrderItem false or the new/existing item
      */
@@ -171,8 +175,8 @@ class ShoppingCart
      * Remove an item from the cart.
      *
      * @param Buyable $buyable
-     * @param int $quantity - number of items to remove, or leave null for all items (default)
-     * @param array $filter
+     * @param int     $quantity - number of items to remove, or leave null for all items (default)
+     * @param array   $filter
      *
      * @return boolean success/failure
      */
@@ -212,8 +216,9 @@ class ShoppingCart
 
     /**
      * Remove a specific order item from cart
-     * @param OrderItem $item
-     * @param int $quantity - number of items to remove or leave `null` to remove all items (default)
+     *
+     * @param  OrderItem $item
+     * @param  int       $quantity - number of items to remove or leave `null` to remove all items (default)
      * @return boolean success/failure
      */
     public function removeOrderItem(OrderItem $item, $quantity = null)
@@ -245,8 +250,8 @@ class ShoppingCart
      * Will automatically add or remove item, if necessary.
      *
      * @param Buyable $buyable
-     * @param int $quantity
-     * @param array $filter
+     * @param int     $quantity
+     * @param array   $filter
      *
      * @return boolean|OrderItem false or the new/existing item
      */
@@ -267,9 +272,10 @@ class ShoppingCart
 
     /**
      * Update quantity of a given order item
-     * @param OrderItem $item
-     * @param int $quantity the new quantity to use
-     * @param array $filter
+     *
+     * @param  OrderItem $item
+     * @param  int       $quantity the new quantity to use
+     * @param  array     $filter
      * @return boolean success/failure
      */
     public function updateOrderItemQuantity(OrderItem $item, $quantity = 1, $filter = [])
@@ -310,9 +316,9 @@ class ShoppingCart
     /**
      * Finds or makes an order item for a given product + filter.
      *
-     * @param Buyable $buyable the buyable
-     * @param int $quantity quantity to add
-     * @param array $filter
+     * @param Buyable $buyable  the buyable
+     * @param int     $quantity quantity to add
+     * @param array   $filter
      *
      * @return OrderItem the found or created item
      * @throws \SilverStripe\ORM\ValidationException
@@ -360,7 +366,7 @@ class ShoppingCart
      * Finds an existing order item.
      *
      * @param Buyable $buyable
-     * @param array $customfilter
+     * @param array   $customfilter
      *
      * @return OrderItem the item requested or null
      */
@@ -397,15 +403,15 @@ class ShoppingCart
      * Ensure the proper buyable will be returned for a given buyable…
      * This is being used to ensure a product with variations cannot be added to the cart…
      * a Variation has to be added instead!
-     * @param Buyable $buyable
+     *
+     * @param  Buyable $buyable
      * @return Buyable
      */
     public function getCorrectBuyable(Buyable $buyable)
     {
-        if (
-            $buyable instanceof Product &&
-            $buyable->hasExtension(ProductVariationsExtension::class) &&
-            $buyable->Variations()->count() > 0
+        if ($buyable instanceof Product
+            && $buyable->hasExtension(ProductVariationsExtension::class)
+            && $buyable->Variations()->count() > 0
         ) {
             foreach ($buyable->Variations() as $variation) {
                 if ($variation->canPurchase()) {
@@ -419,6 +425,7 @@ class ShoppingCart
 
     /**
      * Store old cart id in session order history
+     *
      * @param int|null $requestedOrderId optional parameter that denotes the order that was requested
      */
     public function archiveorderid($requestedOrderId = null)
@@ -444,7 +451,7 @@ class ShoppingCart
     /**
      * Empty / abandon the entire cart.
      *
-     * @param bool $write whether or not to write the abandoned order
+     * @param  bool $write whether or not to write the abandoned order
      * @return bool - true if successful, false if no cart found
      */
     public function clear($write = true)
@@ -479,7 +486,7 @@ class ShoppingCart
      * Store a message to be fed back to user.
      *
      * @param string $message
-     * @param string $type - good, bad, warning
+     * @param string $type    - good, bad, warning
      */
     protected function message($message, $type = 'good')
     {

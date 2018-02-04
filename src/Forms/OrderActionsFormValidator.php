@@ -18,21 +18,24 @@ class OrderActionsFormValidator extends RequiredFields
             if (!GatewayInfo::isManual($gateway) && !GatewayInfo::isOffsite($gateway)) {
                 $fieldFactory = new GatewayFieldsFactory(null);
                 // Merge the required fields and the Credit-Card fields that are required for the gateway
-                $this->required = $fieldFactory->getFieldName(array_merge($this->required, array_intersect(
-                    [
-                        'type',
-                        'name',
-                        'number',
-                        'startMonth',
-                        'startYear',
-                        'expiryMonth',
-                        'expiryYear',
-                        'cvv',
-                        'issueNumber'
-
-                    ],
-                    GatewayInfo::requiredFields($gateway)
-                )));
+                $this->required = $fieldFactory->getFieldName(
+                    array_merge(
+                        $this->required, array_intersect(
+                            [
+                                'type',
+                                'name',
+                                'number',
+                                'startMonth',
+                                'startYear',
+                                'expiryMonth',
+                                'expiryYear',
+                                'cvv',
+                                'issueNumber'
+                            ],
+                            GatewayInfo::requiredFields($gateway)
+                        )
+                    )
+                );
             }
         }
 

@@ -43,10 +43,12 @@ class ViewableCartExtension extends Extension
         }
 
         $maincategory = ProductCategory::get()
-            ->sort([
-                'ParentID' => 'ASC',
-                'ID' => 'ASC',
-            ])->first();
+            ->sort(
+                [
+                    'ParentID' => 'ASC',
+                    'ID' => 'ASC',
+                ]
+            )->first();
         if ($maincategory) {
             return $maincategory->Link();
         }

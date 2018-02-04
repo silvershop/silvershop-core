@@ -25,10 +25,12 @@ class CreateInternationalZoneTask extends BuildTask
         $countries = ShopConfigExtension::current()->getCountriesList();
 
         foreach ($countries as $code => $country) {
-            ZoneRegion::create()->update([
-                'ZoneID' => $zone->ID,
-                'Country' => $code,
-            ])->write();
+            ZoneRegion::create()->update(
+                [
+                    'ZoneID' => $zone->ID,
+                    'Country' => $code,
+                ]
+            )->write();
             echo '.';
         }
     }

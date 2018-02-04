@@ -117,8 +117,7 @@ class OrderStatusLog extends DataObject
     protected function updateWithLastInfo()
     {
         if ($this->OrderID) {
-            if (
-                $latestLog = OrderStatusLog::get()->filter('OrderID', $this->OrderID)->sort('Created', 'DESC')->first()
+            if ($latestLog = OrderStatusLog::get()->filter('OrderID', $this->OrderID)->sort('Created', 'DESC')->first()
             ) {
                 $this->DispatchedBy = $latestLog->DispatchedBy;
                 $this->DispatchedOn = $latestLog->DispatchedOn;

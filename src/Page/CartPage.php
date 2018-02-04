@@ -45,27 +45,29 @@ class CartPage extends Page
 
     public function getCMSFields()
     {
-        $this->beforeUpdateCMSFields(function (FieldList $fields) {
-            if ($checkouts = CheckoutPage::get()) {
+        $this->beforeUpdateCMSFields(
+            function (FieldList $fields) {
+                if ($checkouts = CheckoutPage::get()) {
+                    $fields->addFieldToTab(
+                        'Root.Links',
+                        DropdownField::create(
+                            'CheckoutPageID',
+                            _t('CartPage.has_one_CheckoutPage', 'Checkout Page'),
+                            $checkouts->map("ID", "Title")
+                        )
+                    );
+                }
+
                 $fields->addFieldToTab(
                     'Root.Links',
-                    DropdownField::create(
-                        'CheckoutPageID',
-                        _t('CartPage.has_one_CheckoutPage', 'Checkout Page'),
-                        $checkouts->map("ID", "Title")
+                    TreeDropdownField::create(
+                        'ContinuePageID',
+                        _t('CartPage.has_one_ContinuePage', 'Continue Shopping Page'),
+                        SiteTree::class
                     )
                 );
             }
-
-            $fields->addFieldToTab(
-                'Root.Links',
-                TreeDropdownField::create(
-                    'ContinuePageID',
-                    _t('CartPage.has_one_ContinuePage', 'Continue Shopping Page'),
-                    SiteTree::class
-                )
-            );
-        });
+        );
 
         return parent::getCMSFields();
     }

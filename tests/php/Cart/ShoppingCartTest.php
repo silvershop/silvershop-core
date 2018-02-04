@@ -19,10 +19,14 @@ class ShoppingCartTest extends SapphireTest
     public static $disable_theme  = true;
     protected static $use_draft_site = false;
 
-    /** @var Product */
+    /**
+     * @var Product 
+     */
     protected $product;
 
-    /** @var ShoppingCart */
+    /**
+     * @var ShoppingCart 
+     */
     protected $cart;
 
     public function setUp()

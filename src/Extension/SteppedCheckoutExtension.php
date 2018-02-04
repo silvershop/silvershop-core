@@ -25,12 +25,15 @@ class SteppedCheckoutExtension extends Extension
 {
     /**
      * Anchor string to add to continue links
+     *
      * @config
-     * @var string
+     * @var    string
      */
     private static $continue_anchor;
 
-    /** @var CheckoutPageController */
+    /**
+     * @var CheckoutPageController 
+     */
     protected $owner;
 
     /**

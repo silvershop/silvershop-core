@@ -24,7 +24,6 @@ use SilverStripe\Security\Security;
  *    - member identifier, and password fields.
  *    - required membership fields
  *    - validating data
- *
  */
 class Membership extends CheckoutComponent
 {

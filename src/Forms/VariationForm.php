@@ -38,8 +38,8 @@ class VariationForm extends AddProductForm
      * (ValidateVariant) then simply a validation of the user including that
      * product is done and the users cart isn't actually changed.
      *
-     * @param array $data
-     * @param Form $form
+     * @param  array $data
+     * @param  Form  $form
      * @return mixed
      */
     public function addtocart($data, $form)

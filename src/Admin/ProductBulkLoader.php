@@ -30,15 +30,17 @@ class ProductBulkLoader extends CsvBulkLoader
 {
     /**
      * You can force every product to be in a certain category, as long as you know its ID.
+     *
      * @config
-     * @var null
+     * @var    null
      */
     private static $parent_page_id = null;
 
     /**
      * Set this if you want categories to be created if they don't exist.
+     *
      * @config
-     * @var bool
+     * @var    bool
      */
     protected static $create_new_product_groups = false;
 
@@ -151,10 +153,12 @@ class ProductBulkLoader extends CsvBulkLoader
         $filename = trim(strtolower(Convert::raw2sql($val)));
         $filenamedashes = str_replace(' ', '-', $filename);
         if ($filename
-            && $image = Image::get()->whereAny([
-                "LOWER(\"FileFilename\") LIKE '%$filename%'",
-                "LOWER(\"FileFilename\") LIKE '%$filenamedashes%'"
-            ])->first()
+            && $image = Image::get()->whereAny(
+                [
+                    "LOWER(\"FileFilename\") LIKE '%$filename%'",
+                    "LOWER(\"FileFilename\") LIKE '%$filenamedashes%'"
+                ]
+            )->first()
         ) { //ignore case
             if ($image instanceof Image && $image->exists()) {
                 return $image;

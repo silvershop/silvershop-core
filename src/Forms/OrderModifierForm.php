@@ -13,7 +13,7 @@ use SilverStripe\Forms\Form;
  * Base class for modifier forms.
  * Provides a redirect back to the checkout page.
  *
- * @see        OrderModifier
+ * @see OrderModifier
  *
  * @package    shop
  * @subpackage forms

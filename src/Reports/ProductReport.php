@@ -35,13 +35,15 @@ class ProductReport extends ShopPeriodReport
     {
         $query = parent::query($params);
         $query->selectField($this->periodfield, 'FilterPeriod')
-            ->addSelect([
+            ->addSelect(
+                [
                 '"SilverShop_Product"."ID"',
                 '"SiteTree"."ClassName"',
                 '"SiteTree"."Title"',
                 '"SilverShop_Product"."BasePrice"',
                 '"SiteTree"."Created"',
-            ])
+                ]
+            )
             ->selectField('COUNT("SilverShop_OrderItem"."Quantity")', 'Quantity')
             ->selectField('SUM("SilverShop_OrderAttribute"."CalculatedTotal")', 'Sales');
         $query->addInnerJoin('SiteTree', '"SilverShop_Product"."ID" = "SiteTree"."ID"');

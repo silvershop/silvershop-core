@@ -19,10 +19,12 @@ class SimpleShippingModifierTest extends SapphireTest
         parent::setUp();
         Config::modify()
             ->set(Simple::class, 'default_charge', 10)
-            ->set(Simple::class, 'charges_for_countries', [
-                'NZ' => 5,
-                'UK' => 20,
-            ]);
+            ->set(
+                Simple::class, 'charges_for_countries', [
+                    'NZ' => 5,
+                    'UK' => 20,
+                ]
+            );
     }
 
     public function testShippingCalculation()

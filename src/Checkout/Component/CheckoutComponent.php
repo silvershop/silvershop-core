@@ -19,7 +19,6 @@ use SilverStripe\ORM\ValidationException;
  *  - provide form fields
  *  - validate entered data
  *  - save data from given form fields
- *
  */
 abstract class CheckoutComponent
 {
@@ -33,7 +32,7 @@ abstract class CheckoutComponent
      * Get form fields for manipulating the current order,
      * according to the responsibility of this component.
      *
-     * @param  Order $order the form being updated
+     * @param Order $order the form being updated
      *
      * @throws \Exception
      * @return FieldList fields for manipulating order
@@ -46,7 +45,7 @@ abstract class CheckoutComponent
      * This function should never rely on form.
      *
      * @param Order $order the form being updated
-     * @param array $data data to be validated
+     * @param array $data  data to be validated
      *
      * @throws ValidationException
      * @return boolean the data is valid
@@ -56,7 +55,7 @@ abstract class CheckoutComponent
     /**
      * Get required data out of the model.
      *
-     * @param  Order $order
+     * @param Order $order
      *
      * @return array        get data from model(s)
      */
@@ -68,7 +67,7 @@ abstract class CheckoutComponent
      * This function should never rely on form.
      *
      * @param Order $order
-     * @param array $data data to be saved into order object
+     * @param array $data  data to be saved into order object
      *
      * @throws \Exception
      * @return Order the updated order
@@ -78,7 +77,7 @@ abstract class CheckoutComponent
     /**
      * Get the data fields that are required for the component.
      *
-     * @param  Order $order [description]
+     * @param Order $order [description]
      *
      * @return array        required data fields
      */

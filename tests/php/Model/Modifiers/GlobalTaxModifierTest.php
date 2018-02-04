@@ -15,12 +15,16 @@ class GlobalTaxModifierTest extends SapphireTest
     {
         parent::setUp();
 
-        Config::modify()->set(Order::class, 'modifiers', [
-            GlobalTax::class
-        ])->set(GlobalTax::class, 'country_rates', [
-            'NZ' => array('rate' => 0.15, 'name' => 'GST', 'exclusive' => false),
-            'UK' => array('rate' => 0.175, 'name' => 'VAT', 'exclusive' => true),
-        ]);
+        Config::modify()->set(
+            Order::class, 'modifiers', [
+                GlobalTax::class
+            ]
+        )->set(
+            GlobalTax::class, 'country_rates', [
+                'NZ' => array('rate' => 0.15, 'name' => 'GST', 'exclusive' => false),
+                'UK' => array('rate' => 0.175, 'name' => 'VAT', 'exclusive' => true),
+            ]
+        );
     }
 
     public function testModification()

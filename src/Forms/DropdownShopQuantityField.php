@@ -15,8 +15,9 @@ class DropdownShopQuantityField extends ShopQuantityField
 
     /**
      * The max amount to enter
+     *
      * @config
-     * @var int
+     * @var    int
      */
     private static $max = 100;
 

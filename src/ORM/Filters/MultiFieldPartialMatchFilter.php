@@ -15,20 +15,25 @@ use SilverStripe\ORM\Filters\PartialMatchFilter;
  */
 class MultiFieldPartialMatchFilter extends PartialMatchFilter
 {
-    /** @var array $subfilters */
+    /**
+     * @var array $subfilters 
+     */
     protected $subfilters;
 
-    /** @var array $subfilterModifiers */
+    /**
+     * @var array $subfilterModifiers 
+     */
     protected $subfilterModifiers;
 
     /**
-     * @param string $fullName Determines the name of the field, as well as the searched database
-     *                            column. Can contain a relation name in dot notation, which will automatically join
-     *                            the necessary tables (e.g. "Comments.Name" to join the "Comments" has-many relationship and
-     *                            search the "Name" column when applying this filter to a SiteTree class).
-     * @param mixed $value [optional]
-     * @param array $modifiers [optional]
-     * @param array $otherFields [optional]
+     * @param string $fullName    Determines the name of the field, as well as the searched database
+     *                            column. Can contain a relation name in dot notation, which will
+     *                            automatically join the necessary tables (e.g. "Comments.Name" to
+     *                            join the "Comments" has-many relationship and search the "Name"
+     *                            column when applying this filter to a SiteTree class).
+     * @param mixed  $value       [optional]
+     * @param array  $modifiers   [optional]
+     * @param array  $otherFields [optional]
      */
     public function __construct($fullName, $value = false, array $modifiers = [], array $otherFields = [])
     {

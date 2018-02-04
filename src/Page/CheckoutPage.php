@@ -16,7 +16,7 @@ use SilverStripe\ORM\DB;
  * details to the customer for their current shopping
  * cart on the site.
  *
- * @see     CheckoutPage_Controller->Order()
+ * @see CheckoutPage_Controller->Order()
  *
  * @package shop
  */
@@ -54,10 +54,11 @@ class CheckoutPage extends Page
 
     public function getCMSFields()
     {
-        $this->beforeUpdateCMSFields(function(FieldList $fields) {
-            $fields->addFieldsToTab(
-                'Root.Main',
-                array(
+        $this->beforeUpdateCMSFields(
+            function (FieldList $fields) {
+                $fields->addFieldsToTab(
+                    'Root.Main',
+                    array(
                     HtmlEditorField::create(
                         'PurchaseComplete',
                         _t('CheckoutPage.db_PurchaseComplete', 'Purchase Complete'),
@@ -69,10 +70,11 @@ class CheckoutPage extends Page
                                 "This message is included in reciept email, after the customer submits the checkout"
                             )
                         ),
-                ),
-                'Metadata'
-            );
-        });
+                    ),
+                    'Metadata'
+                );
+            }
+        );
 
         return parent::getCMSFields();
     }

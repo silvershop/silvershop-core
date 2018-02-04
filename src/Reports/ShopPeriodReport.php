@@ -96,7 +96,9 @@ abstract class ShopPeriodReport extends Report implements i18nEntityProvider
     public function getReportField()
     {
         $field = parent::getReportField();
-        /** @var GridFieldConfig $config */
+        /**
+         * @var GridFieldConfig $config
+         */
         $config = $field->getConfig();
         if ($dataColumns = $config->getComponentByType(GridFieldDataColumns::class)) {
             $config->getComponentByType(GridFieldExportButton::class)
@@ -164,21 +166,21 @@ abstract class ShopPeriodReport extends Report implements i18nEntityProvider
         }
         if ($this->grouping) {
             switch ($params['Grouping']) {
-                case 'Year':
-                    $query->addGroupBy($this->fd($filterperiod, '%Y'));
-                    break;
-                case 'Month':
-                default:
-                    $query->addGroupBy($this->fd($filterperiod, '%Y') . ',' . $this->fd($filterperiod, '%m'));
-                    break;
-                case 'Day':
-                    $query->addGroupBy(
-                        $this->fd($filterperiod, '%Y') . ',' . $this->fd($filterperiod, '%m') . ',' . $this->fd(
-                            $filterperiod,
-                            '%d'
-                        )
-                    );
-                    break;
+            case 'Year':
+                $query->addGroupBy($this->fd($filterperiod, '%Y'));
+                break;
+            case 'Month':
+            default:
+                $query->addGroupBy($this->fd($filterperiod, '%Y') . ',' . $this->fd($filterperiod, '%m'));
+                break;
+            case 'Day':
+                $query->addGroupBy(
+                    $this->fd($filterperiod, '%Y') . ',' . $this->fd($filterperiod, '%m') . ',' . $this->fd(
+                        $filterperiod,
+                        '%d'
+                    )
+                );
+                break;
             }
         }
         $query->setOrderBy('"FilterPeriod"', 'ASC');

@@ -18,7 +18,7 @@ use SilverStripe\ORM\HasManyList;
  *
  * @property string $Name
  * @property string $Description
- * @method ZoneRegion[]|HasManyList Regions()
+ * @method   ZoneRegion[]|HasManyList Regions()
  */
 class Zone extends DataObject
 {

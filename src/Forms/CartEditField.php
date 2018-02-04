@@ -22,7 +22,9 @@ use SilverStripe\View\SSViewer;
  */
 class CartEditField extends FormField
 {
-    /** @var Order */
+    /**
+     * @var Order 
+     */
     protected $cart;
 
     protected $items;

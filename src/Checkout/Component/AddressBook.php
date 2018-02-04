@@ -18,14 +18,14 @@ use SilverStripe\View\Requirements;
 
 /**
  * Adds the ability to use the member's address book for choosing addresses
- *
  */
 abstract class AddressBook extends Address implements i18nEntityProvider
 {
     /**
      * The composite field tag to use
+     *
      * @config
-     * @var string
+     * @var    string
      */
     private static $composite_field_tag = 'div';
 
@@ -144,8 +144,8 @@ abstract class AddressBook extends Address implements i18nEntityProvider
      * Create a new address if the existing address has changed, or is not yet
      * created.
      *
-     * @param Order $order order to get addresses from
-     * @param array $data data to set
+     * @param  Order $order order to get addresses from
+     * @param  array $data  data to set
      * @throws ValidationException
      */
     public function setData(Order $order, array $data)

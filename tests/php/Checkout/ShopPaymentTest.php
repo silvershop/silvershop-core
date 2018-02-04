@@ -41,12 +41,14 @@ class ShopPaymentTest extends FunctionalTest
         ShopTest::setConfiguration();
 
         //set supported gateways
-        Config::modify()->set(Payment::class, 'allowed_gateways', [
-            'Dummy', //onsite
-            'Manual', //manual
-            'PaymentExpress_PxPay', //offsite
-            'PaymentExpress_PxPost' //onsite
-        ]);
+        Config::modify()->set(
+            Payment::class, 'allowed_gateways', [
+                'Dummy', //onsite
+                'Manual', //manual
+                'PaymentExpress_PxPay', //offsite
+                'PaymentExpress_PxPost' //onsite
+            ]
+        );
 
         PaymentService::setHttpClient($this->getHttpClient());
         PaymentService::setHttpRequest($this->getHttpRequest());

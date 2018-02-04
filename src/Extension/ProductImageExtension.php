@@ -16,7 +16,9 @@ class ProductImageExtension extends DataExtension
 {
     use Configurable;
 
-    /** @var Image */
+    /**
+     * @var Image
+     */
     protected $owner;
 
     /**
@@ -59,8 +61,8 @@ class ProductImageExtension extends DataExtension
      * Resizes image by width or height only if the source image is bigger than the given width/height.
      * This prevents ugly upscaling.
      *
-     * @param int  $width [optional]
-     * @param int  $height [optional]
+     * @param int  $width   [optional]
+     * @param int  $height  [optional]
      * @param bool $upscale [optional]
      *
      * @return Image

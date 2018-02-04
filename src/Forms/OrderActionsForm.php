@@ -46,9 +46,10 @@ class OrderActionsForm extends Form
 
     /**
      * OrderActionsForm constructor.
-     * @param $controller
-     * @param $name
-     * @param Order $order
+     *
+     * @param  $controller
+     * @param  $name
+     * @param  Order      $order
      * @throws \SilverStripe\Omnipay\Exception\InvalidConfigurationException
      */
     public function __construct($controller, $name, Order $order)
@@ -121,9 +122,13 @@ class OrderActionsForm extends Form
             );
         }
 
-        parent::__construct($controller, $name, $fields, $actions, OrderActionsFormValidator::create([
-            'PaymentMethod'
-        ]));
+        parent::__construct(
+            $controller, $name, $fields, $actions, OrderActionsFormValidator::create(
+                [
+                    'PaymentMethod'
+                ]
+            )
+        );
         $this->extend('updateForm', $order);
     }
 
@@ -131,7 +136,7 @@ class OrderActionsForm extends Form
      * Make payment for a place order, where payment had previously failed.
      *
      * @param array $data
-     * @param Form $form
+     * @param Form  $form
      *
      * @return HTTPResponse
      */
@@ -146,7 +151,9 @@ class OrderActionsForm extends Form
             $gateway = (!empty($data['PaymentMethod'])) ? $data['PaymentMethod'] : null;
 
             if (!GatewayInfo::isManual($gateway)) {
-                /** @var OrderProcessor $processor */
+                /**
+ * @var OrderProcessor $processor
+*/
                 $processor = OrderProcessor::create($this->order);
                 $fieldFactory = new GatewayFieldsFactory(null);
                 $response = $processor->makePayment(
@@ -179,8 +186,8 @@ class OrderActionsForm extends Form
      * and set the status that was requested from
      * the form request data.
      *
-     * @param array $data The form request data submitted
-     * @param Form $form The {@link Form} this was submitted on
+     * @param  array $data The form request data submitted
+     * @param  Form  $form The {@link Form} this was submitted on
      * @throws \SilverStripe\ORM\ValidationException
      */
     public function docancel($data, $form)
@@ -209,7 +216,8 @@ class OrderActionsForm extends Form
 
     /**
      * Get credit card fields for the given gateways
-     * @param array $gateways
+     *
+     * @param  array $gateways
      * @return CompositeField|null
      */
     protected function getCCFields(array $gateways)

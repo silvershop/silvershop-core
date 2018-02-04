@@ -57,16 +57,20 @@ class ProductCategory extends Page implements i18nEntityProvider
         if (!empty($recursive) && self::config()->include_child_groups) {
             $groupids += $this->AllChildCategoryIDs();
         }
-        $products = Product::get()->filterAny([
+        $products = Product::get()->filterAny(
+            [
             'ParentID' => $groupids,
             'ProductCategories.ID' => $groupids
-        ]);
+            ]
+        );
         if (self::config()->must_have_price) {
             if (Product::has_extension(ProductVariationsExtension::class)) {
-                $products = $products->filterAny([
+                $products = $products->filterAny(
+                    [
                     'BasePrice:GreaterThan' => 0,
                     'Variations.Price:GreaterThan' => 0
-                ]);
+                    ]
+                );
             } else {
                 $products = $products->filter('BasePrice:GreaterThan', 0);
             }
@@ -130,8 +134,8 @@ class ProductCategory extends Page implements i18nEntityProvider
     /**
      * Override the nested title defaults, to show deeper nesting in the CMS.
      *
-     * @param integer $level nesting level
-     * @param string $separator seperate nesting with this string
+     * @param integer $level     nesting level
+     * @param string  $separator seperate nesting with this string
      */
     public function NestedTitle($level = 10, $separator = ' > ', $field = 'MenuTitle')
     {

@@ -21,8 +21,9 @@ class GlobalTax extends Base
 
     /**
      * Tax rates per country
+     *
      * @config
-     * @var array
+     * @var    array
      */
     private static $country_rates = [];
 

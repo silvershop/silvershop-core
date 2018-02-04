@@ -23,8 +23,8 @@ use SilverStripe\ORM\ManyManyList;
  *
  * @property string $Name
  * @property string $Label
- * @method AttributeValue[]|HasManyList Values()
- * @method Product[]|ManyManyList Product()
+ * @method   AttributeValue[]|HasManyList Values()
+ * @method   Product[]|ManyManyList Product()
  */
 class AttributeType extends DataObject
 {
@@ -60,9 +60,7 @@ class AttributeType extends DataObject
 
     public static function find_or_make($name)
     {
-        if ($type = AttributeType::get()
-            ->filter('Name:nocase', $name)
-            ->first()
+        if ($type = AttributeType::get()->filter('Name:nocase', $name)->first()
         ) {
             return $type;
         }
@@ -138,7 +136,7 @@ class AttributeType extends DataObject
     /**
      * Returns a dropdown field for the user to select a variant.
      *
-     * @param string $emptyString
+     * @param string    $emptyString
      * @param ArrayList $values
      *
      * @return DropdownField

@@ -35,9 +35,9 @@ use SilverStripe\Versioned\Versioned;
  * @property DBDecimal $Depth
  * @property int $ProductID
  * @property int $ImageID
- * @method Product Product()
- * @method Image Image()
- * @method AttributeValue[]|ManyManyList AttributeValues()
+ * @method   Product Product()
+ * @method   Image Image()
+ * @method   AttributeValue[]|ManyManyList AttributeValues()
  */
 class Variation extends DataObject implements Buyable
 {
@@ -178,9 +178,11 @@ class Variation extends DataObject implements Buyable
         $fields->push(
             TextField::create(
                 'Weight',
-                _t('SilverShop\Page\Product.WeightWithUnit', 'Weight ({WeightUnit})', '', [
-                    'WeightUnit' => Product::config()->weight_unit
-                ]),
+                _t(
+                    'SilverShop\Page\Product.WeightWithUnit', 'Weight ({WeightUnit})', '', [
+                        'WeightUnit' => Product::config()->weight_unit
+                    ]
+                ),
                 '',
                 12
             )

@@ -10,12 +10,12 @@ use SilverStripe\ORM\FieldType\DBCurrency;
 /**
  * A single line in an order. This could be an item, or a subtotal line.
  *
- * @see     OrderItem
- * @see     OrderModifier
+ * @see OrderItem
+ * @see OrderModifier
  *
  * @property DBCurrency $CalculatedTotal
  * @property int $OrderID
- * @method Order Order()
+ * @method   Order Order()
  */
 class OrderAttribute extends DataObject
 {

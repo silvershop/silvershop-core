@@ -13,15 +13,14 @@ use SilverStripe\Dev\BuildTask;
 /**
  * ShopEmailPreviewTask
  *
- * @author Anselm Christophersen <ac@anselm.dk>
- * @date   September 2016
+ * @author     Anselm Christophersen <ac@anselm.dk>
+ * @date       September 2016
  * @package    shop
  * @subpackage tasks
  */
 
 /**
  * ShopEmailPreviewTask
- *
  */
 class ShopEmailPreviewTask extends BuildTask
 {

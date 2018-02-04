@@ -68,18 +68,22 @@ class OrderEmailNotifier
         $checkoutpage = CheckoutPage::get()->first();
         $completemessage = $checkoutpage ? $checkoutpage->PurchaseComplete : '';
 
-        /** @var Email $email */
+        /**
+ * @var Email $email 
+*/
         $email = Injector::inst()->create('ShopEmail');
         $email->setHTMLTemplate($template);
         $email->setFrom($from);
         $email->setTo($to);
         $email->setSubject($subject);
 
-        $email->setData([
+        $email->setData(
+            [
             'PurchaseCompleteMessage' => $completemessage,
             'Order' => $this->order,
             'BaseURL' => Director::absoluteBaseURL(),
-        ]);
+            ]
+        );
 
         return $email;
     }
@@ -87,9 +91,9 @@ class OrderEmailNotifier
     /**
      * Send a mail of the order to the client (and another to the admin).
      *
-     * @param string $template - the class name of the email you wish to send
-     * @param string $subject - subject of the email
-     * @param bool $copyToAdmin - true by default, whether it should send a copy to the admin
+     * @param string $template    - the class name of the email you wish to send
+     * @param string $subject     - subject of the email
+     * @param bool   $copyToAdmin - true by default, whether it should send a copy to the admin
      *
      * @return bool
      */
@@ -109,6 +113,7 @@ class OrderEmailNotifier
 
     /**
      * Send customer a confirmation that the order has been received
+     *
      * @return bool
      */
     public function sendConfirmation()
@@ -192,7 +197,7 @@ class OrderEmailNotifier
      * Send an email to the customer containing the latest note of {@link OrderStatusLog} and the current status.
      *
      * @param string $title Subject for email
-     * @param string $note Optional note-content (instead of using the OrderStatusLog)
+     * @param string $note  Optional note-content (instead of using the OrderStatusLog)
      */
     public function sendStatusChange($title, $note = null)
     {
@@ -214,14 +219,18 @@ class OrderEmailNotifier
             $adminEmail = Email::config()->admin_email;
         }
 
-        /** @var Email $e */
+        /**
+ * @var Email $e 
+*/
         $e = Injector::inst()->create('ShopEmail');
         $e->setHTMLTemplate('SilverShop/Model/Order_StatusEmail');
-        $e->setData([
+        $e->setData(
+            [
             'Order' => $this->order,
             'Note' => $note,
             'FromEmail' => $adminEmail
-        ]);
+            ]
+        );
         $e->setFrom($adminEmail);
         $e->setSubject(_t('ShopEmail.StatusChangeSubject', 'SilverShop – {Title}', ['Title' => $title]));
         $e->setTo($this->order->getLatestEmail());

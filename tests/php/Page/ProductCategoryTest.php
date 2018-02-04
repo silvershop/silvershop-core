@@ -17,28 +17,44 @@ class ProductCategoryTest extends FunctionalTest
     public static $fixture_file = __DIR__ . '/../Fixtures/shop.yml';
     public static $disable_theme = true;
 
-    /** @var ProductCategory */
+    /**
+     * @var ProductCategory
+     */
     protected $products;
 
-    /** @var ProductCategory */
+    /**
+     * @var ProductCategory
+     */
     protected $clothing;
 
-    /** @var ProductCategory */
+    /**
+     * @var ProductCategory
+     */
     protected $electronics;
 
-    /** @var Product */
+    /**
+     * @var Product
+     */
     protected $socks;
 
-    /** @var Product */
+    /**
+     * @var Product
+     */
     protected $tshirt;
 
-    /** @var Product */
+    /**
+     * @var Product
+     */
     protected $hdtv;
 
-    /** @var Product */
+    /**
+     * @var Product
+     */
     protected $beachball;
 
-    /** @var Product */
+    /**
+     * @var Product
+     */
     protected $mp3player;
 
     public function setUp()
@@ -154,11 +170,13 @@ class ProductCategoryTest extends FunctionalTest
         $this->assertEquals(0, $products->count(), 'No product should be returned as there\'s no price set');
 
         // Create a variation for HDTV
-        Variation::create()->update([
-            'InternalItemID' => '50-Inch',
-            'Price' => 1200,
-            'ProductID' => $this->hdtv->ID
-        ])->write();
+        Variation::create()->update(
+            [
+                'InternalItemID' => '50-Inch',
+                'Price' => 1200,
+                'ProductID' => $this->hdtv->ID
+            ]
+        )->write();
 
         $products = $this->electronics->ProductsShowable();
 

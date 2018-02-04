@@ -65,11 +65,13 @@ class OrderActionsFormTest extends FunctionalTest
 
         $ctrl = ModelAsController::controller_for($this->checkoutPage);
 
-        $response = Director::test($ctrl->Link('ActionsForm'), array(
+        $response = Director::test(
+            $ctrl->Link('ActionsForm'), array(
             'action_dopayment' => true,
-            'OrderID'       => $this->order->ID,
+            'OrderID' => $this->order->ID,
             'PaymentMethod' => 'Dummy'
-        ), $this->session());
+            ), $this->session()
+        );
 
         // There should be a new payment
         $this->assertEquals(1, $this->order->Payments()->count());
@@ -87,9 +89,10 @@ class OrderActionsFormTest extends FunctionalTest
 
         $ctrl = ModelAsController::controller_for($this->checkoutPage);
 
-        $response = Director::test($ctrl->Link('ActionsForm'), array(
+        $response = Director::test(
+            $ctrl->Link('ActionsForm'), array(
             'action_dopayment' => true,
-            'OrderID'       => $this->order->ID,
+            'OrderID' => $this->order->ID,
             'PaymentMethod' => 'Dummy',
             'type' => 'visa',
             'name' => 'Tester Mc. Testerson',
@@ -97,7 +100,8 @@ class OrderActionsFormTest extends FunctionalTest
             'expiryMonth' => 10,
             'expiryYear' => date('Y') + 1,
             'cvv' => 123
-        ), $this->session());
+            ), $this->session()
+        );
 
         // There should be a new payment
         $this->assertEquals(1, $this->order->Payments()->count());
@@ -116,17 +120,19 @@ class OrderActionsFormTest extends FunctionalTest
             $this->order
         );
         $validator->setForm($form);
-        $validator->php(array(
-            'OrderID'       => $this->order->ID,
-            'PaymentMethod' => 'Dummy',
-            'type' => 'visa',
-            'name' => 'Tester Mc. Testerson',
-            'number' => '4242424242424242'
-        ));
+        $validator->php(
+            array(
+                'OrderID' => $this->order->ID,
+                'PaymentMethod' => 'Dummy',
+                'type' => 'visa',
+                'name' => 'Tester Mc. Testerson',
+                'number' => '4242424242424242'
+            )
+        );
 
         $requiredCount = 0;
-        foreach ($validator->getErrors() as $error){
-            if($error['messageType'] == 'required'){
+        foreach ($validator->getErrors() as $error) {
+            if ($error['messageType'] == 'required') {
                 $requiredCount++;
             }
         }
@@ -159,9 +165,11 @@ class OrderActionsFormTest extends FunctionalTest
             ->method('isRedirect')->will($this->returnValue($isRedirect));
 
         $mockResponse->expects($this->any())
-            ->method('getRedirectResponse')->will($this->returnValue(
-                new \Symfony\Component\HttpFoundation\RedirectResponse('http://paymentprovider/test/offsiteform')
-            ));
+            ->method('getRedirectResponse')->will(
+                $this->returnValue(
+                    new \Symfony\Component\HttpFoundation\RedirectResponse('http://paymentprovider/test/offsiteform')
+                )
+            );
 
         $mockResponse->expects($this->any())
             ->method('getTransactionReference')->will($this->returnValue($transactionReference));

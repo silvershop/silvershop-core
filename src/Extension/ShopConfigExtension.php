@@ -43,15 +43,17 @@ class ShopConfigExtension extends DataExtension
 
     /**
      * Email address where shop emails should be sent from
+     *
      * @config
-     * @var
+     * @var 
      */
     private static $email_from;
 
     /**
      * The shop base currency
+     *
      * @config
-     * @var
+     * @var 
      */
     private static $base_currency = 'NZD';
 
@@ -149,6 +151,7 @@ class ShopConfigExtension extends DataExtension
 
     /**
      * Convert iso country code to English country name
+     *
      * @return string - name of country
      */
     public static function countryCode2name($code)

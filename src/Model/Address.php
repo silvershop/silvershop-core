@@ -48,9 +48,9 @@ use SilverStripe\SiteConfig\SiteConfig;
  * @property string $FirstName
  * @property string $Surname
  * @property string $Phone
- * @method Member Member()
- * @method Order[]|HasManyList ShippingAddressOrders()
- * @method Order[]|HasManyList BillingAddressOrders()
+ * @method   Member Member()
+ * @method   Order[]|HasManyList ShippingAddressOrders()
+ * @method   Order[]|HasManyList BillingAddressOrders()
  */
 class Address extends DataObject
 {
@@ -108,15 +108,17 @@ class Address extends DataObject
     {
         $self = $this;
 
-        $this->beforeUpdateCMSFields(function (FieldList $fields) use ($self) {
-            $fields->addFieldToTab(
-                'Root.Main',
-                $self->getCountryField(),
-                'State'
-            );
+        $this->beforeUpdateCMSFields(
+            function (FieldList $fields) use ($self) {
+                $fields->addFieldToTab(
+                    'Root.Main',
+                    $self->getCountryField(),
+                    'State'
+                );
 
-            $fields->removeByName('MemberID');
-        });
+                $fields->removeByName('MemberID');
+            }
+        );
 
         return parent::getCMSFields();
     }
@@ -203,11 +205,12 @@ class Address extends DataObject
     {
         return implode(
             ' ',
-            array_filter([
-
-                $this->FirstName,
-                $this->Surname,
-            ])
+            array_filter(
+                [
+                    $this->FirstName,
+                    $this->Surname,
+                ]
+            )
         );
     }
 
@@ -242,7 +245,8 @@ class Address extends DataObject
 
     /**
      * Add alias setters for fields which are synonymous
-     * @param string $val
+     *
+     * @param  string $val
      * @return $this
      */
     public function setProvince($val)

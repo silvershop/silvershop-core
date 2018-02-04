@@ -19,13 +19,14 @@ class ShopTools
 
     /**
      * Convert a numeric price to the shop currency
-     * @param mixed $price the price to convert
+     *
+     * @param  mixed $price the price to convert
      * @return DBMoney the price wrapped in a Money DBField to be used for templates or similar
      */
     public static function price_for_display($price)
     {
         $currency = ShopConfigExtension::get_site_currency();
-        $field = DBMoney::create_field(DBMoney::class, 0, 'Price' );
+        $field = DBMoney::create_field(DBMoney::class, 0, 'Price');
         $field->setAmount($price);
         $field->setCurrency($currency);
         return $field;
@@ -34,6 +35,7 @@ class ShopTools
     /**
      * Get the current locale.
      * Tries to get the locale from Fluent or the default i18n (depending on what is installed)
+     *
      * @return string the locale in use
      */
     public static function get_current_locale()
@@ -48,6 +50,7 @@ class ShopTools
     /**
      * Set/Install the given locale.
      * This does set the i18n locale as well as the Fluent locale (if this module is installed)
+     *
      * @param string $locale the locale to install
      */
     public static function install_locale($locale)
@@ -72,6 +75,7 @@ class ShopTools
 
     /**
      * Get the current section (first looking at controller, then at a request instance and lastly return a fresh session)
+     *
      * @return Session
      */
     public static function getSession()
@@ -94,7 +98,7 @@ class ShopTools
     /**
      * Sanitise a model class' name for inclusion in a link
      *
-     * @param string $class
+     * @param  string $class
      * @return string
      */
     public static function sanitiseClassName($class)
@@ -105,7 +109,7 @@ class ShopTools
     /**
      * Unsanitise a model class' name from a URL param
      *
-     * @param string $class
+     * @param  string $class
      * @return string
      */
     public static function unsanitiseClassName($class)

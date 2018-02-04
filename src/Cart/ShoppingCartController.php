@@ -24,7 +24,8 @@ use SilverStripe\View\Requirements;
 
 /**
  * Manipulate the cart via urls.
- * @mixin ViewableCartExtension
+ *
+ * @mixin  ViewableCartExtension
  * @method ShoppingCart Cart()
  */
 class ShoppingCartController extends Controller
@@ -33,12 +34,15 @@ class ShoppingCartController extends Controller
 
     /**
      * Whether or not this controller redirects to the cart-page whenever an item was added
+     *
      * @config
-     * @var bool
+     * @var    bool
      */
     private static $direct_to_cart_page = false;
 
-    /** @var ShoppingCart */
+    /**
+     * @var ShoppingCart
+     */
     protected $cart;
 
     /**
@@ -101,12 +105,14 @@ class ShoppingCartController extends Controller
 
         $className = get_class($buyable);
 
-        $link = Controller::join_links([
+        $link = Controller::join_links(
+            [
             self::config()->url_segment,
             $action,
             ShopTools::sanitiseClassName($className),
             $buyable->ID
-        ]);
+            ]
+        );
 
         return empty($params) ? $link : $link . '?' . http_build_query($params);
     }
@@ -143,10 +149,9 @@ class ShoppingCartController extends Controller
     protected function buyableFromRequest()
     {
         $request = $this->getRequest();
-        if (
-            SecurityToken::is_enabled() &&
-            !self::config()->disable_security_token &&
-            !SecurityToken::inst()->checkRequest($request)
+        if (SecurityToken::is_enabled()
+            && !self::config()->disable_security_token
+            && !SecurityToken::inst()->checkRequest($request)
         ) {
             return $this->httpError(
                 400,
@@ -281,6 +286,7 @@ class ShoppingCartController extends Controller
 
     /**
      * Handle index requests
+     *
      * @throws \SilverStripe\Control\HTTPResponse_Exception
      */
     public function index()

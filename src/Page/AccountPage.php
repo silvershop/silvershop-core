@@ -39,8 +39,8 @@ class AccountPage extends Page
     /**
      * Return a link to view the order on the account page.
      *
-     * @param int|string $orderID ID of the order
-     * @param boolean $urlSegment Return the URLSegment only
+     * @param int|string $orderID    ID of the order
+     * @param boolean    $urlSegment Return the URLSegment only
      *
      * @return string
      */
@@ -69,12 +69,16 @@ class AccountPage extends Page
     {
         parent::requireDefaultRecords();
         if (!self::get()->exists() && $this->config()->create_default_pages) {
-            /** @var AccountPage $page */
-            $page = self::create()->update([
+            /**
+             * @var AccountPage $page
+             */
+            $page = self::create()->update(
+                [
                 'Title' => 'Account',
                 'URLSegment' => AccountPageController::config()->url_segment,
                 'ShowInMenus' => 0,
-            ]);
+                ]
+            );
             $page->write();
             $page->publishSingle();
             $page->flushCache();

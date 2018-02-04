@@ -150,8 +150,10 @@ class AddProductForm extends Form
      */
     protected function getFormValidator()
     {
-        return RequiredFields::create([
-            'Quantity',
-        ]);
+        return RequiredFields::create(
+            [
+                'Quantity',
+            ]
+        );
     }
 }

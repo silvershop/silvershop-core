@@ -115,7 +115,7 @@ class OrderManipulationExtension extends Extension
      * Return the {@link Order} details for the current
      * Order ID that we're viewing (ID parameter in URL).
      *
-     * @param HTTPRequest $request
+     * @param  HTTPRequest $request
      * @return array of template variables
      * @throws \SilverStripe\Control\HTTPResponse_Exception
      */

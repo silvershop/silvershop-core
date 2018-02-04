@@ -21,23 +21,33 @@ use SilverStripe\ORM\DataObject;
  */
 class ProductTest extends FunctionalTest
 {
-    protected static $fixture_file   = __DIR__ . '/../Fixtures/shop.yml';
-    protected static $disable_theme  = true;
+    protected static $fixture_file = __DIR__ . '/../Fixtures/shop.yml';
+    protected static $disable_theme = true;
     protected static $use_draft_site = true;
 
-    /** @var Product */
+    /**
+     * @var Product
+     */
     protected $mp3player;
 
-    /** @var Product */
+    /**
+     * @var Product
+     */
     protected $socks;
 
-    /** @var Product */
+    /**
+     * @var Product
+     */
     protected $beachball;
 
-    /** @var Product */
+    /**
+     * @var Product
+     */
     protected $tshirt;
 
-    /** @var Product */
+    /**
+     * @var Product
+     */
     protected $pdfbrochure;
 
     function setUp()

@@ -47,10 +47,12 @@ class CartCleanupTask extends BuildTask
 
         $this->log('Deleting all orders since ' . $time);
 
-        $orders = Order::get()->filter([
-            'Status' => 'Cart',
-            'LastEdited:LessThan' => $time,
-        ]);
+        $orders = Order::get()->filter(
+            [
+                'Status' => 'Cart',
+                'LastEdited:LessThan' => $time,
+            ]
+        );
         foreach ($orders as $order) {
             $this->log(sprintf('Deleting order #%s (Reference: %s)', $order->ID, $order->Reference));
             $order->delete();

@@ -28,7 +28,7 @@ class OrderItem extends \SilverShop\Model\Product\OrderItem
     /**
      * Overloaded relationship, for getting versioned variations
      *
-     * @param boolean $current
+     * @param  boolean $current
      * @return Variation
      */
     public function ProductVariation($forcecurrent = false)

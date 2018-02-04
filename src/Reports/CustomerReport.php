@@ -58,10 +58,12 @@ class CustomerReport extends ShopPeriodReport
         $query->addInnerJoin('SilverShop_Order', '"Member"."ID" = "SilverShop_Order"."MemberID"');
         $query->addGroupBy('"Member"."ID"');
         if (!$query->getOrderBy()) {
-            $query->setOrderBy([
+            $query->setOrderBy(
+                [
                 'Spent' => 'DESC',
                 'Orders' => 'DESC'
-            ]);
+                ]
+            );
         }
         $query->setLimit(50);
         return $query;

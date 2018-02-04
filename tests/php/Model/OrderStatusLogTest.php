@@ -233,7 +233,9 @@ class OrderStatusLogTest extends SapphireTest
         );
 
         // clear sent emails
-        /** @var TestMailer $mailer */
+        /**
+         * @var TestMailer $mailer
+         */
         $mailer = Injector::inst()->get(Mailer::class);
         $mailer->clearEmails();
 

@@ -57,7 +57,9 @@ class CheckoutPageController extends PageController
             return false;
         }
 
-        /** @var CheckoutComponentConfig $config */
+        /**
+ * @var CheckoutComponentConfig $config 
+*/
         $config = SinglePageCheckoutComponentConfig::create(ShoppingCart::curr());
         $form = PaymentForm::create($this, 'OrderForm', $config);
 

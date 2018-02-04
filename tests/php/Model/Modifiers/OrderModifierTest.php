@@ -21,14 +21,18 @@ use SilverStripe\ORM\DB;
  */
 class OrderModifierTest extends FunctionalTest
 {
-    public static $fixture_file   = __DIR__ . '/../../Fixtures/shop.yml';
-    public static $disable_theme  = true;
+    public static $fixture_file = __DIR__ . '/../../Fixtures/shop.yml';
+    public static $disable_theme = true;
     protected static $use_draft_site = true;
 
-    /** @var Product */
+    /**
+     * @var Product
+     */
     protected $mp3player;
 
-    /** @var Product */
+    /**
+     * @var Product
+     */
     protected $socks;
 
     protected static $extra_dataobjects = [
@@ -42,9 +46,11 @@ class OrderModifierTest extends FunctionalTest
         ShopTest::setConfiguration();
 
         Config::modify()
-            ->set(Order::class, 'modifiers', [
-                FlatTax::class
-            ])
+            ->set(
+                Order::class, 'modifiers', [
+                    FlatTax::class
+                ]
+            )
             ->set(FlatTax::class, 'rate', 0.25)
             ->set(FlatTax::class, 'name', 'GST');
 
@@ -75,10 +81,12 @@ class OrderModifierTest extends FunctionalTest
             );
         }
 
-        Config::modify()->set(Order::class, 'modifiers', [
-            OrderModifierTest_TestModifier::class,
-            FlatTax::class
-        ]);
+        Config::modify()->set(
+            Order::class, 'modifiers', [
+                OrderModifierTest_TestModifier::class,
+                FlatTax::class
+            ]
+        );
 
         $order = $this->createOrder();
         $order->calculate();
@@ -99,7 +107,8 @@ class OrderModifierTest extends FunctionalTest
         try {
             // Calculate will now fail!
             $order->calculate();
-        } catch (Exception $e){}
+        } catch (Exception $e) {
+        }
 
         // reload order from DB
         $order = Order::get()->byID($order->ID);

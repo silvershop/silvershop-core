@@ -54,8 +54,9 @@ class OrderItem extends OrderAttribute
 
     /**
      * The ORM relationship to the buyable item
+     *
      * @config
-     * @var string
+     * @var    string
      */
     private static $buyable_relationship = 'Product';
 

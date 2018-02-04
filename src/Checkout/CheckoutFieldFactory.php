@@ -152,8 +152,8 @@ class CheckoutFieldFactory
      * Helper function for reducing a field set to a given subset,
      * in the given order.
      *
-     * @param  FieldList $fields form fields to take a subset from.
-     * @param  array     $subset list of field names to return as subset
+     * @param FieldList $fields form fields to take a subset from.
+     * @param array     $subset list of field names to return as subset
      *
      * @return FieldList subset of form fields
      */

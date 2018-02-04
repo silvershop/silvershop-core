@@ -36,7 +36,9 @@ class PaymentExtension extends DataExtension
     public function onCaptured(ServiceResponse $response)
     {
         // ensure order is being reloaded from DB, to prevent dealing with stale data!
-        /** @var Order $order */
+        /**
+         * @var Order $order
+         */
         $order = Order::get()->byID($this->owner->OrderID);
         if ($order && $order->exists()) {
             OrderProcessor::create($order)->completePayment();
@@ -46,7 +48,9 @@ class PaymentExtension extends DataExtension
     protected function placeOrder()
     {
         // ensure order is being reloaded from DB, to prevent dealing with stale data!
-        /** @var Order $order */
+        /**
+         * @var Order $order
+         */
         $order = Order::get()->byID($this->owner->OrderID);
         if ($order && $order->exists()) {
             OrderProcessor::create($order)->placeOrder();

@@ -29,10 +29,12 @@ class CustomProductTest extends FunctionalTest
 
     public function testCustomProduct()
     {
-        $thing = CustomProduct::create()->update([
-            "Title" => "Thing",
-            "Price" => 30,
-        ]);
+        $thing = CustomProduct::create()->update(
+            [
+                "Title" => "Thing",
+                "Price" => 30,
+            ]
+        );
         $thing->write();
 
         $cart = ShoppingCart::singleton();

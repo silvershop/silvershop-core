@@ -12,18 +12,20 @@ class AddressTest extends SapphireTest
 {
     public function testForm()
     {
-        $address = Address::create()->update([
-            'Country'      => 'NZ',
-            'State'        => 'Wellington',
-            'City'         => 'TeAro',
-            'PostalCode'   => '1333',
-            'Address'      => '23 Blah Street',
-            'AddressLine2' => 'Fitzgerald Building, Foor 3',
-            'Company'      => 'Ink inc',
-            'FirstName'    => 'Jerald',
-            'Surname'      => 'Smith',
-            'Phone'        => '12346678',
-        ]);
+        $address = Address::create()->update(
+            [
+                'Country' => 'NZ',
+                'State' => 'Wellington',
+                'City' => 'TeAro',
+                'PostalCode' => '1333',
+                'Address' => '23 Blah Street',
+                'AddressLine2' => 'Fitzgerald Building, Foor 3',
+                'Company' => 'Ink inc',
+                'FirstName' => 'Jerald',
+                'Surname' => 'Smith',
+                'Phone' => '12346678',
+            ]
+        );
 
         $fields = $address->getFrontEndFields();
         $requiremetns = $address->getRequiredFields();
@@ -36,11 +38,13 @@ class AddressTest extends SapphireTest
     public function testRequiredFields()
     {
         // create address instance that lacks some required fields (Address)
-        $address = Address::create()->update([
-            'Country' => 'NZ',
-            'State'   => 'Wellington',
-            'City'    => 'TeAro',
-        ]);
+        $address = Address::create()->update(
+            [
+                'Country' => 'NZ',
+                'State' => 'Wellington',
+                'City' => 'TeAro',
+            ]
+        );
 
         $writeFailed = false;
         try {
@@ -52,12 +56,14 @@ class AddressTest extends SapphireTest
         $this->assertTrue($writeFailed, "Address should not be writable, since it doesn't contain all required fields");
 
         // Create an Address that satisfies the baseline required fields, but not the ones that were added via subclass.
-        $address = ExtendedTestAddress::create()->update([
-            'Country' => 'NZ',
-            'State'   => 'Wellington',
-            'City'    => 'TeAro',
-            'Address' => '23 Blah Street',
-        ]);
+        $address = ExtendedTestAddress::create()->update(
+            [
+                'Country' => 'NZ',
+                'State' => 'Wellington',
+                'City' => 'TeAro',
+                'Address' => '23 Blah Street',
+            ]
+        );
 
         $writeFailed = false;
         try {

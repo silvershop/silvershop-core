@@ -38,13 +38,19 @@ class SteppedCheckoutExtensionTest extends FunctionalTest
     protected static $use_draft_site = true; //so we don't need to publish
     protected $autoFollowRedirection = false;
 
-    /** @var CheckoutPageController */
+    /**
+     * @var CheckoutPageController
+     */
     protected $checkout;
 
-    /** @var Product */
+    /**
+     * @var Product
+     */
     protected $socks;
 
-    /** @var Order */
+    /**
+     * @var Order
+     */
     protected $cart;
 
     public function setUp()
@@ -60,7 +66,9 @@ class SteppedCheckoutExtensionTest extends FunctionalTest
         $this->socks = $this->objFromFixture(Product::class, "socks");
         $this->socks->publishSingle();
 
-        /** @var CheckoutPage $checkoutpage */
+        /**
+         * @var CheckoutPage $checkoutpage
+         */
         $checkoutpage = $this->objFromFixture(CheckoutPage::class, "checkout");
         $checkoutpage->publishSingle();
         $this->checkout = CheckoutPageController::create($checkoutpage);
@@ -196,7 +204,9 @@ class SteppedCheckoutExtensionTest extends FunctionalTest
     public function testSummary()
     {
         $this->checkout->handleRequest($this->buildTestRequest('summary'));
-        /** @var PaymentForm $form */
+        /**
+         * @var PaymentForm $form
+         */
         $form = $this->checkout->ConfirmationForm();
         $data = array(
             'Notes' => 'Leave it around the back',

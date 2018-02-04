@@ -21,16 +21,24 @@ class ProductOrderItemTest extends FunctionalTest
     public static $disable_theme = true;
     public static $orig = array();
 
-    /** @var Product */
+    /**
+     * @var Product
+     */
     protected $mp3player;
 
-    /** @var Product */
+    /**
+     * @var Product
+     */
     protected $socks;
 
-    /** @var Product */
+    /**
+     * @var Product
+     */
     protected $beachball;
 
-    /** @var Product */
+    /**
+     * @var Product
+     */
     protected $hdtv;
 
     /**
@@ -84,10 +92,12 @@ class ProductOrderItemTest extends FunctionalTest
      */
     public function testProductVersionDoesNotExist()
     {
-        $brokenitem = OrderItem::create()->update([
-            "ProductID" => $this->socks->ID,
-            "ProductVersion" => 99999 //non existent version
-        ]);
+        $brokenitem = OrderItem::create()->update(
+            [
+                "ProductID" => $this->socks->ID,
+                "ProductVersion" => 99999 //non existent version
+            ]
+        );
         $this->assertNull($brokenitem->Product(), "version does not exist");
     }
 

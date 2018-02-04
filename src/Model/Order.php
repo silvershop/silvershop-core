@@ -61,13 +61,12 @@ use SilverStripe\Security\Security;
  * @property int $MemberID
  * @property int $ShippingAddressID
  * @property int $BillingAddressID
- * @method Member|MemberExtension Member()
- * @method Address BillingAddress()
- * @method Address ShippingAddress()
- * @method OrderItem[]|HasManyList Items()
- * @method OrderModifier[]|HasManyList Modifiers()
- * @method OrderStatusLog[]|HasManyList OrderStatusLogs()
- *
+ * @method   Member|MemberExtension Member()
+ * @method   Address BillingAddress()
+ * @method   Address ShippingAddress()
+ * @method   OrderItem[]|HasManyList Items()
+ * @method   OrderModifier[]|HasManyList Modifiers()
+ * @method   OrderStatusLog[]|HasManyList OrderStatusLogs()
  */
 class Order extends DataObject
 {
@@ -164,6 +163,7 @@ class Order extends DataObject
 
     /**
      * Statuses for orders that have been placed.
+     *
      * @config
      */
     private static $placed_status = [
@@ -178,6 +178,7 @@ class Order extends DataObject
 
     /**
      * Statuses for which an order can be paid for
+     *
      * @config
      */
     private static $payable_status = [
@@ -189,6 +190,7 @@ class Order extends DataObject
 
     /**
      * Statuses that shouldn't show in user account.
+     *
      * @config
      */
     private static $hidden_status = ['Cart'];
@@ -196,36 +198,41 @@ class Order extends DataObject
 
     /**
      * Statuses that should be logged in the Order-Status-Log
+     *
      * @config
-     * @var array
+     * @var    array
      */
     private static $log_status = [];
 
     /**
      * Whether or not an order can be cancelled before payment
+     *
      * @config
-     * @var bool
+     * @var    bool
      */
     private static $cancel_before_payment = true;
 
     /**
      * Whether or not an order can be cancelled before processing
+     *
      * @config
-     * @var bool
+     * @var    bool
      */
     private static $cancel_before_processing = false;
 
     /**
      * Whether or not an order can be cancelled before sending
+     *
      * @config
-     * @var bool
+     * @var    bool
      */
     private static $cancel_before_sending = false;
 
     /**
      * Whether or not an order can be cancelled after sending
+     *
      * @config
-     * @var bool
+     * @var    bool
      */
     private static $cancel_after_sending = false;
 
@@ -233,7 +240,7 @@ class Order extends DataObject
      * Place an order before payment processing begins
      *
      * @config
-     * @var boolean
+     * @var    boolean
      */
     private static $place_before_payment = false;
 
@@ -243,14 +250,15 @@ class Order extends DataObject
      * shipping, taxes, vouchers etc.
      *
      * @config
-     * @var array
+     * @var    array
      */
     private static $modifiers = [];
 
     /**
      * Rounding precision of order amounts
+     *
      * @config
-     * @var int
+     * @var    int
      */
     private static $rounding_precision = 2;
 
@@ -258,7 +266,7 @@ class Order extends DataObject
      * Minimal length (number of decimals) of order reference ids
      *
      * @config
-     * @var int
+     * @var    int
      */
     private static $reference_id_padding = 5;
 
@@ -270,12 +278,13 @@ class Order extends DataObject
      * Order->onPayment, OrderItem->onPayment, Order->onPaid.
      *
      * @config
-     * @var boolean
+     * @var    boolean
      */
     private static $allow_zero_order_total = false;
 
     /**
      * A flag indicating that an order-status-log entry should be written
+     *
      * @var bool
      */
     protected $flagOrderStatusWrite = false;
@@ -375,6 +384,7 @@ class Order extends DataObject
 
     /**
      * Hack for swapping out relation list with OrderItemList
+     *
      * @inheritdoc
      */
     public function getComponents($componentName)
@@ -459,7 +469,7 @@ class Order extends DataObject
      * useful to determine the status of the Order. Order status should only change to 'Paid' when all
      * payments are 'Captured'.
      *
-     * @param bool $includeAuthorized whether or not to include authorized payments (excluding manual payments)
+     * @param  bool $includeAuthorized whether or not to include authorized payments (excluding manual payments)
      * @return float
      */
     public function TotalOutstanding($includeAuthorized = true)
@@ -505,15 +515,15 @@ class Order extends DataObject
         }
 
         switch ($this->Status) {
-            case 'Unpaid' :
-                return self::config()->cancel_before_payment;
-            case 'Paid' :
-                return self::config()->cancel_before_processing;
-            case 'Processing' :
-                return self::config()->cancel_before_sending;
-            case 'Sent' :
-            case 'Complete' :
-                return self::config()->cancel_after_sending;
+        case 'Unpaid' :
+            return self::config()->cancel_before_payment;
+        case 'Paid' :
+            return self::config()->cancel_before_processing;
+        case 'Processing' :
+            return self::config()->cancel_before_sending;
+        case 'Sent' :
+        case 'Complete' :
+            return self::config()->cancel_after_sending;
         }
         return false;
     }
@@ -541,6 +551,7 @@ class Order extends DataObject
 
     /**
      * Prevent deleting orders.
+     *
      * @return boolean
      */
     public function canDelete($member = null)
@@ -785,8 +796,9 @@ class Order extends DataObject
 
     /**
      * Called from @see onBeforeWrite whenever status changes
+     *
      * @param string $fromStatus status to transition away from
-     * @param string $toStatus target status
+     * @param string $toStatus   target status
      */
     protected function statusTransition($fromStatus, $toStatus)
     {

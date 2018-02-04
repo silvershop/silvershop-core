@@ -19,16 +19,24 @@ class CheckoutFormTest extends FunctionalTest
 {
     public static $fixture_file = __DIR__ . '/../Fixtures/shop.yml';
 
-    /** @var Product */
+    /**
+     * @var Product 
+     */
     protected $mp3player;
 
-    /** @var Product */
+    /**
+     * @var Product 
+     */
     protected $socks;
 
-    /** @var Product */
+    /**
+     * @var Product 
+     */
     protected $beachball;
 
-    /** @var CheckoutPageController */
+    /**
+     * @var CheckoutPageController 
+     */
     protected $checkoutcontroller;
 
     public function setUp()

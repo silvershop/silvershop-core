@@ -17,10 +17,14 @@ class OrderEmailNotifierTest extends SapphireTest
 {
     protected static $fixture_file = __DIR__ . '/../Fixtures/shop.yml';
 
-    /** @var Order */
+    /**
+     * @var Order 
+     */
     protected $order;
 
-    /** @var OrderEmailNotifier */
+    /**
+     * @var OrderEmailNotifier 
+     */
     protected $notifier;
 
     public function setUp()

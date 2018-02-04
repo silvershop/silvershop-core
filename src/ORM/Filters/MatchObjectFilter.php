@@ -38,7 +38,6 @@ use SilverStripe\ORM\DataObject;
  *
  * Example output:
  * "FieldName" = 'data' AND  "AnotherField" = 32 AND "ARequiredField" IS NULL
- *
  */
 class MatchObjectFilter
 {

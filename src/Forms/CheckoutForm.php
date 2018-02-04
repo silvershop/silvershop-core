@@ -12,7 +12,9 @@ use SilverStripe\Security\Security;
 
 class CheckoutForm extends Form
 {
-    /** @var CheckoutComponentConfig  */
+    /**
+     * @var CheckoutComponentConfig  
+     */
     protected $config;
 
     protected $redirectlink;

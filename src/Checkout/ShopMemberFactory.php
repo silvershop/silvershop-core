@@ -65,7 +65,9 @@ class ShopMemberFactory
             throw new ValidationException($result);
         }
 
-        /** @var Member $member */
+        /**
+ * @var Member $member 
+*/
         $member = Member::create()->update($data);
         // 3.2 changed validate to protected which made this fall through the DataExtension and error out
         $validation = $member->doValidate();

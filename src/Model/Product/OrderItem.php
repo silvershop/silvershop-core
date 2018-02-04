@@ -45,8 +45,7 @@ class OrderItem extends \SilverShop\Model\OrderItem
         //ie use live if in cart (however I see no logic for checking cart status)
         if ($this->ProductID && $this->ProductVersion && !$forcecurrent) {
             return Versioned::get_version(Product::class, $this->ProductID, $this->ProductVersion);
-        } elseif (
-            $this->ProductID
+        } elseif ($this->ProductID
             && $product = Versioned::get_one_by_stage(
                 Product::class,
                 'Live',

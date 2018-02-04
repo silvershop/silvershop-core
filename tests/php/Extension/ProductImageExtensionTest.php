@@ -23,16 +23,24 @@ class ProductImageExtensionTest extends SapphireTest
         __DIR__ . '/../Fixtures/Images.yml',
     ];
 
-    /** @var Product */
+    /**
+     * @var Product
+     */
     protected $socks;
 
-    /** @var Image */
+    /**
+     * @var Image
+     */
     protected $img;
 
-    /** @var Image */
+    /**
+     * @var Image
+     */
     protected $img2;
 
-    /** @var SiteConfig */
+    /**
+     * @var SiteConfig
+     */
     protected $siteConfig;
 
     public function setUp()
@@ -49,11 +57,13 @@ class ProductImageExtensionTest extends SapphireTest
         }
 
         // Set default config
-        InterventionBackend::config()->set('error_cache_ttl', [
-            InterventionBackend::FAILED_INVALID => 0,
-            InterventionBackend::FAILED_MISSING => '5,10',
-            InterventionBackend::FAILED_UNKNOWN => 300,
-        ]);
+        InterventionBackend::config()->set(
+            'error_cache_ttl', [
+                InterventionBackend::FAILED_INVALID => 0,
+                InterventionBackend::FAILED_MISSING => '5,10',
+                InterventionBackend::FAILED_UNKNOWN => 300,
+            ]
+        );
 
         $this->socks = $this->objFromFixture(Product::class, 'socks');
         $this->img1 = Image::get()->filter('Name', 'ImageA.png')->first();

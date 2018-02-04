@@ -21,9 +21,9 @@ use SilverStripe\Security\SecurityToken;
  */
 class ShoppingCartControllerTest extends FunctionalTest
 {
-    public static $fixture_file   = __DIR__ . '/../Fixtures/shop.yml';
+    public static $fixture_file = __DIR__ . '/../Fixtures/shop.yml';
 
-    public static $disable_theme  = true;
+    public static $disable_theme = true;
     protected static $use_draft_site = false;
     protected $autoFollowRedirection = false;
 
@@ -33,22 +33,34 @@ class ShoppingCartControllerTest extends FunctionalTest
         CustomProduct_OrderItem::class,
     ];
 
-    /** @var Product */
+    /**
+     * @var Product
+     */
     protected $mp3player;
 
-    /** @var Product */
+    /**
+     * @var Product
+     */
     protected $socks;
 
-    /** @var Product */
+    /**
+     * @var Product
+     */
     protected $noPurchaseProduct;
 
-    /** @var Product */
+    /**
+     * @var Product
+     */
     protected $draftProduct;
 
-    /** @var Product */
+    /**
+     * @var Product
+     */
     protected $noPriceProduct;
 
-    /** @var ShoppingCart */
+    /**
+     * @var ShoppingCart
+     */
     protected $cart;
 
 
@@ -180,12 +192,18 @@ class ShoppingCartControllerTest extends FunctionalTest
     public function testVariations()
     {
         $this->loadFixture(__DIR__ . '/../Fixtures/variations.yml');
-        /** @var Product $ballRoot */
+        /**
+         * @var Product $ballRoot
+         */
         $ballRoot = $this->objFromFixture(Product::class, 'ball');
         $ballRoot->publishSingle();
-        /** @var Product $ball1 */
+        /**
+         * @var Product $ball1
+         */
         $ball1 = $this->objFromFixture(Variation::class, 'redlarge');
-        /** @var Product $ball2 */
+        /**
+         * @var Product $ball2
+         */
         $ball2 = $this->objFromFixture(Variation::class, 'redsmall');
 
         $this->logInWithPermission('ADMIN');
@@ -215,7 +233,7 @@ class ShoppingCartControllerTest extends FunctionalTest
         $productId = $this->mp3player->ID;
         // link should contain the security-token
         $link = ShoppingCartController::add_item_link($this->mp3player);
-        $this->assertRegExp('{^shoppingcart/add/SilverShop-Page-Product/'.$productId.'\?SecurityID=[a-f0-9]+$}', $link);
+        $this->assertRegExp('{^shoppingcart/add/SilverShop-Page-Product/' . $productId . '\?SecurityID=[a-f0-9]+$}', $link);
 
         // should redirect back to the shop
         $response = $this->get($link);
@@ -225,7 +243,7 @@ class ShoppingCartControllerTest extends FunctionalTest
         Config::modify()->set(ShoppingCartController::class, 'disable_security_token', true);
 
         $link = ShoppingCartController::add_item_link($this->mp3player);
-        $this->assertEquals('shoppingcart/add/SilverShop-Page-Product/'.$productId, $link);
+        $this->assertEquals('shoppingcart/add/SilverShop-Page-Product/' . $productId, $link);
 
         // should redirect back to the shop
         $response = $this->get($link);
@@ -235,7 +253,7 @@ class ShoppingCartControllerTest extends FunctionalTest
 
         Config::modify()->set(ShoppingCartController::class, 'disable_security_token', false);
         $link = ShoppingCartController::add_item_link($this->mp3player);
-        $this->assertEquals('shoppingcart/add/SilverShop-Page-Product/'.$productId , $link);
+        $this->assertEquals('shoppingcart/add/SilverShop-Page-Product/' . $productId, $link);
 
         // should redirect back to the shop
         $response = $this->get($link);
@@ -247,7 +265,7 @@ class ShoppingCartControllerTest extends FunctionalTest
         $this->assertEquals($response->getStatusCode(), 400);
 
         // restore previous setting
-        if(!$enabled){
+        if (!$enabled) {
             SecurityToken::disable();
         }
     }

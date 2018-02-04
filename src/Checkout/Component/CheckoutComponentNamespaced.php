@@ -10,7 +10,9 @@ use SilverShop\Model\Order;
  */
 class CheckoutComponentNamespaced extends CheckoutComponent
 {
-    /** @var CheckoutComponent */
+    /**
+     * @var CheckoutComponent
+     */
     protected $proxy;
 
     public function __construct(CheckoutComponent $component)

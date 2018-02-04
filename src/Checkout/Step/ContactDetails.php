@@ -17,8 +17,9 @@ class ContactDetails extends CheckoutStep
 {
     /**
      * Whether or not this step should be skipped if user is logged in
+     *
      * @config
-     * @var bool
+     * @var    bool
      */
     private static $skip_if_logged_in = false;
 
@@ -30,8 +31,7 @@ class ContactDetails extends CheckoutStep
     public function contactdetails()
     {
         $form = $this->ContactDetailsForm();
-        if (
-            ShoppingCart::curr()
+        if (ShoppingCart::curr()
             && self::config()->skip_if_logged_in
         ) {
             if (Security::getCurrentUser()) {

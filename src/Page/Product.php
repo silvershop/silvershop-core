@@ -154,68 +154,78 @@ class Product extends Page implements Buyable
     {
         $self = $this;
 
-        $this->beforeUpdateCMSFields(function (FieldList $fields) use ($self) {
-            $fields->fieldByName('Root.Main.Title')
-                ->setTitle(_t('Product.PageTitle', 'Product Title'));
+        $this->beforeUpdateCMSFields(
+            function (FieldList $fields) use ($self) {
+                $fields->fieldByName('Root.Main.Title')
+                    ->setTitle(_t('Product.PageTitle', 'Product Title'));
 
-            $fields->addFieldsToTab('Root.Main', [
-                TextField::create('InternalItemID', _t(__CLASS__ . '.InternalItemID', 'Product Code/SKU'), '', 30),
-                DropdownField::create('ParentID', _t(__CLASS__ . '.Category', 'Category'), $self->getCategoryOptions())
+                $fields->addFieldsToTab(
+                    'Root.Main', [
+                    TextField::create('InternalItemID', _t(__CLASS__ . '.InternalItemID', 'Product Code/SKU'), '', 30),
+                    DropdownField::create('ParentID', _t(__CLASS__ . '.Category', 'Category'), $self->getCategoryOptions())
                     ->setDescription(_t(__CLASS__ . '.CategoryDescription', 'This is the parent page or default category.')),
-                TextField::create('Model', _t(__CLASS__ . '.Model', 'Model'), '', 30),
-                CheckboxField::create('Featured', _t(__CLASS__ . '.Featured', 'Featured Product')),
-                CheckboxField::create('AllowPurchase', _t(__CLASS__ . '.AllowPurchase', 'Allow product to be purchased'), 1),
-            ]);
+                    TextField::create('Model', _t(__CLASS__ . '.Model', 'Model'), '', 30),
+                    CheckboxField::create('Featured', _t(__CLASS__ . '.Featured', 'Featured Product')),
+                    CheckboxField::create('AllowPurchase', _t(__CLASS__ . '.AllowPurchase', 'Allow product to be purchased'), 1),
+                    ]
+                );
 
-            $fields->addFieldsToTab('Root.Pricing', [
-                TextField::create('BasePrice', $this->fieldLabel('BasePrice'))
+                $fields->addFieldsToTab(
+                    'Root.Pricing', [
+                    TextField::create('BasePrice', $this->fieldLabel('BasePrice'))
                     ->setDescription(_t(__CLASS__ . '.PriceDesc', 'Base price to sell this product at.'))
                     ->setMaxLength(12),
-                TextField::create('CostPrice', $this->fieldLabel('CostPrice'))
+                    TextField::create('CostPrice', $this->fieldLabel('CostPrice'))
                     ->setDescription(_t(__CLASS__ . '.CostPriceDescription', 'Wholesale price before markup.'))
                     ->setMaxLength(12),
-            ]);
-
-            $fieldSubstitutes = [
-                'LengthUnit' => $self::config()->length_unit
-            ];
-
-            $fields->addFieldsToTab('Root.Shipping', [
-                TextField::create(
-                    'Weight',
-                    _t(__CLASS__ . '.WeightWithUnit', 'Weight ({WeightUnit})', '', [
-                        'WeightUnit' => self::config()->weight_unit
-                    ]),
-                    '',
-                    12
-                ),
-                TextField::create(
-                    'Height',
-                    _t(__CLASS__ . '.HeightWithUnit', 'Height ({LengthUnit})', '', $fieldSubstitutes),
-                    '',
-                    12
-                ),
-                TextField::create(
-                    'Width',
-                    _t(__CLASS__ . '.WidthWithUnit', 'Width ({LengthUnit})', '', $fieldSubstitutes),
-                    '',
-                    12
-                ),
-                TextField::create(
-                    'Depth',
-                    _t(__CLASS__ . '.DepthWithUnit', 'Depth ({LengthUnit})', '', $fieldSubstitutes),
-                    '',
-                    12
-                ),
-            ]);
-
-            if (!$fields->dataFieldByName('Image')) {
-                $fields->addFieldToTab(
-                    'Root.Images',
-                    UploadField::create('Image', _t(__CLASS__ . '.Image', 'Product Image'))
+                    ]
                 );
+
+                $fieldSubstitutes = [
+                'LengthUnit' => $self::config()->length_unit
+                ];
+
+                $fields->addFieldsToTab(
+                    'Root.Shipping', [
+                    TextField::create(
+                        'Weight',
+                        _t(
+                            __CLASS__ . '.WeightWithUnit', 'Weight ({WeightUnit})', '', [
+                            'WeightUnit' => self::config()->weight_unit
+                            ]
+                        ),
+                        '',
+                        12
+                    ),
+                    TextField::create(
+                        'Height',
+                        _t(__CLASS__ . '.HeightWithUnit', 'Height ({LengthUnit})', '', $fieldSubstitutes),
+                        '',
+                        12
+                    ),
+                    TextField::create(
+                        'Width',
+                        _t(__CLASS__ . '.WidthWithUnit', 'Width ({LengthUnit})', '', $fieldSubstitutes),
+                        '',
+                        12
+                    ),
+                    TextField::create(
+                        'Depth',
+                        _t(__CLASS__ . '.DepthWithUnit', 'Depth ({LengthUnit})', '', $fieldSubstitutes),
+                        '',
+                        12
+                    ),
+                    ]
+                );
+
+                if (!$fields->dataFieldByName('Image')) {
+                    $fields->addFieldToTab(
+                        'Root.Images',
+                        UploadField::create('Image', _t(__CLASS__ . '.Image', 'Product Image'))
+                    );
+                }
             }
-        });
+        );
 
         return parent::getCMSFields();
     }
@@ -303,7 +313,7 @@ class Product extends Page implements Buyable
      * Other conditions may be added by decorating with the canPurchase function
      *
      * @param Member $member
-     * @param int $quantity
+     * @param int    $quantity
      *
      * @return boolean
      */
@@ -346,7 +356,7 @@ class Product extends Page implements Buyable
     /**
      * Returns the order item which contains the product
      *
-     * @return  OrderItem
+     * @return OrderItem
      */
     public function Item()
     {
@@ -454,7 +464,7 @@ class Product extends Page implements Buyable
      * Integration with opengraph module
      * TODO: Move this feature into a module
      *
-     * @see https://github.com/tractorcow/silverstripe-opengraph
+     * @see    https://github.com/tractorcow/silverstripe-opengraph
      * @return string opengraph type
      */
     public function getOGType()

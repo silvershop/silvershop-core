@@ -20,9 +20,11 @@ abstract class Address extends CheckoutComponent
 
     public function getFormFields(Order $order)
     {
-        return $this->getAddress($order)->getFrontEndFields([
+        return $this->getAddress($order)->getFrontEndFields(
+            [
             'addfielddescriptions' => $this->formfielddescriptions,
-        ]);
+            ]
+        );
     }
 
     public function getRequiredFields(Order $order)
@@ -71,8 +73,8 @@ abstract class Address extends CheckoutComponent
      * Create a new address if the existing address has changed, or is not yet
      * created.
      *
-     * @param Order $order order to get addresses from
-     * @param array $data data to set
+     * @param  Order $order order to get addresses from
+     * @param  array $data  data to set
      * @throws \SilverStripe\ORM\ValidationException
      */
     public function setData(Order $order, array $data)

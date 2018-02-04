@@ -22,7 +22,7 @@ use SilverStripe\SiteConfig\SiteConfig;
 /**
  * Populate shop task
  *
- * @todo       Ideally this task should make use of Spyc, and a single Pages yml file
+ * @todo Ideally this task should make use of Spyc, and a single Pages yml file
  * instead of the YamlFixture class, which is intended for testing.
  *
  * @package    shop
@@ -174,16 +174,20 @@ class PopulateShopTask extends BuildTask
 
     public function populateInternationalZone()
     {
-        $zoneId = Zone::create()->update([
-            'Name' => 'International',
-        ])->write();
+        $zoneId = Zone::create()->update(
+            [
+                'Name' => 'International',
+            ]
+        )->write();
 
         if ($countries = SiteConfig::current_site_config()->getCountriesList()) {
             foreach ($countries as $iso => $country) {
-                ZoneRegion::create()->update([
-                    'Country' => $iso,
-                    'ZoneID' => $zoneId
-                ])->write();
+                ZoneRegion::create()->update(
+                    [
+                        'Country' => $iso,
+                        'ZoneID' => $zoneId
+                    ]
+                )->write();
             }
         }
     }

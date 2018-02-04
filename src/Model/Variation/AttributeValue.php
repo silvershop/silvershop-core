@@ -15,8 +15,8 @@ use SilverStripe\ORM\ManyManyList;
  *
  * @property string $Value
  * @property int $Sort
- * @method AttributeType Type()
- * @method Variation[]|ManyManyList ProductVariation()
+ * @method   AttributeType Type()
+ * @method   Variation[]|ManyManyList ProductVariation()
  */
 class AttributeValue extends DataObject
 {
@@ -52,11 +52,13 @@ class AttributeValue extends DataObject
 
     public function getCMSFields()
     {
-        $this->beforeUpdateCMSFields(function(FieldList $fields) {
+        $this->beforeUpdateCMSFields(
+            function (FieldList $fields) {
 
-            $fields->removeByName('TypeID');
-            $fields->removeByName('Sort');
-        });
+                $fields->removeByName('TypeID');
+                $fields->removeByName('Sort');
+            }
+        );
 
         return parent::getCMSFields();
     }

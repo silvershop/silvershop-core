@@ -38,19 +38,29 @@ class OrderProcessorTest extends SapphireTest
         OrderProcessorTest_CustomOrderItem::class
     ];
 
-    /** @var Product */
+    /**
+     * @var Product 
+     */
     protected $mp3player;
 
-    /** @var Product */
+    /**
+     * @var Product 
+     */
     protected $socks;
 
-    /** @var Product */
+    /**
+     * @var Product 
+     */
     protected $beachball;
 
-    /** @var Product */
+    /**
+     * @var Product 
+     */
     protected $hdtv;
 
-    /** @var ShoppingCart */
+    /**
+     * @var ShoppingCart 
+     */
     protected $shoppingcart;
 
     public function setUp()
@@ -89,12 +99,14 @@ class OrderProcessorTest extends SapphireTest
         $order = $this->shoppingcart->current();
 
         $factory = new ShopMemberFactory();
-        $member = $factory->create([
+        $member = $factory->create(
+            [
                 'FirstName' => 'James',
                 'Surname'   => 'Brown',
                 'Email'     => 'james@example.com',
                 'Password'  => 'jbrown',
-        ]);
+            ]
+        );
         $this->assertTrue((bool)$member);
         $member->write();
 
@@ -181,9 +193,11 @@ class OrderProcessorTest extends SapphireTest
         $cart = ShoppingCart::curr();
         $cart->calculate();
 
-        $this->assertListContains(array(
+        $this->assertListContains(
+            array(
             array('ClassName' => OrderProcessorTest_CustomOrderItem::class)
-        ), $cart->Items());
+            ), $cart->Items()
+        );
 
         $versions = OrderItem::get()->filter('OrderID', $cart->ID)->column('ProductVersion');
 

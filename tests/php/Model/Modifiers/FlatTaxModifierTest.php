@@ -17,21 +17,24 @@ use SilverStripe\Dev\FunctionalTest;
 /**
  * @package    shop
  * @subpackage tests
- *
  */
 class FlatTaxModifierTest extends FunctionalTest
 {
-    protected static $fixture_file  = __DIR__ . '/../../Fixtures/shop.yml';
+    protected static $fixture_file = __DIR__ . '/../../Fixtures/shop.yml';
     protected static $disable_theme = true;
 
     protected static $extra_dataobjects = [
         CustomProduct_OrderItem::class
     ];
 
-    /** @var Product */
+    /**
+     * @var Product
+     */
     protected $mp3player;
 
-    /** @var ShoppingCart */
+    /**
+     * @var ShoppingCart
+     */
     protected $cart;
 
     public function setUp()
@@ -41,9 +44,11 @@ class FlatTaxModifierTest extends FunctionalTest
         ShopTest::setConfiguration();
 
         Config::modify()
-            ->set(Order::class, 'modifiers', [
-                FlatTax::class
-            ])
+            ->set(
+                Order::class, 'modifiers', [
+                    FlatTax::class
+                ]
+            )
             ->set(FlatTax::class, 'name', 'GST')
             ->set(FlatTax::class, 'rate', 0.15);
 
@@ -60,7 +65,9 @@ class FlatTaxModifierTest extends FunctionalTest
         $this->cart->add($this->mp3player);
         $order = $this->cart->current();
         $order->calculate();
-        /** @var OrderModifier $modifier */
+        /**
+         * @var OrderModifier $modifier
+         */
         $modifier = $order->Modifiers()
             ->filter('ClassName', FlatTax::class)
             ->first();
@@ -75,7 +82,9 @@ class FlatTaxModifierTest extends FunctionalTest
         $this->cart->add($this->mp3player);
         $order = $this->cart->current();
         $order->calculate();
-        /** @var OrderModifier $modifier */
+        /**
+         * @var OrderModifier $modifier
+         */
         $modifier = $order->Modifiers()
             ->filter('ClassName', FlatTax::class)
             ->first();

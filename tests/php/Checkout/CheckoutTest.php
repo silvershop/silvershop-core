@@ -25,19 +25,29 @@ class CheckoutTest extends SapphireTest
         __DIR__ . '/../Fixtures/ShopMembers.yml',
     );
 
-    /** @var ShoppingCart */
+    /**
+     * @var ShoppingCart 
+     */
     protected $cart;
 
-    /** @var Address */
+    /**
+     * @var Address 
+     */
     protected $address1;
 
-    /** @var Address */
+    /**
+     * @var Address 
+     */
     protected $address2;
 
-    /** @var Checkout */
+    /**
+     * @var Checkout 
+     */
     protected $checkout;
 
-    /** @var ShopMemberFactory */
+    /**
+     * @var ShopMemberFactory 
+     */
     protected $memberFactory;
 
     public function setUp()

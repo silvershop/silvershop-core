@@ -32,7 +32,7 @@ class ShopUserInfo
     /**
      * Get location of user
      *
-     * @param Address $address location
+     * @param  Address $address location
      * @return null|Address
      */
     public function getAddress()
@@ -50,7 +50,7 @@ class ShopUserInfo
     /**
      * Set location of user
      *
-     * @param Address $address location
+     * @param  Address $address location
      * @return $this
      */
     public function setAddress(Address $address)

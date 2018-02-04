@@ -39,8 +39,9 @@ class Membership extends CheckoutStep
 
     /**
      * Whether or not this step should be skipped if user is logged in
+     *
      * @config
-     * @var bool
+     * @var    bool
      */
     public static $skip_if_logged_in = true;
 
@@ -50,13 +51,17 @@ class Membership extends CheckoutStep
         if (ShoppingCart::curr() && self::config()->skip_if_logged_in && Security::getCurrentUser()) {
             return Controller::curr()->redirect($this->NextStepLink());
         }
-        return $this->owner->customise([
-            'Form' => $this->MembershipForm(),
-            'LoginForm' => $this->LoginForm(),
-            'GuestLink' => $this->NextStepLink(),
-        ])->renderWith([
-            'SilverShop\Page\Layout\CheckoutPage_membership', CheckoutPage::class, 'Page'
-        ]); //needed to make rendering work on index
+        return $this->owner->customise(
+            [
+                'Form' => $this->MembershipForm(),
+                'LoginForm' => $this->LoginForm(),
+                'GuestLink' => $this->NextStepLink(),
+            ]
+        )->renderWith(
+            [
+                'SilverShop\Page\Layout\CheckoutPage_membership', CheckoutPage::class, 'Page'
+            ]
+        ); //needed to make rendering work on index
     }
 
     public function MembershipForm()

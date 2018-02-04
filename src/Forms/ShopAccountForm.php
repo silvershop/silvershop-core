@@ -51,8 +51,8 @@ class ShopAccountForm extends Form
     /**
      * Save the changes to the form
      *
-     * @param array $data
-     * @param Form $form
+     * @param array       $data
+     * @param Form        $form
      * @param HTTPRequest $request
      *
      * @return bool|HTTPResponse
@@ -77,8 +77,8 @@ class ShopAccountForm extends Form
     /**
      * Save the changes to the form, and redirect to the checkout page
      *
-     * @param array $data
-     * @param Form $form
+     * @param array       $data
+     * @param Form        $form
      * @param HTTPRequest $request
      *
      * @return bool|HTTPResponse
