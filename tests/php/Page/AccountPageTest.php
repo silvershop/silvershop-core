@@ -14,6 +14,7 @@ use SilverStripe\ORM\DataObject;
 use SilverStripe\Security\Member;
 use SilverStripe\Security\Security;
 use SilverStripe\SiteConfig\SiteConfig;
+use SilverStripe\View\SSViewer;
 
 
 class AccountPageTest extends FunctionalTest
@@ -34,9 +35,12 @@ class AccountPageTest extends FunctionalTest
     public function setUp()
     {
         parent::setUp();
+
         Controller::add_extension(ShopTestControllerExtension::class);
         $this->accountpage = $this->objFromFixture(AccountPage::class, "accountpage");
         $this->controller = new AccountPageController($this->accountpage);
+        SSViewer::config()->update('theme_enabled', true);
+        SSViewer::set_themes([__DIR__ . '/../themes/shoptest', '$default']);
         //$this->controller->init();
     }
 
