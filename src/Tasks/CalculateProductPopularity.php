@@ -34,20 +34,20 @@ class CalculateProductPopularity extends BuildTask
     {
         foreach (array('_Live', '') as $stage) {
             $sql = <<<SQL
-				UPDATE "SilverShop_Product$stage" SET "Popularity" = (
-					SELECT
-						SUM(1 / (DATEDIFF(NOW(),"SilverShop_Order"."Paid")+1)) * SUM("SilverShop_OrderItem"."Quantity")
-						#	/ DATEDIFF("SiteTree$stage"."Created",NOW())
-						AS Popularity
-					FROM "SiteTree$stage"
-						INNER JOIN "SilverShop_Product_OrderItem" ON "SiteTree$stage"."ID" = "SilverShop_Product_OrderItem"."ProductID"
-						INNER JOIN "SilverShop_OrderItem" ON "SilverShop_OrderItem"."ID" = "SilverShop_Product_OrderItem"."ID"
-						INNER JOIN "SilverShop_OrderAttribute" ON "SilverShop_OrderItem"."ID" = "SilverShop_OrderAttribute"."ID"
-						INNER JOIN "SilverShop_Order" ON "SilverShop_OrderAttribute"."OrderID" = "SilverShop_Order"."ID"
-					WHERE "SiteTree$stage"."ID" = "SilverShop_Product$stage"."ID"
-						AND "SilverShop_Order"."Paid" IS NOT NULL
-					GROUP BY "SilverShop_Product$stage"."ID"
-				);
+UPDATE "SilverShop_Product$stage" SET "Popularity" = (
+  SELECT
+    SUM(1 / (DATEDIFF(NOW(),"SilverShop_Order"."Paid")+1)) * SUM("SilverShop_OrderItem"."Quantity")
+    #  / DATEDIFF("SiteTree$stage"."Created",NOW())
+    AS Popularity
+  FROM "SiteTree$stage"
+    INNER JOIN "SilverShop_Product_OrderItem" ON "SiteTree$stage"."ID" = "SilverShop_Product_OrderItem"."ProductID"
+    INNER JOIN "SilverShop_OrderItem" ON "SilverShop_OrderItem"."ID" = "SilverShop_Product_OrderItem"."ID"
+    INNER JOIN "SilverShop_OrderAttribute" ON "SilverShop_OrderItem"."ID" = "SilverShop_OrderAttribute"."ID"
+    INNER JOIN "SilverShop_Order" ON "SilverShop_OrderAttribute"."OrderID" = "SilverShop_Order"."ID"
+  WHERE "SiteTree$stage"."ID" = "SilverShop_Product$stage"."ID"
+    AND "SilverShop_Order"."Paid" IS NOT NULL
+  GROUP BY "SilverShop_Product$stage"."ID"
+);
 SQL;
             DB::query($sql);
         }

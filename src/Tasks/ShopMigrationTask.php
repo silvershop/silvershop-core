@@ -24,7 +24,7 @@ class ShopMigrationTask extends MigrationTask
     protected $title = 'Migrate Shop';
 
     protected $description = 'Where dev/build is not enough, this task updates database to work with latest version of shop module.
-		You may want to run the CartCleanupTask before migrating if you want to discard past carts.';
+You may want to run the CartCleanupTask before migrating if you want to discard past carts.';
 
     /**
      * Migrate upwards

@@ -106,8 +106,8 @@ class OrderTotalCalculator
         if ($runningtotal < 0) {
             $this->logger->error(
                 "Order (ID = {$this->order->ID}) was calculated to equal $runningtotal.\n
-				Order totals should never be negative!\n
-				The order total was set to $0"
+                Order totals should never be negative!\n
+                The order total was set to $0"
             );
 
             $runningtotal = 0;

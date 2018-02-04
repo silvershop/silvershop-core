@@ -47,13 +47,12 @@ class AccountPageController extends PageController
                 'default' => _t(
                     'SilverShop\Page\AccountPage.Login',
                     'You\'ll need to login before you can access the account page.
-					If you are not registered, you won\'t be able to access it until
-					you make your first order, otherwise please enter your details below.'
+                    If you are not registered, you won\'t be able to access it until
+                    you make your first order, otherwise please enter your details below.'
                 ),
                 'logInAgain' => _t(
                     'SilverShop\Page\AccountPage.LoginAgain',
-                    'You have been logged out. If you would like to log in again,
-					please do so below.'
+                    'You have been logged out. If you would like to log in again, please do so below.'
                 ),
             );
             Security::permissionFailure($this, $messages);
