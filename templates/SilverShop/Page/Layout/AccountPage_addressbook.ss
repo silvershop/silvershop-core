@@ -38,7 +38,7 @@
                     <a href="account/deleteaddress/{$ID}"
                        class="remove-address"
                        title="<%t AccountPage_AddressBook.DeleteAddress 'Delete this address' %>">
-                        <img src="silvershop/images/remove.gif" alt="X">
+                        <img src="$resourceURL('silvershop/core:images/remove.gif')" alt="X">
                     </a>
                 </div>
             </div>

@@ -54,7 +54,7 @@
                                 $RemoveField
                             <% else %>
                                 <a href="$removeallLink" title="<%t ShoppingCart.RemoveAllTitle "Remove all of &quot;{Title}&quot; from your cart" Title=$TableTitle %>">
-                                    <img src="silvershop/images/remove.gif" alt="x"/>
+                                    <img src="$resourceURL('silvershop/core:images/remove.gif')" alt="x"/>
                                 </a>
                             <% end_if %>
 
@@ -87,7 +87,7 @@
                                         <% if $CanRemove %>
                                             <strong>
                                                 <a class="ajaxQuantityLink" href="$removeLink" title="<%t ShoppingCart.RemoveTitle "Remove &quot;{Title}&quot; from your cart." Title=$TableTitle %>">
-                                                    <img src="silvershop/images/remove.gif" alt="x"/>
+                                                    <img src="$resourceURL('silvershop/core:images/remove.gif')" alt="x"/>
                                                 </a>
                                             </strong>
                                         <% end_if %>
