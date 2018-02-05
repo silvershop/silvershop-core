@@ -115,14 +115,14 @@ SilverShop\Model\Order:
     Total: 8
   unpaid:
     Status: Unpaid
-    Created: 2012-11-21 15:23:32
-    Placed: 2012-11-21 15:33:02
+    Created: '2012-11-21 15:23:32'
+    Placed: '2012-11-21 15:33:02'
     Total: 500
   paid:
     Status: Paid
-    Created: 2012-10-02 07:23:08
-    Placed: 2012-10-02 07:33:21
-    Paid: 2012-10-02 07:34:29
+    Created: '2012-10-02 07:23:08'
+    Placed: '2012-10-02 07:33:21'
+    Paid: '2012-10-02 07:34:29'
     Member: =>SilverStripe\Security\Member.joebloggs
     Total: 408
   othercart:
@@ -217,5 +217,5 @@ SilverStripe\Omnipay\Model\Payment:
     Status: Captured
     MoneyAmount: 200
     MoneyCurrency: USD
-    Created: 2012-10-02 07:33:21
+    Created: '2012-10-02 07:33:21'
     Order: =>SilverShop\Model\Order.paid
