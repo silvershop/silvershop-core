@@ -128,7 +128,7 @@ abstract class AddressBook extends Address implements i18nEntityProvider
                     // attempt to get the translated field name
                     $fieldLabel = isset($addressLabels[$fieldName]) ? $addressLabels[$fieldName] : $fieldName;
                     $errorMessage = _t(
-                        'SilverStripe\\Forms\\Form.FIELDISREQUIRED',
+                        'SilverShop\Forms.FIELDISREQUIRED',
                         '{name} is required',
                         array('name' => $fieldLabel)
                     );

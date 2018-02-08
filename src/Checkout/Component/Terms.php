@@ -20,13 +20,13 @@ class Terms extends CheckoutComponent
                 CheckboxField::create(
                     'ReadTermsAndConditions',
                     _t(
-                        'Checkout.TermsAndConditionsLink',
+                        'SilverShop\Checkout\Checkout.TermsAndConditionsLink',
                         'I agree to the terms and conditions stated on the <a href="{TermsPageLink}" target="new" title="Read the shop terms and conditions for this site">{TermsPageTitle}</a> page',
                         '',
                         ['TermsPageLink' => $page->Link(), 'TermsPageTitle' => $page->Title]
                     )
                 )->setCustomValidationMessage(
-                    _t('CheckoutField.MustAgreeToTerms', 'You must agree to the terms and conditions')
+                    _t('SilverShop\Checkout\CheckoutField.MustAgreeToTerms', 'You must agree to the terms and conditions')
                 )
             );
         }

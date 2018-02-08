@@ -104,7 +104,7 @@ class OrderProcessor
         // AuthorizeService or PurchaseService, depending on Gateway configuration.
         // Set the user-facing success URL for redirects
         /**
- * @var ServiceFactory $factory 
+ * @var ServiceFactory $factory
 */
         $factory = ServiceFactory::create();
         $service = $factory->getService($payment, ServiceFactory::INTENT_PAYMENT);
@@ -185,7 +185,7 @@ class OrderProcessor
         if (!GatewayInfo::isSupported($gateway)) {
             $this->error(
                 _t(
-                    "PaymentProcessor.InvalidGateway",
+                    __CLASS__ . ".InvalidGateway",
                     "`{gateway}` isn't a valid payment gateway.",
                     'gateway is the name of the payment gateway',
                     array('gateway' => $gateway)
@@ -194,7 +194,7 @@ class OrderProcessor
             return false;
         }
         if (!$this->order->canPay(Security::getCurrentUser())) {
-            $this->error(_t("PaymentProcessor.CantPay", "Order can't be paid for."));
+            $this->error(_t(__CLASS__ . ".CantPay", "Order can't be paid for."));
             return false;
         }
         $payment = Payment::create()->init(
@@ -247,17 +247,17 @@ class OrderProcessor
     public function canPlace(Order $order)
     {
         if (!$order) {
-            $this->error(_t("OrderProcessor.NoOrder", "Order does not exist."));
+            $this->error(_t(__CLASS__ . ".NoOrder", "Order does not exist."));
             return false;
         }
         //order status is applicable
         if (!$order->IsCart()) {
-            $this->error(_t("OrderProcessor.NotCart", "Order is not a cart."));
+            $this->error(_t(__CLASS__ . ".NotCart", "Order is not a cart."));
             return false;
         }
         //order has products
         if ($order->Items()->Count() <= 0) {
-            $this->error(_t("OrderProcessor.NoItems", "Order has no items."));
+            $this->error(_t(__CLASS__ . ".NoItems", "Order has no items."));
             return false;
         }
 
@@ -274,7 +274,7 @@ class OrderProcessor
     public function placeOrder()
     {
         if (!$this->order) {
-            $this->error(_t("OrderProcessor.NoOrderStarted", "A new order has not yet been started."));
+            $this->error(_t(__CLASS__ . ".NoOrderStarted", "A new order has not yet been started."));
             return false;
         }
         if (!$this->canPlace($this->order)) { //final cart validation

@@ -17,10 +17,10 @@ class SetLocationForm extends Form
     {
         $countries = SiteConfig::current_site_config()->getCountriesList();
         $fields = FieldList::create(
-            $countryfield = DropdownField::create("Country", _t('SetLocationForm.Country', 'Country'), $countries)
+            $countryfield = DropdownField::create("Country", _t(__CLASS__ . '.Country', 'Country'), $countries)
         );
         $countryfield->setHasEmptyDefault(true);
-        $countryfield->setEmptyString(_t('SetLocationForm.ChooseCountry', 'Choose country...'));
+        $countryfield->setEmptyString(_t(__CLASS__ . '.ChooseCountry', 'Choose country...'));
         $actions = FieldList::create(
             FormAction::create("setLocation", "set")
         );

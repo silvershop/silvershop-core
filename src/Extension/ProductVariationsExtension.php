@@ -54,7 +54,7 @@ class ProductVariationsExtension extends DataExtension
                 LabelField::create(
                     'variationspriceinstructinos',
                     _t(
-                        'ProductVariationsExtension.VariationsInfo',
+                        __CLASS__ . '.VariationsInfo',
                         'Price - Because you have one or more variations, the price can be set in the "Variations" tab.'
                     )
                 )

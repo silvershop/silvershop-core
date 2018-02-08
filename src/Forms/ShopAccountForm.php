@@ -31,11 +31,11 @@ class ShopAccountForm extends Form
             $fields = FieldList::create();
         }
         if ($controller instanceof AccountPageController) {
-            $actions = FieldList::create(FormAction::create('submit', _t('MemberForm.Save', 'Save Changes')));
+            $actions = FieldList::create(FormAction::create('submit', _t(__CLASS__ . '.Save', 'Save Changes')));
         } else {
             $actions = FieldList::create(
-                FormAction::create('submit', _t('MemberForm.Save', 'Save Changes')),
-                FormAction::create('proceed', _t('MemberForm.SaveAndProceed', 'Save and proceed to checkout'))
+                FormAction::create('submit', _t(__CLASS__ . '.Save', 'Save Changes')),
+                FormAction::create('proceed', _t(__CLASS__ . '.SaveAndProceed', 'Save and proceed to checkout'))
             );
         }
         parent::__construct($controller, $name, $fields, $actions, $requiredFields);
@@ -67,7 +67,7 @@ class ShopAccountForm extends Form
 
         $form->saveInto($member);
         $member->write();
-        $form->sessionMessage(_t('MemberForm.DetailsSaved', 'Your details have been saved'), 'good');
+        $form->sessionMessage(_t(__CLASS__ . '.DetailsSaved', 'Your details have been saved'), 'good');
 
         $this->extend('updateShopAccountFormResponse', $request, $form, $data, $response);
 
@@ -93,7 +93,7 @@ class ShopAccountForm extends Form
 
         $form->saveInto($member);
         $member->write();
-        $form->sessionMessage(_t('MemberForm.DetailsSaved', 'Your details have been saved'), 'good');
+        $form->sessionMessage(_t(__CLASS__ . '.DetailsSaved', 'Your details have been saved'), 'good');
 
         $this->extend('updateShopAccountFormResponse', $request, $form, $data, $response);
 

@@ -31,7 +31,7 @@ class Base extends OrderModifier
         $title = parent::TableTitle();
         if ($this->Rate) {
             $title .= ' ' . _t(
-                'TaxModifier.AtRate',
+                __CLASS__ . '.AtRate',
                 '@ {Rate}%',
                 '',
                 ['Rate' => number_format($this->Rate * 100, 1)]

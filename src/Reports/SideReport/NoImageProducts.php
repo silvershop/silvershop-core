@@ -9,12 +9,12 @@ class NoImageProducts extends Report
 {
     public function title()
     {
-        return _t('ShopSideReport.NoImage', 'Products with no image');
+        return _t('SilverShop\Reports\SideReport.NoImage', 'Products with no image');
     }
 
     public function group()
     {
-        return _t('ShopSideReport.ShopGroup', 'Shop');
+        return _t('SilverShop\Reports\SideReport.ShopGroup', 'Shop');
     }
 
     public function sort()

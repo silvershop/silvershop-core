@@ -10,7 +10,7 @@
     <table id="OutstandingTable" class="infotable">
         <tbody>
             <tr class="gap summary" id="Outstanding">
-                <th colspan="4" scope="row" class="threeColHeader"><strong><%t Order.TotalOutstanding "Total outstanding" %></strong></th>
+                <th colspan="4" scope="row" class="threeColHeader"><strong><%t SilverShop\Model\Order.TotalOutstanding "Total outstanding" %></strong></th>
                 <td class="right"><strong>$TotalOutstanding.Nice </strong></td>
             </tr>
         </tbody>
@@ -20,7 +20,7 @@
     <table id="NotesTable" class="infotable">
         <thead>
             <tr>
-                <th><%t Order.db_Notes "Notes" %></th>
+                <th><%t SilverShop\Model\Order.db_Notes "Notes" %></th>
             </tr>
         </thead>
         </tbody>

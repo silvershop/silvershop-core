@@ -57,7 +57,7 @@ class GlobalTax extends Base
     {
         $country = $this->Country() ? ' (' . $this->Country() . ') ' : '';
         return parent::TableTitle() . $country .
-            ($this->Type == 'Chargable' ? '' : _t('GlobalTaxModifier.Included', ' (included in the above price)'));
+            ($this->Type == 'Chargable' ? '' : _t(__CLASS__ . '.Included', ' (included in the above price)'));
     }
 
     public function Country()

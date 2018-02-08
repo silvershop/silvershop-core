@@ -2,15 +2,15 @@
     <thead>
         <tr class="title">
             <th colspan="5">
-                <h2><%t OrderItem.PLURALNAME "Items" %></h2>
+                <h2><%t SilverShop\Model\OrderItem.PLURALNAME "Items" %></h2>
             </th>
         </tr>
         <tr class="header">
             <th class="main"></th>
-            <th class="main"><span class="ui-button-text"><%t Product.SINGULARNAME "Product" %></span></th>
-            <th class="main"><span class="ui-button-text"><%t Order.UnitPrice "Unit Price" %></span></th>
-            <th class="main"><span class="ui-button-text"><%t Order.Quantity "Quantity" %></span></th>
-            <th class="main"><span class="ui-button-text"><%t Order.TotalPriceWithCurrency "Total Price ({Currency})" Currency=$Currency %></span></th>
+            <th class="main"><span class="ui-button-text"><%t SilverShop\Page\Product.SINGULARNAME "Product" %></span></th>
+            <th class="main"><span class="ui-button-text"><%t SilverShop\Model\Order.UnitPrice "Unit Price" %></span></th>
+            <th class="main"><span class="ui-button-text"><%t SilverShop\Model\Order.Quantity "Quantity" %></span></th>
+            <th class="main"><span class="ui-button-text"><%t SilverShop\Model\Order.TotalPriceWithCurrency "Total Price ({Currency})" Currency=$Currency %></span></th>
         </tr>
     </thead>
     <tbody>

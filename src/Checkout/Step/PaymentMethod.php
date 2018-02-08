@@ -43,7 +43,7 @@ class PaymentMethod extends CheckoutStep
         $form = CheckoutForm::create($this->owner, 'PaymentMethodForm', $this->checkoutconfig());
         $form->setActions(
             FieldList::create(
-                FormAction::create('setpaymentmethod', _t('CheckoutStep.Continue', 'Continue'))
+                FormAction::create('setpaymentmethod', _t('SilverShop\Checkout\Step\CheckoutStep.Continue', 'Continue'))
             )
         );
         $this->owner->extend('updatePaymentMethodForm', $form);

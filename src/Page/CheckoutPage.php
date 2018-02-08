@@ -61,12 +61,12 @@ class CheckoutPage extends Page
                     array(
                     HtmlEditorField::create(
                         'PurchaseComplete',
-                        _t('CheckoutPage.db_PurchaseComplete', 'Purchase Complete'),
+                        $this->fieldLabel('PurchaseComplete'),
                         4
                     )
                         ->setDescription(
                             _t(
-                                'CheckoutPage.PurchaseCompleteDescription',
+                                __CLASS__ . '.PurchaseCompleteDescription',
                                 "This message is included in reciept email, after the customer submits the checkout"
                             )
                         ),

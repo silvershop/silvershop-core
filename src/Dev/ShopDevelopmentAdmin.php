@@ -51,6 +51,6 @@ class ShopDevelopmentAdmin extends Controller
         //render the debug view
         $renderer = DebugView::create();
         $renderer->renderHeader();
-        $renderer->renderInfo(_t('Shop.DevToolsTitle', 'Shop Development Tools'), Director::absoluteBaseURL());
+        $renderer->renderInfo(_t('SilverShop\Generic.DevToolsTitle', 'Shop Development Tools'), Director::absoluteBaseURL());
     }
 }

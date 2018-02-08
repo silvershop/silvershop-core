@@ -14,6 +14,7 @@ use SilverShop\Page\AccountPage;
 use SilverShop\Page\CheckoutPage;
 use SilverShop\ShopTools;
 use SilverStripe\Control\Controller;
+use SilverStripe\Control\Director;
 use SilverStripe\Dev\Debug;
 use SilverStripe\Forms\CheckboxSetField;
 use SilverStripe\Forms\DateField;
@@ -293,7 +294,7 @@ class Order extends DataObject
     {
         $values = array();
         foreach (singleton(Order::class)->dbObject('Status')->enumValues(false) as $value) {
-            $values[$value] = _t('Order.STATUS_' . strtoupper($value), $value);
+            $values[$value] = _t(__CLASS__ . '.STATUS_' . strtoupper($value), $value);
         }
         return $values;
     }
@@ -387,9 +388,9 @@ class Order extends DataObject
      *
      * @inheritdoc
      */
-    public function getComponents($componentName)
+    public function getComponents($componentName, $id = null)
     {
-        $components = parent::getComponents($componentName);
+        $components = parent::getComponents($componentName, $id);
         if ($componentName === 'Items' && get_class($components) !== UnsavedRelationList::class) {
             $query = $components->dataQuery();
             $components = OrderItemList::create(OrderItem::class, 'OrderID');
@@ -487,7 +488,7 @@ class Order extends DataObject
      */
     public function getStatusI18N()
     {
-        return _t('Order.STATUS_' . strtoupper($this->Status), $this->Status);
+        return _t(__CLASS__ . '.STATUS_' . strtoupper($this->Status), $this->Status);
     }
 
     /**
@@ -860,12 +861,12 @@ class Order extends DataObject
 
             // populate OrderStatusLog
             $log->Title = _t(
-                'ShopEmail.StatusChanged',
+                'SilverShop\ShopEmail.StatusChanged',
                 'Status for order #{OrderNo} changed to "{OrderStatus}"',
                 '',
                 ['OrderNo' => $this->Reference, 'OrderStatus' => $this->getStatusI18N()]
             );
-            $log->Note = _t('ShopEmail.StatusChange' . $this->Status . 'Note', $this->Status . 'Note');
+            $log->Note = _t('SilverShop\ShopEmail.StatusChange' . $this->Status . 'Note', $this->Status . 'Note');
             $log->OrderID = $this->ID;
             OrderEmailNotifier::create($this)->sendStatusChange($log->Title, $log->Note);
             $log->SentToCustomer = true;
@@ -876,9 +877,11 @@ class Order extends DataObject
 
     public function debug()
     {
-        // Temporarily disabled.
-        // TODO: Reactivate when the following issue got fixed: https://github.com/silverstripe/silverstripe-framework/issues/7827
-        return '';
+        if (Director::is_cli()) {
+            // Temporarily disabled.
+            // TODO: Reactivate when the following issue got fixed: https://github.com/silverstripe/silverstripe-framework/issues/7827
+            return '';
+        }
 
         $val = "<div class='order'><h1>" . static::class ."</h1>\n<ul>\n";
         if ($this->record) {

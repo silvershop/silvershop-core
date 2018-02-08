@@ -48,7 +48,7 @@ class CheckoutPageController extends PageController
             return $this->failover->Title;
         }
 
-        return _t('CheckoutPage.DefaultTitle', "Checkout");
+        return _t('SilverShop\Page\CheckoutPage.DefaultTitle', "Checkout");
     }
 
     public function OrderForm()
@@ -58,8 +58,8 @@ class CheckoutPageController extends PageController
         }
 
         /**
- * @var CheckoutComponentConfig $config 
-*/
+         * @var CheckoutComponentConfig $config
+         */
         $config = SinglePageCheckoutComponentConfig::create(ShoppingCart::curr());
         $form = PaymentForm::create($this, 'OrderForm', $config);
 
@@ -71,7 +71,7 @@ class CheckoutPageController extends PageController
         if ($config->getComponentByType(OnsitePayment::class)) {
             $form->setActions(
                 FieldList::create(
-                    FormAction::create('checkoutSubmit', _t('CheckoutPage.SubmitPayment', 'Submit Payment'))
+                    FormAction::create('checkoutSubmit', _t('SilverShop\Page\CheckoutPage.SubmitPayment', 'Submit Payment'))
                 )
             );
         }
@@ -110,7 +110,7 @@ class CheckoutPageController extends PageController
 
         $form->setActions(
             FieldList::create(
-                FormAction::create("submitpayment", _t('CheckoutPage.SubmitPayment', "Submit Payment"))
+                FormAction::create("submitpayment", _t('SilverShop\Page\CheckoutPage.SubmitPayment', "Submit Payment"))
             )
         );
 

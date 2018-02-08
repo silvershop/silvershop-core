@@ -23,7 +23,7 @@ class Payment extends CheckoutComponent
             $fields->push(
                 OptionsetField::create(
                     'PaymentMethod',
-                    _t("CheckoutField.PaymentType", "Payment Type"),
+                    _t("SilverShop\Checkout\CheckoutField.PaymentType", "Payment Type"),
                     $gateways,
                     array_keys($gateways)
                 )
@@ -52,14 +52,14 @@ class Payment extends CheckoutComponent
         $result = ValidationResult::create();
         if (!isset($data['PaymentMethod'])) {
             $result->addError(
-                _t('PaymentCheckoutComponent.NoPaymentMethod', "Payment method not provided"),
+                _t(__CLASS__ . '.NoPaymentMethod', "Payment method not provided"),
                 "PaymentMethod"
             );
             throw new ValidationException($result);
         }
         $methods = GatewayInfo::getSupportedGateways();
         if (!isset($methods[$data['PaymentMethod']])) {
-            $result->addError(_t('PaymentCheckoutComponent.UnsupportedGateway', "Gateway not supported"), "PaymentMethod");
+            $result->addError(_t(__CLASS__ . '.UnsupportedGateway', "Gateway not supported"), "PaymentMethod");
             throw new ValidationException($result);
         }
     }

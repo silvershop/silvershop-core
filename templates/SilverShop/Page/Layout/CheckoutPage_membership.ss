@@ -11,7 +11,7 @@
         $Form
     </div>
     <div class="login">
-        <h2><%t Security.LOGIN 'Log In' %></h2>
+        <h2><%t SilverStripe\Security\Security.LOGIN 'Log In' %></h2>
         $LoginForm
     </div>
 </div>

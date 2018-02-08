@@ -4,7 +4,6 @@ namespace SilverShop\Tests\Extension;
 
 
 use SilverShop\Page\Product;
-use SilverStripe\Assets\Filesystem;
 use SilverStripe\Assets\Image;
 use SilverStripe\Assets\InterventionBackend;
 use SilverStripe\Assets\Tests\Storage\AssetStoreTest\TestAssetStore;

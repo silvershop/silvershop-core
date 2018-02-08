@@ -63,7 +63,7 @@ class Weight extends Base
     public function TableTitle()
     {
         return _t(
-            'WeightShippingModifier.TableTitle',
+            __CLASS__ . '.TableTitle',
             'Shipping ({Kilograms} kg)',
             '',
             ['Kilograms' => $this->Weight()]

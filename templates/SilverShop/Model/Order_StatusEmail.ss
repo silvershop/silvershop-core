@@ -4,7 +4,7 @@
     <head>
         <meta name="viewport" content="width=device-width" />
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-        <title><%t ShopEmail.StatusChangeTitle "Shop Status Change" %></title>
+        <title><%t SilverShop\ShopEmail.StatusChangeTitle "Shop Status Change" %></title>
         <style type="text/css">
             table {     /* Remove spacing around Outlook 07, 10 tables */
                 border-collapse:collapse;
@@ -87,7 +87,7 @@
                         <tbody>
                             <tr>
                                 <td class="banner" align="center" valign="top">
-                                    <strong><%t ShopEmail.StatusChangeTitle 'Shop Status Change' %></strong>
+                                    <strong><%t SilverShop\ShopEmail.StatusChangeTitle 'Shop Status Change' %></strong>
                                 </td>
                             </tr>
                             <tr>
@@ -101,7 +101,7 @@
                                             </tr>
                                             <tr>
                                                 <td class="content-block" valign="top">
-                                                    <%t ShopEmail.StatusChanged 'Status for order #{OrderNo} changed to "{OrderStatus}"' OrderNo=$Reference OrderStatus=$StatusI18N %>
+                                                    <%t SilverShop\ShopEmail.StatusChanged 'Status for order #{OrderNo} changed to "{OrderStatus}"' OrderNo=$Reference OrderStatus=$StatusI18N %>
                                                 </td>
                                             </tr>
                                         <% end_with %>
@@ -112,7 +112,7 @@
                                         </tr>
                                         <tr>
                                             <td class="content-block" valign="top">
-                                                <%t ShopEmail.Regards "Kind regards" %>
+                                                <%t SilverShop\ShopEmail.Regards "Kind regards" %>
                                             </td>
                                         </tr>
 
@@ -120,7 +120,7 @@
                                             <td class="content-block" valign="top">
                                                 $SiteConfig.Title<br/>
                                                 $FromEmail<br/>
-                                                <%t ShopEmail.PhoneNumber "PhoneNumber" %>
+                                                <%t SilverShop\ShopEmail.PhoneNumber "PhoneNumber" %>
                                             </td>
                                         </tr>
                                     </table>
