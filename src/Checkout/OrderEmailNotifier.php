@@ -69,7 +69,7 @@ class OrderEmailNotifier
         $completemessage = $checkoutpage ? $checkoutpage->PurchaseComplete : '';
 
         /**
- * @var Email $email 
+ * @var Email $email
 */
         $email = Injector::inst()->create('ShopEmail');
         $email->setHTMLTemplate($template);
@@ -119,7 +119,7 @@ class OrderEmailNotifier
     public function sendConfirmation()
     {
         $subject = _t(
-            'ShopEmail.ConfirmationSubject',
+            'SilverShop\ShopEmail.ConfirmationSubject',
             'Order #{OrderNo} confirmation',
             '',
             array('OrderNo' => $this->order->Reference)
@@ -137,7 +137,7 @@ class OrderEmailNotifier
     public function sendAdminNotification()
     {
         $subject = _t(
-            'ShopEmail.AdminNotificationSubject',
+            'SilverShop\ShopEmail.AdminNotificationSubject',
             'Order #{OrderNo} notification',
             '',
             array('OrderNo' => $this->order->Reference)
@@ -160,7 +160,7 @@ class OrderEmailNotifier
     public function sendReceipt()
     {
         $subject = _t(
-            'ShopEmail.ReceiptSubject',
+            'SilverShop\ShopEmail.ReceiptSubject',
             'Order #{OrderNo} receipt',
             '',
             array('OrderNo' => $this->order->Reference)
@@ -183,7 +183,7 @@ class OrderEmailNotifier
             Email::config()->admin_email,
             Email::config()->admin_email,
             _t(
-                'ShopEmail.CancelSubject',
+                'SilverShop\ShopEmail.CancelSubject',
                 'Order #{OrderNo} cancelled by member',
                 '',
                 array('OrderNo' => $this->order->Reference)
@@ -220,7 +220,7 @@ class OrderEmailNotifier
         }
 
         /**
- * @var Email $e 
+ * @var Email $e
 */
         $e = Injector::inst()->create('ShopEmail');
         $e->setHTMLTemplate('SilverShop/Model/Order_StatusEmail');
@@ -232,7 +232,7 @@ class OrderEmailNotifier
             ]
         );
         $e->setFrom($adminEmail);
-        $e->setSubject(_t('ShopEmail.StatusChangeSubject', 'SilverShop – {Title}', ['Title' => $title]));
+        $e->setSubject(_t('SilverShop\ShopEmail.StatusChangeSubject', 'SilverShop – {Title}', ['Title' => $title]));
         $e->setTo($this->order->getLatestEmail());
         $e->send();
     }

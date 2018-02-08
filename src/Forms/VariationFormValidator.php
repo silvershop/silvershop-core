@@ -19,7 +19,7 @@ class VariationFormValidator extends RequiredFields
             $this->validationError(
                 '',
                 _t(
-                    'SilverShop\Product\VariationVariationForm.ProductNotAvailable',
+                    'SilverShop\Forms\VariationForm.ProductNotAvailable',
                     'This product is not available with the selected options.'
                 )
             );

@@ -89,17 +89,17 @@ class AccountPageController extends PageController
             $fields = FieldList::create(
                 DropdownField::create(
                     'DefaultShippingAddressID',
-                    _t('SilverShop\Address.ShippingAddress', 'Shipping Address'),
+                    _t('SilverShop\Model\Address.ShippingAddress', 'Shipping Address'),
                     $addresses->map('ID', 'toString')->toArray()
                 ),
                 DropdownField::create(
                     'DefaultBillingAddressID',
-                    _t('SilverShop\Address.BillingAddress', 'Billing Address'),
+                    _t('SilverShop\Model\Address.BillingAddress', 'Billing Address'),
                     $addresses->map('ID', 'toString')->toArray()
                 )
             );
             $actions = FieldList::create(
-                FormAction::create('savedefaultaddresses', _t('SilverShop\Address.SaveDefaults', 'Save Defaults'))
+                FormAction::create('savedefaultaddresses', _t('SilverShop\Model\Address.SaveDefaults', 'Save Defaults'))
             );
             $form = Form::create($this, 'DefaultAddressForm', $fields, $actions);
             $form->loadDataFrom($this->member);
@@ -127,7 +127,7 @@ class AccountPageController extends PageController
         $singletonaddress = singleton(Address::class);
         $fields = $singletonaddress->getFrontEndFields();
         $actions = FieldList::create(
-            FormAction::create('saveaddress', _t('Address.SaveNew', 'Save New Address'))
+            FormAction::create('saveaddress', _t('SilverShop\Model\Address.SaveNew', 'Save New Address'))
         );
         $validator = RequiredFields::create($singletonaddress->getRequiredFields());
         $form = Form::create($this, 'CreateAddressForm', $fields, $actions, $validator);
@@ -157,7 +157,7 @@ class AccountPageController extends PageController
             $member->DefaultBillingAddressID = $address->ID;
             $member->write();
         }
-        $form->sessionMessage(_t('CreateAddressForm.AddressSaved', 'Your address has been saved'), 'good');
+        $form->sessionMessage(_t('SilverShop\Model\Address.AddressSaved', 'Your address has been saved'), 'good');
 
         $this->extend('updateCreateAddressFormResponse', $form, $data, $response);
 

@@ -92,7 +92,7 @@ class AttributeType extends DataObject
                 LiteralField::create(
                     'Values',
                     '<p class="message warning">' .
-                    _t('ProductAttributeType.SaveFirstInfo', 'Save first, then you can add values.') .
+                    _t(__CLASS__ . '.SaveFirstInfo', 'Save first, then you can add values.') .
                     '</p>'
                 )
             );

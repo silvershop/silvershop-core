@@ -2,12 +2,12 @@
     <thead>
         <tr class="title">
             <th colspan="2">
-                <h2><%t Shop.Customer "Customer" %></h2>
+                <h2><%t SilverShop\Generic.Customer "Customer" %></h2>
             </th>
         </tr>
         <tr class="header">
-            <th class="main"><%t AccountPage.MemberName "Name" %></th>
-            <th class="main"><%t AccountPage.MemberEmail "Email" %></th>
+            <th class="main"><%t SilverShop\Page\AccountPage.MemberName "Name" %></th>
+            <th class="main"><%t SilverShop\Page\AccountPage.MemberEmail "Email" %></th>
         </tr>
     </thead>
     <tbody>

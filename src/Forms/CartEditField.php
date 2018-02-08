@@ -23,7 +23,7 @@ use SilverStripe\View\SSViewer;
 class CartEditField extends FormField
 {
     /**
-     * @var Order 
+     * @var Order
      */
     protected $cart;
 
@@ -138,13 +138,13 @@ class CartEditField extends FormField
                 if ($variations->exists()) {
                     $variationfield = DropdownField::create(
                         $name . '[ProductVariationID]',
-                        _t('Variation.SINGULARNAME', 'Variation'),
+                        _t('SilverShop\Model\Variation\Variation.SINGULARNAME', 'Variation'),
                         $variations->map('ID', 'Title'),
                         $item->ProductVariationID
                     );
                 }
             }
-            $remove = CheckboxField::create($name . '[Remove]', _t('Shop.Remove', 'Remove'));
+            $remove = CheckboxField::create($name . '[Remove]', _t('SilverShop\Generic.Remove', 'Remove'));
             $editables->push(
                 $item->customise(
                     array(

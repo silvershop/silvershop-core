@@ -29,7 +29,7 @@ class CartForm extends Form
                 ->setTemplate($template)
         );
         $actions = FieldList::create(
-            FormAction::create('updatecart', _t('CartForm.UpdateCart', 'Update Cart'))
+            FormAction::create('updatecart', _t(__CLASS__ . '.UpdateCart', 'Update Cart'))
         );
 
         parent::__construct($controller, $name, $fields, $actions);
@@ -93,7 +93,7 @@ class CartForm extends Form
         }
         if ($removecount) {
             $messages['remove'] = _t(
-                'CartForm.REMOVED_ITEMS',
+                __CLASS__ . '.REMOVED_ITEMS',
                 'Removed {count} items.',
                 'count is the amount that was removed',
                 array('count' => $removecount)
@@ -101,7 +101,7 @@ class CartForm extends Form
         }
         if ($updatecount) {
             $messages['updatecount'] = _t(
-                'CartForm.UPDATED_ITEMS',
+                __CLASS__ . '.UPDATED_ITEMS',
                 'Updated {count} items.',
                 'count is the amount that was updated',
                 array('count' => $updatecount)

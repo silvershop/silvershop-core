@@ -60,7 +60,7 @@ class ContactDetails extends CheckoutStep
         $form->setRedirectLink($this->NextStepLink());
         $form->setActions(
             FieldList::create(
-                FormAction::create('checkoutSubmit', _t('CheckoutStep.Continue', 'Continue'))
+                FormAction::create('checkoutSubmit', _t('SilverShop\Checkout\Step\CheckoutStep.Continue', 'Continue'))
             )
         );
         $this->owner->extend('updateContactDetailsForm', $form);

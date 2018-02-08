@@ -84,7 +84,7 @@ class VariationForm extends AddProductForm
 
             if ($cart->add($variation, $quantity, $saveabledata)) {
                 $form->sessionMessage(
-                    _t('ShoppingCart.ItemAdded', 'Item has been added successfully.'),
+                    _t('SilverShop\Cart\ShoppingCart.ItemAdded', 'Item has been added successfully.'),
                     'good'
                 );
             } else {

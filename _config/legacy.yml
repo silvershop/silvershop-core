@@ -1,0 +1,34 @@
+---
+Name: silvershop-core-legacy
+---
+# Mapping rules to map old model-classes to new ones.
+SilverStripe\ORM\DatabaseAdmin:
+  classname_value_remapping:
+    AccountPage: SilverShop\Page\AccountPage
+    CartPage: SilverShop\Page\CartPage
+    CheckoutPage: SilverShop\Page\CheckoutPage
+    Address: SilverShop\Model\Address
+    Order: SilverShop\Model\Order
+    OrderAttribute: SilverShop\Model\OrderAttribute
+    OrderItem: SilverShop\Model\OrderItem
+    OrderModifier: SilverShop\Model\Modifiers\OrderModifier
+    OrderStatusLog: SilverShop\Model\OrderStatusLog
+    RegionRestriction: SilverShop\Model\RegionRestriction
+    Zone: SilverShop\Model\Zone
+    ZoneRegion: SilverShop\Model\ZoneRegion
+    FreeShippingModifier: SilverShop\Model\Modifiers\Shipping\Free
+    PickupShippingModifier: SilverShop\Model\Modifiers\Shipping\Pickup
+    ShippingModifier: SilverShop\Model\Modifiers\Shipping\Base
+    SimpleShippingModifier: SilverShop\Model\Modifiers\Shipping\Simple
+    WeightShippingModifier: SilverShop\Model\Modifiers\Shipping\Weight
+    SubTotalModifier: SilverShop\Model\Modifiers\SubTotal
+    FlatTaxModifier: SilverShop\Model\Modifiers\Tax\FlatTax
+    GlobalTaxModifier: SilverShop\Model\Modifiers\Tax\GlobalTax
+    TaxModifier: SilverShop\Model\Modifiers\Tax\Base
+    Product: SilverShop\Page\Product
+    Product_OrderItem: SilverShop\Model\Product\OrderItem
+    ProductCategory: SilverShop\Page\ProductCategory
+    ProductAttributeType: SilverShop\Model\Variation\AttributeType
+    ProductAttributeValue: SilverShop\Model\Variation\AttributeValue
+    ProductVariation: SilverShop\Model\Variation\Variation
+    ProductVariation_OrderItem: SilverShop\Model\Variation\OrderItem

@@ -22,19 +22,19 @@ class I18nDatetime extends DBDatetime
     public function Nice()
     {
         if ($this->value) {
-            return strftime(_t('Shop.DateTimeFormatNice', '%m/%d/%G %I:%M%p'), $this->owner->getTimestamp());
+            return strftime(_t('SilverShop\Generic.DateTimeFormatNice', '%m/%d/%G %I:%M%p'), $this->owner->getTimestamp());
         }
     }
 
     public function NiceDate()
     {
         if ($this->value) {
-            return strftime(_t('Shop.DateFormatNice', '%m/%d/%G'), $this->owner->getTimestamp());
+            return strftime(_t('SilverShop\Generic.DateFormatNice', '%m/%d/%G'), $this->owner->getTimestamp());
         }
     }
 
     public function Nice24()
     {
-        return date(_t('Shop.DateTimeFormatNice24', 'd/m/Y H:i'), $this->owner->getTimestamp());
+        return date(_t('SilverShop\Generic.DateTimeFormatNice24', 'd/m/Y H:i'), $this->owner->getTimestamp());
     }
 }

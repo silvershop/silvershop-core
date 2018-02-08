@@ -4,7 +4,7 @@
 
 <% if $PaymentErrorMessage %>
     <p class="message error">
-        <%t CheckoutPage.PaymentErrorMessage 'Received error from payment gateway:' %>
+        <%t SilverShop\Page\CheckoutPage.PaymentErrorMessage 'Received error from payment gateway:' %>
         $PaymentErrorMessage
     </p>
 <% end_if %>
@@ -44,7 +44,7 @@
                         <div class="accordion-body">
                             <div class="accordion-inner">
                                 <% if $IsCurrentStep('contactdetails') %>
-                                    <p><%t CheckoutStep_Address.SupplyContactInformation "Supply your contact information" %></p>
+                                    <p><%t SilverShop\Checkout\Step\Address.SupplyContactInformation "Supply your contact information" %></p>
                                     $OrderForm
                                 <% end_if %>
                                 <% if $IsPastStep('contactdetails') %>
@@ -61,10 +61,10 @@
                     <div class="accordion-heading">
                         <% if $IsPastStep('shippingaddress') %>
                             <h3><a class="accordion-toggle" title="edit address(es)" href="$Link('shippingaddress')">
-                                <%t Address.SINGULARNAME "Address" %>
+                                <%t SilverShop\Model\Address.SINGULARNAME "Address" %>
                             </a></h3>
                         <% else %>
-                            <h3 class="accordion-toggle"><%t Address.SINGULARNAME "Address" %></h3>
+                            <h3 class="accordion-toggle"><%t SilverShop\Model\Address.SINGULARNAME "Address" %></h3>
                         <% end_if %>
                     </div>
                     <% if $IsFutureStep('shippingaddress') %>
@@ -73,19 +73,19 @@
                         <div class="accordion-body">
                             <div class="accordion-inner">
                                 <% if $IsCurrentStep('shippingaddress') %>
-                                    <p><%t CheckoutStep_Address.EnterShippingAddress "Please enter your shipping address details." %></p>
+                                    <p><%t SilverShop\Checkout\Step\Address.EnterShippingAddress "Please enter your shipping address details." %></p>
                                     $OrderForm
                                 <% end_if %>
                                 <% if $IsPastStep('shippingaddress') %>
                                     <div class="row">
                                         <div class="span4">
                                             <% with $Cart %>
-                                                <h4><%t CheckoutStep_Address.ShipTo "Ship To:" %></h4>
+                                                <h4><%t SilverShop\Checkout\Step\Address.ShipTo "Ship To:" %></h4>
                                                 $ShippingAddress
                                             <% end_with %>
                                         </div>
                                         <div class="span4">
-                                        <h4><%t CheckoutStep_Address.BillTo "Bill To:" %></h4>
+                                        <h4><%t SilverShop\Checkout\Step\Address.BillTo "Bill To:" %></h4>
                                             <% if $IsCurrentStep('billingaddress') %>
                                                 $OrderForm
                                             <% else %>
@@ -105,10 +105,10 @@
                     <div class="accordion-heading">
                         <% if $IsPastStep('shippingmethod') %>
                             <h3><a class="accordion-toggle" title="choose shipping method" href="$Link('shippingmethod')">
-                                <%t CheckoutStep.Shipping "Shipping" %>
+                                <%t SilverShop\Checkout\Step\CheckoutStep.Shipping "Shipping" %>
                             </a></h3>
                         <% else %>
-                            <h3 class="accordion-toggle"><%t CheckoutStep.Shipping "Shipping" %></h3>
+                            <h3 class="accordion-toggle"><%t SilverShop\Checkout\Step\CheckoutStep.Shipping "Shipping" %></h3>
                         <% end_if %>
                     </div>
                     <% if $IsFutureStep('shippingmethod') %>
@@ -133,10 +133,10 @@
                     <div class="accordion-heading">
                         <% if $IsPastStep('paymentmethod') %>
                             <h3><a class="accordion-toggle" title="choose payment method" href="$Link('paymentmethod')">
-                                <%t OrderActionsForm.PaymentMethod "Payment Method" %>
+                                <%t SilverShop\Forms\OrderActionsForm.PaymentMethod "Payment Method" %>
                             </a></h3>
                         <% else %>
-                            <h3 class="accordion-toggle"><%t OrderActionsForm.PaymentMethod "Payment Method" %></h3>
+                            <h3 class="accordion-toggle"><%t SilverShop\Forms\OrderActionsForm.PaymentMethod "Payment Method" %></h3>
                         <% end_if %>
                     </div>
                     <% if $IsFutureStep('paymentmethod') %>
@@ -157,7 +157,7 @@
 
                 <div class="accordion-group">
                     <div class="accordion-heading">
-                        <h3 class="accordion-toggle"><%t CheckoutStep.Summary "Summary" %></h3>
+                        <h3 class="accordion-toggle"><%t SilverShop\Checkout\Step\CheckoutStep.Summary "Summary" %></h3>
                     </div>
                     <% if $IsFutureStep('summary') %>
 
@@ -177,7 +177,7 @@
                                                     <% end_if %>
                                                 <% end_loop %>
                                                 <tr>
-                                                    <th colspan="3"><%t Order.GrandTotal "Grand Total" %></th>
+                                                    <th colspan="3"><%t SilverShop\Model\Order.GrandTotal "Grand Total" %></th>
                                                     <td>$Total.Nice $Currency</td>
                                                 </tr>
                                             </tfoot>
@@ -198,13 +198,13 @@
 <% else %>
 
     <div class="message warning alert alert-block alert-info">
-        <h4 class="alert-heading"><%t ShoppingCart.NoItems "There are no items in your cart." %></h4>
+        <h4 class="alert-heading"><%t SilverShop\Cart\ShoppingCart.NoItems "There are no items in your cart." %></h4>
     </div>
 
     <% if $ContinueLink %>
     <a class="continuelink btn btn-primary" href="$ContinueLink">
         <i class="icon-arrow-left icon-white"></i>
-        <%t ShoppingCart.ContinueShopping 'Continue Shopping' %>
+        <%t SilverShop\Cart\ShoppingCart.ContinueShopping 'Continue Shopping' %>
     </a>
     <% end_if %>
 

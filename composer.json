@@ -22,7 +22,7 @@
   ],
   "require": {
     "php": ">=5.6.0",
-    "silverstripe/recipe-cms": "^1.0.2",
+    "silverstripe/recipe-cms": "^1.0.3",
     "silverstripe/silverstripe-omnipay": "^3@dev",
     "silvershop/silverstripe-listsorter": "^3@dev",
     "silvershop/silverstripe-sqlquerylist": "^2@dev"

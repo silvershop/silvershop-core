@@ -1,5 +1,5 @@
 <% if $Items %>
-    <table class="cart" summary="<%t ShoppingCart.TableSummary "Current contents of your cart." %>">
+    <table class="cart" summary="<%t SilverShop\Cart\ShoppingCart.TableSummary "Current contents of your cart." %>">
         <colgroup>
             <col class="image"/>
             <col class="product title"/>
@@ -11,12 +11,12 @@
         <thead>
             <tr>
                 <th scope="col"></th>
-                <th scope="col"><%t Product.SINGULARNAME "Product" %></th>
-                <th scope="col"><%t Order.UnitPrice "Unit Price" %></th>
-                <th scope="col"><%t Order.Quantity "Quantity" %></th>
-                <th scope="col"><%t Order.TotalPriceWithCurrency "Total Price ({Currency})" Currency=$Currency %></th>
+                <th scope="col"><%t SilverShop\Page\Product.SINGULARNAME "Product" %></th>
+                <th scope="col"><%t SilverShop\Model\Order.UnitPrice "Unit Price" %></th>
+                <th scope="col"><%t SilverShop\Model\Order.Quantity "Quantity" %></th>
+                <th scope="col"><%t SilverShop\Model\Order.TotalPriceWithCurrency "Total Price ({Currency})" Currency=$Currency %></th>
                 <% if $Editable %>
-                    <th scope="col"><%t Shop.Remove "Remove" %></th>
+                    <th scope="col"><%t SilverShop\Generic.Remove "Remove" %></th>
                 <% end_if %>
             </tr>
         </thead>
@@ -26,7 +26,7 @@
                     <td>
                         <% if $Image %>
                             <div class="image">
-                                <a href="$Link" title="<%t Shop.ReadMoreTitle "Click here to read more on &quot;{Title}&quot;" Title=$TableTitle %>">
+                                <a href="$Link" title="<%t SilverShop\Generic.ReadMoreTitle "Click here to read more on &quot;{Title}&quot;" Title=$TableTitle %>">
                                     $Image.setWidth(45)
                                 </a>
                             </div>
@@ -35,14 +35,14 @@
                     <td id="$TableTitleID">
                         <h3>
                         <% if $Link %>
-                            <a href="$Link" title="<%t Shop.ReadMoreTitle "Click here to read more on &quot;{Title}&quot;" Title=$TableTitle %>">$TableTitle</a>
+                            <a href="$Link" title="<%t SilverShop\Generic.ReadMoreTitle "Click here to read more on &quot;{Title}&quot;" Title=$TableTitle %>">$TableTitle</a>
                         <% else %>
                             $TableTitle
                         <% end_if %>
                         </h3>
                         <% if $SubTitle %><p class="subtitle">$SubTitle</p><% end_if %>
                         <% if $Product.Variations && $Up.Editable %>
-                            <%t Shop.Change "Change" %>: $VariationField
+                            <%t SilverShop\Generic.Change "Change" %>: $VariationField
                         <% end_if %>
                     </td>
                     <td>$UnitPrice.Nice</td>
@@ -53,7 +53,7 @@
                             <% if $RemoveField %>
                                 $RemoveField
                             <% else %>
-                                <a href="$removeallLink" title="<%t ShoppingCart.RemoveAllTitle "Remove all of &quot;{Title}&quot; from your cart" Title=$TableTitle %>">
+                                <a href="$removeallLink" title="<%t SilverShop\Cart\ShoppingCart.RemoveAllTitle "Remove all of &quot;{Title}&quot; from your cart" Title=$TableTitle %>">
                                     <img src="$resourceURL('silvershop/core:images/remove.gif')" alt="x"/>
                                 </a>
                             <% end_if %>
@@ -65,7 +65,7 @@
         </tbody>
         <tfoot>
             <tr class="subtotal">
-                <th colspan="4" scope="row"><%t Order.SubTotal "Sub-total" %></th>
+                <th colspan="4" scope="row"><%t SilverShop\Model\Order.SubTotal "Sub-total" %></th>
                 <td id="$TableSubTotalID">$SubTotal.Nice</td>
                 <% if $Editable %><td>&nbsp;</td><% end_if %>
             </tr>
@@ -76,7 +76,7 @@
                             <tr id="$TableID" class="$Classes">
                                 <th id="$TableTitleID" colspan="4" scope="row">
                                     <% if $Link %>
-                                        <a href="$Link" title="<%t Shop.ReadMoreTitle "Click here to read more on &quot;{Title}&quot;" Title=$TableTitle %>">$TableTitle</a>
+                                        <a href="$Link" title="<%t SilverShop\Generic.ReadMoreTitle "Click here to read more on &quot;{Title}&quot;" Title=$TableTitle %>">$TableTitle</a>
                                     <% else %>
                                         $TableTitle
                                     <% end_if %>
@@ -86,7 +86,7 @@
                                     <td>
                                         <% if $CanRemove %>
                                             <strong>
-                                                <a class="ajaxQuantityLink" href="$removeLink" title="<%t ShoppingCart.RemoveTitle "Remove &quot;{Title}&quot; from your cart." Title=$TableTitle %>">
+                                                <a class="ajaxQuantityLink" href="$removeLink" title="<%t SilverShop\Cart\ShoppingCart.RemoveTitle "Remove &quot;{Title}&quot; from your cart." Title=$TableTitle %>">
                                                     <img src="$resourceURL('silvershop/core:images/remove.gif')" alt="x"/>
                                                 </a>
                                             </strong>
@@ -103,7 +103,7 @@
                     <% end_loop %>
                 <% end_if %>
                 <tr class="gap Total">
-                    <th colspan="4" scope="row"><%t Order.Total "Total" %></th>
+                    <th colspan="4" scope="row"><%t SilverShop\Model\Order.Total "Total" %></th>
                     <td id="$TableTotalID"><span class="value">$Total.Nice</span> <span class="currency">$Currency</span></td>
                     <% if $Editable %><td>&nbsp;</td><% end_if %>
                 </tr>
@@ -112,6 +112,6 @@
     </table>
 <% else %>
     <p class="message warning">
-        <%t ShoppingCart.NoItems "There are no items in your cart." %>
+        <%t SilverShop\Cart\ShoppingCart.NoItems "There are no items in your cart." %>
     </p>
 <% end_if %>

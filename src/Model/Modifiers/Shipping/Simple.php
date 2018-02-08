@@ -42,7 +42,7 @@ class Simple extends Base
             $countryList = SiteConfig::current_site_config()->getCountriesList();
 
             return _t(
-                'SimpleShippingModifier.ShipToCountry',
+                __CLASS__ . '.ShipToCountry',
                 'Ship to {Country}',
                 '',
                 ['Country' => $countryList[$country]]

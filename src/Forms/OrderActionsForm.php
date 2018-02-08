@@ -173,7 +173,7 @@ class OrderActionsForm extends Form
             return $this->controller->redirectBack();
         }
         $form->sessionMessage(
-            _t('OrderForm.CouldNotProcessPayment', 'Payment could not be processed.'),
+            _t(__CLASS__ . '.CouldNotProcessPayment', 'Payment could not be processed.'),
             'bad'
         );
         return $this->controller->redirectBack();
@@ -203,7 +203,7 @@ class OrderActionsForm extends Form
             }
 
             $this->controller->sessionMessage(
-                _t('OrderForm.OrderCancelled', 'Order sucessfully cancelled'),
+                _t(__CLASS__ . '.OrderCancelled', 'Order sucessfully cancelled'),
                 'warning'
             );
             if (Security::getCurrentUser() && $link = $this->order->Link()) {

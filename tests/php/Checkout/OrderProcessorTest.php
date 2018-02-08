@@ -39,27 +39,27 @@ class OrderProcessorTest extends SapphireTest
     ];
 
     /**
-     * @var Product 
+     * @var Product
      */
     protected $mp3player;
 
     /**
-     * @var Product 
+     * @var Product
      */
     protected $socks;
 
     /**
-     * @var Product 
+     * @var Product
      */
     protected $beachball;
 
     /**
-     * @var Product 
+     * @var Product
      */
     protected $hdtv;
 
     /**
-     * @var ShoppingCart 
+     * @var ShoppingCart
      */
     protected $shoppingcart;
 
@@ -366,7 +366,7 @@ class OrderProcessorTest extends SapphireTest
         $this->assertEquals('Paid', $order->Status, 'Sets paid status');
 
         $subject = _t(
-            'ShopEmail.ReceiptSubject',
+            'SilverShop\ShopEmail.ReceiptSubject',
             'Order #{OrderNo} receipt',
             '',
             array('OrderNo' => $order->Reference)

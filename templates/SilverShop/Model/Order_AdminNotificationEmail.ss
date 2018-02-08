@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" >
-        <title><%t ShopEmail.AdminNotificationTitle "Shop Receipt" %></title>
+        <title><%t SilverShop\ShopEmail.AdminNotificationTitle "Shop Receipt" %></title>
         <% include SilverShop\Includes\OrderReceiptStyle %>
     </head>
     <body>

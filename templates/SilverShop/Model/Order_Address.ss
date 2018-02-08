@@ -1,8 +1,8 @@
 <table id="ShippingTable" class="infotable">
     <thead>
         <tr>
-            <th><%t Order.ShipTo "Ship To" %></th>
-            <th><%t Order.BillTo "Bill To" %></th>
+            <th><%t SilverShop\Model\Order.ShipTo "Ship To" %></th>
+            <th><%t SilverShop\Model\Order.BillTo "Bill To" %></th>
         </tr>
     </thead>
     <tbody>

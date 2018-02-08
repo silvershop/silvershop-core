@@ -4,7 +4,7 @@
 <div id="Account" class="typography">
 
     <h2 class="pagetitle">
-        <%t AccountPage_EditProfile.Title 'Edit Profile' %>
+        <%t SilverShop\Page\AccountPage_EditProfile.Title 'Edit Profile' %>
     </h2>
 
     $EditAccountForm

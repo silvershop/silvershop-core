@@ -28,7 +28,7 @@ class CartPageController extends PageController
         if ($this->getFailover()->Title) {
             return $this->getFailover()->Title;
         }
-        return _t('CartPage.DefaultTitle', 'Shopping Cart');
+        return _t('SilverShop\Page\CartPage.DefaultTitle', 'Shopping Cart');
     }
 
     /**

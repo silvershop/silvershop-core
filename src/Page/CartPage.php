@@ -52,7 +52,7 @@ class CartPage extends Page
                         'Root.Links',
                         DropdownField::create(
                             'CheckoutPageID',
-                            _t('CartPage.has_one_CheckoutPage', 'Checkout Page'),
+                            $this->fieldLabel('CheckoutPage'),
                             $checkouts->map("ID", "Title")
                         )
                     );
@@ -62,7 +62,7 @@ class CartPage extends Page
                     'Root.Links',
                     TreeDropdownField::create(
                         'ContinuePageID',
-                        _t('CartPage.has_one_ContinuePage', 'Continue Shopping Page'),
+                        $this->fieldLabel('ContinuePage'),
                         SiteTree::class
                     )
                 );

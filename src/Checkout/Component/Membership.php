@@ -81,10 +81,10 @@ class Membership extends CheckoutComponent
     {
         if ($this->confirmed) {
             //relies on fix: https://github.com/silverstripe/silverstripe-framework/pull/2757
-            return ConfirmedPasswordField::create('Password', _t('CheckoutField.Password', 'Password'))
+            return ConfirmedPasswordField::create('Password', _t('SilverShop\Checkout\CheckoutField.Password', 'Password'))
                 ->setCanBeEmpty(!Checkout::membership_required());
         }
-        return PasswordField::create('Password', _t('CheckoutField.Password', 'Password'));
+        return PasswordField::create('Password', _t('SilverShop\Checkout\CheckoutField.Password', 'Password'));
     }
 
     public function validateData(Order $order, array $data)
@@ -104,7 +104,7 @@ class Membership extends CheckoutComponent
                 $fieldLabel = isset($fieldLabels[$idfield]) ? $fieldLabels[$idfield] : $idfield;
                 $result->addError(
                     _t(
-                        'Checkout.MemberExists',
+                        'SilverShop\Checkout\Checkout.MemberExists',
                         'A member already exists with the {Field} {Identifier}',
                         '',
                         array('Field' => $fieldLabel, 'Identifier' => $idval)

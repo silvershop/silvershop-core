@@ -43,9 +43,6 @@ class AccountPageTest extends FunctionalTest
         Controller::add_extension(ShopTestControllerExtension::class);
         $this->accountpage = $this->objFromFixture(AccountPage::class, "accountpage");
         $this->controller = new AccountPageController($this->accountpage);
-        SSViewer::config()->update('theme_enabled', true);
-        SSViewer::set_themes([__DIR__ . '/../themes/shoptest', '$default']);
-        //$this->controller->init();
     }
 
     public function testCanViewAccountPage()
@@ -105,7 +102,7 @@ class AccountPageTest extends FunctionalTest
 
     public function testAddressBookWithDropdownFieldToSelectCountry()
     {
-        $this->useTestTheme(__DIR__ . '/../', 'shoptest', function () {
+        $this->useTestTheme(realpath(__DIR__ . '/../'), 'shoptest', function () {
             $member = $this->objFromFixture(Member::class, "joebloggs");
             $this->logInAs($member);
 
@@ -144,7 +141,7 @@ class AccountPageTest extends FunctionalTest
 
     public function testAddressBookWithReadonlyFieldForCountry()
     {
-        $this->useTestTheme(__DIR__ . '/../', 'shoptest', function (){
+        $this->useTestTheme(realpath(__DIR__ . '/../'), 'shoptest', function (){
             $member = $this->objFromFixture(Member::class, "joebloggs");
             $this->logInAs($member);
 

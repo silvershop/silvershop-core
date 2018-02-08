@@ -1,8 +1,8 @@
 <% if $Products.MoreThanOnePage %>
 <div id="PageNumbers">
-    <p><%t ProductGroup.Page "Page" %>:
+    <p><%t SilverShop\Includes\ProductGroup.Page "Page" %>:
         <% if $Products.NotFirstPage %>
-            <a class="prev" href="$Products.PrevLink" title="<%t ProductGroup.ViewPrevious "View the previous page" %>"><%t ProductGroup.Previous "previous" %></a>
+            <a class="prev" href="$Products.PrevLink" title="<%t SilverShop\Includes\ProductGroup.ViewPrevious "View the previous page" %>"><%t SilverShop\Includes\ProductGroup.Previous "previous" %></a>
         <% end_if %>
 
         <span>
@@ -11,7 +11,7 @@
                     $PageNum
                 <% else %>
                     <% if $Link %>
-                        <a href="$Link" title="<%t ProductGroup.ViewPage "View page number {pageNum}" pageNum=$PageNum %>">$PageNum</a>
+                        <a href="$Link" title="<%t SilverShop\Includes\ProductGroup.ViewPage "View page number {pageNum}" pageNum=$PageNum %>">$PageNum</a>
                     <% else %>
                         &hellip;
                     <% end_if %>
@@ -20,7 +20,7 @@
         </span>
 
         <% if $Products.NotLastPage %>
-            <a class="next" href="$Products.NextLink" title="<%t ProductGroup.ViewNext "View the next page" %>"><%t ProductGroup.Next "next" %></a>
+            <a class="next" href="$Products.NextLink" title="<%t SilverShop\Includes\ProductGroup.ViewNext "View the next page" %>"><%t SilverShop\Includes\ProductGroup.Next "next" %></a>
         <% end_if %>
     </p>
 </div>

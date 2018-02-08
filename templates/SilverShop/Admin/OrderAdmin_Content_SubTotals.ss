@@ -1,6 +1,6 @@
 <tfoot class="order-content-subtotals">
     <tr class="ss-gridfield-item">
-        <th colspan="4" class="main"><%t Order.SubTotal "Sub-total" %></th>
+        <th colspan="4" class="main"><%t SilverShop\Model\Order.SubTotal "Sub-total" %></th>
         <th class="main">$SubTotal.Nice</th>
     </tr>
     <% loop $Modifiers %>
@@ -15,12 +15,12 @@
         <% end_if %>
     <% end_loop %>
     <tr class="ss-gridfield-item">
-        <th colspan="4" class="main"><%t Order.Total "Total" %></th>
+        <th colspan="4" class="main"><%t SilverShop\Model\Order.Total "Total" %></th>
         <th class="main">$Total.Nice $Currency</th>
     </tr>
     <% if $TotalOutstanding %>
         <tr class="ss-gridfield-item">
-            <td colspan="4" class="main"><%t Order.Outstanding "Outstanding" %></td>
+            <td colspan="4" class="main"><%t SilverShop\Model\Order.Outstanding "Outstanding" %></td>
             <td class="main">$TotalOutstanding.Nice $Currency</td>
         </tr>
     <% end_if %>

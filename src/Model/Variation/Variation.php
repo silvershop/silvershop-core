@@ -141,7 +141,7 @@ class Variation extends DataObject implements Buyable
                             'novalues' . $attribute->Name,
                             '<p class="message warning">' .
                             _t(
-                                'ProductVariation.NoAttributeValuesMessage',
+                                __CLASS__ . '.NoAttributeValuesMessage',
                                 '{attribute} has no values to choose from. You can create them in the "Products" &#62; "Product Attribute Type" section of the CMS.',
                                 'Warning that will be shown if an attribute doesn\'t have any values',
                                 ['attribute' => $attribute->Name]
@@ -158,7 +158,7 @@ class Variation extends DataObject implements Buyable
                     'savefirst',
                     '<p class="message warning">' .
                     _t(
-                        'ProductVariation.MustSaveFirstMessage',
+                        __CLASS__ . '.MustSaveFirstMessage',
                         'You can choose variation attributes after saving for the first time, if they exist.'
                     ) .
                     '</p>'
@@ -209,7 +209,7 @@ class Variation extends DataObject implements Buyable
         $fields->push(
             TextField::create(
                 'Depth',
-                _t('Product.DepthWithUnit', 'Depth ({LengthUnit})', '', $fieldSubstitutes),
+                _t('SilverShop\Page\Product.DepthWithUnit', 'Depth ({LengthUnit})', '', $fieldSubstitutes),
                 '',
                 12
             )

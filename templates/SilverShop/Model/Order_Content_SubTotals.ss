@@ -1,6 +1,6 @@
 <tfoot>
     <tr class="gap summary" id="SubTotal">
-        <td colspan="4" scope="row" class="threeColHeader subtotal"><%t Order.SubTotal "Sub-total" %></td>
+        <td colspan="4" scope="row" class="threeColHeader subtotal"><%t SilverShop\Model\Order.SubTotal "Sub-total" %></td>
         <td class="right">$SubTotal.Nice</td>
     </tr>
     <% loop $Modifiers %>
@@ -12,7 +12,7 @@
         <% end_if %>
     <% end_loop %>
     <tr class="gap summary total" id="Total">
-        <td colspan="4" scope="row" class="threeColHeader total"><%t Order.Total "Total" %></td>
+        <td colspan="4" scope="row" class="threeColHeader total"><%t SilverShop\Model\Order.Total "Total" %></td>
         <td class="right">$Total.Nice $Currency</td>
     </tr>
 </tfoot>

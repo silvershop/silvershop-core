@@ -40,7 +40,7 @@ class CheckoutComponentValidator extends RequiredFields
         if (!$valid) {
             $this->form->sessionMessage(
                 _t(
-                    "CheckoutComponentValidator.InvalidDataMessage",
+                    __CLASS__ . ".InvalidDataMessage",
                     "There are problems with the data you entered. See below:"
                 ),
                 "bad"

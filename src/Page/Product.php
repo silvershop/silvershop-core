@@ -157,7 +157,7 @@ class Product extends Page implements Buyable
         $this->beforeUpdateCMSFields(
             function (FieldList $fields) use ($self) {
                 $fields->fieldByName('Root.Main.Title')
-                    ->setTitle(_t('Product.PageTitle', 'Product Title'));
+                    ->setTitle(_t(__CLASS__ . '.PageTitle', 'Product Title'));
 
                 $fields->addFieldsToTab(
                     'Root.Main', [
@@ -249,7 +249,7 @@ class Product extends Page implements Buyable
     {
         $categories = ProductCategory::get()->map('ID', 'NestedTitle')->toArray();
         $categories = [
-            0 => _t('SiteTree.PARENTTYPE_ROOT', 'Top-level page'),
+            0 => _t('SilverStripe\CMS\Model\SiteTree.PARENTTYPE_ROOT', 'Top-level page'),
         ] + $categories;
         if ($this->ParentID && !($this->Parent() instanceof ProductCategory)) {
             $categories = [
