@@ -2,7 +2,6 @@
 
 namespace SilverShop\Model\Variation;
 
-
 use SilverShop\Page\Product;
 use SilverStripe\Forms\DropdownField;
 use SilverStripe\Forms\FieldList;
@@ -14,7 +13,6 @@ use SilverStripe\ORM\ArrayList;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\HasManyList;
 use SilverStripe\ORM\ManyManyList;
-
 
 /**
  * Producte Attribute Type

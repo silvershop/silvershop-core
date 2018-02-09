@@ -6,7 +6,6 @@ use SilverShop\Model\Buyable;
 use SilverStripe\Dev\TestOnly;
 use SilverStripe\ORM\DataObject;
 
-
 /**
  * @package    shop
  * @subpackage tests

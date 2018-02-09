@@ -13,7 +13,6 @@ use SilverStripe\Omnipay\GatewayInfo;
 use SilverStripe\Security\Member;
 use SilverStripe\Security\Security;
 
-
 /**
  * Helper class for getting an order throught the checkout process
  */

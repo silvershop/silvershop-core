@@ -2,7 +2,6 @@
 
 namespace SilverShop\Tests\Forms;
 
-
 use SilverShop\Extension\OrderManipulationExtension;
 use SilverShop\Forms\OrderActionsForm;
 use SilverShop\Forms\OrderActionsFormValidator;
@@ -18,7 +17,6 @@ use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Dev\FunctionalTest;
 use SilverStripe\Omnipay\GatewayInfo;
 use SilverStripe\Omnipay\Model\Payment;
-
 
 class OrderActionsFormTest extends FunctionalTest
 {
@@ -66,11 +64,13 @@ class OrderActionsFormTest extends FunctionalTest
         $ctrl = ModelAsController::controller_for($this->checkoutPage);
 
         $response = Director::test(
-            $ctrl->Link('ActionsForm'), array(
+            $ctrl->Link('ActionsForm'),
+            array(
             'action_dopayment' => true,
             'OrderID' => $this->order->ID,
             'PaymentMethod' => 'Dummy'
-            ), $this->session()
+            ),
+            $this->session()
         );
 
         // There should be a new payment
@@ -79,7 +79,6 @@ class OrderActionsFormTest extends FunctionalTest
         $this->assertEquals('PendingPurchase', $this->order->Payments()->first()->Status);
         // The response we get from submitting the form should be a redirect to the offsite payment form
         $this->assertEquals('http://paymentprovider/test/offsiteform', $response->getHeader('Location'));
-
     }
 
     public function testOnsitePayment()
@@ -90,7 +89,8 @@ class OrderActionsFormTest extends FunctionalTest
         $ctrl = ModelAsController::controller_for($this->checkoutPage);
 
         $response = Director::test(
-            $ctrl->Link('ActionsForm'), array(
+            $ctrl->Link('ActionsForm'),
+            array(
             'action_dopayment' => true,
             'OrderID' => $this->order->ID,
             'PaymentMethod' => 'Dummy',
@@ -100,7 +100,8 @@ class OrderActionsFormTest extends FunctionalTest
             'expiryMonth' => 10,
             'expiryYear' => date('Y') + 1,
             'cvv' => 123
-            ), $this->session()
+            ),
+            $this->session()
         );
 
         // There should be a new payment

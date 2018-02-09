@@ -2,7 +2,6 @@
 
 namespace SilverShop\Extension;
 
-
 use SilverShop\Cart\ShoppingCart;
 use SilverShop\Checkout\Step\Address;
 use SilverShop\Checkout\Step\ContactDetails;
@@ -13,7 +12,6 @@ use SilverShop\Page\CheckoutPage;
 use SilverShop\Page\CheckoutPageController;
 use SilverStripe\Control\Controller;
 use SilverStripe\Core\Extension;
-
 
 /**
  * Stepped checkout provides multiple forms and actions for placing an order
@@ -32,7 +30,7 @@ class SteppedCheckoutExtension extends Extension
     private static $continue_anchor;
 
     /**
-     * @var CheckoutPageController 
+     * @var CheckoutPageController
      */
     protected $owner;
 

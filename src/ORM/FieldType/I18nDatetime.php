@@ -2,9 +2,7 @@
 
 namespace SilverShop\ORM\FieldType;
 
-
 use SilverStripe\ORM\FieldType\DBDatetime;
-
 
 /**
  * provides I18n formating

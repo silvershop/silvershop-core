@@ -2,11 +2,9 @@
 
 namespace SilverShop\Checkout\Component;
 
-
 use SilverShop\Model\Order;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\TextareaField;
-
 
 class Notes extends CheckoutComponent
 {

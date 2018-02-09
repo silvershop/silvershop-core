@@ -2,7 +2,6 @@
 
 namespace SilverShop\Tests\Cart;
 
-
 use SilverStripe\Core\Extension;
 use SilverStripe\Dev\TestOnly;
 

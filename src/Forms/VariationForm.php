@@ -2,7 +2,6 @@
 
 namespace SilverShop\Forms;
 
-
 use Exception;
 use SilverShop\Cart\ShoppingCart;
 use SilverShop\Cart\ShoppingCartController;
@@ -12,7 +11,6 @@ use SilverStripe\Core\Convert;
 use SilverStripe\Forms\Form;
 use SilverStripe\Forms\HiddenField;
 use SilverStripe\ORM\Queries\SQLSelect;
-
 
 /**
  * @package shop

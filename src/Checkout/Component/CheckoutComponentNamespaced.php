@@ -4,7 +4,6 @@ namespace SilverShop\Checkout\Component;
 
 use SilverShop\Model\Order;
 
-
 /**
  * Proxy class to handle namespacing field names for checkout components
  */

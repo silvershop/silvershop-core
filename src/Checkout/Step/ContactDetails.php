@@ -2,7 +2,6 @@
 
 namespace SilverShop\Checkout\Step;
 
-
 use SilverShop\Cart\ShoppingCart;
 use SilverShop\Checkout\CheckoutComponentConfig;
 use SilverShop\Checkout\Component\CustomerDetails;
@@ -11,7 +10,6 @@ use SilverStripe\Control\Controller;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\FormAction;
 use SilverStripe\Security\Security;
-
 
 class ContactDetails extends CheckoutStep
 {
@@ -35,7 +33,7 @@ class ContactDetails extends CheckoutStep
             && self::config()->skip_if_logged_in
         ) {
             if (Security::getCurrentUser()) {
-                if(!$form->getValidator()->validate()) {
+                if (!$form->getValidator()->validate()) {
                     return Controller::curr()->redirect($this->NextStepLink());
                 } else {
                     $form->clearMessage();

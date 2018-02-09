@@ -2,7 +2,6 @@
 
 namespace SilverShop\Model\Modifiers\Shipping;
 
-
 /**
  * Calculates the shipping cost of an order, by taking the products
  * and calculating the shipping weight, based on an array set in _config

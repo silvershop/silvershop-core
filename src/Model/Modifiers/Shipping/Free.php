@@ -2,7 +2,6 @@
 
 namespace SilverShop\Model\Modifiers\Shipping;
 
-
 class Free extends Base
 {
     /**

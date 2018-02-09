@@ -5,7 +5,6 @@ namespace SilverShop\Page;
 use PageController;
 use SilverShop\Forms\AddProductForm;
 
-
 class ProductController extends PageController
 {
     private static $allowed_actions = [

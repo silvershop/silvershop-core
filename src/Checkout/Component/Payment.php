@@ -2,7 +2,6 @@
 
 namespace SilverShop\Checkout\Component;
 
-
 use SilverShop\Checkout\Checkout;
 use SilverShop\Model\Order;
 use SilverStripe\Forms\FieldList;
@@ -11,7 +10,6 @@ use SilverStripe\Forms\OptionsetField;
 use SilverStripe\Omnipay\GatewayInfo;
 use SilverStripe\ORM\ValidationException;
 use SilverStripe\ORM\ValidationResult;
-
 
 class Payment extends CheckoutComponent
 {

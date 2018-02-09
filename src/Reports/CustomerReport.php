@@ -2,9 +2,7 @@
 
 namespace SilverShop\Reports;
 
-
 use SilverStripe\Security\Member;
-
 
 /**
  * List top customers, especially those who spend alot, and those who buy alot.

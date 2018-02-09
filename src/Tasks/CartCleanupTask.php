@@ -2,12 +2,10 @@
 
 namespace SilverShop\Tasks;
 
-
 use LogicException;
 use SilverShop\Model\Order;
 use SilverStripe\Dev\BuildTask;
 use SilverStripe\ORM\FieldType\DBDatetime;
-
 
 /**
  * Cart Cleanup Task.

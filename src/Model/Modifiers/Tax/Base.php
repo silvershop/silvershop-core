@@ -4,7 +4,6 @@ namespace SilverShop\Model\Modifiers\Tax;
 
 use SilverShop\Model\Modifiers\OrderModifier;
 
-
 /**
  * Base class for creating tax modifiers with.
  *

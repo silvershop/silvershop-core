@@ -2,7 +2,6 @@
 
 namespace SilverShop\Forms;
 
-
 use Closure;
 use SilverShop\Model\Order;
 use SilverShop\Model\Variation\Variation;
@@ -13,7 +12,6 @@ use SilverStripe\Forms\TextField;
 use SilverStripe\ORM\ArrayList;
 use SilverStripe\ORM\SS_List;
 use SilverStripe\View\SSViewer;
-
 
 /**
  * Field for editing cart/items within a form

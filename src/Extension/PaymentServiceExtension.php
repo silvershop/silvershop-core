@@ -2,9 +2,7 @@
 
 namespace SilverShop\Extension;
 
-
 use SilverStripe\Core\Extension;
-
 
 /**
  * Extension to the Omnipay PaymentService class

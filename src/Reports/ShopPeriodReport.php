@@ -2,7 +2,6 @@
 
 namespace SilverShop\Reports;
 
-
 use SilverShop\Model\Order;
 use SilverShop\SQLQueryList\SQLQueryList;
 use SilverStripe\Forms\CheckboxField;
@@ -18,7 +17,6 @@ use SilverStripe\ORM\DB;
 use SilverStripe\Reports\Report;
 use SilverStripe\Security\Member;
 use SilverStripe\Security\Security;
-
 
 /**
  * Base class for creating reports that can be filtered to a specific range.
@@ -166,21 +164,21 @@ abstract class ShopPeriodReport extends Report implements i18nEntityProvider
         }
         if ($this->grouping) {
             switch ($params['Grouping']) {
-            case 'Year':
-                $query->addGroupBy($this->fd($filterperiod, '%Y'));
-                break;
-            case 'Month':
-            default:
-                $query->addGroupBy($this->fd($filterperiod, '%Y') . ',' . $this->fd($filterperiod, '%m'));
-                break;
-            case 'Day':
-                $query->addGroupBy(
-                    $this->fd($filterperiod, '%Y') . ',' . $this->fd($filterperiod, '%m') . ',' . $this->fd(
-                        $filterperiod,
-                        '%d'
-                    )
-                );
-                break;
+                case 'Year':
+                    $query->addGroupBy($this->fd($filterperiod, '%Y'));
+                    break;
+                case 'Month':
+                default:
+                    $query->addGroupBy($this->fd($filterperiod, '%Y') . ',' . $this->fd($filterperiod, '%m'));
+                    break;
+                case 'Day':
+                    $query->addGroupBy(
+                        $this->fd($filterperiod, '%Y') . ',' . $this->fd($filterperiod, '%m') . ',' . $this->fd(
+                            $filterperiod,
+                            '%d'
+                        )
+                    );
+                    break;
             }
         }
         $query->setOrderBy('"FilterPeriod"', 'ASC');
@@ -213,4 +211,3 @@ abstract class ShopPeriodReport extends Report implements i18nEntityProvider
         ];
     }
 }
-

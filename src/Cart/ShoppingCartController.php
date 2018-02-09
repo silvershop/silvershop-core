@@ -21,7 +21,6 @@ use SilverStripe\Security\SecurityToken;
 use SilverStripe\Versioned\Versioned;
 use SilverStripe\View\Requirements;
 
-
 /**
  * Manipulate the cart via urls.
  *

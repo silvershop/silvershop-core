@@ -2,11 +2,9 @@
 
 namespace SilverShop\Tests\Model;
 
-
 use SilverShop\Model\Address;
 use SilverShop\Model\RegionRestriction;
 use SilverStripe\Dev\SapphireTest;
-
 
 class RegionRestrictionTest extends SapphireTest
 {
@@ -92,5 +90,3 @@ class RegionRestrictionTest extends SapphireTest
         return RegionRestriction_RateTest::filteredByAddress($address)->sort('Rate', 'ASC')->first();
     }
 }
-
-

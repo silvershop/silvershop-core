@@ -2,7 +2,6 @@
 
 namespace SilverShop\Checkout\Step;
 
-
 use SilverShop\Cart\ShoppingCart;
 use SilverShop\Checkout\CheckoutComponentConfig;
 use SilverShop\Checkout\Component\CustomerDetails;
@@ -17,7 +16,6 @@ use SilverStripe\Forms\FormAction;
 use SilverStripe\Security\MemberAuthenticator\MemberAuthenticator;
 use SilverStripe\Security\MemberAuthenticator\MemberLoginForm;
 use SilverStripe\Security\Security;
-
 
 /**
  * Login, sign-up, or proceed as guest

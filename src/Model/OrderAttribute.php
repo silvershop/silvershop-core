@@ -2,10 +2,8 @@
 
 namespace SilverShop\Model;
 
-
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\FieldType\DBCurrency;
-
 
 /**
  * A single line in an order. This could be an item, or a subtotal line.

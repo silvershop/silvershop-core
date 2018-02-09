@@ -2,10 +2,8 @@
 
 namespace SilverShop\Tests\ORM\FieldType;
 
-
 use SilverShop\ORM\FieldType\CanBeFreeCurrency;
 use SilverStripe\Dev\SapphireTest;
-
 
 class CanBeFreeCurrencyTest extends SapphireTest
 {

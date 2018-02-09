@@ -2,7 +2,6 @@
 
 namespace SilverShop\ORM\Filters;
 
-
 use SilverStripe\Core\Convert;
 use SilverStripe\ORM\DataObject;
 

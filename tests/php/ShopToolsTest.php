@@ -2,10 +2,8 @@
 
 namespace SilverShop\Tests;
 
-
 use SilverShop\ShopTools;
 use SilverStripe\Dev\SapphireTest;
-
 
 class ShopToolsTest extends SapphireTest
 {

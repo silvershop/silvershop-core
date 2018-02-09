@@ -2,10 +2,8 @@
 
 namespace SilverShop\Forms;
 
-
 use SilverStripe\Forms\DropdownField;
 use SilverStripe\SiteConfig\SiteConfig;
-
 
 class RestrictionRegionCountryDropdownField extends DropdownField
 {

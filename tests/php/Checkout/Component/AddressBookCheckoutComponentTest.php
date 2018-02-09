@@ -2,7 +2,6 @@
 
 namespace SilverShop\Tests\Checkout\Component;
 
-
 use SilverShop\Checkout\CheckoutComponentConfig;
 use SilverShop\Checkout\CheckoutConfig;
 use SilverShop\Checkout\Component\AddressBookBilling;
@@ -13,7 +12,6 @@ use SilverStripe\Security\Member;
 use SilverStripe\ORM\ValidationException;
 use SilverStripe\Dev\SapphireTest;
 use SilverStripe\Security\Security;
-
 
 class AddressBookCheckoutComponentTest extends SapphireTest
 {
@@ -26,27 +24,27 @@ class AddressBookCheckoutComponentTest extends SapphireTest
     );
 
     /**
-     * @var Order $cart 
+     * @var Order $cart
      */
     protected $cart;
 
     /**
-     * @var Member $member 
+     * @var Member $member
      */
     protected $member;
 
     /**
-     * @var Address $address1 
+     * @var Address $address1
      */
     protected $address1;
 
     /**
-     * @var Address $address2 
+     * @var Address $address2
      */
     protected $address2;
 
     /**
-     * @var CheckoutComponentConfig $config 
+     * @var CheckoutComponentConfig $config
      */
     protected $config;
 

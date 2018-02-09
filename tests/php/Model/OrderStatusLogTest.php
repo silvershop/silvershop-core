@@ -2,7 +2,6 @@
 
 namespace SilverShop\Tests\Model;
 
-
 use SilverShop\Checkout\OrderProcessor;
 use SilverShop\Model\Order;
 use SilverShop\Model\OrderStatusLog;
@@ -13,7 +12,6 @@ use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Dev\TestMailer;
 use SilverStripe\Security\Member;
 use SilverStripe\Dev\SapphireTest;
-
 
 /**
  * @link OrderStatusLog

@@ -7,7 +7,6 @@ use SilverStripe\Forms\CheckboxField;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\SiteConfig\SiteConfig;
 
-
 class Terms extends CheckoutComponent
 {
     public function getFormFields(Order $order)

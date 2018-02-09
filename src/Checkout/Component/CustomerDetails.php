@@ -2,13 +2,11 @@
 
 namespace SilverShop\Checkout\Component;
 
-
 use SilverShop\Model\Order;
 use SilverStripe\Forms\EmailField;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\TextField;
 use SilverStripe\Security\Security;
-
 
 class CustomerDetails extends CheckoutComponent
 {

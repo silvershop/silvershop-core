@@ -2,12 +2,10 @@
 
 namespace SilverShop\Forms;
 
-
 use SilverShop\Page\CheckoutPage;
 use SilverStripe\Control\Controller;
 use SilverStripe\Control\Director;
 use SilverStripe\Forms\Form;
-
 
 /**
  * Base class for modifier forms.

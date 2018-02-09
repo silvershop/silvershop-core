@@ -2,10 +2,8 @@
 
 namespace SilverShop\Reports;
 
-
 use SilverShop\Page\Product;
 use SilverStripe\CMS\Model\SiteTree;
-
 
 class ProductReport extends ShopPeriodReport
 {

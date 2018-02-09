@@ -2,11 +2,9 @@
 
 namespace SilverShop\Tests\Model;
 
-
 use SilverShop\Model\Address;
 use SilverShop\Model\Zone;
 use SilverStripe\Dev\SapphireTest;
-
 
 class ZoneTest extends SapphireTest
 {

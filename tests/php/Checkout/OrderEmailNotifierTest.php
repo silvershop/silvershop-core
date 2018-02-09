@@ -2,13 +2,11 @@
 
 namespace SilverShop\Tests\Checkout;
 
-
 use SilverShop\Checkout\OrderEmailNotifier;
 use SilverShop\Model\Order;
 use SilverStripe\Control\Email\Email;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\SapphireTest;
-
 
 /**
  * Test OrderEmailNotifier
@@ -18,12 +16,12 @@ class OrderEmailNotifierTest extends SapphireTest
     protected static $fixture_file = __DIR__ . '/../Fixtures/shop.yml';
 
     /**
-     * @var Order 
+     * @var Order
      */
     protected $order;
 
     /**
-     * @var OrderEmailNotifier 
+     * @var OrderEmailNotifier
      */
     protected $notifier;
 

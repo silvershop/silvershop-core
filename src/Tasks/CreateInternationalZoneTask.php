@@ -2,12 +2,10 @@
 
 namespace SilverShop\Tasks;
 
-
 use SilverShop\Extension\ShopConfigExtension;
 use SilverShop\Model\Zone;
 use SilverShop\Model\ZoneRegion;
 use SilverStripe\Dev\BuildTask;
-
 
 class CreateInternationalZoneTask extends BuildTask
 {

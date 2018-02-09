@@ -4,7 +4,6 @@ namespace SilverShop\Model\Modifiers\Shipping;
 
 use SilverShop\ORM\FieldType\CanBeFreeCurrency;
 
-
 /**
  * Pickup the order from the store.
  *

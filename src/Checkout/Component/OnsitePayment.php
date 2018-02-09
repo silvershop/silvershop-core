@@ -2,7 +2,6 @@
 
 namespace SilverShop\Checkout\Component;
 
-
 use Omnipay\Common\Helper;
 use SilverShop\Checkout\Checkout;
 use SilverShop\Model\Order;

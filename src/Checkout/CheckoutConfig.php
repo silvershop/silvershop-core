@@ -2,7 +2,6 @@
 
 namespace SilverShop\Checkout;
 
-
 use SilverStripe\Core\Config\Configurable;
 
 class CheckoutConfig

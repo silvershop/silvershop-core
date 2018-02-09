@@ -2,12 +2,10 @@
 
 namespace SilverShop\Model\Modifiers;
 
-
 use SilverShop\Model\Order;
 use SilverShop\Model\OrderAttribute;
 use SilverStripe\ORM\FieldType\DBCurrency;
 use SilverStripe\ORM\FieldType\DBEnum;
-
 
 /**
  * The OrderModifier class is a databound object for
@@ -86,14 +84,14 @@ class OrderModifier extends OrderAttribute
         $order = $this->Order();
         $value = ($order->IsCart() || $forcecalculation) ? $this->value($subtotal) : $this->Amount;
         switch ($this->Type) {
-        case 'Chargable':
-            $subtotal += $value;
-            break;
-        case 'Deductable':
-            $subtotal -= $value;
-            break;
-        case 'Ignored':
-            break;
+            case 'Chargable':
+                $subtotal += $value;
+                break;
+            case 'Deductable':
+                $subtotal -= $value;
+                break;
+            case 'Ignored':
+                break;
         }
         $value = round($value, Order::config()->rounding_precision);
         $this->Amount = $value;

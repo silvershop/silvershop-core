@@ -20,7 +20,8 @@ class OrderActionsFormValidator extends RequiredFields
                 // Merge the required fields and the Credit-Card fields that are required for the gateway
                 $this->required = $fieldFactory->getFieldName(
                     array_merge(
-                        $this->required, array_intersect(
+                        $this->required,
+                        array_intersect(
                             [
                                 'type',
                                 'name',

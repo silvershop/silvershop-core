@@ -2,12 +2,10 @@
 
 namespace SilverShop\Model;
 
-
 use SilverShop\Forms\RestrictionRegionCountryDropdownField;
 use SilverStripe\Core\Convert;
 use SilverStripe\Forms\TextField;
 use SilverStripe\ORM\DataObject;
-
 
 class RegionRestriction extends DataObject
 {
@@ -107,7 +105,8 @@ class RegionRestriction extends DataObject
                 $region = preg_replace('/[^a-z]+/i', '', substr($postcode['prefix'], 0, 2));
 
                 $set = $set->filter(
-                    'PostalCode:nocase', [
+                    'PostalCode:nocase',
+                    [
                         $region,
                         $postcode['prefix'],
                         $postcode['prefix'] . $postcode['suffix'],

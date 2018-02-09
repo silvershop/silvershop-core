@@ -2,7 +2,6 @@
 
 namespace SilverShop\Forms;
 
-
 use SilverShop\Cart\ShoppingCart;
 use SilverShop\Cart\ShoppingCartController;
 use SilverShop\Model\Buyable;
@@ -18,7 +17,6 @@ use SilverStripe\Forms\NumericField;
 use SilverStripe\Forms\RequiredFields;
 use SilverStripe\Forms\Validator;
 use SilverStripe\ORM\DataObject;
-
 
 /**
  * @package shop

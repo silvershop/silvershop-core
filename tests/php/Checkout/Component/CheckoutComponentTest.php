@@ -2,7 +2,6 @@
 
 namespace SilverShop\Tests\Checkout\Component;
 
-
 use SilverShop\Checkout\CheckoutConfig;
 use SilverShop\Checkout\Component\BillingAddress;
 use SilverShop\Checkout\Component\CheckoutComponentNamespaced;
@@ -18,8 +17,6 @@ use SilverShop\Tests\ShopTest;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\SiteConfig\SiteConfig;
 use SilverStripe\Dev\SapphireTest;
-
-
 
 class CheckoutComponentTest extends SapphireTest
 {

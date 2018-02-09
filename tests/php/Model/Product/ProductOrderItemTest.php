@@ -2,14 +2,12 @@
 
 namespace SilverShop\Tests\Model\Product;
 
-
 use SilverShop\Cart\ShoppingCart;
 use SilverShop\Model\Product\OrderItem;
 use SilverShop\Page\Product;
 use SilverShop\Tests\ShopTest;
 use SilverStripe\Dev\FunctionalTest;
 use SilverStripe\Security\SecurityToken;
-
 
 /**
  * @package    shop

@@ -2,7 +2,6 @@
 
 namespace SilverShop\Model\Variation;
 
-
 use SilverShop\Cart\ShoppingCart;
 use SilverShop\Model\Buyable;
 use SilverShop\Model\Order;
@@ -18,7 +17,6 @@ use SilverStripe\ORM\FieldType\DBCurrency;
 use SilverStripe\ORM\FieldType\DBDecimal;
 use SilverStripe\ORM\ManyManyList;
 use SilverStripe\Versioned\Versioned;
-
 
 /**
  * Product Variation
@@ -179,7 +177,10 @@ class Variation extends DataObject implements Buyable
             TextField::create(
                 'Weight',
                 _t(
-                    'SilverShop\Page\Product.WeightWithUnit', 'Weight ({WeightUnit})', '', [
+                    'SilverShop\Page\Product.WeightWithUnit',
+                    'Weight ({WeightUnit})',
+                    '',
+                    [
                         'WeightUnit' => Product::config()->weight_unit
                     ]
                 ),

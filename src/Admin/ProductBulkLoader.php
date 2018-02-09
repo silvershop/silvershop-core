@@ -2,7 +2,6 @@
 
 namespace SilverShop\Admin;
 
-
 use SilverShop\Model\Variation\AttributeType;
 use SilverShop\Model\Variation\Variation;
 use SilverShop\Page\ProductCategory;
@@ -10,7 +9,6 @@ use SilverStripe\Assets\Image;
 use SilverStripe\Core\Convert;
 use SilverStripe\Dev\CsvBulkLoader;
 use SilverStripe\ORM\ArrayList;
-
 
 /**
  * ProductBulkLoader - allows loading products via CSV file.

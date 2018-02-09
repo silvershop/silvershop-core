@@ -2,7 +2,6 @@
 
 namespace SilverShop\Checkout;
 
-
 use SilverShop\Model\Address;
 use SilverShop\Page\CheckoutPage;
 use SilverStripe\Forms\CheckboxField;
@@ -18,7 +17,6 @@ use SilverStripe\Forms\TextField;
 use SilverStripe\Omnipay\GatewayInfo;
 use SilverStripe\Security\Member;
 use SilverStripe\SiteConfig\SiteConfig;
-
 
 /**
  * Factory for generating checkout fields

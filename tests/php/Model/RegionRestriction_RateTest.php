@@ -2,7 +2,6 @@
 
 namespace SilverShop\Tests\Model;
 
-
 use SilverShop\Model\RegionRestriction;
 use SilverStripe\Dev\TestOnly;
 

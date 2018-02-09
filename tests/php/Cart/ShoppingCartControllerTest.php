@@ -2,7 +2,6 @@
 
 namespace SilverShop\Tests\Cart;
 
-
 use SilverShop\Cart\ShoppingCart;
 use SilverShop\Cart\ShoppingCartController;
 use SilverShop\Model\Variation\Variation;
@@ -12,7 +11,6 @@ use SilverShop\Tests\ShopTest;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\FunctionalTest;
 use SilverStripe\Security\SecurityToken;
-
 
 /**
  * @link ShoppingCart_Controller

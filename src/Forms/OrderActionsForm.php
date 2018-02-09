@@ -123,7 +123,11 @@ class OrderActionsForm extends Form
         }
 
         parent::__construct(
-            $controller, $name, $fields, $actions, OrderActionsFormValidator::create(
+            $controller,
+            $name,
+            $fields,
+            $actions,
+            OrderActionsFormValidator::create(
                 [
                     'PaymentMethod'
                 ]

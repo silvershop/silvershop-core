@@ -10,7 +10,6 @@ use SilverShop\Tests\ShopTest;
 use SilverStripe\Dev\FunctionalTest;
 use SilverStripe\Dev\SapphireTest;
 
-
 class ViewableCartExtensionTest extends FunctionalTest
 {
     public static $fixture_file  = __DIR__ . '/../Fixtures/shop.yml';

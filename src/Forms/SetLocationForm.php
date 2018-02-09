@@ -2,14 +2,12 @@
 
 namespace SilverShop\Forms;
 
-
 use SilverShop\ShopUserInfo;
 use SilverStripe\Forms\DropdownField;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\Form;
 use SilverStripe\Forms\FormAction;
 use SilverStripe\SiteConfig\SiteConfig;
-
 
 class SetLocationForm extends Form
 {
@@ -38,4 +36,3 @@ class SetLocationForm extends Form
         $this->controller->redirectBack();
     }
 }
-

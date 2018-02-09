@@ -60,4 +60,3 @@ JS;
         )->renderWith('SilverShop\Admin\OrderAdmin_Printable');
     }
 }
-

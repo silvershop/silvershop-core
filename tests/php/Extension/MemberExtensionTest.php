@@ -2,14 +2,12 @@
 
 namespace SilverShop\Tests\Extension;
 
-
 use SilverShop\Cart\ShoppingCart;
 use SilverShop\Extension\MemberExtension;
 use SilverShop\Model\Order;
 use SilverStripe\Dev\SapphireTest;
 use SilverStripe\Security\Member;
 use SilverStripe\Security\Security;
-
 
 /**
  * Test member functionality added via ShopMember extension

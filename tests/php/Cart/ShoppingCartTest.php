@@ -2,7 +2,6 @@
 
 namespace SilverShop\Tests\Cart;
 
-
 use SilverShop\Cart\ShoppingCart;
 use SilverShop\Model\Order;
 use SilverShop\Model\Variation\OrderItem;
@@ -12,7 +11,6 @@ use SilverShop\Tests\ShopTest;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\SapphireTest;
 
-
 class ShoppingCartTest extends SapphireTest
 {
     public static $fixture_file   = __DIR__ . '/../Fixtures/shop.yml';
@@ -20,12 +18,12 @@ class ShoppingCartTest extends SapphireTest
     protected static $use_draft_site = false;
 
     /**
-     * @var Product 
+     * @var Product
      */
     protected $product;
 
     /**
-     * @var ShoppingCart 
+     * @var ShoppingCart
      */
     protected $cart;
 
@@ -89,7 +87,6 @@ class ShoppingCartTest extends SapphireTest
 
         $item = $this->cart->get($this->product);
         $this->assertEquals($item->Quantity, 25, "quantity is 25");
-
     }
 
     public function testClear()

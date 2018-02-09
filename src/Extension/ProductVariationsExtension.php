@@ -2,7 +2,6 @@
 
 namespace SilverShop\Extension;
 
-
 use SilverShop\Model\Variation\AttributeType;
 use SilverShop\Model\Variation\AttributeValue;
 use SilverShop\Model\Variation\Variation;
@@ -16,7 +15,6 @@ use SilverStripe\ORM\DataExtension;
 use SilverStripe\ORM\DataList;
 use SilverStripe\Versioned\Versioned;
 use SilverStripe\View\ArrayData;
-
 
 /**
  * Adds extra fields and relationships to Products for variations support.

@@ -2,9 +2,7 @@
 
 namespace SilverShop\ORM\FieldType;
 
-
 use SilverStripe\ORM\FieldType\DBCurrency;
-
 
 /**
  * Improvements to Currency for presenting in templates.

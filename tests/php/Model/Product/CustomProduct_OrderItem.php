@@ -2,7 +2,6 @@
 
 namespace SilverShop\Tests\Model\Product;
 
-
 use SilverShop\Model\Product\OrderItem;
 use SilverStripe\Dev\TestOnly;
 use SilverStripe\Security\Member;

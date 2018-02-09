@@ -5,7 +5,6 @@ namespace SilverShop\Model;
 use SilverShop\ORM\FieldType\ShopCurrency;
 use SilverStripe\Security\Member;
 
-
 /**
  * A buyable class implies it as an associated order item that can be added
  * to an order.

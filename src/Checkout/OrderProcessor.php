@@ -2,7 +2,6 @@
 
 namespace SilverShop\Checkout;
 
-
 use ErrorException;
 use Exception;
 use SilverShop\Cart\ShoppingCart;
@@ -21,7 +20,6 @@ use SilverStripe\ORM\DB;
 use SilverStripe\ORM\FieldType\DBDatetime;
 use SilverStripe\Security\Member;
 use SilverStripe\Security\Security;
-
 
 /**
  * Handles tasks to be performed on orders, particularly placing and processing/fulfilment.
@@ -311,7 +309,8 @@ class OrderProcessor
         set_error_handler(
             function ($severity, $message, $file, $line) {
                 throw new ErrorException($message, 0, $severity, $file, $line);
-            }, E_ALL & ~(E_STRICT | E_NOTICE)
+            },
+            E_ALL & ~(E_STRICT | E_NOTICE)
         );
 
         try {

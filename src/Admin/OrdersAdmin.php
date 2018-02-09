@@ -2,7 +2,6 @@
 
 namespace SilverShop\Admin;
 
-
 use SilverShop\Forms\GridField\OrderGridFieldDetailForm_ItemRequest;
 use SilverShop\Model\Order;
 use SilverShop\Model\OrderStatusLog;
@@ -10,9 +9,10 @@ use SilverStripe\Admin\ModelAdmin;
 use SilverStripe\Forms\GridField\GridFieldAddNewButton;
 use SilverStripe\Forms\GridField\GridFieldDetailForm;
 
-
 /**
  * Order administration interface, based on ModelAdmin
+ *
+ * @package SilverShop\Admin
  */
 class OrdersAdmin extends ModelAdmin
 {

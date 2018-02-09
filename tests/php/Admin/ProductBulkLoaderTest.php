@@ -2,11 +2,9 @@
 
 namespace SilverShop\Tests\Admin;
 
-
 use SilverShop\Admin\ProductBulkLoader;
 use SilverShop\Page\Product;
 use SilverStripe\Dev\FunctionalTest;
-
 
 class ProductBulkLoaderTest extends FunctionalTest
 {

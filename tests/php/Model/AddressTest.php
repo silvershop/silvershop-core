@@ -2,11 +2,9 @@
 
 namespace SilverShop\Tests\Model;
 
-
 use SilverShop\Model\Address;
 use SilverStripe\Dev\SapphireTest;
 use Exception;
-
 
 class AddressTest extends SapphireTest
 {
@@ -78,4 +76,3 @@ class AddressTest extends SapphireTest
         );
     }
 }
-

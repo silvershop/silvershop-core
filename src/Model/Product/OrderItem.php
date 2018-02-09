@@ -2,7 +2,6 @@
 
 namespace SilverShop\Model\Product;
 
-
 use SilverShop\Page\Product;
 use SilverStripe\Versioned\Versioned;
 

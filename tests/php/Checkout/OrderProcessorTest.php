@@ -2,7 +2,6 @@
 
 namespace SilverShop\Tests\Checkout;
 
-
 use SilverShop\Cart\ShoppingCart;
 use SilverShop\Checkout\OrderProcessor;
 use SilverShop\Checkout\ShopMemberFactory;
@@ -19,7 +18,6 @@ use SilverStripe\ORM\DB;
 use SilverStripe\Security\Group;
 use SilverStripe\Security\Member;
 use SilverStripe\Security\Security;
-
 
 /**
  * Test OrderProcessor
@@ -196,7 +194,8 @@ class OrderProcessorTest extends SapphireTest
         $this->assertListContains(
             array(
             array('ClassName' => OrderProcessorTest_CustomOrderItem::class)
-            ), $cart->Items()
+            ),
+            $cart->Items()
         );
 
         $versions = OrderItem::get()->filter('OrderID', $cart->ID)->column('ProductVersion');

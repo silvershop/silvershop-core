@@ -2,10 +2,8 @@
 
 namespace SilverShop\Tests\ORM\FieldType;
 
-
 use SilverShop\ORM\FieldType\ShopCurrency;
 use SilverStripe\Dev\SapphireTest;
-
 
 class ShopCurrencyTest extends SapphireTest
 {

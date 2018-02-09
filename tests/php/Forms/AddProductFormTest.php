@@ -2,12 +2,10 @@
 
 namespace SilverShop\Tests\Forms;
 
-
 use SilverShop\Forms\AddProductForm;
 use SilverShop\Page\Product;
 use SilverShop\Page\ProductController;
 use SilverStripe\Dev\FunctionalTest;
-
 
 class AddProductFormTest extends FunctionalTest
 {
