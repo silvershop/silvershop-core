@@ -18,7 +18,7 @@ class ProductCatalogAdmin extends ModelAdmin
 
     private static $menu_priority = 5;
 
-    private static $menu_icon = 'silvershop/core: images/icons/catalog-admin.png';
+    private static $menu_icon_class = 'silvershop-icon-catalog';
 
     private static $managed_models = [
         Product::class,

@@ -14,7 +14,7 @@ use SilverStripe\ORM\DB;
  */
 class AccountPage extends Page
 {
-    private static $icon = 'silvershop/core: images/icons/account.gif';
+    private static $icon = 'silvershop/core: client/dist/images/icons/account.gif';
 
     private static $table_name = 'SilverShop_AccountPage';
 

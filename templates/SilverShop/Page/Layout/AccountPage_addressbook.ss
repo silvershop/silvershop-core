@@ -1,4 +1,4 @@
-<% require css("silvershop/core: css/account.css") %>
+<% require css("silvershop/core: client/dist/css/account.css") %>
 
 <% include SilverShop\Includes\AccountNavigation %>
 <div id="Account" class="typography">
@@ -38,7 +38,7 @@
                     <a href="account/deleteaddress/{$ID}"
                        class="remove-address"
                        title="<%t SilverShop\Page\AccountPage_AddressBook.DeleteAddress 'Delete this address' %>">
-                        <img src="$resourceURL('silvershop/core:images/remove.gif')" alt="X">
+                        <img src="$resourceURL('silvershop/core:client/dist/images/remove.gif')" alt="X">
                     </a>
                 </div>
             </div>

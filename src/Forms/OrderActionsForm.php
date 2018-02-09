@@ -100,7 +100,7 @@ class OrderActionsForm extends Form
                     if ($this->config()->include_jquery) {
                         Requirements::javascript('https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js');
                     }
-                    Requirements::javascript('silvershop/core: javascript/OrderActionsForm.js');
+                    Requirements::javascript('silvershop/core: client/dist/javascript/OrderActionsForm.js');
                     $fields->push($ccFields);
                 }
 

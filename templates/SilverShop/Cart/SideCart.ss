@@ -1,4 +1,4 @@
-<% require css("silvershop/core: css/sidecart.css") %>
+<% require css("silvershop/core: client/dist/css/sidecart.css") %>
 
 <div class="sidecart">
     <h3><%t SilverShop\Cart\ShoppingCart.Headline "Shopping cart" %></h3>

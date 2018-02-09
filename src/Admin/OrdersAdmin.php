@@ -22,7 +22,7 @@ class OrdersAdmin extends ModelAdmin
 
     private static $menu_priority = 1;
 
-    private static $menu_icon = 'silvershop/core: images/icons/order-admin.png';
+    private static $menu_icon_class = 'silvershop-icon-cart';
 
     private static $managed_models = [
         Order::class => [

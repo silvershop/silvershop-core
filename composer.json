@@ -59,9 +59,7 @@
       "dev-master": "3.x-dev"
     },
     "expose": [
-      "javascript",
-      "images",
-      "css"
+      "client/dist"
     ]
   },
   "support": {
