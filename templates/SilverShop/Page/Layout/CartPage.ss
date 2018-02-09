@@ -1,4 +1,4 @@
-<% require css("silvershop/core: css/cart.css") %>
+<% require css("silvershop/core: client/dist/css/cart.css") %>
 
 <h1 class="pagetitle">$Title</h1>
 <div class="typography">

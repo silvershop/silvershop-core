@@ -305,7 +305,7 @@ class ShoppingCartController extends Controller
     {
         if (Director::isDev() || Permission::check('ADMIN')) {
             //TODO: allow specifying a particular id to debug
-            Requirements::css('silvershop/core: css/cartdebug.css');
+            Requirements::css('silvershop/core: client/dist/css/cartdebug.css');
             $order = ShoppingCart::curr();
             $content = ($order)
                 ? Debug::text($order)

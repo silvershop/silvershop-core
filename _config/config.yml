@@ -21,4 +21,4 @@ SilverShop\Checkout\OrderProcessor:
 
 SilverStripe\Admin\LeftAndMain:
   extra_requirements_css:
-    - 'silvershop/core: css/shopcms.css'
+    - 'silvershop/core: client/dist/css/shopcms.css'

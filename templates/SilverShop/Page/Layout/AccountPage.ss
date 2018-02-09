@@ -1,4 +1,4 @@
-<% require css("silvershop/core: css/account.css") %>
+<% require css("silvershop/core: client/dist/css/account.css") %>
 
 <% include SilverShop\Includes\AccountNavigation %>
 <div id="Account" class="typography">
