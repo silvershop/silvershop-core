@@ -12,7 +12,7 @@ en:
     Cleared: 'Cart was successfully cleared.'
     ContinueShopping: 'Continue Shopping'
     Headline: 'Shopping cart'
-    InvalidSecurityToken: 'Invalid security token, possible CSRF attack.'
+    InvalidSecurityToken: "Invalid security token, possible CSRF attack.\n"
     ItemAdded: 'Item has been added successfully.'
     ItemNotFound: 'Item not found.'
     ItemRemoved: 'Item has been successfully removed.'
@@ -36,10 +36,10 @@ en:
     PasswordRequired: 'A password is required'
     TermsAndConditionsLink: 'I agree to the terms and conditions stated on the <a href="{TermsPageLink}" target="new" title="Read the shop terms and conditions for this site">{TermsPageTitle}</a> page'
   SilverShop\Checkout\CheckoutField:
-    AccountInfo: 'Please choose a password, so you can login and check your order history in the future'
+    AccountInfo: "Please choose a password, so you can login and check your order history in the future\n"
     MemberLoginInfo: 'If you are already a member please <a href="{LoginUrl}">log in</a>'
     MembershipDetails: 'Membership Details'
-    MustAgreeToTerms: 'You must agree to the terms and conditions'
+    MustAgreeToTerms: "You must agree to the terms and conditions\n"
     Password: Password
     PaymentType: 'Payment Type'
   SilverShop\Checkout\Component\OnsitePayment:
@@ -56,7 +56,7 @@ en:
     NotCart: 'Order is not a cart.'
   SilverShop\Checkout\Step\Address:
     BillTo: 'Bill To:'
-    EnterShippingAddress: 'Please enter your shipping address details.'
+    EnterShippingAddress: "Please enter your shipping address details.\n"
     SeperateBilling: 'Bill to a different address from this'
     ShipTo: 'Ship To:'
     SupplyContactInformation: 'Supply your contact information'
@@ -76,19 +76,19 @@ en:
     ClearCart: 'Clear the current shopping cart'
     DebugCart: 'Debug the shopping cart'
     DeleteOrders: 'Delete all orders'
-    DeleteOrdersDesc: 'Remove all orders, modifiers, and payments from the database.'
+    DeleteOrdersDesc: "Remove all orders, modifiers, and payments from the database.\n"
     DeleteProducts: 'Delete all products'
     DeleteProductsDesc: 'Remove all products from the database.'
-    PopulateCart: 'Populate cart with some available products'
+    PopulateCart: "Populate cart with some available products\n"
     PopulateShop: 'Populate shop'
-    PopulateShopDesc: 'Populate the shop with dummy products, categories, and other necessary pages.'
+    PopulateShopDesc: "Populate the shop with dummy products, categories, and other necessary pages.\n"
     RecalculateOrders: 'Recalculate all orders'
     RecalculateOrdersDesc: 'Recalculate all order values. Warning: this will overwrite any historical values.'
     RunAllTests: 'Run all shop unit tests'
     UnitTests: 'Unit Tests'
   SilverShop\Extension\ProductVariationsExtension:
     Attributes: Attributes
-    AttributesDescription: 'These are fields to indicate the way(s) each variation varies. Once selected, they can be edited on each variation.'
+    AttributesDescription: "These are fields to indicate the way(s) each variation varies. Once selected, they can be edited on each variation.\n"
     Variations: Variations
     VariationsInfo: 'Price - Because you have one or more variations, the price can be set in the "Variations" tab.'
   SilverShop\Extension\ShopConfigExtension:
@@ -125,7 +125,7 @@ en:
     RemoveOne: 'Remove one of "{ItemTitle}" from your cart'
   SilverShop\Forms\VariationForm:
     ChooseAttribute: 'Choose {attribute} …'
-    ProductNotAvailable: 'This product is not available with the selected options.'
+    ProductNotAvailable: "This product is not available with the selected options.\n"
     VariationNotAvailable: 'That variation is not available, sorry.'
   SilverShop\Generic:
     Change: Change
@@ -152,8 +152,8 @@ en:
   SilverShop\Includes\ProductMenu:
     GotoPageTitle: 'Go to the {Title} page'
   SilverShop\Model\Address:
-    AddressHint: 'street / thoroughfare number, name, and type or P.O. Box'
-    AddressLine2Hint: 'premises, building, apartment, unit, floor'
+    AddressHint: "street / thoroughfare number, name, and type or P.O. Box\n"
+    AddressLine2Hint: "premises, building, apartment, unit, floor\n"
     AddressSaved: 'Your address has been saved'
     BillingAddress: 'Billing Address'
     CityHint: 'or suburb, county, district'
@@ -324,7 +324,7 @@ en:
     db_ProductVariationVersion: 'Product Variation Version'
     has_one_ProductVariation: 'Product Variation'
   SilverShop\Model\Variation\Variation:
-    MustSaveFirstMessage: 'You can choose variation attributes after saving for the first time, if they exist.'
+    MustSaveFirstMessage: "You can choose variation attributes after saving for the first time, if they exist.\n"
     NoAttributeValuesMessage: '{attribute} has no values to choose from. You can create them in the "Products" > "Product Attribute Type" section of the CMS.'
     PLURALNAME: Variations
     SINGULARNAME: Variation
@@ -348,17 +348,17 @@ en:
     Free: '<span class="free">FREE</span>'
   SilverShop\Page\AccountPage:
     AddressBook: 'Address Book'
-    DESCRIPTION: 'Allows the user to view his account-details and past orders.'
+    DESCRIPTION: "Allows the user to view his account-details and past orders.\n"
     DefaultTitle: Account
     EditProfile: 'Edit Profile'
     LogOut: 'Log Out'
     Login: 'You''ll need to login before you can access the account page. If you are not registered, you won''t be able to access it until you make your first order, otherwise please enter your details below.'
-    LoginAgain: 'You have been logged out. If you would like to log in again, please do so below.'
+    LoginAgain: "You have been logged out. If you would like to log in again, please do so below.\n"
     MemberEmail: Email
     MemberLastVisit: 'Last Visit'
     MemberName: Name
     MemberSince: 'Member Since'
-    NoPage: 'No AccountPage was found. Please create one in the CMS!'
+    NoPage: "No AccountPage was found. Please create one in the CMS!\n"
     NoPastOrders: 'No past orders found.'
     NumberOfOrders: 'Number of orders'
     PLURALNAME: 'Account Pages'
@@ -379,7 +379,7 @@ en:
   SilverShop\Page\AccountPage_EditProfile:
     Title: 'Edit Profile'
   SilverShop\Page\CartPage:
-    DESCRIPTION: 'A page where the user will be able to see and edit his shopping-cart contents.'
+    DESCRIPTION: "A page where the user will be able to see and edit his shopping-cart contents.\n"
     DefaultTitle: 'Shopping Cart'
     PLURALNAME: 'Cart Pages'
     SINGULARNAME: 'Cart Page'
@@ -391,7 +391,7 @@ en:
     PLURALNAME: 'Checkout Pages'
     PaymentErrorMessage: 'Received error from payment gateway:'
     ProceedToPayment: 'Proceed to payment'
-    PurchaseCompleteDescription: 'This message is included in reciept email, after the customer submits the checkout.'
+    PurchaseCompleteDescription: "This message is included in reciept email, after the customer submits the checkout.\n"
     SINGULARNAME: 'Checkout Page'
     SubmitPayment: 'Submit Payment'
     db_PurchaseComplete: 'Purchase Complete'
@@ -401,7 +401,7 @@ en:
     AdditionalCategories: 'Additional Categories'
     AllowPurchase: 'Allow product to be purchased'
     Category: Category
-    CategoryDescription: 'This is the parent page or default category.'
+    CategoryDescription: "This is the parent page or default category.\n"
     Code: 'Product Code'
     CostPriceDescription: 'Wholesale price before markup.'
     DESCRIPTION: 'Product page in the shop'
@@ -447,7 +447,7 @@ en:
     Note: Note
     PaymentsHeadline: Payment(s)
   SilverShop\Reports\AbandonedCartReport:
-    Description: 'Monitor abandoned carts for a particular period. Group results by year, month, or day.'
+    Description: "Monitor abandoned carts for a particular period. Group results by year, month, or day.\n"
     Title: 'Abandoned Carts'
   SilverShop\Reports\CustomerReport:
     Description: 'Customers report'
@@ -459,7 +459,7 @@ en:
     Description: 'Shop Period Report'
     Title: 'Shop Period Report'
   SilverShop\Reports\ShopSalesReport:
-    Description: 'Monitor shop sales performance for a particular period. Group results by year, month, or day.'
+    Description: "Monitor shop sales performance for a particular period. Group results by year, month, or day.\n"
     Title: 'Shop Sales'
   SilverShop\Reports\SideReport:
     AllProducts: 'All Products'
@@ -468,7 +468,7 @@ en:
     NoImage: 'Products with no image'
     ShopGroup: Shop
   SilverShop\Reports\TaxReport:
-    Description: 'Report tax charged on orders. Only includes orders that have been paid.'
+    Description: "Report tax charged on orders. Only includes orders that have been paid.\n"
     Title: Tax
   SilverShop\ShopEmail:
     AdminNotificationSubject: 'Order #{OrderNo} notification'

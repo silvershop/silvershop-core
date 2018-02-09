@@ -11,6 +11,14 @@ warnings:
     DashboardRecentOrdersPanel:
       message: 'removed'
 mappings:
+  Payment: SilverShop\Payment
+  Shop: SilverShop\Generic
+  ShopEmail: SilverShop\ShopEmail
+  ProductGroup: SilverShop\Includes\ProductGroup
+  ProductMenu: SilverShop\Includes\ProductMenu
+  PriceTag: SilverShop\Includes\PriceTag
+  MemberForm: SilverShop\Forms\ShopAccountForm
+  ShopSideReport: SilverShop\Reports\SideReport
   AccountPage: SilverShop\Page\AccountPage
   AccountPage_Controller: SilverShop\Page\AccountPageController
   OrderActionsForm: SilverShop\Forms\OrderActionsForm
@@ -197,3 +205,10 @@ mappings:
   CartCleanupTaskTest: SilverShop\Tests\Tasks\CartCleanupTaskTest
   CartCleanupTaskTest_CartCleanupTaskFake: SilverShop\Tests\Tasks\CartCleanupTaskTest_CartCleanupTaskFake
   ViewableCartTest: SilverShop\Tests\Extension\ViewableCartExtensionTest
+## Migrate translations…
+#  ShopDashboard: REMOVE\ShopDashboard
+#  Variation: REMOVE\Variation
+#  OrderAdmin: MOVE\SilverShop\Admin\OrdersAdmin
+#  OrderForm: MOVE\SilverShop\Forms\OrderActionsForm
+#  CreateAddressForm: MOVE\SilverShop\Model\Address
+#  PaymentProcessor: MOVE\SilverShop\Checkout\OrderProcessor

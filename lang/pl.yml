@@ -1,0 +1,5 @@
+pl:
+  SilverShop\Forms:
+    FIELDISREQUIRED: '{name} jest wymagane'
+  SilverShop\Admin\OrdersAdmin:
+    MENUTITLE: Zamówienia
