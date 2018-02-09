@@ -2,13 +2,11 @@
 
 namespace SilverShop\Model;
 
-
 use SilverShop\ShopTools;
 use SilverStripe\Forms\GridField\GridField;
 use SilverStripe\Forms\GridField\GridFieldConfig_RelationEditor;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\HasManyList;
-
 
 /**
  * TODO: Move this to shipping module…
@@ -94,5 +92,3 @@ class Zone extends DataObject
         return $fields;
     }
 }
-
-

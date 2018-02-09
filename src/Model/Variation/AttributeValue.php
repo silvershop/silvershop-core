@@ -2,11 +2,9 @@
 
 namespace SilverShop\Model\Variation;
 
-
 use SilverStripe\Forms\FieldList;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\ManyManyList;
-
 
 /**
  * Product Attribute Value

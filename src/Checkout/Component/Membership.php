@@ -2,7 +2,6 @@
 
 namespace SilverShop\Checkout\Component;
 
-
 use SilverShop\Checkout\Checkout;
 use SilverShop\Checkout\ShopMemberFactory;
 use SilverShop\Extension\MemberExtension;
@@ -17,7 +16,6 @@ use SilverStripe\ORM\ValidationResult;
 use SilverStripe\Security\Member;
 use SilverStripe\Security\PasswordValidator;
 use SilverStripe\Security\Security;
-
 
 /**
  * Provides:

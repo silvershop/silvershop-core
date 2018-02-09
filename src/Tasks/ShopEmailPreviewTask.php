@@ -2,13 +2,11 @@
 
 namespace SilverShop\Tasks;
 
-
 use SilverShop\Checkout\OrderEmailNotifier;
 use SilverShop\Model\Order;
 use SilverStripe\Control\Director;
 use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Dev\BuildTask;
-
 
 /**
  * ShopEmailPreviewTask

@@ -9,11 +9,10 @@ use SilverStripe\Forms\Form;
 use SilverStripe\Forms\FormAction;
 use SilverStripe\Security\Security;
 
-
 class CheckoutForm extends Form
 {
     /**
-     * @var CheckoutComponentConfig  
+     * @var CheckoutComponentConfig
      */
     protected $config;
 
@@ -26,7 +25,7 @@ class CheckoutForm extends Form
         $this->config = $config;
         $fields = $config->getFormFields();
 
-        if($text = $this->config()->get('submit_button_text')) {
+        if ($text = $this->config()->get('submit_button_text')) {
             $submitBtnText = $text;
         } else {
             $submitBtnText = _t('SilverShop\Page\CheckoutPage.ProceedToPayment', 'Proceed to payment');
@@ -63,7 +62,6 @@ class CheckoutForm extends Form
         //form validation has passed by this point, so we can save data
         $this->config->setData($form->getData());
         if ($this->redirectlink) {
-
             return $this->controller->redirect($this->redirectlink);
         }
 

@@ -2,7 +2,6 @@
 
 namespace SilverShop\Forms;
 
-
 use SilverShop\Cart\ShoppingCart;
 use SilverShop\Model\Buyable;
 use SilverShop\Model\OrderItem;
@@ -10,7 +9,6 @@ use SilverShop\ShopTools;
 use SilverStripe\Forms\HiddenField;
 use SilverStripe\Forms\NumericField;
 use SilverStripe\View\ViewableData;
-
 
 class ShopQuantityField extends ViewableData
 {
@@ -134,4 +132,3 @@ class ShopQuantityField extends ViewableData
         }
     }
 }
-

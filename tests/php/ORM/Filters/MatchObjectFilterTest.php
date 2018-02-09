@@ -2,12 +2,9 @@
 
 namespace SilverShop\Tests\ORM\Filters;
 
-
 use SilverShop\Model\Product\OrderItem;
 use SilverShop\ORM\Filters\MatchObjectFilter;
 use SilverStripe\Dev\SapphireTest;
-
-
 
 class MatchObjectFilterTest extends SapphireTest
 {

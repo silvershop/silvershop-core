@@ -2,14 +2,12 @@
 
 namespace SilverShop\Tests\Page;
 
-
 use SilverShop\Extension\OrderManipulationExtension;
 use SilverShop\Model\Order;
 use SilverShop\Page\CheckoutPage;
 use SilverShop\Tests\ShopTest;
 use SilverStripe\Control\Director;
 use SilverStripe\Dev\FunctionalTest;
-
 
 class CheckoutPageTest extends FunctionalTest
 {

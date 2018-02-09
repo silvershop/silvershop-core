@@ -6,7 +6,6 @@ use SilverStripe\Assets\Image;
 use SilverStripe\Core\Config\Configurable;
 use SilverStripe\ORM\DataExtension;
 
-
 /**
  * Adds some image size functions to the Image DataObject.
  *

@@ -2,7 +2,6 @@
 
 namespace SilverShop\Tasks;
 
-
 use SilverShop\Cart\ShoppingCart;
 use SilverShop\Page\CheckoutPage;
 use SilverShop\Page\Product;
@@ -10,7 +9,6 @@ use SilverStripe\Control\Controller;
 use SilverStripe\Dev\BuildTask;
 use SilverStripe\Security\Member;
 use SilverStripe\Versioned\Versioned;
-
 
 /**
  * Add 5 random Live products to cart, with random quantities between 1 and 10.

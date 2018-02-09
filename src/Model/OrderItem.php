@@ -2,11 +2,9 @@
 
 namespace SilverShop\Model;
 
-
 use SilverShop\Cart\ShoppingCartController;
 use SilverShop\Forms\ShopQuantityField;
 use SilverStripe\ORM\FieldType\DBCurrency;
-
 
 /**
  * An order item is a product which has been added to an order,

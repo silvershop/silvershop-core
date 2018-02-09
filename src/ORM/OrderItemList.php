@@ -2,9 +2,7 @@
 
 namespace SilverShop\ORM;
 
-
 use SilverStripe\ORM\HasManyList;
-
 
 /**
  * Additional functions for Item lists.

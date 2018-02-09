@@ -2,7 +2,6 @@
 
 namespace SilverShop\Tests\Model\Variation;
 
-
 use SilverShop\Cart\ShoppingCart;
 use SilverShop\Model\Variation\AttributeType;
 use SilverShop\Model\Variation\AttributeValue;
@@ -10,7 +9,6 @@ use SilverShop\Model\Variation\Variation;
 use SilverShop\Page\Product;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\SapphireTest;
-
 
 /**
  * Test product variation capabilities.
@@ -27,17 +25,17 @@ class VariationTest extends SapphireTest
     protected static $use_draft_site = true;
 
     /**
-     * @var Product 
+     * @var Product
      */
     protected $mp3player;
 
     /**
-     * @var Product 
+     * @var Product
      */
     protected $socks;
 
     /**
-     * @var Variation 
+     * @var Variation
      */
     protected $redlarge;
 

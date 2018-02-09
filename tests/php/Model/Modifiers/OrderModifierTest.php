@@ -2,7 +2,6 @@
 
 namespace SilverShop\Tests\Model\Modifiers;
 
-
 use Exception;
 use SilverShop\Model\Modifiers\Tax\FlatTax;
 use SilverShop\Model\Order;
@@ -13,7 +12,6 @@ use SilverShop\Tests\ShopTest;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\FunctionalTest;
 use SilverStripe\ORM\DB;
-
 
 /**
  * @package    shop
@@ -47,7 +45,9 @@ class OrderModifierTest extends FunctionalTest
 
         Config::modify()
             ->set(
-                Order::class, 'modifiers', [
+                Order::class,
+                'modifiers',
+                [
                     FlatTax::class
                 ]
             )
@@ -82,7 +82,9 @@ class OrderModifierTest extends FunctionalTest
         }
 
         Config::modify()->set(
-            Order::class, 'modifiers', [
+            Order::class,
+            'modifiers',
+            [
                 OrderModifierTest_TestModifier::class,
                 FlatTax::class
             ]
@@ -141,5 +143,3 @@ class OrderModifierTest extends FunctionalTest
         return $order;
     }
 }
-
-

@@ -11,7 +11,6 @@ use SilverStripe\ORM\ArrayList;
 use SilverStripe\ORM\ValidationException;
 use SilverStripe\ORM\ValidationResult;
 
-
 /**
  * @package shop
  */

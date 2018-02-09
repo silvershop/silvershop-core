@@ -2,13 +2,11 @@
 
 namespace SilverShop\Dev;
 
-
 use SilverStripe\Control\Controller;
 use SilverStripe\Control\Director;
 use SilverStripe\Dev\DebugView;
 use SilverStripe\Security\Permission;
 use SilverStripe\Security\Security;
-
 
 /**
  * Provides a list of development tasks to perform.

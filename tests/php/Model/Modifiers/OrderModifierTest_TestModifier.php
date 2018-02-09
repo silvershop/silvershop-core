@@ -2,7 +2,6 @@
 
 namespace SilverShop\Tests\Model\Modifiers;
 
-
 use SilverShop\Model\Modifiers\OrderModifier;
 use SilverStripe\Dev\TestOnly;
 

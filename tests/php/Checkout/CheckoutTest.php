@@ -2,7 +2,6 @@
 
 namespace SilverShop\Tests\Checkout;
 
-
 use SilverShop\Cart\ShoppingCart;
 use SilverShop\Checkout\Checkout;
 use SilverShop\Checkout\CheckoutConfig;
@@ -15,7 +14,6 @@ use SilverStripe\Dev\SapphireTest;
 use SilverStripe\ORM\ValidationException;
 use SilverStripe\Security\Member;
 
-
 class CheckoutTest extends SapphireTest
 {
     protected static $fixture_file = array(
@@ -26,27 +24,27 @@ class CheckoutTest extends SapphireTest
     );
 
     /**
-     * @var ShoppingCart 
+     * @var ShoppingCart
      */
     protected $cart;
 
     /**
-     * @var Address 
+     * @var Address
      */
     protected $address1;
 
     /**
-     * @var Address 
+     * @var Address
      */
     protected $address2;
 
     /**
-     * @var Checkout 
+     * @var Checkout
      */
     protected $checkout;
 
     /**
-     * @var ShopMemberFactory 
+     * @var ShopMemberFactory
      */
     protected $memberFactory;
 

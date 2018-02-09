@@ -4,7 +4,6 @@ namespace SilverShop\Model\Modifiers\Tax;
 
 use SilverShop\Model\Order;
 
-
 /**
  * Handles calculation of sales tax on Orders on
  * a per-country basis.

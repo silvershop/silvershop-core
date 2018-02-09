@@ -2,9 +2,7 @@
 
 namespace SilverShop\Forms;
 
-
 use SilverStripe\Forms\RequiredFields;
-
 
 /**
  * @package shop

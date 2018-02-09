@@ -9,7 +9,6 @@ use SilverStripe\ORM\DataObject;
 use SilverStripe\Security\Security;
 use SilverStripe\SiteConfig\SiteConfig;
 
-
 abstract class Address extends CheckoutComponent
 {
     protected $formfielddescriptions = true;

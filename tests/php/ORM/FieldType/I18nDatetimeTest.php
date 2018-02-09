@@ -2,11 +2,8 @@
 
 namespace SilverShop\Tests\ORM\FieldType;
 
-
 use SilverShop\ORM\FieldType\I18nDatetime;
 use SilverStripe\Dev\SapphireTest;
-
-
 
 class I18nDatetimeTest extends SapphireTest
 {

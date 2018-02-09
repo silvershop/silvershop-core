@@ -11,7 +11,6 @@ use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\FormAction;
 use SilverStripe\Omnipay\GatewayInfo;
 
-
 class PaymentMethod extends CheckoutStep
 {
     private static $allowed_actions = [

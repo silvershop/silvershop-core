@@ -2,7 +2,6 @@
 
 namespace SilverShop\Checkout\Component;
 
-
 use SilverShop\Model\Order;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Forms\CompositeField;
@@ -14,7 +13,6 @@ use SilverStripe\ORM\ValidationException;
 use SilverStripe\ORM\ValidationResult;
 use SilverStripe\Security\Security;
 use SilverStripe\View\Requirements;
-
 
 /**
  * Adds the ability to use the member's address book for choosing addresses

@@ -2,12 +2,10 @@
 
 namespace SilverShop\Tests\Model\Modifiers;
 
-
 use SilverShop\Model\Modifiers\Tax\GlobalTax;
 use SilverShop\Model\Order;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\SapphireTest;
-
 
 class GlobalTaxModifierTest extends SapphireTest
 {
@@ -16,11 +14,15 @@ class GlobalTaxModifierTest extends SapphireTest
         parent::setUp();
 
         Config::modify()->set(
-            Order::class, 'modifiers', [
+            Order::class,
+            'modifiers',
+            [
                 GlobalTax::class
             ]
         )->set(
-            GlobalTax::class, 'country_rates', [
+            GlobalTax::class,
+            'country_rates',
+            [
                 'NZ' => array('rate' => 0.15, 'name' => 'GST', 'exclusive' => false),
                 'UK' => array('rate' => 0.175, 'name' => 'VAT', 'exclusive' => true),
             ]

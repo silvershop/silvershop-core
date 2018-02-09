@@ -2,9 +2,6 @@
 
 namespace SilverShop\Tests;
 
-
-
-
 /**
  * Helper class for setting up shop tests
  *

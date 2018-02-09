@@ -2,10 +2,8 @@
 
 namespace SilverShop\Tests\Model\Product;
 
-
 use SilverShop\Cart\ShoppingCart;
 use SilverStripe\Dev\FunctionalTest;
-
 
 /**
  * @package    shop

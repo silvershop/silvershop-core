@@ -2,7 +2,6 @@
 
 namespace SilverShop\Model;
 
-
 use SilverShop\ORM\FieldType\ShopCountry;
 use SilverStripe\Forms\DropdownField;
 use SilverStripe\Forms\FieldList;
@@ -13,7 +12,6 @@ use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\HasManyList;
 use SilverStripe\Security\Member;
 use SilverStripe\SiteConfig\SiteConfig;
-
 
 /**
  * Address model using a generic format for storing international addresses.

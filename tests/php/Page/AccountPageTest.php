@@ -2,7 +2,6 @@
 
 namespace SilverShop\Tests\Page;
 
-
 use SilverShop\Model\Address;
 use SilverShop\Page\AccountPage;
 use SilverShop\Page\AccountPageController;
@@ -15,7 +14,6 @@ use SilverStripe\Security\Member;
 use SilverStripe\Security\Security;
 use SilverStripe\SiteConfig\SiteConfig;
 use SilverStripe\View\SSViewer;
-
 
 class AccountPageTest extends FunctionalTest
 {
@@ -141,7 +139,7 @@ class AccountPageTest extends FunctionalTest
 
     public function testAddressBookWithReadonlyFieldForCountry()
     {
-        $this->useTestTheme(realpath(__DIR__ . '/../'), 'shoptest', function (){
+        $this->useTestTheme(realpath(__DIR__ . '/../'), 'shoptest', function () {
             $member = $this->objFromFixture(Member::class, "joebloggs");
             $this->logInAs($member);
 

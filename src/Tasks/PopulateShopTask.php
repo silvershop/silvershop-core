@@ -2,7 +2,6 @@
 
 namespace SilverShop\Tasks;
 
-
 use Page;
 use SilverShop\Model\Zone;
 use SilverShop\Model\ZoneRegion;
@@ -17,7 +16,6 @@ use SilverStripe\Dev\FixtureFactory;
 use SilverStripe\Dev\YamlFixture;
 use SilverStripe\ORM\DB;
 use SilverStripe\SiteConfig\SiteConfig;
-
 
 /**
  * Populate shop task

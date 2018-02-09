@@ -2,7 +2,6 @@
 
 namespace SilverShop\Tests\Page;
 
-
 use SilverShop\Cart\ShoppingCart;
 use SilverShop\Model\Order;
 use SilverShop\Model\Product\OrderItem;
@@ -12,7 +11,6 @@ use SilverStripe\Control\Director;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\FunctionalTest;
 use SilverStripe\ORM\DataObject;
-
 
 /**
  * Test {@link Product}
@@ -161,4 +159,3 @@ class ProductTest extends FunctionalTest
         );
     }
 }
-

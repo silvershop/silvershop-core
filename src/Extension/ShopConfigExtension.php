@@ -2,7 +2,6 @@
 
 namespace SilverShop\Extension;
 
-
 use SilverStripe\AssetAdmin\Forms\UploadField;
 use SilverStripe\Assets\Image;
 use SilverStripe\CMS\Model\SiteTree;
@@ -15,7 +14,6 @@ use SilverStripe\Forms\TreeDropdownField;
 use SilverStripe\ORM\DataExtension;
 use SilverStripe\Security\Group;
 use SilverStripe\SiteConfig\SiteConfig;
-
 
 /**
  * @property string $AllowedCountries
@@ -45,7 +43,7 @@ class ShopConfigExtension extends DataExtension
      * Email address where shop emails should be sent from
      *
      * @config
-     * @var 
+     * @var
      */
     private static $email_from;
 
@@ -53,7 +51,7 @@ class ShopConfigExtension extends DataExtension
      * The shop base currency
      *
      * @config
-     * @var 
+     * @var
      */
     private static $base_currency = 'NZD';
 

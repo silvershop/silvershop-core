@@ -2,11 +2,9 @@
 
 namespace SilverShop\ORM\Filters;
 
-
 use InvalidArgumentException;
 use SilverStripe\ORM\DataQuery;
 use SilverStripe\ORM\Filters\PartialMatchFilter;
-
 
 /**
  * This must be created manually OR the subfilters set manually
@@ -16,12 +14,12 @@ use SilverStripe\ORM\Filters\PartialMatchFilter;
 class MultiFieldPartialMatchFilter extends PartialMatchFilter
 {
     /**
-     * @var array $subfilters 
+     * @var array $subfilters
      */
     protected $subfilters;
 
     /**
-     * @var array $subfilterModifiers 
+     * @var array $subfilterModifiers
      */
     protected $subfilterModifiers;
 

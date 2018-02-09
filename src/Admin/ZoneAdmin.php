@@ -2,10 +2,8 @@
 
 namespace SilverShop\Admin;
 
-
 use SilverShop\Model\Zone;
 use SilverStripe\Admin\ModelAdmin;
-
 
 class ZoneAdmin extends ModelAdmin
 {

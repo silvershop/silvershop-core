@@ -2,9 +2,7 @@
 
 namespace SilverShop\Model\Modifiers\Shipping;
 
-
 use SilverStripe\SiteConfig\SiteConfig;
-
 
 /**
  * Flat shipping to specific countries.

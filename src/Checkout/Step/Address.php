@@ -2,7 +2,6 @@
 
 namespace SilverShop\Checkout\Step;
 
-
 use SilverShop\Cart\ShoppingCart;
 use SilverShop\Forms\CheckoutForm;
 use SilverShop\Checkout\Component\BillingAddress;
@@ -11,7 +10,6 @@ use SilverShop\Checkout\Component\ShippingAddress;
 use SilverStripe\Forms\CheckboxField;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\FormAction;
-
 
 class Address extends CheckoutStep
 {

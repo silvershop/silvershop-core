@@ -2,7 +2,6 @@
 
 namespace SilverShop\Tests\Checkout;
 
-
 use Guzzle\Http\Client;
 use Guzzle\Plugin\Mock\MockPlugin;
 use SilverShop\Cart\ShoppingCart;
@@ -42,7 +41,9 @@ class ShopPaymentTest extends FunctionalTest
 
         //set supported gateways
         Config::modify()->set(
-            Payment::class, 'allowed_gateways', [
+            Payment::class,
+            'allowed_gateways',
+            [
                 'Dummy', //onsite
                 'Manual', //manual
                 'PaymentExpress_PxPay', //offsite

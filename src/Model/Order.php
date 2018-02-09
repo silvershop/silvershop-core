@@ -2,7 +2,6 @@
 
 namespace SilverShop\Model;
 
-
 use SilverShop\Cart\OrderTotalCalculator;
 use SilverShop\Checkout\OrderEmailNotifier;
 use SilverShop\Extension\MemberExtension;
@@ -36,7 +35,6 @@ use SilverStripe\ORM\Search\SearchContext;
 use SilverStripe\ORM\UnsavedRelationList;
 use SilverStripe\Security\Member;
 use SilverStripe\Security\Security;
-
 
 /**
  * The order class is a databound object for handling Orders
@@ -364,7 +362,8 @@ class Order extends DataObject
 
         // filter customer need to use a bunch of different sources
         $filters['FirstName'] = MultiFieldPartialMatchFilter::create(
-            'FirstName', false,
+            'FirstName',
+            false,
             ['SplitWords'],
             [
                 'Surname',
@@ -516,14 +515,14 @@ class Order extends DataObject
         }
 
         switch ($this->Status) {
-        case 'Unpaid' :
+            case 'Unpaid' :
             return self::config()->cancel_before_payment;
-        case 'Paid' :
+            case 'Paid' :
             return self::config()->cancel_before_processing;
-        case 'Processing' :
+            case 'Processing' :
             return self::config()->cancel_before_sending;
-        case 'Sent' :
-        case 'Complete' :
+            case 'Sent' :
+            case 'Complete' :
             return self::config()->cancel_after_sending;
         }
         return false;
@@ -883,7 +882,7 @@ class Order extends DataObject
             return '';
         }
 
-        $val = "<div class='order'><h1>" . static::class ."</h1>\n<ul>\n";
+        $val = "<div class='order'><h1>" . static::class . "</h1>\n<ul>\n";
         if ($this->record) {
             foreach ($this->record as $fieldName => $fieldVal) {
                 $val .= "\t<li>$fieldName: " . Debug::text($fieldVal) . "</li>\n";

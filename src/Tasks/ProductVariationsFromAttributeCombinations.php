@@ -2,10 +2,8 @@
 
 namespace SilverShop\Tasks;
 
-
 use SilverShop\Page\Product;
 use SilverStripe\Control\CliController;
-
 
 /**
  *

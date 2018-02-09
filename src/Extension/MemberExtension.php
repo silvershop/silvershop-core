@@ -2,7 +2,6 @@
 
 namespace SilverShop\Extension;
 
-
 use SilverShop\Cart\ShoppingCart;
 use SilverShop\Model\Address;
 use SilverShop\Model\Order;
@@ -12,7 +11,6 @@ use SilverStripe\ORM\DataExtension;
 use SilverStripe\ORM\DataList;
 use SilverStripe\Security\Member;
 use SilverStripe\SiteConfig\SiteConfig;
-
 
 /**
  * ShopMember provides customisations to {@link Member} for shop purposes

@@ -2,7 +2,6 @@
 
 namespace SilverShop\Page;
 
-
 use Page;
 use SilverShop\Cart\ShoppingCart;
 use SilverShop\Cart\ShoppingCartController;
@@ -24,7 +23,6 @@ use SilverStripe\ORM\FieldType\DBDecimal;
 use SilverStripe\ORM\ManyManyList;
 use SilverStripe\Security\Member;
 use SilverStripe\SiteConfig\SiteConfig;
-
 
 /**
  * This is a standard Product page-type with fields like
@@ -160,7 +158,8 @@ class Product extends Page implements Buyable
                     ->setTitle(_t(__CLASS__ . '.PageTitle', 'Product Title'));
 
                 $fields->addFieldsToTab(
-                    'Root.Main', [
+                    'Root.Main',
+                    [
                     TextField::create('InternalItemID', _t(__CLASS__ . '.InternalItemID', 'Product Code/SKU'), '', 30),
                     DropdownField::create('ParentID', _t(__CLASS__ . '.Category', 'Category'), $self->getCategoryOptions())
                     ->setDescription(_t(__CLASS__ . '.CategoryDescription', 'This is the parent page or default category.')),
@@ -171,7 +170,8 @@ class Product extends Page implements Buyable
                 );
 
                 $fields->addFieldsToTab(
-                    'Root.Pricing', [
+                    'Root.Pricing',
+                    [
                     TextField::create('BasePrice', $this->fieldLabel('BasePrice'))
                     ->setDescription(_t(__CLASS__ . '.PriceDesc', 'Base price to sell this product at.'))
                     ->setMaxLength(12),
@@ -186,11 +186,15 @@ class Product extends Page implements Buyable
                 ];
 
                 $fields->addFieldsToTab(
-                    'Root.Shipping', [
+                    'Root.Shipping',
+                    [
                     TextField::create(
                         'Weight',
                         _t(
-                            __CLASS__ . '.WeightWithUnit', 'Weight ({WeightUnit})', '', [
+                            __CLASS__ . '.WeightWithUnit',
+                            'Weight ({WeightUnit})',
+                            '',
+                            [
                             'WeightUnit' => self::config()->weight_unit
                             ]
                         ),

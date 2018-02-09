@@ -2,11 +2,9 @@
 
 namespace SilverShop\Forms;
 
-
 use SilverShop\Checkout\CheckoutComponentConfig;
 use SilverStripe\Forms\RequiredFields;
 use SilverStripe\ORM\ValidationException;
-
 
 /**
  * Order validator makes sure everything is set correctly

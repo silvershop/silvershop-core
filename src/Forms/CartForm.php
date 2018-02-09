@@ -2,7 +2,6 @@
 
 namespace SilverShop\Forms;
 
-
 use SilverShop\Cart\ShoppingCart;
 use SilverShop\ShopTools;
 use SilverStripe\Core\Convert;
@@ -10,7 +9,6 @@ use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\Form;
 use SilverStripe\Forms\FormAction;
 use SilverStripe\Forms\NumericField;
-
 
 /**
  * Renders the cart inside a form, so that it is editable.

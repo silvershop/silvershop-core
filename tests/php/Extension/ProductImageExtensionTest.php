@@ -2,14 +2,12 @@
 
 namespace SilverShop\Tests\Extension;
 
-
 use SilverShop\Page\Product;
 use SilverStripe\Assets\Image;
 use SilverStripe\Assets\InterventionBackend;
 use SilverStripe\Assets\Tests\Storage\AssetStoreTest\TestAssetStore;
 use SilverStripe\Dev\SapphireTest;
 use SilverStripe\SiteConfig\SiteConfig;
-
 
 /**
  * Tests for product image. These could be easily merged into the main
@@ -57,7 +55,8 @@ class ProductImageExtensionTest extends SapphireTest
 
         // Set default config
         InterventionBackend::config()->set(
-            'error_cache_ttl', [
+            'error_cache_ttl',
+            [
                 InterventionBackend::FAILED_INVALID => 0,
                 InterventionBackend::FAILED_MISSING => '5,10',
                 InterventionBackend::FAILED_UNKNOWN => 300,

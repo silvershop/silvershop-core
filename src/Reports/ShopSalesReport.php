@@ -1,8 +1,8 @@
 <?php
 
 namespace SilverShop\Reports;
-use SilverShop\Model\Order;
 
+use SilverShop\Model\Order;
 
 /**
  * Order sales for the entire shop.

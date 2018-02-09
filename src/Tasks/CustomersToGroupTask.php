@@ -2,13 +2,11 @@
 
 namespace SilverShop\Tasks;
 
-
 use SilverShop\Extension\ShopConfigExtension;
 use SilverStripe\Dev\BuildTask;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\DB;
 use SilverStripe\Security\Member;
-
 
 /**
  * Adds all customers to an assigned group.

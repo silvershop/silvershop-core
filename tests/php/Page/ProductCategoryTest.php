@@ -2,7 +2,6 @@
 
 namespace SilverShop\Tests\Page;
 
-
 use SilverShop\Model\Variation\Variation;
 use SilverShop\Page\Product;
 use SilverShop\Page\ProductCategory;
@@ -10,7 +9,6 @@ use SilverStripe\Control\Director;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\FunctionalTest;
 use SilverStripe\Versioned\Versioned;
-
 
 class ProductCategoryTest extends FunctionalTest
 {

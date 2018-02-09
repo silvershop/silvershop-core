@@ -2,12 +2,10 @@
 
 namespace SilverShop\Extension;
 
-
 use SilverShop\Checkout\OrderProcessor;
 use SilverShop\Model\Order;
 use SilverStripe\Omnipay\Service\ServiceResponse;
 use SilverStripe\ORM\DataExtension;
-
 
 /**
  * Customisations to {@link Payment} specifically for the shop module.

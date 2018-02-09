@@ -2,12 +2,10 @@
 
 namespace SilverShop\Page;
 
-
 use Page;
 use SilverShop\Extension\ProductVariationsExtension;
 use SilverStripe\i18n\i18nEntityProvider;
 use SilverStripe\ORM\DataList;
-
 
 /**
  * Product Category provides a way to hierartically categorise products.
@@ -74,7 +72,6 @@ class ProductCategory extends Page implements i18nEntityProvider
             } else {
                 $products = $products->filter('BasePrice:GreaterThan', 0);
             }
-
         }
 
         $this->extend('updateProductsShowable', $products);
@@ -124,7 +121,6 @@ class ProductCategory extends Page implements i18nEntityProvider
     public function GroupsMenu()
     {
         if ($this->Parent() instanceof ProductCategory) {
-
             return $this->Parent()->GroupsMenu();
         }
         return ProductCategory::get()
@@ -163,4 +159,3 @@ class ProductCategory extends Page implements i18nEntityProvider
         return $entities;
     }
 }
-

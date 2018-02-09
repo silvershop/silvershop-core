@@ -9,14 +9,14 @@ class ShoppingCartTest_TestShoppingCartErroringHooksExtension extends Extension 
 {
     public function beforeSetQuantity($buyable, $quantity, $filter)
     {
-        if($quantity > 10) {
+        if ($quantity > 10) {
             throw new \Exception('Invalid quantity');
         }
     }
 
     public function afterAdd($item, $buyable, $quantity, $filter)
     {
-        if($item->Quantity > 1) {
+        if ($item->Quantity > 1) {
             throw new \Exception('Invalid quantity');
         }
     }

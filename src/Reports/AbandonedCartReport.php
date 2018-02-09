@@ -4,7 +4,6 @@ namespace SilverShop\Reports;
 
 use SilverShop\Model\Order;
 
-
 /**
  * Report on the number of abandoned carts.
  *

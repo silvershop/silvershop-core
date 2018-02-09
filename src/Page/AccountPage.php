@@ -86,5 +86,3 @@ class AccountPage extends Page
         }
     }
 }
-
-

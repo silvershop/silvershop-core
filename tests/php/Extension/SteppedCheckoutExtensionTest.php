@@ -2,7 +2,6 @@
 
 namespace SilverShop\Tests\Extension;
 
-
 use SilverShop\Cart\ShoppingCart;
 use SilverShop\Checkout\Checkout;
 use SilverShop\Extension\MemberExtension;
@@ -20,7 +19,6 @@ use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Dev\FunctionalTest;
 use SilverStripe\Security\Member;
 use SilverStripe\Security\Security;
-
 
 class SteppedCheckoutExtensionTest extends FunctionalTest
 {

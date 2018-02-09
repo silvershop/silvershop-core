@@ -2,11 +2,9 @@
 
 namespace SilverShop\Tests\Checkout;
 
-
 use SilverShop\Page\CheckoutPage;
 use SilverStripe\Control\Director;
 use SilverStripe\Dev\SapphireTest;
-
 
 class NestedCheckoutTest extends SapphireTest
 {

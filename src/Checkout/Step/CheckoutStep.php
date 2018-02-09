@@ -2,12 +2,10 @@
 
 namespace SilverShop\Checkout\Step;
 
-
 use SilverShop\Extension\SteppedCheckoutExtension;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Config\Configurable;
 use SilverStripe\Core\Extension;
-
 
 /**
  * Base class for building steps for checkout processing

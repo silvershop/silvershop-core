@@ -28,11 +28,12 @@ before_script:
   - composer validate
   - if [[ $DB == PGSQL ]]; then composer require silverstripe/postgresql:^2.0 --no-update; fi
   - composer update --prefer-source
+  - if [[ $PHPCS_TEST ]]; then composer require squizlabs/php_codesniffer:^3 --prefer-dist --no-interaction --no-progress --no-suggest -o; fi
 
 script:
   - if [[ $PHPUNIT_TEST ]]; then vendor/bin/phpunit; fi
   - if [[ $PHPUNIT_COVERAGE_TEST ]]; then phpdbg -qrr vendor/bin/phpunit --coverage-clover=coverage.xml; fi
-#  - if [[ $PHPCS_TEST ]]; then vendor/bin/phpcs src/ tests/; fi
+  - if [[ $PHPCS_TEST ]]; then vendor/bin/phpcs -s src/ tests/; fi
 
 after_success:
   - if [[ $PHPUNIT_COVERAGE_TEST ]]; then bash <(curl -s https://codecov.io/bash) -f coverage.xml; fi

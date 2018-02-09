@@ -2,13 +2,11 @@
 
 namespace SilverShop\Tasks;
 
-
 use SilverShop\Model\Modifiers\Shipping\Base;
 use SilverShop\Model\Order;
 use SilverStripe\Dev\MigrationTask;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\DB;
-
 
 /**
  * TODO: Implement for 2.x to 3.x
@@ -127,12 +125,12 @@ You may want to run the CartCleanupTask before migrating if you want to discard 
     public function migrateStatuses($order)
     {
         switch ($order->Status) {
-        case "Cancelled": //Pre version 0.5
-            $order->Status = 'AdminCancelled';
-            break;
-        case "":
-            $order->Status = 'Cart';
-            break;
+            case "Cancelled": //Pre version 0.5
+                $order->Status = 'AdminCancelled';
+                break;
+            case "":
+                $order->Status = 'Cart';
+                break;
         }
     }
 

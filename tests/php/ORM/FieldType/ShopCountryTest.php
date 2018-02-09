@@ -2,10 +2,8 @@
 
 namespace SilverShop\Tests\ORM\FieldType;
 
-
 use SilverShop\ORM\FieldType\ShopCountry;
 use SilverStripe\Dev\SapphireTest;
-
 
 class ShopCountryTest extends SapphireTest
 {

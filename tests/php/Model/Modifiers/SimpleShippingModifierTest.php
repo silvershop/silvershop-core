@@ -2,11 +2,9 @@
 
 namespace SilverShop\Tests\Model\Modifiers;
 
-
 use SilverShop\Model\Modifiers\Shipping\Simple;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\SapphireTest;
-
 
 /**
  * @package    shop
@@ -20,7 +18,9 @@ class SimpleShippingModifierTest extends SapphireTest
         Config::modify()
             ->set(Simple::class, 'default_charge', 10)
             ->set(
-                Simple::class, 'charges_for_countries', [
+                Simple::class,
+                'charges_for_countries',
+                [
                     'NZ' => 5,
                     'UK' => 20,
                 ]

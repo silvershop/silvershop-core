@@ -2,7 +2,6 @@
 
 namespace SilverShop\Tests;
 
-
 use SilverShop\Admin\ProductCatalogAdmin;
 use SilverShop\Cart\ShoppingCartController;
 use SilverShop\Extension\ProductImageExtension;
@@ -26,7 +25,6 @@ use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Omnipay\Model\Payment;
 use SilverStripe\ORM\FieldType\DBDatetime;
 use SilverStripe\Security\Member;
-
 
 /// Reset to all default configuration settings.
 

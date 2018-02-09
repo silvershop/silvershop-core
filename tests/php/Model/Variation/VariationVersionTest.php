@@ -2,12 +2,10 @@
 
 namespace SilverShop\Tests\Model\Variation;
 
-
 use SilverShop\Model\Variation\AttributeType;
 use SilverShop\Model\Variation\Variation;
 use SilverShop\Page\Product;
 use SilverStripe\Dev\SapphireTest;
-
 
 /**
  * Test product variation capabilities.

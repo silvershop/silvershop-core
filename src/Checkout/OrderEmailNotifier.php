@@ -2,7 +2,6 @@
 
 namespace SilverShop\Checkout;
 
-
 use SilverShop\Extension\ShopConfigExtension;
 use SilverShop\Model\Order;
 use SilverShop\Model\OrderStatusLog;
@@ -13,7 +12,6 @@ use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Config\Configurable;
 use SilverStripe\Core\Injector\Injectable;
 use SilverStripe\Core\Injector\Injector;
-
 
 /**
  * Handles email notifications to customers and / or admins.

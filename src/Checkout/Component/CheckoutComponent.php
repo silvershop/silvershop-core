@@ -8,7 +8,6 @@ use SilverStripe\Core\Injector\Injectable;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\ORM\ValidationException;
 
-
 /**
  * CheckoutComponent
  *
@@ -102,4 +101,3 @@ abstract class CheckoutComponent
         return ShopTools::sanitiseClassName(static::class);
     }
 }
-

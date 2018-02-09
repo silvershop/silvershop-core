@@ -2,12 +2,10 @@
 
 namespace SilverShop\Model;
 
-
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\FieldType\DBDate;
 use SilverStripe\Security\Member;
 use SilverStripe\Security\Security;
-
 
 /**
  * Data class that keeps a log of a single

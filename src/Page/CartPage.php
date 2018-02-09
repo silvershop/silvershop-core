@@ -2,7 +2,6 @@
 
 namespace SilverShop\Page;
 
-
 use Page;
 use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\Control\Controller;
@@ -10,7 +9,6 @@ use SilverStripe\Forms\DropdownField;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\TreeDropdownField;
 use SilverStripe\ORM\DB;
-
 
 /**
  * View and edit the cart in a full page.
@@ -93,4 +91,3 @@ class CartPage extends Page
         }
     }
 }
-

@@ -2,7 +2,6 @@
 
 namespace SilverShop\Forms;
 
-
 use SilverShop\Page\AccountPageController;
 use SilverShop\Page\CheckoutPage;
 use SilverStripe\Control\HTTPRequest;
@@ -11,7 +10,6 @@ use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\Form;
 use SilverStripe\Forms\FormAction;
 use SilverStripe\Security\Security;
-
 
 /**
  * Allows shop members to update their details with the shop.
@@ -100,4 +98,3 @@ class ShopAccountForm extends Form
         return $response ?: $this->getController()->redirect(CheckoutPage::find_link());
     }
 }
-

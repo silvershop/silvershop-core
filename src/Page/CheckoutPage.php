@@ -2,7 +2,6 @@
 
 namespace SilverShop\Page;
 
-
 use Page;
 use SilverStripe\Control\Controller;
 use SilverStripe\Forms\FieldList;
@@ -100,5 +99,3 @@ class CheckoutPage extends Page
         }
     }
 }
-
-

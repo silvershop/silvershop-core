@@ -2,7 +2,6 @@
 
 namespace SilverShop\Tests\Model;
 
-
 use SilverShop\Checkout\OrderProcessor;
 use SilverShop\Model\Address;
 use SilverShop\Model\Modifiers\OrderModifier;
@@ -17,7 +16,6 @@ use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\SapphireTest;
 use SilverStripe\Omnipay\Model\Payment;
 use SilverStripe\ORM\DataObject;
-
 
 /**
  * Order Unit Tests
@@ -305,7 +303,8 @@ class OrderTest extends SapphireTest
         $this->assertEquals(
             array(
                 array('Cart' => 'Unpaid')
-            ), OrderTest_TestStatusChangeExtension::$stack
+            ),
+            OrderTest_TestStatusChangeExtension::$stack
         );
 
         OrderTest_TestStatusChangeExtension::reset();
@@ -317,7 +316,8 @@ class OrderTest extends SapphireTest
         $this->assertEquals(
             array(
                 array('Unpaid' => 'Paid')
-            ), OrderTest_TestStatusChangeExtension::$stack
+            ),
+            OrderTest_TestStatusChangeExtension::$stack
         );
 
         $this->assertTrue((boolean)$order->Paid, 'Order paid date should be set');
@@ -366,5 +366,3 @@ class OrderTest extends SapphireTest
         );
     }
 }
-
-

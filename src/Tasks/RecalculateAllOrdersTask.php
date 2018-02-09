@@ -2,11 +2,9 @@
 
 namespace SilverShop\Tasks;
 
-
 use SilverShop\Model\Order;
 use SilverStripe\Control\Director;
 use SilverStripe\Dev\BuildTask;
-
 
 /**
  * Recalculate All Orders

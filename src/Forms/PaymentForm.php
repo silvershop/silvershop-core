@@ -2,7 +2,6 @@
 
 namespace SilverShop\Forms;
 
-
 use SilverShop\Checkout\Checkout;
 use SilverShop\Checkout\CheckoutComponentConfig;
 use SilverShop\Checkout\Component\CheckoutComponentNamespaced;
@@ -11,7 +10,6 @@ use SilverShop\Checkout\OrderProcessor;
 use SilverShop\Model\Order;
 use SilverStripe\Omnipay\GatewayFieldsFactory;
 use SilverStripe\Omnipay\GatewayInfo;
-
 
 class PaymentForm extends CheckoutForm
 {
@@ -137,7 +135,7 @@ class PaymentForm extends CheckoutForm
         $response = null;
         if ($this->controller->hasMethod('processPaymentResponse')) {
             $response = $this->controller->processPaymentResponse($paymentResponse, $form);
-        } else if ($paymentResponse && !$paymentResponse->isError()) {
+        } elseif ($paymentResponse && !$paymentResponse->isError()) {
             $response = $paymentResponse->redirectOrRespond();
         } else {
             $form->sessionMessage($this->orderProcessor->getError(), 'bad');

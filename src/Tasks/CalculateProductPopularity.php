@@ -2,11 +2,9 @@
 
 namespace SilverShop\Tasks;
 
-
 use SilverShop\Page\Product;
 use SilverStripe\Dev\BuildTask;
 use SilverStripe\ORM\DB;
-
 
 class CalculateProductPopularity extends BuildTask
 {

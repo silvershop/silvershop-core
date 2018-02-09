@@ -2,7 +2,6 @@
 
 namespace SilverShop\Cart;
 
-
 use Exception;
 use SilverShop\Extension\OrderManipulationExtension;
 use SilverShop\Extension\ProductVariationsExtension;
@@ -17,7 +16,6 @@ use SilverStripe\Core\Config\Configurable;
 use SilverStripe\Core\Injector\Injectable;
 use SilverStripe\Security\Member;
 use SilverStripe\Security\Security;
-
 
 /**
  * Encapsulated manipulation of the current order using a singleton pattern.
@@ -140,7 +138,7 @@ class ShoppingCart
         // If an extension throws an exception, error out
         try {
             $order->extend('beforeAdd', $buyable, $quantity, $filter);
-        } catch (Exception $exception){
+        } catch (Exception $exception) {
             return $this->error($exception->getMessage());
         }
 
@@ -161,7 +159,7 @@ class ShoppingCart
         // If an extension throws an exception, error out
         try {
             $order->extend('afterAdd', $item, $buyable, $quantity, $filter);
-        } catch (Exception $exception){
+        } catch (Exception $exception) {
             return $this->error($exception->getMessage());
         }
 
@@ -191,7 +189,7 @@ class ShoppingCart
         // If an extension throws an exception, error out
         try {
             $order->extend('beforeRemove', $buyable, $quantity, $filter);
-        } catch (Exception $exception){
+        } catch (Exception $exception) {
             return $this->error($exception->getMessage());
         }
 
@@ -205,7 +203,7 @@ class ShoppingCart
         // TODO: There should be a rollback
         try {
             $order->extend('afterRemove', $item, $buyable, $quantity, $filter);
-        } catch (Exception $exception){
+        } catch (Exception $exception) {
             return $this->error($exception->getMessage());
         }
 
@@ -294,7 +292,7 @@ class ShoppingCart
         // If an extension throws an exception, error out
         try {
             $order->extend('beforeSetQuantity', $buyable, $quantity, $filter);
-        } catch (Exception $exception){
+        } catch (Exception $exception) {
             return $this->error($exception->getMessage());
         }
 
@@ -303,7 +301,7 @@ class ShoppingCart
         // If an extension throws an exception, error out
         try {
             $order->extend('afterSetQuantity', $item, $buyable, $quantity, $filter);
-        } catch (Exception $exception){
+        } catch (Exception $exception) {
             return $this->error($exception->getMessage());
         }
 
@@ -520,5 +518,3 @@ class ShoppingCart
         trigger_error('Unserializing is not allowed.', E_USER_ERROR);
     }
 }
-
-

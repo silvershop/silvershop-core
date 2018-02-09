@@ -2,7 +2,6 @@
 
 namespace SilverShop\Tests\Forms;
 
-
 use SilverShop\Cart\ShoppingCart;
 use SilverShop\Checkout\SinglePageCheckoutComponentConfig;
 use SilverShop\Forms\CheckoutForm;
@@ -14,28 +13,27 @@ use SilverStripe\Dev\FunctionalTest;
 use SilverStripe\Dev\SapphireTest;
 use SilverStripe\SiteConfig\SiteConfig;
 
-
 class CheckoutFormTest extends FunctionalTest
 {
     public static $fixture_file = __DIR__ . '/../Fixtures/shop.yml';
 
     /**
-     * @var Product 
+     * @var Product
      */
     protected $mp3player;
 
     /**
-     * @var Product 
+     * @var Product
      */
     protected $socks;
 
     /**
-     * @var Product 
+     * @var Product
      */
     protected $beachball;
 
     /**
-     * @var CheckoutPageController 
+     * @var CheckoutPageController
      */
     protected $checkoutcontroller;
 
@@ -159,5 +157,3 @@ class CheckoutFormTest extends FunctionalTest
         $this->assertEquals("NZ", $billing->Country);
     }
 }
-
-

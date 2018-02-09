@@ -69,6 +69,9 @@
     "source": "https://github.com/silvershop/silvershop-core",
     "docs": "https://github.com/silvershop/silvershop-core/tree/master/docs/en"
   },
+  "scripts": {
+    "lint": "phpcs -s src/ tests/"
+  },
   "minimum-stability": "dev",
   "prefer-stable": true
 }

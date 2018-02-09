@@ -2,7 +2,6 @@
 
 namespace SilverShop\Tests\Model;
 
-
 use SilverStripe\Dev\TestOnly;
 use SilverStripe\ORM\DataExtension;
 

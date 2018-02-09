@@ -2,7 +2,6 @@
 
 namespace SilverShop\Tests\Tasks;
 
-
 use SilverShop\Tasks\CartCleanupTask;
 use SilverStripe\Dev\TestOnly;
 

@@ -2,12 +2,10 @@
 
 namespace SilverShop\Admin;
 
-
 use SilverShop\Model\Variation\AttributeType;
 use SilverShop\Page\Product;
 use SilverShop\Page\ProductCategory;
 use SilverStripe\Admin\ModelAdmin;
-
 
 /**
  * Product Catalog Admin
