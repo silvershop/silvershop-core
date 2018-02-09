@@ -1,0 +1,27 @@
+es:
+  SilverShop\Forms:
+    FIELDISREQUIRED: 'Se requiere {name}'
+  SilverShop\Admin\OrdersAdmin:
+    MENUTITLE: Pedidos
+  SilverShop\Admin\ProductCatalogAdmin:
+    MENUTITLE: Catálogo
+  SilverShop\Admin\ZoneAdmin:
+    MENUTITLE: Zonas
+  SilverShop\Reports\AbandonedCartReport:
+    Description: "Monitorear cestas abandonadas durante un periodo determinado. Agrupar resultados por año, mes o día.\n"
+    Title: 'Cestas abandonadas'
+  SilverShop\Page\AccountPage:
+    AddressBook: Agenda
+    DESCRIPTION: "Permite al usuario ver los detalles de su cuenta y historial de pedidos\n"
+    DefaultTitle: Cuenta
+    EditProfile: 'Editar perfil'
+    LogOut: Salir
+    MemberEmail: Email
+    MemberLastVisit: 'Última Visita'
+    MemberName: Nombre
+    MemberSince: 'Socio Desde'
+    NoPastOrders: 'No se encontraron pedidos anteriores.'
+    NumberOfOrders: 'Cantidad de pedidos'
+    PLURALNAME: 'Páginas de la cuenta'
+    PastOrders: 'Historial de pedidos'
+    Title: 'Mi cuenta'

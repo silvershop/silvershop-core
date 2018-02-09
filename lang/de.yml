@@ -1,24 +1,6 @@
 de:
-  AccountPage_AddressBook:
-    CreateNewTitle: 'Neue Adresse erstellen'
-    DefaultBillingAddress: Standard-Rechnungsadresse
-    DefaultShippingAddress: Standard-Lieferadresse
-    DeleteAddress: 'Lösche diese Adresse'
-    MakeDefaultBilling: 'Als Standard-Rechnungsadresse'
-    MakeDefaultBillingTitle: 'Verwendet diese Adresse als Standard-Rechnungsadresse'
-    MakeDefaultShipping: 'Als Standard-Lieferadresse'
-    MakeDefaultShippingTitle: 'Verwendet diese Adresse als Standard-Lieferadresse'
-    NoAddress: 'Keine Adresse gefunden.'
-    Title: 'Standard Adressen'
-  AccountPage_EditProfile:
-    Title: 'Nutzerprofil bearbeiten'
-  CheckoutField:
-    AccountInfo: 'Bitte wählen Sie ein Passwort, damit Sie sich zukünftig im Kundenkonto einloggen können.'
-    MemberLoginInfo: 'Wenn Sie schon Kunde bei uns sind, <a href="{LoginUrl}">klicken Sie bitte hier um sich anzumelden</a>.'
-    MembershipDetails: Kundeninformationen
-    MustAgreeToTerms: 'Bitte bestätigen Sie, dass sie die AGB gelesen haben.'
-    Password: Passwort
-    PaymentType: Zahlungsart
+  SilverShop\Forms:
+    FIELDISREQUIRED: '{name} muss ausgefüllt werden'
   SilverShop\Admin\OrdersAdmin:
     MENUTITLE: Bestellungen
     ReceiptTitle: '{SiteTitle} Bestellung Nr. {OrderNo}'
@@ -26,148 +8,45 @@ de:
     MENUTITLE: Katalog
   SilverShop\Admin\ZoneAdmin:
     MENUTITLE: Zonen
-  SilverShop\Cart\ShoppingCart:
-    CannotPurchase: '{Title} kann nicht gekauft werden.'
-    Checkout: Kasse
-    Cleared: 'Der Warenkorb wurde erfolgreich gelöscht.'
-    ContinueShopping: 'Den Einkauf fortsetzen'
-    Headline: Warenkorb
-    InvalidSecurityToken: 'Ungültiger Sicherheitstoken, möglicher CSRF-Angriff.'
-    ItemAdded: 'Produkt erfolgreich hinzugefügt.'
-    ItemNotFound: 'Produkt nicht gefunden.'
-    ItemRemoved: 'Produkt erfolgreich entfernt.'
-    ItemsInCartPlural: 'In Ihrem Warenkorb befinden sich <a href="{link}">{quantity} Artikel</a>.'
-    ItemsInCartSingular: 'In Ihrem Warenkorb befindet sich <a href="{link}">1 Artikel</a>.'
-    NoCartFound: 'Kein Warenkorb gefunden.'
-    NoCartInitialised: 'Kein Warenkorb initialisiert'
-    NoItems: 'Es befinden sich keine Produkte im Warenkorb.'
-    NoOrder: 'Keine aktuelle Bestellung.'
-    ProceedToCheckout: 'Zur Kasse'
-    ProductNotFound: 'Produkt nicht gefunden.'
-    QuantitySet: 'Die Menge wurde geändert.'
-    RemoveAllTitle: 'Entferne alle "{Title}" aus dem Warenkorb.'
-    RemoveTitle: 'Entferne "{Title}" aus dem Warenkorb.'
-    TableSummary: 'Im Warenkorb befindliche Produkte'
-  SilverShop\Checkout\Checkout:
-    IdFieldNotFound: 'Pflichtfeld nicht gefunden: {IdentifierField}'
-    MemberExists: 'Es existiert bereits ein Kundenkonto mit der {Field} {Identifier}'
-    MembershipIsNotAllowed: 'Das Erstellen von neuen Kundenkonten ist nicht erlaubt, bitte kontaktieren Sie uns telefonisch oder per E-Mail.'
-    NoPaymentMethod: 'Die Zahlungsart existiert nicht.'
-    PasswordRequired: 'Passwort ist erforderlich'
-    TermsAndConditionsLink: 'Ich habe die <a href="{TermsPageLink}" target="new" title="{TermsPageTitle} anzeigen">{TermsPageTitle}</a> gelesen und akzeptiert.'
-  SilverShop\Checkout\Component\OnsitePayment:
-    InvalidCreditCard: 'Kreditkarte ist ungültig'
-  SilverShop\Checkout\Component\Payment:
-    NoPaymentMethod: 'Es wurde keine Zahlungsmethode angegeben'
-    UnsupportedGateway: 'Zahlungsmethode wird nicht unterstützt'
-  SilverShop\Checkout\OrderProcessor:
-    CantPay: 'Diese Bestellung kann nicht bezahlt werden.'
-    InvalidGateway: '''{gateway}'' ist keine gültige Bezahlmethode.'
-    NoItems: 'Die Bestellung beinhaltet keine Artikel.'
-    NoOrder: 'Die Bestellung existiert nicht.'
-    NoOrderStarted: 'Es wurde noch keine neue Bestellung gestartet.'
-    NotCart: 'Die Bestellung beinhaltet keinen Warenkorb.'
-  SilverShop\Checkout\Step\Address:
-    BillTo: 'Rechnung an:'
-    EnterShippingAddress: 'Bitte geben Sie Ihre gewünschte Lieferadresse ein.'
-    SeperateBilling: 'Abweichende Rechnungsadresse angeben'
-    ShipTo: 'Lieferung an:'
-    SupplyContactInformation: 'Bitte geben Sie Ihre Kontaktdaten an'
-  SilverShop\Checkout\Step\CheckoutStep:
-    Continue: Weiter
-    Shipping: Lieferung
-    Summary: Zusammenfassung
-  SilverShop\Checkout\Step\Membership:
-    ContinueAsGuest: 'Weiter ohne Kundenkonto'
-    CreateAccount: 'Konto erstellen'
-    CreateNewAccount: 'Neues Konto erstellen'
-  SilverShop\Dev\ShopDevelopmentAdmin:
-    BuildTasks: Build-Tasks
-    CartCleanup: 'Alte Warenkörbe bereinigen'
-    CartCleanupDesc: 'Löscht abgebrochene Warenkörbe aus dem system.'
-    CartTasks: Warenkorb-Aufgaben
-    ClearCart: 'Den aktuellen Warenkorb löschen'
-    DebugCart: Warenkorb-Fehlersuche
-    DeleteOrders: 'Alle Bestellungen löschen'
-    DeleteOrdersDesc: 'Alle Bestellungen, Modifikatoren und Zahlungen aus der Datenbank löschen.'
-    DeleteProducts: 'Alle Produkte löschen'
-    DeleteProductsDesc: 'Löscht alle Produkte aus der Datenbank.'
-    PopulateCart: 'Befülle den Warenkorb mit einigen erhältlichen Produkten'
-    PopulateShop: 'Befülle den Shop'
-    PopulateShopDesc: 'Befüllt den Shop mit Dummy-Produkten, Kategorien und erstellt andere notwendige Seiten.'
-    RecalculateOrders: 'Alle Bestellungen neu berechnen'
-    RecalculateOrdersDesc: 'Neu berechnen aller Bestellwerte. Warnung: Dies wird alle vorhergehenden Werte überschreiben.'
-    RunAllTests: 'Alle Shop-Tests starten'
-    UnitTests: Tests
-  SilverShop\Extension\ProductVariationsExtension:
-    Attributes: Attribute
-    AttributesDescription: 'Diese Felder definieren die Attribute welche die Variationen ausmachen. Sobald sie ausgewählt wurden, können sie in jeder Variation erfasst werden.'
-    Variations: Variationen
-    VariationsInfo: 'Da mehrere Variationen vorhanden sind, muss der Preis bei den Variationen erfasst werden.'
-  SilverShop\Extension\ShopConfigExtension:
-    AllowedCountries: 'Länder für Bestellungen und Lieferungen'
-    AllowedCountriesTabTitle: 'Erlaubte Länder'
-    CustomerGroup: 'Gruppe, zu der neue Kunden hinzugefügt werden'
-    DefaultImage: 'Standard Produktbild'
-    TermsPage: 'Allgemeine Geschäftsbedingungen'
-  SilverShop\Forms:
-    FIELDISREQUIRED: '{name} muss ausgefüllt werden'
-  SilverShop\Forms\CartForm:
-    REMOVED_ITEMS: '{count} Artikel entfernt'
-    UPDATED_ITEMS: '{count} Artikel aktualisiert.'
-    UpdateCart: 'Warenkorb aktualisieren'
-  SilverShop\Forms\CheckoutComponentValidator:
-    InvalidDataMessage: 'Es gibt Probleme mit den von Ihnen eingegebenen Daten. Siehe unten:'
-  SilverShop\Forms\OrderActionsForm:
-    CancelOrder: 'Diese Bestellung stornieren'
-    CouldNotProcessPayment: 'Die Zahlung konnte nicht verarbeitet werden.'
-    MakePayment: 'Zahlung tätigen'
-    ManualNotAllowed: 'Bezahlung gegen Rechnung nicht erlaubt.'
-    OrderCancelled: 'Bestellung erfolgreich storniert'
-    PayOrder: 'Restbetrag bezahlen'
-    PaymentMethod: Zahlungsart
-  SilverShop\Forms\SetLocationForm:
-    ChooseCountry: 'Land auswählen…'
-    Country: Land
-  SilverShop\Forms\ShopAccountForm:
-    DetailsSaved: 'Ihre Angaben wurden gespeichert'
-    Save: 'Änderungen speichern'
-    SaveAndProceed: 'Speichern und weiter zur Kasse'
-  SilverShop\Forms\ShopQuantityField:
-    AddOne: '"{ItemTitle}" zum Warenkorb hinzufügen'
-    RemoveOne: '"{ItemTitle}" vom Warenkorb entfernen'
-  SilverShop\Forms\VariationForm:
-    ChooseAttribute: 'Wähle {attribute}…'
-    ProductNotAvailable: 'Das Produkt ist mit den ausgewählten Optionen nicht verfügbar.'
-    VariationNotAvailable: 'Diese Variante ist leider nicht verfügbar.'
-  SilverShop\Generic:
-    Change: Ändern
-    Customer: Kunde
-    Date: Datum
-    DateFormatNice: '%d.%m.%Y'
-    DateTimeFormatNice: '%d.%m.%Y %H:%M'
-    DateTimeFormatNice24: 'd.m.Y H:i'
-    DevToolsTitle: 'Shop Entwickler Tools'
-    Edit: Bearbeiten
-    Quantity: Menge
-    ReadMoreTitle: 'Für weitere Informationen zu "{Title}", hier klicken'
-    Remove: Entfernen
-    View: Ansehen
-  SilverShop\Includes\PriceTag:
-    SAVE: Gespart
-  SilverShop\Includes\ProductGroup:
-    Next: Nächste
-    Page: Seite
-    Previous: Vorherige
-    ViewNext: 'Zur nächsten Seite'
-    ViewPage: 'Zeige Seite {pageNum}'
-    ViewPrevious: 'Zur vorherigen Seite'
-  SilverShop\Includes\ProductMenu:
-    GotoPageTitle: 'Gehe zu: {Title}'
+  SilverShop\Reports\AbandonedCartReport:
+    Description: "Übersicht der nicht bestellten Warenkörbe für bestimmte Zeitperioden. Resultate können nach Jahr, Monat oder Tag gruppiert werden.\n"
+    Title: 'Nicht bestellte Warenkörbe'
+  SilverShop\Page\AccountPage:
+    AddressBook: Adressbuch
+    DESCRIPTION: "Hier kann der Kunde sein Konto bearbeiten und getätigte Bestellungen einsehen.\n"
+    DefaultTitle: Kundenkonto
+    EditProfile: 'Nutzerprofil bearbeiten'
+    LogOut: Abmelden
+    Login: "Sie müssen sich einloggen um auf Ihr Konto zugreifen zu können. Falls Sie nicht registriert sind, können Sie erst nach Ihrer ersten Bestellung auf Ihr Konto zugreifen. Fall Sie bereits registriert sind, geben Sie folgend Ihre Daten ein.\n"
+    LoginAgain: "Sie sind abgemeldet. Wenn Sie sich wieder anmelden möchten, können Sie es weiter unten tun.\n"
+    MemberEmail: E-Mail
+    MemberLastVisit: 'Letzte Anmeldung'
+    MemberName: Name
+    MemberSince: 'Kunde seit'
+    NoPage: "Es wurde keine Kundenkonto-Seite gefunden. Bitte erstellen Sie eine im CMS!\n"
+    NoPastOrders: 'Keine früheren Bestellungen gefunden.'
+    NumberOfOrders: 'Anzahl der Bestellungen'
+    PLURALNAME: Kundenkonto-Seiten
+    PastOrders: 'Frühere Bestellungen'
+    SINGULARNAME: Kundenkonto-Seite
+    Title: 'Mein Konto'
+  AccountPage_AddressBook:
+    CreateNewTitle: 'Neue Adresse erstellen'
+    NoAddress: 'Keine Adresse gefunden.'
+    Title: 'Standard Adressen'
+    DefaultShippingAddress: Standard-Lieferadresse
+    DefaultBillingAddress: Standard-Rechnungsadresse
+    MakeDefaultShipping: 'Als Standard-Lieferadresse'
+    MakeDefaultShippingTitle: "Verwendet diese Adresse als Standard-Lieferadresse\n"
+    MakeDefaultBilling: 'Als Standard-Rechnungsadresse'
+    MakeDefaultBillingTitle: "Verwendet diese Adresse als Standard-Rechnungsadresse\n"
+    DeleteAddress: 'Lösche diese Adresse'
+  AccountPage_EditProfile:
+    Title: 'Nutzerprofil bearbeiten'
   SilverShop\Model\Address:
+    AddressSaved: 'Ihre Adresse wurde gespeichert'
     AddressHint: 'Straße und Hausnummer'
     AddressLine2Hint: 'Gebäude, Wohnung, Etage, Postfach, etc.'
-    AddressSaved: 'Ihre Adresse wurde gespeichert'
     BillingAddress: Rechnungsadresse
     CityHint: 'Stadt, Bezirk, Landkreis'
     CreateNewAddress: 'Neue Adresse erstellen'
@@ -190,47 +69,78 @@ de:
     db_State: Staat
     db_Surname: Nachname
     has_one_Member: Kunde
-  SilverShop\Model\Modifiers\OrderModifier:
-    PLURALNAME: Modifikatoren
-    SINGULARNAME: Modifikator
-    db_Amount: Betrag
-    db_Sort: Sortierfolge
-    db_Type: Art
-  SilverShop\Model\Modifiers\Shipping\Base:
-    PLURALNAME: Modifikatoren
-    SINGULARNAME: Lieferung
+  SilverShop\Forms\CartForm:
+    REMOVED_ITEMS: '{count} Artikel entfernt'
+    UPDATED_ITEMS: '{count} Artikel aktualisiert.'
+    UpdateCart: 'Warenkorb aktualisieren'
+  SilverShop\Page\CartPage:
+    DESCRIPTION: "Seite auf der der Kunde seinen Warenkorb ansehen und modifizieren kann.\n"
+    DefaultTitle: Warenkorb
+    PLURALNAME: Warenkorb-Seiten
+    SINGULARNAME: Warenkorb-Seite
+    has_one_CheckoutPage: Kassenseite
+    has_one_ContinuePage: Weiterleitungsseite
+  SilverShop\Checkout\Checkout:
+    IdFieldNotFound: 'Pflichtfeld nicht gefunden: {IdentifierField}'
+    MemberExists: 'Es existiert bereits ein Kundenkonto mit der {Field} {Identifier}'
+    MembershipIsNotAllowed: "Das Erstellen von neuen Kundenkonten ist nicht erlaubt, bitte kontaktieren Sie uns telefonisch oder per E-Mail.\n"
+    NoPaymentMethod: 'Die Zahlungsart existiert nicht.'
+    PasswordRequired: 'Passwort ist erforderlich'
+    TermsAndConditionsLink: 'Ich habe die <a href="{TermsPageLink}" target="new" title="{TermsPageTitle} anzeigen">{TermsPageTitle}</a> gelesen und akzeptiert.'
+  SilverShop\Forms\CheckoutComponentValidator:
+    InvalidDataMessage: 'Es gibt Probleme mit den von Ihnen eingegebenen Daten. Siehe unten:'
+  CheckoutField:
+    AccountInfo: "Bitte wählen Sie ein Passwort, damit Sie sich zukünftig im Kundenkonto einloggen können.\n"
+    MemberLoginInfo: 'Wenn Sie schon Kunde bei uns sind, <a href="{LoginUrl}">klicken Sie bitte hier um sich anzumelden</a>.'
+    MembershipDetails: Kundeninformationen
+    MustAgreeToTerms: "Bitte bestätigen Sie, dass sie die AGB gelesen haben.\n"
+    Password: Passwort
+    PaymentType: Zahlungsart
+  SilverShop\Page\CheckoutPage:
+    DESCRIPTION: "Seite auf der der Bestellprozess abgewickelt wird.\n"
+    DefaultTitle: Kasse
+    PLURALNAME: Kassenseiten
+    PaymentErrorMessage: 'Fehler von Payment-Gateway empfangen:'
+    ProceedToPayment: 'Weiter zur Bezahlseite'
+    PurchaseCompleteDescription: "Diese Meldung wird dem Kunden im Bestätigungs-E-Mail gesendet, nachdem der Bestellvorgang abgeschlossen wurde.\n"
+    SINGULARNAME: Kassenseite
+    SubmitPayment: Bezahlen
+    db_PurchaseComplete: 'Bestellung abgeschlossen'
+  SilverShop\Checkout\Step\CheckoutStep:
+    Continue: Weiter
+    Shipping: Lieferung
+    Summary: Zusammenfassung
+  SilverShop\Checkout\Step\Address:
+    BillTo: 'Rechnung an:'
+    EnterShippingAddress: "Bitte geben Sie Ihre gewünschte Lieferadresse ein.\n"
+    SeperateBilling: 'Abweichende Rechnungsadresse angeben'
+    ShipTo: 'Lieferung an:'
+    SupplyContactInformation: 'Bitte geben Sie Ihre Kontaktdaten an'
+  SilverShop\Checkout\Step\Membership:
+    ContinueAsGuest: 'Weiter ohne Kundenkonto'
+    CreateAccount: 'Konto erstellen'
+    CreateNewAccount: 'Neues Konto erstellen'
+  SilverShop\Reports\CustomerReport:
+    Description: Kunden-Report
+    Title: Kunden
+  SilverShop\Model\Modifiers\Tax\FlatTax:
+    PLURALNAME: Steuern
+    SINGULARNAME: Steuer
   SilverShop\Model\Modifiers\Shipping\Free:
     Free: Kostenlos
     PLURALNAME: 'Versand Kostenlos'
     SINGULARNAME: Versandkosten
-  SilverShop\Model\Modifiers\Shipping\Pickup:
-    PLURALNAME: Modifikatoren
-    SINGULARNAME: Selbstabholung
-  SilverShop\Model\Modifiers\Shipping\Simple:
-    PLURALNAME: 'Versandkosten Modifikatoren'
-    SINGULARNAME: Lieferung
-    ShipToCountry: 'Versand nach {Country}'
-    db_Country: Land
-  SilverShop\Model\Modifiers\Shipping\Weight:
-    PLURALNAME: 'Versandkosten nach Gewicht'
-    SINGULARNAME: 'Versandkosten nach Gewicht'
-    TableTitle: 'Versandkosten (für {Kilograms} kg)'
-  SilverShop\Model\Modifiers\SubTotal:
-    PLURALNAME: Zwischensummen
-    SINGULARNAME: Zwischensumme
-  SilverShop\Model\Modifiers\Tax\Base:
-    AtRate: 'zu {Rate}%'
-    PLURALNAME: Steuern
-    SINGULARNAME: Steuer
-    db_Rate: Steuersatz
-  SilverShop\Model\Modifiers\Tax\FlatTax:
-    PLURALNAME: Steuern
-    SINGULARNAME: Steuer
   SilverShop\Model\Modifiers\Tax\GlobalTax:
     Included: '(im Preis enthalten)'
     PLURALNAME: Steuern
     SINGULARNAME: MwSt.
     db_Country: Land
+  SilverShop\Forms\ShopAccountForm:
+    DetailsSaved: 'Ihre Angaben wurden gespeichert'
+    Save: 'Änderungen speichern'
+    SaveAndProceed: 'Speichern und weiter zur Kasse'
+  SilverShop\Checkout\Component\OnsitePayment:
+    InvalidCreditCard: 'Kreditkarte ist ungültig'
   SilverShop\Model\Order:
     BillTo: 'Rechnung an'
     Date: Datum
@@ -281,6 +191,14 @@ de:
     has_one_BillingAddress: Rechnungsadresse
     has_one_Member: Kunde
     has_one_ShippingAddress: Lieferadresse
+  SilverShop\Forms\OrderActionsForm:
+    CancelOrder: 'Diese Bestellung stornieren'
+    MakePayment: 'Zahlung tätigen'
+    ManualNotAllowed: 'Bezahlung gegen Rechnung nicht erlaubt.'
+    PayOrder: 'Restbetrag bezahlen'
+    PaymentMethod: Zahlungsart
+    CouldNotProcessPayment: "Die Zahlung konnte nicht verarbeitet werden.\n"
+    OrderCancelled: 'Bestellung erfolgreich storniert'
   SilverShop\Model\OrderAttribute:
     PLURALNAME: Attribute
     SINGULARNAME: Attribut
@@ -291,6 +209,19 @@ de:
     SINGULARNAME: Produkt
     db_Quantity: Menge
     db_UnitPrice: Stückpreis
+  SilverShop\Model\Modifiers\OrderModifier:
+    PLURALNAME: Modifikatoren
+    SINGULARNAME: Modifikator
+    db_Amount: Betrag
+    db_Sort: Sortierfolge
+    db_Type: Art
+  SilverShop\Checkout\OrderProcessor:
+    NoItems: 'Die Bestellung beinhaltet keine Artikel.'
+    NoOrder: 'Die Bestellung existiert nicht.'
+    NoOrderStarted: "Es wurde noch keine neue Bestellung gestartet.\n"
+    NotCart: "Die Bestellung beinhaltet keinen Warenkorb.\n"
+    CantPay: "Diese Bestellung kann nicht bezahlt werden.\n"
+    InvalidGateway: '''{gateway}'' ist keine gültige Bezahlmethode.'
   SilverShop\Model\OrderStatusLog:
     PLURALNAME: 'Bestellstatus Log-Einträge'
     SINGULARNAME: 'Bestellstatus Log-Eintrag'
@@ -304,104 +235,24 @@ de:
     db_Title: Titel
     has_one_Author: Autor
     has_one_Order: Bestellung
-  SilverShop\Model\Product\OrderItem:
-    PLURALNAME: Artikel
-    SINGULARNAME: Produkt
-    db_ProductVersion: 'Produkt Version'
-    has_one_Product: Produkt
-  SilverShop\Model\RegionRestriction:
-    PLURALNAME: 'Regionale Restriktionen'
-    SINGULARNAME: 'Regionale Restriktion'
-    db_City: Stadt
-    db_Country: Land
-    db_PostalCode: Postleitzahl
-    db_State: Staat
-  SilverShop\Model\Variation\AttributeType:
-    PLURALNAME: Attribute
-    SINGULARNAME: Attribut
-    SaveFirstInfo: 'Werte können nach erstmaligem Speichern erfasst werden.'
-    belongs_many_many_Product: Produkt
-    db_Label: Bezeichnung
-    db_Name: Name
-    has_many_Values: Werte
-  SilverShop\Model\Variation\AttributeValue:
-    PLURALNAME: Attribut-Werte
-    SINGULARNAME: Attribut-Wert
-    belongs_many_many_ProductVariation: 'Produkt Variationen'
-    db_Sort: Sortierfolge
-    db_Value: Attribut-Wert
-    has_one_Type: Art
-  SilverShop\Model\Variation\OrderItem:
-    PLURALNAME: Artikel
-    SINGULARNAME: Produkt
-    db_ProductVariationVersion: Variante/Version
-    has_one_ProductVariation: 'Produkt Variationen'
-  SilverShop\Model\Variation\Variation:
-    MustSaveFirstMessage: 'Attribute können erst nach dem ersten Speichern ausgewählt werden (gesetzt der Fall, sie existieren).'
-    NoAttributeValuesMessage: 'Es gibt keine Werte für {attribute}. Diese können im ''Katalog'' erstellt werden.'
-    PLURALNAME: Variationen
-    SINGULARNAME: Variation
-    db_InternalItemID: Artikelnummer
-    db_Price: Preis
-    db_Version: Version
-    has_one_Image: Bild
-    has_one_Product: Produkt
-    many_many_AttributeValues: Eigenschaften
-  SilverShop\Model\Zone:
-    PLURALNAME: Zonen
-    SINGULARNAME: Zone
-    db_Description: Beschrieb
-    db_Name: Name
-    has_many_Regions: Regionen
-  SilverShop\Model\ZoneRegion:
-    PLURALNAME: Regionen
-    SINGULARNAME: Region
-    has_one_Zone: Zone
-  SilverShop\ORM\FieldType\ShopCurrency:
-    Free: '<span class="free">Kostenlos</span>'
-  SilverShop\Page\AccountPage:
-    AddressBook: Adressbuch
-    DESCRIPTION: 'Hier kann der Kunde sein Konto bearbeiten und getätigte Bestellungen einsehen.'
-    DefaultTitle: Kundenkonto
-    EditProfile: 'Nutzerprofil bearbeiten'
-    LogOut: Abmelden
-    Login: 'Sie müssen sich einloggen um auf Ihr Konto zugreifen zu können. Falls Sie nicht registriert sind, können Sie erst nach Ihrer ersten Bestellung auf Ihr Konto zugreifen. Fall Sie bereits registriert sind, geben Sie folgend Ihre Daten ein.'
-    LoginAgain: 'Sie sind abgemeldet. Wenn Sie sich wieder anmelden möchten, können Sie es weiter unten tun.'
-    MemberEmail: E-Mail
-    MemberLastVisit: 'Letzte Anmeldung'
-    MemberName: Name
-    MemberSince: 'Kunde seit'
-    NoPage: 'Es wurde keine Kundenkonto-Seite gefunden. Bitte erstellen Sie eine im CMS!'
-    NoPastOrders: 'Keine früheren Bestellungen gefunden.'
-    NumberOfOrders: 'Anzahl der Bestellungen'
-    PLURALNAME: Kundenkonto-Seiten
-    PastOrders: 'Frühere Bestellungen'
-    SINGULARNAME: Kundenkonto-Seite
-    Title: 'Mein Konto'
-  SilverShop\Page\CartPage:
-    DESCRIPTION: 'Seite auf der der Kunde seinen Warenkorb ansehen und modifizieren kann.'
-    DefaultTitle: Warenkorb
-    PLURALNAME: Warenkorb-Seiten
-    SINGULARNAME: Warenkorb-Seite
-    has_one_CheckoutPage: Kassenseite
-    has_one_ContinuePage: Weiterleitungsseite
-  SilverShop\Page\CheckoutPage:
-    DESCRIPTION: 'Seite auf der der Bestellprozess abgewickelt wird.'
-    DefaultTitle: Kasse
-    PLURALNAME: Kassenseiten
-    PaymentErrorMessage: 'Fehler von Payment-Gateway empfangen:'
-    ProceedToPayment: 'Weiter zur Bezahlseite'
-    PurchaseCompleteDescription: 'Diese Meldung wird dem Kunden im Bestätigungs-E-Mail gesendet, nachdem der Bestellvorgang abgeschlossen wurde.'
-    SINGULARNAME: Kassenseite
-    SubmitPayment: Bezahlen
-    db_PurchaseComplete: 'Bestellung abgeschlossen'
+  SilverShop\Payment:
+    Note: Notiz
+    PaymentsHeadline: Zahlung(en)
+  SilverShop\Checkout\Component\Payment:
+    NoPaymentMethod: 'Es wurde keine Zahlungsmethode angegeben'
+    UnsupportedGateway: 'Zahlungsmethode wird nicht unterstützt'
+  SilverShop\Model\Modifiers\Shipping\Pickup:
+    PLURALNAME: Modifikatoren
+    SINGULARNAME: Selbstabholung
+  SilverShop\Includes\PriceTag:
+    SAVE: Gespart
   SilverShop\Page\Product:
     AddToCart: 'In den Warenkorb'
-    AddToCartTitle: '"{Title}" zum Warenkorb hinzufügen'
+    AddToCartTitle: '&quot;{Title}&quot; zum Warenkorb hinzufügen'
     AdditionalCategories: 'Zusätzliche Produktkategorien'
-    AllowPurchase: 'Zulassen, dass dieses Produkt bestellt werden darf'
+    AllowPurchase: "Zulassen, dass dieses Produkt bestellt werden darf\n"
     Category: Kategorie
-    CategoryDescription: 'Dies ist die übergeordnete Seite oder Standardkategorie.'
+    CategoryDescription: "Dies ist die übergeordnete Seite oder Standardkategorie.\n"
     Code: Artikelnummer
     CostPriceDescription: 'Großhandelspreis ohne Preisaufschlag.'
     DESCRIPTION: 'Produkte-Seite im Shop'
@@ -411,8 +262,8 @@ de:
     InternalItemID: Artikelnummer
     Model: 'Wichtigste Artikelmerkmale'
     NoImage: 'Kein Bild vorhanden'
+    NumItemsInCartSingular: "Sie haben dieses Produkt in Ihrem Warenkorb\n"
     NumItemsInCartPlural: 'Sie haben {Quantity} Produkte in Ihrem Warekorb'
-    NumItemsInCartSingular: 'Sie haben dieses Produkt in Ihrem Warenkorb'
     PLURALNAME: Produkte
     PageTitle: Produktname
     Price: Preis
@@ -436,40 +287,118 @@ de:
     has_one_Image: Bild
     many_many_ProductCategories: Produktkategorien
     many_many_VariationAttributeTypes: Variationsattributtypen
+  SilverShop\Model\Variation\AttributeType:
+    PLURALNAME: Attribute
+    SINGULARNAME: Attribut
+    SaveFirstInfo: "Werte können nach erstmaligem Speichern erfasst werden.\n"
+    belongs_many_many_Product: Produkt
+    db_Label: Bezeichnung
+    db_Name: Name
+    has_many_Values: Werte
+  SilverShop\Model\Variation\AttributeValue:
+    PLURALNAME: Attribut-Werte
+    SINGULARNAME: Attribut-Wert
+    belongs_many_many_ProductVariation: 'Produkt Variationen'
+    db_Sort: Sortierfolge
+    db_Value: Attribut-Wert
+    has_one_Type: Art
   SilverShop\Page\ProductCategory:
-    Alphabetical: Alphabetisch
     DESCRIPTION: 'Produkte-Kategorie im Shop'
     PLURALNAME: Kategorien
-    Price: Preis
     SINGULARNAME: Kategorie
     belongs_many_many_Products: Produkte
-  SilverShop\Payment:
-    Note: Notiz
-    PaymentsHeadline: Zahlung(en)
-  SilverShop\Reports\AbandonedCartReport:
-    Description: 'Übersicht der nicht bestellten Warenkörbe für bestimmte Zeitperioden. Resultate können nach Jahr, Monat oder Tag gruppiert werden.'
-    Title: 'Nicht bestellte Warenkörbe'
-  SilverShop\Reports\CustomerReport:
-    Description: Kunden-Report
-    Title: Kunden
+    Alphabetical: Alphabetisch
+    Price: Preis
+  SilverShop\Includes\ProductGroup:
+    Next: Nächste
+    Page: Seite
+    Previous: Vorherige
+    ViewNext: 'Zur nächsten Seite'
+    ViewPage: 'Zeige Seite {pageNum}'
+    ViewPrevious: 'Zur vorherigen Seite'
+  SilverShop\Includes\ProductMenu:
+    GotoPageTitle: 'Gehe zu: {Title}'
   SilverShop\Reports\ProductReport:
-    Description: 'Gibt Aufschluss über Verkaufszahlen der einzelnen Produkte. Hilft herauszufinden, welche Produkte sich gut/schlecht verkaufen.'
+    Description: "Gibt Aufschluss über Verkaufszahlen der einzelnen Produkte. Hilft herauszufinden, welche Produkte sich gut/schlecht verkaufen.\n"
     Title: Produkte-Report
-  SilverShop\Reports\ShopPeriodReport:
-    Description: 'Report über einen gewissen Zeitraum'
-    Title: 'Report über einen gewissen Zeitraum'
-  SilverShop\Reports\ShopSalesReport:
-    Description: 'Übersicht der Bestellungen für bestimmte Zeitperioden. Resultate können nach Jahr, Monat oder Tag gruppiert werden.'
-    Title: 'Shop Verkäufe'
-  SilverShop\Reports\SideReport:
-    AllProducts: 'Alle Produkte'
-    FeaturedProducts: 'Hervorgehobene Produkte'
-    Heavy: 'Schwere Produkte'
-    NoImage: 'Produkte ohne Bild'
-    ShopGroup: Shop
-  SilverShop\Reports\TaxReport:
-    Description: 'Zeigt alle bezahlten Steuern. Beinhaltet nur bezahlte Bestellungen.'
-    Title: 'Informationen zu Steuern'
+  SilverShop\Model\Variation\Variation:
+    MustSaveFirstMessage: "Attribute können erst nach dem ersten Speichern ausgewählt werden (gesetzt der Fall, sie existieren).\n"
+    NoAttributeValuesMessage: 'Es gibt keine Werte für {attribute}. Diese können im ''Katalog'' erstellt werden.'
+    PLURALNAME: Variationen
+    SINGULARNAME: Variation
+    db_InternalItemID: Artikelnummer
+    db_Price: Preis
+    db_Version: Version
+    has_one_Image: Bild
+    has_one_Product: Produkt
+    many_many_AttributeValues: Eigenschaften
+  SilverShop\Model\Variation\OrderItem:
+    PLURALNAME: Artikel
+    SINGULARNAME: Produkt
+    db_ProductVariationVersion: Variante/Version
+    has_one_ProductVariation: 'Produkt Variationen'
+  SilverShop\Extension\ProductVariationsExtension:
+    Attributes: Attribute
+    AttributesDescription: "Diese Felder definieren die Attribute welche die Variationen ausmachen. Sobald sie ausgewählt wurden, können sie in jeder Variation erfasst werden.\n"
+    Variations: Variationen
+    VariationsInfo: "Da mehrere Variationen vorhanden sind, muss der Preis bei den Variationen erfasst werden.\n"
+  SilverShop\Model\Product\OrderItem:
+    PLURALNAME: Artikel
+    SINGULARNAME: Produkt
+    db_ProductVersion: 'Produkt Version'
+    has_one_Product: Produkt
+  SilverShop\Model\RegionRestriction:
+    PLURALNAME: 'Regionale Restriktionen'
+    SINGULARNAME: 'Regionale Restriktion'
+    db_City: Stadt
+    db_Country: Land
+    db_PostalCode: Postleitzahl
+    db_State: Staat
+  SilverShop\Forms\SetLocationForm:
+    ChooseCountry: 'Land auswählen…'
+    Country: Land
+  SilverShop\Model\Modifiers\Shipping\Base:
+    PLURALNAME: Modifikatoren
+    SINGULARNAME: Lieferung
+  SilverShop\Generic:
+    Change: Ändern
+    Customer: Kunde
+    Date: Datum
+    DateFormatNice: '%d.%m.%Y'
+    DateTimeFormatNice: '%d.%m.%Y %H:%M'
+    DateTimeFormatNice24: 'd.m.Y H:i'
+    DevToolsTitle: 'Shop Entwickler Tools'
+    Edit: Bearbeiten
+    Quantity: Menge
+    ReadMoreTitle: 'Für weitere Informationen zu &quot;{Title}&quot;, hier klicken'
+    Remove: Entfernen
+    View: Ansehen
+  SilverShop\Extension\ShopConfigExtension:
+    AllowedCountries: "Länder für Bestellungen und Lieferungen\n"
+    AllowedCountriesTabTitle: 'Erlaubte Länder'
+    CustomerGroup: "Gruppe, zu der neue Kunden hinzugefügt werden\n"
+    DefaultImage: 'Standard Produktbild'
+    TermsPage: 'Allgemeine Geschäftsbedingungen'
+  SilverShop\ORM\FieldType\ShopCurrency:
+    Free: '<span class="free">Kostenlos</span>'
+  SilverShop\Dev\ShopDevelopmentAdmin:
+    BuildTasks: Build-Tasks
+    CartCleanup: 'Alte Warenkörbe bereinigen'
+    CartCleanupDesc: "Löscht abgebrochene Warenkörbe aus dem system.\n"
+    CartTasks: Warenkorb-Aufgaben
+    ClearCart: 'Den aktuellen Warenkorb löschen'
+    DebugCart: Warenkorb-Fehlersuche
+    DeleteOrders: 'Alle Bestellungen löschen'
+    DeleteOrdersDesc: "Alle Bestellungen, Modifikatoren und Zahlungen aus der Datenbank löschen.\n"
+    DeleteProducts: 'Alle Produkte löschen'
+    DeleteProductsDesc: 'Löscht alle Produkte aus der Datenbank.'
+    PopulateCart: "Befülle den Warenkorb mit einigen erhältlichen Produkten\n"
+    PopulateShop: 'Befülle den Shop'
+    PopulateShopDesc: "Befüllt den Shop mit Dummy-Produkten, Kategorien und erstellt andere notwendige Seiten.\n"
+    RecalculateOrders: 'Alle Bestellungen neu berechnen'
+    RecalculateOrdersDesc: 'Neu berechnen aller Bestellwerte. Warnung: Dies wird alle vorhergehenden Werte überschreiben.'
+    RunAllTests: 'Alle Shop-Tests starten'
+    UnitTests: Tests
   SilverShop\ShopEmail:
     AdminNotificationSubject: 'Benachrichtigung für Bestellung Nr. {OrderNo}'
     AdminNotificationTitle: 'Shop Benachrichtigung'
@@ -480,10 +409,81 @@ de:
     ReceiptSubject: 'Bestätigung der Bestellung Nr. {OrderNo}'
     ReceiptTitle: Bestellbestätigung
     Regards: 'Mit freundlichen Grüssen'
-    StatusChangeAdminCancelledNote: 'Ihre Bestellung wurde durch einen Mitarbeiter storniert. Bitte treten Sie mit uns in Kontakt, falls Sie Fragen zu dieser Bestellung haben.'
-    StatusChangeMemberCancelledNote: 'Wir haben die Stornierung Ihrer Bestellung zur Kenntnis genommen. Bitte treten Sie mit uns in Kontakt, falls Sie weitere Fragen zu dieser Bestellung haben.'
-    StatusChangeProcessingNote: 'Der Zustand Ihrer Bestellung wurde auf "In Bearbeitung" geändert. Bitte treten Sie mit uns in Kontakt, falls Sie Fragen zu dieser Bestellung haben.'
-    StatusChangeSentNote: 'Ihre Bestellung wurde versendet. Bitte treten Sie mit uns in Kontakt, falls Sie Fragen zu dieser Bestellung haben.'
-    StatusChangeSubject: 'Silvershop – {Title}'
+    StatusChangeSubject: 'Silvershop – '
     StatusChangeTitle: Statusänderung
     StatusChanged: 'Statusänderung der Bestellung Nr. {OrderNo} zu "{OrderStatus}".'
+    StatusChangeAdminCancelledNote: "Ihre Bestellung wurde durch einen Mitarbeiter storniert. Bitte treten Sie mit uns in Kontakt, falls Sie Fragen zu dieser Bestellung haben.\n"
+    StatusChangeMemberCancelledNote: "Wir haben die Stornierung Ihrer Bestellung zur Kenntnis genommen. Bitte treten Sie mit uns in Kontakt, falls Sie weitere Fragen zu dieser Bestellung haben.\n"
+    StatusChangeProcessingNote: "Der Zustand Ihrer Bestellung wurde auf \"In Bearbeitung\" geändert. Bitte treten Sie mit uns in Kontakt, falls Sie Fragen zu dieser Bestellung haben.\n"
+    StatusChangeSentNote: "Ihre Bestellung wurde versendet. Bitte treten Sie mit uns in Kontakt, falls Sie Fragen zu dieser Bestellung haben.\n"
+  SilverShop\Reports\ShopPeriodReport:
+    Description: 'Report über einen gewissen Zeitraum'
+    Title: 'Report über einen gewissen Zeitraum'
+  SilverShop\Forms\ShopQuantityField:
+    AddOne: '&quot;{ItemTitle}&quot; zum Warenkorb hinzufügen'
+    RemoveOne: '&quot;{ItemTitle}&quot; vom Warenkorb entfernen'
+  SilverShop\Reports\ShopSalesReport:
+    Description: "Übersicht der Bestellungen für bestimmte Zeitperioden. Resultate können nach Jahr, Monat oder Tag gruppiert werden.\n"
+    Title: 'Shop Verkäufe'
+  SilverShop\Reports\SideReport:
+    AllProducts: 'Alle Produkte'
+    FeaturedProducts: 'Hervorgehobene Produkte'
+    Heavy: 'Schwere Produkte'
+    NoImage: 'Produkte ohne Bild'
+    ShopGroup: Shop
+  SilverShop\Cart\ShoppingCart:
+    CannotPurchase: '{Title} kann nicht gekauft werden.'
+    Checkout: Kasse
+    Cleared: "Der Warenkorb wurde erfolgreich gelöscht.\n"
+    ContinueShopping: 'Den Einkauf fortsetzen'
+    Headline: Warenkorb
+    InvalidSecurityToken: "Ungültiger Sicherheitstoken, möglicher CSRF-Angriff.\n"
+    ItemAdded: 'Produkt erfolgreich hinzugefügt.'
+    ItemNotFound: 'Produkt nicht gefunden.'
+    ItemRemoved: 'Produkt erfolgreich entfernt.'
+    ItemsInCartPlural: 'In Ihrem Warenkorb befinden sich <a href="{link}">{quantity} Artikel</a>.'
+    ItemsInCartSingular: 'In Ihrem Warenkorb befindet sich <a href="{link}">1 Artikel</a>.'
+    NoCartFound: 'Kein Warenkorb gefunden.'
+    NoCartInitialised: 'Kein Warenkorb initialisiert'
+    NoItems: "Es befinden sich keine Produkte im Warenkorb.\n"
+    NoOrder: 'Keine aktuelle Bestellung.'
+    ProceedToCheckout: 'Zur Kasse'
+    ProductNotFound: 'Produkt nicht gefunden.'
+    QuantitySet: 'Die Menge wurde geändert.'
+    RemoveAllTitle: 'Entferne alle &quot;{Title}&quot; aus dem Warenkorb.'
+    RemoveTitle: 'Entferne &quot;{Title}&quot; aus dem Warenkorb.'
+    TableSummary: 'Im Warenkorb befindliche Produkte'
+  SilverShop\Model\Modifiers\Shipping\Simple:
+    PLURALNAME: 'Versandkosten Modifikatoren'
+    SINGULARNAME: Lieferung
+    ShipToCountry: 'Versand nach {Country}'
+    db_Country: Land
+  SilverShop\Model\Modifiers\SubTotal:
+    PLURALNAME: Zwischensummen
+    SINGULARNAME: Zwischensumme
+  SilverShop\Model\Modifiers\Tax\Base:
+    AtRate: 'zu {Rate}%'
+    PLURALNAME: Steuern
+    SINGULARNAME: Steuer
+    db_Rate: Steuersatz
+  SilverShop\Reports\TaxReport:
+    Description: "Zeigt alle bezahlten Steuern. Beinhaltet nur bezahlte Bestellungen.\n"
+    Title: 'Informationen zu Steuern'
+  SilverShop\Forms\VariationForm:
+    ChooseAttribute: 'Wähle {attribute}…'
+    ProductNotAvailable: "Das Produkt ist mit den ausgewählten Optionen nicht verfügbar.\n"
+    VariationNotAvailable: "Diese Variante ist leider nicht verfügbar.\n"
+  SilverShop\Model\Modifiers\Shipping\Weight:
+    PLURALNAME: 'Versandkosten nach Gewicht'
+    SINGULARNAME: 'Versandkosten nach Gewicht'
+    TableTitle: 'Versandkosten (für {Kilograms} kg)'
+  SilverShop\Model\Zone:
+    PLURALNAME: Zonen
+    SINGULARNAME: Zone
+    db_Description: Beschrieb
+    db_Name: Name
+    has_many_Regions: Regionen
+  SilverShop\Model\ZoneRegion:
+    PLURALNAME: Regionen
+    SINGULARNAME: Region
+    has_one_Zone: Zone
