@@ -914,7 +914,7 @@ class Order extends DataObject
         // collect all the payment status values
         foreach ($this->dbObject('Status')->enumValues() as $value) {
             $key = strtoupper($value);
-            $entities["Order.STATUS_$key"] = array(
+            $entities[__CLASS__ . ".STATUS_$key"] = array(
                 $value,
                 "Translation of the order status '$value'",
             );
