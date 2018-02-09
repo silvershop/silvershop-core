@@ -1,489 +1,487 @@
-nl:
-  SilverShop\Forms:
-    FIELDISREQUIRED: '{name} is verplicht'
+nn:
   SilverShop\Admin\OrdersAdmin:
-    MENUTITLE: Bestellingen
-    ReceiptTitle: '{SiteTitle} Bestelling {OrderNo}'
+    MENUTITLE: Ordrar
+    ReceiptTitle: '{SiteTitle} Ordre {OrderNo}'
   SilverShop\Admin\ProductCatalogAdmin:
-    MENUTITLE: Catalogus
+    MENUTITLE: Katalog
   SilverShop\Admin\ZoneAdmin:
-    MENUTITLE: Gebieden
-  SilverShop\Reports\AbandonedCartReport:
-    Description: "Controleer verlaten winkelwagens voor een bepaalde periode. Sorteer resultaten per jaar, maand of dag.\n"
-    Title: 'Verlaten winkelwagens'
-  SilverShop\Page\AccountPage:
-    AddressBook: Adresboek
-    DESCRIPTION: "Staat de gebruiker toe om zijn accountgegevens en eerdere bestellingen te bekijken.\n"
-    DefaultTitle: Account
-    EditProfile: 'Bewerk profiel'
-    LogOut: Uitloggen
-    Login: "U dient ingelogd te zijn voor u toegang krijgt tot uw accountpagina. Als u nog niet geregistreerd bent bent u niet in staat om in te loggen tot u uw eerste bestelling doet, vult u anders uw gegevens hieronder in.\n"
-    LoginAgain: "U bent uitgelogd. Als u opnieuw wilt inloggen dan kan dat hieronder.\n"
-    MemberEmail: E-mail
-    MemberLastVisit: 'Laatste bezoek'
-    MemberName: Naam
-    MemberSince: 'Account sinds'
-    NoPage: "Er is geen accountpagina gevonden. Maak er één aan in het CMS!\n"
-    NoPastOrders: "Er zijn geen eerdere bestellingen gevonden.\n"
-    NumberOfOrders: 'Aantal bestellingen'
-    PLURALNAME: 'Accountpagina''s'
-    PastOrders: 'Eerdere bestellingen'
-    SINGULARNAME: Accountpagina
-    Title: 'Mijn account'
-  AccountPage_AddressBook:
-    CreateNewTitle: 'Maak een nieuw adres aan'
-    NoAddress: 'Geen adres gevonden'
-    Title: 'Standaard adres'
-    DefaultShippingAddress: 'Standaard verzendingsadres'
-    DefaultBillingAddress: 'Standaard facturatie adres'
-    MakeDefaultShipping: 'Maak standaard verzending'
-    MakeDefaultShippingTitle: 'Maak dit mijn standaard verzendadres'
-    MakeDefaultBilling: 'Maak standaard facturatie adres'
-    MakeDefaultBillingTitle: 'Maak dit mijn standaard facturatie adres'
-    DeleteAddress: 'Verwijder dit adres'
-  AccountPage_EditProfile:
-    Title: 'Bewerk profiel'
-  SilverShop\Model\Address:
-    AddressSaved: 'Uw adres is opgeslagen'
-    AddressHint: 'Straat en huisnummer, naam en postbus'
-    AddressLine2Hint: "landgoed, gebouw, appartement, afdeling, etage\n"
-    BillingAddress: 'Facturatie adres'
-    CityHint: 'of stad, provincie'
-    CreateNewAddress: 'Maak een nieuw adres aan'
-    ExistingBillingAddress: 'Bestaand facturatie adres'
-    ExistingShippingAddress: 'Bestaand verzendingsadres'
-    PLURALNAME: Adressen
-    SINGULARNAME: Adres
-    SaveDefaults: 'Sla op als standaard'
-    SaveNew: 'Sla nieuw adres op'
-    ShippingAddress: Verzendingsadres
-    StateHint: 'Of provincie, gebied, eiland'
-    db_Address: Adres
-    db_AddressLine2: 'Adres regel 2 (optioneel)'
-    db_City: Stad
-    db_Company: Bedrijf
-    db_Country: Land
-    db_FirstName: Voornaam
-    db_Phone: Telefoonnummer
-    db_PostalCode: Postcode
-    db_State: Staat
-    db_Surname: Achternaam
-    has_one_Member: Gebruiker
-  SilverShop\Forms\CartForm:
-    REMOVED_ITEMS: '{count} producten verwijderd.'
-    UPDATED_ITEMS: '{count} producten bijgewerkt.'
-    UpdateCart: 'Winkelwagen bijwerken'
-  SilverShop\Page\CartPage:
-    DESCRIPTION: "Een pagina waar de gebruiker zijn winkelwagen kan inzien en bewerken.\n"
-    DefaultTitle: Winkelwagen
-    PLURALNAME: 'Winkelwagen pagina''s'
-    SINGULARNAME: 'Winkelwagen pagina'
-    has_one_CheckoutPage: 'Betaal pagina'
-    has_one_ContinuePage: Vervolgpagina
-  SilverShop\Checkout\Checkout:
-    IdFieldNotFound: 'Verplicht veld niet gevonden: {IdentifierField}'
-    MemberExists: ' Er bestaat al een account met de {Field} {Identifier}'
-    MembershipIsNotAllowed: "Het is niet toegestaan nieuwe gebruikersaccounts aan te maken\n"
-    NoPaymentMethod: 'Betalingsmethode bestaat niet'
-    PasswordRequired: 'Er is een wachtwoord vereist'
-    TermsAndConditionsLink: 'Ik ga akkoord met de voorwaarden die vermeld staan op de <a href="{TermsPageLink}" target="new" title="Lees de winkelvoorwaarden voor deze website">{TermsPageTitle}</a> pagina'
-  SilverShop\Forms\CheckoutComponentValidator:
-    InvalidDataMessage: 'Er zijn problemen met de door u ingevoerde gegevens. Zie hieronder:'
-  CheckoutField:
-    AccountInfo: "Kies een wachtwoord, zodat u kunt inloggen en uw bestelgeschiedenis kunt controleren voor in de toekomst\n"
-    MemberLoginInfo: 'Als u al een account heeft kunt u <a href="{LoginUrl}">inloggen</a>'
-    MembershipDetails: 'Account details'
-    MustAgreeToTerms: "U moet met de algemene voorwaarden akkoord gaan\n"
-    Password: Wachtwoord
-    PaymentType: 'Betaal methode'
-  SilverShop\Page\CheckoutPage:
-    DESCRIPTION: 'Pagina die het betaalproces afhandelt.'
-    DefaultTitle: Betalen
-    PLURALNAME: 'Betaalpagina''s'
-    PaymentErrorMessage: 'Fout tijdens het maken van de betaling:'
-    ProceedToPayment: 'Ga door naar betaling'
-    PurchaseCompleteDescription: "Dit bericht is toegevoegd aan de bevestigingsmail, nadat de gebruiker de betaling heeft bevestigt.\n"
-    SINGULARNAME: Betaalpagina
-    SubmitPayment: 'Bevestig betaling'
-    db_PurchaseComplete: 'Aanschaf compleet'
-  SilverShop\Checkout\Step\CheckoutStep:
-    Continue: 'Ga verder'
-    Shipping: Verzenden
-    Summary: Overzicht
-  SilverShop\Checkout\Step\Address:
-    BillTo: 'Rekening naar:'
-    EnterShippingAddress: 'Voer uw verzendadres in.'
-    SeperateBilling: 'Factureer op een ander adres'
-    ShipTo: 'Verzend naar:'
-    SupplyContactInformation: 'Geef je contactgegevens'
-  SilverShop\Checkout\Step\Membership:
-    ContinueAsGuest: 'Ga verder als gast'
-    CreateAccount: 'Maak een account aan'
-    CreateNewAccount: 'Maak een nieuw account aan'
-  SilverShop\Reports\CustomerReport:
-    Description: 'Klanten rapport'
-    Title: Klanten
-  SilverShop\Model\Modifiers\Tax\FlatTax:
-    PLURALNAME: 'BTW tarieven'
-    SINGULARNAME: BTW
-  SilverShop\Model\Modifiers\Shipping\Free:
-    Free: GRATIS
-    PLURALNAME: 'Gratis verzending modifiers'
-    SINGULARNAME: Verzenden
-  SilverShop\Model\Modifiers\Tax\GlobalTax:
-    Included: '(inclusief in bovenstaande prijs)'
-    PLURALNAME: 'BTW tarieven'
-    SINGULARNAME: BTW
-    db_Country: Land
-  SilverShop\Forms\ShopAccountForm:
-    DetailsSaved: 'Uw gegevens zijn bewaard'
-    Save: 'Bewaar veranderingen'
-    SaveAndProceed: 'Sla op en ga verder naar betaling'
-  SilverShop\Checkout\Component\OnsitePayment:
-    InvalidCreditCard: 'Credit card is ongeldig'
-  SilverShop\Model\Order:
-    BillTo: 'Rekening naar'
-    Date: Datum
-    DateFrom: 'Datum vanaf'
-    DateTo: 'Datum tot'
-    GrandTotal: Eindtotaal
-    Invoice: Factuur
-    OrderHeadline: 'Bestelling #{OrderNo} van {OrderDate}'
-    Outstanding: Openstaand
-    OutstandingWithAmount: 'Openstaand: {Amount}'
-    PLURALNAME: Bestellingen
-    Print: Print
-    Quantity: Hoeveelheid
-    SINGULARNAME: Bestelling
-    STATUS_ADMINCANCELLED: 'Geannuleerd door personeel'
-    STATUS_CART: 'In winkelwagen'
-    STATUS_COMPLETE: Afgerond
-    STATUS_MEMBERCANCELLED: 'Geannuleerd door klant'
-    STATUS_PAID: Betaald
-    STATUS_PROCESSING: 'In behandeling'
-    STATUS_SENT: Verzonden
-    STATUS_UNPAID: Onbetaald
-    ShipTo: 'Verzend naar'
-    SubTotal: Subtotaal
-    Total: Totaal
-    TotalOutstanding: 'Totaal openstaand'
-    TotalPrice: Totaalprijs
-    TotalPriceWithCurrency: 'Totaalprijs ({Currency})'
-    UnitPrice: Stukprijs
-    db_Dispatched: Verzonden
-    db_Email: E-mail
-    db_FirstName: Voornaam
-    db_IPAddress: 'IP adres'
-    db_Notes: Bericht
-    db_Paid: Betaald
-    db_Placed: Geplaatst
-    db_Printed: Geprint
-    db_ReceiptSent: 'Ontvangstbewijs verzonden'
-    db_Reference: Kenmerk
-    db_SeparateBillingAddress: 'Apart factuuradres'
-    db_Status: Status
-    db_Surname: Achternaam
-    db_Total: Totaal
-    has_many_Items: Artikelen
-    has_many_Modifiers: Modifiers
-    has_many_OrderStatusLogs: 'Bestelstatus logs'
-    has_many_Payments: Betalingen
-    has_one_BillingAddress: 'Facturatie adres'
-    has_one_Member: Gebruiker
-    has_one_ShippingAddress: Verzendingsadres
-  SilverShop\Forms\OrderActionsForm:
-    CancelOrder: 'Annuleer deze bestelling'
-    MakePayment: 'Betaling maken'
-    ManualNotAllowed: 'Handmatige betaling niet toegestaan'
-    PayOrder: 'Betaal openstaand saldo'
-    PaymentMethod: Betaalmethode
-    CouldNotProcessPayment: 'Betaling kan niet worden verwerkt.'
-    OrderCancelled: 'Bestelling succesvol geannuleerd'
-  SilverShop\Model\OrderAttribute:
-    PLURALNAME: Attributen
-    SINGULARNAME: Attribuut
-    db_CalculatedTotal: 'Berekend totaal'
-    has_one_Order: Bestellen
-  SilverShop\Model\OrderItem:
-    PLURALNAME: Artikelen
-    SINGULARNAME: Artikel
-    db_Quantity: Hoeveelheid
-    db_UnitPrice: Stukprijs
-  SilverShop\Model\Modifiers\OrderModifier:
-    PLURALNAME: Modifiers
-    SINGULARNAME: Modifier
-    db_Amount: Bedrag
-    db_Sort: Sorteren
-    db_Type: Type
-  SilverShop\Checkout\OrderProcessor:
-    NoItems: 'Bestelling bevat geen artikelen.'
-    NoOrder: 'Bestelling bestaat niet.'
-    NoOrderStarted: "Er is nog geen nieuwe bestelling begonnen.\n"
-    NotCart: 'Bestelling is niet in de winkelwagen.'
-    CantPay: 'Bestelling kan niet worden betaald.'
-    InvalidGateway: '`{gateway}` is geen geldige betalings gateway.'
-  SilverShop\Model\OrderStatusLog:
-    PLURALNAME: 'Bestelstatus Log Entries'
-    SINGULARNAME: 'Bestellen Log Entry'
-    db_DispatchTicket: Verzendbewijs
-    db_DispatchedBy: 'Wordt verzonden door'
-    db_DispatchedOn: 'Verzonden op'
-    db_Note: Notitie
-    db_PaymentCode: Belatingscode
-    db_PaymentOK: 'Betaling OK'
-    db_SentToCustomer: 'Verzonden aan de klant'
-    db_Title: Titel
-    has_one_Author: Auteur
-    has_one_Order: Bestelling
-  SilverShop\Payment:
-    Note: Notitie
-    PaymentsHeadline: Betaling(en)
-  SilverShop\Checkout\Component\Payment:
-    NoPaymentMethod: 'Betaalmethode niet verstrekt'
-    UnsupportedGateway: 'Gateway niet ondersteund'
-  SilverShop\Model\Modifiers\Shipping\Pickup:
-    PLURALNAME: Modifiers
-    SINGULARNAME: 'Ophaal verzending'
-  SilverShop\Includes\PriceTag:
-    SAVE: Bewaar
-  SilverShop\Page\Product:
-    AddToCart: 'Voeg toe aan winkelwagen'
-    AddToCartTitle: 'Voeg &quot;{Title}&quot; toe aan je winkelwagen'
-    AdditionalCategories: 'Aanvullende categorieën'
-    AllowPurchase: 'Laat toe om het product aan te schaffen'
-    Category: Categorie
-    CategoryDescription: "Dit is de bovenliggende pagina of standaard categorie.\n"
-    Code: Produktcode
-    CostPriceDescription: 'Groothandelsprijs voor prijsstijging.'
-    DESCRIPTION: 'Productpagina in de winkel'
-    Featured: 'Aanbevolen product'
-    Image: 'Product afbeelding'
-    ImageAltText: '{Title} afbeelding'
-    InternalItemID: 'Product code/SKU'
-    Model: model
-    NoImage: 'geen afbeelding'
-    NumItemsInCartSingular: 'U heeft dit artikel in uw winkelwagen'
-    NumItemsInCartPlural: 'U heeft {Quantity} artikelen in uw winkelwagen'
-    PLURALNAME: Producten
-    PageTitle: Producttitel
-    Price: Prijs
-    PriceDesc: "Basisprijs waarvoor dit product verkocht wordt.\n"
-    ProductCodeShort: SKU
-    SINGULARNAME: Product
-    Size: Grootte
-    View: 'Bekijk product'
-    db_AllowPurchase: 'Sta aankoop toe'
-    db_BasePrice: Prijs
-    db_CostPrice: Kostprijs
-    db_Depth: Diepte
-    db_Featured: Aanbevolen
-    db_Height: Hoogte
-    db_InternalItemID: 'Intern artikel ID'
-    db_Model: Model
-    db_Popularity: Populariteit
-    db_Weight: Gewicht
-    db_Width: Breedte
-    has_many_Variations: Modellen
-    has_one_Image: Afbeelding
-    many_many_ProductCategories: 'Product categorieën'
-    many_many_VariationAttributeTypes: 'Variation Attribute Types'
-  SilverShop\Model\Variation\AttributeType:
-    PLURALNAME: Attributen
-    SINGULARNAME: Attribuut
-    SaveFirstInfo: "Bewaar eerst, daarna kunt u waarden toekennen\n"
-    belongs_many_many_Product: Product
-    db_Label: Label
-    db_Name: Naam
-    has_many_Values: Waarden
-  SilverShop\Model\Variation\AttributeValue:
-    PLURALNAME: Waarden
-    SINGULARNAME: Waarde
-    belongs_many_many_ProductVariation: Productvariatie
-    db_Sort: Rangschikken
-    db_Value: Waarde
-    has_one_Type: Type
-  SilverShop\Page\ProductCategory:
-    DESCRIPTION: 'Productcategorie in de winkel'
-    PLURALNAME: Categorieën
-    SINGULARNAME: Categorie
-    belongs_many_many_Products: Producten
-    Alphabetical: Alfabetisch
-    Price: Prijs
-  SilverShop\Includes\ProductGroup:
-    Next: volgende
-    Page: pagina
-    Previous: vorige
-    ViewNext: 'Bekijk de volgende pagina'
-    ViewPage: 'Bekijk paginanummer {pageNum}'
-    ViewPrevious: 'Bekijk de vorige pagina'
-  SilverShop\Includes\ProductMenu:
-    GotoPageTitle: 'Ga naar de {Title} pagina'
-  SilverShop\Reports\ProductReport:
-    Description: "Krijg inzicht in welke producten presteren en welke niet.\n"
-    Title: Producten
-  SilverShop\Model\Variation\Variation:
-    MustSaveFirstMessage: "U kunt een keuze maken uit de variatie attributen nadat u voor de eerste keer opgeslagen heeft, als ze bestaan.\n"
-    NoAttributeValuesMessage: '{attribute} heeft geen waardes om uit te kiezen. U kunt deze aanmaken in de "Products" &#62; "Product Attribute Type" sectie van de CMS.'
-    PLURALNAME: Variaties
-    SINGULARNAME: Variatie
-    db_InternalItemID: 'Intern artikel ID'
-    db_Price: Prijs
-    db_Version: Versie
-    has_one_Image: afbeelding
-    has_one_Product: Product
-    many_many_AttributeValues: 'Attribute waarden'
-  SilverShop\Model\Variation\OrderItem:
-    PLURALNAME: artikelen
-    SINGULARNAME: Artikel
-    db_ProductVariationVersion: 'Product variatie versie'
-    has_one_ProductVariation: 'Product variatie'
-  SilverShop\Extension\ProductVariationsExtension:
-    Attributes: Attributen
-    AttributesDescription: "These are fields to indicate the way(s) each variation varies. Once selected, they can be edited on each variation.\n"
-    Variations: Variaties
-    VariationsInfo: 'Prijs - Omdat u één of meer variaties heeft, de prijs kan aangepast worden in de "Variations" tab.'
-  SilverShop\Model\Product\OrderItem:
-    PLURALNAME: Artikelen
-    SINGULARNAME: Artikel
-    db_ProductVersion: 'Product versie'
-    has_one_Product: Product
-  SilverShop\Model\RegionRestriction:
-    PLURALNAME: 'Regionale beperkingen'
-    SINGULARNAME: 'Regionale beperkingen'
-    db_City: Stad
-    db_Country: Land
-    db_PostalCode: Postcode
-    db_State: Staat
-  SilverShop\Forms\SetLocationForm:
-    ChooseCountry: 'Kies land...'
-    Country: Land
-  SilverShop\Model\Modifiers\Shipping\Base:
-    PLURALNAME: Modifiers
-    SINGULARNAME: Verzenden
-  SilverShop\Generic:
-    Change: 'Pas aan'
-    Customer: Klant
-    Date: Datum
-    DateFormatNice: '%d-%m-%G'
-    DateTimeFormatNice: '%d-%m-%G %H:%M'
-    DateTimeFormatNice24: 'd/m/Y H:i'
-    DevToolsTitle: 'Winkel ontwikkelgereedschappen'
-    Edit: Bewerk
-    Quantity: Hoeveelheid
-    ReadMoreTitle: 'Klik hier om meer te lezen over &quot;{Title}&quot;'
-    Remove: Verwijder
-    View: Bekijk
-  SilverShop\Extension\ShopConfigExtension:
-    AllowedCountries: 'Toegestane bestel- en verzendlanden'
-    AllowedCountriesTabTitle: 'Toegestane landen'
-    CustomerGroup: 'Groep om nieuwe klanten toe te voegen'
-    DefaultImage: 'Standaard productafbeelding'
-    TermsPage: 'Voorwaarden pagina'
-  SilverShop\ORM\FieldType\ShopCurrency:
-    Free: '<span class="free">GRATIS</span>'
-  SilverShop\Dev\ShopDevelopmentAdmin:
-    BuildTasks: 'Maak taken aan'
-    CartCleanup: 'Ruim oude winkelwagens op'
-    CartCleanupDesc: 'Verwijder verlaten winkelwagens'
-    CartTasks: 'Winkelwagen taken'
-    ClearCart: 'Leeg huidige winkelwagen'
-    DebugCart: 'Verwijder de winkelwagen'
-    DeleteOrders: 'Verwijder alle bestellingen'
-    DeleteOrdersDesc: "Verwijder alle bestellingen, modifiers, en betalingen uit de database.\n"
-    DeleteProducts: 'Verwijder alle producten'
-    DeleteProductsDesc: "Verwijder alle producten uit de database.\n"
-    PopulateCart: "Vul de winkelwagen met een aantal beschikbare producten\n"
-    PopulateShop: 'Vul de winkel'
-    PopulateShopDesc: 'Vul de winkel met dummie producten, categorieën, en andere nodigzakelijke pagina''s.'
-    RecalculateOrders: 'Herbereken alle bestellingen'
-    RecalculateOrdersDesc: 'Herbereken alle bestelings waarden. Waarschuwing: dit overschrijft alle eerdere waarden.'
-    RunAllTests: 'Test alle winkel onderdelen'
-    UnitTests: 'Unit Tests'
-  SilverShop\ShopEmail:
-    AdminNotificationSubject: 'Bestelling #{OrderNo} notificatie'
-    AdminNotificationTitle: 'Winkel ontvangstbewijs'
-    CancelSubject: 'Bestelling #{OrderNo} geannuleerd door gebruiker'
-    ConfirmationSubject: 'Bestelling #{OrderNo} bevestiging'
-    ConfirmationTitle: Orderbevestiging
-    PhoneNumber: 'Telefoon nummer'
-    ReceiptSubject: 'Bestelling #{OrderNo} ontvangstbewijs'
-    ReceiptTitle: 'Winkel ontvangstbewijs'
-    Regards: 'Met vriendelijke groet'
-    StatusChangeSubject: 'Silvershop -'
-    StatusChangeTitle: 'Status update'
-    StatusChanged: 'De bestelstatus van order #{OrderNo} is veranderd naar "{OrderStatus}"'
-    StatusChangeAdminCancelledNote: "Uw bestelling is geannuleerd door ons personeel. Neem alstublieft contact met ons op als u vragen heeft over deze bestelling.\n"
-    StatusChangeMemberCancelledNote: "Uw annulering van uw bestelling is geconstateerd. Neem alstublieft contact met ons op als u vragen heeft.\n"
-    StatusChangeProcessingNote: "De status van uw bestelling is veranderd naar In Behandeling. Neem alstublieft contact met ons op als u vragen heeft over uw bestelling.\n"
-    StatusChangeSentNote: "Uw bestelling is verzonden. We streven ernaar om zo snel mogelijk te leveren. Neem alstublieft contact met ons op als uw bestelling niet binnen vijf dagen gearriveerd is.\n"
-  SilverShop\Reports\ShopPeriodReport:
-    Description: 'Periodiek winkel report'
-    Title: 'Periodiek winkel report'
-  SilverShop\Forms\ShopQuantityField:
-    AddOne: 'Voeg één of meer &quot;{ItemTitle}&quot; aan uw winkelwagen'
-    RemoveOne: 'Verwijder één of meer &quot;{ItemTitle}&quot; van uw winkelwagen'
-  SilverShop\Reports\ShopSalesReport:
-    Description: "Hou de winkel verkoop statistieken voor een bepaalde periode in de gaten. Groepsresultaten per jaar, maand, of dag.\n"
-    Title: Winkelverkopen
-  SilverShop\Reports\SideReport:
-    AllProducts: 'Alle producten'
-    FeaturedProducts: 'Anbevolen producten'
-    Heavy: 'Zware producten'
-    NoImage: 'Producten zonder afbeelding'
-    ShopGroup: Winkel
+    MENUTITLE: Sonar
   SilverShop\Cart\ShoppingCart:
-    CannotPurchase: 'Deze {Title} kan niet worden verkocht.'
-    Checkout: Betalen
-    Cleared: 'Winkelwagen is succesvol geleegd.'
-    ContinueShopping: 'Ga verder met winkelen'
-    Headline: Winkelwagen
-    InvalidSecurityToken: "Ongeldig veiligheids token, mogelijke CSRF aanval.\n"
-    ItemAdded: 'Artikel is succesvol toegevoegd.'
-    ItemNotFound: 'Artikel niet gevonden.'
-    ItemRemoved: 'Artikel is succesvol verwijderd.'
-    ItemsInCartPlural: 'Er zijn <a href="{link}">{quantity} artikelen</a> in uw winkelwagen.'
-    ItemsInCartSingular: 'Er is <a href="{link}">1 artikel</a> in uw winkelwagen.'
-    NoCartFound: 'Geen winkelwagen gevonden.'
-    NoCartInitialised: 'Geen winkelwagen geïnitialiseerd'
-    NoItems: "Er zijn geen artikelen in uw winkelwagen.\n"
-    NoOrder: 'Er is geen huidige bestelling.'
-    ProceedToCheckout: 'Ga verder met betalen'
-    ProductNotFound: 'Product niet gevonden.'
-    QuantitySet: 'Hopeveelheid is ingesteld.'
-    RemoveAllTitle: 'Verwijder alle &quot;{Title}&quot; uit uw winkelwagen.'
-    RemoveTitle: 'Verwijder &quot;{Title}&quot; uit uw winkelwagen.'
-    TableSummary: 'Huidige inhoud van uw winkelwagen.'
-  SilverShop\Model\Modifiers\Shipping\Simple:
-    PLURALNAME: 'Eenvoudige verzend Modifiers'
-    SINGULARNAME: Verzenden
-    ShipToCountry: 'Verzend naar {Country}'
-    db_Country: Land
-  SilverShop\Model\Modifiers\SubTotal:
-    PLURALNAME: Subtotalen
-    SINGULARNAME: Subtotaal
-  SilverShop\Model\Modifiers\Tax\Base:
-    AtRate: '{Rate}%'
-    PLURALNAME: 'BTW tarieven'
-    SINGULARNAME: BTW
-    db_Rate: Tarief
-  SilverShop\Reports\TaxReport:
-    Description: "Meldt belastingstarieven op bestellingen. Dit geldt alleen voor bestellingen die zijn betaald.\n"
-    Title: Belasting
+    CannotPurchase: '{Title} er utilgjengelig for kjøp.'
+    Checkout: Kasse
+    Cleared: 'Handlekorg ble tømt.'
+    ContinueShopping: 'Fortsett å handle'
+    Headline: 'Handlekorg'
+    InvalidSecurityToken: "Feil sikkerhetstoken, eit mulig CSRF angrep."
+    ItemAdded: 'Produkt ble lagt til.'
+    ItemNotFound: 'Finn ikkje produkt.'
+    ItemRemoved: 'Produkt ble fjerna.'
+    ItemsInCartPlural: 'Det er <a href="{link}">{quantity} produkt</a> i handlekorga'
+    ItemsInCartSingular: 'Det er <a href="{link}">1 produkt</a> i handlekorga.'
+    NoCartFound: 'Inga handlekorg blei funne'
+    NoCartInitialised: 'ingen handlekorg blei starta'
+    NoItems: 'Handlekorga er tom.'
+    NoOrder: 'Inga ordrar.'
+    ProceedToCheckout: 'Fortsett til kasse'
+    ProductNotFound: 'Produkt finnes ikkje.'
+    QuantitySet: 'Talet må ha ein verdi.'
+    RemoveAllTitle: 'Fjern alle &quot;{Title}&quot; fra handlekorga'
+    RemoveTitle: 'Fjern &quot;{Title}&quot; fra handlekorga'
+    TableSummary: 'Di handlekorg inneheld'
+  SilverShop\Checkout\Checkout:
+    IdFieldNotFound: 'Obligatorisk felt er ikkje funnet: {IdentifierField}'
+    MemberExists: 'Et medlem finnes allereie med {Field} {Identifier}'
+    MembershipIsNotAllowed: 'Det stengt for å lage ny konto'
+    NoPaymentMethod: 'Det er nødvendig med eit passord'
+    PasswordRequired: 'Eit passord er nødvendig'
+    TermsAndConditionsLink: 'Eg godtar salvilkår <a href="{TermsPageLink}" target="new" title="Les salvilkår">{TermsPageTitle}</a> page'
+  SilverShop\Checkout\CheckoutField:
+    AccountInfo: "Ver venleg og vel eit passord, du kan seinare logge inn og sjå ordrehistorikken din"
+    MemberLoginInfo: 'Om allereie er medlem ver venleg og <a href="{LoginUrl}">logg inn</a>'
+    MembershipDetails: 'Medlemskapdetaljer'
+    MustAgreeToTerms: "Du må godta vilkåra"
+    Password: Passord
+    PaymentType: 'Betalingsmåte '
+  SilverShop\Checkout\Component\OnsitePayment:
+    InvalidCreditCard: 'Kredittkort er ugyldig'
+  SilverShop\Checkout\Component\Payment:
+    NoPaymentMethod: 'Betalingsmåte er ikkje gitt'
+    UnsupportedGateway: 'Gateway er ikkje støtta'
+  SilverShop\Checkout\OrderProcessor:
+    CantPay: 'Ordre kan ikkje betalast'
+    InvalidGateway: '`{gateway}`  er ikkje ein gyldig betalinggateway'
+    NoItems: 'Ordre har ingen produkt'
+    NoOrder: 'Ordre finnast ikkje.'
+    NoOrderStarted: 'Den nye ordren har ikkje begynt ennå'
+    NotCart: 'Ordre er ikkje ei handlekorg.'
+  SilverShop\Checkout\Step\Address:
+    BillTo: 'Send rekning til:'
+    EnterShippingAddress: "Ver venleg og skriv inn di fraktadresse"
+    SeperateBilling: 'Send rekning til ei anna adresse'
+    ShipTo: 'Send sending til:'
+    SupplyContactInformation: 'Skriv inn din kontakt informasjon'
+  SilverShop\Checkout\Step\CheckoutStep:
+    Continue: Fortsett
+    Shipping: Frakt
+    Summary: Oppsummering
+  SilverShop\Checkout\Step\Membership:
+    ContinueAsGuest: 'Hald fram som gjest'
+    CreateAccount: 'Lag ein konto'
+    CreateNewAccount: 'Lag ein ny konto'
+  SilverShop\Dev\ShopDevelopmentAdmin:
+    BuildTasks: 'Byggeoppgavar'
+    CartCleanup: 'Reingjør gamle handlekorger'
+    CartCleanupDesc: 'Fjern forlatne handlekorger'
+    CartTasks: 'Handlekorgoppgåver'
+    ClearCart: 'Fjern noverande handlekorg'
+    DebugCart: 'Debug handlekorga'
+    DeleteOrders: 'Slett alle ordrer'
+    DeleteOrdersDesc: "Fjern alle ordre, modifikatorer og betalingar frå databasen."
+    DeleteProducts: 'Slett alle produkt'
+    DeleteProductsDesc: 'Slett alle produkt frå databasen.'
+    PopulateCart: "Bygg butikk med 'dummy'-produkt, -kategoriar og andre nødvendige sider."
+    PopulateShop: 'Bygg butikk'
+    PopulateShopDesc: "Bygg butikk med 'dummy'-produkt, -kategoriar og andre nødvendige sider."
+    RecalculateOrders: 'Kalkuler alle ordre på ny.'
+    RecalculateOrdersDesc: 'Kalkuler alle ordreverdiar. Obs: dette vi skrive over alle verdiar og kan ikkje bli omgjort!!'
+    RunAllTests: 'Kjør alle SilverShop unit tester'
+    UnitTests: 'Unit Tests'
+  SilverShop\Extension\ProductVariationsExtension:
+    Attributes: Attributt
+    AttributesDescription: "Disse feltane viser måten kvar variasjon varierer. Etter at ein av de er valen, kan man redigere kvar variasjon."
+    Variations: Variasjon
+    VariationsInfo: 'Pris - Siden du har ein eller fleire variantar må prisen bli sette under "Variasjon" fanen. '
+  SilverShop\Extension\ShopConfigExtension:
+    AllowedCountries: 'Gi tilgang til sortering og fraktland.'
+    AllowedCountriesTabTitle: 'Tillate land'
+    CustomerGroup: 'Gruppe for å legge nye kundar i'
+    DefaultImage: 'Standard produktbilete'
+    TermsPage: 'Vilkårside'
+  SilverShop\Forms\CartForm:
+    REMOVED_ITEMS: 'Fjerna {count} produkt.'
+    UPDATED_ITEMS: 'Oppdatert {count} produkt.'
+    UpdateCart: 'Oppdater handlekorg'
+  SilverShop\Forms\CheckoutComponentValidator:
+    InvalidDataMessage: 'Noko av dataen du har skrevet er feil, se under:'
+  SilverShop\Forms\OrderActionsForm:
+    CancelOrder: 'Avbestill ordren'
+    CouldNotProcessPayment: 'Betaling kunne ikkje bli gjennomført'
+    MakePayment: 'Betal'
+    ManualNotAllowed: 'Manuell betaling er ikkje tillate'
+    OrderCancelled: 'Ordre er avbestilt'
+    PayOrder: 'Betal uteståande balanse'
+    PaymentMethod: 'Betalingsmåte'
+  SilverShop\Forms\SetLocationForm:
+    ChooseCountry: 'Vel land...'
+    Country: Land
+  SilverShop\Forms\ShopAccountForm:
+    DetailsSaved: 'Din detaljer har blitt lagra'
+    Save: 'Lagre endringar'
+    SaveAndProceed: 'Lagre og fortset til kassa'
+  SilverShop\Forms\ShopQuantityField:
+    AddOne: 'Legg &quot;{ItemTitle}&quot; til handlekorga di'
+    RemoveOne: 'Fjern &quot;{ItemTitle}&quot; fra handlekorga di'
   SilverShop\Forms\VariationForm:
-    ChooseAttribute: 'Kies {attribute} …'
-    ProductNotAvailable: "Dit product is niet beschikbaar met de geselecteerde opties.\n"
-    VariationNotAvailable: "Deze variatie is niet mogelijk, onze excuses.\n"
+    ChooseAttribute: 'Vel {attribute} …'
+    ProductNotAvailable: "Dette produktet er ikkje tilgjengelig med dette valet."
+    VariationNotAvailable: 'Denne varianten er ikkje tilgjengelig.'
+  SilverShop\Generic:
+    Change: Endre
+    Customer: Kunde
+    Date: Dato
+    DateFormatNice: '%m/%d/%G'
+    DateTimeFormatNice: '%m/%d/%G %I:%M%p'
+    DateTimeFormatNice24: 'd/m/Y H:i'
+    DevToolsTitle: 'Vis utviklingsverktøy'
+    Edit: Endre
+    Quantity: Antall
+    ReadMoreTitle: 'Klikk her for å lese meir om &quot;{Title}&quot;'
+    Remove: Fjern
+    View: vis
+  SilverShop\Includes\PriceTag:
+    SAVE: Lagre
+  SilverShop\Includes\ProductGroup:
+    Next: neste
+    Page: Side
+    Previous: forrige
+    ViewNext: 'Vis neste side'
+    ViewPage: 'Vis side {pageNum}'
+    ViewPrevious: 'Vis forrige side'
+  SilverShop\Includes\ProductMenu:
+    GotoPageTitle: 'Gå til {Title}'
+  SilverShop\Model\Address:
+    AddressHint: "gate / nummer, namn og type eller postboks"
+    AddressLine2Hint: "byggning, leilighet, etasje"
+    AddressSaved: 'Di adresse er blitt lagra'
+    BillingAddress: 'Betalingsadresse'
+    CityHint: 'sted, kommune'
+    CreateNewAddress: 'Lag ny adresse'
+    ExistingBillingAddress: 'Eksisterande betalingsadresse'
+    ExistingShippingAddress: 'Eksisterande fraktadresse'
+    PLURALNAME: Adresser
+    SINGULARNAME: Adresse
+    SaveDefaults: 'Lagre som standard'
+    SaveNew: 'Lagre ny adresse'
+    ShippingAddress: 'Fraktadresse'
+    StateHint: 'eller provins, område, øy'
+    db_Address: Adresse
+    db_AddressLine2: 'Adresse linje 2 (valfri) '
+    db_City: By
+    db_Company: Bedrift
+    db_Country: Land
+    db_FirstName: 'Fornamn'
+    db_Phone: 'Telefonnummer'
+    db_PostalCode: 'Postnummer'
+    db_State: Fylke
+    db_Surname: Etternamn
+    has_one_Member: Medlem
+  SilverShop\Model\Modifiers\OrderModifier:
+    PLURALNAME: Modifikatorar
+    SINGULARNAME: Modifikator
+    db_Amount: Beløp
+    db_Sort: Sortere
+    db_Type: Type
+  SilverShop\Model\Modifiers\Shipping\Base:
+    PLURALNAME: Modifikatorar
+    SINGULARNAME: Frakt
+  SilverShop\Model\Modifiers\Shipping\Free:
+    Free: Gratis
+    PLURALNAME: 'Gratis fraktmodifikator'
+    SINGULARNAME: Frakt
+  SilverShop\Model\Modifiers\Shipping\Pickup:
+    PLURALNAME: Modifikatorar
+    SINGULARNAME: 'Hent i butikk'
+  SilverShop\Model\Modifiers\Shipping\Simple:
+    PLURALNAME: 'Enkel fraktmodifikator.'
+    SINGULARNAME: Frakt
+    ShipToCountry: 'Send til (Land)'
+    db_Country: Land
   SilverShop\Model\Modifiers\Shipping\Weight:
-    PLURALNAME: 'Gewicht verzendings Modifiers'
-    SINGULARNAME: Verzenden
-    TableTitle: 'Verzenden ({Kilograms} kg)'
+    PLURALNAME: 'Vekt fraktmodifikator.'
+    SINGULARNAME: Frakt
+    TableTitle: 'Frakt ({Kilograms} kg)'
+  SilverShop\Model\Modifiers\SubTotal:
+    PLURALNAME: 'Sum total'
+    SINGULARNAME: 'Sum total'
+  SilverShop\Model\Modifiers\Tax\Base:
+    AtRate: '@ {Rate}%'
+    PLURALNAME: Momsen
+    SINGULARNAME: Moms
+    db_Rate: Sats
+  SilverShop\Model\Modifiers\Tax\FlatTax:
+    PLURALNAME: Momsen
+    SINGULARNAME: Moms
+  SilverShop\Model\Modifiers\Tax\GlobalTax:
+    Included: '(ikkje inkluder i prisen ovanfor)'
+    PLURALNAME: Momsen
+    SINGULARNAME: Moms
+    db_Country: Land
+  SilverShop\Model\Order:
+    BillTo: 'Send rekning til'
+    Date: Dato
+    DateFrom: 'Dato frå'
+    DateTo: 'Dato til'
+    GrandTotal: 'Pris total'
+    Invoice: Faktura
+    OrderHeadline: 'Ordre #{OrderNo} {OrderDate}'
+    Outstanding: Uteståande
+    OutstandingWithAmount: 'Uteståande: {Amount}'
+    PLURALNAME: Ordrar
+    Print: Print
+    Quantity: Mengde
+    SINGULARNAME: 'Ordre '
+    STATUS_ADMINCANCELLED: 'Avlyst av admin'
+    STATUS_CART: Handlekorg
+    STATUS_COMPLETE: Ferdig
+    STATUS_MEMBERCANCELLED: 'Avlyst av kunde'
+    STATUS_PAID: Betalt
+    STATUS_PROCESSING: Under behandling
+    STATUS_SENT: Sendt
+    STATUS_UNPAID: Ubetalt
+    ShipTo: 'Send sending til:'
+    SubTotal: Sum total
+    Total: Total
+    TotalOutstanding: 'Total uteståande'
+    TotalPrice: 'Total pris'
+    TotalPriceWithCurrency: 'Total pris ({Currency})'
+    UnitPrice: 'Eining pris'
+    db_Dispatched: Sending sendt
+    db_Email: E-post
+    db_FirstName: 'Fornamn'
+    db_IPAddress: 'IP-adresse'
+    db_Notes: Beskjed
+    db_Paid: Betalt
+    db_Placed: Plassert
+    db_Printed: Printa
+    db_ReceiptSent: 'Kvittering sendt'
+    db_Reference: Referanse
+    db_SeparateBillingAddress: 'Eiga betalingsadresse'
+    db_Status: Status
+    db_Surname: Etternamn
+    db_Total: Total
+    has_many_Items: Produkt
+    has_many_Modifiers: Modifikatorar
+    has_many_OrderStatusLogs: 'Ordrestatuslogg'
+    has_many_Payments: Betalingar
+    has_one_BillingAddress: 'Betalingsadresse'
+    has_one_Member: Medlem
+    has_one_ShippingAddress: 'Fraktadresse'
+  SilverShop\Model\OrderAttribute:
+    PLURALNAME: Atributter
+    SINGULARNAME: Atribut
+    db_CalculatedTotal: 'Kalkulert total'
+    has_one_Order: 'Ordre '
+  SilverShop\Model\OrderItem:
+    PLURALNAME: Produkt
+    SINGULARNAME: Produkt
+    db_Quantity: Mengde
+    db_UnitPrice: 'Eining pris'
+  SilverShop\Model\OrderStatusLog:
+    PLURALNAME: 'Ordrestatuslogglinjer'
+    SINGULARNAME: 'Ordrelogglinje'
+    db_DispatchTicket: 'Send billett'
+    db_DispatchedBy: 'Sendt av'
+    db_DispatchedOn: 'Sendt den'
+    db_Note: Melding
+    db_PaymentCode: 'Betalingskode '
+    db_PaymentOK: 'Betaling OK'
+    db_SentToCustomer: 'Send til kunde'
+    db_Title: Tittle
+    has_one_Author: Forfattar
+    has_one_Order: Ordre
+  SilverShop\Model\Product\OrderItem:
+    PLURALNAME: Produkt
+    SINGULARNAME: Produkt
+    db_ProductVersion: 'Produktversjon'
+    has_one_Product: Produkt
+  SilverShop\Model\RegionRestriction:
+    PLURALNAME: 'Regionale restriksjoner'
+    SINGULARNAME: 'Regional restriksjon'
+    db_City: By
+    db_Country: Land
+    db_PostalCode: 'Postnummer'
+    db_State: Fylke
+  SilverShop\Model\Variation\AttributeType:
+    PLURALNAME: Atributter
+    SINGULARNAME: Atribut
+    SaveFirstInfo: 'Du må lagre først, så du kan legge til verdiar'
+    belongs_many_many_Product: Produkt
+    db_Label: Merkjelapp
+    db_Name: Namn
+    has_many_Values: Verdiar
+  SilverShop\Model\Variation\AttributeValue:
+    PLURALNAME: Verdiar
+    SINGULARNAME: Verdi
+    belongs_many_many_ProductVariation: 'Produktvariasjon'
+    db_Sort: Om rokere
+    db_Value: Verdi
+    has_one_Type: Type
+  SilverShop\Model\Variation\OrderItem:
+    PLURALNAME: Produkt
+    SINGULARNAME: Produkt
+    db_ProductVariationVersion: 'Produktvariasjonversjon'
+    has_one_ProductVariation: 'Produktvariasjon'
+  SilverShop\Model\Variation\Variation:
+    MustSaveFirstMessage: "Du kan velje ein variant-attributt etter du har lagra for første gang, om det finnes ein."
+    NoAttributeValuesMessage: '{attribute} har ingen verdi. Du kan lage dem hos "Products" &#62; "Product Attribute Type" seksjonen i adminpanelet.'
+    PLURALNAME: Variasjon
+    SINGULARNAME: Variasjon
+    db_InternalItemID: 'Intern-ID'
+    db_Price: Pris
+    db_Version: Versjon
+    has_one_Image: Bilete
+    has_one_Product: Produkt
+    many_many_AttributeValues: 'Attributtverdi'
   SilverShop\Model\Zone:
-    PLURALNAME: Zones
-    SINGULARNAME: Zone
-    db_Description: Beschrijving
-    db_Name: Naam
-    has_many_Regions: 'Regio''s'
+    PLURALNAME: Sonar
+    SINGULARNAME: Sonar
+    db_Description: 'Beskriving '
+    db_Name: Namn
+    has_many_Regions: Region
   SilverShop\Model\ZoneRegion:
-    PLURALNAME: 'Zone regio''s'
-    SINGULARNAME: 'Zone regio'
-    has_one_Zone: Zone
+    PLURALNAME: 'Soneregionar'
+    SINGULARNAME: 'Soneregion'
+    has_one_Zone: Sonar
+  SilverShop\ORM\FieldType\ShopCurrency:
+    Free: '<span class="free">Gratis</span>'
+  SilverShop\Page\AccountPage:
+    AddressBook: 'Adressebok'
+    DESCRIPTION: "Gi brukar tilgang til å sjå sine kontodetaljer og ordrar."
+    DefaultTitle: Konto
+    EditProfile: 'Rediger profil'
+    LogOut: 'Logg ut'
+    Login: 'Du må vere logga inn for å få tilgang til kontoen. Om du ikkje er registrert vil du få tilbod om det når bestiller din første ordre.'
+    LoginAgain: "Du er blitt logga ut. Logg inn igjen om du vil!"
+    MemberEmail: E-post
+    MemberLastVisit: 'Siste besøk'
+    MemberName: Namn
+    MemberSince: 'Medlem sidan'
+    NoPage: "Inga kontoside blei funne. Venleg lag ei i adminpanelet."
+    NoPastOrders: 'Inga ordrar blei funne'
+    NumberOfOrders: 'Mengde av ordrar'
+    PLURALNAME: 'Kontoside'
+    PastOrders: 'Gamle ordrar'
+    SINGULARNAME: 'Kontoside'
+    Title: 'Min konto'
+  SilverShop\Page\AccountPage_AddressBook:
+    CreateNewTitle: 'Lag ei ny adresse'
+    DefaultBillingAddress: 'Standard fakturaadresse'
+    DefaultShippingAddress: 'Standard fraktadresse'
+    DeleteAddress: 'Slett adressa'
+    MakeDefaultBilling: 'Gjer denne til standard betaling'
+    MakeDefaultBillingTitle: 'Gjer denne til standard betalingadresse'
+    MakeDefaultShipping: 'Gjer den til standard frakt'
+    MakeDefaultShippingTitle: 'Gjer denne til standard fraktadresse'
+    NoAddress: 'Inga adresse blei funne'
+    Title: 'Standardadresse'
+  SilverShop\Page\AccountPage_EditProfile:
+    Title: 'Rediger profil'
+  SilverShop\Page\CartPage:
+    DESCRIPTION: "Ein side kor ein kunde kan sjå og redigere innhaldet i handlekorga sin."
+    DefaultTitle: 'Handlekorg'
+    PLURALNAME: 'Handlekorgsider'
+    SINGULARNAME: 'Handlekorgside'
+    has_one_CheckoutPage: 'Kasseside'
+    has_one_ContinuePage: 'Forsettside'
+  SilverShop\Page\CheckoutPage:
+    DESCRIPTION: 'Side som handterar kassefunksjonen  '
+    DefaultTitle: Kasse
+    PLURALNAME: 'Kassesider'
+    PaymentErrorMessage: 'Ein feil skjedde ved betaling, error frå betaling gateway:'
+    ProceedToPayment: 'Fortsett til betaling'
+    PurchaseCompleteDescription: "Denne beskjeden blir inkludert i kvittering som blir sendt på epost etter at ordren er betalt."
+    SINGULARNAME: 'Kasseside'
+    SubmitPayment: 'Send betaling'
+    db_PurchaseComplete: 'Ordre er betalt'
+  SilverShop\Page\Product:
+    AddToCart: 'Legg til handlekorg'
+    AddToCartTitle: 'Legg til &quot;{Title}&quot; handlekorga'
+    AdditionalCategories: 'Liknande kategoriar'
+    AllowPurchase: 'Tillat at produkt kan kjøpast'
+    Category: Kategori
+    CategoryDescription: "Dette er ei foreldreside eller standardkategori."
+    Code: 'Produktkode'
+    CostPriceDescription: 'Rettleiande pris, leverandørpris eller pris før varen har blitt rabattert.'
+    DESCRIPTION: 'Produktside i butikken'
+    Featured: 'Framheva produkt'
+    Image: 'Produktbilete'
+    ImageAltText: '{Title} bilete'
+    InternalItemID: 'Produktkode/SKU'
+    Model: Modell
+    NoImage: 'ingen bilete'
+    NumItemsInCartPlural: 'Du har {Quantity} produkt i handlekorga'
+    NumItemsInCartSingular: 'Du har dette produktet i handlekorga'
+    PLURALNAME: Produkt
+    PageTitle: 'Produkttittel'
+    Price: Pris
+    PriceDesc: 'Prisen varen blir seld for (salspris).'
+    ProductCodeShort: SKU
+    SINGULARNAME: Produkt
+    Size: Storleik
+    View: 'Vis produkt'
+    db_AllowPurchase: 'Tillat kjøp'
+    db_BasePrice: Pris
+    db_CostPrice: 'Rettleiande pris'
+    db_Depth: 'Djupn '
+    db_Featured: Fremheva
+    db_Height: Høgde
+    db_InternalItemID: 'Intern-ID'
+    db_Model: Modell
+    db_Popularity: Popularitet
+    db_Weight: Vekt
+    db_Width: ' Breidde'
+    has_many_Variations: Variasjon
+    has_one_Image: Bilete
+    many_many_ProductCategories: 'Produktkategoriar'
+    many_many_VariationAttributeTypes: 'Variasjonattributttype'
+  SilverShop\Page\ProductCategory:
+    Alphabetical: Alfabetisk
+    DESCRIPTION: 'Produktkategori i butikken'
+    PLURALNAME: Kategoriar
+    Price: Pris
+    SINGULARNAME: Kategori
+    belongs_many_many_Products: Produkt
+  SilverShop\Payment:
+    Note: Melding
+    PaymentsHeadline: Betaling(ar)
+  SilverShop\Reports\AbandonedCartReport:
+    Description: "Overvak isolerte handlekorger for ein bestemt periode. Grupper resultata for eit år, månad eller dag."
+    Title: 'Ufullstendige handlekorger'
+  SilverShop\Reports\CustomerReport:
+    Description: 'Kunden sin rapport'
+    Title: Kunden
+  SilverShop\Reports\ProductReport:
+    Description: 'Forstå kva for eit produkt som gjer det bra og ikkje'
+    Title: Produkt
+  SilverShop\Reports\ShopPeriodReport:
+    Description: 'Perioderapport'
+    Title: 'Perioderapport'
+  SilverShop\Reports\ShopSalesReport:
+    Description: "Fylg butikksal yting for ein periode. Filter resultatet på år, månad eller dag."
+    Title: 'Sal'
+  SilverShop\Reports\SideReport:
+    AllProducts: 'Alle produkt'
+    FeaturedProducts: 'Framheva produkt'
+    Heavy: 'Tunge produkt'
+    NoImage: 'Produkt uten bilete'
+    ShopGroup: SilverShop
+  SilverShop\Reports\TaxReport:
+    Description: "Momsrapport på belasta ordrar. Inkluderer bare ordre som har status betalt."
+    Title: Moms
+  SilverShop\ShopEmail:
+    AdminNotificationSubject: 'Ordre #{OrderNo} beskjed'
+    AdminNotificationTitle: 'Butikkvittering'
+    CancelSubject: 'Ordre #{OrderNo} kansellert av bruker'
+    ConfirmationSubject: 'Ordre #{OrderNo} bekreftelse'
+    ConfirmationTitle: 'Ordrebekreftelse'
+    PhoneNumber: 'Telefonnummer'
+    ReceiptSubject: 'Ordre #{OrderNo} kvittering'
+    ReceiptTitle: 'Kvittering'
+    Regards: 'Med beste helsing'
+    StatusChangeAdminCancelledNote: 'Vi har kansellert din ordre. Vennligst kontakt oss dersom du har spørsmål om dette.'
+    StatusChangeMemberCancelledNote: 'Din ordre er blitt kansellert. Vennligst kontakt oss dersom du har spørsmål om dette.'
+    StatusChangeProcessingNote: 'Din ordre er i behandling. Vennligst kontakt oss dersom du har spørsmål om dette.'
+    StatusChangeSentNote: 'Din ordre har no blitt sendt! Vi forventer levering i løpet av få dagar. Ta kontakt dersom du ikkje har mottatt levering i løpet av fem dagar.'
+    StatusChangeSubject: 'Silvershop -'
+    StatusChangeTitle: 'Statusendring'
+    StatusChanged: 'Status for ordre #{OrderNo} er endra til "{OrderStatus}"'

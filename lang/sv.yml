@@ -1,16 +1,14 @@
 sv:
-  SilverShop\Forms:
-    FIELDISREQUIRED: '{name} är obligatoriskt'
   SilverShop\Admin\OrdersAdmin:
     MENUTITLE: Beställningar
   SilverShop\Admin\ProductCatalogAdmin:
     MENUTITLE: Katalog
   SilverShop\Admin\ZoneAdmin:
     MENUTITLE: Zones
-  SilverShop\Reports\AbandonedCartReport:
-    Title: 'Övergivna varukorgar'
+  SilverShop\Forms:
+    FIELDISREQUIRED: '{name} är obligatoriskt'
   SilverShop\Page\AccountPage:
-    AddressBook: Adressbok
+    AddressBook: 'Adressbok'
     DefaultTitle: Konto
     LogOut: 'Logga ut'
     MemberEmail: Email
@@ -18,3 +16,5 @@ sv:
     MemberName: Namn
     MemberSince: 'Medlem sedan'
     NumberOfOrders: 'Antal beställningar'
+  SilverShop\Reports\AbandonedCartReport:
+    Title: 'Övergivna varukorgar'

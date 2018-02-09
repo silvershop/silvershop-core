@@ -6,46 +6,154 @@ da:
     MENUTITLE: Katalog
   SilverShop\Admin\ZoneAdmin:
     MENUTITLE: Zoner
-  SilverShop\Reports\AbandonedCartReport:
-    Description: "Overvåg forladte varekurve over en given periode. Gruppér resultater på år, måned eller dag.\n"
-    Title: 'Forladte varekurve'
-  SilverShop\Page\AccountPage:
-    AddressBook: Adressebog
-    DESCRIPTION: "Giver brugeren mulighed for at se sine kontodetaljer og tidligere ordrer.\n"
-    DefaultTitle: Konto
-    EditProfile: 'Rediger profil'
-    LogOut: 'Log ud'
-    Login: "Du skal logge ind før du kan tilgå din konto-side. Hvis ikke du er registreret, kan du ikke tilgå siden før du har afgivet din første ordre.\n"
-    LoginAgain: "Du er blevet logget ud. Hvis du ønsker at logge ind igen, kan du gøre dette herunder.\n"
-    MemberEmail: E-mail
-    MemberLastVisit: 'Sidste besøg'
-    MemberName: Navn
-    MemberSince: 'Medlem siden'
-    NoPage: 'Der blev ikke fundet en AccountPage. Lav venligst en i CMS''et!'
-    NoPastOrders: 'Ingen tidligere ordrer fundet.'
-    NumberOfOrders: 'Antal ordrer'
-    PLURALNAME: Kontosider
-    PastOrders: 'Tidligere ordrer'
-    SINGULARNAME: Kontoside
-    Title: 'Min konto'
-  AccountPage_AddressBook:
-    CreateNewTitle: 'Opret ny adresse'
-    NoAddress: 'Der blev ikke fundet nogen adresser.'
-    Title: 'Standard adresse'
-    DefaultShippingAddress: 'Standard forsendelsesadresse'
-    DefaultBillingAddress: 'Standard betalingsadresse'
-    MakeDefaultShipping: 'Sæt som standard forsendelsesadresse'
-    MakeDefaultShippingTitle: "Gør denne til min standard forsendelsesadresse\n"
-    MakeDefaultBilling: 'Sæt som standard betalingsadresse'
-    MakeDefaultBillingTitle: "Gør denne til min standard betalingsadresse\n"
-    DeleteAddress: 'Slet denne adresse'
-  AccountPage_EditProfile:
-    Title: 'Rediger profil'
+  SilverShop\Cart\ShoppingCart:
+    CannotPurchase: 'Varen {Title} kan ikke købes.'
+    Checkout: Bestilling
+    Cleared: 'Kurven blev tømt.'
+    ContinueShopping: 'Fortsæt med at handle'
+    Headline: 'Indkøbskurv'
+    InvalidSecurityToken: "Ugyldigt sikkerhedsværdi, muligt CSRF angreb."
+    ItemAdded: 'Varen blev tilføjet.'
+    ItemNotFound: 'Varen blev ikke fundet.'
+    ItemRemoved: 'Varen blev fjernet.'
+    ItemsInCartPlural: 'Der er <a href="{link}">{quantity} varer</a> i din kurv.'
+    ItemsInCartSingular: 'Der er <a href="{link}">1 vare</a> i din kurv.'
+    NoCartFound: 'Ingen kurv fundet.'
+    NoCartInitialised: 'ingen kurv initialiseret'
+    NoItems: 'Der er ingen varer i din kurv.'
+    NoOrder: 'Ingen aktiv ordre.'
+    ProceedToCheckout: 'Forsæt til bestilling'
+    ProductNotFound: 'Varen blev ikke fundet.'
+    QuantitySet: 'Antallet blev sat.'
+    RemoveAllTitle: 'Fjern alle &quot;{Title}&quot; fra kurven'
+    RemoveTitle: 'Fjern &quot;{Title}&quot; fra kurven.'
+    TableSummary: 'Nuværende indhold af din kurv.'
+  SilverShop\Checkout\Checkout:
+    IdFieldNotFound: 'Krævet felt ikke fundet: {IdentifierField}'
+    MemberExists: 'Et medlem findes allerede med {Field} {Identifier}'
+    MembershipIsNotAllowed: 'Det er ikke tilladt at oprette nye brugere'
+    NoPaymentMethod: 'Betalingsmetoden eksisterer ikke'
+    PasswordRequired: 'En adgangskode er krævet'
+    TermsAndConditionsLink: 'Jeg accepterer <a href="{TermsPageLink}" target="new" title="Læs de gældende handelsbetingelser her">{TermsPageTitle}</a>'
+  SilverShop\Checkout\CheckoutField:
+    AccountInfo: "Indtast en adgangskode, hvis du ønsker at få oprettet en bruger."
+    MemberLoginInfo: 'Er du allerede bruger, kan du <a href="{LoginUrl}">logge ind her</a>'
+    MembershipDetails: 'Brugerdetaljer'
+    MustAgreeToTerms: "Du skal acceptere handelsbetingelserne"
+    Password: Adgangskode
+    PaymentType: 'Betalingstype'
+  SilverShop\Checkout\Component\OnsitePayment:
+    InvalidCreditCard: 'Kreditkortet er ugyldigt'
+  SilverShop\Checkout\Component\Payment:
+    NoPaymentMethod: 'Betalingsmetode ikke angivet'
+    UnsupportedGateway: 'Gateway ikke understøttet'
+  SilverShop\Checkout\OrderProcessor:
+    CantPay: 'Betaling for ordren kan ikke gennemføres'
+    InvalidGateway: '`{gateway}` er ikke en gyldig betalingsgateway.'
+    NoItems: 'Ordren indeholder ingen varer'
+    NoOrder: 'Ordren eksisterer ikke.'
+    NoOrderStarted: 'En ny ordre er endnu ikke startet.'
+    NotCart: 'Ordren er ikke en kurv.'
+  SilverShop\Checkout\Step\Address:
+    BillTo: 'Betales af:'
+    EnterShippingAddress: "Indtast venligst din forsendelsesadresse"
+    SeperateBilling: 'Fakturer til anden adresse'
+    ShipTo: 'Sendes til:'
+    SupplyContactInformation: 'Indtast dine kontakt oplysninger'
+  SilverShop\Checkout\Step\CheckoutStep:
+    Continue: Fortsæt
+    Shipping: Forsendelse
+    Summary: Oversigt
+  SilverShop\Checkout\Step\Membership:
+    ContinueAsGuest: 'Fortsæt som gæst'
+    CreateAccount: 'Opret en konto'
+    CreateNewAccount: 'Opret ny konto'
+  SilverShop\Dev\ShopDevelopmentAdmin:
+    BuildTasks: 'Build Tasks'
+    CartCleanup: 'Ryd gamle indkøbskurve'
+    CartCleanupDesc: 'Slet forladte indkøbskurve'
+    CartTasks: 'Indkøbskurv handling'
+    ClearCart: 'Ryd den aktive indkøbskurv'
+    DebugCart: 'Fejlfind indkøbskurven'
+    DeleteOrders: 'Slet alle ordrer'
+    DeleteOrdersDesc: "Slet alle ordrer, modifikationer og betalinger fra databasen"
+    DeleteProducts: 'Slet alle produkter'
+    DeleteProductsDesc: 'Slet alle produkter fra databasen'
+    PopulateCart: "Læg nogle tilgængelige produkter i kurven"
+    PopulateShop: 'Opret shop'
+    PopulateShopDesc: "Udfyld shoppen med test produkter, kategorier og andre nødvendige sider"
+    RecalculateOrders: 'Genberegn alle ordrer'
+    RecalculateOrdersDesc: 'Genberegn alle ordre værdier. Advarsel: dette overskriver alle historiske værdier.'
+    RunAllTests: 'Kør alle shoppens unit tests'
+    UnitTests: 'Unit Tests'
+  SilverShop\Extension\ProductVariationsExtension:
+    Attributes: Egenskaber
+    AttributesDescription: "Disse felter indikerer hvordan variationerne varierer. Når de er valgt, kan de redigeres på hver enkelt variation."
+    Variations: Varianter
+    VariationsInfo: 'Pris - Da du har en eller flere variationer, skal priser sættes på fanen "Variationer"'
+  SilverShop\Extension\ShopConfigExtension:
+    AllowedCountries: 'Tilladte ordre og forsendelses lande'
+    AllowedCountriesTabTitle: 'Tilladte lande'
+    CustomerGroup: 'Tilføj nye kunder til denne gruppe'
+    DefaultImage: 'Standard produkt billede'
+    TermsPage: 'Side med handelsbetingelser'
+  SilverShop\Forms\CartForm:
+    REMOVED_ITEMS: 'Fjernede {count} varer.'
+    UPDATED_ITEMS: 'Opdaterede {count} varer.'
+    UpdateCart: 'Opdater kurv'
+  SilverShop\Forms\CheckoutComponentValidator:
+    InvalidDataMessage: 'Der er problemer med de indtastede data. Se herunder:'
+  SilverShop\Forms\OrderActionsForm:
+    CancelOrder: 'Annuller denne ordre'
+    CouldNotProcessPayment: 'Betalingen kunne ikke behandles'
+    MakePayment: 'Gennemfør betaling'
+    ManualNotAllowed: 'Manuel betaling ikke tilladt'
+    OrderCancelled: 'Ordren blev annulleret'
+    PayOrder: 'Betal udestående'
+    PaymentMethod: 'Betalingsmetode'
+  SilverShop\Forms\SetLocationForm:
+    ChooseCountry: 'Vælg land...'
+    Country: Land
+  SilverShop\Forms\ShopAccountForm:
+    DetailsSaved: 'Dine oplysninger blev gemt'
+    Save: 'Gem ændringer'
+    SaveAndProceed: 'Gem og fortsæt til bestilling'
+  SilverShop\Forms\ShopQuantityField:
+    AddOne: 'Tilføj en eller flere &quot;{ItemTitle}&quot; til kurven'
+    RemoveOne: 'Fjern en &quot;{ItemTitle}&quot; fra din kurv'
+  SilverShop\Forms\VariationForm:
+    ChooseAttribute: 'Vælg {attribute} …'
+    ProductNotAvailable: "Dette produkt er ikke tilgængeligt med de valgte muligheder."
+    VariationNotAvailable: 'Denne variation er desværre ikke tilgængelig.'
+  SilverShop\Generic:
+    Change: Ændring
+    Customer: Kunde
+    Date: Dato
+    DateFormatNice: '%d/%m/%Y'
+    DateTimeFormatNice: '%d/%m/%Y %H:%i%s'
+    DateTimeFormatNice24: 'd/m/Y H:i'
+    DevToolsTitle: 'SilverShop udviklingsværktøjer'
+    Edit: Rediger
+    Quantity: Antal
+    ReadMoreTitle: 'Klik her for at læse mere om &quot;{Title}&quot;'
+    Remove: Fjern
+    View: vis
+  SilverShop\Includes\PriceTag:
+    SAVE: Gem
+  SilverShop\Includes\ProductGroup:
+    Next: Næste
+    Page: Side
+    Previous: Forrige
+    ViewNext: 'Vis næste side'
+    ViewPage: 'Vis side {pageNum}'
+    ViewPrevious: 'Vis forrige side'
+  SilverShop\Includes\ProductMenu:
+    GotoPageTitle: 'Gå til {Title} siden'
   SilverShop\Model\Address:
+    AddressHint: "Vej / Gade / Postbox"
+    AddressLine2Hint: "lokale, bygning, lejlighed, enhed, etage"
     AddressSaved: 'Din adresse blev gemt'
-    AddressHint: 'Vej / Gade / Postbox'
-    AddressLine2Hint: 'lokale, bygning, lejlighed, enhed, etage'
-    BillingAddress: Betalingsadresse
+    BillingAddress: 'Betalingsadresse'
     CityHint: 'eller forstad, amt, kommune'
     CreateNewAddress: 'Opret ny adresse'
     ExistingBillingAddress: 'Eksisterende betalingsadresser'
@@ -54,97 +162,66 @@ da:
     SINGULARNAME: Adresse
     SaveDefaults: 'Gem standarder'
     SaveNew: 'Gem ny adresse'
-    ShippingAddress: Forsendelsesadresse
-    StateHint: Stednavn
+    ShippingAddress: 'Forsendelsesadresse'
+    StateHint: 'Stednavn'
     db_Address: Adresse
     db_AddressLine2: 'Adresselinje 2 (ikke krævet)'
     db_City: By
     db_Company: Virksomhed
     db_Country: Land
-    db_FirstName: Fornavn
-    db_Phone: Telefonnummer
-    db_PostalCode: Postnummer
+    db_FirstName: 'Fornavn'
+    db_Phone: 'Telefonnummer'
+    db_PostalCode: 'Postnummer'
     db_State: Amt
     db_Surname: Efternavn
     has_one_Member: Medlem
-  SilverShop\Forms\CartForm:
-    REMOVED_ITEMS: 'Fjernede {count} varer.'
-    UPDATED_ITEMS: 'Opdaterede {count} varer.'
-    UpdateCart: 'Opdater kurv'
-  SilverShop\Page\CartPage:
-    DESCRIPTION: "En side hvor kunder kan se og opdatere indholdet af deres varekurv.\n"
-    DefaultTitle: Varekurv
-    PLURALNAME: 'Varekurv sider'
-    SINGULARNAME: 'Varekurv side'
-    has_one_CheckoutPage: 'Checkout side'
-    has_one_ContinuePage: 'Fortsæt med at handle side'
-  SilverShop\Checkout\Checkout:
-    IdFieldNotFound: 'Krævet felt ikke fundet: {IdentifierField}'
-    MemberExists: 'Et medlem findes allerede med {Field} {Identifier}'
-    MembershipIsNotAllowed: "Det er ikke tilladt at oprette nye brugere\n"
-    NoPaymentMethod: 'Betalingsmetoden eksisterer ikke'
-    PasswordRequired: 'En adgangskode er krævet'
-    TermsAndConditionsLink: 'Jeg accepterer <a href="{TermsPageLink}" target="new" title="Læs de gældende handelsbetingelser her">{TermsPageTitle}</a>'
-  SilverShop\Forms\CheckoutComponentValidator:
-    InvalidDataMessage: 'Der er problemer med de indtastede data. Se herunder:'
-  CheckoutField:
-    AccountInfo: "Indtast en adgangskode, hvis du ønsker at få oprettet en bruger.\n"
-    MemberLoginInfo: 'Er du allerede bruger, kan du <a href="{LoginUrl}">logge ind her</a>'
-    MembershipDetails: Brugerdetaljer
-    MustAgreeToTerms: 'Du skal acceptere handelsbetingelserne'
-    Password: Adgangskode
-    PaymentType: Betalingstype
-  SilverShop\Page\CheckoutPage:
-    DESCRIPTION: 'Side der håndterer bestillingsprocessen'
-    DefaultTitle: Bestilling
-    PLURALNAME: Bestillingssider
-    PaymentErrorMessage: 'Modtog en fejl fra betalingsgateway'
-    ProceedToPayment: 'Fortsæt til betaling'
-    PurchaseCompleteDescription: "Denne besked inkluderes i kvitteringsmailen, der sendes efter gennemført bestilling\n"
-    SINGULARNAME: Bestillingsside
-    SubmitPayment: 'Send betaling'
-    db_PurchaseComplete: 'Købet er gennemført'
-  SilverShop\Checkout\Step\CheckoutStep:
-    Continue: Fortsæt
-    Shipping: Forsendelse
-    Summary: Oversigt
-  SilverShop\Checkout\Step\Address:
-    BillTo: 'Betales af:'
-    EnterShippingAddress: 'Indtast venligst din forsendelsesadresse'
-    SeperateBilling: 'Fakturer til anden adresse'
-    ShipTo: 'Sendes til:'
-    SupplyContactInformation: 'Indtast dine kontakt oplysninger'
-  SilverShop\Checkout\Step\Membership:
-    ContinueAsGuest: 'Fortsæt som gæst'
-    CreateAccount: 'Opret en konto'
-    CreateNewAccount: 'Opret ny konto'
-  SilverShop\Reports\CustomerReport:
-    Description: Kunderapport
-    Title: Kunder
-  SilverShop\Model\Modifiers\Tax\FlatTax:
-    PLURALNAME: Afgifter
-    SINGULARNAME: Moms
+  SilverShop\Model\Modifiers\OrderModifier:
+    PLURALNAME: Modifikationer
+    SINGULARNAME: Modifikation
+    db_Amount: Beløb
+    db_Sort: Sorter
+    db_Type: Type
+  SilverShop\Model\Modifiers\Shipping\Base:
+    PLURALNAME: Modifikationer
+    SINGULARNAME: Forsendelse
   SilverShop\Model\Modifiers\Shipping\Free:
     Free: Gratis
     PLURALNAME: 'Gratis forsendelsesmodificeringer'
-    SINGULARNAME: 'Gratis forsendelse'
+    SINGULARNAME: Gratis forsendelse
+  SilverShop\Model\Modifiers\Shipping\Pickup:
+    PLURALNAME: Modifikationer
+    SINGULARNAME: 'Afhentning'
+  SilverShop\Model\Modifiers\Shipping\Simple:
+    PLURALNAME: 'Simple forsendelsesmetoder'
+    SINGULARNAME: Forsendelse
+    ShipToCountry: 'Send til {Country}'
+    db_Country: Land
+  SilverShop\Model\Modifiers\Shipping\Weight:
+    PLURALNAME: 'Vægtbaserede forsendelses modifikationer'
+    SINGULARNAME: Forsendelse
+    TableTitle: 'Forsendelse ({Kilograms} kg)'
+  SilverShop\Model\Modifiers\SubTotal:
+    PLURALNAME: 'Subtotaler'
+    SINGULARNAME: 'Subtotal'
+  SilverShop\Model\Modifiers\Tax\Base:
+    AtRate: '@ {Rate}%'
+    PLURALNAME: Afgifter
+    SINGULARNAME: Moms
+    db_Rate: Sats
+  SilverShop\Model\Modifiers\Tax\FlatTax:
+    PLURALNAME: Afgifter
+    SINGULARNAME: Moms
   SilverShop\Model\Modifiers\Tax\GlobalTax:
     Included: '(inkluderet i ovenstående pris)'
     PLURALNAME: Afgifter
     SINGULARNAME: Moms
     db_Country: Land
-  SilverShop\Forms\ShopAccountForm:
-    DetailsSaved: 'Dine oplysninger blev gemt'
-    Save: 'Gem ændringer'
-    SaveAndProceed: 'Gem og fortsæt til bestilling'
-  SilverShop\Checkout\Component\OnsitePayment:
-    InvalidCreditCard: 'Kreditkortet er ugyldigt'
   SilverShop\Model\Order:
     BillTo: 'Betales af'
     Date: Dato
     DateFrom: 'Fra dato'
     DateTo: 'Til dato'
-    GrandTotal: Total
+    GrandTotal: 'Total'
     Invoice: Faktura
     OrderHeadline: 'Ordre #{OrderNo} {OrderDate}'
     Outstanding: Udestående
@@ -167,11 +244,11 @@ da:
     TotalOutstanding: 'Udestående total'
     TotalPrice: 'Pris total'
     TotalPriceWithCurrency: 'Pris total ({Currency})'
-    UnitPrice: Enhedspris
+    UnitPrice: 'Enhedspris'
     db_Dispatched: Afsendt
     db_Email: E-mail
-    db_FirstName: Fornavn
-    db_IPAddress: IP-adresse
+    db_FirstName: 'Fornavn'
+    db_IPAddress: 'IP-adresse'
     db_Notes: Besked
     db_Paid: Betalt
     db_Placed: Afgivet
@@ -186,17 +263,9 @@ da:
     has_many_Modifiers: Modifikationer
     has_many_OrderStatusLogs: 'Ordrestatus logs'
     has_many_Payments: Betalinger
-    has_one_BillingAddress: Faktureringsadresse
+    has_one_BillingAddress: 'Faktureringsadresse'
     has_one_Member: Medlem
-    has_one_ShippingAddress: Forsendelsesadresse
-  SilverShop\Forms\OrderActionsForm:
-    CancelOrder: 'Annuller denne ordre'
-    MakePayment: 'Gennemfør betaling'
-    ManualNotAllowed: 'Manuel betaling ikke tilladt'
-    PayOrder: 'Betal udestående'
-    PaymentMethod: Betalingsmetode
-    CouldNotProcessPayment: 'Betalingen kunne ikke behandles'
-    OrderCancelled: 'Ordren blev annulleret'
+    has_one_ShippingAddress: 'Forsendelsesadresse'
   SilverShop\Model\OrderAttribute:
     PLURALNAME: Egenskaber
     SINGULARNAME: Egenskab
@@ -206,20 +275,7 @@ da:
     PLURALNAME: Varer
     SINGULARNAME: Vare
     db_Quantity: Antal
-    db_UnitPrice: Enhedspris
-  SilverShop\Model\Modifiers\OrderModifier:
-    PLURALNAME: Modifikationer
-    SINGULARNAME: Modifikation
-    db_Amount: Beløb
-    db_Sort: Sorter
-    db_Type: Type
-  SilverShop\Checkout\OrderProcessor:
-    NoItems: 'Ordren indeholder ingen varer'
-    NoOrder: 'Ordren eksisterer ikke.'
-    NoOrderStarted: 'En ny ordre er endnu ikke startet.'
-    NotCart: 'Ordren er ikke en kurv.'
-    CantPay: "Betaling for ordren kan ikke gennemføres\n"
-    InvalidGateway: '`{gateway}` er ikke en gyldig betalingsgateway.'
+    db_UnitPrice: 'Enhedspris'
   SilverShop\Model\OrderStatusLog:
     PLURALNAME: 'Ordrestatus log poster'
     SINGULARNAME: 'Ordrestatus log post'
@@ -227,119 +283,12 @@ da:
     db_DispatchedBy: 'Sendt af'
     db_DispatchedOn: 'Sendt den'
     db_Note: Bemærkning
-    db_PaymentCode: Betalingskode
+    db_PaymentCode: 'Betalingskode'
     db_PaymentOK: 'Betaling OK'
     db_SentToCustomer: 'Sendt til kunde'
     db_Title: Titel
     has_one_Author: Ejer
     has_one_Order: Ordre
-  SilverShop\Payment:
-    Note: Bemærkning
-    PaymentsHeadline: Betaling(er)
-  SilverShop\Checkout\Component\Payment:
-    NoPaymentMethod: 'Betalingsmetode ikke angivet'
-    UnsupportedGateway: 'Gateway ikke understøttet'
-  SilverShop\Model\Modifiers\Shipping\Pickup:
-    PLURALNAME: Modifikationer
-    SINGULARNAME: Afhentning
-  SilverShop\Includes\PriceTag:
-    SAVE: Gem
-  SilverShop\Page\Product:
-    AddToCart: 'Tilføj til kurv'
-    AddToCartTitle: 'Tilføj "{Title}" til din kurv'
-    AdditionalCategories: 'Yderligere kategorier'
-    AllowPurchase: 'Tillad produktet at blive købt'
-    Category: Kategori
-    CategoryDescription: 'Dette er den primære kategori'
-    Code: 'Produkt kode'
-    CostPriceDescription: 'Engrospris før avance.'
-    DESCRIPTION: 'Produkt i shoppen'
-    Featured: 'Fremhævet produkt'
-    Image: Produktbillede
-    ImageAltText: '{Title} billede'
-    InternalItemID: Varenummer
-    Model: Model
-    NoImage: 'Intet billede'
-    NumItemsInCartSingular: 'Du har dette produkt i din kurv'
-    NumItemsInCartPlural: 'Du har {Quantity} produkter i din kurv'
-    PLURALNAME: Produkter
-    PageTitle: Produkttitel
-    Price: Pris
-    PriceDesc: "Basis prisen dette produkt skal sælges til.\n"
-    ProductCodeShort: Varenummer
-    SINGULARNAME: Produkt
-    Size: Størrelse
-    View: 'Vis produkt'
-    db_AllowPurchase: 'Tillad køb'
-    db_BasePrice: Pris
-    db_CostPrice: Kostpris
-    db_Depth: Dybde
-    db_Featured: Fremhævet
-    db_Height: Højde
-    db_InternalItemID: 'Internt vare ID'
-    db_Model: Model
-    db_Popularity: Popularitet
-    db_Weight: Vægt
-    db_Width: Bredde
-    has_many_Variations: Varianter
-    has_one_Image: Billede
-    many_many_ProductCategories: Produktkategorier
-    many_many_VariationAttributeTypes: 'Variant egenskabstyper'
-  SilverShop\Model\Variation\AttributeType:
-    PLURALNAME: Egenskaber
-    SINGULARNAME: Egenskab
-    SaveFirstInfo: "Gem først, så kan du tilføje værdier.\n"
-    belongs_many_many_Product: Produkt
-    db_Label: Mærke
-    db_Name: Navn
-    has_many_Values: Værdier
-  SilverShop\Model\Variation\AttributeValue:
-    PLURALNAME: Værdier
-    SINGULARNAME: Værdi
-    belongs_many_many_ProductVariation: Produktvariant
-    db_Sort: Sortér
-    db_Value: Værdi
-    has_one_Type: Type
-  SilverShop\Page\ProductCategory:
-    DESCRIPTION: 'Produktkategori i shoppen'
-    PLURALNAME: Kategorier
-    SINGULARNAME: Kategori
-    belongs_many_many_Products: Produkter
-    Alphabetical: Alfabetisk
-    Price: Pris
-  SilverShop\Includes\ProductGroup:
-    Next: Næste
-    Page: Side
-    Previous: Forrige
-    ViewNext: 'Vis næste side'
-    ViewPage: 'Vis side {pageNum}'
-    ViewPrevious: 'Vis forrige side'
-  SilverShop\Includes\ProductMenu:
-    GotoPageTitle: 'Gå til {Title} siden'
-  SilverShop\Reports\ProductReport:
-    Description: "Få overblik over, hvilke produkter der performer og hvilke der ikke gør.\n"
-    Title: Produkter
-  SilverShop\Model\Variation\Variation:
-    MustSaveFirstMessage: "Du kan vælge variant egenskaber efter, at du har gemt første gang, hvis der findes nogle.\n"
-    NoAttributeValuesMessage: '{attribute} har ingen værdier at vælge i mellem. Du kan oprette dem i "Produkter"  &#62; "Produkt egenskabstyper" området af CMS.'
-    PLURALNAME: Varianter
-    SINGULARNAME: Variant
-    db_InternalItemID: 'Internt vare ID'
-    db_Price: Pris
-    db_Version: Version
-    has_one_Image: Billede
-    has_one_Product: Produkt
-    many_many_AttributeValues: Egenskabsværdier
-  SilverShop\Model\Variation\OrderItem:
-    PLURALNAME: Varer
-    SINGULARNAME: Vare
-    db_ProductVariationVersion: 'Produktvariation version'
-    has_one_ProductVariation: Produktvariation
-  SilverShop\Extension\ProductVariationsExtension:
-    Attributes: Egenskaber
-    AttributesDescription: "Disse felter indikerer hvordan variationerne varierer. Når de er valgt, kan de redigeres på hver enkelt variation.\n"
-    Variations: Varianter
-    VariationsInfo: 'Pris - Da du har en eller flere variationer, skal priser sættes på fanen "Variationer"'
   SilverShop\Model\Product\OrderItem:
     PLURALNAME: Varer
     SINGULARNAME: Vare
@@ -350,131 +299,39 @@ da:
     SINGULARNAME: 'Område restriktion'
     db_City: By
     db_Country: Land
-    db_PostalCode: Postnummer
+    db_PostalCode: 'Postnummer'
     db_State: Amt
-  SilverShop\Forms\SetLocationForm:
-    ChooseCountry: 'Vælg land...'
-    Country: Land
-  SilverShop\Model\Modifiers\Shipping\Base:
-    PLURALNAME: Modifikationer
-    SINGULARNAME: Forsendelse
-  SilverShop\Generic:
-    Change: Ændring
-    Customer: Kunde
-    Date: Dato
-    DateFormatNice: '%d/%m/%Y'
-    DateTimeFormatNice: '%d/%m/%Y %H:%i%s'
-    DateTimeFormatNice24: 'd/m/Y H:i'
-    DevToolsTitle: 'SilverShop udviklingsværktøjer'
-    Edit: Rediger
-    Quantity: Antal
-    ReadMoreTitle: 'Klik her for at læse mere om &quot;{Title}&quot;'
-    Remove: Fjern
-    View: vis
-  SilverShop\Extension\ShopConfigExtension:
-    AllowedCountries: 'Tilladte ordre og forsendelses lande'
-    AllowedCountriesTabTitle: 'Tilladte lande'
-    CustomerGroup: 'Tilføj nye kunder til denne gruppe'
-    DefaultImage: 'Standard produkt billede'
-    TermsPage: 'Side med handelsbetingelser'
-  SilverShop\ORM\FieldType\ShopCurrency:
-    Free: '<span class="free">Gratis</span>'
-  SilverShop\Dev\ShopDevelopmentAdmin:
-    BuildTasks: 'Build Tasks'
-    CartCleanup: 'Ryd gamle indkøbskurve'
-    CartCleanupDesc: 'Slet forladte indkøbskurve'
-    CartTasks: 'Indkøbskurv handling'
-    ClearCart: 'Ryd den aktive indkøbskurv'
-    DebugCart: 'Fejlfind indkøbskurven'
-    DeleteOrders: 'Slet alle ordrer'
-    DeleteOrdersDesc: "Slet alle ordrer, modifikationer og betalinger fra databasen\n"
-    DeleteProducts: 'Slet alle produkter'
-    DeleteProductsDesc: 'Slet alle produkter fra databasen'
-    PopulateCart: "Læg nogle tilgængelige produkter i kurven\n"
-    PopulateShop: 'Opret shop'
-    PopulateShopDesc: "Udfyld shoppen med test produkter, kategorier og andre nødvendige sider\n"
-    RecalculateOrders: 'Genberegn alle ordrer'
-    RecalculateOrdersDesc: 'Genberegn alle ordre værdier. Advarsel: dette overskriver alle historiske værdier.'
-    RunAllTests: 'Kør alle shoppens unit tests'
-    UnitTests: 'Unit Tests'
-  SilverShop\ShopEmail:
-    AdminNotificationSubject: 'Ordre #{OrderNo} notifikation'
-    AdminNotificationTitle: 'Shop kvittering'
-    CancelSubject: 'Ordre #{OrderNo} annulleret af bruger'
-    ConfirmationSubject: 'Ordre #{OrderNo} bekræftelse'
-    ConfirmationTitle: 'Ordre bekræftelse'
-    PhoneNumber: Telefonnummer
-    ReceiptSubject: 'Ordre #{OrderNo} kvittering'
-    ReceiptTitle: 'Shop kvittering'
-    Regards: 'Med venlig hilse'
-    StatusChangeSubject: 'Silvershop - '
-    StatusChangeTitle: 'Shop Status skifte'
-    StatusChanged: 'Status for ordre #{OrderNo} ændret til "{OrderStatus}"'
-    StatusChangeAdminCancelledNote: "Din ordre er blevet annulleret af vores ansatte. Kontakt os venligst hvis du har nogle spørgsmål vedr. denne ordre.\n"
-    StatusChangeMemberCancelledNote: "Din annullering af ordren er blevet noteret. Kontakt os venligst hvis du har spørgsmål.\n"
-    StatusChangeProcessingNote: "Vi har opdateret status på din ordre til \"I gang\". Venligst kontakt os hvis du har spørgsmål til ordren.\n"
-    StatusChangeSentNote: 'Din ordre er blevet afsendt. Vi forsøger at levere omgående - kontakt os venligts, hvis din ordre ikke er leveret inden for få dage'
-  SilverShop\Reports\ShopPeriodReport:
-    Description: 'Shop periode rapport'
-    Title: 'Shop periode rapport'
-  SilverShop\Forms\ShopQuantityField:
-    AddOne: 'Tilføj en eller flere &quot;{ItemTitle}&quot; til kurven'
-    RemoveOne: 'Fjern en &quot;{ItemTitle}&quot; fra din kurv'
-  SilverShop\Reports\ShopSalesReport:
-    Description: "Overvåg shoppens salgsydeevne over en bestemt periode. Gruppér resultater efter år, måned eller dag.\n"
-    Title: 'Shop salg'
-  SilverShop\Reports\SideReport:
-    AllProducts: 'Alle prdukter'
-    FeaturedProducts: 'Fremhævede produkter'
-    Heavy: 'Tunge produkter'
-    NoImage: 'Produkter uden billede'
-    ShopGroup: Shop
-  SilverShop\Cart\ShoppingCart:
-    CannotPurchase: 'Varen {Title} kan ikke købes.'
-    Checkout: Bestilling
-    Cleared: 'Kurven blev tømt.'
-    ContinueShopping: 'Fortsæt med at handle'
-    Headline: Indkøbskurv
-    InvalidSecurityToken: "Ugyldigt sikkerhedsværdi, muligt CSRF angreb.\n"
-    ItemAdded: 'Varen blev tilføjet.'
-    ItemNotFound: 'Varen blev ikke fundet.'
-    ItemRemoved: 'Varen blev fjernet.'
-    ItemsInCartPlural: 'Der er <a href="{link}">{quantity} varer</a> i din kurv.'
-    ItemsInCartSingular: 'Der er <a href="{link}">1 vare</a> i din kurv.'
-    NoCartFound: 'Ingen kurv fundet.'
-    NoCartInitialised: 'ingen kurv initialiseret'
-    NoItems: 'Der er ingen varer i din kurv.'
-    NoOrder: 'Ingen aktiv ordre.'
-    ProceedToCheckout: 'Forsæt til bestilling'
-    ProductNotFound: 'Varen blev ikke fundet.'
-    QuantitySet: 'Antallet blev sat.'
-    RemoveAllTitle: 'Fjern alle &quot;{Title}&quot; fra kurven'
-    RemoveTitle: 'Fjern &quot;{Title}&quot; fra kurven.'
-    TableSummary: 'Nuværende indhold af din kurv.'
-  SilverShop\Model\Modifiers\Shipping\Simple:
-    PLURALNAME: 'Simple forsendelsesmetoder'
-    SINGULARNAME: Forsendelse
-    ShipToCountry: 'Send til {Country}'
-    db_Country: Land
-  SilverShop\Model\Modifiers\SubTotal:
-    PLURALNAME: Subtotaler
-    SINGULARNAME: Subtotal
-  SilverShop\Model\Modifiers\Tax\Base:
-    AtRate: '@ {Rate}%'
-    PLURALNAME: Afgifter
-    SINGULARNAME: Moms
-    db_Rate: Sats
-  SilverShop\Reports\TaxReport:
-    Description: "Rapporter moms opkrævet på ordrer. Inkluderer kun ordrer der er betalt.\n"
-    Title: Moms
-  SilverShop\Forms\VariationForm:
-    ChooseAttribute: 'Vælg {attribute} …'
-    ProductNotAvailable: "Dette produkt er ikke tilgængeligt med de valgte muligheder.\n"
-    VariationNotAvailable: "Denne variation er desværre ikke tilgængelig.\n"
-  SilverShop\Model\Modifiers\Shipping\Weight:
-    PLURALNAME: "Vægtbaserede forsendelses modifikationer\n"
-    SINGULARNAME: Forsendelse
-    TableTitle: 'Forsendelse ({Kilograms} kg)'
+  SilverShop\Model\Variation\AttributeType:
+    PLURALNAME: Egenskaber
+    SINGULARNAME: Egenskab
+    SaveFirstInfo: 'Gem først, så kan du tilføje værdier.'
+    belongs_many_many_Product: Produkt
+    db_Label: Mærke
+    db_Name: Navn
+    has_many_Values: Værdier
+  SilverShop\Model\Variation\AttributeValue:
+    PLURALNAME: Værdier
+    SINGULARNAME: Værdi
+    belongs_many_many_ProductVariation: 'Produktvariant'
+    db_Sort: Sortér
+    db_Value: Værdi
+    has_one_Type: Type
+  SilverShop\Model\Variation\OrderItem:
+    PLURALNAME: Varer
+    SINGULARNAME: Vare
+    db_ProductVariationVersion: 'Produktvariation version'
+    has_one_ProductVariation: 'Produktvariation'
+  SilverShop\Model\Variation\Variation:
+    MustSaveFirstMessage: "Du kan vælge variant egenskaber efter, at du har gemt første gang, hvis der findes nogle."
+    NoAttributeValuesMessage: '{attribute} har ingen værdier at vælge i mellem. Du kan oprette dem i "Produkter"  &#62; "Produkt egenskabstyper" området af CMS.'
+    PLURALNAME: Varianter
+    SINGULARNAME: Variant
+    db_InternalItemID: 'Internt vare ID'
+    db_Price: Pris
+    db_Version: Version
+    has_one_Image: Billede
+    has_one_Product: Produkt
+    many_many_AttributeValues: 'Egenskabsværdier'
   SilverShop\Model\Zone:
     PLURALNAME: Zoner
     SINGULARNAME: Zone
@@ -485,3 +342,146 @@ da:
     PLURALNAME: 'Zone regioner'
     SINGULARNAME: 'Zone region'
     has_one_Zone: Zone
+  SilverShop\ORM\FieldType\ShopCurrency:
+    Free: '<span class="free">Gratis</span>'
+  SilverShop\Page\AccountPage:
+    AddressBook: 'Adressebog'
+    DESCRIPTION: "Giver brugeren mulighed for at se sine kontodetaljer og tidligere ordrer."
+    DefaultTitle: Konto
+    EditProfile: 'Rediger profil'
+    LogOut: 'Log ud'
+    Login: 'Du skal logge ind før du kan tilgå din konto-side. Hvis ikke du er registreret, kan du ikke tilgå siden før du har afgivet din første ordre.'
+    LoginAgain: "Du er blevet logget ud. Hvis du ønsker at logge ind igen, kan du gøre dette herunder."
+    MemberEmail: E-mail
+    MemberLastVisit: 'Sidste besøg'
+    MemberName: Navn
+    MemberSince: 'Medlem siden'
+    NoPage: "Der blev ikke fundet en AccountPage. Lav venligst en i CMS'et!"
+    NoPastOrders: 'Ingen tidligere ordrer fundet.'
+    NumberOfOrders: 'Antal ordrer'
+    PLURALNAME: 'Kontosider'
+    PastOrders: 'Tidligere ordrer'
+    SINGULARNAME: 'Kontoside'
+    Title: 'Min konto'
+  SilverShop\Page\AccountPage_AddressBook:
+    CreateNewTitle: 'Opret ny adresse'
+    DefaultBillingAddress: 'Standard betalingsadresse'
+    DefaultShippingAddress: 'Standard forsendelsesadresse'
+    DeleteAddress: 'Slet denne adresse'
+    MakeDefaultBilling: 'Sæt som standard betalingsadresse'
+    MakeDefaultBillingTitle: 'Gør denne til min standard betalingsadresse'
+    MakeDefaultShipping: 'Sæt som standard forsendelsesadresse'
+    MakeDefaultShippingTitle: 'Gør denne til min standard forsendelsesadresse'
+    NoAddress: 'Der blev ikke fundet nogen adresser.'
+    Title: 'Standard adresse'
+  SilverShop\Page\AccountPage_EditProfile:
+    Title: 'Rediger profil'
+  SilverShop\Page\CartPage:
+    DESCRIPTION: "En side hvor kunder kan se og opdatere indholdet af deres varekurv."
+    DefaultTitle: 'Varekurv'
+    PLURALNAME: 'Varekurv sider'
+    SINGULARNAME: 'Varekurv side'
+    has_one_CheckoutPage: 'Checkout side'
+    has_one_ContinuePage: 'Fortsæt med at handle side'
+  SilverShop\Page\CheckoutPage:
+    DESCRIPTION: 'Side der håndterer bestillingsprocessen'
+    DefaultTitle: Bestilling
+    PLURALNAME: 'Bestillingssider'
+    PaymentErrorMessage: 'Modtog en fejl fra betalingsgateway'
+    ProceedToPayment: 'Fortsæt til betaling'
+    PurchaseCompleteDescription: "Denne besked inkluderes i kvitteringsmailen, der sendes efter gennemført bestilling"
+    SINGULARNAME: 'Bestillingsside'
+    SubmitPayment: 'Send betaling'
+    db_PurchaseComplete: 'Købet er gennemført'
+  SilverShop\Page\Product:
+    AddToCart: 'Tilføj til kurv'
+    AddToCartTitle: 'Tilføj "{Title}" til din kurv'
+    AdditionalCategories: 'Yderligere kategorier'
+    AllowPurchase: 'Tillad produktet at blive købt'
+    Category: Kategori
+    CategoryDescription: "Dette er den primære kategori"
+    Code: 'Produkt kode'
+    CostPriceDescription: 'Engrospris før avance.'
+    DESCRIPTION: 'Produkt i shoppen'
+    Featured: 'Fremhævet produkt'
+    Image: 'Produktbillede'
+    ImageAltText: '{Title} billede'
+    InternalItemID: 'Varenummer'
+    Model: Model
+    NoImage: 'Intet billede'
+    NumItemsInCartPlural: 'Du har {Quantity} produkter i din kurv'
+    NumItemsInCartSingular: 'Du har dette produkt i din kurv'
+    PLURALNAME: Produkter
+    PageTitle: 'Produkttitel'
+    Price: Pris
+    PriceDesc: 'Basis prisen dette produkt skal sælges til.'
+    ProductCodeShort: Varenummer
+    SINGULARNAME: Produkt
+    Size: Størrelse
+    View: 'Vis produkt'
+    db_AllowPurchase: 'Tillad køb'
+    db_BasePrice: Pris
+    db_CostPrice: 'Kostpris'
+    db_Depth: Dybde
+    db_Featured: Fremhævet
+    db_Height: Højde
+    db_InternalItemID: 'Internt vare ID'
+    db_Model: Model
+    db_Popularity: Popularitet
+    db_Weight: Vægt
+    db_Width: Bredde
+    has_many_Variations: Varianter
+    has_one_Image: Billede
+    many_many_ProductCategories: 'Produktkategorier'
+    many_many_VariationAttributeTypes: 'Variant egenskabstyper'
+  SilverShop\Page\ProductCategory:
+    Alphabetical: Alfabetisk
+    DESCRIPTION: 'Produktkategori i shoppen'
+    PLURALNAME: Kategorier
+    Price: Pris
+    SINGULARNAME: Kategori
+    belongs_many_many_Products: Produkter
+  SilverShop\Payment:
+    Note: Bemærkning
+    PaymentsHeadline: Betaling(er)
+  SilverShop\Reports\AbandonedCartReport:
+    Description: "Overvåg forladte varekurve over en given periode. Gruppér resultater på år, måned eller dag."
+    Title: 'Forladte varekurve'
+  SilverShop\Reports\CustomerReport:
+    Description: 'Kunderapport'
+    Title: Kunder
+  SilverShop\Reports\ProductReport:
+    Description: 'Få overblik over, hvilke produkter der performer og hvilke der ikke gør.'
+    Title: Produkter
+  SilverShop\Reports\ShopPeriodReport:
+    Description: 'Shop periode rapport'
+    Title: 'Shop periode rapport'
+  SilverShop\Reports\ShopSalesReport:
+    Description: "Overvåg shoppens salgsydeevne over en bestemt periode. Gruppér resultater efter år, måned eller dag."
+    Title: 'Shop salg'
+  SilverShop\Reports\SideReport:
+    AllProducts: 'Alle prdukter'
+    FeaturedProducts: 'Fremhævede produkter'
+    Heavy: 'Tunge produkter'
+    NoImage: 'Produkter uden billede'
+    ShopGroup: Shop
+  SilverShop\Reports\TaxReport:
+    Description: "Rapporter moms opkrævet på ordrer. Inkluderer kun ordrer der er betalt."
+    Title: Moms
+  SilverShop\ShopEmail:
+    AdminNotificationSubject: 'Ordre #{OrderNo} notifikation'
+    AdminNotificationTitle: 'Shop kvittering'
+    CancelSubject: 'Ordre #{OrderNo} annulleret af bruger'
+    ConfirmationSubject: 'Ordre #{OrderNo} bekræftelse'
+    ConfirmationTitle: 'Ordre bekræftelse'
+    PhoneNumber: 'Telefonnummer'
+    ReceiptSubject: 'Ordre #{OrderNo} kvittering'
+    ReceiptTitle: 'Shop kvittering'
+    Regards: 'Med venlig hilse'
+    StatusChangeAdminCancelledNote: 'Din ordre er blevet annulleret af vores ansatte. Kontakt os venligst hvis du har nogle spørgsmål vedr. denne ordre.'
+    StatusChangeMemberCancelledNote: 'Din annullering af ordren er blevet noteret. Kontakt os venligst hvis du har spørgsmål.'
+    StatusChangeProcessingNote: 'Vi har opdateret status på din ordre til "I gang". Venligst kontakt os hvis du har spørgsmål til ordren.'
+    StatusChangeSentNote: 'Din ordre er blevet afsendt. Vi forsøger at levere omgående - kontakt os venligts, hvis din ordre ikke er leveret inden for få dage'
+    StatusChangeSubject: 'Silvershop - '
+    StatusChangeTitle: 'Shop Status skifte'
+    StatusChanged: 'Status for ordre #{OrderNo} ændret til "{OrderStatus}"'

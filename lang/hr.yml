@@ -5,43 +5,134 @@ hr:
     MENUTITLE: Katalog
   SilverShop\Admin\ZoneAdmin:
     MENUTITLE: Zone
-  SilverShop\Reports\AbandonedCartReport:
-    Description: "Pratite napuštene košarice za određeni period. Grupiraj rezultate po godini, mjesecu ili danu.\n"
-    Title: 'Napuštene košarice'
-  SilverShop\Page\AccountPage:
-    AddressBook: Adresar
-    DESCRIPTION: "Omogućuje korisniku pregled njegovih korisničkih detalja i prethodnih narudžbi.\n"
-    DefaultTitle: Profil
-    EditProfile: 'Uredi profil'
-    LogOut: 'Odjavi se'
-    Login: "Morate se prijaviti prije nego što možete pristupiti stranici profila. Ako niste registrirani niste u mogućnosti pristupiti stranici sve dok ne napravite Vašu prvu narudžbu, u ostalom unesite podatke dolje.\n"
-    LoginAgain: "Odjavili ste se. Ako se želite ponovo prijaviti, molimo učinite to dolje.\n"
-    MemberEmail: Email
-    MemberLastVisit: 'Posljednji posjet'
-    MemberName: Ime
-    MemberSince: 'Član od'
-    NoPage: "Nije pronađen nijedan AccountPage. Molimo Vas kreirajte ga u CMSu!\n"
-    NoPastOrders: 'Nije pronađeno prethodnih narudžbi.'
-    NumberOfOrders: 'Broj narudžbi'
-    PLURALNAME: 'Account Pages'
-    PastOrders: 'Prethodne narudžbe'
-    SINGULARNAME: 'Account Page'
-    Title: 'Moj profil'
-  AccountPage_AddressBook:
-    CreateNewTitle: 'Dodaj novu adresu'
-    NoAddress: 'Nema adresa.'
-    Title: 'Zadane adrese'
-    DefaultShippingAddress: 'Zadana adresa dostave'
-    DefaultBillingAddress: 'Zadana adresa naplate'
-    MakeDefaultShippingTitle: 'Ovo je moja zadana adresa dostave'
-    MakeDefaultBillingTitle: 'Ovo je moja zadana adresa naplate'
-    DeleteAddress: 'Obriši ovu adresu'
-  AccountPage_EditProfile:
-    Title: 'Uredi profil'
+  SilverShop\Cart\ShoppingCart:
+    CannotPurchase: 'Ovaj {Title} nije moguće kupiti. '
+    Checkout: Narudžba
+    Cleared: 'Košarica je uspješno obrisana.'
+    ContinueShopping: 'Nastavi kupnju'
+    Headline: 'Košarica'
+    ItemAdded: 'Proizvod je uspješno dodan.'
+    ItemNotFound: 'Proizvod nije pronađen.'
+    ItemRemoved: 'Proizvod je uspješno uklonjen.'
+    ItemsInCartPlural: 'Imate <a href="{link}">{quantity} proizvoda</a>u košarici.'
+    ItemsInCartSingular: 'U košarici je <a href="{link}">1 proizvod</a>.'
+    NoCartFound: 'Košarica nije pronađena.'
+    NoItems: 'Nemate proizvoda u košarici.'
+    NoOrder: 'Nema trenutne narudžbe.'
+    ProceedToCheckout: 'Nastavi na narudžbu.'
+    ProductNotFound: 'Proizvod nije pronađen.'
+    QuantitySet: 'Količina nije odabrana.'
+    RemoveAllTitle: 'Ukloni sve &quot;{Title}&quot; iz košarice'
+    RemoveTitle: 'Ukloni &quot;{Title}&quot; iz košarice'
+    TableSummary: 'Trenutne stavke Vaše košarice.'
+  SilverShop\Checkout\Checkout:
+    IdFieldNotFound: 'Obavezno polje nije pronađeno: {IdentifierField}'
+    MemberExists: 'Korisnik već postoji s {Field} {Identifier}'
+    MembershipIsNotAllowed: 'Dodavanje novih članstava nije dozvoljeno'
+    NoPaymentMethod: 'Način plaćanja ne postoji'
+    PasswordRequired: 'Lozinka je obavezna'
+    TermsAndConditionsLink: 'Slažem se s uvjetima i odredbama opisanim na <a href="{TermsPageLink}" target="new" title="Pročitaj više o shop uvijetima i odredbima ove stranice">{TermsPageTitle}</a> stranici'
+  SilverShop\Checkout\CheckoutField:
+    AccountInfo: "Molimo unesite lozinku, kako bi ste se mogli prijaviti i provjeriti Vašu povijest narudžbi"
+    MemberLoginInfo: 'Ako ste već član molimo Vas <a href="{LoginUrl}">prijavite se</a>'
+    MembershipDetails: 'Detalji o članstvu'
+    MustAgreeToTerms: "Morate se složiti s uvjetima i odredbama"
+    Password: Lozinka
+    PaymentType: 'Način plaćanja'
+  SilverShop\Checkout\Component\OnsitePayment:
+    InvalidCreditCard: 'Kreditna kartica je nevažeća'
+  SilverShop\Checkout\Component\Payment:
+    NoPaymentMethod: 'Tip plaćanje nije izabran'
+  SilverShop\Checkout\OrderProcessor:
+    CantPay: 'Narudžba se ne može naplatiti.'
+    NoItems: 'Narudžba nema stavki.'
+    NoOrder: 'Narudžba ne postoji.'
+    NoOrderStarted: 'Nova narudžba još nije pokrenuta.'
+    NotCart: 'Narudžba nije u košarici.'
+  SilverShop\Checkout\Step\Address:
+    BillTo: 'Naplati:'
+    EnterShippingAddress: "Molimo unesite Vašu adresu dostave."
+    ShipTo: 'Pošalji na:'
+    SupplyContactInformation: 'Unesite Vaše kontakt informacije'
+  SilverShop\Checkout\Step\CheckoutStep:
+    Continue: Nastavi
+    Shipping: Dostava
+    Summary: Sažetak
+  SilverShop\Checkout\Step\Membership:
+    ContinueAsGuest: 'Nastavi kao gost'
+    CreateAccount: 'Kreiraj profil'
+    CreateNewAccount: 'Kreiraj novi profil'
+  SilverShop\Dev\ShopDevelopmentAdmin:
+    CartCleanup: 'Očisti stare košarice'
+    CartCleanupDesc: 'Ukloni napuštene košarice.'
+    ClearCart: 'Očisti trenutnu košaricu'
+    DeleteOrders: 'Obriši sve narudžbe'
+    DeleteOrdersDesc: "Ukloni sve narudžbe, modifikatore i plaćanja iz baze."
+    DeleteProducts: 'Obriši sve proizvode'
+    DeleteProductsDesc: 'Ukloni sve proizvode iz baze.'
+    PopulateCart: "Popuni košaricu s nekim dostupnim proizvodima"
+    PopulateShop: 'Popuni shop'
+    PopulateShopDesc: "Popuni shop s testnim proizvodima, kategorijama i drugim potrebnim stranicama."
+    RecalculateOrders: 'Preračunaj sve narudžbe'
+  SilverShop\Extension\ProductVariationsExtension:
+    Attributes: Atributi
+    Variations: Varijacije
+  SilverShop\Extension\ShopConfigExtension:
+    AllowedCountries: 'Dopuštene države za narudžbu i dostavu'
+    AllowedCountriesTabTitle: 'Dopuštene države'
+    CustomerGroup: 'Grupiraj nove kupce u'
+    DefaultImage: 'Zadana slika proizvoda'
+    TermsPage: 'Stranica uvijeti i odredbe'
+  SilverShop\Forms\CartForm:
+    REMOVED_ITEMS: 'Uklonjeno {count} stavki.'
+    UPDATED_ITEMS: 'Osvježeno {count} stavki.'
+    UpdateCart: 'Osvježi košaricu'
+  SilverShop\Forms\CheckoutComponentValidator:
+    InvalidDataMessage: 'Postoje problemi s podacima koje ste unijeli. Pogledajte ispod:'
+  SilverShop\Forms\OrderActionsForm:
+    CancelOrder: 'Otkaži ovu narudžbu'
+    CouldNotProcessPayment: 'Plaćanje nije provedeno.'
+    MakePayment: 'Provedi plaćanje'
+    OrderCancelled: 'Narudžba uspješno otkazana'
+  SilverShop\Forms\SetLocationForm:
+    ChooseCountry: 'Odaberite državu...'
+    Country: Država
+  SilverShop\Forms\ShopAccountForm:
+    DetailsSaved: 'Vaši detalji su spremljeni'
+    Save: 'Spremi promjene'
+    SaveAndProceed: 'Spremi i nastavi na narudžbu'
+  SilverShop\Forms\ShopQuantityField:
+    AddOne: 'Dodaj jedan ili više &quot;{ItemTitle}&quot; u košaricu'
+    RemoveOne: 'Ukloni jedan ili više &quot;{ItemTitle}&quot; iz košarice'
+  SilverShop\Forms\VariationForm:
+    ChooseAttribute: 'Odaberi {attribute}…'
+  SilverShop\Generic:
+    Change: Promjeni
+    Customer: Kupac
+    Date: Datum
+    DateFormatNice: '%m/%d/%G'
+    DateTimeFormatNice: '%m/%d/%G %I:%M%p'
+    DateTimeFormatNice24: 'd/m/Y H:i'
+    Edit: Uredi
+    Quantity: Količina
+    ReadMoreTitle: 'Kliknite ovdje za detalje o &quot;{Title}&quot;'
+    Remove: Ukloni
+    View: pogledaj
+  SilverShop\Includes\PriceTag:
+    SAVE: Spremi
+  SilverShop\Includes\ProductGroup:
+    Next: slijedeće
+    Page: Stranica
+    Previous: prethodna
+    ViewNext: 'Pogledaj sljedeću stranicu'
+    ViewPage: 'Pogledaj stranicu broj {pageNum}'
+    ViewPrevious: 'Pogledaj prethodnu stranicu'
+  SilverShop\Includes\ProductMenu:
+    GotoPageTitle: 'Idi na {Title} stranicu'
   SilverShop\Model\Address:
+    AddressHint: "ulica / broj prometnice, naziv, i tip ili broj poštanskog sandučića"
+    AddressLine2Hint: "prostor, zgrada, apartman, kat"
     AddressSaved: 'Vaša adresa je spremljena'
-    AddressHint: "ulica / broj prometnice, naziv, i tip ili broj poštanskog sandučića\n"
-    AddressLine2Hint: 'prostor, zgrada, apartman, kat'
     BillingAddress: 'Adresa naplate'
     CityHint: 'ili predgrađe, županija, okrug'
     CreateNewAddress: 'Dodaj novu adresu'
@@ -58,88 +149,49 @@ hr:
     db_City: Grad
     db_Company: Tvrtka
     db_Country: Država
-    db_FirstName: Ime
+    db_FirstName: 'Ime'
     db_Phone: 'Broj telefona'
     db_PostalCode: 'Poštanski broj'
     db_State: Država
     db_Surname: Prezime
     has_one_Member: Korisnik
-  SilverShop\Forms\CartForm:
-    REMOVED_ITEMS: 'Uklonjeno {count} stavki.'
-    UPDATED_ITEMS: 'Osvježeno {count} stavki.'
-    UpdateCart: 'Osvježi košaricu'
-  SilverShop\Page\CartPage:
-    DESCRIPTION: "Stranica gdje korisnik može pregledati i urediti sadržaj svoje košarice.\n"
-    DefaultTitle: Košarica
-    PLURALNAME: 'Cart Pages'
-    SINGULARNAME: 'Cart Page'
-    has_one_CheckoutPage: 'Checkout Page'
-    has_one_ContinuePage: 'Continue Page'
-  SilverShop\Checkout\Checkout:
-    IdFieldNotFound: 'Obavezno polje nije pronađeno: {IdentifierField}'
-    MemberExists: 'Korisnik već postoji s {Field} {Identifier}'
-    MembershipIsNotAllowed: "Dodavanje novih članstava nije dozvoljeno\n"
-    NoPaymentMethod: 'Način plaćanja ne postoji'
-    PasswordRequired: 'Lozinka je obavezna'
-    TermsAndConditionsLink: 'Slažem se s uvjetima i odredbama opisanim na <a href="{TermsPageLink}" target="new" title="Pročitaj više o shop uvijetima i odredbima ove stranice">{TermsPageTitle}</a> stranici'
-  SilverShop\Forms\CheckoutComponentValidator:
-    InvalidDataMessage: 'Postoje problemi s podacima koje ste unijeli. Pogledajte ispod:'
-  CheckoutField:
-    AccountInfo: "Molimo unesite lozinku, kako bi ste se mogli prijaviti i provjeriti Vašu povijest narudžbi\n"
-    MemberLoginInfo: 'Ako ste već član molimo Vas <a href="{LoginUrl}">prijavite se</a>'
-    MembershipDetails: 'Detalji o članstvu'
-    MustAgreeToTerms: "Morate se složiti s uvjetima i odredbama\n"
-    Password: Lozinka
-    PaymentType: 'Način plaćanja'
-  SilverShop\Page\CheckoutPage:
-    DESCRIPTION: 'Stranica koja obrađuje proces plaćanja'
-    DefaultTitle: Narudžba
-    PLURALNAME: 'Checkout Pages'
-    PaymentErrorMessage: 'Zaprimljena greška s sustava naplate:'
-    ProceedToPayment: 'Nastavi na plaćanje'
-    PurchaseCompleteDescription: "Ova poruka je uključena u email računa, nakon što kupac završi narudžbu.\n"
-    SINGULARNAME: 'Checkout Page'
-    SubmitPayment: 'Pošalji uplatu'
-    db_PurchaseComplete: 'Kupnja završena'
-  SilverShop\Checkout\Step\CheckoutStep:
-    Continue: Nastavi
-    Shipping: Dostava
-    Summary: Sažetak
-  SilverShop\Checkout\Step\Address:
-    BillTo: 'Naplati:'
-    EnterShippingAddress: 'Molimo unesite Vašu adresu dostave.'
-    ShipTo: 'Pošalji na:'
-    SupplyContactInformation: 'Unesite Vaše kontakt informacije'
-  SilverShop\Checkout\Step\Membership:
-    ContinueAsGuest: 'Nastavi kao gost'
-    CreateAccount: 'Kreiraj profil'
-    CreateNewAccount: 'Kreiraj novi profil'
-  SilverShop\Reports\CustomerReport:
-    Description: 'Izvješće kupaca'
-    Title: Kupci
-  SilverShop\Model\Modifiers\Tax\FlatTax:
-    PLURALNAME: Porezi
-    SINGULARNAME: Porez
+  SilverShop\Model\Modifiers\OrderModifier:
+    db_Amount: Količina
+    db_Sort: Poredak
+    db_Type: Tip
+  SilverShop\Model\Modifiers\Shipping\Base:
+    PLURALNAME: Modifikatori
+    SINGULARNAME: Dostava
   SilverShop\Model\Modifiers\Shipping\Free:
     Free: BESPLATNO
     SINGULARNAME: Dostava
+  SilverShop\Model\Modifiers\Shipping\Simple:
+    SINGULARNAME: Dostava
+    ShipToCountry: 'Dostavi u {Country}'
+    db_Country: Država
+  SilverShop\Model\Modifiers\Shipping\Weight:
+    SINGULARNAME: Dostava
+  SilverShop\Model\Modifiers\SubTotal:
+    PLURALNAME: 'Međuzbroj'
+    SINGULARNAME: 'Međuzbroj'
+  SilverShop\Model\Modifiers\Tax\Base:
+    AtRate: '@ {Rate}%'
+    PLURALNAME: Porezi
+    SINGULARNAME: Porez
+  SilverShop\Model\Modifiers\Tax\FlatTax:
+    PLURALNAME: Porezi
+    SINGULARNAME: Porez
   SilverShop\Model\Modifiers\Tax\GlobalTax:
     Included: '(uključeno u cijenu iznad)'
     PLURALNAME: Porezi
     SINGULARNAME: Porez
     db_Country: Država
-  SilverShop\Forms\ShopAccountForm:
-    DetailsSaved: 'Vaši detalji su spremljeni'
-    Save: 'Spremi promjene'
-    SaveAndProceed: 'Spremi i nastavi na narudžbu'
-  SilverShop\Checkout\Component\OnsitePayment:
-    InvalidCreditCard: 'Kreditna kartica je nevažeća'
   SilverShop\Model\Order:
-    BillTo: Naplati
+    BillTo: 'Naplati'
     Date: Datum
     DateFrom: 'Datum od'
     DateTo: 'Datum do'
-    GrandTotal: Sveukupno
+    GrandTotal: 'Sveukupno'
     Invoice: Račun
     OrderHeadline: 'Narudžba #{OrderNo} {OrderDate}'
     Outstanding: Nepodmiren
@@ -153,7 +205,7 @@ hr:
     STATUS_COMPLETE: Završeno
     STATUS_MEMBERCANCELLED: 'Otkazano od korisnika'
     STATUS_PAID: Plaćeno
-    STATUS_PROCESSING: 'U obradi'
+    STATUS_PROCESSING: U obradi
     STATUS_SENT: Poslano
     STATUS_UNPAID: Neplaćen
     ShipTo: 'Pošalji na'
@@ -165,7 +217,7 @@ hr:
     UnitPrice: 'Jedinična cijena'
     db_Dispatched: Otpremljeno
     db_Email: Email
-    db_FirstName: Ime
+    db_FirstName: 'Ime'
     db_IPAddress: 'IP adresa'
     db_Notes: Poruka
     db_Paid: Plaćeno
@@ -181,11 +233,6 @@ hr:
     has_many_Payments: Plaćanja
     has_one_Member: Korisnik
     has_one_ShippingAddress: 'Adresa dostave'
-  SilverShop\Forms\OrderActionsForm:
-    CancelOrder: 'Otkaži ovu narudžbu'
-    MakePayment: 'Provedi plaćanje'
-    CouldNotProcessPayment: 'Plaćanje nije provedeno.'
-    OrderCancelled: 'Narudžba uspješno otkazana'
   SilverShop\Model\OrderAttribute:
     PLURALNAME: Atributi
     SINGULARNAME: Atribut
@@ -196,16 +243,6 @@ hr:
     SINGULARNAME: Stavka
     db_Quantity: Količina
     db_UnitPrice: 'Jedinična cijena'
-  SilverShop\Model\Modifiers\OrderModifier:
-    db_Amount: Količina
-    db_Sort: Poredak
-    db_Type: Tip
-  SilverShop\Checkout\OrderProcessor:
-    NoItems: 'Narudžba nema stavki.'
-    NoOrder: 'Narudžba ne postoji.'
-    NoOrderStarted: 'Nova narudžba još nije pokrenuta.'
-    NotCart: 'Narudžba nije u košarici.'
-    CantPay: 'Narudžba se ne može naplatiti.'
   SilverShop\Model\OrderStatusLog:
     db_Note: Zabilješka
     db_PaymentOK: 'Plaćanje OK'
@@ -213,20 +250,109 @@ hr:
     db_Title: Naslov
     has_one_Author: Autor
     has_one_Order: Narudžba
-  SilverShop\Payment:
-    Note: Zabilješka
-    PaymentsHeadline: Plaćanje(a)
-  SilverShop\Checkout\Component\Payment:
-    NoPaymentMethod: 'Tip plaćanje nije izabran'
-  SilverShop\Includes\PriceTag:
-    SAVE: Spremi
+  SilverShop\Model\Product\OrderItem:
+    PLURALNAME: Stavke
+    SINGULARNAME: Stavka
+    db_ProductVersion: 'Varijacija proizvoda'
+    has_one_Product: Proizvod
+  SilverShop\Model\RegionRestriction:
+    PLURALNAME: 'Restrikcije regije'
+    SINGULARNAME: 'Restrikcija regije'
+    db_City: Grad
+    db_Country: Država
+    db_PostalCode: 'Poštanski broj'
+    db_State: Država
+  SilverShop\Model\Variation\AttributeType:
+    PLURALNAME: Atributi
+    SINGULARNAME: Atribut
+    SaveFirstInfo: 'Prvo spremite, nakon toga dodajte vrijednosti.'
+    belongs_many_many_Product: Proizvod
+    db_Label: Oznaka
+    db_Name: Naziv
+    has_many_Values: Vrijednosti
+  SilverShop\Model\Variation\AttributeValue:
+    PLURALNAME: Vrijednosti
+    SINGULARNAME: Vrijednost
+    belongs_many_many_ProductVariation: 'Varijacije proizvoda'
+    db_Sort: Poredak
+    db_Value: Vrijednost
+    has_one_Type: Ip
+  SilverShop\Model\Variation\OrderItem:
+    PLURALNAME: Stavke
+    SINGULARNAME: Stavka
+    db_ProductVariationVersion: 'Verzija varijacije proizvoda'
+    has_one_ProductVariation: 'Varijacija proizvoda'
+  SilverShop\Model\Variation\Variation:
+    MustSaveFirstMessage: "Možete izabrati atribute varijacija nakon što spremite po prvi puta, ako postoje."
+    PLURALNAME: Varijacije
+    SINGULARNAME: Varijacija
+    db_Price: Cijena
+    db_Version: Verzija
+    has_one_Image: Slika
+    has_one_Product: Proizvod
+    many_many_AttributeValues: 'Vrijednosti atributa'
+  SilverShop\Model\Zone:
+    PLURALNAME: Zone
+    SINGULARNAME: Zone
+    db_Description: Opis
+    db_Name: Naziv1
+    has_many_Regions: Regije
+  SilverShop\ORM\FieldType\ShopCurrency:
+    Free: '<span class="free">BESPLATNO</span>'
+  SilverShop\Page\AccountPage:
+    AddressBook: 'Adresar'
+    DESCRIPTION: "Omogućuje korisniku pregled njegovih korisničkih detalja i prethodnih narudžbi."
+    DefaultTitle: Profil
+    EditProfile: 'Uredi profil'
+    LogOut: 'Odjavi se'
+    Login: 'Morate se prijaviti prije nego što možete pristupiti stranici profila. Ako niste registrirani niste u mogućnosti pristupiti stranici sve dok ne napravite Vašu prvu narudžbu, u ostalom unesite podatke dolje.'
+    LoginAgain: "Odjavili ste se. Ako se želite ponovo prijaviti, molimo učinite to dolje."
+    MemberEmail: Email
+    MemberLastVisit: 'Posljednji posjet'
+    MemberName: Ime
+    MemberSince: 'Član od'
+    NoPage: "Nije pronađen nijedan AccountPage. Molimo Vas kreirajte ga u CMSu!"
+    NoPastOrders: 'Nije pronađeno prethodnih narudžbi.'
+    NumberOfOrders: 'Broj narudžbi'
+    PLURALNAME: 'Account Pages'
+    PastOrders: 'Prethodne narudžbe'
+    SINGULARNAME: 'Account Page'
+    Title: 'Moj profil'
+  SilverShop\Page\AccountPage_AddressBook:
+    CreateNewTitle: 'Dodaj novu adresu'
+    DefaultBillingAddress: 'Zadana adresa naplate'
+    DefaultShippingAddress: 'Zadana adresa dostave'
+    DeleteAddress: 'Obriši ovu adresu'
+    MakeDefaultBillingTitle: 'Ovo je moja zadana adresa naplate'
+    MakeDefaultShippingTitle: 'Ovo je moja zadana adresa dostave'
+    NoAddress: 'Nema adresa.'
+    Title: 'Zadane adrese'
+  SilverShop\Page\AccountPage_EditProfile:
+    Title: 'Uredi profil'
+  SilverShop\Page\CartPage:
+    DESCRIPTION: "Stranica gdje korisnik može pregledati i urediti sadržaj svoje košarice."
+    DefaultTitle: 'Košarica'
+    PLURALNAME: 'Cart Pages'
+    SINGULARNAME: 'Cart Page'
+    has_one_CheckoutPage: 'Checkout Page'
+    has_one_ContinuePage: 'Continue Page'
+  SilverShop\Page\CheckoutPage:
+    DESCRIPTION: 'Stranica koja obrađuje proces plaćanja'
+    DefaultTitle: Narudžba
+    PLURALNAME: 'Checkout Pages'
+    PaymentErrorMessage: 'Zaprimljena greška s sustava naplate:'
+    ProceedToPayment: 'Nastavi na plaćanje'
+    PurchaseCompleteDescription: "Ova poruka je uključena u email računa, nakon što kupac završi narudžbu."
+    SINGULARNAME: 'Checkout Page'
+    SubmitPayment: 'Pošalji uplatu'
+    db_PurchaseComplete: 'Kupnja završena'
   SilverShop\Page\Product:
     AddToCart: 'Dodaj u košaricu'
     AddToCartTitle: 'Dodaj &quot;{Title}&quot; u košaricu'
     AdditionalCategories: 'Dodatne kategorije'
     AllowPurchase: 'Dopusti kupovinu proizvoda'
     Category: Kategorija
-    CategoryDescription: "Ovo je glavna stranica ili zadana kategorija.\n"
+    CategoryDescription: "Ovo je glavna stranica ili zadana kategorija."
     Code: 'Kod proizvoda'
     DESCRIPTION: 'Stranica proizvoda u shopu'
     Featured: 'Izdvojeni proizvod'
@@ -235,12 +361,12 @@ hr:
     InternalItemID: 'Kod proizvoda/SKU'
     Model: Model
     NoImage: 'nema slike'
-    NumItemsInCartSingular: 'Već imate ovaj proizvod u košarici'
     NumItemsInCartPlural: 'Imate {Quantity} proizvoda u košarici'
+    NumItemsInCartSingular: 'Već imate ovaj proizvod u košarici'
     PLURALNAME: Proizvodi
     PageTitle: 'Naziv proizvoda'
     Price: Cijena
-    PriceDesc: "Osnovna cijena za prodaju ovog proizvoda.\n"
+    PriceDesc: 'Osnovna cijena za prodaju ovog proizvoda.'
     ProductCodeShort: SKU
     SINGULARNAME: Proizvod
     Size: Veličina
@@ -257,107 +383,33 @@ hr:
     has_many_Variations: Varijacije
     has_one_Image: Slika
     many_many_ProductCategories: 'Kategorije proizvoda'
-  SilverShop\Model\Variation\AttributeType:
-    PLURALNAME: Atributi
-    SINGULARNAME: Atribut
-    SaveFirstInfo: "Prvo spremite, nakon toga dodajte vrijednosti.\n"
-    belongs_many_many_Product: Proizvod
-    db_Label: Oznaka
-    db_Name: Naziv
-    has_many_Values: Vrijednosti
-  SilverShop\Model\Variation\AttributeValue:
-    PLURALNAME: Vrijednosti
-    SINGULARNAME: Vrijednost
-    belongs_many_many_ProductVariation: 'Varijacije proizvoda'
-    db_Sort: Poredak
-    db_Value: Vrijednost
-    has_one_Type: Ip
   SilverShop\Page\ProductCategory:
+    Alphabetical: Abecedno
     DESCRIPTION: 'Kategorije proizvoda u shopu'
     PLURALNAME: Kategorije
+    Price: Cijena
     SINGULARNAME: Kategorija
     belongs_many_many_Products: Proizvodi
-    Alphabetical: Abecedno
-    Price: Cijena
-  SilverShop\Includes\ProductGroup:
-    Next: slijedeće
-    Page: Stranica
-    Previous: prethodna
-    ViewNext: 'Pogledaj sljedeću stranicu'
-    ViewPage: 'Pogledaj stranicu broj {pageNum}'
-    ViewPrevious: 'Pogledaj prethodnu stranicu'
-  SilverShop\Includes\ProductMenu:
-    GotoPageTitle: 'Idi na {Title} stranicu'
+  SilverShop\Payment:
+    Note: Zabilješka
+    PaymentsHeadline: Plaćanje(a)
+  SilverShop\Reports\AbandonedCartReport:
+    Description: "Pratite napuštene košarice za određeni period. Grupiraj rezultate po godini, mjesecu ili danu."
+    Title: 'Napuštene košarice'
+  SilverShop\Reports\CustomerReport:
+    Description: 'Izvješće kupaca'
+    Title: Kupci
   SilverShop\Reports\ProductReport:
-    Description: "Saznajte koji proizvodi se dobro prodaju, a koji ne.\n"
+    Description: 'Saznajte koji proizvodi se dobro prodaju, a koji ne.'
     Title: Proizvodi
-  SilverShop\Model\Variation\Variation:
-    MustSaveFirstMessage: "Možete izabrati atribute varijacija nakon što spremite po prvi puta, ako postoje.\n"
-    PLURALNAME: Varijacije
-    SINGULARNAME: Varijacija
-    db_Price: Cijena
-    db_Version: Verzija
-    has_one_Image: Slika
-    has_one_Product: Proizvod
-    many_many_AttributeValues: 'Vrijednosti atributa'
-  SilverShop\Model\Variation\OrderItem:
-    PLURALNAME: Stavke
-    SINGULARNAME: Stavka
-    db_ProductVariationVersion: 'Verzija varijacije proizvoda'
-    has_one_ProductVariation: 'Varijacija proizvoda'
-  SilverShop\Extension\ProductVariationsExtension:
-    Attributes: Atributi
-    Variations: Varijacije
-  SilverShop\Model\Product\OrderItem:
-    PLURALNAME: Stavke
-    SINGULARNAME: Stavka
-    db_ProductVersion: 'Varijacija proizvoda'
-    has_one_Product: Proizvod
-  SilverShop\Model\RegionRestriction:
-    PLURALNAME: 'Restrikcije regije'
-    SINGULARNAME: 'Restrikcija regije'
-    db_City: Grad
-    db_Country: Država
-    db_PostalCode: 'Poštanski broj'
-    db_State: Država
-  SilverShop\Forms\SetLocationForm:
-    ChooseCountry: 'Odaberite državu...'
-    Country: Država
-  SilverShop\Model\Modifiers\Shipping\Base:
-    PLURALNAME: Modifikatori
-    SINGULARNAME: Dostava
-  SilverShop\Generic:
-    Change: Promjeni
-    Customer: Kupac
-    Date: Datum
-    DateFormatNice: '%m/%d/%G'
-    DateTimeFormatNice: '%m/%d/%G %I:%M%p'
-    DateTimeFormatNice24: 'd/m/Y H:i'
-    Edit: Uredi
-    Quantity: Količina
-    ReadMoreTitle: 'Kliknite ovdje za detalje o &quot;{Title}&quot;'
-    Remove: Ukloni
-    View: pogledaj
-  SilverShop\Extension\ShopConfigExtension:
-    AllowedCountries: "Dopuštene države za narudžbu i dostavu\n"
-    AllowedCountriesTabTitle: 'Dopuštene države'
-    CustomerGroup: 'Grupiraj nove kupce u'
-    DefaultImage: 'Zadana slika proizvoda'
-    TermsPage: 'Stranica uvijeti i odredbe'
-  SilverShop\ORM\FieldType\ShopCurrency:
-    Free: '<span class="free">BESPLATNO</span>'
-  SilverShop\Dev\ShopDevelopmentAdmin:
-    CartCleanup: 'Očisti stare košarice'
-    CartCleanupDesc: 'Ukloni napuštene košarice.'
-    ClearCart: 'Očisti trenutnu košaricu'
-    DeleteOrders: 'Obriši sve narudžbe'
-    DeleteOrdersDesc: "Ukloni sve narudžbe, modifikatore i plaćanja iz baze.\n"
-    DeleteProducts: 'Obriši sve proizvode'
-    DeleteProductsDesc: 'Ukloni sve proizvode iz baze.'
-    PopulateCart: "Popuni košaricu s nekim dostupnim proizvodima\n"
-    PopulateShop: 'Popuni shop'
-    PopulateShopDesc: "Popuni shop s testnim proizvodima, kategorijama i drugim potrebnim stranicama.\n"
-    RecalculateOrders: 'Preračunaj sve narudžbe'
+  SilverShop\Reports\SideReport:
+    AllProducts: 'Svi proizvodi'
+    FeaturedProducts: 'Izdvojeni proizvodi'
+    Heavy: 'Teški proizvodi'
+    NoImage: 'Proizvodi bez slike'
+    ShopGroup: Shop
+  SilverShop\Reports\TaxReport:
+    Title: Porez
   SilverShop\ShopEmail:
     AdminNotificationTitle: 'Račun shopa'
     CancelSubject: 'Narudžba #{OrderNo} otkazano od korisnika'
@@ -367,61 +419,9 @@ hr:
     ReceiptSubject: 'Račun narudžbe #{OrderNo}'
     ReceiptTitle: 'Račun shopa'
     Regards: 'Lijepi pozdravi'
+    StatusChangeAdminCancelledNote: 'Vaša narudžba je otkazana od strane našeg osoblja. Molimo vas kontaktirajte nas ako imate bilo kakvih pitanja o ovoj narudžbi.'
+    StatusChangeMemberCancelledNote: 'Vaše otkazivanje narudžbe je zabilježeno. Molimo Vas kontaktirajte nas ako imate bilo kakvih pitanja.'
+    StatusChangeProcessingNote: 'Osvježili smo status Vaše narudžbe u "U obradi". Molimo kontaktirajte nas ako imate bilo kakvih pitanja o ovoj narudžbi.'
+    StatusChangeSentNote: 'Vaša narudžba je poslana. Mi ćemo se potruditi da dostavimo najbrže moguće. Molimo Vas kontaktirajte nas ako proizvodi ne dođu unutar 5 dana.'
     StatusChangeSubject: 'Silvershop - '
     StatusChanged: 'Status  narudžbe #{OrderNo} promjenjen u "{OrderStatus}"'
-    StatusChangeAdminCancelledNote: "Vaša narudžba je otkazana od strane našeg osoblja. Molimo vas kontaktirajte nas ako imate bilo kakvih pitanja o ovoj narudžbi.\n"
-    StatusChangeMemberCancelledNote: "Vaše otkazivanje narudžbe je zabilježeno. Molimo Vas kontaktirajte nas ako imate bilo kakvih pitanja.\n"
-    StatusChangeProcessingNote: "Osvježili smo status Vaše narudžbe u \"U obradi\". Molimo kontaktirajte nas ako imate bilo kakvih pitanja o ovoj narudžbi.\n"
-    StatusChangeSentNote: "Vaša narudžba je poslana. Mi ćemo se potruditi da dostavimo najbrže moguće. Molimo Vas kontaktirajte nas ako proizvodi ne dođu unutar 5 dana.\n"
-  SilverShop\Forms\ShopQuantityField:
-    AddOne: 'Dodaj jedan ili više &quot;{ItemTitle}&quot; u košaricu'
-    RemoveOne: 'Ukloni jedan ili više &quot;{ItemTitle}&quot; iz košarice'
-  SilverShop\Reports\SideReport:
-    AllProducts: 'Svi proizvodi'
-    FeaturedProducts: 'Izdvojeni proizvodi'
-    Heavy: 'Teški proizvodi'
-    NoImage: 'Proizvodi bez slike'
-    ShopGroup: Shop
-  SilverShop\Cart\ShoppingCart:
-    CannotPurchase: 'Ovaj {Title} nije moguće kupiti. '
-    Checkout: Narudžba
-    Cleared: 'Košarica je uspješno obrisana.'
-    ContinueShopping: 'Nastavi kupnju'
-    Headline: Košarica
-    ItemAdded: 'Proizvod je uspješno dodan.'
-    ItemNotFound: 'Proizvod nije pronađen.'
-    ItemRemoved: 'Proizvod je uspješno uklonjen.'
-    ItemsInCartPlural: 'Imate <a href="{link}">{quantity} proizvoda</a>u košarici.'
-    ItemsInCartSingular: 'U košarici je <a href="{link}">1 proizvod</a>.'
-    NoCartFound: 'Košarica nije pronađena.'
-    NoItems: 'Nemate proizvoda u košarici.'
-    NoOrder: 'Nema trenutne narudžbe.'
-    ProceedToCheckout: 'Nastavi na narudžbu.'
-    ProductNotFound: 'Proizvod nije pronađen.'
-    QuantitySet: 'Količina nije odabrana.'
-    RemoveAllTitle: 'Ukloni sve &quot;{Title}&quot; iz košarice'
-    RemoveTitle: 'Ukloni &quot;{Title}&quot; iz košarice'
-    TableSummary: 'Trenutne stavke Vaše košarice.'
-  SilverShop\Model\Modifiers\Shipping\Simple:
-    SINGULARNAME: Dostava
-    ShipToCountry: 'Dostavi u {Country}'
-    db_Country: Država
-  SilverShop\Model\Modifiers\SubTotal:
-    PLURALNAME: Međuzbroj
-    SINGULARNAME: Međuzbroj
-  SilverShop\Model\Modifiers\Tax\Base:
-    AtRate: '@ {Rate}%'
-    PLURALNAME: Porezi
-    SINGULARNAME: Porez
-  SilverShop\Reports\TaxReport:
-    Title: Porez
-  SilverShop\Forms\VariationForm:
-    ChooseAttribute: 'Odaberi {attribute}…'
-  SilverShop\Model\Modifiers\Shipping\Weight:
-    SINGULARNAME: Dostava
-  SilverShop\Model\Zone:
-    PLURALNAME: Zone
-    SINGULARNAME: Zone
-    db_Description: Opis
-    db_Name: Naziv1
-    has_many_Regions: Regije
