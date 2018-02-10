@@ -5,14 +5,12 @@ namespace SilverShop\Checkout;
 use SilverShop\Cart\ShoppingCart;
 use SilverShop\Model\Address;
 use SilverShop\Model\Order;
-use SilverShop\Model\Zone;
 use SilverShop\ShopTools;
 use SilverShop\ShopUserInfo;
 use SilverStripe\Core\Injector\Injectable;
 use SilverStripe\Omnipay\GatewayInfo;
 use SilverStripe\Security\Member;
 use SilverStripe\Security\Security;
-
 
 /**
  * Helper class for getting an order throught the checkout process
@@ -115,9 +113,8 @@ class Checkout
         }
         $this->order->write();
         $this->order->extend('onSetShippingAddress', $address);
-        //update zones and userinfo
+
         ShopUserInfo::singleton()->setAddress($address);
-        Zone::cache_zone_ids($address);
     }
 
     public function setBillingAddress(Address $address)

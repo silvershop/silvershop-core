@@ -1,14 +1,16 @@
-# SilverStripe Shop Change Log
-
+# SilverShop ChangeLog
 
 ## 3.0.0
 
+Introduces SilverStripe 4 support and full namespaces.
+
 ### Removals
 
- - Removed all Dashboard classes. The dashboard module is not yet ready for SilverStripe 4. 
+ - Removed all Dashboard classes. The dashboard module is not yet ready for SilverStripe 4.
  This functionality should be added via a separate module whenever the need for it arises.
  - `ShopAccountFormValidator` was removed. It was there to fix a core issue that no longer exists in SS4
- 
+ - `Zone` and regions have been moved out to the `silvershop-shipping` module
+
 ## 2.3.1
 
 Fix a bug (regression) where the variation-form was no longer displayed in cart.
@@ -42,7 +44,7 @@ Security Update: Updated indirect PHPMailer dependency that fixes a critical sec
  * Setting the Type in constructor (Bram de Leeuw)
  * Added a config hook to use a custom notifier (#570) (Chris Lock)
  * Fix german translation file. (Roman Schmid)
- 
+
 ## 2.1.1
 
  * Fix issue (introduced with 2.1) where Order receipt was never sent #563
@@ -51,13 +53,13 @@ Security Update: Updated indirect PHPMailer dependency that fixes a critical sec
 ## 2.1
 
  * Order-Status Email notifications #534
- * Improve previewing and developing of Email templates #551 
- * append symbol setting for European style currencies #549 
- * Improve order-hooks #557 
+ * Improve previewing and developing of Email templates #551
+ * append symbol setting for European style currencies #549
+ * Improve order-hooks #557
  * FIX: Set Order->Paid Date alongside Order->Status
  * FIX: Add reverse relation for addresses
  * Updates to templates (validating markup, proper indentation)
- * Improvements to documentation and example files. 
+ * Improvements to documentation and example files.
 
 ## 2.0
 

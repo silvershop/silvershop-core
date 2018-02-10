@@ -21,7 +21,6 @@ mappings:
   RestrictionRegionCountryDropdownField: SilverShop\Forms\RestrictionRegionCountryDropdownField
   SetLocationForm: SilverShop\Forms\SetLocationForm
   LocationFormPageDecorator: SilverShop\Extension\LocationFormPageExtension
-  ZoneSelectField: SilverShop\Forms\ZoneSelectField
   CartEditField: SilverShop\Forms\CartEditField
   CartForm: SilverShop\Forms\CartForm
   CartPage: SilverShop\Page\CartPage
@@ -72,7 +71,6 @@ mappings:
   ProductBulkLoader: SilverShop\Admin\ProductBulkLoader
   ProductCatalogAdmin: SilverShop\Admin\ProductCatalogAdmin
   ShopConfig: SilverShop\Extension\ShopConfigExtension
-  ZoneAdmin: SilverShop\Admin\ZoneAdmin
   ShopDevelopmentAdmin: SilverShop\Dev\ShopDevelopmentAdmin
   Address: SilverShop\Model\Address
   Buyable: SilverShop\Model\Buyable
@@ -91,8 +89,6 @@ mappings:
   ShopMember: SilverShop\Extension\MemberExtension
   ShopPayment: SilverShop\Extension\PaymentExtension
   ShopPaymentService: SilverShop\Extension\PaymentServiceExtension
-  Zone: SilverShop\Model\Zone
-  ZoneRegion: SilverShop\Model\ZoneRegion
   OrderModifierForm: SilverShop\Forms\OrderModifierForm
   FreeShippingModifier: SilverShop\Model\Modifiers\Shipping\Free
   PickupShippingModifier: SilverShop\Model\Modifiers\Shipping\Pickup
@@ -132,7 +128,6 @@ mappings:
   ShopUserInfo: SilverShop\ShopUserInfo
   CalculateProductPopularity: SilverShop\Tasks\CalculateProductPopularity
   CartCleanupTask: SilverShop\Tasks\CartCleanupTask
-  CreateInternationalZoneTask: SilverShop\Tasks\CreateInternationalZoneTask
   CustomersToGroupTask: SilverShop\Tasks\CustomersToGroupTask
   PopulateCartTask: SilverShop\Tasks\PopulateCartTask
   PopulateShopTask: SilverShop\Tasks\PopulateShopTask
@@ -172,7 +167,6 @@ mappings:
   RegionRestriction_RateTest: SilverShop\Tests\Model\RegionRestriction_RateTest
   ShopMemberTest: SilverShop\Tests\Extension\MemberExtensionTest
   ShopPaymentTest: SilverShop\Tests\Checkout\ShopPaymentTest
-  ZoneTest: SilverShop\Tests\Model\ZoneTest
   FlatTaxModifierTest: SilverShop\Tests\Model\Modifiers\FlatTaxModifierTest
   GlobalTaxModifierTest: SilverShop\Tests\Model\Modifiers\GlobalTaxModifierTest
   OrderModifierTest: SilverShop\Tests\Model\Modifiers\OrderModifierTest
