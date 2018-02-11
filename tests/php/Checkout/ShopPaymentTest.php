@@ -12,10 +12,12 @@ use SilverShop\Page\CheckoutPage;
 use SilverShop\Page\Product;
 use SilverShop\Tests\ShopTest;
 use SilverStripe\Core\Config\Config;
+use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Dev\FunctionalTest;
 use SilverStripe\Dev\TestSession;
 use SilverStripe\Omnipay\Model\Payment;
 use SilverStripe\Omnipay\Service\PaymentService;
+use SilverStripe\Omnipay\Tests\Service\TestGatewayFactory;
 use Symfony\Component\HttpFoundation\Request;
 
 class ShopPaymentTest extends FunctionalTest
@@ -49,10 +51,16 @@ class ShopPaymentTest extends FunctionalTest
                 'PaymentExpress_PxPay', //offsite
                 'PaymentExpress_PxPost' //onsite
             ]
+        )->set(
+            Injector::class,
+            'Omnipay\Common\GatewayFactory',
+            [
+                'class' => TestGatewayFactory::class
+            ]
         );
 
-        PaymentService::setHttpClient($this->getHttpClient());
-        PaymentService::setHttpRequest($this->getHttpRequest());
+        TestGatewayFactory::$httpClient = $this->getHttpClient();
+        TestGatewayFactory::$httpRequest = $this->getHttpRequest();
 
         //publish products
         $this->logInWithPermission('ADMIN');
@@ -131,7 +139,7 @@ class ShopPaymentTest extends FunctionalTest
         return $this->httpClient;
     }
 
-    public function getHttpRequest()
+    protected function getHttpRequest()
     {
         if (null === $this->httpRequest) {
             $this->httpRequest = new Request();
