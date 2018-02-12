@@ -104,11 +104,13 @@ abstract class Address extends CheckoutComponent
             $order->BillingAddressID = $address->ID;
         }
         $order->write();
-        //update user info based on shipping address
+
         if ($this->addresstype === 'Shipping') {
             ShopUserInfo::singleton()->setAddress($address);
-            Zone::cache_zone_ids($address);
+
+            $order->extend('onSetShippingAddress', $address);
         }
+
         //associate member to address
         if ($member = Security::getCurrentUser()) {
             $default = $member->{'Default' . $this->addresstype . 'Address'}();

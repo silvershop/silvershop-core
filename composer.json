@@ -46,7 +46,6 @@
     "bummzack/silverstripe-omnipay-ui": "Adds UI Components to manage payments in the SilverStripe CMS.",
     "silvershop/discounts": "Create coupons and generic discounts to be applied at checkout.",
     "silvershop/shipping": "Provide various shipping methods.",
-    "burnbright/silverstripe-shop-comparison": "Allow comparing products side-by-side,a nd introduces a model for detailed specifications.",
     "silvershop/coloredvariations": "Select colours for variations",
     "burnbright/silverstripe-shop-geocoding": "Geocoding support for addresses and visitors.",
     "burnbright/silverstripe-shop-googleanalytics": "Records shop sales sales in google analytics.",
