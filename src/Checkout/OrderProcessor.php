@@ -73,14 +73,15 @@ class OrderProcessor
      * Create a payment model, and provide link to redirect to external gateway,
      * or redirect to order link.
      *
-     * @param string $gateway     the gateway to use
-     * @param array  $gatewaydata the data that should be passed to the gateway
-     * @param string $successUrl  (optional) return URL for successful payments.
+     * @param string $gateway the gateway to use
+     * @param array $gatewaydata the data that should be passed to the gateway
+     * @param string $successUrl (optional) return URL for successful payments.
      *                            If left blank, the default return URL will be
      *                            used @see getReturnUrl
-     * @param string $cancelUrl   (optional) return URL for cancelled/failed payments
+     * @param string $cancelUrl (optional) return URL for cancelled/failed payments
      *
      * @return ServiceResponse|null
+     * @throws \SilverStripe\Omnipay\Exception\InvalidConfigurationException
      */
     public function makePayment($gateway, $gatewaydata = array(), $successUrl = null, $cancelUrl = null)
     {
@@ -102,8 +103,8 @@ class OrderProcessor
         // AuthorizeService or PurchaseService, depending on Gateway configuration.
         // Set the user-facing success URL for redirects
         /**
- * @var ServiceFactory $factory
-*/
+         * @var ServiceFactory $factory
+         */
         $factory = ServiceFactory::create();
         $service = $factory->getService($payment, ServiceFactory::INTENT_PAYMENT);
 
@@ -265,8 +266,6 @@ class OrderProcessor
     /**
      * Takes an order from being a cart to awaiting payment.
      *
-     * @param Member $member - assign a member to the order
-     *
      * @return boolean - success/failure
      */
     public function placeOrder()
@@ -329,7 +328,7 @@ class OrderProcessor
                 }
             }
             //add member to order & customers group
-            if ($member = Member::currentUser()) {
+            if ($member = Security::getCurrentUser()) {
                 if (!$this->order->MemberID) {
                     $this->order->MemberID = $member->ID;
                 }

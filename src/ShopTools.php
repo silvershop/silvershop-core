@@ -76,10 +76,15 @@ class ShopTools
     /**
      * Get the current section (first looking at controller, then at a request instance and lastly return a fresh session)
      *
+     * @param HTTPRequest $request the incoming request (optional)
      * @return Session
      */
-    public static function getSession()
+    public static function getSession(HTTPRequest $request = null)
     {
+        if ($request && ($session = $request->getSession())) {
+            return $session;
+        }
+
         if (Controller::has_curr() && ($request = Controller::curr()->getRequest())) {
             return $request->getSession();
         }
