@@ -401,7 +401,6 @@ da:
     Category: Kategori
     CategoryDescription: "Dette er den primære kategori"
     Code: 'Produkt kode'
-    CostPriceDescription: 'Engrospris før avance.'
     DESCRIPTION: 'Produkt i shoppen'
     Featured: 'Fremhævet produkt'
     Image: 'Produktbillede'
@@ -421,7 +420,6 @@ da:
     View: 'Vis produkt'
     db_AllowPurchase: 'Tillad køb'
     db_BasePrice: Pris
-    db_CostPrice: 'Kostpris'
     db_Depth: Dybde
     db_Featured: Fremhævet
     db_Height: Højde

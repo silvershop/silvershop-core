@@ -403,7 +403,6 @@ fr:
     Category: Catégorie
     CategoryDescription: "Ceci est la page parente ou la catégorie par défaut"
     Code: 'Code du produit'
-    CostPriceDescription: 'Prix de gros avant majoration.'
     DESCRIPTION: 'Page du produit dans la boutique'
     Featured: 'Produit phare'
     Image: 'Image du produit'
@@ -423,7 +422,6 @@ fr:
     View: 'Voir le produit'
     db_AllowPurchase: 'Autoriser l''achat'
     db_BasePrice: Prix
-    db_CostPrice: 'Prix de revient'
     db_Depth: Profondeur
     db_Featured: Vedette
     db_Height: Hauteur

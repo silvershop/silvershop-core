@@ -20,7 +20,6 @@ The Product pricing and measurement properties have generous decimal place setti
 ```yaml
 Product:
   db:
-    CostPrice: 'Currency(19,2)'
     BasePrice: 'Currency(19,2)'
     Weight: 'Decimal(12,3)'
     Height: 'Decimal(12,3)'

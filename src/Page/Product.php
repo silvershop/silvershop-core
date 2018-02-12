@@ -39,7 +39,6 @@ use SilverStripe\SiteConfig\SiteConfig;
  *
  * @property string $InternalItemID
  * @property string $Model
- * @property DBCurrency $CostPrice
  * @property DBCurrency $BasePrice
  * @property DBDecimal $Weight
  * @property DBDecimal $Height
@@ -58,7 +57,6 @@ class Product extends Page implements Buyable
         'InternalItemID' => 'Varchar(30)', //ie SKU, ProductID etc (internal / existing recognition of product)
         'Model' => 'Varchar(30)',
 
-        'CostPrice' => 'Currency(19,4)', // Wholesale cost of the product to the merchant
         'BasePrice' => 'Currency(19,4)', // Base retail price the item is marked at.
 
         //physical properties
@@ -160,29 +158,26 @@ class Product extends Page implements Buyable
                 $fields->addFieldsToTab(
                     'Root.Main',
                     [
-                    TextField::create('InternalItemID', _t(__CLASS__ . '.InternalItemID', 'Product Code/SKU'), '', 30),
-                    DropdownField::create('ParentID', _t(__CLASS__ . '.Category', 'Category'), $self->getCategoryOptions())
-                    ->setDescription(_t(__CLASS__ . '.CategoryDescription', 'This is the parent page or default category.')),
-                    TextField::create('Model', _t(__CLASS__ . '.Model', 'Model'), '', 30),
-                    CheckboxField::create('Featured', _t(__CLASS__ . '.Featured', 'Featured Product')),
-                    CheckboxField::create('AllowPurchase', _t(__CLASS__ . '.AllowPurchase', 'Allow product to be purchased'), 1),
+                        TextField::create('InternalItemID', _t(__CLASS__ . '.InternalItemID', 'Product Code/SKU'), '', 30),
+                        DropdownField::create('ParentID', _t(__CLASS__ . '.Category', 'Category'), $self->getCategoryOptions())
+                            ->setDescription(_t(__CLASS__ . '.CategoryDescription', 'This is the parent page or default category.')),
+                        TextField::create('Model', _t(__CLASS__ . '.Model', 'Model'), '', 30),
+                        CheckboxField::create('Featured', _t(__CLASS__ . '.Featured', 'Featured Product')),
+                        CheckboxField::create('AllowPurchase', _t(__CLASS__ . '.AllowPurchase', 'Allow product to be purchased'), 1),
                     ]
                 );
 
                 $fields->addFieldsToTab(
                     'Root.Pricing',
                     [
-                    TextField::create('BasePrice', $this->fieldLabel('BasePrice'))
-                    ->setDescription(_t(__CLASS__ . '.PriceDesc', 'Base price to sell this product at.'))
-                    ->setMaxLength(12),
-                    TextField::create('CostPrice', $this->fieldLabel('CostPrice'))
-                    ->setDescription(_t(__CLASS__ . '.CostPriceDescription', 'Wholesale price before markup.'))
-                    ->setMaxLength(12),
+                        TextField::create('BasePrice', $this->fieldLabel('BasePrice'))
+                        ->setDescription(_t(__CLASS__ . '.PriceDesc', 'Base price to sell this product at.'))
+                        ->setMaxLength(12),
                     ]
                 );
 
                 $fieldSubstitutes = [
-                'LengthUnit' => $self::config()->length_unit
+                    'LengthUnit' => $self::config()->length_unit
                 ];
 
                 $fields->addFieldsToTab(

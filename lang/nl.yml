@@ -403,7 +403,6 @@ nl:
     Category: Categorie
     CategoryDescription: "Dit is de bovenliggende pagina of standaard categorie."
     Code: 'Produktcode'
-    CostPriceDescription: 'Groothandelsprijs voor prijsstijging.'
     DESCRIPTION: 'Productpagina in de winkel'
     Featured: 'Aanbevolen product'
     Image: 'Product afbeelding'
@@ -423,7 +422,6 @@ nl:
     View: 'Bekijk product'
     db_AllowPurchase: 'Sta aankoop toe'
     db_BasePrice: Prijs
-    db_CostPrice: 'Kostprijs'
     db_Depth: Diepte
     db_Featured: Aanbevolen
     db_Height: Hoogte

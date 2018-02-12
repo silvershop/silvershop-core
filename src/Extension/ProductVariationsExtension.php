@@ -58,7 +58,6 @@ class ProductVariationsExtension extends DataExtension
                 )
             );
             $fields->removeFieldFromTab('Root.Pricing', 'BasePrice');
-            $fields->removeFieldFromTab('Root.Pricing', 'CostPrice');
             $fields->removeFieldFromTab('Root.Main', 'InternalItemID');
         }
     }

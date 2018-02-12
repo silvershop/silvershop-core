@@ -47,7 +47,6 @@ SilverShop\Page\Product:
   # length_unit: 'M'
   # weight_unit: 'Pounds'
   db: # Revised decimal places
-    CostPrice: 'Currency(19,2)'
     BasePrice: 'Currency(19,2)'
     Weight: 'Decimal(12,3)'
     Height: 'Decimal(12,3)'
