@@ -10,6 +10,12 @@ warnings:
       message: 'removed'
     DashboardRecentOrdersPanel:
       message: 'removed'
+    Zone:
+      message: 'Zones have been moved to the shipping module'
+    ZoneRegion:
+      message: 'Zones have been moved to the shipping module'
+    ZoneAdmin:
+      message: 'Zones have been moved to the shipping module'
 mappings:
   Payment: SilverShop\Payment
   Shop: SilverShop\Generic

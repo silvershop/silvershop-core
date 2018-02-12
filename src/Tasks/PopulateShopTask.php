@@ -3,8 +3,6 @@
 namespace SilverShop\Tasks;
 
 use Page;
-use SilverShop\Model\Zone;
-use SilverShop\Model\ZoneRegion;
 use SilverShop\Page\AccountPage;
 use SilverShop\Page\CartPage;
 use SilverShop\Page\CheckoutPage;
@@ -34,12 +32,6 @@ class PopulateShopTask extends BuildTask
 
     public function run($request)
     {
-
-        if ($request->getVar('createintzone')) {
-            $this->populateInternationalZone();
-            DB::alteration_message('Created an international zone', 'created');
-            return;
-        }
         $this->extend('beforePopulate');
 
         $factory = Injector::inst()->create(FixtureFactory::class);
@@ -168,25 +160,5 @@ class PopulateShopTask extends BuildTask
             $siteconfig->write();
         }
         $this->extend('afterPopulate');
-    }
-
-    public function populateInternationalZone()
-    {
-        $zoneId = Zone::create()->update(
-            [
-                'Name' => 'International',
-            ]
-        )->write();
-
-        if ($countries = SiteConfig::current_site_config()->getCountriesList()) {
-            foreach ($countries as $iso => $country) {
-                ZoneRegion::create()->update(
-                    [
-                        'Country' => $iso,
-                        'ZoneID' => $zoneId
-                    ]
-                )->write();
-            }
-        }
     }
 }

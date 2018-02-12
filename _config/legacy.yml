@@ -14,8 +14,6 @@ SilverStripe\ORM\DatabaseAdmin:
     OrderModifier: SilverShop\Model\Modifiers\OrderModifier
     OrderStatusLog: SilverShop\Model\OrderStatusLog
     RegionRestriction: SilverShop\Model\RegionRestriction
-    Zone: SilverShop\Model\Zone
-    ZoneRegion: SilverShop\Model\ZoneRegion
     FreeShippingModifier: SilverShop\Model\Modifiers\Shipping\Free
     PickupShippingModifier: SilverShop\Model\Modifiers\Shipping\Pickup
     ShippingModifier: SilverShop\Model\Modifiers\Shipping\Base

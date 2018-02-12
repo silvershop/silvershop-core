@@ -3,7 +3,6 @@
 namespace SilverShop\Checkout\Component;
 
 use SilverShop\Model\Order;
-use SilverShop\Model\Zone;
 use SilverShop\ShopUserInfo;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\Security\Security;
