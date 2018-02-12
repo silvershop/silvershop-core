@@ -401,7 +401,6 @@ nn:
     Category: Kategori
     CategoryDescription: "Dette er ei foreldreside eller standardkategori."
     Code: 'Produktkode'
-    CostPriceDescription: 'Rettleiande pris, leverandørpris eller pris før varen har blitt rabattert.'
     DESCRIPTION: 'Produktside i butikken'
     Featured: 'Framheva produkt'
     Image: 'Produktbilete'
@@ -421,7 +420,6 @@ nn:
     View: 'Vis produkt'
     db_AllowPurchase: 'Tillat kjøp'
     db_BasePrice: Pris
-    db_CostPrice: 'Rettleiande pris'
     db_Depth: 'Djupn '
     db_Featured: Fremheva
     db_Height: Høgde

@@ -403,7 +403,6 @@ en:
     Category: Category
     CategoryDescription: "This is the parent page or default category."
     Code: 'Product Code'
-    CostPriceDescription: 'Wholesale price before markup.'
     DESCRIPTION: 'Product page in the shop'
     Featured: 'Featured Product'
     Image: 'Product Image'
@@ -423,7 +422,6 @@ en:
     View: 'View Product'
     db_AllowPurchase: 'Allow Purchase'
     db_BasePrice: Price
-    db_CostPrice: 'Cost Price'
     db_Depth: Depth
     db_Featured: Featured
     db_Height: Height

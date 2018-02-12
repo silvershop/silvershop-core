@@ -403,7 +403,6 @@ de:
     Category: Kategorie
     CategoryDescription: "Dies ist die übergeordnete Seite oder Standardkategorie."
     Code: 'Artikelnummer'
-    CostPriceDescription: 'Großhandelspreis ohne Preisaufschlag.'
     DESCRIPTION: 'Produkte-Seite im Shop'
     Featured: 'Hervorgehobenes Produkt'
     Image: 'Produktabbildung'
@@ -423,7 +422,6 @@ de:
     View: 'Produkt ansehen'
     db_AllowPurchase: 'Kaufen erlauben'
     db_BasePrice: Basispreis
-    db_CostPrice: 'Kostenpreis'
     db_Depth: Tiefe
     db_Featured: Hervorgehoben
     db_Height: Höhe

@@ -49,7 +49,6 @@ class ProductBulkLoader extends CsvBulkLoader
     // will be used in $duplicateChecks as well - they simply don't work.
     public $columnMap = [
         'Price' => 'BasePrice',
-        'Cost Price' => 'CostPrice',
 
         'Category' => '->setParent',
         'ProductGroup' => '->setParent',

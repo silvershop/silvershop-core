@@ -403,7 +403,6 @@ nb:
     Category: Kategori
     CategoryDescription: "Dette er ei foreldreside eller standardkategori."
     Code: 'Produktkode'
-    CostPriceDescription: 'Veiledende pris, leverandørpris eller pris før varen har blitt rabattert.'
     DESCRIPTION: 'Produktside i butikken'
     Featured: 'Fremhevet produkt'
     Image: 'Produktbilde'
@@ -421,7 +420,6 @@ nb:
     View: 'Vis produkt'
     db_AllowPurchase: 'Tillat kjøp'
     db_BasePrice: Pris
-    db_CostPrice: 'Veiledende pris'
     db_Depth: Dybde
     db_Featured: Fremhevet
     db_Height: Høyde
