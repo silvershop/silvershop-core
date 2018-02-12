@@ -31,7 +31,7 @@ class ShoppingCart
     use Injectable;
     use Configurable;
 
-    private static $cartid_session_name = 'shoppingcartid';
+    private static $cartid_session_name = 'SilverShop.shoppingcartid';
 
     /**
      * @var Order

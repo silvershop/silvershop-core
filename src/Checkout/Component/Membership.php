@@ -6,6 +6,7 @@ use SilverShop\Checkout\Checkout;
 use SilverShop\Checkout\ShopMemberFactory;
 use SilverShop\Extension\MemberExtension;
 use SilverShop\Model\Order;
+use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Forms\ConfirmedPasswordField;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\Form;
@@ -13,6 +14,7 @@ use SilverStripe\Forms\PasswordField;
 use SilverStripe\Forms\TextField;
 use SilverStripe\ORM\ValidationException;
 use SilverStripe\ORM\ValidationResult;
+use SilverStripe\Security\IdentityStore;
 use SilverStripe\Security\Member;
 use SilverStripe\Security\PasswordValidator;
 use SilverStripe\Security\Security;
@@ -148,7 +150,8 @@ class Membership extends CheckoutComponent
         $factory = new ShopMemberFactory();
         $member = $factory->create($data);
         $member->write();
-        Security::setCurrentUser($member);
+        // Log-in the current member
+        Injector::inst()->get(IdentityStore::class)->logIn($member);
 
         if ($order->BillingAddressID) {
             $address = $order->getBillingAddress();
