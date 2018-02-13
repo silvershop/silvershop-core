@@ -294,13 +294,6 @@ da:
     SINGULARNAME: Vare
     db_ProductVersion: 'Produkt version'
     has_one_Product: Produkt
-  SilverShop\Shipping\Model\RegionRestriction:
-    PLURALNAME: 'Område restriktioner'
-    SINGULARNAME: 'Område restriktion'
-    db_City: By
-    db_Country: Land
-    db_PostalCode: 'Postnummer'
-    db_State: Amt
   SilverShop\Model\Variation\AttributeType:
     PLURALNAME: Egenskaber
     SINGULARNAME: Egenskab
