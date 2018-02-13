@@ -296,7 +296,7 @@ fr:
     SINGULARNAME: Article
     db_ProductVersion: 'Version du produit'
     has_one_Product: Produit
-  SilverShop\Model\RegionRestriction:
+  SilverShop\Shipping\Model\RegionRestriction:
     PLURALNAME: 'Restrictions régionales'
     SINGULARNAME: 'Restriction régionale'
     db_City: Ville

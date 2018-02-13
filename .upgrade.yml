@@ -99,7 +99,7 @@ mappings:
   OrderItemList: SilverShop\ORM\OrderItemList
   OrderModifier: SilverShop\Model\Modifiers\OrderModifier
   OrderStatusLog: SilverShop\Model\OrderStatusLog
-  RegionRestriction: SilverShop\Model\RegionRestriction
+  RegionRestriction: SilverShop\Shipping\Model\RegionRestriction
   ShopMember: SilverShop\Extension\MemberExtension
   ShopPayment: SilverShop\Extension\PaymentExtension
   ShopPaymentService: SilverShop\Extension\PaymentServiceExtension

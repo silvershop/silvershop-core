@@ -294,7 +294,7 @@ da:
     SINGULARNAME: Vare
     db_ProductVersion: 'Produkt version'
     has_one_Product: Produkt
-  SilverShop\Model\RegionRestriction:
+  SilverShop\Shipping\Model\RegionRestriction:
     PLURALNAME: 'Område restriktioner'
     SINGULARNAME: 'Område restriktion'
     db_City: By
