@@ -56,6 +56,10 @@ class Variation extends DataObject implements Buyable
         'Image' => Image::class
     ];
 
+    private static $owns = [
+        'Image'
+    ];
+
     private static $many_many = [
         'AttributeValues' => AttributeValue::class
     ];

@@ -77,6 +77,10 @@ class Product extends Page implements Buyable
         'Image' => Image::class,
     ];
 
+    private static $owns = [
+        'Image'
+    ];
+
     private static $many_many = [
         'ProductCategories' => ProductCategory::class,
     ];
