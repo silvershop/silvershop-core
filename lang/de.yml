@@ -296,13 +296,6 @@ de:
     SINGULARNAME: Produkt
     db_ProductVersion: 'Produkt Version'
     has_one_Product: Produkt
-  SilverShop\Shipping\Model\RegionRestriction:
-    PLURALNAME: 'Regionale Restriktionen'
-    SINGULARNAME: 'Regionale Restriktion'
-    db_City: Stadt
-    db_Country: Land
-    db_PostalCode: 'Postleitzahl'
-    db_State: Staat
   SilverShop\Model\Variation\AttributeType:
     PLURALNAME: Attribute
     SINGULARNAME: Attribut

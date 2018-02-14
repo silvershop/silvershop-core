@@ -296,13 +296,6 @@ nl:
     SINGULARNAME: Artikel
     db_ProductVersion: 'Product versie'
     has_one_Product: Product
-  SilverShop\Shipping\Model\RegionRestriction:
-    PLURALNAME: 'Regionale beperkingen'
-    SINGULARNAME: 'Regionale beperkingen'
-    db_City: Stad
-    db_Country: Land
-    db_PostalCode: 'Postcode'
-    db_State: Staat
   SilverShop\Model\Variation\AttributeType:
     PLURALNAME: Attributen
     SINGULARNAME: Attribuut

@@ -255,13 +255,6 @@ hr:
     SINGULARNAME: Stavka
     db_ProductVersion: 'Varijacija proizvoda'
     has_one_Product: Proizvod
-  SilverShop\Shipping\Model\RegionRestriction:
-    PLURALNAME: 'Restrikcije regije'
-    SINGULARNAME: 'Restrikcija regije'
-    db_City: Grad
-    db_Country: Država
-    db_PostalCode: 'Poštanski broj'
-    db_State: Država
   SilverShop\Model\Variation\AttributeType:
     PLURALNAME: Atributi
     SINGULARNAME: Atribut

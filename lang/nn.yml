@@ -294,13 +294,6 @@ nn:
     SINGULARNAME: Produkt
     db_ProductVersion: 'Produktversjon'
     has_one_Product: Produkt
-  SilverShop\Shipping\Model\RegionRestriction:
-    PLURALNAME: 'Regionale restriksjoner'
-    SINGULARNAME: 'Regional restriksjon'
-    db_City: By
-    db_Country: Land
-    db_PostalCode: 'Postnummer'
-    db_State: Fylke
   SilverShop\Model\Variation\AttributeType:
     PLURALNAME: Atributter
     SINGULARNAME: Atribut
