@@ -13,7 +13,6 @@ SilverStripe\ORM\DatabaseAdmin:
     OrderItem: SilverShop\Model\OrderItem
     OrderModifier: SilverShop\Model\Modifiers\OrderModifier
     OrderStatusLog: SilverShop\Model\OrderStatusLog
-    RegionRestriction: SilverShop\Shipping\Model\RegionRestriction
     FreeShippingModifier: SilverShop\Model\Modifiers\Shipping\Free
     PickupShippingModifier: SilverShop\Model\Modifiers\Shipping\Pickup
     ShippingModifier: SilverShop\Model\Modifiers\Shipping\Base
