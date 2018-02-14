@@ -18,6 +18,7 @@ use SilverStripe\Forms\DropdownField;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\TextField;
 use SilverStripe\ORM\DataList;
+use SilverStripe\ORM\FieldType\DBBoolean;
 use SilverStripe\ORM\FieldType\DBCurrency;
 use SilverStripe\ORM\FieldType\DBDecimal;
 use SilverStripe\ORM\ManyManyList;
@@ -93,21 +94,13 @@ class Product extends Page implements Buyable
         'InternalItemID',
         'Title',
         'BasePrice.NiceOrEmpty',
-        'canPurchase',
+        'IsPurchaseable.Nice',
     ];
 
     private static $searchable_fields = [
         'InternalItemID',
-        'Title' => ['title' => 'Title'],
+        'Title',
         'Featured',
-    ];
-
-    private static $field_labels = [
-        'InternalItemID' => 'SKU',
-        'Title' => 'Title',
-        'BasePrice' => 'Price',
-        'BasePrice.NiceOrEmpty' => 'Price',
-        'canPurchase' => 'Purchasable',
     ];
 
     private static $table_name = 'SilverShop_Product';
@@ -230,12 +223,16 @@ class Product extends Page implements Buyable
     }
 
     /**
-     * Fix grid field heading displaying "page name"
+     * Add missing translations to the fieldLabels
      */
     public function fieldLabels($includerelations = true)
     {
         $labels = parent::fieldLabels($includerelations);
-        $labels['Title'] = 'Title';
+
+        $labels['Title'] = _t(__CLASS__ . '.PageTitle', 'Product Title');
+        $labels['IsPurchaseable'] = $labels['IsPurchaseable.Nice'] = _t(__CLASS__ . '.IsPurchaseable', 'Is Purchaseable');
+        $labels['BasePrice.NiceOrEmpty'] = _t(__CLASS__ . '.db_BasePrice', 'Price');
+
         return $labels;
     }
 
@@ -339,6 +336,15 @@ class Product extends Page implements Buyable
         $permissions = $this->extend('canPurchase', $member, $quantity);
         $permissions[] = $allowpurchase;
         return min($permissions);
+    }
+
+    /**
+     * Returns the purchaseable flag as `DBBoolean`. Useful for templates or summaries.
+     * @return DBBoolean
+     */
+    public function IsPurchaseable()
+    {
+        return DBBoolean::create_field(DBBoolean::class, $this->canPurchase());
     }
 
     /**

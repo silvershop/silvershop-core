@@ -407,6 +407,7 @@ de:
     NumItemsInCartSingular: 'Sie haben dieses Produkt in Ihrem Warenkorb'
     PLURALNAME: Produkte
     PageTitle: 'Produktname'
+    IsPurchaseable: 'Kaufbar'
     Price: Preis
     PriceDesc: 'Basisverkaufspreis.'
     ProductCodeShort: Art. Nr.
@@ -414,7 +415,7 @@ de:
     Size: Größe
     View: 'Produkt ansehen'
     db_AllowPurchase: 'Kaufen erlauben'
-    db_BasePrice: Basispreis
+    db_BasePrice: Preis
     db_Depth: Tiefe
     db_Featured: Hervorgehoben
     db_Height: Höhe

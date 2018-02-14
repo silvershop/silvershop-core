@@ -7,7 +7,10 @@ use SilverShop\Model\Order;
 use SilverShop\Model\OrderStatusLog;
 use SilverStripe\Admin\ModelAdmin;
 use SilverStripe\Forms\GridField\GridFieldAddNewButton;
+use SilverStripe\Forms\GridField\GridFieldConfig;
+use SilverStripe\Forms\GridField\GridFieldDataColumns;
 use SilverStripe\Forms\GridField\GridFieldDetailForm;
+use SilverStripe\Forms\GridField\GridFieldSortableHeader;
 
 /**
  * Order administration interface, based on ModelAdmin
@@ -25,9 +28,7 @@ class OrdersAdmin extends ModelAdmin
     private static $menu_icon_class = 'silvershop-icon-cart';
 
     private static $managed_models = [
-        Order::class => [
-            'title' => 'Orders',
-        ],
+        Order::class,
         OrderStatusLog::class
     ];
 
@@ -59,34 +60,22 @@ class OrdersAdmin extends ModelAdmin
     {
         $form = parent::getEditForm($id, $fields);
         if ($this->modelClass == $this->sanitiseClassName(Order::class)) {
-            $form->Fields()->fieldByName($this->modelClass)->getConfig()
+            /** @var GridFieldConfig $config */
+            $config = $form->Fields()->fieldByName($this->modelClass)->getConfig();
+            $config->getComponentByType(GridFieldSortableHeader::class)->setFieldSorting(
+                [
+                    'StatusI18N' => 'Status'
+                ]
+            );
+            $config
                 ->getComponentByType(GridFieldDetailForm::class)
                 ->setItemRequestClass(OrderGridFieldDetailForm_ItemRequest::class); //see below
         }
         if ($this->modelClass == $this->sanitiseClassName(OrderStatusLog::class)) {
-            // Remove add new button
+            /** @var GridFieldConfig $config */
             $config = $form->Fields()->fieldByName($this->modelClass)->getConfig();
+            // Remove add new button
             $config->removeComponentsByType($config->getComponentByType(GridFieldAddNewButton::class));
-        }
-
-        return $form;
-    }
-
-    /**
-     * Ensure that SearchForm selection remains populated.
-     */
-    public function SearchForm()
-    {
-        $form = parent::SearchForm();
-        $query = $this->request->getVar('q');
-        if ($query && isset($query['Status'])) {
-            $form->loadDataFrom(
-                array(
-                    'q' => array(
-                        'Status' => implode(',', $query['Status']),
-                    ),
-                )
-            );
         }
 
         return $form;

@@ -19,7 +19,6 @@ use SilverStripe\Forms\CheckboxSetField;
 use SilverStripe\Forms\DateField;
 use SilverStripe\Forms\DropdownField;
 use SilverStripe\Forms\FieldList;
-use SilverStripe\Forms\ListboxField;
 use SilverStripe\Forms\LiteralField;
 use SilverStripe\Forms\Tab;
 use SilverStripe\Forms\TabSet;
@@ -130,22 +129,18 @@ class Order extends DataObject
     ];
 
     private static $summary_fields = [
-        'Reference' => 'Order No',
-        'Placed' => 'Date',
-        'Name' => 'Customer',
-        'LatestEmail' => 'Email',
-        'Total' => 'Total',
-        'Status' => 'Status',
+        'Reference',
+        'Placed',
+        'Name',
+        'LatestEmail',
+        'Total',
+        'StatusI18N',
     ];
 
     private static $searchable_fields = [
-        'Reference' => [],
-        'FirstName' => [
-            'title' => 'Customer Name',
-        ],
-        'Email' => [
-            'title' => 'Customer Email',
-        ],
+        'Reference',
+        'Name',
+        'Email',
         'Status' => [
             'filter' => 'ExactMatchFilter',
             'field' => CheckboxSetField::class,
@@ -326,6 +321,20 @@ class Order extends DataObject
     }
 
     /**
+     * Augment field labels
+     */
+    public function fieldLabels($includerelations = true)
+    {
+        $labels = parent::fieldLabels($includerelations);
+
+        $labels['Name'] = _t('SilverShop\Generic.Customer', 'Customer');
+        $labels['LatestEmail'] = _t(__CLASS__ . '.db_Email', 'Email');
+        $labels['StatusI18N'] = _t(__CLASS__ . '.db_Status', 'Status');
+
+        return $labels;
+    }
+
+    /**
      * Adjust scafolded search context
      *
      * @return SearchContext the updated search context
@@ -334,25 +343,28 @@ class Order extends DataObject
     {
         $context = parent::getDefaultSearchContext();
         $fields = $context->getFields();
+
+        $validStates = self::config()->placed_status;
+        $statusOptions = array_filter(self::get_order_status_options(), function ($k) use ($validStates) {
+            return in_array($k, $validStates);
+        }, ARRAY_FILTER_USE_KEY);
+
         $fields->push(
-            ListboxField::create('Status', $this->fieldLabel('Status'))
-                ->setSource(
-                    array_combine(
-                        self::config()->placed_status,
-                        self::config()->placed_status
-                    )
-                )
+            // TODO: Allow filtering by multiple statuses
+            DropdownField::create('Status', $this->fieldLabel('Status'))
+                ->setSource($statusOptions)
+                ->setHasEmptyDefault(true)
         );
 
         // add date range filtering
         $fields->insertBefore(
             'Status',
-            DateField::create('DateFrom', $this->fieldLabel('DateFrom'))
+            DateField::create('DateFrom', _t(__CLASS__ . '.DateFrom', 'Date from'))
         );
 
         $fields->insertBefore(
             'Status',
-            DateField::create('DateTo', $this->fieldLabel('DateTo'))
+            DateField::create('DateTo', _t(__CLASS__ . '.DateTo', 'Date to'))
         );
 
         // get the array, to maniplulate name, and fullname seperately
@@ -361,7 +373,7 @@ class Order extends DataObject
         $filters['DateTo'] = LessThanFilter::create('Placed');
 
         // filter customer need to use a bunch of different sources
-        $filters['FirstName'] = MultiFieldPartialMatchFilter::create(
+        $filters['Name'] = MultiFieldPartialMatchFilter::create(
             'FirstName',
             false,
             ['SplitWords'],
