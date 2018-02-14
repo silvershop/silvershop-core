@@ -407,6 +407,7 @@ en:
     NumItemsInCartSingular: 'You have this item in your cart'
     PLURALNAME: Products
     PageTitle: 'Product Title'
+    IsPurchaseable: 'Is purchaseable'
     Price: Price
     PriceDesc: 'Base price to sell this product at.'
     ProductCodeShort: SKU
