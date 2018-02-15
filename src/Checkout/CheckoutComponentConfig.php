@@ -100,6 +100,22 @@ class CheckoutComponentConfig
     }
 
     /**
+     * Whether or not this config has a component that collects payment data.
+     * Should be used to determine whether or not to add an additional payment step after checkout.
+     * @return bool
+     */
+    public function hasComponentWithPaymentData()
+    {
+        foreach ($this->getComponents() as $component) {
+            if ($component->providesPaymentData()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Get combined form fields
      *
      * @return FieldList namespaced fields

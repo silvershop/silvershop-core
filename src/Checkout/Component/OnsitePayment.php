@@ -73,4 +73,9 @@ class OnsitePayment extends CheckoutComponent
     {
         //create payment?
     }
+
+    public function providesPaymentData()
+    {
+        return true;
+    }
 }

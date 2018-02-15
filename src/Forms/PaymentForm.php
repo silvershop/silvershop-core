@@ -65,7 +65,7 @@ class PaymentForm extends CheckoutForm
         $gateway = Checkout::get($order)->getSelectedPaymentMethod(false);
         if (GatewayInfo::isOffsite($gateway)
             || GatewayInfo::isManual($gateway)
-            || $this->config->getComponentByType('OnsitePaymentCheckoutComponent')
+            || $this->config->hasComponentWithPaymentData()
         ) {
             return $this->submitpayment($data, $form);
         }
@@ -110,12 +110,12 @@ class PaymentForm extends CheckoutForm
             $cancelUrl = $this->orderProcessor->getReturnUrl();
         }
 
-        // if we got here from checkoutSubmit and there's a namespaced OnsitePayment Component
-        // in there, we need to strip the inputs down to only the checkout component.
+        // if we got here from checkoutSubmit and there's a namespaced Component that provides payment data,
+        // we need to strip the inputs down to only the checkout component.
         $components = $this->config->getComponents();
         if ($components->first() instanceof CheckoutComponentNamespaced) {
             foreach ($components as $component) {
-                if ($component->Proxy() instanceof OnsitePayment) {
+                if ($component->Proxy()->providesPaymentData()) {
                     $data = array_merge($data, $component->unnamespaceData($data));
                 }
             }
