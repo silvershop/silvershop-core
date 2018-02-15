@@ -74,7 +74,7 @@ class Variation extends DataObject implements Buyable
     ];
 
     private static $extensions = [
-        Versioned::class . "('Live')"
+        Versioned::class . '.versioned'
     ];
 
     private static $summary_fields = [
