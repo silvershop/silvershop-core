@@ -19,6 +19,9 @@ class CheckoutComponentNamespaced extends CheckoutComponent
         $this->proxy = $component;
     }
 
+    /**
+     * @return CheckoutComponent
+     */
     public function Proxy()
     {
         return $this->proxy;

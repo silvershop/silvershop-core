@@ -67,8 +67,7 @@ class CheckoutPageController extends PageController
         // If the site has customised the checkout component config to include an onsite payment
         // component, we should honor that and change the button label. PaymentForm::checkoutSubmit
         // will also check this and process payment if needed.
-        //TODO: Make this independent of a specific checkout component class
-        if ($config->getComponentByType(OnsitePayment::class)) {
+        if ($config->hasComponentWithPaymentData()) {
             $form->setActions(
                 FieldList::create(
                     FormAction::create('checkoutSubmit', _t('SilverShop\Page\CheckoutPage.SubmitPayment', 'Submit Payment'))

@@ -100,4 +100,13 @@ abstract class CheckoutComponent
     {
         return ShopTools::sanitiseClassName(static::class);
     }
+
+    /**
+     * Whether or not this component provides the payment data that should be passed to the payment gateway
+     * @return bool
+     */
+    public function providesPaymentData()
+    {
+        return false;
+    }
 }
