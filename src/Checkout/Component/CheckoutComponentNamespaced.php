@@ -75,6 +75,11 @@ class CheckoutComponentNamespaced extends CheckoutComponent
         return $this->proxy->name();
     }
 
+    public function providesPaymentData()
+    {
+        return $this->proxy->providesPaymentData();
+    }
+
     //namespacing functions
 
     public function namespaceData(array $data)
