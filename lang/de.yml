@@ -257,7 +257,7 @@ de:
     db_Printed: Ausgedruckt
     db_ReceiptSent: 'Bestätigung gesendet'
     db_Reference: Bestellnummer
-    db_SeparateBillingAddress: 'Abweichende Lieferadresse'
+    db_SeparateBillingAddress: 'Abweichende Rechnungsadresse'
     db_Status: Status
     db_Surname: Nachname
     db_Total: Gesamt
