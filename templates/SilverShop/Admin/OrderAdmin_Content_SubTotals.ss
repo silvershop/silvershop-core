@@ -1,27 +1,27 @@
-<tfoot class="order-content-subtotals">
-    <tr class="ss-gridfield-item">
-        <th colspan="4" class="main"><%t SilverShop\Model\Order.SubTotal "Sub-total" %></th>
-        <th class="main">$SubTotal.Nice</th>
+<tfoot class="shop-order__subtotals">
+    <tr>
+        <th colspan="4"><%t SilverShop\Model\Order.SubTotal "Sub-total" %></th>
+        <th>$SubTotal.Nice</th>
     </tr>
     <% loop $Modifiers %>
         <% if $ShowInTable %>
-            <tr class="ss-gridfield-item ss-gridfield-$EvenOdd $FirstLast $Classes">
-                <td colspan="4" class="main">
+            <tr class="$EvenOdd $FirstLast $Classes">
+                <td colspan="4">
                     $TableTitle
-                    <% if $SubTitle %><small class="subtitle">($SubTitle)</small><% end_if %>
+                    <% if $SubTitle %><small class="shop-order__subtitle">($SubTitle)</small><% end_if %>
                 </td>
                 <td>$TableValue.Nice</td>
             </tr>
         <% end_if %>
     <% end_loop %>
-    <tr class="ss-gridfield-item">
-        <th colspan="4" class="main"><%t SilverShop\Model\Order.Total "Total" %></th>
-        <th class="main">$Total.Nice $Currency</th>
+    <tr class="shop-order__total">
+        <th colspan="4"><%t SilverShop\Model\Order.Total "Total" %></th>
+        <th>$Total.Nice $Currency</th>
     </tr>
     <% if $TotalOutstanding %>
-        <tr class="ss-gridfield-item">
-            <td colspan="4" class="main"><%t SilverShop\Model\Order.Outstanding "Outstanding" %></td>
-            <td class="main">$TotalOutstanding.Nice $Currency</td>
+        <tr>
+            <td colspan="4"><%t SilverShop\Model\Order.Outstanding "Outstanding" %></td>
+            <td>$TotalOutstanding.Nice $Currency</td>
         </tr>
     <% end_if %>
     <tr>
