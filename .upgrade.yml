@@ -16,10 +16,11 @@ warnings:
       message: 'Zones have been moved to the shipping module'
     ZoneAdmin:
       message: 'Zones have been moved to the shipping module'
+    ShopEmail:
+      message: 'Has been replaced with the SilverStripe 4 SwiftMailer integration'
 mappings:
   Payment: SilverShop\Payment
   Shop: SilverShop\Generic
-  ShopEmail: SilverShop\ShopEmail
   ProductGroup: SilverShop\Includes\ProductGroup
   ProductMenu: SilverShop\Includes\ProductMenu
   PriceTag: SilverShop\Includes\PriceTag

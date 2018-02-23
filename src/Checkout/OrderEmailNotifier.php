@@ -67,19 +67,19 @@ class OrderEmailNotifier
         $completemessage = $checkoutpage ? $checkoutpage->PurchaseComplete : '';
 
         /**
- * @var Email $email
-*/
-        $email = Injector::inst()->create('ShopEmail');
-        $email->setHTMLTemplate($template);
-        $email->setFrom($from);
-        $email->setTo($to);
-        $email->setSubject($subject);
+         * @var Email $email
+         */
+        $email = Email::create()
+            ->setHTMLTemplate($template)
+            ->setFrom($from)
+            ->setTo($to)
+            ->setSubject($subject);
 
         $email->setData(
             [
-            'PurchaseCompleteMessage' => $completemessage,
-            'Order' => $this->order,
-            'BaseURL' => Director::absoluteBaseURL(),
+                'PurchaseCompleteMessage' => $completemessage,
+                'Order' => $this->order,
+                'BaseURL' => Director::absoluteBaseURL(),
             ]
         );
 
@@ -93,7 +93,7 @@ class OrderEmailNotifier
      * @param string $subject     - subject of the email
      * @param bool   $copyToAdmin - true by default, whether it should send a copy to the admin
      *
-     * @return bool
+     * @return bool|string
      */
     public function sendEmail($template, $subject, $copyToAdmin = true)
     {
@@ -103,7 +103,7 @@ class OrderEmailNotifier
             $email->setBcc(Email::config()->admin_email);
         }
         if ($this->debugMode) {
-            return $email->debug();
+            return $this->debug($email);
         } else {
             return $email->send();
         }
@@ -131,6 +131,8 @@ class OrderEmailNotifier
 
     /**
      * Notify store owner about new order.
+     *
+     * @return bool|string
      */
     public function sendAdminNotification()
     {
@@ -145,7 +147,7 @@ class OrderEmailNotifier
             ->setTo(Email::config()->admin_email);
 
         if ($this->debugMode) {
-            return $email->debug();
+            return $this->debug($email);
         } else {
             return $email->send();
         }
@@ -176,19 +178,22 @@ class OrderEmailNotifier
      */
     public function sendCancelNotification()
     {
-        $email = Injector::inst()->create(
-            'ShopEmail',
-            Email::config()->admin_email,
-            Email::config()->admin_email,
-            _t(
+        $email = Email::create()
+            ->setSubject(_t(
                 'SilverShop\ShopEmail.CancelSubject',
                 'Order #{OrderNo} cancelled by member',
                 '',
-                array('OrderNo' => $this->order->Reference)
-            ),
-            $this->order->renderWith(Order::class)
-        );
-        $email->send();
+                ['OrderNo' => $this->order->Reference]
+            ))
+            ->setFrom(Email::config()->admin_email)
+            ->setTo(Email::config()->admin_email)
+            ->setBody($this->order->renderWith(Order::class));
+
+        if ($this->debugMode) {
+            return $this->debug($email);
+        } else {
+            return $email->send();
+        }
     }
 
     /**
@@ -196,6 +201,8 @@ class OrderEmailNotifier
      *
      * @param string $title Subject for email
      * @param string $note  Optional note-content (instead of using the OrderStatusLog)
+     *
+     * @return bool|string
      */
     public function sendStatusChange($title, $note = null)
     {
@@ -218,20 +225,44 @@ class OrderEmailNotifier
         }
 
         /**
- * @var Email $e
-*/
-        $e = Injector::inst()->create('ShopEmail');
-        $e->setHTMLTemplate('SilverShop/Model/Order_StatusEmail');
-        $e->setData(
-            [
-            'Order' => $this->order,
-            'Note' => $note,
-            'FromEmail' => $adminEmail
-            ]
-        );
-        $e->setFrom($adminEmail);
-        $e->setSubject(_t('SilverShop\ShopEmail.StatusChangeSubject', 'SilverShop – {Title}', ['Title' => $title]));
-        $e->setTo($this->order->getLatestEmail());
-        $e->send();
+         * @var Email $e
+         */
+        $email = Email::create()
+            ->setFrom($adminEmail)
+            ->setSubject(_t('SilverShop\ShopEmail.StatusChangeSubject', 'SilverShop – {Title}', ['Title' => $title]))
+            ->setTo($this->order->getLatestEmail())
+            ->setHTMLTemplate('SilverShop/Model/Order_StatusEmail')
+            ->setData(
+                [
+                    'Order' => $this->order,
+                    'Note' => $note,
+                    'FromEmail' => $adminEmail
+                ]
+            );
+
+        if ($this->debugMode) {
+            return $this->debug($email);
+        } else {
+            return $email->send();
+        }
+    }
+
+    /**
+     * The new Email::debug method in SilverStripe dumps the entire message with all message parts,
+     * which makes it unusable to preview an Email.
+     * This method simulates the old way of the message output and renders only the HTML body.
+     *
+     * @param Email $email
+     * @return string
+     */
+    protected function debug(Email $email)
+    {
+        $email->render();
+        $template = $email->getHTMLTemplate();
+        $headers = $email->getSwiftMessage()->getHeaders()->toString();
+
+        return "<h2>Email HTML template: $template</h2>\n" .
+            "<pre>$headers</pre>" .
+            $email->getBody();
     }
 }

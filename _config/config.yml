@@ -15,10 +15,6 @@ SilverShop\Extension\ProductImageExtension:
 SilverShop\Checkout\OrderProcessor:
   bcc_receipt_to_admin: true
 
-#SilverStripe\Core\Injector\Injector:
-#  ShopEmail:
-#    class: StyledHtmlEmail
-
 SilverStripe\Admin\LeftAndMain:
   extra_requirements_css:
     - 'silvershop/core: client/dist/css/shopcms.css'
