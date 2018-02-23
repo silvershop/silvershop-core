@@ -11,6 +11,7 @@ use SilverShop\Model\Order;
 use SilverShop\ShopTools;
 use SilverStripe\Control\Controller;
 use SilverStripe\Core\Config\Config_ForClass;
+use SilverStripe\Core\Config\Configurable;
 use SilverStripe\Core\Injector\Injectable;
 use SilverStripe\Omnipay\GatewayInfo;
 use SilverStripe\Omnipay\Model\Payment;
@@ -30,6 +31,7 @@ use SilverStripe\Security\Security;
 class OrderProcessor
 {
     use Injectable;
+    use Configurable;
 
     /**
      * @var Order
@@ -400,10 +402,5 @@ class OrderProcessor
     protected function error($message)
     {
         $this->error = $message;
-    }
-
-    public static function config()
-    {
-        return new Config_ForClass("OrderProcessor");
     }
 }
