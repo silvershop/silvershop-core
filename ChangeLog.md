@@ -11,6 +11,7 @@ Introduces SilverStripe 4 support and full namespaces.
  - `ShopAccountFormValidator` was removed. It was there to fix a core issue that no longer exists in SS4
  - `Zone` and regions have been moved out to the `silvershop-shipping` module
  - `CostPrice` was removed from `Product` as it is not used and creates confusion for content-authors.
+ - `ShopEmail` was removed, as it's no longer needed with the new SwiftMailer API.
 
 ## 2.3.1
 
