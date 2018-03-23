@@ -11,6 +11,7 @@ use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\GridField\GridField;
 use SilverStripe\Forms\GridField\GridFieldConfig_RecordEditor;
 use SilverStripe\Forms\LabelField;
+use SilverStripe\Forms\ListboxField;
 use SilverStripe\ORM\DataExtension;
 use SilverStripe\ORM\DataList;
 use SilverStripe\Versioned\Versioned;
@@ -37,15 +38,23 @@ class ProductVariationsExtension extends DataExtension
      */
     public function updateCMSFields(FieldList $fields)
     {
-        $fields->addFieldToTab(
-            'Root.Variations',
+        $fields->addFieldsToTab('Root.Variations', [
+            ListboxField::create(
+                'VariationAttributeTypes',
+                _t(__CLASS__ . '.Attributes', "Attributes"),
+                AttributeType::get()->map('ID', 'Title')->toArray()
+            )
+                ->setDescription(_t(
+                    __CLASS__ . '.AttributesDescription',
+                    'These are fields to indicate the way(s) each variation varies. Once selected, they can be edited on each variation.'
+                )),
             GridField::create(
                 'Variations',
                 _t(__CLASS__ . '.Variations', 'Variations'),
                 $this->owner->Variations(),
                 GridFieldConfig_RecordEditor::create()
             )
-        );
+        ]);
         if ($this->owner->Variations()->exists()) {
             $fields->addFieldToTab(
                 'Root.Pricing',
