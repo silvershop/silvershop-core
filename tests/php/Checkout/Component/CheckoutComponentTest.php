@@ -240,11 +240,13 @@ class CheckoutComponentTest extends SapphireTest
     public function testSinglePageConfigForSingleCountrySiteWithReadonlyFieldsForCountry()
     {
         // Set as a single country site
-        $this->loadFixture(__DIR__ . "/../../Fixtures/singlecountry.yml");
-        $singlecountry = SiteConfig::current_site_config();
+        $siteConfig = SiteConfig::current_site_config();
+        $siteConfig->AllowedCountries = 'NZ';
+        $siteConfig->write();
+
         $this->assertEquals(
             "NZ",
-            $singlecountry->getSingleCountry(),
+            $siteConfig->getSingleCountry(),
             "Confirm that website is setup as a single country site"
         );
 
