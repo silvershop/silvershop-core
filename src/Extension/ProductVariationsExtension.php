@@ -198,15 +198,15 @@ class ProductVariationsExtension extends DataExtension
 
         $list = AttributeValue::get()
             ->innerJoin(
-                'ProductVariation_AttributeValues',
-                '"ProductAttributeValue"."ID" = "ProductVariation_AttributeValues"."ProductAttributeValueID"'
+                'SilverShop_Variation_AttributeValues',
+                '"SilverShop_AttributeValue"."ID" = "SilverShop_Variation_AttributeValues"."SilverShop_AttributeValueID"'
             )->innerJoin(
-                'ProductVariation',
-                '"ProductVariation_AttributeValues"."ProductVariationID" = "ProductVariation"."ID"'
-            )->where("TypeID = $type AND \"ProductVariation\".\"ProductID\" = " . $this->owner->ID);
+                'SilverShop_Variation',
+                '"SilverShop_Variation_AttributeValues"."SilverShop_VariationID" = "SilverShop_Variation"."ID"'
+            )->where("TypeID = $type AND \"SilverShop_Variation\".\"ProductID\" = " . $this->owner->ID);
 
         if (!Product::config()->allow_zero_price) {
-            $list = $list->where('"ProductVariation"."Price" > 0');
+            $list = $list->where('"SilverShop_Variation"."Price" > 0');
         }
         return $list;
     }
