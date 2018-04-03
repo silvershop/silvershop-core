@@ -49,7 +49,6 @@
     "silvershop/coloredvariations": "Select colours for variations",
     "burnbright/silverstripe-shop-geocoding": "Geocoding support for addresses and visitors.",
     "burnbright/silverstripe-shop-googleanalytics": "Records shop sales sales in google analytics.",
-    "tractorcow/silverstripe-opengraph": "Implementation of the Facebook Opengraph protocol for Silverstripe",
     "markguinn/silverstripe-shop-ajax": "Basic ajax behaviours for add to cart, etc"
   },
   "extra": {
