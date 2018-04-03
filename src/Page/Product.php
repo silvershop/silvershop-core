@@ -125,8 +125,6 @@ class Product extends Page implements Buyable
 
     private static $order_item = OrderItem::class;
 
-    private static $min_opengraph_img_size = 0;
-
     // Physical Measurement
     private static $weight_unit = 'kg';
 
@@ -467,34 +465,6 @@ class Product extends Page implements Buyable
             return $image;
         }
         return null;
-    }
-
-    /**
-     * Integration with opengraph module
-     * TODO: Move this feature into a module
-     *
-     * @see    https://github.com/tractorcow/silverstripe-opengraph
-     * @return string opengraph type
-     */
-    public function getOGType()
-    {
-        return 'product';
-    }
-
-    /**
-     * Integration with the opengraph module
-     * TODO: Move this feature into a module
-     *
-     * @return string url of product image
-     */
-    public function getOGImage()
-    {
-        if ($image = $this->Image()) {
-            $min = self::config()->min_opengraph_img_size;
-            $image = $min && $image->getWidth() < $min ? $image->setWidth($min) : $image;
-
-            return Director::absoluteURL($image->URL);
-        }
     }
 
     /**
