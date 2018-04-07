@@ -7,14 +7,14 @@ There is a multi-step version of the checkout available that can be enabled. See
 To enable the multi-step checkout, define the steps in your config.yaml file. The config is a mapping from url `action` to `CheckoutStep`. For example:
 
 ```yaml
-CheckoutPage:
+SilverShop\Page\CheckoutPage:
   steps:
-    membership: 'CheckoutStep_Membership'
-    contactdetails: 'CheckoutStep_ContactDetails'
-    shippingaddress: 'CheckoutStep_AddressBook'
-    billingaddress: 'CheckoutStep_AddressBook'
-    shippingmethod: 'CheckoutStep_ShippingMethod'
-    summary: 'CheckoutStep_Summary'
+    membership: 'SilverShop\Checkout\Step\Membership'
+    contactdetails: 'SilverShop\Checkout\Step\ContactDetails'
+    shippingaddress: 'SilverShop\Checkout\Step\AddressBook'
+    billingaddress: 'SilverShop\Checkout\Step\AddressBook'
+    shippingmethod: 'SilverShop\Checkout\Step\ShippingMethod'
+    summary: 'SilverShop\Checkout\Step\Summary'
 ```
 
 The above configuration is picked up by the `SteppedCheckout::setupSteps()` function in `silvershop/_config.php`, and it adds all of the steps as extensions to `CheckoutPage_Controller`, and make sure the index action (yoursite.tld/checkout/) is the first step.
@@ -48,14 +48,14 @@ mysite/templates/Layout/CheckoutPage_summary.ss
 Steps can be configured using yaml config:
 
 ```yaml
-CheckoutPage:
+SilverShop\Page\CheckoutPage:
   steps:
-    'membership' : 'CheckoutStep_Membership'
-    'contactdetails' : 'CheckoutStep_ContactDetails'
-    'shippingaddress' : 'CheckoutStep_Address'
-    'billingaddress' : 'CheckoutStep_Address'
-    'paymentmethod' : 'CheckoutStep_PaymentMethod'
-    'summary' : 'CheckoutStep_Summary'
+    'membership' : 'SilverShop\Checkout\Step\Membership'
+    'contactdetails' : 'SilverShop\Checkout\Step\ContactDetails'
+    'shippingaddress' : 'SilverShop\Checkout\Step\Address'
+    'billingaddress' : 'SilverShop\Checkout\Step\Address'
+    'paymentmethod' : 'SilverShop\Checkout\Step\PaymentMethod'
+    'summary' : 'SilverShop\Checkout\Step\Summary'
 ```
 
 Add/remove/reorder steps as you please, but keep in mind that the data from one step may be reliant on data from another.
@@ -68,7 +68,7 @@ When needing additional Form Fields in a Multi-Step Checkout, your best bet is t
 1) Adjust the yaml config:
 
 ```yaml
-CheckoutPage:
+SilverShop\Checkout\Step\:
   steps:
     ...
     'contactdetails' : 'CheckoutStep_ContactDetailsCustom'
