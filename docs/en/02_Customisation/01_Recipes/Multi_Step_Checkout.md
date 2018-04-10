@@ -68,7 +68,7 @@ When needing additional Form Fields in a Multi-Step Checkout, your best bet is t
 1) Adjust the yaml config:
 
 ```yaml
-SilverShop\Checkout\Step\:
+SilverShop\Page\CheckoutPage:
   steps:
     ...
     'contactdetails' : 'CheckoutStep_ContactDetailsCustom'
