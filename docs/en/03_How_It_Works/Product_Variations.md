@@ -8,13 +8,13 @@ Often variations of a product will have their own unique SKU (product code).
 
 The variation system has intentionally been kept seperate from the core code.
 This is because not every website will need variations support, and thus it should be
-simple to disable / remove.
+simple to disable / remove. It's managed by `SilverShop\Extension\ProductVariationsExtension` which adds the following structure:
 
- * Product
- 	* has_many ProductVariation
- 	   * many_many AttributeValues
- 	* many_many VariationAttributeTypes
- 	   * has_many AttributeValues
+ * `SilverShop\Page\Product`
+ 	* has_many Variations => `SilverShop\Model\Variation\Variation`
+ 	   * many_many AttributeValues => `SilverShop\Model\Variation\AttributeValue`
+ 	* many_many VariationAttributeTypes => `SilverShop\Model\Variation\AttributeType`
+ 	   * has_many Values => `SilverShop\Model\Variation\AttributeValue`
  	
 ## Front-end Choosing a Variation
 
