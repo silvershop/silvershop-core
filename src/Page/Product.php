@@ -6,6 +6,7 @@ use Page;
 use SilverShop\Cart\ShoppingCart;
 use SilverShop\Cart\ShoppingCartController;
 use SilverShop\Extension\ProductVariationsExtension;
+use SilverShop\Forms\AddProductForm;
 use SilverShop\Model\Buyable;
 use SilverShop\Model\Order;
 use SilverShop\Model\Product\OrderItem;
@@ -495,5 +496,16 @@ class Product extends Page implements Buyable
     public function removeallLink()
     {
         return ShoppingCartController::remove_all_item_link($this);
+    }
+
+    /**
+     * Get the form class to use to edit this product in the frontend
+     * @return string FQCN
+     */
+    public function getFormClass()
+    {
+        $formClass = AddProductForm::class;
+        $this->extend('updateFormClass', $formClass);
+        return $formClass;
     }
 }
