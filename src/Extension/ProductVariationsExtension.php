@@ -2,6 +2,7 @@
 
 namespace SilverShop\Extension;
 
+use SilverShop\Forms\VariationForm;
 use SilverShop\Model\Variation\AttributeType;
 use SilverShop\Model\Variation\AttributeValue;
 use SilverShop\Model\Variation\Variation;
@@ -237,10 +238,10 @@ class ProductVariationsExtension extends DataExtension
         }
     }
 
-    public function contentcontrollerInit($controller)
+    public function updateFormClass(&$formClass)
     {
         if ($this->owner->Variations()->exists()) {
-            $controller->formclass = 'VariationForm';
+            $formClass = VariationForm::class;
         }
     }
 }

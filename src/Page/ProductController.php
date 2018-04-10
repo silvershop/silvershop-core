@@ -4,6 +4,7 @@ namespace SilverShop\Page;
 
 use PageController;
 use SilverShop\Forms\AddProductForm;
+use SilverStripe\Core\Injector\Injector;
 
 class ProductController extends PageController
 {
@@ -14,7 +15,7 @@ class ProductController extends PageController
 
     public function Form()
     {
-        $form = AddProductForm::create($this, 'Form');
+        $form = Injector::inst()->create($this->getFormClass(), $this, 'Form');
         $this->extend('updateForm', $form);
         return $form;
     }
