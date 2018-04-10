@@ -28,9 +28,9 @@ in `mysite\_config\config.yml`
 
 ```
 # Example for EURO
-ShopConfig:
+SilverShop\Extension\ShopConfigExtension:
   base_currency: 'EUR'
-ShopCurrency:
+SilverShop\ORM\FieldType\ShopCurrency:
   currency_symbol: '€'
 ```
 
