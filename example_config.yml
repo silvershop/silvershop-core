@@ -14,8 +14,8 @@ SilverStripe\i18n\i18n:
 
 SilverShop\Model\Order:
   modifiers:
-    - 'SimpleShippingModifier'
-    - 'FlatTaxModifier'
+    - 'SilverShop\Model\Modifiers\Shipping\Simple'
+    - 'SilverShop\Model\Modifiers\Tax\FlatTax'
   cancel_before_payment: false
   cancel_before_processing: false
   cancel_before_sending: false

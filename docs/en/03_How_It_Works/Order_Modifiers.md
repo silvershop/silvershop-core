@@ -28,20 +28,20 @@ Things you should know about modifiers:
 
 ## Shipping & Tax Modifiers
 
- * SimpleShippingModifier -Allows you to choose different flat rates for different countries.
- * WeightShippingModifier - Requires entering a weight for each product.
- * FlatTaxModifier
- * TaxModifier
+ * `SilverShop\Model\Modifiers\Shipping\Simple` -Allows you to choose different flat rates for different countries.
+ * `SilverShop\Model\Modifiers\Shipping\Weight` - Requires entering a weight for each product.
+ * `SilverShop\Model\Modifiers\Tax\FlatTax`
+ * `SilverShop\Model\Modifiers\Tax\Base`
 
 ## Add an Order Modifier
 
 Modifiers are introduced using the SilverStripe config system:
 
 ```yaml
-Order:
+SilverShop\Model\Order:
   modifiers:
-    - SimpleShippingModifier
-    - FlatTaxModifier
+    - 'SilverShop\Model\Modifiers\Shipping\Simple'
+    - 'SilverShop\Model\Modifiers\Tax\FlatTax'
 ```
 
 Note that you may need to clear the current order to see updates to modifiers. You can do this by visiting `mysite.com/shoppingcart/clear`
