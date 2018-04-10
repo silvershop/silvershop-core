@@ -6,7 +6,7 @@ The manual tasks can be accessed from yoursite/dev/shop.
 
 If you have a large number of dataobjects, it may pay to run these tasks from the command line, for example:
 
-    [rootdir]: framework/sake dev/tasks/CartCleanupTask
+    [rootdir]: framework/sake dev/tasks/SilverShop-Tasks-CartCleanupTask
 
 ### CartCleanupTask
 
@@ -28,10 +28,10 @@ The best way to do this is via the provided 'Delete Old Carts' / CartCleanup Tas
 
 To run manually, in your browser visit:
 
-	[yoursiteurl.dom]/dev/tasks/CartCleanupTask
+	[yoursiteurl.dom]/dev/tasks/SilverShop-Tasks-CartCleanupTask
 
 To run automatically, trigger the following [sake script](http://docs.silverstripe.org/en/developer_guides/cli/) to run periodically on your sever:
 
-	[yoursitepath]/framework/sake dev/tasks/CartCleanupTask
+	[yoursitepath]/framework/sake dev/tasks/SilverShop-Tasks-CartCleanupTask
 
 If you add '?type=sql' to the end of the url, the deletion will use direct SQL satements, which is faster, but less secure.
