@@ -3,6 +3,11 @@
 Add the following to your yaml config:
 
 ```yml
+---
+Name: silvershop-defaultadmin
+After: #cmsdefaultadmin
+---
+
 SilverStripe\Admin\AdminRootController:
   default_panel: 'SilverShop\Admin\OrdersAdmin'
 ```
