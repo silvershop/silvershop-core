@@ -323,7 +323,7 @@ class Product extends Page implements Buyable
             return false;
         }
         $allowpurchase = false;
-        $extension = self::has_extension('ProductVariationsExtension');
+        $extension = self::has_extension(ProductVariationsExtension::class);
         if ($extension && Variation::get()->filter('ProductID', $this->ID)->first()) {
             foreach ($this->Variations() as $variation) {
                 if ($variation->canPurchase($member, $quantity)) {
