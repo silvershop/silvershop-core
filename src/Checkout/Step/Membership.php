@@ -31,7 +31,7 @@ class Membership extends CheckoutStep
         'CreateAccountForm',
     ];
 
-    public static $url_handlers = [
+    private static $url_handlers = [
         'login' => 'index',
     ];
 
@@ -41,7 +41,7 @@ class Membership extends CheckoutStep
      * @config
      * @var    bool
      */
-    public static $skip_if_logged_in = true;
+    private static $skip_if_logged_in = true;
 
     public function membership()
     {
