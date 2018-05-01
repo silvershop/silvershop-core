@@ -112,7 +112,7 @@ class ShopConfigExtension extends DataExtension
         $countries = self::config()->iso_3166_country_codes;
         asort($countries);
         if ($allowed = $this->owner->AllowedCountries) {
-            $allowed = explode(',', $allowed);
+            $allowed = json_decode($allowed);
             if (count($allowed) > 0) {
                 $countries = array_intersect_key($countries, array_flip($allowed));
             }
