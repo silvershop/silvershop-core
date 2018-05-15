@@ -215,7 +215,7 @@ class ShoppingCart extends Object
      *
      * @return OrderItem the found or created item
      */
-    private function findOrMakeItem(Buyable $buyable, $filter = array())
+    protected function findOrMakeItem(Buyable $buyable, $filter = array())
     {
         $order = $this->findOrMake();
 
