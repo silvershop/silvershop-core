@@ -271,7 +271,7 @@ class ShoppingCart extends Object
         $buyable = $item->Buyable();
         // If an extension throws an exception, error out
         try {
-            $order->extend("beforeSetQuantity", $buyable, $quantity, $filter);
+            $order->extend("beforeSetQuantity", $buyable, $quantity, $filter, $item);
         } catch (Exception $exception){
             return $this->error($exception->getMessage());
         }
