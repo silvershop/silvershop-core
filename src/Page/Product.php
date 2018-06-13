@@ -17,6 +17,7 @@ use SilverStripe\Control\Director;
 use SilverStripe\Forms\CheckboxField;
 use SilverStripe\Forms\DropdownField;
 use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\ListboxField;
 use SilverStripe\Forms\TextField;
 use SilverStripe\ORM\DataList;
 use SilverStripe\ORM\FieldType\DBBoolean;
@@ -151,17 +152,19 @@ class Product extends Page implements Buyable
                 $fields->fieldByName('Root.Main.Title')
                     ->setTitle(_t(__CLASS__ . '.PageTitle', 'Product Title'));
 
-                $fields->addFieldsToTab(
-                    'Root.Main',
-                    [
-                        TextField::create('InternalItemID', _t(__CLASS__ . '.InternalItemID', 'Product Code/SKU'), '', 30),
-                        DropdownField::create('ParentID', _t(__CLASS__ . '.Category', 'Category'), $self->getCategoryOptions())
-                            ->setDescription(_t(__CLASS__ . '.CategoryDescription', 'This is the parent page or default category.')),
-                        TextField::create('Model', _t(__CLASS__ . '.Model', 'Model'), '', 30),
-                        CheckboxField::create('Featured', _t(__CLASS__ . '.Featured', 'Featured Product')),
-                        CheckboxField::create('AllowPurchase', _t(__CLASS__ . '.AllowPurchase', 'Allow product to be purchased'), 1),
-                    ]
-                );
+                $fields->addFieldsToTab('Root.Main', [
+                    TextField::create('InternalItemID', _t(__CLASS__ . '.InternalItemID', 'Product Code/SKU'), '', 30),
+                    DropdownField::create('ParentID', _t(__CLASS__ . '.Category', 'Category'), $self->getCategoryOptions())
+                        ->setDescription(_t(__CLASS__ . '.CategoryDescription', 'This is the parent page or default category.')),
+                    ListboxField::create(
+                        'ProductCategories',
+                        _t(__CLASS__ . '.AdditionalCategories', 'Additional Categories'),
+                        $self->getCategoryOptionsNoParent()
+                    ),
+                    TextField::create('Model', _t(__CLASS__ . '.Model', 'Model'), '', 30),
+                    CheckboxField::create('Featured', _t(__CLASS__ . '.Featured', 'Featured Product')),
+                    CheckboxField::create('AllowPurchase', _t(__CLASS__ . '.AllowPurchase', 'Allow product to be purchased'), 1),
+                ], 'Content');
 
                 $fields->addFieldsToTab(
                     'Root.Pricing',
@@ -266,10 +269,10 @@ class Product extends Page implements Buyable
      */
     private function getCategoryOptionsNoParent()
     {
-        $ancestors = $this->getAncestors()->map('ID', 'ID');
+        $ancestors = $this->getAncestors()->column('ID');
         $categories = ProductCategory::get();
         if (!empty($ancestors)) {
-            $categories->filter('ID:not', $ancestors);
+            $categories = $categories->exclude('ID', $ancestors);
         }
         return $categories->map('ID', 'NestedTitle')->toArray();
     }
