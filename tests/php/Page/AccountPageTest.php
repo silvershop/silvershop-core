@@ -145,7 +145,7 @@ class AccountPageTest extends FunctionalTest
 
             // setup a single-country site
             $siteconfig = DataObject::get_one(SiteConfig::class);
-            $siteconfig->AllowedCountries = "NZ";
+            $siteconfig->AllowedCountries = '["NZ"]';
             $siteconfig->write();
             $singlecountry = SiteConfig::current_site_config();
             $this->assertEquals(

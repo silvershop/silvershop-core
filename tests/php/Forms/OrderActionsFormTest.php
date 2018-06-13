@@ -52,7 +52,10 @@ class OrderActionsFormTest extends FunctionalTest
         $this->logOut();
 
         OrderManipulationExtension::add_session_order($this->order);
-        Config::modify()->set(Payment::class, 'allowed_gateways', array('Dummy'));
+        Config::modify()->set(Payment::class, 'allowed_gateways', ['Dummy']);
+        Config::modify()->merge(GatewayInfo::class, 'Dummy', [
+            'is_offsite' => false
+        ]);
     }
 
     public function testOffsitePayment()
