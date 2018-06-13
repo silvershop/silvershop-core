@@ -102,7 +102,7 @@ class CheckoutFormTest extends FunctionalTest
     public function testCheckoutFormForSingleCountrySiteWithReadonlyFieldsForCountry()
     {
         $siteConfig = SiteConfig::current_site_config();
-        $siteConfig->AllowedCountries = 'NZ';
+        $siteConfig->AllowedCountries = '["NZ"]';
         $siteConfig->write();
 
         $this->assertEquals(

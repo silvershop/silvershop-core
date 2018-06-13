@@ -241,7 +241,7 @@ class CheckoutComponentTest extends SapphireTest
     {
         // Set as a single country site
         $siteConfig = SiteConfig::current_site_config();
-        $siteConfig->AllowedCountries = 'NZ';
+        $siteConfig->AllowedCountries = '["NZ"]';
         $siteConfig->write();
 
         $this->assertEquals(
