@@ -9,7 +9,7 @@
  *
  * @package shop
  */
-class ShoppingCart extends Object
+class ShoppingCart extends SS_Object
 {
     private static $cartid_session_name = 'shoppingcartid';
 
@@ -632,7 +632,7 @@ class ShoppingCart_Controller extends Controller
             return null;
         }
         //ensure only live products are returned, if they are versioned
-        $buyable = Object::has_extension($buyableclass, 'Versioned')
+        $buyable = SS_Object::has_extension($buyableclass, 'Versioned')
             ?
             Versioned::get_by_stage($buyableclass, 'Live')->byID($id)
             :

@@ -35,9 +35,9 @@ class SteppedCheckout extends Extension
             CheckoutPage::config()->first_step = key($steps);
         }
         //initiate extensions
-        Object::add_extension("CheckoutPage_Controller", "SteppedCheckout");
+        SS_Object::add_extension("CheckoutPage_Controller", "SteppedCheckout");
         foreach ($steps as $action => $classname) {
-            Object::add_extension("CheckoutPage_Controller", $classname);
+            SS_Object::add_extension("CheckoutPage_Controller", $classname);
         }
     }
 

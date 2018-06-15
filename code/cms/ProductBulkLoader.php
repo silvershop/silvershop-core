@@ -86,7 +86,7 @@ class ProductBulkLoader extends CsvBulkLoader
         $this->extend('updateColumnMap', $this->columnMap);
         // we have to check for the existence of this in case the stockcontrol module hasn't been loaded
         // and the CSV still contains a Stock column
-        self::$hasStockImpl = Object::has_extension('Product', 'ProductStockDecorator');
+        self::$hasStockImpl = SS_Object::has_extension('Product', 'ProductStockDecorator');
         $results = parent::processAll($filepath, $preview);
         //After results have been processed, publish all created & updated products
         $objects = ArrayList::create();

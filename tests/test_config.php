@@ -1,6 +1,6 @@
 <?php
 
-Object::useCustomClass('SS_Datetime', 'I18nDatetime', true);
+SS_Object::useCustomClass('SS_Datetime', 'I18nDatetime', true);
 
 /// Reset to all default configuration settings.
 

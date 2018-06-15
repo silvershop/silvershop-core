@@ -12,7 +12,7 @@
  *  - save data from given form fields
  *
  */
-abstract class CheckoutComponent extends Object
+abstract class CheckoutComponent extends SS_Object
 {
     protected $requiredfields = array();
 

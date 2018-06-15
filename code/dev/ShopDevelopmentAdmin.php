@@ -40,7 +40,7 @@ class ShopDevelopmentAdmin extends Controller
         }
 
         //render the debug view
-        $renderer = Object::create('DebugView');
+        $renderer = SS_Object::create('DebugView');
         $renderer->writeHeader();
         $renderer->writeInfo(_t("Shop.DevToolsTitle", "Shop Development Tools"), Director::absoluteBaseURL());
     }
