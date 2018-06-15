@@ -126,7 +126,7 @@ class Product extends Page implements Buyable
                 TextField::create('Model', _t('Product.Model', 'Model'), '', 30),
                 CheckboxField::create('Featured', _t('Product.Featured', 'Featured Product')),
                 CheckboxField::create('AllowPurchase', _t('Product.AllowPurchase', 'Allow product to be purchased'), 1),
-            ]);
+            ], 'Content');
 
             $fields->addFieldsToTab('Root.Pricing', [
                 TextField::create('BasePrice', _t('Product.db_BasePrice', 'Price'))

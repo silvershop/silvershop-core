@@ -26,6 +26,7 @@ class OrderActionsFormTest extends FunctionalTest
         $this->checkoutPage->publish('Stage', 'Live');
 
         Config::inst()->update('Payment', 'allowed_gateways', array('Dummy'));
+        Config::inst()->update('GatewayInfo', 'Dummy', array('is_offsite' => false));
     }
 
     public function testOffsitePayment()
