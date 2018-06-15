@@ -24,6 +24,8 @@ class SteppedCheckoutTest extends FunctionalTest
     {
         parent::setUp();
         ShopTest::setConfiguration();
+        Config::inst()->update('GatewayInfo', 'Dummy', array('is_offsite' => false));
+
         //set up steps
         SteppedCheckout::setupSteps(); //use default steps
 
@@ -164,6 +166,7 @@ class SteppedCheckoutTest extends FunctionalTest
 
     public function testSummary()
     {
+        $this->useDraftSite(false);
         $this->checkout->summary();
         $form = $this->checkout->ConfirmationForm();
         $data = array(
