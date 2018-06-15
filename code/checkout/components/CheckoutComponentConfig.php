@@ -5,7 +5,7 @@ use SilverStripe\Omnipay\GatewayInfo;
 /**
  * @package shop
  */
-class CheckoutComponentConfig extends Object
+class CheckoutComponentConfig extends SS_Object
 {
     protected $components;
 

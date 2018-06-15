@@ -1,6 +1,6 @@
 <?php
 
-class CheckoutConfig extends Object
+class CheckoutConfig extends SS_Object
 {
     private static $member_creation_enabled = true;
 
