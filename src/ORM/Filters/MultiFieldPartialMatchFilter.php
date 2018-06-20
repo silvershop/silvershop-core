@@ -65,7 +65,7 @@ class MultiFieldPartialMatchFilter extends PartialMatchFilter
             }
         );
 
-        if (count($this->subfilters) > 0) {
+        if (!is_null($this->subfilters) && count($this->subfilters) > 0) {
             foreach ($this->subfilters as $f) {
                 $f->setModifiers($this->subfilterModifiers);
             }
