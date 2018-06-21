@@ -78,8 +78,14 @@ abstract class ShopPeriodReport extends Report implements i18nEntityProvider
                 );
             }
         }
-        $start->setDateFormat($dateformat);
-        $end->setDateFormat($dateformat);
+
+        // When using silverware/calendar package, setting the date format breaks the admin interface.  Leave default
+        // behavior as was, but allow the date format not to be set as a config override
+        if ($this->config()->get('disable_set_date_format') != true) {
+            $start->setDateFormat($dateformat);
+            $end->setDateFormat($dateformat);
+        }
+
         return $fields;
     }
 
