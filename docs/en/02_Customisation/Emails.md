@@ -5,17 +5,17 @@ Shop emails can be customised to suit your project needs.
 There are a few yaml config options that will affect which emails are sent:
 
 ```yaml
-OrderProcessor:
+SilverShop\Checkout\OrderProcessor:
   #send order confirmation when order is placed, but unpaid
   send_confirmation: true
 
 #send a bcc copy of emails to administrator
-OrderEmailNotifier:
+SilverShop\Checkout\OrderEmailNotifier:
   bcc_confirmation_to_admin: true
   bcc_receipt_to_admin: true
 
 #Specify the 'from' address to use in email correspondence
-ShopConfig:
+SilverShop\Extension\ShopConfigExtension:
   email_from: store@website.com
 
 ```

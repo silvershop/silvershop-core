@@ -16,7 +16,9 @@ use SilverShop\Tests\ShopTest;
 use SilverStripe\Control\Controller;
 use SilverStripe\Control\Director;
 use SilverStripe\Control\HTTPRequest;
+use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\FunctionalTest;
+use SilverStripe\Omnipay\GatewayInfo;
 use SilverStripe\Security\Member;
 use SilverStripe\Security\Security;
 
@@ -55,6 +57,10 @@ class SteppedCheckoutExtensionTest extends FunctionalTest
     {
         parent::setUp();
         $this->logInWithPermission('ADMIN');
+
+        Config::modify()->merge(GatewayInfo::class, 'Dummy', [
+            'is_offsite' => false
+        ]);
 
         ShopTest::setConfiguration();
         ShoppingCart::singleton()->clear();

@@ -33,7 +33,7 @@ class ContactDetails extends CheckoutStep
             && self::config()->skip_if_logged_in
         ) {
             if (Security::getCurrentUser()) {
-                if (!$form->getValidator()->validate()) {
+                if ($form->getValidator()->validate()) {
                     return Controller::curr()->redirect($this->NextStepLink());
                 } else {
                     $form->clearMessage();
