@@ -17,18 +17,14 @@ use SilverStripe\SiteConfig\SiteConfig;
 
 /**
  * Populate shop task
- *
- * @todo Ideally this task should make use of Spyc, and a single Pages yml file
- * instead of the YamlFixture class, which is intended for testing.
- *
- * @package    shop
- * @subpackage tasks
  */
 class PopulateShopTask extends BuildTask
 {
     protected $title = 'Populate Shop';
 
     protected $description = 'Creates dummy account page, products, checkout page, terms page.';
+
+    private static $segment = 'PopulateShopTask';
 
     public function run($request)
     {
