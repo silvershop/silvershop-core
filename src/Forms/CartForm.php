@@ -3,8 +3,10 @@
 namespace SilverShop\Forms;
 
 use SilverShop\Cart\ShoppingCart;
+use SilverShop\Extension\ShopConfigExtension;
 use SilverShop\ShopTools;
 use SilverStripe\Core\Convert;
+use SilverStripe\Core\Config\Config;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\Form;
 use SilverStripe\Forms\FormAction;
@@ -28,6 +30,7 @@ class CartForm extends Form
         );
         $actions = FieldList::create(
             FormAction::create('updatecart', _t(__CLASS__ . '.UpdateCart', 'Update Cart'))
+                ->setUseButtonTag(Config::inst()->get(ShopConfigExtension::class, 'forms_use_button_tag'))
         );
 
         parent::__construct($controller, $name, $fields, $actions);

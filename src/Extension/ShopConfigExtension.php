@@ -55,6 +55,8 @@ class ShopConfigExtension extends DataExtension
      */
     private static $base_currency = 'NZD';
 
+    private static $forms_use_button_tag = false;
+
     public static function current()
     {
         return SiteConfig::current_site_config();

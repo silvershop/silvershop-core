@@ -4,7 +4,9 @@ namespace SilverShop\Forms;
 
 use SilverShop\Checkout\OrderEmailNotifier;
 use SilverShop\Checkout\OrderProcessor;
+use SilverShop\Extension\ShopConfigExtension;
 use SilverShop\Model\Order;
+use SilverStripe\Core\Config\Config;
 use SilverStripe\Control\HTTPResponse;
 use SilverStripe\Forms\CompositeField;
 use SilverStripe\Forms\FieldList;
@@ -108,7 +110,7 @@ class OrderActionsForm extends Form
                     FormAction::create(
                         'dopayment',
                         _t(__CLASS__ . '.PayOrder', 'Pay outstanding balance')
-                    )
+                    )->setUseButtonTag(Config::inst()->get(ShopConfigExtension::class, 'forms_use_button_tag'))
                 );
             }
         }
@@ -155,9 +157,6 @@ class OrderActionsForm extends Form
             $gateway = (!empty($data['PaymentMethod'])) ? $data['PaymentMethod'] : null;
 
             if (!GatewayInfo::isManual($gateway)) {
-                /**
- * @var OrderProcessor $processor
-*/
                 $processor = OrderProcessor::create($this->order);
                 $fieldFactory = new GatewayFieldsFactory(null);
                 $response = $processor->makePayment(

@@ -3,6 +3,8 @@
 namespace SilverShop\Forms;
 
 use SilverShop\ShopUserInfo;
+use SilverShop\Extension\ShopConfigExtension;
+use SilverStripe\Core\Config\Config;
 use SilverStripe\Forms\DropdownField;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\Form;
@@ -21,6 +23,7 @@ class SetLocationForm extends Form
         $countryfield->setEmptyString(_t(__CLASS__ . '.ChooseCountry', 'Choose country...'));
         $actions = FieldList::create(
             FormAction::create("setLocation", "set")
+                ->setUseButtonTag(Config::inst()->get(ShopConfigExtension::class, 'forms_use_button_tag'))
         );
         parent::__construct($controller, $name, $fields, $actions);
         //load currently set location

@@ -3,6 +3,8 @@
 namespace SilverShop\Forms;
 
 use SilverShop\Checkout\CheckoutComponentConfig;
+use SilverShop\Extension\ShopConfigExtension;
+use SilverStripe\Core\Config\Config;
 use SilverStripe\Control\RequestHandler;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\Form;
@@ -35,7 +37,7 @@ class CheckoutForm extends Form
             FormAction::create(
                 'checkoutSubmit',
                 $submitBtnText
-            )
+            )->setUseButtonTag(Config::inst()->get(ShopConfigExtension::class, 'forms_use_button_tag'))
         );
         $validator = CheckoutComponentValidator::create($this->config);
 
