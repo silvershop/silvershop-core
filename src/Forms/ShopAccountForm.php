@@ -2,7 +2,6 @@
 
 namespace SilverShop\Forms;
 
-
 use SilverShop\Extension\ShopConfigExtension;
 use SilverShop\Page\AccountPageController;
 use SilverShop\Page\CheckoutPage;
