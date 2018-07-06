@@ -4,10 +4,12 @@ namespace SilverShop\Forms;
 
 use SilverShop\Cart\ShoppingCart;
 use SilverShop\Cart\ShoppingCartController;
+use SilverShop\Extension\ShopConfigExtension;
 use SilverShop\Model\Buyable;
 use SilverShop\Page\Product;
 use SilverShop\ShopTools;
 use SilverStripe\Control\Controller;
+use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Convert;
 use SilverStripe\Forms\DropdownField;
 use SilverStripe\Forms\FieldList;
@@ -140,6 +142,7 @@ class AddProductForm extends Form
     {
         return FieldList::create(
             FormAction::create('addtocart', _t("SilverShop\Page\Product.AddToCart", 'Add to Cart'))
+                ->setUseButtonTag(Config::inst()->get(ShopConfigExtension::class, 'forms_use_button_tag'))
         );
     }
 

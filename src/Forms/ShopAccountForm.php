@@ -2,8 +2,11 @@
 
 namespace SilverShop\Forms;
 
+
+use SilverShop\Extension\ShopConfigExtension;
 use SilverShop\Page\AccountPageController;
 use SilverShop\Page\CheckoutPage;
+use SilverStripe\Core\Config\Config;
 use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Control\HTTPResponse;
 use SilverStripe\Forms\FieldList;
@@ -32,8 +35,10 @@ class ShopAccountForm extends Form
             $actions = FieldList::create(FormAction::create('submit', _t(__CLASS__ . '.Save', 'Save Changes')));
         } else {
             $actions = FieldList::create(
-                FormAction::create('submit', _t(__CLASS__ . '.Save', 'Save Changes')),
+                FormAction::create('submit', _t(__CLASS__ . '.Save', 'Save Changes'))
+                    ->setUseButtonTag(Config::inst()->get(ShopConfigExtension::class, 'forms_use_button_tag')),
                 FormAction::create('proceed', _t(__CLASS__ . '.SaveAndProceed', 'Save and proceed to checkout'))
+                    ->setUseButtonTag(Config::inst()->get(ShopConfigExtension::class, 'forms_use_button_tag'))
             );
         }
         parent::__construct($controller, $name, $fields, $actions, $requiredFields);
