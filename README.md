@@ -11,8 +11,8 @@ We've put a strong focus on testing, and thanks to TravisCI, you can see the [bu
 [![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/silvershop/silvershop-core/badges/quality-score.png?s=d60753d6cca3817e80aca3dbb79eb5bd4140c981)](https://scrutinizer-ci.com/g/silvershop/silvershop-core/)
 [![Total Downloads](https://poser.pugx.org/silvershop/core/downloads.png)](https://packagist.org/packages/silvershop/core)
 
-* Website: http://silvershop.github.io
-* Demo: http://demo.ss-shop.org
+* Website: http://www.silvershop.io
+* Demo: https://demo.silvershop.io
 
 Your contributions, and feedback are welcomed and appreciated. There are many ways you can [contribute to this project](https://github.com/silvershop/silvershop-core/wiki/Contributing).
 A tremendous thanks to [everyone that has already contributed](https://github.com/silvershop/silvershop-core/graphs/contributors).
@@ -70,9 +70,4 @@ Futher functionality is provided by add-on submodules.
 
 ## Add-on Sub Modules
 
-Don't reinvent the wheel! Get additional pre-built functionality with sub modules. All additional functional will be tagged on [packgist](https://packagist.org/search/?q=silverstripe%20shop) or [github](https://github.com/search?q=silverstripe+shop).
-
-The code for the [shop demo site](http://demo.ss-shop.org/) is available here:
-
-https://github.com/burnbright/silverstripe-shop-demo
-
+Don't reinvent the wheel! Get additional pre-built functionality with sub modules. All additional functional will be tagged on [packgist](https://packagist.org/search/?q=silvershop) as #silvershop
