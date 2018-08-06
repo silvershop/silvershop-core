@@ -28,6 +28,7 @@ before_script:
   - composer validate
   - if [[ $DB == PGSQL ]]; then composer require silverstripe/postgresql:^2.0 --no-update; fi
   - composer update --prefer-source
+  - composer require --no-update silverstripe/installer:$INSTALLER_VERSION
   - if [[ $PHPCS_TEST ]]; then composer require squizlabs/php_codesniffer:^3 --prefer-dist --no-interaction --no-progress --no-suggest -o; fi
 
 script:
