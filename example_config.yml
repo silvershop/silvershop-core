@@ -70,7 +70,6 @@ SilverShop\Page\ProductCategory:
 SilverShop\Extension\ShopConfigExtension:
   base_currency: 'NZD'
   email_from: sales@myshop.com
-  receipt_subject: "Thank you for your order at www.myshop.com - Order #%d"
 
 SilverShop\ORM\FieldType\ShopCurrency:
   decimal_delimiter: '.'
