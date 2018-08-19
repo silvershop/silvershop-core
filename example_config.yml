@@ -43,7 +43,7 @@ SilverShop\Forms\OrderActionsForm:
 #  send_admin_notification: true  # copy to admin
 
 SilverShop\Page\Product:
-  global_allow_purchase: false
+  # global_allow_purchase: false # prevents the purchase of any product and disables adding to cart
   # length_unit: 'M'
   # weight_unit: 'Pounds'
   db: # Revised decimal places
