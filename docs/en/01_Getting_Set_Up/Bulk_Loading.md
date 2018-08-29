@@ -11,7 +11,7 @@ Clicking the "Show Specification for Product" link in the Products section of th
 
 You are not required to fill out all fields for each product row.
 
-You can find a test spreadsheet in shop/tests/test_products.csv , which was exported from `shop/tests/test_products.xls`.
+You can find a test spreadsheet in tests/php/Admin/test_products.csv , which was exported from `tests/php/Admin/test_products.xls`.
 
 ## Assigning products to Categories
 
