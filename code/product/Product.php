@@ -382,9 +382,9 @@ class Product extends Page implements Buyable
         return false;
     }
 
-    public function Link()
+    public function Link($action = null)
     {
-        $link = parent::Link();
+        $link = parent::Link($action);
         $this->extend('updateLink', $link);
         return $link;
     }
