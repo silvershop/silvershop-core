@@ -299,7 +299,7 @@ class Order extends DataObject
     /**
      * Hack for swapping out relation list with OrderItemList
      */
-    public function getComponents($componentName, $filter = "", $sort = "", $join = "", $limit = null)
+    public function getComponents($componentName, $filter = null, $sort = null, $join = null, $limit = null)
     {
         $components = parent::getComponents($componentName, $filter = "", $sort = "", $join = "", $limit = null);
         if ($componentName === "Items" && get_class($components) !== "UnsavedRelationList") {

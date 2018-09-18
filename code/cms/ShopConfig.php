@@ -81,7 +81,7 @@ class ShopConfig extends DataExtension
         asort($countries);
         if ($allowed = $this->owner->AllowedCountries) {
             $allowed = explode(",", $allowed);
-            if (count($allowed > 0)) {
+            if (count($allowed) > 0) {
                 $countries = array_intersect_key($countries, array_flip($allowed));
             }
         }
