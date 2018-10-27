@@ -36,9 +36,6 @@
                 <dt><%t SilverShop\Page\AccountPage.MemberSince 'Member Since' %></dt>
                 <dd>$Created.Nice</dd>
 
-                <dt><%t SilverShop\Page\AccountPage.MemberLastVisit 'Last Visit' %></dt>
-                <dd>$LastVisited.Nice</dd>
-
                 <dt> <%t SilverShop\Page\AccountPage.NumberOfOrders 'Number of orders' %></dt>
                 <dd><% if $PastOrders %>{$PastOrders.Count}<% else %>0<% end_if %></dd>
             </dl>
