@@ -234,6 +234,11 @@ class Variation extends DataObject implements Buyable
         if (isset($_POST['ProductAttributes']) && is_array($_POST['ProductAttributes'])) {
             $this->AttributeValues()->setByIDList(array_values($_POST['ProductAttributes']));
         }
+        
+         $img = $this->Image();
+            if($img ){
+                $img->doPublish();
+            }
     }
 
     public function getTitle()

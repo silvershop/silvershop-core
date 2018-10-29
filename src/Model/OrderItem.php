@@ -4,7 +4,9 @@ namespace SilverShop\Model;
 
 use SilverShop\Cart\ShoppingCartController;
 use SilverShop\Forms\ShopQuantityField;
+use SilverStripe\Forms\TextField;
 use SilverStripe\ORM\FieldType\DBCurrency;
+
 
 /**
  * An order item is a product which has been added to an order,
@@ -30,7 +32,7 @@ class OrderItem extends OrderAttribute
     private static $searchable_fields = [
         'OrderID' => [
             'title' => 'Order ID',
-            'field' => 'TextField',
+            'field' => TextField::class,
         ],
         'Title' => 'PartialMatchFilter',
         'TableTitle' => 'PartialMatchFilter',
