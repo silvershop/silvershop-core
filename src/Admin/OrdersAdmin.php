@@ -39,7 +39,7 @@ class OrdersAdmin extends ModelAdmin
      */
     public function getList()
     {
-        if ($this->modelClass == $this->sanitiseClassName(Order::class)) {
+        if ($this->modelClass == Order::class) {
             $context = $this->getSearchContext();
             $params = $this->request->requestVar('q');
             //TODO update params DateTo, to include the day, ie 23:59:59
