@@ -231,14 +231,16 @@ class Variation extends DataObject implements Buyable
     public function onBeforeWrite()
     {
         parent::onBeforeWrite();
+
         if (isset($_POST['ProductAttributes']) && is_array($_POST['ProductAttributes'])) {
             $this->AttributeValues()->setByIDList(array_values($_POST['ProductAttributes']));
         }
-        
-         $img = $this->Image();
-            if($img ){
-                $img->doPublish();
-            }
+
+        $img = $this->Image();
+
+        if ($img && $img->exists()) {
+            $img->doPublish();
+        }
     }
 
     public function getTitle()
