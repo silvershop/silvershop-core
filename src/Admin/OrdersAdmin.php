@@ -40,13 +40,12 @@ class OrdersAdmin extends ModelAdmin
     public function getList()
     {
         if ($this->modelClass == Order::class) {
-            $context = $this->getSearchContext();
-            $params = $this->request->requestVar('q');
-            //TODO update params DateTo, to include the day, ie 23:59:59
-            $list = $context->getResults($params)
-                ->exclude('Status', Order::config()->hidden_status); //exclude hidden statuses
+			
+			$list = DataObject::singleton($this->modelClass)->get()
+				->exclude('Status', Order::config()->hidden_status); //exclude hidden statuses;
 
             $this->extend('updateList', $list);
+			
             return $list;
         } else {
             return parent::getList();
