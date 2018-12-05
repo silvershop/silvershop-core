@@ -151,4 +151,18 @@ class CheckoutPageController extends PageController
 
         return $lastErrorMessage->Message;
     }
+    
+    /**
+     * Override viewer to get correct template for first step
+     * 
+     * {@inheritDoc}
+     * @see \SilverStripe\CMS\Controllers\ContentController::getViewer()
+     */
+    public function getViewer($action)
+    {
+        if (CheckoutPage::config()->first_step && $action == 'index') {
+            $action = CheckoutPage::config()->first_step;
+        }
+        return parent::getViewer($action);
+    }
 }
