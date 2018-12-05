@@ -57,7 +57,9 @@ class Membership extends CheckoutStep
             ]
         )->renderWith(
             [
-                'SilverShop\Page\Layout\CheckoutPage_membership', CheckoutPage::class, 'Page'
+                'SilverShop\Page\CheckoutPage_membership',
+                CheckoutPage::class,
+                'Page'
             ]
         ); //needed to make rendering work on index
     }
