@@ -54,7 +54,7 @@ class MultiFieldPartialMatchFilter extends PartialMatchFilter
             }
         );
 
-        if (count($this->subfilters) > 0) {
+        if (is_array($this->subfilters)) {
             foreach ($this->subfilters as $f) {
                 $f->setModifiers($this->subfilterModifiers);
             }
@@ -85,7 +85,7 @@ class MultiFieldPartialMatchFilter extends PartialMatchFilter
 
         parent::setValue($value);
 
-        if (count($this->subfilters) > 0) {
+        if (is_array($this->subfilters)) {
             foreach ($this->subfilters as $f) {
                 $f->setValue($value);
             }
@@ -111,7 +111,7 @@ class MultiFieldPartialMatchFilter extends PartialMatchFilter
         $orGroup = $query->disjunctiveGroup();
         $orGroup = parent::apply($orGroup);
 
-        if (count($this->subfilters) > 0) {
+        if (is_array($this->subfilters)) {
             foreach ($this->subfilters as $f) {
                 $orGroup = $f->apply($orGroup);
             }
