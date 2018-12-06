@@ -569,10 +569,9 @@ class ShoppingCart_Controller extends Controller
     protected static function params_to_get_string(array $array)
     {
         if ($array && count($array) > 0) {
-            array_walk($array, create_function('&$v,$k', '$v = $k."=".$v ;'));
-            return "?" . implode("&", $array);
+            return '?' . http_build_query($array);
         }
-        return "";
+        return '';
     }
 
     /**
