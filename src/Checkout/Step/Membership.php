@@ -49,19 +49,11 @@ class Membership extends CheckoutStep
         if (ShoppingCart::curr() && self::config()->skip_if_logged_in && Security::getCurrentUser()) {
             return Controller::curr()->redirect($this->NextStepLink());
         }
-        return $this->owner->customise(
-            [
-                'Form' => $this->MembershipForm(),
-                'LoginForm' => $this->LoginForm(),
-                'GuestLink' => $this->NextStepLink(),
-            ]
-        )->renderWith(
-            [
-                'SilverShop\Page\CheckoutPage_membership',
-                CheckoutPage::class,
-                'Page'
-            ]
-        ); //needed to make rendering work on index
+        return [
+            'Form' => $this->MembershipForm(),
+            'LoginForm' => $this->LoginForm(),
+            'GuestLink' => $this->NextStepLink(),
+        ];
     }
 
     public function MembershipForm()
