@@ -85,12 +85,12 @@ class CheckoutPage extends Page
     {
         parent::requireDefaultRecords();
         if (!self::get()->exists() && $this->config()->create_default_pages) {
-            $page = self::create(
-                array(
+            $page = self::create()->update(
+                [
                     'Title'       => 'Checkout',
                     'URLSegment'  => CheckoutPageController::config()->url_segment,
                     'ShowInMenus' => 0,
-                )
+                ]
             );
             $page->write();
             $page->publishSingle();

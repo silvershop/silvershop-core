@@ -77,12 +77,12 @@ class CartPage extends Page
     {
         parent::requireDefaultRecords();
         if (!self::get()->exists() && $this->config()->create_default_pages) {
-            $page = self::create(
-                array(
+            $page = self::create()->update(
+                [
                     'Title' => 'Shopping Cart',
                     'URLSegment' => CartPageController::config()->url_segment,
                     'ShowInMenus' => 0,
-                )
+                ]
             );
             $page->write();
             $page->publishSingle();
