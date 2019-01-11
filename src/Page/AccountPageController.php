@@ -43,7 +43,9 @@ class AccountPageController extends PageController
     public function init()
     {
         parent::init();
+
         $this->member = Security::getCurrentUser();
+
         if (!$this->member) {
             $messages = array(
                 'default' => _t(

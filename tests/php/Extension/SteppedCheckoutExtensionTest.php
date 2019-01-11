@@ -24,10 +24,10 @@ use SilverStripe\Security\Security;
 
 class SteppedCheckoutExtensionTest extends FunctionalTest
 {
-    protected static $fixture_file = array(
+    protected static $fixture_file = [
         __DIR__ . '/../Fixtures/Pages.yml',
         __DIR__ . '/../Fixtures/shop.yml',
-    );
+    ];
 
     // This seems to be required, because we query the OrderItem table and thus this gets included…
     // TODO: Remove once we figure out how to circumvent that…

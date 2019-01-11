@@ -8,6 +8,7 @@ use SilverShop\Page\AccountPageController;
 use SilverShop\Tests\ShopTestControllerExtension;
 use SilverStripe\Control\Controller;
 use SilverStripe\Control\Director;
+use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Dev\FunctionalTest;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\Security\Member;
@@ -40,7 +41,13 @@ class AccountPageTest extends FunctionalTest
 
         Controller::add_extension(ShopTestControllerExtension::class);
         $this->accountpage = $this->objFromFixture(AccountPage::class, "accountpage");
+
         $this->controller = new AccountPageController($this->accountpage);
+
+        $r = new HTTPRequest('GET', '/');
+        $r->setSession($this->session());
+
+        $this->controller->setRequest($r);
     }
 
     public function testCanViewAccountPage()

@@ -13,8 +13,10 @@ use SilverStripe\Dev\SapphireTest;
 
 class ShoppingCartTest extends SapphireTest
 {
-    public static $fixture_file   = __DIR__ . '/../Fixtures/shop.yml';
+    protected static $fixture_file  = __DIR__ . '/../Fixtures/shop.yml';
+
     public static $disable_theme  = true;
+
     protected static $use_draft_site = false;
 
     /**
