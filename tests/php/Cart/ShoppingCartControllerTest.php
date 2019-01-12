@@ -187,41 +187,6 @@ class ShoppingCartControllerTest extends FunctionalTest
         ); //items is a databoject set, and will therefore be null when cart is empty.
     }
 
-    public function testVariations()
-    {
-        $this->loadFixture(__DIR__ . '/../Fixtures/variations.yml');
-        /**
-         * @var Product $ballRoot
-         */
-        $ballRoot = $this->objFromFixture(Product::class, 'ball');
-        $ballRoot->publishSingle();
-        /**
-         * @var Product $ball1
-         */
-        $ball1 = $this->objFromFixture(Variation::class, 'redlarge');
-        /**
-         * @var Product $ball2
-         */
-        $ball2 = $this->objFromFixture(Variation::class, 'redsmall');
-
-        $this->logInWithPermission('ADMIN');
-        $ball1->publishSingle();
-        $ball2->publishSingle();
-
-        // Add the two variation items
-        $this->get(ShoppingCartController::add_item_link($ball1));
-        $this->get(ShoppingCartController::add_item_link($ball2));
-        $items = ShoppingCart::curr()->Items();
-        $this->assertNotNull($items);
-        $this->assertEquals($items->Count(), 2, 'There are 2 items in the cart');
-
-        // Remove one and see what happens
-        $this->get(ShoppingCartController::remove_all_item_link($ball1));
-        $this->assertEquals($items->Count(), 1, 'There is 1 item in the cart');
-        $this->assertFalse((bool)$this->cart->get($ball1), "first item not in cart");
-        $this->assertNotNull($this->cart->get($ball2), "second item is in cart");
-    }
-
     public function testSecurityToken()
     {
         $enabled = SecurityToken::is_enabled();
@@ -266,5 +231,40 @@ class ShoppingCartControllerTest extends FunctionalTest
         if (!$enabled) {
             SecurityToken::disable();
         }
+    }
+
+    public function testVariations()
+    {
+        $this->loadFixture(__DIR__ . '/../Fixtures/variations.yml');
+        /**
+         * @var Product $ballRoot
+         */
+        $ballRoot = $this->objFromFixture(Product::class, 'ball');
+        $ballRoot->publishSingle();
+        /**
+         * @var Product $ball1
+         */
+        $ball1 = $this->objFromFixture(Variation::class, 'redlarge');
+        /**
+         * @var Product $ball2
+         */
+        $ball2 = $this->objFromFixture(Variation::class, 'redsmall');
+
+        $this->logInWithPermission('ADMIN');
+        $ball1->publishSingle();
+        $ball2->publishSingle();
+
+        // Add the two variation items
+        $this->get(ShoppingCartController::add_item_link($ball1));
+        $this->get(ShoppingCartController::add_item_link($ball2));
+        $items = ShoppingCart::curr()->Items();
+        $this->assertNotNull($items);
+        $this->assertEquals($items->Count(), 2, 'There are 2 items in the cart');
+
+        // Remove one and see what happens
+        $this->get(ShoppingCartController::remove_all_item_link($ball1));
+        $this->assertEquals($items->Count(), 1, 'There is 1 item in the cart');
+        $this->assertFalse((bool)$this->cart->get($ball1), "first item not in cart");
+        $this->assertNotNull($this->cart->get($ball2), "second item is in cart");
     }
 }
