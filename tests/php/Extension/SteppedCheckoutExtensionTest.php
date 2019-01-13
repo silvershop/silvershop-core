@@ -231,8 +231,8 @@ class SteppedCheckoutExtensionTest extends FunctionalTest
 
         //redirect to make payment
         $this->assertEquals(302, $response->getStatusCode());
-        $this->assertStringContains(
-            '/checkout/payment',
+        $this->assertContains(
+            '/checkout/payment/',
             $response->getHeader('location')
         );
     }
