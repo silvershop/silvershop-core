@@ -508,9 +508,14 @@ class Order extends DataObject
     public function Link()
     {
         if (Security::getCurrentUser()) {
-            return Controller::join_links(AccountPage::find_link(), 'order', $this->ID);
+            $link = Controller::join_links(AccountPage::find_link(), 'order', $this->ID);
         }
-        return CheckoutPage::find_link(false, 'order', $this->ID);
+
+        $link = CheckoutPage::find_link(false, 'order', $this->ID);
+
+        $this->extend('updateLink', $link);
+
+        return $link;
     }
 
     /**
@@ -762,7 +767,9 @@ class Order extends DataObject
     public function generateReference()
     {
         $reference = str_pad($this->ID, self::$reference_id_padding, '0', STR_PAD_LEFT);
+
         $this->extend('generateReference', $reference);
+
         $candidate = $reference;
         //prevent generating references that are the same
         $count = 0;
