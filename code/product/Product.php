@@ -538,7 +538,7 @@ class Product_OrderItem extends OrderItem
 
     public function TableTitle()
     {
-        $product = $this->Product();
+        $product = $this->Product(true);
         $tabletitle = ($product) ? $product->Title : $this->i18n_singular_name();
         $this->extend('updateTableTitle', $tabletitle);
         return $tabletitle;
