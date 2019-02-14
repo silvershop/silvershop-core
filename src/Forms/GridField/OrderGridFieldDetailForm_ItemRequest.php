@@ -29,7 +29,7 @@ JS;
         $form->Actions()->push(
             LiteralField::create(
                 'PrintOrder',
-                "<button class=\"no-ajax grid-print-button\" data-icon=\"grid_print\" onclick=\"javascript:$printwindowjs\">"
+                "<button class=\"no-ajax grid-print-button btn action btn-primary font-icon-print\" onclick=\"javascript:$printwindowjs\">"
                 . _t('SilverShop\Model\Order.Print', 'Print') . '</button>'
             )
         );

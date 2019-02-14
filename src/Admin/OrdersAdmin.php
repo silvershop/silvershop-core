@@ -18,62 +18,69 @@ use SilverStripe\ORM\DataObject;
  */
 class OrdersAdmin extends ModelAdmin
 {
-	private static $url_segment = 'orders';
+    private static $url_segment = 'orders';
 
-	private static $menu_title = 'Orders';
+    private static $menu_title = 'Orders';
 
-	private static $menu_priority = 1;
+    private static $menu_priority = 1;
 
-	private static $menu_icon_class = 'silvershop-icon-cart';
+    private static $menu_icon_class = 'silvershop-icon-cart';
 
-	private static $managed_models = [
-		Order::class,
-		OrderStatusLog::class
-	];
+    private static $managed_models = [
+        Order::class,
+        OrderStatusLog::class
+    ];
 
-	private static $model_importers = array();
+    private static $model_importers = array();
 
-	/**
-	 * Restrict list to non-hidden statuses
-	 */
-	public function getList()
-	{
-		if ($this->modelClass == Order::class) {
-			$list = DataObject::singleton($this->modelClass)->get()
-				->exclude('Status', Order::config()->hidden_status); //exclude hidden statuses;
+    /**
+     * Restrict list to non-hidden statuses
+     */
+    public function getList()
+    {
+        if ($this->modelClass == Order::class) {
+            $list = DataObject::singleton($this->modelClass)->get()
+                ->exclude('Status', Order::config()->hidden_status); //exclude hidden statuses;
 
-			$this->extend('updateList', $list);
-			return $list;
-		} else {
-			return parent::getList();
-		}
-	}
+            $this->extend('updateList', $list);
+            return $list;
+        }
+        return parent::getList();
+    }
 
-	/**
-	 * Replace gridfield detail form to include print functionality
-	 */
-	function getEditForm($id = null, $fields = null)
-	{
-		$form = parent::getEditForm($id, $fields);
-		if ($this->modelClass == $this->sanitiseClassName(Order::class)) {
-			/** @var GridFieldConfig $config */
-			$config = $form->Fields()->fieldByName($this->modelClass)->getConfig();
-			$config->getComponentByType(GridFieldSortableHeader::class)->setFieldSorting(
-				[
-					'StatusI18N' => 'Status'
-				]
-			);
-			$config
-				->getComponentByType(GridFieldDetailForm::class)
-				->setItemRequestClass(OrderGridFieldDetailForm_ItemRequest::class); //see below
-		}
-		if ($this->modelClass == $this->sanitiseClassName(OrderStatusLog::class)) {
-			/** @var GridFieldConfig $config */
-			$config = $form->Fields()->fieldByName($this->modelClass)->getConfig();
-			// Remove add new button
-			$config->removeComponentsByType($config->getComponentByType(GridFieldAddNewButton::class));
-		}
+    /**
+     * Replace gridfield detail form to include print functionality
+     */
+    public function getEditForm($id = null, $fields = null)
+    {
+        $form = parent::getEditForm($id, $fields);
+        if ($this->modelClass == Order::class) {
+            /** @var GridFieldConfig $config */
+            $config = $form
+                ->Fields()
+                ->fieldByName($this->sanitiseClassName($this->modelClass))
+                ->getConfig();
 
-		return $form;
-	}
+            $config
+                ->getComponentByType(GridFieldSortableHeader::class)
+                ->setFieldSorting([ 'StatusI18N' => 'Status' ]);
+
+            $config
+                ->getComponentByType(GridFieldDetailForm::class)
+                ->setItemRequestClass(OrderGridFieldDetailForm_ItemRequest::class); //see below
+        }
+
+        if ($this->modelClass == OrderStatusLog::class) {
+            /** @var GridFieldConfig $config */
+            $config = $form
+                ->Fields()
+                ->fieldByName($this->sanitiseClassName($this->modelClass))
+                ->getConfig();
+
+            // Remove add new button
+            $config->removeComponentsByType($config->getComponentByType(GridFieldAddNewButton::class));
+        }
+
+        return $form;
+    }
 }
