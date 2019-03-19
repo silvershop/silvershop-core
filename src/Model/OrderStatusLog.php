@@ -75,6 +75,10 @@ class OrderStatusLog extends DataObject
 
     private static $table_name = 'SilverShop_OrderStatusLog';
 
+    public function canCreate($member = null, $context = [])
+    {
+        return false;
+    }
 
     public function canDelete($member = null)
     {
