@@ -21,7 +21,6 @@
     }
   ],
   "require": {
-    "php": ">=5.6.0",
     "silverstripe/cms": "^4",
     "silverstripe/asset-admin": "*",
     "silverstripe/silverstripe-omnipay": "^3@dev",
