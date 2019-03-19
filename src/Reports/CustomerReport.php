@@ -30,7 +30,6 @@ class CustomerReport extends ShopPeriodReport
             'Created' => 'Joined',
             'Spent' => 'Spent',
             'Orders' => 'Orders',
-            'NumVisit' => 'Visits',
             'edit' => [
                 'title' => 'Edit',
                 'formatting' => '<a href=\"admin/security/EditForm/field/Members/item/$ID/edit\" target=\"_new\">edit</a>',
@@ -49,12 +48,15 @@ class CustomerReport extends ShopPeriodReport
         $query = parent::query($params);
         $query->selectField($this->periodfield, 'FilterPeriod')
             ->addSelect(
-                ['"Member"."ID"', '"Member"."FirstName"', '"Member"."Surname"', '"Member"."Email"', '"Member"."NumVisit"', '"Member"."Created"']
+                ['"Member"."ID"', '"Member"."FirstName"', '"Member"."Surname"', '"Member"."Email"', '"Member"."Created"']
             )
             ->selectField('COUNT("SilverShop_Order"."ID")', 'Orders')
             ->selectField('SUM("SilverShop_Order"."Total")', 'Spent');
+
         $query->addInnerJoin('SilverShop_Order', '"Member"."ID" = "SilverShop_Order"."MemberID"');
+
         $query->addGroupBy('"Member"."ID"');
+
         if (!$query->getOrderBy()) {
             $query->setOrderBy(
                 [

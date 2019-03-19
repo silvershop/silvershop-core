@@ -7,7 +7,6 @@ use SilverShop\Forms\ShopQuantityField;
 use SilverStripe\Forms\TextField;
 use SilverStripe\ORM\FieldType\DBCurrency;
 
-
 /**
  * An order item is a product which has been added to an order,
  * ready for purchase. An order item is typically a product itself,

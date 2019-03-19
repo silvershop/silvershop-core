@@ -151,10 +151,10 @@ class CheckoutPageController extends PageController
 
         return $lastErrorMessage->Message;
     }
-    
+
     /**
      * Override viewer to get correct template for first step
-     * 
+     *
      * {@inheritDoc}
      * @see \SilverStripe\CMS\Controllers\ContentController::getViewer()
      */
