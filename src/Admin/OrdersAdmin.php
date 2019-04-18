@@ -38,14 +38,15 @@ class OrdersAdmin extends ModelAdmin
      */
     public function getList()
     {
-        if ($this->modelClass == Order::class) {
-            $list = DataObject::singleton($this->modelClass)->get()
-                ->exclude('Status', Order::config()->hidden_status); //exclude hidden statuses;
+        $list = parent::getList();
 
+        if ($this->modelClass == Order::class) {
+            // Exclude hidden statuses
+            $list = $list->exclude('Status', Order::config()->hidden_status); 
             $this->extend('updateList', $list);
-            return $list;
         }
-        return parent::getList();
+
+        return $list;
     }
 
     /**
