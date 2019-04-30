@@ -44,7 +44,7 @@ For a SilverStripe 3.x compatible version, please use a 2.x release.
 To install SilverShop using [composer](http://doc.silverstripe.org/framework/en/installation/composer), run the following command:
 
 ```
-composer require silvershop/core ^3@dev
+composer require silvershop/core
 ```
 
 ### Build Tasks
