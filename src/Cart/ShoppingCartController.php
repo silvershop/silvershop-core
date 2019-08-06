@@ -196,16 +196,18 @@ class ShoppingCartController extends Controller
      */
     public function add($request)
     {
+        $result = false;
+
         if ($product = $this->buyableFromRequest()) {
             $quantity = (int)$request->getVar('quantity');
             if (!$quantity) {
                 $quantity = 1;
             }
-            $this->cart->add($product, $quantity, $request->getVars());
+            $result = $this->cart->add($product, $quantity, $request->getVars());
         }
 
         $this->updateLocale($request);
-        $this->extend('updateAddResponse', $request, $response, $product, $quantity);
+        $this->extend('updateAddResponse', $request, $response, $product, $quantity, $result);
         return $response ? $response : self::direct();
     }
 
