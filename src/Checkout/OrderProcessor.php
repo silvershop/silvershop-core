@@ -216,8 +216,6 @@ class OrderProcessor
     public function completePayment()
     {
         if (!$this->order->IsPaid()) {
-            // recalculate order to be sure we have the correct total
-            $this->order->calculate();
 
             $this->order->extend('onPayment'); //a payment has been made
             //place the order, if not already placed
@@ -283,9 +281,6 @@ class OrderProcessor
         if ($this->order->Locale) {
             ShopTools::install_locale($this->order->Locale);
         }
-
-        // recalculate order to be sure we have the correct total
-        $this->order->calculate();
 
         if (DB::get_conn()->supportsTransactions()) {
             DB::get_conn()->transactionStart();
