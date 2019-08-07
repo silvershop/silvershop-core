@@ -475,7 +475,7 @@ en:
     StatusChangeAdminCancelledNote: 'Your order has been cancelled by our staff.  Please contact us if you have any questions about this order.'
     StatusChangeMemberCancelledNote: 'Your cancellation of the order has been noted.  Please contact us if you have any questions.'
     StatusChangeProcessingNote: 'We have updated the status of your order to Processing.  Please contact us if you have any questions about this order.'
-    StatusChangeSentNote: 'Your order has been sent.  We aim to deliver promptly.  Please contact us if the products do not arrived within five days.'
+    StatusChangeSentNote: 'Your order has been sent.  We aim to deliver promptly.  Please contact us if the products have not arrived within five days.'
     StatusChangeSubject: 'Silvershop - {Title}'
     StatusChangeTitle: 'Shop Status Change'
     StatusChanged: 'Status for order #{OrderNo} changed to "{OrderStatus}"'
