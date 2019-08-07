@@ -8,26 +8,23 @@ env:
 
 matrix:
   include:
-    - php: 7.1
-      env: DB=MYSQL INSTALLER_VERSION=4.3.3 PHPCS_TEST=1 PHPUNIT_TEST=1
-    - php: 7.2
-      env: DB=PGSQL INSTALLER_VERSION=4.3.3 PHPUNIT_TEST=1
-    - php: 7.2
-      env: DB=MYSQL INSTALLER_VERSION=4.3.3 PHPUNIT_TEST=1
-    - php: 7.2
-      env: DB=MYSQL INSTALLER_VERSION=4.3.3 PHPUNIT_COVERAGE_TEST=1
+    # - php: 7.3
+    #   env: DB=MYSQL INSTALLER_VERSION=4.4.x-dev PHPCS_TEST=1 PHPUNIT_TEST=1
+    - php: 7.3
+      env: DB=MYSQL INSTALLER_VERSION=4.4.x-dev PHPUNIT_TEST=1
+    - php: 7.3
+      env: DB=PGSQL INSTALLER_VERSION=4.4.x-dev PHPUNIT_TEST=1
+    - php: 7.3
+      env: DB=MYSQL INSTALLER_VERSION=4.4.x-dev PHPUNIT_COVERAGE_TEST=1
 
 before_script:
- # Init PHP
   - phpenv rehash
   - phpenv config-rm xdebug.ini || true
   - echo 'memory_limit = 3096M' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
-
-  # Install composer dependencies
   - export PATH=~/.composer/vendor/bin:$PATH
   - composer validate
-  - if [[ $DB == PGSQL ]]; then composer require silverstripe/postgresql:^2.0 --no-update; fi
-  - composer update --prefer-source
+  - if [[ $DB == PGSQL ]]; then composer require silverstripe/postgresql:^2.2 --no-update; fi
+  - composer install --prefer-source --no-interaction --no-progress --no-suggest --optimize-autoloader --verbose --profile
   - composer require --no-update silverstripe/installer:$INSTALLER_VERSION
   - if [[ $PHPCS_TEST ]]; then composer require squizlabs/php_codesniffer:^3 --prefer-dist --no-interaction --no-progress --no-suggest -o; fi
 
