@@ -25,17 +25,17 @@
                 <div class="panel-footer cf">
                     <% if $ID != $CurrentMember.DefaultShippingAddressID %>
                         <a title="<%t SilverShop\Page\AccountPage_AddressBook.MakeDefaultShippingTitle 'Make this my default shipping address' %>"
-                           href="account/setdefaultshipping/{$ID}" class="btn">
+                           href="$Top.Link('setdefaultshipping')/{$ID}" class="btn">
                             <%t SilverShop\Page\AccountPage_AddressBook.MakeDefaultShipping 'Make Default Shipping' %>
                         </a>
                     <% end_if %>
                     <% if $ID != $CurrentMember.DefaultBillingAddressID %>
                         <a title="<%t SilverShop\Page\AccountPage_AddressBook.MakeDefaultBillingTitle 'Make this my default billing address' %>"
-                           href="account/setdefaultbilling/{$ID}" class="btn">
+                           href="$Top.Link('setdefaultbilling')/{$ID}" class="btn">
                             <%t SilverShop\Page\AccountPage_AddressBook.MakeDefaultBilling 'Make Default Billing' %>
                         </a>
                     <% end_if %>
-                    <a href="account/deleteaddress/{$ID}"
+                    <a href="$Top.Link('deleteaddress')/{$ID}"
                        class="remove-address"
                        title="<%t SilverShop\Page\AccountPage_AddressBook.DeleteAddress 'Delete this address' %>">
                         <img src="$resourceURL('silvershop/core:client/dist/images/remove.gif')" alt="X">
