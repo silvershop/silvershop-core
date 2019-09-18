@@ -306,7 +306,7 @@ class OrderProcessor
             function ($severity, $message, $file, $line) {
                 throw new ErrorException($message, 0, $severity, $file, $line);
             },
-            E_ALL & ~(E_STRICT | E_NOTICE)
+            E_ALL & ~(E_STRICT | E_NOTICE | E_DEPRECATED | E_USER_DEPRECATED)
         );
 
         try {
