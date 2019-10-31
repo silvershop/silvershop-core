@@ -56,16 +56,16 @@ class OrderAttribute extends DataObject
      *
      * @return string
      */
-    public function TableTitle()
+    public function getTableTitle()
     {
         $title = $this->i18n_singular_name();
         $this->extend('updateTableTitle', $title);
         return $title;
     }
 
-    public function CartTitle()
+    public function getCartTitle()
     {
-        $title = $this->TableTitle();
+        $title = $this->getTableTitle();
         $this->extend('updateCartTitle', $title);
         return $title;
     }
