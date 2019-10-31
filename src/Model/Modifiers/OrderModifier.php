@@ -4,6 +4,7 @@ namespace SilverShop\Model\Modifiers;
 
 use SilverShop\Model\Order;
 use SilverShop\Model\OrderAttribute;
+use SilverStripe\Forms\TextField;
 use SilverStripe\ORM\FieldType\DBCurrency;
 use SilverStripe\ORM\FieldType\DBEnum;
 
@@ -33,13 +34,13 @@ class OrderModifier extends OrderAttribute
     ];
 
     private static $searchable_fields = [
-        'OrderID' => array(
+        'OrderID' => [
             'title' => 'Order ID',
-            'field' => 'TextField',
-        ),
-        'Title' => 'PartialMatchFilter',
-        'TableTitle' => 'PartialMatchFilter',
-        'CartTitle' => 'PartialMatchFilter',
+            'field' => TextField::class,
+        ],
+        'Title' => ['filter' => 'PartialMatchFilter'],
+        'TableTitle' => ['filter' => 'PartialMatchFilter'],
+        'CartTitle' => ['filter' => 'PartialMatchFilter'],
         'Amount',
         'Type',
     ];
