@@ -23,11 +23,7 @@ class ShopCountry extends DBVarchar
      */
     public function Nice()
     {
-        $val = ShopConfigExtension::countryCode2name($this->value);
-        if (!$val) {
-            $val = $this->value;
-        }
-        return _t(__CLASS__ . '.' . $this->value, $val);
+        return IntlLocales::singleton()->countryName($this->value);
     }
 
     public function XML()
