@@ -4,6 +4,7 @@ namespace SilverShop\ORM\FieldType;
 
 use SilverShop\Extension\ShopConfigExtension;
 use SilverStripe\Core\Convert;
+use SilverStripe\i18n\Data\Intl\IntlLocales;
 use SilverStripe\ORM\FieldType\DBVarchar;
 
 class ShopCountry extends DBVarchar
@@ -23,11 +24,7 @@ class ShopCountry extends DBVarchar
      */
     public function Nice()
     {
-        $val = ShopConfigExtension::countryCode2name($this->value);
-        if (!$val) {
-            $val = $this->value;
-        }
-        return _t(__CLASS__ . '.' . $this->value, $val);
+        return IntlLocales::singleton()->countryName($this->value);
     }
 
     public function XML()
