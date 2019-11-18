@@ -507,11 +507,11 @@ class Order extends DataObject
      */
     public function Link()
     {
+        $link = CheckoutPage::find_link(false, 'order', $this->ID);
+        
         if (Security::getCurrentUser()) {
             $link = Controller::join_links(AccountPage::find_link(), 'order', $this->ID);
         }
-
-        $link = CheckoutPage::find_link(false, 'order', $this->ID);
 
         $this->extend('updateLink', $link);
 
