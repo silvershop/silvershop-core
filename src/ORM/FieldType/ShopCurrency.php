@@ -36,6 +36,13 @@ class ShopCurrency extends DBCurrency
     private static $append_symbol = false;
 
     /**
+     * Whether or not to use a textual 'free' instead of 0.00
+     *
+     * @var bool
+     */
+    private static $use_free_text = false;
+
+    /**
      * HTML to use for negative numbers
      *
      * @config
@@ -51,6 +58,10 @@ class ShopCurrency extends DBCurrency
 
     public function Nice()
     {
+        if (self::config()->get('use_free_text') && $this->value == 0) {
+            return _t(__CLASS__ . '.Free', 'Free');
+        }
+
         $symbol = $this->config()->currency_symbol;
         $val = number_format(
             abs($this->value),
