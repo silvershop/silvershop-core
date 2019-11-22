@@ -50,12 +50,15 @@ class OrderTotalCalculator
         $runningtotal = $this->order->SubTotal();
         $sort = 1;
         $existingmodifiers = $this->order->Modifiers();
-        $modifierclasses = array_unique(Order::config()->modifiers);
+         
+        $modifierclasses = Order::config()->modifiers;
 
         //check if modifiers are even in use
         if (!is_array($modifierclasses) || empty($modifierclasses)) {
             return $runningtotal;
         }
+        
+        $modifierclasses = array_unique($modifierclasses);
 
         if (DB::get_conn()->supportsTransactions()) {
             DB::get_conn()->transactionStart();
