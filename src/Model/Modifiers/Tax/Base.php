@@ -25,9 +25,9 @@ class Base extends OrderModifier
 
     private static $plural_name = 'Taxes';
 
-    public function TableTitle()
+    public function getTableTitle()
     {
-        $title = parent::TableTitle();
+        $title = parent::getTableTitle();
         if ($this->Rate) {
             $title .= ' ' . _t(
                 __CLASS__ . '.AtRate',
