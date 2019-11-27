@@ -59,7 +59,7 @@ class Weight extends Base
         return $this->Amount = $amount;
     }
 
-    public function TableTitle()
+    public function getTableTitle()
     {
         return _t(
             __CLASS__ . '.TableTitle',

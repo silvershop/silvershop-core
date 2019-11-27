@@ -64,11 +64,12 @@ class OrderItem extends \SilverShop\Model\OrderItem
         }
     }
 
-    public function TableTitle()
+    public function getTableTitle()
     {
         $product = $this->Product();
         $tabletitle = ($product) ? $product->Title : $this->i18n_singular_name();
         $this->extend('updateTableTitle', $tabletitle);
+
         return $tabletitle;
     }
 

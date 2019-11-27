@@ -34,7 +34,7 @@ class Simple extends Base
         return self::config()->default_charge;
     }
 
-    public function TableTitle()
+    public function getTableTitle()
     {
         if ($country = $this->Country()) {
             $countryList = SiteConfig::current_site_config()->getCountriesList();
@@ -46,7 +46,7 @@ class Simple extends Base
                 ['Country' => $countryList[$country]]
             );
         } else {
-            return parent::TableTitle();
+            return parent::getTableTitle();
         }
     }
 

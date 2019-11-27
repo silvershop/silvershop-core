@@ -52,10 +52,11 @@ class GlobalTax extends Base
         return $this->Rate = $defaults['Rate'];
     }
 
-    public function TableTitle()
+    public function getTableTitle()
     {
         $country = $this->Country() ? ' (' . $this->Country() . ') ' : '';
-        return parent::TableTitle() . $country .
+
+        return parent::getTableTitle() . $country .
             ($this->Type == 'Chargable' ? '' : _t(__CLASS__ . '.Included', ' (included in the above price)'));
     }
 
