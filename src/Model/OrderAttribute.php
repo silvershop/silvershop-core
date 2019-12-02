@@ -72,6 +72,8 @@ class OrderAttribute extends DataObject
 
     public function ShowInTable()
     {
-        return true;
+        $showInTable = true;
+        $this->extend('updateShowInTable', $showInTable);
+        return $showInTable;
     }
 }
