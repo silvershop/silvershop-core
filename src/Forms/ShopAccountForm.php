@@ -45,7 +45,6 @@ class ShopAccountForm extends Form
         $this->extend('updateShopAccountForm');
 
         if ($member) {
-            $member->Password = ''; //prevents password field from being populated with encrypted password data
             $this->loadDataFrom($member);
         }
     }
