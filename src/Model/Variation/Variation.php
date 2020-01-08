@@ -317,6 +317,17 @@ class Variation extends DataObject implements Buyable
         return $this->Item()->addLink($this->ProductID, $this->ID);
     }
 
+    /**
+     * Returns a link to the parent product of this variation (variations don't have their own pages)
+     *
+     * @param $action string
+     *
+     * @return string
+     */
+    public function Link($action = null) {
+        return ($this->ProductID) ? $this->Product()->Link($action) : false;
+    }
+
     public function createItem($quantity = 1, $filter = array())
     {
         $orderitem = self::config()->order_item;
