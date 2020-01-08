@@ -435,9 +435,6 @@ class Order extends DataObject
      */
     public function calculate()
     {
-        if (!$this->IsCart()) {
-            return $this->Total;
-        }
         $calculator = OrderTotalCalculator::create($this);
         return $this->Total = $calculator->calculate();
     }
