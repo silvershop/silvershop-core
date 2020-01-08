@@ -291,6 +291,7 @@ class OrderProcessor
             $this->order->Status = 'Unpaid';
         } else {
             $this->order->Status = 'Paid';
+            $this->order->Paid = DBDatetime::now()->Rfc2822();
         }
 
         if (!$this->order->Placed) {
