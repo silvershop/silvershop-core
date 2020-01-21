@@ -83,6 +83,6 @@ SilverShop\Cart\ShoppingCartController:
   # disable security token for cart-links
   disable_security_token: true
 
-SilverShop\Reports\ShopPeriodReport:
+#SilverShop\Reports\ShopPeriodReport:
   # IF you are using the silverware/calendar module, uncomment the following line
   #disable_set_date_format: true
