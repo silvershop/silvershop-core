@@ -19,6 +19,7 @@ use SilverStripe\Forms\CheckboxSetField;
 use SilverStripe\Forms\DateField;
 use SilverStripe\Forms\DropdownField;
 use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\GridField\GridField;
 use SilverStripe\Forms\LiteralField;
 use SilverStripe\Forms\Tab;
 use SilverStripe\Forms\TabSet;
@@ -310,7 +311,11 @@ class Order extends DataObject
             $parts[] = LiteralField::create('Notes', $fs . $this->renderWith('SilverShop\Admin\OrderAdmin_Notes') . $fe);
         }
         $fields->addFieldsToTab('Root.Main', $parts);
+
+        $fields->addFieldToTab('Root.Modifiers', new GridField('Modifiers', 'Modifiers', $this->Modifiers()));
+
         $this->extend('updateCMSFields', $fields);
+
         if ($payments = $fields->fieldByName('Root.Payments.Payments')) {
             $fields->removeByName('Payments');
             $fields->insertAfter('Content', $payments);
@@ -430,9 +435,6 @@ class Order extends DataObject
      */
     public function calculate()
     {
-        if (!$this->IsCart()) {
-            return $this->Total;
-        }
         $calculator = OrderTotalCalculator::create($this);
         return $this->Total = $calculator->calculate();
     }
