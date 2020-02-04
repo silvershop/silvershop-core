@@ -212,8 +212,8 @@ class OrderEmailNotifier
             // Find the latest log message that hasn't been sent to the client yet, but can be (e.g. is visible)
             $latestLog = OrderStatusLog::get()
                 ->filter("OrderID", $this->order->ID)
-                ->filter("SentToCustomer", false)
-                ->filter("VisibleToCustomer", true)
+                ->filter("SentToCustomer", 0)
+                ->filter("VisibleToCustomer", 1)
                 ->first();
 
             if ($latestLog) {
