@@ -889,7 +889,8 @@ class Order extends DataObject
             $log->Note = _t('SilverShop\ShopEmail.StatusChange' . $this->Status . 'Note', $this->Status . 'Note');
             $log->OrderID = $this->ID;
             OrderEmailNotifier::create($this)->sendStatusChange($log->Title, $log->Note);
-            $log->SentToCustomer = true;
+            $log->SentToCustomer = true; // Explicitly set because sendStatusChange() won't set it in this case
+            $log->VisibleToCustomer = true;
             $this->extend('updateOrderStatusLog', $log);
             $log->write();
         }

@@ -206,10 +206,14 @@ class OrderEmailNotifier
      */
     public function sendStatusChange($title, $note = null)
     {
+        $latestLog = null;
+
         if (!$note) {
+            // Find the latest log message that hasn't been sent to the client yet, but can be (e.g. is visible)
             $latestLog = OrderStatusLog::get()
                 ->filter("OrderID", $this->order->ID)
-                ->filter("SentToCustomer", 1)
+                ->filter("SentToCustomer", false)
+                ->filter("VisibleToCustomer", true)
                 ->first();
 
             if ($latestLog) {
@@ -241,10 +245,18 @@ class OrderEmailNotifier
             );
 
         if ($this->debugMode) {
-            return $this->debug($email);
+            $result = $this->debug($email);
         } else {
-            return $email->send();
+            $result = $email->send();
         }
+
+        if ($latestLog) {
+            // If we got the note from an OrderStatusLog object, mark it as having been sent to the customer
+            $latestLog->SentToCustomer = true;
+            $latestLog->write();
+        }
+
+        return $result;
     }
 
     /**
