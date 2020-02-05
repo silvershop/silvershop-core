@@ -3,6 +3,7 @@
 namespace SilverShop\Model;
 
 use SilverStripe\ORM\DataObject;
+use SilverStripe\ORM\DB;
 use SilverStripe\ORM\FieldType\DBDate;
 use SilverStripe\Security\Member;
 use SilverStripe\Security\Security;
@@ -18,7 +19,8 @@ use SilverStripe\Security\Security;
  * @property string $DispatchTicket
  * @property string $PaymentCode
  * @property bool $PaymentOK
- * @property bool $SentToCustomer
+ * @property bool $SentToCustomer Whether or not this entry has been sent to the customer (e.g. via OrderEmailNotifier)
+ * @property bool $VisibleToCustomer Whether or not this entry should be visible to the customer (e.g. on order details)
  * @property int $AuthorID
  * @property int $OrderID
  *
@@ -36,6 +38,7 @@ class OrderStatusLog extends DataObject
         'PaymentCode' => 'Varchar(100)',
         'PaymentOK' => 'Boolean',
         'SentToCustomer' => 'Boolean',
+        'VisibleToCustomer' => 'Boolean',
     ];
 
     private static $has_one = [
@@ -64,7 +67,8 @@ class OrderStatusLog extends DataObject
         'Order.Name' => 'Name',
         'Order.LatestEmail' => 'Email',
         'Title' => 'Title',
-        'SentToCustomer' => 'Emailed'
+        'SentToCustomer' => 'Emailed',
+        'VisibleToCustomer' => 'Visible to customer?'
     ];
 
     private static $singular_name = 'Order Log Entry';
@@ -96,6 +100,35 @@ class OrderStatusLog extends DataObject
         $this->updateWithLastInfo();
     }
 
+    public function requireDefaultRecords()
+    {
+        parent::requireDefaultRecords();
+
+        // If there are existing records with SentToCustomer=true and there are no records with VisibleToCustomer=true,
+        // then we assume this is an upgrade (if a record was sent to the customer, then by definition it's visible to
+        // the customer. However, we use the count check to ensure we only make the database change up until at least
+        // one record has VisibleToCustomer = true (to avoid resetting it in future)
+        if (OrderStatusLog::get()->filter('VisibleToCustomer', true)->count() == 0) {
+            // We don't have any records with VisibleToCustomer true, so update all records with SentToCustomer = true
+            $toUpdate = OrderStatusLog::get()->filter('SentToCustomer', true);
+            $updated = 0;
+
+            /** @var OrderStatusLog $log */
+            foreach ($toUpdate as $log) {
+                $log->VisibleToCustomer = true;
+                $log->write();
+                $updated++;
+            }
+
+            $message = sprintf(
+                'Migrated %d records to new format (set VisibleToCustomer=true where SentToCustomer=true)',
+                $updated
+            );
+
+            DB::alteration_message($message, 'changed');
+        }
+    }
+
     public function onBeforeWrite()
     {
         parent::onBeforeWrite();
@@ -119,13 +152,20 @@ class OrderStatusLog extends DataObject
     protected function updateWithLastInfo()
     {
         if ($this->OrderID) {
-            if ($latestLog = OrderStatusLog::get()->filter('OrderID', $this->OrderID)->sort('Created', 'DESC')->first()
-            ) {
+            /** @var OrderStatusLog $latestLog */
+            $latestLog = OrderStatusLog::get()
+                ->filter('OrderID', $this->OrderID)
+                ->sort('Created', 'DESC')
+                ->first();
+
+            if ($latestLog) {
                 $this->DispatchedBy = $latestLog->DispatchedBy;
                 $this->DispatchedOn = $latestLog->DispatchedOn;
                 $this->DispatchTicket = $latestLog->DispatchTicket;
                 $this->PaymentCode = $latestLog->PaymentCode;
                 $this->PaymentOK = $latestLog->PaymentOK;
+                $this->SentToCustomer = $latestLog->SentToCustomer;
+                $this->VisibleToCustomer = $latestLog->VisibleToCustomer;
             }
         }
     }

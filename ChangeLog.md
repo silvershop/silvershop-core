@@ -1,5 +1,9 @@
 # SilverShop ChangeLog
 
+## Unreleased 3.x
+
+- Add new `VisibleToCustomer` flag to `OrderStatusLog`. Use it alongside the existing `SentToCustomer` flags to allow developers to store additional admin-only log messages attached to orders.
+
 ## 3.0.0
 
 Introduces SilverStripe 4 support and full namespaces.
