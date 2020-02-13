@@ -3,6 +3,7 @@
 ## Unreleased 3.x
 
 - Add new `VisibleToCustomer` flag to `OrderStatusLog`. Use it alongside the existing `SentToCustomer` flags to allow developers to store additional admin-only log messages attached to orders.
+- Add new `order_is_required` config flag to `OrderStatusLog`, set to true by default (for backwards-compatibility). Set it to `false` to allow `OrderStatusLog` objects to be created that are not linked to any particular `Order` object.
 
 ## 3.0.0
 

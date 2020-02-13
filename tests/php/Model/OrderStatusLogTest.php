@@ -321,4 +321,24 @@ class OrderStatusLogTest extends SapphireTest
             'Silvershop - ' . $log_order_status_processing->Title
         );
     }
+
+    public function testOrderIsRequired()
+    {
+        $log = new OrderStatusLog([
+            'Title' => 'Test',
+            'OrderID' => 1
+        ]);
+        $log->write();
+        $this->assertTrue($log->exists());
+
+        // Now we make sure we don't need to set an OrderID
+        Config::modify()->set(OrderStatusLog::class, 'order_is_required', false);
+
+        $log = new OrderStatusLog([
+            'Title' => 'Test'
+        ]);
+
+        $log->write();
+        $this->assertTrue($log->exists());
+    }
 }
