@@ -79,6 +79,13 @@ class OrderStatusLog extends DataObject
 
     private static $table_name = 'SilverShop_OrderStatusLog';
 
+    /**
+     * @var bool Whether the link between an Order and OrderStatusLog is required (tested during write validation)
+     * @see static::validate()
+     * @config
+     */
+    private static $order_is_required = true;
+
     public function canCreate($member = null, $context = [])
     {
         return false;
@@ -143,9 +150,11 @@ class OrderStatusLog extends DataObject
     public function validate()
     {
         $validationResult = parent::validate();
-        if (!$this->OrderID) {
+
+        if (!$this->OrderID && $this->config()->order_is_required) {
             $validationResult->addError('there is no order id for Order Status Log');
         }
+
         return $validationResult;
     }
 
