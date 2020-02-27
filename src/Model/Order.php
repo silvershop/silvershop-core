@@ -115,6 +115,14 @@ class Order extends DataObject
         'OrderStatusLogs' => OrderStatusLog::class,
     ];
 
+    private static $indexes = [
+        'Status' => true,
+        'StatusPlacedCreated' => [
+            'type' => 'index',
+            'columns' => ['Status', 'Placed', 'Created']
+        ]
+    ];
+
     private static $defaults = [
         'Status' => 'Cart',
     ];
