@@ -78,7 +78,7 @@ class ProductImageExtension extends DataExtension
         if ($width && $height) {
             return $realWidth < $width && $realHeight < $height && !$upscale
                 ? $this->owner
-                : $this->owner->Fit($width, $height);
+                : $this->owner->Pad($width, $height);
         } else {
             if ($width) {
                 return $realWidth < $width && !$upscale
