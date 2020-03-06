@@ -46,6 +46,14 @@ class OrderItem extends \SilverShop\Model\Product\OrderItem
         }
         return null;
     }
+    
+    public function onPlacement()
+    {
+        parent::onPlacement();
+        if ($productVariation = $this->ProductVariation(true)) {
+            $this->ProductVariationVersion = $productVariation->Version;
+        }
+    }
 
     public function SubTitle()
     {
