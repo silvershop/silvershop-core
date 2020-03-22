@@ -583,10 +583,11 @@ class Order extends DataObject
 
     /**
      * @param string $type - Billing or Shipping
+     *
      * @return Address
      * @throws Exception
      */
-    protected function getAddress($type)
+    protected function getAddress($type = 'Billing')
     {
         $address = $this->getComponent($type . 'Address');
 
