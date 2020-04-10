@@ -39,6 +39,10 @@ class ShopConfigExtension extends DataExtension
         'DefaultProductImage' => Image::class,
     ];
 
+    private static $owns = [
+        'DefaultProductImage'
+    ];
+
     /**
      * Email address where shop emails should be sent from
      *
