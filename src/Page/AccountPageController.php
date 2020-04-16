@@ -7,6 +7,7 @@ use SilverShop\Forms\ShopAccountForm;
 use SilverShop\Model\Address;
 use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Control\HTTPResponse;
+use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Forms\DropdownField;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\Form;
@@ -15,6 +16,8 @@ use SilverStripe\Forms\HiddenField;
 use SilverStripe\Forms\RequiredFields;
 use SilverStripe\Security\Member;
 use SilverStripe\Security\MemberAuthenticator\ChangePasswordForm;
+use SilverStripe\Security\MemberAuthenticator\ChangePasswordHandler;
+use SilverStripe\Security\MemberAuthenticator\MemberAuthenticator;
 use SilverStripe\Security\Security;
 use SilverStripe\SiteConfig\SiteConfig;
 
@@ -224,10 +227,16 @@ class AccountPageController extends PageController
 
     public function ChangePasswordForm()
     {
+
+        /**
+         * @var ChangePasswordHandler $handler
+         */
+        $handler = Injector::inst()->get(MemberAuthenticator::class)->getChangePasswordHandler($this->Link());
+        $handler->setRequest($this->getRequest());
         /**
          * @var ChangePasswordForm $form
          */
-        $form = ChangePasswordForm::create($this, 'ChangePasswordForm');
+        $form = $handler->changePasswordForm();
 
         // The default form tries to redirect to /account/login which doesn't exist
         $backURL = $form->Fields()->fieldByName('BackURL');
@@ -236,6 +245,7 @@ class AccountPageController extends PageController
             $form->Fields()->push($backURL);
         }
         $backURL->setValue($this->Link('editprofile'));
+
 
         $this->extend('updateChangePasswordForm', $form);
 
