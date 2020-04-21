@@ -8,6 +8,7 @@ class ShopConfig extends DataExtension
 {
     private static $db      = array(
         'AllowedCountries' => 'Text',
+        'AdminEmail' => 'Text',
     );
 
     private static $has_one = array(

@@ -90,7 +90,12 @@ class OrderEmailNotifier
         $email = $this->buildEmail($template, $subject);
 
         if ($copyToAdmin) {
-            $email->setBcc(Email::config()->admin_email);
+            if($adminEmail = SiteConfig::current_site_config()->AdminEmail){
+                $email->setBcc($adminEmail);
+            }else{
+                $email->setBcc(Email::config()->admin_email);
+            }
+            
         }
         if ($this->debugMode) {
             return $email->debug();
@@ -128,9 +133,15 @@ class OrderEmailNotifier
             '',
             array('OrderNo' => $this->order->Reference)
         );
-
-        $email = $this->buildEmail('Order_AdminNotificationEmail', $subject)
-            ->setTo(Email::config()->admin_email);
+    
+        if($adminEmail = SiteConfig::current_site_config()->AdminEmail){
+            $email = $this->buildEmail('Order_AdminNotificationEmail', $subject)
+                ->setTo($adminEmail);
+        }else{
+            $email = $this->buildEmail('Order_AdminNotificationEmail', $subject)
+                ->setTo(Email::config()->admin_email);
+        }
+       
 
         if ($this->debugMode) {
             return $email->debug();
@@ -164,18 +175,33 @@ class OrderEmailNotifier
      */
     public function sendCancelNotification()
     {
-        $email = Injector::inst()->create(
-            'ShopEmail',
-            Email::config()->admin_email,
-            Email::config()->admin_email,
-            _t(
-                'ShopEmail.CancelSubject',
-                'Order #{OrderNo} cancelled by member',
-                '',
-                array('OrderNo' => $this->order->Reference)
-            ),
-            $this->order->renderWith('Order')
-        );
+        if($adminEmail = SiteConfig::current_site_config()->AdminEmail){
+            $email = Injector::inst()->create(
+                'ShopEmail',
+                $adminEmail,
+                $adminEmail,
+                _t(
+                    'ShopEmail.CancelSubject',
+                    'Order #{OrderNo} cancelled by member',
+                    '',
+                    array('OrderNo' => $this->order->Reference)
+                ),
+                $this->order->renderWith('Order')
+            );
+        }else{
+            $email = Injector::inst()->create(
+                'ShopEmail',
+                Email::config()->admin_email,
+                Email::config()->admin_email,
+                _t(
+                    'ShopEmail.CancelSubject',
+                    'Order #{OrderNo} cancelled by member',
+                    '',
+                    array('OrderNo' => $this->order->Reference)
+                ),
+                $this->order->renderWith('Order')
+            );
+        }
         $email->send();
     }
 
@@ -202,7 +228,12 @@ class OrderEmailNotifier
         if (Config::inst()->get('OrderProcessor', 'receipt_email')) {
             $adminEmail = Config::inst()->get('OrderProcessor', 'receipt_email');
         } else {
-            $adminEmail = Email::config()->admin_email;
+            if(SiteConfig::current_site_config()->AdminEmail){
+                $adminEmail = SiteConfig::current_site_config()->AdminEmail;
+            }else{
+                $adminEmail = Email::config()->admin_email;
+            }
+            
         }
 
         $e = Injector::inst()->create('ShopEmail');
