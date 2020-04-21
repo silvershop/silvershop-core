@@ -44,7 +44,7 @@ class ShopConfig extends DataExtension
                         "Group"
                     ),
                     UploadField::create('DefaultProductImage', _t('ShopConfig.DefaultImage', 'Default Product Image')),
-                    TextField::create('AdminEmail', 'AdminEmail')
+                    TextField::create('AdminEmail', _t('ShopConfig.AdminEmail', 'Admin Email'))
 
                 ),
                 $countriestab = Tab::create(
