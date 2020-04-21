@@ -43,7 +43,9 @@ class ShopConfig extends DataExtension
                         _t("ShopConfig.CustomerGroup", "Group to add new customers to"),
                         "Group"
                     ),
-                    UploadField::create('DefaultProductImage', _t('ShopConfig.DefaultImage', 'Default Product Image'))
+                    UploadField::create('DefaultProductImage', _t('ShopConfig.DefaultImage', 'Default Product Image')),
+                    TextField::create('AdminEmail', 'AdminEmail')
+
                 ),
                 $countriestab = Tab::create(
                     "Countries",
