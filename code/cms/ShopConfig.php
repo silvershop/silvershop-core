@@ -8,6 +8,7 @@ class ShopConfig extends DataExtension
 {
     private static $db      = array(
         'AllowedCountries' => 'Text',
+        'AdminEmail' => 'Varchar(150)',
     );
 
     private static $has_one = array(
@@ -42,7 +43,9 @@ class ShopConfig extends DataExtension
                         _t("ShopConfig.CustomerGroup", "Group to add new customers to"),
                         "Group"
                     ),
-                    UploadField::create('DefaultProductImage', _t('ShopConfig.DefaultImage', 'Default Product Image'))
+                    UploadField::create('DefaultProductImage', _t('ShopConfig.DefaultImage', 'Default Product Image')),
+                    TextField::create('AdminEmail', _t('ShopConfig.AdminEmail', 'Admin Email'))
+
                 ),
                 $countriestab = Tab::create(
                     "Countries",

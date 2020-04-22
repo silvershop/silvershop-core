@@ -46,6 +46,16 @@ class OrderEmailNotifier
         $this->debugMode = $bool;
         return $this;
     }
+    
+    public function getAdminEmail() {
+        $adminEmail = SiteConfig::current_site_config()->AdminEmail;
+        
+        if (!$adminEmail) {
+          $adminEmail = Email::config()->admin_email;
+        }
+      
+        return $adminEmail;
+    }
 
     /**
      * @param string $template
@@ -91,7 +101,7 @@ class OrderEmailNotifier
         $email = $this->buildEmail($template, $subject);
 
         if ($copyToAdmin) {
-            $email->setBcc(Email::config()->admin_email);
+            $email->setBcc($this->getAdminEmail());
         }
         if ($this->debugMode) {
             return $email->debug();
@@ -132,7 +142,8 @@ class OrderEmailNotifier
         );
 
         $email = $this->buildEmail('Order_AdminNotificationEmail', $subject)
-            ->setTo(Email::config()->admin_email);
+            ->setTo($this->getAdminEmail());
+       
 
         if ($this->debugMode) {
             return $email->debug();
@@ -168,8 +179,8 @@ class OrderEmailNotifier
     {
         $email = Injector::inst()->create(
             'ShopEmail',
-            Email::config()->admin_email,
-            Email::config()->admin_email,
+            $this->getAdminEmail(),
+            $this->getAdminEmail(),
             _t(
                 'ShopEmail.CancelSubject',
                 'Order #{OrderNo} cancelled by member',
@@ -204,7 +215,12 @@ class OrderEmailNotifier
         if (Config::inst()->get('OrderProcessor', 'receipt_email')) {
             $adminEmail = Config::inst()->get('OrderProcessor', 'receipt_email');
         } else {
-            $adminEmail = Email::config()->admin_email;
+            if(SiteConfig::current_site_config()->AdminEmail){
+                $adminEmail = SiteConfig::current_site_config()->AdminEmail;
+            }else{
+                $adminEmail = Email::config()->admin_email;
+            }
+            
         }
 
         $e = Injector::inst()->create('ShopEmail');
