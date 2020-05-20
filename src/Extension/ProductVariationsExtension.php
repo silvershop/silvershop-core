@@ -17,6 +17,7 @@ use SilverStripe\ORM\DataExtension;
 use SilverStripe\ORM\DataList;
 use SilverStripe\Versioned\Versioned;
 use SilverStripe\View\ArrayData;
+use Symbiote\GridFieldExtensions\GridFieldOrderableRows;
 
 /**
  * Adds extra fields and relationships to Products for variations support.
@@ -49,13 +50,16 @@ class ProductVariationsExtension extends DataExtension
                     __CLASS__ . '.AttributesDescription',
                     'These are fields to indicate the way(s) each variation varies. Once selected, they can be edited on each variation.'
                 )),
-            GridField::create(
+            $variationsGridField = GridField::create(
                 'Variations',
                 _t(__CLASS__ . '.Variations', 'Variations'),
                 $this->owner->Variations(),
                 GridFieldConfig_RecordEditor::create()
             )
         ]);
+        
+        $variationsGridField->getConfig()->addComponent($sort = new GridFieldOrderableRows('Sort'));
+
         if ($this->owner->Variations()->exists()) {
             $fields->addFieldToTab(
                 'Root.Pricing',
