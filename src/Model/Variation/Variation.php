@@ -40,6 +40,7 @@ use SilverStripe\Versioned\Versioned;
 class Variation extends DataObject implements Buyable
 {
     private static $db = [
+        'Sort' => 'Int',
         'InternalItemID' => 'Varchar(30)',
         'Price' => 'Currency(19,4)',
 
