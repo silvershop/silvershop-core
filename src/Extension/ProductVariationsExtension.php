@@ -54,7 +54,7 @@ class ProductVariationsExtension extends DataExtension
                 'Variations',
                 _t(__CLASS__ . '.Variations', 'Variations'),
                 $this->owner->Variations(),
-                GridFieldConfig_RecordEditor::create()
+                GridFieldConfig_RecordEditor::create(100)
             )
         ]);
         
