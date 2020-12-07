@@ -13,7 +13,7 @@ SilverShop\Page\CheckoutPage:
     contactdetails: 'SilverShop\Checkout\Step\ContactDetails'
     shippingaddress: 'SilverShop\Checkout\Step\AddressBook'
     billingaddress: 'SilverShop\Checkout\Step\AddressBook'
-    shippingmethod: 'SilverShop\Shipping\Model\ShippingMethod'
+    shippingmethod: 'SilverShop\Shipping\Checkout\Step\CheckoutStepShippingMethod'  # from SilverShop Shipping module
     summary: 'SilverShop\Checkout\Step\Summary'
 ```
 
