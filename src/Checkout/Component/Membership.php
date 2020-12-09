@@ -4,6 +4,7 @@ namespace SilverShop\Checkout\Component;
 
 use SilverShop\Checkout\Checkout;
 use SilverShop\Checkout\ShopMemberFactory;
+use SilverShop\Extension\ShopConfigExtension;
 use SilverShop\Extension\MemberExtension;
 use SilverShop\Model\Order;
 use SilverStripe\Core\Injector\Injector;
@@ -150,6 +151,12 @@ class Membership extends CheckoutComponent
         $factory = new ShopMemberFactory();
         $member = $factory->create($data);
         $member->write();
+
+        $customer_group = ShopConfigExtension::current()->CustomerGroup();
+        if ($customer_group->exists()) {
+            $member->Groups()->add($customer_group);
+        }
+
         // Log-in the current member
         Injector::inst()->get(IdentityStore::class)->logIn($member);
 
