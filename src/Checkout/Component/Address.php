@@ -4,6 +4,9 @@ namespace SilverShop\Checkout\Component;
 
 use SilverShop\Model\Order;
 use SilverShop\ShopUserInfo;
+use SilverStripe\Core\Config\Config;
+use SilverStripe\Forms\CompositeField;
+use SilverStripe\Forms\FieldList;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\Security\Security;
 use SilverStripe\SiteConfig\SiteConfig;
