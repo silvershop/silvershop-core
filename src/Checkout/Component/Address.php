@@ -34,7 +34,6 @@ abstract class Address extends CheckoutComponent
 
         return FieldList::create(
             CompositeField::create($fields)
-                ->addExtraClass('hasExistingValues')
                 ->setLegend($label)
                 ->setTag(Config::inst()->get(self::class, 'composite_field_tag'))
         );
