@@ -64,7 +64,7 @@ class OrderEmailNotifier
         $from = ShopConfigExtension::config()->email_from ? ShopConfigExtension::config()->email_from : Email::config()->admin_email;
         $to = $this->order->getLatestEmail();
         $checkoutpage = CheckoutPage::get()->first();
-        $completemessage = $checkoutpage ? $checkoutpage->PurchaseComplete : '';
+        $completemessage = $checkoutpage ? $checkoutpage->dbObject('PurchaseComplete') : '';
 
         /**
          * @var Email $email
