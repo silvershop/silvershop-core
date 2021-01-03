@@ -4,6 +4,9 @@ namespace SilverShop\Checkout\Component;
 
 use SilverShop\Model\Order;
 use SilverShop\ShopUserInfo;
+use SilverStripe\Core\Config\Config;
+use SilverStripe\Forms\CompositeField;
+use SilverStripe\Forms\FieldList;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\Security\Security;
 use SilverStripe\SiteConfig\SiteConfig;
@@ -16,12 +19,24 @@ abstract class Address extends CheckoutComponent
 
     protected $addtoaddressbook = false;
 
+    private static $composite_field_tag = 'div';
+
     public function getFormFields(Order $order)
     {
-        return $this->getAddress($order)->getFrontEndFields(
-            [
-            'addfielddescriptions' => $this->formfielddescriptions,
-            ]
+        $fields = $this->getAddress($order)->getFrontEndFields([
+            'addfielddescriptions' => $this->formfielddescriptions
+        ]);
+
+        $label = _t(
+            "SilverShop\Model\Address.{$this->addresstype}Address",
+            "{$this->addresstype} Address"
+        );
+
+        return FieldList::create(
+            CompositeField::create($fields)
+                ->addExtraClass($this->addresstype)
+                ->setLegend($label)
+                ->setTag(Config::inst()->get(self::class, 'composite_field_tag'))
         );
     }
 
