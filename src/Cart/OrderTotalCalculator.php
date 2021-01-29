@@ -149,7 +149,7 @@ class OrderTotalCalculator
             }
             return $modifier;
         }
-        $modifier = new $className();
+        $modifier = $className::create();
         if ($modifier->required() || $forcecreate) { //create any modifiers that are required for every order
             $modifier->OrderID = $this->order->ID;
             $modifier->write();
