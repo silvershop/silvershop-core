@@ -131,7 +131,7 @@ class OrderItem extends OrderAttribute
      */
     protected function calculatetotal()
     {
-        $total = $this->UnitPrice() * $this->Quantity;
+        $total = (float)$this->UnitPrice() * (int)$this->Quantity;
         $this->extend('updateTotal', $total);
         $this->CalculatedTotal = $total;
         return $total;
