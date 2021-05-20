@@ -29,6 +29,6 @@ To override the default recipient email address form notifications, add the bell
 ```php
 public function overrideLatestEmail() 
 {
-  return 'override@email.com
+  return 'override@email.com';
 }
 ```
