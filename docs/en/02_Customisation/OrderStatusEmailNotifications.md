@@ -25,3 +25,10 @@ en:
 ```
 To further customise the email, copy the template `Order_StatusEmail.ss` from `silvershop/templates/email` folder and paste to `{yourtheme}/templates/email` and make the required adjustments.
 
+To override the default recipient email address form notifications, add the bellow method to a SilverShop\Model\Order.php extension.
+```php
+public function overrideLatestEmail() 
+{
+  return 'override@email.com
+}
+```

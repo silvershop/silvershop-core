@@ -652,6 +652,9 @@ class Order extends DataObject
      */
     public function getLatestEmail()
     {
+        if ($this->hasMethod('overrideLatestEmail')) {
+            return $this->overrideLatestEmail();
+        }
         if ($this->MemberID && ($this->Member()->LastEdited > $this->LastEdited || !$this->Email)) {
             return $this->Member()->Email;
         }
