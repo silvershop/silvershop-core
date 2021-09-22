@@ -129,7 +129,7 @@ class ProductAttributeType extends DataObject
         if ($values->exists()) {
             $field = DropdownField::create(
                 'ProductAttributes[' . $this->ID . ']',
-                $this->Name,
+                $this->Label,
                 $values->map('ID', 'Value')
             );
 
