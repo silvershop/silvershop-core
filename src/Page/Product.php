@@ -442,13 +442,6 @@ class Product extends Page implements Buyable
         return false;
     }
 
-    public function Link($action = null)
-    {
-        $link = parent::Link($action);
-        $this->extend('updateLink', $link);
-        return $link;
-    }
-
     /**
      * If the product does not have an image, and a default image
      * is defined in SiteConfig, return that instead.
