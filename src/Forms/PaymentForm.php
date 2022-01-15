@@ -90,7 +90,11 @@ class PaymentForm extends CheckoutForm
 
         // final recalculation, before making payment
         $order->calculate();
-
+        
+        if ($order->isChanged()) {
+            $order->write();
+        }
+        
         // handle cases where order total is 0. Note that the order will appear
         // as "paid", but without a Payment record attached.
         if ($order->GrandTotal() == 0 && Order::config()->allow_zero_order_total) {
