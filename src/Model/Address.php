@@ -125,6 +125,7 @@ class Address extends DataObject
     {
         $fields = new FieldList(
             $this->getCountryField(),
+            TextField::create('Company', $this->fieldLabel('Company')),
             $addressfield = TextField::create('Address', $this->fieldLabel('Address')),
             $address2field =
                 TextField::create('AddressLine2', $this->fieldLabel('AddressLine2')),
