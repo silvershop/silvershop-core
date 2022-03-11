@@ -64,7 +64,7 @@ class ProductReport extends ShopPeriodReport
         $query = new SQLSelect();
         $query->setFrom('"' . $table . '"');
 
-        $whereClue = 'AND 1';
+        $whereClue = '1';
         $filterperiod = $this->periodfield;
         if ($start && $end) {
             $whereClue = sprintf(
