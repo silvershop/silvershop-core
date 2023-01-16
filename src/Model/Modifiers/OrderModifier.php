@@ -94,7 +94,7 @@ class OrderModifier extends OrderAttribute
             case 'Ignored':
                 break;
         }
-        $value = round($value, Order::config()->rounding_precision);
+        $value = round($value ?? 0, Order::config()->rounding_precision);
         $this->Amount = $value;
         return $subtotal;
     }
