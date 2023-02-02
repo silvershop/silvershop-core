@@ -7,10 +7,12 @@ use SilverShop\Cart\ShoppingCart;
 use SilverShop\Cart\ShoppingCartController;
 use SilverShop\Page\Product;
 use SilverShop\ShopTools;
+use SilverStripe\Control\HTTPResponse;
 use SilverStripe\Core\Convert;
 use SilverStripe\Forms\Form;
 use SilverStripe\Forms\HiddenField;
 use SilverStripe\ORM\Queries\SQLSelect;
+use SilverStripe\View\Requirements;
 
 /**
  * @package shop
@@ -97,6 +99,18 @@ class VariationForm extends AddProductForm
         }
 
         $this->extend('updateVariationAddToCart', $form, $variation);
+
+        $response = null;
+        if ($request->isAjax()) {
+            $response = new HTTPResponse($form->forTemplate(), $cart->getMessageType() == 'good' ? 200 : 400);
+            
+            if ($customScripts = Requirements::get_custom_scripts()) {
+                $jsRequirements = "<script type=\"text/javascript\">\n//<![CDATA[\n";
+                $jsRequirements .= implode("\n", $customScripts);
+                $jsRequirements .= "\n//]]>\n</script>\n";
+                $response->setBody($response->getBody().$jsRequirements);
+            }
+        }
 
         $this->extend('updateVariationFormResponse', $request, $response, $variation, $quantity, $form);
         return $response ? $response : ShoppingCartController::direct();

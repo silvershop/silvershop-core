@@ -19,7 +19,7 @@
         <% else %>
             <% if $canPurchase %>
             <div class="add">
-                <a href="$addLink" title="<%t SilverShop\Page\Product.AddToCartTitle "Add &quot;{Title}&quot; to your cart" Title=$Title %>">
+                <a href="$addLink" class="add-to-cart" title="<%t SilverShop\Page\Product.AddToCartTitle "Add &quot;{Title}&quot; to your cart" Title=$Title %>">
                     <%t SilverShop\Page\Product.AddToCart "Add to Cart" %>
                     <% if $IsInCart %>
                         ($Item.Quantity)

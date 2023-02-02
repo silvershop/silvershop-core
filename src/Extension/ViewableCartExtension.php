@@ -19,6 +19,25 @@ use SilverStripe\Core\Extension;
  */
 class ViewableCartExtension extends Extension
 {
+    private static $allowed_actions = [
+        'RenderCart'
+    ];
+
+    public function RenderCart()
+    {
+        $type = $this->owner->getRequest()->requestVar('Type') ?: 'Header';
+        $customFields = [
+            'Type' => $type
+        ];
+        $templates = ["SilverShop\\Cart\\{$type}Cart", 'SilverShop\Cart\Cart'];
+        return $this->owner->renderWith($templates, $customFields);
+    }
+    
+    public function RenderCartLink($type = 'Header')
+    {
+        return $this->owner->Link('RenderCart?Type='.$type);
+    }
+
     /**
      * Get the cart, and do last minute calculation if necessary.
      */

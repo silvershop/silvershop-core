@@ -9,6 +9,7 @@ use SilverShop\Model\Buyable;
 use SilverShop\Page\Product;
 use SilverShop\ShopTools;
 use SilverStripe\Control\Controller;
+use SilverStripe\Control\HTTPResponse;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Convert;
 use SilverStripe\Forms\DropdownField;
@@ -19,6 +20,7 @@ use SilverStripe\Forms\NumericField;
 use SilverStripe\Forms\RequiredFields;
 use SilverStripe\Forms\Validator;
 use SilverStripe\ORM\DataObject;
+use SilverStripe\View\Requirements;
 
 /**
  * @package shop
@@ -50,7 +52,7 @@ class AddProductForm extends Form
             $this->getFormValidator()
         );
 
-        $this->addExtraClass("addproductform");
+        $this->addExtraClass("addproductform add-to-cart");
 
         $this->extend('updateAddProductForm');
     }
@@ -91,6 +93,18 @@ class AddProductForm extends Form
             }
 
             $this->extend('updateAddToCart', $form, $buyable);
+
+            $response = null;
+            if ($request->isAjax()) {
+                $response = new HTTPResponse($form->forTemplate(), $cart->getMessageType() == 'good' ? 200 : 400);
+                
+                if ($customScripts = Requirements::get_custom_scripts()) {
+                    $jsRequirements = "<script type=\"text/javascript\">\n//<![CDATA[\n";
+                    $jsRequirements .= implode("\n", $customScripts);
+                    $jsRequirements .= "\n//]]>\n</script>\n";
+                    $response->setBody($response->getBody().$jsRequirements);
+                }
+            }
 
             $this->extend('updateAddProductFormResponse', $request, $response, $buyable, $quantity, $form);
 

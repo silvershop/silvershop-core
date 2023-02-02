@@ -1,6 +1,7 @@
 <% require css("silvershop/core: client/dist/css/sidecart.css") %>
+<% require javascript("silvershop/core: client/dist/javascript/shoppingcart.js") %>
 
-<div class="sidecart">
+<div class="sidecart cart" data-render-link="$RenderCartLink('Side')">
     <h3><%t SilverShop\Cart\ShoppingCart.Headline "Shopping cart" %></h3>
     <% if $Cart %>
         <% with $Cart %>
