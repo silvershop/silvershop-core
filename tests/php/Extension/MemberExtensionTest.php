@@ -29,6 +29,9 @@ class MemberExtensionTest extends SapphireTest
         $this->assertEquals('Jeremy', $member->FirstName);
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testCMSFields()
     {
         singleton(Member::class)->getCMSFields();

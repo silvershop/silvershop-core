@@ -132,6 +132,9 @@ class ProductTest extends FunctionalTest
         Product::remove_extension('ProductTest_FractionalDiscountExtension');
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testCanViewProductPage()
     {
         $this->get(Director::makeRelative($this->tshirt->Link()));

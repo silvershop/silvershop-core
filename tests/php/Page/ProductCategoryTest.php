@@ -85,6 +85,9 @@ class ProductCategoryTest extends FunctionalTest
         Versioned::set_stage('Live');
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testCanViewProductCategoryPage()
     {
         $products = $this->objFromFixture(ProductCategory::class, 'products');
