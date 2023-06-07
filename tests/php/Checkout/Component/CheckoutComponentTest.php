@@ -47,7 +47,7 @@ class CheckoutComponentTest extends SapphireTest
      */
     protected $addressNoCountry;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         ShopTest::setConfiguration();

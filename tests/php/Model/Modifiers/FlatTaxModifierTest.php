@@ -35,7 +35,7 @@ class FlatTaxModifierTest extends FunctionalTest
      */
     protected $cart;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         ShoppingCart::singleton()->clear();

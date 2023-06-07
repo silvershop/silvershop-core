@@ -37,7 +37,7 @@ class CheckoutFormTest extends FunctionalTest
      */
     protected $checkoutcontroller;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         ShoppingCart::singleton()->clear();

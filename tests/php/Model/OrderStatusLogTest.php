@@ -26,7 +26,7 @@ class OrderStatusLogTest extends SapphireTest
         __DIR__ . '/../Fixtures/Pages.yml'
     );
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         ShopTest::setConfiguration();

@@ -38,7 +38,7 @@ class OrderModifierTest extends FunctionalTest
         OrderModifierTest_TestModifier::class
     ];
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         ShopTest::setConfiguration();

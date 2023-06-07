@@ -18,7 +18,7 @@ class CustomProductTest extends FunctionalTest
         CustomProduct_OrderItem::class,
     ];
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         // clear session

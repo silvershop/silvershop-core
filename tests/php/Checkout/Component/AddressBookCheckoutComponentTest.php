@@ -59,7 +59,7 @@ class AddressBookCheckoutComponentTest extends SapphireTest
         self::COMPONENT_NS . '_Phone'            => '11231231234',
     );
 
-    public function setUp()
+    public function setUp(): void
     {
         ShopTest::setConfiguration();
         CheckoutConfig::config()->membership_required = false;

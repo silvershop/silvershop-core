@@ -48,7 +48,7 @@ class ProductTest extends FunctionalTest
      */
     protected $pdfbrochure;
 
-    function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         ShoppingCart::singleton()->clear();

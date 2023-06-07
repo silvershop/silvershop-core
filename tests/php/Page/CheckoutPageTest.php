@@ -19,7 +19,7 @@ class CheckoutPageTest extends FunctionalTest
     protected static $use_draft_site = true;
     protected $controller;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         ShopTest::setConfiguration();

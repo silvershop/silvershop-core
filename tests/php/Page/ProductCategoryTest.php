@@ -55,7 +55,7 @@ class ProductCategoryTest extends FunctionalTest
      */
     protected $mp3player;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         Config::modify()->set(ProductCategory::class, 'must_have_price', false);

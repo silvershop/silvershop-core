@@ -34,7 +34,7 @@ class OrderActionsFormTest extends FunctionalTest
     protected $order;
     protected $checkoutPage;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         ShopTest::setConfiguration();

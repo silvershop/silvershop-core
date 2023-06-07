@@ -53,7 +53,7 @@ class SteppedCheckoutExtensionTest extends FunctionalTest
      */
     protected $cart;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->logInWithPermission('ADMIN');

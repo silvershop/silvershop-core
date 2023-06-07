@@ -61,7 +61,7 @@ class OrderProcessorTest extends SapphireTest
      */
     protected $shoppingcart;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         ShoppingCart::singleton()->clear();

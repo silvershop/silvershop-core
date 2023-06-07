@@ -49,7 +49,7 @@ class OrderTest extends SapphireTest
     protected $beachball;
 
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         ShopTest::setConfiguration();
@@ -62,7 +62,7 @@ class OrderTest extends SapphireTest
         $this->beachball->publishSingle();
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         unset($this->mp3player);

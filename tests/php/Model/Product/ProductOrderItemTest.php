@@ -42,7 +42,7 @@ class ProductOrderItemTest extends FunctionalTest
     /**
      * Create and publish some products.
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         ShoppingCart::singleton()->clear();

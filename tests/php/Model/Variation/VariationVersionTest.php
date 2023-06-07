@@ -36,7 +36,7 @@ class VariationVersionTest extends SapphireTest
      */
     protected $redlarge;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->ball = $this->objFromFixture(Product::class, "ball");

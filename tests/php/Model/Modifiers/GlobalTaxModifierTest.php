@@ -9,7 +9,7 @@ use SilverStripe\Dev\SapphireTest;
 
 class GlobalTaxModifierTest extends SapphireTest
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 

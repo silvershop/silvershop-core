@@ -48,7 +48,7 @@ class CheckoutTest extends SapphireTest
      */
     protected $memberFactory;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         ShopTest::setConfiguration();
