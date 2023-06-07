@@ -1,0 +1,14 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  ci:
+    name: CI
+    uses: silverstripe/gha-ci/.github/workflows/ci.yml@v1
+    with:
+      composer_require_extra:
+        silverstripe/silverstripe-omnipay:dev-master
