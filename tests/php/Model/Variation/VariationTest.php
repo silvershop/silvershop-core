@@ -97,10 +97,10 @@ class VariationTest extends SapphireTest
         $this->assertEquals($variations->Count(), 4, "four variations created");
 
         $titles = $variations->map('ID', 'Title')->toArray();
-        $this->assertContains('Color:Black, Capacity:120GB', $titles);
-        $this->assertContains('Color:Black, Capacity:300GB', $titles);
-        $this->assertContains('Color:Blue, Capacity:120GB', $titles);
-        $this->assertContains('Color:Blue, Capacity:300GB', $titles);
+        $this->assertStringContainsString('Color:Black, Capacity:120GB', $titles[5]);
+        $this->assertStringContainsString('Color:Black, Capacity:300GB', $titles[6]);
+        $this->assertStringContainsString('Color:Blue, Capacity:120GB', $titles[7]);
+        $this->assertStringContainsString('Color:Blue, Capacity:300GB', $titles[8]);
     }
 
     public function testPriceRange()

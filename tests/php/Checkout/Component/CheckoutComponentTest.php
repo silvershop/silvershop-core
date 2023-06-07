@@ -114,72 +114,72 @@ class CheckoutComponentTest extends SapphireTest
             $components,
             "Components must only be of type '$class'"
         );
-        $this->assertContains(CustomerDetails::class, print_r($components, true));
-        $this->assertContains(ShippingAddress::class, print_r($components, true));
-        $this->assertContains(BillingAddress::class, print_r($components, true));
-        $this->assertContains(Payment::class, print_r($components, true));
-        $this->assertContains(Notes::class, print_r($components, true));
-        $this->assertContains(Terms::class, print_r($components, true));
+        $this->assertStringContainsString(CustomerDetails::class, print_r($components, true));
+        $this->assertStringContainsString(ShippingAddress::class, print_r($components, true));
+        $this->assertStringContainsString(BillingAddress::class, print_r($components, true));
+        $this->assertStringContainsString(Payment::class, print_r($components, true));
+        $this->assertStringContainsString(Notes::class, print_r($components, true));
+        $this->assertStringContainsString(Terms::class, print_r($components, true));
 
         $fields = $config->getFormFields();
 
         $ns = 'SilverShop-Checkout-Component';
-        $this->assertContains(
+        $this->assertStringContainsString(
             "$ns-CustomerDetails_FirstName",
             print_r($fields, true),
             "Form Fields should contain a $ns-CustomerDetails_FirstName field"
         );
-        $this->assertContains(
+        $this->assertStringContainsString(
             "$ns-CustomerDetails_Surname",
             print_r($fields, true),
             "Form Fields should contain a $ns-CustomerDetails_Surname field"
         );
-        $this->assertContains(
+        $this->assertStringContainsString(
             "$ns-CustomerDetails_Email",
             print_r($fields, true),
             "Form Fields should contain a $ns-CustomerDetails_Email field"
         );
-        $this->assertContains(
+        $this->assertStringContainsString(
             "$ns-ShippingAddress_Country",
             print_r($fields, true),
             "Form Fields should contain a $ns-ShippingAddress_Country field"
         );
-        $this->assertContains(
+        $this->assertStringContainsString(
             "$ns-ShippingAddress_Address",
             print_r($fields, true),
             "Form Fields should contain a $ns-ShippingAddress_Address field"
         );
-        $this->assertContains(
+        $this->assertStringContainsString(
             "$ns-ShippingAddress_City",
             print_r($fields, true),
             "Form Fields should contain a $ns-ShippingAddress_City field"
         );
-        $this->assertContains(
+        $this->assertStringContainsString(
             "$ns-ShippingAddress_State",
             print_r($fields, true),
             "Form Fields should contain a $ns-ShippingAddress_State field"
         );
-        $this->assertContains(
+        $this->assertStringContainsString(
             "$ns-BillingAddress_Country",
             print_r($fields, true),
             "Form Fields should contain a $ns-BillingAddress_Country field"
         );
-        $this->assertContains(
+        $this->assertStringContainsString(
             "$ns-BillingAddress_Address",
             print_r($fields, true),
             "Form Fields should contain a $ns-BillingAddress_Address field"
         );
-        $this->assertContains(
+        $this->assertStringContainsString(
             "$ns-BillingAddress_City",
             print_r($fields, true),
             "Form Fields should contain a $ns-BillingAddress_City field"
         );
-        $this->assertContains(
+        $this->assertStringContainsString(
             "$ns-BillingAddress_State",
             print_r($fields, true),
             "Form Fields should contain a $ns-BillingAddress_State field"
         );
-        $this->assertNotContains("rubbish", print_r($fields, true), "Form Field should not include 'rubbish'");
+        $this->assertStringNotContainsString("rubbish", print_r($fields, true), "Form Field should not include 'rubbish'");
 
         $required = $config->getRequiredFields();
         $requiredfields = array(

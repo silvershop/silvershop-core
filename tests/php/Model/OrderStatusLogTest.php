@@ -81,12 +81,12 @@ class OrderStatusLogTest extends SapphireTest
             "Log conatins an Order"
         );
 
-        $this->assertContains(
+        $this->assertStringContainsString(
             "Processing",
             $log_order_status_processing->Note,
             "Processing note is recorded"
         );
-        $this->assertContains(
+        $this->assertStringContainsString(
             'changed to "Processing"',
             $log_order_status_processing->Title,
             'Processing title is recorded'
@@ -114,12 +114,12 @@ class OrderStatusLogTest extends SapphireTest
             $order->ID,
             "Log conatins an Order"
         );
-        $this->assertContains(
+        $this->assertStringContainsString(
             "sent",
             $log_order_status_sent->Note,
             "Sent note is recorded"
         );
-        $this->assertContains(
+        $this->assertStringContainsString(
             'changed to "Sent"',
             $log_order_status_sent->Title,
             "Sent title is recorded"
@@ -157,12 +157,12 @@ class OrderStatusLogTest extends SapphireTest
             $order->ID,
             "Log conatins an Order"
         );
-        $this->assertContains(
+        $this->assertStringContainsString(
             "cancelled",
             $log_order_status_admin_cancelled->Note,
             "Admin Cancelled note is recorded"
         );
-        $this->assertContains(
+        $this->assertStringContainsString(
             'changed to "Cancelled by admin"',
             $log_order_status_admin_cancelled->Title,
             "Admin Cancelled title is recorded"
@@ -195,7 +195,7 @@ class OrderStatusLogTest extends SapphireTest
             $log_order_status_member_cancelled->Note,
             "Member Cancelled note is recorded"
         );
-        $this->assertContains(
+        $this->assertStringContainsString(
             ' changed to "Cancelled by member"',
             $log_order_status_member_cancelled->Title,
             "Member Cancelled title is recorded"
@@ -305,12 +305,12 @@ class OrderStatusLogTest extends SapphireTest
             "Log conatins an Order"
         );
 
-        $this->assertContains(
+        $this->assertStringContainsString(
             "Processing",
             $log_order_status_processing->Note,
             "Processing note is recorded"
         );
-        $this->assertContains(
+        $this->assertStringContainsString(
             ' changed to "Processing"',
             $log_order_status_processing->Title,
             "Processing title is recorded"

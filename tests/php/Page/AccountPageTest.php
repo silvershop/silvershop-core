@@ -164,12 +164,12 @@ class AccountPageTest extends FunctionalTest
             // Open the Address Book page to test form submission with a readonly field
             $page = $this->get("account/addressbook/"); // goto address book page
             $this->assertEquals(200, $page->getStatusCode(), "a page should load");
-            $this->assertContains(
+            $this->assertStringContainsString(
                 "Form_CreateAddressForm_Country_readonly",
                 $page->getBody(),
                 "The Country field is readonly"
             );
-            $this->assertNotContains(
+            $this->assertStringNotContainsString(
                 "<option value=\"NZ\">New Zealand</option>",
                 $page->getBody(),
                 "Dropdown field is not shown"
