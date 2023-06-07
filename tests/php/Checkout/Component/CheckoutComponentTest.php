@@ -280,15 +280,15 @@ class CheckoutComponentTest extends SapphireTest
 
         $fields = $config->getFormFields();
         $ns = 'SilverShop-Checkout-Component';
-        $shippingaddressfield = $fields->fieldByName("$ns-ShippingAddress_Country_readonly");
-        $billingaddressfield = $fields->fieldByName("$ns-BillingAddress_Country_readonly");
+        $shippingaddressfield = $fields->dataFieldByName("$ns-ShippingAddress_Country_readonly");
+        $billingaddressfield = $fields->dataFieldByName("$ns-BillingAddress_Country_readonly");
 
-        $this->assertContains(
+        $this->assertStringContainsString(
             "New Zealand",
             $shippingaddressfield->Value(),
             "The value of the Shipping Country readonly field is 'New Zealand'"
         );
-        $this->assertContains(
+        $this->assertStringContainsString(
             "New Zealand",
             $billingaddressfield->Value(),
             "The value of the Billing Country readonly field is 'New Zealand'"

@@ -141,11 +141,11 @@ class CheckoutFormTest extends FunctionalTest
         $errors = $form->getValidator()->getErrors();
         $this->assertTrue($valid, print_r($errors, true));
         $this->assertTrue(
-            $form->Fields()->fieldByName("{$ns}ShippingAddress_Country_readonly")->isReadonly(),
+            $form->Fields()->dataFieldByName("{$ns}ShippingAddress_Country_readonly")->isReadonly(),
             "Shipping Address Country field is readonly"
         );
         $this->assertTrue(
-            $form->Fields()->fieldByName("{$ns}BillingAddress_Country_readonly")->isReadonly(),
+            $form->Fields()->dataFieldByName("{$ns}BillingAddress_Country_readonly")->isReadonly(),
             "Billing Address Country field is readonly"
         );
         $form->checkoutSubmit($dataCountryAbsent, $form);
