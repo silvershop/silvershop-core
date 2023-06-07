@@ -2,8 +2,7 @@
 
 namespace SilverShop\Tests\Checkout;
 
-use Guzzle\Http\Client;
-use Guzzle\Plugin\Mock\MockPlugin;
+use GuzzleHttp\Psr7\Message;
 use SilverShop\Cart\ShoppingCart;
 use SilverShop\Checkout\OrderProcessor;
 use SilverShop\Model\Order;
@@ -16,9 +15,7 @@ use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Dev\FunctionalTest;
 use SilverStripe\Dev\TestSession;
 use SilverStripe\Omnipay\Model\Payment;
-use SilverStripe\Omnipay\Service\PaymentService;
 use SilverStripe\Omnipay\Tests\Service\TestGatewayFactory;
-use Symfony\Component\HttpFoundation\Request;
 
 class ShopPaymentTest extends FunctionalTest
 {
@@ -29,15 +26,12 @@ class ShopPaymentTest extends FunctionalTest
     public static $disable_theme = true;
     protected $autoFollowRedirection = false;
 
-    public function setUp()
+    /** @var \GuzzleHttp\Handler\MockHandler */
+    protected $mockHandler = null;
+
+    public function setUp(): void
     {
         parent::setUp();
-
-        /*
-        DataObject::reset();
-        ClassLoader::inst()->init(false, true);
-        Debug::dump(ClassInfo::subclassesFor(OrderItem::class));
-        */
         ShoppingCart::singleton()->clear();
         ShopTest::setConfiguration();
 
@@ -69,16 +63,25 @@ class ShopPaymentTest extends FunctionalTest
         $this->objFromFixture(CartPage::class, "cart")->publishSingle();
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testManualPayment()
     {
         $this->markTestIncomplete("Process a manual payment");
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testOnsitePayment()
     {
         $this->markTestIncomplete("Process an onsite payment");
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testOffsitePayment()
     {
         $this->markTestIncomplete("Process an off-site payment");
@@ -102,7 +105,7 @@ class ShopPaymentTest extends FunctionalTest
         //pay for order with external gateway
         $processor = OrderProcessor::create($cart);
         $this->setMockHttpResponse('paymentexpress/tests/Mock/PxPayPurchaseSuccess.txt');
-        $response = $processor->makePayment("PaymentExpress_PxPay", array());
+        $response = $processor->makePayment("PaymentExpress_PxPay", []);
         //gateway responds (in a different session)
         $oldsession = $this->mainSession;
         $this->mainSession = new TestSession();
@@ -122,8 +125,6 @@ class ShopPaymentTest extends FunctionalTest
         $this->assertTrue($order->isPaid(), "order is paid");
         $this->assertNull($this->mainSession->session()->get("shoppingcartid"), "cart session id should be removed");
         $this->assertNotEquals(404, $response->getStatusCode(), "We shouldn't get page not found");
-
-        $this->markTestIncomplete("Should assert other things");
     }
 
     protected $payment;
@@ -133,7 +134,15 @@ class ShopPaymentTest extends FunctionalTest
     protected function getHttpClient()
     {
         if (null === $this->httpClient) {
-            $this->httpClient = new Client();
+            if ($this->mockHandler === null) {
+                $this->mockHandler = new \GuzzleHttp\Handler\MockHandler();
+            }
+
+            $guzzle = new \GuzzleHttp\Client([
+                'handler' => $this->mockHandler,
+            ]);
+
+            $this->httpClient = new \Omnipay\Common\Http\Client(new \Http\Adapter\Guzzle7\Client($guzzle));
         }
 
         return $this->httpClient;
@@ -142,7 +151,7 @@ class ShopPaymentTest extends FunctionalTest
     protected function getHttpRequest()
     {
         if (null === $this->httpRequest) {
-            $this->httpRequest = new Request();
+            $this->httpRequest = new \Symfony\Component\HttpFoundation\Request;
         }
 
         return $this->httpRequest;
@@ -150,14 +159,18 @@ class ShopPaymentTest extends FunctionalTest
 
     protected function setMockHttpResponse($paths)
     {
-        $testspath = BASE_PATH . '/vendor/omnipay';
-        $mock = new MockPlugin(null, true);
-        $this->getHttpClient()->getEventDispatcher()->removeSubscriber($mock);
-        foreach ((array)$paths as $path) {
-            $mock->addResponse($testspath . '/' . $path);
+        if ($this->mockHandler === null) {
+            throw new \Exception('HTTP client not initialised before adding mock response.');
         }
-        $this->getHttpClient()->getEventDispatcher()->addSubscriber($mock);
 
-        return $mock;
+        $testspath = BASE_PATH . '/vendor/omnipay';
+
+        foreach ((array)$paths as $path) {
+            $this->mockHandler->append(
+                Message::parseResponse(file_get_contents("{$testspath}/{$path}"))
+            );
+        }
+
+        return $this->mockHandler;
     }
 }
