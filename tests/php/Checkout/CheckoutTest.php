@@ -111,7 +111,7 @@ class CheckoutTest extends SapphireTest
                 'Password'  => 'janesmith2012',
             )
         );
-        $this->assertTrue(($result instanceof Member), $this->checkout->getMessage());
+        $this->assertTrue(($result instanceof Member), $this->checkout->getMessage() || '');
     }
 
     public function testMustBecomeOrBeMember()
@@ -158,6 +158,10 @@ class CheckoutTest extends SapphireTest
     {
         CheckoutConfig::config()->member_creation_enabled = false;
         CheckoutConfig::config()->membership_required = true;
+
+        $this->expectException(ValidationException::class);
+        $this->expectExceptionMessage('Creating new memberships is not allowed');
+
         $result = $this->memberFactory->create(
             array(
                 'FirstName' => 'Some',
@@ -166,8 +170,6 @@ class CheckoutTest extends SapphireTest
                 'Password'  => 'pass1234',
             )
         );
-
-        $this->fail("Exception was expected here");
     }
 
     /**
@@ -176,6 +178,8 @@ class CheckoutTest extends SapphireTest
      */
     public function testMemberWithoutPassword()
     {
+        $this->expectException(ValidationException::class);
+        $this->expectExceptionMessage('A password is required');
         $result = $this->memberFactory->create(
             array(
                 'FirstName' => 'Jim',
@@ -183,7 +187,6 @@ class CheckoutTest extends SapphireTest
                 'Email'     => 'jim@example.com',
             )
         );
-        $this->fail("Exception was expected here");
     }
 
     /**
@@ -192,6 +195,8 @@ class CheckoutTest extends SapphireTest
      */
     public function testMemberAlreadyExists()
     {
+        $this->expectException(ValidationException::class);
+        $this->expectExceptionMessage('A member already exists with the Email jeremy@example.com');
         $result = $this->memberFactory->create(
             array(
                 'FirstName' => 'Jeremy',
@@ -200,7 +205,6 @@ class CheckoutTest extends SapphireTest
                 'Password'  => 'jeremyperemy',
             )
         );
-        $this->fail("Exception was expected here");
     }
 
     /**
@@ -209,6 +213,8 @@ class CheckoutTest extends SapphireTest
      */
     public function testMemberMissingIdentifier()
     {
+        $this->expectException(ValidationException::class);
+        $this->expectExceptionMessage('Required field not found: Email');
         $result = $this->memberFactory->create(
             array(
                 'FirstName' => 'John',
@@ -216,6 +222,5 @@ class CheckoutTest extends SapphireTest
                 'Password'  => 'johndoe1234',
             )
         );
-        $this->fail("Exception was expected here");
     }
 }
