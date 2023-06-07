@@ -196,7 +196,7 @@ class ShoppingCartControllerTest extends FunctionalTest
         $productId = $this->mp3player->ID;
         // link should contain the security-token
         $link = ShoppingCartController::add_item_link($this->mp3player);
-        $this->assertRegExp('{^shoppingcart/add/SilverShop-Page-Product/' . $productId . '\?SecurityID=[a-f0-9]+$}', $link);
+        $this->assertMatchesRegularExpression('{^shoppingcart/add/SilverShop-Page-Product/' . $productId . '\?SecurityID=[a-f0-9]+$}', $link);
 
         // should redirect back to the shop
         $response = $this->get($link);
