@@ -298,6 +298,7 @@ class OrderTest extends SapphireTest
         $orderId = $order->write();
 
         $order->Status = 'Unpaid';
+        $order->Email = 'hi@there.net';
         $order->write();
 
         $this->assertEquals(

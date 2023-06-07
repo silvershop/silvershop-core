@@ -114,6 +114,7 @@ SilverShop\Model\Order:
     Name: Cart
     Total: 8
   unpaid:
+    Email: hi@there.net
     Status: Unpaid
     Created: '2012-11-21 15:23:32'
     Placed: '2012-11-21 15:33:02'
