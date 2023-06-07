@@ -5,7 +5,7 @@ This module only moves forward as we each build the features we need. We love pu
 ### Here is a quick list of ways you can contribute:
 
  * __Test the latest code__. Find out what branch is currently being worked on (usually 'master'). Install it and try it out.
- * __Code new features and bug fixes__. Submit github pull requests. Don't forget to write PHPUnit tests that ensure your code runs. All pull requests are automatically tested [via TravisCI](https://travis-ci.org/burnbright/silverstripe-shop/pull_requests).
+ * __Code new features and bug fixes__. Submit github pull requests. Don't forget to write PHPUnit tests that ensure your code runs.
  * __Submit issues and ideas__. These can be bugs, or ideas. Be descriptive and detailed. Its better to discuss and design ideas before writing code. Please first check the [list of existing issues](https://github.com/burnbright/silverstripe-shop/issues) to make sure an identical one doesn't exist already.
  * __Write documentation__. Both the developer and user documentation can have pieces missing. Documentation is stored in the repository under `/shop/docs`, and `/shop/docs_user`. Documentation gets displayed at http://docs.ss-shop.org
  * __Provide translations__. This will allow people speaking other languages to use the shop module: https://www.transifex.com/silvershop/silverstripe-shop/
