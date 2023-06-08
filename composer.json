@@ -21,7 +21,7 @@
     }
   ],
   "require": {
-    "silverstripe/cms": "^4",
+    "silverstripe/cms": "^4.10",
     "silverstripe/asset-admin": "*",
     "silverstripe/silverstripe-omnipay": "^3@dev",
     "silvershop/silverstripe-listsorter": "^3@dev",
@@ -30,8 +30,9 @@
   },
   "require-dev": {
     "phpunit/phpunit": "^9.5",
-    "omnipay/dummy": "^3",
-    "omnipay/paymentexpress": "^3"
+    "php-http/guzzle7-adapter": "^1",
+    "omnipay/dummy": "dev-master",
+    "omnipay/paymentexpress": "dev-master"
   },
   "replace": {
     "burnbright/silverstripe-shop": "1.*"

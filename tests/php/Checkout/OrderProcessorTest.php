@@ -30,6 +30,7 @@ class OrderProcessorTest extends SapphireTest
     protected static $fixture_file   = __DIR__ . '/../Fixtures/shop.yml';
     protected static $disable_theme  = true;
     protected static $use_draft_site = true;
+    protected $usesTransactions = false;
     protected $processor;
 
     protected static $extra_dataobjects = [
@@ -102,7 +103,7 @@ class OrderProcessorTest extends SapphireTest
                 'FirstName' => 'James',
                 'Surname'   => 'Brown',
                 'Email'     => 'james@example.com',
-                'Password'  => 'jbrown',
+                'Password'  => '23u90oijlJKsa',
             ]
         );
         $this->assertTrue((bool)$member);

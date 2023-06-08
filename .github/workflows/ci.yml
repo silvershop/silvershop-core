@@ -11,4 +11,7 @@ jobs:
     uses: silverstripe/gha-ci/.github/workflows/ci.yml@v1
     with:
       composer_require_extra:
+        phpunit/phpunit:^9.5
         silverstripe/silverstripe-omnipay:dev-master
+        php-http/discovery:^1.18.1
+        squizlabs/php_codesniffer:^3.7.2

@@ -21,6 +21,7 @@ class OrderModifierTest extends FunctionalTest
 {
     public static $fixture_file = __DIR__ . '/../../Fixtures/shop.yml';
     public static $disable_theme = true;
+    protected $usesTransactions = false;
     protected static $use_draft_site = true;
 
     /**
@@ -123,11 +124,7 @@ class OrderModifierTest extends FunctionalTest
             $amounts[] = (string)$modifier->Amount;
         }
 
-        $this->assertEquals(
-            array('10', '104.5'),
-            $amounts,
-            'Modifiers aren\'t allowed to change upon failure'
-        );
+        $this->assertEquals(array('10', '104.5'), $amounts);
     }
 
     public function createOrder()
