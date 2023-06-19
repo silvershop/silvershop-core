@@ -16,12 +16,12 @@ use SilverStripe\Security\Member;
 
 class CheckoutTest extends SapphireTest
 {
-    protected static $fixture_file = array(
+    protected static $fixture_file = [
         __DIR__ . '/../Fixtures/Pages.yml',
         __DIR__ . '/../Fixtures/Orders.yml',
         __DIR__ . '/../Fixtures/Addresses.yml',
         __DIR__ . '/../Fixtures/ShopMembers.yml',
-    );
+    ];
 
     /**
      * @var ShoppingCart
@@ -104,12 +104,12 @@ class CheckoutTest extends SapphireTest
         //check can proceeed with/without order
         //check member exists
         $result = $this->memberFactory->create(
-            array(
+            [
                 'FirstName' => 'Jane',
                 'Surname'   => 'Smith',
                 'Email'     => 'jane@example.com',
                 'Password'  => 'janesmith2012',
-            )
+            ]
         );
         $this->assertTrue(($result instanceof Member), $this->checkout->getMessage() || '');
     }
@@ -120,12 +120,12 @@ class CheckoutTest extends SapphireTest
         CheckoutConfig::config()->membership_required = true;
 
         $member = $this->memberFactory->create(
-            array(
+            [
                 'FirstName' => 'Susan',
                 'Surname'   => 'Jackson',
                 'Email'     => 'susan@example.com',
                 'Password'  => 'jaleho3htgll',
-            )
+            ]
         );
 
         $this->assertTrue($this->checkout->validateMember($member));
@@ -141,12 +141,12 @@ class CheckoutTest extends SapphireTest
         $this->expectException(ValidationException::class);
 
         $member = $this->memberFactory->create(
-            array(
+            [
                 'FirstName' => 'Susan',
                 'Surname'   => 'Jackson',
                 'Email'     => 'susan@example.com',
                 'Password'  => 'jaleho3htgll',
-            )
+            ]
         );
     }
 
@@ -163,12 +163,12 @@ class CheckoutTest extends SapphireTest
         $this->expectExceptionMessage('Creating new memberships is not allowed');
 
         $result = $this->memberFactory->create(
-            array(
+            [
                 'FirstName' => 'Some',
                 'Surname'   => 'Body',
                 'Email'     => 'somebody@example.com',
                 'Password'  => 'pass1234',
-            )
+            ]
         );
     }
 
@@ -181,11 +181,11 @@ class CheckoutTest extends SapphireTest
         $this->expectException(ValidationException::class);
         $this->expectExceptionMessage('A password is required');
         $result = $this->memberFactory->create(
-            array(
+            [
                 'FirstName' => 'Jim',
                 'Surname'   => 'Smith',
                 'Email'     => 'jim@example.com',
-            )
+            ]
         );
     }
 
@@ -198,12 +198,12 @@ class CheckoutTest extends SapphireTest
         $this->expectException(ValidationException::class);
         $this->expectExceptionMessage('A member already exists with the Email jeremy@example.com');
         $result = $this->memberFactory->create(
-            array(
+            [
                 'FirstName' => 'Jeremy',
                 'Surname'   => 'Peremy',
                 'Email'     => 'jeremy@example.com',
                 'Password'  => 'jeremyperemy',
-            )
+            ]
         );
     }
 
@@ -216,11 +216,11 @@ class CheckoutTest extends SapphireTest
         $this->expectException(ValidationException::class);
         $this->expectExceptionMessage('Required field not found: Email');
         $result = $this->memberFactory->create(
-            array(
+            [
                 'FirstName' => 'John',
                 'Surname'   => 'Doe',
                 'Password'  => 'johndoe1234',
-            )
+            ]
         );
     }
 }

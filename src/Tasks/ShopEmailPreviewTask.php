@@ -26,11 +26,11 @@ class ShopEmailPreviewTask extends BuildTask
 
     protected $description = 'Previews shop emails';
 
-    protected $previewableEmails = array(
+    protected $previewableEmails = [
         'Confirmation',
         'Receipt',
         'AdminNotification'
-    );
+    ];
 
     /**
      * @param HTTPRequest $request

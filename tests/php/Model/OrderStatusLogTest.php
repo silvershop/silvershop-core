@@ -20,17 +20,17 @@ use SilverStripe\Dev\SapphireTest;
  */
 class OrderStatusLogTest extends SapphireTest
 {
-    protected static $fixture_file = array(
+    protected static $fixture_file = [
         __DIR__ . '/../Fixtures/Orders.yml',
         __DIR__ . '/../Fixtures/ShopMembers.yml',
         __DIR__ . '/../Fixtures/Pages.yml'
-    );
+    ];
 
     public function setUp(): void
     {
         parent::setUp();
         ShopTest::setConfiguration();
-        Config::modify()->set(Order::class, 'log_status', array('Processing', 'Sent', 'AdminCancelled', 'MemberCancelled'));
+        Config::modify()->set(Order::class, 'log_status', ['Processing', 'Sent', 'AdminCancelled', 'MemberCancelled']);
     }
 
     public function testOrderStatusLogItemsWithMember()
@@ -56,7 +56,7 @@ class OrderStatusLogTest extends SapphireTest
         );
 
         $processor = OrderProcessor::create($order);
-        $response = $processor->makePayment("Manual", array());
+        $response = $processor->makePayment("Manual", []);
         $order->Status = "Paid";
         $order->write();
 
@@ -280,7 +280,7 @@ class OrderStatusLogTest extends SapphireTest
         );
 
         $processor_guest = OrderProcessor::create($order);
-        $response = $processor_guest->makePayment("Manual", array());
+        $response = $processor_guest->makePayment("Manual", []);
         $order->Status = "Paid";
         $order->write();
 

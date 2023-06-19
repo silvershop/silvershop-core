@@ -32,9 +32,9 @@ class PaymentMethod extends CheckoutStep
         if (count($gateways) == 1) {
             return $this->owner->redirect($this->NextStepLink());
         }
-        return array(
+        return [
             'OrderForm' => $this->PaymentMethodForm(),
-        );
+        ];
     }
 
     public function PaymentMethodForm()

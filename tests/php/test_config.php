@@ -30,7 +30,7 @@ use SilverStripe\Security\Member;
 
 $cfg = Config::modify();
 
-$cfg->set(Injector::class, DBDatetime::class, array("class" => I18nDatetime::class));
+$cfg->set(Injector::class, DBDatetime::class, ["class" => I18nDatetime::class]);
 
 //remove array configs (these get merged, rater than replaced)
 
@@ -74,10 +74,10 @@ $cfg->set(ProductImageExtension::class, 'large_image_width', 200);
 $cfg->set(ProductCategory::class, 'include_child_groups', true);
 $cfg->set(ProductCategory::class, 'page_length', 10);
 $cfg->set(ProductCategory::class, 'must_have_price', true);
-$cfg->set(ProductCategory::class, 'sort_options', array('Title' => 'Alphabetical', 'Price' => 'Lowest Price'));
+$cfg->set(ProductCategory::class, 'sort_options', ['Title' => 'Alphabetical', 'Price' => 'Lowest Price']);
 
 // cart, order
-$cfg->set(Order::class, 'modifiers', array());
+$cfg->set(Order::class, 'modifiers', []);
 $cfg->set(Order::class, 'cancel_before_payment', true);
 $cfg->set(Order::class, 'cancel_before_processing', false);
 $cfg->set(Order::class, 'cancel_before_sending', false);
@@ -92,13 +92,13 @@ $cfg->set(FlatTax::class, 'exclusive', true);
 $cfg->set(
     GlobalTax::class,
     'country_rates',
-    array(
-        "NZ" => array("rate" => 0.15, "name" => "GST", "exclusive" => false),
-    )
+    [
+        "NZ" => ["rate" => 0.15, "name" => "GST", "exclusive" => false],
+    ]
 );
 
 $cfg->set(Simple::class, 'default_charge', 10);
-$cfg->set(Simple::class, 'charges_for_countries', array('US' => 10, 'NZ' => 5));
+$cfg->set(Simple::class, 'charges_for_countries', ['US' => 10, 'NZ' => 5]);
 
 // checkout
 $cfg->set(ShopConfigExtension::class, 'email_from', null);

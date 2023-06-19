@@ -281,7 +281,7 @@ class ProductBulkLoader extends CsvBulkLoader
             $variation->ProductID = $obj->ID; //link to product
             $variation->write();
         }
-        $varcols = array(
+        $varcols = [
             '->processVariation',
             '->processVariation1',
             '->processVariation2',
@@ -289,7 +289,7 @@ class ProductBulkLoader extends CsvBulkLoader
             '->processVariation4',
             '->processVariation5',
             '->processVariation6',
-        );
+        ];
         foreach ($varcols as $col) {
             if (isset($record[$col])) {
                 $parts = explode(':', $record[$col]);

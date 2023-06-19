@@ -26,12 +26,12 @@ class TaxReport extends ShopPeriodReport
     public function columns()
     {
         $period = isset($_GET['filters']['Grouping']) ? $_GET['filters']['Grouping'] : 'Month';
-        return array(
+        return [
             'FilterPeriod' => $period,
             'Count' => 'Order Count',
             'Sales' => 'Total Sales',
             'Tax' => 'Total Tax',
-        );
+        ];
     }
 
     public function query($params)

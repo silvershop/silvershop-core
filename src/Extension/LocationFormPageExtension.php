@@ -7,9 +7,9 @@ use SilverStripe\Core\Extension;
 
 class LocationFormPageExtension extends Extension
 {
-    private static $allowed_actions = array(
+    private static $allowed_actions = [
         'SetLocationForm',
-    );
+    ];
 
     public function SetLocationForm()
     {

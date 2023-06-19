@@ -21,9 +21,9 @@ use SilverStripe\ORM\DB;
  */
 class CheckoutPage extends Page
 {
-    private static $db   = array(
+    private static $db   = [
         'PurchaseComplete' => 'HTMLText',
-    );
+    ];
 
     private static $icon = 'silvershop/core: client/dist/images/icons/money.gif';
 
@@ -57,7 +57,7 @@ class CheckoutPage extends Page
             function (FieldList $fields) {
                 $fields->addFieldsToTab(
                     'Root.Main',
-                    array(
+                    [
                     HtmlEditorField::create(
                         'PurchaseComplete',
                         $this->fieldLabel('PurchaseComplete'),
@@ -69,7 +69,7 @@ class CheckoutPage extends Page
                                 "This message is included in reciept email, after the customer submits the checkout"
                             )
                         ),
-                    ),
+                    ],
                     'Metadata'
                 );
             }

@@ -11,10 +11,10 @@ use SilverStripe\Dev\FunctionalTest;
 
 class CheckoutPageTest extends FunctionalTest
 {
-    protected static $fixture_file   = array(
+    protected static $fixture_file   = [
         __DIR__ . '/../Fixtures/Pages.yml',
         __DIR__ . '/../Fixtures/shop.yml',
-    );
+    ];
     protected static $disable_theme  = true;
     protected static $use_draft_site = true;
     protected $controller;
@@ -34,20 +34,20 @@ class CheckoutPageTest extends FunctionalTest
         //make payment action
         $this->post(
             "/checkout/order/ActionsForm",
-            array(
+            [
                 'OrderID'          => $order->ID,
                 'PaymentMethod'    => 'Dummy',
                 'action_dopayment' => 'submit',
-            )
+            ]
         );
 
         //cancel action
         $this->post(
             "/checkout/order/ActionsForm",
-            array(
+            [
                 'OrderID'         => $order->ID,
                 'action_docancel' => 'submit',
-            )
+            ]
         );
 
         $this->markTestIncomplete('Add some assertions');

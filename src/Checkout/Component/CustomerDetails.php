@@ -48,7 +48,7 @@ class CustomerDetails extends CheckoutComponent
                 'Email' => $member->Email,
             ];
         }
-        return array();
+        return [];
     }
 
     public function setData(Order $order, array $data)

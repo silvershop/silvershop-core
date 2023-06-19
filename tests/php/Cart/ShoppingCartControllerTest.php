@@ -120,7 +120,7 @@ class ShoppingCartControllerTest extends FunctionalTest
 
         // set item quantiy
         $this->get(
-            ShoppingCartController::set_quantity_item_link($this->mp3player, array('quantity' => 5))
+            ShoppingCartController::set_quantity_item_link($this->mp3player, ['quantity' => 5])
         ); //add item via url
         $items = ShoppingCart::curr()->Items();
         $mp3playeritem =
@@ -161,7 +161,7 @@ class ShoppingCartControllerTest extends FunctionalTest
     {
 
         // add items via url
-        $this->get(ShoppingCartController::set_quantity_item_link($this->mp3player, array('quantity' => 5)));
+        $this->get(ShoppingCartController::set_quantity_item_link($this->mp3player, ['quantity' => 5]));
         $this->assertTrue($this->cart->get($this->mp3player) !== false, "mp3player item now exists in cart");
         $this->get(ShoppingCartController::add_item_link($this->socks));
         $this->assertTrue($this->cart->get($this->socks) !== false, "socks item now exists in cart");

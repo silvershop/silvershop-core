@@ -125,7 +125,7 @@ class SteppedCheckoutExtension extends Extension
         if (CheckoutPage::config()->first_step) {
             return $this->owner->{CheckoutPage::config()->first_step}();
         }
-        return array();
+        return [];
     }
 
     /**

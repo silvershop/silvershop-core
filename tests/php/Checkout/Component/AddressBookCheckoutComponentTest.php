@@ -18,10 +18,10 @@ class AddressBookCheckoutComponentTest extends SapphireTest
     // Component namespace
     const COMPONENT_NS = 'SilverShop-Checkout-Component-AddressBookBilling';
 
-    protected static $fixture_file = array(
+    protected static $fixture_file = [
         '../../Fixtures/Orders.yml',
         '../../Fixtures/ShopMembers.yml',
-    );
+    ];
 
     /**
      * @var Order $cart
@@ -48,7 +48,7 @@ class AddressBookCheckoutComponentTest extends SapphireTest
      */
     protected $config;
 
-    protected $fixtureNewAddress = array(
+    protected $fixtureNewAddress = [
         self::COMPONENT_NS . '_BillingAddressID' => 'newaddress',
         self::COMPONENT_NS . '_Country'          => 'US',
         self::COMPONENT_NS . '_Address'          => '123 Test St',
@@ -57,7 +57,7 @@ class AddressBookCheckoutComponentTest extends SapphireTest
         self::COMPONENT_NS . '_State'            => 'AR',
         self::COMPONENT_NS . '_PostalCode'       => '72761',
         self::COMPONENT_NS . '_Phone'            => '11231231234',
-    );
+    ];
 
     public function setUp(): void
     {
@@ -98,9 +98,9 @@ class AddressBookCheckoutComponentTest extends SapphireTest
         Security::setCurrentUser($this->member);
         $this->assertTrue(
             $this->config->validateData(
-                array(
+                [
                     self::COMPONENT_NS . '_BillingAddressID' => $this->address1->ID,
-                )
+                ]
             )
         );
     }
@@ -110,9 +110,9 @@ class AddressBookCheckoutComponentTest extends SapphireTest
         $this->expectException(ValidationException::class);
         $this->assertTrue(
             $this->config->validateData(
-                array(
+                [
                     self::COMPONENT_NS . '_BillingAddressID' => $this->address1->ID,
-                )
+                ]
             )
         );
     }
@@ -126,9 +126,9 @@ class AddressBookCheckoutComponentTest extends SapphireTest
 
         $this->assertTrue(
             $this->config->validateData(
-                array(
+                [
                     self::COMPONENT_NS . '_BillingAddressID' => $this->address1->ID,
-                )
+                ]
             )
         );
     }
@@ -137,9 +137,9 @@ class AddressBookCheckoutComponentTest extends SapphireTest
     {
         $beforeCount = Address::get()->count();
         $this->config->setData(
-            array(
+            [
                 self::COMPONENT_NS . '_BillingAddressID' => $this->address1->ID,
-            )
+            ]
         );
 
         $this->assertEquals($this->cart->BillingAddressID, $this->address1->ID);

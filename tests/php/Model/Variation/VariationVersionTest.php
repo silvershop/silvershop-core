@@ -47,7 +47,7 @@ class VariationVersionTest extends SapphireTest
     public function testVariationsPersistOnUnpublish()
     {
         $color = $this->objFromFixture(AttributeType::class, "color");
-        $values = array('Black', 'Blue');
+        $values = ['Black', 'Blue'];
         $this->mp3player->generateVariationsFromAttributes($color, $values);
         $this->mp3player->publishSingle();
 

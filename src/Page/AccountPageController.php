@@ -50,7 +50,7 @@ class AccountPageController extends PageController
         $this->member = Security::getCurrentUser();
 
         if (!$this->member) {
-            $messages = array(
+            $messages = [
                 'default' => _t(
                     'SilverShop\Page\AccountPage.Login',
                     'You\'ll need to login before you can access the account page.
@@ -61,7 +61,7 @@ class AccountPageController extends PageController
                     'SilverShop\Page\AccountPage.LoginAgain',
                     'You have been logged out. If you would like to log in again, please do so below.'
                 ),
-            );
+            ];
             Security::permissionFailure($this, $messages);
         }
     }
@@ -81,10 +81,10 @@ class AccountPageController extends PageController
 
     public function addressbook()
     {
-        return array(
+        return [
             'DefaultAddressForm' => $this->DefaultAddressForm(),
             'CreateAddressForm' => $this->CreateAddressForm(),
-        );
+        ];
     }
 
     public function DefaultAddressForm()
@@ -171,7 +171,7 @@ class AccountPageController extends PageController
 
     public function editprofile()
     {
-        return array();
+        return [];
     }
 
     /**

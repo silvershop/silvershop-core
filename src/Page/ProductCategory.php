@@ -51,7 +51,7 @@ class ProductCategory extends Page implements i18nEntityProvider
     public function ProductsShowable($recursive = true)
     {
         // Figure out the categories to check
-        $groupids = array($this->ID);
+        $groupids = [$this->ID];
         if (!empty($recursive) && self::config()->include_child_groups) {
             $groupids += $this->AllChildCategoryIDs();
         }
@@ -105,7 +105,7 @@ class ProductCategory extends Page implements i18nEntityProvider
      */
     public function ChildCategories($recursive = false)
     {
-        $ids = array($this->ID);
+        $ids = [$this->ID];
         if ($recursive) {
             $ids += $this->AllChildCategoryIDs();
         }
@@ -150,10 +150,10 @@ class ProductCategory extends Page implements i18nEntityProvider
 
         // add the sort option keys
         foreach ($this->config()->sort_options as $key => $value) {
-            $entities[__CLASS__ . '.' . $key] = array(
+            $entities[__CLASS__ . '.' . $key] = [
                 $key,
                 "Sort by the '$value' field",
-            );
+            ];
         }
 
         return $entities;

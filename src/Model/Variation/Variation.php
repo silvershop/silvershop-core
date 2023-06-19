@@ -248,7 +248,7 @@ class Variation extends DataObject implements Buyable
     {
         $values = $this->AttributeValues();
         if ($values->exists()) {
-            $labelvalues = array();
+            $labelvalues = [];
             foreach ($values as $value) {
                 if (self::config()->title_has_label) {
                     $labelvalues[] = $value->Type()->Label . self::config()->title_separator . $value->Value;
@@ -266,7 +266,7 @@ class Variation extends DataObject implements Buyable
 
     public function getCategoryIDs()
     {
-        return $this->Product() ? $this->Product()->getCategoryIDs() : array();
+        return $this->Product() ? $this->Product()->getCategoryIDs() : [];
     }
 
     public function getCategories()
@@ -302,7 +302,7 @@ class Variation extends DataObject implements Buyable
      */
     public function Item()
     {
-        $filter = array();
+        $filter = [];
         $this->extend('updateItemFilter', $filter);
         $item = ShoppingCart::singleton()->get($this, $filter);
         if (!$item) {
@@ -325,11 +325,12 @@ class Variation extends DataObject implements Buyable
      *
      * @return string
      */
-    public function Link($action = null) {
+    public function Link($action = null)
+    {
         return ($this->ProductID) ? $this->Product()->Link($action) : false;
     }
 
-    public function createItem($quantity = 1, $filter = array())
+    public function createItem($quantity = 1, $filter = [])
     {
         $orderitem = self::config()->order_item;
         $item = new $orderitem();

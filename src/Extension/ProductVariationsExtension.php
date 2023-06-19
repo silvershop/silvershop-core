@@ -89,12 +89,12 @@ class ProductVariationsExtension extends DataExtension
         }
 
         $prices = $variations->map('ID', 'SellingPrice')->toArray();
-        $pricedata = array(
+        $pricedata = [
             'HasRange' => false,
             'Max' => ShopCurrency::create(),
             'Min' => ShopCurrency::create(),
             'Average' => ShopCurrency::create(),
-        );
+        ];
         $count = count($prices);
         $sum = array_sum($prices);
         $maxprice = max($prices);

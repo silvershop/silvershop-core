@@ -53,7 +53,7 @@ class OnsitePayment extends CheckoutComponent
 
     public function getData(Order $order)
     {
-        $data = array();
+        $data = [];
         $gateway = Checkout::get($order)->getSelectedPaymentMethod();
         //provide valid dummy credit card data
         if ($gateway === 'Dummy') {

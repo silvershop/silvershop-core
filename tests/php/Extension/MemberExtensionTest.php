@@ -15,10 +15,10 @@ use SilverStripe\Security\Security;
  */
 class MemberExtensionTest extends SapphireTest
 {
-    public static $fixture_file = array(
+    public static $fixture_file = [
         __DIR__ . '/../Fixtures/ShopMembers.yml',
         __DIR__ . '/../Fixtures/shop.yml',
-    );
+    ];
 
     public function testGetByIdentifier()
     {

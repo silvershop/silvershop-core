@@ -20,10 +20,10 @@ use SilverStripe\Omnipay\Model\Payment;
 
 class OrderActionsFormTest extends FunctionalTest
 {
-    protected static $fixture_file = array(
+    protected static $fixture_file = [
         __DIR__ . '/../Fixtures/Pages.yml',
         __DIR__ . '/../Fixtures/shop.yml',
-    );
+    ];
 
     // This seems to be required, because we query the OrderItem table and thus this gets included…
     // TODO: Remove once we figure out how to circumvent that…
@@ -60,7 +60,7 @@ class OrderActionsFormTest extends FunctionalTest
 
     public function testOffsitePayment()
     {
-        Config::modify()->set(GatewayInfo::class, 'Dummy', array('is_offsite' => true));
+        Config::modify()->set(GatewayInfo::class, 'Dummy', ['is_offsite' => true]);
         $stubGateway = $this->buildPaymentGatewayStub(true, 'test-' . $this->order->ID, true);
         Injector::inst()->registerService($this->stubGatewayFactory($stubGateway), 'Omnipay\Common\GatewayFactory');
 
@@ -68,11 +68,11 @@ class OrderActionsFormTest extends FunctionalTest
 
         $response = Director::test(
             $ctrl->Link('ActionsForm'),
-            array(
+            [
             'action_dopayment' => true,
             'OrderID' => $this->order->ID,
             'PaymentMethod' => 'Dummy'
-            ),
+            ],
             $this->session()
         );
 
@@ -93,7 +93,7 @@ class OrderActionsFormTest extends FunctionalTest
 
         $response = Director::test(
             $ctrl->Link('ActionsForm'),
-            array(
+            [
             'action_dopayment' => true,
             'OrderID' => $this->order->ID,
             'PaymentMethod' => 'Dummy',
@@ -103,7 +103,7 @@ class OrderActionsFormTest extends FunctionalTest
             'expiryMonth' => 10,
             'expiryYear' => date('Y') + 1,
             'cvv' => 123
-            ),
+            ],
             $this->session()
         );
 
@@ -125,13 +125,13 @@ class OrderActionsFormTest extends FunctionalTest
         );
         $validator->setForm($form);
         $validator->php(
-            array(
+            [
                 'OrderID' => $this->order->ID,
                 'PaymentMethod' => 'Dummy',
                 'type' => 'visa',
                 'name' => 'Tester Mc. Testerson',
                 'number' => '4242424242424242'
-            )
+            ]
         );
 
         $requiredCount = 0;
@@ -192,7 +192,7 @@ class OrderActionsFormTest extends FunctionalTest
         // Build the gateway
 
         $stubGateway = $this->getMockBuilder('Omnipay\Common\AbstractGateway')
-            ->setMethods(array('purchase', 'supportsCompletePurchase', 'getName'))
+            ->setMethods(['purchase', 'supportsCompletePurchase', 'getName'])
             ->getMock();
 
         $stubGateway->expects($this->any())

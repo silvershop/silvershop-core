@@ -135,7 +135,7 @@ class CheckoutComponentConfig
 
     public function getRequiredFields()
     {
-        $required = array();
+        $required = [];
         foreach ($this->getComponents() as $component) {
             $required = array_merge($required, $component->getRequiredFields($this->order));
         }
@@ -186,7 +186,7 @@ class CheckoutComponentConfig
      */
     public function getData()
     {
-        $data = array();
+        $data = [];
 
         foreach ($this->getComponents() as $component) {
             $orderdata = $component->getData($this->order);
@@ -220,7 +220,7 @@ class CheckoutComponentConfig
         if (!$this->namespaced) { //no need to try and get un-namespaced dependant data
             return $data;
         }
-        $dependantdata = array();
+        $dependantdata = [];
         foreach ($component->dependsOn() as $dependanttype) {
             $dependant = null;
             foreach ($this->components as $check) {

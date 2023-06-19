@@ -37,7 +37,7 @@ class AddProductForm extends Form
      *
      * @var array
      */
-    protected $saveablefields = array();
+    protected $saveablefields = [];
 
     public function __construct($controller, $name = "AddProductForm")
     {
@@ -115,7 +115,7 @@ class AddProductForm extends Form
         $fields = FieldList::create();
 
         if ($this->maxquantity) {
-            $values = array();
+            $values = [];
             $count = 1;
 
             while ($count <= $this->maxquantity) {

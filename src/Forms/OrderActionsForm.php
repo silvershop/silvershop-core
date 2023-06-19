@@ -225,9 +225,9 @@ class OrderActionsForm extends Form
      */
     protected function getCCFields(array $gateways)
     {
-        $fieldFactory = new GatewayFieldsFactory(null, array('Card'));
-        $onsiteGateways = array();
-        $allRequired = array();
+        $fieldFactory = new GatewayFieldsFactory(null, ['Card']);
+        $onsiteGateways = [];
+        $allRequired = [];
         foreach ($gateways as $gateway => $title) {
             if (!GatewayInfo::isOffsite($gateway)) {
                 $required = GatewayInfo::requiredFields($gateway);

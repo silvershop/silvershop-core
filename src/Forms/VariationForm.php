@@ -156,7 +156,7 @@ class VariationForm extends AddProductForm
             foreach ($query->execute()->column('ID') as $variationID) {
                 $query2->setSelect('SilverShop_AttributeValueID')
                     ->setFrom('SilverShop_Variation_AttributeValues')
-                    ->setWhere(array('SilverShop_VariationID' => $variationID));
+                    ->setWhere(['SilverShop_VariationID' => $variationID]);
                 $vararray[$variationID] = $query2->execute()->keyedColumn();
             }
 

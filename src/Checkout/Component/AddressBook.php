@@ -128,7 +128,7 @@ abstract class AddressBook extends Address implements i18nEntityProvider
                     $errorMessage = _t(
                         'SilverShop\Forms.FIELDISREQUIRED',
                         '{name} is required',
-                        array('name' => $fieldLabel)
+                        ['name' => $fieldLabel]
                     );
 
                     $result->addError($errorMessage, $fieldName);
@@ -180,6 +180,6 @@ abstract class AddressBook extends Address implements i18nEntityProvider
             ];
         }
 
-        return array();
+        return [];
     }
 }

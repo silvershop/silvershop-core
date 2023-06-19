@@ -98,12 +98,12 @@ class OrderModifierTest extends FunctionalTest
         // 408 from items + 10 from modifier + 25% from tax
         $this->assertEquals('522.5', $order->Total);
 
-        $amounts = array();
+        $amounts = [];
         foreach ($order->Modifiers()->sort('Sort') as $modifier) {
             $amounts[] = (string)$modifier->Amount;
         }
 
-        $this->assertEquals(array('10', '104.5'), $amounts);
+        $this->assertEquals(['10', '104.5'], $amounts);
 
         OrderModifierTest_TestModifier::$value = 42;
 
@@ -119,12 +119,12 @@ class OrderModifierTest extends FunctionalTest
         // Order Total should not have changed
         $this->assertEquals('522.5', $order->Total);
 
-        $amounts = array();
+        $amounts = [];
         foreach ($order->Modifiers()->sort('Sort') as $modifier) {
             $amounts[] = (string)$modifier->Amount;
         }
 
-        $this->assertEquals(array('10', '104.5'), $amounts);
+        $this->assertEquals(['10', '104.5'], $amounts);
     }
 
     public function createOrder()

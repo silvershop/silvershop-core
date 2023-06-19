@@ -19,10 +19,10 @@ use SilverStripe\Omnipay\Tests\Service\TestGatewayFactory;
 
 class ShopPaymentTest extends FunctionalTest
 {
-    protected static $fixture_file = array(
+    protected static $fixture_file = [
         __DIR__ . '/../Fixtures/Pages.yml',
         __DIR__ . '/../Fixtures/shop.yml',
-    );
+    ];
     public static $disable_theme = true;
     protected $autoFollowRedirection = false;
 
@@ -95,11 +95,11 @@ class ShopPaymentTest extends FunctionalTest
             ->current();
         //collect checkout details
         $cart->update(
-            array(
+            [
                 'FirstName' => 'Foo',
                 'Surname' => 'Bar',
                 'Email' => 'foo@example.com',
-            )
+            ]
         );
         $cart->write();
         //pay for order with external gateway
@@ -111,7 +111,7 @@ class ShopPaymentTest extends FunctionalTest
         $this->mainSession = new TestSession();
         ShoppingCart::singleton()->clear();
         $this->setMockHttpResponse('paymentexpress/tests/Mock/PxPayCompletePurchaseSuccess.txt');
-        $this->getHttpRequest()->query->replace(array('result' => 'abc123'));
+        $this->getHttpRequest()->query->replace(['result' => 'abc123']);
         $identifier = $response->getPayment()->Identifier;
 
         //bring back client session

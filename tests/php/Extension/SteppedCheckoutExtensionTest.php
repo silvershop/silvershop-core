@@ -122,19 +122,19 @@ class SteppedCheckoutExtensionTest extends FunctionalTest
         $this->checkout->handleRequest($this->buildTestRequest('checkout/createaccount'));
         */
         $form = $this->checkout->MembershipForm();
-        $data = array();
+        $data = [];
         $form->loadDataFrom($data);
 
-        $data = array(
+        $data = [
             'FirstName' => 'Michael',
             'Surname' => 'Black',
             'Email' => 'mb@example.com',
-            'Password' => array(
+            'Password' => [
                 '_Password' => 'pass1234',
                 '_ConfirmPassword' => 'pass1234',
-            ),
+            ],
             'action_docreateaccount' => 'Create New Account',
-        );
+        ];
         $response = $this->post('/checkout/CreateAccountForm', $data); //redirect to next step
 
         $member = MemberExtension::get_by_identifier("mb@example.com");
@@ -148,12 +148,12 @@ class SteppedCheckoutExtensionTest extends FunctionalTest
         $user = $this->objFromFixture(Member::class, "joebloggs");
         Security::setCurrentUser($user);
         $this->checkout->handleRequest($this->buildTestRequest('contactdetails'));
-        $data = array(
+        $data = [
             'FirstName' => 'Pauline',
             'Surname' => 'Richardson',
             'Email' => 'p.richardson@example.com',
             'action_setcontactdetails' => 1,
-        );
+        ];
         $response = $this->post('/checkout/ContactDetailsForm', $data);
 
         $this->markTestIncomplete('check order has been updated');
@@ -164,14 +164,14 @@ class SteppedCheckoutExtensionTest extends FunctionalTest
         $user = $this->objFromFixture(Member::class, "joebloggs");
         Security::setCurrentUser($user);
         $this->checkout->handleRequest($this->buildTestRequest('shippingaddress'));
-        $data = array(
+        $data = [
             'Address' => '2b Baba place',
             'AddressLine2' => 'Level 2',
             'City' => 'Newton',
             'State' => 'Wellington',
             'Country' => 'NZ',
             'action_setaddress' => 1,
-        );
+        ];
         $response = $this->post('/checkout/AddressForm', $data);
 
         $this->markTestIncomplete('assertions!');
@@ -182,14 +182,14 @@ class SteppedCheckoutExtensionTest extends FunctionalTest
         $user = $this->objFromFixture(Member::class, "joebloggs");
         Security::setCurrentUser($user);
         $this->checkout->handleRequest($this->buildTestRequest('billingaddress'));
-        $data = array(
+        $data = [
             'Address' => '3 Art Cresent',
             'AddressLine2' => '',
             'City' => 'Walkworth',
             'State' => 'New Caliphoneya',
             'Country' => 'ZA',
             'action_setbillingaddress' => 1,
-        );
+        ];
         $response = $this->post('/checkout/AddressForm', $data);
 
         $this->markTestIncomplete('assertions!');
@@ -197,10 +197,10 @@ class SteppedCheckoutExtensionTest extends FunctionalTest
 
     public function testPaymentMethod()
     {
-        $data = array(
+        $data = [
             'PaymentMethod' => 'Dummy',
             'action_setpaymentmethod' => 1,
-        );
+        ];
         $response = $this->post('/checkout/PaymentMethodForm', $data);
         $this->assertEquals('Dummy', Checkout::get($this->cart)->getSelectedPaymentMethod());
     }
@@ -212,10 +212,10 @@ class SteppedCheckoutExtensionTest extends FunctionalTest
          * @var PaymentForm $form
          */
         $form = $this->checkout->ConfirmationForm();
-        $data = array(
+        $data = [
             'Notes' => 'Leave it around the back',
             'ReadTermsAndConditions' => 1,
-        );
+        ];
         $member = $this->objFromFixture(Member::class, "joebloggs");
         Security::setCurrentUser($member);
 

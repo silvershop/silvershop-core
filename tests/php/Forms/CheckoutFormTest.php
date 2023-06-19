@@ -63,7 +63,7 @@ class CheckoutFormTest extends FunctionalTest
         $config = new SinglePageCheckoutComponentConfig($order);
         $form = new CheckoutForm($this->checkoutcontroller, "OrderForm", $config);
         $ns = 'SilverShop-Checkout-Component-';
-        $data = array(
+        $data = [
             "{$ns}CustomerDetails_FirstName"    => "Jane",
             "{$ns}CustomerDetails_Surname"      => "Smith",
             "{$ns}CustomerDetails_Email"        => "janesmith@example.com",
@@ -84,7 +84,7 @@ class CheckoutFormTest extends FunctionalTest
             "{$ns}Payment_PaymentMethod"        => "Dummy",
             "{$ns}Notes_Notes"                  => "Leave it around the back",
             "{$ns}Terms_ReadTermsAndConditions" => "1",
-        );
+        ];
         $form->loadDataFrom($data, true);
         $valid = $form->validationResult()->isValid();
         $errors = $form->getValidator()->getErrors();
@@ -116,7 +116,7 @@ class CheckoutFormTest extends FunctionalTest
         $form = new CheckoutForm($this->checkoutcontroller, "OrderForm", $config);
         $ns = 'SilverShop-Checkout-Component-';
         // no country fields due to readonly field
-        $dataCountryAbsent = array(
+        $dataCountryAbsent = [
             "{$ns}CustomerDetails_FirstName"    => "Jane",
             "{$ns}CustomerDetails_Surname"      => "Smith",
             "{$ns}CustomerDetails_Email"        => "janesmith@example.com",
@@ -135,7 +135,7 @@ class CheckoutFormTest extends FunctionalTest
             "{$ns}Payment_PaymentMethod"        => "Dummy",
             "{$ns}Notes_Notes"                  => "Leave it around the back",
             "{$ns}Terms_ReadTermsAndConditions" => "1",
-        );
+        ];
         $form->loadDataFrom($dataCountryAbsent, true);
         $valid = $form->validationResult()->isValid();
         $errors = $form->getValidator()->getErrors();

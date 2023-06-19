@@ -85,12 +85,12 @@ class CartEditField extends FormField
      *
      * @param array $properties
      */
-    public function Field($properties = array())
+    public function Field($properties = [])
     {
         $editables = $this->editableItems();
-        $customcartdata = array(
+        $customcartdata = [
             'Items' => $editables,
-        );
+        ];
         // NOTE: this was originally incorrect - passing just $editables and $customcartdata
         // which broke modules like Display_Logic.
         $this->extend('onBeforeRender', $this, $editables, $customcartdata);
@@ -98,7 +98,7 @@ class CartEditField extends FormField
         return SSViewer::execute_template(
             $this->template,
             $this->cart->customise($customcartdata),
-            array('Editable' => true)
+            ['Editable' => true]
         );
     }
 
@@ -145,11 +145,11 @@ class CartEditField extends FormField
             $remove = CheckboxField::create($name . '[Remove]', _t('SilverShop\Generic.Remove', 'Remove'));
             $editables->push(
                 $item->customise(
-                    array(
+                    [
                         'QuantityField' => $quantity,
                         'VariationField' => $variationfield,
                         'RemoveField' => $remove,
-                    )
+                    ]
                 )
             );
         }

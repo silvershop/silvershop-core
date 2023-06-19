@@ -99,12 +99,12 @@ class ProductCategoryTest extends FunctionalTest
         $products = $this->products->ProductsShowable();
         $this->assertNotNull($products, "Products exist in category");
         $this->assertListEquals(
-            array(
-                array('URLSegment' => 'socks'),
-                array('URLSegment' => 't-shirt'),
-                array('URLSegment' => 'hdtv'),
-                array('URLSegment' => 'beach-ball'),
-            ),
+            [
+                ['URLSegment' => 'socks'],
+                ['URLSegment' => 't-shirt'],
+                ['URLSegment' => 'hdtv'],
+                ['URLSegment' => 'beach-ball'],
+            ],
             $products
         );
     }
@@ -113,9 +113,9 @@ class ProductCategoryTest extends FunctionalTest
     {
         $products = $this->electronics->ProductsShowable();
         $this->assertListEquals(
-            array(
-                array('URLSegment' => 'hdtv'),
-            ),
+            [
+                ['URLSegment' => 'hdtv'],
+            ],
             $products,
             'Should initially contain only direct membership products'
         );
@@ -125,10 +125,10 @@ class ProductCategoryTest extends FunctionalTest
 
         $products = $this->electronics->ProductsShowable();
         $this->assertListEquals(
-            array(
-                array('URLSegment' => 'hdtv'),
-                array('URLSegment' => 'socks'),
-            ),
+            [
+                ['URLSegment' => 'hdtv'],
+                ['URLSegment' => 'socks'],
+            ],
             $products,
             'After adding a category via many-many to socks, that should show up as well'
         );
@@ -142,11 +142,11 @@ class ProductCategoryTest extends FunctionalTest
         $this->assertNotNull($products, "Products exist in category");
         // hdtv not in the list, since it doesn't have a base-price set
         $this->assertListEquals(
-            array(
-                array('URLSegment' => 'socks'),
-                array('URLSegment' => 't-shirt'),
-                array('URLSegment' => 'beach-ball'),
-            ),
+            [
+                ['URLSegment' => 'socks'],
+                ['URLSegment' => 't-shirt'],
+                ['URLSegment' => 'beach-ball'],
+            ],
             $products
         );
 
@@ -155,10 +155,10 @@ class ProductCategoryTest extends FunctionalTest
 
         $products = $this->products->ProductsShowable();
         $this->assertListEquals(
-            array(
-                array('URLSegment' => 't-shirt'),
-                array('URLSegment' => 'beach-ball'),
-            ),
+            [
+                ['URLSegment' => 't-shirt'],
+                ['URLSegment' => 'beach-ball'],
+            ],
             $products
         );
     }
@@ -182,9 +182,9 @@ class ProductCategoryTest extends FunctionalTest
         $products = $this->electronics->ProductsShowable();
 
         $this->assertListEquals(
-            array(
-                array('URLSegment' => 'hdtv')
-            ),
+            [
+                ['URLSegment' => 'hdtv']
+            ],
             $products,
             'HDTV has a priced extension and should now show up in the list of products'
         );

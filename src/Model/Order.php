@@ -294,7 +294,7 @@ class Order extends DataObject
 
     public static function get_order_status_options()
     {
-        $values = array();
+        $values = [];
         foreach (singleton(Order::class)->dbObject('Status')->enumValues(false) as $value) {
             $values[$value] = _t(__CLASS__ . '.STATUS_' . strtoupper($value), $value);
         }
@@ -309,12 +309,12 @@ class Order extends DataObject
         $fields = FieldList::create(TabSet::create('Root', Tab::create('Main')));
         $fs = '<div class="field">';
         $fe = '</div>';
-        $parts = array(
+        $parts = [
             DropdownField::create('Status', $this->fieldLabel('Status'), self::get_order_status_options()),
             LiteralField::create('Customer', $fs . $this->renderWith('SilverShop\Admin\OrderAdmin_Customer') . $fe),
             LiteralField::create('Addresses', $fs . $this->renderWith('SilverShop\Admin\OrderAdmin_Addresses') . $fe),
             LiteralField::create('Content', $fs . $this->renderWith('SilverShop\Admin\OrderAdmin_Content') . $fe),
-        );
+        ];
         if ($this->Notes) {
             $parts[] = LiteralField::create('Notes', $fs . $this->renderWith('SilverShop\Admin\OrderAdmin_Notes') . $fe);
         }
@@ -626,7 +626,7 @@ class Order extends DataObject
      *
      * @return boolean
      */
-    public function canCreate($member = null, $context = array())
+    public function canCreate($member = null, $context = [])
     {
         $extended = $this->extendedCan(__FUNCTION__, $member, $context);
         if ($extended !== null) {
@@ -668,7 +668,7 @@ class Order extends DataObject
     {
         $firstname = $this->FirstName ? $this->FirstName : $this->Member()->FirstName;
         $surname = $this->FirstName ? $this->Surname : $this->Member()->Surname;
-        return implode(' ', array_filter(array($firstname, $surname)));
+        return implode(' ', array_filter([$firstname, $surname]));
     }
 
     public function getTitle()
@@ -947,10 +947,10 @@ class Order extends DataObject
         // collect all the payment status values
         foreach ($this->dbObject('Status')->enumValues() as $value) {
             $key = strtoupper($value);
-            $entities[__CLASS__ . ".STATUS_$key"] = array(
+            $entities[__CLASS__ . ".STATUS_$key"] = [
                 $value,
                 "Translation of the order status '$value'",
-            );
+            ];
         }
 
         return $entities;

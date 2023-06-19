@@ -73,12 +73,12 @@ class VariationTest extends SapphireTest
     {
         $colorred = $this->objFromFixture(AttributeValue::class, "color_red");
         $sizelarge = $this->objFromFixture(AttributeValue::class, "size_large");
-        $attributes = array($colorred->ID, $sizelarge->ID);
+        $attributes = [$colorred->ID, $sizelarge->ID];
         $variation = $this->ball->getVariationByAttributes($attributes);
         $this->assertInstanceOf(Variation::class, $variation, "Variation exists");
         $this->assertEquals(22, $variation->sellingPrice(), "Variation price is $22 (price of ball");
 
-        $attributes = array($colorred->ID, 999);
+        $attributes = [$colorred->ID, 999];
         $variation = $this->ball->getVariationByAttributes($attributes);
         $this->assertNull($variation, "Variation does not exist");
     }
@@ -86,11 +86,11 @@ class VariationTest extends SapphireTest
     public function testGenerateVariations()
     {
         $color = $this->objFromFixture(AttributeType::class, "color");
-        $values = array('Black', 'Blue'); //Note: black doesn't exist in the yaml
+        $values = ['Black', 'Blue']; //Note: black doesn't exist in the yaml
         $this->mp3player->generateVariationsFromAttributes($color, $values);
 
         $capacity = $this->objFromFixture(AttributeType::class, "capacity");
-        $values = array("120GB", "300GB"); //Note: 300GB doesn't exist in the yaml
+        $values = ["120GB", "300GB"]; //Note: 300GB doesn't exist in the yaml
         $this->mp3player->generateVariationsFromAttributes($capacity, $values);
 
         $variations = $this->mp3player->Variations();

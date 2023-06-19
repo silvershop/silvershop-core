@@ -54,7 +54,7 @@ class ProductCategoryController extends PageController
      */
     public function getSorter()
     {
-        $options = array();
+        $options = [];
         foreach (ProductCategory::config()->sort_options as $k => $v) {
             // make the label translatable
             $k = _t(ProductCategory::class . '.' . $k, $k);
