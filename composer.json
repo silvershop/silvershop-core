@@ -32,7 +32,8 @@
     "phpunit/phpunit": "^9.5",
     "php-http/guzzle7-adapter": "^1",
     "omnipay/dummy": "dev-master",
-    "omnipay/paymentexpress": "dev-master"
+    "omnipay/paymentexpress": "dev-master",
+    "squizlabs/php_codesniffer": "^3.7.2"
   },
   "replace": {
     "burnbright/silverstripe-shop": "1.*"
