@@ -116,7 +116,7 @@ class CartForm extends Form
             $form->sessionMessage(implode(' ', $badMessages), 'bad');
         }
 
-        $this->extend('updateCartFormResponse', $request, $response, $form);
+        $this->extend('updateCartFormResponse', $request, $response, $form, $removecount, $updatecount);
 
         return $response ? $response : $this->controller->redirectBack();
     }
