@@ -20,12 +20,12 @@ use SilverStripe\Dev\SapphireTest;
 
 class CheckoutComponentTest extends SapphireTest
 {
-    protected static $fixture_file = array(
+    protected static $fixture_file = [
         __DIR__ . '/../../Fixtures/Orders.yml',
         __DIR__ . '/../../Fixtures/Addresses.yml',
         __DIR__ . '/../../Fixtures/shop.yml',
         __DIR__ . '/../../Fixtures/ShopMembers.yml',
-    );
+    ];
 
     /**
      * @var Order
@@ -47,7 +47,7 @@ class CheckoutComponentTest extends SapphireTest
      */
     protected $addressNoCountry;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         ShopTest::setConfiguration();
@@ -70,11 +70,11 @@ class CheckoutComponentTest extends SapphireTest
         $customerdetailscomponent = $config->getComponentByType(CustomerDetails::class);
         $customerdetailscomponent->setData(
             $order,
-            array(
+            [
                 "FirstName" => "Ed",
                 "Surname"   => "Hillary",
                 "Email"     => "ed@example.com",
-            )
+            ]
         );
 
         $shippingaddresscomponent = $config->getComponentByType(ShippingAddress::class);
@@ -86,25 +86,25 @@ class CheckoutComponentTest extends SapphireTest
         $paymentcomponent = $config->getComponentByType(Payment::class);
         $paymentcomponent->setData(
             $order,
-            array(
+            [
                 "PaymentMethod" => "Dummy",
-            )
+            ]
         );
 
         $notescomponent = $config->getComponentByType(Notes::class);
         $notescomponent->setData(
             $order,
-            array(
+            [
                 "Notes" => "Please bring coffee with goods",
-            )
+            ]
         );
 
         $termscomponent = $config->getComponentByType(Terms::class);
         $termscomponent->setData(
             $order,
-            array(
+            [
                 "ReadTermsAndConditions" => true,
-            )
+            ]
         );
 
         $components = $config->getComponents();
@@ -114,75 +114,75 @@ class CheckoutComponentTest extends SapphireTest
             $components,
             "Components must only be of type '$class'"
         );
-        $this->assertContains(CustomerDetails::class, print_r($components, true));
-        $this->assertContains(ShippingAddress::class, print_r($components, true));
-        $this->assertContains(BillingAddress::class, print_r($components, true));
-        $this->assertContains(Payment::class, print_r($components, true));
-        $this->assertContains(Notes::class, print_r($components, true));
-        $this->assertContains(Terms::class, print_r($components, true));
+        $this->assertStringContainsString(CustomerDetails::class, print_r($components, true));
+        $this->assertStringContainsString(ShippingAddress::class, print_r($components, true));
+        $this->assertStringContainsString(BillingAddress::class, print_r($components, true));
+        $this->assertStringContainsString(Payment::class, print_r($components, true));
+        $this->assertStringContainsString(Notes::class, print_r($components, true));
+        $this->assertStringContainsString(Terms::class, print_r($components, true));
 
         $fields = $config->getFormFields();
 
         $ns = 'SilverShop-Checkout-Component';
-        $this->assertContains(
+        $this->assertStringContainsString(
             "$ns-CustomerDetails_FirstName",
             print_r($fields, true),
             "Form Fields should contain a $ns-CustomerDetails_FirstName field"
         );
-        $this->assertContains(
+        $this->assertStringContainsString(
             "$ns-CustomerDetails_Surname",
             print_r($fields, true),
             "Form Fields should contain a $ns-CustomerDetails_Surname field"
         );
-        $this->assertContains(
+        $this->assertStringContainsString(
             "$ns-CustomerDetails_Email",
             print_r($fields, true),
             "Form Fields should contain a $ns-CustomerDetails_Email field"
         );
-        $this->assertContains(
+        $this->assertStringContainsString(
             "$ns-ShippingAddress_Country",
             print_r($fields, true),
             "Form Fields should contain a $ns-ShippingAddress_Country field"
         );
-        $this->assertContains(
+        $this->assertStringContainsString(
             "$ns-ShippingAddress_Address",
             print_r($fields, true),
             "Form Fields should contain a $ns-ShippingAddress_Address field"
         );
-        $this->assertContains(
+        $this->assertStringContainsString(
             "$ns-ShippingAddress_City",
             print_r($fields, true),
             "Form Fields should contain a $ns-ShippingAddress_City field"
         );
-        $this->assertContains(
+        $this->assertStringContainsString(
             "$ns-ShippingAddress_State",
             print_r($fields, true),
             "Form Fields should contain a $ns-ShippingAddress_State field"
         );
-        $this->assertContains(
+        $this->assertStringContainsString(
             "$ns-BillingAddress_Country",
             print_r($fields, true),
             "Form Fields should contain a $ns-BillingAddress_Country field"
         );
-        $this->assertContains(
+        $this->assertStringContainsString(
             "$ns-BillingAddress_Address",
             print_r($fields, true),
             "Form Fields should contain a $ns-BillingAddress_Address field"
         );
-        $this->assertContains(
+        $this->assertStringContainsString(
             "$ns-BillingAddress_City",
             print_r($fields, true),
             "Form Fields should contain a $ns-BillingAddress_City field"
         );
-        $this->assertContains(
+        $this->assertStringContainsString(
             "$ns-BillingAddress_State",
             print_r($fields, true),
             "Form Fields should contain a $ns-BillingAddress_State field"
         );
-        $this->assertNotContains("rubbish", print_r($fields, true), "Form Field should not include 'rubbish'");
+        $this->assertStringNotContainsString("rubbish", print_r($fields, true), "Form Field should not include 'rubbish'");
 
         $required = $config->getRequiredFields();
-        $requiredfields = array(
+        $requiredfields = [
             "$ns-CustomerDetails_FirstName",
             "$ns-CustomerDetails_Surname",
             "$ns-CustomerDetails_Email",
@@ -194,7 +194,7 @@ class CheckoutComponentTest extends SapphireTest
             "$ns-BillingAddress_State",
             "$ns-BillingAddress_City",
             "$ns-BillingAddress_Address",
-        );
+        ];
         $this->assertSame(
             $requiredfields,
             $required,
@@ -257,11 +257,11 @@ class CheckoutComponentTest extends SapphireTest
         $customerdetailscomponent = $config->getComponentByType(CustomerDetails::class);
         $customerdetailscomponent->setData(
             $order,
-            array(
+            [
                 "FirstName" => "John",
                 "Surname"   => "Walker",
                 "Email"     => "jw@example.com",
-            )
+            ]
         );
 
         $shippingaddresscomponent = $config->getComponentByType(ShippingAddress::class);
@@ -273,22 +273,22 @@ class CheckoutComponentTest extends SapphireTest
         $paymentcomponent = $config->getComponentByType(Payment::class);
         $paymentcomponent->setData(
             $order,
-            array(
+            [
                 "PaymentMethod" => "Dummy",
-            )
+            ]
         );
 
         $fields = $config->getFormFields();
         $ns = 'SilverShop-Checkout-Component';
-        $shippingaddressfield = $fields->fieldByName("$ns-ShippingAddress_Country_readonly");
-        $billingaddressfield = $fields->fieldByName("$ns-BillingAddress_Country_readonly");
+        $shippingaddressfield = $fields->dataFieldByName("$ns-ShippingAddress_Country_readonly");
+        $billingaddressfield = $fields->dataFieldByName("$ns-BillingAddress_Country_readonly");
 
-        $this->assertContains(
+        $this->assertStringContainsString(
             "New Zealand",
             $shippingaddressfield->Value(),
             "The value of the Shipping Country readonly field is 'New Zealand'"
         );
-        $this->assertContains(
+        $this->assertStringContainsString(
             "New Zealand",
             $billingaddressfield->Value(),
             "The value of the Billing Country readonly field is 'New Zealand'"
@@ -297,7 +297,7 @@ class CheckoutComponentTest extends SapphireTest
         $this->assertTrue($shippingaddressfield->isReadonly(), "The Billing Address Country field is readonly");
 
         $required = $config->getRequiredFields();
-        $requiredfieldswithCountryAbsent = array(
+        $requiredfieldswithCountryAbsent = [
             "$ns-CustomerDetails_FirstName",
             "$ns-CustomerDetails_Surname",
             "$ns-CustomerDetails_Email",
@@ -307,7 +307,7 @@ class CheckoutComponentTest extends SapphireTest
             "$ns-BillingAddress_State",
             "$ns-BillingAddress_City",
             "$ns-BillingAddress_Address",
-        );
+        ];
         $this->assertSame(
             $requiredfieldswithCountryAbsent,
             $required,

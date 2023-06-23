@@ -70,12 +70,12 @@ class Membership extends CheckoutComponent
     public function getRequiredFields(Order $order)
     {
         if (Security::getCurrentUser() || !Checkout::membership_required()) {
-            return array();
+            return [];
         }
-        return array(
+        return [
             Member::config()->unique_identifier_field,
             'Password',
-        );
+        ];
     }
 
     public function getPasswordField()
@@ -108,7 +108,7 @@ class Membership extends CheckoutComponent
                         'SilverShop\Checkout\Checkout.MemberExists',
                         'A member already exists with the {Field} {Identifier}',
                         '',
-                        array('Field' => $fieldLabel, 'Identifier' => $idval)
+                        ['Field' => $fieldLabel, 'Identifier' => $idval]
                     ),
                     $idfield
                 );
@@ -127,7 +127,7 @@ class Membership extends CheckoutComponent
 
     public function getData(Order $order)
     {
-        $data = array();
+        $data = [];
 
         if ($member = Security::getCurrentUser()) {
             $idf = Member::config()->unique_identifier_field;

@@ -33,7 +33,7 @@ class CustomersToGroupTask extends BuildTask
             . $gp->ID . ';'
         );
         //make an array of all combos
-        $alreadyAdded = array();
+        $alreadyAdded = [];
         $alreadyAdded[-1] = -1;
         if ($allCombos) {
             foreach ($allCombos as $combo) {

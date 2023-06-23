@@ -12,7 +12,7 @@ use SilverStripe\Dev\SapphireTest;
  */
 class SimpleShippingModifierTest extends SapphireTest
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         Config::modify()

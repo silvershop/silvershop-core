@@ -40,7 +40,7 @@ class ProductImageExtensionTest extends SapphireTest
      */
     protected $siteConfig;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 

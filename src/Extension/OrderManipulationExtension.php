@@ -22,10 +22,10 @@ use SilverStripe\Security\Security;
  */
 class OrderManipulationExtension extends Extension
 {
-    private static $allowed_actions = array(
+    private static $allowed_actions = [
         'ActionsForm',
         'order',
-    );
+    ];
 
     private static $sessname = 'OrderManipulation.historicalorders';
 
@@ -36,7 +36,7 @@ class OrderManipulationExtension extends Extension
     {
         $history = self::get_session_order_ids();
         if (!is_array($history)) {
-            $history = array();
+            $history = [];
         }
         $history[$order->ID] = $order->ID;
         ShopTools::getSession()->set(self::$sessname, $history);
@@ -83,9 +83,9 @@ class OrderManipulationExtension extends Extension
      */
     public function allorders()
     {
-        $filters = array(
+        $filters = [
             'ID' => -1 //ensures no results are returned
-        );
+        ];
         if ($sessids = self::get_session_order_ids()) {
             $filters['ID'] = $sessids;
         }
@@ -129,10 +129,10 @@ class OrderManipulationExtension extends Extension
             return $this->owner->httpError(404, 'Order could not be found');
         }
 
-        return array(
+        return [
             'Order' => $order,
             'Form' => $this->ActionsForm() //see OrderManipulation extension
-        );
+        ];
     }
 
     /**

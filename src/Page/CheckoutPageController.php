@@ -36,11 +36,11 @@ class CheckoutPageController extends PageController
 {
     private static $url_segment     = 'checkout';
 
-    private static $allowed_actions = array(
+    private static $allowed_actions = [
         'OrderForm',
         'payment',
         'PaymentForm',
-    );
+    ];
 
     public function Title()
     {
@@ -90,10 +90,10 @@ class CheckoutPageController extends PageController
             return $this->redirect($this->Link());
         }
 
-        return array(
+        return [
             'Title'     => 'Make Payment',
             'OrderForm' => $this->PaymentForm(),
-        );
+        ];
     }
 
     public function PaymentForm()

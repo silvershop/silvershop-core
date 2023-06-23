@@ -39,7 +39,7 @@ class VariationTest extends SapphireTest
      */
     protected $redlarge;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         ShoppingCart::singleton()->clear();
@@ -73,12 +73,12 @@ class VariationTest extends SapphireTest
     {
         $colorred = $this->objFromFixture(AttributeValue::class, "color_red");
         $sizelarge = $this->objFromFixture(AttributeValue::class, "size_large");
-        $attributes = array($colorred->ID, $sizelarge->ID);
+        $attributes = [$colorred->ID, $sizelarge->ID];
         $variation = $this->ball->getVariationByAttributes($attributes);
         $this->assertInstanceOf(Variation::class, $variation, "Variation exists");
         $this->assertEquals(22, $variation->sellingPrice(), "Variation price is $22 (price of ball");
 
-        $attributes = array($colorred->ID, 999);
+        $attributes = [$colorred->ID, 999];
         $variation = $this->ball->getVariationByAttributes($attributes);
         $this->assertNull($variation, "Variation does not exist");
     }
@@ -86,21 +86,21 @@ class VariationTest extends SapphireTest
     public function testGenerateVariations()
     {
         $color = $this->objFromFixture(AttributeType::class, "color");
-        $values = array('Black', 'Blue'); //Note: black doesn't exist in the yaml
+        $values = ['Black', 'Blue']; //Note: black doesn't exist in the yaml
         $this->mp3player->generateVariationsFromAttributes($color, $values);
 
         $capacity = $this->objFromFixture(AttributeType::class, "capacity");
-        $values = array("120GB", "300GB"); //Note: 300GB doesn't exist in the yaml
+        $values = ["120GB", "300GB"]; //Note: 300GB doesn't exist in the yaml
         $this->mp3player->generateVariationsFromAttributes($capacity, $values);
 
         $variations = $this->mp3player->Variations();
         $this->assertEquals($variations->Count(), 4, "four variations created");
 
         $titles = $variations->map('ID', 'Title')->toArray();
-        $this->assertContains('Color:Black, Capacity:120GB', $titles);
-        $this->assertContains('Color:Black, Capacity:300GB', $titles);
-        $this->assertContains('Color:Blue, Capacity:120GB', $titles);
-        $this->assertContains('Color:Blue, Capacity:300GB', $titles);
+        $this->assertStringContainsString('Color:Black, Capacity:120GB', $titles[5]);
+        $this->assertStringContainsString('Color:Black, Capacity:300GB', $titles[6]);
+        $this->assertStringContainsString('Color:Blue, Capacity:120GB', $titles[7]);
+        $this->assertStringContainsString('Color:Blue, Capacity:300GB', $titles[8]);
     }
 
     public function testPriceRange()

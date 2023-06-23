@@ -29,7 +29,7 @@ class ShoppingCartTest extends SapphireTest
      */
     protected $cart;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         ShopTest::setConfiguration(); //reset config

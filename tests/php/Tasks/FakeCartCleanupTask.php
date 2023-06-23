@@ -7,7 +7,7 @@ use SilverStripe\Dev\TestOnly;
 
 class FakeCartCleanupTask extends CartCleanupTask implements TestOnly
 {
-    public $log = array();
+    public $log = [];
 
     public function log($msg)
     {

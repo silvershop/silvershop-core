@@ -48,7 +48,7 @@ class ProductTest extends FunctionalTest
      */
     protected $pdfbrochure;
 
-    function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         ShoppingCart::singleton()->clear();
@@ -132,6 +132,9 @@ class ProductTest extends FunctionalTest
         Product::remove_extension('ProductTest_FractionalDiscountExtension');
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testCanViewProductPage()
     {
         $this->get(Director::makeRelative($this->tshirt->Link()));
@@ -140,19 +143,19 @@ class ProductTest extends FunctionalTest
 
     public function testCategories()
     {
-        $expectedids = array(
+        $expectedids = [
             $this->objFromFixture(ProductCategory::class, "products")->ID,
-        );
+        ];
         $this->assertEquals(
             array_combine($expectedids, $expectedids),
             $this->beachball->getCategoryIDs()
         );
-        $expectedids = array(
+        $expectedids = [
             $this->objFromFixture(ProductCategory::class, "products")->ID,
             $this->objFromFixture(ProductCategory::class, "electronics")->ID,
             $this->objFromFixture(ProductCategory::class, "musicplayers")->ID,
             $this->objFromFixture(ProductCategory::class, "clearance")->ID,
-        );
+        ];
         $this->assertEquals(
             array_combine($expectedids, $expectedids),
             $this->mp3player->getCategoryIDs()

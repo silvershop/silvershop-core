@@ -37,7 +37,7 @@ class CheckoutFormTest extends FunctionalTest
      */
     protected $checkoutcontroller;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         ShoppingCart::singleton()->clear();
@@ -63,7 +63,7 @@ class CheckoutFormTest extends FunctionalTest
         $config = new SinglePageCheckoutComponentConfig($order);
         $form = new CheckoutForm($this->checkoutcontroller, "OrderForm", $config);
         $ns = 'SilverShop-Checkout-Component-';
-        $data = array(
+        $data = [
             "{$ns}CustomerDetails_FirstName"    => "Jane",
             "{$ns}CustomerDetails_Surname"      => "Smith",
             "{$ns}CustomerDetails_Email"        => "janesmith@example.com",
@@ -84,7 +84,7 @@ class CheckoutFormTest extends FunctionalTest
             "{$ns}Payment_PaymentMethod"        => "Dummy",
             "{$ns}Notes_Notes"                  => "Leave it around the back",
             "{$ns}Terms_ReadTermsAndConditions" => "1",
-        );
+        ];
         $form->loadDataFrom($data, true);
         $valid = $form->validationResult()->isValid();
         $errors = $form->getValidator()->getErrors();
@@ -116,7 +116,7 @@ class CheckoutFormTest extends FunctionalTest
         $form = new CheckoutForm($this->checkoutcontroller, "OrderForm", $config);
         $ns = 'SilverShop-Checkout-Component-';
         // no country fields due to readonly field
-        $dataCountryAbsent = array(
+        $dataCountryAbsent = [
             "{$ns}CustomerDetails_FirstName"    => "Jane",
             "{$ns}CustomerDetails_Surname"      => "Smith",
             "{$ns}CustomerDetails_Email"        => "janesmith@example.com",
@@ -135,17 +135,17 @@ class CheckoutFormTest extends FunctionalTest
             "{$ns}Payment_PaymentMethod"        => "Dummy",
             "{$ns}Notes_Notes"                  => "Leave it around the back",
             "{$ns}Terms_ReadTermsAndConditions" => "1",
-        );
+        ];
         $form->loadDataFrom($dataCountryAbsent, true);
         $valid = $form->validationResult()->isValid();
         $errors = $form->getValidator()->getErrors();
         $this->assertTrue($valid, print_r($errors, true));
         $this->assertTrue(
-            $form->Fields()->fieldByName("{$ns}ShippingAddress_Country_readonly")->isReadonly(),
+            $form->Fields()->dataFieldByName("{$ns}ShippingAddress_Country_readonly")->isReadonly(),
             "Shipping Address Country field is readonly"
         );
         $this->assertTrue(
-            $form->Fields()->fieldByName("{$ns}BillingAddress_Country_readonly")->isReadonly(),
+            $form->Fields()->dataFieldByName("{$ns}BillingAddress_Country_readonly")->isReadonly(),
             "Billing Address Country field is readonly"
         );
         $form->checkoutSubmit($dataCountryAbsent, $form);

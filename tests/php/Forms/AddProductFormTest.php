@@ -20,9 +20,9 @@ class AddProductFormTest extends FunctionalTest
 
         $this->markTestIncomplete("test can't go over max quantity");
 
-        $data = array(
+        $data = [
             'Quantity' => 4,
-        );
+        ];
         $form->addtocart($data, $form);
 
         $this->markTestIncomplete('check quantity');

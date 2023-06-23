@@ -35,7 +35,7 @@ class AccountPageTest extends FunctionalTest
      */
     protected $controller;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -63,10 +63,10 @@ class AccountPageTest extends FunctionalTest
         $this->submitForm(
             "MemberLoginForm_LoginForm",
             "action_doLogin",
-            array(
+            [
                 'Email' => 'test@example.com',
                 'Password' => '23u90oijlJKsa',
-            )
+            ]
         );
 
         $page = $this->get("account/");  // try accessing the account page again
@@ -118,7 +118,7 @@ class AccountPageTest extends FunctionalTest
             $this->assertEquals('addressbook', $page->getHeader('X-TestPageAction'), "Account addressbook should open");
 
             // Create an address
-            $data = array(
+            $data = [
                 "Country" => "AU",
                 "Address" => "Sydney Opera House",
                 "AddressLine2" => "Bennelong Point",
@@ -126,7 +126,7 @@ class AccountPageTest extends FunctionalTest
                 "State" => "NSW",
                 "PostalCode" => "2000",
                 "Phone" => "1234 5678",
-            );
+            ];
             $this->submitForm("Form_CreateAddressForm", "action_saveaddress", $data);
             $this->assertEquals(200, $page->getStatusCode(), "a page should load");
 
@@ -164,24 +164,24 @@ class AccountPageTest extends FunctionalTest
             // Open the Address Book page to test form submission with a readonly field
             $page = $this->get("account/addressbook/"); // goto address book page
             $this->assertEquals(200, $page->getStatusCode(), "a page should load");
-            $this->assertContains(
+            $this->assertStringContainsString(
                 "Form_CreateAddressForm_Country_readonly",
                 $page->getBody(),
                 "The Country field is readonly"
             );
-            $this->assertNotContains(
+            $this->assertStringNotContainsString(
                 "<option value=\"NZ\">New Zealand</option>",
                 $page->getBody(),
                 "Dropdown field is not shown"
             );
 
             // Create an address
-            $data = array(
+            $data = [
                 "Address" => "234 Hereford Street",
                 "City" => "Christchurch",
                 "State" => "Canterbury",
                 "PostalCode" => "8011",
-            );
+            ];
             $this->submitForm("Form_CreateAddressForm", "action_saveaddress", $data);
             $this->assertEquals(200, $page->getStatusCode(), "a page should load");
 

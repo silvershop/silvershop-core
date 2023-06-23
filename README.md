@@ -2,11 +2,11 @@
 
 The SilverShop module aims to provide developers with a framework for building, and customising ecommerce-based projects.
 It includes facilities for customers to browse products and place orders, and for administrators to manage products and orders.
-We've put a strong focus on testing, and thanks to TravisCI, you can see the [build status](https://travis-ci.org/silvershop/silvershop-core) of this project, running on MySQL, SQLite, Postgres, as well as a few different versions of PHP.
+We've put a strong focus on testing. You can see the [![build status](https://github.com/silvershop/silvershop-core/actions/workflows/ci.yml/badge.svg)](https://github.com/silvershop/silvershop-core/actions/workflows/ci.yml) of this project, running on MySQL, SQLite, Postgres, as well as a few different versions of PHP.
 
 [![Latest Stable Version](https://poser.pugx.org/silvershop/core/v/stable.png)](https://packagist.org/packages/silvershop/core)
 [![Latest Unstable Version](https://poser.pugx.org/silvershop/core/v/unstable.png)](https://packagist.org/packages/silvershop/core)
-[![Build Status](https://travis-ci.org/silvershop/silvershop-core.svg?branch=master)](http://travis-ci.org/silvershop/silvershop-core)
+[![CI](https://github.com/silvershop/silvershop-core/actions/workflows/ci.yml/badge.svg)](https://github.com/silvershop/silvershop-core/actions/workflows/ci.yml)
 [![Code Coverage](https://scrutinizer-ci.com/g/silvershop/silvershop-core/badges/coverage.png?s=1abe84b468ef3d96646a0546954adba8131d6459)](https://scrutinizer-ci.com/g/silvershop/silvershop-core/)
 [![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/silvershop/silvershop-core/badges/quality-score.png?s=d60753d6cca3817e80aca3dbb79eb5bd4140c981)](https://scrutinizer-ci.com/g/silvershop/silvershop-core/)
 [![Total Downloads](https://poser.pugx.org/silvershop/core/downloads.png)](https://packagist.org/packages/silvershop/core)

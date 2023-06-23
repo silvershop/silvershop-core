@@ -58,7 +58,7 @@ class CheckoutComponentNamespaced extends CheckoutComponent
     public function getRequiredFields(Order $order)
     {
         $fields = $this->proxy->getRequiredFields($order);
-        $namespaced = array();
+        $namespaced = [];
         foreach ($fields as $field) {
             $namespaced[] = $this->namespaceFieldName($field);
         }
@@ -84,7 +84,7 @@ class CheckoutComponentNamespaced extends CheckoutComponent
 
     public function namespaceData(array $data)
     {
-        $newdata = array();
+        $newdata = [];
         foreach ($data as $key => $value) {
             $newdata[$this->namespaceFieldName($key)] = $value;
         }
@@ -93,7 +93,7 @@ class CheckoutComponentNamespaced extends CheckoutComponent
 
     public function unnamespaceData(array $data)
     {
-        $newdata = array();
+        $newdata = [];
         foreach ($data as $key => $value) {
             if (strpos($key, $this->name()) === 0) {
                 $newdata[$this->unnamespaceFieldName($key)] = $value;

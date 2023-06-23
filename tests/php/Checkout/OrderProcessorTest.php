@@ -30,6 +30,7 @@ class OrderProcessorTest extends SapphireTest
     protected static $fixture_file   = __DIR__ . '/../Fixtures/shop.yml';
     protected static $disable_theme  = true;
     protected static $use_draft_site = true;
+    protected $usesTransactions = false;
     protected $processor;
 
     protected static $extra_dataobjects = [
@@ -61,7 +62,7 @@ class OrderProcessorTest extends SapphireTest
      */
     protected $shoppingcart;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         ShoppingCart::singleton()->clear();
@@ -102,7 +103,7 @@ class OrderProcessorTest extends SapphireTest
                 'FirstName' => 'James',
                 'Surname'   => 'Brown',
                 'Email'     => 'james@example.com',
-                'Password'  => 'jbrown',
+                'Password'  => '23u90oijlJKsa',
             ]
         );
         $this->assertTrue((bool)$member);
@@ -192,16 +193,16 @@ class OrderProcessorTest extends SapphireTest
         $cart->calculate();
 
         $this->assertListContains(
-            array(
-            array('ClassName' => OrderProcessorTest_CustomOrderItem::class)
-            ),
+            [
+            ['ClassName' => OrderProcessorTest_CustomOrderItem::class]
+            ],
             $cart->Items()
         );
 
         $versions = OrderItem::get()->filter('OrderID', $cart->ID)->column('ProductVersion');
 
         // The Product_OrderItem should not reference a product version while the order is not placed
-        $this->assertEquals(array(0), $versions);
+        $this->assertEquals([0], $versions);
 
         $this->assertTrue($cart->has_extension(OrderProcessorTest_PlaceFailExtension::class));
 
@@ -236,7 +237,7 @@ class OrderProcessorTest extends SapphireTest
         $versions = OrderItem::get()->filter('OrderID', $cart->ID)->column('ProductVersion');
 
         // The Product_OrderItem should still not reference a product if the rollback worked
-        $this->assertEquals(array(0), $versions);
+        $this->assertEquals([0], $versions);
 
         $this->assertEquals(
             0,
@@ -368,7 +369,7 @@ class OrderProcessorTest extends SapphireTest
             'SilverShop\ShopEmail.ReceiptSubject',
             'Order #{OrderNo} receipt',
             '',
-            array('OrderNo' => $order->Reference)
+            ['OrderNo' => $order->Reference]
         );
         // Ensure receipt was sent
         $this->assertEmailSent('receipt@example.com', 'shopadmin@example.com', $subject);
@@ -391,14 +392,14 @@ class OrderProcessorTest extends SapphireTest
         $confirmpassword = null,
         $member = null
     ) {
-        $data = array(
+        $data = [
             'FirstName' => $firstname,
             'Surname'   => $surname,
             'Email'     => $email,
             'Address'   => $address1,
             'City'      => $city,
             'State'     => $state,
-        );
+        ];
         if ($address2) {
             $data['AddressLine2'] = $address2;
         }

@@ -218,7 +218,7 @@ class Address extends DataObject
      */
     public function toString($separator = ', ')
     {
-        $fields = array(
+        $fields = [
             $this->Company,
             $this->getName(),
             $this->Address,
@@ -227,7 +227,7 @@ class Address extends DataObject
             $this->State,
             $this->PostalCode,
             $this->Country
-        );
+        ];
         $this->extend('updateToString', $fields);
         return implode($separator, array_filter($fields));
     }

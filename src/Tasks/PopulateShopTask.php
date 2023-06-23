@@ -44,7 +44,7 @@ class PopulateShopTask extends BuildTask
             $shoppage = ProductCategory::get()->filter('URLSegment', 'shop')->first();
             $parentid = $shoppage->ID;
 
-            $categoriestopublish = array(
+            $categoriestopublish = [
                 'products',
                 'electronics',
                 'apparel',
@@ -60,7 +60,7 @@ class PopulateShopTask extends BuildTask
                 'kitchen',
                 'bedroom',
                 'stationery',
-            );
+            ];
             foreach ($categoriestopublish as $categoryname) {
                 $factory->get(ProductCategory::class, $categoryname)->publishSingle();
             }

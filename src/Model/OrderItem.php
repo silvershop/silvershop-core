@@ -49,7 +49,7 @@ class OrderItem extends OrderAttribute
         'Total' => 'Total Price',
     ];
 
-    private static $required_fields = array();
+    private static $required_fields = [];
 
     /**
      * The ORM relationship to the buyable item
@@ -155,7 +155,7 @@ class OrderItem extends OrderAttribute
                 $unique[$field] = $this->$field;
             }
         }
-        $this->extend('updateuniquedata',$unique);
+        $this->extend('updateuniquedata', $unique);
         return $unique;
     }
 

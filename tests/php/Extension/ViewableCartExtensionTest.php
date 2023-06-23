@@ -15,7 +15,7 @@ class ViewableCartExtensionTest extends FunctionalTest
     public static $fixture_file  = __DIR__ . '/../Fixtures/shop.yml';
     public static $disable_theme = true;
 
-    function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         ShoppingCart::singleton()->clear();

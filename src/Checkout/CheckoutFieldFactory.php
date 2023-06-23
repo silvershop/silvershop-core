@@ -40,7 +40,7 @@ class CheckoutFieldFactory
     {
     }
 
-    public function getContactFields($subset = array())
+    public function getContactFields($subset = [])
     {
         return $this->getSubset(
             FieldList::create(
@@ -52,7 +52,7 @@ class CheckoutFieldFactory
         );
     }
 
-    public function getAddressFields($type = "shipping", $subset = array())
+    public function getAddressFields($type = "shipping", $subset = [])
     {
         $address = singleton(Address::class);
         $fields = $address->getFormFields($type);
@@ -82,7 +82,7 @@ class CheckoutFieldFactory
                     'SilverShop\Checkout\CheckoutField.MemberLoginInfo',
                     'If you are already a member please <a href="{LoginUrl}">log in</a>',
                     '',
-                    array('LoginUrl' => $loginlink)
+                    ['LoginUrl' => $loginlink]
                 ) .
                 '</p>'
             ),
@@ -138,7 +138,7 @@ class CheckoutFieldFactory
                     'SilverShop\Checkout\Checkout.TermsAndConditionsLink',
                     'I agree to the terms and conditions stated on the <a href="{TermsPageLink}" target="new" title="Read the shop terms and conditions for this site">{TermsPageTitle}</a> page',
                     '',
-                    array('TermsPageLink' => $termsPage->Link(), 'TermsPageTitle' => $termsPage->Title)
+                    ['TermsPageLink' => $termsPage->Link(), 'TermsPageTitle' => $termsPage->Title]
                 )
             );
         }
@@ -155,7 +155,7 @@ class CheckoutFieldFactory
      *
      * @return FieldList subset of form fields
      */
-    private function getSubset(FieldList $fields, $subset = array())
+    private function getSubset(FieldList $fields, $subset = [])
     {
         if (empty($subset)) {
             return $fields;

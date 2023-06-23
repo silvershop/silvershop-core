@@ -42,7 +42,7 @@ class Payment extends CheckoutComponent
             return [];
         }
 
-        return array('PaymentMethod');
+        return ['PaymentMethod'];
     }
 
     public function validateData(Order $order, array $data)
@@ -64,9 +64,9 @@ class Payment extends CheckoutComponent
 
     public function getData(Order $order)
     {
-        return array(
+        return [
             'PaymentMethod' => Checkout::get($order)->getSelectedPaymentMethod(),
-        );
+        ];
     }
 
     public function setData(Order $order, array $data)

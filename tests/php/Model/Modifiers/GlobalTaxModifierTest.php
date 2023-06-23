@@ -9,7 +9,7 @@ use SilverStripe\Dev\SapphireTest;
 
 class GlobalTaxModifierTest extends SapphireTest
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -23,8 +23,8 @@ class GlobalTaxModifierTest extends SapphireTest
             GlobalTax::class,
             'country_rates',
             [
-                'NZ' => array('rate' => 0.15, 'name' => 'GST', 'exclusive' => false),
-                'UK' => array('rate' => 0.175, 'name' => 'VAT', 'exclusive' => true),
+                'NZ' => ['rate' => 0.15, 'name' => 'GST', 'exclusive' => false],
+                'UK' => ['rate' => 0.175, 'name' => 'VAT', 'exclusive' => true],
             ]
         );
     }

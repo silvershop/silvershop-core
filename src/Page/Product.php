@@ -284,7 +284,7 @@ class Product extends Page implements Buyable
      */
     public function getCategoryIDs()
     {
-        $ids = array();
+        $ids = [];
         //ancestors
         foreach ($this->getAncestors() as $ancestor) {
             $ids[$ancestor->ID] = $ancestor->ID;
@@ -371,7 +371,7 @@ class Product extends Page implements Buyable
      */
     public function Item()
     {
-        $filter = array();
+        $filter = [];
         $this->extend('updateItemFilter', $filter);
         $item = ShoppingCart::singleton()->get($this, $filter);
         if (!$item) {

@@ -13,14 +13,14 @@ use SilverStripe\Forms\FormAction;
 
 class Address extends CheckoutStep
 {
-    private static $allowed_actions = array(
+    private static $allowed_actions = [
         'shippingaddress',
         'ShippingAddressForm',
         'setshippingaddress',
         'billingaddress',
         'BillingAddressForm',
         'setbillingaddress',
-    );
+    ];
 
     public function shippingconfig()
     {
@@ -85,7 +85,7 @@ class Address extends CheckoutStep
 
     public function billingaddress()
     {
-        return array('OrderForm' => $this->BillingAddressForm());
+        return ['OrderForm' => $this->BillingAddressForm()];
     }
 
     public function BillingAddressForm()

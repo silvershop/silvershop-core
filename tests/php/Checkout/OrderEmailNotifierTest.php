@@ -26,7 +26,7 @@ class OrderEmailNotifierTest extends SapphireTest
      */
     protected $notifier;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         Config::modify()->set(Email::class, 'admin_email', 'shop-admin@example.com');

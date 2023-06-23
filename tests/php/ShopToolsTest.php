@@ -7,7 +7,7 @@ use SilverStripe\Dev\SapphireTest;
 
 class ShopToolsTest extends SapphireTest
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         ShopTest::setConfiguration();

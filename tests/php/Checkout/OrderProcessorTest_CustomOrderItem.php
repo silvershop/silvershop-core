@@ -8,9 +8,9 @@ use SilverStripe\Dev\TestOnly;
 // Class that writes order-item data to the DB upon placement
 class OrderProcessorTest_CustomOrderItem extends OrderItem implements TestOnly
 {
-    private static $db = array(
+    private static $db = [
         'IsPlaced' => 'Boolean'
-    );
+    ];
 
     private static $table_name = 'SilverShop_Test_CustomOrderItem';
 

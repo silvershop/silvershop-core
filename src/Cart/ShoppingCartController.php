@@ -69,22 +69,22 @@ class ShoppingCartController extends Controller
         'debug',
     ];
 
-    public static function add_item_link(Buyable $buyable, $parameters = array())
+    public static function add_item_link(Buyable $buyable, $parameters = [])
     {
         return self::build_url('add', $buyable, $parameters);
     }
 
-    public static function remove_item_link(Buyable $buyable, $parameters = array())
+    public static function remove_item_link(Buyable $buyable, $parameters = [])
     {
         return self::build_url('remove', $buyable, $parameters);
     }
 
-    public static function remove_all_item_link(Buyable $buyable, $parameters = array())
+    public static function remove_all_item_link(Buyable $buyable, $parameters = [])
     {
         return self::build_url('removeall', $buyable, $parameters);
     }
 
-    public static function set_quantity_item_link(Buyable $buyable, $parameters = array())
+    public static function set_quantity_item_link(Buyable $buyable, $parameters = [])
     {
         return self::build_url('setquantity', $buyable, $parameters);
     }
