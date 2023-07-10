@@ -19,6 +19,7 @@ use SilverStripe\View\Requirements;
  */
 abstract class AddressBook extends Address implements i18nEntityProvider
 {
+    private static $jquery_file = 'https://code.jquery.com/jquery-3.7.0.min.js';
     /**
      * The composite field tag to use
      *
@@ -34,9 +35,12 @@ abstract class AddressBook extends Address implements i18nEntityProvider
         $fields = parent::getFormFields($order);
 
         if ($existingaddressfields = $this->getExistingAddressFields()) {
-            Requirements::javascript('silverstripe/admin:thirdparty/jquery/jquery.js');
+            if ($jquery = $this->config()->get('jquery_file')) {
+                Requirements::javascript($jquery);
+            }
+
             Requirements::javascript('silvershop/core:client/dist/javascript/CheckoutPage.js');
-            
+
             // add the fields for a new address after the dropdown field
             $existingaddressfields->merge($fields);
             // group under a composite field (invisible by default) so we
