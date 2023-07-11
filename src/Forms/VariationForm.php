@@ -55,7 +55,6 @@ class VariationForm extends AddProductForm
             // if we are in just doing a validation step then check
             if ($this->getRequest()->requestVar('ValidateVariant')) {
                 $message = '';
-                $success = false;
 
                 try {
                     $success = $variation->canPurchase(null, $data['Quantity']);

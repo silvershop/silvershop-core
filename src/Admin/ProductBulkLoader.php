@@ -145,7 +145,7 @@ class ProductBulkLoader extends CsvBulkLoader
     }
 
     // set image, based on filename
-    public function imageByFilename(&$obj, $val, $record)
+    public function imageByFilename(&$obj, $val)
     {
         $filename = trim(strtolower(Convert::raw2sql($val)));
         $filenamedashes = str_replace(' ', '-', $filename);
@@ -165,7 +165,7 @@ class ProductBulkLoader extends CsvBulkLoader
     }
 
     // find product group parent (ie Cateogry)
-    public function setParent(&$obj, $val, $record)
+    public function setParent(&$obj, $val)
     {
         $title = strtolower(Convert::raw2sql($val));
         if ($title) {

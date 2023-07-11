@@ -80,7 +80,7 @@ class CheckoutComponentConfig
     /**
      * Returns the first available component with the given class or interface.
      *
-     * @param String ClassName
+     * @param string $type ClassName
      *
      * @return CheckoutComponent
      */

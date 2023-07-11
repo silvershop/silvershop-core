@@ -159,7 +159,7 @@ class OrderProcessor
                 'firstName'        => $this->order->FirstName,
                 'lastName'         => $this->order->Surname,
                 'email'            => $this->order->Email,
-                'company'          => $this->order->Company,
+                'company'          => $billing->Company,
                 'billingAddress1'  => $billing->Address,
                 'billingAddress2'  => $billing->AddressLine2,
                 'billingCity'      => $billing->City,
@@ -231,7 +231,7 @@ class OrderProcessor
                 || ($this->order->GrandTotal() == 0 && Order::config()->allow_zero_order_total)
             ) {
                 //set order as paid
-                $this->order->Status = 'Paid';
+                $this->order->setField('Status', 'Paid');
                 $this->order->write();
             }
         }
@@ -287,13 +287,13 @@ class OrderProcessor
 
         //update status
         if ($this->order->TotalOutstanding(false)) {
-            $this->order->Status = 'Unpaid';
+            $this->order->setField('Status', 'Unpaid');
         } else {
-            $this->order->Status = 'Paid';
+            $this->order->setField('Status', 'Paid');
         }
 
         if (!$this->order->Placed) {
-            $this->order->Placed = DBDatetime::now()->Rfc2822(); //record placed order datetime
+            $this->order->setField('Placed', DBDatetime::now()->Rfc2822()); //record placed order datetime
             if ($request = Controller::curr()->getRequest()) {
                 $this->order->IPAddress = $request->getIP(); //record client IP
             }

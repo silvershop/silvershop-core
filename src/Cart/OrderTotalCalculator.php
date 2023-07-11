@@ -35,7 +35,7 @@ class OrderTotalCalculator
      */
     protected $order;
 
-    function __construct(Order $order)
+    public function __construct(Order $order)
     {
         $this->order = $order;
     }
@@ -45,19 +45,19 @@ class OrderTotalCalculator
      * @throws Exception
      * @throws \Psr\Container\NotFoundExceptionInterface
      */
-    function calculate()
+    public function calculate()
     {
         $runningtotal = $this->order->SubTotal();
         $sort = 1;
         $existingmodifiers = $this->order->Modifiers();
-         
+
         $modifierclasses = Order::config()->modifiers;
 
         //check if modifiers are even in use
         if (!is_array($modifierclasses) || empty($modifierclasses)) {
             return $runningtotal;
         }
-        
+
         $modifierclasses = array_unique($modifierclasses);
 
         if (DB::get_conn()->supportsTransactions()) {

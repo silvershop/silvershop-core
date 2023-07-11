@@ -56,7 +56,7 @@ class OrderStatusLogTest extends SapphireTest
         );
 
         $processor = OrderProcessor::create($order);
-        $response = $processor->makePayment("Manual", []);
+        $processor->makePayment("Manual", []);
         $order->Status = "Paid";
         $order->write();
 
@@ -280,7 +280,7 @@ class OrderStatusLogTest extends SapphireTest
         );
 
         $processor_guest = OrderProcessor::create($order);
-        $response = $processor_guest->makePayment("Manual", []);
+        $processor_guest->makePayment("Manual", []);
         $order->Status = "Paid";
         $order->write();
 
