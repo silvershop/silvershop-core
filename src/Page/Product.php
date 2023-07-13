@@ -467,7 +467,7 @@ class Product extends Page implements Buyable
     /**
      * Link to add this product to cart.
      *
-     * @return string link
+     * @return string|false link
      */
     public function addLink()
     {
@@ -477,7 +477,7 @@ class Product extends Page implements Buyable
     /**
      * Link to remove one of this product from cart.
      *
-     * @return string link
+     * @return string|false link
      */
     public function removeLink()
     {
@@ -487,7 +487,7 @@ class Product extends Page implements Buyable
     /**
      * Link to remove all of this product from cart.
      *
-     * @return string link
+     * @return string|false link
      */
     public function removeallLink()
     {

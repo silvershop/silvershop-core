@@ -65,7 +65,6 @@ class ProductReport extends ShopPeriodReport
         $query->setFrom('"' . $table . '"');
 
         $whereClue = '1';
-        $filterperiod = $this->periodfield;
         if ($start && $end) {
             $whereClue = sprintf(
                 'DATE("o"."Placed") BETWEEN DATE(\'%s\') AND DATE(\'%s\')',

@@ -838,7 +838,7 @@ class Order extends DataObject
         $this->extend('onStatusChange', $fromStatus, $toStatus);
 
         if ($toStatus == 'Paid' && !$this->Paid) {
-            $this->Paid = DBDatetime::now()->Rfc2822();
+            $this->setField('Paid', DBDatetime::now()->Rfc2822());
             foreach ($this->Items() as $item) {
                 $item->onPayment();
             }
@@ -847,7 +847,7 @@ class Order extends DataObject
 
             if (!$this->ReceiptSent) {
                 OrderEmailNotifier::create($this)->sendReceipt();
-                $this->ReceiptSent = DBDatetime::now()->Rfc2822();
+                $this->setField('ReceiptSent', DBDatetime::now()->Rfc2822());
             }
         }
 

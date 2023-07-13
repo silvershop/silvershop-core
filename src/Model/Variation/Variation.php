@@ -323,7 +323,7 @@ class Variation extends DataObject implements Buyable
      *
      * @param $action string
      *
-     * @return string
+     * @return string|false
      */
     public function Link($action = null)
     {
