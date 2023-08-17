@@ -21,12 +21,12 @@
     }
   ],
   "require": {
-    "silverstripe/cms": "^4.10",
+    "silverstripe/cms": "^4.10 | ^5",
     "silverstripe/asset-admin": "*",
-    "silverstripe/silverstripe-omnipay": "^3@dev",
-    "silvershop/silverstripe-listsorter": "^3@dev",
-    "silvershop/silverstripe-sqlquerylist": "^2@dev",
-    "symbiote/silverstripe-gridfieldextensions": "^3.2"
+    "silverstripe/silverstripe-omnipay": "^3@dev | ^4@dev",
+    "silvershop/silverstripe-listsorter": "^3@dev | ^4@dev",
+    "silvershop/silverstripe-sqlquerylist": "^2@dev | ^3@dev",
+    "symbiote/silverstripe-gridfieldextensions": "^3.2 | ^4"
   },
   "require-dev": {
     "phpunit/phpunit": "^9.5",
