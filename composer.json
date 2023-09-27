@@ -56,7 +56,7 @@
   "extra": {
     "snapshot": "https://raw.github.com/silvershop/silvershop-core/gh-pages/assets/screenshots/shipping%20estimate%20form.png",
     "branch-alias": {
-      "dev-master": "3.x-dev"
+      "dev-master": "4.x-dev"
     },
     "expose": [
       "client/dist"
