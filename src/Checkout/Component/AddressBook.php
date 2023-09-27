@@ -37,9 +37,10 @@ abstract class AddressBook extends Address implements i18nEntityProvider
         if ($existingaddressfields = $this->getExistingAddressFields()) {
             if ($jquery = $this->config()->get('jquery_file')) {
                 Requirements::javascript($jquery);
+                Requirements::javascript('silvershop/core:client/dist/javascript/CheckoutPage.js');
+            } else {
+                Requirements::javascript('silvershop/core:client/dist/javascript/CheckoutPage.nojquery.js');
             }
-
-            Requirements::javascript('silvershop/core:client/dist/javascript/CheckoutPage.js');
 
             // add the fields for a new address after the dropdown field
             $existingaddressfields->merge($fields);
