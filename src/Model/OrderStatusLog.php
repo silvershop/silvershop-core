@@ -168,13 +168,13 @@ class OrderStatusLog extends DataObject
                 ->first();
 
             if ($latestLog) {
-                $this->DispatchedBy = $latestLog->DispatchedBy;
-                $this->DispatchedOn = $latestLog->DispatchedOn;
-                $this->DispatchTicket = $latestLog->DispatchTicket;
-                $this->PaymentCode = $latestLog->PaymentCode;
-                $this->PaymentOK = $latestLog->PaymentOK;
-                $this->SentToCustomer = $latestLog->SentToCustomer;
-                $this->VisibleToCustomer = $latestLog->VisibleToCustomer;
+                $this->setField('DispatchedBy', $latestLog->DispatchedBy);
+                $this->setField('DispatchedOn', $latestLog->DispatchedOn);
+                $this->setField('DispatchTicket', $latestLog->DispatchTicket);
+                $this->setField('PaymentCode', $latestLog->PaymentCode);
+                $this->setField('PaymentOK', $latestLog->PaymentOK);
+                $this->setField('SentToCustomer', $latestLog->SentToCustomer);
+                $this->setField('VisibleToCustomer', $latestLog->VisibleToCustomer);
             }
         }
     }

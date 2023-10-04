@@ -69,22 +69,22 @@ class ShoppingCartController extends Controller
         'debug',
     ];
 
-    public static function add_item_link(Buyable $buyable, $parameters = array())
+    public static function add_item_link(Buyable $buyable, $parameters = [])
     {
         return self::build_url('add', $buyable, $parameters);
     }
 
-    public static function remove_item_link(Buyable $buyable, $parameters = array())
+    public static function remove_item_link(Buyable $buyable, $parameters = [])
     {
         return self::build_url('remove', $buyable, $parameters);
     }
 
-    public static function remove_all_item_link(Buyable $buyable, $parameters = array())
+    public static function remove_all_item_link(Buyable $buyable, $parameters = [])
     {
         return self::build_url('removeall', $buyable, $parameters);
     }
 
-    public static function set_quantity_item_link(Buyable $buyable, $parameters = array())
+    public static function set_quantity_item_link(Buyable $buyable, $parameters = [])
     {
         return self::build_url('setquantity', $buyable, $parameters);
     }
@@ -191,7 +191,7 @@ class ShoppingCartController extends Controller
      *
      * @param HTTPRequest $request
      *
-     * @return HTTPResponse
+     * @return string|HTTPResponse
      * @throws \SilverStripe\Control\HTTPResponse_Exception
      */
     public function add($request)
@@ -216,7 +216,7 @@ class ShoppingCartController extends Controller
      *
      * @param HTTPRequest $request
      *
-     * @return HTTPResponse
+     * @return string|HTTPResponse
      * @throws \SilverStripe\Control\HTTPResponse_Exception
      */
     public function remove($request)
@@ -235,7 +235,7 @@ class ShoppingCartController extends Controller
      *
      * @param HTTPRequest $request
      *
-     * @return HTTPResponse
+     * @return string|HTTPResponse
      * @throws \SilverStripe\Control\HTTPResponse_Exception
      */
     public function removeall($request)
@@ -254,7 +254,7 @@ class ShoppingCartController extends Controller
      *
      * @param HTTPRequest $request
      *
-     * @return HTTPResponse
+     * @return string|HTTPResponse
      * @throws \SilverStripe\Control\HTTPResponse_Exception
      */
     public function setquantity($request)
@@ -275,7 +275,7 @@ class ShoppingCartController extends Controller
      *
      * @param HTTPRequest $request
      *
-     * @return HTTPResponse
+     * @return string|HTTPResponse
      */
     public function clear($request)
     {

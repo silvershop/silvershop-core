@@ -20,17 +20,17 @@ use SilverStripe\Dev\SapphireTest;
  */
 class OrderStatusLogTest extends SapphireTest
 {
-    protected static $fixture_file = array(
+    protected static $fixture_file = [
         __DIR__ . '/../Fixtures/Orders.yml',
         __DIR__ . '/../Fixtures/ShopMembers.yml',
         __DIR__ . '/../Fixtures/Pages.yml'
-    );
+    ];
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         ShopTest::setConfiguration();
-        Config::modify()->set(Order::class, 'log_status', array('Processing', 'Sent', 'AdminCancelled', 'MemberCancelled'));
+        Config::modify()->set(Order::class, 'log_status', ['Processing', 'Sent', 'AdminCancelled', 'MemberCancelled']);
     }
 
     public function testOrderStatusLogItemsWithMember()
@@ -56,7 +56,7 @@ class OrderStatusLogTest extends SapphireTest
         );
 
         $processor = OrderProcessor::create($order);
-        $response = $processor->makePayment("Manual", array());
+        $processor->makePayment("Manual", []);
         $order->Status = "Paid";
         $order->write();
 
@@ -81,12 +81,12 @@ class OrderStatusLogTest extends SapphireTest
             "Log conatins an Order"
         );
 
-        $this->assertContains(
+        $this->assertStringContainsString(
             "Processing",
             $log_order_status_processing->Note,
             "Processing note is recorded"
         );
-        $this->assertContains(
+        $this->assertStringContainsString(
             'changed to "Processing"',
             $log_order_status_processing->Title,
             'Processing title is recorded'
@@ -114,12 +114,12 @@ class OrderStatusLogTest extends SapphireTest
             $order->ID,
             "Log conatins an Order"
         );
-        $this->assertContains(
+        $this->assertStringContainsString(
             "sent",
             $log_order_status_sent->Note,
             "Sent note is recorded"
         );
-        $this->assertContains(
+        $this->assertStringContainsString(
             'changed to "Sent"',
             $log_order_status_sent->Title,
             "Sent title is recorded"
@@ -157,12 +157,12 @@ class OrderStatusLogTest extends SapphireTest
             $order->ID,
             "Log conatins an Order"
         );
-        $this->assertContains(
+        $this->assertStringContainsString(
             "cancelled",
             $log_order_status_admin_cancelled->Note,
             "Admin Cancelled note is recorded"
         );
-        $this->assertContains(
+        $this->assertStringContainsString(
             'changed to "Cancelled by admin"',
             $log_order_status_admin_cancelled->Title,
             "Admin Cancelled title is recorded"
@@ -195,7 +195,7 @@ class OrderStatusLogTest extends SapphireTest
             $log_order_status_member_cancelled->Note,
             "Member Cancelled note is recorded"
         );
-        $this->assertContains(
+        $this->assertStringContainsString(
             ' changed to "Cancelled by member"',
             $log_order_status_member_cancelled->Title,
             "Member Cancelled title is recorded"
@@ -280,7 +280,7 @@ class OrderStatusLogTest extends SapphireTest
         );
 
         $processor_guest = OrderProcessor::create($order);
-        $response = $processor_guest->makePayment("Manual", array());
+        $processor_guest->makePayment("Manual", []);
         $order->Status = "Paid";
         $order->write();
 
@@ -305,12 +305,12 @@ class OrderStatusLogTest extends SapphireTest
             "Log conatins an Order"
         );
 
-        $this->assertContains(
+        $this->assertStringContainsString(
             "Processing",
             $log_order_status_processing->Note,
             "Processing note is recorded"
         );
-        $this->assertContains(
+        $this->assertStringContainsString(
             ' changed to "Processing"',
             $log_order_status_processing->Title,
             "Processing title is recorded"

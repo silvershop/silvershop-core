@@ -30,7 +30,7 @@ class CalculateProductPopularity extends BuildTask
      */
     public function viasql()
     {
-        foreach (array('_Live', '') as $stage) {
+        foreach (['_Live', ''] as $stage) {
             $sql = <<<SQL
 UPDATE "SilverShop_Product$stage" SET "Popularity" = (
   SELECT

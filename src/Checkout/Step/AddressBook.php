@@ -9,14 +9,14 @@ use SilverShop\Checkout\CheckoutComponentConfig;
 
 class AddressBook extends Address
 {
-    private static $allowed_actions = array(
+    private static $allowed_actions = [
         'shippingaddress',
         'ShippingAddressForm',
         'setshippingaddress',
         'billingaddress',
         'BillingAddressForm',
         'setbillingaddress',
-    );
+    ];
 
     public function shippingconfig()
     {

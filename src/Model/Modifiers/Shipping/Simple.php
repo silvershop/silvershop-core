@@ -22,7 +22,7 @@ class Simple extends Base
      * @config
      * @var array
      */
-    private static $charges_by_country = array();
+    private static $charges_by_country = [];
 
     public function value($subtotal = null)
     {

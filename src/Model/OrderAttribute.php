@@ -36,7 +36,7 @@ class OrderAttribute extends DataObject
 
     private static $table_name = 'SilverShop_OrderAttribute';
 
-    public function canCreate($member = null, $context = array())
+    public function canCreate($member = null, $context = [])
     {
         return false;
     }

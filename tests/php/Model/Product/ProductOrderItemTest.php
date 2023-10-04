@@ -17,7 +17,7 @@ class ProductOrderItemTest extends FunctionalTest
 {
     public static $fixture_file = __DIR__ . '/../../Fixtures/shop.yml';
     public static $disable_theme = true;
-    public static $orig = array();
+    public static $orig = [];
 
     /**
      * @var Product
@@ -42,7 +42,7 @@ class ProductOrderItemTest extends FunctionalTest
     /**
      * Create and publish some products.
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         ShoppingCart::singleton()->clear();

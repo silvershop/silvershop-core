@@ -49,7 +49,7 @@ class OrderTest extends SapphireTest
     protected $beachball;
 
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         ShopTest::setConfiguration();
@@ -62,7 +62,7 @@ class OrderTest extends SapphireTest
         $this->beachball->publishSingle();
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         unset($this->mp3player);
@@ -95,10 +95,10 @@ class OrderTest extends SapphireTest
         $items = $order->Items();
         $this->assertNotNull($items);
         $this->assertListEquals(
-            array(
-                array('ProductID' => $this->mp3player->ID, 'Quantity' => 2, 'CalculatedTotal' => 400),
-                array('ProductID' => $this->socks->ID, 'Quantity' => 1, 'CalculatedTotal' => 8),
-            ),
+            [
+                ['ProductID' => $this->mp3player->ID, 'Quantity' => 2, 'CalculatedTotal' => 400],
+                ['ProductID' => $this->socks->ID, 'Quantity' => 1, 'CalculatedTotal' => 8],
+            ],
             $items
         );
         $this->assertEquals(3, $items->Quantity(), "Quantity is 3");
@@ -119,11 +119,11 @@ class OrderTest extends SapphireTest
     {
         //create an order with unrounded total
         $order = new Order(
-            array(
+            [
                 'Total' => 123.257323,
                 //NOTE: setTotal isn't called here, so un-rounded data *could* get in to the object
                 'Status' => 'Unpaid',
-            )
+            ]
         );
         $order->Total = 123.257323; //setTotal IS called here
         $this->assertEquals(123.26, $order->Total(), "Check total rounds appropriately");
@@ -156,10 +156,10 @@ class OrderTest extends SapphireTest
             );
         $this->assertNotNull($items);
         $this->assertListEquals(
-            array(
-                array('ProductID' => $this->mp3player->ID, 'Quantity' => 2, 'CalculatedTotal' => 400),
-                array('ProductID' => $this->socks->ID, 'Quantity' => 1, 'CalculatedTotal' => 8),
-            ),
+            [
+                ['ProductID' => $this->mp3player->ID, 'Quantity' => 2, 'CalculatedTotal' => 400],
+                ['ProductID' => $this->socks->ID, 'Quantity' => 1, 'CalculatedTotal' => 8],
+            ],
             $items
         );
 
@@ -298,12 +298,13 @@ class OrderTest extends SapphireTest
         $orderId = $order->write();
 
         $order->Status = 'Unpaid';
+        $order->Email = 'hi@there.net';
         $order->write();
 
         $this->assertEquals(
-            array(
-                array('Cart' => 'Unpaid')
-            ),
+            [
+                ['Cart' => 'Unpaid']
+            ],
             OrderTest_TestStatusChangeExtension::$stack
         );
 
@@ -314,9 +315,9 @@ class OrderTest extends SapphireTest
         $order->write();
 
         $this->assertEquals(
-            array(
-                array('Unpaid' => 'Paid')
-            ),
+            [
+                ['Unpaid' => 'Paid']
+            ],
             OrderTest_TestStatusChangeExtension::$stack
         );
 

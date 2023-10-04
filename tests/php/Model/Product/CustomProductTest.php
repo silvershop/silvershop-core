@@ -18,7 +18,7 @@ class CustomProductTest extends FunctionalTest
         CustomProduct_OrderItem::class,
     ];
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         // clear session
@@ -37,7 +37,7 @@ class CustomProductTest extends FunctionalTest
 
         $cart = ShoppingCart::singleton();
 
-        $options1 = array('Color' => 'Green', 'Size' => 5, 'Premium' => true);
+        $options1 = ['Color' => 'Green', 'Size' => 5, 'Premium' => true];
         $this->assertTrue((bool)$cart->add($thing, 1, $options1), "add to customisation 1 to cart");
         $item = $cart->get($thing, $options1);
 
@@ -53,13 +53,13 @@ class CustomProductTest extends FunctionalTest
 
         $this->assertFalse((bool)$cart->get($thing), "try to get a non-customised product");
 
-        $options2 = array('Color' => 'Blue', 'Size' => 6, 'Premium' => false);
+        $options2 = ['Color' => 'Blue', 'Size' => 6, 'Premium' => false];
         $this->assertTrue((bool)$cart->add($thing, 5, $options2), "add customisation 2 to cart");
         $item = $cart->get($thing, $options2);
         $this->assertTrue((bool)$item, "item with customisation 2 exists");
         $this->assertEquals(5, $item->Quantity);
 
-        $options3 = array('Color' => 'Blue');
+        $options3 = ['Color' => 'Blue'];
         $this->assertTrue((bool)$cart->add($thing, 1, $options3), "add a sub-variant of customisation 2");
         $item = $cart->get($thing, $options3);
 
@@ -79,7 +79,7 @@ class CustomProductTest extends FunctionalTest
         $cart->clear();
 
         //set quantity
-        $options4 = array('Size' => 12, 'Color' => 'Blue', 'Premium' => false);
+        $options4 = ['Size' => 12, 'Color' => 'Blue', 'Premium' => false];
         $resp = $cart->setQuantity($thing, 5, $options4);
 
         $item = $cart->get($thing, $options4);

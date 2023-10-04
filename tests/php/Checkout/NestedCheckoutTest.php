@@ -10,7 +10,7 @@ class NestedCheckoutTest extends SapphireTest
 {
     public static $fixture_file = __DIR__ . '/../Fixtures/pages/NestedCheckout.yml';
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
     }

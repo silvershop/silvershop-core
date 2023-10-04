@@ -18,7 +18,7 @@ class I18nDatetime extends DBDatetime
     public function Nice()
     {
         if ($this->value) {
-            return strftime(_t('SilverShop\Generic.DateTimeFormatNice', '%m/%d/%G %I:%M%p'), $this->getTimestamp());
+            return date_format(date_create($this->getTimestamp()), _t('SilverShop\Generic.DateTimeFormatNice', '%m/%d/%G %I:%M%p'));
         }
     }
 
@@ -31,7 +31,7 @@ class I18nDatetime extends DBDatetime
     public function NiceDate()
     {
         if ($this->value) {
-            return strftime(_t('SilverShop\Generic.DateFormatNice', '%m/%d/%G'), $this->getTimestamp());
+            return date_format(date_create($this->getTimestamp()), _t('SilverShop\Generic.DateFormatNice', '%m/%d/%G'));
         }
     }
 

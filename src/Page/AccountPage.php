@@ -18,7 +18,7 @@ class AccountPage extends Page
 
     private static $table_name = 'SilverShop_AccountPage';
 
-    public function canCreate($member = null, $context = array())
+    public function canCreate($member = null, $context = [])
     {
         return !self::get()->exists();
     }

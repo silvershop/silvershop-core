@@ -65,7 +65,7 @@ abstract class Address extends CheckoutComponent
         if (!$order->{$this->addresstype . 'AddressID'}) {
             $data = array_merge(
                 ShopUserInfo::singleton()->getLocation(),
-                $member ? $member->{'Default' . $this->addresstype . 'Address'}()->toMap() : array(),
+                $member ? $member->{'Default' . $this->addresstype . 'Address'}()->toMap() : [],
                 [$this->addresstype . 'AddressID' => $order->{$this->addresstype . 'AddressID'}]
             );
         }

@@ -20,15 +20,15 @@ class ProductReport extends ShopPeriodReport
 
     public function columns()
     {
-        return array(
-            'Title' => array(
+        return [
+            'Title' => [
                 'title' => 'Title',
                 'formatting' => '<a href=\"admin/catalog/Product/EditForm/field/Product/item/$ID/edit\" target=\"_new\">$Title</a>',
-            ),
+            ],
             'BasePrice' => 'Price',
             'Quantity' => 'Quantity',
             'Sales' => 'Sales',
-        );
+        ];
     }
 
 
@@ -65,7 +65,6 @@ class ProductReport extends ShopPeriodReport
         $query->setFrom('"' . $table . '"');
 
         $whereClue = '1';
-        $filterperiod = $this->periodfield;
         if ($start && $end) {
             $whereClue = sprintf(
                 'DATE("o"."Placed") BETWEEN DATE(\'%s\') AND DATE(\'%s\')',
@@ -117,7 +116,9 @@ class ProductReport extends ShopPeriodReport
                     )',
                     $completedStatus,
                     $whereClue
-                ), 'Quantity')
+                ),
+                'Quantity'
+            )
             ->selectField(
                 sprintf(
                     '(
@@ -139,7 +140,9 @@ class ProductReport extends ShopPeriodReport
                     )',
                     $completedStatus,
                     $whereClue
-                ), 'Sales')
+                ),
+                'Sales'
+            )
         ;
 
         $query->addInnerJoin('SiteTree', '"SilverShop_Product"."ID" = "SiteTree"."ID"');

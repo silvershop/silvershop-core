@@ -145,7 +145,7 @@ class ProductBulkLoader extends CsvBulkLoader
     }
 
     // set image, based on filename
-    public function imageByFilename(&$obj, $val, $record)
+    public function imageByFilename(&$obj, $val)
     {
         $filename = trim(strtolower(Convert::raw2sql($val)));
         $filenamedashes = str_replace(' ', '-', $filename);
@@ -165,7 +165,7 @@ class ProductBulkLoader extends CsvBulkLoader
     }
 
     // find product group parent (ie Cateogry)
-    public function setParent(&$obj, $val, $record)
+    public function setParent(&$obj, $val)
     {
         $title = strtolower(Convert::raw2sql($val));
         if ($title) {
@@ -281,7 +281,7 @@ class ProductBulkLoader extends CsvBulkLoader
             $variation->ProductID = $obj->ID; //link to product
             $variation->write();
         }
-        $varcols = array(
+        $varcols = [
             '->processVariation',
             '->processVariation1',
             '->processVariation2',
@@ -289,7 +289,7 @@ class ProductBulkLoader extends CsvBulkLoader
             '->processVariation4',
             '->processVariation5',
             '->processVariation6',
-        );
+        ];
         foreach ($varcols as $col) {
             if (isset($record[$col])) {
                 $parts = explode(':', $record[$col]);

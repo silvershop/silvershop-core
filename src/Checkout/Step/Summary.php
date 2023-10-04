@@ -18,9 +18,9 @@ class Summary extends CheckoutStep
     public function summary()
     {
         $form = $this->ConfirmationForm();
-        return array(
+        return [
             'OrderForm' => $form,
-        );
+        ];
     }
 
     public function ConfirmationForm()

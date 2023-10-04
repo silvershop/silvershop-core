@@ -31,7 +31,7 @@ class OrdersAdmin extends ModelAdmin
         OrderStatusLog::class
     ];
 
-    private static $model_importers = array();
+    private static $model_importers = [];
 
     /**
      * Restrict list to non-hidden statuses
@@ -42,7 +42,7 @@ class OrdersAdmin extends ModelAdmin
 
         if ($this->modelClass == Order::class) {
             // Exclude hidden statuses
-            $list = $list->exclude('Status', Order::config()->hidden_status); 
+            $list = $list->exclude('Status', Order::config()->hidden_status);
             $this->extend('updateList', $list);
         }
 

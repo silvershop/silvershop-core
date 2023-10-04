@@ -368,7 +368,7 @@ class ShoppingCart
      *
      * @return OrderItem the item requested or null
      */
-    public function get(Buyable $buyable, $customfilter = array())
+    public function get(Buyable $buyable, $customfilter = [])
     {
         $order = $this->current();
         if (!$buyable || !$order) {
@@ -377,9 +377,9 @@ class ShoppingCart
 
         $buyable = $this->getCorrectBuyable($buyable);
 
-        $filter = array(
+        $filter = [
             'OrderID' => $order->ID,
-        );
+        ];
 
         $itemclass = Config::inst()->get(get_class($buyable), 'order_item');
         $relationship = Config::inst()->get($itemclass, 'buyable_relationship');

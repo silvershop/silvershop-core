@@ -85,7 +85,7 @@ class OrderProcessor
      * @return ServiceResponse|null
      * @throws \SilverStripe\Omnipay\Exception\InvalidConfigurationException
      */
-    public function makePayment($gateway, $gatewaydata = array(), $successUrl = null, $cancelUrl = null)
+    public function makePayment($gateway, $gatewaydata = [], $successUrl = null, $cancelUrl = null)
     {
         //create payment
         $payment = $this->createPayment($gateway);
@@ -147,19 +147,19 @@ class OrderProcessor
         $billing = $this->order->getBillingAddress();
 
         $numPayments = Payment::get()
-            ->filter(array('OrderID' => $this->order->ID))
+            ->filter(['OrderID' => $this->order->ID])
             ->count() - 1;
 
         $transactionId = $this->order->Reference . ($numPayments > 0 ? "-$numPayments" : '');
 
         return array_merge(
             $customData,
-            array(
+            [
                 'transactionId'    => $transactionId,
                 'firstName'        => $this->order->FirstName,
                 'lastName'         => $this->order->Surname,
                 'email'            => $this->order->Email,
-                'company'          => $this->order->Company,
+                'company'          => $billing->Company,
                 'billingAddress1'  => $billing->Address,
                 'billingAddress2'  => $billing->AddressLine2,
                 'billingCity'      => $billing->City,
@@ -174,7 +174,7 @@ class OrderProcessor
                 'shippingState'    => $shipping->State,
                 'shippingCountry'  => $shipping->Country,
                 'shippingPhone'    => $shipping->Phone,
-            )
+            ]
         );
     }
 
@@ -189,7 +189,7 @@ class OrderProcessor
                     __CLASS__ . ".InvalidGateway",
                     "`{gateway}` isn't a valid payment gateway.",
                     'gateway is the name of the payment gateway',
-                    array('gateway' => $gateway)
+                    ['gateway' => $gateway]
                 )
             );
             return false;
@@ -216,7 +216,6 @@ class OrderProcessor
     public function completePayment()
     {
         if (!$this->order->IsPaid()) {
-
             $this->order->extend('onPayment'); //a payment has been made
             //place the order, if not already placed
             if ($this->canPlace($this->order)) {
@@ -232,7 +231,7 @@ class OrderProcessor
                 || ($this->order->GrandTotal() == 0 && Order::config()->allow_zero_order_total)
             ) {
                 //set order as paid
-                $this->order->Status = 'Paid';
+                $this->order->setField('Status', 'Paid');
                 $this->order->write();
             }
         }
@@ -288,13 +287,13 @@ class OrderProcessor
 
         //update status
         if ($this->order->TotalOutstanding(false)) {
-            $this->order->Status = 'Unpaid';
+            $this->order->setField('Status', 'Unpaid');
         } else {
-            $this->order->Status = 'Paid';
+            $this->order->setField('Status', 'Paid');
         }
 
         if (!$this->order->Placed) {
-            $this->order->Placed = DBDatetime::now()->Rfc2822(); //record placed order datetime
+            $this->order->setField('Placed', DBDatetime::now()->Rfc2822()); //record placed order datetime
             if ($request = Controller::curr()->getRequest()) {
                 $this->order->IPAddress = $request->getIP(); //record client IP
             }

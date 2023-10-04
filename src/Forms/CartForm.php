@@ -97,7 +97,7 @@ class CartForm extends Form
                 __CLASS__ . '.REMOVED_ITEMS',
                 'Removed {count} items.',
                 'count is the amount that was removed',
-                array('count' => $removecount)
+                ['count' => $removecount]
             );
         }
         if ($updatecount) {
@@ -105,7 +105,7 @@ class CartForm extends Form
                 __CLASS__ . '.UPDATED_ITEMS',
                 'Updated {count} items.',
                 'count is the amount that was updated',
-                array('count' => $updatecount)
+                ['count' => $updatecount]
             );
         }
         if (count($messages)) {

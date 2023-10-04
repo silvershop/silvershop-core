@@ -7,17 +7,17 @@ use SilverStripe\ORM\DataExtension;
 
 class OrderTest_TestStatusChangeExtension extends DataExtension implements TestOnly
 {
-    public static $stack = array();
+    public static $stack = [];
 
     public static function reset()
     {
-        self::$stack = array();
+        self::$stack = [];
     }
 
     public function onStatusChange($fromStatus, $toStatus)
     {
-        self::$stack[] = array(
+        self::$stack[] = [
             $fromStatus => $toStatus
-        );
+        ];
     }
 }

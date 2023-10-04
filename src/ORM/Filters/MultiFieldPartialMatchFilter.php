@@ -51,7 +51,7 @@ class MultiFieldPartialMatchFilter extends PartialMatchFilter
     {
         $modifiers = array_map('strtolower', $modifiers);
 
-        if (($extras = array_diff($modifiers, ['not', 'nocase', 'case', 'splitwords'])) != array()) {
+        if (($extras = array_diff($modifiers, ['not', 'nocase', 'case', 'splitwords'])) != []) {
             throw new InvalidArgumentException(
                 get_class($this) . ' does not accept ' . implode(', ', $extras) . ' as modifiers'
             );
@@ -77,7 +77,7 @@ class MultiFieldPartialMatchFilter extends PartialMatchFilter
      */
     public function setSubfilters(array $fieldNames)
     {
-        $this->subfilters = array();
+        $this->subfilters = [];
         if (count($fieldNames) > 0) {
             foreach ($fieldNames as $name) {
                 $this->subfilters[] = new PartialMatchFilter($name, $this->value, $this->subfilterModifiers);

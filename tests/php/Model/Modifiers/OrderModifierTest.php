@@ -21,6 +21,7 @@ class OrderModifierTest extends FunctionalTest
 {
     public static $fixture_file = __DIR__ . '/../../Fixtures/shop.yml';
     public static $disable_theme = true;
+    protected $usesTransactions = false;
     protected static $use_draft_site = true;
 
     /**
@@ -38,7 +39,7 @@ class OrderModifierTest extends FunctionalTest
         OrderModifierTest_TestModifier::class
     ];
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         ShopTest::setConfiguration();
@@ -97,12 +98,12 @@ class OrderModifierTest extends FunctionalTest
         // 408 from items + 10 from modifier + 25% from tax
         $this->assertEquals('522.5', $order->Total);
 
-        $amounts = array();
+        $amounts = [];
         foreach ($order->Modifiers()->sort('Sort') as $modifier) {
             $amounts[] = (string)$modifier->Amount;
         }
 
-        $this->assertEquals(array('10', '104.5'), $amounts);
+        $this->assertEquals(['10', '104.5'], $amounts);
 
         OrderModifierTest_TestModifier::$value = 42;
 
@@ -118,16 +119,12 @@ class OrderModifierTest extends FunctionalTest
         // Order Total should not have changed
         $this->assertEquals('522.5', $order->Total);
 
-        $amounts = array();
+        $amounts = [];
         foreach ($order->Modifiers()->sort('Sort') as $modifier) {
             $amounts[] = (string)$modifier->Amount;
         }
 
-        $this->assertEquals(
-            array('10', '104.5'),
-            $amounts,
-            'Modifiers aren\'t allowed to change upon failure'
-        );
+        $this->assertEquals(['10', '104.5'], $amounts);
     }
 
     public function createOrder()

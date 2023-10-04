@@ -4,6 +4,7 @@ namespace SilverShop\Checkout\Component;
 
 use SilverShop\Model\Order;
 use SilverShop\ShopTools;
+use SilverStripe\Core\Config\Configurable;
 use SilverStripe\Core\Injector\Injectable;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\ORM\ValidationException;
@@ -22,6 +23,7 @@ use SilverStripe\ORM\ValidationException;
 abstract class CheckoutComponent
 {
     use Injectable;
+    use Configurable;
 
     protected $requiredfields = [];
 

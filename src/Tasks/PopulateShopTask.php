@@ -44,7 +44,7 @@ class PopulateShopTask extends BuildTask
             $shoppage = ProductCategory::get()->filter('URLSegment', 'shop')->first();
             $parentid = $shoppage->ID;
 
-            $categoriestopublish = array(
+            $categoriestopublish = [
                 'products',
                 'electronics',
                 'apparel',
@@ -60,7 +60,7 @@ class PopulateShopTask extends BuildTask
                 'kitchen',
                 'bedroom',
                 'stationery',
-            );
+            ];
             foreach ($categoriestopublish as $categoryname) {
                 $factory->get(ProductCategory::class, $categoryname)->publishSingle();
             }
@@ -89,7 +89,7 @@ class PopulateShopTask extends BuildTask
         }
 
         //cart page
-        if (!$page = CartPage::get()->first()) {
+        if (!CartPage::get()->first()) {
             $fixture = YamlFixture::create($fixtureDir . '/pages/Cart.yml');
             $fixture->writeInto($factory);
             $page = $factory->get(CartPage::class, 'cart');
@@ -100,7 +100,7 @@ class PopulateShopTask extends BuildTask
         }
 
         //checkout page
-        if (!$page = CheckoutPage::get()->first()) {
+        if (!CheckoutPage::get()->first()) {
             $fixture = YamlFixture::create($fixtureDir . '/pages/Checkout.yml');
             $fixture->writeInto($factory);
             $page = $factory->get(CheckoutPage::class, 'checkout');
@@ -122,7 +122,7 @@ class PopulateShopTask extends BuildTask
         }
 
         //terms page
-        if (!$termsPage = Page::get()->filter('URLSegment', 'terms-and-conditions')->first()) {
+        if (!Page::get()->filter('URLSegment', 'terms-and-conditions')->first()) {
             $fixture = YamlFixture::create($fixtureDir . '/pages/TermsConditions.yml');
             $fixture->writeInto($factory);
             $page = $factory->get('Page', 'termsconditions');

@@ -99,7 +99,7 @@ You may want to run the CartCleanupTask before migrating if you want to discard 
     public function migrateMemberFields($order)
     {
         if ($member = $order->Member()) {
-            $fieldstocopy = array(
+            $fieldstocopy = [
                 'FirstName',
                 'Surname',
                 'Email',
@@ -110,7 +110,7 @@ You may want to run the CartCleanupTask before migrating if you want to discard 
                 'HomePhone',
                 'MobilePhone',
                 'Notes',
-            );
+            ];
             foreach ($fieldstocopy as $field) {
                 if (!$order->$field) {
                     $order->$field = $member->$field;
