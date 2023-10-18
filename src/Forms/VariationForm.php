@@ -130,7 +130,7 @@ class VariationForm extends AddProductForm
                     '',
                     ['attribute' => $attribute->Label]
                 ),
-                $product->possibleValuesForAttributeType($attribute)
+                $product->possibleValuesForAttributeType($attribute)->sort(['Sort' => 'ASC'])
             );
 
             if ($attributeDropdown) {
