@@ -10,6 +10,7 @@ use SilverStripe\Control\Director;
 use SilverStripe\Control\Email\Email;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Config\Configurable;
+use SilverStripe\Core\Extensible;
 use SilverStripe\Core\Injector\Injectable;
 use SilverStripe\View\SSViewer;
 
@@ -22,6 +23,7 @@ class OrderEmailNotifier
 {
     use Injectable;
     use Configurable;
+    use Extensible;
 
     /**
      * @var Order $order
@@ -111,6 +113,9 @@ class OrderEmailNotifier
         if ($copyToAdmin) {
             $email->setBcc(Email::config()->admin_email);
         }
+
+        $this->extend('updateClientEmail', $email);
+
         if ($this->debugMode) {
             $ret = $this->debug($email);
         } else {
@@ -137,6 +142,7 @@ class OrderEmailNotifier
         $email = $this->buildEmail($template, $subject)
             ->setTo(Email::config()->admin_email);
 
+        $this->extend('updateAdminEmail', $email);
 
         if ($this->debugMode) {
             $ret = $this->debug($email);
@@ -223,6 +229,8 @@ class OrderEmailNotifier
             ->setTo(Email::config()->admin_email)
             ->setBody($this->order->renderWith(Order::class));
 
+        $this->extend('updateCancelNotificationEmail', $email);
+
         if ($this->debugMode) {
             $ret = $this->debug($email);
         } else {
@@ -241,7 +249,7 @@ class OrderEmailNotifier
      *
      * @return bool|string
      */
-    public function sendStatusChange($title, $note = null)
+    public function sendStatusChange($title = null, $note = null)
     {
         SSViewer::set_themes(Config::inst()->get(SSViewer::class, 'themes'));
         $latestLog = null;
@@ -281,6 +289,8 @@ class OrderEmailNotifier
                     'FromEmail' => $adminEmail
                 ]
             );
+
+        $this->extend('updateStatusChangeEmail', $email);
 
         if ($this->debugMode) {
             $result = $this->debug($email);
