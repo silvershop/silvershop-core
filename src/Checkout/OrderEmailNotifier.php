@@ -11,7 +11,7 @@ use SilverStripe\Control\Email\Email;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Config\Configurable;
 use SilverStripe\Core\Injector\Injectable;
-use SilverStripe\Core\Injector\Injector;
+use SilverStripe\View\SSViewer;
 
 /**
  * Handles email notifications to customers and / or admins.
@@ -34,6 +34,12 @@ class OrderEmailNotifier
     protected $debugMode = false;
 
     /**
+     * list of current themes for switching when sending emails
+     * @var array|string[]
+     */
+    private array $current_themes;
+
+    /**
      * Assign the order to a local variable
      *
      * @param Order $order
@@ -41,6 +47,7 @@ class OrderEmailNotifier
     public function __construct(Order $order)
     {
         $this->order = $order;
+        $this->current_themes = SSViewer::get_themes();
     }
 
     /**
@@ -89,24 +96,56 @@ class OrderEmailNotifier
     /**
      * Send a mail of the order to the client (and another to the admin).
      *
-     * @param string $template    - the class name of the email you wish to send
+     * @param string $template    - the template of the email you wish to send
      * @param string $subject     - subject of the email
      * @param bool   $copyToAdmin - true by default, whether it should send a copy to the admin
      *
      * @return bool|string
      */
-    public function sendEmail($template, $subject, $copyToAdmin = true)
+    public function sendEmail(string $template, string $subject, bool $copyToAdmin = true)
     {
+        SSViewer::set_themes(Config::inst()->get(SSViewer::class, 'themes'));
+
         $email = $this->buildEmail($template, $subject);
 
         if ($copyToAdmin) {
             $email->setBcc(Email::config()->admin_email);
         }
         if ($this->debugMode) {
-            return $this->debug($email);
+            $ret = $this->debug($email);
         } else {
-            return $email->send();
+            $ret = $email->send();
         }
+
+        SSViewer::set_themes($this->current_themes);
+        return $ret;
+    }
+
+    /**
+     * Send a mail to the admin).
+     *
+     * @param string $template    - the template of the email you wish to send
+     * @param string $subject     - subject of the email
+     * @param bool   $copyToAdmin - true by default, whether it should send a copy to the admin
+     *
+     * @return bool|string
+     */
+    public function sendAdminEmail(string $template, string $subject)
+    {
+        SSViewer::set_themes(Config::inst()->get(SSViewer::class, 'themes'));
+
+        $email = $this->buildEmail($template, $subject)
+            ->setTo(Email::config()->admin_email);
+
+
+        if ($this->debugMode) {
+            $ret = $this->debug($email);
+        } else {
+            $ret = $email->send();
+        }
+
+        SSViewer::set_themes($this->current_themes);
+        return $ret;
     }
 
     /**
@@ -143,14 +182,7 @@ class OrderEmailNotifier
             ['OrderNo' => $this->order->Reference]
         );
 
-        $email = $this->buildEmail('SilverShop/Model/Order_AdminNotificationEmail', $subject)
-            ->setTo(Email::config()->admin_email);
-
-        if ($this->debugMode) {
-            return $this->debug($email);
-        } else {
-            return $email->send();
-        }
+        return $this->sendAdminEmail('SilverShop/Model/Order_AdminNotificationEmail', $subject);
     }
 
     /**
@@ -178,6 +210,8 @@ class OrderEmailNotifier
      */
     public function sendCancelNotification()
     {
+        SSViewer::set_themes(Config::inst()->get(SSViewer::class, 'themes'));
+
         $email = Email::create()
             ->setSubject(_t(
                 'SilverShop\ShopEmail.CancelSubject',
@@ -190,10 +224,13 @@ class OrderEmailNotifier
             ->setBody($this->order->renderWith(Order::class));
 
         if ($this->debugMode) {
-            return $this->debug($email);
+            $ret = $this->debug($email);
         } else {
-            return $email->send();
+            $ret = $email->send();
         }
+
+        SSViewer::set_themes($this->current_themes);
+        return $ret;
     }
 
     /**
@@ -206,6 +243,7 @@ class OrderEmailNotifier
      */
     public function sendStatusChange($title, $note = null)
     {
+        SSViewer::set_themes(Config::inst()->get(SSViewer::class, 'themes'));
         $latestLog = null;
 
         if (!$note) {
@@ -255,7 +293,7 @@ class OrderEmailNotifier
             $latestLog->SentToCustomer = true;
             $latestLog->write();
         }
-
+        SSViewer::set_themes($this->current_themes);
         return $result;
     }
 
@@ -269,10 +307,11 @@ class OrderEmailNotifier
      */
     protected function debug(Email $email)
     {
+        SSViewer::set_themes(Config::inst()->get(SSViewer::class, 'themes'));
         $htmlTemplate = $email->getHTMLTemplate();
         $htmlRender = $email->getData()->renderWith($htmlTemplate)->RAW();
         $template = $email->getHTMLTemplate();
-        $headers = $email->getHeaders()->toString();
+        $headers = $email->getHeaders()->toString();SSViewer::set_themes($this->current_themes);
         return "<h2>Email HTML template: $template</h2>\n" .
             "<h3>Headers</h3>" .
             "<pre>$headers</pre>" .
