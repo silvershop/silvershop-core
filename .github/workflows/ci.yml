@@ -12,5 +12,5 @@ jobs:
     with:
       composer_require_extra:
         phpunit/phpunit:^9.5
-        silverstripe/silverstripe-omnipay:dev-master
+        silverstripe/silverstripe-omnipay:dev-main
         php-http/discovery:^1.18.1
