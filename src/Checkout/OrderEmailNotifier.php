@@ -62,6 +62,11 @@ class OrderEmailNotifier
         return $this;
     }
 
+    public function getOrder(): Order
+    {
+        return $this->order;
+    }
+
     /**
      * @param string $template
      * @param string $subject
@@ -98,9 +103,9 @@ class OrderEmailNotifier
     /**
      * Send a mail of the order to the client (and another to the admin).
      *
-     * @param string $template    - the template of the email you wish to send
-     * @param string $subject     - subject of the email
-     * @param bool   $copyToAdmin - true by default, whether it should send a copy to the admin
+     * @param string $template - the template of the email you wish to send
+     * @param string $subject - subject of the email
+     * @param bool $copyToAdmin - true by default, whether it should send a copy to the admin
      *
      * @return bool|string
      */
@@ -129,9 +134,9 @@ class OrderEmailNotifier
     /**
      * Send a mail to the admin).
      *
-     * @param string $template    - the template of the email you wish to send
-     * @param string $subject     - subject of the email
-     * @param bool   $copyToAdmin - true by default, whether it should send a copy to the admin
+     * @param string $template - the template of the email you wish to send
+     * @param string $subject - subject of the email
+     * @param bool $copyToAdmin - true by default, whether it should send a copy to the admin
      *
      * @return bool|string
      */
@@ -245,7 +250,7 @@ class OrderEmailNotifier
      * Send an email to the customer containing the latest note of {@link OrderStatusLog} and the current status.
      *
      * @param string $title Subject for email
-     * @param string $note  Optional note-content (instead of using the OrderStatusLog)
+     * @param string $note Optional note-content (instead of using the OrderStatusLog)
      *
      * @return bool|string
      */
