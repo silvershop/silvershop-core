@@ -6,6 +6,7 @@ use SilverShop\Checkout\OrderEmailNotifier;
 use SilverShop\Model\Order;
 use SilverStripe\Control\Director;
 use SilverStripe\Control\HTTPRequest;
+use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\BuildTask;
 
 /**
@@ -26,10 +27,12 @@ class ShopEmailPreviewTask extends BuildTask
 
     protected $description = 'Previews shop emails';
 
-    protected $previewableEmails = [
+    private static $previewable_emails = [
         'Confirmation',
         'Receipt',
-        'AdminNotification'
+        'AdminNotification',
+        'CancelNotification',
+        'StatusChange'
     ];
 
     /**
@@ -41,26 +44,28 @@ class ShopEmailPreviewTask extends BuildTask
         $params = $request->allParams();
         $url = Director::absoluteURL("dev/{$params['Action']}/{$params['TaskName']}", true);
         $debug = true;
-        
+
         if ($request->getVar('debug')) {
             $debug = $request->getVar('debug');
         }
-        
+
+        $previewableEmails = Config::inst()->get(self::class, 'previewable_emails') ?? [];
+
         echo '<h2>Choose Email</h2>';
         echo '<ul>';
-        foreach ($this->previewableEmails as $key => $method) {
+        foreach ($previewableEmails as $key => $method) {
             echo '<li><a href="' . $url . '/' . $method . '">' . $method . '</a></li>';
         }
         echo '</ul><hr>';
 
-        if ($email && in_array($email, $this->previewableEmails)) {
+        if ($email && in_array($email, $previewableEmails)) {
             $order = Order::get()->first();
             $notifier = OrderEmailNotifier::create($order);
-            
+
             if ($debug) {
                 $notifier->setDebugMode(true);
             }
-            
+
             $method = "send$email";
             echo $notifier->$method();
         }
