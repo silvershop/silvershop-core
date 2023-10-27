@@ -72,10 +72,19 @@ abstract class AddressBook extends Address implements i18nEntityProvider
         $member = Security::getCurrentUser();
         if ($member && $member->AddressBook()->exists()) {
             $addressoptions = $member->AddressBook()->sort('Created', 'DESC')->map('ID', 'toString')->toArray();
-            $addressoptions['newaddress'] = _t('SilverShop\Model\Address.CreateNewAddress', 'Create new {AddressType} address', '', ["AddressType" => $this->addresstype]);
+
+            $translatedAddressType = $this->addresstype;
+            if ($this->addresstype === 'Billing'){
+                $translatedAddressType = _t('SilverShop\Model\Address.BillingAddress', $this->addresstype);
+            }
+            if ($this->addresstype === 'Shipping'){
+                $translatedAddressType =  _t('SilverShop\Model\Address.ShippingAddress', $this->addresstype);
+            }
+
+            $addressoptions['newaddress'] = _t('SilverShop\Model\Address.CreateNewAddress', 'Create new {AddressType} address', '', ["AddressType" => $translatedAddressType]);
             $fieldtype = count($addressoptions) > 3 ? DropdownField::class : OptionsetField::class;
 
-            $label = _t("SilverShop\Model\Address.Existing{$this->addresstype}Address", "Existing {$this->addresstype} Address");
+            $label = _t("SilverShop\Model\Address.Existing{$this->addresstype}Address", "Existing {$translatedAddressType} Address");
 
             return FieldList::create(
                 $fieldtype::create(
