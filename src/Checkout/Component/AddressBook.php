@@ -74,10 +74,10 @@ abstract class AddressBook extends Address implements i18nEntityProvider
             $addressoptions = $member->AddressBook()->sort('Created', 'DESC')->map('ID', 'toString')->toArray();
 
             $translatedAddressType = $this->addresstype;
-            if ($this->addresstype === 'Billing'){
+            if ($this->addresstype === 'Billing') {
                 $translatedAddressType = _t('SilverShop\Model\Address.BillingAddress', $this->addresstype);
             }
-            if ($this->addresstype === 'Shipping'){
+            if ($this->addresstype === 'Shipping') {
                 $translatedAddressType =  _t('SilverShop\Model\Address.ShippingAddress', $this->addresstype);
             }
 
