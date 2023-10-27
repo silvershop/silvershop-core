@@ -232,7 +232,12 @@ class OrderEmailNotifier
             ))
             ->setFrom(Email::config()->admin_email)
             ->setTo(Email::config()->admin_email)
-            ->setBody($this->order->renderWith(Order::class));
+            ->setHTMLTemplate('SilverShop/Model/Order_CancelEmail')
+            ->setData(
+                [
+                    'Order' => $this->order,
+                ]
+            );
 
         $this->extend('updateCancelNotificationEmail', $email);
 
