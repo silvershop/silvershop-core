@@ -78,7 +78,7 @@ class AccountPageTest extends FunctionalTest
     public function testGlobals()
     {
         $this->assertFalse($this->accountpage->canCreate(), "account page exists");
-        $this->assertEquals(Director::baseURL() . "account/", AccountPage::find_link());
+        $this->assertEquals(Director::baseURL() . "account", AccountPage::find_link());
         $this->assertEquals(Director::baseURL() . "account/order/10", AccountPage::get_order_link(10));
     }
 
