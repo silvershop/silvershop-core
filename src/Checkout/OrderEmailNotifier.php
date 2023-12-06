@@ -269,12 +269,14 @@ class OrderEmailNotifier
      */
     protected function debug(Email $email)
     {
-        $email->render();
+        $htmlTemplate = $email->getHTMLTemplate();
+        $htmlRender = $email->getData()->renderWith($htmlTemplate)->RAW();
         $template = $email->getHTMLTemplate();
-        $headers = $email->getSwiftMessage()->getHeaders()->toString();
-
+        $headers = $email->getHeaders()->toString();
         return "<h2>Email HTML template: $template</h2>\n" .
+            "<h3>Headers</h3>" .
             "<pre>$headers</pre>" .
-            $email->getBody();
+            "<h3>Body</h3>" .
+            $htmlRender;
     }
 }
