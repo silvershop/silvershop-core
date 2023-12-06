@@ -66,7 +66,7 @@ class ShopMemberFactory
         /** @var Member $member */
         $member = Member::create()->update($data);
         // 3.2 changed validate to protected which made this fall through the DataExtension and error out
-        $validation = $member->doValidate();
+        $validation = $member->validate();
         if (!$validation->isValid()) {
             //TODO need to handle i18n here?
             foreach ($validation->getMessages() as $message) {
