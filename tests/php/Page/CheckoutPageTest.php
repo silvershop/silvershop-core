@@ -65,7 +65,7 @@ class CheckoutPageTest extends FunctionalTest
         $checkoutpage->publishSingle();
         $link = CheckoutPage::find_link();
         $this->assertEquals(
-            Director::baseURL() . 'checkout/',
+            Director::baseURL() . 'checkout',
             $link,
             'find_link() returns the correct link to checkout.'
         );

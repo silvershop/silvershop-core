@@ -19,7 +19,7 @@ class NestedCheckoutTest extends SapphireTest
     {
         // NOTE: the "myshop" here comes from the fixtures
         $this->assertEquals(
-            Director::baseURL() . 'myshop/checkout/',
+            Director::baseURL() . 'myshop/checkout',
             CheckoutPage::find_link(),
             'Link is: ' . CheckoutPage::find_link()
         );
