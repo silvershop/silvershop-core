@@ -15,7 +15,6 @@ use SilverStripe\Dev\SapphireTest;
 
 /**
  * @link OrderStatusLog
- * @package shop_statuschangeemail
  * @subpackage tests
  */
 class OrderStatusLogTest extends SapphireTest
@@ -230,12 +229,7 @@ class OrderStatusLogTest extends SapphireTest
             'Silvershop - ' . $logEntry->Title
         );
 
-        // clear sent emails
-        /**
-         * @var TestMailer $mailer
-         */
-        $mailer = Injector::inst()->get(Mailer::class);
-        $mailer->clearEmails();
+        $this->clearEmails();
 
         // force another write on the order
         $order->Notes = 'Random Test Notes';

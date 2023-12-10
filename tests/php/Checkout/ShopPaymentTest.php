@@ -10,12 +10,12 @@ use SilverShop\Page\CartPage;
 use SilverShop\Page\CheckoutPage;
 use SilverShop\Page\Product;
 use SilverShop\Tests\ShopTest;
+use SilverShop\Tests\TestGatewayFactory;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Dev\FunctionalTest;
 use SilverStripe\Dev\TestSession;
 use SilverStripe\Omnipay\Model\Payment;
-use SilverStripe\Omnipay\Tests\Service\TestGatewayFactory;
 
 class ShopPaymentTest extends FunctionalTest
 {
@@ -56,7 +56,6 @@ class ShopPaymentTest extends FunctionalTest
         TestGatewayFactory::$httpClient = $this->getHttpClient();
         TestGatewayFactory::$httpRequest = $this->getHttpRequest();
 
-        //publish products
         $this->logInWithPermission('ADMIN');
         $this->objFromFixture(Product::class, "socks")->publishSingle();
         $this->objFromFixture(CheckoutPage::class, "checkout")->publishSingle();

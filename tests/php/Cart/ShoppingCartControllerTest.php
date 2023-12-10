@@ -19,14 +19,17 @@ use SilverStripe\Security\SecurityToken;
  */
 class ShoppingCartControllerTest extends FunctionalTest
 {
-    public static $fixture_file = __DIR__ . '/../Fixtures/shop.yml';
+    public static $fixture_file = [
+        '../Fixtures/shop.yml',
+        '../Fixtures/variations.yml'
+    ];
 
     public static $disable_theme = true;
+
     protected static $use_draft_site = false;
+
     protected $autoFollowRedirection = false;
 
-    // This seems to be required, because we query the OrderItem table and thus this gets included…
-    // TODO: Remove once we figure out how to circumvent that…
     protected static $extra_dataobjects = [
         CustomProduct_OrderItem::class,
     ];
@@ -235,7 +238,6 @@ class ShoppingCartControllerTest extends FunctionalTest
 
     public function testVariations()
     {
-        $this->loadFixture(__DIR__ . '/../Fixtures/variations.yml');
         /**
          * @var Product $ballRoot
          */

@@ -8,7 +8,6 @@ use SilverShop\Model\Order;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\SapphireTest;
 use SilverStripe\Security\Member;
-use SilverStripe\Security\Security;
 
 /**
  * Test member functionality added via ShopMember extension
@@ -66,8 +65,7 @@ class MemberExtensionTest extends SapphireTest
         $member = $this->objFromFixture(Member::class, "jeremyperemy");
         $this->logInAs($member);
         $this->assertEquals(0, $order->MemberID);
-
-        $member->logOut();
+        $this->logOut();
 
         $this->assertTrue((bool)ShoppingCart::curr());
     }

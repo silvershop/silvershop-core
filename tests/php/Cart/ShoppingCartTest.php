@@ -13,7 +13,10 @@ use SilverStripe\Dev\SapphireTest;
 
 class ShoppingCartTest extends SapphireTest
 {
-    protected static $fixture_file  = __DIR__ . '/../Fixtures/shop.yml';
+    protected static $fixture_file  = [
+        '../Fixtures/shop.yml',
+        '../Fixtures/variations.yml'
+    ];
 
     public static $disable_theme  = true;
 
@@ -136,7 +139,6 @@ class ShoppingCartTest extends SapphireTest
 
     public function testProductVariations()
     {
-        $this->loadFixture(__DIR__ . '/../Fixtures/variations.yml');
         $ball1 = $this->objFromFixture(Variation::class, 'redlarge');
         $ball2 = $this->objFromFixture(Variation::class, 'redsmall');
 
@@ -159,10 +161,10 @@ class ShoppingCartTest extends SapphireTest
         $this->assertNotNull($this->cart->get($ball2), "second item is in cart");
 
         $ball = $this->objFromFixture(Product::class, 'ball');
-        $redlarge = $this->objFromFixture(Variation::class, 'redlarge');
-        // setting price of variation to zero, so it can't be added to cart.
-        $redlarge->Price = 0;
-        $redlarge->write();
+
+        $redLarge = $this->objFromFixture(Variation::class, 'redlarge');
+        $redLarge->Price = 0;
+        $redLarge->write();
 
         $ball->BasePrice = 0;
         $ball->write();

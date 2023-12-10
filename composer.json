@@ -22,6 +22,7 @@
   ],
   "require": {
     "silverstripe/cms": "^5",
+    "silverstripe/asset-admin": "*",
     "silverstripe/silverstripe-omnipay": "^3@dev | dev-main#8f277fa5ef513ded38e55ed3c56778feada26174",
     "silvershop/silverstripe-listsorter": "^3",
     "silvershop/silverstripe-sqlquerylist": "^3",
@@ -63,8 +64,16 @@
     "docs": "https://github.com/silvershop/silvershop-core/tree/master/docs/en"
   },
   "scripts": {
-    "lint": "phpcs -s src/ tests/"
+    "lint": "phpcs -s src/ tests/",
+    "test": "phpunit"
   },
   "minimum-stability": "dev",
-  "prefer-stable": true
+  "prefer-stable": true,
+  "config": {
+    "allow-plugins": {
+      "composer/installers": true,
+      "php-http/discovery": true,
+      "silverstripe/vendor-plugin": true
+    }
+  }
 }

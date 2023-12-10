@@ -5,7 +5,6 @@ namespace SilverShop\Tests\Extension;
 use SilverShop\Page\Product;
 use SilverStripe\Assets\Image;
 use SilverStripe\Assets\InterventionBackend;
-use SilverStripe\Assets\Tests\Storage\AssetStoreTest\TestAssetStore;
 use SilverStripe\Dev\SapphireTest;
 use SilverStripe\SiteConfig\SiteConfig;
 
@@ -28,12 +27,17 @@ class ProductImageExtensionTest extends SapphireTest
     /**
      * @var Image
      */
-    protected $img;
+    protected $img1;
 
     /**
      * @var Image
      */
     protected $img2;
+
+    /**
+     * @var Image
+     */
+    protected $img3;
 
     /**
      * @var SiteConfig
@@ -43,9 +47,6 @@ class ProductImageExtensionTest extends SapphireTest
     public function setUp(): void
     {
         parent::setUp();
-
-        // Set backend root to /images
-        TestAssetStore::activate('images');
 
         // Copy test images for each of the fixture references
         foreach (Image::get() as $image) {

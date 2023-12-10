@@ -1,3 +1,6 @@
 .idea
-vendor/
-resources/
+/vendor/
+/resources/
+/composer.lock
+/app
+/public
