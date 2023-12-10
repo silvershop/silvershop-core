@@ -53,7 +53,7 @@
                             <% if $RemoveField %>
                                 $RemoveField
                             <% else %>
-                                <a href="$removeallLink" title="<%t SilverShop\Cart\ShoppingCart.RemoveAllTitle "Remove all of &quot;{Title}&quot; from your cart" Title=$TableTitle %>">
+                                <a href="$removeAllLink" title="<%t SilverShop\Cart\ShoppingCart.RemoveAllTitle "Remove all of &quot;{Title}&quot; from your cart" Title=$TableTitle %>">
                                     <img src="$resourceURL('silvershop/core:client/dist/images/remove.gif')" alt="x"/>
                                 </a>
                             <% end_if %>

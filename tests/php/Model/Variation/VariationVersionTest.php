@@ -18,7 +18,9 @@ use SilverStripe\Dev\SapphireTest;
 class VariationVersionTest extends SapphireTest
 {
     public static $fixture_file   = '../../Fixtures/variations.yml';
+
     public static $disable_theme  = true;
+
     protected static $use_draft_site = true;
 
     /**
@@ -41,7 +43,7 @@ class VariationVersionTest extends SapphireTest
         parent::setUp();
         $this->ball = $this->objFromFixture(Product::class, "ball");
         $this->mp3player = $this->objFromFixture(Product::class, "mp3player");
-        $this->redLarge = $this->objFromFixture(Variation::class, "redlarge");
+        $this->redLarge = $this->objFromFixture(Variation::class, "redLarge");
     }
 
     public function testVariationsPersistOnUnpublish()

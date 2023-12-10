@@ -128,8 +128,9 @@ class ShoppingCartController extends Controller
         if (Director::is_ajax()) {
             return (string)$status;
         }
-        if (self::config()->direct_to_cart_page && ($cartlink = CartPage::find_link())) {
-            return Controller::curr()->redirect($cartlink);
+
+        if (self::config()->direct_to_cart_page && ($cart = CartPage::find_link())) {
+            return Controller::curr()->redirect($cart);
         } else {
             return Controller::curr()->redirectBack();
         }
@@ -200,15 +201,26 @@ class ShoppingCartController extends Controller
 
         if ($product = $this->buyableFromRequest()) {
             $quantity = (int)$request->getVar('quantity');
+
             if (!$quantity) {
                 $quantity = 1;
             }
+
             $result = $this->cart->add($product, $quantity, $request->getVars());
+
+            if ($result) {
+                $response = $this->cart->getMessage();
+            } else {
+                $response = $this->httpError(400, $this->cart->getMessage());
+            }
+        } else {
+            $response = $this->httpError(404);
         }
 
         $this->updateLocale($request);
         $this->extend('updateAddResponse', $request, $response, $product, $quantity, $result);
-        return $response ? $response : self::direct();
+
+        return $response ? $response : self::direct($result);
     }
 
     /**

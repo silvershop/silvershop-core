@@ -147,10 +147,12 @@ class ShoppingCart
         }
 
         $item = $this->findOrMakeItem($buyable, $quantity, $filter);
+
         if (!$item) {
             return false;
         }
-        if (!$item->_brandnew) {
+
+        if (!$item->brandNew) {
             $item->Quantity += $quantity;
         } else {
             $item->Quantity = $quantity;
@@ -353,8 +355,7 @@ class ShoppingCart
             $item->write();
 
             $order->Items()->add($item);
-
-            $item->_brandnew = true; // flag as being new
+            $item->brandNew = true;
         }
 
         return $item;

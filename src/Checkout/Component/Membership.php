@@ -121,9 +121,11 @@ class Membership extends CheckoutComponent
                     $idfield
                 );
             }
-            $passwordresult = $this->passwordvalidator->validate($data['Password'], $member);
-            if (!$passwordresult->isValid()) {
-                foreach ($passwordresult->getMessages() as $message) {
+
+            $passwordResult = $this->passwordValidator->validate($data['Password'], $member);
+
+            if (!$passwordResult->isValid()) {
+                foreach ($passwordResult->getMessages() as $message) {
                     $result->addError($message['message'], "Password");
                 }
             }

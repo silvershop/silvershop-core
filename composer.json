@@ -61,7 +61,7 @@
   "support": {
     "issues": "https://github.com/silvershop/silvershop-core/issues",
     "source": "https://github.com/silvershop/silvershop-core",
-    "docs": "https://github.com/silvershop/silvershop-core/tree/master/docs/en"
+    "docs": "https://github.com/silvershop/silvershop-core/tree/main/docs/en"
   },
   "scripts": {
     "lint": "phpcs -s src/ tests/",

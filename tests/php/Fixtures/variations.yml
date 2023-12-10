@@ -45,14 +45,15 @@ SilverShop\Page\Product:
     VariationAttributeTypes: =>SilverShop\Model\Variation\AttributeType.size,=>SilverShop\Model\Variation\AttributeType.color
   mp3player:
     Title: Mp3 Player
+    BasePrice: 200
     VariationAttributeTypes: =>SilverShop\Model\Variation\AttributeType.capacity,=>SilverShop\Model\Variation\AttributeType.color
 
 SilverShop\Model\Variation\Variation:
-  redlarge:
+  redLarge:
     Product: =>SilverShop\Page\Product.ball
     Price: 22.00
     AttributeValues: =>SilverShop\Model\Variation\AttributeValue.size_large,=>SilverShop\Model\Variation\AttributeValue.color_red
-  redsmall:
+  redSmall:
     Product: =>SilverShop\Page\Product.ball
     Price: 20.00
     AttributeValues: =>SilverShop\Model\Variation\AttributeValue.size_small,=>SilverShop\Model\Variation\AttributeValue.color_red

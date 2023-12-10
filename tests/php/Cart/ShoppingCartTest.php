@@ -97,7 +97,6 @@ class ShoppingCartTest extends SapphireTest
 
     public function testClear()
     {
-        //$this->assertFalse($this->cart->current(),"there is no cart initally");
         $this->assertTrue((boolean)$this->cart->add($this->product), "add one item");
         $this->assertTrue((boolean)$this->cart->add($this->product), "add another item");
         $this->assertInstanceOf(Order::class, $this->cart->current(), "there's a cart");
@@ -139,8 +138,11 @@ class ShoppingCartTest extends SapphireTest
 
     public function testProductVariations()
     {
-        $ball1 = $this->objFromFixture(Variation::class, 'redlarge');
-        $ball2 = $this->objFromFixture(Variation::class, 'redsmall');
+        /** @var Variation $ball1 */
+        $ball1 = $this->objFromFixture(Variation::class, 'redLarge');
+
+        /** @var Variation $ball2 */
+        $ball2 = $this->objFromFixture(Variation::class, 'redSmall');
 
         $this->assertTrue((boolean)$this->cart->add($ball1), "add one item");
 
@@ -160,9 +162,10 @@ class ShoppingCartTest extends SapphireTest
         $this->assertFalse((bool)$this->cart->get($ball1), "first item not in cart");
         $this->assertNotNull($this->cart->get($ball2), "second item is in cart");
 
+        /** @var Product $ball */
         $ball = $this->objFromFixture(Product::class, 'ball');
 
-        $redLarge = $this->objFromFixture(Variation::class, 'redlarge');
+        $redLarge = $this->objFromFixture(Variation::class, 'redLarge');
         $redLarge->Price = 0;
         $redLarge->write();
 

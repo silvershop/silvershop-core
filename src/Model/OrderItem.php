@@ -18,6 +18,8 @@ use SilverStripe\ORM\FieldType\DBCurrency;
  */
 class OrderItem extends OrderAttribute
 {
+    public bool $brandNew = false;
+
     private static $db = [
         'Quantity' => 'Int',
         'UnitPrice' => 'Currency',
@@ -229,7 +231,7 @@ class OrderItem extends OrderAttribute
     /**
      * @return string
      */
-    public function removeallLink()
+    public function removeAllLink()
     {
         $buyable = $this->Buyable();
         return $buyable ? ShoppingCartController::remove_all_item_link($buyable, $this->uniquedata()) : '';
@@ -238,7 +240,7 @@ class OrderItem extends OrderAttribute
     /**
      * @return string
      */
-    public function setquantityLink()
+    public function setQuantityLink()
     {
         $buyable = $this->Buyable();
         return $buyable ? ShoppingCartController::set_quantity_item_link($buyable, $this->uniquedata()) : '';

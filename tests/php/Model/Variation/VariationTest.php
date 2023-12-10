@@ -37,7 +37,12 @@ class VariationTest extends SapphireTest
     /**
      * @var Variation
      */
-    protected $redlarge;
+    protected $redLarge;
+
+    /**
+     * @var Product
+     */
+    protected $ball;
 
     public function setUp(): void
     {
@@ -45,7 +50,7 @@ class VariationTest extends SapphireTest
         ShoppingCart::singleton()->clear();
         $this->ball = $this->objFromFixture(Product::class, "ball");
         $this->mp3player = $this->objFromFixture(Product::class, "mp3player");
-        $this->redlarge = $this->objFromFixture(Variation::class, "redlarge");
+        $this->redLarge = $this->objFromFixture(Variation::class, "redLarge");
     }
 
     public function testVariationOrderItem()
@@ -58,11 +63,11 @@ class VariationTest extends SapphireTest
             ->set(Variation::class, 'title_separator', ':')
             ->set(Variation::class, 'title_glue', ', ');
 
-        $emptyitem = $this->redlarge->Item();
+        $emptyitem = $this->redLarge->Item();
         $this->assertEquals(1, $emptyitem->Quantity, "Items always have a quantity of at least 1.");
 
-        $cart->add($this->redlarge);
-        $item = $cart->get($this->redlarge);
+        $cart->add($this->redLarge);
+        $item = $cart->get($this->redLarge);
         $this->assertTrue((bool)$item, "item exists");
         $this->assertEquals(1, $item->Quantity);
         $this->assertEquals(22, $item->UnitPrice());
@@ -110,10 +115,5 @@ class VariationTest extends SapphireTest
         $this->assertEquals(20, $range->Min->getValue());
         $this->assertEquals(22, $range->Max->getValue());
         $this->assertEquals(21, $range->Average->getValue());
-    }
-
-    public function testVaraitionsBulkLoader()
-    {
-        $this->markTestIncomplete('try bulk loading some variations ... generate, and exact entries');
     }
 }

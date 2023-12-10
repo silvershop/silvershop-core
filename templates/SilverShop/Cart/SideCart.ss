@@ -30,7 +30,7 @@
                     </p>
                     <p class="quantityprice"><span class="quantity">$Quantity</span> <span class="times">x</span> <span class="unitprice">$UnitPrice.Nice</span></p>
                     <% if $SubTitle %><p class="subtitle">$SubTitle</p><% end_if %>
-                    <a class="remove" href="$removeallLink" title="<%t SilverShop\Cart\ShoppingCart.RemoveTitle "Remove &quot;{Title}&quot; from your cart." Title=$TableTitle %>">x</a>
+                    <a class="remove" href="$removeAllLink" title="<%t SilverShop\Cart\ShoppingCart.RemoveTitle "Remove &quot;{Title}&quot; from your cart." Title=$TableTitle %>">x</a>
                 </div>
             <% end_loop %>
         <% end_with %>
