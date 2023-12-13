@@ -32,7 +32,7 @@ class ProductOrderItemTest extends FunctionalTest
     /**
      * @var Product
      */
-    protected $beachBall;
+    protected $beachball;
 
     /**
      * @var Product
@@ -56,12 +56,12 @@ class ProductOrderItemTest extends FunctionalTest
         $this->logInWithPermission('ADMIN');
         $this->mp3player = $this->objFromFixture(Product::class, 'mp3player');
         $this->socks = $this->objFromFixture(Product::class, 'socks');
-        $this->beachBall = $this->objFromFixture(Product::class, 'beachBall');
+        $this->beachball = $this->objFromFixture(Product::class, 'beachball');
         $this->hdtv = $this->objFromFixture(Product::class, 'hdtv');
 
         $this->mp3player->publishSingle();
         $this->socks->publishSingle();
-        $this->beachBall->publishSingle();
+        $this->beachball->publishSingle();
         $this->hdtv->publishSingle();
 
         $this->cart = ShoppingCart::singleton();
