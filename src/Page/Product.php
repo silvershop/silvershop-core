@@ -18,6 +18,7 @@ use SilverStripe\Forms\CheckboxField;
 use SilverStripe\Forms\DropdownField;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\ListboxField;
+use SilverStripe\Forms\NumericField;
 use SilverStripe\Forms\TextField;
 use SilverStripe\ORM\DataList;
 use SilverStripe\ORM\FieldType\DBBoolean;
@@ -169,7 +170,7 @@ class Product extends Page implements Buyable
                 $fields->addFieldsToTab(
                     'Root.Pricing',
                     [
-                        TextField::create('BasePrice', $this->fieldLabel('BasePrice'))
+                        NumericField::create('BasePrice', $this->fieldLabel('BasePrice'))
                         ->setDescription(_t(__CLASS__ . '.PriceDesc', 'Base price to sell this product at.'))
                         ->setMaxLength(12),
                     ]
