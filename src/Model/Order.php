@@ -707,7 +707,7 @@ class Order extends DataObject
         $address = $this->getComponent($type . 'Address');
 
         if (!$address || !$address->exists() && $this->Member()) {
-            $address = $this->Member()->{"Default${type}Address"}();
+            $address = $this->Member()->{"Default{$type}Address"}();
         }
 
         if (empty($address->Surname) && empty($address->FirstName)) {
