@@ -45,6 +45,10 @@ Integrated webfont. Created via http://fontello.com/
   }
 
   td.col-TotalNice,
-  td.col-Amount-Nice{
+  td.col-TotalValue,
+  td.col-Amount-Nice,
+  td.col-BasePrice,
+  td.col-Sales,
+  td.col-Spent {
     text-align: right;
   }

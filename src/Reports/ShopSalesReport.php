@@ -31,7 +31,10 @@ class ShopSalesReport extends ShopPeriodReport
         return [
             'FilterPeriod' => $period,
             'Count' => 'Order Count',
-            'Sales' => 'Total Sales',
+            'Sales' => [
+                'title' => 'Total Sales',
+                'casting' => 'Currency->Nice'
+                ],
         ];
     }
 
