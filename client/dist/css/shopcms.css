@@ -43,3 +43,7 @@ Integrated webfont. Created via http://fontello.com/
   .shop-order__address {
     vertical-align: top;
   }
+
+  td.col-TotalNice {
+    text-align: right;
+  }

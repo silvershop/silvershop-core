@@ -241,6 +241,7 @@ nn:
     ShipTo: 'Send sending til:'
     SubTotal: Sum total
     Total: Total
+    TotalNice: Total
     TotalOutstanding: 'Total uteståande'
     TotalPrice: 'Total pris'
     TotalPriceWithCurrency: 'Total pris ({Currency})'
