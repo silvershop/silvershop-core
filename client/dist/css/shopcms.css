@@ -44,6 +44,7 @@ Integrated webfont. Created via http://fontello.com/
     vertical-align: top;
   }
 
-  td.col-TotalNice {
+  td.col-TotalNice,
+  td.col-Amount-Nice{
     text-align: right;
   }

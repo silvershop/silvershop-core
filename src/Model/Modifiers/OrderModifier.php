@@ -49,7 +49,7 @@ class OrderModifier extends OrderAttribute
         'Order.ID' => 'Order ID',
         'TableTitle' => 'Table Title',
         'ClassName' => 'Type',
-        'Amount' => 'Amount',
+        'Amount.Nice' => 'Amount',
         'Type' => 'Type',
     ];
 
@@ -121,24 +121,24 @@ class OrderModifier extends OrderAttribute
         return true;
     }
 
-    /**
-     * This function is always called to determine the
-     * amount this modifier needs to charge or deduct.
-     *
-     * If the modifier exists in the DB, in which case it
-     * already exists for a given order, we just return
-     * the Amount data field from the DB. This is for
-     * existing orders.
-     *
-     * If this is a new order, and the modifier doesn't
-     * exist in the DB ($this->ID is 0), so we return
-     * the amount from $this->LiveAmount() which is a
-     * calculation based on the order and it's items.
-     */
-    public function Amount()
-    {
-        return $this->Amount;
-    }
+//    /**
+//     * This function is always called to determine the
+//     * amount this modifier needs to charge or deduct.
+//     *
+//     * If the modifier exists in the DB, in which case it
+//     * already exists for a given order, we just return
+//     * the Amount data field from the DB. This is for
+//     * existing orders.
+//     *
+//     * If this is a new order, and the modifier doesn't
+//     * exist in the DB ($this->ID is 0), so we return
+//     * the amount from $this->LiveAmount() which is a
+//     * calculation based on the order and it's items.
+//     */
+//    public function Amount()
+//    {
+//        return $this->Amount;
+//    }
 
     /**
      * Monetary to use in templates.
