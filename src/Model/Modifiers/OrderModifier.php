@@ -48,7 +48,7 @@ class OrderModifier extends OrderAttribute
     private static $summary_fields = [
         'Order.ID' => 'Order ID',
         'TableTitle' => 'Table Title',
-        'ClassName' => 'Type',
+        'ClassName.ShortName' => 'Type',
         'Amount.Nice' => 'Amount',
         'Type' => 'Type',
     ];
