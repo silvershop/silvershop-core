@@ -47,8 +47,10 @@ class TaxReport extends ShopPeriodReport
                 'SilverShop_OrderAttribute',
                 '"SilverShop_OrderAttribute"."OrderID" = "SilverShop_Order"."ID" AND "SilverShop_OrderAttribute"."ClassName" LIKE \'%TaxModifier\''
             )
-            ->addInnerJoin('SilverShop_OrderModifier',
-                '"SilverShop_OrderModifier"."ID" = "SilverShop_OrderAttribute"."ID"')
+            ->addInnerJoin(
+                'SilverShop_OrderModifier',
+                '"SilverShop_OrderModifier"."ID" = "SilverShop_OrderAttribute"."ID"'
+            )
             ->selectField('COUNT("SilverShop_Order"."ID")', 'Count')
             ->selectField('SUM("SilverShop_OrderModifier"."Amount")', 'Tax')
             ->selectField('SUM("SilverShop_Order"."Total")', 'Sales');
