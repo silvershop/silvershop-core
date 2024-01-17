@@ -243,6 +243,7 @@ nl:
     ShipTo: 'Verzend naar'
     SubTotal: Subtotaal
     Total: Totaal
+    TotalNice: Totaal
     TotalOutstanding: 'Totaal openstaand'
     TotalPrice: 'Totaalprijs'
     TotalPriceWithCurrency: 'Totaalprijs ({Currency})'

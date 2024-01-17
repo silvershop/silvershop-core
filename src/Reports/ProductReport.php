@@ -25,9 +25,15 @@ class ProductReport extends ShopPeriodReport
                 'title' => 'Title',
                 'formatting' => '<a href=\"admin/catalog/Product/EditForm/field/Product/item/$ID/edit\" target=\"_new\">$Title</a>',
             ],
-            'BasePrice' => 'Price',
+            'BasePrice' => [
+                'title' => 'Price',
+                'casting' => 'Currency->Nice'
+            ],
             'Quantity' => 'Quantity',
-            'Sales' => 'Sales',
+            'Sales' => [
+                'title' => 'Total Sales',
+                'casting' => 'Currency->Nice'
+            ],
         ];
     }
 

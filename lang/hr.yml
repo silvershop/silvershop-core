@@ -211,6 +211,7 @@ hr:
     ShipTo: 'Pošalji na'
     SubTotal: Međuzbroj
     Total: Ukupno
+    TotalNice: Ukupno
     TotalOutstanding: 'Ukupno nepodmireno'
     TotalPrice: 'Ukupna cijena'
     TotalPriceWithCurrency: 'Ukupna cijena ({Currency})'

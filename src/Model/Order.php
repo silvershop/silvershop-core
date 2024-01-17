@@ -142,7 +142,7 @@ class Order extends DataObject
         'Placed',
         'Name',
         'LatestEmail',
-        'Total',
+        'TotalNice',
         'StatusI18N',
     ];
 
@@ -343,6 +343,7 @@ class Order extends DataObject
         $labels['Name'] = _t('SilverShop\Generic.Customer', 'Customer');
         $labels['LatestEmail'] = _t(__CLASS__ . '.db_Email', 'Email');
         $labels['StatusI18N'] = _t(__CLASS__ . '.db_Status', 'Status');
+        $labels['TotalNice'] = _t(__CLASS__ . '.TotalNice', 'Total');
 
         return $labels;
     }
@@ -483,6 +484,25 @@ class Order extends DataObject
     }
 
     /**
+     * Helper method for getting nice currency-formatted values.
+     *
+     * This is needed, cause Total() conflicts with casting to Currency.
+     * Related Issue: https://github.com/silvershop/silvershop-core/issues/811
+     *
+     * Can be deprecated and removed once the issue is resolved.
+     *
+     * @return string
+     */
+    public function TotalNice(): string
+    {
+        $total = $this->dbObject('Total');
+        if ($total instanceof DBCurrency) {
+            return $total->Nice();
+        }
+        return '';
+    }
+
+    /**
      * Calculate how much is left to be paid on the order.
      * Enforces rounding precision.
      *
@@ -518,7 +538,7 @@ class Order extends DataObject
     public function Link()
     {
         $link = CheckoutPage::find_link(false, 'order', $this->ID);
-        
+
         if (Security::getCurrentUser()) {
             $link = Controller::join_links(AccountPage::find_link(), 'order', $this->ID);
         }
