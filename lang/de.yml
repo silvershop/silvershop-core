@@ -243,6 +243,7 @@ de:
     ShipTo: 'Lieferung an'
     SubTotal: Zwischensumme
     Total: Gesamt
+    TotalNice: Gesamt
     TotalOutstanding: 'Gesamt ausstehend'
     TotalPrice: 'Gesamtpreis'
     TotalPriceWithCurrency: 'Gesamtpreis ({Currency})'

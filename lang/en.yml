@@ -261,6 +261,7 @@ en:
     db_Status: Status
     db_Surname: Surname
     db_Total: Total
+    TotalNice: Total
     has_many_Items: Items
     has_many_Modifiers: Modifiers
     has_many_OrderStatusLogs: 'Order Status Logs'
