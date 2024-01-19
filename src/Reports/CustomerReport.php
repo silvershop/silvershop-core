@@ -32,7 +32,7 @@ class CustomerReport extends ShopPeriodReport
             'Orders' => 'Orders',
             'edit' => [
                 'title' => 'Edit',
-                'formatting' => '<a href=\"admin/security/EditForm/field/Members/item/$ID/edit\" target=\"_new\">edit</a>',
+                'formatting' => '<a href=\"admin/security/users/EditForm/field/users/item/$ID/edit\" target=\"_new\">edit</a>',
             ],
         ];
     }
