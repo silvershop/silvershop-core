@@ -16,6 +16,10 @@ SilverShop\Page\ProductCategory:
     Parent: =>SilverShop\Page\ProductCategory.electronics
   clearance:
     Title: Clearance
+  empty:
+    Title: Empty
+    URLSegment: empty
+    Parent: =>SilverShop\Page\ProductCategory.products
 
 SilverShop\Page\Product:
   socks:
