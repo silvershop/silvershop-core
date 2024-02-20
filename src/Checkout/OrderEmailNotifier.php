@@ -109,7 +109,7 @@ class OrderEmailNotifier
      *
      * @return bool|string
      */
-    public function sendEmail(string $template, string $subject, bool $copyToAdmin = true)
+    public function sendEmail(string $template, string $subject, ?bool $copyToAdmin = true)
     {
         SSViewer::set_themes(Config::inst()->get(SSViewer::class, 'themes'));
 
