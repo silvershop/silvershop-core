@@ -331,7 +331,8 @@ class OrderEmailNotifier
         $htmlTemplate = $email->getHTMLTemplate();
         $htmlRender = $email->getData()->renderWith($htmlTemplate)->RAW();
         $template = $email->getHTMLTemplate();
-        $headers = $email->getHeaders()->toString();SSViewer::set_themes($this->current_themes);
+        $headers = $email->getHeaders()->toString();
+        SSViewer::set_themes($this->current_themes);
         return "<h2>Email HTML template: $template</h2>\n" .
             "<h3>Headers</h3>" .
             "<pre>$headers</pre>" .
