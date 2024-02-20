@@ -68,6 +68,8 @@ class ProductCategoryTest extends FunctionalTest
         $this->clothing->publishSingle();
         $this->electronics = $this->objFromFixture(ProductCategory::class, 'electronics');
         $this->electronics->publishSingle();
+        $this->empty = $this->objFromFixture(ProductCategory::class, 'empty');
+        $this->empty->publishSingle();
 
         $this->socks = $this->objFromFixture(Product::class, 'socks');
         $this->socks->publishSingle();
@@ -195,5 +197,13 @@ class ProductCategoryTest extends FunctionalTest
         $this->markTestIncomplete('check filtering');
         //check published/ non published / allow purchase etc
         //Hide product if no price...or if product has variations, allow viewing.
+    }
+
+    public function testCanArchive()
+    {
+        $this->logInWithPermission('ADMIN');
+        $this->assertFalse($this->electronics->canArchive(), 'A productcategory with products cannot be archived');
+        $this->assertTrue($this->empty->canArchive(), 'A productcategory without products can be archived');
+        $this->logOut();
     }
 }
