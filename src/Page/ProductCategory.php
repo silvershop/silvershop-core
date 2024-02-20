@@ -6,6 +6,7 @@ use Page;
 use SilverShop\Extension\ProductVariationsExtension;
 use SilverStripe\i18n\i18nEntityProvider;
 use SilverStripe\ORM\DataList;
+use SilverStripe\Security\Security;
 
 /**
  * Product Category provides a way to hierartically categorise products.
@@ -57,16 +58,16 @@ class ProductCategory extends Page implements i18nEntityProvider
         }
         $products = Product::get()->filterAny(
             [
-            'ParentID' => $groupids,
-            'ProductCategories.ID' => $groupids
+                'ParentID' => $groupids,
+                'ProductCategories.ID' => $groupids
             ]
         );
         if (self::config()->must_have_price) {
             if (Product::has_extension(ProductVariationsExtension::class)) {
                 $products = $products->filterAny(
                     [
-                    'BasePrice:GreaterThan' => 0,
-                    'Variations.Price:GreaterThan' => 0
+                        'BasePrice:GreaterThan' => 0,
+                        'Variations.Price:GreaterThan' => 0
                     ]
                 );
             } else {
@@ -130,8 +131,8 @@ class ProductCategory extends Page implements i18nEntityProvider
     /**
      * Override the nested title defaults, to show deeper nesting in the CMS.
      *
-     * @param integer $level     nesting level
-     * @param string  $separator seperate nesting with this string
+     * @param integer $level nesting level
+     * @param string $separator seperate nesting with this string
      */
     public function NestedTitle($level = 10, $separator = ' > ', $field = 'MenuTitle')
     {
@@ -157,5 +158,41 @@ class ProductCategory extends Page implements i18nEntityProvider
         }
 
         return $entities;
+    }
+
+    /**
+     * Don't allow archiving of a category if it has products assigned to it.
+     *
+     * @param $member
+     * @return bool
+     */
+    public function canArchive($member = null)
+    {
+        if (!$member) {
+            $member = Security::getCurrentUser();
+        }
+
+        $parentCanArchive = parent::canArchive($member);
+
+        //no need to look further, archiving is not allowed
+        if (!$parentCanArchive) {
+            return false;
+        }
+
+        $groupIDs = [$this->ID];
+        $groupIDs += $this->AllChildCategoryIDs();
+
+        //check, if the category or a subcategory has products assigned
+        $products = Product::get()->filterAny(
+            [
+                'ParentID' => $groupIDs,
+                'ProductCategories.ID' => $groupIDs
+            ]
+        );
+        if ($products->exists()) {
+            return false;
+        }
+
+        return true;
     }
 }
