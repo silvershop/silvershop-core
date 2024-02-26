@@ -2,6 +2,7 @@
 
 namespace SilverShop\Model\Variation;
 
+use SebastianBergmann\Comparator\NumericComparator;
 use SilverShop\Cart\ShoppingCart;
 use SilverShop\Model\Buyable;
 use SilverShop\Model\Order;
@@ -10,6 +11,7 @@ use SilverStripe\AssetAdmin\Forms\UploadField;
 use SilverStripe\Assets\Image;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\LiteralField;
+use SilverStripe\Forms\NumericField;
 use SilverStripe\Forms\TextField;
 use SilverStripe\ORM\ArrayList;
 use SilverStripe\ORM\DataObject;
@@ -82,7 +84,7 @@ class Variation extends DataObject implements Buyable
         'InternalItemID' => 'Product Code',
         //'Product.Title' => 'Product',
         'Title' => 'Variation',
-        'Price' => 'Price'
+        'Price.Nice' => 'Price'
     ];
 
     private static $searchable_fields = [
@@ -127,7 +129,8 @@ class Variation extends DataObject implements Buyable
     {
         $fields = FieldList::create(
             TextField::create('InternalItemID', _t('SilverShop\Page\Product.Code', 'Product Code')),
-            TextField::create('Price', _t('SilverShop\Page\Product.db_BasePrice', 'Price'))
+            NumericField::create('Price', _t('SilverShop\Page\Product.db_BasePrice', 'Price'))
+                ->setScale(2)
         );
         //add attributes dropdowns
         $attributes = $this->Product()->VariationAttributeTypes();

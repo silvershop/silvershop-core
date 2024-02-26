@@ -57,7 +57,7 @@ class ProductVariationsExtension extends DataExtension
                 GridFieldConfig_RecordEditor::create(100)
             )
         ]);
-
+        
         $variationsGridField->getConfig()->addComponent($sort = new GridFieldOrderableRows('Sort'));
 
         if ($this->owner->Variations()->exists()) {
