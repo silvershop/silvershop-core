@@ -172,7 +172,8 @@ class Product extends Page implements Buyable
                     [
                         NumericField::create('BasePrice', $this->fieldLabel('BasePrice'))
                         ->setDescription(_t(__CLASS__ . '.PriceDesc', 'Base price to sell this product at.'))
-                        ->setMaxLength(12),
+                        ->setMaxLength(12)
+                        ->setScale(2),
                     ]
                 );
 
