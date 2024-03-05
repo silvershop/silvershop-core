@@ -17,6 +17,9 @@ Follow the standard [SilverStripe installation guide](http://docs.silverstripe.o
 
 [Set up your payment provider](06_Payment.md), so customers can make online payments.
 
+## Internationalisation
+See [Internationalsiation i18n](07_Internationalisation.md) for some tips on how to use localise your shop settings.
+
 ## Automated Tasks
 
 Add some [automated tasks](Tasks.md) to handle some things automatically for you.
@@ -34,7 +37,7 @@ If you are wanting to use a debugger tool, you'll probably need to make sure you
 
 ### E-Mails
 
-The best way to catch/debug local emails is to use a service such as [Mailtrap](https://mailtrap.io/) which has a free plan. 
+The best way to catch/debug local emails is to use a service such as [Mailtrap](https://mailtrap.io/) which has a free plan.
 
 The [silverstripe-email-helpers](https://packagist.org/packages/markguinn/silverstripe-email-helpers) module that will be installed alongside silvershop can be used to send your emails to the mailtrap service. To do so, create a config file `mysite/_config/mailer.yml` with the following content:
 

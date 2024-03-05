@@ -36,6 +36,18 @@ SilverShop\ORM\FieldType\ShopCurrency:
 
 then run `dev/build`
 
+## Currencies are shown as simple number or with wrong decimal separator in GridFields
+
+If you changed `summary_fields` of Product or Variation in one of your extensions, you need to make sure, that you tell the GridField to use `.Nice` for it. Example:
+
+```php
+    private static $summary_fields = [
+        'Price.Nice' => 'Price',
+        'AdditionalPrice.Nice' => 'AdditionalPrice', # some custom price field
+    ];
+
+```
+
 ## I can't get payments to work? eg: PayPal, PaymentExpress, Other..
 
 see [payment](06_Payment.md)
@@ -49,7 +61,7 @@ The default shop module provides a few shipping [modifiers](../03_How_It_Works/O
 Follow the [Silverstripe internationalisation guide](http://docs.silverstripe.org/en/developer_guides/i18n/)
 
 
-The translation of the silvershop module is being done via Transifex. You can see the current translation progress on: [www.transifex.com/silvershop/silverstripe-shop](https://www.transifex.com/silvershop/silverstripe-shop). 
+The translation of the silvershop module is being done via Transifex. You can see the current translation progress on: [www.transifex.com/silvershop/silverstripe-shop](https://www.transifex.com/silvershop/silverstripe-shop).
 If your language isn't translated yet, we welcome your contribution on transifex! Just click the **"Help Translate "SilverShop"** button to get started.
 
 

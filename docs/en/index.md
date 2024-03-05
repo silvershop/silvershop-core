@@ -3,7 +3,7 @@ Add it as a shop component of a website, or use as a full ecommerce website solu
 
 Customisation is left to the developer, similar to how the SilverStripe CMS is customised.
 There is little in the way of online web-interface based configuration, tweaking and setup.
-This has been left for the store owner to collaborate with their developer. 
+This has been left for the store owner to collaborate with their developer.
 
 ## [Getting Set Up](01_Getting_Set_Up/index.md) < Start Here
 
@@ -13,7 +13,7 @@ This has been left for the store owner to collaborate with their developer.
 * [Payment](01_Getting_Set_Up/06_Payment.md)
 * [Bulk loading products from a CSV spreadsheet](01_Getting_Set_Up/Bulk_Loading.md)
 * [Shipping](01_Getting_Set_Up/04_Shipping.md) and [Tax](01_Getting_Set_Up/05_Tax.md) Calculation
-
+* [Internationalsiation i18n](01_Getting_Set_Up/07_Internationalisation.md)
 ## [Customisation](02_Customisation/index.md)
 
 * [Emails](02_Customisation/Emails.md)
@@ -23,7 +23,7 @@ This has been left for the store owner to collaborate with their developer.
 * [Hooks](02_Customisation/Hooks.md)
 * [Recipes](02_Customisation/01_Recipes) - how do build in various features.
 * [Migrating To Silverstripe](02_Customisation/Migrating_To_SilverStripe.md)
-* [Contributing](02_Customisation/Contributing.md) - get involved with development.  
+* [Contributing](02_Customisation/Contributing.md) - get involved with development.
  * [Testing](02_Customisation/Testing.md) - infrastructure / instructions
 
 
@@ -38,7 +38,7 @@ This has been left for the store owner to collaborate with their developer.
 * [Shopping Cart](03_How_It_Works/Shopping_Cart.md)
 * [Development](03_How_It_Works/Development.md) - Mission/aim, Coding style/conventions, Release process
 * [Glossary](03_How_It_Works/Glossary.md)
- 
+
 ## External Links
 
 * [Demo](http://demo.ss-shop.org/)
