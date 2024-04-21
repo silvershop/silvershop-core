@@ -27,7 +27,7 @@
                         <% if $Image %>
                             <div class="image">
                                 <a href="$Link" title="<%t SilverShop\Generic.ReadMoreTitle "Click here to read more on &quot;{Title}&quot;" Title=$TableTitle %>">
-                                    $Image.setWidth(45)
+                                    $Image.ScaleWidth(45)
                                 </a>
                             </div>
                         <% end_if %>
