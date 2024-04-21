@@ -2,7 +2,7 @@
 To send emails to customers after changes, start by listing the statuses where an order will be logged:
 ```yaml
 #in mysite/config.yml
-Order:
+SilverShop\Model\Order:
   log_status:
     - Processing
     - Sent
@@ -13,7 +13,7 @@ Next, customise the email by overriding Silvershop's existing settings:
 ```yaml
 #in mysite/lang/en.yml
 en:
-  ShopEmail:
+  SilverShop\ShopEmail:
     PhoneNumber: 123 4567
     Regards: Regards
     StatusChangeSubject: 'Business Name - {Title}'
@@ -23,7 +23,7 @@ en:
     StatusChangeProcessingNote: 'Your note for the email body when order status is Processing'
     StatusChangeSentNote: 'Your note for the email body when order status is Sent' 
 ```
-To further customise the email, copy the template `Order_StatusEmail.ss` from `silvershop/templates/email` folder and paste to `{yourtheme}/templates/email` and make the required adjustments.
+To further customise the email, copy the template `Order_StatusEmail.ss` from `/templates/SilverShop/Model/` folder and paste to `{yourtheme}/templates/SilverShop/Model/` and make the required adjustments.
 
 To override the default recipient email address form notifications, add the bellow method to a SilverShop\Model\Order.php extension.
 ```php
