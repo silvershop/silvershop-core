@@ -13,4 +13,6 @@ jobs:
       composer_require_extra:
         phpunit/phpunit:^9.5
         silverstripe/silverstripe-omnipay:dev-main
-        php-http/discovery:^1.18.1
+        php-http/discovery:^1.19.4
+        symfony/http-foundation:^6.4.4
+        moneyphp/money:^4.5.0

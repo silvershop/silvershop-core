@@ -6,6 +6,12 @@ SilverShop\Checkout\CheckoutConfig:
   member_creation_enabled: true
   membership_required: true
 
+# Send a bcc copy of order & status change emails to the administrator
+SilverShop\Checkout\OrderEmailNotifier:
+  bcc_confirmation_to_admin: true
+  bcc_receipt_to_admin: true
+  bcc_status_change_to_admin: true
+
 SilverStripe\Control\Email\Email:
   admin_email: example@example.com
 
