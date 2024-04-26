@@ -24,12 +24,33 @@ class OrderEmailNotifier
     use Configurable;
 
     /**
+     * bcc Confirmation Emails to Admin
+     *
+     * @var boolean
+     */
+    private static $bcc_confirmation_to_admin = false;
+
+    /**
+     * bcc Receipt Emails to Admin
+     *
+     * @var boolean
+     */
+    private static $bcc_receipt_to_admin = false;
+
+    /**
+     * bcc Status Change Emails to Admin
+     *
+     * @var boolean
+     */
+    private static $bcc_status_change_to_admin = false;
+
+    /**
      * @var Order $order
      */
     protected $order;
 
     /**
-     * @var bool
+     * @var boolean
      */
     protected $debugMode = false;
 
@@ -243,6 +264,10 @@ class OrderEmailNotifier
                     'FromEmail' => $adminEmail
                 ]
             );
+
+        if (self::config()->bcc_status_change_to_admin) {
+            $email->setBcc(Email::config()->admin_email);
+        }
 
         if ($this->debugMode) {
             $result = $this->debug($email);
