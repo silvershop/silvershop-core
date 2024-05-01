@@ -779,7 +779,7 @@ class Order extends DataObject
      */
     public function generateReference()
     {
-        $reference = str_pad($this->ID, self::$reference_id_padding, '0', STR_PAD_LEFT);
+        $reference = str_pad($this->ID, static::config()->get('reference_id_padding'), '0', STR_PAD_LEFT);
 
         $this->extend('generateReference', $reference);
 
