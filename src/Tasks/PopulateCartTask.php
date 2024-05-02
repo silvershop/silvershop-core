@@ -7,7 +7,7 @@ use SilverShop\Page\CheckoutPage;
 use SilverShop\Page\Product;
 use SilverStripe\Control\Controller;
 use SilverStripe\Dev\BuildTask;
-use SilverStripe\Security\Member;
+use SilverStripe\Security\Security;
 use SilverStripe\Versioned\Versioned;
 
 /**
@@ -30,7 +30,7 @@ class PopulateCartTask extends BuildTask
                     $product = $variations->sort('RAND()')->first();
                 }
                 $quantity = (int)rand(1, 5);
-                if ($product->canPurchase(Member::currentUser(), $quantity)) {
+                if ($product->canPurchase(Security::getCurrentUser(), $quantity)) {
                     $cart->add($product, $quantity);
                 }
             }

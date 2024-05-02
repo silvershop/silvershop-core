@@ -127,7 +127,7 @@ public function getData(Order $order) {
 		return array(
 			'Organisation' => $order->Organisation,
 			...
-	if($member = Member::currentUser()){
+	if($member = Security::getCurrentUser()){
 		return array(
 			'Organisation' => $member->Organisation,
 			...

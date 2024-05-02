@@ -29,7 +29,7 @@ class MyCustomCheckoutComponentConfig extends CheckoutComponentConfig
     {
         parent::__construct($order);
         $this->addComponent(CustomerDetailsCheckoutComponent::create());
-        if (Checkout::member_creation_enabled() && !Member::currentUserID()) {
+        if (Checkout::member_creation_enabled() && !Security::getCurrentUser()) {
             $this->addComponent(MembershipCheckoutComponent::create());
         }
         if (count(GatewayInfo::getSupportedGateways()) > 1) {
