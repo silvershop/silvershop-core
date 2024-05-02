@@ -462,7 +462,7 @@ class Order extends DataObject
      */
     public function setTotal($val)
     {
-        $this->setField('Total', round($val, self::$rounding_precision));
+        $this->setField('Total', round($val, static::config()->get('rounding_precision')));
     }
 
     /**
@@ -807,7 +807,7 @@ class Order extends DataObject
     protected function onBeforeWrite()
     {
         parent::onBeforeWrite();
-        if (!$this->getField('Reference') && in_array($this->Status, self::$placed_status)) {
+        if (!$this->getField('Reference') && in_array($this->Status, static::config()->get('placed_status'))) {
             $this->generateReference();
         }
 

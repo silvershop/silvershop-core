@@ -42,15 +42,15 @@ You may want to run the CartCleanupTask before migrating if you want to discard 
     public function migrateOrders()
     {
         $start = $count = 0;
-        $batch = Order::get()->sort('Created', 'ASC')->limit($start, self::$batch_size);
+        $batch = Order::get()->sort('Created', 'ASC')->limit($start, static::config()->get('batch_size'));
         while ($batch->exists()) {
             foreach ($batch as $order) {
                 $this->migrate($order);
                 echo '. ';
                 $count++;
             }
-            $start += self::$batch_size;
-            $batch = $batch->limit($start, self::$batch_size);
+            $start += static::config()->get('batch_size');
+            $batch = $batch->limit($start, static::config()->get('batch_size'));
         };
         echo "$count orders updated.\n<br/>";
     }

@@ -14,6 +14,6 @@ class RestrictionRegionCountryDropdownField extends DropdownField
         $source = SiteConfig::current_site_config()->getCountriesList(true);
         parent::__construct($name, $title, $source, $value);
         $this->setHasEmptyDefault(true);
-        $this->setEmptyString(self::$defaultname);
+        $this->setEmptyString(static::config()->get('defaultname'));
     }
 }

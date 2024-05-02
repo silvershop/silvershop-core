@@ -173,14 +173,14 @@ class Address extends DataObject
 
     /**
      * Get an array of data fields that must be populated for model to be valid.
-     * Required fields can be customised via self::$required_fields
+     * Required fields can be customised via private static $required_fields
      */
     public function getRequiredFields()
     {
         $fields = self::config()->required_fields;
         //hack to allow overriding arrays in ss config
-        if (self::$required_fields != $fields) {
-            foreach (self::$required_fields as $requirement) {
+        if (static::config()->get('required_fields') != $fields) {
+            foreach (static::config()->get('required_fields') as $requirement) {
                 if (($key = array_search($requirement, $fields)) !== false) {
                     unset($fields[$key]);
                 }
