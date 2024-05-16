@@ -216,6 +216,12 @@ class Order extends DataObject
     private static $cancel_before_payment = true;
 
     /**
+     * Email customer an invoice upon payment
+     * @config
+     */
+    private static bool $send_receipt = true;
+
+    /**
      * Whether or not an order can be cancelled before processing
      *
      * @config
@@ -845,7 +851,7 @@ class Order extends DataObject
             //all payment is settled
             $this->extend('onPaid');
 
-            if (!$this->ReceiptSent) {
+            if (!$this->ReceiptSent && static::config()->get('send_receipt')) {
                 OrderEmailNotifier::create($this)->sendReceipt();
                 $this->setField('ReceiptSent', DBDatetime::now()->Rfc2822());
             }

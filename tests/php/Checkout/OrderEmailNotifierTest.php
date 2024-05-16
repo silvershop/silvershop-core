@@ -54,6 +54,19 @@ class OrderEmailNotifierTest extends SapphireTest
         $this->assertEmailSent('test@example.com', 'shop-admin@example.com');
     }
 
+    public function testReceiptNoEmailSent()
+    {
+        $this->clearEmails();
+        Config::modify()->set(Order::class, 'send_receipt', false);
+        $order = $this->objFromFixture(Order::class, 'unpaid');
+        $order->setField('Status', 'Paid');
+        $order->write();
+        $this->assertNull(
+            $this->findEmail('hi@there.net', 'shop-admin@example.com'),
+            'An email is not sent when the Order class send_receipt is set to false'
+        );
+    }
+
     public function testStatusUpdate()
     {
         $this->notifier->sendStatusChange('test subject');

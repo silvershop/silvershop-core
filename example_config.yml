@@ -22,6 +22,7 @@ SilverShop\Model\Order:
   modifiers:
     - 'SilverShop\Model\Modifiers\Shipping\Simple'
     - 'SilverShop\Model\Modifiers\Tax\FlatTax'
+  # send_receipt: false  # send paid invoice to customer (default is true)
   cancel_before_payment: false
   cancel_before_processing: false
   cancel_before_sending: false
