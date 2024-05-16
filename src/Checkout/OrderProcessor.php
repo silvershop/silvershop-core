@@ -34,6 +34,16 @@ class OrderProcessor
     use Configurable;
 
     /**
+     * @config
+     */
+    private static bool $send_admin_notification = false;
+
+    /**
+     * @config
+     */
+    private static bool $send_confirmation = false;
+
+    /**
      * @var Order
      */
     protected $order;
