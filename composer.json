@@ -23,7 +23,7 @@
   "require": {
     "silverstripe/cms": "^5",
     "silverstripe/asset-admin": "*",
-    "silverstripe/silverstripe-omnipay": "^3@dev | dev-main#8f277fa5ef513ded38e55ed3c56778feada26174",
+    "silverstripe/silverstripe-omnipay": "^4",
     "silvershop/silverstripe-listsorter": "^3",
     "silvershop/silverstripe-sqlquerylist": "^3",
     "symbiote/silverstripe-gridfieldextensions": "^4"
