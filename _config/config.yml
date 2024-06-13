@@ -2,19 +2,6 @@
 Name: silvershop-config
 After: framework/routes#coreroutes
 ---
-
-SilverStripe\Security\Member:
-  login_joins_cart: true
-
-SilverShop\Extension\ProductImageExtension:
-  thumbnail_width: 140
-  thumbnail_height: 100
-  content_image_width: 200
-  large_image_width: 600
-
-SilverShop\Checkout\OrderProcessor:
-  bcc_receipt_to_admin: true
-
 SilverStripe\Admin\LeftAndMain:
   extra_requirements_css:
     - 'silvershop/core: client/dist/css/shopcms.css'
