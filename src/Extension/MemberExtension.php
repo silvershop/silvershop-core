@@ -18,6 +18,11 @@ use SilverStripe\SiteConfig\SiteConfig;
  */
 class MemberExtension extends DataExtension
 {
+    /**
+     * @config
+     */
+    private static bool $login_joins_cart = true;
+
     private static $has_many = [
         'AddressBook' => Address::class,
     ];

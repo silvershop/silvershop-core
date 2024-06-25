@@ -32,6 +32,11 @@ class ShoppingCartController extends Controller
     private static $url_segment = 'shoppingcart';
 
     /**
+     * @config
+     */
+    private static string $disable_security_token = '';
+
+    /**
      * Whether or not this controller redirects to the cart-page whenever an item was added
      *
      * @config
