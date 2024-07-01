@@ -2,6 +2,7 @@
 
 namespace SilverShop\Checkout;
 
+use Psr\Log\LoggerInterface;
 use SilverShop\Extension\ShopConfigExtension;
 use SilverShop\Model\Order;
 use SilverShop\Model\OrderStatusLog;
@@ -12,6 +13,7 @@ use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Config\Configurable;
 use SilverStripe\Core\Injector\Injectable;
 use SilverStripe\Core\Injector\Injector;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 
 /**
  * Handles email notifications to customers and / or admins.
@@ -43,6 +45,15 @@ class OrderEmailNotifier
      * @var boolean
      */
     private static $bcc_status_change_to_admin = false;
+
+    private static $dependencies = [
+        'Logger' => '%$' . LoggerInterface::class,
+    ];
+
+    /**
+     * @var LoggerInterface
+     */
+    protected $logger;
 
     /**
      * @var Order $order
@@ -116,7 +127,7 @@ class OrderEmailNotifier
      *
      * @return bool|string
      */
-    public function sendEmail($template, $subject, $copyToAdmin = true)
+    public function sendEmail($template, $subject, $copyToAdmin = true): bool|string
     {
         $email = $this->buildEmail($template, $subject);
 
@@ -126,7 +137,13 @@ class OrderEmailNotifier
         if ($this->debugMode) {
             return $this->debug($email);
         } else {
-            return $email->send();
+            try {
+                $email->send();
+            } catch (TransportExceptionInterface $e) {
+                $this->logger->error('OrderEmailNotifier.sendEmail: error sending email in ' . __FILE__ . ' line ' . __LINE__ . ": {$e->getMessage()}");
+                return false;
+            }
+            return true;
         }
     }
 
@@ -155,7 +172,7 @@ class OrderEmailNotifier
      *
      * @return bool|string
      */
-    public function sendAdminNotification()
+    public function sendAdminNotification(): bool|string
     {
         $subject = _t(
             'SilverShop\ShopEmail.AdminNotificationSubject',
@@ -170,7 +187,13 @@ class OrderEmailNotifier
         if ($this->debugMode) {
             return $this->debug($email);
         } else {
-            return $email->send();
+            try {
+                $email->send();
+            } catch (TransportExceptionInterface $e) {
+                $this->logger->error('OrderEmailNotifier.sendAdminNotification: error sending email in ' . __FILE__ . ' line ' . __LINE__ . ": {$e->getMessage()}");
+                return false;
+            }
+            return true;
         }
     }
 
@@ -197,7 +220,7 @@ class OrderEmailNotifier
     /**
      * Sends an email to the admin that an order has been cancelled
      */
-    public function sendCancelNotification()
+    public function sendCancelNotification(): bool|string
     {
         $email = Email::create()
             ->setSubject(_t(
@@ -213,7 +236,13 @@ class OrderEmailNotifier
         if ($this->debugMode) {
             return $this->debug($email);
         } else {
-            return $email->send();
+            try {
+                $email->send();
+            } catch (TransportExceptionInterface $e) {
+                $this->logger->error('OrderEmailNotifier.sendCancelNotification: error sending email in ' . __FILE__ . ' line ' . __LINE__ . ": {$e->getMessage()}");
+                return false;
+            }
+            return true;
         }
     }
 
@@ -225,7 +254,7 @@ class OrderEmailNotifier
      *
      * @return bool|string
      */
-    public function sendStatusChange($title, $note = null)
+    public function sendStatusChange($title, $note = null): bool|string
     {
         $latestLog = null;
 
@@ -272,7 +301,13 @@ class OrderEmailNotifier
         if ($this->debugMode) {
             $result = $this->debug($email);
         } else {
-            $result = $email->send();
+            try {
+                $email->send();
+            } catch (TransportExceptionInterface $e) {
+                $this->logger->error('OrderEmailNotifier.sendStatusChange: error sending email in ' . __FILE__ . ' line ' . __LINE__ . ": {$e->getMessage()}");
+                return false;
+            }
+            return true;
         }
 
         if ($latestLog) {
@@ -303,5 +338,15 @@ class OrderEmailNotifier
             "<pre>$headers</pre>" .
             "<h3>Body</h3>" .
             $htmlRender;
+    }
+
+    /**
+     * @param LoggerInterface $logger
+     * @return $this
+     */
+    public function setLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+        return $this;
     }
 }
