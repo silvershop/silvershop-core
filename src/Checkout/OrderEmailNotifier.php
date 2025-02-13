@@ -26,21 +26,21 @@ class OrderEmailNotifier
     use Configurable;
 
     /**
-     * bcc Confirmation Emails to Admin
+     * BCC Confirmation Emails to Admin
      *
      * @var boolean
      */
     private static $bcc_confirmation_to_admin = false;
 
     /**
-     * bcc Receipt Emails to Admin
+     * BCC Receipt Emails to Admin
      *
      * @var boolean
      */
     private static $bcc_receipt_to_admin = false;
 
     /**
-     * bcc Status Change Emails to Admin
+     * BCC Status Change Emails to Admin
      *
      * @var boolean
      */
@@ -132,7 +132,7 @@ class OrderEmailNotifier
         $email = $this->buildEmail($template, $subject);
 
         if ($copyToAdmin) {
-            $email->setBcc(Email::config()->admin_email);
+            $email->setBCC(Email::config()->admin_email);
         }
         if ($this->debugMode) {
             return $this->debug($email);
@@ -295,7 +295,7 @@ class OrderEmailNotifier
             );
 
         if (self::config()->bcc_status_change_to_admin) {
-            $email->setBcc(Email::config()->admin_email);
+            $email->setBCC(Email::config()->admin_email);
         }
 
         if ($this->debugMode) {
