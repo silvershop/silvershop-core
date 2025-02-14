@@ -110,8 +110,8 @@ hr:
     Change: Promjeni
     Customer: Kupac
     Date: Datum
-    DateFormatNice: '%m/%d/%G'
-    DateTimeFormatNice: '%m/%d/%G %I:%M%p'
+    DateFormatNice: 'd/m/Y'
+    DateTimeFormatNice: 'd/m/Y H:i'
     DateTimeFormatNice24: 'd/m/Y H:i'
     Edit: Uredi
     Quantity: Količina

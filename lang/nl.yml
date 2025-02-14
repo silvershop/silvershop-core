@@ -131,8 +131,8 @@ nl:
     Change: Pas aan
     Customer: Klant
     Date: Datum
-    DateFormatNice: '%d-%m-%G'
-    DateTimeFormatNice: '%d-%m-%G %H:%M'
+    DateFormatNice: 'd-m-Y'
+    DateTimeFormatNice: 'd-m-Y H:i'
     DateTimeFormatNice24: 'd/m/Y H:i'
     DevToolsTitle: 'Winkel ontwikkelgereedschappen'
     Edit: Bewerk

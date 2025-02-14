@@ -129,8 +129,8 @@ nn:
     Change: Endre
     Customer: Kunde
     Date: Dato
-    DateFormatNice: '%m/%d/%G'
-    DateTimeFormatNice: '%m/%d/%G %I:%M%p'
+    DateFormatNice: 'm/d/Y'
+    DateTimeFormatNice: 'm/d/Y h:i A'
     DateTimeFormatNice24: 'd/m/Y H:i'
     DevToolsTitle: 'Vis utviklingsverktøy'
     Edit: Endre

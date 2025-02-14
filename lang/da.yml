@@ -129,8 +129,8 @@ da:
     Change: Ændring
     Customer: Kunde
     Date: Dato
-    DateFormatNice: '%d/%m/%Y'
-    DateTimeFormatNice: '%d/%m/%Y %H:%i%s'
+    DateFormatNice: 'd/m/Y'
+    DateTimeFormatNice: 'd/m/Y H:i:s'
     DateTimeFormatNice24: 'd/m/Y H:i'
     DevToolsTitle: 'SilverShop udviklingsværktøjer'
     Edit: Rediger

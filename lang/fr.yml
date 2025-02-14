@@ -131,8 +131,8 @@ fr:
     Change: Change
     Customer: Client
     Date: Date
-    DateFormatNice: '%m/%d/%G'
-    DateTimeFormatNice: '%m/%d/%G %I:%M%p'
+    DateFormatNice: 'm/d/Y'
+    DateTimeFormatNice: 'm/d/Y h:i A'
     DateTimeFormatNice24: 'j/m/A H:i'
     DevToolsTitle: 'Rechercher des outils de développeur'
     Edit: Éditer
