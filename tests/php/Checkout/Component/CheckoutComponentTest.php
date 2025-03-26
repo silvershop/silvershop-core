@@ -228,13 +228,19 @@ class CheckoutComponentTest extends SapphireTest
         );
 
         $config->setData($data);
-        //assertions!
+        $fields = $config->getFormFields();
+        $this->assertNotNull($fields, "Form should be generated");
 
-        //form field generation
-        //validate data
-        //set data
-        //get data
-        $this->markTestIncomplete('Lots missing here');
+        // Test required fields validation
+        $this->assertEquals(
+            11,
+            count($config->getRequiredFields()),
+            'Component should have required fields'
+        );
+        $this->assertTrue(
+            in_array("$ns-CustomerDetails_Email", $config->getRequiredFields()),
+            'Email is a required field'
+        );
     }
 
     public function testSinglePageConfigForSingleCountrySiteWithReadonlyFieldsForCountry()

@@ -72,21 +72,66 @@ class OrderTest extends SapphireTest
 
     public function testCMSFields()
     {
-        //singleton(Order::class)->getCMSFields();
-        $this->markTestIncomplete('assertions!');
+        //$order = $this->objFromFixture(Order::class, "paid");
+        $fields = singleton(Order::class)->getCMSFields();
+
+        // Assert essential fields exist
+        $this->assertNotNull(
+            $fields->dataFieldByName('Status'),
+            'Status field should exist'
+        );
+        $this->assertStringContainsString(
+            'Customer',
+            print_r($fields, true),
+            'Customer field should exist'
+        );
+        $this->assertStringContainsString(
+            'Name',
+            print_r($fields, true),
+            'Name field should exist'
+        );
+        $this->assertStringContainsString(
+            'Email',
+            print_r($fields, true),
+            'Email field should exist'
+        );
+        $this->assertStringContainsString(
+            'Ship To',
+            print_r($fields, true),
+            'Ship To field should exist'
+        );
+        $this->assertStringContainsString(
+            'Bill To',
+            print_r($fields, true),
+            'Bill To field should exist'
+        );
     }
 
     public function testSearchFields()
     {
-        //singleton(Order::class)->scaffoldSearchFields();
-        $this->markTestIncomplete('assertions!');
+        $fields = singleton(Order::class)->scaffoldSearchFields();
+
+        $this->assertNotNull($fields->dataFieldByName('Reference'), 'Reference should be searchable');
+        $this->assertNotNull($fields->dataFieldByName('Name'), 'Name should be searchable');
+        $this->assertNotNull($fields->dataFieldByName('Email'), 'Email should be searchable');
+        $this->assertNotNull($fields->dataFieldByName('Status'), 'Status should be searchable');
     }
 
     public function testDebug()
     {
-        //$order = $this->objFromFixture(Order::class, "cart");
-        //$order->debug();
-        $this->markTestIncomplete('assertions!');
+        $order = $this->objFromFixture(Order::class, 'cart');
+        $debug = $order->debug();
+
+        $this->assertStringContainsString('ID: ' . $order->ID, $debug);
+        $this->assertStringContainsString('Status: ' . $order->Status, $debug);
+        $this->assertStringContainsString('Total: ' . $order->Total, $debug);
+        $this->assertStringContainsString('<h2>Items</h2>', $debug);
+
+        // Check items are listed
+        foreach ($order->Items() as $item) {
+            $this->assertStringContainsString((string)$item->Quantity, $debug);
+            $this->assertStringContainsString((string)$item->UnitPrice, $debug);
+        }
     }
 
     public function testOrderItems()
