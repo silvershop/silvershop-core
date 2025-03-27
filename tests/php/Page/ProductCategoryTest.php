@@ -192,8 +192,95 @@ class ProductCategoryTest extends FunctionalTest
 
     public function testFiltering()
     {
-        $this->markTestIncomplete('check filtering');
-        //check published/ non published / allow purchase etc
-        //Hide product if no price...or if product has variations, allow viewing.
+        // Test unpublished products
+        $this->socks->doUnpublish();
+        $products = $this->products->ProductsShowable();
+        $this->assertNotContains(
+            $this->socks->URLSegment,
+            $products->column('URLSegment'),
+            'Unpublished products should not be shown'
+        );
+
+        // Test AllowPurchase flag
+        $this->tshirt->AllowPurchase = false;
+        $this->tshirt->write();
+        $products = $this->products->ProductsShowable();
+        $this->assertContains(
+            $this->tshirt->URLSegment,
+            $products->column('URLSegment'),
+            'Products with AllowPurchase=false are shown'
+        );
+
+        // Test products with no price but has variations
+        Config::modify()->set(ProductCategory::class, 'must_have_price', true);
+        $this->hdtv->BasePrice = 0;
+        $this->hdtv->write();
+
+        // Create variations for HDTV
+        $variation1 = Variation::create(
+            [
+                'InternalItemID' => '42-Inch',
+                'Price' => 899.99,
+                'ProductID' => $this->hdtv->ID
+            ]
+        );
+        $variation1->write();
+
+        $variation2 = Variation::create(
+            [
+                'InternalItemID' => '55-Inch',
+                'Price' => 1299.99,
+                'ProductID' => $this->hdtv->ID
+            ]
+        );
+        $variation2->write();
+
+        $products = $this->products->ProductsShowable();
+        $this->assertContains(
+            $this->hdtv->URLSegment,
+            $products->column('URLSegment'),
+            'Products with no base price but with priced variations should be shown'
+        );
+
+        // Test products with no price and no variations
+        $this->beachball->BasePrice = 0;
+        $this->beachball->write();
+        $products = $this->products->ProductsShowable();
+        $this->assertNotContains(
+            $this->beachball->URLSegment,
+            $products->column('URLSegment'),
+            'Products with no price and no variations should not be shown'
+        );
+
+        // Test draft products
+        Versioned::set_stage('Stage');
+        $newProduct = Product::create(
+            [
+                'Title' => 'Draft Product',
+                'URLSegment' => 'draft-product',
+                'BasePrice' => 99.99,
+                'ParentID' => $this->products->ID
+            ]
+        );
+        $newProduct->write();
+
+        Versioned::set_stage('Live');
+        $products = $this->products->ProductsShowable();
+        $this->assertNotContains(
+            'draft-product',
+            $products->column('URLSegment'),
+            'Draft products should not be shown in live mode'
+        );
+
+        // Test multiple filters combined
+        $this->mp3player->AllowPurchase = false;
+        $this->mp3player->BasePrice = 0;
+        $this->mp3player->write();
+        $products = $this->products->ProductsShowable();
+        $this->assertNotContains(
+            $this->mp3player->URLSegment,
+            $products->column('URLSegment'),
+            'Products failing multiple filter conditions should not be shown'
+        );
     }
 }

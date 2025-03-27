@@ -50,13 +50,15 @@ class CheckoutPageTest extends FunctionalTest
             ]
         );
 
-        $this->markTestIncomplete('Add some assertions');
+        $order = Order::get()->byID($order->ID);
+        $this->assertNull($order->PaymentStatus, 'Payment status should be null after cancellation');
+        $this->assertEquals('Unpaid', $order->Status, 'Order status should be Unpaid');
     }
 
     public function testCanViewCheckoutPage()
     {
-        $this->get('checkout');
-        $this->markTestIncomplete("check order hasn't started");
+        $page = $this->get('checkout');
+        $this->assertEquals(404, $page->getStatusCode(), 'Cannot access the Checkout Page without a current order');
     }
 
     public function testFindLink()

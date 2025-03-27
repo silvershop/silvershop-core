@@ -111,18 +111,7 @@ class SteppedCheckoutExtensionTest extends FunctionalTest
     public function testMembershipStep()
     {
         $this->logOut();
-        //this should still work if there is no cart
         ShoppingCart::singleton()->clear();
-        /*
-        $this->checkout->index();
-        $this->checkout->membership();
-        $this->post('/checkout/guestcontinue', array()); //redirect to next step
-        $this->checkout->handleRequest($this->buildTestRequest('checkout/createaccount'));
-        */
-        $form = $this->checkout->MembershipForm();
-        $data = [];
-        $form->loadDataFrom($data);
-
         $data = [
             'FirstName' => 'Michael',
             'Surname' => 'Black',
@@ -133,7 +122,7 @@ class SteppedCheckoutExtensionTest extends FunctionalTest
             ],
             'action_docreateaccount' => 'Create New Account',
         ];
-        $response = $this->post('/checkout/CreateAccountForm', $data); //redirect to next step
+        $this->post('/checkout/CreateAccountForm', $data); //redirect to next step
 
         $member = MemberExtension::get_by_identifier("mb@example.com");
         $this->assertTrue((boolean)$member, "Check new account was created");
@@ -143,54 +132,125 @@ class SteppedCheckoutExtensionTest extends FunctionalTest
 
     public function testContactDetails()
     {
-        $user = $this->objFromFixture(Member::class, "joebloggs");
-        Security::setCurrentUser($user);
-        $this->checkout->handleRequest($this->buildTestRequest('contactdetails'));
-        $data = [
-            'FirstName' => 'Pauline',
-            'Surname' => 'Richardson',
-            'Email' => 'p.richardson@example.com',
-            'action_setcontactdetails' => 1,
-        ];
-        $response = $this->post('/checkout/ContactDetailsForm', $data);
-
-        $this->markTestIncomplete('check order has been updated');
+        $this->post(
+            '/checkout/ContactDetailsForm',
+            [
+                'SilverShop-Checkout-Component-CustomerDetails_Email' => 'p.richardson@example.com',
+                'SilverShop-Checkout-Component-CustomerDetails_FirstName' => 'Pauline',
+                'SilverShop-Checkout-Component-CustomerDetails_Surname' => 'Richardson',
+            ]
+        );
+        $order = ShoppingCart::curr();
+        $this->assertEquals(
+            'Pauline',
+            $order->FirstName,
+            'Order FirstName should be updated'
+        );
+        $this->assertEquals(
+            'Richardson',
+            $order->Surname,
+            'Order Surname should be updated'
+        );
+        $this->assertEquals(
+            'p.richardson@example.com',
+            $order->Email,
+            'Order Email should be updated'
+        );
     }
 
     public function testShippingAddress()
     {
-        $user = $this->objFromFixture(Member::class, "joebloggs");
-        Security::setCurrentUser($user);
-        $this->checkout->handleRequest($this->buildTestRequest('shippingaddress'));
-        $data = [
-            'Address' => '2b Baba place',
-            'AddressLine2' => 'Level 2',
-            'City' => 'Newton',
-            'State' => 'Wellington',
-            'Country' => 'NZ',
-            'action_setaddress' => 1,
-        ];
-        $response = $this->post('/checkout/AddressForm', $data);
-
-        $this->markTestIncomplete('assertions!');
+        $this->post(
+            '/checkout/ShippingAddressForm',
+            [
+                'SilverShop-Checkout-Component-ShippingAddress_Company' => 'Acme Inc',
+                'SilverShop-Checkout-Component-ShippingAddress_Address' => '2b Baba place',
+                'SilverShop-Checkout-Component-ShippingAddress_AddressLine2' => 'Level 2',
+                'SilverShop-Checkout-Component-ShippingAddress_City' => 'Newton',
+                'SilverShop-Checkout-Component-ShippingAddress_State' => 'Wellington',
+                'SilverShop-Checkout-Component-ShippingAddress_Country' => 'NZ',
+                'SilverShop-Checkout-Component-ShippingAddress_Phone' => '12345678'
+            ]
+        );
+        $order = ShoppingCart::curr();
+        $address = $order->getShippingAddress();
+        $this->assertEquals(
+            'Acme Inc',
+            $address->Company,
+            'Shipping Company should be updated'
+        );
+        $this->assertEquals(
+            '2b Baba place',
+            $address->Address,
+            'Shipping address should be updated'
+        );
+        $this->assertEquals(
+            'Level 2',
+            $address->AddressLine2,
+            'Shipping address line 2 should be updated'
+        );
+        $this->assertEquals(
+            'Newton',
+            $address->City,
+            'Shipping city should be updated'
+        );
+        $this->assertEquals(
+            'Wellington',
+            $address->State,
+            'Shipping state should be updated'
+        );
+        $this->assertEquals(
+            'NZ',
+            $address->Country,
+            'Shipping country should be updated'
+        );
+        $this->assertEquals(
+            '12345678',
+            $address->Phone,
+            'Shipping phone number should be updated'
+        );
     }
 
     public function testBillingAddress()
     {
-        $user = $this->objFromFixture(Member::class, "joebloggs");
-        Security::setCurrentUser($user);
-        $this->checkout->handleRequest($this->buildTestRequest('billingaddress'));
-        $data = [
-            'Address' => '3 Art Cresent',
-            'AddressLine2' => '',
-            'City' => 'Walkworth',
-            'State' => 'New Caliphoneya',
-            'Country' => 'ZA',
-            'action_setbillingaddress' => 1,
-        ];
-        $response = $this->post('/checkout/AddressForm', $data);
-
-        $this->markTestIncomplete('assertions!');
+        $this->post(
+            '/checkout/BillingAddressForm',
+            [
+                'SilverShop-Checkout-Component-BillingAddress_Address' => '3 Art Cresent',
+                'SilverShop-Checkout-Component-BillingAddress_AddressLine2' => '',
+                'SilverShop-Checkout-Component-BillingAddress_City' => 'Walkworth',
+                'SilverShop-Checkout-Component-BillingAddress_State' => 'New Caliphoneya',
+                'SilverShop-Checkout-Component-BillingAddress_Country' => 'ZA',
+                'SilverShop-Checkout-Component-BillingAddress_Phone' => '12345678'
+            ]
+        );
+        $order = ShoppingCart::curr();
+        $address = $order->BillingAddress();
+        $this->assertEquals(
+            '3 Art Cresent',
+            $address->Address,
+            'Billing address should be updated'
+        );
+        $this->assertEquals(
+            'Walkworth',
+            $address->City,
+            'Billing city should be updated'
+        );
+        $this->assertEquals(
+            'New Caliphoneya',
+            $address->State,
+            'Billing state should be updated'
+        );
+        $this->assertEquals(
+            'ZA',
+            $address->Country,
+            'Billing country should be updated'
+        );
+        $this->assertEquals(
+            '12345678',
+            $address->Phone,
+            'Billing phone should be updated'
+        );
     }
 
     public function testPaymentMethod()

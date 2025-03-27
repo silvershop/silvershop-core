@@ -99,6 +99,8 @@ en:
     TermsPage: 'Terms and Conditions Page'
   SilverShop\Forms:
     FIELDISREQUIRED: '{name} is required'
+  SilverShop\Forms\AddProductForm:
+    QuantitySetToMaximum: 'Set to maximum quantity'
   SilverShop\Forms\CartForm:
     REMOVED_ITEMS: 'Removed {count} items.'
     UPDATED_ITEMS: 'Updated {count} items.'

@@ -62,28 +62,65 @@ class ShopPaymentTest extends FunctionalTest
         $this->objFromFixture(CartPage::class, "cart")->publishSingle();
     }
 
-    /**
-     * @doesNotPerformAssertions
-     */
     public function testManualPayment()
     {
-        $this->markTestIncomplete("Process a manual payment");
+        $order = $this->objFromFixture(Order::class, 'unpaid');
+        $payment = Payment::create()->init('Manual', 100.00, 'NZD');
+        $payment->OrderID = $order->ID;
+        $payment->write();
+
+        // Process payment
+        $processor = OrderProcessor::create($order);
+        $response = $processor->makePayment('Manual', []);
+
+        $this->assertTrue($response->isSuccessful(), 'Manual payment should be successful');
+        $this->assertEquals('Created', $payment->Status, 'Payment status should be Created');
     }
 
-    /**
-     * @doesNotPerformAssertions
-     */
     public function testOnsitePayment()
     {
-        $this->markTestIncomplete("Process an onsite payment");
+        $order = $this->objFromFixture(Order::class, 'unpaid');
+
+        // Process onsite payment with dummy gateway
+        $processor = OrderProcessor::create($order);
+        $response = $processor->makePayment(
+            'Dummy',
+            [
+                'number' => '4242424242424242',
+                'expiryMonth' => '12',
+                'expiryYear' => '2025',
+                'cvv' => '123'
+            ]
+        );
+        $processor->completePayment();
+        $this->assertTrue($response->isSuccessful(), 'Onsite payment should be successful');
+        $this->assertFalse($response->isRedirect(), 'Should not be a redirect for onsite payment');
+        $this->assertTrue($order->isPaid(), 'Order should be marked as paid');
+        $payment = $response->getPayment();
+        $this->assertEquals('Captured', $payment->Status, 'Payment status should be Captured');
     }
 
-    /**
-     * @doesNotPerformAssertions
-     */
     public function testOffsitePayment()
     {
-        $this->markTestIncomplete("Process an off-site payment");
+        $order = $this->objFromFixture(Order::class, 'unpaid');
+
+        // Process payment with dummy gateway
+        $processor = OrderProcessor::create($order);
+        $response = $processor->makePayment(
+            'Dummy',
+            [
+                'number' => '4242424242424242',
+                'expiryMonth' => '12',
+                'expiryYear' => '2025',
+                'cvv' => '123'
+            ]
+        );
+        $processor->completePayment();
+
+        $this->assertTrue($response->isSuccessful(), 'Onsite payment should be successful');
+        $this->assertEquals('Paid', $order->Status, 'Order status should be Paid');
+        $payment = $response->getPayment();
+        $this->assertEquals('Captured', $payment->Status, 'Payment status should be Captured');
     }
 
     public function testOffsitePaymentWithGatewayCallback()

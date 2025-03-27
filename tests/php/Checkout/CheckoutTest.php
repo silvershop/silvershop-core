@@ -83,12 +83,6 @@ class CheckoutTest extends SapphireTest
         );
     }
 
-    public function testSetShippingMethod()
-    {
-        //$this->checkout->setShippingMethod(new ShippingMethod()); //see shippingframework submodule
-        $this->markTestIncomplete('combine shipping framework with core, or remove reliance');
-    }
-
     public function testSetPaymentMethod()
     {
         $this->assertTrue($this->checkout->setPaymentMethod("Dummy"), "Valid method set correctly");
