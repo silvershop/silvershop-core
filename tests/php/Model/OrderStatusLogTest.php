@@ -6,10 +6,7 @@ use SilverShop\Checkout\OrderProcessor;
 use SilverShop\Model\Order;
 use SilverShop\Model\OrderStatusLog;
 use SilverShop\Tests\ShopTest;
-use SilverStripe\Control\Email\Mailer;
 use SilverStripe\Core\Config\Config;
-use SilverStripe\Core\Injector\Injector;
-use SilverStripe\Dev\TestMailer;
 use SilverStripe\Security\Member;
 use SilverStripe\Dev\SapphireTest;
 

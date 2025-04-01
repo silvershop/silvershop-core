@@ -2,7 +2,6 @@
 
 namespace SilverShop\ORM\FieldType;
 
-use SilverShop\Extension\ShopConfigExtension;
 use SilverStripe\Core\Convert;
 use SilverStripe\i18n\Data\Intl\IntlLocales;
 use SilverStripe\ORM\FieldType\DBVarchar;

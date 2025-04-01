@@ -18,7 +18,6 @@ use SilverStripe\Forms\FormAction;
 use SilverStripe\Forms\NumericField;
 use SilverStripe\Forms\RequiredFields;
 use SilverStripe\Forms\Validator;
-use SilverStripe\ORM\DataObject;
 
 /**
  * @package shop

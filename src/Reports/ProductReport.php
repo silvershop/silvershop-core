@@ -4,7 +4,6 @@ namespace SilverShop\Reports;
 
 use SilverShop\Page\Product;
 use SilverShop\SQLQueryList\SQLQueryList;
-use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\Queries\SQLSelect;
 

@@ -5,7 +5,6 @@ namespace SilverShop\Forms;
 use SilverShop\Checkout\Checkout;
 use SilverShop\Checkout\CheckoutComponentConfig;
 use SilverShop\Checkout\Component\CheckoutComponentNamespaced;
-use SilverShop\Checkout\Component\OnsitePayment;
 use SilverShop\Checkout\OrderProcessor;
 use SilverShop\Model\Order;
 use SilverStripe\Omnipay\GatewayFieldsFactory;

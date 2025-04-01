@@ -5,7 +5,6 @@ namespace SilverShop\Extension;
 use SilverShop\Cart\ShoppingCart;
 use SilverShop\Model\Address;
 use SilverShop\Model\Order;
-use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Forms\DropdownField;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\ORM\DataExtension;

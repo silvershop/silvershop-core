@@ -12,7 +12,6 @@ use SilverStripe\Control\Email\Email;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Config\Configurable;
 use SilverStripe\Core\Injector\Injectable;
-use SilverStripe\Core\Injector\Injector;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 
 /**

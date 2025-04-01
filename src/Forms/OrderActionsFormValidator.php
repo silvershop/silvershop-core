@@ -2,7 +2,6 @@
 
 namespace SilverShop\Forms;
 
-use SilverStripe\Control\Controller;
 use SilverStripe\Forms\RequiredFields;
 use SilverStripe\Omnipay\GatewayFieldsFactory;
 use SilverStripe\Omnipay\GatewayInfo;

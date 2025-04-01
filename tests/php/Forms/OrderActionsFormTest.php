@@ -6,7 +6,6 @@ use SilverShop\Extension\OrderManipulationExtension;
 use SilverShop\Forms\OrderActionsForm;
 use SilverShop\Forms\OrderActionsFormValidator;
 use SilverShop\Model\Order;
-use SilverShop\Page\AccountPage;
 use SilverShop\Page\CheckoutPage;
 use SilverShop\Tests\Model\Product\CustomProduct_OrderItem;
 use SilverShop\Tests\ShopTest;

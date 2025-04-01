@@ -3,7 +3,6 @@
 namespace SilverShop\Page;
 
 use PageController;
-use SilverShop\Forms\AddProductForm;
 use SilverStripe\Core\Injector\Injector;
 
 class ProductController extends PageController

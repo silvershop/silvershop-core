@@ -10,7 +10,6 @@ use SilverShop\Page\Product;
 use SilverShop\Tests\ShopTest;
 use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Dev\FunctionalTest;
-use SilverStripe\Dev\SapphireTest;
 use SilverStripe\SiteConfig\SiteConfig;
 
 class CheckoutFormTest extends FunctionalTest

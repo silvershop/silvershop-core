@@ -8,7 +8,6 @@ use SilverShop\Model\Order;
 use SilverShop\Page\Product;
 use SilverShop\Tests\ShopTest;
 use SilverStripe\Dev\FunctionalTest;
-use SilverStripe\Dev\SapphireTest;
 
 class ViewableCartExtensionTest extends FunctionalTest
 {

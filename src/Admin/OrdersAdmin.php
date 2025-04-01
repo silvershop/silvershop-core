@@ -9,7 +9,6 @@ use SilverStripe\Admin\ModelAdmin;
 use SilverStripe\Forms\GridField\GridFieldAddNewButton;
 use SilverStripe\Forms\GridField\GridFieldDetailForm;
 use SilverStripe\Forms\GridField\GridFieldSortableHeader;
-use SilverStripe\ORM\DataObject;
 
 /**
  * Order administration interface, based on ModelAdmin

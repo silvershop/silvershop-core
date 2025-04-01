@@ -5,7 +5,6 @@ namespace SilverShop\Tests\Model\Modifiers;
 use Exception;
 use SilverShop\Model\Modifiers\Tax\FlatTax;
 use SilverShop\Model\Order;
-use SilverShop\Model\OrderModifier;
 use SilverShop\Page\Product;
 use SilverShop\Tests\Model\Product\CustomProduct_OrderItem;
 use SilverShop\Tests\ShopTest;

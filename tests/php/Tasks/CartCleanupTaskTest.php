@@ -4,7 +4,6 @@ namespace SilverShop\Tests\Tasks;
 
 use SilverShop\Model\Order;
 use SilverShop\Tasks\CartCleanupTask;
-use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\SapphireTest;
 use SilverStripe\ORM\DB;

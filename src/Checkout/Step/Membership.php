@@ -7,7 +7,6 @@ use SilverShop\Checkout\CheckoutComponentConfig;
 use SilverShop\Checkout\Component\CustomerDetails;
 use SilverShop\Forms\CheckoutForm;
 use SilverShop\Model\Order;
-use SilverShop\Page\CheckoutPage;
 use SilverStripe\Control\Controller;
 use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Forms\FieldList;

@@ -15,7 +15,6 @@ use SilverStripe\Security\MemberAuthenticator\MemberAuthenticator;
 use SilverStripe\Security\Member;
 use SilverStripe\Security\Security;
 use SilverStripe\SiteConfig\SiteConfig;
-use SilverStripe\View\SSViewer;
 
 class AccountPageTest extends FunctionalTest
 {

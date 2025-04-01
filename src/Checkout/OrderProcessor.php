@@ -10,7 +10,6 @@ use SilverShop\Extension\ShopConfigExtension;
 use SilverShop\Model\Order;
 use SilverShop\ShopTools;
 use SilverStripe\Control\Controller;
-use SilverStripe\Core\Config\Config_ForClass;
 use SilverStripe\Core\Config\Configurable;
 use SilverStripe\Core\Injector\Injectable;
 use SilverStripe\Omnipay\Exception\InvalidConfigurationException;
@@ -20,7 +19,6 @@ use SilverStripe\Omnipay\Service\ServiceFactory;
 use SilverStripe\Omnipay\Service\ServiceResponse;
 use SilverStripe\ORM\DB;
 use SilverStripe\ORM\FieldType\DBDatetime;
-use SilverStripe\Security\Member;
 use SilverStripe\Security\Security;
 
 /**

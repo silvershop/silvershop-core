@@ -2,7 +2,6 @@
 
 namespace SilverShop\Tests;
 
-use SilverStripe\CMS\Controllers\ContentController;
 use SilverStripe\Core\Extension;
 use SilverStripe\Dev\TestOnly;
 
