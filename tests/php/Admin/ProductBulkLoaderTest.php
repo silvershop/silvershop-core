@@ -21,7 +21,7 @@ class ProductBulkLoaderTest extends FunctionalTest
         $file = fopen($filepath, 'r');
 
         fgetcsv($file); // pop header row
-        $compareRow = fgetcsv($file);
+        fgetcsv($file);
         $results = $loader->load($filepath);
 
         // Test that right amount of columns was imported

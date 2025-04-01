@@ -115,7 +115,6 @@ class OrderManipulationExtension extends Extension
      * Return the {@link Order} details for the current
      * Order ID that we're viewing (ID parameter in URL).
      *
-     * @param  HTTPRequest $request
      * @return array of template variables
      * @throws \SilverStripe\Control\HTTPResponse_Exception
      */
@@ -156,7 +155,7 @@ class OrderManipulationExtension extends Extension
 
     protected $sessionmessage;
 
-    protected $sessionmessagetype = null;
+    protected $sessionmessagetype;
 
     public function setSessionMessage($message = 'success', $type = 'good')
     {

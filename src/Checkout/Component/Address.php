@@ -158,7 +158,6 @@ abstract class Address extends CheckoutComponent
     }
 
     /**
-     * @param Order $order
      * @return \SilverShop\Model\Address
      */
     public function getAddress(Order $order)

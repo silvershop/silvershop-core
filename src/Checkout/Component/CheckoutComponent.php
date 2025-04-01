@@ -56,7 +56,6 @@ abstract class CheckoutComponent
     /**
      * Get required data out of the model.
      *
-     * @param Order $order
      *
      * @return array        get data from model(s)
      */
@@ -67,7 +66,6 @@ abstract class CheckoutComponent
      *
      * This function should never rely on form.
      *
-     * @param Order $order
      * @param array $data  data to be saved into order object
      *
      * @throws \Exception

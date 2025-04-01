@@ -39,8 +39,7 @@ class CustomerReport extends ShopPeriodReport
 
     public function getReportField()
     {
-        $field = parent::getReportField();
-        return $field;
+        return parent::getReportField();
     }
 
     public function query($params)

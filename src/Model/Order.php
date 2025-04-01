@@ -930,9 +930,8 @@ class Order extends DataObject
         if ($modifiers = $this->Modifiers()) {
             $val .= $modifiers->debug();
         }
-        $val .= "</div></div>";
 
-        return $val;
+        return $val . "</div></div>";
     }
 
     /**

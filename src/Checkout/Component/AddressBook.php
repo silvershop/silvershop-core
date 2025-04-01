@@ -93,7 +93,6 @@ abstract class AddressBook extends Address implements i18nEntityProvider
     /**
      * We don't know at the front end which fields are required so we defer to validateData
      *
-     * @param Order $order
      *
      * @return array
      */
@@ -103,8 +102,6 @@ abstract class AddressBook extends Address implements i18nEntityProvider
     }
 
     /**
-     * @param Order $order
-     * @param array $data
      *
      * @throws ValidationException
      */

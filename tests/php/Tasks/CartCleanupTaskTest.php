@@ -39,7 +39,7 @@ class CartCleanupTaskTest extends SapphireTest
         DB::query('UPDATE "SilverShop_Order" SET "LastEdited" = \'2014-01-31 10:00:00\' WHERE "ID" = ' . $orderPaidOldID);
 
         $task = new FakeCartCleanupTask();
-        $response = $task->run(null);
+        $task->run(null);
 
         $this->assertInstanceOf(Order::class, Order::get()->byID($orderRunningRecentID));
         $this->assertNull(Order::get()->byID($orderRunningOldID));

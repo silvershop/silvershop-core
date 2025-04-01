@@ -134,7 +134,7 @@ class CheckoutTest extends SapphireTest
 
         $this->expectException(ValidationException::class);
 
-        $member = $this->memberFactory->create(
+        $this->memberFactory->create(
             [
                 'FirstName' => 'Susan',
                 'Surname'   => 'Jackson',
@@ -156,7 +156,7 @@ class CheckoutTest extends SapphireTest
         $this->expectException(ValidationException::class);
         $this->expectExceptionMessage('Creating new memberships is not allowed');
 
-        $result = $this->memberFactory->create(
+        $this->memberFactory->create(
             [
                 'FirstName' => 'Some',
                 'Surname'   => 'Body',
@@ -174,7 +174,7 @@ class CheckoutTest extends SapphireTest
     {
         $this->expectException(ValidationException::class);
         $this->expectExceptionMessage('A password is required');
-        $result = $this->memberFactory->create(
+        $this->memberFactory->create(
             [
                 'FirstName' => 'Jim',
                 'Surname'   => 'Smith',
@@ -191,7 +191,7 @@ class CheckoutTest extends SapphireTest
     {
         $this->expectException(ValidationException::class);
         $this->expectExceptionMessage('A member already exists with the Email jeremy@example.com');
-        $result = $this->memberFactory->create(
+        $this->memberFactory->create(
             [
                 'FirstName' => 'Jeremy',
                 'Surname'   => 'Peremy',
@@ -209,7 +209,7 @@ class CheckoutTest extends SapphireTest
     {
         $this->expectException(ValidationException::class);
         $this->expectExceptionMessage('Required field not found: Email');
-        $result = $this->memberFactory->create(
+        $this->memberFactory->create(
             [
                 'FirstName' => 'John',
                 'Surname'   => 'Doe',

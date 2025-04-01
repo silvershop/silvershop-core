@@ -37,7 +37,6 @@ class CheckoutComponentConfig
     }
 
     /**
-     * @param CheckoutComponent $component
      * @param string            $insertBefore The class of the component to insert this one before
      * @return $this
      */

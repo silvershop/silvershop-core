@@ -72,8 +72,6 @@ class CartEditField extends FormField
     /**
      * Provides a way to modify the editableItems list
      * before it is rendered.
-     *
-     * @param Closure $callback
      */
     public function setEditableItemsCallback(Closure $callback)
     {

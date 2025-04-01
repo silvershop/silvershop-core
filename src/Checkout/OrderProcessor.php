@@ -61,8 +61,6 @@ class OrderProcessor
 
     /**
      * Assign the order to a local variable
-     *
-     * @param Order $order
      */
     public function __construct(Order $order)
     {

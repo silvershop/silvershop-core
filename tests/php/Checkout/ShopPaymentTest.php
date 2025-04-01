@@ -27,7 +27,7 @@ class ShopPaymentTest extends FunctionalTest
     protected $autoFollowRedirection = false;
 
     /** @var \GuzzleHttp\Handler\MockHandler */
-    protected $mockHandler = null;
+    protected $mockHandler;
 
     public function setUp(): void
     {

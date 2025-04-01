@@ -67,8 +67,6 @@ class OrderEmailNotifier
 
     /**
      * Assign the order to a local variable
-     *
-     * @param Order $order
      */
     public function __construct(Order $order)
     {
@@ -124,8 +122,6 @@ class OrderEmailNotifier
      * @param string $template    - the class name of the email you wish to send
      * @param string $subject     - subject of the email
      * @param bool   $copyToAdmin - true by default, whether it should send a copy to the admin
-     *
-     * @return bool|string
      */
     public function sendEmail($template, $subject, $copyToAdmin = true): bool|string
     {
@@ -169,8 +165,6 @@ class OrderEmailNotifier
 
     /**
      * Notify store owner about new order.
-     *
-     * @return bool|string
      */
     public function sendAdminNotification(): bool|string
     {
@@ -251,8 +245,6 @@ class OrderEmailNotifier
      *
      * @param string $title Subject for email
      * @param string $note  Optional note-content (instead of using the OrderStatusLog)
-     *
-     * @return bool|string
      */
     public function sendStatusChange($title, $note = null): bool|string
     {
@@ -278,9 +270,6 @@ class OrderEmailNotifier
             $adminEmail = Email::config()->admin_email;
         }
 
-        /**
-         * @var Email $e
-         */
         $email = Email::create()
             ->setFrom($adminEmail)
             ->setSubject(_t('SilverShop\ShopEmail.StatusChangeSubject', 'SilverShop – {Title}', ['Title' => $title]))
@@ -324,7 +313,6 @@ class OrderEmailNotifier
      * which makes it unusable to preview an Email.
      * This method simulates the old way of the message output and renders only the HTML body.
      *
-     * @param Email $email
      * @return string
      */
     protected function debug(Email $email)
@@ -341,7 +329,6 @@ class OrderEmailNotifier
     }
 
     /**
-     * @param LoggerInterface $logger
      * @return $this
      */
     public function setLogger(LoggerInterface $logger)

@@ -125,10 +125,8 @@ class ShoppingCart
     /**
      * Adds an item to the cart
      *
-     * @param Buyable $buyable
      * @param int     $quantity
      * @param array   $filter
-     *
      * @return boolean|OrderItem false or the new/existing item
      */
     public function add(Buyable $buyable, $quantity = 1, $filter = [])
@@ -174,10 +172,8 @@ class ShoppingCart
     /**
      * Remove an item from the cart.
      *
-     * @param Buyable $buyable
      * @param int     $quantity - number of items to remove, or leave null for all items (default)
      * @param array   $filter
-     *
      * @return boolean success/failure
      */
     public function remove(Buyable $buyable, $quantity = null, $filter = [])
@@ -217,7 +213,6 @@ class ShoppingCart
     /**
      * Remove a specific order item from cart
      *
-     * @param  OrderItem $item
      * @param  int       $quantity - number of items to remove or leave `null` to remove all items (default)
      * @return boolean success/failure
      */
@@ -229,7 +224,7 @@ class ShoppingCart
             return $this->error(_t(__CLASS__ . '.NoOrder', 'No current order.'));
         }
 
-        if (!$item || $item->OrderID != $order->ID) {
+        if ($item->OrderID != $order->ID) {
             return $this->error(_t(__CLASS__ . '.ItemNotFound', 'Item not found.'));
         }
 
@@ -249,10 +244,8 @@ class ShoppingCart
      * Sets the quantity of an item in the cart.
      * Will automatically add or remove item, if necessary.
      *
-     * @param Buyable $buyable
      * @param int     $quantity
      * @param array   $filter
-     *
      * @return boolean|OrderItem false or the new/existing item
      */
     public function setQuantity(Buyable $buyable, $quantity = 1, $filter = [])
@@ -273,7 +266,6 @@ class ShoppingCart
     /**
      * Update quantity of a given order item
      *
-     * @param  OrderItem $item
      * @param  int       $quantity the new quantity to use
      * @param  array     $filter
      * @return boolean success/failure
@@ -286,7 +278,7 @@ class ShoppingCart
             return $this->error(_t(__CLASS__ . '.NoOrder', 'No current order.'));
         }
 
-        if (!$item || $item->OrderID != $order->ID) {
+        if ($item->OrderID != $order->ID) {
             return $this->error(_t(__CLASS__ . '.ItemNotFound', 'Item not found.'));
         }
 
@@ -327,7 +319,7 @@ class ShoppingCart
     {
         $order = $this->findOrMake();
 
-        if (!$buyable || !$order) {
+        if (!$order) {
             return null;
         }
 
@@ -364,16 +356,14 @@ class ShoppingCart
     /**
      * Finds an existing order item.
      *
-     * @param Buyable $buyable
      * @param array   $customFilter
-     *
      * @return OrderItem the item requested or null
      */
     public function get(Buyable $buyable, $customFilter = [])
     {
         $order = $this->current();
 
-        if (!$buyable || !$order) {
+        if (!$order) {
             return null;
         }
 
@@ -413,7 +403,6 @@ class ShoppingCart
      * This is being used to ensure a product with variations cannot be added to the cart…
      * a Variation has to be added instead!
      *
-     * @param  Buyable $buyable
      * @return Buyable
      */
     public function getCorrectBuyable(Buyable $buyable)

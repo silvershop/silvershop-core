@@ -110,7 +110,6 @@ class AttributeType extends DataObject
     /**
      * Finds or creates values for this type.
      *
-     * @param array $values
      *
      * @return ArrayList
      */

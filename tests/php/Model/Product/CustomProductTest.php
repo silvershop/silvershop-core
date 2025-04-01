@@ -80,7 +80,7 @@ class CustomProductTest extends FunctionalTest
 
         //set quantity
         $options4 = ['Size' => 12, 'Color' => 'Blue', 'Premium' => false];
-        $resp = $cart->setQuantity($thing, 5, $options4);
+        $cart->setQuantity($thing, 5, $options4);
 
         $item = $cart->get($thing, $options4);
         $this->assertTrue((bool)$item, 'item exists in cart');

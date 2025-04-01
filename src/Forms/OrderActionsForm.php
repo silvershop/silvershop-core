@@ -51,7 +51,6 @@ class OrderActionsForm extends Form
      *
      * @param  $controller
      * @param  $name
-     * @param  Order      $order
      * @throws \SilverStripe\Omnipay\Exception\InvalidConfigurationException
      */
     public function __construct($controller, $name, Order $order)
@@ -220,7 +219,6 @@ class OrderActionsForm extends Form
     /**
      * Get credit card fields for the given gateways
      *
-     * @param  array $gateways
      * @return CompositeField|null
      */
     protected function getCCFields(array $gateways)

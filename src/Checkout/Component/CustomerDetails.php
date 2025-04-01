@@ -18,13 +18,11 @@ class CustomerDetails extends CheckoutComponent
 
     public function getFormFields(Order $order)
     {
-        $fields = FieldList::create(
+        return FieldList::create(
             $firstname = TextField::create('FirstName', _t('SilverShop\Model\Order.db_FirstName', 'First Name')),
             $surname = TextField::create('Surname', _t('SilverShop\Model\Order.db_Surname', 'Surname')),
             $email = EmailField::create('Email', _t('SilverShop\Model\Order.db_Email', 'Email'))
         );
-
-        return $fields;
     }
 
     public function validateData(Order $order, array $data)

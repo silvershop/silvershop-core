@@ -179,7 +179,7 @@ class OrderTest extends SapphireTest
     {
 
         $order = $this->objFromFixture(Order::class, "paid");
-        $processor = OrderProcessor::create($order)->placeOrder();
+        OrderProcessor::create($order)->placeOrder();
         $this->assertEquals(408, $order->Total(), "check totals");
 
         //make a changes to existing products

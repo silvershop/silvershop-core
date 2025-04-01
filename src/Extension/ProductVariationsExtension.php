@@ -112,7 +112,6 @@ class ProductVariationsExtension extends DataExtension
     /**
      * Pass an array of attribute ids to query for the appropriate variation.
      *
-     * @param array $attributes
      *
      * @return Variation|null
      */
@@ -140,8 +139,6 @@ class ProductVariationsExtension extends DataExtension
     /**
      * Generates variations based on selected attributes.
      *
-     * @param  AttributeType $attributetype
-     * @param  array         $values
      * @throws \SilverStripe\ORM\ValidationException
      */
     public function generateVariationsFromAttributes(AttributeType $attributetype, array $values)

@@ -259,7 +259,7 @@ class SteppedCheckoutExtensionTest extends FunctionalTest
             'PaymentMethod' => 'Dummy',
             'action_setpaymentmethod' => 1,
         ];
-        $response = $this->post('/checkout/PaymentMethodForm', $data);
+        $this->post('/checkout/PaymentMethodForm', $data);
         $this->assertEquals('Dummy', Checkout::get($this->cart)->getSelectedPaymentMethod());
     }
 

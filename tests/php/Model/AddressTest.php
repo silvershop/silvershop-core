@@ -24,9 +24,6 @@ class AddressTest extends SapphireTest
                 'Phone' => '12346678',
             ]
         );
-
-        $fields = $address->getFrontEndFields();
-        $requiremetns = $address->getRequiredFields();
         $this->assertEquals(
             "Ink inc|Jerald Smith|23 Blah Street|Fitzgerald Building, Foor 3|TeAro|Wellington|1333|NZ",
             $address->toString("|")

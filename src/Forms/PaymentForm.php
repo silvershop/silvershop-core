@@ -149,9 +149,6 @@ class PaymentForm extends CheckoutForm
         return $response;
     }
 
-    /**
-     * @param OrderProcessor $processor
-     */
     public function setOrderProcessor(OrderProcessor $processor)
     {
         $this->orderProcessor = $processor;

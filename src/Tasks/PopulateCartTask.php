@@ -29,7 +29,7 @@ class PopulateCartTask extends BuildTask
                 if ($variations->exists()) {
                     $product = $variations->sort('RAND()')->first();
                 }
-                $quantity = (int)rand(1, 5);
+                $quantity = rand(1, 5);
                 if ($product->canPurchase(Security::getCurrentUser(), $quantity)) {
                     $cart->add($product, $quantity);
                 }
