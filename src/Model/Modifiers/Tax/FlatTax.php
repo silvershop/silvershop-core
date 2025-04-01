@@ -42,6 +42,8 @@ class FlatTax extends Base
      */
     private static $excludedmessage = '%.1f%% %s';
 
+    private static $table_name = 'SilverShop_FlatTaxModifier';
+
     public function __construct($record = null, $isSingleton = false, $model = null)
     {
         parent::__construct($record, $isSingleton, $model);

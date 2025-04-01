@@ -24,6 +24,8 @@ class Simple extends Base
      */
     private static $charges_by_country = [];
 
+    private static $table_name = 'SilverShop_SimpleModifier';
+
     public function value($subtotal = null)
     {
         $country = $this->Country();

@@ -28,6 +28,8 @@ class Weight extends Base
      */
     private static $weight_cost = [];
 
+    private static $table_name = 'SilverShop_WeightModifier';
+
     protected $weight = 0;
 
     /**

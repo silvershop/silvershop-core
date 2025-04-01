@@ -18,6 +18,8 @@ class SubTotal extends OrderModifier
 
     private static $plural_name = 'Sub Totals';
 
+    private static $table_name = 'SilverShop_SubTotalModifier';
+
     public function value($incoming)
     {
         return $this->Amount = $incoming;

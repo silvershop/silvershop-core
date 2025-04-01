@@ -8,6 +8,8 @@ class Base extends OrderModifier
 {
     private static $singular_name = 'Shipping';
 
+    private static $table_name = 'SilverShop_BaseModifier';
+
     public function required()
     {
         return true; //TODO: make it optional

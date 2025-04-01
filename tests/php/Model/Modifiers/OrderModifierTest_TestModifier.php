@@ -7,6 +7,8 @@ use SilverStripe\Dev\TestOnly;
 
 class OrderModifierTest_TestModifier extends OrderModifier implements TestOnly
 {
+    private static $table_name = 'SilverShop_OrderModifierTest_TestModifier';
+
     public static $value = 10;
     private $willFail = false;
 

@@ -19,11 +19,11 @@ class Base extends OrderModifier
         'Rate' => 0.15 //15% tax
     ];
 
-    private static $table_name = 'SilverShop_TaxModifier';
-
     private static $singular_name = 'Tax';
 
     private static $plural_name = 'Taxes';
+
+    private static $table_name = 'SilverShop_TaxModifier';
 
     public function getTableTitle()
     {

@@ -16,8 +16,6 @@ class GlobalTax extends Base
         'Country' => 'Varchar',
     ];
 
-    private static $table_name = 'SilverShop_GlobalTaxModifier';
-
     /**
      * Tax rates per country
      *
@@ -25,6 +23,8 @@ class GlobalTax extends Base
      * @var    array
      */
     private static $country_rates = [];
+
+    private static $table_name = 'SilverShop_GlobalTaxModifier';
 
     public function value($incoming)
     {
