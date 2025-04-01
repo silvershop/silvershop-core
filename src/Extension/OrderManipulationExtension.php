@@ -8,6 +8,7 @@ use SilverShop\Model\Order;
 use SilverShop\ShopTools;
 use SilverStripe\Control\Controller;
 use SilverStripe\Control\HTTPRequest;
+use SilverStripe\Control\HTTPResponse_Exception;
 use SilverStripe\Core\Extension;
 use SilverStripe\Forms\Form;
 use SilverStripe\ORM\DataList;
@@ -116,7 +117,7 @@ class OrderManipulationExtension extends Extension
      * Order ID that we're viewing (ID parameter in URL).
      *
      * @return array of template variables
-     * @throws \SilverStripe\Control\HTTPResponse_Exception
+     * @throws HTTPResponse_Exception
      */
     public function order(HTTPRequest $request)
     {

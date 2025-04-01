@@ -2,6 +2,7 @@
 
 namespace SilverShop\Checkout\Component;
 
+use SilverStripe\ORM\ValidationException;
 use SilverShop\Model\Order;
 use SilverShop\ShopUserInfo;
 use SilverStripe\Core\Config\Config;
@@ -88,7 +89,7 @@ abstract class Address extends CheckoutComponent
      *
      * @param  Order $order order to get addresses from
      * @param  array $data  data to set
-     * @throws \SilverStripe\ORM\ValidationException
+     * @throws ValidationException
      */
     public function setData(Order $order, array $data)
     {

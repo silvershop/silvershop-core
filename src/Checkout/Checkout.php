@@ -8,6 +8,7 @@ use SilverShop\Model\Order;
 use SilverShop\ShopTools;
 use SilverShop\ShopUserInfo;
 use SilverStripe\Core\Injector\Injectable;
+use SilverStripe\Omnipay\Exception\InvalidConfigurationException;
 use SilverStripe\Omnipay\GatewayInfo;
 use SilverStripe\Security\Member;
 use SilverStripe\Security\Security;
@@ -130,7 +131,7 @@ class Checkout
     /**
      * Set payment method
      *
-     * @throws \SilverStripe\Omnipay\Exception\InvalidConfigurationException
+     * @throws InvalidConfigurationException
      */
     public function setPaymentMethod($paymentmethod)
     {
@@ -149,7 +150,7 @@ class Checkout
      * Gets the selected payment method from the session,
      * or the only available method, if there is only one.
      *
-     * @throws \SilverStripe\Omnipay\Exception\InvalidConfigurationException
+     * @throws InvalidConfigurationException
      */
     public function getSelectedPaymentMethod($nice = false)
     {

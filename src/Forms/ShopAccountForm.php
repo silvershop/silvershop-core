@@ -5,12 +5,13 @@ namespace SilverShop\Forms;
 use SilverShop\Extension\ShopConfigExtension;
 use SilverShop\Page\AccountPageController;
 use SilverShop\Page\CheckoutPage;
-use SilverStripe\Core\Config\Config;
 use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Control\HTTPResponse;
+use SilverStripe\Core\Config\Config;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\Form;
 use SilverStripe\Forms\FormAction;
+use SilverStripe\ORM\ValidationException;
 use SilverStripe\Security\Security;
 
 /**
@@ -57,7 +58,7 @@ class ShopAccountForm extends Form
      * @param HTTPRequest $request
      *
      * @return bool|HTTPResponse
-     * @throws \SilverStripe\ORM\ValidationException
+     * @throws ValidationException
      */
     public function submit($data, $form, $request)
     {
@@ -83,7 +84,7 @@ class ShopAccountForm extends Form
      * @param HTTPRequest $request
      *
      * @return bool|HTTPResponse
-     * @throws \SilverStripe\ORM\ValidationException
+     * @throws ValidationException
      */
     public function proceed($data, $form, $request)
     {

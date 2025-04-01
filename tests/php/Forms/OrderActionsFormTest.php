@@ -17,6 +17,7 @@ use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Dev\FunctionalTest;
 use SilverStripe\Omnipay\GatewayInfo;
 use SilverStripe\Omnipay\Model\Payment;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class OrderActionsFormTest extends FunctionalTest
 {
@@ -171,7 +172,7 @@ class OrderActionsFormTest extends FunctionalTest
         $mockResponse->expects($this->any())
             ->method('getRedirectResponse')->will(
                 $this->returnValue(
-                    new \Symfony\Component\HttpFoundation\RedirectResponse('http://paymentprovider/test/offsiteform')
+                    new RedirectResponse('http://paymentprovider/test/offsiteform')
                 )
             );
 

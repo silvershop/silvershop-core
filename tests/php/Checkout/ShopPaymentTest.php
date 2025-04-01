@@ -2,6 +2,9 @@
 
 namespace SilverShop\Tests\Checkout;
 
+use Exception;
+use GuzzleHttp\Client;
+use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\Psr7\Message;
 use SilverShop\Cart\ShoppingCart;
 use SilverShop\Checkout\OrderProcessor;
@@ -16,6 +19,7 @@ use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Dev\FunctionalTest;
 use SilverStripe\Dev\TestSession;
 use SilverStripe\Omnipay\Model\Payment;
+use Symfony\Component\HttpFoundation\Request;
 
 class ShopPaymentTest extends FunctionalTest
 {
@@ -26,7 +30,7 @@ class ShopPaymentTest extends FunctionalTest
     public static $disable_theme = true;
     protected $autoFollowRedirection = false;
 
-    /** @var \GuzzleHttp\Handler\MockHandler */
+    /** @var MockHandler */
     protected $mockHandler;
 
     public function setUp(): void
@@ -171,10 +175,10 @@ class ShopPaymentTest extends FunctionalTest
     {
         if (null === $this->httpClient) {
             if ($this->mockHandler === null) {
-                $this->mockHandler = new \GuzzleHttp\Handler\MockHandler();
+                $this->mockHandler = new MockHandler();
             }
 
-            $guzzle = new \GuzzleHttp\Client([
+            $guzzle = new Client([
                 'handler' => $this->mockHandler,
             ]);
 
@@ -187,7 +191,7 @@ class ShopPaymentTest extends FunctionalTest
     protected function getHttpRequest()
     {
         if (null === $this->httpRequest) {
-            $this->httpRequest = new \Symfony\Component\HttpFoundation\Request;
+            $this->httpRequest = new Request;
         }
 
         return $this->httpRequest;
@@ -196,7 +200,7 @@ class ShopPaymentTest extends FunctionalTest
     protected function setMockHttpResponse($paths)
     {
         if ($this->mockHandler === null) {
-            throw new \Exception('HTTP client not initialised before adding mock response.');
+            throw new Exception('HTTP client not initialised before adding mock response.');
         }
 
         $testspath = BASE_PATH . '/vendor/omnipay';

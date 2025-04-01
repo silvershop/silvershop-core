@@ -2,6 +2,7 @@
 
 namespace SilverShop\Checkout\Component;
 
+use Exception;
 use SilverShop\Model\Order;
 use SilverShop\ShopTools;
 use SilverStripe\Core\Config\Configurable;
@@ -35,7 +36,7 @@ abstract class CheckoutComponent
      *
      * @param Order $order the form being updated
      *
-     * @throws \Exception
+     * @throws Exception
      * @return FieldList fields for manipulating order
      */
     abstract public function getFormFields(Order $order);
@@ -68,7 +69,7 @@ abstract class CheckoutComponent
      *
      * @param array $data  data to be saved into order object
      *
-     * @throws \Exception
+     * @throws Exception
      * @return Order the updated order
      */
     abstract public function setData(Order $order, array $data);

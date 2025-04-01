@@ -15,6 +15,7 @@ use SilverStripe\Forms\LabelField;
 use SilverStripe\Forms\ListboxField;
 use SilverStripe\ORM\DataExtension;
 use SilverStripe\ORM\DataList;
+use SilverStripe\ORM\ValidationException;
 use SilverStripe\Versioned\Versioned;
 use SilverStripe\View\ArrayData;
 use Symbiote\GridFieldExtensions\GridFieldOrderableRows;
@@ -139,7 +140,7 @@ class ProductVariationsExtension extends DataExtension
     /**
      * Generates variations based on selected attributes.
      *
-     * @throws \SilverStripe\ORM\ValidationException
+     * @throws ValidationException
      */
     public function generateVariationsFromAttributes(AttributeType $attributetype, array $values)
     {

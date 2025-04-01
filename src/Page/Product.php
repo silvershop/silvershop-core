@@ -2,6 +2,7 @@
 
 namespace SilverShop\Page;
 
+use Exception;
 use Page;
 use SilverShop\Cart\ShoppingCart;
 use SilverShop\Cart\ShoppingCartController;
@@ -457,7 +458,7 @@ class Product extends Page implements Buyable
      * is defined in SiteConfig, return that instead.
      *
      * @return Image
-     * @throws \Exception
+     * @throws Exception
      */
     public function Image()
     {

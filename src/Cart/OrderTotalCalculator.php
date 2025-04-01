@@ -5,6 +5,7 @@ namespace SilverShop\Cart;
 use ErrorException;
 use Exception;
 use Monolog\Logger;
+use Psr\Container\NotFoundExceptionInterface;
 use SilverShop\Model\Order;
 use SilverStripe\Core\ClassInfo;
 use SilverStripe\Core\Injector\Injectable;
@@ -43,7 +44,7 @@ class OrderTotalCalculator
     /**
      * @return float
      * @throws Exception
-     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     public function calculate()
     {

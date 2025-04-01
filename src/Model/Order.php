@@ -2,6 +2,7 @@
 
 namespace SilverShop\Model;
 
+use Exception;
 use SilverShop\Cart\OrderTotalCalculator;
 use SilverShop\Checkout\OrderEmailNotifier;
 use SilverShop\Extension\MemberExtension;
@@ -13,7 +14,6 @@ use SilverShop\Page\AccountPage;
 use SilverShop\Page\CheckoutPage;
 use SilverShop\ShopTools;
 use SilverStripe\Control\Controller;
-use SilverStripe\Control\Director;
 use SilverStripe\Dev\Debug;
 use SilverStripe\Forms\CheckboxSetField;
 use SilverStripe\Forms\DateField;
@@ -524,7 +524,7 @@ class Order extends DataObject
     public function Link()
     {
         $link = CheckoutPage::find_link(false, 'order', $this->ID);
-        
+
         if (Security::getCurrentUser()) {
             $link = Controller::join_links(AccountPage::find_link(), 'order', $this->ID);
         }
@@ -706,7 +706,7 @@ class Order extends DataObject
     /**
      * @param string $type - Billing or Shipping
      * @return Address
-     * @throws \Exception
+     * @throws Exception
      */
     protected function getAddress($type)
     {

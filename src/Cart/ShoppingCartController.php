@@ -11,6 +11,7 @@ use SilverShop\ShopTools;
 use SilverStripe\Control\Controller;
 use SilverStripe\Control\Director;
 use SilverStripe\Control\HTTPRequest;
+use SilverStripe\Control\HTTPResponse_Exception;
 use SilverStripe\Control\HTTPResponse;
 use SilverStripe\Core\ClassInfo;
 use SilverStripe\Dev\Debug;
@@ -149,7 +150,7 @@ class ShoppingCartController extends Controller
 
     /**
      * @return Product|Variation|Buyable
-     * @throws \SilverStripe\Control\HTTPResponse_Exception
+     * @throws HTTPResponse_Exception
      */
     protected function buyableFromRequest()
     {
@@ -198,7 +199,7 @@ class ShoppingCartController extends Controller
      * @param HTTPRequest $request
      *
      * @return string|HTTPResponse
-     * @throws \SilverStripe\Control\HTTPResponse_Exception
+     * @throws HTTPResponse_Exception
      */
     public function add($request)
     {
@@ -234,7 +235,7 @@ class ShoppingCartController extends Controller
      * @param HTTPRequest $request
      *
      * @return string|HTTPResponse
-     * @throws \SilverStripe\Control\HTTPResponse_Exception
+     * @throws HTTPResponse_Exception
      */
     public function remove($request)
     {
@@ -253,7 +254,7 @@ class ShoppingCartController extends Controller
      * @param HTTPRequest $request
      *
      * @return string|HTTPResponse
-     * @throws \SilverStripe\Control\HTTPResponse_Exception
+     * @throws HTTPResponse_Exception
      */
     public function removeall($request)
     {
@@ -272,7 +273,7 @@ class ShoppingCartController extends Controller
      * @param HTTPRequest $request
      *
      * @return string|HTTPResponse
-     * @throws \SilverStripe\Control\HTTPResponse_Exception
+     * @throws HTTPResponse_Exception
      */
     public function setquantity($request)
     {
@@ -305,7 +306,7 @@ class ShoppingCartController extends Controller
     /**
      * Handle index requests
      *
-     * @throws \SilverStripe\Control\HTTPResponse_Exception
+     * @throws HTTPResponse_Exception
      */
     public function index()
     {

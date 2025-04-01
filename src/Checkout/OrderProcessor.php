@@ -13,6 +13,7 @@ use SilverStripe\Control\Controller;
 use SilverStripe\Core\Config\Config_ForClass;
 use SilverStripe\Core\Config\Configurable;
 use SilverStripe\Core\Injector\Injectable;
+use SilverStripe\Omnipay\Exception\InvalidConfigurationException;
 use SilverStripe\Omnipay\GatewayInfo;
 use SilverStripe\Omnipay\Model\Payment;
 use SilverStripe\Omnipay\Service\ServiceFactory;
@@ -91,7 +92,7 @@ class OrderProcessor
      * @param string $cancelUrl (optional) return URL for cancelled/failed payments
      *
      * @return ServiceResponse|null
-     * @throws \SilverStripe\Omnipay\Exception\InvalidConfigurationException
+     * @throws InvalidConfigurationException
      */
     public function makePayment($gateway, $gatewaydata = [], $successUrl = null, $cancelUrl = null)
     {

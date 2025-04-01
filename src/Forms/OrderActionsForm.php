@@ -6,8 +6,8 @@ use SilverShop\Checkout\OrderEmailNotifier;
 use SilverShop\Checkout\OrderProcessor;
 use SilverShop\Extension\ShopConfigExtension;
 use SilverShop\Model\Order;
-use SilverStripe\Core\Config\Config;
 use SilverStripe\Control\HTTPResponse;
+use SilverStripe\Core\Config\Config;
 use SilverStripe\Forms\CompositeField;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\Form;
@@ -16,9 +16,11 @@ use SilverStripe\Forms\HeaderField;
 use SilverStripe\Forms\HiddenField;
 use SilverStripe\Forms\LiteralField;
 use SilverStripe\Forms\OptionsetField;
+use SilverStripe\Omnipay\Exception\InvalidConfigurationException;
 use SilverStripe\Omnipay\GatewayFieldsFactory;
 use SilverStripe\Omnipay\GatewayInfo;
 use SilverStripe\ORM\FieldType\DBCurrency;
+use SilverStripe\ORM\ValidationException;
 use SilverStripe\Security\Security;
 use SilverStripe\View\Requirements;
 
@@ -51,7 +53,7 @@ class OrderActionsForm extends Form
      *
      * @param  $controller
      * @param  $name
-     * @throws \SilverStripe\Omnipay\Exception\InvalidConfigurationException
+     * @throws InvalidConfigurationException
      */
     public function __construct($controller, $name, Order $order)
     {
@@ -190,7 +192,7 @@ class OrderActionsForm extends Form
      *
      * @param  array $data The form request data submitted
      * @param  Form  $form The {@link Form} this was submitted on
-     * @throws \SilverStripe\ORM\ValidationException
+     * @throws ValidationException
      */
     public function docancel($data, $form)
     {

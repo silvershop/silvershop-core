@@ -14,6 +14,7 @@ use SilverShop\ShopTools;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Config\Configurable;
 use SilverStripe\Core\Injector\Injectable;
+use SilverStripe\ORM\ValidationException;
 use SilverStripe\Security\Member;
 use SilverStripe\Security\Security;
 
@@ -313,7 +314,7 @@ class ShoppingCart
      * @param array   $filter
      *
      * @return OrderItem the found or created item
-     * @throws \SilverStripe\ORM\ValidationException
+     * @throws ValidationException
      */
     private function findOrMakeItem(Buyable $buyable, $quantity = 1, $filter = [])
     {
