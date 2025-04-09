@@ -43,8 +43,6 @@ class MultiFieldPartialMatchFilter extends PartialMatchFilter
     }
 
     /**
-     * @param array $modifiers
-     *
      * @throws InvalidArgumentException
      */
     public function setModifiers(array $modifiers)
@@ -65,23 +63,16 @@ class MultiFieldPartialMatchFilter extends PartialMatchFilter
             }
         );
 
-        if (!empty($this->subfilters)) {
-            foreach ($this->subfilters as $f) {
-                $f->setModifiers($this->subfilterModifiers);
-            }
+        foreach ($this->subfilters as $f) {
+            $f->setModifiers($this->subfilterModifiers);
         }
     }
 
-    /**
-     * @param array $fieldNames
-     */
     public function setSubfilters(array $fieldNames)
     {
         $this->subfilters = [];
-        if (count($fieldNames) > 0) {
-            foreach ($fieldNames as $name) {
-                $this->subfilters[] = new PartialMatchFilter($name, $this->value, $this->subfilterModifiers);
-            }
+        foreach ($fieldNames as $name) {
+            $this->subfilters[] = new PartialMatchFilter($name, $this->value, $this->subfilterModifiers);
         }
     }
 
@@ -96,10 +87,8 @@ class MultiFieldPartialMatchFilter extends PartialMatchFilter
 
         parent::setValue($value);
 
-        if (count($this->subfilters) > 0) {
-            foreach ($this->subfilters as $f) {
-                $f->setValue($value);
-            }
+        foreach ($this->subfilters as $f) {
+            $f->setValue($value);
         }
     }
 
@@ -113,8 +102,6 @@ class MultiFieldPartialMatchFilter extends PartialMatchFilter
     }
 
     /**
-     * @param DataQuery $query
-     *
      * @return $this|DataQuery
      */
     public function apply(DataQuery $query)
@@ -122,10 +109,8 @@ class MultiFieldPartialMatchFilter extends PartialMatchFilter
         $orGroup = $query->disjunctiveGroup();
         $orGroup = parent::apply($orGroup);
 
-        if (count($this->subfilters) > 0) {
-            foreach ($this->subfilters as $f) {
-                $orGroup = $f->apply($orGroup);
-            }
+        foreach ($this->subfilters as $f) {
+            $orGroup = $f->apply($orGroup);
         }
 
         // The original query will have been affected by the things added to $orGroup above

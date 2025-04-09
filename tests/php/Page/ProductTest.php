@@ -61,7 +61,7 @@ class ProductTest extends FunctionalTest
 
     public function testCMSFields()
     {
-        $fields = $this->tshirt->getCMSFields();
+        $this->tshirt->getCMSFields();
         $this->markTestIncomplete('Test Product CMS fields');
     }
 

@@ -48,7 +48,7 @@ class ShopEmailPreviewTask extends BuildTask
         
         echo '<h2>Choose Email</h2>';
         echo '<ul>';
-        foreach ($this->previewableEmails as $key => $method) {
+        foreach ($this->previewableEmails as $method) {
             echo '<li><a href="' . $url . '/' . $method . '">' . $method . '</a></li>';
         }
         echo '</ul><hr>';
