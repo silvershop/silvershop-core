@@ -13,7 +13,7 @@ class ShopCountry extends DBVarchar
         parent::__construct($name, $size = 3, $options);
     }
 
-    public function forTemplate()
+    public function forTemplate(): string
     {
         return $this->Nice();
     }
@@ -21,12 +21,12 @@ class ShopCountry extends DBVarchar
     /**
      * Convert ISO abbreviation to full, translated country name
      */
-    public function Nice()
+    public function Nice(): string
     {
         return IntlLocales::singleton()->countryName($this->value);
     }
 
-    public function XML()
+    public function XML(): string
     {
         return Convert::raw2xml($this->Nice());
     }

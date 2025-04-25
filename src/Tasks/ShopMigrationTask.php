@@ -27,7 +27,7 @@ You may want to run the CartCleanupTask before migrating if you want to discard 
     /**
      * Migrate upwards
      */
-    public function up()
+    public function up(): void
     {
         $this->migrateOrders();
         $this->migrateProductPrice();
@@ -39,7 +39,7 @@ You may want to run the CartCleanupTask before migrating if you want to discard 
     /**
      * batch process orders
      */
-    public function migrateOrders()
+    public function migrateOrders(): void
     {
         $start = $count = 0;
         $batch = Order::get()->sort('Created', 'ASC')->limit($start, static::config()->get('batch_size'));
@@ -58,7 +58,7 @@ You may want to run the CartCleanupTask before migrating if you want to discard 
     /**
      * Perform migration scripts on a single order.
      */
-    public function migrate(Order $order)
+    public function migrate(Order $order): void
     {
         //TODO: set a from / to version to preform a migration with
         $this->migrateStatuses($order);
@@ -68,7 +68,7 @@ You may want to run the CartCleanupTask before migrating if you want to discard 
         $order->write();
     }
 
-    public function migrateProductPrice()
+    public function migrateProductPrice(): void
     {
         $db = DB::get_conn();
         //if BasePrice has no values, but Price does, then copy from Price
@@ -87,7 +87,7 @@ You may want to run the CartCleanupTask before migrating if you want to discard 
      * Rename all Product_Image ClassNames to Image
      * Added in v1.0
      */
-    public function migrateProductImages()
+    public function migrateProductImages(): void
     {
         DB::query('UPDATE "File" SET "ClassName"=\'Image\' WHERE "ClassName" = \'Product_Image\'');
     }
@@ -96,7 +96,7 @@ You may want to run the CartCleanupTask before migrating if you want to discard 
      * Customer and shipping details have been added to Order,
      * so that memberless (guest) orders can be placed.
      */
-    public function migrateMemberFields($order)
+    public function migrateMemberFields($order): void
     {
         if ($member = $order->Member()) {
             $fieldstocopy = [
@@ -122,7 +122,7 @@ You may want to run the CartCleanupTask before migrating if you want to discard 
     /**
      * Migrate old statuses
      */
-    public function migrateStatuses($order)
+    public function migrateStatuses($order): void
     {
         switch ($order->Status) {
             case "Cancelled": //Pre version 0.5
@@ -139,7 +139,7 @@ You may want to run the CartCleanupTask before migrating if you want to discard 
      *
      * Applies to pre 0.6 sites
      */
-    public function migrateShippingValues($order)
+    public function migrateShippingValues($order): void
     {
         //TODO: see if this actually works..it probably needs to be writeen to a SQL query
         if ($order->hasShippingCost && abs($order->Shipping)) {
@@ -167,7 +167,7 @@ You may want to run the CartCleanupTask before migrating if you want to discard 
     /**
      * Performs calculation function on un-calculated orders.
      */
-    public function migrateOrderCalculation($order)
+    public function migrateOrderCalculation($order): void
     {
         if (!is_numeric($order->Total) || $order->Total <= 0) {
             $order->calculate();
@@ -175,7 +175,7 @@ You may want to run the CartCleanupTask before migrating if you want to discard 
         }
     }
 
-    public function migrateProductVariationsAttribues()
+    public function migrateProductVariationsAttribues(): void
     {
         $db = DB::get_conn();
         //TODO: delete Product_VariationAttribute, if it's empty
@@ -188,7 +188,7 @@ You may want to run the CartCleanupTask before migrating if you want to discard 
         }
     }
 
-    public function migrateShippingTaxValues()
+    public function migrateShippingTaxValues(): void
     {
         //rename obselete columns
         //DB::query("ALTER TABLE \"Order\" CHANGE COLUMN \"hasShippingCost\" \"_obsolete_hasShippingCost\" tinyint(1)");

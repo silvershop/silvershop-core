@@ -13,7 +13,7 @@ use SilverStripe\ORM\ValidationResult;
 
 class Payment extends CheckoutComponent
 {
-    public function getFormFields(Order $order)
+    public function getFormFields(Order $order): FieldList
     {
         $fields = FieldList::create();
         $gateways = GatewayInfo::getSupportedGateways();
@@ -36,7 +36,7 @@ class Payment extends CheckoutComponent
         return $fields;
     }
 
-    public function getRequiredFields(Order $order)
+    public function getRequiredFields(Order $order): array
     {
         if (count(GatewayInfo::getSupportedGateways()) > 1) {
             return [];
@@ -45,7 +45,7 @@ class Payment extends CheckoutComponent
         return ['PaymentMethod'];
     }
 
-    public function validateData(Order $order, array $data)
+    public function validateData(Order $order, array $data): bool
     {
         $result = ValidationResult::create();
         if (!isset($data['PaymentMethod'])) {
@@ -60,19 +60,21 @@ class Payment extends CheckoutComponent
             $result->addError(_t(__CLASS__ . '.UnsupportedGateway', "Gateway not supported"), "PaymentMethod");
             throw new ValidationException($result);
         }
+        return true;
     }
 
-    public function getData(Order $order)
+    public function getData(Order $order): array
     {
         return [
             'PaymentMethod' => Checkout::get($order)->getSelectedPaymentMethod(),
         ];
     }
 
-    public function setData(Order $order, array $data)
+    public function setData(Order $order, array $data): Order
     {
         if (isset($data['PaymentMethod'])) {
             Checkout::get($order)->setPaymentMethod($data['PaymentMethod']);
         }
+        return $order;
     }
 }

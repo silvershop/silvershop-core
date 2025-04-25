@@ -45,7 +45,7 @@ class MultiFieldPartialMatchFilter extends PartialMatchFilter
     /**
      * @throws InvalidArgumentException
      */
-    public function setModifiers(array $modifiers)
+    public function setModifiers(array $modifiers): void
     {
         $modifiers = array_map('strtolower', $modifiers);
 
@@ -58,7 +58,7 @@ class MultiFieldPartialMatchFilter extends PartialMatchFilter
         $this->modifiers = $modifiers;
         $this->subfilterModifiers = array_filter(
             $modifiers,
-            function ($v) {
+            function ($v): bool {
                 return $v != 'splitwords';
             }
         );
@@ -68,7 +68,7 @@ class MultiFieldPartialMatchFilter extends PartialMatchFilter
         }
     }
 
-    public function setSubfilters(array $fieldNames)
+    public function setSubfilters(array $fieldNames): void
     {
         $this->subfilters = [];
         foreach ($fieldNames as $name) {
@@ -79,7 +79,7 @@ class MultiFieldPartialMatchFilter extends PartialMatchFilter
     /**
      * @param string $value
      */
-    public function setValue($value)
+    public function setValue($value): void
     {
         if ($this->shouldSplitWords() && is_string($value) && preg_match('/\s+/', $value)) {
             $value = preg_split('/\s+/', trim($value));
@@ -92,19 +92,13 @@ class MultiFieldPartialMatchFilter extends PartialMatchFilter
         }
     }
 
-    /**
-     * @return bool
-     */
-    protected function shouldSplitWords()
+    protected function shouldSplitWords(): bool
     {
         $modifiers = $this->getModifiers();
         return in_array('splitwords', $modifiers);
     }
 
-    /**
-     * @return $this|DataQuery
-     */
-    public function apply(DataQuery $query)
+    public function apply(DataQuery $query): DataQuery
     {
         $orGroup = $query->disjunctiveGroup();
         $orGroup = parent::apply($orGroup);

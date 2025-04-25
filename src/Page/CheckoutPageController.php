@@ -16,9 +16,11 @@ use SilverShop\Checkout\Step\Summary;
 use SilverShop\Extension\SteppedCheckoutExtension;
 use SilverShop\Extension\ViewableCartExtension;
 use SilverShop\Forms\PaymentForm;
+use SilverStripe\Control\HTTPResponse;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\FormAction;
 use SilverStripe\Omnipay\Model\Message\GatewayErrorMessage;
+use SilverStripe\View\SSViewer;
 
 /**
  * @package shop
@@ -34,15 +36,19 @@ use SilverStripe\Omnipay\Model\Message\GatewayErrorMessage;
  */
 class CheckoutPageController extends PageController
 {
-    private static $url_segment     = 'checkout';
+    private static string $url_segment     = 'checkout';
 
-    private static $allowed_actions = [
+    private static array $allowed_actions = [
         'OrderForm',
         'payment',
         'PaymentForm',
     ];
 
-    public function Title()
+    private static array $steps = [];
+
+    private static string $first_step = '';
+
+    public function Title(): string
     {
         if ($this->failover && $this->failover->Title) {
             return $this->failover->Title;
@@ -51,7 +57,7 @@ class CheckoutPageController extends PageController
         return _t('SilverShop\Page\CheckoutPage.DefaultTitle', "Checkout");
     }
 
-    public function OrderForm()
+    public function OrderForm(): PaymentForm|bool
     {
         if (!(bool)$this->Cart()) {
             return false;
@@ -84,7 +90,7 @@ class CheckoutPageController extends PageController
     /**
      * Action for making on-site payments
      */
-    public function payment()
+    public function payment(): HTTPResponse|array
     {
         if (!$this->Cart()) {
             return $this->redirect($this->Link());
@@ -96,7 +102,7 @@ class CheckoutPageController extends PageController
         ];
     }
 
-    public function PaymentForm()
+    public function PaymentForm(): false|PaymentForm
     {
         if (!(bool)$this->Cart()) {
             return false;
@@ -122,10 +128,8 @@ class CheckoutPageController extends PageController
     /**
      * Retrieves error messages for the latest payment (if existing).
      * This can originate e.g. from an earlier offsite gateway API response.
-     *
-     * @return string
      */
-    public function PaymentErrorMessage()
+    public function PaymentErrorMessage(): string|bool
     {
         $order = $this->Cart();
         if (!$order) {
@@ -158,7 +162,7 @@ class CheckoutPageController extends PageController
      * {@inheritDoc}
      * @see \SilverStripe\CMS\Controllers\ContentController::getViewer()
      */
-    public function getViewer($action)
+    public function getViewer($action): SSViewer
     {
         if (CheckoutPage::config()->first_step && $action == 'index') {
             $action = CheckoutPage::config()->first_step;

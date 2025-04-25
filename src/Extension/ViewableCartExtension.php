@@ -3,6 +3,7 @@
 namespace SilverShop\Extension;
 
 use SilverShop\Cart\ShoppingCart;
+use SilverShop\Model\Order;
 use SilverShop\Page\CartPage;
 use SilverShop\Page\CheckoutPage;
 use SilverShop\Page\ProductCategory;
@@ -22,7 +23,7 @@ class ViewableCartExtension extends Extension
     /**
      * Get the cart, and do last minute calculation if necessary.
      */
-    public function Cart()
+    public function Cart(): false|Order
     {
         $order = ShoppingCart::curr();
         if (!$order || !$order->Items() || !$order->Items()->exists()) {
@@ -32,7 +33,7 @@ class ViewableCartExtension extends Extension
         return $order;
     }
 
-    public function getContinueLink()
+    public function getContinueLink(): string
     {
         if ($cartPage = CartPage::get()->first()) {
             if ($cartPage->ContinuePageID) {
@@ -54,12 +55,12 @@ class ViewableCartExtension extends Extension
         return Director::baseURL();
     }
 
-    public function getCartLink()
+    public function getCartLink(): string
     {
         return CartPage::find_link();
     }
 
-    public function getCheckoutLink()
+    public function getCheckoutLink(): string
     {
         return CheckoutPage::find_link();
     }

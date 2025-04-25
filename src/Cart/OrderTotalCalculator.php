@@ -22,19 +22,16 @@ class OrderTotalCalculator
 {
     use Injectable;
 
-    private static $dependencies = [
+    private static array $dependencies = [
         'logger' => '%$SilverShop\Logger',
     ];
+
+    protected Order $order;
 
     /**
      * @var Logger
      */
     public $logger;
-
-    /**
-     * @var Order
-     */
-    protected $order;
 
     public function __construct(Order $order)
     {
@@ -42,11 +39,10 @@ class OrderTotalCalculator
     }
 
     /**
-     * @return float
      * @throws Exception
      * @throws NotFoundExceptionInterface
      */
-    public function calculate()
+    public function calculate(): float
     {
         $runningtotal = $this->order->SubTotal();
         $sort = 1;
@@ -66,7 +62,7 @@ class OrderTotalCalculator
         }
 
         set_error_handler(
-            function ($severity, $message, $file, $line) {
+            function ($severity, $message, $file, $line): void {
                 throw new ErrorException($message, 0, $severity, $file, $line);
             },
             E_ALL & ~(E_STRICT | E_NOTICE)

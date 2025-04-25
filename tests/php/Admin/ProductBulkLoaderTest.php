@@ -12,7 +12,7 @@ class ProductBulkLoaderTest extends FunctionalTest
     public static $disable_theme  = true;
     protected static $use_draft_site = true;
 
-    public function testLoad()
+    public function testLoad(): void
     {
         $loader = new ProductBulkLoader(Product::class);
 

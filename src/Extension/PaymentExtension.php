@@ -12,26 +12,26 @@ use SilverStripe\ORM\DataExtension;
  */
 class PaymentExtension extends DataExtension
 {
-    private static $has_one = [
+    private static array $has_one = [
         'Order' => Order::class,
     ];
 
-    public function onAwaitingAuthorized(ServiceResponse $response)
+    public function onAwaitingAuthorized(ServiceResponse $response): void
     {
         $this->placeOrder();
     }
 
-    public function onAwaitingCaptured(ServiceResponse $response)
+    public function onAwaitingCaptured(ServiceResponse $response): void
     {
         $this->placeOrder();
     }
 
-    public function onAuthorized(ServiceResponse $response)
+    public function onAuthorized(ServiceResponse $response): void
     {
         $this->placeOrder();
     }
 
-    public function onCaptured(ServiceResponse $response)
+    public function onCaptured(ServiceResponse $response): void
     {
         // ensure order is being reloaded from DB, to prevent dealing with stale data!
         /**
@@ -43,7 +43,7 @@ class PaymentExtension extends DataExtension
         }
     }
 
-    protected function placeOrder()
+    protected function placeOrder(): void
     {
         // ensure order is being reloaded from DB, to prevent dealing with stale data!
         /**

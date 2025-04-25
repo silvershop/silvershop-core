@@ -46,7 +46,7 @@ class ShoppingCartTest extends SapphireTest
         $this->product->publishSingle();
     }
 
-    public function testAddToCart()
+    public function testAddToCart(): void
     {
         $this->assertTrue((boolean)$this->cart->add($this->product), "add one item");
         $this->assertEquals(
@@ -64,7 +64,7 @@ class ShoppingCartTest extends SapphireTest
         $this->assertEquals($item->Quantity, 2, "quantity is 2");
     }
 
-    public function testRemoveFromCart()
+    public function testRemoveFromCart(): void
     {
         $this->assertTrue((boolean)$this->cart->add($this->product), "add item");
         $this->assertEquals(
@@ -82,7 +82,7 @@ class ShoppingCartTest extends SapphireTest
         $this->assertFalse($this->cart->remove($this->product), "try remove non-existent item");
     }
 
-    public function testSetQuantity()
+    public function testSetQuantity(): void
     {
         $this->assertTrue((boolean)$this->cart->setQuantity($this->product, 25), "quantity set");
 
@@ -95,7 +95,7 @@ class ShoppingCartTest extends SapphireTest
         $this->assertEquals($item->Quantity, 25, "quantity is 25");
     }
 
-    public function testClear()
+    public function testClear(): void
     {
         $this->assertTrue((boolean)$this->cart->add($this->product), "add one item");
         $this->assertTrue((boolean)$this->cart->add($this->product), "add another item");
@@ -104,7 +104,7 @@ class ShoppingCartTest extends SapphireTest
         $this->assertFalse((bool)$this->cart->current(), "there is no cart");
     }
 
-    public function testCartSingleton()
+    public function testCartSingleton(): void
     {
         $this->assertTrue((boolean)$this->cart->add($this->product), "add one item");
         $order = $this->cart->current();
@@ -112,7 +112,7 @@ class ShoppingCartTest extends SapphireTest
         $this->assertEquals($order->ID, ShoppingCart::curr()->ID, "if singleton order ids will match");
     }
 
-    public function testErrorInCartHooks()
+    public function testErrorInCartHooks(): void
     {
         Config::modify()->set(Order::class, 'extensions', [ShoppingCartTest_TestShoppingCartErroringHooksExtension::class]);
 
@@ -136,7 +136,7 @@ class ShoppingCartTest extends SapphireTest
         $this->assertEquals($item->Quantity, 10, "quantity is 10");
     }
 
-    public function testProductVariations()
+    public function testProductVariations(): void
     {
         /** @var Variation $ball1 */
         $ball1 = $this->objFromFixture(Variation::class, 'redLarge');

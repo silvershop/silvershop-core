@@ -4,5 +4,5 @@ namespace SilverShop\Checkout\Component;
 
 class ShippingAddress extends Address
 {
-    protected $addresstype = 'Shipping';
+    protected string $addresstype = 'Shipping';
 }

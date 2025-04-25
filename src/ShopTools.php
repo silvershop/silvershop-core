@@ -23,7 +23,7 @@ class ShopTools
      * @param  mixed $price the price to convert
      * @return DBMoney the price wrapped in a Money DBField to be used for templates or similar
      */
-    public static function price_for_display($price)
+    public static function price_for_display($price): DBMoney
     {
         $currency = ShopConfigExtension::get_site_currency();
         $field = DBMoney::create_field(DBMoney::class, 0, 'Price');
@@ -38,7 +38,7 @@ class ShopTools
      *
      * @return string the locale in use
      */
-    public static function get_current_locale()
+    public static function get_current_locale(): string
     {
         if (class_exists('TractorCow\Fluent\State\FluentState')) {
             return singleton('TractorCow\Fluent\State\FluentState')->getLocale();
@@ -53,7 +53,7 @@ class ShopTools
      *
      * @param string $locale the locale to install
      */
-    public static function install_locale($locale)
+    public static function install_locale($locale): void
     {
         // If the locale isn't given, silently fail (there might be carts that still have locale set to null)
         if (empty($locale)) {
@@ -77,9 +77,8 @@ class ShopTools
      * Get the current section (first looking at controller, then at a request instance and lastly return a fresh session)
      *
      * @param HTTPRequest $request the incoming request (optional)
-     * @return Session
      */
-    public static function getSession(HTTPRequest $request = null)
+    public static function getSession(?HTTPRequest $request = null): Session
     {
         if ($request && ($session = $request->getSession())) {
             return $session;
@@ -104,9 +103,8 @@ class ShopTools
      * Sanitise a model class' name for inclusion in a link
      *
      * @param  string $class
-     * @return string
      */
-    public static function sanitiseClassName($class)
+    public static function sanitiseClassName($class): string
     {
         return str_replace('\\', '-', $class);
     }
@@ -115,9 +113,8 @@ class ShopTools
      * Unsanitise a model class' name from a URL param
      *
      * @param  string $class
-     * @return string
      */
-    public static function unsanitiseClassName($class)
+    public static function unsanitiseClassName($class): string
     {
         return str_replace('-', '\\', $class);
     }

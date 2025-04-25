@@ -81,7 +81,7 @@ class OrderProcessorTest extends SapphireTest
         $this->shoppingcart = ShoppingCart::singleton();
     }
 
-    public function testCreatePayment()
+    public function testCreatePayment(): void
     {
         $order = $this->objFromFixture(Order::class, "unpaid");
         $processor = OrderProcessor::create($order);
@@ -89,7 +89,7 @@ class OrderProcessorTest extends SapphireTest
         $this->assertTrue((boolean)$payment);
     }
 
-    public function testPlaceOrder()
+    public function testPlaceOrder(): void
     {
         //place items in cart
         $this->shoppingcart->add($this->mp3player, 2);
@@ -170,7 +170,7 @@ class OrderProcessorTest extends SapphireTest
         $this->assertEquals('james@example.com', $order->Member()->Email, 'email matches');
     }
 
-    public function testPlaceFailure()
+    public function testPlaceFailure(): void
     {
         if (!DB::get_conn()->supportsTransactions()) {
             $this->markTestSkipped(
@@ -248,7 +248,7 @@ class OrderProcessorTest extends SapphireTest
         $this->shoppingcart->clear(false);
     }
 
-    public function testMemberOrder()
+    public function testMemberOrder(): void
     {
         //log out the admin user
         Security::setCurrentUser(null);
@@ -299,7 +299,7 @@ class OrderProcessorTest extends SapphireTest
         );
     }
 
-    public function testNoMemberOrder()
+    public function testNoMemberOrder(): void
     {
         //log out the admin user
         Security::setCurrentUser(null);
@@ -341,7 +341,7 @@ class OrderProcessorTest extends SapphireTest
         $this->assertEquals($shippingaddress->Country, 'AU', 'order country');
     }
 
-    public function testPlaceOrderMarksAsPaidWithNoOutstandingAmount()
+    public function testPlaceOrderMarksAsPaidWithNoOutstandingAmount(): void
     {
         Config::modify()->set(ShopConfigExtension::class, 'email_from', 'shopadmin@example.com');
 
@@ -391,7 +391,7 @@ class OrderProcessorTest extends SapphireTest
         $password = null,
         $confirmpassword = null,
         $member = null
-    ) {
+    ): bool {
         $data = [
             'FirstName' => $firstname,
             'Surname'   => $surname,

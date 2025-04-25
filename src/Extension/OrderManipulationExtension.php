@@ -8,10 +8,12 @@ use SilverShop\Model\Order;
 use SilverShop\ShopTools;
 use SilverStripe\Control\Controller;
 use SilverStripe\Control\HTTPRequest;
+use SilverStripe\Control\HTTPResponse;
 use SilverStripe\Control\HTTPResponse_Exception;
+use SilverStripe\Core\Config\Configurable;
 use SilverStripe\Core\Extension;
-use SilverStripe\Forms\Form;
 use SilverStripe\ORM\DataList;
+use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\PaginatedList;
 use SilverStripe\Security\Security;
 
@@ -23,50 +25,53 @@ use SilverStripe\Security\Security;
  */
 class OrderManipulationExtension extends Extension
 {
-    private static $allowed_actions = [
+    use Configurable;
+
+    private static array $allowed_actions = [
         'ActionsForm',
         'order',
     ];
 
-    private static $sessname = 'OrderManipulation.historicalorders';
+    private static string $sessname = 'OrderManipulation.historicalorders';
+
+    protected string $sessionmessage = '';
+    protected string $sessionmessagetype = '';
 
     /**
      * Add an order to the session-stored history of orders.
      */
-    public static function add_session_order(Order $order)
+    public static function add_session_order(Order $order): void
     {
         $history = self::get_session_order_ids();
         if (!is_array($history)) {
             $history = [];
         }
         $history[$order->ID] = $order->ID;
-        ShopTools::getSession()->set(self::$sessname, $history);
+        ShopTools::getSession()->set(static::config()->get('sessname'), $history);
     }
 
     /**
      * Get historical orders for current session.
      */
-    public static function get_session_order_ids()
+    public static function get_session_order_ids(): ?array
     {
-        $history = ShopTools::getSession()->get(self::$sessname);
+        $history = ShopTools::getSession()->get(static::config()->get('sessname'));
         if (!is_array($history)) {
             $history = null;
         }
         return $history;
     }
 
-    public static function clear_session_order_ids()
+    public static function clear_session_order_ids(): void
     {
-        ShopTools::getSession()->set(self::$sessname, null)->clear(self::$sessname);
+        ShopTools::getSession()->set(static::config()->get('sessname'), null)->clear(static::config()->get('sessname'));
     }
 
     /**
      * Get the order via url 'ID' or form submission 'OrderID'.
      * It will check for permission based on session stored ids or member id.
-     *
-     * @return Order order
      */
-    public function orderfromid()
+    public function orderfromid(): ?DataObject
     {
         $request = $this->owner->getRequest();
         $id = (int)$request->param('ID');
@@ -79,10 +84,8 @@ class OrderManipulationExtension extends Extension
 
     /**
      * Get all orders for current member / session.
-     *
-     * @return DataList of Orders
      */
-    public function allorders()
+    public function allorders(): DataList
     {
         $filters = [
             'ID' => -1 //ensures no results are returned
@@ -101,7 +104,7 @@ class OrderManipulationExtension extends Extension
     /**
      * Return all past orders for current member / session.
      */
-    public function PastOrders($paginated = false)
+    public function PastOrders($paginated = false): DataList
     {
         $orders = $this->allorders()
             ->filter('Status', Order::config()->placed_status);
@@ -119,7 +122,7 @@ class OrderManipulationExtension extends Extension
      * @return array of template variables
      * @throws HTTPResponse_Exception
      */
-    public function order(HTTPRequest $request)
+    public function order(HTTPRequest $request): array|HTTPResponse
     {
         //move the shopping cart session id to past order ids, if it is now an order
         ShoppingCart::singleton()->archiveorderid($request->param('ID'));
@@ -137,10 +140,8 @@ class OrderManipulationExtension extends Extension
 
     /**
      * Build a form for cancelling, or retrying payment for a placed order.
-     *
-     * @return Form
      */
-    public function ActionsForm()
+    public function ActionsForm(): ?OrderActionsForm
     {
         if ($order = $this->orderfromid()) {
             $form = OrderActionsForm::create($this->owner, 'ActionsForm', $order);
@@ -154,18 +155,14 @@ class OrderManipulationExtension extends Extension
         return null;
     }
 
-    protected $sessionmessage;
-
-    protected $sessionmessagetype;
-
-    public function setSessionMessage($message = 'success', $type = 'good')
+    public function setSessionMessage($message = 'success', $type = 'good'): void
     {
         $this->owner->getRequest()->getSession()
             ->set('OrderManipulation.Message', $message)
             ->set('OrderManipulation.MessageType', $type);
     }
 
-    public function SessionMessage()
+    public function SessionMessage(): string
     {
         $session = $this->owner->getRequest()->getSession();
         if ($session && ($message = $session->get('OrderManipulation.Message'))) {
@@ -176,7 +173,7 @@ class OrderManipulationExtension extends Extension
         return $this->sessionmessage;
     }
 
-    public function SessionMessageType()
+    public function SessionMessageType(): string
     {
         $session = $this->owner->getRequest()->getSession();
         if ($session && ($type = $session->get('OrderManipulation.MessageType'))) {

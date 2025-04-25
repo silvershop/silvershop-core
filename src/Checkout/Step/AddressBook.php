@@ -9,7 +9,7 @@ use SilverShop\Checkout\CheckoutComponentConfig;
 
 class AddressBook extends Address
 {
-    private static $allowed_actions = [
+    private static array $allowed_actions = [
         'shippingaddress',
         'ShippingAddressForm',
         'setshippingaddress',
@@ -18,7 +18,7 @@ class AddressBook extends Address
         'setbillingaddress',
     ];
 
-    public function shippingconfig()
+    public function shippingconfig(): CheckoutComponentConfig
     {
         $config = CheckoutComponentConfig::create(ShoppingCart::curr());
         $config->addComponent(AddressBookShipping::create());
@@ -26,7 +26,7 @@ class AddressBook extends Address
         return $config;
     }
 
-    public function billingconfig()
+    public function billingconfig(): CheckoutComponentConfig
     {
         $config = CheckoutComponentConfig::create(ShoppingCart::curr());
         $config->addComponent(AddressBookBilling::create());

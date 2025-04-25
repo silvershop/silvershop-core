@@ -92,7 +92,7 @@ class ShoppingCartControllerTest extends FunctionalTest
         $this->cart = ShoppingCart::singleton();
     }
 
-    public function testAddToCart()
+    public function testAddToCart(): void
     {
         // add 2 of the same items via url
         $url = ShoppingCartController::add_item_link($this->mp3player);
@@ -176,7 +176,7 @@ class ShoppingCartControllerTest extends FunctionalTest
         $this->cart->clear();
     }
 
-    public function testRemoveFromCart()
+    public function testRemoveFromCart(): void
     {
 
         // add items via url
@@ -207,7 +207,7 @@ class ShoppingCartControllerTest extends FunctionalTest
         );
     }
 
-    public function testSecurityToken()
+    public function testSecurityToken(): void
     {
         $enabled = SecurityToken::is_enabled();
 
@@ -251,7 +251,7 @@ class ShoppingCartControllerTest extends FunctionalTest
         }
     }
 
-    public function testVariations()
+    public function testVariations(): void
     {
         /**
          * @var Product $ballRoot

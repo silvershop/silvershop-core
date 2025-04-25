@@ -20,33 +20,14 @@ use SilverStripe\ORM\DataObject;
 class ProductTest extends FunctionalTest
 {
     protected static $fixture_file = __DIR__ . '/../Fixtures/shop.yml';
-    protected static $disable_theme = true;
-    protected static $use_draft_site = true;
+    protected static bool $disable_theme = true;
+    protected static bool $use_draft_site = true;
 
-    /**
-     * @var Product
-     */
-    protected $mp3player;
-
-    /**
-     * @var Product
-     */
-    protected $socks;
-
-    /**
-     * @var Product
-     */
-    protected $beachball;
-
-    /**
-     * @var Product
-     */
-    protected $tshirt;
-
-    /**
-     * @var Product
-     */
-    protected $pdfbrochure;
+    protected Product $mp3player;
+    protected Product $socks;
+    protected Product $beachball;
+    protected Product $tshirt;
+    protected Product $pdfbrochure;
 
     public function setUp(): void
     {
@@ -59,13 +40,13 @@ class ProductTest extends FunctionalTest
         $this->pdfbrochure = $this->objFromFixture(Product::class, 'pdfbrochure');
     }
 
-    public function testCMSFields()
+    public function testCMSFields(): void
     {
         $this->tshirt->getCMSFields();
         $this->markTestIncomplete('Test Product CMS fields');
     }
 
-    public function testCanPurchase()
+    public function testCanPurchase(): void
     {
         $this->assertTrue($this->tshirt->canPurchase());
         $this->assertTrue($this->socks->canPurchase());
@@ -82,7 +63,7 @@ class ProductTest extends FunctionalTest
         Product::config()->global_allow_purchase = true;
     }
 
-    public function testSellingPrice()
+    public function testSellingPrice(): void
     {
         $this->assertEquals(25, $this->tshirt->sellingPrice());
         $this->assertEquals(8, $this->socks->sellingPrice());
@@ -93,7 +74,7 @@ class ProductTest extends FunctionalTest
         $this->assertEquals(0, $this->tshirt->sellingPrice());
     }
 
-    public function testCreateItem()
+    public function testCreateItem(): void
     {
         $item = $this->tshirt->createItem(6);
         $this->assertEquals($this->tshirt->ID, $item->ProductID);
@@ -101,7 +82,7 @@ class ProductTest extends FunctionalTest
         $this->assertEquals(OrderItem::class, get_class($item));
     }
 
-    public function testItem()
+    public function testItem(): void
     {
         $this->assertFalse($this->tshirt->IsInCart(), "tshirt is not in cart");
 
@@ -117,7 +98,7 @@ class ProductTest extends FunctionalTest
         $this->assertEquals(15, $item->Quantity);
     }
 
-    public function testDiscountRoundingError()
+    public function testDiscountRoundingError(): void
     {
         // This extension adds a fractional discount, which could cause
         // the displayed unit price not to match the charged price at
@@ -135,13 +116,13 @@ class ProductTest extends FunctionalTest
     /**
      * @doesNotPerformAssertions
      */
-    public function testCanViewProductPage()
+    public function testCanViewProductPage(): void
     {
         $this->get(Director::makeRelative($this->tshirt->Link()));
         $this->get(Director::makeRelative($this->socks->Link()));
     }
 
-    public function testCategories()
+    public function testCategories(): void
     {
         $expectedids = [
             $this->objFromFixture(ProductCategory::class, "products")->ID,

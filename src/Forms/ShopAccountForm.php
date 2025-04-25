@@ -2,6 +2,7 @@
 
 namespace SilverShop\Forms;
 
+use SilverStripe\Control\RequestHandler;
 use SilverShop\Extension\ShopConfigExtension;
 use SilverShop\Page\AccountPageController;
 use SilverShop\Page\CheckoutPage;
@@ -19,7 +20,7 @@ use SilverStripe\Security\Security;
  */
 class ShopAccountForm extends Form
 {
-    public function __construct($controller, $name)
+    public function __construct(RequestHandler $controller, $name)
     {
         $member = Security::getCurrentUser();
         $requiredFields = null;
@@ -56,11 +57,9 @@ class ShopAccountForm extends Form
      * @param array       $data
      * @param Form        $form
      * @param HTTPRequest $request
-     *
-     * @return bool|HTTPResponse
      * @throws ValidationException
      */
-    public function submit($data, $form, $request)
+    public function submit($data, $form, $request): bool|HTTPResponse
     {
         $member = Security::getCurrentUser();
         if (!$member) {
@@ -82,11 +81,9 @@ class ShopAccountForm extends Form
      * @param array       $data
      * @param Form        $form
      * @param HTTPRequest $request
-     *
-     * @return bool|HTTPResponse
      * @throws ValidationException
      */
-    public function proceed($data, $form, $request)
+    public function proceed($data, $form, $request): bool|HTTPResponse
     {
         $member = Security::getCurrentUser();
         if (!$member) {

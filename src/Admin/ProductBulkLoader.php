@@ -7,6 +7,7 @@ use SilverShop\Model\Variation\Variation;
 use SilverShop\Page\ProductCategory;
 use SilverStripe\Assets\Image;
 use SilverStripe\Core\Convert;
+use SilverStripe\Dev\BulkLoader_Result;
 use SilverStripe\Dev\CsvBulkLoader;
 use SilverStripe\ORM\ArrayList;
 
@@ -102,7 +103,7 @@ class ProductBulkLoader extends CsvBulkLoader
         ],
     ];
 
-    protected function processAll($filepath, $preview = false)
+    protected function processAll($filepath, $preview = false): BulkLoader_Result
     {
         $this->extend('updateColumnMap', $this->columnMap);
 
@@ -135,7 +136,7 @@ class ProductBulkLoader extends CsvBulkLoader
         return $results;
     }
 
-    public function processRecord($record, $columnMap, &$results, $preview = false)
+    public function processRecord($record, $columnMap, &$results, $preview = false): ?int
     {
         if (!$record || !isset($record['Title']) || $record['Title'] == '') { //TODO: make required fields customisable
             return null;
@@ -144,7 +145,7 @@ class ProductBulkLoader extends CsvBulkLoader
     }
 
     // set image, based on filename
-    public function imageByFilename(&$obj, $val)
+    public function imageByFilename(&$obj, $val): ?Image
     {
         $filename = trim(strtolower(Convert::raw2sql($val)));
         $filenamedashes = str_replace(' ', '-', $filename);
@@ -164,7 +165,7 @@ class ProductBulkLoader extends CsvBulkLoader
     }
 
     // find product group parent (ie Cateogry)
-    public function setParent(&$obj, $val)
+    public function setParent(&$obj, $val): void
     {
         $title = strtolower(Convert::raw2sql($val));
         if ($title) {
@@ -193,7 +194,7 @@ class ProductBulkLoader extends CsvBulkLoader
     /**
      * Adds paragraphs to content.
      */
-    public function setContent(&$obj, $val, $record)
+    public function setContent(&$obj, $val, $record): void
     {
         $val = trim($val);
         if ($val) {
@@ -202,7 +203,7 @@ class ProductBulkLoader extends CsvBulkLoader
         }
     }
 
-    public function processVariation(&$obj, $val, $record)
+    public function processVariation(&$obj, $val, $record): void
     {
         if (isset($record['->variationRow'])) {
             return;
@@ -238,37 +239,37 @@ class ProductBulkLoader extends CsvBulkLoader
     }
 
     //work around until I can figure out how to allow calling processVariation multiple times
-    public function processVariation1(&$obj, $val, $record)
+    public function processVariation1(&$obj, $val, $record): void
     {
         $this->processVariation($obj, $val, $record);
     }
 
-    public function processVariation2(&$obj, $val, $record)
+    public function processVariation2(&$obj, $val, $record): void
     {
         $this->processVariation($obj, $val, $record);
     }
 
-    public function processVariation3(&$obj, $val, $record)
+    public function processVariation3(&$obj, $val, $record): void
     {
         $this->processVariation($obj, $val, $record);
     }
 
-    public function processVariation4(&$obj, $val, $record)
+    public function processVariation4(&$obj, $val, $record): void
     {
         $this->processVariation($obj, $val, $record);
     }
 
-    public function processVariation5(&$obj, $val, $record)
+    public function processVariation5(&$obj, $val, $record): void
     {
         $this->processVariation($obj, $val, $record);
     }
 
-    public function processVariation6(&$obj, $val, $record)
+    public function processVariation6(&$obj, $val, $record): void
     {
         $this->processVariation($obj, $val, $record);
     }
 
-    public function variationRow(&$obj, $val, $record)
+    public function variationRow(&$obj, $val, $record): void
     {
 
         $obj->write(); //make sure product is in DB

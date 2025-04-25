@@ -2,6 +2,7 @@
 
 namespace SilverShop\Forms;
 
+use SilverStripe\Control\RequestHandler;
 use SilverShop\Checkout\OrderEmailNotifier;
 use SilverShop\Checkout\OrderProcessor;
 use SilverShop\Extension\ShopConfigExtension;
@@ -29,24 +30,21 @@ use SilverStripe\View\Requirements;
  */
 class OrderActionsForm extends Form
 {
-    private static $allowed_actions = [
+    private static array $allowed_actions = [
         'docancel',
         'dopayment',
         'httpsubmission',
     ];
 
-    private static $email_notification = false;
+    private static bool $email_notification = false;
 
-    private static $allow_paying = true;
+    private static bool $allow_paying = true;
 
-    private static $allow_cancelling = true;
+    private static bool $allow_cancelling = true;
 
-    private static $include_jquery = true;
+    private static bool $include_jquery = true;
 
-    /**
-     * @var Order the order
-     */
-    protected $order;
+    protected Order $order;
 
     /**
      * OrderActionsForm constructor.
@@ -55,7 +53,7 @@ class OrderActionsForm extends Form
      * @param  $name
      * @throws InvalidConfigurationException
      */
-    public function __construct($controller, $name, Order $order)
+    public function __construct(RequestHandler $controller, $name, Order $order)
     {
         $this->order = $order;
         $fields = FieldList::create(
@@ -144,10 +142,8 @@ class OrderActionsForm extends Form
      *
      * @param array $data
      * @param Form  $form
-     *
-     * @return HTTPResponse
      */
-    public function dopayment($data, $form)
+    public function dopayment($data, $form): HTTPResponse
     {
         if (self::config()->allow_paying
             && $this->order
@@ -194,7 +190,7 @@ class OrderActionsForm extends Form
      * @param  Form  $form The {@link Form} this was submitted on
      * @throws ValidationException
      */
-    public function docancel($data, $form)
+    public function docancel($data, $form): void
     {
         if (self::config()->allow_cancelling
             && $this->order->canCancel()
@@ -220,10 +216,8 @@ class OrderActionsForm extends Form
 
     /**
      * Get credit card fields for the given gateways
-     *
-     * @return CompositeField|null
      */
-    protected function getCCFields(array $gateways)
+    protected function getCCFields(array $gateways): ?CompositeField
     {
         $fieldFactory = new GatewayFieldsFactory(null, ['Card']);
         $onsiteGateways = [];

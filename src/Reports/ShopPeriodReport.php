@@ -8,12 +8,14 @@ use SilverStripe\Forms\CheckboxField;
 use SilverStripe\Forms\DateField;
 use SilverStripe\Forms\DropdownField;
 use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\FormField;
 use SilverStripe\Forms\GridField\GridFieldConfig;
 use SilverStripe\Forms\GridField\GridFieldDataColumns;
 use SilverStripe\Forms\GridField\GridFieldExportButton;
 use SilverStripe\i18n\i18nEntityProvider;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\DB;
+use SilverStripe\ORM\Queries\SQLSelect;
 use SilverStripe\Reports\Report;
 use SilverStripe\Security\Member;
 use SilverStripe\Security\Security;
@@ -24,7 +26,7 @@ use SilverStripe\Security\Security;
  */
 abstract class ShopPeriodReport extends Report implements i18nEntityProvider
 {
-    private static $display_uncategorised_data = false;
+    private static bool $display_uncategorised_data = false;
 
     protected $dataClass = Order::class;
 
@@ -34,23 +36,23 @@ abstract class ShopPeriodReport extends Report implements i18nEntityProvider
 
     protected $pagesize = 30;
 
-    private static $groupingdateformats = [
+    private static array $groupingdateformats = [
         'Year' => 'Y',
         'Month' => 'Y - F',
         'Day' => 'd F Y - l',
     ];
 
-    public function title()
+    public function title(): string
     {
         return _t(static::class . ".Title", $this->title);
     }
 
-    public function description()
+    public function description(): string
     {
         return _t(static::class . ".Description", $this->description);
     }
 
-    public function parameterFields()
+    public function parameterFields(): FieldList
     {
         $member = Security::getCurrentUser() ? Security::getCurrentUser() : Member::create();
         $dateformat = $member->getDateFormat();
@@ -91,7 +93,7 @@ abstract class ShopPeriodReport extends Report implements i18nEntityProvider
         return $fields;
     }
 
-    public function canView($member = null)
+    public function canView($member = null): bool
     {
         if (static::class === self::class) {
             return false;
@@ -99,7 +101,7 @@ abstract class ShopPeriodReport extends Report implements i18nEntityProvider
         return parent::canView($member);
     }
 
-    public function getReportField()
+    public function getReportField(): FormField
     {
         $field = parent::getReportField();
         /**
@@ -114,14 +116,14 @@ abstract class ShopPeriodReport extends Report implements i18nEntityProvider
         return $field;
     }
 
-    public function sourceRecords($params)
+    public function sourceRecords($params): SQLQueryList
     {
         isset($params['Grouping']) || $params['Grouping'] = 'Month';
         $list = SQLQueryList::create($this->query($params));
         $grouping = $params['Grouping'];
         $self = $this;
         $list->setOutputClosure(
-            function ($row) use ($grouping, $self) {
+            function (array $row) use ($grouping, $self): object {
                 $row['FilterPeriod'] = $self->formatDateForGrouping($row['FilterPeriod'], $grouping);
 
                 return new $self->dataClass($row);
@@ -131,7 +133,7 @@ abstract class ShopPeriodReport extends Report implements i18nEntityProvider
         return $list;
     }
 
-    public function formatDateForGrouping($date, $grouping)
+    public function formatDateForGrouping($date, $grouping): string
     {
         if (!$date) {
             return $date;
@@ -141,7 +143,7 @@ abstract class ShopPeriodReport extends Report implements i18nEntityProvider
         return date($dformat, strtotime($date));
     }
 
-    public function query($params)
+    public function query($params): ShopReportQuery|SQLSelect
     {
         //convert dates to correct format
         $fields = $this->parameterFields();
@@ -194,17 +196,15 @@ abstract class ShopPeriodReport extends Report implements i18nEntityProvider
         return $query;
     }
 
-    protected function fd($date, $format)
+    protected function fd($date, $format): string
     {
         return DB::get_conn()->formattedDatetimeClause($date, $format);
     }
 
     /**
      * Provide translatable entities for this class and all subclasses
-     *
-     * @return array
      */
-    public function provideI18nEntities()
+    public function provideI18nEntities(): array
     {
         $cls = static::class;
         return [

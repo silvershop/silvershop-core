@@ -16,14 +16,14 @@ use SilverStripe\ORM\DB;
  */
 class CartPage extends Page
 {
-    private static $has_one = [
+    private static array $has_one = [
         'CheckoutPage' => CheckoutPage::class,
         'ContinuePage' => SiteTree::class,
     ];
 
-    private static $icon = 'silvershop/core: client/dist/images/icons/cart.gif';
+    private static string $icon = 'silvershop/core: client/dist/images/icons/cart.gif';
 
-    private static $table_name = 'SilverShop_CartPage';
+    private static string $table_name = 'SilverShop_CartPage';
 
     /**
      * Returns the link to the checkout page on this site
@@ -32,7 +32,7 @@ class CartPage extends Page
      *
      * @return string Link to checkout page
      */
-    public static function find_link($urlSegment = false, $action = false, $id = false)
+    public static function find_link($urlSegment = false, $action = false, $id = false): string
     {
         $base = CartPageController::config()->url_segment;
         if ($page = self::get()->first()) {
@@ -41,10 +41,10 @@ class CartPage extends Page
         return Controller::join_links($base, $action, $id);
     }
 
-    public function getCMSFields()
+    public function getCMSFields(): FieldList
     {
         $this->beforeUpdateCMSFields(
-            function (FieldList $fields) {
+            function (FieldList $fields): void {
                 if ($checkouts = CheckoutPage::get()) {
                     $fields->addFieldToTab(
                         'Root.Links',
@@ -73,7 +73,7 @@ class CartPage extends Page
     /**
      * This module always requires a page model.
      */
-    public function requireDefaultRecords()
+    public function requireDefaultRecords(): void
     {
         parent::requireDefaultRecords();
         if (!self::get()->exists() && $this->config()->create_default_pages) {

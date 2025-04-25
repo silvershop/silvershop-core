@@ -13,7 +13,7 @@ class ShopToolsTest extends SapphireTest
         ShopTest::setConfiguration();
     }
 
-    public function testPriceForDisplay()
+    public function testPriceForDisplay(): void
     {
         $dp = ShopTools::price_for_display(12345.67);
         $dp->setCurrency("NZD");

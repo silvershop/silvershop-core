@@ -20,15 +20,9 @@ use SilverStripe\View\SSViewer;
  */
 class CartEditField extends FormField
 {
-    /**
-     * @var Order
-     */
-    protected $cart;
-
-    protected $items;
-
+    protected Order $cart;
+    protected SS_List $items;
     protected $template = 'Cart';
-
     protected $editableItemsCallback;
 
     public function __construct($name, $title, $cart)
@@ -43,7 +37,7 @@ class CartEditField extends FormField
      *
      * @param string $template
      */
-    public function setTemplate($template)
+    public function setTemplate($template): static
     {
         $this->template = $template;
         return $this;
@@ -53,7 +47,7 @@ class CartEditField extends FormField
      * Allow overriding the given items list.
      * This helps with formatting, grouping, ordering etc.
      */
-    public function setItemsList(SS_List $list)
+    public function setItemsList(SS_List $list): static
     {
         $this->items = $list;
         return $this;
@@ -61,10 +55,8 @@ class CartEditField extends FormField
 
     /**
      * Get the items list being used to produce the cart.
-     *
-     * @return SS_List
      */
-    public function getItemsList()
+    public function getItemsList(): SS_List
     {
         return $this->items;
     }
@@ -73,7 +65,7 @@ class CartEditField extends FormField
      * Provides a way to modify the editableItems list
      * before it is rendered.
      */
-    public function setEditableItemsCallback(Closure $callback)
+    public function setEditableItemsCallback(Closure $callback): void
     {
         $this->editableItemsCallback = $callback;
     }
@@ -81,7 +73,9 @@ class CartEditField extends FormField
     /**
      * Render the cart with editable item fields.
      *
+     * Note: SilverStripe\Forms\FormField\Field returns DBHTMLText
      * @param array $properties
+     * @return string
      */
     public function Field($properties = [])
     {
@@ -103,8 +97,6 @@ class CartEditField extends FormField
     /**
      * Add quantity, variation and remove fields to the
      * item set.
-     *
-     * @param SS_List $items
      */
     protected function editableItems()
     {

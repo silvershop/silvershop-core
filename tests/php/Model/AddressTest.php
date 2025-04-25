@@ -8,7 +8,7 @@ use Exception;
 
 class AddressTest extends SapphireTest
 {
-    public function testForm()
+    public function testForm(): void
     {
         $address = Address::create()->update(
             [
@@ -30,7 +30,7 @@ class AddressTest extends SapphireTest
         );
     }
 
-    public function testRequiredFields()
+    public function testRequiredFields(): void
     {
         // create address instance that lacks some required fields (Address)
         $address = Address::create()->update(

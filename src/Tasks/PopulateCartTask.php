@@ -19,7 +19,7 @@ class PopulateCartTask extends BuildTask
 
     protected $description = 'Add 5 random Live products or variations to cart, with random quantities between 1 and 10.';
 
-    public function run($request)
+    public function run($request): void
     {
         $cart = ShoppingCart::singleton();
         $count = $request->getVar('count') ? $request->getVar('count') : 5;

@@ -28,18 +28,18 @@ use Symbiote\GridFieldExtensions\GridFieldOrderableRows;
  */
 class ProductVariationsExtension extends DataExtension
 {
-    private static $has_many = [
+    private static array $has_many = [
         'Variations' => Variation::class,
     ];
 
-    private static $many_many = [
+    private static array $many_many = [
         'VariationAttributeTypes' => AttributeType::class,
     ];
 
     /**
      * Adds variations specific fields to the CMS.
      */
-    public function updateCMSFields(FieldList $fields)
+    public function updateCMSFields(FieldList $fields): void
     {
         $fields->addFieldsToTab('Root.Variations', [
             ListboxField::create(
@@ -77,7 +77,7 @@ class ProductVariationsExtension extends DataExtension
         }
     }
 
-    public function PriceRange()
+    public function PriceRange(): ?ArrayData
     {
         $variations = $this->owner->Variations();
 
@@ -112,11 +112,8 @@ class ProductVariationsExtension extends DataExtension
 
     /**
      * Pass an array of attribute ids to query for the appropriate variation.
-     *
-     *
-     * @return Variation|null
      */
-    public function getVariationByAttributes(array $attributes)
+    public function getVariationByAttributes(array $attributes): ?Variation
     {
         if (!is_array($attributes)) {
             return null;
@@ -142,7 +139,7 @@ class ProductVariationsExtension extends DataExtension
      *
      * @throws ValidationException
      */
-    public function generateVariationsFromAttributes(AttributeType $attributetype, array $values)
+    public function generateVariationsFromAttributes(AttributeType $attributetype, array $values): void
     {
         //TODO: introduce transactions here, in case objects get half made etc
         //if product has variation attribute types
@@ -186,10 +183,8 @@ class ProductVariationsExtension extends DataExtension
     /**
      * Get all the {@link ProductAttributeValue} for a given attribute type,
      * based on this product's variations.
-     *
-     * @return DataList
      */
-    public function possibleValuesForAttributeType($type)
+    public function possibleValuesForAttributeType($type): ?DataList
     {
         if (!is_numeric($type)) {
             $type = $type->ID;
@@ -219,7 +214,7 @@ class ProductVariationsExtension extends DataExtension
     /**
      * Make sure variations are deleted with product.
      */
-    public function onAfterDelete()
+    public function onAfterDelete(): void
     {
         $remove = false;
         // if a record is staged or live, leave it's variations alone.
@@ -242,7 +237,7 @@ class ProductVariationsExtension extends DataExtension
         }
     }
 
-    public function updateFormClass(&$formClass)
+    public function updateFormClass(&$formClass): void
     {
         if ($this->owner->Variations()->exists()) {
             $formClass = VariationForm::class;

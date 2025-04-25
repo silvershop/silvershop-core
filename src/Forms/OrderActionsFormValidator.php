@@ -8,7 +8,7 @@ use SilverStripe\Omnipay\GatewayInfo;
 
 class OrderActionsFormValidator extends RequiredFields
 {
-    public function php($data)
+    public function php($data): bool
     {
         // Check if we should do a payment
         if (!empty($data['PaymentMethod'])) {

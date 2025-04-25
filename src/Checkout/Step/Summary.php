@@ -10,12 +10,12 @@ use SilverShop\Forms\PaymentForm;
 
 class Summary extends CheckoutStep
 {
-    private static $allowed_actions = [
+    private static array $allowed_actions = [
         'summary',
         'ConfirmationForm',
     ];
 
-    public function summary()
+    public function summary(): array
     {
         $form = $this->ConfirmationForm();
         return [
@@ -23,7 +23,7 @@ class Summary extends CheckoutStep
         ];
     }
 
-    public function ConfirmationForm()
+    public function ConfirmationForm(): PaymentForm
     {
         $config = CheckoutComponentConfig::create(ShoppingCart::curr(), false);
         $config->addComponent(Notes::create());

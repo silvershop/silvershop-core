@@ -12,21 +12,21 @@ use SilverStripe\Admin\ModelAdmin;
  **/
 class ProductCatalogAdmin extends ModelAdmin
 {
-    private static $url_segment = 'catalog';
+    private static string $url_segment = 'catalog';
 
-    private static $menu_title = 'Catalog';
+    private static string $menu_title = 'Catalog';
 
-    private static $menu_priority = 5;
+    private static int $menu_priority = 5;
 
-    private static $menu_icon_class = 'silvershop-icon-catalog';
+    private static string $menu_icon_class = 'silvershop-icon-catalog';
 
-    private static $managed_models = [
+    private static array $managed_models = [
         Product::class,
         ProductCategory::class,
         AttributeType::class,
     ];
 
-    private static $model_importers = [
+    private static array $model_importers = [
         Product::class => ProductBulkLoader::class,
     ];
 }

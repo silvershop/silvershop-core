@@ -37,7 +37,7 @@ class SteppedCheckoutExtension extends Extension
     /**
      * Set up CheckoutPage_Controller decorators for managing steps
      */
-    public static function setupSteps($steps = null)
+    public static function setupSteps($steps = null): void
     {
         if (!is_array($steps)) {
             //default steps
@@ -64,7 +64,7 @@ class SteppedCheckoutExtension extends Extension
         }
     }
 
-    public function getSteps()
+    public function getSteps(): array
     {
         return CheckoutPage::config()->steps;
     }
@@ -72,7 +72,7 @@ class SteppedCheckoutExtension extends Extension
     /**
      * Redirect back to start of checkout if no cart started
      */
-    public function onAfterInit()
+    public function onAfterInit(): void
     {
         $action = $this->owner->getRequest()->param('Action');
         $steps = $this->getSteps();
@@ -85,7 +85,7 @@ class SteppedCheckoutExtension extends Extension
     /**
      * Check if passed action is the same as the current step
      */
-    public function IsCurrentStep($name)
+    public function IsCurrentStep($name): bool
     {
         if ($this->owner->getAction() === $name) {
             return true;
@@ -95,7 +95,7 @@ class SteppedCheckoutExtension extends Extension
         return false;
     }
 
-    public function StepExists($name)
+    public function StepExists($name): bool
     {
         $steps = $this->getSteps();
         return isset($steps[$name]);
@@ -104,7 +104,7 @@ class SteppedCheckoutExtension extends Extension
     /**
      * Check if passed action is for a step before current
      */
-    public function IsPastStep($name)
+    public function IsPastStep($name): bool
     {
         return $this->compareActions($name, $this->owner->getAction()) < 0;
     }
@@ -112,7 +112,7 @@ class SteppedCheckoutExtension extends Extension
     /**
      * Check if passed action is for a step after current
      */
-    public function IsFutureStep($name)
+    public function IsFutureStep($name): bool
     {
         return $this->compareActions($name, $this->owner->getAction()) > 0;
     }
@@ -120,7 +120,7 @@ class SteppedCheckoutExtension extends Extension
     /**
      * Get first step from stored steps
      */
-    public function index()
+    public function index(): string|array
     {
         if (CheckoutPage::config()->first_step) {
             return $this->owner->{CheckoutPage::config()->first_step}();
@@ -131,7 +131,7 @@ class SteppedCheckoutExtension extends Extension
     /**
      * Check if one step comes before or after the another
      */
-    private function compareActions($action1, $action2)
+    private function compareActions($action1, $action2): int|float
     {
         return $this->actionPos($action1) - $this->actionPos($action2);
     }

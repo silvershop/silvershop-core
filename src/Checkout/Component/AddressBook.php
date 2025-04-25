@@ -19,18 +19,17 @@ use SilverStripe\View\Requirements;
  */
 abstract class AddressBook extends Address implements i18nEntityProvider
 {
-    private static $jquery_file = 'https://code.jquery.com/jquery-3.7.0.min.js';
+    private static string $jquery_file = 'https://code.jquery.com/jquery-3.7.0.min.js';
     /**
      * The composite field tag to use
      *
      * @config
-     * @var    string
      */
-    private static $composite_field_tag = 'div';
+    private static string $composite_field_tag = 'div';
 
-    protected $addtoaddressbook = true;
+    protected bool $addtoaddressbook = true;
 
-    public function getFormFields(Order $order)
+    public function getFormFields(Order $order): FieldList
     {
         $fields = parent::getFormFields($order);
 
@@ -67,7 +66,7 @@ abstract class AddressBook extends Address implements i18nEntityProvider
      *
      * @return FieldList|null fields for
      */
-    public function getExistingAddressFields()
+    public function getExistingAddressFields(): ?FieldList
     {
         $member = Security::getCurrentUser();
         if ($member && $member->AddressBook()->exists()) {
@@ -93,19 +92,16 @@ abstract class AddressBook extends Address implements i18nEntityProvider
     /**
      * We don't know at the front end which fields are required so we defer to validateData
      *
-     *
-     * @return array
      */
-    public function getRequiredFields(Order $order)
+    public function getRequiredFields(Order $order): array
     {
         return [];
     }
 
     /**
-     *
      * @throws ValidationException
      */
-    public function validateData(Order $order, array $data)
+    public function validateData(Order $order, array $data): bool
     {
         $result = ValidationResult::create();
         $existingID =
@@ -138,6 +134,7 @@ abstract class AddressBook extends Address implements i18nEntityProvider
                 }
             }
         }
+        return true;
     }
 
     /**
@@ -148,7 +145,7 @@ abstract class AddressBook extends Address implements i18nEntityProvider
      * @param  array $data  data to set
      * @throws ValidationException
      */
-    public function setData(Order $order, array $data)
+    public function setData(Order $order, array $data): Order
     {
         $existingID =
             !empty($data[$this->addresstype . 'AddressID']) ? (int)$data[$this->addresstype . 'AddressID'] : 0;
@@ -159,14 +156,13 @@ abstract class AddressBook extends Address implements i18nEntityProvider
         } else {
             parent::setData($order, $data);
         }
+        return $order;
     }
 
     /**
      * Provide translatable entities for this class
-     *
-     * @return array
      */
-    public function provideI18nEntities()
+    public function provideI18nEntities(): array
     {
         if ($this->addresstype) {
             return [

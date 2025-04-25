@@ -15,17 +15,15 @@ class TestGatewayFactory extends GatewayFactory implements TestOnly
 {
     /**
      * HTTP client to use for gateways (for unit-tests)
-     * @var ClientInterface
      */
-    public static $httpClient;
+    public static ClientInterface $httpClient;
 
     /**
      * HTTP request to use for gateways (for unit-tests)
-     * @var HttpRequest
      */
-    public static $httpRequest;
+    public static HttpRequest $httpRequest;
 
-    public function create($class, ClientInterface $httpClient = null, HttpRequest $httpRequest = null)
+    public function create($class, ?ClientInterface $httpClient = null, ?HttpRequest $httpRequest = null)
     {
         return parent::create($class, self::$httpClient, self::$httpRequest);
     }

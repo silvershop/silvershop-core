@@ -7,11 +7,11 @@ use SilverStripe\Core\Extension;
 
 class LocationFormPageExtension extends Extension
 {
-    private static $allowed_actions = [
+    private static array $allowed_actions = [
         'SetLocationForm',
     ];
 
-    public function SetLocationForm()
+    public function SetLocationForm(): SetLocationForm
     {
         return SetLocationForm::create($this->owner);
     }

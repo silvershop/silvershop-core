@@ -2,6 +2,7 @@
 
 namespace SilverShop\Checkout\Step;
 
+use SilverStripe\Control\HTTPResponse;
 use SilverShop\Cart\ShoppingCart;
 use SilverShop\Checkout\CheckoutComponentConfig;
 use SilverShop\Checkout\Component\CustomerDetails;
@@ -17,16 +18,15 @@ class ContactDetails extends CheckoutStep
      * Whether or not this step should be skipped if user is logged in
      *
      * @config
-     * @var    bool
      */
-    private static $skip_if_logged_in = false;
+    private static bool $skip_if_logged_in = false;
 
-    private static $allowed_actions = [
+    private static array $allowed_actions = [
         'contactdetails',
         'ContactDetailsForm',
     ];
 
-    public function contactdetails()
+    public function contactdetails(): HTTPResponse|array
     {
         $form = $this->ContactDetailsForm();
         if (ShoppingCart::curr()
@@ -46,7 +46,7 @@ class ContactDetails extends CheckoutStep
         ];
     }
 
-    public function ContactDetailsForm()
+    public function ContactDetailsForm(): false|CheckoutForm
     {
         $cart = ShoppingCart::curr();
         if (!$cart) {

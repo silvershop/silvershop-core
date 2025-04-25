@@ -14,19 +14,17 @@ class Simple extends Base
 {
     /**
      * @config
-     * @var float
      */
-    private static $default_charge = 10;
+    private static int $default_charge = 10;
 
     /**
      * @config
-     * @var array
      */
-    private static $charges_by_country = [];
+    private static array $charges_by_country = [];
 
-    private static $table_name = 'SilverShop_SimpleModifier';
+    private static string $table_name = 'SilverShop_SimpleModifier';
 
-    public function value($subtotal = null)
+    public function value($subtotal = null): int|float
     {
         $country = $this->Country();
         if ($country && isset(self::config()->charges_by_country[$country])) {
@@ -36,7 +34,7 @@ class Simple extends Base
         return self::config()->default_charge;
     }
 
-    public function getTableTitle()
+    public function getTableTitle(): string
     {
         if ($country = $this->Country()) {
             $countryList = SiteConfig::current_site_config()->getCountriesList();
@@ -53,7 +51,7 @@ class Simple extends Base
     }
 
     /**
-     * @return string | null
+     * @return ?string
      */
     public function Country()
     {

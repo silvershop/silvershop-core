@@ -8,14 +8,14 @@ use SilverStripe\Dev\SapphireTest;
 
 class MatchObjectFilterTest extends SapphireTest
 {
-    public function testRelationId()
+    public function testRelationId(): void
     {
         // Tests that an ID is automatically added to any relation fields in the DataObject's has_one.
         $filter = new MatchObjectFilter(OrderItem::class, ['ProductID' => 5], ['ProductID']);
         $this->assertEquals($filter->getFilter(), ['"ProductID" = \'5\''], 'ID was added to filter');
     }
 
-    public function testMissingValues()
+    public function testMissingValues(): void
     {
         // Tests that missing values are included in the filter as IS NULL or = 0
         // Missing value for a has_one relationship field.

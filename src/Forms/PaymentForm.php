@@ -7,6 +7,8 @@ use SilverShop\Checkout\CheckoutComponentConfig;
 use SilverShop\Checkout\Component\CheckoutComponentNamespaced;
 use SilverShop\Checkout\OrderProcessor;
 use SilverShop\Model\Order;
+use SilverStripe\Control\HTTPResponse;
+use SilverStripe\Control\RequestHandler;
 use SilverStripe\Omnipay\GatewayFieldsFactory;
 use SilverStripe\Omnipay\GatewayInfo;
 
@@ -16,47 +18,47 @@ class PaymentForm extends CheckoutForm
      * @var string URL to redirect the user to on payment success.
      * Not the same as the "confirm" action in {@link PaymentGatewayController}.
      */
-    protected $successlink;
+    protected string $successlink = '';
 
     /**
      * @var string URL to redirect the user to on payment failure.
      * Not the same as the "cancel" action in {@link PaymentGatewayController}.
      */
-    protected $failurelink;
+    protected string $failurelink = '';
 
     /**
      * @var OrderProcessor
      */
     protected $orderProcessor;
 
-    public function __construct($controller, $name, CheckoutComponentConfig $config)
+    public function __construct(RequestHandler $controller, $name, CheckoutComponentConfig $config)
     {
         parent::__construct($controller, $name, $config);
 
         $this->orderProcessor = OrderProcessor::create($config->getOrder());
     }
 
-    public function setSuccessLink($link)
+    public function setSuccessLink(string $link): void
     {
         $this->successlink = $link;
     }
 
-    public function getSuccessLink()
+    public function getSuccessLink(): string
     {
         return $this->successlink;
     }
 
-    public function setFailureLink($link)
+    public function setFailureLink(string $link): void
     {
         $this->failurelink = $link;
     }
 
-    public function getFailureLink()
+    public function getFailureLink(): string
     {
         return $this->failurelink;
     }
 
-    public function checkoutSubmit($data, $form)
+    public function checkoutSubmit($data, $form): HTTPResponse
     {
         // form validation has passed by this point, so we can save data
         $this->config->setData($form->getData());
@@ -148,7 +150,7 @@ class PaymentForm extends CheckoutForm
         return $response;
     }
 
-    public function setOrderProcessor(OrderProcessor $processor)
+    public function setOrderProcessor(OrderProcessor $processor): void
     {
         $this->orderProcessor = $processor;
     }

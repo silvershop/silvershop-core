@@ -10,7 +10,6 @@ use SilverShop\Model\Order;
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Forms\ConfirmedPasswordField;
 use SilverStripe\Forms\FieldList;
-use SilverStripe\Forms\Form;
 use SilverStripe\Forms\PasswordField;
 use SilverStripe\Forms\TextField;
 use SilverStripe\ORM\ValidationException;
@@ -56,7 +55,7 @@ class Membership extends CheckoutComponent
         }
     }
 
-    public function getFormFields(Order $order, Form $form = null)
+    public function getFormFields(Order $order): FieldList
     {
         $fields = FieldList::create();
 
@@ -66,7 +65,7 @@ class Membership extends CheckoutComponent
 
         $idField = Member::config()->unique_identifier_field;
 
-        if (!$order->{$idField} && ($form && !$form->Fields()->fieldByName($idField))) {
+        if (!$order->{$idField}) {
             $fields->push(TextField::create($idField, $idField));
         }
 
@@ -75,7 +74,7 @@ class Membership extends CheckoutComponent
         return $fields;
     }
 
-    public function getRequiredFields(Order $order)
+    public function getRequiredFields(Order $order): array
     {
         if (Security::getCurrentUser() || !Checkout::membership_required()) {
             return [];
@@ -86,7 +85,7 @@ class Membership extends CheckoutComponent
         ];
     }
 
-    public function getPasswordField()
+    public function getPasswordField(): ConfirmedPasswordField|PasswordField
     {
         if ($this->confirmed) {
             //relies on fix: https://github.com/silverstripe/silverstripe-framework/pull/2757
@@ -96,10 +95,10 @@ class Membership extends CheckoutComponent
         return PasswordField::create('Password', _t('SilverShop\Checkout\CheckoutField.Password', 'Password'));
     }
 
-    public function validateData(Order $order, array $data)
+    public function validateData(Order $order, array $data): bool
     {
         if (Security::getCurrentUser()) {
-            return;
+            return true;
         }
         $result = ValidationResult::create();
         if (Checkout::membership_required() || !empty($data['Password'])) {
@@ -133,9 +132,10 @@ class Membership extends CheckoutComponent
         if (!$result->isValid()) {
             throw new ValidationException($result);
         }
+        return true;
     }
 
-    public function getData(Order $order)
+    public function getData(Order $order): array
     {
         $data = [];
 
@@ -149,13 +149,13 @@ class Membership extends CheckoutComponent
     /**
      * @throws ValidationException
      */
-    public function setData(Order $order, array $data)
+    public function setData(Order $order, array $data): Order
     {
         if (Security::getCurrentUser()) {
-            return;
+            return $order;
         }
         if (!Checkout::membership_required() && empty($data['Password'])) {
-            return;
+            return $order;
         }
 
         $factory = new ShopMemberFactory();
@@ -185,12 +185,12 @@ class Membership extends CheckoutComponent
         if ($member->isChanged()) {
             $member->write();
         }
+        return $order;
     }
 
-    public function setConfirmed($confirmed)
+    public function setConfirmed($confirmed): static
     {
         $this->confirmed = $confirmed;
-
         return $this;
     }
 }

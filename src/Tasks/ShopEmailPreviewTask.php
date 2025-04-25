@@ -35,7 +35,7 @@ class ShopEmailPreviewTask extends BuildTask
     /**
      * @param HTTPRequest $request
      */
-    public function run($request)
+    public function run($request): void
     {
         $email = $request->remaining();
         $params = $request->allParams();

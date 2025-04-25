@@ -20,12 +20,16 @@ class CustomersToGroupTask extends BuildTask
 
     protected $description = 'Adds all customers to an assigned group.';
 
-    public function run($request)
+    public function run($request): void
     {
-
         $gp = ShopConfigExtension::current()->CustomerGroup();
         if (empty($gp)) {
-            return false;
+            die(
+                _t(
+                    'SilverShop\Task\CustomersToGroupTask.DefaultCustomerGroupRequired',
+                    'Default Customer Group required'
+                )
+            );
         }
 
         $allCombos = DB::query(
@@ -54,7 +58,10 @@ class CustomersToGroupTask extends BuildTask
                 echo '.';
             }
         } else {
-            echo 'no new members added';
+            echo _t(
+                'SilverShop\Task\CustomersToGroupTask.NoNewMembersAdded',
+                'No new members added'
+            );
         }
     }
 }

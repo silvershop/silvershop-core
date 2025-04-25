@@ -26,43 +26,28 @@ class OrderEmailNotifier
 
     /**
      * BCC Confirmation Emails to Admin
-     *
-     * @var boolean
      */
-    private static $bcc_confirmation_to_admin = false;
+    private static bool $bcc_confirmation_to_admin = false;
 
     /**
      * BCC Receipt Emails to Admin
-     *
-     * @var boolean
      */
-    private static $bcc_receipt_to_admin = false;
+    private static bool $bcc_receipt_to_admin = false;
 
     /**
      * BCC Status Change Emails to Admin
-     *
-     * @var boolean
      */
-    private static $bcc_status_change_to_admin = false;
+    private static bool $bcc_status_change_to_admin = false;
 
-    private static $dependencies = [
+    private static array $dependencies = [
         'Logger' => '%$' . LoggerInterface::class,
     ];
 
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger;
+    protected LoggerInterface $logger;
 
-    /**
-     * @var Order $order
-     */
-    protected $order;
+    protected Order $order;
 
-    /**
-     * @var boolean
-     */
-    protected $debugMode = false;
+    protected bool $debugMode = false;
 
     /**
      * Assign the order to a local variable
@@ -72,23 +57,13 @@ class OrderEmailNotifier
         $this->order = $order;
     }
 
-    /**
-     * @param bool $bool
-     * @return $this
-     */
-    public function setDebugMode($bool)
+    public function setDebugMode(bool $bool): static
     {
         $this->debugMode = $bool;
         return $this;
     }
 
-    /**
-     * @param string $template
-     * @param string $subject
-     *
-     * @return Email
-     */
-    protected function buildEmail($template, $subject)
+    protected function buildEmail(string $template, string $subject): Email
     {
         $from = ShopConfigExtension::config()->email_from ? ShopConfigExtension::config()->email_from : Email::config()->admin_email;
         $to = $this->order->getLatestEmail();
@@ -122,7 +97,7 @@ class OrderEmailNotifier
      * @param string $subject     - subject of the email
      * @param bool   $copyToAdmin - true by default, whether it should send a copy to the admin
      */
-    public function sendEmail($template, $subject, $copyToAdmin = true): bool|string
+    public function sendEmail(string $template, string $subject, $copyToAdmin = true): bool|string
     {
         $email = $this->buildEmail($template, $subject);
 
@@ -144,10 +119,8 @@ class OrderEmailNotifier
 
     /**
      * Send customer a confirmation that the order has been received
-     *
-     * @return bool
      */
-    public function sendConfirmation()
+    public function sendConfirmation(): bool|string
     {
         $subject = _t(
             'SilverShop\ShopEmail.ConfirmationSubject',
@@ -194,7 +167,7 @@ class OrderEmailNotifier
      * Send customer an order receipt email.
      * Precondition: The order payment has been successful
      */
-    public function sendReceipt()
+    public function sendReceipt(): bool|string
     {
         $subject = _t(
             'SilverShop\ShopEmail.ReceiptSubject',
@@ -245,7 +218,7 @@ class OrderEmailNotifier
      * @param string $title Subject for email
      * @param string $note  Optional note-content (instead of using the OrderStatusLog)
      */
-    public function sendStatusChange($title, $note = null): bool|string
+    public function sendStatusChange(string $title, string $note = ''): bool|string
     {
         $latestLog = null;
 
@@ -311,10 +284,8 @@ class OrderEmailNotifier
      * The new Email::debug method in SilverStripe dumps the entire message with all message parts,
      * which makes it unusable to preview an Email.
      * This method simulates the old way of the message output and renders only the HTML body.
-     *
-     * @return string
      */
-    protected function debug(Email $email)
+    protected function debug(Email $email): string
     {
         $htmlTemplate = $email->getHTMLTemplate();
         $htmlRender = $email->getData()->renderWith($htmlTemplate)->RAW();
@@ -330,7 +301,7 @@ class OrderEmailNotifier
     /**
      * @return $this
      */
-    public function setLogger(LoggerInterface $logger)
+    public function setLogger(LoggerInterface $logger): static
     {
         $this->logger = $logger;
         return $this;

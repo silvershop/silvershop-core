@@ -15,11 +15,11 @@ use SilverStripe\ORM\DB;
  */
 class AccountPage extends Page
 {
-    private static $icon = 'silvershop/core: client/dist/images/icons/account.gif';
+    private static string $icon = 'silvershop/core: client/dist/images/icons/account.gif';
 
-    private static $table_name = 'SilverShop_AccountPage';
+    private static string $table_name = 'SilverShop_AccountPage';
 
-    public function canCreate($member = null, $context = [])
+    public function canCreate($member = null, $context = []): bool
     {
         return !self::get()->exists();
     }
@@ -42,10 +42,8 @@ class AccountPage extends Page
      *
      * @param int|string $orderID    ID of the order
      * @param boolean    $urlSegment Return the URLSegment only
-     *
-     * @return string
      */
-    public static function get_order_link($orderID, $urlSegment = false)
+    public static function get_order_link($orderID, $urlSegment = false): string
     {
         $page = self::get_if_account_page_exists();
 
@@ -55,10 +53,7 @@ class AccountPage extends Page
         );
     }
 
-    /**
-     * @return AccountPage
-     */
-    protected static function get_if_account_page_exists()
+    protected static function get_if_account_page_exists(): ?DataObject
     {
         if ($page = DataObject::get_one(self::class)) {
             return $page;
@@ -70,7 +65,7 @@ class AccountPage extends Page
     /**
      * This module always requires a page model.
      */
-    public function requireDefaultRecords()
+    public function requireDefaultRecords(): void
     {
         parent::requireDefaultRecords();
         if (!self::get()->exists() && $this->config()->create_default_pages) {

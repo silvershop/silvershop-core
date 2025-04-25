@@ -4,7 +4,7 @@ namespace SilverShop\Model\Modifiers\Shipping;
 
 class Free extends Base
 {
-    private static $table_name = 'SilverShop_FreeModifier';
+    private static string $table_name = 'SilverShop_FreeModifier';
 
     /**
      * Calculate whether the current order is eligable for free shipping

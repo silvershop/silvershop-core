@@ -15,9 +15,8 @@ class CheckoutPageTest extends FunctionalTest
         __DIR__ . '/../Fixtures/Pages.yml',
         __DIR__ . '/../Fixtures/shop.yml',
     ];
-    protected static $disable_theme  = true;
-    protected static $use_draft_site = true;
-    protected $controller;
+    protected static bool $disable_theme  = true;
+    protected static bool $use_draft_site = true;
 
     public function setUp(): void
     {
@@ -25,7 +24,7 @@ class CheckoutPageTest extends FunctionalTest
         ShopTest::setConfiguration();
     }
 
-    public function testActionsForm()
+    public function testActionsForm(): void
     {
         $order = $this->objFromFixture(Order::class, "unpaid");
         OrderManipulationExtension::add_session_order($order);
@@ -55,13 +54,13 @@ class CheckoutPageTest extends FunctionalTest
         $this->assertEquals('Unpaid', $order->Status, 'Order status should be Unpaid');
     }
 
-    public function testCanViewCheckoutPage()
+    public function testCanViewCheckoutPage(): void
     {
         $page = $this->get('checkout');
         $this->assertEquals(404, $page->getStatusCode(), 'Cannot access the Checkout Page without a current order');
     }
 
-    public function testFindLink()
+    public function testFindLink(): void
     {
         $checkoutpage = $this->objFromFixture(CheckoutPage::class, 'checkout');
         $checkoutpage->publishSingle();

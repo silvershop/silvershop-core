@@ -22,18 +22,11 @@ class AccountPageTest extends FunctionalTest
         __DIR__ . '/../Fixtures/Pages.yml',
         __DIR__ . '/../Fixtures/shop.yml',
     ];
-    protected static $disable_theme = true;
-    protected static $use_draft_site = true;
+    protected static bool $disable_theme = true;
+    protected static bool $use_draft_site = true;
 
-    /**
-     * @var AccountPage
-     */
-    protected $accountpage;
-
-    /**
-     * @var AccountPageController
-     */
-    protected $controller;
+    protected AccountPage $accountpage;
+    protected AccountPageController $controller;
 
     public function setUp(): void
     {
@@ -50,7 +43,7 @@ class AccountPageTest extends FunctionalTest
         $this->controller->setRequest($r);
     }
 
-    public function testCanViewAccountPage()
+    public function testCanViewAccountPage(): void
     {
         $page = $this->get("account/");  // attempt to access the Account Page
         $this->assertEquals(200, $page->getStatusCode(), "a page should load");
@@ -75,14 +68,14 @@ class AccountPageTest extends FunctionalTest
         $this->assertEquals(AccountPageController::class, $page->getHeader('X-TestPageClass'), "Account Page should open");
     }
 
-    public function testGlobals()
+    public function testGlobals(): void
     {
         $this->assertFalse($this->accountpage->canCreate(), "account page exists");
         $this->assertEquals(Controller::join_links(Director::baseURL() . "account"), AccountPage::find_link());
         $this->assertEquals(Controller::join_links(Director::baseURL() . "account/order/10"), AccountPage::get_order_link(10));
     }
 
-    public function testAddressBook()
+    public function testAddressBook(): void
     {
         $member = $this->objFromFixture(Member::class, "joebloggs");
         $this->logInAs($member);
@@ -140,12 +133,12 @@ class AccountPageTest extends FunctionalTest
         );
     }
 
-    public function testAddressBookWithDropdownFieldToSelectCountry()
+    public function testAddressBookWithDropdownFieldToSelectCountry(): void
     {
         $this->useTestTheme(
             realpath(__DIR__ . '/../'),
             'shoptest',
-            function () {
+            function (): void {
                 $member = $this->objFromFixture(Member::class, 'joebloggs');
                 $this->logInAs($member);
 
@@ -186,12 +179,12 @@ class AccountPageTest extends FunctionalTest
         );
     }
 
-    public function testAddressBookWithReadonlyFieldForCountry()
+    public function testAddressBookWithReadonlyFieldForCountry(): void
     {
         $this->useTestTheme(
             realpath(__DIR__ . '/../'),
             'shoptest',
-            function () {
+            function (): void {
                 $member = $this->objFromFixture(Member::class, 'joebloggs');
                 $this->logInAs($member);
 
@@ -248,7 +241,7 @@ class AccountPageTest extends FunctionalTest
         );
     }
 
-    public function testEditProfile()
+    public function testEditProfile(): void
     {
         $member = $this->objFromFixture(Member::class, 'joebloggs');
         $this->logInAs($member);

@@ -81,7 +81,7 @@ class Order extends DataObject
      * AdminCancelled: Order cancelled by the administrator
      * MemberCancelled: Order cancelled by the customer (Member)
      */
-    private static $db = [
+    private static array $db = [
         'Total' => 'Currency',
         'Reference' => 'Varchar', //allow for customised order numbering schemes
         //status
@@ -103,19 +103,19 @@ class Order extends DataObject
         'Locale' => 'Locale',
     ];
 
-    private static $has_one = [
+    private static array $has_one = [
         'Member' => Member::class,
         'ShippingAddress' => Address::class,
         'BillingAddress' => Address::class,
     ];
 
-    private static $has_many = [
+    private static array $has_many = [
         'Items' => OrderItem::class,
         'Modifiers' => OrderModifier::class,
         'OrderStatusLogs' => OrderStatusLog::class,
     ];
 
-    private static $indexes = [
+    private static array $indexes = [
         'Status' => true,
         'StatusPlacedCreated' => [
             'type' => 'index',
@@ -123,11 +123,11 @@ class Order extends DataObject
         ]
     ];
 
-    private static $defaults = [
+    private static array $defaults = [
         'Status' => 'Cart',
     ];
 
-    private static $casting = [
+    private static array $casting = [
         'FullBillingAddress' => 'Text',
         'FullShippingAddress' => 'Text',
         'Total' => 'Currency',
@@ -137,7 +137,7 @@ class Order extends DataObject
         'TotalOutstanding' => 'Currency',
     ];
 
-    private static $summary_fields = [
+    private static array $summary_fields = [
         'Reference',
         'Placed',
         'Name',
@@ -146,7 +146,7 @@ class Order extends DataObject
         'StatusI18N',
     ];
 
-    private static $searchable_fields = [
+    private static array $searchable_fields = [
         'Reference',
         'Name',
         'Email',
@@ -156,20 +156,20 @@ class Order extends DataObject
         ],
     ];
 
-    private static $table_name = 'SilverShop_Order';
+    private static string $table_name = 'SilverShop_Order';
 
-    private static $singular_name = 'Order';
+    private static string $singular_name = 'Order';
 
-    private static $plural_name = 'Orders';
+    private static string $plural_name = 'Orders';
 
-    private static $default_sort = '"Placed" DESC, "Created" DESC';
+    private static string $default_sort = '"Placed" DESC, "Created" DESC';
 
     /**
      * Statuses for orders that have been placed.
      *
      * @config
      */
-    private static $placed_status = [
+    private static array $placed_status = [
         'Paid',
         'Unpaid',
         'Processing',
@@ -184,7 +184,7 @@ class Order extends DataObject
      *
      * @config
      */
-    private static $payable_status = [
+    private static array $payable_status = [
         'Cart',
         'Unpaid',
         'Processing',
@@ -196,24 +196,22 @@ class Order extends DataObject
      *
      * @config
      */
-    private static $hidden_status = ['Cart'];
+    private static array $hidden_status = ['Cart'];
 
 
     /**
      * Statuses that should be logged in the Order-Status-Log
      *
      * @config
-     * @var    array
      */
-    private static $log_status = [];
+    private static array $log_status = [];
 
     /**
      * Whether or not an order can be cancelled before payment
      *
      * @config
-     * @var    bool
      */
-    private static $cancel_before_payment = true;
+    private static bool $cancel_before_payment = true;
 
     /**
      * Email customer an invoice upon payment
@@ -225,33 +223,29 @@ class Order extends DataObject
      * Whether or not an order can be cancelled before processing
      *
      * @config
-     * @var    bool
      */
-    private static $cancel_before_processing = false;
+    private static bool $cancel_before_processing = false;
 
     /**
      * Whether or not an order can be cancelled before sending
      *
      * @config
-     * @var    bool
      */
-    private static $cancel_before_sending = false;
+    private static bool $cancel_before_sending = false;
 
     /**
      * Whether or not an order can be cancelled after sending
      *
      * @config
-     * @var    bool
      */
-    private static $cancel_after_sending = false;
+    private static bool $cancel_after_sending = false;
 
     /**
      * Place an order before payment processing begins
      *
      * @config
-     * @var    boolean
      */
-    private static $place_before_payment = false;
+    private static bool $place_before_payment = false;
 
     /**
      * Modifiers represent the additional charges or
@@ -259,25 +253,22 @@ class Order extends DataObject
      * shipping, taxes, vouchers etc.
      *
      * @config
-     * @var    array
      */
-    private static $modifiers = [];
+    private static array $modifiers = [];
 
     /**
      * Rounding precision of order amounts
      *
      * @config
-     * @var    int
      */
-    private static $rounding_precision = 2;
+    private static int $rounding_precision = 2;
 
     /**
      * Minimal length (number of decimals) of order reference ids
      *
      * @config
-     * @var    int
      */
-    private static $reference_id_padding = 5;
+    private static int $reference_id_padding = 5;
 
     /**
      * Will allow completion of orders with GrandTotal=0,
@@ -287,18 +278,18 @@ class Order extends DataObject
      * Order->onPayment, OrderItem->onPayment, Order->onPaid.
      *
      * @config
-     * @var    boolean
      */
-    private static $allow_zero_order_total = false;
+    private static bool $allow_zero_order_total = false;
 
     /**
      * A flag indicating that an order-status-log entry should be written
-     *
-     * @var bool
      */
-    protected $flagOrderStatusWrite = false;
+    protected bool $flagOrderStatusWrite = false;
 
-    public static function get_order_status_options()
+    /**
+     * @return mixed[]
+     */
+    public static function get_order_status_options(): array
     {
         $values = [];
         foreach (singleton(Order::class)->dbObject('Status')->enumValues(false) as $value) {
@@ -310,7 +301,7 @@ class Order extends DataObject
     /**
      * Create CMS fields for cms viewing and editing orders
      */
-    public function getCMSFields()
+    public function getCMSFields(): FieldList
     {
         $fields = FieldList::create(TabSet::create('Root', Tab::create('Main')));
         $fs = '<div class="field">';
@@ -342,7 +333,7 @@ class Order extends DataObject
     /**
      * Augment field labels
      */
-    public function fieldLabels($includerelations = true)
+    public function fieldLabels($includerelations = true): array
     {
         $labels = parent::fieldLabels($includerelations);
 
@@ -355,16 +346,15 @@ class Order extends DataObject
 
     /**
      * Adjust scafolded search context
-     *
-     * @return SearchContext the updated search context
+     * returns the updated search context
      */
-    public function getDefaultSearchContext()
+    public function getDefaultSearchContext(): SearchContext
     {
         $context = parent::getDefaultSearchContext();
         $fields = $context->getFields();
 
         $validStates = self::config()->placed_status;
-        $statusOptions = array_filter(self::get_order_status_options(), function ($k) use ($validStates) {
+        $statusOptions = array_filter(self::get_order_status_options(), function ($k) use ($validStates): bool {
             return in_array($k, $validStates);
         }, ARRAY_FILTER_USE_KEY);
 
@@ -447,7 +437,7 @@ class Order extends DataObject
      *
      * @return float the final total
      */
-    public function calculate()
+    public function calculate(): float
     {
         $calculator = OrderTotalCalculator::create($this);
         return $this->Total = $calculator->calculate();
@@ -466,7 +456,7 @@ class Order extends DataObject
     /**
      * Enforce rounding precision when setting total
      */
-    public function setTotal($val)
+    public function setTotal($val): void
     {
         $this->setField('Total', round($val, static::config()->get('rounding_precision')));
     }
@@ -498,9 +488,8 @@ class Order extends DataObject
      * payments are 'Captured'.
      *
      * @param  bool $includeAuthorized whether or not to include authorized payments (excluding manual payments)
-     * @return float
      */
-    public function TotalOutstanding($includeAuthorized = true)
+    public function TotalOutstanding($includeAuthorized = true): float
     {
         return round(
             $this->GrandTotal() - ($includeAuthorized ? $this->TotalPaidOrAuthorized() : $this->TotalPaid()),
@@ -513,7 +502,7 @@ class Order extends DataObject
      *
      * @return string the payment status
      */
-    public function getStatusI18N()
+    public function getStatusI18N(): string
     {
         return _t(__CLASS__ . '.STATUS_' . strtoupper($this->Status), $this->Status);
     }
@@ -521,7 +510,7 @@ class Order extends DataObject
     /**
      * Get the link for finishing order processing.
      */
-    public function Link()
+    public function Link(): string
     {
         $link = CheckoutPage::find_link(false, 'order', $this->ID);
 
@@ -537,10 +526,8 @@ class Order extends DataObject
     /**
      * Returns TRUE if the order can be cancelled
      * PRECONDITION: Order is in the DB.
-     *
-     * @return boolean
      */
-    public function canCancel($member = null)
+    public function canCancel($member = null): bool
     {
         $extended = $this->extendedCan(__FUNCTION__, $member);
         if ($extended !== null) {
@@ -563,10 +550,8 @@ class Order extends DataObject
 
     /**
      * Check if an order can be paid for.
-     *
-     * @return boolean
      */
-    public function canPay($member = null)
+    public function canPay($member = null): bool
     {
         $extended = $this->extendedCan(__FUNCTION__, $member);
         if ($extended !== null) {
@@ -584,10 +569,8 @@ class Order extends DataObject
 
     /**
      * Prevent deleting orders.
-     *
-     * @return boolean
      */
-    public function canDelete($member = null)
+    public function canDelete($member = null): bool
     {
         $extended = $this->extendedCan(__FUNCTION__, $member);
         if ($extended !== null) {
@@ -599,10 +582,8 @@ class Order extends DataObject
 
     /**
      * Check if an order can be viewed.
-     *
-     * @return boolean
      */
-    public function canView($member = null)
+    public function canView($member = null): bool
     {
         $extended = $this->extendedCan(__FUNCTION__, $member);
         if ($extended !== null) {
@@ -614,10 +595,8 @@ class Order extends DataObject
 
     /**
      * Check if an order can be edited.
-     *
-     * @return boolean
      */
-    public function canEdit($member = null)
+    public function canEdit($member = null): bool
     {
         $extended = $this->extendedCan(__FUNCTION__, $member);
         if ($extended !== null) {
@@ -629,10 +608,8 @@ class Order extends DataObject
 
     /**
      * Prevent standard creation of orders.
-     *
-     * @return boolean
      */
-    public function canCreate($member = null, $context = [])
+    public function canCreate($member = null, $context = []): bool
     {
         $extended = $this->extendedCan(__FUNCTION__, $member, $context);
         if ($extended !== null) {
@@ -645,10 +622,8 @@ class Order extends DataObject
     /**
      * Return the currency of this order.
      * Note: this is a fixed value across the entire site.
-     *
-     * @return string
      */
-    public function Currency()
+    public function Currency(): string
     {
         return ShopConfigExtension::get_site_currency();
     }
@@ -670,7 +645,7 @@ class Order extends DataObject
     /**
      * Gets the name of the customer.
      */
-    public function getName()
+    public function getName(): string
     {
         $firstname = $this->FirstName ? $this->FirstName : $this->Member()->FirstName;
         $surname = $this->FirstName ? $this->Surname : $this->Member()->Surname;
@@ -685,7 +660,7 @@ class Order extends DataObject
     /**
      * Get shipping address, or member default shipping address.
      */
-    public function getShippingAddress()
+    public function getShippingAddress(): ?Address
     {
         return $this->getAddress('Shipping');
     }
@@ -694,7 +669,7 @@ class Order extends DataObject
      * Get billing address, if marked to use seperate address, otherwise use shipping address,
      * or the member default billing address.
      */
-    public function getBillingAddress()
+    public function getBillingAddress(): ?Address
     {
         if (!$this->SeparateBillingAddress && $this->ShippingAddressID === $this->BillingAddressID) {
             return $this->getShippingAddress();
@@ -705,10 +680,9 @@ class Order extends DataObject
 
     /**
      * @param string $type - Billing or Shipping
-     * @return Address
      * @throws Exception
      */
-    protected function getAddress($type)
+    protected function getAddress(string $type): ?Address
     {
         $address = $this->getComponent($type . 'Address');
 
@@ -733,10 +707,8 @@ class Order extends DataObject
 
     /**
      * Check if the two addresses saved differ.
-     *
-     * @return boolean
      */
-    public function getAddressesDiffer()
+    public function getAddressesDiffer(): bool
     {
         return $this->SeparateBillingAddress || $this->ShippingAddressID !== $this->BillingAddressID;
     }
@@ -744,10 +716,8 @@ class Order extends DataObject
     /**
      * Has this order been sent to the customer?
      * (at "Sent" status).
-     *
-     * @return boolean
      */
-    public function IsSent()
+    public function IsSent(): bool
     {
         return $this->Status == 'Sent';
     }
@@ -755,10 +725,8 @@ class Order extends DataObject
     /**
      * Is this order currently being processed?
      * (at "Sent" OR "Processing" status).
-     *
-     * @return boolean
      */
-    public function IsProcessing()
+    public function IsProcessing(): bool
     {
         return $this->IsSent() || $this->Status == 'Processing';
     }
@@ -767,15 +735,13 @@ class Order extends DataObject
      * Return whether this Order has been paid for (Status == Paid)
      * or Status == Processing, where it's been paid for, but is
      * currently in a processing state.
-     *
-     * @return boolean
      */
-    public function IsPaid()
+    public function IsPaid(): bool
     {
         return (boolean)$this->Paid || $this->Status == 'Paid';
     }
 
-    public function IsCart()
+    public function IsCart(): bool
     {
         return $this->Status == 'Cart';
     }
@@ -783,7 +749,7 @@ class Order extends DataObject
     /**
      * Create a unique reference identifier string for this order.
      */
-    public function generateReference()
+    public function generateReference(): void
     {
         $reference = str_pad($this->ID, static::config()->get('reference_id_padding'), '0', STR_PAD_LEFT);
 
@@ -810,7 +776,7 @@ class Order extends DataObject
     /**
      * Force creating an order reference
      */
-    protected function onBeforeWrite()
+    protected function onBeforeWrite(): void
     {
         parent::onBeforeWrite();
         if (!$this->getField('Reference') && in_array($this->Status, static::config()->get('placed_status'))) {
@@ -838,7 +804,7 @@ class Order extends DataObject
      * @param string $fromStatus status to transition away from
      * @param string $toStatus   target status
      */
-    protected function statusTransition($fromStatus, $toStatus)
+    protected function statusTransition($fromStatus, $toStatus): void
     {
         // Add extension hook to react to order status transitions.
         $this->extend('onStatusChange', $fromStatus, $toStatus);
@@ -866,7 +832,7 @@ class Order extends DataObject
     /**
      * delete attributes, statuslogs, and payments
      */
-    protected function onBeforeDelete()
+    protected function onBeforeDelete(): void
     {
         foreach ($this->Items() as $item) {
             $item->delete();
@@ -887,7 +853,7 @@ class Order extends DataObject
         parent::onBeforeDelete();
     }
 
-    public function onAfterWrite()
+    public function onAfterWrite(): void
     {
         parent::onAfterWrite();
 
@@ -913,7 +879,7 @@ class Order extends DataObject
         }
     }
 
-    public function debug()
+    public function debug(): string
     {
         $val = "<div class='order'><h1>" . static::class . "</h1>\n<ul>\n";
         if ($this->record) {
@@ -936,10 +902,8 @@ class Order extends DataObject
 
     /**
      * Provide i18n entities for the order class
-     *
-     * @return array
      */
-    public function provideI18nEntities()
+    public function provideI18nEntities(): array
     {
         $entities = parent::provideI18nEntities();
 

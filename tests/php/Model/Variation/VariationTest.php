@@ -21,28 +21,13 @@ use SilverStripe\Dev\SapphireTest;
 class VariationTest extends SapphireTest
 {
     public static $fixture_file   = __DIR__ . '/../../Fixtures/variations.yml';
-    public static $disable_theme  = true;
-    protected static $use_draft_site = true;
+    public static bool $disable_theme  = true;
+    protected static bool $use_draft_site = true;
 
-    /**
-     * @var Product
-     */
-    protected $mp3player;
-
-    /**
-     * @var Product
-     */
-    protected $socks;
-
-    /**
-     * @var Variation
-     */
-    protected $redLarge;
-
-    /**
-     * @var Product
-     */
-    protected $ball;
+    protected Product $mp3player;
+    protected Product $socks;
+    protected Product $ball;
+    protected Variation $redLarge;
 
     public function setUp(): void
     {
@@ -53,7 +38,7 @@ class VariationTest extends SapphireTest
         $this->redLarge = $this->objFromFixture(Variation::class, "redLarge");
     }
 
-    public function testVariationOrderItem()
+    public function testVariationOrderItem(): void
     {
         $cart = ShoppingCart::singleton();
 
@@ -74,7 +59,7 @@ class VariationTest extends SapphireTest
         $this->assertEquals("Size:Large, Color:Red", $item->SubTitle());
     }
 
-    public function testGetVariation()
+    public function testGetVariation(): void
     {
         $colorred = $this->objFromFixture(AttributeValue::class, "color_red");
         $sizelarge = $this->objFromFixture(AttributeValue::class, "size_large");
@@ -88,7 +73,7 @@ class VariationTest extends SapphireTest
         $this->assertNull($variation, "Variation does not exist");
     }
 
-    public function testGenerateVariations()
+    public function testGenerateVariations(): void
     {
         $color = $this->objFromFixture(AttributeType::class, "color");
         $values = ['Black', 'Blue']; //Note: black doesn't exist in the yaml
@@ -108,7 +93,7 @@ class VariationTest extends SapphireTest
         $this->assertStringContainsString('Color:Blue, Capacity:300GB', $titles[8]);
     }
 
-    public function testPriceRange()
+    public function testPriceRange(): void
     {
         $range = $this->ball->PriceRange();
         $this->assertTrue($range->HasRange);

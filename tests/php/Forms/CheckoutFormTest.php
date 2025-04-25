@@ -16,25 +16,10 @@ class CheckoutFormTest extends FunctionalTest
 {
     public static $fixture_file = __DIR__ . '/../Fixtures/shop.yml';
 
-    /**
-     * @var Product
-     */
-    protected $mp3player;
-
-    /**
-     * @var Product
-     */
-    protected $socks;
-
-    /**
-     * @var Product
-     */
-    protected $beachball;
-
-    /**
-     * @var CheckoutPageController
-     */
-    protected $checkoutcontroller;
+    protected Product $mp3player;
+    protected Product $socks;
+    protected Product $beachball;
+    protected CheckoutPageController $checkoutcontroller;
 
     public function setUp(): void
     {
@@ -56,7 +41,7 @@ class CheckoutFormTest extends FunctionalTest
         ShoppingCart::singleton()->add($this->socks); //start cart
     }
 
-    public function testCheckoutForm()
+    public function testCheckoutForm(): void
     {
         $order = ShoppingCart::curr();
         $config = new SinglePageCheckoutComponentConfig($order);
@@ -122,7 +107,7 @@ class CheckoutFormTest extends FunctionalTest
         $this->assertEquals("Cart", $order->Status);
     }
 
-    public function testCheckoutFormForSingleCountrySiteWithReadonlyFieldsForCountry()
+    public function testCheckoutFormForSingleCountrySiteWithReadonlyFieldsForCountry(): void
     {
         $siteConfig = SiteConfig::current_site_config();
         $siteConfig->AllowedCountries = '["NZ"]';
@@ -180,7 +165,7 @@ class CheckoutFormTest extends FunctionalTest
         $this->assertEquals("NZ", $billing->Country);
     }
 
-    public function testCheckoutFormWithInvalidData()
+    public function testCheckoutFormWithInvalidData(): void
     {
         $order = ShoppingCart::curr();
         $config = new SinglePageCheckoutComponentConfig($order);

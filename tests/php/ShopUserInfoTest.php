@@ -7,7 +7,7 @@ use SilverStripe\Dev\SapphireTest;
 
 class ShopUserInfoTest extends SapphireTest
 {
-    public function testSetLocation()
+    public function testSetLocation(): void
     {
         ShopUserInfo::singleton()->setLocation(
             [

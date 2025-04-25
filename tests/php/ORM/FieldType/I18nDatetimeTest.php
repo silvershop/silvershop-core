@@ -7,7 +7,7 @@ use SilverStripe\Dev\SapphireTest;
 
 class I18nDatetimeTest extends SapphireTest
 {
-    public function testField()
+    public function testField(): void
     {
 
         $field = new I18nDatetime();

@@ -16,9 +16,9 @@ use SilverStripe\Security\Security;
  */
 class ShopDevelopmentAdmin extends Controller
 {
-    private static $url_segment = 'silvershop';
+    private static string $url_segment = 'silvershop';
 
-    private static $allowed_actions = [
+    private static array $allowed_actions = [
         'index' => true
     ];
 

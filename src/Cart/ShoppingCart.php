@@ -32,36 +32,25 @@ class ShoppingCart
     use Injectable;
     use Configurable;
 
-    private static $cartid_session_name = 'SilverShop.shoppingcartid';
+    private static string $cartid_session_name = 'SilverShop.shoppingcartid';
 
-    /**
-     * @var Order
-     */
     private $order;
-
-    private $calculateonce = false;
-
-    private $message;
-
-    private $type;
-
+    private bool $calculateonce = false;
+    private string $message = '';
+    private string $type = '';
 
     /**
      * Shortened alias for ShoppingCart::singleton()->current()
-     *
-     * @return Order
      */
-    public static function curr()
+    public static function curr(): ?Order
     {
         return self::singleton()->current();
     }
 
     /**
      * Get the current order, or return null if it doesn't exist.
-     *
-     * @return Order
      */
-    public function current()
+    public function current(): ?Order
     {
         $session = ShopTools::getSession();
         //find order by id saved to session (allows logging out and retaining cart contents)
@@ -85,10 +74,8 @@ class ShoppingCart
      * Set the current cart
      *
      * @param Order $cart the Order to use as the current cart-content
-     *
-     * @return ShoppingCart
      */
-    public function setCurrent(Order $cart)
+    public function setCurrent(Order $cart): static
     {
         if (!$cart->IsCart()) {
             trigger_error('Passed Order object is not cart status', E_ERROR);
@@ -102,10 +89,8 @@ class ShoppingCart
 
     /**
      * Helper that only allows orders to be started internally.
-     *
-     * @return Order
      */
-    protected function findOrMake()
+    protected function findOrMake(): Order
     {
         if ($this->current()) {
             return $this->current();
@@ -128,9 +113,9 @@ class ShoppingCart
      *
      * @param int     $quantity
      * @param array   $filter
-     * @return boolean|OrderItem false or the new/existing item
+     * @return bool|null|OrderItem false or the new/existing item
      */
-    public function add(Buyable $buyable, $quantity = 1, $filter = [])
+    public function add(Buyable $buyable, $quantity = 1, $filter = []): bool|null|OrderItem
     {
         $order = $this->findOrMake();
 
@@ -177,7 +162,7 @@ class ShoppingCart
      * @param array   $filter
      * @return boolean success/failure
      */
-    public function remove(Buyable $buyable, $quantity = null, $filter = [])
+    public function remove(Buyable $buyable, $quantity = null, $filter = []): ?bool
     {
         $order = $this->current();
 
@@ -215,9 +200,9 @@ class ShoppingCart
      * Remove a specific order item from cart
      *
      * @param  int       $quantity - number of items to remove or leave `null` to remove all items (default)
-     * @return boolean success/failure
+     * @return ?bool success/failure
      */
-    public function removeOrderItem(OrderItem $item, $quantity = null)
+    public function removeOrderItem(OrderItem $item, $quantity = null): ?bool
     {
         $order = $this->current();
 
@@ -247,9 +232,9 @@ class ShoppingCart
      *
      * @param int     $quantity
      * @param array   $filter
-     * @return boolean|OrderItem false or the new/existing item
+     * @return bool|null|OrderItem false or the new/existing item
      */
-    public function setQuantity(Buyable $buyable, $quantity = 1, $filter = [])
+    public function setQuantity(Buyable $buyable, $quantity = 1, $filter = []): bool|null|OrderItem
     {
         if ($quantity <= 0) {
             return $this->remove($buyable, $quantity, $filter);
@@ -269,9 +254,9 @@ class ShoppingCart
      *
      * @param  int       $quantity the new quantity to use
      * @param  array     $filter
-     * @return boolean success/failure
+     * @return ?bool success/failure
      */
-    public function updateOrderItemQuantity(OrderItem $item, $quantity = 1, $filter = [])
+    public function updateOrderItemQuantity(OrderItem $item, $quantity = 1, $filter = []): ?bool
     {
         $order = $this->current();
 
@@ -312,11 +297,9 @@ class ShoppingCart
      * @param Buyable $buyable  the buyable
      * @param int     $quantity quantity to add
      * @param array   $filter
-     *
-     * @return OrderItem the found or created item
      * @throws ValidationException
      */
-    private function findOrMakeItem(Buyable $buyable, $quantity = 1, $filter = [])
+    private function findOrMakeItem(Buyable $buyable, $quantity = 1, $filter = []): ?OrderItem
     {
         $order = $this->findOrMake();
 
@@ -358,9 +341,9 @@ class ShoppingCart
      * Finds an existing order item.
      *
      * @param array   $customFilter
-     * @return OrderItem the item requested or null
+     * @return ?OrderItem the item requested or null
      */
-    public function get(Buyable $buyable, $customFilter = [])
+    public function get(Buyable $buyable, $customFilter = []): ?OrderItem
     {
         $order = $this->current();
 
@@ -427,7 +410,7 @@ class ShoppingCart
      *
      * @param int|null $requestedOrderId optional parameter that denotes the order that was requested
      */
-    public function archiveorderid($requestedOrderId = null)
+    public function archiveorderid($requestedOrderId = null): void
     {
         $session = ShopTools::getSession();
         $sessionId = $session->get(self::config()->cartid_session_name);
@@ -451,9 +434,9 @@ class ShoppingCart
      * Empty / abandon the entire cart.
      *
      * @param  bool $write whether or not to write the abandoned order
-     * @return bool - true if successful, false if no cart found
+     * @return ?bool - true if successful, false if no cart found
      */
-    public function clear($write = true)
+    public function clear($write = true): ?bool
     {
         $session = ShopTools::getSession();
         $session->set(self::config()->cartid_session_name, null)->clear(self::config()->cartid_session_name);
@@ -473,6 +456,7 @@ class ShoppingCart
 
     /**
      * Store a new error.
+     * @return null
      */
     protected function error($message)
     {
@@ -487,25 +471,25 @@ class ShoppingCart
      * @param string $message
      * @param string $type    - good, bad, warning
      */
-    protected function message($message, $type = 'good')
+    protected function message($message, $type = 'good'): void
     {
         $this->message = $message;
         $this->type = $type;
     }
 
-    public function getMessage()
+    public function getMessage(): string
     {
         return $this->message;
     }
 
-    public function getMessageType()
+    public function getMessageType(): string
     {
         return $this->type;
     }
 
-    public function clearMessage()
+    public function clearMessage(): void
     {
-        $this->message = null;
+        $this->message = '';
     }
 
     //singleton protection

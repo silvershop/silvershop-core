@@ -9,12 +9,12 @@ class OrderTest_TestStatusChangeExtension extends DataExtension implements TestO
 {
     public static $stack = [];
 
-    public static function reset()
+    public static function reset(): void
     {
         self::$stack = [];
     }
 
-    public function onStatusChange($fromStatus, $toStatus)
+    public function onStatusChange($fromStatus, $toStatus): void
     {
         self::$stack[] = [
             $fromStatus => $toStatus

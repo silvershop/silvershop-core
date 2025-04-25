@@ -36,25 +36,25 @@ class OrderEmailNotifierTest extends SapphireTest
         $this->notifier = OrderEmailNotifier::create($this->order);
     }
 
-    public function testAdminNotification()
+    public function testAdminNotification(): void
     {
         $this->notifier->sendAdminNotification();
         $this->assertEmailSent('shop-admin@example.com', 'shop-admin@example.com');
     }
 
-    public function testConfirmation()
+    public function testConfirmation(): void
     {
         $this->notifier->sendConfirmation();
         $this->assertEmailSent('test@example.com', 'shop-admin@example.com');
     }
 
-    public function testReceipt()
+    public function testReceipt(): void
     {
         $this->notifier->sendReceipt();
         $this->assertEmailSent('test@example.com', 'shop-admin@example.com');
     }
 
-    public function testReceiptNoEmailSent()
+    public function testReceiptNoEmailSent(): void
     {
         $this->clearEmails();
         Config::modify()->set(Order::class, 'send_receipt', false);
@@ -67,7 +67,7 @@ class OrderEmailNotifierTest extends SapphireTest
         );
     }
 
-    public function testStatusUpdate()
+    public function testStatusUpdate(): void
     {
         $this->notifier->sendStatusChange('test subject');
         $this->assertEmailSent('test@example.com', 'shop-admin@example.com', 'Silvershop - test subject');

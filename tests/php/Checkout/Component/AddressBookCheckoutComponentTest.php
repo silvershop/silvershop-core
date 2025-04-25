@@ -77,14 +77,14 @@ class AddressBookCheckoutComponentTest extends SapphireTest
         $this->address1->write();
     }
 
-    public function testCreateNewAddress()
+    public function testCreateNewAddress(): void
     {
         $this->assertTrue(
             $this->config->validateData($this->fixtureNewAddress)
         );
     }
 
-    public function testIncompleteNewAddress()
+    public function testIncompleteNewAddress(): void
     {
         $this->expectException(ValidationException::class);
         $data = $this->fixtureNewAddress;
@@ -93,7 +93,7 @@ class AddressBookCheckoutComponentTest extends SapphireTest
         $this->config->validateData($data);
     }
 
-    public function testUseExistingAddress()
+    public function testUseExistingAddress(): void
     {
         Security::setCurrentUser($this->member);
         $this->assertTrue(
@@ -105,7 +105,7 @@ class AddressBookCheckoutComponentTest extends SapphireTest
         );
     }
 
-    public function testShouldRejectExistingIfNotLoggedIn()
+    public function testShouldRejectExistingIfNotLoggedIn(): void
     {
         $this->expectException(ValidationException::class);
         $this->assertTrue(
@@ -117,7 +117,7 @@ class AddressBookCheckoutComponentTest extends SapphireTest
         );
     }
 
-    public function testShouldRejectExistingIfNotOwnedByMember()
+    public function testShouldRejectExistingIfNotOwnedByMember(): void
     {
         $this->expectException(ValidationException::class);
         Security::setCurrentUser($this->member);
@@ -133,7 +133,7 @@ class AddressBookCheckoutComponentTest extends SapphireTest
         );
     }
 
-    public function testShouldNotCreateBlankAddresses()
+    public function testShouldNotCreateBlankAddresses(): void
     {
         $beforeCount = Address::get()->count();
         $this->config->setData(

@@ -16,33 +16,14 @@ use SilverStripe\Security\SecurityToken;
 class ProductOrderItemTest extends FunctionalTest
 {
     public static $fixture_file = __DIR__ . '/../../Fixtures/shop.yml';
-    public static $disable_theme = true;
-    public static $orig = [];
+    public static bool $disable_theme = true;
+    public static array $orig = [];
 
-    /**
-     * @var Product
-     */
-    protected $mp3player;
-
-    /**
-     * @var Product
-     */
-    protected $socks;
-
-    /**
-     * @var Product
-     */
-    protected $beachball;
-
-    /**
-     * @var Product
-     */
-    protected $hdtv;
-
-    /**
-     * @var ShoppingCart
-     */
-    protected $cart;
+    protected Product $mp3player;
+    protected Product $socks;
+    protected Product $beachball;
+    protected Product $hdtv;
+    protected ShoppingCart $cart;
 
     /**
      * Create and publish some products.
@@ -67,7 +48,7 @@ class ProductOrderItemTest extends FunctionalTest
         $this->cart = ShoppingCart::singleton();
     }
 
-    public function testEmptyItem()
+    public function testEmptyItem(): void
     {
         $emptyItem = $this->mp3player->Item();
         $this->assertEquals(1, $emptyItem->Quantity, "Items always have a quantity of at least 1.");
@@ -76,7 +57,7 @@ class ProductOrderItemTest extends FunctionalTest
     /**
      * Test product updates. These may be caused by an admin, causing everyone's cart to update.
      */
-    public function testProductVersionUpdate()
+    public function testProductVersionUpdate(): void
     {
         $this->cart->add($this->socks);
 
@@ -95,7 +76,7 @@ class ProductOrderItemTest extends FunctionalTest
     /**
      * Tries to create an order item with a non-existent version.
      */
-    public function testProductVersionDoesNotExist()
+    public function testProductVersionDoesNotExist(): void
     {
         $brokenItem = OrderItem::create()->update(
             [
@@ -109,7 +90,7 @@ class ProductOrderItemTest extends FunctionalTest
     /**
      * Check  the links are accurate
      */
-    public function testLinks()
+    public function testLinks(): void
     {
         SecurityToken::disable();
         $product = $this->socks;
@@ -135,7 +116,7 @@ class ProductOrderItemTest extends FunctionalTest
     /**
      * Coverage for a bug where there's an error generating the link when ProductID = 0
      */
-    public function testCorruptedOrderItemLinks()
+    public function testCorruptedOrderItemLinks(): void
     {
         SecurityToken::disable();
         $product = $this->socks;

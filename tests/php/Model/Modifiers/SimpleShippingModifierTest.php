@@ -27,7 +27,7 @@ class SimpleShippingModifierTest extends SapphireTest
             );
     }
 
-    public function testShippingCalculation()
+    public function testShippingCalculation(): void
     {
         $modifier = new Simple();
         $this->assertEquals(10, $modifier->value(100));

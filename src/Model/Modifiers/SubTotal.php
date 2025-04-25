@@ -10,17 +10,17 @@ namespace SilverShop\Model\Modifiers;
  */
 class SubTotal extends OrderModifier
 {
-    private static $defaults = [
+    private static array $defaults = [
         'Type' => 'Ignored',
     ];
 
-    private static $singular_name = 'Sub Total';
+    private static string $singular_name = 'Sub Total';
 
-    private static $plural_name = 'Sub Totals';
+    private static string $plural_name = 'Sub Totals';
 
-    private static $table_name = 'SilverShop_SubTotalModifier';
+    private static string $table_name = 'SilverShop_SubTotalModifier';
 
-    public function value($incoming)
+    public function value($incoming): int|float
     {
         return $this->Amount = $incoming;
     }

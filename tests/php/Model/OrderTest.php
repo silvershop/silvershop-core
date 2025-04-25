@@ -33,21 +33,9 @@ class OrderTest extends SapphireTest
         CustomProduct_OrderItem::class,
     ];
 
-    /**
-     * @var Product
-     */
-    protected $mp3player;
-
-    /**
-     * @var Product
-     */
-    protected $socks;
-
-    /**
-     * @var Product
-     */
-    protected $beachball;
-
+    protected Product $mp3player;
+    protected Product $socks;
+    protected Product $beachball;
 
     public function setUp(): void
     {
@@ -70,7 +58,7 @@ class OrderTest extends SapphireTest
         unset($this->beachball);
     }
 
-    public function testCMSFields()
+    public function testCMSFields(): void
     {
         //$order = $this->objFromFixture(Order::class, "paid");
         $fields = singleton(Order::class)->getCMSFields();
@@ -107,7 +95,7 @@ class OrderTest extends SapphireTest
         );
     }
 
-    public function testSearchFields()
+    public function testSearchFields(): void
     {
         $fields = singleton(Order::class)->scaffoldSearchFields();
 
@@ -117,7 +105,7 @@ class OrderTest extends SapphireTest
         $this->assertNotNull($fields->dataFieldByName('Status'), 'Status should be searchable');
     }
 
-    public function testDebug()
+    public function testDebug(): void
     {
         $order = $this->objFromFixture(Order::class, 'cart');
         $debug = $order->debug();
@@ -134,7 +122,7 @@ class OrderTest extends SapphireTest
         }
     }
 
-    public function testOrderItems()
+    public function testOrderItems(): void
     {
         $order = $this->objFromFixture(Order::class, "paid");
         $items = $order->Items();
@@ -148,10 +136,10 @@ class OrderTest extends SapphireTest
         );
         $this->assertEquals(3, $items->Quantity(), "Quantity is 3");
         $this->assertTrue($items->Plural(), "There is more than one item");
-        $this->assertEquals(0.7, $items->Sum('Weight', true), "Total order weight sums correctly", 0.0001);
+        $this->assertEquals(0.7, $items->Sum('Weight', true), "Total order weight sums correctly");
     }
 
-    public function testTotals()
+    public function testTotals(): void
     {
         $order = $this->objFromFixture(Order::class, "paid");
         $this->assertEquals(408, $order->SubTotal(), "Subtotal is correct"); // 200 + 200 + 8
@@ -160,7 +148,7 @@ class OrderTest extends SapphireTest
         $this->assertEquals(208, $order->TotalOutstanding(), "Outstanding total is correct");
     }
 
-    public function testRounding()
+    public function testRounding(): void
     {
         //create an order with unrounded total
         $order = new Order(
@@ -175,7 +163,7 @@ class OrderTest extends SapphireTest
         $this->assertEquals(123.26, $order->TotalOutstanding(), "Check total outstanding rounds appropriately");
     }
 
-    public function testPlacedOrderImmutability()
+    public function testPlacedOrderImmutability(): void
     {
 
         $order = $this->objFromFixture(Order::class, "paid");
@@ -219,7 +207,7 @@ class OrderTest extends SapphireTest
         $this->assertEquals(8, $socks->Total(), "Total remains the same");
     }
 
-    public function testCanFunctions()
+    public function testCanFunctions(): void
     {
         $order = $this->objFromFixture(Order::class, "cart");
         $order->calculate();
@@ -282,7 +270,7 @@ class OrderTest extends SapphireTest
         $this->assertFalse($order->canDelete(), "never allow deleting orders");
     }
 
-    public function testDelete()
+    public function testDelete(): void
     {
         Config::modify()
             ->set(FlatTax::class, 'rate', 0.25)
@@ -335,7 +323,7 @@ class OrderTest extends SapphireTest
         $this->assertEquals(1, Payment::get()->filter('ID', $paymentId)->count());
     }
 
-    public function testStatusChange()
+    public function testStatusChange(): void
     {
         Config::modify()->merge(Order::class, 'extensions', [OrderTest_TestStatusChangeExtension::class]);
 
@@ -369,7 +357,7 @@ class OrderTest extends SapphireTest
         $this->assertTrue((boolean)$order->Paid, 'Order paid date should be set');
     }
 
-    public function testOrderAddress()
+    public function testOrderAddress(): void
     {
         $order = $this->objFromFixture(Order::class, 'paid');
 

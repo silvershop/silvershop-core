@@ -2,6 +2,7 @@
 
 namespace SilverShop\Checkout\Step;
 
+use SilverStripe\Control\HTTPResponse;
 use SilverShop\Cart\ShoppingCart;
 use SilverShop\Checkout\CheckoutComponentConfig;
 use SilverShop\Checkout\Component\CustomerDetails;
@@ -21,7 +22,7 @@ use SilverStripe\Security\Security;
  */
 class Membership extends CheckoutStep
 {
-    private static $allowed_actions = [
+    private static array $allowed_actions = [
         'membership',
         'MembershipForm',
         'LoginForm',
@@ -30,7 +31,7 @@ class Membership extends CheckoutStep
         'CreateAccountForm',
     ];
 
-    private static $url_handlers = [
+    private static array $url_handlers = [
         'login' => 'index',
     ];
 
@@ -38,11 +39,10 @@ class Membership extends CheckoutStep
      * Whether or not this step should be skipped if user is logged in
      *
      * @config
-     * @var    bool
      */
-    private static $skip_if_logged_in = true;
+    private static bool $skip_if_logged_in = true;
 
-    public function membership()
+    public function membership(): HTTPResponse|array
     {
         //if logged in, then redirect to next step
         if (ShoppingCart::curr() && self::config()->skip_if_logged_in && Security::getCurrentUser()) {
@@ -55,7 +55,7 @@ class Membership extends CheckoutStep
         ];
     }
 
-    public function MembershipForm()
+    public function MembershipForm(): Form
     {
         $fields = FieldList::create();
         $actions = FieldList::create(
@@ -74,19 +74,19 @@ class Membership extends CheckoutStep
         return $form;
     }
 
-    public function guestcontinue()
+    public function guestcontinue(): void
     {
         $this->owner->redirect($this->NextStepLink());
     }
 
-    public function LoginForm()
+    public function LoginForm(): MemberLoginForm
     {
         $form = MemberLoginForm::create($this->owner, MemberAuthenticator::class, 'LoginForm');
         $this->owner->extend('updateLoginForm', $form);
         return $form;
     }
 
-    public function createaccount($requestdata)
+    public function createaccount($requestdata): HTTPResponse|array
     {
         //we shouldn't create an account if already a member
         if (Security::getCurrentUser()) {
@@ -115,7 +115,7 @@ class Membership extends CheckoutStep
         return $config;
     }
 
-    public function CreateAccountForm()
+    public function CreateAccountForm(): CheckoutForm
     {
         $form = CheckoutForm::create($this->owner, 'CreateAccountForm', $this->registerconfig());
         $form->setActions(
@@ -136,7 +136,7 @@ class Membership extends CheckoutStep
         return $form;
     }
 
-    public function docreateaccount($data, Form $form)
+    public function docreateaccount($data, Form $form): HTTPResponse
     {
         $this->registerconfig()->setData($form->getData());
 

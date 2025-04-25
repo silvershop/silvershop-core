@@ -9,12 +9,12 @@ use SilverStripe\ORM\HasManyList;
  */
 class OrderItemList extends HasManyList
 {
-    public function Quantity()
+    public function Quantity(): float
     {
         return $this->Sum('Quantity');
     }
 
-    public function Plural()
+    public function Plural(): bool
     {
         return $this->Quantity() > 1;
     }
@@ -26,9 +26,9 @@ class OrderItemList extends HasManyList
      * @param string  $field     - field to sum
      * @param boolean $onproduct - sum from product or not
      *
-     * @return number - sum total of field
+     * @return float sum total of field
      */
-    public function Sum($field, $onproduct = false)
+    public function Sum($field, $onproduct = false): float
     {
         $total = 0;
         foreach ($this->getIterator() as $item) {
@@ -47,7 +47,7 @@ class OrderItemList extends HasManyList
     /**
      * Add up the totals of all the order items in this list.
      */
-    public function SubTotal()
+    public function SubTotal(): int|float
     {
         $result = 0;
         foreach ($this->getIterator() as $item) {

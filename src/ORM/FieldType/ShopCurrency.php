@@ -15,48 +15,42 @@ class ShopCurrency extends DBCurrency
      * The shop currency decimal delimiter
      *
      * @config
-     * @var    string
      */
-    private static $decimal_delimiter = '.';
+    private static string $decimal_delimiter = '.';
 
     /**
      * The shop currency thousands delimiter
      *
      * @config
-     * @var    string
      */
-    private static $thousand_delimiter = ',';
+    private static string $thousand_delimiter = ',';
 
     /**
      * Whether or not to append the currency symbol to
      *
      * @config
-     * @var    string
      */
-    private static $append_symbol = false;
+    private static bool $append_symbol = false;
 
     /**
      * Whether or not to use a textual 'free' instead of 0.00
-     *
-     * @var bool
      */
-    private static $use_free_text = false;
+    private static bool $use_free_text = false;
 
     /**
      * HTML to use for negative numbers
      *
      * @config
-     * @var    string
      */
-    private static $negative_value_format = '<span class="negative">(%s)</span>';
+    private static string $negative_value_format = '<span class="negative">(%s)</span>';
 
-    private static $casting = [
+    private static array $casting = [
         'forTemplate' => 'HTMLFragment',
         'Nice' => 'HTMLFragment',
         'NiceOrEmpty' => 'HTMLFragment',
     ];
 
-    public function Nice()
+    public function Nice(): string|float
     {
         if (self::config()->get('use_free_text') && $this->value == 0) {
             return _t(__CLASS__ . '.Free', 'Free');
@@ -81,7 +75,7 @@ class ShopCurrency extends DBCurrency
         return $val;
     }
 
-    public function forTemplate()
+    public function forTemplate(): string
     {
         return $this->Nice();
     }
@@ -89,7 +83,7 @@ class ShopCurrency extends DBCurrency
     /**
      * If no cents on the price, trim those off.
      *
-     * @return string
+     * @return mixed
      */
     public function TrimCents()
     {
@@ -102,7 +96,7 @@ class ShopCurrency extends DBCurrency
         return $val;
     }
 
-    public function NiceOrEmpty()
+    public function NiceOrEmpty(): string|float
     {
         if ($this->value != 0) {
             return $this->Nice();

@@ -17,7 +17,7 @@ class CartCleanupTaskTest extends SapphireTest
 {
     protected $usesDatabase = true;
 
-    public function testRun()
+    public function testRun(): void
     {
         Config::modify()->set(CartCleanupTask::class, 'delete_after_mins', 120);
         DBDatetime::set_mock_now('2014-01-31 13:00:00');

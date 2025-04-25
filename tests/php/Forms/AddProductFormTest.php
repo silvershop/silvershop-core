@@ -12,7 +12,7 @@ class AddProductFormTest extends FunctionalTest
 {
     public static $fixture_file = "../Fixtures/shop.yml";
 
-    public function testForm()
+    public function testForm(): void
     {
         $controller = ProductController::create($this->objFromFixture(Product::class, "socks"));
         $form = AddProductForm::create($controller);

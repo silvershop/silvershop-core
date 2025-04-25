@@ -42,21 +42,14 @@ class OrderProcessor
      */
     private static bool $send_confirmation = false;
 
-    /**
-     * @var Order
-     */
-    protected $order;
+    protected Order $order;
 
     /**
      * @var OrderEmailNotifier
      */
     protected $notifier;
 
-    /**
-     * @var string
-     */
-    protected $error;
-
+    protected string $error = '';
 
     /**
      * Assign the order to a local variable
@@ -71,9 +64,9 @@ class OrderProcessor
      * URL to display success message to the user.
      * Happens after any potential offsite gateway redirects.
      *
-     * @return String Relative URL
+     * @return string Relative URL
      */
-    public function getReturnUrl()
+    public function getReturnUrl(): string
     {
         return $this->order->Link();
     }
@@ -145,10 +138,8 @@ class OrderProcessor
      * Map shop data to omnipay fields
      *
      * @param array $customData Usually user submitted data.
-     *
-     * @return array
      */
-    protected function getGatewayData($customData)
+    protected function getGatewayData($customData): array
     {
         $shipping = $this->order->getShippingAddress();
         $billing = $this->order->getBillingAddress();
@@ -188,7 +179,7 @@ class OrderProcessor
     /**
      * Create a new payment for an order
      */
-    public function createPayment($gateway)
+    public function createPayment($gateway): bool|Payment
     {
         if (!GatewayInfo::isSupported($gateway)) {
             $this->error(
@@ -220,7 +211,7 @@ class OrderProcessor
      *    - update order status accordingling
      *    - fire event hooks
      */
-    public function completePayment()
+    public function completePayment(): void
     {
         if (!$this->order->IsPaid()) {
             $this->order->extend('onPayment'); //a payment has been made
@@ -246,10 +237,8 @@ class OrderProcessor
 
     /**
      * Determine if an order can be placed.
-     *
-     * @param boolean $order
      */
-    public function canPlace(Order $order)
+    public function canPlace(?Order $order): bool
     {
         if (!$order) {
             $this->error(_t(__CLASS__ . ".NoOrder", "Order does not exist."));
@@ -274,7 +263,7 @@ class OrderProcessor
      *
      * @return boolean - success/failure
      */
-    public function placeOrder()
+    public function placeOrder(): bool
     {
         if (!$this->order) {
             $this->error(_t(__CLASS__ . ".NoOrderStarted", "A new order has not yet been started."));
@@ -391,20 +380,17 @@ class OrderProcessor
         return true; //report success
     }
 
-    /**
-     * @return Order
-     */
-    public function getOrder()
+    public function getOrder(): Order
     {
         return $this->order;
     }
 
-    public function getError()
+    public function getError(): ?string
     {
         return $this->error;
     }
 
-    protected function error($message)
+    protected function error(string $message): void
     {
         $this->error = $message;
     }

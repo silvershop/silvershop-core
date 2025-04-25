@@ -12,15 +12,15 @@ use SilverShop\ORM\FieldType\CanBeFreeCurrency;
  */
 class Pickup extends Base
 {
-    private static $singular_name = 'Pick Up Shipping';
+    private static string $singular_name = 'Pick Up Shipping';
 
-    private static $table_name = 'SilverShop_PickupModifier';
+    private static string $table_name = 'SilverShop_PickupModifier';
 
-    private static $defaults = [
+    private static array $defaults = [
         'Type' => 'Ignored',
     ];
 
-    private static $casting = [
+    private static array $casting = [
         'TableValue' => CanBeFreeCurrency::class,
     ];
 }

@@ -2,9 +2,11 @@
 
 namespace SilverShop\Forms;
 
+use SilverStripe\Control\RequestHandler;
 use SilverShop\Cart\ShoppingCart;
 use SilverShop\Extension\ShopConfigExtension;
 use SilverShop\ShopTools;
+use SilverStripe\Control\HTTPResponse;
 use SilverStripe\Core\Convert;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Forms\FieldList;
@@ -21,7 +23,7 @@ class CartForm extends Form
 {
     protected $cart;
 
-    public function __construct($controller, $name = 'CartForm', $cart = null, $template = 'SilverShop\Cart\Cart')
+    public function __construct(RequestHandler $controller, $name = 'CartForm', $cart = null, $template = 'SilverShop\Cart\Cart')
     {
         $this->cart = $cart;
         $fields = FieldList::create(
@@ -39,7 +41,7 @@ class CartForm extends Form
     /**
      * Update the cart using data collected
      */
-    public function updatecart($data, $form)
+    public function updatecart($data, $form): HTTPResponse
     {
         $items = $this->cart->Items();
         $updatecount = $removecount = 0;

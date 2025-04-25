@@ -9,7 +9,7 @@ class ShopReportTest extends SapphireTest
 {
     protected static $fixture_file = __DIR__ . '/../Fixtures/shop.yml';
 
-    function testSalesReport()
+    function testSalesReport(): void
     {
         $report = new ShopSalesReport();
         $records = $report->sourceRecords([]);

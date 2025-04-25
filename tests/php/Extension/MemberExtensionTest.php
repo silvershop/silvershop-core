@@ -19,7 +19,7 @@ class MemberExtensionTest extends SapphireTest
         __DIR__ . '/../Fixtures/shop.yml',
     ];
 
-    public function testGetByIdentifier()
+    public function testGetByIdentifier(): void
     {
         Config::modify()->set(Member::class, 'unique_identifier_field', 'Email');
         $member = MemberExtension::get_by_identifier('jeremy@example.com');
@@ -31,20 +31,20 @@ class MemberExtensionTest extends SapphireTest
     /**
      * @doesNotPerformAssertions
      */
-    public function testCMSFields()
+    public function testCMSFields(): void
     {
         singleton(Member::class)->getCMSFields();
         singleton(Member::class)->getMemberFormFields();
     }
 
-    public function testPastOrders()
+    public function testPastOrders(): void
     {
         $member = $this->objFromFixture(Member::class, "joebloggs");
         $pastorders = $member->getPastOrders();
         $this->assertEquals(1, $pastorders->count());
     }
 
-    public function testLoginJoinsCart()
+    public function testLoginJoinsCart(): void
     {
         Config::modify()->set(Member::class, 'login_joins_cart', true);
         $order = $this->objFromFixture(Order::class, "cart");
@@ -57,7 +57,7 @@ class MemberExtensionTest extends SapphireTest
         $this->assertNull(ShoppingCart::curr());
     }
 
-    public function testLoginDoesntJoinCart()
+    public function testLoginDoesntJoinCart(): void
     {
         Config::modify()->set(Member::class, 'login_joins_cart', false);
         $order = $this->objFromFixture(Order::class, "cart");

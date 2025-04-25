@@ -25,7 +25,7 @@ class CustomProductTest extends FunctionalTest
         ShoppingCart::singleton()->clear();
     }
 
-    public function testCustomProduct()
+    public function testCustomProduct(): void
     {
         $thing = CustomProduct::create()->update(
             [

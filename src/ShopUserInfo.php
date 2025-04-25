@@ -17,12 +17,12 @@ class ShopUserInfo
      *
      * @return array location data
      */
-    public function getLocation()
+    public function getLocation(): array
     {
         return $this->getLocationData();
     }
 
-    public function setLocation(array $location)
+    public function setLocation(array $location): static
     {
         $this->setLocationData($location);
 
@@ -31,11 +31,8 @@ class ShopUserInfo
 
     /**
      * Get location of user
-     *
-     * @param  Address $address location
-     * @return null|Address
      */
-    public function getAddress()
+    public function getAddress(): ?Address
     {
         $address = null;
         if ($data = $this->getLocationData()) {
@@ -53,20 +50,20 @@ class ShopUserInfo
      * @param  Address $address location
      * @return $this
      */
-    public function setAddress(Address $address)
+    public function setAddress(Address $address): static
     {
         $this->setLocationData($address->toMap());
 
         return $this;
     }
 
-    protected function getLocationData()
+    protected function getLocationData(): array
     {
         $data = ShopTools::getSession()->get('UserInfo.Location');
         return is_array($data) ? $data : [];
     }
 
-    protected function setLocationData(array $data)
+    protected function setLocationData(array $data): void
     {
         ShopTools::getSession()->set('UserInfo.Location', $data);
     }

@@ -39,7 +39,7 @@ abstract class CheckoutComponent
      * @throws Exception
      * @return FieldList fields for manipulating order
      */
-    abstract public function getFormFields(Order $order);
+    abstract public function getFormFields(Order $order): FieldList;
 
     /**
      * Is this data valid for saving into an order?
@@ -52,7 +52,7 @@ abstract class CheckoutComponent
      * @throws ValidationException
      * @return boolean the data is valid
      */
-    abstract public function validateData(Order $order, array $data);
+    abstract public function validateData(Order $order, array $data): bool;
 
     /**
      * Get required data out of the model.
@@ -60,7 +60,7 @@ abstract class CheckoutComponent
      *
      * @return array        get data from model(s)
      */
-    abstract public function getData(Order $order);
+    abstract public function getData(Order $order): array;
 
     /**
      * Set the model data for this component.
@@ -72,7 +72,7 @@ abstract class CheckoutComponent
      * @throws Exception
      * @return Order the updated order
      */
-    abstract public function setData(Order $order, array $data);
+    abstract public function setData(Order $order, array $data): Order;
 
     /**
      * Get the data fields that are required for the component.
@@ -81,32 +81,25 @@ abstract class CheckoutComponent
      *
      * @return array        required data fields
      */
-    public function getRequiredFields(Order $order)
+    public function getRequiredFields(Order $order): array
     {
         return $this->requiredfields;
     }
 
-    /**
-     * @return array
-     */
-    public function dependsOn()
+    public function dependsOn(): array
     {
         return $this->dependson;
     }
 
-    /**
-     * @return string
-     */
-    public function name()
+    public function name(): string
     {
         return ShopTools::sanitiseClassName(static::class);
     }
 
     /**
      * Whether or not this component provides the payment data that should be passed to the payment gateway
-     * @return bool
      */
-    public function providesPaymentData()
+    public function providesPaymentData(): bool
     {
         return false;
     }

@@ -2,6 +2,7 @@
 
 namespace SilverShop\Forms;
 
+use SilverStripe\Control\RequestHandler;
 use SilverShop\Cart\ShoppingCart;
 use SilverShop\Cart\ShoppingCartController;
 use SilverShop\Extension\ShopConfigExtension;
@@ -17,7 +18,6 @@ use SilverStripe\Forms\Form;
 use SilverStripe\Forms\FormAction;
 use SilverStripe\Forms\NumericField;
 use SilverStripe\Forms\RequiredFields;
-use SilverStripe\Forms\Validator;
 
 /**
  * @package shop
@@ -26,19 +26,15 @@ class AddProductForm extends Form
 {
     /**
      * Populates quantity dropdown with this many values
-     *
-     * @var int
      */
-    protected $maxquantity = 0;
+    protected int $maxquantity = 0;
 
     /**
      * Fields that can be saved to an order item.
-     *
-     * @var array
      */
-    protected $saveablefields = [];
+    protected array $saveablefields = [];
 
-    public function __construct($controller, $name = "AddProductForm")
+    public function __construct(RequestHandler $controller, $name = "AddProductForm")
     {
 
         parent::__construct(
@@ -57,14 +53,14 @@ class AddProductForm extends Form
     /**
      * Choose maximum value to populate quantity dropdown
      */
-    public function setMaximumQuantity($qty)
+    public function setMaximumQuantity($qty): static
     {
         $this->maxquantity = (int)$qty;
 
         return $this;
     }
 
-    public function setSaveableFields($fields)
+    public function setSaveableFields(array $fields): void
     {
         $this->saveablefields = $fields;
     }
@@ -84,7 +80,7 @@ class AddProductForm extends Form
                 array_intersect_key($data, array_combine($this->saveablefields, $this->saveablefields))
             ) : $data;
             $quantity = isset($data['Quantity']) ? (int)$data['Quantity'] : 1;
-            if ($quantity > $this->maxquantity) {
+            if (($this->maxquantity >0) && ($quantity > $this->maxquantity)) {
                 $quantity = $this->maxquantity;
                 $form->sessionMessage(
                     _t('SilverShop\Forms\AddProductForm.QuantitySetToMaximum', 'Set to maximum quantity'),
@@ -114,9 +110,8 @@ class AddProductForm extends Form
 
     /**
      * @param Controller $controller the controller instance that is being passed to the form
-     * @return FieldList Fields for this form.
      */
-    protected function getFormFields($controller = null)
+    protected function getFormFields($controller = null): FieldList
     {
         $fields = FieldList::create();
 
@@ -141,10 +136,7 @@ class AddProductForm extends Form
         return $fields;
     }
 
-    /**
-     * @return FieldList Actions for this form.
-     */
-    protected function getFormActions()
+    protected function getFormActions(): FieldList
     {
         return FieldList::create(
             FormAction::create('addtocart', _t("SilverShop\Page\Product.AddToCart", 'Add to Cart'))
@@ -152,9 +144,6 @@ class AddProductForm extends Form
         );
     }
 
-    /**
-     * @return Validator Validator for this form.
-     */
     protected function getFormValidator()
     {
         return RequiredFields::create(

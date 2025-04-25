@@ -61,7 +61,7 @@ class CheckoutComponentTest extends SapphireTest
             ->set(CheckoutConfig::class, 'membership_required', false);
     }
 
-    public function testSinglePageConfig()
+    public function testSinglePageConfig(): void
     {
         $order = new Order();  //start a new order
         $order->write();
@@ -243,7 +243,7 @@ class CheckoutComponentTest extends SapphireTest
         );
     }
 
-    public function testSinglePageConfigForSingleCountrySiteWithReadonlyFieldsForCountry()
+    public function testSinglePageConfigForSingleCountrySiteWithReadonlyFieldsForCountry(): void
     {
         // Set as a single country site
         $siteConfig = SiteConfig::current_site_config();

@@ -17,7 +17,7 @@ class ProductReport extends ShopPeriodReport
 
     protected $periodfield = '"SilverShop_Order"."Created"';
 
-    public function columns()
+    public function columns(): array
     {
         return [
             'Title' => [
@@ -31,12 +31,12 @@ class ProductReport extends ShopPeriodReport
     }
 
 
-    public function sourceRecords($params)
+    public function sourceRecords($params): SQLQueryList
     {
         $list = SQLQueryList::create($this->query($params));
         $self = $this;
         $list->setOutputClosure(
-            function ($row) use ($self) {
+            function (array $row) use ($self): object {
                 $row['BasePrice'] = $self->formatMoney($row['BasePrice']);
                 $row['Sales'] = $self->formatMoney($row['Sales']);
                 return new $self->dataClass($row);
@@ -45,12 +45,12 @@ class ProductReport extends ShopPeriodReport
         return $list;
     }
 
-    private function formatMoney($money)
+    private function formatMoney($money): string
     {
         return number_format($money, 2);
     }
 
-    public function query($params)
+    public function query($params): ShopReportQuery|SQLSelect
     {
         //convert dates to correct format
         $fields = $this->parameterFields();

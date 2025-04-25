@@ -6,9 +6,12 @@ use SilverShop\Forms\GridField\OrderGridFieldDetailForm_ItemRequest;
 use SilverShop\Model\Order;
 use SilverShop\Model\OrderStatusLog;
 use SilverStripe\Admin\ModelAdmin;
+use SilverStripe\Forms\Form;
 use SilverStripe\Forms\GridField\GridFieldAddNewButton;
+use SilverStripe\Forms\GridField\GridFieldConfig;
 use SilverStripe\Forms\GridField\GridFieldDetailForm;
 use SilverStripe\Forms\GridField\GridFieldSortableHeader;
+use SilverStripe\ORM\DataList;
 
 /**
  * Order administration interface, based on ModelAdmin
@@ -17,25 +20,25 @@ use SilverStripe\Forms\GridField\GridFieldSortableHeader;
  */
 class OrdersAdmin extends ModelAdmin
 {
-    private static $url_segment = 'orders';
+    private static string $url_segment = 'orders';
 
-    private static $menu_title = 'Orders';
+    private static string $menu_title = 'Orders';
 
-    private static $menu_priority = 1;
+    private static int $menu_priority = 1;
 
-    private static $menu_icon_class = 'silvershop-icon-cart';
+    private static string $menu_icon_class = 'silvershop-icon-cart';
 
-    private static $managed_models = [
+    private static array $managed_models = [
         Order::class,
         OrderStatusLog::class
     ];
 
-    private static $model_importers = [];
+    private static array $model_importers = [];
 
     /**
      * Restrict list to non-hidden statuses
      */
-    public function getList()
+    public function getList(): DataList
     {
         $list = parent::getList();
 
@@ -51,7 +54,7 @@ class OrdersAdmin extends ModelAdmin
     /**
      * Replace gridfield detail form to include print functionality
      */
-    public function getEditForm($id = null, $fields = null)
+    public function getEditForm($id = null, $fields = null): Form
     {
         $form = parent::getEditForm($id, $fields);
         if ($this->modelClass == Order::class) {

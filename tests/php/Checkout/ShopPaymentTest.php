@@ -27,7 +27,7 @@ class ShopPaymentTest extends FunctionalTest
         __DIR__ . '/../Fixtures/Pages.yml',
         __DIR__ . '/../Fixtures/shop.yml',
     ];
-    public static $disable_theme = true;
+    public static bool $disable_theme = true;
     protected $autoFollowRedirection = false;
 
     /** @var MockHandler */
@@ -66,7 +66,7 @@ class ShopPaymentTest extends FunctionalTest
         $this->objFromFixture(CartPage::class, "cart")->publishSingle();
     }
 
-    public function testManualPayment()
+    public function testManualPayment(): void
     {
         $order = $this->objFromFixture(Order::class, 'unpaid');
         $payment = Payment::create()->init('Manual', 100.00, 'NZD');
@@ -81,7 +81,7 @@ class ShopPaymentTest extends FunctionalTest
         $this->assertEquals('Created', $payment->Status, 'Payment status should be Created');
     }
 
-    public function testOnsitePayment()
+    public function testOnsitePayment(): void
     {
         $order = $this->objFromFixture(Order::class, 'unpaid');
 
@@ -104,7 +104,7 @@ class ShopPaymentTest extends FunctionalTest
         $this->assertEquals('Captured', $payment->Status, 'Payment status should be Captured');
     }
 
-    public function testOffsitePayment()
+    public function testOffsitePayment(): void
     {
         $order = $this->objFromFixture(Order::class, 'unpaid');
 
@@ -127,7 +127,7 @@ class ShopPaymentTest extends FunctionalTest
         $this->assertEquals('Captured', $payment->Status, 'Payment status should be Captured');
     }
 
-    public function testOffsitePaymentWithGatewayCallback()
+    public function testOffsitePaymentWithGatewayCallback(): void
     {
         //set up cart
         $cart = ShoppingCart::singleton()
@@ -167,7 +167,6 @@ class ShopPaymentTest extends FunctionalTest
         $this->assertNotEquals(404, $response->getStatusCode(), "We shouldn't get page not found");
     }
 
-    protected $payment;
     protected $httpClient;
     protected $httpRequest;
 
@@ -197,7 +196,7 @@ class ShopPaymentTest extends FunctionalTest
         return $this->httpRequest;
     }
 
-    protected function setMockHttpResponse($paths)
+    protected function setMockHttpResponse($paths): MockHandler
     {
         if ($this->mockHandler === null) {
             throw new Exception('HTTP client not initialised before adding mock response.');

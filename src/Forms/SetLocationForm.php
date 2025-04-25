@@ -2,6 +2,7 @@
 
 namespace SilverShop\Forms;
 
+use SilverStripe\Control\RequestHandler;
 use SilverShop\ShopUserInfo;
 use SilverShop\Extension\ShopConfigExtension;
 use SilverStripe\Core\Config\Config;
@@ -13,7 +14,7 @@ use SilverStripe\SiteConfig\SiteConfig;
 
 class SetLocationForm extends Form
 {
-    public function __construct($controller, $name = "SetLocationForm")
+    public function __construct(RequestHandler $controller, $name = "SetLocationForm")
     {
         $countries = SiteConfig::current_site_config()->getCountriesList();
         $fields = FieldList::create(
@@ -33,7 +34,7 @@ class SetLocationForm extends Form
         }
     }
 
-    public function setLocation($data, $form)
+    public function setLocation($data, $form): void
     {
         singleton(ShopUserInfo::class)->setLocation($data);
         $this->controller->redirectBack();

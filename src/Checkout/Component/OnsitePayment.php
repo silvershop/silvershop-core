@@ -5,6 +5,7 @@ namespace SilverShop\Checkout\Component;
 use Omnipay\Common\Helper;
 use SilverShop\Checkout\Checkout;
 use SilverShop\Model\Order;
+use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\LiteralField;
 use SilverStripe\Omnipay\GatewayFieldsFactory;
 use SilverStripe\Omnipay\GatewayInfo;
@@ -16,7 +17,7 @@ use SilverStripe\ORM\ValidationResult;
  */
 class OnsitePayment extends CheckoutComponent
 {
-    public function getFormFields(Order $order)
+    public function getFormFields(Order $order): FieldList
     {
         $gateway = Checkout::get($order)->getSelectedPaymentMethod();
         $gatewayfieldsfactory = new GatewayFieldsFactory($gateway, ['Card']);
@@ -33,7 +34,7 @@ class OnsitePayment extends CheckoutComponent
         return $fields;
     }
 
-    public function getRequiredFields(Order $order)
+    public function getRequiredFields(Order $order): array
     {
         $gateway = Checkout::get($order)->getSelectedPaymentMethod();
         $required = GatewayInfo::requiredFields($gateway);
@@ -41,7 +42,7 @@ class OnsitePayment extends CheckoutComponent
         return $fieldsFactory->getFieldName(array_combine($required, $required));
     }
 
-    public function validateData(Order $order, array $data)
+    public function validateData(Order $order, array $data): bool
     {
         $result = ValidationResult::create();
         //TODO: validate credit card data
@@ -49,9 +50,10 @@ class OnsitePayment extends CheckoutComponent
             $result->addError(_t(__CLASS__ . '.InvalidCreditCard', 'Credit card is invalid'));
             throw new ValidationException($result);
         }
+        return true;
     }
 
-    public function getData(Order $order)
+    public function getData(Order $order): array
     {
         $data = [];
         $gateway = Checkout::get($order)->getSelectedPaymentMethod();
@@ -69,12 +71,13 @@ class OnsitePayment extends CheckoutComponent
         return $data;
     }
 
-    public function setData(Order $order, array $data)
+    public function setData(Order $order, array $data): Order
     {
         //create payment?
+        return $order;
     }
 
-    public function providesPaymentData()
+    public function providesPaymentData(): bool
     {
         return true;
     }

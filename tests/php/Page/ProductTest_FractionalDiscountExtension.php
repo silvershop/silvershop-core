@@ -7,7 +7,7 @@ use SilverStripe\ORM\DataExtension;
 
 class ProductTest_FractionalDiscountExtension extends DataExtension implements TestOnly
 {
-    public function updateSellingPrice(&$price)
+    public function updateSellingPrice(&$price): void
     {
         $price -= 0.015;
     }

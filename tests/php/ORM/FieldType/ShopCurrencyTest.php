@@ -7,7 +7,7 @@ use SilverStripe\Dev\SapphireTest;
 
 class ShopCurrencyTest extends SapphireTest
 {
-    public function testField()
+    public function testField(): void
     {
         ShopCurrency::config()->currency_symbol = "X";
         ShopCurrency::config()->decimal_delimiter = "|";

@@ -7,7 +7,7 @@ use SilverStripe\Dev\SapphireTest;
 
 class ShopCountryTest extends SapphireTest
 {
-    public function testField()
+    public function testField(): void
     {
         $field = new ShopCountry("Country");
         $field->setValue("ABC");

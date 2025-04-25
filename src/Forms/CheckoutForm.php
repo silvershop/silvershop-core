@@ -5,6 +5,7 @@ namespace SilverShop\Forms;
 use SilverShop\Checkout\CheckoutComponentConfig;
 use SilverShop\Extension\ShopConfigExtension;
 use SilverStripe\Core\Config\Config;
+use SilverStripe\Control\HTTPResponse;
 use SilverStripe\Control\RequestHandler;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\Form;
@@ -13,10 +14,7 @@ use SilverStripe\Security\Security;
 
 class CheckoutForm extends Form
 {
-    /**
-     * @var CheckoutComponentConfig
-     */
-    protected $config;
+    protected CheckoutComponentConfig $config;
 
     protected $redirectlink;
 
@@ -54,12 +52,12 @@ class CheckoutForm extends Form
         }
     }
 
-    public function setRedirectLink($link)
+    public function setRedirectLink($link): void
     {
         $this->redirectlink = $link;
     }
 
-    public function checkoutSubmit($data, $form)
+    public function checkoutSubmit($data, $form): HTTPResponse
     {
         //form validation has passed by this point, so we can save data
         $this->config->setData($form->getData());
@@ -70,7 +68,7 @@ class CheckoutForm extends Form
         return $this->controller->redirectBack();
     }
 
-    public function getConfig()
+    public function getConfig(): CheckoutComponentConfig
     {
         return $this->config;
     }

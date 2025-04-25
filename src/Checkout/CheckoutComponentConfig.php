@@ -18,20 +18,18 @@ class CheckoutComponentConfig
 {
     use Injectable;
 
-    protected $components;
+    protected ArrayList $components;
+    protected Order $order;
+    protected bool $namespaced; //namespace fields according to their component
 
-    protected $order;
-
-    protected $namespaced; //namespace fields according to their component
-
-    public function __construct(Order $order, $namespaced = true)
+    public function __construct(Order $order, bool $namespaced = true)
     {
         $this->components = ArrayList::create();
         $this->order = $order;
         $this->namespaced = $namespaced;
     }
 
-    public function getOrder()
+    public function getOrder(): Order
     {
         return $this->order;
     }
@@ -40,7 +38,7 @@ class CheckoutComponentConfig
      * @param string            $insertBefore The class of the component to insert this one before
      * @return $this
      */
-    public function addComponent(CheckoutComponent $component, $insertBefore = null)
+    public function addComponent(CheckoutComponent $component, $insertBefore = null): static
     {
         if ($this->namespaced) {
             $component = CheckoutComponentNamespaced::create($component);
@@ -68,7 +66,7 @@ class CheckoutComponentConfig
     /**
      * @return ArrayList Of CheckoutComponent
      */
-    public function getComponents()
+    public function getComponents(): ArrayList
     {
         if (!$this->components) {
             $this->components = ArrayList::create();
@@ -80,10 +78,9 @@ class CheckoutComponentConfig
      * Returns the first available component with the given class or interface.
      *
      * @param string $type ClassName
-     *
-     * @return CheckoutComponent
+     * @return ?CheckoutComponent
      */
-    public function getComponentByType($type)
+    public function getComponentByType(string $type)
     {
         foreach ($this->components as $component) {
             if ($this->namespaced) {
@@ -101,9 +98,8 @@ class CheckoutComponentConfig
     /**
      * Whether or not this config has a component that collects payment data.
      * Should be used to determine whether or not to add an additional payment step after checkout.
-     * @return bool
      */
-    public function hasComponentWithPaymentData()
+    public function hasComponentWithPaymentData(): bool
     {
         foreach ($this->getComponents() as $component) {
             if ($component->providesPaymentData()) {
@@ -119,7 +115,7 @@ class CheckoutComponentConfig
      *
      * @return FieldList namespaced fields
      */
-    public function getFormFields()
+    public function getFormFields(): FieldList
     {
         $fields = FieldList::create();
         foreach ($this->getComponents() as $component) {
@@ -132,7 +128,7 @@ class CheckoutComponentConfig
         return $fields;
     }
 
-    public function getRequiredFields()
+    public function getRequiredFields(): array
     {
         $required = [];
         foreach ($this->getComponents() as $component) {
@@ -145,11 +141,10 @@ class CheckoutComponentConfig
      * Validate every component against given data.
      *
      * @param array $data data to validate
-     *
      * @return boolean validation result
      * @throws ValidationException
      */
-    public function validateData($data)
+    public function validateData(array $data): bool
     {
         $result = ValidationResult::create();
         foreach ($this->getComponents() as $component) {
@@ -183,7 +178,7 @@ class CheckoutComponentConfig
      *
      * @return array map of field names to data values
      */
-    public function getData()
+    public function getData(): array
     {
         $data = [];
 
@@ -204,7 +199,7 @@ class CheckoutComponentConfig
      *
      * @param array $data map of field names to data values
      */
-    public function setData($data)
+    public function setData(array $data): void
     {
         foreach ($this->getComponents() as $component) {
             $component->setData($this->order, $this->dependantData($component, $data));
@@ -214,8 +209,9 @@ class CheckoutComponentConfig
     /**
      * Helper function for saving data from other components.
      */
-    protected function dependantData($component, $data)
+    protected function dependantData($component, array $data): array
     {
+
         if (!$this->namespaced) { //no need to try and get un-namespaced dependant data
             return $data;
         }

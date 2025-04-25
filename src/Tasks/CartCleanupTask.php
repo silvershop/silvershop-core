@@ -19,10 +19,8 @@ class CartCleanupTask extends BuildTask
 {
     /**
      * @config
-     *
-     * @var string
      */
-    private static $delete_after_mins = 120;
+    private static int $delete_after_mins = 120;
 
     /**
      * @var string
@@ -34,7 +32,7 @@ class CartCleanupTask extends BuildTask
      */
     protected $description = 'Deletes abandoned carts.';
 
-    public function run($request)
+    public function run($request): void
     {
         if (!$this->config()->get('delete_after_mins')) {
             throw new LogicException('No valid time specified in "delete_after_mins"');
@@ -61,7 +59,7 @@ class CartCleanupTask extends BuildTask
         $this->log("$count old carts removed.");
     }
 
-    protected function log($msg)
+    protected function log(string $msg)
     {
         echo $msg . "\n";
     }

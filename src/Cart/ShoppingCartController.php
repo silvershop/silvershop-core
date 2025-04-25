@@ -30,7 +30,7 @@ use SilverStripe\View\Requirements;
  */
 class ShoppingCartController extends Controller
 {
-    private static $url_segment = 'shoppingcart';
+    private static string $url_segment = 'shoppingcart';
 
     /**
      * @config
@@ -41,9 +41,8 @@ class ShoppingCartController extends Controller
      * Whether or not this controller redirects to the cart-page whenever an item was added
      *
      * @config
-     * @var    bool
      */
-    private static $direct_to_cart_page = false;
+    private static bool $direct_to_cart_page = false;
 
     /**
      * @var ShoppingCart
@@ -52,17 +51,15 @@ class ShoppingCartController extends Controller
 
     /**
      * @config
-     * @var array
      */
-    private static $url_handlers = [
+    private static array $url_handlers = [
         '$Action/$Buyable/$ID' => 'handleAction',
     ];
 
     /**
      * @config
-     * @var array
      */
-    private static $allowed_actions = [
+    private static array $allowed_actions = [
         'add',
         'additem',
         'remove',
@@ -75,22 +72,22 @@ class ShoppingCartController extends Controller
         'debug',
     ];
 
-    public static function add_item_link(Buyable $buyable, $parameters = [])
+    public static function add_item_link(Buyable $buyable, $parameters = []): bool|string
     {
         return self::build_url('add', $buyable, $parameters);
     }
 
-    public static function remove_item_link(Buyable $buyable, $parameters = [])
+    public static function remove_item_link(Buyable $buyable, $parameters = []): bool|string
     {
         return self::build_url('remove', $buyable, $parameters);
     }
 
-    public static function remove_all_item_link(Buyable $buyable, $parameters = [])
+    public static function remove_all_item_link(Buyable $buyable, $parameters = []): bool|string
     {
         return self::build_url('removeall', $buyable, $parameters);
     }
 
-    public static function set_quantity_item_link(Buyable $buyable, $parameters = [])
+    public static function set_quantity_item_link(Buyable $buyable, $parameters = []): bool|string
     {
         return self::build_url('setquantity', $buyable, $parameters);
     }
@@ -98,7 +95,7 @@ class ShoppingCartController extends Controller
     /**
      * Helper for creating a url
      */
-    protected static function build_url($action, $buyable, $params = [])
+    protected static function build_url($action, $buyable, $params = []): bool|string
     {
         if (!$action || !$buyable) {
             return false;
@@ -142,17 +139,16 @@ class ShoppingCartController extends Controller
         }
     }
 
-    public function init()
+    public function init(): void
     {
         parent::init();
         $this->cart = ShoppingCart::singleton();
     }
 
     /**
-     * @return Product|Variation|Buyable
      * @throws HTTPResponse_Exception
      */
-    protected function buyableFromRequest()
+    protected function buyableFromRequest(): Product|Variation|Buyable|null
     {
         $request = $this->getRequest();
         if (SecurityToken::is_enabled()
@@ -197,11 +193,9 @@ class ShoppingCartController extends Controller
      * Action: add item to cart
      *
      * @param HTTPRequest $request
-     *
-     * @return string|HTTPResponse
      * @throws HTTPResponse_Exception
      */
-    public function add($request)
+    public function add($request): string|HTTPResponse|null
     {
         $result = false;
 
@@ -233,11 +227,9 @@ class ShoppingCartController extends Controller
      * Action: remove a certain number of items from the cart
      *
      * @param HTTPRequest $request
-     *
-     * @return string|HTTPResponse
      * @throws HTTPResponse_Exception
      */
-    public function remove($request)
+    public function remove($request): string|HTTPResponse
     {
         if ($product = $this->buyableFromRequest()) {
             $this->cart->remove($product, $quantity = 1, $request->getVars());
@@ -252,11 +244,9 @@ class ShoppingCartController extends Controller
      * Action: remove all of an item from the cart
      *
      * @param HTTPRequest $request
-     *
-     * @return string|HTTPResponse
      * @throws HTTPResponse_Exception
      */
-    public function removeall($request)
+    public function removeall($request): string|HTTPResponse
     {
         if ($product = $this->buyableFromRequest()) {
             $this->cart->remove($product, null, $request->getVars());
@@ -271,11 +261,9 @@ class ShoppingCartController extends Controller
      * Action: update the quantity of an item in the cart
      *
      * @param HTTPRequest $request
-     *
-     * @return string|HTTPResponse
      * @throws HTTPResponse_Exception
      */
-    public function setquantity($request)
+    public function setquantity($request): string|HTTPResponse
     {
         $product = $this->buyableFromRequest();
         $quantity = (int)$request->getVar('quantity');
@@ -292,10 +280,8 @@ class ShoppingCartController extends Controller
      * Action: clear the cart
      *
      * @param HTTPRequest $request
-     *
-     * @return string|HTTPResponse
      */
-    public function clear($request)
+    public function clear($request): string|HTTPResponse
     {
         $this->updateLocale($request);
         $this->cart->clear();
@@ -310,8 +296,8 @@ class ShoppingCartController extends Controller
      */
     public function index()
     {
-        if ($cart = $this->Cart()) {
-            return $this->redirect($cart->CartLink);
+        if ($this->Cart() && CartPage::find_link()) {
+            return $this->redirect(CartPage::find_link());
         } elseif ($response = ErrorPage::response_for(404)) {
             return $response;
         }

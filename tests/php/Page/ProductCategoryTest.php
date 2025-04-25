@@ -13,47 +13,16 @@ use SilverStripe\Versioned\Versioned;
 class ProductCategoryTest extends FunctionalTest
 {
     public static $fixture_file = __DIR__ . '/../Fixtures/shop.yml';
-    public static $disable_theme = true;
+    public static bool $disable_theme = true;
 
-    /**
-     * @var ProductCategory
-     */
-    protected $products;
-
-    /**
-     * @var ProductCategory
-     */
-    protected $clothing;
-
-    /**
-     * @var ProductCategory
-     */
-    protected $electronics;
-
-    /**
-     * @var Product
-     */
-    protected $socks;
-
-    /**
-     * @var Product
-     */
-    protected $tshirt;
-
-    /**
-     * @var Product
-     */
-    protected $hdtv;
-
-    /**
-     * @var Product
-     */
-    protected $beachball;
-
-    /**
-     * @var Product
-     */
-    protected $mp3player;
+    protected ProductCategory $products;
+    protected ProductCategory $clothing;
+    protected ProductCategory $electronics;
+    protected Product $socks;
+    protected Product $tshirt;
+    protected Product $hdtv;
+    protected Product $beachball;
+    protected Product $mp3player;
 
     public function setUp(): void
     {
@@ -88,13 +57,13 @@ class ProductCategoryTest extends FunctionalTest
     /**
      * @doesNotPerformAssertions
      */
-    public function testCanViewProductCategoryPage()
+    public function testCanViewProductCategoryPage(): void
     {
         $products = $this->objFromFixture(ProductCategory::class, 'products');
         $this->get(Director::makeRelative($products->Link()));
     }
 
-    public function testGetAllProducts()
+    public function testGetAllProducts(): void
     {
         $products = $this->products->ProductsShowable();
         $this->assertNotNull($products, "Products exist in category");
@@ -109,7 +78,7 @@ class ProductCategoryTest extends FunctionalTest
         );
     }
 
-    public function testSecondaryMembership()
+    public function testSecondaryMembership(): void
     {
         $products = $this->electronics->ProductsShowable();
         $this->assertListEquals(
@@ -134,7 +103,7 @@ class ProductCategoryTest extends FunctionalTest
         );
     }
 
-    public function testZeroPrice()
+    public function testZeroPrice(): void
     {
         Config::modify()->set(ProductCategory::class, 'must_have_price', true);
 
@@ -163,7 +132,7 @@ class ProductCategoryTest extends FunctionalTest
         );
     }
 
-    public function testZeroPriceWithVariations()
+    public function testZeroPriceWithVariations(): void
     {
         Config::modify()->set(ProductCategory::class, 'must_have_price', true);
 
@@ -190,7 +159,7 @@ class ProductCategoryTest extends FunctionalTest
         );
     }
 
-    public function testFiltering()
+    public function testFiltering(): void
     {
         // Test unpublished products
         $this->socks->doUnpublish();

@@ -4,6 +4,7 @@ namespace SilverShop\Page;
 
 use PageController;
 use SilverShop\ListSorter\ListSorter;
+use SilverStripe\ORM\DataList;
 use SilverStripe\ORM\PaginatedList;
 
 class ProductCategoryController extends PageController
@@ -11,7 +12,7 @@ class ProductCategoryController extends PageController
     /**
      * Return the products for this group.
      */
-    public function Products($recursive = true)
+    public function Products($recursive = true): PaginatedList
     {
         $products = $this->ProductsShowable($recursive);
 
@@ -32,7 +33,7 @@ class ProductCategoryController extends PageController
     /**
      * Return products that are featured, that is products that have "FeaturedProduct = 1"
      */
-    public function FeaturedProducts($recursive = true)
+    public function FeaturedProducts($recursive = true): DataList
     {
         return $this->ProductsShowable($recursive)
             ->filter('Featured', true);
@@ -41,7 +42,7 @@ class ProductCategoryController extends PageController
     /**
      * Return products that are not featured, that is products that have "FeaturedProduct = 0"
      */
-    public function NonFeaturedProducts($recursive = true)
+    public function NonFeaturedProducts($recursive = true): DataList
     {
         return $this->ProductsShowable($recursive)
             ->filter('Featured', false);
@@ -49,10 +50,8 @@ class ProductCategoryController extends PageController
 
     /**
      * Sorting controls
-     *
-     * @return ListSorter sorter
      */
-    public function getSorter()
+    public function getSorter(): ListSorter
     {
         $options = [];
         foreach (ProductCategory::config()->sort_options as $k => $v) {

@@ -11,7 +11,7 @@ use SilverStripe\Control\CliController;
  */
 class ProductVariationsFromAttributeCombinations extends CliController
 {
-    public function process()
+    public function process(): void
     {
         $products = Product::get();
         if (!$products->count()) {

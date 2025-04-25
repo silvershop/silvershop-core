@@ -17,10 +17,9 @@ class ShopMemberFactory
      * @throws ValidationException
      *
      * @param $data - map of member data
-     *
      * @return Member - new member (not saved to db)
      */
-    public function create($data)
+    public function create($data): ?Member
     {
         $result = ValidationResult::create();
         if (!Checkout::member_creation_enabled()) {

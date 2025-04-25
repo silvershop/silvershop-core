@@ -14,20 +14,20 @@ use SilverStripe\Versioned\Versioned;
  */
 class OrderItem extends \SilverShop\Model\OrderItem
 {
-    private static $db = [
+    private static array $db = [
         'ProductVersion' => 'Int',
     ];
 
-    private static $has_one = [
+    private static array $has_one = [
         'Product' => Product::class,
     ];
 
-    private static $table_name = 'SilverShop_Product_OrderItem';
+    private static string $table_name = 'SilverShop_Product_OrderItem';
 
     /**
      * the has_one join field to identify the buyable
      */
-    private static $buyable_relationship = 'Product';
+    private static string $buyable_relationship = 'Product';
 
     /**
      * Get related product
@@ -35,8 +35,7 @@ class OrderItem extends \SilverShop\Model\OrderItem
      *  - historical version if order is placed
      *
      * @param boolean $forcecurrent - force getting latest version of the product.
-     *
-     * @return Product
+     * @return ?Product
      */
     public function Product($forcecurrent = false)
     {
@@ -56,7 +55,7 @@ class OrderItem extends \SilverShop\Model\OrderItem
         return null;
     }
 
-    public function onPlacement()
+    public function onPlacement(): void
     {
         parent::onPlacement();
         if ($product = $this->Product(true)) {
@@ -64,7 +63,7 @@ class OrderItem extends \SilverShop\Model\OrderItem
         }
     }
 
-    public function getTableTitle()
+    public function getTableTitle(): string
     {
         $product = $this->Product();
         $tabletitle = ($product) ? $product->Title : $this->i18n_singular_name();

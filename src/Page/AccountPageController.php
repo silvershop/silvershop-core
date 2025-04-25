@@ -23,9 +23,9 @@ use SilverStripe\SiteConfig\SiteConfig;
 
 class AccountPageController extends PageController
 {
-    private static $url_segment = 'account';
+    private static string $url_segment = 'account';
 
-    private static $allowed_actions = [
+    private static array $allowed_actions = [
         'addressbook',
         'CreateAddressForm',
         'DefaultAddressForm',
@@ -43,7 +43,7 @@ class AccountPageController extends PageController
      */
     protected $member;
 
-    public function init()
+    public function init(): void
     {
         parent::init();
 
@@ -66,7 +66,7 @@ class AccountPageController extends PageController
         }
     }
 
-    public function getTitle()
+    public function getTitle(): string
     {
         if ($this->dataRecord && $title = $this->dataRecord->Title) {
             return $title;
@@ -74,12 +74,12 @@ class AccountPageController extends PageController
         return _t('SilverShop\Page\AccountPage.DefaultTitle', 'Account');
     }
 
-    public function getMember()
+    public function getMember(): Member
     {
         return $this->member;
     }
 
-    public function addressbook()
+    public function addressbook(): array
     {
         return [
             'DefaultAddressForm' => $this->DefaultAddressForm(),
@@ -87,7 +87,7 @@ class AccountPageController extends PageController
         ];
     }
 
-    public function DefaultAddressForm()
+    public function DefaultAddressForm(): Form|bool
     {
         $addresses = $this->member->AddressBook()->sort('Created', 'DESC');
         if ($addresses->exists()) {
@@ -117,17 +117,18 @@ class AccountPageController extends PageController
         return false;
     }
 
-    public function savedefaultaddresses($data, $form)
+    public function savedefaultaddresses($data, $form): HTTPResponse
     {
         $form->saveInto($this->member);
         $this->member->write();
 
+        $response = null;
         $this->extend('updateDefaultAddressFormResponse', $form, $data, $response);
 
         return $response ?: $this->redirect($this->Link('addressbook'));
     }
 
-    public function CreateAddressForm()
+    public function CreateAddressForm(): Form
     {
         $singletonaddress = singleton(Address::class);
         $fields = $singletonaddress->getFrontEndFields();
@@ -140,7 +141,7 @@ class AccountPageController extends PageController
         return $form;
     }
 
-    public function saveaddress($data, $form)
+    public function saveaddress($data, $form): HTTPResponse
     {
         $member = $this->getMember();
         $address = Address::create();
@@ -164,21 +165,18 @@ class AccountPageController extends PageController
         }
         $form->sessionMessage(_t('SilverShop\Model\Address.AddressSaved', 'Your address has been saved'), 'good');
 
+        $response = null;
         $this->extend('updateCreateAddressFormResponse', $form, $data, $response);
 
         return $response ?: $this->redirect($this->Link('addressbook'));
     }
 
-    public function editprofile()
+    public function editprofile(): array
     {
         return [];
     }
 
-    /**
-     * @param HTTPRequest $req
-     * @return HTTPResponse
-     */
-    function deleteaddress($req)
+    function deleteaddress(HTTPRequest$req): ?HTTPResponse
     {
         // NOTE: we don't want to fully delete the address because it's presumably still
         // attached to an order. Setting MemberID to 0 means it won't show up in the address
@@ -193,22 +191,14 @@ class AccountPageController extends PageController
         return $this->redirectBack();
     }
 
-    /**
-     * @param HTTPRequest $req
-     * @return HTTPResponse
-     */
-    function setdefaultbilling($req)
+    function setdefaultbilling(HTTPRequest $req): HTTPResponse
     {
         $this->member->DefaultBillingAddressID = $req->param('ID');
         $this->member->write();
         return $this->redirectBack();
     }
 
-    /**
-     * @param HTTPRequest $req
-     * @return HTTPResponse
-     */
-    function setdefaultshipping($req)
+    function setdefaultshipping(HTTPRequest $req): HTTPResponse
     {
         $this->member->DefaultShippingAddressID = $req->param('ID');
         $this->member->write();
@@ -217,17 +207,14 @@ class AccountPageController extends PageController
 
     /**
      * Return a form allowing the user to edit their details.
-     *
-     * @return ShopAccountForm
      */
-    public function EditAccountForm()
+    public function EditAccountForm(): ShopAccountForm
     {
         return ShopAccountForm::create($this, 'EditAccountForm');
     }
 
-    public function ChangePasswordForm()
+    public function ChangePasswordForm(): ChangePasswordForm
     {
-
         /**
          * @var ChangePasswordHandler $handler
          */
@@ -257,7 +244,7 @@ class AccountPageController extends PageController
      * This catches that and sends it back to editprofile, which seems easier and less error-prone
      * than the alternative of trying to manipulate the BackURL field.
      */
-    public function changepassword()
+    public function changepassword(): void
     {
         $this->redirect($this->Link('editprofile'));
     }

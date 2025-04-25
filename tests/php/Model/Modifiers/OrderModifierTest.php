@@ -6,6 +6,7 @@ use Exception;
 use SilverShop\Model\Modifiers\Tax\FlatTax;
 use SilverShop\Model\Order;
 use SilverShop\Page\Product;
+use SilverShop\Tests\Model\Modifiers\OrderModifierTest_TestModifier;
 use SilverShop\Tests\Model\Product\CustomProduct_OrderItem;
 use SilverShop\Tests\ShopTest;
 use SilverStripe\Core\Config\Config;
@@ -21,17 +22,10 @@ class OrderModifierTest extends FunctionalTest
     public static $fixture_file = __DIR__ . '/../../Fixtures/shop.yml';
     public static $disable_theme = true;
     protected $usesTransactions = false;
-    protected static $use_draft_site = true;
+    protected static bool $use_draft_site = true;
 
-    /**
-     * @var Product
-     */
-    protected $mp3player;
-
-    /**
-     * @var Product
-     */
-    protected $socks;
+    protected Product $mp3player;
+    protected Product $socks;
 
     protected static $extra_dataobjects = [
         CustomProduct_OrderItem::class,
@@ -62,7 +56,7 @@ class OrderModifierTest extends FunctionalTest
         $this->socks->publishSingle();
     }
 
-    public function testModifierCalculation()
+    public function testModifierCalculation(): void
     {
         $order = $this->createOrder();
         $this->assertEquals(510, $order->calculate(), "Total with 25% tax");
@@ -73,7 +67,7 @@ class OrderModifierTest extends FunctionalTest
         $this->assertEquals(408, $order->calculate(), "Total with no modification");
     }
 
-    public function testModifierFailure()
+    public function testModifierFailure(): void
     {
         if (!DB::get_conn()->supportsTransactions()) {
             $this->markTestSkipped(
@@ -126,7 +120,7 @@ class OrderModifierTest extends FunctionalTest
         $this->assertEquals(['10', '104.5'], $amounts);
     }
 
-    public function createOrder()
+    public function createOrder(): Order
     {
         $order = new Order();
         $order->write();

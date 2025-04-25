@@ -19,21 +19,14 @@ use SilverStripe\Dev\FunctionalTest;
 class FlatTaxModifierTest extends FunctionalTest
 {
     protected static $fixture_file = __DIR__ . '/../../Fixtures/shop.yml';
-    protected static $disable_theme = true;
+    protected static bool $disable_theme = true;
+
+    protected Product $mp3player;
+    protected ShoppingCart $cart;
 
     protected static $extra_dataobjects = [
         CustomProduct_OrderItem::class
     ];
-
-    /**
-     * @var Product
-     */
-    protected $mp3player;
-
-    /**
-     * @var ShoppingCart
-     */
-    protected $cart;
 
     public function setUp(): void
     {
@@ -58,7 +51,7 @@ class FlatTaxModifierTest extends FunctionalTest
         $this->mp3player->publishSingle();
     }
 
-    public function testInclusiveTax()
+    public function testInclusiveTax(): void
     {
         Config::modify()->set(FlatTax::class, 'exclusive', false);
         $this->cart->clear();
@@ -75,7 +68,7 @@ class FlatTaxModifierTest extends FunctionalTest
         $this->assertEquals(200, $order->GrandTotal());
     }
 
-    public function testExclusiveTax()
+    public function testExclusiveTax(): void
     {
         Config::modify()->set(FlatTax::class, 'exclusive', true);
         $this->cart->clear();

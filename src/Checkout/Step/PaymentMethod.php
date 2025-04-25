@@ -7,18 +7,19 @@ use SilverShop\Checkout\Checkout;
 use SilverShop\Checkout\CheckoutComponentConfig;
 use SilverShop\Checkout\Component\Payment;
 use SilverShop\Forms\CheckoutForm;
+use SilverStripe\Control\HTTPResponse;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\FormAction;
 use SilverStripe\Omnipay\GatewayInfo;
 
 class PaymentMethod extends CheckoutStep
 {
-    private static $allowed_actions = [
+    private static array $allowed_actions = [
         'paymentmethod',
         'PaymentMethodForm',
     ];
 
-    protected function checkoutconfig()
+    protected function checkoutconfig(): CheckoutComponentConfig
     {
         $config = CheckoutComponentConfig::create(ShoppingCart::curr(), false);
         $config->addComponent(Payment::create());
@@ -26,7 +27,7 @@ class PaymentMethod extends CheckoutStep
         return $config;
     }
 
-    public function paymentmethod()
+    public function paymentmethod(): HTTPResponse|array
     {
         $gateways = GatewayInfo::getSupportedGateways();
         if (count($gateways) == 1) {
@@ -37,7 +38,7 @@ class PaymentMethod extends CheckoutStep
         ];
     }
 
-    public function PaymentMethodForm()
+    public function PaymentMethodForm(): CheckoutForm
     {
         $form = CheckoutForm::create($this->owner, 'PaymentMethodForm', $this->checkoutconfig());
         $form->setActions(
@@ -50,13 +51,13 @@ class PaymentMethod extends CheckoutStep
         return $form;
     }
 
-    public function setpaymentmethod($data, $form)
+    public function setpaymentmethod($data, $form): HTTPResponse
     {
         $this->checkoutconfig()->setData($form->getData());
         return $this->owner->redirect($this->NextStepLink());
     }
 
-    public function SelectedPaymentMethod()
+    public function SelectedPaymentMethod(): string|array
     {
         return Checkout::get($this->owner->Cart())->getSelectedPaymentMethod(true);
     }

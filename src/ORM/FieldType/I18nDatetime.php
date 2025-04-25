@@ -13,7 +13,7 @@ class I18nDatetime extends DBDatetime
      * Returns the datetime in the format given in the lang file
      * 'SilverShop\Generic.DateTimeFormatNice'. Defaults to 'm/d/Y h:i A'
      *
-     * @return string|null
+     * @return ?string
      */
     public function Nice()
     {
@@ -29,7 +29,7 @@ class I18nDatetime extends DBDatetime
      * Returns the date in the format given in the lang file.
      * 'SilverShop\Generic.DateFormatNice'. Defaults to 'm/d/Y'
      *
-     * @return string|null
+     * @return ?string
      */
     public function NiceDate()
     {
@@ -44,10 +44,8 @@ class I18nDatetime extends DBDatetime
     /**
      * Returns the 24h datetime in the format given in the lang file.
      * 'SilverShop\Generic.DateTimeFormatNice24'. Defaults to 'd/m/Y H:i'
-     *
-     * @return string|null
      */
-    public function Nice24()
+    public function Nice24(): string
     {
         return date(
             _t('SilverShop\Generic.DateTimeFormatNice24', 'd/m/Y H:i'),

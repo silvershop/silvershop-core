@@ -26,37 +26,37 @@ use SilverStripe\ORM\ManyManyList;
  */
 class AttributeType extends DataObject
 {
-    private static $db = [
+    private static array $db = [
         'Name' => 'Varchar', //for back-end use
         'Label' => 'Varchar' //for front-end use
     ];
 
-    private static $has_many = [
+    private static array $has_many = [
         'Values' => AttributeValue::class,
     ];
 
-    private static $belongs_many_many = [
+    private static array $belongs_many_many = [
         'Product' => Product::class,
     ];
 
-    private static $summary_fields = [
+    private static array $summary_fields = [
         'Name' => 'Name',
         'Label' => 'Label',
     ];
 
-    private static $indexes = [
+    private static array $indexes = [
         'LastEdited' => true,
     ];
 
-    private static $default_sort = 'ID ASC';
+    private static string $default_sort = 'ID ASC';
 
-    private static $singular_name = 'Attribute';
+    private static string $singular_name = 'Attribute';
 
-    private static $plural_name = 'Attributes';
+    private static string $plural_name = 'Attributes';
 
-    private static $table_name = 'SilverShop_AttributeType';
+    private static string $table_name = 'SilverShop_AttributeType';
 
-    public static function find_or_make($name)
+    public static function find_or_make($name): AttributeType
     {
         if ($type = AttributeType::get()->filter('Name:nocase', $name)->first()
         ) {
@@ -70,7 +70,7 @@ class AttributeType extends DataObject
         return $type;
     }
 
-    public function getCMSFields()
+    public function getCMSFields(): FieldList
     {
         $fields = FieldList::create(
             TextField::create('Name', $this->fieldLabel('Name')),
@@ -101,7 +101,7 @@ class AttributeType extends DataObject
         return $fields;
     }
 
-    public function addValues(array $values)
+    public function addValues(array $values): void
     {
         $avalues = $this->convertArrayToValues($values);
         $this->Values()->addMany($avalues);
@@ -110,10 +110,8 @@ class AttributeType extends DataObject
     /**
      * Finds or creates values for this type.
      *
-     *
-     * @return ArrayList
      */
-    public function convertArrayToValues(array $values)
+    public function convertArrayToValues(array $values): ArrayList
     {
         $set = ArrayList::create();
         foreach ($values as $value) {
@@ -133,12 +131,10 @@ class AttributeType extends DataObject
     /**
      * Returns a dropdown field for the user to select a variant.
      *
-     * @param string    $emptyString
+     * @param string    $emptystring
      * @param ArrayList $values
-     *
-     * @return DropdownField
      */
-    public function getDropDownField($emptystring = null, $values = null)
+    public function getDropDownField($emptystring = null, $values = null): ?DropdownField
     {
         $values = ($values) ? $values : $this->Values()->sort(['Sort' => 'ASC', 'Value' => 'ASC']);
 
@@ -159,7 +155,7 @@ class AttributeType extends DataObject
         return null;
     }
 
-    public function onBeforeWrite()
+    public function onBeforeWrite(): void
     {
         parent::onBeforeWrite();
         if ($this->Name && !$this->Label) {
@@ -169,7 +165,7 @@ class AttributeType extends DataObject
         }
     }
 
-    public function canDelete($member = null)
+    public function canDelete($member = null): bool
     {
         //TODO: prevent deleting if has been used
         return true;

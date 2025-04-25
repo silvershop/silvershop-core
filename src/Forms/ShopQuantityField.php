@@ -8,33 +8,27 @@ use SilverShop\Model\OrderItem;
 use SilverShop\ShopTools;
 use SilverStripe\Forms\HiddenField;
 use SilverStripe\Forms\NumericField;
+use SilverStripe\ORM\FieldType\DBHTMLText;
 use SilverStripe\View\ViewableData;
 
 class ShopQuantityField extends ViewableData
 {
-    /**
-     * @var OrderItem
-     */
-    protected $item;
+    protected OrderItem $item;
 
     protected $parameters;
 
-    protected $classes = ['ajaxQuantityField'];
+    protected array $classes = ['ajaxQuantityField'];
 
-    protected $template = self::class;
+    protected string $template = self::class;
 
-    /**
-     * @var Buyable
-     */
-    protected $buyable;
+    protected Buyable $buyable;
 
     /**
      * The max amount to enter
      *
      * @config
-     * @var    int
      */
-    private static $max = 0;
+    private static int $max = 0;
 
     public function __construct($object, $parameters = null)
     {
@@ -60,7 +54,7 @@ class ShopQuantityField extends ViewableData
         //TODO: include javascript for easy update
     }
 
-    public function setClasses($newclasses, $overwrite = false)
+    public function setClasses(array $newclasses, $overwrite = false): void
     {
         if ($overwrite) {
             $this->classes = array_merge($this->classes, $newclasses);
@@ -69,17 +63,17 @@ class ShopQuantityField extends ViewableData
         }
     }
 
-    public function setTemplate($template)
+    public function setTemplate(string $template): void
     {
         $this->template = $template;
     }
 
-    public function Item()
+    public function Item(): OrderItem
     {
         return $this->item;
     }
 
-    public function Quantity()
+    public function Quantity(): int
     {
         return $this->item->Quantity;
     }
@@ -100,22 +94,22 @@ class ShopQuantityField extends ViewableData
         return $field;
     }
 
-    public function MainID()
+    public function MainID(): string
     {
         return ShopTools::sanitiseClassName(get_class($this->item)) . '_DB_' . $this->item->ID;
     }
 
-    public function IncrementLink()
+    public function IncrementLink(): string
     {
         return $this->item->addLink();
     }
 
-    public function DecrementLink()
+    public function DecrementLink(): string
     {
         return $this->item->removeLink();
     }
 
-    public function forTemplate()
+    public function forTemplate(): DBHTMLText
     {
         return $this->renderWith($this->template);
     }

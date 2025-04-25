@@ -16,10 +16,8 @@ class CheckoutStep extends Extension
 
     /**
      * Get the next step action
-     *
-     * @return string|NULL
      */
-    private function nextstep()
+    private function nextstep(): ?string
     {
         $steps = $this->owner->getSteps();
         $found = false;
@@ -34,7 +32,7 @@ class CheckoutStep extends Extension
         return null;
     }
 
-    public function NextStepLink($nextstep = null)
+    public function NextStepLink($nextstep = null): string
     {
         if (!$nextstep) {
             $nextstep = $this->nextstep();

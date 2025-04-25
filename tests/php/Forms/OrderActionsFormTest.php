@@ -2,6 +2,7 @@
 
 namespace SilverShop\Tests\Forms;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use SilverShop\Extension\OrderManipulationExtension;
 use SilverShop\Forms\OrderActionsForm;
 use SilverShop\Forms\OrderActionsFormValidator;
@@ -31,8 +32,8 @@ class OrderActionsFormTest extends FunctionalTest
         CustomProduct_OrderItem::class,
     ];
 
-    protected $order;
-    protected $checkoutPage;
+    protected Order $order;
+    protected CheckoutPage $checkoutPage;
 
     public function setUp(): void
     {
@@ -58,7 +59,7 @@ class OrderActionsFormTest extends FunctionalTest
         ]);
     }
 
-    public function testOffsitePayment()
+    public function testOffsitePayment(): void
     {
         Config::modify()->set(GatewayInfo::class, 'Dummy', ['is_offsite' => true]);
         $stubGateway = $this->buildPaymentGatewayStub(true, 'test-' . $this->order->ID, true);
@@ -84,7 +85,7 @@ class OrderActionsFormTest extends FunctionalTest
         $this->assertEquals('http://paymentprovider/test/offsiteform', $response->getHeader('Location'));
     }
 
-    public function testOnsitePayment()
+    public function testOnsitePayment(): void
     {
         $stubGateway = $this->buildPaymentGatewayStub(true, 'test-' . $this->order->ID, false);
         Injector::inst()->registerService($this->stubGatewayFactory($stubGateway), 'Omnipay\Common\GatewayFactory');
@@ -115,7 +116,7 @@ class OrderActionsFormTest extends FunctionalTest
         $this->assertStringEndsWith($ctrl->Link('order/' . $this->order->ID), $response->getHeader('location'));
     }
 
-    public function testValidation()
+    public function testValidation(): void
     {
         $validator = OrderActionsFormValidator::create('PaymentMethod');
         $form = OrderActionsForm::create(
@@ -144,7 +145,7 @@ class OrderActionsFormTest extends FunctionalTest
         $this->assertEquals(3, $requiredCount);
     }
 
-    protected function stubGatewayFactory($stubGateway)
+    protected function stubGatewayFactory($stubGateway): MockObject
     {
         $factory = $this->getMockBuilder('Omnipay\Common\GatewayFactory')->getMock();
         $factory->expects($this->any())->method('create')->will($this->returnValue($stubGateway));
@@ -155,7 +156,7 @@ class OrderActionsFormTest extends FunctionalTest
         $successValue,
         $transactionReference,
         $isRedirect = true
-    ) {
+    ): MockObject {
         //--------------------------------------------------------------------------------------------------------------
         // request and response
 

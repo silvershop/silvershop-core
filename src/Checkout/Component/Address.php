@@ -2,27 +2,27 @@
 
 namespace SilverShop\Checkout\Component;
 
-use SilverStripe\ORM\ValidationException;
 use SilverShop\Model\Order;
 use SilverShop\ShopUserInfo;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Forms\CompositeField;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\ORM\DataObject;
+use SilverStripe\ORM\ValidationException;
 use SilverStripe\Security\Security;
 use SilverStripe\SiteConfig\SiteConfig;
 
 abstract class Address extends CheckoutComponent
 {
-    protected $formfielddescriptions = true;
+    protected bool $formfielddescriptions = true;
 
-    protected $addresstype;
+    protected string $addresstype = '';
 
-    protected $addtoaddressbook = false;
+    protected bool $addtoaddressbook = false;
 
-    private static $composite_field_tag = 'div';
+    private static string $composite_field_tag = 'div';
 
-    public function getFormFields(Order $order)
+    public function getFormFields(Order $order): FieldList
     {
         $fields = $this->getAddress($order)->getFrontEndFields([
             'addfielddescriptions' => $this->formfielddescriptions
@@ -41,16 +41,17 @@ abstract class Address extends CheckoutComponent
         );
     }
 
-    public function getRequiredFields(Order $order)
+    public function getRequiredFields(Order $order): array
     {
         return $this->getAddress($order)->getRequiredFields();
     }
 
-    public function validateData(Order $order, array $data)
+    public function validateData(Order $order, array $data): bool
     {
+        return true;
     }
 
-    public function getData(Order $order)
+    public function getData(Order $order): array
     {
         $data = $this->getAddress($order)->toMap();
 
@@ -91,7 +92,7 @@ abstract class Address extends CheckoutComponent
      * @param  array $data  data to set
      * @throws ValidationException
      */
-    public function setData(Order $order, array $data)
+    public function setData(Order $order, array $data): Order
     {
         $address = $this->getAddress($order);
         //if the value matches the current address then unset
@@ -140,12 +141,13 @@ abstract class Address extends CheckoutComponent
         }
         //extension hooks
         $order->extend('onSet' . $this->addresstype . 'Address', $address);
+        return $order;
     }
 
     /**
      * Enable adding form field descriptions
      */
-    public function setShowFormFieldDescriptions($show = true)
+    public function setShowFormFieldDescriptions(bool $show = true): void
     {
         $this->formfielddescriptions = $show;
     }
@@ -153,15 +155,12 @@ abstract class Address extends CheckoutComponent
     /**
      * Add new addresses to the address book.
      */
-    public function setAddToAddressBook($add = true)
+    public function setAddToAddressBook(bool $add = true): void
     {
         $this->addtoaddressbook = $add;
     }
 
-    /**
-     * @return \SilverShop\Model\Address
-     */
-    public function getAddress(Order $order)
+    public function getAddress(Order $order): \SilverShop\Model\Address
     {
         return $order->{$this->addresstype . 'Address'}();
     }

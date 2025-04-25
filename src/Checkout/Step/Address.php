@@ -7,13 +7,14 @@ use SilverShop\Forms\CheckoutForm;
 use SilverShop\Checkout\Component\BillingAddress;
 use SilverShop\Checkout\CheckoutComponentConfig;
 use SilverShop\Checkout\Component\ShippingAddress;
+use SilverStripe\Control\HTTPResponse;
 use SilverStripe\Forms\CheckboxField;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\FormAction;
 
 class Address extends CheckoutStep
 {
-    private static $allowed_actions = [
+    private static array $allowed_actions = [
         'shippingaddress',
         'ShippingAddressForm',
         'setshippingaddress',
@@ -22,7 +23,7 @@ class Address extends CheckoutStep
         'setbillingaddress',
     ];
 
-    public function shippingconfig()
+    public function shippingconfig(): CheckoutComponentConfig
     {
         $config = CheckoutComponentConfig::create(ShoppingCart::curr());
         $config->addComponent(ShippingAddress::create());
@@ -30,7 +31,7 @@ class Address extends CheckoutStep
         return $config;
     }
 
-    public function shippingaddress()
+    public function shippingaddress(): array
     {
         $form = $this->ShippingAddressForm();
         $form->Fields()->push(
@@ -47,7 +48,7 @@ class Address extends CheckoutStep
         return ['OrderForm' => $form];
     }
 
-    public function ShippingAddressForm()
+    public function ShippingAddressForm(): CheckoutForm
     {
         $form = CheckoutForm::create($this->owner, 'ShippingAddressForm', $this->shippingconfig());
         $form->setActions(
@@ -60,7 +61,7 @@ class Address extends CheckoutStep
         return $form;
     }
 
-    public function setshippingaddress($data, $form)
+    public function setshippingaddress($data, $form): HTTPResponse
     {
         $this->shippingconfig()->setData($form->getData());
         $step = null;
@@ -75,7 +76,7 @@ class Address extends CheckoutStep
         return $this->owner->redirect($this->NextStepLink($step));
     }
 
-    public function billingconfig()
+    public function billingconfig(): CheckoutComponentConfig
     {
         $config = CheckoutComponentConfig::create(ShoppingCart::curr());
         $config->addComponent(BillingAddress::create());
@@ -83,12 +84,12 @@ class Address extends CheckoutStep
         return $config;
     }
 
-    public function billingaddress()
+    public function billingaddress(): array
     {
         return ['OrderForm' => $this->BillingAddressForm()];
     }
 
-    public function BillingAddressForm()
+    public function BillingAddressForm(): CheckoutForm
     {
         $form = CheckoutForm::create($this->owner, 'BillingAddressForm', $this->billingconfig());
         $form->setActions(
@@ -101,7 +102,7 @@ class Address extends CheckoutStep
         return $form;
     }
 
-    public function setbillingaddress($data, $form)
+    public function setbillingaddress($data, $form): HTTPResponse
     {
         $this->billingconfig()->setData($form->getData());
         return $this->owner->redirect($this->NextStepLink());

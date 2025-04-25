@@ -33,23 +33,12 @@ class SteppedCheckoutExtensionTest extends FunctionalTest
         CustomProduct_OrderItem::class,
     ];
 
-    protected static $use_draft_site = true; //so we don't need to publish
+    protected static bool $use_draft_site = true; //so we don't need to publish
     protected $autoFollowRedirection = false;
 
-    /**
-     * @var CheckoutPageController
-     */
-    protected $checkout;
-
-    /**
-     * @var Product
-     */
-    protected $socks;
-
-    /**
-     * @var Order
-     */
-    protected $cart;
+    protected CheckoutPageController $checkout;
+    protected Product $socks;
+    protected Order $cart;
 
     public function setUp(): void
     {
@@ -79,7 +68,7 @@ class SteppedCheckoutExtensionTest extends FunctionalTest
         ShoppingCart::singleton()->setCurrent($this->cart);
     }
 
-    public function testTemplateFunctionsForFirstStep()
+    public function testTemplateFunctionsForFirstStep(): void
     {
         //put us at the first step index == membership
         $this->checkout->handleRequest($this->buildTestRequest(''));
@@ -97,7 +86,7 @@ class SteppedCheckoutExtensionTest extends FunctionalTest
         $this->assertTrue($this->checkout->IsFutureStep('contactdetails'));
     }
 
-    public function testTemplateFunctionsForOtherSteps()
+    public function testTemplateFunctionsForOtherSteps(): void
     {
         $this->checkout->handleRequest($this->buildTestRequest('summary')); //change to summary step
         $this->assertTrue($this->checkout->StepExists('summary'));
@@ -108,7 +97,7 @@ class SteppedCheckoutExtensionTest extends FunctionalTest
         $this->assertFalse($this->checkout->StepExists('nosuchstep'));
     }
 
-    public function testMembershipStep()
+    public function testMembershipStep(): void
     {
         $this->logOut();
         ShoppingCart::singleton()->clear();
@@ -130,7 +119,7 @@ class SteppedCheckoutExtensionTest extends FunctionalTest
         $this->assertEquals('Black', $member->Surname);
     }
 
-    public function testContactDetails()
+    public function testContactDetails(): void
     {
         $this->post(
             '/checkout/ContactDetailsForm',
@@ -158,7 +147,7 @@ class SteppedCheckoutExtensionTest extends FunctionalTest
         );
     }
 
-    public function testShippingAddress()
+    public function testShippingAddress(): void
     {
         $this->post(
             '/checkout/ShippingAddressForm',
@@ -211,7 +200,7 @@ class SteppedCheckoutExtensionTest extends FunctionalTest
         );
     }
 
-    public function testBillingAddress()
+    public function testBillingAddress(): void
     {
         $this->post(
             '/checkout/BillingAddressForm',
@@ -253,7 +242,7 @@ class SteppedCheckoutExtensionTest extends FunctionalTest
         );
     }
 
-    public function testPaymentMethod()
+    public function testPaymentMethod(): void
     {
         $data = [
             'PaymentMethod' => 'Dummy',
@@ -263,7 +252,7 @@ class SteppedCheckoutExtensionTest extends FunctionalTest
         $this->assertEquals('Dummy', Checkout::get($this->cart)->getSelectedPaymentMethod());
     }
 
-    public function testSummary()
+    public function testSummary(): void
     {
         $this->checkout->handleRequest($this->buildTestRequest('summary'));
         /**
@@ -295,7 +284,7 @@ class SteppedCheckoutExtensionTest extends FunctionalTest
         );
     }
 
-    protected function buildTestRequest($url, $method = 'GET')
+    protected function buildTestRequest($url, $method = 'GET'): HTTPRequest
     {
         $request = new HTTPRequest($method, $url);
         $request->setSession($this->mainSession->session());

@@ -2,12 +2,14 @@
 
 namespace SilverShop\Forms;
 
+use SilverStripe\Control\RequestHandler;
 use Exception;
 use SilverShop\Cart\ShoppingCart;
 use SilverShop\Cart\ShoppingCartController;
 use SilverShop\Page\Product;
 use SilverShop\ShopTools;
 use SilverStripe\Core\Convert;
+use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\Form;
 use SilverStripe\Forms\HiddenField;
 use SilverStripe\ORM\Queries\SQLSelect;
@@ -19,13 +21,12 @@ class VariationForm extends AddProductForm
 {
     /**
      * @config
-     * @var bool
      */
-    private static $include_json = true;
+    private static bool $include_json = true;
 
-    protected $requiredFields = ['Quantity'];
+    protected array $requiredFields = ['Quantity'];
 
-    public function __construct($controller, $name = 'VariationForm')
+    public function __construct(RequestHandler $controller, $name = 'VariationForm')
     {
         parent::__construct($controller, $name);
         $this->extend('updateVariationForm');
@@ -55,6 +56,7 @@ class VariationForm extends AddProductForm
             // if we are in just doing a validation step then check
             if ($this->getRequest()->requestVar('ValidateVariant')) {
                 $message = '';
+                $success = false;
 
                 try {
                     $success = $variation->canPurchase(null, $data['Quantity']);
@@ -112,7 +114,7 @@ class VariationForm extends AddProductForm
         return null;
     }
 
-    protected function getFormFields($controller = null)
+    protected function getFormFields($controller = null): FieldList
     {
         $fields = parent::getFormFields($controller);
 

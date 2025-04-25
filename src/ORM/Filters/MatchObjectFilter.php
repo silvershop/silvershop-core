@@ -42,9 +42,9 @@ class MatchObjectFilter
 {
     protected $className;
 
-    protected $data;
+    protected array $data;
 
-    protected $required;
+    protected array $required;
 
     /**
      * @param string $className
@@ -63,7 +63,7 @@ class MatchObjectFilter
      *
      * @return array of filter statements
      */
-    public function getFilter()
+    public function getFilter(): ?array
     {
         if (!is_array($this->data)) {
             return null;

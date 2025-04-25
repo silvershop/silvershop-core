@@ -9,7 +9,7 @@ use SilverStripe\Core\Extension;
  */
 class PaymentServiceExtension extends Extension
 {
-    public function updatePartialPayment($newPayment, $originalPayment)
+    public function updatePartialPayment($newPayment, $originalPayment): void
     {
         $newPayment->OrderID = $originalPayment->OrderID;
     }

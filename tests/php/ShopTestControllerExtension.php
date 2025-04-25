@@ -10,7 +10,7 @@ use SilverStripe\Dev\TestOnly;
  */
 class ShopTestControllerExtension extends Extension implements TestOnly
 {
-    public function onAfterInit()
+    public function onAfterInit(): void
     {
         $this->owner->response->addHeader(
             'X-TestPageClass',

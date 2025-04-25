@@ -12,7 +12,7 @@ use SilverShop\Model\Order;
  */
 class GlobalTax extends Base
 {
-    private static $db = [
+    private static array $db = [
         'Country' => 'Varchar',
     ];
 
@@ -20,13 +20,12 @@ class GlobalTax extends Base
      * Tax rates per country
      *
      * @config
-     * @var    array
      */
-    private static $country_rates = [];
+    private static array $country_rates = [];
 
-    private static $table_name = 'SilverShop_GlobalTaxModifier';
+    private static string $table_name = 'SilverShop_GlobalTaxModifier';
 
-    public function value($incoming)
+    public function value($incoming): int|float
     {
         $rate = $this->Type == 'Chargable'
             ?
@@ -39,7 +38,7 @@ class GlobalTax extends Base
     public function Rate()
     {
         // If the order is no longer in cart, rely on the saved data
-        if ($this->OrderID && !$this->Order()->IsCart()) {
+        if ($this->OrderID && $this->Order()->exists() && !$this->Order()->IsCart()) {
             return $this->getField('Rate');
         }
 
@@ -52,7 +51,7 @@ class GlobalTax extends Base
         return $this->Rate = $defaults['Rate'];
     }
 
-    public function getTableTitle()
+    public function getTableTitle(): string
     {
         $country = $this->Country() ? ' (' . $this->Country() . ') ' : '';
 
@@ -62,18 +61,18 @@ class GlobalTax extends Base
 
     public function Country()
     {
-        if ($this->OrderID && $address = $this->Order()->getBillingAddress()) {
+        if ($this->OrderID && $this->Order()->exists() && $address = $this->Order()->getBillingAddress()) {
             return $address->Country;
         }
 
         return null;
     }
 
-    public function onBeforeWrite()
+    public function onBeforeWrite(): void
     {
         parent::onBeforeWrite();
         // While the order is still in "Cart" status, persist country code to DB
-        if ($this->OrderID && $this->Order()->IsCart()) {
+        if ($this->OrderID && $this->Order()->exists() && $this->Order()->IsCart()) {
             $this->setField('Country', $this->Country());
         }
     }
