@@ -155,7 +155,7 @@ class OrderActionsForm extends Form
 
             if (!GatewayInfo::isManual($gateway)) {
                 $processor = OrderProcessor::create($this->order);
-                $fieldFactory = new GatewayFieldsFactory(null);
+                $fieldFactory = GatewayFieldsFactory::create(null);
                 $response = $processor->makePayment(
                     $gateway,
                     $fieldFactory->normalizeFormData($data),
@@ -219,7 +219,7 @@ class OrderActionsForm extends Form
      */
     protected function getCCFields(array $gateways): ?CompositeField
     {
-        $fieldFactory = new GatewayFieldsFactory(null, ['Card']);
+        $fieldFactory = GatewayFieldsFactory::create(null, ['Card']);
         $onsiteGateways = [];
         $allRequired = [];
         foreach ($gateways as $gateway => $title) {

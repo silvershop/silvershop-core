@@ -59,7 +59,7 @@ class ProductVariationsExtension extends DataExtension
             )
         ]);
 
-        $variationsGridField->getConfig()->addComponent($sort = new GridFieldOrderableRows('Sort'));
+        $variationsGridField->getConfig()->addComponent($sort = GridFieldOrderableRows::create('Sort'));
 
         if ($this->owner->Variations()->exists()) {
             $fields->addFieldToTab(

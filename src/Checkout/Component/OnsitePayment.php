@@ -20,7 +20,7 @@ class OnsitePayment extends CheckoutComponent
     public function getFormFields(Order $order): FieldList
     {
         $gateway = Checkout::get($order)->getSelectedPaymentMethod();
-        $gatewayfieldsfactory = new GatewayFieldsFactory($gateway, ['Card']);
+        $gatewayfieldsfactory = GatewayFieldsFactory::create($gateway, ['Card']);
         $fields = $gatewayfieldsfactory->getCardFields();
         if ($gateway === 'Dummy') {
             $fields->unshift(
@@ -38,7 +38,7 @@ class OnsitePayment extends CheckoutComponent
     {
         $gateway = Checkout::get($order)->getSelectedPaymentMethod();
         $required = GatewayInfo::requiredFields($gateway);
-        $fieldsFactory = new GatewayFieldsFactory($gateway, ['Card']);
+        $fieldsFactory = GatewayFieldsFactory::create($gateway, ['Card']);
         return $fieldsFactory->getFieldName(array_combine($required, $required));
     }
 
@@ -48,7 +48,7 @@ class OnsitePayment extends CheckoutComponent
         //TODO: validate credit card data
         if (!Helper::validateLuhn($data['number'])) {
             $result->addError(_t(__CLASS__ . '.InvalidCreditCard', 'Credit card is invalid'));
-            throw new ValidationException($result);
+            throw ValidationException::create($result);
         }
         return true;
     }

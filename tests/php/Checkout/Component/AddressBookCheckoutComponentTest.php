@@ -69,9 +69,9 @@ class AddressBookCheckoutComponentTest extends SapphireTest
         $this->cart = $this->objFromFixture(Order::class, "cart1");
         $this->address1 = $this->objFromFixture(Address::class, "address1");
         $this->address2 = $this->objFromFixture(Address::class, "address2");
-        $this->config = new CheckoutComponentConfig($this->cart, true);
+        $this->config = CheckoutComponentConfig::create($this->cart, true);
 
-        $this->config->addComponent(new AddressBookBilling());
+        $this->config->addComponent(AddressBookBilling::create());
 
         $this->address1->MemberID = $this->member->ID;
         $this->address1->write();

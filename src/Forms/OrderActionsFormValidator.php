@@ -15,7 +15,7 @@ class OrderActionsFormValidator extends RequiredFields
             $gateway = $data['PaymentMethod'];
             // If the gateway isn't manual and not offsite, Check for credit-card fields!
             if (!GatewayInfo::isManual($gateway) && !GatewayInfo::isOffsite($gateway)) {
-                $fieldFactory = new GatewayFieldsFactory(null);
+                $fieldFactory = GatewayFieldsFactory::create(null);
                 // Merge the required fields and the Credit-Card fields that are required for the gateway
                 $this->required = $fieldFactory->getFieldName(
                     array_merge(

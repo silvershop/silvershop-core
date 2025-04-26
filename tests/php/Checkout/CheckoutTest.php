@@ -36,7 +36,7 @@ class CheckoutTest extends SapphireTest
         $this->cart = $this->objFromFixture(Order::class, "cart1");
         $this->address1 = $this->objFromFixture(Address::class, "address1");
         $this->address2 = $this->objFromFixture(Address::class, "address2");
-        $this->checkout = new Checkout($this->cart);
+        $this->checkout = Checkout::create($this->cart);
         $this->memberFactory = new ShopMemberFactory();
 
         Config::modify()

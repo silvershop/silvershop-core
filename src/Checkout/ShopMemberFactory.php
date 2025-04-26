@@ -26,7 +26,7 @@ class ShopMemberFactory
             $result->addError(
                 _t('SilverShop\Checkout\Checkout.MembershipIsNotAllowed', 'Creating new memberships is not allowed')
             );
-            throw new ValidationException($result);
+            throw ValidationException::create($result);
         }
         $idfield = Config::inst()->get(Member::class, 'unique_identifier_field');
         if (!isset($data[$idfield]) || empty($data[$idfield])) {
@@ -38,11 +38,11 @@ class ShopMemberFactory
                     ['IdentifierField' => $idfield]
                 )
             );
-            throw new ValidationException($result);
+            throw ValidationException::create($result);
         }
         if (!isset($data['Password']) || empty($data['Password'])) {
             $result->addError(_t('SilverShop\Checkout\Checkout.PasswordRequired', 'A password is required'));
-            throw new ValidationException($result);
+            throw ValidationException::create($result);
         }
         $idval = $data[$idfield];
         if ($member = MemberExtension::get_by_identifier($idval)) {
@@ -59,7 +59,7 @@ class ShopMemberFactory
                     ['Field' => $fieldLabel, 'Identifier' => $idval]
                 )
             );
-            throw new ValidationException($result);
+            throw ValidationException::create($result);
         }
 
         /** @var Member $member */
@@ -73,7 +73,7 @@ class ShopMemberFactory
             }
         }
         if (!$result->isValid()) {
-            throw new ValidationException($result);
+            throw ValidationException::create($result);
         }
 
         return $member;

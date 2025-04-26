@@ -44,8 +44,8 @@ class CheckoutFormTest extends FunctionalTest
     public function testCheckoutForm(): void
     {
         $order = ShoppingCart::curr();
-        $config = new SinglePageCheckoutComponentConfig($order);
-        $form = new CheckoutForm($this->checkoutcontroller, "OrderForm", $config);
+        $config = SinglePageCheckoutComponentConfig::create($order);
+        $form = CheckoutForm::create($this->checkoutcontroller, "OrderForm", $config);
         $ns = 'SilverShop-Checkout-Component-';
         $data = [
             "{$ns}CustomerDetails_FirstName"    => "Jane",
@@ -120,8 +120,8 @@ class CheckoutFormTest extends FunctionalTest
         );
 
         $order = ShoppingCart::curr();
-        $config = new SinglePageCheckoutComponentConfig($order);
-        $form = new CheckoutForm($this->checkoutcontroller, "OrderForm", $config);
+        $config = SinglePageCheckoutComponentConfig::create($order);
+        $form = CheckoutForm::create($this->checkoutcontroller, "OrderForm", $config);
         $ns = 'SilverShop-Checkout-Component-';
         // no country fields due to readonly field
         $dataCountryAbsent = [
@@ -168,7 +168,7 @@ class CheckoutFormTest extends FunctionalTest
     public function testCheckoutFormWithInvalidData(): void
     {
         $order = ShoppingCart::curr();
-        $config = new SinglePageCheckoutComponentConfig($order);
+        $config = SinglePageCheckoutComponentConfig::create($order);
         $form = CheckoutForm::create($this->checkoutcontroller, 'OrderForm', $config);
         $ns = 'SilverShop-Checkout-Component-';
         $invalidData = [

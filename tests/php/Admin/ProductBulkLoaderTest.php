@@ -14,7 +14,7 @@ class ProductBulkLoaderTest extends FunctionalTest
 
     public function testLoad(): void
     {
-        $loader = new ProductBulkLoader(Product::class);
+        $loader = ProductBulkLoader::create(Product::class);
 
         $ds = DIRECTORY_SEPARATOR;
         $filepath = realpath(__DIR__ . $ds . 'test_products.csv');

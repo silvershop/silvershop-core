@@ -11,7 +11,7 @@ class ShopReportTest extends SapphireTest
 
     function testSalesReport(): void
     {
-        $report = new ShopSalesReport();
+        $report = ShopSalesReport::create();
         $records = $report->sourceRecords([]);
         $records = $report->sourceRecords(['Grouping' => 'Year']);
         $records = $report->sourceRecords(['Grouping' => 'Month']);

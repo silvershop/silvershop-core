@@ -228,7 +228,7 @@ class AccountPageController extends PageController
         // The default form tries to redirect to /account/login which doesn't exist
         $backURL = $form->Fields()->fieldByName('BackURL');
         if (!$backURL) {
-            $backURL = new HiddenField('BackURL', 'BackURL');
+            $backURL = HiddenField::create('BackURL', 'BackURL');
             $form->Fields()->push($backURL);
         }
         $backURL->setValue($this->Link('editprofile'));

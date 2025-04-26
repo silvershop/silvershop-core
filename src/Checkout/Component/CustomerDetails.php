@@ -36,7 +36,7 @@ class CustomerDetails extends CheckoutComponent
                     _t(__CLASS__ . '.No' . $field_name, "{$field_name} is required"),
                     "CustomerDetails"
                 );
-                throw new ValidationException($result);
+                throw ValidationException::create($result);
             }
         }
         return true;

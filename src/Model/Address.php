@@ -124,7 +124,7 @@ class Address extends DataObject
 
     public function getFrontEndFields($params = null): FieldList
     {
-        $fields = new FieldList(
+        $fields = FieldList::create(
             $this->getCountryField(),
             TextField::create('Company', $this->fieldLabel('Company')),
             $addressfield = TextField::create('Address', $this->fieldLabel('Address')),

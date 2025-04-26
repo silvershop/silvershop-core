@@ -9,7 +9,7 @@ class CanBeFreeCurrencyTest extends SapphireTest
 {
     public function testField(): void
     {
-        $field = new CanBeFreeCurrency("Test");
+        $field = CanBeFreeCurrency::create("Test");
         $field->setValue(20000);
         $this->assertEquals("$20,000.00", $field->Nice());
         $field->setValue(0);

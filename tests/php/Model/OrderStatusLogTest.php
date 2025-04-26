@@ -315,7 +315,7 @@ class OrderStatusLogTest extends SapphireTest
 
     public function testOrderIsRequired(): void
     {
-        $log = new OrderStatusLog([
+        $log = OrderStatusLog::create([
             'Title' => 'Test',
             'OrderID' => 1
         ]);
@@ -325,7 +325,7 @@ class OrderStatusLogTest extends SapphireTest
         // Now we make sure we don't need to set an OrderID
         Config::modify()->set(OrderStatusLog::class, 'order_is_required', false);
 
-        $log = new OrderStatusLog([
+        $log = OrderStatusLog::create([
             'Title' => 'Test'
         ]);
 

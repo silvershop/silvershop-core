@@ -127,7 +127,7 @@ class PaymentForm extends CheckoutForm
         }
 
         $gateway = Checkout::get($order)->getSelectedPaymentMethod(false);
-        $fieldFactory = new GatewayFieldsFactory($gateway);
+        $fieldFactory = GatewayFieldsFactory::create($gateway);
 
         // This is where the payment is actually attempted
         $paymentResponse = $this->orderProcessor->makePayment(

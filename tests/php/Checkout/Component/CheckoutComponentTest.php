@@ -63,9 +63,9 @@ class CheckoutComponentTest extends SapphireTest
 
     public function testSinglePageConfig(): void
     {
-        $order = new Order();  //start a new order
+        $order = Order::create();  //start a new order
         $order->write();
-        $config = new SinglePageCheckoutComponentConfig($order);
+        $config = SinglePageCheckoutComponentConfig::create($order);
 
         $customerdetailscomponent = $config->getComponentByType(CustomerDetails::class);
         $customerdetailscomponent->setData(
@@ -256,9 +256,9 @@ class CheckoutComponentTest extends SapphireTest
             "Confirm that website is setup as a single country site"
         );
 
-        $order = new Order();  //start a new order
+        $order = Order::create();  //start a new order
         $order->write();
-        $config = new SinglePageCheckoutComponentConfig($order);
+        $config = SinglePageCheckoutComponentConfig::create($order);
 
         $customerdetailscomponent = $config->getComponentByType(CustomerDetails::class);
         $customerdetailscomponent->setData(

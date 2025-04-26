@@ -48,7 +48,7 @@ class ProductImageExtensionTest extends SapphireTest
         $this->socks = $this->objFromFixture(Product::class, 'socks');
         $this->img1 = Image::get()->filter('Name', 'ImageA.png')->first();
         $this->img2 = Image::get()->filter('Name', 'ImageB.png')->first();
-        $this->img3 = new Image;
+        $this->img3 = Image::create();
 
         $this->siteConfig = SiteConfig::current_site_config();
         $this->siteConfig->DefaultProductImageID = $this->img1->ID;

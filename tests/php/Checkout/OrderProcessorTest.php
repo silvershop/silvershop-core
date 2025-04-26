@@ -418,7 +418,7 @@ class OrderProcessorTest extends SapphireTest
 
         $order = $this->shoppingcart->current();
         $order->update($data);
-        $address = new Address();
+        $address = Address::create();
         $address->update($data);
         $address->write();
         $order->ShippingAddressID = $address->ID;

@@ -298,7 +298,7 @@ class OrderProcessor
         // Add an error handler that throws an exception upon error, so that we can catch errors as exceptions
         // in the following block.
         set_error_handler(
-            function ($severity, $message, $file, $line) {
+            function ($severity, $message, $file, $line): bool {
                 if (!(error_reporting() & $severity)) {
                     // suppressed error, for example from exif_read_data in image manipulation
                     return false;

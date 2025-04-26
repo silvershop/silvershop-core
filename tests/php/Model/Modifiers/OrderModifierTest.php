@@ -122,7 +122,7 @@ class OrderModifierTest extends FunctionalTest
 
     public function createOrder(): Order
     {
-        $order = new Order();
+        $order = Order::create();
         $order->write();
         $item1a = $this->mp3player->createItem(2);
         $item1a->write();

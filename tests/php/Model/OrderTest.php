@@ -151,13 +151,11 @@ class OrderTest extends SapphireTest
     public function testRounding(): void
     {
         //create an order with unrounded total
-        $order = new Order(
-            [
-                'Total' => 123.257323,
-                //NOTE: setTotal isn't called here, so un-rounded data *could* get in to the object
-                'Status' => 'Unpaid',
-            ]
-        );
+        $order = Order::create([
+            'Total' => 123.257323,
+            //NOTE: setTotal isn't called here, so un-rounded data *could* get into the object
+            'Status' => 'Unpaid',
+        ]);
         $order->Total = 123.257323; //setTotal IS called here
         $this->assertEquals(123.26, $order->Total(), "Check total rounds appropriately");
         $this->assertEquals(123.26, $order->TotalOutstanding(), "Check total outstanding rounds appropriately");

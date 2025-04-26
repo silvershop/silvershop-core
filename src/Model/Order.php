@@ -317,7 +317,7 @@ class Order extends DataObject
         }
         $fields->addFieldsToTab('Root.Main', $parts);
 
-        $fields->addFieldToTab('Root.Modifiers', new GridField('Modifiers', 'Modifiers', $this->Modifiers()));
+        $fields->addFieldToTab('Root.Modifiers', GridField::create('Modifiers', 'Modifiers', $this->Modifiers()));
 
         $this->extend('updateCMSFields', $fields);
 

@@ -458,7 +458,7 @@ class ShoppingCart
      * Store a new error.
      * @return null
      */
-    protected function error($message)
+    protected function error(string $message)
     {
         $this->message($message, 'bad');
 
@@ -471,7 +471,7 @@ class ShoppingCart
      * @param string $message
      * @param string $type    - good, bad, warning
      */
-    protected function message($message, $type = 'good'): void
+    protected function message(string $message, string $type = 'good'): void
     {
         $this->message = $message;
         $this->type = $type;

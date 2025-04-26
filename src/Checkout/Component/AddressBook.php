@@ -112,7 +112,7 @@ abstract class AddressBook extends Address implements i18nEntityProvider
             // If existing address selected, check that it exists in $member->AddressBook
             if (!$member || !$member->AddressBook()->byID($existingID)) {
                 $result->addError('Invalid address supplied', $this->addresstype . 'AddressID');
-                throw new ValidationException($result);
+                throw ValidationException::create($result);
             }
         } else {
             // Otherwise, require the normal address fields
@@ -130,7 +130,7 @@ abstract class AddressBook extends Address implements i18nEntityProvider
                     );
 
                     $result->addError($errorMessage, $fieldName);
-                    throw new ValidationException($result);
+                    throw ValidationException::create($result);
                 }
             }
         }

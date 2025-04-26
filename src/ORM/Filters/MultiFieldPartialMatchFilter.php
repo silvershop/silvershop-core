@@ -72,7 +72,7 @@ class MultiFieldPartialMatchFilter extends PartialMatchFilter
     {
         $this->subfilters = [];
         foreach ($fieldNames as $name) {
-            $this->subfilters[] = new PartialMatchFilter($name, $this->value, $this->subfilterModifiers);
+            $this->subfilters[] = PartialMatchFilter::create($name, $this->value, $this->subfilterModifiers);
         }
     }
 
