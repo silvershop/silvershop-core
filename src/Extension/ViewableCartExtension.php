@@ -29,7 +29,7 @@ class ViewableCartExtension extends Extension
     public function Cart(): false|Order
     {
         $order = ShoppingCart::curr();
-        if (!$order || !$order->Items() || !$order->Items()->exists()) {
+        if (!$order instanceof Order || !$order->Items() || !$order->Items()->exists()) {
             return false;
         }
 

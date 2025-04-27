@@ -45,7 +45,7 @@ class ShopMemberFactory
             throw ValidationException::create($validationResult);
         }
         $idval = $data[$idfield];
-        if ($member = MemberExtension::get_by_identifier($idval)) {
+        if (($member = MemberExtension::get_by_identifier($idval)) instanceof Member) {
             // get localized field labels
             $fieldLabels = $member->fieldLabels(false);
             // if a localized value exists, use this for our error-message

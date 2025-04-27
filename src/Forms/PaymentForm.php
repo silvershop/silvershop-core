@@ -85,7 +85,7 @@ class PaymentForm extends CheckoutForm
     {
         $data = $form->getData();
 
-        $cancelUrl = $this->getFailureLink() ? $this->getFailureLink() : $this->controller->Link();
+        $cancelUrl = !in_array($this->getFailureLink(), ['', '0'], true) ? $this->getFailureLink() : $this->controller->Link();
 
         $order = $this->config->getOrder();
 

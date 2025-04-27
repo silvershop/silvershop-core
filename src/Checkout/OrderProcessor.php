@@ -234,7 +234,7 @@ class OrderProcessor
      */
     public function canPlace(?Order $order): bool
     {
-        if (!$order) {
+        if (!$order instanceof Order) {
             $this->error(_t(__CLASS__ . ".NoOrder", "Order does not exist."));
             return false;
         }
@@ -293,7 +293,7 @@ class OrderProcessor
         // in the following block.
         set_error_handler(
             function ($severity, $message, $file, $line): bool {
-                if (!(error_reporting() & $severity)) {
+                if ((error_reporting() & $severity) === 0) {
                     // suppressed error, for example from exif_read_data in image manipulation
                     return false;
                 }

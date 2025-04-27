@@ -4,6 +4,7 @@ namespace SilverShop\Cart;
 
 use SilverShop\Extension\ViewableCartExtension;
 use SilverShop\Model\Buyable;
+use SilverShop\Model\Order;
 use SilverShop\Model\Variation\Variation;
 use SilverShop\Page\CartPage;
 use SilverShop\Page\Product;
@@ -152,7 +153,7 @@ class ShoppingCartController extends Controller
             );
         }
         $id = (int)$httpRequest->param('ID');
-        if (empty($id)) {
+        if ($id === 0) {
             //TODO: store error message
             return null;
         }
@@ -187,10 +188,10 @@ class ShoppingCartController extends Controller
     {
         $result = false;
 
-        if ($product = $this->buyableFromRequest()) {
+        if (($product = $this->buyableFromRequest()) instanceof Buyable) {
             $quantity = (int)$request->getVar('quantity');
 
-            if (!$quantity) {
+            if ($quantity === 0) {
                 $quantity = 1;
             }
 
@@ -219,7 +220,7 @@ class ShoppingCartController extends Controller
      */
     public function remove($request): string|HTTPResponse
     {
-        if ($product = $this->buyableFromRequest()) {
+        if (($product = $this->buyableFromRequest()) instanceof Buyable) {
             $this->cart->remove($product, $quantity = 1, $request->getVars());
         }
 
@@ -236,7 +237,7 @@ class ShoppingCartController extends Controller
      */
     public function removeall($request): string|HTTPResponse
     {
-        if ($product = $this->buyableFromRequest()) {
+        if (($product = $this->buyableFromRequest()) instanceof Buyable) {
             $this->cart->remove($product, null, $request->getVars());
         }
 
@@ -255,7 +256,7 @@ class ShoppingCartController extends Controller
     {
         $product = $this->buyableFromRequest();
         $quantity = (int)$request->getVar('quantity');
-        if ($product) {
+        if ($product instanceof Buyable) {
             $this->cart->setQuantity($product, $quantity, $request->getVars());
         }
 
@@ -302,7 +303,7 @@ class ShoppingCartController extends Controller
             //TODO: allow specifying a particular id to debug
             Requirements::css('silvershop/core: client/dist/css/cartdebug.css');
             $order = ShoppingCart::curr();
-            $content = ($order)
+            $content = ($order instanceof Order)
                 ? Debug::text($order)
                 : 'Cart has not been created yet. Add a product.';
             return ['Content' => $content];

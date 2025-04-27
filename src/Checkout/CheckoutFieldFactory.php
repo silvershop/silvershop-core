@@ -29,7 +29,7 @@ class CheckoutFieldFactory
 
     public static function singleton(): ?\SilverShop\Checkout\CheckoutFieldFactory
     {
-        if (!self::$checkoutFieldFactory) {
+        if (!self::$checkoutFieldFactory instanceof \SilverShop\Checkout\CheckoutFieldFactory) {
             self::$checkoutFieldFactory = new CheckoutFieldFactory();
         }
         return self::$checkoutFieldFactory;

@@ -152,7 +152,7 @@ class CheckoutPageController extends PageController
                 break;
             }
         }
-        if (!$lastErrorMessage) {
+        if (!$lastErrorMessage instanceof GatewayErrorMessage) {
             return false;
         }
 

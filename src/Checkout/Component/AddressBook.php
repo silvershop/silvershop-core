@@ -32,7 +32,7 @@ abstract class AddressBook extends Address implements i18nEntityProvider
     {
         $fieldList = parent::getFormFields($order);
 
-        if ($existingaddressfields = $this->getExistingAddressFields()) {
+        if (($existingaddressfields = $this->getExistingAddressFields()) instanceof FieldList) {
             if ($jquery = $this->config()->get('jquery_file')) {
                 Requirements::javascript($jquery);
                 Requirements::javascript('silvershop/core:client/dist/javascript/CheckoutPage.js');
@@ -106,7 +106,7 @@ abstract class AddressBook extends Address implements i18nEntityProvider
         $existingID =
             !empty($data[$this->addresstype . 'AddressID']) ? (int)$data[$this->addresstype . 'AddressID'] : 0;
 
-        if ($existingID) {
+        if ($existingID !== 0) {
             $member = Security::getCurrentUser();
             // If existing address selected, check that it exists in $member->AddressBook
             if (!$member || !$member->AddressBook()->byID($existingID)) {
@@ -163,7 +163,7 @@ abstract class AddressBook extends Address implements i18nEntityProvider
      */
     public function provideI18nEntities(): array
     {
-        if ($this->addresstype) {
+        if ($this->addresstype !== '' && $this->addresstype !== '0') {
             return [
 
                 "SilverShop\Model\Address.{$this->addresstype}Address" => [

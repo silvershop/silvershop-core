@@ -94,7 +94,7 @@ class CartForm extends Form
                 }
             }
         }
-        if ($removecount) {
+        if ($removecount !== 0) {
             $messages['remove'] = _t(
                 __CLASS__ . '.REMOVED_ITEMS',
                 'Removed {count} items.',
@@ -102,7 +102,7 @@ class CartForm extends Form
                 ['count' => $removecount]
             );
         }
-        if ($updatecount) {
+        if ($updatecount !== 0) {
             $messages['updatecount'] = _t(
                 __CLASS__ . '.UPDATED_ITEMS',
                 'Updated {count} items.',
@@ -110,11 +110,11 @@ class CartForm extends Form
                 ['count' => $updatecount]
             );
         }
-        if (count($messages)) {
+        if (count($messages) !== 0) {
             $form->sessionMessage(implode(' ', $messages), 'good');
         }
 
-        if (count($badMessages)) {
+        if (count($badMessages) !== 0) {
             $form->sessionMessage(implode(' ', $badMessages), 'bad');
         }
 

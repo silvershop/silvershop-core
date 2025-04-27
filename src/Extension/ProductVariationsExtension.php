@@ -148,7 +148,7 @@ class ProductVariationsExtension extends Extension
     {
         //TODO: introduce transactions here, in case objects get half made etc
         //if product has variation attribute types
-        if (!empty($values)) {
+        if ($values !== []) {
             //TODO: get values dataobject set
             $avalues = $attributetype->convertArrayToValues($values);
             $existingvariations = $this->owner->Variations();

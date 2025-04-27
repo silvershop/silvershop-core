@@ -74,7 +74,7 @@ class VariationForm extends AddProductForm
                 return json_encode($ret);
             }
 
-            $saveabledata = (!empty($this->saveablefields)) ? Convert::raw2sql(
+            $saveabledata = ($this->saveablefields !== []) ? Convert::raw2sql(
                 array_intersect_key($data, array_combine($this->saveablefields, $this->saveablefields))
             ) : $data;
 

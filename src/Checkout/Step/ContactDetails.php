@@ -2,12 +2,13 @@
 
 namespace SilverShop\Checkout\Step;
 
-use SilverStripe\Control\HTTPResponse;
 use SilverShop\Cart\ShoppingCart;
 use SilverShop\Checkout\CheckoutComponentConfig;
 use SilverShop\Checkout\Component\CustomerDetails;
 use SilverShop\Forms\CheckoutForm;
+use SilverShop\Model\Order;
 use SilverStripe\Control\Controller;
+use SilverStripe\Control\HTTPResponse;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\FormAction;
 use SilverStripe\Security\Security;
@@ -27,7 +28,7 @@ class ContactDetails extends CheckoutStep
     public function contactdetails(): HTTPResponse|array
     {
         $form = $this->ContactDetailsForm();
-        if (!ShoppingCart::curr()) {
+        if (!ShoppingCart::curr() instanceof Order) {
             return [
                 'OrderForm' => $form,
             ];
@@ -55,7 +56,7 @@ class ContactDetails extends CheckoutStep
     public function ContactDetailsForm(): false|CheckoutForm
     {
         $cart = ShoppingCart::curr();
-        if (!$cart) {
+        if (!$cart instanceof Order) {
             return false;
         }
         $checkoutComponentConfig = CheckoutComponentConfig::create(ShoppingCart::curr());

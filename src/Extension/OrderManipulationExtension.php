@@ -78,7 +78,7 @@ class OrderManipulationExtension extends Extension
     {
         $httpRequest = $this->owner->getRequest();
         $id = (int)$httpRequest->param('ID');
-        if (!$id) {
+        if ($id === 0) {
             $id = (int)$httpRequest->postVar('OrderID');
         }
 
@@ -93,7 +93,7 @@ class OrderManipulationExtension extends Extension
         $filters = [
             'ID' => -1 //ensures no results are returned
         ];
-        if ($sessids = self::get_session_order_ids()) {
+        if (($sessids = self::get_session_order_ids()) !== null && ($sessids = self::get_session_order_ids()) !== []) {
             $filters['ID'] = $sessids;
         }
         if ($member = Security::getCurrentUser()) {
@@ -131,7 +131,7 @@ class OrderManipulationExtension extends Extension
         ShoppingCart::singleton()->archiveorderid($httpRequest->param('ID'));
 
         $order = $this->orderfromid();
-        if (!$order) {
+        if (!$order instanceof DataObject) {
             return $this->owner->httpError(404, 'Order could not be found');
         }
 
@@ -146,7 +146,7 @@ class OrderManipulationExtension extends Extension
      */
     public function ActionsForm(): ?OrderActionsForm
     {
-        if ($order = $this->orderfromid()) {
+        if (($order = $this->orderfromid()) instanceof DataObject) {
             $form = OrderActionsForm::create($this->owner, 'ActionsForm', $order);
             $form->extend('updateActionsForm', $order);
             if (!$form->Actions()->exists()) {

@@ -92,7 +92,7 @@ class ShoppingCart
      */
     protected function findOrMake(): Order
     {
-        if ($this->current()) {
+        if ($this->current() instanceof Order) {
             return $this->current();
         }
         $this->order = Order::create();
@@ -132,7 +132,7 @@ class ShoppingCart
 
         $item = $this->findOrMakeItem($buyable, $quantity, $filter);
 
-        if (!$item) {
+        if (!$item instanceof OrderItem) {
             return false;
         }
 
@@ -166,7 +166,7 @@ class ShoppingCart
     {
         $order = $this->current();
 
-        if (!$order) {
+        if (!$order instanceof Order) {
             return $this->error(_t(__CLASS__ . '.NoOrder', 'No current order.'));
         }
 
@@ -179,7 +179,7 @@ class ShoppingCart
 
         $item = $this->get($buyable, $filter);
 
-        if (!$item || !$this->removeOrderItem($item, $quantity)) {
+        if (!$item instanceof OrderItem || $this->removeOrderItem($item, $quantity) !== true) {
             return false;
         }
 
@@ -206,7 +206,7 @@ class ShoppingCart
     {
         $order = $this->current();
 
-        if (!$order) {
+        if (!$order instanceof Order) {
             return $this->error(_t(__CLASS__ . '.NoOrder', 'No current order.'));
         }
 
@@ -242,7 +242,7 @@ class ShoppingCart
 
         $item = $this->findOrMakeItem($buyable, $quantity, $filter);
 
-        if (!$item || !$this->updateOrderItemQuantity($item, $quantity, $filter)) {
+        if (!$item instanceof OrderItem || $this->updateOrderItemQuantity($item, $quantity, $filter) !== true) {
             return false;
         }
 
@@ -260,7 +260,7 @@ class ShoppingCart
     {
         $order = $this->current();
 
-        if (!$order) {
+        if (!$order instanceof Order) {
             return $this->error(_t(__CLASS__ . '.NoOrder', 'No current order.'));
         }
 
@@ -309,7 +309,7 @@ class ShoppingCart
 
         $item = $this->get($buyable, $filter);
 
-        if (!$item) {
+        if (!$item instanceof OrderItem) {
             $member = Security::getCurrentUser();
 
             $buyable = $this->getCorrectBuyable($buyable);
@@ -347,7 +347,7 @@ class ShoppingCart
     {
         $order = $this->current();
 
-        if (!$order) {
+        if (!$order instanceof Order) {
             return null;
         }
 
@@ -444,7 +444,7 @@ class ShoppingCart
         $this->order = null;
 
         if ($write) {
-            if (!$order) {
+            if (!$order instanceof Order) {
                 return $this->error(_t(__CLASS__ . '.NoCartFound', 'No cart found.'));
             }
             $order->write();

@@ -144,7 +144,7 @@ class ProductBulkLoader extends CsvBulkLoader
     {
         $filename = trim(strtolower(Convert::raw2sql($val)));
         $filenamedashes = str_replace(' ', '-', $filename);
-        if (!$filename) {
+        if ($filename === '' || $filename === '0') {
             return null;
         }
         if (!($image = Image::get()->whereAny(
@@ -166,7 +166,7 @@ class ProductBulkLoader extends CsvBulkLoader
     public function setParent(&$obj, $val): void
     {
         $title = strtolower(Convert::raw2sql($val));
-        if ($title) {
+        if ($title !== '' && $title !== '0') {
             // find or create parent category, if provided
             if ($parentPage = ProductCategory::get()->where(['LOWER("Title") = ?' => $title])->sort('Created', 'DESC')->first()) {
                 $obj->ParentID = $parentPage->ID;
@@ -195,7 +195,7 @@ class ProductBulkLoader extends CsvBulkLoader
     public function setContent(&$obj, $val, $record): void
     {
         $val = trim($val);
-        if ($val) {
+        if ($val !== '' && $val !== '0') {
             $paragraphs = explode("\n", $val);
             $obj->Content = '<p>' . implode('</p><p>', $paragraphs) . '</p>';
         }
@@ -212,7 +212,7 @@ class ProductBulkLoader extends CsvBulkLoader
             $attributevalues = explode(',', $parts[1]);
             //get rid of empty values
             foreach ($attributevalues as $key => $value) {
-                if (!$value || trim($value) == '') {
+                if ($value === '' || $value === '0' || trim($value) == '') {
                     unset($attributevalues[$key]);
                 }
             }
@@ -296,7 +296,7 @@ class ProductBulkLoader extends CsvBulkLoader
                     $attributevalues = explode(',', $parts[1]);
                     //get rid of empty values
                     foreach ($attributevalues as $key => $value) {
-                        if (!$value || trim($value) == '') {
+                        if ($value === '' || $value === '0' || trim($value) == '') {
                             unset($attributevalues[$key]);
                         }
                     }

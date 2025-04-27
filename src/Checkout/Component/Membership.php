@@ -105,7 +105,7 @@ class Membership extends CheckoutComponent
             $member = Member::create($data);
             $idfield = Member::config()->unique_identifier_field;
             $idval = $data[$idfield];
-            if (MemberExtension::get_by_identifier($idval)) {
+            if (MemberExtension::get_by_identifier($idval) instanceof Member) {
                 // get localized field labels
                 $fieldLabels = $member->fieldLabels(false);
                 // if a localized value exists, use this for our error-message

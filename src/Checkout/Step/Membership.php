@@ -103,7 +103,7 @@ class Membership extends CheckoutStep
     {
         $order = ShoppingCart::curr();
         //hack to make components work when there is no order
-        if (!$order) {
+        if (!$order instanceof Order) {
             $order = Order::create();
         }
         $checkoutComponentConfig = CheckoutComponentConfig::create($order, false);

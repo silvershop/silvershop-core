@@ -8,6 +8,7 @@ use SilverShop\Checkout\Step\ContactDetails;
 use SilverShop\Checkout\Step\Membership;
 use SilverShop\Checkout\Step\PaymentMethod;
 use SilverShop\Checkout\Step\Summary;
+use SilverShop\Model\Order;
 use SilverShop\Page\CheckoutPage;
 use SilverShop\Page\CheckoutPageController;
 use SilverStripe\Control\Controller;
@@ -74,7 +75,7 @@ class SteppedCheckoutExtension extends Extension
     {
         $action = $this->owner->getRequest()->param('Action');
         $steps = $this->getSteps();
-        if (!ShoppingCart::curr() && !empty($action) && isset($steps[$action])) {
+        if (!ShoppingCart::curr() instanceof Order && !empty($action) && isset($steps[$action])) {
             Controller::curr()->redirect($this->owner->Link());
             return;
         }

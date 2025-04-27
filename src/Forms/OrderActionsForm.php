@@ -97,7 +97,7 @@ class OrderActionsForm extends Form
                     )
                 );
 
-                if ($ccFields = $this->getCCFields($gateways)) {
+                if (($ccFields = $this->getCCFields($gateways)) instanceof CompositeField) {
                     if ($this->config()->include_jquery) {
                         Requirements::javascript('https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js');
                     }
@@ -232,7 +232,7 @@ class OrderActionsForm extends Form
         $allRequired = array_unique($allRequired);
         $allRequired = $gatewayFieldsFactory->getFieldName(array_combine($allRequired, $allRequired));
 
-        if (empty($onsiteGateways)) {
+        if ($onsiteGateways === []) {
             return null;
         }
 

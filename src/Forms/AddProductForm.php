@@ -76,7 +76,7 @@ class AddProductForm extends Form
                 ShopTools::install_locale($order->Locale);
             }
 
-            $saveabledata = (!empty($this->saveablefields)) ? Convert::raw2sql(
+            $saveabledata = ($this->saveablefields !== []) ? Convert::raw2sql(
                 array_intersect_key($data, array_combine($this->saveablefields, $this->saveablefields))
             ) : $data;
             $quantity = isset($data['Quantity']) ? (int)$data['Quantity'] : 1;
@@ -115,7 +115,7 @@ class AddProductForm extends Form
     {
         $fieldList = FieldList::create();
 
-        if ($this->maxquantity) {
+        if ($this->maxquantity !== 0) {
             $values = [];
             $count = 1;
 

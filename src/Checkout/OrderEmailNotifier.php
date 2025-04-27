@@ -219,7 +219,7 @@ class OrderEmailNotifier
     {
         $latestLog = null;
 
-        if (!$note) {
+        if ($note === '' || $note === '0') {
             // Find the latest log message that hasn't been sent to the client yet, but can be (e.g. is visible)
             $latestLog = OrderStatusLog::get()
                 ->filter("OrderID", $this->order->ID)

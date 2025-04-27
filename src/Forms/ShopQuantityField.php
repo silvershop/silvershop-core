@@ -117,7 +117,7 @@ class ShopQuantityField extends ViewableData
      */
     public function AJAXLinkHiddenField()
     {
-        if ($quantitylink = $this->item->setquantityLink()) {
+        if (($quantitylink = $this->item->setquantityLink()) !== '' && ($quantitylink = $this->item->setquantityLink()) !== '0') {
             return HiddenField::create(
                 $this->MainID() . '_Quantity_SetQuantityLink'
             )->setValue($quantitylink)->addExtraClass('ajaxQuantityField_qtylink');

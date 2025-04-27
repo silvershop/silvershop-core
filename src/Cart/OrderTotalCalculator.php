@@ -51,7 +51,7 @@ class OrderTotalCalculator
         $modifierclasses = Order::config()->modifiers;
 
         //check if modifiers are even in use
-        if (!is_array($modifierclasses) || empty($modifierclasses)) {
+        if (!is_array($modifierclasses) || $modifierclasses === []) {
             return $runningtotal;
         }
 
