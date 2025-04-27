@@ -39,9 +39,8 @@ class Simple extends Base
                 '',
                 ['Country' => $countryList[$country]]
             );
-        } else {
-            return parent::getTableTitle();
         }
+        return parent::getTableTitle();
     }
 
     /**
@@ -49,10 +48,11 @@ class Simple extends Base
      */
     public function Country()
     {
-        if ($order = $this->Order()) {
-            if ($order->getShippingAddress()->exists() && $order->getShippingAddress()->Country) {
-                return $order->getShippingAddress()->Country;
-            }
+        if (!($order = $this->Order())) {
+            return null;
+        }
+        if ($order->getShippingAddress()->exists() && $order->getShippingAddress()->Country) {
+            return $order->getShippingAddress()->Country;
         }
 
         return null;

@@ -47,7 +47,10 @@ class OrderAttribute extends DataObject
 
     public function isLive(): bool
     {
-        return (!$this->isInDB() || $this->Order()->IsCart());
+        if (!$this->isInDB()) {
+            return true;
+        }
+        return $this->Order()->IsCart();
     }
 
     /**

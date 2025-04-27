@@ -123,9 +123,8 @@ class ShoppingCartController extends Controller
 
         if (self::config()->direct_to_cart_page && ($cart = CartPage::find_link())) {
             return Controller::curr()->redirect($cart);
-        } else {
-            return Controller::curr()->redirectBack();
         }
+        return Controller::curr()->redirectBack();
     }
 
     public function init(): void
@@ -287,7 +286,8 @@ class ShoppingCartController extends Controller
     {
         if ($this->Cart() && CartPage::find_link()) {
             return $this->redirect(CartPage::find_link());
-        } elseif ($response = ErrorPage::response_for(404)) {
+        }
+        if ($response = ErrorPage::response_for(404)) {
             return $response;
         }
         return $this->httpError(404, _t('SilverShop\Cart\ShoppingCart.NoCartInitialised', 'no cart initialised'));

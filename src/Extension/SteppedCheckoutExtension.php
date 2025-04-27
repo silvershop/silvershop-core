@@ -87,7 +87,8 @@ class SteppedCheckoutExtension extends Extension
     {
         if ($this->owner->getAction() === $name) {
             return true;
-        } elseif (!$this->owner->getAction() || $this->owner->getAction() === 'index') {
+        }
+        if (!$this->owner->getAction() || $this->owner->getAction() === 'index') {
             return $this->actionPos($name) === 0;
         }
         return false;

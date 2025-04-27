@@ -254,7 +254,7 @@ class Product extends Page implements Buyable
             0 => _t('SilverStripe\CMS\Model\SiteTree.PARENTTYPE_ROOT', 'Top-level page'),
         ] + $categories;
         if ($this->ParentID && !($this->Parent() instanceof ProductCategory)) {
-            $categories = [
+            return [
                 $this->ParentID => $this->Parent()->Title . ' (' . $this->Parent()->i18n_singular_name() . ')',
             ] + $categories;
         }

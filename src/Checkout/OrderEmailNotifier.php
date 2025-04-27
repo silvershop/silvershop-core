@@ -106,15 +106,14 @@ class OrderEmailNotifier
         }
         if ($this->debugMode) {
             return $this->debug($email);
-        } else {
-            try {
-                $email->send();
-            } catch (TransportExceptionInterface $e) {
-                $this->logger->error('OrderEmailNotifier.sendEmail: error sending email in ' . __FILE__ . ' line ' . __LINE__ . ": {$e->getMessage()}");
-                return false;
-            }
-            return true;
         }
+        try {
+            $email->send();
+        } catch (TransportExceptionInterface $e) {
+            $this->logger->error('OrderEmailNotifier.sendEmail: error sending email in ' . __FILE__ . ' line ' . __LINE__ . ": {$e->getMessage()}");
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -152,15 +151,14 @@ class OrderEmailNotifier
 
         if ($this->debugMode) {
             return $this->debug($email);
-        } else {
-            try {
-                $email->send();
-            } catch (TransportExceptionInterface $e) {
-                $this->logger->error('OrderEmailNotifier.sendAdminNotification: error sending email in ' . __FILE__ . ' line ' . __LINE__ . ": {$e->getMessage()}");
-                return false;
-            }
-            return true;
         }
+        try {
+            $email->send();
+        } catch (TransportExceptionInterface $e) {
+            $this->logger->error('OrderEmailNotifier.sendAdminNotification: error sending email in ' . __FILE__ . ' line ' . __LINE__ . ": {$e->getMessage()}");
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -201,15 +199,14 @@ class OrderEmailNotifier
 
         if ($this->debugMode) {
             return $this->debug($email);
-        } else {
-            try {
-                $email->send();
-            } catch (TransportExceptionInterface $e) {
-                $this->logger->error('OrderEmailNotifier.sendCancelNotification: error sending email in ' . __FILE__ . ' line ' . __LINE__ . ": {$e->getMessage()}");
-                return false;
-            }
-            return true;
         }
+        try {
+            $email->send();
+        } catch (TransportExceptionInterface $e) {
+            $this->logger->error('OrderEmailNotifier.sendCancelNotification: error sending email in ' . __FILE__ . ' line ' . __LINE__ . ": {$e->getMessage()}");
+            return false;
+        }
+        return true;
     }
 
     /**

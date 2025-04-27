@@ -60,7 +60,7 @@ class OrderManipulationExtension extends Extension
     {
         $history = ShopTools::getSession()->get(static::config()->get('sessname'));
         if (!is_array($history)) {
-            $history = null;
+            return null;
         }
         return $history;
     }
@@ -112,7 +112,7 @@ class OrderManipulationExtension extends Extension
         $orders = $this->allorders()
             ->filter('Status', Order::config()->placed_status);
         if ($paginated) {
-            $orders = PaginatedList::create($orders, $this->owner->getRequest());
+            return PaginatedList::create($orders, $this->owner->getRequest());
         }
 
         return $orders;

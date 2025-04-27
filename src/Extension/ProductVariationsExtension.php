@@ -211,7 +211,7 @@ class ProductVariationsExtension extends Extension
             );
 
         if (!Product::config()->allow_zero_price) {
-            $list = $list->where('"SilverShop_Variation"."Price" > 0');
+            return $list->where('"SilverShop_Variation"."Price" > 0');
         }
         return $list;
     }

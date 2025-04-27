@@ -59,7 +59,7 @@ class OnsitePayment extends CheckoutComponent
         $gateway = Checkout::get($order)->getSelectedPaymentMethod();
         //provide valid dummy credit card data
         if ($gateway === 'Dummy') {
-            $data = array_merge(
+            return array_merge(
                 [
                     'name' => 'Joe Bloggs',
                     'number' => '4242424242424242',

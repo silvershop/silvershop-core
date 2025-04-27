@@ -85,17 +85,15 @@ class ProductImageExtension extends Extension
             return $realWidth < $width && $realHeight < $height && !$upscale
                 ? $this->owner
                 : $this->owner->Pad($width, $height);
-        } else {
-            if ($width) {
-                return $realWidth < $width && !$upscale
-                    ? $this->owner
-                    : $this->owner->ScaleWidth($width);
-            } else {
-                return $realHeight < $height && !$upscale
-                    ? $this->owner
-                    : $this->owner->ScaleHeight($height);
-            }
         }
+        if ($width) {
+            return $realWidth < $width && !$upscale
+                ? $this->owner
+                : $this->owner->ScaleWidth($width);
+        }
+        return $realHeight < $height && !$upscale
+            ? $this->owner
+            : $this->owner->ScaleHeight($height);
     }
 
     /**

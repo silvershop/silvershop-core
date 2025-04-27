@@ -143,7 +143,7 @@ class Checkout
         reset($methods);
         $method = count($methods) === 1 ? key($methods) : ShopTools::getSession()->get('Checkout.PaymentMethod');
         if ($nice && isset($methods[$method])) {
-            $method = $methods[$method];
+            return $methods[$method];
         }
         return $method;
     }

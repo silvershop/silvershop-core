@@ -642,9 +642,8 @@ class Order extends DataObject
     {
         if (!$this->SeparateBillingAddress && $this->ShippingAddressID === $this->BillingAddressID) {
             return $this->getShippingAddress();
-        } else {
-            return $this->getAddress('Billing');
         }
+        return $this->getAddress('Billing');
     }
 
     /**
@@ -697,7 +696,10 @@ class Order extends DataObject
      */
     public function IsProcessing(): bool
     {
-        return $this->IsSent() || $this->Status == 'Processing';
+        if ($this->IsSent()) {
+            return true;
+        }
+        return $this->Status == 'Processing';
     }
 
     /**

@@ -163,9 +163,8 @@ class OrderActionsForm extends Form
                 );
                 if ($response && !$response->isError()) {
                     return $response->redirectOrRespond();
-                } else {
-                    $form->sessionMessage($processor->getError(), 'bad');
                 }
+                $form->sessionMessage($processor->getError(), 'bad');
             } else {
                 $form->sessionMessage(_t(__CLASS__ . '.ManualNotAllowed', 'Manual payment not allowed'), 'bad');
             }

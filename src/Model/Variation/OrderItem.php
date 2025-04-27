@@ -41,9 +41,9 @@ class OrderItem extends \SilverShop\Model\Product\OrderItem
                 $this->ProductVariationID,
                 $this->ProductVariationVersion
             );
-        } elseif ($this->ProductVariationID
-            && $product = Variation::get()->byID($this->ProductVariationID)
-        ) {
+        }
+        if ($this->ProductVariationID
+            && $product = Variation::get()->byID($this->ProductVariationID)) {
             return $product;
         }
         return null;

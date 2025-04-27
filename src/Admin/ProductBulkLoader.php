@@ -144,17 +144,20 @@ class ProductBulkLoader extends CsvBulkLoader
     {
         $filename = trim(strtolower(Convert::raw2sql($val)));
         $filenamedashes = str_replace(' ', '-', $filename);
-        if ($filename
-            && $image = Image::get()->whereAny(
-                [
-                    "LOWER(\"FileFilename\") LIKE '%$filename%'",
-                    "LOWER(\"FileFilename\") LIKE '%$filenamedashes%'"
-                ]
-            )->first()
-        ) { //ignore case
-            if ($image instanceof Image && $image->exists()) {
-                return $image;
-            }
+        if (!$filename) {
+            return null;
+        }
+        if (!($image = Image::get()->whereAny(
+            [
+                "LOWER(\"FileFilename\") LIKE '%$filename%'",
+                "LOWER(\"FileFilename\") LIKE '%$filenamedashes%'"
+            ]
+        )->first())) {
+            return null;
+        }
+        //ignore case
+        if ($image instanceof Image && $image->exists()) {
+            return $image;
         }
         return null;
     }

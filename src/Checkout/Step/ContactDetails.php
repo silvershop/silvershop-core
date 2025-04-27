@@ -27,17 +27,25 @@ class ContactDetails extends CheckoutStep
     public function contactdetails(): HTTPResponse|array
     {
         $form = $this->ContactDetailsForm();
-        if (ShoppingCart::curr()
-            && self::config()->skip_if_logged_in
-        ) {
-            if (Security::getCurrentUser()) {
-                if ($form->getValidator()->validate()) {
-                    return Controller::curr()->redirect($this->NextStepLink());
-                } else {
-                    $form->clearMessage();
-                }
-            }
+        if (!ShoppingCart::curr()) {
+            return [
+                'OrderForm' => $form,
+            ];
         }
+        if (!self::config()->skip_if_logged_in) {
+            return [
+                'OrderForm' => $form,
+            ];
+        }
+        if (!Security::getCurrentUser()) {
+            return [
+                'OrderForm' => $form,
+            ];
+        }
+        if ($form->getValidator()->validate()) {
+            return Controller::curr()->redirect($this->NextStepLink());
+        }
+        $form->clearMessage();
 
         return [
             'OrderForm' => $form,
