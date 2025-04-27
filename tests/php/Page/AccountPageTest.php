@@ -37,10 +37,10 @@ class AccountPageTest extends FunctionalTest
         $this->accountpage->publishSingle();
         $this->controller = AccountPageController::create($this->accountpage);
 
-        $r = new HTTPRequest('GET', '/');
-        $r->setSession($this->session());
+        $httpRequest = new HTTPRequest('GET', '/');
+        $httpRequest->setSession($this->session());
 
-        $this->controller->setRequest($r);
+        $this->controller->setRequest($httpRequest);
     }
 
     public function testCanViewAccountPage(): void
@@ -143,10 +143,10 @@ class AccountPageTest extends FunctionalTest
                 $this->logInAs($member);
 
                 // Open Address Book page
-                $page = $this->get('account/addressbook/'); // goto address book page
-                $this->assertEquals(200, $page->getStatusCode(), 'a page should load');
-                $this->assertEquals(AccountPageController::class, $page->getHeader('X-TestPageClass'), 'Account page should open');
-                $this->assertEquals('addressbook', $page->getHeader('X-TestPageAction'), 'Account addressbook should open');
+                $httpResponse = $this->get('account/addressbook/'); // goto address book page
+                $this->assertEquals(200, $httpResponse->getStatusCode(), 'a page should load');
+                $this->assertEquals(AccountPageController::class, $httpResponse->getHeader('X-TestPageClass'), 'Account page should open');
+                $this->assertEquals('addressbook', $httpResponse->getHeader('X-TestPageAction'), 'Account addressbook should open');
 
                 // Create an address
                 $this->submitForm(
@@ -162,7 +162,7 @@ class AccountPageTest extends FunctionalTest
                         'Phone' => '1234 5678',
                     ]
                 );
-                $this->assertEquals(200, $page->getStatusCode(), 'a page should load');
+                $this->assertEquals(200, $httpResponse->getStatusCode(), 'a page should load');
 
                 $au_address = Address::get()->filter('PostalCode', '2000')->sort('ID')->last();
                 $this->assertEquals(
@@ -200,16 +200,16 @@ class AccountPageTest extends FunctionalTest
                 );
 
                 // Open the Address Book page to test form submission with a readonly field
-                $page = $this->get('account/addressbook/'); // goto address book page
-                $this->assertEquals(200, $page->getStatusCode(), 'a page should load');
+                $httpResponse = $this->get('account/addressbook/'); // goto address book page
+                $this->assertEquals(200, $httpResponse->getStatusCode(), 'a page should load');
                 $this->assertStringContainsString(
                     'Form_CreateAddressForm_Country_readonly',
-                    $page->getBody(),
+                    $httpResponse->getBody(),
                     'The Country field is readonly'
                 );
                 $this->assertStringNotContainsString(
                     '<option value=\"NZ\">New Zealand</option>',
-                    $page->getBody(),
+                    $httpResponse->getBody(),
                     'Dropdown field is not shown'
                 );
 
@@ -224,7 +224,7 @@ class AccountPageTest extends FunctionalTest
                         'PostalCode' => '8011',
                     ]
                 );
-                $this->assertEquals(200, $page->getStatusCode(), 'a page should load');
+                $this->assertEquals(200, $httpResponse->getStatusCode(), 'a page should load');
 
                 $nz_address = Address::get()->filter('PostalCode', '8011')->sort('ID')->last();
                 $this->assertEquals(
@@ -270,10 +270,10 @@ class AccountPageTest extends FunctionalTest
         );
         $this->assertEquals(200, $page->getStatusCode(), 'a page should load');
 
-        $authenticator = new MemberAuthenticator;
-        $validation_result = $authenticator->checkPassword($member, 'newpassword123');
+        $memberAuthenticator = new MemberAuthenticator;
+        $validationResult = $memberAuthenticator->checkPassword($member, 'newpassword123');
         $this->assertTrue(
-            $validation_result->isValid(),
+            $validationResult->isValid(),
             'Password should have changed'
         );
     }

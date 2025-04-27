@@ -113,7 +113,7 @@ class Variation extends DataObject implements Buyable
 
     public function getCMSFields(): FieldList
     {
-        $fields = FieldList::create(
+        $fieldList = FieldList::create(
             TextField::create('InternalItemID', _t('SilverShop\Page\Product.Code', 'Product Code')),
             TextField::create('Price', _t('SilverShop\Page\Product.db_BasePrice', 'Price'))
         );
@@ -125,9 +125,9 @@ class Variation extends DataObject implements Buyable
                     if ($value = $this->AttributeValues()->find('TypeID', $attribute->ID)) {
                         $field->setValue($value->ID);
                     }
-                    $fields->push($field);
+                    $fieldList->push($field);
                 } else {
-                    $fields->push(
+                    $fieldList->push(
                         LiteralField::create(
                             'novalues' . $attribute->Name,
                             '<p class="message warning">' .
@@ -144,7 +144,7 @@ class Variation extends DataObject implements Buyable
                 //TODO: allow setting custom values here, rather than visiting the products section
             }
         } else {
-            $fields->push(
+            $fieldList->push(
                 LiteralField::create(
                     'savefirst',
                     '<p class="message warning">' .
@@ -156,7 +156,7 @@ class Variation extends DataObject implements Buyable
                 )
             );
         }
-        $fields->push(
+        $fieldList->push(
             UploadField::create('Image', _t('SilverShop\Page\Product.Image', 'Product Image'))
         );
 
@@ -166,7 +166,7 @@ class Variation extends DataObject implements Buyable
         ];
 
         //physical measurements
-        $fields->push(
+        $fieldList->push(
             TextField::create(
                 'Weight',
                 _t(
@@ -182,7 +182,7 @@ class Variation extends DataObject implements Buyable
             )
         );
 
-        $fields->push(
+        $fieldList->push(
             TextField::create(
                 'Height',
                 _t('SilverShop\Page\Product.HeightWithUnit', 'Height ({LengthUnit})', '', $fieldSubstitutes),
@@ -191,7 +191,7 @@ class Variation extends DataObject implements Buyable
             )
         );
 
-        $fields->push(
+        $fieldList->push(
             TextField::create(
                 'Width',
                 _t('SilverShop\Page\Product.WidthWithUnit', 'Width ({LengthUnit})', '', $fieldSubstitutes),
@@ -200,7 +200,7 @@ class Variation extends DataObject implements Buyable
             )
         );
 
-        $fields->push(
+        $fieldList->push(
             TextField::create(
                 'Depth',
                 _t('SilverShop\Page\Product.DepthWithUnit', 'Depth ({LengthUnit})', '', $fieldSubstitutes),
@@ -209,9 +209,9 @@ class Variation extends DataObject implements Buyable
             )
         );
 
-        $this->extend('updateCMSFields', $fields);
+        $this->extend('updateCMSFields', $fieldList);
 
-        return $fields;
+        return $fieldList;
     }
 
     /**
@@ -228,10 +228,10 @@ class Variation extends DataObject implements Buyable
 
     public function getTitle()
     {
-        $values = $this->AttributeValues();
-        if ($values->exists()) {
+        $attributeValues = $this->AttributeValues();
+        if ($attributeValues->exists()) {
             $labelvalues = [];
-            foreach ($values as $value) {
+            foreach ($attributeValues as $value) {
                 if (self::config()->title_has_label) {
                     $labelvalues[] = $value->Type()->Label . self::config()->title_separator . $value->Value;
                 } else {

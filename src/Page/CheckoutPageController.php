@@ -67,27 +67,27 @@ class CheckoutPageController extends PageController
         }
 
         /**
-         * @var CheckoutComponentConfig $config
+         * @var CheckoutComponentConfig $singlePageCheckoutComponentConfig
          */
-        $config = SinglePageCheckoutComponentConfig::create(ShoppingCart::curr());
-        $form = PaymentForm::create($this, 'OrderForm', $config);
+        $singlePageCheckoutComponentConfig = SinglePageCheckoutComponentConfig::create(ShoppingCart::curr());
+        $paymentForm = PaymentForm::create($this, 'OrderForm', $singlePageCheckoutComponentConfig);
 
         // Normally, the payment is on a second page, either offsite or through /checkout/payment
         // If the site has customised the checkout component config to include an onsite payment
         // component, we should honor that and change the button label. PaymentForm::checkoutSubmit
         // will also check this and process payment if needed.
-        if ($config->hasComponentWithPaymentData()) {
-            $form->setActions(
+        if ($singlePageCheckoutComponentConfig->hasComponentWithPaymentData()) {
+            $paymentForm->setActions(
                 FieldList::create(
                     FormAction::create('checkoutSubmit', _t('SilverShop\Page\CheckoutPage.SubmitPayment', 'Submit Payment'))
                 )
             );
         }
 
-        $form->Cart = $this->Cart();
-        $this->extend('updateOrderForm', $form);
+        $paymentForm->Cart = $this->Cart();
+        $this->extend('updateOrderForm', $paymentForm);
 
-        return $form;
+        return $paymentForm;
     }
 
     /**
@@ -111,21 +111,21 @@ class CheckoutPageController extends PageController
             return false;
         }
 
-        $config = CheckoutComponentConfig::create(ShoppingCart::curr(), false);
-        $config->addComponent(OnsitePayment::create());
+        $checkoutComponentConfig = CheckoutComponentConfig::create(ShoppingCart::curr(), false);
+        $checkoutComponentConfig->addComponent(OnsitePayment::create());
 
-        $form = PaymentForm::create($this, "PaymentForm", $config);
+        $paymentForm = PaymentForm::create($this, "PaymentForm", $checkoutComponentConfig);
 
-        $form->setActions(
+        $paymentForm->setActions(
             FieldList::create(
                 FormAction::create("submitpayment", _t('SilverShop\Page\CheckoutPage.SubmitPayment', "Submit Payment"))
             )
         );
 
-        $form->setFailureLink($this->Link());
-        $this->extend('updatePaymentForm', $form);
+        $paymentForm->setFailureLink($this->Link());
+        $this->extend('updatePaymentForm', $paymentForm);
 
-        return $form;
+        return $paymentForm;
     }
 
     /**

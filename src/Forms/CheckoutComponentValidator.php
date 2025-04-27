@@ -14,9 +14,9 @@ class CheckoutComponentValidator extends RequiredFields
 {
     protected CheckoutComponentConfig $config;
 
-    public function __construct(CheckoutComponentConfig $config)
+    public function __construct(CheckoutComponentConfig $checkoutComponentConfig)
     {
-        $this->config = $config;
+        $this->config = $checkoutComponentConfig;
         parent::__construct($this->config->getRequiredFields());
     }
 

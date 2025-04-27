@@ -20,10 +20,10 @@ class CheckoutForm extends Form
 
     private static $submit_button_text;
 
-    public function __construct(RequestHandler $controller, $name, CheckoutComponentConfig $config)
+    public function __construct(RequestHandler $requestHandler, $name, CheckoutComponentConfig $checkoutComponentConfig)
     {
-        $this->config = $config;
-        $fields = $config->getFormFields();
+        $this->config = $checkoutComponentConfig;
+        $fieldList = $checkoutComponentConfig->getFormFields();
 
         if ($text = $this->config()->get('submit_button_text')) {
             $submitBtnText = $text;
@@ -37,15 +37,15 @@ class CheckoutForm extends Form
                 $submitBtnText
             )->setUseButtonTag(Config::inst()->get(ShopConfigExtension::class, 'forms_use_button_tag'))
         );
-        $validator = CheckoutComponentValidator::create($this->config);
+        $checkoutComponentValidator = CheckoutComponentValidator::create($this->config);
 
-        parent::__construct($controller, $name, $fields, $actions, $validator);
+        parent::__construct($requestHandler, $name, $fieldList, $actions, $checkoutComponentValidator);
         //load data from various sources
         $this->loadDataFrom($this->config->getData(), Form::MERGE_IGNORE_FALSEISH);
         if ($member = Security::getCurrentUser()) {
             $this->loadDataFrom($member, Form::MERGE_IGNORE_FALSEISH);
         }
-        if ($controller && ($session = $controller->getRequest()->getSession())) {
+        if ($requestHandler && ($session = $requestHandler->getRequest()->getSession())) {
             if ($sessiondata = $session->get("FormInfo.{$this->FormName()}.data")) {
                 $this->loadDataFrom($sessiondata, Form::MERGE_IGNORE_FALSEISH);
             }

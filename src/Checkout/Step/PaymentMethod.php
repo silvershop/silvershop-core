@@ -21,10 +21,10 @@ class PaymentMethod extends CheckoutStep
 
     protected function checkoutconfig(): CheckoutComponentConfig
     {
-        $config = CheckoutComponentConfig::create(ShoppingCart::curr(), false);
-        $config->addComponent(Payment::create());
+        $checkoutComponentConfig = CheckoutComponentConfig::create(ShoppingCart::curr(), false);
+        $checkoutComponentConfig->addComponent(Payment::create());
 
-        return $config;
+        return $checkoutComponentConfig;
     }
 
     public function paymentmethod(): HTTPResponse|array
@@ -40,15 +40,15 @@ class PaymentMethod extends CheckoutStep
 
     public function PaymentMethodForm(): CheckoutForm
     {
-        $form = CheckoutForm::create($this->owner, 'PaymentMethodForm', $this->checkoutconfig());
-        $form->setActions(
+        $checkoutForm = CheckoutForm::create($this->owner, 'PaymentMethodForm', $this->checkoutconfig());
+        $checkoutForm->setActions(
             FieldList::create(
                 FormAction::create('setpaymentmethod', _t('SilverShop\Checkout\Step\CheckoutStep.Continue', 'Continue'))
             )
         );
-        $this->owner->extend('updatePaymentMethodForm', $form);
+        $this->owner->extend('updatePaymentMethodForm', $checkoutForm);
 
-        return $form;
+        return $checkoutForm;
     }
 
     public function setpaymentmethod($data, $form): HTTPResponse

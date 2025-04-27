@@ -10,12 +10,12 @@ class I18nDatetimeTest extends SapphireTest
     public function testField(): void
     {
 
-        $field = I18nDatetime::create();
-        $field->setValue('2012-11-21 11:54:13');
+        $i18nDatetime = I18nDatetime::create();
+        $i18nDatetime->setValue('2012-11-21 11:54:13');
 
-        $field->Nice();
-        $field->NiceDate();
-        $field->Nice24();
+        $i18nDatetime->Nice();
+        $i18nDatetime->NiceDate();
+        $i18nDatetime->Nice24();
 
         $this->markTestIncomplete('assertions!');
     }

@@ -58,11 +58,11 @@ class SteppedCheckoutExtensionTest extends FunctionalTest
         $this->socks->publishSingle();
 
         /**
-         * @var CheckoutPage $checkoutpage
+         * @var CheckoutPage $dataObject
          */
-        $checkoutpage = $this->objFromFixture(CheckoutPage::class, "checkout");
-        $checkoutpage->publishSingle();
-        $this->checkout = CheckoutPageController::create($checkoutpage);
+        $dataObject = $this->objFromFixture(CheckoutPage::class, "checkout");
+        $dataObject->publishSingle();
+        $this->checkout = CheckoutPageController::create($dataObject);
 
         $this->cart = $this->objFromFixture(Order::class, "cart");
         ShoppingCart::singleton()->setCurrent($this->cart);
@@ -256,9 +256,9 @@ class SteppedCheckoutExtensionTest extends FunctionalTest
     {
         $this->checkout->handleRequest($this->buildTestRequest('summary'));
         /**
-         * @var PaymentForm $form
+         * @var PaymentForm $paymentForm
          */
-        $form = $this->checkout->ConfirmationForm();
+        $paymentForm = $this->checkout->ConfirmationForm();
         $data = [
             'Notes' => 'Leave it around the back',
             'ReadTermsAndConditions' => 1,
@@ -267,9 +267,9 @@ class SteppedCheckoutExtensionTest extends FunctionalTest
         Security::setCurrentUser($member);
 
         Checkout::get($this->cart)->setPaymentMethod("Dummy"); //a selected payment method is required
-        $form->loadDataFrom($data);
-        $this->assertTrue($form->validationResult()->isValid(), "Checkout data is valid");
-        $response = $this->post('/checkout/ConfirmationForm', $data);
+        $paymentForm->loadDataFrom($data);
+        $this->assertTrue($paymentForm->validationResult()->isValid(), "Checkout data is valid");
+        $httpResponse = $this->post('/checkout/ConfirmationForm', $data);
         $this->assertEquals('Cart', $this->cart->Status, "Order is still in cart");
 
         $order = Order::get()->byID($this->cart->ID);
@@ -277,17 +277,17 @@ class SteppedCheckoutExtensionTest extends FunctionalTest
         $this->assertEquals("Leave it around the back", $order->Notes);
 
         //redirect to make payment
-        $this->assertEquals(302, $response->getStatusCode());
+        $this->assertEquals(302, $httpResponse->getStatusCode());
         $this->assertStringContainsString(
             '/checkout/payment',
-            $response->getHeader('location')
+            $httpResponse->getHeader('location')
         );
     }
 
     protected function buildTestRequest($url, $method = 'GET'): HTTPRequest
     {
-        $request = new HTTPRequest($method, $url);
-        $request->setSession($this->mainSession->session());
-        return $request;
+        $httpRequest = new HTTPRequest($method, $url);
+        $httpRequest->setSession($this->mainSession->session());
+        return $httpRequest;
     }
 }

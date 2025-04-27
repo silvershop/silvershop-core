@@ -13,9 +13,9 @@ class CheckoutComponentNamespaced extends CheckoutComponent
 {
     protected CheckoutComponent $proxy;
 
-    public function __construct(CheckoutComponent $component)
+    public function __construct(CheckoutComponent $checkoutComponent)
     {
-        $this->proxy = $component;
+        $this->proxy = $checkoutComponent;
     }
 
     public function Proxy(): CheckoutComponent
@@ -25,15 +25,15 @@ class CheckoutComponentNamespaced extends CheckoutComponent
 
     public function getFormFields(Order $order): FieldList
     {
-        $fields = $this->proxy->getFormFields($order);
-        $allFields = $fields->dataFields();
+        $fieldList = $this->proxy->getFormFields($order);
+        $allFields = $fieldList->dataFields();
         if ($allFields) {
-            foreach ($allFields as $field) {
-                $field->setName($this->namespaceFieldName($field->getName()));
+            foreach ($allFields as $allField) {
+                $allField->setName($this->namespaceFieldName($allField->getName()));
             }
         }
 
-        return $fields;
+        return $fieldList;
     }
 
     public function validateData(Order $order, array $data): bool

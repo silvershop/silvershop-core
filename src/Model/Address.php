@@ -109,14 +109,14 @@ class Address extends DataObject
         $self = $this;
 
         $this->beforeUpdateCMSFields(
-            function (FieldList $fields) use ($self): void {
-                $fields->addFieldToTab(
+            function (FieldList $fieldList) use ($self): void {
+                $fieldList->addFieldToTab(
                     'Root.Main',
                     $self->getCountryField(),
                     'State'
                 );
 
-                $fields->removeByName('MemberID');
+                $fieldList->removeByName('MemberID');
             }
         );
 
@@ -125,7 +125,7 @@ class Address extends DataObject
 
     public function getFrontEndFields($params = null): FieldList
     {
-        $fields = FieldList::create(
+        $fieldList = FieldList::create(
             $this->getCountryField(),
             TextField::create('Company', $this->fieldLabel('Company')),
             $addressfield = TextField::create('Address', $this->fieldLabel('Address')),
@@ -147,8 +147,8 @@ class Address extends DataObject
             $statefield->setDescription(_t(__CLASS__ . '.StateHint', 'or province, territory, island'));
         }
 
-        $this->extend('updateFormFields', $fields);
-        return $fields;
+        $this->extend('updateFormFields', $fieldList);
+        return $fieldList;
     }
 
     public function getCountryField(): ReadonlyField|DropdownField
@@ -162,15 +162,15 @@ class Address extends DataObject
                 array_pop($countries)
             );
         }
-        $field = DropdownField::create(
+        $singleSelectField = DropdownField::create(
             'Country',
             $this->fieldLabel('Country'),
             $countries
         )->setHasEmptyDefault(true);
 
-        $this->extend('updateCountryField', $field);
+        $this->extend('updateCountryField', $singleSelectField);
 
-        return $field;
+        return $singleSelectField;
     }
 
     /**
@@ -324,14 +324,14 @@ class Address extends DataObject
 
     function validate(): ValidationResult
     {
-        $result = parent::validate();
+        $validationResult = parent::validate();
 
         foreach ($this->getRequiredFields() as $requirement) {
             if (empty($this->$requirement)) {
-                $result->addError("Address Model validate function - missing required field: $requirement");
+                $validationResult->addError("Address Model validate function - missing required field: $requirement");
             }
         }
 
-        return $result;
+        return $validationResult;
     }
 }

@@ -116,27 +116,27 @@ class OrderTest extends SapphireTest
         $this->assertStringContainsString('<h2>Items</h2>', $debug);
 
         // Check items are listed
-        foreach ($order->Items() as $item) {
-            $this->assertStringContainsString((string)$item->Quantity, $debug);
-            $this->assertStringContainsString((string)$item->UnitPrice, $debug);
+        foreach ($order->Items() as $hasManyList) {
+            $this->assertStringContainsString((string)$hasManyList->Quantity, $debug);
+            $this->assertStringContainsString((string)$hasManyList->UnitPrice, $debug);
         }
     }
 
     public function testOrderItems(): void
     {
         $order = $this->objFromFixture(Order::class, "paid");
-        $items = $order->Items();
-        $this->assertNotNull($items);
+        $hasManyList = $order->Items();
+        $this->assertNotNull($hasManyList);
         $this->assertListEquals(
             [
                 ['ProductID' => $this->mp3player->ID, 'Quantity' => 2, 'CalculatedTotal' => 400],
                 ['ProductID' => $this->socks->ID, 'Quantity' => 1, 'CalculatedTotal' => 8],
             ],
-            $items
+            $hasManyList
         );
-        $this->assertEquals(3, $items->Quantity(), "Quantity is 3");
-        $this->assertTrue($items->Plural(), "There is more than one item");
-        $this->assertEquals(0.7, $items->Sum('Weight', true), "Total order weight sums correctly");
+        $this->assertEquals(3, $hasManyList->Quantity(), "Quantity is 3");
+        $this->assertTrue($hasManyList->Plural(), "There is more than one item");
+        $this->assertEquals(0.7, $hasManyList->Sum('Weight', true), "Total order weight sums correctly");
     }
 
     public function testTotals(): void
@@ -179,27 +179,27 @@ class OrderTest extends SapphireTest
         $this->assertFalse($order->isCart());
 
         //item values don't change
-        $items = $order->Items()
+        $hasManyList = $order->Items()
             //hack join to make thigns work
             ->innerJoin(
                 "SilverShop_Product_OrderItem",
                 '"SilverShop_OrderItem"."ID" = "SilverShop_Product_OrderItem"."ID"'
             );
-        $this->assertNotNull($items);
+        $this->assertNotNull($hasManyList);
         $this->assertListEquals(
             [
                 ['ProductID' => $this->mp3player->ID, 'Quantity' => 2, 'CalculatedTotal' => 400],
                 ['ProductID' => $this->socks->ID, 'Quantity' => 1, 'CalculatedTotal' => 8],
             ],
-            $items
+            $hasManyList
         );
 
-        $mp3player = $items->find('ProductID', $this->mp3player->ID);//join needed to provide ProductID
+        $mp3player = $hasManyList->find('ProductID', $this->mp3player->ID);//join needed to provide ProductID
         $this->assertNotNull($mp3player, "MP3 player is in order");
         $this->assertEquals(200, $mp3player->UnitPrice(), "Unit price remains the same");
         $this->assertEquals(400, $mp3player->Total(), "Total remains the same");
 
-        $socks = $items->find('ProductID', $this->socks->ID);
+        $socks = $hasManyList->find('ProductID', $this->socks->ID);
         $this->assertNotNull($socks, "Socks are in order");
         $this->assertEquals(8, $socks->UnitPrice(), "Unit price remains the same");
         $this->assertEquals(8, $socks->Total(), "Total remains the same");
@@ -275,9 +275,9 @@ class OrderTest extends SapphireTest
             ->merge(Order::class, 'modifiers', [FlatTax::class]);
 
         $order = Order::create();
-        $shirt = $this->objFromFixture(Product::class, "tshirt");
+        $dataObject = $this->objFromFixture(Product::class, "tshirt");
         $mp3player = $this->objFromFixture(Product::class, "mp3player");
-        $order->Items()->add($shirt->createItem(3));
+        $order->Items()->add($dataObject->createItem(3));
         $order->Items()->add($mp3player->createItem(1));
         $order->write();
         $order->calculate();

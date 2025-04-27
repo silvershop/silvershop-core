@@ -24,7 +24,7 @@ abstract class Address extends CheckoutComponent
 
     public function getFormFields(Order $order): FieldList
     {
-        $fields = $this->getAddress($order)->getFrontEndFields([
+        $fieldList = $this->getAddress($order)->getFrontEndFields([
             'addfielddescriptions' => $this->formfielddescriptions
         ]);
 
@@ -34,7 +34,7 @@ abstract class Address extends CheckoutComponent
         );
 
         return FieldList::create(
-            CompositeField::create($fields)
+            CompositeField::create($fieldList)
                 ->addExtraClass($this->addresstype)
                 ->setLegend($label)
                 ->setTag(Config::inst()->get(self::class, 'composite_field_tag'))

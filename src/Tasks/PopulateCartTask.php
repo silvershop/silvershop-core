@@ -21,7 +21,7 @@ class PopulateCartTask extends BuildTask
 
     public function run($request): void
     {
-        $cart = ShoppingCart::singleton();
+        $shoppingCart = ShoppingCart::singleton();
         $count = $request->getVar('count') ? $request->getVar('count') : 5;
         if ($products = Versioned::get_by_stage(Product::class, 'Live', '', 'RAND()', '', $count)) {
             foreach ($products as $product) {
@@ -31,7 +31,7 @@ class PopulateCartTask extends BuildTask
                 }
                 $quantity = rand(1, 5);
                 if ($product->canPurchase(Security::getCurrentUser(), $quantity)) {
-                    $cart->add($product, $quantity);
+                    $shoppingCart->add($product, $quantity);
                 }
             }
         }

@@ -73,16 +73,16 @@ class ShoppingCart
     /**
      * Set the current cart
      *
-     * @param Order $cart the Order to use as the current cart-content
+     * @param Order $order the current cart-content
      */
-    public function setCurrent(Order $cart): static
+    public function setCurrent(Order $order): static
     {
-        if (!$cart->IsCart()) {
+        if (!$order->IsCart()) {
             trigger_error('Passed Order object is not cart status', E_ERROR);
         }
-        $this->order = $cart;
+        $this->order = $order;
         $session = ShopTools::getSession();
-        $session->set(self::config()->cartid_session_name, $cart->ID);
+        $session->set(self::config()->cartid_session_name, $order->ID);
 
         return $this;
     }
@@ -111,8 +111,8 @@ class ShoppingCart
     /**
      * Adds an item to the cart
      *
-     * @param int     $quantity
-     * @param array   $filter
+     * @param int $quantity
+     * @param array $filter
      * @return bool|null|OrderItem false or the new/existing item
      */
     public function add(Buyable $buyable, $quantity = 1, $filter = []): bool|null|OrderItem
@@ -158,8 +158,8 @@ class ShoppingCart
     /**
      * Remove an item from the cart.
      *
-     * @param int     $quantity - number of items to remove, or leave null for all items (default)
-     * @param array   $filter
+     * @param int $quantity - number of items to remove, or leave null for all items (default)
+     * @param array $filter
      * @return boolean success/failure
      */
     public function remove(Buyable $buyable, $quantity = null, $filter = []): ?bool
@@ -199,10 +199,10 @@ class ShoppingCart
     /**
      * Remove a specific order item from cart
      *
-     * @param  int       $quantity - number of items to remove or leave `null` to remove all items (default)
+     * @param int $quantity - number of items to remove or leave `null` to remove all items (default)
      * @return ?bool success/failure
      */
-    public function removeOrderItem(OrderItem $item, $quantity = null): ?bool
+    public function removeOrderItem(OrderItem $orderItem, $quantity = null): ?bool
     {
         $order = $this->current();
 
@@ -210,17 +210,17 @@ class ShoppingCart
             return $this->error(_t(__CLASS__ . '.NoOrder', 'No current order.'));
         }
 
-        if ($item->OrderID != $order->ID) {
+        if ($orderItem->OrderID != $order->ID) {
             return $this->error(_t(__CLASS__ . '.ItemNotFound', 'Item not found.'));
         }
 
         //if $quantity will become 0, then remove all
-        if (!$quantity || ($item->Quantity - $quantity) <= 0) {
-            $item->delete();
-            $item->destroy();
+        if (!$quantity || ($orderItem->Quantity - $quantity) <= 0) {
+            $orderItem->delete();
+            $orderItem->destroy();
         } else {
-            $item->Quantity -= $quantity;
-            $item->write();
+            $orderItem->Quantity -= $quantity;
+            $orderItem->write();
         }
 
         return true;
@@ -230,8 +230,8 @@ class ShoppingCart
      * Sets the quantity of an item in the cart.
      * Will automatically add or remove item, if necessary.
      *
-     * @param int     $quantity
-     * @param array   $filter
+     * @param int $quantity
+     * @param array $filter
      * @return bool|null|OrderItem false or the new/existing item
      */
     public function setQuantity(Buyable $buyable, $quantity = 1, $filter = []): bool|null|OrderItem
@@ -252,11 +252,11 @@ class ShoppingCart
     /**
      * Update quantity of a given order item
      *
-     * @param  int       $quantity the new quantity to use
-     * @param  array     $filter
+     * @param int $quantity the new quantity to use
+     * @param array $filter
      * @return ?bool success/failure
      */
-    public function updateOrderItemQuantity(OrderItem $item, $quantity = 1, $filter = []): ?bool
+    public function updateOrderItemQuantity(OrderItem $orderItem, $quantity = 1, $filter = []): ?bool
     {
         $order = $this->current();
 
@@ -264,11 +264,11 @@ class ShoppingCart
             return $this->error(_t(__CLASS__ . '.NoOrder', 'No current order.'));
         }
 
-        if ($item->OrderID != $order->ID) {
+        if ($orderItem->OrderID != $order->ID) {
             return $this->error(_t(__CLASS__ . '.ItemNotFound', 'Item not found.'));
         }
 
-        $buyable = $item->Buyable();
+        $buyable = $orderItem->Buyable();
         // If an extension throws an exception, error out
         try {
             $order->extend('beforeSetQuantity', $buyable, $quantity, $filter);
@@ -276,16 +276,16 @@ class ShoppingCart
             return $this->error($exception->getMessage());
         }
 
-        $item->Quantity = $quantity;
+        $orderItem->Quantity = $quantity;
 
         // If an extension throws an exception, error out
         try {
-            $order->extend('afterSetQuantity', $item, $buyable, $quantity, $filter);
+            $order->extend('afterSetQuantity', $orderItem, $buyable, $quantity, $filter);
         } catch (Exception $exception) {
             return $this->error($exception->getMessage());
         }
 
-        $item->write();
+        $orderItem->write();
         $this->message(_t(__CLASS__ . '.QuantitySet', 'Quantity has been set.'));
 
         return true;
@@ -295,8 +295,8 @@ class ShoppingCart
      * Finds or makes an order item for a given product + filter.
      *
      * @param Buyable $buyable  the buyable
-     * @param int     $quantity quantity to add
-     * @param array   $filter
+     * @param int $quantity quantity to add
+     * @param array $filter
      * @throws ValidationException
      */
     private function findOrMakeItem(Buyable $buyable, $quantity = 1, $filter = []): ?OrderItem
@@ -340,7 +340,7 @@ class ShoppingCart
     /**
      * Finds an existing order item.
      *
-     * @param array   $customFilter
+     * @param array $customFilter
      * @return ?OrderItem the item requested or null
      */
     public function get(Buyable $buyable, $customFilter = []): ?OrderItem
@@ -371,9 +371,9 @@ class ShoppingCart
             $required = array_merge($required, $itemClass::config()->required_fields);
         }
 
-        $query = new MatchObjectFilter($itemClass, array_merge($customFilter, $filter), $required);
+        $matchObjectFilter = new MatchObjectFilter($itemClass, array_merge($customFilter, $filter), $required);
 
-        $item = $itemClass::get()->where($query->getFilter())->first();
+        $item = $itemClass::get()->where($matchObjectFilter->getFilter())->first();
 
         if (!$item) {
             return $this->error(_t(__CLASS__ . '.ItemNotFound', 'Item not found.'));
@@ -395,9 +395,9 @@ class ShoppingCart
             && $buyable->hasExtension(ProductVariationsExtension::class)
             && $buyable->Variations()->count() > 0
         ) {
-            foreach ($buyable->Variations() as $variation) {
-                if ($variation->canPurchase()) {
-                    return $variation;
+            foreach ($buyable->Variations() as $hasManyList) {
+                if ($hasManyList->canPurchase()) {
+                    return $hasManyList;
                 }
             }
         }

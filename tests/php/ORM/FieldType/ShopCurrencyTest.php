@@ -14,8 +14,8 @@ class ShopCurrencyTest extends SapphireTest
         ShopCurrency::config()->thousand_delimiter = "-";
         ShopCurrency::config()->negative_value_format = "- %s";
 
-        $field = ShopCurrency::create("Price");
-        $field->setValue(-12345.56);
-        $this->assertEquals("- X12-345|56", $field->Nice());
+        $shopCurrency = ShopCurrency::create("Price");
+        $shopCurrency->setValue(-12345.56);
+        $this->assertEquals("- X12-345|56", $shopCurrency->Nice());
     }
 }

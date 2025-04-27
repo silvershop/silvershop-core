@@ -41,10 +41,10 @@ class CartPageController extends PageController
         if (!$cart) {
             return false;
         }
-        $form = CartForm::create($this, 'CartForm', $cart);
+        $cartForm = CartForm::create($this, 'CartForm', $cart);
 
-        $this->extend('updateCartForm', $form);
+        $this->extend('updateCartForm', $cartForm);
 
-        return $form;
+        return $cartForm;
     }
 }

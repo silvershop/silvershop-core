@@ -33,16 +33,16 @@ class ProductReport extends ShopPeriodReport
 
     public function sourceRecords($params): SQLQueryList
     {
-        $list = SQLQueryList::create($this->query($params));
+        $sqlQueryList = SQLQueryList::create($this->query($params));
         $self = $this;
-        $list->setOutputClosure(
+        $sqlQueryList->setOutputClosure(
             function (array $row) use ($self): object {
                 $row['BasePrice'] = $self->formatMoney($row['BasePrice']);
                 $row['Sales'] = $self->formatMoney($row['Sales']);
                 return new $self->dataClass($row);
             }
         );
-        return $list;
+        return $sqlQueryList;
     }
 
     private function formatMoney($money): string
@@ -53,15 +53,15 @@ class ProductReport extends ShopPeriodReport
     public function query($params): ShopReportQuery|SQLSelect
     {
         //convert dates to correct format
-        $fields = $this->parameterFields();
-        $fields->setValues($params);
-        $start = $fields->fieldByName('StartPeriod')->dataValue();
-        $end = $fields->fieldByName('EndPeriod')->dataValue();
+        $fieldList = $this->parameterFields();
+        $fieldList->setValues($params);
+        $start = $fieldList->fieldByName('StartPeriod')->dataValue();
+        $end = $fieldList->fieldByName('EndPeriod')->dataValue();
 
 
         $table = DataObject::getSchema()->tableName($this->dataClass);
-        $query = new SQLSelect();
-        $query->setFrom('"' . $table . '"');
+        $sqlSelect = new SQLSelect();
+        $sqlSelect->setFrom('"' . $table . '"');
 
         $whereClue = '1';
         if ($start && $end) {
@@ -87,7 +87,7 @@ class ProductReport extends ShopPeriodReport
             ]) . '\'';
 
 
-        $query->setSelect(
+        $sqlSelect->setSelect(
             [
                 '"SiteTree"."ID"',
                 '"SiteTree"."Title"',
@@ -144,8 +144,8 @@ class ProductReport extends ShopPeriodReport
             )
         ;
 
-        $query->addInnerJoin('SiteTree', '"SilverShop_Product"."ID" = "SiteTree"."ID"');
-        $query->setOrderBy('Quantity DESC');
-        return $query;
+        $sqlSelect->addInnerJoin('SiteTree', '"SilverShop_Product"."ID" = "SiteTree"."ID"');
+        $sqlSelect->setOrderBy('Quantity DESC');
+        return $sqlSelect;
     }
 }

@@ -9,10 +9,10 @@ class ShopCountryTest extends SapphireTest
 {
     public function testField(): void
     {
-        $field = ShopCountry::create("Country");
-        $field->setValue("ABC");
-        $this->assertEquals("ABC", $field->forTemplate());
-        $field->setValue("NZ");
-        $this->assertEquals("New Zealand", $field->forTemplate());
+        $shopCountry = ShopCountry::create("Country");
+        $shopCountry->setValue("ABC");
+        $this->assertEquals("ABC", $shopCountry->forTemplate());
+        $shopCountry->setValue("NZ");
+        $this->assertEquals("New Zealand", $shopCountry->forTemplate());
     }
 }

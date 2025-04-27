@@ -14,7 +14,7 @@ class ProductBulkLoaderTest extends FunctionalTest
 
     public function testLoad(): void
     {
-        $loader = ProductBulkLoader::create(Product::class);
+        $productBulkLoader = ProductBulkLoader::create(Product::class);
 
         $ds = DIRECTORY_SEPARATOR;
         $filepath = realpath(__DIR__ . $ds . 'test_products.csv');
@@ -22,7 +22,7 @@ class ProductBulkLoaderTest extends FunctionalTest
 
         fgetcsv($file); // pop header row
         fgetcsv($file);
-        $results = $loader->load($filepath);
+        $results = $productBulkLoader->load($filepath);
 
         // Test that right amount of columns was imported
         $this->assertEquals(13, $results->Count(), 'Test correct count of imported data');

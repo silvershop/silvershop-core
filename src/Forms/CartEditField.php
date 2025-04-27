@@ -47,9 +47,9 @@ class CartEditField extends FormField
      * Allow overriding the given items list.
      * This helps with formatting, grouping, ordering etc.
      */
-    public function setItemsList(SS_List $list): static
+    public function setItemsList(SS_List $ssList): static
     {
-        $this->items = $list;
+        $this->items = $ssList;
         return $this;
     }
 

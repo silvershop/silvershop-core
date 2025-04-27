@@ -20,17 +20,17 @@ class AddressBook extends Address
 
     public function shippingconfig(): CheckoutComponentConfig
     {
-        $config = CheckoutComponentConfig::create(ShoppingCart::curr());
-        $config->addComponent(AddressBookShipping::create());
+        $checkoutComponentConfig = CheckoutComponentConfig::create(ShoppingCart::curr());
+        $checkoutComponentConfig->addComponent(AddressBookShipping::create());
 
-        return $config;
+        return $checkoutComponentConfig;
     }
 
     public function billingconfig(): CheckoutComponentConfig
     {
-        $config = CheckoutComponentConfig::create(ShoppingCart::curr());
-        $config->addComponent(AddressBookBilling::create());
+        $checkoutComponentConfig = CheckoutComponentConfig::create(ShoppingCart::curr());
+        $checkoutComponentConfig->addComponent(AddressBookBilling::create());
 
-        return $config;
+        return $checkoutComponentConfig;
     }
 }

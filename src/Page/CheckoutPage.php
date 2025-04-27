@@ -51,8 +51,8 @@ class CheckoutPage extends Page
     public function getCMSFields(): FieldList
     {
         $this->beforeUpdateCMSFields(
-            function (FieldList $fields): void {
-                $fields->addFieldsToTab(
+            function (FieldList $fieldList): void {
+                $fieldList->addFieldsToTab(
                     'Root.Main',
                     [
                     HtmlEditorField::create(

@@ -29,14 +29,14 @@ class CustomerDetails extends CheckoutComponent
 
     public function validateData(Order $order, array $data): bool
     {
-        $result = ValidationResult::create();
+        $validationResult = ValidationResult::create();
         foreach ($this->getRequiredFields($order) as $field_name) {
             if (!isset($field_name)) {
-                $result->addError(
+                $validationResult->addError(
                     _t(__CLASS__ . '.No' . $field_name, "{$field_name} is required"),
                     "CustomerDetails"
                 );
-                throw ValidationException::create($result);
+                throw ValidationException::create($validationResult);
             }
         }
         return true;

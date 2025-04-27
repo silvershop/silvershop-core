@@ -50,8 +50,8 @@ class ProductOrderItemTest extends FunctionalTest
 
     public function testEmptyItem(): void
     {
-        $emptyItem = $this->mp3player->Item();
-        $this->assertEquals(1, $emptyItem->Quantity, "Items always have a quantity of at least 1.");
+        $orderItem = $this->mp3player->Item();
+        $this->assertEquals(1, $orderItem->Quantity, "Items always have a quantity of at least 1.");
     }
 
     /**
@@ -78,13 +78,13 @@ class ProductOrderItemTest extends FunctionalTest
      */
     public function testProductVersionDoesNotExist(): void
     {
-        $brokenItem = OrderItem::create()->update(
+        $orderItem = OrderItem::create()->update(
             [
                 "ProductID" => $this->socks->ID,
                 "ProductVersion" => 99999 //non existent version
             ]
         );
-        $this->assertNull($brokenItem->Product(), "version does not exist");
+        $this->assertNull($orderItem->Product(), "version does not exist");
     }
 
     /**
@@ -94,22 +94,22 @@ class ProductOrderItemTest extends FunctionalTest
     {
         SecurityToken::disable();
         $product = $this->socks;
-        $item = $product->Item();
+        $orderItem = $product->Item();
         $this->assertEquals(
             "shoppingcart/add/SilverShop-Page-Product/{$product->ID}",
-            $item->addLink()
+            $orderItem->addLink()
         );
         $this->assertEquals(
             "shoppingcart/remove/SilverShop-Page-Product/{$product->ID}",
-            $item->removeLink()
+            $orderItem->removeLink()
         );
         $this->assertEquals(
             "shoppingcart/removeall/SilverShop-Page-Product/{$product->ID}",
-            $item->removeAllLink()
+            $orderItem->removeAllLink()
         );
         $this->assertEquals(
             "shoppingcart/setquantity/SilverShop-Page-Product/{$product->ID}",
-            $item->setQuantityLink()
+            $orderItem->setQuantityLink()
         );
     }
 
@@ -120,8 +120,8 @@ class ProductOrderItemTest extends FunctionalTest
     {
         SecurityToken::disable();
         $product = $this->socks;
-        $item = $product->Item();
-        $item->ProductID = 0;
-        $this->assertEquals('', $item->removeLink());
+        $orderItem = $product->Item();
+        $orderItem->ProductID = 0;
+        $this->assertEquals('', $orderItem->removeLink());
     }
 }

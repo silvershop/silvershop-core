@@ -104,11 +104,11 @@ class ProductBulkLoader extends CsvBulkLoader
 
         $results = parent::processAll($filepath, $preview);
         //After results have been processed, publish all created & updated products
-        $objects = ArrayList::create();
-        $objects->merge($results->Created());
-        $objects->merge($results->Updated());
+        $arrayList = ArrayList::create();
+        $arrayList->merge($results->Created());
+        $arrayList->merge($results->Updated());
         $parentPageID = $this->config()->parent_page_id;
-        foreach ($objects as $object) {
+        foreach ($arrayList as $object) {
             if (!$object->ParentID) {
                 //set parent page
                 if (is_numeric($parentPageID) && ProductCategory::get()->byID($parentPageID)) { //cached option
@@ -288,9 +288,9 @@ class ProductBulkLoader extends CsvBulkLoader
             '->processVariation5',
             '->processVariation6',
         ];
-        foreach ($varcols as $col) {
-            if (isset($record[$col])) {
-                $parts = explode(':', $record[$col]);
+        foreach ($varcols as $varcol) {
+            if (isset($record[$varcol])) {
+                $parts = explode(':', $record[$varcol]);
                 if (count($parts) == 2) {
                     $attributetype = trim($parts[0]);
                     $attributevalues = explode(',', $parts[1]);

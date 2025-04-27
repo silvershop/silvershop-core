@@ -38,10 +38,10 @@ class CheckoutComponentConfig
      * @param string            $insertBefore The class of the component to insert this one before
      * @return $this
      */
-    public function addComponent(CheckoutComponent $component, $insertBefore = null): static
+    public function addComponent(CheckoutComponent $checkoutComponent, $insertBefore = null): static
     {
         if ($this->namespaced) {
-            $component = CheckoutComponentNamespaced::create($component);
+            $checkoutComponent = CheckoutComponentNamespaced::create($checkoutComponent);
         }
         if ($insertBefore) {
             $existingItems = $this->getComponents();
@@ -49,16 +49,16 @@ class CheckoutComponentConfig
             $inserted = false;
             foreach ($existingItems as $existingItem) {
                 if (!$inserted && $existingItem instanceof $insertBefore) {
-                    $this->components->push($component);
+                    $this->components->push($checkoutComponent);
                     $inserted = true;
                 }
                 $this->components->push($existingItem);
             }
             if (!$inserted) {
-                $this->components->push($component);
+                $this->components->push($checkoutComponent);
             }
         } else {
-            $this->getComponents()->push($component);
+            $this->getComponents()->push($checkoutComponent);
         }
         return $this;
     }
@@ -117,15 +117,15 @@ class CheckoutComponentConfig
      */
     public function getFormFields(): FieldList
     {
-        $fields = FieldList::create();
+        $fieldList = FieldList::create();
         foreach ($this->getComponents() as $component) {
             if ($cfields = $component->getFormFields($this->order)) {
-                $fields->merge($cfields);
+                $fieldList->merge($cfields);
             } else {
                 user_error('getFields on  ' . get_class($component) . ' must return a FieldList');
             }
         }
-        return $fields;
+        return $fieldList;
     }
 
     public function getRequiredFields(): array
@@ -146,7 +146,7 @@ class CheckoutComponentConfig
      */
     public function validateData(array $data): bool
     {
-        $result = ValidationResult::create();
+        $validationResult = ValidationResult::create();
         foreach ($this->getComponents() as $component) {
             try {
                 $component->validateData($this->order, $this->dependantData($component, $data));
@@ -159,15 +159,15 @@ class CheckoutComponentConfig
                     if ($this->namespaced) {
                         $code = $component->namespaceFieldName($code);
                     }
-                    $result->addError($message['message'], $code);
+                    $validationResult->addError($message['message'], $code);
                 }
             }
         }
 
-        $this->order->extend('onValidateDataOnCheckout', $result);
+        $this->order->extend('onValidateDataOnCheckout', $validationResult);
 
-        if (!$result->isValid()) {
-            throw ValidationException::create($result);
+        if (!$validationResult->isValid()) {
+            throw ValidationException::create($validationResult);
         }
 
         return true;

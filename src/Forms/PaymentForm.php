@@ -31,11 +31,11 @@ class PaymentForm extends CheckoutForm
      */
     protected $orderProcessor;
 
-    public function __construct(RequestHandler $controller, $name, CheckoutComponentConfig $config)
+    public function __construct(RequestHandler $requestHandler, $name, CheckoutComponentConfig $checkoutComponentConfig)
     {
-        parent::__construct($controller, $name, $config);
+        parent::__construct($requestHandler, $name, $checkoutComponentConfig);
 
-        $this->orderProcessor = OrderProcessor::create($config->getOrder());
+        $this->orderProcessor = OrderProcessor::create($checkoutComponentConfig->getOrder());
     }
 
     public function setSuccessLink(string $link): void
@@ -117,9 +117,9 @@ class PaymentForm extends CheckoutForm
 
         // if we got here from checkoutSubmit and there's a namespaced Component that provides payment data,
         // we need to strip the inputs down to only the checkout component.
-        $components = $this->config->getComponents();
-        if ($components->first() instanceof CheckoutComponentNamespaced) {
-            foreach ($components as $component) {
+        $arrayList = $this->config->getComponents();
+        if ($arrayList->first() instanceof CheckoutComponentNamespaced) {
+            foreach ($arrayList as $component) {
                 if ($component->Proxy()->providesPaymentData()) {
                     $data = array_merge($data, $component->unnamespaceData($data));
                 }
@@ -127,12 +127,12 @@ class PaymentForm extends CheckoutForm
         }
 
         $gateway = Checkout::get($order)->getSelectedPaymentMethod(false);
-        $fieldFactory = GatewayFieldsFactory::create($gateway);
+        $gatewayFieldsFactory = GatewayFieldsFactory::create($gateway);
 
         // This is where the payment is actually attempted
         $paymentResponse = $this->orderProcessor->makePayment(
             $gateway,
-            $fieldFactory->normalizeFormData($data),
+            $gatewayFieldsFactory->normalizeFormData($data),
             $this->getSuccessLink(),
             $cancelUrl
         );
@@ -150,9 +150,9 @@ class PaymentForm extends CheckoutForm
         return $response;
     }
 
-    public function setOrderProcessor(OrderProcessor $processor): void
+    public function setOrderProcessor(OrderProcessor $orderProcessor): void
     {
-        $this->orderProcessor = $processor;
+        $this->orderProcessor = $orderProcessor;
     }
 
     /**

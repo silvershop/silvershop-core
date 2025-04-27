@@ -34,13 +34,13 @@ class AddProductForm extends Form
      */
     protected array $saveablefields = [];
 
-    public function __construct(RequestHandler $controller, $name = "AddProductForm")
+    public function __construct(RequestHandler $requestHandler, $name = "AddProductForm")
     {
 
         parent::__construct(
-            $controller,
+            $requestHandler,
             $name,
-            $this->getFormFields($controller),
+            $this->getFormFields($requestHandler),
             $this->getFormActions(),
             $this->getFormValidator()
         );
@@ -113,7 +113,7 @@ class AddProductForm extends Form
      */
     protected function getFormFields($controller = null): FieldList
     {
-        $fields = FieldList::create();
+        $fieldList = FieldList::create();
 
         if ($this->maxquantity) {
             $values = [];
@@ -124,16 +124,16 @@ class AddProductForm extends Form
                 $count++;
             }
 
-            $fields->push(DropdownField::create('Quantity', _t('SilverShop\Generic.Quantity', 'Quantity'), $values, 1));
+            $fieldList->push(DropdownField::create('Quantity', _t('SilverShop\Generic.Quantity', 'Quantity'), $values, 1));
         } else {
-            $fields->push(
+            $fieldList->push(
                 NumericField::create('Quantity', _t('SilverShop\Generic.Quantity', 'Quantity'), 1)
                     ->setAttribute('type', 'number')
                     ->setAttribute('min', '0')
             );
         }
 
-        return $fields;
+        return $fieldList;
     }
 
     protected function getFormActions(): FieldList

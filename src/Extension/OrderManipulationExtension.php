@@ -76,10 +76,10 @@ class OrderManipulationExtension extends Extension
      */
     public function orderfromid(): ?DataObject
     {
-        $request = $this->owner->getRequest();
-        $id = (int)$request->param('ID');
+        $httpRequest = $this->owner->getRequest();
+        $id = (int)$httpRequest->param('ID');
         if (!$id) {
-            $id = (int)$request->postVar('OrderID');
+            $id = (int)$httpRequest->postVar('OrderID');
         }
 
         return $this->allorders()->byID($id);
@@ -107,15 +107,15 @@ class OrderManipulationExtension extends Extension
     /**
      * Return all past orders for current member / session.
      */
-    public function PastOrders($paginated = false): DataList
+    public function PastOrders($paginated = false): DataList|PaginatedList
     {
-        $orders = $this->allorders()
+        $dataList = $this->allorders()
             ->filter('Status', Order::config()->placed_status);
         if ($paginated) {
-            return PaginatedList::create($orders, $this->owner->getRequest());
+            return PaginatedList::create($dataList, $this->owner->getRequest());
         }
 
-        return $orders;
+        return $dataList;
     }
 
     /**
@@ -125,10 +125,10 @@ class OrderManipulationExtension extends Extension
      * @return array of template variables
      * @throws HTTPResponse_Exception
      */
-    public function order(HTTPRequest $request): array|HTTPResponse
+    public function order(HTTPRequest $httpRequest): array|HTTPResponse
     {
         //move the shopping cart session id to past order ids, if it is now an order
-        ShoppingCart::singleton()->archiveorderid($request->param('ID'));
+        ShoppingCart::singleton()->archiveorderid($httpRequest->param('ID'));
 
         $order = $this->orderfromid();
         if (!$order) {

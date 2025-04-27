@@ -117,34 +117,34 @@ class ShoppingCartTest extends SapphireTest
         Config::modify()->set(Order::class, 'extensions', [ShoppingCartTest_TestShoppingCartErroringHooksExtension::class]);
 
         ShoppingCart::singleton()->clear();
-        $cart = ShoppingCart::singleton();
+        $shoppingCart = ShoppingCart::singleton();
 
         $this->assertTrue((boolean)$this->cart->add($this->product, 1), "add one item");
-        $item = $cart->get($this->product);
+        $item = $shoppingCart->get($this->product);
         $this->assertFalse(
             (boolean)$this->cart->add($this->product, 1),
             "Cannot add more than one item, extension will error"
         );
         $this->assertEquals($item->Quantity, 1, "quantity is 1");
 
-        $this->assertTrue((boolean)$cart->setQuantity($this->product, 10), "quantity set");
-        $item = $cart->get($this->product);
+        $this->assertTrue((boolean)$shoppingCart->setQuantity($this->product, 10), "quantity set");
+        $item = $shoppingCart->get($this->product);
         $this->assertEquals($item->Quantity, 10, "quantity is 10");
 
-        $this->assertFalse((boolean)$cart->setQuantity($this->product, 11), "Cannot set quantity to more than 10 items");
-        $item = $cart->get($this->product);
+        $this->assertFalse((boolean)$shoppingCart->setQuantity($this->product, 11), "Cannot set quantity to more than 10 items");
+        $item = $shoppingCart->get($this->product);
         $this->assertEquals($item->Quantity, 10, "quantity is 10");
     }
 
     public function testProductVariations(): void
     {
-        /** @var Variation $ball1 */
-        $ball1 = $this->objFromFixture(Variation::class, 'redLarge');
+        /** @var Variation $variation */
+        $variation = $this->objFromFixture(Variation::class, 'redLarge');
 
         /** @var Variation $ball2 */
         $ball2 = $this->objFromFixture(Variation::class, 'redSmall');
 
-        $this->assertTrue((boolean)$this->cart->add($ball1), "add one item");
+        $this->assertTrue((boolean)$this->cart->add($variation), "add one item");
 
         $this->assertEquals(
             ['onStartOrder', 'beforeAdd', 'afterAdd'],
@@ -152,27 +152,27 @@ class ShoppingCartTest extends SapphireTest
         );
 
         $this->assertTrue((boolean)$this->cart->add($ball2), "add another item");
-        $this->assertTrue($this->cart->remove($ball1), "remove first item");
+        $this->assertTrue($this->cart->remove($variation), "remove first item");
 
         $this->assertEquals(
             ['onStartOrder', 'beforeAdd', 'afterAdd', 'beforeAdd', 'afterAdd', 'beforeRemove', 'afterRemove'],
             ShoppingCartTest_TestShoppingCartHooksExtension::$stack
         );
 
-        $this->assertFalse((bool)$this->cart->get($ball1), "first item not in cart");
+        $this->assertFalse((bool)$this->cart->get($variation), "first item not in cart");
         $this->assertNotNull($this->cart->get($ball2), "second item is in cart");
 
-        /** @var Product $ball */
-        $ball = $this->objFromFixture(Product::class, 'ball');
+        /** @var Product $dataObject */
+        $dataObject = $this->objFromFixture(Product::class, 'ball');
 
         $redLarge = $this->objFromFixture(Variation::class, 'redLarge');
         $redLarge->Price = 0;
         $redLarge->write();
 
-        $ball->BasePrice = 0;
-        $ball->write();
+        $dataObject->BasePrice = 0;
+        $dataObject->write();
 
-        $item = $this->cart->add($ball);
+        $item = $this->cart->add($dataObject);
         $this->assertNotNull($item, "Product with variations can be added to cart");
         $this->assertInstanceOf(OrderItem::class, $item, 'A variation should be added to cart.');
         $this->assertEquals(20, $item->Buyable()->Price, 'The buyable variation was added');

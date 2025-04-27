@@ -137,11 +137,11 @@ class AccountPageController extends PageController
     {
         $singletonaddress = singleton(Address::class);
         $fields = $singletonaddress->getFrontEndFields();
-        $actions = FieldList::create(
+        $fieldList = FieldList::create(
             FormAction::create('saveaddress', _t('SilverShop\Model\Address.SaveNew', 'Save New Address'))
         );
-        $validator = RequiredFields::create($singletonaddress->getRequiredFields());
-        $form = Form::create($this, 'CreateAddressForm', $fields, $actions, $validator);
+        $requiredFields = RequiredFields::create($singletonaddress->getRequiredFields());
+        $form = Form::create($this, 'CreateAddressForm', $fields, $fieldList, $requiredFields);
         $this->extend('updateCreateAddressForm', $form);
         return $form;
     }
@@ -181,12 +181,12 @@ class AccountPageController extends PageController
         return [];
     }
 
-    function deleteaddress(HTTPRequest$req): ?HTTPResponse
+    function deleteaddress(HTTPRequest$httpRequest): ?HTTPResponse
     {
         // NOTE: we don't want to fully delete the address because it's presumably still
         // attached to an order. Setting MemberID to 0 means it won't show up in the address
         // book any longer.
-        $address = $this->member->AddressBook()->byID($req->param('ID'));
+        $address = $this->member->AddressBook()->byID($httpRequest->param('ID'));
         if ($address) {
             $address->MemberID = 0;
             $address->write();
@@ -196,16 +196,16 @@ class AccountPageController extends PageController
         return $this->redirectBack();
     }
 
-    function setdefaultbilling(HTTPRequest $req): HTTPResponse
+    function setdefaultbilling(HTTPRequest $httpRequest): HTTPResponse
     {
-        $this->member->DefaultBillingAddressID = $req->param('ID');
+        $this->member->DefaultBillingAddressID = $httpRequest->param('ID');
         $this->member->write();
         return $this->redirectBack();
     }
 
-    function setdefaultshipping(HTTPRequest $req): HTTPResponse
+    function setdefaultshipping(HTTPRequest $httpRequest): HTTPResponse
     {
-        $this->member->DefaultShippingAddressID = $req->param('ID');
+        $this->member->DefaultShippingAddressID = $httpRequest->param('ID');
         $this->member->write();
         return $this->redirectBack();
     }
@@ -226,22 +226,22 @@ class AccountPageController extends PageController
         $handler = Injector::inst()->get(MemberAuthenticator::class)->getChangePasswordHandler($this->Link());
         $handler->setRequest($this->getRequest());
         /**
-         * @var ChangePasswordForm $form
+         * @var ChangePasswordForm $changePasswordForm
          */
-        $form = $handler->changePasswordForm();
+        $changePasswordForm = $handler->changePasswordForm();
 
         // The default form tries to redirect to /account/login which doesn't exist
-        $backURL = $form->Fields()->fieldByName('BackURL');
+        $backURL = $changePasswordForm->Fields()->fieldByName('BackURL');
         if (!$backURL) {
             $backURL = HiddenField::create('BackURL', 'BackURL');
-            $form->Fields()->push($backURL);
+            $changePasswordForm->Fields()->push($backURL);
         }
         $backURL->setValue($this->Link('editprofile'));
 
 
-        $this->extend('updateChangePasswordForm', $form);
+        $this->extend('updateChangePasswordForm', $changePasswordForm);
 
-        return $form;
+        return $changePasswordForm;
     }
 
     /**

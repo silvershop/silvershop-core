@@ -148,11 +148,11 @@ class Product extends Page implements Buyable
         $self = $this;
 
         $this->beforeUpdateCMSFields(
-            function (FieldList $fields) use ($self): void {
-                $fields->fieldByName('Root.Main.Title')
+            function (FieldList $fieldList) use ($self): void {
+                $fieldList->fieldByName('Root.Main.Title')
                     ->setTitle(_t(__CLASS__ . '.PageTitle', 'Product Title'));
 
-                $fields->addFieldsToTab('Root.Main', [
+                $fieldList->addFieldsToTab('Root.Main', [
                     TextField::create('InternalItemID', _t(__CLASS__ . '.InternalItemID', 'Product Code/SKU'), '', 30),
                     DropdownField::create('ParentID', _t(__CLASS__ . '.Category', 'Category'), $self->getCategoryOptions())
                         ->setDescription(_t(__CLASS__ . '.CategoryDescription', 'This is the parent page or default category.')),
@@ -166,7 +166,7 @@ class Product extends Page implements Buyable
                     CheckboxField::create('AllowPurchase', _t(__CLASS__ . '.AllowPurchase', 'Allow product to be purchased'), 1),
                 ], 'Content');
 
-                $fields->addFieldsToTab(
+                $fieldList->addFieldsToTab(
                     'Root.Pricing',
                     [
                         TextField::create('BasePrice', $this->fieldLabel('BasePrice'))
@@ -179,7 +179,7 @@ class Product extends Page implements Buyable
                     'LengthUnit' => $self::config()->length_unit
                 ];
 
-                $fields->addFieldsToTab(
+                $fieldList->addFieldsToTab(
                     'Root.Shipping',
                     [
                     TextField::create(
@@ -216,8 +216,8 @@ class Product extends Page implements Buyable
                     ]
                 );
 
-                if (!$fields->dataFieldByName('Image')) {
-                    $fields->addFieldToTab(
+                if (!$fieldList->dataFieldByName('Image')) {
+                    $fieldList->addFieldToTab(
                         'Root.Images',
                         UploadField::create('Image', _t(__CLASS__ . '.Image', 'Product Image'))
                     );
@@ -326,8 +326,8 @@ class Product extends Page implements Buyable
         $extension = self::has_extension(ProductVariationsExtension::class);
 
         if ($extension && Variation::get()->filter('ProductID', $this->ID)->first()) {
-            foreach ($this->Variations() as $variation) {
-                if ($variation->canPurchase($member, $quantity)) {
+            foreach ($this->Variations() as $hasManyList) {
+                if ($hasManyList->canPurchase($member, $quantity)) {
                     $allowPurchase = true;
                     break;
                 }
@@ -356,8 +356,8 @@ class Product extends Page implements Buyable
      */
     public function IsInCart(): bool
     {
-        $item = $this->Item();
-        return $item && $item->exists() && $item->Quantity > 0;
+        $orderItem = $this->Item();
+        return $orderItem && $orderItem->exists() && $orderItem->Quantity > 0;
     }
 
     /**

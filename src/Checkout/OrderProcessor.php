@@ -99,14 +99,14 @@ class OrderProcessor
         // AuthorizeService or PurchaseService, depending on Gateway configuration.
         // Set the user-facing success URL for redirects
         /**
-         * @var ServiceFactory $factory
+         * @var ServiceFactory $serviceFactory
          */
-        $factory = ServiceFactory::create();
-        $service = $factory->getService($payment, ServiceFactory::INTENT_PAYMENT);
+        $serviceFactory = ServiceFactory::create();
+        $paymentService = $serviceFactory->getService($payment, ServiceFactory::INTENT_PAYMENT);
 
         // Initiate payment, get the result back
         try {
-            $serviceResponse = $service->initiate($this->getGatewayData($gatewaydata));
+            $serviceResponse = $paymentService->initiate($this->getGatewayData($gatewaydata));
         } catch (\SilverStripe\Omnipay\Exception\Exception $ex) {
             // error out when an exception occurs
             $this->error($ex->getMessage());

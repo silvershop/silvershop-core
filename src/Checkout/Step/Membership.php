@@ -55,7 +55,7 @@ class Membership extends CheckoutStep
 
     public function MembershipForm(): Form
     {
-        $fields = FieldList::create();
+        $fieldList = FieldList::create();
         $actions = FieldList::create(
             FormAction::create(
                 'createaccount',
@@ -67,7 +67,7 @@ class Membership extends CheckoutStep
             ),
             FormAction::create('guestcontinue', _t(__CLASS__ . '.ContinueAsGuest', 'Continue as Guest'))
         );
-        $form = Form::create($this->owner, 'MembershipForm', $fields, $actions);
+        $form = Form::create($this->owner, 'MembershipForm', $fieldList, $actions);
         $this->owner->extend('updateMembershipForm', $form);
         return $form;
     }
@@ -79,9 +79,9 @@ class Membership extends CheckoutStep
 
     public function LoginForm(): MemberLoginForm
     {
-        $form = MemberLoginForm::create($this->owner, MemberAuthenticator::class, 'LoginForm');
-        $this->owner->extend('updateLoginForm', $form);
-        return $form;
+        $memberLoginForm = MemberLoginForm::create($this->owner, MemberAuthenticator::class, 'LoginForm');
+        $this->owner->extend('updateLoginForm', $memberLoginForm);
+        return $memberLoginForm;
     }
 
     public function createaccount($requestdata): HTTPResponse|array
@@ -106,17 +106,17 @@ class Membership extends CheckoutStep
         if (!$order) {
             $order = Order::create();
         }
-        $config = CheckoutComponentConfig::create($order, false);
-        $config->addComponent(CustomerDetails::create());
-        $config->addComponent(\SilverShop\Checkout\Component\Membership::create());
+        $checkoutComponentConfig = CheckoutComponentConfig::create($order, false);
+        $checkoutComponentConfig->addComponent(CustomerDetails::create());
+        $checkoutComponentConfig->addComponent(\SilverShop\Checkout\Component\Membership::create());
 
-        return $config;
+        return $checkoutComponentConfig;
     }
 
     public function CreateAccountForm(): CheckoutForm
     {
-        $form = CheckoutForm::create($this->owner, 'CreateAccountForm', $this->registerconfig());
-        $form->setActions(
+        $checkoutForm = CheckoutForm::create($this->owner, 'CreateAccountForm', $this->registerconfig());
+        $checkoutForm->setActions(
             FieldList::create(
                 FormAction::create(
                     'docreateaccount',
@@ -128,10 +128,10 @@ class Membership extends CheckoutStep
                 )
             )
         );
-        $form->getValidator()->addRequiredField('Password');
+        $checkoutForm->getValidator()->addRequiredField('Password');
 
-        $this->owner->extend('updateCreateAccountForm', $form);
-        return $form;
+        $this->owner->extend('updateCreateAccountForm', $checkoutForm);
+        return $checkoutForm;
     }
 
     public function docreateaccount($data, Form $form): HTTPResponse

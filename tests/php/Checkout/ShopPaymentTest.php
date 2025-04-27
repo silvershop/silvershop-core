@@ -74,8 +74,8 @@ class ShopPaymentTest extends FunctionalTest
         $payment->write();
 
         // Process payment
-        $processor = OrderProcessor::create($order);
-        $response = $processor->makePayment('Manual', []);
+        $orderProcessor = OrderProcessor::create($order);
+        $response = $orderProcessor->makePayment('Manual', []);
 
         $this->assertTrue($response->isSuccessful(), 'Manual payment should be successful');
         $this->assertEquals('Created', $payment->Status, 'Payment status should be Created');
@@ -86,8 +86,8 @@ class ShopPaymentTest extends FunctionalTest
         $order = $this->objFromFixture(Order::class, 'unpaid');
 
         // Process onsite payment with dummy gateway
-        $processor = OrderProcessor::create($order);
-        $response = $processor->makePayment(
+        $orderProcessor = OrderProcessor::create($order);
+        $response = $orderProcessor->makePayment(
             'Dummy',
             [
                 'number' => '4242424242424242',
@@ -96,7 +96,7 @@ class ShopPaymentTest extends FunctionalTest
                 'cvv' => '123'
             ]
         );
-        $processor->completePayment();
+        $orderProcessor->completePayment();
         $this->assertTrue($response->isSuccessful(), 'Onsite payment should be successful');
         $this->assertFalse($response->isRedirect(), 'Should not be a redirect for onsite payment');
         $this->assertTrue($order->isPaid(), 'Order should be marked as paid');
@@ -109,8 +109,8 @@ class ShopPaymentTest extends FunctionalTest
         $order = $this->objFromFixture(Order::class, 'unpaid');
 
         // Process payment with dummy gateway
-        $processor = OrderProcessor::create($order);
-        $response = $processor->makePayment(
+        $orderProcessor = OrderProcessor::create($order);
+        $response = $orderProcessor->makePayment(
             'Dummy',
             [
                 'number' => '4242424242424242',
@@ -119,7 +119,7 @@ class ShopPaymentTest extends FunctionalTest
                 'cvv' => '123'
             ]
         );
-        $processor->completePayment();
+        $orderProcessor->completePayment();
 
         $this->assertTrue($response->isSuccessful(), 'Onsite payment should be successful');
         $this->assertEquals('Paid', $order->Status, 'Order status should be Paid');
@@ -143,9 +143,9 @@ class ShopPaymentTest extends FunctionalTest
         );
         $cart->write();
         //pay for order with external gateway
-        $processor = OrderProcessor::create($cart);
+        $orderProcessor = OrderProcessor::create($cart);
         $this->setMockHttpResponse('paymentexpress/tests/Mock/PxPayPurchaseSuccess.txt');
-        $response = $processor->makePayment("PaymentExpress_PxPay", []);
+        $response = $orderProcessor->makePayment("PaymentExpress_PxPay", []);
         //gateway responds (in a different session)
         $oldsession = $this->mainSession;
         $this->mainSession = new TestSession();
@@ -177,11 +177,11 @@ class ShopPaymentTest extends FunctionalTest
                 $this->mockHandler = new MockHandler();
             }
 
-            $guzzle = new Client([
+            $client = new Client([
                 'handler' => $this->mockHandler,
             ]);
 
-            $this->httpClient = new \Omnipay\Common\Http\Client(new \Http\Adapter\Guzzle7\Client($guzzle));
+            $this->httpClient = new \Omnipay\Common\Http\Client(new \Http\Adapter\Guzzle7\Client($client));
         }
 
         return $this->httpClient;

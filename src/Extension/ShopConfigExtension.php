@@ -65,10 +65,10 @@ class ShopConfigExtension extends Extension
         return self::config()->base_currency;
     }
 
-    public function updateCMSFields(FieldList $fields): void
+    public function updateCMSFields(FieldList $fieldList): void
     {
-        $fields->insertBefore('Access', $shoptab = Tab::create('Shop', 'Shop'));
-        $fields->addFieldToTab(
+        $fieldList->insertBefore('Access', $shoptab = Tab::create('Shop', 'Shop'));
+        $fieldList->addFieldToTab(
             'Root.Shop',
             TabSet::create(
                 'ShopTabs',
@@ -96,7 +96,7 @@ class ShopConfigExtension extends Extension
                 )
             )
         );
-        $fields->removeByName('CreateTopLevelGroups');
+        $fieldList->removeByName('CreateTopLevelGroups');
         $countriesTab->setTitle(_t(__CLASS__ . '.AllowedCountriesTabTitle', 'Allowed Countries'));
     }
 

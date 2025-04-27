@@ -37,14 +37,14 @@ class CartCleanupTaskTest extends SapphireTest
         $orderPaidOldID = $orderPaidOld->write();
         DB::query('UPDATE "SilverShop_Order" SET "LastEdited" = \'2014-01-31 10:00:00\' WHERE "ID" = ' . $orderPaidOldID);
 
-        $task = FakeCartCleanupTask::create();
-        $task->run(null);
+        $fakeCartCleanupTask = FakeCartCleanupTask::create();
+        $fakeCartCleanupTask->run(null);
 
         $this->assertInstanceOf(Order::class, Order::get()->byID($orderRunningRecentID));
         $this->assertNull(Order::get()->byID($orderRunningOldID));
         $this->assertInstanceOf(Order::class, Order::get()->byID($orderPaidOldID));
 
-        $this->assertEquals('1 old carts removed.', $task->log[count($task->log) - 1]);
+        $this->assertEquals('1 old carts removed.', $fakeCartCleanupTask->log[count($fakeCartCleanupTask->log) - 1]);
 
         DBDatetime::clear_mock_now();
     }

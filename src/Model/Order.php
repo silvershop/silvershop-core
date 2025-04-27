@@ -272,7 +272,7 @@ class Order extends DataObject
      */
     public function getCMSFields(): FieldList
     {
-        $fields = FieldList::create(TabSet::create('Root', Tab::create('Main')));
+        $fieldList = FieldList::create(TabSet::create('Root', Tab::create('Main')));
         $fs = '<div class="field">';
         $fe = '</div>';
         $parts = [
@@ -284,19 +284,19 @@ class Order extends DataObject
         if ($this->Notes) {
             $parts[] = LiteralField::create('Notes', $fs . $this->renderWith('SilverShop\Admin\OrderAdmin_Notes') . $fe);
         }
-        $fields->addFieldsToTab('Root.Main', $parts);
+        $fieldList->addFieldsToTab('Root.Main', $parts);
 
-        $fields->addFieldToTab('Root.Modifiers', GridField::create('Modifiers', 'Modifiers', $this->Modifiers()));
+        $fieldList->addFieldToTab('Root.Modifiers', GridField::create('Modifiers', 'Modifiers', $this->Modifiers()));
 
-        $this->extend('updateCMSFields', $fields);
+        $this->extend('updateCMSFields', $fieldList);
 
-        if ($payments = $fields->fieldByName('Root.Payments.Payments')) {
-            $fields->removeByName('Payments');
-            $fields->insertAfter('Content', $payments);
+        if ($payments = $fieldList->fieldByName('Root.Payments.Payments')) {
+            $fieldList->removeByName('Payments');
+            $fieldList->insertAfter('Content', $payments);
             $payments->addExtraClass('order-payments');
         }
 
-        return $fields;
+        return $fieldList;
     }
 
     /**
@@ -319,15 +319,15 @@ class Order extends DataObject
      */
     public function getDefaultSearchContext(): SearchContext
     {
-        $context = parent::getDefaultSearchContext();
-        $fields = $context->getFields();
+        $searchContext = parent::getDefaultSearchContext();
+        $fieldList = $searchContext->getFields();
 
         $validStates = self::config()->placed_status;
         $statusOptions = array_filter(self::get_order_status_options(), function ($k) use ($validStates): bool {
             return in_array($k, $validStates);
         }, ARRAY_FILTER_USE_KEY);
 
-        $fields->push(
+        $fieldList->push(
             // TODO: Allow filtering by multiple statuses
             DropdownField::create('Status', $this->fieldLabel('Status'))
                 ->setSource($statusOptions)
@@ -335,18 +335,18 @@ class Order extends DataObject
         );
 
         // add date range filtering
-        $fields->insertBefore(
+        $fieldList->insertBefore(
             'Status',
             DateField::create('DateFrom', _t(__CLASS__ . '.DateFrom', 'Date from'))
         );
 
-        $fields->insertBefore(
+        $fieldList->insertBefore(
             'Status',
             DateField::create('DateTo', _t(__CLASS__ . '.DateTo', 'Date to'))
         );
 
         // get the array, to maniplulate name, and fullname seperately
-        $filters = $context->getFilters();
+        $filters = $searchContext->getFilters();
         $filters['DateFrom'] = GreaterThanFilter::create('Placed');
         $filters['DateTo'] = LessThanFilter::create('Placed');
 
@@ -366,10 +366,10 @@ class Order extends DataObject
             ]
         );
 
-        $context->setFilters($filters);
+        $searchContext->setFilters($filters);
 
-        $this->extend('updateDefaultSearchContext', $context);
-        return $context;
+        $this->extend('updateDefaultSearchContext', $searchContext);
+        return $searchContext;
     }
 
     /**
@@ -408,8 +408,8 @@ class Order extends DataObject
      */
     public function calculate(): float
     {
-        $calculator = OrderTotalCalculator::create($this);
-        return $this->Total = $calculator->calculate();
+        $orderTotalCalculator = OrderTotalCalculator::create($this);
+        return $this->Total = $orderTotalCalculator->calculate();
     }
 
     /**
@@ -418,8 +418,8 @@ class Order extends DataObject
      */
     public function getModifier($className, $forcecreate = false)
     {
-        $calculator = OrderTotalCalculator::create($this);
-        return $calculator->getModifier($className, $forcecreate);
+        $orderTotalCalculator = OrderTotalCalculator::create($this);
+        return $orderTotalCalculator->getModifier($className, $forcecreate);
     }
 
     /**
@@ -782,8 +782,8 @@ class Order extends DataObject
 
         if ($toStatus == 'Paid' && !$this->Paid) {
             $this->setField('Paid', DBDatetime::now()->Rfc2822());
-            foreach ($this->Items() as $item) {
-                $item->onPayment();
+            foreach ($this->Items() as $hasManyList) {
+                $hasManyList->onPayment();
             }
             //all payment is settled
             $this->extend('onPaid');
@@ -805,8 +805,8 @@ class Order extends DataObject
      */
     protected function onBeforeDelete(): void
     {
-        foreach ($this->Items() as $item) {
-            $item->delete();
+        foreach ($this->Items() as $hasManyList) {
+            $hasManyList->delete();
         }
 
         foreach ($this->Modifiers() as $modifier) {

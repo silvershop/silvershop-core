@@ -92,8 +92,8 @@ class OrderModifierTest extends FunctionalTest
         $this->assertEquals('522.5', $order->Total);
 
         $amounts = [];
-        foreach ($order->Modifiers()->sort('Sort') as $modifier) {
-            $amounts[] = (string)$modifier->Amount;
+        foreach ($order->Modifiers()->sort('Sort') as $hasManyList) {
+            $amounts[] = (string)$hasManyList->Amount;
         }
 
         $this->assertEquals(['10', '104.5'], $amounts);
@@ -113,8 +113,8 @@ class OrderModifierTest extends FunctionalTest
         $this->assertEquals('522.5', $order->Total);
 
         $amounts = [];
-        foreach ($order->Modifiers()->sort('Sort') as $modifier) {
-            $amounts[] = (string)$modifier->Amount;
+        foreach ($order->Modifiers()->sort('Sort') as $hasManyList) {
+            $amounts[] = (string)$hasManyList->Amount;
         }
 
         $this->assertEquals(['10', '104.5'], $amounts);
@@ -124,9 +124,9 @@ class OrderModifierTest extends FunctionalTest
     {
         $order = Order::create();
         $order->write();
-        $item1a = $this->mp3player->createItem(2);
-        $item1a->write();
-        $order->Items()->add($item1a);
+        $orderItem = $this->mp3player->createItem(2);
+        $orderItem->write();
+        $order->Items()->add($orderItem);
         $item1b = $this->socks->createItem();
         $item1b->write();
         $order->Items()->add($item1b);

@@ -35,13 +35,13 @@ class VariationVersionTest extends SapphireTest
 
     public function testVariationsPersistOnUnpublish(): void
     {
-        $color = $this->objFromFixture(AttributeType::class, "color");
+        $attributeType = $this->objFromFixture(AttributeType::class, "color");
         $values = ['Black', 'Blue'];
 
-        $this->mp3player->generateVariationsFromAttributes($color, $values);
+        $this->mp3player->generateVariationsFromAttributes($attributeType, $values);
         $this->mp3player->publishRecursive();
 
-        $variations = $this->mp3player->Variations();
-        $this->assertEquals($variations->Count(), 2, "two variations created and persist after product unpublished");
+        $hasManyList = $this->mp3player->Variations();
+        $this->assertEquals($hasManyList->Count(), 2, "two variations created and persist after product unpublished");
     }
 }

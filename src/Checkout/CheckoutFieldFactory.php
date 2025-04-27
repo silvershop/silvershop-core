@@ -25,14 +25,14 @@ use SilverStripe\SiteConfig\SiteConfig;
  */
 class CheckoutFieldFactory
 {
-    private static ?\SilverShop\Checkout\CheckoutFieldFactory $inst = null;
+    private static ?\SilverShop\Checkout\CheckoutFieldFactory $checkoutFieldFactory = null;
 
     public static function singleton(): ?\SilverShop\Checkout\CheckoutFieldFactory
     {
-        if (!self::$inst) {
-            self::$inst = new CheckoutFieldFactory();
+        if (!self::$checkoutFieldFactory) {
+            self::$checkoutFieldFactory = new CheckoutFieldFactory();
         }
-        return self::$inst;
+        return self::$checkoutFieldFactory;
     }
 
     //prevent instantiation
@@ -61,19 +61,19 @@ class CheckoutFieldFactory
 
     public function getMembershipFields(): FieldList
     {
-        $fields = $this->getContactFields();
+        $fieldList = $this->getContactFields();
         $idfield = Member::config()->unique_identifier_field;
-        if (!$fields->fieldByName($idfield)) {
-            $fields->push(TextField::create($idfield, $idfield)); //TODO: scaffold the correct id field
+        if (!$fieldList->fieldByName($idfield)) {
+            $fieldList->push(TextField::create($idfield, $idfield)); //TODO: scaffold the correct id field
         }
-        $fields->push($this->getPasswordField());
-        return $fields;
+        $fieldList->push($this->getPasswordField());
+        return $fieldList;
     }
 
     public function getPasswordFields(): FieldList
     {
         $loginlink = "Security/login?BackURL=" . CheckoutPage::find_link(true);
-        $fields = FieldList::create(
+        $fieldList = FieldList::create(
             HeaderField::create(_t('SilverShop\Checkout\CheckoutField.MembershipDetails', 'Membership Details'), 3),
             LiteralField::create(
                 'MemberInfo',
@@ -98,7 +98,7 @@ class CheckoutFieldFactory
         if (!Checkout::membership_required()) {
             $pwf->setCanBeEmpty(true);
         }
-        return $fields;
+        return $fieldList;
     }
 
     public function getPaymentMethodFields(): OptionsetField
@@ -150,18 +150,18 @@ class CheckoutFieldFactory
      * Helper function for reducing a field set to a given subset,
      * in the given order.
      *
-     * @param FieldList $fields form fields to take a subset from.
+     * @param FieldList $fieldList form fields to take a subset from.
      * @param array     $subset list of field names to return as subset
      * @return FieldList subset of form fields
      */
-    private function getSubset(FieldList $fields, $subset = []): FieldList
+    private function getSubset(FieldList $fieldList, $subset = []): FieldList
     {
         if (empty($subset)) {
-            return $fields;
+            return $fieldList;
         }
         $subfieldlist = FieldList::create();
         foreach ($subset as $field) {
-            if ($field = $fields->fieldByName($field)) {
+            if ($field = $fieldList->fieldByName($field)) {
                 $subfieldlist->push($field);
             }
         }

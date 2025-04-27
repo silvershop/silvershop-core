@@ -23,10 +23,10 @@ class CartForm extends Form
 {
     protected $cart;
 
-    public function __construct(RequestHandler $controller, $name = 'CartForm', $cart = null, $template = 'SilverShop\Cart\Cart')
+    public function __construct(RequestHandler $requestHandler, $name = 'CartForm', $cart = null, $template = 'SilverShop\Cart\Cart')
     {
         $this->cart = $cart;
-        $fields = FieldList::create(
+        $fieldList = FieldList::create(
             CartEditField::create('Items', '', $this->cart)
                 ->setTemplate($template)
         );
@@ -35,7 +35,7 @@ class CartForm extends Form
                 ->setUseButtonTag(Config::inst()->get(ShopConfigExtension::class, 'forms_use_button_tag'))
         );
 
-        parent::__construct($controller, $name, $fields, $actions);
+        parent::__construct($requestHandler, $name, $fieldList, $actions);
     }
 
     /**
@@ -52,7 +52,7 @@ class CartForm extends Form
             ShopTools::install_locale($order->Locale);
         }
 
-        $numericConverter = NumericField::create('_temp');
+        $numericField = NumericField::create('_temp');
 
         $messages = [];
         $badMessages = [];
@@ -74,8 +74,8 @@ class CartForm extends Form
                 }
                 //update quantities
                 if (isset($fields['Quantity']) && $quantity = Convert::raw2sql($fields['Quantity'])) {
-                    $numericConverter->setValue($quantity);
-                    if (!ShoppingCart::singleton()->updateOrderItemQuantity($item, $numericConverter->dataValue())) {
+                    $numericField->setValue($quantity);
+                    if (!ShoppingCart::singleton()->updateOrderItemQuantity($item, $numericField->dataValue())) {
                         $badMessages[] = ShoppingCart::singleton()->getMessage();
                     }
                 }

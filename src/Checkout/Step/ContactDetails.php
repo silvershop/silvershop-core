@@ -58,17 +58,17 @@ class ContactDetails extends CheckoutStep
         if (!$cart) {
             return false;
         }
-        $config = CheckoutComponentConfig::create(ShoppingCart::curr());
-        $config->addComponent(CustomerDetails::create());
-        $form = CheckoutForm::create($this->owner, 'ContactDetailsForm', $config);
-        $form->setRedirectLink($this->NextStepLink());
-        $form->setActions(
+        $checkoutComponentConfig = CheckoutComponentConfig::create(ShoppingCart::curr());
+        $checkoutComponentConfig->addComponent(CustomerDetails::create());
+        $checkoutForm = CheckoutForm::create($this->owner, 'ContactDetailsForm', $checkoutComponentConfig);
+        $checkoutForm->setRedirectLink($this->NextStepLink());
+        $checkoutForm->setActions(
             FieldList::create(
                 FormAction::create('checkoutSubmit', _t('SilverShop\Checkout\Step\CheckoutStep.Continue', 'Continue'))
             )
         );
-        $this->owner->extend('updateContactDetailsForm', $form);
+        $this->owner->extend('updateContactDetailsForm', $checkoutForm);
 
-        return $form;
+        return $checkoutForm;
     }
 }

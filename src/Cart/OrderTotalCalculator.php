@@ -69,8 +69,8 @@ class OrderTotalCalculator
         );
 
         try {
-            foreach ($modifierclasses as $ClassName) {
-                if ($modifier = $this->getModifier($ClassName)) {
+            foreach ($modifierclasses as $modifierclass) {
+                if ($modifier = $this->getModifier($modifierclass)) {
                     $modifier->Sort = $sort;
                     $runningtotal = $modifier->modify($runningtotal);
                     if ($modifier->isChanged()) {

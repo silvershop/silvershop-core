@@ -30,7 +30,7 @@ abstract class AddressBook extends Address implements i18nEntityProvider
 
     public function getFormFields(Order $order): FieldList
     {
-        $fields = parent::getFormFields($order);
+        $fieldList = parent::getFormFields($order);
 
         if ($existingaddressfields = $this->getExistingAddressFields()) {
             if ($jquery = $this->config()->get('jquery_file')) {
@@ -41,7 +41,7 @@ abstract class AddressBook extends Address implements i18nEntityProvider
             }
 
             // add the fields for a new address after the dropdown field
-            $existingaddressfields->merge($fields);
+            $existingaddressfields->merge($fieldList);
             // group under a composite field (invisible by default) so we
             // easily know which fields to show/hide
             $label = _t(
@@ -57,7 +57,7 @@ abstract class AddressBook extends Address implements i18nEntityProvider
             );
         }
 
-        return $fields;
+        return $fieldList;
     }
 
     /**
@@ -102,7 +102,7 @@ abstract class AddressBook extends Address implements i18nEntityProvider
      */
     public function validateData(Order $order, array $data): bool
     {
-        $result = ValidationResult::create();
+        $validationResult = ValidationResult::create();
         $existingID =
             !empty($data[$this->addresstype . 'AddressID']) ? (int)$data[$this->addresstype . 'AddressID'] : 0;
 
@@ -110,8 +110,8 @@ abstract class AddressBook extends Address implements i18nEntityProvider
             $member = Security::getCurrentUser();
             // If existing address selected, check that it exists in $member->AddressBook
             if (!$member || !$member->AddressBook()->byID($existingID)) {
-                $result->addError('Invalid address supplied', $this->addresstype . 'AddressID');
-                throw ValidationException::create($result);
+                $validationResult->addError('Invalid address supplied', $this->addresstype . 'AddressID');
+                throw ValidationException::create($validationResult);
             }
         } else {
             // Otherwise, require the normal address fields
@@ -128,8 +128,8 @@ abstract class AddressBook extends Address implements i18nEntityProvider
                         ['name' => $fieldLabel]
                     );
 
-                    $result->addError($errorMessage, $fieldName);
-                    throw ValidationException::create($result);
+                    $validationResult->addError($errorMessage, $fieldName);
+                    throw ValidationException::create($validationResult);
                 }
             }
         }

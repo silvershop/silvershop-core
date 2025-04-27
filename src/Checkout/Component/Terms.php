@@ -12,11 +12,11 @@ class Terms extends CheckoutComponent
 {
     public function getFormFields(Order $order): FieldList
     {
-        $fields = FieldList::create();
+        $fieldList = FieldList::create();
         $page = SiteConfig::current_site_config()->TermsPage();
 
         if ($page->exists()) {
-            $fields->push(
+            $fieldList->push(
                 CheckboxField::create(
                     'ReadTermsAndConditions',
                     DBField::create_field('HTMLText', _t(
@@ -31,7 +31,7 @@ class Terms extends CheckoutComponent
             );
         }
 
-        return $fields;
+        return $fieldList;
     }
 
     public function validateData(Order $order, array $data): bool

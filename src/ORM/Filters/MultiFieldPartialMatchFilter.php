@@ -63,16 +63,16 @@ class MultiFieldPartialMatchFilter extends PartialMatchFilter
             }
         );
 
-        foreach ($this->subfilters as $f) {
-            $f->setModifiers($this->subfilterModifiers);
+        foreach ($this->subfilters as $subfilter) {
+            $subfilter->setModifiers($this->subfilterModifiers);
         }
     }
 
     public function setSubfilters(array $fieldNames): void
     {
         $this->subfilters = [];
-        foreach ($fieldNames as $name) {
-            $this->subfilters[] = PartialMatchFilter::create($name, $this->value, $this->subfilterModifiers);
+        foreach ($fieldNames as $fieldName) {
+            $this->subfilters[] = PartialMatchFilter::create($fieldName, $this->value, $this->subfilterModifiers);
         }
     }
 
@@ -87,8 +87,8 @@ class MultiFieldPartialMatchFilter extends PartialMatchFilter
 
         parent::setValue($value);
 
-        foreach ($this->subfilters as $f) {
-            $f->setValue($value);
+        foreach ($this->subfilters as $subfilter) {
+            $subfilter->setValue($value);
         }
     }
 
@@ -98,17 +98,17 @@ class MultiFieldPartialMatchFilter extends PartialMatchFilter
         return in_array('splitwords', $modifiers);
     }
 
-    public function apply(DataQuery $query): DataQuery
+    public function apply(DataQuery $dataQuery): DataQuery
     {
-        $orGroup = $query->disjunctiveGroup();
+        $orGroup = $dataQuery->disjunctiveGroup();
         $orGroup = parent::apply($orGroup);
 
-        foreach ($this->subfilters as $f) {
-            $orGroup = $f->apply($orGroup);
+        foreach ($this->subfilters as $subfilter) {
+            $orGroup = $subfilter->apply($orGroup);
         }
 
         // The original query will have been affected by the things added to $orGroup above
         // but returning this instead of that will cause new filters to be added as AND
-        return $query;
+        return $dataQuery;
     }
 }

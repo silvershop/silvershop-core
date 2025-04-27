@@ -20,7 +20,7 @@ use SilverStripe\Security\Security;
  */
 class ShopAccountForm extends Form
 {
-    public function __construct(RequestHandler $controller, $name)
+    public function __construct(RequestHandler $requestHandler, $name)
     {
         $member = Security::getCurrentUser();
         $requiredFields = null;
@@ -32,7 +32,7 @@ class ShopAccountForm extends Form
         } else {
             $fields = FieldList::create();
         }
-        if ($controller instanceof AccountPageController) {
+        if ($requestHandler instanceof AccountPageController) {
             $actions = FieldList::create(FormAction::create('submit', _t(__CLASS__ . '.Save', 'Save Changes')));
         } else {
             $actions = FieldList::create(
@@ -42,7 +42,7 @@ class ShopAccountForm extends Form
                     ->setUseButtonTag(Config::inst()->get(ShopConfigExtension::class, 'forms_use_button_tag'))
             );
         }
-        parent::__construct($controller, $name, $fields, $actions, $requiredFields);
+        parent::__construct($requestHandler, $name, $fields, $actions, $requiredFields);
 
         $this->extend('updateShopAccountForm');
 

@@ -70,9 +70,9 @@ You may want to run the CartCleanupTask before migrating if you want to discard 
 
     public function migrateProductPrice(): void
     {
-        $db = DB::get_conn();
+        $database = DB::get_conn();
         //if BasePrice has no values, but Price does, then copy from Price
-        if ($db->hasTable('Product') && !DataObject::get_one('Product', '"BasePrice" > 0')) {
+        if ($database->hasTable('Product') && !DataObject::get_one('Product', '"BasePrice" > 0')) {
             //TODO: warn against lost data
             DB::query('UPDATE "Product" SET "BasePrice" = "Price";');
             DB::query('UPDATE "Product_Live" SET "BasePrice" = "Price";');
@@ -177,14 +177,14 @@ You may want to run the CartCleanupTask before migrating if you want to discard 
 
     public function migrateProductVariationsAttribues(): void
     {
-        $db = DB::get_conn();
+        $database = DB::get_conn();
         //TODO: delete Product_VariationAttribute, if it's empty
-        if ($db->hasTable(
+        if ($database->hasTable(
             'Product_VariationAttributes'
         )
         ) { //TODO: check if Product_VariationAttributeTypes table is empty
             DB::query('DROP TABLE "Product_VariationAttributeTypes"');
-            $db->renameTable('Product_VariationAttributes', 'Product_VariationAttributeTypes');
+            $database->renameTable('Product_VariationAttributes', 'Product_VariationAttributeTypes');
         }
     }
 

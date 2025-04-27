@@ -62,13 +62,13 @@ class OrderActionsFormTest extends FunctionalTest
     public function testOffsitePayment(): void
     {
         Config::modify()->set(GatewayInfo::class, 'Dummy', ['is_offsite' => true]);
-        $stubGateway = $this->buildPaymentGatewayStub(true, 'test-' . $this->order->ID, true);
-        Injector::inst()->registerService($this->stubGatewayFactory($stubGateway), 'Omnipay\Common\GatewayFactory');
+        $mockObject = $this->buildPaymentGatewayStub(true, 'test-' . $this->order->ID, true);
+        Injector::inst()->registerService($this->stubGatewayFactory($mockObject), 'Omnipay\Common\GatewayFactory');
 
-        $ctrl = ModelAsController::controller_for($this->checkoutPage);
+        $contentController = ModelAsController::controller_for($this->checkoutPage);
 
-        $response = Director::test(
-            $ctrl->Link('ActionsForm'),
+        $httpResponse = Director::test(
+            $contentController->Link('ActionsForm'),
             [
             'action_dopayment' => true,
             'OrderID' => $this->order->ID,
@@ -82,18 +82,18 @@ class OrderActionsFormTest extends FunctionalTest
         // The status of the payment should be pending purchase, as there's a redirect to the offsite gateway
         $this->assertEquals('PendingPurchase', $this->order->Payments()->first()->Status);
         // The response we get from submitting the form should be a redirect to the offsite payment form
-        $this->assertEquals('http://paymentprovider/test/offsiteform', $response->getHeader('Location'));
+        $this->assertEquals('http://paymentprovider/test/offsiteform', $httpResponse->getHeader('Location'));
     }
 
     public function testOnsitePayment(): void
     {
-        $stubGateway = $this->buildPaymentGatewayStub(true, 'test-' . $this->order->ID, false);
-        Injector::inst()->registerService($this->stubGatewayFactory($stubGateway), 'Omnipay\Common\GatewayFactory');
+        $mockObject = $this->buildPaymentGatewayStub(true, 'test-' . $this->order->ID, false);
+        Injector::inst()->registerService($this->stubGatewayFactory($mockObject), 'Omnipay\Common\GatewayFactory');
 
-        $ctrl = ModelAsController::controller_for($this->checkoutPage);
+        $contentController = ModelAsController::controller_for($this->checkoutPage);
 
-        $response = Director::test(
-            $ctrl->Link('ActionsForm'),
+        $httpResponse = Director::test(
+            $contentController->Link('ActionsForm'),
             [
             'action_dopayment' => true,
             'OrderID' => $this->order->ID,
@@ -113,19 +113,19 @@ class OrderActionsFormTest extends FunctionalTest
         // The status of the payment should be Captured
         $this->assertEquals('Captured', $this->order->Payments()->first()->Status);
         // The response we get from submitting the form should be a redirect to the paid order
-        $this->assertStringEndsWith($ctrl->Link('order/' . $this->order->ID), $response->getHeader('location'));
+        $this->assertStringEndsWith($contentController->Link('order/' . $this->order->ID), $httpResponse->getHeader('location'));
     }
 
     public function testValidation(): void
     {
-        $validator = OrderActionsFormValidator::create('PaymentMethod');
-        $form = OrderActionsForm::create(
+        $orderActionsFormValidator = OrderActionsFormValidator::create('PaymentMethod');
+        $orderActionsForm = OrderActionsForm::create(
             ModelAsController::controller_for($this->checkoutPage),
             'ActionsForm',
             $this->order
         );
-        $validator->setForm($form);
-        $validator->php(
+        $orderActionsFormValidator->setForm($orderActionsForm);
+        $orderActionsFormValidator->php(
             [
                 'OrderID' => $this->order->ID,
                 'PaymentMethod' => 'Dummy',
@@ -136,7 +136,7 @@ class OrderActionsFormTest extends FunctionalTest
         );
 
         $requiredCount = 0;
-        foreach ($validator->getErrors() as $error) {
+        foreach ($orderActionsFormValidator->getErrors() as $error) {
             if ($error['messageType'] == 'required') {
                 $requiredCount++;
             }
@@ -147,9 +147,9 @@ class OrderActionsFormTest extends FunctionalTest
 
     protected function stubGatewayFactory($stubGateway): MockObject
     {
-        $factory = $this->getMockBuilder('Omnipay\Common\GatewayFactory')->getMock();
-        $factory->expects($this->any())->method('create')->will($this->returnValue($stubGateway));
-        return $factory;
+        $mock = $this->getMockBuilder('Omnipay\Common\GatewayFactory')->getMock();
+        $mock->expects($this->any())->method('create')->will($this->returnValue($stubGateway));
+        return $mock;
     }
 
     protected function buildPaymentGatewayStub(
@@ -192,19 +192,19 @@ class OrderActionsFormTest extends FunctionalTest
         //--------------------------------------------------------------------------------------------------------------
         // Build the gateway
 
-        $stubGateway = $this->getMockBuilder('Omnipay\Common\AbstractGateway')
+        $mock = $this->getMockBuilder('Omnipay\Common\AbstractGateway')
             ->setMethods(['purchase', 'supportsCompletePurchase', 'getName'])
             ->getMock();
 
-        $stubGateway->expects($this->any())
+        $mock->expects($this->any())
             ->method('purchase')
             ->will($this->returnValue($mockRequest));
 
 
-        $stubGateway->expects($this->any())
+        $mock->expects($this->any())
             ->method('supportsCompletePurchase')
             ->will($this->returnValue($isRedirect));
 
-        return $stubGateway;
+        return $mock;
     }
 }

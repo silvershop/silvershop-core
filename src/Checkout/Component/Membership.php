@@ -57,21 +57,21 @@ class Membership extends CheckoutComponent
 
     public function getFormFields(Order $order): FieldList
     {
-        $fields = FieldList::create();
+        $fieldList = FieldList::create();
 
         if (Security::getCurrentUser()) {
-            return $fields;
+            return $fieldList;
         }
 
         $idField = Member::config()->unique_identifier_field;
 
         if (!$order->{$idField}) {
-            $fields->push(TextField::create($idField, $idField));
+            $fieldList->push(TextField::create($idField, $idField));
         }
 
-        $fields->push($this->getPasswordField());
+        $fieldList->push($this->getPasswordField());
 
-        return $fields;
+        return $fieldList;
     }
 
     public function getRequiredFields(Order $order): array
@@ -100,7 +100,7 @@ class Membership extends CheckoutComponent
         if (Security::getCurrentUser()) {
             return true;
         }
-        $result = ValidationResult::create();
+        $validationResult = ValidationResult::create();
         if (Checkout::membership_required() || !empty($data['Password'])) {
             $member = Member::create($data);
             $idfield = Member::config()->unique_identifier_field;
@@ -110,7 +110,7 @@ class Membership extends CheckoutComponent
                 $fieldLabels = $member->fieldLabels(false);
                 // if a localized value exists, use this for our error-message
                 $fieldLabel = isset($fieldLabels[$idfield]) ? $fieldLabels[$idfield] : $idfield;
-                $result->addError(
+                $validationResult->addError(
                     _t(
                         'SilverShop\Checkout\Checkout.MemberExists',
                         'A member already exists with the {Field} {Identifier}',
@@ -125,12 +125,12 @@ class Membership extends CheckoutComponent
 
             if (!$passwordResult->isValid()) {
                 foreach ($passwordResult->getMessages() as $message) {
-                    $result->addError($message['message'], "Password");
+                    $validationResult->addError($message['message'], "Password");
                 }
             }
         }
-        if (!$result->isValid()) {
-            throw ValidationException::create($result);
+        if (!$validationResult->isValid()) {
+            throw ValidationException::create($validationResult);
         }
         return true;
     }
@@ -158,8 +158,8 @@ class Membership extends CheckoutComponent
             return $order;
         }
 
-        $factory = new ShopMemberFactory();
-        $member = $factory->create($data);
+        $shopMemberFactory = new ShopMemberFactory();
+        $member = $shopMemberFactory->create($data);
         $member->write();
 
         $customer_group = ShopConfigExtension::current()->CustomerGroup();

@@ -17,23 +17,23 @@ class Summary extends CheckoutStep
 
     public function summary(): array
     {
-        $form = $this->ConfirmationForm();
+        $paymentForm = $this->ConfirmationForm();
         return [
-            'OrderForm' => $form,
+            'OrderForm' => $paymentForm,
         ];
     }
 
     public function ConfirmationForm(): PaymentForm
     {
-        $config = CheckoutComponentConfig::create(ShoppingCart::curr(), false);
-        $config->addComponent(Notes::create());
-        $config->addComponent(Terms::create());
-        $this->owner->extend('updateConfirmationComponentConfig', $config);
+        $checkoutComponentConfig = CheckoutComponentConfig::create(ShoppingCart::curr(), false);
+        $checkoutComponentConfig->addComponent(Notes::create());
+        $checkoutComponentConfig->addComponent(Terms::create());
+        $this->owner->extend('updateConfirmationComponentConfig', $checkoutComponentConfig);
 
-        $form = PaymentForm::create($this->owner, 'ConfirmationForm', $config);
-        $form->setFailureLink($this->owner->Link('summary'));
-        $this->owner->extend('updateConfirmationForm', $form);
+        $paymentForm = PaymentForm::create($this->owner, 'ConfirmationForm', $checkoutComponentConfig);
+        $paymentForm->setFailureLink($this->owner->Link('summary'));
+        $this->owner->extend('updateConfirmationForm', $paymentForm);
 
-        return $form;
+        return $paymentForm;
     }
 }

@@ -48,9 +48,9 @@ class CartPage extends Page
     public function getCMSFields(): FieldList
     {
         $this->beforeUpdateCMSFields(
-            function (FieldList $fields): void {
+            function (FieldList $fieldList): void {
                 if ($checkouts = CheckoutPage::get()) {
-                    $fields->addFieldToTab(
+                    $fieldList->addFieldToTab(
                         'Root.Links',
                         DropdownField::create(
                             'CheckoutPageID',
@@ -60,7 +60,7 @@ class CartPage extends Page
                     );
                 }
 
-                $fields->addFieldToTab(
+                $fieldList->addFieldToTab(
                     'Root.Links',
                     TreeDropdownField::create(
                         'ContinuePageID',

@@ -65,9 +65,9 @@ class CheckoutComponentTest extends SapphireTest
     {
         $order = Order::create();  //start a new order
         $order->write();
-        $config = SinglePageCheckoutComponentConfig::create($order);
+        $singlePageCheckoutComponentConfig = SinglePageCheckoutComponentConfig::create($order);
 
-        $customerdetailscomponent = $config->getComponentByType(CustomerDetails::class);
+        $customerdetailscomponent = $singlePageCheckoutComponentConfig->getComponentByType(CustomerDetails::class);
         $customerdetailscomponent->setData(
             $order,
             [
@@ -77,13 +77,13 @@ class CheckoutComponentTest extends SapphireTest
             ]
         );
 
-        $shippingaddresscomponent = $config->getComponentByType(ShippingAddress::class);
+        $shippingaddresscomponent = $singlePageCheckoutComponentConfig->getComponentByType(ShippingAddress::class);
         $shippingaddresscomponent->setData($order, $this->address1->toMap());
 
-        $billingaddresscomponent = $config->getComponentByType(BillingAddress::class);
+        $billingaddresscomponent = $singlePageCheckoutComponentConfig->getComponentByType(BillingAddress::class);
         $billingaddresscomponent->setData($order, $this->address2->toMap());
 
-        $paymentcomponent = $config->getComponentByType(Payment::class);
+        $paymentcomponent = $singlePageCheckoutComponentConfig->getComponentByType(Payment::class);
         $paymentcomponent->setData(
             $order,
             [
@@ -91,7 +91,7 @@ class CheckoutComponentTest extends SapphireTest
             ]
         );
 
-        $notescomponent = $config->getComponentByType(Notes::class);
+        $notescomponent = $singlePageCheckoutComponentConfig->getComponentByType(Notes::class);
         $notescomponent->setData(
             $order,
             [
@@ -99,7 +99,7 @@ class CheckoutComponentTest extends SapphireTest
             ]
         );
 
-        $termscomponent = $config->getComponentByType(Terms::class);
+        $termscomponent = $singlePageCheckoutComponentConfig->getComponentByType(Terms::class);
         $termscomponent->setData(
             $order,
             [
@@ -107,21 +107,21 @@ class CheckoutComponentTest extends SapphireTest
             ]
         );
 
-        $components = $config->getComponents();
+        $arrayList = $singlePageCheckoutComponentConfig->getComponents();
         $class = CheckoutComponentNamespaced::class;
         $this->assertContainsOnlyInstancesOf(
             $class,
-            $components,
+            $arrayList,
             "Components must only be of type '$class'"
         );
-        $this->assertStringContainsString(CustomerDetails::class, print_r($components, true));
-        $this->assertStringContainsString(ShippingAddress::class, print_r($components, true));
-        $this->assertStringContainsString(BillingAddress::class, print_r($components, true));
-        $this->assertStringContainsString(Payment::class, print_r($components, true));
-        $this->assertStringContainsString(Notes::class, print_r($components, true));
-        $this->assertStringContainsString(Terms::class, print_r($components, true));
+        $this->assertStringContainsString(CustomerDetails::class, print_r($arrayList, true));
+        $this->assertStringContainsString(ShippingAddress::class, print_r($arrayList, true));
+        $this->assertStringContainsString(BillingAddress::class, print_r($arrayList, true));
+        $this->assertStringContainsString(Payment::class, print_r($arrayList, true));
+        $this->assertStringContainsString(Notes::class, print_r($arrayList, true));
+        $this->assertStringContainsString(Terms::class, print_r($arrayList, true));
 
-        $fields = $config->getFormFields();
+        $fields = $singlePageCheckoutComponentConfig->getFormFields();
 
         $ns = 'SilverShop-Checkout-Component';
         $this->assertStringContainsString(
@@ -181,7 +181,7 @@ class CheckoutComponentTest extends SapphireTest
         );
         $this->assertStringNotContainsString("rubbish", print_r($fields, true), "Form Field should not include 'rubbish'");
 
-        $required = $config->getRequiredFields();
+        $required = $singlePageCheckoutComponentConfig->getRequiredFields();
         $requiredfields = [
             "$ns-CustomerDetails_FirstName",
             "$ns-CustomerDetails_Surname",
@@ -201,7 +201,7 @@ class CheckoutComponentTest extends SapphireTest
             "getRequiredFields function returns required fields from numerous components"
         );
 
-        $data = $config->getData();
+        $data = $singlePageCheckoutComponentConfig->getData();
 
         $this->assertEquals("Ed", $data["$ns-CustomerDetails_FirstName"]);
         $this->assertEquals("Hillary", $data["$ns-CustomerDetails_Surname"]);
@@ -221,24 +221,24 @@ class CheckoutComponentTest extends SapphireTest
         $this->assertEquals("Dummy", $data["$ns-Payment_PaymentMethod"]);
         $this->assertEquals("Please bring coffee with goods", $data["$ns-Notes_Notes"]);
 
-        $validateData = $config->validateData($data);
+        $validateData = $singlePageCheckoutComponentConfig->validateData($data);
         $this->assertTrue(
             $validateData,
             "Data validation must return true" . print_r($validateData, true)
         );
 
-        $config->setData($data);
-        $fields = $config->getFormFields();
+        $singlePageCheckoutComponentConfig->setData($data);
+        $fields = $singlePageCheckoutComponentConfig->getFormFields();
         $this->assertNotNull($fields, "Form should be generated");
 
         // Test required fields validation
         $this->assertEquals(
             11,
-            count($config->getRequiredFields()),
+            count($singlePageCheckoutComponentConfig->getRequiredFields()),
             'Component should have required fields'
         );
         $this->assertTrue(
-            in_array("$ns-CustomerDetails_Email", $config->getRequiredFields()),
+            in_array("$ns-CustomerDetails_Email", $singlePageCheckoutComponentConfig->getRequiredFields()),
             'Email is a required field'
         );
     }
@@ -258,9 +258,9 @@ class CheckoutComponentTest extends SapphireTest
 
         $order = Order::create();  //start a new order
         $order->write();
-        $config = SinglePageCheckoutComponentConfig::create($order);
+        $singlePageCheckoutComponentConfig = SinglePageCheckoutComponentConfig::create($order);
 
-        $customerdetailscomponent = $config->getComponentByType(CustomerDetails::class);
+        $customerdetailscomponent = $singlePageCheckoutComponentConfig->getComponentByType(CustomerDetails::class);
         $customerdetailscomponent->setData(
             $order,
             [
@@ -270,13 +270,13 @@ class CheckoutComponentTest extends SapphireTest
             ]
         );
 
-        $shippingaddresscomponent = $config->getComponentByType(ShippingAddress::class);
+        $shippingaddresscomponent = $singlePageCheckoutComponentConfig->getComponentByType(ShippingAddress::class);
         $shippingaddresscomponent->setData($order, $this->addressNoCountry->toMap());
 
-        $billingaddresscomponent = $config->getComponentByType(BillingAddress::class);
+        $billingaddresscomponent = $singlePageCheckoutComponentConfig->getComponentByType(BillingAddress::class);
         $billingaddresscomponent->setData($order, $this->addressNoCountry->toMap());
 
-        $paymentcomponent = $config->getComponentByType(Payment::class);
+        $paymentcomponent = $singlePageCheckoutComponentConfig->getComponentByType(Payment::class);
         $paymentcomponent->setData(
             $order,
             [
@@ -284,10 +284,10 @@ class CheckoutComponentTest extends SapphireTest
             ]
         );
 
-        $fields = $config->getFormFields();
+        $fieldList = $singlePageCheckoutComponentConfig->getFormFields();
         $ns = 'SilverShop-Checkout-Component';
-        $shippingaddressfield = $fields->dataFieldByName("$ns-ShippingAddress_Country_readonly");
-        $billingaddressfield = $fields->dataFieldByName("$ns-BillingAddress_Country_readonly");
+        $shippingaddressfield = $fieldList->dataFieldByName("$ns-ShippingAddress_Country_readonly");
+        $billingaddressfield = $fieldList->dataFieldByName("$ns-BillingAddress_Country_readonly");
 
         $this->assertStringContainsString(
             "New Zealand",
@@ -302,7 +302,7 @@ class CheckoutComponentTest extends SapphireTest
         $this->assertTrue($shippingaddressfield->isReadonly(), "The Shipping Address Country field is readonly");
         $this->assertTrue($shippingaddressfield->isReadonly(), "The Billing Address Country field is readonly");
 
-        $required = $config->getRequiredFields();
+        $required = $singlePageCheckoutComponentConfig->getRequiredFields();
         $requiredfieldswithCountryAbsent = [
             "$ns-CustomerDetails_FirstName",
             "$ns-CustomerDetails_Surname",
@@ -320,17 +320,17 @@ class CheckoutComponentTest extends SapphireTest
             "getRequiredFields function returns required fields from numerous components except for the Country fields (no need to validate readonly fields)"
         );
 
-        $data = $config->getData();
+        $data = $singlePageCheckoutComponentConfig->getData();
         $this->assertEquals("NZ", $data["$ns-ShippingAddress_Country"]);
         $this->assertEquals("NZ", $data["$ns-BillingAddress_Country"]);
 
-        $validateData = $config->validateData($data);
+        $validateData = $singlePageCheckoutComponentConfig->validateData($data);
         $this->assertTrue(
             $validateData,
             "Data validation must return true.  Note: should not be testing a country field here as validation of a readonly field is not necessary"
             . print_r($validateData, true)
         );
 
-        $config->setData($data);
+        $singlePageCheckoutComponentConfig->setData($data);
     }
 }

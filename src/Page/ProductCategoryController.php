@@ -63,9 +63,9 @@ class ProductCategoryController extends PageController
             $options[$k] = $v;
         }
 
-        $sorter = ListSorter::create($this->request, $options);
-        $this->extend('updateSorter', $sorter);
+        $listSorter = ListSorter::create($this->request, $options);
+        $this->extend('updateSorter', $listSorter);
 
-        return $sorter;
+        return $listSorter;
     }
 }

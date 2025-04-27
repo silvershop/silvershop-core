@@ -26,10 +26,10 @@ class ShopTools
     public static function price_for_display($price): DBMoney
     {
         $currency = ShopConfigExtension::get_site_currency();
-        $field = DBMoney::create_field(DBMoney::class, 0, 'Price');
-        $field->setAmount($price);
-        $field->setCurrency($currency);
-        return $field;
+        $dbMoney = DBMoney::create_field(DBMoney::class, 0, 'Price');
+        $dbMoney->setAmount($price);
+        $dbMoney->setCurrency($currency);
+        return $dbMoney;
     }
 
     /**
@@ -76,16 +76,16 @@ class ShopTools
     /**
      * Get the current section (first looking at controller, then at a request instance and lastly return a fresh session)
      *
-     * @param HTTPRequest $request the incoming request (optional)
+     * @param HTTPRequest $httpRequest the incoming request (optional)
      */
-    public static function getSession(?HTTPRequest $request = null): Session
+    public static function getSession(?HTTPRequest $httpRequest = null): Session
     {
-        if ($request && ($session = $request->getSession())) {
+        if ($httpRequest && ($session = $httpRequest->getSession())) {
             return $session;
         }
 
-        if (Controller::has_curr() && ($request = Controller::curr()->getRequest())) {
-            return $request->getSession();
+        if (Controller::has_curr() && ($httpRequest = Controller::curr()->getRequest())) {
+            return $httpRequest->getSession();
         }
 
         try {

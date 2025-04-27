@@ -15,10 +15,10 @@ class Payment extends CheckoutComponent
 {
     public function getFormFields(Order $order): FieldList
     {
-        $fields = FieldList::create();
+        $fieldList = FieldList::create();
         $gateways = GatewayInfo::getSupportedGateways();
         if (count($gateways) > 1) {
-            $fields->push(
+            $fieldList->push(
                 OptionsetField::create(
                     'PaymentMethod',
                     _t("SilverShop\Checkout\CheckoutField.PaymentType", "Payment Type"),
@@ -28,12 +28,12 @@ class Payment extends CheckoutComponent
             );
         }
         if (count($gateways) == 1) {
-            $fields->push(
+            $fieldList->push(
                 HiddenField::create('PaymentMethod')->setValue(key($gateways))
             );
         }
 
-        return $fields;
+        return $fieldList;
     }
 
     public function getRequiredFields(Order $order): array
@@ -47,18 +47,18 @@ class Payment extends CheckoutComponent
 
     public function validateData(Order $order, array $data): bool
     {
-        $result = ValidationResult::create();
+        $validationResult = ValidationResult::create();
         if (!isset($data['PaymentMethod'])) {
-            $result->addError(
+            $validationResult->addError(
                 _t(__CLASS__ . '.NoPaymentMethod', "Payment method not provided"),
                 "PaymentMethod"
             );
-            throw ValidationException::create($result);
+            throw ValidationException::create($validationResult);
         }
         $methods = GatewayInfo::getSupportedGateways();
         if (!isset($methods[$data['PaymentMethod']])) {
-            $result->addError(_t(__CLASS__ . '.UnsupportedGateway', "Gateway not supported"), "PaymentMethod");
-            throw ValidationException::create($result);
+            $validationResult->addError(_t(__CLASS__ . '.UnsupportedGateway', "Gateway not supported"), "PaymentMethod");
+            throw ValidationException::create($validationResult);
         }
         return true;
     }

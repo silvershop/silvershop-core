@@ -76,10 +76,10 @@ class ProductTest extends FunctionalTest
 
     public function testCreateItem(): void
     {
-        $item = $this->tshirt->createItem(6);
-        $this->assertEquals($this->tshirt->ID, $item->ProductID);
-        $this->assertEquals(6, $item->Quantity);
-        $this->assertEquals(OrderItem::class, get_class($item));
+        $orderItem = $this->tshirt->createItem(6);
+        $this->assertEquals($this->tshirt->ID, $orderItem->ProductID);
+        $this->assertEquals(6, $orderItem->Quantity);
+        $this->assertEquals(OrderItem::class, get_class($orderItem));
     }
 
     public function testItem(): void
@@ -90,8 +90,8 @@ class ProductTest extends FunctionalTest
         $this->assertEquals(1, $item->Quantity);
         $this->assertEquals(0, $item->ID);
 
-        $sc = ShoppingCart::singleton();
-        $sc->add($this->tshirt, 15);
+        $shoppingCart = ShoppingCart::singleton();
+        $shoppingCart->add($this->tshirt, 15);
 
         $this->assertTrue($this->tshirt->IsInCart(), "tshirt is in cart");
         $item = $this->tshirt->Item();

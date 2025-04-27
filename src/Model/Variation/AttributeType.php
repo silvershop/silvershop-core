@@ -72,12 +72,12 @@ class AttributeType extends DataObject
 
     public function getCMSFields(): FieldList
     {
-        $fields = FieldList::create(
+        $fieldList = FieldList::create(
             TextField::create('Name', $this->fieldLabel('Name')),
             TextField::create('Label', $this->fieldLabel('Label'))
         );
         if ($this->isInDB()) {
-            $fields->push(
+            $fieldList->push(
                 GridField::create(
                     'Values',
                     $this->fieldLabel('Values'),
@@ -86,7 +86,7 @@ class AttributeType extends DataObject
                 )
             );
         } else {
-            $fields->push(
+            $fieldList->push(
                 LiteralField::create(
                     'Values',
                     '<p class="message warning">' .
@@ -96,15 +96,15 @@ class AttributeType extends DataObject
             );
         }
 
-        $this->extend('updateCMSFields', $fields);
+        $this->extend('updateCMSFields', $fieldList);
 
-        return $fields;
+        return $fieldList;
     }
 
     public function addValues(array $values): void
     {
-        $avalues = $this->convertArrayToValues($values);
-        $this->Values()->addMany($avalues);
+        $arrayList = $this->convertArrayToValues($values);
+        $this->Values()->addMany($arrayList);
     }
 
     /**
@@ -113,7 +113,7 @@ class AttributeType extends DataObject
      */
     public function convertArrayToValues(array $values): ArrayList
     {
-        $set = ArrayList::create();
+        $arrayList = ArrayList::create();
         foreach ($values as $value) {
             $val = $this->Values()->find('Value', $value);
             if (!$val) {  //TODO: ignore case, if possible
@@ -122,10 +122,10 @@ class AttributeType extends DataObject
                 $val->TypeID = $this->ID;
                 $val->write();
             }
-            $set->push($val);
+            $arrayList->push($val);
         }
 
-        return $set;
+        return $arrayList;
     }
 
     /**

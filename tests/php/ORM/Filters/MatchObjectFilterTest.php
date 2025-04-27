@@ -11,8 +11,8 @@ class MatchObjectFilterTest extends SapphireTest
     public function testRelationId(): void
     {
         // Tests that an ID is automatically added to any relation fields in the DataObject's has_one.
-        $filter = new MatchObjectFilter(OrderItem::class, ['ProductID' => 5], ['ProductID']);
-        $this->assertEquals($filter->getFilter(), ['"ProductID" = \'5\''], 'ID was added to filter');
+        $matchObjectFilter = new MatchObjectFilter(OrderItem::class, ['ProductID' => 5], ['ProductID']);
+        $this->assertEquals($matchObjectFilter->getFilter(), ['"ProductID" = \'5\''], 'ID was added to filter');
     }
 
     public function testMissingValues(): void

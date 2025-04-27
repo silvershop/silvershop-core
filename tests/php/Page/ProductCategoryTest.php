@@ -59,14 +59,14 @@ class ProductCategoryTest extends FunctionalTest
      */
     public function testCanViewProductCategoryPage(): void
     {
-        $products = $this->objFromFixture(ProductCategory::class, 'products');
-        $this->get(Director::makeRelative($products->Link()));
+        $dataObject = $this->objFromFixture(ProductCategory::class, 'products');
+        $this->get(Director::makeRelative($dataObject->Link()));
     }
 
     public function testGetAllProducts(): void
     {
-        $products = $this->products->ProductsShowable();
-        $this->assertNotNull($products, "Products exist in category");
+        $dataList = $this->products->ProductsShowable();
+        $this->assertNotNull($dataList, "Products exist in category");
         $this->assertListEquals(
             [
                 ['URLSegment' => 'socks'],
@@ -74,7 +74,7 @@ class ProductCategoryTest extends FunctionalTest
                 ['URLSegment' => 'hdtv'],
                 ['URLSegment' => 'beach-ball'],
             ],
-            $products
+            $dataList
         );
     }
 

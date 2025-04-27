@@ -53,10 +53,10 @@ class OrderActionsForm extends Form
      * @param  $name
      * @throws InvalidConfigurationException
      */
-    public function __construct(RequestHandler $controller, $name, Order $order)
+    public function __construct(RequestHandler $requestHandler, $name, Order $order)
     {
         $this->order = $order;
-        $fields = FieldList::create(
+        $fieldList = FieldList::create(
             HiddenField::create('OrderID', '', $order->ID)
         );
         $actions = FieldList::create();
@@ -70,14 +70,14 @@ class OrderActionsForm extends Form
                 }
             }
             if (!empty($gateways)) {
-                $fields->push(
+                $fieldList->push(
                     HeaderField::create(
                         'MakePaymentHeader',
                         _t(__CLASS__ . '.MakePayment', 'Make Payment')
                     )
                 );
                 $outstandingfield = DBCurrency::create_field(DBCurrency::class, $order->TotalOutstanding(true));
-                $fields->push(
+                $fieldList->push(
                     LiteralField::create(
                         'Outstanding',
                         _t(
@@ -88,7 +88,7 @@ class OrderActionsForm extends Form
                         )
                     )
                 );
-                $fields->push(
+                $fieldList->push(
                     OptionsetField::create(
                         'PaymentMethod',
                         _t(__CLASS__ . '.PaymentMethod', 'Payment Method'),
@@ -102,7 +102,7 @@ class OrderActionsForm extends Form
                         Requirements::javascript('https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js');
                     }
                     Requirements::javascript('silvershop/core: client/dist/javascript/OrderActionsForm.js');
-                    $fields->push($ccFields);
+                    $fieldList->push($ccFields);
                 }
 
                 $actions->push(
@@ -124,9 +124,9 @@ class OrderActionsForm extends Form
         }
 
         parent::__construct(
-            $controller,
+            $requestHandler,
             $name,
-            $fields,
+            $fieldList,
             $actions,
             OrderActionsFormValidator::create(
                 [
@@ -218,34 +218,34 @@ class OrderActionsForm extends Form
      */
     protected function getCCFields(array $gateways): ?CompositeField
     {
-        $fieldFactory = GatewayFieldsFactory::create(null, ['Card']);
+        $gatewayFieldsFactory = GatewayFieldsFactory::create(null, ['Card']);
         $onsiteGateways = [];
         $allRequired = [];
         foreach ($gateways as $gateway => $title) {
             if (!GatewayInfo::isOffsite($gateway)) {
                 $required = GatewayInfo::requiredFields($gateway);
-                $onsiteGateways[$gateway] = $fieldFactory->getFieldName($required);
+                $onsiteGateways[$gateway] = $gatewayFieldsFactory->getFieldName($required);
                 $allRequired += $required;
             }
         }
 
         $allRequired = array_unique($allRequired);
-        $allRequired = $fieldFactory->getFieldName(array_combine($allRequired, $allRequired));
+        $allRequired = $gatewayFieldsFactory->getFieldName(array_combine($allRequired, $allRequired));
 
         if (empty($onsiteGateways)) {
             return null;
         }
 
-        $ccFields = $fieldFactory->getCardFields();
+        $fieldList = $gatewayFieldsFactory->getCardFields();
 
         // Remove all the credit card fields that aren't required by any gateway
-        foreach ($ccFields->dataFields() as $name => $field) {
+        foreach ($fieldList->dataFields() as $name => $formField) {
             if ($name && !in_array($name, $allRequired)) {
-                $ccFields->removeByName($name, true);
+                $fieldList->removeByName($name, true);
             }
         }
 
-        $lookupField = LiteralField::create(
+        $literalField = LiteralField::create(
             '_CCLookupField',
             sprintf(
                 '<span class="gateway-lookup" data-gateways=\'%s\'></span>',
@@ -253,8 +253,8 @@ class OrderActionsForm extends Form
             )
         );
 
-        $ccFields->push($lookupField);
+        $fieldList->push($literalField);
 
-        return CompositeField::create($ccFields)->setTag('fieldset')->addExtraClass('credit-card');
+        return CompositeField::create($fieldList)->setTag('fieldset')->addExtraClass('credit-card');
     }
 }

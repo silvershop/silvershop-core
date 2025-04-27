@@ -23,9 +23,9 @@ class VariationForm extends AddProductForm
 
     protected array $requiredFields = ['Quantity'];
 
-    public function __construct(RequestHandler $controller, $name = 'VariationForm')
+    public function __construct(RequestHandler $requestHandler, $name = 'VariationForm')
     {
-        parent::__construct($controller, $name);
+        parent::__construct($requestHandler, $name);
         $this->extend('updateVariationForm');
     }
 
@@ -113,10 +113,10 @@ class VariationForm extends AddProductForm
 
     protected function getFormFields($controller = null): FieldList
     {
-        $fields = parent::getFormFields($controller);
+        $fieldList = parent::getFormFields($controller);
 
         if (!$controller) {
-            return $fields;
+            return $fieldList;
         }
         $product = $controller->data();
         $attributes = $product->VariationAttributeTypes();
@@ -133,7 +133,7 @@ class VariationForm extends AddProductForm
             );
 
             if ($attributeDropdown) {
-                $fields->push($attributeDropdown);
+                $fieldList->push($attributeDropdown);
                 $this->requiredFields[] = "ProductAttributes[$attribute->ID]";
             }
         }
@@ -141,7 +141,7 @@ class VariationForm extends AddProductForm
         if ($this->config()->include_json) {
             $vararray = [];
 
-            $query = $query2 = new SQLSelect();
+            $query = $sqlSelect = new SQLSelect();
 
             $query->setSelect('ID')
                 ->setFrom('SilverShop_Variation')
@@ -152,13 +152,13 @@ class VariationForm extends AddProductForm
             }
 
             foreach ($query->execute()->column('ID') as $variationID) {
-                $query2->setSelect('SilverShop_AttributeValueID')
+                $sqlSelect->setSelect('SilverShop_AttributeValueID')
                     ->setFrom('SilverShop_Variation_AttributeValues')
                     ->setWhere(['SilverShop_VariationID' => $variationID]);
-                $vararray[$variationID] = $query2->execute()->keyedColumn();
+                $vararray[$variationID] = $sqlSelect->execute()->keyedColumn();
             }
 
-            $fields->push(
+            $fieldList->push(
                 HiddenField::create(
                     'VariationOptions',
                     'VariationOptions',
@@ -167,7 +167,7 @@ class VariationForm extends AddProductForm
             );
         }
 
-        return $fields;
+        return $fieldList;
     }
 
     protected function getFormValidator()

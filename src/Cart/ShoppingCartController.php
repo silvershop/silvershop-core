@@ -138,10 +138,10 @@ class ShoppingCartController extends Controller
      */
     protected function buyableFromRequest(): Product|Variation|Buyable|null
     {
-        $request = $this->getRequest();
+        $httpRequest = $this->getRequest();
         if (SecurityToken::is_enabled()
             && !self::config()->disable_security_token
-            && !SecurityToken::inst()->checkRequest($request)
+            && !SecurityToken::inst()->checkRequest($httpRequest)
         ) {
             return $this->httpError(
                 400,
@@ -151,13 +151,13 @@ class ShoppingCartController extends Controller
                 )
             );
         }
-        $id = (int)$request->param('ID');
+        $id = (int)$httpRequest->param('ID');
         if (empty($id)) {
             //TODO: store error message
             return null;
         }
         $buyableclass = Product::class;
-        if ($class = $request->param('Buyable')) {
+        if ($class = $httpRequest->param('Buyable')) {
             $buyableclass = ShopTools::unsanitiseClassName($class);
         }
         if (!ClassInfo::exists($buyableclass)) {

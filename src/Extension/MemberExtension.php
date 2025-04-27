@@ -46,12 +46,12 @@ class MemberExtension extends Extension
         )->first();
     }
 
-    public function updateCMSFields(FieldList $fields): void
+    public function updateCMSFields(FieldList $fieldList): void
     {
-        $fields->removeByName('Country');
-        $fields->removeByName('DefaultShippingAddressID');
-        $fields->removeByName('DefaultBillingAddressID');
-        $fields->addFieldToTab(
+        $fieldList->removeByName('Country');
+        $fieldList->removeByName('DefaultShippingAddressID');
+        $fieldList->removeByName('DefaultBillingAddressID');
+        $fieldList->addFieldToTab(
             'Root.Main',
             DropdownField::create(
                 'Country',

@@ -52,10 +52,10 @@ class AttributeValue extends DataObject
     public function getCMSFields(): FieldList
     {
         $this->beforeUpdateCMSFields(
-            function (FieldList $fields): void {
+            function (FieldList $fieldList): void {
 
-                $fields->removeByName('TypeID');
-                $fields->removeByName('Sort');
+                $fieldList->removeByName('TypeID');
+                $fieldList->removeByName('Sort');
             }
         );
 

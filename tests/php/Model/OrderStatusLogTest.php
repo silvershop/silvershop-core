@@ -51,8 +51,8 @@ class OrderStatusLogTest extends SapphireTest
             "no log generated with Status of 'Unpaid'"
         );
 
-        $processor = OrderProcessor::create($order);
-        $processor->makePayment("Manual", []);
+        $orderProcessor = OrderProcessor::create($order);
+        $orderProcessor->makePayment("Manual", []);
         $order->Status = "Paid";
         $order->write();
 
@@ -270,8 +270,8 @@ class OrderStatusLogTest extends SapphireTest
             "no log generated with Status of 'Unpaid'"
         );
 
-        $processor_guest = OrderProcessor::create($order);
-        $processor_guest->makePayment("Manual", []);
+        $orderProcessor = OrderProcessor::create($order);
+        $orderProcessor->makePayment("Manual", []);
         $order->Status = "Paid";
         $order->write();
 

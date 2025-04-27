@@ -21,9 +21,9 @@ class OnsitePayment extends CheckoutComponent
     {
         $gateway = Checkout::get($order)->getSelectedPaymentMethod();
         $gatewayfieldsfactory = GatewayFieldsFactory::create($gateway, ['Card']);
-        $fields = $gatewayfieldsfactory->getCardFields();
+        $fieldList = $gatewayfieldsfactory->getCardFields();
         if ($gateway === 'Dummy') {
-            $fields->unshift(
+            $fieldList->unshift(
                 LiteralField::create(
                     'dummypaymentmessage',
                     '<p class=\"message good\">Dummy data has been added to the form for testing convenience.</p>'
@@ -31,24 +31,24 @@ class OnsitePayment extends CheckoutComponent
             );
         }
 
-        return $fields;
+        return $fieldList;
     }
 
     public function getRequiredFields(Order $order): array
     {
         $gateway = Checkout::get($order)->getSelectedPaymentMethod();
         $required = GatewayInfo::requiredFields($gateway);
-        $fieldsFactory = GatewayFieldsFactory::create($gateway, ['Card']);
-        return $fieldsFactory->getFieldName(array_combine($required, $required));
+        $gatewayFieldsFactory = GatewayFieldsFactory::create($gateway, ['Card']);
+        return $gatewayFieldsFactory->getFieldName(array_combine($required, $required));
     }
 
     public function validateData(Order $order, array $data): bool
     {
-        $result = ValidationResult::create();
+        $validationResult = ValidationResult::create();
         //TODO: validate credit card data
         if (!Helper::validateLuhn($data['number'])) {
-            $result->addError(_t(__CLASS__ . '.InvalidCreditCard', 'Credit card is invalid'));
-            throw ValidationException::create($result);
+            $validationResult->addError(_t(__CLASS__ . '.InvalidCreditCard', 'Credit card is invalid'));
+            throw ValidationException::create($validationResult);
         }
         return true;
     }

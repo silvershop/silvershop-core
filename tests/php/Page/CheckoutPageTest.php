@@ -56,14 +56,14 @@ class CheckoutPageTest extends FunctionalTest
 
     public function testCanViewCheckoutPage(): void
     {
-        $page = $this->get('checkout');
-        $this->assertEquals(404, $page->getStatusCode(), 'Cannot access the Checkout Page without a current order');
+        $httpResponse = $this->get('checkout');
+        $this->assertEquals(404, $httpResponse->getStatusCode(), 'Cannot access the Checkout Page without a current order');
     }
 
     public function testFindLink(): void
     {
-        $checkoutpage = $this->objFromFixture(CheckoutPage::class, 'checkout');
-        $checkoutpage->publishSingle();
+        $dataObject = $this->objFromFixture(CheckoutPage::class, 'checkout');
+        $dataObject->publishSingle();
         $link = CheckoutPage::find_link();
         $this->assertEquals(
             Director::baseURL() . 'checkout',
