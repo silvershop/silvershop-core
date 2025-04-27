@@ -18,16 +18,14 @@ use SilverStripe\Core\Extension;
  *
  * @package    shop
  * @subpackage steppedcheckout
+ * @extends Extension<static>
  */
 class SteppedCheckoutExtension extends Extension
 {
     /**
      * Anchor string to add to continue links
-     *
-     * @config
-     * @var    string
      */
-    private static $continue_anchor;
+    private static string $continue_anchor = '';
 
     /**
      * @var CheckoutPageController

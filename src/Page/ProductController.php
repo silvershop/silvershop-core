@@ -5,6 +5,9 @@ namespace SilverShop\Page;
 use PageController;
 use SilverStripe\Core\Injector\Injector;
 
+/**
+ * @extends PageController<Product>
+ */
 class ProductController extends PageController
 {
     private static array $allowed_actions = [

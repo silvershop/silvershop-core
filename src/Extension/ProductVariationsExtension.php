@@ -8,13 +8,15 @@ use SilverShop\Model\Variation\AttributeValue;
 use SilverShop\Model\Variation\Variation;
 use SilverShop\ORM\FieldType\ShopCurrency;
 use SilverShop\Page\Product;
+use SilverStripe\Core\Extension;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\GridField\GridField;
 use SilverStripe\Forms\GridField\GridFieldConfig_RecordEditor;
 use SilverStripe\Forms\LabelField;
 use SilverStripe\Forms\ListboxField;
-use SilverStripe\ORM\DataExtension;
 use SilverStripe\ORM\DataList;
+use SilverStripe\ORM\HasManyList;
+use SilverStripe\ORM\ManyManyList;
 use SilverStripe\ORM\ValidationException;
 use SilverStripe\Versioned\Versioned;
 use SilverStripe\View\ArrayData;
@@ -23,10 +25,13 @@ use Symbiote\GridFieldExtensions\GridFieldOrderableRows;
 /**
  * Adds extra fields and relationships to Products for variations support.
  *
- * @package    silvershop
+ * @package silvershop
  * @subpackage variations
+ * @method HasManyList<Variation> Variations()
+ * @method ManyManyList<AttributeType> VariationAttributeTypes()
+ * @extends Extension<(Product & static)>
  */
-class ProductVariationsExtension extends DataExtension
+class ProductVariationsExtension extends Extension
 {
     private static array $has_many = [
         'Variations' => Variation::class,

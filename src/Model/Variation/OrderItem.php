@@ -12,6 +12,7 @@ use SilverStripe\Versioned\Versioned;
  *
  * @property int $ProductVariationVersion
  * @property int $ProductVariationID
+ * @method Variation ProductVariation()
  */
 class OrderItem extends \SilverShop\Model\Product\OrderItem
 {

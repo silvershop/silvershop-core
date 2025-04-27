@@ -8,16 +8,15 @@ use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\HTMLEditor\HTMLEditorField;
 use SilverStripe\ORM\DB;
 
-//use PageController;
-
 /**
  * CheckoutPage is a CMS page-type that shows the order
  * details to the customer for their current shopping
  * cart on the site.
  *
- * @see CheckoutPage_Controller->Order()
+ * @see \SilverShop\Page\CheckoutPageController->Order()
  *
  * @package shop
+ * @property ?string $PurchaseComplete
  */
 class CheckoutPage extends Page
 {

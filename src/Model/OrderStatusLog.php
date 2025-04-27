@@ -4,7 +4,6 @@ namespace SilverShop\Model;
 
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\DB;
-use SilverStripe\ORM\FieldType\DBDate;
 use SilverStripe\ORM\ValidationResult;
 use SilverStripe\Security\Member;
 use SilverStripe\Security\Security;
@@ -14,11 +13,11 @@ use SilverStripe\Security\Security;
  * status of an order.
  *
  * @property string $Title
- * @property string $Note
- * @property string $DispatchedBy
- * @property DBDate $DispatchedOn
- * @property string $DispatchTicket
- * @property string $PaymentCode
+ * @property ?string $Note
+ * @property ?string $DispatchedBy
+ * @property ?string $DispatchedOn
+ * @property ?string $DispatchTicket
+ * @property ?string $PaymentCode
  * @property bool $PaymentOK
  * @property bool $SentToCustomer Whether or not this entry has been sent to the customer (e.g. via OrderEmailNotifier)
  * @property bool $VisibleToCustomer Whether or not this entry should be visible to the customer (e.g. on order details)

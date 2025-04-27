@@ -2,7 +2,9 @@
 
 namespace SilverShop\Extension;
 
+use PageController;
 use SilverShop\Cart\ShoppingCart;
+use SilverShop\Cart\ShoppingCartController;
 use SilverShop\Model\Order;
 use SilverShop\Page\CartPage;
 use SilverShop\Page\CheckoutPage;
@@ -17,6 +19,7 @@ use SilverStripe\Core\Extension;
  * this function is called.
  *
  * @package shop
+ * @extends Extension<((PageController & static) | (ShoppingCartController & static))>
  */
 class ViewableCartExtension extends Extension
 {

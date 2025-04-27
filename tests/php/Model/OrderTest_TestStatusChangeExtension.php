@@ -2,10 +2,13 @@
 
 namespace SilverShop\Tests\Model;
 
+use SilverStripe\Core\Extension;
 use SilverStripe\Dev\TestOnly;
-use SilverStripe\ORM\DataExtension;
 
-class OrderTest_TestStatusChangeExtension extends DataExtension implements TestOnly
+/**
+ * @extends Extension<static>
+ */
+class OrderTest_TestStatusChangeExtension extends Extension implements TestOnly
 {
     public static $stack = [];
 

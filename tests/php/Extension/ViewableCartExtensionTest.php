@@ -27,7 +27,7 @@ class ViewableCartExtensionTest extends FunctionalTest
     {
         $cart = $this->objFromFixture(Order::class, "cart");
         ShoppingCart::singleton()->setCurrent($cart);
-        $page = new PageController();
+        $page = PageController::create();
         $this->assertEquals("$8.00", (string)$page->renderWith("CartTestTemplate"));
     }
 }

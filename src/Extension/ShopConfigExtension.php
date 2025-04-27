@@ -6,26 +6,26 @@ use SilverStripe\AssetAdmin\Forms\UploadField;
 use SilverStripe\Assets\Image;
 use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\Core\Config\Configurable;
+use SilverStripe\Core\Extension;
 use SilverStripe\Forms\CheckboxSetField;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\Tab;
 use SilverStripe\Forms\TabSet;
 use SilverStripe\Forms\TreeDropdownField;
-use SilverStripe\ORM\DataExtension;
 use SilverStripe\Security\Group;
 use SilverStripe\SiteConfig\SiteConfig;
 
 /**
- * @property string $AllowedCountries
+ * @property ?string $AllowedCountries
  * @property int $TermsPageID
  * @property int $CustomerGroupID
  * @property int $DefaultProductImageID
- *
  * @method SiteTree TermsPage()
  * @method Group CustomerGroup()
  * @method Image DefaultProductImage()
+ * @extends Extension<(SiteConfig & static)>
  */
-class ShopConfigExtension extends DataExtension
+class ShopConfigExtension extends Extension
 {
     use Configurable;
 
@@ -45,15 +45,11 @@ class ShopConfigExtension extends DataExtension
 
     /**
      * Email address where shop emails should be sent from
-     *
-     * @config
      */
     private static $email_from;
 
     /**
      * The shop base currency
-     *
-     * @config
      */
     private static string $base_currency = 'NZD';
 

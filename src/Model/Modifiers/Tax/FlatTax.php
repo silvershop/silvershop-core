@@ -12,9 +12,6 @@ use SilverShop\Model\Order;
  */
 class FlatTax extends Base
 {
-    /**
-     * @config
-     */
     private static string $name            = 'GST';
 
     /**
@@ -23,19 +20,10 @@ class FlatTax extends Base
      */
     private static $rate            = 0.15;
 
-    /**
-     * @config
-     */
     private static bool $exclusive       = true;
 
-    /**
-     * @config
-     */
     private static string $includedmessage = '%.1f%% %s (inclusive)';
 
-    /**
-     * @config
-     */
     private static string $excludedmessage = '%.1f%% %s';
 
     private static string $table_name = 'SilverShop_FlatTaxModifier';

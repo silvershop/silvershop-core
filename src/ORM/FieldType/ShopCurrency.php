@@ -13,22 +13,16 @@ class ShopCurrency extends DBCurrency
 {
     /**
      * The shop currency decimal delimiter
-     *
-     * @config
      */
     private static string $decimal_delimiter = '.';
 
     /**
      * The shop currency thousands delimiter
-     *
-     * @config
      */
     private static string $thousand_delimiter = ',';
 
     /**
      * Whether or not to append the currency symbol to
-     *
-     * @config
      */
     private static bool $append_symbol = false;
 
@@ -39,8 +33,6 @@ class ShopCurrency extends DBCurrency
 
     /**
      * HTML to use for negative numbers
-     *
-     * @config
      */
     private static string $negative_value_format = '<span class="negative">(%s)</span>';
 

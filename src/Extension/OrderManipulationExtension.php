@@ -5,11 +5,13 @@ namespace SilverShop\Extension;
 use SilverShop\Cart\ShoppingCart;
 use SilverShop\Forms\OrderActionsForm;
 use SilverShop\Model\Order;
+use SilverShop\Page\AccountPageController;
+use SilverShop\Page\CheckoutPageController;
 use SilverShop\ShopTools;
 use SilverStripe\Control\Controller;
 use SilverStripe\Control\HTTPRequest;
-use SilverStripe\Control\HTTPResponse;
 use SilverStripe\Control\HTTPResponse_Exception;
+use SilverStripe\Control\HTTPResponse;
 use SilverStripe\Core\Config\Configurable;
 use SilverStripe\Core\Extension;
 use SilverStripe\ORM\DataList;
@@ -22,6 +24,7 @@ use SilverStripe\Security\Security;
  * order that has been previously placed.
  *
  * @property Controller $owner
+ * @extends Extension<((AccountPageController & static) | (CheckoutPageController & static))>
  */
 class OrderManipulationExtension extends Extension
 {

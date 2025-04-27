@@ -2,6 +2,7 @@
 
 namespace SilverShop\Page;
 
+use SilverStripe\ORM\ManyManyList;
 use Page;
 use SilverShop\Extension\ProductVariationsExtension;
 use SilverStripe\i18n\i18nEntityProvider;
@@ -13,6 +14,7 @@ use SilverStripe\ORM\DataList;
  * It contains functions for versioning child products
  *
  * @package shop
+ * @method ManyManyList<Product> Products()
  */
 class ProductCategory extends Page implements i18nEntityProvider
 {

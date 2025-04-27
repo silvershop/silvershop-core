@@ -32,15 +32,10 @@ class ShoppingCartController extends Controller
 {
     private static string $url_segment = 'shoppingcart';
 
-    /**
-     * @config
-     */
     private static string $disable_security_token = '';
 
     /**
      * Whether or not this controller redirects to the cart-page whenever an item was added
-     *
-     * @config
      */
     private static bool $direct_to_cart_page = false;
 
@@ -49,16 +44,10 @@ class ShoppingCartController extends Controller
      */
     protected $cart;
 
-    /**
-     * @config
-     */
     private static array $url_handlers = [
         '$Action/$Buyable/$ID' => 'handleAction',
     ];
 
-    /**
-     * @config
-     */
     private static array $allowed_actions = [
         'add',
         'additem',

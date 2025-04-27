@@ -6,6 +6,9 @@ use Exception;
 use SilverStripe\Core\Extension;
 use SilverStripe\Dev\TestOnly;
 
+/**
+ * @extends Extension<static>
+ */
 class ShoppingCartTest_TestShoppingCartErroringHooksExtension extends Extension implements TestOnly
 {
     public function beforeSetQuantity($buyable, $quantity, $filter): void

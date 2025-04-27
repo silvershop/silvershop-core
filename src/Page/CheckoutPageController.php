@@ -2,6 +2,7 @@
 
 namespace SilverShop\Page;
 
+use SilverShop\Extension\OrderManipulationExtension;
 use PageController;
 use SilverShop\Cart\ShoppingCart;
 use SilverShop\Checkout\CheckoutComponentConfig;
@@ -33,6 +34,8 @@ use SilverStripe\View\SSViewer;
  * @mixin PaymentMethod
  * @mixin Summary
  * @mixin ViewableCartExtension
+ * @mixin OrderManipulationExtension
+ * @extends PageController<CheckoutPage>
  */
 class CheckoutPageController extends PageController
 {

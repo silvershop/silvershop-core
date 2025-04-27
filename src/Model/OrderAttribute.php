@@ -3,7 +3,6 @@
 namespace SilverShop\Model;
 
 use SilverStripe\ORM\DataObject;
-use SilverStripe\ORM\FieldType\DBCurrency;
 
 /**
  * A single line in an order. This could be an item, or a subtotal line.
@@ -11,7 +10,7 @@ use SilverStripe\ORM\FieldType\DBCurrency;
  * @see OrderItem
  * @see OrderModifier
  *
- * @property DBCurrency $CalculatedTotal
+ * @property float $CalculatedTotal
  * @property int $OrderID
  * @method   Order Order()
  */

@@ -5,47 +5,30 @@ namespace SilverShop\Extension;
 use SilverStripe\Assets\Image;
 use SilverStripe\Assets\Storage\AssetContainer;
 use SilverStripe\Core\Config\Configurable;
-use SilverStripe\ORM\DataExtension;
+use SilverStripe\Core\Extension;
 
 /**
  * Adds some image size functions to the Image DataObject.
  *
  * @package shop
+ * @extends Extension<(Image & static)>
  */
-class ProductImageExtension extends DataExtension
+class ProductImageExtension extends Extension
 {
     use Configurable;
 
     protected $owner;
 
-    /**
-     * @config
-     */
     private static int $thumbnail_width = 140;
 
-    /**
-     * @config
-     */
     private static int $thumbnail_height = 100;
 
-    /**
-     * @config
-     */
     private static int $content_image_width = 200;
 
-    /**
-     * @config
-     */
     private static int $content_image_height = 0;
 
-    /**
-     * @config
-     */
     private static int $large_image_width = 600;
 
-    /**
-     * @config
-     */
     private static int $large_image_height = 0;
 
     /**

@@ -29,18 +29,13 @@ class ProductBulkLoader extends CsvBulkLoader
 {
     /**
      * You can force every product to be in a certain category, as long as you know its ID.
-     *
-     * @config
      */
-    private static $parent_page_id;
+    private static ?int $parent_page_id = null;
 
     /**
      * Set this if you want categories to be created if they don't exist.
-     *
-     * @config
-     * @var    bool
      */
-    protected static $create_new_product_groups = false;
+    protected static bool $create_new_product_groups = false;
 
     protected $foundParentId;
 

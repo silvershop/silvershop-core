@@ -13,6 +13,10 @@ use SilverStripe\ORM\DB;
 /**
  * View and edit the cart in a full page.
  * Visitor can continue shopping, or proceed to checkout.
+ * @property int $CheckoutPageID
+ * @property int $ContinuePageID
+ * @method CheckoutPage CheckoutPage()
+ * @method SiteTree ContinuePage()
  */
 class CartPage extends Page
 {

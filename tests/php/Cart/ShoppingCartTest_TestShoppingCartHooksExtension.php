@@ -5,6 +5,9 @@ namespace SilverShop\Tests\Cart;
 use SilverStripe\Core\Extension;
 use SilverStripe\Dev\TestOnly;
 
+/**
+ * @extends Extension<static>
+ */
 class ShoppingCartTest_TestShoppingCartHooksExtension extends Extension implements TestOnly
 {
     public static $stack = [];

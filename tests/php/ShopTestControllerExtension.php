@@ -7,6 +7,7 @@ use SilverStripe\Dev\TestOnly;
 
 /**
  * Test Extension that can be applied to controllers to test if a requested page returns the desired page-class.
+ * @extends Extension<static>
  */
 class ShopTestControllerExtension extends Extension implements TestOnly
 {

@@ -13,8 +13,6 @@ use SilverStripe\Forms\LiteralField;
 use SilverStripe\Forms\TextField;
 use SilverStripe\ORM\ArrayList;
 use SilverStripe\ORM\DataObject;
-use SilverStripe\ORM\FieldType\DBCurrency;
-use SilverStripe\ORM\FieldType\DBDecimal;
 use SilverStripe\ORM\ManyManyList;
 use SilverStripe\Security\Member;
 use SilverStripe\Versioned\Versioned;
@@ -26,17 +24,18 @@ use SilverStripe\Versioned\Versioned;
  * Used in combination with ProductAttributes, such as color, size.
  * A variation will specify one particular combination, such as red, and large.
  *
- * @property string $InternalItemID
- * @property DBCurrency $Price
- * @property DBDecimal $Weight
- * @property DBDecimal $Height
- * @property DBDecimal $Width
- * @property DBDecimal $Depth
+ * @property ?string $InternalItemID
+ * @property float $Price
+ * @property float $Weight
+ * @property float $Height
+ * @property float $Width
+ * @property float $Depth
  * @property int $ProductID
  * @property int $ImageID
  * @method   Product Product()
  * @method   Image Image()
- * @method   AttributeValue[]|ManyManyList AttributeValues()
+ * @method ManyManyList<AttributeValue> AttributeValues()
+ * @property int $Sort
  */
 class Variation extends DataObject implements Buyable
 {
@@ -106,19 +105,10 @@ class Variation extends DataObject implements Buyable
 
     private static string $table_name = 'SilverShop_Variation';
 
-    /**
-     * @config
-     */
     private static bool $title_has_label = true;
 
-    /**
-     * @config
-     */
     private static string $title_separator = ':';
 
-    /**
-     * @config
-     */
     private static string $title_glue = ', ';
 
     public function getCMSFields(): FieldList

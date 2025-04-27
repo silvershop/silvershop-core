@@ -5,7 +5,6 @@ namespace SilverShop\Model;
 use Exception;
 use SilverShop\Cart\OrderTotalCalculator;
 use SilverShop\Checkout\OrderEmailNotifier;
-use SilverShop\Extension\MemberExtension;
 use SilverShop\Extension\ShopConfigExtension;
 use SilverShop\Model\Modifiers\OrderModifier;
 use SilverShop\ORM\Filters\MultiFieldPartialMatchFilter;
@@ -25,9 +24,7 @@ use SilverStripe\Forms\Tab;
 use SilverStripe\Forms\TabSet;
 use SilverStripe\Omnipay\Extensions\Payable;
 use SilverStripe\ORM\DataObject;
-use SilverStripe\ORM\FieldType\DBCurrency;
 use SilverStripe\ORM\FieldType\DBDatetime;
-use SilverStripe\ORM\FieldType\DBEnum;
 use SilverStripe\ORM\Filters\GreaterThanFilter;
 use SilverStripe\ORM\Filters\LessThanFilter;
 use SilverStripe\ORM\HasManyList;
@@ -41,31 +38,30 @@ use SilverStripe\Security\Security;
  * within SilverStripe.
  *
  * @mixin Payable
- *
- * @property DBCurrency $Total
- * @property string $Reference
- * @property DBDatetime $Placed
- * @property DBDatetime $Paid
- * @property DBDatetime $ReceiptSent
- * @property DBDatetime $Printed
- * @property DBDatetime $Dispatched
- * @property DBEnum $Status
- * @property string $FirstName
- * @property string $Surname
- * @property string $Email
- * @property string $Notes
- * @property string $IPAddress
+ * @property float $Total
+ * @property mixed $Reference
+ * @property ?string $Placed
+ * @property ?string $Paid
+ * @property ?string $ReceiptSent
+ * @property ?string $Printed
+ * @property ?string $Dispatched
+ * @property ?string $Status
+ * @property ?string $FirstName
+ * @property ?string $Surname
+ * @property ?string $Email
+ * @property ?string $Notes
+ * @property ?string $IPAddress
  * @property bool $SeparateBillingAddress
- * @property string $Locale
+ * @property ?string $Locale
  * @property int $MemberID
  * @property int $ShippingAddressID
  * @property int $BillingAddressID
- * @method   Member|MemberExtension Member()
- * @method   Address BillingAddress()
- * @method   Address ShippingAddress()
- * @method   OrderItem[]|HasManyList Items()
- * @method   OrderModifier[]|HasManyList Modifiers()
- * @method   OrderStatusLog[]|HasManyList OrderStatusLogs()
+ * @method Member Member()
+ * @method Address BillingAddress()
+ * @method Address ShippingAddress()
+ * @method HasManyList<OrderItem> Items()
+ * @method HasManyList<OrderModifier> Modifiers()
+ * @method HasManyList<OrderStatusLog> OrderStatusLogs()
  */
 class Order extends DataObject
 {
@@ -166,8 +162,6 @@ class Order extends DataObject
 
     /**
      * Statuses for orders that have been placed.
-     *
-     * @config
      */
     private static array $placed_status = [
         'Paid',
@@ -181,8 +175,6 @@ class Order extends DataObject
 
     /**
      * Statuses for which an order can be paid for
-     *
-     * @config
      */
     private static array $payable_status = [
         'Cart',
@@ -193,57 +185,42 @@ class Order extends DataObject
 
     /**
      * Statuses that shouldn't show in user account.
-     *
-     * @config
      */
     private static array $hidden_status = ['Cart'];
 
 
     /**
      * Statuses that should be logged in the Order-Status-Log
-     *
-     * @config
      */
     private static array $log_status = [];
 
     /**
      * Whether or not an order can be cancelled before payment
-     *
-     * @config
      */
     private static bool $cancel_before_payment = true;
 
     /**
      * Email customer an invoice upon payment
-     * @config
      */
     private static bool $send_receipt = true;
 
     /**
      * Whether or not an order can be cancelled before processing
-     *
-     * @config
      */
     private static bool $cancel_before_processing = false;
 
     /**
      * Whether or not an order can be cancelled before sending
-     *
-     * @config
      */
     private static bool $cancel_before_sending = false;
 
     /**
      * Whether or not an order can be cancelled after sending
-     *
-     * @config
      */
     private static bool $cancel_after_sending = false;
 
     /**
      * Place an order before payment processing begins
-     *
-     * @config
      */
     private static bool $place_before_payment = false;
 
@@ -251,22 +228,16 @@ class Order extends DataObject
      * Modifiers represent the additional charges or
      * deductions associated to an order, such as
      * shipping, taxes, vouchers etc.
-     *
-     * @config
      */
     private static array $modifiers = [];
 
     /**
      * Rounding precision of order amounts
-     *
-     * @config
      */
     private static int $rounding_precision = 2;
 
     /**
      * Minimal length (number of decimals) of order reference ids
-     *
-     * @config
      */
     private static int $reference_id_padding = 5;
 
@@ -276,8 +247,6 @@ class Order extends DataObject
      * Will send the "Paid" date on the order, even though no actual payment was taken.
      * Will trigger the payment related extension points:
      * Order->onPayment, OrderItem->onPayment, Order->onPaid.
-     *
-     * @config
      */
     private static bool $allow_zero_order_total = false;
 

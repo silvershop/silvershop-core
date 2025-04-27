@@ -37,19 +37,20 @@ use SilverStripe\SiteConfig\SiteConfig;
  *      Universal Postal Union addressing standards:
  * @see http://www.upu.int/nc/en/activities/addressing/standards.html
  *
- * @property ShopCountry $Country
- * @property string $State
- * @property string $City
- * @property string $PostalCode
- * @property string $Address
- * @property string $AddressLine2
- * @property string $Company
- * @property string $FirstName
- * @property string $Surname
- * @property string $Phone
+ * @property ?string $Country
+ * @property ?string $State
+ * @property ?string $City
+ * @property ?string $PostalCode
+ * @property ?string $Address
+ * @property ?string $AddressLine2
+ * @property ?string $Company
+ * @property ?string $FirstName
+ * @property ?string $Surname
+ * @property ?string $Phone
  * @method   Member Member()
- * @method   Order[]|HasManyList ShippingAddressOrders()
- * @method   Order[]|HasManyList BillingAddressOrders()
+ * @method HasManyList<Order> ShippingAddressOrders()
+ * @method HasManyList<Order> BillingAddressOrders()
+ * @property int $MemberID
  */
 class Address extends DataObject
 {

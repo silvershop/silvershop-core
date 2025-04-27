@@ -22,8 +22,6 @@ use SilverStripe\Forms\ListboxField;
 use SilverStripe\Forms\TextField;
 use SilverStripe\ORM\DataList;
 use SilverStripe\ORM\FieldType\DBBoolean;
-use SilverStripe\ORM\FieldType\DBCurrency;
-use SilverStripe\ORM\FieldType\DBDecimal;
 use SilverStripe\ORM\ManyManyList;
 use SilverStripe\Security\Member;
 use SilverStripe\SiteConfig\SiteConfig;
@@ -41,19 +39,20 @@ use SilverStripe\SiteConfig\SiteConfig;
  *
  * @mixin ProductVariationsExtension
  *
- * @property string $InternalItemID
- * @property string $Model
- * @property DBCurrency $BasePrice
- * @property DBDecimal $Weight
- * @property DBDecimal $Height
- * @property DBDecimal $Width
- * @property DBDecimal $Depth
+ * @property ?string $InternalItemID
+ * @property ?string $Model
+ * @property float $BasePrice
+ * @property float $Weight
+ * @property float $Height
+ * @property float $Width
+ * @property float $Depth
  * @property bool $Featured
  * @property bool $AllowPurchase
  * @property float $Popularity
  * @property int $ImageID
  *
- * @method ProductCategory[]|ManyManyList ProductCategories()
+ * @method ManyManyList<ProductCategory> ProductCategories()
+ * @method Image Image()
  */
 class Product extends Page implements Buyable
 {

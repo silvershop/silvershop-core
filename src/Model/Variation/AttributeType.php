@@ -19,10 +19,10 @@ use SilverStripe\ORM\ManyManyList;
  * Types of product attributes.
  * eg: color, size, length
  *
- * @property string $Name
- * @property string $Label
- * @method   AttributeValue[]|HasManyList Values()
- * @method   Product[]|ManyManyList Product()
+ * @property ?string $Name
+ * @property ?string $Label
+ * @method HasManyList<AttributeValue> Values()
+ * @method ManyManyList<Product> Product()
  */
 class AttributeType extends DataObject
 {

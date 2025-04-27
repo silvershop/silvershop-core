@@ -35,7 +35,7 @@ class AccountPageTest extends FunctionalTest
         Controller::add_extension(ShopTestControllerExtension::class);
         $this->accountpage = $this->objFromFixture(AccountPage::class, "accountpage");
         $this->accountpage->publishSingle();
-        $this->controller = new AccountPageController($this->accountpage);
+        $this->controller = AccountPageController::create($this->accountpage);
 
         $r = new HTTPRequest('GET', '/');
         $r->setSession($this->session());

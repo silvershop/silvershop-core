@@ -5,21 +5,25 @@ namespace SilverShop\Extension;
 use SilverShop\Cart\ShoppingCart;
 use SilverShop\Model\Address;
 use SilverShop\Model\Order;
+use SilverStripe\Core\Extension;
 use SilverStripe\Forms\DropdownField;
 use SilverStripe\Forms\FieldList;
-use SilverStripe\ORM\DataExtension;
 use SilverStripe\ORM\DataList;
+use SilverStripe\ORM\HasManyList;
 use SilverStripe\Security\Member;
 use SilverStripe\SiteConfig\SiteConfig;
 
 /**
  * ShopMember provides customisations to {@link Member} for shop purposes
+ * @property int $DefaultShippingAddressID
+ * @property int $DefaultBillingAddressID
+ * @method Address DefaultShippingAddress()
+ * @method Address DefaultBillingAddress()
+ * @method HasManyList<Address> AddressBook()
+ * @extends Extension<(Member & static)>
  */
-class MemberExtension extends DataExtension
+class MemberExtension extends Extension
 {
-    /**
-     * @config
-     */
     private static bool $login_joins_cart = true;
 
     private static array $has_many = [

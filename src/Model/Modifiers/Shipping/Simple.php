@@ -12,14 +12,8 @@ use SilverStripe\SiteConfig\SiteConfig;
  */
 class Simple extends Base
 {
-    /**
-     * @config
-     */
     private static int $default_charge = 10;
 
-    /**
-     * @config
-     */
     private static array $charges_by_country = [];
 
     private static string $table_name = 'SilverShop_SimpleModifier';

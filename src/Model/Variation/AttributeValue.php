@@ -11,10 +11,11 @@ use SilverStripe\ORM\ManyManyList;
  * The actual values for a type of product attribute.
  * eg: red, green, blue... 12, 13, 15
  *
- * @property string $Value
+ * @property ?string $Value
  * @property int $Sort
  * @method   AttributeType Type()
- * @method   Variation[]|ManyManyList ProductVariation()
+ * @method ManyManyList<Variation> ProductVariation()
+ * @property int $TypeID
  */
 class AttributeValue extends DataObject
 {

@@ -35,7 +35,7 @@ class CheckoutFormTest extends FunctionalTest
 
         $request = new HTTPRequest('GET', '');
         $request->setSession($this->mainSession->session());
-        $this->checkoutcontroller = new CheckoutPageController();
+        $this->checkoutcontroller = CheckoutPageController::create();
         $this->checkoutcontroller->setRequest($request);
 
         ShoppingCart::singleton()->add($this->socks); //start cart

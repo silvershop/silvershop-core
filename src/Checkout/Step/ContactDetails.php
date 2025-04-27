@@ -16,8 +16,6 @@ class ContactDetails extends CheckoutStep
 {
     /**
      * Whether or not this step should be skipped if user is logged in
-     *
-     * @config
      */
     private static bool $skip_if_logged_in = false;
 

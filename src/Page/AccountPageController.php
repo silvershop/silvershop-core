@@ -2,6 +2,7 @@
 
 namespace SilverShop\Page;
 
+use SilverShop\Extension\OrderManipulationExtension;
 use PageController;
 use SilverShop\Forms\ShopAccountForm;
 use SilverShop\Model\Address;
@@ -21,6 +22,10 @@ use SilverStripe\Security\MemberAuthenticator\MemberAuthenticator;
 use SilverStripe\Security\Security;
 use SilverStripe\SiteConfig\SiteConfig;
 
+/**
+ * @mixin OrderManipulationExtension
+ * @extends PageController<AccountPage>
+ */
 class AccountPageController extends PageController
 {
     private static string $url_segment = 'account';

@@ -17,9 +17,6 @@ use SilverStripe\ORM\FieldType\DBDatetime;
  */
 class CartCleanupTask extends BuildTask
 {
-    /**
-     * @config
-     */
     private static int $delete_after_mins = 120;
 
     /**

@@ -19,9 +19,6 @@ use SilverStripe\ORM\Queries\SQLSelect;
  */
 class VariationForm extends AddProductForm
 {
-    /**
-     * @config
-     */
     private static bool $include_json = true;
 
     protected array $requiredFields = ['Quantity'];

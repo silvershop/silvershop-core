@@ -20,10 +20,9 @@ use SilverStripe\View\Requirements;
 abstract class AddressBook extends Address implements i18nEntityProvider
 {
     private static string $jquery_file = 'https://code.jquery.com/jquery-3.7.0.min.js';
+
     /**
      * The composite field tag to use
-     *
-     * @config
      */
     private static string $composite_field_tag = 'div';
 

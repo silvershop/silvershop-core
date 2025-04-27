@@ -5,16 +5,14 @@ namespace SilverShop\Model\Modifiers;
 use SilverShop\Model\Order;
 use SilverShop\Model\OrderAttribute;
 use SilverStripe\Forms\TextField;
-use SilverStripe\ORM\FieldType\DBCurrency;
-use SilverStripe\ORM\FieldType\DBEnum;
 
 /**
  * The OrderModifier class is a databound object for
  * handling the additional charges or deductions of
  * an order.
  *
- * @property DBCurrency $Amount
- * @property DBEnum $Type
+ * @property float $Amount
+ * @property ?string $Type
  * @property int $Sort
  */
 class OrderModifier extends OrderAttribute

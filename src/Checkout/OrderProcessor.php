@@ -32,14 +32,8 @@ class OrderProcessor
     use Injectable;
     use Configurable;
 
-    /**
-     * @config
-     */
     private static bool $send_admin_notification = false;
 
-    /**
-     * @config
-     */
     private static bool $send_confirmation = false;
 
     protected Order $order;

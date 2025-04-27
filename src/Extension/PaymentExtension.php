@@ -4,13 +4,17 @@ namespace SilverShop\Extension;
 
 use SilverShop\Checkout\OrderProcessor;
 use SilverShop\Model\Order;
+use SilverStripe\Core\Extension;
+use SilverStripe\Omnipay\Model\Payment;
 use SilverStripe\Omnipay\Service\ServiceResponse;
-use SilverStripe\ORM\DataExtension;
 
 /**
  * Customisations to {@link Payment} specifically for the shop module.
+ * @property int $OrderID
+ * @method Order Order()
+ * @extends Extension<(Payment & static)>
  */
-class PaymentExtension extends DataExtension
+class PaymentExtension extends Extension
 {
     private static array $has_one = [
         'Order' => Order::class,

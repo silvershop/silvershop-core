@@ -22,8 +22,6 @@ class Weight extends Base
      *     '1.0': 15
      *     '2.0': 20
      * </code>
-     *
-     * @config
      */
     private static array $weight_cost = [];
 

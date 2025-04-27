@@ -25,8 +25,6 @@ class ShopQuantityField extends ViewableData
 
     /**
      * The max amount to enter
-     *
-     * @config
      */
     private static int $max = 0;
 

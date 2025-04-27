@@ -3,9 +3,11 @@
 namespace SilverShop\Extension;
 
 use SilverStripe\Core\Extension;
+use SilverStripe\Omnipay\Service\PaymentService;
 
 /**
  * Extension to the Omnipay PaymentService class
+ * @extends Extension<(PaymentService & static)>
  */
 class PaymentServiceExtension extends Extension
 {

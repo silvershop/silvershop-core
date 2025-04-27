@@ -9,6 +9,7 @@ use SilverStripe\Core\Extension;
 
 /**
  * Base class for building steps for checkout processing
+ * @extends Extension<static>
  */
 class CheckoutStep extends Extension
 {

@@ -14,7 +14,7 @@ use SilverStripe\ORM\FieldType\DBCurrency;
  * product attributes like colour, size, or type.
  *
  * @property int $Quantity
- * @property DBCurrency $UnitPrice
+ * @property float $UnitPrice
  */
 class OrderItem extends OrderAttribute
 {
@@ -55,8 +55,6 @@ class OrderItem extends OrderAttribute
 
     /**
      * The ORM relationship to the buyable item
-     *
-     * @config
      */
     private static string $buyable_relationship = 'Product';
 

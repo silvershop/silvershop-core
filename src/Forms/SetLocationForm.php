@@ -34,7 +34,7 @@ class SetLocationForm extends Form
         }
     }
 
-    public function setLocation($data, $form): void
+    public function setLocation(array $data, Form $form): void
     {
         singleton(ShopUserInfo::class)->setLocation($data);
         $this->controller->redirectBack();
