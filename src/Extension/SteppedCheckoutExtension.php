@@ -29,11 +29,6 @@ class SteppedCheckoutExtension extends Extension
     private static string $continue_anchor = '';
 
     /**
-     * @var CheckoutPageController
-     */
-    protected $owner;
-
-    /**
      * Set up CheckoutPage_Controller decorators for managing steps
      */
     public static function setupSteps($steps = null): void
