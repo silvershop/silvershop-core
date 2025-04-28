@@ -118,8 +118,10 @@ class Variation extends DataObject implements Buyable
             TextField::create('Price', _t('SilverShop\Page\Product.db_BasePrice', 'Price'))
         );
         //add attributes dropdowns
-        $attributes = $this->Product()->VariationAttributeTypes();
-        if ($attributes->exists()) {
+        if ($this->Product()->exists()) {
+            $attributes = $this->Product()->VariationAttributeTypes();
+        }
+        if ($attributes && $attributes->exists()) {
             foreach ($attributes as $attribute) {
                 if ($field = $attribute->getDropDownField()) {
                     if ($value = $this->AttributeValues()->find('TypeID', $attribute->ID)) {
@@ -232,7 +234,7 @@ class Variation extends DataObject implements Buyable
         if ($attributeValues->exists()) {
             $labelvalues = [];
             foreach ($attributeValues as $value) {
-                if (self::config()->title_has_label) {
+                if (self::config()->title_has_label && $value->Type()->exists()) {
                     $labelvalues[] = $value->Type()->Label . self::config()->title_separator . $value->Value;
                 } else {
                     $labelvalues[] = $value->Value;
@@ -248,12 +250,12 @@ class Variation extends DataObject implements Buyable
 
     public function getCategoryIDs(): array
     {
-        return $this->Product() ? $this->Product()->getCategoryIDs() : [];
+        return $this->Product()->exists() ? $this->Product()->getCategoryIDs() : [];
     }
 
     public function getCategories()
     {
-        return $this->Product() ? $this->Product()->getCategories() : ArrayList::create();
+        return $this->Product()->exists() ? $this->Product()->getCategories() : ArrayList::create();
     }
 
     public function canPurchase(?Member $member = null, int $quantity = 1): bool
@@ -309,7 +311,7 @@ class Variation extends DataObject implements Buyable
      */
     public function Link($action = null)
     {
-        return ($this->ProductID) ? $this->Product()->Link($action) : false;
+        return ($this->ProductID && $this->Product()->exists()) ? $this->Product()->Link($action) : false;
     }
 
     public function createItem($quantity = 1, $filter = []): OrderItem

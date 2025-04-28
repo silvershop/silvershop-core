@@ -605,7 +605,7 @@ class Order extends DataObject
         if ($this->hasMethod('overrideLatestEmail')) {
             return $this->overrideLatestEmail();
         }
-        if ($this->MemberID && ($this->Member()->LastEdited > $this->LastEdited || !$this->Email)) {
+        if ($this->MemberID && $this->Member()->exists() && ($this->Member()->LastEdited > $this->LastEdited || !$this->Email)) {
             return $this->Member()->Email;
         }
         return $this->getField('Email');
@@ -616,8 +616,25 @@ class Order extends DataObject
      */
     public function getName(): string
     {
-        $firstname = $this->FirstName ? $this->FirstName : $this->Member()->FirstName;
-        $surname = $this->FirstName ? $this->Surname : $this->Member()->Surname;
+        $firstname = '';
+        $surname = '';
+
+        if ($this->FirstName) {
+            $firstname = $this->FirstName;
+        } else {
+            if ($this->Member()->exists()) {
+                $firstname = $this->Member()->FirstName;
+            }
+        }
+
+        if ($this->Surname) {
+            $surname = $this->Surname;
+        } else {
+            if ($this->Member()->exists()) {
+                $surname = $this->Member()->Surname;
+            }
+        }
+
         return implode(' ', array_filter([$firstname, $surname]));
     }
 

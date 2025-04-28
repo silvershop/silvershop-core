@@ -39,7 +39,7 @@ class ViewableCartExtension extends Extension
     public function getContinueLink(): string
     {
         if ($cartPage = CartPage::get()->first()) {
-            if ($cartPage->ContinuePageID) {
+            if ($cartPage->ContinuePageID && $cartPage->ContinuePage()->exists()) {
                 return $cartPage->ContinuePage()->Link();
             }
         }

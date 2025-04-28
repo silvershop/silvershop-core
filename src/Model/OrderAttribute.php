@@ -50,7 +50,7 @@ class OrderAttribute extends DataObject
         if (!$this->isInDB()) {
             return true;
         }
-        return $this->Order()->IsCart();
+        return $this->Order()->exists() && $this->Order()->IsCart();
     }
 
     /**
