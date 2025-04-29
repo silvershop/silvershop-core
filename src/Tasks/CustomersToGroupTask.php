@@ -23,7 +23,7 @@ class CustomersToGroupTask extends BuildTask
     public function run($request): void
     {
         $gp = ShopConfigExtension::current()->CustomerGroup();
-        if (empty($gp)) {
+        if (!$gp->exists()) {
             die(
                 _t(
                     'SilverShop\Task\CustomersToGroupTask.DefaultCustomerGroupRequired',
@@ -48,7 +48,9 @@ class CustomersToGroupTask extends BuildTask
             Member::class,
             $where = '"Member"."ID" NOT IN (' . implode(',', $alreadyAdded) . ')',
             $sort = null,
-            $join = 'INNER JOIN "SilverShop_Order" ON "SilverShop_Order"."MemberID" = "Member"."ID"'
+        )->leftJoin(
+            'SilverShop_Order',
+            $join = '"SilverShop_Order"."MemberID" = "Member"."ID"'
         );
         //add combos
         if ($dataList) {
