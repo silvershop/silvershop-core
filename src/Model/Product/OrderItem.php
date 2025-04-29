@@ -3,11 +3,12 @@
 namespace SilverShop\Model\Product;
 
 use SilverShop\Page\Product;
+use SilverStripe\ORM\DataObject;
 use SilverStripe\Versioned\Versioned;
 
 /**
  * Product - Order Item
- * Connects a product to an orde.
+ * Connects a product to an order
  *
  * @property int $ProductVersion
  * @property int $ProductID
@@ -36,9 +37,8 @@ class OrderItem extends \SilverShop\Model\OrderItem
      *  - historical version if order is placed
      *
      * @param boolean $forcecurrent - force getting latest version of the product.
-     * @return ?Product
      */
-    public function Product($forcecurrent = false)
+    public function Product(bool $forcecurrent = false): DataObject|Versioned|null
     {
         //TODO: this might need some unit testing to make sure it compliles with comment description
         //ie use live if in cart (however I see no logic for checking cart status)

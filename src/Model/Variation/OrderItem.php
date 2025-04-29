@@ -3,6 +3,7 @@
 namespace SilverShop\Model\Variation;
 
 use SilverStripe\Assets\Image;
+use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\FieldType\DBDecimal;
 use SilverStripe\Versioned\Versioned;
 
@@ -33,7 +34,7 @@ class OrderItem extends \SilverShop\Model\Product\OrderItem
      *
      * @param  boolean $forcecurrent
      */
-    public function ProductVariation($forcecurrent = false): ?Variation
+    public function ProductVariation($forcecurrent = false): DataObject|Versioned|null
     {
         if ($this->ProductVariationID && $this->ProductVariationVersion && !$forcecurrent) {
             return Versioned::get_version(
@@ -73,7 +74,7 @@ class OrderItem extends \SilverShop\Model\Product\OrderItem
         return $this->Product()->Image();
     }
 
-    public function Width(): DBDecimal
+    public function Width(): float
     {
         if (($variation = $this->ProductVariation()) && $variation->Width) {
             return $variation->Width;
@@ -81,7 +82,7 @@ class OrderItem extends \SilverShop\Model\Product\OrderItem
         return $this->Product()->Width;
     }
 
-    public function Height(): DBDecimal
+    public function Height(): float
     {
         if (($variation = $this->ProductVariation()) && $variation->Height) {
             return $variation->Height;
@@ -89,7 +90,7 @@ class OrderItem extends \SilverShop\Model\Product\OrderItem
         return $this->Product()->Height;
     }
 
-    public function Depth(): DBDecimal
+    public function Depth(): float
     {
         if (($variation = $this->ProductVariation()) && $variation->Depth) {
             return $variation->Depth;
@@ -97,7 +98,7 @@ class OrderItem extends \SilverShop\Model\Product\OrderItem
         return $this->Product()->Depth;
     }
 
-    public function Weight(): DBDecimal
+    public function Weight(): float
     {
         if (($variation = $this->ProductVariation()) && $variation->Weight) {
             return $variation->Weight;
