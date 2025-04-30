@@ -93,6 +93,7 @@ class CheckoutComponentConfig
                 }
             }
         }
+        return null;
     }
 
     /**

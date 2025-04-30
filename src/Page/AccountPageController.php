@@ -24,7 +24,6 @@ use SilverStripe\SiteConfig\SiteConfig;
 
 /**
  * @mixin OrderManipulationExtension
- * @extends PageController<AccountPage>
  */
 class AccountPageController extends PageController
 {
@@ -198,14 +197,14 @@ class AccountPageController extends PageController
 
     function setdefaultbilling(HTTPRequest $httpRequest): HTTPResponse
     {
-        $this->member->DefaultBillingAddressID = $httpRequest->param('ID');
+        $this->member->DefaultBillingAddressID = (int) $httpRequest->param('ID');
         $this->member->write();
         return $this->redirectBack();
     }
 
     function setdefaultshipping(HTTPRequest $httpRequest): HTTPResponse
     {
-        $this->member->DefaultShippingAddressID = $httpRequest->param('ID');
+        $this->member->DefaultShippingAddressID = (int) $httpRequest->param('ID');
         $this->member->write();
         return $this->redirectBack();
     }

@@ -10,7 +10,6 @@ use SilverShop\Forms\CartForm;
  * Class CartPageController
  *
  * @mixin ViewableCartExtension
- * @extends PageController<CartPage>
  */
 class CartPageController extends PageController
 {

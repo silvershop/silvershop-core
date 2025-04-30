@@ -118,6 +118,7 @@ class Variation extends DataObject implements Buyable
             TextField::create('Price', _t('SilverShop\Page\Product.db_BasePrice', 'Price'))
         );
         //add attributes dropdowns
+        $attributes = null;
         if ($this->Product()->exists()) {
             $attributes = $this->Product()->VariationAttributeTypes();
         }

@@ -200,7 +200,6 @@ class OrderActionsForm extends Form
             if (self::config()->email_notification) {
                 OrderEmailNotifier::create($this->order)->sendCancelNotification();
             }
-
             $this->controller->sessionMessage(
                 _t(__CLASS__ . '.OrderCancelled', 'Order sucessfully cancelled'),
                 'warning'

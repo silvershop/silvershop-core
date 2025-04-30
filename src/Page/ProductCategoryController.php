@@ -7,9 +7,6 @@ use SilverShop\ListSorter\ListSorter;
 use SilverStripe\ORM\DataList;
 use SilverStripe\ORM\PaginatedList;
 
-/**
- * @extends PageController<ProductCategory>
- */
 class ProductCategoryController extends PageController
 {
     /**

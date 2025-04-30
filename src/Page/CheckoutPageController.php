@@ -35,7 +35,6 @@ use SilverStripe\View\SSViewer;
  * @mixin Summary
  * @mixin ViewableCartExtension
  * @mixin OrderManipulationExtension
- * @extends PageController<CheckoutPage>
  */
 class CheckoutPageController extends PageController
 {
