@@ -877,12 +877,12 @@ class Order extends DataObject
         }
         $val .= "</ul>\n";
         $val .= "<div class='items'><h2>Items</h2>";
-        if ($items = $this->Items()) {
+        if ($this->Items()->exists()) {
             $val .= $this->Items()->debug();
         }
         $val .= "</div><div class='modifiers'><h2>Modifiers</h2>";
-        if ($modifiers = $this->Modifiers()) {
-            $val .= $modifiers->debug();
+        if ($this->Modifiers()->exists()) {
+            $val .= $this->Modifiers()->debug();
         }
 
         return $val . "</div></div>";

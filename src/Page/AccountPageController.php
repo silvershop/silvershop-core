@@ -185,7 +185,7 @@ class AccountPageController extends PageController
         // NOTE: we don't want to fully delete the address because it's presumably still
         // attached to an order. Setting MemberID to 0 means it won't show up in the address
         // book any longer.
-        $address = $this->member->AddressBook()->byID($httpRequest->param('ID'));
+        $address = $this->member->AddressBook()->byID((int) $httpRequest->param('ID'));
         if ($address) {
             $address->MemberID = 0;
             $address->write();

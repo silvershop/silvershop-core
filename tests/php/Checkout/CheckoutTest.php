@@ -88,7 +88,7 @@ class CheckoutTest extends SapphireTest
         );
         $this->assertTrue(
             ($result instanceof Member),
-            $this->checkout->getMessage() || ''
+            $this->checkout->getMessage() ?: '$result is an instanceof Member'
         );
     }
 

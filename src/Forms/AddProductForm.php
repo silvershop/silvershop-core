@@ -9,7 +9,6 @@ use SilverShop\Extension\ShopConfigExtension;
 use SilverShop\Model\Buyable;
 use SilverShop\Page\Product;
 use SilverShop\ShopTools;
-use SilverStripe\Control\Controller;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Convert;
 use SilverStripe\Forms\DropdownField;
@@ -34,7 +33,7 @@ class AddProductForm extends Form
      */
     protected array $saveablefields = [];
 
-    public function __construct(RequestHandler $requestHandler, $name = "AddProductForm")
+    public function __construct(RequestHandler $requestHandler, string $name = "AddProductForm")
     {
 
         parent::__construct(
@@ -109,9 +108,9 @@ class AddProductForm extends Form
     }
 
     /**
-     * @param Controller $controller the controller instance that is being passed to the form
+     * @param RequestHandler $controller the controller instance that is being passed to the form
      */
-    protected function getFormFields($controller = null): FieldList
+    protected function getFormFields(RequestHandler $controller = null): FieldList
     {
         $fieldList = FieldList::create();
 

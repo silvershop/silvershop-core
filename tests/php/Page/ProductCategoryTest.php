@@ -119,7 +119,7 @@ class ProductCategoryTest extends FunctionalTest
             $products
         );
 
-        $this->socks->BasePrice = '';
+        $this->socks->BasePrice = 0;
         $this->socks->write();
 
         $products = $this->products->ProductsShowable();

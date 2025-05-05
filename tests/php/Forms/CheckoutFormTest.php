@@ -69,7 +69,7 @@ class CheckoutFormTest extends FunctionalTest
             "{$ns}Notes_Notes"                  => "Leave it around the back",
             "{$ns}Terms_ReadTermsAndConditions" => "1",
         ];
-        $checkoutForm->loadDataFrom($data, true);
+        $checkoutForm->loadDataFrom($data, 1);
         $valid = $checkoutForm->validationResult()->isValid();
         $errors = $checkoutForm->getValidator()->getErrors();
         $this->assertTrue($valid, print_r($errors, true));
@@ -144,7 +144,7 @@ class CheckoutFormTest extends FunctionalTest
             "{$ns}Notes_Notes"                  => "Leave it around the back",
             "{$ns}Terms_ReadTermsAndConditions" => "1",
         ];
-        $checkoutForm->loadDataFrom($dataCountryAbsent, true);
+        $checkoutForm->loadDataFrom($dataCountryAbsent, 1);
         $valid = $checkoutForm->validationResult()->isValid();
         $errors = $checkoutForm->getValidator()->getErrors();
         $this->assertTrue($valid, print_r($errors, true));
@@ -193,7 +193,7 @@ class CheckoutFormTest extends FunctionalTest
             "{$ns}Notes_Notes"                  => "",
             "{$ns}Terms_ReadTermsAndConditions" => "",
         ];
-        $checkoutForm->loadDataFrom($invalidData, true);
+        $checkoutForm->loadDataFrom($invalidData, 1);
         $valid = $checkoutForm->validationResult()->isValid();
         $errors = $checkoutForm->getValidator()->getErrors();
         $this->assertFalse($valid, 'Form should be invalid with empty and incorrect data');

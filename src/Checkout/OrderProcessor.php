@@ -259,7 +259,7 @@ class OrderProcessor
      */
     public function placeOrder(): bool
     {
-        if (!$this->order) {
+        if (!$this->order->exists()) {
             $this->error(_t(__CLASS__ . ".NoOrderStarted", "A new order has not yet been started."));
             return false;
         }
@@ -284,9 +284,7 @@ class OrderProcessor
 
         if (!$this->order->Placed) {
             $this->order->setField('Placed', DBDatetime::now()->Rfc2822()); //record placed order datetime
-            if ($request = Controller::curr()->getRequest()) {
-                $this->order->IPAddress = $request->getIP(); //record client IP
-            }
+            $this->order->IPAddress = Controller::curr()->getRequest()->getIP(); //record client IP
         }
 
         // Add an error handler that throws an exception upon error, so that we can catch errors as exceptions

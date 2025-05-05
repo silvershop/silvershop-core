@@ -302,11 +302,6 @@ class ShoppingCart
     private function findOrMakeItem(Buyable $buyable, $quantity = 1, $filter = []): ?OrderItem
     {
         $order = $this->findOrMake();
-
-        if (!$order) {
-            return null;
-        }
-
         $item = $this->get($buyable, $filter);
 
         if (!$item instanceof OrderItem) {

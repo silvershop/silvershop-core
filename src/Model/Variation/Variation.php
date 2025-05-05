@@ -125,7 +125,7 @@ class Variation extends DataObject implements Buyable
         if ($attributes && $attributes->exists()) {
             foreach ($attributes as $attribute) {
                 if ($field = $attribute->getDropDownField()) {
-                    if ($value = $this->AttributeValues()->find('TypeID', $attribute->ID)) {
+                    if ($value = $this->AttributeValues()->find('TypeID', (string) $attribute->ID)) {
                         $field->setValue($value->ID);
                     }
                     $fieldList->push($field);

@@ -194,12 +194,12 @@ class OrderTest extends SapphireTest
             $hasManyList
         );
 
-        $mp3player = $hasManyList->find('ProductID', $this->mp3player->ID);//join needed to provide ProductID
+        $mp3player = $hasManyList->find('ProductID', (string) $this->mp3player->ID);//join needed to provide ProductID
         $this->assertNotNull($mp3player, "MP3 player is in order");
         $this->assertEquals(200, $mp3player->UnitPrice(), "Unit price remains the same");
         $this->assertEquals(400, $mp3player->Total(), "Total remains the same");
 
-        $socks = $hasManyList->find('ProductID', $this->socks->ID);
+        $socks = $hasManyList->find('ProductID', (string) $this->socks->ID);
         $this->assertNotNull($socks, "Socks are in order");
         $this->assertEquals(8, $socks->UnitPrice(), "Unit price remains the same");
         $this->assertEquals(8, $socks->Total(), "Total remains the same");

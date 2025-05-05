@@ -15,13 +15,13 @@ class I18nDatetime extends DBDatetime
      */
     public function Nice(): ?string
     {
-        if ($this->value) {
-            return date_format(
-                date_create($this->getTimestamp()),
-                _t('SilverShop\Generic.DateTimeFormatNice', 'm/d/Y h:i A')
-            );
+        if (!$this->value) {
+            return null;
         }
-        return null;
+        return date(
+            _t('SilverShop\Generic.DateTimeFormatNice', 'm/d/Y h:i A'),
+            $this->getTimestamp()
+        );
     }
 
     /**
@@ -30,21 +30,24 @@ class I18nDatetime extends DBDatetime
      */
     public function NiceDate(): ?string
     {
-        if ($this->value) {
-            return date_format(
-                date_create($this->getTimestamp()),
-                _t('SilverShop\Generic.DateFormatNice', 'm/d/Y')
-            );
+        if (!$this->value) {
+            return null;
         }
-        return null;
+        return date(
+            _t('SilverShop\Generic.DateFormatNice', 'm/d/Y'),
+            $this->getTimestamp()
+        );
     }
 
     /**
      * Returns the 24h datetime in the format given in the lang file.
      * 'SilverShop\Generic.DateTimeFormatNice24'. Defaults to 'd/m/Y H:i'
      */
-    public function Nice24(): string
+    public function Nice24(): ?string
     {
+        if (!$this->value) {
+            return null;
+        }
         return date(
             _t('SilverShop\Generic.DateTimeFormatNice24', 'd/m/Y H:i'),
             $this->getTimestamp()

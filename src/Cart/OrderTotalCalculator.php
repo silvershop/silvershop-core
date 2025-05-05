@@ -80,7 +80,7 @@ class OrderTotalCalculator
                 $sort++;
             }
             //clear old modifiers out
-            if ($existingmodifiers) {
+            if ($existingmodifiers->exists()) {
                 foreach ($existingmodifiers as $modifier) {
                     if (!in_array($modifier->ClassName, $modifierclasses)) {
                         $modifier->delete();

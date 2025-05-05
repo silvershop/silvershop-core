@@ -43,7 +43,7 @@ class ContactDetails extends CheckoutStep
                 'OrderForm' => $form,
             ];
         }
-        if ($form->getValidator()->validate()) {
+        if ($form->getValidator()->validate()->isValid()) {
             return Controller::curr()->redirect($this->NextStepLink());
         }
         $form->clearMessage();

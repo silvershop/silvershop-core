@@ -39,13 +39,13 @@ class ShopEmailPreviewTask extends BuildTask
     {
         $email = $request->remaining();
         $params = $request->allParams();
-        $url = Director::absoluteURL("dev/{$params['Action']}/{$params['TaskName']}", true);
+        $url = Director::absoluteURL("dev/{$params['Action']}/{$params['TaskName']}");
         $debug = true;
-        
+
         if ($request->getVar('debug')) {
             $debug = $request->getVar('debug');
         }
-        
+
         echo '<h2>Choose Email</h2>';
         echo '<ul>';
         foreach ($this->previewableEmails as $method) {
@@ -56,11 +56,11 @@ class ShopEmailPreviewTask extends BuildTask
         if ($email && in_array($email, $this->previewableEmails)) {
             $order = Order::get()->first();
             $notifier = OrderEmailNotifier::create($order);
-            
+
             if ($debug) {
                 $notifier->setDebugMode(true);
             }
-            
+
             $method = "send$email";
             echo $notifier->$method();
         }

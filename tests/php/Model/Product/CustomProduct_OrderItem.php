@@ -32,8 +32,8 @@ class CustomProduct_OrderItem extends OrderItem implements TestOnly
 
     public function UnitPrice()
     {
-        if ($product = $this->CustomProduct()) {
-            return $product->Price;
+        if ($this->CustomProduct()->exists()) {
+            return $this->CustomProduct()->Price;
         }
         return 0;
     }

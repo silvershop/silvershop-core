@@ -125,7 +125,7 @@ class ShoppingCartControllerTest extends FunctionalTest
         // join needed to provide ProductID
         $mp3playerItem = $items
             ->innerJoin("SilverShop_Product_OrderItem", "\"SilverShop_OrderItem\".\"ID\" = \"SilverShop_Product_OrderItem\".\"ID\"")
-            ->find('ProductID', $this->mp3player->ID);
+            ->find('ProductID', (string) $this->mp3player->ID);
 
         $this->assertNotNull($mp3playerItem, "Mp3 player is in cart");
 
@@ -145,7 +145,7 @@ class ShoppingCartControllerTest extends FunctionalTest
         $mp3playeritem =
             $items->innerJoin("SilverShop_Product_OrderItem", "\"SilverShop_OrderItem\".\"ID\" = \"SilverShop_Product_OrderItem\".\"ID\"")->find(
                 'ProductID',
-                $this->mp3player->ID
+                (string) $this->mp3player->ID
             ); //join needed to provide ProductID
         $this->assertEquals($mp3playeritem->Quantity, 5, 'We have 5 of this product in the cart.');
 

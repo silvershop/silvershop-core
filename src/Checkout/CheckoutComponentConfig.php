@@ -68,7 +68,7 @@ class CheckoutComponentConfig
      */
     public function getComponents(): ArrayList
     {
-        if (!$this->components) {
+        if (!$this->components->exists()) {
             $this->components = ArrayList::create();
         }
         return $this->components;

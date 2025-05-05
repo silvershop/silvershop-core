@@ -128,7 +128,7 @@ class OrderManipulationExtension extends Extension
     public function order(HTTPRequest $httpRequest): array|HTTPResponse
     {
         //move the shopping cart session id to past order ids, if it is now an order
-        ShoppingCart::singleton()->archiveorderid($httpRequest->param('ID'));
+        ShoppingCart::singleton()->archiveorderid((int) $httpRequest->param('ID'));
 
         $order = $this->orderfromid();
         if (!$order instanceof DataObject) {
