@@ -11,50 +11,51 @@ use SilverStripe\ORM\ManyManyList;
  * The actual values for a type of product attribute.
  * eg: red, green, blue... 12, 13, 15
  *
- * @property string $Value
+ * @property ?string $Value
  * @property int $Sort
  * @method   AttributeType Type()
- * @method   Variation[]|ManyManyList ProductVariation()
+ * @method ManyManyList<Variation> ProductVariation()
+ * @property int $TypeID
  */
 class AttributeValue extends DataObject
 {
-    private static $db = [
+    private static array $db = [
         'Value' => 'Varchar',
         'Sort' => 'Int',
     ];
 
-    private static $has_one = [
+    private static array $has_one = [
         'Type' => AttributeType::class,
     ];
 
-    private static $belongs_many_many = [
+    private static array $belongs_many_many = [
         'ProductVariation' => Variation::class,
     ];
 
-    private static $summary_fields = [
+    private static array $summary_fields = [
         'Value' => 'Value',
     ];
 
-    private static $indexes = [
+    private static array $indexes = [
         'LastEdited' => true,
         'Sort' => true,
     ];
 
-    private static $table_name = 'SilverShop_AttributeValue';
+    private static string $table_name = 'SilverShop_AttributeValue';
 
-    private static $default_sort = '"TypeID" ASC, "Sort" ASC, "Value" ASC';
+    private static string $default_sort = '"TypeID" ASC, "Sort" ASC, "Value" ASC';
 
-    private static $singular_name = 'Value';
+    private static string $singular_name = 'Value';
 
-    private static $plural_name = 'Values';
+    private static string $plural_name = 'Values';
 
-    public function getCMSFields()
+    public function getCMSFields(): FieldList
     {
         $this->beforeUpdateCMSFields(
-            function (FieldList $fields) {
+            function (FieldList $fieldList): void {
 
-                $fields->removeByName('TypeID');
-                $fields->removeByName('Sort');
+                $fieldList->removeByName('TypeID');
+                $fieldList->removeByName('Sort');
             }
         );
 

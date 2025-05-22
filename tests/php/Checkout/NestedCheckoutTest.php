@@ -15,7 +15,7 @@ class NestedCheckoutTest extends SapphireTest
         parent::setUp();
     }
 
-    public function testNestedCheckoutForm()
+    public function testNestedCheckoutForm(): void
     {
         // NOTE: the "myshop" here comes from the fixtures
         $this->assertEquals(

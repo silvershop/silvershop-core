@@ -5,8 +5,8 @@ namespace SilverShop\Tests\Model\Modifiers;
 use Exception;
 use SilverShop\Model\Modifiers\Tax\FlatTax;
 use SilverShop\Model\Order;
-use SilverShop\Model\OrderModifier;
 use SilverShop\Page\Product;
+use SilverShop\Tests\Model\Modifiers\OrderModifierTest_TestModifier;
 use SilverShop\Tests\Model\Product\CustomProduct_OrderItem;
 use SilverShop\Tests\ShopTest;
 use SilverStripe\Core\Config\Config;
@@ -22,17 +22,10 @@ class OrderModifierTest extends FunctionalTest
     public static $fixture_file = __DIR__ . '/../../Fixtures/shop.yml';
     public static $disable_theme = true;
     protected $usesTransactions = false;
-    protected static $use_draft_site = true;
+    protected static bool $use_draft_site = true;
 
-    /**
-     * @var Product
-     */
-    protected $mp3player;
-
-    /**
-     * @var Product
-     */
-    protected $socks;
+    protected Product $mp3player;
+    protected Product $socks;
 
     protected static $extra_dataobjects = [
         CustomProduct_OrderItem::class,
@@ -63,7 +56,7 @@ class OrderModifierTest extends FunctionalTest
         $this->socks->publishSingle();
     }
 
-    public function testModifierCalculation()
+    public function testModifierCalculation(): void
     {
         $order = $this->createOrder();
         $this->assertEquals(510, $order->calculate(), "Total with 25% tax");
@@ -74,7 +67,7 @@ class OrderModifierTest extends FunctionalTest
         $this->assertEquals(408, $order->calculate(), "Total with no modification");
     }
 
-    public function testModifierFailure()
+    public function testModifierFailure(): void
     {
         if (!DB::get_conn()->supportsTransactions()) {
             $this->markTestSkipped(
@@ -99,8 +92,8 @@ class OrderModifierTest extends FunctionalTest
         $this->assertEquals('522.5', $order->Total);
 
         $amounts = [];
-        foreach ($order->Modifiers()->sort('Sort') as $modifier) {
-            $amounts[] = (string)$modifier->Amount;
+        foreach ($order->Modifiers()->sort('Sort') as $hasManyList) {
+            $amounts[] = (string)$hasManyList->Amount;
         }
 
         $this->assertEquals(['10', '104.5'], $amounts);
@@ -120,20 +113,20 @@ class OrderModifierTest extends FunctionalTest
         $this->assertEquals('522.5', $order->Total);
 
         $amounts = [];
-        foreach ($order->Modifiers()->sort('Sort') as $modifier) {
-            $amounts[] = (string)$modifier->Amount;
+        foreach ($order->Modifiers()->sort('Sort') as $hasManyList) {
+            $amounts[] = (string)$hasManyList->Amount;
         }
 
         $this->assertEquals(['10', '104.5'], $amounts);
     }
 
-    public function createOrder()
+    public function createOrder(): Order
     {
-        $order = new Order();
+        $order = Order::create();
         $order->write();
-        $item1a = $this->mp3player->createItem(2);
-        $item1a->write();
-        $order->Items()->add($item1a);
+        $orderItem = $this->mp3player->createItem(2);
+        $orderItem->write();
+        $order->Items()->add($orderItem);
         $item1b = $this->socks->createItem();
         $item1b->write();
         $order->Items()->add($item1b);

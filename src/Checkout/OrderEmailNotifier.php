@@ -12,7 +12,6 @@ use SilverStripe\Control\Email\Email;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Config\Configurable;
 use SilverStripe\Core\Injector\Injectable;
-use SilverStripe\Core\Injector\Injector;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 
 /**
@@ -27,71 +26,44 @@ class OrderEmailNotifier
 
     /**
      * BCC Confirmation Emails to Admin
-     *
-     * @var boolean
      */
-    private static $bcc_confirmation_to_admin = false;
+    private static bool $bcc_confirmation_to_admin = false;
 
     /**
      * BCC Receipt Emails to Admin
-     *
-     * @var boolean
      */
-    private static $bcc_receipt_to_admin = false;
+    private static bool $bcc_receipt_to_admin = false;
 
     /**
      * BCC Status Change Emails to Admin
-     *
-     * @var boolean
      */
-    private static $bcc_status_change_to_admin = false;
+    private static bool $bcc_status_change_to_admin = false;
 
-    private static $dependencies = [
+    private static array $dependencies = [
         'Logger' => '%$' . LoggerInterface::class,
     ];
 
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger;
+    protected LoggerInterface $logger;
 
-    /**
-     * @var Order $order
-     */
-    protected $order;
+    protected Order $order;
 
-    /**
-     * @var boolean
-     */
-    protected $debugMode = false;
+    protected bool $debugMode = false;
 
     /**
      * Assign the order to a local variable
-     *
-     * @param Order $order
      */
     public function __construct(Order $order)
     {
         $this->order = $order;
     }
 
-    /**
-     * @param bool $bool
-     * @return $this
-     */
-    public function setDebugMode($bool)
+    public function setDebugMode(bool $bool): static
     {
         $this->debugMode = $bool;
         return $this;
     }
 
-    /**
-     * @param string $template
-     * @param string $subject
-     *
-     * @return Email
-     */
-    protected function buildEmail($template, $subject)
+    protected function buildEmail(string $template, string $subject): Email
     {
         $from = ShopConfigExtension::config()->email_from ? ShopConfigExtension::config()->email_from : Email::config()->admin_email;
         $to = $this->order->getLatestEmail();
@@ -124,10 +96,8 @@ class OrderEmailNotifier
      * @param string $template    - the class name of the email you wish to send
      * @param string $subject     - subject of the email
      * @param bool   $copyToAdmin - true by default, whether it should send a copy to the admin
-     *
-     * @return bool|string
      */
-    public function sendEmail($template, $subject, $copyToAdmin = true): bool|string
+    public function sendEmail(string $template, string $subject, $copyToAdmin = true): bool|string
     {
         $email = $this->buildEmail($template, $subject);
 
@@ -136,23 +106,20 @@ class OrderEmailNotifier
         }
         if ($this->debugMode) {
             return $this->debug($email);
-        } else {
-            try {
-                $email->send();
-            } catch (TransportExceptionInterface $e) {
-                $this->logger->error('OrderEmailNotifier.sendEmail: error sending email in ' . __FILE__ . ' line ' . __LINE__ . ": {$e->getMessage()}");
-                return false;
-            }
-            return true;
         }
+        try {
+            $email->send();
+        } catch (TransportExceptionInterface $e) {
+            $this->logger->error('OrderEmailNotifier.sendEmail: error sending email in ' . __FILE__ . ' line ' . __LINE__ . ": {$e->getMessage()}");
+            return false;
+        }
+        return true;
     }
 
     /**
      * Send customer a confirmation that the order has been received
-     *
-     * @return bool
      */
-    public function sendConfirmation()
+    public function sendConfirmation(): bool|string
     {
         $subject = _t(
             'SilverShop\ShopEmail.ConfirmationSubject',
@@ -169,8 +136,6 @@ class OrderEmailNotifier
 
     /**
      * Notify store owner about new order.
-     *
-     * @return bool|string
      */
     public function sendAdminNotification(): bool|string
     {
@@ -186,22 +151,21 @@ class OrderEmailNotifier
 
         if ($this->debugMode) {
             return $this->debug($email);
-        } else {
-            try {
-                $email->send();
-            } catch (TransportExceptionInterface $e) {
-                $this->logger->error('OrderEmailNotifier.sendAdminNotification: error sending email in ' . __FILE__ . ' line ' . __LINE__ . ": {$e->getMessage()}");
-                return false;
-            }
-            return true;
         }
+        try {
+            $email->send();
+        } catch (TransportExceptionInterface $e) {
+            $this->logger->error('OrderEmailNotifier.sendAdminNotification: error sending email in ' . __FILE__ . ' line ' . __LINE__ . ": {$e->getMessage()}");
+            return false;
+        }
+        return true;
     }
 
     /**
      * Send customer an order receipt email.
      * Precondition: The order payment has been successful
      */
-    public function sendReceipt()
+    public function sendReceipt(): bool|string
     {
         $subject = _t(
             'SilverShop\ShopEmail.ReceiptSubject',
@@ -235,15 +199,14 @@ class OrderEmailNotifier
 
         if ($this->debugMode) {
             return $this->debug($email);
-        } else {
-            try {
-                $email->send();
-            } catch (TransportExceptionInterface $e) {
-                $this->logger->error('OrderEmailNotifier.sendCancelNotification: error sending email in ' . __FILE__ . ' line ' . __LINE__ . ": {$e->getMessage()}");
-                return false;
-            }
-            return true;
         }
+        try {
+            $email->send();
+        } catch (TransportExceptionInterface $e) {
+            $this->logger->error('OrderEmailNotifier.sendCancelNotification: error sending email in ' . __FILE__ . ' line ' . __LINE__ . ": {$e->getMessage()}");
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -251,14 +214,12 @@ class OrderEmailNotifier
      *
      * @param string $title Subject for email
      * @param string $note  Optional note-content (instead of using the OrderStatusLog)
-     *
-     * @return bool|string
      */
-    public function sendStatusChange($title, $note = null): bool|string
+    public function sendStatusChange(string $title, string $note = ''): bool|string
     {
         $latestLog = null;
 
-        if (!$note) {
+        if ($note === '' || $note === '0') {
             // Find the latest log message that hasn't been sent to the client yet, but can be (e.g. is visible)
             $latestLog = OrderStatusLog::get()
                 ->filter("OrderID", $this->order->ID)
@@ -278,9 +239,6 @@ class OrderEmailNotifier
             $adminEmail = Email::config()->admin_email;
         }
 
-        /**
-         * @var Email $e
-         */
         $email = Email::create()
             ->setFrom($adminEmail)
             ->setSubject(_t('SilverShop\ShopEmail.StatusChangeSubject', 'SilverShop – {Title}', ['Title' => $title]))
@@ -323,11 +281,8 @@ class OrderEmailNotifier
      * The new Email::debug method in SilverStripe dumps the entire message with all message parts,
      * which makes it unusable to preview an Email.
      * This method simulates the old way of the message output and renders only the HTML body.
-     *
-     * @param Email $email
-     * @return string
      */
-    protected function debug(Email $email)
+    protected function debug(Email $email): string
     {
         $htmlTemplate = $email->getHTMLTemplate();
         $htmlRender = $email->getData()->renderWith($htmlTemplate)->RAW();
@@ -341,10 +296,9 @@ class OrderEmailNotifier
     }
 
     /**
-     * @param LoggerInterface $logger
      * @return $this
      */
-    public function setLogger(LoggerInterface $logger)
+    public function setLogger(LoggerInterface $logger): static
     {
         $this->logger = $logger;
         return $this;

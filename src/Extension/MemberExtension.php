@@ -5,39 +5,40 @@ namespace SilverShop\Extension;
 use SilverShop\Cart\ShoppingCart;
 use SilverShop\Model\Address;
 use SilverShop\Model\Order;
-use SilverStripe\Control\HTTPRequest;
+use SilverStripe\Core\Extension;
 use SilverStripe\Forms\DropdownField;
 use SilverStripe\Forms\FieldList;
-use SilverStripe\ORM\DataExtension;
 use SilverStripe\ORM\DataList;
+use SilverStripe\ORM\HasManyList;
 use SilverStripe\Security\Member;
 use SilverStripe\SiteConfig\SiteConfig;
 
 /**
  * ShopMember provides customisations to {@link Member} for shop purposes
+ * @property int $DefaultShippingAddressID
+ * @property int $DefaultBillingAddressID
+ * @method Address DefaultShippingAddress()
+ * @method Address DefaultBillingAddress()
+ * @method HasManyList<Address> AddressBook()
+ * @extends Extension<(Member & static)>
  */
-class MemberExtension extends DataExtension
+class MemberExtension extends Extension
 {
-    /**
-     * @config
-     */
     private static bool $login_joins_cart = true;
 
-    private static $has_many = [
+    private static array $has_many = [
         'AddressBook' => Address::class,
     ];
 
-    private static $has_one = [
+    private static array $has_one = [
         'DefaultShippingAddress' => Address::class,
         'DefaultBillingAddress' => Address::class,
     ];
 
     /**
      * Get member by unique field.
-     *
-     * @return Member|null
      */
-    public static function get_by_identifier($idvalue)
+    public static function get_by_identifier($idvalue): ?Member
     {
         return Member::get()->filter(
             Member::config()->unique_identifier_field,
@@ -45,12 +46,12 @@ class MemberExtension extends DataExtension
         )->first();
     }
 
-    public function updateCMSFields(FieldList $fields)
+    public function updateCMSFields(FieldList $fieldList): void
     {
-        $fields->removeByName('Country');
-        $fields->removeByName('DefaultShippingAddressID');
-        $fields->removeByName('DefaultBillingAddressID');
-        $fields->addFieldToTab(
+        $fieldList->removeByName('Country');
+        $fieldList->removeByName('DefaultShippingAddressID');
+        $fieldList->removeByName('DefaultBillingAddressID');
+        $fieldList->addFieldToTab(
             'Root.Main',
             DropdownField::create(
                 'Country',
@@ -60,7 +61,7 @@ class MemberExtension extends DataExtension
         );
     }
 
-    public function updateMemberFormFields($fields)
+    public function updateMemberFormFields($fields): void
     {
         $fields->removeByName('DefaultShippingAddressID');
         $fields->removeByName('DefaultBillingAddressID');
@@ -73,7 +74,7 @@ class MemberExtension extends DataExtension
      * Link the current order to the current member on login,
      * if there is one, and if configuration is set to do so.
      */
-    public function afterMemberLoggedIn()
+    public function afterMemberLoggedIn(): void
     {
         if (Member::config()->login_joins_cart && $order = ShoppingCart::singleton()->current()) {
             $order->MemberID = $this->owner->ID;
@@ -84,7 +85,7 @@ class MemberExtension extends DataExtension
     /**
      * Clear the cart, and session variables on member logout
      */
-    public function beforeMemberLoggedOut()
+    public function beforeMemberLoggedOut(): void
     {
         if (Member::config()->login_joins_cart) {
             ShoppingCart::singleton()->clear();
@@ -96,7 +97,7 @@ class MemberExtension extends DataExtension
      *
      * @return DataList list of orders
      */
-    public function getPastOrders()
+    public function getPastOrders(): DataList
     {
         return Order::get()
             ->filter('MemberID', $this->owner->ID)

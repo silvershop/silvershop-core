@@ -18,25 +18,12 @@ use SilverStripe\Dev\SapphireTest;
 class VariationVersionTest extends SapphireTest
 {
     public static $fixture_file   = '../../Fixtures/variations.yml';
+    public static bool $disable_theme  = true;
+    protected static bool $use_draft_site = true;
 
-    public static $disable_theme  = true;
-
-    protected static $use_draft_site = true;
-
-    /**
-     * @var Product
-     */
-    protected $mp3player;
-
-    /**
-     * @var Product
-     */
-    protected $ball;
-
-    /**
-     * @var Variation
-     */
-    protected $redLarge;
+    protected Product $mp3player;
+    protected Product $ball;
+    protected Variation $redLarge;
 
     public function setUp(): void
     {
@@ -46,15 +33,15 @@ class VariationVersionTest extends SapphireTest
         $this->redLarge = $this->objFromFixture(Variation::class, "redLarge");
     }
 
-    public function testVariationsPersistOnUnpublish()
+    public function testVariationsPersistOnUnpublish(): void
     {
-        $color = $this->objFromFixture(AttributeType::class, "color");
+        $attributeType = $this->objFromFixture(AttributeType::class, "color");
         $values = ['Black', 'Blue'];
 
-        $this->mp3player->generateVariationsFromAttributes($color, $values);
+        $this->mp3player->generateVariationsFromAttributes($attributeType, $values);
         $this->mp3player->publishRecursive();
 
-        $variations = $this->mp3player->Variations();
-        $this->assertEquals($variations->Count(), 2, "two variations created and persist after product unpublished");
+        $hasManyList = $this->mp3player->Variations();
+        $this->assertEquals($hasManyList->Count(), 2, "two variations created and persist after product unpublished");
     }
 }

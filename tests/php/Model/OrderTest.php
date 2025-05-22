@@ -33,21 +33,9 @@ class OrderTest extends SapphireTest
         CustomProduct_OrderItem::class,
     ];
 
-    /**
-     * @var Product
-     */
-    protected $mp3player;
-
-    /**
-     * @var Product
-     */
-    protected $socks;
-
-    /**
-     * @var Product
-     */
-    protected $beachball;
-
+    protected Product $mp3player;
+    protected Product $socks;
+    protected Product $beachball;
 
     public function setUp(): void
     {
@@ -70,7 +58,7 @@ class OrderTest extends SapphireTest
         unset($this->beachball);
     }
 
-    public function testCMSFields()
+    public function testCMSFields(): void
     {
         //$order = $this->objFromFixture(Order::class, "paid");
         $fields = singleton(Order::class)->getCMSFields();
@@ -107,7 +95,7 @@ class OrderTest extends SapphireTest
         );
     }
 
-    public function testSearchFields()
+    public function testSearchFields(): void
     {
         $fields = singleton(Order::class)->scaffoldSearchFields();
 
@@ -117,7 +105,7 @@ class OrderTest extends SapphireTest
         $this->assertNotNull($fields->dataFieldByName('Status'), 'Status should be searchable');
     }
 
-    public function testDebug()
+    public function testDebug(): void
     {
         $order = $this->objFromFixture(Order::class, 'cart');
         $debug = $order->debug();
@@ -128,30 +116,30 @@ class OrderTest extends SapphireTest
         $this->assertStringContainsString('<h2>Items</h2>', $debug);
 
         // Check items are listed
-        foreach ($order->Items() as $item) {
-            $this->assertStringContainsString((string)$item->Quantity, $debug);
-            $this->assertStringContainsString((string)$item->UnitPrice, $debug);
+        foreach ($order->Items() as $hasManyList) {
+            $this->assertStringContainsString((string)$hasManyList->Quantity, $debug);
+            $this->assertStringContainsString((string)$hasManyList->UnitPrice, $debug);
         }
     }
 
-    public function testOrderItems()
+    public function testOrderItems(): void
     {
         $order = $this->objFromFixture(Order::class, "paid");
-        $items = $order->Items();
-        $this->assertNotNull($items);
+        $hasManyList = $order->Items();
+        $this->assertNotNull($hasManyList);
         $this->assertListEquals(
             [
                 ['ProductID' => $this->mp3player->ID, 'Quantity' => 2, 'CalculatedTotal' => 400],
                 ['ProductID' => $this->socks->ID, 'Quantity' => 1, 'CalculatedTotal' => 8],
             ],
-            $items
+            $hasManyList
         );
-        $this->assertEquals(3, $items->Quantity(), "Quantity is 3");
-        $this->assertTrue($items->Plural(), "There is more than one item");
-        $this->assertEquals(0.7, $items->Sum('Weight', true), "Total order weight sums correctly", 0.0001);
+        $this->assertEquals(3, $hasManyList->Quantity(), "Quantity is 3");
+        $this->assertTrue($hasManyList->Plural(), "There is more than one item");
+        $this->assertEquals(0.7, $hasManyList->Sum('Weight', true), "Total order weight sums correctly");
     }
 
-    public function testTotals()
+    public function testTotals(): void
     {
         $order = $this->objFromFixture(Order::class, "paid");
         $this->assertEquals(408, $order->SubTotal(), "Subtotal is correct"); // 200 + 200 + 8
@@ -160,26 +148,24 @@ class OrderTest extends SapphireTest
         $this->assertEquals(208, $order->TotalOutstanding(), "Outstanding total is correct");
     }
 
-    public function testRounding()
+    public function testRounding(): void
     {
         //create an order with unrounded total
-        $order = new Order(
-            [
-                'Total' => 123.257323,
-                //NOTE: setTotal isn't called here, so un-rounded data *could* get in to the object
-                'Status' => 'Unpaid',
-            ]
-        );
+        $order = Order::create([
+            'Total' => 123.257323,
+            //NOTE: setTotal isn't called here, so un-rounded data *could* get into the object
+            'Status' => 'Unpaid',
+        ]);
         $order->Total = 123.257323; //setTotal IS called here
         $this->assertEquals(123.26, $order->Total(), "Check total rounds appropriately");
         $this->assertEquals(123.26, $order->TotalOutstanding(), "Check total outstanding rounds appropriately");
     }
 
-    public function testPlacedOrderImmutability()
+    public function testPlacedOrderImmutability(): void
     {
 
         $order = $this->objFromFixture(Order::class, "paid");
-        $processor = OrderProcessor::create($order)->placeOrder();
+        OrderProcessor::create($order)->placeOrder();
         $this->assertEquals(408, $order->Total(), "check totals");
 
         //make a changes to existing products
@@ -193,33 +179,33 @@ class OrderTest extends SapphireTest
         $this->assertFalse($order->isCart());
 
         //item values don't change
-        $items = $order->Items()
+        $hasManyList = $order->Items()
             //hack join to make thigns work
             ->innerJoin(
                 "SilverShop_Product_OrderItem",
                 '"SilverShop_OrderItem"."ID" = "SilverShop_Product_OrderItem"."ID"'
             );
-        $this->assertNotNull($items);
+        $this->assertNotNull($hasManyList);
         $this->assertListEquals(
             [
                 ['ProductID' => $this->mp3player->ID, 'Quantity' => 2, 'CalculatedTotal' => 400],
                 ['ProductID' => $this->socks->ID, 'Quantity' => 1, 'CalculatedTotal' => 8],
             ],
-            $items
+            $hasManyList
         );
 
-        $mp3player = $items->find('ProductID', $this->mp3player->ID);//join needed to provide ProductID
+        $mp3player = $hasManyList->find('ProductID', (string) $this->mp3player->ID);//join needed to provide ProductID
         $this->assertNotNull($mp3player, "MP3 player is in order");
         $this->assertEquals(200, $mp3player->UnitPrice(), "Unit price remains the same");
         $this->assertEquals(400, $mp3player->Total(), "Total remains the same");
 
-        $socks = $items->find('ProductID', $this->socks->ID);
+        $socks = $hasManyList->find('ProductID', (string) $this->socks->ID);
         $this->assertNotNull($socks, "Socks are in order");
         $this->assertEquals(8, $socks->UnitPrice(), "Unit price remains the same");
         $this->assertEquals(8, $socks->Total(), "Total remains the same");
     }
 
-    public function testCanFunctions()
+    public function testCanFunctions(): void
     {
         $order = $this->objFromFixture(Order::class, "cart");
         $order->calculate();
@@ -282,16 +268,16 @@ class OrderTest extends SapphireTest
         $this->assertFalse($order->canDelete(), "never allow deleting orders");
     }
 
-    public function testDelete()
+    public function testDelete(): void
     {
         Config::modify()
             ->set(FlatTax::class, 'rate', 0.25)
             ->merge(Order::class, 'modifiers', [FlatTax::class]);
 
         $order = Order::create();
-        $shirt = $this->objFromFixture(Product::class, "tshirt");
+        $dataObject = $this->objFromFixture(Product::class, "tshirt");
         $mp3player = $this->objFromFixture(Product::class, "mp3player");
-        $order->Items()->add($shirt->createItem(3));
+        $order->Items()->add($dataObject->createItem(3));
         $order->Items()->add($mp3player->createItem(1));
         $order->write();
         $order->calculate();
@@ -335,7 +321,7 @@ class OrderTest extends SapphireTest
         $this->assertEquals(1, Payment::get()->filter('ID', $paymentId)->count());
     }
 
-    public function testStatusChange()
+    public function testStatusChange(): void
     {
         Config::modify()->merge(Order::class, 'extensions', [OrderTest_TestStatusChangeExtension::class]);
 
@@ -369,7 +355,7 @@ class OrderTest extends SapphireTest
         $this->assertTrue((boolean)$order->Paid, 'Order paid date should be set');
     }
 
-    public function testOrderAddress()
+    public function testOrderAddress(): void
     {
         $order = $this->objFromFixture(Order::class, 'paid');
 

@@ -23,30 +23,11 @@ class CheckoutTest extends SapphireTest
         __DIR__ . '/../Fixtures/ShopMembers.yml',
     ];
 
-    /**
-     * @var ShoppingCart
-     */
-    protected $cart;
-
-    /**
-     * @var Address
-     */
-    protected $address1;
-
-    /**
-     * @var Address
-     */
-    protected $address2;
-
-    /**
-     * @var Checkout
-     */
-    protected $checkout;
-
-    /**
-     * @var ShopMemberFactory
-     */
-    protected $memberFactory;
+    protected ShoppingCart|Order $cart;
+    protected Address $address1;
+    protected Address $address2;
+    protected Checkout $checkout;
+    protected ShopMemberFactory $memberFactory;
 
     public function setUp(): void
     {
@@ -55,7 +36,7 @@ class CheckoutTest extends SapphireTest
         $this->cart = $this->objFromFixture(Order::class, "cart1");
         $this->address1 = $this->objFromFixture(Address::class, "address1");
         $this->address2 = $this->objFromFixture(Address::class, "address2");
-        $this->checkout = new Checkout($this->cart);
+        $this->checkout = Checkout::create($this->cart);
         $this->memberFactory = new ShopMemberFactory();
 
         Config::modify()
@@ -63,7 +44,7 @@ class CheckoutTest extends SapphireTest
             ->set(CheckoutConfig::class, 'membership_required', false);
     }
 
-    public function testSetUpShippingAddress()
+    public function testSetUpShippingAddress(): void
     {
         $this->checkout->setShippingAddress($this->address1);
         $this->assertEquals(
@@ -73,7 +54,7 @@ class CheckoutTest extends SapphireTest
         );
     }
 
-    public function testSetUpBillingAddress()
+    public function testSetUpBillingAddress(): void
     {
         $this->checkout->setBillingAddress($this->address2);
         $this->assertEquals(
@@ -83,7 +64,7 @@ class CheckoutTest extends SapphireTest
         );
     }
 
-    public function testSetPaymentMethod()
+    public function testSetPaymentMethod(): void
     {
         $this->assertTrue($this->checkout->setPaymentMethod("Dummy"), "Valid method set correctly");
         $this->assertEquals('Dummy', $this->checkout->getSelectedPaymentMethod(false));
@@ -93,7 +74,7 @@ class CheckoutTest extends SapphireTest
      * Tests the default membership configuration.
      * You can become a member, but it is not necessary
      */
-    public function testCanBecomeMember()
+    public function testCanBecomeMember(): void
     {
         //check can proceeed with/without order
         //check member exists
@@ -105,10 +86,13 @@ class CheckoutTest extends SapphireTest
                 'Password'  => 'janesmith2012',
             ]
         );
-        $this->assertTrue(($result instanceof Member), $this->checkout->getMessage() || '');
+        $this->assertTrue(
+            ($result instanceof Member),
+            $this->checkout->getMessage() ?: '$result is an instanceof Member'
+        );
     }
 
-    public function testMustBecomeOrBeMember()
+    public function testMustBecomeOrBeMember(): void
     {
         CheckoutConfig::config()->member_creation_enabled = true;
         CheckoutConfig::config()->membership_required = true;
@@ -127,14 +111,14 @@ class CheckoutTest extends SapphireTest
         $this->assertFalse($this->checkout->validateMember(false));
     }
 
-    public function testNoMemberships()
+    public function testNoMemberships(): void
     {
         CheckoutConfig::config()->member_creation_enabled = false;
         CheckoutConfig::config()->membership_required = false;
 
         $this->expectException(ValidationException::class);
 
-        $member = $this->memberFactory->create(
+        $this->memberFactory->create(
             [
                 'FirstName' => 'Susan',
                 'Surname'   => 'Jackson',
@@ -148,7 +132,7 @@ class CheckoutTest extends SapphireTest
      * @expectedException \SilverStripe\ORM\ValidationException
      * @expectedExceptionMessage Creating new memberships is not allowed
      */
-    public function testMembersOnly()
+    public function testMembersOnly(): void
     {
         CheckoutConfig::config()->member_creation_enabled = false;
         CheckoutConfig::config()->membership_required = true;
@@ -156,7 +140,7 @@ class CheckoutTest extends SapphireTest
         $this->expectException(ValidationException::class);
         $this->expectExceptionMessage('Creating new memberships is not allowed');
 
-        $result = $this->memberFactory->create(
+        $this->memberFactory->create(
             [
                 'FirstName' => 'Some',
                 'Surname'   => 'Body',
@@ -170,11 +154,11 @@ class CheckoutTest extends SapphireTest
      * @expectedException \SilverStripe\ORM\ValidationException
      * @expectedExceptionMessage A password is required
      */
-    public function testMemberWithoutPassword()
+    public function testMemberWithoutPassword(): void
     {
         $this->expectException(ValidationException::class);
         $this->expectExceptionMessage('A password is required');
-        $result = $this->memberFactory->create(
+        $this->memberFactory->create(
             [
                 'FirstName' => 'Jim',
                 'Surname'   => 'Smith',
@@ -187,11 +171,11 @@ class CheckoutTest extends SapphireTest
      * @expectedException \SilverStripe\ORM\ValidationException
      * @expectedExceptionMessage A member already exists with the Email jeremy@example.com
      */
-    public function testMemberAlreadyExists()
+    public function testMemberAlreadyExists(): void
     {
         $this->expectException(ValidationException::class);
         $this->expectExceptionMessage('A member already exists with the Email jeremy@example.com');
-        $result = $this->memberFactory->create(
+        $this->memberFactory->create(
             [
                 'FirstName' => 'Jeremy',
                 'Surname'   => 'Peremy',
@@ -205,11 +189,11 @@ class CheckoutTest extends SapphireTest
      * @expectedException \SilverStripe\ORM\ValidationException
      * @expectedExceptionMessage Required field not found: Email
      */
-    public function testMemberMissingIdentifier()
+    public function testMemberMissingIdentifier(): void
     {
         $this->expectException(ValidationException::class);
         $this->expectExceptionMessage('Required field not found: Email');
-        $result = $this->memberFactory->create(
+        $this->memberFactory->create(
             [
                 'FirstName' => 'John',
                 'Surname'   => 'Doe',

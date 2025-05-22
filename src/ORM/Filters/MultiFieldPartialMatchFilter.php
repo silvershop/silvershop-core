@@ -43,11 +43,9 @@ class MultiFieldPartialMatchFilter extends PartialMatchFilter
     }
 
     /**
-     * @param array $modifiers
-     *
      * @throws InvalidArgumentException
      */
-    public function setModifiers(array $modifiers)
+    public function setModifiers(array $modifiers): void
     {
         $modifiers = array_map('strtolower', $modifiers);
 
@@ -60,35 +58,28 @@ class MultiFieldPartialMatchFilter extends PartialMatchFilter
         $this->modifiers = $modifiers;
         $this->subfilterModifiers = array_filter(
             $modifiers,
-            function ($v) {
+            function ($v): bool {
                 return $v != 'splitwords';
             }
         );
 
-        if (!empty($this->subfilters)) {
-            foreach ($this->subfilters as $f) {
-                $f->setModifiers($this->subfilterModifiers);
-            }
+        foreach ($this->subfilters as $subfilter) {
+            $subfilter->setModifiers($this->subfilterModifiers);
         }
     }
 
-    /**
-     * @param array $fieldNames
-     */
-    public function setSubfilters(array $fieldNames)
+    public function setSubfilters(array $fieldNames): void
     {
         $this->subfilters = [];
-        if (count($fieldNames) > 0) {
-            foreach ($fieldNames as $name) {
-                $this->subfilters[] = new PartialMatchFilter($name, $this->value, $this->subfilterModifiers);
-            }
+        foreach ($fieldNames as $fieldName) {
+            $this->subfilters[] = PartialMatchFilter::create($fieldName, $this->value, $this->subfilterModifiers);
         }
     }
 
     /**
      * @param string $value
      */
-    public function setValue($value)
+    public function setValue($value): void
     {
         if ($this->shouldSplitWords() && is_string($value) && preg_match('/\s+/', $value)) {
             $value = preg_split('/\s+/', trim($value));
@@ -96,40 +87,28 @@ class MultiFieldPartialMatchFilter extends PartialMatchFilter
 
         parent::setValue($value);
 
-        if (count($this->subfilters) > 0) {
-            foreach ($this->subfilters as $f) {
-                $f->setValue($value);
-            }
+        foreach ($this->subfilters as $subfilter) {
+            $subfilter->setValue($value);
         }
     }
 
-    /**
-     * @return bool
-     */
-    protected function shouldSplitWords()
+    protected function shouldSplitWords(): bool
     {
         $modifiers = $this->getModifiers();
         return in_array('splitwords', $modifiers);
     }
 
-    /**
-     * @param DataQuery $query
-     *
-     * @return $this|DataQuery
-     */
-    public function apply(DataQuery $query)
+    public function apply(DataQuery $dataQuery): DataQuery
     {
-        $orGroup = $query->disjunctiveGroup();
+        $orGroup = $dataQuery->disjunctiveGroup();
         $orGroup = parent::apply($orGroup);
 
-        if (count($this->subfilters) > 0) {
-            foreach ($this->subfilters as $f) {
-                $orGroup = $f->apply($orGroup);
-            }
+        foreach ($this->subfilters as $subfilter) {
+            $orGroup = $subfilter->apply($orGroup);
         }
 
         // The original query will have been affected by the things added to $orGroup above
         // but returning this instead of that will cause new filters to be added as AND
-        return $query;
+        return $dataQuery;
     }
 }

@@ -92,13 +92,13 @@ class ShoppingCartControllerTest extends FunctionalTest
         $this->cart = ShoppingCart::singleton();
     }
 
-    public function testAddToCart()
+    public function testAddToCart(): void
     {
         // add 2 of the same items via url
         $url = ShoppingCartController::add_item_link($this->mp3player);
-        $addMp3 = $this->get($url);
+        $httpResponse = $this->get($url);
 
-        $this->assertEquals(200, $addMp3->getStatusCode(), "Adding the mp3 player should work");
+        $this->assertEquals(200, $httpResponse->getStatusCode(), "Adding the mp3 player should work");
 
         $secondMp3 = $this->get(ShoppingCartController::add_item_link($this->mp3player));
         $this->assertEquals(200, $secondMp3->getStatusCode(), "Adding a second mp3 player should work");
@@ -125,7 +125,7 @@ class ShoppingCartControllerTest extends FunctionalTest
         // join needed to provide ProductID
         $mp3playerItem = $items
             ->innerJoin("SilverShop_Product_OrderItem", "\"SilverShop_OrderItem\".\"ID\" = \"SilverShop_Product_OrderItem\".\"ID\"")
-            ->find('ProductID', $this->mp3player->ID);
+            ->find('ProductID', (string) $this->mp3player->ID);
 
         $this->assertNotNull($mp3playerItem, "Mp3 player is in cart");
 
@@ -145,7 +145,7 @@ class ShoppingCartControllerTest extends FunctionalTest
         $mp3playeritem =
             $items->innerJoin("SilverShop_Product_OrderItem", "\"SilverShop_OrderItem\".\"ID\" = \"SilverShop_Product_OrderItem\".\"ID\"")->find(
                 'ProductID',
-                $this->mp3player->ID
+                (string) $this->mp3player->ID
             ); //join needed to provide ProductID
         $this->assertEquals($mp3playeritem->Quantity, 5, 'We have 5 of this product in the cart.');
 
@@ -176,7 +176,7 @@ class ShoppingCartControllerTest extends FunctionalTest
         $this->cart->clear();
     }
 
-    public function testRemoveFromCart()
+    public function testRemoveFromCart(): void
     {
 
         // add items via url
@@ -196,8 +196,8 @@ class ShoppingCartControllerTest extends FunctionalTest
         $this->assertNotNull($mp3playeritem, "product still exists");
         $this->assertEquals($mp3playeritem->Quantity, 4, "only 4 of item left");
 
-        $items = ShoppingCart::curr()->Items();
-        $this->assertNotNull($items, "Cart is not empty");
+        $hasManyList = ShoppingCart::curr()->Items();
+        $this->assertNotNull($hasManyList, "Cart is not empty");
 
         $this->cart->clear(); //test clearing cart
         $this->assertEquals(
@@ -207,7 +207,7 @@ class ShoppingCartControllerTest extends FunctionalTest
         );
     }
 
-    public function testSecurityToken()
+    public function testSecurityToken(): void
     {
         $enabled = SecurityToken::is_enabled();
 
@@ -251,38 +251,38 @@ class ShoppingCartControllerTest extends FunctionalTest
         }
     }
 
-    public function testVariations()
+    public function testVariations(): void
     {
         /**
-         * @var Product $ballRoot
+         * @var Product $dataObject
          */
-        $ballRoot = $this->objFromFixture(Product::class, 'ball');
-        $ballRoot->publishSingle();
+        $dataObject = $this->objFromFixture(Product::class, 'ball');
+        $dataObject->publishSingle();
 
         /**
-         * @var Product $ball1
+         * @var Product $variation
          */
-        $ball1 = $this->objFromFixture(Variation::class, 'redLarge');
+        $variation = $this->objFromFixture(Variation::class, 'redLarge');
         /**
          * @var Product $ball2
          */
         $ball2 = $this->objFromFixture(Variation::class, 'redSmall');
 
         $this->logInWithPermission('ADMIN');
-        $ball1->publishSingle();
+        $variation->publishSingle();
         $ball2->publishSingle();
 
         // Add the two variation items
-        $this->get(ShoppingCartController::add_item_link($ball1));
+        $this->get(ShoppingCartController::add_item_link($variation));
         $this->get(ShoppingCartController::add_item_link($ball2));
-        $items = ShoppingCart::curr()->Items();
-        $this->assertNotNull($items);
-        $this->assertEquals($items->Count(), 2, 'There are 2 items in the cart');
+        $hasManyList = ShoppingCart::curr()->Items();
+        $this->assertNotNull($hasManyList);
+        $this->assertEquals($hasManyList->Count(), 2, 'There are 2 items in the cart');
 
         // Remove one and see what happens
-        $this->get(ShoppingCartController::remove_all_item_link($ball1));
-        $this->assertEquals($items->Count(), 1, 'There is 1 item in the cart');
-        $this->assertFalse((bool)$this->cart->get($ball1), "first item not in cart");
+        $this->get(ShoppingCartController::remove_all_item_link($variation));
+        $this->assertEquals($hasManyList->Count(), 1, 'There is 1 item in the cart');
+        $this->assertFalse((bool)$this->cart->get($variation), "first item not in cart");
         $this->assertNotNull($this->cart->get($ball2), "second item is in cart");
     }
 }

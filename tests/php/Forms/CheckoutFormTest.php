@@ -10,32 +10,16 @@ use SilverShop\Page\Product;
 use SilverShop\Tests\ShopTest;
 use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Dev\FunctionalTest;
-use SilverStripe\Dev\SapphireTest;
 use SilverStripe\SiteConfig\SiteConfig;
 
 class CheckoutFormTest extends FunctionalTest
 {
     public static $fixture_file = __DIR__ . '/../Fixtures/shop.yml';
 
-    /**
-     * @var Product
-     */
-    protected $mp3player;
-
-    /**
-     * @var Product
-     */
-    protected $socks;
-
-    /**
-     * @var Product
-     */
-    protected $beachball;
-
-    /**
-     * @var CheckoutPageController
-     */
-    protected $checkoutcontroller;
+    protected Product $mp3player;
+    protected Product $socks;
+    protected Product $beachball;
+    protected CheckoutPageController $checkoutcontroller;
 
     public function setUp(): void
     {
@@ -49,19 +33,19 @@ class CheckoutFormTest extends FunctionalTest
         $this->beachball = $this->objFromFixture(Product::class, 'beachball');
         $this->beachball->publishSingle();
 
-        $request = new HTTPRequest('GET', '');
-        $request->setSession($this->mainSession->session());
-        $this->checkoutcontroller = new CheckoutPageController();
-        $this->checkoutcontroller->setRequest($request);
+        $httpRequest = new HTTPRequest('GET', '');
+        $httpRequest->setSession($this->mainSession->session());
+        $this->checkoutcontroller = CheckoutPageController::create();
+        $this->checkoutcontroller->setRequest($httpRequest);
 
         ShoppingCart::singleton()->add($this->socks); //start cart
     }
 
-    public function testCheckoutForm()
+    public function testCheckoutForm(): void
     {
         $order = ShoppingCart::curr();
-        $config = new SinglePageCheckoutComponentConfig($order);
-        $form = new CheckoutForm($this->checkoutcontroller, "OrderForm", $config);
+        $singlePageCheckoutComponentConfig = SinglePageCheckoutComponentConfig::create($order);
+        $checkoutForm = CheckoutForm::create($this->checkoutcontroller, "OrderForm", $singlePageCheckoutComponentConfig);
         $ns = 'SilverShop-Checkout-Component-';
         $data = [
             "{$ns}CustomerDetails_FirstName"    => "Jane",
@@ -85,11 +69,11 @@ class CheckoutFormTest extends FunctionalTest
             "{$ns}Notes_Notes"                  => "Leave it around the back",
             "{$ns}Terms_ReadTermsAndConditions" => "1",
         ];
-        $form->loadDataFrom($data, true);
-        $valid = $form->validationResult()->isValid();
-        $errors = $form->getValidator()->getErrors();
+        $checkoutForm->loadDataFrom($data, 1);
+        $valid = $checkoutForm->validationResult()->isValid();
+        $errors = $checkoutForm->getValidator()->getErrors();
         $this->assertTrue($valid, print_r($errors, true));
-        $form->checkoutSubmit($data, $form);
+        $checkoutForm->checkoutSubmit($data, $checkoutForm);
 
         // Assert Customer Details
         $this->assertEquals("Jane", $order->FirstName);
@@ -97,14 +81,14 @@ class CheckoutFormTest extends FunctionalTest
         $this->assertEquals("janesmith@example.com", $order->Email);
 
         // Assert Shipping Address
-        $shipping = $order->ShippingAddress();
-        $this->assertEquals("NZ", $shipping->Country);
-        $this->assertEquals("1234 Green Lane", $shipping->Address);
-        $this->assertEquals("Building 2", $shipping->AddressLine2);
-        $this->assertEquals("Bleasdfweorville", $shipping->City);
-        $this->assertEquals("Trumpo", $shipping->State);
-        $this->assertEquals("4123", $shipping->PostalCode);
-        $this->assertEquals("032092277", $shipping->Phone);
+        $address = $order->ShippingAddress();
+        $this->assertEquals("NZ", $address->Country);
+        $this->assertEquals("1234 Green Lane", $address->Address);
+        $this->assertEquals("Building 2", $address->AddressLine2);
+        $this->assertEquals("Bleasdfweorville", $address->City);
+        $this->assertEquals("Trumpo", $address->State);
+        $this->assertEquals("4123", $address->PostalCode);
+        $this->assertEquals("032092277", $address->Phone);
 
         // Assert Billing Address
         $billing = $order->BillingAddress();
@@ -123,7 +107,7 @@ class CheckoutFormTest extends FunctionalTest
         $this->assertEquals("Cart", $order->Status);
     }
 
-    public function testCheckoutFormForSingleCountrySiteWithReadonlyFieldsForCountry()
+    public function testCheckoutFormForSingleCountrySiteWithReadonlyFieldsForCountry(): void
     {
         $siteConfig = SiteConfig::current_site_config();
         $siteConfig->AllowedCountries = '["NZ"]';
@@ -136,8 +120,8 @@ class CheckoutFormTest extends FunctionalTest
         );
 
         $order = ShoppingCart::curr();
-        $config = new SinglePageCheckoutComponentConfig($order);
-        $form = new CheckoutForm($this->checkoutcontroller, "OrderForm", $config);
+        $singlePageCheckoutComponentConfig = SinglePageCheckoutComponentConfig::create($order);
+        $checkoutForm = CheckoutForm::create($this->checkoutcontroller, "OrderForm", $singlePageCheckoutComponentConfig);
         $ns = 'SilverShop-Checkout-Component-';
         // no country fields due to readonly field
         $dataCountryAbsent = [
@@ -160,32 +144,32 @@ class CheckoutFormTest extends FunctionalTest
             "{$ns}Notes_Notes"                  => "Leave it around the back",
             "{$ns}Terms_ReadTermsAndConditions" => "1",
         ];
-        $form->loadDataFrom($dataCountryAbsent, true);
-        $valid = $form->validationResult()->isValid();
-        $errors = $form->getValidator()->getErrors();
+        $checkoutForm->loadDataFrom($dataCountryAbsent, 1);
+        $valid = $checkoutForm->validationResult()->isValid();
+        $errors = $checkoutForm->getValidator()->getErrors();
         $this->assertTrue($valid, print_r($errors, true));
         $this->assertTrue(
-            $form->Fields()->dataFieldByName("{$ns}ShippingAddress_Country_readonly")->isReadonly(),
+            $checkoutForm->Fields()->dataFieldByName("{$ns}ShippingAddress_Country_readonly")->isReadonly(),
             "Shipping Address Country field is readonly"
         );
         $this->assertTrue(
-            $form->Fields()->dataFieldByName("{$ns}BillingAddress_Country_readonly")->isReadonly(),
+            $checkoutForm->Fields()->dataFieldByName("{$ns}BillingAddress_Country_readonly")->isReadonly(),
             "Billing Address Country field is readonly"
         );
-        $form->checkoutSubmit($dataCountryAbsent, $form);
+        $checkoutForm->checkoutSubmit($dataCountryAbsent, $checkoutForm);
 
-        $shipping = $order->ShippingAddress();
-        $this->assertEquals("NZ", $shipping->Country);
+        $address = $order->ShippingAddress();
+        $this->assertEquals("NZ", $address->Country);
 
         $billing = $order->BillingAddress();
         $this->assertEquals("NZ", $billing->Country);
     }
 
-    public function testCheckoutFormWithInvalidData()
+    public function testCheckoutFormWithInvalidData(): void
     {
         $order = ShoppingCart::curr();
-        $config = new SinglePageCheckoutComponentConfig($order);
-        $form = CheckoutForm::create($this->checkoutcontroller, 'OrderForm', $config);
+        $singlePageCheckoutComponentConfig = SinglePageCheckoutComponentConfig::create($order);
+        $checkoutForm = CheckoutForm::create($this->checkoutcontroller, 'OrderForm', $singlePageCheckoutComponentConfig);
         $ns = 'SilverShop-Checkout-Component-';
         $invalidData = [
             "{$ns}CustomerDetails_FirstName"    => "",
@@ -209,9 +193,9 @@ class CheckoutFormTest extends FunctionalTest
             "{$ns}Notes_Notes"                  => "",
             "{$ns}Terms_ReadTermsAndConditions" => "",
         ];
-        $form->loadDataFrom($invalidData, true);
-        $valid = $form->validationResult()->isValid();
-        $errors = $form->getValidator()->getErrors();
+        $checkoutForm->loadDataFrom($invalidData, 1);
+        $valid = $checkoutForm->validationResult()->isValid();
+        $errors = $checkoutForm->getValidator()->getErrors();
         $this->assertFalse($valid, 'Form should be invalid with empty and incorrect data');
         $this->assertNotEmpty($errors, 'There should be validation errors');
     }

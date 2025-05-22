@@ -4,12 +4,13 @@ namespace SilverShop\Forms\GridField;
 
 use SilverStripe\Forms\GridField\GridFieldDetailForm_ItemRequest;
 use SilverStripe\Forms\LiteralField;
+use SilverStripe\ORM\FieldType\DBHTMLText;
 use SilverStripe\SiteConfig\SiteConfig;
 use SilverStripe\View\Requirements;
 
 class OrderGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemRequest
 {
-    private static $allowed_actions = [
+    private static array $allowed_actions = [
         'edit',
         'view',
         'ItemEditForm',
@@ -40,7 +41,7 @@ JS;
     /**
      * Render order for printing
      */
-    public function printorder()
+    public function printorder(): DBHTMLText
     {
         Requirements::clear();
         //include print javascript, if print argument is provided

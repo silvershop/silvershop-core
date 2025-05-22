@@ -3,20 +3,23 @@
 namespace SilverShop\Tests\Checkout;
 
 // Extension to Order that will allow us a failed placement
+use SilverStripe\Core\Extension;
 use SilverStripe\Dev\TestOnly;
-use SilverStripe\ORM\DataExtension;
 
-class OrderProcessorTest_PlaceFailExtension extends DataExtension implements TestOnly
+/**
+ * @extends Extension<static>
+ */
+class OrderProcessorTest_PlaceFailExtension extends Extension implements TestOnly
 {
-    private $willFail = false;
+    private bool $willFail = false;
 
-    public function onPlaceOrder()
+    public function onPlaceOrder(): void
     {
         // flag this order to fail
         $this->willFail = true;
     }
 
-    public function onAfterWrite()
+    public function onAfterWrite(): void
     {
         // fail after writing, so that we can test if DB rollback works as intended
         if ($this->willFail) {

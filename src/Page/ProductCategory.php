@@ -2,6 +2,7 @@
 
 namespace SilverShop\Page;
 
+use SilverStripe\ORM\ManyManyList;
 use Page;
 use SilverShop\Extension\ProductVariationsExtension;
 use SilverStripe\i18n\i18nEntityProvider;
@@ -13,30 +14,31 @@ use SilverStripe\ORM\DataList;
  * It contains functions for versioning child products
  *
  * @package shop
+ * @method ManyManyList<Product> Products()
  */
 class ProductCategory extends Page implements i18nEntityProvider
 {
-    private static $belongs_many_many = [
+    private static array $belongs_many_many = [
         'Products' => Product::class,
     ];
 
-    private static $singular_name = 'Category';
+    private static string $singular_name = 'Category';
 
-    private static $plural_name = 'Categories';
+    private static string $plural_name = 'Categories';
 
-    private static $icon = 'silvershop/core: client/dist/images/icons/folder.gif';
+    private static string $icon = 'silvershop/core: client/dist/images/icons/folder.gif';
 
-    private static $table_name = 'SilverShop_ProductCategory';
+    private static string $table_name = 'SilverShop_ProductCategory';
 
-    private static $default_child = 'Product';
+    private static string $default_child = 'Product';
 
-    private static $include_child_groups = true;
+    private static bool $include_child_groups = true;
 
-    private static $page_length = 12;
+    private static int $page_length = 12;
 
-    private static $must_have_price = true;
+    private static bool $must_have_price = true;
 
-    private static $sort_options = [
+    private static array $sort_options = [
         'Alphabetical' => 'URLSegment',
         'Price' => 'BasePrice',
     ];
@@ -45,10 +47,8 @@ class ProductCategory extends Page implements i18nEntityProvider
      * Retrieve a set of products, based on the given parameters. Checks get query for sorting and pagination.
      *
      * @param bool $recursive include sub-categories
-     *
-     * @return DataList
      */
-    public function ProductsShowable($recursive = true)
+    public function ProductsShowable($recursive = true): DataList
     {
         // Figure out the categories to check
         $groupids = [$this->ID];
@@ -82,7 +82,7 @@ class ProductCategory extends Page implements i18nEntityProvider
     /**
      * Loop down each level of children to get all ids.
      */
-    public function AllChildCategoryIDs()
+    public function AllChildCategoryIDs(): array
     {
         $ids = [$this->ID];
         $allids = [];
@@ -100,10 +100,8 @@ class ProductCategory extends Page implements i18nEntityProvider
      * Return children ProductCategory pages of this category.
      *
      * @param bool $recursive
-     *
-     * @return DataList
      */
-    public function ChildCategories($recursive = false)
+    public function ChildCategories($recursive = false): DataList
     {
         $ids = [$this->ID];
         if ($recursive) {
@@ -115,10 +113,8 @@ class ProductCategory extends Page implements i18nEntityProvider
 
     /**
      * Recursively generate a product menu, starting from the topmost category.
-     *
-     * @return DataList
      */
-    public function GroupsMenu()
+    public function GroupsMenu(): DataList
     {
         if ($this->Parent() instanceof ProductCategory) {
             return $this->Parent()->GroupsMenu();
@@ -133,9 +129,10 @@ class ProductCategory extends Page implements i18nEntityProvider
      * @param integer $level     nesting level
      * @param string  $separator seperate nesting with this string
      */
-    public function NestedTitle($level = 10, $separator = ' > ', $field = 'MenuTitle')
+    public function NestedTitle($level = 10, $separator = ' > ', $field = 'MenuTitle'): string
     {
         $item = $this;
+        $parts = [];
         while ($item && $level > 0) {
             $parts[] = $item->{$field};
             $item = $item->Parent;
@@ -144,7 +141,7 @@ class ProductCategory extends Page implements i18nEntityProvider
         return implode($separator, array_reverse($parts));
     }
 
-    public function provideI18nEntities()
+    public function provideI18nEntities(): array
     {
         $entities = parent::provideI18nEntities();
 

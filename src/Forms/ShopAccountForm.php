@@ -2,15 +2,17 @@
 
 namespace SilverShop\Forms;
 
+use SilverStripe\Control\RequestHandler;
 use SilverShop\Extension\ShopConfigExtension;
 use SilverShop\Page\AccountPageController;
 use SilverShop\Page\CheckoutPage;
-use SilverStripe\Core\Config\Config;
 use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Control\HTTPResponse;
+use SilverStripe\Core\Config\Config;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\Form;
 use SilverStripe\Forms\FormAction;
+use SilverStripe\ORM\ValidationException;
 use SilverStripe\Security\Security;
 
 /**
@@ -18,7 +20,7 @@ use SilverStripe\Security\Security;
  */
 class ShopAccountForm extends Form
 {
-    public function __construct($controller, $name)
+    public function __construct(RequestHandler $requestHandler, $name)
     {
         $member = Security::getCurrentUser();
         $requiredFields = null;
@@ -30,7 +32,7 @@ class ShopAccountForm extends Form
         } else {
             $fields = FieldList::create();
         }
-        if ($controller instanceof AccountPageController) {
+        if ($requestHandler instanceof AccountPageController) {
             $actions = FieldList::create(FormAction::create('submit', _t(__CLASS__ . '.Save', 'Save Changes')));
         } else {
             $actions = FieldList::create(
@@ -40,7 +42,7 @@ class ShopAccountForm extends Form
                     ->setUseButtonTag(Config::inst()->get(ShopConfigExtension::class, 'forms_use_button_tag'))
             );
         }
-        parent::__construct($controller, $name, $fields, $actions, $requiredFields);
+        parent::__construct($requestHandler, $name, $fields, $actions, $requiredFields);
 
         $this->extend('updateShopAccountForm');
 
@@ -55,11 +57,9 @@ class ShopAccountForm extends Form
      * @param array       $data
      * @param Form        $form
      * @param HTTPRequest $request
-     *
-     * @return bool|HTTPResponse
-     * @throws \SilverStripe\ORM\ValidationException
+     * @throws ValidationException
      */
-    public function submit($data, $form, $request)
+    public function submit($data, $form, $request): bool|HTTPResponse
     {
         $member = Security::getCurrentUser();
         if (!$member) {
@@ -81,11 +81,9 @@ class ShopAccountForm extends Form
      * @param array       $data
      * @param Form        $form
      * @param HTTPRequest $request
-     *
-     * @return bool|HTTPResponse
-     * @throws \SilverStripe\ORM\ValidationException
+     * @throws ValidationException
      */
-    public function proceed($data, $form, $request)
+    public function proceed($data, $form, $request): bool|HTTPResponse
     {
         $member = Security::getCurrentUser();
         if (!$member) {

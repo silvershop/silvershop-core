@@ -14,23 +14,23 @@ use SilverStripe\ORM\FieldType\DBCurrency;
  * product attributes like colour, size, or type.
  *
  * @property int $Quantity
- * @property DBCurrency $UnitPrice
+ * @property float $UnitPrice
  */
 class OrderItem extends OrderAttribute
 {
     public bool $brandNew = false;
 
-    private static $db = [
+    private static array $db = [
         'Quantity' => 'Int',
         'UnitPrice' => 'Currency',
     ];
 
-    private static $casting = [
+    private static array $casting = [
         'UnitPrice' => 'Currency',
         'Total' => 'Currency',
     ];
 
-    private static $searchable_fields = [
+    private static array $searchable_fields = [
         'OrderID' => [
             'title' => 'Order ID',
             'field' => TextField::class,
@@ -43,7 +43,7 @@ class OrderItem extends OrderAttribute
         'Total',
     ];
 
-    private static $summary_fields = [
+    private static array $summary_fields = [
         'Order.ID' => 'Order ID',
         'TableTitle' => 'Title',
         'UnitPrice' => 'Unit Price',
@@ -51,23 +51,20 @@ class OrderItem extends OrderAttribute
         'Total' => 'Total Price',
     ];
 
-    private static $required_fields = [];
+    private static array $required_fields = [];
 
     /**
      * The ORM relationship to the buyable item
-     *
-     * @config
-     * @var    string
      */
-    private static $buyable_relationship = 'Product';
+    private static string $buyable_relationship = 'Product';
 
-    private static $singular_name = 'Item';
+    private static string $singular_name = 'Item';
 
-    private static $plural_name = 'Items';
+    private static string $plural_name = 'Items';
 
-    private static $default_sort = '"Created" DESC';
+    private static string $default_sort = '"Created" DESC';
 
-    private static $table_name = 'SilverShop_OrderItem';
+    private static string $table_name = 'SilverShop_OrderItem';
 
     /**
      * Get the buyable object related to this item.
@@ -83,7 +80,7 @@ class OrderItem extends OrderAttribute
      */
     public function UnitPrice()
     {
-        if ($this->Order()->IsCart()) {
+        if ($this->Order()->exists() && $this->Order()->IsCart()) {
             $buyable = $this->Buyable();
             $unitprice = ($buyable) ? $buyable->sellingPrice() : $this->UnitPrice;
             $this->extend('updateUnitPrice', $unitprice);
@@ -95,7 +92,7 @@ class OrderItem extends OrderAttribute
     /**
      * Prevent unit price ever being below 0
      */
-    public function setUnitPrice($val)
+    public function setUnitPrice($val): void
     {
         if ($val < 0) {
             $val = 0;
@@ -109,7 +106,7 @@ class OrderItem extends OrderAttribute
      *
      * @param int $val new quantity to set
      */
-    public function setQuantity($val)
+    public function setQuantity($val): void
     {
         $val = $val < 1 ? 1 : $val;
         $this->setField('Quantity', $val);
@@ -119,9 +116,9 @@ class OrderItem extends OrderAttribute
      * Get calculated total, or stored total
      * depending on whether the order is in cart
      */
-    public function Total()
+    public function Total(): DBCurrency|float
     {
-        if ($this->Order()->IsCart()) { //always calculate total if order is in cart
+        if ($this->Order()->exists() && $this->Order()->IsCart()) { //always calculate total if order is in cart
             return $this->calculatetotal();
         }
         return $this->CalculatedTotal; //otherwise get value from database
@@ -131,7 +128,7 @@ class OrderItem extends OrderAttribute
      * Calculates the total for this item.
      * Generally called by onBeforeWrite
      */
-    protected function calculatetotal()
+    protected function calculatetotal(): float
     {
         $total = (float)$this->UnitPrice() * (int)$this->Quantity;
         $this->extend('updateTotal', $total);
@@ -143,7 +140,7 @@ class OrderItem extends OrderAttribute
      * Intersects this item's required_fields with the data record.
      * This is used for uniquely adding items to the cart.
      */
-    public function uniquedata()
+    public function uniquedata(): array
     {
         $required = self::config()->required_fields; //TODO: also combine with all ancestors of this->class
         $unique = [];
@@ -164,10 +161,10 @@ class OrderItem extends OrderAttribute
     /**
      * Recalculate total before saving to database.
      */
-    public function onBeforeWrite()
+    public function onBeforeWrite(): void
     {
         parent::onBeforeWrite();
-        if ($this->OrderID && $this->Order() && $this->Order()->isCart()) {
+        if ($this->OrderID && $this->Order() && $this->Order()->exists() && $this->Order()->isCart()) {
             $this->calculatetotal();
         }
     }
@@ -175,7 +172,7 @@ class OrderItem extends OrderAttribute
     /*
      * Event handler called when an order is fully paid for.
      */
-    public function onPayment()
+    public function onPayment(): void
     {
         $this->extend('onPayment');
     }
@@ -186,7 +183,7 @@ class OrderItem extends OrderAttribute
      * This should only be called when order is transformed from
      * Cart to Order, aka being 'placed'.
      */
-    public function onPlacement()
+    public function onPlacement(): void
     {
         $this->extend('onPlacement');
     }
@@ -202,45 +199,30 @@ class OrderItem extends OrderAttribute
         }
     }
 
-    /**
-     * @return ShopQuantityField
-     */
-    public function QuantityField()
+    public function QuantityField(): ShopQuantityField
     {
         return ShopQuantityField::create($this);
     }
 
-    /**
-     * @return string
-     */
-    public function addLink()
+    public function addLink(): string
     {
         $buyable = $this->Buyable();
         return $buyable ? ShoppingCartController::add_item_link($buyable, $this->uniquedata()) : '';
     }
 
-    /**
-     * @return string
-     */
-    public function removeLink()
+    public function removeLink(): string
     {
         $buyable = $this->Buyable();
         return $buyable ? ShoppingCartController::remove_item_link($buyable, $this->uniquedata()) : '';
     }
 
-    /**
-     * @return string
-     */
-    public function removeAllLink()
+    public function removeAllLink(): string
     {
         $buyable = $this->Buyable();
         return $buyable ? ShoppingCartController::remove_all_item_link($buyable, $this->uniquedata()) : '';
     }
 
-    /**
-     * @return string
-     */
-    public function setQuantityLink()
+    public function setQuantityLink(): string
     {
         $buyable = $this->Buyable();
         return $buyable ? ShoppingCartController::set_quantity_item_link($buyable, $this->uniquedata()) : '';

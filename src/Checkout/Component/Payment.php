@@ -13,12 +13,12 @@ use SilverStripe\ORM\ValidationResult;
 
 class Payment extends CheckoutComponent
 {
-    public function getFormFields(Order $order)
+    public function getFormFields(Order $order): FieldList
     {
-        $fields = FieldList::create();
+        $fieldList = FieldList::create();
         $gateways = GatewayInfo::getSupportedGateways();
         if (count($gateways) > 1) {
-            $fields->push(
+            $fieldList->push(
                 OptionsetField::create(
                     'PaymentMethod',
                     _t("SilverShop\Checkout\CheckoutField.PaymentType", "Payment Type"),
@@ -28,15 +28,15 @@ class Payment extends CheckoutComponent
             );
         }
         if (count($gateways) == 1) {
-            $fields->push(
+            $fieldList->push(
                 HiddenField::create('PaymentMethod')->setValue(key($gateways))
             );
         }
 
-        return $fields;
+        return $fieldList;
     }
 
-    public function getRequiredFields(Order $order)
+    public function getRequiredFields(Order $order): array
     {
         if (count(GatewayInfo::getSupportedGateways()) > 1) {
             return [];
@@ -45,34 +45,36 @@ class Payment extends CheckoutComponent
         return ['PaymentMethod'];
     }
 
-    public function validateData(Order $order, array $data)
+    public function validateData(Order $order, array $data): bool
     {
-        $result = ValidationResult::create();
+        $validationResult = ValidationResult::create();
         if (!isset($data['PaymentMethod'])) {
-            $result->addError(
+            $validationResult->addError(
                 _t(__CLASS__ . '.NoPaymentMethod', "Payment method not provided"),
                 "PaymentMethod"
             );
-            throw new ValidationException($result);
+            throw ValidationException::create($validationResult);
         }
         $methods = GatewayInfo::getSupportedGateways();
         if (!isset($methods[$data['PaymentMethod']])) {
-            $result->addError(_t(__CLASS__ . '.UnsupportedGateway', "Gateway not supported"), "PaymentMethod");
-            throw new ValidationException($result);
+            $validationResult->addError(_t(__CLASS__ . '.UnsupportedGateway', "Gateway not supported"), "PaymentMethod");
+            throw ValidationException::create($validationResult);
         }
+        return true;
     }
 
-    public function getData(Order $order)
+    public function getData(Order $order): array
     {
         return [
             'PaymentMethod' => Checkout::get($order)->getSelectedPaymentMethod(),
         ];
     }
 
-    public function setData(Order $order, array $data)
+    public function setData(Order $order, array $data): Order
     {
         if (isset($data['PaymentMethod'])) {
             Checkout::get($order)->setPaymentMethod($data['PaymentMethod']);
         }
+        return $order;
     }
 }

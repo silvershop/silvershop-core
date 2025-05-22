@@ -8,33 +8,25 @@ use SilverShop\Model\OrderItem;
 use SilverShop\ShopTools;
 use SilverStripe\Forms\HiddenField;
 use SilverStripe\Forms\NumericField;
+use SilverStripe\ORM\FieldType\DBHTMLText;
 use SilverStripe\View\ViewableData;
 
 class ShopQuantityField extends ViewableData
 {
-    /**
-     * @var OrderItem
-     */
-    protected $item;
+    protected OrderItem $item;
 
     protected $parameters;
 
-    protected $classes = ['ajaxQuantityField'];
+    protected array $classes = ['ajaxQuantityField'];
 
-    protected $template = self::class;
+    protected string $template = self::class;
 
-    /**
-     * @var Buyable
-     */
-    protected $buyable;
+    protected Buyable $buyable;
 
     /**
      * The max amount to enter
-     *
-     * @config
-     * @var    int
      */
-    private static $max = 0;
+    private static int $max = 0;
 
     public function __construct($object, $parameters = null)
     {
@@ -60,7 +52,7 @@ class ShopQuantityField extends ViewableData
         //TODO: include javascript for easy update
     }
 
-    public function setClasses($newclasses, $overwrite = false)
+    public function setClasses(array $newclasses, $overwrite = false): void
     {
         if ($overwrite) {
             $this->classes = array_merge($this->classes, $newclasses);
@@ -69,24 +61,24 @@ class ShopQuantityField extends ViewableData
         }
     }
 
-    public function setTemplate($template)
+    public function setTemplate(string $template): void
     {
         $this->template = $template;
     }
 
-    public function Item()
+    public function Item(): OrderItem
     {
         return $this->item;
     }
 
-    public function Quantity()
+    public function Quantity(): int
     {
         return $this->item->Quantity;
     }
 
     public function Field()
     {
-        $field = NumericField::create(
+        $numericField = NumericField::create(
             $this->MainID() . '_Quantity',
             // this title currently doesn't show up in the front end, better assign a translation anyway.
             _t('SilverShop\Model\Order.Quantity', 'Quantity'),
@@ -94,28 +86,28 @@ class ShopQuantityField extends ViewableData
         )->setHTML5(true);
 
         if ($this->config()->max > 0) {
-            $field->setAttribute("max", $this->config()->max);
+            $numericField->setAttribute("max", $this->config()->max);
         }
 
-        return $field;
+        return $numericField;
     }
 
-    public function MainID()
+    public function MainID(): string
     {
         return ShopTools::sanitiseClassName(get_class($this->item)) . '_DB_' . $this->item->ID;
     }
 
-    public function IncrementLink()
+    public function IncrementLink(): string
     {
         return $this->item->addLink();
     }
 
-    public function DecrementLink()
+    public function DecrementLink(): string
     {
         return $this->item->removeLink();
     }
 
-    public function forTemplate()
+    public function forTemplate(): DBHTMLText
     {
         return $this->renderWith($this->template);
     }
@@ -125,7 +117,7 @@ class ShopQuantityField extends ViewableData
      */
     public function AJAXLinkHiddenField()
     {
-        if ($quantitylink = $this->item->setquantityLink()) {
+        if (($quantitylink = $this->item->setquantityLink()) !== '' && ($quantitylink = $this->item->setquantityLink()) !== '0') {
             return HiddenField::create(
                 $this->MainID() . '_Quantity_SetQuantityLink'
             )->setValue($quantitylink)->addExtraClass('ajaxQuantityField_qtylink');

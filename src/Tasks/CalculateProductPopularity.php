@@ -12,9 +12,9 @@ class CalculateProductPopularity extends BuildTask
 
     protected $description = 'Count up total sales quantites for each product';
 
-    private static $number_sold_calculation_type = 'SUM'; //SUM or COUNT
+    private static string $number_sold_calculation_type = 'SUM'; //SUM or COUNT
 
-    public function run($request)
+    public function run($request): void
     {
         if ($request->getVar('via') == 'php') {
             $this->viaphp();
@@ -28,7 +28,7 @@ class CalculateProductPopularity extends BuildTask
      * Update both live and stage tables, based on the algorithm:
      *    product popularity = sum(1/order_age) * sum(item_quantity)
      */
-    public function viasql()
+    public function viasql(): void
     {
         foreach (['_Live', ''] as $stage) {
             $sql = <<<SQL
@@ -52,7 +52,7 @@ SQL;
     }
 
     //legacy function  for working out popularity
-    public function viaphp()
+    public function viaphp(): void
     {
         $ps = singleton(Product::class);
         $q = $ps->buildSQL('"SilverShop_Product"."AllowPurchase" = 1');

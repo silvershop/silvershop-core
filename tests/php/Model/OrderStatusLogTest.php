@@ -6,10 +6,7 @@ use SilverShop\Checkout\OrderProcessor;
 use SilverShop\Model\Order;
 use SilverShop\Model\OrderStatusLog;
 use SilverShop\Tests\ShopTest;
-use SilverStripe\Control\Email\Mailer;
 use SilverStripe\Core\Config\Config;
-use SilverStripe\Core\Injector\Injector;
-use SilverStripe\Dev\TestMailer;
 use SilverStripe\Security\Member;
 use SilverStripe\Dev\SapphireTest;
 
@@ -32,7 +29,7 @@ class OrderStatusLogTest extends SapphireTest
         Config::modify()->set(Order::class, 'log_status', ['Processing', 'Sent', 'AdminCancelled', 'MemberCancelled']);
     }
 
-    public function testOrderStatusLogItemsWithMember()
+    public function testOrderStatusLogItemsWithMember(): void
     {
         // start a new order
         $order = $this->objFromFixture(Order::class, "cart1");
@@ -54,8 +51,8 @@ class OrderStatusLogTest extends SapphireTest
             "no log generated with Status of 'Unpaid'"
         );
 
-        $processor = OrderProcessor::create($order);
-        $processor->makePayment("Manual", []);
+        $orderProcessor = OrderProcessor::create($order);
+        $orderProcessor->makePayment("Manual", []);
         $order->Status = "Paid";
         $order->write();
 
@@ -206,7 +203,7 @@ class OrderStatusLogTest extends SapphireTest
         );
     }
 
-    public function testEmailSentOnce()
+    public function testEmailSentOnce(): void
     {
         $order = $this->objFromFixture(Order::class, "cart1");
         $member = $this->objFromFixture(Member::class, 'jeremyperemy');
@@ -257,7 +254,7 @@ class OrderStatusLogTest extends SapphireTest
         );
     }
 
-    public function testOrderPlacedByGuest()
+    public function testOrderPlacedByGuest(): void
     {
         // start a new order
         $order = $this->objFromFixture(Order::class, "cart1");
@@ -273,8 +270,8 @@ class OrderStatusLogTest extends SapphireTest
             "no log generated with Status of 'Unpaid'"
         );
 
-        $processor_guest = OrderProcessor::create($order);
-        $processor_guest->makePayment("Manual", []);
+        $orderProcessor = OrderProcessor::create($order);
+        $orderProcessor->makePayment("Manual", []);
         $order->Status = "Paid";
         $order->write();
 
@@ -316,9 +313,9 @@ class OrderStatusLogTest extends SapphireTest
         );
     }
 
-    public function testOrderIsRequired()
+    public function testOrderIsRequired(): void
     {
-        $log = new OrderStatusLog([
+        $log = OrderStatusLog::create([
             'Title' => 'Test',
             'OrderID' => 1
         ]);
@@ -328,7 +325,7 @@ class OrderStatusLogTest extends SapphireTest
         // Now we make sure we don't need to set an OrderID
         Config::modify()->set(OrderStatusLog::class, 'order_is_required', false);
 
-        $log = new OrderStatusLog([
+        $log = OrderStatusLog::create([
             'Title' => 'Test'
         ]);
 

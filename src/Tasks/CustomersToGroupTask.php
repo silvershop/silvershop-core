@@ -20,41 +20,50 @@ class CustomersToGroupTask extends BuildTask
 
     protected $description = 'Adds all customers to an assigned group.';
 
-    public function run($request)
+    public function run($request): void
     {
-
         $gp = ShopConfigExtension::current()->CustomerGroup();
-        if (empty($gp)) {
-            return false;
+        if (!$gp->exists()) {
+            die(
+                _t(
+                    'SilverShop\Task\CustomersToGroupTask.DefaultCustomerGroupRequired',
+                    'Default Customer Group required'
+                )
+            );
         }
 
-        $allCombos = DB::query(
+        $query = DB::query(
             'SELECT "ID", "MemberID", "GroupID" FROM "Group_Members" WHERE "Group_Members"."GroupID" = '
             . $gp->ID . ';'
         );
         //make an array of all combos
         $alreadyAdded = [];
         $alreadyAdded[-1] = -1;
-        if ($allCombos) {
-            foreach ($allCombos as $combo) {
+        if ($query) {
+            foreach ($query as $combo) {
                 $alreadyAdded[$combo['MemberID']] = $combo['MemberID'];
             }
         }
-        $unlistedMembers = DataObject::get(
+        $dataList = DataObject::get(
             Member::class,
             $where = '"Member"."ID" NOT IN (' . implode(',', $alreadyAdded) . ')',
             $sort = null,
-            $join = 'INNER JOIN "SilverShop_Order" ON "SilverShop_Order"."MemberID" = "Member"."ID"'
+        )->leftJoin(
+            'SilverShop_Order',
+            $join = '"SilverShop_Order"."MemberID" = "Member"."ID"'
         );
         //add combos
-        if ($unlistedMembers) {
+        if ($dataList) {
             $existingMembers = $gp->Members();
-            foreach ($unlistedMembers as $member) {
+            foreach ($dataList as $member) {
                 $existingMembers->add($member);
                 echo '.';
             }
         } else {
-            echo 'no new members added';
+            echo _t(
+                'SilverShop\Task\CustomersToGroupTask.NoNewMembersAdded',
+                'No new members added'
+            );
         }
     }
 }

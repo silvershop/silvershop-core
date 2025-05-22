@@ -10,16 +10,15 @@ use SilverShop\Extension\ShopConfigExtension;
 use SilverShop\Model\Order;
 use SilverShop\ShopTools;
 use SilverStripe\Control\Controller;
-use SilverStripe\Core\Config\Config_ForClass;
 use SilverStripe\Core\Config\Configurable;
 use SilverStripe\Core\Injector\Injectable;
+use SilverStripe\Omnipay\Exception\InvalidConfigurationException;
 use SilverStripe\Omnipay\GatewayInfo;
 use SilverStripe\Omnipay\Model\Payment;
 use SilverStripe\Omnipay\Service\ServiceFactory;
 use SilverStripe\Omnipay\Service\ServiceResponse;
 use SilverStripe\ORM\DB;
 use SilverStripe\ORM\FieldType\DBDatetime;
-use SilverStripe\Security\Member;
 use SilverStripe\Security\Security;
 
 /**
@@ -33,36 +32,21 @@ class OrderProcessor
     use Injectable;
     use Configurable;
 
-    /**
-     * @config
-     */
     private static bool $send_admin_notification = false;
 
-    /**
-     * @config
-     */
     private static bool $send_confirmation = false;
 
-    /**
-     * @var Order
-     */
-    protected $order;
+    protected Order $order;
 
     /**
      * @var OrderEmailNotifier
      */
     protected $notifier;
 
-    /**
-     * @var string
-     */
-    protected $error;
-
+    protected string $error = '';
 
     /**
      * Assign the order to a local variable
-     *
-     * @param Order $order
      */
     public function __construct(Order $order)
     {
@@ -74,9 +58,9 @@ class OrderProcessor
      * URL to display success message to the user.
      * Happens after any potential offsite gateway redirects.
      *
-     * @return String Relative URL
+     * @return string Relative URL
      */
-    public function getReturnUrl()
+    public function getReturnUrl(): string
     {
         return $this->order->Link();
     }
@@ -93,7 +77,7 @@ class OrderProcessor
      * @param string $cancelUrl (optional) return URL for cancelled/failed payments
      *
      * @return ServiceResponse|null
-     * @throws \SilverStripe\Omnipay\Exception\InvalidConfigurationException
+     * @throws InvalidConfigurationException
      */
     public function makePayment($gateway, $gatewaydata = [], $successUrl = null, $cancelUrl = null)
     {
@@ -115,14 +99,14 @@ class OrderProcessor
         // AuthorizeService or PurchaseService, depending on Gateway configuration.
         // Set the user-facing success URL for redirects
         /**
-         * @var ServiceFactory $factory
+         * @var ServiceFactory $serviceFactory
          */
-        $factory = ServiceFactory::create();
-        $service = $factory->getService($payment, ServiceFactory::INTENT_PAYMENT);
+        $serviceFactory = ServiceFactory::create();
+        $paymentService = $serviceFactory->getService($payment, ServiceFactory::INTENT_PAYMENT);
 
         // Initiate payment, get the result back
         try {
-            $serviceResponse = $service->initiate($this->getGatewayData($gatewaydata));
+            $serviceResponse = $paymentService->initiate($this->getGatewayData($gatewaydata));
         } catch (\SilverStripe\Omnipay\Exception\Exception $ex) {
             // error out when an exception occurs
             $this->error($ex->getMessage());
@@ -148,10 +132,8 @@ class OrderProcessor
      * Map shop data to omnipay fields
      *
      * @param array $customData Usually user submitted data.
-     *
-     * @return array
      */
-    protected function getGatewayData($customData)
+    protected function getGatewayData($customData): array
     {
         $shipping = $this->order->getShippingAddress();
         $billing = $this->order->getBillingAddress();
@@ -191,7 +173,7 @@ class OrderProcessor
     /**
      * Create a new payment for an order
      */
-    public function createPayment($gateway)
+    public function createPayment($gateway): bool|Payment
     {
         if (!GatewayInfo::isSupported($gateway)) {
             $this->error(
@@ -223,7 +205,7 @@ class OrderProcessor
      *    - update order status accordingling
      *    - fire event hooks
      */
-    public function completePayment()
+    public function completePayment(): void
     {
         if (!$this->order->IsPaid()) {
             $this->order->extend('onPayment'); //a payment has been made
@@ -249,12 +231,10 @@ class OrderProcessor
 
     /**
      * Determine if an order can be placed.
-     *
-     * @param boolean $order
      */
-    public function canPlace(Order $order)
+    public function canPlace(?Order $order): bool
     {
-        if (!$order) {
+        if (!$order instanceof Order) {
             $this->error(_t(__CLASS__ . ".NoOrder", "Order does not exist."));
             return false;
         }
@@ -277,9 +257,9 @@ class OrderProcessor
      *
      * @return boolean - success/failure
      */
-    public function placeOrder()
+    public function placeOrder(): bool
     {
-        if (!$this->order) {
+        if (!$this->order->exists()) {
             $this->error(_t(__CLASS__ . ".NoOrderStarted", "A new order has not yet been started."));
             return false;
         }
@@ -304,16 +284,14 @@ class OrderProcessor
 
         if (!$this->order->Placed) {
             $this->order->setField('Placed', DBDatetime::now()->Rfc2822()); //record placed order datetime
-            if ($request = Controller::curr()->getRequest()) {
-                $this->order->IPAddress = $request->getIP(); //record client IP
-            }
+            $this->order->IPAddress = Controller::curr()->getRequest()->getIP(); //record client IP
         }
 
         // Add an error handler that throws an exception upon error, so that we can catch errors as exceptions
         // in the following block.
         set_error_handler(
-            function ($severity, $message, $file, $line) {
-                if (!(error_reporting() & $severity)) {
+            function ($severity, $message, $file, $line): bool {
+                if ((error_reporting() & $severity) === 0) {
                     // suppressed error, for example from exif_read_data in image manipulation
                     return false;
                 }
@@ -394,20 +372,17 @@ class OrderProcessor
         return true; //report success
     }
 
-    /**
-     * @return Order
-     */
-    public function getOrder()
+    public function getOrder(): Order
     {
         return $this->order;
     }
 
-    public function getError()
+    public function getError(): ?string
     {
         return $this->error;
     }
 
-    protected function error($message)
+    protected function error(string $message): void
     {
         $this->error = $message;
     }

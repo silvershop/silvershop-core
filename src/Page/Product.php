@@ -2,6 +2,7 @@
 
 namespace SilverShop\Page;
 
+use Exception;
 use Page;
 use SilverShop\Cart\ShoppingCart;
 use SilverShop\Cart\ShoppingCartController;
@@ -21,8 +22,6 @@ use SilverStripe\Forms\ListboxField;
 use SilverStripe\Forms\TextField;
 use SilverStripe\ORM\DataList;
 use SilverStripe\ORM\FieldType\DBBoolean;
-use SilverStripe\ORM\FieldType\DBCurrency;
-use SilverStripe\ORM\FieldType\DBDecimal;
 use SilverStripe\ORM\ManyManyList;
 use SilverStripe\Security\Member;
 use SilverStripe\SiteConfig\SiteConfig;
@@ -40,23 +39,24 @@ use SilverStripe\SiteConfig\SiteConfig;
  *
  * @mixin ProductVariationsExtension
  *
- * @property string $InternalItemID
- * @property string $Model
- * @property DBCurrency $BasePrice
- * @property DBDecimal $Weight
- * @property DBDecimal $Height
- * @property DBDecimal $Width
- * @property DBDecimal $Depth
+ * @property ?string $InternalItemID
+ * @property ?string $Model
+ * @property float $BasePrice
+ * @property float $Weight
+ * @property float $Height
+ * @property float $Width
+ * @property float $Depth
  * @property bool $Featured
  * @property bool $AllowPurchase
  * @property float $Popularity
  * @property int $ImageID
  *
- * @method ProductCategory[]|ManyManyList ProductCategories()
+ * @method ManyManyList<ProductCategory> ProductCategories()
+ * @method Image Image()
  */
 class Product extends Page implements Buyable
 {
-    private static $db = [
+    private static array $db = [
         'InternalItemID' => 'Varchar(30)', //ie SKU, ProductID etc (internal / existing recognition of product)
         'Model' => 'Varchar(30)',
 
@@ -75,64 +75,64 @@ class Product extends Page implements Buyable
         'Popularity' => 'Float' //storage for CalculateProductPopularity task
     ];
 
-    private static $has_one = [
+    private static array $has_one = [
         'Image' => Image::class,
     ];
 
-    private static $owns = [
+    private static array $owns = [
         'Image'
     ];
 
-    private static $many_many = [
+    private static array $many_many = [
         'ProductCategories' => ProductCategory::class,
     ];
 
-    private static $defaults = [
+    private static array $defaults = [
         'AllowPurchase' => true,
         'ShowInMenus' => false,
     ];
 
-    private static $casting = [
+    private static array $casting = [
         'Price' => 'Currency',
     ];
 
-    private static $summary_fields = [
+    private static array $summary_fields = [
         'InternalItemID',
         'Title',
         'BasePrice.NiceOrEmpty',
         'IsPurchaseable.Nice',
     ];
 
-    private static $searchable_fields = [
+    private static array $searchable_fields = [
         'InternalItemID',
         'Title',
         'Featured',
     ];
 
-    private static $table_name = 'SilverShop_Product';
+    private static string $table_name = 'SilverShop_Product';
 
-    private static $singular_name = 'Product';
+    private static string $singular_name = 'Product';
 
-    private static $plural_name = 'Products';
+    private static string $plural_name = 'Products';
 
-    private static $icon = 'silvershop/core: client/dist/images/icons/package.gif';
+    private static string $icon = 'silvershop/core: client/dist/images/icons/package.gif';
 
-    private static $default_parent = ProductCategory::class;
+    private static string $default_parent = ProductCategory::class;
 
-    private static $default_sort = '"Title" ASC';
+    private static string $default_sort = '"Title" ASC';
 
-    private static $global_allow_purchase = true;
+    private static bool $global_allow_purchase = true;
 
-    private static $allow_zero_price = false;
+    private static bool $allow_zero_price = false;
 
-    private static $order_item = OrderItem::class;
+    private static string $order_item = OrderItem::class;
 
     // Physical Measurement
-    private static $weight_unit = 'kg';
+    private static string $weight_unit = 'kg';
 
-    private static $length_unit = 'cm';
+    private static string $length_unit = 'cm';
 
-    private static $indexes = [
+    private static array $indexes = [
         'Featured' => true,
         'AllowPurchase' => true,
         'InternalItemID' => true,
@@ -143,16 +143,16 @@ class Product extends Page implements Buyable
      *
      * @return FieldList updated field list
      */
-    public function getCMSFields()
+    public function getCMSFields(): FieldList
     {
         $self = $this;
 
         $this->beforeUpdateCMSFields(
-            function (FieldList $fields) use ($self) {
-                $fields->fieldByName('Root.Main.Title')
+            function (FieldList $fieldList) use ($self): void {
+                $fieldList->fieldByName('Root.Main.Title')
                     ->setTitle(_t(__CLASS__ . '.PageTitle', 'Product Title'));
 
-                $fields->addFieldsToTab('Root.Main', [
+                $fieldList->addFieldsToTab('Root.Main', [
                     TextField::create('InternalItemID', _t(__CLASS__ . '.InternalItemID', 'Product Code/SKU'), '', 30),
                     DropdownField::create('ParentID', _t(__CLASS__ . '.Category', 'Category'), $self->getCategoryOptions())
                         ->setDescription(_t(__CLASS__ . '.CategoryDescription', 'This is the parent page or default category.')),
@@ -166,7 +166,7 @@ class Product extends Page implements Buyable
                     CheckboxField::create('AllowPurchase', _t(__CLASS__ . '.AllowPurchase', 'Allow product to be purchased'), 1),
                 ], 'Content');
 
-                $fields->addFieldsToTab(
+                $fieldList->addFieldsToTab(
                     'Root.Pricing',
                     [
                         TextField::create('BasePrice', $this->fieldLabel('BasePrice'))
@@ -179,7 +179,7 @@ class Product extends Page implements Buyable
                     'LengthUnit' => $self::config()->length_unit
                 ];
 
-                $fields->addFieldsToTab(
+                $fieldList->addFieldsToTab(
                     'Root.Shipping',
                     [
                     TextField::create(
@@ -216,8 +216,8 @@ class Product extends Page implements Buyable
                     ]
                 );
 
-                if (!$fields->dataFieldByName('Image')) {
-                    $fields->addFieldToTab(
+                if (!$fieldList->dataFieldByName('Image')) {
+                    $fieldList->addFieldToTab(
                         'Root.Images',
                         UploadField::create('Image', _t(__CLASS__ . '.Image', 'Product Image'))
                     );
@@ -231,7 +231,7 @@ class Product extends Page implements Buyable
     /**
      * Add missing translations to the fieldLabels
      */
-    public function fieldLabels($includerelations = true)
+    public function fieldLabels($includerelations = true): array
     {
         $labels = parent::fieldLabels($includerelations);
 
@@ -247,14 +247,14 @@ class Product extends Page implements Buyable
      *
      * @return array categories
      */
-    private function getCategoryOptions()
+    private function getCategoryOptions(): array
     {
         $categories = ProductCategory::get()->map('ID', 'NestedTitle')->toArray();
         $categories = [
             0 => _t('SilverStripe\CMS\Model\SiteTree.PARENTTYPE_ROOT', 'Top-level page'),
         ] + $categories;
         if ($this->ParentID && !($this->Parent() instanceof ProductCategory)) {
-            $categories = [
+            return [
                 $this->ParentID => $this->Parent()->Title . ' (' . $this->Parent()->i18n_singular_name() . ')',
             ] + $categories;
         }
@@ -267,7 +267,7 @@ class Product extends Page implements Buyable
      *
      * @return array categories
      */
-    private function getCategoryOptionsNoParent()
+    private function getCategoryOptionsNoParent(): array
     {
         $ancestors = $this->getAncestors()->column('ID');
         $categories = ProductCategory::get();
@@ -282,7 +282,7 @@ class Product extends Page implements Buyable
      *
      * @return array ids list
      */
-    public function getCategoryIDs()
+    public function getCategoryIDs(): array
     {
         $ids = [];
         //ancestors
@@ -300,7 +300,7 @@ class Product extends Page implements Buyable
      *
      * @return DataList category data list
      */
-    public function getCategories()
+    public function getCategories(): DataList
     {
         return ProductCategory::get()->byIDs($this->getCategoryIDs());
     }
@@ -313,13 +313,8 @@ class Product extends Page implements Buyable
      *  - if not variations, selling price must be above 0
      *
      * Other conditions may be added by decorating with the canPurchase function
-     *
-     * @param Member $member
-     * @param int    $quantity
-     *
-     * @return boolean
      */
-    public function canPurchase($member = null, $quantity = 1)
+    public function canPurchase(?Member $member = null, int $quantity = 1): bool
     {
         $global = self::config()->global_allow_purchase;
 
@@ -331,8 +326,8 @@ class Product extends Page implements Buyable
         $extension = self::has_extension(ProductVariationsExtension::class);
 
         if ($extension && Variation::get()->filter('ProductID', $this->ID)->first()) {
-            foreach ($this->Variations() as $variation) {
-                if ($variation->canPurchase($member, $quantity)) {
+            foreach ($this->Variations() as $hasManyList) {
+                if ($hasManyList->canPurchase($member, $quantity)) {
                     $allowPurchase = true;
                     break;
                 }
@@ -350,30 +345,25 @@ class Product extends Page implements Buyable
 
     /**
      * Returns the purchaseable flag as `DBBoolean`. Useful for templates or summaries.
-     * @return DBBoolean
      */
-    public function IsPurchaseable()
+    public function IsPurchaseable(): DBBoolean
     {
         return DBBoolean::create_field(DBBoolean::class, $this->canPurchase());
     }
 
     /**
      * Returns if the product is already in the shopping cart.
-     *
-     * @return boolean
      */
-    public function IsInCart()
+    public function IsInCart(): bool
     {
-        $item = $this->Item();
-        return $item && $item->exists() && $item->Quantity > 0;
+        $orderItem = $this->Item();
+        return $orderItem && $orderItem->exists() && $orderItem->Quantity > 0;
     }
 
     /**
      * Returns the order item which contains the product
-     *
-     * @return OrderItem
      */
-    public function Item()
+    public function Item(): OrderItem|\SilverShop\Model\OrderItem
     {
         $filter = [];
         $this->extend('updateItemFilter', $filter);
@@ -389,7 +379,7 @@ class Product extends Page implements Buyable
     /**
      * @see Buyable::createItem()
      */
-    public function createItem($quantity = 1, $filter = null)
+    public function createItem($quantity = 1, $filter = null): OrderItem
     {
         $orderItem = self::config()->order_item;
 
@@ -412,7 +402,7 @@ class Product extends Page implements Buyable
      * The raw retail price the visitor will get when they
      * add to cart. Can include discounts or markups on the base price.
      */
-    public function sellingPrice()
+    public function sellingPrice(): float
     {
         $price = $this->BasePrice;
 
@@ -433,12 +423,12 @@ class Product extends Page implements Buyable
     /**
      * This value is cased to Currency in temlates.
      */
-    public function getPrice()
+    public function getPrice(): float
     {
         return $this->sellingPrice();
     }
 
-    public function setPrice($price)
+    public function setPrice($price): void
     {
         $price = $price < 0 ? 0 : $price;
         $this->setField('BasePrice', $price);
@@ -447,7 +437,7 @@ class Product extends Page implements Buyable
     /**
      * Allow orphaned products to be viewed.
      */
-    public function isOrphaned()
+    public function isOrphaned(): bool
     {
         return false;
     }
@@ -457,9 +447,9 @@ class Product extends Page implements Buyable
      * is defined in SiteConfig, return that instead.
      *
      * @return Image
-     * @throws \Exception
+     * @throws Exception
      */
-    public function Image()
+    public function Image(): ?Image
     {
         $image = $this->getComponent('Image');
         $this->extend('updateImage', $image);
@@ -476,10 +466,8 @@ class Product extends Page implements Buyable
 
     /**
      * Link to add this product to cart.
-     *
-     * @return string|false link
      */
-    public function addLink()
+    public function addLink(): string|bool
     {
         return ShoppingCartController::add_item_link($this);
     }
@@ -489,7 +477,7 @@ class Product extends Page implements Buyable
      *
      * @return string|false link
      */
-    public function removeLink()
+    public function removeLink(): string|bool
     {
         return ShoppingCartController::remove_item_link($this);
     }
@@ -499,7 +487,7 @@ class Product extends Page implements Buyable
      *
      * @return string|false link
      */
-    public function removeAllLink()
+    public function removeAllLink(): string|bool
     {
         return ShoppingCartController::remove_all_item_link($this);
     }
@@ -508,7 +496,7 @@ class Product extends Page implements Buyable
      * Get the form class to use to edit this product in the frontend
      * @return string FQCN
      */
-    public function getFormClass()
+    public function getFormClass(): string
     {
         $formClass = AddProductForm::class;
         $this->extend('updateFormClass', $formClass);

@@ -2,9 +2,11 @@
 
 namespace SilverShop\Forms;
 
+use SilverStripe\Control\RequestHandler;
 use SilverShop\Cart\ShoppingCart;
 use SilverShop\Extension\ShopConfigExtension;
 use SilverShop\ShopTools;
+use SilverStripe\Control\HTTPResponse;
 use SilverStripe\Core\Convert;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Forms\FieldList;
@@ -21,10 +23,10 @@ class CartForm extends Form
 {
     protected $cart;
 
-    public function __construct($controller, $name = 'CartForm', $cart = null, $template = 'SilverShop\Cart\Cart')
+    public function __construct(RequestHandler $requestHandler, $name = 'CartForm', $cart = null, $template = 'SilverShop\Cart\Cart')
     {
         $this->cart = $cart;
-        $fields = FieldList::create(
+        $fieldList = FieldList::create(
             CartEditField::create('Items', '', $this->cart)
                 ->setTemplate($template)
         );
@@ -33,13 +35,13 @@ class CartForm extends Form
                 ->setUseButtonTag(Config::inst()->get(ShopConfigExtension::class, 'forms_use_button_tag'))
         );
 
-        parent::__construct($controller, $name, $fields, $actions);
+        parent::__construct($requestHandler, $name, $fieldList, $actions);
     }
 
     /**
      * Update the cart using data collected
      */
-    public function updatecart($data, $form)
+    public function updatecart($data, $form): HTTPResponse
     {
         $items = $this->cart->Items();
         $updatecount = $removecount = 0;
@@ -50,7 +52,7 @@ class CartForm extends Form
             ShopTools::install_locale($order->Locale);
         }
 
-        $numericConverter = NumericField::create('_temp');
+        $numericField = NumericField::create('_temp');
 
         $messages = [];
         $badMessages = [];
@@ -72,8 +74,8 @@ class CartForm extends Form
                 }
                 //update quantities
                 if (isset($fields['Quantity']) && $quantity = Convert::raw2sql($fields['Quantity'])) {
-                    $numericConverter->setValue($quantity);
-                    if (!ShoppingCart::singleton()->updateOrderItemQuantity($item, $numericConverter->dataValue())) {
+                    $numericField->setValue($quantity);
+                    if (!ShoppingCart::singleton()->updateOrderItemQuantity($item, $numericField->dataValue())) {
                         $badMessages[] = ShoppingCart::singleton()->getMessage();
                     }
                 }
@@ -92,7 +94,7 @@ class CartForm extends Form
                 }
             }
         }
-        if ($removecount) {
+        if ($removecount !== 0) {
             $messages['remove'] = _t(
                 __CLASS__ . '.REMOVED_ITEMS',
                 'Removed {count} items.',
@@ -100,7 +102,7 @@ class CartForm extends Form
                 ['count' => $removecount]
             );
         }
-        if ($updatecount) {
+        if ($updatecount !== 0) {
             $messages['updatecount'] = _t(
                 __CLASS__ . '.UPDATED_ITEMS',
                 'Updated {count} items.',
@@ -108,11 +110,11 @@ class CartForm extends Form
                 ['count' => $updatecount]
             );
         }
-        if (count($messages)) {
+        if (count($messages) !== 0) {
             $form->sessionMessage(implode(' ', $messages), 'good');
         }
 
-        if (count($badMessages)) {
+        if (count($badMessages) !== 0) {
             $form->sessionMessage(implode(' ', $badMessages), 'bad');
         }
 

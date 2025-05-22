@@ -8,6 +8,7 @@ use SilverShop\Model\Order;
 use SilverShop\ShopTools;
 use SilverShop\ShopUserInfo;
 use SilverStripe\Core\Injector\Injectable;
+use SilverStripe\Omnipay\Exception\InvalidConfigurationException;
 use SilverStripe\Omnipay\GatewayInfo;
 use SilverStripe\Security\Member;
 use SilverStripe\Security\Security;
@@ -32,17 +33,17 @@ class Checkout
      *        it is optional to be, or become a member at checkout.
      */
 
-    public static function member_creation_enabled()
+    public static function member_creation_enabled(): bool
     {
         return CheckoutConfig::config()->member_creation_enabled;
     }
 
-    public static function membership_required()
+    public static function membership_required(): bool
     {
         return CheckoutConfig::config()->membership_required;
     }
 
-    public static function get($order = null)
+    public static function get($order = null): Checkout|bool
     {
         if ($order === null) {
             $order = ShoppingCart::curr(); //roll back to current cart
@@ -53,20 +54,9 @@ class Checkout
         return false;
     }
 
-    /**
-     * @var Order
-     */
-    protected $order;
-
-    /**
-     * @var string
-     */
-    protected $message;
-
-    /**
-     * @var string
-     */
-    protected $type;
+    protected Order $order;
+    protected string $message = '';
+    protected string $type = '';
 
     public function __construct(Order $order)
     {
@@ -75,20 +65,16 @@ class Checkout
 
     /**
      * Get stored message
-     *
-     * @return string
      */
-    public function getMessage()
+    public function getMessage(): string
     {
         return $this->message;
     }
 
     /**
      * Get type of stored message
-     *
-     * @return string
      */
-    public function getMessageType()
+    public function getMessageType(): string
     {
         return $this->type;
     }
@@ -96,7 +82,7 @@ class Checkout
     /**
      * contact information
      */
-    public function setContactDetails($email, $firstname, $surname)
+    public function setContactDetails($email, $firstname, $surname): void
     {
         $this->order->Email = $email;
         $this->order->FirstName = $firstname;
@@ -105,7 +91,7 @@ class Checkout
     }
 
     //save / set up addresses
-    public function setShippingAddress(Address $address)
+    public function setShippingAddress(Address $address): void
     {
         $this->order->ShippingAddressID = $address->ID;
         if ($member = Security::getCurrentUser()) {
@@ -117,7 +103,7 @@ class Checkout
         ShopUserInfo::singleton()->setAddress($address);
     }
 
-    public function setBillingAddress(Address $address)
+    public function setBillingAddress(Address $address): void
     {
         $this->order->BillingAddressID = $address->ID;
         if ($member = Security::getCurrentUser()) {
@@ -130,9 +116,9 @@ class Checkout
     /**
      * Set payment method
      *
-     * @throws \SilverStripe\Omnipay\Exception\InvalidConfigurationException
+     * @throws InvalidConfigurationException
      */
-    public function setPaymentMethod($paymentmethod)
+    public function setPaymentMethod($paymentmethod): bool
     {
         $methods = GatewayInfo::getSupportedGateways();
         if (!isset($methods[$paymentmethod])) {
@@ -149,15 +135,15 @@ class Checkout
      * Gets the selected payment method from the session,
      * or the only available method, if there is only one.
      *
-     * @throws \SilverStripe\Omnipay\Exception\InvalidConfigurationException
+     * @throws InvalidConfigurationException
      */
-    public function getSelectedPaymentMethod($nice = false)
+    public function getSelectedPaymentMethod($nice = false): string|array|null
     {
         $methods = GatewayInfo::getSupportedGateways();
         reset($methods);
         $method = count($methods) === 1 ? key($methods) : ShopTools::getSession()->get('Checkout.PaymentMethod');
         if ($nice && isset($methods[$method])) {
-            $method = $methods[$method];
+            return $methods[$method];
         }
         return $method;
     }
@@ -165,7 +151,7 @@ class Checkout
     /**
      * Checks if member (or not) is allowed, in accordance with configuration
      */
-    public function validateMember($member)
+    public function validateMember($member): bool
     {
         if (!CheckoutConfig::config()->membership_required) {
             return true;
@@ -180,7 +166,7 @@ class Checkout
     /**
      * Store a new error & return false;
      */
-    protected function error($message)
+    protected function error(string $message): bool
     {
         $this->message($message, 'bad');
         return false;
@@ -189,10 +175,9 @@ class Checkout
     /**
      * Store a message to be fed back to user.
      *
-     * @param string $message
      * @param string $type    - good, bad, warning
      */
-    protected function message($message, $type = 'good')
+    protected function message(string $message, string $type = 'good'): void
     {
         $this->message = $message;
         $this->type = $type;

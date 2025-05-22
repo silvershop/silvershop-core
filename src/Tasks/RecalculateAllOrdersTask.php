@@ -18,7 +18,7 @@ class RecalculateAllOrdersTask extends BuildTask
 
     protected $description = 'Runs all price calculation functions on all orders.';
 
-    public function run($request)
+    public function run($request): void
     {
         $br = Director::is_cli() ? "\n" : '<br/>';
 

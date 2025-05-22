@@ -3,6 +3,7 @@
 namespace SilverShop\Reports;
 
 use SilverShop\Model\Order;
+use SilverStripe\ORM\Queries\SQLSelect;
 
 /**
  * Order sales for the entire shop.
@@ -25,7 +26,7 @@ class ShopSalesReport extends ShopPeriodReport
 
     protected $grouping = true;
 
-    public function columns()
+    public function columns(): array
     {
         $period = isset($_GET['filters']['Grouping']) ? $_GET['filters']['Grouping'] : 'Month';
         return [
@@ -35,7 +36,7 @@ class ShopSalesReport extends ShopPeriodReport
         ];
     }
 
-    public function query($params)
+    public function query($params): ShopReportQuery|SQLSelect
     {
         return parent::query($params)
             ->selectField('COUNT("SilverShop_Order"."ID")', 'Count')

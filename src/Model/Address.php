@@ -7,9 +7,10 @@ use SilverStripe\Forms\DropdownField;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\ReadonlyField;
 use SilverStripe\Forms\TextField;
-use SilverStripe\ORM\DataList;
 use SilverStripe\ORM\DataObject;
+use SilverStripe\ORM\FieldType\DBHTMLText;
 use SilverStripe\ORM\HasManyList;
+use SilverStripe\ORM\ValidationResult;
 use SilverStripe\Security\Member;
 use SilverStripe\SiteConfig\SiteConfig;
 
@@ -36,23 +37,24 @@ use SilverStripe\SiteConfig\SiteConfig;
  *      Universal Postal Union addressing standards:
  * @see http://www.upu.int/nc/en/activities/addressing/standards.html
  *
- * @property ShopCountry $Country
- * @property string $State
- * @property string $City
- * @property string $PostalCode
- * @property string $Address
- * @property string $AddressLine2
- * @property string $Company
- * @property string $FirstName
- * @property string $Surname
- * @property string $Phone
+ * @property ?string $Country
+ * @property ?string $State
+ * @property ?string $City
+ * @property ?string $PostalCode
+ * @property ?string $Address
+ * @property ?string $AddressLine2
+ * @property ?string $Company
+ * @property ?string $FirstName
+ * @property ?string $Surname
+ * @property ?string $Phone
  * @method   Member Member()
- * @method   Order[]|HasManyList ShippingAddressOrders()
- * @method   Order[]|HasManyList BillingAddressOrders()
+ * @method HasManyList<Order> ShippingAddressOrders()
+ * @method HasManyList<Order> BillingAddressOrders()
+ * @property int $MemberID
  */
 class Address extends DataObject
 {
-    private static $db = [
+    private static array $db = [
         'Country' => 'ShopCountry',
         //level1: Country = ISO 2-character country code
         'State' => 'Varchar(100)',
@@ -76,54 +78,54 @@ class Address extends DataObject
         'Phone' => 'Varchar(100)',
     ];
 
-    private static $has_one = [
+    private static array $has_one = [
         'Member' => Member::class,
     ];
 
-    private static $has_many = [
+    private static array $has_many = [
         'ShippingAddressOrders' => Order::class . '.ShippingAddress',
         'BillingAddressOrders' => Order::class . '.BillingAddress'
     ];
 
-    private static $casting = [
+    private static array $casting = [
         'Country' => ShopCountry::class,
     ];
 
-    private static $required_fields = [
+    private static array $required_fields = [
         'Country',
         'State',
         'City',
         'Address',
     ];
 
-    private static $summary_fields = [
+    private static array $summary_fields = [
         'toString' => 'Address',
     ];
 
-    private static $table_name = 'SilverShop_Address';
+    private static string $table_name = 'SilverShop_Address';
 
-    public function getCMSFields()
+    public function getCMSFields(): FieldList
     {
         $self = $this;
 
         $this->beforeUpdateCMSFields(
-            function (FieldList $fields) use ($self) {
-                $fields->addFieldToTab(
+            function (FieldList $fieldList) use ($self): void {
+                $fieldList->addFieldToTab(
                     'Root.Main',
                     $self->getCountryField(),
                     'State'
                 );
 
-                $fields->removeByName('MemberID');
+                $fieldList->removeByName('MemberID');
             }
         );
 
         return parent::getCMSFields();
     }
 
-    public function getFrontEndFields($params = null)
+    public function getFrontEndFields($params = null): FieldList
     {
-        $fields = new FieldList(
+        $fieldList = FieldList::create(
             $this->getCountryField(),
             TextField::create('Company', $this->fieldLabel('Company')),
             $addressfield = TextField::create('Address', $this->fieldLabel('Address')),
@@ -145,11 +147,11 @@ class Address extends DataObject
             $statefield->setDescription(_t(__CLASS__ . '.StateHint', 'or province, territory, island'));
         }
 
-        $this->extend('updateFormFields', $fields);
-        return $fields;
+        $this->extend('updateFormFields', $fieldList);
+        return $fieldList;
     }
 
-    public function getCountryField()
+    public function getCountryField(): ReadonlyField|DropdownField
     {
         $countries = SiteConfig::current_site_config()->getCountriesList();
         if (count($countries) == 1) {
@@ -160,22 +162,22 @@ class Address extends DataObject
                 array_pop($countries)
             );
         }
-        $field = DropdownField::create(
+        $singleSelectField = DropdownField::create(
             'Country',
             $this->fieldLabel('Country'),
             $countries
         )->setHasEmptyDefault(true);
 
-        $this->extend('updateCountryField', $field);
+        $this->extend('updateCountryField', $singleSelectField);
 
-        return $field;
+        return $singleSelectField;
     }
 
     /**
      * Get an array of data fields that must be populated for model to be valid.
      * Required fields can be customised via private static $required_fields
      */
-    public function getRequiredFields()
+    public function getRequiredFields(): array
     {
         $fields = self::config()->required_fields;
         //hack to allow overriding arrays in ss config
@@ -200,7 +202,7 @@ class Address extends DataObject
     /**
      * Get full name associated with this Address
      */
-    public function getName()
+    public function getName(): string
     {
         return implode(
             ' ',
@@ -216,7 +218,7 @@ class Address extends DataObject
     /**
      * Convert address to a single string.
      */
-    public function toString($separator = ', ')
+    public function toString($separator = ', '): string
     {
         $fields = [
             $this->Company,
@@ -232,12 +234,12 @@ class Address extends DataObject
         return implode($separator, array_filter($fields));
     }
 
-    public function getTitle()
+    public function getTitle(): string
     {
         return $this->toString();
     }
 
-    public function forTemplate()
+    public function forTemplate(): DBHTMLText
     {
         return $this->renderWith(__CLASS__);
     }
@@ -248,88 +250,88 @@ class Address extends DataObject
      * @param  string $val
      * @return $this
      */
-    public function setProvince($val)
+    public function setProvince($val): static
     {
         $this->State = $val;
         return $this;
     }
 
-    public function setTerritory($val)
+    public function setTerritory($val): static
     {
         $this->State = $val;
         return $this;
     }
 
-    public function setIsland($val)
+    public function setIsland($val): static
     {
         $this->State = $val;
         return $this;
     }
 
-    public function setPostCode($val)
+    public function setPostCode($val): static
     {
         $this->PostalCode = $val;
         return $this;
     }
 
-    public function setZipCode($val)
+    public function setZipCode($val): static
     {
         $this->PostalCode = $val;
         return $this;
     }
 
-    public function setStreet($val)
+    public function setStreet($val): static
     {
         $this->Address = $val;
         return $this;
     }
 
-    public function setStreet2($val)
+    public function setStreet2($val): static
     {
         $this->AddressLine2 = $val;
         return $this;
     }
 
-    public function setAddress2($val)
+    public function setAddress2($val): static
     {
         $this->AddressLine2 = $val;
         return $this;
     }
 
-    public function setInstitution($val)
+    public function setInstitution($val): static
     {
         $this->Company = $val;
         return $this;
     }
 
-    public function setBusiness($val)
+    public function setBusiness($val): static
     {
         $this->Company = $val;
         return $this;
     }
 
-    public function setOrganisation($val)
+    public function setOrganisation($val): static
     {
         $this->Company = $val;
         return $this;
     }
 
-    public function setOrganization($val)
+    public function setOrganization($val): static
     {
         $this->Company = $val;
         return $this;
     }
 
-    function validate()
+    function validate(): ValidationResult
     {
-        $result = parent::validate();
+        $validationResult = parent::validate();
 
         foreach ($this->getRequiredFields() as $requirement) {
             if (empty($this->$requirement)) {
-                $result->addError("Address Model validate function - missing required field: $requirement");
+                $validationResult->addError("Address Model validate function - missing required field: $requirement");
             }
         }
 
-        return $result;
+        return $validationResult;
     }
 }

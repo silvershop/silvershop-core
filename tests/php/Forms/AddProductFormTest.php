@@ -12,17 +12,17 @@ class AddProductFormTest extends FunctionalTest
 {
     public static $fixture_file = "../Fixtures/shop.yml";
 
-    public function testForm()
+    public function testForm(): void
     {
         $controller = ProductController::create($this->objFromFixture(Product::class, "socks"));
-        $form = AddProductForm::create($controller);
-        $form->setMaximumQuantity(10);
+        $addProductForm = AddProductForm::create($controller);
+        $addProductForm->setMaximumQuantity(10);
 
-        $form->addtocart(
+        $addProductForm->addtocart(
             [
                'Quantity' => 11,
             ],
-            $form
+            $addProductForm
         );
         $order = ShoppingCart::curr();
         $this->assertEquals(
@@ -32,11 +32,11 @@ class AddProductFormTest extends FunctionalTest
         );
 
         ShoppingCart::singleton()->clear();
-        $form->addtocart(
+        $addProductForm->addtocart(
             [
                 'Quantity' => 4,
             ],
-            $form
+            $addProductForm
         );
         $order = ShoppingCart::curr();
         $this->assertEquals(

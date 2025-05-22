@@ -13,11 +13,11 @@ class ShopToolsTest extends SapphireTest
         ShopTest::setConfiguration();
     }
 
-    public function testPriceForDisplay()
+    public function testPriceForDisplay(): void
     {
-        $dp = ShopTools::price_for_display(12345.67);
-        $dp->setCurrency("NZD");
-        $dp->setLocale("en_NZ");
-        $this->assertEquals($dp->Nice(), "$12,345.67");
+        $dbMoney = ShopTools::price_for_display(12345.67);
+        $dbMoney->setCurrency("NZD");
+        $dbMoney->setLocale("en_NZ");
+        $this->assertEquals($dbMoney->Nice(), "$12,345.67");
     }
 }

@@ -9,7 +9,7 @@ use SilverStripe\Forms\RequiredFields;
  */
 class VariationFormValidator extends RequiredFields
 {
-    public function php($data)
+    public function php($data): bool
     {
         $valid = parent::php($data);
 

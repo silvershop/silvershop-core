@@ -3,6 +3,7 @@
 namespace SilverShop\Reports;
 
 use SilverShop\Model\Order;
+use SilverStripe\ORM\Queries\SQLSelect;
 
 /**
  * Tax report
@@ -23,7 +24,7 @@ class TaxReport extends ShopPeriodReport
 
     protected $grouping = true;
 
-    public function columns()
+    public function columns(): array
     {
         $period = isset($_GET['filters']['Grouping']) ? $_GET['filters']['Grouping'] : 'Month';
         return [
@@ -34,7 +35,7 @@ class TaxReport extends ShopPeriodReport
         ];
     }
 
-    public function query($params)
+    public function query($params): ShopReportQuery|SQLSelect
     {
         return parent::query($params)
             ->addInnerJoin(

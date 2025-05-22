@@ -2,6 +2,7 @@
 
 namespace SilverShop\Page;
 
+use SilverShop\Extension\OrderManipulationExtension;
 use PageController;
 use SilverShop\Forms\ShopAccountForm;
 use SilverShop\Model\Address;
@@ -21,11 +22,14 @@ use SilverStripe\Security\MemberAuthenticator\MemberAuthenticator;
 use SilverStripe\Security\Security;
 use SilverStripe\SiteConfig\SiteConfig;
 
+/**
+ * @mixin OrderManipulationExtension
+ */
 class AccountPageController extends PageController
 {
-    private static $url_segment = 'account';
+    private static string $url_segment = 'account';
 
-    private static $allowed_actions = [
+    private static array $allowed_actions = [
         'addressbook',
         'CreateAddressForm',
         'DefaultAddressForm',
@@ -43,7 +47,7 @@ class AccountPageController extends PageController
      */
     protected $member;
 
-    public function init()
+    public function init(): void
     {
         parent::init();
 
@@ -66,7 +70,7 @@ class AccountPageController extends PageController
         }
     }
 
-    public function getTitle()
+    public function getTitle(): string
     {
         if ($this->dataRecord && $title = $this->dataRecord->Title) {
             return $title;
@@ -74,12 +78,12 @@ class AccountPageController extends PageController
         return _t('SilverShop\Page\AccountPage.DefaultTitle', 'Account');
     }
 
-    public function getMember()
+    public function getMember(): Member
     {
         return $this->member;
     }
 
-    public function addressbook()
+    public function addressbook(): array
     {
         return [
             'DefaultAddressForm' => $this->DefaultAddressForm(),
@@ -87,7 +91,7 @@ class AccountPageController extends PageController
         ];
     }
 
-    public function DefaultAddressForm()
+    public function DefaultAddressForm(): Form|bool
     {
         $addresses = $this->member->AddressBook()->sort('Created', 'DESC');
         if ($addresses->exists()) {
@@ -117,30 +121,31 @@ class AccountPageController extends PageController
         return false;
     }
 
-    public function savedefaultaddresses($data, $form)
+    public function savedefaultaddresses($data, $form): HTTPResponse
     {
         $form->saveInto($this->member);
         $this->member->write();
 
+        $response = null;
         $this->extend('updateDefaultAddressFormResponse', $form, $data, $response);
 
         return $response ?: $this->redirect($this->Link('addressbook'));
     }
 
-    public function CreateAddressForm()
+    public function CreateAddressForm(): Form
     {
         $singletonaddress = singleton(Address::class);
         $fields = $singletonaddress->getFrontEndFields();
-        $actions = FieldList::create(
+        $fieldList = FieldList::create(
             FormAction::create('saveaddress', _t('SilverShop\Model\Address.SaveNew', 'Save New Address'))
         );
-        $validator = RequiredFields::create($singletonaddress->getRequiredFields());
-        $form = Form::create($this, 'CreateAddressForm', $fields, $actions, $validator);
+        $requiredFields = RequiredFields::create($singletonaddress->getRequiredFields());
+        $form = Form::create($this, 'CreateAddressForm', $fields, $fieldList, $requiredFields);
         $this->extend('updateCreateAddressForm', $form);
         return $form;
     }
 
-    public function saveaddress($data, $form)
+    public function saveaddress($data, $form): HTTPResponse
     {
         $member = $this->getMember();
         $address = Address::create();
@@ -164,26 +169,23 @@ class AccountPageController extends PageController
         }
         $form->sessionMessage(_t('SilverShop\Model\Address.AddressSaved', 'Your address has been saved'), 'good');
 
+        $response = null;
         $this->extend('updateCreateAddressFormResponse', $form, $data, $response);
 
         return $response ?: $this->redirect($this->Link('addressbook'));
     }
 
-    public function editprofile()
+    public function editprofile(): array
     {
         return [];
     }
 
-    /**
-     * @param HTTPRequest $req
-     * @return HTTPResponse
-     */
-    function deleteaddress($req)
+    function deleteaddress(HTTPRequest$httpRequest): ?HTTPResponse
     {
         // NOTE: we don't want to fully delete the address because it's presumably still
         // attached to an order. Setting MemberID to 0 means it won't show up in the address
         // book any longer.
-        $address = $this->member->AddressBook()->byID($req->param('ID'));
+        $address = $this->member->AddressBook()->byID((int) $httpRequest->param('ID'));
         if ($address) {
             $address->MemberID = 0;
             $address->write();
@@ -193,63 +195,52 @@ class AccountPageController extends PageController
         return $this->redirectBack();
     }
 
-    /**
-     * @param HTTPRequest $req
-     * @return HTTPResponse
-     */
-    function setdefaultbilling($req)
+    function setdefaultbilling(HTTPRequest $httpRequest): HTTPResponse
     {
-        $this->member->DefaultBillingAddressID = $req->param('ID');
+        $this->member->DefaultBillingAddressID = (int) $httpRequest->param('ID');
         $this->member->write();
         return $this->redirectBack();
     }
 
-    /**
-     * @param HTTPRequest $req
-     * @return HTTPResponse
-     */
-    function setdefaultshipping($req)
+    function setdefaultshipping(HTTPRequest $httpRequest): HTTPResponse
     {
-        $this->member->DefaultShippingAddressID = $req->param('ID');
+        $this->member->DefaultShippingAddressID = (int) $httpRequest->param('ID');
         $this->member->write();
         return $this->redirectBack();
     }
 
     /**
      * Return a form allowing the user to edit their details.
-     *
-     * @return ShopAccountForm
      */
-    public function EditAccountForm()
+    public function EditAccountForm(): ShopAccountForm
     {
         return ShopAccountForm::create($this, 'EditAccountForm');
     }
 
-    public function ChangePasswordForm()
+    public function ChangePasswordForm(): ChangePasswordForm
     {
-
         /**
          * @var ChangePasswordHandler $handler
          */
         $handler = Injector::inst()->get(MemberAuthenticator::class)->getChangePasswordHandler($this->Link());
         $handler->setRequest($this->getRequest());
         /**
-         * @var ChangePasswordForm $form
+         * @var ChangePasswordForm $changePasswordForm
          */
-        $form = $handler->changePasswordForm();
+        $changePasswordForm = $handler->changePasswordForm();
 
         // The default form tries to redirect to /account/login which doesn't exist
-        $backURL = $form->Fields()->fieldByName('BackURL');
+        $backURL = $changePasswordForm->Fields()->fieldByName('BackURL');
         if (!$backURL) {
-            $backURL = new HiddenField('BackURL', 'BackURL');
-            $form->Fields()->push($backURL);
+            $backURL = HiddenField::create('BackURL', 'BackURL');
+            $changePasswordForm->Fields()->push($backURL);
         }
         $backURL->setValue($this->Link('editprofile'));
 
 
-        $this->extend('updateChangePasswordForm', $form);
+        $this->extend('updateChangePasswordForm', $changePasswordForm);
 
-        return $form;
+        return $changePasswordForm;
     }
 
     /**
@@ -257,7 +248,7 @@ class AccountPageController extends PageController
      * This catches that and sends it back to editprofile, which seems easier and less error-prone
      * than the alternative of trying to manipulate the BackURL field.
      */
-    public function changepassword()
+    public function changepassword(): void
     {
         $this->redirect($this->Link('editprofile'));
     }

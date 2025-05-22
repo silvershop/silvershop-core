@@ -42,6 +42,10 @@ en:
     MustAgreeToTerms: "You must agree to the terms and conditions"
     Password: Password
     PaymentType: 'Payment Type'
+  SilverShop\Checkout\Component\CustomerDetails:
+    NoFirstName: 'A firstname is required'
+    NoSurname: 'A surname is required'
+    NoEmail: 'An email address is required'
   SilverShop\Checkout\Component\OnsitePayment:
     InvalidCreditCard: 'Credit card is invalid'
   SilverShop\Checkout\Component\Payment:
@@ -481,3 +485,6 @@ en:
     StatusChangeSubject: 'Silvershop - {Title}'
     StatusChangeTitle: 'Shop Status Change'
     StatusChanged: 'Status for order #{OrderNo} changed to "{OrderStatus}"'
+  SilverShop\Task\CustomersToGroupTask:
+    DefaultCustomerGroupRequired: 'Default Customer Group required'
+    NoNewMembersAdded: 'No new members added'

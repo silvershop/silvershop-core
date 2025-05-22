@@ -16,9 +16,9 @@ use SilverStripe\Security\Security;
  */
 class ShopDevelopmentAdmin extends Controller
 {
-    private static $url_segment = 'silvershop';
+    private static string $url_segment = 'silvershop';
 
-    private static $allowed_actions = [
+    private static array $allowed_actions = [
         'index' => true
     ];
 
@@ -47,8 +47,8 @@ class ShopDevelopmentAdmin extends Controller
         }
 
         //render the debug view
-        $renderer = DebugView::create();
-        $renderer->renderHeader();
-        $renderer->renderInfo(_t('SilverShop\Generic.DevToolsTitle', 'Shop Development Tools'), Director::absoluteBaseURL());
+        $debugView = DebugView::create();
+        $debugView->renderHeader();
+        $debugView->renderInfo(_t('SilverShop\Generic.DevToolsTitle', 'Shop Development Tools'), Director::absoluteBaseURL());
     }
 }

@@ -25,14 +25,14 @@ use SilverStripe\SiteConfig\SiteConfig;
  */
 class CheckoutFieldFactory
 {
-    private static $inst;
+    private static ?\SilverShop\Checkout\CheckoutFieldFactory $checkoutFieldFactory = null;
 
-    public static function singleton()
+    public static function singleton(): ?\SilverShop\Checkout\CheckoutFieldFactory
     {
-        if (!self::$inst) {
-            self::$inst = new CheckoutFieldFactory();
+        if (!self::$checkoutFieldFactory instanceof \SilverShop\Checkout\CheckoutFieldFactory) {
+            self::$checkoutFieldFactory = new CheckoutFieldFactory();
         }
-        return self::$inst;
+        return self::$checkoutFieldFactory;
     }
 
     //prevent instantiation
@@ -40,7 +40,7 @@ class CheckoutFieldFactory
     {
     }
 
-    public function getContactFields($subset = [])
+    public function getContactFields($subset = []): FieldList
     {
         return $this->getSubset(
             FieldList::create(
@@ -52,28 +52,28 @@ class CheckoutFieldFactory
         );
     }
 
-    public function getAddressFields($type = "shipping", $subset = [])
+    public function getAddressFields($type = "shipping", $subset = []): FieldList
     {
         $address = singleton(Address::class);
         $fields = $address->getFormFields($type);
         return $this->getSubset($fields, $subset);
     }
 
-    public function getMembershipFields()
+    public function getMembershipFields(): FieldList
     {
-        $fields = $this->getContactFields();
+        $fieldList = $this->getContactFields();
         $idfield = Member::config()->unique_identifier_field;
-        if (!$fields->fieldByName($idfield)) {
-            $fields->push(TextField::create($idfield, $idfield)); //TODO: scaffold the correct id field
+        if (!$fieldList->fieldByName($idfield)) {
+            $fieldList->push(TextField::create($idfield, $idfield)); //TODO: scaffold the correct id field
         }
-        $fields->push($this->getPasswordField());
-        return $fields;
+        $fieldList->push($this->getPasswordField());
+        return $fieldList;
     }
 
-    public function getPasswordFields()
+    public function getPasswordFields(): FieldList
     {
         $loginlink = "Security/login?BackURL=" . CheckoutPage::find_link(true);
-        $fields = FieldList::create(
+        $fieldList = FieldList::create(
             HeaderField::create(_t('SilverShop\Checkout\CheckoutField.MembershipDetails', 'Membership Details'), 3),
             LiteralField::create(
                 'MemberInfo',
@@ -98,10 +98,10 @@ class CheckoutFieldFactory
         if (!Checkout::membership_required()) {
             $pwf->setCanBeEmpty(true);
         }
-        return $fields;
+        return $fieldList;
     }
 
-    public function getPaymentMethodFields()
+    public function getPaymentMethodFields(): OptionsetField
     {
         //TODO: only get one field if there is no option
         return OptionsetField::create(
@@ -112,7 +112,7 @@ class CheckoutFieldFactory
         );
     }
 
-    public function getPasswordField($confirmed = true)
+    public function getPasswordField($confirmed = true): ConfirmedPasswordField|PasswordField
     {
         if ($confirmed) {
             return ConfirmedPasswordField::create('Password', _t('SilverShop\Checkout\CheckoutField.Password', 'Password'));
@@ -120,12 +120,12 @@ class CheckoutFieldFactory
         return PasswordField::create('Password', _t('SilverShop\Checkout\CheckoutField.Password', 'Password'));
     }
 
-    public function getNotesField()
+    public function getNotesField(): TextareaField
     {
         return TextareaField::create("Notes", _t("SilverShop\Model\Order.db_Notes", "Message"));
     }
 
-    public function getTermsConditionsField()
+    public function getTermsConditionsField(): CheckboxField
     {
         $field = null;
 
@@ -150,19 +150,18 @@ class CheckoutFieldFactory
      * Helper function for reducing a field set to a given subset,
      * in the given order.
      *
-     * @param FieldList $fields form fields to take a subset from.
+     * @param FieldList $fieldList form fields to take a subset from.
      * @param array     $subset list of field names to return as subset
-     *
      * @return FieldList subset of form fields
      */
-    private function getSubset(FieldList $fields, $subset = [])
+    private function getSubset(FieldList $fieldList, $subset = []): FieldList
     {
         if (empty($subset)) {
-            return $fields;
+            return $fieldList;
         }
         $subfieldlist = FieldList::create();
         foreach ($subset as $field) {
-            if ($field = $fields->fieldByName($field)) {
+            if ($field = $fieldList->fieldByName($field)) {
                 $subfieldlist->push($field);
             }
         }

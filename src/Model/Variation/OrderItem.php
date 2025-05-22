@@ -2,6 +2,9 @@
 
 namespace SilverShop\Model\Variation;
 
+use SilverStripe\Assets\Image;
+use SilverStripe\ORM\DataObject;
+use SilverStripe\ORM\FieldType\DBDecimal;
 use SilverStripe\Versioned\Versioned;
 
 /**
@@ -10,28 +13,28 @@ use SilverStripe\Versioned\Versioned;
  *
  * @property int $ProductVariationVersion
  * @property int $ProductVariationID
+ * @method Variation ProductVariation()
  */
 class OrderItem extends \SilverShop\Model\Product\OrderItem
 {
-    private static $db = [
+    private static array $db = [
         'ProductVariationVersion' => 'Int',
     ];
 
-    private static $has_one = [
+    private static array $has_one = [
         'ProductVariation' => Variation::class
     ];
 
-    private static $buyable_relationship = 'ProductVariation';
+    private static string $buyable_relationship = 'ProductVariation';
 
-    private static $table_name = 'SilverShop_Variation_OrderItem';
+    private static string $table_name = 'SilverShop_Variation_OrderItem';
 
     /**
      * Overloaded relationship, for getting versioned variations
      *
-     * @param  boolean $current
-     * @return Variation
+     * @param  boolean $forcecurrent
      */
-    public function ProductVariation($forcecurrent = false)
+    public function ProductVariation($forcecurrent = false): DataObject|Versioned|null
     {
         if ($this->ProductVariationID && $this->ProductVariationVersion && !$forcecurrent) {
             return Versioned::get_version(
@@ -39,15 +42,15 @@ class OrderItem extends \SilverShop\Model\Product\OrderItem
                 $this->ProductVariationID,
                 $this->ProductVariationVersion
             );
-        } elseif ($this->ProductVariationID
-            && $product = Variation::get()->byID($this->ProductVariationID)
-        ) {
+        }
+        if ($this->ProductVariationID
+            && $product = Variation::get()->byID($this->ProductVariationID)) {
             return $product;
         }
         return null;
     }
-    
-    public function onPlacement()
+
+    public function onPlacement(): void
     {
         parent::onPlacement();
         if ($productVariation = $this->ProductVariation(true)) {
@@ -55,7 +58,7 @@ class OrderItem extends \SilverShop\Model\Product\OrderItem
         }
     }
 
-    public function SubTitle()
+    public function SubTitle(): false|string
     {
         if ($this->ProductVariation()) {
             return $this->ProductVariation()->getTitle();
@@ -63,7 +66,7 @@ class OrderItem extends \SilverShop\Model\Product\OrderItem
         return false;
     }
 
-    public function Image()
+    public function Image(): Image
     {
         if (($variation = $this->ProductVariation()) && $variation->Image()->exists()) {
             return $variation->Image();
@@ -71,7 +74,7 @@ class OrderItem extends \SilverShop\Model\Product\OrderItem
         return $this->Product()->Image();
     }
 
-    public function Width()
+    public function Width(): float
     {
         if (($variation = $this->ProductVariation()) && $variation->Width) {
             return $variation->Width;
@@ -79,7 +82,7 @@ class OrderItem extends \SilverShop\Model\Product\OrderItem
         return $this->Product()->Width;
     }
 
-    public function Height()
+    public function Height(): float
     {
         if (($variation = $this->ProductVariation()) && $variation->Height) {
             return $variation->Height;
@@ -87,7 +90,7 @@ class OrderItem extends \SilverShop\Model\Product\OrderItem
         return $this->Product()->Height;
     }
 
-    public function Depth()
+    public function Depth(): float
     {
         if (($variation = $this->ProductVariation()) && $variation->Depth) {
             return $variation->Depth;
@@ -95,7 +98,7 @@ class OrderItem extends \SilverShop\Model\Product\OrderItem
         return $this->Product()->Depth;
     }
 
-    public function Weight()
+    public function Weight(): float
     {
         if (($variation = $this->ProductVariation()) && $variation->Weight) {
             return $variation->Weight;

@@ -3,58 +3,38 @@
 namespace SilverShop\Extension;
 
 use SilverStripe\Assets\Image;
+use SilverStripe\Assets\Storage\AssetContainer;
 use SilverStripe\Core\Config\Configurable;
-use SilverStripe\ORM\DataExtension;
+use SilverStripe\Core\Extension;
 
 /**
  * Adds some image size functions to the Image DataObject.
  *
  * @package shop
+ * @extends Extension<(Image & static)>
  */
-class ProductImageExtension extends DataExtension
+class ProductImageExtension extends Extension
 {
     use Configurable;
 
-    /**
-     * @var Image
-     */
     protected $owner;
 
-    /**
-     * @config
-     */
     private static int $thumbnail_width = 140;
 
-    /**
-     * @config
-     */
     private static int $thumbnail_height = 100;
 
-    /**
-     * @config
-     */
     private static int $content_image_width = 200;
 
-    /**
-     * @config
-     */
     private static int $content_image_height = 0;
 
-    /**
-     * @config
-     */
     private static int $large_image_width = 600;
 
-    /**
-     * @config
-     */
     private static int $large_image_height = 0;
 
     /**
      * @param bool $upscale [optional]
-     * @return Image
      */
-    public function getThumbnail($upscale = false)
+    public function getThumbnail($upscale = false): Image|AssetContainer
     {
         $width = self::config()->thumbnail_width;
         $height = self::config()->thumbnail_height;
@@ -64,9 +44,8 @@ class ProductImageExtension extends DataExtension
 
     /**
      * @param bool $upscale [optional]
-     * @return Image
      */
-    public function getContentImage($upscale = false)
+    public function getContentImage($upscale = false): Image|AssetContainer
     {
         $width = self::config()->content_image_width;
         $height = self::config()->content_image_height;
@@ -76,9 +55,8 @@ class ProductImageExtension extends DataExtension
 
     /**
      * @param bool $upscale [optional]
-     * @return Image
      */
-    public function getLargeImage($upscale = false)
+    public function getLargeImage($upscale = false): Image|AssetContainer
     {
         $width = self::config()->large_image_width;
         $height = self::config()->large_image_height;
@@ -93,10 +71,8 @@ class ProductImageExtension extends DataExtension
      * @param int  $width   [optional]
      * @param int  $height  [optional]
      * @param bool $upscale [optional]
-     *
-     * @return Image
      */
-    public function getImageAt($width = null, $height = null, $upscale = false)
+    public function getImageAt($width = null, $height = null, $upscale = false): Image|AssetContainer
     {
         if (!$this->owner->exists()) {
             return $this->owner;
@@ -109,23 +85,21 @@ class ProductImageExtension extends DataExtension
             return $realWidth < $width && $realHeight < $height && !$upscale
                 ? $this->owner
                 : $this->owner->Pad($width, $height);
-        } else {
-            if ($width) {
-                return $realWidth < $width && !$upscale
-                    ? $this->owner
-                    : $this->owner->ScaleWidth($width);
-            } else {
-                return $realHeight < $height && !$upscale
-                    ? $this->owner
-                    : $this->owner->ScaleHeight($height);
-            }
         }
+        if ($width) {
+            return $realWidth < $width && !$upscale
+                ? $this->owner
+                : $this->owner->ScaleWidth($width);
+        }
+        return $realHeight < $height && !$upscale
+            ? $this->owner
+            : $this->owner->ScaleHeight($height);
     }
 
     /**
      * @return bool - is the image large enough that a "large" image makes sense?
      */
-    public function HasLargeImage()
+    public function HasLargeImage(): bool
     {
         $imageWidth = intval($this->owner->getWidth());
         return $imageWidth > self::config()->content_image_width;

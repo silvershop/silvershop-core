@@ -15,7 +15,6 @@ use SilverStripe\Security\MemberAuthenticator\MemberAuthenticator;
 use SilverStripe\Security\Member;
 use SilverStripe\Security\Security;
 use SilverStripe\SiteConfig\SiteConfig;
-use SilverStripe\View\SSViewer;
 
 class AccountPageTest extends FunctionalTest
 {
@@ -23,18 +22,11 @@ class AccountPageTest extends FunctionalTest
         __DIR__ . '/../Fixtures/Pages.yml',
         __DIR__ . '/../Fixtures/shop.yml',
     ];
-    protected static $disable_theme = true;
-    protected static $use_draft_site = true;
+    protected static bool $disable_theme = true;
+    protected static bool $use_draft_site = true;
 
-    /**
-     * @var AccountPage
-     */
-    protected $accountpage;
-
-    /**
-     * @var AccountPageController
-     */
-    protected $controller;
+    protected AccountPage $accountpage;
+    protected AccountPageController $controller;
 
     public function setUp(): void
     {
@@ -43,15 +35,15 @@ class AccountPageTest extends FunctionalTest
         Controller::add_extension(ShopTestControllerExtension::class);
         $this->accountpage = $this->objFromFixture(AccountPage::class, "accountpage");
         $this->accountpage->publishSingle();
-        $this->controller = new AccountPageController($this->accountpage);
+        $this->controller = AccountPageController::create($this->accountpage);
 
-        $r = new HTTPRequest('GET', '/');
-        $r->setSession($this->session());
+        $httpRequest = new HTTPRequest('GET', '/');
+        $httpRequest->setSession($this->session());
 
-        $this->controller->setRequest($r);
+        $this->controller->setRequest($httpRequest);
     }
 
-    public function testCanViewAccountPage()
+    public function testCanViewAccountPage(): void
     {
         $page = $this->get("account/");  // attempt to access the Account Page
         $this->assertEquals(200, $page->getStatusCode(), "a page should load");
@@ -76,14 +68,14 @@ class AccountPageTest extends FunctionalTest
         $this->assertEquals(AccountPageController::class, $page->getHeader('X-TestPageClass'), "Account Page should open");
     }
 
-    public function testGlobals()
+    public function testGlobals(): void
     {
         $this->assertFalse($this->accountpage->canCreate(), "account page exists");
         $this->assertEquals(Controller::join_links(Director::baseURL() . "account"), AccountPage::find_link());
         $this->assertEquals(Controller::join_links(Director::baseURL() . "account/order/10"), AccountPage::get_order_link(10));
     }
 
-    public function testAddressBook()
+    public function testAddressBook(): void
     {
         $member = $this->objFromFixture(Member::class, "joebloggs");
         $this->logInAs($member);
@@ -141,20 +133,20 @@ class AccountPageTest extends FunctionalTest
         );
     }
 
-    public function testAddressBookWithDropdownFieldToSelectCountry()
+    public function testAddressBookWithDropdownFieldToSelectCountry(): void
     {
         $this->useTestTheme(
             realpath(__DIR__ . '/../'),
             'shoptest',
-            function () {
+            function (): void {
                 $member = $this->objFromFixture(Member::class, 'joebloggs');
                 $this->logInAs($member);
 
                 // Open Address Book page
-                $page = $this->get('account/addressbook/'); // goto address book page
-                $this->assertEquals(200, $page->getStatusCode(), 'a page should load');
-                $this->assertEquals(AccountPageController::class, $page->getHeader('X-TestPageClass'), 'Account page should open');
-                $this->assertEquals('addressbook', $page->getHeader('X-TestPageAction'), 'Account addressbook should open');
+                $httpResponse = $this->get('account/addressbook/'); // goto address book page
+                $this->assertEquals(200, $httpResponse->getStatusCode(), 'a page should load');
+                $this->assertEquals(AccountPageController::class, $httpResponse->getHeader('X-TestPageClass'), 'Account page should open');
+                $this->assertEquals('addressbook', $httpResponse->getHeader('X-TestPageAction'), 'Account addressbook should open');
 
                 // Create an address
                 $this->submitForm(
@@ -170,7 +162,7 @@ class AccountPageTest extends FunctionalTest
                         'Phone' => '1234 5678',
                     ]
                 );
-                $this->assertEquals(200, $page->getStatusCode(), 'a page should load');
+                $this->assertEquals(200, $httpResponse->getStatusCode(), 'a page should load');
 
                 $au_address = Address::get()->filter('PostalCode', '2000')->sort('ID')->last();
                 $this->assertEquals(
@@ -187,12 +179,12 @@ class AccountPageTest extends FunctionalTest
         );
     }
 
-    public function testAddressBookWithReadonlyFieldForCountry()
+    public function testAddressBookWithReadonlyFieldForCountry(): void
     {
         $this->useTestTheme(
             realpath(__DIR__ . '/../'),
             'shoptest',
-            function () {
+            function (): void {
                 $member = $this->objFromFixture(Member::class, 'joebloggs');
                 $this->logInAs($member);
 
@@ -208,16 +200,16 @@ class AccountPageTest extends FunctionalTest
                 );
 
                 // Open the Address Book page to test form submission with a readonly field
-                $page = $this->get('account/addressbook/'); // goto address book page
-                $this->assertEquals(200, $page->getStatusCode(), 'a page should load');
+                $httpResponse = $this->get('account/addressbook/'); // goto address book page
+                $this->assertEquals(200, $httpResponse->getStatusCode(), 'a page should load');
                 $this->assertStringContainsString(
                     'Form_CreateAddressForm_Country_readonly',
-                    $page->getBody(),
+                    $httpResponse->getBody(),
                     'The Country field is readonly'
                 );
                 $this->assertStringNotContainsString(
                     '<option value=\"NZ\">New Zealand</option>',
-                    $page->getBody(),
+                    $httpResponse->getBody(),
                     'Dropdown field is not shown'
                 );
 
@@ -232,7 +224,7 @@ class AccountPageTest extends FunctionalTest
                         'PostalCode' => '8011',
                     ]
                 );
-                $this->assertEquals(200, $page->getStatusCode(), 'a page should load');
+                $this->assertEquals(200, $httpResponse->getStatusCode(), 'a page should load');
 
                 $nz_address = Address::get()->filter('PostalCode', '8011')->sort('ID')->last();
                 $this->assertEquals(
@@ -249,7 +241,7 @@ class AccountPageTest extends FunctionalTest
         );
     }
 
-    public function testEditProfile()
+    public function testEditProfile(): void
     {
         $member = $this->objFromFixture(Member::class, 'joebloggs');
         $this->logInAs($member);
@@ -278,10 +270,10 @@ class AccountPageTest extends FunctionalTest
         );
         $this->assertEquals(200, $page->getStatusCode(), 'a page should load');
 
-        $authenticator = new MemberAuthenticator;
-        $validation_result = $authenticator->checkPassword($member, 'newpassword123');
+        $memberAuthenticator = new MemberAuthenticator;
+        $validationResult = $memberAuthenticator->checkPassword($member, 'newpassword123');
         $this->assertTrue(
-            $validation_result->isValid(),
+            $validationResult->isValid(),
             'Password should have changed'
         );
     }

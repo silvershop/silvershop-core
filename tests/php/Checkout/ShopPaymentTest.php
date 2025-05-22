@@ -2,6 +2,9 @@
 
 namespace SilverShop\Tests\Checkout;
 
+use Exception;
+use GuzzleHttp\Client;
+use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\Psr7\Message;
 use SilverShop\Cart\ShoppingCart;
 use SilverShop\Checkout\OrderProcessor;
@@ -16,6 +19,7 @@ use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Dev\FunctionalTest;
 use SilverStripe\Dev\TestSession;
 use SilverStripe\Omnipay\Model\Payment;
+use Symfony\Component\HttpFoundation\Request;
 
 class ShopPaymentTest extends FunctionalTest
 {
@@ -23,11 +27,11 @@ class ShopPaymentTest extends FunctionalTest
         __DIR__ . '/../Fixtures/Pages.yml',
         __DIR__ . '/../Fixtures/shop.yml',
     ];
-    public static $disable_theme = true;
+    public static bool $disable_theme = true;
     protected $autoFollowRedirection = false;
 
-    /** @var \GuzzleHttp\Handler\MockHandler */
-    protected $mockHandler = null;
+    /** @var MockHandler */
+    protected $mockHandler;
 
     public function setUp(): void
     {
@@ -62,7 +66,7 @@ class ShopPaymentTest extends FunctionalTest
         $this->objFromFixture(CartPage::class, "cart")->publishSingle();
     }
 
-    public function testManualPayment()
+    public function testManualPayment(): void
     {
         $order = $this->objFromFixture(Order::class, 'unpaid');
         $payment = Payment::create()->init('Manual', 100.00, 'NZD');
@@ -70,20 +74,20 @@ class ShopPaymentTest extends FunctionalTest
         $payment->write();
 
         // Process payment
-        $processor = OrderProcessor::create($order);
-        $response = $processor->makePayment('Manual', []);
+        $orderProcessor = OrderProcessor::create($order);
+        $response = $orderProcessor->makePayment('Manual', []);
 
         $this->assertTrue($response->isSuccessful(), 'Manual payment should be successful');
         $this->assertEquals('Created', $payment->Status, 'Payment status should be Created');
     }
 
-    public function testOnsitePayment()
+    public function testOnsitePayment(): void
     {
         $order = $this->objFromFixture(Order::class, 'unpaid');
 
         // Process onsite payment with dummy gateway
-        $processor = OrderProcessor::create($order);
-        $response = $processor->makePayment(
+        $orderProcessor = OrderProcessor::create($order);
+        $response = $orderProcessor->makePayment(
             'Dummy',
             [
                 'number' => '4242424242424242',
@@ -92,7 +96,7 @@ class ShopPaymentTest extends FunctionalTest
                 'cvv' => '123'
             ]
         );
-        $processor->completePayment();
+        $orderProcessor->completePayment();
         $this->assertTrue($response->isSuccessful(), 'Onsite payment should be successful');
         $this->assertFalse($response->isRedirect(), 'Should not be a redirect for onsite payment');
         $this->assertTrue($order->isPaid(), 'Order should be marked as paid');
@@ -100,13 +104,13 @@ class ShopPaymentTest extends FunctionalTest
         $this->assertEquals('Captured', $payment->Status, 'Payment status should be Captured');
     }
 
-    public function testOffsitePayment()
+    public function testOffsitePayment(): void
     {
         $order = $this->objFromFixture(Order::class, 'unpaid');
 
         // Process payment with dummy gateway
-        $processor = OrderProcessor::create($order);
-        $response = $processor->makePayment(
+        $orderProcessor = OrderProcessor::create($order);
+        $response = $orderProcessor->makePayment(
             'Dummy',
             [
                 'number' => '4242424242424242',
@@ -115,7 +119,7 @@ class ShopPaymentTest extends FunctionalTest
                 'cvv' => '123'
             ]
         );
-        $processor->completePayment();
+        $orderProcessor->completePayment();
 
         $this->assertTrue($response->isSuccessful(), 'Onsite payment should be successful');
         $this->assertEquals('Paid', $order->Status, 'Order status should be Paid');
@@ -123,7 +127,7 @@ class ShopPaymentTest extends FunctionalTest
         $this->assertEquals('Captured', $payment->Status, 'Payment status should be Captured');
     }
 
-    public function testOffsitePaymentWithGatewayCallback()
+    public function testOffsitePaymentWithGatewayCallback(): void
     {
         //set up cart
         $cart = ShoppingCart::singleton()
@@ -139,9 +143,9 @@ class ShopPaymentTest extends FunctionalTest
         );
         $cart->write();
         //pay for order with external gateway
-        $processor = OrderProcessor::create($cart);
+        $orderProcessor = OrderProcessor::create($cart);
         $this->setMockHttpResponse('paymentexpress/tests/Mock/PxPayPurchaseSuccess.txt');
-        $response = $processor->makePayment("PaymentExpress_PxPay", []);
+        $response = $orderProcessor->makePayment("PaymentExpress_PxPay", []);
         //gateway responds (in a different session)
         $oldsession = $this->mainSession;
         $this->mainSession = new TestSession();
@@ -163,7 +167,6 @@ class ShopPaymentTest extends FunctionalTest
         $this->assertNotEquals(404, $response->getStatusCode(), "We shouldn't get page not found");
     }
 
-    protected $payment;
     protected $httpClient;
     protected $httpRequest;
 
@@ -171,14 +174,14 @@ class ShopPaymentTest extends FunctionalTest
     {
         if (null === $this->httpClient) {
             if ($this->mockHandler === null) {
-                $this->mockHandler = new \GuzzleHttp\Handler\MockHandler();
+                $this->mockHandler = new MockHandler();
             }
 
-            $guzzle = new \GuzzleHttp\Client([
+            $client = new Client([
                 'handler' => $this->mockHandler,
             ]);
 
-            $this->httpClient = new \Omnipay\Common\Http\Client(new \Http\Adapter\Guzzle7\Client($guzzle));
+            $this->httpClient = new \Omnipay\Common\Http\Client(new \Http\Adapter\Guzzle7\Client($client));
         }
 
         return $this->httpClient;
@@ -187,16 +190,16 @@ class ShopPaymentTest extends FunctionalTest
     protected function getHttpRequest()
     {
         if (null === $this->httpRequest) {
-            $this->httpRequest = new \Symfony\Component\HttpFoundation\Request;
+            $this->httpRequest = new Request;
         }
 
         return $this->httpRequest;
     }
 
-    protected function setMockHttpResponse($paths)
+    protected function setMockHttpResponse($paths): MockHandler
     {
         if ($this->mockHandler === null) {
-            throw new \Exception('HTTP client not initialised before adding mock response.');
+            throw new Exception('HTTP client not initialised before adding mock response.');
         }
 
         $testspath = BASE_PATH . '/vendor/omnipay';

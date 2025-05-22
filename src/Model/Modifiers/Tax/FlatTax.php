@@ -12,11 +12,7 @@ use SilverShop\Model\Order;
  */
 class FlatTax extends Base
 {
-    /**
-     * @config
-     * @var string
-     */
-    private static $name            = 'GST';
+    private static string $name            = 'GST';
 
     /**
      * @config
@@ -24,23 +20,13 @@ class FlatTax extends Base
      */
     private static $rate            = 0.15;
 
-    /**
-     * @config
-     * @var bool
-     */
-    private static $exclusive       = true;
+    private static bool $exclusive       = true;
 
-    /**
-     * @config
-     * @var string
-     */
-    private static $includedmessage = '%.1f%% %s (inclusive)';
+    private static string $includedmessage = '%.1f%% %s (inclusive)';
 
-    /**
-     * @config
-     * @var string
-     */
-    private static $excludedmessage = '%.1f%% %s';
+    private static string $excludedmessage = '%.1f%% %s';
+
+    private static string $table_name = 'SilverShop_FlatTaxModifier';
 
     public function __construct($record = null, $isSingleton = false, $model = null)
     {
@@ -51,7 +37,7 @@ class FlatTax extends Base
     /**
      * Get the tax amount to charge on the order.
      */
-    public function value($incoming)
+    public function value($incoming): int|float
     {
         $this->Rate = self::config()->rate;
         //inclusive tax requires a different calculation

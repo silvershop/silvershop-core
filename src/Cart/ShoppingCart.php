@@ -14,6 +14,7 @@ use SilverShop\ShopTools;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Config\Configurable;
 use SilverStripe\Core\Injector\Injectable;
+use SilverStripe\ORM\ValidationException;
 use SilverStripe\Security\Member;
 use SilverStripe\Security\Security;
 
@@ -31,36 +32,25 @@ class ShoppingCart
     use Injectable;
     use Configurable;
 
-    private static $cartid_session_name = 'SilverShop.shoppingcartid';
+    private static string $cartid_session_name = 'SilverShop.shoppingcartid';
 
-    /**
-     * @var Order
-     */
     private $order;
-
-    private $calculateonce = false;
-
-    private $message;
-
-    private $type;
-
+    private bool $calculateonce = false;
+    private string $message = '';
+    private string $type = '';
 
     /**
      * Shortened alias for ShoppingCart::singleton()->current()
-     *
-     * @return Order
      */
-    public static function curr()
+    public static function curr(): ?Order
     {
         return self::singleton()->current();
     }
 
     /**
      * Get the current order, or return null if it doesn't exist.
-     *
-     * @return Order
      */
-    public function current()
+    public function current(): ?Order
     {
         $session = ShopTools::getSession();
         //find order by id saved to session (allows logging out and retaining cart contents)
@@ -83,30 +73,26 @@ class ShoppingCart
     /**
      * Set the current cart
      *
-     * @param Order $cart the Order to use as the current cart-content
-     *
-     * @return ShoppingCart
+     * @param Order $order the current cart-content
      */
-    public function setCurrent(Order $cart)
+    public function setCurrent(Order $order): static
     {
-        if (!$cart->IsCart()) {
+        if (!$order->IsCart()) {
             trigger_error('Passed Order object is not cart status', E_ERROR);
         }
-        $this->order = $cart;
+        $this->order = $order;
         $session = ShopTools::getSession();
-        $session->set(self::config()->cartid_session_name, $cart->ID);
+        $session->set(self::config()->cartid_session_name, $order->ID);
 
         return $this;
     }
 
     /**
      * Helper that only allows orders to be started internally.
-     *
-     * @return Order
      */
-    protected function findOrMake()
+    protected function findOrMake(): Order
     {
-        if ($this->current()) {
+        if ($this->current() instanceof Order) {
             return $this->current();
         }
         $this->order = Order::create();
@@ -125,13 +111,11 @@ class ShoppingCart
     /**
      * Adds an item to the cart
      *
-     * @param Buyable $buyable
-     * @param int     $quantity
-     * @param array   $filter
-     *
-     * @return boolean|OrderItem false or the new/existing item
+     * @param int $quantity
+     * @param array $filter
+     * @return bool|null|OrderItem false or the new/existing item
      */
-    public function add(Buyable $buyable, $quantity = 1, $filter = [])
+    public function add(Buyable $buyable, $quantity = 1, $filter = []): bool|null|OrderItem
     {
         $order = $this->findOrMake();
 
@@ -148,7 +132,7 @@ class ShoppingCart
 
         $item = $this->findOrMakeItem($buyable, $quantity, $filter);
 
-        if (!$item) {
+        if (!$item instanceof OrderItem) {
             return false;
         }
 
@@ -174,17 +158,15 @@ class ShoppingCart
     /**
      * Remove an item from the cart.
      *
-     * @param Buyable $buyable
-     * @param int     $quantity - number of items to remove, or leave null for all items (default)
-     * @param array   $filter
-     *
+     * @param int $quantity - number of items to remove, or leave null for all items (default)
+     * @param array $filter
      * @return boolean success/failure
      */
-    public function remove(Buyable $buyable, $quantity = null, $filter = [])
+    public function remove(Buyable $buyable, $quantity = null, $filter = []): ?bool
     {
         $order = $this->current();
 
-        if (!$order) {
+        if (!$order instanceof Order) {
             return $this->error(_t(__CLASS__ . '.NoOrder', 'No current order.'));
         }
 
@@ -197,7 +179,7 @@ class ShoppingCart
 
         $item = $this->get($buyable, $filter);
 
-        if (!$item || !$this->removeOrderItem($item, $quantity)) {
+        if (!$item instanceof OrderItem || $this->removeOrderItem($item, $quantity) !== true) {
             return false;
         }
 
@@ -217,29 +199,28 @@ class ShoppingCart
     /**
      * Remove a specific order item from cart
      *
-     * @param  OrderItem $item
-     * @param  int       $quantity - number of items to remove or leave `null` to remove all items (default)
-     * @return boolean success/failure
+     * @param int $quantity - number of items to remove or leave `null` to remove all items (default)
+     * @return ?bool success/failure
      */
-    public function removeOrderItem(OrderItem $item, $quantity = null)
+    public function removeOrderItem(OrderItem $orderItem, $quantity = null): ?bool
     {
         $order = $this->current();
 
-        if (!$order) {
+        if (!$order instanceof Order) {
             return $this->error(_t(__CLASS__ . '.NoOrder', 'No current order.'));
         }
 
-        if (!$item || $item->OrderID != $order->ID) {
+        if ($orderItem->OrderID != $order->ID) {
             return $this->error(_t(__CLASS__ . '.ItemNotFound', 'Item not found.'));
         }
 
         //if $quantity will become 0, then remove all
-        if (!$quantity || ($item->Quantity - $quantity) <= 0) {
-            $item->delete();
-            $item->destroy();
+        if (!$quantity || ($orderItem->Quantity - $quantity) <= 0) {
+            $orderItem->delete();
+            $orderItem->destroy();
         } else {
-            $item->Quantity -= $quantity;
-            $item->write();
+            $orderItem->Quantity -= $quantity;
+            $orderItem->write();
         }
 
         return true;
@@ -249,13 +230,11 @@ class ShoppingCart
      * Sets the quantity of an item in the cart.
      * Will automatically add or remove item, if necessary.
      *
-     * @param Buyable $buyable
-     * @param int     $quantity
-     * @param array   $filter
-     *
-     * @return boolean|OrderItem false or the new/existing item
+     * @param int $quantity
+     * @param array $filter
+     * @return bool|null|OrderItem false or the new/existing item
      */
-    public function setQuantity(Buyable $buyable, $quantity = 1, $filter = [])
+    public function setQuantity(Buyable $buyable, $quantity = 1, $filter = []): bool|null|OrderItem
     {
         if ($quantity <= 0) {
             return $this->remove($buyable, $quantity, $filter);
@@ -263,7 +242,7 @@ class ShoppingCart
 
         $item = $this->findOrMakeItem($buyable, $quantity, $filter);
 
-        if (!$item || !$this->updateOrderItemQuantity($item, $quantity, $filter)) {
+        if (!$item instanceof OrderItem || $this->updateOrderItemQuantity($item, $quantity, $filter) !== true) {
             return false;
         }
 
@@ -273,24 +252,23 @@ class ShoppingCart
     /**
      * Update quantity of a given order item
      *
-     * @param  OrderItem $item
-     * @param  int       $quantity the new quantity to use
-     * @param  array     $filter
-     * @return boolean success/failure
+     * @param int $quantity the new quantity to use
+     * @param array $filter
+     * @return ?bool success/failure
      */
-    public function updateOrderItemQuantity(OrderItem $item, $quantity = 1, $filter = [])
+    public function updateOrderItemQuantity(OrderItem $orderItem, $quantity = 1, $filter = []): ?bool
     {
         $order = $this->current();
 
-        if (!$order) {
+        if (!$order instanceof Order) {
             return $this->error(_t(__CLASS__ . '.NoOrder', 'No current order.'));
         }
 
-        if (!$item || $item->OrderID != $order->ID) {
+        if ($orderItem->OrderID != $order->ID) {
             return $this->error(_t(__CLASS__ . '.ItemNotFound', 'Item not found.'));
         }
 
-        $buyable = $item->Buyable();
+        $buyable = $orderItem->Buyable();
         // If an extension throws an exception, error out
         try {
             $order->extend('beforeSetQuantity', $buyable, $quantity, $filter);
@@ -298,16 +276,16 @@ class ShoppingCart
             return $this->error($exception->getMessage());
         }
 
-        $item->Quantity = $quantity;
+        $orderItem->Quantity = $quantity;
 
         // If an extension throws an exception, error out
         try {
-            $order->extend('afterSetQuantity', $item, $buyable, $quantity, $filter);
+            $order->extend('afterSetQuantity', $orderItem, $buyable, $quantity, $filter);
         } catch (Exception $exception) {
             return $this->error($exception->getMessage());
         }
 
-        $item->write();
+        $orderItem->write();
         $this->message(_t(__CLASS__ . '.QuantitySet', 'Quantity has been set.'));
 
         return true;
@@ -317,23 +295,16 @@ class ShoppingCart
      * Finds or makes an order item for a given product + filter.
      *
      * @param Buyable $buyable  the buyable
-     * @param int     $quantity quantity to add
-     * @param array   $filter
-     *
-     * @return OrderItem the found or created item
-     * @throws \SilverStripe\ORM\ValidationException
+     * @param int $quantity quantity to add
+     * @param array $filter
+     * @throws ValidationException
      */
-    private function findOrMakeItem(Buyable $buyable, $quantity = 1, $filter = [])
+    private function findOrMakeItem(Buyable $buyable, $quantity = 1, $filter = []): ?OrderItem
     {
         $order = $this->findOrMake();
-
-        if (!$buyable || !$order) {
-            return null;
-        }
-
         $item = $this->get($buyable, $filter);
 
-        if (!$item) {
+        if (!$item instanceof OrderItem) {
             $member = Security::getCurrentUser();
 
             $buyable = $this->getCorrectBuyable($buyable);
@@ -364,16 +335,14 @@ class ShoppingCart
     /**
      * Finds an existing order item.
      *
-     * @param Buyable $buyable
-     * @param array   $customFilter
-     *
-     * @return OrderItem the item requested or null
+     * @param array $customFilter
+     * @return ?OrderItem the item requested or null
      */
-    public function get(Buyable $buyable, $customFilter = [])
+    public function get(Buyable $buyable, $customFilter = []): ?OrderItem
     {
         $order = $this->current();
 
-        if (!$buyable || !$order) {
+        if (!$order instanceof Order) {
             return null;
         }
 
@@ -397,9 +366,9 @@ class ShoppingCart
             $required = array_merge($required, $itemClass::config()->required_fields);
         }
 
-        $query = new MatchObjectFilter($itemClass, array_merge($customFilter, $filter), $required);
+        $matchObjectFilter = new MatchObjectFilter($itemClass, array_merge($customFilter, $filter), $required);
 
-        $item = $itemClass::get()->where($query->getFilter())->first();
+        $item = $itemClass::get()->where($matchObjectFilter->getFilter())->first();
 
         if (!$item) {
             return $this->error(_t(__CLASS__ . '.ItemNotFound', 'Item not found.'));
@@ -413,7 +382,6 @@ class ShoppingCart
      * This is being used to ensure a product with variations cannot be added to the cart…
      * a Variation has to be added instead!
      *
-     * @param  Buyable $buyable
      * @return Buyable
      */
     public function getCorrectBuyable(Buyable $buyable)
@@ -422,9 +390,9 @@ class ShoppingCart
             && $buyable->hasExtension(ProductVariationsExtension::class)
             && $buyable->Variations()->count() > 0
         ) {
-            foreach ($buyable->Variations() as $variation) {
-                if ($variation->canPurchase()) {
-                    return $variation;
+            foreach ($buyable->Variations() as $hasManyList) {
+                if ($hasManyList->canPurchase()) {
+                    return $hasManyList;
                 }
             }
         }
@@ -437,7 +405,7 @@ class ShoppingCart
      *
      * @param int|null $requestedOrderId optional parameter that denotes the order that was requested
      */
-    public function archiveorderid($requestedOrderId = null)
+    public function archiveorderid($requestedOrderId = null): void
     {
         $session = ShopTools::getSession();
         $sessionId = $session->get(self::config()->cartid_session_name);
@@ -461,9 +429,9 @@ class ShoppingCart
      * Empty / abandon the entire cart.
      *
      * @param  bool $write whether or not to write the abandoned order
-     * @return bool - true if successful, false if no cart found
+     * @return ?bool - true if successful, false if no cart found
      */
-    public function clear($write = true)
+    public function clear($write = true): ?bool
     {
         $session = ShopTools::getSession();
         $session->set(self::config()->cartid_session_name, null)->clear(self::config()->cartid_session_name);
@@ -471,7 +439,7 @@ class ShoppingCart
         $this->order = null;
 
         if ($write) {
-            if (!$order) {
+            if (!$order instanceof Order) {
                 return $this->error(_t(__CLASS__ . '.NoCartFound', 'No cart found.'));
             }
             $order->write();
@@ -483,8 +451,9 @@ class ShoppingCart
 
     /**
      * Store a new error.
+     * @return null
      */
-    protected function error($message)
+    protected function error(string $message)
     {
         $this->message($message, 'bad');
 
@@ -497,25 +466,25 @@ class ShoppingCart
      * @param string $message
      * @param string $type    - good, bad, warning
      */
-    protected function message($message, $type = 'good')
+    protected function message(string $message, string $type = 'good'): void
     {
         $this->message = $message;
         $this->type = $type;
     }
 
-    public function getMessage()
+    public function getMessage(): string
     {
         return $this->message;
     }
 
-    public function getMessageType()
+    public function getMessageType(): string
     {
         return $this->type;
     }
 
-    public function clearMessage()
+    public function clearMessage(): void
     {
-        $this->message = null;
+        $this->message = '';
     }
 
     //singleton protection

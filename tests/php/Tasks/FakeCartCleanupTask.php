@@ -9,7 +9,7 @@ class FakeCartCleanupTask extends CartCleanupTask implements TestOnly
 {
     public $log = [];
 
-    public function log($msg)
+    public function log($msg): void
     {
         $this->log[] = $msg;
     }

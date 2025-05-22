@@ -21,28 +21,13 @@ use SilverStripe\Dev\SapphireTest;
 class VariationTest extends SapphireTest
 {
     public static $fixture_file   = __DIR__ . '/../../Fixtures/variations.yml';
-    public static $disable_theme  = true;
-    protected static $use_draft_site = true;
+    public static bool $disable_theme  = true;
+    protected static bool $use_draft_site = true;
 
-    /**
-     * @var Product
-     */
-    protected $mp3player;
-
-    /**
-     * @var Product
-     */
-    protected $socks;
-
-    /**
-     * @var Variation
-     */
-    protected $redLarge;
-
-    /**
-     * @var Product
-     */
-    protected $ball;
+    protected Product $mp3player;
+    protected Product $socks;
+    protected Product $ball;
+    protected Variation $redLarge;
 
     public function setUp(): void
     {
@@ -53,9 +38,9 @@ class VariationTest extends SapphireTest
         $this->redLarge = $this->objFromFixture(Variation::class, "redLarge");
     }
 
-    public function testVariationOrderItem()
+    public function testVariationOrderItem(): void
     {
-        $cart = ShoppingCart::singleton();
+        $shoppingCart = ShoppingCart::singleton();
 
         //config
         Config::modify()
@@ -66,49 +51,49 @@ class VariationTest extends SapphireTest
         $emptyitem = $this->redLarge->Item();
         $this->assertEquals(1, $emptyitem->Quantity, "Items always have a quantity of at least 1.");
 
-        $cart->add($this->redLarge);
-        $item = $cart->get($this->redLarge);
+        $shoppingCart->add($this->redLarge);
+        $item = $shoppingCart->get($this->redLarge);
         $this->assertTrue((bool)$item, "item exists");
         $this->assertEquals(1, $item->Quantity);
         $this->assertEquals(22, $item->UnitPrice());
         $this->assertEquals("Size:Large, Color:Red", $item->SubTitle());
     }
 
-    public function testGetVariation()
+    public function testGetVariation(): void
     {
-        $colorred = $this->objFromFixture(AttributeValue::class, "color_red");
+        $attributeValue = $this->objFromFixture(AttributeValue::class, "color_red");
         $sizelarge = $this->objFromFixture(AttributeValue::class, "size_large");
-        $attributes = [$colorred->ID, $sizelarge->ID];
+        $attributes = [$attributeValue->ID, $sizelarge->ID];
         $variation = $this->ball->getVariationByAttributes($attributes);
         $this->assertInstanceOf(Variation::class, $variation, "Variation exists");
         $this->assertEquals(22, $variation->sellingPrice(), "Variation price is $22 (price of ball");
 
-        $attributes = [$colorred->ID, 999];
+        $attributes = [$attributeValue->ID, 999];
         $variation = $this->ball->getVariationByAttributes($attributes);
         $this->assertNull($variation, "Variation does not exist");
     }
 
-    public function testGenerateVariations()
+    public function testGenerateVariations(): void
     {
-        $color = $this->objFromFixture(AttributeType::class, "color");
+        $attributeType = $this->objFromFixture(AttributeType::class, "color");
         $values = ['Black', 'Blue']; //Note: black doesn't exist in the yaml
-        $this->mp3player->generateVariationsFromAttributes($color, $values);
+        $this->mp3player->generateVariationsFromAttributes($attributeType, $values);
 
         $capacity = $this->objFromFixture(AttributeType::class, "capacity");
         $values = ["120GB", "300GB"]; //Note: 300GB doesn't exist in the yaml
         $this->mp3player->generateVariationsFromAttributes($capacity, $values);
 
-        $variations = $this->mp3player->Variations();
-        $this->assertEquals($variations->Count(), 4, "four variations created");
+        $hasManyList = $this->mp3player->Variations();
+        $this->assertEquals($hasManyList->Count(), 4, "four variations created");
 
-        $titles = $variations->map('ID', 'Title')->toArray();
+        $titles = $hasManyList->map('ID', 'Title')->toArray();
         $this->assertStringContainsString('Color:Black, Capacity:120GB', $titles[5]);
         $this->assertStringContainsString('Color:Black, Capacity:300GB', $titles[6]);
         $this->assertStringContainsString('Color:Blue, Capacity:120GB', $titles[7]);
         $this->assertStringContainsString('Color:Blue, Capacity:300GB', $titles[8]);
     }
 
-    public function testPriceRange()
+    public function testPriceRange(): void
     {
         $range = $this->ball->PriceRange();
         $this->assertTrue($range->HasRange);

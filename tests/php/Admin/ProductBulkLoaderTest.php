@@ -12,17 +12,17 @@ class ProductBulkLoaderTest extends FunctionalTest
     public static $disable_theme  = true;
     protected static $use_draft_site = true;
 
-    public function testLoad()
+    public function testLoad(): void
     {
-        $loader = new ProductBulkLoader(Product::class);
+        $productBulkLoader = ProductBulkLoader::create(Product::class);
 
         $ds = DIRECTORY_SEPARATOR;
         $filepath = realpath(__DIR__ . $ds . 'test_products.csv');
         $file = fopen($filepath, 'r');
 
         fgetcsv($file); // pop header row
-        $compareRow = fgetcsv($file);
-        $results = $loader->load($filepath);
+        fgetcsv($file);
+        $results = $productBulkLoader->load($filepath);
 
         // Test that right amount of columns was imported
         $this->assertEquals(13, $results->Count(), 'Test correct count of imported data');

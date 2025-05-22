@@ -8,7 +8,7 @@ use Exception;
 
 class AddressTest extends SapphireTest
 {
-    public function testForm()
+    public function testForm(): void
     {
         $address = Address::create()->update(
             [
@@ -24,16 +24,13 @@ class AddressTest extends SapphireTest
                 'Phone' => '12346678',
             ]
         );
-
-        $fields = $address->getFrontEndFields();
-        $requiremetns = $address->getRequiredFields();
         $this->assertEquals(
             "Ink inc|Jerald Smith|23 Blah Street|Fitzgerald Building, Foor 3|TeAro|Wellington|1333|NZ",
             $address->toString("|")
         );
     }
 
-    public function testRequiredFields()
+    public function testRequiredFields(): void
     {
         // create address instance that lacks some required fields (Address)
         $address = Address::create()->update(

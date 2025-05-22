@@ -13,9 +13,8 @@ use SilverStripe\Forms\LiteralField;
 use SilverStripe\Forms\TextField;
 use SilverStripe\ORM\ArrayList;
 use SilverStripe\ORM\DataObject;
-use SilverStripe\ORM\FieldType\DBCurrency;
-use SilverStripe\ORM\FieldType\DBDecimal;
 use SilverStripe\ORM\ManyManyList;
+use SilverStripe\Security\Member;
 use SilverStripe\Versioned\Versioned;
 
 /**
@@ -25,21 +24,22 @@ use SilverStripe\Versioned\Versioned;
  * Used in combination with ProductAttributes, such as color, size.
  * A variation will specify one particular combination, such as red, and large.
  *
- * @property string $InternalItemID
- * @property DBCurrency $Price
- * @property DBDecimal $Weight
- * @property DBDecimal $Height
- * @property DBDecimal $Width
- * @property DBDecimal $Depth
+ * @property ?string $InternalItemID
+ * @property float $Price
+ * @property float $Weight
+ * @property float $Height
+ * @property float $Width
+ * @property float $Depth
  * @property int $ProductID
  * @property int $ImageID
  * @method   Product Product()
  * @method   Image Image()
- * @method   AttributeValue[]|ManyManyList AttributeValues()
+ * @method ManyManyList<AttributeValue> AttributeValues()
+ * @property int $Sort
  */
 class Variation extends DataObject implements Buyable
 {
-    private static $db = [
+    private static array $db = [
         'Sort' => 'Int',
         'InternalItemID' => 'Varchar(30)',
         'Price' => 'Currency(19,4)',
@@ -52,94 +52,85 @@ class Variation extends DataObject implements Buyable
         'Depth' => 'Decimal(12,5)'
     ];
 
-    private static $has_one = [
+    private static array $has_one = [
         'Product' => Product::class,
         'Image' => Image::class
     ];
 
-    private static $owns = [
+    private static array $owns = [
         'Image'
     ];
 
-    private static $many_many = [
+    private static array $many_many = [
         'AttributeValues' => AttributeValue::class
     ];
 
-    private static $casting = [
+    private static array $casting = [
         'Title' => 'Text',
         'Price' => 'Currency'
     ];
 
-    private static $versioning = [
+    private static array $versioning = [
         'Live'
     ];
 
-    private static $extensions = [
+    private static array $extensions = [
         Versioned::class . '.versioned'
     ];
 
-    private static $summary_fields = [
+    private static array $summary_fields = [
         'InternalItemID' => 'Product Code',
         //'Product.Title' => 'Product',
         'Title' => 'Variation',
         'Price' => 'Price'
     ];
 
-    private static $searchable_fields = [
+    private static array $searchable_fields = [
         'Product.Title',
         'InternalItemID'
     ];
 
-    private static $indexes = [
+    private static array $indexes = [
         'InternalItemID' => true,
         'LastEdited' => true
     ];
 
-    private static $singular_name = 'Variation';
+    private static string $singular_name = 'Variation';
 
-    private static $plural_name = 'Variations';
+    private static string $plural_name = 'Variations';
 
-    private static $default_sort = 'InternalItemID';
+    private static string $default_sort = 'InternalItemID';
 
-    private static $order_item = OrderItem::class;
+    private static string $order_item = OrderItem::class;
 
-    private static $table_name = 'SilverShop_Variation';
+    private static string $table_name = 'SilverShop_Variation';
 
-    /**
-     * @config
-     * @var bool
-     */
-    private static $title_has_label = true;
+    private static bool $title_has_label = true;
 
-    /**
-     * @config
-     * @var string
-     */
-    private static $title_separator = ':';
+    private static string $title_separator = ':';
 
-    /**
-     * @config
-     * @var string
-     */
-    private static $title_glue = ', ';
+    private static string $title_glue = ', ';
 
-    public function getCMSFields()
+    public function getCMSFields(): FieldList
     {
-        $fields = FieldList::create(
+        $fieldList = FieldList::create(
             TextField::create('InternalItemID', _t('SilverShop\Page\Product.Code', 'Product Code')),
             TextField::create('Price', _t('SilverShop\Page\Product.db_BasePrice', 'Price'))
         );
         //add attributes dropdowns
-        $attributes = $this->Product()->VariationAttributeTypes();
-        if ($attributes->exists()) {
+        $attributes = null;
+        if ($this->Product()->exists()) {
+            $attributes = $this->Product()->VariationAttributeTypes();
+        }
+        if ($attributes && $attributes->exists()) {
             foreach ($attributes as $attribute) {
                 if ($field = $attribute->getDropDownField()) {
-                    if ($value = $this->AttributeValues()->find('TypeID', $attribute->ID)) {
+                    if ($value = $this->AttributeValues()->find('TypeID', (string) $attribute->ID)) {
                         $field->setValue($value->ID);
                     }
-                    $fields->push($field);
+                    $fieldList->push($field);
                 } else {
-                    $fields->push(
+                    $fieldList->push(
                         LiteralField::create(
                             'novalues' . $attribute->Name,
                             '<p class="message warning">' .
@@ -156,7 +147,7 @@ class Variation extends DataObject implements Buyable
                 //TODO: allow setting custom values here, rather than visiting the products section
             }
         } else {
-            $fields->push(
+            $fieldList->push(
                 LiteralField::create(
                     'savefirst',
                     '<p class="message warning">' .
@@ -168,7 +159,7 @@ class Variation extends DataObject implements Buyable
                 )
             );
         }
-        $fields->push(
+        $fieldList->push(
             UploadField::create('Image', _t('SilverShop\Page\Product.Image', 'Product Image'))
         );
 
@@ -178,7 +169,7 @@ class Variation extends DataObject implements Buyable
         ];
 
         //physical measurements
-        $fields->push(
+        $fieldList->push(
             TextField::create(
                 'Weight',
                 _t(
@@ -194,7 +185,7 @@ class Variation extends DataObject implements Buyable
             )
         );
 
-        $fields->push(
+        $fieldList->push(
             TextField::create(
                 'Height',
                 _t('SilverShop\Page\Product.HeightWithUnit', 'Height ({LengthUnit})', '', $fieldSubstitutes),
@@ -203,7 +194,7 @@ class Variation extends DataObject implements Buyable
             )
         );
 
-        $fields->push(
+        $fieldList->push(
             TextField::create(
                 'Width',
                 _t('SilverShop\Page\Product.WidthWithUnit', 'Width ({LengthUnit})', '', $fieldSubstitutes),
@@ -212,7 +203,7 @@ class Variation extends DataObject implements Buyable
             )
         );
 
-        $fields->push(
+        $fieldList->push(
             TextField::create(
                 'Depth',
                 _t('SilverShop\Page\Product.DepthWithUnit', 'Depth ({LengthUnit})', '', $fieldSubstitutes),
@@ -221,15 +212,15 @@ class Variation extends DataObject implements Buyable
             )
         );
 
-        $this->extend('updateCMSFields', $fields);
+        $this->extend('updateCMSFields', $fieldList);
 
-        return $fields;
+        return $fieldList;
     }
 
     /**
      * Save selected attributes - somewhat of a hack.
      */
-    public function onBeforeWrite()
+    public function onBeforeWrite(): void
     {
         parent::onBeforeWrite();
 
@@ -240,11 +231,11 @@ class Variation extends DataObject implements Buyable
 
     public function getTitle()
     {
-        $values = $this->AttributeValues();
-        if ($values->exists()) {
+        $attributeValues = $this->AttributeValues();
+        if ($attributeValues->exists()) {
             $labelvalues = [];
-            foreach ($values as $value) {
-                if (self::config()->title_has_label) {
+            foreach ($attributeValues as $value) {
+                if (self::config()->title_has_label && $value->Type()->exists()) {
                     $labelvalues[] = $value->Type()->Label . self::config()->title_separator . $value->Value;
                 } else {
                     $labelvalues[] = $value->Value;
@@ -258,17 +249,17 @@ class Variation extends DataObject implements Buyable
         return $title;
     }
 
-    public function getCategoryIDs()
+    public function getCategoryIDs(): array
     {
-        return $this->Product() ? $this->Product()->getCategoryIDs() : [];
+        return $this->Product()->exists() ? $this->Product()->getCategoryIDs() : [];
     }
 
     public function getCategories()
     {
-        return $this->Product() ? $this->Product()->getCategories() : ArrayList::create();
+        return $this->Product()->exists() ? $this->Product()->getCategories() : ArrayList::create();
     }
 
-    public function canPurchase($member = null, $quantity = 1)
+    public function canPurchase(?Member $member = null, int $quantity = 1): bool
     {
         $allowpurchase = false;
         if ($product = $this->Product()) {
@@ -285,7 +276,7 @@ class Variation extends DataObject implements Buyable
      * Returns if the product variation is already in the shopping cart.
      * @return boolean
      */
-    public function IsInCart()
+    public function IsInCart(): bool
     {
         return $this->Item() && $this->Item()->Quantity > 0;
     }
@@ -307,7 +298,7 @@ class Variation extends DataObject implements Buyable
         return $item;
     }
 
-    public function addLink()
+    public function addLink(): string
     {
         return $this->Item()->addLink($this->ProductID, $this->ID);
     }
@@ -321,10 +312,10 @@ class Variation extends DataObject implements Buyable
      */
     public function Link($action = null)
     {
-        return ($this->ProductID) ? $this->Product()->Link($action) : false;
+        return ($this->ProductID && $this->Product()->exists()) ? $this->Product()->Link($action) : false;
     }
 
-    public function createItem($quantity = 1, $filter = [])
+    public function createItem($quantity = 1, $filter = []): OrderItem
     {
         $orderitem = self::config()->order_item;
         $item = new $orderitem();
@@ -339,7 +330,7 @@ class Variation extends DataObject implements Buyable
         return $item;
     }
 
-    public function sellingPrice()
+    public function sellingPrice(): float
     {
         $price = $this->Price;
         $this->extend('updateSellingPrice', $price);

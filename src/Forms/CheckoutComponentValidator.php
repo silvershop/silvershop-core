@@ -12,15 +12,15 @@ use SilverStripe\ORM\ValidationException;
  */
 class CheckoutComponentValidator extends RequiredFields
 {
-    protected $config;
+    protected CheckoutComponentConfig $config;
 
-    public function __construct(CheckoutComponentConfig $config)
+    public function __construct(CheckoutComponentConfig $checkoutComponentConfig)
     {
-        $this->config = $config;
+        $this->config = $checkoutComponentConfig;
         parent::__construct($this->config->getRequiredFields());
     }
 
-    public function php($data)
+    public function php($data): bool
     {
         $valid = parent::php($data);
         //do component validation
@@ -48,7 +48,7 @@ class CheckoutComponentValidator extends RequiredFields
         return $valid;
     }
 
-    public function fieldHasError($field)
+    public function fieldHasError($field): bool
     {
         if ($this->getErrors()) {
             foreach ($this->getErrors() as $error) {

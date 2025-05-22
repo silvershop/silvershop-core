@@ -7,6 +7,7 @@ use SilverShop\Model\Variation\Variation;
 use SilverShop\Page\ProductCategory;
 use SilverStripe\Assets\Image;
 use SilverStripe\Core\Convert;
+use SilverStripe\Dev\BulkLoader_Result;
 use SilverStripe\Dev\CsvBulkLoader;
 use SilverStripe\ORM\ArrayList;
 
@@ -28,21 +29,15 @@ class ProductBulkLoader extends CsvBulkLoader
 {
     /**
      * You can force every product to be in a certain category, as long as you know its ID.
-     *
-     * @config
-     * @var    null
      */
-    private static $parent_page_id = null;
+    private static ?int $parent_page_id = null;
 
     /**
      * Set this if you want categories to be created if they don't exist.
-     *
-     * @config
-     * @var    bool
      */
-    protected static $create_new_product_groups = false;
+    protected static bool $create_new_product_groups = false;
 
-    protected $foundParentId = null;
+    protected $foundParentId;
 
 
     // NB do NOT use functional indirection on any fields where they
@@ -103,17 +98,17 @@ class ProductBulkLoader extends CsvBulkLoader
         ],
     ];
 
-    protected function processAll($filepath, $preview = false)
+    protected function processAll($filepath, $preview = false): BulkLoader_Result
     {
         $this->extend('updateColumnMap', $this->columnMap);
 
         $results = parent::processAll($filepath, $preview);
         //After results have been processed, publish all created & updated products
-        $objects = ArrayList::create();
-        $objects->merge($results->Created());
-        $objects->merge($results->Updated());
+        $arrayList = ArrayList::create();
+        $arrayList->merge($results->Created());
+        $arrayList->merge($results->Updated());
         $parentPageID = $this->config()->parent_page_id;
-        foreach ($objects as $object) {
+        foreach ($arrayList as $object) {
             if (!$object->ParentID) {
                 //set parent page
                 if (is_numeric($parentPageID) && ProductCategory::get()->byID($parentPageID)) { //cached option
@@ -136,7 +131,7 @@ class ProductBulkLoader extends CsvBulkLoader
         return $results;
     }
 
-    public function processRecord($record, $columnMap, &$results, $preview = false)
+    public function processRecord($record, $columnMap, &$results, $preview = false): ?int
     {
         if (!$record || !isset($record['Title']) || $record['Title'] == '') { //TODO: make required fields customisable
             return null;
@@ -145,30 +140,33 @@ class ProductBulkLoader extends CsvBulkLoader
     }
 
     // set image, based on filename
-    public function imageByFilename(&$obj, $val)
+    public function imageByFilename(&$obj, $val): ?Image
     {
         $filename = trim(strtolower(Convert::raw2sql($val)));
         $filenamedashes = str_replace(' ', '-', $filename);
-        if ($filename
-            && $image = Image::get()->whereAny(
-                [
-                    "LOWER(\"FileFilename\") LIKE '%$filename%'",
-                    "LOWER(\"FileFilename\") LIKE '%$filenamedashes%'"
-                ]
-            )->first()
-        ) { //ignore case
-            if ($image instanceof Image && $image->exists()) {
-                return $image;
-            }
+        if ($filename === '' || $filename === '0') {
+            return null;
+        }
+        if (!($image = Image::get()->whereAny(
+            [
+                "LOWER(\"FileFilename\") LIKE '%$filename%'",
+                "LOWER(\"FileFilename\") LIKE '%$filenamedashes%'"
+            ]
+        )->first())) {
+            return null;
+        }
+        //ignore case
+        if ($image instanceof Image && $image->exists()) {
+            return $image;
         }
         return null;
     }
 
     // find product group parent (ie Cateogry)
-    public function setParent(&$obj, $val)
+    public function setParent(&$obj, $val): void
     {
         $title = strtolower(Convert::raw2sql($val));
-        if ($title) {
+        if ($title !== '' && $title !== '0') {
             // find or create parent category, if provided
             if ($parentPage = ProductCategory::get()->where(['LOWER("Title") = ?' => $title])->sort('Created', 'DESC')->first()) {
                 $obj->ParentID = $parentPage->ID;
@@ -194,16 +192,16 @@ class ProductBulkLoader extends CsvBulkLoader
     /**
      * Adds paragraphs to content.
      */
-    public function setContent(&$obj, $val, $record)
+    public function setContent(&$obj, $val, $record): void
     {
         $val = trim($val);
-        if ($val) {
+        if ($val !== '' && $val !== '0') {
             $paragraphs = explode("\n", $val);
             $obj->Content = '<p>' . implode('</p><p>', $paragraphs) . '</p>';
         }
     }
 
-    public function processVariation(&$obj, $val, $record)
+    public function processVariation(&$obj, $val, $record): void
     {
         if (isset($record['->variationRow'])) {
             return;
@@ -214,7 +212,7 @@ class ProductBulkLoader extends CsvBulkLoader
             $attributevalues = explode(',', $parts[1]);
             //get rid of empty values
             foreach ($attributevalues as $key => $value) {
-                if (!$value || trim($value) == '') {
+                if ($value === '' || $value === '0' || trim($value) == '') {
                     unset($attributevalues[$key]);
                 }
             }
@@ -239,37 +237,37 @@ class ProductBulkLoader extends CsvBulkLoader
     }
 
     //work around until I can figure out how to allow calling processVariation multiple times
-    public function processVariation1(&$obj, $val, $record)
+    public function processVariation1(&$obj, $val, $record): void
     {
         $this->processVariation($obj, $val, $record);
     }
 
-    public function processVariation2(&$obj, $val, $record)
+    public function processVariation2(&$obj, $val, $record): void
     {
         $this->processVariation($obj, $val, $record);
     }
 
-    public function processVariation3(&$obj, $val, $record)
+    public function processVariation3(&$obj, $val, $record): void
     {
         $this->processVariation($obj, $val, $record);
     }
 
-    public function processVariation4(&$obj, $val, $record)
+    public function processVariation4(&$obj, $val, $record): void
     {
         $this->processVariation($obj, $val, $record);
     }
 
-    public function processVariation5(&$obj, $val, $record)
+    public function processVariation5(&$obj, $val, $record): void
     {
         $this->processVariation($obj, $val, $record);
     }
 
-    public function processVariation6(&$obj, $val, $record)
+    public function processVariation6(&$obj, $val, $record): void
     {
         $this->processVariation($obj, $val, $record);
     }
 
-    public function variationRow(&$obj, $val, $record)
+    public function variationRow(&$obj, $val, $record): void
     {
 
         $obj->write(); //make sure product is in DB
@@ -290,15 +288,15 @@ class ProductBulkLoader extends CsvBulkLoader
             '->processVariation5',
             '->processVariation6',
         ];
-        foreach ($varcols as $col) {
-            if (isset($record[$col])) {
-                $parts = explode(':', $record[$col]);
+        foreach ($varcols as $varcol) {
+            if (isset($record[$varcol])) {
+                $parts = explode(':', $record[$varcol]);
                 if (count($parts) == 2) {
                     $attributetype = trim($parts[0]);
                     $attributevalues = explode(',', $parts[1]);
                     //get rid of empty values
                     foreach ($attributevalues as $key => $value) {
-                        if (!$value || trim($value) == '') {
+                        if ($value === '' || $value === '0' || trim($value) == '') {
                             unset($attributevalues[$key]);
                         }
                     }

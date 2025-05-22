@@ -2,6 +2,7 @@
 
 namespace SilverShop\Forms;
 
+use SilverStripe\Control\RequestHandler;
 use SilverShop\ShopUserInfo;
 use SilverShop\Extension\ShopConfigExtension;
 use SilverStripe\Core\Config\Config;
@@ -13,10 +14,10 @@ use SilverStripe\SiteConfig\SiteConfig;
 
 class SetLocationForm extends Form
 {
-    public function __construct($controller, $name = "SetLocationForm")
+    public function __construct(RequestHandler $requestHandler, $name = "SetLocationForm")
     {
         $countries = SiteConfig::current_site_config()->getCountriesList();
-        $fields = FieldList::create(
+        $fieldList = FieldList::create(
             $countryfield = DropdownField::create("Country", _t(__CLASS__ . '.Country', 'Country'), $countries)
         );
         $countryfield->setHasEmptyDefault(true);
@@ -25,7 +26,7 @@ class SetLocationForm extends Form
             FormAction::create("setLocation", "set")
                 ->setUseButtonTag(Config::inst()->get(ShopConfigExtension::class, 'forms_use_button_tag'))
         );
-        parent::__construct($controller, $name, $fields, $actions);
+        parent::__construct($requestHandler, $name, $fieldList, $actions);
         //load currently set location
         if ($location = singleton(ShopUserInfo::class)->getLocation()) {
             $countryfield->setHasEmptyDefault(false);
@@ -33,7 +34,7 @@ class SetLocationForm extends Form
         }
     }
 
-    public function setLocation($data, $form)
+    public function setLocation(array $data, Form $form): void
     {
         singleton(ShopUserInfo::class)->setLocation($data);
         $this->controller->redirectBack();

@@ -9,14 +9,14 @@ class ShopReportTest extends SapphireTest
 {
     protected static $fixture_file = __DIR__ . '/../Fixtures/shop.yml';
 
-    function testSalesReport()
+    function testSalesReport(): void
     {
-        $report = new ShopSalesReport();
-        $records = $report->sourceRecords([]);
-        $records = $report->sourceRecords(['Grouping' => 'Year']);
-        $records = $report->sourceRecords(['Grouping' => 'Month']);
-        $records = $report->sourceRecords(['Grouping' => 'Week']);
-        $records = $report->sourceRecords(
+        $shopSalesReport = ShopSalesReport::create();
+        $records = $shopSalesReport->sourceRecords([]);
+        $records = $shopSalesReport->sourceRecords(['Grouping' => 'Year']);
+        $records = $shopSalesReport->sourceRecords(['Grouping' => 'Month']);
+        $records = $shopSalesReport->sourceRecords(['Grouping' => 'Week']);
+        $records = $shopSalesReport->sourceRecords(
             [
                 'Grouping'    => 'Day',
                 'StartPeriod' => 'May 1, 2010',

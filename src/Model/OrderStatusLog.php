@@ -4,7 +4,7 @@ namespace SilverShop\Model;
 
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\DB;
-use SilverStripe\ORM\FieldType\DBDate;
+use SilverStripe\ORM\ValidationResult;
 use SilverStripe\Security\Member;
 use SilverStripe\Security\Security;
 
@@ -13,11 +13,11 @@ use SilverStripe\Security\Security;
  * status of an order.
  *
  * @property string $Title
- * @property string $Note
- * @property string $DispatchedBy
- * @property DBDate $DispatchedOn
- * @property string $DispatchTicket
- * @property string $PaymentCode
+ * @property ?string $Note
+ * @property ?string $DispatchedBy
+ * @property ?string $DispatchedOn
+ * @property ?string $DispatchTicket
+ * @property ?string $PaymentCode
  * @property bool $PaymentOK
  * @property bool $SentToCustomer Whether or not this entry has been sent to the customer (e.g. via OrderEmailNotifier)
  * @property bool $VisibleToCustomer Whether or not this entry should be visible to the customer (e.g. on order details)
@@ -29,7 +29,7 @@ use SilverStripe\Security\Security;
  */
 class OrderStatusLog extends DataObject
 {
-    private static $db = [
+    private static array $db = [
         'Title' => 'Varchar(100)',
         'Note' => 'Text',
         'DispatchedBy' => 'Varchar(100)',
@@ -41,12 +41,12 @@ class OrderStatusLog extends DataObject
         'VisibleToCustomer' => 'Boolean',
     ];
 
-    private static $has_one = [
+    private static array $has_one = [
         'Author' => Member::class,
         'Order' => Order::class,
     ];
 
-    private static $searchable_fields = [
+    private static array $searchable_fields = [
         'Order.Reference' => [
             'filter' => 'PartialMatchFilter',
             'title' => 'Order No'
@@ -61,7 +61,7 @@ class OrderStatusLog extends DataObject
         ]
     ];
 
-    private static $summary_fields = [
+    private static array $summary_fields = [
         'Order.Reference' => 'Order No',
         'Created' => 'Created',
         'Order.Name' => 'Name',
@@ -71,20 +71,20 @@ class OrderStatusLog extends DataObject
         'VisibleToCustomer' => 'Visible to customer?'
     ];
 
-    private static $singular_name = 'Order Log Entry';
+    private static string $singular_name = 'Order Log Entry';
 
-    private static $plural_name = 'Order Status Log Entries';
+    private static string $plural_name = 'Order Status Log Entries';
 
-    private static $default_sort = '"Created" DESC';
+    private static string $default_sort = '"Created" DESC';
 
-    private static $table_name = 'SilverShop_OrderStatusLog';
+    private static string $table_name = 'SilverShop_OrderStatusLog';
 
     /**
      * @var bool Whether the link between an Order and OrderStatusLog is required (tested during write validation)
      * @see static::validate()
      * @config
      */
-    private static $order_is_required = true;
+    private static bool $order_is_required = true;
 
     public function canCreate($member = null, $context = [])
     {
@@ -101,13 +101,14 @@ class OrderStatusLog extends DataObject
         return false;
     }
 
-    public function populateDefaults()
+    public function populateDefaults(): static
     {
         parent::populateDefaults();
         $this->updateWithLastInfo();
+        return $this;
     }
 
-    public function requireDefaultRecords()
+    public function requireDefaultRecords(): void
     {
         parent::requireDefaultRecords();
 
@@ -136,7 +137,7 @@ class OrderStatusLog extends DataObject
         }
     }
 
-    public function onBeforeWrite()
+    public function onBeforeWrite(): void
     {
         parent::onBeforeWrite();
         if (!$this->AuthorID && ($member = Security::getCurrentUser())) {
@@ -147,7 +148,7 @@ class OrderStatusLog extends DataObject
         }
     }
 
-    public function validate()
+    public function validate(): ValidationResult
     {
         $validationResult = parent::validate();
 
@@ -158,7 +159,7 @@ class OrderStatusLog extends DataObject
         return $validationResult;
     }
 
-    protected function updateWithLastInfo()
+    protected function updateWithLastInfo(): void
     {
         if ($this->OrderID) {
             /** @var OrderStatusLog $latestLog */

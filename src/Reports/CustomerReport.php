@@ -2,6 +2,8 @@
 
 namespace SilverShop\Reports;
 
+use SilverStripe\Forms\FormField;
+use SilverStripe\ORM\Queries\SQLSelect;
 use SilverStripe\Security\Member;
 
 /**
@@ -21,7 +23,7 @@ class CustomerReport extends ShopPeriodReport
 
     protected $periodfield = '"SilverShop_Order"."Paid"';
 
-    public function columns()
+    public function columns(): array
     {
         return [
             'FirstName' => 'First Name',
@@ -37,13 +39,12 @@ class CustomerReport extends ShopPeriodReport
         ];
     }
 
-    public function getReportField()
+    public function getReportField(): FormField
     {
-        $field = parent::getReportField();
-        return $field;
+        return parent::getReportField();
     }
 
-    public function query($params)
+    public function query($params): ShopReportQuery|SQLSelect
     {
         $query = parent::query($params);
         $query->selectField($this->periodfield, 'FilterPeriod')

@@ -11,21 +11,21 @@ use SilverShop\Model\Modifiers\OrderModifier;
  */
 class Base extends OrderModifier
 {
-    private static $db = [
+    private static array $db = [
         'Rate' => 'Double',
     ];
 
-    private static $defaults = [
+    private static array $defaults = [
         'Rate' => 0.15 //15% tax
     ];
 
-    private static $table_name = 'SilverShop_TaxModifier';
+    private static string $singular_name = 'Tax';
 
-    private static $singular_name = 'Tax';
+    private static string $plural_name = 'Taxes';
 
-    private static $plural_name = 'Taxes';
+    private static string $table_name = 'SilverShop_TaxModifier';
 
-    public function getTableTitle()
+    public function getTableTitle(): string
     {
         $title = parent::getTableTitle();
         if ($this->Rate) {

@@ -8,12 +8,14 @@ use SilverStripe\Forms\CheckboxField;
 use SilverStripe\Forms\DateField;
 use SilverStripe\Forms\DropdownField;
 use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\FormField;
 use SilverStripe\Forms\GridField\GridFieldConfig;
 use SilverStripe\Forms\GridField\GridFieldDataColumns;
 use SilverStripe\Forms\GridField\GridFieldExportButton;
 use SilverStripe\i18n\i18nEntityProvider;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\DB;
+use SilverStripe\ORM\Queries\SQLSelect;
 use SilverStripe\Reports\Report;
 use SilverStripe\Security\Member;
 use SilverStripe\Security\Security;
@@ -24,7 +26,7 @@ use SilverStripe\Security\Security;
  */
 abstract class ShopPeriodReport extends Report implements i18nEntityProvider
 {
-    private static $display_uncategorised_data = false;
+    private static bool $display_uncategorised_data = false;
 
     protected $dataClass = Order::class;
 
@@ -34,32 +36,32 @@ abstract class ShopPeriodReport extends Report implements i18nEntityProvider
 
     protected $pagesize = 30;
 
-    private static $groupingdateformats = [
+    private static array $groupingdateformats = [
         'Year' => 'Y',
         'Month' => 'Y - F',
         'Day' => 'd F Y - l',
     ];
 
-    public function title()
+    public function title(): string
     {
         return _t(static::class . ".Title", $this->title);
     }
 
-    public function description()
+    public function description(): string
     {
         return _t(static::class . ".Description", $this->description);
     }
 
-    public function parameterFields()
+    public function parameterFields(): FieldList
     {
         $member = Security::getCurrentUser() ? Security::getCurrentUser() : Member::create();
         $dateformat = $member->getDateFormat();
-        $fields = FieldList::create(
+        $fieldList = FieldList::create(
             $start = DateField::create('StartPeriod', 'Start Date'),
             $end = DateField::create('EndPeriod', 'End Date')
         );
         if ($this->grouping) {
-            $fields->push(
+            $fieldList->push(
                 DropdownField::create(
                     'Grouping',
                     'Group By',
@@ -72,7 +74,7 @@ abstract class ShopPeriodReport extends Report implements i18nEntityProvider
                 )
             );
             if (self::config()->display_uncategorised_data) {
-                $fields->push(
+                $fieldList->push(
                     CheckboxField::create('IncludeUncategorised', 'Include Uncategorised Data')
                         ->setDescription('Display data that doesn\'t have a date.')
                 );
@@ -88,10 +90,10 @@ abstract class ShopPeriodReport extends Report implements i18nEntityProvider
             $end->setDateFormat($dateformat);
         }
 
-        return $fields;
+        return $fieldList;
     }
 
-    public function canView($member = null)
+    public function canView($member = null): bool
     {
         if (static::class === self::class) {
             return false;
@@ -99,39 +101,39 @@ abstract class ShopPeriodReport extends Report implements i18nEntityProvider
         return parent::canView($member);
     }
 
-    public function getReportField()
+    public function getReportField(): FormField
     {
-        $field = parent::getReportField();
+        $formField = parent::getReportField();
         /**
          * @var GridFieldConfig $config
          */
-        $config = $field->getConfig();
+        $config = $formField->getConfig();
         if ($dataColumns = $config->getComponentByType(GridFieldDataColumns::class)) {
             $config->getComponentByType(GridFieldExportButton::class)
-                ->setExportColumns($dataColumns->getDisplayFields($field));
+                ->setExportColumns($dataColumns->getDisplayFields($formField));
         }
 
-        return $field;
+        return $formField;
     }
 
-    public function sourceRecords($params)
+    public function sourceRecords($params): SQLQueryList
     {
         isset($params['Grouping']) || $params['Grouping'] = 'Month';
-        $list = SQLQueryList::create($this->query($params));
+        $sqlQueryList = SQLQueryList::create($this->query($params));
         $grouping = $params['Grouping'];
         $self = $this;
-        $list->setOutputClosure(
-            function ($row) use ($grouping, $self) {
+        $sqlQueryList->setOutputClosure(
+            function (array $row) use ($grouping, $self): object {
                 $row['FilterPeriod'] = $self->formatDateForGrouping($row['FilterPeriod'], $grouping);
 
                 return new $self->dataClass($row);
             }
         );
 
-        return $list;
+        return $sqlQueryList;
     }
 
-    public function formatDateForGrouping($date, $grouping)
+    public function formatDateForGrouping($date, $grouping): string
     {
         if (!$date) {
             return $date;
@@ -141,46 +143,46 @@ abstract class ShopPeriodReport extends Report implements i18nEntityProvider
         return date($dformat, strtotime($date));
     }
 
-    public function query($params)
+    public function query($params): ShopReportQuery|SQLSelect
     {
         //convert dates to correct format
-        $fields = $this->parameterFields();
-        $fields->setValues($params);
-        $start = $fields->fieldByName('StartPeriod')->dataValue();
-        $end = $fields->fieldByName('EndPeriod')->dataValue();
+        $fieldList = $this->parameterFields();
+        $fieldList->setValues($params);
+        $start = $fieldList->fieldByName('StartPeriod')->dataValue();
+        $end = $fieldList->fieldByName('EndPeriod')->dataValue();
         //include the entire end day
         if ($end) {
             $end = date('Y-m-d', strtotime($end) + 86400);
         }
         $filterperiod = $this->periodfield;
-        $query = new ShopReportQuery();
-        $query->setSelect(['FilterPeriod' => "MIN($filterperiod)"]);
+        $shopReportQuery = new ShopReportQuery();
+        $shopReportQuery->setSelect(['FilterPeriod' => "MIN($filterperiod)"]);
 
         $table = DataObject::getSchema()->tableName($this->dataClass);
 
-        $query->setFrom('"' . $table . '"');
+        $shopReportQuery->setFrom('"' . $table . '"');
 
         if ($start && $end) {
-            $query->addWhere("$filterperiod BETWEEN '$start' AND '$end'");
+            $shopReportQuery->addWhere("$filterperiod BETWEEN '$start' AND '$end'");
         } elseif ($start) {
-            $query->addWhere("$filterperiod > '$start'");
+            $shopReportQuery->addWhere("$filterperiod > '$start'");
         } elseif ($end) {
-            $query->addWhere("$filterperiod <= '$end'");
+            $shopReportQuery->addWhere("$filterperiod <= '$end'");
         }
         if ($start || $end || !self::config()->display_uncategorised_data || !isset($params['IncludeUncategorised'])) {
-            $query->addWhere("$filterperiod IS NOT NULL");
+            $shopReportQuery->addWhere("$filterperiod IS NOT NULL");
         }
         if ($this->grouping) {
             switch ($params['Grouping']) {
                 case 'Year':
-                    $query->addGroupBy($this->fd($filterperiod, '%Y'));
+                    $shopReportQuery->addGroupBy($this->fd($filterperiod, '%Y'));
                     break;
                 case 'Month':
                 default:
-                    $query->addGroupBy($this->fd($filterperiod, '%Y') . ',' . $this->fd($filterperiod, '%m'));
+                    $shopReportQuery->addGroupBy($this->fd($filterperiod, '%Y') . ',' . $this->fd($filterperiod, '%m'));
                     break;
                 case 'Day':
-                    $query->addGroupBy(
+                    $shopReportQuery->addGroupBy(
                         $this->fd($filterperiod, '%Y') . ',' . $this->fd($filterperiod, '%m') . ',' . $this->fd(
                             $filterperiod,
                             '%d'
@@ -189,22 +191,20 @@ abstract class ShopPeriodReport extends Report implements i18nEntityProvider
                     break;
             }
         }
-        $query->setOrderBy('"FilterPeriod"', 'ASC');
+        $shopReportQuery->setOrderBy('"FilterPeriod"', 'ASC');
 
-        return $query;
+        return $shopReportQuery;
     }
 
-    protected function fd($date, $format)
+    protected function fd($date, $format): string
     {
         return DB::get_conn()->formattedDatetimeClause($date, $format);
     }
 
     /**
      * Provide translatable entities for this class and all subclasses
-     *
-     * @return array
      */
-    public function provideI18nEntities()
+    public function provideI18nEntities(): array
     {
         $cls = static::class;
         return [

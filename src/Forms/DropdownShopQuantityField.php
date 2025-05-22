@@ -11,15 +11,12 @@ use SilverStripe\Forms\DropdownField;
  */
 class DropdownShopQuantityField extends ShopQuantityField
 {
-    protected $template = self::class;
+    protected string $template = self::class;
 
     /**
      * The max amount to enter
-     *
-     * @config
-     * @var    int
      */
-    private static $max = 100;
+    private static int $max = 100;
 
     public function Field()
     {

@@ -2,12 +2,15 @@
 
 namespace SilverShop\Tests\Page;
 
+use SilverStripe\Core\Extension;
 use SilverStripe\Dev\TestOnly;
-use SilverStripe\ORM\DataExtension;
 
-class ProductTest_FractionalDiscountExtension extends DataExtension implements TestOnly
+/**
+ * @extends Extension<static>
+ */
+class ProductTest_FractionalDiscountExtension extends Extension implements TestOnly
 {
-    public function updateSellingPrice(&$price)
+    public function updateSellingPrice(&$price): void
     {
         $price -= 0.015;
     }

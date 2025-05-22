@@ -13,9 +13,9 @@ use SilverShop\Forms\CartForm;
  */
 class CartPageController extends PageController
 {
-    private static $url_segment = 'cart';
+    private static string $url_segment = 'cart';
 
-    private static $allowed_actions = [
+    private static array $allowed_actions = [
         'CartForm',
         'updatecart',
     ];
@@ -23,7 +23,7 @@ class CartPageController extends PageController
     /**
      * Display a title if there is no model, or no title.
      */
-    public function Title()
+    public function Title(): string
     {
         if ($this->getFailover()->Title) {
             return $this->getFailover()->Title;
@@ -34,16 +34,16 @@ class CartPageController extends PageController
     /**
      * A form for updating cart items
      */
-    public function CartForm()
+    public function CartForm(): CartForm|bool
     {
         $cart = $this->Cart();
         if (!$cart) {
             return false;
         }
-        $form = CartForm::create($this, 'CartForm', $cart);
+        $cartForm = CartForm::create($this, 'CartForm', $cart);
 
-        $this->extend('updateCartForm', $form);
+        $this->extend('updateCartForm', $cartForm);
 
-        return $form;
+        return $cartForm;
     }
 }

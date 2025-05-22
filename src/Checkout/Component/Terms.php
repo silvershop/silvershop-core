@@ -10,13 +10,13 @@ use SilverStripe\SiteConfig\SiteConfig;
 
 class Terms extends CheckoutComponent
 {
-    public function getFormFields(Order $order)
+    public function getFormFields(Order $order): FieldList
     {
-        $fields = FieldList::create();
+        $fieldList = FieldList::create();
         $page = SiteConfig::current_site_config()->TermsPage();
 
         if ($page->exists()) {
-            $fields->push(
+            $fieldList->push(
                 CheckboxField::create(
                     'ReadTermsAndConditions',
                     DBField::create_field('HTMLText', _t(
@@ -31,24 +31,25 @@ class Terms extends CheckoutComponent
             );
         }
 
-        return $fields;
+        return $fieldList;
     }
 
-    public function validateData(Order $order, array $data)
+    public function validateData(Order $order, array $data): bool
     {
         return true;
     }
 
-    public function getData(Order $order)
+    public function getData(Order $order): array
     {
         return [];
     }
 
-    public function setData(Order $order, array $data)
+    public function setData(Order $order, array $data): Order
     {
+        return $order;
     }
 
-    public function getRequiredFields(Order $order)
+    public function getRequiredFields(Order $order): array
     {
         $fields = parent::getRequiredFields($order);
 

@@ -7,10 +7,12 @@ use SilverStripe\Dev\TestOnly;
 
 class OrderModifierTest_TestModifier extends OrderModifier implements TestOnly
 {
-    public static $value = 10;
-    private $willFail = false;
+    private static string $table_name = 'SilverShop_OrderModifierTest_TestModifier';
 
-    public function value($incoming)
+    public static int $value = 10;
+    private bool $willFail = false;
+
+    public function value($incoming): int
     {
         if (self::$value === 42) {
             $this->willFail = true;
@@ -18,7 +20,7 @@ class OrderModifierTest_TestModifier extends OrderModifier implements TestOnly
         return self::$value;
     }
 
-    protected function onAfterWrite()
+    protected function onAfterWrite(): void
     {
         parent::onAfterWrite();
         if ($this->willFail) {

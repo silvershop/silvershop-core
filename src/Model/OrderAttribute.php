@@ -3,7 +3,6 @@
 namespace SilverShop\Model;
 
 use SilverStripe\ORM\DataObject;
-use SilverStripe\ORM\FieldType\DBCurrency;
 
 /**
  * A single line in an order. This could be an item, or a subtotal line.
@@ -11,66 +10,67 @@ use SilverStripe\ORM\FieldType\DBCurrency;
  * @see OrderItem
  * @see OrderModifier
  *
- * @property DBCurrency $CalculatedTotal
+ * @property float $CalculatedTotal
  * @property int $OrderID
  * @method   Order Order()
  */
 class OrderAttribute extends DataObject
 {
-    private static $singular_name = 'Attribute';
+    private static string $singular_name = 'Attribute';
 
-    private static $plural_name = 'Attributes';
+    private static string $plural_name = 'Attributes';
 
-    private static $db = [
+    private static array $db = [
         'CalculatedTotal' => 'Currency',
     ];
 
-    private static $has_one = [
+    private static array $has_one = [
         'Order' => Order::class,
     ];
 
-    private static $casting = [
+    private static array $casting = [
         'TableTitle' => 'Text',
         'CartTitle' => 'Text',
     ];
 
-    private static $table_name = 'SilverShop_OrderAttribute';
+    private static string $table_name = 'SilverShop_OrderAttribute';
 
-    public function canCreate($member = null, $context = [])
+    public function canCreate($member = null, $context = []): bool
     {
         return false;
     }
 
-    public function canDelete($member = null)
+    public function canDelete($member = null): bool
     {
         return false;
     }
 
-    public function isLive()
+    public function isLive(): bool
     {
-        return (!$this->isInDB() || $this->Order()->IsCart());
+        if (!$this->isInDB()) {
+            return true;
+        }
+        return $this->Order()->exists() && $this->Order()->IsCart();
     }
 
     /**
      * Produces a title for use in templates.
-     *
-     * @return string
      */
-    public function getTableTitle()
+    public function getTableTitle(): string
     {
         $title = $this->i18n_singular_name();
         $this->extend('updateTableTitle', $title);
         return $title;
     }
 
-    public function getCartTitle()
+    public function getCartTitle(): string
     {
         $title = $this->getTableTitle();
         $this->extend('updateCartTitle', $title);
         return $title;
     }
 
-    public function ShowInTable()
+    public function ShowInTable(): bool
     {
         $showInTable = true;
         $this->extend('updateShowInTable', $showInTable);

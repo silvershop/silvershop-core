@@ -5,35 +5,33 @@ namespace SilverShop\Model\Modifiers;
 use SilverShop\Model\Order;
 use SilverShop\Model\OrderAttribute;
 use SilverStripe\Forms\TextField;
-use SilverStripe\ORM\FieldType\DBCurrency;
-use SilverStripe\ORM\FieldType\DBEnum;
 
 /**
  * The OrderModifier class is a databound object for
  * handling the additional charges or deductions of
  * an order.
  *
- * @property DBCurrency $Amount
- * @property DBEnum $Type
+ * @property float $Amount
+ * @property ?string $Type
  * @property int $Sort
  */
 class OrderModifier extends OrderAttribute
 {
-    private static $db = [
+    private static array $db = [
         'Amount' => 'Currency',
         'Type' => "Enum('Chargable,Deductable,Ignored','Chargable')",
         'Sort' => 'Int',
     ];
 
-    private static $defaults = [
+    private static array $defaults = [
         'Type' => 'Chargable',
     ];
 
-    private static $casting = [
+    private static array $casting = [
         'TableValue' => 'Currency',
     ];
 
-    private static $searchable_fields = [
+    private static array $searchable_fields = [
         'OrderID' => [
             'title' => 'Order ID',
             'field' => TextField::class,
@@ -45,7 +43,7 @@ class OrderModifier extends OrderAttribute
         'Type',
     ];
 
-    private static $summary_fields = [
+    private static array $summary_fields = [
         'Order.ID' => 'Order ID',
         'TableTitle' => 'Table Title',
         'ClassName' => 'Type',
@@ -53,18 +51,18 @@ class OrderModifier extends OrderAttribute
         'Type' => 'Type',
     ];
 
-    private static $singular_name = 'Modifier';
+    private static string $singular_name = 'Modifier';
 
-    private static $plural_name = 'Modifiers';
+    private static string $plural_name = 'Modifiers';
 
-    private static $default_sort = '"Sort" ASC, "Created" ASC';
+    private static string $default_sort = '"Sort" ASC, "Created" ASC';
 
-    private static $table_name = 'SilverShop_OrderModifier';
+    private static string $table_name = 'SilverShop_OrderModifier';
 
     /**
      * Specifies whether this modifier is always required in an order.
      */
-    public function required()
+    public function required(): bool
     {
         return true;
     }
@@ -78,7 +76,7 @@ class OrderModifier extends OrderAttribute
      * @param $subtotal - running total to be modified
      * @param $forcecalculation - force calculating the value, if order isn't in cart
      *
-     * @return $subtotal - updated subtotal
+     * @return mixed $subtotal - updated subtotal
      */
     public function modify($subtotal, $forcecalculation = false)
     {
@@ -94,7 +92,7 @@ class OrderModifier extends OrderAttribute
             case 'Ignored':
                 break;
         }
-        $value = round($value ?? 0, Order::config()->rounding_precision);
+        $value = round($value, Order::config()->rounding_precision);
         $this->Amount = $value;
         return $subtotal;
     }
@@ -104,7 +102,7 @@ class OrderModifier extends OrderAttribute
      *
      * @param float $incoming the incoming running total.
      */
-    public function value($incoming)
+    public function value($incoming): int|float
     {
         return 0;
     }
@@ -112,7 +110,7 @@ class OrderModifier extends OrderAttribute
     /**
      * Check if the modifier should be in the cart.
      */
-    public function valid()
+    public function valid(): bool
     {
         $order = $this->Order();
         if (!$order) {
@@ -150,8 +148,6 @@ class OrderModifier extends OrderAttribute
 
     /**
      * Provides a modifier total that is positive or negative, depending on whether the modifier is chargable or not.
-     *
-     * @return boolean
      */
     public function Total()
     {
@@ -163,20 +159,16 @@ class OrderModifier extends OrderAttribute
 
     /**
      * Checks if this modifier has type = Chargable
-     *
-     * @return boolean
      */
-    public function IsChargable()
+    public function IsChargable(): bool
     {
         return $this->Type == 'Chargable';
     }
 
     /**
      * Checks if the modifier can be removed.
-     *
-     * @return boolean
      */
-    public function canRemove()
+    public function canRemove(): bool
     {
         return false;
     }

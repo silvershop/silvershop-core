@@ -8,13 +8,16 @@ use SilverShop\Model\Variation\AttributeValue;
 use SilverShop\Model\Variation\Variation;
 use SilverShop\ORM\FieldType\ShopCurrency;
 use SilverShop\Page\Product;
+use SilverStripe\Core\Extension;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\GridField\GridField;
 use SilverStripe\Forms\GridField\GridFieldConfig_RecordEditor;
 use SilverStripe\Forms\LabelField;
 use SilverStripe\Forms\ListboxField;
-use SilverStripe\ORM\DataExtension;
 use SilverStripe\ORM\DataList;
+use SilverStripe\ORM\HasManyList;
+use SilverStripe\ORM\ManyManyList;
+use SilverStripe\ORM\ValidationException;
 use SilverStripe\Versioned\Versioned;
 use SilverStripe\View\ArrayData;
 use Symbiote\GridFieldExtensions\GridFieldOrderableRows;
@@ -22,23 +25,26 @@ use Symbiote\GridFieldExtensions\GridFieldOrderableRows;
 /**
  * Adds extra fields and relationships to Products for variations support.
  *
- * @package    silvershop
+ * @package silvershop
  * @subpackage variations
+ * @method HasManyList<Variation> Variations()
+ * @method ManyManyList<AttributeType> VariationAttributeTypes()
+ * @extends Extension<(Product & static)>
  */
-class ProductVariationsExtension extends DataExtension
+class ProductVariationsExtension extends Extension
 {
-    private static $has_many = [
+    private static array $has_many = [
         'Variations' => Variation::class,
     ];
 
-    private static $many_many = [
+    private static array $many_many = [
         'VariationAttributeTypes' => AttributeType::class,
     ];
 
     /**
      * Adds variations specific fields to the CMS.
      */
-    public function updateCMSFields(FieldList $fields)
+    public function updateCMSFields(FieldList $fields): void
     {
         $fields->addFieldsToTab('Root.Variations', [
             ListboxField::create(
@@ -58,7 +64,7 @@ class ProductVariationsExtension extends DataExtension
             )
         ]);
 
-        $variationsGridField->getConfig()->addComponent($sort = new GridFieldOrderableRows('Sort'));
+        $variationsGridField->getConfig()->addComponent($sort = GridFieldOrderableRows::create('Sort'));
 
         if ($this->owner->Variations()->exists()) {
             $fields->addFieldToTab(
@@ -76,7 +82,7 @@ class ProductVariationsExtension extends DataExtension
         }
     }
 
-    public function PriceRange()
+    public function PriceRange(): ?ArrayData
     {
         $variations = $this->owner->Variations();
 
@@ -111,12 +117,8 @@ class ProductVariationsExtension extends DataExtension
 
     /**
      * Pass an array of attribute ids to query for the appropriate variation.
-     *
-     * @param array $attributes
-     *
-     * @return Variation|null
      */
-    public function getVariationByAttributes(array $attributes)
+    public function getVariationByAttributes(array $attributes): ?Variation
     {
         if (!is_array($attributes)) {
             return null;
@@ -140,15 +142,13 @@ class ProductVariationsExtension extends DataExtension
     /**
      * Generates variations based on selected attributes.
      *
-     * @param  AttributeType $attributetype
-     * @param  array         $values
-     * @throws \SilverStripe\ORM\ValidationException
+     * @throws ValidationException
      */
-    public function generateVariationsFromAttributes(AttributeType $attributetype, array $values)
+    public function generateVariationsFromAttributes(AttributeType $attributetype, array $values): void
     {
         //TODO: introduce transactions here, in case objects get half made etc
         //if product has variation attribute types
-        if (!empty($values)) {
+        if ($values !== []) {
             //TODO: get values dataobject set
             $avalues = $attributetype->convertArrayToValues($values);
             $existingvariations = $this->owner->Variations();
@@ -188,10 +188,8 @@ class ProductVariationsExtension extends DataExtension
     /**
      * Get all the {@link ProductAttributeValue} for a given attribute type,
      * based on this product's variations.
-     *
-     * @return DataList
      */
-    public function possibleValuesForAttributeType($type)
+    public function possibleValuesForAttributeType($type): ?DataList
     {
         if (!is_numeric($type)) {
             $type = $type->ID;
@@ -213,7 +211,7 @@ class ProductVariationsExtension extends DataExtension
             );
 
         if (!Product::config()->allow_zero_price) {
-            $list = $list->where('"SilverShop_Variation"."Price" > 0');
+            return $list->where('"SilverShop_Variation"."Price" > 0');
         }
         return $list;
     }
@@ -221,7 +219,7 @@ class ProductVariationsExtension extends DataExtension
     /**
      * Make sure variations are deleted with product.
      */
-    public function onAfterDelete()
+    public function onAfterDelete(): void
     {
         $remove = false;
         // if a record is staged or live, leave it's variations alone.
@@ -244,7 +242,7 @@ class ProductVariationsExtension extends DataExtension
         }
     }
 
-    public function updateFormClass(&$formClass)
+    public function updateFormClass(&$formClass): void
     {
         if ($this->owner->Variations()->exists()) {
             $formClass = VariationForm::class;

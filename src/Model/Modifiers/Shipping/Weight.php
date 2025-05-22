@@ -22,18 +22,17 @@ class Weight extends Base
      *     '1.0': 15
      *     '2.0': 20
      * </code>
-     *
-     * @config
-     * @var    array
      */
-    private static $weight_cost = [];
+    private static array $weight_cost = [];
+
+    private static string $table_name = 'SilverShop_WeightModifier';
 
     protected $weight = 0;
 
     /**
      * Calculates shipping cost based on Product Weight.
      */
-    public function value($subtotal = 0)
+    public function value($subtotal = 0): int|float
     {
         $totalWeight = $this->Weight();
         if (!$totalWeight) {
@@ -59,7 +58,7 @@ class Weight extends Base
         return $this->Amount = $amount;
     }
 
-    public function getTableTitle()
+    public function getTableTitle(): string
     {
         return _t(
             __CLASS__ . '.TableTitle',
@@ -81,8 +80,8 @@ class Weight extends Base
         }
         $weight = 0;
         $order = $this->Order();
-        if ($order && $orderItems = $order->Items()) {
-            foreach ($orderItems as $orderItem) {
+        if ($order && $order->Items()->exists()) {
+            foreach ($order->Items() as $orderItem) {
                 if ($product = $orderItem->Product()) {
                     $weight = $weight + ($product->Weight * $orderItem->Quantity);
                 }

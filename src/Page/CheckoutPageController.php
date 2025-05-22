@@ -2,6 +2,7 @@
 
 namespace SilverShop\Page;
 
+use SilverShop\Extension\OrderManipulationExtension;
 use PageController;
 use SilverShop\Cart\ShoppingCart;
 use SilverShop\Checkout\CheckoutComponentConfig;
@@ -16,9 +17,11 @@ use SilverShop\Checkout\Step\Summary;
 use SilverShop\Extension\SteppedCheckoutExtension;
 use SilverShop\Extension\ViewableCartExtension;
 use SilverShop\Forms\PaymentForm;
+use SilverStripe\Control\HTTPResponse;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\FormAction;
 use SilverStripe\Omnipay\Model\Message\GatewayErrorMessage;
+use SilverStripe\View\SSViewer;
 
 /**
  * @package shop
@@ -31,18 +34,23 @@ use SilverStripe\Omnipay\Model\Message\GatewayErrorMessage;
  * @mixin PaymentMethod
  * @mixin Summary
  * @mixin ViewableCartExtension
+ * @mixin OrderManipulationExtension
  */
 class CheckoutPageController extends PageController
 {
-    private static $url_segment     = 'checkout';
+    private static string $url_segment     = 'checkout';
 
-    private static $allowed_actions = [
+    private static array $allowed_actions = [
         'OrderForm',
         'payment',
         'PaymentForm',
     ];
 
-    public function Title()
+    private static array $steps = [];
+
+    private static string $first_step = '';
+
+    public function Title(): string
     {
         if ($this->failover && $this->failover->Title) {
             return $this->failover->Title;
@@ -51,40 +59,40 @@ class CheckoutPageController extends PageController
         return _t('SilverShop\Page\CheckoutPage.DefaultTitle', "Checkout");
     }
 
-    public function OrderForm()
+    public function OrderForm(): PaymentForm|bool
     {
         if (!(bool)$this->Cart()) {
             return false;
         }
 
         /**
-         * @var CheckoutComponentConfig $config
+         * @var CheckoutComponentConfig $singlePageCheckoutComponentConfig
          */
-        $config = SinglePageCheckoutComponentConfig::create(ShoppingCart::curr());
-        $form = PaymentForm::create($this, 'OrderForm', $config);
+        $singlePageCheckoutComponentConfig = SinglePageCheckoutComponentConfig::create(ShoppingCart::curr());
+        $paymentForm = PaymentForm::create($this, 'OrderForm', $singlePageCheckoutComponentConfig);
 
         // Normally, the payment is on a second page, either offsite or through /checkout/payment
         // If the site has customised the checkout component config to include an onsite payment
         // component, we should honor that and change the button label. PaymentForm::checkoutSubmit
         // will also check this and process payment if needed.
-        if ($config->hasComponentWithPaymentData()) {
-            $form->setActions(
+        if ($singlePageCheckoutComponentConfig->hasComponentWithPaymentData()) {
+            $paymentForm->setActions(
                 FieldList::create(
                     FormAction::create('checkoutSubmit', _t('SilverShop\Page\CheckoutPage.SubmitPayment', 'Submit Payment'))
                 )
             );
         }
 
-        $form->Cart = $this->Cart();
-        $this->extend('updateOrderForm', $form);
+        $paymentForm->Cart = $this->Cart();
+        $this->extend('updateOrderForm', $paymentForm);
 
-        return $form;
+        return $paymentForm;
     }
 
     /**
      * Action for making on-site payments
      */
-    public function payment()
+    public function payment(): HTTPResponse|array
     {
         if (!$this->Cart()) {
             return $this->redirect($this->Link());
@@ -96,36 +104,34 @@ class CheckoutPageController extends PageController
         ];
     }
 
-    public function PaymentForm()
+    public function PaymentForm(): false|PaymentForm
     {
         if (!(bool)$this->Cart()) {
             return false;
         }
 
-        $config = CheckoutComponentConfig::create(ShoppingCart::curr(), false);
-        $config->addComponent(OnsitePayment::create());
+        $checkoutComponentConfig = CheckoutComponentConfig::create(ShoppingCart::curr(), false);
+        $checkoutComponentConfig->addComponent(OnsitePayment::create());
 
-        $form = PaymentForm::create($this, "PaymentForm", $config);
+        $paymentForm = PaymentForm::create($this, "PaymentForm", $checkoutComponentConfig);
 
-        $form->setActions(
+        $paymentForm->setActions(
             FieldList::create(
                 FormAction::create("submitpayment", _t('SilverShop\Page\CheckoutPage.SubmitPayment', "Submit Payment"))
             )
         );
 
-        $form->setFailureLink($this->Link());
-        $this->extend('updatePaymentForm', $form);
+        $paymentForm->setFailureLink($this->Link());
+        $this->extend('updatePaymentForm', $paymentForm);
 
-        return $form;
+        return $paymentForm;
     }
 
     /**
      * Retrieves error messages for the latest payment (if existing).
      * This can originate e.g. from an earlier offsite gateway API response.
-     *
-     * @return string
      */
-    public function PaymentErrorMessage()
+    public function PaymentErrorMessage(): string|bool
     {
         $order = $this->Cart();
         if (!$order) {
@@ -145,7 +151,7 @@ class CheckoutPageController extends PageController
                 break;
             }
         }
-        if (!$lastErrorMessage) {
+        if (!$lastErrorMessage instanceof GatewayErrorMessage) {
             return false;
         }
 
@@ -158,7 +164,7 @@ class CheckoutPageController extends PageController
      * {@inheritDoc}
      * @see \SilverStripe\CMS\Controllers\ContentController::getViewer()
      */
-    public function getViewer($action)
+    public function getViewer($action): SSViewer
     {
         if (CheckoutPage::config()->first_step && $action == 'index') {
             $action = CheckoutPage::config()->first_step;

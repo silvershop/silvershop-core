@@ -29,9 +29,9 @@ class GlobalTaxModifierTest extends SapphireTest
         );
     }
 
-    public function testModification()
+    public function testModification(): void
     {
-        $modifier = GlobalTax::create();
-        $this->assertEquals(15, $modifier->value(100)); //15% tax default
+        $globalTax = GlobalTax::create();
+        $this->assertEquals(15, $globalTax->value(100)); //15% tax default
     }
 }

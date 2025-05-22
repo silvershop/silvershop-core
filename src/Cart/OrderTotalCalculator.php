@@ -5,6 +5,7 @@ namespace SilverShop\Cart;
 use ErrorException;
 use Exception;
 use Monolog\Logger;
+use Psr\Container\NotFoundExceptionInterface;
 use SilverShop\Model\Order;
 use SilverStripe\Core\ClassInfo;
 use SilverStripe\Core\Injector\Injectable;
@@ -21,19 +22,16 @@ class OrderTotalCalculator
 {
     use Injectable;
 
-    private static $dependencies = [
+    private static array $dependencies = [
         'logger' => '%$SilverShop\Logger',
     ];
+
+    protected Order $order;
 
     /**
      * @var Logger
      */
     public $logger;
-
-    /**
-     * @var Order
-     */
-    protected $order;
 
     public function __construct(Order $order)
     {
@@ -41,11 +39,10 @@ class OrderTotalCalculator
     }
 
     /**
-     * @return float
      * @throws Exception
-     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
-    public function calculate()
+    public function calculate(): float
     {
         $runningtotal = $this->order->SubTotal();
         $sort = 1;
@@ -54,7 +51,7 @@ class OrderTotalCalculator
         $modifierclasses = Order::config()->modifiers;
 
         //check if modifiers are even in use
-        if (!is_array($modifierclasses) || empty($modifierclasses)) {
+        if (!is_array($modifierclasses) || $modifierclasses === []) {
             return $runningtotal;
         }
 
@@ -65,15 +62,15 @@ class OrderTotalCalculator
         }
 
         set_error_handler(
-            function ($severity, $message, $file, $line) {
+            function ($severity, $message, $file, $line): void {
                 throw new ErrorException($message, 0, $severity, $file, $line);
             },
             E_ALL & ~(E_STRICT | E_NOTICE)
         );
 
         try {
-            foreach ($modifierclasses as $ClassName) {
-                if ($modifier = $this->getModifier($ClassName)) {
+            foreach ($modifierclasses as $modifierclass) {
+                if ($modifier = $this->getModifier($modifierclass)) {
                     $modifier->Sort = $sort;
                     $runningtotal = $modifier->modify($runningtotal);
                     if ($modifier->isChanged()) {
@@ -83,7 +80,7 @@ class OrderTotalCalculator
                 $sort++;
             }
             //clear old modifiers out
-            if ($existingmodifiers) {
+            if ($existingmodifiers->exists()) {
                 foreach ($existingmodifiers as $modifier) {
                     if (!in_array($modifier->ClassName, $modifierclasses)) {
                         $modifier->delete();

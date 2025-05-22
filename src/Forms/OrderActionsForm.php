@@ -2,12 +2,13 @@
 
 namespace SilverShop\Forms;
 
+use SilverStripe\Control\RequestHandler;
 use SilverShop\Checkout\OrderEmailNotifier;
 use SilverShop\Checkout\OrderProcessor;
 use SilverShop\Extension\ShopConfigExtension;
 use SilverShop\Model\Order;
-use SilverStripe\Core\Config\Config;
 use SilverStripe\Control\HTTPResponse;
+use SilverStripe\Core\Config\Config;
 use SilverStripe\Forms\CompositeField;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\Form;
@@ -16,9 +17,11 @@ use SilverStripe\Forms\HeaderField;
 use SilverStripe\Forms\HiddenField;
 use SilverStripe\Forms\LiteralField;
 use SilverStripe\Forms\OptionsetField;
+use SilverStripe\Omnipay\Exception\InvalidConfigurationException;
 use SilverStripe\Omnipay\GatewayFieldsFactory;
 use SilverStripe\Omnipay\GatewayInfo;
 use SilverStripe\ORM\FieldType\DBCurrency;
+use SilverStripe\ORM\ValidationException;
 use SilverStripe\Security\Security;
 use SilverStripe\View\Requirements;
 
@@ -27,37 +30,33 @@ use SilverStripe\View\Requirements;
  */
 class OrderActionsForm extends Form
 {
-    private static $allowed_actions = [
+    private static array $allowed_actions = [
         'docancel',
         'dopayment',
         'httpsubmission',
     ];
 
-    private static $email_notification = false;
+    private static bool $email_notification = false;
 
-    private static $allow_paying = true;
+    private static bool $allow_paying = true;
 
-    private static $allow_cancelling = true;
+    private static bool $allow_cancelling = true;
 
-    private static $include_jquery = true;
+    private static bool $include_jquery = true;
 
-    /**
-     * @var Order the order
-     */
-    protected $order;
+    protected Order $order;
 
     /**
      * OrderActionsForm constructor.
      *
      * @param  $controller
      * @param  $name
-     * @param  Order      $order
-     * @throws \SilverStripe\Omnipay\Exception\InvalidConfigurationException
+     * @throws InvalidConfigurationException
      */
-    public function __construct($controller, $name, Order $order)
+    public function __construct(RequestHandler $requestHandler, $name, Order $order)
     {
         $this->order = $order;
-        $fields = FieldList::create(
+        $fieldList = FieldList::create(
             HiddenField::create('OrderID', '', $order->ID)
         );
         $actions = FieldList::create();
@@ -71,14 +70,14 @@ class OrderActionsForm extends Form
                 }
             }
             if (!empty($gateways)) {
-                $fields->push(
+                $fieldList->push(
                     HeaderField::create(
                         'MakePaymentHeader',
                         _t(__CLASS__ . '.MakePayment', 'Make Payment')
                     )
                 );
                 $outstandingfield = DBCurrency::create_field(DBCurrency::class, $order->TotalOutstanding(true));
-                $fields->push(
+                $fieldList->push(
                     LiteralField::create(
                         'Outstanding',
                         _t(
@@ -89,7 +88,7 @@ class OrderActionsForm extends Form
                         )
                     )
                 );
-                $fields->push(
+                $fieldList->push(
                     OptionsetField::create(
                         'PaymentMethod',
                         _t(__CLASS__ . '.PaymentMethod', 'Payment Method'),
@@ -98,12 +97,12 @@ class OrderActionsForm extends Form
                     )
                 );
 
-                if ($ccFields = $this->getCCFields($gateways)) {
+                if (($ccFields = $this->getCCFields($gateways)) instanceof CompositeField) {
                     if ($this->config()->include_jquery) {
                         Requirements::javascript('https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js');
                     }
                     Requirements::javascript('silvershop/core: client/dist/javascript/OrderActionsForm.js');
-                    $fields->push($ccFields);
+                    $fieldList->push($ccFields);
                 }
 
                 $actions->push(
@@ -125,9 +124,9 @@ class OrderActionsForm extends Form
         }
 
         parent::__construct(
-            $controller,
+            $requestHandler,
             $name,
-            $fields,
+            $fieldList,
             $actions,
             OrderActionsFormValidator::create(
                 [
@@ -143,10 +142,8 @@ class OrderActionsForm extends Form
      *
      * @param array $data
      * @param Form  $form
-     *
-     * @return HTTPResponse
      */
-    public function dopayment($data, $form)
+    public function dopayment($data, $form): HTTPResponse
     {
         if (self::config()->allow_paying
             && $this->order
@@ -158,7 +155,7 @@ class OrderActionsForm extends Form
 
             if (!GatewayInfo::isManual($gateway)) {
                 $processor = OrderProcessor::create($this->order);
-                $fieldFactory = new GatewayFieldsFactory(null);
+                $fieldFactory = GatewayFieldsFactory::create(null);
                 $response = $processor->makePayment(
                     $gateway,
                     $fieldFactory->normalizeFormData($data),
@@ -166,9 +163,8 @@ class OrderActionsForm extends Form
                 );
                 if ($response && !$response->isError()) {
                     return $response->redirectOrRespond();
-                } else {
-                    $form->sessionMessage($processor->getError(), 'bad');
                 }
+                $form->sessionMessage($processor->getError(), 'bad');
             } else {
                 $form->sessionMessage(_t(__CLASS__ . '.ManualNotAllowed', 'Manual payment not allowed'), 'bad');
             }
@@ -191,9 +187,9 @@ class OrderActionsForm extends Form
      *
      * @param  array $data The form request data submitted
      * @param  Form  $form The {@link Form} this was submitted on
-     * @throws \SilverStripe\ORM\ValidationException
+     * @throws ValidationException
      */
-    public function docancel($data, $form)
+    public function docancel($data, $form): void
     {
         if (self::config()->allow_cancelling
             && $this->order->canCancel()
@@ -204,7 +200,6 @@ class OrderActionsForm extends Form
             if (self::config()->email_notification) {
                 OrderEmailNotifier::create($this->order)->sendCancelNotification();
             }
-
             $this->controller->sessionMessage(
                 _t(__CLASS__ . '.OrderCancelled', 'Order sucessfully cancelled'),
                 'warning'
@@ -219,40 +214,37 @@ class OrderActionsForm extends Form
 
     /**
      * Get credit card fields for the given gateways
-     *
-     * @param  array $gateways
-     * @return CompositeField|null
      */
-    protected function getCCFields(array $gateways)
+    protected function getCCFields(array $gateways): ?CompositeField
     {
-        $fieldFactory = new GatewayFieldsFactory(null, ['Card']);
+        $gatewayFieldsFactory = GatewayFieldsFactory::create(null, ['Card']);
         $onsiteGateways = [];
         $allRequired = [];
         foreach ($gateways as $gateway => $title) {
             if (!GatewayInfo::isOffsite($gateway)) {
                 $required = GatewayInfo::requiredFields($gateway);
-                $onsiteGateways[$gateway] = $fieldFactory->getFieldName($required);
+                $onsiteGateways[$gateway] = $gatewayFieldsFactory->getFieldName($required);
                 $allRequired += $required;
             }
         }
 
         $allRequired = array_unique($allRequired);
-        $allRequired = $fieldFactory->getFieldName(array_combine($allRequired, $allRequired));
+        $allRequired = $gatewayFieldsFactory->getFieldName(array_combine($allRequired, $allRequired));
 
-        if (empty($onsiteGateways)) {
+        if ($onsiteGateways === []) {
             return null;
         }
 
-        $ccFields = $fieldFactory->getCardFields();
+        $fieldList = $gatewayFieldsFactory->getCardFields();
 
         // Remove all the credit card fields that aren't required by any gateway
-        foreach ($ccFields->dataFields() as $name => $field) {
+        foreach ($fieldList->dataFields() as $name => $formField) {
             if ($name && !in_array($name, $allRequired)) {
-                $ccFields->removeByName($name, true);
+                $fieldList->removeByName($name, true);
             }
         }
 
-        $lookupField = LiteralField::create(
+        $literalField = LiteralField::create(
             '_CCLookupField',
             sprintf(
                 '<span class="gateway-lookup" data-gateways=\'%s\'></span>',
@@ -260,8 +252,8 @@ class OrderActionsForm extends Form
             )
         );
 
-        $ccFields->push($lookupField);
+        $fieldList->push($literalField);
 
-        return CompositeField::create($ccFields)->setTag('fieldset')->addExtraClass('credit-card');
+        return CompositeField::create($fieldList)->setTag('fieldset')->addExtraClass('credit-card');
     }
 }

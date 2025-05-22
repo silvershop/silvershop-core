@@ -5,6 +5,7 @@ namespace SilverShop\Checkout\Component;
 use Omnipay\Common\Helper;
 use SilverShop\Checkout\Checkout;
 use SilverShop\Model\Order;
+use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\LiteralField;
 use SilverStripe\Omnipay\GatewayFieldsFactory;
 use SilverStripe\Omnipay\GatewayInfo;
@@ -16,13 +17,13 @@ use SilverStripe\ORM\ValidationResult;
  */
 class OnsitePayment extends CheckoutComponent
 {
-    public function getFormFields(Order $order)
+    public function getFormFields(Order $order): FieldList
     {
         $gateway = Checkout::get($order)->getSelectedPaymentMethod();
-        $gatewayfieldsfactory = new GatewayFieldsFactory($gateway, ['Card']);
-        $fields = $gatewayfieldsfactory->getCardFields();
+        $gatewayfieldsfactory = GatewayFieldsFactory::create($gateway, ['Card']);
+        $fieldList = $gatewayfieldsfactory->getCardFields();
         if ($gateway === 'Dummy') {
-            $fields->unshift(
+            $fieldList->unshift(
                 LiteralField::create(
                     'dummypaymentmessage',
                     '<p class=\"message good\">Dummy data has been added to the form for testing convenience.</p>'
@@ -30,34 +31,35 @@ class OnsitePayment extends CheckoutComponent
             );
         }
 
-        return $fields;
+        return $fieldList;
     }
 
-    public function getRequiredFields(Order $order)
+    public function getRequiredFields(Order $order): array
     {
         $gateway = Checkout::get($order)->getSelectedPaymentMethod();
         $required = GatewayInfo::requiredFields($gateway);
-        $fieldsFactory = new GatewayFieldsFactory($gateway, ['Card']);
-        return $fieldsFactory->getFieldName(array_combine($required, $required));
+        $gatewayFieldsFactory = GatewayFieldsFactory::create($gateway, ['Card']);
+        return $gatewayFieldsFactory->getFieldName(array_combine($required, $required));
     }
 
-    public function validateData(Order $order, array $data)
+    public function validateData(Order $order, array $data): bool
     {
-        $result = ValidationResult::create();
+        $validationResult = ValidationResult::create();
         //TODO: validate credit card data
         if (!Helper::validateLuhn($data['number'])) {
-            $result->addError(_t(__CLASS__ . '.InvalidCreditCard', 'Credit card is invalid'));
-            throw new ValidationException($result);
+            $validationResult->addError(_t(__CLASS__ . '.InvalidCreditCard', 'Credit card is invalid'));
+            throw ValidationException::create($validationResult);
         }
+        return true;
     }
 
-    public function getData(Order $order)
+    public function getData(Order $order): array
     {
         $data = [];
         $gateway = Checkout::get($order)->getSelectedPaymentMethod();
         //provide valid dummy credit card data
         if ($gateway === 'Dummy') {
-            $data = array_merge(
+            return array_merge(
                 [
                     'name' => 'Joe Bloggs',
                     'number' => '4242424242424242',
@@ -69,12 +71,13 @@ class OnsitePayment extends CheckoutComponent
         return $data;
     }
 
-    public function setData(Order $order, array $data)
+    public function setData(Order $order, array $data): Order
     {
         //create payment?
+        return $order;
     }
 
-    public function providesPaymentData()
+    public function providesPaymentData(): bool
     {
         return true;
     }

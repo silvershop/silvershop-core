@@ -8,26 +8,25 @@ use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\HTMLEditor\HTMLEditorField;
 use SilverStripe\ORM\DB;
 
-//use PageController;
-
 /**
  * CheckoutPage is a CMS page-type that shows the order
  * details to the customer for their current shopping
  * cart on the site.
  *
- * @see CheckoutPage_Controller->Order()
+ * @see \SilverShop\Page\CheckoutPageController->Order()
  *
  * @package shop
+ * @property ?string $PurchaseComplete
  */
 class CheckoutPage extends Page
 {
-    private static $db   = [
+    private static array $db   = [
         'PurchaseComplete' => 'HTMLText',
     ];
 
-    private static $icon = 'silvershop/core: client/dist/images/icons/money.gif';
+    private static string $icon = 'silvershop/core: client/dist/images/icons/money.gif';
 
-    private static $table_name = 'SilverShop_CheckoutPage';
+    private static string $table_name = 'SilverShop_CheckoutPage';
 
     /**
      * @config
@@ -39,10 +38,8 @@ class CheckoutPage extends Page
      * Returns the link to the checkout page on this site
      *
      * @param boolean $urlSegment If set to TRUE, only returns the URLSegment field
-     *
-     * @return string Link to checkout page
      */
-    public static function find_link($urlSegment = false, $action = null, $id = null)
+    public static function find_link($urlSegment = false, $action = null, $id = null): string
     {
         $base = CheckoutPageController::config()->url_segment;
         if ($page = self::get()->first()) {
@@ -51,11 +48,11 @@ class CheckoutPage extends Page
         return Controller::join_links($base, $action, $id);
     }
 
-    public function getCMSFields()
+    public function getCMSFields(): FieldList
     {
         $this->beforeUpdateCMSFields(
-            function (FieldList $fields) {
-                $fields->addFieldsToTab(
+            function (FieldList $fieldList): void {
+                $fieldList->addFieldsToTab(
                     'Root.Main',
                     [
                     HtmlEditorField::create(
@@ -81,7 +78,7 @@ class CheckoutPage extends Page
     /**
      * This module always requires a page model.
      */
-    public function requireDefaultRecords()
+    public function requireDefaultRecords(): void
     {
         parent::requireDefaultRecords();
         if (!self::get()->exists() && $this->config()->create_default_pages) {

@@ -5,6 +5,7 @@ namespace SilverShop\Forms;
 use SilverShop\Checkout\CheckoutComponentConfig;
 use SilverShop\Extension\ShopConfigExtension;
 use SilverStripe\Core\Config\Config;
+use SilverStripe\Control\HTTPResponse;
 use SilverStripe\Control\RequestHandler;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\Form;
@@ -13,19 +14,16 @@ use SilverStripe\Security\Security;
 
 class CheckoutForm extends Form
 {
-    /**
-     * @var CheckoutComponentConfig
-     */
-    protected $config;
+    protected CheckoutComponentConfig $config;
 
     protected $redirectlink;
 
     private static $submit_button_text;
 
-    public function __construct(RequestHandler $controller, $name, CheckoutComponentConfig $config)
+    public function __construct(RequestHandler $requestHandler, $name, CheckoutComponentConfig $checkoutComponentConfig)
     {
-        $this->config = $config;
-        $fields = $config->getFormFields();
+        $this->config = $checkoutComponentConfig;
+        $fieldList = $checkoutComponentConfig->getFormFields();
 
         if ($text = $this->config()->get('submit_button_text')) {
             $submitBtnText = $text;
@@ -39,27 +37,27 @@ class CheckoutForm extends Form
                 $submitBtnText
             )->setUseButtonTag(Config::inst()->get(ShopConfigExtension::class, 'forms_use_button_tag'))
         );
-        $validator = CheckoutComponentValidator::create($this->config);
+        $checkoutComponentValidator = CheckoutComponentValidator::create($this->config);
 
-        parent::__construct($controller, $name, $fields, $actions, $validator);
+        parent::__construct($requestHandler, $name, $fieldList, $actions, $checkoutComponentValidator);
         //load data from various sources
         $this->loadDataFrom($this->config->getData(), Form::MERGE_IGNORE_FALSEISH);
         if ($member = Security::getCurrentUser()) {
             $this->loadDataFrom($member, Form::MERGE_IGNORE_FALSEISH);
         }
-        if ($controller && ($session = $controller->getRequest()->getSession())) {
+        if ($requestHandler && ($session = $requestHandler->getRequest()->getSession())) {
             if ($sessiondata = $session->get("FormInfo.{$this->FormName()}.data")) {
                 $this->loadDataFrom($sessiondata, Form::MERGE_IGNORE_FALSEISH);
             }
         }
     }
 
-    public function setRedirectLink($link)
+    public function setRedirectLink($link): void
     {
         $this->redirectlink = $link;
     }
 
-    public function checkoutSubmit($data, $form)
+    public function checkoutSubmit($data, $form): HTTPResponse
     {
         //form validation has passed by this point, so we can save data
         $this->config->setData($form->getData());
@@ -70,7 +68,7 @@ class CheckoutForm extends Form
         return $this->controller->redirectBack();
     }
 
-    public function getConfig()
+    public function getConfig(): CheckoutComponentConfig
     {
         return $this->config;
     }

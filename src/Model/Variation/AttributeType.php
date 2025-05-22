@@ -19,44 +19,44 @@ use SilverStripe\ORM\ManyManyList;
  * Types of product attributes.
  * eg: color, size, length
  *
- * @property string $Name
- * @property string $Label
- * @method   AttributeValue[]|HasManyList Values()
- * @method   Product[]|ManyManyList Product()
+ * @property ?string $Name
+ * @property ?string $Label
+ * @method HasManyList<AttributeValue> Values()
+ * @method ManyManyList<Product> Product()
  */
 class AttributeType extends DataObject
 {
-    private static $db = [
+    private static array $db = [
         'Name' => 'Varchar', //for back-end use
         'Label' => 'Varchar' //for front-end use
     ];
 
-    private static $has_many = [
+    private static array $has_many = [
         'Values' => AttributeValue::class,
     ];
 
-    private static $belongs_many_many = [
+    private static array $belongs_many_many = [
         'Product' => Product::class,
     ];
 
-    private static $summary_fields = [
+    private static array $summary_fields = [
         'Name' => 'Name',
         'Label' => 'Label',
     ];
 
-    private static $indexes = [
+    private static array $indexes = [
         'LastEdited' => true,
     ];
 
-    private static $default_sort = 'ID ASC';
+    private static string $default_sort = 'ID ASC';
 
-    private static $singular_name = 'Attribute';
+    private static string $singular_name = 'Attribute';
 
-    private static $plural_name = 'Attributes';
+    private static string $plural_name = 'Attributes';
 
-    private static $table_name = 'SilverShop_AttributeType';
+    private static string $table_name = 'SilverShop_AttributeType';
 
-    public static function find_or_make($name)
+    public static function find_or_make($name): AttributeType
     {
         if ($type = AttributeType::get()->filter('Name:nocase', $name)->first()
         ) {
@@ -70,14 +70,14 @@ class AttributeType extends DataObject
         return $type;
     }
 
-    public function getCMSFields()
+    public function getCMSFields(): FieldList
     {
-        $fields = FieldList::create(
+        $fieldList = FieldList::create(
             TextField::create('Name', $this->fieldLabel('Name')),
             TextField::create('Label', $this->fieldLabel('Label'))
         );
         if ($this->isInDB()) {
-            $fields->push(
+            $fieldList->push(
                 GridField::create(
                     'Values',
                     $this->fieldLabel('Values'),
@@ -86,7 +86,7 @@ class AttributeType extends DataObject
                 )
             );
         } else {
-            $fields->push(
+            $fieldList->push(
                 LiteralField::create(
                     'Values',
                     '<p class="message warning">' .
@@ -96,27 +96,24 @@ class AttributeType extends DataObject
             );
         }
 
-        $this->extend('updateCMSFields', $fields);
+        $this->extend('updateCMSFields', $fieldList);
 
-        return $fields;
+        return $fieldList;
     }
 
-    public function addValues(array $values)
+    public function addValues(array $values): void
     {
-        $avalues = $this->convertArrayToValues($values);
-        $this->Values()->addMany($avalues);
+        $arrayList = $this->convertArrayToValues($values);
+        $this->Values()->addMany($arrayList);
     }
 
     /**
      * Finds or creates values for this type.
      *
-     * @param array $values
-     *
-     * @return ArrayList
      */
-    public function convertArrayToValues(array $values)
+    public function convertArrayToValues(array $values): ArrayList
     {
-        $set = ArrayList::create();
+        $arrayList = ArrayList::create();
         foreach ($values as $value) {
             $val = $this->Values()->find('Value', $value);
             if (!$val) {  //TODO: ignore case, if possible
@@ -125,21 +122,19 @@ class AttributeType extends DataObject
                 $val->TypeID = $this->ID;
                 $val->write();
             }
-            $set->push($val);
+            $arrayList->push($val);
         }
 
-        return $set;
+        return $arrayList;
     }
 
     /**
      * Returns a dropdown field for the user to select a variant.
      *
-     * @param string    $emptyString
+     * @param string    $emptystring
      * @param ArrayList $values
-     *
-     * @return DropdownField
      */
-    public function getDropDownField($emptystring = null, $values = null)
+    public function getDropDownField($emptystring = null, $values = null): ?DropdownField
     {
         $values = ($values) ? $values : $this->Values()->sort(['Sort' => 'ASC', 'Value' => 'ASC']);
 
@@ -160,7 +155,7 @@ class AttributeType extends DataObject
         return null;
     }
 
-    public function onBeforeWrite()
+    public function onBeforeWrite(): void
     {
         parent::onBeforeWrite();
         if ($this->Name && !$this->Label) {
@@ -170,7 +165,7 @@ class AttributeType extends DataObject
         }
     }
 
-    public function canDelete($member = null)
+    public function canDelete($member = null): bool
     {
         //TODO: prevent deleting if has been used
         return true;

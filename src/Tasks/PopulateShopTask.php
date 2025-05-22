@@ -24,9 +24,9 @@ class PopulateShopTask extends BuildTask
 
     protected $description = 'Creates dummy account page, products, checkout page, terms page.';
 
-    private static $segment = 'PopulateShopTask';
+    private static string $segment = 'PopulateShopTask';
 
-    public function run($request)
+    public function run($request): void
     {
         $this->extend('beforePopulate');
 

@@ -8,6 +8,7 @@ use SilverShop\Checkout\Step\ContactDetails;
 use SilverShop\Checkout\Step\Membership;
 use SilverShop\Checkout\Step\PaymentMethod;
 use SilverShop\Checkout\Step\Summary;
+use SilverShop\Model\Order;
 use SilverShop\Page\CheckoutPage;
 use SilverShop\Page\CheckoutPageController;
 use SilverStripe\Control\Controller;
@@ -18,26 +19,19 @@ use SilverStripe\Core\Extension;
  *
  * @package    shop
  * @subpackage steppedcheckout
+ * @extends Extension<static>
  */
 class SteppedCheckoutExtension extends Extension
 {
     /**
      * Anchor string to add to continue links
-     *
-     * @config
-     * @var    string
      */
-    private static $continue_anchor;
-
-    /**
-     * @var CheckoutPageController
-     */
-    protected $owner;
+    private static string $continue_anchor = '';
 
     /**
      * Set up CheckoutPage_Controller decorators for managing steps
      */
-    public static function setupSteps($steps = null)
+    public static function setupSteps($steps = null): void
     {
         if (!is_array($steps)) {
             //default steps
@@ -59,12 +53,12 @@ class SteppedCheckoutExtension extends Extension
         }
         //initiate extensions
         CheckoutPageController::add_extension(SteppedCheckoutExtension::class);
-        foreach ($steps as $action => $classname) {
+        foreach ($steps as $classname) {
             CheckoutPageController::add_extension($classname);
         }
     }
 
-    public function getSteps()
+    public function getSteps(): array
     {
         return CheckoutPage::config()->steps;
     }
@@ -72,11 +66,11 @@ class SteppedCheckoutExtension extends Extension
     /**
      * Redirect back to start of checkout if no cart started
      */
-    public function onAfterInit()
+    public function onAfterInit(): void
     {
         $action = $this->owner->getRequest()->param('Action');
         $steps = $this->getSteps();
-        if (!ShoppingCart::curr() && !empty($action) && isset($steps[$action])) {
+        if (!ShoppingCart::curr() instanceof Order && !empty($action) && isset($steps[$action])) {
             Controller::curr()->redirect($this->owner->Link());
             return;
         }
@@ -85,17 +79,18 @@ class SteppedCheckoutExtension extends Extension
     /**
      * Check if passed action is the same as the current step
      */
-    public function IsCurrentStep($name)
+    public function IsCurrentStep($name): bool
     {
         if ($this->owner->getAction() === $name) {
             return true;
-        } elseif (!$this->owner->getAction() || $this->owner->getAction() === 'index') {
+        }
+        if (!$this->owner->getAction() || $this->owner->getAction() === 'index') {
             return $this->actionPos($name) === 0;
         }
         return false;
     }
 
-    public function StepExists($name)
+    public function StepExists($name): bool
     {
         $steps = $this->getSteps();
         return isset($steps[$name]);
@@ -104,7 +99,7 @@ class SteppedCheckoutExtension extends Extension
     /**
      * Check if passed action is for a step before current
      */
-    public function IsPastStep($name)
+    public function IsPastStep($name): bool
     {
         return $this->compareActions($name, $this->owner->getAction()) < 0;
     }
@@ -112,7 +107,7 @@ class SteppedCheckoutExtension extends Extension
     /**
      * Check if passed action is for a step after current
      */
-    public function IsFutureStep($name)
+    public function IsFutureStep($name): bool
     {
         return $this->compareActions($name, $this->owner->getAction()) > 0;
     }
@@ -120,7 +115,7 @@ class SteppedCheckoutExtension extends Extension
     /**
      * Get first step from stored steps
      */
-    public function index()
+    public function index(): string|array
     {
         if (CheckoutPage::config()->first_step) {
             return $this->owner->{CheckoutPage::config()->first_step}();
@@ -131,7 +126,7 @@ class SteppedCheckoutExtension extends Extension
     /**
      * Check if one step comes before or after the another
      */
-    private function compareActions($action1, $action2)
+    private function compareActions($action1, $action2): int|float
     {
         return $this->actionPos($action1) - $this->actionPos($action2);
     }

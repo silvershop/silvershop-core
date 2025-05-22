@@ -2,12 +2,12 @@
 
 namespace SilverShop\Checkout\Step;
 
+use SilverStripe\Control\HTTPResponse;
 use SilverShop\Cart\ShoppingCart;
 use SilverShop\Checkout\CheckoutComponentConfig;
 use SilverShop\Checkout\Component\CustomerDetails;
 use SilverShop\Forms\CheckoutForm;
 use SilverShop\Model\Order;
-use SilverShop\Page\CheckoutPage;
 use SilverStripe\Control\Controller;
 use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Forms\FieldList;
@@ -22,7 +22,7 @@ use SilverStripe\Security\Security;
  */
 class Membership extends CheckoutStep
 {
-    private static $allowed_actions = [
+    private static array $allowed_actions = [
         'membership',
         'MembershipForm',
         'LoginForm',
@@ -31,19 +31,16 @@ class Membership extends CheckoutStep
         'CreateAccountForm',
     ];
 
-    private static $url_handlers = [
+    private static array $url_handlers = [
         'login' => 'index',
     ];
 
     /**
      * Whether or not this step should be skipped if user is logged in
-     *
-     * @config
-     * @var    bool
      */
-    private static $skip_if_logged_in = true;
+    private static bool $skip_if_logged_in = true;
 
-    public function membership()
+    public function membership(): HTTPResponse|array
     {
         //if logged in, then redirect to next step
         if (ShoppingCart::curr() && self::config()->skip_if_logged_in && Security::getCurrentUser()) {
@@ -56,9 +53,9 @@ class Membership extends CheckoutStep
         ];
     }
 
-    public function MembershipForm()
+    public function MembershipForm(): Form
     {
-        $fields = FieldList::create();
+        $fieldList = FieldList::create();
         $actions = FieldList::create(
             FormAction::create(
                 'createaccount',
@@ -70,24 +67,24 @@ class Membership extends CheckoutStep
             ),
             FormAction::create('guestcontinue', _t(__CLASS__ . '.ContinueAsGuest', 'Continue as Guest'))
         );
-        $form = Form::create($this->owner, 'MembershipForm', $fields, $actions);
+        $form = Form::create($this->owner, 'MembershipForm', $fieldList, $actions);
         $this->owner->extend('updateMembershipForm', $form);
         return $form;
     }
 
-    public function guestcontinue()
+    public function guestcontinue(): void
     {
         $this->owner->redirect($this->NextStepLink());
     }
 
-    public function LoginForm()
+    public function LoginForm(): MemberLoginForm
     {
-        $form = MemberLoginForm::create($this->owner, MemberAuthenticator::class, 'LoginForm');
-        $this->owner->extend('updateLoginForm', $form);
-        return $form;
+        $memberLoginForm = MemberLoginForm::create($this->owner, MemberAuthenticator::class, 'LoginForm');
+        $this->owner->extend('updateLoginForm', $memberLoginForm);
+        return $memberLoginForm;
     }
 
-    public function createaccount($requestdata)
+    public function createaccount($requestdata): HTTPResponse|array
     {
         //we shouldn't create an account if already a member
         if (Security::getCurrentUser()) {
@@ -106,20 +103,20 @@ class Membership extends CheckoutStep
     {
         $order = ShoppingCart::curr();
         //hack to make components work when there is no order
-        if (!$order) {
+        if (!$order instanceof Order) {
             $order = Order::create();
         }
-        $config = CheckoutComponentConfig::create($order, false);
-        $config->addComponent(CustomerDetails::create());
-        $config->addComponent(\SilverShop\Checkout\Component\Membership::create());
+        $checkoutComponentConfig = CheckoutComponentConfig::create($order, false);
+        $checkoutComponentConfig->addComponent(CustomerDetails::create());
+        $checkoutComponentConfig->addComponent(\SilverShop\Checkout\Component\Membership::create());
 
-        return $config;
+        return $checkoutComponentConfig;
     }
 
-    public function CreateAccountForm()
+    public function CreateAccountForm(): CheckoutForm
     {
-        $form = CheckoutForm::create($this->owner, 'CreateAccountForm', $this->registerconfig());
-        $form->setActions(
+        $checkoutForm = CheckoutForm::create($this->owner, 'CreateAccountForm', $this->registerconfig());
+        $checkoutForm->setActions(
             FieldList::create(
                 FormAction::create(
                     'docreateaccount',
@@ -131,13 +128,13 @@ class Membership extends CheckoutStep
                 )
             )
         );
-        $form->getValidator()->addRequiredField('Password');
+        $checkoutForm->getValidator()->addRequiredField('Password');
 
-        $this->owner->extend('updateCreateAccountForm', $form);
-        return $form;
+        $this->owner->extend('updateCreateAccountForm', $checkoutForm);
+        return $checkoutForm;
     }
 
-    public function docreateaccount($data, Form $form)
+    public function docreateaccount($data, Form $form): HTTPResponse
     {
         $this->registerconfig()->setData($form->getData());
 

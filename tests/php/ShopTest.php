@@ -12,10 +12,10 @@ use SilverStripe\Core\Environment;
  */
 class ShopTest
 {
-    public static function setConfiguration()
+    public static function setConfiguration(): void
     {
         include __DIR__ . DIRECTORY_SEPARATOR . 'test_config.php';
 
-        Environment::putEnv('SS_SEND_ALL_EMAILS_TO', '');
+        Environment::setEnv('SS_SEND_ALL_EMAILS_TO', '');
     }
 }

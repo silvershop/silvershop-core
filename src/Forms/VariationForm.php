@@ -2,12 +2,14 @@
 
 namespace SilverShop\Forms;
 
+use SilverStripe\Control\RequestHandler;
 use Exception;
 use SilverShop\Cart\ShoppingCart;
 use SilverShop\Cart\ShoppingCartController;
 use SilverShop\Page\Product;
 use SilverShop\ShopTools;
 use SilverStripe\Core\Convert;
+use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\Form;
 use SilverStripe\Forms\HiddenField;
 use SilverStripe\ORM\Queries\SQLSelect;
@@ -17,17 +19,13 @@ use SilverStripe\ORM\Queries\SQLSelect;
  */
 class VariationForm extends AddProductForm
 {
-    /**
-     * @config
-     * @var bool
-     */
-    private static $include_json = true;
+    private static bool $include_json = true;
 
-    protected $requiredFields = ['Quantity'];
+    protected array $requiredFields = ['Quantity'];
 
-    public function __construct($controller, $name = 'VariationForm')
+    public function __construct(RequestHandler $requestHandler, $name = 'VariationForm')
     {
-        parent::__construct($controller, $name);
+        parent::__construct($requestHandler, $name);
         $this->extend('updateVariationForm');
     }
 
@@ -55,6 +53,7 @@ class VariationForm extends AddProductForm
             // if we are in just doing a validation step then check
             if ($this->getRequest()->requestVar('ValidateVariant')) {
                 $message = '';
+                $success = false;
 
                 try {
                     $success = $variation->canPurchase(null, $data['Quantity']);
@@ -75,7 +74,7 @@ class VariationForm extends AddProductForm
                 return json_encode($ret);
             }
 
-            $saveabledata = (!empty($this->saveablefields)) ? Convert::raw2sql(
+            $saveabledata = ($this->saveablefields !== []) ? Convert::raw2sql(
                 array_intersect_key($data, array_combine($this->saveablefields, $this->saveablefields))
             ) : $data;
 
@@ -112,12 +111,12 @@ class VariationForm extends AddProductForm
         return null;
     }
 
-    protected function getFormFields($controller = null)
+    protected function getFormFields($controller = null): FieldList
     {
-        $fields = parent::getFormFields($controller);
+        $fieldList = parent::getFormFields($controller);
 
         if (!$controller) {
-            return $fields;
+            return $fieldList;
         }
         $product = $controller->data();
         $attributes = $product->VariationAttributeTypes();
@@ -134,7 +133,7 @@ class VariationForm extends AddProductForm
             );
 
             if ($attributeDropdown) {
-                $fields->push($attributeDropdown);
+                $fieldList->push($attributeDropdown);
                 $this->requiredFields[] = "ProductAttributes[$attribute->ID]";
             }
         }
@@ -142,7 +141,7 @@ class VariationForm extends AddProductForm
         if ($this->config()->include_json) {
             $vararray = [];
 
-            $query = $query2 = new SQLSelect();
+            $query = $sqlSelect = new SQLSelect();
 
             $query->setSelect('ID')
                 ->setFrom('SilverShop_Variation')
@@ -153,13 +152,13 @@ class VariationForm extends AddProductForm
             }
 
             foreach ($query->execute()->column('ID') as $variationID) {
-                $query2->setSelect('SilverShop_AttributeValueID')
+                $sqlSelect->setSelect('SilverShop_AttributeValueID')
                     ->setFrom('SilverShop_Variation_AttributeValues')
                     ->setWhere(['SilverShop_VariationID' => $variationID]);
-                $vararray[$variationID] = $query2->execute()->keyedColumn();
+                $vararray[$variationID] = $sqlSelect->execute()->keyedColumn();
             }
 
-            $fields->push(
+            $fieldList->push(
                 HiddenField::create(
                     'VariationOptions',
                     'VariationOptions',
@@ -168,7 +167,7 @@ class VariationForm extends AddProductForm
             );
         }
 
-        return $fields;
+        return $fieldList;
     }
 
     protected function getFormValidator()

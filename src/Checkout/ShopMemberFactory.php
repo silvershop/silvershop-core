@@ -17,21 +17,20 @@ class ShopMemberFactory
      * @throws ValidationException
      *
      * @param $data - map of member data
-     *
      * @return Member - new member (not saved to db)
      */
-    public function create($data)
+    public function create($data): ?Member
     {
-        $result = ValidationResult::create();
+        $validationResult = ValidationResult::create();
         if (!Checkout::member_creation_enabled()) {
-            $result->addError(
+            $validationResult->addError(
                 _t('SilverShop\Checkout\Checkout.MembershipIsNotAllowed', 'Creating new memberships is not allowed')
             );
-            throw new ValidationException($result);
+            throw ValidationException::create($validationResult);
         }
         $idfield = Config::inst()->get(Member::class, 'unique_identifier_field');
         if (!isset($data[$idfield]) || empty($data[$idfield])) {
-            $result->addError(
+            $validationResult->addError(
                 _t(
                     'SilverShop\Checkout\Checkout.IdFieldNotFound',
                     'Required field not found: {IdentifierField}',
@@ -39,20 +38,20 @@ class ShopMemberFactory
                     ['IdentifierField' => $idfield]
                 )
             );
-            throw new ValidationException($result);
+            throw ValidationException::create($validationResult);
         }
         if (!isset($data['Password']) || empty($data['Password'])) {
-            $result->addError(_t('SilverShop\Checkout\Checkout.PasswordRequired', 'A password is required'));
-            throw new ValidationException($result);
+            $validationResult->addError(_t('SilverShop\Checkout\Checkout.PasswordRequired', 'A password is required'));
+            throw ValidationException::create($validationResult);
         }
         $idval = $data[$idfield];
-        if ($member = MemberExtension::get_by_identifier($idval)) {
+        if (($member = MemberExtension::get_by_identifier($idval)) instanceof Member) {
             // get localized field labels
             $fieldLabels = $member->fieldLabels(false);
             // if a localized value exists, use this for our error-message
             $fieldLabel = isset($fieldLabels[$idfield]) ? $fieldLabels[$idfield] : $idfield;
 
-            $result->addError(
+            $validationResult->addError(
                 _t(
                     'SilverShop\Checkout\Checkout.MemberExists',
                     'A member already exists with the {Field} {Identifier}',
@@ -60,7 +59,7 @@ class ShopMemberFactory
                     ['Field' => $fieldLabel, 'Identifier' => $idval]
                 )
             );
-            throw new ValidationException($result);
+            throw ValidationException::create($validationResult);
         }
 
         /** @var Member $member */
@@ -70,11 +69,11 @@ class ShopMemberFactory
         if (!$validation->isValid()) {
             //TODO need to handle i18n here?
             foreach ($validation->getMessages() as $message) {
-                $result->addError($message['message']);
+                $validationResult->addError($message['message']);
             }
         }
-        if (!$result->isValid()) {
-            throw new ValidationException($result);
+        if (!$validationResult->isValid()) {
+            throw ValidationException::create($validationResult);
         }
 
         return $member;

@@ -6,7 +6,7 @@ use SilverStripe\ORM\Queries\SQLSelect;
 
 class ShopReportQuery extends SQLSelect
 {
-    public function canSortBy($fieldName)
+    public function canSortBy($fieldName): bool
     {
         return true;
     }

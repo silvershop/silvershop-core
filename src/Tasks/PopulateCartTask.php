@@ -19,9 +19,9 @@ class PopulateCartTask extends BuildTask
 
     protected $description = 'Add 5 random Live products or variations to cart, with random quantities between 1 and 10.';
 
-    public function run($request)
+    public function run($request): void
     {
-        $cart = ShoppingCart::singleton();
+        $shoppingCart = ShoppingCart::singleton();
         $count = $request->getVar('count') ? $request->getVar('count') : 5;
         if ($products = Versioned::get_by_stage(Product::class, 'Live', '', 'RAND()', '', $count)) {
             foreach ($products as $product) {
@@ -29,9 +29,9 @@ class PopulateCartTask extends BuildTask
                 if ($variations->exists()) {
                     $product = $variations->sort('RAND()')->first();
                 }
-                $quantity = (int)rand(1, 5);
+                $quantity = rand(1, 5);
                 if ($product->canPurchase(Security::getCurrentUser(), $quantity)) {
-                    $cart->add($product, $quantity);
+                    $shoppingCart->add($product, $quantity);
                 }
             }
         }

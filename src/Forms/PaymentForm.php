@@ -5,9 +5,10 @@ namespace SilverShop\Forms;
 use SilverShop\Checkout\Checkout;
 use SilverShop\Checkout\CheckoutComponentConfig;
 use SilverShop\Checkout\Component\CheckoutComponentNamespaced;
-use SilverShop\Checkout\Component\OnsitePayment;
 use SilverShop\Checkout\OrderProcessor;
 use SilverShop\Model\Order;
+use SilverStripe\Control\HTTPResponse;
+use SilverStripe\Control\RequestHandler;
 use SilverStripe\Omnipay\GatewayFieldsFactory;
 use SilverStripe\Omnipay\GatewayInfo;
 
@@ -17,47 +18,47 @@ class PaymentForm extends CheckoutForm
      * @var string URL to redirect the user to on payment success.
      * Not the same as the "confirm" action in {@link PaymentGatewayController}.
      */
-    protected $successlink;
+    protected string $successlink = '';
 
     /**
      * @var string URL to redirect the user to on payment failure.
      * Not the same as the "cancel" action in {@link PaymentGatewayController}.
      */
-    protected $failurelink;
+    protected string $failurelink = '';
 
     /**
      * @var OrderProcessor
      */
     protected $orderProcessor;
 
-    public function __construct($controller, $name, CheckoutComponentConfig $config)
+    public function __construct(RequestHandler $requestHandler, $name, CheckoutComponentConfig $checkoutComponentConfig)
     {
-        parent::__construct($controller, $name, $config);
+        parent::__construct($requestHandler, $name, $checkoutComponentConfig);
 
-        $this->orderProcessor = OrderProcessor::create($config->getOrder());
+        $this->orderProcessor = OrderProcessor::create($checkoutComponentConfig->getOrder());
     }
 
-    public function setSuccessLink($link)
+    public function setSuccessLink(string $link): void
     {
         $this->successlink = $link;
     }
 
-    public function getSuccessLink()
+    public function getSuccessLink(): string
     {
         return $this->successlink;
     }
 
-    public function setFailureLink($link)
+    public function setFailureLink(string $link): void
     {
         $this->failurelink = $link;
     }
 
-    public function getFailureLink()
+    public function getFailureLink(): string
     {
         return $this->failurelink;
     }
 
-    public function checkoutSubmit($data, $form)
+    public function checkoutSubmit($data, $form): HTTPResponse
     {
         // form validation has passed by this point, so we can save data
         $this->config->setData($form->getData());
@@ -84,7 +85,7 @@ class PaymentForm extends CheckoutForm
     {
         $data = $form->getData();
 
-        $cancelUrl = $this->getFailureLink() ? $this->getFailureLink() : $this->controller->Link();
+        $cancelUrl = !in_array($this->getFailureLink(), ['', '0'], true) ? $this->getFailureLink() : $this->controller->Link();
 
         $order = $this->config->getOrder();
 
@@ -116,9 +117,9 @@ class PaymentForm extends CheckoutForm
 
         // if we got here from checkoutSubmit and there's a namespaced Component that provides payment data,
         // we need to strip the inputs down to only the checkout component.
-        $components = $this->config->getComponents();
-        if ($components->first() instanceof CheckoutComponentNamespaced) {
-            foreach ($components as $component) {
+        $arrayList = $this->config->getComponents();
+        if ($arrayList->first() instanceof CheckoutComponentNamespaced) {
+            foreach ($arrayList as $component) {
                 if ($component->Proxy()->providesPaymentData()) {
                     $data = array_merge($data, $component->unnamespaceData($data));
                 }
@@ -126,12 +127,12 @@ class PaymentForm extends CheckoutForm
         }
 
         $gateway = Checkout::get($order)->getSelectedPaymentMethod(false);
-        $fieldFactory = new GatewayFieldsFactory($gateway);
+        $gatewayFieldsFactory = GatewayFieldsFactory::create($gateway);
 
         // This is where the payment is actually attempted
         $paymentResponse = $this->orderProcessor->makePayment(
             $gateway,
-            $fieldFactory->normalizeFormData($data),
+            $gatewayFieldsFactory->normalizeFormData($data),
             $this->getSuccessLink(),
             $cancelUrl
         );
@@ -149,12 +150,9 @@ class PaymentForm extends CheckoutForm
         return $response;
     }
 
-    /**
-     * @param OrderProcessor $processor
-     */
-    public function setOrderProcessor(OrderProcessor $processor)
+    public function setOrderProcessor(OrderProcessor $orderProcessor): void
     {
-        $this->orderProcessor = $processor;
+        $this->orderProcessor = $orderProcessor;
     }
 
     /**
