@@ -491,5 +491,4 @@ class Product extends Page implements Buyable
     {
         return ShoppingCartController::remove_all_item_link($this);
     }
-
 }

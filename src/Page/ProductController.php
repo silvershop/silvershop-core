@@ -30,5 +30,4 @@ class ProductController extends PageController
         $this->extend('updateFormClass', $formClass);
         return $formClass;
     }
-
 }
