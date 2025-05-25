@@ -491,15 +491,4 @@ class Product extends Page implements Buyable
     {
         return ShoppingCartController::remove_all_item_link($this);
     }
-
-    /**
-     * Get the form class to use to edit this product in the frontend
-     * @return string FQCN
-     */
-    public function getFormClass(): string
-    {
-        $formClass = AddProductForm::class;
-        $this->extend('updateFormClass', $formClass);
-        return $formClass;
-    }
 }
