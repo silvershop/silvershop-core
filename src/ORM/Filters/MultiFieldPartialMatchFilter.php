@@ -16,12 +16,12 @@ class MultiFieldPartialMatchFilter extends PartialMatchFilter
     /**
      * @var array $subfilters
      */
-    protected $subfilters;
+    protected $subfilters = [];
 
     /**
      * @var array $subfilterModifiers
      */
-    protected $subfilterModifiers;
+    protected $subfilterModifiers = [];
 
     /**
      * @param string $fullName    Determines the name of the field, as well as the searched database
@@ -36,9 +36,11 @@ class MultiFieldPartialMatchFilter extends PartialMatchFilter
     public function __construct($fullName, $value = false, array $modifiers = [], array $otherFields = [])
     {
         parent::__construct($fullName, $value, $modifiers);
+        
         if ($value !== false) {
             $this->setValue($value);
         }
+        
         $this->setSubfilters($otherFields);
     }
 
@@ -63,8 +65,10 @@ class MultiFieldPartialMatchFilter extends PartialMatchFilter
             }
         );
 
-        foreach ($this->subfilters as $subfilter) {
-            $subfilter->setModifiers($this->subfilterModifiers);
+        if ($this->subfilters) {
+            foreach ($this->subfilters as $subfilter) {
+                $subfilter->setModifiers($this->subfilterModifiers);
+            }
         }
     }
 
