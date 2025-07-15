@@ -1,7 +1,7 @@
 SilverShop\Page\ProductCategory:
   kites:
     Title: Kites
-    UrlSegment: kites
+    URLSegment: kites
 
 SilverShop\Model\Variation\AttributeType:
   kitesize:
@@ -23,11 +23,16 @@ SilverShop\Page\Product:
   extremekite2000:
     Title: Extereme Kite 2000
     BasePrice: 35.00
+    URLSegment: extreme-kite-2000
+    AllowPurchase: 1
+    Weight: 0.3
     Parent: =>SilverShop\Page\ProductCategory.kites
     VariationAttributeTypes: =>SilverShop\Model\Variation\AttributeType.kitesize,=>SilverShop\Model\Variation\AttributeType.color
 
 SilverShop\Model\Variation\Variation:
   extremekite2000_redsmall:
+    InternalItemID: 123
+    Price: 35.00
     Product: =>SilverShop\Page\Product.extremekite2000
     AttributeValues: =>SilverShop\Model\Variation\AttributeValue.kitesize_small,=>SilverShop\Model\Variation\AttributeValue.color_red
 
