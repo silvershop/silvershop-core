@@ -29,7 +29,9 @@ class ShopEmailPreviewTask extends BuildTask
     protected $previewableEmails = [
         'Confirmation',
         'Receipt',
-        'AdminNotification'
+        'AdminNotification',
+        'CancelNotification',
+        'StatusChange'
     ];
 
     /**
@@ -62,7 +64,12 @@ class ShopEmailPreviewTask extends BuildTask
             }
 
             $method = "send$email";
-            echo $notifier->$method();
+
+            if ($email == 'StatusChange') {
+                echo $notifier->$method('This is a test title', 'This is a test note');
+            } else {
+                echo $notifier->$method();
+            }
         }
         //this is a little hardcore way of ending the party,
         //but as it's only used for styling, it works for now
