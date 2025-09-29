@@ -197,9 +197,7 @@ class ShoppingCartController extends Controller
 
             $result = $this->cart->add($product, $quantity, $request->getVars());
 
-            if ($result) {
-                $response = $this->cart->getMessage();
-            } else {
+            if (!$result) {
                 $response = $this->httpError(400, $this->cart->getMessage());
             }
         } else {
