@@ -26,7 +26,7 @@ class ProductCategory extends Page implements i18nEntityProvider
 
     private static string $plural_name = 'Categories';
 
-    private static string $icon = 'silvershop/core: client/dist/images/icons/folder.gif';
+    private static $icon_class = 'font-icon-p-archive';
 
     private static string $table_name = 'SilverShop_ProductCategory';
 

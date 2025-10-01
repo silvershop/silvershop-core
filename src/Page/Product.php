@@ -115,7 +115,7 @@ class Product extends Page implements Buyable
 
     private static string $plural_name = 'Products';
 
-    private static string $icon = 'silvershop/core: client/dist/images/icons/package.gif';
+    private static $icon_class = 'font-icon-p-package';
 
     private static string $default_parent = ProductCategory::class;
 
