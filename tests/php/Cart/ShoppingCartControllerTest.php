@@ -98,13 +98,13 @@ class ShoppingCartControllerTest extends FunctionalTest
         $url = ShoppingCartController::add_item_link($this->mp3player);
         $httpResponse = $this->get($url);
 
-        $this->assertEquals(200, $httpResponse->getStatusCode(), "Adding the mp3 player should work");
+        $this->assertEquals(302, $httpResponse->getStatusCode(), "Adding the mp3 player should work");
 
         $secondMp3 = $this->get(ShoppingCartController::add_item_link($this->mp3player));
-        $this->assertEquals(200, $secondMp3->getStatusCode(), "Adding a second mp3 player should work");
+        $this->assertEquals(302, $secondMp3->getStatusCode(), "Adding a second mp3 player should work");
 
         $socks = $this->get(ShoppingCartController::add_item_link($this->socks));
-        $this->assertEquals(200, $socks->getStatusCode(), "Adding socks should work");
+        $this->assertEquals(302, $socks->getStatusCode(), "Adding socks should work");
 
         // add a product that you can't add
         $noPurchaseProduct = $this->get(ShoppingCartController::add_item_link($this->noPurchaseProduct));
@@ -220,7 +220,7 @@ class ShoppingCartControllerTest extends FunctionalTest
         $this->assertMatchesRegularExpression('{^shoppingcart/add/SilverShop-Page-Product/' . $productId . '\?SecurityID=[a-f0-9]+$}', $link);
 
         $response = $this->get($link);
-        $this->assertEquals($response->getStatusCode(), 200);
+        $this->assertEquals(302, $response->getStatusCode());
 
         // disable security token for cart-links
         Config::modify()->set(ShoppingCartController::class, 'disable_security_token', true);
@@ -229,7 +229,7 @@ class ShoppingCartControllerTest extends FunctionalTest
         $this->assertEquals('shoppingcart/add/SilverShop-Page-Product/' . $productId, $link);
 
         $response = $this->get($link);
-        $this->assertEquals($response->getStatusCode(), 200);
+        $this->assertEquals(302, $response->getStatusCode());
 
         SecurityToken::disable();
 
@@ -238,12 +238,12 @@ class ShoppingCartControllerTest extends FunctionalTest
         $this->assertEquals('shoppingcart/add/SilverShop-Page-Product/' . $productId, $link);
 
         $response = $this->get($link);
-        $this->assertEquals($response->getStatusCode(), 200);
+        $this->assertEquals(302, $response->getStatusCode());
 
         SecurityToken::enable();
         // should now return a 400 status
         $response = $this->get($link);
-        $this->assertEquals($response->getStatusCode(), 400);
+        $this->assertEquals(400, $response->getStatusCode());
 
         // restore previous setting
         if (!$enabled) {
