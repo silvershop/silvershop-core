@@ -25,7 +25,7 @@ class CartPage extends Page
         'ContinuePage' => SiteTree::class,
     ];
 
-    private static string $icon = 'silvershop/core: client/dist/images/icons/cart.gif';
+    private static $icon_class = 'font-icon-p-cart';
 
     private static string $table_name = 'SilverShop_CartPage';
 
