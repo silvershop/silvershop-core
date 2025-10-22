@@ -21,22 +21,21 @@ SilverShop\Checkout\OrderEmailNotifier:
 #Specify the 'from' address to use in email correspondence
 SilverShop\Extension\ShopConfigExtension:
   email_from: store@website.com
-
 ```
 
 ## Modifying templates
 
-Update email content by overriding the templates inside the `templates/email/` folder. Just create a corresponding folder/template in your mysite folder, such as `mysite/templates/email/Order_RecieptEmail`.
+Override email templates in the `templates/SilverShop/Model/` folder by creating a corresponding folder/template in your theme.  For example, `{yourtheme}/templates/SilverShop/Model/Order_StatusEmail.ss`, or place in `app/templates/SilverShop/Model/Order_StatusEmail.ss`.
 
-## Modifying subject lines
+## Overriding Subjects & Titles
 
-Email subjects are in the translation system, so you can do the following to change an email subject line:
-
+Email subjects & titles are in the translation system, so you can do the following to change an email subject line:
 
 ```yaml
 #in mysite/lang/en.yml
 en:
-  ShopEmail:
+  SilverShop\ShopEmail:
+    ConfirmationTitle: "My Website Order # {OrderNo}"
     ConfirmationSubject: 'My Website Order #{OrderNo} confirmation'
     ReceiptSubject: 'My Website Order #{OrderNo} receipt'
     CancelSubject: 'My Website Order #{OrderNo} cancelled by member'
@@ -44,11 +43,11 @@ en:
 
 ## Making your own Notifier
 
-There may be times when you want to add custom logic around the e-mail. For instance if your purchase requires your user to enter e-mail addresses and each of those addresses receives a different confirmation e-mail. In this situation make a `MyCustomOrderEmailNotifier` that can optionally extend `OrderEmailNotifier` and add custom logic into it then declare it to replace the current notifier
+There may be times when you want to add custom logic around the email. For instance if your purchase requires your user to enter email addresses and each of those addresses receives a different confirmation email. In this situation make a `MyCustomOrderEmailNotifier` that can optionally extend `OrderEmailNotifier` and add custom logic into it then declare it to replace the current notifier.
 
 ```yaml
 # in mysite/config.yml
 Injector:
-  OrderEmailNotifier:
+  SilverShop\Checkout\OrderEmailNotifier:
     class: MyCustomOrderEmailNotifier
 ```

@@ -193,7 +193,9 @@ class OrderEmailNotifier
                 '',
                 ['OrderNo' => $this->order->Reference]
             ))
-            ->setFrom(Email::config()->admin_email)
+            ->setFrom(
+                ShopConfigExtension::config()->email_from ? ShopConfigExtension::config()->email_from : Email::config()->admin_email
+            )
             ->setTo(Email::config()->admin_email)
             ->setBody($this->order->renderWith(Order::class));
 
@@ -233,14 +235,9 @@ class OrderEmailNotifier
             }
         }
 
-        if (Config::inst()->get(OrderProcessor::class, 'receipt_email')) {
-            $adminEmail = Config::inst()->get(OrderProcessor::class, 'receipt_email');
-        } else {
-            $adminEmail = Email::config()->admin_email;
-        }
-
+        $from = ShopConfigExtension::config()->email_from ? ShopConfigExtension::config()->email_from : Email::config()->admin_email;
         $email = Email::create()
-            ->setFrom($adminEmail)
+            ->setFrom($from)
             ->setSubject(_t('SilverShop\ShopEmail.StatusChangeSubject', 'SilverShop – {Title}', ['Title' => $title]))
             ->setTo($this->order->getLatestEmail())
             ->setHTMLTemplate('SilverShop/Model/Order_StatusEmail')
@@ -248,7 +245,7 @@ class OrderEmailNotifier
                 [
                     'Order' => $this->order,
                     'Note' => $note,
-                    'FromEmail' => $adminEmail
+                    'FromEmail' => $from
                 ]
             );
 
