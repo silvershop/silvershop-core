@@ -179,23 +179,13 @@ class Address extends DataObject
      */
     public function getRequiredFields(): array
     {
-        $fields = self::config()->required_fields;
-        //hack to allow overriding arrays in ss config
-        if (static::config()->get('required_fields') != $fields) {
-            foreach (static::config()->get('required_fields') as $requirement) {
-                if (($key = array_search($requirement, $fields)) !== false) {
-                    unset($fields[$key]);
-                }
-            }
-        }
-        //set nicer keys for easier processing
-        $fields = array_combine($fields, $fields);
+        $fields = static::config()->get('required_fields');
+        $fields = array_combine($fields, $fields);  //set nicer keys for easier processing
         $this->extend('updateRequiredFields', $fields);
         //don't require country if shop config only specifies a single country
         if (isset($fields['Country']) && SiteConfig::current_site_config()->getSingleCountry()) {
             unset($fields['Country']);
         }
-
         return $fields;
     }
 
