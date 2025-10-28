@@ -12,6 +12,7 @@ use SilverStripe\Control\Email\Email;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Config\Configurable;
 use SilverStripe\Core\Injector\Injectable;
+use SilverStripe\View\SSViewer;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 
 /**
@@ -235,6 +236,10 @@ class OrderEmailNotifier
             }
         }
 
+        // save currently loaded theme stack and load frontend stack
+        $adminThemeset = SSViewer::get_themes();
+        SSViewer::set_themes(SSViewer::config()->uninherited('themes'));
+
         $from = ShopConfigExtension::config()->email_from ? ShopConfigExtension::config()->email_from : Email::config()->admin_email;
         $email = Email::create()
             ->setFrom($from)
@@ -258,6 +263,8 @@ class OrderEmailNotifier
         } else {
             try {
                 $email->send();
+                // restore theme stack
+                SSViewer::set_themes($adminThemeset);
             } catch (TransportExceptionInterface $e) {
                 $this->logger->error('OrderEmailNotifier.sendStatusChange: error sending email in ' . __FILE__ . ' line ' . __LINE__ . ": {$e->getMessage()}");
                 return false;
