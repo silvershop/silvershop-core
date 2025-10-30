@@ -20,6 +20,7 @@ use SilverStripe\Security\MemberAuthenticator\ChangePasswordForm;
 use SilverStripe\Security\MemberAuthenticator\ChangePasswordHandler;
 use SilverStripe\Security\MemberAuthenticator\MemberAuthenticator;
 use SilverStripe\Security\Security;
+use SilverStripe\Security\SecurityToken;
 use SilverStripe\SiteConfig\SiteConfig;
 
 /**
@@ -180,8 +181,20 @@ class AccountPageController extends PageController
         return [];
     }
 
+    public function DeleteAddressLink($AddressID)
+    {
+        $link = self::join_links(
+            $this->Link('deleteaddress'),
+            $AddressID
+        );
+        return SecurityToken::inst()->addToUrl($link);
+    }
+
     function deleteaddress(HTTPRequest$httpRequest): ?HTTPResponse
     {
+        if (!SecurityToken::inst()->checkRequest($httpRequest)) {
+            return $this->httpError(400);
+        }
         // NOTE: we don't want to fully delete the address because it's presumably still
         // attached to an order. Setting MemberID to 0 means it won't show up in the address
         // book any longer.
@@ -195,17 +208,47 @@ class AccountPageController extends PageController
         return $this->redirectBack();
     }
 
+    public function SetDefaultBillingLink($AddressID)
+    {
+        $link = self::join_links(
+            $this->Link('setdefaultbilling'),
+            $AddressID
+        );
+        return SecurityToken::inst()->addToUrl($link);
+    }
+
     function setdefaultbilling(HTTPRequest $httpRequest): HTTPResponse
     {
-        $this->member->DefaultBillingAddressID = (int) $httpRequest->param('ID');
-        $this->member->write();
+        if (!SecurityToken::inst()->checkRequest($httpRequest)) {
+            return $this->httpError(400);
+        }
+        $address = $this->member->AddressBook()->byID((int) $httpRequest->param('ID'));
+        if ($address) {
+            $this->member->DefaultBillingAddressID = $address->ID;
+            $this->member->write();
+        }
         return $this->redirectBack();
+    }
+
+    public function SetDefaultShippingLink($AddressID)
+    {
+        $link = self::join_links(
+            $this->Link('setdefaultshipping'),
+            $AddressID
+        );
+        return SecurityToken::inst()->addToUrl($link);
     }
 
     function setdefaultshipping(HTTPRequest $httpRequest): HTTPResponse
     {
-        $this->member->DefaultShippingAddressID = (int) $httpRequest->param('ID');
-        $this->member->write();
+        if (!SecurityToken::inst()->checkRequest($httpRequest)) {
+            return $this->httpError(400);
+        }
+        $address = $this->member->AddressBook()->byID((int) $httpRequest->param('ID'));
+        if ($address) {
+            $this->member->DefaultShippingAddressID = $address->ID;
+            $this->member->write();
+        }
         return $this->redirectBack();
     }
 
