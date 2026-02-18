@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Tests\Page;
 
 use SilverShop\Model\Variation\Variation;
@@ -10,21 +12,29 @@ use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\FunctionalTest;
 use SilverStripe\Versioned\Versioned;
 
-class ProductCategoryTest extends FunctionalTest
+final class ProductCategoryTest extends FunctionalTest
 {
     public static $fixture_file = __DIR__ . '/../Fixtures/shop.yml';
+
     public static bool $disable_theme = true;
 
     protected ProductCategory $products;
+
     protected ProductCategory $clothing;
+
     protected ProductCategory $electronics;
+
     protected Product $socks;
+
     protected Product $tshirt;
+
     protected Product $hdtv;
+
     protected Product $beachball;
+
     protected Product $mp3player;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         Config::modify()->set(ProductCategory::class, 'must_have_price', false);
@@ -33,19 +43,25 @@ class ProductCategoryTest extends FunctionalTest
 
         $this->products = $this->objFromFixture(ProductCategory::class, 'products');
         $this->products->publishSingle();
+
         $this->clothing = $this->objFromFixture(ProductCategory::class, 'clothing');
         $this->clothing->publishSingle();
+
         $this->electronics = $this->objFromFixture(ProductCategory::class, 'electronics');
         $this->electronics->publishSingle();
 
         $this->socks = $this->objFromFixture(Product::class, 'socks');
         $this->socks->publishSingle();
+
         $this->tshirt = $this->objFromFixture(Product::class, 'tshirt');
         $this->tshirt->publishSingle();
+
         $this->hdtv = $this->objFromFixture(Product::class, 'hdtv');
         $this->hdtv->publishSingle();
+
         $this->beachball = $this->objFromFixture(Product::class, 'beachball');
         $this->beachball->publishSingle();
+
         $this->mp3player = $this->objFromFixture(Product::class, 'mp3player');
         $this->mp3player->publishSingle();
 
@@ -137,7 +153,7 @@ class ProductCategoryTest extends FunctionalTest
         Config::modify()->set(ProductCategory::class, 'must_have_price', true);
 
         $products = $this->electronics->ProductsShowable();
-        $this->assertEquals(0, $products->count(), 'No product should be returned as there\'s no price set');
+        $this->assertEquals(0, $products->count(), "No product should be returned as there's no price set");
 
         // Create a variation for HDTV
         Variation::create()->update(
@@ -173,6 +189,7 @@ class ProductCategoryTest extends FunctionalTest
         // Test AllowPurchase flag
         $this->tshirt->AllowPurchase = false;
         $this->tshirt->write();
+
         $products = $this->products->ProductsShowable();
         $this->assertContains(
             $this->tshirt->URLSegment,
@@ -214,6 +231,7 @@ class ProductCategoryTest extends FunctionalTest
         // Test products with no price and no variations
         $this->beachball->BasePrice = 0;
         $this->beachball->write();
+
         $products = $this->products->ProductsShowable();
         $this->assertNotContains(
             $this->beachball->URLSegment,
@@ -245,6 +263,7 @@ class ProductCategoryTest extends FunctionalTest
         $this->mp3player->AllowPurchase = false;
         $this->mp3player->BasePrice = 0;
         $this->mp3player->write();
+
         $products = $this->products->ProductsShowable();
         $this->assertNotContains(
             $this->mp3player->URLSegment,

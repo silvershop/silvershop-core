@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Reports;
 
 use SilverShop\Page\Product;
@@ -11,7 +13,7 @@ class ProductReport extends ShopPeriodReport
 {
     protected $title = 'Products';
 
-    protected $description = 'Understand which products are performing, and which aren\'t.';
+    protected $description = "Understand which products are performing, and which aren't.";
 
     protected $dataClass = Product::class;
 
@@ -55,6 +57,7 @@ class ProductReport extends ShopPeriodReport
         //convert dates to correct format
         $fieldList = $this->parameterFields();
         $fieldList->setValues($params);
+
         $start = $fieldList->fieldByName('StartPeriod')->dataValue();
         $end = $fieldList->fieldByName('EndPeriod')->dataValue();
 
@@ -82,9 +85,9 @@ class ProductReport extends ShopPeriodReport
             );
         }
 
-        $completedStatus = '\'' . implode('\', \'', [
+        $completedStatus = "'" . implode("', '", [
                 'Unpaid', 'Paid', 'Processing', 'Sent', 'Complete'
-            ]) . '\'';
+            ]) . "'";
 
 
         $sqlSelect->setSelect(

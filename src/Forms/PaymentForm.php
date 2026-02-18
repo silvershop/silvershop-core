@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Forms;
 
 use SilverShop\Checkout\Checkout;
@@ -85,7 +87,7 @@ class PaymentForm extends CheckoutForm
     {
         $data = $form->getData();
 
-        $cancelUrl = !in_array($this->getFailureLink(), ['', '0'], true) ? $this->getFailureLink() : $this->controller->Link();
+        $cancelUrl = in_array($this->getFailureLink(), ['', '0'], true) ? $this->controller->Link() : $this->getFailureLink();
 
         $order = $this->config->getOrder();
 
@@ -103,6 +105,7 @@ class PaymentForm extends CheckoutForm
                 $form->sessionMessage($this->orderProcessor->getError());
                 return $this->controller->redirectBack();
             }
+
             return $this->controller->redirect($this->getSuccessLink());
         }
 
@@ -112,6 +115,7 @@ class PaymentForm extends CheckoutForm
                 $form->sessionMessage($this->orderProcessor->getError());
                 return $this->controller->redirectBack();
             }
+
             $cancelUrl = $this->orderProcessor->getReturnUrl();
         }
 

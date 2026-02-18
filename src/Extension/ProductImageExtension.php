@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Extension;
 
 use SilverStripe\Assets\Image;
@@ -74,26 +76,28 @@ class ProductImageExtension extends Extension
      */
     public function getImageAt($width = null, $height = null, $upscale = false): Image|AssetContainer
     {
-        if (!$this->owner->exists()) {
-            return $this->owner;
+        if (!$this->getOwner()->exists()) {
+            return $this->getOwner();
         }
 
-        $realWidth = $this->owner->getWidth();
-        $realHeight = $this->owner->getHeight();
+        $realWidth = $this->getOwner()->getWidth();
+        $realHeight = $this->getOwner()->getHeight();
 
         if ($width && $height) {
             return $realWidth < $width && $realHeight < $height && !$upscale
-                ? $this->owner
-                : $this->owner->Pad($width, $height);
+                ? $this->getOwner()
+                : $this->getOwner()->Pad($width, $height);
         }
+
         if ($width) {
             return $realWidth < $width && !$upscale
-                ? $this->owner
-                : $this->owner->ScaleWidth($width);
+                ? $this->getOwner()
+                : $this->getOwner()->ScaleWidth($width);
         }
+
         return $realHeight < $height && !$upscale
-            ? $this->owner
-            : $this->owner->ScaleHeight($height);
+            ? $this->getOwner()
+            : $this->getOwner()->ScaleHeight($height);
     }
 
     /**
@@ -101,7 +105,7 @@ class ProductImageExtension extends Extension
      */
     public function HasLargeImage(): bool
     {
-        $imageWidth = intval($this->owner->getWidth());
+        $imageWidth = intval($this->getOwner()->getWidth());
         return $imageWidth > self::config()->content_image_width;
     }
 }

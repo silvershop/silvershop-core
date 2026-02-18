@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Tests\Checkout;
 
 use SilverShop\Checkout\OrderEmailNotifier;
@@ -12,7 +14,7 @@ use SilverStripe\Dev\SapphireTest;
 /**
  * Test OrderEmailNotifier
  */
-class OrderEmailNotifierTest extends SapphireTest
+final class OrderEmailNotifierTest extends SapphireTest
 {
     protected static $fixture_file = __DIR__ . '/../Fixtures/shop.yml';
 
@@ -26,7 +28,7 @@ class OrderEmailNotifierTest extends SapphireTest
      */
     protected $notifier;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         Config::modify()->set(Email::class, 'admin_email', 'shop-admin@example.com');

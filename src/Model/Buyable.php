@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Model;
 
 use SilverShop\Model\OrderItem;

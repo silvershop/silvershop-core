@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Checkout\Step;
 
 use SilverStripe\Control\HTTPResponse;
@@ -43,9 +45,10 @@ class Membership extends CheckoutStep
     public function membership(): HTTPResponse|array
     {
         //if logged in, then redirect to next step
-        if (ShoppingCart::curr() && self::config()->skip_if_logged_in && Security::getCurrentUser()) {
+        if (ShoppingCart::curr() instanceof Order && self::config()->skip_if_logged_in && Security::getCurrentUser()) {
             return Controller::curr()->redirect($this->NextStepLink());
         }
+
         return [
             'Form' => $this->MembershipForm(),
             'LoginForm' => $this->LoginForm(),
@@ -67,20 +70,20 @@ class Membership extends CheckoutStep
             ),
             FormAction::create('guestcontinue', _t(__CLASS__ . '.ContinueAsGuest', 'Continue as Guest'))
         );
-        $form = Form::create($this->owner, 'MembershipForm', $fieldList, $actions);
-        $this->owner->extend('updateMembershipForm', $form);
+        $form = Form::create($this->getOwner(), 'MembershipForm', $fieldList, $actions);
+        $this->getOwner()->extend('updateMembershipForm', $form);
         return $form;
     }
 
     public function guestcontinue(): void
     {
-        $this->owner->redirect($this->NextStepLink());
+        $this->getOwner()->redirect($this->NextStepLink());
     }
 
     public function LoginForm(): MemberLoginForm
     {
-        $memberLoginForm = MemberLoginForm::create($this->owner, MemberAuthenticator::class, 'LoginForm');
-        $this->owner->extend('updateLoginForm', $memberLoginForm);
+        $memberLoginForm = MemberLoginForm::create($this->getOwner(), MemberAuthenticator::class, 'LoginForm');
+        $this->getOwner()->extend('updateLoginForm', $memberLoginForm);
         return $memberLoginForm;
     }
 
@@ -90,10 +93,12 @@ class Membership extends CheckoutStep
         if (Security::getCurrentUser()) {
             return Controller::curr()->redirect($this->NextStepLink());
         }
+
         //using this function to redirect, and display action
         if (!($requestdata instanceof HTTPRequest)) {
             return Controller::curr()->redirect($this->NextStepLink('createaccount'));
         }
+
         return [
             'Form' => $this->CreateAccountForm(),
         ];
@@ -106,6 +111,7 @@ class Membership extends CheckoutStep
         if (!$order instanceof Order) {
             $order = Order::create();
         }
+
         $checkoutComponentConfig = CheckoutComponentConfig::create($order, false);
         $checkoutComponentConfig->addComponent(CustomerDetails::create());
         $checkoutComponentConfig->addComponent(\SilverShop\Checkout\Component\Membership::create());
@@ -115,7 +121,7 @@ class Membership extends CheckoutStep
 
     public function CreateAccountForm(): CheckoutForm
     {
-        $checkoutForm = CheckoutForm::create($this->owner, 'CreateAccountForm', $this->registerconfig());
+        $checkoutForm = CheckoutForm::create($this->getOwner(), 'CreateAccountForm', $this->registerconfig());
         $checkoutForm->setActions(
             FieldList::create(
                 FormAction::create(
@@ -130,7 +136,7 @@ class Membership extends CheckoutStep
         );
         $checkoutForm->getValidator()->addRequiredField('Password');
 
-        $this->owner->extend('updateCreateAccountForm', $checkoutForm);
+        $this->getOwner()->extend('updateCreateAccountForm', $checkoutForm);
         return $checkoutForm;
     }
 

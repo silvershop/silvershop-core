@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Checkout\Step;
 
 use SilverShop\Cart\ShoppingCart;

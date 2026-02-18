@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Cart;
 
 use ErrorException;
@@ -77,8 +79,10 @@ class OrderTotalCalculator
                         $modifier->write();
                     }
                 }
-                $sort++;
+
+                ++$sort;
             }
+
             //clear old modifiers out
             if ($existingmodifiers->exists()) {
                 foreach ($existingmodifiers as $modifier) {
@@ -88,13 +92,14 @@ class OrderTotalCalculator
                     }
                 }
             }
-        } catch (Exception $ex) {
+        } catch (Exception $exception) {
             // Rollback the transaction if an error occurred
             if (DB::get_conn()->supportsTransactions()) {
                 DB::get_conn()->transactionRollback();
             }
+
             // throw the exception after rollback
-            throw $ex;
+            throw $exception;
         } finally {
             // restore the error handler, no matter what
             restore_error_handler();
@@ -108,7 +113,7 @@ class OrderTotalCalculator
         //prevent negative sales from ever occurring
         if ($runningtotal < 0) {
             $this->logger->error(
-                "Order (ID = {$this->order->ID}) was calculated to equal $runningtotal.\n
+                "Order (ID = {$this->order->ID}) was calculated to equal {$runningtotal}.\n
                 Order totals should never be negative!\n
                 The order total was set to $0"
             );
@@ -130,8 +135,9 @@ class OrderTotalCalculator
     public function getModifier($className, $forcecreate = false)
     {
         if (!ClassInfo::exists($className)) {
-            user_error("Modifier class \"$className\" does not exist.");
+            user_error(sprintf('Modifier class "%s" does not exist.', $className));
         }
+
         //search for existing
         $modifier = $className::get()
             ->filter("OrderID", $this->order->ID)
@@ -144,8 +150,10 @@ class OrderTotalCalculator
                 $modifier->destroy();
                 return null;
             }
+
             return $modifier;
         }
+
         $modifier = $className::create();
         if ($modifier->required() || $forcecreate) { //create any modifiers that are required for every order
             $modifier->OrderID = $this->order->ID;

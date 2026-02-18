@@ -20,11 +20,12 @@ A tremendous thanks to [everyone that has already contributed](https://github.co
 
 ## Requirements
 
- * SilverStripe 4.0.2 or higher [framework](https://github.com/silverstripe/silverstripe-framework) & [cms](https://github.com/silverstripe/silverstripe-cms)
+ * SilverStripe ^6 [framework](https://github.com/silverstripe/silverstripe-framework) & [cms](https://github.com/silverstripe/silverstripe-cms)
  * [Omnipay Module](https://github.com/burnbright/silverstripe-omnipay) + its dependencies.
 
 See `composer.json` for exact set of dependencies.
 
+For a SilverStripe 4.x and 5.x compatible version, please use a 3.x release.
 For a SilverStripe 3.x compatible version, please use a 2.x release.
 
 ## Stay up to date / get in touch
@@ -57,6 +58,25 @@ There are a few useful tasks that can be run via a url to help you test:
 ## Configuration
 
 You can view various configuration options in the 'example_config.yml' file.
+
+### Offsite payment gateways (e.g. PayPal Express) lose the session on return in CMS6
+
+SilverStripe CMS6 changed the default session cookie SameSite attribute to Strict. This means
+the browser will not send the session cookie when the user is redirected back from an external
+payment provider, resulting in a new empty session and a broken checkout flow.
+
+To fix this, set `cookie_samesite` to `None` or `'Lax'` in your project's session config:
+
+```yaml
+SilverStripe\Control\Session:
+  cookie_samesite: None # Required for offsite payment gateways (PayPal Express etc) to preserve session on return
+# or
+  cookie_samesite: 'Lax' # Required for offsite payment gateways (PayPal Express etc) to preserve session on return
+```
+
+`SameSite=None` requires the cookie to be sent over HTTPS — SilverStripe enforces the Secure flag
+automatically when this setting is used, so no additional config is needed. This was not an
+issue in CMS5, which did not default to Strict.
 
 ## Core Features
 

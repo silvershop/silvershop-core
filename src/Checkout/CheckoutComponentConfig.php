@@ -1,15 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Checkout;
 
+use SilverStripe\Model\List\ArrayList;
+use SilverStripe\Core\Validation\ValidationResult;
+use SilverStripe\Core\Validation\ValidationException;
 use SilverShop\Checkout\Component\CheckoutComponent;
 use SilverShop\Checkout\Component\CheckoutComponentNamespaced;
 use SilverShop\Model\Order;
 use SilverStripe\Core\Injector\Injectable;
 use SilverStripe\Forms\FieldList;
-use SilverStripe\ORM\ArrayList;
-use SilverStripe\ORM\ValidationException;
-use SilverStripe\ORM\ValidationResult;
 
 /**
  * @package shop
@@ -19,7 +21,9 @@ class CheckoutComponentConfig
     use Injectable;
 
     protected ArrayList $components;
+
     protected Order $order;
+
     protected bool $namespaced; //namespace fields according to their component
 
     public function __construct(Order $order, bool $namespaced = true)
@@ -43,6 +47,7 @@ class CheckoutComponentConfig
         if ($this->namespaced) {
             $checkoutComponent = CheckoutComponentNamespaced::create($checkoutComponent);
         }
+
         if ($insertBefore) {
             $existingItems = $this->getComponents();
             $this->components = ArrayList::create();
@@ -52,14 +57,17 @@ class CheckoutComponentConfig
                     $this->components->push($checkoutComponent);
                     $inserted = true;
                 }
+
                 $this->components->push($existingItem);
             }
+
             if (!$inserted) {
                 $this->components->push($checkoutComponent);
             }
         } else {
             $this->getComponents()->push($checkoutComponent);
         }
+
         return $this;
     }
 
@@ -71,6 +79,7 @@ class CheckoutComponentConfig
         if (!$this->components->exists()) {
             $this->components = ArrayList::create();
         }
+
         return $this->components;
     }
 
@@ -80,19 +89,18 @@ class CheckoutComponentConfig
      * @param string $type ClassName
      * @return ?CheckoutComponent
      */
-    public function getComponentByType(string $type)
+    public function getComponentByType(string $type): ?object
     {
         foreach ($this->components as $component) {
             if ($this->namespaced) {
                 if ($component->Proxy() instanceof $type) {
                     return $component->Proxy();
                 }
-            } else {
-                if ($component instanceof $type) {
-                    return $component;
-                }
+            } elseif ($component instanceof $type) {
+                return $component;
             }
         }
+
         return null;
     }
 
@@ -126,6 +134,7 @@ class CheckoutComponentConfig
                 user_error('getFields on  ' . get_class($component) . ' must return a FieldList');
             }
         }
+
         return $fieldList;
     }
 
@@ -135,6 +144,7 @@ class CheckoutComponentConfig
         foreach ($this->getComponents() as $component) {
             $required = array_merge($required, $component->getRequiredFields($this->order));
         }
+
         return $required;
     }
 
@@ -157,10 +167,12 @@ class CheckoutComponentConfig
                     if (is_numeric($code)) {
                         $code = null;
                     }
+
                     if ($this->namespaced) {
                         $code = $component->namespaceFieldName($code);
                     }
-                    $validationResult->addError($message['message'], $code);
+
+                    $validationResult->addError($message['message'], ValidationResult::TYPE_ERROR, (string)$code);
                 }
             }
         }
@@ -192,6 +204,7 @@ class CheckoutComponentConfig
                 user_error('getData on  ' . $component->name() . ' must return an array');
             }
         }
+
         return $data;
     }
 
@@ -216,6 +229,7 @@ class CheckoutComponentConfig
         if (!$this->namespaced) { //no need to try and get un-namespaced dependant data
             return $data;
         }
+
         $dependantdata = [];
         foreach ($component->dependsOn() as $dependanttype) {
             $dependant = null;
@@ -225,14 +239,17 @@ class CheckoutComponentConfig
                     break;
                 }
             }
+
             if (!$dependant) {
-                user_error("Could not find a $dependanttype component, as depended by " . $component->name());
+                user_error(sprintf('Could not find a %s component, as depended by ', $dependanttype) . $component->name());
             }
+
             $dependantdata = array_merge(
                 $dependantdata,
                 $component->namespaceData($dependant->unnamespaceData($data))
             );
         }
+
         return array_merge($dependantdata, $data);
     }
 }

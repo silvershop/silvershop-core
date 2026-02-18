@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Tasks;
 
 use Page;
@@ -13,20 +15,23 @@ use SilverStripe\Dev\BuildTask;
 use SilverStripe\Dev\FixtureFactory;
 use SilverStripe\Dev\YamlFixture;
 use SilverStripe\ORM\DB;
+use SilverStripe\PolyExecution\PolyOutput;
 use SilverStripe\SiteConfig\SiteConfig;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputInterface;
 
 /**
  * Populate shop task
  */
 class PopulateShopTask extends BuildTask
 {
-    protected $title = 'Populate Shop';
+    protected string $title = 'Populate Shop';
 
-    protected $description = 'Creates dummy account page, products, checkout page, terms page.';
+    protected static string $description = 'Creates dummy account page, products, checkout page, terms page.';
 
     private static string $segment = 'PopulateShopTask';
 
-    public function run($request): void
+    protected function execute(InputInterface $input, PolyOutput $output): int
     {
         $this->extend('beforePopulate');
 
@@ -41,7 +46,7 @@ class PopulateShopTask extends BuildTask
             $fixture = YamlFixture::create($fixtureDir . '/dummyproducts.yml');
             $fixture->writeInto($factory);//needs to be a data model
 
-            $shoppage = ProductCategory::get()->filter('URLSegment', 'shop')->first();
+            $shoppage = ProductCategory::get()->filter(['URLSegment' => 'shop'])->first();
             $parentid = $shoppage->ID;
 
             $categoriestopublish = [
@@ -64,6 +69,7 @@ class PopulateShopTask extends BuildTask
             foreach ($categoriestopublish as $categoryname) {
                 $factory->get(ProductCategory::class, $categoryname)->publishSingle();
             }
+
             $productstopublish = [
                 'mp3player',
                 'hdtv',
@@ -83,9 +89,10 @@ class PopulateShopTask extends BuildTask
             foreach ($productstopublish as $productname) {
                 $factory->get(Product::class, $productname)->publishSingle();
             }
+
             DB::alteration_message('Created dummy products and categories', 'created');
         } else {
-            echo '<p style="color:orange;">Products and categories were not created because some already exist.</p>';
+            $output->writeln('Products and categories were not created because some already exist.');
         }
 
         //cart page
@@ -118,11 +125,11 @@ class PopulateShopTask extends BuildTask
             $page->ParentID = $parentid;
             $page->writeToStage('Stage');
             $page->publishSingle();
-            DB::alteration_message('Account page \'Account\' created', 'created');
+            DB::alteration_message("Account page 'Account' created", 'created');
         }
 
         //terms page
-        if (!Page::get()->filter('URLSegment', 'terms-and-conditions')->first()) {
+        if (!Page::get()->filter(['URLSegment' => 'terms-and-conditions'])->first()) {
             $fixture = YamlFixture::create($fixtureDir . '/pages/TermsConditions.yml');
             $fixture->writeInto($factory);
             $page = $factory->get('Page', 'termsconditions');
@@ -155,6 +162,8 @@ class PopulateShopTask extends BuildTask
                  AE,GB,US,UY,UZ,VU,VE,VN,YE,YU,ZM,ZW';
             $siteconfig->write();
         }
+
         $this->extend('afterPopulate');
+        return Command::SUCCESS;
     }
 }

@@ -21,12 +21,12 @@
     }
   ],
   "require": {
-    "silverstripe/cms": "^5",
+    "silverstripe/cms": "^6",
     "silverstripe/asset-admin": "*",
-    "silverstripe/silverstripe-omnipay": "^4",
-    "silvershop/silverstripe-listsorter": "^3",
-    "silvershop/silverstripe-sqlquerylist": "^3",
-    "symbiote/silverstripe-gridfieldextensions": "^4"
+    "silverstripe/silverstripe-omnipay": "^6.0.0",
+    "silvershop/silverstripe-listsorter": "dev-main",
+    "silvershop/silverstripe-sqlquerylist": "^3.1.0",
+    "symbiote/silverstripe-gridfieldextensions": "^5.0"
   },
   "require-dev": {
     "phpunit/phpunit": "^9.5",
@@ -53,7 +53,7 @@
   "extra": {
     "snapshot": "https://raw.github.com/silvershop/silvershop-core/gh-pages/assets/screenshots/shipping%20estimate%20form.png",
     "branch-alias": {
-      "dev-main": "4.x-dev"
+      "dev-main": "6.x-dev"
     },
     "expose": [
       "client/dist"

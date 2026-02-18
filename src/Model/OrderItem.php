@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Model;
 
 use SilverShop\Cart\ShoppingCartController;
@@ -86,6 +88,7 @@ class OrderItem extends OrderAttribute
             $this->extend('updateUnitPrice', $unitprice);
             return $this->UnitPrice = $unitprice;
         }
+
         return $this->UnitPrice;
     }
 
@@ -97,6 +100,7 @@ class OrderItem extends OrderAttribute
         if ($val < 0) {
             $val = 0;
         }
+
         $this->setField('UnitPrice', $val);
     }
 
@@ -108,7 +112,7 @@ class OrderItem extends OrderAttribute
      */
     public function setQuantity($val): void
     {
-        $val = $val < 1 ? 1 : $val;
+        $val = max(1, $val);
         $this->setField('Quantity', $val);
     }
 
@@ -121,6 +125,7 @@ class OrderItem extends OrderAttribute
         if ($this->Order()->exists() && $this->Order()->IsCart()) { //always calculate total if order is in cart
             return $this->calculatetotal();
         }
+
         return $this->CalculatedTotal; //otherwise get value from database
     }
 
@@ -149,11 +154,13 @@ class OrderItem extends OrderAttribute
         if ($required) {
             foreach ($required as $field) {
                 if ($hasOnes === $field || isset($hasOnes[$field])) {
-                    $field = $field . 'ID'; //add ID to hasones
+                    $field .= 'ID'; //add ID to hasones
                 }
+
                 $unique[$field] = $this->$field;
             }
         }
+
         $this->extend('updateuniquedata', $unique);
         return $unique;
     }
@@ -161,7 +168,7 @@ class OrderItem extends OrderAttribute
     /**
      * Recalculate total before saving to database.
      */
-    public function onBeforeWrite(): void
+    protected function onBeforeWrite(): void
     {
         parent::onBeforeWrite();
         if ($this->OrderID && $this->Order() && $this->Order()->exists() && $this->Order()->isCart()) {

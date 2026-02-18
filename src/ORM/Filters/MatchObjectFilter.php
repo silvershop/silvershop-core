@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\ORM\Filters;
 
 use SilverStripe\Core\Convert;
@@ -68,6 +70,7 @@ class MatchObjectFilter
         if (!is_array($this->data)) {
             return null;
         }
+
         $allowed = array_keys(DataObject::getSchema()->databaseFields($this->className));
         $fields = array_flip(array_intersect($allowed, $this->required));
         $singleton = singleton($this->className);
@@ -85,19 +88,18 @@ class MatchObjectFilter
                     $dbfield = $singleton->dbObject($field);
                     $value = $dbfield->prepValueForDB($this->data[$field]);
 
-                    $new[] = "\"$field\" = '$value'";
+                    $new[] = sprintf("\"%s\" = '%s'", $field, $value);
                 } else {
-                    $new[] = "\"$field\" IS NULL";
+                    $new[] = sprintf('"%s" IS NULL', $field);
                 }
+            } elseif (isset($this->data[$field])) {
+                $value = Convert::raw2sql($this->data[$field]);
+                $new[] = sprintf("\"%s\" = '%s'", $field, $value);
             } else {
-                if (isset($this->data[$field])) {
-                    $value = Convert::raw2sql($this->data[$field]);
-                    $new[] = "\"$field\" = '$value'";
-                } else {
-                    $new[] = "\"$field\" IS NULL";
-                }
+                $new[] = sprintf('"%s" IS NULL', $field);
             }
         }
+
         return $new;
     }
 }

@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Forms;
 
+use SilverStripe\Core\Validation\ValidationException;
 use SilverStripe\Control\RequestHandler;
 use SilverShop\Checkout\OrderEmailNotifier;
 use SilverShop\Checkout\OrderProcessor;
@@ -21,7 +24,6 @@ use SilverStripe\Omnipay\Exception\InvalidConfigurationException;
 use SilverStripe\Omnipay\GatewayFieldsFactory;
 use SilverStripe\Omnipay\GatewayInfo;
 use SilverStripe\ORM\FieldType\DBCurrency;
-use SilverStripe\ORM\ValidationException;
 use SilverStripe\Security\Security;
 use SilverStripe\View\Requirements;
 
@@ -69,6 +71,7 @@ class OrderActionsForm extends Form
                     unset($gateways[$gateway]);
                 }
             }
+
             if (!empty($gateways)) {
                 $fieldList->push(
                     HeaderField::create(
@@ -101,6 +104,7 @@ class OrderActionsForm extends Form
                     if ($this->config()->include_jquery) {
                         Requirements::javascript('https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js');
                     }
+
                     Requirements::javascript('silvershop/core: client/dist/javascript/OrderActionsForm.js');
                     $fieldList->push($ccFields);
                 }
@@ -113,6 +117,7 @@ class OrderActionsForm extends Form
                 );
             }
         }
+
         //cancelling
         if (self::config()->allow_cancelling && $order->canCancel()) {
             $actions->push(
@@ -140,18 +145,17 @@ class OrderActionsForm extends Form
     /**
      * Make payment for a place order, where payment had previously failed.
      *
-     * @param array $data
      * @param Form  $form
      */
-    public function dopayment($data, $form): HTTPResponse
+    public function dopayment(array $data, $form): HTTPResponse
     {
         if (self::config()->allow_paying
-            && $this->order
+            && $this->order instanceof Order
             && $this->order->canPay()
         ) {
             // Save payment data from form and process payment
             $data = $form->getData();
-            $gateway = (!empty($data['PaymentMethod'])) ? $data['PaymentMethod'] : null;
+            $gateway = (empty($data['PaymentMethod'])) ? null : $data['PaymentMethod'];
 
             if (!GatewayInfo::isManual($gateway)) {
                 $processor = OrderProcessor::create($this->order);
@@ -164,6 +168,7 @@ class OrderActionsForm extends Form
                 if ($response && !$response->isError()) {
                     return $response->redirectOrRespond();
                 }
+
                 $form->sessionMessage($processor->getError(), 'bad');
             } else {
                 $form->sessionMessage(_t(__CLASS__ . '.ManualNotAllowed', 'Manual payment not allowed'), 'bad');
@@ -171,6 +176,7 @@ class OrderActionsForm extends Form
 
             return $this->controller->redirectBack();
         }
+
         $form->sessionMessage(
             _t(__CLASS__ . '.CouldNotProcessPayment', 'Payment could not be processed.'),
             'bad'
@@ -200,6 +206,7 @@ class OrderActionsForm extends Form
             if (self::config()->email_notification) {
                 OrderEmailNotifier::create($this->order)->sendCancelNotification();
             }
+
             $this->controller->sessionMessage(
                 _t(__CLASS__ . '.OrderCancelled', 'Order sucessfully cancelled'),
                 'warning'
@@ -220,7 +227,7 @@ class OrderActionsForm extends Form
         $gatewayFieldsFactory = GatewayFieldsFactory::create(null, ['Card']);
         $onsiteGateways = [];
         $allRequired = [];
-        foreach ($gateways as $gateway => $title) {
+        foreach (array_keys($gateways) as $gateway) {
             if (!GatewayInfo::isOffsite($gateway)) {
                 $required = GatewayInfo::requiredFields($gateway);
                 $onsiteGateways[$gateway] = $gatewayFieldsFactory->getFieldName($required);

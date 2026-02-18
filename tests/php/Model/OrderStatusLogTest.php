@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Tests\Model;
 
 use SilverShop\Checkout\OrderProcessor;
@@ -14,7 +16,7 @@ use SilverStripe\Dev\SapphireTest;
  * @link OrderStatusLog
  * @subpackage tests
  */
-class OrderStatusLogTest extends SapphireTest
+final class OrderStatusLogTest extends SapphireTest
 {
     protected static $fixture_file = [
         __DIR__ . '/../Fixtures/Orders.yml',
@@ -22,7 +24,7 @@ class OrderStatusLogTest extends SapphireTest
         __DIR__ . '/../Fixtures/Pages.yml'
     ];
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         ShopTest::setConfiguration();
@@ -36,7 +38,7 @@ class OrderStatusLogTest extends SapphireTest
         $member = $this->objFromFixture(Member::class, 'jeremyperemy');
         $order->MemberID = $member->ID;
 
-        $no_log_generated_with_order_status_cart = OrderStatusLog::get()->sort('ID')->last();
+        $no_log_generated_with_order_status_cart = OrderStatusLog::get()->sort(['ID' => 'ASC'])->last();
         $this->assertNull(
             $no_log_generated_with_order_status_cart,
             "no log generated with Status of 'Cart'"
@@ -45,7 +47,7 @@ class OrderStatusLogTest extends SapphireTest
         $order->Status = "Unpaid";
         $order->write();
 
-        $no_log_generated_with_order_status_unpaid = OrderStatusLog::get()->sort('ID')->last();
+        $no_log_generated_with_order_status_unpaid = OrderStatusLog::get()->sort(['ID' => 'ASC'])->last();
         $this->assertNull(
             $no_log_generated_with_order_status_unpaid,
             "no log generated with Status of 'Unpaid'"
@@ -53,10 +55,11 @@ class OrderStatusLogTest extends SapphireTest
 
         $orderProcessor = OrderProcessor::create($order);
         $orderProcessor->makePayment("Manual", []);
+
         $order->Status = "Paid";
         $order->write();
 
-        $log_order_status_paid = OrderStatusLog::get()->sort('ID')->last();
+        $log_order_status_paid = OrderStatusLog::get()->sort(['ID' => 'ASC'])->last();
         $this->assertNull(
             $log_order_status_paid,
             "no log generated with Status of 'Unpaid'"
@@ -65,7 +68,7 @@ class OrderStatusLogTest extends SapphireTest
         $order->Status = "Processing";
         $order->write();
 
-        $log_order_status_processing = OrderStatusLog::get()->sort('ID')->last();
+        $log_order_status_processing = OrderStatusLog::get()->sort(['ID' => 'ASC'])->last();
         $this->assertEquals(OrderStatusLog::get()->count(), '1', "One items in the OrderStatusLog");
         $this->assertNotNull(
             $log_order_status_processing,
@@ -95,7 +98,7 @@ class OrderStatusLogTest extends SapphireTest
         $order->Status = "Sent";
         $order->write();
 
-        $log_order_status_sent = OrderStatusLog::get()->sort('ID')->last();
+        $log_order_status_sent = OrderStatusLog::get()->sort(['ID' => 'ASC'])->last();
         $this->assertEquals(
             OrderStatusLog::get()->count(),
             '2',
@@ -138,7 +141,7 @@ class OrderStatusLogTest extends SapphireTest
         $order->Status = "AdminCancelled";
         $order->write();
 
-        $log_order_status_admin_cancelled = OrderStatusLog::get()->sort('ID')->last();
+        $log_order_status_admin_cancelled = OrderStatusLog::get()->sort(['ID' => 'ASC'])->last();
         $this->assertEquals(
             OrderStatusLog::get()->count(),
             '3',
@@ -171,7 +174,8 @@ class OrderStatusLogTest extends SapphireTest
 
         $order->Status = "MemberCancelled";
         $order->write();
-        $log_order_status_member_cancelled = OrderStatusLog::get()->sort('ID')->last();
+
+        $log_order_status_member_cancelled = OrderStatusLog::get()->sort(['ID' => 'ASC'])->last();
         $this->assertEquals(
             OrderStatusLog::get()->count(),
             '4',
@@ -212,7 +216,7 @@ class OrderStatusLogTest extends SapphireTest
         $order->Status = 'Processing';
         $order->write();
 
-        $logEntry = OrderStatusLog::get()->sort('ID')->last();
+        $logEntry = OrderStatusLog::get()->sort(['ID' => 'ASC'])->last();
 
         $this->assertEquals(
             OrderStatusLog::get()->count(),
@@ -264,7 +268,7 @@ class OrderStatusLogTest extends SapphireTest
         $order->Status = "Unpaid";
         $order->write();
 
-        $no_log_generated_with_order_status_unpaid = OrderStatusLog::get()->sort('ID')->last();
+        $no_log_generated_with_order_status_unpaid = OrderStatusLog::get()->sort(['ID' => 'ASC'])->last();
         $this->assertNull(
             $no_log_generated_with_order_status_unpaid,
             "no log generated with Status of 'Unpaid'"
@@ -272,10 +276,11 @@ class OrderStatusLogTest extends SapphireTest
 
         $orderProcessor = OrderProcessor::create($order);
         $orderProcessor->makePayment("Manual", []);
+
         $order->Status = "Paid";
         $order->write();
 
-        $log_order_status_paid = OrderStatusLog::get()->sort('ID')->last();
+        $log_order_status_paid = OrderStatusLog::get()->sort(['ID' => 'ASC'])->last();
         $this->assertNull(
             $log_order_status_paid,
             "no log generated with Status of 'Unpaid'"
@@ -284,7 +289,7 @@ class OrderStatusLogTest extends SapphireTest
         $order->Status = "Processing";
         $order->write();
 
-        $log_order_status_processing = OrderStatusLog::get()->sort('ID')->last();
+        $log_order_status_processing = OrderStatusLog::get()->sort(['ID' => 'ASC'])->last();
         $this->assertEquals(OrderStatusLog::get()->count(), '1', "One items in the OrderStatusLog");
         $this->assertNotNull(
             $log_order_status_processing,

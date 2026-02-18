@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Forms;
 
 use SilverStripe\Forms\DropdownField;
@@ -21,7 +23,7 @@ class DropdownShopQuantityField extends ShopQuantityField
     public function Field()
     {
         $qtyArray = [];
-        for ($r = 1; $r <= $this->config()->max; $r++) {
+        for ($r = 1; $r <= $this->config()->max; ++$r) {
             $qtyArray[$r] = $r;
         }
 

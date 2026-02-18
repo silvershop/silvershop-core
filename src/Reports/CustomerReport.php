@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Reports;
 
 use SilverStripe\Forms\FormField;
@@ -17,6 +19,7 @@ use SilverStripe\Security\Member;
 class CustomerReport extends ShopPeriodReport
 {
     protected $title = 'Customers';
+
     protected $description = 'Understand which customers spend the most.';
 
     protected $dataClass = Member::class;
@@ -44,7 +47,7 @@ class CustomerReport extends ShopPeriodReport
         return parent::getReportField();
     }
 
-    public function query($params): ShopReportQuery|SQLSelect
+    public function query(array $params): ShopReportQuery|SQLSelect
     {
         $query = parent::query($params);
         $query->selectField($this->periodfield, 'FilterPeriod')
@@ -66,6 +69,7 @@ class CustomerReport extends ShopPeriodReport
                 ]
             );
         }
+
         $query->setLimit(50);
         return $query;
     }

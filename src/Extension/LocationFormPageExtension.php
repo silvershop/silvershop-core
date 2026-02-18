@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Extension;
 
 use SilverShop\Forms\SetLocationForm;
@@ -16,6 +18,6 @@ class LocationFormPageExtension extends Extension
 
     public function SetLocationForm(): SetLocationForm
     {
-        return SetLocationForm::create($this->owner);
+        return SetLocationForm::create($this->getOwner());
     }
 }

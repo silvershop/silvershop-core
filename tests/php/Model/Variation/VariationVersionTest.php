@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Tests\Model\Variation;
 
 use SilverShop\Model\Variation\AttributeType;
@@ -15,17 +17,21 @@ use SilverStripe\Dev\SapphireTest;
  * @package    shop
  * @subpackage tests
  */
-class VariationVersionTest extends SapphireTest
+final class VariationVersionTest extends SapphireTest
 {
     public static $fixture_file   = '../../Fixtures/variations.yml';
+
     public static bool $disable_theme  = true;
+
     protected static bool $use_draft_site = true;
 
     protected Product $mp3player;
+
     protected Product $ball;
+
     protected Variation $redLarge;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->ball = $this->objFromFixture(Product::class, "ball");

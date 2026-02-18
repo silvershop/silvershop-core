@@ -1,12 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Tasks;
 
 use SilverShop\Extension\ShopConfigExtension;
 use SilverStripe\Dev\BuildTask;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\DB;
+use SilverStripe\PolyExecution\PolyOutput;
 use SilverStripe\Security\Member;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputInterface;
 
 /**
  * Adds all customers to an assigned group.
@@ -16,20 +21,21 @@ use SilverStripe\Security\Member;
  */
 class CustomersToGroupTask extends BuildTask
 {
-    protected $title = 'Customers to Group';
+    protected string $title = 'Customers to Group';
 
-    protected $description = 'Adds all customers to an assigned group.';
+    protected static string $description = 'Adds all customers to an assigned group.';
 
-    public function run($request): void
+    protected function execute(InputInterface $input, PolyOutput $output): int
     {
         $gp = ShopConfigExtension::current()->CustomerGroup();
         if (!$gp->exists()) {
-            die(
+            $output->writeln(
                 _t(
                     'SilverShop\Task\CustomersToGroupTask.DefaultCustomerGroupRequired',
                     'Default Customer Group required'
                 )
             );
+            return Command::FAILURE;
         }
 
         $query = DB::query(
@@ -44,6 +50,7 @@ class CustomersToGroupTask extends BuildTask
                 $alreadyAdded[$combo['MemberID']] = $combo['MemberID'];
             }
         }
+
         $dataList = DataObject::get(
             Member::class,
             $where = '"Member"."ID" NOT IN (' . implode(',', $alreadyAdded) . ')',
@@ -57,13 +64,17 @@ class CustomersToGroupTask extends BuildTask
             $existingMembers = $gp->Members();
             foreach ($dataList as $member) {
                 $existingMembers->add($member);
-                echo '.';
+                $output->write('.');
             }
+            $output->writeln('');
         } else {
-            echo _t(
-                'SilverShop\Task\CustomersToGroupTask.NoNewMembersAdded',
-                'No new members added'
+            $output->writeln(
+                _t(
+                    'SilverShop\Task\CustomersToGroupTask.NoNewMembersAdded',
+                    'No new members added'
+                )
             );
         }
+        return Command::SUCCESS;
     }
 }

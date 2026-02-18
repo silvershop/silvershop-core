@@ -1,7 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Checkout\Component;
 
+use SilverStripe\Core\Validation\ValidationResult;
+use SilverStripe\Core\Validation\ValidationException;
 use Omnipay\Common\Helper;
 use SilverShop\Checkout\Checkout;
 use SilverShop\Model\Order;
@@ -9,8 +13,6 @@ use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\LiteralField;
 use SilverStripe\Omnipay\GatewayFieldsFactory;
 use SilverStripe\Omnipay\GatewayInfo;
-use SilverStripe\ORM\ValidationException;
-use SilverStripe\ORM\ValidationResult;
 
 /**
  * This component should only ever be used on SSL encrypted pages!
@@ -50,6 +52,7 @@ class OnsitePayment extends CheckoutComponent
             $validationResult->addError(_t(__CLASS__ . '.InvalidCreditCard', 'Credit card is invalid'));
             throw ValidationException::create($validationResult);
         }
+
         return true;
     }
 
@@ -68,6 +71,7 @@ class OnsitePayment extends CheckoutComponent
                 $data
             );
         }
+
         return $data;
     }
 

@@ -1,12 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Tasks;
 
 use SilverShop\Checkout\OrderEmailNotifier;
 use SilverShop\Model\Order;
-use SilverStripe\Control\Director;
-use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Dev\BuildTask;
+use SilverStripe\Control\Email\Email;
+use SilverStripe\PolyExecution\PolyOutput;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 
 /**
  * ShopEmailPreviewTask
@@ -16,15 +21,11 @@ use SilverStripe\Dev\BuildTask;
  * @package    shop
  * @subpackage tasks
  */
-
-/**
- * ShopEmailPreviewTask
- */
 class ShopEmailPreviewTask extends BuildTask
 {
-    protected $title = 'Preview Shop Emails';
+    protected string $title = 'Preview Shop Emails';
 
-    protected $description = 'Previews shop emails';
+    protected static string $description = 'Previews shop emails';
 
     protected $previewableEmails = [
         'Confirmation',
@@ -34,45 +35,58 @@ class ShopEmailPreviewTask extends BuildTask
         'StatusChange'
     ];
 
-    /**
-     * @param HTTPRequest $request
-     */
-    public function run($request): void
+    public function getOptions(): array
     {
-        $email = $request->remaining();
-        $params = $request->allParams();
-        $url = Director::absoluteURL("dev/{$params['Action']}/{$params['TaskName']}");
-        $debug = true;
+        return [
+            new InputOption(
+                'email',
+                null,
+                InputOption::VALUE_OPTIONAL,
+                'The email type to preview. Available: Confirmation, Receipt, AdminNotification, CancelNotification, StatusChange',
+            ),
+        ];
+    }
 
-        if ($request->getVar('debug')) {
-            $debug = $request->getVar('debug');
-        }
+    protected function execute(InputInterface $input, PolyOutput $output): int
+    {
+        $email = $input->getOption('email');
 
-        echo '<h2>Choose Email</h2>';
-        echo '<ul>';
+        $output->writeln('Available email previews:');
         foreach ($this->previewableEmails as $method) {
-            echo '<li><a href="' . $url . '/' . $method . '">' . $method . '</a></li>';
+            $output->writeln('  - ' . $method);
         }
-        echo '</ul><hr>';
+        $output->writeln('');
 
         if ($email && in_array($email, $this->previewableEmails)) {
-            $order = Order::get()->first();
+            $order = Order::get()->filter('Email:not', ['', null])->first()
+                ?? Order::get()->first();
+
+            if (!$order) {
+                $output->writeln('No orders found to preview email with.');
+                return Command::FAILURE;
+            }
+
+            // Ensure a valid email exists on the order for preview rendering
+            if (!$order->getLatestEmail()) {
+                $order->Email = Email::config()->admin_email ?: 'preview@example.com';
+            }
+
             $notifier = OrderEmailNotifier::create($order);
+            $notifier->setDebugMode(true);
 
-            if ($debug) {
-                $notifier->setDebugMode(true);
-            }
+            $method = 'send' . $email;
 
-            $method = "send$email";
-
-            if ($email == 'StatusChange') {
-                echo $notifier->$method('This is a test title', 'This is a test note');
+            if ($email === 'StatusChange') {
+                $output->writeForHtml($notifier->$method('This is a test title', 'This is a test note'));
             } else {
-                echo $notifier->$method();
+                $output->writeForHtml($notifier->$method());
             }
+            $output->writeForAnsi('Email rendered (HTML only - open in browser to preview).');
+        } elseif ($email) {
+            $output->writeln('Unknown email type: ' . $email);
+            return Command::FAILURE;
         }
-        //this is a little hardcore way of ending the party,
-        //but as it's only used for styling, it works for now
-        die;
+
+        return Command::SUCCESS;
     }
 }

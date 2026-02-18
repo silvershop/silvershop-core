@@ -1,7 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Checkout\Component;
 
+use SilverStripe\Core\Validation\ValidationResult;
+use SilverStripe\Core\Validation\ValidationException;
 use SilverShop\Model\Order;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Forms\CompositeField;
@@ -9,8 +13,6 @@ use SilverStripe\Forms\DropdownField;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\OptionsetField;
 use SilverStripe\i18n\i18nEntityProvider;
-use SilverStripe\ORM\ValidationException;
-use SilverStripe\ORM\ValidationResult;
 use SilverStripe\Security\Security;
 use SilverStripe\View\Requirements;
 
@@ -45,8 +47,8 @@ abstract class AddressBook extends Address implements i18nEntityProvider
             // group under a composite field (invisible by default) so we
             // easily know which fields to show/hide
             $label = _t(
-                "SilverShop\Model\Address.{$this->addresstype}Address",
-                "{$this->addresstype} Address"
+                sprintf('SilverShop\Model\Address.%sAddress', $this->addresstype),
+                $this->addresstype . ' Address'
             );
 
             return FieldList::create(
@@ -73,7 +75,7 @@ abstract class AddressBook extends Address implements i18nEntityProvider
             $addressoptions['newaddress'] = _t('SilverShop\Model\Address.CreateNewAddress', 'Create new {AddressType} address', '', ["AddressType" => $this->addresstype]);
             $fieldtype = count($addressoptions) > 3 ? DropdownField::class : OptionsetField::class;
 
-            $label = _t("SilverShop\Model\Address.Existing{$this->addresstype}Address", "Existing {$this->addresstype} Address");
+            $label = _t(sprintf('SilverShop\Model\Address.Existing%sAddress', $this->addresstype), sprintf('Existing %s Address', $this->addresstype));
 
             return FieldList::create(
                 $fieldtype::create(
@@ -104,7 +106,7 @@ abstract class AddressBook extends Address implements i18nEntityProvider
     {
         $validationResult = ValidationResult::create();
         $existingID =
-            !empty($data[$this->addresstype . 'AddressID']) ? (int)$data[$this->addresstype . 'AddressID'] : 0;
+            empty($data[$this->addresstype . 'AddressID']) ? 0 : (int)$data[$this->addresstype . 'AddressID'];
 
         if ($existingID !== 0) {
             $member = Security::getCurrentUser();
@@ -133,6 +135,7 @@ abstract class AddressBook extends Address implements i18nEntityProvider
                 }
             }
         }
+
         return true;
     }
 
@@ -147,7 +150,7 @@ abstract class AddressBook extends Address implements i18nEntityProvider
     public function setData(Order $order, array $data): Order
     {
         $existingID =
-            !empty($data[$this->addresstype . 'AddressID']) ? (int)$data[$this->addresstype . 'AddressID'] : 0;
+            empty($data[$this->addresstype . 'AddressID']) ? 0 : (int)$data[$this->addresstype . 'AddressID'];
         if ($existingID > 0) {
             $order->{$this->addresstype . 'AddressID'} = $existingID;
             $order->write();
@@ -155,6 +158,7 @@ abstract class AddressBook extends Address implements i18nEntityProvider
         } else {
             parent::setData($order, $data);
         }
+
         return $order;
     }
 
@@ -166,13 +170,13 @@ abstract class AddressBook extends Address implements i18nEntityProvider
         if ($this->addresstype !== '' && $this->addresstype !== '0') {
             return [
 
-                "SilverShop\Model\Address.{$this->addresstype}Address" => [
-                    "{$this->addresstype} Address",
-                    "Label for the {$this->addresstype} address",
+                sprintf('SilverShop\Model\Address.%sAddress', $this->addresstype) => [
+                    $this->addresstype . ' Address',
+                    sprintf('Label for the %s address', $this->addresstype),
                 ],
-                "SilverShop\Model\Address.Existing{$this->addresstype}Address" => [
-                    "Existing {$this->addresstype} Address",
-                    "Label to select an existing {$this->addresstype} Address",
+                sprintf('SilverShop\Model\Address.Existing%sAddress', $this->addresstype) => [
+                    sprintf('Existing %s Address', $this->addresstype),
+                    sprintf('Label to select an existing %s Address', $this->addresstype),
                 ],
             ];
         }

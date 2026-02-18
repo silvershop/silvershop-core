@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Tests\Checkout;
 
 use SilverShop\Cart\ShoppingCart;
@@ -25,12 +27,16 @@ use SilverStripe\Security\Security;
  * @package    silvershop
  * @subpackage tests
  */
-class OrderProcessorTest extends SapphireTest
+final class OrderProcessorTest extends SapphireTest
 {
     protected static $fixture_file   = __DIR__ . '/../Fixtures/shop.yml';
+
     protected static $disable_theme  = true;
+
     protected static $use_draft_site = true;
+
     protected $usesTransactions = false;
+
     protected $processor;
 
     protected static $extra_dataobjects = [
@@ -62,7 +68,7 @@ class OrderProcessorTest extends SapphireTest
      */
     protected $shoppingcart;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         ShoppingCart::singleton()->clear();
@@ -174,7 +180,7 @@ class OrderProcessorTest extends SapphireTest
     {
         if (!DB::get_conn()->supportsTransactions()) {
             $this->markTestSkipped(
-                'The Database doesn\'t support transactions.'
+                "The Database doesn't support transactions."
             );
         }
 
@@ -184,7 +190,7 @@ class OrderProcessorTest extends SapphireTest
         Config::modify()->set(Product::class, 'order_item', OrderProcessorTest_CustomOrderItem::class);
 
         //log out the admin user
-        Security::setCurrentUser(null);
+        Security::setCurrentUser();
         $member = $this->objFromFixture(Member::class, 'joebloggs');
         Security::setCurrentUser($member);
 
@@ -199,7 +205,7 @@ class OrderProcessorTest extends SapphireTest
             $cart->Items()
         );
 
-        $versions = OrderItem::get()->filter('OrderID', $cart->ID)->column('ProductVersion');
+        $versions = OrderItem::get()->filter(['OrderID' => $cart->ID])->column('ProductVersion');
 
         // The Product_OrderItem should not reference a product version while the order is not placed
         $this->assertEquals([0], $versions);
@@ -234,14 +240,14 @@ class OrderProcessorTest extends SapphireTest
 
         // When order failed, everything that was written during the placement should be rolled back
 
-        $versions = OrderItem::get()->filter('OrderID', $cart->ID)->column('ProductVersion');
+        $versions = OrderItem::get()->filter(['OrderID' => $cart->ID])->column('ProductVersion');
 
         // The Product_OrderItem should still not reference a product if the rollback worked
         $this->assertEquals([0], $versions);
 
         $this->assertEquals(
             0,
-            OrderProcessorTest_CustomOrderItem::get()->filter('OrderID', $cart->ID)->first()->IsPlaced
+            OrderProcessorTest_CustomOrderItem::get()->filter(['OrderID' => $cart->ID])->first()->IsPlaced
         );
 
         Order::remove_extension(OrderProcessorTest_PlaceFailExtension::class);
@@ -251,7 +257,7 @@ class OrderProcessorTest extends SapphireTest
     public function testMemberOrder(): void
     {
         //log out the admin user
-        Security::setCurrentUser(null);
+        Security::setCurrentUser();
         $this->shoppingcart->add($this->mp3player);
         $member = $this->objFromFixture(Member::class, 'joebloggs');
         Security::setCurrentUser($member);
@@ -302,11 +308,12 @@ class OrderProcessorTest extends SapphireTest
     public function testNoMemberOrder(): void
     {
         //log out the admin user
-        Security::setCurrentUser(null);
+        Security::setCurrentUser();
 
         $this->shoppingcart->add($this->socks);
         $order = $this->shoppingcart->current();
         $order->calculate();
+
         $success = $this->placeOrder(
             'Donald',
             'Duck',
@@ -319,7 +326,7 @@ class OrderProcessorTest extends SapphireTest
             'AU'
         );
         $error = $this->processor->getError();
-        $this->assertTrue($success, "Non-member order placed successfully ...$error");
+        $this->assertTrue($success, 'Non-member order placed successfully ...' . $error);
 
         $order = Order::get()->byID($order->ID); //update $order
         $this->assertTrue((boolean)$order, 'Order exists');
@@ -403,29 +410,36 @@ class OrderProcessorTest extends SapphireTest
         if ($address2) {
             $data['AddressLine2'] = $address2;
         }
+
         if ($postcode) {
             $data['PostalCode'] = $postcode;
         }
+
         if ($country) {
             $data['Country'] = $country;
         }
+
         if ($password) {
             $data['Password[_Password]'] = $password;
         }
+
         if ($confirmpassword) {
             $data['Password[_ConfirmPassword]'] = $confirmpassword;
         }
 
         $order = $this->shoppingcart->current();
         $order->update($data);
+
         $address = Address::create();
         $address->update($data);
         $address->write();
+
         $order->ShippingAddressID = $address->ID;
         $order->BillingAddressID = $address->ID; //same (for now)
         if ($member) {
             $order->MemberID = $member->ID;
         }
+
         $order->write();
         $this->processor = OrderProcessor::create($order);
         return $this->processor->placeOrder();

@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Tests\ORM\Filters;
 
 use SilverShop\Model\Product\OrderItem;
 use SilverShop\ORM\Filters\MatchObjectFilter;
 use SilverStripe\Dev\SapphireTest;
 
-class MatchObjectFilterTest extends SapphireTest
+final class MatchObjectFilterTest extends SapphireTest
 {
     public function testRelationId(): void
     {

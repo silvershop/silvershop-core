@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Checkout\Step;
 
 use SilverShop\Cart\ShoppingCart;
@@ -28,11 +30,13 @@ class Summary extends CheckoutStep
         $checkoutComponentConfig = CheckoutComponentConfig::create(ShoppingCart::curr(), false);
         $checkoutComponentConfig->addComponent(Notes::create());
         $checkoutComponentConfig->addComponent(Terms::create());
-        $this->owner->extend('updateConfirmationComponentConfig', $checkoutComponentConfig);
 
-        $paymentForm = PaymentForm::create($this->owner, 'ConfirmationForm', $checkoutComponentConfig);
-        $paymentForm->setFailureLink($this->owner->Link('summary'));
-        $this->owner->extend('updateConfirmationForm', $paymentForm);
+        $this->getOwner()->extend('updateConfirmationComponentConfig', $checkoutComponentConfig);
+
+        $paymentForm = PaymentForm::create($this->getOwner(), 'ConfirmationForm', $checkoutComponentConfig);
+        $paymentForm->setFailureLink($this->getOwner()->Link('summary'));
+
+        $this->getOwner()->extend('updateConfirmationForm', $paymentForm);
 
         return $paymentForm;
     }

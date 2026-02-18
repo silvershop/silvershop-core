@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Checkout\Step;
 
 use SilverShop\Cart\ShoppingCart;
@@ -30,9 +32,10 @@ class PaymentMethod extends CheckoutStep
     public function paymentmethod(): HTTPResponse|array
     {
         $gateways = GatewayInfo::getSupportedGateways();
-        if (count($gateways) == 1) {
-            return $this->owner->redirect($this->NextStepLink());
+        if (count($gateways) === 1) {
+            return $this->getOwner()->redirect($this->NextStepLink());
         }
+
         return [
             'OrderForm' => $this->PaymentMethodForm(),
         ];
@@ -40,13 +43,13 @@ class PaymentMethod extends CheckoutStep
 
     public function PaymentMethodForm(): CheckoutForm
     {
-        $checkoutForm = CheckoutForm::create($this->owner, 'PaymentMethodForm', $this->checkoutconfig());
+        $checkoutForm = CheckoutForm::create($this->getOwner(), 'PaymentMethodForm', $this->checkoutconfig());
         $checkoutForm->setActions(
             FieldList::create(
                 FormAction::create('setpaymentmethod', _t('SilverShop\Checkout\Step\CheckoutStep.Continue', 'Continue'))
             )
         );
-        $this->owner->extend('updatePaymentMethodForm', $checkoutForm);
+        $this->getOwner()->extend('updatePaymentMethodForm', $checkoutForm);
 
         return $checkoutForm;
     }
@@ -54,11 +57,11 @@ class PaymentMethod extends CheckoutStep
     public function setpaymentmethod($data, $form): HTTPResponse
     {
         $this->checkoutconfig()->setData($form->getData());
-        return $this->owner->redirect($this->NextStepLink());
+        return $this->getOwner()->redirect($this->NextStepLink());
     }
 
     public function SelectedPaymentMethod(): string|array
     {
-        return Checkout::get($this->owner->Cart())->getSelectedPaymentMethod(true);
+        return Checkout::get($this->getOwner()->Cart())->getSelectedPaymentMethod(true);
     }
 }

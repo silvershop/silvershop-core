@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Page;
 
 use Page;
@@ -15,7 +17,7 @@ use SilverStripe\ORM\DB;
  */
 class AccountPage extends Page
 {
-    private static $icon_class = 'font-icon-p-profile';
+    private static string $cms_icon_class = 'font-icon-p-profile';
 
     private static string $table_name = 'SilverShop_AccountPage';
 
@@ -58,6 +60,7 @@ class AccountPage extends Page
         if ($page = DataObject::get_one(self::class)) {
             return $page;
         }
+
         user_error(_t(__CLASS__ . '.NoPage', 'No AccountPage was found. Please create one in the CMS!'), E_USER_ERROR);
         return null; // just to keep static analysis happy
     }

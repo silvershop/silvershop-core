@@ -1,13 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Page;
 
+use SilverStripe\Forms\FormField;
 use Exception;
 use Page;
 use SilverShop\Cart\ShoppingCart;
 use SilverShop\Cart\ShoppingCartController;
 use SilverShop\Extension\ProductVariationsExtension;
-use SilverShop\Forms\AddProductForm;
 use SilverShop\Model\Buyable;
 use SilverShop\Model\Order;
 use SilverShop\Model\Product\OrderItem;
@@ -59,19 +61,15 @@ class Product extends Page implements Buyable
     private static array $db = [
         'InternalItemID' => 'Varchar(30)', //ie SKU, ProductID etc (internal / existing recognition of product)
         'Model' => 'Varchar(30)',
-
         'BasePrice' => 'Currency(19,4)', // Base retail price the item is marked at.
-
         //physical properties
         // TODO: Move these to an extension (used in Variations as well)
         'Weight' => 'Decimal(12,5)',
         'Height' => 'Decimal(12,5)',
         'Width' => 'Decimal(12,5)',
         'Depth' => 'Decimal(12,5)',
-
         'Featured' => 'Boolean',
         'AllowPurchase' => 'Boolean',
-
         'Popularity' => 'Float' //storage for CalculateProductPopularity task
     ];
 
@@ -115,7 +113,7 @@ class Product extends Page implements Buyable
 
     private static string $plural_name = 'Products';
 
-    private static $icon_class = 'font-icon-p-package';
+    private static string $cms_icon_class = 'font-icon-p-package';
 
     private static string $default_parent = ProductCategory::class;
 
@@ -216,7 +214,7 @@ class Product extends Page implements Buyable
                     ]
                 );
 
-                if (!$fieldList->dataFieldByName('Image')) {
+                if (!$fieldList->dataFieldByName('Image') instanceof FormField) {
                     $fieldList->addFieldToTab(
                         'Root.Images',
                         UploadField::create('Image', _t(__CLASS__ . '.Image', 'Product Image'))
@@ -272,8 +270,9 @@ class Product extends Page implements Buyable
         $ancestors = $this->getAncestors()->column('ID');
         $categories = ProductCategory::get();
         if (!empty($ancestors)) {
-            $categories = $categories->exclude('ID', $ancestors);
+            $categories = $categories->exclude(['ID' => $ancestors]);
         }
+
         return $categories->map('ID', 'NestedTitle')->toArray();
     }
 
@@ -289,6 +288,7 @@ class Product extends Page implements Buyable
         foreach ($this->getAncestors() as $ancestor) {
             $ids[$ancestor->ID] = $ancestor->ID;
         }
+
         //additional categories
         $ids += $this->ProductCategories()->getIDList();
 
@@ -325,7 +325,7 @@ class Product extends Page implements Buyable
         $allowPurchase = false;
         $extension = self::has_extension(ProductVariationsExtension::class);
 
-        if ($extension && Variation::get()->filter('ProductID', $this->ID)->first()) {
+        if ($extension && Variation::get()->filter(['ProductID' => $this->ID])->first()) {
             foreach ($this->Variations() as $hasManyList) {
                 if ($hasManyList->canPurchase($member, $quantity)) {
                     $allowPurchase = true;
@@ -357,7 +357,7 @@ class Product extends Page implements Buyable
     public function IsInCart(): bool
     {
         $orderItem = $this->Item();
-        return $orderItem && $orderItem->exists() && $orderItem->Quantity > 0;
+        return $orderItem instanceof \SilverShop\Model\OrderItem && $orderItem->exists() && $orderItem->Quantity > 0;
     }
 
     /**
@@ -372,6 +372,7 @@ class Product extends Page implements Buyable
             //return dummy item so that we can still make use of Item
             $item = $this->createItem();
         }
+
         $this->extend('updateDummyItem', $item);
         return $item;
     }
@@ -393,6 +394,7 @@ class Product extends Page implements Buyable
         if ($filter) {
             $item->update($filter);
         }
+
         $item->Quantity = $quantity;
 
         return $item;
@@ -457,10 +459,12 @@ class Product extends Page implements Buyable
         if ($image && $image->exists()) {
             return $image;
         }
+
         $image = SiteConfig::current_site_config()->DefaultProductImage();
         if ($image && $image->exists()) {
             return $image;
         }
+
         return null;
     }
 

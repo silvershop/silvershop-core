@@ -1,25 +1,39 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Tasks;
 
+use SilverShop\Model\Variation\AttributeType;
 use SilverShop\Page\Product;
-use SilverStripe\Control\CliController;
+use SilverStripe\Dev\BuildTask;
+use SilverStripe\PolyExecution\PolyOutput;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputInterface;
 
 /**
  *
  * @subpackage tasks
  */
-class ProductVariationsFromAttributeCombinations extends CliController
+class ProductVariationsFromAttributeCombinations extends BuildTask
 {
-    public function process(): void
+    protected function execute(InputInterface $input, PolyOutput $output): int
     {
         $products = Product::get();
         if (!$products->count()) {
-            return;
+            return Command::SUCCESS;
         }
 
         foreach ($products as $product) {
-            $product->generateVariationsFromAttributes();
+            /** @var AttributeType $attributeType */
+            foreach ($product->VariationAttributeTypes() as $attributeType) {
+                $values = $attributeType->Values()->column('Value');
+                if (!empty($values)) {
+                    $product->generateVariationsFromAttributes($attributeType, $values);
+                }
+            }
         }
+
+        return Command::SUCCESS;
     }
 }

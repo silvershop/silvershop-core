@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Tests\Model\Product;
 
 use SilverShop\Model\Product\OrderItem;
@@ -13,21 +15,26 @@ class CustomProduct_OrderItem extends OrderItem implements TestOnly
         'Size' => 'Int',
         'Premium' => 'Boolean',
     ];
+
     private static array $defaults = [
         'Color' => 'Red',
         'Premium' => false,
     ];
+
     private static array $has_one = [
         'CustomProduct' => CustomProduct::class,
         'Recipient' => Member::class,
     ];
+
     private static string $buyable_relationship = "CustomProduct";
+
     private static array $required_fields = [
         'Color',
         'Size',
         'Premium',
         'Recipient',
     ];
+
     private static string $table_name = 'SilverShop_Test_CustomProduct_OrderItem';
 
     public function UnitPrice()
@@ -35,6 +42,7 @@ class CustomProduct_OrderItem extends OrderItem implements TestOnly
         if ($this->CustomProduct()->exists()) {
             return $this->CustomProduct()->Price;
         }
+
         return 0;
     }
 }

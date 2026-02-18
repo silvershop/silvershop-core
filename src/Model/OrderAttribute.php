@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Model;
 
 use SilverStripe\ORM\DataObject;
@@ -50,6 +52,7 @@ class OrderAttribute extends DataObject
         if (!$this->isInDB()) {
             return true;
         }
+
         return $this->Order()->exists() && $this->Order()->IsCart();
     }
 

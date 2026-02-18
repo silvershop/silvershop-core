@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Model;
 
+use SilverStripe\Core\Validation\ValidationResult;
 use SilverShop\ORM\FieldType\ShopCountry;
 use SilverStripe\Forms\DropdownField;
 use SilverStripe\Forms\FieldList;
@@ -10,7 +13,6 @@ use SilverStripe\Forms\TextField;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\FieldType\DBHTMLText;
 use SilverStripe\ORM\HasManyList;
-use SilverStripe\ORM\ValidationResult;
 use SilverStripe\Security\Member;
 use SilverStripe\SiteConfig\SiteConfig;
 
@@ -154,7 +156,7 @@ class Address extends DataObject
     public function getCountryField(): ReadonlyField|DropdownField
     {
         $countries = SiteConfig::current_site_config()->getCountriesList();
-        if (count($countries) == 1) {
+        if (count($countries) === 1) {
             //field name is Country_readonly so it's value doesn't get updated
             return ReadonlyField::create(
                 'Country_readonly',
@@ -162,6 +164,7 @@ class Address extends DataObject
                 array_pop($countries)
             );
         }
+
         $singleSelectField = DropdownField::create(
             'Country',
             $this->fieldLabel('Country'),
@@ -186,6 +189,7 @@ class Address extends DataObject
         if (isset($fields['Country']) && SiteConfig::current_site_config()->getSingleCountry()) {
             unset($fields['Country']);
         }
+
         return $fields;
     }
 
@@ -229,9 +233,9 @@ class Address extends DataObject
         return $this->toString();
     }
 
-    public function forTemplate(): DBHTMLText
+    public function forTemplate(): string
     {
-        return $this->renderWith(__CLASS__);
+        return (string)$this->renderWith(__CLASS__);
     }
 
     /**
@@ -312,13 +316,13 @@ class Address extends DataObject
         return $this;
     }
 
-    function validate(): ValidationResult
+    public function validate(): ValidationResult
     {
         $validationResult = parent::validate();
 
         foreach ($this->getRequiredFields() as $requirement) {
             if (empty($this->$requirement)) {
-                $validationResult->addError("Address Model validate function - missing required field: $requirement");
+                $validationResult->addError('Address Model validate function - missing required field: ' . $requirement);
             }
         }
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Page;
 
 use PageController;
@@ -28,6 +30,7 @@ class CartPageController extends PageController
         if ($this->getFailover && $this->getFailover()->Title) {
             return $this->getFailover()->Title;
         }
+
         return _t('SilverShop\Page\CartPage.DefaultTitle', 'Shopping Cart');
     }
 
@@ -40,6 +43,7 @@ class CartPageController extends PageController
         if (!$cart) {
             return false;
         }
+
         $cartForm = CartForm::create($this, 'CartForm', $cart);
 
         $this->extend('updateCartForm', $cartForm);

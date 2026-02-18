@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Extension;
 
 use SilverStripe\AssetAdmin\Forms\UploadField;
@@ -97,6 +99,7 @@ class ShopConfigExtension extends Extension
             )
         );
         $fieldList->removeByName('CreateTopLevelGroups');
+
         $countriesTab->setTitle(_t(__CLASS__ . '.AllowedCountriesTabTitle', 'Allowed Countries'));
     }
 
@@ -109,17 +112,19 @@ class ShopConfigExtension extends Extension
     {
         $countries = self::config()->iso_3166_country_codes;
         asort($countries);
-        if ($allowed = $this->owner->AllowedCountries) {
+        if ($allowed = $this->getOwner()->AllowedCountries) {
             $allowed = json_decode($allowed);
             if (!empty($allowed)) {
                 $countries = array_intersect_key($countries, array_flip($allowed));
             }
         }
+
         if ($prefixisocode) {
             foreach ($countries as $key => $value) {
-                $countries[$key] = "$key - $value";
+                $countries[$key] = sprintf('%s - %s', $key, $value);
             }
         }
+
         return $countries;
     }
 
@@ -130,14 +135,15 @@ class ShopConfigExtension extends Extension
     public function getSingleCountry(bool $fullname = false): ?string
     {
         $countries = $this->getCountriesList();
-        if (count($countries) == 1) {
+        if (count($countries) === 1) {
             if ($fullname) {
                 return array_pop($countries);
-            } else {
-                reset($countries);
-                return key($countries);
             }
+
+            reset($countries);
+            return key($countries);
         }
+
         return null;
     }
 
@@ -150,6 +156,7 @@ class ShopConfigExtension extends Extension
         if (isset($codes[$code])) {
             return $codes[$code];
         }
+
         return $code;
     }
 }

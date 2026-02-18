@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Tests\Page;
 
 use SilverShop\Model\Address;
@@ -16,25 +18,29 @@ use SilverStripe\Security\Member;
 use SilverStripe\Security\Security;
 use SilverStripe\SiteConfig\SiteConfig;
 
-class AccountPageTest extends FunctionalTest
+final class AccountPageTest extends FunctionalTest
 {
     protected static $fixture_file = [
         __DIR__ . '/../Fixtures/Pages.yml',
         __DIR__ . '/../Fixtures/shop.yml',
     ];
+
     protected static bool $disable_theme = true;
+
     protected static bool $use_draft_site = true;
 
     protected AccountPage $accountpage;
+
     protected AccountPageController $controller;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
         Controller::add_extension(ShopTestControllerExtension::class);
         $this->accountpage = $this->objFromFixture(AccountPage::class, "accountpage");
         $this->accountpage->publishSingle();
+
         $this->controller = AccountPageController::create($this->accountpage);
 
         $httpRequest = new HTTPRequest('GET', '/');
@@ -84,7 +90,7 @@ class AccountPageTest extends FunctionalTest
         $address->MemberID = $member->ID;
         $address->write();
 
-        $this->controller->init();
+        $this->controller->doInit();
         $forms = $this->controller->addressbook();
         $createform = $forms['CreateAddressForm'];
         $defaultform = $forms['DefaultAddressForm'];
@@ -164,7 +170,7 @@ class AccountPageTest extends FunctionalTest
                 );
                 $this->assertEquals(200, $httpResponse->getStatusCode(), 'a page should load');
 
-                $au_address = Address::get()->filter('PostalCode', '2000')->sort('ID')->last();
+                $au_address = Address::get()->filter(['PostalCode' => '2000'])->sort(['ID' => 'ASC'])->last();
                 $this->assertEquals(
                     'AU',
                     $au_address->Country,
@@ -192,6 +198,7 @@ class AccountPageTest extends FunctionalTest
                 $siteconfig = DataObject::get_one(SiteConfig::class);
                 $siteconfig->AllowedCountries = '["NZ"]';
                 $siteconfig->write();
+
                 $singlecountry = SiteConfig::current_site_config();
                 $this->assertEquals(
                     'NZ',
@@ -226,7 +233,7 @@ class AccountPageTest extends FunctionalTest
                 );
                 $this->assertEquals(200, $httpResponse->getStatusCode(), 'a page should load');
 
-                $nz_address = Address::get()->filter('PostalCode', '8011')->sort('ID')->last();
+                $nz_address = Address::get()->filter(['PostalCode' => '8011'])->sort(['ID' => 'ASC'])->last();
                 $this->assertEquals(
                     'NZ',
                     $nz_address->Country,
@@ -263,15 +270,15 @@ class AccountPageTest extends FunctionalTest
             'ChangePasswordForm_ChangePasswordForm',
             'action_doChangePassword',
             [
-                'OldPassword' => '23u90oijlJKsa',
-                'NewPassword1' => 'newpassword123',
-                'NewPassword2' => 'newpassword123'
+                'Password[_CurrentPassword]' => '23u90oijlJKsa',
+                'Password[_Password]' => 'newpassword123!?',
+                'Password[_ConfirmPassword]' => 'newpassword123!?'
             ]
         );
         $this->assertEquals(200, $page->getStatusCode(), 'a page should load');
 
         $memberAuthenticator = new MemberAuthenticator;
-        $validationResult = $memberAuthenticator->checkPassword($member, 'newpassword123');
+        $validationResult = $memberAuthenticator->checkPassword($member, 'newpassword123!?');
         $this->assertTrue(
             $validationResult->isValid(),
             'Password should have changed'

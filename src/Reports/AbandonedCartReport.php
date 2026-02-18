@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Reports;
 
 use SilverShop\Model\Order;
@@ -34,7 +36,7 @@ class AbandonedCartReport extends ShopPeriodReport
         ];
     }
 
-    public function query($params): ShopReportQuery|SQLSelect
+    public function query(array $params): ShopReportQuery|SQLSelect
     {
         return parent::query($params)
             ->selectField('COUNT("SilverShop_Order"."ID")', 'Count')

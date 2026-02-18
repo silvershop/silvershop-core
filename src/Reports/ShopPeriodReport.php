@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Reports;
 
 use SilverShop\Model\Order;
@@ -76,7 +78,7 @@ abstract class ShopPeriodReport extends Report implements i18nEntityProvider
             if (self::config()->display_uncategorised_data) {
                 $fieldList->push(
                     CheckboxField::create('IncludeUncategorised', 'Include Uncategorised Data')
-                        ->setDescription('Display data that doesn\'t have a date.')
+                        ->setDescription("Display data that doesn't have a date.")
                 );
             }
         }
@@ -98,6 +100,7 @@ abstract class ShopPeriodReport extends Report implements i18nEntityProvider
         if (static::class === self::class) {
             return false;
         }
+
         return parent::canView($member);
     }
 
@@ -116,9 +119,12 @@ abstract class ShopPeriodReport extends Report implements i18nEntityProvider
         return $formField;
     }
 
-    public function sourceRecords($params): SQLQueryList
+    public function sourceRecords(array $params)
     {
-        isset($params['Grouping']) || $params['Grouping'] = 'Month';
+        if (!isset($params['Grouping'])) {
+            $params['Grouping'] = 'Month';
+        }
+
         $sqlQueryList = SQLQueryList::create($this->query($params));
         $grouping = $params['Grouping'];
         $self = $this;
@@ -138,40 +144,45 @@ abstract class ShopPeriodReport extends Report implements i18nEntityProvider
         if (!$date) {
             return $date;
         }
+
         $formats = self::config()->groupingdateformats;
         $dformat = $formats[$grouping];
         return date($dformat, strtotime($date));
     }
 
-    public function query($params): ShopReportQuery|SQLSelect
+    public function query(array $params): ShopReportQuery|SQLSelect
     {
         //convert dates to correct format
         $fieldList = $this->parameterFields();
         $fieldList->setValues($params);
+
         $start = $fieldList->fieldByName('StartPeriod')->dataValue();
         $end = $fieldList->fieldByName('EndPeriod')->dataValue();
         //include the entire end day
         if ($end) {
             $end = date('Y-m-d', strtotime($end) + 86400);
         }
+
         $filterperiod = $this->periodfield;
         $shopReportQuery = new ShopReportQuery();
-        $shopReportQuery->setSelect(['FilterPeriod' => "MIN($filterperiod)"]);
+        $shopReportQuery->setSelect(['FilterPeriod' => sprintf('MIN(%s)', $filterperiod)]);
 
         $table = DataObject::getSchema()->tableName($this->dataClass);
 
         $shopReportQuery->setFrom('"' . $table . '"');
 
         if ($start && $end) {
-            $shopReportQuery->addWhere("$filterperiod BETWEEN '$start' AND '$end'");
+            $shopReportQuery->addWhere(sprintf("%s BETWEEN '%s' AND '%s'", $filterperiod, $start, $end));
         } elseif ($start) {
-            $shopReportQuery->addWhere("$filterperiod > '$start'");
+            $shopReportQuery->addWhere(sprintf("%s > '%s'", $filterperiod, $start));
         } elseif ($end) {
-            $shopReportQuery->addWhere("$filterperiod <= '$end'");
+            $shopReportQuery->addWhere(sprintf("%s <= '%s'", $filterperiod, $end));
         }
+
         if ($start || $end || !self::config()->display_uncategorised_data || !isset($params['IncludeUncategorised'])) {
-            $shopReportQuery->addWhere("$filterperiod IS NOT NULL");
+            $shopReportQuery->addWhere($filterperiod . ' IS NOT NULL');
         }
+
         if ($this->grouping) {
             switch ($params['Grouping']) {
                 case 'Year':
@@ -191,6 +202,7 @@ abstract class ShopPeriodReport extends Report implements i18nEntityProvider
                     break;
             }
         }
+
         $shopReportQuery->setOrderBy('"FilterPeriod"', 'ASC');
 
         return $shopReportQuery;
@@ -208,13 +220,13 @@ abstract class ShopPeriodReport extends Report implements i18nEntityProvider
     {
         $cls = static::class;
         return [
-            "{$cls}.Title" => [
+            $cls . '.Title' => [
                 $this->title,
-                "Title for the {$cls} report",
+                sprintf('Title for the %s report', $cls),
             ],
-            "{$cls}.Description" => [
+            $cls . '.Description' => [
                 $this->description,
-                "Description for the {$cls} report",
+                sprintf('Description for the %s report', $cls),
             ],
         ];
     }

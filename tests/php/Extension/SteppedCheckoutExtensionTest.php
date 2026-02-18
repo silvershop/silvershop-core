@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Tests\Extension;
 
 use SilverShop\Cart\ShoppingCart;
@@ -20,7 +22,7 @@ use SilverStripe\Omnipay\GatewayInfo;
 use SilverStripe\Security\Member;
 use SilverStripe\Security\Security;
 
-class SteppedCheckoutExtensionTest extends FunctionalTest
+final class SteppedCheckoutExtensionTest extends FunctionalTest
 {
     protected static $fixture_file = [
         __DIR__ . '/../Fixtures/Pages.yml',
@@ -33,14 +35,18 @@ class SteppedCheckoutExtensionTest extends FunctionalTest
         CustomProduct_OrderItem::class,
     ];
 
-    protected static bool $use_draft_site = true; //so we don't need to publish
+    protected static bool $use_draft_site = true;
+
+     //so we don't need to publish
     protected $autoFollowRedirection = false;
 
     protected CheckoutPageController $checkout;
+
     protected Product $socks;
+
     protected Order $cart;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->logInWithPermission('ADMIN');
@@ -62,6 +68,7 @@ class SteppedCheckoutExtensionTest extends FunctionalTest
          */
         $dataObject = $this->objFromFixture(CheckoutPage::class, "checkout");
         $dataObject->publishSingle();
+
         $this->checkout = CheckoutPageController::create($dataObject);
 
         $this->cart = $this->objFromFixture(Order::class, "cart");
@@ -268,7 +275,7 @@ class SteppedCheckoutExtensionTest extends FunctionalTest
 
         Checkout::get($this->cart)->setPaymentMethod("Dummy"); //a selected payment method is required
         $paymentForm->loadDataFrom($data);
-        $this->assertTrue($paymentForm->validationResult()->isValid(), "Checkout data is valid");
+        $this->assertTrue($paymentForm->validate()->isValid(), "Checkout data is valid");
         $httpResponse = $this->post('/checkout/ConfirmationForm', $data);
         $this->assertEquals('Cart', $this->cart->Status, "Order is still in cart");
 

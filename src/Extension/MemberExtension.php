@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Extension;
 
 use SilverShop\Cart\ShoppingCart;
@@ -40,10 +42,7 @@ class MemberExtension extends Extension
      */
     public static function get_by_identifier($idvalue): ?Member
     {
-        return Member::get()->filter(
-            Member::config()->unique_identifier_field,
-            $idvalue
-        )->first();
+        return Member::get()->filter([Member::config()->unique_identifier_field => $idvalue])->first();
     }
 
     public function updateCMSFields(FieldList $fieldList): void
@@ -74,10 +73,10 @@ class MemberExtension extends Extension
      * Link the current order to the current member on login,
      * if there is one, and if configuration is set to do so.
      */
-    public function afterMemberLoggedIn(): void
+    public function onAfterMemberLoggedIn(): void
     {
         if (Member::config()->login_joins_cart && $order = ShoppingCart::singleton()->current()) {
-            $order->MemberID = $this->owner->ID;
+            $order->MemberID = $this->getOwner()->ID;
             $order->write();
         }
     }
@@ -85,7 +84,7 @@ class MemberExtension extends Extension
     /**
      * Clear the cart, and session variables on member logout
      */
-    public function beforeMemberLoggedOut(): void
+    public function onBeforeMemberLoggedOut(): void
     {
         if (Member::config()->login_joins_cart) {
             ShoppingCart::singleton()->clear();
@@ -99,8 +98,6 @@ class MemberExtension extends Extension
      */
     public function getPastOrders(): DataList
     {
-        return Order::get()
-            ->filter('MemberID', $this->owner->ID)
-            ->filter('Status:not', Order::config()->hidden_status);
+        return Order::get()->filter(['MemberID' => $this->getOwner()->ID])->filter(['Status:not' => Order::config()->hidden_status]);
     }
 }
