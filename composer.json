@@ -29,7 +29,7 @@
     "symbiote/silverstripe-gridfieldextensions": "^5.0"
   },
   "require-dev": {
-    "phpunit/phpunit": "^9.5",
+    "phpunit/phpunit": "^11.3",
     "php-http/guzzle7-adapter": "^1",
     "omnipay/dummy": "dev-master",
     "omnipay/manual": "^3",
