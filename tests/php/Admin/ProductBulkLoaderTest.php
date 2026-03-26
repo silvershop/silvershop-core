@@ -1,15 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Tests\Admin;
 
 use SilverShop\Admin\ProductBulkLoader;
 use SilverShop\Page\Product;
 use SilverStripe\Dev\FunctionalTest;
 
-class ProductBulkLoaderTest extends FunctionalTest
+final class ProductBulkLoaderTest extends FunctionalTest
 {
     public static $fixture_file   = __DIR__ . '/../Fixtures/shop.yml';
+
     public static $disable_theme  = true;
+
     protected static $use_draft_site = true;
 
     public function testLoad(): void
@@ -28,7 +32,7 @@ class ProductBulkLoaderTest extends FunctionalTest
         $this->assertEquals(13, $results->Count(), 'Test correct count of imported data');
 
         // Test that columns were correctly imported
-        $obj = Product::get()->filter('Title', 'Socks')->first();
+        $obj = Product::get()->filter(['Title' => 'Socks'])->first();
         $this->assertNotNull($obj, "New product exists");
         $this->assertEquals("<p>The comfiest pair of socks you'll ever own.</p>", $obj->Content, "Content matches");
         $this->assertEquals(12, $obj->BasePrice, "Checking price matches.");

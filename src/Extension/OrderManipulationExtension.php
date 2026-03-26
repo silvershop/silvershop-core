@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Extension;
 
+use SilverStripe\Model\List\PaginatedList;
 use SilverShop\Cart\ShoppingCart;
 use SilverShop\Forms\OrderActionsForm;
 use SilverShop\Model\Order;
@@ -16,7 +19,6 @@ use SilverStripe\Core\Config\Configurable;
 use SilverStripe\Core\Extension;
 use SilverStripe\ORM\DataList;
 use SilverStripe\ORM\DataObject;
-use SilverStripe\ORM\PaginatedList;
 use SilverStripe\Security\Security;
 
 /**
@@ -38,6 +40,7 @@ class OrderManipulationExtension extends Extension
     private static string $sessname = 'OrderManipulation.historicalorders';
 
     protected string $sessionmessage = '';
+
     protected string $sessionmessagetype = '';
 
     /**
@@ -49,6 +52,7 @@ class OrderManipulationExtension extends Extension
         if (!is_array($history)) {
             $history = [];
         }
+
         $history[$order->ID] = $order->ID;
         ShopTools::getSession()->set(static::config()->get('sessname'), $history);
     }
@@ -62,6 +66,7 @@ class OrderManipulationExtension extends Extension
         if (!is_array($history)) {
             return null;
         }
+
         return $history;
     }
 
@@ -76,7 +81,7 @@ class OrderManipulationExtension extends Extension
      */
     public function orderfromid(): ?DataObject
     {
-        $httpRequest = $this->owner->getRequest();
+        $httpRequest = $this->getOwner()->getRequest();
         $id = (int)$httpRequest->param('ID');
         if ($id === 0) {
             $id = (int)$httpRequest->postVar('OrderID');
@@ -96,12 +101,12 @@ class OrderManipulationExtension extends Extension
         if (($sessids = self::get_session_order_ids()) !== null && ($sessids = self::get_session_order_ids()) !== []) {
             $filters['ID'] = $sessids;
         }
+
         if ($member = Security::getCurrentUser()) {
             $filters['MemberID'] = $member->ID;
         }
 
-        return Order::get()->filterAny($filters)
-            ->filter('Status:not', Order::config()->hidden_status);
+        return Order::get()->filterAny($filters)->filter(['Status:not' => Order::config()->hidden_status]);
     }
 
     /**
@@ -109,10 +114,9 @@ class OrderManipulationExtension extends Extension
      */
     public function PastOrders($paginated = false): DataList|PaginatedList
     {
-        $dataList = $this->allorders()
-            ->filter('Status', Order::config()->placed_status);
+        $dataList = $this->allorders()->filter(['Status' => Order::config()->placed_status]);
         if ($paginated) {
-            return PaginatedList::create($dataList, $this->owner->getRequest());
+            return PaginatedList::create($dataList, $this->getOwner()->getRequest());
         }
 
         return $dataList;
@@ -132,7 +136,7 @@ class OrderManipulationExtension extends Extension
 
         $order = $this->orderfromid();
         if (!$order instanceof DataObject) {
-            return $this->owner->httpError(404, 'Order could not be found');
+            return $this->getOwner()->httpError(404, 'Order could not be found');
         }
 
         return [
@@ -147,7 +151,7 @@ class OrderManipulationExtension extends Extension
     public function ActionsForm(): ?OrderActionsForm
     {
         if (($order = $this->orderfromid()) instanceof DataObject) {
-            $form = OrderActionsForm::create($this->owner, 'ActionsForm', $order);
+            $form = OrderActionsForm::create($this->getOwner(), 'ActionsForm', $order);
             $form->extend('updateActionsForm', $order);
             if (!$form->Actions()->exists()) {
                 return null;
@@ -155,19 +159,20 @@ class OrderManipulationExtension extends Extension
 
             return $form;
         }
+
         return null;
     }
 
     public function setSessionMessage($message = 'success', $type = 'good'): void
     {
-        $this->owner->getRequest()->getSession()
+        $this->getOwner()->getRequest()->getSession()
             ->set('OrderManipulation.Message', $message)
             ->set('OrderManipulation.MessageType', $type);
     }
 
     public function SessionMessage(): string
     {
-        $session = $this->owner->getRequest()->getSession();
+        $session = $this->getOwner()->getRequest()->getSession();
         if ($session && ($message = $session->get('OrderManipulation.Message'))) {
             $this->sessionmessage = $message;
             $session->clear('OrderManipulation.Message');
@@ -178,7 +183,7 @@ class OrderManipulationExtension extends Extension
 
     public function SessionMessageType(): string
     {
-        $session = $this->owner->getRequest()->getSession();
+        $session = $this->getOwner()->getRequest()->getSession();
         if ($session && ($type = $session->get('OrderManipulation.MessageType'))) {
             $this->sessionmessagetype = $type;
             $session->clear('OrderManipulation.MessageType');

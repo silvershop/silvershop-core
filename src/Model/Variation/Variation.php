@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Model\Variation;
 
+use SilverStripe\Model\List\ArrayList;
 use SilverShop\Cart\ShoppingCart;
 use SilverShop\Model\Buyable;
 use SilverShop\Model\Order;
@@ -11,7 +14,6 @@ use SilverStripe\Assets\Image;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\LiteralField;
 use SilverStripe\Forms\TextField;
-use SilverStripe\ORM\ArrayList;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\ManyManyList;
 use SilverStripe\Security\Member;
@@ -122,12 +124,14 @@ class Variation extends DataObject implements Buyable
         if ($this->Product()->exists()) {
             $attributes = $this->Product()->VariationAttributeTypes();
         }
+
         if ($attributes && $attributes->exists()) {
             foreach ($attributes as $attribute) {
                 if ($field = $attribute->getDropDownField()) {
                     if ($value = $this->AttributeValues()->find('TypeID', (string) $attribute->ID)) {
                         $field->setValue($value->ID);
                     }
+
                     $fieldList->push($field);
                 } else {
                     $fieldList->push(
@@ -137,13 +141,14 @@ class Variation extends DataObject implements Buyable
                             _t(
                                 __CLASS__ . '.NoAttributeValuesMessage',
                                 '{attribute} has no values to choose from. You can create them in the "Products" &#62; "Product Attribute Type" section of the CMS.',
-                                'Warning that will be shown if an attribute doesn\'t have any values',
+                                "Warning that will be shown if an attribute doesn't have any values",
                                 ['attribute' => $attribute->Name]
                             ) .
                             '</p>'
                         )
                     );
                 }
+
                 //TODO: allow setting custom values here, rather than visiting the products section
             }
         } else {
@@ -159,6 +164,7 @@ class Variation extends DataObject implements Buyable
                 )
             );
         }
+
         $fieldList->push(
             UploadField::create('Image', _t('SilverShop\Page\Product.Image', 'Product Image'))
         );
@@ -220,7 +226,7 @@ class Variation extends DataObject implements Buyable
     /**
      * Save selected attributes - somewhat of a hack.
      */
-    public function onBeforeWrite(): void
+    protected function onBeforeWrite(): void
     {
         parent::onBeforeWrite();
 
@@ -244,6 +250,7 @@ class Variation extends DataObject implements Buyable
 
             $title = implode(self::config()->title_glue, $labelvalues);
         }
+
         $this->extend('updateTitle', $title);
 
         return $title;
@@ -269,7 +276,7 @@ class Variation extends DataObject implements Buyable
 
         $permissions = $this->extend('canPurchase', $member, $quantity);
         $permissions[] = $allowpurchase;
-        return min($permissions);
+        return (bool)min($permissions);
     }
 
     /*
@@ -294,6 +301,7 @@ class Variation extends DataObject implements Buyable
             //return dummy item so that we can still make use of Item
             $item = $this->createItem(0);
         }
+
         $this->extend('updateDummyItem', $item);
         return $item;
     }
@@ -326,6 +334,7 @@ class Variation extends DataObject implements Buyable
             //TODO: make this a bit safer, perhaps intersect with allowed fields
             $item->update($filter);
         }
+
         $item->Quantity = $quantity;
         return $item;
     }

@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Page;
 
+use SilverStripe\Model\List\PaginatedList;
 use PageController;
 use SilverShop\ListSorter\ListSorter;
 use SilverStripe\ORM\DataList;
-use SilverStripe\ORM\PaginatedList;
 
 class ProductCategoryController extends PageController
 {

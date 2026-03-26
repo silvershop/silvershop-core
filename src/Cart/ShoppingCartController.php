@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Cart;
 
+use SilverStripe\Model\ModelData;
 use SilverShop\Extension\ViewableCartExtension;
 use SilverShop\Model\Buyable;
 use SilverShop\Model\Order;
@@ -113,10 +116,8 @@ class ShoppingCartController extends Controller
      * This is used here and in VariationForm and AddProductForm
      *
      * @param bool|string $status
-     *
-     * @return string|HTTPResponse
      */
-    public static function direct($status = true)
+    public static function direct($status = true): string|HTTPResponse
     {
         if (Director::is_ajax()) {
             return (string)$status;
@@ -125,10 +126,11 @@ class ShoppingCartController extends Controller
         if (self::config()->direct_to_cart_page && ($cart = CartPage::find_link())) {
             return Controller::curr()->redirect($cart);
         }
+
         return Controller::curr()->redirectBack();
     }
 
-    public function init(): void
+    protected function init(): void
     {
         parent::init();
         $this->cart = ShoppingCart::singleton();
@@ -152,19 +154,23 @@ class ShoppingCartController extends Controller
                 )
             );
         }
+
         $id = (int)$httpRequest->param('ID');
         if ($id === 0) {
             //TODO: store error message
             return null;
         }
+
         $buyableclass = Product::class;
         if ($class = $httpRequest->param('Buyable')) {
             $buyableclass = ShopTools::unsanitiseClassName($class);
         }
+
         if (!ClassInfo::exists($buyableclass)) {
             //TODO: store error message
             return null;
         }
+
         //ensure only live products are returned, if they are versioned
         $buyable = $buyableclass::has_extension(Versioned::class)
             ? Versioned::get_by_stage($buyableclass, 'Live')->byID($id)
@@ -286,16 +292,18 @@ class ShoppingCartController extends Controller
         if ($this->Cart() && CartPage::find_link()) {
             return $this->redirect(CartPage::find_link());
         }
+
         if ($response = ErrorPage::response_for(404)) {
             return $response;
         }
+
         return $this->httpError(404, _t('SilverShop\Cart\ShoppingCart.NoCartInitialised', 'no cart initialised'));
     }
 
     /**
      * Displays order info and cart contents.
      */
-    public function debug()
+    public function debug(): ModelData|string
     {
         if (Director::isDev() || Permission::check('ADMIN')) {
             //TODO: allow specifying a particular id to debug

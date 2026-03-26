@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Model\Modifiers\Tax;
 
 use SilverShop\Model\Order;
@@ -45,6 +47,7 @@ class GlobalTax extends Base
         if ($country && isset($rates[$country])) {
             return $this->Rate = $rates[$country]['rate'];
         }
+
         $defaults = self::config()->defaults;
         return $this->Rate = $defaults['Rate'];
     }
@@ -66,7 +69,7 @@ class GlobalTax extends Base
         return null;
     }
 
-    public function onBeforeWrite(): void
+    protected function onBeforeWrite(): void
     {
         parent::onBeforeWrite();
         // While the order is still in "Cart" status, persist country code to DB

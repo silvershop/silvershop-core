@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Forms;
 
+use SilverShop\Model\Order;
 use SilverStripe\Control\RequestHandler;
 use SilverShop\Cart\ShoppingCart;
 use SilverShop\Extension\ShopConfigExtension;
@@ -41,14 +44,15 @@ class CartForm extends Form
     /**
      * Update the cart using data collected
      */
-    public function updatecart($data, $form): HTTPResponse
+    public function updatecart(array $data, $form): HTTPResponse
     {
         $items = $this->cart->Items();
-        $updatecount = $removecount = 0;
+        $updatecount = 0;
+        $removecount = 0;
 
         $request = $this->getRequest();
         $order = ShoppingCart::curr();
-        if ($request && $request->isAjax() && $order) {
+        if ($request && $request->isAjax() && $order instanceof Order) {
             ShopTools::install_locale($order->Locale);
         }
 
@@ -62,16 +66,18 @@ class CartForm extends Form
                 if (!$item) {
                     continue;
                 }
+
                 //delete lines
                 if (isset($fields['Remove']) || (isset($fields['Quantity']) && (int)$fields['Quantity'] <= 0)) {
                     if (ShoppingCart::singleton()->removeOrderItem($item)) {
-                        $removecount++;
+                        ++$removecount;
                     } else {
                         $badMessages[] = ShoppingCart::singleton()->getMessage();
                     }
 
                     continue;
                 }
+
                 //update quantities
                 if (isset($fields['Quantity']) && $quantity = Convert::raw2sql($fields['Quantity'])) {
                     $numericField->setValue($quantity);
@@ -79,21 +85,22 @@ class CartForm extends Form
                         $badMessages[] = ShoppingCart::singleton()->getMessage();
                     }
                 }
+
                 //update variations
-                if (isset($fields['ProductVariationID']) && $id = Convert::raw2sql($fields['ProductVariationID'])) {
-                    if ($item->ProductVariationID != $id) {
-                        $item->ProductVariationID = $id;
-                    }
+                if (isset($fields['ProductVariationID']) && ($id = Convert::raw2sql($fields['ProductVariationID'])) && $item->ProductVariationID != $id) {
+                    $item->ProductVariationID = $id;
                 }
+
                 //TODO: make updates through ShoppingCart class
                 //TODO: combine with items that now match exactly
                 //TODO: validate changes
                 if ($item->isChanged()) {
                     $item->write();
-                    $updatecount++;
+                    ++$updatecount;
                 }
             }
         }
+
         if ($removecount !== 0) {
             $messages['remove'] = _t(
                 __CLASS__ . '.REMOVED_ITEMS',
@@ -102,6 +109,7 @@ class CartForm extends Form
                 ['count' => $removecount]
             );
         }
+
         if ($updatecount !== 0) {
             $messages['updatecount'] = _t(
                 __CLASS__ . '.UPDATED_ITEMS',
@@ -110,11 +118,12 @@ class CartForm extends Form
                 ['count' => $updatecount]
             );
         }
-        if (count($messages) !== 0) {
+
+        if ($messages !== []) {
             $form->sessionMessage(implode(' ', $messages), 'good');
         }
 
-        if (count($badMessages) !== 0) {
+        if ($badMessages !== []) {
             $form->sessionMessage(implode(' ', $badMessages), 'bad');
         }
 

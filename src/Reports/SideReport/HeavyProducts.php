@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Reports\SideReport;
 
 use SilverShop\Page\Product;
@@ -25,7 +27,7 @@ class HeavyProducts extends Report
 
     public function sourceRecords($params = null): DataList
     {
-        return Product::get()->filter('Weight:GreaterThan', 10)->sort('Weight', 'ASC');
+        return Product::get()->filter(['Weight:GreaterThan' => 10])->sort(['Weight' => 'ASC']);
     }
 
     public function columns(): array

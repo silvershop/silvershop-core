@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Extension;
 
 use SilverShop\Checkout\OrderProcessor;
@@ -41,7 +43,7 @@ class PaymentExtension extends Extension
         /**
          * @var Order $order
          */
-        $order = Order::get()->byID($this->owner->OrderID);
+        $order = Order::get()->byID($this->getOwner()->OrderID);
         if ($order && $order->exists()) {
             OrderProcessor::create($order)->completePayment();
         }
@@ -53,7 +55,7 @@ class PaymentExtension extends Extension
         /**
          * @var Order $order
          */
-        $order = Order::get()->byID($this->owner->OrderID);
+        $order = Order::get()->byID($this->getOwner()->OrderID);
         if ($order && $order->exists()) {
             OrderProcessor::create($order)->placeOrder();
         }

@@ -24,13 +24,13 @@
                                 </td>
                             </tr>
                             <% if $Order %>
-                            <% loop $Order %>
+                            <% with $Order %>
                                 <tr>
                                     <td>
                                         <% include SilverShop\Model\Order %>
                                     </td>
                                 </tr>
-                            <% end_loop %>
+                            <% end_with %>
                             <% end_if %>
                         </tbody>
                     </table>

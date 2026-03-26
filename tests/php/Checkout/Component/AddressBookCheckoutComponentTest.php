@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Tests\Checkout\Component;
 
+use SilverStripe\Core\Validation\ValidationException;
 use SilverShop\Checkout\CheckoutComponentConfig;
 use SilverShop\Checkout\CheckoutConfig;
 use SilverShop\Checkout\Component\AddressBookBilling;
@@ -9,11 +12,10 @@ use SilverShop\Model\Address;
 use SilverShop\Model\Order;
 use SilverShop\Tests\ShopTest;
 use SilverStripe\Security\Member;
-use SilverStripe\ORM\ValidationException;
 use SilverStripe\Dev\SapphireTest;
 use SilverStripe\Security\Security;
 
-class AddressBookCheckoutComponentTest extends SapphireTest
+final class AddressBookCheckoutComponentTest extends SapphireTest
 {
     // Component namespace
     const COMPONENT_NS = 'SilverShop-Checkout-Component-AddressBookBilling';
@@ -59,7 +61,7 @@ class AddressBookCheckoutComponentTest extends SapphireTest
         self::COMPONENT_NS . '_Phone'            => '11231231234',
     ];
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         ShopTest::setConfiguration();
         CheckoutConfig::config()->membership_required = false;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Checkout;
 
 use SilverShop\Checkout\Component\BillingAddress;
@@ -24,9 +26,11 @@ class SinglePageCheckoutComponentConfig extends CheckoutComponentConfig
         if (Checkout::member_creation_enabled() && !Security::getCurrentUser()) {
             $this->addComponent(Membership::create());
         }
+
         if (count(GatewayInfo::getSupportedGateways()) > 1) {
             $this->addComponent(Payment::create());
         }
+
         $this->addComponent(Notes::create());
         $this->addComponent(Terms::create());
     }

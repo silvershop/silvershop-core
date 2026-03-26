@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Tests\Cart;
 
 use SilverShop\Cart\ShoppingCart;
@@ -11,7 +13,7 @@ use SilverShop\Tests\ShopTest;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\SapphireTest;
 
-class ShoppingCartTest extends SapphireTest
+final class ShoppingCartTest extends SapphireTest
 {
     protected static $fixture_file  = [
         '../Fixtures/shop.yml',
@@ -32,7 +34,7 @@ class ShoppingCartTest extends SapphireTest
      */
     protected $cart;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         ShopTest::setConfiguration(); //reset config

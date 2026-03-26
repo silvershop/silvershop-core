@@ -1,16 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Tests\Checkout;
 
 use SilverShop\Page\CheckoutPage;
 use SilverStripe\Control\Director;
 use SilverStripe\Dev\SapphireTest;
 
-class NestedCheckoutTest extends SapphireTest
+final class NestedCheckoutTest extends SapphireTest
 {
     public static $fixture_file = __DIR__ . '/../Fixtures/pages/NestedCheckout.yml';
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
     }

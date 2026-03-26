@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Page;
 
 use Page;
@@ -24,7 +26,7 @@ class CheckoutPage extends Page
         'PurchaseComplete' => 'HTMLText',
     ];
 
-    private static $icon_class = 'font-icon-p-shop';
+    private static string $cms_icon_class = 'font-icon-p-shop';
 
     private static string $table_name = 'SilverShop_CheckoutPage';
 
@@ -45,6 +47,7 @@ class CheckoutPage extends Page
         if ($page = self::get()->first()) {
             $base = $page->Link();
         }
+
         return Controller::join_links($base, $action, $id);
     }
 

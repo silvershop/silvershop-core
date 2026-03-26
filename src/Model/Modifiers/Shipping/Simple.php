@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Model\Modifiers\Shipping;
 
 use SilverStripe\SiteConfig\SiteConfig;
@@ -40,6 +42,7 @@ class Simple extends Base
                 ['Country' => $countryList[$country]]
             );
         }
+
         return parent::getTableTitle();
     }
 
@@ -51,6 +54,7 @@ class Simple extends Base
         if (!($order = $this->Order())) {
             return null;
         }
+
         if ($order->getShippingAddress()->exists() && $order->getShippingAddress()->Country) {
             return $order->getShippingAddress()->Country;
         }

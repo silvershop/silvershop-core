@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Tests\Model\Modifiers;
 
 use Exception;
@@ -17,14 +19,18 @@ use SilverStripe\ORM\DB;
  * @package    shop
  * @subpackage tests
  */
-class OrderModifierTest extends FunctionalTest
+final class OrderModifierTest extends FunctionalTest
 {
     public static $fixture_file = __DIR__ . '/../../Fixtures/shop.yml';
+
     public static $disable_theme = true;
+
     protected $usesTransactions = false;
+
     protected static bool $use_draft_site = true;
 
     protected Product $mp3player;
+
     protected Product $socks;
 
     protected static $extra_dataobjects = [
@@ -32,7 +38,7 @@ class OrderModifierTest extends FunctionalTest
         OrderModifierTest_TestModifier::class
     ];
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         ShopTest::setConfiguration();
@@ -71,7 +77,7 @@ class OrderModifierTest extends FunctionalTest
     {
         if (!DB::get_conn()->supportsTransactions()) {
             $this->markTestSkipped(
-                'The Database doesn\'t support transactions.'
+                "The Database doesn't support transactions."
             );
         }
 
@@ -92,7 +98,7 @@ class OrderModifierTest extends FunctionalTest
         $this->assertEquals('522.5', $order->Total);
 
         $amounts = [];
-        foreach ($order->Modifiers()->sort('Sort') as $hasManyList) {
+        foreach ($order->Modifiers()->sort(['Sort' => 'ASC']) as $hasManyList) {
             $amounts[] = (string)$hasManyList->Amount;
         }
 
@@ -103,7 +109,7 @@ class OrderModifierTest extends FunctionalTest
         try {
             // Calculate will now fail!
             $order->calculate();
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
         }
 
         // reload order from DB
@@ -113,7 +119,7 @@ class OrderModifierTest extends FunctionalTest
         $this->assertEquals('522.5', $order->Total);
 
         $amounts = [];
-        foreach ($order->Modifiers()->sort('Sort') as $hasManyList) {
+        foreach ($order->Modifiers()->sort(['Sort' => 'ASC']) as $hasManyList) {
             $amounts[] = (string)$hasManyList->Amount;
         }
 
@@ -124,6 +130,7 @@ class OrderModifierTest extends FunctionalTest
     {
         $order = Order::create();
         $order->write();
+
         $orderItem = $this->mp3player->createItem(2);
         $orderItem->write();
         $order->Items()->add($orderItem);

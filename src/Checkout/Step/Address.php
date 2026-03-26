@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Checkout\Step;
 
 use SilverShop\Cart\ShoppingCart;
@@ -50,18 +52,18 @@ class Address extends CheckoutStep
 
     public function ShippingAddressForm(): CheckoutForm
     {
-        $checkoutForm = CheckoutForm::create($this->owner, 'ShippingAddressForm', $this->shippingconfig());
+        $checkoutForm = CheckoutForm::create($this->getOwner(), 'ShippingAddressForm', $this->shippingconfig());
         $checkoutForm->setActions(
             FieldList::create(
                 FormAction::create('setshippingaddress', _t('SilverShop\Checkout\Step\CheckoutStep.Continue', 'Continue'))
             )
         );
-        $this->owner->extend('updateShippingAddressForm', $checkoutForm);
+        $this->getOwner()->extend('updateShippingAddressForm', $checkoutForm);
 
         return $checkoutForm;
     }
 
-    public function setshippingaddress($data, $form): HTTPResponse
+    public function setshippingaddress(array $data, $form): HTTPResponse
     {
         $this->shippingconfig()->setData($form->getData());
         $step = null;
@@ -73,7 +75,8 @@ class Address extends CheckoutStep
             $order->BillingAddressID = $order->ShippingAddressID;
             $order->write();
         }
-        return $this->owner->redirect($this->NextStepLink($step));
+
+        return $this->getOwner()->redirect($this->NextStepLink($step));
     }
 
     public function billingconfig(): CheckoutComponentConfig
@@ -91,13 +94,13 @@ class Address extends CheckoutStep
 
     public function BillingAddressForm(): CheckoutForm
     {
-        $checkoutForm = CheckoutForm::create($this->owner, 'BillingAddressForm', $this->billingconfig());
+        $checkoutForm = CheckoutForm::create($this->getOwner(), 'BillingAddressForm', $this->billingconfig());
         $checkoutForm->setActions(
             FieldList::create(
                 FormAction::create('setbillingaddress', _t('SilverShop\Checkout\Step\CheckoutStep.Continue', 'Continue'))
             )
         );
-        $this->owner->extend('updateBillingAddressForm', $checkoutForm);
+        $this->getOwner()->extend('updateBillingAddressForm', $checkoutForm);
 
         return $checkoutForm;
     }
@@ -105,6 +108,6 @@ class Address extends CheckoutStep
     public function setbillingaddress($data, $form): HTTPResponse
     {
         $this->billingconfig()->setData($form->getData());
-        return $this->owner->redirect($this->NextStepLink());
+        return $this->getOwner()->redirect($this->NextStepLink());
     }
 }

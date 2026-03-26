@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Forms;
 
 use SilverShop\Page\CheckoutPage;
@@ -23,6 +25,7 @@ class OrderModifierForm extends Form
         if (Director::is_ajax()) {
             return $status; //TODO: allow for custom return types, eg json - similar to ShoppingCart::return_data()
         }
+
         Controller::curr()->redirect(CheckoutPage::find_link());
     }
 }

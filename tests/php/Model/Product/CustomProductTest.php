@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Tests\Model\Product;
 
 use SilverShop\Cart\ShoppingCart;
@@ -9,7 +11,7 @@ use SilverStripe\Dev\FunctionalTest;
  * @package    shop
  * @subpackage tests
  */
-class CustomProductTest extends FunctionalTest
+final class CustomProductTest extends FunctionalTest
 {
     protected static $use_draft_site = true;
 
@@ -18,7 +20,7 @@ class CustomProductTest extends FunctionalTest
         CustomProduct_OrderItem::class,
     ];
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         // clear session

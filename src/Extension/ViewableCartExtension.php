@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Extension;
 
 use PageController;
@@ -38,10 +40,8 @@ class ViewableCartExtension extends Extension
 
     public function getContinueLink(): string
     {
-        if ($cartPage = CartPage::get()->first()) {
-            if ($cartPage->ContinuePageID && $cartPage->ContinuePage()->exists()) {
-                return $cartPage->ContinuePage()->Link();
-            }
+        if (($cartPage = CartPage::get()->first()) && ($cartPage->ContinuePageID && $cartPage->ContinuePage()->exists())) {
+            return $cartPage->ContinuePage()->Link();
         }
 
         $maincategory = ProductCategory::get()

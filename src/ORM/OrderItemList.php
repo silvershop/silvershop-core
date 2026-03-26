@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\ORM;
 
 use SilverStripe\ORM\HasManyList;
@@ -41,6 +43,7 @@ class OrderItemList extends HasManyList
                 $total += $product->$field * $quantity;
             }
         }
+
         return $total;
     }
 

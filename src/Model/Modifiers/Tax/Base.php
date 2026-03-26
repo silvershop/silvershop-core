@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Model\Modifiers\Tax;
 
 use SilverShop\Model\Modifiers\OrderModifier;
@@ -36,6 +38,7 @@ class Base extends OrderModifier
                 ['Rate' => number_format($this->Rate * 100, 1)]
             );
         }
+
         return $title;
     }
 }

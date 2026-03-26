@@ -1,7 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Extension;
 
+use SilverStripe\Model\ArrayData;
+use SilverStripe\Core\Validation\ValidationException;
 use SilverShop\Forms\VariationForm;
 use SilverShop\Model\Variation\AttributeType;
 use SilverShop\Model\Variation\AttributeValue;
@@ -17,9 +21,7 @@ use SilverStripe\Forms\ListboxField;
 use SilverStripe\ORM\DataList;
 use SilverStripe\ORM\HasManyList;
 use SilverStripe\ORM\ManyManyList;
-use SilverStripe\ORM\ValidationException;
 use SilverStripe\Versioned\Versioned;
-use SilverStripe\View\ArrayData;
 use Symbiote\GridFieldExtensions\GridFieldOrderableRows;
 
 /**
@@ -41,6 +43,12 @@ class ProductVariationsExtension extends Extension
         'VariationAttributeTypes' => AttributeType::class,
     ];
 
+    private static array $scaffold_cms_fields_settings = [
+        'ignoreRelations' => [
+            'VariationAttributeTypes'
+        ]
+    ];
+
     /**
      * Adds variations specific fields to the CMS.
      */
@@ -59,14 +67,14 @@ class ProductVariationsExtension extends Extension
             $variationsGridField = GridField::create(
                 'Variations',
                 _t(__CLASS__ . '.Variations', 'Variations'),
-                $this->owner->Variations(),
+                $this->getOwner()->Variations(),
                 GridFieldConfig_RecordEditor::create(100)
             )
         ]);
 
         $variationsGridField->getConfig()->addComponent($sort = GridFieldOrderableRows::create('Sort'));
 
-        if ($this->owner->Variations()->exists()) {
+        if ($this->getOwner()->Variations()->exists()) {
             $fields->addFieldToTab(
                 'Root.Pricing',
                 LabelField::create(
@@ -84,7 +92,7 @@ class ProductVariationsExtension extends Extension
 
     public function PriceRange(): ?ArrayData
     {
-        $variations = $this->owner->Variations();
+        $variations = $this->getOwner()->Variations();
 
         if (!Product::config()->allow_zero_price) {
             $variations = $variations->filter('Price:GreaterThan', 0);
@@ -125,15 +133,15 @@ class ProductVariationsExtension extends Extension
         }
 
         $attrs = array_filter(array_values($attributes));
-        $set = Variation::get()->filter('ProductID', $this->owner->ID);
+        $set = Variation::get()->filter(['ProductID' => $this->getOwner()->ID]);
 
         foreach ($attrs as $i => $valueid) {
-            $alias = "A$i";
+            $alias = 'A' . $i;
             $set = $set->innerJoin(
                 'SilverShop_Variation_AttributeValues',
-                "\"SilverShop_Variation\".\"ID\" = \"$alias\".\"SilverShop_VariationID\"",
+                sprintf('"SilverShop_Variation"."ID" = "%s"."SilverShop_VariationID"', $alias),
                 $alias
-            )->where(["\"$alias\".\"SilverShop_AttributeValueID\" = ?" => $valueid]);
+            )->where([sprintf('"%s"."SilverShop_AttributeValueID" = ?', $alias) => $valueid]);
         }
 
         return $set->first();
@@ -151,19 +159,20 @@ class ProductVariationsExtension extends Extension
         if ($values !== []) {
             //TODO: get values dataobject set
             $avalues = $attributetype->convertArrayToValues($values);
-            $existingvariations = $this->owner->Variations();
+            $existingvariations = $this->getOwner()->Variations();
             if ($existingvariations->exists()) {
                 //delete old variation, and create new ones - to prevent modification of exising variations
                 foreach ($existingvariations as $oldvariation) {
                     $oldvalues = $oldvariation->AttributeValues();
                     foreach ($avalues as $value) {
                         $newvariation = $oldvariation->duplicate();
-                        $newvariation->InternalItemID = $this->owner->InternalItemID . '-' . $newvariation->ID;
+                        $newvariation->InternalItemID = $this->getOwner()->InternalItemID . '-' . $newvariation->ID;
                         $newvariation->AttributeValues()->addMany($oldvalues);
                         $newvariation->AttributeValues()->add($value);
                         $newvariation->write();
                         $existingvariations->add($newvariation);
                     }
+
                     $existingvariations->remove($oldvariation);
                     $oldvariation->AttributeValues()->removeAll();
                     $oldvariation->delete();
@@ -173,10 +182,10 @@ class ProductVariationsExtension extends Extension
             } else {
                 foreach ($avalues as $value) {
                     $variation = Variation::create();
-                    $variation->ProductID = $this->owner->ID;
-                    $variation->Price = $this->owner->BasePrice;
+                    $variation->ProductID = $this->getOwner()->ID;
+                    $variation->Price = $this->getOwner()->BasePrice;
                     $variation->write();
-                    $variation->InternalItemID = $this->owner->InternalItemID . '-' . $variation->ID;
+                    $variation->InternalItemID = $this->getOwner()->InternalItemID . '-' . $variation->ID;
                     $variation->AttributeValues()->add($value);
                     $variation->write();
                     $existingvariations->add($variation);
@@ -207,12 +216,13 @@ class ProductVariationsExtension extends Extension
                 'SilverShop_Variation',
                 '"SilverShop_Variation_AttributeValues"."SilverShop_VariationID" = "SilverShop_Variation"."ID"'
             )->where(
-                "TypeID = $type AND \"SilverShop_Variation\".\"ProductID\" = " . $this->owner->ID
+                sprintf('TypeID = %s AND "SilverShop_Variation"."ProductID" = ', $type) . $this->getOwner()->ID
             );
 
         if (!Product::config()->allow_zero_price) {
             return $list->where('"SilverShop_Variation"."Price" > 0');
         }
+
         return $list;
     }
 
@@ -226,16 +236,17 @@ class ProductVariationsExtension extends Extension
         if (!property_exists($this, 'owner')) {
             $remove = true;
         } else {
-            $staged = Versioned::get_by_stage($this->owner->ClassName, 'Stage')
-                ->byID($this->owner->ID);
-            $live = Versioned::get_by_stage($this->owner->ClassName, 'Live')
-                ->byID($this->owner->ID);
+            $staged = Versioned::get_by_stage($this->getOwner()->ClassName, 'Stage')
+                ->byID($this->getOwner()->ID);
+            $live = Versioned::get_by_stage($this->getOwner()->ClassName, 'Live')
+                ->byID($this->getOwner()->ID);
             if (!$staged && !$live) {
                 $remove = true;
             }
         }
+
         if ($remove) {
-            foreach ($this->owner->Variations() as $variation) {
+            foreach ($this->getOwner()->Variations() as $variation) {
                 $variation->delete();
                 $variation->destroy();
             }
@@ -244,7 +255,7 @@ class ProductVariationsExtension extends Extension
 
     public function updateFormClass(&$formClass): void
     {
-        if ($this->owner->Variations()->exists()) {
+        if ($this->getOwner()->Variations()->exists()) {
             $formClass = VariationForm::class;
         }
     }

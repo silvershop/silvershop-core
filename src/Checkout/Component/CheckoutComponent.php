@@ -1,14 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Checkout\Component;
 
+use SilverStripe\Core\Validation\ValidationException;
 use Exception;
 use SilverShop\Model\Order;
 use SilverShop\ShopTools;
 use SilverStripe\Core\Config\Configurable;
 use SilverStripe\Core\Injector\Injectable;
 use SilverStripe\Forms\FieldList;
-use SilverStripe\ORM\ValidationException;
 
 /**
  * CheckoutComponent

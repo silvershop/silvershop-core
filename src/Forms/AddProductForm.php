@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Forms;
 
+use SilverStripe\Forms\Validation\RequiredFieldsValidator;
 use SilverStripe\Control\RequestHandler;
 use SilverShop\Cart\ShoppingCart;
 use SilverShop\Cart\ShoppingCartController;
@@ -16,7 +19,6 @@ use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\Form;
 use SilverStripe\Forms\FormAction;
 use SilverStripe\Forms\NumericField;
-use SilverStripe\Forms\RequiredFields;
 
 /**
  * @package shop
@@ -64,7 +66,7 @@ class AddProductForm extends Form
         $this->saveablefields = $fields;
     }
 
-    public function addtocart($data, $form)
+    public function addtocart(array $data, $form)
     {
         if ($buyable = $this->getBuyable($data)) {
             $cart = ShoppingCart::singleton();
@@ -86,6 +88,7 @@ class AddProductForm extends Form
                     'good'
                 );
             }
+
             $cart->add($buyable, $quantity, $saveabledata);
             if (!ShoppingCartController::config()->direct_to_cart_page) {
                 $form->SessionMessage($cart->getMessage(), $cart->getMessageType());
@@ -104,6 +107,7 @@ class AddProductForm extends Form
         if ($this->controller->dataRecord instanceof Buyable) {
             return $this->controller->dataRecord;
         }
+
         return Product::get()->byID((int)$this->getRequest()->postVar('BuyableID'));
     }
 
@@ -120,7 +124,7 @@ class AddProductForm extends Form
 
             while ($count <= $this->maxquantity) {
                 $values[$count] = $count;
-                $count++;
+                ++$count;
             }
 
             $fieldList->push(DropdownField::create('Quantity', _t('SilverShop\Generic.Quantity', 'Quantity'), $values, 1));
@@ -145,7 +149,7 @@ class AddProductForm extends Form
 
     protected function getFormValidator()
     {
-        return RequiredFields::create(
+        return RequiredFieldsValidator::create(
             [
                 'Quantity',
             ]

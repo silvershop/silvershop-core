@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Tests\Model\Modifiers;
 
 use SilverShop\Model\Modifiers\Shipping\Simple;
@@ -10,9 +12,9 @@ use SilverStripe\Dev\SapphireTest;
  * @package    shop
  * @subpackage tests
  */
-class SimpleShippingModifierTest extends SapphireTest
+final class SimpleShippingModifierTest extends SapphireTest
 {
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         Config::modify()

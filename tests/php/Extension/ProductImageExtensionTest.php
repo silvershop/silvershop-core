@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Tests\Extension;
 
 use SilverShop\Page\Product;
@@ -12,7 +14,7 @@ use SilverStripe\SiteConfig\SiteConfig;
  * Tests for product image. These could be easily merged into the main
  * Product tests if desired, but those tests are currently non-functional.
  */
-class ProductImageExtensionTest extends SapphireTest
+final class ProductImageExtensionTest extends SapphireTest
 {
     protected static $fixture_file = [
         __DIR__ . '/../Fixtures/shop.yml',
@@ -20,12 +22,16 @@ class ProductImageExtensionTest extends SapphireTest
     ];
 
     protected Product $socks;
+
     protected Image $img1;
+
     protected Image $img2;
+
     protected Image $img3;
+
     protected SiteConfig $siteConfig;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -46,8 +52,8 @@ class ProductImageExtensionTest extends SapphireTest
         );
 
         $this->socks = $this->objFromFixture(Product::class, 'socks');
-        $this->img1 = Image::get()->filter('Name', 'ImageA.png')->first();
-        $this->img2 = Image::get()->filter('Name', 'ImageB.png')->first();
+        $this->img1 = Image::get()->filter(['Name' => 'ImageA.png'])->first();
+        $this->img2 = Image::get()->filter(['Name' => 'ImageB.png'])->first();
         $this->img3 = Image::create();
 
         $this->siteConfig = SiteConfig::current_site_config();
@@ -55,7 +61,7 @@ class ProductImageExtensionTest extends SapphireTest
         $this->siteConfig->write();
     }
 
-    function testProductWithImage(): void
+    public function testProductWithImage(): void
     {
         $this->socks->ImageID = $this->img2->ID;
         $image = $this->socks->Image();
@@ -63,27 +69,29 @@ class ProductImageExtensionTest extends SapphireTest
         $this->assertEquals($image->ID, $this->img2->ID, 'should not be the default');
     }
 
-    function testProductWithMissingImage(): void
+    public function testProductWithMissingImage(): void
     {
         $this->img3->Filename = 'assets/ProductImageTest3.png';
         $this->img3->write();
+
         $this->socks->ImageID = $this->img3->ID;
         $image = $this->socks->Image();
         $this->assertTrue($image && $image->exists(), 'should exist');
         $this->assertEquals($image->ID, $this->img1->ID, 'should be the default');
     }
 
-    function testProductWithNoImage(): void
+    public function testProductWithNoImage(): void
     {
         $image = $this->socks->Image();
         $this->assertTrue($image && $image->exists(), 'should exist');
         $this->assertEquals($image->ID, $this->img1->ID, 'should be the default');
     }
 
-    function testProductWithNoDefaultImage(): void
+    public function testProductWithNoDefaultImage(): void
     {
         $this->siteConfig->DefaultProductImageID = 0;
         $this->siteConfig->write();
+
         $image = $this->socks->Image();
         $this->assertFalse($image && $image->exists(), 'should not exist');
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Checkout;
 
 use ErrorException;
@@ -107,9 +109,9 @@ class OrderProcessor
         // Initiate payment, get the result back
         try {
             $serviceResponse = $paymentService->initiate($this->getGatewayData($gatewaydata));
-        } catch (\SilverStripe\Omnipay\Exception\Exception $ex) {
+        } catch (\SilverStripe\Omnipay\Exception\Exception $exception) {
             // error out when an exception occurs
-            $this->error($ex->getMessage());
+            $this->error($exception->getMessage());
             return null;
         }
 
@@ -142,7 +144,7 @@ class OrderProcessor
             ->filter(['OrderID' => $this->order->ID])
             ->count() - 1;
 
-        $transactionId = $this->order->Reference . ($numPayments > 0 ? "-$numPayments" : '');
+        $transactionId = $this->order->Reference . ($numPayments > 0 ? '-' . $numPayments : '');
 
         return array_merge(
             $customData,
@@ -186,10 +188,12 @@ class OrderProcessor
             );
             return false;
         }
+
         if (!$this->order->canPay(Security::getCurrentUser())) {
             $this->error(_t(__CLASS__ . ".CantPay", "Order can't be paid for."));
             return false;
         }
+
         $payment = Payment::create()->init(
             $gateway,
             $this->order->TotalOutstanding(true),
@@ -212,10 +216,8 @@ class OrderProcessor
             //place the order, if not already placed
             if ($this->canPlace($this->order)) {
                 $this->placeOrder();
-            } else {
-                if ($this->order->Locale) {
-                    ShopTools::install_locale($this->order->Locale);
-                }
+            } elseif ($this->order->Locale) {
+                ShopTools::install_locale($this->order->Locale);
             }
 
             if (($this->order->GrandTotal() > 0 && $this->order->TotalOutstanding(false) <= 0)
@@ -238,11 +240,13 @@ class OrderProcessor
             $this->error(_t(__CLASS__ . ".NoOrder", "Order does not exist."));
             return false;
         }
+
         //order status is applicable
         if (!$order->IsCart()) {
             $this->error(_t(__CLASS__ . ".NotCart", "Order is not a cart."));
             return false;
         }
+
         //order has products
         if ($order->Items()->Count() <= 0) {
             $this->error(_t(__CLASS__ . ".NoItems", "Order has no items."));
@@ -263,6 +267,7 @@ class OrderProcessor
             $this->error(_t(__CLASS__ . ".NoOrderStarted", "A new order has not yet been started."));
             return false;
         }
+
         if (!$this->canPlace($this->order)) { //final cart validation
             return false;
         }
@@ -276,7 +281,7 @@ class OrderProcessor
         }
 
         //update status
-        if ($this->order->TotalOutstanding(false)) {
+        if ($this->order->TotalOutstanding(false) !== 0.0) {
             $this->order->setField('Status', 'Unpaid');
         } else {
             $this->order->setField('Status', 'Paid');
@@ -295,6 +300,7 @@ class OrderProcessor
                     // suppressed error, for example from exif_read_data in image manipulation
                     return false;
                 }
+
                 throw new ErrorException($message, 0, $severity, $file, $line);
             },
             E_ALL & ~(E_STRICT | E_NOTICE | E_DEPRECATED | E_USER_DEPRECATED)
@@ -309,31 +315,36 @@ class OrderProcessor
                     $item->write();
                 }
             }
+
             $modifiers = $this->order->Modifiers();
             if ($modifiers->exists()) {
                 foreach ($modifiers as $modifier) {
                     $modifier->write();
                 }
             }
+
             //add member to order & customers group
             if ($member = Security::getCurrentUser()) {
                 if (!$this->order->MemberID) {
                     $this->order->MemberID = $member->ID;
                 }
+
                 $cgroup = ShopConfigExtension::current()->CustomerGroup();
                 if ($cgroup->exists()) {
                     $member->Groups()->add($cgroup);
                 }
             }
+
             //allow decorators to do stuff when order is saved.
             $this->order->extend('onPlaceOrder');
             $this->order->write();
-        } catch (Exception $ex) {
+        } catch (Exception $exception) {
             // Rollback the transaction if an error occurred
             if (DB::get_conn()->supportsTransactions()) {
                 DB::get_conn()->transactionRollback();
             }
-            $this->error($ex->getMessage());
+
+            $this->error($exception->getMessage());
             return false;
         } finally {
             // restore the error handler, no matter what

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Page;
 
 use SilverStripe\ORM\ManyManyList;
@@ -26,7 +28,7 @@ class ProductCategory extends Page implements i18nEntityProvider
 
     private static string $plural_name = 'Categories';
 
-    private static $icon_class = 'font-icon-p-archive';
+    private static string $cms_icon_class = 'font-icon-p-archive';
 
     private static string $table_name = 'SilverShop_ProductCategory';
 
@@ -55,6 +57,7 @@ class ProductCategory extends Page implements i18nEntityProvider
         if (!empty($recursive) && self::config()->include_child_groups) {
             $groupids += $this->AllChildCategoryIDs();
         }
+
         $products = Product::get()->filterAny(
             [
             'ParentID' => $groupids,
@@ -70,7 +73,7 @@ class ProductCategory extends Page implements i18nEntityProvider
                     ]
                 );
             } else {
-                $products = $products->filter('BasePrice:GreaterThan', 0);
+                $products = $products->filter(['BasePrice:GreaterThan' => 0]);
             }
         }
 
@@ -87,8 +90,7 @@ class ProductCategory extends Page implements i18nEntityProvider
         $ids = [$this->ID];
         $allids = [];
         do {
-            $ids = ProductCategory::get()
-                ->filter('ParentID', $ids)
+            $ids = ProductCategory::get()->filter(['ParentID' => $ids])
                 ->getIDList();
             $allids += $ids;
         } while (!empty($ids));
@@ -108,7 +110,7 @@ class ProductCategory extends Page implements i18nEntityProvider
             $ids += $this->AllChildCategoryIDs();
         }
 
-        return ProductCategory::get()->filter('ParentID', $ids);
+        return ProductCategory::get()->filter(['ParentID' => $ids]);
     }
 
     /**
@@ -119,8 +121,8 @@ class ProductCategory extends Page implements i18nEntityProvider
         if ($this->Parent() instanceof ProductCategory) {
             return $this->Parent()->GroupsMenu();
         }
-        return ProductCategory::get()
-            ->filter('ParentID', $this->ID);
+
+        return ProductCategory::get()->filter(['ParentID' => $this->ID]);
     }
 
     /**
@@ -136,8 +138,9 @@ class ProductCategory extends Page implements i18nEntityProvider
         while ($item && $level > 0) {
             $parts[] = $item->{$field};
             $item = $item->Parent;
-            $level--;
+            --$level;
         }
+
         return implode($separator, array_reverse($parts));
     }
 
@@ -149,7 +152,7 @@ class ProductCategory extends Page implements i18nEntityProvider
         foreach ($this->config()->sort_options as $key => $value) {
             $entities[__CLASS__ . '.' . $key] = [
                 $key,
-                "Sort by the '$value' field",
+                sprintf("Sort by the '%s' field", $value),
             ];
         }
 

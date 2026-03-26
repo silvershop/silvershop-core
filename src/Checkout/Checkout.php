@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Checkout;
 
 use SilverShop\Cart\ShoppingCart;
@@ -48,14 +50,18 @@ class Checkout
         if ($order === null) {
             $order = ShoppingCart::curr(); //roll back to current cart
         }
+
         if ($order->exists() && $order->isInDB()) {//check if order can go through checkout
             return Checkout::create($order);
         }
+
         return false;
     }
 
     protected Order $order;
+
     protected string $message = '';
+
     protected string $type = '';
 
     public function __construct(Order $order)
@@ -97,6 +103,7 @@ class Checkout
         if ($member = Security::getCurrentUser()) {
             $this->order->MemberID = $member->ID;
         }
+
         $this->order->write();
         $this->order->extend('onSetShippingAddress', $address);
 
@@ -109,6 +116,7 @@ class Checkout
         if ($member = Security::getCurrentUser()) {
             $this->order->MemberID = $member->ID;
         }
+
         $this->order->write();
         $this->order->extend('onSetBillingAddress', $address);
     }
@@ -127,6 +135,7 @@ class Checkout
                 ->clear('Checkout.PaymentMethod');
             return $this->error(_t(__CLASS__ . '.NoPaymentMethod', 'Payment method does not exist'));
         }
+
         ShopTools::getSession()->set('Checkout.PaymentMethod', $paymentmethod);
         return true;
     }
@@ -145,6 +154,7 @@ class Checkout
         if ($nice && isset($methods[$method])) {
             return $methods[$method];
         }
+
         return $method;
     }
 
@@ -156,11 +166,8 @@ class Checkout
         if (!CheckoutConfig::config()->membership_required) {
             return true;
         }
-        if (empty($member) || !($member instanceof Member)) {
-            return false;
-        }
 
-        return true;
+        return !empty($member) && $member instanceof Member;
     }
 
     /**

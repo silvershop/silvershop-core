@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Checkout\Component;
 
 use SilverShop\Model\Order;
@@ -25,6 +27,7 @@ class Notes extends CheckoutComponent
         if (isset($data['Notes'])) {
             $order->Notes = $data['Notes'];
         }
+
         //TODO: save this to an order log
 
         $order->write();

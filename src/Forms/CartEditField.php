@@ -1,7 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Forms;
 
+use SilverStripe\Model\List\SS_List;
+use SilverStripe\Model\List\ArrayList;
 use Closure;
 use SilverShop\Model\Order;
 use SilverShop\Model\Variation\Variation;
@@ -9,9 +13,8 @@ use SilverStripe\Forms\CheckboxField;
 use SilverStripe\Forms\DropdownField;
 use SilverStripe\Forms\FormField;
 use SilverStripe\Forms\TextField;
-use SilverStripe\ORM\ArrayList;
-use SilverStripe\ORM\SS_List;
-use SilverStripe\View\SSViewer;
+use SilverStripe\TemplateEngine\SSTemplateEngine;
+use SilverStripe\View\ViewLayerData;
 
 /**
  * Field for editing cart/items within a form
@@ -21,8 +24,11 @@ use SilverStripe\View\SSViewer;
 class CartEditField extends FormField
 {
     protected Order $cart;
+
     protected SS_List $items;
+
     protected $template = 'Cart';
+
     protected $editableItemsCallback;
 
     public function __construct($name, $title, $cart)
@@ -87,9 +93,9 @@ class CartEditField extends FormField
         // which broke modules like Display_Logic.
         $this->extend('onBeforeRender', $this, $editables, $customcartdata);
 
-        return SSViewer::execute_template(
+        return SSTemplateEngine::execute_template(
             $this->template,
-            $this->cart->customise($customcartdata),
+            ViewLayerData::create($this->cart->customise($customcartdata)),
             ['Editable' => true]
         );
     }
@@ -106,11 +112,13 @@ class CartEditField extends FormField
             if (!$buyable) {
                 continue;
             }
+
             // If the buyable is a variation, use the belonging product instead for variation-form generation
             if ($buyable instanceof Variation) {
                 $buyable = $buyable->Product();
             }
-            $name = $this->name . "[$item->ID]";
+
+            $name = $this->name . sprintf('[%s]', $item->ID);
             $quantity = TextField::create(
                 $name . '[Quantity]',
                 'Quantity',
@@ -132,6 +140,7 @@ class CartEditField extends FormField
                     );
                 }
             }
+
             $remove = CheckboxField::create($name . '[Remove]', _t('SilverShop\Generic.Remove', 'Remove'));
             $editables->push(
                 $item->customise(

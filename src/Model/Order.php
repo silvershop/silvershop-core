@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Model;
 
 use Exception;
@@ -264,6 +266,7 @@ class Order extends DataObject
         foreach (singleton(Order::class)->dbObject('Status')->enumValues(false) as $value) {
             $values[$value] = _t(__CLASS__ . '.STATUS_' . strtoupper($value), $value);
         }
+
         return $values;
     }
 
@@ -284,6 +287,7 @@ class Order extends DataObject
         if ($this->Notes) {
             $parts[] = LiteralField::create('Notes', $fs . $this->renderWith('SilverShop\Admin\OrderAdmin_Notes') . $fe);
         }
+
         $fieldList->addFieldsToTab('Root.Main', $parts);
 
         $fieldList->addFieldToTab('Root.Modifiers', GridField::create('Modifiers', 'Modifiers', $this->Modifiers()));
@@ -328,7 +332,7 @@ class Order extends DataObject
         }, ARRAY_FILTER_USE_KEY);
 
         $fieldList->push(
-            // TODO: Allow filtering by multiple statuses
+        // TODO: Allow filtering by multiple statuses
             DropdownField::create('Status', $this->fieldLabel('Status'))
                 ->setSource($statusOptions)
                 ->setHasEmptyDefault(true)
@@ -386,6 +390,7 @@ class Order extends DataObject
             $components->setDataQuery($query);
             $components = $components->forForeignID($this->ID);
         }
+
         return $components;
     }
 
@@ -434,7 +439,7 @@ class Order extends DataObject
      * Get final value of order.
      * Retrieves value from DataObject's record array.
      */
-    public function Total()
+    public function Total(): mixed
     {
         return $this->getField('Total');
     }
@@ -442,7 +447,7 @@ class Order extends DataObject
     /**
      * Alias for Total.
      */
-    public function GrandTotal()
+    public function GrandTotal(): mixed
     {
         return $this->Total();
     }
@@ -505,15 +510,16 @@ class Order extends DataObject
 
         switch ($this->Status) {
             case 'Unpaid' :
-            return self::config()->cancel_before_payment;
+                return self::config()->cancel_before_payment;
             case 'Paid' :
-            return self::config()->cancel_before_processing;
+                return self::config()->cancel_before_processing;
             case 'Processing' :
-            return self::config()->cancel_before_sending;
+                return self::config()->cancel_before_sending;
             case 'Sent' :
             case 'Complete' :
-            return self::config()->cancel_after_sending;
+                return self::config()->cancel_after_sending;
         }
+
         return false;
     }
 
@@ -530,10 +536,8 @@ class Order extends DataObject
         if (!in_array($this->Status, self::config()->payable_status)) {
             return false;
         }
-        if ($this->TotalOutstanding(true) > 0 && empty($this->Paid)) {
-            return true;
-        }
-        return false;
+
+        return $this->TotalOutstanding(true) > 0 && empty($this->Paid);
     }
 
     /**
@@ -605,9 +609,11 @@ class Order extends DataObject
         if ($this->hasMethod('overrideLatestEmail')) {
             return $this->overrideLatestEmail();
         }
+
         if ($this->MemberID && $this->Member()->exists() && ($this->Member()->LastEdited > $this->LastEdited || !$this->Email)) {
             return $this->Member()->Email;
         }
+
         return $this->getField('Email');
     }
 
@@ -621,18 +627,14 @@ class Order extends DataObject
 
         if ($this->FirstName) {
             $firstname = $this->FirstName;
-        } else {
-            if ($this->Member()->exists()) {
-                $firstname = $this->Member()->FirstName;
-            }
+        } elseif ($this->Member()->exists()) {
+            $firstname = $this->Member()->FirstName;
         }
 
         if ($this->Surname) {
             $surname = $this->Surname;
-        } else {
-            if ($this->Member()->exists()) {
-                $surname = $this->Member()->Surname;
-            }
+        } elseif ($this->Member()->exists()) {
+            $surname = $this->Member()->Surname;
         }
 
         return implode(' ', array_filter([$firstname, $surname]));
@@ -660,6 +662,7 @@ class Order extends DataObject
         if (!$this->SeparateBillingAddress && $this->ShippingAddressID === $this->BillingAddressID) {
             return $this->getShippingAddress();
         }
+
         return $this->getAddress('Billing');
     }
 
@@ -672,7 +675,7 @@ class Order extends DataObject
         $address = $this->getComponent($type . 'Address');
 
         if (!$address || !$address->exists() && $this->Member()) {
-            $address = $this->Member()->{"Default{$type}Address"}();
+            $address = $this->Member()->{sprintf('Default%sAddress', $type)}();
         }
 
         if (empty($address->Surname) && empty($address->FirstName)) {
@@ -716,6 +719,7 @@ class Order extends DataObject
         if ($this->IsSent()) {
             return true;
         }
+
         return $this->Status == 'Processing';
     }
 
@@ -739,17 +743,18 @@ class Order extends DataObject
      */
     public function generateReference(): void
     {
-        $reference = str_pad($this->ID, static::config()->get('reference_id_padding'), '0', STR_PAD_LEFT);
+        $reference = str_pad((string)$this->ID, static::config()->get('reference_id_padding'), '0', STR_PAD_LEFT);
 
         $this->extend('generateReference', $reference);
 
         $candidate = $reference;
         //prevent generating references that are the same
         $count = 0;
-        while (Order::get()->filter('Reference', $candidate)->count() > 0) {
-            $count++;
+        while (Order::get()->filter(['Reference' => $candidate])->count() > 0) {
+            ++$count;
             $candidate = $reference . '' . $count;
         }
+
         $this->Reference = $candidate;
     }
 
@@ -802,6 +807,7 @@ class Order extends DataObject
             foreach ($this->Items() as $hasManyList) {
                 $hasManyList->onPayment();
             }
+
             //all payment is settled
             $this->extend('onPaid');
 
@@ -841,7 +847,7 @@ class Order extends DataObject
         parent::onBeforeDelete();
     }
 
-    public function onAfterWrite(): void
+    protected function onAfterWrite(): void
     {
         parent::onAfterWrite();
 
@@ -872,14 +878,16 @@ class Order extends DataObject
         $val = "<div class='order'><h1>" . static::class . "</h1>\n<ul>\n";
         if ($this->record) {
             foreach ($this->record as $fieldName => $fieldVal) {
-                $val .= "\t<li>$fieldName: " . Debug::text($fieldVal) . "</li>\n";
+                $val .= sprintf('	<li>%s: ', $fieldName) . Debug::text($fieldVal) . "</li>\n";
             }
         }
+
         $val .= "</ul>\n";
         $val .= "<div class='items'><h2>Items</h2>";
         if ($this->Items()->exists()) {
             $val .= $this->Items()->debug();
         }
+
         $val .= "</div><div class='modifiers'><h2>Modifiers</h2>";
         if ($this->Modifiers()->exists()) {
             $val .= $this->Modifiers()->debug();
@@ -898,9 +906,9 @@ class Order extends DataObject
         // collect all the payment status values
         foreach ($this->dbObject('Status')->enumValues() as $value) {
             $key = strtoupper($value);
-            $entities[__CLASS__ . ".STATUS_$key"] = [
+            $entities[__CLASS__ . ('.STATUS_' . $key)] = [
                 $value,
-                "Translation of the order status '$value'",
+                sprintf("Translation of the order status '%s'", $value),
             ];
         }
 

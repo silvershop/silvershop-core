@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Model\Modifiers\Tax;
 
 use SilverShop\Model\Order;

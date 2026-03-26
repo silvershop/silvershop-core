@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Model\Product;
 
 use SilverShop\Page\Product;
@@ -45,6 +47,7 @@ class OrderItem extends \SilverShop\Model\OrderItem
         if ($this->ProductID && $this->ProductVersion && !$forcecurrent) {
             return Versioned::get_version(Product::class, $this->ProductID, $this->ProductVersion);
         }
+
         if ($this->ProductID
             && $product = Versioned::get_one_by_stage(
                 Product::class,
@@ -53,13 +56,14 @@ class OrderItem extends \SilverShop\Model\OrderItem
             )) {
             return $product;
         }
+
         return null;
     }
 
     public function onPlacement(): void
     {
         parent::onPlacement();
-        if ($product = $this->Product(true)) {
+        if ($product = $this->Product()) {
             $this->ProductVersion = $product->Version;
         }
     }

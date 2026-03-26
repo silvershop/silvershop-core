@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Model\Modifiers\Shipping;
 
 /**
@@ -38,6 +40,7 @@ class Weight extends Base
         if (!$totalWeight) {
             return $this->Amount = 0;
         }
+
         $amount = 0;
 
         $table = $this->config()->weight_cost;
@@ -55,6 +58,7 @@ class Weight extends Base
                 }
             }
         }
+
         return $this->Amount = $amount;
     }
 
@@ -78,15 +82,17 @@ class Weight extends Base
         if ($this->weight) {
             return $this->weight;
         }
+
         $weight = 0;
         $order = $this->Order();
         if ($order && $order->Items()->exists()) {
             foreach ($order->Items() as $orderItem) {
                 if ($product = $orderItem->Product()) {
-                    $weight = $weight + ($product->Weight * $orderItem->Quantity);
+                    $weight += $product->Weight * $orderItem->Quantity;
                 }
             }
         }
+
         return $this->weight = $weight;
     }
 }

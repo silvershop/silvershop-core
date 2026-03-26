@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Tests\Tasks;
 
 use SilverShop\Tasks\CartCleanupTask;
@@ -9,7 +11,7 @@ class FakeCartCleanupTask extends CartCleanupTask implements TestOnly
 {
     public $log = [];
 
-    public function log($msg): void
+    protected function log($msg): void
     {
         $this->log[] = $msg;
     }

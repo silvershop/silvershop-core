@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop;
 
+use TractorCow\Fluent\State\FluentState;
 use Psr\Container\NotFoundExceptionInterface;
 use SilverShop\Extension\ShopConfigExtension;
 use SilverStripe\Control\Controller;
@@ -40,8 +43,8 @@ class ShopTools
      */
     public static function get_current_locale(): string
     {
-        if (class_exists('TractorCow\Fluent\State\FluentState')) {
-            return singleton('TractorCow\Fluent\State\FluentState')->getLocale();
+        if (class_exists(FluentState::class)) {
+            return singleton(FluentState::class)->getLocale();
         }
 
         return i18n::get_locale();
@@ -53,15 +56,15 @@ class ShopTools
      *
      * @param string $locale the locale to install
      */
-    public static function install_locale($locale): void
+    public static function install_locale(?string $locale): void
     {
         // If the locale isn't given, silently fail (there might be carts that still have locale set to null)
-        if (empty($locale)) {
+        if (in_array($locale, [null, '', '0'], true)) {
             return;
         }
 
-        if (class_exists('TractorCow\Fluent\State\FluentState')) {
-            singleton('TractorCow\Fluent\State\FluentState')->setLocale($locale);
+        if (class_exists(FluentState::class)) {
+            singleton(FluentState::class)->setLocale($locale);
         }
 
         // Do something like Fluent does to install the locale
@@ -69,7 +72,7 @@ class ShopTools
 
         // LC_NUMERIC causes SQL errors for some locales (comma as decimal indicator) so skip
         foreach ([LC_COLLATE, LC_CTYPE, LC_MONETARY, LC_TIME] as $category) {
-            setlocale($category, "{$locale}.UTF-8", $locale);
+            setlocale($category, $locale . '.UTF-8', $locale);
         }
     }
 
@@ -84,7 +87,7 @@ class ShopTools
             return $session;
         }
 
-        if (Controller::has_curr() && ($httpRequest = Controller::curr()->getRequest())) {
+        if (Controller::curr() && ($httpRequest = Controller::curr()->getRequest())) {
             return $httpRequest->getSession();
         }
 
@@ -92,7 +95,7 @@ class ShopTools
             if ($session = Injector::inst()->get(HTTPRequest::class)->getSession()) {
                 return $session;
             }
-        } catch (NotFoundExceptionInterface $e) {
+        } catch (NotFoundExceptionInterface $notFoundException) {
             // No-Op
         }
 

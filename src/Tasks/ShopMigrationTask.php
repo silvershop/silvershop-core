@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Tasks;
 
 use SilverShop\Model\Modifiers\Shipping\Base;
@@ -7,6 +9,9 @@ use SilverShop\Model\Order;
 use SilverStripe\Dev\MigrationTask;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\DB;
+use SilverStripe\PolyExecution\PolyOutput;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputInterface;
 
 /**
  * TODO: Implement for 2.x to 3.x
@@ -19,10 +24,18 @@ class ShopMigrationTask extends MigrationTask
      */
     public static $batch_size = 250;
 
-    protected $title = 'Migrate Shop';
+    protected string $title = 'Migrate Shop';
 
-    protected $description = 'Where dev/build is not enough, this task updates database to work with latest version of shop module.
+    protected static string $description = 'Where dev/build is not enough, this task updates database to work with latest version of shop module.
 You may want to run the CartCleanupTask before migrating if you want to discard past carts.';
+
+    protected PolyOutput $output;
+
+    protected function execute(InputInterface $input, PolyOutput $output): int
+    {
+        $this->output = $output;
+        return parent::execute($input, $output);
+    }
 
     /**
      * Migrate upwards
@@ -36,23 +49,31 @@ You may want to run the CartCleanupTask before migrating if you want to discard 
         //TODO: migrate CheckoutPage->TermsPageID to ShopConfig
     }
 
+    public function down(): void
+    {
+        user_error('ShopMigrationTask: down() method not implemented', E_USER_WARNING);
+    }
+
     /**
      * batch process orders
      */
     public function migrateOrders(): void
     {
-        $start = $count = 0;
-        $batch = Order::get()->sort('Created', 'ASC')->limit($start, static::config()->get('batch_size'));
+        $start = 0;
+        $count = 0;
+        $batch = Order::get()->sort(['Created' => 'ASC'])->limit($start, static::config()->get('batch_size'));
         while ($batch->exists()) {
             foreach ($batch as $order) {
                 $this->migrate($order);
-                echo '. ';
-                $count++;
+                $this->output->write('. ');
+                ++$count;
             }
+
             $start += static::config()->get('batch_size');
             $batch = $batch->limit($start, static::config()->get('batch_size'));
-        };
-        echo "$count orders updated.\n<br/>";
+        }
+
+        $this->output->writeln($count . ' orders updated.');
     }
 
     /**
@@ -152,6 +173,7 @@ You may want to run the CartCleanupTask before migrating if you want to discard 
             $order->hasShippingCost = null;
             $order->Shipping = null;
         }
+
         if ($order->AddedTax) {
             $modifier2 = \SilverShop\Model\Modifiers\Tax\Base::create();
             $modifier2->Amount = $order->AddedTax < 0 ? abs($order->AddedTax) : $order->AddedTax;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Admin;
 
 use SilverShop\Model\Variation\AttributeType;

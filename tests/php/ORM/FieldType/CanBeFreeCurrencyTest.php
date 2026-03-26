@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Tests\ORM\FieldType;
 
 use SilverShop\ORM\FieldType\CanBeFreeCurrency;
 use SilverStripe\Dev\SapphireTest;
 
-class CanBeFreeCurrencyTest extends SapphireTest
+final class CanBeFreeCurrencyTest extends SapphireTest
 {
     public function testField(): void
     {
@@ -13,6 +15,6 @@ class CanBeFreeCurrencyTest extends SapphireTest
         $canBeFreeCurrency->setValue(20000);
         $this->assertEquals("$20,000.00", $canBeFreeCurrency->Nice());
         $canBeFreeCurrency->setValue(0);
-        $this->assertEquals("<span class=\"free\">FREE</span>", $canBeFreeCurrency->Nice());
+        $this->assertEquals('<span class="free">FREE</span>', $canBeFreeCurrency->Nice());
     }
 }

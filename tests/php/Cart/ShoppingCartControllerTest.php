@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Tests\Cart;
 
 use SilverShop\Cart\ShoppingCart;
@@ -17,7 +19,7 @@ use SilverStripe\Security\SecurityToken;
  *
  * Test manipulating via urls.
  */
-class ShoppingCartControllerTest extends FunctionalTest
+final class ShoppingCartControllerTest extends FunctionalTest
 {
     public static $fixture_file = [
         '../Fixtures/shop.yml',
@@ -65,7 +67,7 @@ class ShoppingCartControllerTest extends FunctionalTest
     protected $cart;
 
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -124,7 +126,7 @@ class ShoppingCartControllerTest extends FunctionalTest
 
         // join needed to provide ProductID
         $mp3playerItem = $items
-            ->innerJoin("SilverShop_Product_OrderItem", "\"SilverShop_OrderItem\".\"ID\" = \"SilverShop_Product_OrderItem\".\"ID\"")
+            ->innerJoin("SilverShop_Product_OrderItem", '"SilverShop_OrderItem"."ID" = "SilverShop_Product_OrderItem"."ID"')
             ->find('ProductID', (string) $this->mp3player->ID);
 
         $this->assertNotNull($mp3playerItem, "Mp3 player is in cart");
@@ -143,7 +145,7 @@ class ShoppingCartControllerTest extends FunctionalTest
 
         $items = ShoppingCart::curr()->Items();
         $mp3playeritem =
-            $items->innerJoin("SilverShop_Product_OrderItem", "\"SilverShop_OrderItem\".\"ID\" = \"SilverShop_Product_OrderItem\".\"ID\"")->find(
+            $items->innerJoin("SilverShop_Product_OrderItem", '"SilverShop_OrderItem"."ID" = "SilverShop_Product_OrderItem"."ID"')->find(
                 'ProductID',
                 (string) $this->mp3player->ID
             ); //join needed to provide ProductID

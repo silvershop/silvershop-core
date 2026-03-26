@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Model;
 
+use SilverStripe\Core\Validation\ValidationResult;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\DB;
-use SilverStripe\ORM\ValidationResult;
 use SilverStripe\Security\Member;
 use SilverStripe\Security\Security;
 
@@ -116,16 +118,16 @@ class OrderStatusLog extends DataObject
         // then we assume this is an upgrade (if a record was sent to the customer, then by definition it's visible to
         // the customer. However, we use the count check to ensure we only make the database change up until at least
         // one record has VisibleToCustomer = true (to avoid resetting it in future)
-        if (OrderStatusLog::get()->filter('VisibleToCustomer', true)->count() == 0) {
+        if (OrderStatusLog::get()->filter(['VisibleToCustomer' => true])->count() == 0) {
             // We don't have any records with VisibleToCustomer true, so update all records with SentToCustomer = true
-            $toUpdate = OrderStatusLog::get()->filter('SentToCustomer', true);
+            $toUpdate = OrderStatusLog::get()->filter(['SentToCustomer' => true]);
             $updated = 0;
 
             /** @var OrderStatusLog $log */
             foreach ($toUpdate as $log) {
                 $log->VisibleToCustomer = true;
                 $log->write();
-                $updated++;
+                ++$updated;
             }
 
             $message = sprintf(
@@ -137,12 +139,13 @@ class OrderStatusLog extends DataObject
         }
     }
 
-    public function onBeforeWrite(): void
+    protected function onBeforeWrite(): void
     {
         parent::onBeforeWrite();
         if (!$this->AuthorID && ($member = Security::getCurrentUser())) {
             $this->AuthorID = $member->ID;
         }
+
         if (!$this->Title) {
             $this->Title = 'Order Update';
         }
@@ -163,9 +166,7 @@ class OrderStatusLog extends DataObject
     {
         if ($this->OrderID) {
             /** @var OrderStatusLog $latestLog */
-            $latestLog = OrderStatusLog::get()
-                ->filter('OrderID', $this->OrderID)
-                ->sort('Created', 'DESC')
+            $latestLog = OrderStatusLog::get()->filter(['OrderID' => $this->OrderID])->sort(['Created' => 'DESC'])
                 ->first();
 
             if ($latestLog) {

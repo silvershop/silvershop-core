@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Model\Variation;
 
 use SilverStripe\Assets\Image;
 use SilverStripe\ORM\DataObject;
-use SilverStripe\ORM\FieldType\DBDecimal;
 use SilverStripe\Versioned\Versioned;
 
 /**
@@ -43,17 +44,19 @@ class OrderItem extends \SilverShop\Model\Product\OrderItem
                 $this->ProductVariationVersion
             );
         }
+
         if ($this->ProductVariationID
             && $product = Variation::get()->byID($this->ProductVariationID)) {
             return $product;
         }
+
         return null;
     }
 
     public function onPlacement(): void
     {
         parent::onPlacement();
-        if ($productVariation = $this->ProductVariation(true)) {
+        if ($productVariation = $this->ProductVariation()) {
             $this->ProductVariationVersion = $productVariation->Version;
         }
     }
@@ -63,6 +66,7 @@ class OrderItem extends \SilverShop\Model\Product\OrderItem
         if ($this->ProductVariation()) {
             return $this->ProductVariation()->getTitle();
         }
+
         return false;
     }
 
@@ -71,6 +75,7 @@ class OrderItem extends \SilverShop\Model\Product\OrderItem
         if (($variation = $this->ProductVariation()) && $variation->Image()->exists()) {
             return $variation->Image();
         }
+
         return $this->Product()->Image();
     }
 
@@ -79,6 +84,7 @@ class OrderItem extends \SilverShop\Model\Product\OrderItem
         if (($variation = $this->ProductVariation()) && $variation->Width) {
             return $variation->Width;
         }
+
         return $this->Product()->Width;
     }
 
@@ -87,6 +93,7 @@ class OrderItem extends \SilverShop\Model\Product\OrderItem
         if (($variation = $this->ProductVariation()) && $variation->Height) {
             return $variation->Height;
         }
+
         return $this->Product()->Height;
     }
 
@@ -95,6 +102,7 @@ class OrderItem extends \SilverShop\Model\Product\OrderItem
         if (($variation = $this->ProductVariation()) && $variation->Depth) {
             return $variation->Depth;
         }
+
         return $this->Product()->Depth;
     }
 
@@ -103,6 +111,7 @@ class OrderItem extends \SilverShop\Model\Product\OrderItem
         if (($variation = $this->ProductVariation()) && $variation->Weight) {
             return $variation->Weight;
         }
+
         return $this->Product()->Weight;
     }
 }

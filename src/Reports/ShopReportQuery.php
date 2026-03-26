@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Reports;
 
 use SilverStripe\ORM\Queries\SQLSelect;

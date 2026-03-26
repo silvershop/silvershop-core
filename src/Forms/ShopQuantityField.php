@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Forms;
 
+use SilverStripe\Model\ModelData;
 use SilverShop\Cart\ShoppingCart;
 use SilverShop\Model\Buyable;
 use SilverShop\Model\OrderItem;
@@ -9,9 +12,8 @@ use SilverShop\ShopTools;
 use SilverStripe\Forms\HiddenField;
 use SilverStripe\Forms\NumericField;
 use SilverStripe\ORM\FieldType\DBHTMLText;
-use SilverStripe\View\ViewableData;
 
-class ShopQuantityField extends ViewableData
+class ShopQuantityField extends ModelData
 {
     protected OrderItem $item;
 
@@ -30,14 +32,13 @@ class ShopQuantityField extends ViewableData
 
     public function __construct($object, $parameters = null)
     {
-        parent::__construct();
-
         if ($object instanceof Buyable) {
             $this->item = ShoppingCart::singleton()->get($object, $parameters);
             //provide a 0-quantity facade item if there is no such item in cart
             if (!$this->item) {
                 $this->item = $object->createItem();
             }
+
             $this->buyable = $object;
             //TODO: perhaps we should just store the product itself,
             //and do away with the facade, as it might be unnecessary complication
@@ -45,20 +46,18 @@ class ShopQuantityField extends ViewableData
             $this->item = $object;
             $this->buyable = $object->Buyable();
         }
+
         if (!$this->item) {
             user_error('ShopQuantityField: no item or product passed to constructor.');
         }
+
         $this->parameters = $parameters;
         //TODO: include javascript for easy update
     }
 
     public function setClasses(array $newclasses, $overwrite = false): void
     {
-        if ($overwrite) {
-            $this->classes = array_merge($this->classes, $newclasses);
-        } else {
-            $this->classes = $newclasses;
-        }
+        $this->classes = $overwrite ? array_merge($this->classes, $newclasses) : $newclasses;
     }
 
     public function setTemplate(string $template): void
@@ -107,7 +106,7 @@ class ShopQuantityField extends ViewableData
         return $this->item->removeLink();
     }
 
-    public function forTemplate(): DBHTMLText
+    public function forTemplate(): string
     {
         return $this->renderWith($this->template);
     }

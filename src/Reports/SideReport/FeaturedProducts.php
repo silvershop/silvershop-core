@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Reports\SideReport;
 
 use SilverShop\Page\Product;
@@ -34,7 +36,7 @@ class FeaturedProducts extends Report
 
     public function sourceRecords($params = null): DataList
     {
-        return Product::get()->filter('Featured', 1)->sort('Title');
+        return Product::get()->filter(['Featured' => 1])->sort(['Title' => 'ASC']);
     }
 
     public function columns(): array

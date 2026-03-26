@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Tests\Page;
 
 use SilverShop\Cart\ShoppingCart;
@@ -17,19 +19,25 @@ use SilverStripe\ORM\DataObject;
  *
  * @package shop
  */
-class ProductTest extends FunctionalTest
+final class ProductTest extends FunctionalTest
 {
     protected static $fixture_file = __DIR__ . '/../Fixtures/shop.yml';
+
     protected static bool $disable_theme = true;
+
     protected static bool $use_draft_site = true;
 
     protected Product $mp3player;
+
     protected Product $socks;
+
     protected Product $beachball;
+
     protected Product $tshirt;
+
     protected Product $pdfbrochure;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         ShoppingCart::singleton()->clear();

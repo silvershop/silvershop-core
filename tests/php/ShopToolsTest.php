@@ -1,13 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Tests;
 
 use SilverShop\ShopTools;
 use SilverStripe\Dev\SapphireTest;
 
-class ShopToolsTest extends SapphireTest
+final class ShopToolsTest extends SapphireTest
 {
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         ShopTest::setConfiguration();
