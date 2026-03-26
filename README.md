@@ -25,8 +25,8 @@ A tremendous thanks to [everyone that has already contributed](https://github.co
 
 See `composer.json` for exact set of dependencies.
 
-For a SilverStripe 4.x and 5.x compatible version, please use a 3.x release.
-For a SilverStripe 3.x compatible version, please use a 2.x release.
+* For a SilverStripe 4.x and 5.x compatible version, please use 3.0 or 3.1.
+* For a SilverStripe 3.x compatible version, please use a 2.x release.
 
 ## Stay up to date / get in touch
 
