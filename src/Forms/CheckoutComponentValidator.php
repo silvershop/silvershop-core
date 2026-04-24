@@ -1,41 +1,47 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Forms;
 
+use SilverStripe\Core\Validation\ValidationException;
+use SilverStripe\Forms\Form;
+use SilverStripe\Forms\Validation\RequiredFieldsValidator;
 use SilverShop\Checkout\CheckoutComponentConfig;
-use SilverStripe\Forms\RequiredFields;
-use SilverStripe\ORM\ValidationException;
 
 /**
  * Order validator makes sure everything is set correctly
  * and in place before an order can be placed.
  */
-class CheckoutComponentValidator extends RequiredFields
+class CheckoutComponentValidator extends RequiredFieldsValidator
 {
+//    protected Form $form;
+
     protected CheckoutComponentConfig $config;
 
     public function __construct(CheckoutComponentConfig $checkoutComponentConfig)
     {
         $this->config = $checkoutComponentConfig;
-        parent::__construct($this->config->getRequiredFields());
     }
 
     public function php($data): bool
     {
-        $valid = parent::php($data);
+        $valid = true;
         //do component validation
         try {
             $this->config->validateData($data);
-        } catch (ValidationException $e) {
-            $result = $e->getResult();
+        } catch (ValidationException $validationException) {
+            $result = $validationException->getResult();
             foreach ($result->getMessages() as $message) {
                 if (!$this->fieldHasError($message['fieldName'])) {
                     $this->validationError($message['fieldName'], $message['message'], 'bad');
                 }
             }
+
             $valid = false;
         }
-        if (!$valid) {
+
+        if(!$valid) {
             $this->form->sessionMessage(
                 _t(
                     __CLASS__ . ".InvalidDataMessage",
@@ -57,6 +63,7 @@ class CheckoutComponentValidator extends RequiredFields
                 }
             }
         }
+
         return false;
     }
 }

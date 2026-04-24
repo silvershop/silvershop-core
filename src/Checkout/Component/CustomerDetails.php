@@ -1,13 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Checkout\Component;
 
+use SilverStripe\Core\Validation\ValidationResult;
+use SilverStripe\Core\Validation\ValidationException;
 use SilverShop\Model\Order;
 use SilverStripe\Forms\EmailField;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\TextField;
-use SilverStripe\ORM\ValidationException;
-use SilverStripe\ORM\ValidationResult;
 use SilverStripe\Security\Security;
 
 class CustomerDetails extends CheckoutComponent
@@ -33,12 +35,13 @@ class CustomerDetails extends CheckoutComponent
         foreach ($this->getRequiredFields($order) as $field_name) {
             if (!isset($field_name)) {
                 $validationResult->addError(
-                    _t(__CLASS__ . '.No' . $field_name, "{$field_name} is required"),
+                    _t(__CLASS__ . '.No' . $field_name, $field_name . ' is required'),
                     "CustomerDetails"
                 );
                 throw ValidationException::create($validationResult);
             }
         }
+
         return true;
     }
 
@@ -51,6 +54,7 @@ class CustomerDetails extends CheckoutComponent
                 'Email' => $order->Email,
             ];
         }
+
         if ($member = Security::getCurrentUser()) {
             return [
                 'FirstName' => $member->FirstName,
@@ -58,6 +62,7 @@ class CustomerDetails extends CheckoutComponent
                 'Email' => $member->Email,
             ];
         }
+
         return [];
     }
 

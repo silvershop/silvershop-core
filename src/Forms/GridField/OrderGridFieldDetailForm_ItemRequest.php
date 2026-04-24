@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Forms\GridField;
 
 use SilverStripe\Forms\GridField\GridFieldDetailForm_ItemRequest;
@@ -25,12 +27,12 @@ class OrderGridFieldDetailForm_ItemRequest extends GridFieldDetailForm_ItemReque
         $form = parent::ItemEditForm();
         $printlink = $this->Link('printorder') . '?print=1';
         $printwindowjs = <<<JS
-            window.open('$printlink', 'print_order', 'toolbar=0,scrollbars=1,location=1,statusbar=0,menubar=0,resizable=1,width=800,height=600,left = 50,top = 50');return false;
+            window.open('{$printlink}', 'print_order', 'toolbar=0,scrollbars=1,location=1,statusbar=0,menubar=0,resizable=1,width=800,height=600,left = 50,top = 50');return false;
 JS;
         $form->Actions()->push(
             LiteralField::create(
                 'PrintOrder',
-                "<button class=\"no-ajax grid-print-button btn action btn-primary font-icon-print\" onclick=\"javascript:$printwindowjs\">"
+                sprintf('<button class="no-ajax grid-print-button btn action btn-primary font-icon-print" onclick="javascript:%s">', $printwindowjs)
                 . _t('SilverShop\Model\Order.Print', 'Print') . '</button>'
             )
         );
@@ -46,11 +48,12 @@ JS;
         Requirements::clear();
         //include print javascript, if print argument is provided
         if (isset($_REQUEST['print']) && $_REQUEST['print']) {
-            Requirements::customScript('if(document.location.href.indexOf(\'print=1\') > 0) {window.print();}');
+            Requirements::customScript("if(document.location.href.indexOf('print=1') > 0) {window.print();}");
         }
+
         $title = _t('SilverShop\Model\Order.Invoice', 'Invoice');
         if ($id = $this->popupController->getRequest()->param('ID')) {
-            $title .= " #$id";
+            $title .= ' #' . $id;
         }
 
         return $this->record->customise(

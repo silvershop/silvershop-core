@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Tests\Forms;
 
 use SilverShop\Cart\ShoppingCart;
@@ -8,7 +10,7 @@ use SilverShop\Page\Product;
 use SilverShop\Page\ProductController;
 use SilverStripe\Dev\FunctionalTest;
 
-class AddProductFormTest extends FunctionalTest
+final class AddProductFormTest extends FunctionalTest
 {
     public static $fixture_file = "../Fixtures/shop.yml";
 

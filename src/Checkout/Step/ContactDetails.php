@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Checkout\Step;
 
 use SilverShop\Cart\ShoppingCart;
@@ -33,19 +35,23 @@ class ContactDetails extends CheckoutStep
                 'OrderForm' => $form,
             ];
         }
+
         if (!self::config()->skip_if_logged_in) {
             return [
                 'OrderForm' => $form,
             ];
         }
+
         if (!Security::getCurrentUser()) {
             return [
                 'OrderForm' => $form,
             ];
         }
+
         if ($form->getValidator()->validate()->isValid()) {
             return Controller::curr()->redirect($this->NextStepLink());
         }
+
         $form->clearMessage();
 
         return [
@@ -59,16 +65,18 @@ class ContactDetails extends CheckoutStep
         if (!$cart instanceof Order) {
             return false;
         }
+
         $checkoutComponentConfig = CheckoutComponentConfig::create(ShoppingCart::curr());
         $checkoutComponentConfig->addComponent(CustomerDetails::create());
-        $checkoutForm = CheckoutForm::create($this->owner, 'ContactDetailsForm', $checkoutComponentConfig);
+
+        $checkoutForm = CheckoutForm::create($this->getOwner(), 'ContactDetailsForm', $checkoutComponentConfig);
         $checkoutForm->setRedirectLink($this->NextStepLink());
         $checkoutForm->setActions(
             FieldList::create(
                 FormAction::create('checkoutSubmit', _t('SilverShop\Checkout\Step\CheckoutStep.Continue', 'Continue'))
             )
         );
-        $this->owner->extend('updateContactDetailsForm', $checkoutForm);
+        $this->getOwner()->extend('updateContactDetailsForm', $checkoutForm);
 
         return $checkoutForm;
     }

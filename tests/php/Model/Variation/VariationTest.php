@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Tests\Model\Variation;
 
 use SilverShop\Cart\ShoppingCart;
@@ -18,18 +20,23 @@ use SilverStripe\Dev\SapphireTest;
  * @package    shop
  * @subpackage tests
  */
-class VariationTest extends SapphireTest
+final class VariationTest extends SapphireTest
 {
     public static $fixture_file   = __DIR__ . '/../../Fixtures/variations.yml';
+
     public static bool $disable_theme  = true;
+
     protected static bool $use_draft_site = true;
 
     protected Product $mp3player;
+
     protected Product $socks;
+
     protected Product $ball;
+
     protected Variation $redLarge;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         ShoppingCart::singleton()->clear();

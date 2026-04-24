@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Cart;
 
+use SilverStripe\Core\Validation\ValidationException;
 use Exception;
 use SilverShop\Extension\OrderManipulationExtension;
 use SilverShop\Extension\ProductVariationsExtension;
@@ -14,7 +17,7 @@ use SilverShop\ShopTools;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Config\Configurable;
 use SilverStripe\Core\Injector\Injectable;
-use SilverStripe\ORM\ValidationException;
+use SilverStripe\ORM\FieldType\DBField;
 use SilverStripe\Security\Member;
 use SilverStripe\Security\Security;
 
@@ -35,8 +38,11 @@ class ShoppingCart
     private static string $cartid_session_name = 'SilverShop.shoppingcartid';
 
     private $order;
+
     private bool $calculateonce = false;
-    private string $message = '';
+
+    private DBField|string $message = '';
+
     private string $type = '';
 
     /**
@@ -62,6 +68,7 @@ class ShoppingCart
                 ]
             )->first();
         }
+
         if (!$this->calculateonce && $this->order) {
             $this->order->calculate();
             $this->calculateonce = true;
@@ -80,6 +87,7 @@ class ShoppingCart
         if (!$order->IsCart()) {
             trigger_error('Passed Order object is not cart status', E_ERROR);
         }
+
         $this->order = $order;
         $session = ShopTools::getSession();
         $session->set(self::config()->cartid_session_name, $order->ID);
@@ -95,10 +103,12 @@ class ShoppingCart
         if ($this->current() instanceof Order) {
             return $this->current();
         }
+
         $this->order = Order::create();
         if (Member::config()->login_joins_cart && ($member = Security::getCurrentUser())) {
             $this->order->MemberID = $member->ID;
         }
+
         $this->order->write();
         $this->order->extend('onStartOrder');
 
@@ -409,13 +419,13 @@ class ShoppingCart
     {
         $session = ShopTools::getSession();
         $sessionId = $session->get(self::config()->cartid_session_name);
-        $order = Order::get()
-            ->filter('Status:not', 'Cart')
+        $order = Order::get()->filter(['Status:not' => 'Cart'])
             ->byId($sessionId);
 
         if ($order && !$order->IsCart()) {
             OrderManipulationExtension::add_session_order($order);
         }
+
         // in case there was no order requested
         // OR there was an order requested AND it's the same one as currently in the session,
         // then clear the cart. This check is here to prevent clearing of the cart if the user just
@@ -442,8 +452,10 @@ class ShoppingCart
             if (!$order instanceof Order) {
                 return $this->error(_t(__CLASS__ . '.NoCartFound', 'No cart found.'));
             }
+
             $order->write();
         }
+
         $this->message(_t(__CLASS__ . '.Cleared', 'Cart was successfully cleared.'));
 
         return true;
@@ -451,9 +463,8 @@ class ShoppingCart
 
     /**
      * Store a new error.
-     * @return null
      */
-    protected function error(string $message)
+    protected function error(string $message): null
     {
         $this->message($message, 'bad');
 
@@ -463,16 +474,16 @@ class ShoppingCart
     /**
      * Store a message to be fed back to user.
      *
-     * @param string $message
+     * @param DBField|string $message - the message to be stored (DB Field for link support - e.g. cart link)
      * @param string $type    - good, bad, warning
      */
-    protected function message(string $message, string $type = 'good'): void
+    protected function message(DBField|string $message, string $type = 'good'): void
     {
         $this->message = $message;
         $this->type = $type;
     }
 
-    public function getMessage(): string
+    public function getMessage():  DBField|string
     {
         return $this->message;
     }

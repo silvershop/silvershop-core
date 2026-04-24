@@ -1,7 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Checkout\Component;
 
+use SilverStripe\Security\Validation\PasswordValidator;
+use SilverStripe\Core\Validation\ValidationResult;
+use SilverStripe\Core\Validation\ValidationException;
+use SilverStripe\Security\Validation\RulesPasswordValidator;
 use SilverShop\Checkout\Checkout;
 use SilverShop\Checkout\ShopMemberFactory;
 use SilverShop\Extension\ShopConfigExtension;
@@ -12,11 +18,8 @@ use SilverStripe\Forms\ConfirmedPasswordField;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\PasswordField;
 use SilverStripe\Forms\TextField;
-use SilverStripe\ORM\ValidationException;
-use SilverStripe\ORM\ValidationResult;
 use SilverStripe\Security\IdentityStore;
 use SilverStripe\Security\Member;
-use SilverStripe\Security\PasswordValidator;
 use SilverStripe\Security\Security;
 
 /**
@@ -30,7 +33,7 @@ class Membership extends CheckoutComponent
     protected $confirmed;
 
     /**
-     * @var PasswordValidator
+     * @var RulesPasswordValidator
      */
     protected $passwordValidator;
 
@@ -45,8 +48,8 @@ class Membership extends CheckoutComponent
         if (!$validator) {
             $this->passwordValidator = Member::password_validator();
 
-            if (!$this->passwordValidator) {
-                $this->passwordValidator = PasswordValidator::create();
+            if (!$this->passwordValidator instanceof PasswordValidator) {
+                $this->passwordValidator = RulesPasswordValidator::create();
                 $this->passwordValidator->setMinLength(5);
                 $this->passwordValidator->setTestNames(
                     ["lowercase", "uppercase", "digits", "punctuation"]
@@ -79,6 +82,7 @@ class Membership extends CheckoutComponent
         if (Security::getCurrentUser() || !Checkout::membership_required()) {
             return [];
         }
+
         return [
             Member::config()->unique_identifier_field,
             'Password',
@@ -92,6 +96,7 @@ class Membership extends CheckoutComponent
             return ConfirmedPasswordField::create('Password', _t('SilverShop\Checkout\CheckoutField.Password', 'Password'))
                 ->setCanBeEmpty(!Checkout::membership_required());
         }
+
         return PasswordField::create('Password', _t('SilverShop\Checkout\CheckoutField.Password', 'Password'));
     }
 
@@ -100,6 +105,7 @@ class Membership extends CheckoutComponent
         if (Security::getCurrentUser()) {
             return true;
         }
+
         $validationResult = ValidationResult::create();
         if (Checkout::membership_required() || !empty($data['Password'])) {
             $member = Member::create($data);
@@ -129,9 +135,11 @@ class Membership extends CheckoutComponent
                 }
             }
         }
+
         if (!$validationResult->isValid()) {
             throw ValidationException::create($validationResult);
         }
+
         return true;
     }
 
@@ -143,6 +151,7 @@ class Membership extends CheckoutComponent
             $idf = Member::config()->unique_identifier_field;
             $data[$idf] = $member->{$idf};
         }
+
         return $data;
     }
 
@@ -154,6 +163,7 @@ class Membership extends CheckoutComponent
         if (Security::getCurrentUser()) {
             return $order;
         }
+
         if (!Checkout::membership_required() && empty($data['Password'])) {
             return $order;
         }
@@ -176,15 +186,18 @@ class Membership extends CheckoutComponent
             $address->write();
             $member->DefaultBillingAddressID = $order->BillingAddressID;
         }
+
         if ($order->ShippingAddressID) {
             $address = $order->getShippingAddress();
             $address->MemberID = $member->ID;
             $address->write();
             $member->DefaultShippingAddressID = $order->ShippingAddressID;
         }
+
         if ($member->isChanged()) {
             $member->write();
         }
+
         return $order;
     }
 

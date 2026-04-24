@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Reports;
 
 use SilverShop\Model\Order;
@@ -35,7 +37,7 @@ class TaxReport extends ShopPeriodReport
         ];
     }
 
-    public function query($params): ShopReportQuery|SQLSelect
+    public function query(array $params): ShopReportQuery|SQLSelect
     {
         return parent::query($params)
             ->addInnerJoin(

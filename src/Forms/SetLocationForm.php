@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Forms;
 
 use SilverStripe\Control\RequestHandler;
@@ -22,6 +24,7 @@ class SetLocationForm extends Form
         );
         $countryfield->setHasEmptyDefault(true);
         $countryfield->setEmptyString(_t(__CLASS__ . '.ChooseCountry', 'Choose country...'));
+
         $actions = FieldList::create(
             FormAction::create("setLocation", "set")
                 ->setUseButtonTag(Config::inst()->get(ShopConfigExtension::class, 'forms_use_button_tag'))

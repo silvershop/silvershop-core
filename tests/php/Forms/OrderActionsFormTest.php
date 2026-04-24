@@ -1,7 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Tests\Forms;
 
+use Omnipay\Common\GatewayFactory;
+use Omnipay\Common\Message\AbstractResponse;
+use Omnipay\Common\Message\AbstractRequest;
+use Omnipay\Common\AbstractGateway;
 use PHPUnit\Framework\MockObject\MockObject;
 use SilverShop\Extension\OrderManipulationExtension;
 use SilverShop\Forms\OrderActionsForm;
@@ -19,7 +25,7 @@ use SilverStripe\Omnipay\GatewayInfo;
 use SilverStripe\Omnipay\Model\Payment;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
-class OrderActionsFormTest extends FunctionalTest
+final class OrderActionsFormTest extends FunctionalTest
 {
     protected static $fixture_file = [
         __DIR__ . '/../Fixtures/Pages.yml',
@@ -33,9 +39,10 @@ class OrderActionsFormTest extends FunctionalTest
     ];
 
     protected Order $order;
+
     protected CheckoutPage $checkoutPage;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         ShopTest::setConfiguration();
@@ -63,7 +70,7 @@ class OrderActionsFormTest extends FunctionalTest
     {
         Config::modify()->set(GatewayInfo::class, 'Dummy', ['is_offsite' => true]);
         $mockObject = $this->buildPaymentGatewayStub(true, 'test-' . $this->order->ID, true);
-        Injector::inst()->registerService($this->stubGatewayFactory($mockObject), 'Omnipay\Common\GatewayFactory');
+        Injector::inst()->registerService($this->stubGatewayFactory($mockObject), GatewayFactory::class);
 
         $contentController = ModelAsController::controller_for($this->checkoutPage);
 
@@ -88,7 +95,7 @@ class OrderActionsFormTest extends FunctionalTest
     public function testOnsitePayment(): void
     {
         $mockObject = $this->buildPaymentGatewayStub(true, 'test-' . $this->order->ID, false);
-        Injector::inst()->registerService($this->stubGatewayFactory($mockObject), 'Omnipay\Common\GatewayFactory');
+        Injector::inst()->registerService($this->stubGatewayFactory($mockObject), GatewayFactory::class);
 
         $contentController = ModelAsController::controller_for($this->checkoutPage);
 
@@ -138,16 +145,17 @@ class OrderActionsFormTest extends FunctionalTest
         $requiredCount = 0;
         foreach ($orderActionsFormValidator->getErrors() as $error) {
             if ($error['messageType'] == 'required') {
-                $requiredCount++;
+                ++$requiredCount;
             }
         }
+
         // 3 required fields missing
         $this->assertEquals(3, $requiredCount);
     }
 
     protected function stubGatewayFactory($stubGateway): MockObject
     {
-        $mock = $this->getMockBuilder('Omnipay\Common\GatewayFactory')->getMock();
+        $mock = $this->getMockBuilder(GatewayFactory::class)->getMock();
         $mock->expects($this->any())->method('create')->will($this->returnValue($stubGateway));
         return $mock;
     }
@@ -160,7 +168,7 @@ class OrderActionsFormTest extends FunctionalTest
         //--------------------------------------------------------------------------------------------------------------
         // request and response
 
-        $mockResponse = $this->getMockBuilder('Omnipay\Common\Message\AbstractResponse')
+        $mockResponse = $this->getMockBuilder(AbstractResponse::class)
             ->disableOriginalConstructor()->getMock();
 
         $mockResponse->expects($this->any())
@@ -179,7 +187,7 @@ class OrderActionsFormTest extends FunctionalTest
         $mockResponse->expects($this->any())
             ->method('getTransactionReference')->will($this->returnValue($transactionReference));
 
-        $mockRequest = $this->getMockBuilder('Omnipay\Common\Message\AbstractRequest')
+        $mockRequest = $this->getMockBuilder(AbstractRequest::class)
             ->disableOriginalConstructor()->getMock();
 
         $mockRequest->expects($this->any())
@@ -192,8 +200,9 @@ class OrderActionsFormTest extends FunctionalTest
         //--------------------------------------------------------------------------------------------------------------
         // Build the gateway
 
-        $mock = $this->getMockBuilder('Omnipay\Common\AbstractGateway')
-            ->setMethods(['purchase', 'supportsCompletePurchase', 'getName'])
+        $mock = $this->getMockBuilder(AbstractGateway::class)
+            ->addMethods(['purchase'])
+            ->onlyMethods(['supportsCompletePurchase', 'getName'])
             ->getMock();
 
         $mock->expects($this->any())

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Dev;
 
 use SilverStripe\Control\Controller;
@@ -22,7 +24,7 @@ class ShopDevelopmentAdmin extends Controller
         'index' => true
     ];
 
-    public function init()
+    protected function init()
     {
         parent::init();
 
@@ -50,5 +52,6 @@ class ShopDevelopmentAdmin extends Controller
         $debugView = DebugView::create();
         $debugView->renderHeader();
         $debugView->renderInfo(_t('SilverShop\Generic.DevToolsTitle', 'Shop Development Tools'), Director::absoluteBaseURL());
+        return null;
     }
 }

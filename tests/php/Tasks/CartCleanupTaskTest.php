@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Tests\Tasks;
 
 use SilverShop\Model\Order;
@@ -8,12 +10,14 @@ use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\SapphireTest;
 use SilverStripe\ORM\DB;
 use SilverStripe\ORM\FieldType\DBDatetime;
+use SilverStripe\PolyExecution\PolyOutput;
+use Symfony\Component\Console\Input\ArrayInput;
 
 /**
  * @package    shop
  * @subpackage tests
  */
-class CartCleanupTaskTest extends SapphireTest
+final class CartCleanupTaskTest extends SapphireTest
 {
     protected $usesDatabase = true;
 
@@ -38,7 +42,10 @@ class CartCleanupTaskTest extends SapphireTest
         DB::query('UPDATE "SilverShop_Order" SET "LastEdited" = \'2014-01-31 10:00:00\' WHERE "ID" = ' . $orderPaidOldID);
 
         $fakeCartCleanupTask = FakeCartCleanupTask::create();
-        $fakeCartCleanupTask->run(null);
+        $fakeCartCleanupTask->run(
+            new ArrayInput([]),
+            new PolyOutput(PolyOutput::FORMAT_ANSI)
+        );
 
         $this->assertInstanceOf(Order::class, Order::get()->byID($orderRunningRecentID));
         $this->assertNull(Order::get()->byID($orderRunningOldID));

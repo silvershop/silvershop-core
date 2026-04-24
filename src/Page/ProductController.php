@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Page;
 
 use PageController;
@@ -16,18 +18,18 @@ class ProductController extends PageController
     public function Form()
     {
         $form = Injector::inst()->create($this->getFormClass(), $this, 'Form');
-        $this->extend('updateForm', $form);
+        $this->data()->extend('updateForm', $form);
         return $form;
     }
 
     /**
-    * Get the form class to use to edit this product in the frontend
-    * @return string FQCN
-    */
+     * Get the form class to use to edit this product in the frontend
+     * @return string FQCN
+     */
     public function getFormClass(): string
     {
         $formClass = AddProductForm::class;
-        $this->extend('updateFormClass', $formClass);
+        $this->data()->extend('updateFormClass', $formClass);
         return $formClass;
     }
 }

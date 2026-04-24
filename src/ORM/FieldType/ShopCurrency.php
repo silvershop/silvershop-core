@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\ORM\FieldType;
 
 use SilverStripe\ORM\FieldType\DBCurrency;
@@ -42,7 +44,7 @@ class ShopCurrency extends DBCurrency
         'NiceOrEmpty' => 'HTMLFragment',
     ];
 
-    public function Nice(): string|float
+    public function Nice(): string
     {
         if (self::config()->get('use_free_text') && $this->value == 0) {
             return _t(__CLASS__ . '.Free', 'Free');
@@ -55,11 +57,8 @@ class ShopCurrency extends DBCurrency
             self::config()->decimal_delimiter,
             self::config()->thousand_delimiter
         );
-        if ($this->config()->append_symbol) {
-            $val = $val . ' ' . $symbol;
-        } else {
-            $val = $symbol . $val;
-        }
+        $val = $this->config()->append_symbol ? $val . ' ' . $symbol : $symbol . $val;
+
         if ($this->value < 0) {
             return sprintf(self::config()->negative_value_format, $val);
         }
@@ -93,6 +92,7 @@ class ShopCurrency extends DBCurrency
         if ($this->value != 0) {
             return $this->Nice();
         }
+
         return '';
     }
 }

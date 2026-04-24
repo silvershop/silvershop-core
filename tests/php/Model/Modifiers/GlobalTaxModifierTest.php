@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Tests\Model\Modifiers;
 
 use SilverShop\Model\Modifiers\Tax\GlobalTax;
@@ -7,9 +9,9 @@ use SilverShop\Model\Order;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\SapphireTest;
 
-class GlobalTaxModifierTest extends SapphireTest
+final class GlobalTaxModifierTest extends SapphireTest
 {
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 

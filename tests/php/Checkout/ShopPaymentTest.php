@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Tests\Checkout;
 
+use Omnipay\Common\GatewayFactory;
 use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
@@ -21,19 +24,21 @@ use SilverStripe\Dev\TestSession;
 use SilverStripe\Omnipay\Model\Payment;
 use Symfony\Component\HttpFoundation\Request;
 
-class ShopPaymentTest extends FunctionalTest
+final class ShopPaymentTest extends FunctionalTest
 {
     protected static $fixture_file = [
         __DIR__ . '/../Fixtures/Pages.yml',
         __DIR__ . '/../Fixtures/shop.yml',
     ];
+
     public static bool $disable_theme = true;
+
     protected $autoFollowRedirection = false;
 
     /** @var MockHandler */
     protected $mockHandler;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         ShoppingCart::singleton()->clear();
@@ -51,7 +56,7 @@ class ShopPaymentTest extends FunctionalTest
             ]
         )->set(
             Injector::class,
-            'Omnipay\Common\GatewayFactory',
+            GatewayFactory::class,
             [
                 'class' => TestGatewayFactory::class
             ]
@@ -92,7 +97,7 @@ class ShopPaymentTest extends FunctionalTest
             [
                 'number' => '4242424242424242',
                 'expiryMonth' => '12',
-                'expiryYear' => '2025',
+                'expiryYear' => date('Y'), // Use the current year to prevent from expired card
                 'cvv' => '123'
             ]
         );
@@ -115,7 +120,7 @@ class ShopPaymentTest extends FunctionalTest
             [
                 'number' => '4242424242424242',
                 'expiryMonth' => '12',
-                'expiryYear' => '2025',
+                'expiryYear' => date('Y'), // Use the current year to prevent from expired card
                 'cvv' => '123'
             ]
         );
@@ -157,7 +162,7 @@ class ShopPaymentTest extends FunctionalTest
         //bring back client session
         $this->mainSession = $oldsession;
         // complete the order
-        $response = $this->get("paymentendpoint/$identifier/complete", $oldsession->session());
+        $response = $this->get(sprintf('paymentendpoint/%s/complete', $identifier), $oldsession->session());
 
         //reload cart as new order
         $order = Order::get()->byId($cart->ID);
@@ -168,6 +173,7 @@ class ShopPaymentTest extends FunctionalTest
     }
 
     protected $httpClient;
+
     protected $httpRequest;
 
     protected function getHttpClient()
@@ -205,9 +211,12 @@ class ShopPaymentTest extends FunctionalTest
         $testspath = BASE_PATH . '/vendor/omnipay';
 
         foreach ((array)$paths as $path) {
-            $this->mockHandler->append(
-                Message::parseResponse(file_get_contents("{$testspath}/{$path}"))
-            );
+            $fullPath = sprintf('%s/%s', $testspath, $path);
+            $contents = file_get_contents($fullPath);
+            if ($contents === false) {
+                $this->markTestSkipped(sprintf('Mock file not found: %s', $fullPath));
+            }
+            $this->mockHandler->append(Message::parseResponse($contents));
         }
 
         return $this->mockHandler;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Checkout;
 
 use Psr\Log\LoggerInterface;
@@ -9,7 +11,6 @@ use SilverShop\Model\OrderStatusLog;
 use SilverShop\Page\CheckoutPage;
 use SilverStripe\Control\Director;
 use SilverStripe\Control\Email\Email;
-use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Config\Configurable;
 use SilverStripe\Core\Injector\Injectable;
 use SilverStripe\View\SSViewer;
@@ -105,15 +106,18 @@ class OrderEmailNotifier
         if ($copyToAdmin) {
             $email->setBCC(Email::config()->admin_email);
         }
+
         if ($this->debugMode) {
             return $this->debug($email);
         }
+
         try {
             $email->send();
-        } catch (TransportExceptionInterface $e) {
-            $this->logger->error('OrderEmailNotifier.sendEmail: error sending email in ' . __FILE__ . ' line ' . __LINE__ . ": {$e->getMessage()}");
+        } catch (TransportExceptionInterface $transportException) {
+            $this->logger->error('OrderEmailNotifier.sendEmail: error sending email in ' . __FILE__ . ' line ' . __LINE__ . (': ' . $transportException->getMessage()));
             return false;
         }
+
         return true;
     }
 
@@ -153,12 +157,14 @@ class OrderEmailNotifier
         if ($this->debugMode) {
             return $this->debug($email);
         }
+
         try {
             $email->send();
-        } catch (TransportExceptionInterface $e) {
-            $this->logger->error('OrderEmailNotifier.sendAdminNotification: error sending email in ' . __FILE__ . ' line ' . __LINE__ . ": {$e->getMessage()}");
+        } catch (TransportExceptionInterface $transportException) {
+            $this->logger->error('OrderEmailNotifier.sendAdminNotification: error sending email in ' . __FILE__ . ' line ' . __LINE__ . (': ' . $transportException->getMessage()));
             return false;
         }
+
         return true;
     }
 
@@ -203,12 +209,14 @@ class OrderEmailNotifier
         if ($this->debugMode) {
             return $this->debug($email);
         }
+
         try {
             $email->send();
-        } catch (TransportExceptionInterface $e) {
-            $this->logger->error('OrderEmailNotifier.sendCancelNotification: error sending email in ' . __FILE__ . ' line ' . __LINE__ . ": {$e->getMessage()}");
+        } catch (TransportExceptionInterface $transportException) {
+            $this->logger->error('OrderEmailNotifier.sendCancelNotification: error sending email in ' . __FILE__ . ' line ' . __LINE__ . (': ' . $transportException->getMessage()));
             return false;
         }
+
         return true;
     }
 
@@ -224,10 +232,7 @@ class OrderEmailNotifier
 
         if ($note === '' || $note === '0') {
             // Find the latest log message that hasn't been sent to the client yet, but can be (e.g. is visible)
-            $latestLog = OrderStatusLog::get()
-                ->filter("OrderID", $this->order->ID)
-                ->filter("SentToCustomer", 0)
-                ->filter("VisibleToCustomer", 1)
+            $latestLog = OrderStatusLog::get()->filter(["OrderID" => $this->order->ID])->filter(["SentToCustomer" => 0])->filter(["VisibleToCustomer" => 1])
                 ->first();
 
             if ($latestLog) {
@@ -266,9 +271,10 @@ class OrderEmailNotifier
                 // restore theme stack
                 SSViewer::set_themes($adminThemeset);
             } catch (TransportExceptionInterface $e) {
-                $this->logger->error('OrderEmailNotifier.sendStatusChange: error sending email in ' . __FILE__ . ' line ' . __LINE__ . ": {$e->getMessage()}");
+                $this->logger->error('OrderEmailNotifier.sendStatusChange: error sending email in ' . __FILE__ . ' line ' . __LINE__ . (': ' . $e->getMessage()));
                 return false;
             }
+
             return true;
         }
 
@@ -292,9 +298,9 @@ class OrderEmailNotifier
         $htmlRender = $email->getData()->renderWith($htmlTemplate)->RAW();
         $template = $email->getHTMLTemplate();
         $headers = $email->getHeaders()->toString();
-        return "<h2>Email HTML template: $template</h2>\n" .
+        return "<h2>Email HTML template: {$template}</h2>\n" .
             "<h3>Headers</h3>" .
-            "<pre>$headers</pre>" .
+            sprintf('<pre>%s</pre>', $headers) .
             "<h3>Body</h3>" .
             $htmlRender;
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Model\Modifiers;
 
 use SilverShop\Model\Order;
@@ -92,6 +94,7 @@ class OrderModifier extends OrderAttribute
             case 'Ignored':
                 break;
         }
+
         $value = round($value, Order::config()->rounding_precision);
         $this->Amount = $value;
         return $subtotal;
@@ -113,10 +116,7 @@ class OrderModifier extends OrderAttribute
     public function valid(): bool
     {
         $order = $this->Order();
-        if (!$order) {
-            return false;
-        }
-        return true;
+        return (bool) $order;
     }
 
     /**
@@ -154,6 +154,7 @@ class OrderModifier extends OrderAttribute
         if ($this->Type == 'Deductable') {
             return $this->Amount * -1;
         }
+
         return $this->Amount;
     }
 

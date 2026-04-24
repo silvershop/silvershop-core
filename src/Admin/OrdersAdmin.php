@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Admin;
 
 use SilverShop\Forms\GridField\OrderGridFieldDetailForm_ItemRequest;
@@ -44,7 +46,7 @@ class OrdersAdmin extends ModelAdmin
 
         if ($this->modelClass == Order::class) {
             // Exclude hidden statuses
-            $list = $list->exclude('Status', Order::config()->hidden_status);
+            $list = $list->exclude(['Status' => Order::config()->hidden_status]);
             $this->extend('updateList', $list);
         }
 

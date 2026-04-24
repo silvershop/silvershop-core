@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Tests\ORM\FieldType;
 
 use SilverShop\ORM\FieldType\I18nDatetime;
 use SilverStripe\Dev\SapphireTest;
 
-class I18nDatetimeTest extends SapphireTest
+final class I18nDatetimeTest extends SapphireTest
 {
     public function testField(): void
     {

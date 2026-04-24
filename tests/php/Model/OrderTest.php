@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Tests\Model;
 
 use SilverShop\Checkout\OrderProcessor;
@@ -23,7 +25,7 @@ use SilverStripe\ORM\DataObject;
  * @package    silvershop
  * @subpackage tests
  */
-class OrderTest extends SapphireTest
+final class OrderTest extends SapphireTest
 {
     public static $fixture_file = __DIR__ . '/../Fixtures/shop.yml';
 
@@ -34,23 +36,27 @@ class OrderTest extends SapphireTest
     ];
 
     protected Product $mp3player;
+
     protected Product $socks;
+
     protected Product $beachball;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         ShopTest::setConfiguration();
         $this->logInWithPermission('ADMIN');
         $this->mp3player = $this->objFromFixture(Product::class, 'mp3player');
         $this->mp3player->publishSingle();
+
         $this->socks = $this->objFromFixture(Product::class, 'socks');
         $this->socks->publishSingle();
+
         $this->beachball = $this->objFromFixture(Product::class, 'beachball');
         $this->beachball->publishSingle();
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         unset($this->mp3player);
@@ -171,6 +177,7 @@ class OrderTest extends SapphireTest
         //make a changes to existing products
         $this->mp3player->BasePrice = 100;
         $this->mp3player->write();
+
         $this->socks->BasePrice = 20;
         $this->socks->write();
 
@@ -301,8 +308,8 @@ class OrderTest extends SapphireTest
         $this->assertEquals(1, $order->OrderStatusLogs()->count());
         $this->assertEquals(1, $order->Payments()->count());
 
-        $itemIds = OrderItem::get()->filter('OrderID', $order->ID)->column('ID');
-        $modifierIds = OrderModifier::get()->filter('OrderID', $order->ID)->column('ID');
+        $itemIds = OrderItem::get()->filter(['OrderID' => $order->ID])->column('ID');
+        $modifierIds = OrderModifier::get()->filter(['OrderID' => $order->ID])->column('ID');
 
         $order->delete();
 
@@ -313,12 +320,12 @@ class OrderTest extends SapphireTest
         $this->assertEquals(0, $order->Payments()->count());
 
         // Ensure the order items have been deleted!
-        $this->assertEquals(0, OrderItem::get()->filter('ID', $itemIds)->count());
-        $this->assertEquals(0, OrderModifier::get()->filter('ID', $modifierIds)->count());
-        $this->assertEquals(0, OrderStatusLog::get()->filter('ID', $statusLogId)->count());
+        $this->assertEquals(0, OrderItem::get()->filter(['ID' => $itemIds])->count());
+        $this->assertEquals(0, OrderModifier::get()->filter(['ID' => $modifierIds])->count());
+        $this->assertEquals(0, OrderStatusLog::get()->filter(['ID' => $statusLogId])->count());
 
         // Keep the payment… it might be relevant for book keeping
-        $this->assertEquals(1, Payment::get()->filter('ID', $paymentId)->count());
+        $this->assertEquals(1, Payment::get()->filter(['ID' => $paymentId])->count());
     }
 
     public function testStatusChange(): void

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Tests;
 
 use SilverStripe\Core\Extension;
@@ -11,15 +13,17 @@ use SilverStripe\Dev\TestOnly;
  */
 class ShopTestControllerExtension extends Extension implements TestOnly
 {
+    public $response;
+
     public function onAfterInit(): void
     {
-        $this->owner->response->addHeader(
+        $this->getOwner()->response->addHeader(
             'X-TestPageClass',
-            get_class($this->owner)
+            get_class($this->getOwner())
         );
-        $params = $this->owner->getURLParams();
+        $params = $this->getOwner()->getURLParams();
         if (isset($params['Action'])) {
-            $this->owner->response->addHeader('X-TestPageAction', $params['Action']);
+            $this->getOwner()->response->addHeader('X-TestPageAction', $params['Action']);
         }
     }
 }

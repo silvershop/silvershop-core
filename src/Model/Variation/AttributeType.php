@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Model\Variation;
 
+use SilverStripe\Model\List\ArrayList;
 use SilverShop\Page\Product;
 use SilverStripe\Forms\DropdownField;
 use SilverStripe\Forms\FieldList;
@@ -9,7 +12,6 @@ use SilverStripe\Forms\GridField\GridField;
 use SilverStripe\Forms\GridField\GridFieldConfig_RecordEditor;
 use SilverStripe\Forms\LiteralField;
 use SilverStripe\Forms\TextField;
-use SilverStripe\ORM\ArrayList;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\HasManyList;
 use SilverStripe\ORM\ManyManyList;
@@ -58,10 +60,11 @@ class AttributeType extends DataObject
 
     public static function find_or_make($name): AttributeType
     {
-        if ($type = AttributeType::get()->filter('Name:nocase', $name)->first()
+        if ($type = AttributeType::get()->filter(['Name:nocase' => $name])->first()
         ) {
             return $type;
         }
+
         $type = AttributeType::create();
         $type->Name = $name;
         $type->Label = $name;
@@ -122,6 +125,7 @@ class AttributeType extends DataObject
                 $val->TypeID = $this->ID;
                 $val->write();
             }
+
             $arrayList->push($val);
         }
 
@@ -155,7 +159,7 @@ class AttributeType extends DataObject
         return null;
     }
 
-    public function onBeforeWrite(): void
+    protected function onBeforeWrite(): void
     {
         parent::onBeforeWrite();
         if ($this->Name && !$this->Label) {

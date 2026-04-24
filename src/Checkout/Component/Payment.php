@@ -1,15 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Checkout\Component;
 
+use SilverStripe\Core\Validation\ValidationResult;
+use SilverStripe\Core\Validation\ValidationException;
 use SilverShop\Checkout\Checkout;
 use SilverShop\Model\Order;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\HiddenField;
 use SilverStripe\Forms\OptionsetField;
 use SilverStripe\Omnipay\GatewayInfo;
-use SilverStripe\ORM\ValidationException;
-use SilverStripe\ORM\ValidationResult;
 
 class Payment extends CheckoutComponent
 {
@@ -27,7 +29,8 @@ class Payment extends CheckoutComponent
                 )
             );
         }
-        if (count($gateways) == 1) {
+
+        if (count($gateways) === 1) {
             $fieldList->push(
                 HiddenField::create('PaymentMethod')->setValue(key($gateways))
             );
@@ -55,11 +58,13 @@ class Payment extends CheckoutComponent
             );
             throw ValidationException::create($validationResult);
         }
+
         $methods = GatewayInfo::getSupportedGateways();
         if (!isset($methods[$data['PaymentMethod']])) {
             $validationResult->addError(_t(__CLASS__ . '.UnsupportedGateway', "Gateway not supported"), "PaymentMethod");
             throw ValidationException::create($validationResult);
         }
+
         return true;
     }
 
@@ -75,6 +80,7 @@ class Payment extends CheckoutComponent
         if (isset($data['PaymentMethod'])) {
             Checkout::get($order)->setPaymentMethod($data['PaymentMethod']);
         }
+
         return $order;
     }
 }

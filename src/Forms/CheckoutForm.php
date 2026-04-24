@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Forms;
 
 use SilverShop\Checkout\CheckoutComponentConfig;
@@ -45,10 +47,9 @@ class CheckoutForm extends Form
         if ($member = Security::getCurrentUser()) {
             $this->loadDataFrom($member, Form::MERGE_IGNORE_FALSEISH);
         }
-        if ($requestHandler && ($session = $requestHandler->getRequest()->getSession())) {
-            if ($sessiondata = $session->get("FormInfo.{$this->FormName()}.data")) {
-                $this->loadDataFrom($sessiondata, Form::MERGE_IGNORE_FALSEISH);
-            }
+
+        if ($requestHandler && ($session = $requestHandler->getRequest()->getSession()) && $sessiondata = $session->get(sprintf('FormInfo.%s.data', $this->FormName()))) {
+            $this->loadDataFrom($sessiondata, Form::MERGE_IGNORE_FALSEISH);
         }
     }
 

@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Tests;
 
 use SilverShop\ShopUserInfo;
 use SilverStripe\Dev\SapphireTest;
 
-class ShopUserInfoTest extends SapphireTest
+final class ShopUserInfoTest extends SapphireTest
 {
     public function testSetLocation(): void
     {

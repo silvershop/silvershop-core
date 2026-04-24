@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Tests\Model;
 
 use SilverShop\Model\Address;
 use SilverStripe\Dev\SapphireTest;
 use Exception;
 
-class AddressTest extends SapphireTest
+final class AddressTest extends SapphireTest
 {
     public function testForm(): void
     {
@@ -44,7 +46,7 @@ class AddressTest extends SapphireTest
         $writeFailed = false;
         try {
             $address->write();
-        } catch (Exception $ex) {
+        } catch (Exception $exception) {
             $writeFailed = true;
         }
 
@@ -63,7 +65,7 @@ class AddressTest extends SapphireTest
         $writeFailed = false;
         try {
             $address->write();
-        } catch (Exception $ex) {
+        } catch (Exception $exception) {
             $writeFailed = true;
         }
 

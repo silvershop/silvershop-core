@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Forms;
 
 use SilverStripe\Control\RequestHandler;
@@ -23,7 +25,7 @@ class VariationForm extends AddProductForm
 
     protected array $requiredFields = ['Quantity'];
 
-    public function __construct(RequestHandler $requestHandler, $name = 'VariationForm')
+    public function __construct(RequestHandler $requestHandler, string $name = 'VariationForm')
     {
         parent::__construct($requestHandler, $name);
         $this->extend('updateVariationForm');
@@ -111,13 +113,14 @@ class VariationForm extends AddProductForm
         return null;
     }
 
-    protected function getFormFields($controller = null): FieldList
+    protected function getFormFields(RequestHandler $controller = null): FieldList
     {
         $fieldList = parent::getFormFields($controller);
 
-        if (!$controller) {
+        if (!$controller instanceof RequestHandler) {
             return $fieldList;
         }
+
         $product = $controller->data();
         $attributes = $product->VariationAttributeTypes();
 
@@ -134,14 +137,14 @@ class VariationForm extends AddProductForm
 
             if ($attributeDropdown) {
                 $fieldList->push($attributeDropdown);
-                $this->requiredFields[] = "ProductAttributes[$attribute->ID]";
+                $this->requiredFields[] = sprintf('ProductAttributes[%s]', $attribute->ID);
             }
         }
 
         if ($this->config()->include_json) {
             $vararray = [];
-
-            $query = $sqlSelect = new SQLSelect();
+            $query = new SQLSelect();
+            $sqlSelect = $query;
 
             $query->setSelect('ID')
                 ->setFrom('SilverShop_Variation')

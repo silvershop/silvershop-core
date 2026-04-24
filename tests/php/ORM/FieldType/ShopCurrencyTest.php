@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Tests\ORM\FieldType;
 
 use SilverShop\ORM\FieldType\ShopCurrency;
 use SilverStripe\Dev\SapphireTest;
 
-class ShopCurrencyTest extends SapphireTest
+final class ShopCurrencyTest extends SapphireTest
 {
     public function testField(): void
     {

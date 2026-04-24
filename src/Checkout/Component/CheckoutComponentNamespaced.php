@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Checkout\Component;
 
 use SilverShop\Checkout\Component\CheckoutComponent;
@@ -27,10 +29,8 @@ class CheckoutComponentNamespaced extends CheckoutComponent
     {
         $fieldList = $this->proxy->getFormFields($order);
         $allFields = $fieldList->dataFields();
-        if ($allFields) {
-            foreach ($allFields as $allField) {
-                $allField->setName($this->namespaceFieldName($allField->getName()));
-            }
+        foreach ($allFields as $allField) {
+            $allField->setName($this->namespaceFieldName($allField->getName()));
         }
 
         return $fieldList;
@@ -61,6 +61,7 @@ class CheckoutComponentNamespaced extends CheckoutComponent
         foreach ($fields as $field) {
             $namespaced[] = $this->namespaceFieldName($field);
         }
+
         return $namespaced;
     }
 
@@ -89,6 +90,7 @@ class CheckoutComponentNamespaced extends CheckoutComponent
         foreach ($data as $key => $value) {
             $newdata[$this->namespaceFieldName($key)] = $value;
         }
+
         return $newdata;
     }
 
@@ -103,6 +105,7 @@ class CheckoutComponentNamespaced extends CheckoutComponent
                 $newdata[$this->unnamespaceFieldName($key)] = $value;
             }
         }
+
         return $newdata;
     }
 

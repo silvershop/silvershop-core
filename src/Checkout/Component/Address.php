@@ -1,14 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Checkout\Component;
 
+use SilverStripe\Core\Validation\ValidationException;
 use SilverShop\Model\Order;
 use SilverShop\ShopUserInfo;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Forms\CompositeField;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\ORM\DataObject;
-use SilverStripe\ORM\ValidationException;
 use SilverStripe\Security\Security;
 use SilverStripe\SiteConfig\SiteConfig;
 
@@ -29,8 +31,8 @@ abstract class Address extends CheckoutComponent
         ]);
 
         $label = _t(
-            "SilverShop\Model\Address.{$this->addresstype}Address",
-            "{$this->addresstype} Address"
+            sprintf('SilverShop\Model\Address.%sAddress', $this->addresstype),
+            $this->addresstype . ' Address'
         );
 
         return FieldList::create(
@@ -103,22 +105,26 @@ abstract class Address extends CheckoutComponent
                 unset($data[$key]);
             }
         }
+
         $address->update($data);
         //if only one country is available, then set it
         if ($country = SiteConfig::current_site_config()->getSingleCountry()) {
             $address->Country = $country;
         }
+
         //write new address, or duplicate if changed
         if (!$address->isInDB()) {
             $address->write();
         } elseif ($address->isChanged()) {
             $address = $address->duplicate();
         }
+
         //set billing address, if not already set
         $order->{$this->addresstype . 'AddressID'} = $address->ID;
         if (!$order->BillingAddressID) {
             $order->BillingAddressID = $address->ID;
         }
+
         $order->write();
 
         if ($this->addresstype === 'Shipping') {
@@ -135,10 +141,12 @@ abstract class Address extends CheckoutComponent
                 $member->{'Default' . $this->addresstype . 'AddressID'} = $address->ID;
                 $member->write();
             }
+
             if ($this->addtoaddressbook) {
                 $member->AddressBook()->add($address);
             }
         }
+
         //extension hooks
         $order->extend('onSet' . $this->addresstype . 'Address', $address);
         return $order;

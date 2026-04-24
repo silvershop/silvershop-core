@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Tests\Model\Modifiers;
 
 use SilverShop\Model\Modifiers\OrderModifier;
@@ -10,6 +12,7 @@ class OrderModifierTest_TestModifier extends OrderModifier implements TestOnly
     private static string $table_name = 'SilverShop_OrderModifierTest_TestModifier';
 
     public static int $value = 10;
+
     private bool $willFail = false;
 
     public function value($incoming): int
@@ -17,6 +20,7 @@ class OrderModifierTest_TestModifier extends OrderModifier implements TestOnly
         if (self::$value === 42) {
             $this->willFail = true;
         }
+
         return self::$value;
     }
 

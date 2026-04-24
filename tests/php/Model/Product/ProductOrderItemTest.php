@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Tests\Model\Product;
 
 use SilverShop\Cart\ShoppingCart;
@@ -13,22 +15,28 @@ use SilverStripe\Security\SecurityToken;
  * @package    shop
  * @subpackage tests
  */
-class ProductOrderItemTest extends FunctionalTest
+final class ProductOrderItemTest extends FunctionalTest
 {
     public static $fixture_file = __DIR__ . '/../../Fixtures/shop.yml';
+
     public static bool $disable_theme = true;
+
     public static array $orig = [];
 
     protected Product $mp3player;
+
     protected Product $socks;
+
     protected Product $beachball;
+
     protected Product $hdtv;
+
     protected ShoppingCart $cart;
 
     /**
      * Create and publish some products.
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         ShoppingCart::singleton()->clear();
@@ -96,19 +104,19 @@ class ProductOrderItemTest extends FunctionalTest
         $product = $this->socks;
         $orderItem = $product->Item();
         $this->assertEquals(
-            "shoppingcart/add/SilverShop-Page-Product/{$product->ID}",
+            'shoppingcart/add/SilverShop-Page-Product/' . $product->ID,
             $orderItem->addLink()
         );
         $this->assertEquals(
-            "shoppingcart/remove/SilverShop-Page-Product/{$product->ID}",
+            'shoppingcart/remove/SilverShop-Page-Product/' . $product->ID,
             $orderItem->removeLink()
         );
         $this->assertEquals(
-            "shoppingcart/removeall/SilverShop-Page-Product/{$product->ID}",
+            'shoppingcart/removeall/SilverShop-Page-Product/' . $product->ID,
             $orderItem->removeAllLink()
         );
         $this->assertEquals(
-            "shoppingcart/setquantity/SilverShop-Page-Product/{$product->ID}",
+            'shoppingcart/setquantity/SilverShop-Page-Product/' . $product->ID,
             $orderItem->setQuantityLink()
         );
     }

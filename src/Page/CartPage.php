@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Page;
 
 use Page;
@@ -25,7 +27,7 @@ class CartPage extends Page
         'ContinuePage' => SiteTree::class,
     ];
 
-    private static $icon_class = 'font-icon-p-cart';
+    private static string $cms_icon_class = 'font-icon-p-cart';
 
     private static string $table_name = 'SilverShop_CartPage';
 
@@ -42,6 +44,7 @@ class CartPage extends Page
         if ($page = self::get()->first()) {
             $base = $page->Link();
         }
+
         return Controller::join_links($base, $action, $id);
     }
 

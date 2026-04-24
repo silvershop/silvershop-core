@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Tests\Checkout;
 
+use SilverStripe\Core\Validation\ValidationException;
 use SilverShop\Cart\ShoppingCart;
 use SilverShop\Checkout\Checkout;
 use SilverShop\Checkout\CheckoutConfig;
@@ -11,10 +14,9 @@ use SilverShop\Model\Order;
 use SilverShop\Tests\ShopTest;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\SapphireTest;
-use SilverStripe\ORM\ValidationException;
 use SilverStripe\Security\Member;
 
-class CheckoutTest extends SapphireTest
+final class CheckoutTest extends SapphireTest
 {
     protected static $fixture_file = [
         __DIR__ . '/../Fixtures/Pages.yml',
@@ -24,12 +26,16 @@ class CheckoutTest extends SapphireTest
     ];
 
     protected ShoppingCart|Order $cart;
+
     protected Address $address1;
+
     protected Address $address2;
+
     protected Checkout $checkout;
+
     protected ShopMemberFactory $memberFactory;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         ShopTest::setConfiguration();

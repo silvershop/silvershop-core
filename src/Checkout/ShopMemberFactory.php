@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Checkout;
 
+use SilverStripe\Core\Validation\ValidationResult;
+use SilverStripe\Core\Validation\ValidationException;
 use SilverShop\Extension\MemberExtension;
 use SilverStripe\Core\Config\Config;
-use SilverStripe\ORM\ValidationException;
-use SilverStripe\ORM\ValidationResult;
 use SilverStripe\Security\Member;
 
 class ShopMemberFactory
@@ -19,7 +21,7 @@ class ShopMemberFactory
      * @param $data - map of member data
      * @return Member - new member (not saved to db)
      */
-    public function create($data): ?Member
+    public function create(array $data): ?Member
     {
         $validationResult = ValidationResult::create();
         if (!Checkout::member_creation_enabled()) {
@@ -28,22 +30,25 @@ class ShopMemberFactory
             );
             throw ValidationException::create($validationResult);
         }
+
         $idfield = Config::inst()->get(Member::class, 'unique_identifier_field');
         if (!isset($data[$idfield]) || empty($data[$idfield])) {
             $validationResult->addError(
                 _t(
                     'SilverShop\Checkout\Checkout.IdFieldNotFound',
                     'Required field not found: {IdentifierField}',
-                    'Identifier is the field that holds the unique user-identifier, commonly this is \'Email\'',
+                    "Identifier is the field that holds the unique user-identifier, commonly this is 'Email'",
                     ['IdentifierField' => $idfield]
                 )
             );
             throw ValidationException::create($validationResult);
         }
+
         if (!isset($data['Password']) || empty($data['Password'])) {
             $validationResult->addError(_t('SilverShop\Checkout\Checkout.PasswordRequired', 'A password is required'));
             throw ValidationException::create($validationResult);
         }
+
         $idval = $data[$idfield];
         if (($member = MemberExtension::get_by_identifier($idval)) instanceof Member) {
             // get localized field labels
@@ -72,6 +77,7 @@ class ShopMemberFactory
                 $validationResult->addError($message['message']);
             }
         }
+
         if (!$validationResult->isValid()) {
             throw ValidationException::create($validationResult);
         }

@@ -1,13 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Forms;
 
-use SilverStripe\Forms\RequiredFields;
+use SilverStripe\Forms\Validation\RequiredFieldsValidator;
 use SilverStripe\Omnipay\GatewayFieldsFactory;
 use SilverStripe\Omnipay\GatewayInfo;
 
-class OrderActionsFormValidator extends RequiredFields
+class OrderActionsFormValidator extends RequiredFieldsValidator
 {
+    /**
+     * @var mixed[]|string
+     */
+    public $required;
+
     public function php($data): bool
     {
         // Check if we should do a payment

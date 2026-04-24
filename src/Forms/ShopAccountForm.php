@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Forms;
 
+use SilverStripe\Core\Validation\ValidationException;
 use SilverStripe\Control\RequestHandler;
 use SilverShop\Extension\ShopConfigExtension;
 use SilverShop\Page\AccountPageController;
@@ -12,7 +15,6 @@ use SilverStripe\Core\Config\Config;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\Form;
 use SilverStripe\Forms\FormAction;
-use SilverStripe\ORM\ValidationException;
 use SilverStripe\Security\Security;
 
 /**
@@ -32,6 +34,7 @@ class ShopAccountForm extends Form
         } else {
             $fields = FieldList::create();
         }
+
         if ($requestHandler instanceof AccountPageController) {
             $actions = FieldList::create(FormAction::create('submit', _t(__CLASS__ . '.Save', 'Save Changes')));
         } else {
@@ -42,6 +45,7 @@ class ShopAccountForm extends Form
                     ->setUseButtonTag(Config::inst()->get(ShopConfigExtension::class, 'forms_use_button_tag'))
             );
         }
+
         parent::__construct($requestHandler, $name, $fields, $actions, $requiredFields);
 
         $this->extend('updateShopAccountForm');

@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Checkout;
 
+use SilverStripe\Forms\FormField;
 use SilverShop\Model\Address;
 use SilverShop\Page\CheckoutPage;
 use SilverStripe\Forms\CheckboxField;
@@ -25,13 +28,14 @@ use SilverStripe\SiteConfig\SiteConfig;
  */
 class CheckoutFieldFactory
 {
-    private static ?\SilverShop\Checkout\CheckoutFieldFactory $checkoutFieldFactory = null;
+    private static ?CheckoutFieldFactory $checkoutFieldFactory = null;
 
-    public static function singleton(): ?\SilverShop\Checkout\CheckoutFieldFactory
+    public static function singleton(): ?CheckoutFieldFactory
     {
         if (!self::$checkoutFieldFactory instanceof \SilverShop\Checkout\CheckoutFieldFactory) {
             self::$checkoutFieldFactory = new CheckoutFieldFactory();
         }
+
         return self::$checkoutFieldFactory;
     }
 
@@ -63,9 +67,10 @@ class CheckoutFieldFactory
     {
         $fieldList = $this->getContactFields();
         $idfield = Member::config()->unique_identifier_field;
-        if (!$fieldList->fieldByName($idfield)) {
+        if (!$fieldList->fieldByName($idfield) instanceof FormField) {
             $fieldList->push(TextField::create($idfield, $idfield)); //TODO: scaffold the correct id field
         }
+
         $fieldList->push($this->getPasswordField());
         return $fieldList;
     }
@@ -98,6 +103,7 @@ class CheckoutFieldFactory
         if (!Checkout::membership_required()) {
             $pwf->setCanBeEmpty(true);
         }
+
         return $fieldList;
     }
 
@@ -117,6 +123,7 @@ class CheckoutFieldFactory
         if ($confirmed) {
             return ConfirmedPasswordField::create('Password', _t('SilverShop\Checkout\CheckoutField.Password', 'Password'));
         }
+
         return PasswordField::create('Password', _t('SilverShop\Checkout\CheckoutField.Password', 'Password'));
     }
 
@@ -159,12 +166,14 @@ class CheckoutFieldFactory
         if (empty($subset)) {
             return $fieldList;
         }
+
         $subfieldlist = FieldList::create();
         foreach ($subset as $field) {
-            if ($field = $fieldList->fieldByName($field)) {
+            if (($field = $fieldList->fieldByName($field)) instanceof FormField) {
                 $subfieldlist->push($field);
             }
         }
+
         return $subfieldlist;
     }
 }

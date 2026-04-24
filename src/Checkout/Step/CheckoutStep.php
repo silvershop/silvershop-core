@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Checkout\Step;
 
 use SilverShop\Extension\SteppedCheckoutExtension;
@@ -20,7 +22,7 @@ class CheckoutStep extends Extension
      */
     private function nextstep(): ?string
     {
-        $steps = $this->owner->getSteps();
+        $steps = $this->getOwner()->getSteps();
         $found = false;
         foreach ($steps as $step => $class) {
             //determine if this is the current step
@@ -30,6 +32,7 @@ class CheckoutStep extends Extension
                 return $step;
             }
         }
+
         return null;
     }
 
@@ -38,8 +41,9 @@ class CheckoutStep extends Extension
         if (!$nextstep) {
             $nextstep = $this->nextstep();
         }
+
         $anchor = Config::inst()->get(SteppedCheckoutExtension::class, 'continue_anchor');
         $anchor = $anchor ? '#' . $anchor : '';
-        return $this->owner->Link($nextstep) . $anchor;
+        return $this->getOwner()->Link($nextstep) . $anchor;
     }
 }

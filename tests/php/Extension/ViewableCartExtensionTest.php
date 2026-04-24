@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Tests\Extension;
 
 use PageController;
@@ -9,12 +11,13 @@ use SilverShop\Page\Product;
 use SilverShop\Tests\ShopTest;
 use SilverStripe\Dev\FunctionalTest;
 
-class ViewableCartExtensionTest extends FunctionalTest
+final class ViewableCartExtensionTest extends FunctionalTest
 {
     public static $fixture_file  = __DIR__ . '/../Fixtures/shop.yml';
+
     public static bool $disable_theme = true;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         ShoppingCart::singleton()->clear();
@@ -23,7 +26,7 @@ class ViewableCartExtensionTest extends FunctionalTest
         $this->objFromFixture(Product::class, "socks")->publishSingle();
     }
 
-    function testCart(): void
+    public function testCart(): void
     {
         $order = $this->objFromFixture(Order::class, "cart");
         ShoppingCart::singleton()->setCurrent($order);

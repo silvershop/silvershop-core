@@ -1,15 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SilverShop\Tests\Reports;
 
 use SilverShop\Reports\ShopSalesReport;
 use SilverStripe\Dev\SapphireTest;
 
-class ShopReportTest extends SapphireTest
+final class ShopReportTest extends SapphireTest
 {
     protected static $fixture_file = __DIR__ . '/../Fixtures/shop.yml';
 
-    function testSalesReport(): void
+    public function testSalesReport(): void
     {
         $shopSalesReport = ShopSalesReport::create();
         $records = $shopSalesReport->sourceRecords([]);
