@@ -152,7 +152,7 @@ class OrderManipulationExtension extends Extension
     {
         if (($order = $this->orderfromid()) instanceof DataObject) {
             $form = OrderActionsForm::create($this->getOwner(), 'ActionsForm', $order);
-            $form->extend('updateActionsForm', $order);
+
             if (!$form->Actions()->exists()) {
                 return null;
             }
