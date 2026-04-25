@@ -77,6 +77,14 @@ class Product extends Page implements Buyable
         'Image' => Image::class,
     ];
 
+    /**
+     * Variations are defined on {@see ProductVariationsExtension}; duplicating a product should copy them.
+     * Cascade deletes for variations are handled in that extension for correct Versioned behaviour.
+     */
+    private static array $cascade_duplicates = [
+        'Variations',
+    ];
+
     private static array $owns = [
         'Image'
     ];

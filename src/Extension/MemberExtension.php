@@ -32,6 +32,14 @@ class MemberExtension extends Extension
         'AddressBook' => Address::class,
     ];
 
+    private static array $cascade_deletes = [
+        'AddressBook',
+    ];
+
+    private static array $cascade_duplicates = [
+        'AddressBook',
+    ];
+
     private static array $has_one = [
         'DefaultShippingAddress' => Address::class,
         'DefaultBillingAddress' => Address::class,

@@ -113,6 +113,18 @@ class Order extends DataObject
         'OrderStatusLogs' => OrderStatusLog::class,
     ];
 
+    private static array $cascade_deletes = [
+        'Items',
+        'Modifiers',
+        'OrderStatusLogs',
+    ];
+
+    private static array $cascade_duplicates = [
+        'Items',
+        'Modifiers',
+        'OrderStatusLogs',
+    ];
+
     private static array $indexes = [
         'Status' => true,
         'StatusPlacedCreated' => [
@@ -824,27 +836,16 @@ class Order extends DataObject
     }
 
     /**
-     * delete attributes, statuslogs, and payments
+     * Remove payment relations (payment records are kept for book-keeping).
+     * Items, modifiers, and status logs use {@see $cascade_deletes} via {@see parent::onBeforeDelete()}.
      */
     protected function onBeforeDelete(): void
     {
-        foreach ($this->Items() as $hasManyList) {
-            $hasManyList->delete();
-        }
-
-        foreach ($this->Modifiers() as $modifier) {
-            $modifier->delete();
-        }
-
-        foreach ($this->OrderStatusLogs() as $logEntry) {
-            $logEntry->delete();
-        }
+        parent::onBeforeDelete();
 
         // just remove the payment relations…
         // that way payment objects still persist (they might be relevant for book-keeping?)
         $this->Payments()->removeAll();
-
-        parent::onBeforeDelete();
     }
 
     protected function onAfterWrite(): void

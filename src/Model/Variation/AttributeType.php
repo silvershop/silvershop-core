@@ -17,9 +17,7 @@ use SilverStripe\ORM\HasManyList;
 use SilverStripe\ORM\ManyManyList;
 
 /**
- * Producte Attribute Type
- * Types of product attributes.
- * eg: color, size, length
+ * Product Variation Attribute Type
  *
  * @property ?string $Name
  * @property ?string $Label
@@ -35,6 +33,14 @@ class AttributeType extends DataObject
 
     private static array $has_many = [
         'Values' => AttributeValue::class,
+    ];
+
+    private static array $cascade_deletes = [
+        'Values',
+    ];
+
+    private static array $cascade_duplicates = [
+        'Values',
     ];
 
     private static array $belongs_many_many = [
@@ -159,9 +165,11 @@ class AttributeType extends DataObject
         return null;
     }
 
+
     protected function onBeforeWrite(): void
     {
         parent::onBeforeWrite();
+
         if ($this->Name && !$this->Label) {
             $this->Label = $this->Name;
         } elseif ($this->Label && !$this->Name) {
@@ -169,9 +177,14 @@ class AttributeType extends DataObject
         }
     }
 
+
     public function canDelete($member = null): bool
     {
-        //TODO: prevent deleting if has been used
+        // check to see if the attribute type is used by any products
+        if ($this->Product()->exists()) {
+            return false;
+        }
+
         return true;
     }
 }
