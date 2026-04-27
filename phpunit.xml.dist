@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" bootstrap="vendor/silverstripe/cms/tests/bootstrap.php" colors="true" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/11.3/phpunit.xsd">
-  <source includeUncoveredFiles="true">
+  <source>
     <include>
       <directory suffix=".php">src/</directory>
     </include>

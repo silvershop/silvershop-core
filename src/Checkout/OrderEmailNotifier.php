@@ -77,6 +77,7 @@ class OrderEmailNotifier
          */
         $email = Email::create()
             ->setHTMLTemplate($template)
+            ->setPlainTemplate($template . 'Plain')
             ->setFrom($from)
             ->setTo($to)
             ->setSubject($subject);
@@ -204,7 +205,8 @@ class OrderEmailNotifier
                 ShopConfigExtension::config()->email_from ? ShopConfigExtension::config()->email_from : Email::config()->admin_email
             )
             ->setTo(Email::config()->admin_email)
-            ->setBody($this->order->renderWith(Order::class));
+            ->setBody((string) $this->order->renderWith(Order::class))
+            ->text((string) $this->order->renderWith('SilverShop/Model/Order_EmailPlainBody')->Plain());
 
         if ($this->debugMode) {
             return $this->debug($email);
@@ -251,6 +253,7 @@ class OrderEmailNotifier
             ->setSubject(_t('SilverShop\ShopEmail.StatusChangeSubject', 'SilverShop – {Title}', ['Title' => $title]))
             ->setTo($this->order->getLatestEmail())
             ->setHTMLTemplate('SilverShop/Model/Order_StatusEmail')
+            ->setPlainTemplate('SilverShop/Model/Order_StatusEmailPlain')
             ->setData(
                 [
                     'Order' => $this->order,
