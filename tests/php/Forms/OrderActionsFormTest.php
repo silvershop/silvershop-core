@@ -15,14 +15,14 @@ use SilverShop\Forms\OrderActionsFormValidator;
 use SilverShop\Model\Order;
 use SilverShop\Page\CheckoutPage;
 use SilverShop\Tests\Model\Product\CustomProduct_OrderItem;
-use SilverShop\Tests\ShopTest;
+use SilverShop\Tests\ShopTestBootstrap;
 use SilverStripe\CMS\Controllers\ModelAsController;
-use SilverStripe\Control\Director;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Dev\FunctionalTest;
 use SilverStripe\Omnipay\GatewayInfo;
 use SilverStripe\Omnipay\Model\Payment;
+use SilverStripe\Security\RandomGenerator;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 final class OrderActionsFormTest extends FunctionalTest
@@ -45,7 +45,7 @@ final class OrderActionsFormTest extends FunctionalTest
     protected function setUp(): void
     {
         parent::setUp();
-        ShopTest::setConfiguration();
+        ShopTestBootstrap::setConfiguration();
 
         $this->logInWithPermission('ADMIN');
         // create order from fixture and persist to DB
@@ -66,24 +66,43 @@ final class OrderActionsFormTest extends FunctionalTest
         ]);
     }
 
+    /**
+     * OrderActionsForm posts to the order URL (not a separate ActionsForm path). Prime the session with a GET
+     * so the CSRF token exists, then POST with SecurityID.
+     *
+     * @param  array<string, mixed>  $body
+     */
+    private function submitOrderActionsForm(array $body): \SilverStripe\Control\HTTPResponse
+    {
+        $orderUrl = $this->checkoutPage->Link('order/' . $this->order->ID);
+        $this->get($orderUrl);
+
+        $securityID = $this->session()->get('SecurityID');
+        if (!$securityID) {
+            $securityID = (new RandomGenerator())->randomToken('sha1');
+            $this->session()->set('SecurityID', $securityID);
+        }
+
+        $body['SecurityID'] = $securityID;
+
+        return Director::test($orderUrl, $body, $this->session(), 'POST');
+    }
+
     public function testOffsitePayment(): void
     {
         Config::modify()->set(GatewayInfo::class, 'Dummy', ['is_offsite' => true]);
         $mockObject = $this->buildPaymentGatewayStub(true, 'test-' . $this->order->ID, true);
         Injector::inst()->registerService($this->stubGatewayFactory($mockObject), GatewayFactory::class);
 
-        $contentController = ModelAsController::controller_for($this->checkoutPage);
-
-        $httpResponse = Director::test(
-            $contentController->Link('ActionsForm'),
+        $httpResponse = $this->submitOrderActionsForm(
             [
-            'action_dopayment' => true,
-            'OrderID' => $this->order->ID,
-            'PaymentMethod' => 'Dummy'
-            ],
-            $this->session()
+                'action_dopayment' => true,
+                'OrderID' => $this->order->ID,
+                'PaymentMethod' => 'Dummy',
+            ]
         );
 
+        $this->order = Order::get()->byID($this->order->ID);
         // There should be a new payment
         $this->assertEquals(1, $this->order->Payments()->count());
         // The status of the payment should be pending purchase, as there's a redirect to the offsite gateway
@@ -97,30 +116,30 @@ final class OrderActionsFormTest extends FunctionalTest
         $mockObject = $this->buildPaymentGatewayStub(true, 'test-' . $this->order->ID, false);
         Injector::inst()->registerService($this->stubGatewayFactory($mockObject), GatewayFactory::class);
 
-        $contentController = ModelAsController::controller_for($this->checkoutPage);
-
-        $httpResponse = Director::test(
-            $contentController->Link('ActionsForm'),
+        $httpResponse = $this->submitOrderActionsForm(
             [
-            'action_dopayment' => true,
-            'OrderID' => $this->order->ID,
-            'PaymentMethod' => 'Dummy',
-            'type' => 'visa',
-            'name' => 'Tester Mc. Testerson',
-            'number' => '4242424242424242',
-            'expiryMonth' => 10,
-            'expiryYear' => date('Y') + 1,
-            'cvv' => 123
-            ],
-            $this->session()
+                'action_dopayment' => true,
+                'OrderID' => $this->order->ID,
+                'PaymentMethod' => 'Dummy',
+                'type' => 'visa',
+                'name' => 'Tester Mc. Testerson',
+                'number' => '4242424242424242',
+                'expiryMonth' => 10,
+                'expiryYear' => date('Y') + 1,
+                'cvv' => 123,
+            ]
         );
 
+        $this->order = Order::get()->byID($this->order->ID);
         // There should be a new payment
         $this->assertEquals(1, $this->order->Payments()->count());
         // The status of the payment should be Captured
         $this->assertEquals('Captured', $this->order->Payments()->first()->Status);
         // The response we get from submitting the form should be a redirect to the paid order
-        $this->assertStringEndsWith($contentController->Link('order/' . $this->order->ID), $httpResponse->getHeader('location'));
+        $this->assertStringEndsWith(
+            $this->checkoutPage->Link('order/' . $this->order->ID),
+            $httpResponse->getHeader('location')
+        );
     }
 
     public function testValidation(): void
@@ -209,6 +228,9 @@ final class OrderActionsFormTest extends FunctionalTest
             ->method('purchase')
             ->will($this->returnValue($mockRequest));
 
+        $mock->expects($this->any())
+            ->method('getName')
+            ->willReturn('Dummy');
 
         $mock->expects($this->any())
             ->method('supportsCompletePurchase')

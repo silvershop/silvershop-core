@@ -8,6 +8,7 @@ use SilverShop\Cart\ShoppingCart;
 use SilverShop\Extension\MemberExtension;
 use SilverShop\Model\Order;
 use SilverStripe\Core\Config\Config;
+use PHPUnit\Framework\Attributes\DoesNotPerformAssertions;
 use SilverStripe\Dev\SapphireTest;
 use SilverStripe\Security\Member;
 
@@ -30,9 +31,7 @@ final class MemberExtensionTest extends SapphireTest
         $this->assertEquals('Jeremy', $member->FirstName);
     }
 
-    /**
-     * @doesNotPerformAssertions
-     */
+    #[DoesNotPerformAssertions]
     public function testCMSFields(): void
     {
         singleton(Member::class)->getCMSFields();

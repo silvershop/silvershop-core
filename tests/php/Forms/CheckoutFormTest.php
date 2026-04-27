@@ -9,7 +9,7 @@ use SilverShop\Checkout\SinglePageCheckoutComponentConfig;
 use SilverShop\Forms\CheckoutForm;
 use SilverShop\Page\CheckoutPageController;
 use SilverShop\Page\Product;
-use SilverShop\Tests\ShopTest;
+use SilverShop\Tests\ShopTestBootstrap;
 use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Dev\FunctionalTest;
 use SilverStripe\SiteConfig\SiteConfig;
@@ -30,7 +30,7 @@ final class CheckoutFormTest extends FunctionalTest
     {
         parent::setUp();
         ShoppingCart::singleton()->clear();
-        ShopTest::setConfiguration();
+        ShopTestBootstrap::setConfiguration();
         $this->mp3player = $this->objFromFixture(Product::class, 'mp3player');
         $this->mp3player->publishSingle();
 

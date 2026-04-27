@@ -15,7 +15,7 @@ use SilverShop\Checkout\Component\Terms;
 use SilverShop\Checkout\SinglePageCheckoutComponentConfig;
 use SilverShop\Model\Address;
 use SilverShop\Model\Order;
-use SilverShop\Tests\ShopTest;
+use SilverShop\Tests\ShopTestBootstrap;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\SiteConfig\SiteConfig;
 use SilverStripe\Dev\SapphireTest;
@@ -52,7 +52,7 @@ final class CheckoutComponentTest extends SapphireTest
     protected function setUp(): void
     {
         parent::setUp();
-        ShopTest::setConfiguration();
+        ShopTestBootstrap::setConfiguration();
         $this->cart = $this->objFromFixture(Order::class, "cart1");
         $this->address1 = $this->objFromFixture(Address::class, "address1");
         $this->address2 = $this->objFromFixture(Address::class, "address2");

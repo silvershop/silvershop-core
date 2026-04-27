@@ -10,7 +10,7 @@ use SilverShop\Model\Order;
 use SilverShop\Page\Product;
 use SilverShop\Tests\Model\Modifiers\OrderModifierTest_TestModifier;
 use SilverShop\Tests\Model\Product\CustomProduct_OrderItem;
-use SilverShop\Tests\ShopTest;
+use SilverShop\Tests\ShopTestBootstrap;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\FunctionalTest;
 use SilverStripe\ORM\DB;
@@ -41,7 +41,7 @@ final class OrderModifierTest extends FunctionalTest
     protected function setUp(): void
     {
         parent::setUp();
-        ShopTest::setConfiguration();
+        ShopTestBootstrap::setConfiguration();
 
         Config::modify()
             ->set(

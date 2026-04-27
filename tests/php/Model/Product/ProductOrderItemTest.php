@@ -7,7 +7,7 @@ namespace SilverShop\Tests\Model\Product;
 use SilverShop\Cart\ShoppingCart;
 use SilverShop\Model\Product\OrderItem;
 use SilverShop\Page\Product;
-use SilverShop\Tests\ShopTest;
+use SilverShop\Tests\ShopTestBootstrap;
 use SilverStripe\Dev\FunctionalTest;
 use SilverStripe\Security\SecurityToken;
 
@@ -40,7 +40,7 @@ final class ProductOrderItemTest extends FunctionalTest
     {
         parent::setUp();
         ShoppingCart::singleton()->clear();
-        ShopTest::setConfiguration();
+        ShopTestBootstrap::setConfiguration();
 
         $this->logInWithPermission('ADMIN');
         $this->mp3player = $this->objFromFixture(Product::class, 'mp3player');

@@ -14,7 +14,7 @@ use SilverShop\Page\CheckoutPage;
 use SilverShop\Page\CheckoutPageController;
 use SilverShop\Page\Product;
 use SilverShop\Tests\Model\Product\CustomProduct_OrderItem;
-use SilverShop\Tests\ShopTest;
+use SilverShop\Tests\ShopTestBootstrap;
 use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\FunctionalTest;
@@ -55,7 +55,7 @@ final class SteppedCheckoutExtensionTest extends FunctionalTest
             'is_offsite' => false
         ]);
 
-        ShopTest::setConfiguration();
+        ShopTestBootstrap::setConfiguration();
         ShoppingCart::singleton()->clear();
         //set up steps
         SteppedCheckoutExtension::setupSteps(); //use default steps

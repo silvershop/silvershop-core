@@ -9,7 +9,7 @@ use SilverShop\Cart\ShoppingCartController;
 use SilverShop\Model\Variation\Variation;
 use SilverShop\Page\Product;
 use SilverShop\Tests\Model\Product\CustomProduct_OrderItem;
-use SilverShop\Tests\ShopTest;
+use SilverShop\Tests\ShopTestBootstrap;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\FunctionalTest;
 use SilverStripe\Security\SecurityToken;
@@ -71,7 +71,7 @@ final class ShoppingCartControllerTest extends FunctionalTest
     {
         parent::setUp();
 
-        ShopTest::setConfiguration(); //reset config
+        ShopTestBootstrap::setConfiguration(); //reset config
         ShoppingCart::singleton()->clear();
 
         // Needed, so that products can be published

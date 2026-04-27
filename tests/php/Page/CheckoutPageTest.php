@@ -7,7 +7,7 @@ namespace SilverShop\Tests\Page;
 use SilverShop\Extension\OrderManipulationExtension;
 use SilverShop\Model\Order;
 use SilverShop\Page\CheckoutPage;
-use SilverShop\Tests\ShopTest;
+use SilverShop\Tests\ShopTestBootstrap;
 use SilverStripe\Control\Director;
 use SilverStripe\Dev\FunctionalTest;
 
@@ -25,18 +25,23 @@ final class CheckoutPageTest extends FunctionalTest
     protected function setUp(): void
     {
         parent::setUp();
-        ShopTest::setConfiguration();
+        ShopTestBootstrap::setConfiguration();
     }
 
     public function testActionsForm(): void
     {
+        $checkout = $this->objFromFixture(CheckoutPage::class, 'checkout');
+        $checkout->publishSingle();
+
         $order = $this->objFromFixture(Order::class, "unpaid");
         OrderManipulationExtension::add_session_order($order);
-        $this->get("/checkout/order/" . $order->ID);
 
-        //make payment action
+        $orderUrl = $checkout->Link('order/' . $order->ID);
+        $this->get($orderUrl);
+
+        //make payment action (form posts to the order URL, not .../ActionsForm)
         $this->post(
-            "/checkout/order/ActionsForm",
+            $orderUrl,
             [
                 'OrderID'          => $order->ID,
                 'PaymentMethod'    => 'Dummy',
@@ -44,11 +49,12 @@ final class CheckoutPageTest extends FunctionalTest
             ]
         );
 
+        $order = Order::get()->byID($order->ID);
         $this->assertEquals('Paid', $order->Status, 'Order status should be Paid');
 
         //cancel action
         $this->post(
-            "/checkout/order/ActionsForm",
+            $orderUrl,
             [
                 'OrderID'         => $order->ID,
                 'action_docancel' => 'submit',

@@ -9,6 +9,7 @@ use SilverShop\Page\Product;
 use SilverShop\Page\ProductCategory;
 use SilverStripe\Control\Director;
 use SilverStripe\Core\Config\Config;
+use PHPUnit\Framework\Attributes\DoesNotPerformAssertions;
 use SilverStripe\Dev\FunctionalTest;
 use SilverStripe\Versioned\Versioned;
 
@@ -70,9 +71,7 @@ final class ProductCategoryTest extends FunctionalTest
         Versioned::set_stage('Live');
     }
 
-    /**
-     * @doesNotPerformAssertions
-     */
+    #[DoesNotPerformAssertions]
     public function testCanViewProductCategoryPage(): void
     {
         $dataObject = $this->objFromFixture(ProductCategory::class, 'products');

@@ -8,7 +8,7 @@ use PageController;
 use SilverShop\Cart\ShoppingCart;
 use SilverShop\Model\Order;
 use SilverShop\Page\Product;
-use SilverShop\Tests\ShopTest;
+use SilverShop\Tests\ShopTestBootstrap;
 use SilverStripe\Dev\FunctionalTest;
 
 final class ViewableCartExtensionTest extends FunctionalTest
@@ -21,7 +21,7 @@ final class ViewableCartExtensionTest extends FunctionalTest
     {
         parent::setUp();
         ShoppingCart::singleton()->clear();
-        ShopTest::setConfiguration();
+        ShopTestBootstrap::setConfiguration();
         $this->logInWithPermission('ADMIN');
         $this->objFromFixture(Product::class, "socks")->publishSingle();
     }

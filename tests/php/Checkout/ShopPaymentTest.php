@@ -15,7 +15,7 @@ use SilverShop\Model\Order;
 use SilverShop\Page\CartPage;
 use SilverShop\Page\CheckoutPage;
 use SilverShop\Page\Product;
-use SilverShop\Tests\ShopTest;
+use SilverShop\Tests\ShopTestBootstrap;
 use SilverShop\Tests\TestGatewayFactory;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Injector\Injector;
@@ -42,7 +42,7 @@ final class ShopPaymentTest extends FunctionalTest
     {
         parent::setUp();
         ShoppingCart::singleton()->clear();
-        ShopTest::setConfiguration();
+        ShopTestBootstrap::setConfiguration();
 
         //set supported gateways
         Config::modify()->set(

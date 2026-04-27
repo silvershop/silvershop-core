@@ -9,7 +9,7 @@ use SilverShop\Model\Order;
 use SilverShop\Model\Variation\OrderItem;
 use SilverShop\Model\Variation\Variation;
 use SilverShop\Page\Product;
-use SilverShop\Tests\ShopTest;
+use SilverShop\Tests\ShopTestBootstrap;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\SapphireTest;
 
@@ -37,7 +37,7 @@ final class ShoppingCartTest extends SapphireTest
     protected function setUp(): void
     {
         parent::setUp();
-        ShopTest::setConfiguration(); //reset config
+        ShopTestBootstrap::setConfiguration(); //reset config
         Config::modify()->set(Order::class, 'extensions', [ShoppingCartTest_TestShoppingCartHooksExtension::class]);
 
         ShoppingCart::singleton()->clear();

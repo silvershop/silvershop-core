@@ -10,7 +10,7 @@ use SilverShop\Checkout\CheckoutConfig;
 use SilverShop\Checkout\Component\AddressBookBilling;
 use SilverShop\Model\Address;
 use SilverShop\Model\Order;
-use SilverShop\Tests\ShopTest;
+use SilverShop\Tests\ShopTestBootstrap;
 use SilverStripe\Security\Member;
 use SilverStripe\Dev\SapphireTest;
 use SilverStripe\Security\Security;
@@ -63,7 +63,7 @@ final class AddressBookCheckoutComponentTest extends SapphireTest
 
     protected function setUp(): void
     {
-        ShopTest::setConfiguration();
+        ShopTestBootstrap::setConfiguration();
         CheckoutConfig::config()->membership_required = false;
         parent::setUp();
 

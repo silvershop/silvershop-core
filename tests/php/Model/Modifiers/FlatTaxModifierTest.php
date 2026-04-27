@@ -10,7 +10,7 @@ use SilverShop\Model\Modifiers\Tax\FlatTax;
 use SilverShop\Model\Order;
 use SilverShop\Page\Product;
 use SilverShop\Tests\Model\Product\CustomProduct_OrderItem;
-use SilverShop\Tests\ShopTest;
+use SilverShop\Tests\ShopTestBootstrap;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\FunctionalTest;
 
@@ -36,7 +36,7 @@ final class FlatTaxModifierTest extends FunctionalTest
     {
         parent::setUp();
         ShoppingCart::singleton()->clear();
-        ShopTest::setConfiguration();
+        ShopTestBootstrap::setConfiguration();
 
         Config::modify()
             ->set(

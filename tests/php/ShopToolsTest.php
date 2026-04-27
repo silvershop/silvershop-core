@@ -12,7 +12,7 @@ final class ShopToolsTest extends SapphireTest
     protected function setUp(): void
     {
         parent::setUp();
-        ShopTest::setConfiguration();
+        ShopTestBootstrap::setConfiguration();
     }
 
     public function testPriceForDisplay(): void

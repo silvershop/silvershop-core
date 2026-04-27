@@ -11,6 +11,7 @@ use SilverShop\Page\Product;
 use SilverShop\Page\ProductCategory;
 use SilverStripe\Control\Director;
 use SilverStripe\Core\Config\Config;
+use PHPUnit\Framework\Attributes\DoesNotPerformAssertions;
 use SilverStripe\Dev\FunctionalTest;
 use SilverStripe\ORM\DataObject;
 
@@ -121,9 +122,7 @@ final class ProductTest extends FunctionalTest
         Product::remove_extension('ProductTest_FractionalDiscountExtension');
     }
 
-    /**
-     * @doesNotPerformAssertions
-     */
+    #[DoesNotPerformAssertions]
     public function testCanViewProductPage(): void
     {
         $this->get(Director::makeRelative($this->tshirt->Link()));

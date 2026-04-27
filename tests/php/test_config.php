@@ -116,5 +116,3 @@ $cfg->set(
         'Country',
     ]
 );
-$cfg->set(OrderActionsForm::class, 'set_allow_cancelling', false);
-$cfg->set(OrderActionsForm::class, 'set_allow_paying', false);

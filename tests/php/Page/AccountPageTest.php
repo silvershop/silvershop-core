@@ -278,6 +278,7 @@ final class AccountPageTest extends FunctionalTest
         $this->assertEquals(200, $page->getStatusCode(), 'a page should load');
 
         $memberAuthenticator = new MemberAuthenticator;
+        $member = Member::get()->byID($member->ID);
         $validationResult = $memberAuthenticator->checkPassword($member, 'newpassword123!?');
         $this->assertTrue(
             $validationResult->isValid(),

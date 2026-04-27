@@ -7,7 +7,7 @@ namespace SilverShop\Tests\Model;
 use SilverShop\Checkout\OrderProcessor;
 use SilverShop\Model\Order;
 use SilverShop\Model\OrderStatusLog;
-use SilverShop\Tests\ShopTest;
+use SilverShop\Tests\ShopTestBootstrap;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Security\Member;
 use SilverStripe\Dev\SapphireTest;
@@ -27,7 +27,7 @@ final class OrderStatusLogTest extends SapphireTest
     protected function setUp(): void
     {
         parent::setUp();
-        ShopTest::setConfiguration();
+        ShopTestBootstrap::setConfiguration();
         Config::modify()->set(Order::class, 'log_status', ['Processing', 'Sent', 'AdminCancelled', 'MemberCancelled']);
     }
 

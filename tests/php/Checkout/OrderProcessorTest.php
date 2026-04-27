@@ -12,7 +12,7 @@ use SilverShop\Model\Address;
 use SilverShop\Model\Order;
 use SilverShop\Model\Product\OrderItem;
 use SilverShop\Page\Product;
-use SilverShop\Tests\ShopTest;
+use SilverShop\Tests\ShopTestBootstrap;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\SapphireTest;
 use SilverStripe\Omnipay\Model\Payment;
@@ -72,7 +72,7 @@ final class OrderProcessorTest extends SapphireTest
     {
         parent::setUp();
         ShoppingCart::singleton()->clear();
-        ShopTest::setConfiguration();
+        ShopTestBootstrap::setConfiguration();
 
         $this->mp3player = $this->objFromFixture(Product::class, 'mp3player');
         $this->socks = $this->objFromFixture(Product::class, 'socks');
