@@ -114,7 +114,7 @@ class AddProductForm extends Form
     /**
      * @param RequestHandler $controller the controller instance that is being passed to the form
      */
-    protected function getFormFields(RequestHandler $controller = null): FieldList
+    protected function getFormFields(RequestHandler $controller): FieldList
     {
         $fieldList = FieldList::create();
 
