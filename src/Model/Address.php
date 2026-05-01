@@ -198,7 +198,7 @@ class Address extends DataObject
      */
     public function getName(): string
     {
-        return implode(
+        $name = implode(
             ' ',
             array_filter(
                 [
@@ -207,6 +207,8 @@ class Address extends DataObject
                 ]
             )
         );
+        $this->extend('updateName', $name);
+        return $name;
     }
 
     /**

@@ -362,6 +362,17 @@ final class OrderTest extends SapphireTest
         $this->assertTrue((boolean)$order->Paid, 'Order paid date should be set');
     }
 
+    public function testGetNameExtensionHook(): void
+    {
+        Config::modify()->merge(Order::class, 'extensions', [OrderTest_UpdateNameExtension::class]);
+
+        $order = Order::create();
+        $order->FirstName = 'Jane';
+        $order->Surname = 'Doe';
+
+        $this->assertEquals('Jane Doe (extended)', $order->getName());
+    }
+
     public function testOrderAddress(): void
     {
         $order = $this->objFromFixture(Order::class, 'paid');

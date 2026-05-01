@@ -1,0 +1,1 @@
+{"version":2,"defects":{"SilverShop\\Tests\\Model\\AddressTest::testRequiredFields":8},"times":{"SilverShop\\Tests\\Model\\AddressTest::testForm":0.003,"SilverShop\\Tests\\Model\\AddressTest::testGetNameExtensionHook":0.001,"SilverShop\\Tests\\Model\\AddressTest::testRequiredFields":0.139}}
