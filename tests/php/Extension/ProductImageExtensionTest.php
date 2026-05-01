@@ -95,4 +95,61 @@ final class ProductImageExtensionTest extends SapphireTest
         $image = $this->socks->Image();
         $this->assertFalse($image && $image->exists(), 'should not exist');
     }
+
+    public function testGetImageAtReturnsOwnerWhenNotExists(): void
+    {
+        $nonExistent = Image::create();
+        $result = $nonExistent->getImageAt(100, 100);
+        $this->assertSame($nonExistent, $result, 'non-existent image should return the owner');
+    }
+
+    public function testGetImageAtWidthAndHeightNoUpscale(): void
+    {
+        // Image is 32x32; requesting 100x100 without upscale should use FitMax (no upscaling)
+        $result = $this->img1->getImageAt(100, 100, false);
+        $this->assertNotNull($result, 'result should not be null');
+        $this->assertLessThanOrEqual(32, $result->getWidth(), 'width should not exceed original');
+        $this->assertLessThanOrEqual(32, $result->getHeight(), 'height should not exceed original');
+    }
+
+    public function testGetImageAtWidthOnlyNoUpscale(): void
+    {
+        // Image is 32x32; requesting width=100 without upscale should use ScaleMaxWidth (no upscaling)
+        $result = $this->img1->getImageAt(100, 0, false);
+        $this->assertNotNull($result, 'result should not be null');
+        $this->assertLessThanOrEqual(32, $result->getWidth(), 'width should not exceed original');
+    }
+
+    public function testGetImageAtHeightOnlyNoUpscale(): void
+    {
+        // Image is 32x32; requesting height=100 without upscale should use ScaleMaxHeight (no upscaling)
+        $result = $this->img1->getImageAt(0, 100, false);
+        $this->assertNotNull($result, 'result should not be null');
+        $this->assertLessThanOrEqual(32, $result->getHeight(), 'height should not exceed original');
+    }
+
+    public function testGetImageAtWidthAndHeightDownscale(): void
+    {
+        // Image is 32x32; requesting 16x16 should scale down the image
+        $result = $this->img1->getImageAt(16, 16, false);
+        $this->assertNotNull($result, 'result should not be null');
+        $this->assertLessThanOrEqual(16, $result->getWidth(), 'width should be scaled down');
+        $this->assertLessThanOrEqual(16, $result->getHeight(), 'height should be scaled down');
+    }
+
+    public function testGetImageAtWidthOnlyDownscale(): void
+    {
+        // Image is 32x32; requesting width=16 should scale down the image
+        $result = $this->img1->getImageAt(16, 0, false);
+        $this->assertNotNull($result, 'result should not be null');
+        $this->assertLessThanOrEqual(16, $result->getWidth(), 'width should be scaled down');
+    }
+
+    public function testGetImageAtHeightOnlyDownscale(): void
+    {
+        // Image is 32x32; requesting height=16 should scale down the image
+        $result = $this->img1->getImageAt(0, 16, false);
+        $this->assertNotNull($result, 'result should not be null');
+        $this->assertLessThanOrEqual(16, $result->getHeight(), 'height should be scaled down');
+    }
 }
