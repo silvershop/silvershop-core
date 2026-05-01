@@ -67,7 +67,7 @@ class OrderTotalCalculator
             function ($severity, $message, $file, $line): void {
                 throw new ErrorException($message, 0, $severity, $file, $line);
             },
-            E_ALL & ~(E_STRICT | E_NOTICE)
+            E_ALL & ~(E_NOTICE)
         );
 
         try {

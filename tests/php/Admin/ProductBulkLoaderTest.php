@@ -24,8 +24,8 @@ final class ProductBulkLoaderTest extends FunctionalTest
         $filepath = realpath(__DIR__ . $ds . 'test_products.csv');
         $file = fopen($filepath, 'r');
 
-        fgetcsv($file); // pop header row
-        fgetcsv($file);
+        fgetcsv($file, null, ",", '"', ""); // pop header row
+        fgetcsv($file, null, ",", '"', "");
         $results = $productBulkLoader->load($filepath);
 
         // Test that right amount of columns was imported

@@ -113,7 +113,7 @@ class VariationForm extends AddProductForm
         return null;
     }
 
-    protected function getFormFields(RequestHandler $controller = null): FieldList
+    protected function getFormFields(RequestHandler $controller): FieldList
     {
         $fieldList = parent::getFormFields($controller);
 
