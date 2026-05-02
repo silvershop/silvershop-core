@@ -254,13 +254,13 @@ class OrderActionsForm extends Form
         $literalField = LiteralField::create(
             '_CCLookupField',
             sprintf(
-                '<span class="gateway-lookup" data-gateways=\'%s\'></span>',
+                '<span class="silvershop-gateway-lookup" data-gateways=\'%s\'></span>',
                 json_encode($onsiteGateways, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP)
             )
         );
 
         $fieldList->push($literalField);
 
-        return CompositeField::create($fieldList)->setTag('fieldset')->addExtraClass('credit-card');
+        return CompositeField::create($fieldList)->setTag('fieldset')->addExtraClass('silvershop-credit-card');
     }
 }

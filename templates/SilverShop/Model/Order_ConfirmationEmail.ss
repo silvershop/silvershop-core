@@ -13,13 +13,13 @@
                         <thead>
                             <tr>
                                 <th scope="col" colspan="2">
-                                    <h1 class="title">$Subject</h1>
+                                    <h1 class="silvershop-title">$Subject</h1>
                                 </th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td scope="row" colspan="2" class="typography">
+                                <td scope="row" colspan="2" class="silvershop-typography">
                                     $PurchaseCompleteMessage
                                 </td>
                             </tr>

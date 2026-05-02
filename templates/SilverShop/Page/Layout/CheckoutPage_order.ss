@@ -1,12 +1,12 @@
 <div id="Account">
-    <div class="typography">
+    <div class="silvershop-typography">
         <% if $Order %>
             <% with $Order %>
                 <h2><%t SilverShop\Model\Order.OrderHeadline "Order #{OrderNo} {OrderDate}" OrderNo=$Reference OrderDate=$Created.Nice %></h2>
             <% end_with %>
         <% end_if %>
         <% if $Message %>
-            <p class="message $MessageType">$Message</p>
+            <p class="silvershop-message $MessageType">$Message</p>
         <% end_if %>
         <% if $Order %>
             <% with $Order %>

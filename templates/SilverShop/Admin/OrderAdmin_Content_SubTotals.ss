@@ -1,4 +1,4 @@
-<tfoot class="shop-order__subtotals">
+<tfoot class="silvershop-shop-order__subtotals">
     <tr>
         <th colspan="4"><%t SilverShop\Model\Order.SubTotal "Sub-total" %></th>
         <th>$SubTotal.Nice</th>
@@ -8,13 +8,13 @@
             <tr class="$EvenOdd $FirstLast $Classes">
                 <td colspan="4">
                     $TableTitle
-                    <% if $SubTitle %><small class="shop-order__subtitle">($SubTitle)</small><% end_if %>
+                    <% if $SubTitle %><small class="silvershop-shop-order__subtitle">($SubTitle)</small><% end_if %>
                 </td>
                 <td>$TableValue.Nice</td>
             </tr>
         <% end_if %>
     <% end_loop %>
-    <tr class="shop-order__total">
+    <tr class="silvershop-shop-order__total">
         <th colspan="4"><%t SilverShop\Model\Order.Total "Total" %></th>
         <th>$Total.Nice $Currency</th>
     </tr>
@@ -25,6 +25,6 @@
         </tr>
     <% end_if %>
     <tr>
-        <td class="bottom-all" colspan="5"></td>
+        <td class="silvershop-bottom-all" colspan="5"></td>
     </tr>
 </tfoot>

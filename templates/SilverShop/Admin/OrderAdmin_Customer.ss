@@ -1,12 +1,12 @@
-<div class="grid grid-field">
-    <table class="shop-order shop-order--customer table grid-field__table">
+<div class="silvershop-grid silvershop-grid-field">
+    <table class="silvershop-shop-order silvershop-shop-order--customer silvershop-table silvershop-grid-field__table">
         <thead>
-            <tr class="shop-order__title">
+            <tr class="silvershop-shop-order__title">
                 <th colspan="2">
                     <h2><%t SilverShop\Generic.Customer "Customer" %></h2>
                 </th>
             </tr>
-            <tr class="shop-order__header">
+            <tr class="silvershop-shop-order__header">
                 <th><%t SilverShop\Page\AccountPage.MemberName "Name" %></th>
                 <th><%t SilverShop\Page\AccountPage.MemberEmail "Email" %></th>
             </tr>
@@ -23,7 +23,7 @@
         </tbody>
         <tfoot>
             <tr>
-                <td class="bottom-all" colspan="2"></td>
+                <td class="silvershop-bottom-all" colspan="2"></td>
             </tr>
         </tfoot>
     </table>

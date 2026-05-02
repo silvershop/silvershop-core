@@ -1,30 +1,30 @@
-<div class="accountnav">
-    <div class="nav">
+<div class="silvershop-accountnav">
+    <div class="silvershop-nav">
         <h2><%t SilverShop\Page\AccountPage.Title 'My Account' %></h2>
-        <ul class="nav nav-list">
+        <ul class="silvershop-nav silvershop-nav-list">
             <li>
                 <a href="{$Link}">
-                    <i class="icon icon-list fa fa-list"></i><%t SilverShop\Page\AccountPage.PastOrders 'Past Orders' %>
+                    <i class="silvershop-icon silvershop-icon-list fa fa-list"></i><%t SilverShop\Page\AccountPage.PastOrders 'Past Orders' %>
                 </a>
             </li>
             <li>
                 <a href="{$Link('editprofile')}">
-                    <i class="icon icon-user fa fa-user"></i><%t SilverShop\Page\AccountPage.EditProfile 'Edit Profile' %>
+                    <i class="silvershop-icon silvershop-icon-user fa fa-user"></i><%t SilverShop\Page\AccountPage.EditProfile 'Edit Profile' %>
                 </a>
             </li>
             <li>
                 <a href="{$Link('addressbook')}">
-                    <i class="icon icon-book fa fa-book"></i><%t SilverShop\Page\AccountPage.AddressBook 'Address Book' %>
+                    <i class="silvershop-icon silvershop-icon-book fa fa-book"></i><%t SilverShop\Page\AccountPage.AddressBook 'Address Book' %>
                 </a>
             </li>
             <li>
                 <a href="Security/logout">
-                    <i class="icon icon-off fa fa-sign-out"></i><%t SilverShop\Page\AccountPage.LogOut 'Log Out' %>
+                    <i class="silvershop-icon silvershop-icon-off fa fa-sign-out"></i><%t SilverShop\Page\AccountPage.LogOut 'Log Out' %>
                 </a>
             </li>
         </ul>
     </div>
-    <div class="memberdetails">
+    <div class="silvershop-memberdetails">
         <% with $CurrentMember %>
             <dl>
                 <dt><%t SilverShop\Page\AccountPage.MemberName 'Name' %></dt>

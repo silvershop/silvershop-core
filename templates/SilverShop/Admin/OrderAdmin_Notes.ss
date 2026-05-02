@@ -1,7 +1,7 @@
-<div class="grid grid-field">
-    <table class="shop-order shop-order--notes table grid-field__table">
+<div class="silvershop-grid silvershop-grid-field">
+    <table class="silvershop-shop-order silvershop-shop-order--notes silvershop-table silvershop-grid-field__table">
         <thead>
-            <tr class="shop-order__title">
+            <tr class="silvershop-shop-order__title">
                 <th>
                     <h2><%t SilverShop\Model\Order.db_Notes "Notes" %></h2>
                 </th>
@@ -14,7 +14,7 @@
         </tbody>
         <tfoot>
             <tr>
-                <td class="bottom-all"></td>
+                <td class="silvershop-bottom-all"></td>
             </tr>
         </tfoot>
     </table>

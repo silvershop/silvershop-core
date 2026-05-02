@@ -82,11 +82,11 @@
     <body>
         <table id="container">
             <tr>
-                <td class="max-width">
-                    <table class="main" width="100%" cellpadding="0" cellspacing="0">
+                <td class="silvershop-max-width">
+                    <table class="silvershop-main" width="100%" cellpadding="0" cellspacing="0">
                         <tbody>
                             <tr>
-                                <td class="banner" align="center" valign="top">
+                                <td class="silvershop-banner" align="center" valign="top">
                                     <strong><%t SilverShop\ShopEmail.StatusChangeTitle 'Shop Status Change' %></strong>
                                 </td>
                             </tr>
@@ -95,29 +95,29 @@
                                     <table width="100%" cellpadding="0" cellspacing="0">
                                         <% with Order %>
                                             <tr>
-                                                <td class="content-block" valign="top">
+                                                <td class="silvershop-content-block" valign="top">
                                                     <%t SilverStripe\Control\ChangePasswordEmail_ss.Hello 'Hello' %> <% if $FirstName %>$FirstName<% else %>$Member.FirstName<% end_if %>
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <td class="content-block" valign="top">
+                                                <td class="silvershop-content-block" valign="top">
                                                     <%t SilverShop\ShopEmail.StatusChanged 'Status for order #{OrderNo} changed to "{OrderStatus}"' OrderNo=$Reference OrderStatus=$StatusI18N %>
                                                 </td>
                                             </tr>
                                         <% end_with %>
                                         <tr>
-                                            <td class="content-block" valign="top">
+                                            <td class="silvershop-content-block" valign="top">
                                                 $Note
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td class="content-block" valign="top">
+                                            <td class="silvershop-content-block" valign="top">
                                                 <%t SilverShop\ShopEmail.Regards "Kind regards" %>
                                             </td>
                                         </tr>
 
                                         <tr>
-                                            <td class="content-block" valign="top">
+                                            <td class="silvershop-content-block" valign="top">
                                                 $SiteConfig.Title<br/>
                                                 $FromEmail<br/>
                                                 <%t SilverShop\ShopEmail.PhoneNumber "PhoneNumber" %>

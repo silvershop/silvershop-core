@@ -5,10 +5,10 @@
       // Get the currently selected gateway
       var selected = $("#PaymentMethod input:checked").val();
       // Find credit-card input fields
-      var ccInput = $("#PaymentMethod").nextAll('.credit-card');
+      var ccInput = $("#PaymentMethod").nextAll('.silvershop-credit-card');
       if (ccInput && ccInput.length > 0) {
         // Find gateway lookup data
-        var lookup = ccInput.find(".gateway-lookup").data("gateways");
+        var lookup = ccInput.find(".silvershop-gateway-lookup").data("gateways");
         if (lookup && (selected in lookup)) {
           // Show the Credit-Card fields if the gateway is in the lookup data
           ccInput.show();

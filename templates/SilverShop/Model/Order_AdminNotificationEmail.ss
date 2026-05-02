@@ -13,7 +13,7 @@
                         <thead>
                             <tr>
                                 <th scope="col" colspan="2">
-                                    <h1 class="title">$Subject</h1>
+                                    <h1 class="silvershop-title">$Subject</h1>
                                 </th>
                             </tr>
                         </thead>

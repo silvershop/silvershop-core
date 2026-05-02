@@ -2,7 +2,7 @@
 <div id="PageNumbers">
     <p><%t SilverShop\Includes\ProductGroup.Page "Page" %>:
         <% if $Products.NotFirstPage %>
-            <a class="prev" href="$Products.PrevLink" title="<%t SilverShop\Includes\ProductGroup.ViewPrevious "View the previous page" %>"><%t SilverShop\Includes\ProductGroup.Previous "previous" %></a>
+            <a class="silvershop-prev" href="$Products.PrevLink" title="<%t SilverShop\Includes\ProductGroup.ViewPrevious "View the previous page" %>"><%t SilverShop\Includes\ProductGroup.Previous "previous" %></a>
         <% end_if %>
 
         <span>
@@ -20,7 +20,7 @@
         </span>
 
         <% if $Products.NotLastPage %>
-            <a class="next" href="$Products.NextLink" title="<%t SilverShop\Includes\ProductGroup.ViewNext "View the next page" %>"><%t SilverShop\Includes\ProductGroup.Next "next" %></a>
+            <a class="silvershop-next" href="$Products.NextLink" title="<%t SilverShop\Includes\ProductGroup.ViewNext "View the next page" %>"><%t SilverShop\Includes\ProductGroup.Next "next" %></a>
         <% end_if %>
     </p>
 </div>

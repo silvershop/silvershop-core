@@ -1,33 +1,33 @@
-<div id="Product" class="typography">
-    <h1 class="pageTitle">$Title</h1>
-    <div class="breadcrumbs">$Breadcrumbs</div>
-    <div class="productDetails">
+<div id="Product" class="silvershop-typography">
+    <h1 class="silvershop-pageTitle">$Title</h1>
+    <div class="silvershop-breadcrumbs">$Breadcrumbs</div>
+    <div class="silvershop-productDetails">
         <% if $Image.ContentImage %>
-            <img class="productImage" src="$Image.ContentImage.URL" alt="<%t SilverShop\Page\Product.ImageAltText "{Title} image" Title=$Title %>" />
+            <img class="silvershop-productImage" src="$Image.ContentImage.URL" alt="<%t SilverShop\Page\Product.ImageAltText "{Title} image" Title=$Title %>" />
         <% else %>
-            <div class="noimage"><%t SilverShop\Page\Product.NoImage "no image" %></div>
+            <div class="silvershop-noimage"><%t SilverShop\Page\Product.NoImage "no image" %></div>
         <% end_if %>
         <% if $InternalItemID %>
-            <p class="InternalItemID">
-                <span class="title"><%t SilverShop\Page\Product.Code "Product Code" %>:</span>
-                <span class="value">{$InternalItemID}</span>
+            <p class="silvershop-InternalItemID">
+                <span class="silvershop-title"><%t SilverShop\Page\Product.Code "Product Code" %>:</span>
+                <span class="silvershop-value">{$InternalItemID}</span>
             </p>
         <% end_if %>
         <% if $Model %>
-            <p class="Model">
-                <span class="title"><%t SilverShop\Page\Product.Model "Model" %>:</span>
-                <span class="value">$Model.XML</span>
+            <p class="silvershop-Model">
+                <span class="silvershop-title"><%t SilverShop\Page\Product.Model "Model" %>:</span>
+                <span class="silvershop-value">$Model.XML</span>
             </p>
         <% end_if %>
         <% if $Size %>
-            <p class="Size">
-                <span class="title"><%t SilverShop\Page\Product.Size "Size" %>:</span>
-                <span class="value">$Size.XML</span>
+            <p class="silvershop-Size">
+                <span class="silvershop-title"><%t SilverShop\Page\Product.Size "Size" %>:</span>
+                <span class="silvershop-value">$Size.XML</span>
             </p>
         <% end_if %>
         <% include SilverShop\Includes\Price %>
         <% if $IsInCart %>
-            <p class="NumItemsInCart">
+            <p class="silvershop-NumItemsInCart">
                 <% if $Item.Quantity == 1 %>
                     <%t SilverShop\Page\Product.NumItemsInCartSingular "You have this item in your cart" %>
                 <% else %>
@@ -38,7 +38,7 @@
         $Form
     </div>
     <% if $Content %>
-        <div class="productContent typography">
+        <div class="silvershop-productContent silvershop-typography">
             $Content
         </div>
     <% end_if %>

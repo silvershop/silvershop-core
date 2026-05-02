@@ -6,7 +6,7 @@
             <% include SilverShop\Includes\ProductMenu %>
         <% end_with %>
     <% end_if %>
-    <div class="cart">
+    <div class="silvershop-cart">
       <% include SilverShop\Cart\SideCart %>
   </div>
 </div>

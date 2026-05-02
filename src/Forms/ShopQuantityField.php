@@ -19,7 +19,7 @@ class ShopQuantityField extends ModelData
 
     protected $parameters;
 
-    protected array $classes = ['ajaxQuantityField'];
+    protected array $classes = ['silvershop-ajaxQuantityField'];
 
     protected string $template = self::class;
 
@@ -84,6 +84,10 @@ class ShopQuantityField extends ModelData
             $this->item->Quantity
         )->setHTML5(true);
 
+        foreach ($this->classes as $className) {
+            $numericField->addExtraClass($className);
+        }
+
         if ($this->config()->max > 0) {
             $numericField->setAttribute("max", $this->config()->max);
         }
@@ -119,7 +123,7 @@ class ShopQuantityField extends ModelData
         if (($quantitylink = $this->item->setquantityLink()) !== '' && ($quantitylink = $this->item->setquantityLink()) !== '0') {
             return HiddenField::create(
                 $this->MainID() . '_Quantity_SetQuantityLink'
-            )->setValue($quantitylink)->addExtraClass('ajaxQuantityField_qtylink');
+            )->setValue($quantitylink)->addExtraClass('silvershop-ajaxQuantityField_qtylink');
         }
     }
 }

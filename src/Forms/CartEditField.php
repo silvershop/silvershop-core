@@ -27,7 +27,7 @@ class CartEditField extends FormField
 
     protected SS_List $items;
 
-    protected $template = 'Cart';
+    protected $template = 'SilverShop\\Cart\\Cart';
 
     protected $editableItemsCallback;
 
@@ -124,7 +124,7 @@ class CartEditField extends FormField
                 'Quantity',
                 $item->Quantity
             )
-                ->addExtraClass('numeric')
+                ->addExtraClass('silvershop-numeric')
                 ->setAttribute('type', 'number')
                 ->setAttribute('min', '0');
 

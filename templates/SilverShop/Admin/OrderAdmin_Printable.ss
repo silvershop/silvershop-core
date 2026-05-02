@@ -6,7 +6,7 @@
     </head>
     <body>
         <div style="page-break-after: always;">
-            <h1 class="title">
+            <h1 class="silvershop-title">
                 <%t SilverShop\Admin\OrdersAdmin.ReceiptTitle "{SiteTitle} Order {OrderNo}" SiteTitle=$SiteConfig.Title OrderNo=$Reference %>
             </h1>
             <% include SilverShop\Model\Order %>

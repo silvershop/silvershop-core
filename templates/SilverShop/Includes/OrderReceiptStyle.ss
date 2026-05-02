@@ -48,7 +48,7 @@
     }
 
     /* Styling for Silvershop order */
-    h1.title{
+    h1.silvershop-title{
         font-size:1.5em;
         display:block;
         text-align:right;
@@ -64,8 +64,8 @@
     table#SenderTable{
         width:100%;
     }
-        table#SenderTable .sender,
-        table#SenderTable .meta{
+        table#SenderTable .silvershop-sender,
+        table#SenderTable .silvershop-meta{
             width:50%;
         }
 
@@ -73,11 +73,11 @@
         margin-left:auto;
     }
 
-    table#MetaTable .label{
+    table#MetaTable .silvershop-label{
         font-weight:bold;
     }
 
-    table.infotable{
+    table.silvershop-infotable{
         border:1px solid #CDDDDD;
         border-collapse:collapse;
         width:100%;
@@ -86,7 +86,7 @@
         background:#fff;
         margin-top:10px;
     }
-    .warningMessage {
+    .silvershop-warningMessage {
         margin: 4px 0 0 3px;
         padding: 5px;
         width: 92%;
@@ -94,61 +94,61 @@
         border: 4px solid #FF7373;
         background: #FED0D0;
     }
-    table.infotable h3 {
+    table.silvershop-infotable h3 {
         color: #4EA3D7;
         font-size: 15px;
         font-weight: normal;
         font-family: Tahoma, Verdana, sans-serif;
     }
 
-    table.infotable tr.Total td {
+    table.silvershop-infotable tr.silvershop-total td {
         font-weight:bold;
         font-size:14px;
 
         text-transform:uppercase;
     }
-    table.infotable tr td,
-    table.infotable tr th {
+    table.silvershop-infotable tr td,
+    table.silvershop-infotable tr th {
         padding:5px;
         color: #333;
         border:1px solid #CDDDDD;
     }
-    table.infotable td {
+    table.silvershop-infotable td {
         font-size:12px;
     }
-    table.infotable tr.summary {
+    table.silvershop-infotable tr.silvershop-summary {
         font-weight: bold;
     }
-    table.infotable td.ordersummary {
+    table.silvershop-infotable td.silvershop-ordersummary {
         font-size:1em;
         border-bottom:1px solid #ccc;
     }
-    table.infotable th {
+    table.silvershop-infotable th {
         font-weight:bold;
         font-size:12px;
         color:#000;
         background:#E7EFEF;
     }
-    table.infotable tr td a {
+    table.silvershop-infotable tr td a {
         color:#4EA3D7;
         text-decoration:underline;
     }
-        table.infotable tr td a:hover {
+        table.silvershop-infotable tr td a:hover {
             text-decoration:none;
         }
-    table.infotable .modifierRow,
-    table.infotable .threeColHeader{
+    table.silvershop-infotable .silvershop-modifierRow,
+    table.silvershop-infotable .silvershop-threeColHeader{
         text-align:right;
     }
 
-    table.infotable .right {
+    table.silvershop-infotable .silvershop-right {
         text-align:right;
     }
-    table.infotable .center {
+    table.silvershop-infotable .silvershop-center {
         text-align:center;
     }
-    table.infotable .left,
-    table.infotable th {
+    table.silvershop-infotable .silvershop-left,
+    table.silvershop-infotable th {
         text-align:left;
     }
 

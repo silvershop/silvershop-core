@@ -34,7 +34,7 @@
   }
 
   $(function () {
-    $('input.ajaxQuantityField').each(
+    $('input.silvershop-ajaxQuantityField').each(
       function () {
         $(this).removeAttr('disabled');
         $(this).change(

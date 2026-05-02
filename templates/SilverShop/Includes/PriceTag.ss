@@ -1,14 +1,14 @@
-<div class="pricetag">
+<div class="silvershop-pricetag">
     <% if $DiscountedPrice %>
-        <span class="original strikeout">
-            <span class="symbol">$Price.Symbol</span>
-            <strong class="main">$Price.Main</strong>
-            <small class="fractional">$Price.Fractional</small>
-            <span class="code">$Price.CurrencyCode</span>
+        <span class="silvershop-original silvershop-strikeout">
+            <span class="silvershop-symbol">$Price.Symbol</span>
+            <strong class="silvershop-main">$Price.Main</strong>
+            <small class="silvershop-fractional">$Price.Fractional</small>
+            <span class="silvershop-code">$Price.CurrencyCode</span>
         </span>
-        <span class="discounted">$DiscountedPrice.Nice</span> <%t SilverShop\Includes\PriceTag.SAVE "Save" %>: <span class="savings">$DiscountedPrice.Savings</span>
+        <span class="silvershop-discounted">$DiscountedPrice.Nice</span> <%t SilverShop\Includes\PriceTag.SAVE "Save" %>: <span class="silvershop-savings">$DiscountedPrice.Savings</span>
     <% else %>
-        <span class="original"><strong class="price">$Price.Nice</strong></span>
+        <span class="silvershop-original"><strong class="silvershop-price">$Price.Nice</strong></span>
     <% end_if %>
     <% if $RecommendedPrice %><span>$RecommendedPrice.Nice</span><% end_if %>
 </div>

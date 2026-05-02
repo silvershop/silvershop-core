@@ -1,12 +1,12 @@
 <% if $Items %>
-    <table class="cart" summary="<%t SilverShop\Cart\ShoppingCart.TableSummary "Current contents of your cart." %>">
+    <table class="silvershop-cart" summary="<%t SilverShop\Cart\ShoppingCart.TableSummary "Current contents of your cart." %>">
         <colgroup>
-            <col class="image"/>
-            <col class="product title"/>
-            <col class="unitprice" />
-            <col class="quantity" />
-            <col class="total"/>
-            <col class="remove"/>
+            <col class="silvershop-image"/>
+            <col class="silvershop-product silvershop-title"/>
+            <col class="silvershop-unitprice" />
+            <col class="silvershop-quantity" />
+            <col class="silvershop-total"/>
+            <col class="silvershop-remove"/>
         </colgroup>
         <thead>
             <tr>
@@ -25,7 +25,7 @@
                 <tr id="$TableID" class="$Classes $EvenOdd $FirstLast">
                     <td>
                         <% if $Image %>
-                            <div class="image">
+                            <div class="silvershop-image">
                                 <a href="$Link" title="<%t SilverShop\Generic.ReadMoreTitle "Click here to read more on &quot;{Title}&quot;" Title=$TableTitle %>">
                                     $Image.ScaleWidth(45)
                                 </a>
@@ -40,7 +40,7 @@
                             $TableTitle
                         <% end_if %>
                         </h3>
-                        <% if $SubTitle %><p class="subtitle">$SubTitle</p><% end_if %>
+                        <% if $SubTitle %><p class="silvershop-subtitle">$SubTitle</p><% end_if %>
                         <% if $Product.Variations && $Up.Editable %>
                             <%t SilverShop\Generic.Change "Change" %>: $VariationField
                         <% end_if %>
@@ -64,7 +64,7 @@
             <% end_if %><% end_loop %>
         </tbody>
         <tfoot>
-            <tr class="subtotal">
+            <tr class="silvershop-subtotal">
                 <th colspan="4" scope="row"><%t SilverShop\Model\Order.SubTotal "Sub-total" %></th>
                 <td id="$TableSubTotalID">$SubTotal.Nice</td>
                 <% if $Editable %><td>&nbsp;</td><% end_if %>
@@ -86,7 +86,7 @@
                                     <td>
                                         <% if $CanRemove %>
                                             <strong>
-                                                <a class="ajaxQuantityLink" href="$removeLink" title="<%t SilverShop\Cart\ShoppingCart.RemoveTitle "Remove &quot;{Title}&quot; from your cart." Title=$TableTitle %>">
+                                                <a class="silvershop-ajaxQuantityLink" href="$removeLink" title="<%t SilverShop\Cart\ShoppingCart.RemoveTitle "Remove &quot;{Title}&quot; from your cart." Title=$TableTitle %>">
                                                     <img src="$resourceURL('silvershop/core:client/dist/images/remove.gif')" alt="x"/>
                                                 </a>
                                             </strong>
@@ -102,16 +102,16 @@
                         <% end_if %>
                     <% end_loop %>
                 <% end_if %>
-                <tr class="gap Total">
+                <tr class="silvershop-gap silvershop-Total">
                     <th colspan="4" scope="row"><%t SilverShop\Model\Order.Total "Total" %></th>
-                    <td id="$TableTotalID"><span class="value">$Total.Nice</span> <span class="currency">$Currency</span></td>
+                    <td id="$TableTotalID"><span class="silvershop-value">$Total.Nice</span> <span class="silvershop-currency">$Currency</span></td>
                     <% if $Editable %><td>&nbsp;</td><% end_if %>
                 </tr>
             <% end_if %>
         </tfoot>
     </table>
 <% else %>
-    <p class="message warning">
+    <p class="silvershop-message silvershop-warning">
         <%t SilverShop\Cart\ShoppingCart.NoItems "There are no items in your cart." %>
     </p>
 <% end_if %>

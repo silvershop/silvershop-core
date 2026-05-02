@@ -1,16 +1,16 @@
 <% require css("silvershop/core: client/dist/css/checkout.css") %>
 
-<h1 class="pageTitle">$Title</h1>
+<h1 class="silvershop-pageTitle">$Title</h1>
 <div id="Checkout">
-    <div class="typography">
+    <div class="silvershop-typography">
         <% if $Content %>
             $Content
         <% end_if %>
     </div>
-    <div class="membership">
+    <div class="silvershop-membership">
         $Form
     </div>
-    <div class="login">
+    <div class="silvershop-login">
         <h2><%t SilverStripe\Security\Security.LOGIN 'Log In' %></h2>
         $LoginForm
     </div>

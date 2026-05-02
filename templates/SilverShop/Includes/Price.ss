@@ -1,13 +1,13 @@
 <% if $PriceRange %>
-	<div class="price">
-		<strong class="value">$PriceRange.Min.Nice</strong>
+	<div class="silvershop-price">
+		<strong class="silvershop-value">$PriceRange.Min.Nice</strong>
 		<% if $PriceRange.HasRange %>
-			- <strong class="value">$PriceRange.Max.Nice</strong>
+			- <strong class="silvershop-value">$PriceRange.Max.Nice</strong>
 		<% end_if %>
-		<span class="currency">$Price.Currency</span>
+		<span class="silvershop-currency">$Price.Currency</span>
 	</div>
 <% else_if $Price %>
-	<div class="price">
-		<strong class="value">$Price.Nice</strong> <span class="currency">$Price.Currency</span>
+	<div class="silvershop-price">
+		<strong class="silvershop-value">$Price.Nice</strong> <span class="silvershop-currency">$Price.Currency</span>
 	</div>
 <% end_if %>

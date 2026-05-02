@@ -7,17 +7,17 @@
     <% if $Payments %>
         <% include SilverShop\Model\Order_Payments %>
     <% end_if %>
-    <table id="OutstandingTable" class="infotable">
+    <table id="OutstandingTable" class="silvershop-infotable">
         <tbody>
-            <tr class="gap summary" id="Outstanding">
-                <th colspan="4" scope="row" class="threeColHeader"><strong><%t SilverShop\Model\Order.TotalOutstanding "Total outstanding" %></strong></th>
-                <td class="right"><strong>$TotalOutstanding.Nice </strong></td>
+            <tr class="silvershop-gap silvershop-summary" id="Outstanding">
+                <th colspan="4" scope="row" class="silvershop-threeColHeader"><strong><%t SilverShop\Model\Order.TotalOutstanding "Total outstanding" %></strong></th>
+                <td class="silvershop-right"><strong>$TotalOutstanding.Nice </strong></td>
             </tr>
         </tbody>
     </table>
 <% end_if %>
 <% if $Notes %>
-    <table id="NotesTable" class="infotable">
+    <table id="NotesTable" class="silvershop-infotable">
         <thead>
             <tr>
                 <th><%t SilverShop\Model\Order.db_Notes "Notes" %></th>

@@ -309,7 +309,7 @@ class Order extends DataObject
         if ($payments = $fieldList->fieldByName('Root.Payments.Payments')) {
             $fieldList->removeByName('Payments');
             $fieldList->insertAfter('Content', $payments);
-            $payments->addExtraClass('order-payments');
+            $payments->addExtraClass('silvershop-order-payments');
         }
 
         return $fieldList;

@@ -1,4 +1,4 @@
-<table class="variationstable">
+<table class="silvershop-variationstable">
     <tr>
         <th><%t SilverShop\Model\ProductVariation.SINGULARNAME "Variation" %></th>
         <th><%t SilverShop\Page\Product.Price "Price" %></th>
