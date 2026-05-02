@@ -41,7 +41,7 @@ class CheckoutComponentValidator extends RequiredFieldsValidator
             $valid = false;
         }
 
-        if(!$valid) {
+        if (!$valid) {
             $this->form->sessionMessage(
                 _t(
                     __CLASS__ . ".InvalidDataMessage",
