@@ -67,8 +67,9 @@ class ProductImageExtension extends Extension
     }
 
     /**
-     * Resizes image by width or height only if the source image is bigger than the given width/height.
-     * This prevents ugly upscaling.
+     * Resizes image to the given width and/or height.
+     * When upscale is false (default), uses FitMax/ScaleMaxWidth/ScaleMaxHeight to prevent upscaling
+     * while still processing the image through the resampling pipeline.
      *
      * @param int  $width   [optional]
      * @param int  $height  [optional]
@@ -80,24 +81,21 @@ class ProductImageExtension extends Extension
             return $this->getOwner();
         }
 
-        $realWidth = $this->getOwner()->getWidth();
-        $realHeight = $this->getOwner()->getHeight();
-
         if ($width && $height) {
-            return $realWidth < $width && $realHeight < $height && !$upscale
-                ? $this->getOwner()
-                : $this->getOwner()->Pad($width, $height);
+            return $upscale
+                ? $this->getOwner()->Pad($width, $height)
+                : $this->getOwner()->FitMax($width, $height);
         }
 
         if ($width) {
-            return $realWidth < $width && !$upscale
-                ? $this->getOwner()
-                : $this->getOwner()->ScaleWidth($width);
+            return $upscale
+                ? $this->getOwner()->ScaleWidth($width)
+                : $this->getOwner()->ScaleMaxWidth($width);
         }
 
-        return $realHeight < $height && !$upscale
-            ? $this->getOwner()
-            : $this->getOwner()->ScaleHeight($height);
+        return $upscale
+            ? $this->getOwner()->ScaleHeight($height)
+            : $this->getOwner()->ScaleMaxHeight($height);
     }
 
     /**
