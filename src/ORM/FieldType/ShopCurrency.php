@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace SilverShop\ORM\FieldType;
 
+use SilverStripe\Forms\FormField;
+use SilverStripe\Forms\NumericField;
 use SilverStripe\ORM\FieldType\DBCurrency;
 
 /**
@@ -38,6 +40,11 @@ class ShopCurrency extends DBCurrency
      */
     private static string $negative_value_format = '<span class="negative">(%s)</span>';
 
+    /**
+     * Number of decimal places to use for currency display and form fields
+     */
+    private static int $decimals = 2;
+
     private static array $casting = [
         'forTemplate' => 'HTMLFragment',
         'Nice' => 'HTMLFragment',
@@ -53,7 +60,7 @@ class ShopCurrency extends DBCurrency
         $symbol = $this->config()->currency_symbol;
         $val = number_format(
             abs($this->value),
-            2,
+            self::config()->decimals,
             self::config()->decimal_delimiter,
             self::config()->thousand_delimiter
         );
@@ -64,6 +71,12 @@ class ShopCurrency extends DBCurrency
         }
 
         return $val;
+    }
+
+    public function scaffoldFormField(?string $title = null, array $params = []): ?FormField
+    {
+        return NumericField::create($this->getName(), $title)
+            ->setScale(self::config()->decimals);
     }
 
     public function forTemplate(): string
