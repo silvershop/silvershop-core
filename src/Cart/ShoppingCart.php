@@ -85,7 +85,7 @@ class ShoppingCart
     public function setCurrent(Order $order): static
     {
         if (!$order->IsCart()) {
-            trigger_error('Passed Order object is not cart status', E_ERROR);
+            trigger_error('Passed Order object is not cart status', E_USER_ERROR);
         }
 
         $this->order = $order;
