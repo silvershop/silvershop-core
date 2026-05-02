@@ -54,6 +54,12 @@ Order
 
  - onInit
  - onCalculate
+ - updateName - modify the full name returned by Order::getName()
+
+Address
+
+ - updateToString - modify the full address string returned by Address::toString()
+ - updateName - modify the full name returned by Address::getName()
 
 OrderItem
 

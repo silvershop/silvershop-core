@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace SilverShop\Tests\Model;
 
 use SilverShop\Model\Address;
+use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\SapphireTest;
 use Exception;
 
@@ -30,6 +31,17 @@ final class AddressTest extends SapphireTest
             "Ink inc|Jerald Smith|23 Blah Street|Fitzgerald Building, Foor 3|TeAro|Wellington|1333|NZ",
             $address->toString("|")
         );
+    }
+
+    public function testGetNameExtensionHook(): void
+    {
+        Config::modify()->merge(Address::class, 'extensions', [AddressTest_UpdateNameExtension::class]);
+
+        $address = Address::create();
+        $address->FirstName = 'Jane';
+        $address->Surname = 'Doe';
+
+        $this->assertEquals('Jane Doe (extended)', $address->getName());
     }
 
     public function testRequiredFields(): void

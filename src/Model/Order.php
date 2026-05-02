@@ -649,7 +649,9 @@ class Order extends DataObject
             $surname = $this->Member()->Surname;
         }
 
-        return implode(' ', array_filter([$firstname, $surname]));
+        $name = implode(' ', array_filter([$firstname, $surname]));
+        $this->extend('updateName', $name);
+        return $name;
     }
 
     public function getTitle()
