@@ -50,21 +50,25 @@ class ProductCurrencyPrice extends DataObject
 
     public function canCreate($member = null, $context = []): bool
     {
-        return $this->Product()->canEdit($member);
+        $product = $this->Product();
+        return $product && $product->exists() ? $product->canEdit($member) : false;
     }
 
     public function canEdit($member = null): bool
     {
-        return $this->Product()->canEdit($member);
+        $product = $this->Product();
+        return $product && $product->exists() ? $product->canEdit($member) : false;
     }
 
     public function canDelete($member = null): bool
     {
-        return $this->Product()->canEdit($member);
+        $product = $this->Product();
+        return $product && $product->exists() ? $product->canEdit($member) : false;
     }
 
     public function canView($member = null): bool
     {
-        return $this->Product()->canView($member);
+        $product = $this->Product();
+        return $product && $product->exists() ? $product->canView($member) : false;
     }
 }

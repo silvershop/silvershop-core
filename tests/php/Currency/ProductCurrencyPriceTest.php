@@ -22,7 +22,7 @@ final class ProductCurrencyPriceTest extends SapphireTest
     protected static $fixture_file = __DIR__ . '/../Fixtures/shop.yml';
 
     /**
-     * @var SimpleCurrencyService
+     * @var CurrencyService
      */
     private CurrencyService $currencyService;
 
