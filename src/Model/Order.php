@@ -55,6 +55,8 @@ use SilverStripe\Security\Security;
  * @property ?string $IPAddress
  * @property bool $SeparateBillingAddress
  * @property ?string $Locale
+ * @property ?string $Currency
+ * @property ?float $ExchangeRate
  * @property int $MemberID
  * @property int $ShippingAddressID
  * @property int $BillingAddressID
@@ -99,6 +101,9 @@ class Order extends DataObject
         'SeparateBillingAddress' => 'Boolean',
         // keep track of customer locale
         'Locale' => 'Locale',
+        // currency information
+        'Currency' => 'Varchar(3)', // ISO 4217 currency code used for this order
+        'ExchangeRate' => 'Decimal(19,6)', // Exchange rate from base currency at the time of the order
     ];
 
     private static array $has_one = [
