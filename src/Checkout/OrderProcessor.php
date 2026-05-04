@@ -340,12 +340,11 @@ class OrderProcessor
             // Store the exchange rate at time of placement for historical records
             if (!$this->order->ExchangeRate) {
                 $currencyService = Injector::inst()->get(CurrencyService::class);
-                $orderCurrency = $this->order->Currency ?: $currencyService->getActiveCurrency();
                 $baseCurrency = ShopConfigExtension::get_site_currency();
                 if (!$this->order->Currency) {
-                    $this->order->Currency = $orderCurrency;
+                    $this->order->Currency = $currencyService->getActiveCurrency();
                 }
-                $this->order->ExchangeRate = $currencyService->getExchangeRate($baseCurrency, $orderCurrency);
+                $this->order->ExchangeRate = $currencyService->getExchangeRate($baseCurrency, $this->order->Currency);
             }
 
             //allow decorators to do stuff when order is saved.
