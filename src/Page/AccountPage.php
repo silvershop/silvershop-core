@@ -29,7 +29,7 @@ class AccountPage extends Page
     /**
      * Returns the link or the URLSegment to the account page on this site
      *
-     * @param boolean $urlSegment Return the URLSegment only
+     * @param bool $urlSegment Return the URLSegment only
      *
      * @return mixed
      */
@@ -43,7 +43,7 @@ class AccountPage extends Page
      * Return a link to view the order on the account page.
      *
      * @param int|string $orderID    ID of the order
-     * @param boolean    $urlSegment Return the URLSegment only
+     * @param bool    $urlSegment Return the URLSegment only
      */
     public static function get_order_link($orderID, $urlSegment = false): string
     {

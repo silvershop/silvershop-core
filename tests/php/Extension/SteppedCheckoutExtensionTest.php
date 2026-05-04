@@ -121,7 +121,7 @@ final class SteppedCheckoutExtensionTest extends FunctionalTest
         $this->post('/checkout/CreateAccountForm', $data); //redirect to next step
 
         $member = MemberExtension::get_by_identifier("mb@example.com");
-        $this->assertTrue((boolean)$member, "Check new account was created");
+        $this->assertTrue((bool)$member, "Check new account was created");
         $this->assertEquals('Michael', $member->FirstName);
         $this->assertEquals('Black', $member->Surname);
     }

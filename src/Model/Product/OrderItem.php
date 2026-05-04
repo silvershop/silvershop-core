@@ -38,7 +38,7 @@ class OrderItem extends \SilverShop\Model\OrderItem
      *  - live version if in cart, or
      *  - historical version if order is placed
      *
-     * @param boolean $forcecurrent - force getting latest version of the product.
+     * @param bool $forcecurrent - force getting latest version of the product.
      */
     public function Product(bool $forcecurrent = false): DataObject|Versioned|null
     {

@@ -258,7 +258,7 @@ class OrderProcessor
     /**
      * Takes an order from being a cart to awaiting payment.
      *
-     * @return boolean - success/failure
+     * @return bool - success/failure
      */
     public function placeOrder(): bool
     {

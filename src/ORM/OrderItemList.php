@@ -26,7 +26,7 @@ class OrderItemList extends HasManyList
      * Optionally sum product field instead.
      *
      * @param string  $field     - field to sum
-     * @param boolean $onproduct - sum from product or not
+     * @param bool $onproduct - sum from product or not
      *
      * @return float sum total of field
      */

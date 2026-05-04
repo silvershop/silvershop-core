@@ -246,7 +246,7 @@ class ShoppingCart
      *
      * @param int $quantity - number of items to remove, or leave null for all items (default)
      * @param array $filter
-     * @return boolean success/failure
+     * @return bool success/failure
      */
     public function remove(Buyable $buyable, $quantity = null, $filter = []): ?bool
     {

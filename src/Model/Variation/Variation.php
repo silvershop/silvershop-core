@@ -348,7 +348,7 @@ class Variation extends DataObject implements Buyable
 
     /*
      * Returns if the product variation is already in the shopping cart.
-     * @return boolean
+     * @return bool
      */
     public function IsInCart(): bool
     {

@@ -152,7 +152,7 @@ class CheckoutComponentConfig
      * Validate every component against given data.
      *
      * @param array $data data to validate
-     * @return boolean validation result
+     * @return bool validation result
      * @throws ValidationException
      */
     public function validateData(array $data): bool

@@ -92,7 +92,7 @@ final class OrderProcessorTest extends SapphireTest
         $order = $this->objFromFixture(Order::class, "unpaid");
         $orderProcessor = OrderProcessor::create($order);
         $payment = $orderProcessor->createPayment('Dummy');
-        $this->assertTrue((boolean)$payment);
+        $this->assertTrue((bool)$payment);
     }
 
     public function testPlaceOrder(): void
@@ -282,7 +282,7 @@ final class OrderProcessorTest extends SapphireTest
         );
 
         $order = Order::get()->byID($cart->ID);
-        $this->assertTrue((boolean)$order, 'Order exists');
+        $this->assertTrue((bool)$order, 'Order exists');
         $this->assertEquals($order->Status, 'Unpaid', 'status is now "unpaid"');
         $this->assertEquals($order->FirstName, 'Joseph', 'order first name');
         $this->assertEquals($order->Surname, 'Blog', 'order surname');
@@ -329,7 +329,7 @@ final class OrderProcessorTest extends SapphireTest
         $this->assertTrue($success, 'Non-member order placed successfully ...' . $error);
 
         $order = Order::get()->byID($order->ID); //update $order
-        $this->assertTrue((boolean)$order, 'Order exists');
+        $this->assertTrue((bool)$order, 'Order exists');
         $this->assertEquals($order->Status, 'Unpaid', 'status is now "unpaid"');
         $this->assertEquals($order->MemberID, 0, 'No associated member');
         $this->assertEquals($order->GrandTotal(), 8, 'grand total');
