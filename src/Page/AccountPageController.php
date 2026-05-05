@@ -145,6 +145,7 @@ class AccountPageController extends PageController
         );
         $requiredFields = RequiredFieldsValidator::create($singletonaddress->getRequiredFields());
         $form = Form::create($this, 'CreateAddressForm', $fields, $fieldList, $requiredFields);
+        $form->loadDataFrom($this->member, Form::MERGE_IGNORE_FALSEISH);
         $this->extend('updateCreateAddressForm', $form);
         return $form;
     }

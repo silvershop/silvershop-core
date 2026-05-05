@@ -83,6 +83,15 @@ abstract class Address extends CheckoutComponent
             $data['Country'] = $country;
         }
 
+        // Pre-fill address name from the logged-in member when the address has no name yet
+        if ($member = Security::getCurrentUser()) {
+            foreach (['FirstName', 'Surname'] as $nameField) {
+                if (empty($data[$nameField]) && !empty($member->$nameField)) {
+                    $data[$nameField] = $member->$nameField;
+                }
+            }
+        }
+
         return $data;
     }
 

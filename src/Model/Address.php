@@ -128,6 +128,8 @@ class Address extends DataObject
     public function getFrontEndFields($params = null): FieldList
     {
         $fieldList = FieldList::create(
+            TextField::create('FirstName', _t('SilverShop\Model\Order.db_FirstName', 'First Name')),
+            TextField::create('Surname', _t('SilverShop\Model\Order.db_Surname', 'Surname')),
             $this->getCountryField(),
             TextField::create('Company', $this->fieldLabel('Company')),
             $addressfield = TextField::create('Address', $this->fieldLabel('Address')),

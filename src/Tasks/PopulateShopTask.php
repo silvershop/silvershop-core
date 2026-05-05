@@ -31,6 +31,15 @@ class PopulateShopTask extends BuildTask
 
     private static string $segment = 'PopulateShopTask';
 
+    private static string $force = 'force';
+
+    public function getOptions(): array
+    {
+        return [
+            new InputOption(self::$force, null, InputOption::VALUE_NONE, 'Force the creation of products and categories'),
+        ];
+    }
+
     protected function execute(InputInterface $input, PolyOutput $output): int
     {
         $this->extend('beforePopulate');
@@ -41,8 +50,10 @@ class PopulateShopTask extends BuildTask
 
         $fixtureDir = realpath(__DIR__ . '/../../tests/php/Fixtures');
 
-        //create products
-        if (!Product::get()->count()) {
+        $force = $input->getOption('force');
+
+        // create products
+        if (!Product::get()->count() || $force) {
             $fixture = YamlFixture::create($fixtureDir . '/dummyproducts.yml');
             $fixture->writeInto($factory);//needs to be a data model
 
