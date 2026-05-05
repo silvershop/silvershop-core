@@ -19,6 +19,7 @@ use SilverStripe\PolyExecution\PolyOutput;
 use SilverStripe\SiteConfig\SiteConfig;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 
 /**
  * Populate shop task
@@ -77,6 +78,7 @@ class PopulateShopTask extends BuildTask
                 'bedroom',
                 'stationery',
             ];
+
             foreach ($categoriestopublish as $categoryname) {
                 $factory->get(ProductCategory::class, $categoryname)->publishSingle();
             }
@@ -107,7 +109,9 @@ class PopulateShopTask extends BuildTask
         }
 
         //cart page
-        if (!CartPage::get()->first()) {
+        $cartPage = CartPage::get()->first();
+
+        if (!$cartPage) {
             $fixture = YamlFixture::create($fixtureDir . '/pages/Cart.yml');
             $fixture->writeInto($factory);
             $page = $factory->get(CartPage::class, 'cart');
