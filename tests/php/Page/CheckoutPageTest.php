@@ -40,7 +40,7 @@ final class CheckoutPageTest extends FunctionalTest
         $this->get($orderUrl);
 
         //make payment action (form posts to the order URL, not .../ActionsForm)
-        $this->post(
+        $response = $this->post(
             $orderUrl,
             [
                 'OrderID'          => $order->ID,

@@ -19,6 +19,7 @@ use SilverShop\Tests\ShopTestBootstrap;
 use SilverStripe\CMS\Controllers\ModelAsController;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Injector\Injector;
+use SilverStripe\Control\Director;
 use SilverStripe\Dev\FunctionalTest;
 use SilverStripe\Omnipay\GatewayInfo;
 use SilverStripe\Omnipay\Model\Payment;
