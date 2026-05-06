@@ -49,6 +49,14 @@ class ProductVariationsExtension extends Extension
         ]
     ];
 
+    private static array $cascade_deletes = [
+        'Variations',
+    ];
+
+    private static array $cascade_duplicates = [
+        'Variations',
+    ];
+
     /**
      * Adds variations specific fields to the CMS.
      */
@@ -226,32 +234,6 @@ class ProductVariationsExtension extends Extension
         return $list;
     }
 
-    /**
-     * Make sure variations are deleted with product.
-     */
-    public function onAfterDelete(): void
-    {
-        $remove = false;
-        // if a record is staged or live, leave it's variations alone.
-        if (!property_exists($this, 'owner')) {
-            $remove = true;
-        } else {
-            $staged = Versioned::get_by_stage($this->getOwner()->ClassName, 'Stage')
-                ->byID($this->getOwner()->ID);
-            $live = Versioned::get_by_stage($this->getOwner()->ClassName, 'Live')
-                ->byID($this->getOwner()->ID);
-            if (!$staged && !$live) {
-                $remove = true;
-            }
-        }
-
-        if ($remove) {
-            foreach ($this->getOwner()->Variations() as $variation) {
-                $variation->delete();
-                $variation->destroy();
-            }
-        }
-    }
 
     public function updateFormClass(&$formClass): void
     {

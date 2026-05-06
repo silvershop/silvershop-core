@@ -48,9 +48,6 @@ class Variation extends DataObject implements Buyable
         'Sort' => 'Int',
         'InternalItemID' => 'Varchar(30)',
         'Price' => 'Currency(19,4)',
-
-        //physical properties
-        //TODO: Move to an extension
         'Weight' => 'Decimal(12,5)',
         'Height' => 'Decimal(12,5)',
         'Width' => 'Decimal(12,5)',
@@ -70,6 +67,14 @@ class Variation extends DataObject implements Buyable
         'AttributeValues' => AttributeValue::class
     ];
 
+    private static array $cascade_deletes = [
+        'AttributeValues'
+    ];
+
+    private static array $cascade_duplicates = [
+        'AttributeValues'
+    ];
+
     private static array $casting = [
         'Title' => 'Text',
         'Price' => 'Currency'
@@ -85,7 +90,6 @@ class Variation extends DataObject implements Buyable
 
     private static array $summary_fields = [
         'InternalItemID' => 'Product Code',
-        //'Product.Title' => 'Product',
         'Title' => 'Variation',
         'Price' => 'Price'
     ];
@@ -122,8 +126,9 @@ class Variation extends DataObject implements Buyable
             TextField::create('InternalItemID', _t('SilverShop\Page\Product.Code', 'Product Code')),
             TextField::create('Price', _t('SilverShop\Page\Product.db_BasePrice', 'Price'))
         );
-        //add attributes dropdowns
+
         $attributes = null;
+
         if ($this->Product()->exists()) {
             $attributes = $this->Product()->VariationAttributeTypes();
         }
@@ -151,8 +156,6 @@ class Variation extends DataObject implements Buyable
                         )
                     );
                 }
-
-                //TODO: allow setting custom values here, rather than visiting the products section
             }
         } else {
             $fieldList->push(
@@ -172,12 +175,10 @@ class Variation extends DataObject implements Buyable
             UploadField::create('Image', _t('SilverShop\Page\Product.Image', 'Product Image'))
         );
 
-        //physical measurement units
         $fieldSubstitutes = [
-            'LengthUnit' => Product::config()->length_unit
+            'LengthUnit' => Product::config()->get('length_unit')
         ];
 
-        //physical measurements
         $fieldList->push(
             TextField::create(
                 'Weight',
@@ -238,9 +239,13 @@ class Variation extends DataObject implements Buyable
         }
     }
 
+
+
+
     public function getTitle()
     {
         $attributeValues = $this->AttributeValues();
+
         if ($attributeValues->exists()) {
             $labelvalues = [];
             foreach ($attributeValues as $value) {
@@ -259,15 +264,76 @@ class Variation extends DataObject implements Buyable
         return $title;
     }
 
+
     public function getCategoryIDs(): array
     {
         return $this->Product()->exists() ? $this->Product()->getCategoryIDs() : [];
     }
 
+
     public function getCategories()
     {
         return $this->Product()->exists() ? $this->Product()->getCategories() : ArrayList::create();
     }
+
+    public function canView($member = null): bool
+    {
+        $extended = $this->extendedCan(__FUNCTION__, $member);
+        if ($extended !== null) {
+            return $extended;
+        }
+
+        return $this->checkProductPermission(__FUNCTION__, $member);
+    }
+
+    public function canCreate($member = null, $context = []): bool
+    {
+        $extended = $this->extendedCan(__FUNCTION__, $member, $context);
+        if ($extended !== null) {
+            return $extended;
+        }
+
+        return $this->checkProductPermission(__FUNCTION__, $member, $context);
+    }
+
+    public function canEdit($member = null): bool
+    {
+        $extended = $this->extendedCan(__FUNCTION__, $member);
+        if ($extended !== null) {
+            return $extended;
+        }
+
+        return $this->checkProductPermission(__FUNCTION__, $member);
+    }
+
+    public function canDelete($member = null): bool
+    {
+        $extended = $this->extendedCan(__FUNCTION__, $member);
+        if ($extended !== null) {
+            return $extended;
+        }
+
+        return $this->checkProductPermission(__FUNCTION__, $member);
+    }
+
+    /**
+     * Defer CMS permissions to the related product where possible.
+     * If the variation isn't linked yet, fallback to product create permission.
+     */
+    protected function checkProductPermission(string $permissionMethod, $member = null, array $context = []): bool
+    {
+        $product = $this->Product();
+        if ($product && $product->exists()) {
+            if ($permissionMethod === 'canCreate') {
+                return (bool) $product->canCreate($member, $context);
+            }
+
+            return (bool) $product->{$permissionMethod}($member);
+        }
+
+        return (bool) Product::singleton()->canCreate($member, $context);
+    }
+
 
     public function canPurchase(?Member $member = null, int $quantity = 1): bool
     {
@@ -300,6 +366,7 @@ class Variation extends DataObject implements Buyable
         $filter = [];
         $this->extend('updateItemFilter', $filter);
         $item = ShoppingCart::singleton()->get($this, $filter);
+
         if (!$item) {
             //return dummy item so that we can still make use of Item
             $item = $this->createItem(0);
