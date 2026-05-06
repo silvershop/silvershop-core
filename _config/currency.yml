@@ -1,0 +1,10 @@
+---
+Name: silvershop-currency
+After: silvershop-config
+---
+
+# Register the default currency service implementation.
+# Override this to use a custom implementation, e.g. one that fetches live exchange rates.
+SilverStripe\Core\Injector\Injector:
+  SilverShop\Currency\CurrencyService:
+    class: SilverShop\Currency\SimpleCurrencyService

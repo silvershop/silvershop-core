@@ -55,6 +55,15 @@ class ShopConfigExtension extends Extension
      */
     private static string $base_currency = 'NZD';
 
+    /**
+     * Supported currencies in the shop (ISO 4217 currency codes).
+     * When set to more than one currency, multi-currency support is enabled.
+     * The first entry should always be (or match) the base_currency.
+     *
+     * @var string[]
+     */
+    private static array $supported_currencies = [];
+
     private static bool $forms_use_button_tag = false;
 
     public static function current(): SiteConfig
@@ -65,6 +74,22 @@ class ShopConfigExtension extends Extension
     public static function get_site_currency(): string
     {
         return self::config()->base_currency;
+    }
+
+    /**
+     * Get the list of supported currencies.
+     * If empty, only the base currency is supported.
+     *
+     * @return string[] list of ISO 4217 currency codes
+     */
+    public static function get_supported_currencies(): array
+    {
+        $currencies = self::config()->supported_currencies;
+        if (empty($currencies)) {
+            return [self::get_site_currency()];
+        }
+
+        return $currencies;
     }
 
     public function updateCMSFields(FieldList $fieldList): void

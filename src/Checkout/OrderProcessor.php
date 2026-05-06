@@ -7,6 +7,7 @@ namespace SilverShop\Checkout;
 use ErrorException;
 use Exception;
 use SilverShop\Cart\ShoppingCart;
+use SilverShop\Currency\CurrencyService;
 use SilverShop\Extension\OrderManipulationExtension;
 use SilverShop\Extension\ShopConfigExtension;
 use SilverShop\Model\Order;
@@ -14,6 +15,7 @@ use SilverShop\ShopTools;
 use SilverStripe\Control\Controller;
 use SilverStripe\Core\Config\Configurable;
 use SilverStripe\Core\Injector\Injectable;
+use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Omnipay\Exception\InvalidConfigurationException;
 use SilverStripe\Omnipay\GatewayInfo;
 use SilverStripe\Omnipay\Model\Payment;
@@ -333,6 +335,16 @@ class OrderProcessor
                 if ($cgroup->exists()) {
                     $member->Groups()->add($cgroup);
                 }
+            }
+
+            // Store the exchange rate at time of placement for historical records
+            if (!$this->order->ExchangeRate) {
+                $currencyService = Injector::inst()->get(CurrencyService::class);
+                $baseCurrency = ShopConfigExtension::get_site_currency();
+                if (!$this->order->Currency) {
+                    $this->order->Currency = $currencyService->getActiveCurrency();
+                }
+                $this->order->ExchangeRate = $currencyService->getExchangeRate($baseCurrency, $this->order->Currency);
             }
 
             //allow decorators to do stuff when order is saved.

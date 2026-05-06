@@ -6,7 +6,7 @@ namespace SilverShop;
 
 use TractorCow\Fluent\State\FluentState;
 use Psr\Container\NotFoundExceptionInterface;
-use SilverShop\Extension\ShopConfigExtension;
+use SilverShop\Currency\CurrencyService;
 use SilverStripe\Control\Controller;
 use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Control\Session;
@@ -28,7 +28,8 @@ class ShopTools
      */
     public static function price_for_display($price): DBMoney
     {
-        $currency = ShopConfigExtension::get_site_currency();
+        $currencyService = Injector::inst()->get(CurrencyService::class);
+        $currency = $currencyService->getActiveCurrency();
         $dbMoney = DBMoney::create_field(DBMoney::class, 0, 'Price');
         $dbMoney->setAmount($price);
         $dbMoney->setCurrency($currency);

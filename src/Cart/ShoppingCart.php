@@ -6,6 +6,7 @@ namespace SilverShop\Cart;
 
 use SilverStripe\Core\Validation\ValidationException;
 use Exception;
+use SilverShop\Currency\CurrencyService;
 use SilverShop\Extension\OrderManipulationExtension;
 use SilverShop\Extension\ProductVariationsExtension;
 use SilverShop\Model\Buyable;
@@ -17,6 +18,7 @@ use SilverShop\ShopTools;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Config\Configurable;
 use SilverStripe\Core\Injector\Injectable;
+use SilverStripe\Core\Injector\Injector;
 use SilverStripe\ORM\FieldType\DBField;
 use SilverStripe\Security\Member;
 use SilverStripe\Security\Security;
@@ -108,6 +110,10 @@ class ShoppingCart
         if (Member::config()->login_joins_cart && ($member = Security::getCurrentUser())) {
             $this->order->MemberID = $member->ID;
         }
+
+        // Set the active currency on the order
+        $currencyService = Injector::inst()->get(CurrencyService::class);
+        $this->order->Currency = $currencyService->getActiveCurrency();
 
         $this->order->write();
         $this->order->extend('onStartOrder');

@@ -9,10 +9,13 @@ use Exception;
 use Page;
 use SilverShop\Cart\ShoppingCart;
 use SilverShop\Cart\ShoppingCartController;
+use SilverShop\Currency\CurrencyService;
 use SilverShop\Extension\ProductVariationsExtension;
+use SilverShop\Extension\ShopConfigExtension;
 use SilverShop\Model\Buyable;
 use SilverShop\Model\Order;
 use SilverShop\Model\Product\OrderItem;
+use SilverShop\Model\Product\ProductCurrencyPrice;
 use SilverShop\Model\Variation\Variation;
 use SilverStripe\AssetAdmin\Forms\UploadField;
 use SilverStripe\Assets\Image;
@@ -20,10 +23,13 @@ use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Forms\CheckboxField;
 use SilverStripe\Forms\DropdownField;
 use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\GridField\GridField;
+use SilverStripe\Forms\GridField\GridFieldConfig_RecordEditor;
 use SilverStripe\Forms\ListboxField;
 use SilverStripe\Forms\TextField;
 use SilverStripe\ORM\DataList;
 use SilverStripe\ORM\FieldType\DBBoolean;
+use SilverStripe\ORM\HasManyList;
 use SilverStripe\ORM\ManyManyList;
 use SilverStripe\Security\Member;
 use SilverStripe\SiteConfig\SiteConfig;
@@ -55,6 +61,7 @@ use SilverStripe\SiteConfig\SiteConfig;
  *
  * @method ManyManyList<ProductCategory> ProductCategories()
  * @method Image Image()
+ * @method HasManyList<ProductCurrencyPrice> Prices()
  */
 class Product extends Page implements Buyable
 {
@@ -77,12 +84,21 @@ class Product extends Page implements Buyable
         'Image' => Image::class,
     ];
 
+    private static array $has_many = [
+        'Prices' => ProductCurrencyPrice::class,
+    ];
+
     /**
      * Variations are defined on {@see ProductVariationsExtension}; duplicating a product should copy them.
      * Cascade deletes for variations are handled in that extension for correct Versioned behaviour.
      */
     private static array $cascade_duplicates = [
         'Variations',
+        'Prices',
+    ];
+
+    private static array $cascade_deletes = [
+        'Prices',
     ];
 
     private static array $owns = [
@@ -180,6 +196,19 @@ class Product extends Page implements Buyable
                         ->setMaxLength(12),
                     ]
                 );
+
+                // Add per-currency prices grid if the product has been saved
+                if ($self->isInDB()) {
+                    $fieldList->addFieldToTab(
+                        'Root.Pricing',
+                        GridField::create(
+                            'Prices',
+                            _t(__CLASS__ . '.CurrencyPrices', 'Prices per Currency'),
+                            $self->Prices(),
+                            GridFieldConfig_RecordEditor::create()
+                        )
+                    );
+                }
 
                 $fieldSubstitutes = [
                     'LengthUnit' => $self::config()->length_unit
@@ -411,10 +440,31 @@ class Product extends Page implements Buyable
     /**
      * The raw retail price the visitor will get when they
      * add to cart. Can include discounts or markups on the base price.
+     *
+     * If the shop has multi-currency enabled, this will return the price in the
+     * currently active currency. If a specific price has been defined for that
+     * currency it will be used directly; otherwise the base price will be
+     * converted using the active {@link CurrencyService}.
      */
     public function sellingPrice(): float
     {
         $price = $this->BasePrice;
+
+        // Check for a currency-specific price override
+        $currencyService = Injector::inst()->get(CurrencyService::class);
+        $activeCurrency = $currencyService->getActiveCurrency();
+        $baseCurrency = ShopConfigExtension::get_site_currency();
+
+        if ($activeCurrency !== $baseCurrency) {
+            // Check for a directly-defined price for this currency
+            $currencyPrice = $this->Prices()->filter('Currency', $activeCurrency)->first();
+            if ($currencyPrice && $currencyPrice->exists()) {
+                $price = $currencyPrice->Price;
+            } else {
+                // Fall back to currency conversion
+                $price = $currencyService->convert((float)$price, $baseCurrency, $activeCurrency);
+            }
+        }
 
         $this->extend('updateSellingPrice', $price);
 

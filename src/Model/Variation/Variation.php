@@ -6,6 +6,8 @@ namespace SilverShop\Model\Variation;
 
 use SilverStripe\Model\List\ArrayList;
 use SilverShop\Cart\ShoppingCart;
+use SilverShop\Currency\CurrencyService;
+use SilverShop\Extension\ShopConfigExtension;
 use SilverShop\Model\Buyable;
 use SilverShop\Model\Order;
 use SilverShop\Page\Product;
@@ -17,6 +19,7 @@ use SilverStripe\Forms\TextField;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\ManyManyList;
 use SilverStripe\Security\Member;
+use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Versioned\Versioned;
 
 /**
@@ -342,6 +345,16 @@ class Variation extends DataObject implements Buyable
     public function sellingPrice(): float
     {
         $price = $this->Price;
+
+        // Apply currency conversion if the active currency differs from the base currency
+        $currencyService = Injector::inst()->get(CurrencyService::class);
+        $activeCurrency = $currencyService->getActiveCurrency();
+        $baseCurrency = ShopConfigExtension::get_site_currency();
+
+        if ($activeCurrency !== $baseCurrency) {
+            $price = $currencyService->convert((float)$price, $baseCurrency, $activeCurrency);
+        }
+
         $this->extend('updateSellingPrice', $price);
 
         //prevent negative values
