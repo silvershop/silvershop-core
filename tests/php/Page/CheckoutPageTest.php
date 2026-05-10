@@ -72,6 +72,23 @@ final class CheckoutPageTest extends FunctionalTest
         $this->assertEquals(404, $httpResponse->getStatusCode(), 'Cannot access the Checkout Page without a current order');
     }
 
+    public function testCheckoutIncludesSessionKeepAliveScript(): void
+    {
+        $checkout = $this->objFromFixture(CheckoutPage::class, 'checkout');
+        $checkout->publishSingle();
+
+        $order = $this->objFromFixture(Order::class, "unpaid");
+        OrderManipulationExtension::add_session_order($order);
+
+        $httpResponse = $this->get('checkout');
+        $this->assertEquals(200, $httpResponse->getStatusCode(), 'Checkout page should be available with a current order');
+        $this->assertStringContainsString(
+            'client/dist/javascript/CheckoutSessionKeepAlive.js',
+            (string)$httpResponse->getBody(),
+            'Checkout keepalive script should be included on checkout pages'
+        );
+    }
+
     public function testFindLink(): void
     {
         $dataObject = $this->objFromFixture(CheckoutPage::class, 'checkout');

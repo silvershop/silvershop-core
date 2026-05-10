@@ -13,6 +13,7 @@ use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\Form;
 use SilverStripe\Forms\FormAction;
 use SilverStripe\Security\Security;
+use SilverStripe\View\Requirements;
 
 class CheckoutForm extends Form
 {
@@ -24,6 +25,8 @@ class CheckoutForm extends Form
 
     public function __construct(RequestHandler $requestHandler, $name, CheckoutComponentConfig $checkoutComponentConfig)
     {
+        Requirements::javascript('silvershop/core:client/dist/javascript/CheckoutSessionKeepAlive.js');
+
         $this->config = $checkoutComponentConfig;
         $fieldList = $checkoutComponentConfig->getFormFields();
 
