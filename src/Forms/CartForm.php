@@ -92,7 +92,7 @@ class CartForm extends Form
                 }
 
                 if (isset($fields['Comment'])) {
-                    $item->Comment = Convert::raw2sql((string)$fields['Comment']);
+                    $item->Comment = (string)$fields['Comment'];
                 }
 
                 //TODO: make updates through ShoppingCart class
