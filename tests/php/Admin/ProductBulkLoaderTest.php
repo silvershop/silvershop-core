@@ -44,19 +44,22 @@ final class ProductBulkLoaderTest extends FunctionalTest
 
     public function testCreateNewProductGroupWhenConfigured(): void
     {
+        $existingConfigValue = Config::inst()->get(ProductBulkLoader::class, 'create_new_product_groups');
         Config::modify()->set(ProductBulkLoader::class, 'create_new_product_groups', true);
         try {
             $productBulkLoader = ProductBulkLoader::create(Product::class);
             $product = $this->objFromFixture(Product::class, 'socks');
-            $newCategoryTitle = 'Category Created By Bulk Loader';
+            $originalParentID = (int) $product->ParentID;
+            $newCategoryTitle = 'category created by bulk loader';
 
             $productBulkLoader->setParent($product, $newCategoryTitle);
 
-            $createdCategory = ProductCategory::get()->filter('Title', strtolower($newCategoryTitle))->first();
+            $createdCategory = ProductCategory::get()->byID($product->ParentID);
             $this->assertNotNull($createdCategory);
-            $this->assertSame((int) $createdCategory->ID, (int) $product->ParentID);
+            $this->assertSame($newCategoryTitle, (string) $createdCategory->Title);
+            $this->assertNotSame($originalParentID, (int) $product->ParentID);
         } finally {
-            Config::modify()->set(ProductBulkLoader::class, 'create_new_product_groups', false);
+            Config::modify()->set(ProductBulkLoader::class, 'create_new_product_groups', $existingConfigValue);
         }
     }
 }
