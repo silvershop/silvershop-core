@@ -66,6 +66,8 @@ class OnsitePayment extends CheckoutComponent
                 [
                     'name' => 'Joe Bloggs',
                     'number' => '4242424242424242',
+                    'expiryMonth' => '12',
+                    'expiryYear' => (string) ((int) date('Y') + 2),
                     'cvv' => 123,
                 ],
                 $data

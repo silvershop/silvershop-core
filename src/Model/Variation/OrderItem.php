@@ -61,13 +61,13 @@ class OrderItem extends \SilverShop\Model\Product\OrderItem
         }
     }
 
-    public function SubTitle(): false|string
+    public function SubTitle(): string
     {
         if ($this->ProductVariation()) {
-            return $this->ProductVariation()->getTitle();
+            return (string) $this->ProductVariation()->getTitle();
         }
 
-        return false;
+        return '';
     }
 
     public function Image(): ?Image

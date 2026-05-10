@@ -85,10 +85,9 @@ class OrderProcessor
      */
     public function makePayment($gateway, $gatewaydata = [], $successUrl = null, $cancelUrl = null)
     {
-        //create payment
         $payment = $this->createPayment($gateway);
+
         if (!$payment) {
-            //errors have been stored.
             return null;
         }
 
@@ -99,12 +98,7 @@ class OrderProcessor
             $payment->setFailureUrl($cancelUrl);
         }
 
-        // Create a payment service, by using the Service Factory. This will automatically choose an
-        // AuthorizeService or PurchaseService, depending on Gateway configuration.
-        // Set the user-facing success URL for redirects
-        /**
-         * @var ServiceFactory $serviceFactory
-         */
+        /** @var ServiceFactory $serviceFactory */
         $serviceFactory = ServiceFactory::create();
         $paymentService = $serviceFactory->getService($payment, ServiceFactory::INTENT_PAYMENT);
 
@@ -122,7 +116,10 @@ class OrderProcessor
             if ($opResponse = $serviceResponse->getOmnipayResponse()) {
                 $this->error($opResponse->getMessage());
             } else {
-                $this->error('An unspecified payment error occurred. Please check the payment messages.');
+                $this->error(
+                    $this->extractServiceResponseErrorMessage($serviceResponse)
+                    ?? 'An unspecified payment error occurred. Please check the payment messages.'
+                );
             }
         }
 
@@ -208,14 +205,14 @@ class OrderProcessor
     /**
      * Complete payment processing
      *    - send receipt
-     *    - update order status accordingling
+     *    - update order status according to the payment status
      *    - fire event hooks
      */
     public function completePayment(): void
     {
         if (!$this->order->IsPaid()) {
-            $this->order->extend('onPayment'); //a payment has been made
-            //place the order, if not already placed
+            $this->order->extend('onPayment');
+
             if ($this->canPlace($this->order)) {
                 $this->placeOrder();
             } elseif ($this->order->Locale) {
@@ -395,18 +392,45 @@ class OrderProcessor
         return true; //report success
     }
 
+
     public function getOrder(): Order
     {
         return $this->order;
     }
+
 
     public function getError(): ?string
     {
         return $this->error;
     }
 
-    protected function error(string $message): void
+
+    protected function error(string $message): self
     {
         $this->error = $message;
+
+        return $this;
+    }
+
+    /**
+     * Tries to resolve a useful gateway message when Omnipay has no response payload.
+     */
+    protected function extractServiceResponseErrorMessage(ServiceResponse $serviceResponse): ?string
+    {
+        $payment = $serviceResponse->getPayment();
+        if (!$payment || !$payment->exists()) {
+            return null;
+        }
+
+        $message = $payment->Messages()
+            ->exclude('Message', '')
+            ->sort('Created', 'DESC')
+            ->first();
+
+        if (!$message || !isset($message->Message) || !is_string($message->Message) || $message->Message === '') {
+            return null;
+        }
+
+        return $message->Message;
     }
 }

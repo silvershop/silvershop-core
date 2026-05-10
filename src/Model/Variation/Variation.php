@@ -240,8 +240,6 @@ class Variation extends DataObject implements Buyable
     }
 
 
-
-
     public function getTitle()
     {
         $attributeValues = $this->AttributeValues();
