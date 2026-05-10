@@ -78,6 +78,15 @@ final class ProductCategoryTest extends FunctionalTest
         $this->get(Director::makeRelative($dataObject->Link()));
     }
 
+    public function testProductCategoryIncludesSchemaOrgMarkup(): void
+    {
+        $response = $this->get(Director::makeRelative($this->products->Link()));
+        $body = $response->getBody();
+        $this->assertStringContainsString('itemtype="http://schema.org/Product"', $body);
+        $this->assertStringContainsString('itemprop="name"', $body);
+        $this->assertStringContainsString('itemprop="offers"', $body);
+    }
+
     public function testGetAllProducts(): void
     {
         $dataList = $this->products->ProductsShowable();

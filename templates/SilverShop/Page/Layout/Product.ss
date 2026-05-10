@@ -1,18 +1,18 @@
 <% require css("silvershop/core: client/dist/css/product.css") %>
 
-<div class="silvershop-product silvershop-typography">
-    <h1 class="silvershop-product__title">$Title</h1>
+<div class="silvershop-product silvershop-typography" <% include SilverShop\Includes\SchemaOrg\ProductScope %>>
+    <h1 class="silvershop-product__title" <% include SilverShop\Includes\SchemaOrg\ProductName %>>$Title</h1>
     <div class="silvershop-product__breadcrumbs">$Breadcrumbs</div>
     <div class="silvershop-product__details">
         <% if $Image.ContentImage %>
-            <img class="silvershop-product__image" src="$Image.ContentImage.URL" alt="<%t SilverShop\Page\Product.ImageAltText "{Title} image" Title=$Title %>" />
+            <img class="silvershop-product__image" <% include SilverShop\Includes\SchemaOrg\ProductImage %> src="$Image.ContentImage.URL" alt="<%t SilverShop\Page\Product.ImageAltText "{Title} image" Title=$Title %>" />
         <% else %>
             <div class="silvershop-product__no-image"><%t SilverShop\Page\Product.NoImage "no image" %></div>
         <% end_if %>
         <% if $InternalItemID %>
             <p class="silvershop-product__attribute silvershop-product__attribute--code">
                 <span class="silvershop-product__attribute-label"><%t SilverShop\Page\Product.Code "Product Code" %>:</span>
-                <span class="silvershop-product__attribute-value">{$InternalItemID}</span>
+                <span class="silvershop-product__attribute-value" <% include SilverShop\Includes\SchemaOrg\ProductSku %>>{$InternalItemID}</span>
             </p>
         <% end_if %>
         <% if $Model %>
@@ -40,7 +40,7 @@
         $Form
     </div>
     <% if $Content %>
-        <div class="silvershop-product__content silvershop-typography">
+        <div class="silvershop-product__content silvershop-typography" <% include SilverShop\Includes\SchemaOrg\ProductDescription %>>
             $Content
         </div>
     <% end_if %>

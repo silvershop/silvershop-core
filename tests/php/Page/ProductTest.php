@@ -129,6 +129,17 @@ final class ProductTest extends FunctionalTest
         $this->get(Director::makeRelative($this->socks->Link()));
     }
 
+    public function testProductPageIncludesSchemaOrgMarkup(): void
+    {
+        $response = $this->get(Director::makeRelative($this->tshirt->Link()));
+        $body = $response->getBody();
+        $this->assertStringContainsString('itemtype="http://schema.org/Product"', $body);
+        $this->assertStringContainsString('itemprop="name"', $body);
+        $this->assertStringContainsString('itemprop="offers"', $body);
+        $this->assertStringContainsString('itemprop="price"', $body);
+        $this->assertStringContainsString('itemprop="priceCurrency"', $body);
+    }
+
     public function testCategories(): void
     {
         $expectedids = [
