@@ -223,7 +223,8 @@ class ShoppingCartController extends Controller
         $result = false;
 
         if (($product = $this->buyableFromRequest()) instanceof Buyable) {
-            $quantity = max(0, (int)$request->getVar('quantity'));
+            $quantityParam = $request->getVar('quantity');
+            $quantity = ($quantityParam !== null) ? max(0, (int)$quantityParam) : 1;
 
             if ($quantity === 0) {
                 $result = $this->cart->remove($product, null, $request->getVars());

@@ -10,6 +10,7 @@ use SilverShop\Model\Variation\Variation;
 use SilverShop\Page\Product;
 use SilverShop\Tests\Model\Product\CustomProduct_OrderItem;
 use SilverShop\Tests\ShopTestBootstrap;
+use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\FunctionalTest;
 use SilverStripe\Security\SecurityToken;
 
@@ -288,7 +289,6 @@ final class ShoppingCartControllerTest extends FunctionalTest
         $this->assertNotNull($this->cart->get($ball2), "second item is in cart");
     }
 
-<<<<<<< HEAD
     public function testCanCommentOnCartLine(): void
     {
         $this->get(ShoppingCartController::add_item_link($this->mp3player));
@@ -316,7 +316,8 @@ final class ShoppingCartControllerTest extends FunctionalTest
 
         $item = ShoppingCart::curr()->Items()->byID($item->ID);
         $this->assertEquals($comment, $item->Comment);
-=======
+    }
+
     public function testAddProductViaUrlWithQuantityQuery(): void
     {
         ShoppingCart::singleton()->clear();
@@ -466,6 +467,5 @@ final class ShoppingCartControllerTest extends FunctionalTest
     {
         $controller = ShoppingCartController::create();
         $this->assertTrue($controller->checkAccessAction('addvariations'));
->>>>>>> 9dca194b (fix: variation table qualities (#785))
     }
 }
