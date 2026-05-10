@@ -25,6 +25,7 @@ class OrderItem extends OrderAttribute
     private static array $db = [
         'Quantity' => 'Int',
         'UnitPrice' => 'Currency',
+        'Comment' => 'Text',
     ];
 
     private static array $casting = [

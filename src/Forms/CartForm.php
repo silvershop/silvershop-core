@@ -91,6 +91,10 @@ class CartForm extends Form
                     $item->ProductVariationID = $id;
                 }
 
+                if (isset($fields['Comment'])) {
+                    $item->Comment = Convert::raw2sql((string)$fields['Comment']);
+                }
+
                 //TODO: make updates through ShoppingCart class
                 //TODO: combine with items that now match exactly
                 //TODO: validate changes

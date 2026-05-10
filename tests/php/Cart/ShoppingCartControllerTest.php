@@ -23,7 +23,8 @@ final class ShoppingCartControllerTest extends FunctionalTest
 {
     public static $fixture_file = [
         '../Fixtures/shop.yml',
-        '../Fixtures/variations.yml'
+        '../Fixtures/variations.yml',
+        '../Fixtures/pages/Cart.yml',
     ];
 
     public static $disable_theme = true;
@@ -286,5 +287,34 @@ final class ShoppingCartControllerTest extends FunctionalTest
         $this->assertEquals($hasManyList->Count(), 1, 'There is 1 item in the cart');
         $this->assertFalse((bool)$this->cart->get($variation), "first item not in cart");
         $this->assertNotNull($this->cart->get($ball2), "second item is in cart");
+    }
+
+    public function testCanCommentOnCartLine(): void
+    {
+        $this->get(ShoppingCartController::add_item_link($this->mp3player));
+
+        $item = ShoppingCart::curr()->Items()->first();
+        $this->assertNotNull($item);
+
+        $body = $this->get('cart')->getBody();
+        $this->assertStringContainsString('Items[' . $item->ID . '][Comment]', $body);
+
+        $comment = 'Please gift wrap this item';
+        $response = $this->post(
+            'cart/CartForm',
+            [
+                'Items' => [
+                    $item->ID => [
+                        'Quantity' => 1,
+                        'Comment' => $comment,
+                    ],
+                ],
+                'action_updatecart' => 'Update Cart',
+            ]
+        );
+        $this->assertEquals(302, $response->getStatusCode());
+
+        $item = ShoppingCart::curr()->Items()->byID($item->ID);
+        $this->assertEquals($comment, $item->Comment);
     }
 }
