@@ -1,3 +1,5 @@
+<% require css("silvershop/core: client/dist/css/product.css") %>
+
 <div class="silvershop-product silvershop-typography">
     <h1 class="silvershop-product__title">$Title</h1>
     <div class="silvershop-product__breadcrumbs">$Breadcrumbs</div>

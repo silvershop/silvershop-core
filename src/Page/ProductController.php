@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace SilverShop\Page;
 
 use PageController;
-use SilverStripe\Core\Injector\Injector;
 use SilverShop\Forms\AddProductForm;
+use SilverStripe\Core\Injector\Injector;
+use SilverStripe\Security\SecurityToken;
+use SilverStripe\View\Requirements;
 
 class ProductController extends PageController
 {
@@ -14,6 +16,19 @@ class ProductController extends PageController
         'Form',
         'AddProductForm',
     ];
+
+    protected function init()
+    {
+        parent::init();
+
+        $record = $this->data();
+        if ($record instanceof Product && $record->Variations()->exists()) {
+            if (SecurityToken::is_enabled()) {
+                SecurityToken::inst()->getValue();
+            }
+            Requirements::javascript('silvershop/core:client/dist/javascript/VariationsTable.js');
+        }
+    }
 
     public function Form()
     {

@@ -42,8 +42,8 @@ class VariationForm extends AddProductForm
      */
     public function addtocart($data, $form)
     {
+        $quantity = null;
         if ($variation = $this->getBuyable($data)) {
-            $quantity = (isset($data['Quantity']) && is_numeric($data['Quantity'])) ? (int)$data['Quantity'] : 1;
             $cart = ShoppingCart::singleton();
             $request = $this->getRequest();
 
@@ -80,9 +80,18 @@ class VariationForm extends AddProductForm
                 array_intersect_key($data, array_combine($this->saveablefields, $this->saveablefields))
             ) : $data;
 
-            if ($cart->add($variation, $quantity, $saveabledata)) {
+            $explicitZero = isset($data['Quantity']) && is_numeric($data['Quantity']) && (int)$data['Quantity'] === 0;
+            $quantity = (isset($data['Quantity']) && is_numeric($data['Quantity'])) ? max(0, (int)$data['Quantity']) : 1;
+
+            $ok = $explicitZero
+                ? $cart->remove($variation, null, $saveabledata)
+                : $cart->add($variation, $quantity, $saveabledata);
+
+            if ($ok) {
                 $form->sessionMessage(
-                    _t('SilverShop\Cart\ShoppingCart.ItemAdded', 'Item has been added successfully.'),
+                    $explicitZero
+                        ? $cart->getMessage()
+                        : _t('SilverShop\Cart\ShoppingCart.ItemAdded', 'Item has been added successfully.'),
                     'good'
                 );
             } else {

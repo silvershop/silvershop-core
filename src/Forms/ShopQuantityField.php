@@ -11,7 +11,6 @@ use SilverShop\Model\OrderItem;
 use SilverShop\ShopTools;
 use SilverStripe\Forms\HiddenField;
 use SilverStripe\Forms\NumericField;
-use SilverStripe\ORM\FieldType\DBHTMLText;
 
 class ShopQuantityField extends ModelData
 {
@@ -36,7 +35,7 @@ class ShopQuantityField extends ModelData
             $this->item = ShoppingCart::singleton()->get($object, $parameters);
             //provide a 0-quantity facade item if there is no such item in cart
             if (!$this->item) {
-                $this->item = $object->createItem();
+                $this->item = $object->createItem(0);
             }
 
             $this->buyable = $object;
@@ -84,6 +83,9 @@ class ShopQuantityField extends ModelData
             $this->item->Quantity
         )->setHTML5(true);
 
+        $numericField->setAttribute('min', 0);
+        $numericField->setAttribute('step', 1);
+
         foreach ($this->classes as $className) {
             $numericField->addExtraClass($className);
         }
@@ -112,7 +114,7 @@ class ShopQuantityField extends ModelData
 
     public function forTemplate(): string
     {
-        return $this->renderWith($this->template);
+        return $this->renderWith($this->template)->forTemplate();
     }
 
     /**

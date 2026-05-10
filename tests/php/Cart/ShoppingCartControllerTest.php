@@ -10,7 +10,6 @@ use SilverShop\Model\Variation\Variation;
 use SilverShop\Page\Product;
 use SilverShop\Tests\Model\Product\CustomProduct_OrderItem;
 use SilverShop\Tests\ShopTestBootstrap;
-use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\FunctionalTest;
 use SilverStripe\Security\SecurityToken;
 
@@ -289,6 +288,7 @@ final class ShoppingCartControllerTest extends FunctionalTest
         $this->assertNotNull($this->cart->get($ball2), "second item is in cart");
     }
 
+<<<<<<< HEAD
     public function testCanCommentOnCartLine(): void
     {
         $this->get(ShoppingCartController::add_item_link($this->mp3player));
@@ -316,5 +316,156 @@ final class ShoppingCartControllerTest extends FunctionalTest
 
         $item = ShoppingCart::curr()->Items()->byID($item->ID);
         $this->assertEquals($comment, $item->Comment);
+=======
+    public function testAddProductViaUrlWithQuantityQuery(): void
+    {
+        ShoppingCart::singleton()->clear();
+
+        $url = ShoppingCartController::add_item_link($this->mp3player, ['quantity' => 4]);
+        $response = $this->get($url);
+        $this->assertEquals(302, $response->getStatusCode(), 'Add with quantity should redirect');
+
+        $item = $this->cart->get($this->mp3player);
+        $this->assertNotNull($item);
+        $this->assertSame(4, (int) $item->Quantity);
+
+        $this->cart->clear();
+    }
+
+    public function testAddVariationViaUrlWithQuantityQuery(): void
+    {
+        ShoppingCart::singleton()->clear();
+
+        $product = $this->objFromFixture(Product::class, 'ball');
+        $product->publishSingle();
+
+        $variation = $this->objFromFixture(Variation::class, 'redLarge');
+        $variation->publishSingle();
+
+        $url = ShoppingCartController::add_item_link($variation, ['quantity' => 3]);
+        $response = $this->get($url);
+        $this->assertEquals(302, $response->getStatusCode(), 'Add variation with quantity should redirect');
+
+        $item = $this->cart->get($variation);
+        $this->assertNotNull($item);
+        $this->assertSame(3, (int) $item->Quantity);
+
+        $this->cart->clear();
+    }
+
+    public function testAddVariationsBulkPost(): void
+    {
+        ShoppingCart::singleton()->clear();
+
+        $product = $this->objFromFixture(Product::class, 'ball');
+        $product->publishSingle();
+
+        $redLarge = $this->objFromFixture(Variation::class, 'redLarge');
+        $redSmall = $this->objFromFixture(Variation::class, 'redSmall');
+        $redLarge->publishSingle();
+        $redSmall->publishSingle();
+
+        $url = 'shoppingcart/addvariations';
+        $data = [
+            'ProductID' => (string) $product->ID,
+            'VariantQuantity' => [
+                (string) $redLarge->ID => '2',
+                (string) $redSmall->ID => '1',
+            ],
+        ];
+
+        if (SecurityToken::is_enabled()) {
+            $data[SecurityToken::inst()->getName()] = SecurityToken::inst()->getValue();
+        }
+
+        $response = $this->post($url, $data);
+        $this->assertEquals(302, $response->getStatusCode(), 'Bulk add variations should redirect');
+
+        $itemLarge = $this->cart->get($redLarge);
+        $itemSmall = $this->cart->get($redSmall);
+        $this->assertNotNull($itemLarge);
+        $this->assertNotNull($itemSmall);
+        $this->assertSame(2, (int) $itemLarge->Quantity);
+        $this->assertSame(1, (int) $itemSmall->Quantity);
+
+        $this->cart->clear();
+    }
+
+    public function testAddVariationsSkipsZeroQuantity(): void
+    {
+        ShoppingCart::singleton()->clear();
+
+        $product = $this->objFromFixture(Product::class, 'ball');
+        $product->publishSingle();
+
+        $redLarge = $this->objFromFixture(Variation::class, 'redLarge');
+        $redSmall = $this->objFromFixture(Variation::class, 'redSmall');
+        $redLarge->publishSingle();
+        $redSmall->publishSingle();
+
+        $url = 'shoppingcart/addvariations';
+        $data = [
+            'ProductID' => (string) $product->ID,
+            'VariantQuantity' => [
+                (string) $redLarge->ID => '0',
+                (string) $redSmall->ID => '3',
+            ],
+        ];
+
+        if (SecurityToken::is_enabled()) {
+            $data[SecurityToken::inst()->getName()] = SecurityToken::inst()->getValue();
+        }
+
+        $response = $this->post($url, $data);
+        $this->assertEquals(302, $response->getStatusCode());
+
+        $this->assertNull($this->cart->get($redLarge));
+        $itemSmall = $this->cart->get($redSmall);
+        $this->assertNotNull($itemSmall);
+        $this->assertSame(3, (int) $itemSmall->Quantity);
+
+        $this->cart->clear();
+    }
+
+    public function testAddVariationsRejectsForeignVariation(): void
+    {
+        ShoppingCart::singleton()->clear();
+
+        $product = $this->objFromFixture(Product::class, 'ball');
+        $product->publishSingle();
+
+        $redLarge = $this->objFromFixture(Variation::class, 'redLarge');
+        $redLarge->publishSingle();
+
+        $url = 'shoppingcart/addvariations';
+        $data = [
+            'ProductID' => (string) $product->ID,
+            'VariantQuantity' => [
+                (string) $redLarge->ID => '1',
+                '999999999' => '1',
+            ],
+        ];
+
+        if (SecurityToken::is_enabled()) {
+            $data[SecurityToken::inst()->getName()] = SecurityToken::inst()->getValue();
+        }
+
+        $response = $this->post($url, $data);
+        $this->assertEquals(400, $response->getStatusCode());
+
+        $this->cart->clear();
+    }
+
+    public function testAddVariationsMethodNotAllowedOnGet(): void
+    {
+        $response = $this->get('shoppingcart/addvariations');
+        $this->assertEquals(405, $response->getStatusCode(), (string) $response->getBody());
+    }
+
+    public function testCheckAccessAddvariations(): void
+    {
+        $controller = ShoppingCartController::create();
+        $this->assertTrue($controller->checkAccessAction('addvariations'));
+>>>>>>> 9dca194b (fix: variation table qualities (#785))
     }
 }

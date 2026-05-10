@@ -352,7 +352,10 @@ class Variation extends DataObject implements Buyable
      */
     public function IsInCart(): bool
     {
-        return $this->Item() && $this->Item()->Quantity > 0;
+        $orderItem = $this->Item();
+        return $orderItem instanceof \SilverShop\Model\OrderItem
+            && $orderItem->exists()
+            && (int) $orderItem->Quantity > 0;
     }
 
     /*

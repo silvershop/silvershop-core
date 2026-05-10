@@ -32,6 +32,7 @@ use SilverStripe\ORM\FieldType\DBBoolean;
 use SilverStripe\ORM\HasManyList;
 use SilverStripe\ORM\ManyManyList;
 use SilverStripe\Security\Member;
+use SilverStripe\Security\SecurityToken;
 use SilverStripe\SiteConfig\SiteConfig;
 
 /**
@@ -552,5 +553,48 @@ class Product extends Page implements Buyable
     public function removeAllLink(): string|bool
     {
         return ShoppingCartController::remove_all_item_link($this);
+    }
+
+    /**
+     * POST target for bulk-adding variations from the variations table form.
+     */
+    public function getVariationsBulkAddLink(): string
+    {
+        return Injector::inst()->create(ShoppingCartController::class)->Link('addvariations');
+    }
+
+    public function getVariationsBulkSecurityTokenName(): string
+    {
+        return SecurityToken::inst()->getName();
+    }
+
+    public function getVariationsBulkSecurityTokenValue(): string
+    {
+        return SecurityToken::inst()->getValue();
+    }
+
+    public function getVariationsBulkSecurityTokenRequired(): bool
+    {
+        return SecurityToken::is_enabled();
+    }
+
+    /**
+     * True when at least one purchasable variation is not yet in the cart (shows bulk submit).
+     */
+    public function getShowVariationsBulkAddButton(): bool
+    {
+        $cart = ShoppingCart::singleton();
+
+        foreach ($this->Variations() as $variation) {
+            if (!$variation->canPurchase()) {
+                continue;
+            }
+
+            if ($cart->get($variation) === null) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

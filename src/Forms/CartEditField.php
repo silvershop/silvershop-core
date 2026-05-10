@@ -126,7 +126,8 @@ class CartEditField extends FormField
             )
                 ->addExtraClass('silvershop-numeric')
                 ->setAttribute('type', 'number')
-                ->setAttribute('min', '0');
+                ->setAttribute('min', '0')
+                ->setAttribute('step', '1');
             $comment = TextField::create(
                 $name . '[Comment]',
                 _t('SilverShop\Model\OrderItem.Comment', 'Comment'),

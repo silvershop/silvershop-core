@@ -98,6 +98,17 @@ class ShoppingCart
     }
 
     /**
+     * If the singleton has no cart loaded but this line belongs to a cart order, restore session context.
+     */
+    protected function restoreCartContextFromLine(OrderItem $orderItem): void
+    {
+        $linked = $orderItem->Order();
+        if ($linked && $linked->IsCart()) {
+            $this->setCurrent($linked);
+        }
+    }
+
+    /**
      * Helper that only allows orders to be started internally.
      */
     protected function findOrMake(): Order
@@ -183,7 +194,8 @@ class ShoppingCart
         $order = $this->current();
 
         if (!$order instanceof Order) {
-            return $this->error(_t(__CLASS__ . '.NoOrder', 'No current order.'));
+            // Nothing in the cart yet — removal is already the desired state (e.g. quantity 0 before first add).
+            return true;
         }
 
         // If an extension throws an exception, error out
@@ -220,6 +232,8 @@ class ShoppingCart
      */
     public function removeOrderItem(OrderItem $orderItem, $quantity = null): ?bool
     {
+        $this->restoreCartContextFromLine($orderItem);
+
         $order = $this->current();
 
         if (!$order instanceof Order) {
@@ -274,6 +288,8 @@ class ShoppingCart
      */
     public function updateOrderItemQuantity(OrderItem $orderItem, $quantity = 1, $filter = []): ?bool
     {
+        $this->restoreCartContextFromLine($orderItem);
+
         $order = $this->current();
 
         if (!$order instanceof Order) {

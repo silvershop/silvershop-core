@@ -80,16 +80,23 @@ class AddProductForm extends Form
             $saveabledata = ($this->saveablefields !== []) ? Convert::raw2sql(
                 array_intersect_key($data, array_combine($this->saveablefields, $this->saveablefields))
             ) : $data;
-            $quantity = isset($data['Quantity']) ? (int)$data['Quantity'] : 1;
-            if (($this->maxquantity >0) && ($quantity > $this->maxquantity)) {
-                $quantity = $this->maxquantity;
-                $form->sessionMessage(
-                    _t('SilverShop\Forms\AddProductForm.QuantitySetToMaximum', 'Set to maximum quantity'),
-                    'good'
-                );
-            }
 
-            $cart->add($buyable, $quantity, $saveabledata);
+            $explicitZero = isset($data['Quantity']) && is_numeric($data['Quantity']) && (int)$data['Quantity'] === 0;
+            $quantity = 0;
+            if ($explicitZero) {
+                $cart->remove($buyable, null, $saveabledata);
+            } else {
+                $quantity = isset($data['Quantity']) ? max(0, (int)$data['Quantity']) : 1;
+                if (($this->maxquantity >0) && ($quantity > $this->maxquantity)) {
+                    $quantity = $this->maxquantity;
+                    $form->sessionMessage(
+                        _t('SilverShop\Forms\AddProductForm.QuantitySetToMaximum', 'Set to maximum quantity'),
+                        'good'
+                    );
+                }
+
+                $cart->add($buyable, $quantity, $saveabledata);
+            }
             if (!ShoppingCartController::config()->direct_to_cart_page) {
                 $form->SessionMessage($cart->getMessage(), $cart->getMessageType());
             }
@@ -133,6 +140,7 @@ class AddProductForm extends Form
                 NumericField::create('Quantity', _t('SilverShop\Generic.Quantity', 'Quantity'), 1)
                     ->setAttribute('type', 'number')
                     ->setAttribute('min', '0')
+                    ->setAttribute('step', '1')
             );
         }
 

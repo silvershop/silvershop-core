@@ -49,12 +49,16 @@ class ShoppingCartController extends Controller
     protected $cart;
 
     private static array $url_handlers = [
-        '$Action/$Buyable/$ID' => 'handleAction',
+        // Require three segments for buyable actions so a single segment (e.g. addvariations, clear) is not
+        // captured as $Action with optional empty $Buyable/$ID (which breaks request parsing).
+        '$Action!/$Buyable!/$ID!' => 'handleAction',
+        '$Action' => '$Action',
     ];
 
     private static array $allowed_actions = [
         'add',
         'additem',
+        'addvariations',
         'remove',
         'removeitem',
         'removeall',
@@ -64,6 +68,30 @@ class ShoppingCartController extends Controller
         'clear',
         'debug',
     ];
+
+    /**
+     * {@inheritDoc}
+     *
+     * Static config snapshots can omit newly added URL actions; ensure bulk variation POST is permitted.
+     */
+    public function allowedActions($limitToClass = null)
+    {
+        $actions = parent::allowedActions($limitToClass);
+
+        if (!is_array($actions)) {
+            return $actions;
+        }
+
+        foreach (array_values($actions) as $value) {
+            if (is_string($value) && strtolower($value) === 'addvariations') {
+                return $actions;
+            }
+        }
+
+        $actions[] = 'addvariations';
+
+        return $actions;
+    }
 
     public static function add_item_link(Buyable $buyable, $parameters = []): bool|string
     {
@@ -195,13 +223,13 @@ class ShoppingCartController extends Controller
         $result = false;
 
         if (($product = $this->buyableFromRequest()) instanceof Buyable) {
-            $quantity = (int)$request->getVar('quantity');
+            $quantity = max(0, (int)$request->getVar('quantity'));
 
             if ($quantity === 0) {
-                $quantity = 1;
+                $result = $this->cart->remove($product, null, $request->getVars());
+            } else {
+                $result = $this->cart->add($product, $quantity, $request->getVars());
             }
-
-            $result = $this->cart->add($product, $quantity, $request->getVars());
 
             if (!$result) {
                 $response = $this->httpError(400, $this->cart->getMessage());
@@ -214,6 +242,93 @@ class ShoppingCartController extends Controller
         $this->extend('updateAddResponse', $request, $response, $product, $quantity, $result);
 
         return $response ? $response : self::direct($result);
+    }
+
+    /**
+     * Add multiple variations for one product in a single POST (bulk form from product page).
+     *
+     * Expects: ProductID, VariantQuantity[variationID] => int (quantities &lt;= 0 are skipped).
+     *
+     * @throws HTTPResponse_Exception
+     */
+    public function addvariations(HTTPRequest $request): string|HTTPResponse|null
+    {
+        $response = null;
+
+        if (!$request->isPOST()) {
+            return $this->httpError(405);
+        }
+
+        // Always validate CSRF for this POST, even when disable_security_token relaxes GET cart URLs.
+        if (SecurityToken::is_enabled() && !SecurityToken::inst()->checkRequest($request)) {
+            return $this->httpError(
+                400,
+                _t(
+                    'SilverShop\Cart\ShoppingCart.InvalidSecurityToken',
+                    'Invalid security token, possible CSRF attack.'
+                )
+            );
+        }
+
+        $productId = (int) $request->postVar('ProductID');
+        if ($productId === 0) {
+            return $this->httpError(400);
+        }
+
+        $productClass = Product::class;
+        $product = $productClass::has_extension(Versioned::class)
+            ? Versioned::get_by_stage($productClass, 'Live')->byID($productId)
+            : DataObject::get($productClass)->byID($productId);
+
+        if (!$product instanceof Product) {
+            return $this->httpError(404);
+        }
+
+        $rawQuantities = $request->postVar('VariantQuantity');
+        $quantities = is_array($rawQuantities) ? $rawQuantities : [];
+
+        /** @var list<array{0: Buyable, 1: int}> $toAdd */
+        $toAdd = [];
+
+        foreach ($quantities as $variationId => $qty) {
+            $variationId = (int) $variationId;
+            $qty = max(0, (int) $qty);
+
+            if ($variationId === 0 || $qty === 0) {
+                continue;
+            }
+
+            $variationClass = Variation::class;
+            $variation = $variationClass::has_extension(Versioned::class)
+                ? Versioned::get_by_stage($variationClass, 'Live')->byID($variationId)
+                : DataObject::get($variationClass)->byID($variationId);
+
+            if (!$variation instanceof Variation || (int) $variation->ProductID !== (int) $product->ID) {
+                return $this->httpError(400);
+            }
+
+            $buyable = $this->cart->getCorrectBuyable($variation);
+
+            if (!$buyable instanceof Buyable) {
+                return $this->httpError(400, $this->cart->getMessage());
+            }
+
+            $toAdd[] = [$buyable, $qty];
+        }
+
+        foreach ($toAdd as [$buyable, $qty]) {
+            $addResult = $this->cart->add($buyable, $qty, $request->getVars());
+
+            if (!$addResult) {
+                $response = $this->httpError(400, $this->cart->getMessage());
+                break;
+            }
+        }
+
+        $this->updateLocale($request);
+        $this->extend('updateAddVariationsResponse', $request, $response, $product, $quantities);
+
+        return $response ? $response : self::direct(true);
     }
 
     /**
@@ -259,7 +374,7 @@ class ShoppingCartController extends Controller
     public function setquantity($request): string|HTTPResponse
     {
         $product = $this->buyableFromRequest();
-        $quantity = (int)$request->getVar('quantity');
+        $quantity = max(0, (int)$request->getVar('quantity'));
         if ($product instanceof Buyable) {
             $this->cart->setQuantity($product, $quantity, $request->getVars());
         }

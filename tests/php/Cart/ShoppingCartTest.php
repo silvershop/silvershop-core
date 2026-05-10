@@ -66,6 +66,12 @@ final class ShoppingCartTest extends SapphireTest
         $this->assertEquals($item->Quantity, 2, "quantity is 2");
     }
 
+    public function testRemoveWithNoCartIsNoOp(): void
+    {
+        $this->assertNull($this->cart->current(), 'fixture starts without a cart');
+        $this->assertTrue((bool) $this->cart->remove($this->product), 'remove with no cart is a successful no-op');
+    }
+
     public function testRemoveFromCart(): void
     {
         $this->assertTrue((boolean)$this->cart->add($this->product), "add item");
@@ -178,5 +184,16 @@ final class ShoppingCartTest extends SapphireTest
         $this->assertNotNull($item, "Product with variations can be added to cart");
         $this->assertInstanceOf(OrderItem::class, $item, 'A variation should be added to cart.');
         $this->assertEquals(20, $item->Buyable()->Price, 'The buyable variation was added');
+    }
+
+    public function testAddVariationWithExplicitQuantity(): void
+    {
+        /** @var Variation $variation */
+        $variation = $this->objFromFixture(Variation::class, 'redLarge');
+
+        $this->assertTrue((bool) $this->cart->add($variation, 4), 'add four of one variation');
+        $item = $this->cart->get($variation);
+        $this->assertNotNull($item);
+        $this->assertSame(4, (int) $item->Quantity);
     }
 }
