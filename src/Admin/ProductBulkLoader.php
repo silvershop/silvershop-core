@@ -200,7 +200,7 @@ class ProductBulkLoader extends CsvBulkLoader
             } elseif ($this->config()->create_new_product_groups) {
                 //create parent product group
                 $pg = ProductCategory::create();
-                $pg->setTitle($title);
+                $pg->Title = $title;
                 $pg->ParentID = ($this->foundParentId) ? $this->foundParentId : 0;
                 $pg->writeToStage('Stage');
                 $pg->publishSingle();
