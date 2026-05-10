@@ -68,8 +68,8 @@ final class OrderActionsFormTest extends FunctionalTest
     }
 
     /**
-     * OrderActionsForm posts to the order URL (not a separate ActionsForm path). Prime the session with a GET
-     * so the CSRF token exists, then POST with SecurityID.
+     * OrderActionsForm action is at `checkout/ActionsForm`. Prime the session with a GET
+     * to the order page so the CSRF token exists, then POST to the ActionsForm endpoint.
      *
      * @param  array<string, mixed>  $body
      */
@@ -86,7 +86,8 @@ final class OrderActionsFormTest extends FunctionalTest
 
         $body['SecurityID'] = $securityID;
 
-        return Director::test($orderUrl, $body, $this->session(), 'POST');
+        $actionsFormUrl = $this->checkoutPage->Link('ActionsForm');
+        return Director::test($actionsFormUrl, $body, $this->session(), 'POST');
     }
 
     public function testOffsitePayment(): void
