@@ -8,7 +8,6 @@ use SilverStripe\Forms\FormField;
 use Exception;
 use Page;
 use SilverShop\Cart\ShoppingCart;
-use SilverShop\Cart\ShoppingCartController;
 use SilverShop\Currency\CurrencyService;
 use SilverShop\Extension\ProductVariationsExtension;
 use SilverShop\Extension\ShopConfigExtension;
@@ -532,7 +531,7 @@ class Product extends Page implements Buyable
      */
     public function addLink(): string|bool
     {
-        return ShoppingCartController::add_item_link($this);
+        return CartPageController::add_item_link($this);
     }
 
     /**
@@ -542,7 +541,7 @@ class Product extends Page implements Buyable
      */
     public function removeLink(): string|bool
     {
-        return ShoppingCartController::remove_item_link($this);
+        return CartPageController::remove_item_link($this);
     }
 
     /**
@@ -552,7 +551,7 @@ class Product extends Page implements Buyable
      */
     public function removeAllLink(): string|bool
     {
-        return ShoppingCartController::remove_all_item_link($this);
+        return CartPageController::remove_all_item_link($this);
     }
 
     /**
@@ -560,7 +559,7 @@ class Product extends Page implements Buyable
      */
     public function getVariationsBulkAddLink(): string
     {
-        return Injector::inst()->create(ShoppingCartController::class)->Link('addvariations');
+        return CartPage::find_link(false, 'addvariations');
     }
 
     public function getVariationsBulkSecurityTokenName(): string

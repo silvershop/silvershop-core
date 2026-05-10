@@ -5,17 +5,17 @@ declare(strict_types=1);
 namespace SilverShop\Forms;
 
 use SilverShop\Model\Order;
+use SilverShop\Model\Variation\Variation;
 use SilverStripe\Control\RequestHandler;
 use SilverShop\Cart\ShoppingCart;
 use SilverShop\Extension\ShopConfigExtension;
 use SilverShop\ShopTools;
 use SilverStripe\Control\HTTPResponse;
-use SilverStripe\Core\Convert;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\Form;
 use SilverStripe\Forms\FormAction;
-use SilverStripe\Forms\NumericField;
+use SilverStripe\Versioned\Versioned;
 
 /**
  * Renders the cart inside a form, so that it is editable.
@@ -51,12 +51,11 @@ class CartForm extends Form
         $removecount = 0;
 
         $request = $this->getRequest();
+        $response = null;
         $order = ShoppingCart::curr();
         if ($request && $request->isAjax() && $order instanceof Order) {
             ShopTools::install_locale($order->Locale);
         }
-
-        $numericField = NumericField::create('_temp');
 
         $messages = [];
         $badMessages = [];
@@ -68,7 +67,9 @@ class CartForm extends Form
                 }
 
                 //delete lines
-                if (isset($fields['Remove']) || (isset($fields['Quantity']) && (int)$fields['Quantity'] <= 0)) {
+                if (isset($fields['Remove']) || (isset($fields['Quantity']) && (string) $fields['Quantity'] !== '' && is_numeric(
+                    $fields['Quantity']
+                ) && (int) $fields['Quantity'] <= 0)) {
                     if (ShoppingCart::singleton()->removeOrderItem($item)) {
                         ++$removecount;
                     } else {
@@ -79,26 +80,47 @@ class CartForm extends Form
                 }
 
                 //update quantities
-                if (isset($fields['Quantity']) && $quantity = Convert::raw2sql($fields['Quantity'])) {
-                    $numericField->setValue($quantity);
-                    if (!ShoppingCart::singleton()->updateOrderItemQuantity($item, $numericField->dataValue())) {
-                        $badMessages[] = ShoppingCart::singleton()->getMessage();
+                if (array_key_exists('Quantity', $fields)) {
+                    $rawQty = $fields['Quantity'];
+                    if ($rawQty !== null && $rawQty !== '') {
+                        if (!is_numeric($rawQty)) {
+                            $badMessages[] = _t(
+                                __CLASS__ . '.INVALID_QUANTITY',
+                                'Please enter a valid quantity.'
+                            );
+                        } else {
+                            $qtyInt = (int) $rawQty;
+                            if ($qtyInt < 0) {
+                                $badMessages[] = _t(
+                                    __CLASS__ . '.INVALID_QUANTITY',
+                                    'Please enter a valid quantity.'
+                                );
+                            } elseif (!ShoppingCart::singleton()->updateOrderItemQuantity($item, $qtyInt)) {
+                                $badMessages[] = ShoppingCart::singleton()->getMessage();
+                            }
+                        }
                     }
                 }
 
-                //update variations
-                if (isset($fields['ProductVariationID']) && ($id = Convert::raw2sql($fields['ProductVariationID'])) && $item->ProductVariationID != $id) {
-                    $item->ProductVariationID = $id;
+                if (array_key_exists('ProductVariationID', $fields)) {
+                    $id = (int) $fields['ProductVariationID'];
+                    if ($id > 0 && (int) $item->ProductVariationID !== $id) {
+                        $variation = Variation::has_extension(Versioned::class)
+                            ? Versioned::get_by_stage(Variation::class, 'Live')->byID($id)
+                            : Variation::get()->byID($id);
+                        if (!$variation instanceof Variation || (int) $variation->ProductID !== (int) $item->ProductID) {
+                            $badMessages[] = _t(__CLASS__ . '.INVALID_VARIATION', 'That variation is not valid for this product.');
+                        } elseif (!ShoppingCart::singleton()->switchOrderItemVariation($item, $variation)) {
+                            $badMessages[] = ShoppingCart::singleton()->getMessage();
+                        }
+                    }
                 }
 
                 if (isset($fields['Comment'])) {
                     $item->Comment = trim(strip_tags((string)$fields['Comment']));
                 }
 
-                //TODO: make updates through ShoppingCart class
-                //TODO: combine with items that now match exactly
-                //TODO: validate changes
-                if ($item->isChanged()) {
+                if ($item->isChanged() || isset($fields['Comment'])) {
                     $item->write();
                     ++$updatecount;
                 }

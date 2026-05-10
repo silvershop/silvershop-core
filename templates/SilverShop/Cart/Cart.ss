@@ -51,18 +51,23 @@
                         <% end_if %>
                     </td>
                     <td class="silvershop-cart__cell silvershop-cart__cell--unit-price">$UnitPrice.Nice</td>
-                    <td class="silvershop-cart__cell silvershop-cart__cell--quantity"><% if $Up.Editable %>$QuantityField<% else %>$Quantity<% end_if %></td>
+                    <td class="silvershop-cart__cell silvershop-cart__cell--quantity">
+                        <% if $Up.Editable %>
+                            <div class="silvershop-cart__qty" data-cart-qty data-set-quantity-url="$setQuantityLink">
+                                <button type="button" class="silvershop-cart__qty-btn silvershop-cart__qty-btn--dec" aria-label="<%t SilverShop\Cart\ShoppingCart.DecreaseQuantity 'Decrease quantity' %>">−</button>
+                                $QuantityField
+                                <button type="button" class="silvershop-cart__qty-btn silvershop-cart__qty-btn--inc" aria-label="<%t SilverShop\Cart\ShoppingCart.IncreaseQuantity 'Increase quantity' %>">+</button>
+                            </div>
+                        <% else %>
+                            $Quantity
+                        <% end_if %>
+                    </td>
                     <td class="silvershop-cart__cell silvershop-cart__cell--total">$Total.Nice</td>
                     <% if $Up.Editable %>
                         <td class="silvershop-cart__cell silvershop-cart__cell--remove">
-                            <% if $RemoveField %>
-                                $RemoveField
-                            <% else %>
-                                <a class="silvershop-cart__remove-link" href="$removeAllLink" title="<%t SilverShop\Cart\ShoppingCart.RemoveAllTitle "Remove all of &quot;{Title}&quot; from your cart" Title=$TableTitle %>">
-                                    <img class="silvershop-cart__remove-icon" src="$resourceURL('silvershop/core:client/dist/images/remove.gif')" alt="x"/>
-                                </a>
-                            <% end_if %>
-
+                            <button type="button" class="silvershop-button silvershop-button--secondary silvershop-cart__remove-btn" data-cart-remove data-remove-url="$removeAllLink">
+                                <%t SilverShop\Generic.Remove "Remove" %>
+                            </button>
                         </td>
                     <% end_if %>
                 </tr>

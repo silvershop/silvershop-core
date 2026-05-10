@@ -13,23 +13,23 @@ There are a few different ways to modify the shopping cart contents, each with t
 ### Modify via URL
 
 There are a number of urls that can be called to make modifications to the cart.
-There is a common controller 'ShoppingCart', which uses the default url 'mysite/shoppingcart'.
+These are served by the cart page controller (`SilverShop\Page\CartPageController`) under your cart page URL — typically `mysite/cart` when the page uses the `cart` URL segment.
 
-Add product with ID '19' to the cart:
+Add product (class + ID in the URL — class name is sanitised, e.g. `SilverShop-Page-Product`):
 
-	example.com/shoppingcart/additem/19
+	example.com/cart/add/SilverShop-Page-Product/19
 
-Remove one of product with ID '19'
+Remove one:
 
-	example.com/shoppingcart/removeitem/19
+	example.com/cart/remove/SilverShop-Page-Product/19
 
-Remove all of product with ID '19'
+Remove all:
 
-	example.com/shoppingcart/removeallitem/19
+	example.com/cart/removeall/SilverShop-Page-Product/19
 	
-Set quantity of product with ID '19' to 5
+Set quantity to 5:
 
-	example.com/shoppingcart/setquantityitem/19/?quantity=5
+	example.com/cart/setquantity/SilverShop-Page-Product/19?quantity=5
 
 ### Modify via form
 
@@ -38,6 +38,8 @@ Cart contents can be modified with a form. This is particularly useful when need
 ### API calls
 
 The ShoppingCart class can be called directly for your own purposes. See ShoppingCart.php for more details.
+
+For HTTP routes, JSON responses, and the `updateCartItemModification` validation hook, see [Cart API](Cart_API.md).
 
 ## Product Versions
 

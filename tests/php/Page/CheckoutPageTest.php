@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace SilverShop\Tests\Page;
 
-use SilverShop\Cart\ShoppingCartController;
 use SilverShop\Extension\OrderManipulationExtension;
 use SilverShop\Model\Order;
+use SilverShop\Page\CartPageController;
 use SilverShop\Page\CheckoutPage;
 use SilverShop\Page\Product;
 use SilverShop\Tests\ShopTestBootstrap;
@@ -85,7 +85,7 @@ final class CheckoutPageTest extends FunctionalTest
         // an order with items, which causes OrderForm (and the keepalive script) to render.
         $socks = $this->objFromFixture(Product::class, 'socks');
         $socks->publishSingle();
-        $this->get(ShoppingCartController::add_item_link($socks));
+        $this->get(CartPageController::add_item_link($socks));
 
         $httpResponse = $this->get('checkout');
         $this->assertEquals(200, $httpResponse->getStatusCode(), 'Checkout page should be available with a current order');

@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace SilverShop\Tests\Cart;
 
 use SilverShop\Cart\ShoppingCart;
-use SilverShop\Cart\ShoppingCartController;
+use SilverShop\Model\Order;
 use SilverShop\Model\Variation\Variation;
 use SilverShop\Page\CartPage;
+use SilverShop\Page\CartPageController;
 use SilverShop\Page\Product;
 use SilverShop\Tests\Model\Product\CustomProduct_OrderItem;
 use SilverShop\Tests\ShopTestBootstrap;
@@ -16,9 +17,7 @@ use SilverStripe\Dev\FunctionalTest;
 use SilverStripe\Security\SecurityToken;
 
 /**
- * @link ShoppingCart_Controller
- *
- * Test manipulating via urls.
+ * Cart HTTP behaviour (covers {@see CartPageController}; class name retained for fixture path / autoload historic mapping).
  */
 final class ShoppingCartControllerTest extends FunctionalTest
 {
@@ -93,47 +92,44 @@ final class ShoppingCartControllerTest extends FunctionalTest
         $this->noPurchaseProduct->publishSingle();
         $this->noPriceProduct->publishSingle();
 
+        $this->objFromFixture(CartPage::class, 'cart')->publishSingle();
+
         $this->cart = ShoppingCart::singleton();
     }
 
     public function testAddToCart(): void
     {
-        // add 2 of the same items via url
-        $url = ShoppingCartController::add_item_link($this->mp3player);
+        $url = CartPageController::add_item_link($this->mp3player);
         $httpResponse = $this->get($url);
 
         $this->assertEquals(302, $httpResponse->getStatusCode(), "Adding the mp3 player should work");
 
-        $secondMp3 = $this->get(ShoppingCartController::add_item_link($this->mp3player));
+        $secondMp3 = $this->get(CartPageController::add_item_link($this->mp3player));
         $this->assertEquals(302, $secondMp3->getStatusCode(), "Adding a second mp3 player should work");
 
-        $socks = $this->get(ShoppingCartController::add_item_link($this->socks));
+        $socks = $this->get(CartPageController::add_item_link($this->socks));
         $this->assertEquals(302, $socks->getStatusCode(), "Adding socks should work");
 
-        // add a product that you can't add
-        $noPurchaseProduct = $this->get(ShoppingCartController::add_item_link($this->noPurchaseProduct));
+        $noPurchaseProduct = $this->get(CartPageController::add_item_link($this->noPurchaseProduct));
         $this->assertEquals(400, $noPurchaseProduct->getStatusCode(), "Cannot purchase a product if disabled");
 
-        $draftProduct = $this->get(ShoppingCartController::add_item_link($this->draftProduct));
+        $draftProduct = $this->get(CartPageController::add_item_link($this->draftProduct));
         $this->assertEquals(404, $draftProduct->getStatusCode(), "Cannot purchase a product that is draft");
 
-        $noPriceProduct = $this->get(ShoppingCartController::add_item_link($this->noPriceProduct));
+        $noPriceProduct = $this->get(CartPageController::add_item_link($this->noPriceProduct));
         $this->assertEquals(400, $noPriceProduct->getStatusCode(), "Cannot purchase a product");
 
-        // See what's in the cart
         $items = ShoppingCart::curr()->Items();
         $this->assertNotNull($items);
 
         $this->assertEquals($items->Count(), 2, 'There are 2 items in the cart');
 
-        // join needed to provide ProductID
         $mp3playerItem = $items
             ->innerJoin("SilverShop_Product_OrderItem", '"SilverShop_OrderItem"."ID" = "SilverShop_Product_OrderItem"."ID"')
             ->find('ProductID', (string) $this->mp3player->ID);
 
         $this->assertNotNull($mp3playerItem, "Mp3 player is in cart");
 
-        // We have the product that we asserted in our fixture file, with a quantity of 2 in the cart
         $this->assertEquals(
             $mp3playerItem->ProductID,
             $this->mp3player->ID,
@@ -142,7 +138,7 @@ final class ShoppingCartControllerTest extends FunctionalTest
         $this->assertEquals($mp3playerItem->Quantity, 2, 'We have 2 of this product in the cart.');
 
         $this->get(
-            ShoppingCartController::set_quantity_item_link($this->mp3player, ['quantity' => 5])
+            CartPageController::set_quantity_item_link($this->mp3player, ['quantity' => 5])
         );
 
         $items = ShoppingCart::curr()->Items();
@@ -150,10 +146,9 @@ final class ShoppingCartControllerTest extends FunctionalTest
             $items->innerJoin("SilverShop_Product_OrderItem", '"SilverShop_OrderItem"."ID" = "SilverShop_Product_OrderItem"."ID"')->find(
                 'ProductID',
                 (string) $this->mp3player->ID
-            ); //join needed to provide ProductID
+            );
         $this->assertEquals($mp3playeritem->Quantity, 5, 'We have 5 of this product in the cart.');
 
-        // non purchasable product checks
         $this->assertEquals(
             $this->noPurchaseProduct->canPurchase(),
             false,
@@ -182,19 +177,16 @@ final class ShoppingCartControllerTest extends FunctionalTest
 
     public function testRemoveFromCart(): void
     {
-
-        // add items via url
-        $this->get(ShoppingCartController::set_quantity_item_link($this->mp3player, ['quantity' => 5]));
+        $this->get(CartPageController::set_quantity_item_link($this->mp3player, ['quantity' => 5]));
         $this->assertTrue($this->cart->get($this->mp3player) !== false, "mp3player item now exists in cart");
 
-        $this->get(ShoppingCartController::add_item_link($this->socks));
+        $this->get(CartPageController::add_item_link($this->socks));
         $this->assertTrue($this->cart->get($this->socks) !== false, "socks item now exists in cart");
 
-        // remove items via url
-        $this->get(ShoppingCartController::remove_item_link($this->socks)); //remove one different = remove completely
+        $this->get(CartPageController::remove_item_link($this->socks));
         $this->assertFalse((bool)$this->cart->get($this->socks));
 
-        $this->get(ShoppingCartController::remove_item_link($this->mp3player)); //remove one product = 4 left
+        $this->get(CartPageController::remove_item_link($this->mp3player));
 
         $mp3playeritem = $this->cart->get($this->mp3player);
         $this->assertNotNull($mp3playeritem, "product still exists");
@@ -203,7 +195,7 @@ final class ShoppingCartControllerTest extends FunctionalTest
         $hasManyList = ShoppingCart::curr()->Items();
         $this->assertNotNull($hasManyList, "Cart is not empty");
 
-        $this->cart->clear(); //test clearing cart
+        $this->cart->clear();
         $this->assertEquals(
             ShoppingCart::curr(),
             null,
@@ -215,41 +207,39 @@ final class ShoppingCartControllerTest extends FunctionalTest
     {
         $enabled = SecurityToken::is_enabled();
 
-        // enable security tokens
         SecurityToken::enable();
 
         $productId = $this->mp3player->ID;
-        // link should contain the security-token
-        $link = ShoppingCartController::add_item_link($this->mp3player);
-        $this->assertMatchesRegularExpression('{^shoppingcart/add/SilverShop-Page-Product/' . $productId . '\?SecurityID=[a-f0-9]+$}', $link);
+        $link = CartPageController::add_item_link($this->mp3player);
+        $this->assertMatchesRegularExpression(
+            '{^/?cart/add/SilverShop-Page-Product/' . $productId . '\?SecurityID=[a-f0-9]+$}',
+            $link
+        );
 
         $response = $this->get($link);
         $this->assertEquals(302, $response->getStatusCode());
 
-        // disable security token for cart-links
-        Config::modify()->set(ShoppingCartController::class, 'disable_security_token', true);
+        Config::modify()->set(CartPageController::class, 'disable_security_token', true);
 
-        $link = ShoppingCartController::add_item_link($this->mp3player);
-        $this->assertEquals('shoppingcart/add/SilverShop-Page-Product/' . $productId, $link);
+        $link = CartPageController::add_item_link($this->mp3player);
+        $this->assertEquals('cart/add/SilverShop-Page-Product/' . $productId, ltrim($link, '/'));
 
         $response = $this->get($link);
         $this->assertEquals(302, $response->getStatusCode());
 
         SecurityToken::disable();
 
-        Config::modify()->set(ShoppingCartController::class, 'disable_security_token', false);
-        $link = ShoppingCartController::add_item_link($this->mp3player);
-        $this->assertEquals('shoppingcart/add/SilverShop-Page-Product/' . $productId, $link);
+        Config::modify()->set(CartPageController::class, 'disable_security_token', false);
+        $link = CartPageController::add_item_link($this->mp3player);
+        $this->assertEquals('cart/add/SilverShop-Page-Product/' . $productId, ltrim($link, '/'));
 
         $response = $this->get($link);
         $this->assertEquals(302, $response->getStatusCode());
 
         SecurityToken::enable();
-        // should now return a 400 status
         $response = $this->get($link);
         $this->assertEquals(400, $response->getStatusCode());
 
-        // restore previous setting
         if (!$enabled) {
             SecurityToken::disable();
         }
@@ -276,15 +266,13 @@ final class ShoppingCartControllerTest extends FunctionalTest
         $variation->publishSingle();
         $ball2->publishSingle();
 
-        // Add the two variation items
-        $this->get(ShoppingCartController::add_item_link($variation));
-        $this->get(ShoppingCartController::add_item_link($ball2));
+        $this->get(CartPageController::add_item_link($variation));
+        $this->get(CartPageController::add_item_link($ball2));
         $hasManyList = ShoppingCart::curr()->Items();
         $this->assertNotNull($hasManyList);
         $this->assertEquals($hasManyList->Count(), 2, 'There are 2 items in the cart');
 
-        // Remove one and see what happens
-        $this->get(ShoppingCartController::remove_all_item_link($variation));
+        $this->get(CartPageController::remove_all_item_link($variation));
         $this->assertEquals($hasManyList->Count(), 1, 'There is 1 item in the cart');
         $this->assertFalse((bool)$this->cart->get($variation), "first item not in cart");
         $this->assertNotNull($this->cart->get($ball2), "second item is in cart");
@@ -296,7 +284,7 @@ final class ShoppingCartControllerTest extends FunctionalTest
         $cartPage = $this->objFromFixture(CartPage::class, 'cart');
         $cartPage->publishSingle();
 
-        $this->get(ShoppingCartController::add_item_link($this->mp3player));
+        $this->get(CartPageController::add_item_link($this->mp3player));
 
         $item = ShoppingCart::curr()->Items()->first();
         $this->assertNotNull($item);
@@ -327,7 +315,7 @@ final class ShoppingCartControllerTest extends FunctionalTest
     {
         ShoppingCart::singleton()->clear();
 
-        $url = ShoppingCartController::add_item_link($this->mp3player, ['quantity' => 4]);
+        $url = CartPageController::add_item_link($this->mp3player, ['quantity' => 4]);
         $response = $this->get($url);
         $this->assertEquals(302, $response->getStatusCode(), 'Add with quantity should redirect');
 
@@ -348,7 +336,7 @@ final class ShoppingCartControllerTest extends FunctionalTest
         $variation = $this->objFromFixture(Variation::class, 'redLarge');
         $variation->publishSingle();
 
-        $url = ShoppingCartController::add_item_link($variation, ['quantity' => 3]);
+        $url = CartPageController::add_item_link($variation, ['quantity' => 3]);
         $response = $this->get($url);
         $this->assertEquals(302, $response->getStatusCode(), 'Add variation with quantity should redirect');
 
@@ -371,7 +359,7 @@ final class ShoppingCartControllerTest extends FunctionalTest
         $redLarge->publishSingle();
         $redSmall->publishSingle();
 
-        $url = 'shoppingcart/addvariations';
+        $url = 'cart/addvariations';
         $data = [
             'ProductID' => (string) $product->ID,
             'VariantQuantity' => [
@@ -409,7 +397,7 @@ final class ShoppingCartControllerTest extends FunctionalTest
         $redLarge->publishSingle();
         $redSmall->publishSingle();
 
-        $url = 'shoppingcart/addvariations';
+        $url = 'cart/addvariations';
         $data = [
             'ProductID' => (string) $product->ID,
             'VariantQuantity' => [
@@ -443,7 +431,7 @@ final class ShoppingCartControllerTest extends FunctionalTest
         $redLarge = $this->objFromFixture(Variation::class, 'redLarge');
         $redLarge->publishSingle();
 
-        $url = 'shoppingcart/addvariations';
+        $url = 'cart/addvariations';
         $data = [
             'ProductID' => (string) $product->ID,
             'VariantQuantity' => [
@@ -464,13 +452,111 @@ final class ShoppingCartControllerTest extends FunctionalTest
 
     public function testAddVariationsMethodNotAllowedOnGet(): void
     {
-        $response = $this->get('shoppingcart/addvariations');
+        $response = $this->get('cart/addvariations');
         $this->assertEquals(405, $response->getStatusCode(), (string) $response->getBody());
     }
 
     public function testCheckAccessAddvariations(): void
     {
-        $controller = ShoppingCartController::create();
+        $cartPage = $this->objFromFixture(CartPage::class, 'cart');
+        $controller = CartPageController::create($cartPage);
         $this->assertTrue($controller->checkAccessAction('addvariations'));
+    }
+
+    public function testCheckAccessSwitchvariation(): void
+    {
+        $cartPage = $this->objFromFixture(CartPage::class, 'cart');
+        $controller = CartPageController::create($cartPage);
+        $this->assertTrue($controller->checkAccessAction('switchvariation'));
+    }
+
+    public function testAddJsonFormat(): void
+    {
+        ShoppingCart::singleton()->clear();
+
+        $url = CartPageController::add_item_link($this->mp3player, ['quantity' => 2]) . '&format=json';
+        $response = $this->get($url);
+        $this->assertEquals(200, $response->getStatusCode());
+        $json = json_decode((string) $response->getBody(), true);
+        $this->assertIsArray($json);
+        $this->assertTrue($json['success']);
+        $this->assertArrayHasKey('message', $json);
+
+        $item = $this->cart->get($this->mp3player);
+        $this->assertNotNull($item);
+        $this->assertSame(2, (int) $item->Quantity);
+
+        $this->cart->clear();
+    }
+
+    public function testSwitchVariationEndpoint(): void
+    {
+        ShoppingCart::singleton()->clear();
+
+        $product = $this->objFromFixture(Product::class, 'ball');
+        $product->publishSingle();
+
+        $redLarge = $this->objFromFixture(Variation::class, 'redLarge');
+        $redSmall = $this->objFromFixture(Variation::class, 'redSmall');
+        $redLarge->publishSingle();
+        $redSmall->publishSingle();
+
+        $this->get(CartPageController::add_item_link($redLarge, ['quantity' => 4]));
+        $item = $this->cart->get($redLarge);
+        $this->assertNotNull($item);
+        $this->assertInstanceOf(\SilverShop\Model\Variation\OrderItem::class, $item);
+
+        $query = [
+            'ItemID' => (string) $item->ID,
+            'VariationID' => (string) $redSmall->ID,
+        ];
+        if (SecurityToken::is_enabled()) {
+            $query[SecurityToken::inst()->getName()] = SecurityToken::inst()->getValue();
+        }
+
+        $url = 'cart/switchvariation?' . http_build_query($query);
+        $response = $this->get($url);
+        $this->assertEquals(302, $response->getStatusCode(), (string) $response->getBody());
+
+        $this->assertNull($this->cart->get($redLarge));
+        $newItem = $this->cart->get($redSmall);
+        $this->assertNotNull($newItem);
+        $this->assertSame((int) $item->ID, (int) $newItem->ID);
+        $this->assertSame(4, (int) $newItem->Quantity);
+        $this->assertSame((int) $redSmall->ID, (int) $newItem->ProductVariationID);
+
+        $this->cart->clear();
+    }
+
+    public function testSwitchVariationRunsModificationHook(): void
+    {
+        Order::add_extension(ShoppingCartControllerTest_ModificationExtension::class);
+
+        try {
+            ShoppingCart::singleton()->clear();
+
+            $product = $this->objFromFixture(Product::class, 'ball');
+            $product->publishSingle();
+
+            $redLarge = $this->objFromFixture(Variation::class, 'redLarge');
+            $redSmall = $this->objFromFixture(Variation::class, 'redSmall');
+            $redLarge->publishSingle();
+            $redSmall->publishSingle();
+
+            $this->get(CartPageController::add_item_link($redLarge, ['quantity' => 8]));
+            $item = $this->cart->get($redLarge);
+            $this->assertNotNull($item);
+
+            $this->assertTrue(
+                ShoppingCart::singleton()->switchOrderItemVariation($item, $redSmall)
+            );
+
+            $updated = $this->cart->get($redSmall);
+            $this->assertNotNull($updated);
+            $this->assertSame(5, (int) $updated->Quantity);
+        } finally {
+            Order::remove_extension(ShoppingCartControllerTest_ModificationExtension::class);
+            ShoppingCart::singleton()->clear();
+        }
     }
 }

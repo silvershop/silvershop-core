@@ -1,4 +1,5 @@
 <% require css("silvershop/core: client/dist/css/cart.css") %>
+<% require javascript("silvershop/core: client/dist/js/cart-form.js") %>
 
 <div class="silvershop-cart-page silvershop-typography">
     <h1 class="silvershop-cart-page__title">$Title</h1>

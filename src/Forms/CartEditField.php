@@ -9,7 +9,6 @@ use SilverStripe\Model\List\ArrayList;
 use Closure;
 use SilverShop\Model\Order;
 use SilverShop\Model\Variation\Variation;
-use SilverStripe\Forms\CheckboxField;
 use SilverStripe\Forms\DropdownField;
 use SilverStripe\Forms\FormField;
 use SilverStripe\Forms\TextField;
@@ -124,10 +123,11 @@ class CartEditField extends FormField
                 'Quantity',
                 $item->Quantity
             )
-                ->addExtraClass('silvershop-numeric')
+                ->addExtraClass('silvershop-numeric silvershop-cart__qty-input')
                 ->setAttribute('type', 'number')
                 ->setAttribute('min', '0')
-                ->setAttribute('step', '1');
+                ->setAttribute('step', '1')
+                ->setAttribute('inputmode', 'numeric');
             $comment = TextField::create(
                 $name . '[Comment]',
                 _t('SilverShop\Model\OrderItem.Comment', 'Comment'),
@@ -147,14 +147,12 @@ class CartEditField extends FormField
                 }
             }
 
-            $remove = CheckboxField::create($name . '[Remove]', _t('SilverShop\Generic.Remove', 'Remove'));
             $editables->push(
                 $item->customise(
                     [
                         'QuantityField' => $quantity,
                         'CommentField' => $comment,
                         'VariationField' => $variationfield,
-                        'RemoveField' => $remove,
                     ]
                 )
             );

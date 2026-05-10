@@ -16,6 +16,7 @@
 .silvershop-cart__col--image,
 .silvershop-cart__col--remove {
     width: 10px;
+    white-space: nowrap;
 }
 
 .silvershop-cart__col--unit-price,
@@ -29,4 +30,34 @@
 
 .silvershop-cart__foot th {
     text-align: left;
+}
+
+.silvershop-cart__qty {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+}
+
+.silvershop-cart__qty--busy {
+    opacity: 0.6;
+}
+
+.silvershop-cart__qty-input {
+    width: 3.5rem;
+    max-width: 100%;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.silvershop-cart__qty-btn {
+    flex: 0 0 auto;
+    min-width: 2rem;
+    padding: 0.2rem 0.45rem;
+    line-height: 1.2;
+    cursor: pointer;
+}
+
+.silvershop-cart__remove-btn {
+    white-space: nowrap;
 }

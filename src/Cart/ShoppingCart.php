@@ -12,6 +12,8 @@ use SilverShop\Extension\ProductVariationsExtension;
 use SilverShop\Model\Buyable;
 use SilverShop\Model\Order;
 use SilverShop\Model\OrderItem;
+use SilverShop\Model\Variation\OrderItem as VariationOrderItem;
+use SilverShop\Model\Variation\Variation;
 use SilverShop\ORM\Filters\MatchObjectFilter;
 use SilverShop\Page\Product;
 use SilverShop\ShopTools;
@@ -144,40 +146,97 @@ class ShoppingCart
      */
     public function add(Buyable $buyable, $quantity = 1, $filter = []): bool|null|OrderItem
     {
-        $order = $this->findOrMake();
+        $quantity = (int) $quantity;
+        if ($quantity <= 0) {
+            return false;
+        }
 
-        // If an extension throws an exception, error out
+        $order = $this->findOrMake();
+        $buyable = $this->getCorrectBuyable($buyable);
+        $existing = $this->findLineItem($buyable, $filter);
+
+        $currentQty = $existing ? (int) $existing->Quantity : 0;
+        $proposedTotal = $currentQty + $quantity;
+
+        $modOutcome = $this->validateCartItemModification(
+            new CartItemModificationContext(
+                CartItemModificationContext::OP_ADD,
+                $order,
+                $existing,
+                $buyable,
+                $filter,
+                $quantity,
+                $proposedTotal
+            )
+        );
+
+        if ($modOutcome->abort) {
+            if ($modOutcome->message !== null) {
+                $this->message($modOutcome->message, $modOutcome->messageType);
+            }
+
+            return null;
+        }
+
+        $finalTotal = $modOutcome->lineQuantityAfter ?? $proposedTotal;
+        if ($finalTotal < 0) {
+            $finalTotal = 0;
+        }
+
+        if ($finalTotal === 0) {
+            if ($existing instanceof OrderItem) {
+                return $this->removeOrderItem($existing, null) ? null : false;
+            }
+
+            return false;
+        }
+
+        $member = Security::getCurrentUser();
+
+        if (!$buyable->canPurchase($member, $finalTotal)) {
+            return $this->error(
+                _t(
+                    __CLASS__ . '.CannotPurchase',
+                    'This {Title} cannot be purchased.',
+                    '',
+                    ['Title' => $buyable->i18n_singular_name()]
+                )
+            );
+        }
+
+        $effectiveDelta = max(0, $finalTotal - $currentQty);
+
         try {
-            $order->extend('beforeAdd', $buyable, $quantity, $filter);
+            $order->extend('beforeAdd', $buyable, $effectiveDelta, $filter);
         } catch (Exception $exception) {
             return $this->error($exception->getMessage());
         }
 
-        if (!$buyable) {
-            return $this->error(_t(__CLASS__ . '.ProductNotFound', 'Product not found.'));
-        }
-
-        $item = $this->findOrMakeItem($buyable, $quantity, $filter);
-
-        if (!$item instanceof OrderItem) {
-            return false;
-        }
-
-        if (!$item->brandNew) {
-            $item->Quantity += $quantity;
+        if (!$existing instanceof OrderItem) {
+            $item = $buyable->createItem($finalTotal, $filter);
+            $item->OrderID = $order->ID;
+            $item->write();
+            $order->Items()->add($item);
+            $item->brandNew = true;
         } else {
-            $item->Quantity = $quantity;
+            $item = $existing;
+            $item->Quantity = $finalTotal;
+            $item->brandNew = false;
         }
 
-        // If an extension throws an exception, error out
         try {
-            $order->extend('afterAdd', $item, $buyable, $quantity, $filter);
+            $order->extend('afterAdd', $item, $buyable, $effectiveDelta, $filter);
         } catch (Exception $exception) {
             return $this->error($exception->getMessage());
         }
 
         $item->write();
-        $this->message(_t(__CLASS__ . '.ItemAdded', 'Item has been added successfully.'));
+
+        if (!$modOutcome->abort && $modOutcome->message && $modOutcome->messageType !== 'good') {
+            $this->message($modOutcome->message, $modOutcome->messageType);
+        } else {
+            $this->message(_t(__CLASS__ . '.ItemAdded', 'Item has been added successfully.'));
+        }
 
         return $item;
     }
@@ -198,28 +257,81 @@ class ShoppingCart
             return true;
         }
 
-        // If an extension throws an exception, error out
+        $buyable = $this->getCorrectBuyable($buyable);
+        $item = $this->findLineItem($buyable, $filter);
+
+        if (!$item instanceof OrderItem) {
+            return false;
+        }
+
+        $currentQty = (int) $item->Quantity;
+        $removeUnits = $quantity === null ? $currentQty : (int) $quantity;
+
+        if ($removeUnits < 0) {
+            return false;
+        }
+
+        // Match legacy removeOrderItem behaviour: an explicit 0 means "remove the entire line".
+        if ($removeUnits === 0) {
+            $removeUnits = $currentQty;
+        }
+
+        if ($removeUnits > $currentQty) {
+            $removeUnits = $currentQty;
+        }
+
+        $proposedRemaining = max(0, $currentQty - $removeUnits);
+
+        $modOutcome = $this->validateCartItemModification(
+            new CartItemModificationContext(
+                CartItemModificationContext::OP_REMOVE,
+                $order,
+                $item,
+                $buyable,
+                $filter,
+                $removeUnits,
+                $proposedRemaining
+            )
+        );
+
+        if ($modOutcome->abort) {
+            if ($modOutcome->message !== null) {
+                $this->message($modOutcome->message, $modOutcome->messageType);
+            }
+
+            return null;
+        }
+
+        $finalRemaining = $modOutcome->lineQuantityAfter ?? $proposedRemaining;
+        if ($finalRemaining < 0) {
+            $finalRemaining = 0;
+        }
+
         try {
             $order->extend('beforeRemove', $buyable, $quantity, $filter);
         } catch (Exception $exception) {
             return $this->error($exception->getMessage());
         }
 
-        $item = $this->get($buyable, $filter);
-
-        if (!$item instanceof OrderItem || $this->removeOrderItem($item, $quantity) !== true) {
-            return false;
+        if ($finalRemaining <= 0) {
+            $item->delete();
+            $item->destroy();
+        } else {
+            $item->Quantity = $finalRemaining;
+            $item->write();
         }
 
-        // If an extension throws an exception, error out
-        // TODO: There should be a rollback
         try {
             $order->extend('afterRemove', $item, $buyable, $quantity, $filter);
         } catch (Exception $exception) {
             return $this->error($exception->getMessage());
         }
 
-        $this->message(_t(__CLASS__ . '.ItemRemoved', 'Item has been successfully removed.'));
+        if (!$modOutcome->abort && $modOutcome->message && $modOutcome->messageType !== 'good') {
+            $this->message($modOutcome->message, $modOutcome->messageType);
+        } else {
+            $this->message(_t(__CLASS__ . '.ItemRemoved', 'Item has been successfully removed.'));
+        }
 
         return true;
     }
@@ -244,13 +356,63 @@ class ShoppingCart
             return $this->error(_t(__CLASS__ . '.ItemNotFound', 'Item not found.'));
         }
 
-        //if $quantity will become 0, then remove all
-        if (!$quantity || ($orderItem->Quantity - $quantity) <= 0) {
+        $buyable = $orderItem->Buyable();
+        if (!$buyable instanceof Buyable) {
+            return $this->error(_t(__CLASS__ . '.ItemNotFound', 'Item not found.'));
+        }
+
+        $currentQty = (int) $orderItem->Quantity;
+        $removeUnits = $quantity === null ? $currentQty : (int) $quantity;
+
+        if ($removeUnits > $currentQty) {
+            $removeUnits = $currentQty;
+        }
+
+        $proposedRemaining = max(0, $currentQty - $removeUnits);
+
+        $modOutcome = $this->validateCartItemModification(
+            new CartItemModificationContext(
+                CartItemModificationContext::OP_REMOVE,
+                $order,
+                $orderItem,
+                $buyable,
+                [],
+                $removeUnits,
+                $proposedRemaining
+            )
+        );
+
+        if ($modOutcome->abort) {
+            if ($modOutcome->message !== null) {
+                $this->message($modOutcome->message, $modOutcome->messageType);
+            }
+
+            return null;
+        }
+
+        $finalRemaining = $modOutcome->lineQuantityAfter ?? $proposedRemaining;
+        if ($finalRemaining < 0) {
+            $finalRemaining = 0;
+        }
+
+        try {
+            $order->extend('beforeRemove', $buyable, $quantity, []);
+        } catch (Exception $exception) {
+            return $this->error($exception->getMessage());
+        }
+
+        if ($finalRemaining <= 0) {
             $orderItem->delete();
             $orderItem->destroy();
         } else {
-            $orderItem->Quantity -= $quantity;
+            $orderItem->Quantity = $finalRemaining;
             $orderItem->write();
+        }
+
+        try {
+            $order->extend('afterRemove', $orderItem, $buyable, $quantity, []);
+        } catch (Exception $exception) {
+            return $this->error($exception->getMessage());
         }
 
         return true;
@@ -301,24 +463,79 @@ class ShoppingCart
         }
 
         $buyable = $orderItem->Buyable();
-        // If an extension throws an exception, error out
+        if (!$buyable instanceof Buyable) {
+            return $this->error(_t(__CLASS__ . '.ItemNotFound', 'Item not found.'));
+        }
+
+        $requested = (int) $quantity;
+
+        if ($requested <= 0) {
+            return $this->removeOrderItem($orderItem, null);
+        }
+
+        $modOutcome = $this->validateCartItemModification(
+            new CartItemModificationContext(
+                CartItemModificationContext::OP_SET_QUANTITY,
+                $order,
+                $orderItem,
+                $buyable,
+                $filter,
+                $requested,
+                $requested
+            )
+        );
+
+        if ($modOutcome->abort) {
+            if ($modOutcome->message !== null) {
+                $this->message($modOutcome->message, $modOutcome->messageType);
+            }
+
+            return null;
+        }
+
+        $finalQty = $modOutcome->lineQuantityAfter ?? $requested;
+        if ($finalQty < 0) {
+            $finalQty = 0;
+        }
+
+        if ($finalQty === 0) {
+            return $this->removeOrderItem($orderItem, null);
+        }
+
+        $member = Security::getCurrentUser();
+
+        if (!$buyable->canPurchase($member, $finalQty)) {
+            return $this->error(
+                _t(
+                    __CLASS__ . '.CannotPurchase',
+                    'This {Title} cannot be purchased.',
+                    '',
+                    ['Title' => $buyable->i18n_singular_name()]
+                )
+            );
+        }
+
         try {
-            $order->extend('beforeSetQuantity', $buyable, $quantity, $filter);
+            $order->extend('beforeSetQuantity', $buyable, $finalQty, $filter);
         } catch (Exception $exception) {
             return $this->error($exception->getMessage());
         }
 
-        $orderItem->Quantity = $quantity;
+        $orderItem->Quantity = $finalQty;
 
-        // If an extension throws an exception, error out
         try {
-            $order->extend('afterSetQuantity', $orderItem, $buyable, $quantity, $filter);
+            $order->extend('afterSetQuantity', $orderItem, $buyable, $finalQty, $filter);
         } catch (Exception $exception) {
             return $this->error($exception->getMessage());
         }
 
         $orderItem->write();
-        $this->message(_t(__CLASS__ . '.QuantitySet', 'Quantity has been set.'));
+
+        if (!$modOutcome->abort && $modOutcome->message && $modOutcome->messageType !== 'good') {
+            $this->message($modOutcome->message, $modOutcome->messageType);
+        } else {
+            $this->message(_t(__CLASS__ . '.QuantitySet', 'Quantity has been set.'));
+        }
 
         return true;
     }
@@ -334,7 +551,7 @@ class ShoppingCart
     private function findOrMakeItem(Buyable $buyable, $quantity = 1, $filter = []): ?OrderItem
     {
         $order = $this->findOrMake();
-        $item = $this->get($buyable, $filter);
+        $item = $this->findLineItem($buyable, $filter);
 
         if (!$item instanceof OrderItem) {
             $member = Security::getCurrentUser();
@@ -372,6 +589,20 @@ class ShoppingCart
      */
     public function get(Buyable $buyable, $customFilter = []): ?OrderItem
     {
+        $item = $this->findLineItem($buyable, $customFilter);
+
+        if (!$item instanceof OrderItem) {
+            return $this->error(_t(__CLASS__ . '.ItemNotFound', 'Item not found.'));
+        }
+
+        return $item;
+    }
+
+    /**
+     * Find an existing cart line without updating {@see getMessage()} when the line does not exist.
+     */
+    public function findLineItem(Buyable $buyable, array $customFilter = []): ?OrderItem
+    {
         $order = $this->current();
 
         if (!$order instanceof Order) {
@@ -400,13 +631,125 @@ class ShoppingCart
 
         $matchObjectFilter = new MatchObjectFilter($itemClass, array_merge($customFilter, $filter), $required);
 
-        $item = $itemClass::get()->where($matchObjectFilter->getFilter())->first();
+        return $itemClass::get()->where($matchObjectFilter->getFilter())->first();
+    }
 
-        if (!$item) {
-            return $this->error(_t(__CLASS__ . '.ItemNotFound', 'Item not found.'));
+    /**
+     * Validate or adjust a cart modification via {@see Order::extend('updateCartItemModification', ...)}.
+     */
+    public function validateCartItemModification(CartItemModificationContext $context): CartItemModificationOutcome
+    {
+        $outcome = new CartItemModificationOutcome();
+        $context->order->extend('updateCartItemModification', $context, $outcome);
+
+        return $outcome;
+    }
+
+    /**
+     * Switch a variation cart line to another variation of the same parent product (same validation path as quantity updates).
+     */
+    public function switchOrderItemVariation(OrderItem $orderItem, Variation $newVariation, array $filter = []): bool
+    {
+        $this->restoreCartContextFromLine($orderItem);
+
+        $order = $this->current();
+
+        if (!$order instanceof Order) {
+            return (bool) $this->error(_t(__CLASS__ . '.NoOrder', 'No current order.'));
         }
 
-        return $item;
+        if ($orderItem->OrderID != $order->ID) {
+            return (bool) $this->error(_t(__CLASS__ . '.ItemNotFound', 'Item not found.'));
+        }
+
+        if (!$orderItem instanceof VariationOrderItem) {
+            return (bool) $this->error(
+                _t(__CLASS__ . '.LineNotVariation', 'This cart line does not support switching variation.')
+            );
+        }
+
+        if (!$newVariation->exists()) {
+            return (bool) $this->error(_t(__CLASS__ . '.ProductNotFound', 'Product not found.'));
+        }
+
+        if ((int) $newVariation->ProductID !== (int) $orderItem->ProductID) {
+            return (bool) $this->error(
+                _t(__CLASS__ . '.VariationWrongProduct', 'That variation does not belong to this product.')
+            );
+        }
+
+        $buyable = $this->getCorrectBuyable($newVariation);
+        if (!$buyable instanceof Variation) {
+            return (bool) $this->error(_t(__CLASS__ . '.ProductNotFound', 'Product not found.'));
+        }
+
+        if ((int) $orderItem->ProductVariationID === (int) $buyable->ID) {
+            return true;
+        }
+
+        $lineQty = (int) $orderItem->Quantity;
+
+        $duplicate = $this->findLineItem($buyable, []);
+        if ($duplicate instanceof OrderItem && $duplicate->ID !== $orderItem->ID) {
+            return (bool) $this->error(
+                _t(__CLASS__ . '.VariationAlreadyInCart', 'That variation is already in your cart.')
+            );
+        }
+
+        $modOutcome = $this->validateCartItemModification(
+            new CartItemModificationContext(
+                CartItemModificationContext::OP_SWITCH_VARIATION,
+                $order,
+                $orderItem,
+                $buyable,
+                $filter,
+                0,
+                $lineQty
+            )
+        );
+
+        if ($modOutcome->abort) {
+            if ($modOutcome->message !== null) {
+                $this->message($modOutcome->message, $modOutcome->messageType);
+            }
+
+            return false;
+        }
+
+        $finalQty = $modOutcome->lineQuantityAfter ?? $lineQty;
+        if ($finalQty < 0) {
+            $finalQty = 0;
+        }
+
+        if ($finalQty === 0) {
+            return (bool) $this->removeOrderItem($orderItem, null);
+        }
+
+        $member = Security::getCurrentUser();
+
+        if (!$buyable->canPurchase($member, $finalQty)) {
+            return (bool) $this->error(
+                _t(
+                    __CLASS__ . '.CannotPurchase',
+                    'This {Title} cannot be purchased.',
+                    '',
+                    ['Title' => $buyable->i18n_singular_name()]
+                )
+            );
+        }
+
+        $orderItem->ProductVariationID = (int) $buyable->ID;
+        $orderItem->Quantity = $finalQty;
+
+        $orderItem->write();
+
+        if (!$modOutcome->abort && $modOutcome->message && $modOutcome->messageType !== 'good') {
+            $this->message($modOutcome->message, $modOutcome->messageType);
+        } else {
+            $this->message(_t(__CLASS__ . '.VariationUpdated', 'Variation has been updated.'));
+        }
+
+        return true;
     }
 
     /**

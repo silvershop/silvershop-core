@@ -7,7 +7,7 @@ namespace SilverShop\Forms;
 use SilverStripe\Control\RequestHandler;
 use Exception;
 use SilverShop\Cart\ShoppingCart;
-use SilverShop\Cart\ShoppingCartController;
+use SilverShop\Page\CartPageController;
 use SilverShop\Page\Product;
 use SilverShop\ShopTools;
 use SilverStripe\Core\Convert;
@@ -108,7 +108,7 @@ class VariationForm extends AddProductForm
         $this->extend('updateVariationAddToCart', $form, $variation);
 
         $this->extend('updateVariationFormResponse', $request, $response, $variation, $quantity, $form);
-        return $response ? $response : ShoppingCartController::direct();
+        return $response ? $response : CartPageController::direct();
     }
 
     public function getBuyable($data = null)

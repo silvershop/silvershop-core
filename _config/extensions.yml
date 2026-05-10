@@ -5,10 +5,6 @@ PageController:
   extensions:
     - SilverShop\Extension\ViewableCartExtension
 
-SilverShop\Cart\ShoppingCartController:
-  extensions:
-    - SilverShop\Extension\ViewableCartExtension
-
 SilverShop\Model\Order:
   extensions:
     - SilverStripe\Omnipay\Extensions\Payable

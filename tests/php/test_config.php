@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace SilverShop\Tests;
 
 use SilverShop\Admin\ProductCatalogAdmin;
-use SilverShop\Cart\ShoppingCartController;
+use SilverShop\Page\CartPageController;
 use SilverShop\Extension\ProductImageExtension;
 use SilverShop\Extension\ShopConfigExtension;
 use SilverShop\Extension\SteppedCheckoutExtension;
@@ -84,7 +84,7 @@ $cfg->set(Order::class, 'cancel_before_payment', true);
 $cfg->set(Order::class, 'cancel_before_processing', false);
 $cfg->set(Order::class, 'cancel_before_sending', false);
 $cfg->set(Order::class, 'cancel_after_sending', false);
-$cfg->set(ShoppingCartController::class, 'direct_to_cart_page', false);
+$cfg->set(CartPageController::class, 'direct_to_cart_page', false);
 
 //modifiers
 $cfg->set(FlatTax::class, 'name', 'NZD');

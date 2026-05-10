@@ -7,7 +7,7 @@ namespace SilverShop\Forms;
 use SilverStripe\Forms\Validation\RequiredFieldsValidator;
 use SilverStripe\Control\RequestHandler;
 use SilverShop\Cart\ShoppingCart;
-use SilverShop\Cart\ShoppingCartController;
+use SilverShop\Page\CartPageController;
 use SilverShop\Extension\ShopConfigExtension;
 use SilverShop\Model\Buyable;
 use SilverShop\Page\Product;
@@ -97,7 +97,7 @@ class AddProductForm extends Form
 
                 $cart->add($buyable, $quantity, $saveabledata);
             }
-            if (!ShoppingCartController::config()->direct_to_cart_page) {
+            if (!CartPageController::config()->direct_to_cart_page) {
                 $form->SessionMessage($cart->getMessage(), $cart->getMessageType());
             }
 
@@ -105,7 +105,7 @@ class AddProductForm extends Form
 
             $this->extend('updateAddProductFormResponse', $request, $response, $buyable, $quantity, $form);
 
-            return $response ? $response : ShoppingCartController::direct($cart->getMessageType());
+            return $response ? $response : CartPageController::direct($cart->getMessageType());
         }
     }
 

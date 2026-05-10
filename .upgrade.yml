@@ -43,7 +43,7 @@ mappings:
   MatchObjectFilter: SilverShop\ORM\Filters\MatchObjectFilter
   OrderTotalCalculator: SilverShop\Cart\OrderTotalCalculator
   ShoppingCart: SilverShop\Cart\ShoppingCart
-  ShoppingCart_Controller: SilverShop\Cart\ShoppingCartController
+  ShoppingCart_Controller: SilverShop\Page\CartPageController
   ShopQuantityField: SilverShop\Forms\ShopQuantityField
   DropdownShopQuantityField: SilverShop\Forms\DropdownShopQuantityField
   ViewableCart: SilverShop\Extension\ViewableCartExtension

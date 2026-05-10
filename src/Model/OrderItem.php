@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace SilverShop\Model;
 
-use SilverShop\Cart\ShoppingCartController;
+use SilverShop\Page\CartPageController;
 use SilverShop\Forms\ShopQuantityField;
 use SilverStripe\Forms\TextField;
 use SilverStripe\ORM\FieldType\DBCurrency;
@@ -215,24 +215,24 @@ class OrderItem extends OrderAttribute
     public function addLink(): string
     {
         $buyable = $this->Buyable();
-        return $buyable ? ShoppingCartController::add_item_link($buyable, $this->uniquedata()) : '';
+        return $buyable ? CartPageController::add_item_link($buyable, $this->uniquedata()) : '';
     }
 
     public function removeLink(): string
     {
         $buyable = $this->Buyable();
-        return $buyable ? ShoppingCartController::remove_item_link($buyable, $this->uniquedata()) : '';
+        return $buyable ? CartPageController::remove_item_link($buyable, $this->uniquedata()) : '';
     }
 
     public function removeAllLink(): string
     {
         $buyable = $this->Buyable();
-        return $buyable ? ShoppingCartController::remove_all_item_link($buyable, $this->uniquedata()) : '';
+        return $buyable ? CartPageController::remove_all_item_link($buyable, $this->uniquedata()) : '';
     }
 
     public function setQuantityLink(): string
     {
         $buyable = $this->Buyable();
-        return $buyable ? ShoppingCartController::set_quantity_item_link($buyable, $this->uniquedata()) : '';
+        return $buyable ? CartPageController::set_quantity_item_link($buyable, $this->uniquedata()) : '';
     }
 }

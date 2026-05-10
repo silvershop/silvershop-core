@@ -102,7 +102,7 @@ SilverShop\ORM\FieldType\ShopCurrency:
   # european style currencies, e.g. 45,00 € instead of €45,00
   append_symbol: true
 
-SilverShop\Cart\ShoppingCartController:
+SilverShop\Page\CartPageController:
   # Redirect to the cart page after manipulating the shopping cart
   direct_to_cart_page: true
   # disable security token for cart-links

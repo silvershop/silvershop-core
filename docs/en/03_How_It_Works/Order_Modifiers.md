@@ -44,7 +44,7 @@ SilverShop\Model\Order:
     - 'SilverShop\Model\Modifiers\Tax\FlatTax'
 ```
 
-Note that you may need to clear the current order to see updates to modifiers. You can do this by visiting `mysite.com/shoppingcart/clear`
+Note that you may need to clear the current order to see updates to modifiers. You can do this by visiting `mysite.com/cart/clear` (the cart page, default URL segment `cart`)
   
 ## Removing an Order Modifier
 
