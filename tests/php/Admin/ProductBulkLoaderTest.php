@@ -6,6 +6,8 @@ namespace SilverShop\Tests\Admin;
 
 use SilverShop\Admin\ProductBulkLoader;
 use SilverShop\Page\Product;
+use SilverShop\Page\ProductCategory;
+use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\FunctionalTest;
 
 final class ProductBulkLoaderTest extends FunctionalTest
@@ -38,5 +40,26 @@ final class ProductBulkLoaderTest extends FunctionalTest
         $this->assertEquals(12, $obj->BasePrice, "Checking price matches.");
         $this->assertEquals(124, $obj->InternalItemID, "Checking ID matches");
         fclose($file);
+    }
+
+    public function testCreateNewProductGroupWhenConfigured(): void
+    {
+        $existingConfigValue = Config::inst()->get(ProductBulkLoader::class, 'create_new_product_groups');
+        Config::modify()->set(ProductBulkLoader::class, 'create_new_product_groups', true);
+        try {
+            $productBulkLoader = ProductBulkLoader::create(Product::class);
+            $product = $this->objFromFixture(Product::class, 'socks');
+            $originalParentID = (int) $product->ParentID;
+            $newCategoryTitle = 'category created by bulk loader';
+
+            $productBulkLoader->setParent($product, $newCategoryTitle);
+
+            $createdCategory = ProductCategory::get()->byID($product->ParentID);
+            $this->assertNotNull($createdCategory);
+            $this->assertSame($newCategoryTitle, (string) $createdCategory->Title);
+            $this->assertNotSame($originalParentID, (int) $product->ParentID);
+        } finally {
+            Config::modify()->set(ProductBulkLoader::class, 'create_new_product_groups', $existingConfigValue);
+        }
     }
 }
