@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace SilverShop\Tests\Page;
 
+use SilverShop\Cart\ShoppingCartController;
 use SilverShop\Extension\OrderManipulationExtension;
 use SilverShop\Model\Order;
 use SilverShop\Page\CheckoutPage;
+use SilverShop\Page\Product;
 use SilverShop\Tests\ShopTestBootstrap;
 use SilverStripe\Control\Director;
 use SilverStripe\Dev\FunctionalTest;
@@ -37,11 +39,12 @@ final class CheckoutPageTest extends FunctionalTest
         OrderManipulationExtension::add_session_order($order);
 
         $orderUrl = $checkout->Link('order/' . $order->ID);
+        $actionsFormUrl = $checkout->Link('ActionsForm');
         $this->get($orderUrl);
 
-        //make payment action (form posts to the order URL, not .../ActionsForm)
+        //make payment action
         $response = $this->post(
-            $orderUrl,
+            $actionsFormUrl,
             [
                 'OrderID'          => $order->ID,
                 'PaymentMethod'    => 'Dummy',
@@ -52,9 +55,9 @@ final class CheckoutPageTest extends FunctionalTest
         $order = Order::get()->byID($order->ID);
         $this->assertEquals('Paid', $order->Status, 'Order status should be Paid');
 
-        //cancel action
+        //cancel action — Paid orders cannot be cancelled (cancel_before_processing=false)
         $this->post(
-            $orderUrl,
+            $actionsFormUrl,
             [
                 'OrderID'         => $order->ID,
                 'action_docancel' => 'submit',
@@ -63,7 +66,7 @@ final class CheckoutPageTest extends FunctionalTest
 
         $order = Order::get()->byID($order->ID);
         $this->assertNull($order->PaymentStatus, 'Payment status should be null after cancellation');
-        $this->assertEquals('Unpaid', $order->Status, 'Order status should be Unpaid');
+        $this->assertEquals('Paid', $order->Status, 'Order status should remain Paid (cancel not permitted after payment)');
     }
 
     public function testCanViewCheckoutPage(): void
@@ -77,8 +80,12 @@ final class CheckoutPageTest extends FunctionalTest
         $checkout = $this->objFromFixture(CheckoutPage::class, 'checkout');
         $checkout->publishSingle();
 
-        $order = $this->objFromFixture(Order::class, "unpaid");
-        OrderManipulationExtension::add_session_order($order);
+        // add_session_order() only records order history; it does not set an active cart.
+        // Publish a product and add it to the cart via HTTP so ShoppingCart::curr() returns
+        // an order with items, which causes OrderForm (and the keepalive script) to render.
+        $socks = $this->objFromFixture(Product::class, 'socks');
+        $socks->publishSingle();
+        $this->get(ShoppingCartController::add_item_link($socks));
 
         $httpResponse = $this->get('checkout');
         $this->assertEquals(200, $httpResponse->getStatusCode(), 'Checkout page should be available with a current order');

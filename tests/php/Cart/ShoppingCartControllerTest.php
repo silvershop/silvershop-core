@@ -7,6 +7,7 @@ namespace SilverShop\Tests\Cart;
 use SilverShop\Cart\ShoppingCart;
 use SilverShop\Cart\ShoppingCartController;
 use SilverShop\Model\Variation\Variation;
+use SilverShop\Page\CartPage;
 use SilverShop\Page\Product;
 use SilverShop\Tests\Model\Product\CustomProduct_OrderItem;
 use SilverShop\Tests\ShopTestBootstrap;
@@ -291,6 +292,10 @@ final class ShoppingCartControllerTest extends FunctionalTest
 
     public function testCanCommentOnCartLine(): void
     {
+        // CartPage must be published because this test runs with $use_draft_site = false
+        $cartPage = $this->objFromFixture(CartPage::class, 'cart');
+        $cartPage->publishSingle();
+
         $this->get(ShoppingCartController::add_item_link($this->mp3player));
 
         $item = ShoppingCart::curr()->Items()->first();

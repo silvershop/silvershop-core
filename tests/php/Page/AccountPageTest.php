@@ -266,6 +266,8 @@ final class AccountPageTest extends FunctionalTest
         $member = Security::getCurrentUser();
         $this->assertEquals('UpdatedName', $member->FirstName, 'First name should be updated');
 
+        // Reload the editprofile page to ensure we have the ChangePasswordForm in context
+        $this->get('account/editprofile/');
         $page = $this->submitForm(
             'ChangePasswordForm_ChangePasswordForm',
             'action_doChangePassword',
