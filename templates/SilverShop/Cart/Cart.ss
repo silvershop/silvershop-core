@@ -44,6 +44,11 @@
                         <% if $Product.Variations && $Up.Editable %>
                             <span class="silvershop-cart__variation-label"><%t SilverShop\Generic.Change "Change" %>:</span> $VariationField
                         <% end_if %>
+                        <% if $Up.Editable %>
+                            $CommentField
+                        <% else_if $Comment %>
+                            <p class="silvershop-comment">$Comment.XML</p>
+                        <% end_if %>
                     </td>
                     <td class="silvershop-cart__cell silvershop-cart__cell--unit-price">$UnitPrice.Nice</td>
                     <td class="silvershop-cart__cell silvershop-cart__cell--quantity"><% if $Up.Editable %>$QuantityField<% else %>$Quantity<% end_if %></td>

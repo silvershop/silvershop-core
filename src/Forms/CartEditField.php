@@ -127,6 +127,11 @@ class CartEditField extends FormField
                 ->addExtraClass('silvershop-numeric')
                 ->setAttribute('type', 'number')
                 ->setAttribute('min', '0');
+            $comment = TextField::create(
+                $name . '[Comment]',
+                _t('SilverShop\Model\OrderItem.Comment', 'Comment'),
+                $item->Comment
+            );
 
             $variationfield = false;
             if ($buyable->hasMany('Variations')) {
@@ -146,6 +151,7 @@ class CartEditField extends FormField
                 $item->customise(
                     [
                         'QuantityField' => $quantity,
+                        'CommentField' => $comment,
                         'VariationField' => $variationfield,
                         'RemoveField' => $remove,
                     ]
