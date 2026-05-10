@@ -1,12 +1,12 @@
-<li class="silvershop-product-card">
+<li class="silvershop-product-card" <% include SilverShop\Includes\SchemaOrg\ProductScope %>>
     <% if $Image %>
         <a class="silvershop-product-card__image-link" href="$Link" title="<%t SilverShop\Generic.ReadMoreTitle "Click here to read more on &quot;{Title}&quot;" Title=$Title %>">
-            <img class="silvershop-product-card__image" src="$Image.getThumbnail.URL" alt="<%t SilverShop\Page\Product.ImageAltText "{Title} image" Title=$Title %>" />
+            <img class="silvershop-product-card__image" <% include SilverShop\Includes\SchemaOrg\ProductImage %> src="$Image.getThumbnail.URL" alt="<%t SilverShop\Page\Product.ImageAltText "{Title} image" Title=$Title %>" />
         </a>
     <% else %>
         <a href="$Link" title="<%t SilverShop\Generic.ReadMoreTitle "Click here to read more on &quot;{Title}&quot;" Title=$Title %>" class="silvershop-product-card__no-image"><!-- no image --></a>
     <% end_if %>
-    <h3 class="silvershop-product-card__title"><a class="silvershop-product-card__title-link" href="$Link" title="<%t SilverShop\Generic.ReadMoreTitle "Click here to read more on &quot;{Title}&quot;" Title=$Title %>">$Title</a></h3>
+    <h3 class="silvershop-product-card__title"><a class="silvershop-product-card__title-link" <% include SilverShop\Includes\SchemaOrg\ProductName %> href="$Link" title="<%t SilverShop\Generic.ReadMoreTitle "Click here to read more on &quot;{Title}&quot;" Title=$Title %>">$Title</a></h3>
     <% if $Model %><p class="silvershop-product-card__model"><strong><%t SilverShop\Page\Product.Model "Model" %>:</strong> $Model.XML</p><% end_if %>
     <div class="silvershop-product-card__actions">
         <% include SilverShop\Includes\Price %>
