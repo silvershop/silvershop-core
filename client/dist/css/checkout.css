@@ -1,59 +1,54 @@
 /** Minimal Checkout Page Styling **/
 
-#OrderForm_OrderForm {
+.silvershop-checkout__form {
     clear: left;
 }
 
-/* CheckoutPage form styling */
-#LeftOrder, #RightOrder {
+/* CheckoutPage form layout: target the SilverStripe-generated CompositeField
+   classes that callers commonly use (LeftOrder/RightOrder/BottomOrder). These
+   are kept as additional class hooks rather than IDs so projects can opt-in. */
+.silvershop-checkout__col--left,
+.silvershop-checkout__col--right {
     float: left;
-
-}
-
-#LeftOrder {
     width: 50%;
 }
 
-#RightOrder {
-    width: 50%;
-}
-
-#LeftOrder .CompositeField {
+.silvershop-checkout__col--left .CompositeField {
     margin-right: 10px;
 }
 
-#BottomOrder {
+.silvershop-checkout__col--bottom {
     clear: both;
 }
 
-#Checkout form label.left {
+.silvershop-checkout form label.left {
     float: left;
     width: 30%;
     font-weight: bold;
 }
 
-#Checkout form input.nolabel {
+.silvershop-checkout form input.nolabel {
     margin-left: 30%;
 }
 
-#Checkout form input.text {
+.silvershop-checkout form input.text {
     width: 50%;
 }
 
-#Checkout form #PaymentMethod li {
+.silvershop-checkout form .silvershop-payment-method li {
     list-style: none;
 }
 
-#Checkout form #Amount {
+.silvershop-checkout form .silvershop-amount {
     font-size: 1.5em;
 }
 
-#Checkout #Notes .middleColumn textarea {
+.silvershop-checkout .silvershop-notes .middleColumn textarea {
     clear: left;
     width: 100%;
     resize: vertical;
 }
 
-table.silvershop-ordercontent {
+.silvershop-receipt {
     width: 100%;
 }

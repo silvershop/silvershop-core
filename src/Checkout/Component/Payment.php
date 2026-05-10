@@ -26,7 +26,7 @@ class Payment extends CheckoutComponent
                     _t("SilverShop\Checkout\CheckoutField.PaymentType", "Payment Type"),
                     $gateways,
                     array_keys($gateways)
-                )
+                )->addExtraClass('silvershop-payment-method')
             );
         }
 

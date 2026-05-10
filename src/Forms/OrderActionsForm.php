@@ -97,7 +97,7 @@ class OrderActionsForm extends Form
                         _t(__CLASS__ . '.PaymentMethod', 'Payment Method'),
                         $gateways,
                         key($gateways)
-                    )
+                    )->addExtraClass('silvershop-payment-method')
                 );
 
                 if (($ccFields = $this->getCCFields($gateways)) instanceof CompositeField) {

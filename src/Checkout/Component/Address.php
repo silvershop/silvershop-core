@@ -37,7 +37,7 @@ abstract class Address extends CheckoutComponent
 
         return FieldList::create(
             CompositeField::create($fieldList)
-                ->addExtraClass('silvershop-' . $this->addresstype)
+                ->addExtraClass('silvershop-address-fields silvershop-address-fields--' . strtolower($this->addresstype))
                 ->setLegend($label)
                 ->setTag(Config::inst()->get(self::class, 'composite_field_tag'))
         );

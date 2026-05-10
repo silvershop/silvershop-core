@@ -1,14 +1,14 @@
-#Product {
+.silvershop-product {
 
 }
 
-.price .value {
+.silvershop-price__value {
     font-weight: bold;
     font-size: 1.2em;
 }
 
 /* Image placeholder */
-#Product .noimage {
+.silvershop-product__no-image {
     padding: 60px 20px;
     height: 40px;
     width: 200px;

@@ -20,12 +20,12 @@
   // with one of the options being "create a new ____". When that last option is selected, the
   // other fields need to be shown, otherwise they need to be hidden.
   function onExistingValueChange() {
-    $('.hasExistingValues').each(function (idx, container) {
-      var $toggle = $('.existingValues select,.existingValues input:checked', container);
+    $('.silvershop-has-existing-values').each(function (idx, container) {
+      var $toggle = $('.silvershop-existing-values select,.silvershop-existing-values input:checked', container);
       // visible if the value is not an ID (numeric)
       var toggleState = isNaN(parseInt($toggle.val()));
       var toggleMethod = toggleState ? conf.showFieldAnimation : conf.hideFieldAnimation;
-      var $toggleFields = $(container).find('.field').not('.existingValues');
+      var $toggleFields = $(container).find('.field').not('.silvershop-existing-values');
 
       // animate the fields
       if ($toggleFields && $toggleFields.length > 0) {
@@ -42,8 +42,8 @@
     });
   }
 
-  $('.existingValues select').on('change', onExistingValueChange);
-  $('.existingValues input[type=radio]').on('click', onExistingValueChange);
+  $('.silvershop-existing-values select').on('change', onExistingValueChange);
+  $('.silvershop-existing-values input[type=radio]').on('click', onExistingValueChange);
 
   onExistingValueChange(); // handle initial state
 
@@ -51,20 +51,20 @@
   $(document).ready(function () {
 
     // Payment checkout component (selecting a payment method)
-    var paymentInputs = $('#PaymentMethod input[type=radio]');
-    var methodFields = $('div.paymentfields');
+    var paymentInputs = $('.silvershop-payment-method input[type=radio]');
+    var methodFields = $('.silvershop-payment-fields');
 
     methodFields.hide();
 
     paymentInputs.each(function (e) {
       if ($(this).attr('checked') == true) {
-        $('#MethodFields_' + $(this).attr('value')).show();
+        $('.silvershop-payment-fields--' + $(this).attr('value')).show();
       }
     });
 
     paymentInputs.click(function (e) {
       methodFields.hide();
-      $('#MethodFields_' + $(this).attr('value')).show();
+      $('.silvershop-payment-fields--' + $(this).attr('value')).show();
     });
 
   });

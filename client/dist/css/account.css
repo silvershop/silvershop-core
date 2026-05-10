@@ -1,91 +1,92 @@
-/* create a box floated to the right */
-.accountcontent {
+.silvershop-account {
     float: left;
     width: 70%;
 }
 
-.accountnav {
+.silvershop-account-nav {
     float: right;
     width: 25%;
 }
 
-table.orderhistory {
+.silvershop-order-history {
     width: 100%;
 }
 
 /*
  * Member form styling, and tweaks to the login form as well
  */
-#ShopAccountForm_EditAccountForm,
-#ChangePasswordForm_ChangePasswordForm {
+.silvershop-account__form--edit,
+.silvershop-account__form--password {
     width: 45%;
     float: left;
 }
 
-#ChangePasswordForm_ChangePasswordForm {
+.silvershop-account__form--password {
     margin-left: 5%;
 }
 
 
-/* address book panels ************************************************************/
-.AccountPage h2 {
+/* Address book panels ********************************************************/
+.silvershop-account .silvershop-account__title {
     clear: left;
 }
 
-.address-panel {
+.silvershop-address-panel {
     position: relative;
     float: left;
     width: 48%;
     background: #eee;
     border: 1px solid #ccc;
-    border-radius:2px;
+    border-radius: 2px;
     padding: 20px;
     margin-bottom: 5px;
 }
-.address-panel.odd {
-    margin-right:2%;
+
+.silvershop-address-panel.odd {
+    margin-right: 2%;
 }
 
-.address-panel .panel-body {
-    font-size:14px;
-    line-height:17px;
+.silvershop-address-panel__body {
+    font-size: 14px;
+    line-height: 17px;
 }
-.address-panel .panel-footer {
+
+.silvershop-address-panel__footer {
     border-top: 1px solid #d9d9d9;
     padding: 8px 20px;
-    bottom: 0px;
+    bottom: 0;
     margin: 15px -20px -20px;
 }
 
-/*@include clearfix;*/
-.cf:before,
-.cf:after {
-    content: " "; /* 1 */
-    display: table; /* 2 */
+.silvershop-address-panel__footer:before,
+.silvershop-address-panel__footer:after {
+    content: " ";
+    display: table;
 }
-.cf:after {
+
+.silvershop-address-panel__footer:after {
     clear: both;
 }
 
-.address-panel .panel-footer .btn {
+.silvershop-address-panel__btn {
     line-height: 32px;
     padding: 0 9px;
     font-size: 10px;
     margin: 0 9px 0 0;
 }
 
-.address-panel .remove-address {
+.silvershop-address-panel__remove {
     float: right;
     line-height: 32px;
-    border:none;
+    border: none;
 }
 
-.address-panel .remove-address img {
+.silvershop-address-panel__remove-icon {
     background: none;
     border: none;
 }
 
-.address-panel .tag {
+.silvershop-address-panel__tag {
     position: relative;
     top: -21px;
     background: #f7931e;

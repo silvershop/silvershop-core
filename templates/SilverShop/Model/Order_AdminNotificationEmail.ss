@@ -6,14 +6,14 @@
         <% include SilverShop\Includes\OrderReceiptStyle %>
     </head>
     <body>
-        <table id="container" cellpadding="0" cellspacing="0" border="0" >
+        <table class="silvershop-email silvershop-email--admin-notification" cellpadding="0" cellspacing="0" border="0">
             <tr>
                 <td>
-                    <table id="Content" cellspacing="0" cellpadding="0" summary="Email Information">
+                    <table class="silvershop-email__content" cellspacing="0" cellpadding="0" summary="Email Information">
                         <thead>
                             <tr>
-                                <th scope="col" colspan="2">
-                                    <h1 class="silvershop-title">$Subject</h1>
+                                <th class="silvershop-email__title-cell" scope="col" colspan="2">
+                                    <h1 class="silvershop-email__title">$Subject</h1>
                                 </th>
                             </tr>
                         </thead>
@@ -21,7 +21,7 @@
                             <% if $Order %>
                                 <% with $Order %>
                                     <tr>
-                                        <td>
+                                        <td class="silvershop-email__order">
                                             <% include SilverShop\Model\Order %>
                                         </td>
                                     </tr>

@@ -53,7 +53,7 @@ abstract class AddressBook extends Address implements i18nEntityProvider
 
             return FieldList::create(
                 CompositeField::create($existingaddressfields)
-                    ->addExtraClass('silvershop-hasExistingValues')
+                    ->addExtraClass('silvershop-has-existing-values')
                     ->setLegend($label)
                     ->setTag(Config::inst()->get(self::class, 'composite_field_tag'))
             );
@@ -83,7 +83,7 @@ abstract class AddressBook extends Address implements i18nEntityProvider
                     $label,
                     $addressoptions,
                     $member->{'Default' . $this->addresstype . 'AddressID'}
-                )->addExtraClass('silvershop-existingValues')
+                )->addExtraClass('silvershop-existing-values')
             );
         }
 

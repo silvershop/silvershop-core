@@ -1,27 +1,27 @@
-.sidecart {
+.silvershop-sidecart {
 }
 
-.sidecart .item {
+.silvershop-sidecart__item {
     clear: both;
     position: relative;
     padding-right: 16px;
 }
 
-.sidecart .image {
+.silvershop-sidecart__image {
     float: left;
     margin-right: 1em;
 }
 
-.sidecart .remove {
+.silvershop-sidecart__remove {
     position: absolute;
     top: 0;
     right: 0;
 }
 
-.sidecart p {
+.silvershop-sidecart p {
     margin-bottom: 0.1em;
 }
 
-.sidecart .quantity {
+.silvershop-sidecart__quantity {
     font-weight: bold;
 }

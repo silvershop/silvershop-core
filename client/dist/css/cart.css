@@ -1,32 +1,32 @@
-table.cart {
+.silvershop-cart {
     width: 100%;
 }
 
-table.cart td {
+.silvershop-cart__cell {
     text-align: center;
 }
 
-table.cart td h3,
-table.cart td .subtitle {
+.silvershop-cart__product-title,
+.silvershop-cart__subtitle {
     text-align: left;
     margin-top: 0;
     margin-bottom: 0.5em;
 }
 
-table.cart colgroup.image,
-table.cart colgroup.remove {
+.silvershop-cart__col--image,
+.silvershop-cart__col--remove {
     width: 10px;
 }
 
-table.cart colgroup.unitprice,
-table.cart colgroup.total {
+.silvershop-cart__col--unit-price,
+.silvershop-cart__col--total {
     width: 10em;
 }
 
-table.cart colgroup.quantity {
+.silvershop-cart__col--quantity {
     width: 10em;
 }
 
-table.cart tfoot th {
+.silvershop-cart__foot th {
     text-align: left;
 }

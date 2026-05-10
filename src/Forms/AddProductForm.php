@@ -46,7 +46,7 @@ class AddProductForm extends Form
             $this->getFormValidator()
         );
 
-        $this->addExtraClass("silvershop-addproductform");
+        $this->addExtraClass("silvershop-add-product-form");
 
         $this->extend('updateAddProductForm');
     }

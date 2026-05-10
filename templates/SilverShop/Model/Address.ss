@@ -1,9 +1,9 @@
-<% if $Name %>$Name<br/><% end_if %>
-<% if $Company %>$Company<br/><% end_if %>
-<% if $Address %>$Address<br/><% end_if %>
-<% if $AddressLine2 %>$AddressLine2<br/><% end_if %>
-<% if $City %>$City<br/><% end_if %>
-<% if $PostalCode %>$PostalCode<br/><% end_if %>
-<% if $State %>$State<br/><% end_if %>
-<% if $Country %>$Country<br/><% end_if %>
-<% if $Phone %>$Phone<% end_if %>
+<% if $Name %><span class="silvershop-address__line silvershop-address__line--name">$Name</span><br/><% end_if %>
+<% if $Company %><span class="silvershop-address__line silvershop-address__line--company">$Company</span><br/><% end_if %>
+<% if $Address %><span class="silvershop-address__line silvershop-address__line--address">$Address</span><br/><% end_if %>
+<% if $AddressLine2 %><span class="silvershop-address__line silvershop-address__line--address2">$AddressLine2</span><br/><% end_if %>
+<% if $City %><span class="silvershop-address__line silvershop-address__line--city">$City</span><br/><% end_if %>
+<% if $PostalCode %><span class="silvershop-address__line silvershop-address__line--postal-code">$PostalCode</span><br/><% end_if %>
+<% if $State %><span class="silvershop-address__line silvershop-address__line--state">$State</span><br/><% end_if %>
+<% if $Country %><span class="silvershop-address__line silvershop-address__line--country">$Country</span><br/><% end_if %>
+<% if $Phone %><span class="silvershop-address__line silvershop-address__line--phone">$Phone</span><% end_if %>

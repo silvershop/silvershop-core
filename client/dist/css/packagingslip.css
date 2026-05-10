@@ -10,7 +10,7 @@ body {
     font-size: 62.5%;
 }
 
-p.footertext {
+.silvershop-packing-slip__footer-text {
     text-align: center;
     color: #666;
     font-size: 10px;
@@ -20,13 +20,13 @@ p.footertext {
     font-size: 1em;
 }
 
-h2.pageTitle {
+.silvershop-packing-slip__title {
     font-size: 2em;
 }
 
-#OrderInformation div,
-#OrderStatusForm,
-#OrderStatusLog {
+.silvershop-packing-slip__order-info,
+.silvershop-packing-slip__status-form,
+.silvershop-packing-slip__status-log {
     margin: 20px;
     background: #fff;
     padding: 20px;
@@ -37,33 +37,33 @@ h2.pageTitle {
     text-align: left;
 }
 
-.packingSlip {
+.silvershop-packing-slip {
     width: 98%;
     border-collapse: collapse;
 }
 
-.packingSlip th {
+.silvershop-packing-slip th {
     color: #666;
     font-size: 1.8em;
     padding: 5px;
 }
 
-.packingSlip td {
+.silvershop-packing-slip td {
     border: 1px solid #ccc;
     font-size: 1.2em;
     padding: 5px;
 }
 
-.packingSlip td h2 {
+.silvershop-packing-slip td h2 {
     color: #666;
     font-size: 2.5em;
 }
 
-.packingSlip tr.orderDetails {
+.silvershop-packing-slip__row--order-details {
     font-weight: bold;
     border-bottom: 10px;
 }
 
-.packingSlip.orderDetails {
+.silvershop-packing-slip--order-details {
     margin-top: 10px;
 }

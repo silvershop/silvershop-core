@@ -1,60 +1,60 @@
 <% if $Items %>
     <table class="silvershop-cart" summary="<%t SilverShop\Cart\ShoppingCart.TableSummary "Current contents of your cart." %>">
         <colgroup>
-            <col class="silvershop-image"/>
-            <col class="silvershop-product silvershop-title"/>
-            <col class="silvershop-unitprice" />
-            <col class="silvershop-quantity" />
-            <col class="silvershop-total"/>
-            <col class="silvershop-remove"/>
+            <col class="silvershop-cart__col silvershop-cart__col--image"/>
+            <col class="silvershop-cart__col silvershop-cart__col--product"/>
+            <col class="silvershop-cart__col silvershop-cart__col--unit-price" />
+            <col class="silvershop-cart__col silvershop-cart__col--quantity" />
+            <col class="silvershop-cart__col silvershop-cart__col--total"/>
+            <col class="silvershop-cart__col silvershop-cart__col--remove"/>
         </colgroup>
-        <thead>
-            <tr>
-                <th scope="col"></th>
-                <th scope="col"><%t SilverShop\Page\Product.SINGULARNAME "Product" %></th>
-                <th scope="col"><%t SilverShop\Model\Order.UnitPrice "Unit Price" %></th>
-                <th scope="col"><%t SilverShop\Model\Order.Quantity "Quantity" %></th>
-                <th scope="col"><%t SilverShop\Model\Order.TotalPriceWithCurrency "Total Price ({Currency})" Currency=$Currency %></th>
+        <thead class="silvershop-cart__head">
+            <tr class="silvershop-cart__head-row">
+                <th class="silvershop-cart__head-cell silvershop-cart__head-cell--image" scope="col"></th>
+                <th class="silvershop-cart__head-cell silvershop-cart__head-cell--product" scope="col"><%t SilverShop\Page\Product.SINGULARNAME "Product" %></th>
+                <th class="silvershop-cart__head-cell silvershop-cart__head-cell--unit-price" scope="col"><%t SilverShop\Model\Order.UnitPrice "Unit Price" %></th>
+                <th class="silvershop-cart__head-cell silvershop-cart__head-cell--quantity" scope="col"><%t SilverShop\Model\Order.Quantity "Quantity" %></th>
+                <th class="silvershop-cart__head-cell silvershop-cart__head-cell--total" scope="col"><%t SilverShop\Model\Order.TotalPriceWithCurrency "Total Price ({Currency})" Currency=$Currency %></th>
                 <% if $Editable %>
-                    <th scope="col"><%t SilverShop\Generic.Remove "Remove" %></th>
+                    <th class="silvershop-cart__head-cell silvershop-cart__head-cell--remove" scope="col"><%t SilverShop\Generic.Remove "Remove" %></th>
                 <% end_if %>
             </tr>
         </thead>
-        <tbody>
+        <tbody class="silvershop-cart__body">
             <% loop $Items %><% if $ShowInTable %>
-                <tr id="$TableID" class="$Classes $EvenOdd $FirstLast">
-                    <td>
+                <tr class="silvershop-cart__row silvershop-cart__row--item $EvenOdd $FirstLast">
+                    <td class="silvershop-cart__cell silvershop-cart__cell--image">
                         <% if $Image %>
-                            <div class="silvershop-image">
-                                <a href="$Link" title="<%t SilverShop\Generic.ReadMoreTitle "Click here to read more on &quot;{Title}&quot;" Title=$TableTitle %>">
+                            <div class="silvershop-cart__image">
+                                <a class="silvershop-cart__image-link" href="$Link" title="<%t SilverShop\Generic.ReadMoreTitle "Click here to read more on &quot;{Title}&quot;" Title=$TableTitle %>">
                                     $Image.ScaleWidth(45)
                                 </a>
                             </div>
                         <% end_if %>
                     </td>
-                    <td id="$TableTitleID">
-                        <h3>
+                    <td class="silvershop-cart__cell silvershop-cart__cell--product">
+                        <h3 class="silvershop-cart__product-title">
                         <% if $Link %>
-                            <a href="$Link" title="<%t SilverShop\Generic.ReadMoreTitle "Click here to read more on &quot;{Title}&quot;" Title=$TableTitle %>">$TableTitle</a>
+                            <a class="silvershop-cart__product-link" href="$Link" title="<%t SilverShop\Generic.ReadMoreTitle "Click here to read more on &quot;{Title}&quot;" Title=$TableTitle %>">$TableTitle</a>
                         <% else %>
                             $TableTitle
                         <% end_if %>
                         </h3>
-                        <% if $SubTitle %><p class="silvershop-subtitle">$SubTitle</p><% end_if %>
+                        <% if $SubTitle %><p class="silvershop-cart__subtitle">$SubTitle</p><% end_if %>
                         <% if $Product.Variations && $Up.Editable %>
-                            <%t SilverShop\Generic.Change "Change" %>: $VariationField
+                            <span class="silvershop-cart__variation-label"><%t SilverShop\Generic.Change "Change" %>:</span> $VariationField
                         <% end_if %>
                     </td>
-                    <td>$UnitPrice.Nice</td>
-                    <td><% if $Up.Editable %>$QuantityField<% else %>$Quantity<% end_if %></td>
-                    <td id="$TableTotalID">$Total.Nice</td>
+                    <td class="silvershop-cart__cell silvershop-cart__cell--unit-price">$UnitPrice.Nice</td>
+                    <td class="silvershop-cart__cell silvershop-cart__cell--quantity"><% if $Up.Editable %>$QuantityField<% else %>$Quantity<% end_if %></td>
+                    <td class="silvershop-cart__cell silvershop-cart__cell--total">$Total.Nice</td>
                     <% if $Up.Editable %>
-                        <td>
+                        <td class="silvershop-cart__cell silvershop-cart__cell--remove">
                             <% if $RemoveField %>
                                 $RemoveField
                             <% else %>
-                                <a href="$removeAllLink" title="<%t SilverShop\Cart\ShoppingCart.RemoveAllTitle "Remove all of &quot;{Title}&quot; from your cart" Title=$TableTitle %>">
-                                    <img src="$resourceURL('silvershop/core:client/dist/images/remove.gif')" alt="x"/>
+                                <a class="silvershop-cart__remove-link" href="$removeAllLink" title="<%t SilverShop\Cart\ShoppingCart.RemoveAllTitle "Remove all of &quot;{Title}&quot; from your cart" Title=$TableTitle %>">
+                                    <img class="silvershop-cart__remove-icon" src="$resourceURL('silvershop/core:client/dist/images/remove.gif')" alt="x"/>
                                 </a>
                             <% end_if %>
 
@@ -63,31 +63,31 @@
                 </tr>
             <% end_if %><% end_loop %>
         </tbody>
-        <tfoot>
-            <tr class="silvershop-subtotal">
-                <th colspan="4" scope="row"><%t SilverShop\Model\Order.SubTotal "Sub-total" %></th>
-                <td id="$TableSubTotalID">$SubTotal.Nice</td>
-                <% if $Editable %><td>&nbsp;</td><% end_if %>
+        <tfoot class="silvershop-cart__foot">
+            <tr class="silvershop-cart__row silvershop-cart__row--subtotal">
+                <th class="silvershop-cart__cell silvershop-cart__cell--subtotal-label" colspan="4" scope="row"><%t SilverShop\Model\Order.SubTotal "Sub-total" %></th>
+                <td class="silvershop-cart__cell silvershop-cart__cell--subtotal-value">$SubTotal.Nice</td>
+                <% if $Editable %><td class="silvershop-cart__cell silvershop-cart__cell--spacer">&nbsp;</td><% end_if %>
             </tr>
             <% if $ShowSubtotals %>
                 <% if $Modifiers %>
                     <% loop $Modifiers %>
                         <% if $ShowInTable %>
-                            <tr id="$TableID" class="$Classes">
-                                <th id="$TableTitleID" colspan="4" scope="row">
+                            <tr class="silvershop-cart__row silvershop-cart__row--modifier $Classes">
+                                <th class="silvershop-cart__cell silvershop-cart__cell--modifier-label" colspan="4" scope="row">
                                     <% if $Link %>
-                                        <a href="$Link" title="<%t SilverShop\Generic.ReadMoreTitle "Click here to read more on &quot;{Title}&quot;" Title=$TableTitle %>">$TableTitle</a>
+                                        <a class="silvershop-cart__modifier-link" href="$Link" title="<%t SilverShop\Generic.ReadMoreTitle "Click here to read more on &quot;{Title}&quot;" Title=$TableTitle %>">$TableTitle</a>
                                     <% else %>
                                         $TableTitle
                                     <% end_if %>
                                 </th>
-                                <td id="$TableTotalID">$TableValue.Nice</td>
+                                <td class="silvershop-cart__cell silvershop-cart__cell--modifier-value">$TableValue.Nice</td>
                                 <% if $Up.Editable %>
-                                    <td>
+                                    <td class="silvershop-cart__cell silvershop-cart__cell--remove">
                                         <% if $CanRemove %>
                                             <strong>
-                                                <a class="silvershop-ajaxQuantityLink" href="$removeLink" title="<%t SilverShop\Cart\ShoppingCart.RemoveTitle "Remove &quot;{Title}&quot; from your cart." Title=$TableTitle %>">
-                                                    <img src="$resourceURL('silvershop/core:client/dist/images/remove.gif')" alt="x"/>
+                                                <a class="silvershop-cart__remove-link silvershop-cart__remove-link--modifier" href="$removeLink" title="<%t SilverShop\Cart\ShoppingCart.RemoveTitle "Remove &quot;{Title}&quot; from your cart." Title=$TableTitle %>">
+                                                    <img class="silvershop-cart__remove-icon" src="$resourceURL('silvershop/core:client/dist/images/remove.gif')" alt="x"/>
                                                 </a>
                                             </strong>
                                         <% end_if %>
@@ -95,23 +95,23 @@
                                 <% end_if %>
                             </tr>
                             <% if $Form %>
-                                <tr>
-                                    <td colspan="5">$Form</td><td colspan="10"></td>
+                                <tr class="silvershop-cart__row silvershop-cart__row--modifier-form">
+                                    <td class="silvershop-cart__cell silvershop-cart__cell--modifier-form" colspan="5">$Form</td><td colspan="10"></td>
                                 </tr>
                             <% end_if %>
                         <% end_if %>
                     <% end_loop %>
                 <% end_if %>
-                <tr class="silvershop-gap silvershop-Total">
-                    <th colspan="4" scope="row"><%t SilverShop\Model\Order.Total "Total" %></th>
-                    <td id="$TableTotalID"><span class="silvershop-value">$Total.Nice</span> <span class="silvershop-currency">$Currency</span></td>
-                    <% if $Editable %><td>&nbsp;</td><% end_if %>
+                <tr class="silvershop-cart__row silvershop-cart__row--total">
+                    <th class="silvershop-cart__cell silvershop-cart__cell--total-label" colspan="4" scope="row"><%t SilverShop\Model\Order.Total "Total" %></th>
+                    <td class="silvershop-cart__cell silvershop-cart__cell--total-value"><span class="silvershop-cart__total-amount">$Total.Nice</span> <span class="silvershop-cart__total-currency">$Currency</span></td>
+                    <% if $Editable %><td class="silvershop-cart__cell silvershop-cart__cell--spacer">&nbsp;</td><% end_if %>
                 </tr>
             <% end_if %>
         </tfoot>
     </table>
 <% else %>
-    <p class="silvershop-message silvershop-warning">
+    <p class="silvershop-message silvershop-message--warning">
         <%t SilverShop\Cart\ShoppingCart.NoItems "There are no items in your cart." %>
     </p>
 <% end_if %>

@@ -34,7 +34,7 @@
   }
 
   $(function () {
-    $('input.silvershop-ajaxQuantityField').each(
+    $('input.silvershop-ajax-quantity-field').each(
       function () {
         $(this).removeAttr('disabled');
         $(this).change(
@@ -58,7 +58,7 @@
         );
       }
     );
-    $('select.ajaxCountryField').each(
+    $('select.silvershop-ajax-country-field').each(
       function () {
         $(this).removeAttr('disabled');
         $(this).change(
@@ -76,4 +76,3 @@
     );
   });
 })(jQuery);
-

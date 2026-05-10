@@ -7,25 +7,25 @@
     <% if $Payments %>
         <% include SilverShop\Model\Order_Payments %>
     <% end_if %>
-    <table id="OutstandingTable" class="silvershop-infotable">
+    <table class="silvershop-receipt silvershop-receipt--outstanding">
         <tbody>
-            <tr class="silvershop-gap silvershop-summary" id="Outstanding">
-                <th colspan="4" scope="row" class="silvershop-threeColHeader"><strong><%t SilverShop\Model\Order.TotalOutstanding "Total outstanding" %></strong></th>
-                <td class="silvershop-right"><strong>$TotalOutstanding.Nice </strong></td>
+            <tr class="silvershop-receipt__row silvershop-receipt__row--summary silvershop-receipt__row--outstanding">
+                <th class="silvershop-receipt__cell silvershop-receipt__cell--label" colspan="4" scope="row"><strong><%t SilverShop\Model\Order.TotalOutstanding "Total outstanding" %></strong></th>
+                <td class="silvershop-receipt__cell silvershop-receipt__cell--value"><strong>$TotalOutstanding.Nice </strong></td>
             </tr>
         </tbody>
     </table>
 <% end_if %>
 <% if $Notes %>
-    <table id="NotesTable" class="silvershop-infotable">
+    <table class="silvershop-receipt silvershop-receipt--notes">
         <thead>
-            <tr>
-                <th><%t SilverShop\Model\Order.db_Notes "Notes" %></th>
+            <tr class="silvershop-receipt__row silvershop-receipt__row--head">
+                <th class="silvershop-receipt__cell silvershop-receipt__cell--head"><%t SilverShop\Model\Order.db_Notes "Notes" %></th>
             </tr>
         </thead>
-        </tbody>
-            <tr>
-                <td>$Notes</td>
+        <tbody>
+            <tr class="silvershop-receipt__row">
+                <td class="silvershop-receipt__cell silvershop-receipt__cell--notes">$Notes</td>
             </tr>
         </tbody>
     </table>

@@ -3,9 +3,9 @@
     // Helper JavaScript to toggle Credit-Card fields, depending on selected gateway
     var handleGatewayChanged = function () {
       // Get the currently selected gateway
-      var selected = $("#PaymentMethod input:checked").val();
+      var selected = $(".silvershop-payment-method input:checked").val();
       // Find credit-card input fields
-      var ccInput = $("#PaymentMethod").nextAll('.silvershop-credit-card');
+      var ccInput = $(".silvershop-payment-method").nextAll('.silvershop-credit-card');
       if (ccInput && ccInput.length > 0) {
         // Find gateway lookup data
         var lookup = ccInput.find(".silvershop-gateway-lookup").data("gateways");
@@ -24,7 +24,7 @@
       }
     };
 
-    $("#PaymentMethod input").on("change", handleGatewayChanged);
+    $(".silvershop-payment-method input").on("change", handleGatewayChanged);
     handleGatewayChanged();
   });
 })(jQuery);

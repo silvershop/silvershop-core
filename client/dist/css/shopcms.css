@@ -27,19 +27,19 @@ Integrated webfont. Created via http://fontello.com/
 
 
 /* Order styles */
-.shop-order h2 {
+.silvershop-shop-order h2 {
   margin: 0;
 }
 
-  .shop-order .shop-order__total th {
+  .silvershop-shop-order .silvershop-shop-order__row--total th {
     font-weight: bold;
   }
 
-  .shop-order .shop-order__header th {
+  .silvershop-shop-order .silvershop-shop-order__header th {
     padding-top: 0;
     padding-bottom: 0.3rem;
   }
 
-  .shop-order__address {
+  .silvershop-shop-order__cell--address {
     vertical-align: top;
   }

@@ -1,21 +1,21 @@
-<div id="ProductGroup" class="silvershop-typography">
-    <h1 class="silvershop-pageTitle">$Title</h1>
+<div class="silvershop-product-category silvershop-typography">
+    <h1 class="silvershop-product-category__title">$Title</h1>
     <% if $Content %>
-        <div>
+        <div class="silvershop-product-category__content">
             $Content
         </div>
     <% end_if %>
 
     <% if $Products %>
-        <div id="Products" class="silvershop-category">
+        <div class="silvershop-product-category__products">
             <% include SilverShop\ListSorter\Includes\Sorter %>
-            <div class="silvershop-clear"><!-- --></div>
-            <ul class="silvershop-productList">
+            <div class="silvershop-product-category__clear"><!-- --></div>
+            <ul class="silvershop-product-category__list">
                 <% loop $Products %>
                     <% include SilverShop\Includes\ProductGroupItem %>
                 <% end_loop %>
             </ul>
-            <div class="silvershop-clear"><!-- --></div>
+            <div class="silvershop-product-category__clear"><!-- --></div>
             <% include SilverShop\Includes\ProductGroupPagination %>
         </div>
     <% end_if %>

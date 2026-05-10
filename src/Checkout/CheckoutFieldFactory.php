@@ -115,7 +115,7 @@ class CheckoutFieldFactory
             _t('SilverShop\Checkout\CheckoutField.PaymentType', "Payment Type"),
             GatewayInfo::getSupportedGateways(),
             array_keys(GatewayInfo::getSupportedGateways())
-        );
+        )->addExtraClass('silvershop-payment-method');
     }
 
     public function getPasswordField($confirmed = true): ConfirmedPasswordField|PasswordField

@@ -1,20 +1,20 @@
-.category {
+.silvershop-product-category {
     overflow-x: hidden;
 }
 
-.sortOptions .current {
+.silvershop-sorter__option--current {
     text-decoration: none;
     font-weight: bold;
 }
 
-.productList {
+.silvershop-product-category__list {
     padding: 0;
     margin: 0;
 }
 
 /* 3) Product Settings */
 
-.productItem {
+.silvershop-product-card {
     list-style: none;
     float: left;
     width: 140px;
@@ -24,26 +24,26 @@
     padding: 5px;
 }
 
-.productItem .productActions {
+.silvershop-product-card__actions {
     padding: 0;
     margin: 0;
 }
 
-.productItem .productActions li {
+.silvershop-product-card__actions li {
     list-style: none;
     padding: 0;
     margin: 0;
 }
 
-.resultsBar .resultsShowing,
-.resultsBar .resultsShowing {
+.silvershop-pagination__results,
+.silvershop-pagination__results {
     float: right;
     width: 50%;
     text-align: right;
 }
 
 /* Image placeholder */
-.productItem a.noimage {
+.silvershop-product-card__no-image {
     padding: 40px 20px;
     height: 20px;
     text-align: center;

@@ -21,7 +21,7 @@
                 margin: 0;
                 vertical-align: top;
             }
-            body, table#container {
+            body, table.silvershop-status-email {
                 font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
                 background-color: #f6f6f6;
                 font-size: 14px;
@@ -35,23 +35,23 @@
                 -webkit-text-size-adjust: 100%;
                 -ms-text-size-adjust:100%;
             }
-            table#container > tr > td {
+            table.silvershop-status-email > tr > td {
                 padding: 0 5px 0 5px;
             }
-            td.max-width {
+            .silvershop-status-email__cell-max-width {
                 max-width: 600px !important;
                 display: block !important;
                 clear: both !important;
                 margin: 0 auto;
             }
 
-            table.main {
+            .silvershop-status-email__main {
                 border: 1px solid #e9e9e9;
                 border-radius: 3px;
                 background-color: #fff;
                 margin: 0;
             }
-            td.banner {
+            .silvershop-status-email__banner {
                 color: #fff;
                 background-color: #659726;
                 font-size: 14px;
@@ -60,64 +60,64 @@
                 border-radius: 3px 3px 0 0;
                 padding: 20px;
             }
-            td#Content {
+            .silvershop-status-email__content {
                 padding: 20px;
-                text-align:left;
-                margin:auto;
+                text-align: left;
+                margin: auto;
             }
-            td.content-block {
+            .silvershop-status-email__block {
                 padding: 0 0 20px;
             }
             @media only screen and (max-width: 640px) {
-                body, table#container {
+                body, table.silvershop-status-email {
                     padding: 0 !important;
                     width: 100% !important;
                 }
-                td#Content {
+                .silvershop-status-email__content {
                     padding: 10px !important;
                 }
             }
         </style>
     </head>
     <body>
-        <table id="container">
+        <table class="silvershop-status-email">
             <tr>
-                <td class="silvershop-max-width">
-                    <table class="silvershop-main" width="100%" cellpadding="0" cellspacing="0">
+                <td class="silvershop-status-email__cell-max-width">
+                    <table class="silvershop-status-email__main" width="100%" cellpadding="0" cellspacing="0">
                         <tbody>
                             <tr>
-                                <td class="silvershop-banner" align="center" valign="top">
+                                <td class="silvershop-status-email__banner" align="center" valign="top">
                                     <strong><%t SilverShop\ShopEmail.StatusChangeTitle 'Shop Status Change' %></strong>
                                 </td>
                             </tr>
                             <tr>
-                                <td id="Content" valign="top">
+                                <td class="silvershop-status-email__content" valign="top">
                                     <table width="100%" cellpadding="0" cellspacing="0">
                                         <% with Order %>
                                             <tr>
-                                                <td class="silvershop-content-block" valign="top">
+                                                <td class="silvershop-status-email__block" valign="top">
                                                     <%t SilverStripe\Control\ChangePasswordEmail_ss.Hello 'Hello' %> <% if $FirstName %>$FirstName<% else %>$Member.FirstName<% end_if %>
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <td class="silvershop-content-block" valign="top">
+                                                <td class="silvershop-status-email__block" valign="top">
                                                     <%t SilverShop\ShopEmail.StatusChanged 'Status for order #{OrderNo} changed to "{OrderStatus}"' OrderNo=$Reference OrderStatus=$StatusI18N %>
                                                 </td>
                                             </tr>
                                         <% end_with %>
                                         <tr>
-                                            <td class="silvershop-content-block" valign="top">
+                                            <td class="silvershop-status-email__block" valign="top">
                                                 $Note
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td class="silvershop-content-block" valign="top">
+                                            <td class="silvershop-status-email__block" valign="top">
                                                 <%t SilverShop\ShopEmail.Regards "Kind regards" %>
                                             </td>
                                         </tr>
 
                                         <tr>
-                                            <td class="silvershop-content-block" valign="top">
+                                            <td class="silvershop-status-email__block" valign="top">
                                                 $SiteConfig.Title<br/>
                                                 $FromEmail<br/>
                                                 <%t SilverShop\ShopEmail.PhoneNumber "PhoneNumber" %>

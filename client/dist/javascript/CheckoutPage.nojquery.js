@@ -5,15 +5,15 @@
  *     other fields need to be shown, otherwise they need to be hidden.
  */
 function onExistingValueChange() {
-    let existingValues = document.querySelectorAll('.hasExistingValues');
+    let existingValues = document.querySelectorAll('.silvershop-has-existing-values');
     if(!existingValues) return;
 
     existingValues.forEach(function (container, idx) {
-        let toggle = document.querySelector('.existingValues select, .existingValues input:checked');
+        let toggle = document.querySelector('.silvershop-existing-values select, .silvershop-existing-values input:checked');
 
         // visible if the value is not an ID (numeric)
         let toggleState = Number.isNaN(parseInt(toggle.value));
-        let toggleFields = container.querySelectorAll(".field:not(.existingValues)");
+        let toggleFields = container.querySelectorAll(".field:not(.silvershop-existing-values)");
 
         // animate the fields - hide or show
         if (toggleFields && toggleFields.length > 0) {
@@ -32,10 +32,10 @@ function onExistingValueChange() {
     });
 }
 
-let selectors = document.querySelectorAll('.existingValues select');
+let selectors = document.querySelectorAll('.silvershop-existing-values select');
 if(selectors) selectors.forEach(selector => selector.addEventListener('change', onExistingValueChange));
 
-let inputs = document.querySelectorAll('.existingValues input[type=radio]')
+let inputs = document.querySelectorAll('.silvershop-existing-values input[type=radio]')
 if(inputs) inputs.forEach(input => input.addEventListener('click', onExistingValueChange));
 
 onExistingValueChange(); // handle initial state

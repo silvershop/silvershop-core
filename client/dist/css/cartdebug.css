@@ -9,7 +9,7 @@ pre {
     color: blue;
 }
 
-.order > ul {
+.silvershop-cart-debug__order > ul {
     -moz-column-count: 3;
 }
 
