@@ -1,12 +1,39 @@
-/** Minimal Checkout Page Styling **/
+/** Checkout: layout aligned with modern CSS (grid/flex); floats kept as fallback for custom markup */
 
-.silvershop-checkout__form {
-    clear: left;
+.silvershop-checkout {
+    width: 100%;
+    max-width: 1100px;
+    margin-inline: auto;
+    padding-inline: clamp(1rem, 4vw, 2rem);
+    box-sizing: border-box;
 }
 
-/* CheckoutPage form layout: target the SilverStripe-generated CompositeField
-   classes that callers commonly use (LeftOrder/RightOrder/BottomOrder). These
-   are kept as additional class hooks rather than IDs so projects can opt-in. */
+.silvershop-checkout__title {
+    margin-top: 0;
+}
+
+.silvershop-checkout__form {
+    margin-top: var(--silvershop-space-lg, 2rem);
+}
+
+@media (min-width: 900px) {
+    .silvershop-checkout__columns {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(280px, 380px);
+        gap: var(--silvershop-space-lg, 2rem);
+        align-items: start;
+    }
+}
+
+.silvershop-checkout__columns .silvershop-checkout__form {
+    margin-top: 0;
+}
+
+.silvershop-checkout__column--summary .silvershop-cart {
+    margin-top: 0;
+}
+
+/* Composite columns used by some checkout setups */
 .silvershop-checkout__col--left,
 .silvershop-checkout__col--right {
     float: left;
@@ -19,6 +46,15 @@
 
 .silvershop-checkout__col--bottom {
     clear: both;
+}
+
+@media (min-width: 900px) {
+    .silvershop-checkout__layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(260px, 340px);
+        gap: var(--silvershop-space-lg, 2rem);
+        align-items: start;
+    }
 }
 
 .silvershop-checkout form label.left {
@@ -51,4 +87,91 @@
 
 .silvershop-receipt {
     width: 100%;
+}
+
+/* Payment field panels */
+.silvershop-payment-fields {
+    margin-top: var(--silvershop-space-sm, 0.75rem);
+    padding: var(--silvershop-space-md, 1.25rem);
+    border-radius: var(--silvershop-radius-md, 10px);
+    border: 1px solid var(--silvershop-color-border, #e6e6e6);
+    background: var(--silvershop-color-surface, #fafafa);
+}
+
+/* ---- Stepped checkout polish ---- */
+.silvershop-stepped-checkout {
+    width: 100%;
+    max-width: 1100px;
+    margin-inline: auto;
+    padding-inline: clamp(1rem, 4vw, 2rem);
+    box-sizing: border-box;
+}
+
+.silvershop-stepped-checkout__title {
+    margin-top: 0;
+}
+
+.silvershop-stepped-checkout__layout {
+    margin-top: var(--silvershop-space-md, 1.25rem);
+}
+
+.silvershop-stepped-checkout__steps {
+    display: flex;
+    flex-direction: column;
+    gap: var(--silvershop-space-md, 1.25rem);
+}
+
+.silvershop-stepped-checkout__step {
+    border: 1px solid var(--silvershop-color-border, #e6e6e6);
+    border-radius: var(--silvershop-radius-md, 10px);
+    background: var(--silvershop-color-card, #fff);
+    box-shadow: var(--silvershop-shadow-card, 0 1px 2px rgba(0, 0, 0, 0.06));
+    overflow: hidden;
+}
+
+.silvershop-stepped-checkout__step--future {
+    opacity: 0.65;
+}
+
+.silvershop-stepped-checkout__step-heading {
+    margin: 0;
+    padding: var(--silvershop-space-sm, 0.75rem) var(--silvershop-space-md, 1.25rem);
+    background: var(--silvershop-color-surface, #fafafa);
+    border-bottom: 1px solid var(--silvershop-color-border, #e6e6e6);
+}
+
+.silvershop-stepped-checkout__step-body {
+    padding: var(--silvershop-space-md, 1.25rem);
+}
+
+.silvershop-stepped-checkout__step-link {
+    color: var(--silvershop-color-accent, #1a6b2c);
+    text-decoration: none;
+}
+
+.silvershop-stepped-checkout__step-link:hover,
+.silvershop-stepped-checkout__step-link:focus {
+    text-decoration: underline;
+}
+
+.silvershop-stepped-checkout__addresses {
+    display: grid;
+    gap: var(--silvershop-space-md, 1.25rem);
+}
+
+@media (min-width: 640px) {
+    .silvershop-stepped-checkout__addresses {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+.silvershop-stepped-checkout__summary {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.silvershop-stepped-checkout__summary td,
+.silvershop-stepped-checkout__summary th {
+    padding: 0.5rem 0.65rem;
+    border-bottom: 1px solid var(--silvershop-color-border, #e6e6e6);
 }

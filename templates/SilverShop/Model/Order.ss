@@ -1,4 +1,7 @@
-<% require css("silvershop/core: client/dist/css/order.css") %>
+<% if $SilverShopIncludeDefaultStyles %>
+<% require css("silvershop/core:client/dist/css/silvershop-base.css") %>
+<% require css("silvershop/core:client/dist/css/order.css") %>
+<% end_if %>
 
 <%-- As Order.ss is also used in emails, avoid div, paragraph and heading elements --%>
 <% include SilverShop\Model\Order_Address %>

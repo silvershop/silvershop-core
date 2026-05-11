@@ -1,4 +1,6 @@
 (function () {
+    'use strict';
+
     var pingInterval = 5 * 60 * 1000;
     var baseElement = document.querySelector('base');
     var baseHref = baseElement ? baseElement.href : '/';
@@ -16,8 +18,8 @@
                 method: 'POST',
                 credentials: 'same-origin',
                 headers: {
-                    'X-Requested-With': 'XMLHttpRequest',
-                },
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
             }).catch(function () {});
             return;
         }

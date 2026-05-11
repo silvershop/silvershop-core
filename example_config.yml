@@ -48,6 +48,10 @@ SilverShop\Forms\OrderActionsForm:
 #  send_confirmation: true  #send order confirmation when an order is placed, but unpaid
 #  send_admin_notification: true  # copy to admin
 
+# Disable bundled storefront CSS if your theme supplies its own styles.
+# SilverShop\View\ShopFrontendAssetConfig:
+#   include_default_styles: false
+
 SilverShop\Page\Product:
   # global_allow_purchase: false # prevents the purchase of any product and disables adding to cart
   # length_unit: 'M'

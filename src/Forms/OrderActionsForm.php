@@ -44,7 +44,10 @@ class OrderActionsForm extends Form
 
     private static bool $allow_cancelling = true;
 
-    private static bool $include_jquery = true;
+    /**
+     * @deprecated Ignored; {@see OrderActionsForm} credit-card toggling uses vanilla JavaScript.
+     */
+    private static bool $include_jquery = false;
 
     protected Order $order;
 
@@ -101,11 +104,7 @@ class OrderActionsForm extends Form
                 );
 
                 if (($ccFields = $this->getCCFields($gateways)) instanceof CompositeField) {
-                    if ($this->config()->include_jquery) {
-                        Requirements::javascript('https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js');
-                    }
-
-                    Requirements::javascript('silvershop/core: client/dist/javascript/OrderActionsForm.js');
+                    Requirements::javascript('silvershop/core:client/dist/javascript/order-actions-form.js');
                     $fieldList->push($ccFields);
                 }
 

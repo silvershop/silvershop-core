@@ -1,0 +1,5 @@
+---
+Name: silvershop-frontend-assets
+---
+SilverShop\View\ShopFrontendAssetConfig:
+  include_default_styles: true

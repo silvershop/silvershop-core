@@ -25,7 +25,9 @@ class CheckoutForm extends Form
 
     public function __construct(RequestHandler $requestHandler, $name, CheckoutComponentConfig $checkoutComponentConfig)
     {
-        Requirements::javascript('silvershop/core:client/dist/javascript/CheckoutSessionKeepAlive.js');
+        Requirements::javascript('silvershop/core:client/dist/javascript/checkout-session-keep-alive.js');
+        Requirements::javascript('silvershop/core:client/dist/javascript/checkout-ui.js');
+        Requirements::javascript('silvershop/core:client/dist/javascript/shop-ajax-helpers.js');
 
         $this->config = $checkoutComponentConfig;
         $fieldList = $checkoutComponentConfig->getFormFields();

@@ -773,7 +773,7 @@ class CartPageController extends PageController
     public function debug(): ModelData|string
     {
         if (Director::isDev() || Permission::check('ADMIN')) {
-            Requirements::css('silvershop/core: client/dist/css/cartdebug.css');
+            Requirements::css('silvershop/core:client/dist/css/cartdebug.css');
             $order = ShoppingCart::curr();
             $content = ($order instanceof Order)
                 ? Debug::text($order)

@@ -59,6 +59,17 @@ There are a few useful tasks that can be run via a url to help you test:
 
 You can view various configuration options in the 'example_config.yml' file.
 
+### Frontend CSS (optional)
+
+SilverShop Layout templates include bundled CSS under `client/dist/css/` (shared design tokens in `silvershop-base.css`, plus page-specific files such as `product.css`, `cart.css`, and `checkout.css`). To **disable** those styles and rely entirely on your theme or build pipeline, set:
+
+```yaml
+SilverShop\View\ShopFrontendAssetConfig:
+  include_default_styles: false
+```
+
+When disabled, templates skip `<% require css(...) %>` for those storefront styles only. JavaScript for cart JSON controls, checkout behaviour (session keep-alive, address-book toggle, payment method panels, AJAX helpers), and CMS requirements are unchanged.
+
 ### Offsite payment gateways (e.g. PayPal Express) lose the session on return in CMS6
 
 SilverStripe CMS6 changed the default session cookie SameSite attribute to Strict. This means

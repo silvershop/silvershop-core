@@ -1,5 +1,9 @@
-<% require css("silvershop/core: client/dist/css/cart.css") %>
-<% require javascript("silvershop/core: client/dist/js/cart-form.js") %>
+<% if $SilverShopIncludeDefaultStyles %>
+<% require css("silvershop/core:client/dist/css/silvershop-base.css") %>
+<% require css("silvershop/core:client/dist/css/cart.css") %>
+<% end_if %>
+<% require javascript("silvershop/core:client/dist/javascript/shop-ajax-helpers.js") %>
+<% require javascript("silvershop/core:client/dist/javascript/cart-form.js") %>
 
 <div class="silvershop-cart-page silvershop-typography">
     <h1 class="silvershop-cart-page__title">$Title</h1>
@@ -21,13 +25,13 @@
     <% end_if %>
     <div class="silvershop-cart-page__footer">
         <% if $ContinueLink %>
-            <a class="silvershop-cart-page__continue silvershop-button" href="$ContinueLink">
+            <a class="silvershop-cart-page__continue silvershop-button silvershop-button--secondary" href="$ContinueLink">
                 <%t SilverShop\Cart\ShoppingCart.ContinueShopping 'Continue Shopping' %>
             </a>
         <% end_if %>
         <% if $Cart %>
             <% if $CheckoutLink %>
-                <a class="silvershop-cart-page__checkout silvershop-button" href="$CheckoutLink">
+                <a class="silvershop-cart-page__checkout silvershop-button silvershop-button--primary" href="$CheckoutLink">
                     <%t SilverShop\Cart\ShoppingCart.ProceedToCheckout 'Proceed to Checkout' %>
                 </a>
             <% end_if %>

@@ -39,4 +39,4 @@
     document.addEventListener('input', function (e) {
         clampNegativeQuantityInput(e.target);
     });
-}());
+})();

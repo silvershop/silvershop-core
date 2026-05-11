@@ -1,4 +1,7 @@
-<% require css("silvershop/core: client/dist/css/checkout.css") %>
+<% if $SilverShopIncludeDefaultStyles %>
+<% require css("silvershop/core:client/dist/css/silvershop-base.css") %>
+<% require css("silvershop/core:client/dist/css/checkout.css") %>
+<% end_if %>
 
 <div class="silvershop-checkout silvershop-checkout--membership">
     <h1 class="silvershop-checkout__title">$Title</h1>

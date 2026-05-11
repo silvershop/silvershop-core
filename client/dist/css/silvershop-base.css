@@ -1,0 +1,168 @@
+/**
+ * Shared storefront tokens and layout primitives for SilverShop Layout templates.
+ * Loaded together with page-specific CSS when ShopFrontendAssetConfig.include_default_styles is true.
+ */
+:root {
+    --silvershop-font-sans: system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", sans-serif;
+    --silvershop-color-text: #1a1a1a;
+    --silvershop-color-muted: #5c5c5c;
+    --silvershop-color-border: #e6e6e6;
+    --silvershop-color-surface: #fafafa;
+    --silvershop-color-card: #ffffff;
+    --silvershop-color-accent: #1a6b2c;
+    --silvershop-color-accent-hover: #145522;
+    --silvershop-radius-sm: 6px;
+    --silvershop-radius-md: 10px;
+    --silvershop-shadow-card: 0 1px 2px rgba(0, 0, 0, 0.06), 0 4px 16px rgba(0, 0, 0, 0.06);
+    --silvershop-space-xs: 0.35rem;
+    --silvershop-space-sm: 0.75rem;
+    --silvershop-space-md: 1.25rem;
+    --silvershop-space-lg: 2rem;
+}
+
+.silvershop-typography {
+    font-family: var(--silvershop-font-sans);
+    color: var(--silvershop-color-text);
+    line-height: 1.55;
+}
+
+/* ---- Layout with optional sidebar (product + category pages) ---- */
+.silvershop-layout {
+    display: grid;
+    width: 100%;
+    max-width: 1200px;
+    margin-inline: auto;
+    padding-inline: clamp(0.65rem, 2.5vw, 1.25rem);
+    box-sizing: border-box;
+    gap: var(--silvershop-space-md);
+    align-items: start;
+}
+
+.silvershop-layout__main {
+    min-width: 0;
+}
+
+/* Explicit areas so the sidebar column stays right regardless of theme floats/clears */
+.silvershop-layout--with-sidebar {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+        "main"
+        "sidebar";
+}
+
+.silvershop-layout--with-sidebar > .silvershop-layout__main {
+    grid-area: main;
+}
+
+.silvershop-layout--with-sidebar > .silvershop-sidebar {
+    grid-area: sidebar;
+}
+
+@media (min-width: 900px) {
+    .silvershop-layout--with-sidebar {
+        grid-template-columns: minmax(0, 1fr) minmax(260px, 320px);
+        grid-template-areas: "main sidebar";
+        column-gap: clamp(1rem, 2vw, 1.75rem);
+        row-gap: var(--silvershop-space-md);
+    }
+
+    .silvershop-sidebar {
+        position: sticky;
+        top: 1rem;
+        align-self: start;
+    }
+}
+
+/* ---- Sidebar (categories + mini cart) — compact padding ---- */
+.silvershop-sidebar {
+    border-radius: var(--silvershop-radius-sm);
+    border: 1px solid var(--silvershop-color-border);
+    background: var(--silvershop-color-card);
+    box-shadow: var(--silvershop-shadow-card);
+    overflow: hidden;
+}
+
+.silvershop-sidebar__cart {
+    border-top: 1px solid var(--silvershop-color-border);
+    padding: 0.5rem 0.6rem;
+}
+
+/* Product menu inside sidebar inherits readable spacing */
+.silvershop-sidebar .silvershop-product-nav,
+.silvershop-sidebar nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0.5rem 0.6rem;
+}
+
+.silvershop-sidebar nav ul ul {
+    padding-inline-start: var(--silvershop-space-sm);
+}
+
+/* Sidebar nav links: no SilverShop accent colour — inherit theme / UA defaults */
+
+/* ---- Buttons ---- */
+.silvershop-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--silvershop-space-xs);
+    padding: 0.55rem 1.15rem;
+    font: inherit;
+    font-weight: 600;
+    line-height: 1.25;
+    text-decoration: none;
+    border-radius: var(--silvershop-radius-sm);
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.silvershop-button--primary,
+.silvershop-cart-page__checkout.silvershop-button {
+    color: #fff;
+    background: var(--silvershop-color-accent);
+    border-color: var(--silvershop-color-accent-hover);
+}
+
+.silvershop-button--primary:hover,
+.silvershop-button--primary:focus,
+.silvershop-cart-page__checkout.silvershop-button:hover,
+.silvershop-cart-page__checkout.silvershop-button:focus {
+    color: #fff;
+    background: var(--silvershop-color-accent-hover);
+}
+
+.silvershop-button--secondary,
+.silvershop-cart-page__continue.silvershop-button {
+    color: var(--silvershop-color-text);
+    background: var(--silvershop-color-surface);
+    border-color: var(--silvershop-color-border);
+}
+
+.silvershop-button:focus-visible {
+    outline: 2px solid #4a90d9;
+    outline-offset: 2px;
+}
+
+/* ---- Messages ---- */
+.silvershop-message {
+    padding: var(--silvershop-space-sm) var(--silvershop-space-md);
+    border-radius: var(--silvershop-radius-sm);
+    border: 1px solid var(--silvershop-color-border);
+    background: var(--silvershop-color-surface);
+}
+
+.silvershop-message--warning {
+    border-color: #e8c36a;
+    background: #fff9e6;
+}
+
+.silvershop-message--error {
+    border-color: #e07070;
+    background: #fff1f1;
+}
+
+.silvershop-message__heading {
+    margin: 0 0 0.35rem;
+}

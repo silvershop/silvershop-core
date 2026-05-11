@@ -14,15 +14,12 @@ use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\OptionsetField;
 use SilverStripe\i18n\i18nEntityProvider;
 use SilverStripe\Security\Security;
-use SilverStripe\View\Requirements;
 
 /**
  * Adds the ability to use the member's address book for choosing addresses
  */
 abstract class AddressBook extends Address implements i18nEntityProvider
 {
-    private static string $jquery_file = 'https://code.jquery.com/jquery-3.7.0.min.js';
-
     /**
      * The composite field tag to use
      */
@@ -35,13 +32,7 @@ abstract class AddressBook extends Address implements i18nEntityProvider
         $fieldList = parent::getFormFields($order);
 
         if (($existingaddressfields = $this->getExistingAddressFields()) instanceof FieldList) {
-            if ($jquery = $this->config()->get('jquery_file')) {
-                Requirements::javascript($jquery);
-                Requirements::javascript('silvershop/core:client/dist/javascript/CheckoutPage.js');
-            } else {
-                Requirements::javascript('silvershop/core:client/dist/javascript/CheckoutPage.nojquery.js');
-            }
-
+            // Checkout UI (address book toggle + payment methods) is loaded via {@see CheckoutForm}.
             // add the fields for a new address after the dropdown field
             $existingaddressfields->merge($fieldList);
             // group under a composite field (invisible by default) so we

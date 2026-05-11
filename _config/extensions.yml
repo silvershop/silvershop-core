@@ -4,6 +4,7 @@ Name: silvershop-extensions
 PageController:
   extensions:
     - SilverShop\Extension\ViewableCartExtension
+    - SilverShop\Extension\ShopFrontendAssetExtension
 
 SilverShop\Model\Order:
   extensions:

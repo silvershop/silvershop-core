@@ -1,4 +1,7 @@
-<% require css("silvershop/core: client/dist/css/account.css") %>
+<% if $SilverShopIncludeDefaultStyles %>
+<% require css("silvershop/core:client/dist/css/silvershop-base.css") %>
+<% require css("silvershop/core:client/dist/css/account.css") %>
+<% end_if %>
 
 <% include SilverShop\Includes\AccountNavigation %>
 <div class="silvershop-account silvershop-account--order silvershop-typography">

@@ -90,7 +90,7 @@ final class CheckoutPageTest extends FunctionalTest
         $httpResponse = $this->get('checkout');
         $this->assertEquals(200, $httpResponse->getStatusCode(), 'Checkout page should be available with a current order');
         $this->assertStringContainsString(
-            'client/dist/javascript/CheckoutSessionKeepAlive.js',
+            'client/dist/javascript/checkout-session-keep-alive.js',
             (string)$httpResponse->getBody(),
             'Checkout keepalive script should be included on checkout pages'
         );

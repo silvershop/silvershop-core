@@ -26,7 +26,7 @@ class ProductController extends PageController
             if (SecurityToken::is_enabled()) {
                 SecurityToken::inst()->getValue();
             }
-            Requirements::javascript('silvershop/core:client/dist/javascript/VariationsTable.js');
+            Requirements::javascript('silvershop/core:client/dist/javascript/variations-table.js');
         }
     }
 
