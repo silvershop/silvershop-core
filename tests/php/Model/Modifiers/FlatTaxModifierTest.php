@@ -26,6 +26,8 @@ final class FlatTaxModifierTest extends FunctionalTest
 
     protected Product $mp3player;
 
+    protected Product $socks;
+
     protected ShoppingCart $cart;
 
     protected static $extra_dataobjects = [
@@ -52,7 +54,9 @@ final class FlatTaxModifierTest extends FunctionalTest
         $this->logInWithPermission('ADMIN');
         $this->cart = ShoppingCart::singleton();
         $this->mp3player = $this->objFromFixture(Product::class, 'mp3player');
+        $this->socks = $this->objFromFixture(Product::class, 'socks');
         $this->mp3player->publishSingle();
+        $this->socks->publishSingle();
     }
 
     public function testInclusiveTax(): void
@@ -87,5 +91,32 @@ final class FlatTaxModifierTest extends FunctionalTest
             ->first();
         $this->assertEquals(30, $modifier->Amount);
         $this->assertEquals(230, $order->GrandTotal());
+    }
+
+    public function testProductSpecificTaxRates(): void
+    {
+        Config::modify()->set(FlatTax::class, 'exclusive', true);
+        $this->mp3player->TaxRate = 0.15;
+        $this->mp3player->write();
+        $this->mp3player->publishSingle();
+
+        $this->socks->TaxRate = 0;
+        $this->socks->write();
+        $this->socks->publishSingle();
+
+        $this->cart->clear();
+        $this->cart->add($this->mp3player);
+        $this->cart->add($this->socks);
+
+        $order = $this->cart->current();
+        $order->calculate();
+        /**
+         * @var OrderModifier $modifier
+         */
+        $modifier = $order->Modifiers()->filter(['ClassName' => FlatTax::class])
+            ->first();
+
+        $this->assertEquals(30, $modifier->Amount);
+        $this->assertEquals(238, $order->GrandTotal());
     }
 }

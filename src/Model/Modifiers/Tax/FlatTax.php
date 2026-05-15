@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace SilverShop\Model\Modifiers\Tax;
 
 use SilverShop\Model\Order;
+use SilverShop\Model\OrderItem;
 
 /**
  * Handles calculation of sales tax on Orders.
@@ -41,12 +42,51 @@ class FlatTax extends Base
      */
     public function value($incoming): int|float
     {
-        $this->Rate = self::config()->rate;
-        //inclusive tax requires a different calculation
-        return self::config()->exclusive
-            ?
-            $incoming * $this->Rate
-            :
-            $incoming - round($incoming / (1 + $this->Rate), Order::config()->rounding_precision);
+        $this->Rate = (float) self::config()->rate;
+        $order = $this->Order();
+        $taxTotal = 0.0;
+        $hasCustomTaxRate = false;
+
+        if ($order && $order->exists() && $order->Items()->exists()) {
+            foreach ($order->Items() as $item) {
+                $taxRate = $this->getItemTaxRate($item, $hasCustomTaxRate);
+                $taxTotal += $this->calculateTaxForAmount((float) $item->Total(), $taxRate);
+            }
+        }
+
+        if ($hasCustomTaxRate) {
+            return $taxTotal;
+        }
+
+        return $this->calculateTaxForAmount((float) $incoming, $this->Rate);
+    }
+
+    protected function getItemTaxRate(OrderItem $item, bool &$hasCustomTaxRate): float
+    {
+        $buyable = $item->Buyable();
+        if (!$buyable || !method_exists($buyable, 'getField')) {
+            return $this->Rate;
+        }
+
+        $itemTaxRate = $buyable->getField('TaxRate');
+        if ($itemTaxRate === null || $itemTaxRate === '') {
+            return $this->Rate;
+        }
+
+        $hasCustomTaxRate = true;
+        return max(0.0, (float) $itemTaxRate);
+    }
+
+    protected function calculateTaxForAmount(float $amount, float $rate): float
+    {
+        if (self::config()->exclusive) {
+            return $amount * $rate;
+        }
+
+        if ($rate <= 0) {
+            return 0.0;
+        }
+
+        return $amount - round($amount / (1 + $rate), Order::config()->rounding_precision);
     }
 }

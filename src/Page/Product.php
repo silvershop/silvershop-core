@@ -50,6 +50,7 @@ use SilverStripe\SiteConfig\SiteConfig;
  * @property ?string $InternalItemID
  * @property ?string $Model
  * @property float $BasePrice
+ * @property ?float $TaxRate
  * @property float $Weight
  * @property float $Height
  * @property float $Width
@@ -69,6 +70,7 @@ class Product extends Page implements Buyable
         'InternalItemID' => 'Varchar(30)', //ie SKU, ProductID etc (internal / existing recognition of product)
         'Model' => 'Varchar(30)',
         'BasePrice' => 'Currency(19,4)', // Base retail price the item is marked at.
+        'TaxRate' => 'Double',
         //physical properties
         // TODO: Move these to an extension (used in Variations as well)
         'Weight' => 'Decimal(12,5)',
@@ -194,6 +196,9 @@ class Product extends Page implements Buyable
                         TextField::create('BasePrice', $this->fieldLabel('BasePrice'))
                         ->setDescription(_t(__CLASS__ . '.PriceDesc', 'Base price to sell this product at.'))
                         ->setMaxLength(12),
+                        TextField::create('TaxRate', $this->fieldLabel('TaxRate'))
+                        ->setDescription(_t(__CLASS__ . '.TaxRateDesc', 'Optional tax rate for this product only (for example 0.15 for 15%). Leave blank to use the default order tax rate.'))
+                        ->setMaxLength(12),
                     ]
                 );
 
@@ -273,6 +278,7 @@ class Product extends Page implements Buyable
         $labels['Title'] = _t(__CLASS__ . '.PageTitle', 'Product Title');
         $labels['IsPurchaseable'] = $labels['IsPurchaseable.Nice'] = _t(__CLASS__ . '.IsPurchaseable', 'Is Purchaseable');
         $labels['BasePrice.NiceOrEmpty'] = _t(__CLASS__ . '.db_BasePrice', 'Price');
+        $labels['TaxRate'] = _t(__CLASS__ . '.db_TaxRate', 'Tax Rate');
 
         return $labels;
     }
