@@ -115,6 +115,11 @@ final class FlatTaxModifierTest extends FunctionalTest
         $modifier = $order->Modifiers()->filter(['ClassName' => FlatTax::class])
             ->first();
 
+        $mp3OrderItem = $order->Items()->filter('ProductID', $this->mp3player->ID)->first();
+        $socksOrderItem = $order->Items()->filter('ProductID', $this->socks->ID)->first();
+
+        $this->assertEquals(200, $mp3OrderItem->Total());
+        $this->assertEquals(8, $socksOrderItem->Total());
         $this->assertEquals(30, $modifier->Amount);
         $this->assertEquals(238, $order->GrandTotal());
     }

@@ -519,7 +519,7 @@ class Product extends Page implements Buyable
             $result->addError(
                 _t(
                     __CLASS__ . '.TaxRateNonNegative',
-                    'Tax rate must be greater than or equal to 0. You entered {Rate}.',
+                    'Tax rate must not be negative. You entered {Rate}.',
                     ['Rate' => $this->TaxRate]
                 )
             );

@@ -84,7 +84,7 @@ class FlatTax extends Base
         if ($itemTaxRate < 0) {
             throw new InvalidArgumentException(
                 sprintf(
-                    'Tax rate for product #%d ("%s") must be greater than or equal to 0.',
+                    'Tax rate for product #%d ("%s") must not be negative.',
                     (int) $buyable->ID,
                     (string) $buyable->Title
                 )
