@@ -7,6 +7,7 @@ namespace SilverShop\Model\Modifiers\Tax;
 use InvalidArgumentException;
 use SilverShop\Model\Order;
 use SilverShop\Model\OrderItem;
+use SilverStripe\ORM\DataObject;
 
 /**
  * Handles calculation of sales tax on Orders.
@@ -69,7 +70,7 @@ class FlatTax extends Base
     protected function getItemTaxRate(OrderItem $item): array
     {
         $buyable = $item->Buyable();
-        if (!$buyable || !method_exists($buyable, 'getField')) {
+        if (!$buyable instanceof DataObject || !$buyable->hasField('TaxRate')) {
             return [$this->Rate, false];
         }
 

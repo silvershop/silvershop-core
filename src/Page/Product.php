@@ -199,7 +199,8 @@ class Product extends Page implements Buyable
                         ->setDescription(_t(__CLASS__ . '.PriceDesc', 'Base price to sell this product at.'))
                         ->setMaxLength(12),
                         NumericField::create('TaxRate', $this->fieldLabel('TaxRate'))
-                        ->setDescription(_t(__CLASS__ . '.TaxRateDesc', 'Optional tax rate for this product only (for example 0.15 for 15%). Leave blank to use the default order tax rate.')),
+                        ->setDescription(_t(__CLASS__ . '.TaxRateDesc', 'Optional tax rate for this product only (for example 0.15 for 15%). Leave blank to use the default order tax rate.'))
+                        ->setAttribute('min', 0),
                     ]
                 );
 
