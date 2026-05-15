@@ -74,7 +74,7 @@ class FlatTax extends Base
         }
 
         $hasCustomTaxRate = true;
-        return max(0.0, (float) $itemTaxRate);
+        return (float) $itemTaxRate;
     }
 
     protected function calculateTaxForAmount(float $amount, float $rate): float

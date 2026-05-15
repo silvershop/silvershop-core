@@ -25,6 +25,7 @@ use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\GridField\GridField;
 use SilverStripe\Forms\GridField\GridFieldConfig_RecordEditor;
 use SilverStripe\Forms\ListboxField;
+use SilverStripe\Forms\NumericField;
 use SilverStripe\Forms\TextField;
 use SilverStripe\ORM\DataList;
 use SilverStripe\ORM\FieldType\DBBoolean;
@@ -196,7 +197,7 @@ class Product extends Page implements Buyable
                         TextField::create('BasePrice', $this->fieldLabel('BasePrice'))
                         ->setDescription(_t(__CLASS__ . '.PriceDesc', 'Base price to sell this product at.'))
                         ->setMaxLength(12),
-                        TextField::create('TaxRate', $this->fieldLabel('TaxRate'))
+                        NumericField::create('TaxRate', $this->fieldLabel('TaxRate'))
                         ->setDescription(_t(__CLASS__ . '.TaxRateDesc', 'Optional tax rate for this product only (for example 0.15 for 15%). Leave blank to use the default order tax rate.'))
                         ->setMaxLength(12),
                     ]
@@ -498,6 +499,16 @@ class Product extends Page implements Buyable
     {
         $price = $price < 0 ? 0 : $price;
         $this->setField('BasePrice', $price);
+    }
+
+    public function setTaxRate($taxRate): void
+    {
+        if ($taxRate === null || $taxRate === '') {
+            $this->setField('TaxRate', null);
+            return;
+        }
+
+        $this->setField('TaxRate', max(0, (float) $taxRate));
     }
 
     /**
