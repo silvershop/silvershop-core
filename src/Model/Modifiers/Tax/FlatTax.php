@@ -79,6 +79,7 @@ class FlatTax extends Base
         }
 
         $itemTaxRate = (float) $itemTaxRate;
+        // Defensive check for legacy or direct DB data that bypassed Product validation.
         if ($itemTaxRate < 0) {
             throw new InvalidArgumentException('Tax rates must be greater than or equal to 0.');
         }
@@ -88,12 +89,12 @@ class FlatTax extends Base
 
     protected function calculateTaxForAmount(float $amount, float $rate): float
     {
-        if (self::config()->exclusive) {
-            return $amount * $rate;
-        }
-
         if ($rate === 0.0) {
             return 0.0;
+        }
+
+        if (self::config()->exclusive) {
+            return $amount * $rate;
         }
 
         return $amount - round($amount / (1 + $rate), Order::config()->rounding_precision);
