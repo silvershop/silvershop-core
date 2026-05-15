@@ -68,7 +68,7 @@ final class FlatTaxModifierTest extends FunctionalTest
         $order = $this->cart->current();
         $order->calculate();
         /**
-         * @var OrderModifier $modifier
+         * @var FlatTax $modifier
          */
         $modifier = $order->Modifiers()->filter(['ClassName' => FlatTax::class])
             ->first();
