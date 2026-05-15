@@ -34,6 +34,7 @@ use SilverStripe\ORM\ManyManyList;
 use SilverStripe\Security\Member;
 use SilverStripe\Security\SecurityToken;
 use SilverStripe\SiteConfig\SiteConfig;
+use SilverStripe\ORM\ValidationResult;
 
 /**
  * This is a standard Product page-type with fields like
@@ -507,7 +508,17 @@ class Product extends Page implements Buyable
             return;
         }
 
-        $this->setField('TaxRate', max(0, (float) $taxRate));
+        $this->setField('TaxRate', (float) $taxRate);
+    }
+
+    public function validate(): ValidationResult
+    {
+        $result = parent::validate();
+        if ($this->TaxRate !== null && $this->TaxRate < 0) {
+            $result->addError(_t(__CLASS__ . '.TaxRateNonNegative', 'Tax rate must be greater than or equal to 0.'));
+        }
+
+        return $result;
     }
 
     /**

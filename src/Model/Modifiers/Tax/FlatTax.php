@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SilverShop\Model\Modifiers\Tax;
 
+use InvalidArgumentException;
 use SilverShop\Model\Order;
 use SilverShop\Model\OrderItem;
 
@@ -77,7 +78,12 @@ class FlatTax extends Base
             return [$this->Rate, false];
         }
 
-        return [(float) $itemTaxRate, true];
+        $itemTaxRate = (float) $itemTaxRate;
+        if ($itemTaxRate < 0) {
+            throw new InvalidArgumentException('Tax rates must be greater than or equal to 0.');
+        }
+
+        return [$itemTaxRate, true];
     }
 
     protected function calculateTaxForAmount(float $amount, float $rate): float
@@ -86,7 +92,7 @@ class FlatTax extends Base
             return $amount * $rate;
         }
 
-        if ($rate <= 0) {
+        if ($rate === 0.0) {
             return 0.0;
         }
 
