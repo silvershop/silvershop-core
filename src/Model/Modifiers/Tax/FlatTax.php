@@ -82,7 +82,13 @@ class FlatTax extends Base
         $itemTaxRate = (float) $itemTaxRate;
         // Defensive check for legacy or direct DB data that bypassed Product validation.
         if ($itemTaxRate < 0) {
-            throw new InvalidArgumentException('Tax rates must be greater than or equal to 0.');
+            throw new InvalidArgumentException(
+                sprintf(
+                    'Tax rate for product #%d ("%s") must be greater than or equal to 0.',
+                    (int) $buyable->ID,
+                    (string) $buyable->Title
+                )
+            );
         }
 
         return [$itemTaxRate, true];

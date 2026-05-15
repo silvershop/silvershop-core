@@ -516,7 +516,13 @@ class Product extends Page implements Buyable
     {
         $result = parent::validate();
         if ($this->TaxRate !== null && $this->TaxRate < 0) {
-            $result->addError(_t(__CLASS__ . '.TaxRateNonNegative', 'Tax rate must be greater than or equal to 0.'));
+            $result->addError(
+                _t(
+                    __CLASS__ . '.TaxRateNonNegative',
+                    'Tax rate must be greater than or equal to 0. You entered {Rate}.',
+                    ['Rate' => $this->TaxRate]
+                )
+            );
         }
 
         return $result;
