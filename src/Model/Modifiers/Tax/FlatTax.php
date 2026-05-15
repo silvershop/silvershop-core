@@ -49,7 +49,11 @@ class FlatTax extends Base
 
         if ($order && $order->exists() && $order->Items()->exists()) {
             foreach ($order->Items() as $item) {
-                $taxRate = $this->getItemTaxRate($item, $hasCustomTaxRateFound);
+                [$taxRate, $hasCustomTaxRateForItem] = $this->getItemTaxRate($item);
+                if ($hasCustomTaxRateForItem) {
+                    $hasCustomTaxRateFound = true;
+                }
+
                 $taxTotal += $this->calculateTaxForAmount((float) $item->Total(), $taxRate);
             }
         }
@@ -61,20 +65,19 @@ class FlatTax extends Base
         return $this->calculateTaxForAmount((float) $incoming, $this->Rate);
     }
 
-    protected function getItemTaxRate(OrderItem $item, bool &$hasCustomTaxRateFound): float
+    protected function getItemTaxRate(OrderItem $item): array
     {
         $buyable = $item->Buyable();
         if (!$buyable || !method_exists($buyable, 'getField')) {
-            return $this->Rate;
+            return [$this->Rate, false];
         }
 
         $itemTaxRate = $buyable->getField('TaxRate');
         if ($itemTaxRate === null || $itemTaxRate === '') {
-            return $this->Rate;
+            return [$this->Rate, false];
         }
 
-        $hasCustomTaxRateFound = true;
-        return (float) $itemTaxRate;
+        return [(float) $itemTaxRate, true];
     }
 
     protected function calculateTaxForAmount(float $amount, float $rate): float

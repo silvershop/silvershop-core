@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace SilverShop\Tests\Model\Modifiers;
 
 use SilverShop\Cart\ShoppingCart;
-use SilverShop\Model\Modifiers\OrderModifier;
 use SilverShop\Model\Modifiers\Tax\FlatTax;
 use SilverShop\Model\Order;
 use SilverShop\Page\Product;
@@ -85,7 +84,7 @@ final class FlatTaxModifierTest extends FunctionalTest
         $order = $this->cart->current();
         $order->calculate();
         /**
-         * @var OrderModifier $modifier
+         * @var FlatTax $modifier
          */
         $modifier = $order->Modifiers()->filter(['ClassName' => FlatTax::class])
             ->first();
@@ -111,7 +110,7 @@ final class FlatTaxModifierTest extends FunctionalTest
         $order = $this->cart->current();
         $order->calculate();
         /**
-         * @var OrderModifier $modifier
+         * @var FlatTax $modifier
          */
         $modifier = $order->Modifiers()->filter(['ClassName' => FlatTax::class])
             ->first();
