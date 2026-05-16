@@ -30,6 +30,10 @@ class TaxClass extends DataObject
         'Rate' => 'Double',
     ];
 
+    private static array $defaults = [
+        'Rate' => 0,
+    ];
+
     private static array $has_many = [
         'Products' => Product::class,
     ];
@@ -42,6 +46,11 @@ class TaxClass extends DataObject
     public function validate(): ValidationResult
     {
         $result = parent::validate();
+        if ($this->Rate === null || $this->Rate === '') {
+            $result->addError(_t(__CLASS__ . '.RateRequired', 'Tax class rate is required.'));
+            return $result;
+        }
+
         if ($this->Rate < 0) {
             $result->addError(_t(__CLASS__ . '.RateNonNegative', 'Tax class rate must not be negative.'));
         }
