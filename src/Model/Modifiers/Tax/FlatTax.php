@@ -70,12 +70,12 @@ class FlatTax extends Base
     protected function getItemTaxRate(OrderItem $item): array
     {
         $buyable = $item->Buyable();
-        if (!$buyable instanceof DataObject || !$buyable->hasField('TaxRate')) {
+        if (!$buyable instanceof DataObject || !method_exists($buyable, 'getTaxRate')) {
             return [$this->Rate, false];
         }
 
-        $itemTaxRate = $buyable->getField('TaxRate');
-        if ($itemTaxRate === null || $itemTaxRate === '') {
+        $itemTaxRate = $buyable->getTaxRate();
+        if ($itemTaxRate === null) {
             return [$this->Rate, false];
         }
 

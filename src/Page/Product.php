@@ -15,6 +15,7 @@ use SilverShop\Model\Buyable;
 use SilverShop\Model\Order;
 use SilverShop\Model\Product\OrderItem;
 use SilverShop\Model\Product\ProductCurrencyPrice;
+use SilverShop\Model\TaxClass;
 use SilverShop\Model\Variation\Variation;
 use SilverStripe\AssetAdmin\Forms\UploadField;
 use SilverStripe\Assets\Image;
@@ -25,7 +26,6 @@ use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\GridField\GridField;
 use SilverStripe\Forms\GridField\GridFieldConfig_RecordEditor;
 use SilverStripe\Forms\ListboxField;
-use SilverStripe\Forms\NumericField;
 use SilverStripe\Forms\TextField;
 use SilverStripe\ORM\DataList;
 use SilverStripe\ORM\FieldType\DBBoolean;
@@ -34,7 +34,6 @@ use SilverStripe\ORM\ManyManyList;
 use SilverStripe\Security\Member;
 use SilverStripe\Security\SecurityToken;
 use SilverStripe\SiteConfig\SiteConfig;
-use SilverStripe\ORM\ValidationResult;
 
 /**
  * This is a standard Product page-type with fields like
@@ -52,7 +51,6 @@ use SilverStripe\ORM\ValidationResult;
  * @property ?string $InternalItemID
  * @property ?string $Model
  * @property float $BasePrice
- * @property ?float $TaxRate
  * @property float $Weight
  * @property float $Height
  * @property float $Width
@@ -72,7 +70,6 @@ class Product extends Page implements Buyable
         'InternalItemID' => 'Varchar(30)', //ie SKU, ProductID etc (internal / existing recognition of product)
         'Model' => 'Varchar(30)',
         'BasePrice' => 'Currency(19,4)', // Base retail price the item is marked at.
-        'TaxRate' => 'Double',
         //physical properties
         // TODO: Move these to an extension (used in Variations as well)
         'Weight' => 'Decimal(12,5)',
@@ -86,6 +83,7 @@ class Product extends Page implements Buyable
 
     private static array $has_one = [
         'Image' => Image::class,
+        'TaxClass' => TaxClass::class,
     ];
 
     private static array $has_many = [
@@ -198,9 +196,14 @@ class Product extends Page implements Buyable
                         TextField::create('BasePrice', $this->fieldLabel('BasePrice'))
                         ->setDescription(_t(__CLASS__ . '.PriceDesc', 'Base price to sell this product at.'))
                         ->setMaxLength(12),
-                        NumericField::create('TaxRate', $this->fieldLabel('TaxRate'))
-                        ->setDescription(_t(__CLASS__ . '.TaxRateDesc', 'Optional tax rate for this product only (for example 0.15 for 15%). Leave blank to use the default order tax rate.'))
-                        ->setAttribute('min', 0),
+                        DropdownField::create(
+                            'TaxClassID',
+                            $this->fieldLabel('TaxClass'),
+                            TaxClass::get()->map('ID', 'Title')
+                        )
+                        ->setHasEmptyDefault(true)
+                        ->setEmptyString(_t(__CLASS__ . '.DefaultTaxRate', 'Use default tax rate'))
+                        ->setDescription(_t(__CLASS__ . '.TaxClassDesc', 'Optional tax class for this product.')),
                     ]
                 );
 
@@ -280,7 +283,7 @@ class Product extends Page implements Buyable
         $labels['Title'] = _t(__CLASS__ . '.PageTitle', 'Product Title');
         $labels['IsPurchaseable'] = $labels['IsPurchaseable.Nice'] = _t(__CLASS__ . '.IsPurchaseable', 'Is Purchaseable');
         $labels['BasePrice.NiceOrEmpty'] = _t(__CLASS__ . '.db_BasePrice', 'Price');
-        $labels['TaxRate'] = _t(__CLASS__ . '.db_TaxRate', 'Tax Rate');
+        $labels['TaxClass'] = _t(__CLASS__ . '.db_TaxClass', 'Tax Class');
 
         return $labels;
     }
@@ -502,30 +505,14 @@ class Product extends Page implements Buyable
         $this->setField('BasePrice', $price);
     }
 
-    public function setTaxRate($taxRate): void
+    public function getTaxRate(): ?float
     {
-        if ($taxRate === null || $taxRate === '') {
-            $this->setField('TaxRate', null);
-            return;
+        $taxClass = $this->TaxClass();
+        if (!$taxClass || !$taxClass->exists()) {
+            return null;
         }
 
-        $this->setField('TaxRate', (float) $taxRate);
-    }
-
-    public function validate(): ValidationResult
-    {
-        $result = parent::validate();
-        if ($this->TaxRate !== null && $this->TaxRate < 0) {
-            $result->addError(
-                _t(
-                    __CLASS__ . '.TaxRateNonNegative',
-                    'Tax rate must not be negative. You entered {Rate}.',
-                    ['Rate' => $this->TaxRate]
-                )
-            );
-        }
-
-        return $result;
+        return (float) $taxClass->Rate;
     }
 
     /**

@@ -7,6 +7,7 @@ namespace SilverShop\Tests\Model\Modifiers;
 use SilverShop\Cart\ShoppingCart;
 use SilverShop\Model\Modifiers\Tax\FlatTax;
 use SilverShop\Model\Order;
+use SilverShop\Model\TaxClass;
 use SilverShop\Page\Product;
 use SilverShop\Tests\Model\Product\CustomProduct_OrderItem;
 use SilverShop\Tests\ShopTestBootstrap;
@@ -95,11 +96,21 @@ final class FlatTaxModifierTest extends FunctionalTest
     public function testProductSpecificTaxRates(): void
     {
         Config::modify()->set(FlatTax::class, 'exclusive', true);
-        $this->mp3player->TaxRate = 0.15;
+        $taxableClass = TaxClass::create();
+        $taxableClass->Title = 'Taxable (15%)';
+        $taxableClass->Rate = 0.15;
+        $taxableClass->write();
+
+        $taxFreeClass = TaxClass::create();
+        $taxFreeClass->Title = 'Tax-free (0%)';
+        $taxFreeClass->Rate = 0;
+        $taxFreeClass->write();
+
+        $this->mp3player->TaxClassID = $taxableClass->ID;
         $this->mp3player->write();
         $this->mp3player->publishSingle();
 
-        $this->socks->TaxRate = 0;
+        $this->socks->TaxClassID = $taxFreeClass->ID;
         $this->socks->write();
         $this->socks->publishSingle();
 
