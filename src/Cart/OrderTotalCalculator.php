@@ -130,7 +130,7 @@ class OrderTotalCalculator
      * or created if it is always required.
      *
      * @param string  $className
-     * @param boolean $forcecreate - force the modifier to be created.
+     * @param bool $forcecreate - force the modifier to be created.
      */
     public function getModifier($className, $forcecreate = false)
     {

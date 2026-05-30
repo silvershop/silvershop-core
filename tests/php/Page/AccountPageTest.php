@@ -96,8 +96,8 @@ final class AccountPageTest extends FunctionalTest
         $defaultform = $forms['DefaultAddressForm'];
         $this->assertTrue($member->AddressBook()->exists());
 
-        $this->assertTrue((boolean)$createform, "Create form exists");
-        $this->assertTrue((boolean)$defaultform, "Default form exists");
+        $this->assertTrue((bool)$createform, "Create form exists");
+        $this->assertTrue((bool)$defaultform, "Default form exists");
 
         $page = $this->get('account/addressbook');
         $this->assertEquals(200, $page->getStatusCode(), 'a page should load');

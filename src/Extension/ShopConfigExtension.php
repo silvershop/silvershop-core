@@ -131,7 +131,7 @@ class ShopConfigExtension extends Extension
     /**
      * Get list of allowed countries
      *
-     * @param boolean $prefixisocode - prefix the country code
+     * @param bool $prefixisocode - prefix the country code
      */
     public function getCountriesList($prefixisocode = false): array
     {

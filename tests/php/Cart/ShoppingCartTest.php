@@ -50,13 +50,13 @@ final class ShoppingCartTest extends SapphireTest
 
     public function testAddToCart(): void
     {
-        $this->assertTrue((boolean)$this->cart->add($this->product), "add one item");
+        $this->assertTrue((bool)$this->cart->add($this->product), "add one item");
         $this->assertEquals(
             ['onStartOrder', 'beforeAdd', 'afterAdd'],
             ShoppingCartTest_TestShoppingCartHooksExtension::$stack
         );
 
-        $this->assertTrue((boolean)$this->cart->add($this->product), "add another item");
+        $this->assertTrue((bool)$this->cart->add($this->product), "add another item");
         $this->assertEquals(
             ['onStartOrder', 'beforeAdd', 'afterAdd', 'beforeAdd', 'afterAdd'],
             ShoppingCartTest_TestShoppingCartHooksExtension::$stack
@@ -74,7 +74,7 @@ final class ShoppingCartTest extends SapphireTest
 
     public function testRemoveFromCart(): void
     {
-        $this->assertTrue((boolean)$this->cart->add($this->product), "add item");
+        $this->assertTrue((bool)$this->cart->add($this->product), "add item");
         $this->assertEquals(
             ['onStartOrder', 'beforeAdd', 'afterAdd'],
             ShoppingCartTest_TestShoppingCartHooksExtension::$stack
@@ -92,7 +92,7 @@ final class ShoppingCartTest extends SapphireTest
 
     public function testSetQuantity(): void
     {
-        $this->assertTrue((boolean)$this->cart->setQuantity($this->product, 25), "quantity set");
+        $this->assertTrue((bool)$this->cart->setQuantity($this->product, 25), "quantity set");
 
         $this->assertEquals(
             ['onStartOrder', 'beforeSetQuantity', 'afterSetQuantity'],
@@ -105,8 +105,8 @@ final class ShoppingCartTest extends SapphireTest
 
     public function testClear(): void
     {
-        $this->assertTrue((boolean)$this->cart->add($this->product), "add one item");
-        $this->assertTrue((boolean)$this->cart->add($this->product), "add another item");
+        $this->assertTrue((bool)$this->cart->add($this->product), "add one item");
+        $this->assertTrue((bool)$this->cart->add($this->product), "add another item");
         $this->assertInstanceOf(Order::class, $this->cart->current(), "there's a cart");
         $this->assertTrue($this->cart->clear(), "clear the cart");
         $this->assertFalse((bool)$this->cart->current(), "there is no cart");
@@ -114,7 +114,7 @@ final class ShoppingCartTest extends SapphireTest
 
     public function testCartSingleton(): void
     {
-        $this->assertTrue((boolean)$this->cart->add($this->product), "add one item");
+        $this->assertTrue((bool)$this->cart->add($this->product), "add one item");
         $order = $this->cart->current();
 
         $this->assertEquals($order->ID, ShoppingCart::curr()->ID, "if singleton order ids will match");
@@ -127,19 +127,19 @@ final class ShoppingCartTest extends SapphireTest
         ShoppingCart::singleton()->clear();
         $shoppingCart = ShoppingCart::singleton();
 
-        $this->assertTrue((boolean)$this->cart->add($this->product, 1), "add one item");
+        $this->assertTrue((bool)$this->cart->add($this->product, 1), "add one item");
         $item = $shoppingCart->get($this->product);
         $this->assertFalse(
-            (boolean)$this->cart->add($this->product, 1),
+            (bool)$this->cart->add($this->product, 1),
             "Cannot add more than one item, extension will error"
         );
         $this->assertEquals($item->Quantity, 1, "quantity is 1");
 
-        $this->assertTrue((boolean)$shoppingCart->setQuantity($this->product, 10), "quantity set");
+        $this->assertTrue((bool)$shoppingCart->setQuantity($this->product, 10), "quantity set");
         $item = $shoppingCart->get($this->product);
         $this->assertEquals($item->Quantity, 10, "quantity is 10");
 
-        $this->assertFalse((boolean)$shoppingCart->setQuantity($this->product, 11), "Cannot set quantity to more than 10 items");
+        $this->assertFalse((bool)$shoppingCart->setQuantity($this->product, 11), "Cannot set quantity to more than 10 items");
         $item = $shoppingCart->get($this->product);
         $this->assertEquals($item->Quantity, 10, "quantity is 10");
     }
@@ -152,14 +152,14 @@ final class ShoppingCartTest extends SapphireTest
         /** @var Variation $ball2 */
         $ball2 = $this->objFromFixture(Variation::class, 'redSmall');
 
-        $this->assertTrue((boolean)$this->cart->add($variation), "add one item");
+        $this->assertTrue((bool)$this->cart->add($variation), "add one item");
 
         $this->assertEquals(
             ['onStartOrder', 'beforeAdd', 'afterAdd'],
             ShoppingCartTest_TestShoppingCartHooksExtension::$stack
         );
 
-        $this->assertTrue((boolean)$this->cart->add($ball2), "add another item");
+        $this->assertTrue((bool)$this->cart->add($ball2), "add another item");
         $this->assertTrue($this->cart->remove($variation), "remove first item");
 
         $this->assertEquals(

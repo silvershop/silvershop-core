@@ -359,7 +359,7 @@ final class OrderTest extends SapphireTest
             OrderTest_TestStatusChangeExtension::$stack
         );
 
-        $this->assertTrue((boolean)$order->Paid, 'Order paid date should be set');
+        $this->assertTrue((bool)$order->Paid, 'Order paid date should be set');
     }
 
     public function testGetNameExtensionHook(): void

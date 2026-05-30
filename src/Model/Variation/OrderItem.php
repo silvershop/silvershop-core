@@ -33,7 +33,7 @@ class OrderItem extends \SilverShop\Model\Product\OrderItem
     /**
      * Overloaded relationship, for getting versioned variations
      *
-     * @param  boolean $forcecurrent
+     * @param  bool $forcecurrent
      */
     public function ProductVariation($forcecurrent = false): DataObject|Versioned|null
     {

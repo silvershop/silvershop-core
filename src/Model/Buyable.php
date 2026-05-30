@@ -31,7 +31,7 @@ interface Buyable
      *
      * @param  Member|null $member   the Member that wants to purchase the buyable. Defaults to null
      * @param  int         $quantity the quantity to purchase. Defaults to 1
-     * @return boolean true if the buyable can be purchased
+     * @return bool true if the buyable can be purchased
      */
     public function canPurchase(?Member $member = null, int $quantity = 1): bool;
 

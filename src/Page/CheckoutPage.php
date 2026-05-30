@@ -39,7 +39,7 @@ class CheckoutPage extends Page
     /**
      * Returns the link to the checkout page on this site
      *
-     * @param boolean $urlSegment If set to TRUE, only returns the URLSegment field
+     * @param bool $urlSegment If set to TRUE, only returns the URLSegment field
      */
     public static function find_link($urlSegment = false, $action = null, $id = null): string
     {

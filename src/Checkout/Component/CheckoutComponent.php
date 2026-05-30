@@ -52,7 +52,7 @@ abstract class CheckoutComponent
      * @param array $data  data to be validated
      *
      * @throws ValidationException
-     * @return boolean the data is valid
+     * @return bool the data is valid
      */
     abstract public function validateData(Order $order, array $data): bool;
 
