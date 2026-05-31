@@ -82,8 +82,10 @@
 }
 
 .silvershop-address-panel__remove-icon {
-    background: none;
-    border: none;
+    display: block;
+    width: 16px;
+    height: 16px;
+    color: var(--silvershop-color-muted, #5c5c5c);
 }
 
 .silvershop-address-panel__tag {

@@ -99,6 +99,13 @@
     white-space: nowrap;
 }
 
+.silvershop-cart__remove-icon {
+    display: block;
+    width: 16px;
+    height: 16px;
+    color: var(--silvershop-color-muted, #5c5c5c);
+}
+
 @media (max-width: 720px) {
     .silvershop-cart {
         display: block;
