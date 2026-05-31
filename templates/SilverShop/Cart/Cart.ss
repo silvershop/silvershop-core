@@ -97,7 +97,7 @@
                                         <% if $CanRemove %>
                                             <strong>
                                                 <a class="silvershop-cart__remove-link silvershop-cart__remove-link--modifier" href="$removeLink" title="<%t SilverShop\Cart\ShoppingCart.RemoveTitle "Remove &quot;{Title}&quot; from your cart." Title=$TableTitle %>">
-                                                    <img class="silvershop-cart__remove-icon" src="$resourceURL('silvershop/core:client/dist/images/remove.gif')" alt="x"/>
+                                                    <span class="silvershop-cart__remove-icon">X</span>
                                                 </a>
                                             </strong>
                                         <% end_if %>

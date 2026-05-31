@@ -41,7 +41,7 @@
                     <a href="$Top.DeleteAddressLink($ID)"
                        class="silvershop-address-panel__remove"
                        title="<%t SilverShop\Page\AccountPage_AddressBook.DeleteAddress 'Delete this address' %>">
-                        <img class="silvershop-address-panel__remove-icon" src="$resourceURL('silvershop/core:client/dist/images/remove.gif')" alt="X">
+                        <span class="silvershop-address-panel__remove-icon">X</span>
                     </a>
                 </div>
             </div>
