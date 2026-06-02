@@ -313,11 +313,17 @@ class CartPageController extends PageController
         return $cartForm;
     }
 
+    /**
+     * Feedback message from the current cart action/state for template rendering.
+     */
     public function CartMessage(): string
     {
         return (string) $this->cart->getMessage();
     }
 
+    /**
+     * Feedback message type from the current cart action/state for template rendering.
+     */
     public function CartMessageType(): string
     {
         return $this->cart->getMessageType();
