@@ -67,10 +67,14 @@ final class CustomProductTest extends FunctionalTest
 
         $this->assertTrue((bool)$shoppingCart->add($customProduct), "add product with no customisation");
         $item = $shoppingCart->get($customProduct);
+        $this->assertNotNull($item, 'default custom product item exists');
 
         $order = $shoppingCart->current();
         $hasManyList = $order->Items();
         $this->assertEquals(4, $hasManyList->Count(), "4 items in cart");
+        $this->assertEquals(30, $hasManyList->first()->UnitPrice(), 'custom buyable unit price is used');
+        $this->assertEquals(300, $hasManyList->Sum('Price', true), 'sum by buyable field works for custom buyables');
+        $this->assertNull($item->Image(), 'custom buyables without an Image relation should not error');
 
         //remove
         $shoppingCart->remove($customProduct, 2, $options2);

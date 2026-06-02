@@ -87,8 +87,8 @@ class Weight extends Base
         $order = $this->Order();
         if ($order && $order->Items()->exists()) {
             foreach ($order->Items() as $orderItem) {
-                if ($product = $orderItem->Product()) {
-                    $weight += $product->Weight * $orderItem->Quantity;
+                if ($buyable = $orderItem->Buyable()) {
+                    $weight += $buyable->Weight * $orderItem->Quantity;
                 }
             }
         }

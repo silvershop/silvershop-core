@@ -39,8 +39,8 @@ class OrderItemList extends HasManyList
                 $total += $item->$field * $quantity;
             } elseif ($item->hasMethod($field)) {
                 $total += $item->$field() * $quantity;
-            } elseif ($product = $item->Product()) {
-                $total += $product->$field * $quantity;
+            } elseif ($buyable = $item->Buyable()) {
+                $total += $buyable->$field * $quantity;
             }
         }
 

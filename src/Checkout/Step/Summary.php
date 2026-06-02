@@ -14,7 +14,7 @@ use SilverShop\Model\Address;
 use SilverShop\Model\Order;
 use SilverStripe\Control\HTTPResponse;
 use SilverStripe\Security\Security;
-use SilverStripe\View\ArrayData;
+use SilverStripe\Model\ArrayData;
 
 class Summary extends CheckoutStep
 {
@@ -69,24 +69,21 @@ class Summary extends CheckoutStep
             $firstIncompleteStep = 'contactdetails';
         }
 
-        if (
-            !$firstIncompleteStep
+        if (!$firstIncompleteStep
             && isset($steps['shippingaddress'])
             && !$this->hasValidAddress($order->ShippingAddressID, $order->ShippingAddress())
         ) {
             $firstIncompleteStep = 'shippingaddress';
         }
 
-        if (
-            !$firstIncompleteStep
+        if (!$firstIncompleteStep
             && isset($steps['billingaddress'])
             && !$this->hasValidAddress($order->BillingAddressID, $order->BillingAddress())
         ) {
             $firstIncompleteStep = 'billingaddress';
         }
 
-        if (
-            !$firstIncompleteStep
+        if (!$firstIncompleteStep
             && isset($steps['paymentmethod'])
             && $checkout
             && !$checkout->getSelectedPaymentMethod()
