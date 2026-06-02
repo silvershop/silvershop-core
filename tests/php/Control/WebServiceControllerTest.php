@@ -4,10 +4,14 @@ declare(strict_types=1);
 
 namespace SilverShop\Tests\Control;
 
+use SilverShop\Cart\ShoppingCart;
+use SilverShop\Control\WebServiceController;
 use SilverShop\Page\Product;
 use SilverShop\Page\ProductCategory;
 use SilverShop\Tests\ShopTestBootstrap;
+use SilverStripe\Core\Extension;
 use SilverStripe\Dev\FunctionalTest;
+use SilverStripe\Security\SecurityToken;
 use SilverStripe\Versioned\Versioned;
 
 final class WebServiceControllerTest extends FunctionalTest
@@ -21,6 +25,8 @@ final class WebServiceControllerTest extends FunctionalTest
         parent::setUp();
 
         ShopTestBootstrap::setConfiguration();
+        ShoppingCart::singleton()->clear();
+        WebServiceController::add_extension(WebServiceControllerTest_SerialisedProductExtension::class);
         $this->logInWithPermission('ADMIN');
 
         foreach (['products', 'clothing', 'electronics', 'musicplayers', 'clearance'] as $category) {
@@ -33,6 +39,12 @@ final class WebServiceControllerTest extends FunctionalTest
 
         $this->logOut();
         Versioned::set_stage('Live');
+    }
+
+    protected function tearDown(): void
+    {
+        WebServiceControllerTest_SerialisedProductExtension::$enabled = false;
+        parent::tearDown();
     }
 
     public function testProductsJsonList(): void
@@ -78,5 +90,103 @@ final class WebServiceControllerTest extends FunctionalTest
         $this->assertStringContainsString('application/xml', (string) $response->getHeader('Content-Type'));
         $this->assertStringContainsString('<products>', (string) $response->getBody());
         $this->assertStringContainsString('<title>Socks</title>', (string) $response->getBody());
+    }
+
+    public function testProductSerialisationCanBeExtended(): void
+    {
+        WebServiceControllerTest_SerialisedProductExtension::$enabled = true;
+
+        $response = $this->get('api/v1/products/socks.json');
+
+        $payload = json_decode((string) $response->getBody(), true);
+        $this->assertIsArray($payload);
+        $this->assertSame('custom-socks', $payload['customTag']);
+    }
+
+    public function testCartAddJson(): void
+    {
+        $product = $this->objFromFixture(Product::class, 'socks');
+        $response = $this->get($this->apiUrl('api/v1/cart/add.json', [
+            'ProductID' => $product->ID,
+            'quantity' => 2,
+        ]));
+
+        $this->assertSame(200, $response->getStatusCode());
+
+        $payload = json_decode((string) $response->getBody(), true);
+        $this->assertIsArray($payload);
+        $this->assertTrue($payload['success']);
+        $this->assertSame('good', $payload['messageType']);
+        $this->assertArrayHasKey('itemId', $payload);
+
+        $item = ShoppingCart::singleton()->get($product);
+        $this->assertNotNull($item);
+        $this->assertSame(2, (int) $item->Quantity);
+    }
+
+    public function testCartRemoveJson(): void
+    {
+        $product = $this->objFromFixture(Product::class, 'socks');
+        ShoppingCart::singleton()->add($product, 2);
+
+        $response = $this->get($this->apiUrl('api/v1/cart/remove.json', [
+            'ProductID' => $product->ID,
+        ]));
+
+        $this->assertSame(200, $response->getStatusCode());
+
+        $payload = json_decode((string) $response->getBody(), true);
+        $this->assertIsArray($payload);
+        $this->assertTrue($payload['success']);
+        $this->assertSame('good', $payload['messageType']);
+
+        $item = ShoppingCart::singleton()->get($product);
+        $this->assertNotNull($item);
+        $this->assertSame(1, (int) $item->Quantity);
+    }
+
+    public function testCartClearJson(): void
+    {
+        $product = $this->objFromFixture(Product::class, 'socks');
+        ShoppingCart::singleton()->add($product, 1);
+
+        $response = $this->get($this->apiUrl('api/v1/cart/clear.json'));
+
+        $this->assertSame(200, $response->getStatusCode());
+
+        $payload = json_decode((string) $response->getBody(), true);
+        $this->assertIsArray($payload);
+        $this->assertTrue($payload['success']);
+        $this->assertSame('good', $payload['messageType']);
+        $this->assertNull(ShoppingCart::singleton()->current());
+    }
+
+    /**
+     * @param array<string, mixed> $query
+     */
+    private function apiUrl(string $path, array $query = []): string
+    {
+        if (SecurityToken::is_enabled()) {
+            $query[SecurityToken::inst()->getName()] = SecurityToken::inst()->getValue();
+        }
+
+        return $query ? $path . '?' . http_build_query($query) : $path;
+    }
+}
+
+class WebServiceControllerTest_SerialisedProductExtension extends Extension
+{
+    public static bool $enabled = false;
+
+    /**
+     * @param array<string, mixed> $payload
+     */
+    public function updateSerialisedProduct(array &$payload, Product $product): void
+    {
+        if (!self::$enabled || $product->URLSegment !== 'socks') {
+            return;
+        }
+
+        $payload['customTag'] = 'custom-socks';
     }
 }

@@ -5,10 +5,16 @@ declare(strict_types=1);
 namespace SilverShop\Control;
 
 use JsonException;
+use SilverShop\Cart\ShoppingCart;
+use SilverShop\Interfaces\Buyable;
 use SilverShop\Page\Product;
+use SilverShop\ShopTools;
 use SilverStripe\Control\Controller;
 use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Control\HTTPResponse;
+use SilverStripe\Core\ClassInfo;
+use SilverStripe\ORM\DataObject;
+use SilverStripe\Security\SecurityToken;
 use SilverStripe\Versioned\Versioned;
 use SimpleXMLElement;
 
@@ -19,13 +25,17 @@ class WebServiceController extends Controller
         $this->setRequest($request);
 
         [$resource, $identifier, $format] = $this->parseRequest($request);
-        if ($resource !== 'products') {
-            return $this->errorResponse($format, 404, 'Not found');
+        if ($resource === 'products') {
+            return $identifier === null
+                ? $this->productsResponse($format)
+                : $this->productResponse($identifier, $format);
         }
 
-        return $identifier === null
-            ? $this->productsResponse($format)
-            : $this->productResponse($identifier, $format);
+        if ($resource === 'cart') {
+            return $this->cartResponse($request, $identifier, $format);
+        }
+
+        return $this->errorResponse($format, 404, 'Not found');
     }
 
     /**
@@ -109,17 +119,113 @@ class WebServiceController extends Controller
         return $this->formatResponse($format, 'product', $this->serialiseProduct($product));
     }
 
+    private function cartResponse(HTTPRequest $request, ?string $operation, string $format): HTTPResponse
+    {
+        $cart = ShoppingCart::singleton();
+
+        if ($this->hasInvalidSecurityToken($request)) {
+            return $this->cartOperationResponse(
+                $format,
+                $cart,
+                false,
+                400,
+                [
+                    'message' => 'Invalid security token, possible CSRF attack.',
+                    'messageType' => 'bad',
+                ]
+            );
+        }
+
+        return match ($operation) {
+            'add' => $this->cartAddResponse($request, $cart, $format),
+            'remove' => $this->cartRemoveResponse($request, $cart, $format),
+            'clear' => $this->cartClearResponse($cart, $format),
+            default => $this->errorResponse($format, 404, 'Not found'),
+        };
+    }
+
+    private function cartAddResponse(HTTPRequest $request, ShoppingCart $cart, string $format): HTTPResponse
+    {
+        $buyable = $this->buyableFromRequest($request, $cart);
+        if (!$buyable instanceof Buyable) {
+            return $this->cartOperationResponse(
+                $format,
+                $cart,
+                false,
+                404,
+                ['message' => 'Not found', 'messageType' => 'bad']
+            );
+        }
+
+        $quantity = max(0, (int) ($request->requestVar('quantity') ?? 1));
+        $result = $quantity === 0
+            ? $cart->remove($buyable, null, $request->requestVars())
+            : $cart->add($buyable, $quantity, $request->requestVars());
+
+        if (!$result) {
+            return $this->cartOperationResponse($format, $cart, false, 400);
+        }
+
+        $extra = [];
+        if ($result instanceof \SilverShop\Model\OrderItem) {
+            $extra['itemId'] = (int) $result->ID;
+        }
+
+        return $this->cartOperationResponse($format, $cart, true, 200, $extra);
+    }
+
+    private function cartRemoveResponse(HTTPRequest $request, ShoppingCart $cart, string $format): HTTPResponse
+    {
+        $buyable = $this->buyableFromRequest($request, $cart);
+        if (!$buyable instanceof Buyable) {
+            return $this->cartOperationResponse(
+                $format,
+                $cart,
+                false,
+                404,
+                ['message' => 'Not found', 'messageType' => 'bad']
+            );
+        }
+
+        $quantity = (int) ($request->requestVar('quantity') ?? 1);
+        $result = $cart->remove($buyable, $quantity, $request->requestVars());
+
+        if ($result === null) {
+            return $this->cartOperationResponse($format, $cart, false, 400);
+        }
+
+        if ($result === false) {
+            return $this->cartOperationResponse($format, $cart, false, 404, ['message' => 'Not found']);
+        }
+
+        return $this->cartOperationResponse($format, $cart, true);
+    }
+
+    private function cartClearResponse(ShoppingCart $cart, string $format): HTTPResponse
+    {
+        $result = $cart->clear();
+        if ($result === null) {
+            return $this->cartOperationResponse($format, $cart, false, 400);
+        }
+
+        return $this->cartOperationResponse($format, $cart, true);
+    }
+
     /**
      * @return array{id:int,title:string,price:float,link:string}
      */
     private function serialiseProduct(Product $product): array
     {
-        return [
+        $payload = [
             'id' => (int) $product->ID,
             'title' => (string) $product->Title,
             'price' => (float) $product->sellingPrice(),
             'link' => (string) $product->Link(),
         ];
+
+        $this->extend('updateSerialisedProduct', $payload, $product);
+
+        return $payload;
     }
 
     private function formatResponse(string $format, string $rootNode, array $payload, int $statusCode = 200): HTTPResponse
@@ -160,6 +266,51 @@ class WebServiceController extends Controller
     private function errorResponse(string $format, int $statusCode, string $message): HTTPResponse
     {
         return $this->formatResponse($format, 'response', ['message' => $message], $statusCode);
+    }
+
+    private function cartOperationResponse(
+        string $format,
+        ShoppingCart $cart,
+        bool $success,
+        int $statusCode = 200,
+        array $extra = []
+    ): HTTPResponse {
+        $payload = array_merge(
+            [
+                'success' => $success,
+                'message' => (string) $cart->getMessage(),
+                'messageType' => $cart->getMessageType(),
+            ],
+            $extra
+        );
+
+        return $this->formatResponse($format, 'response', $payload, $statusCode);
+    }
+
+    private function hasInvalidSecurityToken(HTTPRequest $request): bool
+    {
+        return SecurityToken::is_enabled() && !SecurityToken::inst()->checkRequest($request);
+    }
+
+    private function buyableFromRequest(HTTPRequest $request, ShoppingCart $cart): ?Buyable
+    {
+        $buyableClass = (string) ($request->requestVar('Buyable') ?: Product::class);
+        $buyableClass = ClassInfo::exists($buyableClass) ? $buyableClass : ShopTools::unsanitiseClassName($buyableClass);
+        $buyableId = (int) ($request->requestVar('ProductID') ?? $request->requestVar('BuyableID') ?? 0);
+
+        if ($buyableId === 0 || !ClassInfo::exists($buyableClass)) {
+            return null;
+        }
+
+        $buyable = $buyableClass::has_extension(Versioned::class)
+            ? Versioned::get_by_stage($buyableClass, Versioned::LIVE)->byID($buyableId)
+            : DataObject::get($buyableClass)->byID($buyableId);
+
+        if (!$buyable instanceof Buyable) {
+            return null;
+        }
+
+        return $cart->getCorrectBuyable($buyable);
     }
 
     private function appendXml(SimpleXMLElement $xml, mixed $payload, string $numericNodeName = 'item'): void
