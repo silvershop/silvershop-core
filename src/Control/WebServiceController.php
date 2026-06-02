@@ -97,9 +97,10 @@ class WebServiceController extends Controller
 
     private function productResponse(string $identifier, string $format): HTTPResponse
     {
+        $products = Versioned::get_by_stage(Product::class, Versioned::LIVE);
         $product = preg_match('/^\d+$/', $identifier) === 1
-            ? Versioned::get_by_stage(Product::class, Versioned::LIVE)->byID((int) $identifier)
-            : Versioned::get_by_stage(Product::class, Versioned::LIVE)->filter('URLSegment', $identifier)->first();
+            ? $products->byID((int) $identifier)
+            : $products->filter('URLSegment', $identifier)->first();
 
         if (!$product || !$product->exists() || !$product->canView()) {
             return $this->errorResponse($format, 404, 'Product not found');
