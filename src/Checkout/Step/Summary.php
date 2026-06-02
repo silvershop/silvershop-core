@@ -14,7 +14,7 @@ use SilverShop\Model\Address;
 use SilverShop\Model\Order;
 use SilverStripe\Control\HTTPResponse;
 use SilverStripe\Security\Security;
-use SilverStripe\View\ArrayData;
+use SilverStripe\Model\ArrayData;
 
 class Summary extends CheckoutStep
 {
