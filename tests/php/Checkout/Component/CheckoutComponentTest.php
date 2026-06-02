@@ -10,11 +10,13 @@ use SilverShop\Checkout\Component\CheckoutComponentNamespaced;
 use SilverShop\Checkout\Component\CustomerDetails;
 use SilverShop\Checkout\Component\Notes;
 use SilverShop\Checkout\Component\Payment;
+use SilverShop\Checkout\Component\Address as CheckoutAddressComponent;
 use SilverShop\Checkout\Component\ShippingAddress;
 use SilverShop\Checkout\Component\Terms;
 use SilverShop\Checkout\SinglePageCheckoutComponentConfig;
 use SilverShop\Model\Address;
 use SilverShop\Model\Order;
+use SilverShop\ShopUserInfo;
 use SilverShop\Tests\ShopTestBootstrap;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\SiteConfig\SiteConfig;
@@ -336,5 +338,34 @@ final class CheckoutComponentTest extends SapphireTest
         );
 
         $singlePageCheckoutComponentConfig->setData($data);
+    }
+
+    public function testShopUserInfoLocationCanBeConfiguredForCheckoutAddressDefaults(): void
+    {
+        ShopUserInfo::singleton()->setLocation([
+            'Country' => 'AU',
+            'State' => 'Incorrect State',
+            'City' => 'Sydney',
+        ]);
+
+        $defaultOrder = Order::create();
+        $defaultOrder->write();
+
+        $defaultData = ShippingAddress::create()->getData($defaultOrder);
+
+        $this->assertEquals('AU', $defaultData['Country']);
+        $this->assertNotEquals('Sydney', $defaultData['City']);
+        $this->assertNotEquals('Incorrect State', $defaultData['State']);
+
+        Config::modify()->set(CheckoutAddressComponent::class, 'shop_user_info_location_fields', ['Country', 'City']);
+
+        $configuredOrder = Order::create();
+        $configuredOrder->write();
+
+        $data = ShippingAddress::create()->getData($configuredOrder);
+
+        $this->assertEquals('AU', $data['Country']);
+        $this->assertEquals('Sydney', $data['City']);
+        $this->assertNotEquals('Incorrect State', $data['State']);
     }
 }
