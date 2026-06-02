@@ -62,6 +62,17 @@ class PaymentForm extends CheckoutForm
 
     public function checkoutSubmit($data, $form): HTTPResponse
     {
+        if (
+            $this->getName() === 'ConfirmationForm'
+            && $this->controller
+            && $this->controller->hasMethod('getFirstIncompleteCheckoutStepLink')
+        ) {
+            $stepLink = $this->controller->getFirstIncompleteCheckoutStepLink();
+            if ($stepLink) {
+                return $this->controller->redirect($stepLink);
+            }
+        }
+
         // form validation has passed by this point, so we can save data
         $this->config->setData($form->getData());
         $order = $this->config->getOrder();
