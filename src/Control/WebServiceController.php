@@ -160,13 +160,7 @@ class WebServiceController extends Controller
 
         $quantity = $this->requestedCartQuantity($request);
         if ($quantity === null) {
-            return $this->cartOperationResponse(
-                $format,
-                $cart,
-                false,
-                400,
-                ['message' => 'Quantity must be zero or greater.', 'messageType' => 'bad']
-            );
+            return $this->invalidCartQuantityResponse($format, $cart);
         }
 
         $result = $quantity === 0
@@ -200,19 +194,19 @@ class WebServiceController extends Controller
 
         $quantity = $this->requestedCartQuantity($request);
         if ($quantity === null) {
-            return $this->cartOperationResponse(
-                $format,
-                $cart,
-                false,
-                400,
-                ['message' => 'Quantity must be zero or greater.', 'messageType' => 'bad']
-            );
+            return $this->invalidCartQuantityResponse($format, $cart);
         }
 
         $result = $cart->remove($buyable, $quantity, $request->requestVars());
 
         if ($result === null) {
-            return $this->cartOperationResponse($format, $cart, false, 400);
+            return $this->cartOperationResponse(
+                $format,
+                $cart,
+                false,
+                400,
+                ['message' => (string) $cart->getMessage(), 'messageType' => 'bad']
+            );
         }
 
         if ($result === false) {
@@ -347,6 +341,17 @@ class WebServiceController extends Controller
         $quantity = (int) ($request->requestVar('quantity') ?? 1);
 
         return $quantity < 0 ? null : $quantity;
+    }
+
+    private function invalidCartQuantityResponse(string $format, ShoppingCart $cart): HTTPResponse
+    {
+        return $this->cartOperationResponse(
+            $format,
+            $cart,
+            false,
+            400,
+            ['message' => 'Quantity must be zero or greater.', 'messageType' => 'bad']
+        );
     }
 
     private function appendXml(SimpleXMLElement $xml, mixed $payload, string $numericNodeName = 'item'): void
