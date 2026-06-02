@@ -43,6 +43,7 @@ final class WebServiceControllerTest extends FunctionalTest
 
     protected function tearDown(): void
     {
+        WebServiceController::remove_extension(WebServiceControllerTest_SerialisedProductExtension::class);
         WebServiceControllerTest_SerialisedProductExtension::$enabled = false;
         parent::tearDown();
     }
@@ -159,6 +160,24 @@ final class WebServiceControllerTest extends FunctionalTest
         $this->assertTrue($payload['success']);
         $this->assertSame('good', $payload['messageType']);
         $this->assertNull(ShoppingCart::singleton()->current());
+    }
+
+    public function testCartAddRejectsNegativeQuantity(): void
+    {
+        $product = $this->objFromFixture(Product::class, 'socks');
+        $response = $this->get($this->apiUrl('api/v1/cart/add.json', [
+            'ProductID' => $product->ID,
+            'quantity' => -1,
+        ]));
+
+        $this->assertSame(400, $response->getStatusCode());
+
+        $payload = json_decode((string) $response->getBody(), true);
+        $this->assertIsArray($payload);
+        $this->assertFalse($payload['success']);
+        $this->assertSame('bad', $payload['messageType']);
+        $this->assertSame('Quantity must be zero or greater.', $payload['message']);
+        $this->assertNull(ShoppingCart::singleton()->get($product));
     }
 
     /**

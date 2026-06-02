@@ -7,6 +7,7 @@ namespace SilverShop\Control;
 use JsonException;
 use SilverShop\Cart\ShoppingCart;
 use SilverShop\Interfaces\Buyable;
+use SilverShop\Model\OrderItem;
 use SilverShop\Page\Product;
 use SilverShop\ShopTools;
 use SilverStripe\Control\Controller;
@@ -157,7 +158,17 @@ class WebServiceController extends Controller
             );
         }
 
-        $quantity = max(0, (int) ($request->requestVar('quantity') ?? 1));
+        $quantity = (int) ($request->requestVar('quantity') ?? 1);
+        if ($quantity < 0) {
+            return $this->cartOperationResponse(
+                $format,
+                $cart,
+                false,
+                400,
+                ['message' => 'Quantity must be zero or greater.', 'messageType' => 'bad']
+            );
+        }
+
         $result = $quantity === 0
             ? $cart->remove($buyable, null, $request->requestVars())
             : $cart->add($buyable, $quantity, $request->requestVars());
@@ -167,7 +178,7 @@ class WebServiceController extends Controller
         }
 
         $extra = [];
-        if ($result instanceof \SilverShop\Model\OrderItem) {
+        if ($result instanceof OrderItem) {
             $extra['itemId'] = (int) $result->ID;
         }
 
@@ -188,6 +199,16 @@ class WebServiceController extends Controller
         }
 
         $quantity = (int) ($request->requestVar('quantity') ?? 1);
+        if ($quantity < 0) {
+            return $this->cartOperationResponse(
+                $format,
+                $cart,
+                false,
+                400,
+                ['message' => 'Quantity must be zero or greater.', 'messageType' => 'bad']
+            );
+        }
+
         $result = $cart->remove($buyable, $quantity, $request->requestVars());
 
         if ($result === null) {
@@ -295,7 +316,9 @@ class WebServiceController extends Controller
     private function buyableFromRequest(HTTPRequest $request, ShoppingCart $cart): ?Buyable
     {
         $buyableClass = (string) ($request->requestVar('Buyable') ?: Product::class);
-        $buyableClass = ClassInfo::exists($buyableClass) ? $buyableClass : ShopTools::unsanitiseClassName($buyableClass);
+        if (!ClassInfo::exists($buyableClass)) {
+            $buyableClass = ShopTools::unsanitiseClassName($buyableClass);
+        }
         $buyableId = (int) ($request->requestVar('ProductID') ?? $request->requestVar('BuyableID') ?? 0);
 
         if ($buyableId === 0 || !ClassInfo::exists($buyableClass)) {
