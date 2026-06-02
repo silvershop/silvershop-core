@@ -5,10 +5,16 @@ declare(strict_types=1);
 namespace SilverShop\Checkout\Step;
 
 use SilverShop\Cart\ShoppingCart;
+use SilverShop\Checkout\Checkout;
 use SilverShop\Checkout\CheckoutComponentConfig;
 use SilverShop\Checkout\Component\Notes;
 use SilverShop\Checkout\Component\Terms;
 use SilverShop\Forms\PaymentForm;
+use SilverShop\Model\Address;
+use SilverShop\Model\Order;
+use SilverStripe\Control\HTTPResponse;
+use SilverStripe\Security\Security;
+use SilverStripe\View\ArrayData;
 
 class Summary extends CheckoutStep
 {
@@ -17,8 +23,12 @@ class Summary extends CheckoutStep
         'ConfirmationForm',
     ];
 
-    public function summary(): array
+    public function summary(): HTTPResponse|array
     {
+        if ($redirect = $this->redirectToFirstIncompleteCheckoutStep()) {
+            return $redirect;
+        }
+
         $paymentForm = $this->ConfirmationForm();
         return [
             'OrderForm' => $paymentForm,
@@ -39,5 +49,92 @@ class Summary extends CheckoutStep
         $this->getOwner()->extend('updateConfirmationForm', $paymentForm);
 
         return $paymentForm;
+    }
+
+    public function getFirstIncompleteCheckoutStep(): ?string
+    {
+        $order = ShoppingCart::curr();
+        if (!$order instanceof Order) {
+            return null;
+        }
+
+        $steps = $this->getOwner()->getSteps();
+        $checkout = Checkout::get($order);
+        $firstIncompleteStep = null;
+        if (isset($steps['membership']) && $checkout && !$checkout->validateMember(Security::getCurrentUser())) {
+            $firstIncompleteStep = 'membership';
+        }
+
+        if (!$firstIncompleteStep && isset($steps['contactdetails']) && !$this->hasContactDetails($order)) {
+            $firstIncompleteStep = 'contactdetails';
+        }
+
+        if (
+            !$firstIncompleteStep
+            && isset($steps['shippingaddress'])
+            && !$this->hasValidAddress($order->ShippingAddressID, $order->ShippingAddress())
+        ) {
+            $firstIncompleteStep = 'shippingaddress';
+        }
+
+        if (
+            !$firstIncompleteStep
+            && isset($steps['billingaddress'])
+            && !$this->hasValidAddress($order->BillingAddressID, $order->BillingAddress())
+        ) {
+            $firstIncompleteStep = 'billingaddress';
+        }
+
+        if (
+            !$firstIncompleteStep
+            && isset($steps['paymentmethod'])
+            && $checkout
+            && !$checkout->getSelectedPaymentMethod()
+        ) {
+            $firstIncompleteStep = 'paymentmethod';
+        }
+
+        $stepResult = ArrayData::create([
+            'Step' => $firstIncompleteStep,
+        ]);
+        $this->getOwner()->extend('updateFirstIncompleteCheckoutStep', $stepResult, $order, $steps, $checkout);
+
+        return $stepResult->getField('Step');
+    }
+
+    public function getFirstIncompleteCheckoutStepLink(): ?string
+    {
+        $step = $this->getFirstIncompleteCheckoutStep();
+
+        if (!$step) {
+            return null;
+        }
+
+        return $this->getOwner()->Link($step);
+    }
+
+    protected function redirectToFirstIncompleteCheckoutStep(): ?HTTPResponse
+    {
+        $link = $this->getFirstIncompleteCheckoutStepLink();
+        if (!$link) {
+            return null;
+        }
+
+        return $this->getOwner()->redirect($link);
+    }
+
+    protected function hasContactDetails(Order $order): bool
+    {
+        $hasContactDetailsResult = ArrayData::create([
+            'HasContactDetails' => !empty($order->FirstName) && !empty($order->Surname) && !empty($order->Email),
+        ]);
+        $this->getOwner()->extend('updateHasContactDetails', $hasContactDetailsResult, $order);
+
+        return (bool) $hasContactDetailsResult->getField('HasContactDetails');
+    }
+
+    protected function hasValidAddress(int $addressID, Address $address): bool
+    {
+        return $address->exists() && $addressID > 0 && $address->validate()->isValid();
     }
 }
