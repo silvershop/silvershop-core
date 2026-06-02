@@ -44,6 +44,7 @@ class MyBuyable extends DataObject implements Buyable
         $item = MyBuyableOrderItem::create();
         $item->MyBuyableID = $this->ID;
         $item->Quantity = $quantity;
+        // Use $filter for additional order item options (eg. selected customisations)
         $item->update($filter);
 
         return $item;
