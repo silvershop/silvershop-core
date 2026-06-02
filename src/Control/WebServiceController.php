@@ -158,8 +158,8 @@ class WebServiceController extends Controller
             );
         }
 
-        $quantity = (int) ($request->requestVar('quantity') ?? 1);
-        if ($quantity < 0) {
+        $quantity = $this->requestedCartQuantity($request);
+        if ($quantity === null) {
             return $this->cartOperationResponse(
                 $format,
                 $cart,
@@ -198,8 +198,8 @@ class WebServiceController extends Controller
             );
         }
 
-        $quantity = (int) ($request->requestVar('quantity') ?? 1);
-        if ($quantity < 0) {
+        $quantity = $this->requestedCartQuantity($request);
+        if ($quantity === null) {
             return $this->cartOperationResponse(
                 $format,
                 $cart,
@@ -325,7 +325,7 @@ class WebServiceController extends Controller
             return null;
         }
 
-        $buyable = $buyableClass::has_extension(Versioned::class)
+        $buyable = ClassInfo::hasExtension($buyableClass, Versioned::class)
             ? Versioned::get_by_stage($buyableClass, Versioned::LIVE)->byID($buyableId)
             : DataObject::get($buyableClass)->byID($buyableId);
 
@@ -334,6 +334,13 @@ class WebServiceController extends Controller
         }
 
         return $cart->getCorrectBuyable($buyable);
+    }
+
+    private function requestedCartQuantity(HTTPRequest $request): ?int
+    {
+        $quantity = (int) ($request->requestVar('quantity') ?? 1);
+
+        return $quantity < 0 ? null : $quantity;
     }
 
     private function appendXml(SimpleXMLElement $xml, mixed $payload, string $numericNodeName = 'item'): void

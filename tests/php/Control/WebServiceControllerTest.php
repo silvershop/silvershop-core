@@ -162,6 +162,22 @@ final class WebServiceControllerTest extends FunctionalTest
         $this->assertNull(ShoppingCart::singleton()->current());
     }
 
+    public function testCartRemoveJsonWhenItemMissing(): void
+    {
+        $product = $this->objFromFixture(Product::class, 'socks');
+        $response = $this->get($this->apiUrl('api/v1/cart/remove.json', [
+            'ProductID' => $product->ID,
+        ]));
+
+        $this->assertSame(404, $response->getStatusCode());
+
+        $payload = json_decode((string) $response->getBody(), true);
+        $this->assertIsArray($payload);
+        $this->assertFalse($payload['success']);
+        $this->assertSame('bad', $payload['messageType']);
+        $this->assertSame('Not found', $payload['message']);
+    }
+
     public function testCartAddRejectsNegativeQuantity(): void
     {
         $product = $this->objFromFixture(Product::class, 'socks');
@@ -202,7 +218,7 @@ class WebServiceControllerTest_SerialisedProductExtension extends Extension
      */
     public function updateSerialisedProduct(array &$payload, Product $product): void
     {
-        if (!self::$enabled || $product->URLSegment !== 'socks') {
+        if (!self::$enabled) {
             return;
         }
 
