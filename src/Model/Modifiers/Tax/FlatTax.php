@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace SilverShop\Model\Modifiers\Tax;
 
+use InvalidArgumentException;
 use SilverShop\Model\Order;
+use SilverShop\Model\OrderItem;
+use SilverStripe\ORM\DataObject;
 
 /**
  * Handles calculation of sales tax on Orders.
@@ -41,12 +44,66 @@ class FlatTax extends Base
      */
     public function value($incoming): int|float
     {
-        $this->Rate = self::config()->rate;
-        //inclusive tax requires a different calculation
-        return self::config()->exclusive
-            ?
-            $incoming * $this->Rate
-            :
-            $incoming - round($incoming / (1 + $this->Rate), Order::config()->rounding_precision);
+        $this->Rate = (float) self::config()->rate;
+        $order = $this->Order();
+        $taxTotal = 0.0;
+        $hasCustomTaxRateFound = false;
+
+        if ($order && $order->exists() && $order->Items()->exists()) {
+            foreach ($order->Items() as $item) {
+                [$taxRate, $hasCustomTaxRateForItem] = $this->getItemTaxRate($item);
+                if ($hasCustomTaxRateForItem) {
+                    $hasCustomTaxRateFound = true;
+                }
+
+                $taxTotal += $this->calculateTaxForAmount((float) $item->Total(), $taxRate);
+            }
+        }
+
+        if ($hasCustomTaxRateFound) {
+            return $taxTotal;
+        }
+
+        return $this->calculateTaxForAmount((float) $incoming, $this->Rate);
+    }
+
+    protected function getItemTaxRate(OrderItem $item): array
+    {
+        $buyable = $item->Buyable();
+        if (!$buyable instanceof DataObject || !method_exists($buyable, 'getTaxRate')) {
+            return [$this->Rate, false];
+        }
+
+        $itemTaxRate = $buyable->getTaxRate();
+        if ($itemTaxRate === null) {
+            return [$this->Rate, false];
+        }
+
+        $itemTaxRate = (float) $itemTaxRate;
+        // Defensive check for legacy or direct DB data that bypassed Product validation.
+        if ($itemTaxRate < 0) {
+            throw new InvalidArgumentException(
+                sprintf(
+                    'Tax rate for product #%d ("%s") must not be negative.',
+                    (int) $buyable->ID,
+                    (string) $buyable->Title
+                )
+            );
+        }
+
+        return [$itemTaxRate, true];
+    }
+
+    protected function calculateTaxForAmount(float $amount, float $rate): float
+    {
+        if ($rate === 0.0) {
+            return 0.0;
+        }
+
+        if (self::config()->exclusive) {
+            return $amount * $rate;
+        }
+
+        return $amount - round($amount / (1 + $rate), Order::config()->rounding_precision);
     }
 }

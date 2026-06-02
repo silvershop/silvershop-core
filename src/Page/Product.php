@@ -15,6 +15,7 @@ use SilverShop\Model\Buyable;
 use SilverShop\Model\Order;
 use SilverShop\Model\Product\OrderItem;
 use SilverShop\Model\Product\ProductCurrencyPrice;
+use SilverShop\Model\TaxClass;
 use SilverShop\Model\Variation\Variation;
 use SilverStripe\AssetAdmin\Forms\UploadField;
 use SilverStripe\Assets\Image;
@@ -82,6 +83,7 @@ class Product extends Page implements Buyable
 
     private static array $has_one = [
         'Image' => Image::class,
+        'TaxClass' => TaxClass::class,
     ];
 
     private static array $has_many = [
@@ -194,6 +196,14 @@ class Product extends Page implements Buyable
                         TextField::create('BasePrice', $this->fieldLabel('BasePrice'))
                         ->setDescription(_t(__CLASS__ . '.PriceDesc', 'Base price to sell this product at.'))
                         ->setMaxLength(12),
+                        DropdownField::create(
+                            'TaxClassID',
+                            $this->fieldLabel('TaxClass'),
+                            TaxClass::get()->map('ID', 'Title')
+                        )
+                        ->setHasEmptyDefault(true)
+                        ->setEmptyString(_t(__CLASS__ . '.DefaultTaxRate', 'Use default tax rate'))
+                        ->setDescription(_t(__CLASS__ . '.TaxClassDesc', 'Optional tax class for this product.')),
                     ]
                 );
 
@@ -273,6 +283,7 @@ class Product extends Page implements Buyable
         $labels['Title'] = _t(__CLASS__ . '.PageTitle', 'Product Title');
         $labels['IsPurchaseable'] = $labels['IsPurchaseable.Nice'] = _t(__CLASS__ . '.IsPurchaseable', 'Is Purchaseable');
         $labels['BasePrice.NiceOrEmpty'] = _t(__CLASS__ . '.db_BasePrice', 'Price');
+        $labels['TaxClass'] = _t(__CLASS__ . '.db_TaxClass', 'Tax Class');
 
         return $labels;
     }
@@ -492,6 +503,16 @@ class Product extends Page implements Buyable
     {
         $price = $price < 0 ? 0 : $price;
         $this->setField('BasePrice', $price);
+    }
+
+    public function getTaxRate(): ?float
+    {
+        $taxClass = $this->TaxClass();
+        if (!$taxClass || !$taxClass->exists()) {
+            return null;
+        }
+
+        return (float) $taxClass->Rate;
     }
 
     /**

@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace SilverShop\Tests\Model\Modifiers;
 
 use SilverShop\Cart\ShoppingCart;
-use SilverShop\Model\Modifiers\OrderModifier;
 use SilverShop\Model\Modifiers\Tax\FlatTax;
 use SilverShop\Model\Order;
+use SilverShop\Model\TaxClass;
 use SilverShop\Page\Product;
 use SilverShop\Tests\Model\Product\CustomProduct_OrderItem;
 use SilverShop\Tests\ShopTestBootstrap;
@@ -25,6 +25,8 @@ final class FlatTaxModifierTest extends FunctionalTest
     protected static bool $disable_theme = true;
 
     protected Product $mp3player;
+
+    protected Product $socks;
 
     protected ShoppingCart $cart;
 
@@ -52,7 +54,9 @@ final class FlatTaxModifierTest extends FunctionalTest
         $this->logInWithPermission('ADMIN');
         $this->cart = ShoppingCart::singleton();
         $this->mp3player = $this->objFromFixture(Product::class, 'mp3player');
+        $this->socks = $this->objFromFixture(Product::class, 'socks');
         $this->mp3player->publishSingle();
+        $this->socks->publishSingle();
     }
 
     public function testInclusiveTax(): void
@@ -64,7 +68,7 @@ final class FlatTaxModifierTest extends FunctionalTest
         $order = $this->cart->current();
         $order->calculate();
         /**
-         * @var OrderModifier $modifier
+         * @var FlatTax $modifier
          */
         $modifier = $order->Modifiers()->filter(['ClassName' => FlatTax::class])
             ->first();
@@ -81,11 +85,53 @@ final class FlatTaxModifierTest extends FunctionalTest
         $order = $this->cart->current();
         $order->calculate();
         /**
-         * @var OrderModifier $modifier
+         * @var FlatTax $modifier
          */
         $modifier = $order->Modifiers()->filter(['ClassName' => FlatTax::class])
             ->first();
         $this->assertEquals(30, $modifier->Amount);
         $this->assertEquals(230, $order->GrandTotal());
+    }
+
+    public function testProductSpecificTaxRates(): void
+    {
+        Config::modify()->set(FlatTax::class, 'exclusive', true);
+        $taxableClass = TaxClass::create();
+        $taxableClass->Title = 'Taxable (15%)';
+        $taxableClass->Rate = 0.15;
+        $taxableClass->write();
+
+        $taxFreeClass = TaxClass::create();
+        $taxFreeClass->Title = 'Tax-free (0%)';
+        $taxFreeClass->Rate = 0;
+        $taxFreeClass->write();
+
+        $this->mp3player->TaxClassID = $taxableClass->ID;
+        $this->mp3player->write();
+        $this->mp3player->publishSingle();
+
+        $this->socks->TaxClassID = $taxFreeClass->ID;
+        $this->socks->write();
+        $this->socks->publishSingle();
+
+        $this->cart->clear();
+        $this->cart->add($this->mp3player);
+        $this->cart->add($this->socks);
+
+        $order = $this->cart->current();
+        $order->calculate();
+        /**
+         * @var FlatTax $modifier
+         */
+        $modifier = $order->Modifiers()->filter(['ClassName' => FlatTax::class])
+            ->first();
+
+        $mp3OrderItem = $order->Items()->filter('ProductID', $this->mp3player->ID)->first();
+        $socksOrderItem = $order->Items()->filter('ProductID', $this->socks->ID)->first();
+
+        $this->assertEquals(200, $mp3OrderItem->Total());
+        $this->assertEquals(8, $socksOrderItem->Total());
+        $this->assertEquals(30, $modifier->Amount);
+        $this->assertEquals(238, $order->GrandTotal());
     }
 }
