@@ -314,6 +314,22 @@ class CartPageController extends PageController
     }
 
     /**
+     * Feedback message from the current cart action/state for template rendering.
+     */
+    public function CartMessage(): string
+    {
+        return (string) $this->cart->getMessage();
+    }
+
+    /**
+     * Feedback message type from the current cart action/state for template rendering.
+     */
+    public function CartMessageType(): string
+    {
+        return $this->cart->getMessageType();
+    }
+
+    /**
      * Whether the client asked for a JSON payload (`?format=json` or `Accept: application/json`).
      */
     protected function wantsJson(HTTPRequest $request): bool

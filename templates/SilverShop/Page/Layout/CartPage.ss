@@ -12,6 +12,9 @@
             $Content
         <% end_if %>
     </div>
+    <% if $CartMessage %>
+        <p class="silvershop-message silvershop-message--$CartMessageType">$CartMessage</p>
+    <% end_if %>
     <% if $Cart %>
 
         <% if $CartForm %>
