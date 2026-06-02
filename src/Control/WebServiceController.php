@@ -59,7 +59,7 @@ class WebServiceController extends Controller
             return $format;
         }
 
-        $accept = strtolower((string) $request->getHeader('Accept', true));
+        $accept = strtolower((string) $request->getHeader('Accept'));
         if (str_contains($accept, 'xml')) {
             return 'xml';
         }
@@ -127,8 +127,18 @@ class WebServiceController extends Controller
         if ($format === 'xml') {
             $xml = new SimpleXMLElement(sprintf('<%s/>', $rootNode));
             $this->appendXml($xml, $payload, $rootNode === 'products' ? 'product' : 'field');
+            $body = $xml->asXML();
 
-            $response = HTTPResponse::create($xml->asXML() ?: '', $statusCode);
+            if ($body === false) {
+                $response = HTTPResponse::create(
+                    '{"message":"Failed to encode response data as XML"}',
+                    500
+                );
+                $response->addHeader('Content-Type', 'application/json; charset=utf-8');
+                return $response;
+            }
+
+            $response = HTTPResponse::create($body, $statusCode);
             $response->addHeader('Content-Type', 'application/xml; charset=utf-8');
             return $response;
         }
@@ -136,7 +146,7 @@ class WebServiceController extends Controller
         try {
             $body = json_encode($payload, JSON_THROW_ON_ERROR);
         } catch (JsonException) {
-            $body = '{"message":"Encoding error"}';
+            $body = '{"message":"Failed to encode response data as JSON"}';
             $statusCode = 500;
         }
 
