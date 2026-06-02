@@ -216,7 +216,13 @@ class WebServiceController extends Controller
         }
 
         if ($result === false) {
-            return $this->cartOperationResponse($format, $cart, false, 404, ['message' => 'Not found']);
+            return $this->cartOperationResponse(
+                $format,
+                $cart,
+                false,
+                404,
+                ['message' => 'Item not found in cart', 'messageType' => 'bad']
+            );
         }
 
         return $this->cartOperationResponse($format, $cart, true);

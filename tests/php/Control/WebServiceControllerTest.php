@@ -175,7 +175,7 @@ final class WebServiceControllerTest extends FunctionalTest
         $this->assertIsArray($payload);
         $this->assertFalse($payload['success']);
         $this->assertSame('bad', $payload['messageType']);
-        $this->assertSame('Not found', $payload['message']);
+        $this->assertSame('Item not found in cart', $payload['message']);
     }
 
     public function testCartAddRejectsNegativeQuantity(): void
@@ -222,6 +222,6 @@ class WebServiceControllerTest_SerialisedProductExtension extends Extension
             return;
         }
 
-        $payload['customTag'] = 'custom-socks';
+        $payload['customTag'] = 'custom-' . $product->URLSegment;
     }
 }
