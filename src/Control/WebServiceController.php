@@ -321,7 +321,11 @@ class WebServiceController extends Controller
         }
         $buyableId = (int) ($request->requestVar('ProductID') ?? $request->requestVar('BuyableID') ?? 0);
 
-        if ($buyableId === 0 || !ClassInfo::exists($buyableClass)) {
+        if (
+            $buyableId === 0
+            || !ClassInfo::exists($buyableClass)
+            || !is_a($buyableClass, Buyable::class, true)
+        ) {
             return null;
         }
 
