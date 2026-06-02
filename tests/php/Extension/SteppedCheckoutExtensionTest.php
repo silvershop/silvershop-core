@@ -16,6 +16,7 @@ use SilverShop\Page\Product;
 use SilverShop\Tests\Model\Product\CustomProduct_OrderItem;
 use SilverShop\Tests\ShopTestBootstrap;
 use SilverStripe\Control\HTTPRequest;
+use SilverStripe\Control\HTTPResponse;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\FunctionalTest;
 use SilverStripe\Omnipay\GatewayInfo;
@@ -95,6 +96,8 @@ final class SteppedCheckoutExtensionTest extends FunctionalTest
 
     public function testTemplateFunctionsForOtherSteps(): void
     {
+        $this->completeCheckoutUpToSummary();
+
         $this->checkout->handleRequest($this->buildTestRequest('summary')); //change to summary step
         $this->assertTrue($this->checkout->StepExists('summary'));
         $this->assertFalse($this->checkout->IsPastStep('summary'));
@@ -259,8 +262,34 @@ final class SteppedCheckoutExtensionTest extends FunctionalTest
         $this->assertEquals('Dummy', Checkout::get($this->cart)->getSelectedPaymentMethod());
     }
 
+    public function testSummaryRedirectsToFirstIncompleteStep(): void
+    {
+        $response = $this->checkout->handleRequest($this->buildTestRequest('summary'));
+
+        $this->assertInstanceOf(HTTPResponse::class, $response);
+        $this->assertEquals(302, $response->getStatusCode());
+        $this->assertStringContainsString('/checkout/contactdetails', $response->getHeader('location'));
+    }
+
+    public function testSummarySubmissionRedirectsToFirstIncompleteStep(): void
+    {
+        $httpResponse = $this->post(
+            '/checkout/ConfirmationForm',
+            [
+                'Notes' => 'Leave it around the back',
+                'ReadTermsAndConditions' => 1,
+            ]
+        );
+
+        $this->assertEquals(302, $httpResponse->getStatusCode());
+        $this->assertStringContainsString('/checkout/contactdetails', $httpResponse->getHeader('location'));
+        $this->assertSame('', (string) Order::get()->byID($this->cart->ID)->Notes);
+        $this->assertEquals('Cart', $this->cart->Status, "Order is still in cart");
+    }
+
     public function testSummary(): void
     {
+        $this->completeCheckoutUpToSummary();
         $this->checkout->handleRequest($this->buildTestRequest('summary'));
         /**
          * @var PaymentForm $paymentForm
@@ -272,8 +301,6 @@ final class SteppedCheckoutExtensionTest extends FunctionalTest
         ];
         $member = $this->objFromFixture(Member::class, "joebloggs");
         Security::setCurrentUser($member);
-
-        Checkout::get($this->cart)->setPaymentMethod("Dummy"); //a selected payment method is required
         $paymentForm->loadDataFrom($data);
         $this->assertTrue($paymentForm->validate()->isValid(), "Checkout data is valid");
         $httpResponse = $this->post('/checkout/ConfirmationForm', $data);
@@ -296,5 +323,38 @@ final class SteppedCheckoutExtensionTest extends FunctionalTest
         $httpRequest = new HTTPRequest($method, $url);
         $httpRequest->setSession($this->mainSession->session());
         return $httpRequest;
+    }
+
+    protected function completeCheckoutUpToSummary(): void
+    {
+        $this->post(
+            '/checkout/ContactDetailsForm',
+            [
+                'SilverShop-Checkout-Component-CustomerDetails_Email' => 'p.richardson@example.com',
+                'SilverShop-Checkout-Component-CustomerDetails_FirstName' => 'Pauline',
+                'SilverShop-Checkout-Component-CustomerDetails_Surname' => 'Richardson',
+            ]
+        );
+
+        $this->post(
+            '/checkout/ShippingAddressForm',
+            [
+                'SilverShop-Checkout-Component-ShippingAddress_Company' => 'Acme Inc',
+                'SilverShop-Checkout-Component-ShippingAddress_Address' => '2b Baba place',
+                'SilverShop-Checkout-Component-ShippingAddress_AddressLine2' => 'Level 2',
+                'SilverShop-Checkout-Component-ShippingAddress_City' => 'Newton',
+                'SilverShop-Checkout-Component-ShippingAddress_State' => 'Wellington',
+                'SilverShop-Checkout-Component-ShippingAddress_Country' => 'NZ',
+                'SilverShop-Checkout-Component-ShippingAddress_Phone' => '12345678'
+            ]
+        );
+
+        $this->post(
+            '/checkout/PaymentMethodForm',
+            [
+                'PaymentMethod' => 'Dummy',
+                'action_setpaymentmethod' => 1,
+            ]
+        );
     }
 }
