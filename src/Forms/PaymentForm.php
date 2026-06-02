@@ -16,7 +16,7 @@ use SilverStripe\Omnipay\GatewayInfo;
 
 class PaymentForm extends CheckoutForm
 {
-    protected const SUMMARY_FORM_NAME = 'ConfirmationForm';
+    protected const CONFIRMATION_FORM_NAME = 'ConfirmationForm';
 
     /**
      * @var string URL to redirect the user to on payment success.
@@ -65,7 +65,7 @@ class PaymentForm extends CheckoutForm
     public function checkoutSubmit($data, $form): HTTPResponse
     {
         if (
-            $this->getName() === self::SUMMARY_FORM_NAME
+            $this->getName() === self::CONFIRMATION_FORM_NAME
             && $this->controller
             && $this->controller->hasMethod('getFirstIncompleteCheckoutStepLink')
         ) {

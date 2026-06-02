@@ -14,6 +14,7 @@ use SilverShop\Model\Address;
 use SilverShop\Model\Order;
 use SilverStripe\Control\HTTPResponse;
 use SilverStripe\Security\Security;
+use SilverStripe\View\ArrayData;
 
 class Summary extends CheckoutStep
 {
@@ -93,9 +94,12 @@ class Summary extends CheckoutStep
             $firstIncompleteStep = 'paymentmethod';
         }
 
-        $this->getOwner()->extend('updateFirstIncompleteCheckoutStep', $firstIncompleteStep, $order, $steps, $checkout);
+        $state = ArrayData::create([
+            'Step' => $firstIncompleteStep,
+        ]);
+        $this->getOwner()->extend('updateFirstIncompleteCheckoutStep', $state, $order, $steps, $checkout);
 
-        return $firstIncompleteStep;
+        return $state->getField('Step');
     }
 
     public function getFirstIncompleteCheckoutStepLink(): ?string
@@ -121,10 +125,12 @@ class Summary extends CheckoutStep
 
     protected function hasContactDetails(Order $order): bool
     {
-        $hasContactDetails = !empty($order->FirstName) && !empty($order->Surname) && !empty($order->Email);
-        $this->getOwner()->extend('updateHasContactDetails', $hasContactDetails, $order);
+        $state = ArrayData::create([
+            'HasContactDetails' => !empty($order->FirstName) && !empty($order->Surname) && !empty($order->Email),
+        ]);
+        $this->getOwner()->extend('updateHasContactDetails', $state, $order);
 
-        return $hasContactDetails;
+        return (bool) $state->getField('HasContactDetails');
     }
 
     protected function hasValidAddress(int $addressID, Address $address): bool
