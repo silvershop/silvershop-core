@@ -24,6 +24,15 @@ abstract class Address extends CheckoutComponent
 
     private static string $composite_field_tag = 'div';
 
+    /**
+     * Location fields that can be sourced from ShopUserInfo (e.g. external APIs).
+     *
+     * @var list<string>
+     */
+    private static array $shop_user_info_location_fields = [
+        'Country',
+    ];
+
     public function getFormFields(Order $order): FieldList
     {
         $fieldList = $this->getAddress($order)->getFrontEndFields([
@@ -59,7 +68,7 @@ abstract class Address extends CheckoutComponent
 
         //merge data from multiple sources
         $data = array_merge(
-            ShopUserInfo::singleton()->getLocation(),
+            $this->getConfiguredShopUserInfoLocation(),
             $data,
             [$this->addresstype . 'AddressID' => $order->{$this->addresstype . 'AddressID'}]
         );
@@ -68,7 +77,7 @@ abstract class Address extends CheckoutComponent
         $member = Security::getCurrentUser();
         if (!$order->{$this->addresstype . 'AddressID'}) {
             $data = array_merge(
-                ShopUserInfo::singleton()->getLocation(),
+                $this->getConfiguredShopUserInfoLocation(),
                 $member ? $member->{'Default' . $this->addresstype . 'Address'}()->toMap() : [],
                 [$this->addresstype . 'AddressID' => $order->{$this->addresstype . 'AddressID'}]
             );
@@ -159,6 +168,17 @@ abstract class Address extends CheckoutComponent
         //extension hooks
         $order->extend('onSet' . $this->addresstype . 'Address', $address);
         return $order;
+    }
+
+    protected function getConfiguredShopUserInfoLocation(): array
+    {
+        $location = ShopUserInfo::singleton()->getLocation();
+        $allowedFields = Config::inst()->get(self::class, 'shop_user_info_location_fields') ?? [];
+        if (!is_array($allowedFields) || $allowedFields === []) {
+            return [];
+        }
+
+        return array_intersect_key($location, array_flip($allowedFields));
     }
 
     /**
