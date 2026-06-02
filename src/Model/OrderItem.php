@@ -203,7 +203,7 @@ class OrderItem extends OrderAttribute
     public function Image()
     {
         $buyable = $this->Buyable();
-        if ($buyable && $buyable->hasOne('Image')) {
+        if ($buyable && $buyable->hasMethod('Image')) {
             return $buyable->Image();
         }
     }
