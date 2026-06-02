@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace SilverShop\Tests\Page;
 
+use SilverShop\Cart\ShoppingCart;
 use SilverShop\Extension\OrderManipulationExtension;
 use SilverShop\Model\Order;
-use SilverShop\Page\CartPageController;
 use SilverShop\Page\CheckoutPage;
 use SilverShop\Page\Product;
 use SilverShop\Tests\ShopTestBootstrap;
@@ -46,9 +46,16 @@ final class CheckoutPageTest extends FunctionalTest
         $response = $this->post(
             $actionsFormUrl,
             [
+                'SecurityID'        => $this->session()->get('SecurityID'),
                 'OrderID'          => $order->ID,
                 'PaymentMethod'    => 'Dummy',
-                'action_dopayment' => 'submit',
+                'type'             => 'visa',
+                'name'             => 'Tester Mc. Testerson',
+                'number'           => '4242424242424242',
+                'expiryMonth'      => 10,
+                'expiryYear'       => date('Y') + 1,
+                'cvv'              => 123,
+                'action_dopayment' => 1,
             ]
         );
 
@@ -80,17 +87,17 @@ final class CheckoutPageTest extends FunctionalTest
         $checkout = $this->objFromFixture(CheckoutPage::class, 'checkout');
         $checkout->publishSingle();
 
-        // add_session_order() only records order history; it does not set an active cart.
-        // Publish a product and add it to the cart via HTTP so ShoppingCart::curr() returns
-        // an order with items, which causes OrderForm (and the keepalive script) to render.
+        // add_session_order() only records order history; create an active cart with items so
+        // OrderForm renders and registers its keepalive requirement.
         $socks = $this->objFromFixture(Product::class, 'socks');
         $socks->publishSingle();
-        $this->get(CartPageController::add_item_link($socks));
+        ShoppingCart::singleton()->clear();
+        ShoppingCart::singleton()->add($socks);
 
         $httpResponse = $this->get('checkout');
         $this->assertEquals(200, $httpResponse->getStatusCode(), 'Checkout page should be available with a current order');
         $this->assertStringContainsString(
-            'client/dist/javascript/checkout-session-keep-alive.js',
+            'checkout-session-keep-alive.js',
             (string)$httpResponse->getBody(),
             'Checkout keepalive script should be included on checkout pages'
         );

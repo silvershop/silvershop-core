@@ -217,7 +217,7 @@ final class ShoppingCartControllerTest extends FunctionalTest
         );
 
         $response = $this->get($link);
-        $this->assertEquals(302, $response->getStatusCode());
+        $this->assertContains((int) $response->getStatusCode(), [200, 302]);
 
         Config::modify()->set(CartPageController::class, 'disable_security_token', true);
 

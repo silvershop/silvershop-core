@@ -70,6 +70,10 @@ class WebServiceController extends Controller
             return $format;
         }
 
+        if (preg_match('/\.(json|xml)$/i', (string) $request->getURL(), $matches) === 1) {
+            return strtolower($matches[1]);
+        }
+
         $accept = strtolower((string) $request->getHeader('Accept'));
         if (str_contains($accept, 'xml')) {
             return 'xml';
