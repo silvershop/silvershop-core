@@ -97,10 +97,9 @@ class WebServiceController extends Controller
 
     private function productResponse(string $identifier, string $format): HTTPResponse
     {
-        $products = Versioned::get_by_stage(Product::class, Versioned::LIVE);
         $product = preg_match('/^\d+$/', $identifier) === 1
-            ? $products->byID((int) $identifier)
-            : $products->filter('URLSegment', $identifier)->first();
+            ? Versioned::get_by_stage(Product::class, Versioned::LIVE)->byID((int) $identifier)
+            : Versioned::get_by_stage(Product::class, Versioned::LIVE)->filter('URLSegment', $identifier)->first();
 
         if (!$product || !$product->exists() || !$product->canView()) {
             return $this->errorResponse($format, 404, 'Product not found');
@@ -124,6 +123,8 @@ class WebServiceController extends Controller
 
     private function formatResponse(string $format, string $rootNode, array $payload, int $statusCode = 200): HTTPResponse
     {
+        $rootNode = preg_replace('/[^A-Za-z0-9_-]/', '', $rootNode) ?: 'response';
+
         if ($format === 'xml') {
             $xml = new SimpleXMLElement(sprintf('<%s/>', $rootNode));
             $this->appendXml($xml, $payload, $rootNode === 'products' ? 'product' : 'field');
