@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SilverShop\Control;
 
+use JsonException;
 use SilverShop\Page\Product;
 use SilverStripe\Control\Controller;
 use SilverStripe\Control\HTTPRequest;
@@ -97,7 +98,7 @@ class WebServiceController extends Controller
     private function productResponse(string $identifier, string $format): HTTPResponse
     {
         $products = Versioned::get_by_stage(Product::class, Versioned::LIVE);
-        $product = ctype_digit($identifier)
+        $product = preg_match('/^\d+$/', $identifier) === 1
             ? $products->byID((int) $identifier)
             : $products->filter('URLSegment', $identifier)->first();
 
@@ -132,7 +133,14 @@ class WebServiceController extends Controller
             return $response;
         }
 
-        $response = HTTPResponse::create(json_encode($payload), $statusCode);
+        try {
+            $body = json_encode($payload, JSON_THROW_ON_ERROR);
+        } catch (JsonException) {
+            $body = '{"message":"Encoding error"}';
+            $statusCode = 500;
+        }
+
+        $response = HTTPResponse::create($body, $statusCode);
         $response->addHeader('Content-Type', 'application/json; charset=utf-8');
         return $response;
     }

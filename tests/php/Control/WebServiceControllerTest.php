@@ -49,7 +49,10 @@ final class WebServiceControllerTest extends FunctionalTest
         $this->assertContains('Socks', $titles);
         $this->assertContains('Mp3 Player', $titles);
 
-        $socks = current(array_filter($payload, static fn(array $product): bool => $product['title'] === 'Socks'));
+        $matches = array_values(array_filter($payload, static fn(array $product): bool => $product['title'] === 'Socks'));
+        $this->assertNotEmpty($matches);
+
+        $socks = $matches[0];
         $this->assertIsArray($socks);
         $this->assertSame(8.0, (float) $socks['price']);
     }
