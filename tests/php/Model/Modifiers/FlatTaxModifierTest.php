@@ -138,6 +138,10 @@ final class FlatTaxModifierTest extends FunctionalTest
             if ((int) $item->ProductID === (int) $this->socks->ID) {
                 $socksOrderItem = $item;
             }
+
+            if ($mp3OrderItem !== null && $socksOrderItem !== null) {
+                break;
+            }
         }
 
         $this->assertNotNull($mp3OrderItem);
