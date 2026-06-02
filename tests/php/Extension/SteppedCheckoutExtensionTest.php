@@ -283,7 +283,7 @@ final class SteppedCheckoutExtensionTest extends FunctionalTest
 
         $this->assertEquals(302, $httpResponse->getStatusCode());
         $this->assertStringContainsString('/checkout/contactdetails', $httpResponse->getHeader('location'));
-        $this->assertSame('', (string) Order::get()->byID($this->cart->ID)->Notes);
+        $this->assertEmpty(Order::get()->byID($this->cart->ID)->Notes);
         $this->assertEquals('Cart', $this->cart->Status, "Order is still in cart");
     }
 

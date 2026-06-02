@@ -111,6 +111,6 @@ class Summary extends CheckoutStep
 
     protected function hasValidAddress(int $addressID, Address $address): bool
     {
-        return $addressID > 0 && $address->exists() && $address->validate()->isValid();
+        return $address->exists() && $addressID > 0 && $address->validate()->isValid();
     }
 }
