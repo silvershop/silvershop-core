@@ -64,11 +64,7 @@ class PaymentForm extends CheckoutForm
 
     public function checkoutSubmit($data, $form): HTTPResponse
     {
-        if (
-            $this->getName() === self::SUMMARY_CONFIRMATION_FORM_NAME
-            && $this->controller
-            && $this->controller->hasMethod('getFirstIncompleteCheckoutStepLink')
-        ) {
+        if ($this->shouldRedirectToFirstIncompleteCheckoutStep()) {
             $stepLink = $this->controller->getFirstIncompleteCheckoutStepLink();
             if ($stepLink) {
                 return $this->controller->redirect($stepLink);
@@ -89,6 +85,13 @@ class PaymentForm extends CheckoutForm
         return $this->controller->redirect(
             $this->controller->Link('payment') //assumes CheckoutPage
         );
+    }
+
+    protected function shouldRedirectToFirstIncompleteCheckoutStep(): bool
+    {
+        return $this->getName() === self::SUMMARY_CONFIRMATION_FORM_NAME
+            && $this->controller
+            && $this->controller->hasMethod('getFirstIncompleteCheckoutStepLink');
     }
 
     /**
