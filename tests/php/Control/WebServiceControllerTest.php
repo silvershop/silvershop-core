@@ -9,7 +9,6 @@ use SilverShop\Control\WebServiceController;
 use SilverShop\Page\Product;
 use SilverShop\Page\ProductCategory;
 use SilverShop\Tests\ShopTestBootstrap;
-use SilverStripe\Core\Extension;
 use SilverStripe\Dev\FunctionalTest;
 use SilverStripe\Security\SecurityToken;
 use SilverStripe\Versioned\Versioned;
@@ -206,22 +205,5 @@ final class WebServiceControllerTest extends FunctionalTest
         }
 
         return $query ? $path . '?' . http_build_query($query) : $path;
-    }
-}
-
-class WebServiceControllerTest_SerialisedProductExtension extends Extension
-{
-    public static bool $enabled = false;
-
-    /**
-     * @param array<string, mixed> $payload
-     */
-    public function updateSerialisedProduct(array &$payload, Product $product): void
-    {
-        if (!self::$enabled) {
-            return;
-        }
-
-        $payload['customTag'] = 'custom-' . $product->URLSegment;
     }
 }
