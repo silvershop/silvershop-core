@@ -4,4 +4,5 @@ After: framework/routes#coreroutes
 ---
 SilverStripe\Control\Director:
   rules:
+    'api/v1//$Action/$ID': SilverShop\Control\WebServiceController
     dev/shop: SilverShop\Dev\ShopDevelopmentAdmin

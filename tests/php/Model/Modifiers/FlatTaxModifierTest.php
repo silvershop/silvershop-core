@@ -126,9 +126,26 @@ final class FlatTaxModifierTest extends FunctionalTest
         $modifier = $order->Modifiers()->filter(['ClassName' => FlatTax::class])
             ->first();
 
-        $mp3OrderItem = $order->Items()->filter('ProductID', $this->mp3player->ID)->first();
-        $socksOrderItem = $order->Items()->filter('ProductID', $this->socks->ID)->first();
+        $items = $order->Items();
+        $mp3OrderItem = null;
+        $socksOrderItem = null;
 
+        foreach ($items as $item) {
+            if ((int) $item->ProductID === (int) $this->mp3player->ID) {
+                $mp3OrderItem = $item;
+            }
+
+            if ((int) $item->ProductID === (int) $this->socks->ID) {
+                $socksOrderItem = $item;
+            }
+
+            if ($mp3OrderItem !== null && $socksOrderItem !== null) {
+                break;
+            }
+        }
+
+        $this->assertNotNull($mp3OrderItem);
+        $this->assertNotNull($socksOrderItem);
         $this->assertEquals(200, $mp3OrderItem->Total());
         $this->assertEquals(8, $socksOrderItem->Total());
         $this->assertEquals(30, $modifier->Amount);

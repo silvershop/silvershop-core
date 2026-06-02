@@ -32,6 +32,7 @@ class CustomProduct extends DataObject implements Buyable, TestOnly
 
         $item = Injector::inst()->create($itemClass);
         $item->CustomProductID = $this->ID;
+        $item->Quantity = $quantity;
 
         if ($filter !== []) {
             $item->update($filter);

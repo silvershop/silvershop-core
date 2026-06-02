@@ -6,6 +6,7 @@ namespace SilverShop\Tests\Model\Product;
 
 use SilverShop\Cart\ShoppingCart;
 use SilverShop\Model\Product\OrderItem;
+use SilverShop\Page\CartPageController;
 use SilverShop\Page\Product;
 use SilverShop\Tests\ShopTestBootstrap;
 use SilverStripe\Dev\FunctionalTest;
@@ -104,19 +105,19 @@ final class ProductOrderItemTest extends FunctionalTest
         $product = $this->socks;
         $orderItem = $product->Item();
         $this->assertEquals(
-            'shoppingcart/add/SilverShop-Page-Product/' . $product->ID,
+            CartPageController::add_item_link($product),
             $orderItem->addLink()
         );
         $this->assertEquals(
-            'shoppingcart/remove/SilverShop-Page-Product/' . $product->ID,
+            CartPageController::remove_item_link($product),
             $orderItem->removeLink()
         );
         $this->assertEquals(
-            'shoppingcart/removeall/SilverShop-Page-Product/' . $product->ID,
+            CartPageController::remove_all_item_link($product),
             $orderItem->removeAllLink()
         );
         $this->assertEquals(
-            'shoppingcart/setquantity/SilverShop-Page-Product/' . $product->ID,
+            CartPageController::set_quantity_item_link($product),
             $orderItem->setQuantityLink()
         );
     }
