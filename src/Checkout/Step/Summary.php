@@ -94,12 +94,12 @@ class Summary extends CheckoutStep
             $firstIncompleteStep = 'paymentmethod';
         }
 
-        $state = ArrayData::create([
+        $checkoutStepState = ArrayData::create([
             'Step' => $firstIncompleteStep,
         ]);
-        $this->getOwner()->extend('updateFirstIncompleteCheckoutStep', $state, $order, $steps, $checkout);
+        $this->getOwner()->extend('updateFirstIncompleteCheckoutStep', $checkoutStepState, $order, $steps, $checkout);
 
-        return $state->getField('Step');
+        return $checkoutStepState->getField('Step');
     }
 
     public function getFirstIncompleteCheckoutStepLink(): ?string
@@ -125,12 +125,12 @@ class Summary extends CheckoutStep
 
     protected function hasContactDetails(Order $order): bool
     {
-        $state = ArrayData::create([
+        $contactDetailsState = ArrayData::create([
             'HasContactDetails' => !empty($order->FirstName) && !empty($order->Surname) && !empty($order->Email),
         ]);
-        $this->getOwner()->extend('updateHasContactDetails', $state, $order);
+        $this->getOwner()->extend('updateHasContactDetails', $contactDetailsState, $order);
 
-        return (bool) $state->getField('HasContactDetails');
+        return (bool) $contactDetailsState->getField('HasContactDetails');
     }
 
     protected function hasValidAddress(int $addressID, Address $address): bool
