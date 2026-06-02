@@ -313,6 +313,16 @@ class CartPageController extends PageController
         return $cartForm;
     }
 
+    public function CartMessage(): string
+    {
+        return (string) $this->cart->getMessage();
+    }
+
+    public function CartMessageType(): string
+    {
+        return $this->cart->getMessageType();
+    }
+
     /**
      * Whether the client asked for a JSON payload (`?format=json` or `Accept: application/json`).
      */

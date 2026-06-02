@@ -313,6 +313,25 @@ final class ShoppingCartControllerTest extends FunctionalTest
         $this->assertEquals($comment, $item->Comment);
     }
 
+    public function testCartRemovesUnavailableItemsAndShowsWarning(): void
+    {
+        ShoppingCart::singleton()->clear();
+        $this->get(CartPageController::add_item_link($this->mp3player, ['quantity' => 2]));
+        $this->assertNotNull($this->cart->get($this->mp3player));
+
+        $this->mp3player->AllowPurchase = false;
+        $this->mp3player->write();
+        $this->mp3player->publishSingle();
+
+        $response = $this->get('cart');
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertNull($this->cart->get($this->mp3player));
+        $this->assertStringContainsString(
+            'Some items in your cart are no longer available and were removed.',
+            (string) $response->getBody()
+        );
+    }
+
     public function testAddProductViaUrlWithQuantityQuery(): void
     {
         ShoppingCart::singleton()->clear();

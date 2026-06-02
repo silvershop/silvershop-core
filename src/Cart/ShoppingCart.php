@@ -73,12 +73,45 @@ class ShoppingCart
             )->first();
         }
 
+        if ($this->order instanceof Order) {
+            $removedCount = $this->removeUnavailableItems($this->order);
+            if ($removedCount > 0) {
+                $this->message(
+                    _t(
+                        __CLASS__ . '.UnavailableItemsRemoved',
+                        'Some items in your cart are no longer available and were removed.'
+                    ),
+                    'warning'
+                );
+            }
+        }
+
         if (!$this->calculateonce && $this->order) {
             $this->order->calculate();
             $this->calculateonce = true;
         }
 
         return $this->order ? $this->order : null;
+    }
+
+    /**
+     * Remove items that are no longer purchasable from the active cart.
+     */
+    protected function removeUnavailableItems(Order $order): int
+    {
+        $removedCount = 0;
+        $member = Security::getCurrentUser();
+
+        foreach ($order->Items() as $item) {
+            $buyable = $item->Buyable();
+            if (!$buyable instanceof Buyable || !$buyable->canPurchase($member, (int) $item->Quantity)) {
+                $item->delete();
+                $item->destroy();
+                ++$removedCount;
+            }
+        }
+
+        return $removedCount;
     }
 
     /**
