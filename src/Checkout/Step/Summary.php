@@ -84,7 +84,12 @@ class Summary extends CheckoutStep
             $firstIncompleteStep = 'billingaddress';
         }
 
-        if (!$firstIncompleteStep && isset($steps['paymentmethod']) && $checkout && !$checkout->getSelectedPaymentMethod()) {
+        if (
+            !$firstIncompleteStep
+            && isset($steps['paymentmethod'])
+            && $checkout
+            && !$checkout->getSelectedPaymentMethod()
+        ) {
             $firstIncompleteStep = 'paymentmethod';
         }
 
