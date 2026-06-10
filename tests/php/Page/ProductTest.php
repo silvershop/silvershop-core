@@ -131,6 +131,12 @@ final class ProductTest extends FunctionalTest
 
     public function testProductPageIncludesSchemaOrgMarkup(): void
     {
+        $this->logInWithPermission('ADMIN');
+        $this->objFromFixture(ProductCategory::class, 'products')->publishSingle();
+        $this->objFromFixture(ProductCategory::class, 'clothing')->publishSingle();
+        $this->tshirt->publishSingle();
+        $this->logOut();
+
         $response = $this->get(Director::makeRelative($this->tshirt->Link()));
         $body = $response->getBody();
         $this->assertSame(200, $response->getStatusCode());

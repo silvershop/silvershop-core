@@ -148,7 +148,8 @@ final class WebServiceControllerTest extends FunctionalTest
     public function testCartClearJson(): void
     {
         $product = $this->objFromFixture(Product::class, 'socks');
-        ShoppingCart::singleton()->add($product, 1);
+        // Add via HTTP so the cart lives in the same session used by subsequent HTTP requests.
+        $this->get($this->apiUrl('api/v1/cart/add.json', ['ProductID' => $product->ID]));
 
         $response = $this->get($this->apiUrl('api/v1/cart/clear.json'));
 

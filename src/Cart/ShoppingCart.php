@@ -104,7 +104,7 @@ class ShoppingCart
 
         foreach ($order->Items() as $item) {
             $buyable = $item->Buyable();
-            if (!$buyable instanceof Buyable || !$buyable->canPurchase($member, (int) $item->Quantity)) {
+            if ($buyable instanceof Buyable && !$buyable->canPurchase($member, (int) $item->Quantity)) {
                 $item->delete();
                 $item->destroy();
                 ++$removedCount;
