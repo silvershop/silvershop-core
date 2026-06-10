@@ -37,7 +37,12 @@ class PopulateShopTask extends BuildTask
     public function getOptions(): array
     {
         return [
-            new InputOption(self::$force, null, InputOption::VALUE_NONE, 'Force the creation of products and categories'),
+            new InputOption(
+                static::config()->get('force'),
+                null,
+                InputOption::VALUE_NONE,
+                'Force the creation of products and categories'
+            ),
         ];
     }
 

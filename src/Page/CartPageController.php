@@ -794,9 +794,9 @@ class CartPageController extends PageController
             $content = ($order instanceof Order)
                 ? Debug::text($order)
                 : 'Cart has not been created yet. Add a product.';
-
-            return ['Content' => $content];
+            return ModelData::create()->customise(['Content' => $content]);
         }
+        return '';
     }
 
     /**
