@@ -210,7 +210,7 @@ class CartPageController extends PageController
             'remove', 'removeitem' => 'remove',
             'removeall', 'removeallitem' => 'removeall',
             'setquantity', 'setquantityitem' => 'setquantity',
-            'addvariations', 'switchvariation', 'clear', 'debug', 'updatecart', 'cartform' => $a === 'cartform' ? 'CartForm' : $a,
+            'addvariations', 'switchvariation', 'clear', 'debug', 'updatecart' => $a,
             default => null,
         };
     }
