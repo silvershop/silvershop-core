@@ -6,7 +6,7 @@ namespace SilverShop\Control;
 
 use JsonException;
 use SilverShop\Cart\ShoppingCart;
-use SilverShop\Interfaces\Buyable;
+use SilverShop\Model\Buyable;
 use SilverShop\Model\OrderItem;
 use SilverShop\Page\Product;
 use SilverShop\ShopTools;
