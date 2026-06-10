@@ -332,7 +332,7 @@ class WebServiceController extends Controller
             return null;
         }
 
-        $buyable = ClassInfo::hasExtension($buyableClass, Versioned::class)
+        $buyable = $buyableClass::has_extension(Versioned::class)
             ? Versioned::get_by_stage($buyableClass, Versioned::LIVE)->byID($buyableId)
             : DataObject::get($buyableClass)->byID($buyableId);
 

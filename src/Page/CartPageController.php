@@ -154,6 +154,16 @@ class CartPageController extends PageController
         if ($cartMethod !== null) {
             $classMessage = Director::isLive() ? 'on this handler' : 'on class ' . static::class;
 
+            // CartForm is a sub-RequestHandler that must process its own form submission.
+            // Bypass handleAction() (which would render the form as HTML) and delegate directly.
+            if ($cartMethod === 'CartForm') {
+                $cartForm = $this->CartForm();
+                if ($cartForm instanceof CartForm) {
+                    return $cartForm->handleRequest($request);
+                }
+                return parent::handleRequest($request);
+            }
+
             try {
                 if (!$this->hasAction($cartMethod)) {
                     return $this->httpError(404, "Action '{$cartMethod}' isn't available $classMessage.");
@@ -294,6 +304,9 @@ class CartPageController extends PageController
     {
         parent::init();
         $this->cart = ShoppingCart::singleton();
+        // Prime the cart so that removeUnavailableItems() runs and sets any warning message
+        // before the template renders $CartMessage (which appears before $Cart in the template).
+        $this->cart->current();
     }
 
     /**
