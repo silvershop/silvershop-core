@@ -100,8 +100,8 @@ final class CheckoutTest extends SapphireTest
 
     public function testMustBecomeOrBeMember(): void
     {
-        CheckoutConfig::config()->member_creation_enabled = true;
-        CheckoutConfig::config()->membership_required = true;
+        CheckoutConfig::config()->set('member_creation_enabled', true);
+        CheckoutConfig::config()->set('membership_required', true);
 
         $member = $this->memberFactory->create(
             [
@@ -119,8 +119,8 @@ final class CheckoutTest extends SapphireTest
 
     public function testNoMemberships(): void
     {
-        CheckoutConfig::config()->member_creation_enabled = false;
-        CheckoutConfig::config()->membership_required = false;
+        CheckoutConfig::config()->set('member_creation_enabled', false);
+        CheckoutConfig::config()->set('membership_required', false);
 
         $this->expectException(ValidationException::class);
 
@@ -140,8 +140,8 @@ final class CheckoutTest extends SapphireTest
      */
     public function testMembersOnly(): void
     {
-        CheckoutConfig::config()->member_creation_enabled = false;
-        CheckoutConfig::config()->membership_required = true;
+        CheckoutConfig::config()->set('member_creation_enabled', false);
+        CheckoutConfig::config()->set('membership_required', true);
 
         $this->expectException(ValidationException::class);
         $this->expectExceptionMessage('Creating new memberships is not allowed');

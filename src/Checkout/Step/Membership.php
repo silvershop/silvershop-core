@@ -45,7 +45,7 @@ class Membership extends CheckoutStep
     public function membership(): HTTPResponse|array
     {
         //if logged in, then redirect to next step
-        if (ShoppingCart::curr() instanceof Order && self::config()->skip_if_logged_in && Security::getCurrentUser()) {
+        if (ShoppingCart::curr() instanceof Order && self::config()->get('skip_if_logged_in') && Security::getCurrentUser()) {
             return Controller::curr()->redirect($this->NextStepLink());
         }
 

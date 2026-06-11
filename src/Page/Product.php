@@ -488,7 +488,7 @@ class Product extends Page implements Buyable
         // (i.e. if the calculated price is 3.145 it will display as 3.15.
         // so if I put 10 of them in my cart I will expect the price to be
         // 31.50 not 31.45).
-        return round($price, Order::config()->rounding_precision);
+        return round($price, Order::config()->get('rounding_precision'));
     }
 
     /**

@@ -216,6 +216,7 @@ final class ShopPaymentTest extends FunctionalTest
             if ($contents === false) {
                 $this->markTestSkipped(sprintf('Mock file not found: %s', $fullPath));
             }
+
             $this->mockHandler->append(Message::parseResponse($contents));
         }
 

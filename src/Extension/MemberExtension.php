@@ -50,7 +50,7 @@ class MemberExtension extends Extension
      */
     public static function get_by_identifier($idvalue): ?Member
     {
-        return Member::get()->filter([Member::config()->unique_identifier_field => $idvalue])->first();
+        return Member::get()->filter([Member::config()->get('unique_identifier_field') => $idvalue])->first();
     }
 
     public function updateCMSFields(FieldList $fieldList): void
@@ -83,7 +83,7 @@ class MemberExtension extends Extension
      */
     public function onAfterMemberLoggedIn(): void
     {
-        if (Member::config()->login_joins_cart && $order = ShoppingCart::singleton()->current()) {
+        if (Member::config()->get('login_joins_cart') && $order = ShoppingCart::singleton()->current()) {
             $order->MemberID = $this->getOwner()->ID;
             $order->write();
         }
@@ -94,7 +94,7 @@ class MemberExtension extends Extension
      */
     public function onBeforeMemberLoggedOut(): void
     {
-        if (Member::config()->login_joins_cart) {
+        if (Member::config()->get('login_joins_cart')) {
             ShoppingCart::singleton()->clear();
         }
     }
@@ -106,6 +106,6 @@ class MemberExtension extends Extension
      */
     public function getPastOrders(): DataList
     {
-        return Order::get()->filter(['MemberID' => $this->getOwner()->ID])->filter(['Status:not' => Order::config()->hidden_status]);
+        return Order::get()->filter(['MemberID' => $this->getOwner()->ID])->filter(['Status:not' => Order::config()->get('hidden_status')]);
     }
 }

@@ -46,7 +46,7 @@ class OrdersAdmin extends ModelAdmin
 
         if ($this->modelClass == Order::class) {
             // Exclude hidden statuses
-            $list = $list->exclude(['Status' => Order::config()->hidden_status]);
+            $list = $list->exclude(['Status' => Order::config()->get('hidden_status')]);
             $this->extend('updateList', $list);
         }
 

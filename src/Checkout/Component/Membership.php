@@ -66,7 +66,7 @@ class Membership extends CheckoutComponent
             return $fieldList;
         }
 
-        $idField = Member::config()->unique_identifier_field;
+        $idField = Member::config()->get('unique_identifier_field');
 
         if (!$order->{$idField}) {
             $fieldList->push(TextField::create($idField, $idField));
@@ -84,7 +84,7 @@ class Membership extends CheckoutComponent
         }
 
         return [
-            Member::config()->unique_identifier_field,
+            Member::config()->get('unique_identifier_field'),
             'Password',
         ];
     }
@@ -109,7 +109,7 @@ class Membership extends CheckoutComponent
         $validationResult = ValidationResult::create();
         if (Checkout::membership_required() || !empty($data['Password'])) {
             $member = Member::create($data);
-            $idfield = Member::config()->unique_identifier_field;
+            $idfield = Member::config()->get('unique_identifier_field');
             $idval = $data[$idfield];
             if (MemberExtension::get_by_identifier($idval) instanceof Member) {
                 // get localized field labels
@@ -148,7 +148,7 @@ class Membership extends CheckoutComponent
         $data = [];
 
         if ($member = Security::getCurrentUser()) {
-            $idf = Member::config()->unique_identifier_field;
+            $idf = Member::config()->get('unique_identifier_field');
             $data[$idf] = $member->{$idf};
         }
 

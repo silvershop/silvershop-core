@@ -150,7 +150,7 @@ class VariationForm extends AddProductForm
             }
         }
 
-        if ($this->config()->include_json) {
+        if ($this->config()->get('include_json')) {
             $vararray = [];
             $query = new SQLSelect();
             $sqlSelect = $query;

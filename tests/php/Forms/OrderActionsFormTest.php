@@ -80,7 +80,7 @@ final class OrderActionsFormTest extends FunctionalTest
 
         $securityID = $this->session()->get('SecurityID');
         if (!$securityID) {
-            $securityID = (new RandomGenerator())->randomToken('sha1');
+            $securityID = (RandomGenerator::create())->randomToken('sha1');
             $this->session()->set('SecurityID', $securityID);
         }
 

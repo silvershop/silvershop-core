@@ -56,7 +56,7 @@ class SimpleCurrencyService implements CurrencyService
     public function getActiveCurrency(): string
     {
         $session = ShopTools::getSession();
-        $currency = $session->get(self::config()->session_key);
+        $currency = $session->get(self::config()->get('session_key'));
 
         if ($currency) {
             return (string)$currency;
@@ -68,7 +68,7 @@ class SimpleCurrencyService implements CurrencyService
     public function setActiveCurrency(string $currency): void
     {
         $session = ShopTools::getSession();
-        $session->set(self::config()->session_key, $currency);
+        $session->set(self::config()->get('session_key'), $currency);
     }
 
     public function getExchangeRate(string $from, string $to): float
@@ -78,7 +78,7 @@ class SimpleCurrencyService implements CurrencyService
         }
 
         $baseCurrency = ShopConfigExtension::get_site_currency();
-        $rates = self::config()->exchange_rates;
+        $rates = self::config()->get('exchange_rates');
 
         // Build rate from $from to $to using the base currency as pivot
         $fromRate = $this->getRateToBase($from, $baseCurrency, $rates);

@@ -50,7 +50,7 @@ class OrderTotalCalculator
         $sort = 1;
         $existingmodifiers = $this->order->Modifiers();
 
-        $modifierclasses = Order::config()->modifiers;
+        $modifierclasses = Order::config()->get('modifiers');
 
         //check if modifiers are even in use
         if (!is_array($modifierclasses) || $modifierclasses === []) {

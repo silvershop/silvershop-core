@@ -74,7 +74,7 @@ class OrderItem extends OrderAttribute
      */
     public function Buyable()
     {
-        return $this->{self::config()->buyable_relationship}();
+        return $this->{self::config()->get('buyable_relationship')}();
     }
 
     /**
@@ -148,7 +148,7 @@ class OrderItem extends OrderAttribute
      */
     public function uniquedata(): array
     {
-        $required = self::config()->required_fields; //TODO: also combine with all ancestors of this->class
+        $required = self::config()->get('required_fields'); //TODO: also combine with all ancestors of this->class
         $unique = [];
         $hasOnes = $this->hasOne();
         //reduce record to only required fields

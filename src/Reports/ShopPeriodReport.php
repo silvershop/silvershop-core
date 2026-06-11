@@ -75,7 +75,7 @@ abstract class ShopPeriodReport extends Report implements i18nEntityProvider
                     'Month'
                 )
             );
-            if (self::config()->display_uncategorised_data) {
+            if (self::config()->get('display_uncategorised_data')) {
                 $fieldList->push(
                     CheckboxField::create('IncludeUncategorised', 'Include Uncategorised Data')
                         ->setDescription("Display data that doesn't have a date.")
@@ -145,7 +145,7 @@ abstract class ShopPeriodReport extends Report implements i18nEntityProvider
             return $date;
         }
 
-        $formats = self::config()->groupingdateformats;
+        $formats = self::config()->get('groupingdateformats');
         $dformat = $formats[$grouping];
         return date($dformat, strtotime($date));
     }
@@ -179,7 +179,7 @@ abstract class ShopPeriodReport extends Report implements i18nEntityProvider
             $shopReportQuery->addWhere(sprintf("%s <= '%s'", $filterperiod, $end));
         }
 
-        if ($start || $end || !self::config()->display_uncategorised_data || !isset($params['IncludeUncategorised'])) {
+        if ($start || $end || !self::config()->get('display_uncategorised_data') || !isset($params['IncludeUncategorised'])) {
             $shopReportQuery->addWhere($filterperiod . ' IS NOT NULL');
         }
 

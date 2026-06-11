@@ -106,7 +106,7 @@ class OrderManipulationExtension extends Extension
             $filters['MemberID'] = $member->ID;
         }
 
-        return Order::get()->filterAny($filters)->filter(['Status:not' => Order::config()->hidden_status]);
+        return Order::get()->filterAny($filters)->filter(['Status:not' => Order::config()->get('hidden_status')]);
     }
 
     /**
@@ -114,7 +114,7 @@ class OrderManipulationExtension extends Extension
      */
     public function PastOrders($paginated = false): DataList|PaginatedList
     {
-        $dataList = $this->allorders()->filter(['Status' => Order::config()->placed_status]);
+        $dataList = $this->allorders()->filter(['Status' => Order::config()->get('placed_status')]);
         if ($paginated) {
             return PaginatedList::create($dataList, $this->getOwner()->getRequest());
         }

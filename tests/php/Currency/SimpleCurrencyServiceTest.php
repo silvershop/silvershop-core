@@ -44,13 +44,13 @@ final class SimpleCurrencyServiceTest extends SapphireTest
 
     public function testGetActiveCurrencyDefaultsToBaseCurrency(): void
     {
-        $service = new SimpleCurrencyService();
+        $service = SimpleCurrencyService::create();
         $this->assertEquals('NZD', $service->getActiveCurrency());
     }
 
     public function testSetAndGetActiveCurrency(): void
     {
-        $service = new SimpleCurrencyService();
+        $service = SimpleCurrencyService::create();
         $service->setActiveCurrency('USD');
         $this->assertEquals('USD', $service->getActiveCurrency());
 
@@ -61,14 +61,14 @@ final class SimpleCurrencyServiceTest extends SapphireTest
 
     public function testConvertSameCurrency(): void
     {
-        $service = new SimpleCurrencyService();
+        $service = SimpleCurrencyService::create();
         $this->assertEquals(100.0, $service->convert(100.0, 'NZD', 'NZD'));
         $this->assertEquals(100.0, $service->convert(100.0, 'USD', 'USD'));
     }
 
     public function testConvertFromBaseCurrency(): void
     {
-        $service = new SimpleCurrencyService();
+        $service = SimpleCurrencyService::create();
 
         // 100 NZD should be 60 USD (rate 0.60)
         $this->assertEqualsWithDelta(60.0, $service->convert(100.0, 'NZD', 'USD'), 0.001);
@@ -79,7 +79,7 @@ final class SimpleCurrencyServiceTest extends SapphireTest
 
     public function testConvertToBaseCurrency(): void
     {
-        $service = new SimpleCurrencyService();
+        $service = SimpleCurrencyService::create();
 
         // 60 USD should be 100 NZD (1 / 0.60)
         $this->assertEqualsWithDelta(100.0, $service->convert(60.0, 'USD', 'NZD'), 0.001);
@@ -87,7 +87,7 @@ final class SimpleCurrencyServiceTest extends SapphireTest
 
     public function testConvertBetweenForeignCurrencies(): void
     {
-        $service = new SimpleCurrencyService();
+        $service = SimpleCurrencyService::create();
 
         // 60 USD → NZD (100) → EUR (55)
         // So 60 USD should be approx 55 EUR
@@ -96,27 +96,27 @@ final class SimpleCurrencyServiceTest extends SapphireTest
 
     public function testGetExchangeRateSameCurrency(): void
     {
-        $service = new SimpleCurrencyService();
+        $service = SimpleCurrencyService::create();
         $this->assertEquals(1.0, $service->getExchangeRate('NZD', 'NZD'));
         $this->assertEquals(1.0, $service->getExchangeRate('USD', 'USD'));
     }
 
     public function testGetExchangeRateFromBase(): void
     {
-        $service = new SimpleCurrencyService();
+        $service = SimpleCurrencyService::create();
         $this->assertEqualsWithDelta(0.60, $service->getExchangeRate('NZD', 'USD'), 0.001);
         $this->assertEqualsWithDelta(0.55, $service->getExchangeRate('NZD', 'EUR'), 0.001);
     }
 
     public function testGetExchangeRateToBase(): void
     {
-        $service = new SimpleCurrencyService();
+        $service = SimpleCurrencyService::create();
         $this->assertEqualsWithDelta(1.0 / 0.60, $service->getExchangeRate('USD', 'NZD'), 0.001);
     }
 
     public function testUnknownCurrencyFallsBackToOneToOne(): void
     {
-        $service = new SimpleCurrencyService();
+        $service = SimpleCurrencyService::create();
         // No rate configured for JPY — should return 1:1
         $this->assertEquals(1.0, $service->getExchangeRate('NZD', 'JPY'));
         $this->assertEquals(100.0, $service->convert(100.0, 'NZD', 'JPY'));

@@ -66,7 +66,7 @@ class CheckoutFieldFactory
     public function getMembershipFields(): FieldList
     {
         $fieldList = $this->getContactFields();
-        $idfield = Member::config()->unique_identifier_field;
+        $idfield = Member::config()->get('unique_identifier_field');
         if (!$fieldList->fieldByName($idfield) instanceof FormField) {
             $fieldList->push(TextField::create($idfield, $idfield)); //TODO: scaffold the correct id field
         }

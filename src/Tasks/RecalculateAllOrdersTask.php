@@ -37,6 +37,7 @@ class RecalculateAllOrdersTask extends BuildTask
 
             $output->writeln('Done.');
         }
+
         return Command::SUCCESS;
     }
 }

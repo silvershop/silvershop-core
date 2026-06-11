@@ -43,7 +43,7 @@ class CheckoutPage extends Page
      */
     public static function find_link($urlSegment = false, $action = null, $id = null): string
     {
-        $base = CheckoutPageController::config()->url_segment;
+        $base = CheckoutPageController::config()->get('url_segment');
         if ($page = self::get()->first()) {
             $base = $page->Link();
         }
@@ -88,7 +88,7 @@ class CheckoutPage extends Page
             $page = self::create()->update(
                 [
                     'Title'       => 'Checkout',
-                    'URLSegment'  => CheckoutPageController::config()->url_segment,
+                    'URLSegment'  => CheckoutPageController::config()->get('url_segment'),
                     'ShowInMenus' => 0,
                 ]
             );

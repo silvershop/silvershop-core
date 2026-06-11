@@ -97,6 +97,7 @@ class AddProductForm extends Form
 
                 $cart->add($buyable, $quantity, $saveabledata);
             }
+
             if (!CartPageController::config()->direct_to_cart_page) {
                 $form->SessionMessage($cart->getMessage(), $cart->getMessageType());
             }

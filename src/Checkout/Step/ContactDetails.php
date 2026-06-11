@@ -36,7 +36,7 @@ class ContactDetails extends CheckoutStep
             ];
         }
 
-        if (!self::config()->skip_if_logged_in) {
+        if (!self::config()->get('skip_if_logged_in')) {
             return [
                 'OrderForm' => $form,
             ];

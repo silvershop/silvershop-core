@@ -116,7 +116,7 @@ class PaymentForm extends CheckoutForm
         
         // handle cases where order total is 0. Note that the order will appear
         // as "paid", but without a Payment record attached.
-        if ($order->GrandTotal() == 0 && Order::config()->allow_zero_order_total) {
+        if ($order->GrandTotal() == 0 && Order::config()->get('allow_zero_order_total')) {
             if (!$this->orderProcessor->placeOrder()) {
                 $form->sessionMessage($this->orderProcessor->getError());
                 return $this->controller->redirectBack();
@@ -126,7 +126,7 @@ class PaymentForm extends CheckoutForm
         }
 
         // try to place order before payment, if configured
-        if (Order::config()->place_before_payment) {
+        if (Order::config()->get('place_before_payment')) {
             if (!$this->orderProcessor->placeOrder()) {
                 $form->sessionMessage($this->orderProcessor->getError());
                 return $this->controller->redirectBack();

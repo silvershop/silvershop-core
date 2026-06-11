@@ -38,8 +38,8 @@ class ProductImageExtension extends Extension
      */
     public function getThumbnail($upscale = false): Image|AssetContainer
     {
-        $width = self::config()->thumbnail_width;
-        $height = self::config()->thumbnail_height;
+        $width = self::config()->get('thumbnail_width');
+        $height = self::config()->get('thumbnail_height');
 
         return $this->getImageAt($width, $height, $upscale);
     }
@@ -49,8 +49,8 @@ class ProductImageExtension extends Extension
      */
     public function getContentImage($upscale = false): Image|AssetContainer
     {
-        $width = self::config()->content_image_width;
-        $height = self::config()->content_image_height;
+        $width = self::config()->get('content_image_width');
+        $height = self::config()->get('content_image_height');
 
         return $this->getImageAt($width, $height, $upscale);
     }
@@ -60,8 +60,8 @@ class ProductImageExtension extends Extension
      */
     public function getLargeImage($upscale = false): Image|AssetContainer
     {
-        $width = self::config()->large_image_width;
-        $height = self::config()->large_image_height;
+        $width = self::config()->get('large_image_width');
+        $height = self::config()->get('large_image_height');
 
         return $this->getImageAt($width, $height, $upscale);
     }
@@ -104,6 +104,6 @@ class ProductImageExtension extends Extension
     public function HasLargeImage(): bool
     {
         $imageWidth = intval($this->getOwner()->getWidth());
-        return $imageWidth > self::config()->content_image_width;
+        return $imageWidth > self::config()->get('content_image_width');
     }
 }
