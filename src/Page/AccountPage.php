@@ -78,7 +78,7 @@ class AccountPage extends Page
             $page = self::create()->update(
                 [
                 'Title' => 'Account',
-                'URLSegment' => AccountPageController::config()->url_segment,
+                'URLSegment' => AccountPageController::config()->get('url_segment'),
                 'ShowInMenus' => 0,
                 ]
             );

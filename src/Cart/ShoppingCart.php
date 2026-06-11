@@ -64,7 +64,7 @@ class ShoppingCart
     {
         $session = ShopTools::getSession();
         //find order by id saved to session (allows logging out and retaining cart contents)
-        if (!$this->order && $sessionid = $session->get(self::config()->cartid_session_name)) {
+        if (!$this->order && $sessionid = $session->get(self::config()->get('cartid_session_name'))) {
             $this->order = Order::get()->filter(
                 [
                     'Status' => 'Cart',
@@ -127,7 +127,7 @@ class ShoppingCart
 
         $this->order = $order;
         $session = ShopTools::getSession();
-        $session->set(self::config()->cartid_session_name, $order->ID);
+        $session->set(self::config()->get('cartid_session_name'), $order->ID);
 
         return $this;
     }
@@ -153,7 +153,7 @@ class ShoppingCart
         }
 
         $this->order = Order::create();
-        if (Member::config()->login_joins_cart && ($member = Security::getCurrentUser())) {
+        if (Member::config()->get('login_joins_cart') && ($member = Security::getCurrentUser())) {
             $this->order->MemberID = $member->ID;
         }
 
@@ -165,7 +165,7 @@ class ShoppingCart
         $this->order->extend('onStartOrder');
 
         $session = ShopTools::getSession();
-        $session->set(self::config()->cartid_session_name, $this->order->ID);
+        $session->set(self::config()->get('cartid_session_name'), $this->order->ID);
 
         return $this->order;
     }
@@ -816,7 +816,7 @@ class ShoppingCart
     public function archiveorderid($requestedOrderId = null): void
     {
         $session = ShopTools::getSession();
-        $sessionId = $session->get(self::config()->cartid_session_name);
+        $sessionId = $session->get(self::config()->get('cartid_session_name'));
         $order = Order::get()->filter(['Status:not' => 'Cart'])
             ->byId($sessionId);
 
@@ -842,7 +842,7 @@ class ShoppingCart
     public function clear($write = true): ?bool
     {
         $session = ShopTools::getSession();
-        $session->set(self::config()->cartid_session_name, null)->clear(self::config()->cartid_session_name);
+        $session->set(self::config()->get('cartid_session_name'), null)->clear(self::config()->get('cartid_session_name'));
         $order = $this->current();
         $this->order = null;
 

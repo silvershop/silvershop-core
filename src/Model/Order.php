@@ -343,7 +343,7 @@ class Order extends DataObject
         $searchContext = parent::getDefaultSearchContext();
         $fieldList = $searchContext->getFields();
 
-        $validStates = self::config()->placed_status;
+        $validStates = self::config()->get('placed_status');
         $statusOptions = array_filter(self::get_order_status_options(), function ($k) use ($validStates): bool {
             return in_array($k, $validStates);
         }, ARRAY_FILTER_USE_KEY);
@@ -484,7 +484,7 @@ class Order extends DataObject
     {
         return round(
             $this->GrandTotal() - ($includeAuthorized ? $this->TotalPaidOrAuthorized() : $this->TotalPaid()),
-            self::config()->rounding_precision
+            self::config()->get('rounding_precision')
         );
     }
 
@@ -527,14 +527,14 @@ class Order extends DataObject
 
         switch ($this->Status) {
             case 'Unpaid' :
-                return self::config()->cancel_before_payment;
+                return self::config()->get('cancel_before_payment');
             case 'Paid' :
-                return self::config()->cancel_before_processing;
+                return self::config()->get('cancel_before_processing');
             case 'Processing' :
-                return self::config()->cancel_before_sending;
+                return self::config()->get('cancel_before_sending');
             case 'Sent' :
             case 'Complete' :
-                return self::config()->cancel_after_sending;
+                return self::config()->get('cancel_after_sending');
         }
 
         return false;
@@ -550,7 +550,7 @@ class Order extends DataObject
             return $extended;
         }
 
-        if (!in_array($this->Status, self::config()->payable_status)) {
+        if (!in_array($this->Status, self::config()->get('payable_status'))) {
             return false;
         }
 
@@ -836,7 +836,7 @@ class Order extends DataObject
             }
         }
 
-        $logStatus = $this->config()->log_status;
+        $logStatus = $this->config()->get('log_status');
         if (!empty($logStatus) && in_array($toStatus, $logStatus)) {
             $this->flagOrderStatusWrite = $fromStatus != $toStatus;
         }

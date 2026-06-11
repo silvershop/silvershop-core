@@ -66,7 +66,7 @@ class OrderActionsForm extends Form
         );
         $actions = FieldList::create();
         //payment
-        if (self::config()->allow_paying && $order->canPay()) {
+        if (self::config()->get('allow_paying') && $order->canPay()) {
             $gateways = GatewayInfo::getSupportedGateways();
             //remove manual gateways
             foreach ($gateways as $gateway => $gatewayname) {
@@ -118,7 +118,7 @@ class OrderActionsForm extends Form
         }
 
         //cancelling
-        if (self::config()->allow_cancelling && $order->canCancel()) {
+        if (self::config()->get('allow_cancelling') && $order->canCancel()) {
             $actions->push(
                 FormAction::create(
                     'docancel',
@@ -148,7 +148,7 @@ class OrderActionsForm extends Form
      */
     public function dopayment(array $data, $form): HTTPResponse
     {
-        if (self::config()->allow_paying
+        if (self::config()->get('allow_paying')
             && $this->order instanceof Order
             && $this->order->canPay()
         ) {
@@ -196,13 +196,13 @@ class OrderActionsForm extends Form
      */
     public function docancel($data, $form): void
     {
-        if (self::config()->allow_cancelling
+        if (self::config()->get('allow_cancelling')
             && $this->order->canCancel()
         ) {
             $this->order->setField('Status', 'MemberCancelled');
             $this->order->write();
 
-            if (self::config()->email_notification) {
+            if (self::config()->get('email_notification')) {
                 OrderEmailNotifier::create($this->order)->sendCancelNotification();
             }
 

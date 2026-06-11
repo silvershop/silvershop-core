@@ -23,7 +23,7 @@ class DropdownShopQuantityField extends ShopQuantityField
     public function Field()
     {
         $qtyArray = [];
-        for ($r = 1; $r <= $this->config()->max; ++$r) {
+        for ($r = 1; $r <= $this->config()->get('max'); ++$r) {
             $qtyArray[$r] = $r;
         }
 

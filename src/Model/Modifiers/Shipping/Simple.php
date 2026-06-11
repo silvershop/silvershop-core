@@ -23,11 +23,11 @@ class Simple extends Base
     public function value($subtotal = null): int|float
     {
         $country = $this->Country();
-        if ($country && isset(self::config()->charges_by_country[$country])) {
-            return self::config()->charges_by_country[$country];
+        if ($country && isset(self::config()->get('charges_by_country')[$country])) {
+            return self::config()->get('charges_by_country')[$country];
         }
 
-        return self::config()->default_charge;
+        return self::config()->get('default_charge');
     }
 
     public function getTableTitle(): string

@@ -44,7 +44,7 @@ final class CartCleanupTaskTest extends SapphireTest
         $fakeCartCleanupTask = FakeCartCleanupTask::create();
         $fakeCartCleanupTask->run(
             new ArrayInput([]),
-            new PolyOutput(PolyOutput::FORMAT_ANSI)
+            PolyOutput::create(PolyOutput::FORMAT_ANSI)
         );
 
         $this->assertInstanceOf(Order::class, Order::get()->byID($orderRunningRecentID));

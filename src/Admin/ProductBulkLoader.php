@@ -110,7 +110,7 @@ class ProductBulkLoader extends CsvBulkLoader
         $arrayList->merge($results->Created());
         $arrayList->merge($results->Updated());
 
-        $parentPageID = $this->config()->parent_page_id;
+        $parentPageID = $this->config()->get('parent_page_id');
         foreach ($arrayList as $object) {
             if (!$object->ParentID) {
                 //set parent page
@@ -197,7 +197,7 @@ class ProductBulkLoader extends CsvBulkLoader
                 $obj->writeToStage('Stage');
                 $obj->publishSingle();
                 //TODO: otherwise assign it to the first product group found
-            } elseif ($this->config()->create_new_product_groups) {
+            } elseif ($this->config()->get('create_new_product_groups')) {
                 //create parent product group
                 $pg = ProductCategory::create();
                 $pg->Title = $title;

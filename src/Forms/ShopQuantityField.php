@@ -90,8 +90,8 @@ class ShopQuantityField extends ModelData
             $numericField->addExtraClass($className);
         }
 
-        if ($this->config()->max > 0) {
-            $numericField->setAttribute("max", $this->config()->max);
+        if ($this->config()->get('max') > 0) {
+            $numericField->setAttribute("max", $this->config()->get('max'));
         }
 
         return $numericField;

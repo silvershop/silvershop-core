@@ -247,14 +247,14 @@ class Variation extends DataObject implements Buyable
         if ($attributeValues->exists()) {
             $labelvalues = [];
             foreach ($attributeValues as $value) {
-                if (self::config()->title_has_label && $value->Type()->exists()) {
-                    $labelvalues[] = $value->Type()->Label . self::config()->title_separator . $value->Value;
+                if (self::config()->get('title_has_label') && $value->Type()->exists()) {
+                    $labelvalues[] = $value->Type()->Label . self::config()->get('title_separator') . $value->Value;
                 } else {
                     $labelvalues[] = $value->Value;
                 }
             }
 
-            $title = implode(self::config()->title_glue, $labelvalues);
+            $title = implode(self::config()->get('title_glue'), $labelvalues);
         }
 
         $this->extend('updateTitle', $title);
@@ -396,7 +396,7 @@ class Variation extends DataObject implements Buyable
 
     public function createItem($quantity = 1, $filter = []): OrderItem
     {
-        $orderitem = self::config()->order_item;
+        $orderitem = self::config()->get('order_item');
         $item = new $orderitem();
         $item->ProductID = $this->ProductID;
         $item->ProductVariationID = $this->ID;
@@ -435,6 +435,6 @@ class Variation extends DataObject implements Buyable
         // (i.e. if the calculated price is 3.145 it will display as 3.15.
         // so if I put 10 of them in my cart I will expect the price to be
         // 31.50 not 31.45).
-        return round($price, Order::config()->rounding_precision);
+        return round($price, Order::config()->get('rounding_precision'));
     }
 }

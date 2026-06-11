@@ -36,7 +36,7 @@ class FlatTax extends Base
     public function __construct($record = null, $isSingleton = false, $model = null)
     {
         parent::__construct($record, $isSingleton, $model);
-        $this->Type = self::config()->exclusive ? 'Chargable' : 'Ignored';
+        $this->Type = self::config()->get('exclusive') ? 'Chargable' : 'Ignored';
     }
 
     /**
@@ -44,7 +44,7 @@ class FlatTax extends Base
      */
     public function value($incoming): int|float
     {
-        $this->Rate = (float) self::config()->rate;
+        $this->Rate = (float) self::config()->get('rate');
         $order = $this->Order();
         $taxTotal = 0.0;
         $hasCustomTaxRateFound = false;
@@ -100,10 +100,10 @@ class FlatTax extends Base
             return 0.0;
         }
 
-        if (self::config()->exclusive) {
+        if (self::config()->get('exclusive')) {
             return $amount * $rate;
         }
 
-        return $amount - round($amount / (1 + $rate), Order::config()->rounding_precision);
+        return $amount - round($amount / (1 + $rate), Order::config()->get('rounding_precision'));
     }
 }

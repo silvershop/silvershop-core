@@ -196,7 +196,7 @@ class OrderProcessor
         $payment = Payment::create()->init(
             $gateway,
             $this->order->TotalOutstanding(true),
-            ShopConfigExtension::config()->base_currency
+            ShopConfigExtension::config()->get('base_currency')
         );
         $this->order->Payments()->add($payment);
         return $payment;
@@ -221,7 +221,7 @@ class OrderProcessor
 
             if (($this->order->GrandTotal() > 0 && $this->order->TotalOutstanding(false) <= 0)
                 // Zero-dollar order (e.g. paid with loyalty points)
-                || ($this->order->GrandTotal() == 0 && Order::config()->allow_zero_order_total)
+                || ($this->order->GrandTotal() == 0 && Order::config()->get('allow_zero_order_total'))
             ) {
                 //set order as paid
                 $this->order->setField('Status', 'Paid');
@@ -341,6 +341,7 @@ class OrderProcessor
                 if (!$this->order->Currency) {
                     $this->order->Currency = $currencyService->getActiveCurrency();
                 }
+
                 $this->order->ExchangeRate = $currencyService->getExchangeRate($baseCurrency, $this->order->Currency);
             }
 
@@ -375,14 +376,14 @@ class OrderProcessor
         */
 
         //send confirmation if configured and receipt hasn't been sent
-        if (self::config()->send_confirmation
+        if (self::config()->get('send_confirmation')
             && !$this->order->ReceiptSent
         ) {
             $this->notifier->sendConfirmation();
         }
 
         //notify admin, if configured
-        if (self::config()->send_admin_notification) {
+        if (self::config()->get('send_admin_notification')) {
             $this->notifier->sendAdminNotification();
         }
 

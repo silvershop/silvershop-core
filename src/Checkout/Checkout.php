@@ -37,12 +37,12 @@ class Checkout
 
     public static function member_creation_enabled(): bool
     {
-        return CheckoutConfig::config()->member_creation_enabled;
+        return CheckoutConfig::config()->get('member_creation_enabled');
     }
 
     public static function membership_required(): bool
     {
-        return CheckoutConfig::config()->membership_required;
+        return CheckoutConfig::config()->get('membership_required');
     }
 
     public static function get($order = null): Checkout|bool
@@ -163,7 +163,7 @@ class Checkout
      */
     public function validateMember($member): bool
     {
-        if (!CheckoutConfig::config()->membership_required) {
+        if (!CheckoutConfig::config()->get('membership_required')) {
             return true;
         }
 

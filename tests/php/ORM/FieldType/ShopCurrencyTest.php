@@ -12,10 +12,10 @@ final class ShopCurrencyTest extends SapphireTest
 {
     public function testField(): void
     {
-        ShopCurrency::config()->currency_symbol = "X";
-        ShopCurrency::config()->decimal_delimiter = "|";
-        ShopCurrency::config()->thousand_delimiter = "-";
-        ShopCurrency::config()->negative_value_format = "- %s";
+        ShopCurrency::config()->set('currency_symbol', "X");
+        ShopCurrency::config()->set('decimal_delimiter', "|");
+        ShopCurrency::config()->set('thousand_delimiter', "-");
+        ShopCurrency::config()->set('negative_value_format', "- %s");
 
         $shopCurrency = ShopCurrency::create("Price");
         $shopCurrency->setValue(-12345.56);
@@ -24,10 +24,10 @@ final class ShopCurrencyTest extends SapphireTest
 
     public function testNiceUsesDecimalsConfig(): void
     {
-        ShopCurrency::config()->currency_symbol = "$";
-        ShopCurrency::config()->decimal_delimiter = ".";
-        ShopCurrency::config()->thousand_delimiter = ",";
-        ShopCurrency::config()->decimals = 4;
+        ShopCurrency::config()->set('currency_symbol', "$");
+        ShopCurrency::config()->set('decimal_delimiter', ".");
+        ShopCurrency::config()->set('thousand_delimiter', ",");
+        ShopCurrency::config()->set('decimals', 4);
 
         $shopCurrency = ShopCurrency::create("Price");
         $shopCurrency->setValue(12345.5678);
@@ -36,7 +36,7 @@ final class ShopCurrencyTest extends SapphireTest
 
     public function testScaffoldFormFieldReturnsNumericField(): void
     {
-        ShopCurrency::config()->decimals = 2;
+        ShopCurrency::config()->set('decimals', 2);
 
         $shopCurrency = ShopCurrency::create("Price");
         $field = $shopCurrency->scaffoldFormField("Price");
@@ -47,7 +47,7 @@ final class ShopCurrencyTest extends SapphireTest
 
     public function testScaffoldFormFieldRespectsDecimalsConfig(): void
     {
-        ShopCurrency::config()->decimals = 4;
+        ShopCurrency::config()->set('decimals', 4);
 
         $shopCurrency = ShopCurrency::create("Price");
         $field = $shopCurrency->scaffoldFormField("Price");

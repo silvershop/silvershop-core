@@ -68,7 +68,7 @@ final class OrderModifierTest extends FunctionalTest
         $this->assertEquals(510, $order->calculate(), "Total with 25% tax");
 
         //remove modifiers
-        Order::config()->modifiers = null;
+        Order::config()->set('modifiers', null);
         $order->calculate();
         $this->assertEquals(408, $order->calculate(), "Total with no modification");
     }

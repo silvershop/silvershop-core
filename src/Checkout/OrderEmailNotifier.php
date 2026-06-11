@@ -67,7 +67,7 @@ class OrderEmailNotifier
 
     protected function buildEmail(string $template, string $subject): Email
     {
-        $from = ShopConfigExtension::config()->email_from ? ShopConfigExtension::config()->email_from : Email::config()->admin_email;
+        $from = ShopConfigExtension::config()->get('email_from') ? ShopConfigExtension::config()->get('email_from') : Email::config()->get('admin_email');
         $to = $this->order->getLatestEmail();
         $checkoutpage = CheckoutPage::get()->first();
         $completemessage = $checkoutpage ? $checkoutpage->dbObject('PurchaseComplete') : '';
@@ -105,7 +105,7 @@ class OrderEmailNotifier
         $email = $this->buildEmail($template, $subject);
 
         if ($copyToAdmin) {
-            $email->setBCC(Email::config()->admin_email);
+            $email->setBCC(Email::config()->get('admin_email'));
         }
 
         if ($this->debugMode) {
@@ -136,7 +136,7 @@ class OrderEmailNotifier
         return $this->sendEmail(
             'SilverShop/Model/Order_ConfirmationEmail',
             $subject,
-            self::config()->bcc_confirmation_to_admin
+            self::config()->get('bcc_confirmation_to_admin')
         );
     }
 
@@ -153,7 +153,7 @@ class OrderEmailNotifier
         );
 
         $email = $this->buildEmail('SilverShop/Model/Order_AdminNotificationEmail', $subject)
-            ->setTo(Email::config()->admin_email);
+            ->setTo(Email::config()->get('admin_email'));
 
         if ($this->debugMode) {
             return $this->debug($email);
@@ -185,7 +185,7 @@ class OrderEmailNotifier
         return $this->sendEmail(
             'SilverShop/Model/Order_ReceiptEmail',
             $subject,
-            self::config()->bcc_receipt_to_admin
+            self::config()->get('bcc_receipt_to_admin')
         );
     }
 
@@ -202,9 +202,9 @@ class OrderEmailNotifier
                 ['OrderNo' => $this->order->Reference]
             ))
             ->setFrom(
-                ShopConfigExtension::config()->email_from ? ShopConfigExtension::config()->email_from : Email::config()->admin_email
+                ShopConfigExtension::config()->get('email_from') ? ShopConfigExtension::config()->get('email_from') : Email::config()->get('admin_email')
             )
-            ->setTo(Email::config()->admin_email)
+            ->setTo(Email::config()->get('admin_email'))
             ->setBody((string) $this->order->renderWith(Order::class))
             ->text((string) $this->order->renderWith('SilverShop/Model/Order_EmailPlainBody')->Plain());
 
@@ -247,7 +247,7 @@ class OrderEmailNotifier
         $adminThemeset = SSViewer::get_themes();
         SSViewer::set_themes(SSViewer::config()->uninherited('themes'));
 
-        $from = ShopConfigExtension::config()->email_from ? ShopConfigExtension::config()->email_from : Email::config()->admin_email;
+        $from = ShopConfigExtension::config()->get('email_from') ? ShopConfigExtension::config()->get('email_from') : Email::config()->get('admin_email');
         $email = Email::create()
             ->setFrom($from)
             ->setSubject(_t('SilverShop\ShopEmail.StatusChangeSubject', 'SilverShop – {Title}', ['Title' => $title]))
@@ -262,8 +262,8 @@ class OrderEmailNotifier
                 ]
             );
 
-        if (self::config()->bcc_status_change_to_admin) {
-            $email->setBCC(Email::config()->admin_email);
+        if (self::config()->get('bcc_status_change_to_admin')) {
+            $email->setBCC(Email::config()->get('admin_email'));
         }
 
         if ($this->debugMode) {

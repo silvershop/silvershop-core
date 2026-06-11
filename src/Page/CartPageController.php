@@ -161,18 +161,19 @@ class CartPageController extends PageController
                 if ($cartForm instanceof CartForm) {
                     return $cartForm->handleRequest($request);
                 }
+
                 return parent::handleRequest($request);
             }
 
             try {
                 if (!$this->hasAction($cartMethod)) {
-                    return $this->httpError(404, "Action '{$cartMethod}' isn't available $classMessage.");
+                    return $this->httpError(404, sprintf("Action '%s' isn't available %s.", $cartMethod, $classMessage));
                 }
 
                 if (!$this->checkAccessAction($cartMethod)
                     || in_array(strtolower($cartMethod), ['run', 'doinit'], true)
                 ) {
-                    return $this->httpError(403, "Action '{$cartMethod}' isn't allowed $classMessage.");
+                    return $this->httpError(403, sprintf("Action '%s' isn't allowed %s.", $cartMethod, $classMessage));
                 }
 
                 $result = $this->handleAction($request, $cartMethod);
@@ -809,6 +810,7 @@ class CartPageController extends PageController
                 : 'Cart has not been created yet. Add a product.';
             return ModelData::create()->customise(['Content' => $content]);
         }
+
         return '';
     }
 

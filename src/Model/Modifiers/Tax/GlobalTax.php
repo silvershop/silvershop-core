@@ -31,7 +31,7 @@ class GlobalTax extends Base
             ?
             $this->Rate()
             :
-            round(1 - (1 / (1 + $this->Rate())), Order::config()->rounding_precision);
+            round(1 - (1 / (1 + $this->Rate())), Order::config()->get('rounding_precision'));
         return $incoming * $rate;
     }
 
@@ -42,13 +42,13 @@ class GlobalTax extends Base
             return $this->getField('Rate');
         }
 
-        $rates = self::config()->country_rates;
+        $rates = self::config()->get('country_rates');
         $country = $this->Country();
         if ($country && isset($rates[$country])) {
             return $this->Rate = $rates[$country]['rate'];
         }
 
-        $defaults = self::config()->defaults;
+        $defaults = self::config()->get('defaults');
         return $this->Rate = $defaults['Rate'];
     }
 

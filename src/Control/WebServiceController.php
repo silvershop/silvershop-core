@@ -171,7 +171,7 @@ class WebServiceController extends Controller
             ? $cart->remove($buyable, null, $request->requestVars())
             : $cart->add($buyable, $quantity, $request->requestVars());
 
-        if (!$result) {
+        if ($result === null) {
             return $this->cartOperationResponse($format, $cart, false, 400);
         }
 
@@ -323,6 +323,7 @@ class WebServiceController extends Controller
         if (!ClassInfo::exists($buyableClass)) {
             $buyableClass = ShopTools::unsanitiseClassName($buyableClass);
         }
+
         $buyableId = (int) ($request->requestVar('ProductID') ?? $request->requestVar('BuyableID') ?? 0);
 
         if ($buyableId === 0
@@ -369,6 +370,7 @@ class WebServiceController extends Controller
                 $child = $xml->addChild($nodeName);
                 $this->appendXml($child, $value, $numericNodeName);
             }
+
             return;
         }
 

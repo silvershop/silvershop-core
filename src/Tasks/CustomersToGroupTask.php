@@ -66,6 +66,7 @@ class CustomersToGroupTask extends BuildTask
                 $existingMembers->add($member);
                 $output->write('.');
             }
+
             $output->writeln('');
         } else {
             $output->writeln(
@@ -75,6 +76,7 @@ class CustomersToGroupTask extends BuildTask
                 )
             );
         }
+
         return Command::SUCCESS;
     }
 }

@@ -25,7 +25,7 @@ class Summary extends CheckoutStep
 
     public function summary(): HTTPResponse|array
     {
-        if ($redirect = $this->redirectToFirstIncompleteCheckoutStep()) {
+        if (($redirect = $this->redirectToFirstIncompleteCheckoutStep()) !== null) {
             return $redirect;
         }
 

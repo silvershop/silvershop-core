@@ -57,17 +57,17 @@ class ShopCurrency extends DBCurrency
             return _t(__CLASS__ . '.Free', 'Free');
         }
 
-        $symbol = $this->config()->currency_symbol;
+        $symbol = $this->config()->get('currency_symbol');
         $val = number_format(
             abs($this->value),
-            self::config()->decimals,
-            self::config()->decimal_delimiter,
-            self::config()->thousand_delimiter
+            self::config()->get('decimals'),
+            self::config()->get('decimal_delimiter'),
+            self::config()->get('thousand_delimiter')
         );
-        $val = $this->config()->append_symbol ? $val . ' ' . $symbol : $symbol . $val;
+        $val = $this->config()->get('append_symbol') ? $val . ' ' . $symbol : $symbol . $val;
 
         if ($this->value < 0) {
-            return sprintf(self::config()->negative_value_format, $val);
+            return sprintf(self::config()->get('negative_value_format'), $val);
         }
 
         return $val;
@@ -76,7 +76,7 @@ class ShopCurrency extends DBCurrency
     public function scaffoldFormField(?string $title = null, array $params = []): ?FormField
     {
         return NumericField::create($this->getName(), $title)
-            ->setScale(self::config()->decimals);
+            ->setScale(self::config()->get('decimals'));
     }
 
     public function forTemplate(): string

@@ -43,7 +43,7 @@ class Weight extends Base
 
         $amount = 0;
 
-        $table = $this->config()->weight_cost;
+        $table = $this->config()->get('weight_cost');
         if (!empty($table) && is_array($table)) {
             // ensure table is sorted
             ksort($table, SORT_NUMERIC);

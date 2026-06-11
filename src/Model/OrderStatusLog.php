@@ -155,7 +155,7 @@ class OrderStatusLog extends DataObject
     {
         $validationResult = parent::validate();
 
-        if (!$this->OrderID && $this->config()->order_is_required) {
+        if (!$this->OrderID && $this->config()->get('order_is_required')) {
             $validationResult->addError('there is no order id for Order Status Log');
         }
 

@@ -64,7 +64,7 @@ final class AddressBookCheckoutComponentTest extends SapphireTest
     protected function setUp(): void
     {
         ShopTestBootstrap::setConfiguration();
-        CheckoutConfig::config()->membership_required = false;
+        CheckoutConfig::config()->set('membership_required', false);
         parent::setUp();
 
         $this->member = $this->objFromFixture(Member::class, "jeremyperemy");

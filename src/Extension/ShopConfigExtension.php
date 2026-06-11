@@ -73,7 +73,7 @@ class ShopConfigExtension extends Extension
 
     public static function get_site_currency(): string
     {
-        return self::config()->base_currency;
+        return self::config()->get('base_currency');
     }
 
     /**
@@ -84,7 +84,7 @@ class ShopConfigExtension extends Extension
      */
     public static function get_supported_currencies(): array
     {
-        $currencies = self::config()->supported_currencies;
+        $currencies = self::config()->get('supported_currencies');
         if (empty($currencies)) {
             return [self::get_site_currency()];
         }
@@ -118,7 +118,7 @@ class ShopConfigExtension extends Extension
                     CheckboxSetField::create(
                         'AllowedCountries',
                         _t(__CLASS__ . '.AllowedCountries', 'Allowed Ordering and Shipping Countries'),
-                        self::config()->iso_3166_country_codes
+                        self::config()->get('iso_3166_country_codes')
                     )
                 )
             )
@@ -135,7 +135,7 @@ class ShopConfigExtension extends Extension
      */
     public function getCountriesList($prefixisocode = false): array
     {
-        $countries = self::config()->iso_3166_country_codes;
+        $countries = self::config()->get('iso_3166_country_codes');
         asort($countries);
         if ($allowed = $this->getOwner()->AllowedCountries) {
             $allowed = json_decode($allowed);
@@ -177,7 +177,7 @@ class ShopConfigExtension extends Extension
      */
     public static function countryCode2name($code): string
     {
-        $codes = self::config()->iso_3166_country_codes;
+        $codes = self::config()->get('iso_3166_country_codes');
         if (isset($codes[$code])) {
             return $codes[$code];
         }

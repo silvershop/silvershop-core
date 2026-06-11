@@ -67,6 +67,7 @@ class ShopEmailPreviewTask extends BuildTask
         foreach ($this->previewableEmails as $method) {
             $output->writeln('  - ' . $method);
         }
+
         $output->writeln('');
 
         if ($email && in_array($email, $this->previewableEmails, true)) {
@@ -80,7 +81,7 @@ class ShopEmailPreviewTask extends BuildTask
 
             // Ensure a valid email exists on the order for preview rendering
             if (!$order->getLatestEmail()) {
-                $order->Email = Email::config()->admin_email ?: 'preview@example.com';
+                $order->Email = Email::config()->get('admin_email') ?: 'preview@example.com';
             }
 
             $notifier = OrderEmailNotifier::create($order);
@@ -93,7 +94,7 @@ class ShopEmailPreviewTask extends BuildTask
                 $usedExplicitId = false;
                 $log = $this->resolvePreviewOrderStatusLog($order, $logOption, $usedExplicitId);
 
-                if (!$log) {
+                if ($log === null) {
                     if ($usedExplicitId) {
                         $output->writeln(
                             'Invalid order-status-log ID, or that log does not belong to the preview order.'
@@ -114,6 +115,7 @@ class ShopEmailPreviewTask extends BuildTask
                 $method = 'send' . $email;
                 $output->writeForHtml($notifier->$method());
             }
+
             $output->writeForAnsi('Email rendered (HTML only - open in browser to preview).');
         } elseif ($email) {
             $output->writeln('Unknown email type: ' . $email);
