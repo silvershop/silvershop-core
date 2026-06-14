@@ -354,8 +354,8 @@ final class CheckoutComponentTest extends SapphireTest
         $defaultData = ShippingAddress::create()->getData($defaultOrder);
 
         $this->assertEquals('AU', $defaultData['Country']);
-        $this->assertNotEquals('Sydney', $defaultData['City']);
-        $this->assertNotEquals('Incorrect State', $defaultData['State']);
+        $this->assertArrayNotHasKey('Sydney', $defaultData);
+        $this->assertArrayNotHasKey('State', $defaultData);
 
         Config::modify()->set(CheckoutAddressComponent::class, 'shop_user_info_location_fields', ['Country', 'City']);
 
@@ -366,6 +366,6 @@ final class CheckoutComponentTest extends SapphireTest
 
         $this->assertEquals('AU', $data['Country']);
         $this->assertEquals('Sydney', $data['City']);
-        $this->assertNotEquals('Incorrect State', $data['State']);
+        $this->assertArrayNotHasKey('State', $data, 'State not specified in heckoutAddressComponent::config()shop_user_info_location_fields');
     }
 }
