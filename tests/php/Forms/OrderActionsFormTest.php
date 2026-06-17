@@ -174,7 +174,7 @@ final class OrderActionsFormTest extends FunctionalTest
     protected function stubGatewayFactory($stubGateway): MockObject
     {
         $mock = $this->getMockBuilder(GatewayFactory::class)->getMock();
-        $mock->expects($this->any())->method('create')->will($this->returnValue($stubGateway));
+        $mock->expects($this->any())->method('create')->willReturn($stubGateway);
         return $mock;
     }
 
@@ -190,29 +190,27 @@ final class OrderActionsFormTest extends FunctionalTest
             ->disableOriginalConstructor()->getMock();
 
         $mockResponse->expects($this->any())
-            ->method('isSuccessful')->will($this->returnValue($successValue));
+            ->method('isSuccessful')->willReturn($successValue);
 
         $mockResponse->expects($this->any())
-            ->method('isRedirect')->will($this->returnValue($isRedirect));
+            ->method('isRedirect')->willReturn($isRedirect);
 
         $mockResponse->expects($this->any())
-            ->method('getRedirectResponse')->will(
-                $this->returnValue(
-                    new RedirectResponse('http://paymentprovider/test/offsiteform')
-                )
+            ->method('getRedirectResponse')->willReturn(
+                new RedirectResponse('http://paymentprovider/test/offsiteform')
             );
 
         $mockResponse->expects($this->any())
-            ->method('getTransactionReference')->will($this->returnValue($transactionReference));
+            ->method('getTransactionReference')->willReturn($transactionReference);
 
         $mockRequest = $this->getMockBuilder(AbstractRequest::class)
             ->disableOriginalConstructor()->getMock();
 
         $mockRequest->expects($this->any())
-            ->method('send')->will($this->returnValue($mockResponse));
+            ->method('send')->willReturn($mockResponse);
 
         $mockRequest->expects($this->any())
-            ->method('getTransactionReference')->will($this->returnValue($transactionReference));
+            ->method('getTransactionReference')->willReturn($transactionReference);
 
 
         //--------------------------------------------------------------------------------------------------------------
@@ -225,7 +223,7 @@ final class OrderActionsFormTest extends FunctionalTest
 
         $mock->expects($this->any())
             ->method('purchase')
-            ->will($this->returnValue($mockRequest));
+            ->willReturn($mockRequest);
 
         $mock->expects($this->any())
             ->method('getName')
@@ -233,7 +231,7 @@ final class OrderActionsFormTest extends FunctionalTest
 
         $mock->expects($this->any())
             ->method('supportsCompletePurchase')
-            ->will($this->returnValue($isRedirect));
+            ->willReturn($isRedirect);
 
         return $mock;
     }

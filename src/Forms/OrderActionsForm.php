@@ -153,7 +153,6 @@ class OrderActionsForm extends Form
             && $this->order->canPay()
         ) {
             // Save payment data from form and process payment
-            $data = $form->getData();
             $gateway = (empty($data['PaymentMethod'])) ? null : $data['PaymentMethod'];
 
             if (!GatewayInfo::isManual($gateway)) {
