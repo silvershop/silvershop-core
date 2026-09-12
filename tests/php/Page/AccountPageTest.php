@@ -270,7 +270,7 @@ final class AccountPageTest extends FunctionalTest
         $this->get('account/editprofile/');
         $page = $this->submitForm(
             'ChangePasswordForm_ChangePasswordForm',
-            null,
+            'action_doChangePassword',
             [
                 'Password[_CurrentPassword]' => '23u90oijlJKsa',
                 'Password[_Password]' => 'newpassword123!?',

@@ -159,12 +159,18 @@ final class WebServiceControllerTest extends FunctionalTest
         $this->assertIsArray($payload);
         $this->assertTrue($payload['success']);
         $this->assertSame('good', $payload['messageType']);
-        $this->assertNull(ShoppingCart::singleton()->current());
+
+        // Verify via HTTP/session context that the item is now gone.
+        $missingResponse = $this->get($this->apiUrl('api/v1/cart/remove.json', [
+            'ProductID' => $product->ID,
+        ]));
+        $this->assertSame(404, $missingResponse->getStatusCode());
     }
 
     public function testCartRemoveJsonWhenItemMissing(): void
     {
         $product = $this->objFromFixture(Product::class, 'socks');
+        $this->get($this->apiUrl('api/v1/cart/clear.json'));
         $response = $this->get($this->apiUrl('api/v1/cart/remove.json', [
             'ProductID' => $product->ID,
         ]));

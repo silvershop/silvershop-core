@@ -115,6 +115,9 @@ final class OrderActionsFormTest extends FunctionalTest
 
     public function testOnsitePayment(): void
     {
+        $mockObject = $this->buildPaymentGatewayStub(true, 'test-' . $this->order->ID, false);
+        Injector::inst()->registerService($this->stubGatewayFactory($mockObject), GatewayFactory::class);
+
         $httpResponse = $this->submitOrderActionsForm(
             [
                 'action_dopayment' => 1,
