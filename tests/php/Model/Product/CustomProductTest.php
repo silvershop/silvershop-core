@@ -65,8 +65,8 @@ final class CustomProductTest extends FunctionalTest
         $this->assertTrue((bool)$shoppingCart->add($customProduct, 1, $options3), "add a sub-variant of customisation 2");
         $item = $shoppingCart->get($customProduct, $options3);
 
-        $defaultOptions = ['Color' => 'Red', 'Size' => 0, 'Premium' => false];
-        $this->assertTrue((bool)$shoppingCart->add($customProduct, 1, $defaultOptions), "add product with no customisation");
+        $defaultOptions = array_merge(['Size' => 0], (array) CustomProduct_OrderItem::config()->get('defaults'));
+        $this->assertTrue((bool)$shoppingCart->add($customProduct, 1, $defaultOptions), "add product with default customisation options");
         $item = $shoppingCart->get($customProduct, $defaultOptions);
         $this->assertNotNull($item, 'default custom product item exists');
 
