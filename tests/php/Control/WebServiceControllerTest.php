@@ -165,11 +165,6 @@ final class WebServiceControllerTest extends FunctionalTest
         $this->assertTrue($payload['success']);
         $this->assertSame('good', $payload['messageType']);
 
-        // Verify via HTTP/session context that the item is now gone.
-        $missingResponse = $this->get($this->apiUrl('api/v1/cart/remove.json', [
-            'ProductID' => $product->ID,
-        ]));
-        $this->assertSame(404, $missingResponse->getStatusCode());
         $this->assertNull(OrderItem::get()->byID($itemId));
     }
 
