@@ -165,6 +165,11 @@ final class WebServiceControllerTest extends FunctionalTest
             'ProductID' => $product->ID,
         ]));
         $this->assertSame(404, $missingResponse->getStatusCode());
+
+        $currentCart = ShoppingCart::singleton()->current();
+        if ($currentCart !== null) {
+            $this->assertSame(0, $currentCart->Items()->count());
+        }
     }
 
     public function testCartRemoveJsonWhenItemMissing(): void
