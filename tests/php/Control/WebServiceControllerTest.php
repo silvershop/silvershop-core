@@ -167,6 +167,8 @@ final class WebServiceControllerTest extends FunctionalTest
         $this->assertSame(404, $missingResponse->getStatusCode());
 
         $currentCart = ShoppingCart::singleton()->current();
+        // Depending on request/session boundaries in FunctionalTest, clearing can either
+        // fully drop the cart object or keep an empty in-memory cart instance.
         $this->assertTrue(
             $currentCart === null || $currentCart->Items()->count() === 0,
             'Cart should be absent or contain no items after clear.'
