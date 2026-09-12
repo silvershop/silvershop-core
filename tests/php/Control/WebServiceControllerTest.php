@@ -6,6 +6,7 @@ namespace SilverShop\Tests\Control;
 
 use SilverShop\Cart\ShoppingCart;
 use SilverShop\Control\WebServiceController;
+use SilverShop\Model\OrderItem;
 use SilverShop\Page\Product;
 use SilverShop\Page\ProductCategory;
 use SilverShop\Tests\ShopTestBootstrap;
@@ -149,7 +150,11 @@ final class WebServiceControllerTest extends FunctionalTest
     {
         $product = $this->objFromFixture(Product::class, 'socks');
         // Add via HTTP so the cart lives in the same session used by subsequent HTTP requests.
-        $this->get($this->apiUrl('api/v1/cart/add.json', ['ProductID' => $product->ID]));
+        $addResponse = $this->get($this->apiUrl('api/v1/cart/add.json', ['ProductID' => $product->ID]));
+        $addPayload = json_decode((string) $addResponse->getBody(), true);
+        $this->assertIsArray($addPayload);
+        $this->assertArrayHasKey('itemId', $addPayload);
+        $itemId = (int) $addPayload['itemId'];
 
         $response = $this->get($this->apiUrl('api/v1/cart/clear.json'));
 
@@ -165,14 +170,7 @@ final class WebServiceControllerTest extends FunctionalTest
             'ProductID' => $product->ID,
         ]));
         $this->assertSame(404, $missingResponse->getStatusCode());
-
-        $currentCart = ShoppingCart::singleton()->current();
-        // Depending on request/session boundaries in FunctionalTest, clearing can either
-        // fully drop the cart object or keep an empty in-memory cart instance.
-        $this->assertTrue(
-            $currentCart === null || $currentCart->Items()->count() === 0,
-            'Cart should be absent or contain no items after clear.'
-        );
+        $this->assertNull(OrderItem::get()->byID($itemId));
     }
 
     public function testCartRemoveJsonWhenItemMissing(): void
