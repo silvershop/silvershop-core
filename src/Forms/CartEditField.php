@@ -135,7 +135,7 @@ class CartEditField extends FormField
             );
 
             $variationfield = false;
-            if ($buyable->hasMany('Variations')) {
+            if ($buyable->hasMethod('Variations')) {
                 $variations = $buyable->Variations();
                 if ($variations->exists()) {
                     $variationfield = DropdownField::create(
