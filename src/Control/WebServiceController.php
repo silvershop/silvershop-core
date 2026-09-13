@@ -369,7 +369,7 @@ class WebServiceController extends Controller
     private function cartItemFilterFromRequest(HTTPRequest $request, Buyable $buyable): array
     {
         $itemClass = Config::inst()->get($buyable::class, 'order_item') ?: OrderItem::class;
-        $allowedFields = array_keys(DataObject::getSchema()->databaseFields($itemClass));
+        $allowedFields = array_keys(DataObject::getSchema()->fieldSpecs($itemClass));
 
         return array_intersect_key($request->requestVars(), array_flip($allowedFields));
     }
