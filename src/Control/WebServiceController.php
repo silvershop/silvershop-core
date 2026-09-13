@@ -15,7 +15,6 @@ use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Control\HTTPResponse;
 use SilverStripe\Core\ClassInfo;
 use SilverStripe\ORM\DataObject;
-use SilverStripe\ORM\DataObjectSchema;
 use SilverStripe\Security\SecurityToken;
 use SilverStripe\Versioned\Versioned;
 use SimpleXMLElement;
@@ -370,9 +369,7 @@ class WebServiceController extends Controller
     private function cartItemFilterFromRequest(HTTPRequest $request, Buyable $buyable): array
     {
         $itemClass = Config::inst()->get($buyable::class, 'order_item') ?: OrderItem::class;
-        $allowedFields = array_keys(
-            DataObject::getSchema()->fieldSpecs($itemClass, DataObjectSchema::INCLUDE_CLASS)
-        );
+        $allowedFields = array_keys(DataObject::getSchema()->fieldSpecs($itemClass));
 
         return array_intersect_key($request->requestVars(), array_flip($allowedFields));
     }
