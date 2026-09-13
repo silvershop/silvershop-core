@@ -267,7 +267,11 @@ final class AccountPageTest extends FunctionalTest
         $this->assertEquals('UpdatedName', $member->FirstName, 'First name should be updated');
 
         // Reload the editprofile page to ensure we have the ChangePasswordForm in context
-        $this->get('account/editprofile/');
+        $passwordPage = $this->get('account/editprofile/');
+        $passwordPageBody = (string) $passwordPage->getBody();
+        $changePasswordFormName = str_contains($passwordPageBody, 'name="Form_ChangePasswordForm"')
+            ? 'Form_ChangePasswordForm'
+            : 'ChangePasswordForm_ChangePasswordForm';
         $passwordData = [
             'Password[_CurrentPassword]' => '23u90oijlJKsa',
             'Password[_Password]' => 'newpassword123!?',
@@ -275,7 +279,7 @@ final class AccountPageTest extends FunctionalTest
             'action_doChangePassword' => 1,
         ];
         $page = $this->submitForm(
-            'ChangePasswordForm_ChangePasswordForm',
+            $changePasswordFormName,
             'action_doChangePassword',
             $passwordData
         );
@@ -284,17 +288,6 @@ final class AccountPageTest extends FunctionalTest
         $memberAuthenticator = new MemberAuthenticator;
         $member = Member::get()->byID($member->ID);
         $validationResult = $memberAuthenticator->checkPassword($member, 'newpassword123!?');
-        if (!$validationResult->isValid()) {
-            // Framework versions can render the form under a different generated form name.
-            $this->get('account/editprofile/');
-            $this->submitForm(
-                'Form_ChangePasswordForm',
-                'action_doChangePassword',
-                $passwordData
-            );
-            $member = Member::get()->byID($member->ID);
-            $validationResult = $memberAuthenticator->checkPassword($member, 'newpassword123!?');
-        }
         $this->assertTrue(
             $validationResult->isValid(),
             'Password should have changed'
