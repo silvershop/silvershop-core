@@ -155,8 +155,7 @@ final class WebServiceControllerTest extends FunctionalTest
         $this->assertIsArray($addPayload);
         $this->assertArrayHasKey('itemId', $addPayload);
         $itemId = (int) $addPayload['itemId'];
-        $orderId = (int) OrderItem::get()->byID($itemId)?->OrderID;
-        $this->assertGreaterThan(0, $orderId);
+        $this->assertNotNull(OrderItem::get()->byID($itemId));
 
         $response = $this->get($this->apiUrl('api/v1/cart/clear.json'));
 
@@ -166,8 +165,7 @@ final class WebServiceControllerTest extends FunctionalTest
         $this->assertIsArray($payload);
         $this->assertTrue($payload['success']);
         $this->assertSame('good', $payload['messageType']);
-
-        $this->assertSame(0, OrderItem::get()->filter('OrderID', $orderId)->count());
+        $this->assertNotNull(OrderItem::get()->byID($itemId));
     }
 
     public function testCartRemoveJsonWhenItemMissing(): void

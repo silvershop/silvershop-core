@@ -120,15 +120,13 @@ final class OrderActionsFormTest extends FunctionalTest
 
         $httpResponse = $this->submitOrderActionsForm(
             [
-                'action_dopayment' => 1,
+                'action_dopayment' => true,
                 'OrderID' => $this->order->ID,
                 'PaymentMethod' => 'Dummy',
-                'type' => 'visa',
-                'name' => 'Tester Mc. Testerson',
                 'number' => '4242424242424242',
                 'expiryMonth' => 10,
-                'expiryYear' => date('Y') + 1,
-                'cvv' => 123,
+                'expiryYear' => date('Y'),
+                'cvv' => '123',
             ]
         );
 

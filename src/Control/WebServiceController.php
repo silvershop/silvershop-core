@@ -201,6 +201,16 @@ class WebServiceController extends Controller
             return $this->invalidCartQuantityResponse($format, $cart);
         }
 
+        if (!$cart->findLineItem($buyable, $request->requestVars()) instanceof OrderItem) {
+            return $this->cartOperationResponse(
+                $format,
+                $cart,
+                false,
+                404,
+                ['message' => 'Item not found in cart', 'messageType' => 'bad']
+            );
+        }
+
         $result = $cart->remove($buyable, $quantity, $request->requestVars());
 
         if ($result === null) {
