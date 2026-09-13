@@ -125,7 +125,7 @@ final class OrderActionsFormTest extends FunctionalTest
                 'PaymentMethod' => 'Dummy',
                 'number' => '4242424242424242',
                 'expiryMonth' => 10,
-                'expiryYear' => date('Y'),
+                'expiryYear' => date('Y') + 1,
                 'cvv' => '123',
             ]
         );

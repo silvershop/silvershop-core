@@ -165,6 +165,11 @@ final class WebServiceControllerTest extends FunctionalTest
         $this->assertIsArray($payload);
         $this->assertTrue($payload['success']);
         $this->assertSame('good', $payload['messageType']);
+
+        $missingResponse = $this->get($this->apiUrl('api/v1/cart/remove.json', [
+            'ProductID' => $product->ID,
+        ]));
+        $this->assertSame(404, $missingResponse->getStatusCode());
         $this->assertNotNull(OrderItem::get()->byID($itemId));
     }
 
