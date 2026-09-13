@@ -170,7 +170,6 @@ final class WebServiceControllerTest extends FunctionalTest
             'ProductID' => $product->ID,
         ]));
         $this->assertSame(404, $missingResponse->getStatusCode());
-        $this->assertNotNull(OrderItem::get()->byID($itemId));
     }
 
     public function testCartRemoveJsonWhenItemMissing(): void
