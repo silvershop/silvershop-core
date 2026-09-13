@@ -201,7 +201,7 @@ class WebServiceController extends Controller
             return $this->invalidCartQuantityResponse($format, $cart);
         }
 
-        $filter = $this->cartItemFilterFromRequest($request);
+        $filter = $this->cartItemFilterFromRequest($request, $buyable);
 
         if (!$cart->findLineItem($buyable, $filter) instanceof OrderItem) {
             return $this->cartOperationResponse(
@@ -366,14 +366,12 @@ class WebServiceController extends Controller
     /**
      * @return array<string, mixed>
      */
-    private function cartItemFilterFromRequest(HTTPRequest $request): array
+    private function cartItemFilterFromRequest(HTTPRequest $request, Buyable $buyable): array
     {
-        $filter = $request->requestVars();
-        unset($filter['Buyable'], $filter['ProductID'], $filter['BuyableID'], $filter['quantity']);
-        $tokenName = SecurityToken::inst()->getName();
-        unset($filter[$tokenName], $filter['SecurityID']);
+        $itemClass = Config::inst()->get($buyable::class, 'order_item') ?: OrderItem::class;
+        $allowedFields = array_keys(DataObject::getSchema()->databaseFields($itemClass));
 
-        return $filter;
+        return array_intersect_key($request->requestVars(), array_flip($allowedFields));
     }
 
     private function invalidCartQuantityResponse(string $format, ShoppingCart $cart): HTTPResponse
