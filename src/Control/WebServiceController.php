@@ -201,7 +201,9 @@ class WebServiceController extends Controller
             return $this->invalidCartQuantityResponse($format, $cart);
         }
 
-        if (!$cart->findLineItem($buyable, $request->requestVars()) instanceof OrderItem) {
+        $filter = $this->cartItemFilterFromRequest($request);
+
+        if (!$cart->findLineItem($buyable, $filter) instanceof OrderItem) {
             return $this->cartOperationResponse(
                 $format,
                 $cart,
@@ -211,7 +213,7 @@ class WebServiceController extends Controller
             );
         }
 
-        $result = $cart->remove($buyable, $quantity, $request->requestVars());
+        $result = $cart->remove($buyable, $quantity, $filter);
 
         if ($result === null) {
             return $this->cartOperationResponse(
@@ -359,6 +361,19 @@ class WebServiceController extends Controller
         $quantity = (int) ($request->requestVar('quantity') ?? 1);
 
         return $quantity < 0 ? null : $quantity;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function cartItemFilterFromRequest(HTTPRequest $request): array
+    {
+        $filter = $request->requestVars();
+        unset($filter['Buyable'], $filter['ProductID'], $filter['BuyableID'], $filter['quantity']);
+        $tokenName = SecurityToken::inst()->getName();
+        unset($filter[$tokenName], $filter['SecurityID']);
+
+        return $filter;
     }
 
     private function invalidCartQuantityResponse(string $format, ShoppingCart $cart): HTTPResponse
