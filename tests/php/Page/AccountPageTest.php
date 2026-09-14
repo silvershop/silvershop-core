@@ -20,6 +20,8 @@ use SilverStripe\SiteConfig\SiteConfig;
 
 final class AccountPageTest extends FunctionalTest
 {
+    private const TEST_MEMBER_PASSWORD = '23u90oijlJKsa';
+
     protected static $fixture_file = [
         __DIR__ . '/../Fixtures/Pages.yml',
         __DIR__ . '/../Fixtures/shop.yml',
@@ -68,7 +70,7 @@ final class AccountPageTest extends FunctionalTest
             "action_doLogin",
             [
                 'Email' => 'test@example.com',
-                'Password' => '23u90oijlJKsa',
+                'Password' => self::TEST_MEMBER_PASSWORD,
             ]
         );
 
@@ -94,7 +96,7 @@ final class AccountPageTest extends FunctionalTest
             'action_doLogin',
             [
                 'Email' => 'test@example.com',
-                'Password' => '23u90oijlJKsa',
+                'Password' => self::TEST_MEMBER_PASSWORD,
             ]
         );
 
@@ -319,7 +321,7 @@ final class AccountPageTest extends FunctionalTest
             'ChangePasswordForm_ChangePasswordForm',
             null,
             [
-                'Password[_CurrentPassword]' => '23u90oijlJKsa',
+                'Password[_CurrentPassword]' => self::TEST_MEMBER_PASSWORD,
                 'Password[_Password]' => 'newpassword123!?',
                 'Password[_ConfirmPassword]' => 'newpassword123!?',
                 'action_doChangePassword' => 1,
