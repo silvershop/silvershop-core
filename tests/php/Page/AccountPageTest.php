@@ -86,8 +86,13 @@ final class AccountPageTest extends FunctionalTest
         $this->accountpage->write();
         $this->accountpage->publishSingle();
 
+        $this->autoFollowRedirection = false;
         $page = $this->get('account/');
-        $this->assertEquals(200, $page->getStatusCode(), 'a page should load');
+        $this->assertEquals(302, $page->getStatusCode(), 'Anonymous visitors should be redirected to login');
+        $this->assertStringContainsString('Security/login', (string) $page->getHeader('Location'));
+
+        $this->autoFollowRedirection = true;
+        $page = $this->get('account/');
         $this->assertSame(Security::class, $page->getHeader('X-TestPageClass'));
         $this->assertSame('login', $page->getHeader('X-TestPageAction'));
 
@@ -117,8 +122,13 @@ final class AccountPageTest extends FunctionalTest
         $this->assertFalse($subpage->canView(null));
         $this->assertTrue($subpage->canView($member));
 
+        $this->autoFollowRedirection = false;
         $page = $this->get('account/order-history/');
-        $this->assertEquals(200, $page->getStatusCode(), 'a page should load');
+        $this->assertEquals(302, $page->getStatusCode(), 'Anonymous visitors should be redirected to login');
+        $this->assertStringContainsString('Security/login', (string) $page->getHeader('Location'));
+
+        $this->autoFollowRedirection = true;
+        $page = $this->get('account/order-history/');
         $this->assertSame(Security::class, $page->getHeader('X-TestPageClass'));
         $this->assertSame('login', $page->getHeader('X-TestPageAction'));
     }
