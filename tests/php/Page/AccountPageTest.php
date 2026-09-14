@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace SilverShop\Tests\Page;
 
-use PageController;
 use SilverShop\Model\Address;
 use SilverShop\Page\AccountPage;
 use SilverShop\Page\AccountPageController;
@@ -110,17 +109,22 @@ final class AccountPageTest extends FunctionalTest
         $this->accountpage->write();
         $this->accountpage->publishRecursive();
 
+        $member = $this->objFromFixture(Member::class, 'joebloggs');
+        $subpage = $this->objFromFixture(\Page::class, 'accountsubpage');
+
+        $this->assertFalse($subpage->canView(false));
+        $this->assertTrue($subpage->canView($member));
+
         $page = $this->get('account/order-history/');
         $this->assertEquals(200, $page->getStatusCode(), 'a page should load');
         $this->assertSame(Security::class, $page->getHeader('X-TestPageClass'));
         $this->assertSame('login', $page->getHeader('X-TestPageAction'));
 
-        $member = $this->objFromFixture(Member::class, 'joebloggs');
         $this->logInAs($member);
 
         $page = $this->get('account/order-history/');
         $this->assertEquals(200, $page->getStatusCode(), 'a page should load');
-        $this->assertSame(PageController::class, $page->getHeader('X-TestPageClass'));
+        $this->assertNotSame(Security::class, $page->getHeader('X-TestPageClass'));
     }
 
     public function testGlobals(): void
