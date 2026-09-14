@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SilverShop\Tests\Page;
 
+use PageController;
 use SilverShop\Model\Address;
 use SilverShop\Page\AccountPage;
 use SilverShop\Page\AccountPageController;
@@ -49,8 +50,12 @@ final class AccountPageTest extends FunctionalTest
         $this->controller->setRequest($httpRequest);
     }
 
-    public function testCanViewAccountPage(): void
+    public function testCanViewAccountPageWithPublicCmsVisibility(): void
     {
+        $this->accountpage->CanViewType = 'Anyone';
+        $this->accountpage->write();
+        $this->accountpage->publishSingle();
+
         $page = $this->get("account/");  // attempt to access the Account Page
         $this->assertEquals(200, $page->getStatusCode(), "a page should load");
         $this->assertTrue(
@@ -72,6 +77,50 @@ final class AccountPageTest extends FunctionalTest
         $this->assertEquals(200, $page->getStatusCode(), "a page should load");
 
         $this->assertEquals(AccountPageController::class, $page->getHeader('X-TestPageClass'), "Account Page should open");
+    }
+
+    public function testCanViewAccountPageWithLoggedInUsersCmsVisibility(): void
+    {
+        $this->accountpage->CanViewType = 'LoggedInUsers';
+        $this->accountpage->write();
+        $this->accountpage->publishSingle();
+
+        $page = $this->get('account/');
+        $this->assertEquals(200, $page->getStatusCode(), 'a page should load');
+        $this->assertSame(Security::class, $page->getHeader('X-TestPageClass'));
+        $this->assertSame('login', $page->getHeader('X-TestPageAction'));
+
+        $this->submitForm(
+            'MemberLoginForm_LoginForm',
+            'action_doLogin',
+            [
+                'Email' => 'test@example.com',
+                'Password' => '23u90oijlJKsa',
+            ]
+        );
+
+        $page = $this->get('account/');
+        $this->assertEquals(200, $page->getStatusCode(), 'a page should load');
+        $this->assertSame(AccountPageController::class, $page->getHeader('X-TestPageClass'));
+    }
+
+    public function testSubPagesInheritAccountPageCmsVisibility(): void
+    {
+        $this->accountpage->CanViewType = 'LoggedInUsers';
+        $this->accountpage->write();
+        $this->accountpage->publishRecursive();
+
+        $page = $this->get('account/order-history/');
+        $this->assertEquals(200, $page->getStatusCode(), 'a page should load');
+        $this->assertSame(Security::class, $page->getHeader('X-TestPageClass'));
+        $this->assertSame('login', $page->getHeader('X-TestPageAction'));
+
+        $member = $this->objFromFixture(Member::class, 'joebloggs');
+        $this->logInAs($member);
+
+        $page = $this->get('account/order-history/');
+        $this->assertEquals(200, $page->getStatusCode(), 'a page should load');
+        $this->assertSame(PageController::class, $page->getHeader('X-TestPageClass'));
     }
 
     public function testGlobals(): void

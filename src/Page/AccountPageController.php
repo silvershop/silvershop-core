@@ -54,9 +54,13 @@ class AccountPageController extends PageController
     {
         parent::init();
 
+        if ($this->redirectedTo()) {
+            return;
+        }
+
         $this->member = Security::getCurrentUser();
 
-        if (!$this->member) {
+        if (!$this->member && $this->dataRecord && $this->dataRecord->canView()) {
             $messages = [
                 'default' => _t(
                     'SilverShop\Page\AccountPage.Login',
