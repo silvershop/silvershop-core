@@ -60,7 +60,7 @@ class AccountPageController extends PageController
 
         $this->member = Security::getCurrentUser();
 
-        if (!$this->member && $this->dataRecord && $this->dataRecord->canView()) {
+        if (!$this->member) {
             $messages = [
                 'default' => _t(
                     'SilverShop\Page\AccountPage.Login',
