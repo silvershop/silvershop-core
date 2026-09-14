@@ -62,6 +62,10 @@ class ShoppingCart
      */
     public function current(): ?Order
     {
+        if (!Controller::curr()) {
+            return null;
+        }
+
         $session = ShopTools::getSession();
         //find order by id saved to session (allows logging out and retaining cart contents)
         if (!$this->order && $sessionid = $session->get(self::config()->get('cartid_session_name'))) {
