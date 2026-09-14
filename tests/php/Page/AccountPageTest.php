@@ -114,7 +114,7 @@ final class AccountPageTest extends FunctionalTest
         $member = $this->objFromFixture(Member::class, 'joebloggs');
         $subpage = $this->objFromFixture(\Page::class, 'accountsubpage');
 
-        $this->assertFalse($subpage->canView(false));
+        $this->assertFalse($subpage->canView(null));
         $this->assertTrue($subpage->canView($member));
 
         $page = $this->get('account/order-history/');
