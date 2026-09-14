@@ -428,8 +428,13 @@ class ShoppingCart
             $finalRemaining = 0;
         }
 
+        // extend() receives its arguments by reference, so the extra-data argument must be a variable,
+        // not a [] literal (which is a "Argument #4 could not be passed by reference" fatal on PHP 8+).
+        // This mirrors the $filter variable already passed to the same hooks in remove().
+        $filter = [];
+
         try {
-            $order->extend('beforeRemove', $buyable, $quantity, []);
+            $order->extend('beforeRemove', $buyable, $quantity, $filter);
         } catch (Exception $exception) {
             return $this->error($exception->getMessage());
         }
@@ -443,7 +448,7 @@ class ShoppingCart
         }
 
         try {
-            $order->extend('afterRemove', $orderItem, $buyable, $quantity, []);
+            $order->extend('afterRemove', $orderItem, $buyable, $quantity, $filter);
         } catch (Exception $exception) {
             return $this->error($exception->getMessage());
         }
