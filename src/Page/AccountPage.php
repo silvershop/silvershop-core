@@ -21,6 +21,10 @@ class AccountPage extends Page
 
     private static string $table_name = 'SilverShop_AccountPage';
 
+    private static array $defaults = [
+        'CanViewType' => 'LoggedInUsers',
+    ];
+
     public function canCreate($member = null, $context = []): bool
     {
         return !self::get()->exists();

@@ -54,6 +54,10 @@ class AccountPageController extends PageController
     {
         parent::init();
 
+        if ($this->redirectedTo()) {
+            return;
+        }
+
         $this->member = Security::getCurrentUser();
 
         if (!$this->member) {
