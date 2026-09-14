@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace SilverShop\Cart;
 
-use SilverStripe\Core\Validation\ValidationException;
 use Exception;
 use SilverShop\Currency\CurrencyService;
 use SilverShop\Extension\OrderManipulationExtension;
@@ -17,10 +16,12 @@ use SilverShop\Model\Variation\Variation;
 use SilverShop\ORM\Filters\MatchObjectFilter;
 use SilverShop\Page\Product;
 use SilverShop\ShopTools;
+use SilverStripe\Control\Controller;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Config\Configurable;
 use SilverStripe\Core\Injector\Injectable;
 use SilverStripe\Core\Injector\Injector;
+use SilverStripe\Core\Validation\ValidationException;
 use SilverStripe\ORM\FieldType\DBField;
 use SilverStripe\Security\Member;
 use SilverStripe\Security\Security;
