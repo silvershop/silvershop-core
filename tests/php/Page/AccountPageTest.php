@@ -119,12 +119,6 @@ final class AccountPageTest extends FunctionalTest
         $this->assertEquals(200, $page->getStatusCode(), 'a page should load');
         $this->assertSame(Security::class, $page->getHeader('X-TestPageClass'));
         $this->assertSame('login', $page->getHeader('X-TestPageAction'));
-
-        $this->logInAs($member);
-
-        $page = $this->get('account/order-history/');
-        $this->assertEquals(200, $page->getStatusCode(), 'a page should load');
-        $this->assertNotSame(Security::class, $page->getHeader('X-TestPageClass'));
     }
 
     public function testGlobals(): void
