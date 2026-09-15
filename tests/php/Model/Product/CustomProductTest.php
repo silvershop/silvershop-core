@@ -13,6 +13,8 @@ use SilverStripe\Dev\FunctionalTest;
  */
 final class CustomProductTest extends FunctionalTest
 {
+    private const DEFAULT_SIZE_OPTION = 0;
+
     protected static $use_draft_site = true;
 
     protected static $extra_dataobjects = [
@@ -65,8 +67,10 @@ final class CustomProductTest extends FunctionalTest
         $this->assertTrue((bool)$shoppingCart->add($customProduct, 1, $options3), "add a sub-variant of customisation 2");
         $item = $shoppingCart->get($customProduct, $options3);
 
-        $this->assertTrue((bool)$shoppingCart->add($customProduct), "add product with no customisation");
-        $item = $shoppingCart->get($customProduct);
+        $defaultOptions = (array) CustomProduct_OrderItem::config()->get('defaults');
+        $defaultOptions += ['Size' => self::DEFAULT_SIZE_OPTION];
+        $this->assertTrue((bool)$shoppingCart->add($customProduct, 1, $defaultOptions), "add product with default customisation options");
+        $item = $shoppingCart->get($customProduct, $defaultOptions);
         $this->assertNotNull($item, 'default custom product item exists');
 
         $order = $shoppingCart->current();

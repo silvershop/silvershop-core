@@ -14,6 +14,7 @@ use SilverStripe\Control\Controller;
 use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Control\HTTPResponse;
 use SilverStripe\Core\ClassInfo;
+use SilverStripe\Core\Config\Config;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\Security\SecurityToken;
 use SilverStripe\Versioned\Versioned;
@@ -201,7 +202,19 @@ class WebServiceController extends Controller
             return $this->invalidCartQuantityResponse($format, $cart);
         }
 
-        $result = $cart->remove($buyable, $quantity, $request->requestVars());
+        $filter = $this->cartItemFilterFromRequest($request, $buyable);
+
+        if (!$cart->findLineItem($buyable, $filter) instanceof OrderItem) {
+            return $this->cartOperationResponse(
+                $format,
+                $cart,
+                false,
+                404,
+                ['message' => 'Item not found in cart', 'messageType' => 'bad']
+            );
+        }
+
+        $result = $cart->remove($buyable, $quantity, $filter);
 
         if ($result === null) {
             return $this->cartOperationResponse(
@@ -349,6 +362,17 @@ class WebServiceController extends Controller
         $quantity = (int) ($request->requestVar('quantity') ?? 1);
 
         return $quantity < 0 ? null : $quantity;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function cartItemFilterFromRequest(HTTPRequest $request, Buyable $buyable): array
+    {
+        $itemClass = Config::inst()->get($buyable::class, 'order_item') ?: OrderItem::class;
+        $allowedFields = array_keys(DataObject::getSchema()->fieldSpecs($itemClass));
+
+        return array_intersect_key($request->requestVars(), array_flip($allowedFields));
     }
 
     private function invalidCartQuantityResponse(string $format, ShoppingCart $cart): HTTPResponse

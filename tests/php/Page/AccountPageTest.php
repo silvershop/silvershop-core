@@ -326,16 +326,21 @@ final class AccountPageTest extends FunctionalTest
         $this->assertEquals('UpdatedName', $member->FirstName, 'First name should be updated');
 
         // Reload the editprofile page to ensure we have the ChangePasswordForm in context
-        $this->get('account/editprofile/');
+        $passwordPage = $this->get('account/editprofile/');
+        $passwordPageBody = (string) $passwordPage->getBody();
+        $changePasswordFormName = str_contains($passwordPageBody, 'name="Form_ChangePasswordForm"')
+            ? 'Form_ChangePasswordForm'
+            : 'ChangePasswordForm_ChangePasswordForm';
+        $passwordData = [
+            'Password[_CurrentPassword]' => '23u90oijlJKsa',
+            'Password[_Password]' => 'newpassword123!?',
+            'Password[_ConfirmPassword]' => 'newpassword123!?',
+            'action_doChangePassword' => 1,
+        ];
         $page = $this->submitForm(
-            'ChangePasswordForm_ChangePasswordForm',
-            null,
-            [
-                'Password[_CurrentPassword]' => self::TEST_MEMBER_PASSWORD,
-                'Password[_Password]' => 'newpassword123!?',
-                'Password[_ConfirmPassword]' => 'newpassword123!?',
-                'action_doChangePassword' => 1,
-            ]
+            $changePasswordFormName,
+            'action_doChangePassword',
+            $passwordData
         );
         $this->assertEquals(200, $page->getStatusCode(), 'a page should load');
 

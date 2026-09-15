@@ -6,6 +6,7 @@ namespace SilverShop\Tests\Control;
 
 use SilverShop\Cart\ShoppingCart;
 use SilverShop\Control\WebServiceController;
+use SilverShop\Model\OrderItem;
 use SilverShop\Page\Product;
 use SilverShop\Page\ProductCategory;
 use SilverShop\Tests\ShopTestBootstrap;
@@ -149,7 +150,12 @@ final class WebServiceControllerTest extends FunctionalTest
     {
         $product = $this->objFromFixture(Product::class, 'socks');
         // Add via HTTP so the cart lives in the same session used by subsequent HTTP requests.
-        $this->get($this->apiUrl('api/v1/cart/add.json', ['ProductID' => $product->ID]));
+        $addResponse = $this->get($this->apiUrl('api/v1/cart/add.json', ['ProductID' => $product->ID]));
+        $addPayload = json_decode((string) $addResponse->getBody(), true);
+        $this->assertIsArray($addPayload);
+        $this->assertArrayHasKey('itemId', $addPayload);
+        $itemId = (int) $addPayload['itemId'];
+        $orderId = (int) OrderItem::get()->byID($itemId)?->OrderID;
 
         $response = $this->get($this->apiUrl('api/v1/cart/clear.json'));
 
@@ -159,12 +165,13 @@ final class WebServiceControllerTest extends FunctionalTest
         $this->assertIsArray($payload);
         $this->assertTrue($payload['success']);
         $this->assertSame('good', $payload['messageType']);
-        $this->assertNull(ShoppingCart::singleton()->current());
+        $this->assertSame(0, OrderItem::get()->filter('OrderID', $orderId)->count());
     }
 
     public function testCartRemoveJsonWhenItemMissing(): void
     {
         $product = $this->objFromFixture(Product::class, 'socks');
+        $this->get($this->apiUrl('api/v1/cart/clear.json'));
         $response = $this->get($this->apiUrl('api/v1/cart/remove.json', [
             'ProductID' => $product->ID,
         ]));
