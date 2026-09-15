@@ -19,6 +19,13 @@ SilverShop\Page\AccountPage:
     Title: Account
     URLSegment: account
 
+Page:
+  accountsubpage:
+    Title: Order History
+    URLSegment: order-history
+    Parent: =>SilverShop\Page\AccountPage.accountpage
+    CanViewType: Inherit
+
 SilverStripe\SiteConfig\SiteConfig:
   config:
     Title: Shop Testing Website

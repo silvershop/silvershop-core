@@ -20,6 +20,8 @@ use SilverStripe\SiteConfig\SiteConfig;
 
 final class AccountPageTest extends FunctionalTest
 {
+    private const TEST_MEMBER_PASSWORD = '23u90oijlJKsa';
+
     protected static $fixture_file = [
         __DIR__ . '/../Fixtures/Pages.yml',
         __DIR__ . '/../Fixtures/shop.yml',
@@ -49,8 +51,12 @@ final class AccountPageTest extends FunctionalTest
         $this->controller->setRequest($httpRequest);
     }
 
-    public function testCanViewAccountPage(): void
+    public function testCanViewAccountPageWithPublicCmsVisibility(): void
     {
+        $this->accountpage->CanViewType = 'Anyone';
+        $this->accountpage->write();
+        $this->accountpage->publishSingle();
+
         $page = $this->get("account/");  // attempt to access the Account Page
         $this->assertEquals(200, $page->getStatusCode(), "a page should load");
         $this->assertTrue(
@@ -64,7 +70,7 @@ final class AccountPageTest extends FunctionalTest
             "action_doLogin",
             [
                 'Email' => 'test@example.com',
-                'Password' => '23u90oijlJKsa',
+                'Password' => self::TEST_MEMBER_PASSWORD,
             ]
         );
 
@@ -72,6 +78,59 @@ final class AccountPageTest extends FunctionalTest
         $this->assertEquals(200, $page->getStatusCode(), "a page should load");
 
         $this->assertEquals(AccountPageController::class, $page->getHeader('X-TestPageClass'), "Account Page should open");
+    }
+
+    public function testCanViewAccountPageWithLoggedInUsersCmsVisibility(): void
+    {
+        $this->accountpage->CanViewType = 'LoggedInUsers';
+        $this->accountpage->write();
+        $this->accountpage->publishSingle();
+
+        $this->autoFollowRedirection = false;
+        $page = $this->get('account/');
+        $this->assertEquals(302, $page->getStatusCode(), 'Anonymous visitors should be redirected to login');
+        $this->assertStringContainsString('Security/login', (string) $page->getHeader('Location'));
+
+        $this->autoFollowRedirection = true;
+        $page = $this->get('account/');
+        $this->assertSame(Security::class, $page->getHeader('X-TestPageClass'));
+        $this->assertSame('login', $page->getHeader('X-TestPageAction'));
+
+        $this->submitForm(
+            'MemberLoginForm_LoginForm',
+            'action_doLogin',
+            [
+                'Email' => 'test@example.com',
+                'Password' => self::TEST_MEMBER_PASSWORD,
+            ]
+        );
+
+        $page = $this->get('account/');
+        $this->assertEquals(200, $page->getStatusCode(), 'a page should load');
+        $this->assertSame(AccountPageController::class, $page->getHeader('X-TestPageClass'));
+    }
+
+    public function testSubPagesInheritAccountPageCmsVisibility(): void
+    {
+        $this->accountpage->CanViewType = 'LoggedInUsers';
+        $this->accountpage->write();
+        $this->accountpage->publishRecursive();
+
+        $member = $this->objFromFixture(Member::class, 'joebloggs');
+        $subpage = $this->objFromFixture(\Page::class, 'accountsubpage');
+
+        $this->assertFalse($subpage->canView(null));
+        $this->assertTrue($subpage->canView($member));
+
+        $this->autoFollowRedirection = false;
+        $page = $this->get('account/order-history/');
+        $this->assertEquals(302, $page->getStatusCode(), 'Anonymous visitors should be redirected to login');
+        $this->assertStringContainsString('Security/login', (string) $page->getHeader('Location'));
+
+        $this->autoFollowRedirection = true;
+        $page = $this->get('account/order-history/');
+        $this->assertSame(Security::class, $page->getHeader('X-TestPageClass'));
+        $this->assertSame('login', $page->getHeader('X-TestPageAction'));
     }
 
     public function testGlobals(): void

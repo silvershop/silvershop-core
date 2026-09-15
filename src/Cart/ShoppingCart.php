@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace SilverShop\Cart;
 
-use SilverStripe\Core\Validation\ValidationException;
 use Exception;
 use SilverShop\Currency\CurrencyService;
 use SilverShop\Extension\OrderManipulationExtension;
@@ -17,10 +16,12 @@ use SilverShop\Model\Variation\Variation;
 use SilverShop\ORM\Filters\MatchObjectFilter;
 use SilverShop\Page\Product;
 use SilverShop\ShopTools;
+use SilverStripe\Control\Controller;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Config\Configurable;
 use SilverStripe\Core\Injector\Injectable;
 use SilverStripe\Core\Injector\Injector;
+use SilverStripe\Core\Validation\ValidationException;
 use SilverStripe\ORM\FieldType\DBField;
 use SilverStripe\Security\Member;
 use SilverStripe\Security\Security;
@@ -62,6 +63,10 @@ class ShoppingCart
      */
     public function current(): ?Order
     {
+        if (!Controller::curr()) {
+            return null;
+        }
+
         $session = ShopTools::getSession();
         //find order by id saved to session (allows logging out and retaining cart contents)
         if (!$this->order && $sessionid = $session->get(self::config()->get('cartid_session_name'))) {
@@ -428,8 +433,13 @@ class ShoppingCart
             $finalRemaining = 0;
         }
 
+        // extend() receives its arguments by reference, so the extra-data argument must be a variable,
+        // not a [] literal (which is a "Argument #4 could not be passed by reference" fatal on PHP 8+).
+        // This mirrors the $filter variable already passed to the same hooks in remove().
+        $filter = [];
+
         try {
-            $order->extend('beforeRemove', $buyable, $quantity, []);
+            $order->extend('beforeRemove', $buyable, $quantity, $filter);
         } catch (Exception $exception) {
             return $this->error($exception->getMessage());
         }
@@ -443,7 +453,7 @@ class ShoppingCart
         }
 
         try {
-            $order->extend('afterRemove', $orderItem, $buyable, $quantity, []);
+            $order->extend('afterRemove', $orderItem, $buyable, $quantity, $filter);
         } catch (Exception $exception) {
             return $this->error($exception->getMessage());
         }
