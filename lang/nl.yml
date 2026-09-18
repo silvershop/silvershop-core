@@ -7,7 +7,7 @@ nl:
   SilverShop\Admin\ZoneAdmin:
     MENUTITLE: Gebieden
   SilverShop\Cart\ShoppingCart:
-    CannotPurchase: 'Deze {Title} kan niet worden verkocht.'
+    CannotPurchase: "'{Title}' kan niet worden gekocht."
     Checkout: Betalen
     Cleared: 'Winkelwagen is succesvol geleegd.'
     ContinueShopping: 'Ga verder met winkelen'
@@ -24,7 +24,7 @@ nl:
     NoOrder: 'Er is geen huidige bestelling.'
     ProceedToCheckout: 'Ga verder met betalen'
     ProductNotFound: 'Product niet gevonden.'
-    QuantitySet: 'Hopeveelheid is ingesteld.'
+    QuantitySet: 'Hoeveelheid is ingesteld.'
     RemoveAllTitle: 'Verwijder alle &quot;{Title}&quot; uit uw winkelwagen.'
     RemoveTitle: 'Verwijder &quot;{Title}&quot; uit uw winkelwagen.'
     TableSummary: 'Huidige inhoud van uw winkelwagen.'
