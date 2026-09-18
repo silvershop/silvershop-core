@@ -8,6 +8,7 @@ use SilverStripe\ORM\ManyManyList;
 use Page;
 use SilverShop\Extension\ProductVariationsExtension;
 use SilverStripe\i18n\i18nEntityProvider;
+use SilverStripe\Model\List\SS_List;
 use SilverStripe\ORM\DataList;
 
 /**
@@ -50,7 +51,7 @@ class ProductCategory extends Page implements i18nEntityProvider
      *
      * @param bool $recursive include sub-categories
      */
-    public function ProductsShowable($recursive = true): DataList
+    public function ProductsShowable($recursive = true): SS_List
     {
         // Figure out the categories to check
         $groupids = [$this->ID];
