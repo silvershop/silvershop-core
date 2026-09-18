@@ -46,6 +46,13 @@ class ShoppingCart
 
     private bool $calculateonce = false;
 
+    /**
+     * Re-entrancy guard for {@see removeUnavailableItems()}. A Buyable's canPurchase() may call back
+     * into current() (e.g. a stock check that inspects the cart), which would otherwise recurse
+     * infinitely: current() -> removeUnavailableItems() -> canPurchase() -> current() -> ...
+     */
+    private bool $removingUnavailable = false;
+
     private DBField|string $message = '';
 
     private string $type = '';
@@ -78,8 +85,13 @@ class ShoppingCart
             )->first();
         }
 
-        if ($this->order instanceof Order) {
-            $removedCount = $this->removeUnavailableItems($this->order);
+        if ($this->order instanceof Order && !$this->removingUnavailable) {
+            $this->removingUnavailable = true;
+            try {
+                $removedCount = $this->removeUnavailableItems($this->order);
+            } finally {
+                $this->removingUnavailable = false;
+            }
             if ($removedCount > 0) {
                 $this->message(
                     _t(
