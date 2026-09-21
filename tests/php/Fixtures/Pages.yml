@@ -1,9 +1,3 @@
-Page:
-  termsandconditions:
-    Title: Terms and Conditions
-    URLSegment: terms-and-conditions
-    Content: Test terms and conditions.
-
 SilverShop\Page\CheckoutPage:
   checkout:
     Title: Checkout
@@ -20,6 +14,10 @@ SilverShop\Page\AccountPage:
     URLSegment: account
 
 Page:
+  termsandconditions:
+    Title: Terms and Conditions
+    URLSegment: terms-and-conditions
+    Content: Test terms and conditions.
   accountsubpage:
     Title: Order History
     URLSegment: order-history
