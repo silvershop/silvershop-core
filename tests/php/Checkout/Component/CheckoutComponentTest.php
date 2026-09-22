@@ -19,6 +19,7 @@ use SilverShop\Model\Order;
 use SilverShop\ShopUserInfo;
 use SilverShop\Tests\ShopTestBootstrap;
 use SilverStripe\Core\Config\Config;
+use SilverStripe\Core\Validation\ValidationException;
 use SilverStripe\SiteConfig\SiteConfig;
 use SilverStripe\Dev\SapphireTest;
 
@@ -367,5 +368,38 @@ final class CheckoutComponentTest extends SapphireTest
         $this->assertEquals('AU', $data['Country']);
         $this->assertEquals('Sydney', $data['City']);
         $this->assertArrayNotHasKey('State', $data, 'State not specified in heckoutAddressComponent::config()shop_user_info_location_fields');
+    }
+
+    public function testCustomerDetailsValidatesCompleteContactDetails(): void
+    {
+        $order = Order::create();
+        $order->write();
+
+        $component = CustomerDetails::create();
+
+        $this->assertTrue(
+            $component->validateData($order, [
+                'FirstName' => 'Ed',
+                'Surname'   => 'Hillary',
+                'Email'     => 'ed@example.com',
+            ]),
+            'Complete contact details should validate'
+        );
+    }
+
+    public function testCustomerDetailsRejectsBlankContactDetails(): void
+    {
+        $order = Order::create();
+        $order->write();
+
+        $component = CustomerDetails::create();
+
+        // FirstName, Surname and Email are required — blank values must not validate.
+        $this->expectException(ValidationException::class);
+        $component->validateData($order, [
+            'FirstName' => '',
+            'Surname'   => '',
+            'Email'     => '',
+        ]);
     }
 }
