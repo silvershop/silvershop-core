@@ -335,9 +335,9 @@ final class AccountPageTest extends FunctionalTest
             'ChangePasswordForm_ChangePasswordForm',
             null,
             [
-                'Password[_CurrentPassword]' => self::TEST_MEMBER_PASSWORD,
-                'Password[_Password]' => 'newpassword123!?',
-                'Password[_ConfirmPassword]' => 'newpassword123!?',
+                'OldPassword' => self::TEST_MEMBER_PASSWORD,
+                'NewPassword1' => 'newpassword123!?',
+                'NewPassword2' => 'newpassword123!?',
                 'action_doChangePassword' => 1,
             ]
         );
