@@ -123,9 +123,9 @@ final class OrderActionsFormTest extends FunctionalTest
                 'type' => 'visa',
                 'name' => 'Tester Mc. Testerson',
                 'number' => '4242424242424242',
-                'expiryMonth' => 10,
-                'expiryYear' => date('Y') + 1,
-                'cvv' => 123,
+                'expiryMonth' => '10',
+                'expiryYear' => (string) (date('Y') + 1),
+                'cvv' => '123',
             ]
         );
 

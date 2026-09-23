@@ -118,6 +118,10 @@ final class AccountPageTest extends FunctionalTest
 
         $member = $this->objFromFixture(Member::class, 'joebloggs');
         $subpage = $this->objFromFixture(\Page::class, 'accountsubpage');
+        // publishRecursive() on the parent does not cascade to child pages (SiteTree has no $owns),
+        // so publish the subpage explicitly. Otherwise draft-site security — not CanViewType
+        // inheritance — governs canView(), and the logged-in member is wrongly denied.
+        $subpage->publishSingle();
 
         $this->assertFalse($subpage->canView(null));
         $this->assertTrue($subpage->canView($member));

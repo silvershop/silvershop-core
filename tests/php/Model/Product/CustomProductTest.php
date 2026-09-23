@@ -65,8 +65,9 @@ final class CustomProductTest extends FunctionalTest
         $this->assertTrue((bool)$shoppingCart->add($customProduct, 1, $options3), "add a sub-variant of customisation 2");
         $item = $shoppingCart->get($customProduct, $options3);
 
-        $this->assertTrue((bool)$shoppingCart->add($customProduct), "add product with no customisation");
-        $item = $shoppingCart->get($customProduct);
+        // add() returns the created line; an empty-filter get() intentionally matches nothing here
+        // (see the assertFalse above), so capture the item from add() rather than re-querying.
+        $this->assertTrue((bool)($item = $shoppingCart->add($customProduct)), "add product with no customisation");
         $this->assertNotNull($item, 'default custom product item exists');
 
         $order = $shoppingCart->current();

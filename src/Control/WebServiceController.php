@@ -201,6 +201,18 @@ class WebServiceController extends Controller
             return $this->invalidCartQuantityResponse($format, $cart);
         }
 
+        // ShoppingCart::remove() treats "no cart yet" as a successful no-op (returns true), so an
+        // explicit presence check is needed to report a genuinely missing line as 404.
+        if (!$cart->findLineItem($buyable) instanceof OrderItem) {
+            return $this->cartOperationResponse(
+                $format,
+                $cart,
+                false,
+                404,
+                ['message' => 'Item not found in cart', 'messageType' => 'bad']
+            );
+        }
+
         $result = $cart->remove($buyable, $quantity, $request->requestVars());
 
         if ($result === null) {
