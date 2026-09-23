@@ -118,6 +118,10 @@ final class AccountPageTest extends FunctionalTest
 
         $member = $this->objFromFixture(Member::class, 'joebloggs');
         $subpage = $this->objFromFixture(\Page::class, 'accountsubpage');
+        // publishRecursive() on the parent does not cascade to child pages (SiteTree has no $owns),
+        // so publish the subpage explicitly. Otherwise draft-site security — not CanViewType
+        // inheritance — governs canView(), and the logged-in member is wrongly denied.
+        $subpage->publishSingle();
 
         $this->assertFalse($subpage->canView(null));
         $this->assertTrue($subpage->canView($member));
@@ -331,9 +335,17 @@ final class AccountPageTest extends FunctionalTest
             'ChangePasswordForm_ChangePasswordForm',
             null,
             [
+                // The change-password form field names differ across the supported framework
+                // range: some versions render discrete OldPassword / NewPassword1 / NewPassword2
+                // fields, others a ConfirmedPasswordField (Password[_CurrentPassword] /
+                // Password[_Password] / Password[_ConfirmPassword]). Post both conventions so the
+                // test holds either way; field names the form does not define are ignored.
                 'Password[_CurrentPassword]' => self::TEST_MEMBER_PASSWORD,
                 'Password[_Password]' => 'newpassword123!?',
                 'Password[_ConfirmPassword]' => 'newpassword123!?',
+                'OldPassword' => self::TEST_MEMBER_PASSWORD,
+                'NewPassword1' => 'newpassword123!?',
+                'NewPassword2' => 'newpassword123!?',
                 'action_doChangePassword' => 1,
             ]
         );
