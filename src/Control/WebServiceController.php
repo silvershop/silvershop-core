@@ -24,19 +24,24 @@ class WebServiceController extends Controller
     public function handleRequest(HTTPRequest $request): HTTPResponse
     {
         $this->setRequest($request);
+        $this->pushCurrent();
 
-        [$resource, $identifier, $format] = $this->parseRequest($request);
-        if ($resource === 'products') {
-            return $identifier === null
-                ? $this->productsResponse($format)
-                : $this->productResponse($identifier, $format);
+        try {
+            [$resource, $identifier, $format] = $this->parseRequest($request);
+            if ($resource === 'products') {
+                return $identifier === null
+                    ? $this->productsResponse($format)
+                    : $this->productResponse($identifier, $format);
+            }
+
+            if ($resource === 'cart') {
+                return $this->cartResponse($request, $identifier, $format);
+            }
+
+            return $this->errorResponse($format, 404, 'Not found');
+        } finally {
+            $this->popCurrent();
         }
-
-        if ($resource === 'cart') {
-            return $this->cartResponse($request, $identifier, $format);
-        }
-
-        return $this->errorResponse($format, 404, 'Not found');
     }
 
     /**
