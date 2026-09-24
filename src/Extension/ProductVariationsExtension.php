@@ -9,6 +9,7 @@ use SilverStripe\Core\Validation\ValidationException;
 use SilverShop\Forms\VariationForm;
 use SilverShop\Model\Variation\AttributeType;
 use SilverShop\Model\Variation\AttributeValue;
+use SilverShop\Model\Variation\OrderItem as VariationOrderItem;
 use SilverShop\Model\Variation\Variation;
 use SilverShop\ORM\FieldType\ShopCurrency;
 use SilverShop\Page\Product;
@@ -335,11 +336,17 @@ class ProductVariationsExtension extends Extension
                         $existingvariations->add($newvariation);
                     }
 
+                    // Keep superseded variations that are referenced by an order: order lines
+                    // link back by ProductVariationID/Version, so deleting the variation would
+                    // orphan historical orders. Only the unreferenced ones are cleaned up.
+                    if (VariationOrderItem::get()->filter('ProductVariationID', $oldvariation->ID)->exists()) {
+                        continue;
+                    }
+
                     $existingvariations->remove($oldvariation);
                     $oldvariation->AttributeValues()->removeAll();
                     $oldvariation->delete();
                     $oldvariation->destroy();
-                    //TODO: check that old variations actually stick around, as they will be needed for past orders etc
                 }
             } else {
                 foreach ($avalues as $value) {
