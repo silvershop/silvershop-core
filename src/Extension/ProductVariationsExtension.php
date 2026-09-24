@@ -107,12 +107,12 @@ class ProductVariationsExtension extends Extension
             'InternalItemID' => [
                 'title' => _t(__CLASS__ . '.CodeColumn', 'Code'),
                 'callback' => fn ($record, $column, $grid): TextField =>
-                    TextField::create($column)->setAttribute('style', 'max-width:12em'),
+                    TextField::create($column)->setAttribute('style', 'width:12em'),
             ],
             'Price' => [
                 'title' => _t(__CLASS__ . '.PriceColumn', 'Price'),
                 'callback' => fn ($record, $column, $grid): NumericField =>
-                    NumericField::create($column)->setScale(2)->setAttribute('style', 'max-width:8em'),
+                    NumericField::create($column)->setScale(2)->setAttribute('style', 'width:7em'),
             ],
         ];
 
@@ -134,6 +134,18 @@ class ProductVariationsExtension extends Extension
                     'Attributes are the ways this product varies (e.g. Size, Colour). Choose them and Save, then '
                     . 'use "Generate variations" to create the sellable combinations below.'
                 )),
+            // Shrink the fixed-width data columns to their content so the attribute dropdown
+            // columns take the remaining width (the data cells otherwise stretch to fill the
+            // 100%-wide grid table). Scoped to this editable grid via .ss-gridfield-editable.
+            LiteralField::create(
+                'variationsgridcss',
+                '<style>'
+                . '.ss-gridfield-editable .col-InternalItemID,'
+                . '.ss-gridfield-editable .col-Price,'
+                . '.ss-gridfield-editable .col-StockLevel,'
+                . '.ss-gridfield-editable .col-StockUnlimited{width:1%;white-space:nowrap}'
+                . '</style>'
+            ),
             GridField::create(
                 'Variations',
                 _t(__CLASS__ . '.Variations', 'Variations'),
