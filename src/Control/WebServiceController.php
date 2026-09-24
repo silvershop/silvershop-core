@@ -24,19 +24,24 @@ class WebServiceController extends Controller
     public function handleRequest(HTTPRequest $request): HTTPResponse
     {
         $this->setRequest($request);
+        $this->pushCurrent();
 
-        [$resource, $identifier, $format] = $this->parseRequest($request);
-        if ($resource === 'products') {
-            return $identifier === null
-                ? $this->productsResponse($format)
-                : $this->productResponse($identifier, $format);
+        try {
+            [$resource, $identifier, $format] = $this->parseRequest($request);
+            if ($resource === 'products') {
+                return $identifier === null
+                    ? $this->productsResponse($format)
+                    : $this->productResponse($identifier, $format);
+            }
+
+            if ($resource === 'cart') {
+                return $this->cartResponse($request, $identifier, $format);
+            }
+
+            return $this->errorResponse($format, 404, 'Not found');
+        } finally {
+            $this->popCurrent();
         }
-
-        if ($resource === 'cart') {
-            return $this->cartResponse($request, $identifier, $format);
-        }
-
-        return $this->errorResponse($format, 404, 'Not found');
     }
 
     /**
@@ -199,6 +204,18 @@ class WebServiceController extends Controller
         $quantity = $this->requestedCartQuantity($request);
         if ($quantity === null) {
             return $this->invalidCartQuantityResponse($format, $cart);
+        }
+
+        // ShoppingCart::remove() treats "no cart yet" as a successful no-op (returns true), so an
+        // explicit presence check is needed to report a genuinely missing line as 404.
+        if (!$cart->findLineItem($buyable) instanceof OrderItem) {
+            return $this->cartOperationResponse(
+                $format,
+                $cart,
+                false,
+                404,
+                ['message' => 'Item not found in cart', 'messageType' => 'bad']
+            );
         }
 
         $result = $cart->remove($buyable, $quantity, $request->requestVars());
