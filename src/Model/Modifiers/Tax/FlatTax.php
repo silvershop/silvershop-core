@@ -50,13 +50,27 @@ class FlatTax extends Base
         $hasCustomTaxRateFound = false;
 
         if ($order && $order->exists() && $order->Items()->exists()) {
+            // Order-level discounts (deductible modifiers) reduce the taxable base, so they
+            // must be apportioned across the items before per-item tax is calculated —
+            // otherwise mixed / product-specific rates over-charge tax on discounted orders.
+            // Spread the discount across items in proportion to each item's value.
+            // (Chargeable modifiers such as shipping are intentionally not taxed here; their
+            // taxability is jurisdiction-specific and belongs in dedicated tax configuration.)
+            $itemSubtotal = (float) $order->SubTotal();
+            $discount = (float) $order->Modifiers()->filter('Type', 'Deductable')->sum('Amount');
+
             foreach ($order->Items() as $item) {
                 [$taxRate, $hasCustomTaxRateForItem] = $this->getItemTaxRate($item);
                 if ($hasCustomTaxRateForItem) {
                     $hasCustomTaxRateFound = true;
                 }
 
-                $taxTotal += $this->calculateTaxForAmount((float) $item->Total(), $taxRate);
+                $itemTotal = (float) $item->Total();
+                $taxableAmount = $itemSubtotal > 0
+                    ? $itemTotal - (($itemTotal / $itemSubtotal) * $discount)
+                    : $itemTotal;
+
+                $taxTotal += $this->calculateTaxForAmount($taxableAmount, $taxRate);
             }
         }
 
