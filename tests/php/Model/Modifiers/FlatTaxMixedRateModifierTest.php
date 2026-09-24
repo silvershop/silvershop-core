@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace SilverShop\Tests\Model\Modifiers;
 
 use SilverShop\Cart\ShoppingCart;
-use SilverShop\Model\Modifiers\OrderModifier;
 use SilverShop\Model\Modifiers\Tax\FlatTax;
 use SilverShop\Model\Order;
 use SilverShop\Model\TaxClass;
@@ -14,7 +13,6 @@ use SilverShop\Tests\Model\Product\CustomProduct_OrderItem;
 use SilverShop\Tests\ShopTestBootstrap;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\FunctionalTest;
-use SilverStripe\Dev\TestOnly;
 
 /**
  * Characterises FlatTax's per-item ("product-specific tax rate") path when other
@@ -134,27 +132,5 @@ final class FlatTaxMixedRateModifierTest extends FunctionalTest
             FlatTax::class,
         ]);
         $this->assertEqualsWithDelta(30.0, $tax, 0.001);
-    }
-}
-
-class FlatTaxTest_ChargeModifier extends OrderModifier implements TestOnly
-{
-    private static string $table_name = 'SilverShop_FlatTaxTest_ChargeModifier';
-
-    public function value($incoming): int|float
-    {
-        $this->Type = 'Chargable';
-        return 10;
-    }
-}
-
-class FlatTaxTest_DiscountModifier extends OrderModifier implements TestOnly
-{
-    private static string $table_name = 'SilverShop_FlatTaxTest_DiscountModifier';
-
-    public function value($incoming): int|float
-    {
-        $this->Type = 'Deductable';
-        return 40;
     }
 }
