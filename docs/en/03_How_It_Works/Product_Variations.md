@@ -16,6 +16,36 @@ simple to disable / remove. It's managed by `SilverShop\Extension\ProductVariati
  	* many_many VariationAttributeTypes => `SilverShop\Model\Variation\AttributeType`
  	   * has_many Values => `SilverShop\Model\Variation\AttributeValue`
  	
+## Managing variations in the CMS
+
+Variations are managed on a product's **Variations** tab.
+
+1. **Choose the attributes.** In the *Attributes* field, pick the attribute types that describe how this
+   product varies (e.g. Size, Colour) and **Save**. These are the axes of the variation matrix.
+2. **Generate the matrix.** Click **Generate variations** to create the sellable combinations — the
+   cartesian product of the selected attribute types' values. For example *Size* (S, M, L) × *Colour*
+   (Red, Blue) produces six variations.
+
+The **Generate variations** button is **idempotent and non-destructive**:
+
+ * It only creates the combinations that are **missing** — existing variations are left untouched. So
+   after adding a new value (say a new colour) you can click it again and it just fills in the gaps.
+ * It never deletes variations — in particular it will not remove variations that are referenced by
+   placed orders.
+ * Newly generated variations are priced at the product's `BasePrice` by default.
+
+### Editing variations inline
+
+Each row in the Variations grid is one sellable combination and can be edited inline:
+
+ * **Attribute dropdowns** — one per attribute type; change what a variation is.
+ * **Code** (`InternalItemID`) and **Price** — edited directly in the row.
+ * **Stock** — shown when the [`silvershop/stock`](https://github.com/silvershop/silverstripe-stock) module
+   is installed.
+ * **Drag to reorder**, and open a row's edit view to set a per-variation image.
+
+Changes are saved with the product.
+
 ## Front-end Choosing a Variation
 
 You can either provide a list of possible variations to the visitor, or present

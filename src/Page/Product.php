@@ -22,10 +22,13 @@ use SilverStripe\Assets\Image;
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Forms\CheckboxField;
 use SilverStripe\Forms\DropdownField;
+use SilverStripe\Forms\FieldGroup;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\GridField\GridField;
 use SilverStripe\Forms\GridField\GridFieldConfig_RecordEditor;
 use SilverStripe\Forms\ListboxField;
+use SilverStripe\Forms\LiteralField;
+use SilverStripe\Forms\NumericField;
 use SilverStripe\Forms\TextField;
 use SilverStripe\ORM\DataList;
 use SilverStripe\ORM\FieldType\DBBoolean;
@@ -176,6 +179,10 @@ class Product extends Page implements Buyable
                 $fieldList->fieldByName('Root.Main.Title')
                     ->setTitle(_t(__CLASS__ . '.PageTitle', 'Product Title'));
 
+                if ($mainTab = $fieldList->fieldByName('Root.Main')) {
+                    $mainTab->setTitle(_t(__CLASS__ . '.MainContentTab', 'Content'));
+                }
+
                 $fieldList->addFieldsToTab('Root.Main', [
                     TextField::create('InternalItemID', _t(__CLASS__ . '.InternalItemID', 'Product Code/SKU'), '', 30),
                     DropdownField::create('ParentID', _t(__CLASS__ . '.Category', 'Category'), $self->getCategoryOptions())
@@ -224,40 +231,39 @@ class Product extends Page implements Buyable
                     'LengthUnit' => $self::config()->length_unit
                 ];
 
+                // Remove the auto-scaffolded dimension fields; they are rebuilt into one row below.
+                $fieldList->removeByName(['Width', 'Height', 'Depth']);
+
                 $fieldList->addFieldsToTab(
                     'Root.Shipping',
                     [
-                    TextField::create(
-                        'Weight',
-                        _t(
-                            __CLASS__ . '.WeightWithUnit',
-                            'Weight ({WeightUnit})',
-                            '',
-                            [
-                            'WeightUnit' => self::config()->weight_unit
-                            ]
+                        NumericField::create(
+                            'Weight',
+                            _t(
+                                __CLASS__ . '.WeightWithUnit',
+                                'Weight ({WeightUnit})',
+                                '',
+                                [
+                                    'WeightUnit' => self::config()->weight_unit
+                                ]
+                            )
+                        )->setHTML5(true)->setScale(null),
+                        // Width, Height and Depth on one row.
+                        FieldGroup::create(
+                            _t(__CLASS__ . '.Dimensions', 'Dimensions ({LengthUnit})', '', $fieldSubstitutes),
+                            NumericField::create('Width', _t(__CLASS__ . '.Width', 'Width'))->setHTML5(true)->setScale(null),
+                            NumericField::create('Height', _t(__CLASS__ . '.Height', 'Height'))->setHTML5(true)->setScale(null),
+                            NumericField::create('Depth', _t(__CLASS__ . '.Depth', 'Depth'))->setHTML5(true)->setScale(null)
+                        )->setName('Dimensions'),
+                        LiteralField::create(
+                            'shippingdimensionsnote',
+                            '<p class="message notice" style="display:flex;align-items:flex-start;gap:.5em">'
+                            . '<span class="font-icon-info-circled" aria-hidden="true"></span><span>' . _t(
+                                __CLASS__ . '.ShippingDimensionsNote',
+                                'Weight and dimensions are only used by shipping methods that calculate rates by '
+                                . 'weight or size — they have no effect unless such a shipping method is configured.'
+                            ) . '</span></p>'
                         ),
-                        '',
-                        12
-                    ),
-                    TextField::create(
-                        'Height',
-                        _t(__CLASS__ . '.HeightWithUnit', 'Height ({LengthUnit})', '', $fieldSubstitutes),
-                        '',
-                        12
-                    ),
-                    TextField::create(
-                        'Width',
-                        _t(__CLASS__ . '.WidthWithUnit', 'Width ({LengthUnit})', '', $fieldSubstitutes),
-                        '',
-                        12
-                    ),
-                    TextField::create(
-                        'Depth',
-                        _t(__CLASS__ . '.DepthWithUnit', 'Depth ({LengthUnit})', '', $fieldSubstitutes),
-                        '',
-                        12
-                    ),
                     ]
                 );
 

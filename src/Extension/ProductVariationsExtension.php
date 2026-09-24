@@ -14,14 +14,24 @@ use SilverShop\ORM\FieldType\ShopCurrency;
 use SilverShop\Page\Product;
 use SilverStripe\Core\Extension;
 use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\LiteralField;
+use SilverStripe\Versioned\GridFieldArchiveAction;
+use SilverShop\Forms\GridField\GridFieldGenerateVariationsButton;
+use SilverShop\Forms\GridField\GridFieldVariationAttributeColumns;
 use SilverStripe\Forms\GridField\GridField;
+use SilverStripe\Forms\GridField\GridField_ActionMenu;
 use SilverStripe\Forms\GridField\GridFieldConfig_RecordEditor;
-use SilverStripe\Forms\LabelField;
+use SilverStripe\Forms\GridField\GridFieldDataColumns;
+use SilverStripe\Forms\GridField\GridFieldDeleteAction;
+use SilverStripe\Forms\GridField\GridFieldEditButton;
 use SilverStripe\Forms\ListboxField;
+use SilverStripe\Forms\NumericField;
+use SilverStripe\Forms\TextField;
 use SilverStripe\ORM\DataList;
 use SilverStripe\ORM\HasManyList;
 use SilverStripe\ORM\ManyManyList;
 use SilverStripe\Versioned\Versioned;
+use Symbiote\GridFieldExtensions\GridFieldEditableColumns;
 use Symbiote\GridFieldExtensions\GridFieldOrderableRows;
 
 /**
@@ -45,7 +55,10 @@ class ProductVariationsExtension extends Extension
 
     private static array $scaffold_cms_fields_settings = [
         'ignoreRelations' => [
-            'VariationAttributeTypes'
+            'VariationAttributeTypes',
+            // Product::getCMSFields() adds the per-currency "Prices" grid to Root.Pricing
+            // explicitly, so skip auto-scaffolding it (which leaves an empty "Prices" tab).
+            'Prices',
         ]
     ];
 
@@ -62,6 +75,54 @@ class ProductVariationsExtension extends Extension
      */
     public function updateCMSFields(FieldList $fields): void
     {
+        // Matrix editor: start from the record editor, then swap the static data columns
+        // for inline-editable columns (Code + Price edited directly in the grid; the
+        // read-only "Variation" column shows the attribute combination). Image, weight,
+        // dimensions and stock remain on each row's edit form. A one-click, idempotent,
+        // non-destructive "Generate variations" button fills in the missing combinations.
+        $variationsConfig = GridFieldConfig_RecordEditor::create(100);
+        // Rebuild the columns so the inline-editable data columns come first and the row
+        // actions ("...") sit at the right; also prefer a real Delete over the versioned
+        // Archive action.
+        $variationsConfig->removeComponentsByType(GridFieldDataColumns::class);
+        $variationsConfig->removeComponentsByType(GridFieldEditButton::class);
+        $variationsConfig->removeComponentsByType(GridFieldDeleteAction::class);
+        $variationsConfig->removeComponentsByType(GridFieldArchiveAction::class);
+        $variationsConfig->removeComponentsByType(GridField_ActionMenu::class);
+
+        $variationsConfig->addComponent($editableColumns = GridFieldEditableColumns::create());
+        // One inline dropdown column per attribute type (Size, Colour, …), added right after
+        // the "Variation" combination column. Renders nothing when the product has no attributes.
+        $variationsConfig->addComponent(new GridFieldVariationAttributeColumns());
+        $variationsConfig->addComponent(GridFieldOrderableRows::create('Sort'));
+        $variationsConfig->addComponent(new GridFieldGenerateVariationsButton());
+        $variationsConfig->addComponent(new GridFieldEditButton());
+        $variationsConfig->addComponent(new GridFieldDeleteAction());
+        $variationsConfig->addComponent(new GridField_ActionMenu());
+
+        // Array form: 'title' labels the column header, 'callback' supplies the inline field.
+        // The attribute dropdown columns (added below) identify each row, so no separate
+        // read-only "Variation" combination column is needed.
+        $displayFields = [
+            'InternalItemID' => [
+                'title' => _t(__CLASS__ . '.CodeColumn', 'Code'),
+                'callback' => fn ($record, $column, $grid): TextField =>
+                    TextField::create($column)->setAttribute('style', 'width:12em'),
+            ],
+            'Price' => [
+                'title' => _t(__CLASS__ . '.PriceColumn', 'Price'),
+                'callback' => fn ($record, $column, $grid): NumericField =>
+                    NumericField::create($column)->setScale(2)->setAttribute('style', 'width:7em'),
+            ],
+        ];
+
+        // Let optional modules contribute extra inline-editable columns keyed to a
+        // getter/setter on Variation — e.g. silvershop/stock adds a per-variation
+        // "Stock" column. Nothing is added when no such module is installed.
+        $this->getOwner()->extend('updateVariationEditableColumns', $displayFields);
+
+        $editableColumns->setDisplayFields($displayFields);
+
         $fields->addFieldsToTab('Root.Variations', [
             ListboxField::create(
                 'VariationAttributeTypes',
@@ -70,32 +131,125 @@ class ProductVariationsExtension extends Extension
             )
                 ->setDescription(_t(
                     __CLASS__ . '.AttributesDescription',
-                    'These are fields to indicate the way(s) each variation varies. Once selected, they can be edited on each variation.'
+                    'Attributes are the ways this product varies (e.g. Size, Colour). Choose them and Save, then '
+                    . 'use "Generate variations" to create the sellable combinations below.'
                 )),
-            $variationsGridField = GridField::create(
+            // Shrink the fixed-width data columns to their content so the attribute dropdown
+            // columns take the remaining width (the data cells otherwise stretch to fill the
+            // 100%-wide grid table). Scoped to this editable grid via .ss-gridfield-editable.
+            LiteralField::create(
+                'variationsgridcss',
+                '<style>'
+                . '.ss-gridfield-editable .col-InternalItemID,'
+                . '.ss-gridfield-editable .col-Price,'
+                . '.ss-gridfield-editable .col-StockLevel,'
+                . '.ss-gridfield-editable .col-StockUnlimited{width:1%;white-space:nowrap}'
+                . '</style>'
+            ),
+            GridField::create(
                 'Variations',
                 _t(__CLASS__ . '.Variations', 'Variations'),
                 $this->getOwner()->Variations(),
-                GridFieldConfig_RecordEditor::create(100)
-            )
+                $variationsConfig
+            ),
+            LiteralField::create(
+                'variationsgridinfo',
+                '<p class="message notice" style="display:flex;align-items:flex-start;gap:.5em">'
+                . '<span class="font-icon-info-circled" aria-hidden="true"></span><span>' . _t(
+                    __CLASS__ . '.VariationsGridInfo',
+                    'Each row is a sellable variation with its own code, price and stock. Change what a variation is '
+                    . 'with the attribute dropdowns, drag to reorder, and set an image via a row\'s edit button. '
+                    . 'Click "Generate variations" to add any missing combinations. Changes are saved with the product.'
+                ) . '</span></p>'
+            ),
         ]);
-
-        $variationsGridField->getConfig()->addComponent($sort = GridFieldOrderableRows::create('Sort'));
 
         if ($this->getOwner()->Variations()->exists()) {
             $fields->addFieldToTab(
                 'Root.Pricing',
-                LabelField::create(
-                    'variationspriceinstructinos',
-                    _t(
+                LiteralField::create(
+                    'variationspriceinfo',
+                    '<p class="message notice" style="margin-top:1.5em;display:flex;align-items:flex-start;gap:.5em">'
+                    . '<span class="font-icon-info-circled" aria-hidden="true"></span><span>' . _t(
                         __CLASS__ . '.VariationsInfo',
-                        'Price - Because you have one or more variations, the price can be set in the "Variations" tab.'
-                    )
+                        'Because this product has one or more variations, the price is set per variation '
+                        . 'on the "Variations" tab.'
+                    ) . '</span></p>'
                 )
             );
             $fields->removeFieldFromTab('Root.Pricing', 'BasePrice');
             $fields->removeFieldFromTab('Root.Main', 'InternalItemID');
         }
+    }
+
+    /**
+     * Generate the full variation matrix for this product's selected attribute types —
+     * the cartesian product of each type's values. Idempotent and non-destructive:
+     * combinations that already exist are left untouched, only the missing ones are
+     * created (priced at the product's BasePrice by default). Returns the number created.
+     */
+    public function generateVariations(): int
+    {
+        $product = $this->getOwner();
+        $types = $product->VariationAttributeTypes();
+
+        if (!$types->exists()) {
+            return 0;
+        }
+
+        // Collect the value ids for each axis; a type with no values can't complete the matrix.
+        $valueSets = [];
+        foreach ($types as $type) {
+            $ids = $type->Values()->column('ID');
+            if ($ids === []) {
+                return 0;
+            }
+            $valueSets[] = $ids;
+        }
+
+        // Cartesian product of the axis value ids.
+        $combinations = [[]];
+        foreach ($valueSets as $ids) {
+            $expanded = [];
+            foreach ($combinations as $combination) {
+                foreach ($ids as $id) {
+                    $expanded[] = array_merge($combination, [$id]);
+                }
+            }
+            $combinations = $expanded;
+        }
+
+        // Signatures of the combinations that already exist.
+        $existing = [];
+        foreach ($product->Variations() as $variation) {
+            $ids = $variation->AttributeValues()->column('ID');
+            sort($ids);
+            $existing[implode('-', $ids)] = true;
+        }
+
+        $created = 0;
+        foreach ($combinations as $combination) {
+            $signature = $combination;
+            sort($signature);
+            $signature = implode('-', $signature);
+
+            if (isset($existing[$signature])) {
+                continue;
+            }
+
+            $variation = Variation::create();
+            $variation->ProductID = $product->ID;
+            $variation->Price = $product->BasePrice;
+            $variation->write();
+            $variation->InternalItemID = $product->InternalItemID . '-' . $variation->ID;
+            $variation->AttributeValues()->setByIDList($combination);
+            $variation->write();
+
+            $existing[$signature] = true;
+            $created++;
+        }
+
+        return $created;
     }
 
     public function PriceRange(): ?ArrayData
