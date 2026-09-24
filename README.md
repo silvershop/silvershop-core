@@ -92,6 +92,7 @@ issue in CMS5, which did not default to Strict.
 ## Core Features
 
  * Product Catalog - Products extend Page, and can be browsed within Product Category pages.
+ * Product Variations - Sell predefined combinations (e.g. size × colour), created with a one-click, non-destructive matrix generator. See [Product Variations](docs/en/03_How_It_Works/Product_Variations.md).
  * Cart Page - For viewing and updating your cart.
  * Checkout - Gather delivery/billing details and anything specific to the order. Can be single-page or multi-step.
  * Online Payments - Via the omnipay module.
