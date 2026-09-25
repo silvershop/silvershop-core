@@ -13,8 +13,10 @@ use SilverShop\Model\Order;
 use SilverShop\Page\Product;
 use SilverStripe\AssetAdmin\Forms\UploadField;
 use SilverStripe\Assets\Image;
+use SilverStripe\Forms\FieldGroup;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\LiteralField;
+use SilverStripe\Forms\NumericField;
 use SilverStripe\Forms\TextField;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\ManyManyList;
@@ -178,7 +180,7 @@ class Variation extends DataObject implements Buyable
         ];
 
         $fieldList->push(
-            TextField::create(
+            NumericField::create(
                 'Weight',
                 _t(
                     'SilverShop\Page\Product.WeightWithUnit',
@@ -187,37 +189,18 @@ class Variation extends DataObject implements Buyable
                     [
                         'WeightUnit' => Product::config()->weight_unit
                     ]
-                ),
-                '',
-                12
-            )
+                )
+            )->setHTML5(true)->setScale(null)
         );
 
+        // Width, Height and Depth on one compact row, mirroring the product's Shipping tab.
         $fieldList->push(
-            TextField::create(
-                'Height',
-                _t('SilverShop\Page\Product.HeightWithUnit', 'Height ({LengthUnit})', '', $fieldSubstitutes),
-                '',
-                12
-            )
-        );
-
-        $fieldList->push(
-            TextField::create(
-                'Width',
-                _t('SilverShop\Page\Product.WidthWithUnit', 'Width ({LengthUnit})', '', $fieldSubstitutes),
-                '',
-                12
-            )
-        );
-
-        $fieldList->push(
-            TextField::create(
-                'Depth',
-                _t('SilverShop\Page\Product.DepthWithUnit', 'Depth ({LengthUnit})', '', $fieldSubstitutes),
-                '',
-                12
-            )
+            FieldGroup::create(
+                _t('SilverShop\Page\Product.Dimensions', 'Dimensions ({LengthUnit})', '', $fieldSubstitutes),
+                NumericField::create('Width', _t('SilverShop\Page\Product.Width', 'Width'))->setHTML5(true)->setScale(null),
+                NumericField::create('Height', _t('SilverShop\Page\Product.Height', 'Height'))->setHTML5(true)->setScale(null),
+                NumericField::create('Depth', _t('SilverShop\Page\Product.Depth', 'Depth'))->setHTML5(true)->setScale(null)
+            )->setName('Dimensions')
         );
 
         $this->extend('updateCMSFields', $fieldList);
