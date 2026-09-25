@@ -67,13 +67,11 @@ class Variation extends DataObject implements Buyable
         'AttributeValues' => AttributeValue::class
     ];
 
-    private static array $cascade_deletes = [
-        'AttributeValues'
-    ];
-
-    private static array $cascade_duplicates = [
-        'AttributeValues'
-    ];
+    // NB: AttributeValues is a many_many of SHARED records owned by AttributeType, so it must NOT
+    // cascade. Deleting a variation only removes the join rows (SilverStripe does this
+    // automatically) — the shared values ("Red", "Large", …) stay for other variations and the
+    // attribute type. Cascade-deleting them here previously wiped the values catalogue-wide, and
+    // cascade-duplicating them created duplicate value records.
 
     private static array $casting = [
         'Title' => 'Text',
