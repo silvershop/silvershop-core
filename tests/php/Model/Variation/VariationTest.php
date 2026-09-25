@@ -11,6 +11,8 @@ use SilverShop\Model\Variation\Variation;
 use SilverShop\Page\Product;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\SapphireTest;
+use SilverStripe\Forms\FieldGroup;
+use SilverStripe\Forms\NumericField;
 
 /**
  * Test product variation capabilities.
@@ -107,5 +109,30 @@ final class VariationTest extends SapphireTest
         $this->assertEquals(20, $range->Min->getValue());
         $this->assertEquals(22, $range->Max->getValue());
         $this->assertEquals(21, $range->Average->getValue());
+    }
+
+    public function testDetailFormGroupsDimensionsAsNumericFields(): void
+    {
+        $fields = $this->redLarge->getCMSFields();
+
+        $this->assertInstanceOf(
+            NumericField::class,
+            $fields->dataFieldByName('Weight'),
+            'Weight is an HTML5 numeric field'
+        );
+
+        $group = $fields->fieldByName('Dimensions');
+        $this->assertInstanceOf(
+            FieldGroup::class,
+            $group,
+            'Width, Height and Depth are grouped in one compact Dimensions row'
+        );
+
+        $names = [];
+        foreach ($group->getChildren() as $child) {
+            $names[] = $child->getName();
+            $this->assertInstanceOf(NumericField::class, $child, $child->getName() . ' is numeric');
+        }
+        $this->assertSame(['Width', 'Height', 'Depth'], $names);
     }
 }
