@@ -427,8 +427,7 @@ class Variation extends DataObject implements Buyable
         if ($product && $product->exists()) {
             if ($product->PriceVariationsFromBase) {
                 $price = $product->BasePrice;
-            } elseif (
-                (float) $price <= 0
+            } elseif ((float) $price <= 0
                 && self::config()->get('price_fallback')
                 && !Product::config()->get('allow_zero_price')
             ) {
