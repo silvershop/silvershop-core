@@ -135,4 +135,34 @@ final class VariationTest extends SapphireTest
         }
         $this->assertSame(['Width', 'Height', 'Depth'], $names);
     }
+
+    /**
+     * Regression: AttributeValues is a many_many of SHARED records owned by AttributeType, so
+     * deleting a variation must only drop the join rows — never the values themselves. A previous
+     * cascade_deletes on this relation wiped the whole values catalogue when a variation was
+     * deleted, emptying every product's attribute dropdowns.
+     */
+    public function testDeletingVariationKeepsSharedAttributeValues(): void
+    {
+        $red = $this->objFromFixture(AttributeValue::class, 'color_red');
+        $large = $this->objFromFixture(AttributeValue::class, 'size_large');
+        $redSmall = $this->objFromFixture(Variation::class, 'redSmall');
+
+        // redLarge uses Large + Red; redSmall shares Red. Delete redLarge.
+        $this->redLarge->delete();
+
+        $this->assertNotNull(
+            AttributeValue::get()->byID($red->ID),
+            'shared "Red" value survives deleting a variation that used it'
+        );
+        $this->assertNotNull(
+            AttributeValue::get()->byID($large->ID),
+            '"Large" value survives even though only the deleted variation used it'
+        );
+        $this->assertContains(
+            (string) $red->ID,
+            array_map('strval', $redSmall->AttributeValues()->column('ID')),
+            'the surviving variation keeps its link to the shared value'
+        );
+    }
 }
