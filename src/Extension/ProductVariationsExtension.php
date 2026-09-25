@@ -145,6 +145,12 @@ class ProductVariationsExtension extends Extension
                 . '.ss-gridfield-editable .col-Price,'
                 . '.ss-gridfield-editable .col-StockLevel,'
                 . '.ss-gridfield-editable .col-StockUnlimited{width:1%;white-space:nowrap}'
+                // When a row is flagged "Unlimited" (optional stock module column) its stock
+                // quantity no longer applies: grey the field, block editing and overlay an
+                // infinity symbol. Pure CSS via :has(); a no-op when there is no such column.
+                . '.variations-grid tbody tr:has(.col-StockUnlimited input:checked) td.col-StockLevel{position:relative}'
+                . '.variations-grid tbody tr:has(.col-StockUnlimited input:checked) td.col-StockLevel input{color:transparent;background:#f4f4f4;pointer-events:none}'
+                . '.variations-grid tbody tr:has(.col-StockUnlimited input:checked) td.col-StockLevel::after{content:"\\221E";position:absolute;top:50%;left:0;right:0;transform:translateY(-50%);text-align:center;font-size:1.5em;line-height:1;color:#555;pointer-events:none}'
                 . '</style>'
             ),
             GridField::create(
