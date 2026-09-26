@@ -117,4 +117,36 @@ final class VariationAttributeColumnsTest extends SapphireTest
 
         $this->assertSame($expected, $valueIDs, 'the variation now carries the newly selected values');
     }
+
+    public function testInlineSavePreservesValuesForColumnsNotShown(): void
+    {
+        $product = $this->objFromFixture(Product::class, 'ball');
+        $grid = $this->variationsGrid($product);
+        $component = $grid->getConfig()->getComponentByType(GridFieldVariationAttributeColumns::class);
+
+        $sizeType = $this->objFromFixture(AttributeType::class, 'size');
+        $small = $this->objFromFixture(AttributeValue::class, 'size_small');
+        $red = $this->objFromFixture(AttributeValue::class, 'color_red');
+        $redLarge = $this->objFromFixture(Variation::class, 'redLarge'); // Size:Large, Colour:Red
+
+        // Simulate a save where only the Size column is present (e.g. the Colour attribute was
+        // removed from the product, so its column isn't rendered). The Colour value must survive.
+        $grid->setValue([
+            'VariationAttributes' => [
+                $redLarge->ID => [
+                    $sizeType->ID => (string) $small->ID,
+                ],
+            ],
+        ]);
+
+        $component->handleSave($grid, $product);
+
+        $reloaded = Variation::get()->byID($redLarge->ID);
+        $valueIDs = $reloaded->AttributeValues()->column('ID');
+        sort($valueIDs);
+        $expected = [$small->ID, $red->ID];
+        sort($expected);
+
+        $this->assertSame($expected, $valueIDs, 'Size updated; Colour (column not shown) preserved');
+    }
 }

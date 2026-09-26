@@ -140,14 +140,23 @@ class GridFieldVariationAttributeColumns implements GridField_ColumnProvider, Gr
                 continue;
             }
 
-            $valueIDs = [];
-            foreach ($typeMap as $valueID) {
+            // Reconcile only the attribute types shown as columns: for each, swap the variation's
+            // existing value of that type for the submitted one. Values for any type NOT in the
+            // grid (e.g. an attribute the product no longer varies by) are left untouched, so a
+            // save never strips attribute data the merchant didn't edit.
+            foreach ($typeMap as $typeID => $valueID) {
+                if (!is_numeric($typeID)) {
+                    continue;
+                }
+
+                foreach ($variation->AttributeValues()->filter('TypeID', (int) $typeID) as $existing) {
+                    $variation->AttributeValues()->remove($existing);
+                }
+
                 if ($valueID) {
-                    $valueIDs[] = (int) $valueID;
+                    $variation->AttributeValues()->add((int) $valueID);
                 }
             }
-
-            $variation->AttributeValues()->setByIDList($valueIDs);
         }
     }
 }
