@@ -25,6 +25,7 @@ use SilverStripe\Forms\GridField\GridFieldConfig_RecordEditor;
 use SilverStripe\Forms\GridField\GridFieldDataColumns;
 use SilverStripe\Forms\GridField\GridFieldDeleteAction;
 use SilverStripe\Forms\GridField\GridFieldEditButton;
+use SilverStripe\Forms\CheckboxField;
 use SilverStripe\Forms\ListboxField;
 use SilverStripe\Forms\NumericField;
 use SilverStripe\Forms\TextField;
@@ -32,6 +33,7 @@ use SilverStripe\ORM\DataList;
 use SilverStripe\ORM\HasManyList;
 use SilverStripe\ORM\ManyManyList;
 use SilverStripe\Versioned\Versioned;
+use SilverStripe\View\Requirements;
 use Symbiote\GridFieldExtensions\GridFieldEditableColumns;
 use Symbiote\GridFieldExtensions\GridFieldOrderableRows;
 
@@ -46,6 +48,12 @@ use Symbiote\GridFieldExtensions\GridFieldOrderableRows;
  */
 class ProductVariationsExtension extends Extension
 {
+    private static array $db = [
+        // When set, every variation of this product is priced from the product's BasePrice
+        // (the per-variation price column is hidden). See Variation::sellingPrice().
+        'PriceVariationsFromBase' => 'Boolean',
+    ];
+
     private static array $has_many = [
         'Variations' => Variation::class,
     ];
@@ -76,6 +84,9 @@ class ProductVariationsExtension extends Extension
      */
     public function updateCMSFields(FieldList $fields): void
     {
+        // Live-toggle the per-variation Price column when the "price from base" checkbox changes.
+        Requirements::javascript('silvershop/core:client/dist/javascript/variation-flat-pricing.js');
+
         // Matrix editor: start from the record editor, then swap the static data columns
         // for inline-editable columns (Code + Price edited directly in the grid; the
         // read-only "Variation" column shows the attribute combination). Image, weight,
@@ -104,17 +115,27 @@ class ProductVariationsExtension extends Extension
         // Array form: 'title' labels the column header, 'callback' supplies the inline field.
         // The attribute dropdown columns (added below) identify each row, so no separate
         // read-only "Variation" combination column is needed.
+        $flatPricing = (bool) $this->getOwner()->PriceVariationsFromBase;
+
+        // Formatted base price, shown on the flat-pricing checkbox label.
+        $basePrice = ShopCurrency::create();
+        $basePrice->setValue($this->getOwner()->BasePrice);
+        $basePriceNice = $basePrice->Nice();
+
         $displayFields = [
             'InternalItemID' => [
                 'title' => _t(__CLASS__ . '.CodeColumn', 'Code'),
                 'callback' => fn ($record, $column, $grid): TextField =>
                     TextField::create($column)->setAttribute('style', 'width:12em'),
             ],
-            'Price' => [
-                'title' => _t(__CLASS__ . '.PriceColumn', 'Price'),
-                'callback' => fn ($record, $column, $grid): NumericField =>
-                    NumericField::create($column)->setScale(2)->setAttribute('style', 'width:7em'),
-            ],
+        ];
+        // Per-variation Price column. Always rendered; hidden via CSS (the grid's "flat-pricing"
+        // class) when the product prices every variation from its base price, so the JS toggle
+        // below can show/hide it live without a save.
+        $displayFields['Price'] = [
+            'title' => _t(__CLASS__ . '.PriceColumn', 'Price'),
+            'callback' => fn ($record, $column, $grid): NumericField =>
+                NumericField::create($column)->setScale(2)->setAttribute('style', 'width:7em'),
         ];
 
         // Let optional modules contribute extra inline-editable columns keyed to a
@@ -135,6 +156,18 @@ class ProductVariationsExtension extends Extension
                     'Attributes are the ways this product varies (e.g. Size, Colour). Choose them and Save, then '
                     . 'use "Generate variations" to create the sellable combinations below.'
                 )),
+            CheckboxField::create(
+                'PriceVariationsFromBase',
+                _t(
+                    __CLASS__ . '.PriceVariationsFromBase',
+                    'Price all variations from the base price ({price})',
+                    '',
+                    ['price' => $basePriceNice]
+                )
+            )->setDescription(_t(
+                __CLASS__ . '.PriceVariationsFromBaseDesc',
+                'Sells every variation at the product\'s base price and hides the per-variation price column.'
+            )),
             // Shrink the fixed-width data columns to their content so the attribute dropdown
             // columns take the remaining width (the data cells otherwise stretch to fill the
             // 100%-wide grid table). Scoped to this editable grid via .ss-gridfield-editable.
@@ -145,6 +178,8 @@ class ProductVariationsExtension extends Extension
                 . '.ss-gridfield-editable .col-Price,'
                 . '.ss-gridfield-editable .col-StockLevel,'
                 . '.ss-gridfield-editable .col-StockUnlimited{width:1%;white-space:nowrap}'
+                // Flat pricing hides the per-variation Price column (toggled live by JS).
+                . '.variations-grid.flat-pricing .col-Price{display:none}'
                 // When a row is flagged "Unlimited" (optional stock module column) its stock
                 // quantity no longer applies: grey the field, block editing and overlay an
                 // infinity symbol. Pure CSS via :has(); a no-op when there is no such column.
@@ -158,7 +193,7 @@ class ProductVariationsExtension extends Extension
                 _t(__CLASS__ . '.Variations', 'Variations'),
                 $this->getOwner()->Variations(),
                 $variationsConfig
-            ),
+            )->addExtraClass('variations-grid' . ($flatPricing ? ' flat-pricing' : '')),
             LiteralField::create(
                 'variationsgridinfo',
                 '<p class="message notice" style="display:flex;align-items:flex-start;gap:.5em">'
@@ -172,21 +207,35 @@ class ProductVariationsExtension extends Extension
         ]);
 
         if ($this->getOwner()->Variations()->exists()) {
-            $fields->addFieldToTab(
-                'Root.Pricing',
-                LiteralField::create(
-                    'variationspriceinfo',
-                    '<p class="message notice" style="margin-top:1.5em;display:flex;align-items:flex-start;gap:.5em">'
-                    . '<span class="font-icon-info-circled" aria-hidden="true"></span><span>' . _t(
-                        __CLASS__ . '.VariationsInfo',
-                        'Because this product has one or more variations, the price is set per variation '
-                        . 'on the "Variations" tab.'
-                    ) . '</span></p>'
-                )
+            // One constant explanation of how variation pricing works, followed by a line stating
+            // the current on/off state of the "Price all variations from the base price" option.
+            $explanation = _t(
+                __CLASS__ . '.VariationsInfo',
+                'Each variation is priced on the "Variations" tab. Tick "Price all variations from '
+                . 'the base price" there to sell them all at the base price above instead.'
             );
-            $fields->removeFieldFromTab('Root.Pricing', 'BasePrice');
+            $state = $flatPricing
+                ? _t(
+                    __CLASS__ . '.VariationsFlatState',
+                    'Currently on: every variation is sold at the base price above.'
+                )
+                : _t(
+                    __CLASS__ . '.VariationsOwnPriceState',
+                    'Currently off: each variation uses its own price (the base price is the fallback '
+                    . 'for any left without one).'
+                );
+            $fields->addFieldToTab('Root.Pricing', LiteralField::create(
+                'variationspriceinfo',
+                $this->pricingNotice($explanation . '<br><strong>' . $state . '</strong>')
+            ));
             $fields->removeFieldFromTab('Root.Main', 'InternalItemID');
         }
+    }
+
+    private function pricingNotice(string $text): string
+    {
+        return '<p class="message notice" style="margin-top:1.5em;display:flex;align-items:flex-start;gap:.5em">'
+            . '<span class="font-icon-info-circled" aria-hidden="true"></span><span>' . $text . '</span></p>';
     }
 
     /**
