@@ -24,7 +24,4 @@
             <td class="silvershop-shop-order__cell silvershop-shop-order__cell--value">$TotalOutstanding.Nice $Currency</td>
         </tr>
     <% end_if %>
-    <tr class="silvershop-shop-order__row silvershop-shop-order__row--bottom">
-        <td class="silvershop-shop-order__cell silvershop-shop-order__cell--bottom" colspan="5"></td>
-    </tr>
 </tfoot>
