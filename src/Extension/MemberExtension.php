@@ -8,12 +8,10 @@ use SilverShop\Cart\ShoppingCart;
 use SilverShop\Model\Address;
 use SilverShop\Model\Order;
 use SilverStripe\Core\Extension;
-use SilverStripe\Forms\DropdownField;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\ORM\DataList;
 use SilverStripe\ORM\HasManyList;
 use SilverStripe\Security\Member;
-use SilverStripe\SiteConfig\SiteConfig;
 
 /**
  * ShopMember provides customisations to {@link Member} for shop purposes
@@ -55,17 +53,8 @@ class MemberExtension extends Extension
 
     public function updateCMSFields(FieldList $fieldList): void
     {
-        $fieldList->removeByName('Country');
         $fieldList->removeByName('DefaultShippingAddressID');
         $fieldList->removeByName('DefaultBillingAddressID');
-        $fieldList->addFieldToTab(
-            'Root.Main',
-            DropdownField::create(
-                'Country',
-                _t('SilverShop\Model\Address.db_Country', 'Country'),
-                SiteConfig::current_site_config()->getCountriesList()
-            )
-        );
     }
 
     public function updateMemberFormFields($fields): void
