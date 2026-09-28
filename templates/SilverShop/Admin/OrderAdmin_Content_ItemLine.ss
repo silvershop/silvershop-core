@@ -6,6 +6,8 @@
                     <img class="silvershop-shop-order__image-img" src="$Buyable.Image.ScaleWidth(45).AbsoluteURL" alt="$Buyable.Title"/>
                 </a>
             </div>
+        <% else %>
+            <span class="silvershop-shop-order__image-placeholder" aria-hidden="true"></span>
         <% end_if %>
     </td>
     <td class="silvershop-shop-order__cell silvershop-shop-order__cell--product">

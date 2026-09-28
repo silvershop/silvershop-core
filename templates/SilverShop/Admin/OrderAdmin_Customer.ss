@@ -21,10 +21,5 @@
                 </td>
             </tr>
         </tbody>
-        <tfoot>
-            <tr class="silvershop-shop-order__row silvershop-shop-order__row--bottom">
-                <td class="silvershop-shop-order__cell silvershop-shop-order__cell--bottom" colspan="2"></td>
-            </tr>
-        </tfoot>
     </table>
 </div>

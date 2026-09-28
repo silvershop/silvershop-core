@@ -12,10 +12,5 @@
                 <td class="silvershop-shop-order__cell silvershop-shop-order__cell--notes">$Notes</td>
             </tr>
         </tbody>
-        <tfoot>
-            <tr class="silvershop-shop-order__row silvershop-shop-order__row--bottom">
-                <td class="silvershop-shop-order__cell silvershop-shop-order__cell--bottom"></td>
-            </tr>
-        </tfoot>
     </table>
 </div>

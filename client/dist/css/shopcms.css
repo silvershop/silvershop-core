@@ -26,20 +26,128 @@ Integrated webfont. Created via http://fontello.com/
 .silvershop-icon-cart:before { content: '\e803'; } /* '' */
 
 
-/* Order styles */
-.silvershop-shop-order h2 {
-  margin: 0;
+/* Order styles
+   Table styling for the read-only Customer / Addresses / Items blocks that Order::getCMSFields()
+   renders in the admin. Scoped to .silvershop-shop-order, so it is inert when a project overrides the
+   OrderAdmin_* templates. Uses the CMS Bootstrap tokens so it follows the admin theme (incl. dark mode). */
+.silvershop-shop-order {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0.5rem 0 2rem;
+  font-size: 1rem;
+  color: var(--bs-body-color, #43536d);
 }
 
-  .silvershop-shop-order .silvershop-shop-order__row--total th {
-    font-weight: bold;
-  }
+/* Match the standard GridField title (.grid-field__title): light weight, no transform */
+.silvershop-shop-order h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.1875rem;
+  font-weight: 300;
+  text-transform: none;
+  color: var(--bs-body-color, #43536d);
+}
 
-  .silvershop-shop-order .silvershop-shop-order__header th {
-    padding-top: 0;
-    padding-bottom: 0.3rem;
-  }
+.silvershop-shop-order th,
+.silvershop-shop-order td {
+  padding: 0.9231rem 0.9rem;
+  text-align: left;
+  vertical-align: top;
+  line-height: 20px;
+  border-bottom: 1px solid var(--bs-border-color, #dae0e9);
+}
 
-  .silvershop-shop-order__cell--address {
-    vertical-align: top;
-  }
+.silvershop-shop-order .silvershop-shop-order__title-cell {
+  border-bottom: 0;
+  padding: 0 0 0.25rem;
+}
+
+/* Content rows sit on a white surface (like GridField); titles/headers stay on the admin background */
+.silvershop-shop-order__row {
+  background: var(--bs-white, #fff);
+}
+
+/* Match the standard GridField column header (.grid-field__sort): uppercase, normal weight */
+.silvershop-shop-order .silvershop-shop-order__header th {
+  padding-top: 1.2308rem;
+  padding-bottom: 1.2308rem;
+  font-size: 0.923rem;
+  font-weight: normal;
+  text-transform: uppercase;
+  line-height: 20px;
+  color: var(--bs-body-color, #43536d);
+  border-bottom: 1px solid var(--bs-border-color, #dae0e9);
+}
+
+/* Numeric columns right-aligned; quantity centred */
+.silvershop-shop-order__header-cell--unit-price,
+.silvershop-shop-order__header-cell--total,
+.silvershop-shop-order__cell--unit-price,
+.silvershop-shop-order__cell--item-total,
+.silvershop-shop-order__cell--value {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.silvershop-shop-order__header-cell--quantity,
+.silvershop-shop-order__cell--quantity {
+  text-align: center;
+}
+
+.silvershop-shop-order__cell--image {
+  width: 60px;
+}
+
+.silvershop-shop-order__image-img {
+  display: block;
+  border-radius: 4px;
+}
+
+/* Placeholder square for line items whose product has no image */
+.silvershop-shop-order__image-placeholder {
+  display: block;
+  width: 45px;
+  height: 45px;
+  border: 1px solid var(--bs-border-color, #ced5e1);
+  border-radius: 4px;
+  background: var(--bs-tertiary-bg, #f6f7f9) center / 22px no-repeat
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23aeb6c4' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='3' width='18' height='18' rx='2'/%3E%3Ccircle cx='9' cy='9' r='1.5'/%3E%3Cpath d='m21 15-5-5L5 21'/%3E%3C/svg%3E");
+}
+
+.silvershop-shop-order__product-title {
+  font-weight: 600;
+}
+
+.silvershop-shop-order__sku,
+.silvershop-shop-order__subtitle {
+  margin-top: 0.15rem;
+  font-size: 12px;
+  color: var(--bs-secondary-color, #74809b);
+  font-weight: 400;
+}
+
+.silvershop-shop-order__cell--label {
+  text-align: right;
+  color: var(--bs-secondary-color, #74809b);
+}
+
+/* Subtotal + Total: full body colour like the address text, a touch lighter than default bold */
+.silvershop-shop-order .silvershop-shop-order__row--subtotal th,
+.silvershop-shop-order .silvershop-shop-order__row--total th {
+  font-weight: 600;
+  color: var(--bs-body-color, #43536d);
+}
+
+.silvershop-shop-order .silvershop-shop-order__row--total th {
+  border-top: 1px solid var(--bs-border-color, #dae0e9);
+}
+
+/* Customer + address blocks: two even columns, top-aligned */
+.silvershop-shop-order--customer td,
+.silvershop-shop-order--addresses td {
+  width: 50%;
+}
+
+.silvershop-shop-order__cell--address {
+  vertical-align: top;
+  line-height: 1.6;
+}
