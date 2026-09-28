@@ -239,6 +239,7 @@ en:
     Quantity: Quantity
     SINGULARNAME: Order
     STATUS_ADMINCANCELLED: 'Cancelled by admin'
+    TABMAIN: Main
     STATUS_CART: Cart
     STATUS_COMPLETE: Complete
     STATUS_MEMBERCANCELLED: 'Cancelled by member'

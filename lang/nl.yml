@@ -233,6 +233,7 @@ nl:
     Quantity: Hoeveelheid
     SINGULARNAME: Bestelling
     STATUS_ADMINCANCELLED: 'Geannuleerd door personeel'
+    TABMAIN: Inhoud
     STATUS_CART: In winkelwagen
     STATUS_COMPLETE: Afgerond
     STATUS_MEMBERCANCELLED: 'Geannuleerd door klant'
