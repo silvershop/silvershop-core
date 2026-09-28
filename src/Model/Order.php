@@ -293,6 +293,7 @@ class Order extends DataObject
     public function getCMSFields(): FieldList
     {
         $fieldList = FieldList::create(TabSet::create('Root', Tab::create('Main')));
+        $fieldList->fieldByName('Root.Main')->setTitle(_t(__CLASS__ . '.TABMAIN', 'Main'));
         $fs = '<div class="field">';
         $fe = '</div>';
         $parts = [
