@@ -151,6 +151,8 @@ class ProductVariationsExtension extends Extension
                 . '.variations-grid tbody tr:has(.col-StockUnlimited input:checked) td.col-StockLevel{position:relative}'
                 . '.variations-grid tbody tr:has(.col-StockUnlimited input:checked) td.col-StockLevel input{color:transparent;background:#f4f4f4;pointer-events:none}'
                 . '.variations-grid tbody tr:has(.col-StockUnlimited input:checked) td.col-StockLevel::after{content:"\\221E";position:absolute;top:50%;left:0;right:0;transform:translateY(-50%);text-align:center;font-size:1.5em;line-height:1;color:#555;pointer-events:none}'
+                // Separate the "Attributes" field from the variations grid above it.
+                . '[id$="VariationAttributeTypes_Holder"]{margin-top:2em!important}'
                 . '</style>'
             ),
             GridField::create(
