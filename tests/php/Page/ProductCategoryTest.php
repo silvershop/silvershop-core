@@ -9,6 +9,8 @@ use SilverShop\Page\Product;
 use SilverShop\Page\ProductCategory;
 use SilverStripe\Control\Director;
 use SilverStripe\Core\Config\Config;
+use SilverStripe\Model\List\SS_List;
+use SilverStripe\ORM\DataObject;
 use PHPUnit\Framework\Attributes\DoesNotPerformAssertions;
 use SilverStripe\Dev\FunctionalTest;
 use SilverStripe\Versioned\Versioned;
@@ -278,5 +280,32 @@ final class ProductCategoryTest extends FunctionalTest
             $products->column('URLSegment'),
             'Products failing multiple filter conditions should not be shown'
         );
+    }
+
+    public function testProductsShowableOverrideHook(): void
+    {
+        $category = $this->electronics;
+
+        $normal = $category->ProductsShowable()->count();
+        $allProducts = Product::get()->count();
+        $this->assertNotSame(
+            $allProducts,
+            $normal,
+            'Sanity: a category normally shows a subset of all products'
+        );
+
+        // An extension supplying overrideProductsShowable should short-circuit the whole method.
+        ProductCategory::add_extension(ProductCategoryTest_OverrideExtension::class);
+        DataObject::flush_and_destroy_cache();
+
+        $overridden = ProductCategory::get()->byID($category->ID)->ProductsShowable();
+        $this->assertInstanceOf(SS_List::class, $overridden);
+        $this->assertSame(
+            $allProducts,
+            $overridden->count(),
+            'The overrideProductsShowable hook supplies the whole list, skipping the category query'
+        );
+
+        ProductCategory::remove_extension(ProductCategoryTest_OverrideExtension::class);
     }
 }

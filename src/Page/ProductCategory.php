@@ -53,6 +53,15 @@ class ProductCategory extends Page implements i18nEntityProvider
      */
     public function ProductsShowable($recursive = true): SS_List
     {
+        // Allow an extension to supply the product list up front — e.g. a category-membership index,
+        // a search-backed or personalised list — skipping the child-category walk and the
+        // ParentID/ProductCategories query entirely. No-op (and no behaviour change) when unused.
+        $override = null;
+        $this->extend('overrideProductsShowable', $override, $recursive);
+        if ($override instanceof SS_List) {
+            return $override;
+        }
+
         // Figure out the categories to check
         $groupids = [$this->ID];
         if (!empty($recursive) && self::config()->include_child_groups) {
