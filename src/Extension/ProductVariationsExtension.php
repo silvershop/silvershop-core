@@ -161,7 +161,7 @@ class ProductVariationsExtension extends Extension
             ),
             LiteralField::create(
                 'variationsgridinfo',
-                '<p class="message notice" style="display:flex;align-items:flex-start;gap:.5em">'
+                '<p class="message notice" style="margin-top:1.5em;display:flex;align-items:flex-start;gap:.5em">'
                 . '<span class="font-icon-info-circled" aria-hidden="true"></span><span>' . _t(
                     __CLASS__ . '.VariationsGridInfo',
                     'Each row is a sellable variation with its own code, price and stock. Change what a variation is '
