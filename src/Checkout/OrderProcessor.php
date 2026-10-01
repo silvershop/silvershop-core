@@ -196,7 +196,7 @@ class OrderProcessor
         $payment = Payment::create()->init(
             $gateway,
             $this->order->TotalOutstanding(true),
-            ShopConfigExtension::config()->get('base_currency')
+            ShopConfigExtension::get_site_currency()
         );
         $this->order->Payments()->add($payment);
         return $payment;
