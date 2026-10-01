@@ -472,7 +472,9 @@ en:
   SilverShop\ShopEmail:
     AdminNotificationSubject: 'Order #{OrderNo} notification'
     AdminNotificationTitle: 'Shop Receipt'
+    CancelNotice: 'Order #{OrderNo} has been cancelled by the customer.'
     CancelSubject: 'Order #{OrderNo} cancelled by member'
+    CancelTitle: 'Order Cancelled'
     ConfirmationSubject: 'Order #{OrderNo} confirmation'
     ConfirmationTitle: 'Order Confirmation'
     PhoneNumber: 'Phone number'

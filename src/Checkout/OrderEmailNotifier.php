@@ -195,6 +195,8 @@ class OrderEmailNotifier
     public function sendCancelNotification(): bool|string
     {
         $email = Email::create()
+            ->setHTMLTemplate('SilverShop/Model/Order_CancelNotificationEmail')
+            ->setPlainTemplate('SilverShop/Model/Order_CancelNotificationEmailPlain')
             ->setSubject(_t(
                 'SilverShop\ShopEmail.CancelSubject',
                 'Order #{OrderNo} cancelled by member',
@@ -205,8 +207,9 @@ class OrderEmailNotifier
                 ShopConfigExtension::config()->get('email_from') ? ShopConfigExtension::config()->get('email_from') : Email::config()->get('admin_email')
             )
             ->setTo(Email::config()->get('admin_email'))
-            ->setBody((string) $this->order->renderWith(Order::class))
-            ->text((string) $this->order->renderWith('SilverShop/Model/Order_EmailPlainBody')->Plain());
+            ->setData([
+                'Order' => $this->order,
+            ]);
 
         if ($this->debugMode) {
             return $this->debug($email);
