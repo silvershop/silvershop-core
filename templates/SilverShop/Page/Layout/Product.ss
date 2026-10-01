@@ -7,7 +7,6 @@
     <div class="silvershop-layout__main">
         <div class="silvershop-product silvershop-typography" <% include SilverShop\Includes\SchemaOrg\ProductScope %>>
             <h1 class="silvershop-product__title" <% include SilverShop\Includes\SchemaOrg\ProductName %>>$Title</h1>
-            <div class="silvershop-product__breadcrumbs">$Breadcrumbs</div>
             <div class="silvershop-product__details">
                 <% if $Image.ContentImage %>
                     <img class="silvershop-product__image" <% include SilverShop\Includes\SchemaOrg\ProductImage %> src="$Image.ContentImage.URL" alt="<%t SilverShop\Page\Product.ImageAltText "{Title} image" Title=$Title %>" />
