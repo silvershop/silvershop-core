@@ -7,11 +7,13 @@ namespace SilverShop\Tests\Forms;
 use SilverShop\Cart\ShoppingCart;
 use SilverShop\Checkout\SinglePageCheckoutComponentConfig;
 use SilverShop\Forms\CheckoutForm;
+use SilverShop\Model\Address;
 use SilverShop\Page\CheckoutPageController;
 use SilverShop\Page\Product;
 use SilverShop\Tests\ShopTestBootstrap;
 use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Dev\FunctionalTest;
+use SilverStripe\Security\Member;
 use SilverStripe\SiteConfig\SiteConfig;
 
 final class CheckoutFormTest extends FunctionalTest
@@ -206,5 +208,60 @@ final class CheckoutFormTest extends FunctionalTest
         $errors = $checkoutForm->getValidator()->getErrors();
         $this->assertFalse($valid, 'Form should be invalid with empty and incorrect data');
         $this->assertNotEmpty($errors, 'There should be validation errors');
+    }
+
+    public function testCheckoutFormUsesAddressBookDefaultsForLoggedInMember(): void
+    {
+        $this->logInAs('test@example.com');
+        $member = $this->objFromFixture(Member::class, 'joebloggs');
+        $order = ShoppingCart::curr();
+
+        $legacyAddress = Address::create();
+        $legacyAddress->update([
+            'Country' => 'NZ',
+            'Address' => '99 Legacy Road',
+            'City' => 'Oldtown',
+            'State' => 'Legacy',
+        ]);
+        $legacyAddress->write();
+
+        $savedAddress = Address::create();
+        $savedAddress->update([
+            'Country' => 'US',
+            'Address' => '12 Account Street',
+            'City' => 'Profile City',
+            'State' => 'Profile State',
+            'MemberID' => $member->ID,
+        ]);
+        $savedAddress->write();
+
+        $member->DefaultShippingAddressID = $savedAddress->ID;
+        $member->DefaultBillingAddressID = $savedAddress->ID;
+        $member->write();
+
+        $order->MemberID = $member->ID;
+        $order->ShippingAddressID = $legacyAddress->ID;
+        $order->BillingAddressID = $legacyAddress->ID;
+        $order->write();
+
+        $singlePageCheckoutComponentConfig = SinglePageCheckoutComponentConfig::create($order);
+        $checkoutForm = CheckoutForm::create($this->checkoutcontroller, 'OrderForm', $singlePageCheckoutComponentConfig);
+        $ns = 'SilverShop-Checkout-Component-';
+
+        $shippingAddressID = $checkoutForm->Fields()->dataFieldByName($ns . 'AddressBookShipping_ShippingAddressID');
+        $billingAddressID = $checkoutForm->Fields()->dataFieldByName($ns . 'AddressBookBilling_BillingAddressID');
+
+        $this->assertNotNull($shippingAddressID);
+        $this->assertNotNull($billingAddressID);
+        $this->assertSame((string)$savedAddress->ID, (string)$shippingAddressID->Value());
+        $this->assertSame((string)$savedAddress->ID, (string)$billingAddressID->Value());
+        $this->assertSame(
+            $savedAddress->Address,
+            (string)$checkoutForm->Fields()->dataFieldByName($ns . 'AddressBookShipping_Address')->Value()
+        );
+        $this->assertSame(
+            $savedAddress->Address,
+            (string)$checkoutForm->Fields()->dataFieldByName($ns . 'AddressBookBilling_Address')->Value()
+        );
     }
 }
