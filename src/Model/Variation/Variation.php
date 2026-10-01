@@ -120,6 +120,12 @@ class Variation extends DataObject implements Buyable
 
     private static string $title_glue = ', ';
 
+    /**
+     * When true, a variation with no price of its own falls back to its product's BasePrice.
+     * Skipped when Product.allow_zero_price is enabled (a 0 price is then intentional).
+     */
+    private static bool $price_fallback = true;
+
     public function getCMSFields(): FieldList
     {
         $fieldList = FieldList::create(
@@ -394,6 +400,21 @@ class Variation extends DataObject implements Buyable
     public function sellingPrice(): float
     {
         $price = $this->Price;
+
+        // Resolve against the product's base price:
+        //  #2 flat pricing — the product prices every variation from its base price; or
+        //  #1 fallback — a variation with no price of its own inherits the base price.
+        $product = $this->Product();
+        if ($product && $product->exists()) {
+            if ($product->PriceVariationsFromBase) {
+                $price = $product->BasePrice;
+            } elseif ((float) $price <= 0
+                && self::config()->get('price_fallback')
+                && !Product::config()->get('allow_zero_price')
+            ) {
+                $price = $product->BasePrice;
+            }
+        }
 
         // Apply currency conversion if the active currency differs from the base currency
         $currencyService = Injector::inst()->get(CurrencyService::class);
