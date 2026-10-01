@@ -1,129 +1,41 @@
-<!-- Reference: https://github.com/mailgun/transactional-email-templates -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <meta name="viewport" content="width=device-width" />
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <title><%t SilverShop\ShopEmail.StatusChangeTitle "Shop Status Change" %></title>
-        <style type="text/css">
-            table {     /* Remove spacing around Outlook 07, 10 tables */
-                border-collapse:collapse;
-                mso-table-lspace:0pt;
-                mso-table-rspace:0pt;
-            }
-            table td {border-collapse: collapse;}  /* Outlook 07 & 10 padding issue */
-            tr {
-                box-sizing: border-box;
-                margin: 0;
-            }
-            td {
-                box-sizing: border-box;
-                margin: 0;
-                vertical-align: top;
-            }
-            body, table.silvershop-status-email {
-                font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-                background-color: #f6f6f6;
-                font-size: 14px;
-                line-height: 1.6em;
-                padding: 0;
-                margin: auto;
-                width: 100% !important;
-                height: 100%;
-                box-sizing: border-box;
-                -webkit-font-smoothing: antialiased;
-                -webkit-text-size-adjust: 100%;
-                -ms-text-size-adjust:100%;
-            }
-            table.silvershop-status-email > tr > td {
-                padding: 0 5px 0 5px;
-            }
-            .silvershop-status-email__cell-max-width {
-                max-width: 600px !important;
-                display: block !important;
-                clear: both !important;
-                margin: 0 auto;
-            }
-
-            .silvershop-status-email__main {
-                border: 1px solid #e9e9e9;
-                border-radius: 3px;
-                background-color: #fff;
-                margin: 0;
-            }
-            .silvershop-status-email__banner {
-                color: #fff;
-                background-color: #659726;
-                font-size: 14px;
-                font-weight: 500;
-                text-align: center;
-                border-radius: 3px 3px 0 0;
-                padding: 20px;
-            }
-            .silvershop-status-email__content {
-                padding: 20px;
-                text-align: left;
-                margin: auto;
-            }
-            .silvershop-status-email__block {
-                padding: 0 0 20px;
-            }
-            @media only screen and (max-width: 640px) {
-                body, table.silvershop-status-email {
-                    padding: 0 !important;
-                    width: 100% !important;
-                }
-                .silvershop-status-email__content {
-                    padding: 10px !important;
-                }
-            }
-        </style>
+        <% include SilverShop\Includes\OrderReceiptStyle %>
     </head>
     <body>
-        <table class="silvershop-status-email">
+        <table class="silvershop-email silvershop-email--status" cellpadding="0" cellspacing="0" border="0">
             <tr>
-                <td class="silvershop-status-email__cell-max-width">
-                    <table class="silvershop-status-email__main" width="100%" cellpadding="0" cellspacing="0">
-                        <tbody>
+                <td>
+                    <table class="silvershop-email__content" cellspacing="0" cellpadding="0" summary="Email Information">
+                        <thead>
                             <tr>
-                                <td class="silvershop-status-email__banner" align="center" valign="top">
-                                    <strong><%t SilverShop\ShopEmail.StatusChangeTitle 'Shop Status Change' %></strong>
-                                </td>
+                                <th class="silvershop-email__title-cell" scope="col" colspan="2">
+                                    <span class="silvershop-email__brand">$SiteConfig.Title</span>
+                                    <h1 class="silvershop-email__title"><%t SilverShop\ShopEmail.StatusChangeTitle "Shop Status Change" %></h1>
+                                </th>
                             </tr>
+                        </thead>
+                        <tbody>
+                            <% with $Order %>
+                                <tr>
+                                    <td class="silvershop-email__intro silvershop-typography" colspan="2">
+                                        <%t SilverStripe\Control\ChangePasswordEmail_ss.Hello 'Hello' %> <% if $FirstName %>$FirstName<% else %>$Member.FirstName<% end_if %>,<br /><br />
+                                        <%t SilverShop\ShopEmail.StatusChanged 'Status for order #{OrderNo} changed to "{OrderStatus}"' OrderNo=$Reference OrderStatus=$StatusI18N %>
+                                    </td>
+                                </tr>
+                            <% end_with %>
+                            <% if $Note %>
+                                <tr>
+                                    <td class="silvershop-email__intro silvershop-typography" colspan="2">$Note</td>
+                                </tr>
+                            <% end_if %>
                             <tr>
-                                <td class="silvershop-status-email__content" valign="top">
-                                    <table width="100%" cellpadding="0" cellspacing="0">
-                                        <% with Order %>
-                                            <tr>
-                                                <td class="silvershop-status-email__block" valign="top">
-                                                    <%t SilverStripe\Control\ChangePasswordEmail_ss.Hello 'Hello' %> <% if $FirstName %>$FirstName<% else %>$Member.FirstName<% end_if %>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="silvershop-status-email__block" valign="top">
-                                                    <%t SilverShop\ShopEmail.StatusChanged 'Status for order #{OrderNo} changed to "{OrderStatus}"' OrderNo=$Reference OrderStatus=$StatusI18N %>
-                                                </td>
-                                            </tr>
-                                        <% end_with %>
-                                        <tr>
-                                            <td class="silvershop-status-email__block" valign="top">
-                                                $Note
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="silvershop-status-email__block" valign="top">
-                                                <%t SilverShop\ShopEmail.Regards "Kind regards" %>
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <td class="silvershop-status-email__block" valign="top">
-                                                $SiteConfig.Title<br/>
-                                                $FromEmail<br/>
-                                                <%t SilverShop\ShopEmail.PhoneNumber "PhoneNumber" %>
-                                            </td>
-                                        </tr>
-                                    </table>
+                                <td class="silvershop-email__intro silvershop-typography" colspan="2">
+                                    <%t SilverShop\ShopEmail.Regards "Kind regards" %><br />$SiteConfig.Title
                                 </td>
                             </tr>
                         </tbody>

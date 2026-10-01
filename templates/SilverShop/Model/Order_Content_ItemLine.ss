@@ -4,6 +4,8 @@
             <a class="silvershop-receipt__image-link" href="$Link" title="<%t SilverShop\Generic.ReadMoreTitle "Click here to read more on &quot;{Title}&quot;" Title=$TableTitle %>">
                 <img class="silvershop-receipt__image" src="<% with $Image.ScaleWidth(45) %>$Me.AbsoluteURL<% end_with %>" alt="$Buyable.Title"/>
             </a>
+        <% else %>
+            <span class="silvershop-receipt__no-image" aria-hidden="true"></span>
         <% end_if %>
     </td>
     <td class="silvershop-receipt__cell silvershop-receipt__cell--product" scope="row">
