@@ -13,7 +13,8 @@
                         <thead>
                             <tr>
                                 <th class="silvershop-email__title-cell" scope="col" colspan="2">
-                                    <h1 class="silvershop-email__title">$Subject</h1>
+                                    <span class="silvershop-email__brand">$SiteConfig.Title</span>
+                                    <h1 class="silvershop-email__title"><%t SilverShop\ShopEmail.AdminNotificationHeading "New order received" %></h1>
                                 </th>
                             </tr>
                         </thead>

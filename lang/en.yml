@@ -470,6 +470,7 @@ en:
     Description: "Report tax charged on orders. Only includes orders that have been paid."
     Title: Tax
   SilverShop\ShopEmail:
+    AdminNotificationHeading: 'New order received'
     AdminNotificationSubject: 'Order #{OrderNo} notification'
     AdminNotificationTitle: 'Shop Receipt'
     CancelSubject: 'Order #{OrderNo} cancelled by member'

@@ -13,16 +13,19 @@
                         <thead>
                             <tr>
                                 <th class="silvershop-email__title-cell" scope="col" colspan="2">
-                                    <h1 class="silvershop-email__title">$Subject</h1>
+                                    <span class="silvershop-email__brand">$SiteConfig.Title</span>
+                                    <h1 class="silvershop-email__title"><%t SilverShop\ShopEmail.ConfirmationTitle "Order Confirmation" %></h1>
                                 </th>
                             </tr>
                         </thead>
                         <tbody>
+                            <% if $PurchaseCompleteMessage %>
                             <tr>
                                 <td class="silvershop-email__intro silvershop-typography" scope="row" colspan="2">
                                     $PurchaseCompleteMessage
                                 </td>
                             </tr>
+                            <% end_if %>
                             <% if $Order %>
                             <% with $Order %>
                                 <tr>
