@@ -71,14 +71,36 @@ class ShopConfigExtension extends Extension
         return SiteConfig::current_site_config();
     }
 
+    /**
+     * The shop base currency.
+     *
+     * Defaults to the {@link $base_currency} config, but fires the extendable `updateSiteCurrency` hook so
+     * extensions can resolve it dynamically — e.g. from a CMS setting, a member preference or geo-IP — without
+     * overriding this method or the static config. Extensions receive the currency by reference:
+     *
+     * <code>
+     * public function updateSiteCurrency(string &$currency): void
+     * {
+     *     if ($chosen = $this->getOwner()->MyCurrencyField) {
+     *         $currency = $chosen;
+     *     }
+     * }
+     * </code>
+     */
     public static function get_site_currency(): string
     {
-        return self::config()->get('base_currency');
+        $currency = (string) self::config()->get('base_currency');
+        self::current()->extend('updateSiteCurrency', $currency);
+
+        return $currency;
     }
 
     /**
      * Get the list of supported currencies.
      * If empty, only the base currency is supported.
+     *
+     * Fires the extendable `updateSupportedCurrencies` hook (currencies passed by reference) so extensions can add
+     * or replace the accepted currencies.
      *
      * @return string[] list of ISO 4217 currency codes
      */
@@ -86,8 +108,10 @@ class ShopConfigExtension extends Extension
     {
         $currencies = self::config()->get('supported_currencies');
         if (empty($currencies)) {
-            return [self::get_site_currency()];
+            $currencies = [self::get_site_currency()];
         }
+
+        self::current()->extend('updateSupportedCurrencies', $currencies);
 
         return $currencies;
     }
