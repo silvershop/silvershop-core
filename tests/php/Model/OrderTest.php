@@ -145,6 +145,44 @@ final class OrderTest extends SapphireTest
         $this->assertEquals(0.7, $hasManyList->Sum('Weight', true), "Total order weight sums correctly");
     }
 
+    public function testItemsQueryIsCachedPerRequest(): void
+    {
+        $order = $this->objFromFixture(Order::class, "paid");
+
+        if (!method_exists($order->Items(), 'setUseCache')) {
+            $this->markTestSkipped('Per-request query caching requires silverstripe/framework ^6.1 (DataList::setUseCache)');
+        }
+
+        // Items() caches its query for the rest of the request, so repeated reads reuse the same record instances.
+        $firstPass = null;
+        foreach ($order->Items() as $item) {
+            $firstPass = $item;
+            break;
+        }
+        $this->assertNotNull($firstPass, "The order should have at least one item");
+
+        $secondPass = null;
+        foreach ($order->Items() as $item) {
+            $secondPass = $item;
+            break;
+        }
+        $this->assertSame(
+            $firstPass,
+            $secondPass,
+            "Repeated Items() reads should return the per-request cached record instance"
+        );
+
+        // Writing an item flushes that cache, so the next read reflects the change rather than stale data.
+        $firstPass->Quantity = $firstPass->Quantity + 5;
+        $firstPass->write();
+
+        $this->assertSame(
+            (int)$firstPass->Quantity,
+            (int)$order->Items()->byID($firstPass->ID)->Quantity,
+            "Writing an item should flush the cached Items() query so the new value is read back"
+        );
+    }
+
     public function testTotals(): void
     {
         $order = $this->objFromFixture(Order::class, "paid");
