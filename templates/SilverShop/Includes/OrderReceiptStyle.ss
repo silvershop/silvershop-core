@@ -33,6 +33,9 @@
     .silvershop-email__order { padding: 4px 28px 24px; }
     .silvershop-email__downloads { padding: 0 28px 24px; color: #222222; font-size: 14px; line-height: 1.6; }
 
+    /* Footer: a quiet shop-name line under a hairline rule. */
+    .silvershop-email__footer { padding: 16px 28px 22px; color: #888888; font-size: 12px; line-height: 1.5; border-top: 1px solid #ededed; }
+
     /* Order summary — flat, horizontal rules only. */
     .silvershop-receipt { width: 100%; border-collapse: collapse; background: transparent; border: 0; margin: 0 0 18px; }
     .silvershop-receipt h3 { margin: 0 0 8px; color: #222222; font-size: 15px; font-weight: 700; font-family: inherit; }
@@ -62,7 +65,7 @@
 
     @media only screen and (max-width: 620px) {
         table.silvershop-email { width: 100% !important; }
-        .silvershop-email__title-cell, .silvershop-email__intro, .silvershop-email__order, .silvershop-email__downloads {
+        .silvershop-email__title-cell, .silvershop-email__intro, .silvershop-email__order, .silvershop-email__downloads, .silvershop-email__footer {
             padding-left: 18px !important; padding-right: 18px !important;
         }
     }
