@@ -439,4 +439,16 @@ class Variation extends DataObject implements Buyable
         // 31.50 not 31.45).
         return round($price, Order::config()->get('rounding_precision'));
     }
+
+    /**
+     * The tax rate for this variation: delegate to the parent product's tax class, since a variation is taxed the
+     * same as its product. Without this, per-item tax modifiers (e.g. FlatTax, which reads the buyable's
+     * getTaxRate()) can't see a variation's rate and fall back to the flat default.
+     */
+    public function getTaxRate(): ?float
+    {
+        $product = $this->Product();
+
+        return ($product && $product->exists()) ? $product->getTaxRate() : null;
+    }
 }
