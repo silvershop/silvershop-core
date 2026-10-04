@@ -407,6 +407,15 @@ class Order extends DataObject
             $components = OrderItemList::create(OrderItem::class, 'OrderID');
             $components->setDataQuery($query);
             $components = $components->forForeignID($this->ID);
+            // Cache the item query for the rest of the request. Rendering a cart or order re-reads Items() many
+            // times — the cart template and sidebar, every modifier's calculation and each subtotal/total pass —
+            // so without this each one re-runs the same SELECT. The per-request cache is flushed automatically
+            // when an OrderItem is written or deleted (DataObject::write()/delete() reset it), so a changing cart
+            // still reads fresh. setUseCache() is a silverstripe/framework ^6.1 API, so it is guarded here: core
+            // keeps its ^6 baseline and this is a no-op on 6.0.
+            if (method_exists($components, 'setUseCache')) {
+                $components = $components->setUseCache(true);
+            }
         }
 
         return $components;
