@@ -32,7 +32,10 @@ class AbandonedCartReport extends ShopPeriodReport
         return [
             'FilterPeriod' => $period,
             'Count' => 'Count',
-            'TotalValue' => 'Total Value',
+            'TotalValue' => [
+                'title' => 'Total Value',
+                'casting' => 'Currency->Nice',
+            ],
         ];
     }
 

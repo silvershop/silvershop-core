@@ -14,6 +14,8 @@ use SilverStripe\Forms\FormField;
 use SilverStripe\Forms\GridField\GridFieldConfig;
 use SilverStripe\Forms\GridField\GridFieldDataColumns;
 use SilverStripe\Forms\GridField\GridFieldExportButton;
+use SilverStripe\Forms\GridField\GridFieldPrintButton;
+use SilverStripe\ORM\FieldType\DBField;
 use SilverStripe\i18n\i18nEntityProvider;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\DB;
@@ -112,8 +114,23 @@ abstract class ShopPeriodReport extends Report implements i18nEntityProvider
          */
         $config = $formField->getConfig();
         if ($dataColumns = $config->getComponentByType(GridFieldDataColumns::class)) {
-            $config->getComponentByType(GridFieldExportButton::class)
-                ->setExportColumns($dataColumns->getDisplayFields($formField));
+            // The on-screen columns format currency via "casting" (stored in the DataColumns field casting),
+            // but CSV/print exports must stay numeric — a formatted "€1,234.56" carries a thousands-separator
+            // comma that breaks CSV parsing. Pin any Currency-cast column to its raw value for export/print by
+            // using a callable column, which the export/print buttons read directly instead of via the casting.
+            $rawColumns = $dataColumns->getDisplayFields($formField);
+            foreach ($dataColumns->getFieldCasting() as $field => $casting) {
+                if ($casting === 'Currency->Nice' && array_key_exists($field, $rawColumns)) {
+                    $rawColumns[$field] = fn ($value) => $value instanceof DBField ? $value->getValue() : $value;
+                }
+            }
+
+            if ($exportButton = $config->getComponentByType(GridFieldExportButton::class)) {
+                $exportButton->setExportColumns($rawColumns);
+            }
+            if ($printButton = $config->getComponentByType(GridFieldPrintButton::class)) {
+                $printButton->setPrintColumns($rawColumns);
+            }
         }
 
         return $formField;
