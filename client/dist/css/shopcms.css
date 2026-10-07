@@ -151,3 +151,12 @@ Integrated webfont. Created via http://fontello.com/
   vertical-align: top;
   line-height: 1.6;
 }
+
+/* Right-align currency columns in the Orders admin list and the shop reports */
+.ss-gridfield td.col-Total,
+.ss-gridfield td.col-Sales,
+.ss-gridfield td.col-Tax,
+.ss-gridfield td.col-TotalValue,
+.ss-gridfield td.col-Spent {
+  text-align: right;
+}

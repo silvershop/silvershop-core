@@ -33,7 +33,10 @@ class CustomerReport extends ShopPeriodReport
             'Surname' => 'Surname',
             'Email' => 'Email',
             'Created' => 'Joined',
-            'Spent' => 'Spent',
+            'Spent' => [
+                'title' => 'Spent',
+                'casting' => 'Currency->Nice',
+            ],
             'Orders' => 'Orders',
             'edit' => [
                 'title' => 'Edit',

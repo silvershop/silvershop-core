@@ -11,7 +11,10 @@ use SilverStripe\Admin\ModelAdmin;
 use SilverStripe\Forms\Form;
 use SilverStripe\Forms\GridField\GridFieldAddNewButton;
 use SilverStripe\Forms\GridField\GridFieldConfig;
+use SilverStripe\Forms\GridField\GridFieldDataColumns;
 use SilverStripe\Forms\GridField\GridFieldDetailForm;
+use SilverStripe\Forms\GridField\GridFieldExportButton;
+use SilverStripe\Forms\GridField\GridFieldPrintButton;
 use SilverStripe\Forms\GridField\GridFieldSortableHeader;
 use SilverStripe\ORM\DataList;
 
@@ -60,11 +63,11 @@ class OrdersAdmin extends ModelAdmin
     {
         $form = parent::getEditForm($id, $fields);
         if ($this->modelClass == Order::class) {
-            /** @var GridFieldConfig $config */
-            $config = $form
+            $gridField = $form
                 ->Fields()
-                ->fieldByName($this->sanitiseClassName($this->modelClass))
-                ->getConfig();
+                ->fieldByName($this->sanitiseClassName($this->modelClass));
+            /** @var GridFieldConfig $config */
+            $config = $gridField->getConfig();
 
             $config
                 ->getComponentByType(GridFieldSortableHeader::class)
@@ -73,6 +76,25 @@ class OrdersAdmin extends ModelAdmin
             $config
                 ->getComponentByType(GridFieldDetailForm::class)
                 ->setItemRequestClass(OrderGridFieldDetailForm_ItemRequest::class); //see below
+
+            // Show the Total column as formatted currency in the CMS list (e.g. "€1,234.56"), but keep the
+            // CSV/print exports numeric — a formatted string would break anything parsing the export, so
+            // existing integrations see no change.
+            if ($dataColumns = $config->getComponentByType(GridFieldDataColumns::class)) {
+                $dataColumns->setFieldCasting(['Total' => 'Currency->Nice']);
+
+                $rawTotal = fn ($value) => $value;
+                if ($export = $config->getComponentByType(GridFieldExportButton::class)) {
+                    $columns = $dataColumns->getDisplayFields($gridField);
+                    $columns['Total'] = $rawTotal;
+                    $export->setExportColumns($columns);
+                }
+                if ($print = $config->getComponentByType(GridFieldPrintButton::class)) {
+                    $columns = $dataColumns->getDisplayFields($gridField);
+                    $columns['Total'] = $rawTotal;
+                    $print->setPrintColumns($columns);
+                }
+            }
         }
 
         if ($this->modelClass == OrderStatusLog::class) {

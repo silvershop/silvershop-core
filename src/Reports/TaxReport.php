@@ -32,8 +32,14 @@ class TaxReport extends ShopPeriodReport
         return [
             'FilterPeriod' => $period,
             'Count' => 'Order Count',
-            'Sales' => 'Total Sales',
-            'Tax' => 'Total Tax',
+            'Sales' => [
+                'title' => 'Total Sales',
+                'casting' => 'Currency->Nice',
+            ],
+            'Tax' => [
+                'title' => 'Total Tax',
+                'casting' => 'Currency->Nice',
+            ],
         ];
     }
 
