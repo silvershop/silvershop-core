@@ -212,8 +212,8 @@ final class CheckoutFormTest extends FunctionalTest
 
     public function testCheckoutFormUsesAddressBookDefaultsForLoggedInMember(): void
     {
-        $this->logInAs('test@example.com');
         $member = $this->objFromFixture(Member::class, 'joebloggs');
+        $this->logInAs($member);
         $order = ShoppingCart::curr();
 
         $legacyAddress = Address::create();
@@ -253,15 +253,15 @@ final class CheckoutFormTest extends FunctionalTest
 
         $this->assertNotNull($shippingAddressID);
         $this->assertNotNull($billingAddressID);
-        $this->assertSame((string)$savedAddress->ID, (string)$shippingAddressID->Value());
-        $this->assertSame((string)$savedAddress->ID, (string)$billingAddressID->Value());
+        $this->assertSame((string)$savedAddress->ID, (string)$shippingAddressID->getValue());
+        $this->assertSame((string)$savedAddress->ID, (string)$billingAddressID->getValue());
         $this->assertSame(
             $savedAddress->Address,
-            (string)$checkoutForm->Fields()->dataFieldByName($ns . 'AddressBookShipping_Address')->Value()
+            (string)$checkoutForm->Fields()->dataFieldByName($ns . 'AddressBookShipping_Address')->getValue()
         );
         $this->assertSame(
             $savedAddress->Address,
-            (string)$checkoutForm->Fields()->dataFieldByName($ns . 'AddressBookBilling_Address')->Value()
+            (string)$checkoutForm->Fields()->dataFieldByName($ns . 'AddressBookBilling_Address')->getValue()
         );
     }
 }

@@ -101,8 +101,14 @@ abstract class AddressBook extends Address implements i18nEntityProvider
         }
 
         if ($address && $address->exists()) {
-            $data = array_merge($data, $address->toMap(), [$addressIDField => $address->ID]);
-            unset($data['ID'], $data['ClassName'], $data['RecordClassName']);
+            // Only overwrite the address fields the form already exposes — don't leak record metadata
+            // (ID, ClassName, Created, LastEdited, MemberID, …) into the prefill data.
+            foreach ($address->toMap() as $field => $value) {
+                if (array_key_exists($field, $data)) {
+                    $data[$field] = $value;
+                }
+            }
+            $data[$addressIDField] = $address->ID;
         }
 
         return $data;
