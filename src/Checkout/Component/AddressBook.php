@@ -81,6 +81,39 @@ abstract class AddressBook extends Address implements i18nEntityProvider
         return null;
     }
 
+    public function getData(Order $order): array
+    {
+        $data = parent::getData($order);
+        $member = Security::getCurrentUser();
+        if (!$member || !$member->AddressBook()->exists()) {
+            return $data;
+        }
+
+        $addressIDField = $this->addresstype . 'AddressID';
+        $selectedAddressID = isset($data[$addressIDField]) ? (int)$data[$addressIDField] : 0;
+        $address = $selectedAddressID > 0 ? $member->AddressBook()->byID($selectedAddressID) : null;
+
+        if (!$address) {
+            $address = $member->{'Default' . $this->addresstype . 'Address'}();
+            if (!$address || !$address->exists() || !$member->AddressBook()->byID((int)$address->ID)) {
+                $address = $member->AddressBook()->sort('Created', 'DESC')->first();
+            }
+        }
+
+        if ($address && $address->exists()) {
+            // Only overwrite the address fields the form already exposes — don't leak record metadata
+            // (ID, ClassName, Created, LastEdited, MemberID, …) into the prefill data.
+            foreach ($address->toMap() as $field => $value) {
+                if (array_key_exists($field, $data)) {
+                    $data[$field] = $value;
+                }
+            }
+            $data[$addressIDField] = $address->ID;
+        }
+
+        return $data;
+    }
+
     /**
      * We don't know at the front end which fields are required so we defer to validateData
      *

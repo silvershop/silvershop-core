@@ -9,6 +9,8 @@ use SilverShop\Checkout\Component\CustomerDetails;
 use SilverShop\Checkout\Component\Membership;
 use SilverShop\Checkout\Component\Notes;
 use SilverShop\Checkout\Component\Payment;
+use SilverShop\Checkout\Component\AddressBookBilling;
+use SilverShop\Checkout\Component\AddressBookShipping;
 use SilverShop\Checkout\Component\ShippingAddress;
 use SilverShop\Checkout\Component\Terms;
 use SilverShop\Model\Order;
@@ -21,8 +23,14 @@ class SinglePageCheckoutComponentConfig extends CheckoutComponentConfig
     {
         parent::__construct($order);
         $this->addComponent(CustomerDetails::create());
-        $this->addComponent(ShippingAddress::create());
-        $this->addComponent(BillingAddress::create());
+        $member = Security::getCurrentUser();
+        if ($member && $member->AddressBook()->exists()) {
+            $this->addComponent(AddressBookShipping::create());
+            $this->addComponent(AddressBookBilling::create());
+        } else {
+            $this->addComponent(ShippingAddress::create());
+            $this->addComponent(BillingAddress::create());
+        }
         if (Checkout::member_creation_enabled() && !Security::getCurrentUser()) {
             $this->addComponent(Membership::create());
         }
