@@ -71,6 +71,7 @@ final class ShoppingCartControllerTest extends FunctionalTest
     protected function setUp(): void
     {
         parent::setUp();
+        ShopTestBootstrap::useShopTestTheme();
 
         ShopTestBootstrap::setConfiguration(); //reset config
         ShoppingCart::singleton()->clear();

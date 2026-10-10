@@ -7,6 +7,7 @@ namespace SilverShop\Tests\Page;
 use SilverShop\Model\Variation\Variation;
 use SilverShop\Page\Product;
 use SilverShop\Page\ProductCategory;
+use SilverShop\Tests\ShopTestBootstrap;
 use SilverStripe\Control\Director;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Model\List\SS_List;
@@ -40,6 +41,7 @@ final class ProductCategoryTest extends FunctionalTest
     protected function setUp(): void
     {
         parent::setUp();
+        ShopTestBootstrap::useShopTestTheme();
         Config::modify()->set(ProductCategory::class, 'must_have_price', false);
 
         $this->logInWithPermission('ADMIN');
