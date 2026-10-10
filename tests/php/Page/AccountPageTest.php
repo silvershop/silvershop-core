@@ -7,6 +7,7 @@ namespace SilverShop\Tests\Page;
 use SilverShop\Model\Address;
 use SilverShop\Page\AccountPage;
 use SilverShop\Page\AccountPageController;
+use SilverShop\Tests\ShopTestBootstrap;
 use SilverShop\Tests\ShopTestControllerExtension;
 use SilverStripe\Control\Controller;
 use SilverStripe\Control\Director;
@@ -38,6 +39,7 @@ final class AccountPageTest extends FunctionalTest
     protected function setUp(): void
     {
         parent::setUp();
+        ShopTestBootstrap::useShopTestTheme();
 
         Controller::add_extension(ShopTestControllerExtension::class);
         $this->accountpage = $this->objFromFixture(AccountPage::class, "accountpage");

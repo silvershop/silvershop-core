@@ -27,6 +27,7 @@ final class CheckoutPageTest extends FunctionalTest
     protected function setUp(): void
     {
         parent::setUp();
+        ShopTestBootstrap::useShopTestTheme();
         ShopTestBootstrap::setConfiguration();
     }
 
