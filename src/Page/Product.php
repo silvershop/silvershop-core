@@ -214,8 +214,10 @@ class Product extends Page implements Buyable
                     ]
                 );
 
-                // Add per-currency prices grid if the product has been saved
-                if ($self->isInDB()) {
+                // Per-currency price overrides only apply when multi-currency is in use, so only show the grid
+                // then (for a saved product). get_supported_currencies() fires the updateSupportedCurrencies hook,
+                // so this honours extensions that add currencies, not just the supported_currencies config.
+                if ($self->isInDB() && count(ShopConfigExtension::get_supported_currencies()) > 1) {
                     $fieldList->addFieldToTab(
                         'Root.Pricing',
                         GridField::create(

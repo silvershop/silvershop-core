@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace SilverShop\Tests\Page;
 
 use SilverShop\Cart\ShoppingCart;
+use SilverShop\Extension\ShopConfigExtension;
 use SilverShop\Model\Order;
 use SilverShop\Model\Product\OrderItem;
 use SilverShop\Page\Product;
 use SilverShop\Page\ProductCategory;
 use SilverStripe\Control\Director;
 use SilverStripe\Core\Config\Config;
+use SilverStripe\Forms\GridField\GridField;
 use PHPUnit\Framework\Attributes\DoesNotPerformAssertions;
 use SilverStripe\Dev\FunctionalTest;
 use SilverStripe\ORM\DataObject;
@@ -53,6 +55,28 @@ final class ProductTest extends FunctionalTest
     {
         $this->tshirt->getCMSFields();
         $this->markTestIncomplete('Test Product CMS fields');
+    }
+
+    public function testCurrencyPricesGridOnlyWithMultiCurrency(): void
+    {
+        // Single currency (the default): the per-currency price grid is hidden, so single-currency shops are
+        // not shown a feature they cannot use.
+        $this->assertNull(
+            $this->tshirt->getCMSFields()->dataFieldByName('Prices'),
+            'the Prices per Currency grid is hidden when multi-currency is not configured'
+        );
+
+        // With two or more supported currencies the grid appears.
+        Config::modify()->set(
+            ShopConfigExtension::class,
+            'supported_currencies',
+            [ShopConfigExtension::get_site_currency(), 'USD']
+        );
+        $this->assertInstanceOf(
+            GridField::class,
+            $this->tshirt->getCMSFields()->dataFieldByName('Prices'),
+            'the Prices per Currency grid appears once multiple currencies are configured'
+        );
     }
 
     public function testCanPurchase(): void
