@@ -12,7 +12,9 @@ use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Control\Session;
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\i18n\i18n;
+use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\FieldType\DBMoney;
+use SilverStripe\Versioned\Versioned;
 
 /**
  * Globally useful tools
@@ -44,8 +46,9 @@ class ShopTools
      */
     public static function get_current_locale(): string
     {
-        if (class_exists(FluentState::class)) {
-            return singleton(FluentState::class)->getLocale();
+        // Fluent has no locale until one is set (e.g. no Locale records, or CLI/tests), so fall back to i18n
+        if (class_exists(FluentState::class) && $locale = singleton(FluentState::class)->getLocale()) {
+            return $locale;
         }
 
         return i18n::get_locale();
@@ -75,6 +78,32 @@ class ShopTools
         foreach ([LC_COLLATE, LC_CTYPE, LC_MONETARY, LC_TIME] as $category) {
             setlocale($category, $locale . '.UTF-8', $locale);
         }
+    }
+
+    /**
+     * Get a specific version of a versioned record, e.g. the product as it was when an order was placed.
+     *
+     * With Fluent, a version can only be read in the locale it was written in, so when the current locale
+     * has no such version the record is read again without localisation rather than returning null.
+     *
+     * @template T of DataObject
+     * @param class-string<T> $class
+     * @return T|null
+     */
+    public static function get_version(string $class, int|string $id, int|string $version): ?DataObject
+    {
+        $record = Versioned::get_version($class, $id, $version);
+
+        if (!$record && class_exists(FluentState::class)) {
+            $record = FluentState::singleton()->withState(
+                static function (FluentState $fluentState) use ($class, $id, $version): ?DataObject {
+                    $fluentState->setLocale(null);
+                    return Versioned::get_version($class, $id, $version);
+                }
+            );
+        }
+
+        return $record;
     }
 
     /**

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SilverShop\Model\Variation;
 
+use SilverShop\ShopTools;
 use SilverStripe\Assets\Image;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\Versioned\Versioned;
@@ -38,7 +39,7 @@ class OrderItem extends \SilverShop\Model\Product\OrderItem
     public function ProductVariation($forcecurrent = false): DataObject|Versioned|null
     {
         if ($this->ProductVariationID && $this->ProductVariationVersion && !$forcecurrent) {
-            return Versioned::get_version(
+            return ShopTools::get_version(
                 Variation::class,
                 $this->ProductVariationID,
                 $this->ProductVariationVersion
