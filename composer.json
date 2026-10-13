@@ -34,7 +34,8 @@
     "omnipay/dummy": "dev-master",
     "omnipay/manual": "^3",
     "omnipay/paymentexpress": "dev-master",
-    "squizlabs/php_codesniffer": "^3.7.2"
+    "squizlabs/php_codesniffer": "^3.7.2",
+    "tractorcow/silverstripe-fluent": "^8"
   },
   "replace": {
     "burnbright/silverstripe-shop": "1.*"

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace SilverShop\Model\Product;
 
 use SilverShop\Page\Product;
+use SilverShop\ShopTools;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\Versioned\Versioned;
 
@@ -44,20 +45,20 @@ class OrderItem extends \SilverShop\Model\OrderItem
     {
         //TODO: this might need some unit testing to make sure it compliles with comment description
         //ie use live if in cart (however I see no logic for checking cart status)
+        $product = null;
         if ($this->ProductID && $this->ProductVersion && !$forcecurrent) {
-            return Versioned::get_version(Product::class, $this->ProductID, $this->ProductVersion);
-        }
-
-        if ($this->ProductID
-            && $product = Versioned::get_one_by_stage(
+            $product = ShopTools::get_version(Product::class, $this->ProductID, $this->ProductVersion);
+        } elseif ($this->ProductID) {
+            $product = Versioned::get_one_by_stage(
                 Product::class,
                 'Live',
                 '"SilverShop_Product"."ID"  = ' . $this->ProductID
-            )) {
-            return $product;
+            );
         }
 
-        return null;
+        $this->extend('updateProduct', $product, $forcecurrent);
+
+        return $product;
     }
 
     public function onPlacement(): void
