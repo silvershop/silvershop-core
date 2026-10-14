@@ -28,6 +28,10 @@
     .silvershop-email__title-cell { padding: 24px 28px 18px; }
     .silvershop-email__brand { display: block; margin: 0 0 14px; padding: 0 0 14px; font-size: 18px; font-weight: 700; line-height: 1.25; text-align: left; color: #222222; border-bottom: 2px solid #222222; }
     .silvershop-email__title { display: block; margin: 0; padding: 0; font-size: 22px; font-weight: 700; line-height: 1.25; text-align: left; text-transform: none; color: #222222; }
+    /* Optional logo brand (silvershop/store-profile provides $SiteConfig.ShopEmailBrand); falls back to the text brand above. */
+    .silvershop-email__logo { display: block; margin: 0 0 14px; max-width: 220px; height: auto; border: 0; }
+    /* Shared flat CTA button (dark fill) for emails that need one. */
+    .silvershop-email__btn { display: inline-block; margin: 4px 0; padding: 11px 20px; background: #222222; color: #ffffff !important; font-size: 14px; font-weight: 600; text-decoration: none; }
 
     .silvershop-email__intro { padding: 18px 28px; color: #444444; font-size: 14px; line-height: 1.6; }
     .silvershop-email__order { padding: 4px 28px 24px; }

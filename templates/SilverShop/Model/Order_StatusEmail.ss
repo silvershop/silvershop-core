@@ -1,7 +1,7 @@
 <% include SilverShop\Includes\OrderEmailHeader Modifier="status" %>
                         <tr>
                             <th class="silvershop-email__title-cell" scope="col" colspan="2">
-                                <span class="silvershop-email__brand">$SiteConfig.Title</span>
+                                <% if $SiteConfig.ShopEmailBrand %>$SiteConfig.ShopEmailBrand<% else %><span class="silvershop-email__brand">$SiteConfig.Title</span><% end_if %>
                                 <h1 class="silvershop-email__title"><%t SilverShop\ShopEmail.StatusChangeTitle "Shop Status Change" %></h1>
                             </th>
                         </tr>
