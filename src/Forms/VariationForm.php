@@ -10,7 +10,6 @@ use SilverShop\Cart\ShoppingCart;
 use SilverShop\Page\CartPageController;
 use SilverShop\Page\Product;
 use SilverShop\ShopTools;
-use SilverStripe\Core\Convert;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\Form;
 use SilverStripe\Forms\HiddenField;
@@ -76,9 +75,7 @@ class VariationForm extends AddProductForm
                 return json_encode($ret);
             }
 
-            $saveabledata = ($this->saveablefields !== []) ? Convert::raw2sql(
-                array_intersect_key($data, array_combine($this->saveablefields, $this->saveablefields))
-            ) : $data;
+            $saveabledata = $this->prepareSaveableData($data, $variation);
 
             $explicitZero = isset($data['Quantity']) && is_numeric($data['Quantity']) && (int)$data['Quantity'] === 0;
             $quantity = (isset($data['Quantity']) && is_numeric($data['Quantity'])) ? max(0, (int)$data['Quantity']) : 1;

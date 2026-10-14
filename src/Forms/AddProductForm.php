@@ -66,6 +66,41 @@ class AddProductForm extends Form
         $this->saveablefields = $fields;
     }
 
+    /**
+     * The fields (if any) that a subclass has restricted the saveable order-item data to. An empty array means
+     * the whole submitted data is saved. Exposed so an {@see prepareSaveableData()} hook can append a field to a
+     * restricted set (e.g. per-line personalisation adding its identity hash to a bundle's selected items).
+     *
+     * @return array<int, string>
+     */
+    public function getSaveableFields(): array
+    {
+        return $this->saveablefields;
+    }
+
+    /**
+     * Build the data saved onto the order item for this add. Fires the `updateAddToCartData` extension hook
+     * first (by reference), so a module can fold extra submitted inputs into the line before the cart matches
+     * it — the one place to transform add-to-cart data server-side, pre-add, for every product type. When a
+     * subclass has restricted the saveable fields the result is limited to those (SQL-escaped); otherwise the
+     * whole submitted data passes through unchanged, exactly as before.
+     *
+     * @param array<string, mixed> $data
+     * @return array<string, mixed>
+     */
+    protected function prepareSaveableData(array $data, Buyable $buyable): array
+    {
+        $this->extend('updateAddToCartData', $data, $buyable);
+
+        if ($this->saveablefields === []) {
+            return $data;
+        }
+
+        return Convert::raw2sql(
+            array_intersect_key($data, array_combine($this->saveablefields, $this->saveablefields))
+        );
+    }
+
     public function addtocart(array $data, $form)
     {
         if ($buyable = $this->getBuyable($data)) {
@@ -77,9 +112,7 @@ class AddProductForm extends Form
                 ShopTools::install_locale($order->Locale);
             }
 
-            $saveabledata = ($this->saveablefields !== []) ? Convert::raw2sql(
-                array_intersect_key($data, array_combine($this->saveablefields, $this->saveablefields))
-            ) : $data;
+            $saveabledata = $this->prepareSaveableData($data, $buyable);
 
             $explicitZero = isset($data['Quantity']) && is_numeric($data['Quantity']) && (int)$data['Quantity'] === 0;
             $quantity = 0;
