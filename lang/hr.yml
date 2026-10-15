@@ -1,8 +1,6 @@
 hr:
   SilverShop\Admin\OrdersAdmin:
     MENUTITLE: Narudžbe
-  SilverShop\Admin\ProductCatalogAdmin:
-    MENUTITLE: Katalog
   SilverShop\Admin\ZoneAdmin:
     MENUTITLE: Zone
   SilverShop\Cart\ShoppingCart:

@@ -2,8 +2,6 @@ nl:
   SilverShop\Admin\OrdersAdmin:
     MENUTITLE: Bestellingen
     ReceiptTitle: '{SiteTitle} Bestelling {OrderNo}'
-  SilverShop\Admin\ProductCatalogAdmin:
-    MENUTITLE: Catalogus
   SilverShop\Admin\ZoneAdmin:
     MENUTITLE: Gebieden
   SilverShop\Cart\ShoppingCart:

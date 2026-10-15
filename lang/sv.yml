@@ -1,8 +1,6 @@
 sv:
   SilverShop\Admin\OrdersAdmin:
     MENUTITLE: Beställningar
-  SilverShop\Admin\ProductCatalogAdmin:
-    MENUTITLE: Katalog
   SilverShop\Admin\ZoneAdmin:
     MENUTITLE: Zones
   SilverShop\Forms:
