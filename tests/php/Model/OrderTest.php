@@ -13,11 +13,13 @@ use SilverShop\Model\OrderStatusLog;
 use SilverShop\Model\Product\OrderItem;
 use SilverShop\Page\Product;
 use SilverShop\Tests\Model\Product\CustomProduct_OrderItem;
+use SilverShop\Tests\CapturesDeprecationNotices;
 use SilverShop\Tests\ShopTestBootstrap;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\SapphireTest;
 use SilverStripe\Omnipay\Model\Payment;
 use SilverStripe\ORM\DataObject;
+use SilverStripe\ORM\FieldType\DBCurrency;
 
 /**
  * Order Unit Tests
@@ -27,6 +29,8 @@ use SilverStripe\ORM\DataObject;
  */
 final class OrderTest extends SapphireTest
 {
+    use CapturesDeprecationNotices;
+
     public static $fixture_file = __DIR__ . '/../Fixtures/shop.yml';
 
     // This seems to be required, because we query the OrderItem table and thus this gets included…
@@ -201,8 +205,53 @@ final class OrderTest extends SapphireTest
             'Status' => 'Unpaid',
         ]);
         $order->Total = 123.257323; //setTotal IS called here
-        $this->assertEquals(123.26, $order->Total(), "Check total rounds appropriately");
+        $this->assertEquals(123.26, $order->GrandTotal(), "Check total rounds appropriately");
         $this->assertEquals(123.26, $order->TotalOutstanding(), "Check total outstanding rounds appropriately");
+    }
+
+    public function testGrandTotalReadsTotalField(): void
+    {
+        $order = Order::create(['Total' => 1234.5]);
+
+        $this->assertEquals(1234.5, $order->GrandTotal());
+        $this->assertInstanceOf(DBCurrency::class, $order->obj('GrandTotal'));
+        $this->assertSame($order->dbObject('Total')->Nice(), $order->obj('GrandTotal')->Nice());
+    }
+
+    public function testTotalMethodIsDeprecated(): void
+    {
+        $order = Order::create(['Total' => 12.34]);
+
+        $notices = $this->captureDeprecationNotices(fn () => $this->assertEquals(12.34, $order->Total()));
+
+        $this->assertNotEmpty(
+            $this->noticesFor($notices, Order::class . '->Total'),
+            'Calling Order::Total() raises a deprecation notice'
+        );
+    }
+
+    public function testTemplatesDoNotCallDeprecatedTotal(): void
+    {
+        $order = $this->objFromFixture(Order::class, 'paid');
+
+        $templates = [
+            'SilverShop\\Model\\Order',
+            'SilverShop\\Model\\Order_EmailPlainBody',
+            'SilverShop\\Cart\\Cart',
+            'SilverShop\\Admin\\OrderAdmin_Content',
+        ];
+        $output = '';
+        $notices = $this->captureDeprecationNotices(function () use ($order, $templates, &$output) {
+            foreach ($templates as $template) {
+                $output .= $order->renderWith($template);
+            }
+        });
+
+        $this->assertStringContainsString($order->dbObject('Total')->Nice(), $output);
+        $this->assertEmpty(
+            $this->noticesFor($notices, Order::class . '->Total'),
+            'Order templates should not call the deprecated Order::Total() method'
+        );
     }
 
     public function testPlacedOrderImmutability(): void
@@ -210,7 +259,7 @@ final class OrderTest extends SapphireTest
 
         $order = $this->objFromFixture(Order::class, "paid");
         OrderProcessor::create($order)->placeOrder();
-        $this->assertEquals(408, $order->Total(), "check totals");
+        $this->assertEquals(408, $order->GrandTotal(), "check totals");
 
         //make a changes to existing products
         $this->mp3player->BasePrice = 100;
@@ -220,7 +269,7 @@ final class OrderTest extends SapphireTest
         $this->socks->write();
 
         //total doesn't change
-        $this->assertEquals(408, $order->Total());
+        $this->assertEquals(408, $order->GrandTotal());
         $this->assertFalse($order->isCart());
 
         //item values don't change

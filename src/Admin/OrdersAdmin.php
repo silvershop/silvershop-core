@@ -83,10 +83,17 @@ class OrdersAdmin extends ModelAdmin
             if ($dataColumns = $config->getComponentByType(GridFieldDataColumns::class)) {
                 $dataColumns->setFieldCasting(['Total' => 'Currency->Nice']);
 
+                // Read the Total database field directly, rather than via the deprecated Order::Total() method.
+                $gridField->addDataFields(['Total' => fn (Order $order) => $order->getField('Total')]);
+
                 $rawTotal = fn ($value) => $value;
                 if ($export = $config->getComponentByType(GridFieldExportButton::class)) {
-                    $columns = $dataColumns->getDisplayFields($gridField);
-                    $columns['Total'] = $rawTotal;
+                    // Export the raw value via GrandTotal(), which the formatted data column doesn't handle,
+                    // while keeping the same column header.
+                    $columns = [];
+                    foreach ($dataColumns->getDisplayFields($gridField) as $field => $title) {
+                        $columns[$field === 'Total' ? 'GrandTotal' : $field] = $title;
+                    }
                     $export->setExportColumns($columns);
                 }
                 if ($print = $config->getComponentByType(GridFieldPrintButton::class)) {

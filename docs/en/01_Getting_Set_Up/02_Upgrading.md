@@ -5,6 +5,28 @@ Don't forget to run the following url commands when you upgrade the shop module:
     [yourdomain.com]/dev/build?flush=all
     [yourdomain.com]/dev/tasks/ShopMigrationTask
 
+# 6.3
+
+## `Order::Total()` is deprecated
+
+`Order::Total()` is deprecated and will be removed in 7.0. The method shadows the `Total` database field, so
+anything that looks the value up by name (templates, `obj('Total')`, GridField columns, CSV exports) gets a raw
+number instead of the field's `Currency` casting, which gets in the way of formatting the order total.
+
+Calling it now raises a deprecation notice (when [deprecation notices](https://docs.silverstripe.org/en/6/upgrading/deprecations/)
+are enabled). Update your code as follows:
+
+* PHP: replace `$order->Total()` with `$order->GrandTotal()`, or `$order->getField('Total')` / `$order->Total`
+  when you want the raw database value.
+* Templates rendered with an `Order` (or `$Cart`): replace `$Total` with `$GrandTotal`, e.g. `$GrandTotal.Nice`.
+  The core templates have already been updated, so copy the change into any templates you override, such as
+  `Cart.ss`, `Order.ss`, `Order_Content_SubTotals.ss`, `Order_EmailPlainBody.ss` and `OrderHistory.ss`.
+
+This only applies to `Order`. `OrderItem::Total()` and `OrderModifier::Total()` are unchanged.
+
+Once the method is removed in 7.0, `$order->Total` and `$Total` in templates will resolve to the `Currency` database
+field as normal.
+
 # 2.0
 ## Payment Gateway Settings
 Your payment gateway parameters need to be set on the GatewayInfo class.  See [Silverstripe-Omnipay 2 Upgrading Instructions](https://github.com/silverstripe/silverstripe-omnipay/blob/master/docs/changelogs/2.0.md#configuration-api) for details.

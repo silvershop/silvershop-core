@@ -13,6 +13,6 @@
     <% end_loop %>
     <tr class="silvershop-receipt__row silvershop-receipt__row--summary silvershop-receipt__row--total">
         <td class="silvershop-receipt__cell silvershop-receipt__cell--label" colspan="4" scope="row"><%t SilverShop\Model\Order.Total "Total" %></td>
-        <td class="silvershop-receipt__cell silvershop-receipt__cell--right silvershop-receipt__cell--value">$Total.Nice $Currency</td>
+        <td class="silvershop-receipt__cell silvershop-receipt__cell--right silvershop-receipt__cell--value">$GrandTotal.Nice $Currency</td>
     </tr>
 </tfoot>
