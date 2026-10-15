@@ -16,6 +16,7 @@ use SilverShop\Page\CheckoutPage;
 use SilverShop\ShopTools;
 use SilverStripe\Control\Controller;
 use SilverStripe\Dev\Debug;
+use SilverStripe\Dev\Deprecation;
 use SilverStripe\Forms\CheckboxSetField;
 use SilverStripe\Forms\DateField;
 use SilverStripe\Forms\DropdownField;
@@ -146,6 +147,7 @@ class Order extends DataObject
         'FullBillingAddress' => 'Text',
         'FullShippingAddress' => 'Text',
         'Total' => 'Currency',
+        'GrandTotal' => 'Currency',
         'SubTotal' => 'Currency',
         'TotalPaid' => 'Currency',
         'Shipping' => 'Currency',
@@ -465,18 +467,25 @@ class Order extends DataObject
     /**
      * Get final value of order.
      * Retrieves value from DataObject's record array.
+     *
+     * This method shadows the Total database field, which bypasses the field's Currency casting
+     * (e.g. in templates and GridField columns). Once removed, $order->Total and $Total in
+     * templates will resolve to the database field as normal.
+     *
+     * @deprecated 6.3.0 Will be removed in 7.0.0. Use GrandTotal(), or getField('Total') for the raw value.
      */
     public function Total(): mixed
     {
+        Deprecation::notice('6.3.0', 'Will be removed in 7.0.0. Use GrandTotal() instead.');
         return $this->getField('Total');
     }
 
     /**
-     * Alias for Total.
+     * Get final value of order.
      */
     public function GrandTotal(): mixed
     {
-        return $this->Total();
+        return $this->getField('Total');
     }
 
     /**

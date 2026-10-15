@@ -191,7 +191,7 @@
                                                     <% end_loop %>
                                                     <tr class="silvershop-stepped-checkout__summary-row silvershop-stepped-checkout__summary-row--total">
                                                         <th class="silvershop-stepped-checkout__summary-label" colspan="3"><%t SilverShop\Model\Order.GrandTotal "Grand Total" %></th>
-                                                        <td class="silvershop-stepped-checkout__summary-value">$Total.Nice $Currency</td>
+                                                        <td class="silvershop-stepped-checkout__summary-value">$GrandTotal.Nice $Currency</td>
                                                     </tr>
                                                 </tfoot>
                                             </table>

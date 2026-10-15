@@ -6,7 +6,7 @@
 <%-- As Order.ss is also used in emails, avoid div, paragraph and heading elements --%>
 <% include SilverShop\Model\Order_Address %>
 <% include SilverShop\Model\Order_Content %>
-<% if $Total %>
+<% if $GrandTotal %>
     <% if $Payments %>
         <% include SilverShop\Model\Order_Payments %>
     <% end_if %>
