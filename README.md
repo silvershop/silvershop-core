@@ -96,7 +96,7 @@ issue in CMS5, which did not default to Strict.
  * Cart Page - For viewing and updating your cart.
  * Checkout - Gather delivery/billing details and anything specific to the order. Can be single-page or multi-step.
  * Online Payments - Via the omnipay module.
- * Administration - Manage the catalog and orders in the CMS.
+ * Administration - Manage orders in the CMS. Products and categories are edited through the site tree, or in a dedicated Catalog section with [silvershop/productcatalog](https://github.com/silvershop/silvershop-productcatalog).
 
 Futher functionality is provided by add-on submodules.
 

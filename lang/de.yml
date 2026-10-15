@@ -2,8 +2,6 @@ de:
   SilverShop\Admin\OrdersAdmin:
     MENUTITLE: Bestellungen
     ReceiptTitle: '{SiteTitle} Bestellung Nr. {OrderNo}'
-  SilverShop\Admin\ProductCatalogAdmin:
-    MENUTITLE: Katalog
   SilverShop\Admin\ZoneAdmin:
     MENUTITLE: Zonen
   SilverShop\Cart\ShoppingCart:

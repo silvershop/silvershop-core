@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace SilverShop\Tests;
 
-use SilverShop\Admin\ProductCatalogAdmin;
 use SilverShop\Page\CartPageController;
 use SilverShop\Extension\ProductImageExtension;
 use SilverShop\Extension\ShopConfigExtension;
@@ -15,8 +14,6 @@ use SilverShop\Model\Modifiers\Shipping\Simple;
 use SilverShop\Model\Modifiers\Tax\FlatTax;
 use SilverShop\Model\Modifiers\Tax\GlobalTax;
 use SilverShop\Model\Order;
-use SilverShop\Model\Variation\AttributeType;
-use SilverShop\Model\Variation\Variation;
 use SilverShop\ORM\FieldType\I18nDatetime;
 use SilverShop\ORM\FieldType\ShopCurrency;
 use SilverShop\Page\Product;
@@ -38,7 +35,6 @@ $cfg->set(Injector::class, DBDatetime::class, ["class" => I18nDatetime::class]);
 
 $cfg->remove(Payment::class, "allowed_gateways");
 $cfg->remove(Order::class, "modifiers");
-$cfg->remove(ProductCatalogAdmin::class, "managed_models");
 $cfg->remove(ProductCategory::class, "sort_options");
 
 // non-ecommerce
@@ -60,16 +56,6 @@ $cfg->set(ShopCurrency::class, 'negative_value_format', '-%s');
 
 // products
 $cfg->set(Product::class, 'global_allow_purchase', true);
-$cfg->set(
-    ProductCatalogAdmin::class,
-    'managed_models',
-    [
-        Product::class,
-        ProductCategory::class,
-        Variation::class,
-        AttributeType::class
-    ]
-);
 $cfg->set(ProductImageExtension::class, 'thumbnail_width', 140);
 $cfg->set(ProductImageExtension::class, 'thumbnail_height', 100);
 $cfg->set(ProductImageExtension::class, 'large_image_width', 200);

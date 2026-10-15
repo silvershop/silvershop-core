@@ -2,8 +2,6 @@ nb:
   SilverShop\Admin\OrdersAdmin:
     MENUTITLE: Ordrer
     ReceiptTitle: '{SiteTitle} Ordre {OrderNo}'
-  SilverShop\Admin\ProductCatalogAdmin:
-    MENUTITLE: Katalog
   SilverShop\Admin\ZoneAdmin:
     MENUTITLE: Soner
   SilverShop\Cart\ShoppingCart:
