@@ -114,7 +114,7 @@
                 <% end_if %>
                 <tr class="silvershop-cart__row silvershop-cart__row--total">
                     <th class="silvershop-cart__cell silvershop-cart__cell--total-label" colspan="4" scope="row"><%t SilverShop\Model\Order.Total "Total" %></th>
-                    <td class="silvershop-cart__cell silvershop-cart__cell--total-value"><span class="silvershop-cart__total-amount">$Total.Nice</span> <span class="silvershop-cart__total-currency">$Currency</span></td>
+                    <td class="silvershop-cart__cell silvershop-cart__cell--total-value"><span class="silvershop-cart__total-amount">$GrandTotal.Nice</span> <span class="silvershop-cart__total-currency">$Currency</span></td>
                     <% if $Editable %><td class="silvershop-cart__cell silvershop-cart__cell--spacer">&nbsp;</td><% end_if %>
                 </tr>
             <% end_if %>

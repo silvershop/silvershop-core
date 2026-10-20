@@ -16,7 +16,7 @@
     <% end_loop %>
     <tr class="silvershop-shop-order__row silvershop-shop-order__row--total">
         <th class="silvershop-shop-order__cell silvershop-shop-order__cell--label" colspan="4"><%t SilverShop\Model\Order.Total "Total" %></th>
-        <th class="silvershop-shop-order__cell silvershop-shop-order__cell--value">$Total.Nice $Currency</th>
+        <th class="silvershop-shop-order__cell silvershop-shop-order__cell--value">$GrandTotal.Nice $Currency</th>
     </tr>
     <% if $TotalOutstanding %>
         <tr class="silvershop-shop-order__row silvershop-shop-order__row--outstanding">

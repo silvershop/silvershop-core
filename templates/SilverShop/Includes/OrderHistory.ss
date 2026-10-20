@@ -15,7 +15,7 @@
             <td class="silvershop-order-history__cell silvershop-order-history__cell--reference">$Reference</td>
             <td class="silvershop-order-history__cell silvershop-order-history__cell--date">$Created.Nice</td>
             <td class="silvershop-order-history__cell silvershop-order-history__cell--items">$Items.Quantity</td>
-            <td class="silvershop-order-history__cell silvershop-order-history__cell--total">$Total.Nice</td>
+            <td class="silvershop-order-history__cell silvershop-order-history__cell--total">$GrandTotal.Nice</td>
             <td class="silvershop-order-history__cell silvershop-order-history__cell--status">$StatusI18N</td>
             <td class="silvershop-order-history__cell silvershop-order-history__cell--actions">
                 <a class="silvershop-order-history__view silvershop-button silvershop-button--small silvershop-button--primary" href="$Link">

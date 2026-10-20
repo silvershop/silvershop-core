@@ -21,8 +21,8 @@
 <%t SilverShop\Model\Order.SubTotal "Sub-total" %>: $SubTotal.Nice
 <% loop $Modifiers %><% if $ShowInTable %>$TableTitle: $TableValue.Nice
 <% end_if %><% end_loop %>
-<%t SilverShop\Model\Order.Total "Total" %>: $Total.Nice $Currency
-<% if $Total %><% if $Payments %>
+<%t SilverShop\Model\Order.Total "Total" %>: $GrandTotal.Nice $Currency
+<% if $GrandTotal %><% if $Payments %>
 <%t SilverShop\Payment.PaymentsHeadline "Payment(s)" %>:
 <% loop $Payments %>  $Created.Nice | $Amount.Nice $Currency | $PaymentStatus | $GatewayTitle
 <% end_loop %>
