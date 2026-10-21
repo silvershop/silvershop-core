@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SilverShop\Model;
 
+use SilverShop\ORM\Filters\MatchObjectFilter;
 use SilverShop\Page\CartPageController;
 use SilverShop\Forms\ShopQuantityField;
 use SilverStripe\Forms\TextField;
@@ -150,14 +151,11 @@ class OrderItem extends OrderAttribute
     {
         $required = self::config()->get('required_fields'); //TODO: also combine with all ancestors of this->class
         $unique = [];
-        $hasOnes = $this->hasOne();
         //reduce record to only required fields
         if ($required) {
             foreach ($required as $field) {
-                if ($hasOnes === $field || isset($hasOnes[$field])) {
-                    $field .= 'ID'; //add ID to hasones
-                }
-
+                //has_ones may be configured with or without the ID suffix
+                $field = MatchObjectFilter::normaliseFieldName(static::class, $field);
                 $unique[$field] = $this->$field;
             }
         }

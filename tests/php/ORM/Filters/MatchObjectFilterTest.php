@@ -24,8 +24,8 @@ final class MatchObjectFilterTest extends SapphireTest
         $filter = new MatchObjectFilter(OrderItem::class, [], ['ProductID']);
         $this->assertEquals(
             $filter->getFilter(),
-            ['"ProductID" IS NULL'],
-            'missing ID value became IS NULL'
+            ['("ProductID" = 0 OR "ProductID" IS NULL)'],
+            'missing ID value matches 0 or NULL'
         );
         // Missing value for a db field.
         $filter = new MatchObjectFilter(OrderItem::class, [], ['ProductVersion']);
@@ -34,5 +34,25 @@ final class MatchObjectFilterTest extends SapphireTest
             ['"ProductVersion" IS NULL'],
             'missing DB value became IS NULL'
         );
+    }
+
+    public function testRelationNameIsNormalised(): void
+    {
+        // has_one relations can be listed without the ID suffix, in required fields and in data keys.
+        $filter = new MatchObjectFilter(OrderItem::class, ['ProductID' => 5], ['Product']);
+        $this->assertEquals(['"ProductID" = \'5\''], $filter->getFilter(), 'required relation name matched');
+
+        $filter = new MatchObjectFilter(OrderItem::class, ['Product' => 5], ['ProductID']);
+        $this->assertEquals(['"ProductID" = \'5\''], $filter->getFilter(), 'relation name data key matched');
+
+        $filter = new MatchObjectFilter(OrderItem::class, ['Product' => 4, 'ProductID' => 5], ['Product']);
+        $this->assertEquals(['"ProductID" = \'5\''], $filter->getFilter(), 'explicit ID data key wins');
+    }
+
+    public function testNormaliseFieldName(): void
+    {
+        $this->assertSame('ProductID', MatchObjectFilter::normaliseFieldName(OrderItem::class, 'Product'));
+        $this->assertSame('ProductID', MatchObjectFilter::normaliseFieldName(OrderItem::class, 'ProductID'));
+        $this->assertSame('Quantity', MatchObjectFilter::normaliseFieldName(OrderItem::class, 'Quantity'));
     }
 }
