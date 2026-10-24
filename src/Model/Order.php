@@ -796,7 +796,7 @@ class Order extends DataObject
     }
 
     /**
-     * [PoC] Single funnel for Order status changes.
+     * Single funnel for Order status changes.
      *
      * Because this method exists, {@see \SilverStripe\Model\ModelData::__set()}
      * routes every `$order->Status = 'X'` assignment through here, and callers

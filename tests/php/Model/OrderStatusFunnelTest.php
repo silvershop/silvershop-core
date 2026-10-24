@@ -15,7 +15,7 @@ use SilverStripe\Dev\SapphireTest;
 use SilverStripe\Omnipay\Model\Payment;
 
 /**
- * [PoC] Proves the BC-warranted Order::setStatus() funnel:
+ * Proves the BC-warranted Order::setStatus() funnel:
  *  A. magic `$order->Status = X` routes through setStatus(), and the legacy
  *     onStatusChange hook still fires at write time (backwards compatible);
  *  B. an explicit setStatus($value, $name) carries the transition name (intent);

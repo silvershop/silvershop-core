@@ -8,7 +8,7 @@ use SilverStripe\Core\Extension;
 use SilverStripe\Dev\TestOnly;
 
 /**
- * [PoC] Strict state-machine stand-in: vetoes (rejects) any transition
+ * Strict state-machine stand-in: vetoes (rejects) any transition
  * whose target equals $vetoTarget by returning false from the funnel hook.
  * Proves that onBeforeStatusChange can enforce a guard before the write.
  *
