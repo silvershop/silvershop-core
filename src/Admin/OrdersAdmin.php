@@ -41,6 +41,24 @@ class OrdersAdmin extends ModelAdmin
     private static array $model_importers = [];
 
     /**
+     * Hide the legacy status-log tab when it would be permanently empty: core's
+     * status logging is off (`Order.log_status` unset — the default) and no
+     * {@link OrderStatusLog} rows exist (e.g. none written by a module). This
+     * removes an always-empty tab out of the box, while never hiding a tab that
+     * actually holds data.
+     */
+    public function getManagedModels()
+    {
+        $models = parent::getManagedModels();
+
+        if (empty(Order::config()->get('log_status')) && !OrderStatusLog::get()->exists()) {
+            unset($models[OrderStatusLog::class]);
+        }
+
+        return $models;
+    }
+
+    /**
      * Restrict list to non-hidden statuses
      */
     public function getList(): DataList
