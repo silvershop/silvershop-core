@@ -224,7 +224,7 @@ class OrderProcessor
                 || ($this->order->GrandTotal() == 0 && Order::config()->get('allow_zero_order_total'))
             ) {
                 //set order as paid
-                $this->order->setField('Status', 'Paid');
+                $this->order->setStatus('Paid', 'payment_received');
                 $this->order->write();
             }
         }
@@ -281,9 +281,9 @@ class OrderProcessor
 
         //update status
         if ($this->order->TotalOutstanding(false) !== 0.0) {
-            $this->order->setField('Status', 'Unpaid');
+            $this->order->setStatus('Unpaid', 'placed_unpaid');
         } else {
-            $this->order->setField('Status', 'Paid');
+            $this->order->setStatus('Paid', 'placed_paid');
         }
 
         if (!$this->order->Placed) {

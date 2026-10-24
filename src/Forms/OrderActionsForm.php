@@ -198,7 +198,7 @@ class OrderActionsForm extends Form
         if (self::config()->get('allow_cancelling')
             && $this->order->canCancel()
         ) {
-            $this->order->setField('Status', 'MemberCancelled');
+            $this->order->setStatus('MemberCancelled', 'member_cancel');
             $this->order->write();
 
             if (self::config()->get('email_notification')) {
