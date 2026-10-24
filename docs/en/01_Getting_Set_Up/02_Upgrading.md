@@ -7,6 +7,28 @@ Don't forget to run the following url commands when you upgrade the shop module:
 
 # 6.3
 
+## Countries and states come from `commerceguys/addressing`
+
+The country list and the subdivisions (states, provinces, counties) offered on address forms now come from
+[commerceguys/addressing](https://github.com/commerceguys/addressing), which packages CLDR and Google's address
+data. Country names are shown in the current locale.
+
+* `_config/countries.yml` has been removed. `ShopConfigExtension.iso_3166_country_codes` still works, but only
+  needs the countries you want to add or rename, e.g.
+
+  ```yaml
+  SilverShop\Extension\ShopConfigExtension:
+    iso_3166_country_codes:
+      NZ: 'Aotearoa New Zealand'
+  ```
+
+* `Address.State` is now a `SilverShop\Forms\SubdivisionField`. When the selected country has known subdivisions
+  it's a dropdown storing the value written on an address (`NSW`, `CA`, `Co. Cork`); otherwise it stays a text
+  field. The field swaps automatically when the country changes, using the `api/v1/subdivisions/{country}.json`
+  endpoint. Existing free-text values are kept, and pre-selected when they match a subdivision name.
+* Customise the field with the `updateStateField` extension hook on `Address`, or get the data directly from
+  `SilverShop\Model\AddressData`.
+
 ## `Order::Total()` is deprecated
 
 `Order::Total()` is deprecated and will be removed in 7.0. The method shadows the `Total` database field, so

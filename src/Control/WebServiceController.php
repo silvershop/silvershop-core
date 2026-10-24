@@ -6,6 +6,7 @@ namespace SilverShop\Control;
 
 use JsonException;
 use SilverShop\Cart\ShoppingCart;
+use SilverShop\Model\AddressData;
 use SilverShop\Model\Buyable;
 use SilverShop\Model\OrderItem;
 use SilverShop\Page\Product;
@@ -36,6 +37,10 @@ class WebServiceController extends Controller
 
             if ($resource === 'cart') {
                 return $this->cartResponse($request, $identifier, $format);
+            }
+
+            if ($resource === 'subdivisions' && $identifier !== null) {
+                return $this->subdivisionsResponse($identifier, $format);
             }
 
             return $this->errorResponse($format, 404, 'Not found');
@@ -127,6 +132,24 @@ class WebServiceController extends Controller
         }
 
         return $this->formatResponse($format, 'product', $this->serialiseProduct($product));
+    }
+
+    /**
+     * Subdivisions (states, provinces, etc.) for a country, in display order.
+     * An empty list means the address should use a free-text state field.
+     */
+    private function subdivisionsResponse(string $countryCode, string $format): HTTPResponse
+    {
+        $countryCode = strtoupper($countryCode);
+        $subdivisions = [];
+        foreach (AddressData::singleton()->getSubdivisions($countryCode) as $code => $name) {
+            $subdivisions[] = ['code' => (string) $code, 'name' => $name];
+        }
+
+        return $this->formatResponse($format, 'subdivisions', [
+            'country' => $countryCode,
+            'subdivisions' => $subdivisions,
+        ]);
     }
 
     private function cartResponse(HTTPRequest $request, ?string $operation, string $format): HTTPResponse
