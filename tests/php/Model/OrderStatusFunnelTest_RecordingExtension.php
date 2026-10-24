@@ -8,7 +8,7 @@ use SilverStripe\Core\Extension;
 use SilverStripe\Dev\TestOnly;
 
 /**
- * [PoC] Observer: records both the new pre-write funnel hook
+ * Observer: records both the new pre-write funnel hook
  * (onBeforeStatusChange) and the existing post hook (onStatusChange),
  * so a test can prove (a) the funnel fires with the transition name and
  * (b) the legacy onStatusChange still fires (BC).
