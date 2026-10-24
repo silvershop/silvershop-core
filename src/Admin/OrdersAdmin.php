@@ -7,6 +7,7 @@ namespace SilverShop\Admin;
 use SilverShop\Forms\GridField\OrderGridFieldDetailForm_ItemRequest;
 use SilverShop\Model\Order;
 use SilverShop\Model\OrderStatusLog;
+use SilverShop\Model\OrderTransition;
 use SilverStripe\Admin\ModelAdmin;
 use SilverStripe\Forms\Form;
 use SilverStripe\Forms\GridField\GridFieldAddNewButton;
@@ -35,7 +36,8 @@ class OrdersAdmin extends ModelAdmin
 
     private static array $managed_models = [
         Order::class,
-        OrderStatusLog::class
+        OrderStatusLog::class,
+        OrderTransition::class
     ];
 
     private static array $model_importers = [];
@@ -53,6 +55,11 @@ class OrdersAdmin extends ModelAdmin
 
         if (empty(Order::config()->get('log_status')) && !OrderStatusLog::get()->exists()) {
             unset($models[OrderStatusLog::class]);
+        }
+
+        // Likewise hide the transition audit tab only when auditing is off and empty.
+        if (!Order::config()->get('audit_status_transitions') && !OrderTransition::get()->exists()) {
+            unset($models[OrderTransition::class]);
         }
 
         return $models;
@@ -122,7 +129,8 @@ class OrdersAdmin extends ModelAdmin
             }
         }
 
-        if ($this->modelClass == OrderStatusLog::class) {
+        // Both logs are system-written and read-only in the admin.
+        if (in_array($this->modelClass, [OrderStatusLog::class, OrderTransition::class], true)) {
             /** @var GridFieldConfig $config */
             $config = $form
                 ->Fields()
