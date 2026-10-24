@@ -805,6 +805,37 @@ class Order extends DataObject
     }
 
     /**
+     * Single funnel for Order status changes.
+     *
+     * Because this method exists, {@see \SilverStripe\Model\ModelData::__set()}
+     * routes every `$order->Status = 'X'` assignment through here, and callers
+     * may also call it explicitly with a transition name to carry intent. It
+     * fires a vetoable `onBeforeStatusChange` extension hook BEFORE the field is
+     * written, then writes via setField() (no recursion, no write()).
+     *
+     * Advisory by default: with no extension implementing onBeforeStatusChange
+     * the hook is a no-op and behaviour is byte-identical to the old
+     * `setField('Status', $value)`. A strict state-machine extension may return
+     * false from onBeforeStatusChange to veto (reject) the transition.
+     *
+     * @param mixed       $value          target status (mirrors setField's loose contract)
+     * @param string|null $transitionName optional intent/name of the transition
+     */
+    public function setStatus($value, ?string $transitionName = null): static
+    {
+        $from = $this->getField('Status');
+        if ($from !== $value) {
+            $results = $this->extend('onBeforeStatusChange', $from, $value, $transitionName);
+            if (in_array(false, $results, true)) {
+                // A strict state-machine extension vetoed this transition.
+                return $this;
+            }
+        }
+        $this->setField('Status', $value);
+        return $this;
+    }
+
+    /**
      * Force creating an order reference
      */
     protected function onBeforeWrite(): void
