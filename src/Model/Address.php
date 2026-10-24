@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace SilverShop\Model;
 
 use SilverStripe\Core\Validation\ValidationResult;
+use SilverShop\Forms\SubdivisionField;
 use SilverShop\ORM\FieldType\ShopCountry;
 use SilverStripe\Forms\DropdownField;
 use SilverStripe\Forms\FieldList;
@@ -117,6 +118,7 @@ class Address extends DataObject
                     $self->getCountryField(),
                     'State'
                 );
+                $fieldList->replaceField('State', $self->getStateField());
 
                 $fieldList->removeByName('MemberID');
             }
@@ -136,7 +138,7 @@ class Address extends DataObject
             $address2field =
                 TextField::create('AddressLine2', $this->fieldLabel('AddressLine2')),
             $cityfield = TextField::create('City', $this->fieldLabel('City')),
-            $statefield = TextField::create('State', $this->fieldLabel('State')),
+            $statefield = $this->getStateField(),
             $postcodefield = TextField::create('PostalCode', $this->fieldLabel('PostalCode')),
             $phonefield = TextField::create('Phone', $this->fieldLabel('Phone'))
         );
@@ -176,6 +178,20 @@ class Address extends DataObject
         $this->extend('updateCountryField', $singleSelectField);
 
         return $singleSelectField;
+    }
+
+    /**
+     * State / province field, offering the subdivisions of the selected
+     * country where they are known.
+     */
+    public function getStateField(): SubdivisionField
+    {
+        $subdivisionField = SubdivisionField::create('State', $this->fieldLabel('State'))
+            ->setCountry($this->Country);
+
+        $this->extend('updateStateField', $subdivisionField);
+
+        return $subdivisionField;
     }
 
     /**

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SilverShop\Extension;
 
+use SilverShop\Model\AddressData;
 use SilverStripe\AssetAdmin\Forms\UploadField;
 use SilverStripe\Assets\Image;
 use SilverStripe\CMS\Model\SiteTree;
@@ -65,6 +66,15 @@ class ShopConfigExtension extends Extension
     private static array $supported_currencies = [];
 
     private static bool $forms_use_button_tag = false;
+
+    /**
+     * Country names to add or override, keyed by ISO 3166-1 alpha-2 code.
+     * The full country list comes from commerceguys/addressing, so this only
+     * needs entries that should differ from it.
+     *
+     * @var array<string, string>
+     */
+    private static array $iso_3166_country_codes = [];
 
     public static function current(): SiteConfig
     {
@@ -142,7 +152,7 @@ class ShopConfigExtension extends Extension
                     CheckboxSetField::create(
                         'AllowedCountries',
                         _t(__CLASS__ . '.AllowedCountries', 'Allowed Ordering and Shipping Countries'),
-                        self::config()->get('iso_3166_country_codes')
+                        self::get_all_countries()
                     )
                 )
             )
@@ -153,14 +163,34 @@ class ShopConfigExtension extends Extension
     }
 
     /**
+     * Get every country the shop knows about, as ISO code => localised name,
+     * with any {@link $iso_3166_country_codes} overrides applied.
+     *
+     * @return array<string, string>
+     */
+    public static function get_all_countries(): array
+    {
+        $countries = AddressData::singleton()->getCountries();
+        $overrides = (array) self::config()->get('iso_3166_country_codes');
+        if ($overrides !== []) {
+            $added = array_diff_key($overrides, $countries);
+            $countries = array_merge($countries, $overrides);
+            if ($added !== []) {
+                asort($countries);
+            }
+        }
+
+        return $countries;
+    }
+
+    /**
      * Get list of allowed countries
      *
      * @param bool $prefixisocode - prefix the country code
      */
     public function getCountriesList($prefixisocode = false): array
     {
-        $countries = self::config()->get('iso_3166_country_codes');
-        asort($countries);
+        $countries = self::get_all_countries();
         if ($allowed = $this->getOwner()->AllowedCountries) {
             $allowed = json_decode($allowed);
             if (!empty($allowed)) {
@@ -197,11 +227,11 @@ class ShopConfigExtension extends Extension
     }
 
     /**
-     * Convert iso country code to English country name
+     * Convert iso country code to its country name in the current locale
      */
     public static function countryCode2name($code): string
     {
-        $codes = self::config()->get('iso_3166_country_codes');
+        $codes = self::get_all_countries();
         if (isset($codes[$code])) {
             return $codes[$code];
         }

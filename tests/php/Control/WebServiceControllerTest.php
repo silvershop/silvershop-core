@@ -69,6 +69,20 @@ final class WebServiceControllerTest extends FunctionalTest
         $this->assertSame(8.0, (float) $socks['price']);
     }
 
+    public function testSubdivisionsJson(): void
+    {
+        $response = $this->get('api/v1/subdivisions/au.json');
+
+        $this->assertSame(200, $response->getStatusCode());
+
+        $payload = json_decode((string) $response->getBody(), true);
+        $this->assertSame('AU', $payload['country']);
+        $this->assertContains(['code' => 'NSW', 'name' => 'New South Wales'], $payload['subdivisions']);
+
+        $payload = json_decode((string) $this->get('api/v1/subdivisions/NZ.json')->getBody(), true);
+        $this->assertSame(['country' => 'NZ', 'subdivisions' => []], $payload);
+    }
+
     public function testSingleProductJsonByUrlSegment(): void
     {
         $response = $this->get('api/v1/products/socks.json');
