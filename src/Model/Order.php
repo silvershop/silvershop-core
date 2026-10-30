@@ -117,6 +117,7 @@ class Order extends DataObject
         'Items' => OrderItem::class,
         'Modifiers' => OrderModifier::class,
         'OrderStatusLogs' => OrderStatusLog::class,
+        'StatusTransitions' => OrderTransition::class,
     ];
 
     private static array $cascade_deletes = [
@@ -216,6 +217,14 @@ class Order extends DataObject
     private static array $log_status = [];
 
     /**
+     * Write a structured {@link OrderTransition} audit record on every
+     * persisted status change. On by default; set to false to disable (e.g.
+     * during bulk migrations). Independent of the legacy, email-coupled
+     * `log_status` above.
+     */
+    private static bool $audit_status_transitions = true;
+
+    /**
      * Whether or not an order can be cancelled before payment
      */
     private static bool $cancel_before_payment = true;
@@ -275,6 +284,20 @@ class Order extends DataObject
      * A flag indicating that an order-status-log entry should be written
      */
     protected bool $flagOrderStatusWrite = false;
+
+    /**
+     * Intent name supplied to {@link setStatus()}, carried to onAfterWrite so the
+     * audit record can capture which transition fired. Transient (not a DB field).
+     */
+    protected ?string $pendingTransitionName = null;
+
+    /**
+     * Captured at {@link statusTransition()} time, consumed in onAfterWrite() to
+     * write the {@link OrderTransition}. Transient.
+     *
+     * @var array{from:string,to:string,name:string|null}|null
+     */
+    protected ?array $pendingAuditTransition = null;
 
     /**
      * @return mixed[]
@@ -831,6 +854,7 @@ class Order extends DataObject
                 return $this;
             }
         }
+        $this->pendingTransitionName = $transitionName;
         $this->setField('Status', $value);
         return $this;
     }
@@ -890,6 +914,16 @@ class Order extends DataObject
         if (!empty($logStatus) && in_array($toStatus, $logStatus)) {
             $this->flagOrderStatusWrite = $fromStatus != $toStatus;
         }
+
+        // Structured, always-on (opt-out) audit record of the transition.
+        if ($this->config()->get('audit_status_transitions') && $fromStatus != $toStatus) {
+            $this->pendingAuditTransition = [
+                'from' => (string) $fromStatus,
+                'to' => (string) $toStatus,
+                'name' => $this->pendingTransitionName,
+            ];
+        }
+        $this->pendingTransitionName = null;
     }
 
     /**
@@ -928,6 +962,22 @@ class Order extends DataObject
             $log->VisibleToCustomer = true;
             $this->extend('updateOrderStatusLog', $log);
             $log->write();
+        }
+
+        // Structured transition audit (see statusTransition() + $audit_status_transitions).
+        if ($this->pendingAuditTransition !== null) {
+            $transition = $this->pendingAuditTransition;
+            $this->pendingAuditTransition = null;
+
+            $record = OrderTransition::create();
+            $record->OrderID = $this->ID;
+            $record->FromStatus = $transition['from'];
+            $record->ToStatus = $transition['to'];
+            $record->TransitionName = $transition['name'];
+            if ($member = Security::getCurrentUser()) {
+                $record->MemberID = $member->ID;
+            }
+            $record->write();
         }
     }
 
