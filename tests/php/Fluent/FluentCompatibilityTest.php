@@ -43,11 +43,13 @@ final class FluentCompatibilityTest extends SapphireTest
 
     protected function setUp(): void
     {
+        // parent::setUp() must run first: skipping before it leaves SapphireTest's state
+        // uninitialised, so tearDown() errors instead of the test being skipped
+        parent::setUp();
+
         if (!class_exists(FluentState::class)) {
             $this->markTestSkipped('tractorcow/silverstripe-fluent is not installed');
         }
-
-        parent::setUp();
 
         Locale::create(['Locale' => 'en_NZ', 'Title' => 'English', 'URLSegment' => 'en', 'IsGlobalDefault' => true])->write();
         Locale::create(['Locale' => 'de_DE', 'Title' => 'German', 'URLSegment' => 'de'])->write();
