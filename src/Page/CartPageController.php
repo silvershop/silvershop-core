@@ -626,17 +626,15 @@ class CartPageController extends PageController
             return $this->cartFailure($request, 400, 'Missing ItemID or VariationID.');
         }
 
-        $item = OrderItem::get()->byID($itemId);
-        if (!$item instanceof OrderItem) {
-            return $this->cartFailure($request, 404);
-        }
-
-        $order = $item->Order();
-        if (!$order->exists() || !$order->IsCart()) {
+        $order = $this->cart->current();
+        if (!$order instanceof Order || !$order->IsCart()) {
             return $this->cartFailure($request, 400);
         }
 
-        $this->cart->setCurrent($order);
+        $item = $order->Items()->byID($itemId);
+        if (!$item instanceof OrderItem) {
+            return $this->cartFailure($request, 404);
+        }
 
         $variation = Variation::has_extension(Versioned::class)
             ? Versioned::get_by_stage(Variation::class, 'Live')->byID($variationId)
