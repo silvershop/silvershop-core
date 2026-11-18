@@ -8,7 +8,7 @@ on:
 jobs:
   ci:
     name: CI
-    uses: silverstripe/gha-ci/.github/workflows/ci.yml@v1
+    uses: silverstripe/gha-ci/.github/workflows/ci.yml@v3
     with:
       composer_require_extra:
         phpunit/phpunit:^11.3
