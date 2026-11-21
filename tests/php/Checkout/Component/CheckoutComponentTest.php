@@ -18,6 +18,7 @@ use SilverShop\Model\Address;
 use SilverShop\Model\Order;
 use SilverShop\ShopUserInfo;
 use SilverShop\Tests\ShopTestBootstrap;
+use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Validation\ValidationException;
 use SilverStripe\SiteConfig\SiteConfig;
@@ -401,5 +402,30 @@ final class CheckoutComponentTest extends SapphireTest
             'Surname'   => '',
             'Email'     => '',
         ]);
+    }
+
+    public function testTermsAreOnlyCheckedWhenATermsPageIsSet(): void
+    {
+        $order = Order::create();
+        $order->write();
+
+        $this->assertTrue(Terms::create()->validateData($order, []), 'Without a terms page there is nothing to accept');
+    }
+
+    public function testTermsMustBeAcceptedWhenATermsPageIsSet(): void
+    {
+        $terms = SiteTree::create(['Title' => 'Terms and Conditions', 'URLSegment' => 'terms']);
+        $terms->write();
+        $terms->publishSingle();
+        $siteConfig = SiteConfig::current_site_config();
+        $siteConfig->TermsPageID = $terms->ID;
+        $siteConfig->write();
+
+        $order = Order::create();
+        $order->write();
+
+        $this->assertTrue(Terms::create()->validateData($order, ['ReadTermsAndConditions' => '1']));
+        $this->expectException(ValidationException::class);
+        Terms::create()->validateData($order, ['ReadTermsAndConditions' => '']);
     }
 }

@@ -11,6 +11,7 @@ use SilverShop\Model\Address;
 use SilverShop\Page\CheckoutPageController;
 use SilverShop\Page\Product;
 use SilverShop\Tests\ShopTestBootstrap;
+use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Dev\FunctionalTest;
 use SilverStripe\Security\Member;
@@ -208,6 +209,109 @@ final class CheckoutFormTest extends FunctionalTest
         $errors = $checkoutForm->getValidator()->getErrors();
         $this->assertFalse($valid, 'Form should be invalid with empty and incorrect data');
         $this->assertNotEmpty($errors, 'There should be validation errors');
+    }
+
+    /**
+     * Regression test: the components' required fields must be enforced by the form's validator.
+     * The terms checkbox is only required by Terms::getRequiredFields() (its validateData() accepts anything).
+     */
+    public function testTermsMustBeAcceptedWhenATermsPageIsSet(): void
+    {
+        $this->setTermsPage();
+        $ns = 'SilverShop-Checkout-Component-';
+
+        $data = $this->validData($ns);
+        $data[$ns . 'Terms_ReadTermsAndConditions'] = '';
+        $result = $this->orderForm()->loadDataFrom($data, 1)->validate();
+        $this->assertFalse($result->isValid(), 'An order must not be placed without accepting the terms');
+        $this->assertContains($ns . 'Terms_ReadTermsAndConditions', $this->errorFields($result->getMessages()));
+
+        $data[$ns . 'Terms_ReadTermsAndConditions'] = '1';
+        $result = $this->orderForm()->loadDataFrom($data, 1)->validate();
+        $this->assertTrue($result->isValid(), print_r($result->getMessages(), true));
+    }
+
+    public function testRequiredAddressFieldsAreEnforced(): void
+    {
+        $ns = 'SilverShop-Checkout-Component-';
+        $data = $this->validData($ns);
+        $data[$ns . 'ShippingAddress_City'] = '';
+
+        $result = $this->orderForm()->loadDataFrom($data, 1)->validate();
+
+        $this->assertFalse($result->isValid(), 'A required address field must not be empty');
+        $this->assertContains($ns . 'ShippingAddress_City', $this->errorFields($result->getMessages()));
+    }
+
+    public function testRequiredFieldsAreMarkedAsRequired(): void
+    {
+        $this->setTermsPage();
+        $ns = 'SilverShop-Checkout-Component-';
+        $fields = $this->orderForm()->Fields();
+
+        $this->assertTrue($fields->dataFieldByName($ns . 'CustomerDetails_Email')->Required());
+        $this->assertTrue($fields->dataFieldByName($ns . 'ShippingAddress_City')->Required());
+        $this->assertTrue($fields->dataFieldByName($ns . 'Terms_ReadTermsAndConditions')->Required());
+    }
+
+    private function orderForm(): CheckoutForm
+    {
+        return CheckoutForm::create(
+            $this->checkoutcontroller,
+            'OrderForm',
+            SinglePageCheckoutComponentConfig::create(ShoppingCart::curr())
+        );
+    }
+
+    private function setTermsPage(): void
+    {
+        $terms = SiteTree::create(['Title' => 'Terms and Conditions', 'URLSegment' => 'terms']);
+        $terms->write();
+        $terms->publishSingle();
+        $siteConfig = SiteConfig::current_site_config();
+        $siteConfig->TermsPageID = $terms->ID;
+        $siteConfig->write();
+    }
+
+    /**
+     * @param array<int|string, array<string, mixed>> $messages
+     * @return string[]
+     */
+    private function errorFields(array $messages): array
+    {
+        return array_values(array_filter(array_map(
+            static fn (array $message): string => (string) ($message['fieldName'] ?? ''),
+            $messages
+        )));
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private function validData(string $ns): array
+    {
+        return [
+            $ns . 'CustomerDetails_FirstName'    => 'Jane',
+            $ns . 'CustomerDetails_Surname'      => 'Smith',
+            $ns . 'CustomerDetails_Email'        => 'janesmith@example.com',
+            $ns . 'ShippingAddress_Country'      => 'NZ',
+            $ns . 'ShippingAddress_Address'      => '1234 Green Lane',
+            $ns . 'ShippingAddress_AddressLine2' => 'Building 2',
+            $ns . 'ShippingAddress_City'         => 'Bleasdfweorville',
+            $ns . 'ShippingAddress_State'        => 'Trumpo',
+            $ns . 'ShippingAddress_PostalCode'   => '4123',
+            $ns . 'ShippingAddress_Phone'        => '032092277',
+            $ns . 'BillingAddress_Country'       => 'NZ',
+            $ns . 'BillingAddress_Address'       => '1234 Green Lane',
+            $ns . 'BillingAddress_AddressLine2'  => 'Building 2',
+            $ns . 'BillingAddress_City'          => 'Bleasdfweorville',
+            $ns . 'BillingAddress_State'         => 'Trumpo',
+            $ns . 'BillingAddress_PostalCode'    => '4123',
+            $ns . 'BillingAddress_Phone'         => '032092277',
+            $ns . 'Payment_PaymentMethod'        => 'Dummy',
+            $ns . 'Notes_Notes'                  => 'Leave it around the back',
+            $ns . 'Terms_ReadTermsAndConditions' => '1',
+        ];
     }
 
     public function testCheckoutFormUsesAddressBookDefaultsForLoggedInMember(): void
