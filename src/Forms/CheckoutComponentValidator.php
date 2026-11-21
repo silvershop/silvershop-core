@@ -22,11 +22,13 @@ class CheckoutComponentValidator extends RequiredFieldsValidator
     public function __construct(CheckoutComponentConfig $checkoutComponentConfig)
     {
         $this->config = $checkoutComponentConfig;
+        // The components' required fields (customer details, address fields, the terms checkbox, ...).
+        parent::__construct($this->config->getRequiredFields());
     }
 
     public function php($data): bool
     {
-        $valid = true;
+        $valid = parent::php($data);
         //do component validation
         try {
             $this->config->validateData($data);

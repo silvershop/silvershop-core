@@ -318,6 +318,21 @@ final class SteppedCheckoutExtensionTest extends FunctionalTest
         );
     }
 
+    /**
+     * Regression test: the Pages.yml fixture sets a terms page, so the summary step must refuse an order without the
+     * terms accepted (Terms::getRequiredFields(); its validateData() accepts anything).
+     */
+    public function testSummaryRequiresTheTermsToBeAccepted(): void
+    {
+        $this->completeCheckoutUpToSummary();
+        $this->checkout->handleRequest($this->buildTestRequest('summary'));
+
+        $paymentForm = $this->checkout->ConfirmationForm();
+        $paymentForm->loadDataFrom(['Notes' => 'Leave it around the back']);
+
+        $this->assertFalse($paymentForm->validate()->isValid(), 'An order must not be placed without accepting the terms');
+    }
+
     protected function buildTestRequest($url, $method = 'GET'): HTTPRequest
     {
         $httpRequest = new HTTPRequest($method, $url);

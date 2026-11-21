@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace SilverShop\Checkout\Component;
 
 use SilverShop\Model\Order;
+use SilverStripe\Core\Validation\ValidationException;
+use SilverStripe\Core\Validation\ValidationResult;
 use SilverStripe\Forms\CheckboxField;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\ORM\FieldType\DBField;
@@ -38,6 +40,17 @@ class Terms extends CheckoutComponent
 
     public function validateData(Order $order, array $data): bool
     {
+        // Also enforced as a required field by CheckoutComponentValidator; checked here too so the terms can't be
+        // skipped when a custom validator or form leaves the required fields out.
+        if (SiteConfig::current_site_config()->TermsPage()->exists() && empty($data['ReadTermsAndConditions'])) {
+            $validationResult = ValidationResult::create();
+            $validationResult->addFieldError(
+                'ReadTermsAndConditions',
+                _t('SilverShop\Checkout\CheckoutField.MustAgreeToTerms', 'You must agree to the terms and conditions')
+            );
+            throw ValidationException::create($validationResult);
+        }
+
         return true;
     }
 
