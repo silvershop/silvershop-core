@@ -10,6 +10,7 @@ use SilverShop\Forms\CheckoutForm;
 use SilverShop\Model\Address;
 use SilverShop\Page\CheckoutPageController;
 use SilverShop\Page\Product;
+use SilverShop\Tests\Checkout\Component\ErrorReportingComponent;
 use SilverShop\Tests\ShopTestBootstrap;
 use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\Control\HTTPRequest;
@@ -252,6 +253,89 @@ final class CheckoutFormTest extends FunctionalTest
         $this->assertTrue($fields->dataFieldByName($ns . 'CustomerDetails_Email')->Required());
         $this->assertTrue($fields->dataFieldByName($ns . 'ShippingAddress_City')->Required());
         $this->assertTrue($fields->dataFieldByName($ns . 'Terms_ReadTermsAndConditions')->Required());
+    }
+
+    /**
+     * Regression test: every error a checkout component reports must reach the customer, not only the first one.
+     */
+    public function testEveryComponentErrorIsReported(): void
+    {
+        $form = $this->orderFormWithComponentErrors([
+            ['message' => 'Your card has expired'],
+            ['message' => 'Your card was declined'],
+        ]);
+        $result = $form->loadDataFrom($this->validData('SilverShop-Checkout-Component-'), 1)->validate();
+
+        $this->assertFalse($result->isValid());
+        $this->assertStringContainsString('Your card has expired', $form->getMessage(), 'Every component error must be shown');
+        $this->assertStringContainsString('Your card was declined', $form->getMessage(), 'Every component error must be shown');
+    }
+
+    /**
+     * Regression test: an error a checkout component reports for one of its fields must be shown on that field.
+     */
+    public function testComponentErrorsAreReportedOnTheirField(): void
+    {
+        $form = $this->orderFormWithComponentErrors([
+            ['field' => 'DeliveryDate', 'message' => 'We do not deliver on Sundays'],
+            ['field' => 'VatNumber', 'message' => 'This is not a valid VAT number'],
+        ]);
+        $result = $form->loadDataFrom($this->validData('SilverShop-Checkout-Component-'), 1)->validate();
+        $ns = ErrorReportingComponent::create()->name() . '_';
+
+        $this->assertFalse($result->isValid());
+        $this->assertSame(
+            'We do not deliver on Sundays',
+            $form->Fields()->dataFieldByName($ns . 'DeliveryDate')->getMessage(),
+            'A component error must be shown on its field'
+        );
+        $this->assertSame(
+            'This is not a valid VAT number',
+            $form->Fields()->dataFieldByName($ns . 'VatNumber')->getMessage(),
+            'A component error must be shown on its field'
+        );
+    }
+
+    /**
+     * Regression test: an empty customer field is flagged by the required check and by CustomerDetails::validateData();
+     * the customer must see that once, on the field.
+     */
+    public function testAnEmptyCustomerFieldIsReportedOnce(): void
+    {
+        $ns = 'SilverShop-Checkout-Component-';
+        $data = $this->validData($ns);
+        $data[$ns . 'CustomerDetails_FirstName'] = '';
+
+        $result = $this->orderForm()->loadDataFrom($data, 1)->validate();
+
+        $this->assertFalse($result->isValid());
+        $this->assertSame(
+            [$ns . 'CustomerDetails_FirstName'],
+            array_column($result->getMessages(), 'fieldName'),
+            'An empty first name must be reported once, on its field. Reported: ' . $this->describe($result->getMessages())
+        );
+    }
+
+    /**
+     * @param array<int, array{message: string, field?: string, code?: string}> $errors
+     */
+    private function orderFormWithComponentErrors(array $errors): CheckoutForm
+    {
+        $config = SinglePageCheckoutComponentConfig::create(ShoppingCart::curr());
+        $config->addComponent(ErrorReportingComponent::create($errors));
+
+        return CheckoutForm::create($this->checkoutcontroller, 'OrderForm', $config);
+    }
+
+    /**
+     * @param array<int|string, array<string, mixed>> $messages
+     */
+    private function describe(array $messages): string
+    {
+        return implode('; ', array_map(
+            static fn (array $message): string => sprintf('[%s] %s', $message['fieldName'] ?: 'form', $message['message']),
+            $messages
+        ));
     }
 
     private function orderForm(): CheckoutForm
