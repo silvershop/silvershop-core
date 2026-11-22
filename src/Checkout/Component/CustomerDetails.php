@@ -34,9 +34,9 @@ class CustomerDetails extends CheckoutComponent
         $validationResult = ValidationResult::create();
         foreach ($this->getRequiredFields($order) as $field_name) {
             if (empty($data[$field_name])) {
-                $validationResult->addError(
-                    _t(__CLASS__ . '.No' . $field_name, $field_name . ' is required'),
-                    "CustomerDetails"
+                $validationResult->addFieldError(
+                    $field_name,
+                    _t(__CLASS__ . '.No' . $field_name, $field_name . ' is required')
                 );
             }
         }

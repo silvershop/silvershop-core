@@ -162,17 +162,24 @@ class CheckoutComponentConfig
             try {
                 $component->validateData($this->order, $this->dependantData($component, $data));
             } catch (ValidationException $e) {
-                //transfer messages into a single result
+                //transfer messages into a single result, keeping the field each message is about
                 foreach ($e->getResult()->getMessages() as $code => $message) {
-                    if (is_numeric($code)) {
-                        $code = null;
-                    }
+                    $code = is_numeric($code) ? '' : (string)$code;
+                    // a message without a field name may still name its field by its code
+                    $fieldName = $message['fieldName'] ?: $code;
 
                     if ($this->namespaced) {
-                        $code = $component->namespaceFieldName($code);
+                        $fieldName = $fieldName === '' ? '' : $component->namespaceFieldName($fieldName);
+                        $code = $code === '' ? '' : $component->namespaceFieldName($code);
                     }
 
-                    $validationResult->addError($message['message'], ValidationResult::TYPE_ERROR, (string)$code);
+                    $validationResult->addFieldError(
+                        $fieldName,
+                        $message['message'],
+                        ValidationResult::TYPE_ERROR,
+                        $code,
+                        $message['messageCast'] ?? ValidationResult::CAST_TEXT
+                    );
                 }
             }
         }

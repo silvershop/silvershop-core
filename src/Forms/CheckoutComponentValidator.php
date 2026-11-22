@@ -35,7 +35,8 @@ class CheckoutComponentValidator extends RequiredFieldsValidator
         } catch (ValidationException $validationException) {
             $result = $validationException->getResult();
             foreach ($result->getMessages() as $message) {
-                if (!$this->fieldHasError($message['fieldName'])) {
+                // report every message; a field only gets the first one (e.g. "required", not also the component's)
+                if (!$message['fieldName'] || !$this->fieldHasError($message['fieldName'])) {
                     $this->validationError($message['fieldName'], $message['message'], 'bad');
                 }
             }

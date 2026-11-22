@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SilverShop\Tests\Checkout\Component;
 
+use SilverShop\Checkout\CheckoutComponentConfig;
 use SilverShop\Checkout\CheckoutConfig;
 use SilverShop\Checkout\Component\BillingAddress;
 use SilverShop\Checkout\Component\CheckoutComponentNamespaced;
@@ -427,5 +428,76 @@ final class CheckoutComponentTest extends SapphireTest
         $this->assertTrue(Terms::create()->validateData($order, ['ReadTermsAndConditions' => '1']));
         $this->expectException(ValidationException::class);
         Terms::create()->validateData($order, ['ReadTermsAndConditions' => '']);
+    }
+
+    public function testCustomerDetailsReportsEachBlankFieldOnThatField(): void
+    {
+        $order = Order::create();
+        $order->write();
+
+        try {
+            CustomerDetails::create()->validateData($order, ['FirstName' => 'Ed', 'Surname' => '', 'Email' => '']);
+            $this->fail('Blank contact details must not validate');
+        } catch (ValidationException $validationException) {
+            $this->assertSame(
+                ['Surname', 'Email'],
+                array_column($validationException->getResult()->getMessages(), 'fieldName')
+            );
+        }
+    }
+
+    /**
+     * Regression test: CheckoutComponentConfig::validateData() collects the errors of all components into one result.
+     * Every error must survive that, with the (namespaced) field it is about.
+     */
+    public function testValidateDataKeepsEveryComponentErrorWithItsField(): void
+    {
+        $errors = [
+            ['field' => 'DeliveryDate', 'message' => 'We do not deliver on Sundays'],
+            ['code' => 'VatNumber', 'message' => 'This is not a valid VAT number'],
+            ['message' => 'Your card has expired'],
+            ['message' => 'Your card was declined'],
+        ];
+        $ns = ErrorReportingComponent::create()->name() . '_';
+
+        $this->assertSame(
+            [
+                '[' . $ns . 'DeliveryDate] We do not deliver on Sundays',
+                '[' . $ns . 'VatNumber] This is not a valid VAT number',
+                '[form] Your card has expired',
+                '[form] Your card was declined',
+            ],
+            $this->collectedErrors(CheckoutComponentConfig::create($this->cart, true), $errors),
+            'Namespaced config'
+        );
+        $this->assertSame(
+            [
+                '[DeliveryDate] We do not deliver on Sundays',
+                '[VatNumber] This is not a valid VAT number',
+                '[form] Your card has expired',
+                '[form] Your card was declined',
+            ],
+            $this->collectedErrors(CheckoutComponentConfig::create($this->cart, false), $errors),
+            'Config without namespaces'
+        );
+    }
+
+    /**
+     * @param array<int, array{message: string, field?: string, code?: string}> $errors
+     * @return string[]
+     */
+    private function collectedErrors(CheckoutComponentConfig $config, array $errors): array
+    {
+        $config->addComponent(ErrorReportingComponent::create($errors));
+        try {
+            $config->validateData([]);
+        } catch (ValidationException $validationException) {
+            return array_values(array_map(
+                static fn (array $message): string => sprintf('[%s] %s', $message['fieldName'] ?: 'form', $message['message']),
+                $validationException->getResult()->getMessages()
+            ));
+        }
+
+        $this->fail('The component errors must be reported');
     }
 }
