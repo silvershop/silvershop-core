@@ -33,7 +33,8 @@ class ShopMemberFactory
 
         $idfield = Config::inst()->get(Member::class, 'unique_identifier_field');
         if (!isset($data[$idfield]) || empty($data[$idfield])) {
-            $validationResult->addError(
+            $validationResult->addFieldError(
+                $idfield,
                 _t(
                     'SilverShop\Checkout\Checkout.IdFieldNotFound',
                     'Required field not found: {IdentifierField}',
@@ -45,7 +46,10 @@ class ShopMemberFactory
         }
 
         if (!isset($data['Password']) || empty($data['Password'])) {
-            $validationResult->addError(_t('SilverShop\Checkout\Checkout.PasswordRequired', 'A password is required'));
+            $validationResult->addFieldError(
+                'Password',
+                _t('SilverShop\Checkout\Checkout.PasswordRequired', 'A password is required')
+            );
             throw ValidationException::create($validationResult);
         }
 
@@ -56,7 +60,8 @@ class ShopMemberFactory
             // if a localized value exists, use this for our error-message
             $fieldLabel = isset($fieldLabels[$idfield]) ? $fieldLabels[$idfield] : $idfield;
 
-            $validationResult->addError(
+            $validationResult->addFieldError(
+                $idfield,
                 _t(
                     'SilverShop\Checkout\Checkout.MemberExists',
                     'A member already exists with the {Field} {Identifier}',
@@ -72,9 +77,13 @@ class ShopMemberFactory
         // 3.2 changed validate to protected which made this fall through the DataExtension and error out
         $validation = $member->validate();
         if (!$validation->isValid()) {
-            //TODO need to handle i18n here?
+            // Keep each message's field and type (e.g. a password rule on Password).
             foreach ($validation->getMessages() as $message) {
-                $validationResult->addError($message['message']);
+                if (!empty($message['fieldName'])) {
+                    $validationResult->addFieldError($message['fieldName'], $message['message'], $message['messageType']);
+                } else {
+                    $validationResult->addError($message['message'], $message['messageType']);
+                }
             }
         }
 
