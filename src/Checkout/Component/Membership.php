@@ -116,14 +116,14 @@ class Membership extends CheckoutComponent
                 $fieldLabels = $member->fieldLabels(false);
                 // if a localized value exists, use this for our error-message
                 $fieldLabel = isset($fieldLabels[$idfield]) ? $fieldLabels[$idfield] : $idfield;
-                $validationResult->addError(
+                $validationResult->addFieldError(
+                    $idfield,
                     _t(
                         'SilverShop\Checkout\Checkout.MemberExists',
                         'A member already exists with the {Field} {Identifier}',
                         '',
                         ['Field' => $fieldLabel, 'Identifier' => $idval]
-                    ),
-                    $idfield
+                    )
                 );
             }
 
@@ -131,7 +131,7 @@ class Membership extends CheckoutComponent
 
             if (!$passwordResult->isValid()) {
                 foreach ($passwordResult->getMessages() as $message) {
-                    $validationResult->addError($message['message'], "Password");
+                    $validationResult->addFieldError('Password', $message['message']);
                 }
             }
         }

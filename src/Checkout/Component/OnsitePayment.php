@@ -49,7 +49,7 @@ class OnsitePayment extends CheckoutComponent
         $validationResult = ValidationResult::create();
         //TODO: validate credit card data
         if (!Helper::validateLuhn($data['number'])) {
-            $validationResult->addError(_t(__CLASS__ . '.InvalidCreditCard', 'Credit card is invalid'));
+            $validationResult->addFieldError('number', _t(__CLASS__ . '.InvalidCreditCard', 'Credit card is invalid'));
             throw ValidationException::create($validationResult);
         }
 
