@@ -49,6 +49,10 @@ This only applies to `Order`. `OrderItem::Total()` and `OrderModifier::Total()` 
 Once the method is removed in 7.0, `$order->Total` and `$Total` in templates will resolve to the `Currency` database
 field as normal.
 
+## Changes to Class Names
+* Change `SilverShop\Tests\ShopTest` to `SilverShop\Tests\ShopTestBootstrap`
+* Change `SilverShop\Cart\ShoppingCartController` to `SilverShop\Page\CartPageController`
+
 # 2.0
 ## Payment Gateway Settings
 Your payment gateway parameters need to be set on the GatewayInfo class.  See [Silverstripe-Omnipay 2 Upgrading Instructions](https://github.com/silverstripe/silverstripe-omnipay/blob/master/docs/changelogs/2.0.md#configuration-api) for details.
