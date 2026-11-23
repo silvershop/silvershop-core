@@ -811,7 +811,9 @@ class Order extends DataObject
         $candidate = $reference;
         //prevent generating references that are the same
         $count = 0;
-        while (Order::get()->filter(['Reference' => $candidate])->count() > 0) {
+        // only other orders count: a second (stale) instance writing this same order must not bump its own reference
+        $others = Order::get()->exclude('ID', (int) $this->ID);
+        while ($others->filter(['Reference' => $candidate])->count() > 0) {
             ++$count;
             $candidate = $reference . '' . $count;
         }

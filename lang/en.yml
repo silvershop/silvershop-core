@@ -58,6 +58,7 @@ en:
     NoOrder: 'Order does not exist.'
     NoOrderStarted: 'A new order has not yet been started.'
     NotCart: 'Order is not a cart.'
+    PaymentDescription: 'Order {reference}'
   SilverShop\Checkout\Step\Address:
     BillTo: 'Bill To:'
     EnterShippingAddress: "Please enter your shipping address details."

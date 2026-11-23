@@ -23,8 +23,8 @@ use SilverShop\Forms\PaymentForm;
 use SilverStripe\Control\HTTPResponse;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\FormAction;
-use SilverStripe\Omnipay\Model\Message\GatewayErrorMessage;
 use SilverStripe\View\SSViewer;
+use SilverStripe\ORM\DataObject;
 
 /**
  * @package shop
@@ -146,20 +146,29 @@ class CheckoutPageController extends PageController
             return false;
         }
 
-        $errorMessages = $lastPayment->Messages()->exclude('Message', '')->sort('Created', 'DESC');
-        $lastErrorMessage = null;
-        foreach ($errorMessages as $errorMessage) {
-            if ($errorMessage instanceof GatewayErrorMessage) {
-                $lastErrorMessage = $errorMessage;
-                break;
+        $messages = $lastPayment->Messages()->exclude('Message', '')->sort('Created', 'DESC');
+        foreach ($messages as $message) {
+            if ($this->isPaymentErrorMessage($message)) {
+                return $message->Message;
             }
         }
 
-        if (!$lastErrorMessage instanceof GatewayErrorMessage) {
-            return false;
+        return false;
+    }
+
+    /**
+     * Whether a payment message reports an error. silverstripe-omnipay 6.1+ stores every message as a plain
+     * PaymentMessage with its kind in `Type` (e.g. `PurchaseError`, `CompletePurchaseError`); 6.0 used one subclass
+     * per kind, with GatewayErrorMessage for errors.
+     */
+    protected function isPaymentErrorMessage(DataObject $message): bool
+    {
+        $type = (string) $message->getField('Type');
+        if ($type !== '') {
+            return str_ends_with($type, 'Error');
         }
 
-        return $lastErrorMessage->Message;
+        return is_a($message, 'SilverStripe\\Omnipay\\Model\\Message\\GatewayErrorMessage');
     }
 
     /**

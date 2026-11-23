@@ -52,6 +52,7 @@ de:
     NoOrder: 'Die Bestellung existiert nicht.'
     NoOrderStarted: 'Es wurde noch keine neue Bestellung gestartet.'
     NotCart: 'Die Bestellung beinhaltet keinen Warenkorb.'
+    PaymentDescription: 'Bestellung {reference}'
   SilverShop\Checkout\Step\Address:
     BillTo: 'Rechnung an:'
     EnterShippingAddress: "Bitte geben Sie Ihre gewünschte Lieferadresse ein."
