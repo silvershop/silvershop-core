@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace SilverShop\Extension;
 
+use SilverShop\Forms\AllowedCountriesField;
 use SilverShop\Model\AddressData;
 use SilverStripe\AssetAdmin\Forms\UploadField;
 use SilverStripe\Assets\Image;
 use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\Core\Config\Configurable;
 use SilverStripe\Core\Extension;
-use SilverStripe\Forms\CheckboxSetField;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\Tab;
 use SilverStripe\Forms\TabSet;
@@ -149,7 +149,7 @@ class ShopConfigExtension extends Extension
                 ),
                 $countriesTab = Tab::create(
                     'Countries',
-                    CheckboxSetField::create(
+                    AllowedCountriesField::create(
                         'AllowedCountries',
                         _t(__CLASS__ . '.AllowedCountries', 'Allowed Ordering and Shipping Countries'),
                         self::get_all_countries()
@@ -191,7 +191,9 @@ class ShopConfigExtension extends Extension
     public function getCountriesList($prefixisocode = false): array
     {
         $countries = self::get_all_countries();
-        if ($allowed = $this->getOwner()->AllowedCountries) {
+        // getField(), not ->AllowedCountries: another extension's getAllowedCountries() method on SiteConfig
+        // (e.g. symbiote/silverstripe-addressable) would otherwise be returned instead of the stored JSON.
+        if ($allowed = $this->getOwner()->getField('AllowedCountries')) {
             $allowed = json_decode($allowed);
             if (!empty($allowed)) {
                 $countries = array_intersect_key($countries, array_flip($allowed));
