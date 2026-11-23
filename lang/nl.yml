@@ -14,18 +14,18 @@ nl:
     ItemAdded: 'Artikel is succesvol toegevoegd.'
     ItemNotFound: 'Artikel niet gevonden.'
     ItemRemoved: 'Artikel is succesvol verwijderd.'
-    ItemsInCartPlural: 'Er zijn <a href="{link}">{quantity} artikelen</a> in uw winkelwagen.'
-    ItemsInCartSingular: 'Er is <a href="{link}">1 artikel</a> in uw winkelwagen.'
+    ItemsInCartPlural: 'Er zitten <a href="{link}">{quantity} artikelen</a> in je winkelwagen.'
+    ItemsInCartSingular: 'Er zit <a href="{link}">1 artikel</a> in je winkelwagen.'
     NoCartFound: 'Geen winkelwagen gevonden.'
     NoCartInitialised: 'Geen winkelwagen geïnitialiseerd'
-    NoItems: 'Er zijn geen artikelen in uw winkelwagen.'
+    NoItems: 'Er zitten geen artikelen in je winkelwagen.'
     NoOrder: 'Er is geen huidige bestelling.'
     ProceedToCheckout: 'Ga verder met betalen'
     ProductNotFound: 'Product niet gevonden.'
     QuantitySet: 'Hoeveelheid is ingesteld.'
-    RemoveAllTitle: 'Verwijder alle &quot;{Title}&quot; uit uw winkelwagen.'
-    RemoveTitle: 'Verwijder &quot;{Title}&quot; uit uw winkelwagen.'
-    TableSummary: 'Huidige inhoud van uw winkelwagen.'
+    RemoveAllTitle: 'Verwijder alle &quot;{Title}&quot; uit je winkelwagen.'
+    RemoveTitle: 'Verwijder &quot;{Title}&quot; uit je winkelwagen.'
+    TableSummary: 'Huidige inhoud van je winkelwagen.'
   SilverShop\Checkout\Checkout:
     IdFieldNotFound: 'Verplicht veld niet gevonden: {IdentifierField}'
     MemberExists: ' Er bestaat al een account met de {Field} {Identifier}'
@@ -34,10 +34,10 @@ nl:
     PasswordRequired: 'Er is een wachtwoord vereist'
     TermsAndConditionsLink: 'Ik ga akkoord met de voorwaarden die vermeld staan op de <a href="{TermsPageLink}" target="new" title="Lees de winkelvoorwaarden voor deze website">{TermsPageTitle}</a> pagina'
   SilverShop\Checkout\CheckoutField:
-    AccountInfo: "Kies een wachtwoord, zodat u kunt inloggen en uw bestelgeschiedenis kunt controleren voor in de toekomst"
-    MemberLoginInfo: 'Als u al een account heeft kunt u <a href="{LoginUrl}">inloggen</a>'
+    AccountInfo: 'Kies een wachtwoord, dan kun je inloggen en later je bestelgeschiedenis bekijken'
+    MemberLoginInfo: 'Heb je al een account? <a href="{LoginUrl}">Log dan in</a>'
     MembershipDetails: 'Account details'
-    MustAgreeToTerms: "U moet met de algemene voorwaarden akkoord gaan"
+    MustAgreeToTerms: 'Je moet akkoord gaan met de algemene voorwaarden'
     Password: Wachtwoord
     PaymentType: 'Betaal methode'
   SilverShop\Checkout\Component\OnsitePayment:
@@ -54,7 +54,7 @@ nl:
     NotCart: 'Bestelling is niet in de winkelwagen.'
   SilverShop\Checkout\Step\Address:
     BillTo: 'Rekening naar:'
-    EnterShippingAddress: "Voer uw verzendadres in."
+    EnterShippingAddress: 'Vul je verzendadres in.'
     SeperateBilling: 'Factureer op een ander adres'
     ShipTo: 'Verzend naar:'
     SupplyContactInformation: 'Geef je contactgegevens'
@@ -88,7 +88,7 @@ nl:
     Attributes: Attributen
     AttributesDescription: "These are fields to indicate the way(s) each variation varies. Once selected, they can be edited on each variation."
     Variations: Variaties
-    VariationsInfo: 'Prijs - Omdat u één of meer variaties heeft, de prijs kan aangepast worden in de "Variations" tab.'
+    VariationsInfo: 'Elke variatie krijgt een eigen prijs op het tabblad "Variaties". Vink daar "Price all variations from the base price" aan om ze allemaal voor de basisprijs hierboven te verkopen.'
   SilverShop\Extension\ShopConfigExtension:
     AllowedCountries: 'Toegestane bestel- en verzendlanden'
     AllowedCountriesTabTitle: 'Toegestane landen'
@@ -102,7 +102,7 @@ nl:
     UPDATED_ITEMS: '{count} producten bijgewerkt.'
     UpdateCart: 'Winkelwagen bijwerken'
   SilverShop\Forms\CheckoutComponentValidator:
-    InvalidDataMessage: 'Er zijn problemen met de door u ingevoerde gegevens. Zie hieronder:'
+    InvalidDataMessage: 'Er klopt iets niet in de gegevens die je hebt ingevuld. Zie hieronder:'
   SilverShop\Forms\OrderActionsForm:
     CancelOrder: 'Annuleer deze bestelling'
     CouldNotProcessPayment: 'Betaling kan niet worden verwerkt.'
@@ -115,12 +115,12 @@ nl:
     ChooseCountry: 'Kies land...'
     Country: Land
   SilverShop\Forms\ShopAccountForm:
-    DetailsSaved: 'Uw gegevens zijn bewaard'
+    DetailsSaved: 'Je gegevens zijn opgeslagen'
     Save: 'Bewaar veranderingen'
     SaveAndProceed: 'Sla op en ga verder naar betaling'
   SilverShop\Forms\ShopQuantityField:
-    AddOne: 'Voeg één of meer &quot;{ItemTitle}&quot; aan uw winkelwagen'
-    RemoveOne: 'Verwijder één of meer &quot;{ItemTitle}&quot; van uw winkelwagen'
+    AddOne: 'Nog één &quot;{ItemTitle}&quot; toevoegen aan je winkelwagen'
+    RemoveOne: 'Eén &quot;{ItemTitle}&quot; uit je winkelwagen halen'
   SilverShop\Forms\VariationForm:
     ChooseAttribute: 'Kies {attribute} …'
     ProductNotAvailable: "Dit product is niet beschikbaar met de geselecteerde opties."
@@ -152,7 +152,7 @@ nl:
   SilverShop\Model\Address:
     AddressHint: "Straat en huisnummer, naam en postbus"
     AddressLine2Hint: "landgoed, gebouw, appartement, afdeling, etage"
-    AddressSaved: 'Uw adres is opgeslagen'
+    AddressSaved: 'Je adres is opgeslagen'
     BillingAddress: 'Facturatie adres'
     CityHint: 'of stad, provincie'
     CreateNewAddress: 'Maak een nieuw adres aan'
@@ -298,7 +298,7 @@ nl:
   SilverShop\Model\Variation\AttributeType:
     PLURALNAME: Attributen
     SINGULARNAME: Attribuut
-    SaveFirstInfo: 'Bewaar eerst, daarna kunt u waarden toekennen'
+    SaveFirstInfo: 'Sla eerst op, daarna kun je waarden toevoegen.'
     belongs_many_many_Product: Product
     db_Label: Label
     db_Name: Naam
@@ -316,8 +316,8 @@ nl:
     db_ProductVariationVersion: 'Product variatie versie'
     has_one_ProductVariation: 'Product variatie'
   SilverShop\Model\Variation\Variation:
-    MustSaveFirstMessage: "U kunt een keuze maken uit de variatie attributen nadat u voor de eerste keer opgeslagen heeft, als ze bestaan."
-    NoAttributeValuesMessage: '{attribute} heeft geen waardes om uit te kiezen. U kunt deze aanmaken in de "Products" &#62; "Product Attribute Type" sectie van de CMS.'
+    MustSaveFirstMessage: 'Na de eerste keer opslaan kun je variatie-attributen kiezen, als die er zijn.'
+    NoAttributeValuesMessage: '{attribute} heeft geen waarden om uit te kiezen. Je kunt ze aanmaken in het onderdeel "Products" &#62; "Product Attribute Type" van het CMS.'
     PLURALNAME: Variaties
     SINGULARNAME: Variatie
     db_InternalItemID: 'Intern artikel ID'
@@ -344,8 +344,8 @@ nl:
     DefaultTitle: Account
     EditProfile: 'Bewerk profiel'
     LogOut: 'Uitloggen'
-    Login: 'U dient ingelogd te zijn voor u toegang krijgt tot uw accountpagina. Als u nog niet geregistreerd bent bent u niet in staat om in te loggen tot u uw eerste bestelling doet, vult u anders uw gegevens hieronder in.'
-    LoginAgain: "U bent uitgelogd. Als u opnieuw wilt inloggen dan kan dat hieronder."
+    Login: 'Log in om je accountpagina te bekijken. Heb je nog geen account, dan kun je pas inloggen na je eerste bestelling. Anders vul je hieronder je gegevens in.'
+    LoginAgain: 'Je bent uitgelogd. Wil je opnieuw inloggen? Dat kan hieronder.'
     MemberEmail: E-mail
     MemberLastVisit: 'Laatste bezoek'
     MemberName: Naam
@@ -402,8 +402,8 @@ nl:
     InternalItemID: 'Product code/SKU'
     Model: model
     NoImage: 'geen afbeelding'
-    NumItemsInCartPlural: 'U heeft {Quantity} artikelen in uw winkelwagen'
-    NumItemsInCartSingular: 'U heeft dit artikel in uw winkelwagen'
+    NumItemsInCartPlural: 'Je hebt {Quantity} artikelen in je winkelwagen'
+    NumItemsInCartSingular: 'Je hebt dit artikel in je winkelwagen'
     PLURALNAME: Producten
     PageTitle: 'Producttitel'
     Price: Prijs
@@ -470,10 +470,10 @@ nl:
     ReceiptSubject: 'Bestelling #{OrderNo} ontvangstbewijs'
     ReceiptTitle: 'Winkel ontvangstbewijs'
     Regards: 'Met vriendelijke groet'
-    StatusChangeAdminCancelledNote: 'Uw bestelling is geannuleerd door ons personeel. Neem alstublieft contact met ons op als u vragen heeft over deze bestelling.'
-    StatusChangeMemberCancelledNote: 'Uw annulering van uw bestelling is geconstateerd. Neem alstublieft contact met ons op als u vragen heeft.'
-    StatusChangeProcessingNote: 'De status van uw bestelling is veranderd naar In Behandeling. Neem alstublieft contact met ons op als u vragen heeft over uw bestelling.'
-    StatusChangeSentNote: 'Uw bestelling is verzonden. We streven ernaar om zo snel mogelijk te leveren. Neem alstublieft contact met ons op als uw bestelling niet binnen vijf dagen gearriveerd is.'
+    StatusChangeAdminCancelledNote: 'Je bestelling is door ons geannuleerd. Neem contact met ons op als je vragen hebt over deze bestelling.'
+    StatusChangeMemberCancelledNote: 'We hebben je annulering ontvangen. Neem contact met ons op als je vragen hebt.'
+    StatusChangeProcessingNote: 'Je bestelling is nu in behandeling. Neem contact met ons op als je vragen hebt over deze bestelling.'
+    StatusChangeSentNote: 'Je bestelling is verzonden. We leveren zo snel mogelijk. Neem contact met ons op als de producten niet binnen vijf dagen zijn aangekomen.'
     StatusChangeSubject: 'Silvershop -'
     StatusChangeTitle: 'Status update'
     StatusChanged: 'De bestelstatus van order #{OrderNo} is veranderd naar "{OrderStatus}"'
