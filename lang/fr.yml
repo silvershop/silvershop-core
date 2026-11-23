@@ -52,6 +52,7 @@ fr:
     NoOrder: 'La commande n''existe pas'
     NoOrderStarted: 'Aucune nouvelle commande n''a été démarrée.'
     NotCart: 'La commande ne comprend pas de panier'
+    PaymentDescription: 'Commande {reference}'
   SilverShop\Checkout\Step\Address:
     BillTo: 'Facturer à :'
     EnterShippingAddress: "Entrer les détails de votre adresse de livraison."

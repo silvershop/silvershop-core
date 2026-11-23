@@ -52,6 +52,7 @@ nl:
     NoOrder: 'Bestelling bestaat niet.'
     NoOrderStarted: 'Er is nog geen nieuwe bestelling begonnen.'
     NotCart: 'Bestelling is niet in de winkelwagen.'
+    PaymentDescription: 'Bestelling {reference}'
   SilverShop\Checkout\Step\Address:
     BillTo: 'Rekening naar:'
     EnterShippingAddress: "Voer uw verzendadres in."

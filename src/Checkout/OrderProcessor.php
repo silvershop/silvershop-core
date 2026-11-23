@@ -146,6 +146,14 @@ class OrderProcessor
         $transactionId = $this->order->Reference . ($numPayments > 0 ? '-' . $numPayments : '');
 
         return array_merge(
+            [
+                // Some gateways (e.g. Mollie) require a description; custom data can still override it.
+                'description' => _t(
+                    __CLASS__ . '.PaymentDescription',
+                    'Order {reference}',
+                    ['reference' => $this->order->getReference()]
+                ),
+            ],
             $customData,
             [
                 'transactionId'    => $transactionId,
@@ -343,6 +351,12 @@ class OrderProcessor
                 }
 
                 $this->order->ExchangeRate = $currencyService->getExchangeRate($baseCurrency, $this->order->Currency);
+            }
+
+            // Assign the order reference before the hook, so onPlaceOrder handlers (e.g. emails) see the final
+            // reference rather than the bare ID. write() would otherwise only generate it afterwards.
+            if (!$this->order->getField('Reference')) {
+                $this->order->generateReference();
             }
 
             //allow decorators to do stuff when order is saved.
