@@ -46,6 +46,8 @@ en:
     NoFirstName: 'A firstname is required'
     NoSurname: 'A surname is required'
     NoEmail: 'An email address is required'
+  SilverShop\Checkout\Component\Membership:
+    IdentifierRequired: 'Enter your {Field} to create an account'
   SilverShop\Checkout\Component\OnsitePayment:
     InvalidCreditCard: 'Credit card is invalid'
   SilverShop\Checkout\Component\Payment:

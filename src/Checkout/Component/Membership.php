@@ -110,12 +110,22 @@ class Membership extends CheckoutComponent
         if (Checkout::membership_required() || !empty($data['Password'])) {
             $member = Member::create($data);
             $idfield = Member::config()->get('unique_identifier_field');
-            $idval = $data[$idfield];
-            if (MemberExtension::get_by_identifier($idval) instanceof Member) {
-                // get localized field labels
-                $fieldLabels = $member->fieldLabels(false);
-                // if a localized value exists, use this for our error-message
-                $fieldLabel = isset($fieldLabels[$idfield]) ? $fieldLabels[$idfield] : $idfield;
+            $idval = $this->identifier($order, $data);
+            // get localized field labels
+            $fieldLabels = $member->fieldLabels(false);
+            // if a localized value exists, use this for our error-message
+            $fieldLabel = isset($fieldLabels[$idfield]) ? $fieldLabels[$idfield] : $idfield;
+            if ($idval === '') {
+                // Checked here, before the checkout saves anything; ShopMemberFactory would only refuse it later.
+                $validationResult->addFieldError(
+                    $idfield,
+                    _t(
+                        __CLASS__ . '.IdentifierRequired',
+                        'Enter your {Field} to create an account',
+                        ['Field' => $fieldLabel]
+                    )
+                );
+            } elseif (MemberExtension::get_by_identifier($idval) instanceof Member) {
                 $validationResult->addFieldError(
                     $idfield,
                     _t(
@@ -127,7 +137,7 @@ class Membership extends CheckoutComponent
                 );
             }
 
-            $passwordResult = $this->passwordValidator->validate($data['Password'], $member);
+            $passwordResult = $this->passwordValidator->validate((string) ($data['Password'] ?? ''), $member);
 
             if (!$passwordResult->isValid()) {
                 foreach ($passwordResult->getMessages() as $message) {
@@ -141,6 +151,17 @@ class Membership extends CheckoutComponent
         }
 
         return true;
+    }
+
+    /**
+     * The identifier (usually Email) for the new account: the submitted one, or the order's when the field isn't shown.
+     */
+    private function identifier(Order $order, array $data): string
+    {
+        $idfield = Member::config()->get('unique_identifier_field');
+        $submitted = trim((string) ($data[$idfield] ?? ''));
+
+        return $submitted !== '' ? $submitted : trim((string) $order->{$idfield});
     }
 
     public function getData(Order $order): array
@@ -167,6 +188,9 @@ class Membership extends CheckoutComponent
         if (!Checkout::membership_required() && empty($data['Password'])) {
             return $order;
         }
+
+        // The identifier field is only shown while the order has none (see getFormFields()); otherwise use the order's.
+        $data[Member::config()->get('unique_identifier_field')] = $this->identifier($order, $data);
 
         $shopMemberFactory = new ShopMemberFactory();
         $member = $shopMemberFactory->create($data);
