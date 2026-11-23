@@ -40,6 +40,8 @@ en:
     MustAgreeToTerms: "You must agree to the terms and conditions"
     Password: Password
     PaymentType: 'Payment Type'
+  SilverShop\Checkout\Component\AddressBook:
+    InvalidAddress: 'Invalid address supplied'
   SilverShop\Checkout\Component\CustomerDetails:
     NoFirstName: 'A firstname is required'
     NoSurname: 'A surname is required'

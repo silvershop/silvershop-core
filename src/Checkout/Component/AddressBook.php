@@ -136,7 +136,10 @@ abstract class AddressBook extends Address implements i18nEntityProvider
             $member = Security::getCurrentUser();
             // If existing address selected, check that it exists in $member->AddressBook
             if (!$member || !$member->AddressBook()->byID($existingID)) {
-                $validationResult->addError('Invalid address supplied', $this->addresstype . 'AddressID');
+                $validationResult->addFieldError(
+                    $this->addresstype . 'AddressID',
+                    _t(__CLASS__ . '.InvalidAddress', 'Invalid address supplied')
+                );
                 throw ValidationException::create($validationResult);
             }
         } else {
@@ -154,7 +157,7 @@ abstract class AddressBook extends Address implements i18nEntityProvider
                         ['name' => $fieldLabel]
                     );
 
-                    $validationResult->addError($errorMessage, $fieldName);
+                    $validationResult->addFieldError($fieldName, $errorMessage);
                     throw ValidationException::create($validationResult);
                 }
             }
